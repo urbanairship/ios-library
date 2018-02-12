@@ -6,12 +6,12 @@
 #import "UAInAppMessageResolutionEvent+Internal.h"
 #import "UAInAppMessage+Internal.h"
 #import "UAUtils.h"
-#import "UAInAppMessageBannerDisplayContent.h"
+#import "UAInAppMessageFullScreenDisplayContent.h"
 
 @interface UAInAppMessageResolutionEventTest : UABaseTest
 @property (nonatomic, strong) id analytics;
 @property (nonatomic, strong) id airship;
-@property (nonatomic, strong) UAInAppMessageBannerDisplayContent *displayContent;
+@property (nonatomic, strong) UAInAppMessageFullScreenDisplayContent *displayContent;
 @end
 
 @implementation UAInAppMessageResolutionEventTest
@@ -27,8 +27,7 @@
     [[[self.airship stub] andReturn:self.analytics] sharedAnalytics];
     [UAirship setSharedAirship:self.airship];
 
-    self.displayContent = [UAInAppMessageBannerDisplayContent displayContentWithBuilderBlock:^(UAInAppMessageBannerDisplayContentBuilder *builder) {
-        builder.placement = UAInAppMessageBannerPlacementTop;
+    self.displayContent = [UAInAppMessageFullScreenDisplayContent displayContentWithBuilderBlock:^(UAInAppMessageFullScreenDisplayContentBuilder *builder) {
         builder.buttonLayout = UAInAppMessageButtonLayoutTypeJoined;
 
         UAInAppMessageTextInfo *heading = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
@@ -36,16 +35,30 @@
         }];
         builder.heading = heading;
 
-        UAInAppMessageTextInfo *buttonTex = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
-            builder.text = @"Dismiss";
-        }];
 
-        UAInAppMessageButtonInfo *button = [UAInAppMessageButtonInfo buttonInfoWithBuilderBlock:^(UAInAppMessageButtonInfoBuilder * _Nonnull builder) {
-            builder.label = buttonTex;
+
+        UAInAppMessageButtonInfo *buttonOne = [UAInAppMessageButtonInfo buttonInfoWithBuilderBlock:^(UAInAppMessageButtonInfoBuilder * _Nonnull builder) {
+            builder.label = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
+                builder.text = @"Dismiss";
+            }];
             builder.identifier = @"button";
         }];
 
-        builder.buttons = @[button];
+        UAInAppMessageButtonInfo *buttonTwo = [UAInAppMessageButtonInfo buttonInfoWithBuilderBlock:^(UAInAppMessageButtonInfoBuilder * _Nonnull builder) {
+            builder.label = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
+                builder.text = [@"" stringByPaddingToLength:31 withString:@"TEXT" startingAtIndex:0];
+            }];
+            builder.identifier = @"long_button_text";
+        }];
+
+        UAInAppMessageButtonInfo *buttonThree = [UAInAppMessageButtonInfo buttonInfoWithBuilderBlock:^(UAInAppMessageButtonInfoBuilder * _Nonnull builder) {
+            builder.label = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
+                builder.text = [@"" stringByPaddingToLength:30 withString:@"TEXT" startingAtIndex:0];
+            }];
+            builder.identifier = @"exact_button_description";
+        }];
+
+        builder.buttons = @[buttonOne, buttonTwo, buttonThree];
     }];
 }
 
@@ -115,7 +128,39 @@
     UAInAppMessageResolution *resolution = [UAInAppMessageResolution buttonClickResolutionWithButtonInfo:self.displayContent.buttons[0]];
     [self verifyEventWithEventBlock:^UAInAppMessageResolutionEvent *(UAInAppMessage *message) {
         return [UAInAppMessageResolutionEvent eventWithMessage:message resolution:resolution displayTime:3.141];
-    } expectedResolutionData:expectedResolutionData];}
+    } expectedResolutionData:expectedResolutionData];
+}
+
+/**
+ * Test in-app button clicked resolution event with a label only takes the first 30 characters.
+ */
+- (void)testButtonClickedResolutionLongLabel {
+    NSDictionary *expectedResolutionData = @{ @"type": @"button_click",
+                                              @"button_id": self.displayContent.buttons[1].identifier,
+                                              @"button_description": [self.displayContent.buttons[1].label.text substringToIndex:30],
+                                              @"display_time": @"3.141"};
+
+    UAInAppMessageResolution *resolution = [UAInAppMessageResolution buttonClickResolutionWithButtonInfo:self.displayContent.buttons[1]];
+    [self verifyEventWithEventBlock:^UAInAppMessageResolutionEvent *(UAInAppMessage *message) {
+        return [UAInAppMessageResolutionEvent eventWithMessage:message resolution:resolution displayTime:3.141];
+    } expectedResolutionData:expectedResolutionData];
+}
+
+/**
+ * Test in-app button clicked resolution event with a label only takes the first 30 characters.
+ */
+- (void)testButtonClickedResolutionMaxDescriptionLength {
+    NSDictionary *expectedResolutionData = @{ @"type": @"button_click",
+                                              @"button_id": self.displayContent.buttons[2].identifier,
+                                              @"button_description": self.displayContent.buttons[2].label.text,
+                                              @"display_time": @"3.141"};
+
+    UAInAppMessageResolution *resolution = [UAInAppMessageResolution buttonClickResolutionWithButtonInfo:self.displayContent.buttons[2]];
+    [self verifyEventWithEventBlock:^UAInAppMessageResolutionEvent *(UAInAppMessage *message) {
+        return [UAInAppMessageResolutionEvent eventWithMessage:message resolution:resolution displayTime:3.141];
+    } expectedResolutionData:expectedResolutionData];
+}
+
 
 
 /**
