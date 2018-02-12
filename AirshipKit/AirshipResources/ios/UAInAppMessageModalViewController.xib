@@ -37,6 +37,10 @@
             <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
+                <view alpha="0.29999999999999999" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="KZc-00-wWo" userLabel="Shade View">
+                    <rect key="frame" x="-0.5" y="-0.5" width="375" height="667"/>
+                    <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                </view>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Fzu-gd-kpG" userLabel="Modal View" customClass="UAInAppMessageModalView">
                     <rect key="frame" x="20" y="83.5" width="335" height="500"/>
                     <subviews>
@@ -177,9 +181,13 @@
             </subviews>
             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
             <constraints>
+                <constraint firstItem="KZc-00-wWo" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="Ajh-9C-jj5"/>
+                <constraint firstItem="KZc-00-wWo" firstAttribute="height" secondItem="iN0-l3-epB" secondAttribute="height" id="Iep-YR-FEQ"/>
                 <constraint firstItem="Fzu-gd-kpG" firstAttribute="centerX" secondItem="vUN-kp-3ea" secondAttribute="centerX" id="MLe-tl-tvt"/>
+                <constraint firstItem="KZc-00-wWo" firstAttribute="width" secondItem="iN0-l3-epB" secondAttribute="width" id="UF7-YB-cPG"/>
                 <constraint firstItem="Fzu-gd-kpG" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="f7p-Hf-fjh"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="Fzu-gd-kpG" secondAttribute="trailing" priority="999" constant="20" id="jc7-Az-AaP"/>
+                <constraint firstItem="KZc-00-wWo" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="kgj-9D-TpW"/>
                 <constraint firstItem="Fzu-gd-kpG" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" priority="999" constant="20" id="qSS-Nc-aX9"/>
                 <constraint firstItem="Fzu-gd-kpG" firstAttribute="height" secondItem="iN0-l3-epB" secondAttribute="height" multiplier="0.75" id="xmi-Ie-6M5"/>
             </constraints>
