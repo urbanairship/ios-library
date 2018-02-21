@@ -157,8 +157,17 @@ static NSMutableSet *overlayControllers_ = nil;
     CGFloat widthConstant = normalizedSize.width - screenSize.width;
     CGFloat heightConstant = normalizedSize.height - screenSize.height;
 
-    self.containerViewHeightConstraint.constant = heightConstant;
-    self.containerViewWidthConstraint.constant = widthConstant;
+    CGFloat topInset = 0;
+    CGFloat leftInset = 0;
+    // Nub adjustment for iPhone X
+    if (@available(iOS 11.0, *)) {
+        UIWindow *window = [UAUtils mainWindow];
+        topInset = window.safeAreaInsets.top;
+        leftInset = window.safeAreaInsets.left;
+    }
+
+    self.containerViewHeightConstraint.constant = heightConstant - topInset;
+    self.containerViewWidthConstraint.constant = widthConstant - leftInset;
 
     [self.containerView layoutIfNeeded];
 
