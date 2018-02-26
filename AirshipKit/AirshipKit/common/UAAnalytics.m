@@ -57,12 +57,13 @@ NSString *const UAEventKey = @"event";
         self.config = airshipConfig;
         self.dataStore = dataStore;
         self.eventManager = eventManager;
-        self.eventManager.uploadsEnabled = self.componentEnabled;
 
         // Default analytics value
         if (![self.dataStore objectForKey:kUAAnalyticsEnabled]) {
             [self.dataStore setBool:YES forKey:kUAAnalyticsEnabled];
         }
+
+        self.eventManager.uploadsEnabled = self.isEnabled && self.componentEnabled;
 
         // Register for background notifications
         [[NSNotificationCenter defaultCenter] addObserver:self
@@ -241,6 +242,7 @@ NSString *const UAEventKey = @"event";
     }
 
     [self.dataStore setBool:enabled forKey:kUAAnalyticsEnabled];
+    self.eventManager.uploadsEnabled = self.isEnabled && self.componentEnabled;
 }
 
 - (void)associateDeviceIdentifiers:(UAAssociatedIdentifiers *)associatedIdentifiers {
@@ -294,7 +296,7 @@ NSString *const UAEventKey = @"event";
 }
 
 - (void)onComponentEnableChange {
-    self.eventManager.uploadsEnabled = self.componentEnabled;
+    self.eventManager.uploadsEnabled = self.isEnabled && self.componentEnabled;
     if (self.componentEnabled) {
         // if component was disabled and is now enabled, schedule an upload just in case
         [self scheduleUpload];
