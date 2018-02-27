@@ -77,7 +77,7 @@ NSString *const UAInAppMessageFullScreenViewNibName = @"UAInAppMessageFullScreen
                                         toItem:nil
                                      attribute:NSLayoutAttributeNotAnAttribute
                                     multiplier:1
-                                      constant:0];
+                                      constant:0].active = true;
 
         self.statusBarPaddingView.backgroundColor = displayContent.backgroundColor;
 

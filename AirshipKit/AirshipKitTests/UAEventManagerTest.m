@@ -577,5 +577,41 @@
     [self.mockStore verify];
 }
 
+- (void)testEnableSchedulesUploadWhenCurrentlyDisabled {
+    // setup
+    self.eventManager.uploadsEnabled = NO;
+
+    // expectations
+    XCTestExpectation *expectUpload = [self expectationWithDescription:@"Expect upload via [self.queue addBackgroundOperation:delay:]"];
+    [[[[self.mockQueue expect] andDo:^(NSInvocation *invocation) {
+        [expectUpload fulfill];
+    }] ignoringNonObjectArgs] addBackgroundOperation:OCMOCK_ANY delay:0];
+
+    // test
+    self.eventManager.uploadsEnabled = YES;
+    
+    // verify
+    [self waitForExpectationsWithTimeout:1 handler:nil];
+    [self.mockQueue verify];
+}
+
+- (void)testDisableCancelsUploadsWhenCurrentlyEnabled {
+    // setup
+    self.eventManager.uploadsEnabled = YES;
+    
+    // expectations
+    XCTestExpectation *expectCancel = [self expectationWithDescription:@"Expect cancel via [self.queue addBackgroundOperation:delay:]"];
+    [[[self.mockQueue expect] andDo:^(NSInvocation *invocation) {
+        [expectCancel fulfill];
+    }] cancelAllOperations];
+    
+    // test
+    self.eventManager.uploadsEnabled = NO;
+    
+    // verify
+    [self waitForExpectationsWithTimeout:1 handler:nil];
+    [self.mockQueue verify];
+}
+
 @end
 

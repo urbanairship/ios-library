@@ -54,7 +54,7 @@ const NSTimeInterval BackgroundLowPriorityEventUploadInterval = 900;
         self.dataStore = dataStore;
         self.client = client;
         self.queue = queue;
-        self.uploadsEnabled = YES;
+        _uploadsEnabled = YES;
 
         // Set the intial delay
         self.earliestForegroundSendTime = [NSDate dateWithTimeIntervalSinceNow:InitialForegroundUploadDelay];
@@ -116,6 +116,17 @@ const NSTimeInterval BackgroundLowPriorityEventUploadInterval = 900;
                                        eventStore:eventStore
                                            client:client
                                             queue:queue];
+}
+
+- (void)setUploadsEnabled:(BOOL)uploadsEnabled {
+    if (_uploadsEnabled != uploadsEnabled) {
+        _uploadsEnabled = uploadsEnabled;
+        if (uploadsEnabled) {
+            [self scheduleUpload];
+        } else {
+            [self cancelUpload];
+        }
+    }
 }
 
 #pragma mark -
@@ -250,6 +261,10 @@ const NSTimeInterval BackgroundLowPriorityEventUploadInterval = 900;
 }
 
 - (void)scheduleUpload {
+    if (!self.uploadsEnabled) {
+        return;
+    }
+    
     // Background time is limited, so bypass other time delays
     if ([UIApplication sharedApplication].applicationState == UIApplicationStateBackground) {
         [self scheduleUploadWithDelay:BackgroundUploadDelay];
@@ -277,7 +292,13 @@ const NSTimeInterval BackgroundLowPriorityEventUploadInterval = 900;
     
     UA_LDEBUG(@"Enqueuing attempt to schedule event upload with delay on main queue.");
 
+    UA_WEAKIFY(self);
     dispatch_async(dispatch_get_main_queue(), ^{
+        UA_STRONGIFY(self);
+        if (!self.uploadsEnabled) {
+            return;
+        }
+        
         UA_LDEBUG(@"Attempting to schedule event upload with delay: %f seconds.", delay);
 
         NSDate *uploadDate = [NSDate dateWithTimeIntervalSinceNow:delay];
@@ -305,6 +326,9 @@ const NSTimeInterval BackgroundLowPriorityEventUploadInterval = 900;
 
     UAAsyncOperation *operation = [UAAsyncOperation operationWithBlock:^(UAAsyncOperation *operation) {
         UA_STRONGIFY(self);
+        if (!self.uploadsEnabled) {
+            return;
+        }
 
         self.nextUploadDate = nil;
 
