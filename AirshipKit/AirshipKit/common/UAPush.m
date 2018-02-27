@@ -793,15 +793,6 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
         return;
     }
     
-    if (![NSThread isMainThread]) {
-        UA_WEAKIFY(self);
-        dispatch_async(dispatch_get_main_queue(), ^{
-            UA_STRONGIFY(self);
-            [self updateChannelRegistrationForcefully:forcefully];
-        });
-        return;
-    }
-
     // Only cancel in flight requests if the channel is already created
     if (!self.channelCreationEnabled) {
         UA_LDEBUG(@"Channel creation is currently disabled.");
@@ -813,11 +804,12 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
         return;
     }
 
-
-    [self.channelRegistrar registerWithChannelID:self.channelID
-                                 channelLocation:self.channelLocation
-                                     withPayload:[self createChannelPayload]
-                                      forcefully:forcefully];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.channelRegistrar registerWithChannelID:self.channelID
+                                     channelLocation:self.channelLocation
+                                         withPayload:[self createChannelPayload]
+                                          forcefully:forcefully];
+    });
 }
 
 - (void)updateChannelTagGroups {
@@ -825,14 +817,6 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
         return;
     }
     
-    if (![NSThread isMainThread]) {
-        UA_WEAKIFY(self);
-        dispatch_async(dispatch_get_main_queue(), ^{
-            UA_STRONGIFY(self);
-            [self updateChannelTagGroups];
-        });
-        return;
-    }
 
     if (!self.channelID) {
         return;
@@ -911,14 +895,6 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
 }
 
 - (void)notificationRegistrationFinishedWithOptions:(UANotificationOptions)options {
-    if (![NSThread isMainThread]) {
-        UA_WEAKIFY(self);
-        dispatch_async(dispatch_get_main_queue(), ^{
-            UA_STRONGIFY(self);
-            [self notificationRegistrationFinishedWithOptions:options];
-        });
-        return;
-    }
     
     if (!self.deviceToken) {
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -931,7 +907,9 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
 
     id strongDelegate = self.registrationDelegate;
     if ([strongDelegate respondsToSelector:@selector(notificationRegistrationFinishedWithOptions:categories:)]) {
-        [strongDelegate notificationRegistrationFinishedWithOptions:options categories:self.combinedCategories];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [strongDelegate notificationRegistrationFinishedWithOptions:options categories:self.combinedCategories];
+        });
     }
 }
 
