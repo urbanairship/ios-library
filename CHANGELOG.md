@@ -3,6 +3,15 @@ iOS Changelog
 
 Migration Guides: Documentation/Migration
 
+Version 9.0.3 - February 27, 2018
+=================================
+Patch release to fix several UI issues, reduce the amount of code executed when Analytics are disabled, and make UAActionScheduleInfo constructor public. Applications needing any of these changes are encouraged to upgrade.
+
+Bug fixes
+---------
+- Made close button more accessible in overlay pages on iPhone X.
+- Fixed potential issues with full-screen in-app message display in particular configurations and image sizes.
+
 Version 9.0.2 - February 12, 2018
 =================================
 

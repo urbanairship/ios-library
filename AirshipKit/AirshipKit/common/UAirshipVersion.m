@@ -2,7 +2,7 @@
 
 #import "UAirshipVersion.h"
 
-NSString *const versionString = @"9.0.2";
+NSString *const versionString = @"9.0.3";
 
 @implementation UAirshipVersion
 
