@@ -4,6 +4,32 @@
 #import "UAirship.h"
 #import "UAAnalytics.h"
 
+NSString *const kUAChannelIdentityHintsKey = @"identity_hints";
+NSString *const kUAChannelUserIDKey = @"user_id";
+NSString *const kUAChannelDeviceIDKey = @"device_id";
+
+NSString *const kUAChannelKey = @"channel";
+NSString *const kUAPlatformKey= @"ios";
+NSString *const kUAChannelDeviceTypeKey = @"device_type";
+NSString *const kUAChannelOptInKey = @"opt_in";
+NSString *const kUAChannelPushAddressKey = @"push_address";
+
+NSString *const kUAChannelTopLevelTimeZoneJSONKey = @"timezone";
+NSString *const kUAChannelTopLevelLanguageJSONKey = @"locale_language";
+NSString *const kUAChannelTopLevelCountryJSONKey = @"locale_country";
+
+NSString *const kUAChanneliOSKey = @"ios";
+NSString *const kUAChannelBadgeJSONKey = @"badge";
+NSString *const kUAChannelQuietTimeJSONKey = @"quiettime";
+NSString *const kUAChannelTimeZoneJSONKey = @"tz";
+
+NSString *const kUAChannelAliasJSONKey = @"alias";
+NSString *const kUAChannelSetTagsKey = @"set_tags";
+NSString *const kUAChannelTagsJSONKey = @"tags";
+
+NSString *const kUABackgroundEnabledJSONKey = @"background";
+
+NSString *const kUAIdentityHintsKey= @"identity_hints";
 
 @implementation UAChannelRegistrationPayload
 

@@ -2,31 +2,31 @@
 
 #import <Foundation/Foundation.h>
 
-#define kUAChannelIdentityHintsKey @"identity_hints"
-#define kUAChannelUserIDKey @"user_id"
-#define kUAChannelDeviceIDKey @"device_id"
-
-#define kUAChannelKey @"channel"
-#define kUAChannelDeviceTypeKey @"device_type"
-#define kUAChannelOptInKey @"opt_in"
-#define kUAChannelPushAddressKey @"push_address"
-
-#define kUAChannelTopLevelTimeZoneJSONKey @"timezone"
-#define kUAChannelTopLevelLanguageJSONKey @"locale_language"
-#define kUAChannelTopLevelCountryJSONKey @"locale_country"
-
-#define kUAChanneliOSKey @"ios"
-#define kUAChannelBadgeJSONKey @"badge"
-#define kUAChannelQuietTimeJSONKey @"quiettime"
-#define kUAChannelTimeZoneJSONKey @"tz"
-
-#define kUAChannelAliasJSONKey @"alias"
-#define kUAChannelSetTagsKey @"set_tags"
-#define kUAChannelTagsJSONKey @"tags"
-
-#define kUABackgroundEnabledJSONKey @"background"
-
 NS_ASSUME_NONNULL_BEGIN
+
+extern NSString *const kUAChannelIdentityHintsKey;
+extern NSString *const kUAChannelUserIDKey;
+extern NSString *const kUAChannelDeviceIDKey;
+
+extern NSString *const kUAChannelKey;
+extern NSString *const kUAChannelDeviceTypeKey;
+extern NSString *const kUAChannelOptInKey;
+extern NSString *const kUAChannelPushAddressKey;
+
+extern NSString *const kUAChannelTopLevelTimeZoneJSONKey;
+extern NSString *const kUAChannelTopLevelLanguageJSONKey;
+extern NSString *const kUAChannelTopLevelCountryJSONKey;
+
+extern NSString *const kUAChanneliOSKey;
+extern NSString *const kUAChannelBadgeJSONKey;
+extern NSString *const kUAChannelQuietTimeJSONKey;
+extern NSString *const kUAChannelTimeZoneJSONKey;
+
+extern NSString *const kUAChannelAliasJSONKey;
+extern NSString *const kUAChannelSetTagsKey;
+extern NSString *const kUAChannelTagsJSONKey;
+
+extern NSString *const kUABackgroundEnabledJSONKey;
 
 /**
  * Model object encapsulating the data relevant to a creation or updates processed by UAChannelAPIClient.
