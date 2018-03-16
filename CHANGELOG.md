@@ -3,6 +3,17 @@ iOS Changelog
 
 Migration Guides: Documentation/Migration
 
+Version 9.0.4 - March 19, 2018
+=================================
+Patch release to relax URL whitelisting to include custom schemes, fix a delegate call that was happening off the main queue, and fix UI issues in the message center and in in-app message banners. Applications needing any of these changes are encouraged to upgrade.
+
+Bug fixes
+---------
+- Relaxed URL whitelisting to include custom schemes.
+- Fixed issue in the message center list view that prevented icons from properly loading.
+- Fixed spacing issue in in-app banner view layout.
+- Fixed a bug that resulted in UAInboxDelegate being called off the main queue.
+
 Version 9.0.3 - February 27, 2018
 =================================
 Patch release to fix several UI issues, reduce the amount of code executed when Analytics are disabled, and make UAActionScheduleInfo constructor public. Applications needing any of these changes are encouraged to upgrade.
