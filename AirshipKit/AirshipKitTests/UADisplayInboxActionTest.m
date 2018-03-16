@@ -114,10 +114,16 @@
     [[[self.mockMessageList stub] andReturn:self.mockMessage] messageForID:@"MCRAP"];
     
     // Should notify the delegate of the message
-    [[self.mockInboxDelegate expect] showMessageForID:@"MCRAP"];
+    XCTestExpectation *expectation = [self expectationWithDescription:@"showMessageForID called"];
+    [[[self.mockInboxDelegate expect] andDo:^(NSInvocation *invocation) {
+        [expectation fulfill];
+    }] showMessageForID:@"MCRAP"];
     
     // Perform the action
     [self verifyActionPerformWithActionArguments:args expectedFetchResult:UAActionFetchResultNoData];
+    
+    // Wait for it to complete
+    [self waitForExpectationsWithTimeout:1 handler:nil];
     
     // Verify delegate calls
     [self.mockInboxDelegate verify];
@@ -135,13 +141,19 @@
                                                       withSituation:UASituationForegroundInteractiveButton];
     
     // Should notify the delegate of the notification
-    [[self.mockInboxDelegate expect] showMessageForID:@"MCRAP"];
+    XCTestExpectation *expectation = [self expectationWithDescription:@"showMessageForID called"];
+    [[[self.mockInboxDelegate expect] andDo:^(NSInvocation *invocation) {
+        [expectation fulfill];
+    }] showMessageForID:@"MCRAP"];
     
     // Need to stub a message list result so the action is able to finish
     [[[self.mockMessageList stub] andReturn:self.mockMessage] messageForID:@"MCRAP"];
     
     // Perform the action
     [self verifyActionPerformWithActionArguments:args expectedFetchResult:UAActionFetchResultNoData];
+    
+    // Wait for it to complete
+    [self waitForExpectationsWithTimeout:1 handler:nil];
     
     // Verify delegate calls
     [self.mockInboxDelegate verify];
@@ -159,7 +171,10 @@
                                                       withSituation:UASituationForegroundInteractiveButton];
 
     // Should notify the delegate of the notification
-    [[self.mockInboxDelegate expect] showMessageForID:@"MCRAP"];
+    XCTestExpectation *expectation = [self expectationWithDescription:@"showMessageForID called"];
+    [[[self.mockInboxDelegate expect] andDo:^(NSInvocation *invocation) {
+        [expectation fulfill];
+    }] showMessageForID:@"MCRAP"];
 
     // Need to stub a message list result so the action is able to finish
     [self stubMessageListRefreshWithSuccessBlock:^{
@@ -169,6 +184,9 @@
     // Perform the action
     [self verifyActionPerformWithActionArguments:args expectedFetchResult:UAActionFetchResultNewData];
 
+    // Wait for it to complete
+    [self waitForExpectationsWithTimeout:1 handler:nil];
+    
     // Verify delegate calls
     [self.mockInboxDelegate verify];
 }
@@ -188,10 +206,16 @@
     [self stubMessageListRefreshWithFailureBlock:nil];
 
     // Should notify the delegate of the message
-    [[self.mockInboxDelegate expect] showInbox];
+    XCTestExpectation *expectation = [self expectationWithDescription:@"showInbox called"];
+    [[[self.mockInboxDelegate expect] andDo:^(NSInvocation *invocation) {
+        [expectation fulfill];
+    }] showInbox];
 
     // Perform the action
     [self verifyActionPerformWithActionArguments:args expectedFetchResult:UAActionFetchResultFailed];
+    
+    // Wait for it to complete
+    [self waitForExpectationsWithTimeout:1 handler:nil];
     
     // Verify delegate calls
     [self.mockInboxDelegate verify];
@@ -209,11 +233,17 @@
                                                            metadata:@{UAActionMetadataInboxMessageKey: self.mockMessage}];
 
     // Should notify the delegate of the message
-    [[self.mockInboxDelegate expect] showMessageForID:((UAInboxMessage *)self.mockMessage).messageID];
+    XCTestExpectation *expectation = [self expectationWithDescription:@"showMessageForID called"];
+    [[[self.mockInboxDelegate expect] andDo:^(NSInvocation *invocation) {
+        [expectation fulfill];
+    }] showMessageForID:((UAInboxMessage *)self.mockMessage).messageID];
 
     // Perform the action
     [self verifyActionPerformWithActionArguments:args expectedFetchResult:UAActionFetchResultNoData];
 
+    // Wait for it to complete
+    [self waitForExpectationsWithTimeout:1 handler:nil];
+    
     // Verify delegate calls
     [self.mockInboxDelegate verify];
 }
@@ -233,11 +263,17 @@
     [[[self.mockMessageList stub] andReturn:self.mockMessage] messageForID:self.notification[@"_uamid"]];
 
     // Should notify the delegate of the message
-    [[self.mockInboxDelegate expect] showMessageForID:((UAInboxMessage *)self.mockMessage).messageID];
+    XCTestExpectation *expectation = [self expectationWithDescription:@"showMessageForID called"];
+    [[[self.mockInboxDelegate expect] andDo:^(NSInvocation *invocation) {
+        [expectation fulfill];
+    }] showMessageForID:((UAInboxMessage *)self.mockMessage).messageID];
 
     // Perform the action
     [self verifyActionPerformWithActionArguments:args expectedFetchResult:UAActionFetchResultNoData];
 
+    // Wait for it to complete
+    [self waitForExpectationsWithTimeout:1 handler:nil];
+    
     // Verify delegate calls
     [self.mockInboxDelegate verify];
 }
@@ -256,11 +292,17 @@
     [[[self.mockMessageList stub] andReturn:self.mockMessage] messageForID:@"MCRAP"];
 
     // Should display in the default message center
-    [[self.mockMessageCenter expect] displayMessageForID:((UAInboxMessage *)self.mockMessage).messageID];
+    XCTestExpectation *expectation = [self expectationWithDescription:@"displayMessageForID called"];
+    [[[self.mockMessageCenter expect] andDo:^(NSInvocation *invocation) {
+        [expectation fulfill];
+    }] displayMessageForID:((UAInboxMessage *)self.mockMessage).messageID];
 
     // Perform the action
     [self verifyActionPerformWithActionArguments:args expectedFetchResult:UAActionFetchResultNoData];
 
+    // Wait for it to complete
+    [self waitForExpectationsWithTimeout:1 handler:nil];
+    
     // Verify it was displayed
     [self.mockMessageCenter verify];
 }
@@ -274,14 +316,19 @@
     UAActionArguments *args = [UAActionArguments argumentsWithValue:nil withSituation:UASituationManualInvocation];
 
     // Should display in the default message center
-    [[self.mockMessageCenter expect] display];
-
+    XCTestExpectation *expectation = [self expectationWithDescription:@"display called"];
+    [[[self.mockMessageCenter expect] andDo:^(NSInvocation *invocation) {
+        [expectation fulfill];
+    }] display];
     // Need to stub a message list result so the action is able to finish
     [self stubMessageListRefreshWithSuccessBlock:nil];
     
     // Perform the action
     [self verifyActionPerformWithActionArguments:args expectedFetchResult:UAActionFetchResultNoData];
 
+    // Wait for it to complete
+    [self waitForExpectationsWithTimeout:1 handler:nil];
+    
     // Verify it was displayed
     [self.mockMessageCenter verify];
 }
