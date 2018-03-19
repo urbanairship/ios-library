@@ -102,6 +102,18 @@ typedef BOOL (^UAWhitelistMatcher)(NSURL *);
 }
 
 /**
+ * Convenience method for getting a URL path using CoreFoundation, which
+ * preserves trailing slashes.
+ */
+- (NSString *)cfPathForURL:(NSURL *)url {
+    if (!url) {
+        return nil;
+    }
+
+    return (__bridge_transfer NSString*)CFURLCopyPath((CFURLRef)url);
+}
+
+/**
  * Generates matcher that compares a URL component (scheme/host/path) with a supplied regex
  */
 - (UAWhitelistMatcher)matcherForURLComponent:(NSString *)componentKey withRegexString:(NSString *)regexString {
@@ -118,7 +130,16 @@ typedef BOOL (^UAWhitelistMatcher)(NSURL *);
                                                                                options:0
                                                                                  error:nil];
         // NSRegularExpression chokes on nil input strings, so in that case convert it into an empty string
-        NSString *component = [url valueForKey:componentKey] ?: @"";
+        NSString *component;
+
+        // The NSURL path property silently strips trailing slashes
+        if ([componentKey isEqualToString:@"path"]) {
+            component = [self cfPathForURL:url];
+        } else {
+            component = [url valueForKey:componentKey];
+        }
+
+        component = component ?: @"";
 
         NSRange matchRange = [regex rangeOfFirstMatchInString:component options:0 range:NSMakeRange(0, component.length)];
         return matchRange.location != NSNotFound;
@@ -136,13 +157,15 @@ typedef BOOL (^UAWhitelistMatcher)(NSURL *);
 
     NSString *scheme = url.scheme;
 
+    // NSURL won't parse strings with an actual asterisk for the scheme
+    scheme = [scheme stringByReplacingOccurrencesOfString:@"WILDCARD" withString:@"*"];
+
     NSString *schemeRegexString;
 
-    // NSURL won't parse strings with an actual asterisk for the scheme
-    if (!scheme || !scheme.length || [scheme isEqualToString:@"WILDCARD"]) {
-        schemeRegexString = @"(http|https)";
+    if (!scheme || !scheme.length || [scheme isEqualToString:@"*"]) {
+        schemeRegexString = @".*";
     } else {
-        schemeRegexString = scheme;
+        schemeRegexString = [self escapeRegexString:scheme escapingWildcards:NO];
     }
 
     return [self matcherForURLComponent:@"scheme" withRegexString:schemeRegexString];
@@ -180,13 +203,15 @@ typedef BOOL (^UAWhitelistMatcher)(NSURL *);
         return nil;
     }
 
-    NSString *path = url.path;
+    // The NSURL path property silently strips trailing slashes
+    NSString *path = [self cfPathForURL:url];
 
     NSString *pathRegexString;
-    if (path && path.length) {
-        pathRegexString = [self escapeRegexString:path escapingWildcards:NO];
-    } else {
+
+    if (!path || !path.length || [path isEqualToString:@"/*"]) {
         pathRegexString = @".*";
+    } else {
+        pathRegexString = [self escapeRegexString:path escapingWildcards:NO];
     }
 
     return [self matcherForURLComponent:@"path" withRegexString:pathRegexString];
@@ -194,46 +219,69 @@ typedef BOOL (^UAWhitelistMatcher)(NSURL *);
 
 - (UAWhitelistMatcher)wildcardMatcher {
     return ^BOOL(NSURL *url) {
-        return [url.scheme isEqualToString:@"http"]  ||
-               [url.scheme isEqualToString:@"https"] ||
-               [url.scheme isEqualToString:@"file"];
+        return YES;
     };
 }
 
-- (BOOL)validatePattern:(NSString *)pattern {
+- (NSRegularExpression *)patternValidator:(NSString *)pattern {
     /**
      * Regular expression to match the scheme.
-     * <scheme> := '*' | 'http' | 'https'
+     * <scheme> := '*' | <valid scheme characters, `*` will match 0 or more characters>
      */
-    NSString *schemeRegexString = @"((\\*)|(http)|(https))";
+    NSString *schemeRegexString = @"([^\\s]+)";
 
     /**
      * Regular expression to match the host.
-     * <host> := '*' | '*.'<any char except '/' and '*'> | <any char except '/' and '*'>
+     * <host> := '*' | *.<valid host characters> | <valid host characters>
      */
     NSString *hostRegexString = @"((\\*)|(\\*\\.[^/\\*]+)|([^/\\*]+))";
 
     /**
      * Regular expression to match the path.
-     * <path> := '/' <any chars, including *>
+     * <path> := <any chars, `*` will match 0 or more characters>
      */
-    NSString *pathRegexString =  @"(/.*)";
+    NSString *pathRegexString =  @"(.*)";
 
     /**
      * Regular expression to match the pattern.
-     * <pattern> := '*' | <scheme>://<host><path> | <scheme>://<host> | file://<path>
+     * <pattern> := '*' | <scheme>://<host>/<path> | <scheme>://<host> | <scheme>:///<path> | <scheme>:/<path> | <scheme>:/
      */
-    NSString *validPatternRegexString = [NSString stringWithFormat:@"^((\\*)|((%@://%@%@)|(%@://%@)|(file://%@)))$",
+
+    NSString *validPatternRegexString = [NSString stringWithFormat:@"^((\\*)|((%@://%@/%@)|(%@://%@)|(%@:/[^/]%@)|(%@:/)|(%@:///%@)))$",
                                          schemeRegexString, hostRegexString, pathRegexString,
-                                         schemeRegexString, hostRegexString, pathRegexString];
+                                         schemeRegexString, hostRegexString,
+                                         schemeRegexString, pathRegexString,
+                                         schemeRegexString,
+                                         schemeRegexString, pathRegexString];
 
     NSRegularExpression *validPatternExpression = [NSRegularExpression regularExpressionWithPattern:validPatternRegexString
                                                                             options:NSRegularExpressionUseUnicodeWordBoundaries
                                                                               error:nil];
-    NSUInteger matches = [validPatternExpression numberOfMatchesInString:pattern
-                                                                      options:0
-                                                                        range:NSMakeRange(0, pattern.length)];
+
+    return validPatternExpression;
+}
+
+- (BOOL)validatePattern:(NSString *)pattern {
+    NSRegularExpression *validator = [self patternValidator:pattern];
+
+    NSUInteger matches = [validator numberOfMatchesInString:pattern
+                                                    options:0
+                                                      range:NSMakeRange(0, pattern.length)];
     return matches > 0;
+}
+
+- (NSString *)escapeSchemeWildcard:(NSString *)patternString {
+    NSArray *components = [patternString componentsSeparatedByString:@":"];
+
+    if (components.count > 1) {
+        NSString *schemeComponent = components.firstObject;
+        schemeComponent = [schemeComponent stringByReplacingOccurrencesOfString:@"*" withString:@"WILDCARD"];
+        NSMutableArray *array = [NSMutableArray arrayWithObject:schemeComponent];
+        [array addObjectsFromArray:[components subarrayWithRange:NSMakeRange(1, components.count - 1)]];
+        return [array componentsJoinedByString:@":"];
+    }
+
+    return patternString;
 }
 
 - (BOOL)addEntry:(NSString *)patternString scope:(UAWhitelistScope)scope {
@@ -243,13 +291,10 @@ typedef BOOL (^UAWhitelistMatcher)(NSURL *);
         return NO;
     }
 
-    if ([patternString hasPrefix:@"*://"]) {
-        // NSURL won't parse strings with an actual asterisk for the scheme
-        patternString = [@"WILDCARD" stringByAppendingString:[patternString substringFromIndex:1]];
-    }
+    // NSURL won't parse strings with an actual asterisk for the scheme
+    patternString = [self escapeSchemeWildcard:patternString];
 
-    // If we have just a wildcard, we need to add a special matcher for both file and https/http
-    // URLs.
+    // If we have just a wildcard, match anything
     if ([patternString isEqualToString:@"*"]) {
         [self.entries addObject:[UAWhitelistEntry entryWithMatcher:[self wildcardMatcher] scope:scope]];
         return YES;
