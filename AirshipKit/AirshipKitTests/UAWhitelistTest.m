@@ -70,14 +70,12 @@
     // Not a URL
     XCTAssertFalse([self.whitelist addEntry:@"not a url"]);
 
+    // Missing /
+    XCTAssertFalse([self.whitelist addEntry:@"*:*"]);
+
     // Missing schemes
     XCTAssertFalse([self.whitelist addEntry:@"www.urbanairship.com"]);
     XCTAssertFalse([self.whitelist addEntry:@"://www.urbanairship.com"]);
-
-    // Invalid schemes
-    XCTAssertFalse([self.whitelist addEntry:@"what://*"]);
-    XCTAssertFalse([self.whitelist addEntry:@"ftp://*"]);
-    XCTAssertFalse([self.whitelist addEntry:@"sftp://*"]);
 
     // White space in scheme
     XCTAssertFalse([self.whitelist addEntry:@" file://*"]);
@@ -91,9 +89,6 @@
 
     // Missing file path
     XCTAssertFalse([self.whitelist addEntry:@"file://"]);
-
-    // Invalid file path
-    XCTAssertFalse([self.whitelist addEntry:@"file://*"]);
 }
 
 /**
@@ -111,15 +106,23 @@
 - (void)testSchemeWildcard {
     [self.whitelist addEntry:@"*://www.urbanairship.com"];
 
+    XCTAssertTrue([self.whitelist addEntry:@"*://www.urbanairship.com"]);
+    XCTAssertTrue([self.whitelist addEntry:@"cool*story://rad"]);
+
     // Reject
     XCTAssertFalse([self.whitelist isWhitelisted:[NSURL URLWithString:@""]]);
     XCTAssertFalse([self.whitelist isWhitelisted:[NSURL URLWithString:@"urbanairship.com"]]);
     XCTAssertFalse([self.whitelist isWhitelisted:[NSURL URLWithString:@"www.urbanairship.com"]]);
-    XCTAssertFalse([self.whitelist isWhitelisted:[NSURL URLWithString:@"file://www.urbanairship.com"]]);
+    XCTAssertFalse([self.whitelist isWhitelisted:[NSURL URLWithString:@"cool://rad"]]);
+
 
     // Accept
     XCTAssertTrue([self.whitelist isWhitelisted:[NSURL URLWithString:@"https://www.urbanairship.com"]]);
     XCTAssertTrue([self.whitelist isWhitelisted:[NSURL URLWithString:@"http://www.urbanairship.com"]]);
+    XCTAssertTrue([self.whitelist isWhitelisted:[NSURL URLWithString:@"file://www.urbanairship.com"]]);
+    XCTAssertTrue([self.whitelist isWhitelisted:[NSURL URLWithString:@"valid://www.urbanairship.com"]]);
+    XCTAssertTrue([self.whitelist isWhitelisted:[NSURL URLWithString:@"cool----story://rad"]]);
+    XCTAssertTrue([self.whitelist isWhitelisted:[NSURL URLWithString:@"coolstory://rad"]]);
 }
 
 /**
@@ -144,12 +147,12 @@
  * Test regular expression on the host are treated as literals.
  */
 - (void)testRegexInHost {
-    XCTAssertTrue([self.whitelist addEntry:@"*://[a-z,A-Z]+"]);
+    XCTAssertTrue([self.whitelist addEntry:@"w+.+://[a-z,A-Z]+"]);
 
-    XCTAssertFalse([self.whitelist isWhitelisted:[NSURL URLWithString:@"https://urbanairship"]]);
+    XCTAssertFalse([self.whitelist isWhitelisted:[NSURL URLWithString:@"wwww://urbanairship"]]);
 
     // It should match on a host that is equal to [a-z,A-Z]+
-    XCTAssertTrue([self.whitelist isWhitelisted:[NSURL URLWithString:@"https://[a-z,A-Z]%2B"]]);
+    XCTAssertTrue([self.whitelist isWhitelisted:[NSURL URLWithString:@"w+.+://[a-z,A-Z]%2B"]]);
 }
 
 /**
@@ -176,11 +179,23 @@
  */
 - (void)testHostWildcard {
     XCTAssertTrue([self.whitelist addEntry:@"http://*"]);
+    XCTAssertTrue([self.whitelist addEntry:@"https://*.coolstory"]);
+
+    // * is only available at the beginning
+    XCTAssertFalse([self.whitelist addEntry:@"https://*.coolstory.*"]);
+
+    // Reject
+    XCTAssertFalse([self.whitelist isWhitelisted:[NSURL URLWithString:@""]]);
+    XCTAssertFalse([self.whitelist isWhitelisted:[NSURL URLWithString:@"https://cool"]]);
+    XCTAssertFalse([self.whitelist isWhitelisted:[NSURL URLWithString:@"https://story"]]);
 
     // Accept
     XCTAssertTrue([self.whitelist isWhitelisted:[NSURL URLWithString:@"http://what.urbanairship.com"]]);
     XCTAssertTrue([self.whitelist isWhitelisted:[NSURL URLWithString:@"http:///android-asset/test.html"]]);
     XCTAssertTrue([self.whitelist isWhitelisted:[NSURL URLWithString:@"http://www.anything.com"]]);
+    XCTAssertTrue([self.whitelist isWhitelisted:[NSURL URLWithString:@"https://coolstory"]]);
+    XCTAssertTrue([self.whitelist isWhitelisted:[NSURL URLWithString:@"https://what.coolstory"]]);
+    XCTAssertTrue([self.whitelist isWhitelisted:[NSURL URLWithString:@"https://what.what.coolstory"]]);
 }
 
 /**
@@ -207,6 +222,7 @@
     XCTAssertTrue([self.whitelist isWhitelisted:[NSURL URLWithString:@"file:///what/oh/hi"]]);
     XCTAssertTrue([self.whitelist isWhitelisted:[NSURL URLWithString:@"https://hi.urbanairship.com/path"]]);
     XCTAssertTrue([self.whitelist isWhitelisted:[NSURL URLWithString:@"http://urbanairship.com"]]);
+    XCTAssertTrue([self.whitelist isWhitelisted:[NSURL URLWithString:@"cool.story://urbanairship.com"]]);
 }
 
 /**
@@ -240,18 +256,23 @@
 }
 
 /**
- * Test paths in http/https URLs.
+ * Test paths.
  */
 - (void)testURLPaths {
     [self.whitelist addEntry:@"*://*.urbanairship.com/accept.html"];
     [self.whitelist addEntry:@"*://*.urbanairship.com/anythingHTML/*.html"];
     [self.whitelist addEntry:@"https://urbanairship.com/what/index.html"];
+    [self.whitelist addEntry:@"wild://cool/*"];
+
 
     // Reject
 
     XCTAssertFalse([self.whitelist isWhitelisted:[NSURL URLWithString:@"https://what.urbanairship.com/reject.html"]]);
     XCTAssertFalse([self.whitelist isWhitelisted:[NSURL URLWithString:@"https://what.urbanairship.com/anythingHTML/image.png"]]);
     XCTAssertFalse([self.whitelist isWhitelisted:[NSURL URLWithString:@"https://what.urbanairship.com/anythingHTML/image.png"]]);
+    XCTAssertFalse([self.whitelist isWhitelisted:[NSURL URLWithString:@"wile:///whatever"]]);
+    XCTAssertFalse([self.whitelist isWhitelisted:[NSURL URLWithString:@"wile:///cool"]]);
+
 
     // Accept
 
@@ -259,6 +280,9 @@
     XCTAssertTrue([self.whitelist isWhitelisted:[NSURL URLWithString:@"https://what.urbanairship.com/anythingHTML/test.html"]]);
     XCTAssertTrue([self.whitelist isWhitelisted:[NSURL URLWithString:@"https://what.urbanairship.com/anythingHTML/foo/bar/index.html"]]);
     XCTAssertTrue([self.whitelist isWhitelisted:[NSURL URLWithString:@"https://urbanairship.com/what/index.html"]]);
+    XCTAssertTrue([self.whitelist isWhitelisted:[NSURL URLWithString:@"wild://cool"]]);
+    XCTAssertTrue([self.whitelist isWhitelisted:[NSURL URLWithString:@"wild://cool/"]]);
+    XCTAssertTrue([self.whitelist isWhitelisted:[NSURL URLWithString:@"wild://cool/path"]]);
 }
 
 - (void)testScope {
@@ -301,6 +325,50 @@
 
     XCTAssertTrue([self.whitelist isWhitelisted:[NSURL URLWithString:@"https://urbanairship.com/all.html"] scope:UAWhitelistScopeJavaScriptInterface]);
     XCTAssertTrue([self.whitelist isWhitelisted:[NSURL URLWithString:@"https://urbanairship.com/all.html"] scope:UAWhitelistScopeOpenURL]);
+}
+
+- (void)testDeepLinks {
+    // Test any path and undefined host
+    XCTAssertTrue([self.whitelist addEntry:@"com.urbanairship.one:/*"]);
+    XCTAssertTrue([self.whitelist isWhitelisted:[NSURL URLWithString:@"com.urbanairship.one://cool"]]);
+    XCTAssertTrue([self.whitelist isWhitelisted:[NSURL URLWithString:@"com.urbanairship.one:cool"]]);
+    XCTAssertTrue([self.whitelist isWhitelisted:[NSURL URLWithString:@"com.urbanairship.one:/cool"]]);
+    XCTAssertTrue([self.whitelist isWhitelisted:[NSURL URLWithString:@"com.urbanairship.one:///cool"]]);
+
+    // Test any host and undefined path
+
+    XCTAssertTrue([self.whitelist addEntry:@"com.urbanairship.two://*"]);
+    XCTAssertTrue([self.whitelist isWhitelisted:[NSURL URLWithString:@"com.urbanairship.two:cool"]]);
+    XCTAssertTrue([self.whitelist isWhitelisted:[NSURL URLWithString:@"com.urbanairship.two://cool"]]);
+    XCTAssertTrue([self.whitelist isWhitelisted:[NSURL URLWithString:@"com.urbanairship.two:/cool"]]);
+    XCTAssertTrue([self.whitelist isWhitelisted:[NSURL URLWithString:@"com.urbanairship.two:///cool"]]);
+
+    // Test any host and any path
+
+    XCTAssertTrue([self.whitelist addEntry:@"com.urbanairship.three://*/*"]);
+    XCTAssertTrue([self.whitelist isWhitelisted:[NSURL URLWithString:@"com.urbanairship.three:cool"]]);
+    XCTAssertTrue([self.whitelist isWhitelisted:[NSURL URLWithString:@"com.urbanairship.three://cool"]]);
+    XCTAssertTrue([self.whitelist isWhitelisted:[NSURL URLWithString:@"com.urbanairship.three:/cool"]]);
+    XCTAssertTrue([self.whitelist isWhitelisted:[NSURL URLWithString:@"com.urbanairship.three:///cool"]]);
+
+    // Test specific host and path
+    XCTAssertTrue([self.whitelist addEntry:@"com.urbanairship.four://*.cool/whatever/*"]);
+    XCTAssertFalse([self.whitelist isWhitelisted:[NSURL URLWithString:@"com.urbanairship.four:cool"]]);
+    XCTAssertFalse([self.whitelist isWhitelisted:[NSURL URLWithString:@"com.urbanairship.four://cool"]]);
+    XCTAssertFalse([self.whitelist isWhitelisted:[NSURL URLWithString:@"com.urbanairship.four:/cool"]]);
+    XCTAssertFalse([self.whitelist isWhitelisted:[NSURL URLWithString:@"com.urbanairship.four:///cool"]]);
+
+    XCTAssertTrue([self.whitelist isWhitelisted:[NSURL URLWithString:@"com.urbanairship.four://whatever.cool/whatever/"]]);
+    XCTAssertTrue([self.whitelist isWhitelisted:[NSURL URLWithString:@"com.urbanairship.four://cool/whatever/indeed"]]);
+}
+
+- (void)testRootPath {
+    XCTAssertTrue([self.whitelist addEntry:@"com.urbanairship.five:/"]);
+
+    XCTAssertTrue([self.whitelist isWhitelisted:[NSURL URLWithString:@"com.urbanairship.five:/"]]);
+    XCTAssertTrue([self.whitelist isWhitelisted:[NSURL URLWithString:@"com.urbanairship.five:///"]]);
+
+    XCTAssertFalse([self.whitelist isWhitelisted:[NSURL URLWithString:@"com.urbanairship.five:/cool"]]);
 }
 
 @end

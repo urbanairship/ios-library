@@ -33,15 +33,16 @@ typedef NS_OPTIONS(NSUInteger, UAWhitelistScope) {
  *
  * Whitelist entries are written as URL patterns with optional wildcard matching:
  *
- *     \<scheme\> := '\*' | 'http' | 'https'
+ *     \<scheme\> := \<any char combination, '\*' are treated as wildcards\>
  *
- *     \<host\> := '\*' | '\*.'\<any char except '/' and '\*'\> | \<any char except '/' and '\*'\>
+ *     \<host\> := '\*' | '\*.'\<any char combination except '/' and '\*'\> | \<any char combination except '/' and '\*'\>
  *
- *     \<path\> := '/' \<any chars, including \*\>
+ *     \<path\> := \<any char combination, '\*' are treated as wildcards\>
  *
- *     \<pattern\> := '\*' | \<scheme\>://\<host\>\<path\> | \<scheme\>://\<host\> | file://\<path\>
+ *     \<pattern\> := '\*' | \<scheme\>://\<host\>\<path\> | \<scheme\>://\<host\> | \<scheme\>:/\<path\> | \<scheme\>:///\<path\>
  *
- * Wildcards in the scheme pattern will match either http or https schemes.
+ * A single wildcard will match any URI.
+ * Wildcards in the scheme pattern will match any characters, and a single wildcard in the scheme will match any scheme.
  * The wildcard in a host pattern "*.mydomain.com" will match anything within the mydomain.com domain.
  * Wildcards in the path pattern will match any characters, including subdirectories.
  *

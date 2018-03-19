@@ -96,7 +96,7 @@
                         <constraint firstItem="GTX-VX-8Bf" firstAttribute="leading" secondItem="AGo-BI-V0D" secondAttribute="leading" id="9h3-md-rqW"/>
                         <constraint firstItem="VNH-yL-Bh8" firstAttribute="top" secondItem="AGo-BI-V0D" secondAttribute="top" id="AM7-gz-kqh"/>
                         <constraint firstItem="Y02-V2-YH8" firstAttribute="top" secondItem="VNH-yL-Bh8" secondAttribute="bottom" id="H0B-JU-7Ck"/>
-                        <constraint firstItem="VNH-yL-Bh8" firstAttribute="leading" secondItem="GTX-VX-8Bf" secondAttribute="trailing" constant="20" id="YCd-rP-DJS"/>
+                        <constraint firstItem="VNH-yL-Bh8" firstAttribute="leading" secondItem="GTX-VX-8Bf" secondAttribute="trailing" id="YCd-rP-DJS"/>
                         <constraint firstItem="GTX-VX-8Bf" firstAttribute="top" secondItem="AGo-BI-V0D" secondAttribute="top" id="YwI-6c-NB2"/>
                         <constraint firstItem="Y02-V2-YH8" firstAttribute="width" secondItem="VNH-yL-Bh8" secondAttribute="width" id="hkH-Dn-gz9"/>
                         <constraint firstAttribute="trailing" secondItem="Y02-V2-YH8" secondAttribute="trailing" constant="20" id="pHs-HL-0yZ"/>

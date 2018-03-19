@@ -835,9 +835,7 @@
     if ([self.iconCache objectForKey:[self iconURLStringForMessage:message]]) {
         localImageView.image = [self.iconCache objectForKey:[self iconURLStringForMessage:message]];
     } else {
-        if (!strongMessageTable.dragging && !strongMessageTable.decelerating) {
-            [self retrieveIconForIndexPath:indexPath iconSize:localImageView.frame.size];
-        }
+        [self retrieveIconForIndexPath:indexPath iconSize:localImageView.frame.size];
 
         UIImage *placeholderIcon = self.placeholderIcon;
 
@@ -980,42 +978,9 @@
 #pragma mark -
 #pragma mark List Icon Loading (UIScrollViewDelegate)
 
-// Load images for all onscreen rows when scrolling is finished
-- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
-    if (!decelerate) {
-        [self retrieveImagesForOnscreenRows];
-    }
-}
-
-// Compute the eventual resting view bounds (r), and retrieve images for those cells
-- (void)scrollViewWillEndDragging:(UIScrollView *)scrollView
-                     withVelocity:(CGPoint)velocity
-              targetContentOffset:(inout CGPoint *)targetContentOffset {
-
-    CGRect r;
-    r.origin = *targetContentOffset;
-    r.size = self.view.bounds.size;
-
-    NSArray *indexPaths = [self.messageTable indexPathsForRowsInRect:r];
-    for (NSIndexPath *indexPath in indexPaths) {
-        UITableViewCell *cell = [self.messageTable cellForRowAtIndexPath:indexPath];
-        UA_LTRACE(@"Loading row %ld. Title: %@", (long)indexPath.row, [self messageAtIndex:indexPath.row].title);
-        [self retrieveIconForIndexPath:indexPath iconSize:cell.imageView.frame.size];
-    }
-}
-
-// Load the images when deceleration completes (though the end dragging should try to fetch these first)
-- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
-    [self retrieveImagesForOnscreenRows];
-}
-
 // A tap on the status bar will force a scroll to the top
 - (BOOL)scrollViewShouldScrollToTop:(UIScrollView *)scrollView {
     return YES;
-}
-
-- (void)scrollViewDidScrollToTop:(UIScrollView *)scrollView {
-    [self retrieveImagesForOnscreenRows];
 }
 
 #pragma mark - UISplitViewControllerDelegate
@@ -1078,17 +1043,6 @@
     UIGraphicsEndImageContext();
 
     return scaledImage;
-}
-
-/**
- * Retrieve the list view icon for all the currently visible index paths.
- */
-- (void)retrieveImagesForOnscreenRows {
-    NSArray *visiblePaths = [self.messageTable indexPathsForVisibleRows];
-    for (NSIndexPath *indexPath in visiblePaths) {
-        UITableViewCell *cell = [self.messageTable cellForRowAtIndexPath:indexPath];
-        [self retrieveIconForIndexPath:indexPath iconSize:cell.imageView.frame.size];
-    }
 }
 
 /**
