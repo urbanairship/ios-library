@@ -63,6 +63,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * UNNotification used to generate the UANotification.
+ * This will be nil on iOS versions prior to 10.0, or when receiving silent,
+ * `content-available` pushes in the background.
  */
 @property (nonatomic, strong, nullable, readonly) UNNotification *notification NS_AVAILABLE_IOS(10.0);
 
