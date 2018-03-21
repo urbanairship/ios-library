@@ -2,7 +2,7 @@
 
 #import "UARemoteDataAPIClient+Internal.h"
 #import "UAPreferenceDataStore+Internal.h"
-#import "UAUtils.h"
+#import "UAUtils+Internal.h"
 #import "UAConfig+Internal.h"
 
 @interface UARemoteDataAPIClient()

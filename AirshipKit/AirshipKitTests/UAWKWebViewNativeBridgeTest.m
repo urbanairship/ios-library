@@ -9,7 +9,7 @@
 #import "UAConfig.h"
 #import "UAUser.h"
 #import "UAInboxMessage.h"
-#import "UAUtils.h"
+#import "UAUtils+Internal.h"
 #import "UAInbox.h"
 #import "UAInboxMessageList.h"
 #import "UAActionJSDelegate.h"

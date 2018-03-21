@@ -6,7 +6,7 @@
 #import "UAirship.h"
 #import "UAConfig.h"
 #import "NSString+UAURLEncoding.h"
-#import "UAUtils.h"
+#import "UAUtils+Internal.h"
 
 @interface UALandingPageAction()
 @property (nonatomic, strong) NSURLSessionDataTask *dataTask;

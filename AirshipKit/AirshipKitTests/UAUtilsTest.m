@@ -1,6 +1,6 @@
 /* Copyright 2018 Urban Airship and Contributors */
 
-#import "UAUtils.h"
+#import "UAUtils+Internal.h"
 #import "UAUtilsTest.h"
 #import "UAUser+Internal.h"
 #import "UAirship+Internal.h"

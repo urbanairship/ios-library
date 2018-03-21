@@ -7,7 +7,7 @@
 #import "UAirship.h"
 #import "UAWebView+Internal.h"
 #import "UABeveledLoadingIndicator.h"
-#import "UAUtils.h"
+#import "UAUtils+Internal.h"
 
 NSString *const UAInAppMessageHTMLViewNibName = @"UAInAppMessageHTMLView";
 

@@ -7,7 +7,7 @@
 #import "UAInAppMessageUtils+Internal.h"
 #import "UAInAppMessageBannerDisplayContent+Internal.h"
 #import "UAColorUtils+Internal.h"
-#import "UAUtils.h"
+#import "UAUtils+Internal.h"
 
 #import "UAInAppMessageBannerDisplayContent+Internal.h"
 

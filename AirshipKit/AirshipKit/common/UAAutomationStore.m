@@ -13,7 +13,7 @@
 #import "UAirship.h"
 #import "UAJSONPredicate.h"
 #import "UAConfig.h"
-#import "UAUtils.h"
+#import "UAUtils+Internal.h"
 
 @interface UAAutomationStore ()
 @property (nonatomic, strong) NSManagedObjectContext *managedContext;

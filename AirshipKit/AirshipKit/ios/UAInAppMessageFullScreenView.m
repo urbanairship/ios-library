@@ -10,7 +10,7 @@
 #import "UAColorUtils+Internal.h"
 #import "UAInAppMessageFullScreenDisplayContent+Internal.h"
 #import "UAInAppMessageCloseButton+Internal.h"
-#import "UAUtils.h"
+#import "UAUtils+Internal.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

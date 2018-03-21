@@ -4,7 +4,7 @@
 #import "UAirship.h"
 #import "UAInbox.h"
 #import "UAInboxMessage.h"
-#import "UAUtils.h"
+#import "UAUtils+Internal.h"
 #import "UAMessageCenterLocalization.h"
 #import "UAMessageCenterListViewController.h"
 #import "UAMessageCenterMessageViewController.h"

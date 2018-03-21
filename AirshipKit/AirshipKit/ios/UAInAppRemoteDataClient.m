@@ -6,7 +6,7 @@
 #import "UARemoteDataPayload+Internal.h"
 #import "UARemoteDataManager+Internal.h"
 #import "UAPreferenceDataStore+Internal.h"
-#import "UAUtils.h"
+#import "UAUtils+Internal.h"
 #import "UAGlobal.h"
 #import "UAInAppMessageScheduleInfo+Internal.h"
 #import "UAInAppMessageManager.h"

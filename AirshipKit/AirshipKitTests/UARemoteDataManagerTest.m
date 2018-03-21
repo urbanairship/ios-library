@@ -9,7 +9,7 @@
 
 #import "UAPreferenceDataStore+Internal.h"
 #import "UAConfig+Internal.h"
-#import "UAUtils.h"
+#import "UAUtils+Internal.h"
 
 #import "UABaseTest.h"
 

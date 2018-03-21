@@ -6,7 +6,7 @@
 #import "UAirship.h"
 #import "UAInboxMessageList.h"
 #import "UAInboxMessage.h"
-#import "UAUtils.h"
+#import "UAUtils+Internal.h"
 #import "UAMessageCenterLocalization.h"
 #import "UABeveledLoadingIndicator.h"
 

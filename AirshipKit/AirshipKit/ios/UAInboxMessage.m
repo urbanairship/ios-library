@@ -2,7 +2,7 @@
 
 #import "UAInboxMessage+Internal.h"
 #import "UAInboxMessageList+Internal.h"
-#import "UAUtils.h"
+#import "UAUtils+Internal.h"
 
 @interface UAInboxMessage()
 @property (nonatomic, copy) NSString *messageID;

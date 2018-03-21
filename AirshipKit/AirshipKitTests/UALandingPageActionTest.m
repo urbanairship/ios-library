@@ -7,7 +7,7 @@
 #import "UAAction+Internal.h"
 #import "UAirship+Internal.h"
 #import "UAConfig.h"
-#import "UAUtils.h"
+#import "UAUtils+Internal.h"
 #import "NSString+UAURLEncoding.h"
 
 @interface UALandingPageActionTest : UABaseTest

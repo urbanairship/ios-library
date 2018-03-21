@@ -1,7 +1,7 @@
 /* Copyright 2018 Urban Airship and Contributors */
 
 #import "UARateAppPromptViewController+Internal.h"
-#import "UAUtils.h"
+#import "UAUtils+Internal.h"
 #import "NSString+UALocalizationAdditions.h"
 
 @interface UARateAppPromptViewController ()

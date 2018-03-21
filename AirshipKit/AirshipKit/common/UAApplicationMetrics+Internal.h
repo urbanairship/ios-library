@@ -20,6 +20,13 @@ NS_ASSUME_NONNULL_BEGIN
 /// @name Application Metrics Internal Methods
 ///---------------------------------------------------------------------------------------
 
+/**
+ * Application metrics factory method.
+ * @param dataStore The dataStore.
+ * @return An application metrics instance.
+ */
++ (instancetype)applicationMetricsWithDataStore:(UAPreferenceDataStore *)dataStore;
+
 - (void)didBecomeActive;
 - (NSString *)lastAppVersion;
 

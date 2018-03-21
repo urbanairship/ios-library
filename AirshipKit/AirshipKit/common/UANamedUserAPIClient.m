@@ -2,7 +2,7 @@
 
 #import "UANamedUserAPIClient+Internal.h"
 #import "UAConfig.h"
-#import "UAUtils.h"
+#import "UAUtils+Internal.h"
 #import "NSJSONSerialization+UAAdditions.h"
 
 #define kUANamedUserPath @"/api/named_users"

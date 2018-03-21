@@ -223,7 +223,6 @@
 		99666DB81EDF2BDC00BAE46B /* UAChannelAPIClient+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DB341D8C996900BABD4F /* UAChannelAPIClient+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		99666DB91EDF2BDC00BAE46B /* UAChannelAPIClient.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DB351D8C996900BABD4F /* UAChannelAPIClient.m */; };
 		99666DBA1EDF2BDC00BAE46B /* UAChannelRegistrar+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DB381D8C996900BABD4F /* UAChannelRegistrar+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		99666DBB1EDF2BDC00BAE46B /* UAChannelRegistrar.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DB391D8C996900BABD4F /* UAChannelRegistrar.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		99666DBC1EDF2BDC00BAE46B /* UAChannelRegistrar.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DB3A1D8C996900BABD4F /* UAChannelRegistrar.m */; };
 		99666DBD1EDF2BDC00BAE46B /* UAChannelRegistrationPayload+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DB3B1D8C996900BABD4F /* UAChannelRegistrationPayload+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		99666DBE1EDF2BDC00BAE46B /* UAChannelRegistrationPayload.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DB3C1D8C996900BABD4F /* UAChannelRegistrationPayload.m */; };
@@ -363,7 +362,7 @@
 		99666E591EDF2C8D00BAE46B /* UAEventAPIClient.m in Sources */ = {isa = PBXBuildFile; fileRef = CC04F1C01DC17D1500B4842D /* UAEventAPIClient.m */; };
 		99666E5A1EDF2C9500BAE46B /* UAURLProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DBF21D8C996A00BABD4F /* UAURLProtocol.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		99666E5B1EDF2C9500BAE46B /* UAURLProtocol.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DBF31D8C996A00BABD4F /* UAURLProtocol.m */; };
-		99666E5C1EDF2C9500BAE46B /* UAUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DBFB1D8C996A00BABD4F /* UAUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		99666E5C1EDF2C9500BAE46B /* UAUtils+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DBFB1D8C996A00BABD4F /* UAUtils+Internal.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		99666E5D1EDF2C9500BAE46B /* UAUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DBFC1D8C996A00BABD4F /* UAUtils.m */; };
 		99666E5E1EDF2C9500BAE46B /* NSJSONSerialization+UAAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DAE01D8C996900BABD4F /* NSJSONSerialization+UAAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		99666E5F1EDF2C9500BAE46B /* NSJSONSerialization+UAAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DAE11D8C996900BABD4F /* NSJSONSerialization+UAAdditions.m */; };
@@ -661,7 +660,6 @@
 		CC40DC611D8C996A00BABD4F /* UAChannelCapture.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DB361D8C996900BABD4F /* UAChannelCapture.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CC40DC621D8C996A00BABD4F /* UAChannelCapture.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DB371D8C996900BABD4F /* UAChannelCapture.m */; };
 		CC40DC631D8C996A00BABD4F /* UAChannelRegistrar+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DB381D8C996900BABD4F /* UAChannelRegistrar+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		CC40DC641D8C996A00BABD4F /* UAChannelRegistrar.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DB391D8C996900BABD4F /* UAChannelRegistrar.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CC40DC651D8C996A00BABD4F /* UAChannelRegistrar.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DB3A1D8C996900BABD4F /* UAChannelRegistrar.m */; };
 		CC40DC661D8C996A00BABD4F /* UAChannelRegistrationPayload+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DB3B1D8C996900BABD4F /* UAChannelRegistrationPayload+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CC40DC671D8C996A00BABD4F /* UAChannelRegistrationPayload.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DB3C1D8C996900BABD4F /* UAChannelRegistrationPayload.m */; };
@@ -809,7 +807,7 @@
 		CC40DD231D8C996A00BABD4F /* UAUserAPIClient.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DBF81D8C996A00BABD4F /* UAUserAPIClient.m */; };
 		CC40DD241D8C996A00BABD4F /* UAUserData+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DBF91D8C996A00BABD4F /* UAUserData+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CC40DD251D8C996A00BABD4F /* UAUserData.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DBFA1D8C996A00BABD4F /* UAUserData.m */; };
-		CC40DD261D8C996A00BABD4F /* UAUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DBFB1D8C996A00BABD4F /* UAUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CC40DD261D8C996A00BABD4F /* UAUtils+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DBFB1D8C996A00BABD4F /* UAUtils+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CC40DD271D8C996A00BABD4F /* UAUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DBFC1D8C996A00BABD4F /* UAUtils.m */; };
 		CC40DD281D8C996A00BABD4F /* UAWebViewCallData.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DBFD1D8C996A00BABD4F /* UAWebViewCallData.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CC40DD291D8C996A00BABD4F /* UAWebViewCallData.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DBFE1D8C996A00BABD4F /* UAWebViewCallData.m */; };
@@ -1245,7 +1243,6 @@
 		DF7E22511ED62E0900C79C46 /* UARemoveTagsAction.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DBDC1D8C996A00BABD4F /* UARemoveTagsAction.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DF7E22521ED62E0900C79C46 /* UANamedUser.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DBB51D8C996A00BABD4F /* UANamedUser.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DF7E22531ED62E0900C79C46 /* UAChannelCapture.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DB361D8C996900BABD4F /* UAChannelCapture.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DF7E22541ED62E0900C79C46 /* UAChannelRegistrar.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DB391D8C996900BABD4F /* UAChannelRegistrar.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DF7E22551ED62E0900C79C46 /* UANotificationAction.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DBBD1D8C996A00BABD4F /* UANotificationAction.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DF7E22561ED62E0900C79C46 /* UANotificationCategories.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DBC01D8C996A00BABD4F /* UANotificationCategories.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DF7E22571ED62E0900C79C46 /* UANotificationCategory.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DBC31D8C996A00BABD4F /* UANotificationCategory.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1300,7 +1297,7 @@
 		DF7E228E1ED62E0900C79C46 /* UAApplicationMetrics.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DB211D8C996900BABD4F /* UAApplicationMetrics.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DF7E228F1ED62E0900C79C46 /* UAAssociatedIdentifiers.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DB231D8C996900BABD4F /* UAAssociatedIdentifiers.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DF7E22901ED62E0900C79C46 /* UAURLProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DBF21D8C996A00BABD4F /* UAURLProtocol.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DF7E22911ED62E0900C79C46 /* UAUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DBFB1D8C996A00BABD4F /* UAUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		DF7E22911ED62E0900C79C46 /* UAUtils+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DBFB1D8C996A00BABD4F /* UAUtils+Internal.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DF7E22921ED62E0900C79C46 /* NSJSONSerialization+UAAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DAE01D8C996900BABD4F /* NSJSONSerialization+UAAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DF7E22931ED62E0900C79C46 /* NSString+UALocalizationAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DAE21D8C996900BABD4F /* NSString+UALocalizationAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DF7E22941ED62E0900C79C46 /* NSString+UAURLEncoding.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DAE41D8C996900BABD4F /* NSString+UAURLEncoding.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1725,7 +1722,6 @@
 		CC40DB361D8C996900BABD4F /* UAChannelCapture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAChannelCapture.h; path = ios/UAChannelCapture.h; sourceTree = "<group>"; };
 		CC40DB371D8C996900BABD4F /* UAChannelCapture.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAChannelCapture.m; path = ios/UAChannelCapture.m; sourceTree = "<group>"; };
 		CC40DB381D8C996900BABD4F /* UAChannelRegistrar+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UAChannelRegistrar+Internal.h"; path = "common/UAChannelRegistrar+Internal.h"; sourceTree = "<group>"; };
-		CC40DB391D8C996900BABD4F /* UAChannelRegistrar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAChannelRegistrar.h; path = common/UAChannelRegistrar.h; sourceTree = "<group>"; };
 		CC40DB3A1D8C996900BABD4F /* UAChannelRegistrar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAChannelRegistrar.m; path = common/UAChannelRegistrar.m; sourceTree = "<group>"; };
 		CC40DB3B1D8C996900BABD4F /* UAChannelRegistrationPayload+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UAChannelRegistrationPayload+Internal.h"; path = "common/UAChannelRegistrationPayload+Internal.h"; sourceTree = "<group>"; };
 		CC40DB3C1D8C996900BABD4F /* UAChannelRegistrationPayload.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAChannelRegistrationPayload.m; path = common/UAChannelRegistrationPayload.m; sourceTree = "<group>"; };
@@ -1883,7 +1879,7 @@
 		CC40DBF81D8C996A00BABD4F /* UAUserAPIClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAUserAPIClient.m; path = common/UAUserAPIClient.m; sourceTree = "<group>"; };
 		CC40DBF91D8C996A00BABD4F /* UAUserData+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UAUserData+Internal.h"; path = "common/UAUserData+Internal.h"; sourceTree = "<group>"; };
 		CC40DBFA1D8C996A00BABD4F /* UAUserData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAUserData.m; path = common/UAUserData.m; sourceTree = "<group>"; };
-		CC40DBFB1D8C996A00BABD4F /* UAUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAUtils.h; path = common/UAUtils.h; sourceTree = "<group>"; };
+		CC40DBFB1D8C996A00BABD4F /* UAUtils+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UAUtils+Internal.h"; path = "common/UAUtils+Internal.h"; sourceTree = "<group>"; };
 		CC40DBFC1D8C996A00BABD4F /* UAUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAUtils.m; path = common/UAUtils.m; sourceTree = "<group>"; };
 		CC40DBFD1D8C996A00BABD4F /* UAWebViewCallData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAWebViewCallData.h; path = ios/UAWebViewCallData.h; sourceTree = "<group>"; };
 		CC40DBFE1D8C996A00BABD4F /* UAWebViewCallData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAWebViewCallData.m; path = ios/UAWebViewCallData.m; sourceTree = "<group>"; };
@@ -2952,7 +2948,6 @@
 				CC40DB341D8C996900BABD4F /* UAChannelAPIClient+Internal.h */,
 				CC40DB351D8C996900BABD4F /* UAChannelAPIClient.m */,
 				CC40DB381D8C996900BABD4F /* UAChannelRegistrar+Internal.h */,
-				CC40DB391D8C996900BABD4F /* UAChannelRegistrar.h */,
 				CC40DB3A1D8C996900BABD4F /* UAChannelRegistrar.m */,
 				CC40DB3B1D8C996900BABD4F /* UAChannelRegistrationPayload+Internal.h */,
 				CC40DB3C1D8C996900BABD4F /* UAChannelRegistrationPayload.m */,
@@ -3128,7 +3123,7 @@
 			children = (
 				CC40DBF21D8C996A00BABD4F /* UAURLProtocol.h */,
 				CC40DBF31D8C996A00BABD4F /* UAURLProtocol.m */,
-				CC40DBFB1D8C996A00BABD4F /* UAUtils.h */,
+				CC40DBFB1D8C996A00BABD4F /* UAUtils+Internal.h */,
 				CC40DBFC1D8C996A00BABD4F /* UAUtils.m */,
 				CC40DAE01D8C996900BABD4F /* NSJSONSerialization+UAAdditions.h */,
 				CC40DAE11D8C996900BABD4F /* NSJSONSerialization+UAAdditions.m */,
@@ -3661,7 +3656,6 @@
 				CC40DCF41D8C996A00BABD4F /* UAOpenExternalURLAction.h in Headers */,
 				99E2DA3E1FBA29B200C9F2CC /* UAInAppMessageBannerController+Internal.h in Headers */,
 				CC40DCC21D8C996A00BABD4F /* UAJavaScriptDelegate.h in Headers */,
-				CC40DD261D8C996A00BABD4F /* UAUtils.h in Headers */,
 				CC40DCB71D8C996A00BABD4F /* UAInboxUtils.h in Headers */,
 				E29D35E91DB93A59003C292F /* UAFetchDeviceInfoAction.h in Headers */,
 				CC40DC0F1D8C996A00BABD4F /* NSString+UAURLEncoding.h in Headers */,
@@ -3672,7 +3666,6 @@
 				CC40DCDD1D8C996A00BABD4F /* UAModifyTagsAction.h in Headers */,
 				CC40DC1B1D8C996A00BABD4F /* UAActionJSDelegate.h in Headers */,
 				CC40DC701D8C996A00BABD4F /* UAConfig.h in Headers */,
-				CC40DC641D8C996A00BABD4F /* UAChannelRegistrar.h in Headers */,
 				DF0221F71FDB05B600EF8C9D /* UAInAppMessageAudienceChecks+Internal.h in Headers */,
 				CC40DCA41D8C996A00BABD4F /* UALegacyInAppMessaging.h in Headers */,
 				6E598D6320004546005B234B /* UAInAppMessageEventUtils+Internal.h in Headers */,
@@ -3755,6 +3748,7 @@
 				99978EE41EBA77AD000F4AF7 /* UAWalletAction.h in Headers */,
 				3C805B1E200ED87D0079F56E /* UAInAppMessageHTMLController+Internal.h in Headers */,
 				99978EE81EBA7BE7000F4AF7 /* UADeepLinkAction.h in Headers */,
+				CC40DD261D8C996A00BABD4F /* UAUtils+Internal.h in Headers */,
 				CC70E8EB1DDA985D000E2528 /* UA_Base64.h in Headers */,
 				CC40DC391D8C996A00BABD4F /* UAAnalytics.h in Headers */,
 				CC40DD001D8C996A00BABD4F /* UAPush.h in Headers */,
@@ -3960,7 +3954,6 @@
 				99666DB81EDF2BDC00BAE46B /* UAChannelAPIClient+Internal.h in Headers */,
 				DF702D841FABA46B00E7A3DC /* UAVersionMatcher+Internal.h in Headers */,
 				99666DBA1EDF2BDC00BAE46B /* UAChannelRegistrar+Internal.h in Headers */,
-				99666DBB1EDF2BDC00BAE46B /* UAChannelRegistrar.h in Headers */,
 				99666DBD1EDF2BDC00BAE46B /* UAChannelRegistrationPayload+Internal.h in Headers */,
 				DF5ED8E31F7455C5002DDA24 /* UARemoteDataStore+Internal.h in Headers */,
 				99666DDC1EDF2BF300BAE46B /* UACircularRegion+Internal.h in Headers */,
@@ -4055,7 +4048,7 @@
 				99666DA71EDF2BC100BAE46B /* UAUser.h in Headers */,
 				99666DA91EDF2BC100BAE46B /* UAUserAPIClient+Internal.h in Headers */,
 				99666DAB1EDF2BC100BAE46B /* UAUserData+Internal.h in Headers */,
-				99666E5C1EDF2C9500BAE46B /* UAUtils.h in Headers */,
+				99666E5C1EDF2C9500BAE46B /* UAUtils+Internal.h in Headers */,
 				99666E711EDF2CB900BAE46B /* UAWhitelist.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4105,7 +4098,6 @@
 				99E2DA2C1FB62D1600C9F2CC /* UAInAppMessage+Internal.h in Headers */,
 				DF18CCE61FEC73B000652445 /* UAInAppMessageModalAdapter.h in Headers */,
 				DF7E22531ED62E0900C79C46 /* UAChannelCapture.h in Headers */,
-				DF7E22541ED62E0900C79C46 /* UAChannelRegistrar.h in Headers */,
 				DF7E22551ED62E0900C79C46 /* UANotificationAction.h in Headers */,
 				DF7E22561ED62E0900C79C46 /* UANotificationCategories.h in Headers */,
 				DF7E22571ED62E0900C79C46 /* UANotificationCategory.h in Headers */,
@@ -4182,7 +4174,7 @@
 				DF7E228F1ED62E0900C79C46 /* UAAssociatedIdentifiers.h in Headers */,
 				DF7E22901ED62E0900C79C46 /* UAURLProtocol.h in Headers */,
 				DFD442A81FD77308002E4FA1 /* UAInAppMessageAudience+Internal.h in Headers */,
-				DF7E22911ED62E0900C79C46 /* UAUtils.h in Headers */,
+				DF7E22911ED62E0900C79C46 /* UAUtils+Internal.h in Headers */,
 				DF7E22921ED62E0900C79C46 /* NSJSONSerialization+UAAdditions.h in Headers */,
 				DF7E22931ED62E0900C79C46 /* NSString+UALocalizationAdditions.h in Headers */,
 				DF7E22941ED62E0900C79C46 /* NSString+UAURLEncoding.h in Headers */,

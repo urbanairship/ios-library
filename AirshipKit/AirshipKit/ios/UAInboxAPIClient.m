@@ -3,7 +3,7 @@
 #import "UAInboxAPIClient+Internal.h"
 #import "UAConfig.h"
 #import "UAUser.h"
-#import "UAUtils.h"
+#import "UAUtils+Internal.h"
 #import "NSJSONSerialization+UAAdditions.h"
 #import "UAPreferenceDataStore+Internal.h"
 #import "UAirship.h"

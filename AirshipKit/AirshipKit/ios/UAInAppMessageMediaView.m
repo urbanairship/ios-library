@@ -4,7 +4,7 @@
 #import "UAirship.h"
 #import "UAWebView+Internal.h"
 #import "AVFoundation/AVFoundation.h"
-#import "UAUtils.h"
+#import "UAUtils+Internal.h"
 #import "UAInAppMessageUtils+Internal.h"
 
 NS_ASSUME_NONNULL_BEGIN

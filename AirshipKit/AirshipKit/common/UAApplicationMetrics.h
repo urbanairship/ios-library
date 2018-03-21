@@ -32,17 +32,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, readonly) BOOL isAppVersionUpdated;
 
-///---------------------------------------------------------------------------------------
-/// @name Application Metrics Core Methods
-///---------------------------------------------------------------------------------------
-
-/**
- * Triggers an analytics event.
- * @param dataStore The dataStore.
- * @return An application metrics instance.
- */
-+ (instancetype)applicationMetricsWithDataStore:(UAPreferenceDataStore *)dataStore;
-
 @end
 
 NS_ASSUME_NONNULL_END

@@ -4,7 +4,7 @@
 #import "UAEvent+Internal.h"
 #import "UAAnalytics.h"
 #import "UAirship.h"
-#import "UAUtils.h"
+#import "UAUtils+Internal.h"
 
 @implementation UAAppExitEvent
 

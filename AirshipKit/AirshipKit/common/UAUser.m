@@ -4,7 +4,7 @@
 #import "UAUserData+Internal.h"
 #import "UAUserAPIClient+Internal.h"
 #import "UAPush.h"
-#import "UAUtils.h"
+#import "UAUtils+Internal.h"
 #import "UAConfig.h"
 #import "UAKeychainUtils+Internal.h"
 #import "UAPreferenceDataStore+Internal.h"

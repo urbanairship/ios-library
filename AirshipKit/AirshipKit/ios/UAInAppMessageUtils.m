@@ -4,7 +4,7 @@
 #import "UAInAppMessageUtils+Internal.h"
 #import "UAInAppMessageButtonView+Internal.h"
 #import "UAActionRunner+Internal.h"
-#import "UAUtils.h"
+#import "UAUtils+Internal.h"
 #import "UAirship.h"
 
 NSString *const UADefaultSerifFont = @"Times New Roman";

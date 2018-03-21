@@ -6,7 +6,7 @@
 #import "UAEventManager+Internal.h"
 #import "UAConfig.h"
 #import "UAEvent.h"
-#import "UAUtils.h"
+#import "UAUtils+Internal.h"
 
 #import "UAAppBackgroundEvent+Internal.h"
 #import "UAAppForegroundEvent+Internal.h"

@@ -3,7 +3,7 @@
 #import "UABaseTest.h"
 #import "UAScheduleInfo+Internal.h"
 #import "UAActionScheduleInfo+Internal.h"
-#import "UAUtils.h"
+#import "UAUtils+Internal.h"
 
 @interface UAActionInfoTests : UABaseTest
 

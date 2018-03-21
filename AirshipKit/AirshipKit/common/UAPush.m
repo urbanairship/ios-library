@@ -7,7 +7,7 @@
 #import "UAAnalytics+Internal.h"
 #import "UADeviceRegistrationEvent+Internal.h"
 
-#import "UAUtils.h"
+#import "UAUtils+Internal.h"
 #import "UAActionRegistry+Internal.h"
 #import "UAActionRunner+Internal.h"
 #import "UAChannelRegistrationPayload+Internal.h"

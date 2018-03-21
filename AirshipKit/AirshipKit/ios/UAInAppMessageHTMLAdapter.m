@@ -4,7 +4,7 @@
 #import "UAInAppMessageAdapterProtocol.h"
 #import "UAInAppMessageHTMLController+Internal.h"
 #import "UAInAppMessageHTMLDisplayContent.h"
-#import "UAUtils.h"
+#import "UAUtils+Internal.h"
 #import "UAirship.h"
 
 NS_ASSUME_NONNULL_BEGIN

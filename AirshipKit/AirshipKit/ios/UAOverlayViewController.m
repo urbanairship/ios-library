@@ -4,7 +4,7 @@
 
 #import "UABespokeCloseView.h"
 #import "UABeveledLoadingIndicator.h"
-#import "UAUtils.h"
+#import "UAUtils+Internal.h"
 #import "UAirship.h"
 #import "UAGlobal.h"
 #import "UAInboxMessage.h"

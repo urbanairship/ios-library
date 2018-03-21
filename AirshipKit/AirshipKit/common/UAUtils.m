@@ -1,6 +1,6 @@
 /* Copyright 2018 Urban Airship and Contributors */
 
-#import "UAUtils.h"
+#import "UAUtils+Internal.h"
 #import "UAActionResult.h"
 
 // Frameworks

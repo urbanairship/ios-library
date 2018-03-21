@@ -2,7 +2,7 @@
 
 #import "UIWebView+UAAdditions.h"
 #import "UAUser.h"
-#import "UAUtils.h"
+#import "UAUtils+Internal.h"
 #import "UAirship.h"
 
 @implementation UIWebView (UAAdditions)
