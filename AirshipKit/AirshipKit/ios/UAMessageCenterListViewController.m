@@ -830,7 +830,6 @@
     [cell setData:message];
 
     UIImageView *localImageView = cell.listIconView;
-    UITableView *strongMessageTable = self.messageTable;
 
     if ([self.iconCache objectForKey:[self iconURLStringForMessage:message]]) {
         localImageView.image = [self.iconCache objectForKey:[self iconURLStringForMessage:message]];
