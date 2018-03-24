@@ -33,6 +33,49 @@ NSString *const kUAIdentityHintsKey= @"identity_hints";
 
 @implementation UAChannelRegistrationPayload
 
++ (UAChannelRegistrationPayload *)channelRegistrationPayloadWithData:(NSData *)data {
+    return [[UAChannelRegistrationPayload alloc] initWithData:data];
+}
+
+- (UAChannelRegistrationPayload *)initWithData:(NSData *)data {
+    self = [super init];
+
+    if (self) {
+        NSDictionary *dataDictionary = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:nil];
+
+        NSDictionary *topLevel = dataDictionary[kUAChannelKey];
+        NSDictionary *identityHints = dataDictionary[kUAIdentityHintsKey];
+
+        if (topLevel != nil) {
+            NSDictionary *platform = topLevel[kUAPlatformKey];
+
+            if (platform != nil) {
+                self.badge = platform[kUAChannelBadgeJSONKey];
+                self.quietTime = platform[kUAChannelQuietTimeJSONKey];
+            }
+
+            self.deviceID = topLevel[kUAChannelDeviceIDKey];
+            self.pushAddress = topLevel[kUAChannelPushAddressKey];
+            self.userID = topLevel[kUAChannelUserIDKey];
+            self.optedIn = [topLevel[kUAChannelOptInKey] boolValue];
+            self.backgroundEnabled = [topLevel[kUABackgroundEnabledJSONKey] boolValue];
+            self.setTags = [topLevel[kUAChannelSetTagsKey] boolValue];
+            self.tags = topLevel[kUAChannelTagsJSONKey];
+            self.alias = topLevel[kUAChannelAliasJSONKey];
+            self.language = topLevel[kUAChannelTopLevelLanguageJSONKey];
+            self.country = topLevel[kUAChannelTopLevelCountryJSONKey];
+            self.timeZone = topLevel[kUAChannelTopLevelTimeZoneJSONKey];
+        }
+
+        if (identityHints != nil) {
+            self.userID = identityHints[kUAChannelUserIDKey];
+            self.deviceID = identityHints[kUAChannelDeviceIDKey];
+        }
+    }
+
+    return self;
+}
+
 - (NSData *)asJSONData {
     return [NSJSONSerialization dataWithJSONObject:[self payloadDictionary]
                                            options:0
@@ -51,7 +94,7 @@ NSString *const kUAIdentityHintsKey= @"identity_hints";
 
     // Channel is a top level object containing channel related fields.
     NSMutableDictionary *channel = [NSMutableDictionary dictionary];
-    [channel setValue:@"ios" forKey:kUAChannelDeviceTypeKey];
+    [channel setValue:kUAPlatformKey forKey:kUAChannelDeviceTypeKey];
     [channel setValue:[NSNumber numberWithBool:self.optedIn] forKey:kUAChannelOptInKey];
 #if TARGET_OS_TV    // REVISIT - do we need to force self.backgroundEnabled to YES?? - may be a hacking artifact
     [channel setValue:[NSNumber numberWithBool:YES] forKey:kUABackgroundEnabledJSONKey];

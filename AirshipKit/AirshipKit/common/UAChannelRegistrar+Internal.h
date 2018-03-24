@@ -5,6 +5,7 @@
 @class UAChannelRegistrationPayload;
 @class UAChannelAPIClient;
 @class UAConfig;
+@class UAPreferenceDataStore;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -57,16 +58,34 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, weak, nullable) id<UAChannelRegistrarDelegate> delegate;
 
 /**
+* Last successful payload date JSON key.
+*/
+extern NSString *const lastSuccessfulUpdateKey;
+
+/**
+ * Last payload JSON key.
+ */
+extern NSString *const lastSuccessfulPayloadKey;
+
+/**
  * The channel API client.
  */
 @property (nonatomic, strong) UAChannelAPIClient *channelAPIClient;
 
-
 /**
  * The last successful payload that was registered.
  */
-@property (nonatomic, strong, nullable) UAChannelRegistrationPayload *lastSuccessPayload;
+@property (nonatomic, strong, nullable) UAChannelRegistrationPayload *lastSuccessfulPayload;
 
+/**
+ * The date of the last successful update.
+ */
+@property (nonatomic, strong, nullable) NSDate *lastSuccessfulUpdate;
+
+/**
+ * The preference data store.
+ */
+@property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 
 /**
  * A flag indicating if registration is in progress.

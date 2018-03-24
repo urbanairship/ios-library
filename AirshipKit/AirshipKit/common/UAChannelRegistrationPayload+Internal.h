@@ -109,6 +109,12 @@ extern NSString *const kUABackgroundEnabledJSONKey;
 ///---------------------------------------------------------------------------------------
 
 /**
+ * Factory method that builds a payload from NSData.
+ * @return A UAChannelRegistrationPayload instance.
+ */
++ (UAChannelRegistrationPayload *)channelRegistrationPayloadWithData:(NSData *)data;
+
+/**
  * The UAChannelRegistrationPayload as JSON data.
  * @return The payload as JSON data.
  */
