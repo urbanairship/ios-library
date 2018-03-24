@@ -19,7 +19,7 @@ UAConfig *config;
 @implementation UAChannelRegistrar
 
 @synthesize lastSuccessfulPayload = _lastSuccessfulPayload;
-@synthesize lastSuccessfulUpdate = _lastSuccessfulUpdate;
+@synthesize lastSuccessfulUpdateDate = _lastSuccessfulUpdateDate;
 
 -(id)initWithConfig:(UAConfig *)config {
     self = [super init];
@@ -37,7 +37,7 @@ UAConfig *config;
 }
 
 - (BOOL)shouldUpdateRegistration:(UAChannelRegistrationPayload *)payload {
-    NSTimeInterval timeSinceLastUpdate = [self.lastSuccessUpdateDate timeIntervalSinceDate:[NSDate date]];
+    NSTimeInterval timeSinceLastUpdate = [[NSDate date] timeIntervalSinceDate:self.lastSuccessUpdateDate];
 
     BOOL differsFromLastPayload = ![payload isEqualToPayload:self.lastSuccessfulPayload];
 
@@ -237,7 +237,7 @@ UAConfig *config;
 - (UAChannelRegistrationPayload *)lastSuccessfulPayload {
     NSData *payloadData = [self.dataStore objectForKey:lastSuccessfulPayloadKey];
 
-    if (payloadData == nil) {
+    if (payloadData == nil || ![payloadData isKindOfClass:[NSData class]]) {
         return nil;
     }
 
@@ -254,7 +254,7 @@ UAConfig *config;
 }
 
 - (void)setLastSuccessUpdateDate:(NSDate *)date {
-    _lastSuccessfulUpdate = date;
+    _lastSuccessfulUpdateDate = date;
     [self.dataStore setObject:date forKey:lastSuccessfulUpdateKey];
 }
 

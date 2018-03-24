@@ -91,6 +91,16 @@
 }
 
 /**
+ * Tests that a payload initialized from data is equivalent to standard initialized payload
+ */
+- (void)testPayloadFromData {
+    NSData *payloadData = [self.payload asJSONData];
+
+    UAChannelRegistrationPayload *withData = [UAChannelRegistrationPayload channelRegistrationPayloadWithData:payloadData];
+    XCTAssertTrue([withData isEqualToPayload:self.payload]);
+}
+
+/**
  * Test when tags are empty or nil
  */
 - (void)testAsJsonEmptyTags {
@@ -347,7 +357,6 @@
 
 
 // Helpers
-
 - (NSMutableDictionary *)buildQuietTimeWithStartDate:(NSDate *)startDate withEndDate:(NSDate *)endDate {
 
     NSCalendar *cal = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];

@@ -80,7 +80,7 @@ extern NSString *const lastSuccessfulPayloadKey;
 /**
  * The date of the last successful update.
  */
-@property (nonatomic, strong, nullable) NSDate *lastSuccessfulUpdate;
+@property (nonatomic, strong, nullable) NSDate *lastSuccessfulUpdateDate;
 
 /**
  * The preference data store.
