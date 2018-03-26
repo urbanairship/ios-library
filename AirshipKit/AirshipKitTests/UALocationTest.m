@@ -14,6 +14,8 @@
 @property (nonatomic, strong) id mockLocationManager;
 @property (nonatomic, strong) id mockedApplication;
 @property (nonatomic, strong) id mockedBundle;
+@property (nonatomic, strong) id mockProcessInfo;
+@property (nonatomic, assign) NSUInteger testOSMajorVersion;
 
 @end
 
@@ -38,6 +40,18 @@
     self.mockedBundle = [self mockForClass:[NSBundle class]];
     [[[self.mockedBundle stub] andReturn:self.mockedBundle] mainBundle];
     [[[self.mockedBundle stub] andReturn:@"Always"] objectForInfoDictionaryKey:@"NSLocationAlwaysUsageDescription"];
+
+    self.testOSMajorVersion = 10;
+    self.mockProcessInfo = [self mockForClass:[NSProcessInfo class]];
+    [[[self.mockProcessInfo stub] andReturn:self.mockProcessInfo] processInfo];
+
+    [[[[self.mockProcessInfo stub] andDo:^(NSInvocation *invocation) {
+        NSOperatingSystemVersion arg;
+        [invocation getArgument:&arg atIndex:2];
+
+        BOOL result = self.testOSMajorVersion >= arg.majorVersion;
+        [invocation setReturnValue:&result];
+    }] ignoringNonObjectArgs] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){0, 0, 0}];
 }
 
 - (void)tearDown {
@@ -652,6 +666,72 @@
     [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(YES)] significantLocationChangeMonitoringAvailable];
 
     // Reject auhorization to be requested
+    [[self.mockLocationManager reject] requestAlwaysAuthorization];
+
+    // Enable location
+    self.location.locationUpdatesEnabled = YES;
+
+    // Verify we did not request location authorization
+    [self.mockLocationManager verify];
+}
+
+/**
+ * Test enabling location updates does request always authorization if the app
+ * bundle contains a description for 'always and when and use' location description on iOS 11+.
+ */
+- (void)testAlwaysAndWhenInUseLocationDescription {
+    // Stop mocking the bundle to remove the description
+    [self.mockedBundle stopMocking];
+
+    // Re-start mock to add the NSLocationAlwaysAndWhenInUseUsageDescription for iOS 11
+    self.mockedBundle = [self mockForClass:[NSBundle class]];
+    [[[self.mockedBundle stub] andReturn:self.mockedBundle] mainBundle];
+    [[[self.mockedBundle stub] andReturn:@"Always"] objectForInfoDictionaryKey:@"NSLocationAlwaysAndWhenInUseUsageDescription"];
+    [[[self.mockedBundle stub] andReturn:@"When In Use"] objectForInfoDictionaryKey:@"NSLocationWhenInUseUsageDescription"];
+
+    // Set mock iOS version to 11+
+    self.testOSMajorVersion = 11;
+
+    // Make the app active
+    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateActive)] applicationState];
+
+    // Set the location authorization to be not determined
+    [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(kCLAuthorizationStatusNotDetermined)] authorizationStatus];
+
+    // Make significant location available
+    [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(YES)] significantLocationChangeMonitoringAvailable];
+
+    // Expect auhorization to be requested
+    [[self.mockLocationManager expect] requestAlwaysAuthorization];
+
+    // Enable location
+    self.location.locationUpdatesEnabled = YES;
+
+    // Verify we did not request location authorization
+    [self.mockLocationManager verify];
+}
+
+/**
+ * Test enabling location updates do not request always authorization if the app
+ * bundle does not contain a description for 'always and when and use' location description on iOS 11+.
+ */
+- (void)testMissingAlwaysAndWhenInUseLocationDescription {
+    // Stop mocking the bundle to remove the description
+    [self.mockedBundle stopMocking];
+
+    // Set mock iOS version to 11+
+    self.testOSMajorVersion = 11;
+
+    // Make the app active
+    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateActive)] applicationState];
+
+    // Set the location authorization to be not determined
+    [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(kCLAuthorizationStatusNotDetermined)] authorizationStatus];
+
+    // Make significant location available
+    [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(YES)] significantLocationChangeMonitoringAvailable];
+
+    // Expect auhorization to be requested
     [[self.mockLocationManager reject] requestAlwaysAuthorization];
 
     // Enable location
