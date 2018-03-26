@@ -199,16 +199,26 @@ NSString *const UALocationBackgroundUpdatesAllowed = @"UALocationBackgroundUpdat
         return;
     }
 
-    // Make sure the NSLocationAlwaysUsageDescription plist value is set
-    if (![[NSBundle mainBundle] objectForInfoDictionaryKey:@"NSLocationAlwaysUsageDescription"]) {
-        UA_LERR(@"NSLocationAlwaysUsageDescription not set, unable to request authorization.");
-        return;
+    // For iOS versions > iOS 11 make sure the NSLocationAlwaysAndWhenInUseUsageDescription plist value is set
+    if ([[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){11, 0, 0}]) {
+        // Make sure the NSLocationAlwaysAndWhenInUseUsageDescription plist value is set
+        if (![[NSBundle mainBundle] objectForInfoDictionaryKey:@"NSLocationAlwaysAndWhenInUseUsageDescription"]) {
+            UA_LERR(@"NSLocationAlwaysUsageDescription not set, unable to request authorization.");
+            return;
+        }
+    } else {
+        // Make sure the NSLocationAlwaysUsageDescription plist value is set on versions < iOS 11
+        if (![[NSBundle mainBundle] objectForInfoDictionaryKey:@"NSLocationAlwaysUsageDescription"]) {
+            UA_LERR(@"NSLocationAlwaysUsageDescription not set, unable to request authorization.");
+            return;
+        }
     }
 
     UA_LINFO("Requesting location authorization.");
 #if TARGET_OS_TV    // requestAlwaysAuthorization is not available on tvOS
     [self.locationManager requestWhenInUseAuthorization];
 #else
+    // On iOS 11+ this will potentially result in 'when in use' authorization
     [self.locationManager requestAlwaysAuthorization];
 #endif
 }
