@@ -20,6 +20,18 @@ NS_ASSUME_NONNULL_BEGIN
  */
 + (nullable instancetype)textViewWithHeading:(UAInAppMessageTextInfo * _Nullable)heading body:(UAInAppMessageTextInfo * _Nullable)body;
 
+/**
+ * Text view factory method.
+
+ * @param heading The heading text info.
+ * @param body The body text info.
+ * @param onTop Flag indicating the text view is at the top of the parent view.
+ *
+ * @return a configured UAInAppMessageTextView instance, or nil if neither heading or body are provided.
+ */
++ (nullable instancetype)textViewWithHeading:(UAInAppMessageTextInfo * _Nullable)heading body:(UAInAppMessageTextInfo * _Nullable)body onTop:(BOOL)onTop;
+
+
 @end
 
 NS_ASSUME_NONNULL_END
