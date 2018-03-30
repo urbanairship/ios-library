@@ -43,7 +43,7 @@ static NSMutableSet *overlayControllers_ = nil;
 
 @property(nonatomic, assign) CGSize size;
 @property(nonatomic, assign) BOOL aspectLock;
-
+@property(nonatomic, assign) UIDeviceOrientation lastOrientation;
 
 @end
 
@@ -172,6 +172,16 @@ static NSMutableSet *overlayControllers_ = nil;
 
     if (self.onLayoutSubviews) {
         self.onLayoutSubviews();
+    }
+
+    UIDeviceOrientation orientation = [UIDevice currentDevice].orientation;
+    if (self.lastOrientation != orientation) {
+
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [self.webView.scrollView setZoomScale:0 animated:YES];
+        });
+
+        self.lastOrientation = orientation;
     }
 }
 
