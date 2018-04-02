@@ -195,7 +195,7 @@ static NSMutableSet *overlayControllers_ = nil;
  * The message being displayed, if applicable. This value may be nil.
  */
 @property (nonatomic, strong) UAInboxMessage *message;
-@property (nonatomic, strong) UIViewController *parentViewController;
+@property (nonatomic, strong) UIView *parentView;
 @property (nonatomic, strong) UAOverlayView *overlayView;
 @property (nonatomic, strong) UIView *background;
 @property (nonatomic, strong) UIView *backgroundInset;
@@ -229,7 +229,7 @@ static NSMutableSet *overlayControllers_ = nil;
 
 + (void)showURL:(NSURL *)url withHeaders:(NSDictionary *)headers {
     CGSize defaultsToFullSize = CGSizeZero;
-    UAOverlayViewController *overlayController = [[UAOverlayViewController alloc] initWithParentViewController:[UAUtils topController]
+    UAOverlayViewController *overlayController = [[UAOverlayViewController alloc] initWithParentView:[UAUtils mainWindow]
                                                                                                                       andURL:url
                                                                                                                   andMessage:nil
                                                                                                                   andHeaders:headers
@@ -239,7 +239,7 @@ static NSMutableSet *overlayControllers_ = nil;
 }
 
 + (void)showURL:(NSURL *)url withHeaders:(NSDictionary *)headers size:(CGSize)size aspectLock:(BOOL)aspectLock {
-    UAOverlayViewController *overlayController = [[UAOverlayViewController alloc] initWithParentViewController:[UAUtils topController]
+    UAOverlayViewController *overlayController = [[UAOverlayViewController alloc] initWithParentView:[UAUtils mainWindow]
                                                                                                                       andURL:url
                                                                                                                   andMessage:nil
                                                                                                                   andHeaders:headers
@@ -255,7 +255,7 @@ static NSMutableSet *overlayControllers_ = nil;
 
 + (void)showMessage:(UAInboxMessage *)message withHeaders:(NSDictionary *)headers {
     CGSize defaultsToFullSize = CGSizeZero;
-    UAOverlayViewController *overlayController = [[UAOverlayViewController alloc] initWithParentViewController:[UAUtils topController]
+    UAOverlayViewController *overlayController = [[UAOverlayViewController alloc] initWithParentView:[UAUtils mainWindow]
                                                                                                                       andURL:message.messageBodyURL
                                                                                                                   andMessage:message
                                                                                                                   andHeaders:headers
@@ -265,7 +265,7 @@ static NSMutableSet *overlayControllers_ = nil;
 }
 
 + (void)showMessage:(UAInboxMessage *)message withHeaders:(NSDictionary *)headers size:(CGSize)size aspectLock:(BOOL)aspectLock {
-    UAOverlayViewController *overlayController = [[UAOverlayViewController alloc] initWithParentViewController:[UAUtils topController]
+    UAOverlayViewController *overlayController = [[UAOverlayViewController alloc] initWithParentView:[UAUtils mainWindow]
                                                                                                                       andURL:message.messageBodyURL
                                                                                                                   andMessage:message
                                                                                                                   andHeaders:headers
@@ -280,14 +280,14 @@ static NSMutableSet *overlayControllers_ = nil;
     }
 }
 
-- (instancetype)initWithParentViewController:(UIViewController *)parent andURL:(NSURL *)url andMessage:(UAInboxMessage *)message andHeaders:(NSDictionary *)headers size:(CGSize)size aspectLock:(BOOL)aspectLock {
+- (instancetype)initWithParentView:(UIView *)parent andURL:(NSURL *)url andMessage:(UAInboxMessage *)message andHeaders:(NSDictionary *)headers size:(CGSize)size aspectLock:(BOOL)aspectLock {
     self = [super init];
     if (self) {
 
         self.overlayView = [[UAOverlayView alloc] initWithSize:size aspectLock:aspectLock];
         self.overlayView.alpha = 0.0;
 
-        self.parentViewController = parent;
+        self.parentView = parent;
         self.url = url;
         self.message = message;
         self.headers = headers;
@@ -339,13 +339,12 @@ static NSMutableSet *overlayControllers_ = nil;
 }
 
 - (void)showOverlay {
-
-    UIView *parentView = self.parentViewController.view;
-
-    [parentView addSubview:self.overlayView];
-    self.overlayView.translatesAutoresizingMaskIntoConstraints = NO;
+    UIView *parentView = self.parentView;
 
     if (parentView != nil) {
+        [parentView addSubview:self.overlayView];
+        self.overlayView.translatesAutoresizingMaskIntoConstraints = NO;
+
         // Constrain overlay view to center of parent view
         NSLayoutConstraint *xConstraint = [NSLayoutConstraint constraintWithItem:self.overlayView attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:parentView attribute:NSLayoutAttributeCenterX multiplier:1 constant:0];
         NSLayoutConstraint *yConstraint = [NSLayoutConstraint constraintWithItem:self.overlayView attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:parentView attribute:NSLayoutAttributeCenterY multiplier:1 constant:0];
