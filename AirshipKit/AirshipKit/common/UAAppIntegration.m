@@ -63,6 +63,7 @@
 
 + (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
     switch(application.applicationState) {
+        UA_LTRACE(@"Received remote notification: %@", userInfo);
         case UIApplicationStateActive:
             if ([[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){10, 0, 0}] && ![UAUtils isSilentPush:userInfo]) {
                 // Handled by the new userNotificationCenter:willPresentNotification:withCompletionHandler:
@@ -113,6 +114,8 @@
 }
 
 + (void)application:(UIApplication *)application handleActionWithIdentifier:(NSString *)identifier forRemoteNotification:(NSDictionary *)userInfo withResponseInfo:(NSDictionary *)responseInfo completionHandler:(void (^)(void))handler {
+    UA_LTRACE(@"Handling notification action: %@", identifier);
+
     NSString *responseText = responseInfo ? responseInfo[UIUserNotificationActionResponseTypedTextKey] : nil;
     UANotificationResponse *response = [UANotificationResponse notificationResponseWithNotificationInfo:userInfo
                                                                                        actionIdentifier:identifier
@@ -145,6 +148,8 @@
 
 #if !TARGET_OS_TV   // UNNotificationResponse not available on tvOS
 + (void)userNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void(^)(void))completionHandler {
+    UA_LTRACE(@"Received notification response: %@", response);
+
     UANotificationResponse *airshipResponse = [UANotificationResponse notificationResponseWithUNNotificationResponse:response];
 
     [self handleNotificationResponse:airshipResponse completionHandler:^(void) {
