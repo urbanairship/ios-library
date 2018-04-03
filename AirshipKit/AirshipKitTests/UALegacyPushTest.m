@@ -7,7 +7,7 @@
 #import "UAirship+Internal.h"
 #import "UAActionRunner+Internal.h"
 #import "UAActionRegistry+Internal.h"
-#import "UAUtils.h"
+#import "UAUtils+Internal.h"
 #import "UAUser.h"
 #import "UAChannelRegistrationPayload+Internal.h"
 #import "UAChannelRegistrar+Internal.h"

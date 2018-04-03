@@ -2,7 +2,7 @@
 
 #import "UAUserAPIClient+Internal.h"
 #import "UAConfig.h"
-#import "UAUtils.h"
+#import "UAUtils+Internal.h"
 #import "NSJSONSerialization+UAAdditions.h"
 #import "UAUser.h"
 #import "UAUserData+Internal.h"

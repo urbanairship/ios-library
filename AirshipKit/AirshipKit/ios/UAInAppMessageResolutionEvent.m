@@ -4,7 +4,7 @@
 #import "UAAnalytics.h"
 #import "UAirship.h"
 #import "UAEvent+Internal.h"
-#import "UAUtils.h"
+#import "UAUtils+Internal.h"
 #import "UAInAppMessageEventUtils+Internal.h"
 
 NSUInteger const MaxButtonDescriptionLength = 30;

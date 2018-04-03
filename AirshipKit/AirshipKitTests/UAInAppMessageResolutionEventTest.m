@@ -5,7 +5,7 @@
 #import "UAirship+Internal.h"
 #import "UAInAppMessageResolutionEvent+Internal.h"
 #import "UAInAppMessage+Internal.h"
-#import "UAUtils.h"
+#import "UAUtils+Internal.h"
 #import "UAInAppMessageFullScreenDisplayContent.h"
 
 @interface UAInAppMessageResolutionEventTest : UABaseTest

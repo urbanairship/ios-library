@@ -3,7 +3,7 @@
 #import "UAChannelRegistrar+Internal.h"
 #import "UAChannelAPIClient+Internal.h"
 #import "UAGlobal.h"
-#import "UAUtils.h"
+#import "UAUtils+Internal.h"
 #import "UAChannelRegistrationPayload+Internal.h"
 #import "UAConfig.h"
 

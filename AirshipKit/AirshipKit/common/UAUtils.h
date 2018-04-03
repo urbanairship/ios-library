@@ -8,9 +8,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class UAHTTPRequest;
-@class UARequest;
-
 #define kUAConnectionTypeNone @"none"
 #define kUAConnectionTypeCell @"cell"
 #define kUAConnectionTypeWifi @"wifi"
@@ -36,16 +33,6 @@ NS_ASSUME_NONNULL_BEGIN
  * @return The device ID, or an empty string if the ID cannot be retrieved or created.
  */
 + (NSString *)deviceID;
-
-///---------------------------------------------------------------------------------------
-/// @name UAHTTP Authenticated Request Helpers
-///---------------------------------------------------------------------------------------
-
-+ (void)logFailedRequest:(UARequest *)request
-             withMessage:(NSString *)message
-               withError:(nullable NSError *)error
-            withResponse:(nullable NSHTTPURLResponse *)response;
-
 
 #if !TARGET_OS_TV   // Inbox not supported on tvOS
 /**

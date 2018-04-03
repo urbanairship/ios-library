@@ -3,7 +3,7 @@
 
 #import "UAApplicationMetrics+Internal.h"
 #import "UAPreferenceDataStore+Internal.h"
-#import "UAUtils.h"
+#import "UAUtils+Internal.h"
 
 @interface UAApplicationMetrics()
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;

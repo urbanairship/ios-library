@@ -4,7 +4,7 @@
 
 #import "UABespokeCloseView.h"
 #import "UABeveledLoadingIndicator.h"
-#import "UAUtils.h"
+#import "UAUtils+Internal.h"
 #import "UAirship.h"
 #import "UAGlobal.h"
 #import "UAInboxMessage.h"
@@ -28,7 +28,6 @@ static NSMutableSet *overlayControllers_ = nil;
 
 @property (strong, nonatomic) IBOutlet UIView *containerView;
 @property (strong, nonatomic) IBOutlet UIView *shadeView;
-@property (strong, nonatomic) IBOutlet UIView *backgroundView;
 @property (strong, nonatomic) IBOutlet UIButton *closeButton;
 @property (strong, nonatomic) IBOutlet UIView *closeButtonView;
 @property (strong, nonatomic) IBOutlet UIView *backgroundInsetView;
@@ -44,7 +43,7 @@ static NSMutableSet *overlayControllers_ = nil;
 
 @property(nonatomic, assign) CGSize size;
 @property(nonatomic, assign) BOOL aspectLock;
-
+@property(nonatomic, assign) UIDeviceOrientation previousOrientation;
 
 @end
 
@@ -174,6 +173,16 @@ static NSMutableSet *overlayControllers_ = nil;
     if (self.onLayoutSubviews) {
         self.onLayoutSubviews();
     }
+
+    UIDeviceOrientation orientation = [UIDevice currentDevice].orientation;
+    if (self.previousOrientation != orientation) {
+
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [self.webView.scrollView setZoomScale:0 animated:YES];
+        });
+
+        self.previousOrientation = orientation;
+    }
 }
 
 @end
@@ -195,7 +204,7 @@ static NSMutableSet *overlayControllers_ = nil;
  * The message being displayed, if applicable. This value may be nil.
  */
 @property (nonatomic, strong) UAInboxMessage *message;
-@property (nonatomic, strong) UIViewController *parentViewController;
+@property (nonatomic, strong) UIView *parentView;
 @property (nonatomic, strong) UAOverlayView *overlayView;
 @property (nonatomic, strong) UIView *background;
 @property (nonatomic, strong) UIView *backgroundInset;
@@ -229,7 +238,7 @@ static NSMutableSet *overlayControllers_ = nil;
 
 + (void)showURL:(NSURL *)url withHeaders:(NSDictionary *)headers {
     CGSize defaultsToFullSize = CGSizeZero;
-    UAOverlayViewController *overlayController = [[UAOverlayViewController alloc] initWithParentViewController:[UAUtils topController]
+    UAOverlayViewController *overlayController = [[UAOverlayViewController alloc] initWithParentView:[UAUtils mainWindow]
                                                                                                                       andURL:url
                                                                                                                   andMessage:nil
                                                                                                                   andHeaders:headers
@@ -239,7 +248,7 @@ static NSMutableSet *overlayControllers_ = nil;
 }
 
 + (void)showURL:(NSURL *)url withHeaders:(NSDictionary *)headers size:(CGSize)size aspectLock:(BOOL)aspectLock {
-    UAOverlayViewController *overlayController = [[UAOverlayViewController alloc] initWithParentViewController:[UAUtils topController]
+    UAOverlayViewController *overlayController = [[UAOverlayViewController alloc] initWithParentView:[UAUtils mainWindow]
                                                                                                                       andURL:url
                                                                                                                   andMessage:nil
                                                                                                                   andHeaders:headers
@@ -255,7 +264,7 @@ static NSMutableSet *overlayControllers_ = nil;
 
 + (void)showMessage:(UAInboxMessage *)message withHeaders:(NSDictionary *)headers {
     CGSize defaultsToFullSize = CGSizeZero;
-    UAOverlayViewController *overlayController = [[UAOverlayViewController alloc] initWithParentViewController:[UAUtils topController]
+    UAOverlayViewController *overlayController = [[UAOverlayViewController alloc] initWithParentView:[UAUtils mainWindow]
                                                                                                                       andURL:message.messageBodyURL
                                                                                                                   andMessage:message
                                                                                                                   andHeaders:headers
@@ -265,7 +274,7 @@ static NSMutableSet *overlayControllers_ = nil;
 }
 
 + (void)showMessage:(UAInboxMessage *)message withHeaders:(NSDictionary *)headers size:(CGSize)size aspectLock:(BOOL)aspectLock {
-    UAOverlayViewController *overlayController = [[UAOverlayViewController alloc] initWithParentViewController:[UAUtils topController]
+    UAOverlayViewController *overlayController = [[UAOverlayViewController alloc] initWithParentView:[UAUtils mainWindow]
                                                                                                                       andURL:message.messageBodyURL
                                                                                                                   andMessage:message
                                                                                                                   andHeaders:headers
@@ -280,14 +289,14 @@ static NSMutableSet *overlayControllers_ = nil;
     }
 }
 
-- (instancetype)initWithParentViewController:(UIViewController *)parent andURL:(NSURL *)url andMessage:(UAInboxMessage *)message andHeaders:(NSDictionary *)headers size:(CGSize)size aspectLock:(BOOL)aspectLock {
+- (instancetype)initWithParentView:(UIView *)parent andURL:(NSURL *)url andMessage:(UAInboxMessage *)message andHeaders:(NSDictionary *)headers size:(CGSize)size aspectLock:(BOOL)aspectLock {
     self = [super init];
     if (self) {
 
         self.overlayView = [[UAOverlayView alloc] initWithSize:size aspectLock:aspectLock];
         self.overlayView.alpha = 0.0;
 
-        self.parentViewController = parent;
+        self.parentView = parent;
         self.url = url;
         self.message = message;
         self.headers = headers;
@@ -339,13 +348,12 @@ static NSMutableSet *overlayControllers_ = nil;
 }
 
 - (void)showOverlay {
-
-    UIView *parentView = self.parentViewController.view;
-
-    [parentView addSubview:self.overlayView];
-    self.overlayView.translatesAutoresizingMaskIntoConstraints = NO;
+    UIView *parentView = self.parentView;
 
     if (parentView != nil) {
+        [parentView addSubview:self.overlayView];
+        self.overlayView.translatesAutoresizingMaskIntoConstraints = NO;
+
         // Constrain overlay view to center of parent view
         NSLayoutConstraint *xConstraint = [NSLayoutConstraint constraintWithItem:self.overlayView attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:parentView attribute:NSLayoutAttributeCenterX multiplier:1 constant:0];
         NSLayoutConstraint *yConstraint = [NSLayoutConstraint constraintWithItem:self.overlayView attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:parentView attribute:NSLayoutAttributeCenterY multiplier:1 constant:0];

@@ -5,7 +5,7 @@
 #import "UAInAppMessageBannerDisplayContent+Internal.h"
 #import "UAInAppMessageBannerController+Internal.h"
 #import "UAInAppMessageUtils+Internal.h"
-#import "UAUtils.h"
+#import "UAUtils+Internal.h"
 
 @interface UAInAppMessageBannerAdapter ()
 @property (nonatomic, strong) UAInAppMessage *message;

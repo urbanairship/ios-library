@@ -5,7 +5,7 @@
 #import "UAWhitelist.h"
 #import "UAInboxMessage.h"
 #import "UAGlobal.h"
-#import "UAUtils.h"
+#import "UAUtils+Internal.h"
 #import "UAirship+Internal.h"
 #import "UAInbox.h"
 #import "UAInboxMessage.h"

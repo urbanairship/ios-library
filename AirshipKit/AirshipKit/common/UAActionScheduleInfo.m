@@ -2,7 +2,7 @@
 
 #import "UAActionScheduleInfo.h"
 #import "UAScheduleInfo+Internal.h"
-#import "UAUtils.h"
+#import "UAUtils+Internal.h"
 #import "NSJSONSerialization+UAAdditions.h"
 
 

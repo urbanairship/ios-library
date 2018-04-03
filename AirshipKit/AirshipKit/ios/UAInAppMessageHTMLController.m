@@ -51,6 +51,11 @@ double const UAInAppMessageDefaultHTMLAnimationDuration = 0.2;
  */
 @property (nonatomic, copy, nullable) void (^showCompletionHandler)(UAInAppMessageResolution *);
 
+/**
+ * The previous orientation of the view.
+ */
+@property(nonatomic, assign) UIDeviceOrientation previousOrientation;
+
 @end
 
 @implementation UAInAppMessageHTMLController
@@ -72,9 +77,27 @@ double const UAInAppMessageDefaultHTMLAnimationDuration = 0.2;
 
         self.nativeBridge = [[UAWKWebViewNativeBridge alloc] init];
         self.nativeBridge.forwardDelegate = self;
+
+        [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
+        [[NSNotificationCenter defaultCenter]
+         addObserver:self selector:@selector(orientationChanged:)
+         name:UIDeviceOrientationDidChangeNotification
+         object:nil];
     }
 
     return self;
+}
+
+- (void)orientationChanged:(NSNotification *)note {
+    UIDeviceOrientation orientation = [UIDevice currentDevice].orientation;
+    if (self.previousOrientation != orientation) {
+
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [self.htmlView.webView.scrollView setZoomScale:0 animated:YES];
+        });
+
+        self.previousOrientation = orientation;
+    }
 }
 
 - (UAInAppMessageCloseButton * _Nullable)createCloseButton {
@@ -273,6 +296,8 @@ double const UAInAppMessageDefaultHTMLAnimationDuration = 0.2;
  * and releasing resources that can be disposed of prior to starting the dismissal animation.
  */
 - (void)beginTeardown {
+    [[UIDevice currentDevice] endGeneratingDeviceOrientationNotifications];
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
     self.htmlView.userInteractionEnabled = NO;
 }
 

@@ -1,7 +1,7 @@
 /* Copyright 2018 Urban Airship and Contributors */
 
 #import "NSManagedObjectContext+UAAdditions.h"
-#import "UAUtils.h"
+#import "UAUtils+Internal.h"
 #import "UAGlobal.h"
 
 @implementation NSManagedObjectContext (UAAdditions)

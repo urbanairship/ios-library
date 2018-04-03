@@ -15,7 +15,7 @@
 #import "UAAppForegroundEvent+Internal.h"
 #import "UADeviceRegistrationEvent+Internal.h"
 #import "UAPushReceivedEvent+Internal.h"
-#import "UAUtils.h"
+#import "UAUtils+Internal.h"
 
 
 

@@ -6,12 +6,12 @@
 
 #import "UAUser+Internal.h"
 #import "UAAnalytics+Internal.h"
-#import "UAUtils.h"
+#import "UAUtils+Internal.h"
 #import "UAKeychainUtils+Internal.h"
 #import "UAGlobal.h"
 #import "UAPush+Internal.h"
 #import "UAConfig.h"
-#import "UAApplicationMetrics.h"
+#import "UAApplicationMetrics+Internal.h"
 #import "UAActionRegistry.h"
 #import "UALocation+Internal.h"
 #import "UAAutoIntegration+Internal.h"
@@ -30,7 +30,7 @@
 #if !TARGET_OS_TV
 #import "UAInbox+Internal.h"
 #import "UAActionJSDelegate.h"
-#import "UAChannelCapture.h"
+#import "UAChannelCapture+Internal.h"
 #import "UAMessageCenter.h"
 #import "UAInboxAPIClient+Internal.h"
 #import "UALegacyInAppMessaging+Internal.h"

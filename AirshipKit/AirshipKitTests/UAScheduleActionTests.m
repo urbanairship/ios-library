@@ -7,7 +7,7 @@
 #import "UAActionArguments+Internal.h"
 #import "UAAutomation.h"
 #import "UAirship.h"
-#import "UAUtils.h"
+#import "UAUtils+Internal.h"
 #import "UASchedule+Internal.h"
 #import "UAScheduleInfo+Internal.h"
 #import "UAActionScheduleInfo+Internal.h"

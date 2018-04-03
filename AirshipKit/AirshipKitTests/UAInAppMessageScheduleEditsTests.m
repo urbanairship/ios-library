@@ -5,7 +5,7 @@
 #import "UAInAppMessageScheduleInfo.h"
 #import "UAInAppMessage+Internal.h"
 #import "UAInAppMessageBannerDisplayContent.h"
-#import "UAUtils.h"
+#import "UAUtils+Internal.h"
 #import "UAScheduleInfo+Internal.h"
 
 @interface UAInAppMessageScheduleEditsTests : UABaseTest

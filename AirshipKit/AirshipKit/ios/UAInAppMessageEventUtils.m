@@ -2,7 +2,7 @@
 #import "UAInAppMessage+Internal.h"
 #import "UAAnalytics.h"
 #import "UAirship.h"
-#import "UAUtils.h"
+#import "UAUtils+Internal.h"
 
 NSString *const UAInAppMessageEventIDKey = @"id";
 NSString *const UAInAppMessageEventConversionSendIDKey = @"conversion_send_id";

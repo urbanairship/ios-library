@@ -77,11 +77,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) UAInboxMessageList *messageList;
 
 /**
- * The Inbox API Client
- */
-@property (nonatomic, readonly, strong) UAInboxAPIClient *client;
-
-/**
  * The delegate that should be notified when an incoming push is handled,
  * as an object conforming to the UAInboxDelegate protocol.
  * NOTE: The delegate is not retained.
