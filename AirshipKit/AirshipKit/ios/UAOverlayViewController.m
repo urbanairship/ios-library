@@ -28,7 +28,6 @@ static NSMutableSet *overlayControllers_ = nil;
 
 @property (strong, nonatomic) IBOutlet UIView *containerView;
 @property (strong, nonatomic) IBOutlet UIView *shadeView;
-@property (strong, nonatomic) IBOutlet UIView *backgroundView;
 @property (strong, nonatomic) IBOutlet UIButton *closeButton;
 @property (strong, nonatomic) IBOutlet UIView *closeButtonView;
 @property (strong, nonatomic) IBOutlet UIView *backgroundInsetView;
