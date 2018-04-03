@@ -6,7 +6,7 @@
 #import "UAInAppMessageModalViewController+Internal.h"
 #import "UAInAppMessageMediaView+Internal.h"
 #import "UAInAppMessageUtils+Internal.h"
-#import "UAUtils.h"
+#import "UAUtils+Internal.h"
 
 @interface UAInAppMessageModalAdapter ()
 @property (nonatomic, strong) UAInAppMessage *message;

@@ -3,7 +3,7 @@
 
 #import "UAVersionMatcher+Internal.h"
 #import "UAGlobal.h"
-#import "UAUtils.h"
+#import "UAUtils+Internal.h"
 
 typedef NS_ENUM(NSInteger,UAVersionMatcherConstraintType) {
     UAVersionMatcherConstraintTypeUnknown,

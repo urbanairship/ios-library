@@ -1,7 +1,7 @@
 /* Copyright 2018 Urban Airship and Contributors */
 
 #import "UARemoteDataPayload+Internal.h"
-#import "UAUtils.h"
+#import "UAUtils+Internal.h"
 
 @implementation UARemoteDataPayload
 

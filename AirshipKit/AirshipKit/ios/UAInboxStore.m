@@ -6,7 +6,7 @@
 #import "UAirship+Internal.h"
 #import "NSManagedObjectContext+UAAdditions.h"
 #import "UAConfig.h"
-#import "UAUtils.h"
+#import "UAUtils+Internal.h"
 
 @interface UAInboxStore()
 @property (nonatomic, copy) NSString *storeName;

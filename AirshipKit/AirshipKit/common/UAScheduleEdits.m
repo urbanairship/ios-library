@@ -2,7 +2,7 @@
 
 #import "UAScheduleEdits+Internal.h"
 #import "UAScheduleInfo+Internal.h"
-#import "UAUtils.h"
+#import "UAUtils+Internal.h"
 
 NSString * const UAScheduleEditsErrorDomain = @"com.urbanairship.schedule_edits";
 

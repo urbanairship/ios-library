@@ -1,7 +1,7 @@
 /* Copyright 2018 Urban Airship and Contributors */
 
 #import "UAirship.h"
-#import "UAUtils.h"
+#import "UAUtils+Internal.h"
 #import "UAInAppMessageTextView+Internal.h"
 #import "UAInAppMessageButtonView+Internal.h"
 #import "UAInAppMessageMediaView+Internal.h"

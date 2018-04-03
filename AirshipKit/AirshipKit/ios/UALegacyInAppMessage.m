@@ -1,7 +1,7 @@
 /* Copyright 2018 Urban Airship and Contributors */
 
 #import "UALegacyInAppMessage.h"
-#import "UAUtils.h"
+#import "UAUtils+Internal.h"
 #import "UAColorUtils+Internal.h"
 #import "UAActionArguments.h"
 #import "UAirship+Internal.h"

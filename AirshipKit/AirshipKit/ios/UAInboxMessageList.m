@@ -8,7 +8,7 @@
 #import "UAInboxAPIClient+Internal.h"
 #import "UAInboxMessage+Internal.h"
 #import "UAInboxStore+Internal.h"
-#import "UAUtils.h"
+#import "UAUtils+Internal.h"
 #import "UAUser.h"
 #import "UAURLProtocol.h"
 

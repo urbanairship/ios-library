@@ -3,7 +3,7 @@
 #import "UAChannelAPIClient+Internal.h"
 #import "UAChannelRegistrationPayload+Internal.h"
 #import "UAConfig.h"
-#import "UAUtils.h"
+#import "UAUtils+Internal.h"
 #import "UAirship.h"
 #import "UAAnalytics+Internal.h"
 #import "NSJSONSerialization+UAAdditions.h"

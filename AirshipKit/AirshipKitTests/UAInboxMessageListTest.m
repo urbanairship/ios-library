@@ -8,7 +8,7 @@
 #import "UAirship.h"
 #import "UAConfig.h"
 #import "UAInboxStore+Internal.h"
-#import "UAUtils.h"
+#import "UAUtils+Internal.h"
 
 static UAUser *mockUser_ = nil;
 

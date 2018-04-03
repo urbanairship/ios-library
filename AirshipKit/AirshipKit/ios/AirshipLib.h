@@ -24,7 +24,6 @@
 #import "UABespokeCloseView.h"
 #import "UABeveledLoadingIndicator.h"
 #import "UACancelSchedulesAction.h"
-#import "UAChannelRegistrar.h"
 #import "UACircularRegion.h"
 #import "UAComponent.h"
 #import "UAConfig.h"

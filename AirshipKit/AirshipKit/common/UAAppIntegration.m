@@ -11,7 +11,7 @@
 #import "UANotificationAction.h"
 #import "UANotificationCategory.h"
 #import "UAActionArguments.h"
-#import "UAUtils.h"
+#import "UAUtils+Internal.h"
 #import "UAConfig.h"
 #import "UAActionRunner+Internal.h"
 #import "UAActionRegistry+Internal.h"

@@ -3,7 +3,7 @@
 #import <UIKit/UIKit.h>
 
 #import "UAEventAPIClient+Internal.h"
-#import "UAUtils.h"
+#import "UAUtils+Internal.h"
 #import "UAirship.h"
 #import "UAPush+Internal.h"
 #import "UAUser.h"

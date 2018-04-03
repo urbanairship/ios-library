@@ -1,7 +1,7 @@
 /* Copyright 2018 Urban Airship and Contributors */
 
 #import "UAScheduleInfo+Internal.h"
-#import "UAUtils.h"
+#import "UAUtils+Internal.h"
 
 NSUInteger const UAScheduleInfoMaxTriggers = 10;
 

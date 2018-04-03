@@ -3,7 +3,7 @@
 
 #import "UABaseTest.h"
 #import "UAScheduleDelay.h"
-#import "UAUtils.h"
+#import "UAUtils+Internal.h"
 
 @interface UAScheduleDelayTests : UABaseTest
 

@@ -1,7 +1,7 @@
 /* Copyright 2018 Urban Airship and Contributors */
 
 #import "UAShareAction.h"
-#import "UAUtils.h"
+#import "UAUtils+Internal.h"
 #import "UAGlobal.h"
 #import "UAActivityViewController.h"
 

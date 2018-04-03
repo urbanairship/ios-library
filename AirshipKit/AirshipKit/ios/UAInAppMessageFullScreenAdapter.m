@@ -6,7 +6,7 @@
 #import "UAInAppMessageFullScreenController+Internal.h"
 #import "UAInAppMessageUtils+Internal.h"
 #import "UAInAppMessageMediaView+Internal.h"
-#import "UAUtils.h"
+#import "UAUtils+Internal.h"
 
 @interface UAInAppMessageFullScreenAdapter ()
 @property (nonatomic, strong) UAInAppMessage *message;

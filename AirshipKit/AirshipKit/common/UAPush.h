@@ -3,7 +3,6 @@
 #import "UAGlobal.h"
 #import "UAirship.h"
 #import "UANamedUser.h"
-#import "UAChannelRegistrar.h"
 #import "UANotificationContent.h"
 #import "UANotificationResponse.h"
 #import "UANotificationAction.h"
