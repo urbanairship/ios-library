@@ -64,7 +64,7 @@
 #import "UATextInputNotificationAction.h"
 #import "UAURLProtocol.h"
 #import "UAUser.h"
-#import "UAUtils+Internal.h"
+#import "UAUtils.h"
 #import "UAWhitelist.h"
 #import "UA_Base64.h"
 #import "UAirship.h"
