@@ -370,44 +370,30 @@
     return YES;// For safety, assume production unless the profile is explicitly set to development
 }
 
-- (void)setAnalyticsURL:(NSString *)analyticsURL {
+- (NSString *)normalizeURL:(NSString *)urlString {
     //Any appending url starts with a beginning /, so make sure the base url does not
-    if ([analyticsURL hasSuffix:@"/"]) {
-        UA_LWARN(@"Analytics URL ends with a trailing slash, stripping ending slash.");
-        _analyticsURL = [analyticsURL substringWithRange:NSMakeRange(0, [analyticsURL length] - 1)];
+    if ([urlString hasSuffix:@"/"]) {
+        UA_LWARN(@"URL %@ ends with a trailing slash, stripping ending slash.", urlString);
+        return [urlString substringWithRange:NSMakeRange(0, urlString.length - 1)];
     } else {
-        _analyticsURL = [analyticsURL copy];
+        return [urlString copy];
     }
+}
+
+- (void)setAnalyticsURL:(NSString *)analyticsURL {
+    _analyticsURL = [self normalizeURL:analyticsURL];
 }
 
 - (void)setDeviceAPIURL:(NSString *)deviceAPIURL {
-    //Any appending url starts with a beginning /, so make sure the base url does not
-    if ([deviceAPIURL hasSuffix:@"/"]) {
-        UA_LWARN(@"Device API URL ends with a trailing slash, stripping ending slash.");
-        _deviceAPIURL = [deviceAPIURL substringWithRange:NSMakeRange(0, [deviceAPIURL length] - 1)];
-    } else {
-        _deviceAPIURL = [deviceAPIURL copy];
-    }
+    _deviceAPIURL = [self normalizeURL:deviceAPIURL];
 }
 
 - (void)setRemoteDataAPIURL:(NSString *)remoteDataAPIURL {
-    //Any appending url starts with a beginning /, so make sure the base url does not
-    if ([remoteDataAPIURL hasSuffix:@"/"]) {
-        UA_LWARN(@"Remote Data API URL ends with a trailing slash, stripping ending slash.");
-        _remoteDataAPIURL = [remoteDataAPIURL substringWithRange:NSMakeRange(0, [remoteDataAPIURL length] - 1)];
-    } else {
-        _remoteDataAPIURL = [remoteDataAPIURL copy];
-    }
+    _remoteDataAPIURL = [self normalizeURL:remoteDataAPIURL];
 }
 
 - (void)setLandingPageContentURL:(NSString *)landingPageContentURL {
-    //Any appending url starts with a beginning /, so make sure the base url does not
-    if ([landingPageContentURL hasSuffix:@"/"]) {
-        UA_LWARN(@"Landing page content URL ends with a trailing slash, stripping ending slash.");
-        _landingPageContentURL = [landingPageContentURL substringWithRange:NSMakeRange(0, [landingPageContentURL length] - 1)];
-    } else {
-        _landingPageContentURL = [landingPageContentURL copy];
-    }
+    _landingPageContentURL = [self normalizeURL:landingPageContentURL];
 }
 
 #pragma mark -
