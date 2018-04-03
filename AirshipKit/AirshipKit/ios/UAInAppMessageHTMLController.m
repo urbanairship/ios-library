@@ -52,9 +52,9 @@ double const UAInAppMessageDefaultHTMLAnimationDuration = 0.2;
 @property (nonatomic, copy, nullable) void (^showCompletionHandler)(UAInAppMessageResolution *);
 
 /**
- * The last orientation the view has been in.
+ * The previous orientation of the view.
  */
-@property(nonatomic, assign) UIDeviceOrientation lastOrientation;
+@property(nonatomic, assign) UIDeviceOrientation previousOrientation;
 
 @end
 
@@ -90,13 +90,13 @@ double const UAInAppMessageDefaultHTMLAnimationDuration = 0.2;
 
 - (void)orientationChanged:(NSNotification *)note {
     UIDeviceOrientation orientation = [UIDevice currentDevice].orientation;
-    if (self.lastOrientation != orientation) {
+    if (self.previousOrientation != orientation) {
 
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             [self.htmlView.webView.scrollView setZoomScale:0 animated:YES];
         });
 
-        self.lastOrientation = orientation;
+        self.previousOrientation = orientation;
     }
 }
 
