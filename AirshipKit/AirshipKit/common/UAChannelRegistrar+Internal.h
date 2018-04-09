@@ -60,12 +60,12 @@ NS_ASSUME_NONNULL_BEGIN
 /**
 * Last successful payload date JSON key.
 */
-extern NSString *const lastSuccessfulUpdateKey;
+extern NSString *const UALastSuccessfulUpdateKey;
 
 /**
  * Last payload JSON key.
  */
-extern NSString *const lastSuccessfulPayloadKey;
+extern NSString *const UALastSuccessfulPayloadKey;
 
 /**
  * The channel API client.
@@ -97,7 +97,7 @@ extern NSString *const lastSuccessfulPayloadKey;
  * @param config The Urban Airship config.
  * @return A new channel registrar instance.
  */
-+ (instancetype)channelRegistrarWithConfig:(UAConfig *)config;
++ (instancetype)channelRegistrarWithConfig:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore;
 
 ///---------------------------------------------------------------------------------------
 /// @name Channel Registrar Registration Management

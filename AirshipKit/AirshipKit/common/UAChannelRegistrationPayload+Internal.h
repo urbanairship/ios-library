@@ -4,29 +4,29 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-extern NSString *const kUAChannelIdentityHintsKey;
-extern NSString *const kUAChannelUserIDKey;
-extern NSString *const kUAChannelDeviceIDKey;
+extern NSString *const UAChannelIdentityHintsKey;
+extern NSString *const UAChannelUserIDKey;
+extern NSString *const UAChannelDeviceIDKey;
 
-extern NSString *const kUAChannelKey;
-extern NSString *const kUAChannelDeviceTypeKey;
-extern NSString *const kUAChannelOptInKey;
-extern NSString *const kUAChannelPushAddressKey;
+extern NSString *const UAChannelKey;
+extern NSString *const UAChannelDeviceTypeKey;
+extern NSString *const UAChannelOptInKey;
+extern NSString *const UAChannelPushAddressKey;
 
-extern NSString *const kUAChannelTopLevelTimeZoneJSONKey;
-extern NSString *const kUAChannelTopLevelLanguageJSONKey;
-extern NSString *const kUAChannelTopLevelCountryJSONKey;
+extern NSString *const UAChannelTopLevelTimeZoneJSONKey;
+extern NSString *const UAChannelTopLevelLanguageJSONKey;
+extern NSString *const UAChannelTopLevelCountryJSONKey;
 
-extern NSString *const kUAChanneliOSKey;
-extern NSString *const kUAChannelBadgeJSONKey;
-extern NSString *const kUAChannelQuietTimeJSONKey;
-extern NSString *const kUAChannelTimeZoneJSONKey;
+extern NSString *const UAChanneliOSKey;
+extern NSString *const UAChannelBadgeJSONKey;
+extern NSString *const UAChannelQuietTimeJSONKey;
+extern NSString *const UAChannelTimeZoneJSONKey;
 
-extern NSString *const kUAChannelAliasJSONKey;
-extern NSString *const kUAChannelSetTagsKey;
-extern NSString *const kUAChannelTagsJSONKey;
+extern NSString *const UAChannelAliasJSONKey;
+extern NSString *const UAChannelSetTagsKey;
+extern NSString *const UAChannelTagsJSONKey;
 
-extern NSString *const kUABackgroundEnabledJSONKey;
+extern NSString *const UABackgroundEnabledJSONKey;
 
 /**
  * Model object encapsulating the data relevant to a creation or updates processed by UAChannelAPIClient.

@@ -113,7 +113,7 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
 
         self.registrationBackgroundTask = UIBackgroundTaskInvalid;
 
-        self.channelRegistrar = [UAChannelRegistrar channelRegistrarWithConfig:config];
+        self.channelRegistrar = [UAChannelRegistrar channelRegistrarWithConfig:config dataStore:dataStore];
         self.channelRegistrar.delegate = self;
 
         self.tagGroupsAPIClient = [UATagGroupsAPIClient clientWithConfig:config];

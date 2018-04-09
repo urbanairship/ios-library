@@ -11,8 +11,8 @@
 
 NSTimeInterval const k24HoursInSeconds = 24 * 60 * 60;
 
-NSString *const lastSuccessfulUpdateKey = @"last-update-key";
-NSString *const lastSuccessfulPayloadKey = @"payload-key";
+NSString *const UALastSuccessfulUpdateKey = @"last-update-key";
+NSString *const UALastSuccessfulPayloadKey = @"payload-key";
 
 UAConfig *config;
 
@@ -21,32 +21,30 @@ UAConfig *config;
 @synthesize lastSuccessfulPayload = _lastSuccessfulPayload;
 @synthesize lastSuccessfulUpdateDate = _lastSuccessfulUpdateDate;
 
--(id)initWithConfig:(UAConfig *)config {
+-(id)initWithConfig:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
     self = [super init];
     if (self) {
         self.channelAPIClient = [UAChannelAPIClient clientWithConfig:config];
         self.isRegistrationInProgress = NO;
-        self.dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:[NSString stringWithFormat:@"com.urbanairship.%@.", config.appKey]];
+        self.dataStore = dataStore;
     }
 
     return self;
 }
 
-+ (instancetype)channelRegistrarWithConfig:(UAConfig *)config {
-    return [[UAChannelRegistrar alloc] initWithConfig:config];
++ (instancetype)channelRegistrarWithConfig:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
+    return [[UAChannelRegistrar alloc] initWithConfig:config dataStore:dataStore];
 }
 
 - (BOOL)shouldUpdateRegistration:(UAChannelRegistrationPayload *)payload {
-    NSTimeInterval timeSinceLastUpdate = [[NSDate date] timeIntervalSinceDate:self.lastSuccessUpdateDate];
-
-    BOOL differsFromLastPayload = ![payload isEqualToPayload:self.lastSuccessfulPayload];
+    NSTimeInterval timeSinceLastUpdate = [[NSDate date] timeIntervalSinceDate:self.lastSuccessfulUpdateDate];
 
     if (self.lastSuccessfulPayload == nil) {
         UA_LDEBUG(@"Should update registration. Last payload is nil.");
         return true;
     }
 
-    if (differsFromLastPayload) {
+    if (![payload isEqualToPayload:self.lastSuccessfulPayload]) {
         UA_LDEBUG(@"Should update registration. Channel registration payload has changed.");
         return true;
     }
@@ -77,7 +75,7 @@ UAConfig *config;
         if (!channelID || !channelLocation) {
             [self createChannelWithPayload:payloadCopy];
         } else {
-            [self updateChannel:channelID channelLocation:channelLocation withPayload:payloadCopy forcefully:forcefully];
+            [self updateChannel:channelID channelLocation:channelLocation withPayload:payloadCopy];
         }
 
     } else {
@@ -93,7 +91,7 @@ UAConfig *config;
     // or not, so just clear the last success payload and time.
     if (self.isRegistrationInProgress) {
         self.lastSuccessfulPayload = nil;
-        self.lastSuccessUpdateDate = [NSDate distantPast];
+        self.lastSuccessfulUpdateDate = [NSDate distantPast];
     }
 
     self.isRegistrationInProgress = NO;
@@ -101,8 +99,7 @@ UAConfig *config;
 
 - (void)updateChannel:(NSString *)channelID
       channelLocation:(NSString *)location
-          withPayload:(UAChannelRegistrationPayload *)payload
-           forcefully:(BOOL)forcefully {
+          withPayload:(UAChannelRegistrationPayload *)payload {
     UA_LDEBUG(@"Updating channel %@", channelID);
 
     UA_WEAKIFY(self);
@@ -225,7 +222,7 @@ UAConfig *config;
     }
 
     self.lastSuccessfulPayload = payload;
-    self.lastSuccessUpdateDate = [NSDate date];
+    self.lastSuccessfulUpdateDate = [NSDate date];
     self.isRegistrationInProgress = NO;
 
     id strongDelegate = self.delegate;
@@ -235,7 +232,7 @@ UAConfig *config;
 }
 
 - (UAChannelRegistrationPayload *)lastSuccessfulPayload {
-    NSData *payloadData = [self.dataStore objectForKey:lastSuccessfulPayloadKey];
+    NSData *payloadData = [self.dataStore objectForKey:UALastSuccessfulPayloadKey];
 
     if (payloadData == nil || ![payloadData isKindOfClass:[NSData class]]) {
         return nil;
@@ -246,16 +243,16 @@ UAConfig *config;
 
 - (void)setLastSuccessfulPayload:(UAChannelRegistrationPayload *)payload {
     _lastSuccessfulPayload = payload;
-    [self.dataStore setObject:payload.asJSONData forKey:lastSuccessfulPayloadKey];
+    [self.dataStore setObject:payload.asJSONData forKey:UALastSuccessfulPayloadKey];
 }
 
-- (NSDate *)lastSuccessUpdateDate {
-    return [self.dataStore objectForKey:lastSuccessfulUpdateKey] ?: [NSDate distantPast];
+- (NSDate *)lastSuccessfulUpdateDate {
+    return [self.dataStore objectForKey:UALastSuccessfulUpdateKey] ?: [NSDate distantPast];
 }
 
 - (void)setLastSuccessUpdateDate:(NSDate *)date {
     _lastSuccessfulUpdateDate = date;
-    [self.dataStore setObject:date forKey:lastSuccessfulUpdateKey];
+    [self.dataStore setObject:date forKey:UALastSuccessfulUpdateKey];
 }
 
 // Must be called on main queue
