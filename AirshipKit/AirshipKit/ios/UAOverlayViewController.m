@@ -49,9 +49,9 @@ static NSMutableSet *overlayControllers_ = nil;
 
 @implementation UAOverlayView
 
-+ (id)overlayViewWithSize:(CGSize)size aspectLock:(BOOL)aspectLock owner:(id)owner {
++ (id)overlayViewWithSize:(CGSize)size aspectLock:(BOOL)aspectLock {
     NSBundle *bundle = [UAirship resources];
-    UAOverlayView *view = [[bundle loadNibNamed:kUAOverlayViewNibName owner:owner options:nil] firstObject];
+    UAOverlayView *view = [[bundle loadNibNamed:kUAOverlayViewNibName owner:nil options:nil] firstObject];
 
     if (view) {
         view.size = size;
@@ -293,7 +293,7 @@ static NSMutableSet *overlayControllers_ = nil;
     self = [super init];
     if (self) {
 
-        self.overlayView = [UAOverlayView overlayViewWithSize:size aspectLock:aspectLock owner:self];
+        self.overlayView = [UAOverlayView overlayViewWithSize:size aspectLock:aspectLock];
         self.overlayView.alpha = 0.0;
 
         self.parentView = parent;
