@@ -237,6 +237,8 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
         builder.buttons = buttonInfos;
     }];
 
+    id<UALegacyInAppMessageBuilderExtender> extender = self.builderExtender;
+
     UAInAppMessageScheduleInfo *scheduleInfo = [UAInAppMessageScheduleInfo scheduleInfoWithBuilderBlock:^(UAInAppMessageScheduleInfoBuilder * _Nonnull builder) {
 
         UAScheduleTrigger *trigger;
@@ -257,9 +259,19 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
             builder.displayContent = displayContent;
             builder.extras = message.extra;
             builder.identifier = message.identifier;
+
+            // Allow the app to customize the message builder if necessary
+            if (extender && [extender respondsToSelector:@selector(extendMessageBuilder:message:)]) {
+                [extender extendMessageBuilder:builder message:message];
+            }
         }];
 
         builder.message = newMessage;
+
+        // Allow the app to customize the schedule info builder if necessary
+        if (extender && [extender respondsToSelector:@selector(extendScheduleInfoBuilder:message:)]) {
+            [extender extendScheduleInfoBuilder:builder message:message];
+        }
     }];
 
     return scheduleInfo;
