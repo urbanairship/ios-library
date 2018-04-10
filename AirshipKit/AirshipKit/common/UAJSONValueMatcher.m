@@ -20,7 +20,8 @@ NSString *const UAJSONValueMatcherAtMost = @"at_most";
 NSString *const UAJSONValueMatcherAtLeast = @"at_least";
 NSString *const UAJSONValueMatcherEquals = @"equals";
 NSString *const UAJSONValueMatcherIsPresent = @"is_present";
-NSString *const UAJSONValueMatcherVersionConstraint = @"version";
+NSString *const UAJSONValueMatcherVersionConstraint = @"version_matches";
+NSString *const UAJSONValueMatcherAlternateVersionConstraint = @"version";
 NSString *const UAJSONValueMatcherArrayContains = @"array_contains";
 NSString *const UAJSONValueMatcherArrayIndex = @"index";
 
@@ -205,6 +206,11 @@ NSString * const UAJSONValueMatcherErrorDomain = @"com.urbanairship.json_value_m
     }
 
     UAJSONValueMatcher *matcher = [self matcherWithVersionConstraint:json[UAJSONValueMatcherVersionConstraint]];
+    if (matcher) {
+        return matcher;
+    }
+    
+    matcher = [self matcherWithVersionConstraint:json[UAJSONValueMatcherAlternateVersionConstraint]];
     if (matcher) {
         return matcher;
     }

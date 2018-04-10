@@ -249,6 +249,19 @@
     XCTAssertFalse([matcher evaluateObject:@[]]);
 }
 
+- (void)testVersionMatcher {
+    NSError *error;
+    UAJSONValueMatcher *matcher = [UAJSONValueMatcher matcherWithJSON:@{ @"version_matches": @"9.9" } error:&error];
+    XCTAssertFalse([matcher evaluateObject:@"9.0"]);
+    XCTAssertTrue([matcher evaluateObject:@"9.9"]);
+    XCTAssertFalse([matcher evaluateObject:@"10.0"]);
+
+    matcher = [UAJSONValueMatcher matcherWithJSON:@{ @"version": @"8.9" } error:&error];
+    XCTAssertFalse([matcher evaluateObject:@"8.0"]);
+    XCTAssertTrue([matcher evaluateObject:@"8.9"]);
+    XCTAssertFalse([matcher evaluateObject:@"9.0"]);
+}
+
 - (void)testInvalidPayload {
     // Invalid combo
     NSError *error;
@@ -281,11 +294,17 @@
     XCTAssertNotNil(error);
 
     // Invalid range value
-    json = @{ @"version": @"cool story" };
+    json = @{ @"version_matches": @"cool story" };
     error = nil;
     XCTAssertNil([UAJSONValueMatcher matcherWithJSON:json error:&error]);
     XCTAssertNotNil(error);
 
+    // Invalid range value
+    json = @{ @"version": @"cool story" };
+    error = nil;
+    XCTAssertNil([UAJSONValueMatcher matcherWithJSON:json error:&error]);
+    XCTAssertNotNil(error);
+    
     // Invalid object
     error = nil;
     XCTAssertNil([UAJSONValueMatcher matcherWithJSON:@"cool" error:&error]);
