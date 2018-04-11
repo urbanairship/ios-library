@@ -15,30 +15,39 @@ DERIVED_DATA=$(mktemp -d /tmp/ci-derived-data-XXXXX)
 
 start_time=`date +%s`
 
+MODE="all"
+
 TESTS=false
 SAMPLES=false
 POD_LINT=false
 FULL_SDK_BUILD=false
 
-OPTS=`getopt hatscf $*`
+# Parse arguments
+OPTS=`getopt hm: $*`
 if [ $? != 0 ] ; then echo "Failed parsing options." >&2 ; exit 1 ; fi
 eval set -- "$OPTS"
 
 while true; do
   case "$1" in
-    -h  ) echo -ne " -a for all \n -t for tests \n -s for samples \n -d for docs \n -f for full SDK build (static lib, docs, package) \n -c for pod lint \n"; exit 1;;
-    -a  ) TESTS=true;SAMPLES=true;POD_LINT=true;FULL_SDK_BUILD=true;;
-    -t  ) TESTS=true;;
-    -s  ) SAMPLES=true;;
-    -c  ) POD_LINT=true;;
-    -f  ) FULL_SDK_BUILD=true;;
+    -h  ) echo -ne "-m to set the mode. \n  Available modes: all, merge, pr. Defaults to all. \n"; exit 0;;
+    -m  ) MODE=$2; shift;;
     --  ) ;;
     *   ) break ;;
   esac
   shift
 done
 
-echo -ne "CI with options - tests:${TESTS} samples:${SAMPLES} pod lint:${POD_LINT} full sdk build:${FULL_SDK_BUILD}\n\n"
+# Enable steps based on mode
+shopt -s nocasematch
+case $MODE in
+  all   ) FULL_SDK_BUILD=true;SAMPLES=true;TESTS=true;POD_LINT=true;;
+  merge ) FULL_SDK_BUILD=true;SAMPLES=true;POD_LINT=true;;
+  pr    ) TESTS=true;;
+  *   ) echo "invalid mode"; exit 1;;
+esac
+shopt -u nocasematch
+
+echo -ne "Runnig CI tasks in mode:${MODE} \n\n";
 
 
 ##################################################################################################
@@ -48,9 +57,11 @@ echo -ne "\n\n *********** BUILDING SDK *********** \n\n"
 
 if [ $FULL_SDK_BUILD = true ]
 then
+  # Build all
   ./${SCRIPT_DIRECTORY}/build.sh -a
 else
-  ./${SCRIPT_DIRECTORY}/build.sh
+  # Only the framework
+  ./${SCRIPT_DIRECTORY}/build.sh -f
 fi
 
 ##################################################################################################
