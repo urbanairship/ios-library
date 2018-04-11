@@ -6,17 +6,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-
-/**
- * Max priority that a schedule can be given. This is a negative integer.
- */
-extern NSInteger const UAScheduleInfoMaxPriority;
-
-/**
- * Min priority that a schedule can be given. This is a positive integer.
- */
-extern NSInteger const UAScheduleInfoMinPriority;
-
 /**
  * Max number of triggers a schedule can support.
  */
