@@ -28,6 +28,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+/**
+ * A protocol for extending the default conversion between legacy in-app messages and v2 scheduled messages.
+ */
 @protocol UALegacyInAppMessageBuilderExtender <NSObject>
 
 @optional
