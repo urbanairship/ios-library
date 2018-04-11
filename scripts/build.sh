@@ -15,89 +15,73 @@ VERSION=$(awk <$ROOT_PATH/AirshipKit/AirshipConfig.xcconfig "\$1 == \"CURRENT_PR
 DOCS=false
 STATIC_LIB=false
 PACKAGE=false
+FRAMEWORK=false
 
-OPTS=`getopt hadlp $*`
+OPTS=`getopt hadlpf $*`
 if [ $? != 0 ] ; then echo "Failed parsing options." >&2 ; exit 1 ; fi
 eval set -- "$OPTS"
 
 while true; do
   case "$1" in
-    -h  ) echo -ne " -a for all \n-d for docs \n -l for static lib \n -p to package the release. This option includes all. \n"; exit 1;;
-    -a  ) DOCS=true;STATIC_LIB=true;PACKAGE=true;;
+    -h  ) echo -ne " -a for all \n-d for docs \n -l for static lib \n -p to package the release. This option includes all. \n"; exit 0;;
+    -a  ) DOCS=true;STATIC_LIB=true;PACKAGE=true;FRAMEWORK=true;;
     -d  ) DOCS=true;;
     -l  ) STATIC_LIB=true;;
-    -p  ) DOCS=true;STATIC_LIB=true;PACKAGE=true;;
+    -f  ) FRAMEWORK=true;;
+    -p  ) DOCS=true;STATIC_LIB=true;PACKAGE=true;FRAMEWORK=true;;
     --  ) ;;
     *   ) break ;;
   esac
   shift
 done
 
-echo -ne "Build with options - docs:${DOCS} static-lib:${STATIC_LIB} package:${PACKAGE}\n\n"
+echo -ne "Build with options - docs:${DOCS} static-lib:${STATIC_LIB} package:${PACKAGE} framework:${FRAMEWORK}\n\n"
 
 # Clean up output directory
 rm -rf $DESTINATION
 mkdir -p $DESTINATION
 mkdir -p $STAGING
 
-########################
-# Build resource bundles
-########################
-echo -ne "\n\n *********** BUILDING RESOURCE BUNDLES *********** \n\n"
-
-xcrun xcodebuild -configuration "Release" \
--project "${ROOT_PATH}/AirshipKit/AirshipKit.xcodeproj" \
--target "AirshipResources" \
--sdk "iphoneos" \
-clean build \
-ONLY_ACTIVE_ARCH=NO \
-BUILD_DIR="${TEMP_DIR}/AirshipResources" \
-SYMROOT="${TEMP_DIR}/AirshipResources" \
-OBJROOT="${TEMP_DIR}/AirshipResources/obj" \
-BUILD_ROOT="${TEMP_DIR}/AirshipResources" \
-TARGET_BUILD_DIR="${TEMP_DIR}/AirshipResources/Release-iphoneos"
-
-xcrun xcodebuild -configuration "Release" \
--project "${ROOT_PATH}/AirshipKit/AirshipKit.xcodeproj" \
--target "AirshipResources tvOS" \
--sdk "appletvos" \
-clean build \
-ONLY_ACTIVE_ARCH=NO \
-BUILD_DIR="${TEMP_DIR}/AirshipResources tvOS" \
-SYMROOT="${TEMP_DIR}/AirshipResources tvOS" \
-OBJROOT="${TEMP_DIR}/AirshipResources tvOS/obj" \
-BUILD_ROOT="${TEMP_DIR}/AirshipResources tvOS" \
-TARGET_BUILD_DIR="${TEMP_DIR}/AirshipResources tvOS/Release-appletvos"
-
 ##################
 # Build frameworks
 ##################
-echo -ne "\n\n *********** BUILDING AIRSHIPKIT *********** \n\n"
 
-# iphoneOS
-xcrun xcodebuild -configuration "Release" \
--project "${ROOT_PATH}/AirshipKit/AirshipKit.xcodeproj" \
--target "AirshipKit" \
--sdk "iphoneos" \
+if [ $FRAMEWORK = true ]
+then
+  echo -ne "\n\n *********** BUILDING AIRSHIPKIT *********** \n\n"
 
-# tvOS
-xcrun xcodebuild -configuration "Release" \
--project "${ROOT_PATH}/AirshipKit/AirshipKit.xcodeproj" \
--target "AirshipKit tvOS" \
--sdk "appletvos" \
+  # iphoneOS
+  xcrun xcodebuild -configuration "Release" \
+  -project "${ROOT_PATH}/AirshipKit/AirshipKit.xcodeproj" \
+  -target "AirshipKit" \
+  -sdk "iphoneos" \
+  BUILD_DIR="${TEMP_DIR}/AirshipKit" \
+  SYMROOT="${TEMP_DIR}/AirshipKit" \
+  OBJROOT="${TEMP_DIR}/AirshipKit/obj" \
+  BUILD_ROOT="${TEMP_DIR}/AirshipKit"
+  # tvOS
+  xcrun xcodebuild -configuration "Release" \
+  -project "${ROOT_PATH}/AirshipKit/AirshipKit.xcodeproj" \
+  -target "AirshipKit tvOS" \
+  -sdk "appletvos" \
+  BUILD_DIR="${TEMP_DIR}/AirshipKit" \
+  SYMROOT="${TEMP_DIR}/AirshipKit" \
+  OBJROOT="${TEMP_DIR}/AirshipKit/obj" \
+  BUILD_ROOT="${TEMP_DIR}/AirshipKit"
 
-# Verify the iOS resource bundle does not contain an executable
-IOS_BUNDLE_EXECTUABLE="${TEMP_DIR}/AirshipResources/Release-iphoneos/AirshipResources.bundle/AirshipResources"
-if [ -f $IOS_BUNDLE_EXECTUABLE ]; then
-  echo "Error: iOS AirshipResources.bundle executable exists."
-  exit 1
-fi
+  # Verify the iOS resource bundle does not contain an executable
+  IOS_BUNDLE_EXECUTABLE="${TEMP_DIR}/AirshipKit/Release-iphoneos/AirshipResources.bundle/AirshipResources"
+  if [ -f $IOS_BUNDLE_EXECUTABLE ]; then
+    echo "Error: iOS AirshipResources.bundle executable exists."
+    exit 1
+  fi
 
-# Verify the tvOS resource bundle does not contain an executable
-TV_BUNDLE_EXECTUABLE="${TEMP_DIR}/AirshipResources/Release-appletvos/AirshipResources tvOS.bundle/AirshipResources"
-if [ -f $TV_BUNDLE_EXECTUABLE ]; then
-  echo "Error: tvOS AirshipResources.bundle executable exists."
-  exit 1
+  # Verify the tvOS resource bundle does not contain an executable
+  TV_BUNDLE_EXECUTABLE="${TEMP_DIR}/AirshipKit/Release-appletvos/AirshipResources tvOS.bundle/AirshipResources"
+  if [ -f "${TV_BUNDLE_EXECUTABLE}" ]; then
+    echo "Error: tvOS AirshipResources.bundle executable exists."
+    exit 1
+  fi
 fi
 
 ######################
@@ -107,6 +91,19 @@ fi
 if [ $STATIC_LIB = true ]
 then
   echo -ne "\n\n *********** BUILDING STATIC LIB *********** \n\n"
+
+  # Resource bundle
+  xcrun xcodebuild -configuration "Release" \
+  -project "${ROOT_PATH}/AirshipKit/AirshipKit.xcodeproj" \
+  -target "AirshipResources" \
+  -sdk "iphoneos" \
+  clean build \
+  ONLY_ACTIVE_ARCH=NO \
+  BUILD_DIR="${TEMP_DIR}/AirshipResources" \
+  SYMROOT="${TEMP_DIR}/AirshipResources" \
+  OBJROOT="${TEMP_DIR}/AirshipResources/obj" \
+  BUILD_ROOT="${TEMP_DIR}/AirshipResources" \
+  TARGET_BUILD_DIR="${TEMP_DIR}/AirshipResources/Release-iphoneos"
 
   # iphoneOS
   xcrun xcodebuild -configuration "Release" \
@@ -136,6 +133,13 @@ then
   OBJROOT="${TEMP_DIR}/AirshipLib/obj" \
   BUILD_ROOT="${TEMP_DIR}/AirshipLib" \
   TARGET_BUILD_DIR="${TEMP_DIR}/AirshipLib/iphonesimulator"
+
+  # Verify the iOS resource bundle does not contain an executable
+  IOS_BUNDLE_EXECUTABLE="${TEMP_DIR}/AirshipResources/Release-iphoneos/AirshipResources.bundle/AirshipResources"
+  if [ -f $IOS_BUNDLE_EXECUTABLE ]; then
+    echo "Error: iOS AirshipResources.bundle executable exists."
+    exit 1
+  fi
 
   # Create a universal static library the two static libraries
   xcrun -sdk iphoneos lipo -create -output "${TEMP_DIR}/AirshipLib/libUAirship-${VERSION}.a" "${TEMP_DIR}/AirshipLib/iphoneos/libUAirship.a" "${TEMP_DIR}/AirshipLib/iphonesimulator/libUAirship.a"
