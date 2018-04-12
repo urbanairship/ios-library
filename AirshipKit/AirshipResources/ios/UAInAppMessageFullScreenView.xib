@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="13529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
-    <device id="retina4_7" orientation="portrait">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina5_9" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13527"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -13,35 +13,45 @@
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
         <view contentMode="scaleToFill" id="iN0-l3-epB" customClass="UAInAppMessageFullScreenView">
-            <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+            <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleAspectFill" bounces="NO" showsHorizontalScrollIndicator="NO" bouncesZoom="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hEr-Uv-JrX">
-                    <rect key="frame" x="0.0" y="20" width="375" height="647"/>
+                    <rect key="frame" x="0.0" y="44" width="375" height="734"/>
                     <subviews>
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="nxZ-dF-if9" userLabel="WrapperView">
-                            <rect key="frame" x="0.0" y="0.0" width="375" height="650"/>
+                            <rect key="frame" x="0.0" y="0.0" width="375" height="900"/>
                             <subviews>
-                                <stackView opaque="NO" contentMode="scaleToFill" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" axis="vertical" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="Dgh-Mi-mKc" userLabel="Full Screen Stack View">
-                                    <rect key="frame" x="0.0" y="0.0" width="375" height="595"/>
+                                <stackView opaque="NO" contentMode="scaleToFill" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" axis="vertical" spacing="24" translatesAutoresizingMaskIntoConstraints="NO" id="Dgh-Mi-mKc" userLabel="Full Screen Stack View">
+                                    <rect key="frame" x="0.0" y="0.0" width="375" height="804"/>
                                 </stackView>
                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="rsN-La-UOG" userLabel="Footer Container View">
-                                    <rect key="frame" x="0.0" y="605" width="375" height="35"/>
+                                    <rect key="frame" x="24" y="828" width="327" height="48"/>
                                     <constraints>
-                                        <constraint firstAttribute="height" constant="35" placeholder="YES" id="XdO-ZE-UJI"/>
+                                        <constraint firstAttribute="height" constant="48" placeholder="YES" id="XdO-ZE-UJI"/>
+                                    </constraints>
+                                </view>
+                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Hxr-ai-woU" userLabel="Close Button Container View">
+                                    <rect key="frame" x="329" y="0.0" width="46" height="46"/>
+                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                    <constraints>
+                                        <constraint firstAttribute="height" constant="46" id="Eaf-FR-3JQ"/>
+                                        <constraint firstAttribute="width" constant="46" id="agT-Wc-9oV"/>
                                     </constraints>
                                 </view>
                             </subviews>
                             <constraints>
-                                <constraint firstItem="rsN-La-UOG" firstAttribute="top" relation="greaterThanOrEqual" secondItem="Dgh-Mi-mKc" secondAttribute="bottom" constant="10" id="0D6-HO-TmE"/>
+                                <constraint firstItem="rsN-La-UOG" firstAttribute="top" relation="greaterThanOrEqual" secondItem="Dgh-Mi-mKc" secondAttribute="bottom" constant="24" id="0D6-HO-TmE"/>
                                 <constraint firstItem="Dgh-Mi-mKc" firstAttribute="trailing" secondItem="nxZ-dF-if9" secondAttribute="trailing" id="38K-Ja-MKv"/>
-                                <constraint firstAttribute="height" constant="650" placeholder="YES" identifier="This is removed at build time" id="4V8-J1-qgU"/>
-                                <constraint firstItem="rsN-La-UOG" firstAttribute="bottom" secondItem="nxZ-dF-if9" secondAttribute="bottom" constant="-10" id="4iw-X8-Uyp"/>
-                                <constraint firstAttribute="bottom" secondItem="Dgh-Mi-mKc" secondAttribute="bottom" priority="999" constant="10" identifier="Fallback constraint when footer is nil." id="BXZ-hk-yfh"/>
-                                <constraint firstItem="rsN-La-UOG" firstAttribute="trailing" secondItem="nxZ-dF-if9" secondAttribute="trailing" id="Cz9-uT-xrE"/>
+                                <constraint firstAttribute="height" constant="900" placeholder="YES" identifier="This is removed at build time" id="4V8-J1-qgU"/>
+                                <constraint firstAttribute="bottom" secondItem="rsN-La-UOG" secondAttribute="bottom" constant="24" id="4iw-X8-Uyp"/>
+                                <constraint firstAttribute="bottom" secondItem="Dgh-Mi-mKc" secondAttribute="bottom" priority="999" constant="24" identifier="Fallback constraint when footer is nil." id="BXZ-hk-yfh"/>
+                                <constraint firstItem="rsN-La-UOG" firstAttribute="trailing" secondItem="nxZ-dF-if9" secondAttribute="trailing" constant="-24" id="Cz9-uT-xrE"/>
                                 <constraint firstItem="Dgh-Mi-mKc" firstAttribute="top" secondItem="nxZ-dF-if9" secondAttribute="top" id="HHM-b9-y3E"/>
                                 <constraint firstItem="Dgh-Mi-mKc" firstAttribute="leading" secondItem="nxZ-dF-if9" secondAttribute="leading" id="IJV-07-dM9"/>
-                                <constraint firstItem="rsN-La-UOG" firstAttribute="leading" secondItem="nxZ-dF-if9" secondAttribute="leading" id="tFr-IR-Zo3"/>
+                                <constraint firstItem="Hxr-ai-woU" firstAttribute="top" secondItem="nxZ-dF-if9" secondAttribute="top" id="pjZ-wy-j9K"/>
+                                <constraint firstAttribute="trailing" secondItem="Hxr-ai-woU" secondAttribute="trailing" id="t8Z-cW-QYE"/>
+                                <constraint firstItem="rsN-La-UOG" firstAttribute="leading" secondItem="nxZ-dF-if9" secondAttribute="leading" constant="24" id="tFr-IR-Zo3"/>
                             </constraints>
                         </view>
                     </subviews>
@@ -65,9 +75,11 @@
             </constraints>
             <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
             <connections>
+                <outlet property="closeButtonContainer" destination="Hxr-ai-woU" id="2ff-g1-utr"/>
                 <outlet property="containerStackView" destination="Dgh-Mi-mKc" id="2tL-PN-m1G"/>
                 <outlet property="footerButtonContainer" destination="rsN-La-UOG" id="sTA-XJ-G1s"/>
                 <outlet property="scrollView" destination="hEr-Uv-JrX" id="gLP-dp-phf"/>
+                <outlet property="wrapperView" destination="nxZ-dF-if9" id="jRj-kq-uDK"/>
             </connections>
             <point key="canvasLocation" x="220.5" y="8.5"/>
         </view>
