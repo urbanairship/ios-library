@@ -23,7 +23,7 @@ NSString *const UAInAppMessageBannerContentViewNibName = @"UAInAppMessageBannerC
 
 @implementation UAInAppMessageBannerContentView
 
-+ (instancetype)contentViewWithLayout:(UAInAppMessageBannerContentLayoutType)contentLayout textView:(UAInAppMessageTextView *)textView mediaView:(UAInAppMessageMediaView * _Nullable)mediaView {
++ (instancetype)contentViewWithLayout:(UAInAppMessageBannerContentLayoutType)contentLayout textView:(UAInAppMessageTextView *)textView mediaView:(UAInAppMessageMediaView * _Nullable)mediaView owner:(id)owner {
     NSString *nibName = UAInAppMessageBannerContentViewNibName;
     NSBundle *bundle = [UAirship resources];
     UAInAppMessageBannerContentView *view;
@@ -31,10 +31,10 @@ NSString *const UAInAppMessageBannerContentViewNibName = @"UAInAppMessageBannerC
     // Left and right IAM views are firstObject and lastObject, respectively.
     switch (contentLayout) {
         case UAInAppMessageBannerContentLayoutTypeMediaLeft:
-            view = [[bundle loadNibNamed:nibName owner:nil options:nil] firstObject];
+            view = [[bundle loadNibNamed:nibName owner:owner options:nil] firstObject];
             break;
         case UAInAppMessageBannerContentLayoutTypeMediaRight:
-            view = [[bundle loadNibNamed:nibName owner:nil options:nil] lastObject];
+            view = [[bundle loadNibNamed:nibName owner:owner options:nil] lastObject];
             break;
     }
     

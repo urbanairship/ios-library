@@ -21,12 +21,13 @@ NSString *const UAInAppMessageTextViewNibName = @"UAInAppMessageTextView";
 @implementation UAInAppMessageTextView
 
 + (nullable instancetype)textViewWithHeading:(UAInAppMessageTextInfo * _Nullable)heading
-                               body:(UAInAppMessageTextInfo * _Nullable)body {
+                                        body:(UAInAppMessageTextInfo * _Nullable)body
+                                       owner:(id)owner{
     
     NSString *nibName = UAInAppMessageTextViewNibName;
     NSBundle *bundle = [UAirship resources];
 
-    UAInAppMessageTextView *view = [[bundle loadNibNamed:nibName owner:nil options:nil] firstObject];
+    UAInAppMessageTextView *view = [[bundle loadNibNamed:nibName owner:owner options:nil] firstObject];
 
     if (view) {
         view.translatesAutoresizingMaskIntoConstraints = NO;

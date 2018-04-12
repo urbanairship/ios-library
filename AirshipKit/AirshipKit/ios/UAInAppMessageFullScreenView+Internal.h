@@ -22,14 +22,16 @@ NS_ASSUME_NONNULL_BEGIN
  * @param buttonView The subview that holds the buttons.
  * @param footerButton The button that displays footer link text and opens the footer link.
  * @param mediaView The media view.
+ * @param owner The "File Owner" of the view
  *
  * @return a configured UAInAppMessageFullScreenView instance.
  */
 + (nullable instancetype)fullScreenMessageViewWithDisplayContent:(UAInAppMessageFullScreenDisplayContent *)displayContent
-                                            closeButton:(UIButton *)closeButton
-                                             buttonView:( UAInAppMessageButtonView * _Nullable)buttonView
-                                           footerButton:(UIButton * _Nullable )footerButton
-                                              mediaView:(UAInAppMessageMediaView * _Nullable)mediaView;
+                                                     closeButton:(UIButton *)closeButton
+                                                      buttonView:( UAInAppMessageButtonView * _Nullable)buttonView
+                                                    footerButton:(UIButton * _Nullable )footerButton
+                                                       mediaView:(UAInAppMessageMediaView * _Nullable)mediaView
+                                                           owner:(id)owner;
 
 @end
 
