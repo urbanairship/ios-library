@@ -32,6 +32,12 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property(nonatomic, weak) id<UALegacyInAppMessageFactoryDelegate> factoryDelegate;
 
+/**
+ * Sets whether legacy messages will display immediately upon arrival, instead of waiting
+ * until the following foreground. Defaults to `YES`.
+ */
+@property(nonatomic, assign) BOOL displayASAPEnabled;
+
 @end
 
 NS_ASSUME_NONNULL_END
