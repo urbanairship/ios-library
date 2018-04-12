@@ -9,7 +9,7 @@
 
 NSString * const UAAppConfigCommon = @"app_config";
 NSString * const UAAppConfigIOS = @"app_config:ios";
-NSString * const UARemoteConfigDisableKey = @"disable";
+NSString * const UARemoteConfigDisableKey = @"disable_features";
 
 @interface UARemoteConfigManager()
 @property (nonatomic, strong) UADisposable *remoteDataSubscription;

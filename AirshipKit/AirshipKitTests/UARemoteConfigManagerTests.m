@@ -101,7 +101,7 @@
                                                 }
                                             ];
     NSDictionary *commonConfig = @{@"someclient":sampleRemoteConfig,
-                                   @"disable":expectedRemoteConfigForDisable};
+                                   @"disable_features":expectedRemoteConfigForDisable};
     UARemoteDataPayload *commonConfigDataPayload = [[UARemoteDataPayload alloc] initWithType:@"app_config" timestamp:[NSDate date] data:commonConfig];
 
     // set expectations
@@ -128,8 +128,8 @@
                                                    @"modules":@"push",
                                                    };
     
-    NSDictionary *commonConfig = @{@"disable":@[expectedCommonRemoteConfigForDisable]};
-    NSDictionary *iosConfig = @{@"disable":@[expectediOSRemoteConfigForDisable]};
+    NSDictionary *commonConfig = @{@"disable_features":@[expectedCommonRemoteConfigForDisable]};
+    NSDictionary *iosConfig = @{@"disable_features":@[expectediOSRemoteConfigForDisable]};
     
     NSArray *expectedRemoteConfigForDisable = @[
                                                 expectedCommonRemoteConfigForDisable,
