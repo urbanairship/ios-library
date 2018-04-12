@@ -206,7 +206,7 @@ NSString *const UAInAppMessageFullScreenViewNibName = @"UAInAppMessageFullScreen
     }
 
     if (@available(iOS 11.0, *)) {
-        // Black out the inset and componsate for excess vertical safe area when iPhone X is horizontal
+        // Black out the inset and compensate for excess vertical safe area when iPhone X is horizontal
         if (window.safeAreaInsets.top == 0 && window.safeAreaInsets.left > 0) {
             self.backgroundColor = [UIColor blackColor];
             [UAInAppMessageUtils applyPadding:0 toView:self.wrapperView attribute:NSLayoutAttributeTop];
