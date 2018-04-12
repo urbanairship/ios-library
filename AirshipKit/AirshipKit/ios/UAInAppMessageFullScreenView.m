@@ -37,41 +37,29 @@ NSString *const UAInAppMessageFullScreenViewNibName = @"UAInAppMessageFullScreen
 
 @implementation UAInAppMessageFullScreenView
 
-+ (instancetype)fullScreenMessageViewWithDisplayContent:(UAInAppMessageFullScreenDisplayContent *)displayContent
-                                            closeButton:(UAInAppMessageCloseButton *)closeButton
-                                             buttonView:(UAInAppMessageButtonView * _Nullable)buttonView
-                                           footerButton:(UIButton * _Nullable)footerButton
-                                              mediaView:(UAInAppMessageMediaView * _Nullable)mediaView {
-
-    return [[UAInAppMessageFullScreenView alloc] initFullScreenViewWithDisplayContent:displayContent
-                                                                          closeButton:closeButton
-                                                                           buttonView:buttonView
-                                                                         footerButton:footerButton
-                                                                            mediaView:mediaView];
-}
-
-- (instancetype)initFullScreenViewWithDisplayContent:(UAInAppMessageFullScreenDisplayContent *)displayContent
-                                         closeButton:(UAInAppMessageCloseButton *)closeButton
-                                          buttonView:(UAInAppMessageButtonView * _Nullable)buttonView
-                                        footerButton:(UIButton * _Nullable)footerButton
-                                           mediaView:(UAInAppMessageMediaView * _Nullable)mediaView {
++ (nullable instancetype)fullScreenMessageViewWithDisplayContent:(UAInAppMessageFullScreenDisplayContent *)displayContent
+                                                     closeButton:(UAInAppMessageCloseButton *)closeButton
+                                                      buttonView:(UAInAppMessageButtonView * _Nullable)buttonView
+                                                    footerButton:(UIButton * _Nullable)footerButton
+                                                       mediaView:(UAInAppMessageMediaView * _Nullable)mediaView
+                                                           owner:(id)owner{
 
     NSString *nibName = UAInAppMessageFullScreenViewNibName;
     NSBundle *bundle = [UAirship resources];
 
-    self = [[bundle loadNibNamed:nibName owner:self options:nil] firstObject];
+    UAInAppMessageFullScreenView *view = [[bundle loadNibNamed:nibName owner:owner options:nil] firstObject];
 
-    if (self) {
-        self.translatesAutoresizingMaskIntoConstraints = NO;
-        self.mediaView = mediaView;
-        self.buttonView = buttonView;
+    if (view) {
+        view.translatesAutoresizingMaskIntoConstraints = NO;
+        view.mediaView = mediaView;
+        view.buttonView = buttonView;
 
-        self.closeButton = closeButton;
+        view.closeButton = closeButton;
 
-        self.statusBarPaddingView = [[UIView alloc] init];
+        view.statusBarPaddingView = [[UIView alloc] init];
 
         // The padding view has 0 size because the actual padding is supplied by the stack view spacing
-        [NSLayoutConstraint constraintWithItem:self.statusBarPaddingView
+        [NSLayoutConstraint constraintWithItem:view.statusBarPaddingView
                                      attribute:NSLayoutAttributeHeight
                                      relatedBy:NSLayoutRelationEqual
                                         toItem:nil
@@ -79,71 +67,71 @@ NSString *const UAInAppMessageFullScreenViewNibName = @"UAInAppMessageFullScreen
                                     multiplier:1
                                       constant:0].active = true;
 
-        self.statusBarPaddingView.backgroundColor = displayContent.backgroundColor;
+        view.statusBarPaddingView.backgroundColor = displayContent.backgroundColor;
 
         // Add views that belong in the stack - adding views that are nil will result in no-op
         if (displayContent.contentLayout == UAInAppMessageFullScreenContentLayoutHeaderMediaBody) {
             // Close
-            UIView *closeView = [self createBarCloseView];
-            [self.containerStackView addArrangedSubview:closeView];
+            UIView *closeView = [view createBarCloseView];
+            [view.containerStackView addArrangedSubview:closeView];
 
             // Top text
-            self.topTextView = [UAInAppMessageTextView textViewWithHeading:displayContent.heading body:nil];
-            [self.containerStackView addArrangedSubview:self.topTextView];
+            view.topTextView = [UAInAppMessageTextView textViewWithHeading:displayContent.heading body:nil owner:owner];
+            [view.containerStackView addArrangedSubview:view.topTextView];
 
             // Media
-            [self.containerStackView addArrangedSubview:mediaView];
+            [view.containerStackView addArrangedSubview:mediaView];
 
             // Bottom text
-            self.bottomTextView = [UAInAppMessageTextView textViewWithHeading:nil body:displayContent.body];
-            [self.containerStackView addArrangedSubview:self.bottomTextView];
+            view.bottomTextView = [UAInAppMessageTextView textViewWithHeading:nil body:displayContent.body owner:owner];
+            [view.containerStackView addArrangedSubview:view.bottomTextView];
         } else if (displayContent.contentLayout == UAInAppMessageFullScreenContentLayoutHeaderBodyMedia) {
             // Close
-            UIView *closeView = [self createBarCloseView];
-            [self.containerStackView addArrangedSubview:closeView];
+            UIView *closeView = [view createBarCloseView];
+            [view.containerStackView addArrangedSubview:closeView];
 
             // Top text
-            self.topTextView = [UAInAppMessageTextView textViewWithHeading:displayContent.heading body:displayContent.body];\
-            [self.containerStackView addArrangedSubview:self.topTextView];
+            view.topTextView = [UAInAppMessageTextView textViewWithHeading:displayContent.heading body:displayContent.body owner:owner];\
+            [view.containerStackView addArrangedSubview:view.topTextView];
 
             // Media
-            [self.containerStackView addArrangedSubview:mediaView];
+            [view.containerStackView addArrangedSubview:mediaView];
         } else if (displayContent.contentLayout == UAInAppMessageFullScreenContentLayoutMediaHeaderBody) {
 
             // Close with media
-            UIView *closeView = mediaView != nil ? [self createCompoundCloseView] : [self createBarCloseView];
-            [self.containerStackView addArrangedSubview:closeView];
+            UIView *closeView = mediaView != nil ? [view createCompoundCloseView] : [view createBarCloseView];
+            [view.containerStackView addArrangedSubview:closeView];
 
             // Top text with body
-            self.topTextView = [UAInAppMessageTextView textViewWithHeading:displayContent.heading body:displayContent.body];
-            [self.containerStackView addArrangedSubview:self.topTextView];
+            view.topTextView = [UAInAppMessageTextView textViewWithHeading:displayContent.heading body:displayContent.body owner:owner];
+            [view.containerStackView addArrangedSubview:view.topTextView];
         }
 
         // Button container is always the last thing in the stack
-        [self.containerStackView addArrangedSubview:self.buttonView];
+        [view.containerStackView addArrangedSubview:view.buttonView];
 
         // Add invisible spacer to guarantee it expands instead of other views
         UIView *spacer = [[UIView alloc] initWithFrame:CGRectZero];
         spacer.backgroundColor = [UIColor clearColor];
         [spacer setContentHuggingPriority:1 forAxis:UILayoutConstraintAxisVertical];
-        [self.containerStackView addArrangedSubview:spacer];
+        [view.containerStackView addArrangedSubview:spacer];
 
         // Explicitly remove footer view from the superview if footer is nil
         if (footerButton) {
-            [self.footerButtonContainer addSubview:footerButton];
-            [UAInAppMessageUtils applyContainerConstraintsToContainer:self.footerButtonContainer containedView:footerButton];
+            [view.footerButtonContainer addSubview:footerButton];
+            [UAInAppMessageUtils applyContainerConstraintsToContainer:view.footerButtonContainer containedView:footerButton];
         } else {
-            [self.footerButtonContainer removeFromSuperview];
+            [view.footerButtonContainer removeFromSuperview];
         }
 
-        self.displayContent = displayContent;
-        self.backgroundColor = displayContent.backgroundColor;
-        self.scrollView.backgroundColor = displayContent.backgroundColor;
+        view.displayContent = displayContent;
+        view.backgroundColor = displayContent.backgroundColor;
+        view.scrollView.backgroundColor = displayContent.backgroundColor;
 
-        self.translatesAutoresizingMaskIntoConstraints = NO;
+        view.translatesAutoresizingMaskIntoConstraints = NO;
     }
 
-    return self;
+    return view;
 }
 
 -(UIView *)createCompoundCloseView {

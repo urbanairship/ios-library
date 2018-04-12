@@ -47,7 +47,7 @@ typedef NS_ENUM(NSInteger, UAInAppMessageAudienceErrorCode) {
  * @param error An NSError pointer for storing errors, if applicable.
  * @returns `YES` if the json was able to be applied, otherwise `NO`.
  */
-+ (instancetype)audienceWithJSON:(id)json error:(NSError **)error;
++ (nullable instancetype)audienceWithJSON:(id)json error:(NSError **)error;
 
 /**
  * Method to return the audience as its JSON representation.

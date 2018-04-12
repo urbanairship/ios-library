@@ -78,7 +78,7 @@ class UAProjectValidationTest: XCTestCase {
             }
         }
 
-        return filesFromProjectWithOptionals.flatMap{ $0 } as Array<URL>
+        return filesFromProjectWithOptionals.compactMap{ $0 } as Array<URL>
     }
 
     func validateProjectForTarget(buildTarget : String, buildOS : String, targetSubFolder : String? = nil) {

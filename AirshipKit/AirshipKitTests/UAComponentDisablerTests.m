@@ -31,9 +31,9 @@
         NSString *key;
         [invocation getArgument:&key atIndex:2];
         if ([key isEqualToString:@"sharedInAppMessageManager"]) {
-            [invocation setReturnValue:&_mockIAMComponent];
+            [invocation setReturnValue:&self->_mockIAMComponent];
         } else if ([key isEqualToString:@"sharedPush"]) {
-            [invocation setReturnValue:&_mockPushComponent];
+            [invocation setReturnValue:&self->_mockPushComponent];
         }
     }] valueForKey:OCMOCK_ANY];
 

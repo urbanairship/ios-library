@@ -41,7 +41,7 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
 
     self.mockedUAPush = [self mockForClass:[UAPush class]];
     [[[self.mockedUAPush stub] andDo:^(NSInvocation *invocation) {
-        [invocation setReturnValue:&_pushChannelID];
+        [invocation setReturnValue:&self->_pushChannelID];
     }] channelID];
 
     self.mockConfig = [self mockForClass:[UAConfig class]];

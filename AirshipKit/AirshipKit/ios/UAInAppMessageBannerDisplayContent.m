@@ -191,10 +191,12 @@ NSUInteger const UAInAppMessageBannerMaxButtons = 2;
             } else if ([UAInAppMessageBannerPlacementBottomValue isEqualToString:placementValue]) {
                 builder.placement = UAInAppMessageBannerPlacementBottom;
             } else {
-                NSString *msg = [NSString stringWithFormat:@"Placement must be a string. Invalid value: %@", placementValue];
-                *error =  [NSError errorWithDomain:UAInAppMessageBannerDisplayContentDomain
-                                              code:UAInAppMessageBannerDisplayContentErrorCodeInvalidJSON
-                                          userInfo:@{NSLocalizedDescriptionKey:msg}];
+                if (error) {
+                    NSString *msg = [NSString stringWithFormat:@"Placement must be a string. Invalid value: %@", placementValue];
+                    *error =  [NSError errorWithDomain:UAInAppMessageBannerDisplayContentDomain
+                                                  code:UAInAppMessageBannerDisplayContentErrorCodeInvalidJSON
+                                              userInfo:@{NSLocalizedDescriptionKey:msg}];
+                }
                 return nil;
             }
         }

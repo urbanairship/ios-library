@@ -49,16 +49,16 @@ static NSMutableSet *overlayControllers_ = nil;
 
 @implementation UAOverlayView
 
-- (id)initWithSize:(CGSize)size aspectLock:(BOOL)aspectLock {
++ (id)overlayViewWithSize:(CGSize)size aspectLock:(BOOL)aspectLock owner:(id)owner {
     NSBundle *bundle = [UAirship resources];
-    self = [[bundle loadNibNamed:kUAOverlayViewNibName owner:self options:nil] firstObject];
+    UAOverlayView *view = [[bundle loadNibNamed:kUAOverlayViewNibName owner:owner options:nil] firstObject];
 
-    if (self) {
-        self.size = size;
-        self.aspectLock = aspectLock;
+    if (view) {
+        view.size = size;
+        view.aspectLock = aspectLock;
     }
 
-    return self;
+    return view;
 }
 
 // Normalizes the provided size to aspect fill the current screen
@@ -293,7 +293,7 @@ static NSMutableSet *overlayControllers_ = nil;
     self = [super init];
     if (self) {
 
-        self.overlayView = [[UAOverlayView alloc] initWithSize:size aspectLock:aspectLock];
+        self.overlayView = [UAOverlayView overlayViewWithSize:size aspectLock:aspectLock owner:self];
         self.overlayView.alpha = 0.0;
 
         self.parentView = parent;

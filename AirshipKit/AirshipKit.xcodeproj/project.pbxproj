@@ -1036,7 +1036,6 @@
 		CC8999AB1D8B642D00A0CECC /* UAMessageCenterListCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = CC8999A21D8B642D00A0CECC /* UAMessageCenterListCell.xib */; };
 		CC8999AC1D8B642D00A0CECC /* UAMessageCenterListViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CC8999A31D8B642D00A0CECC /* UAMessageCenterListViewController.xib */; };
 		CC8999AE1D8B642D00A0CECC /* UAMessageCenterPlaceholderIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = CC8999A51D8B642D00A0CECC /* UAMessageCenterPlaceholderIcon.png */; };
-		CC8999AF1D8B642D00A0CECC /* UALegacyInAppMessageView.xib in Resources */ = {isa = PBXBuildFile; fileRef = CC8999A61D8B642D00A0CECC /* UALegacyInAppMessageView.xib */; };
 		CC899CC51D8B6F6500A0CECC /* AirshipResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = CC8999771D8B625500A0CECC /* AirshipResources.bundle */; };
 		CC944EBF1DB0225000C42269 /* UARequest+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC944EBD1DB0225000C42269 /* UARequest+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CC944EC01DB0225000C42269 /* UARequest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC944EBE1DB0225000C42269 /* UARequest.m */; };
@@ -2016,7 +2015,6 @@
 		CC8999A21D8B642D00A0CECC /* UAMessageCenterListCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UAMessageCenterListCell.xib; sourceTree = "<group>"; };
 		CC8999A31D8B642D00A0CECC /* UAMessageCenterListViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UAMessageCenterListViewController.xib; sourceTree = "<group>"; };
 		CC8999A51D8B642D00A0CECC /* UAMessageCenterPlaceholderIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = UAMessageCenterPlaceholderIcon.png; sourceTree = "<group>"; };
-		CC8999A61D8B642D00A0CECC /* UALegacyInAppMessageView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UALegacyInAppMessageView.xib; sourceTree = "<group>"; };
 		CC899CD01D8B712D00A0CECC /* libUAirship.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libUAirship.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		CC944EBD1DB0225000C42269 /* UARequest+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UARequest+Internal.h"; path = "common/UARequest+Internal.h"; sourceTree = "<group>"; };
 		CC944EBE1DB0225000C42269 /* UARequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UARequest.m; path = common/UARequest.m; sourceTree = "<group>"; };
@@ -3531,7 +3529,6 @@
 				99E2DA4A1FBA2A6800C9F2CC /* UAInAppMessageButtonView.xib */,
 				99E2DA4C1FBA2A7900C9F2CC /* UAInAppMessageTextView.xib */,
 				CC8999A21D8B642D00A0CECC /* UAMessageCenterListCell.xib */,
-				CC8999A61D8B642D00A0CECC /* UALegacyInAppMessageView.xib */,
 				CC8999A31D8B642D00A0CECC /* UAMessageCenterListViewController.xib */,
 				DFECEA761E64DC83006AA8EA /* UAMessageCenterMessageViewController.xib */,
 				DFECEA841E65E900006AA8EA /* UAOverlayView.xib */,
@@ -4361,7 +4358,6 @@
 				CC64F0511D8B77E3009CEF27 /* Frameworks */,
 				CC64F0521D8B77E3009CEF27 /* Resources */,
 				D3775F1A08A9BD2223C1AC9E /* [CP] Embed Pods Frameworks */,
-				F5CEFEC0515FB1B49241A7D4 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -4452,7 +4448,7 @@
 		494DD94E1B0EB677009C134E /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0920;
+				LastUpgradeCheck = 0930;
 				ORGANIZATIONNAME = "Urban Airship";
 				TargetAttributes = {
 					494DD9561B0EB677009C134E = {
@@ -4577,7 +4573,6 @@
 				99978EEB1EBAB7E7000F4AF7 /* UADefaultActions.plist in Resources */,
 				99E2DA4B1FBA2A6800C9F2CC /* UAInAppMessageButtonView.xib in Resources */,
 				99E2DA4D1FBA2A7900C9F2CC /* UAInAppMessageTextView.xib in Resources */,
-				CC8999AF1D8B642D00A0CECC /* UALegacyInAppMessageView.xib in Resources */,
 				6E7700AB1F04790C00B5E465 /* UANotificationCategories.plist in Resources */,
 				DFECEA851E65E900006AA8EA /* UAOverlayView.xib in Resources */,
 				CC8999AE1D8B642D00A0CECC /* UAMessageCenterPlaceholderIcon.png in Resources */,
@@ -4688,21 +4683,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		F5CEFEC0515FB1B49241A7D4 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/../Pods/Target Support Files/Pods-AirshipKitTests/Pods-AirshipKitTests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -5495,12 +5475,14 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
@@ -5554,12 +5536,14 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;

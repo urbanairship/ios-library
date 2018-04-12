@@ -127,11 +127,13 @@ double const MinimumSwipeVelocity = 100.0;
     UAInAppMessageButtonLayoutType buttonLayout = self.displayContent.buttonLayout;
 
     UAInAppMessageTextView *textView = [UAInAppMessageTextView textViewWithHeading:heading
-                                                                              body:body];
+                                                                              body:body
+                                                                             owner:self];
 
     UAInAppMessageBannerContentView *bannerContentView = [UAInAppMessageBannerContentView contentViewWithLayout:contentLayout
                                                                                                        textView:textView
-                                                                                                          mediaView:self.mediaView];
+                                                                                                      mediaView:self.mediaView
+                                                                                                          owner:self];
     // Only add button view if buttons are present
     UAInAppMessageButtonView *buttonView;
     if (buttons.count) {
@@ -143,7 +145,8 @@ double const MinimumSwipeVelocity = 100.0;
 
     self.bannerView = [UAInAppMessageBannerView bannerMessageViewWithDisplayContent:self.displayContent
                                                                   bannerContentView:bannerContentView
-                                                                         buttonView:buttonView];
+                                                                         buttonView:buttonView
+                                                                              owner:self];
 
     [parentView addSubview:self.bannerView];
 

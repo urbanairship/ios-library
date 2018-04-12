@@ -55,7 +55,7 @@ extern NSString *const UAScheduleInfoInAppMessageKey;
  * @param json The JSON payload.
  * @return The message id or `nil` if the JSON is invalid.
  */
-+ (NSString *)parseMessageID:(id)json;
++ (nullable NSString *)parseMessageID:(id)json;
 
 @end
 

@@ -165,7 +165,7 @@ NS_ASSUME_NONNULL_BEGIN
  * in NSDictionary representation.
  * @return A fully configured instance of UAInAppMessage.
  */
-+ (instancetype)messageWithPayload:(NSDictionary *)payload;
++ (nullable instancetype)messageWithPayload:(NSDictionary *)payload;
 
 ///---------------------------------------------------------------------------------------
 /// @name Legacy In App Message Utilities

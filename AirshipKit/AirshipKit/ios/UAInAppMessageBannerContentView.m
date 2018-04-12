@@ -23,49 +23,45 @@ NSString *const UAInAppMessageBannerContentViewNibName = @"UAInAppMessageBannerC
 
 @implementation UAInAppMessageBannerContentView
 
-+ (instancetype)contentViewWithLayout:(UAInAppMessageBannerContentLayoutType)contentLayout textView:(UAInAppMessageTextView *)textView mediaView:(UAInAppMessageMediaView * _Nullable)mediaView {
-    return [[self alloc] initContentViewWithLayout:contentLayout textView:textView mediaView:mediaView];
-}
-
-- (instancetype)initContentViewWithLayout:(UAInAppMessageBannerContentLayoutType)contentLayout textView:(UAInAppMessageTextView *)textView mediaView:(UAInAppMessageMediaView * _Nullable)mediaView {
-
++ (instancetype)contentViewWithLayout:(UAInAppMessageBannerContentLayoutType)contentLayout textView:(UAInAppMessageTextView *)textView mediaView:(UAInAppMessageMediaView * _Nullable)mediaView owner:(id)owner {
     NSString *nibName = UAInAppMessageBannerContentViewNibName;
     NSBundle *bundle = [UAirship resources];
+    UAInAppMessageBannerContentView *view;
     
     // Left and right IAM views are firstObject and lastObject, respectively.
     switch (contentLayout) {
         case UAInAppMessageBannerContentLayoutTypeMediaLeft:
-            self = [[bundle loadNibNamed:nibName owner:self options:nil] firstObject];
+            view = [[bundle loadNibNamed:nibName owner:owner options:nil] firstObject];
             break;
         case UAInAppMessageBannerContentLayoutTypeMediaRight:
-            self = [[bundle loadNibNamed:nibName owner:self options:nil] lastObject];
+            view = [[bundle loadNibNamed:nibName owner:owner options:nil] lastObject];
             break;
     }
     
-    if (self) {
-        self.translatesAutoresizingMaskIntoConstraints = NO;
-        self.userInteractionEnabled = NO;
+    if (view) {
+        view.translatesAutoresizingMaskIntoConstraints = NO;
+        view.userInteractionEnabled = NO;
         
-        self.backgroundColor = [UIColor clearColor];
+        view.backgroundColor = [UIColor clearColor];
         
-        self.containerView.translatesAutoresizingMaskIntoConstraints = NO;
-        self.containerView.backgroundColor = [UIColor clearColor];
+        view.containerView.translatesAutoresizingMaskIntoConstraints = NO;
+        view.containerView.backgroundColor = [UIColor clearColor];
 
         if (mediaView) {
-            [self.mediaContainerView addSubview:mediaView];
-            [UAInAppMessageUtils applyContainerConstraintsToContainer:self.mediaContainerView containedView:mediaView];
+            [view.mediaContainerView addSubview:mediaView];
+            [UAInAppMessageUtils applyContainerConstraintsToContainer:view.mediaContainerView containedView:mediaView];
         } else {
-            [self.mediaContainerView removeFromSuperview];
+            [view.mediaContainerView removeFromSuperview];
         }
 
-        [self addTextView:textView];
+        [view addTextView:textView];
 
-        [self.textContainerView layoutIfNeeded];
-        [self.mediaContainerView layoutIfNeeded];
-        [self layoutIfNeeded];
+        [view.textContainerView layoutIfNeeded];
+        [view.mediaContainerView layoutIfNeeded];
+        [view layoutIfNeeded];
     }
     
-    return self;
+    return view;
 }
 
 - (void)addTextView:(UAInAppMessageTextView *)textView {

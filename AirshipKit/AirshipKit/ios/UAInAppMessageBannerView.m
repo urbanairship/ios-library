@@ -52,64 +52,62 @@ CGFloat const ShadowOpacity = 0.5;
 
 + (instancetype)bannerMessageViewWithDisplayContent:(UAInAppMessageBannerDisplayContent *)displayContent
                                   bannerContentView:(UAInAppMessageBannerContentView *)contentView
-                                         buttonView:(UAInAppMessageButtonView * _Nullable)buttonView {
+                                         buttonView:(UAInAppMessageButtonView * _Nullable)buttonView
+                                              owner:(id)owner {
 
-    return [[UAInAppMessageBannerView alloc] initBannerViewWithDisplayContent:displayContent
-                                                            bannerContentView:contentView
-                                                                   buttonView:buttonView];
-}
-
-- (instancetype)initBannerViewWithDisplayContent:(UAInAppMessageBannerDisplayContent *)displayContent
-                               bannerContentView:(UAInAppMessageBannerContentView *)contentView
-                                      buttonView:(UAInAppMessageButtonView * _Nullable)buttonView {
     NSString *nibName = UAInAppMessageBannerViewNibName;
     NSBundle *bundle = [UAirship resources];
     CGFloat shadowOffset;
-
+    UAInAppMessageBannerView *view;
+    
     // Top and bottom banner views are firstObject and lastObject, respectively.
     switch (displayContent.placement) {
         case UAInAppMessageBannerPlacementTop:
-            self = [[bundle loadNibNamed:nibName owner:self options:nil] firstObject];
+            view = [[bundle loadNibNamed:nibName owner:owner options:nil] firstObject];
             shadowOffset = ShadowOffset;
-            self.rounding = UIRectCornerBottomLeft | UIRectCornerBottomRight;
+            if (view) {
+                view.rounding = UIRectCornerBottomLeft | UIRectCornerBottomRight;
+            }
             break;
         case UAInAppMessageBannerPlacementBottom:
-            self = [[bundle loadNibNamed:nibName owner:self options:nil] lastObject];
+            view = [[bundle loadNibNamed:nibName owner:owner options:nil] lastObject];
             shadowOffset = -ShadowOffset;
-            self.rounding = UIRectCornerTopLeft | UIRectCornerTopRight;
+            if (view) {
+                view.rounding = UIRectCornerTopLeft | UIRectCornerTopRight;
+            }
             break;
     }
 
-    if (self) {
-        [self addBannerContentView:contentView];
+    if (view) {
+        [view addBannerContentView:contentView];
 
         if (buttonView) {
-            [self addButtonView:buttonView];
+            [view addButtonView:buttonView];
         } else {
-            [self.buttonContainerView removeFromSuperview];
+            [view.buttonContainerView removeFromSuperview];
         }
 
-        self.displayContent = displayContent;
+        view.displayContent = displayContent;
         // The layer color is set to background color to preserve rounding and shadow
-        self.backgroundColor = [UIColor clearColor];
+        view.backgroundColor = [UIColor clearColor];
 
-        self.layer.shadowOffset = CGSizeMake(0, shadowOffset);
-        self.layer.shadowRadius = ShadowRadius;
+        view.layer.shadowOffset = CGSizeMake(0, shadowOffset);
+        view.layer.shadowRadius = ShadowRadius;
         
-        self.translatesAutoresizingMaskIntoConstraints = NO;
+        view.translatesAutoresizingMaskIntoConstraints = NO;
 
-        self.layer.shadowOffset = CGSizeMake(shadowOffset/2, shadowOffset);
-        self.layer.shadowRadius = ShadowRadius;
-        self.layer.shadowOpacity = ShadowOpacity;
+        view.layer.shadowOffset = CGSizeMake(shadowOffset/2, shadowOffset);
+        view.layer.shadowRadius = ShadowRadius;
+        view.layer.shadowOpacity = ShadowOpacity;
 
-        self.tab.backgroundColor = displayContent.dismissButtonColor;
-        self.tab.layer.masksToBounds = YES;
-        self.tab.layer.cornerRadius = self.tab.frame.size.height/2;
+        view.tab.backgroundColor = displayContent.dismissButtonColor;
+        view.tab.layer.masksToBounds = YES;
+        view.tab.layer.cornerRadius = view.tab.frame.size.height/2;
 
-        [self layoutSubviews];
+        [view layoutSubviews];
     }
 
-    return self;
+    return view;
 }
 
 - (void)layoutSubviews {

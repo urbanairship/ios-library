@@ -105,7 +105,8 @@ double const DefaultFullScreenAnimationDuration = 0.2;
                                                                                     closeButton:closeButton
                                                                                      buttonView:buttonView
                                                                                    footerButton:footerButton
-                                                                                      mediaView:self.mediaView];
+                                                                                      mediaView:self.mediaView
+                                                                                          owner:self];
 
     [parentView addSubview:self.fullScreenView];
     [self addInitialConstraintsToParentView:parentView fullScreenView:self.fullScreenView];

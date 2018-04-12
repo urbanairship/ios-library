@@ -57,7 +57,7 @@ void (^deviceRegisterSuccessDoBlock)(NSInvocation *);
 
     self.mockedUAConfig = [self mockForClass:[UAConfig class]];
     [[[self.mockedUAConfig stub] andDo:^(NSInvocation *invocation) {
-        [invocation setReturnValue:&_clearNamedUser];
+        [invocation setReturnValue:&self->_clearNamedUser];
     }] clearNamedUserOnAppRestore];
 
     self.mockedUAirship = [self mockForClass:[UAirship class]];

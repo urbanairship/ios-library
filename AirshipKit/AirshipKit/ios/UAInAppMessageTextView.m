@@ -21,47 +21,43 @@ NSString *const UAInAppMessageTextViewNibName = @"UAInAppMessageTextView";
 @implementation UAInAppMessageTextView
 
 + (nullable instancetype)textViewWithHeading:(UAInAppMessageTextInfo * _Nullable)heading
-                               body:(UAInAppMessageTextInfo * _Nullable)body {
-    return [[UAInAppMessageTextView alloc] initWithHeading:heading body:body];
-}
-
-- (nullable instancetype)initWithHeading:(UAInAppMessageTextInfo * _Nullable)heading body:(UAInAppMessageTextInfo * _Nullable)body {
-    self = [super init];
-
+                                        body:(UAInAppMessageTextInfo * _Nullable)body
+                                       owner:(id)owner{
+    
     NSString *nibName = UAInAppMessageTextViewNibName;
     NSBundle *bundle = [UAirship resources];
 
-    self = [[bundle loadNibNamed:nibName owner:self options:nil] firstObject];
+    UAInAppMessageTextView *view = [[bundle loadNibNamed:nibName owner:owner options:nil] firstObject];
 
-    if (self) {
-        self.translatesAutoresizingMaskIntoConstraints = NO;
+    if (view) {
+        view.translatesAutoresizingMaskIntoConstraints = NO;
 
         if (heading) {
             UILabel *headingLabel = [[UILabel alloc] init];
             headingLabel.translatesAutoresizingMaskIntoConstraints = NO;
 
-            self.headingLabel = headingLabel;
-            [self.headingLabel setContentHuggingPriority:UILayoutPriorityRequired forAxis:UILayoutConstraintAxisVertical];
+            view.headingLabel = headingLabel;
+            [view.headingLabel setContentHuggingPriority:UILayoutPriorityRequired forAxis:UILayoutConstraintAxisVertical];
 
             [UAInAppMessageUtils applyTextInfo:heading label:headingLabel];
 
-            [self.textContainer addArrangedSubview:headingLabel];
+            [view.textContainer addArrangedSubview:headingLabel];
         }
 
         if (body) {
             UILabel *bodyLabel = [[UILabel alloc] init];
             bodyLabel.translatesAutoresizingMaskIntoConstraints = NO;
-            self.bodyLabel = bodyLabel;
-            [self.bodyLabel setContentHuggingPriority:UILayoutPriorityRequired
+            view.bodyLabel = bodyLabel;
+            [view.bodyLabel setContentHuggingPriority:UILayoutPriorityRequired
                                               forAxis:UILayoutConstraintAxisVertical];
 
             [UAInAppMessageUtils applyTextInfo:body label:bodyLabel];
 
-            [self.textContainer addArrangedSubview:bodyLabel];
+            [view.textContainer addArrangedSubview:bodyLabel];
         }
 
         [UIView performWithoutAnimation:^{
-            [self.textContainer layoutIfNeeded];
+            [view.textContainer layoutIfNeeded];
         }];
     }
 
@@ -69,7 +65,7 @@ NSString *const UAInAppMessageTextViewNibName = @"UAInAppMessageTextView";
         return nil;
     }
 
-    return self;
+    return view;
 }
 
 @end

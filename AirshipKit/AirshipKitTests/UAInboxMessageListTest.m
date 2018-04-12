@@ -38,7 +38,7 @@ static UAUser *mockUser_ = nil;
     self.userCreated = YES;
     self.mockUser = [self mockForClass:[UAUser class]];
     [[[self.mockUser stub] andDo:^(NSInvocation *invocation) {
-        [invocation setReturnValue:&_userCreated];
+        [invocation setReturnValue:&self->_userCreated];
     }] isCreated];
 
     self.mockInboxAPIClient = [self mockForClass:[UAInboxAPIClient class]];

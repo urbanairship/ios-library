@@ -27,7 +27,7 @@ typedef NS_ENUM(NSInteger, UAInAppMessageTagSelectorErrorCode) {
  * @param error An NSError pointer for storing errors, if applicable.
  * @return The parsed tag selector.
  */
-+ (instancetype)selectorWithJSON:(NSDictionary *)json error:(NSError **)error;
++ (nullable instancetype)selectorWithJSON:(NSDictionary *)json error:(NSError **)error;
 
 /**
  * Convert a tag selector back to JSON
