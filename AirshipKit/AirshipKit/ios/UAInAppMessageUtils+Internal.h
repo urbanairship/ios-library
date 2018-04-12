@@ -53,17 +53,6 @@
 + (void)applyCenterConstraintsToContainer:(UIView *)container containedView:(UIView *)contained;
 
 /**
- * Constrains the close button view to the upper right of the container
- *
- * This method has the side effect of setting both views' translatesAutoresizingMasksIntoConstraints parameters to NO.
- * This is done to ensure that autoresizing mask constraints do not conflict with the close button constraints.
- *
- * @param container The container view.
- * @param closeButton The contained close button.
- */
-+ (void)applyCloseButtonConstraintsToContainer:(UIView *)container closeButton:(UAInAppMessageCloseButton *)closeButton;
-
-/**
  * Caches url data contents using a background thread. Calls completion handler on main thread
  * with cache key under which the cached contents are stored.
  *
@@ -86,6 +75,15 @@
  * @return The NSCache
  */
 + (NSCache *)createImageCache;
+
+/**
+ * Applies padding to view constraints matching the provided attribute.
+ *
+ * @param padding The padding to add to constraints matching the attribute type
+ * @param view A view with constraints to apply padding to
+ * @param attribute The attribute type that should be padded
+ */
++ (void)applyPadding:(CGFloat)padding toView:(UIView *)view attribute:(NSLayoutAttribute)attribute;
 
 /**
  * Prepares in-app message to display.
