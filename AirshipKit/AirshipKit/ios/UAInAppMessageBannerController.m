@@ -22,8 +22,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 double const MaxWidth = 420;
 
-double const DefaultLeadingEdgeSpace = 10;
-double const DefaultTrailingEdgeSpace = 10;
+double const DefaultLeadingEdgeSpace = 24;
+double const DefaultTrailingEdgeSpace = 24;
 
 double const DefaultAnimationDuration = 0.2;
 double const MinimumLongPressDuration = 0.2;
