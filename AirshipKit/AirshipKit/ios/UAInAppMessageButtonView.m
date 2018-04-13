@@ -38,27 +38,26 @@ NSString *const UAInAppMessageButtonViewNibName = @"UAInAppMessageButtonView";
 
     NSString *nibName = UAInAppMessageButtonViewNibName;
     NSBundle *bundle = [UAirship resources];
-    UAInAppMessageButtonView *view;
-    
+
     // Joined, Separate and Stacked views object at index 0,1,2, respectively.
     switch (layout) {
         case UAInAppMessageButtonLayoutTypeJoined:
-            view = [[bundle loadNibNamed:nibName owner:nil options:nil] objectAtIndex:0];
+            self = [[bundle loadNibNamed:nibName owner:self options:nil] objectAtIndex:0];
             break;
         case UAInAppMessageButtonLayoutTypeSeparate:
-            view = [[bundle loadNibNamed:nibName owner:nil options:nil] objectAtIndex:1];
+            self = [[bundle loadNibNamed:nibName owner:self options:nil] objectAtIndex:1];
             break;
         case UAInAppMessageButtonLayoutTypeStacked:
-            view = [[bundle loadNibNamed:nibName owner:nil options:nil] objectAtIndex:2];
+            self = [[bundle loadNibNamed:nibName owner:self options:nil] objectAtIndex:2];
             break;
     }
 
-    if (view) {
-        view.translatesAutoresizingMaskIntoConstraints = NO;
-        [view addButtons:buttons layout:layout target:target selector:selector];
+    if (self) {
+        self.translatesAutoresizingMaskIntoConstraints = NO;
+        [self addButtons:buttons layout:layout target:target selector:selector];
     }
 
-    return view;
+    return self;
 
 }
 

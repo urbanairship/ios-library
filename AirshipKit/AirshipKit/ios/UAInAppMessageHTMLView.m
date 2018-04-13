@@ -24,33 +24,37 @@ NSString *const UAInAppMessageHTMLViewNibName = @"UAInAppMessageHTMLView";
 @implementation UAInAppMessageHTMLView
 
 + (instancetype)htmlViewWithDisplayContent:(UAInAppMessageHTMLDisplayContent *)displayContent closeButton:(UIButton *)closeButton {
+    return [[self alloc] initWithDisplayContent:displayContent closeButton:closeButton];
+}
+
+- (instancetype)initWithDisplayContent:(UAInAppMessageHTMLDisplayContent *)displayContent closeButton:(UIButton *)closeButton {
     NSString *nibName = UAInAppMessageHTMLViewNibName;
     NSBundle *bundle = [UAirship resources];
 
-    UAInAppMessageHTMLView *view = [[bundle loadNibNamed:nibName owner:nil options:nil] firstObject];
+    self = [[bundle loadNibNamed:nibName owner:self options:nil] firstObject];
 
-    if (view) {
+    if (self) {
         // Always add the close button
-        [view.closeButtonContainer addSubview:closeButton];
+        [self.closeButtonContainer addSubview:closeButton];
 
-        [UAInAppMessageUtils applyContainerConstraintsToContainer:view.closeButtonContainer containedView:closeButton];
+        [UAInAppMessageUtils applyContainerConstraintsToContainer:self.closeButtonContainer containedView:closeButton];
 
-        view.webView.backgroundColor = [UIColor clearColor];
-        view.webView.opaque = NO;
+        self.webView.backgroundColor = [UIColor clearColor];
+        self.webView.opaque = NO;
 
         if (@available(iOS 10.0, tvOS 10.0, *)) {
-            [view.webView.configuration setDataDetectorTypes:WKDataDetectorTypeNone];
+            [self.webView.configuration setDataDetectorTypes:WKDataDetectorTypeNone];
         }
 
-        view.backgroundColor = displayContent.backgroundColor;
-        view.webView.backgroundColor = displayContent.backgroundColor;
-        view.messageTop.backgroundColor = displayContent.backgroundColor;
+        self.backgroundColor = displayContent.backgroundColor;
+        self.webView.backgroundColor = displayContent.backgroundColor;
+        self.messageTop.backgroundColor = displayContent.backgroundColor;
 
-        view.displayContent = displayContent;
-        view.translatesAutoresizingMaskIntoConstraints = NO;
+        self.displayContent = displayContent;
+        self.translatesAutoresizingMaskIntoConstraints = NO;
     }
 
-    return view;
+    return self;
 }
 
 - (void)layoutSubviews {
