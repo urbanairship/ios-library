@@ -14,6 +14,9 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+// Hand tuned value that removes excess verical safe area from
+CGFloat const ExcessiveSafeAreaPadding = 16;
+
 NSString *const UAInAppMessageFullScreenViewNibName = @"UAInAppMessageFullScreenView";
 
 @interface UAInAppMessageFullScreenView ()
@@ -40,8 +43,7 @@ NSString *const UAInAppMessageFullScreenViewNibName = @"UAInAppMessageFullScreen
 
 @implementation UAInAppMessageFullScreenView
 
-
-+ (instancetype)fullScreenMessageViewWithDisplayContent:(UAInAppMessageFullScreenDisplayContent *)displayContent
++ (nullable instancetype)fullScreenMessageViewWithDisplayContent:(UAInAppMessageFullScreenDisplayContent *)displayContent
                                             closeButton:(UAInAppMessageCloseButton *)closeButton
                                              buttonView:(UAInAppMessageButtonView * _Nullable)buttonView
                                            footerButton:(UIButton * _Nullable)footerButton
@@ -211,7 +213,7 @@ NSString *const UAInAppMessageFullScreenViewNibName = @"UAInAppMessageFullScreen
             self.backgroundColor = [UIColor blackColor];
             [UAInAppMessageUtils applyPadding:0 toView:self.wrapperView attribute:NSLayoutAttributeTop];
         } else if (window.safeAreaInsets.top > 0 && window.safeAreaInsets.left == 0) {
-            [UAInAppMessageUtils applyPadding:-16 toView:self.wrapperView attribute:NSLayoutAttributeTop];
+            [UAInAppMessageUtils applyPadding:-ExcessiveSafeAreaPadding toView:self.wrapperView attribute:NSLayoutAttributeTop];
             self.backgroundColor = self.displayContent.backgroundColor;
         }
     }

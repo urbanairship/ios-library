@@ -268,13 +268,6 @@ double const DefaultModalAnimationDuration = 0.2;
             break;
         }
     }
-
-    // Apply special casing for when media and header are nil
-    if (!self.displayContent.heading && !self.mediaView) {
-        // Apply 16pt padding to top of body, with no horizontal padding
-        self.scrollableStackToTopConstaint.constant = 16;
-        [self.view layoutIfNeeded];
-    }
     
     // Only create button view if there are buttons
     if (self.displayContent.buttons.count) {
