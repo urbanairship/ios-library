@@ -293,7 +293,7 @@ double const DefaultModalAnimationDuration = 0.2;
     // Only create header view if header is present
     UIView *headerView;
     if (self.displayContent.heading) {
-        headerView = [UAInAppMessageTextView textViewWithHeading:self.displayContent.heading body:nil owner:self];
+        headerView = [UAInAppMessageTextView textViewWithHeading:self.displayContent.heading body:nil];
         
         [containerForHeaderView addSubview:headerView];
         [UAInAppMessageUtils applyContainerConstraintsToContainer:containerForHeaderView containedView:headerView];
@@ -312,7 +312,7 @@ double const DefaultModalAnimationDuration = 0.2;
     // Only create body view if body is present
     UIView *bodyView;
     if (self.displayContent.body) {
-        bodyView = [UAInAppMessageTextView textViewWithHeading:nil body:self.displayContent.body owner:self];
+        bodyView = [UAInAppMessageTextView textViewWithHeading:nil body:self.displayContent.body];
         
         [containerForBodyView addSubview:bodyView];
         [UAInAppMessageUtils applyContainerConstraintsToContainer:containerForBodyView containedView:bodyView];

@@ -822,7 +822,7 @@
     UAMessageCenterListCell *cell = (UAMessageCenterListCell *)[tableView dequeueReusableCellWithIdentifier:nibName];
 
     if (!cell) {
-        cell = [[bundle loadNibNamed:nibName owner:self options:nil] firstObject];
+        cell = [[bundle loadNibNamed:nibName owner:nil options:nil] firstObject];
     }
 
     cell.style = self.style;

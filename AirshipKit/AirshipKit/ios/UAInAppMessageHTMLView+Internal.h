@@ -29,13 +29,9 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @param displayContent The display content.
  * @param closeButton The button that closes the full screen view.
- * @param owner The "File Owner" of the view
- *
- * @return a configured UAInAppMessageHTMLView instance.
  */
 + (instancetype)htmlViewWithDisplayContent:(UAInAppMessageHTMLDisplayContent *)displayContent
-                               closeButton:(UIButton *)closeButton
-                                     owner:(id)owner;
+                               closeButton:(UIButton *)closeButton;
 
 @end
 

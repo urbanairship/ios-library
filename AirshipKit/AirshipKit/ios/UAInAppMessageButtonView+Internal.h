@@ -19,7 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 
  * @param buttons The button infos to add to the view.
  * @param layout The button layout.
- * @param target The object that will handle the button events. Also, the "File Owner" of the view.
+ * @param target The object that will handle the button events.
  * @param selector The selector to call on the target when a button event occurs.
  *
  * @return a configured UAInAppMessageButtonView instance.

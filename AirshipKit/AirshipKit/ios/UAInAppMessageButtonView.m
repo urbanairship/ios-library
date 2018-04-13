@@ -43,13 +43,13 @@ NSString *const UAInAppMessageButtonViewNibName = @"UAInAppMessageButtonView";
     // Joined, Separate and Stacked views object at index 0,1,2, respectively.
     switch (layout) {
         case UAInAppMessageButtonLayoutTypeJoined:
-            view = [[bundle loadNibNamed:nibName owner:target options:nil] objectAtIndex:0];
+            view = [[bundle loadNibNamed:nibName owner:nil options:nil] objectAtIndex:0];
             break;
         case UAInAppMessageButtonLayoutTypeSeparate:
-            view = [[bundle loadNibNamed:nibName owner:target options:nil] objectAtIndex:1];
+            view = [[bundle loadNibNamed:nibName owner:nil options:nil] objectAtIndex:1];
             break;
         case UAInAppMessageButtonLayoutTypeStacked:
-            view = [[bundle loadNibNamed:nibName owner:target options:nil] objectAtIndex:2];
+            view = [[bundle loadNibNamed:nibName owner:nil options:nil] objectAtIndex:2];
             break;
     }
 

@@ -52,8 +52,7 @@ CGFloat const ShadowOpacity = 0.5;
 
 + (instancetype)bannerMessageViewWithDisplayContent:(UAInAppMessageBannerDisplayContent *)displayContent
                                   bannerContentView:(UAInAppMessageBannerContentView *)contentView
-                                         buttonView:(UAInAppMessageButtonView * _Nullable)buttonView
-                                              owner:(id)owner {
+                                         buttonView:(UAInAppMessageButtonView * _Nullable)buttonView {
 
     NSString *nibName = UAInAppMessageBannerViewNibName;
     NSBundle *bundle = [UAirship resources];
@@ -63,14 +62,14 @@ CGFloat const ShadowOpacity = 0.5;
     // Top and bottom banner views are firstObject and lastObject, respectively.
     switch (displayContent.placement) {
         case UAInAppMessageBannerPlacementTop:
-            view = [[bundle loadNibNamed:nibName owner:owner options:nil] firstObject];
+            view = [[bundle loadNibNamed:nibName owner:nil options:nil] firstObject];
             shadowOffset = ShadowOffset;
             if (view) {
                 view.rounding = UIRectCornerBottomLeft | UIRectCornerBottomRight;
             }
             break;
         case UAInAppMessageBannerPlacementBottom:
-            view = [[bundle loadNibNamed:nibName owner:owner options:nil] lastObject];
+            view = [[bundle loadNibNamed:nibName owner:nil options:nil] lastObject];
             shadowOffset = -ShadowOffset;
             if (view) {
                 view.rounding = UIRectCornerTopLeft | UIRectCornerTopRight;

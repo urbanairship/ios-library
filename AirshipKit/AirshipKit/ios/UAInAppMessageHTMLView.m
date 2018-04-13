@@ -23,11 +23,11 @@ NSString *const UAInAppMessageHTMLViewNibName = @"UAInAppMessageHTMLView";
 
 @implementation UAInAppMessageHTMLView
 
-+ (instancetype)htmlViewWithDisplayContent:(UAInAppMessageHTMLDisplayContent *)displayContent closeButton:(UIButton *)closeButton owner:(id)owner {
++ (instancetype)htmlViewWithDisplayContent:(UAInAppMessageHTMLDisplayContent *)displayContent closeButton:(UIButton *)closeButton {
     NSString *nibName = UAInAppMessageHTMLViewNibName;
     NSBundle *bundle = [UAirship resources];
 
-    UAInAppMessageHTMLView *view = [[bundle loadNibNamed:nibName owner:owner options:nil] firstObject];
+    UAInAppMessageHTMLView *view = [[bundle loadNibNamed:nibName owner:nil options:nil] firstObject];
 
     if (view) {
         // Always add the close button

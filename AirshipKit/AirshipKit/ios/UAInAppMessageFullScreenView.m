@@ -41,13 +41,12 @@ NSString *const UAInAppMessageFullScreenViewNibName = @"UAInAppMessageFullScreen
                                                      closeButton:(UAInAppMessageCloseButton *)closeButton
                                                       buttonView:(UAInAppMessageButtonView * _Nullable)buttonView
                                                     footerButton:(UIButton * _Nullable)footerButton
-                                                       mediaView:(UAInAppMessageMediaView * _Nullable)mediaView
-                                                           owner:(id)owner{
+                                                       mediaView:(UAInAppMessageMediaView * _Nullable)mediaView {
 
     NSString *nibName = UAInAppMessageFullScreenViewNibName;
     NSBundle *bundle = [UAirship resources];
 
-    UAInAppMessageFullScreenView *view = [[bundle loadNibNamed:nibName owner:owner options:nil] firstObject];
+    UAInAppMessageFullScreenView *view = [[bundle loadNibNamed:nibName owner:nil options:nil] firstObject];
 
     if (view) {
         view.translatesAutoresizingMaskIntoConstraints = NO;
@@ -76,14 +75,14 @@ NSString *const UAInAppMessageFullScreenViewNibName = @"UAInAppMessageFullScreen
             [view.containerStackView addArrangedSubview:closeView];
 
             // Top text
-            view.topTextView = [UAInAppMessageTextView textViewWithHeading:displayContent.heading body:nil owner:owner];
+            view.topTextView = [UAInAppMessageTextView textViewWithHeading:displayContent.heading body:nil];
             [view.containerStackView addArrangedSubview:view.topTextView];
 
             // Media
             [view.containerStackView addArrangedSubview:mediaView];
 
             // Bottom text
-            view.bottomTextView = [UAInAppMessageTextView textViewWithHeading:nil body:displayContent.body owner:owner];
+            view.bottomTextView = [UAInAppMessageTextView textViewWithHeading:nil body:displayContent.body];
             [view.containerStackView addArrangedSubview:view.bottomTextView];
         } else if (displayContent.contentLayout == UAInAppMessageFullScreenContentLayoutHeaderBodyMedia) {
             // Close
@@ -91,7 +90,7 @@ NSString *const UAInAppMessageFullScreenViewNibName = @"UAInAppMessageFullScreen
             [view.containerStackView addArrangedSubview:closeView];
 
             // Top text
-            view.topTextView = [UAInAppMessageTextView textViewWithHeading:displayContent.heading body:displayContent.body owner:owner];\
+            view.topTextView = [UAInAppMessageTextView textViewWithHeading:displayContent.heading body:displayContent.body];\
             [view.containerStackView addArrangedSubview:view.topTextView];
 
             // Media
@@ -103,7 +102,7 @@ NSString *const UAInAppMessageFullScreenViewNibName = @"UAInAppMessageFullScreen
             [view.containerStackView addArrangedSubview:closeView];
 
             // Top text with body
-            view.topTextView = [UAInAppMessageTextView textViewWithHeading:displayContent.heading body:displayContent.body owner:owner];
+            view.topTextView = [UAInAppMessageTextView textViewWithHeading:displayContent.heading body:displayContent.body];
             [view.containerStackView addArrangedSubview:view.topTextView];
         }
 
