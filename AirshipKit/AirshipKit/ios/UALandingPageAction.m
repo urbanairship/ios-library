@@ -89,6 +89,7 @@ NSString *const UALandingPageFill = @"fill";
 - (BOOL)parseAspectLockOptionFromValue:(id)value {
     if ([value isKindOfClass:[NSDictionary class]]) {
         if ([[value valueForKey:UALandingPageAspectLockKey] isKindOfClass:[NSNumber class]]) {
+            // key "aspectLock" is still accepted by the API
             NSNumber *aspectLock = (NSNumber *)[value valueForKey:UALandingPageAspectLockKey];
 
             return aspectLock.boolValue;

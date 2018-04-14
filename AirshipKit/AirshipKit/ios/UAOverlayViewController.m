@@ -33,8 +33,6 @@ static NSMutableSet *overlayControllers_ = nil;
 @property (strong, nonatomic) IBOutlet UIView *backgroundInsetView;
 @property (strong, nonatomic) IBOutlet UABeveledLoadingIndicator *loadingIndicatorView;
 
-@property (strong, nonatomic) IBOutlet NSLayoutConstraint *containerViewHeightConstraint;
-@property (strong, nonatomic) IBOutlet NSLayoutConstraint *containerViewWidthConstraint;
 
 /**
  * Block invoked whenever the [UIView layoutSubviews] method is called.
@@ -44,6 +42,9 @@ static NSMutableSet *overlayControllers_ = nil;
 @property(nonatomic, assign) CGSize size;
 @property(nonatomic, assign) BOOL aspectLock;
 @property(nonatomic, assign) UIDeviceOrientation previousOrientation;
+
+@property(nonatomic, strong) NSLayoutConstraint *widthConstraint;
+@property(nonatomic, strong) NSLayoutConstraint *heightConstraint;
 
 @end
 
@@ -61,40 +62,66 @@ static NSMutableSet *overlayControllers_ = nil;
     return self;
 }
 
-// Normalizes the provided size to aspect fill the current screen
-- (CGSize)normalizeSizeForScreen:(CGSize)size {
+- (CGSize)getMaxSafeOverlaySize {
     CGSize screenSize = [UIScreen mainScreen].bounds.size;
 
-    CGFloat screenAspect = screenSize.width/screenSize.height;
-    CGFloat landingPageAspect = size.width/size.height;
+    // Get insets for max size
+    CGFloat topInset = 0;
+    CGFloat bottomInset = 0;
+    CGFloat leftInset = 0;
+    CGFloat rightInset = 0;
+
+    if (@available(iOS 11.0, *)) {
+        UIWindow *window = [UAUtils mainWindow];
+        topInset = window.safeAreaInsets.top;
+        bottomInset = window.safeAreaInsets.bottom;
+        leftInset = window.safeAreaInsets.left;
+        rightInset = window.safeAreaInsets.right;
+    }
+
+    CGFloat maxOverlayWidth = screenSize.width - (fabs(leftInset) + fabs(rightInset));
+    CGFloat maxOverlayHeight = screenSize.height - (fabs(topInset) + fabs(bottomInset));
+
+    return CGSizeMake(maxOverlayWidth, maxOverlayHeight);
+}
+
+// Normalizes the provided size to aspect fill the current screen
+- (CGSize)normalizeSize:(CGSize)size {
+    CGFloat requestedAspect = size.width/size.height;
+
+    CGSize maxSafeOverlaySize = [self getMaxSafeOverlaySize];
+    CGFloat screenAspect = maxSafeOverlaySize.width/maxSafeOverlaySize.height;
+
+    // If aspect ratio is invalid, remove aspect lock
+    if (![self validateAspectRatio:requestedAspect]) {
+        self.aspectLock = NO;
+    }
 
     BOOL sizeIsValid = ([self validateWidth:size.width] && [self validateHeight:size.height]);
 
-    if (self.aspectLock && [self validateAspectRatio:landingPageAspect] && !sizeIsValid) {
-
-        if (screenAspect > landingPageAspect) {
-            return CGSizeMake(size.width * (screenSize.height/size.height), screenSize.height);
+    // If aspect lock is on and size is invalid, adjust size
+    if (self.aspectLock && !sizeIsValid) {
+        if (screenAspect > requestedAspect) {
+            return CGSizeMake(size.width * (maxSafeOverlaySize.height/size.height), maxSafeOverlaySize.height);
         } else {
-            return CGSizeMake(screenSize.width, size.height * (screenSize.width/size.width));
+            return CGSizeMake(maxSafeOverlaySize.width, size.height * (maxSafeOverlaySize.width/size.width));
         }
     }
 
     // Fill screen width if width is invalid
     if (![self validateWidth:size.width]) {
-        size.width = screenSize.width;
+        size.width = maxSafeOverlaySize.width;
     }
 
     // Fill screen height if height is invalid
     if (![self validateHeight:size.height]) {
-        size.height = screenSize.height;
+        size.height = maxSafeOverlaySize.height;
     }
 
     return size;
 }
 
 -(BOOL)validateAspectRatio:(CGFloat)aspectRatio {
-
-
     if (isnan(aspectRatio) || aspectRatio > INTMAX_MAX) {
         return NO;
     }
@@ -127,8 +154,8 @@ static NSMutableSet *overlayControllers_ = nil;
 }
 
 - (BOOL)validateHeight:(CGFloat)height {
-    CGSize screenSize = [UIScreen mainScreen].bounds.size;
-    CGFloat maximumOverlayViewHeight = screenSize.height;
+    CGSize maxScreenSize = [self getMaxSafeOverlaySize];
+    CGFloat maximumOverlayViewHeight = maxScreenSize.height;
     CGFloat minimumOverlayViewHeight = (kUAOverlayViewControllerWebViewPadding * 4) * 2;
 
     if (height < minimumOverlayViewHeight) {
@@ -146,27 +173,31 @@ static NSMutableSet *overlayControllers_ = nil;
     return YES;
 }
 
+- (void)applySizeConstraintsForSize:(CGSize)size {
+    // Apply height and width constraints
+    self.widthConstraint.active = NO;
+    self.widthConstraint = [NSLayoutConstraint constraintWithItem:self.containerView
+                                                        attribute:NSLayoutAttributeWidth
+                                                        relatedBy:NSLayoutRelationEqual
+                                                           toItem:nil
+                                                        attribute:NSLayoutAttributeNotAnAttribute
+                                                       multiplier:1
+                                                         constant:size.width];
+    self.widthConstraint.active = YES;
+
+    self.heightConstraint.active = NO;
+    self.heightConstraint = [NSLayoutConstraint constraintWithItem:self.containerView
+                                                         attribute:NSLayoutAttributeHeight
+                                                         relatedBy:NSLayoutRelationEqual
+                                                            toItem:nil
+                                                         attribute:NSLayoutAttributeNotAnAttribute
+                                                        multiplier:1
+                                                          constant:size.height];
+    self.heightConstraint.active = YES;
+}
+
 - (void)layoutSubviews {
     [super layoutSubviews];
-
-    CGSize screenSize = [UIScreen mainScreen].bounds.size;
-
-    CGSize normalizedSize = [self normalizeSizeForScreen:self.size];
-
-    CGFloat widthConstant = normalizedSize.width - screenSize.width;
-    CGFloat heightConstant = normalizedSize.height - screenSize.height;
-
-    CGFloat topInset = 0;
-    CGFloat leftInset = 0;
-    // Nub adjustment for iPhone X
-    if (@available(iOS 11.0, *)) {
-        UIWindow *window = [UAUtils mainWindow];
-        topInset = window.safeAreaInsets.top;
-        leftInset = window.safeAreaInsets.left;
-    }
-
-    self.containerViewHeightConstraint.constant = heightConstant - topInset;
-    self.containerViewWidthConstraint.constant = widthConstant - leftInset;
 
     [self.containerView layoutIfNeeded];
 
@@ -176,6 +207,9 @@ static NSMutableSet *overlayControllers_ = nil;
 
     UIDeviceOrientation orientation = [UIDevice currentDevice].orientation;
     if (self.previousOrientation != orientation) {
+
+        // apply the size
+        [self applySizeConstraintsForSize:[self normalizeSize:self.size]];
 
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             [self.webView.scrollView setZoomScale:0 animated:YES];
@@ -367,7 +401,6 @@ static NSMutableSet *overlayControllers_ = nil;
         widthConstraint.active = YES;
         heightConstraint.active = YES;
     }
-
 
     // Technically UABespokeCloseView is a not a UIButton, so we will be adding it as a subView of an actual, transparent one.
     self.closeButtonView.userInteractionEnabled = NO;

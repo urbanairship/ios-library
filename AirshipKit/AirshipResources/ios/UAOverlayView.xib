@@ -24,27 +24,27 @@
                     </userDefinedRuntimeAttributes>
                 </view>
                 <view opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="vOB-aH-fCl" userLabel="Container View">
-                    <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
+                    <rect key="frame" x="0.0" y="34" width="375" height="744"/>
                     <subviews>
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="NIM-3E-mEZ" userLabel="Background View">
-                            <rect key="frame" x="0.0" y="44" width="375" height="734"/>
+                            <rect key="frame" x="0.0" y="15" width="375" height="714"/>
                             <subviews>
                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="sib-JW-aVL">
-                                    <rect key="frame" x="15" y="15" width="345" height="704"/>
+                                    <rect key="frame" x="15" y="15" width="345" height="684"/>
                                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                     <userDefinedRuntimeAttributes>
                                         <userDefinedRuntimeAttribute type="boolean" keyPath="translatesAutoresizingMaskIntoConstraints" value="NO"/>
                                     </userDefinedRuntimeAttributes>
                                 </view>
                                 <webView contentMode="scaleToFill" scalesPageToFit="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xZB-lX-Zq7" customClass="UAWebView">
-                                    <rect key="frame" x="15" y="15" width="345" height="704"/>
+                                    <rect key="frame" x="15" y="15" width="345" height="684"/>
                                     <color key="backgroundColor" red="0.36078431370000003" green="0.38823529410000002" blue="0.4039215686" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                     <userDefinedRuntimeAttributes>
                                         <userDefinedRuntimeAttribute type="boolean" keyPath="translatesAutoresizingMaskIntoConstraints" value="NO"/>
                                     </userDefinedRuntimeAttributes>
                                 </webView>
                                 <view alpha="0.69999999999999996" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="1cx-OK-wDZ" customClass="UABeveledLoadingIndicator">
-                                    <rect key="frame" x="138" y="317.33333333333331" width="100" height="100"/>
+                                    <rect key="frame" x="137.66666666666666" y="307" width="100" height="100"/>
                                     <constraints>
                                         <constraint firstAttribute="width" constant="100" id="7Fd-WC-cRt"/>
                                         <constraint firstAttribute="height" constant="100" id="V6O-HE-7jH"/>
@@ -98,7 +98,10 @@
                         </view>
                     </subviews>
                     <constraints>
+                        <constraint firstItem="NIM-3E-mEZ" firstAttribute="top" secondItem="vOB-aH-fCl" secondAttribute="top" constant="15" id="Fyb-l7-URe"/>
+                        <constraint firstItem="NIM-3E-mEZ" firstAttribute="width" secondItem="vOB-aH-fCl" secondAttribute="width" id="VJA-0Q-Enc"/>
                         <constraint firstItem="NIM-3E-mEZ" firstAttribute="centerX" secondItem="vOB-aH-fCl" secondAttribute="centerX" id="dEF-yC-HkJ"/>
+                        <constraint firstAttribute="bottom" secondItem="NIM-3E-mEZ" secondAttribute="bottom" constant="15" id="qzQ-oF-AuN"/>
                     </constraints>
                     <userDefinedRuntimeAttributes>
                         <userDefinedRuntimeAttribute type="boolean" keyPath="translatesAutoresizingMaskIntoConstraints" value="NO"/>
@@ -106,16 +109,15 @@
                 </view>
             </subviews>
             <constraints>
-                <constraint firstItem="vOB-aH-fCl" firstAttribute="height" secondItem="iN0-l3-epB" secondAttribute="height" id="4fr-ik-v2F"/>
                 <constraint firstItem="vOB-aH-fCl" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="6HX-pv-Nw8"/>
                 <constraint firstItem="MxQ-yh-M1D" firstAttribute="height" secondItem="iN0-l3-epB" secondAttribute="height" id="7vV-Ov-0d4"/>
-                <constraint firstItem="NIM-3E-mEZ" firstAttribute="bottom" secondItem="0t9-9Q-wW6" secondAttribute="bottom" id="B4e-6p-ufg"/>
-                <constraint firstItem="0t9-9Q-wW6" firstAttribute="top" secondItem="NIM-3E-mEZ" secondAttribute="top" id="MwV-zC-bVR"/>
-                <constraint firstItem="vOB-aH-fCl" firstAttribute="width" secondItem="iN0-l3-epB" secondAttribute="width" id="Ot2-Z9-x6W"/>
-                <constraint firstItem="NIM-3E-mEZ" firstAttribute="width" secondItem="0t9-9Q-wW6" secondAttribute="width" id="ZfO-CQ-Fec"/>
+                <constraint firstItem="vOB-aH-fCl" firstAttribute="top" relation="lessThanOrEqual" secondItem="0t9-9Q-wW6" secondAttribute="top" priority="999" id="M8P-3v-OdV"/>
                 <constraint firstItem="MxQ-yh-M1D" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="kLt-Jw-moK"/>
+                <constraint firstItem="vOB-aH-fCl" firstAttribute="leading" secondItem="0t9-9Q-wW6" secondAttribute="leading" priority="999" id="kNH-oJ-fSZ"/>
                 <constraint firstItem="vOB-aH-fCl" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="lWX-qL-r2f"/>
+                <constraint firstItem="vOB-aH-fCl" firstAttribute="trailing" secondItem="0t9-9Q-wW6" secondAttribute="trailing" priority="999" id="ns0-pv-aXt"/>
                 <constraint firstItem="MxQ-yh-M1D" firstAttribute="width" secondItem="iN0-l3-epB" secondAttribute="width" id="sBj-MK-Ktg"/>
+                <constraint firstItem="vOB-aH-fCl" firstAttribute="bottom" secondItem="0t9-9Q-wW6" secondAttribute="bottom" priority="999" id="sHD-ut-hgK"/>
                 <constraint firstItem="MxQ-yh-M1D" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="ur4-XD-gBd"/>
             </constraints>
             <viewLayoutGuide key="safeArea" id="0t9-9Q-wW6"/>
@@ -127,8 +129,6 @@
                 <outlet property="closeButton" destination="B21-6U-tyU" id="YpG-PQ-5B8"/>
                 <outlet property="closeButtonView" destination="Col-NU-Fki" id="MHl-rS-IMT"/>
                 <outlet property="containerView" destination="vOB-aH-fCl" id="6ze-m9-0HS"/>
-                <outlet property="containerViewHeightConstraint" destination="4fr-ik-v2F" id="i09-7C-TIH"/>
-                <outlet property="containerViewWidthConstraint" destination="Ot2-Z9-x6W" id="Bfi-tG-2kY"/>
                 <outlet property="loadingIndicatorView" destination="1cx-OK-wDZ" id="49y-N1-IP1"/>
                 <outlet property="shadeView" destination="MxQ-yh-M1D" id="9RR-Lr-JNg"/>
                 <outlet property="webView" destination="xZB-lX-Zq7" id="jEc-mP-X2b"/>
