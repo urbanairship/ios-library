@@ -224,9 +224,7 @@ double const DefaultModalAnimationDuration = 0.2;
             }
 
             // Add Media
-            if (self.mediaView) {
-                [self.scrollableStack addArrangedSubview:self.mediaView];
-            }
+            [self.scrollableStack addArrangedSubview:self.mediaView];
 
             // Add Body
             UIView *bodyView = [UAInAppMessageTextView textViewWithHeading:nil body:self.displayContent.body];

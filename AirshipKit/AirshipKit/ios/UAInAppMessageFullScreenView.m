@@ -14,7 +14,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-// Hand tuned value that removes excess verical safe area from
+// Hand tuned value that removes excess vertical safe area from
 CGFloat const ExcessiveSafeAreaPadding = 16;
 
 NSString *const UAInAppMessageFullScreenViewNibName = @"UAInAppMessageFullScreenView";
@@ -130,16 +130,10 @@ NSString *const UAInAppMessageFullScreenViewNibName = @"UAInAppMessageFullScreen
                 break;
             }
             case UAInAppMessageFullScreenContentLayoutHeaderBodyMedia: {
-                self.topTextView = [UAInAppMessageTextView textViewWithHeading:displayContent.heading body:nil onTop:YES];
-                // Add header
+                self.topTextView = [UAInAppMessageTextView textViewWithHeading:displayContent.heading body:displayContent.body onTop:YES];
+                // Add header and body
                 if (self.topTextView) {
                     [self.containerStackView addArrangedSubview:self.topTextView];
-                }
-
-                self.bottomTextView = [UAInAppMessageTextView textViewWithHeading:nil body:displayContent.body onTop:!self.topTextView];
-                // Add body
-                if (self.bottomTextView) {
-                    [self.containerStackView addArrangedSubview:self.bottomTextView];
                 }
 
                 // Add media

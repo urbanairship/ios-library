@@ -153,11 +153,9 @@ NSString *const UAInAppMessageAdapterCacheName = @"UAInAppMessageAdapterCache";
                 }
 
             //Apply constant regardless of order of participating views
-            if (firstAttribute == attribute) {
-                    constraint.constant = padding;
-                } else if (secondAttribute == attribute) {
-                        constraint.constant = padding;
-                    }
+            if ((firstAttribute == attribute) || (secondAttribute == attribute)) {
+                constraint.constant = padding;
+            }
         }
 }
 
