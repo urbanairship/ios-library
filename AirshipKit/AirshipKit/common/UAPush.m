@@ -18,11 +18,9 @@
 #import "UAPreferenceDataStore+Internal.h"
 #import "UAConfig.h"
 #import "UANotificationCategory.h"
-#import "UATagGroupsAPIClient+Internal.h"
 #import "UATagUtils+Internal.h"
 #import "UAPushReceivedEvent+Internal.h"
-#import "UATagGroupsMutation+Internal.h"
-#import "UAPreferenceDataStore+InternalTagGroupsMutation.h"
+#import "UATagGroupsRegistrar+Internal.h"
 
 #if !TARGET_OS_TV
 #import "UAInboxUtils.h"
@@ -56,11 +54,6 @@ NSString *const UAPushEnabledKey = @"UAPushEnabled";
 NSString *const UAPushQuietTimeStartKey = @"start";
 NSString *const UAPushQuietTimeEndKey = @"end";
 
-// Channel tag group keys
-NSString *const UAPushAddTagGroupsSettingsKey = @"UAPushAddTagGroups";
-NSString *const UAPushRemoveTagGroupsSettingsKey = @"UAPushRemoveTagGroups";
-NSString *const UAPushTagGroupsMutationsKey = @"UAPushTagGroupsMutations";
-
 // The default device tag group.
 NSString *const UAPushDefaultDeviceTagGroup = @"device";
 
@@ -72,6 +65,15 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
 
 NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channel_id";
 
+@interface UAPush()
+
+/**
+ * The UATagGroupsRegistrar that manages tag group registration with Urban Airship.
+ */
+@property (nonatomic, strong) UATagGroupsRegistrar *tagGroupsRegistrar;
+
+@end
+
 @implementation UAPush
 
 // Both getter and setter are custom here, so give the compiler a hand with the synthesizing
@@ -81,7 +83,7 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
-- (instancetype)initWithConfig:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
+- (instancetype)initWithConfig:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore tagGroupsRegistrar:(UATagGroupsRegistrar *)tagGroupsRegistrar {
     self = [super initWithDataStore:dataStore];
     if (self) {
         self.dataStore = dataStore;
@@ -116,8 +118,7 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
         self.channelRegistrar = [UAChannelRegistrar channelRegistrarWithConfig:config dataStore:dataStore];
         self.channelRegistrar.delegate = self;
 
-        self.tagGroupsAPIClient = [UATagGroupsAPIClient clientWithConfig:config];
-        self.tagGroupsAPIClient.enabled = self.componentEnabled;
+        self.tagGroupsRegistrar = tagGroupsRegistrar;
 
         // Check config to see if user wants to delay channel creation
         // If channel ID exists or channel creation delay is disabled then channelCreationEnabled
@@ -157,10 +158,6 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
         // prior to allowing the application to set defaults.
         [self migratePushSettings];
 
-        [self.dataStore migrateTagGroupSettingsForAddTagsKey:UAPushAddTagGroupsSettingsKey
-                                               removeTagsKey:UAPushRemoveTagGroupsSettingsKey
-                                                      newKey:UAPushTagGroupsMutationsKey];
-
         // Log the channel ID at error level, but without logging
         // it as an error.
         if (self.channelID && uaLogLevel >= UALogLevelError) {
@@ -182,7 +179,11 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
 }
 
 + (instancetype)pushWithConfig:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
-    return [[UAPush alloc] initWithConfig:config dataStore:dataStore];
+    return [[UAPush alloc] initWithConfig:config dataStore:dataStore tagGroupsRegistrar:[UATagGroupsRegistrar channelTagGroupsRegistrarWithConfig:config dataStore:dataStore]];
+}
+
++ (instancetype)pushWithConfig:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore tagGroupsRegistrar:(UATagGroupsRegistrar *)tagGroupsRegistrar {
+    return [[UAPush alloc] initWithConfig:config dataStore:dataStore tagGroupsRegistrar:tagGroupsRegistrar];
 }
 
 - (void)updateAuthorizedNotificationTypes {
@@ -536,16 +537,7 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
         return;
     }
 
-    NSArray *normalizedTags = [UATagUtils normalizeTags:tags];
-    NSString *normalizedTagGroupID = [UATagUtils normalizeTagGroupID:tagGroupID];
-    if (!normalizedTags.count || !normalizedTagGroupID.length) {
-        return;
-    }
-
-    UATagGroupsMutation *mutation = [UATagGroupsMutation mutationToAddTags:normalizedTags
-                                                                     group:normalizedTagGroupID];
-
-    [self.dataStore addTagGroupsMutation:mutation atBeginning:NO forKey:UAPushTagGroupsMutationsKey];
+    [self.tagGroupsRegistrar addTags:tags group:tagGroupID];
 }
 
 - (void)removeTags:(NSArray *)tags group:(NSString *)tagGroupID {
@@ -554,17 +546,7 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
         return;
     }
 
-    NSArray *normalizedTags = [UATagUtils normalizeTags:tags];
-    NSString *normalizedTagGroupID = [UATagUtils normalizeTagGroupID:tagGroupID];
-
-    if (!normalizedTags.count || !normalizedTagGroupID.length) {
-        return;
-    }
-
-    UATagGroupsMutation *mutation = [UATagGroupsMutation mutationToRemoveTags:normalizedTags
-                                                                        group:normalizedTagGroupID];
-
-    [self.dataStore addTagGroupsMutation:mutation atBeginning:NO forKey:UAPushTagGroupsMutationsKey];
+    [self.tagGroupsRegistrar removeTags:tags group:tagGroupID];
 }
 
 - (void)setTags:(NSArray *)tags group:(NSString *)tagGroupID {
@@ -572,18 +554,8 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
         UA_LERR(@"Unable to set tags %@ for device tag group when channelTagRegistrationEnabled is true.", [tags description]);
         return;
     }
-
-    NSArray *normalizedTags = [UATagUtils normalizeTags:tags];
-    NSString *normalizedTagGroupID = [UATagUtils normalizeTagGroupID:tagGroupID];
-
-    if (!normalizedTagGroupID.length) {
-        return;
-    }
-
-    UATagGroupsMutation *mutation = [UATagGroupsMutation mutationToSetTags:normalizedTags
-                                                                     group:normalizedTagGroupID];
-
-    [self.dataStore addTagGroupsMutation:mutation atBeginning:NO forKey:UAPushTagGroupsMutationsKey];
+    
+    [self.tagGroupsRegistrar setTags:tags group:tagGroupID];
 }
 
 - (void)setBadgeNumber:(NSInteger)badgeNumber {
@@ -608,7 +580,6 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
 - (void)resetBadge {
     [self setBadgeNumber:0];
 }
-
 
 #pragma mark -
 #pragma mark UIApplication State Observation
@@ -816,55 +787,12 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
     if (!self.componentEnabled) {
         return;
     }
-    
 
     if (!self.channelID) {
         return;
     }
 
-    UATagGroupsMutation *mutation = [self.dataStore pollTagGroupsMutationForKey:UAPushTagGroupsMutationsKey];
-
-    if (!mutation) {
-        return;
-    }
-
-    UA_WEAKIFY(self);
-
-    __block UIBackgroundTaskIdentifier backgroundTask = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
-        UA_STRONGIFY(self);
-
-        UA_LTRACE(@"Tag groups background task expired.");
-        [self.tagGroupsAPIClient cancelAllRequests];
-        [self.dataStore addTagGroupsMutation:mutation atBeginning:YES forKey:UAPushTagGroupsMutationsKey];
-
-        if (backgroundTask != UIBackgroundTaskInvalid) {
-            [[UIApplication sharedApplication] endBackgroundTask:backgroundTask];
-            backgroundTask = UIBackgroundTaskInvalid;
-        }
-    }];
-
-    if (backgroundTask == UIBackgroundTaskInvalid) {
-        UA_LTRACE("Background task unavailable, skipping tag groups update.");
-        [self.dataStore addTagGroupsMutation:mutation atBeginning:YES forKey:UAPushTagGroupsMutationsKey];
-        return;
-    }
-
-    [self.tagGroupsAPIClient updateChannel:self.channelID
-                         tagGroupsMutation:mutation
-                         completionHandler:^(NSUInteger status) {
-                             dispatch_async(dispatch_get_main_queue(), ^{
-                                 UA_STRONGIFY(self);
-
-                                 if (status >= 200 && status <= 299) {
-                                     [self updateChannelTagGroups];
-                                 } else if (status != 400 && status != 403) {
-                                     [self.dataStore addTagGroupsMutation:mutation atBeginning:YES forKey:UAPushTagGroupsMutationsKey];
-                                 }
-
-                                 [[UIApplication sharedApplication] endBackgroundTask:backgroundTask];
-                                 backgroundTask = UIBackgroundTaskInvalid;
-                             });
-                         }];
+    [self.tagGroupsRegistrar updateTagGroupsForID:self.channelID];
 }
 
 - (void)updateAPNSRegistration {
@@ -1119,7 +1047,7 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
 }
 
 - (void)onComponentEnableChange {
-    self.tagGroupsAPIClient.enabled = self.componentEnabled;
+    self.tagGroupsRegistrar.componentEnabled = self.componentEnabled;
     if (self.componentEnabled) {
         // if component was disabled and is now enabled, register the channel
         [self updateRegistration];

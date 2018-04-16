@@ -8,9 +8,7 @@
 #import "UANamedUserAPIClient+Internal.h"
 #import "UAPush+Internal.h"
 #import "UAConfig.h"
-#import "UATagGroupsAPIClient+Internal.h"
-#import "UATagGroupsMutation+Internal.h"
-
+#import "UATagGroupsRegistrar+Internal.h"
 
 @interface UANamedUserTest : UABaseTest
 
@@ -20,7 +18,7 @@
 @property (nonatomic, strong) id mockedNamedUserClient;
 @property (nonatomic, strong) id mockedUAPush;
 @property (nonatomic, copy) NSString *pushChannelID;
-@property (nonatomic, strong) id mockTagGroupsAPIClient;
+@property (nonatomic, strong) id mockTagGroupsRegistrar;
 @property (nonatomic, strong) NSMutableDictionary *addTagGroups;
 @property (nonatomic, strong) NSMutableDictionary *removeTagGroups;
 @property (nonatomic, strong) id mockApplication;
@@ -53,7 +51,9 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
 
     self.pushChannelID = @"someChannel";
 
-    self.namedUser = [UANamedUser namedUserWithPush:self.mockedUAPush config:self.mockConfig dataStore:self.dataStore];
+    self.mockTagGroupsRegistrar = [self mockForClass:[UATagGroupsRegistrar class]];
+
+    self.namedUser = [UANamedUser namedUserWithPush:self.mockedUAPush config:self.mockConfig dataStore:self.dataStore tagGroupsRegistrar:self.mockTagGroupsRegistrar];
 
     self.mockedNamedUserClient = [self mockForClass:[UANamedUserAPIClient class]];
     self.namedUser.namedUserAPIClient = self.mockedNamedUserClient;
@@ -78,21 +78,6 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
         UANamedUserAPIClientFailureBlock failureBlock = (__bridge UANamedUserAPIClientFailureBlock)arg;
         failureBlock(400);
     };
-
-    self.addTagGroups = [[NSMutableDictionary alloc] init];
-    NSMutableDictionary *tagsToAdd = [NSMutableDictionary dictionary];
-    NSArray *addTagsArray = @[@"tag1", @"tag2", @"tag3"];
-    [tagsToAdd setValue:addTagsArray forKey:@"tag_group"];
-    self.addTagGroups = tagsToAdd;
-
-    self.removeTagGroups = [[NSMutableDictionary alloc] init];
-    NSMutableDictionary *tagsToRemove = [NSMutableDictionary dictionary];
-    NSArray *removeTagsArray = @[@"tag3", @"tag4", @"tag5"];
-    [tagsToRemove setValue:removeTagsArray forKey:@"tag_group"];
-    self.removeTagGroups = tagsToRemove;
-
-    self.mockTagGroupsAPIClient = [self mockForClass:[UATagGroupsAPIClient class]];
-    self.namedUser.tagGroupsAPIClient = self.mockTagGroupsAPIClient;
 }
 
 - (void)tearDown {
@@ -100,7 +85,6 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
     [self.mockedNamedUserClient stopMocking];
     [self.mockedAirship stopMocking];
     [self.mockedUAPush stopMocking];
-    [self.mockTagGroupsAPIClient stopMocking];
     [self.mockApplication stopMocking];
     [self.mockConfig stopMocking];
 
@@ -376,51 +360,19 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
 }
 
 /**
- * Test updating tag groups calls the tag client for every pending mutation.
+ * Test that the tag groups registrar is called when UANamedUser is asked to update tags
  */
-- (void)testUpdateTagGroups {
-    // Background task
-    [[[self.mockApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)30)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
-
-    // Channel
-    self.namedUser.identifier = @"named_user";
-
-    // Expect a set mutation, return 200
-    [[[self.mockTagGroupsAPIClient expect] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:4];
-
-        void (^completionHandler)(NSUInteger) = (__bridge void (^)(NSUInteger))arg;
-        completionHandler(200);
-    }] updateNamedUser:@"named_user"
-     tagGroupsMutation:[OCMArg checkWithBlock:^BOOL(id obj) {
-        UATagGroupsMutation *mutation = (UATagGroupsMutation *)obj;
-        NSDictionary *expectedPayload = @{@"set": @{ @"group2": @[@"tag1"] } };
-        return [expectedPayload isEqualToDictionary:[mutation payload]];
-    }] completionHandler:OCMOCK_ANY];
-
-
-    // Expect Add & Remove mutations, return 200
-    [[[self.mockTagGroupsAPIClient expect] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:4];
-
-        void (^completionHandler)(NSUInteger) = (__bridge void (^)(NSUInteger))arg;
-        completionHandler(200);
-    }] updateNamedUser:@"named_user"
-     tagGroupsMutation:[OCMArg checkWithBlock:^BOOL(id obj) {
-        UATagGroupsMutation *mutation = (UATagGroupsMutation *)obj;
-        NSDictionary *expectedPayload = @{@"add": @{ @"group1": @[@"tag1"] }, @"remove": @{ @"group1": @[@"tag2"] } };
-        return [expectedPayload isEqualToDictionary:[mutation payload]];
-    }] completionHandler:OCMOCK_ANY];
-
-    [self.namedUser addTags:@[@"tag1"] group:@"group1"];
-    [self.namedUser removeTags:@[@"tag2"] group:@"group1"];
-    [self.namedUser setTags:@[@"tag1"] group:@"group2"];
-
+- (void)testUpdateTags {
+    // EXPECTATIONS
+    [[self.mockTagGroupsRegistrar expect] updateTagGroupsForID:[OCMArg checkWithBlock:^BOOL(id obj) {
+        return (obj != nil);
+    }]];
+    
+    // TEST
     [self.namedUser updateTags];
     
-    [self.mockTagGroupsAPIClient verify];
+    // VERIFY
+    [self.mockTagGroupsRegistrar verify];
 }
 
 @end

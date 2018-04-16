@@ -19,10 +19,9 @@
 #import "UANotificationCategory.h"
 #import "UAPreferenceDataStore+Internal.h"
 #import "UAConfig.h"
-#import "UATagGroupsAPIClient+Internal.h"
+#import "UATagGroupsRegistrar+Internal.h"
 #import "UANotificationCategory.h"
 #import "UAPushReceivedEvent+Internal.h"
-#import "UATagGroupsMutation+Internal.h"
 
 @interface UAPushTest : UABaseTest
 @property (nonatomic, strong) id mockApplication;
@@ -35,7 +34,7 @@
 @property (nonatomic, strong) id mockUAUtils;
 @property (nonatomic, strong) id mockUAUser;
 @property (nonatomic, strong) id mockDefaultNotificationCategories;
-@property (nonatomic, strong) id mockTagGroupsAPIClient;
+@property (nonatomic, strong) id mockTagGroupsRegistrar;
 @property (nonatomic, strong) id mockProcessInfo;
 @property (nonatomic, strong) id mockUNNotificationSettingsPartial;
 @property (nonatomic, strong) id mockUserNotificationCenter;
@@ -111,7 +110,9 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     self.dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:@"uapush.test."];
     [self.dataStore removeAll];
     
-    self.push =  [UAPush pushWithConfig:[UAConfig defaultConfig] dataStore:self.dataStore];
+    self.mockTagGroupsRegistrar = [self mockForClass:[UATagGroupsRegistrar class]];
+
+    self.push =  [UAPush pushWithConfig:[UAConfig defaultConfig] dataStore:self.dataStore tagGroupsRegistrar:self.mockTagGroupsRegistrar];
 
     self.notification = @{
                           @"aps": @{
@@ -168,9 +169,6 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     self.mockDefaultNotificationCategories = [self mockForClass:[UANotificationCategories class]];
 
     self.push.registrationDelegate = self.mockRegistrationDelegate;
-
-    self.mockTagGroupsAPIClient = [self mockForClass:[UATagGroupsAPIClient class]];
-    self.push.tagGroupsAPIClient = self.mockTagGroupsAPIClient;
 
     [UAirship setSharedAirship:self.mockAirship];
 }
@@ -418,14 +416,13 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     self.push.channelTagRegistrationEnabled = YES;
     
     // EXPECTATIONS
-    id mockedTagGroupClass = [self mockForClass:[UATagGroupsMutation class]];
-    [[mockedTagGroupClass reject] mutationToAddTags:OCMOCK_ANY group:OCMOCK_ANY];
+    [[self.mockTagGroupsRegistrar reject] addTags:OCMOCK_ANY group:OCMOCK_ANY];
     
-   // TEST
+    // TEST
     [self.push addTags:@[@"tag1"] group:@"device"];
     
     // VERIFY
-    [mockedTagGroupClass verify];
+    [self.mockTagGroupsRegistrar verify];
 }
 
 - (void)testRemoveTagsFromDeviceTagGroupWhenChannelTagRegistrationDisabled {
@@ -436,14 +433,13 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     self.push.channelTagRegistrationEnabled = YES;
     
     // EXPECTATIONS
-    id mockedTagGroupClass = [self mockForClass:[UATagGroupsMutation class]];
-    [[mockedTagGroupClass reject] mutationToRemoveTags:OCMOCK_ANY group:OCMOCK_ANY];
+    [[self.mockTagGroupsRegistrar reject] removeTags:OCMOCK_ANY group:OCMOCK_ANY];
     
     // TEST
     [self.push removeTags:@[@"tag1"] group:@"device"];
     
     // VERIFY
-    [mockedTagGroupClass verify];
+    [self.mockTagGroupsRegistrar verify];
 }
 
 - (void)testSetTagsInDeviceTagGroupWhenChannelTagRegistrationDisabled {
@@ -451,74 +447,30 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     self.push.channelTagRegistrationEnabled = YES;
     
     // EXPECTATIONS
-    id mockedTagGroupClass = [self mockForClass:[UATagGroupsMutation class]];
-    [[mockedTagGroupClass reject] mutationToSetTags:OCMOCK_ANY group:OCMOCK_ANY];
-    
+    [[self.mockTagGroupsRegistrar reject] setTags:OCMOCK_ANY group:OCMOCK_ANY];
+
     // TEST
     [self.push setTags:@[@"tag1"] group:@"device"];
     
     // VERIFY
-    [mockedTagGroupClass verify];
+    [self.mockTagGroupsRegistrar verify];
 }
 
-- (void)testAddEmptyTagListOrEmptyGroupDoesntAddTags {
+- (void)testUpdateTags {
     // SETUP
+    self.push.channelID = @"someChannel";
+    self.push.channelLocation = @"someChannelLocation";
 
     // EXPECTATIONS
-    id mockedTagGroupClass = [self mockForClass:[UATagGroupsMutation class]];
-    [[mockedTagGroupClass reject] mutationToAddTags:OCMOCK_ANY group:OCMOCK_ANY];
-    
+    [[self.mockTagGroupsRegistrar expect] updateTagGroupsForID:[OCMArg checkWithBlock:^BOOL(id obj) {
+        return (obj != nil);
+    }]];
+
     // TEST
-    [self.push addTags:@[] group:@"group1"];
-    [self.push addTags:@[@"tag1"] group:@""];
+    [self.push updateChannelTagGroups];
     
     // VERIFY
-    [mockedTagGroupClass verify];
-}
-
-- (void)testRemoveEmptyTagListOrEmptyGroupDoesntRemoveTags {
-    // SETUP
-    [self.push addTags:@[@"tag1"] group:@"device"];
-
-    // EXPECTATIONS
-    id mockedTagGroupClass = [self mockForClass:[UATagGroupsMutation class]];
-    [[mockedTagGroupClass reject] mutationToRemoveTags:OCMOCK_ANY group:OCMOCK_ANY];
-    
-    // TEST
-    [self.push removeTags:@[] group:@"group1"];
-    [self.push removeTags:@[@"tag1"] group:@""];
-    
-    // VERIFY
-    [mockedTagGroupClass verify];
-}
-
-- (void)testSetEmptyTagListClearsTags {
-    // SETUP
-    NSArray *emptyArray = @[];
-    
-    // EXPECTATIONS
-    id mockedTagGroupClass = [self mockForClass:[UATagGroupsMutation class]];
-    [[[mockedTagGroupClass expect] andReturn:[[UATagGroupsMutation alloc] init]] mutationToSetTags:[OCMArg isEqual:emptyArray] group:OCMOCK_ANY];
-    
-    // TEST
-    [self.push setTags:emptyArray group:@"group1"];
-    
-    // VERIFY
-    [mockedTagGroupClass verify];
-}
-
-- (void)testSetWithEmptyGroupDoesntSetTags {
-    // SETUP
-    
-    // EXPECTATIONS
-    id mockedTagGroupClass = [self mockForClass:[UATagGroupsMutation class]];
-    [[mockedTagGroupClass reject] mutationToSetTags:OCMOCK_ANY group:OCMOCK_ANY];
-    
-    // TEST
-    [self.push setTags:@[@"tag1"] group:@""];
-    
-    // VERIFY
-    [mockedTagGroupClass verify];
+    [self.mockTagGroupsRegistrar verify];
 }
 
 /**
@@ -2642,91 +2594,6 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 }
 
 /**
- * Test updating tag groups calls the tag client for every pending mutation.
- */
-- (void)testUpdateTagGroups {
-    // set up
-    [self setupForUpdateTagGroupsTest];
-    
-    // test
-    [self.push updateRegistration];
-    
-    // verify
-    [self verifyUpdateTagGroupsTest];
-}
-
-- (void)setupForUpdateTagGroupsTest {
-    // Background task
-    [[[self.mockApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)30)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
-
-    // Channel
-    self.push.channelID = @"someChannelID";
-    self.push.channelLocation = @"someChannelLocation";
-
-    XCTestExpectation *expectation = [self expectationWithDescription:@"Async update channel tag groups call"];
-
-    // Expect a set mutation, return 200
-    [[[self.mockTagGroupsAPIClient expect] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:4];
-
-        void (^completionHandler)(NSUInteger) = (__bridge void (^)(NSUInteger))arg;
-        completionHandler(200);
-    }] updateChannel:@"someChannelID"
-     tagGroupsMutation:[OCMArg checkWithBlock:^BOOL(id obj) {
-        UATagGroupsMutation *mutation = (UATagGroupsMutation *)obj;
-        NSDictionary *expectedPayload = @{@"set": @{ @"group2": @[@"tag1"] } };
-        return [expectedPayload isEqualToDictionary:[mutation payload]];
-    }] completionHandler:OCMOCK_ANY];
-
-
-    // Expect Add & Remove mutations, return 200
-    [[[self.mockTagGroupsAPIClient expect] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:4];
-
-        [expectation fulfill];
-
-        void (^completionHandler)(NSUInteger) = (__bridge void (^)(NSUInteger))arg;
-        completionHandler(200);
-    }] updateChannel:@"someChannelID"
-     tagGroupsMutation:[OCMArg checkWithBlock:^BOOL(id obj) {
-        UATagGroupsMutation *mutation = (UATagGroupsMutation *)obj;
-        NSDictionary *expectedPayload = @{@"add": @{ @"group1": @[@"tag1"] }, @"remove": @{ @"group1": @[@"tag2"] } };
-        return [expectedPayload isEqualToDictionary:[mutation payload]];
-    }] completionHandler:OCMOCK_ANY];
-
-    [self.push addTags:@[@"tag1"] group:@"group1"];
-    [self.push removeTags:@[@"tag2"] group:@"group1"];
-    [self.push setTags:@[@"tag1"] group:@"group2"];
-}
-
-- (void)verifyUpdateTagGroupsTest {
-    [self waitForExpectationsWithTimeout:1 handler:nil];
-
-    [self.mockTagGroupsAPIClient verify];
-}
-
-- (void)testUpdateChannelTagGroupsWithInvalidBackground {
-    // SETUP
-    [self.dataStore setObject:@"someChannelLocation" forKey:UAPushChannelLocationKey];
-    [self.dataStore setObject:@"someChannelID"       forKey:UAPushChannelIDKey];
-    [self.push addTags:@[@"tag1"] group:@"group1"];
-
-    // Prevent beginRegistrationBackgroundTask early return
-    [[[self.mockApplication stub] andReturnValue:OCMOCK_VALUE(UIBackgroundTaskInvalid)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
-    
-    // EXPECTATIONS
-    [[self.mockTagGroupsAPIClient reject] updateChannel:OCMOCK_ANY tagGroupsMutation:OCMOCK_ANY completionHandler:OCMOCK_ANY];
-   
-    // TEST
-    [self.push updateChannelTagGroups];
-    
-    // VERIFY
-    [self.mockTagGroupsAPIClient verify];
-}
-
-/**
  * Test on first launch when user has not been prompted for notification.
  */
 - (void)testNotificationNotPrompted {
@@ -2820,14 +2687,41 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 
 - (void)testEnablingDisabledPushUpdatesRegistration {
     // Setup
+    self.push.channelLocation = @"someChannelLocation";
+    self.push.channelID = @"someChannelID";
     self.push.componentEnabled = NO;
-    [self setupForUpdateTagGroupsTest];
-
+    
+    // EXPECTATIONS
+    __block NSMutableSet *expectedCategories = [NSMutableSet set];
+    for (UANotificationCategory *category in self.push.combinedCategories) {
+        [expectedCategories addObject:[category asUNNotificationCategory]];
+    }
+    OCMExpect([self.mockUserNotificationCenter setNotificationCategories:[OCMArg checkWithBlock:^BOOL(NSSet<UNNotificationCategory *> *categories) {
+        return (expectedCategories.count == categories.count);
+    }]]);
+    
+    OCMExpect([self.mockUserNotificationCenter requestAuthorizationWithOptions:(UNAuthorizationOptions)self.push.notificationOptions completionHandler:OCMOCK_ANY]).andDo(^(NSInvocation *invocation) {
+        void *arg;
+        UNAuthorizationOptions normalizedOptions;
+        [invocation getArgument:&normalizedOptions atIndex:2];
+        [invocation getArgument:&arg atIndex:3];
+        typedef void (^NotificationAuthorizationBlock)(BOOL granted, NSError *__nullable error);
+        NotificationAuthorizationBlock completionBlock = (__bridge NotificationAuthorizationBlock)arg;
+        completionBlock((self.push.notificationOptions == (UANotificationOptions)normalizedOptions),nil);
+    });
+    
     // Test
     self.push.componentEnabled = YES;
     
     // verify
-    [self verifyUpdateTagGroupsTest];
+    XCTAssertTrue(self.push.userPushNotificationsEnabled,
+                  @"userPushNotificationsEnabled should be enabled when set to YES");
+
+    XCTAssertTrue([self.dataStore boolForKey:UAUserPushNotificationsEnabledKey],
+                  @"userPushNotificationsEnabled should be stored in standardUserDefaults");
+    
+    XCTAssertNoThrow([self.mockUserNotificationCenter verify],
+                     @"userPushNotificationsEnabled should register for remote notifications");
 }
 
 @end

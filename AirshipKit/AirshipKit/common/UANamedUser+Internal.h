@@ -4,7 +4,7 @@
 
 @class UANamedUserAPIClient;
 @class UAConfig;
-@class UATagGroupsAPIClient;
+@class UATagGroupsRegistrar;
 @class UAPush;
 
 NS_ASSUME_NONNULL_BEGIN
@@ -73,11 +73,6 @@ extern NSString *const UANamedUserRemoveTagGroupsSettingsKey;
  */
 @property (nonatomic, strong) UAConfig *config;
 
-/**
- * The tag groups API client.
- */
-@property (nonatomic, strong) UATagGroupsAPIClient *tagGroupsAPIClient;
-
 ///---------------------------------------------------------------------------------------
 /// @name Named User Internal Methods
 ///---------------------------------------------------------------------------------------
@@ -92,6 +87,19 @@ extern NSString *const UANamedUserRemoveTagGroupsSettingsKey;
 + (instancetype)namedUserWithPush:(UAPush *)push
                            config:(UAConfig *)config
                         dataStore:(UAPreferenceDataStore *)dataStore;
+
+/**
+ * Factory method to create a named user. For testing.
+ * @parm push The UAPush instance.
+ * @param config The Urban Airship config.
+ * @param dataStore The shared preference data store.
+ * @param tagGroupsRegistrar The tag groups registrar.
+ * @return A named user instance.
+ */
++ (instancetype)namedUserWithPush:(UAPush *)push
+                           config:(UAConfig *)config
+                        dataStore:(UAPreferenceDataStore *)dataStore
+               tagGroupsRegistrar:(UATagGroupsRegistrar *)tagGroupsRegistrar;
 
 /**
  * Updates the association or disassociation of the current named user ID.

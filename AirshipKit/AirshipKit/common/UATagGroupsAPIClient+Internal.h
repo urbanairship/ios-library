@@ -19,12 +19,12 @@ NS_ASSUME_NONNULL_BEGIN
 ///---------------------------------------------------------------------------------------
 
 /**
- * Factory method to create a UATagGroupsAPIClient.
+ * Factory method to create a UATagGroupsAPIClient for channel tag groups.
  *
  * @param config The Urban Airship config.
  * @return UATagGroupsAPIClient instance.
  */
-+ (instancetype)clientWithConfig:(UAConfig *)config;
++ (instancetype)channelClientWithConfig:(UAConfig *)config;
 
 /**
  * Factory method to create a UATagGroupsAPIClient.
@@ -33,29 +33,35 @@ NS_ASSUME_NONNULL_BEGIN
  * @param session The request session.
  * @return UATagGroupsAPIClient instance.
  */
-+ (instancetype)clientWithConfig:(UAConfig *)config session:(UARequestSession *)session;
++ (instancetype)channelClientWithConfig:(UAConfig *)config session:(UARequestSession *)session;
 
 /**
- * Update the channel tag group.
+ * Factory method to create a UATagGroupsAPIClient for named user tag groups.
  *
- * @param channelId The channel ID string.
+ * @param config The Urban Airship config.
+ * @return UATagGroupsAPIClient instance.
+ */
++ (instancetype)namedUserClientWithConfig:(UAConfig *)config;
+
+/**
+ * Factory method to create a UATagGroupsAPIClient.
+ *
+ * @param config The Urban Airship config.
+ * @param session The request session.
+ * @return UATagGroupsAPIClient instance.
+ */
++ (instancetype)namedUserClientWithConfig:(UAConfig *)config session:(UARequestSession *)session;
+
+/**
+ * Update the tag group for the identifier.
+ *
+ * @param identifier The ID string.
  * @param mutation The tag groups changes.
  * @param completionHandler The completion handler with the status code.
  */
-- (void)updateChannel:(NSString *)channelId
+- (void)updateTagGroupsForId:(NSString *)identifier
     tagGroupsMutation:(UATagGroupsMutation *)mutation
     completionHandler:(void (^)(NSUInteger status))completionHandler;
-
-/**
- * Update the named user tags.
- *
- * @param identifier The named user ID string.
- * @param mutation The tag groups changes.
- * @param completionHandler The completion handler with the status code.
- */
-- (void)updateNamedUser:(NSString *)identifier
-      tagGroupsMutation:(UATagGroupsMutation *)mutation
-      completionHandler:(void (^)(NSUInteger status))completionHandler;
 
 @end
 

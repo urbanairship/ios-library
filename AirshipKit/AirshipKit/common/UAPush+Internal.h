@@ -14,6 +14,7 @@
 @class UAPreferenceDataStore;
 @class UAConfig;
 @class UATagGroupsAPIClient;
+@class UATagGroupsRegistrar;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -93,21 +94,6 @@ extern NSString *const UAPushChannelIDKey;
 extern NSString *const UAPushChannelLocationKey;
 
 /**
- * Add channel tag groups data store key.
- */
-extern NSString *const UAPushAddTagGroupsSettingsKey;
-
-/**
- * Remove channel tag groups data store key.
- */
-extern NSString *const UAPushRemoveTagGroupsSettingsKey;
-
-/**
- * Tag group mutations data store key.
- */
-extern NSString *const UAPushTagGroupsMutationsKey;
-
-/**
  * Old push enabled key.
  */
 extern NSString *const UAPushEnabledKey;
@@ -166,12 +152,6 @@ extern NSString *const UAPushEnabledKey;
  */
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 
-
-/**
- * The tag groups API client.
- */
-@property (nonatomic, strong) UATagGroupsAPIClient *tagGroupsAPIClient;
-
 /**
  * The current authorized notification options.
  */
@@ -198,6 +178,15 @@ extern NSString *const UAPushEnabledKey;
  * @return A new push instance.
  */
 + (instancetype)pushWithConfig:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore;
+
+/**
+ * Factory method to create a push instance. For testing
+ * @param config The Urban Airship config
+ * @param dataStore The preference data store.
+ * @param tagGroupsregistrar The tag groups registrar.
+ * @return A new push instance.
+ */
++ (instancetype)pushWithConfig:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore tagGroupsRegistrar:(UATagGroupsRegistrar *)tagGroupsregistrar;
 
 /**
  * Get the local time zone, considered the default.

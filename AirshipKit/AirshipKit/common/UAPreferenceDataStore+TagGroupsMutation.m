@@ -18,37 +18,51 @@
     return [NSKeyedUnarchiver unarchiveObjectWithData:encodedMutations];
 }
 
-- (void)addTagGroupsMutation:(UATagGroupsMutation *)mutation atBeginning:(BOOL)atBeginning forKey:(NSString *)key {
-    id Mutations = [[self tagGroupsMutationsForKey:key] mutableCopy];
-
-    if (!Mutations) {
-        Mutations = @[mutation];
-    } else if (atBeginning) {
-        [Mutations insertObject:mutation atIndex:0];
+- (void)addTagGroupsMutation:(UATagGroupsMutation *)mutation forKey:(NSString *)key {
+    id mutations = [[self tagGroupsMutationsForKey:key] mutableCopy];
+    
+    if (!mutations) {
+        mutations = @[mutation];
     } else {
-        [Mutations addObject:mutation];
+        [mutations addObject:mutation];
     }
-
-    Mutations = [UATagGroupsMutation collapseMutations:Mutations];
-    [self setTagGroupsMutations:Mutations forKey:key];
+    
+    [self setTagGroupsMutations:mutations forKey:key];
 }
 
-- (UATagGroupsMutation *)pollTagGroupsMutationForKey:(NSString *)key {
-    id Mutations = [[self tagGroupsMutationsForKey:key] mutableCopy];
-    if (![Mutations count]) {
+- (nullable UATagGroupsMutation *)peekTagGroupsMutationForKey:(NSString *)key {
+    id mutations = [self tagGroupsMutationsForKey:key];
+    if (![mutations count]) {
         return nil;
     }
+    
+    return mutations[0];
+}
 
-    id mutation = Mutations[0];
-    [Mutations removeObjectAtIndex:0];
-
-    if ([Mutations count]) {
-        [self setTagGroupsMutations:Mutations forKey:key];
+- (UATagGroupsMutation *)popTagGroupsMutationForKey:(NSString *)key {
+    id mutations = [[self tagGroupsMutationsForKey:key] mutableCopy];
+    if (![mutations count]) {
+        return nil;
+    }
+    
+    id mutation = mutations[0];
+    [mutations removeObjectAtIndex:0];
+    
+    if ([mutations count]) {
+        [self setTagGroupsMutations:mutations forKey:key];
     } else {
         [self removeObjectForKey:key];
     }
-
+    
     return mutation;
+}
+
+- (void)collapseTagGroupsMutationForKey:(NSString *)key {
+    id mutations = [[self tagGroupsMutationsForKey:key] mutableCopy];
+    
+    mutations = [UATagGroupsMutation collapseMutations:mutations];
+    
+    [self setTagGroupsMutations:mutations forKey:key];
 }
 
 - (void)migrateTagGroupSettingsForAddTagsKey:(NSString *)addTagsKey
@@ -60,7 +74,7 @@
 
     if (addTags || removeTags) {
         UATagGroupsMutation *mutation = [UATagGroupsMutation mutationWithAddTags:addTags removeTags:removeTags];
-        [self addTagGroupsMutation:mutation atBeginning:YES forKey:key];
+        [self addTagGroupsMutation:mutation forKey:key];
 
         [self removeObjectForKey:addTagsKey];
         [self removeObjectForKey:removeTagsKey];

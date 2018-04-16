@@ -13,33 +13,44 @@
 #define kUATagGroupsResponseObjectWarningsKey @"warnings"
 #define kUATagGroupsResponseObjectErrorKey @"error"
 
+@interface UATagGroupsAPIClient()
+@property (nonatomic,strong) NSString *tagGroupsPath;
+@property (nonatomic,strong) NSString *tagGroupsKey;
+@end
+
 @implementation UATagGroupsAPIClient
 
-+ (instancetype)clientWithConfig:(UAConfig *)config {
-    return [[self alloc] initWithConfig:config session:[UARequestSession sessionWithConfig:config]];
++ (instancetype)channelClientWithConfig:(UAConfig *)config {
+    UATagGroupsAPIClient *client = [self channelClientWithConfig:config session:[UARequestSession sessionWithConfig:config]];
+    return client;
 }
 
-+ (instancetype)clientWithConfig:(UAConfig *)config session:(UARequestSession *)session {
-    return [[self alloc] initWithConfig:config session:session];
++ (instancetype)channelClientWithConfig:(UAConfig *)config session:(UARequestSession *)session {
+    UATagGroupsAPIClient *client = [[self alloc] initWithConfig:config session:session];
+    client.tagGroupsPath = kUAChannelTagGroupsPath;
+    client.tagGroupsKey = kUATagGroupsIosChannelKey;
+    return client;
 }
 
-- (void)updateChannel:(NSString *)channelId
-    tagGroupsMutation:(UATagGroupsMutation *)mutation
-    completionHandler:(void (^)(NSUInteger status))completionHandler {
++ (instancetype)namedUserClientWithConfig:(UAConfig *)config {
+    UATagGroupsAPIClient *client = [self namedUserClientWithConfig:config session:[UARequestSession sessionWithConfig:config]];
+    return client;
+}
+
++ (instancetype)namedUserClientWithConfig:(UAConfig *)config session:(UARequestSession *)session {
+    UATagGroupsAPIClient *client = [[self alloc] initWithConfig:config session:session];
+    client.tagGroupsPath = kUANamedUserTagsPath;
+    client.tagGroupsKey = kUATagGroupsNamedUserIdKey;
+    return client;
+}
+
+- (void)updateTagGroupsForId:(NSString *)identifier
+           tagGroupsMutation:(UATagGroupsMutation *)mutation
+           completionHandler:(void (^)(NSUInteger status))completionHandler {
 
     [self performTagGroupsMutation:mutation
-                              path:kUAChannelTagGroupsPath
-                          audience:@{kUATagGroupsIosChannelKey : channelId}
-                 completionHandler:completionHandler];
-}
-
-- (void)updateNamedUser:(NSString *)identifier
-      tagGroupsMutation:(UATagGroupsMutation *)mutation
-      completionHandler:(void (^)(NSUInteger status))completionHandler {
-
-    [self performTagGroupsMutation:mutation
-                              path:kUANamedUserTagsPath
-                          audience:@{kUATagGroupsNamedUserIdKey : identifier}
+                              path:self.tagGroupsPath
+                          audience:@{self.tagGroupsKey : identifier}
                  completionHandler:completionHandler];
 }
 
