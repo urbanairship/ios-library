@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="13529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="13771" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13527"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13772"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -19,18 +19,18 @@
                     <rect key="frame" x="0.0" y="0.0" width="375" height="384"/>
                     <subviews>
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="d3j-OF-iBo" userLabel="Tab">
-                            <rect key="frame" x="170" y="369" width="35" height="5"/>
+                            <rect key="frame" x="170" y="370" width="35" height="4"/>
                             <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             <constraints>
-                                <constraint firstAttribute="height" constant="5" id="BLw-0Q-GGD"/>
+                                <constraint firstAttribute="height" constant="4" id="BLw-0Q-GGD"/>
                                 <constraint firstAttribute="width" constant="35" id="s13-Zk-Lhe"/>
                             </constraints>
                         </view>
                         <view contentMode="scaleToFill" verticalCompressionResistancePriority="751" translatesAutoresizingMaskIntoConstraints="NO" id="A4y-Le-7Tg" userLabel="Banner Content Container View">
-                            <rect key="frame" x="0.0" y="20" width="375" height="294"/>
+                            <rect key="frame" x="0.0" y="16" width="375" height="287"/>
                         </view>
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="1dl-fi-7LK" userLabel="Button Container View">
-                            <rect key="frame" x="0.0" y="324" width="375" height="35"/>
+                            <rect key="frame" x="-8" y="319" width="391" height="35"/>
                             <constraints>
                                 <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="35" id="LxC-ti-qq2"/>
                             </constraints>
@@ -38,16 +38,16 @@
                     </subviews>
                     <gestureRecognizers/>
                     <constraints>
-                        <constraint firstItem="A4y-Le-7Tg" firstAttribute="top" secondItem="3me-ax-tOr" secondAttribute="top" constant="20" id="0pm-g8-eyn"/>
+                        <constraint firstItem="A4y-Le-7Tg" firstAttribute="top" secondItem="3me-ax-tOr" secondAttribute="top" constant="16" id="0pm-g8-eyn"/>
                         <constraint firstItem="A4y-Le-7Tg" firstAttribute="leading" secondItem="3me-ax-tOr" secondAttribute="leading" id="3Rc-bg-CwK"/>
                         <constraint firstItem="d3j-OF-iBo" firstAttribute="centerX" secondItem="3me-ax-tOr" secondAttribute="centerX" id="H7e-zG-uUm"/>
-                        <constraint firstItem="d3j-OF-iBo" firstAttribute="top" secondItem="1dl-fi-7LK" secondAttribute="bottom" constant="10" id="HE3-3p-9u4"/>
-                        <constraint firstAttribute="trailing" secondItem="1dl-fi-7LK" secondAttribute="trailing" id="JDs-8v-YAX"/>
-                        <constraint firstItem="1dl-fi-7LK" firstAttribute="leading" secondItem="3me-ax-tOr" secondAttribute="leading" id="Uwj-Bf-RVk"/>
+                        <constraint firstItem="d3j-OF-iBo" firstAttribute="top" secondItem="1dl-fi-7LK" secondAttribute="bottom" constant="16" id="HE3-3p-9u4"/>
+                        <constraint firstAttribute="trailing" secondItem="1dl-fi-7LK" secondAttribute="trailing" constant="-8" id="JDs-8v-YAX"/>
+                        <constraint firstItem="1dl-fi-7LK" firstAttribute="leading" secondItem="3me-ax-tOr" secondAttribute="leading" constant="-8" id="Uwj-Bf-RVk"/>
                         <constraint firstAttribute="bottom" secondItem="d3j-OF-iBo" secondAttribute="bottom" constant="10" id="Yt8-dl-LjM"/>
                         <constraint firstAttribute="trailing" secondItem="A4y-Le-7Tg" secondAttribute="trailing" id="cmI-UF-uGV"/>
                         <constraint firstItem="d3j-OF-iBo" firstAttribute="top" secondItem="A4y-Le-7Tg" secondAttribute="bottom" priority="999" constant="10" id="d3r-jB-F0B"/>
-                        <constraint firstItem="1dl-fi-7LK" firstAttribute="top" secondItem="A4y-Le-7Tg" secondAttribute="bottom" constant="10" id="iyV-3I-47L"/>
+                        <constraint firstItem="1dl-fi-7LK" firstAttribute="top" secondItem="A4y-Le-7Tg" secondAttribute="bottom" constant="16" id="iyV-3I-47L"/>
                     </constraints>
                 </view>
             </subviews>
@@ -80,35 +80,35 @@
                     <rect key="frame" x="0.0" y="0.0" width="375" height="384"/>
                     <subviews>
                         <view contentMode="scaleToFill" verticalCompressionResistancePriority="751" translatesAutoresizingMaskIntoConstraints="NO" id="Q1Q-Fn-4BB" userLabel="Banner Content Container View">
-                            <rect key="frame" x="0.0" y="25" width="375" height="294"/>
+                            <rect key="frame" x="0.0" y="24" width="375" height="293"/>
                         </view>
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="U3b-0L-Ls4" userLabel="Button Container View">
-                            <rect key="frame" x="0.0" y="329" width="375" height="35"/>
+                            <rect key="frame" x="-8" y="333" width="391" height="35"/>
                             <constraints>
                                 <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="35" id="A9B-1s-QD1"/>
                             </constraints>
                         </view>
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="wWP-qH-7ee" userLabel="Tab">
-                            <rect key="frame" x="170" y="10" width="35" height="5"/>
+                            <rect key="frame" x="170" y="10" width="35" height="4"/>
                             <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             <constraints>
                                 <constraint firstAttribute="width" constant="35" id="f2A-EQ-nev"/>
-                                <constraint firstAttribute="height" constant="5" id="yuL-lL-7ZS"/>
+                                <constraint firstAttribute="height" constant="4" id="yuL-lL-7ZS"/>
                             </constraints>
                         </view>
                     </subviews>
                     <gestureRecognizers/>
                     <constraints>
-                        <constraint firstItem="U3b-0L-Ls4" firstAttribute="top" secondItem="Q1Q-Fn-4BB" secondAttribute="bottom" constant="10" id="1iD-g2-gTZ"/>
+                        <constraint firstItem="U3b-0L-Ls4" firstAttribute="top" secondItem="Q1Q-Fn-4BB" secondAttribute="bottom" constant="16" id="1iD-g2-gTZ"/>
                         <constraint firstItem="Q1Q-Fn-4BB" firstAttribute="leading" secondItem="OZc-8h-5Bw" secondAttribute="leading" id="5JN-Yc-dkp"/>
                         <constraint firstAttribute="trailing" secondItem="Q1Q-Fn-4BB" secondAttribute="trailing" id="8e5-fh-c48"/>
                         <constraint firstItem="wWP-qH-7ee" firstAttribute="top" secondItem="OZc-8h-5Bw" secondAttribute="top" constant="10" id="Aj1-En-VJ6"/>
-                        <constraint firstAttribute="trailing" secondItem="U3b-0L-Ls4" secondAttribute="trailing" id="Ioa-r4-thC"/>
-                        <constraint firstAttribute="bottom" secondItem="Q1Q-Fn-4BB" secondAttribute="bottom" priority="999" constant="20" id="Qcb-rR-71D"/>
+                        <constraint firstAttribute="trailing" secondItem="U3b-0L-Ls4" secondAttribute="trailing" constant="-8" id="Ioa-r4-thC"/>
+                        <constraint firstAttribute="bottom" secondItem="Q1Q-Fn-4BB" secondAttribute="bottom" priority="999" constant="16" id="Qcb-rR-71D"/>
                         <constraint firstItem="wWP-qH-7ee" firstAttribute="centerX" secondItem="OZc-8h-5Bw" secondAttribute="centerX" id="U2P-gz-eGc"/>
-                        <constraint firstAttribute="bottom" secondItem="U3b-0L-Ls4" secondAttribute="bottom" constant="20" id="ZmL-1V-AAn"/>
+                        <constraint firstAttribute="bottom" secondItem="U3b-0L-Ls4" secondAttribute="bottom" constant="16" id="ZmL-1V-AAn"/>
                         <constraint firstItem="Q1Q-Fn-4BB" firstAttribute="top" secondItem="wWP-qH-7ee" secondAttribute="bottom" constant="10" id="bx8-x4-IYE"/>
-                        <constraint firstItem="U3b-0L-Ls4" firstAttribute="leading" secondItem="OZc-8h-5Bw" secondAttribute="leading" id="pwW-yb-Hva"/>
+                        <constraint firstItem="U3b-0L-Ls4" firstAttribute="leading" secondItem="OZc-8h-5Bw" secondAttribute="leading" constant="-8" id="pwW-yb-Hva"/>
                     </constraints>
                 </view>
             </subviews>

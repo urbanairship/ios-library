@@ -25,14 +25,12 @@ NS_ASSUME_NONNULL_BEGIN
  * @param displayContent The banner display content.
  * @param contentView The subview that holds the text and optional image.
  * @param buttonView The subview that holds the buttons.
- * @param owner The "File Owner" of the view
  *
  * @return a configured UAInAppMessageBannerView instance.
  */
 + (instancetype)bannerMessageViewWithDisplayContent:(UAInAppMessageBannerDisplayContent *)displayContent
                                   bannerContentView:(UAInAppMessageBannerContentView *)contentView
-                                         buttonView:(UAInAppMessageButtonView * _Nullable)buttonView
-                                              owner:(id)owner;
+                                         buttonView:(UAInAppMessageButtonView * _Nullable)buttonView;
 
 @end
 

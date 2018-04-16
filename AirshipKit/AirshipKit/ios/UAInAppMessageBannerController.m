@@ -22,8 +22,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 double const MaxWidth = 420;
 
-double const DefaultLeadingEdgeSpace = 10;
-double const DefaultTrailingEdgeSpace = 10;
+double const DefaultLeadingEdgeSpace = 24;
+double const DefaultTrailingEdgeSpace = 24;
 
 double const DefaultAnimationDuration = 0.2;
 double const MinimumLongPressDuration = 0.2;
@@ -127,13 +127,11 @@ double const MinimumSwipeVelocity = 100.0;
     UAInAppMessageButtonLayoutType buttonLayout = self.displayContent.buttonLayout;
 
     UAInAppMessageTextView *textView = [UAInAppMessageTextView textViewWithHeading:heading
-                                                                              body:body
-                                                                             owner:self];
+                                                                              body:body];
 
     UAInAppMessageBannerContentView *bannerContentView = [UAInAppMessageBannerContentView contentViewWithLayout:contentLayout
                                                                                                        textView:textView
-                                                                                                      mediaView:self.mediaView
-                                                                                                          owner:self];
+                                                                                                          mediaView:self.mediaView];
     // Only add button view if buttons are present
     UAInAppMessageButtonView *buttonView;
     if (buttons.count) {
@@ -145,8 +143,7 @@ double const MinimumSwipeVelocity = 100.0;
 
     self.bannerView = [UAInAppMessageBannerView bannerMessageViewWithDisplayContent:self.displayContent
                                                                   bannerContentView:bannerContentView
-                                                                         buttonView:buttonView
-                                                                              owner:self];
+                                                                         buttonView:buttonView];
 
     [parentView addSubview:self.bannerView];
 

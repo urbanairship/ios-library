@@ -2,6 +2,14 @@
 
 #import "UAInAppMessageCloseButton+Internal.h"
 
+CGFloat const XPaddingFromContainerTop = 16;
+CGFloat const XHeight = 30;
+CGFloat const XWidth = 30;
+CGFloat const XInset = 10;
+CGFloat const XThickness = 2;
+
+CGFloat const CircleTransparency = 0.25;
+
 @implementation UAInAppMessageCloseButton
 
 - (instancetype)initWithCoder:(NSCoder *)aDecoder {
@@ -16,9 +24,18 @@
 
     CGContextRef context = UIGraphicsGetCurrentContext();
     CGContextSetFillColorWithColor(context, [UIColor clearColor].CGColor);
-    NSInteger xInset = 10;
 
-    CGRect xFrame = CGRectInset(self.bounds, xInset, xInset);
+    CGRect xFrame = CGRectInset(CGRectMake(self.bounds.origin.x, self.bounds.origin.y + XPaddingFromContainerTop, XWidth, XHeight), XInset, XInset);
+
+    // Draw a semi-transparent white circle
+    CGContextSetFillColorWithColor(context, [UIColor colorWithWhite:1 alpha:CircleTransparency].CGColor);
+
+    CGRect circleRect = CGRectInset(CGRectMake(self.bounds.origin.x, self.bounds.origin.y + XPaddingFromContainerTop, XWidth, XHeight), 1, 1);
+    CGContextFillEllipseInRect(context, circleRect);
+
+    CGContextSetLineWidth(context, 0);
+    CGContextSetStrokeColorWithColor(context, strokeColor.CGColor);
+    CGContextStrokeEllipseInRect(context, circleRect);
 
     // Draw X
     UIBezierPath *aPath = [UIBezierPath bezierPath];
@@ -33,8 +50,8 @@
     [strokeColor setStroke];
 
     // Adjust the drawing options as needed.
-    aPath.lineWidth = 2.5;
-    bPath.lineWidth = 2.5;
+    aPath.lineWidth = XThickness;
+    bPath.lineWidth = XThickness;
 
     // Line cap style
     aPath.lineCapStyle = kCGLineCapButt;

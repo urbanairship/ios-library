@@ -98,6 +98,7 @@ double const DefaultFullScreenAnimationDuration = 0.2;
                                                                                   selector:@selector(buttonTapped:)];
 
     UAInAppMessageCloseButton *closeButton = [self createCloseButton];
+    closeButton.dismissButtonColor = self.displayContent.dismissButtonColor;
 
     UAInAppMessageButton *footerButton = [self addFooterButtonWithButtonInfo:self.displayContent.footer];
 
@@ -105,8 +106,7 @@ double const DefaultFullScreenAnimationDuration = 0.2;
                                                                                     closeButton:closeButton
                                                                                      buttonView:buttonView
                                                                                    footerButton:footerButton
-                                                                                      mediaView:self.mediaView
-                                                                                          owner:self];
+                                                                                      mediaView:self.mediaView];
 
     [parentView addSubview:self.fullScreenView];
     [self addInitialConstraintsToParentView:parentView fullScreenView:self.fullScreenView];
@@ -118,11 +118,9 @@ double const DefaultFullScreenAnimationDuration = 0.2;
 
 - (UAInAppMessageCloseButton * _Nullable)createCloseButton {
     UAInAppMessageCloseButton *closeButton = [[UAInAppMessageCloseButton alloc] init];
-    closeButton.dismissButtonColor = self.displayContent.dismissButtonColor;
     [closeButton addTarget:self
                     action:@selector(buttonTapped:)
           forControlEvents:UIControlEventTouchUpInside];
-
     return closeButton;
 }
 

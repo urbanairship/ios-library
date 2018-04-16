@@ -21,56 +21,6 @@ NS_ASSUME_NONNULL_BEGIN
 double const DefaultModalAnimationDuration = 0.2;
 
 /**
- * Custom UIScrollView class to handle shrinking UIScrollView when content is smaller.
- */
-@interface UAInAppMessageModalScrollView : UIScrollView
-
-/**
- * The modal message view.
- */
-@property (nonatomic, weak) UIView *modalView;
-
-/**
- * Content view to hold header, media and body views. Used for UIScrollView sizing.
- */
-@property (nonatomic, weak) UIView *contentView;
-
-/**
- * The maximum height constraint on the modal view. Active at init.
- * Used for shrinking scroll view to fit content.
- */
-@property (weak, nonatomic) NSLayoutConstraint *modalViewMaxHeightConstraint;
-
-/**
- * The actual height constraint on the modal view. Inactive at init.
- * Used for shrinking scroll view to fit content.
- */
-@property (weak, nonatomic) NSLayoutConstraint *modalViewActualHeightConstraint;
-
-@end
-
-
-@implementation UAInAppMessageModalScrollView
-
-- (void)layoutSubviews {
-    [super layoutSubviews];
-    
-    // do we need to shrink the scroll view to fit a smaller content size?
-    if (self.frame.size.height > (self.contentView.frame.size.height + 1)) {
-        CGFloat shrinkScrollView = self.frame.size.height - self.contentView.frame.size.height;
-
-        // change constraints on modal view for the shrunken scroll view
-        self.modalViewMaxHeightConstraint.active = NO;
-        self.modalViewActualHeightConstraint.constant = ceil(self.modalView.frame.size.height - shrinkScrollView);
-        self.modalViewActualHeightConstraint.active = YES;
-        
-        [self setNeedsLayout];
-    }
-}
-
-@end
-
-/**
  * Custom UIView class to handle rounding the border of the modal view.
  */
 @interface UAInAppMessageModalView : UIView
@@ -119,25 +69,9 @@ double const DefaultModalAnimationDuration = 0.2;
 @property (weak, nonatomic) IBOutlet UAInAppMessageModalView *modalView;
 
 /**
- * The maximum height constraint on the modal view. Active at init.
- * Used for shrinking scroll view to fit content.
+ * The stack view that holds any scrollable content.
  */
-@property (strong, nonatomic) IBOutlet NSLayoutConstraint *modalViewMaxHeightConstraint;
-
-/**
- * The actual height constraint on the modal view. Inactive at init.
- * Used for shrinking scroll view to fit content.
- */
-@property (strong, nonatomic) IBOutlet NSLayoutConstraint *modalViewActualHeightConstraint;
-
-/**
- * Constraints used to align the media view to the top of the close button if the media view
- * is the top-most view.
- */
-@property (strong, nonatomic) IBOutlet NSLayoutConstraint *scrollTopViewToCloseButtonBottom;
-@property (strong, nonatomic) IBOutlet NSLayoutConstraint *scrollTopViewToCloseButtonTop;
-@property (strong, nonatomic) IBOutlet NSLayoutConstraint *scrollMiddleViewToCloseButtonBottom;
-@property (strong, nonatomic) IBOutlet NSLayoutConstraint *scrollMiddleViewToCloseButtonTop;
+@property (strong, nonatomic) IBOutlet UIStackView *scrollableStack;
 
 /**
  * View to hold close (dismiss) button at top of modal message
@@ -145,26 +79,9 @@ double const DefaultModalAnimationDuration = 0.2;
 @property (weak, nonatomic) IBOutlet UIView *closeButtonContainerView;
 
 /**
- * Dismiss button
+ * Close button.
  */
-@property (weak, nonatomic) IBOutlet UAInAppMessageCloseButton *closeButton;
-
-/**
- * Scroll view to hold header, media and body views
- */
-@property (weak, nonatomic) IBOutlet UAInAppMessageModalScrollView *scrollView;
-
-/**
- * Content view to hold header, media and body views. Needed for UIScrollView sizing.
- */
-@property (weak, nonatomic) IBOutlet UIView *contentView;
-
-/**
- * Views to hold header, media and body views.
- */
-@property (weak, nonatomic) IBOutlet UIView *scrollTopView;
-@property (weak, nonatomic) IBOutlet UIView *scrollMiddleView;
-@property (weak, nonatomic) IBOutlet UIView *scrollBottomView;
+@property (strong, nonatomic) UAInAppMessageCloseButton *closeButton;
 
 /**
  * View to hold buttons
@@ -201,6 +118,11 @@ double const DefaultModalAnimationDuration = 0.2;
  */
 @property (nonatomic, copy, nullable) void (^showCompletionHandler)(UAInAppMessageResolution *);
 
+/**
+ * Used to add padding above the stack view - constant defaults to 0
+ */
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint *scrollableStackToTopConstaint;
+
 @end
 
 @implementation UAInAppMessageModalViewController
@@ -225,9 +147,19 @@ double const DefaultModalAnimationDuration = 0.2;
         self.messageID = messageID;
         self.displayContent = displayContent;
         self.mediaView = mediaView;
+        self.closeButton = [self createCloseButton];
     }
     
     return self;
+}
+
+- (UAInAppMessageCloseButton * _Nullable)createCloseButton {
+    UAInAppMessageCloseButton *closeButton = [[UAInAppMessageCloseButton alloc] init];
+    [closeButton addTarget:self
+                    action:@selector(buttonTapped:)
+          forControlEvents:UIControlEventTouchUpInside];
+
+    return closeButton;
 }
 
 #pragma mark -
@@ -254,70 +186,85 @@ double const DefaultModalAnimationDuration = 0.2;
     [self.modalWindow makeKeyAndVisible];
 }
 
+- (UAInAppMessageModalContentLayoutType)normalizeContentLayout:(UAInAppMessageModalDisplayContent *)content {
+
+    // If there's no media, normalize to header body media
+    if (!content.media) {
+        return UAInAppMessageModalContentLayoutHeaderBodyMedia;
+    }
+
+    // If header is missing for header media body, but media is present, normalize to media header body
+    if (content.contentLayout == UAInAppMessageModalContentLayoutHeaderMediaBody && !content.heading && content.media) {
+        return UAInAppMessageModalContentLayoutMediaHeaderBody;
+    }
+
+    return (UAInAppMessageModalContentLayoutType)content.contentLayout;
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
-    // set up scrollView so it can shrink when content is smaller than view
-    self.scrollView.modalView = self.modalView;
-    self.scrollView.contentView = self.contentView;
-    self.scrollView.modalViewMaxHeightConstraint = self.modalViewMaxHeightConstraint;
-    self.scrollView.modalViewActualHeightConstraint = self.modalViewActualHeightConstraint;
-    
+
     self.modalView.borderRadius = self.displayContent.borderRadius;
     self.modalView.backgroundColor = self.displayContent.backgroundColor;
-    
-    self.closeButton.dismissButtonColor = self.displayContent.dismissButtonColor;
 
-    // figure out which views go where based on contentLayout
-    UIView *containerForHeaderView;
-    UIView *containerForMediaView;
-    UIView *containerForBodyView;
-    switch (self.displayContent.contentLayout) {
-        case UAInAppMessageModalContentLayoutHeaderMediaBody:
-            containerForHeaderView = self.scrollTopView;
-            containerForMediaView = self.scrollMiddleView;
-            containerForBodyView = self.scrollBottomView;
+    self.closeButton.dismissButtonColor = self.displayContent.dismissButtonColor;
+    [self.closeButtonContainerView addSubview:self.closeButton];
+    [UAInAppMessageUtils applyContainerConstraintsToContainer:self.closeButtonContainerView containedView:self.closeButton];
+
+    // Normalize the display content layout
+    UAInAppMessageModalContentLayoutType normalizedContentLayout = [self normalizeContentLayout:self.displayContent];
+
+    // Apply UI special casing for normalized content layout
+    switch (normalizedContentLayout) {
+        case UAInAppMessageModalContentLayoutHeaderMediaBody: {
+            // Add Header
+            UIView *headerView = [UAInAppMessageTextView textViewWithHeading:self.displayContent.heading body:nil onTop:YES];
+            if (headerView) {
+                [self.scrollableStack addArrangedSubview:headerView];
+            }
+
+            // Add Media
+            [self.scrollableStack addArrangedSubview:self.mediaView];
+
+            // Add Body
+            UIView *bodyView = [UAInAppMessageTextView textViewWithHeading:nil body:self.displayContent.body];
+            [self.scrollableStack addArrangedSubview:bodyView];
+            if (bodyView) {
+                [self.scrollableStack addArrangedSubview:bodyView];
+            }
+
             break;
-        case UAInAppMessageModalContentLayoutHeaderBodyMedia:
-            containerForHeaderView = self.scrollTopView;
-            containerForBodyView = self.scrollMiddleView;
-            containerForMediaView = self.scrollBottomView;
+        }
+        case UAInAppMessageModalContentLayoutHeaderBodyMedia:{
+
+            // Add Header and Body
+            UIView *headerAndBodyView = [UAInAppMessageTextView textViewWithHeading:self.displayContent.heading body:self.displayContent.body onTop:YES];
+            if (headerAndBodyView) {
+                [self.scrollableStack addArrangedSubview:headerAndBodyView];
+            }
+
+            // Add Media
+            if (self.mediaView) {
+                [self.scrollableStack addArrangedSubview:self.mediaView];
+            }
+
             break;
-        case UAInAppMessageModalContentLayoutMediaHeaderBody:
-            containerForMediaView = self.scrollTopView;
-            containerForHeaderView = self.scrollMiddleView;
-            containerForBodyView = self.scrollBottomView;
+        }
+        case UAInAppMessageModalContentLayoutMediaHeaderBody: {
+            // Add Media
+            if (self.mediaView) {
+                [self.scrollableStack addArrangedSubview:self.mediaView];
+            }
+
+            // Add Header and Body
+            UIView *headerAndBodyView = [UAInAppMessageTextView textViewWithHeading:self.displayContent.heading body:self.displayContent.body onTop:NO];
+
+            if (headerAndBodyView) {
+                [self.scrollableStack addArrangedSubview:headerAndBodyView];
+            }
+
             break;
-    }
-    
-    // Only create header view if header is present
-    UIView *headerView;
-    if (self.displayContent.heading) {
-        headerView = [UAInAppMessageTextView textViewWithHeading:self.displayContent.heading body:nil owner:self];
-        
-        [containerForHeaderView addSubview:headerView];
-        [UAInAppMessageUtils applyContainerConstraintsToContainer:containerForHeaderView containedView:headerView];
-    } else {
-        [containerForHeaderView removeFromSuperview];
-    }
-    
-    // Only create media view if media is present
-    if (self.mediaView) {
-        [containerForMediaView addSubview:self.mediaView];
-        [UAInAppMessageUtils applyContainerConstraintsToContainer:containerForMediaView containedView:self.mediaView];
-    } else {
-        [containerForMediaView removeFromSuperview];
-    }
- 
-    // Only create body view if body is present
-    UIView *bodyView;
-    if (self.displayContent.body) {
-        bodyView = [UAInAppMessageTextView textViewWithHeading:nil body:self.displayContent.body owner:self];
-        
-        [containerForBodyView addSubview:bodyView];
-        [UAInAppMessageUtils applyContainerConstraintsToContainer:containerForBodyView containedView:bodyView];
-    } else {
-        [containerForBodyView removeFromSuperview];
+        }
     }
     
     // Only create button view if there are buttons
@@ -336,7 +283,7 @@ double const DefaultModalAnimationDuration = 0.2;
     } else {
         [self.buttonContainerView removeFromSuperview];
     }
-    
+
     // footer view
     UAInAppMessageButton *footerButton = [self createFooterButtonWithButtonInfo:self.displayContent.footer];
     if (footerButton) {
@@ -345,46 +292,9 @@ double const DefaultModalAnimationDuration = 0.2;
     } else {
         [self.footerContainerView removeFromSuperview];
     }
-    
+
     // will make opaque as part of animation when view appears
     self.view.alpha = 0;
-}
-
-- (void)viewDidLayoutSubviews {
-    [super viewDidLayoutSubviews];
-    
-    // if there is a media view, and it is the top view in the scroll view, put it behind the close button
-    // rather than underneath it.
-    if (self.mediaView) {
-        switch (self.displayContent.contentLayout) {
-            case UAInAppMessageModalContentLayoutMediaHeaderBody:
-                // media view is the top view
-                self.scrollTopViewToCloseButtonBottom.active = NO;
-                self.scrollTopViewToCloseButtonTop.active = YES;
-                [self.contentView bringSubviewToFront:self.closeButtonContainerView];
-                break;
-            case UAInAppMessageModalContentLayoutHeaderMediaBody:
-                // media view is the top view if there is no header
-                if (!self.displayContent.heading) {
-                    self.scrollMiddleViewToCloseButtonBottom.active = NO;
-                    self.scrollMiddleViewToCloseButtonTop.active = YES;
-                    [self.contentView bringSubviewToFront:self.closeButtonContainerView];
-                }
-                break;
-            case UAInAppMessageModalContentLayoutHeaderBodyMedia:
-                // media view can not be the top view
-                break;
-        }
-    }
-}
-
-- (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {
-    // before the view changes size (rotates), restore the old constraints. Once view has changed sized,
-    // the new constraints will be recalculated in [UAInAppMessageModalScrollView layoutSubviews].
-    self.modalViewActualHeightConstraint.active = NO;
-    self.modalViewMaxHeightConstraint.active = YES;
-
-    [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -441,7 +351,7 @@ double const DefaultModalAnimationDuration = 0.2;
     }];
 }
 
-- (IBAction)buttonTapped:(id)sender {
+- (void)buttonTapped:(id)sender {
     // Check for close button
     if ([sender isKindOfClass:[UAInAppMessageCloseButton class]]) {
         [self dismissWithResolution:[UAInAppMessageResolution userDismissedResolution]];

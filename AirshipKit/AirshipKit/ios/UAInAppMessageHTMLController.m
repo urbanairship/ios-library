@@ -195,8 +195,7 @@ double const UAInAppMessageDefaultHTMLAnimationDuration = 0.2;
     UAInAppMessageCloseButton *closeButton = [self createCloseButton];
 
     self.htmlView = [UAInAppMessageHTMLView htmlViewWithDisplayContent:self.displayContent
-                                                           closeButton:closeButton
-                                                                 owner:self];
+                                                           closeButton:closeButton];
 
     self.htmlView.webView.navigationDelegate = self.nativeBridge;
 

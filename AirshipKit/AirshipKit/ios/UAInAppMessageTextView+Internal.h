@@ -15,13 +15,22 @@ NS_ASSUME_NONNULL_BEGIN
 
  * @param heading The heading text info.
  * @param body The body text info.
- * @param owner The "File Owner" of the view
  *
  * @return a configured UAInAppMessageTextView instance, or nil if neither heading or body are provided.
  */
-+ (nullable instancetype)textViewWithHeading:(UAInAppMessageTextInfo * _Nullable)heading
-                                        body:(UAInAppMessageTextInfo * _Nullable)body
-                                       owner:(id)owner;
++ (nullable instancetype)textViewWithHeading:(UAInAppMessageTextInfo * _Nullable)heading body:(UAInAppMessageTextInfo * _Nullable)body;
+
+/**
+ * Text view factory method.
+
+ * @param heading The heading text info.
+ * @param body The body text info.
+ * @param onTop Flag indicating the text view is at the top of the parent view.
+ *
+ * @return a configured UAInAppMessageTextView instance, or nil if neither heading or body are provided.
+ */
++ (nullable instancetype)textViewWithHeading:(UAInAppMessageTextInfo * _Nullable)heading body:(UAInAppMessageTextInfo * _Nullable)body onTop:(BOOL)onTop;
+
 
 @end
 
