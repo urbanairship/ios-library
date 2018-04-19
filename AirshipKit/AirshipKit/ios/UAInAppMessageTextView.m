@@ -45,73 +45,69 @@ CGFloat const CloseButtonViewWidth = 46.0;
 
 + (nullable instancetype)textViewWithHeading:(UAInAppMessageTextInfo * _Nullable)heading
                                body:(UAInAppMessageTextInfo * _Nullable)body {
-    return [[UAInAppMessageTextView alloc] initWithHeading:heading body:body onTop:NO];
+    return [UAInAppMessageTextView textViewWithHeading:heading body:body onTop:NO];
 }
 
 + (nullable instancetype)textViewWithHeading:(UAInAppMessageTextInfo * _Nullable)heading body:(UAInAppMessageTextInfo * _Nullable)body onTop:(BOOL)onTop {
-    return [[UAInAppMessageTextView alloc] initWithHeading:heading body:body onTop:onTop];
-}
-
-- (nullable instancetype)initWithHeading:(UAInAppMessageTextInfo * _Nullable)heading body:(UAInAppMessageTextInfo * _Nullable)body onTop:(BOOL)onTop {
-    self = [super init];
-
-    NSString *nibName = UAInAppMessageTextViewNibName;
-    NSBundle *bundle = [UAirship resources];
-
-    self = [[bundle loadNibNamed:nibName owner:self options:nil] firstObject];
-
-    if (self) {
-        self.translatesAutoresizingMaskIntoConstraints = NO;
-
-        if (heading) {
-            UIView *closeButtonPaddedHeading;
-            UILabel *headingLabel = [[UILabel alloc] init];
-            headingLabel.translatesAutoresizingMaskIntoConstraints = NO;
-
-            self.headingLabel = headingLabel;
-            [self.headingLabel setContentHuggingPriority:UILayoutPriorityRequired forAxis:UILayoutConstraintAxisVertical];
-
-            [UAInAppMessageUtils applyTextInfo:heading label:headingLabel];
-
-            if (onTop) {
-                // Add horizontal padding to the header
-                closeButtonPaddedHeading = [self viewWithCloseButtonPadding:headingLabel];
-                // Add padding to top
-                self.textContainerToTop.constant = TopPadding;
-                [self layoutIfNeeded];
-            }
-
-            [self.textContainer addArrangedSubview:closeButtonPaddedHeading ?: headingLabel];
-        }
-
-        if (body) {
-            UILabel *bodyLabel = [[UILabel alloc] init];
-            bodyLabel.translatesAutoresizingMaskIntoConstraints = NO;
-            self.bodyLabel = bodyLabel;
-            [self.bodyLabel setContentHuggingPriority:UILayoutPriorityRequired
-                                              forAxis:UILayoutConstraintAxisVertical];
-
-            [UAInAppMessageUtils applyTextInfo:body label:bodyLabel];
-
-            if (onTop && !heading) {
-                // Add padding with additional body padding to top
-                self.textContainerToTop.constant = TopPadding + AdditionalBodyPadding;
-                [self layoutIfNeeded];
-            }
-
-            [self.textContainer addArrangedSubview:bodyLabel];
-        }
-
-        [UIView performWithoutAnimation:^{
-            [self.textContainer layoutIfNeeded];
-        }];
-    }
-
     if (!heading && !body) {
         return nil;
     }
+    
+    NSString *nibName = UAInAppMessageTextViewNibName;
+    NSBundle *bundle = [UAirship resources];
+    
+    UAInAppMessageTextView *view = [[bundle loadNibNamed:nibName owner:nil options:nil] firstObject];
+    
+    [view configureWithHeading:heading body:body onTop:onTop];
+    
+    return view;
+}
 
-    return self;
+- (void)configureWithHeading:(UAInAppMessageTextInfo * _Nullable)heading body:(UAInAppMessageTextInfo * _Nullable)body onTop:(BOOL)onTop {
+    self.translatesAutoresizingMaskIntoConstraints = NO;
+    
+    if (heading) {
+        UIView *closeButtonPaddedHeading;
+        UILabel *headingLabel = [[UILabel alloc] init];
+        headingLabel.translatesAutoresizingMaskIntoConstraints = NO;
+        
+        self.headingLabel = headingLabel;
+        [self.headingLabel setContentHuggingPriority:UILayoutPriorityRequired forAxis:UILayoutConstraintAxisVertical];
+        
+        [UAInAppMessageUtils applyTextInfo:heading label:headingLabel];
+        
+        if (onTop) {
+            // Add horizontal padding to the header
+            closeButtonPaddedHeading = [self viewWithCloseButtonPadding:headingLabel];
+            // Add padding to top
+            self.textContainerToTop.constant = TopPadding;
+            [self layoutIfNeeded];
+        }
+        
+        [self.textContainer addArrangedSubview:closeButtonPaddedHeading ?: headingLabel];
+    }
+    
+    if (body) {
+        UILabel *bodyLabel = [[UILabel alloc] init];
+        bodyLabel.translatesAutoresizingMaskIntoConstraints = NO;
+        self.bodyLabel = bodyLabel;
+        [self.bodyLabel setContentHuggingPriority:UILayoutPriorityRequired
+                                          forAxis:UILayoutConstraintAxisVertical];
+        
+        [UAInAppMessageUtils applyTextInfo:body label:bodyLabel];
+        
+        if (onTop && !heading) {
+            // Add padding with additional body padding to top
+            self.textContainerToTop.constant = TopPadding + AdditionalBodyPadding;
+            [self layoutIfNeeded];
+        }
+        
+        [self.textContainer addArrangedSubview:bodyLabel];
+    }
+    
+    [UIView performWithoutAnimation:^{
+        [self.textContainer layoutIfNeeded];
+    }];
 }
 
 // Takes a text view, returns a compound view with top bar and close button padding

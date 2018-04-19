@@ -48,147 +48,127 @@ NSString *const UAInAppMessageFullScreenViewNibName = @"UAInAppMessageFullScreen
                                              buttonView:(UAInAppMessageButtonView * _Nullable)buttonView
                                            footerButton:(UIButton * _Nullable)footerButton
                                               mediaView:(UAInAppMessageMediaView * _Nullable)mediaView {
+    NSString *nibName = UAInAppMessageFullScreenViewNibName;
+    NSBundle *bundle = [UAirship resources];
 
-    return [[UAInAppMessageFullScreenView alloc] initFullScreenViewWithDisplayContent:displayContent
-                                                                          closeButton:closeButton
-                                                                           buttonView:buttonView
-                                                                         footerButton:footerButton
-                                                                            mediaView:mediaView];
+    UAInAppMessageFullScreenView *view = [[bundle loadNibNamed:nibName owner:nil options:nil] firstObject];
+    [view configureFullScreenViewWithDisplayContent:displayContent
+                                          closeButton:closeButton
+                                           buttonView:buttonView
+                                         footerButton:footerButton
+                                            mediaView:mediaView];
+    
+    return view;
 }
 
-- (UAInAppMessageFullScreenContentLayoutType)normalizeContentLayout:(UAInAppMessageFullScreenDisplayContent *)content {
-
-    // If there's no media, normalize to header body media
-    if (!content.media) {
-        return UAInAppMessageFullScreenContentLayoutHeaderBodyMedia;
-    }
-
-    // If header is missing for header media body, but media is present, normalize to media header body
-    if (content.contentLayout == UAInAppMessageFullScreenContentLayoutHeaderMediaBody && !content.heading && content.media) {
-        return UAInAppMessageFullScreenContentLayoutMediaHeaderBody;
-    }
-
-    return (UAInAppMessageFullScreenContentLayoutType)content.contentLayout;
-}
-
-- (instancetype)initFullScreenViewWithDisplayContent:(UAInAppMessageFullScreenDisplayContent *)displayContent
+- (void)configureFullScreenViewWithDisplayContent:(UAInAppMessageFullScreenDisplayContent *)displayContent
                                          closeButton:(UAInAppMessageCloseButton *)closeButton
                                           buttonView:(UAInAppMessageButtonView * _Nullable)buttonView
                                         footerButton:(UIButton * _Nullable)footerButton
                                            mediaView:(UAInAppMessageMediaView * _Nullable)mediaView {
-
-    NSString *nibName = UAInAppMessageFullScreenViewNibName;
-    NSBundle *bundle = [UAirship resources];
-
-    self = [[bundle loadNibNamed:nibName owner:self options:nil] firstObject];
-
-    if (self) {
-        self.translatesAutoresizingMaskIntoConstraints = NO;
-        self.mediaView = mediaView;
-        self.buttonView = buttonView;
-
-        self.closeButton = closeButton;
-        [self.closeButtonContainer addSubview:closeButton];
-        [UAInAppMessageUtils applyContainerConstraintsToContainer:self.closeButtonContainer containedView:closeButton];
-
-        self.statusBarPaddingView = [[UIView alloc] init];
-
-        // The padding view has 0 size because the actual padding is supplied by the stack view spacing
-        [NSLayoutConstraint constraintWithItem:self.statusBarPaddingView
-                                     attribute:NSLayoutAttributeHeight
-                                     relatedBy:NSLayoutRelationEqual
-                                        toItem:nil
-                                     attribute:NSLayoutAttributeNotAnAttribute
-                                    multiplier:1
-                                      constant:0].active = true;
-
-        self.statusBarPaddingView.backgroundColor = displayContent.backgroundColor;
-
-        // Normalize content layout
-        UAInAppMessageFullScreenContentLayoutType normalizedContentLayout = [self normalizeContentLayout:displayContent];
-
-        // Add views that belong in the stack - adding views that are nil will result in no-op
-        switch (normalizedContentLayout) {
-            case UAInAppMessageFullScreenContentLayoutHeaderMediaBody: {
-
-                // Add header
-                self.topTextView = [UAInAppMessageTextView textViewWithHeading:displayContent.heading body:nil onTop:YES];
-                if (self.topTextView) {
-                    [self.containerStackView addArrangedSubview:self.topTextView];
-                }
-
-                // Add media
-                if (mediaView) {
-                    [self.containerStackView addArrangedSubview:mediaView];
-                }
-
-                self.bottomTextView = [UAInAppMessageTextView textViewWithHeading:nil body:displayContent.body onTop:!mediaView && !self.topTextView];
-                // Add body
-                if (self.bottomTextView) {
-                    [self.containerStackView addArrangedSubview:self.bottomTextView];
-                }
-                break;
+    self.translatesAutoresizingMaskIntoConstraints = NO;
+    self.mediaView = mediaView;
+    self.buttonView = buttonView;
+    
+    self.closeButton = closeButton;
+    [self.closeButtonContainer addSubview:closeButton];
+    [UAInAppMessageUtils applyContainerConstraintsToContainer:self.closeButtonContainer containedView:closeButton];
+    
+    self.statusBarPaddingView = [[UIView alloc] init];
+    
+    // The padding view has 0 size because the actual padding is supplied by the stack view spacing
+    [NSLayoutConstraint constraintWithItem:self.statusBarPaddingView
+                                 attribute:NSLayoutAttributeHeight
+                                 relatedBy:NSLayoutRelationEqual
+                                    toItem:nil
+                                 attribute:NSLayoutAttributeNotAnAttribute
+                                multiplier:1
+                                  constant:0].active = true;
+    
+    self.statusBarPaddingView.backgroundColor = displayContent.backgroundColor;
+    
+    // Normalize content layout
+    UAInAppMessageFullScreenContentLayoutType normalizedContentLayout = [self normalizeContentLayout:displayContent];
+    
+    // Add views that belong in the stack - adding views that are nil will result in no-op
+    switch (normalizedContentLayout) {
+        case UAInAppMessageFullScreenContentLayoutHeaderMediaBody: {
+            
+            // Add header
+            self.topTextView = [UAInAppMessageTextView textViewWithHeading:displayContent.heading body:nil onTop:YES];
+            if (self.topTextView) {
+                [self.containerStackView addArrangedSubview:self.topTextView];
             }
-            case UAInAppMessageFullScreenContentLayoutHeaderBodyMedia: {
-                self.topTextView = [UAInAppMessageTextView textViewWithHeading:displayContent.heading body:displayContent.body onTop:YES];
-                // Add header and body
-                if (self.topTextView) {
-                    [self.containerStackView addArrangedSubview:self.topTextView];
-                }
-
-                // Add media
-                if (mediaView) {
-                    [self.containerStackView addArrangedSubview:mediaView];
-                }
-
-                break;
+            
+            // Add media
+            if (mediaView) {
+                [self.containerStackView addArrangedSubview:mediaView];
             }
-            case UAInAppMessageFullScreenContentLayoutMediaHeaderBody: {
-
-                if (mediaView) {
-                    // Add media
-                    [self.containerStackView addArrangedSubview:mediaView];
-                }
-
-                self.topTextView = [UAInAppMessageTextView textViewWithHeading:displayContent.heading body:displayContent.body onTop:!mediaView];
-
-                // Add header and body
-                if (self.topTextView) {
-                    [self.containerStackView addArrangedSubview:self.topTextView];
-                }
-
-                break;
+            
+            self.bottomTextView = [UAInAppMessageTextView textViewWithHeading:nil body:displayContent.body onTop:!mediaView && !self.topTextView];
+            // Add body
+            if (self.bottomTextView) {
+                [self.containerStackView addArrangedSubview:self.bottomTextView];
             }
+            break;
         }
-
-        // Button container is always the last thing in the stack
-        [self.containerStackView addArrangedSubview:self.buttonView];
-
-        // Add invisible spacer to guarantee it expands instead of other views
-        UIView *spacer = [[UIView alloc] initWithFrame:CGRectZero];
-        spacer.backgroundColor = [UIColor clearColor];
-        [spacer setContentHuggingPriority:1 forAxis:UILayoutConstraintAxisVertical];
-        [self.containerStackView addArrangedSubview:spacer];
-
-        // Explicitly remove footer view from the superview if footer is nil
-        if (footerButton) {
-            [self.footerButtonContainer addSubview:footerButton];
-            [UAInAppMessageUtils applyContainerConstraintsToContainer:self.footerButtonContainer containedView:footerButton];
-        } else {
-            [self.footerButtonContainer removeFromSuperview];
+        case UAInAppMessageFullScreenContentLayoutHeaderBodyMedia: {
+            self.topTextView = [UAInAppMessageTextView textViewWithHeading:displayContent.heading body:displayContent.body onTop:YES];
+            // Add header and body
+            if (self.topTextView) {
+                [self.containerStackView addArrangedSubview:self.topTextView];
+            }
+            
+            // Add media
+            if (mediaView) {
+                [self.containerStackView addArrangedSubview:mediaView];
+            }
+            
+            break;
         }
-
-        self.displayContent = displayContent;
-        self.backgroundColor = displayContent.backgroundColor;
-        self.scrollView.backgroundColor = displayContent.backgroundColor;
-
-        self.translatesAutoresizingMaskIntoConstraints = NO;
+        case UAInAppMessageFullScreenContentLayoutMediaHeaderBody: {
+            
+            if (mediaView) {
+                // Add media
+                [self.containerStackView addArrangedSubview:mediaView];
+            }
+            
+            self.topTextView = [UAInAppMessageTextView textViewWithHeading:displayContent.heading body:displayContent.body onTop:!mediaView];
+            
+            // Add header and body
+            if (self.topTextView) {
+                [self.containerStackView addArrangedSubview:self.topTextView];
+            }
+            
+            break;
+        }
     }
-
-    return self;
+    
+    // Button container is always the last thing in the stack
+    [self.containerStackView addArrangedSubview:self.buttonView];
+    
+    // Add invisible spacer to guarantee it expands instead of other views
+    UIView *spacer = [[UIView alloc] initWithFrame:CGRectZero];
+    spacer.backgroundColor = [UIColor clearColor];
+    [spacer setContentHuggingPriority:1 forAxis:UILayoutConstraintAxisVertical];
+    [self.containerStackView addArrangedSubview:spacer];
+    
+    // Explicitly remove footer view from the superview if footer is nil
+    if (footerButton) {
+        [self.footerButtonContainer addSubview:footerButton];
+        [UAInAppMessageUtils applyContainerConstraintsToContainer:self.footerButtonContainer containedView:footerButton];
+    } else {
+        [self.footerButtonContainer removeFromSuperview];
+    }
+    
+    self.displayContent = displayContent;
+    self.backgroundColor = displayContent.backgroundColor;
+    self.scrollView.backgroundColor = displayContent.backgroundColor;
+    
+    self.translatesAutoresizingMaskIntoConstraints = NO;
 }
 
--(void)layoutSubviews {
+- (void)layoutSubviews {
     [super layoutSubviews];
 
     UIWindow *window = [UIApplication sharedApplication].keyWindow;
@@ -213,6 +193,21 @@ NSString *const UAInAppMessageFullScreenViewNibName = @"UAInAppMessageFullScreen
     }
 
     [self.containerStackView layoutIfNeeded];
+}
+
+- (UAInAppMessageFullScreenContentLayoutType)normalizeContentLayout:(UAInAppMessageFullScreenDisplayContent *)content {
+    
+    // If there's no media, normalize to header body media
+    if (!content.media) {
+        return UAInAppMessageFullScreenContentLayoutHeaderBodyMedia;
+    }
+    
+    // If header is missing for header media body, but media is present, normalize to media header body
+    if (content.contentLayout == UAInAppMessageFullScreenContentLayoutHeaderMediaBody && !content.heading && content.media) {
+        return UAInAppMessageFullScreenContentLayoutMediaHeaderBody;
+    }
+    
+    return (UAInAppMessageFullScreenContentLayoutType)content.contentLayout;
 }
 
 @end

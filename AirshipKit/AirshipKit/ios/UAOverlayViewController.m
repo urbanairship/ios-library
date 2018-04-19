@@ -50,16 +50,19 @@ static NSMutableSet *overlayControllers_ = nil;
 
 @implementation UAOverlayView
 
-- (id)initWithSize:(CGSize)size aspectLock:(BOOL)aspectLock {
++ (id)overlayViewWithSize:(CGSize)size aspectLock:(BOOL)aspectLock {
+    NSString *nibName = kUAOverlayViewNibName;
     NSBundle *bundle = [UAirship resources];
-    self = [[bundle loadNibNamed:kUAOverlayViewNibName owner:self options:nil] firstObject];
+    
+    UAOverlayView *view = [[bundle loadNibNamed:nibName owner:nil options:nil] firstObject];
+    [view configureWithSize:size aspectLock:aspectLock];
+    
+    return view;
+}
 
-    if (self) {
-        self.size = size;
-        self.aspectLock = aspectLock;
-    }
-
-    return self;
+- (void)configureWithSize:(CGSize)size aspectLock:(BOOL)aspectLock {
+    self.size = size;
+    self.aspectLock = aspectLock;
 }
 
 - (CGSize)getMaxSafeOverlaySize {
@@ -326,8 +329,7 @@ static NSMutableSet *overlayControllers_ = nil;
 - (instancetype)initWithParentView:(UIView *)parent andURL:(NSURL *)url andMessage:(UAInboxMessage *)message andHeaders:(NSDictionary *)headers size:(CGSize)size aspectLock:(BOOL)aspectLock {
     self = [super init];
     if (self) {
-
-        self.overlayView = [[UAOverlayView alloc] initWithSize:size aspectLock:aspectLock];
+        self.overlayView = [UAOverlayView overlayViewWithSize:size aspectLock:aspectLock];
         self.overlayView.alpha = 0.0;
 
         self.parentView = parent;

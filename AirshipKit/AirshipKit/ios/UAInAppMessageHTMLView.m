@@ -24,37 +24,34 @@ NSString *const UAInAppMessageHTMLViewNibName = @"UAInAppMessageHTMLView";
 @implementation UAInAppMessageHTMLView
 
 + (instancetype)htmlViewWithDisplayContent:(UAInAppMessageHTMLDisplayContent *)displayContent closeButton:(UIButton *)closeButton {
-    return [[self alloc] initWithDisplayContent:displayContent closeButton:closeButton];
-}
-
-- (instancetype)initWithDisplayContent:(UAInAppMessageHTMLDisplayContent *)displayContent closeButton:(UIButton *)closeButton {
     NSString *nibName = UAInAppMessageHTMLViewNibName;
     NSBundle *bundle = [UAirship resources];
+    
+    UAInAppMessageHTMLView *view = [[bundle loadNibNamed:nibName owner:nil options:nil] firstObject];
+    [view configureWithDisplayContent:displayContent closeButton:closeButton];
+    
+    return view;
+}
 
-    self = [[bundle loadNibNamed:nibName owner:self options:nil] firstObject];
-
-    if (self) {
-        // Always add the close button
-        [self.closeButtonContainer addSubview:closeButton];
-
-        [UAInAppMessageUtils applyContainerConstraintsToContainer:self.closeButtonContainer containedView:closeButton];
-
-        self.webView.backgroundColor = [UIColor clearColor];
-        self.webView.opaque = NO;
-
-        if (@available(iOS 10.0, tvOS 10.0, *)) {
-            [self.webView.configuration setDataDetectorTypes:WKDataDetectorTypeNone];
-        }
-
-        self.backgroundColor = displayContent.backgroundColor;
-        self.webView.backgroundColor = displayContent.backgroundColor;
-        self.messageTop.backgroundColor = displayContent.backgroundColor;
-
-        self.displayContent = displayContent;
-        self.translatesAutoresizingMaskIntoConstraints = NO;
+- (void)configureWithDisplayContent:(UAInAppMessageHTMLDisplayContent *)displayContent closeButton:(UIButton *)closeButton {
+    // Always add the close button
+    [self.closeButtonContainer addSubview:closeButton];
+    
+    [UAInAppMessageUtils applyContainerConstraintsToContainer:self.closeButtonContainer containedView:closeButton];
+    
+    self.webView.backgroundColor = [UIColor clearColor];
+    self.webView.opaque = NO;
+    
+    if (@available(iOS 10.0, tvOS 10.0, *)) {
+        [self.webView.configuration setDataDetectorTypes:WKDataDetectorTypeNone];
     }
-
-    return self;
+    
+    self.backgroundColor = displayContent.backgroundColor;
+    self.webView.backgroundColor = displayContent.backgroundColor;
+    self.messageTop.backgroundColor = displayContent.backgroundColor;
+    
+    self.displayContent = displayContent;
+    self.translatesAutoresizingMaskIntoConstraints = NO;
 }
 
 - (void)layoutSubviews {

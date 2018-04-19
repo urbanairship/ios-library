@@ -53,63 +53,70 @@ CGFloat const ShadowOpacity = 0.5;
 + (instancetype)bannerMessageViewWithDisplayContent:(UAInAppMessageBannerDisplayContent *)displayContent
                                   bannerContentView:(UAInAppMessageBannerContentView *)contentView
                                          buttonView:(UAInAppMessageButtonView * _Nullable)buttonView {
-
-    return [[UAInAppMessageBannerView alloc] initBannerViewWithDisplayContent:displayContent
-                                                            bannerContentView:contentView
-                                                                   buttonView:buttonView];
-}
-
-- (instancetype)initBannerViewWithDisplayContent:(UAInAppMessageBannerDisplayContent *)displayContent
-                               bannerContentView:(UAInAppMessageBannerContentView *)contentView
-                                      buttonView:(UAInAppMessageButtonView * _Nullable)buttonView {
     NSString *nibName = UAInAppMessageBannerViewNibName;
     NSBundle *bundle = [UAirship resources];
+
+    // Top and bottom banner views are firstObject and lastObject, respectively.
+    UAInAppMessageBannerView *view;
+    switch (displayContent.placement) {
+        case UAInAppMessageBannerPlacementTop:
+            view = [[bundle loadNibNamed:nibName owner:nil options:nil] firstObject];
+            break;
+        case UAInAppMessageBannerPlacementBottom:
+            view = [[bundle loadNibNamed:nibName owner:nil options:nil] lastObject];
+            break;
+    }
+    
+    [view configureBannerViewWithDisplayContent:displayContent
+                                bannerContentView:contentView
+                                       buttonView:buttonView];
+    
+    return view;
+}
+
+- (void)configureBannerViewWithDisplayContent:(UAInAppMessageBannerDisplayContent *)displayContent
+                               bannerContentView:(UAInAppMessageBannerContentView *)contentView
+                                      buttonView:(UAInAppMessageButtonView * _Nullable)buttonView {
     CGFloat shadowOffset;
 
     // Top and bottom banner views are firstObject and lastObject, respectively.
     switch (displayContent.placement) {
         case UAInAppMessageBannerPlacementTop:
-            self = [[bundle loadNibNamed:nibName owner:self options:nil] firstObject];
             shadowOffset = ShadowOffset;
             self.rounding = UIRectCornerBottomLeft | UIRectCornerBottomRight;
             break;
         case UAInAppMessageBannerPlacementBottom:
-            self = [[bundle loadNibNamed:nibName owner:self options:nil] lastObject];
             shadowOffset = -ShadowOffset;
             self.rounding = UIRectCornerTopLeft | UIRectCornerTopRight;
             break;
     }
-
-    if (self) {
-        [self addBannerContentView:contentView];
-
-        if (buttonView) {
-            [self addButtonView:buttonView];
-        } else {
-            [self.buttonContainerView removeFromSuperview];
-        }
-
-        self.displayContent = displayContent;
-        // The layer color is set to background color to preserve rounding and shadow
-        self.backgroundColor = [UIColor clearColor];
-
-        self.layer.shadowOffset = CGSizeMake(0, shadowOffset);
-        self.layer.shadowRadius = ShadowRadius;
-        
-        self.translatesAutoresizingMaskIntoConstraints = NO;
-
-        self.layer.shadowOffset = CGSizeMake(shadowOffset/2, shadowOffset);
-        self.layer.shadowRadius = ShadowRadius;
-        self.layer.shadowOpacity = ShadowOpacity;
-
-        self.tab.backgroundColor = displayContent.dismissButtonColor;
-        self.tab.layer.masksToBounds = YES;
-        self.tab.layer.cornerRadius = self.tab.frame.size.height/2;
-
-        [self layoutSubviews];
+    
+    [self addBannerContentView:contentView];
+    
+    if (buttonView) {
+        [self addButtonView:buttonView];
+    } else {
+        [self.buttonContainerView removeFromSuperview];
     }
-
-    return self;
+    
+    self.displayContent = displayContent;
+    // The layer color is set to background color to preserve rounding and shadow
+    self.backgroundColor = [UIColor clearColor];
+    
+    self.layer.shadowOffset = CGSizeMake(0, shadowOffset);
+    self.layer.shadowRadius = ShadowRadius;
+    
+    self.translatesAutoresizingMaskIntoConstraints = NO;
+    
+    self.layer.shadowOffset = CGSizeMake(shadowOffset/2, shadowOffset);
+    self.layer.shadowRadius = ShadowRadius;
+    self.layer.shadowOpacity = ShadowOpacity;
+    
+    self.tab.backgroundColor = displayContent.dismissButtonColor;
+    self.tab.layer.masksToBounds = YES;
+    self.tab.layer.cornerRadius = self.tab.frame.size.height/2;
+    
+    [self layoutSubviews];
 }
 
 - (void)layoutSubviews {
