@@ -145,6 +145,16 @@ extern NSString * const UAJSONValueMatcherErrorDomain;
  */
 - (BOOL)evaluateObject:(nullable id)object;
 
+/**
+ * Evaluates the object with the matcher.
+ *
+ * @param object The object to evaluate.
+ * @param ignoreCase {@code YES} to ignore case when checking String values, {@code NO} to check case.
+ * Strings contained in arrays and dictionaries also follow this rule.
+ * @return `YES` if the matcher matches the object, otherwise `NO`.
+ */
+- (BOOL)evaluateObject:(nullable id)object ignoreCase:(BOOL)ignoreCase;
+
 @end
 
 NS_ASSUME_NONNULL_END

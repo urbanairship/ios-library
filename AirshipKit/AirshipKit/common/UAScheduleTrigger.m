@@ -58,7 +58,7 @@ NSString * const UAScheduleTriggerErrorDomain = @"com.urbanairship.schedule_trig
 
 + (instancetype)regionEnterTriggerForRegionID:(NSString *)regionID count:(NSUInteger)count {
     UAJSONValueMatcher *valueMatcher = [UAJSONValueMatcher matcherWhereStringEquals:regionID];
-    UAJSONMatcher *jsonMatcher = [UAJSONMatcher matcherWithValueMatcher:valueMatcher key:kUARegionIDKey];
+    UAJSONMatcher *jsonMatcher = [UAJSONMatcher matcherWithValueMatcher:valueMatcher scope:@[kUARegionIDKey]];
     UAJSONPredicate *predicate = [UAJSONPredicate predicateWithJSONMatcher:jsonMatcher];
 
     return [UAScheduleTrigger triggerWithType:UAScheduleTriggerRegionEnter
@@ -68,7 +68,7 @@ NSString * const UAScheduleTriggerErrorDomain = @"com.urbanairship.schedule_trig
 
 + (instancetype)regionExitTriggerForRegionID:(NSString *)regionID count:(NSUInteger)count {
     UAJSONValueMatcher *valueMatcher = [UAJSONValueMatcher matcherWhereStringEquals:regionID];
-    UAJSONMatcher *jsonMatcher = [UAJSONMatcher matcherWithValueMatcher:valueMatcher key:kUARegionIDKey];
+    UAJSONMatcher *jsonMatcher = [UAJSONMatcher matcherWithValueMatcher:valueMatcher scope:@[kUARegionIDKey]];
     UAJSONPredicate *predicate = [UAJSONPredicate predicateWithJSONMatcher:jsonMatcher];
 
     return [UAScheduleTrigger triggerWithType:UAScheduleTriggerRegionExit
@@ -99,7 +99,7 @@ NSString * const UAScheduleTriggerErrorDomain = @"com.urbanairship.schedule_trig
 }
 
 + (instancetype)versionTriggerWithConstraint:(NSString *)versionConstraint count:(NSUInteger)count {
-    UAJSONMatcher *matcher = [UAJSONMatcher matcherWithValueMatcher:[UAJSONValueMatcher matcherWithVersionConstraint:versionConstraint] key:@"version" scope:@[@"ios"]];
+    UAJSONMatcher *matcher = [UAJSONMatcher matcherWithValueMatcher:[UAJSONValueMatcher matcherWithVersionConstraint:versionConstraint] scope:@[@"ios", @"version"]];
     UAJSONPredicate *predicate = [UAJSONPredicate predicateWithJSONMatcher:matcher];
     return [UAScheduleTrigger triggerWithType:UAScheduleTriggerVersion goal:@(count) predicate:predicate];
 }

@@ -1111,6 +1111,12 @@
 		DF5ED9011F7475FE002DDA24 /* UARemoteDataStorePayload+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = DF5ED8FE1F7475FE002DDA24 /* UARemoteDataStorePayload+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DF5ED9021F7475FE002DDA24 /* UARemoteDataStorePayload.m in Sources */ = {isa = PBXBuildFile; fileRef = DF5ED8FF1F7475FE002DDA24 /* UARemoteDataStorePayload.m */; };
 		DF5ED9031F7475FE002DDA24 /* UARemoteDataStorePayload.m in Sources */ = {isa = PBXBuildFile; fileRef = DF5ED8FF1F7475FE002DDA24 /* UARemoteDataStorePayload.m */; };
+		DF6557E22089071C000330FA /* UAJSONValueMatcher+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = DF6557E12089071C000330FA /* UAJSONValueMatcher+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		DF6557E32089071C000330FA /* UAJSONValueMatcher+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = DF6557E12089071C000330FA /* UAJSONValueMatcher+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		DF6557E42089071C000330FA /* UAJSONValueMatcher+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = DF6557E12089071C000330FA /* UAJSONValueMatcher+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		DF6557E9208A6E1A000330FA /* UAJSONMatcher+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = DF6557E8208A6E1A000330FA /* UAJSONMatcher+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		DF6557EA208A6E1A000330FA /* UAJSONMatcher+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = DF6557E8208A6E1A000330FA /* UAJSONMatcher+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		DF6557EB208A6E1A000330FA /* UAJSONMatcher+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = DF6557E8208A6E1A000330FA /* UAJSONMatcher+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DF6596D01FBA3B810055E97B /* UAComponent.h in Headers */ = {isa = PBXBuildFile; fileRef = DF6596CE1FBA3B810055E97B /* UAComponent.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DF6596D11FBA3B810055E97B /* UAComponent.h in Headers */ = {isa = PBXBuildFile; fileRef = DF6596CE1FBA3B810055E97B /* UAComponent.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DF6596D21FBA3B810055E97B /* UAComponent.h in Headers */ = {isa = PBXBuildFile; fileRef = DF6596CE1FBA3B810055E97B /* UAComponent.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -2089,6 +2095,8 @@
 		DF5ED8E91F745682002DDA24 /* UARemoteData.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = UARemoteData.xcdatamodel; sourceTree = "<group>"; };
 		DF5ED8FE1F7475FE002DDA24 /* UARemoteDataStorePayload+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UARemoteDataStorePayload+Internal.h"; sourceTree = "<group>"; };
 		DF5ED8FF1F7475FE002DDA24 /* UARemoteDataStorePayload.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UARemoteDataStorePayload.m; sourceTree = "<group>"; };
+		DF6557E12089071C000330FA /* UAJSONValueMatcher+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "UAJSONValueMatcher+Internal.h"; path = "common/UAJSONValueMatcher+Internal.h"; sourceTree = "<group>"; };
+		DF6557E8208A6E1A000330FA /* UAJSONMatcher+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "UAJSONMatcher+Internal.h"; path = "common/UAJSONMatcher+Internal.h"; sourceTree = "<group>"; };
 		DF6596CE1FBA3B810055E97B /* UAComponent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = UAComponent.h; path = common/UAComponent.h; sourceTree = "<group>"; };
 		DF6596CF1FBA3B810055E97B /* UAComponent.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = UAComponent.m; path = common/UAComponent.m; sourceTree = "<group>"; };
 		DF6596DC1FBBB77E0055E97B /* UAComponentTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAComponentTests.m; sourceTree = "<group>"; };
@@ -2854,10 +2862,12 @@
 			isa = PBXGroup;
 			children = (
 				CC40DB981D8C996900BABD4F /* UAJSONMatcher.h */,
+				DF6557E8208A6E1A000330FA /* UAJSONMatcher+Internal.h */,
 				CC40DB991D8C996900BABD4F /* UAJSONMatcher.m */,
 				CC40DB9A1D8C996900BABD4F /* UAJSONPredicate.h */,
 				CC40DB9B1D8C996900BABD4F /* UAJSONPredicate.m */,
 				CC40DB9C1D8C996900BABD4F /* UAJSONValueMatcher.h */,
+				DF6557E12089071C000330FA /* UAJSONValueMatcher+Internal.h */,
 				CC40DB9D1D8C996900BABD4F /* UAJSONValueMatcher.m */,
 			);
 			name = Predicate;
@@ -3794,6 +3804,7 @@
 				CC40DD111D8C996A00BABD4F /* UAScheduleTriggerData+Internal.h in Headers */,
 				6EF2DF0F1E5CBAE30062099A /* UAScheduleDelayData+Internal.h in Headers */,
 				CC40DC291D8C996A00BABD4F /* UASchedule+Internal.h in Headers */,
+				DF6557E22089071C000330FA /* UAJSONValueMatcher+Internal.h in Headers */,
 				CC40DC541D8C996A00BABD4F /* UAAutomation+Internal.h in Headers */,
 				CC40DD1F1D8C996A00BABD4F /* UAUser+Internal.h in Headers */,
 				998767251FBD0EE300197AF4 /* UAInAppMessageMediaInfo.h in Headers */,
@@ -3850,6 +3861,7 @@
 				CC40DC441D8C996A00BABD4F /* UAAppForegroundEvent+Internal.h in Headers */,
 				CC40DC461D8C996A00BABD4F /* UAAppInitEvent+Internal.h in Headers */,
 				99E2DA6E1FBB6B5D00C9F2CC /* UAInAppMessageBannerDisplayContent.h in Headers */,
+				DF6557E9208A6E1A000330FA /* UAJSONMatcher+Internal.h in Headers */,
 				6ED3C0412008038B002A746B /* UAInAppMessageCustomDisplayContent+Internal.h in Headers */,
 				CC40DC501D8C996A00BABD4F /* UAAssociateIdentifiersEvent+Internal.h in Headers */,
 				CC40DC891D8C996A00BABD4F /* UAEvent+Internal.h in Headers */,
@@ -4022,6 +4034,7 @@
 				99666DB31EDF2BD200BAE46B /* UANamedUser+Internal.h in Headers */,
 				6EADE70C1FA8FA200007F924 /* UAScheduleInfo+Internal.h in Headers */,
 				99666DB41EDF2BD200BAE46B /* UANamedUser.h in Headers */,
+				DF6557E32089071C000330FA /* UAJSONValueMatcher+Internal.h in Headers */,
 				99666DB61EDF2BD200BAE46B /* UANamedUserAPIClient+Internal.h in Headers */,
 				DF5ED8DA1F743E7E002DDA24 /* UARemoteDataPayload+Internal.h in Headers */,
 				99666DC31EDF2BE600BAE46B /* UANotificationAction.h in Headers */,
@@ -4048,6 +4061,7 @@
 				99666E331EDF2C8D00BAE46B /* UARetailEventTemplate.h in Headers */,
 				99666D891EDF2BA000BAE46B /* UAScheduleAction.h in Headers */,
 				99666DA41EDF2BB400BAE46B /* UAScheduleDelay.h in Headers */,
+				DF6557EA208A6E1A000330FA /* UAJSONMatcher+Internal.h in Headers */,
 				99666D971EDF2BAE00BAE46B /* UAScheduleDelayData+Internal.h in Headers */,
 				99666DA11EDF2BB400BAE46B /* UAScheduleTrigger+Internal.h in Headers */,
 				99666DA21EDF2BB400BAE46B /* UAScheduleTrigger.h in Headers */,
@@ -4232,6 +4246,7 @@
 				DF7E21F31ED62D3300C79C46 /* UAAPIClient+Internal.h in Headers */,
 				DF7E21F41ED62D3300C79C46 /* UARequest+Internal.h in Headers */,
 				DF7E21F51ED62D3300C79C46 /* UARequestSession+Internal.h in Headers */,
+				DF6557E42089071C000330FA /* UAJSONValueMatcher+Internal.h in Headers */,
 				DFE92A171ED8A61300ED3838 /* UATagsActionPredicate+Internal.h in Headers */,
 				DF8D736920000B1A0092FDEA /* UAInAppMessageModalDisplayContent.h in Headers */,
 				999028AC1FDAE8FE0021C7DF /* UAInAppMessageButton+Internal.h in Headers */,
@@ -4288,6 +4303,7 @@
 				6E598D6420004546005B234B /* UAInAppMessageEventUtils+Internal.h in Headers */,
 				DF7E221A1ED62D9B00C79C46 /* UALocation+Internal.h in Headers */,
 				DF7E221B1ED62D9B00C79C46 /* UAAction+Internal.h in Headers */,
+				DF6557EB208A6E1A000330FA /* UAJSONMatcher+Internal.h in Headers */,
 				DF7E221C1ED62D9B00C79C46 /* UAActionArguments+Internal.h in Headers */,
 				99B6EE6B1F3B9B5900C4E3F1 /* UAEnableFeatureActionPredicate+Internal.h in Headers */,
 				DF7E221D1ED62D9B00C79C46 /* UAActionRegistry+Internal.h in Headers */,

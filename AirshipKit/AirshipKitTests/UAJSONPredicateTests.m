@@ -18,8 +18,8 @@
 - (void)setUp {
     [super setUp];
 
-    self.fooMatcher = [UAJSONMatcher matcherWithValueMatcher:[UAJSONValueMatcher matcherWhereStringEquals:@"bar"] key:@"foo"];
-    self.storyMatcher = [UAJSONMatcher matcherWithValueMatcher:[UAJSONValueMatcher matcherWhereStringEquals:@"story"] key:@"cool"];
+    self.fooMatcher = [UAJSONMatcher matcherWithValueMatcher:[UAJSONValueMatcher matcherWhereStringEquals:@"bar"] scope:@[@"foo"]];
+    self.storyMatcher = [UAJSONMatcher matcherWithValueMatcher:[UAJSONValueMatcher matcherWhereStringEquals:@"story"] scope:@[@"cool"]];
     self.stringMatcher = [UAJSONMatcher matcherWithValueMatcher:[UAJSONValueMatcher matcherWhereStringEquals:@"cool"]];
 }
 
@@ -98,8 +98,8 @@
 }
 
 - (void)testAndPredicatePayload {
-    NSDictionary *json = @{ @"and": @[ @{ @"value": @{ @"equals": @"bar" }, @"key": @"foo" },
-                                       @{ @"value": @{ @"equals": @"story" }, @"key": @"cool" } ]};
+    NSDictionary *json = @{ @"and": @[ @{ @"value": @{ @"equals": @"bar" }, @"scope": @[@"foo"] },
+                                       @{ @"value": @{ @"equals": @"story" }, @"scope": @[@"cool"] } ]};
 
     UAJSONPredicate *fooPredicate = [UAJSONPredicate predicateWithJSONMatcher:self.fooMatcher];
     UAJSONPredicate *storyPredicate = [UAJSONPredicate predicateWithJSONMatcher:self.storyMatcher];
@@ -142,8 +142,8 @@
 }
 
 - (void)testOrPredicatePayload {
-    NSDictionary *json = @{ @"or": @[ @{ @"value": @{ @"equals": @"bar" }, @"key": @"foo" },
-                                       @{ @"value": @{ @"equals": @"story" }, @"key": @"cool" } ]};
+    NSDictionary *json = @{ @"or": @[ @{ @"value": @{ @"equals": @"bar" }, @"scope": @[@"foo"] },
+                                       @{ @"value": @{ @"equals": @"story" }, @"scope": @[@"cool"] } ]};
 
     UAJSONPredicate *fooPredicate = [UAJSONPredicate predicateWithJSONMatcher:self.fooMatcher];
     UAJSONPredicate *storyPredicate = [UAJSONPredicate predicateWithJSONMatcher:self.storyMatcher];

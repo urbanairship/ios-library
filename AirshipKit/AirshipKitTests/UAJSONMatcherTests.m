@@ -1,8 +1,8 @@
 /* Copyright 2018 Urban Airship and Contributors */
 
 #import "UABaseTest.h"
-#import "UAJSONMatcher.h"
-#import "UAJSONValueMatcher.h"
+#import "UAJSONMatcher+Internal.h"
+#import "UAJSONValueMatcher+Internal.h"
 
 @interface UAJSONMatcherTests : UABaseTest
 @property (nonatomic, strong) UAJSONValueMatcher *valueMatcher;
@@ -27,6 +27,22 @@
     XCTAssertFalse([matcher evaluateObject:@(YES)]);
 }
 
+- (void)testMatcherOnlyIgnoreCase {
+    UAJSONMatcher *matcher = [UAJSONMatcher matcherWithValueMatcher:self.valueMatcher ignoreCase:YES];
+    XCTAssertNotNil(matcher);
+    XCTAssertTrue([matcher evaluateObject:@"cool"]);
+    XCTAssertTrue([matcher evaluateObject:@"COOL"]);
+    XCTAssertTrue([matcher evaluateObject:@"CooL"]);
+
+    XCTAssertFalse([matcher evaluateObject:nil]);
+    XCTAssertFalse([matcher evaluateObject:matcher]);
+    XCTAssertFalse([matcher evaluateObject:@"not cool"]);
+    XCTAssertFalse([matcher evaluateObject:@"NOT COOL"]);
+    XCTAssertFalse([matcher evaluateObject:@{@"property": @"cool"}]);
+    XCTAssertFalse([matcher evaluateObject:@(1)]);
+    XCTAssertFalse([matcher evaluateObject:@(YES)]);
+}
+
 - (void)testMatcherOnlyPayload {
     NSDictionary *json = @{ @"value": @{ @"equals": @"cool" } };
     UAJSONMatcher *matcher = [UAJSONMatcher matcherWithValueMatcher:self.valueMatcher];
@@ -39,8 +55,52 @@
     XCTAssertNil(error);
 }
 
+- (void)testMatcherOnlyIgnoreCasePayload {
+    NSDictionary *json = @{ @"value": @{ @"equals": @"cool" }, @"ignore_case":@(YES) };
+    UAJSONMatcher *matcher = [UAJSONMatcher matcherWithValueMatcher:self.valueMatcher ignoreCase:YES];
+    
+    XCTAssertEqualObjects(json, matcher.payload);
+    
+    // Verify a matcher created from the JSON matches
+    NSError *error = nil;
+    UAJSONMatcher *matcherFromJSON = [UAJSONMatcher matcherWithJSON:json error:&error];
+    XCTAssertNotNil(matcherFromJSON);
+    XCTAssertEqualObjects(matcher, matcherFromJSON);
+    XCTAssertNil(error);
+    
+    // Verify a matcher created from the JSON from the first matcher matches
+    error = nil;
+    matcherFromJSON = [UAJSONMatcher matcherWithJSON:[matcher payload] error:&error];
+    XCTAssertNotNil(matcherFromJSON);
+    XCTAssertEqualObjects(matcher, matcherFromJSON);
+    XCTAssertNil(error);
+}
+
+- (void)testMatcherOnlyPayloadWithUnknownKey {
+    NSDictionary *json = @{ @"value": @{ @"equals": @"cool" }, @"unknown": @(YES) };
+    UAJSONMatcher *matcher = [UAJSONMatcher matcherWithValueMatcher:self.valueMatcher];
+    XCTAssertNotNil(matcher);
+    
+    XCTAssertNotEqualObjects(json, matcher.payload);
+    
+    // Verify a matcher created from the JSON matches
+    NSError *error = nil;
+    UAJSONMatcher *matcherFromJSON = [UAJSONMatcher matcherWithJSON:json error:&error];
+    XCTAssertNotNil(matcherFromJSON);
+    XCTAssertEqualObjects(matcher, matcherFromJSON);
+    XCTAssertNil(error);
+    
+    // Verify a matcher created from the JSON from the first matcher matches
+    error = nil;
+    matcherFromJSON = [UAJSONMatcher matcherWithJSON:[matcher payload] error:&error];
+    XCTAssertNotNil(matcherFromJSON);
+    XCTAssertEqualObjects(matcher, matcherFromJSON);
+    XCTAssertNil(error);
+    
+}
+
 - (void)testMatcherWithKey {
-    UAJSONMatcher *matcher = [UAJSONMatcher matcherWithValueMatcher:self.valueMatcher key:@"property"];
+    UAJSONMatcher *matcher = [UAJSONMatcher matcherWithValueMatcher:self.valueMatcher scope:@[@"property"]];
     XCTAssertTrue([matcher evaluateObject:@{@"property": @"cool"}]);
 
     XCTAssertFalse([matcher evaluateObject:@"property"]);
@@ -52,6 +112,8 @@
     XCTAssertFalse([matcher evaluateObject:@(YES)]);
 }
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 - (void)testMatcherWithKeyPayload {
     NSDictionary *json = @{ @"value": @{ @"equals": @"cool" }, @"key": @"property" };
     UAJSONMatcher *matcher = [UAJSONMatcher matcherWithValueMatcher:self.valueMatcher key:@"property"];
@@ -93,6 +155,24 @@
     NSError *error = nil;
     XCTAssertEqualObjects(json, [UAJSONMatcher matcherWithJSON:json error:&error].payload);
     XCTAssertNil(error);
+}
+#pragma GCC diagnostic pop
+
+- (void)testMatcherWithScopeIgnoreCase {
+    UAJSONMatcher *matcher = [UAJSONMatcher matcherWithValueMatcher:self.valueMatcher scope:@[@"property"] ignoreCase:YES];
+    XCTAssertNotNil(matcher);
+    XCTAssertTrue([matcher evaluateObject:@{@"property": @"cool"}]);
+    XCTAssertTrue([matcher evaluateObject:@{@"property": @"COOL"}]);
+    XCTAssertTrue([matcher evaluateObject:@{@"property": @"CooL"}]);
+    
+    XCTAssertFalse([matcher evaluateObject:@"property"]);
+    XCTAssertFalse([matcher evaluateObject:@{@"property": @"not cool"}]);
+    XCTAssertFalse([matcher evaluateObject:@{@"property": @"NOT COOL"}]);
+    XCTAssertFalse([matcher evaluateObject:nil]);
+    XCTAssertFalse([matcher evaluateObject:matcher]);
+    XCTAssertFalse([matcher evaluateObject:@"not cool"]);
+    XCTAssertFalse([matcher evaluateObject:@(1)]);
+    XCTAssertFalse([matcher evaluateObject:@(YES)]);
 }
 
 - (void)testScopeAsString {

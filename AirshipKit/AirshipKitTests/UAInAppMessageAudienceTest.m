@@ -26,7 +26,7 @@
                                         }
                                 } error:&error];
 
-        UAJSONMatcher *matcher = [UAJSONMatcher matcherWithValueMatcher:[UAJSONValueMatcher matcherWithVersionConstraint:@"[1.0, 2.0]"] key:@"version" scope:@[@"ios"]];
+        UAJSONMatcher *matcher = [UAJSONMatcher matcherWithValueMatcher:[UAJSONValueMatcher matcherWithVersionConstraint:@"[1.0, 2.0]"] scope:@[@"ios",@"version"]];
         builder.versionPredicate = [UAJSONPredicate predicateWithJSONMatcher:matcher];
         builder.testDevices = @[@"test-device"];
     }];

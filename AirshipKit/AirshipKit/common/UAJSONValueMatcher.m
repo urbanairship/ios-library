@@ -1,6 +1,6 @@
 /* Copyright 2018 Urban Airship and Contributors */
 
-#import "UAJSONValueMatcher.h"
+#import "UAJSONValueMatcher+Internal.h"
 #import "NSJSONSerialization+UAAdditions.h"
 #import "UAVersionMatcher+Internal.h"
 #import "UAJSONPredicate.h"
@@ -45,11 +45,15 @@ NSString * const UAJSONValueMatcherErrorDomain = @"com.urbanairship.json_value_m
 }
 
 - (BOOL)evaluateObject:(id)value {
+    return [self evaluateObject:value ignoreCase:NO];
+}
+
+- (BOOL)evaluateObject:(id)value ignoreCase:(BOOL)ignoreCase {
     if (self.isPresent != nil) {
         return [self.isPresent boolValue] == (value != nil);
     }
 
-    if (self.equals && ![self.equals isEqual:value]) {
+    if (self.equals && ![self value:self.equals isEqualToValue:value ignoreCase:ignoreCase]) {
         return NO;
     }
 
@@ -93,6 +97,63 @@ NSString * const UAJSONValueMatcherErrorDomain = @"com.urbanairship.json_value_m
     }
     
     return YES;
+}
+
+- (BOOL)value:(id)valueOne isEqualToValue:(id)valueTwo ignoreCase:(BOOL)ignoreCase {
+    if (valueOne == valueTwo) {
+        return YES;
+    }
+    
+    if (!ignoreCase) {
+        return [valueOne isEqual:valueTwo];
+    }
+    
+    if ([valueOne isKindOfClass:[NSString class]]) {
+        if (![valueTwo isKindOfClass:[NSString class]]) {
+            return NO;
+        }
+        
+        return [valueOne caseInsensitiveCompare:valueTwo] == NSOrderedSame;
+    }
+    
+    
+    if ([valueOne isKindOfClass:[NSArray class]]) {
+        if (![valueTwo isKindOfClass:[NSArray class]]) {
+            return NO;
+        }
+        
+        if ([valueTwo count] != [valueOne count]) {
+            return NO;
+        }
+        
+        for (int i = 0; i < [valueOne count]; i++) {
+            if (![self value:valueOne[i] isEqualToValue:valueTwo[i] ignoreCase:ignoreCase]) {
+                return NO;
+            }
+        }
+        
+        return YES;
+    }
+    
+    if ([valueOne isKindOfClass:[NSDictionary class]]) {
+        if (![valueTwo isKindOfClass:[NSDictionary class]]) {
+            return NO;
+        }
+        
+        if ([valueTwo count] != [valueOne count]) {
+            return NO;
+        }
+        
+        for (NSString *key in [valueOne allKeys]) {
+            if (![self value:valueOne[key] isEqualToValue:valueTwo[key] ignoreCase:ignoreCase]) {
+                return NO;
+            }
+        }
+        
+        return YES;
+    }
+    
+    return [valueOne isEqual:valueTwo];
 }
 
 + (instancetype)matcherWhereNumberAtLeast:(NSNumber *)number {
