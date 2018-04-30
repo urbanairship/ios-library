@@ -57,6 +57,7 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
         self.inAppMessageManager = inAppMessageManager;
 
         self.factoryDelegate = self;
+        self.displayASAPEnabled = YES;
     }
 
     return self;
@@ -236,17 +237,41 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
         builder.buttons = buttonInfos;
     }];
 
+    id<UALegacyInAppMessageBuilderExtender> extender = self.builderExtender;
+
     UAInAppMessageScheduleInfo *scheduleInfo = [UAInAppMessageScheduleInfo scheduleInfoWithBuilderBlock:^(UAInAppMessageScheduleInfoBuilder * _Nonnull builder) {
-        builder.triggers = @[[UAScheduleTrigger activeSessionTriggerWithCount:1]];
+
+        UAScheduleTrigger *trigger;
+
+        // In terms of the scheduled message model, displayASAP means using an active session trigger.
+        // Otherwise the closest analog to the v1 behavior is the foreground trigger.
+        if (self.displayASAPEnabled) {
+            trigger = [UAScheduleTrigger activeSessionTriggerWithCount:1];
+        } else {
+            trigger = [UAScheduleTrigger foregroundTriggerWithCount:1];
+        }
+
+        builder.triggers = @[trigger];
+
         builder.end = message.expiry;
 
         UAInAppMessage *newMessage = [UAInAppMessage messageWithBuilderBlock:^(UAInAppMessageBuilder * _Nonnull builder) {
             builder.displayContent = displayContent;
             builder.extras = message.extra;
             builder.identifier = message.identifier;
+
+            // Allow the app to customize the message builder if necessary
+            if (extender && [extender respondsToSelector:@selector(extendMessageBuilder:message:)]) {
+                [extender extendMessageBuilder:builder message:message];
+            }
         }];
 
         builder.message = newMessage;
+
+        // Allow the app to customize the schedule info builder if necessary
+        if (extender && [extender respondsToSelector:@selector(extendScheduleInfoBuilder:message:)]) {
+            [extender extendScheduleInfoBuilder:builder message:message];
+        }
     }];
 
     return scheduleInfo;
