@@ -2,6 +2,7 @@
 
 #import <UIKit/UIKit.h>
 #import "UAInAppMessageButtonInfo.h"
+#import "UAInAppMessageButtonStyle.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -45,12 +46,19 @@ typedef NS_OPTIONS(NSUInteger, UAInAppMessageButtonRounding) {
 @property(nonatomic, strong) NSLayoutConstraint *heightConstraint;
 
 /**
+ * The Button styling.
+ */
+@property(nonatomic, strong) UAInAppMessageButtonStyle *style;
+
+/**
  * Factory method for creating an in-app message button.
  *
  * @param buttonInfo The button info.
+ * @param style The button styling.
  * @param rounding The edges to round.
  */
 + (instancetype)buttonWithButtonInfo:(UAInAppMessageButtonInfo *)buttonInfo
+                               style:(UAInAppMessageButtonStyle *)style
                             rounding:(UAInAppMessageButtonRounding)rounding;
 
 /**

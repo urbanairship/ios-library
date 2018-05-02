@@ -18,12 +18,12 @@ typedef NS_ENUM(NSInteger, UAInAppMessageModalContentLayoutType) {
      * Header, Media, Body
      */
     UAInAppMessageModalContentLayoutHeaderMediaBody,
-    
+
     /**
      * Media, Header, Body
      */
     UAInAppMessageModalContentLayoutMediaHeaderBody,
-    
+
     /**
      * Header, Body, Media
      */

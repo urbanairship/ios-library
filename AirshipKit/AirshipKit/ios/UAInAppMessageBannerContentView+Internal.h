@@ -14,15 +14,18 @@ NS_ASSUME_NONNULL_BEGIN
  * and an optional image.
  *
  * @param contentLayout The banner content layout.
- * @param textView The subview that holds the text.
+ * @param headerView The subview that holds the header.
+ * @param bodyView The subview that holds the body.
  * @param mediaView The media view.
  *
  * @return a configured UAInAppMessageBannerContentView instance.
  */
-+ (instancetype)contentViewWithLayout:(UAInAppMessageBannerContentLayoutType)contentLayout
-                             textView:(UAInAppMessageTextView *)textView
-                            mediaView:(UAInAppMessageMediaView *_Nullable)mediaView;
++ (nullable instancetype)contentViewWithLayout:(UAInAppMessageBannerContentLayoutType)contentLayout
+                                    headerView:(nullable UAInAppMessageTextView *)headerView
+                                      bodyView:(nullable UAInAppMessageTextView *)bodyView
+                                     mediaView:(nullable UAInAppMessageMediaView *)mediaView;
 
 @end
 
 NS_ASSUME_NONNULL_END
+

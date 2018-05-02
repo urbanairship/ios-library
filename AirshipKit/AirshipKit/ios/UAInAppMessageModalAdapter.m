@@ -8,6 +8,8 @@
 #import "UAInAppMessageUtils+Internal.h"
 #import "UAUtils+Internal.h"
 
+NSString *const UAModalStyleFileName = @"UAInAppMessageModalStyle";
+
 @interface UAInAppMessageModalAdapter ()
 @property (nonatomic, strong) UAInAppMessage *message;
 @property (nonatomic, strong) UAInAppMessageModalViewController *modalController;
@@ -23,12 +25,13 @@
 
 -(instancetype)initWithMessage:(UAInAppMessage *)message {
     self = [super init];
-    
+
     if (self) {
         self.message = message;
         self.imageCache = [UAInAppMessageUtils createImageCache];
+        self.style = [UAInAppMessageModalStyle styleWithContentsOfFile:UAModalStyleFileName];
     }
-    
+
     return self;
 }
 
@@ -38,8 +41,9 @@
         if (result == UAInAppMessagePrepareResultSuccess) {
             mediaView.hideWindowWhenVideoIsFullScreen = YES;
             self.modalController = [UAInAppMessageModalViewController modalControllerWithModalMessageID:self.message.identifier
-                                                                                                         displayContent:displayContent
-                                                                                                              mediaView:mediaView];
+                                                                                         displayContent:displayContent
+                                                                                              mediaView:mediaView
+                                                                                                  style:self.style];
         }
         completionHandler(result);
     }];
@@ -58,7 +62,7 @@
     if (self.imageCache) {
         [self.imageCache removeAllObjects];
     }
-    
+
     self.imageCache = nil;
 }
 

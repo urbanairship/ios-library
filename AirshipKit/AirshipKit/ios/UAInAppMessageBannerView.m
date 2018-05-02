@@ -13,6 +13,11 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/*
+ * Default view padding
+ */
+CGFloat const BannerDefaultPadding = 16.0;
+
 // UAInAppMessageBannerContentView nib name
 NSString *const UAInAppMessageBannerViewNibName = @"UAInAppMessageBannerView";
 CGFloat const VerticalPaddingToSafeArea = 20;
@@ -25,26 +30,19 @@ CGFloat const ShadowOpacity = 0.5;
 
 @interface UAInAppMessageBannerView ()
 
-@property (strong, nonatomic) IBOutlet UIView *containerView;
+@property (nonatomic, strong) UAInAppMessageBannerDisplayContent *displayContent;
+
 @property (nonatomic, strong) IBOutlet UIView *bannerContentContainerView;
 @property (nonatomic, strong) IBOutlet UIView *buttonContainerView;
-
-@property (strong, nonatomic) IBOutlet UIView *tab;
+@property (strong, nonatomic) IBOutlet UIView *nubCover;
 
 @property (nonatomic, strong) UAInAppMessageBannerContentView *bannerContentView;
 @property (nonatomic, strong) UAInAppMessageButtonView *buttonView;
+@property (strong, nonatomic) IBOutlet UIView *tab;
 
-@property (nonatomic, strong) UAInAppMessageBannerDisplayContent *displayContent;
 @property (nonatomic, assign) UAInAppMessageButtonRounding rounding;
 
-@property (strong, nonatomic) IBOutlet NSLayoutConstraint *topConstraint;
-@property (strong, nonatomic) IBOutlet NSLayoutConstraint *bottomConstraint;
-
-@property (strong, nonatomic) IBOutlet NSLayoutConstraint *contentTopConstraint;
-@property (strong, nonatomic) IBOutlet NSLayoutConstraint *contentBottomConstraint;
-@property (strong, nonatomic) IBOutlet NSLayoutConstraint *noButtonsContentBottomConstraint;
-@property (strong, nonatomic) NSLayoutConstraint *heightConstraint;
-
+@property (strong, nonatomic) NSLayoutConstraint *absoluteHeightConstraint;
 
 @end
 
@@ -52,7 +50,9 @@ CGFloat const ShadowOpacity = 0.5;
 
 + (instancetype)bannerMessageViewWithDisplayContent:(UAInAppMessageBannerDisplayContent *)displayContent
                                   bannerContentView:(UAInAppMessageBannerContentView *)contentView
-                                         buttonView:(UAInAppMessageButtonView * _Nullable)buttonView {
+                                         buttonView:(nullable UAInAppMessageButtonView *)buttonView
+                                              style:(UAInAppMessageBannerStyle *)style {
+
     NSString *nibName = UAInAppMessageBannerViewNibName;
     NSBundle *bundle = [UAirship resources];
 
@@ -66,20 +66,19 @@ CGFloat const ShadowOpacity = 0.5;
             view = [[bundle loadNibNamed:nibName owner:nil options:nil] lastObject];
             break;
     }
-    
-    [view configureBannerViewWithDisplayContent:displayContent
-                                bannerContentView:contentView
-                                       buttonView:buttonView];
-    
+
+    [view configureBannerViewWithDisplayContent:displayContent bannerContentView:contentView buttonView:buttonView style:style];
+
     return view;
 }
 
 - (void)configureBannerViewWithDisplayContent:(UAInAppMessageBannerDisplayContent *)displayContent
-                               bannerContentView:(UAInAppMessageBannerContentView *)contentView
-                                      buttonView:(UAInAppMessageButtonView * _Nullable)buttonView {
+                            bannerContentView:(UAInAppMessageBannerContentView *)contentView
+                                   buttonView:(nullable UAInAppMessageButtonView *)buttonView
+                                        style:(UAInAppMessageBannerStyle *)style {
+
     CGFloat shadowOffset;
 
-    // Top and bottom banner views are firstObject and lastObject, respectively.
     switch (displayContent.placement) {
         case UAInAppMessageBannerPlacementTop:
             shadowOffset = ShadowOffset;
@@ -90,65 +89,52 @@ CGFloat const ShadowOpacity = 0.5;
             self.rounding = UIRectCornerTopLeft | UIRectCornerTopRight;
             break;
     }
-    
+
     [self addBannerContentView:contentView];
-    
+
     if (buttonView) {
         [self addButtonView:buttonView];
     } else {
         [self.buttonContainerView removeFromSuperview];
     }
-    
+
     self.displayContent = displayContent;
     // The layer color is set to background color to preserve rounding and shadow
     self.backgroundColor = [UIColor clearColor];
-    
+    self.nubCover.backgroundColor = displayContent.backgroundColor;
+
     self.layer.shadowOffset = CGSizeMake(0, shadowOffset);
     self.layer.shadowRadius = ShadowRadius;
-    
+
     self.translatesAutoresizingMaskIntoConstraints = NO;
-    
+
     self.layer.shadowOffset = CGSizeMake(shadowOffset/2, shadowOffset);
     self.layer.shadowRadius = ShadowRadius;
     self.layer.shadowOpacity = ShadowOpacity;
-    
+
     self.tab.backgroundColor = displayContent.dismissButtonColor;
     self.tab.layer.masksToBounds = YES;
     self.tab.layer.cornerRadius = self.tab.frame.size.height/2;
-    
+
     [self layoutSubviews];
 }
 
 - (void)layoutSubviews {
     [super layoutSubviews];
-    // Applies iPhone X inset spacing, otherwise no-op
-    [self applyInsetSpacing];
-    [self applyLayerRounding];
 
     // Limit absolute banner height to window height - padding
-    self.heightConstraint = [NSLayoutConstraint constraintWithItem:self
-                                                         attribute:NSLayoutAttributeHeight
-                                                         relatedBy:NSLayoutRelationLessThanOrEqual
-                                                            toItem:nil
-                                                         attribute:NSLayoutAttributeNotAnAttribute
-                                                        multiplier:1
-                                                          constant:[UAUtils mainWindow].frame.size.height - DefaultBannerHeightPadding];
+    self.absoluteHeightConstraint.active = NO;
+    self.absoluteHeightConstraint = [NSLayoutConstraint constraintWithItem:self
+                                                                 attribute:NSLayoutAttributeHeight
+                                                                 relatedBy:NSLayoutRelationLessThanOrEqual
+                                                                    toItem:nil
+                                                                 attribute:NSLayoutAttributeNotAnAttribute
+                                                                multiplier:1
+                                                                  constant:[UAUtils mainWindow].frame.size.height - DefaultBannerHeightPadding];
 
-    self.heightConstraint.active = YES;
-    [self layoutIfNeeded];
-}
+    self.absoluteHeightConstraint.active = YES;
 
-- (void)applyInsetSpacing {
-    if (@available(iOS 11.0, *)) {
-        UIWindow *window = [UAUtils mainWindow];
-
-        self.topConstraint.constant = window.safeAreaInsets.top;
-        self.contentTopConstraint.constant = window.safeAreaInsets.top ?: VerticalPaddingToSafeArea;
-
-        self.bottomConstraint.constant = window.safeAreaInsets.bottom;
-        self.contentBottomConstraint.constant = window.safeAreaInsets.bottom ?: VerticalPaddingToSafeArea;
-        self.noButtonsContentBottomConstraint.constant = window.safeAreaInsets.bottom ?: VerticalPaddingToSafeArea;
-    }
+    [self applyLayerRounding];
 
     [self layoutIfNeeded];
 }
@@ -196,3 +182,4 @@ CGFloat const ShadowOpacity = 0.5;
 @end
 
 NS_ASSUME_NONNULL_END
+

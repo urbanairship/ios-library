@@ -3,6 +3,7 @@
 #import <UIKit/UIKit.h>
 #import "UAInAppMessageBannerDisplayContent.h"
 #import "UAInAppMessageResolution.h"
+#import "UAInAppMessageBannerStyle.h"
 
 @class UAInAppMessageMediaView;
 
@@ -13,19 +14,20 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface UAInAppMessageBannerController : NSObject <UIGestureRecognizerDelegate>
 
-
 /**
  * The factory method for creating a banner controller.
  *
  * @param identifer The message identifier.
  * @param displayContent The display content.
  * @param mediaView The media view.
+ * @param style The banner style.
  *
  * @return a configured UAInAppMessageBannerView instance.
  */
 + (instancetype)bannerControllerWithBannerMessageID:(NSString *)identifer
                                      displayContent:(UAInAppMessageBannerDisplayContent *)displayContent
-                                              mediaView:(UAInAppMessageMediaView *_Nullable)mediaView;
+                                          mediaView:(nullable UAInAppMessageMediaView *)mediaView
+                                              style:(nullable UAInAppMessageBannerStyle *)style;
 
 /**
  * The method to show the banner controller.

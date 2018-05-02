@@ -2,6 +2,7 @@
 
 #import <UIKit/UIKit.h>
 #import "UAInAppMessageMediaInfo.h"
+#import "UAInAppMessageMediaStyle.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -20,6 +21,16 @@ NS_ASSUME_NONNULL_BEGIN
  * Defaults to NO.
  */
 @property (nonatomic, assign) BOOL hideWindowWhenVideoIsFullScreen;
+
+/**
+ * The in-app message media container. This view is used to internally pad the media view.
+ */
+@property (nonatomic, strong) UIView *mediaContainer;
+
+/**
+ * The in-app message media view styling.
+ */
+@property(nonatomic, strong) UAInAppMessageMediaStyle *style;
 
 /**
  * Factory method for creating an in-app message media view.

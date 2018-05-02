@@ -32,14 +32,16 @@
     }
     NSString *path = [[NSBundle mainBundle] pathForResource:file ofType:@"plist"];
 
-    if (path) {
-        NSDictionary *styleDict = [[NSDictionary alloc] initWithContentsOfFile:path];
-        NSDictionary *normalizedStyleDict = [UAMessageCenterStyle normalizeDictionary:styleDict];
-
-        [style setValuesForKeysWithDictionary:normalizedStyleDict];
-
-        UA_LTRACE(@"Message Center style options: %@", [normalizedStyleDict description]);
+    if (!path) {
+        return style;
     }
+
+    NSDictionary *styleDict = [[NSDictionary alloc] initWithContentsOfFile:path];
+    NSDictionary *normalizedStyleDict = [UAMessageCenterStyle normalizeDictionary:styleDict];
+
+    [style setValuesForKeysWithDictionary:normalizedStyleDict];
+
+    UA_LTRACE(@"Message Center style options: %@", [normalizedStyleDict description]);
 
     return style;
 }

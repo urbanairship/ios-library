@@ -86,28 +86,28 @@ NSUInteger const UAInAppMessageFullScreenMaxButtons = 5;
         }
         return nil;
     }
-    
+
     if (json[UAInAppMessageHeadingKey]) {
         builder.heading = [UAInAppMessageTextInfo textInfoWithJSON:json[UAInAppMessageHeadingKey] error:error];
         if (!builder.heading) {
             return nil;
         }
     }
-    
+
     if (json[UAInAppMessageBodyKey]) {
         builder.body = [UAInAppMessageTextInfo textInfoWithJSON:json[UAInAppMessageBodyKey] error:error];
         if (!builder.body) {
             return nil;
         }
     }
-    
+
     if (json[UAInAppMessageMediaKey]) {
         builder.media = [UAInAppMessageMediaInfo mediaInfoWithJSON:json[UAInAppMessageMediaKey] error:error];
         if (!builder.media) {
             return nil;
         }
     }
-    
+
     NSMutableArray<UAInAppMessageButtonInfo *> *buttons = [NSMutableArray array];
     id buttonsJSONArray = json[UAInAppMessageButtonsKey];
     if (buttonsJSONArray) {
@@ -120,17 +120,17 @@ NSUInteger const UAInAppMessageFullScreenMaxButtons = 5;
             }
             return nil;
         }
-        
+
         for (id buttonJSON in buttonsJSONArray) {
             UAInAppMessageButtonInfo *buttonInfo = [UAInAppMessageButtonInfo buttonInfoWithJSON:buttonJSON error:error];
-            
+
             if (!buttonInfo) {
                 return nil;
             }
-            
+
             [buttons addObject:buttonInfo];
         }
-        
+
         if (!buttons.count) {
             if (error) {
                 NSString *msg = @"Buttons must contain at least 1 button.";
@@ -140,10 +140,10 @@ NSUInteger const UAInAppMessageFullScreenMaxButtons = 5;
             }
             return nil;
         }
-        
+
         builder.buttons = [NSArray arrayWithArray:buttons];
     }
-    
+
     id buttonLayoutValue = json[UAInAppMessageButtonLayoutKey];
     if (buttonLayoutValue) {
         if (![buttonLayoutValue isKindOfClass:[NSString class]]) {
@@ -188,9 +188,9 @@ NSUInteger const UAInAppMessageFullScreenMaxButtons = 5;
             }
             return nil;
         }
-        
+
         layoutContents = [layoutContents lowercaseString];
-        
+
         if ([UAInAppMessageFullScreenContentLayoutMediaHeaderBodyValue isEqualToString:layoutContents]) {
             builder.contentLayout = UAInAppMessageFullScreenContentLayoutMediaHeaderBody;
         } else if ([UAInAppMessageFullScreenContentLayoutHeaderMediaBodyValue isEqualToString:layoutContents]) {
@@ -207,7 +207,7 @@ NSUInteger const UAInAppMessageFullScreenMaxButtons = 5;
             return nil;
         }
     }
-    
+
     id backgroundColor = json[UAInAppMessageBackgroundColorKey];
     if (backgroundColor) {
         if (![backgroundColor isKindOfClass:[NSString class]]) {
@@ -221,7 +221,7 @@ NSUInteger const UAInAppMessageFullScreenMaxButtons = 5;
         }
         builder.backgroundColor = [UAColorUtils colorWithHexString:backgroundColor];
     }
-    
+
     id dismissButtonColor = json[UAInAppMessageDismissButtonColorKey];
     if (dismissButtonColor) {
         if (![dismissButtonColor isKindOfClass:[NSString class]]) {
@@ -235,7 +235,7 @@ NSUInteger const UAInAppMessageFullScreenMaxButtons = 5;
         }
         builder.dismissButtonColor = [UAColorUtils colorWithHexString:dismissButtonColor];
     }
-    
+
     if (json[UAInAppMessageFooterKey]) {
         builder.footer = [UAInAppMessageButtonInfo buttonInfoWithJSON:json[UAInAppMessageFooterKey] error:error];
 
@@ -375,7 +375,7 @@ NSUInteger const UAInAppMessageFullScreenMaxButtons = 5;
     if (content.backgroundColor != self.backgroundColor && ![[UAColorUtils hexStringWithColor:self.backgroundColor] isEqualToString:[UAColorUtils hexStringWithColor:content.backgroundColor]]) {
         return NO;
     }
-    
+
     if (content.dismissButtonColor != self.dismissButtonColor && ![[UAColorUtils hexStringWithColor:self.dismissButtonColor] isEqualToString:[UAColorUtils hexStringWithColor:content.dismissButtonColor]]) {
         return NO;
     }

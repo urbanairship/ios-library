@@ -38,12 +38,12 @@ NSUInteger const UAInAppMessageModalMaxButtons = 2;
         UA_LERR(@"Modal display must have either its body or heading defined.");
         return NO;
     }
-    
+
     if (self.buttons.count > UAInAppMessageModalMaxButtons) {
         UA_LERR(@"Modal display allows a maximum of %lu buttons", (unsigned long)UAInAppMessageModalMaxButtons);
         return NO;
     }
-    
+
     return YES;
 }
 
@@ -68,17 +68,17 @@ NSUInteger const UAInAppMessageModalMaxButtons = 2;
 
 + (nullable instancetype)displayContentWithBuilderBlock:(void(^)(UAInAppMessageModalDisplayContentBuilder *builder))builderBlock {
     UAInAppMessageModalDisplayContentBuilder *builder = [[UAInAppMessageModalDisplayContentBuilder alloc] init];
-    
+
     if (builderBlock) {
         builderBlock(builder);
     }
-    
+
     return [[UAInAppMessageModalDisplayContent alloc] initWithBuilder:builder];
 }
 
 + (nullable instancetype)displayContentWithJSON:(id)json error:(NSError **)error {
     UAInAppMessageModalDisplayContentBuilder *builder = [[UAInAppMessageModalDisplayContentBuilder alloc] init];
-    
+
     if (![json isKindOfClass:[NSDictionary class]]) {
         if (error) {
             NSString *msg = [NSString stringWithFormat:@"Attempted to deserialize invalid object: %@", json];
@@ -88,28 +88,28 @@ NSUInteger const UAInAppMessageModalMaxButtons = 2;
         }
         return nil;
     }
-    
+
     if (json[UAInAppMessageHeadingKey]) {
         builder.heading = [UAInAppMessageTextInfo textInfoWithJSON:json[UAInAppMessageHeadingKey] error:error];
         if (!builder.heading) {
             return nil;
         }
     }
-    
+
     if (json[UAInAppMessageBodyKey]) {
         builder.body = [UAInAppMessageTextInfo textInfoWithJSON:json[UAInAppMessageBodyKey] error:error];
         if (!builder.body) {
             return nil;
         }
     }
-    
+
     if (json[UAInAppMessageMediaKey]) {
         builder.media = [UAInAppMessageMediaInfo mediaInfoWithJSON:json[UAInAppMessageMediaKey] error:error];
         if (!builder.media) {
             return nil;
         }
     }
-    
+
     NSMutableArray<UAInAppMessageButtonInfo *> *buttons = [NSMutableArray array];
     id buttonsJSONArray = json[UAInAppMessageButtonsKey];
     if (buttonsJSONArray) {
@@ -122,17 +122,17 @@ NSUInteger const UAInAppMessageModalMaxButtons = 2;
             }
             return nil;
         }
-        
+
         for (id buttonJSON in buttonsJSONArray) {
             UAInAppMessageButtonInfo *buttonInfo = [UAInAppMessageButtonInfo buttonInfoWithJSON:buttonJSON error:error];
-            
+
             if (!buttonInfo) {
                 return nil;
             }
-            
+
             [buttons addObject:buttonInfo];
         }
-        
+
         if (!buttons.count) {
             if (error) {
                 NSString *msg = @"Buttons must contain at least 1 button.";
@@ -142,10 +142,10 @@ NSUInteger const UAInAppMessageModalMaxButtons = 2;
             }
             return nil;
         }
-        
+
         builder.buttons = [NSArray arrayWithArray:buttons];
     }
-    
+
     id buttonLayoutValue = json[UAInAppMessageButtonLayoutKey];
     if (buttonLayoutValue) {
         if (![buttonLayoutValue isKindOfClass:[NSString class]]) {
@@ -173,7 +173,7 @@ NSUInteger const UAInAppMessageModalMaxButtons = 2;
             return nil;
         }
     }
-    
+
     id layoutContents = json[UAInAppMessageContentLayoutKey];
     if (layoutContents) {
         if (![layoutContents isKindOfClass:[NSString class]]) {
@@ -185,9 +185,9 @@ NSUInteger const UAInAppMessageModalMaxButtons = 2;
             }
             return nil;
         }
-        
+
         layoutContents = [layoutContents lowercaseString];
-        
+
         if ([UAInAppMessageModalContentLayoutMediaHeaderBodyValue isEqualToString:layoutContents]) {
             builder.contentLayout = UAInAppMessageModalContentLayoutMediaHeaderBody;
         } else if ([UAInAppMessageModalContentLayoutHeaderMediaBodyValue isEqualToString:layoutContents]) {
@@ -204,7 +204,7 @@ NSUInteger const UAInAppMessageModalMaxButtons = 2;
             return nil;
         }
     }
-    
+
     id backgroundColor = json[UAInAppMessageBackgroundColorKey];
     if (backgroundColor) {
         if (![backgroundColor isKindOfClass:[NSString class]]) {
@@ -218,7 +218,7 @@ NSUInteger const UAInAppMessageModalMaxButtons = 2;
         }
         builder.backgroundColor = [UAColorUtils colorWithHexString:backgroundColor];
     }
-    
+
     id dismissButtonColor = json[UAInAppMessageDismissButtonColorKey];
     if (dismissButtonColor) {
         if (![dismissButtonColor isKindOfClass:[NSString class]]) {
@@ -232,7 +232,7 @@ NSUInteger const UAInAppMessageModalMaxButtons = 2;
         }
         builder.dismissButtonColor = [UAColorUtils colorWithHexString:dismissButtonColor];
     }
-    
+
     id borderRadius = json[UAInAppMessageBorderRadiusKey];
     if (borderRadius) {
         if (![borderRadius isKindOfClass:[NSNumber class]]) {
@@ -246,15 +246,15 @@ NSUInteger const UAInAppMessageModalMaxButtons = 2;
         }
         builder.borderRadius = [borderRadius unsignedIntegerValue];
     }
-    
+
     if (json[UAInAppMessageFooterKey]) {
         builder.footer = [UAInAppMessageButtonInfo buttonInfoWithJSON:json[UAInAppMessageFooterKey] error:error];
-        
+
         if (!builder.footer) {
             return nil;
         }
     }
-    
+
     if (![builder isValid]) {
         if (error) {
             NSString *msg = [NSString stringWithFormat:@"Invalid modal display content: %@", json];
@@ -262,20 +262,20 @@ NSUInteger const UAInAppMessageModalMaxButtons = 2;
                                           code:UAInAppMessageModalDisplayContentErrorCodeInvalidJSON
                                       userInfo:@{NSLocalizedDescriptionKey:msg}];
         }
-        
+
         return nil;
     }
-    
+
     return [[UAInAppMessageModalDisplayContent alloc] initWithBuilder:builder];}
 
 - (nullable instancetype)initWithBuilder:(UAInAppMessageModalDisplayContentBuilder *)builder {
     self = [super init];
-    
+
     if (![builder isValid]) {
         UA_LDEBUG(@"UAInAppMessageModalDisplayContent could not be initialized, builder has missing or invalid parameters.");
         return nil;
     }
-    
+
     if (self) {
         self.heading = builder.heading;
         self.body = builder.body;
@@ -294,7 +294,7 @@ NSUInteger const UAInAppMessageModalMaxButtons = 2;
 
 - (NSDictionary *)toJSON {
     NSMutableDictionary *json = [NSMutableDictionary dictionary];
-    
+
     [json setValue:[self.heading toJSON] forKey:UAInAppMessageHeadingKey];
     [json setValue:[self.body toJSON] forKey:UAInAppMessageBodyKey];
     [json setValue:[self.media toJSON] forKey:UAInAppMessageMediaKey];
@@ -307,11 +307,11 @@ NSUInteger const UAInAppMessageModalMaxButtons = 2;
     for (UAInAppMessageButtonInfo *buttonInfo in self.buttons) {
         [buttonsJSONs addObject:[buttonInfo toJSON]];
     }
-    
+
     if (buttonsJSONs.count) {
         [json setValue:buttonsJSONs forKey:UAInAppMessageButtonsKey];
     }
-    
+
     switch (self.buttonLayout) {
         case UAInAppMessageButtonLayoutTypeStacked:
             [json setValue:UAInAppMessageButtonLayoutStackedValue forKey:UAInAppMessageButtonLayoutKey];
@@ -323,7 +323,7 @@ NSUInteger const UAInAppMessageModalMaxButtons = 2;
             [json setValue:UAInAppMessageButtonLayoutJoinedValue forKey:UAInAppMessageButtonLayoutKey];
             break;
     }
-    
+
     switch (self.contentLayout) {
         case UAInAppMessageModalContentLayoutHeaderMediaBody:
             [json setValue:UAInAppMessageModalContentLayoutHeaderMediaBodyValue forKey:UAInAppMessageContentLayoutKey];
@@ -335,7 +335,7 @@ NSUInteger const UAInAppMessageModalMaxButtons = 2;
             [json setValue:UAInAppMessageModalContentLayoutHeaderBodyMediaValue forKey:UAInAppMessageContentLayoutKey];
             break;
     }
-    
+
     return [json copy];
 }
 
@@ -345,57 +345,57 @@ NSUInteger const UAInAppMessageModalMaxButtons = 2;
     if (self == object) {
         return YES;
     }
-    
+
     if (![object isKindOfClass:[UAInAppMessageModalDisplayContent class]]) {
         return NO;
     }
-    
+
     return [self isEqualToInAppMessageModalDisplayContent:(UAInAppMessageModalDisplayContent *)object];
 }
 
 - (BOOL)isEqualToInAppMessageModalDisplayContent:(UAInAppMessageModalDisplayContent *)content {
-    
+
     if (content.heading != self.heading && ![self.heading isEqual:content.heading]) {
         return NO;
     }
-    
+
     if (content.body != self.body && ![self.body isEqual:content.body]) {
         return NO;
     }
-    
+
     if (content.media != self.media  && ![self.media isEqual:content.media]) {
         return NO;
     }
-    
+
     if (content.buttons != self.buttons  && ![self.buttons isEqualToArray:content.buttons]) {
         return NO;
     }
-    
+
     if (content.footer != self.footer  && ![self.footer isEqual:content.footer]) {
         return NO;
     }
-    
+
     if (content.buttonLayout != self.buttonLayout) {
         return NO;
     }
-    
+
     if (content.contentLayout != self.contentLayout) {
         return NO;
     }
-    
+
     // Unfortunately, UIColor won't compare across color spaces. It works to convert them to hex and then compare them.
     if (content.backgroundColor != self.backgroundColor && ![[UAColorUtils hexStringWithColor:self.backgroundColor] isEqualToString:[UAColorUtils hexStringWithColor:content.backgroundColor]]) {
         return NO;
     }
-    
+
     if (content.dismissButtonColor != self.dismissButtonColor && ![[UAColorUtils hexStringWithColor:self.dismissButtonColor] isEqualToString:[UAColorUtils hexStringWithColor:content.dismissButtonColor]]) {
         return NO;
     }
-    
+
     if (self.borderRadius != content.borderRadius) {
         return NO;
     }
-    
+
     return YES;
 }
 
@@ -411,7 +411,7 @@ NSUInteger const UAInAppMessageModalMaxButtons = 2;
     result = 31 * result + [[UAColorUtils hexStringWithColor:self.backgroundColor] hash];
     result = 31 * result + [[UAColorUtils hexStringWithColor:self.dismissButtonColor] hash];
     result = 31 * result + self.borderRadius;
-    
+
     return result;
 }
 

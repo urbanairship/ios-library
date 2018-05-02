@@ -10,7 +10,8 @@
 #import "UAInAppMessageUtils+Internal.h"
 #import "UAInAppMessageManager+Internal.h"
 #import "UAColorUtils+Internal.h"
-#import "UAInAppMessageCloseButton+Internal.h"
+#import "UAInAppMessageDismissButton+Internal.h"
+#import "UAInAppMessageFullScreenStyle.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -58,28 +59,37 @@ double const DefaultFullScreenAnimationDuration = 0.2;
  */
 @property (nonatomic, copy, nullable) void (^showCompletionHandler)(UAInAppMessageResolution *);
 
+/**
+ * Full screen in-app message display style.
+ */
+@property(nonatomic, strong) UAInAppMessageFullScreenStyle *style;
+
 @end
 
 @implementation UAInAppMessageFullScreenController
 
 + (instancetype)fullScreenControllerWithFullScreenMessageID:(NSString *)messageID
                                              displayContent:(UAInAppMessageFullScreenDisplayContent *)displayContent
-                                                  mediaView:(UAInAppMessageMediaView *_Nullable)mediaView {
+                                                  mediaView:(nullable UAInAppMessageMediaView *)mediaView
+                                                      style:(UAInAppMessageFullScreenStyle *)style {
 
     return [[self alloc] initWithFullScreenMessageID:messageID
                                       displayContent:displayContent
-                                           mediaView:mediaView];
+                                           mediaView:mediaView
+                                               style:style];
 }
 
 - (instancetype)initWithFullScreenMessageID:(NSString *)messageID
                              displayContent:(UAInAppMessageFullScreenDisplayContent *)displayContent
-                                  mediaView:(UAInAppMessageMediaView *_Nullable)mediaView {
+                                  mediaView:(nullable UAInAppMessageMediaView *)mediaView
+                                      style:(UAInAppMessageFullScreenStyle *)style {
     self = [super init];
 
     if (self) {
         self.messageID = messageID;
         self.displayContent = displayContent;
         self.mediaView = mediaView;
+        self.style = style;
     }
 
     return self;
@@ -88,17 +98,16 @@ double const DefaultFullScreenAnimationDuration = 0.2;
 #pragma mark -
 #pragma mark Core Functionality
 
-
 - (void)showWithParentView:(UIView *)parentView completionHandler:(void (^)(UAInAppMessageResolution *))completionHandler {
     self.showCompletionHandler = completionHandler;
-    
+
     UAInAppMessageButtonView *buttonView = [UAInAppMessageButtonView buttonViewWithButtons:self.displayContent.buttons
                                                                                     layout:self.displayContent.buttonLayout
+                                                                                     style:self.style.buttonStyle
                                                                                     target:self
                                                                                   selector:@selector(buttonTapped:)];
 
-    UAInAppMessageCloseButton *closeButton = [self createCloseButton];
-    closeButton.dismissButtonColor = self.displayContent.dismissButtonColor;
+    UAInAppMessageDismissButton *closeButton = [self createCloseButton];
 
     UAInAppMessageButton *footerButton = [self addFooterButtonWithButtonInfo:self.displayContent.footer];
 
@@ -106,7 +115,8 @@ double const DefaultFullScreenAnimationDuration = 0.2;
                                                                                     closeButton:closeButton
                                                                                      buttonView:buttonView
                                                                                    footerButton:footerButton
-                                                                                      mediaView:self.mediaView];
+                                                                                      mediaView:self.mediaView
+                                                                                          style:self.style];
 
     [parentView addSubview:self.fullScreenView];
     [self addInitialConstraintsToParentView:parentView fullScreenView:self.fullScreenView];
@@ -116,15 +126,16 @@ double const DefaultFullScreenAnimationDuration = 0.2;
     }];
 }
 
-- (UAInAppMessageCloseButton * _Nullable)createCloseButton {
-    UAInAppMessageCloseButton *closeButton = [[UAInAppMessageCloseButton alloc] init];
+- (nullable UAInAppMessageDismissButton *)createCloseButton {
+    UAInAppMessageDismissButton *closeButton = [UAInAppMessageDismissButton closeButtonWithIconImageName:self.style.dismissIconResource
+                                                                                                   color:self.displayContent.dismissButtonColor];
     [closeButton addTarget:self
                     action:@selector(buttonTapped:)
           forControlEvents:UIControlEventTouchUpInside];
     return closeButton;
 }
 
-- (UAInAppMessageButton * _Nullable)addFooterButtonWithButtonInfo:(UAInAppMessageButtonInfo *)buttonInfo {
+- (nullable UAInAppMessageButton *)addFooterButtonWithButtonInfo:(UAInAppMessageButtonInfo *)buttonInfo {
     if (!buttonInfo) {
         return nil;
     }
@@ -132,8 +143,8 @@ double const DefaultFullScreenAnimationDuration = 0.2;
     UAInAppMessageButton *footerButton = [UAInAppMessageButton footerButtonWithButtonInfo:buttonInfo];
 
     [footerButton addTarget:self
-                    action:@selector(buttonTapped:)
-          forControlEvents:UIControlEventTouchUpInside];
+                     action:@selector(buttonTapped:)
+           forControlEvents:UIControlEventTouchUpInside];
 
     return footerButton;
 }
@@ -156,7 +167,7 @@ double const DefaultFullScreenAnimationDuration = 0.2;
 
 - (void)buttonTapped:(id)sender {
     // Check for close button
-    if ([sender isKindOfClass:[UAInAppMessageCloseButton class]]) {
+    if ([sender isKindOfClass:[UAInAppMessageDismissButton class]]) {
         [self dismissWithResolution:[UAInAppMessageResolution userDismissedResolution]];
         return;
     }
@@ -272,3 +283,4 @@ double const DefaultFullScreenAnimationDuration = 0.2;
 @end
 
 NS_ASSUME_NONNULL_END
+

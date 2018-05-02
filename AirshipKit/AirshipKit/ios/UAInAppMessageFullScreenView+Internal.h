@@ -1,6 +1,7 @@
 /* Copyright 2018 Urban Airship and Contributors */
 
 #import <UIKit/UIKit.h>
+#import "UAInAppMessageFullScreenStyle.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -9,6 +10,7 @@ NS_ASSUME_NONNULL_BEGIN
 @class UAInAppMessageFullScreenContentView;
 @class UAInAppMessageFullScreenDisplayContent;
 @class UAInAppMessageMediaView;
+@class UAInAppMessageDismissButton;
 /**
  * The full screen view.
  */
@@ -22,14 +24,16 @@ NS_ASSUME_NONNULL_BEGIN
  * @param buttonView The subview that holds the buttons.
  * @param footerButton The button that displays footer link text and opens the footer link.
  * @param mediaView The media view.
+ * @param style The full screen styling.
  *
  * @return a configured UAInAppMessageFullScreenView instance.
  */
 + (nullable instancetype)fullScreenMessageViewWithDisplayContent:(UAInAppMessageFullScreenDisplayContent *)displayContent
-                                            closeButton:(UIButton *)closeButton
-                                             buttonView:( UAInAppMessageButtonView * _Nullable)buttonView
-                                           footerButton:(UIButton * _Nullable )footerButton
-                                              mediaView:(UAInAppMessageMediaView * _Nullable)mediaView;
+                                                     closeButton:(UAInAppMessageDismissButton *)closeButton
+                                                      buttonView:(nullable UAInAppMessageButtonView *)buttonView
+                                                    footerButton:(nullable UIButton *)footerButton
+                                                       mediaView:(nullable UAInAppMessageMediaView *)mediaView
+                                                           style:(nullable UAInAppMessageFullScreenStyle *)style;
 
 @end
 

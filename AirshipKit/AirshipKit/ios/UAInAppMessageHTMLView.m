@@ -1,7 +1,7 @@
 /* Copyright 2018 Urban Airship and Contributors */
 
 #import "UAInAppMessageHTMLView+Internal.h"
-#import "UAInAppMessageCloseButton+Internal.h"
+#import "UAInAppMessageDismissButton+Internal.h"
 #import "UAInAppMessageUtils+Internal.h"
 #import "UAInAppMessageHTMLDisplayContent.h"
 #import "UAirship.h"
@@ -13,7 +13,7 @@ NSString *const UAInAppMessageHTMLViewNibName = @"UAInAppMessageHTMLView";
 
 @interface UAInAppMessageHTMLView ()
 
-@property (strong, nonatomic) IBOutlet UAInAppMessageCloseButton *closeButtonContainer;
+@property (strong, nonatomic) IBOutlet UAInAppMessageDismissButton *closeButtonContainer;
 @property (strong, nonatomic) IBOutlet UIView *messageTop;
 @property (strong, nonatomic) IBOutlet UAWebView *webView;
 @property (strong, nonatomic) IBOutlet UABeveledLoadingIndicator *loadingIndicator;

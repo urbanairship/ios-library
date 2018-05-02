@@ -3,6 +3,7 @@
 #import <UIKit/UIKit.h>
 #import "UAInAppMessageFullScreenDisplayContent.h"
 #import "UAInAppMessageResolution.h"
+#import "UAInAppMessageFullScreenStyle.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -19,12 +20,14 @@ NS_ASSUME_NONNULL_BEGIN
  * @param identifer The message identifier.
  * @param displayContent The display content.
  * @param mediaView The media view.
+ * @param style The full screen styling.
  *
  * @return a configured UAInAppMessageFullScreenView instance.
  */
 + (instancetype)fullScreenControllerWithFullScreenMessageID:(NSString *)identifer
                                              displayContent:(UAInAppMessageFullScreenDisplayContent *)displayContent
-                                                  mediaView:(UAInAppMessageMediaView * _Nullable)mediaView;
+                                                  mediaView:(nullable UAInAppMessageMediaView *)mediaView
+                                                      style:(UAInAppMessageFullScreenStyle *)style;
 
 /**
  * The method to show the full screen controller.
@@ -32,8 +35,10 @@ NS_ASSUME_NONNULL_BEGIN
  * @param parentView The parent view.
  * @param completionHandler The completion handler that's called when show operation completes.
  */
-- (void)showWithParentView:(UIView *)parentView completionHandler:(void (^)(UAInAppMessageResolution *))completionHandler;
+- (void)showWithParentView:(UIView *)parentView
+         completionHandler:(void (^)(UAInAppMessageResolution *))completionHandler;
 
 @end
 
 NS_ASSUME_NONNULL_END
+

@@ -44,10 +44,19 @@ CGFloat const DefaultVideoAspectRatio = 16.0/9.0;
 
         self.webView = nil;
 
+        self.mediaContainer = [[UIView alloc] init];
+        self.mediaContainer.backgroundColor = [UIColor clearColor];
+        self.mediaContainer.opaque = NO;
+        [self addSubview:self.mediaContainer];
+        [UAInAppMessageUtils applyContainerConstraintsToContainer:self containedView:self.mediaContainer];
+
         self.imageView = [[UIImageView alloc] initWithFrame:self.frame];
-        [self addSubview:self.imageView];
+        [self.mediaContainer addSubview:self.imageView];
         [self.imageView setImage:image];
-        [UAInAppMessageUtils applyContainerConstraintsToContainer:self containedView:self.imageView];
+        [UAInAppMessageUtils applyContainerConstraintsToContainer:self.mediaContainer containedView:self.imageView];
+
+        // Apply style padding
+        [UAInAppMessageUtils applyPaddingToView:self.mediaContainer padding:self.style.additionalPadding replace:NO];
     }
 
     return self;
@@ -61,6 +70,12 @@ CGFloat const DefaultVideoAspectRatio = 16.0/9.0;
         self.mediaInfo = mediaInfo;
 
         self.imageView = nil;
+
+        self.mediaContainer = [[UIView alloc] init];
+        self.mediaContainer.backgroundColor = [UIColor clearColor];
+        self.mediaContainer.opaque = NO;
+        [self addSubview:self.mediaContainer];
+        [UAInAppMessageUtils applyContainerConstraintsToContainer:self containedView:self.mediaContainer];
 
         WKWebViewConfiguration *config = [[WKWebViewConfiguration alloc] init];
         config.allowsInlineMediaPlayback = YES;
@@ -77,8 +92,11 @@ CGFloat const DefaultVideoAspectRatio = 16.0/9.0;
         }
 
         self.webView = [[WKWebView alloc] initWithFrame:self.frame configuration:config];
-        [self addSubview:self.webView];
-        [UAInAppMessageUtils applyContainerConstraintsToContainer:self containedView:self.webView];
+        [self.mediaContainer addSubview:self.webView];
+        [UAInAppMessageUtils applyContainerConstraintsToContainer:self.mediaContainer containedView:self.webView];
+
+        // Apply style padding
+        [UAInAppMessageUtils applyPaddingToView:self.mediaContainer  padding:self.style.additionalPadding replace:NO];
     }
 
     return self;
@@ -119,10 +137,10 @@ CGFloat const DefaultVideoAspectRatio = 16.0/9.0;
         }
     }
 
-    self.aspectConstraint = [NSLayoutConstraint constraintWithItem:self
+    self.aspectConstraint = [NSLayoutConstraint constraintWithItem:self.mediaContainer
                                                          attribute:NSLayoutAttributeWidth
                                                          relatedBy:NSLayoutRelationEqual
-                                                            toItem:self
+                                                            toItem:self.mediaContainer
                                                          attribute:NSLayoutAttributeHeight
                                                         multiplier:aspectRatio
                                                           constant:0];
@@ -173,7 +191,7 @@ CGFloat const DefaultVideoAspectRatio = 16.0/9.0;
 
     self.heightConstraint.active = NO;
     // Limit absolute height to window height - padding
-    self.heightConstraint = [NSLayoutConstraint constraintWithItem:self
+    self.heightConstraint = [NSLayoutConstraint constraintWithItem:self.mediaContainer
                                                          attribute:NSLayoutAttributeHeight
                                                          relatedBy:NSLayoutRelationLessThanOrEqual
                                                             toItem:nil

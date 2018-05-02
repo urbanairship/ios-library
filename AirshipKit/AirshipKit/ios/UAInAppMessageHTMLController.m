@@ -2,7 +2,7 @@
 
 #import "UAInAppMessageHTMLController+Internal.h"
 #import "UAInAppMessageHTMLDisplayContent+Internal.h"
-#import "UAInAppMessageCloseButton+Internal.h"
+#import "UAInAppMessageDismissButton+Internal.h"
 #import "UAInAppMessageHTMLView+Internal.h"
 #import "UAWebView+Internal.h"
 #import "UAWKWebViewNativeBridge.h"
@@ -100,8 +100,8 @@ double const UAInAppMessageDefaultHTMLAnimationDuration = 0.2;
     }
 }
 
-- (UAInAppMessageCloseButton * _Nullable)createCloseButton {
-    UAInAppMessageCloseButton *closeButton = [[UAInAppMessageCloseButton alloc] init];
+- (UAInAppMessageDismissButton * _Nullable)createCloseButton {
+    UAInAppMessageDismissButton *closeButton = [[UAInAppMessageDismissButton alloc] init];
     closeButton.dismissButtonColor = self.displayContent.dismissButtonColor;
     [closeButton addTarget:self
                     action:@selector(buttonTapped:)
@@ -192,7 +192,7 @@ double const UAInAppMessageDefaultHTMLAnimationDuration = 0.2;
 }
 
 - (void)createViews:(UIView *)parentView {
-    UAInAppMessageCloseButton *closeButton = [self createCloseButton];
+    UAInAppMessageDismissButton *closeButton = [self createCloseButton];
 
     self.htmlView = [UAInAppMessageHTMLView htmlViewWithDisplayContent:self.displayContent
                                                            closeButton:closeButton];
@@ -237,7 +237,7 @@ double const UAInAppMessageDefaultHTMLAnimationDuration = 0.2;
 
 - (void)buttonTapped:(id)sender {
     // Check for close button
-    if ([sender isKindOfClass:[UAInAppMessageCloseButton class]]) {
+    if ([sender isKindOfClass:[UAInAppMessageDismissButton class]]) {
         [self dismissWithResolution:[UAInAppMessageResolution userDismissedResolution]];
     }
 }

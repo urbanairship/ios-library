@@ -16,19 +16,26 @@ NSString *const UAInAppMessageBannerContentViewNibName = @"UAInAppMessageBannerC
 
 // Subviews
 @property(nonatomic, strong) IBOutlet UIView *mediaContainerView;
-@property(nonatomic, strong) IBOutlet UIView *textContainerView;
+@property (strong, nonatomic) IBOutlet UIStackView *textStackView;
 @property (nonatomic, strong) IBOutlet UIView *containerView;
+
+@property (nonatomic, strong) UILabel *headerView;
+@property (nonatomic, strong) UILabel *bodyView;
 
 @end
 
 @implementation UAInAppMessageBannerContentView
 
-+ (instancetype)contentViewWithLayout:(UAInAppMessageBannerContentLayoutType)contentLayout textView:(UAInAppMessageTextView *)textView mediaView:(UAInAppMessageMediaView * _Nullable)mediaView {
++ (nullable instancetype)contentViewWithLayout:(UAInAppMessageBannerContentLayoutType)contentLayout
+                                    headerView:(nullable UAInAppMessageTextView *)headerView
+                                      bodyView:(nullable UAInAppMessageTextView *)bodyView
+                                     mediaView:(nullable UAInAppMessageMediaView *)mediaView {
+
     NSString *nibName = UAInAppMessageBannerContentViewNibName;
     NSBundle *bundle = [UAirship resources];
-    
-    // Left and right IAM views are firstObject and lastObject, respectively.
+
     UAInAppMessageBannerContentView *view;
+    // Left and right IAM views are firstObject and lastObject, respectively.
     switch (contentLayout) {
         case UAInAppMessageBannerContentLayoutTypeMediaLeft:
             view = [[bundle loadNibNamed:nibName owner:nil options:nil] firstObject];
@@ -37,38 +44,55 @@ NSString *const UAInAppMessageBannerContentViewNibName = @"UAInAppMessageBannerC
             view = [[bundle loadNibNamed:nibName owner:nil options:nil] lastObject];
             break;
     }
-    
-    [view configureContentViewWithLayout:contentLayout textView:textView mediaView:mediaView];
-    
+
+    [view configureContentViewWithLayout:contentLayout headerView:headerView bodyView:bodyView mediaView:mediaView];
+
     return view;
 }
 
-- (void)configureContentViewWithLayout:(UAInAppMessageBannerContentLayoutType)contentLayout textView:(UAInAppMessageTextView *)textView mediaView:(UAInAppMessageMediaView * _Nullable)mediaView {
+- (void)configureContentViewWithLayout:(UAInAppMessageBannerContentLayoutType)contentLayout headerView:(UAInAppMessageTextView *)headerView bodyView:(UAInAppMessageTextView *)bodyView mediaView:(nullable UAInAppMessageMediaView *)mediaView {
+
     self.translatesAutoresizingMaskIntoConstraints = NO;
     self.userInteractionEnabled = NO;
-    
     self.backgroundColor = [UIColor clearColor];
-    
+
     self.containerView.translatesAutoresizingMaskIntoConstraints = NO;
     self.containerView.backgroundColor = [UIColor clearColor];
-    
+
     if (mediaView) {
         [self.mediaContainerView addSubview:mediaView];
         [UAInAppMessageUtils applyContainerConstraintsToContainer:self.mediaContainerView containedView:mediaView];
     } else {
         [self.mediaContainerView removeFromSuperview];
     }
-    
-    [self addTextView:textView];
-    
-    [self.textContainerView layoutIfNeeded];
-    [self.mediaContainerView layoutIfNeeded];
+
+    if (headerView) {
+        self.headerView = headerView.textLabel;
+        [self.textStackView addArrangedSubview:headerView];
+        [self.headerView sizeToFit];
+
+    }
+
+    if (bodyView) {
+        self.bodyView = bodyView.textLabel;
+        [self.textStackView addArrangedSubview:bodyView];
+        [self.bodyView sizeToFit];
+    }
+
+    // Add invisible spacer to guarantee it expands instead of other views
+    UIView *spacer = [[UIView alloc] initWithFrame:CGRectZero];
+    spacer.backgroundColor = [UIColor clearColor];
+    [spacer setContentHuggingPriority:1 forAxis:UILayoutConstraintAxisVertical];
+    [self.textStackView addArrangedSubview:spacer];
+
     [self layoutIfNeeded];
 }
 
-- (void)addTextView:(UAInAppMessageTextView *)textView {
-    [self.textContainerView addSubview:textView];
-    [UAInAppMessageUtils applyContainerConstraintsToContainer:self.textContainerView containedView:textView];
+-(void)layoutSubviews {
+    [self.headerView sizeToFit];
+    [self.bodyView sizeToFit];
+    [self.textStackView layoutIfNeeded];
+    [self.mediaContainerView layoutIfNeeded];
 }
 
 @end

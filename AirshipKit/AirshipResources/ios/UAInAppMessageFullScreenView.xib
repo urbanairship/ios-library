@@ -20,13 +20,10 @@
                     <rect key="frame" x="0.0" y="44" width="375" height="734"/>
                     <subviews>
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="nxZ-dF-if9" userLabel="WrapperView">
-                            <rect key="frame" x="0.0" y="0.0" width="375" height="900"/>
+                            <rect key="frame" x="0.0" y="0.0" width="375" height="740"/>
                             <subviews>
-                                <stackView opaque="NO" contentMode="scaleToFill" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" axis="vertical" spacing="24" translatesAutoresizingMaskIntoConstraints="NO" id="Dgh-Mi-mKc" userLabel="Full Screen Stack View">
-                                    <rect key="frame" x="0.0" y="0.0" width="375" height="804"/>
-                                </stackView>
                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="rsN-La-UOG" userLabel="Footer Container View">
-                                    <rect key="frame" x="24" y="828" width="327" height="48"/>
+                                    <rect key="frame" x="24" y="668" width="327" height="48"/>
                                     <constraints>
                                         <constraint firstAttribute="height" constant="48" placeholder="YES" id="XdO-ZE-UJI"/>
                                     </constraints>
@@ -39,16 +36,19 @@
                                         <constraint firstAttribute="width" constant="46" id="agT-Wc-9oV"/>
                                     </constraints>
                                 </view>
+                                <stackView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="1000" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" axis="vertical" spacing="24" translatesAutoresizingMaskIntoConstraints="NO" id="Dgh-Mi-mKc" userLabel="Full Screen Stack View">
+                                    <rect key="frame" x="24" y="0.0" width="327" height="644"/>
+                                </stackView>
                             </subviews>
                             <constraints>
                                 <constraint firstItem="rsN-La-UOG" firstAttribute="top" relation="greaterThanOrEqual" secondItem="Dgh-Mi-mKc" secondAttribute="bottom" constant="24" id="0D6-HO-TmE"/>
-                                <constraint firstItem="Dgh-Mi-mKc" firstAttribute="trailing" secondItem="nxZ-dF-if9" secondAttribute="trailing" id="38K-Ja-MKv"/>
-                                <constraint firstAttribute="height" constant="900" placeholder="YES" identifier="This is removed at build time" id="4V8-J1-qgU"/>
+                                <constraint firstAttribute="trailing" secondItem="Dgh-Mi-mKc" secondAttribute="trailing" constant="24" id="38K-Ja-MKv"/>
+                                <constraint firstAttribute="height" constant="740" placeholder="YES" identifier="This is removed at build time" id="4V8-J1-qgU"/>
                                 <constraint firstAttribute="bottom" secondItem="rsN-La-UOG" secondAttribute="bottom" constant="24" id="4iw-X8-Uyp"/>
                                 <constraint firstAttribute="bottom" secondItem="Dgh-Mi-mKc" secondAttribute="bottom" priority="999" constant="24" identifier="Fallback constraint when footer is nil." id="BXZ-hk-yfh"/>
-                                <constraint firstItem="rsN-La-UOG" firstAttribute="trailing" secondItem="nxZ-dF-if9" secondAttribute="trailing" constant="-24" id="Cz9-uT-xrE"/>
+                                <constraint firstAttribute="trailing" secondItem="rsN-La-UOG" secondAttribute="trailing" constant="24" id="Cz9-uT-xrE"/>
                                 <constraint firstItem="Dgh-Mi-mKc" firstAttribute="top" secondItem="nxZ-dF-if9" secondAttribute="top" id="HHM-b9-y3E"/>
-                                <constraint firstItem="Dgh-Mi-mKc" firstAttribute="leading" secondItem="nxZ-dF-if9" secondAttribute="leading" id="IJV-07-dM9"/>
+                                <constraint firstItem="Dgh-Mi-mKc" firstAttribute="leading" secondItem="nxZ-dF-if9" secondAttribute="leading" constant="24" id="IJV-07-dM9"/>
                                 <constraint firstItem="Hxr-ai-woU" firstAttribute="top" secondItem="nxZ-dF-if9" secondAttribute="top" id="pjZ-wy-j9K"/>
                                 <constraint firstAttribute="trailing" secondItem="Hxr-ai-woU" secondAttribute="trailing" id="t8Z-cW-QYE"/>
                                 <constraint firstItem="rsN-La-UOG" firstAttribute="leading" secondItem="nxZ-dF-if9" secondAttribute="leading" constant="24" id="tFr-IR-Zo3"/>
@@ -56,12 +56,11 @@
                         </view>
                     </subviews>
                     <constraints>
-                        <constraint firstItem="Dgh-Mi-mKc" firstAttribute="width" secondItem="hEr-Uv-JrX" secondAttribute="width" id="4LU-yB-rgN"/>
                         <constraint firstItem="nxZ-dF-if9" firstAttribute="top" secondItem="hEr-Uv-JrX" secondAttribute="top" id="EH7-re-Skt"/>
                         <constraint firstItem="nxZ-dF-if9" firstAttribute="width" secondItem="hEr-Uv-JrX" secondAttribute="width" id="K2K-ea-PXh"/>
                         <constraint firstItem="nxZ-dF-if9" firstAttribute="bottom" secondItem="hEr-Uv-JrX" secondAttribute="bottom" id="Lb6-1B-08I"/>
                         <constraint firstItem="nxZ-dF-if9" firstAttribute="leading" secondItem="hEr-Uv-JrX" secondAttribute="leading" id="PUu-PN-dO7"/>
-                        <constraint firstItem="nxZ-dF-if9" firstAttribute="height" relation="greaterThanOrEqual" secondItem="hEr-Uv-JrX" secondAttribute="height" id="QUr-up-vfr"/>
+                        <constraint firstItem="nxZ-dF-if9" firstAttribute="height" relation="greaterThanOrEqual" secondItem="hEr-Uv-JrX" secondAttribute="height" constant="-24" id="QUr-up-vfr"/>
                         <constraint firstItem="nxZ-dF-if9" firstAttribute="trailing" secondItem="hEr-Uv-JrX" secondAttribute="trailing" id="Yum-9D-zGh"/>
                     </constraints>
                 </scrollView>

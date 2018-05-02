@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>headerStyle</key>
+	<dict>
+		<key>letterSpacing</key>
+		<false/>
+		<key>lineHeight</key>
+		<date>2018-04-18T18:56:01Z</date>
+	</dict>
+	<key>bodyStyle</key>
+	<dict>
+		<key>letterSpacing</key>
+		<date>2018-04-18T18:55:52Z</date>
+		<key>lineHeight</key>
+		<integer>0</integer>
+	</dict>
+	<key>buttonStyle</key>
+	<dict>
+		<key>buttonHeight</key>
+		<integer>0</integer>
+		<key>stackedButtonSpacing</key>
+		<integer>0</integer>
+	</dict>
+	<key>additionalPadding</key>
+	<dict>
+		<key>top</key>
+		<false/>
+		<key>bottom</key>
+		<dict/>
+		<key>leading</key>
+		<string>0</string>
+		<key>trailing</key>
+		<integer>0</integer>
+	</dict>
+</dict>
+</plist>

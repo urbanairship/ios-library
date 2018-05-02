@@ -50,6 +50,7 @@
 #import "UANotificationContent.h"
 #import "UANotificationResponse.h"
 #import "UAOpenExternalURLAction.h"
+#import "UAPadding.h"
 #import "UAProximityRegion.h"
 #import "UAPush.h"
 #import "UARegionEvent.h"

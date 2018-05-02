@@ -9,7 +9,7 @@
 #import "UAInAppMessageButton+Internal.h"
 #import "UAInAppMessageAdapterProtocol.h"
 #import "UAInAppMessageMediaView+Internal.h"
-#import "UAInAppMessageCloseButton+Internal.h"
+#import "UAInAppMessageDismissButton+Internal.h"
 
 @interface UAInAppMessageUtils : NSObject
 
@@ -17,18 +17,23 @@
  * Applies button info to a button.
  *
  * @param buttonInfo The button info.
+ * @param style The button styling.
  * @param button The button.
  * @param buttonMargin Specify the top and bottom margin between the edge of the button and the edge of the label
  */
-+ (void)applyButtonInfo:(UAInAppMessageButtonInfo *)buttonInfo button:(UAInAppMessageButton *)button buttonMargin:(CGFloat)buttonMargin;
++ (void)applyButtonInfo:(UAInAppMessageButtonInfo *)buttonInfo
+                  style:(UAInAppMessageButtonStyle *)style
+                 button:(UAInAppMessageButton *)button
+           buttonMargin:(CGFloat)buttonMargin;
 
 /**
  * Applies text info to a text label.
  *
  * @param textInfo The text info.
+ * @param style The text styling.
  * @param label The label.
  */
-+ (void)applyTextInfo:(UAInAppMessageTextInfo *)textInfo label:(UILabel *)label;
++ (void)applyTextInfo:(UAInAppMessageTextInfo *)textInfo style:(UAInAppMessageTextStyle *)style label:(UILabel *)label;
 
 /**
  * Constrains the contained view to the center of the container with equivalent size
@@ -42,15 +47,15 @@
 + (void)applyContainerConstraintsToContainer:(UIView *)container containedView:(UIView *)contained;
 
 /**
- * Constrains the contained view to the center of the container
+ * Constrains the buttom image view to default size and to the lower left hand corner of the touchable button space.
  *
  * This method has the side effect of setting both views' translatesAutoresizingMasksIntoConstraints parameters to NO.
  * This is done to ensure that autoresizing mask constraints do not conflict with the centering constraints.
  *
  * @param container The container view.
- * @param contained The contained view.
+ * @param contained The contained image view view.
  */
-+ (void)applyCenterConstraintsToContainer:(UIView *)container containedView:(UIView *)contained;
++ (void)applyCloseButtonImageConstraintsToContainer:(UIView *)container closeButtonImageView:(UIImageView *)contained;
 
 /**
  * Caches url data contents using a background thread. Calls completion handler on main thread
@@ -77,13 +82,23 @@
 + (NSCache *)createImageCache;
 
 /**
- * Applies padding to view constraints matching the provided attribute.
+ * Applies padding on the view to match the provided padding style object.
  *
- * @param padding The padding to add to constraints matching the attribute type
+ * @param padding The padding style object
  * @param view A view with constraints to apply padding to
- * @param attribute The attribute type that should be padded
+ * @param replace If YES padding will be replaced instead of added to.
  */
-+ (void)applyPadding:(CGFloat)padding toView:(UIView *)view attribute:(NSLayoutAttribute)attribute;
++ (void)applyPaddingToView:(UIView *)view padding:(UAPadding *)padding replace:(BOOL)replace;
+
+/**
+ * Replaces view constraint constants matching the provided attribute with the provided padding.
+ *
+ * @param attribute The attribute type that should be padded
+ * @param view A view with constraints to apply padding to
+ * @param padding The padding to add to constraints matching the attribute type
+ * @param replace If YES padding will be replaced instead of added to.
+*/
++ (void)applyPaddingForAttribute:(NSLayoutAttribute)attribute onView:(UIView *)view padding:(CGFloat)padding replace:(BOOL)replace;
 
 /**
  * Prepares in-app message to display.
@@ -101,5 +116,14 @@
  * @return `YES` if the in-app message is ready, `NO` otherwise.
  */
 + (BOOL)isReadyToDisplayWithMedia:(UAInAppMessageMediaInfo *)media;
+
+/**
+ * Normalizes style dictionaries by stripping out white space
+ *
+ * @param keyedValues The style dictionary to be normalized.
+ * @return The normalized dictionary of style values.
+ */
++ (NSDictionary *)normalizeStyleDictionary:(NSDictionary *)keyedValues;
+
 
 @end

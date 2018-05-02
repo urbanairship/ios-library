@@ -10,15 +10,19 @@
 NSString *const UADefaultSerifFont = @"Times New Roman";
 NSString *const UAInAppMessageAdapterCacheName = @"UAInAppMessageAdapterCache";
 
+CGFloat const CloseButtonWidth = 30;
+CGFloat const CloseButtonHeight = 30;
+
 @implementation UAInAppMessageUtils
 
-+ (void)applyButtonInfo:(UAInAppMessageButtonInfo *)buttonInfo button:(UAInAppMessageButton *)button buttonMargin:(CGFloat)buttonMargin {
++ (void)applyButtonInfo:(UAInAppMessageButtonInfo *)buttonInfo style:(UAInAppMessageButtonStyle *)style button:(UAInAppMessageButton *)button buttonMargin:(CGFloat)buttonMargin  {
     button.backgroundColor = buttonInfo.backgroundColor;
 
     // Title label should resize for text length
     button.titleLabel.numberOfLines = 0;
 
-    NSDictionary *attributes = [UAInAppMessageUtils attributesWithTextInfo:buttonInfo.label];
+    NSDictionary *attributes = [UAInAppMessageUtils attributesWithTextInfo:buttonInfo.label textStyle:style.buttonTextStyle];
+
     NSAttributedString *attributedTitle = [[NSAttributedString alloc] initWithString:buttonInfo.label.text attributes:attributes];
 
     switch (buttonInfo.label.alignment) {
@@ -37,8 +41,12 @@ NSString *const UAInAppMessageAdapterCacheName = @"UAInAppMessageAdapterCache";
     }
 
     [button setAttributedTitle:attributedTitle forState:UIControlStateNormal];
-    
-    CGFloat buttonHeight = button.titleLabel.intrinsicContentSize.height + 2 * buttonMargin;
+
+    CGFloat defaultButtonHeight = button.titleLabel.intrinsicContentSize.height + 2 * buttonMargin;
+
+    // Style the button height
+    CGFloat styledButtonHeight = style.buttonHeight ? [style.buttonHeight floatValue] : defaultButtonHeight;
+
     if (!button.heightConstraint) {
         button.heightConstraint = [NSLayoutConstraint constraintWithItem:button
                                                                attribute:NSLayoutAttributeHeight
@@ -46,50 +54,24 @@ NSString *const UAInAppMessageAdapterCacheName = @"UAInAppMessageAdapterCache";
                                                                   toItem:nil
                                                                attribute:NSLayoutAttributeNotAnAttribute
                                                               multiplier:1.0f
-                                                                constant:buttonHeight];
+                                                                constant:styledButtonHeight];
     }
-    
+
     button.heightConstraint.active = YES;
-    button.heightConstraint.constant = buttonHeight;
-    
+    button.heightConstraint.constant = styledButtonHeight;
 }
 
-+ (void)applyTextInfo:(UAInAppMessageTextInfo *)textInfo label:(UILabel *)label {
++ (void)applyTextInfo:(UAInAppMessageTextInfo *)textInfo style:(UAInAppMessageTextStyle *)style label:(UILabel *)label {
     // Label should resize for text length
     label.numberOfLines = 0;
+    label.lineBreakMode = NSLineBreakByWordWrapping;
 
-    NSDictionary *attributes = [UAInAppMessageUtils attributesWithTextInfo:textInfo];
+    NSDictionary *attributes = [UAInAppMessageUtils attributesWithTextInfo:textInfo textStyle:style];
     NSAttributedString *attributedText = [[NSAttributedString alloc] initWithString:textInfo.text attributes:attributes];
 
     [label setAttributedText:attributedText];
-}
-
-+ (void)applyCenterConstraintsToContainer:(UIView *)container containedView:(UIView *)contained {
-    if (!container || !contained) {
-        UA_LDEBUG(@"Attempted to constrain a nil view");
-        return;
-    }
-
-    container.translatesAutoresizingMaskIntoConstraints = NO;
-    contained.translatesAutoresizingMaskIntoConstraints = NO;
-
-    NSLayoutConstraint *centerXConstraint = [NSLayoutConstraint constraintWithItem:contained
-                                                                         attribute:NSLayoutAttributeCenterX
-                                                                         relatedBy:NSLayoutRelationEqual
-                                                                            toItem:container
-                                                                         attribute:NSLayoutAttributeCenterX
-                                                                        multiplier:1.0f
-                                                                          constant:0.0f];
-
-    NSLayoutConstraint *centerYConstraint = [NSLayoutConstraint constraintWithItem:contained
-                                                                         attribute:NSLayoutAttributeCenterY
-                                                                         relatedBy:NSLayoutRelationEqual
-                                                                            toItem:container
-                                                                         attribute:NSLayoutAttributeCenterY
-                                                                        multiplier:1.0f
-                                                                          constant:0.0f];
-    centerXConstraint.active = true;
-    centerYConstraint.active = true;
+    [label sizeToFit];
+    [label.superview layoutIfNeeded];
 }
 
 + (void)applyContainerConstraintsToContainer:(UIView *)container containedView:(UIView *)contained {
@@ -102,61 +84,188 @@ NSString *const UAInAppMessageAdapterCacheName = @"UAInAppMessageAdapterCache";
     container.translatesAutoresizingMaskIntoConstraints = NO;
     contained.translatesAutoresizingMaskIntoConstraints = NO;
 
-    NSLayoutConstraint *centerXConstraint = [NSLayoutConstraint constraintWithItem:contained
-                                                                         attribute:NSLayoutAttributeCenterX
+    NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:contained
+                                                                     attribute:NSLayoutAttributeTop
+                                                                     relatedBy:NSLayoutRelationEqual
+                                                                        toItem:container
+                                                                     attribute:NSLayoutAttributeTop
+                                                                    multiplier:1.0f
+                                                                      constant:0.0f];
+
+    // The container and contained are reversed here to allow positive constant increases to result in expected padding
+    NSLayoutConstraint *bottomConstraint = [NSLayoutConstraint constraintWithItem:container
+                                                                        attribute:NSLayoutAttributeBottom
+                                                                        relatedBy:NSLayoutRelationEqual
+                                                                           toItem:contained
+                                                                        attribute:NSLayoutAttributeBottom
+                                                                       multiplier:1.0f
+                                                                         constant:0.0f];
+
+    // The container and contained are reversed here to allow positive constant increases to result in expected padding
+    NSLayoutConstraint *trailingConstraint = [NSLayoutConstraint constraintWithItem:container
+                                                                          attribute:NSLayoutAttributeTrailing
+                                                                          relatedBy:NSLayoutRelationEqual
+                                                                             toItem:contained
+                                                                          attribute:NSLayoutAttributeTrailing
+                                                                         multiplier:1.0f
+                                                                           constant:0.0f];
+
+    NSLayoutConstraint *leadingConstraint = [NSLayoutConstraint constraintWithItem:contained
+                                                                         attribute:NSLayoutAttributeLeading
                                                                          relatedBy:NSLayoutRelationEqual
                                                                             toItem:container
-                                                                         attribute:NSLayoutAttributeCenterX
+                                                                         attribute:NSLayoutAttributeLeading
                                                                         multiplier:1.0f
                                                                           constant:0.0f];
 
-    NSLayoutConstraint *centerYConstraint = [NSLayoutConstraint constraintWithItem:contained
-                                                                         attribute:NSLayoutAttributeCenterY
-                                                                         relatedBy:NSLayoutRelationEqual
-                                                                            toItem:container
-                                                                         attribute:NSLayoutAttributeCenterY
-                                                                        multiplier:1.0f
-                                                                          constant:0.0f];
+    topConstraint.active = true;
+    bottomConstraint.active = true;
+    trailingConstraint.active = true;
+    leadingConstraint.active = true;
+}
 
++ (void)applyCloseButtonImageConstraintsToContainer:(UIView *)container closeButtonImageView:(UIImageView *)contained {
+    if (!container || !contained) {
+        UA_LDEBUG(@"Attempted to constrain a nil view");
+        return;
+    }
+
+    // This is a side effect, but these should be set to NO by default when using autolayout
+    container.translatesAutoresizingMaskIntoConstraints = NO;
+    contained.translatesAutoresizingMaskIntoConstraints = NO;
+
+    // Constrain the close button image view to the lower left corner of the touchable button space
     NSLayoutConstraint *widthConstraint = [NSLayoutConstraint constraintWithItem:contained
                                                                        attribute:NSLayoutAttributeWidth
                                                                        relatedBy:NSLayoutRelationEqual
-                                                                          toItem:container
-                                                                       attribute:NSLayoutAttributeWidth
+                                                                          toItem:nil
+                                                                       attribute:NSLayoutAttributeNotAnAttribute
                                                                       multiplier:1.0f
-                                                                        constant:0.0f];
+                                                                        constant:CloseButtonWidth];
 
     NSLayoutConstraint *heightConstraint = [NSLayoutConstraint constraintWithItem:contained
                                                                         attribute:NSLayoutAttributeHeight
                                                                         relatedBy:NSLayoutRelationEqual
-                                                                           toItem:container
-                                                                        attribute:NSLayoutAttributeHeight
+                                                                           toItem:nil
+                                                                        attribute:NSLayoutAttributeNotAnAttribute
+                                                                       multiplier:1.0f
+                                                                         constant:CloseButtonHeight];
+
+    // The container and contained are reversed here to allow positive constant increases to result in expected padding
+    NSLayoutConstraint *bottomConstraint = [NSLayoutConstraint constraintWithItem:container
+                                                                        attribute:NSLayoutAttributeBottom
+                                                                        relatedBy:NSLayoutRelationEqual
+                                                                           toItem:contained
+                                                                        attribute:NSLayoutAttributeBottom
                                                                        multiplier:1.0f
                                                                          constant:0.0f];
 
-    centerXConstraint.active = true;
-    centerYConstraint.active = true;
+    // The container and contained are reversed here to allow positive constant increases to result in expected padding
+    NSLayoutConstraint *leadingConstraint = [NSLayoutConstraint constraintWithItem:container
+                                                                         attribute:NSLayoutAttributeLeading
+                                                                         relatedBy:NSLayoutRelationEqual
+                                                                            toItem:contained
+                                                                         attribute:NSLayoutAttributeLeading
+                                                                        multiplier:1.0f
+                                                                          constant:0.0f];
+
     widthConstraint.active = true;
     heightConstraint.active = true;
+    bottomConstraint.active = true;
+    leadingConstraint.active = true;
 }
 
-+ (void)applyPadding:(CGFloat)padding toView:(UIView *)view attribute:(NSLayoutAttribute)attribute {
-        for (NSLayoutConstraint *constraint in view.constraints) {
-            NSLayoutAttribute firstAttribute = constraint.firstAttribute;
-            NSLayoutAttribute secondAttribute = constraint.secondAttribute;
++ (void)applyPaddingToView:(UIView *)view padding:(UAPadding *)padding replace:(BOOL)replace {
+    if (!view) {
+        return;
+    }
 
-            if (firstAttribute == NSLayoutAttributeCenterX ||
-                             firstAttribute == NSLayoutAttributeCenterY ||
-                             secondAttribute == NSLayoutAttributeCenterX ||
-                             secondAttribute == NSLayoutAttributeCenterY ) {
-                    UA_LDEBUG(@"Attempted to customize padding on a center-constrainted view, this can cause view ambiguities.");
-                }
+    if (padding.top) {
+        [UAInAppMessageUtils applyPaddingForAttribute:NSLayoutAttributeTop
+                                               onView:view
+                                              padding:[padding.top floatValue]
+                                              replace:replace];
+    }
 
-            //Apply constant regardless of order of participating views
-            if ((firstAttribute == attribute) || (secondAttribute == attribute)) {
-                constraint.constant = padding;
-            }
+    if (padding.bottom) {
+        [UAInAppMessageUtils applyPaddingForAttribute:NSLayoutAttributeBottom
+                                               onView:view
+                                              padding:[padding.bottom floatValue]
+                                              replace:replace];
+    }
+
+    if (padding.trailing) {
+        [UAInAppMessageUtils applyPaddingForAttribute:NSLayoutAttributeTrailing
+                                               onView:view
+                                              padding:[padding.trailing floatValue]
+                                              replace:replace];
+    }
+
+    if (padding.leading) {
+        [UAInAppMessageUtils applyPaddingForAttribute:NSLayoutAttributeLeading
+                                               onView:view
+                                              padding:[padding.leading floatValue]
+                                              replace:replace];
+    }
+
+}
+
++ (void)applyPaddingForAttribute:(NSLayoutAttribute)attribute onView:(UIView *)view padding:(CGFloat)padding replace:(BOOL)replace {
+    NSArray *constraints = @[];
+
+    constraints = [constraints arrayByAddingObjectsFromArray:view.constraints];
+    constraints = [constraints arrayByAddingObjectsFromArray:view.superview.constraints];
+
+    // Filter constraints to only include those pertaining to the view
+    NSArray *filteredConstraints = [constraints filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(id object, NSDictionary *bindings) {
+        NSLayoutConstraint *constraint;
+        if ([object isKindOfClass:[NSLayoutConstraint class]]) {
+            constraint = (NSLayoutConstraint *)object;
         }
+
+        BOOL matchesView = constraint.firstItem == view || constraint.secondItem == view;
+        BOOL matchesSuperView = constraint.firstItem == view.superview || constraint.secondItem == view.superview;
+        BOOL matchesLayoutGuide = [constraint.firstItem isKindOfClass:[UILayoutGuide class]] || [constraint.secondItem isKindOfClass:[UILayoutGuide class]];
+
+        // A view and its superview (or an external layout guide) must be present to be considered padding
+        return matchesView && (matchesSuperView || matchesLayoutGuide);
+    }]];
+
+    for (NSLayoutConstraint *constraint in filteredConstraints) {
+        NSLayoutAttribute firstAttribute = constraint.firstAttribute;
+        NSLayoutAttribute secondAttribute = constraint.secondAttribute;
+
+        if (firstAttribute == NSLayoutAttributeCenterX ||
+            firstAttribute == NSLayoutAttributeCenterY ||
+            secondAttribute == NSLayoutAttributeCenterX ||
+            secondAttribute == NSLayoutAttributeCenterY ) {
+            UA_LWARN(@"Attempted to customize padding on a center-constrainted view, this can cause view ambiguities.");
+        }
+
+        // Apply constant regardless of order of participating views
+        if ((firstAttribute == attribute) || (secondAttribute == attribute)) {
+            constraint.constant = replace ? padding : constraint.constant + padding;
+        }
+    }
+}
+
+// Normalizes style values by stripping out white space
++ (NSDictionary *)normalizeStyleDictionary:(NSDictionary *)keyedValues {
+    NSMutableDictionary *normalizedValues = [NSMutableDictionary dictionary];
+
+    for (NSString *key in keyedValues) {
+
+        id value = [keyedValues objectForKey:key];
+
+        // Strip whitespace, if necessary
+        if ([value isKindOfClass:[NSString class]]){
+            value = [(NSString *)value stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+        }
+
+        [normalizedValues setValue:value forKey:key];
+    }
+
+    return normalizedValues;
 }
 
 + (void)prefetchContentsOfURL:(NSURL *)url WithCache:(NSCache *)cache completionHandler:(void (^)(NSString *cacheKey, UAInAppMessagePrepareResult result))completionHandler {
@@ -229,10 +338,10 @@ NSString *const UAInAppMessageAdapterCacheName = @"UAInAppMessageAdapterCache";
 #pragma mark -
 #pragma mark Helpers
 
-+ (NSDictionary *)attributesWithTextInfo:(UAInAppMessageTextInfo *)textInfo {
++ (NSDictionary *)attributesWithTextInfo:(UAInAppMessageTextInfo *)textInfo textStyle:(UAInAppMessageTextStyle *)style {
     NSMutableDictionary *attributes = [NSMutableDictionary dictionary];
 
-    // Font and style
+    // Font and font style
     UIFont *font = [UAInAppMessageUtils fontWithTextInfo:textInfo];
     [attributes setObject:font forKey:NSFontAttributeName];
 
@@ -244,10 +353,22 @@ NSString *const UAInAppMessageAdapterCacheName = @"UAInAppMessageAdapterCache";
     // Color
     [attributes setObject:textInfo.color forKey:NSForegroundColorAttributeName];
 
+    // Letter Spacing
+    if (style.letterSpacing) {
+        [attributes setObject:style.letterSpacing forKey:NSKernAttributeName];
+    }
+
     // Alignment and word wrapping
     NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
     [paragraphStyle setLineBreakMode:NSLineBreakByWordWrapping];
     [paragraphStyle setAlignment:[UAInAppMessageUtils alignmentWithTextInfo:textInfo]];
+
+    // Line Spacing
+    if (style.lineSpacing) {
+        [paragraphStyle setLineSpacing:[style.lineSpacing floatValue]];
+        [attributes setObject:paragraphStyle forKey:NSParagraphStyleAttributeName];
+    }
+
     [attributes setObject:paragraphStyle forKey:NSParagraphStyleAttributeName];
 
     return attributes;
@@ -330,7 +451,7 @@ NSString *const UAInAppMessageAdapterCacheName = @"UAInAppMessageAdapterCache";
     NSCache *imageCache = [[NSCache alloc] init];
     [imageCache setName:UAInAppMessageAdapterCacheName];
     [imageCache setCountLimit:1];
-    
+
     return imageCache;
 }
 
@@ -376,8 +497,9 @@ NSString *const UAInAppMessageAdapterCacheName = @"UAInAppMessageAdapterCache";
     BOOL noConnection = ([[UAUtils connectionType] isEqual:kUAConnectionTypeNone]);
     if (noConnection && (media.type == UAInAppMessageMediaInfoTypeVideo || media.type == UAInAppMessageMediaInfoTypeYouTube)) {
         return NO;
-    }    
+    }
     return YES;
 }
 
 @end
+

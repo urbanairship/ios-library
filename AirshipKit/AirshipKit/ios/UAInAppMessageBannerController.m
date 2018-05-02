@@ -12,6 +12,7 @@
 #import "UAInAppMessageManager+Internal.h"
 #import "UAColorUtils+Internal.h"
 #import "UAActionRunner+Internal.h"
+#import "UAInAppMessageBannerStyle.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -22,12 +23,18 @@ NS_ASSUME_NONNULL_BEGIN
 
 double const MaxWidth = 420;
 
-double const DefaultLeadingEdgeSpace = 24;
-double const DefaultTrailingEdgeSpace = 24;
+double const DefaultBannerControllerPadding = 24;
 
 double const DefaultAnimationDuration = 0.2;
 double const MinimumLongPressDuration = 0.2;
 double const MinimumSwipeVelocity = 100.0;
+
+/*
+ * Hand tuned value that removes excess vertical safe area to properly offset the
+ * top padding from the nub on the iPhone X
+ */
+CGFloat const BannerExcessiveSafeAreaPadding = 14;
+
 
 @interface UAInAppMessageBannerController ()
 
@@ -40,6 +47,11 @@ double const MinimumSwipeVelocity = 100.0;
  * The banner display content consisting of the text and image.
  */
 @property (nonatomic, strong) UAInAppMessageBannerDisplayContent *displayContent;
+
+/**
+ * The in-app message banner view styling.
+ */
+@property(nonatomic, strong) UAInAppMessageBannerStyle *style;
 
 /**
  * The banner's media view.
@@ -89,22 +101,31 @@ double const MinimumSwipeVelocity = 100.0;
 
 + (instancetype)bannerControllerWithBannerMessageID:(NSString *)messageID
                                      displayContent:(UAInAppMessageBannerDisplayContent *)displayContent
-                                              mediaView:(UAInAppMessageMediaView *_Nullable)mediaView {
+                                          mediaView:(nullable UAInAppMessageMediaView *)mediaView
+                                              style:(nullable UAInAppMessageBannerStyle *)style {
 
     return [[self alloc] initWithBannerMessageID:messageID
                                   displayContent:displayContent
-                                           mediaView:mediaView];
+                                       mediaView:mediaView
+                                           style:style];
 }
 
 - (instancetype)initWithBannerMessageID:(NSString *)messageID
                          displayContent:(UAInAppMessageBannerDisplayContent *)displayContent
-                                  mediaView:(UAInAppMessageMediaView *_Nullable)mediaView {
+                              mediaView:(nullable UAInAppMessageMediaView *)mediaView
+                                  style:(nullable UAInAppMessageBannerStyle *)style {
     self = [super init];
 
     if (self) {
         self.messageID = messageID;
         self.displayContent = displayContent;
         self.mediaView = mediaView;
+        self.style = style;
+
+        [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(orientationChanged:)
+                                                     name:UIDeviceOrientationDidChangeNotification
+                                                   object:nil];
     }
 
     return self;
@@ -126,30 +147,45 @@ double const MinimumSwipeVelocity = 100.0;
     NSArray<UAInAppMessageButtonInfo *> *buttons = self.displayContent.buttons;
     UAInAppMessageButtonLayoutType buttonLayout = self.displayContent.buttonLayout;
 
-    UAInAppMessageTextView *textView = [UAInAppMessageTextView textViewWithHeading:heading
-                                                                              body:body];
+    UAInAppMessageTextView *headerView = [UAInAppMessageTextView textViewWithTextInfo:heading style:self.style.headerStyle];
+    UAInAppMessageTextView *bodyView = [UAInAppMessageTextView textViewWithTextInfo:body style:self.style.bodyStyle];
 
     UAInAppMessageBannerContentView *bannerContentView = [UAInAppMessageBannerContentView contentViewWithLayout:contentLayout
-                                                                                                       textView:textView
-                                                                                                          mediaView:self.mediaView];
+                                                                                                     headerView:headerView
+                                                                                                       bodyView:bodyView
+                                                                                                      mediaView:self.mediaView];
+
+
     // Only add button view if buttons are present
     UAInAppMessageButtonView *buttonView;
     if (buttons.count) {
         buttonView = [UAInAppMessageButtonView buttonViewWithButtons:buttons
                                                               layout:buttonLayout
+                                                               style:self.style.buttonStyle
                                                               target:self
                                                             selector:@selector(buttonTapped:)];
     }
 
     self.bannerView = [UAInAppMessageBannerView bannerMessageViewWithDisplayContent:self.displayContent
                                                                   bannerContentView:bannerContentView
-                                                                         buttonView:buttonView];
-
+                                                                         buttonView:buttonView
+                                                                              style:self.style];
     [parentView addSubview:self.bannerView];
-
     [self addInitialConstraintsToParentView:parentView
                                  bannerView:self.bannerView
                                   placement:self.displayContent.placement];
+
+    // Apply style padding to banner container
+    [UAInAppMessageUtils applyPaddingToView:self.bannerView.containerView padding:self.style.additionalPadding replace:NO];
+
+    // Apply style padding to banner text views
+    [UAInAppMessageUtils applyPaddingToView:headerView.textLabel padding:self.style.headerStyle.additionalPadding replace:NO];
+
+    // Apply style padding to banner button view
+    [UAInAppMessageUtils applyPaddingToView:buttonView.buttonContainer padding:self.style.buttonStyle.additionalPadding replace:NO];
+
+    // Apply style padding to banner button view
+    [UAInAppMessageUtils applyPaddingToView:self.mediaView.mediaContainer padding:self.style.mediaStyle.additionalPadding replace:NO];
 
     self.showCompletionHandler = completionHandler;
 
@@ -225,19 +261,20 @@ double const MinimumSwipeVelocity = 100.0;
                                                                   toItem:parentView
                                                                attribute:NSLayoutAttributeLeading
                                                               multiplier:1
-                                                                constant:DefaultTrailingEdgeSpace];
-
+                                                                constant:DefaultBannerControllerPadding];
+    // High but can still be broken by max width
     leading.priority = 999;
     leading.active = YES;
 
     // Constrain Trailing edge
-    NSLayoutConstraint *trailing = [NSLayoutConstraint constraintWithItem:bannerView
+    NSLayoutConstraint *trailing = [NSLayoutConstraint constraintWithItem:parentView
                                                                 attribute:NSLayoutAttributeTrailing
                                                                 relatedBy:NSLayoutRelationEqual
-                                                                   toItem:parentView
-                                                                attribute:NSLayoutAttributeTrailingMargin
+                                                                   toItem:bannerView
+                                                                attribute:NSLayoutAttributeTrailing
                                                                multiplier:1
-                                                                 constant:-DefaultTrailingEdgeSpace];
+                                                                 constant:DefaultBannerControllerPadding];
+    // High but can still be broken by max width
     trailing.priority = 999;
     trailing.active = YES;
 
@@ -255,13 +292,13 @@ double const MinimumSwipeVelocity = 100.0;
     switch (placement) {
         case UAInAppMessageBannerPlacementTop:
             // Top constraint is used for animating the message in the top position.
-            self.verticalConstraint = [NSLayoutConstraint constraintWithItem:bannerView
+            self.verticalConstraint = [NSLayoutConstraint constraintWithItem:parentView
                                                                    attribute:NSLayoutAttributeTop
                                                                    relatedBy:NSLayoutRelationEqual
-                                                                      toItem:parentView
+                                                                      toItem:bannerView
                                                                    attribute:NSLayoutAttributeTop
                                                                   multiplier:1
-                                                                    constant:-bannerView.bounds.size.height];
+                                                                    constant:bannerView.bounds.size.height];
 
             break;
         case UAInAppMessageBannerPlacementBottom:
@@ -277,6 +314,8 @@ double const MinimumSwipeVelocity = 100.0;
             break;
     }
 
+
+
     self.verticalConstraint.active = YES;
 
     [parentView layoutIfNeeded];
@@ -285,6 +324,9 @@ double const MinimumSwipeVelocity = 100.0;
 
 - (void)bannerView:(UAInAppMessageBannerView *)bannerView animateInWithParentView:(UIView *)parentView completionHandler:(void (^)(void))completionHandler {
     self.verticalConstraint.constant = 0;
+
+    // Force orientation check on display
+    [self refreshViewForCurrentOrientation];
 
     [UIView animateWithDuration:DefaultAnimationDuration delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
         [parentView layoutIfNeeded];
@@ -295,14 +337,7 @@ double const MinimumSwipeVelocity = 100.0;
 }
 
 - (void)bannerView:(UAInAppMessageBannerView *)bannerView animateOutWithParentView:(UIView *)parentView completionHandler:(void (^)(void))completionHandler {
-    switch (self.displayContent.placement) {
-        case UAInAppMessageBannerPlacementTop:
-            self.verticalConstraint.constant = -bannerView.bounds.size.height;
-            break;
-        case UAInAppMessageBannerPlacementBottom:
-            self.verticalConstraint.constant = bannerView.bounds.size.height;
-            break;
-    }
+    self.verticalConstraint.constant = bannerView.bounds.size.height;
 
     [UIView animateWithDuration:DefaultAnimationDuration delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
         [parentView layoutIfNeeded];
@@ -428,11 +463,67 @@ double const MinimumSwipeVelocity = 100.0;
     }
 }
 
+- (void)refreshViewForCurrentOrientation {
+    BOOL statusBarShowing = !([UIApplication sharedApplication].isStatusBarHidden);
+    CGFloat styledDefaultBannerTopPadding = [self.style.additionalPadding.top floatValue] + DefaultBannerControllerPadding;
+
+    if (@available(iOS 11.0, *)) {
+        UIWindow *window = [UIApplication sharedApplication].keyWindow;
+
+        // If the orientation has a bar without inset
+        if (window.safeAreaInsets.top == 0 && statusBarShowing) {
+            [UAInAppMessageUtils applyPaddingForAttribute:NSLayoutAttributeTop
+                                                   onView:self.bannerView.containerView
+                                                  padding:styledDefaultBannerTopPadding
+                                                  replace:YES];
+            [self.bannerView layoutIfNeeded];
+            return;
+        }
+
+        // If the orientation has a bar with inset
+        if (window.safeAreaInsets.top > 0 && statusBarShowing) {
+            CGFloat adjustedDefaultPadding = window.safeAreaInsets.top - BannerExcessiveSafeAreaPadding;
+            CGFloat adjustedCustomPadding = adjustedDefaultPadding + [self.style.additionalPadding.top floatValue];
+
+            CGFloat topPadding = self.style.additionalPadding.top ?  adjustedCustomPadding : adjustedDefaultPadding;
+
+            [UAInAppMessageUtils applyPaddingForAttribute:NSLayoutAttributeTop
+                                                   onView:self.bannerView.containerView
+                                                  padding:topPadding
+                                                  replace:YES];
+            [self.bannerView layoutIfNeeded];
+            return;
+        }
+    } else {
+        // If status bar is showing
+        if (statusBarShowing) {
+            [UAInAppMessageUtils applyPaddingForAttribute:NSLayoutAttributeTop
+                                                   onView:self.bannerView.containerView
+                                                  padding:styledDefaultBannerTopPadding
+                                                  replace:YES];
+            [self.bannerView layoutIfNeeded];
+            return;
+        }
+    }
+
+    // Otherwise remove top padding
+    [UAInAppMessageUtils applyPaddingForAttribute:NSLayoutAttributeTop
+                                           onView:self.bannerView.containerView
+                                          padding:[self.style.additionalPadding.top floatValue]
+                                          replace:YES];
+    [self.bannerView layoutIfNeeded];
+}
+
 #pragma mark -
 #pragma mark App State
 
+- (void)orientationChanged:(NSNotification *)notification {
+    [self refreshViewForCurrentOrientation];
+}
+
 - (void)applicationDidBecomeActive {
     [self scheduleDismissalTimer];
+
 }
 
 - (void)applicationWillResignActive {
@@ -507,3 +598,4 @@ double const MinimumSwipeVelocity = 100.0;
 @end
 
 NS_ASSUME_NONNULL_END
+

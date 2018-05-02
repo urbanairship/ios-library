@@ -8,6 +8,8 @@
 #import "UAInAppMessageMediaView+Internal.h"
 #import "UAUtils+Internal.h"
 
+NSString *const UAFullScreenStyleFileName = @"UAInAppMessageFullScreenStyle";
+
 @interface UAInAppMessageFullScreenAdapter ()
 @property (nonatomic, strong) UAInAppMessage *message;
 @property (nonatomic, strong) UAInAppMessageFullScreenController *fullScreenController;
@@ -26,25 +28,27 @@
     if (self) {
         self.message = message;
         self.imageCache = [UAInAppMessageUtils createImageCache];
+        self.style = [UAInAppMessageFullScreenStyle styleWithContentsOfFile:UAFullScreenStyleFileName];
     }
 
     return self;
 }
 
-- (void)prepare:(void (^)(UAInAppMessagePrepareResult))completionHandler {    
+- (void)prepare:(void (^)(UAInAppMessagePrepareResult))completionHandler {
     UAInAppMessageFullScreenDisplayContent *displayContent = (UAInAppMessageFullScreenDisplayContent *)self.message.displayContent;
     [UAInAppMessageUtils prepareMediaView:displayContent.media imageCache:self.imageCache completionHandler:^(UAInAppMessagePrepareResult result, UAInAppMessageMediaView *mediaView) {
         if (result == UAInAppMessagePrepareResultSuccess) {
             self.fullScreenController = [UAInAppMessageFullScreenController fullScreenControllerWithFullScreenMessageID:self.message.identifier
                                                                                                          displayContent:displayContent
-                                                                                                              mediaView:mediaView];
+                                                                                                              mediaView:mediaView
+                                                                                                                  style:self.style];
         }
         completionHandler(result);
     }];
 }
 
 - (BOOL)isReadyToDisplay {
-    UAInAppMessageFullScreenDisplayContent* fullScreenContent = (UAInAppMessageFullScreenDisplayContent *)self.message.displayContent;
+    UAInAppMessageFullScreenDisplayContent *fullScreenContent = (UAInAppMessageFullScreenDisplayContent *)self.message.displayContent;
     return [UAInAppMessageUtils isReadyToDisplayWithMedia:fullScreenContent.media];
 }
 

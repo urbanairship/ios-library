@@ -11,21 +11,20 @@
 // UAInAppMessageButtonView nib name
 NSString *const UAInAppMessageButtonViewNibName = @"UAInAppMessageButtonView";
 
-@interface UAInAppMessageButtonView ()
-
-@property (strong, nonatomic) IBOutlet UIStackView *buttonContainer;
-
-@end
+CGFloat const DefaultStackedButtonSpacing = 24;
+CGFloat const DefaultSeparatedButtonSpacing = 16;
 
 @implementation UAInAppMessageButtonView
 
 + (instancetype)buttonViewWithButtons:(NSArray<UAInAppMessageButtonInfo *> *)buttons
                                layout:(UAInAppMessageButtonLayoutType)layout
+                                style:(UAInAppMessageButtonStyle *)style
                                target:(id)target
                              selector:(SEL)selector {
+
     NSString *nibName = UAInAppMessageButtonViewNibName;
     NSBundle *bundle = [UAirship resources];
-    
+
     // Joined, Separate and Stacked views object at index 0,1,2, respectively.
     UAInAppMessageButtonView *view;
     switch (layout) {
@@ -39,21 +38,48 @@ NSString *const UAInAppMessageButtonViewNibName = @"UAInAppMessageButtonView";
             view = [[bundle loadNibNamed:nibName owner:nil options:nil] objectAtIndex:2];
             break;
     }
-    
+
     [view configureWithButtons:buttons
-                          layout:layout
-                          target:target
-                        selector:selector];
-    
+                        layout:layout
+                         style:style
+                        target:target
+                      selector:selector];
+
     return view;
 }
 
 - (void)configureWithButtons:(NSArray<UAInAppMessageButtonInfo *> *)buttons
                          layout:(UAInAppMessageButtonLayoutType)layout
+                          style:(UAInAppMessageButtonStyle *)style
                          target:(id)target
                        selector:(SEL)selector {
+
+    switch (layout) {
+        case UAInAppMessageButtonLayoutTypeJoined:
+            break;
+        case UAInAppMessageButtonLayoutTypeSeparate:
+            // Set button spacing style
+            if (self) {
+                self.buttonContainer.spacing = style.separatedButtonSpacing ? [style.separatedButtonSpacing floatValue] : DefaultSeparatedButtonSpacing;
+            }
+
+            break;
+        case UAInAppMessageButtonLayoutTypeStacked:
+            // Set button spacing style
+            if (self) {
+                self.buttonContainer.spacing = style.stackedButtonSpacing ? [style.stackedButtonSpacing floatValue] : DefaultStackedButtonSpacing;
+            }
+
+            break;
+    }
+
+    self.style = style;
+
     self.translatesAutoresizingMaskIntoConstraints = NO;
     [self addButtons:buttons layout:layout target:target selector:selector];
+
+    // Add the button style padding
+    [UAInAppMessageUtils applyPaddingToView:self.buttonContainer padding:style.additionalPadding replace:NO];
 }
 
 - (void)addButtons:(NSArray<UAInAppMessageButtonInfo *> *)buttonInfos
@@ -94,6 +120,7 @@ NSString *const UAInAppMessageButtonViewNibName = @"UAInAppMessageButtonView";
         }
 
         button = [UAInAppMessageButton buttonWithButtonInfo:buttonInfo
+                                                      style:self.style
                                                    rounding:rounding];
         
         [button addTarget:target action:selector forControlEvents:UIControlEventTouchUpInside];
@@ -107,9 +134,9 @@ NSString *const UAInAppMessageButtonViewNibName = @"UAInAppMessageButtonView";
         [buttons addObject:button];
     }
     
-    // make all the buttons the same height as the tallest button
+    // Apply the button style height or default to tallest button height
     for (UAInAppMessageButton *button in buttons) {
-        button.heightConstraint.constant = maxButtonHeight;
+        button.heightConstraint.constant = self.style.buttonHeight ? [self.style.buttonHeight floatValue] : maxButtonHeight;
     }
 
     if (self.buttonContainer.subviews.count == 0) {

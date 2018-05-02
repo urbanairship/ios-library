@@ -18,7 +18,7 @@ typedef NS_ENUM(NSInteger, UAInAppMessageBannerPlacementType) {
      * Banner placement top
      */
     UAInAppMessageBannerPlacementTop,
-    
+
     /**
      * Banner placement bottom
      */
@@ -33,7 +33,7 @@ typedef NS_ENUM(NSInteger, UAInAppMessageBannerContentLayoutType) {
      * Media on the left
      */
     UAInAppMessageBannerContentLayoutTypeMediaLeft,
-    
+
     /**
      * Media on the right
      */

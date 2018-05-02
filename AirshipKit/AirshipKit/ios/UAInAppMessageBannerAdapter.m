@@ -7,6 +7,8 @@
 #import "UAInAppMessageUtils+Internal.h"
 #import "UAUtils+Internal.h"
 
+NSString *const UABannerStyleFileName = @"UAInAppMessageBannerStyle";
+
 @interface UAInAppMessageBannerAdapter ()
 @property (nonatomic, strong) UAInAppMessage *message;
 @property (nonatomic, strong) UAInAppMessageBannerController *bannerController;
@@ -25,6 +27,7 @@
     if (self) {
         self.message = message;
         self.imageCache = [UAInAppMessageUtils createImageCache];
+        self.style = [UAInAppMessageBannerStyle styleWithContentsOfFile:UABannerStyleFileName];
     }
 
     return self;
@@ -35,8 +38,9 @@
     [UAInAppMessageUtils prepareMediaView:displayContent.media imageCache:self.imageCache completionHandler:^(UAInAppMessagePrepareResult result, UAInAppMessageMediaView *mediaView) {
         if (result == UAInAppMessagePrepareResultSuccess) {
             self.bannerController = [UAInAppMessageBannerController bannerControllerWithBannerMessageID:self.message.identifier
-                                                                                                         displayContent:displayContent
-                                                                                                              mediaView:mediaView];
+                                                                                         displayContent:displayContent
+                                                                                              mediaView:mediaView
+                                                                                                  style:self.style];
         }
         completionHandler(result);
     }];

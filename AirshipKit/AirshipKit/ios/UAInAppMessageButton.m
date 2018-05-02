@@ -5,8 +5,10 @@
 #import "UAInAppMessageUtils+Internal.h"
 
 CGFloat const ButtonIsBeingTappedAlpha = 0.7;
-CGFloat const UAInAppMessageButtonMargin = 15;
-CGFloat const UAInAppMessageFooterMargin = 0;
+CGFloat const DefaultButtonMargin = 15;
+CGFloat const DefaultFooterMargin = 0;
+CGFloat const DefaultButtonBorderWidth = 2;
+
 
 @interface UAInAppMessageButton ()
 @property(nonatomic, strong) UAInAppMessageButtonInfo *buttonInfo;
@@ -18,9 +20,11 @@ CGFloat const UAInAppMessageFooterMargin = 0;
 @implementation UAInAppMessageButton
 
 + (instancetype)buttonWithButtonInfo:(UAInAppMessageButtonInfo *)buttonInfo
+                               style:(UAInAppMessageButtonStyle *)style
                             rounding:(UAInAppMessageButtonRounding)rounding {
-return [[self alloc] initWithButtonInfo:buttonInfo
-                               rounding:rounding];
+    return [[self alloc] initWithButtonInfo:buttonInfo
+                                      style:style
+                                   rounding:rounding];
 }
 
 + (instancetype)footerButtonWithButtonInfo:(UAInAppMessageButtonInfo *)buttonInfo {
@@ -35,7 +39,8 @@ return [[self alloc] initWithButtonInfo:buttonInfo
         self.buttonInfo = buttonInfo;
         self.rounding = 0;
         self.isFooter = true;
-        [UAInAppMessageUtils applyButtonInfo:buttonInfo button:self buttonMargin:UAInAppMessageFooterMargin];
+
+        [UAInAppMessageUtils applyButtonInfo:buttonInfo style:nil button:self buttonMargin:DefaultFooterMargin];
 
         // Apply rounding on layout subviews
         [self layoutSubviews];
@@ -45,13 +50,28 @@ return [[self alloc] initWithButtonInfo:buttonInfo
 }
 
 - (instancetype)initWithButtonInfo:(UAInAppMessageButtonInfo *)buttonInfo
+                             style:(UAInAppMessageButtonStyle *)style
                           rounding:(UAInAppMessageButtonRounding)rounding {
     self = [super init];
 
     if (self) {
         self.buttonInfo = buttonInfo;
         self.rounding = rounding;
-        [UAInAppMessageUtils applyButtonInfo:buttonInfo button:self buttonMargin:UAInAppMessageButtonMargin];
+        self.style = style;
+
+        // Style the buttons
+        [UAInAppMessageUtils applyButtonInfo:buttonInfo
+                                       style:style
+                                      button:self
+                                buttonMargin:DefaultButtonMargin];
+
+        // Replace the style padding
+        CGFloat top = style.buttonTextStyle.additionalPadding.top ? [style.buttonTextStyle.additionalPadding.top floatValue] : 0;
+        CGFloat bottom = style.buttonTextStyle.additionalPadding.bottom ? [style.buttonTextStyle.additionalPadding.bottom floatValue] : 0;
+        CGFloat trailing = style.buttonTextStyle.additionalPadding.trailing ? [style.buttonTextStyle.additionalPadding.trailing floatValue] : 0;
+        CGFloat leading = style.buttonTextStyle.additionalPadding.leading ? [style.buttonTextStyle.additionalPadding.leading floatValue] : 0;
+
+        [self setTitleEdgeInsets:UIEdgeInsetsMake(top, leading, bottom, trailing)];
 
         // Apply rounding on layout subviews
         [self layoutSubviews];
@@ -86,7 +106,8 @@ return [[self alloc] initWithButtonInfo:buttonInfo
 
     if (!self.isFooter) {
         [self applyLayerRounding];
-        [self applyBorder];
+
+        [self applyBorderOfWidth:self.style.borderWidth ? [self.style.borderWidth floatValue] :  DefaultButtonBorderWidth];
     }
 }
 
@@ -102,15 +123,15 @@ return [[self alloc] initWithButtonInfo:buttonInfo
 
 }
 
--(void)applyBorder {
+-(void)applyBorderOfWidth:(CGFloat)width {
     CGFloat radius = self.buttonInfo.borderRadius;
     CGPathRef borderPath = [UIBezierPath bezierPathWithRoundedRect:self.bounds
-                                               byRoundingCorners:(UIRectCorner)self.rounding
-                                                     cornerRadii:(CGSize){radius, radius}].CGPath;
+                                                 byRoundingCorners:(UIRectCorner)self.rounding
+                                                       cornerRadii:(CGSize){radius, radius}].CGPath;
 
     CAShapeLayer *borderLayer = [CAShapeLayer layer];
     borderLayer.frame = self.bounds;
-    borderLayer.lineWidth = 2;
+    borderLayer.lineWidth = width;
     borderLayer.fillColor = [[UIColor clearColor] CGColor];
     borderLayer.strokeColor = [self.buttonInfo.borderColor CGColor];
     borderLayer.path = borderPath;
@@ -126,3 +147,4 @@ return [[self alloc] initWithButtonInfo:buttonInfo
 }
 
 @end
+

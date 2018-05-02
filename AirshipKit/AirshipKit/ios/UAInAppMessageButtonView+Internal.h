@@ -5,6 +5,7 @@
 #import "UAInAppMessageButtonInfo.h"
 #import "UAInAppMessageButton+Internal.h"
 #import "UAInAppMessageBannerDisplayContent+Internal.h"
+#import "UAInAppMessageButtonStyle.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -15,10 +16,21 @@ NS_ASSUME_NONNULL_BEGIN
 @interface UAInAppMessageButtonView : UIView
 
 /**
- * Button view factory method.
+ * The in-app message button container.
+ */
+@property (strong, nonatomic) IBOutlet UIStackView *buttonContainer;
 
+/**
+ * The in-app message button view styling.
+ */
+@property(nonatomic, strong) UAInAppMessageButtonStyle *style;
+
+/**
+ * Button view factory method.
+ *
  * @param buttons The button infos to add to the view.
  * @param layout The button layout.
+ * @param style The button styling.
  * @param target The object that will handle the button events.
  * @param selector The selector to call on the target when a button event occurs.
  *
@@ -26,6 +38,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 + (instancetype)buttonViewWithButtons:(NSArray<UAInAppMessageButtonInfo *> *)buttons
                                layout:(UAInAppMessageButtonLayoutType)layout
+                                style:(UAInAppMessageButtonStyle *)style
                                target:(id)target
                              selector:(SEL)selector;
 
