@@ -61,6 +61,7 @@ NSUInteger const UAInAppMessageModalMaxButtons = 2;
 @property(nonatomic, strong) UIColor *backgroundColor;
 @property(nonatomic, strong) UIColor *dismissButtonColor;
 @property(nonatomic, assign) NSUInteger borderRadius;
+@property(nonatomic, assign) BOOL allowFullScreenDisplay;
 
 @end
 
@@ -247,6 +248,20 @@ NSUInteger const UAInAppMessageModalMaxButtons = 2;
         builder.borderRadius = [borderRadius unsignedIntegerValue];
     }
 
+    id allowFullScreenDisplay = json[UAInAppMessageModalAllowsFullScreenKey];
+    if (allowFullScreenDisplay) {
+        if (![borderRadius isKindOfClass:[NSNumber class]]) {
+            if (error) {
+                NSString *msg = [NSString stringWithFormat:@"Allows full screen flag must be a boolean stored as an NSNumber. Invalid value: %@", allowFullScreenDisplay];
+                *error =  [NSError errorWithDomain:UAInAppMessageModalDisplayContentDomain
+                                              code:UAInAppMessageModalDisplayContentErrorCodeInvalidJSON
+                                          userInfo:@{NSLocalizedDescriptionKey:msg}];
+            }
+            return nil;
+        }
+        builder.allowFullScreenDisplay = [allowFullScreenDisplay boolValue];
+    }
+
     if (json[UAInAppMessageFooterKey]) {
         builder.footer = [UAInAppMessageButtonInfo buttonInfoWithJSON:json[UAInAppMessageFooterKey] error:error];
 
@@ -287,6 +302,7 @@ NSUInteger const UAInAppMessageModalMaxButtons = 2;
         self.backgroundColor = builder.backgroundColor;
         self.dismissButtonColor = builder.dismissButtonColor;
         self.borderRadius = builder.borderRadius;
+        self.allowFullScreenDisplay = builder.allowFullScreenDisplay;
     }
 
     return self;
@@ -302,6 +318,7 @@ NSUInteger const UAInAppMessageModalMaxButtons = 2;
     [json setValue:[UAColorUtils hexStringWithColor:self.dismissButtonColor] forKey:UAInAppMessageDismissButtonColorKey];
     [json setValue:[self.footer toJSON] forKey:UAInAppMessageFooterKey];
     [json setValue:@(self.borderRadius) forKey:UAInAppMessageBorderRadiusKey];
+    [json setValue:@(self.allowFullScreenDisplay) forKey:UAInAppMessageModalAllowsFullScreenKey];
 
     NSMutableArray *buttonsJSONs = [NSMutableArray array];
     for (UAInAppMessageButtonInfo *buttonInfo in self.buttons) {
@@ -396,6 +413,11 @@ NSUInteger const UAInAppMessageModalMaxButtons = 2;
         return NO;
     }
 
+
+    if (self.allowFullScreenDisplay != content.allowFullScreenDisplay) {
+        return NO;
+    }
+
     return YES;
 }
 
@@ -411,6 +433,7 @@ NSUInteger const UAInAppMessageModalMaxButtons = 2;
     result = 31 * result + [[UAColorUtils hexStringWithColor:self.backgroundColor] hash];
     result = 31 * result + [[UAColorUtils hexStringWithColor:self.dismissButtonColor] hash];
     result = 31 * result + self.borderRadius;
+    result = 31 * result + self.allowFullScreenDisplay;
 
     return result;
 }

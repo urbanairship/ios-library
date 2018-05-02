@@ -293,8 +293,6 @@ NSString *const UAInAppMessageFullScreenViewNibName = @"UAInAppMessageFullScreen
 - (void)refreshViewForCurrentOrientation {
     BOOL statusBarShowing = !([UIApplication sharedApplication].isStatusBarHidden);
 
-    CGFloat styledDefaultTopPadding = [self.style.additionalPadding.top floatValue] + FullScreenDefaultPadding;
-
     if (@available(iOS 11.0, *)) {
         UIWindow *window = [UIApplication sharedApplication].keyWindow;
 
@@ -309,7 +307,7 @@ NSString *const UAInAppMessageFullScreenViewNibName = @"UAInAppMessageFullScreen
         if (window.safeAreaInsets.top == 0 && statusBarShowing) {
             [UAInAppMessageUtils applyPaddingForAttribute:NSLayoutAttributeTop
                                                    onView:self.wrapperView
-                                                  padding:styledDefaultTopPadding
+                                                  padding:FullScreenDefaultPadding
                                                   replace:YES];
             [self.wrapperView layoutIfNeeded];
             return;
@@ -317,14 +315,9 @@ NSString *const UAInAppMessageFullScreenViewNibName = @"UAInAppMessageFullScreen
 
         // If the orientation has a bar with inset
         if (window.safeAreaInsets.top > 0 && statusBarShowing) {
-            CGFloat adjustedDefaultPadding = FullScreenExcessiveSafeAreaPadding;
-            CGFloat adjustedCustomPadding = adjustedDefaultPadding + [self.style.additionalPadding.top floatValue];
-
-            CGFloat styledDefaultInsetAdjustedPadding = self.style.additionalPadding.top ?  adjustedCustomPadding : adjustedDefaultPadding;
-
             [UAInAppMessageUtils applyPaddingForAttribute:NSLayoutAttributeTop
                                                    onView:self.wrapperView
-                                                  padding:styledDefaultInsetAdjustedPadding
+                                                  padding:FullScreenExcessiveSafeAreaPadding
                                                   replace:YES];
             [self.wrapperView layoutIfNeeded];
             return;
@@ -333,7 +326,7 @@ NSString *const UAInAppMessageFullScreenViewNibName = @"UAInAppMessageFullScreen
         if (statusBarShowing) {
             [UAInAppMessageUtils applyPaddingForAttribute:NSLayoutAttributeTop
                                                    onView:self.wrapperView
-                                                  padding:styledDefaultTopPadding
+                                                  padding:FullScreenDefaultPadding
                                                   replace:YES];
             [self.wrapperView layoutIfNeeded];
             return;
@@ -343,7 +336,7 @@ NSString *const UAInAppMessageFullScreenViewNibName = @"UAInAppMessageFullScreen
     // Otherwise remove top padding
     [UAInAppMessageUtils applyPaddingForAttribute:NSLayoutAttributeTop
                                            onView:self.wrapperView
-                                          padding:[self.style.additionalPadding.top floatValue]
+                                          padding:0
                                           replace:YES];
     [self.wrapperView layoutIfNeeded];
 }

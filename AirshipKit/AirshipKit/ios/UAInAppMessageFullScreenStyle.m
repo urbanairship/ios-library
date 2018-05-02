@@ -4,7 +4,6 @@
 #import "UAInAppMessageUtils+Internal.h"
 
 NSString *const UAFullScreenDismissIconResourceKey = @"dismissIconResource";
-NSString *const UAFullScreenAdditionalPaddingKey = @"additionalPadding";
 NSString *const UAFullScreenButtonStyleKey = @"buttonStyle";
 NSString *const UAFullScreenTextStyleKey = @"textStyle";
 NSString *const UAFullScreenHeaderStyleKey = @"headerStyle";
@@ -46,7 +45,6 @@ NSString *const UAFullScreenMediaStyleKey = @"mediaStyle";
             style.dismissIconResource = dismissIconResource;
         }
 
-        style.additionalPadding = [UAPadding paddingWithDictionary:normalizedFullScreenStyleDict[UAFullScreenAdditionalPaddingKey]];
         style.headerStyle = [UAInAppMessageTextStyle styleWithDictionary:normalizedFullScreenStyleDict[UAFullScreenHeaderStyleKey]];
         style.bodyStyle = [UAInAppMessageTextStyle styleWithDictionary:normalizedFullScreenStyleDict[UAFullScreenBodyStyleKey]];
         style.buttonStyle = [UAInAppMessageButtonStyle styleWithDictionary:normalizedFullScreenStyleDict[UAFullScreenButtonStyleKey]];;

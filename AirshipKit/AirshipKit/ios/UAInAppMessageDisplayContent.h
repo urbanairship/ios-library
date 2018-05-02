@@ -73,6 +73,8 @@ extern NSString *const UAInAppMessageURLKey;
 extern NSString *const UAInAppMessageDismissButtonColorKey;
 extern NSString *const UAInAppMessageFooterKey;
 extern NSString *const UAInAppMessageDurationKey;
+extern NSString *const UAInAppMessageModalAllowsFullScreenKey;
+
 
 /**
  * Buttons are stacked.

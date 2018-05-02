@@ -17,10 +17,17 @@
                 <outlet property="buttonContainerView" destination="33i-vo-bTq" id="eec-W5-dXp"/>
                 <outlet property="closeButtonContainerView" destination="ITh-ke-3Lu" id="OH2-RB-Eub"/>
                 <outlet property="footerContainerView" destination="62a-du-jp6" id="Bh6-qa-Gv1"/>
+                <outlet property="modalCenterXConstraint" destination="nP9-Sr-HcU" id="EXY-PY-EWM"/>
+                <outlet property="modalCenterYConstraint" destination="sDs-L5-7Dh" id="Blx-f8-X4l"/>
                 <outlet property="modalContainer" destination="Gmc-md-UHv" id="oxA-bo-xg0"/>
+                <outlet property="modalContainerAspect" destination="t8p-lZ-HZn" id="NMr-KV-Pt4"/>
+                <outlet property="modalHeightConstraint" destination="ijq-fT-ON3" id="UDq-Pi-16e"/>
                 <outlet property="modalView" destination="Fzu-gd-kpG" id="mfv-YA-9s4"/>
+                <outlet property="modalViewMaxWidthConstraint" destination="Ucg-Xu-csp" id="bs7-13-KkT"/>
+                <outlet property="modalWidthConstraint" destination="jhd-FM-oN8" id="JOD-fE-6OM"/>
                 <outlet property="scrollableStack" destination="Wmt-hb-XaP" id="L2N-At-2L1"/>
                 <outlet property="scrollableStackToTopConstaint" destination="3dp-Ht-cbI" id="IB9-N2-hXi"/>
+                <outlet property="shadeView" destination="KZc-00-wWo" id="PGT-PV-loj"/>
                 <outlet property="view" destination="iN0-l3-epB" id="gFo-ZZ-7i3"/>
             </connections>
         </placeholder>
@@ -34,12 +41,12 @@
                     <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                 </view>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Gmc-md-UHv" userLabel="Modal Container">
-                    <rect key="frame" x="47.333333333333343" y="161" width="281" height="500"/>
+                    <rect key="frame" x="47.666666666666657" y="161" width="281" height="500"/>
                     <subviews>
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Fzu-gd-kpG" userLabel="Modal View" customClass="UAInAppMessageModalView">
                             <rect key="frame" x="0.0" y="0.0" width="281" height="500"/>
                             <subviews>
-                                <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="DIK-Y7-gKS">
+                                <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" contentInsetAdjustmentBehavior="never" translatesAutoresizingMaskIntoConstraints="NO" id="DIK-Y7-gKS">
                                     <rect key="frame" x="0.0" y="0.0" width="281" height="280"/>
                                     <subviews>
                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="kRl-GT-BSO" userLabel="Wrapper View">
@@ -77,7 +84,7 @@
                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="33i-vo-bTq" userLabel="Button Container View">
                                     <rect key="frame" x="24" y="304" width="233" height="100"/>
                                     <constraints>
-                                        <constraint firstAttribute="height" constant="100" placeholder="YES" id="cB6-mv-O6F"/>
+                                        <constraint firstAttribute="height" priority="999" constant="100" placeholder="YES" id="cB6-mv-O6F"/>
                                     </constraints>
                                 </view>
                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ITh-ke-3Lu" userLabel="Close Button Container View">
@@ -95,7 +102,6 @@
                                 <constraint firstAttribute="height" priority="999" constant="500" placeholder="YES" id="5Za-bB-Ir3"/>
                                 <constraint firstItem="DIK-Y7-gKS" firstAttribute="top" secondItem="Fzu-gd-kpG" secondAttribute="top" id="6b6-mc-xmy"/>
                                 <constraint firstItem="62a-du-jp6" firstAttribute="leading" secondItem="Fzu-gd-kpG" secondAttribute="leading" constant="24" id="7RN-kD-Hcf"/>
-                                <constraint firstAttribute="height" id="9SG-Y2-y3Y"/>
                                 <constraint firstItem="33i-vo-bTq" firstAttribute="top" secondItem="DIK-Y7-gKS" secondAttribute="bottom" constant="24" id="BJh-NU-Ey5"/>
                                 <constraint firstItem="ITh-ke-3Lu" firstAttribute="trailing" secondItem="Fzu-gd-kpG" secondAttribute="trailing" id="I8i-Sb-EY7"/>
                                 <constraint firstItem="33i-vo-bTq" firstAttribute="leading" secondItem="Fzu-gd-kpG" secondAttribute="leading" constant="24" id="Ibc-gb-OWy"/>
@@ -110,23 +116,17 @@
                                 <constraint firstItem="62a-du-jp6" firstAttribute="top" secondItem="DIK-Y7-gKS" secondAttribute="bottom" priority="200" constant="24" id="mDD-A9-65B"/>
                                 <constraint firstAttribute="trailing" secondItem="33i-vo-bTq" secondAttribute="trailing" constant="24" id="qWw-fJ-M4g"/>
                                 <constraint firstAttribute="bottom" secondItem="33i-vo-bTq" secondAttribute="bottom" priority="200" constant="24" id="tOI-rD-GJJ"/>
-                                <constraint firstAttribute="width" relation="lessThanOrEqual" constant="420" id="zGd-fT-Ocl"/>
                             </constraints>
-                            <variation key="default">
-                                <mask key="constraints">
-                                    <exclude reference="9SG-Y2-y3Y"/>
-                                </mask>
-                            </variation>
                         </view>
                     </subviews>
                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     <constraints>
                         <constraint firstAttribute="bottom" secondItem="Fzu-gd-kpG" secondAttribute="bottom" id="Otd-df-Xcu"/>
-                        <constraint firstAttribute="height" secondItem="Gmc-md-UHv" secondAttribute="width" multiplier="16:9" priority="1" id="PP4-42-LWZ"/>
-                        <constraint firstAttribute="width" relation="lessThanOrEqual" priority="998" constant="420" id="aP5-89-dLj"/>
+                        <constraint firstAttribute="width" relation="lessThanOrEqual" constant="420" id="Ucg-Xu-csp"/>
                         <constraint firstItem="Fzu-gd-kpG" firstAttribute="top" secondItem="Gmc-md-UHv" secondAttribute="top" id="hAJ-8K-qbo"/>
                         <constraint firstItem="Fzu-gd-kpG" firstAttribute="leading" secondItem="Gmc-md-UHv" secondAttribute="leading" id="mhl-uc-NNe"/>
                         <constraint firstAttribute="trailing" secondItem="Fzu-gd-kpG" secondAttribute="trailing" id="mxw-tV-MFb"/>
+                        <constraint firstAttribute="height" secondItem="Gmc-md-UHv" secondAttribute="width" multiplier="16:9" priority="1" id="t8p-lZ-HZn"/>
                     </constraints>
                 </view>
             </subviews>
@@ -140,8 +140,8 @@
                 <constraint firstItem="Gmc-md-UHv" firstAttribute="height" relation="lessThanOrEqual" secondItem="iN0-l3-epB" secondAttribute="height" multiplier="0.75" priority="998" id="ijq-fT-ON3"/>
                 <constraint firstItem="Gmc-md-UHv" firstAttribute="width" relation="greaterThanOrEqual" secondItem="iN0-l3-epB" secondAttribute="width" multiplier="0.5" priority="200" id="jhd-FM-oN8"/>
                 <constraint firstItem="KZc-00-wWo" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="kgj-9D-TpW"/>
-                <constraint firstItem="Gmc-md-UHv" firstAttribute="centerX" secondItem="vUN-kp-3ea" secondAttribute="centerX" id="nP9-Sr-HcU"/>
-                <constraint firstItem="Gmc-md-UHv" firstAttribute="centerY" secondItem="vUN-kp-3ea" secondAttribute="centerY" id="sDs-L5-7Dh"/>
+                <constraint firstItem="Gmc-md-UHv" firstAttribute="centerX" secondItem="vUN-kp-3ea" secondAttribute="centerX" priority="999" id="nP9-Sr-HcU"/>
+                <constraint firstItem="Gmc-md-UHv" firstAttribute="centerY" secondItem="vUN-kp-3ea" secondAttribute="centerY" priority="999" id="sDs-L5-7Dh"/>
             </constraints>
             <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
             <point key="canvasLocation" x="-309.5" y="29.5"/>

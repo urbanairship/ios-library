@@ -30,7 +30,13 @@ CGFloat const ModalDefaultPadding = 24.0;
  */
 CGFloat const ModalTextViewInterstitialPadding = -8;
 
-/**
+/*
+ * Hand tuned value that removes excess vertical safe area to make the
+ * top padding look more consistent with the iPhone X nub
+ */
+CGFloat const ModalExcessiveSafeAreaPadding = -8;
+
+/*
  * Instead of padding body text on the right to avoid the close button
  * it is given extra top padding when it's on top.
  */
@@ -52,7 +58,12 @@ double const DefaultModalAnimationDuration = 0.2;
 /**
  * The modal message's border radius.
  */
-@property (nonatomic,assign) CGFloat borderRadius;
+@property (nonatomic, assign) CGFloat borderRadius;
+
+/**
+ * The flag that tells the view whether or not to round its border.
+ */
+@property (nonatomic, assign) CGFloat allowBorderRounding;
 
 @end
 
@@ -65,6 +76,11 @@ double const DefaultModalAnimationDuration = 0.2;
 }
 
 - (void)applyBorderRounding {
+    if (!self.allowBorderRounding) {
+        //Don't round if display is full screen
+        return;
+    }
+
     CAShapeLayer *maskLayer = [CAShapeLayer layer];
     maskLayer.path = [UIBezierPath bezierPathWithRoundedRect:self.bounds
                                            byRoundingCorners:UIRectCornerAllCorners
@@ -152,6 +168,29 @@ double const DefaultModalAnimationDuration = 0.2;
  */
 @property (strong, nonatomic) IBOutlet NSLayoutConstraint *scrollableStackToTopConstaint;
 
+/**
+ * Flag indicating if the modal will display full screen.
+ */
+@property (assign, nonatomic) BOOL displayFullScreen;
+
+/**
+ * Modal constraints necessary to deactivate before stretching to full screen
+ */
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint *modalViewMaxWidthConstraint;
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint *modalCenterXConstraint;
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint *modalCenterYConstraint;
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint *modalWidthConstraint;
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint *modalHeightConstraint;
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint *modalContainerAspect;
+
+/**
+ * Shade view is used to shade the background when the view is in a modal
+ * presentation. Shade view is rendered opaque and set to either background
+ * color or black (media in horizontal display on iPhone X) during the full
+ * screen presentation.
+ */
+@property (strong, nonatomic) IBOutlet UIView *shadeView;
+
 @end
 
 @implementation UAInAppMessageModalViewController
@@ -238,6 +277,9 @@ double const DefaultModalAnimationDuration = 0.2;
 - (void)viewDidLoad {
     [super viewDidLoad];
 
+    self.displayFullScreen = self.displayContent.allowFullScreenDisplay && (UI_USER_INTERFACE_IDIOM() != UIUserInterfaceIdiomPad);
+    self.modalView.allowBorderRounding = !(self.displayFullScreen);
+
     self.modalView.borderRadius = self.displayContent.borderRadius;
     self.modalView.backgroundColor = self.displayContent.backgroundColor;
 
@@ -295,7 +337,9 @@ double const DefaultModalAnimationDuration = 0.2;
                 [self.scrollableStack addArrangedSubview:headerView];
 
                 // Special casing for when header is on top
-                [UAInAppMessageUtils applyPaddingForAttribute:NSLayoutAttributeTop onView:headerView.textLabel padding:ModalDefaultPadding
+                [UAInAppMessageUtils applyPaddingForAttribute:NSLayoutAttributeTop
+                                                       onView:headerView.textLabel
+                                                      padding:ModalDefaultPadding
                                                       replace:NO];
                 // Special case for when header is on top
                 CGFloat closeButtonPadding = ModalCloseButtonViewWidth - ModalDefaultPadding;
@@ -409,11 +453,68 @@ double const DefaultModalAnimationDuration = 0.2;
         [self.footerContainerView removeFromSuperview];
     }
 
-    // Add the style padding to the modal itself
-    [UAInAppMessageUtils applyPaddingToView:self.modalView padding:self.style.additionalPadding replace:NO];
+    // Add the style padding to the modal itself if not full screen
+    if (!self.displayFullScreen) {
+        [UAInAppMessageUtils applyPaddingToView:self.modalView padding:self.style.additionalPadding replace:NO];
+    }
 
     // will make opaque as part of animation when view appears
     self.view.alpha = 0;
+
+    if (self.displayFullScreen) {
+        // Detect view type
+        [self stretchToFullScreen];
+        [self refreshViewForCurrentOrientation];
+    }
+}
+
+// Alters contraints to cover the full screen.
+- (void)stretchToFullScreen {
+
+    // Deactivate necessary modal constraints
+    self.modalViewMaxWidthConstraint.active = NO;
+    self.modalCenterXConstraint.active = NO;
+    self.modalCenterYConstraint.active = NO;
+    self.modalWidthConstraint.active = NO;
+    self.modalHeightConstraint.active = NO;
+    self.modalContainerAspect.active = NO;
+
+    // Add full screen constraints
+    // (note the these are not to the safe area - so insets will need to be provided opn iPhone X)
+    [UAInAppMessageUtils applyContainerConstraintsToContainer:self.view containedView:self.modalContainer];
+
+    // Set shade view to background color
+    self.shadeView.opaque = YES;
+    self.shadeView.alpha = 1;
+    self.shadeView.backgroundColor = self.displayContent.backgroundColor;
+}
+
+- (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {
+    [self refreshViewForCurrentOrientation];
+}
+
+- (void)refreshViewForCurrentOrientation {
+    if (self.displayFullScreen) {
+        if (@available(iOS 11.0, *)) {
+            UIWindow *window = [UIApplication sharedApplication].keyWindow;
+            // Black out the inset and compensate for excess vertical safe area when iPhone X is horizontal
+            if (window.safeAreaInsets.top == 0 && window.safeAreaInsets.left > 0) {
+                self.shadeView.backgroundColor = [UIColor blackColor];
+                // Apply insets for iPhone X, use larger safe inset on rotation to balance the view
+                CGFloat largerInset = fmax(window.safeAreaInsets.left, window.safeAreaInsets.right);
+                [UAInAppMessageUtils applyPaddingForAttribute:NSLayoutAttributeTrailing onView:self.modalContainer padding:largerInset replace:YES];
+                [UAInAppMessageUtils applyPaddingForAttribute:NSLayoutAttributeLeading onView:self.modalContainer padding:largerInset replace:YES];
+                [UAInAppMessageUtils applyPaddingForAttribute:NSLayoutAttributeTop onView:self.modalContainer padding:window.safeAreaInsets.top replace:YES];
+                [UAInAppMessageUtils applyPaddingForAttribute:NSLayoutAttributeBottom onView:self.modalContainer padding:window.safeAreaInsets.bottom replace:YES];
+            } else if (window.safeAreaInsets.top > 0 && window.safeAreaInsets.left == 0) {
+                [UAInAppMessageUtils applyPaddingForAttribute:NSLayoutAttributeTrailing onView:self.modalContainer padding:0 replace:YES];
+                [UAInAppMessageUtils applyPaddingForAttribute:NSLayoutAttributeLeading onView:self.modalContainer padding:0 replace:YES];
+                [UAInAppMessageUtils applyPaddingForAttribute:NSLayoutAttributeTop onView:self.modalContainer padding:window.safeAreaInsets.top + ModalExcessiveSafeAreaPadding replace:YES];
+                [UAInAppMessageUtils applyPaddingForAttribute:NSLayoutAttributeBottom onView:self.modalContainer padding:window.safeAreaInsets.bottom replace:YES];
+                self.shadeView.backgroundColor = self.displayContent.backgroundColor;
+            }
+        }
+    }
 }
 
 - (void)viewDidAppear:(BOOL)animated {

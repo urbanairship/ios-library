@@ -26,6 +26,7 @@ NSString *const UAInAppMessageMediaKey = @"media";
 NSString *const UAInAppMessageFooterKey = @"footer";
 NSString *const UAInAppMessageDismissButtonColorKey = @"dismiss_button_color";
 NSString *const UAInAppMessageDurationKey = @"duration";
+NSString *const UAInAppMessageModalAllowsFullScreenKey = @"allow_fullscreen_display";
 
 /*
  * Sub-classes must override this method

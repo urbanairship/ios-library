@@ -161,6 +161,7 @@
         
         builder.buttons = @[button1, button2];
         builder.footer = footerButton;
+        builder.allowFullScreenDisplay = YES;
         
     }];
     

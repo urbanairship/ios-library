@@ -55,11 +55,6 @@ extern NSString *const UAFullScreenMediaStyleKey;
 ///---------------------------------------------------------------------------------------
 
 /**
- * The constants added to the default spacing between a view and its parent.
- */
-@property(nonatomic, strong, nullable) UAPadding *additionalPadding;
-
-/**
  * The dismiss icon image resource name.
  */
 @property(nonatomic, strong, nullable) NSString *dismissIconResource;

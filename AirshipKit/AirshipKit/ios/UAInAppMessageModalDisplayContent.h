@@ -92,6 +92,12 @@ extern NSUInteger const UAInAppMessageModalMaxButtons;
 @property(nonatomic, assign) NSUInteger borderRadius;
 
 /**
+ * Flag indicating the modal should display as full screen on compact devices.
+ * Defaults to NO.
+ */
+@property(nonatomic, assign) BOOL allowFullScreenDisplay;
+
+/**
  * Checks if the builder is valid and will produce an display content instance.
  * @return YES if the builder is valid, otherwise NO.
  */
@@ -154,6 +160,12 @@ extern NSUInteger const UAInAppMessageModalMaxButtons;
  * The modal message's border radius. Defaults to 0.
  */
 @property(nonatomic, assign, readonly) NSUInteger borderRadius;
+
+/**
+ * Flag indicating the modal should display as full screen on compact devices.
+ * Defaults to NO.
+ */
+@property(nonatomic, assign, readonly) BOOL allowFullScreenDisplay;
 
 /**
  * Factory method for building modal message display content with builder block.

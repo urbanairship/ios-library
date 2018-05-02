@@ -40,10 +40,6 @@
 
     //Properties in the valid style plist should match what's set in the style
     XCTAssertEqualObjects(@"testDismissIconResourceName", validStyle.dismissIconResource);
-    XCTAssertEqualObjects(@1, validStyle.additionalPadding.top);
-    XCTAssertEqualObjects(@2, validStyle.additionalPadding.bottom);
-    XCTAssertEqualObjects(@3, validStyle.additionalPadding.leading);
-    XCTAssertEqualObjects(@4, validStyle.additionalPadding.trailing);
     XCTAssertEqualObjects(@5, validStyle.headerStyle.letterSpacing);
     XCTAssertEqualObjects(@6, validStyle.headerStyle.lineSpacing);
     XCTAssertEqualObjects(@7, validStyle.headerStyle.additionalPadding.top);
