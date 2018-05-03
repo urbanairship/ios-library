@@ -3,6 +3,20 @@ iOS Changelog
 
 Migration Guides: Documentation/Migration
 
+Version 9.1.0 - May 3, 2018
+===========================
+
+Minor release that updates the in-app message designs.
+
+Changes
+-------
+- Updated in-app message designs.
+- Added support to display an in-app modal message as fullscreen on smaller screen devices.
+- Added support to adjust current in-app message designs through a plist.
+- Added a new UALegacyInAppMessageBuilderExtender protocol to make customizing the
+  legacy in-app message easier.
+- Updated for Xcode 9.3.
+
 Version 9.0.5 - April 2, 2018
 =================================
 Patch release to fix bugs in landing page presentation and content resizing on rotation. Applications using landing pages are encouraged to upgrade.
