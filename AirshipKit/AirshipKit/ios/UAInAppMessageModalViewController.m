@@ -159,14 +159,14 @@ double const DefaultModalAnimationDuration = 0.2;
 @property (nonatomic, strong) UAInAppMessageModalDisplayContent *displayContent;
 
 /**
+ * The modal max width.
+ */
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint *modalMaxWidth;
+
+/**
  * The completion handler passed in when the message is shown.
  */
 @property (nonatomic, copy, nullable) void (^showCompletionHandler)(UAInAppMessageResolution *);
-
-/**
- * Used to add padding above the stack view - constant defaults to 0
- */
-@property (strong, nonatomic) IBOutlet NSLayoutConstraint *scrollableStackToTopConstaint;
 
 /**
  * Flag indicating if the modal will display full screen.
@@ -465,6 +465,32 @@ double const DefaultModalAnimationDuration = 0.2;
         // Detect view type
         [self stretchToFullScreen];
         [self refreshViewForCurrentOrientation];
+    }
+
+    // Apply max width and height constraints from style if they are present
+    if (self.style.maxWidth) {
+        self.modalViewMaxWidthConstraint.active = NO;
+
+        // Set max width
+        [NSLayoutConstraint constraintWithItem:self.modalView
+                                     attribute:NSLayoutAttributeWidth
+                                     relatedBy:NSLayoutRelationLessThanOrEqual
+                                        toItem:nil
+                                     attribute:NSLayoutAttributeNotAnAttribute
+                                    multiplier:1
+                                      constant:[self.style.maxWidth floatValue]].active = YES;
+    }
+
+    // Apply max width and height constraints from style if they are present
+    if (self.style.maxHeight) {
+        // Set max width
+        [NSLayoutConstraint constraintWithItem:self.modalView
+                                     attribute:NSLayoutAttributeHeight
+                                     relatedBy:NSLayoutRelationLessThanOrEqual
+                                        toItem:nil
+                                     attribute:NSLayoutAttributeNotAnAttribute
+                                    multiplier:1
+                                      constant:[self.style.maxHeight floatValue]].active = YES;
     }
 }
 

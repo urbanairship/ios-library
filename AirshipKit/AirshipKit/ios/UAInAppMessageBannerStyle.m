@@ -10,6 +10,7 @@ NSString *const UABannerHeaderStyleKey = @"headerStyle";
 NSString *const UABannerBodyStyleKey = @"bodyStyle";
 NSString *const UABannerMediaStyleKey = @"mediaStyle";
 NSString *const UABannerButtonStyleKey = @"buttonStyle";
+NSString *const UABannerMaxWidthKey = @"maxWidth";
 
 @implementation UAInAppMessageBannerStyle
 
@@ -37,6 +38,14 @@ NSString *const UABannerButtonStyleKey = @"buttonStyle";
 
     if (bannerStyleDict) {
         normalizedBannerStyleDict = [UAInAppMessageUtils normalizeStyleDictionary:bannerStyleDict];
+
+        id maxWidthObj = normalizedBannerStyleDict[UABannerMaxWidthKey];
+        if (maxWidthObj) {
+            if ([maxWidthObj isKindOfClass:[NSNumber class]]) {
+                maxWidthObj = (NSNumber *)maxWidthObj;
+            }
+            style.maxWidth = maxWidthObj;
+        }
 
         style.additionalPadding = [UAPadding paddingWithDictionary:normalizedBannerStyleDict[UABannerAdditionalPaddingKey]];
         style.headerStyle = [UAInAppMessageTextStyle styleWithDictionary:normalizedBannerStyleDict[UABannerHeaderStyleKey]];

@@ -67,6 +67,8 @@
     XCTAssertEqualObjects(@25, validStyle.buttonStyle.additionalPadding.bottom);
     XCTAssertEqualObjects(@26, validStyle.buttonStyle.additionalPadding.leading);
     XCTAssertEqualObjects(@27, validStyle.buttonStyle.additionalPadding.trailing);
+    XCTAssertEqualObjects(@28, validStyle.maxWidth);
+    XCTAssertEqualObjects(@29, validStyle.maxHeight);
 }
 
 @end

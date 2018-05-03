@@ -26,7 +26,6 @@
                 <outlet property="modalViewMaxWidthConstraint" destination="Ucg-Xu-csp" id="bs7-13-KkT"/>
                 <outlet property="modalWidthConstraint" destination="jhd-FM-oN8" id="JOD-fE-6OM"/>
                 <outlet property="scrollableStack" destination="Wmt-hb-XaP" id="L2N-At-2L1"/>
-                <outlet property="scrollableStackToTopConstaint" destination="3dp-Ht-cbI" id="IB9-N2-hXi"/>
                 <outlet property="shadeView" destination="KZc-00-wWo" id="PGT-PV-loj"/>
                 <outlet property="view" destination="iN0-l3-epB" id="gFo-ZZ-7i3"/>
             </connections>

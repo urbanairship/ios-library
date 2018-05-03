@@ -85,5 +85,9 @@
 	</dict>
 	<key>dismissIconResource</key>
 	<string>testDismissIconResourceName</string>
+	<key>maxWidth</key>
+	<integer>28</integer>
+	<key>maxHeight</key>
+	<integer>29</integer>
 </dict>
 </plist>

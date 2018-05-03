@@ -21,7 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
 @class UAInAppMessageMediaView;
 @class UAInAppMessageBannerDisplayContent;
 
-double const MaxWidth = 420;
+double const DefaultMaxWidth = 420;
 
 double const DefaultBannerControllerPadding = 24;
 
@@ -285,7 +285,7 @@ CGFloat const BannerExcessiveSafeAreaPadding = 14;
                                                                    toItem:nil
                                                                 attribute:NSLayoutAttributeNotAnAttribute
                                                                multiplier:1
-                                                                 constant:MaxWidth];
+                                                                 constant:[self.style.maxWidth floatValue] ?: DefaultMaxWidth];
     maxWidth.priority = UILayoutPriorityRequired;
     maxWidth.active = YES;
 

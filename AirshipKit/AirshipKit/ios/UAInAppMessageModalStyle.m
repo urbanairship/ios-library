@@ -11,7 +11,8 @@ NSString *const UAModalTextStyleKey = @"textStyle";
 NSString *const UAModalHeaderStyleKey = @"headerStyle";
 NSString *const UAModalBodyStyleKey = @"bodyStyle";
 NSString *const UAModalMediaStyleKey = @"mediaStyle";
-
+NSString *const UAModalMaxWidthKey = @"maxWidth";
+NSString *const UAModalMaxHeightKey = @"maxHeight";
 
 @implementation UAInAppMessageModalStyle
 
@@ -33,7 +34,6 @@ NSString *const UAModalMediaStyleKey = @"mediaStyle";
     }
 
     NSDictionary *normalizedModalStyleDict;
-
     NSDictionary *modalStyleDict = [[NSDictionary alloc] initWithContentsOfFile:path];
 
     if (modalStyleDict) {
@@ -46,6 +46,22 @@ NSString *const UAModalMediaStyleKey = @"mediaStyle";
                 return nil;
             }
             style.dismissIconResource = dismissIconResource;
+        }
+
+        id maxWidthObj = normalizedModalStyleDict[UAModalMaxWidthKey];
+        if (maxWidthObj) {
+            if ([maxWidthObj isKindOfClass:[NSNumber class]]) {
+                maxWidthObj = (NSNumber *)maxWidthObj;
+            }
+            style.maxWidth = maxWidthObj;
+        }
+
+        id maxHeightObj = normalizedModalStyleDict[UAModalMaxHeightKey];
+        if (maxHeightObj) {
+            if ([maxHeightObj isKindOfClass:[NSNumber class]]) {
+                maxHeightObj = (NSNumber *)maxHeightObj;
+            }
+            style.maxHeight = maxHeightObj;
         }
 
         style.additionalPadding = [UAPadding paddingWithDictionary:normalizedModalStyleDict[UAModalAdditionalPaddingKey]];

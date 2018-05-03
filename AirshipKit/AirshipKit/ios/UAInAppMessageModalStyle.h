@@ -43,6 +43,15 @@ extern NSString *const UAModalButtonStyleKey;
  */
 extern NSString *const UAModalMediaStyleKey;
 
+/**
+ * The key representing the max width in a style plist.
+ */
+extern NSString *const UAModalMaxWidthKey;
+
+/**
+ * The key representing the max height in a style plist.
+ */
+extern NSString *const UAModalMaxHeightKey;
 
 /**
  * Model object representing a custom style to be applied
@@ -63,6 +72,16 @@ extern NSString *const UAModalMediaStyleKey;
  * The dismiss icon image resource name.
  */
 @property(nonatomic, strong, nullable) NSString *dismissIconResource;
+
+/**
+ * The max width.
+ */
+@property(nonatomic, strong, nullable) NSNumber *maxWidth;
+
+/**
+ * The max height.
+ */
+@property(nonatomic, strong, nullable) NSNumber *maxHeight;
 
 /**
  * The header text style

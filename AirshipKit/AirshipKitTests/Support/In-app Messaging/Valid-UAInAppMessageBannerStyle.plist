@@ -13,6 +13,8 @@
 		<key>trailing</key>
 		<integer>4</integer>
 	</dict>
+	<key>maxWidth</key>
+	<integer>26</integer>
 	<key>headerStyle</key>
 	<dict>
 		<key>letterSpacing</key>

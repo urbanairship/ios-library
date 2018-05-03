@@ -38,6 +38,10 @@ extern NSString *const UABannerButtonStyleKey;
  */
 extern NSString *const UABannerMediaStyleKey;
 
+/**
+ * The key representing the max width in a style plist.
+ */
+extern NSString *const UABannerMaxWidthKey;
 
 
 /**
@@ -74,6 +78,12 @@ extern NSString *const UABannerMediaStyleKey;
  * The media style
  */
 @property(nonatomic, strong, nullable) UAInAppMessageMediaStyle *mediaStyle;
+
+/**
+ * The max width.
+ */
+@property(nonatomic, strong, nullable) NSNumber *maxWidth;
+
 
 @end
 
