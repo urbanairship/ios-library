@@ -31,10 +31,10 @@
                             </constraints>
                         </view>
                         <view contentMode="scaleToFill" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="A4y-Le-7Tg" userLabel="Banner Content Container View">
-                            <rect key="frame" x="0.0" y="16" width="375" height="287"/>
+                            <rect key="frame" x="0.0" y="16" width="375" height="293"/>
                         </view>
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="1dl-fi-7LK" userLabel="Button Container View">
-                            <rect key="frame" x="16" y="319" width="343" height="35"/>
+                            <rect key="frame" x="16" y="325" width="343" height="35"/>
                             <constraints>
                                 <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="35" placeholder="YES" id="LxC-ti-qq2"/>
                             </constraints>
@@ -45,7 +45,7 @@
                         <constraint firstItem="A4y-Le-7Tg" firstAttribute="top" secondItem="3me-ax-tOr" secondAttribute="top" constant="16" id="0pm-g8-eyn"/>
                         <constraint firstItem="A4y-Le-7Tg" firstAttribute="leading" secondItem="3me-ax-tOr" secondAttribute="leading" id="3Rc-bg-CwK"/>
                         <constraint firstItem="d3j-OF-iBo" firstAttribute="centerX" secondItem="3me-ax-tOr" secondAttribute="centerX" id="H7e-zG-uUm"/>
-                        <constraint firstItem="d3j-OF-iBo" firstAttribute="top" secondItem="1dl-fi-7LK" secondAttribute="bottom" constant="16" id="HE3-3p-9u4"/>
+                        <constraint firstItem="d3j-OF-iBo" firstAttribute="top" secondItem="1dl-fi-7LK" secondAttribute="bottom" constant="10" id="HE3-3p-9u4"/>
                         <constraint firstAttribute="trailing" secondItem="1dl-fi-7LK" secondAttribute="trailing" constant="16" id="JDs-8v-YAX"/>
                         <constraint firstItem="1dl-fi-7LK" firstAttribute="leading" secondItem="3me-ax-tOr" secondAttribute="leading" constant="16" id="Uwj-Bf-RVk"/>
                         <constraint firstAttribute="bottom" secondItem="d3j-OF-iBo" secondAttribute="bottom" constant="10" id="Yt8-dl-LjM"/>

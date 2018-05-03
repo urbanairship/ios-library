@@ -11,10 +11,21 @@
 
 NSString *const UAInAppMessageHTMLViewNibName = @"UAInAppMessageHTMLView";
 
+/**
+ * Default view padding
+ */
+CGFloat const HTMLDefaultPadding = 24.0;
+
+/**
+ * Hand tuned value that removes excess vertical safe area to make the
+ * top padding look more consistent with the iPhone X nub
+ */
+CGFloat const HTMLExcessiveSafeAreaPadding = -8;
+
 @interface UAInAppMessageHTMLView ()
 
 @property (strong, nonatomic) IBOutlet UAInAppMessageDismissButton *closeButtonContainer;
-@property (strong, nonatomic) IBOutlet UIView *messageTop;
+@property (strong, nonatomic) IBOutlet UIView *wrapperView;
 @property (strong, nonatomic) IBOutlet UAWebView *webView;
 @property (strong, nonatomic) IBOutlet UABeveledLoadingIndicator *loadingIndicator;
 @property (strong, nonatomic) UAInAppMessageHTMLDisplayContent *displayContent;
@@ -48,8 +59,7 @@ NSString *const UAInAppMessageHTMLViewNibName = @"UAInAppMessageHTMLView";
     
     self.backgroundColor = displayContent.backgroundColor;
     self.webView.backgroundColor = displayContent.backgroundColor;
-    self.messageTop.backgroundColor = displayContent.backgroundColor;
-    
+
     self.displayContent = displayContent;
     self.translatesAutoresizingMaskIntoConstraints = NO;
 }
@@ -57,16 +67,60 @@ NSString *const UAInAppMessageHTMLViewNibName = @"UAInAppMessageHTMLView";
 - (void)layoutSubviews {
     [super layoutSubviews];
 
-    if (@available(iOS 11.0, *)) {
-        UIWindow *window = [UAUtils mainWindow];
+    [self refreshViewForCurrentOrientation];
+}
 
-        // Black out the inset when iPhone X is horizontal
+- (void)refreshViewForCurrentOrientation {
+    BOOL statusBarShowing = !([UIApplication sharedApplication].isStatusBarHidden);
+
+    if (@available(iOS 11.0, *)) {
+        UIWindow *window = [UIApplication sharedApplication].keyWindow;
+
+        // Black out the inset and compensate for excess vertical safe area when iPhone X is horizontal
         if (window.safeAreaInsets.top == 0 && window.safeAreaInsets.left > 0) {
             self.backgroundColor = [UIColor blackColor];
-        } else {
+        } else if (window.safeAreaInsets.top > 0 && window.safeAreaInsets.left == 0) {
             self.backgroundColor = self.displayContent.backgroundColor;
         }
+
+        // If the orientation has a bar without inset
+        if (window.safeAreaInsets.top == 0 && statusBarShowing) {
+            [UAInAppMessageUtils applyPaddingForAttribute:NSLayoutAttributeTop
+                                                   onView:self.wrapperView
+                                                  padding:HTMLDefaultPadding
+                                                  replace:YES];
+            [self.wrapperView layoutIfNeeded];
+            return;
+        }
+
+        // If the orientation has a bar with inset
+        if (window.safeAreaInsets.top > 0 && statusBarShowing) {
+            [UAInAppMessageUtils applyPaddingForAttribute:NSLayoutAttributeTop
+                                                   onView:self.wrapperView
+                                                  padding:HTMLExcessiveSafeAreaPadding
+                                                  replace:YES];
+            [self.wrapperView layoutIfNeeded];
+            return;
+        }
+    } else {
+        if (statusBarShowing) {
+            [UAInAppMessageUtils applyPaddingForAttribute:NSLayoutAttributeTop
+                                                   onView:self.wrapperView
+                                                  padding:HTMLDefaultPadding
+                                                  replace:YES];
+            [self.wrapperView layoutIfNeeded];
+            return;
+        }
     }
+
+    // Otherwise remove top padding
+    [UAInAppMessageUtils applyPaddingForAttribute:NSLayoutAttributeTop
+                                           onView:self.wrapperView
+                                          padding:0
+                                          replace:YES];
+
+    [self.wrapperView layoutIfNeeded];
 }
+
 
 @end

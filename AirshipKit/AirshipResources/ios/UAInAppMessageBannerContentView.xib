@@ -20,7 +20,7 @@
                 <view contentMode="scaleAspectFill" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="CwK-FL-VAk" userLabel="ContainerView">
                     <rect key="frame" x="0.0" y="0.0" width="375" height="120"/>
                     <subviews>
-                        <view opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="fqe-vD-Gmm" userLabel="Media Padding View">
+                        <view opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="fqe-vD-Gmm" userLabel="Media Expandable Padding View">
                             <rect key="frame" x="16" y="120" width="120" height="0.0"/>
                             <constraints>
                                 <constraint firstAttribute="height" priority="250" id="BBN-PT-Ibf"/>
@@ -29,6 +29,12 @@
                         <stackView opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="755" axis="vertical" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="39z-R3-T6G" userLabel="Text Stack">
                             <rect key="frame" x="152" y="0.0" width="207" height="120"/>
                         </stackView>
+                        <view opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="1" translatesAutoresizingMaskIntoConstraints="NO" id="zj3-AL-NA1" userLabel="Text Expandable Padding View">
+                            <rect key="frame" x="168" y="120" width="207" height="0.0"/>
+                            <constraints>
+                                <constraint firstAttribute="height" priority="1" id="HZX-lC-1DH"/>
+                            </constraints>
+                        </view>
                         <view opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="500" translatesAutoresizingMaskIntoConstraints="NO" id="6QX-8T-8Be">
                             <rect key="frame" x="16" y="0.0" width="120" height="120"/>
                             <constraints>
@@ -39,12 +45,15 @@
                     </subviews>
                     <constraints>
                         <constraint firstItem="39z-R3-T6G" firstAttribute="top" secondItem="CwK-FL-VAk" secondAttribute="top" id="0EZ-vd-jGs"/>
+                        <constraint firstItem="zj3-AL-NA1" firstAttribute="top" secondItem="39z-R3-T6G" secondAttribute="bottom" id="5c4-yB-Uoy"/>
                         <constraint firstItem="fqe-vD-Gmm" firstAttribute="leading" secondItem="CwK-FL-VAk" secondAttribute="leading" constant="16" id="JNw-FA-zu7"/>
+                        <constraint firstAttribute="trailing" secondItem="zj3-AL-NA1" secondAttribute="trailing" id="Lo1-PS-guU"/>
                         <constraint firstAttribute="bottom" secondItem="fqe-vD-Gmm" secondAttribute="bottom" id="PCC-Fe-NW1"/>
                         <constraint firstItem="fqe-vD-Gmm" firstAttribute="width" secondItem="6QX-8T-8Be" secondAttribute="width" id="ZR0-lR-Epx"/>
                         <constraint firstItem="6QX-8T-8Be" firstAttribute="leading" secondItem="CwK-FL-VAk" secondAttribute="leading" constant="16" id="bop-Xc-D3i"/>
-                        <constraint firstAttribute="bottom" secondItem="39z-R3-T6G" secondAttribute="bottom" id="dft-cU-BCf"/>
                         <constraint firstItem="39z-R3-T6G" firstAttribute="leading" secondItem="CwK-FL-VAk" secondAttribute="leading" priority="998" constant="16" id="fPv-4U-njI"/>
+                        <constraint firstItem="zj3-AL-NA1" firstAttribute="width" secondItem="39z-R3-T6G" secondAttribute="width" id="hbc-vg-1e9"/>
+                        <constraint firstAttribute="bottom" secondItem="zj3-AL-NA1" secondAttribute="bottom" id="nC8-kq-pTp"/>
                         <constraint firstItem="39z-R3-T6G" firstAttribute="leading" secondItem="6QX-8T-8Be" secondAttribute="trailing" constant="16" id="ndW-W1-Bwo"/>
                         <constraint firstItem="fqe-vD-Gmm" firstAttribute="top" secondItem="6QX-8T-8Be" secondAttribute="bottom" id="oCD-Dm-Mv7"/>
                         <constraint firstAttribute="trailing" secondItem="39z-R3-T6G" secondAttribute="trailing" constant="16" id="rRc-yc-lYj"/>

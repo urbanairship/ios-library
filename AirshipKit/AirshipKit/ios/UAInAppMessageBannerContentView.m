@@ -79,12 +79,6 @@ NSString *const UAInAppMessageBannerContentViewNibName = @"UAInAppMessageBannerC
         [self.bodyView sizeToFit];
     }
 
-    // Add invisible spacer to guarantee it expands instead of other views
-    UIView *spacer = [[UIView alloc] initWithFrame:CGRectZero];
-    spacer.backgroundColor = [UIColor clearColor];
-    [spacer setContentHuggingPriority:1 forAxis:UILayoutConstraintAxisVertical];
-    [self.textStackView addArrangedSubview:spacer];
-
     [self layoutIfNeeded];
 }
 
