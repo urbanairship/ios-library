@@ -5,10 +5,21 @@
 #import "AppDelegate.h"
 #import "InboxDelegate.h"
 #import "PushHandler.h"
+#import "PushSettingsViewController.h"
+#import "HomeViewController.h"
+#import "MessageCenterViewController.h"
 
 #define kSimulatorWarningDisabledKey @"ua-simulator-warning-disabled"
 
-@interface AppDelegate () <UARegistrationDelegate>
+NSString *const HomeStoryboardID = @"home";
+NSString *const PushSettingsStoryboardID = @"push_settings";
+NSString *const MessageCenterStoryboardID = @"message_center";
+
+int const HomeTab = 0;
+int const PushSettingsTab = 1;
+int const MessageCenterTab = 2;
+
+@interface AppDelegate () <UARegistrationDelegate, UADeepLinkDelegate>
 @property(nonatomic, strong) InboxDelegate *inboxDelegate;
 @property(nonatomic, strong) PushHandler *pushHandler;
 
@@ -65,6 +76,7 @@
     [UAirship push].pushNotificationDelegate = self.pushHandler;
 
     [UAirship push].registrationDelegate = self;
+    [UAirship shared].deepLinkDelegate = self;
 
     // User notifications will not be enabled until userPushNotificationsEnabled is
     // set YES on UAPush. Once enabled, the setting will be persisted and the user
@@ -142,13 +154,41 @@
     });
 }
 
--(void)applicationWillEnterForeground:(UIApplication *)application {
+- (void)applicationWillEnterForeground:(UIApplication *)application {
     [self refreshMessageCenterBadge];
 }
 
 - (void)registrationSucceededForChannelID:(NSString *)channelID deviceToken:(nonnull NSString *)deviceToken {
 
     [[NSNotificationCenter defaultCenter] postNotificationName:@"channelIDUpdated" object:self userInfo:nil];
+}
+
+#pragma mark -
+#pragma mark Deep link handling
+
+- (void)receivedDeepLink:(NSURL *_Nonnull)url completionHandler:(void (^_Nonnull)(void))completionHandler {
+    NSArray *pathComponents = url.pathComponents;
+
+    UITabBarController *tabController = (UITabBarController *)self.window.rootViewController;
+
+    if ([pathComponents containsObject:HomeStoryboardID]) {
+        [tabController setSelectedIndex:HomeTab];
+    } else if ([pathComponents containsObject:PushSettingsStoryboardID]) {
+        id selectedVC = tabController.selectedViewController;
+
+        if ([selectedVC isKindOfClass:[UINavigationController class]]) {
+            UINavigationController *nav = (UINavigationController *)selectedVC;
+            if (![[nav topViewController] isKindOfClass:[PushSettingsViewController class]]) {
+                [nav popToRootViewControllerAnimated:YES];
+            }
+        }
+
+        [tabController setSelectedIndex:PushSettingsTab];
+    } else if ([pathComponents containsObject:MessageCenterStoryboardID]) {
+        [tabController setSelectedIndex:MessageCenterTab];
+    }
+
+    completionHandler();
 }
 
 @end

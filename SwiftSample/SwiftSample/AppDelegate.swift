@@ -4,10 +4,18 @@ import UIKit
 import AirshipKit
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate, UARegistrationDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, UARegistrationDelegate, UADeepLinkDelegate {
 
     let simulatorWarningDisabledKey = "ua-simulator-warning-disabled"
     let pushHandler = PushHandler()
+
+    let HomeStoryboardID = "home";
+    let PushSettingsStoryboardID = "push_settings";
+    let MessageCenterStoryboardID = "message_center";
+
+    let HomeTab = 0;
+    let PushSettingsTab = 1;
+    let MessageCenterTab = 2;
 
     var window: UIWindow?
     var inboxDelegate: InboxDelegate?
@@ -55,6 +63,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UARegistrationDelegate {
         UAirship.inbox().delegate = self.inboxDelegate
         UAirship.push().pushNotificationDelegate = pushHandler
         UAirship.push().registrationDelegate = self
+        UAirship.shared().deepLinkDelegate = self
 
         NotificationCenter.default.addObserver(self, selector:#selector(AppDelegate.refreshMessageCenterBadge), name: NSNotification.Name.UAInboxMessageListUpdated, object: nil)
 
@@ -128,5 +137,26 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UARegistrationDelegate {
             userInfo:nil)
     }
 
+    func receivedDeepLink(_ url: URL, completionHandler: @escaping () -> ()) {
+        let pathComponents = url.pathComponents
+
+        let tabController = window!.rootViewController as! UITabBarController
+
+        if pathComponents.contains(HomeStoryboardID) {
+            tabController.selectedIndex = HomeTab
+        } else if pathComponents.contains(PushSettingsStoryboardID) {
+            if let nav = tabController.selectedViewController as? UINavigationController {
+                if !nav.topViewController!.isKind(of: PushSettingsViewController.self) {
+                    nav.popToRootViewController(animated: true);
+                }
+            }
+
+            tabController.selectedIndex = PushSettingsTab;
+        } else if pathComponents.contains(MessageCenterStoryboardID) {
+            tabController.selectedIndex = MessageCenterTab;
+        }
+
+        completionHandler()
+    }
 }
 

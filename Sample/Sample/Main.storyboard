@@ -18,7 +18,7 @@
         <!--Home-->
         <scene sceneID="hNz-n2-bh7">
             <objects>
-                <viewController title="Home" id="9pv-A4-QxB" customClass="HomeViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="home" title="Home" id="9pv-A4-QxB" customClass="HomeViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="Ia1-K6-d13"/>
                         <viewControllerLayoutGuide type="bottom" id="4ug-Mw-9AY"/>
@@ -102,7 +102,7 @@
         <!--Message Center-->
         <scene sceneID="jra-5K-cKn">
             <objects>
-                <navigationController id="uCE-kh-Bmv" customClass="MessageCenterViewController" sceneMemberID="viewController">
+                <navigationController storyboardIdentifier="message_center" id="uCE-kh-Bmv" customClass="MessageCenterViewController" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" title="Message Center" image="Inbox" id="puz-9M-buY"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="QwL-7h-v1G">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
@@ -122,7 +122,7 @@
         <!--Push Settings-->
         <scene sceneID="JAH-EW-D9D">
             <objects>
-                <tableViewController id="5WH-WV-JV0" customClass="PushSettingsViewController" sceneMemberID="viewController">
+                <tableViewController storyboardIdentifier="push_settings" id="5WH-WV-JV0" customClass="PushSettingsViewController" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" delaysContentTouches="NO" dataMode="static" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="18" sectionFooterHeight="18" id="VFG-Bf-CM5">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="700"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
