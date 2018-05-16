@@ -45,6 +45,10 @@
 
 - (void)tearDown {
     [super tearDown];
+    [self.mockApplication stopMocking];
+    [self.mockChannelTagGroupsAPIClient stopMocking];
+    [self.mockNamedUserTagGroupsAPIClient stopMocking];
+    [self.mockOperationQueue stopMocking];
     [self.dataStore removeAll];
 }
 
@@ -101,7 +105,7 @@
         [endBackgroundTaskExpecation fulfill];
     }] endBackgroundTask:0];
 
-    [self waitForExpectationsWithTimeout:1 handler:nil];
+    [self waitForExpectationsWithTimeout:2 handler:nil];
     
     [self.mockChannelTagGroupsAPIClient verify];
     [self.mockNamedUserTagGroupsAPIClient verify];

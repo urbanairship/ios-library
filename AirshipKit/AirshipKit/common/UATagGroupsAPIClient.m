@@ -4,6 +4,7 @@
 #import "UATagGroupsMutation+Internal.h"
 #import "UAConfig.h"
 #import "NSJSONSerialization+UAAdditions.h"
+#import "NSURLResponse+UAAdditions.h"
 
 #define kUAChannelTagGroupsPath @"/api/channels/tags/"
 #define kUANamedUserTagsPath @"/api/named_users/tags/"
@@ -81,13 +82,7 @@
     UA_LTRACE(@"Updating tag groups with payload: %@", payload);
 
     [self.session dataTaskWithRequest:request retryWhere:^BOOL(NSData * _Nullable data, NSURLResponse * _Nullable response) {
-        NSHTTPURLResponse *httpResponse = nil;
-        if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
-            httpResponse = (NSHTTPURLResponse *) response;
-        }
-
-        NSInteger status = httpResponse.statusCode;
-        return (BOOL)((status >= 500 && status <= 599));
+        return [response hasRetriableStatus];
     } completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
         NSHTTPURLResponse *httpResponse = nil;
         if ([response isKindOfClass:[NSHTTPURLResponse class]]) {

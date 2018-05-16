@@ -4,6 +4,7 @@
 #import "UAPreferenceDataStore+Internal.h"
 #import "UAUtils+Internal.h"
 #import "UAConfig+Internal.h"
+#import "NSURLResponse+UAAdditions.h"
 
 @interface UARemoteDataAPIClient()
 
@@ -44,14 +45,7 @@ NSString * const kUALastRemoteDataModifiedTime = @"UALastRemoteDataModifiedTime"
     
 
     [self.session dataTaskWithRequest:refreshRequest retryWhere:^BOOL(NSData * _Nullable data, NSURLResponse * _Nullable response) {
-        if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
-            NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *) response;
-            if (httpResponse.statusCode >= 500 && httpResponse.statusCode <= 599) {
-                return YES;
-            }
-        }
-        
-        return NO;
+        return [response hasRetriableStatus];
     } completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
         if (![response isKindOfClass:[NSHTTPURLResponse class]]) {
             if (refreshRemoteDataFailureBlock) {
