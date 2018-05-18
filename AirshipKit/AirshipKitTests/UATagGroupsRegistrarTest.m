@@ -45,10 +45,10 @@
 
 - (void)tearDown {
     [super tearDown];
-    [self.mockApplication stopMocking];
-    [self.mockChannelTagGroupsAPIClient stopMocking];
-    [self.mockNamedUserTagGroupsAPIClient stopMocking];
-    [self.mockOperationQueue stopMocking];
+        [self.mockApplication stopMocking];
+        [self.mockChannelTagGroupsAPIClient stopMocking];
+        [self.mockNamedUserTagGroupsAPIClient stopMocking];
+        [self.mockOperationQueue stopMocking];
     [self.dataStore removeAll];
 }
 
