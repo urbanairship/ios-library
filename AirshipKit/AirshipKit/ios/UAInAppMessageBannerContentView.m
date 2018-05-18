@@ -7,6 +7,8 @@
 #import "UAInAppMessageTextView+Internal.h"
 #import "UAInAppMessageMediaView+Internal.h"
 #import "UAInAppMessageUtils+Internal.h"
+#import "UAViewUtils+Internal.h"
+
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -61,7 +63,7 @@ NSString *const UAInAppMessageBannerContentViewNibName = @"UAInAppMessageBannerC
 
     if (mediaView) {
         [self.mediaContainerView addSubview:mediaView];
-        [UAInAppMessageUtils applyContainerConstraintsToContainer:self.mediaContainerView containedView:mediaView];
+        [UAViewUtils applyContainerConstraintsToContainer:self.mediaContainerView containedView:mediaView];
     } else {
         [self.mediaContainerView removeFromSuperview];
     }

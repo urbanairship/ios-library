@@ -36,17 +36,6 @@
 + (void)applyTextInfo:(UAInAppMessageTextInfo *)textInfo style:(UAInAppMessageTextStyle *)style label:(UILabel *)label;
 
 /**
- * Constrains the contained view to the center of the container with equivalent size
- *
- * This method has the side effect of setting both views' translatesAutoresizingMasksIntoConstraints parameters to NO.
- * This is done to ensure that autoresizing mask constraints do not conflict with the centering constraints.
- * 
- * @param container The container view.
- * @param contained The contained view.
- */
-+ (void)applyContainerConstraintsToContainer:(UIView *)container containedView:(UIView *)contained;
-
-/**
  * Constrains the buttom image view to default size and to the lower left hand corner of the touchable button space.
  *
  * This method has the side effect of setting both views' translatesAutoresizingMasksIntoConstraints parameters to NO.

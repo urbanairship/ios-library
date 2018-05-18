@@ -8,6 +8,8 @@
 #import "UAWebView+Internal.h"
 #import "UABeveledLoadingIndicator.h"
 #import "UAUtils+Internal.h"
+#import "UAViewUtils+Internal.h"
+
 
 NSString *const UAInAppMessageHTMLViewNibName = @"UAInAppMessageHTMLView";
 
@@ -48,7 +50,7 @@ CGFloat const HTMLExcessiveSafeAreaPadding = -8;
     // Always add the close button
     [self.closeButtonContainer addSubview:closeButton];
     
-    [UAInAppMessageUtils applyContainerConstraintsToContainer:self.closeButtonContainer containedView:closeButton];
+    [UAViewUtils applyContainerConstraintsToContainer:self.closeButtonContainer containedView:closeButton];
     
     self.webView.backgroundColor = [UIColor clearColor];
     self.webView.opaque = NO;

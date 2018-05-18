@@ -7,8 +7,11 @@
 #import "UAInboxMessageList.h"
 #import "UAInboxMessage.h"
 #import "UAUtils+Internal.h"
+#import "UAViewUtils+Internal.h"
 #import "UAMessageCenterLocalization.h"
 #import "UABeveledLoadingIndicator.h"
+#import "UAInAppMessageUtils+Internal.h"
+
 
 #define kMessageUp 0
 #define kMessageDown 1
@@ -23,9 +26,19 @@
 @property (nonatomic, strong) WKWebView *webView;
 
 /**
- * The loading indicator.
+ * The custom loading indicator container view.
  */
-@property (weak, nonatomic) IBOutlet UABeveledLoadingIndicator *loadingIndicatorView;
+@property (nonatomic, strong) IBOutlet UIView *loadingIndicatorContainerView;
+
+/**
+ * The optional custom loading indicator view.
+ */
+@property (nullable, nonatomic, strong) UIView *loadingIndicatorView;
+
+/**
+ * The optional custom animation to execute during loading.
+ */
+@property (nullable, nonatomic, strong) void (^loadingAnimations)(void);
 
 /**
  * The view displayed when there are no messages.
@@ -128,6 +141,22 @@ typedef enum MessageState {
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+
+    // Add the custom loading view if it's been set
+    if (self.loadingIndicatorView) {
+        // Add custom loading indicator view and constrain it to the center
+        [self.loadingIndicatorContainerView addSubview:self.loadingIndicatorView];
+        [UAViewUtils applyContainerConstraintsToContainer:self.loadingIndicatorContainerView containedView:self.loadingIndicatorView];
+    } else {
+        // Generate default loading view
+        UABeveledLoadingIndicator *defaultLoadingIndicatorView = [[UABeveledLoadingIndicator alloc] init];
+
+        self.loadingIndicatorView = defaultLoadingIndicatorView;
+
+        // Add default loading indicator view and constrain it to the center
+        [self.loadingIndicatorContainerView addSubview:self.loadingIndicatorView];
+        [UAViewUtils applyContainerConstraintsToContainer:self.loadingIndicatorContainerView containedView:self.loadingIndicatorView];
+    }
     
     if (self.messageState == NONE) {
         [self coverWithMessageAndHideLoadingIndicator:UAMessageCenterLocalizedString(@"ua_message_not_selected")];
@@ -184,12 +213,21 @@ typedef enum MessageState {
     [self hideLoadingIndicator];
 }
 
+- (void)setLoadingIndicatorView:(UIView *)loadingIndicatorView animations:(void (^)(void))animations {
+    self.loadingAnimations = animations;
+    self.loadingIndicatorView = loadingIndicatorView;
+}
+
 - (void)showLoadingIndicator {
-    [self.loadingIndicatorView show];
+    if (self.loadingAnimations) {
+        self.loadingAnimations();
+    }
+
+    [self.loadingIndicatorView setHidden:NO];
 }
 
 - (void)hideLoadingIndicator {
-    [self.loadingIndicatorView hide];
+    [self.loadingIndicatorView setHidden:YES];
 }
 
 static NSString *urlForBlankPage = @"about:blank";

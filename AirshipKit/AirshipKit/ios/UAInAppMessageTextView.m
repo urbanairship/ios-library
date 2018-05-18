@@ -4,6 +4,8 @@
 #import "UAInAppMessageTextView+Internal.h"
 #import "UAInAppMessageTextInfo.h"
 #import "UAInAppMessageUtils+Internal.h"
+#import "UAViewUtils+Internal.h"
+
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -25,7 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
             self.style = style;
 
             [self addSubview:self.textLabel];
-            [UAInAppMessageUtils applyContainerConstraintsToContainer:self
+            [UAViewUtils applyContainerConstraintsToContainer:self
                                                         containedView:self.textLabel];
 
             self.textLabel.translatesAutoresizingMaskIntoConstraints = NO;

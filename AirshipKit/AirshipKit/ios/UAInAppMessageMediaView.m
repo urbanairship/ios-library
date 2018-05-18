@@ -6,6 +6,7 @@
 #import "AVFoundation/AVFoundation.h"
 #import "UAUtils+Internal.h"
 #import "UAInAppMessageUtils+Internal.h"
+#import "UAViewUtils+Internal.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -48,12 +49,12 @@ CGFloat const DefaultVideoAspectRatio = 16.0/9.0;
         self.mediaContainer.backgroundColor = [UIColor clearColor];
         self.mediaContainer.opaque = NO;
         [self addSubview:self.mediaContainer];
-        [UAInAppMessageUtils applyContainerConstraintsToContainer:self containedView:self.mediaContainer];
+        [UAViewUtils applyContainerConstraintsToContainer:self containedView:self.mediaContainer];
 
         self.imageView = [[UIImageView alloc] initWithFrame:self.frame];
         [self.mediaContainer addSubview:self.imageView];
         [self.imageView setImage:image];
-        [UAInAppMessageUtils applyContainerConstraintsToContainer:self.mediaContainer containedView:self.imageView];
+        [UAViewUtils applyContainerConstraintsToContainer:self.mediaContainer containedView:self.imageView];
 
         // Apply style padding
         [UAInAppMessageUtils applyPaddingToView:self.mediaContainer padding:self.style.additionalPadding replace:NO];
@@ -75,7 +76,7 @@ CGFloat const DefaultVideoAspectRatio = 16.0/9.0;
         self.mediaContainer.backgroundColor = [UIColor clearColor];
         self.mediaContainer.opaque = NO;
         [self addSubview:self.mediaContainer];
-        [UAInAppMessageUtils applyContainerConstraintsToContainer:self containedView:self.mediaContainer];
+        [UAViewUtils applyContainerConstraintsToContainer:self containedView:self.mediaContainer];
 
         WKWebViewConfiguration *config = [[WKWebViewConfiguration alloc] init];
         config.allowsInlineMediaPlayback = YES;
@@ -93,7 +94,7 @@ CGFloat const DefaultVideoAspectRatio = 16.0/9.0;
 
         self.webView = [[WKWebView alloc] initWithFrame:self.frame configuration:config];
         [self.mediaContainer addSubview:self.webView];
-        [UAInAppMessageUtils applyContainerConstraintsToContainer:self.mediaContainer containedView:self.webView];
+        [UAViewUtils applyContainerConstraintsToContainer:self.mediaContainer containedView:self.webView];
 
         // Apply style padding
         [UAInAppMessageUtils applyPaddingToView:self.mediaContainer  padding:self.style.additionalPadding replace:NO];

@@ -11,6 +11,8 @@
 #import "UAColorUtils+Internal.h"
 #import "UAInAppMessageDismissButton+Internal.h"
 #import "UAInAppMessageModalStyle.h"
+#import "UAViewUtils+Internal.h"
+
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -285,7 +287,7 @@ double const DefaultModalAnimationDuration = 0.2;
 
     self.closeButton.dismissButtonColor = self.displayContent.dismissButtonColor;
     [self.closeButtonContainerView addSubview:self.closeButton];
-    [UAInAppMessageUtils applyContainerConstraintsToContainer:self.closeButtonContainerView containedView:self.closeButton];
+    [UAViewUtils applyContainerConstraintsToContainer:self.closeButtonContainerView containedView:self.closeButton];
 
     // Normalize the display content layout
     UAInAppMessageModalContentLayoutType normalizedContentLayout = [self normalizeContentLayout:self.displayContent];
@@ -419,7 +421,7 @@ double const DefaultModalAnimationDuration = 0.2;
                                                                                       selector:@selector(buttonTapped:)];
         if (buttonView) {
             [self.buttonContainerView addSubview:buttonView];
-            [UAInAppMessageUtils applyContainerConstraintsToContainer:self.buttonContainerView containedView:buttonView];
+            [UAViewUtils applyContainerConstraintsToContainer:self.buttonContainerView containedView:buttonView];
 
             // Add the button style padding
             [UAInAppMessageUtils applyPaddingToView:buttonView.buttonContainer padding:self.style.buttonStyle.additionalPadding replace:NO];
@@ -448,7 +450,7 @@ double const DefaultModalAnimationDuration = 0.2;
     UAInAppMessageButton *footerButton = [self createFooterButtonWithButtonInfo:self.displayContent.footer];
     if (footerButton) {
         [self.footerContainerView addSubview:footerButton];
-        [UAInAppMessageUtils applyContainerConstraintsToContainer:self.footerContainerView containedView:footerButton];
+        [UAViewUtils applyContainerConstraintsToContainer:self.footerContainerView containedView:footerButton];
     } else {
         [self.footerContainerView removeFromSuperview];
     }
@@ -507,7 +509,7 @@ double const DefaultModalAnimationDuration = 0.2;
 
     // Add full screen constraints
     // (note the these are not to the safe area - so insets will need to be provided opn iPhone X)
-    [UAInAppMessageUtils applyContainerConstraintsToContainer:self.view containedView:self.modalContainer];
+    [UAViewUtils applyContainerConstraintsToContainer:self.view containedView:self.modalContainer];
 
     // Set shade view to background color
     self.shadeView.opaque = YES;

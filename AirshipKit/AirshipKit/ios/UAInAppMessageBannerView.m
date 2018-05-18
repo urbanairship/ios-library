@@ -8,6 +8,7 @@
 #import "UAInAppMessageBannerDisplayContent+Internal.h"
 #import "UAColorUtils+Internal.h"
 #import "UAUtils+Internal.h"
+#import "UAViewUtils+Internal.h"
 
 #import "UAInAppMessageBannerDisplayContent+Internal.h"
 
@@ -165,7 +166,7 @@ CGFloat const ShadowOpacity = 0.5;
     self.bannerContentView = bannerContentView;
 
     [self.bannerContentContainerView addSubview:bannerContentView];
-    [UAInAppMessageUtils applyContainerConstraintsToContainer:self.bannerContentContainerView containedView:bannerContentView];
+    [UAViewUtils applyContainerConstraintsToContainer:self.bannerContentContainerView containedView:bannerContentView];
 
     [self.bannerContentContainerView layoutSubviews];
 }
@@ -174,7 +175,7 @@ CGFloat const ShadowOpacity = 0.5;
     self.buttonView = buttonView;
 
     [self.buttonContainerView addSubview:buttonView];
-    [UAInAppMessageUtils applyContainerConstraintsToContainer:self.buttonContainerView containedView:buttonView];
+    [UAViewUtils applyContainerConstraintsToContainer:self.buttonContainerView containedView:buttonView];
 
     [self.buttonContainerView layoutSubviews];
 }

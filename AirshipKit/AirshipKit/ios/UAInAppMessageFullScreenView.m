@@ -12,6 +12,8 @@
 #import "UAInAppMessageFullScreenDisplayContent+Internal.h"
 #import "UAInAppMessageDismissButton+Internal.h"
 #import "UAUtils+Internal.h"
+#import "UAViewUtils+Internal.h"
+
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -120,7 +122,7 @@ NSString *const UAInAppMessageFullScreenViewNibName = @"UAInAppMessageFullScreen
     self.closeButton = closeButton;
     [self.closeButtonContainer addSubview:closeButton];
 
-    [UAInAppMessageUtils applyContainerConstraintsToContainer:self.closeButtonContainer containedView:closeButton];
+    [UAViewUtils applyContainerConstraintsToContainer:self.closeButtonContainer containedView:closeButton];
 
     // Normalize content layout
     UAInAppMessageFullScreenContentLayoutType normalizedContentLayout = [self normalizeContentLayout:displayContent];
@@ -269,7 +271,7 @@ NSString *const UAInAppMessageFullScreenViewNibName = @"UAInAppMessageFullScreen
     // Explicitly remove footer view from the superview if footer is nil
     if (footerButton) {
         [self.footerButtonContainer addSubview:footerButton];
-        [UAInAppMessageUtils applyContainerConstraintsToContainer:self.footerButtonContainer containedView:footerButton];
+        [UAViewUtils applyContainerConstraintsToContainer:self.footerButtonContainer containedView:footerButton];
     } else {
         [self.footerButtonContainer removeFromSuperview];
     }

@@ -3,6 +3,7 @@
 #import <UIKit/UIKit.h>
 #import <WebKit/WebKit.h>
 #import "UAWKWebViewDelegate.h"
+#import "UABeveledLoadingIndicator.h"
 #import "UAMessageCenterMessageViewProtocol.h"
 
 /**

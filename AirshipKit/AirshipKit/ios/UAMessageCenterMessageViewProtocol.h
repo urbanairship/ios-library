@@ -12,6 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @protocol UAMessageCenterMessageViewProtocol
 
+
 /**
  * The UAInboxMessage being displayed.
  */
@@ -40,6 +41,18 @@ NS_ASSUME_NONNULL_BEGIN
  * @param errorCompletion Called on loading error
  */
 - (void)loadMessageForID:(NSString *)messageID onlyIfChanged:(BOOL)onlyIfChanged onError:(nullable void (^)(void))errorCompletion;
+
+
+@optional
+
+/**
+ * Sets a custom message loading indicator view and animation. Will
+ * show the default loading indicator and animation if left unset.
+ *
+ * @param loading indicator view.
+ * @param animation block to execute upon displaying loading indicator view.
+ */
+- (void)setLoadingIndicatorView:(UIView *)loadingIndicatorView animations:(void (^)(void))animations;
 
 @end
 
