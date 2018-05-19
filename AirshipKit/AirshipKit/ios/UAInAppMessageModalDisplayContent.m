@@ -33,6 +33,30 @@ NSUInteger const UAInAppMessageModalMaxButtons = 2;
     return self;
 }
 
+- (instancetype)initWithDisplayContent:(UAInAppMessageModalDisplayContent *)content {
+    self = [super init];
+
+    if (self) {
+        self.heading = content.heading;
+        self.body = content.body;
+        self.media = content.media;
+        self.footer = content.footer;
+        self.buttons = content.buttons;
+        self.buttonLayout = content.buttonLayout;
+        self.contentLayout = content.contentLayout;
+        self.backgroundColor = content.backgroundColor;
+        self.dismissButtonColor = content.dismissButtonColor;
+        self.borderRadius = content.borderRadius;
+        self.allowFullScreenDisplay = content.allowFullScreenDisplay;
+    }
+
+    return self;
+}
+
++ (instancetype)builderWithDisplayContent:(UAInAppMessageModalDisplayContent *)content {
+    return [[self alloc] initWithDisplayContent:content];
+}
+
 - (BOOL)isValid {
     if (!self.heading && !self.body) {
         UA_LERR(@"Modal display must have either its body or heading defined.");
@@ -354,6 +378,16 @@ NSUInteger const UAInAppMessageModalMaxButtons = 2;
     }
 
     return [json copy];
+}
+
+- (UAInAppMessageModalDisplayContent *)extend:(void(^)(UAInAppMessageModalDisplayContentBuilder *builder))builderBlock {
+    if (builderBlock) {
+        UAInAppMessageModalDisplayContentBuilder *builder = [UAInAppMessageModalDisplayContentBuilder builderWithDisplayContent:self];
+        builderBlock(builder);
+        return [[UAInAppMessageModalDisplayContent alloc] initWithBuilder:builder];
+    }
+
+    return self;
 }
 
 #pragma mark - NSObject

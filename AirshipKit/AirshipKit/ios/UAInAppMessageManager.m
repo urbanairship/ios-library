@@ -25,7 +25,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-NSTimeInterval const DefaultMessageDisplayInterval = 30;
+NSTimeInterval const DefaultMessageDisplayInterval = 1;
 NSTimeInterval const MaxSchedules = 200;
 NSTimeInterval const MessagePrepareRetyDelay = 200;
 
@@ -203,6 +203,19 @@ NSString *const UAInAppMessageManagerEnabledKey = @"UAInAppMessageManagerEnabled
     self.isDisplayLocked = true;
 }
 
+- (id<UAInAppMessageAdapterProtocol>)adapterForMessage:(UAInAppMessage *)message {
+    id<UAInAppMessageAdapterProtocol> (^factory)(UAInAppMessage* message) = self.adapterFactories[@(message.displayType)];
+
+    if (!factory) {
+        UA_LWARN(@"Factory unavailable for message: %@", message);
+        return nil;
+    }
+
+    id<UAInAppMessageAdapterProtocol> adapter = factory(message);
+
+    return adapter;
+}
+
 - (BOOL)isScheduleReadyToExecute:(UASchedule *)schedule {
     UA_LTRACE(@"Checking if schedule %@ is ready to execute.", schedule.identifier);
 
@@ -222,26 +235,23 @@ NSString *const UAInAppMessageManagerEnabledKey = @"UAInAppMessageManagerEnabled
             return YES;
         }
 
-        id<UAInAppMessageAdapterProtocol> (^factory)(UAInAppMessage* message) = self.adapterFactories[@(info.message.displayType)];
+        UAInAppMessage *message = info.message;
 
-        if (!factory) {
-            UA_LWARN(@"Factory unavailable for message: %@. Cancelling schedule.", info.message);
-            [self cancelScheduleWithID:schedule.identifier];
-            return NO;
+        // Allow the delegate to extend the message if desired.
+        if ([self.delegate respondsToSelector:@selector(extendMessage:)]) {
+            message = [self.delegate extendMessage:message];
         }
 
-        id<UAInAppMessageAdapterProtocol> adapter = factory(info.message);
-
-        // If no adapter factory available for specified displayType return NO
+        id<UAInAppMessageAdapterProtocol> adapter = [self adapterForMessage:message];
         if (!adapter) {
-            UA_LWARN(@"Factory failed to build adapter with message: %@. Cancelling schedule.", info.message);
+            UA_LWARN(@"Failed to build adapter for message: %@. Cancelling schedule.", info.message);
             [self cancelScheduleWithID:schedule.identifier];
             return NO;
         }
 
         UAInAppMessageScheduleData *data = [UAInAppMessageScheduleData dataWithAdapter:adapter
                                                                             scheduleID:schedule.identifier
-                                                                               message:info.message];
+                                                                               message:message];
         self.scheduleData[schedule.identifier] = data;
         [self prepareMessageWithScheduleData:data delay:0];
         return NO;
@@ -288,6 +298,8 @@ NSString *const UAInAppMessageManagerEnabledKey = @"UAInAppMessageManagerEnabled
         return;
     }
 
+    id<UAInAppMessageAdapterProtocol> adapter = scheduleData.adapter;
+
     // Lock Display
     [self lockDisplay];
 
@@ -297,7 +309,7 @@ NSString *const UAInAppMessageManagerEnabledKey = @"UAInAppMessageManagerEnabled
     }
 
     // Display event
-    UAEvent *event = [UAInAppMessageDisplayEvent eventWithMessage:info.message];
+    UAEvent *event = [UAInAppMessageDisplayEvent eventWithMessage:message];
     [[UAirship analytics] addEvent:event];
 
     // Display time timer
@@ -305,13 +317,13 @@ NSString *const UAInAppMessageManagerEnabledKey = @"UAInAppMessageManagerEnabled
     [timer start];
 
     UA_WEAKIFY(self);
-    [scheduleData.adapter display:^(UAInAppMessageResolution *resolution) {
+    [adapter display:^(UAInAppMessageResolution *resolution) {
         UA_STRONGIFY(self);
         UA_LDEBUG(@"Schedule %@ finished displaying", schedule.identifier);
 
         // Resolution event
         [timer stop];
-        UAEvent *event = [UAInAppMessageResolutionEvent eventWithMessage:info.message resolution:resolution displayTime:timer.time];
+        UAEvent *event = [UAInAppMessageResolutionEvent eventWithMessage:message resolution:resolution displayTime:timer.time];
         [[UAirship analytics] addEvent:event];
 
         // Cancel button
@@ -319,16 +331,14 @@ NSString *const UAInAppMessageManagerEnabledKey = @"UAInAppMessageManagerEnabled
             [self cancelScheduleWithID:schedule.identifier];
         }
 
-        if (info.message.actions) {
-            [UAActionRunner runActionsWithActionValues:info.message.actions
+        if (message.actions) {
+            [UAActionRunner runActionsWithActionValues:message.actions
                                              situation:UASituationManualInvocation
                                               metadata:nil
                                      completionHandler:^(UAActionResult *result) {
                                          UA_LTRACE(@"Finished running actions for schedule %@", schedule.identifier);
                                      }];
         }
-
-
 
         // Start timer to unlock display after display interval
         [self unlockDisplayAfter:self.displayInterval];

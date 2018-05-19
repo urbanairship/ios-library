@@ -140,6 +140,13 @@ typedef NS_OPTIONS(NSUInteger, UAInAppMessageTextInfoAlignmentType) {
  */
 + (nullable instancetype)textInfoWithBuilderBlock:(void(^)(UAInAppMessageTextInfoBuilder *builder))builderBlock;
 
+/**
+ * Extends an in-app message text info with a builder block.
+ *
+ * @return An extended instance of UAInAppMessageTextInfo.
+ */
+- (UAInAppMessageTextInfo *)extend:(void(^)(UAInAppMessageTextInfoBuilder *builder))builderBlock;
+
 @end
 
 NS_ASSUME_NONNULL_END

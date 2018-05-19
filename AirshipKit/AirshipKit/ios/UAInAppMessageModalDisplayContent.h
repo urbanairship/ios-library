@@ -168,13 +168,20 @@ extern NSUInteger const UAInAppMessageModalMaxButtons;
 @property(nonatomic, assign, readonly) BOOL allowFullScreenDisplay;
 
 /**
- * Factory method for building modal message display content with builder block.
+ * Factory method for building modal message display content with a builder block.
  *
  * @param builderBlock The builder block.
- *
- * @returns the display content if the builder block successfully built it, otherwise nil.
+ * @return The display content if the builder block successfully built it, otherwise nil.
  */
 + (nullable instancetype)displayContentWithBuilderBlock:(void(^)(UAInAppMessageModalDisplayContentBuilder *builder))builderBlock;
+
+/**
+ * Extends a modal display content with a builder block.
+ *
+ * @param builderBlock The builder block.
+ * @return An extended instance of UAInAppMessageModalDisplayContent.
+ */
+- (UAInAppMessageModalDisplayContent *)extend:(void(^)(UAInAppMessageModalDisplayContentBuilder *builder))builderBlock;
 
 @end
 

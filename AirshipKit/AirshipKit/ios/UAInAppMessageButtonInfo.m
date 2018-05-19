@@ -44,6 +44,26 @@ NSString *const UAInAppMessageButtonInfoBehaviorDismissValue = @"dismiss";
     return self;
 }
 
+- (instancetype)initWithInfo:(UAInAppMessageButtonInfo *)info {
+    self = [super init];
+
+    if (self) {
+        self.label = info.label;
+        self.identifier = info.identifier;
+        self.behavior = info.behavior;
+        self.borderRadius = info.borderRadius;
+        self.backgroundColor = info.backgroundColor;
+        self.borderColor = info.borderColor;
+        self.actions = info.actions;
+    }
+
+    return self;
+}
+
++ (instancetype)builderWithInfo:(UAInAppMessageButtonInfo *)info {
+    return [[self alloc] initWithInfo:info];
+}
+
 - (BOOL)isValid {
     if (!self.label) {
         UA_LERR(@"In-app button infos require a label");
@@ -260,6 +280,16 @@ NSString *const UAInAppMessageButtonInfoBehaviorDismissValue = @"dismiss";
     [json setValue:self.actions forKey:UAInAppMessageButtonInfoActionsKey];
 
     return [json copy];
+}
+
+- (UAInAppMessageButtonInfo *)extend:(void(^)(UAInAppMessageButtonInfoBuilder *builder))builderBlock {
+    if (builderBlock) {
+        UAInAppMessageButtonInfoBuilder *builder = [UAInAppMessageButtonInfoBuilder builderWithInfo:self];
+        builderBlock(builder);
+        return [[UAInAppMessageButtonInfo alloc] initWithBuilder:builder];
+    }
+
+    return self;
 }
 
 #pragma mark - NSObject

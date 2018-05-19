@@ -185,15 +185,21 @@ extern NSUInteger const UAInAppMessageBannerMaxButtons;
  */
 @property(nonatomic, copy, nullable, readonly) NSDictionary *actions;
 
-
 /**
- * Factory method for building banner display content with builder block.
+ * Factory method for building banner display content with a builder block.
  *
  * @param builderBlock The builder block.
- *
- * @returns the display content if the builder block successfully built it, otherwise nil.
+ * @return The display content if the builder block successfully built it, otherwise nil.
  */
 + (nullable instancetype)displayContentWithBuilderBlock:(void(^)(UAInAppMessageBannerDisplayContentBuilder *builder))builderBlock;
+
+/**
+ * Extends a banner dislay content with a builder block.
+ *
+ * @param builderBlock The builder block.
+ * @return An extended instance of UAInAppMessageBannerDisplayContent.
+ */
+- (UAInAppMessageBannerDisplayContent *)extend:(void(^)(UAInAppMessageBannerDisplayContentBuilder *builder))builderBlock;
 
 @end
 
