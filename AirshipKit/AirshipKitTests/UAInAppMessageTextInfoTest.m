@@ -37,4 +37,28 @@
     XCTAssertNil(textInfo);
 }
 
+- (void)testExtend {
+    UAInAppMessageTextInfo *textInfo = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
+        builder.text = @"text";
+        builder.alignment = NSTextAlignmentCenter;
+        builder.color = [UIColor redColor];
+        builder.fontFamilies = @[@"sans-serif"];
+        builder.style = UAInAppMessageTextInfoStyleBold | UAInAppMessageTextInfoStyleItalic | UAInAppMessageTextInfoStyleUnderline;
+        builder.size = 11;
+    }];
+
+    UAInAppMessageTextInfo *newInfo = [textInfo extend:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
+        builder.text = @"new text";
+    }];
+
+    XCTAssertNotNil(newInfo);
+    XCTAssertFalse([newInfo isEqual:textInfo]);
+    XCTAssertEqual(newInfo.alignment, textInfo.alignment);
+    XCTAssertEqualObjects(newInfo.color, textInfo.color);
+    XCTAssertEqualObjects(newInfo.fontFamilies, textInfo.fontFamilies);
+    XCTAssertEqual(newInfo.style, textInfo.style);
+    XCTAssertEqual(newInfo.size, textInfo.size);
+    XCTAssertEqualObjects(newInfo.text, @"new text");
+}
+
 @end
