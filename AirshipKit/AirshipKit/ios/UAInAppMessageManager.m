@@ -25,7 +25,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-NSTimeInterval const DefaultMessageDisplayInterval = 1;
+NSTimeInterval const DefaultMessageDisplayInterval = 30;
 NSTimeInterval const MaxSchedules = 200;
 NSTimeInterval const MessagePrepareRetyDelay = 200;
 
