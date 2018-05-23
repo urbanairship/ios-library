@@ -112,6 +112,7 @@ void (^deviceRegisterSuccessDoBlock)(NSInvocation *);
     [self.mockedRegistrarDelegate stopMocking];
     [self.mockedUAConfig stopMocking];
     [self.mockedUAPush stopMocking];
+    [self.mockedDataStore stopMocking];
     [self.mockedUAirship stopMocking];
 
     [super tearDown];

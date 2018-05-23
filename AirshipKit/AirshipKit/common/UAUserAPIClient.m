@@ -6,6 +6,7 @@
 #import "NSJSONSerialization+UAAdditions.h"
 #import "UAUser.h"
 #import "UAUserData+Internal.h"
+#import "NSURLResponse+UAAdditions.h"
 
 @implementation UAUserAPIClient
 
@@ -31,16 +32,7 @@
 
 
     [self.session dataTaskWithRequest:request retryWhere:^BOOL(NSData * _Nullable data, NSURLResponse * _Nullable response) {
-        NSHTTPURLResponse *httpResponse = nil;
-        if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
-            httpResponse = (NSHTTPURLResponse *) response;
-        }
-
-        if (httpResponse.statusCode >= 500 && httpResponse.statusCode <= 599) {
-            return YES;
-        }
-
-        return NO;
+        return [response hasRetriableStatus];
     } completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
         NSHTTPURLResponse *httpResponse = nil;
         if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
@@ -85,16 +77,7 @@
     UARequest *request = [self requestToUpdateUser:user payload:payload];
 
     [self.session dataTaskWithRequest:request retryWhere:^BOOL(NSData * _Nullable data, NSURLResponse * _Nullable response) {
-        NSHTTPURLResponse *httpResponse = nil;
-        if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
-            httpResponse = (NSHTTPURLResponse *) response;
-        }
-
-        if (httpResponse.statusCode >= 500 && httpResponse.statusCode <= 599) {
-            return YES;
-        }
-
-        return NO;
+        return [response hasRetriableStatus];
     } completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
         NSHTTPURLResponse *httpResponse = nil;
         if ([response isKindOfClass:[NSHTTPURLResponse class]]) {

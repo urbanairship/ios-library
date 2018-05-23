@@ -11,7 +11,7 @@ DEPENDENCIES:
   - XcodeEdit (~> 2.1)
 
 SPEC REPOS:
-  https://github.com/CocoaPods/Specs.git:
+  https://github.com/cocoapods/specs.git:
     - KIF
     - OCMock
     - XcodeEdit
@@ -23,4 +23,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 47a6023bea81a52ac91c2a6fb7ce53a511daad03
 
-COCOAPODS: 1.5.0
+COCOAPODS: 1.5.2

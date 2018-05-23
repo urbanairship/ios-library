@@ -3,6 +3,7 @@
 #import "NSOperationQueue+UAAdditions.h"
 #import "NSString+UALocalizationAdditions.h"
 #import "NSString+UAURLEncoding.h"
+#import "NSURLResponse+UAAdditions.h"
 #import "UAAccountEventTemplate.h"
 #import "UAAction+Operators.h"
 #import "UAAction.h"

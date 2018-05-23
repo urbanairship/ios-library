@@ -7,6 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3C54A7D620B4C8D50026887C /* NSURLResponse+UAAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C54A7D420B4C8D50026887C /* NSURLResponse+UAAdditions.m */; };
+		3C54A7D720B4C8D50026887C /* NSURLResponse+UAAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C54A7D420B4C8D50026887C /* NSURLResponse+UAAdditions.m */; };
+		3C54A7D820B4C8D50026887C /* NSURLResponse+UAAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C54A7D420B4C8D50026887C /* NSURLResponse+UAAdditions.m */; };
+		3C54A7D920B4C8D50026887C /* NSURLResponse+UAAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C54A7D520B4C8D50026887C /* NSURLResponse+UAAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		3C54A7DA20B4C8D50026887C /* NSURLResponse+UAAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C54A7D520B4C8D50026887C /* NSURLResponse+UAAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		3C54A7DB20B4C8D50026887C /* NSURLResponse+UAAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C54A7D520B4C8D50026887C /* NSURLResponse+UAAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3C5A250E20115BE600F25829 /* UAInAppMessageHTMLView+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C5A250C20115BE600F25829 /* UAInAppMessageHTMLView+Internal.h */; };
 		3C5A250F20115BE600F25829 /* UAInAppMessageHTMLView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C5A250D20115BE600F25829 /* UAInAppMessageHTMLView.m */; };
 		3C5A25182012BFB900F25829 /* UAInAppMessageHTMLView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3C5A25162012BFB900F25829 /* UAInAppMessageHTMLView.xib */; };
@@ -1505,6 +1511,8 @@
 
 /* Begin PBXFileReference section */
 		07A9F5B3D35A6078949E4EAA /* Pods-AirshipKitTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AirshipKitTests.release.xcconfig"; path = "../Pods/Target Support Files/Pods-AirshipKitTests/Pods-AirshipKitTests.release.xcconfig"; sourceTree = "<group>"; };
+		3C54A7D420B4C8D50026887C /* NSURLResponse+UAAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSURLResponse+UAAdditions.m"; path = "common/NSURLResponse+UAAdditions.m"; sourceTree = "<group>"; };
+		3C54A7D520B4C8D50026887C /* NSURLResponse+UAAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSURLResponse+UAAdditions.h"; path = "common/NSURLResponse+UAAdditions.h"; sourceTree = "<group>"; };
 		3C5A250C20115BE600F25829 /* UAInAppMessageHTMLView+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "UAInAppMessageHTMLView+Internal.h"; path = "ios/UAInAppMessageHTMLView+Internal.h"; sourceTree = "<group>"; };
 		3C5A250D20115BE600F25829 /* UAInAppMessageHTMLView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = UAInAppMessageHTMLView.m; path = ios/UAInAppMessageHTMLView.m; sourceTree = "<group>"; };
 		3C5A25162012BFB900F25829 /* UAInAppMessageHTMLView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UAInAppMessageHTMLView.xib; sourceTree = "<group>"; };
@@ -3245,6 +3253,8 @@
 		CC40DDE71D91D8E600BABD4F /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				3C54A7D520B4C8D50026887C /* NSURLResponse+UAAdditions.h */,
+				3C54A7D420B4C8D50026887C /* NSURLResponse+UAAdditions.m */,
 				CC40DBF21D8C996A00BABD4F /* UAURLProtocol.h */,
 				CC40DBF31D8C996A00BABD4F /* UAURLProtocol.m */,
 				3CE58FD3207427CE00076854 /* UAUtils.h */,
@@ -3757,6 +3767,7 @@
 				3CE58FD4207427CF00076854 /* UAUtils.h in Headers */,
 				CC40DC051D8C996A00BABD4F /* AirshipKit.h in Headers */,
 				CCEAF3F11DD3D8C1005C080F /* UAPreferenceDataStore+InternalTagGroupsMutation.h in Headers */,
+				3C54A7D920B4C8D50026887C /* NSURLResponse+UAAdditions.h in Headers */,
 				45DCD8332086AAB200BCF10F /* UAInAppMessageButtonStyle.h in Headers */,
 				DF7E21E91ED624D000C79C46 /* UAMessageCenterMessageViewProtocol.h in Headers */,
 				3C805B1C200ED87D0079F56E /* UAInAppMessageHTMLDisplayContent.h in Headers */,
@@ -4036,9 +4047,10 @@
 				99666E751EDF2CC500BAE46B /* AirshipKit.h in Headers */,
 				3CE58FD520742A8100076854 /* UAUtils.h in Headers */,
 				DF7E7A1F1EE2163A00D4EF02 /* AirshipLib.h in Headers */,
-				99666E5E1EDF2C9500BAE46B /* NSJSONSerialization+UAAdditions.h in Headers */,
 				6E598D371FFC4FB4005B234B /* UAActionScheduleEdits.h in Headers */,
 				457F47AC20ADDF7500DEEAD9 /* UAViewUtils+Internal.h in Headers */,
+				3C54A7DA20B4C8D50026887C /* NSURLResponse+UAAdditions.h in Headers */,
+				99666E5E1EDF2C9500BAE46B /* NSJSONSerialization+UAAdditions.h in Headers */,
 				99666E6A1EDF2C9A00BAE46B /* NSManagedObjectContext+UAAdditions.h in Headers */,
 				99666E6E1EDF2C9A00BAE46B /* NSOperationQueue+UAAdditions.h in Headers */,
 				99666E601EDF2C9500BAE46B /* NSString+UALocalizationAdditions.h in Headers */,
@@ -4210,6 +4222,7 @@
 				3C77BF8F2016AA3C00AD37F3 /* UAInAppMessageHTMLAdapter.h in Headers */,
 				99E2DA2E1FB62D2400C9F2CC /* UAInAppMessageManager+Internal.h in Headers */,
 				6EADE7071FA8FA160007F924 /* UAAutomationEngine+Internal.h in Headers */,
+				3C54A7DB20B4C8D50026887C /* NSURLResponse+UAAdditions.h in Headers */,
 				45DCD8342086AAB200BCF10F /* UAInAppMessageButtonStyle.h in Headers */,
 				DF7E22A41ED62E0900C79C46 /* AirshipKit.h in Headers */,
 				99E2DA311FB62E6C00C9F2CC /* UARemoteDataManager+Internal.h in Headers */,
@@ -4931,6 +4944,7 @@
 				CC40DC331D8C996A00BABD4F /* UAAddCustomEventAction.m in Sources */,
 				DF18CCED1FEC74D200652445 /* UAInAppMessageModalViewController.m in Sources */,
 				CC40DC711D8C996A00BABD4F /* UAConfig.m in Sources */,
+				3C54A7D620B4C8D50026887C /* NSURLResponse+UAAdditions.m in Sources */,
 				CC40DCB61D8C996A00BABD4F /* UAInboxMessageList.m in Sources */,
 				CC40DC151D8C996A00BABD4F /* UAAction+Operators.m in Sources */,
 				998B22681FD89D4400C535AE /* UAInAppMessageBannerContentView.m in Sources */,
@@ -5303,6 +5317,7 @@
 				99E2DA771FBB76E000C9F2CC /* UAInAppMessageTextInfo.m in Sources */,
 				DF18CCEE1FEC74D200652445 /* UAInAppMessageModalViewController.m in Sources */,
 				6E3673E11E8C8178005B5DFF /* UATextInputNotificationAction.m in Sources */,
+				3C54A7D820B4C8D50026887C /* NSURLResponse+UAAdditions.m in Sources */,
 				CC04F19B1DBFF0CB00B4842D /* NSManagedContext+UAAdditions.m in Sources */,
 				CC40DD501D8C9A1C00BABD4F /* UAAssociateIdentifiersEvent.m in Sources */,
 				CC40DD511D8C9A1C00BABD4F /* UAAutoIntegration.m in Sources */,
@@ -5566,6 +5581,7 @@
 				99666D821EDF2B7300BAE46B /* UAAPIClient.m in Sources */,
 				99666D8A1EDF2BA000BAE46B /* UAScheduleAction.m in Sources */,
 				99666D841EDF2B7300BAE46B /* UARequest.m in Sources */,
+				3C54A7D720B4C8D50026887C /* NSURLResponse+UAAdditions.m in Sources */,
 				99666DA01EDF2BB400BAE46B /* UAAutomation.m in Sources */,
 				DF5ED8DD1F743E7E002DDA24 /* UARemoteDataPayload.m in Sources */,
 				99666D941EDF2BAE00BAE46B /* UAAutomationStore.m in Sources */,
