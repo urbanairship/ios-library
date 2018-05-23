@@ -359,6 +359,7 @@ NSUInteger const UAInAppMessageFullScreenMaxButtons = 5;
         return [[UAInAppMessageFullScreenDisplayContent alloc] initWithBuilder:builder];
     }
 
+    UA_LINFO(@"Extended %@ with nil builderBlock. Returning self.", self);
     return self;
 }
 

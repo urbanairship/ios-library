@@ -377,6 +377,7 @@ NSUInteger const UAInAppMessageBannerMaxButtons = 2;
         return [[UAInAppMessageBannerDisplayContent alloc] initWithBuilder:builder];
     }
 
+    UA_LINFO(@"Extended %@ with nil builderBlock. Returning self.", self);
     return self;
 }
 

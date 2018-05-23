@@ -162,6 +162,7 @@ NSString *const UAInAppMessageURLKey = @"url";
         return [[UAInAppMessageHTMLDisplayContent alloc] initWithBuilder:builder];
     }
 
+    UA_LINFO(@"Extended %@ with nil builderBlock. Returning self.", self);
     return self;
 }
 

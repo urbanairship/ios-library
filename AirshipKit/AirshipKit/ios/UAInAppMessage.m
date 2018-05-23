@@ -305,6 +305,7 @@ NSString *const UAInAppMessageSourceLegacyPushValue = @"legacy-push";
         return [[UAInAppMessage alloc] initWithBuilder:builder];
     }
 
+    UA_LINFO(@"Extended %@ with nil builderBlock. Returning self.", self);
     return self;
 }
 

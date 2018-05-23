@@ -387,6 +387,7 @@ NSUInteger const UAInAppMessageModalMaxButtons = 2;
         return [[UAInAppMessageModalDisplayContent alloc] initWithBuilder:builder];
     }
 
+    UA_LINFO(@"Extended %@ with nil builderBlock. Returning self.", self);
     return self;
 }
 
