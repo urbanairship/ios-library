@@ -103,6 +103,14 @@ extern NSUInteger const UAInAppMessageIDLimit;
  */
 + (instancetype)messageWithBuilderBlock:(void(^)(UAInAppMessageBuilder *builder))builderBlock;
 
+/**
+ * Extends a message with a builder block.
+ *
+ * @param builderBlock The builder block.
+ * @return An extended instance of UAInAppMessage.
+ */
+- (UAInAppMessage *)extend:(void(^)(UAInAppMessageBuilder *builder))builderBlock;
+
 @end
 
 NS_ASSUME_NONNULL_END

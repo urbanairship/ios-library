@@ -142,5 +142,26 @@
     XCTAssertNil(message);
 }
 
+- (void)testExtend {
+    UAInAppMessage *message = [UAInAppMessage messageWithBuilderBlock:^(UAInAppMessageBuilder * _Nonnull builder) {
+        builder.displayContent = [UAInAppMessageCustomDisplayContent displayContentWithValue:@{@"cool": @"story"}];
+        builder.identifier = @"abc123";
+    }];
+
+    UAInAppMessage *newMessage = [message extend:^(UAInAppMessageBuilder * _Nonnull builder) {
+        builder.displayContent = [UAInAppMessageCustomDisplayContent displayContentWithValue:@{@"neat": @"rad"}];
+    }];
+
+    XCTAssertNotNil(newMessage);
+    XCTAssertFalse([newMessage isEqual:message]);
+    XCTAssertEqualObjects(newMessage.identifier, message.identifier);
+    XCTAssertEqual(newMessage.displayType, message.displayType);
+    XCTAssertEqualObjects(newMessage.extras, message.extras);
+    XCTAssertEqualObjects(newMessage.actions, message.actions);
+    XCTAssertEqualObjects(newMessage.audience, message.audience);
+    XCTAssertEqual(newMessage.source, message.source);
+    XCTAssertEqualObjects(newMessage.campaigns, message.campaigns);
+    XCTAssertEqualObjects(((UAInAppMessageCustomDisplayContent *)newMessage.displayContent).value, @{@"neat" :@"rad"});
+}
 
 @end

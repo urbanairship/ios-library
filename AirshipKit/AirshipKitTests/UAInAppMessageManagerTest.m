@@ -107,12 +107,15 @@
         [prepareCalled fulfill];
     }] prepare:OCMOCK_ANY];
 
+    [[self.mockDelegate expect] extendMessage:[OCMArg isKindOfClass:[UAInAppMessage class]]];
+
     UASchedule *schedule = [UASchedule scheduleWithIdentifier:@"test IAM schedule" info:self.scheduleInfo];
     XCTAssertFalse([self.manager isScheduleReadyToExecute:schedule]);
 
     [self waitForExpectationsWithTimeout:5 handler:nil];
     
     [self.mockAdapter verify];
+    [self.mockDelegate verify];
     [self.mockAutomationEngine verify];
 }
 

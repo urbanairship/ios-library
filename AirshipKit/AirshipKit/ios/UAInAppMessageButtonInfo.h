@@ -124,6 +124,14 @@ extern NSUInteger const UAInAppMessageButtonInfoIDLimit;
  */
 + (nullable instancetype)buttonInfoWithBuilderBlock:(void(^)(UAInAppMessageButtonInfoBuilder *builder))builderBlock;
 
+/**
+ * Extends an in-app message button info with a builder block.
+ *
+ * @param builderBlock The builder block.
+ * @return An extended instance of UAInAppMessageButtonInfo.
+ */
+- (UAInAppMessageButtonInfo *)extend:(void(^)(UAInAppMessageButtonInfoBuilder *builder))builderBlock;
+
 @end
 
 NS_ASSUME_NONNULL_END

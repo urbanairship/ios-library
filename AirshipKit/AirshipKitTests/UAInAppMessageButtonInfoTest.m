@@ -118,5 +118,37 @@
     XCTAssertNil(buttonInfo);
 }
 
+- (void)testExtend {
+    UAInAppMessageButtonInfo *buttonInfo = [UAInAppMessageButtonInfo buttonInfoWithBuilderBlock:^(UAInAppMessageButtonInfoBuilder * _Nonnull builder) {
+        builder.label = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
+            builder.text = @"text";
+            builder.alignment = NSTextAlignmentCenter;
+            builder.color = [UIColor redColor];
+            builder.style = UAInAppMessageTextInfoStyleBold | UAInAppMessageTextInfoStyleItalic | UAInAppMessageTextInfoStyleUnderline;
+            builder.size = 11;
+        }];
+
+        builder.identifier = [@"" stringByPaddingToLength:UAInAppMessageButtonInfoIDLimit withString:@"ID" startingAtIndex:0];
+        builder.behavior = UAInAppMessageButtonInfoBehaviorCancel;
+        builder.borderRadius = 11;
+        builder.backgroundColor = [UIColor redColor];
+        builder.borderColor = [UIColor redColor];
+        builder.actions = @{@"+^t":@"test"};
+    }];
+
+    UAInAppMessageButtonInfo *newInfo = [buttonInfo extend:^(UAInAppMessageButtonInfoBuilder * _Nonnull builder) {
+        builder.actions = @{@"+^t":@"cool"};
+    }];
+
+    XCTAssertNotNil(newInfo);
+    XCTAssertFalse([newInfo isEqual:buttonInfo]);
+    XCTAssertEqualObjects(newInfo.label, buttonInfo.label);
+    XCTAssertEqual(newInfo.behavior, buttonInfo.behavior);
+    XCTAssertEqual(newInfo.borderRadius, buttonInfo.borderRadius);
+    XCTAssertEqualObjects(newInfo.backgroundColor, buttonInfo.backgroundColor);
+    XCTAssertEqualObjects(newInfo.borderColor, buttonInfo.borderColor);
+    XCTAssertEqualObjects(newInfo.actions, @{@"+^t":@"cool"});
+}
+
 @end
 

@@ -172,4 +172,94 @@
     XCTAssertEqual(content.hash, fromJSON.hash);
 }
 
+- (void)testExtend {
+    UAInAppMessageModalDisplayContent *content =  [UAInAppMessageModalDisplayContent displayContentWithBuilderBlock:^(UAInAppMessageModalDisplayContentBuilder *builder) {
+        builder.buttonLayout = UAInAppMessageButtonLayoutTypeJoined;
+        builder.contentLayout = UAInAppMessageModalContentLayoutHeaderMediaBody;
+        builder.dismissButtonColor = [UIColor greenColor];
+
+        builder.media = [UAInAppMessageMediaInfo mediaInfoWithURL:@"some url"
+                                               contentDescription:@"some-description" type:UAInAppMessageMediaInfoTypeImage];
+
+        builder.heading = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
+            builder.text = @"headline content";
+            builder.color = [UIColor redColor];
+            builder.size = 11;
+            builder.alignment = NSTextAlignmentLeft;
+            builder.style = UAInAppMessageTextInfoStyleBold | UAInAppMessageTextInfoStyleItalic | UAInAppMessageTextInfoStyleUnderline;
+        }];;
+
+        builder.body = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
+            builder.text = @"body content";
+            builder.color = [UIColor greenColor];
+            builder.size = 11;
+            builder.alignment = NSTextAlignmentLeft;
+            builder.style = UAInAppMessageTextInfoStyleBold | UAInAppMessageTextInfoStyleItalic | UAInAppMessageTextInfoStyleUnderline;
+        }];
+
+        UAInAppMessageButtonInfo *button1 = [UAInAppMessageButtonInfo buttonInfoWithBuilderBlock:^(UAInAppMessageButtonInfoBuilder * _Nonnull builder) {
+            builder.label = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
+                builder.text = @"Dismiss";
+                builder.color = [UIColor blueColor];
+                builder.size = 11;
+                builder.alignment = NSTextAlignmentLeft;
+                builder.style = UAInAppMessageTextInfoStyleBold | UAInAppMessageTextInfoStyleItalic | UAInAppMessageTextInfoStyleUnderline;
+            }];
+            builder.backgroundColor = [UIColor redColor];
+            builder.identifier = @"button";
+        }];
+
+        UAInAppMessageButtonInfo *button2 = [UAInAppMessageButtonInfo buttonInfoWithBuilderBlock:^(UAInAppMessageButtonInfoBuilder * _Nonnull builder) {
+            builder.label = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
+                builder.text = @"Cancel";
+                builder.color = [UIColor redColor];
+                builder.size = 9;
+                builder.alignment = NSTextAlignmentRight;
+                builder.style = UAInAppMessageTextInfoStyleBold | UAInAppMessageTextInfoStyleItalic | UAInAppMessageTextInfoStyleUnderline;
+            }];
+            builder.backgroundColor = [UIColor blueColor];
+            builder.borderRadius = 10;
+            builder.behavior = UAInAppMessageButtonInfoBehaviorCancel;
+            builder.identifier = @"button";
+        }];
+
+        UAInAppMessageButtonInfo *footerButton = [UAInAppMessageButtonInfo buttonInfoWithBuilderBlock:^(UAInAppMessageButtonInfoBuilder * _Nonnull builder) {
+            builder.label = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
+                builder.text = @"footer link";
+                builder.color = [UIColor redColor];
+                builder.size = 9;
+                builder.alignment = NSTextAlignmentCenter;
+                builder.style = UAInAppMessageTextInfoStyleUnderline;
+            }];
+            builder.backgroundColor = [UIColor clearColor];
+            builder.borderRadius = 10;
+            builder.behavior = UAInAppMessageButtonInfoBehaviorCancel;
+            builder.identifier = @"button";
+        }];
+
+        builder.buttons = @[button1, button2];
+        builder.footer = footerButton;
+        builder.allowFullScreenDisplay = YES;
+
+    }];
+
+    UAInAppMessageModalDisplayContent *newContent = [content extend:^(UAInAppMessageModalDisplayContentBuilder * _Nonnull builder) {
+        builder.allowFullScreenDisplay = NO;
+    }];
+
+    XCTAssertNotNil(newContent);
+    XCTAssertFalse([newContent isEqual:content]);
+    XCTAssertEqualObjects(newContent.heading, content.heading);
+    XCTAssertEqualObjects(newContent.body, content.body);
+    XCTAssertEqualObjects(newContent.media, content.media);
+    XCTAssertEqualObjects(newContent.footer, content.footer);
+    XCTAssertEqualObjects(newContent.buttons, content.buttons);
+    XCTAssertEqual(newContent.buttonLayout, content.buttonLayout);
+    XCTAssertEqual(newContent.contentLayout, content.contentLayout);
+    XCTAssertEqualObjects(newContent.backgroundColor, content.backgroundColor);
+    XCTAssertEqualObjects(newContent.dismissButtonColor, content.dismissButtonColor);
+    XCTAssertEqual(newContent.borderRadius, content.borderRadius);
+    XCTAssertFalse(newContent.allowFullScreenDisplay);
+}
+
 @end

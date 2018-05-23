@@ -10,12 +10,30 @@ NSString *const UAInAppMessageURLKey = @"url";
 @implementation UAInAppMessageHTMLDisplayContentBuilder
 
 - (instancetype)init {
-    if (self = [super init]) {
+    self = [super init];
+
+    if (self) {
         self.backgroundColor = [UIColor whiteColor];
         self.dismissButtonColor = [UIColor blackColor];
     }
 
     return self;
+}
+
+- (instancetype)initWithDisplayContent:(UAInAppMessageHTMLDisplayContent *)content {
+    self = [super init];
+
+    if (self) {
+        self.url = content.url;
+        self.backgroundColor = content.backgroundColor;
+        self.dismissButtonColor = content.dismissButtonColor;
+    }
+
+    return self;
+}
+
++ (instancetype)builderWithDisplayContent:(UAInAppMessageHTMLDisplayContent *)content {
+    return [[self alloc] initWithDisplayContent:content];
 }
 
 - (BOOL)isValid {
@@ -135,6 +153,17 @@ NSString *const UAInAppMessageURLKey = @"url";
     [json setValue:[UAColorUtils hexStringWithColor:self.dismissButtonColor] forKey:UAInAppMessageDismissButtonColorKey];
 
     return [json copy];
+}
+
+- (UAInAppMessageHTMLDisplayContent *)extend:(void(^)(UAInAppMessageHTMLDisplayContentBuilder *builder))builderBlock {
+    if (builderBlock) {
+        UAInAppMessageHTMLDisplayContentBuilder *builder = [UAInAppMessageHTMLDisplayContentBuilder builderWithDisplayContent:self];
+        builderBlock(builder);
+        return [[UAInAppMessageHTMLDisplayContent alloc] initWithBuilder:builder];
+    }
+
+    UA_LINFO(@"Extended %@ with nil builderBlock. Returning self.", self);
+    return self;
 }
 
 #pragma mark - NSObject

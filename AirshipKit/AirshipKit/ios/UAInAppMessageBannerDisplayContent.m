@@ -24,7 +24,9 @@ NSUInteger const UAInAppMessageBannerMaxButtons = 2;
 
 // set default values for properties
 - (instancetype)init {
-    if (self = [super init]) {
+    self = [super init];
+
+    if (self) {
         self.buttonLayout = UAInAppMessageButtonLayoutTypeSeparate;
         self.placement = UAInAppMessageBannerPlacementBottom;
         self.contentLayout = UAInAppMessageBannerContentLayoutTypeMediaLeft;
@@ -32,9 +34,34 @@ NSUInteger const UAInAppMessageBannerMaxButtons = 2;
         self.backgroundColor = [UIColor whiteColor];
         self.dismissButtonColor = [UIColor blackColor];
     }
+
     return self;
 }
 
+- (instancetype)initWithDisplayContent:(UAInAppMessageBannerDisplayContent *)content {
+    self = [super init];
+
+    if (self) {
+        self.heading = content.heading;
+        self.body = content.body;
+        self.media = content.media;
+        self.buttons = content.buttons;
+        self.buttonLayout = content.buttonLayout;
+        self.placement = content.placement;
+        self.contentLayout = content.contentLayout;
+        self.duration = content.duration;
+        self.backgroundColor = content.backgroundColor;
+        self.dismissButtonColor = content.dismissButtonColor;
+        self.borderRadius = content.borderRadius;
+        self.actions = content.actions;
+    }
+
+    return self;
+}
+
++ (instancetype)builderWithDisplayContent:(UAInAppMessageBannerDisplayContent *)content {
+    return [[self alloc] initWithDisplayContent:content];
+}
 
 - (BOOL)isValid {
     if (self.heading == nil && self.body == nil) {
@@ -54,6 +81,7 @@ NSUInteger const UAInAppMessageBannerMaxButtons = 2;
 
     return YES;
 }
+
 @end
 
 @interface UAInAppMessageBannerDisplayContent()
@@ -342,6 +370,16 @@ NSUInteger const UAInAppMessageBannerMaxButtons = 2;
     return self;
 }
 
+- (UAInAppMessageBannerDisplayContent *)extend:(void(^)(UAInAppMessageBannerDisplayContentBuilder *builder))builderBlock {
+    if (builderBlock) {
+        UAInAppMessageBannerDisplayContentBuilder *builder = [UAInAppMessageBannerDisplayContentBuilder builderWithDisplayContent:self];
+        builderBlock(builder);
+        return [[UAInAppMessageBannerDisplayContent alloc] initWithBuilder:builder];
+    }
+
+    UA_LINFO(@"Extended %@ with nil builderBlock. Returning self.", self);
+    return self;
+}
 
 - (NSDictionary *)toJSON {
     NSMutableDictionary *json = [NSMutableDictionary dictionary];

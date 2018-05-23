@@ -56,13 +56,20 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, strong, readonly) UIColor *dismissButtonColor;
 
 /**
- * Factory method for building HTML display content with builder block.
+ * Factory method for building HTML display content with a builder block.
  *
  * @param builderBlock The builder block.
- *
- * @returns the display content if the builder block successfully built it, otherwise nil.
+ * @return the display content if the builder block successfully built it, otherwise nil.
  */
 + (nullable instancetype)displayContentWithBuilderBlock:(void(^)(UAInAppMessageHTMLDisplayContentBuilder *builder))builderBlock;
+
+/**
+ * Extends an HTML display content with a builder block.
+ *
+ * @param builderBlock The builder block.
+ * @return An extended instance of UAInAppMessageHTMLDisplayContent.
+ */
+- (UAInAppMessageHTMLDisplayContent *)extend:(void(^)(UAInAppMessageHTMLDisplayContentBuilder *builder))builderBlock;
 
 @end
 

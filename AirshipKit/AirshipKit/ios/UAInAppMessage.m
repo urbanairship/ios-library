@@ -13,6 +13,26 @@ NSUInteger const UAInAppMessageIDLimit = 100;
 
 @implementation UAInAppMessageBuilder
 
+- (instancetype)initWithMessage:(UAInAppMessage *)message {
+    self = [super init];
+
+    if (self) {
+        self.identifier = message.identifier;
+        self.displayContent = message.displayContent;
+        self.extras = message.extras;
+        self.actions = message.actions;
+        self.audience = message.audience;
+        self.source = message.source;
+        self.campaigns = message.campaigns;
+    }
+
+    return self;
+}
+
++ (instancetype)builderWithMessage:(UAInAppMessage *)message {
+    return [[self alloc] initWithMessage:message];
+}
+
 - (BOOL)isValid {
     if (!self.identifier.length || self.identifier.length > UAInAppMessageIDLimit) {
         UA_LERR(@"In-app message requires an identifier between [1, 100] characters");
@@ -26,6 +46,7 @@ NSUInteger const UAInAppMessageIDLimit = 100;
 
     return YES;
 }
+
 @end
 
 @interface UAInAppMessage()
@@ -275,6 +296,17 @@ NSString *const UAInAppMessageSourceLegacyPushValue = @"legacy-push";
 
 - (NSDictionary *)campaigns {
     return _campaigns;
+}
+
+- (UAInAppMessage *)extend:(void(^)(UAInAppMessageBuilder *builder))builderBlock {
+    if (builderBlock) {
+        UAInAppMessageBuilder *builder = [UAInAppMessageBuilder builderWithMessage:self];
+        builderBlock(builder);
+        return [[UAInAppMessage alloc] initWithBuilder:builder];
+    }
+
+    UA_LINFO(@"Extended %@ with nil builderBlock. Returning self.", self);
+    return self;
 }
 
 #pragma mark - Validation

@@ -36,12 +36,34 @@ NSString *const UAInAppMessageTextInfoStyleUnderlineValue = @"underline";
 @implementation UAInAppMessageTextInfoBuilder
 
 - (instancetype)init {
-    if (self = [super init]) {
+    self = [super init];
+
+    if (self) {
         self.color = [UIColor blackColor];
         self.size = 14;
         self.alignment = UAInAppMessageTextInfoAlignmentNone;
     }
+
     return self;
+}
+
+- (instancetype)initWithInfo:(UAInAppMessageTextInfo *)info {
+    self = [super init];
+
+    if (self) {
+        self.text = info.text;
+        self.color = info.color;
+        self.size = info.size;
+        self.alignment = info.alignment;
+        self.style = info.style;
+        self.fontFamilies = info.fontFamilies;
+    }
+
+    return self;
+}
+
++ (instancetype)builderWithInfo:(UAInAppMessageTextInfo *)info {
+    return [[self alloc] initWithInfo:info];
 }
 
 - (BOOL)isValid {
@@ -288,6 +310,16 @@ NSString *const UAInAppMessageTextInfoStyleUnderlineValue = @"underline";
     return [json copy];
 }
 
+- (UAInAppMessageTextInfo *)extend:(void(^)(UAInAppMessageTextInfoBuilder *builder))builderBlock {
+    if (builderBlock) {
+        UAInAppMessageTextInfoBuilder *builder = [UAInAppMessageTextInfoBuilder builderWithInfo:self];
+        builderBlock(builder);
+        return [[UAInAppMessageTextInfo alloc] initWithBuilder:builder];
+    }
+
+    UA_LINFO(@"Extended %@ with nil builderBlock. Returning self.", self);
+    return self;
+}
 
 #pragma mark - NSObject
 

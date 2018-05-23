@@ -24,6 +24,24 @@
     XCTAssertEqual(content.hash, fromJSON.hash);
 }
 
+- (void)testExtend {
+    UAInAppMessageHTMLDisplayContent *content =  [UAInAppMessageHTMLDisplayContent displayContentWithBuilderBlock:^(UAInAppMessageHTMLDisplayContentBuilder *builder) {
+        builder.backgroundColor = [UIColor blueColor];
+        builder.dismissButtonColor = [UIColor greenColor];
+        builder.url = @"https://foo.bar.com";
+    }];
+
+    UAInAppMessageHTMLDisplayContent *newContent = [content extend:^(UAInAppMessageHTMLDisplayContentBuilder * _Nonnull builder) {
+        builder.url = @"https://baz.boz.com";
+    }];
+
+    XCTAssertNotNil(newContent);
+    XCTAssertFalse([newContent isEqual:content]);
+    XCTAssertEqualObjects(newContent.backgroundColor, content.backgroundColor);
+    XCTAssertEqualObjects(newContent.dismissButtonColor, content.dismissButtonColor);
+    XCTAssertEqualObjects(newContent.url, @"https://baz.boz.com");
+}
+
 @end
 
 
