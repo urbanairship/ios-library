@@ -58,6 +58,11 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign, getter=isEnabled) BOOL enabled;
 
 /**
+ * In-app message display paused flag.
+ */
+@property (nonatomic, assign, getter=isPaused) BOOL paused;
+
+/**
  * In-app messaging delegate.
  */
 @property (nonatomic, weak) id<UAInAppMessagingDelegate> delegate;

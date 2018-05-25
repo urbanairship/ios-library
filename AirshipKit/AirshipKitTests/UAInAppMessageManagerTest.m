@@ -330,6 +330,55 @@
     [self.mockAutomationEngine verify];
 }
 
+- (void)testPauseDisplay {
+    UASchedule *testSchedule = [UASchedule scheduleWithIdentifier:@"expected_id" info:self.scheduleInfo];
+
+    //Set factory block with banner display type
+    UA_WEAKIFY(self)
+    [self.manager setFactoryBlock:^id<UAInAppMessageAdapterProtocol> _Nonnull(UAInAppMessage * _Nonnull message) {
+        UA_STRONGIFY(self)
+        return self.mockAdapter;
+    } forDisplayType:UAInAppMessageDisplayTypeBanner];
+
+    // Add block to send a successful prepare result and expect schedule conditions change
+    XCTestExpectation *prepareCalled = [self expectationWithDescription:@"prepare should be called"];
+    [[[self.mockAdapter expect] andDo:^(NSInvocation *invocation) {
+        void (^prepareBlock)(UAInAppMessagePrepareResult);
+        [invocation getArgument:&prepareBlock atIndex:2];
+
+        prepareBlock(UAInAppMessagePrepareResultSuccess);
+        [prepareCalled fulfill];
+    }] prepare:OCMOCK_ANY];
+
+    //Check Schedule to set current schedule ID
+    XCTAssertFalse([self.manager isScheduleReadyToExecute:testSchedule]);
+    // Wait for prepare to finish
+    [self waitForExpectationsWithTimeout:1 handler:nil];
+
+    // Mock isReadyToDisplay to YES
+    [[[self.mockAdapter stub] andReturnValue:OCMOCK_VALUE(YES)] isReadyToDisplay];
+
+    // Pause the manager
+    self.manager.paused = NO;
+
+    // Should display when paused == NO
+    XCTAssertTrue([self.manager isScheduleReadyToExecute:testSchedule]);
+
+    // Pause the manager
+    self.manager.paused = YES;
+
+    // Should not display when paused
+    XCTAssertFalse([self.manager isScheduleReadyToExecute:testSchedule]);
+
+    // Expect schedule conditions when paused to unpaused transition occurs
+    [[self.mockAutomationEngine expect] scheduleConditionsChanged];
+    // Unpause the manager from being previously paused
+    self.manager.paused = NO;
+
+    [self.mockAdapter verify];
+    [self.mockAutomationEngine verify];
+}
+
 - (void)testCancelMessage {
     UAInAppMessageManager *manager = [UAInAppMessageManager managerWithAutomationEngine:self.mockAutomationEngine
                                                                       remoteDataManager:[self mockForClass:[UARemoteDataManager class]]

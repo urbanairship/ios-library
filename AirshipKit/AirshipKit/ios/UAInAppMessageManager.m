@@ -31,7 +31,7 @@ NSTimeInterval const MessagePrepareRetyDelay = 200;
 
 NSString *const UAInAppAutomationStoreFileFormat = @"In-app-automation-%@.sqlite";
 NSString *const UAInAppMessageManagerEnabledKey = @"UAInAppMessageManagerEnabled";
-
+NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
 
 @interface UAInAppMessageScheduleData : NSObject
 @property(nonatomic, strong, nonnull) id<UAInAppMessageAdapterProtocol> adapter;
@@ -63,6 +63,7 @@ NSString *const UAInAppMessageManagerEnabledKey = @"UAInAppMessageManagerEnabled
 @interface UAInAppMessageManager ()  <UAAutomationEngineDelegate>
 
 @property(nonatomic, assign) BOOL isDisplayLocked;
+
 @property(nonatomic, strong, nullable) NSMutableDictionary *adapterFactories;
 @property(nonatomic, strong, nullable) UAAutomationEngine *automationEngine;
 @property(nonatomic, strong) UAInAppRemoteDataClient *remoteDataClient;
@@ -188,19 +189,19 @@ NSString *const UAInAppMessageManagerEnabledKey = @"UAInAppMessageManagerEnabled
 - (void)unlockDisplayAfter:(NSTimeInterval)interval {
     if (interval > 0) {
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(interval * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            self.isDisplayLocked = false;
+            self.isDisplayLocked = NO;
             [self.automationEngine scheduleConditionsChanged];
         });
     } else {
         dispatch_async(dispatch_get_main_queue(), ^{
-            self.isDisplayLocked = false;
+            self.isDisplayLocked = NO;
             [self.automationEngine scheduleConditionsChanged];
         });
     }
 }
 
 - (void)lockDisplay {
-    self.isDisplayLocked = true;
+    self.isDisplayLocked = YES;
 }
 
 - (id<UAInAppMessageAdapterProtocol>)adapterForMessage:(UAInAppMessage *)message {
@@ -264,11 +265,18 @@ NSString *const UAInAppMessageManagerEnabledKey = @"UAInAppMessageManagerEnabled
         return YES;
     }
 
-    // If the display is locked via timer return no
+    // If the display is locked via timer or manager
     if (self.isDisplayLocked) {
         UA_LTRACE(@"Display is locked. Schedule: %@ not ready.", schedule.identifier);
         return NO;
     }
+
+    // If manager is paused
+    if (self.isPaused) {
+        UA_LTRACE(@"Message display is currently paused. Schedule: %@ not ready.", schedule.identifier);
+        return NO;
+    }
+
     if (!data.isPrepareFinished) {
         UA_LTRACE(@"Message not prepared. Schedule %@ is not ready.", schedule.identifier);
         return NO;
@@ -408,6 +416,20 @@ NSString *const UAInAppMessageManagerEnabledKey = @"UAInAppMessageManagerEnabled
 
 - (void)onComponentEnableChange {
     [self updateEnginePauseState];
+}
+
+- (void)setPaused:(BOOL)paused {
+
+    // If we're unpausing, alert the automation engine
+    if (self.isPaused == YES && self.isPaused != paused) {
+        [self.automationEngine scheduleConditionsChanged];
+    }
+
+    [self.dataStore setBool:paused forKey:UAInAppMessageManagerPausedKey];
+}
+
+- (BOOL)isPaused{
+    return [self.dataStore boolForKey:UAInAppMessageManagerPausedKey default:NO];
 }
 
 - (void)setEnabled:(BOOL)enabled {
