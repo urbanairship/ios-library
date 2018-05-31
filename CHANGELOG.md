@@ -3,6 +3,17 @@ iOS Changelog
 
 Migration Guides: Documentation/Migration
 
+Version 9.2.0 - May 31, 2018
+============================
+
+Minor release that exposes new methods in In-App Automation and Message Center.
+
+Changes
+-------
+- Added method to override Message Center loading indicator.
+- Added method to allow for extending of In-App Automation messages.
+- Added method to allow for pausing In-App Automation.
+
 Version 9.1.0 - May 3, 2018
 ===========================
 

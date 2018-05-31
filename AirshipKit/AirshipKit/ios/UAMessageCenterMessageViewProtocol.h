@@ -49,8 +49,8 @@ NS_ASSUME_NONNULL_BEGIN
  * Sets a custom message loading indicator view and animation. Will
  * show the default loading indicator and animation if left unset.
  *
- * @param loading indicator view.
- * @param animation block to execute upon displaying loading indicator view.
+ * @param loadingIndicatorView Loading indicator view.
+ * @param animations Block to execute upon displaying loading indicator view.
  */
 - (void)setLoadingIndicatorView:(UIView *)loadingIndicatorView animations:(void (^)(void))animations;
 

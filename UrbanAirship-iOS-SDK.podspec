@@ -1,5 +1,5 @@
 Pod::Spec.new do |s|
-   s.version                 = "9.1.0"
+   s.version                 = "9.2.0"
    s.name                    = "UrbanAirship-iOS-SDK"
    s.summary                 = "Urban Airship iOS SDK"
 
