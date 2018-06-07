@@ -26,9 +26,9 @@ static NSString *cachedDeviceID_ = nil;
 + (BOOL)createKeychainValueForUsername:(NSString *)username withPassword:(NSString *)password forIdentifier:(NSString *)identifier {
     NSMutableDictionary *userDictionary = [UAKeychainUtils searchDictionaryWithIdentifier:identifier];
 
-    // Set access permission - we use the keychain for it's stickiness, not security,
-    // So the least permissive setting is acceptable here
-    [userDictionary setObject:(__bridge id)kSecAttrAccessibleAlways forKey:(__bridge id)kSecAttrAccessible];
+    // Set access permission - we use the keychain for its stickiness, not security,
+    // the current security attribute is used primarily to prevent flagging during security scans
+    [userDictionary setObject:(__bridge id)kSecAttrAccessibleAfterFirstUnlock forKey:(__bridge id)kSecAttrAccessible];
 
     // Set username data
     [userDictionary setObject:username forKey:(__bridge id)kSecAttrAccount];
@@ -55,11 +55,12 @@ static NSString *cachedDeviceID_ = nil;
                           withPassword:(NSString *)password 
                          forIdentifier:(NSString *)identifier {
 
-    //setup search dict, use username as query param
+
+    // Setup search dict, use username as query param
     NSMutableDictionary *searchDictionary = [self searchDictionaryWithIdentifier:identifier];
     [searchDictionary setObject:username forKey:(__bridge id)kSecAttrAccount];
 
-    //update password
+    // Update password
     NSMutableDictionary *updateDictionary = [NSMutableDictionary dictionary];
     NSData *passwordData = [password dataUsingEncoding:NSUTF8StringEncoding];
     [updateDictionary setObject:passwordData forKey:(__bridge id)kSecValueData];
@@ -95,12 +96,33 @@ static NSString *cachedDeviceID_ = nil;
     [searchQuery setObject:(id)kCFBooleanTrue forKey:(__bridge id)kSecReturnData];
     [searchQuery setObject:(id)kCFBooleanTrue forKey:(__bridge id)kSecReturnAttributes];
 
-
     CFDictionaryRef resultDataRef = nil;
     OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)searchQuery, (CFTypeRef *)&resultDataRef);
     NSDictionary *resultDict = (__bridge_transfer NSDictionary *)resultDataRef;
 
     if (status == errSecSuccess && resultDict) {
+
+        // Check if we have the old attribute type(s)
+        if ([[[resultDict objectForKey:(__bridge id)kSecAttrAccessible] copy] isEqualToString:(__bridge NSString *)(kSecAttrAccessibleAlways)]
+            || [[[resultDict objectForKey:(__bridge id)kSecAttrAccessible] copy] isEqualToString:(__bridge NSString *)(kSecAttrAccessibleAlwaysThisDeviceOnly)]) {
+
+            UA_LTRACE(@"Updating user credentials attributes");
+
+            // Update the deviceID attribute to kSecAttrAccessibleAlwaysThisDeviceOnly
+            NSMutableDictionary *updateQuery = [NSMutableDictionary dictionary];
+
+            // Set the new attribute
+            [updateQuery setObject:(__bridge id)kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly forKey:(__bridge id)kSecAttrAccessible];
+
+            // Perform the update
+            OSStatus status = SecItemUpdate((__bridge CFDictionaryRef)[UAKeychainUtils searchDictionaryWithIdentifier:kUAKeychainDeviceIDKey], (__bridge CFDictionaryRef)updateQuery);
+            if (status != errSecSuccess) {
+                UA_LTRACE(@"Failed to update user credentials accessibility attribute.");
+            } else {
+                UA_LTRACE(@"Updated user credentials attributes.");
+            }
+        }
+
         return resultDict;
     }
 
@@ -143,9 +165,9 @@ static NSString *cachedDeviceID_ = nil;
 
     NSMutableDictionary *keychainValues = [UAKeychainUtils searchDictionaryWithIdentifier:kUAKeychainDeviceIDKey];
 
-    //set access permission - we use the keychain for its stickiness, not security,
-    //so the least permissive setting is acceptable here
-    [keychainValues setObject:(__bridge id)kSecAttrAccessibleAlwaysThisDeviceOnly forKey:(__bridge id)kSecAttrAccessible];
+    // Set access permission - we use the keychain for its stickiness, not security,
+    // the current security attribute is used primarily to prevent flagging during security scans
+    [keychainValues setObject:(__bridge id)kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly forKey:(__bridge id)kSecAttrAccessible];
 
     //set model name (username) data
     [keychainValues setObject:[UAUtils deviceModelName] forKey:(__bridge id)kSecAttrAccount];
@@ -190,9 +212,9 @@ static NSString *cachedDeviceID_ = nil;
         UA_LTRACE(@"Retrieved Device ID info from keychain.");
 
         if (resultDataRef) {
-
-            // Check if we have the old attribute type
-            if ([[[resultDict objectForKey:(__bridge id)kSecAttrAccessible] copy] isEqualToString:(__bridge NSString *)(kSecAttrAccessibleAlways)]) {
+            // Check if we have the old attribute type(s)
+            if ([[[resultDict objectForKey:(__bridge id)kSecAttrAccessible] copy] isEqualToString:(__bridge NSString *)(kSecAttrAccessibleAlways)]
+                || [[[resultDict objectForKey:(__bridge id)kSecAttrAccessible] copy] isEqualToString:(__bridge NSString *)(kSecAttrAccessibleAlwaysThisDeviceOnly)]) {
 
                 UA_LTRACE(@"Updating Device ID attributes");
 
@@ -200,7 +222,7 @@ static NSString *cachedDeviceID_ = nil;
                 NSMutableDictionary *updateQuery = [NSMutableDictionary dictionary];
 
                 // Set the new attribute
-                [updateQuery setObject:(__bridge id)kSecAttrAccessibleAlwaysThisDeviceOnly forKey:(__bridge id)kSecAttrAccessible];
+                [updateQuery setObject:(__bridge id)kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly forKey:(__bridge id)kSecAttrAccessible];
 
                 // Perform the update
                 OSStatus status = SecItemUpdate((__bridge CFDictionaryRef)[UAKeychainUtils searchDictionaryWithIdentifier:kUAKeychainDeviceIDKey], (__bridge CFDictionaryRef)updateQuery);
