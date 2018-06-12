@@ -1422,50 +1422,6 @@ NSString *validLegacyDeviceToken = @"0123456789abcdef0123456789abcdef";
                   @"UserPushNotificationsAllowed should be NO");
 }
 
-/**
- * Test that UserPushNotificationAllowed is NO
- */
-- (void)testRegistrationPayloadNoDeviceToken {
-    // Set up UAPush to give minimum payload
-    self.push.deviceToken = nil;
-    self.push.alias = nil;
-    self.push.channelTagRegistrationEnabled = NO;
-    self.push.autobadgeEnabled = NO;
-    self.push.quietTimeEnabled = NO;
-
-    // Opt in requirement
-    self.push.userPushNotificationsEnabled = YES;
-
-    // Verify opt in is false when device token is nil
-    UAChannelRegistrationPayload *expectedPayload = [[UAChannelRegistrationPayload alloc] init];
-    expectedPayload.deviceID = @"someDeviceID";
-    expectedPayload.userID = @"someUser";
-    expectedPayload.optedIn = false;
-    expectedPayload.setTags = NO;
-
-    BOOL (^checkPayloadBlock)(id obj) = ^(id obj) {
-        UAChannelRegistrationPayload *payload = obj;
-        return [payload isEqualToPayload:expectedPayload];
-    };
-
-    [[[self.mockApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)30)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
-    
-    // Expect UAPush to update its registration
-    XCTestExpectation *pushRegistrationUpdated = [self expectationWithDescription:@"Push registration updated"];
-    
-    [[[self.mockChannelRegistrar expect] andDo:^(NSInvocation *invocation) {
-        [pushRegistrationUpdated fulfill];
-    }] registerWithChannelID:OCMOCK_ANY channelLocation:OCMOCK_ANY withPayload:[OCMArg checkWithBlock:checkPayloadBlock] forcefully:YES];
-    
-    [self.push updateChannelRegistrationForcefully:YES];
-
-    [self waitForExpectationsWithTimeout:1 handler:nil];
-    
-    XCTAssertNoThrow([self.mockChannelRegistrar verify],
-                     @"payload is not being created with expected values");
-
-}
-
 - (void)testRegistrationPayloadDeviceTagsDisabled {
     self.push.userPushNotificationsEnabled = YES;
     self.push.channelTagRegistrationEnabled = NO;

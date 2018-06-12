@@ -684,30 +684,12 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
     }
 
     if (self.timeZone.name && self.quietTimeEnabled) {
-        payload.timeZone = self.timeZone.name;
         payload.quietTime = [self.quietTime copy];
     }
 
-    if ([UAirship analytics].isEnabled) {
-        NSString *localeLanguage = [[NSLocale autoupdatingCurrentLocale] objectForKey:NSLocaleLanguageCode];
-        NSString *localeCountry = [[NSLocale autoupdatingCurrentLocale] objectForKey: NSLocaleCountryCode];
-
-        // Set top level language
-        if (localeLanguage) {
-            payload.language = localeLanguage;
-        }
-
-        // Set top level country
-        if (localeCountry) {
-            payload.country = localeCountry;
-        }
-
-        // Set top level timezone only when language or country is available
-        if (self.timeZone.name && (localeLanguage || localeCountry)) {
-            payload.timeZone = self.timeZone.name;
-        }
-
-    }
+    payload.timeZone = self.timeZone.name;
+    payload.language = [[NSLocale autoupdatingCurrentLocale] objectForKey:NSLocaleLanguageCode];
+    payload.country = [[NSLocale autoupdatingCurrentLocale] objectForKey: NSLocaleCountryCode];
 
     return payload;
 }

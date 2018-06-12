@@ -3,7 +3,6 @@
 #import "UABaseTest.h"
 #import "UAPush+Internal.h"
 #import "UAirship.h"
-#import "UAAnalytics.h"
 #import "UAirship+Internal.h"
 #import "UAActionRunner+Internal.h"
 #import "UAActionRegistry+Internal.h"
@@ -27,7 +26,6 @@
 @property (nonatomic, strong) id mockApplication;
 @property (nonatomic, strong) id mockChannelRegistrar;
 @property (nonatomic, strong) id mockAirship;
-@property (nonatomic, strong) id mockAnalytics;
 @property (nonatomic, strong) id mockPushDelegate;
 @property (nonatomic, strong) id mockRegistrationDelegate;
 @property (nonatomic, strong) id mockActionRunner;
@@ -146,10 +144,8 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     self.push.channelRegistrar.delegate = nil;
     self.push.channelRegistrar = self.mockChannelRegistrar;
 
-    self.mockAnalytics = [self mockForClass:[UAAnalytics class]];
 
     self.mockAirship =[self mockForClass:[UAirship class]];
-    [[[self.mockAirship stub] andReturn:self.mockAnalytics] sharedAnalytics];
     [[[self.mockAirship stub] andReturn:self.dataStore] dataStore];
 
     self.mockPushDelegate = [self mockForProtocol:@protocol(UAPushNotificationDelegate)];
@@ -1400,12 +1396,9 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 }
 
 /**
- * Test registration payload when analytics is enabled does not include timezone, locale language or country
+ * Test registration payload include timezone, locale language, and country
  */
-- (void)testRegistrationPayloadAnalyticsEnabled {
-    // Set up UAPush to give a full, opted in payload
-    [[[self.mockAnalytics stub] andReturnValue:OCMOCK_VALUE(YES)] isEnabled];
-
+- (void)testRegistrationPayload {
     self.push.deviceToken = validDeviceToken;
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
@@ -1441,50 +1434,6 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
         [pushRegistrationUpdated fulfill];
     }] registerWithChannelID:OCMOCK_ANY channelLocation:OCMOCK_ANY withPayload:[OCMArg checkWithBlock:checkPayloadBlock] forcefully:YES];
     
-    [self.push updateChannelRegistrationForcefully:YES];
-
-    [self waitForExpectationsWithTimeout:1 handler:nil];
-
-    XCTAssertNoThrow([self.mockChannelRegistrar verify],
-                     @"payload is not being created with expected values");
-}
-
-/**
- * Test registration payload when analytics is disabled does not include locale language or country
- */
-- (void)testRegistrationPayloadAnalyticsDisabled {
-    // Set up UAPush to give a full, opted in payload
-    [[[self.mockAnalytics stub] andReturnValue:OCMOCK_VALUE(NO)] isEnabled];
-
-    self.push.deviceToken = validDeviceToken;
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-    self.push.alias = @"ALIAS";
-#pragma GCC diagnostic pop
-    self.push.channelTagRegistrationEnabled = YES;
-    self.push.tags = @[@"tag-one"];
-    self.push.autobadgeEnabled = NO;
-    self.push.quietTimeEnabled = YES;
-    self.push.timeZone = [NSTimeZone timeZoneWithName:@"Pacific/Auckland"];
-
-    [self.push setQuietTimeStartHour:12 startMinute:0 endHour:12 endMinute:0];
-
-    // Opt in requirement
-    self.push.userPushNotificationsEnabled = YES;
-
-    BOOL (^checkPayloadBlock)(id obj) = ^BOOL(id obj) {
-        UAChannelRegistrationPayload *payload = (UAChannelRegistrationPayload *)obj;
-        return payload.language == nil && [payload.timeZone isEqualToString:self.push.timeZone.name] && payload.country == nil;
-    };
-
-    [[[self.mockApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)30)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
-
-    // Expect UAPush to update its registration
-    XCTestExpectation *pushRegistrationUpdated = [self expectationWithDescription:@"Push registration updated"];
-    [[[self.mockChannelRegistrar expect] andDo:^(NSInvocation *invocation) {
-        [pushRegistrationUpdated fulfill];
-    }] registerWithChannelID:OCMOCK_ANY channelLocation:OCMOCK_ANY withPayload:[OCMArg checkWithBlock:checkPayloadBlock] forcefully:YES];
-
     [self.push updateChannelRegistrationForcefully:YES];
 
     [self waitForExpectationsWithTimeout:1 handler:nil];
@@ -1632,6 +1581,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     self.push.channelTagRegistrationEnabled = NO;
     self.push.autobadgeEnabled = NO;
     self.push.quietTimeEnabled = NO;
+    self.push.timeZone = [NSTimeZone timeZoneWithName:@"Pacific/Auckland"];
 
     // Opt in requirement
     self.push.userPushNotificationsEnabled = YES;
@@ -1642,6 +1592,9 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     expectedPayload.userID = @"someUser";
     expectedPayload.optedIn = false;
     expectedPayload.setTags = NO;
+    expectedPayload.language =  [[NSLocale autoupdatingCurrentLocale] objectForKey:NSLocaleLanguageCode];
+    expectedPayload.country =  [[NSLocale autoupdatingCurrentLocale] objectForKey:NSLocaleCountryCode];
+    expectedPayload.timeZone = @"Pacific/Auckland";
 
     BOOL (^checkPayloadBlock)(id obj) = ^(id obj) {
         UAChannelRegistrationPayload *payload = obj;
