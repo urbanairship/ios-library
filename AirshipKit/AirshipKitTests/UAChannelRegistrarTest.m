@@ -505,6 +505,21 @@ void (^deviceRegisterSuccessDoBlock)(NSInvocation *);
     XCTAssertNoThrow([self.mockedRegistrarDelegate verify], @"Delegate should be called on success");
 }
 
+- (void)testLastSuccessfulUpdate {
+    NSDate *now = [NSDate date];
+    
+    [[self.mockedDataStore expect] setObject:now forKey:@"last-update-key"];
+
+    self.registrar.lastSuccessfulUpdateDate = now;
+    
+    XCTAssertNoThrow([self.mockedDataStore verify], @"last update timestamp should have been stored");
+
+    [[[self.mockedDataStore expect] andReturn:now] objectForKey:@"last-update-key"];
+
+    XCTAssertEqualObjects(self.registrar.lastSuccessfulUpdateDate, now);
+    XCTAssertNoThrow([self.mockedDataStore verify], @"last update timestamp should have been stored and retrieved");
+}
+
 - (void)expectRegistrationSucceededWithPayload:(UAChannelRegistrationPayload *)payload {
     XCTestExpectation *expectation = [self expectationWithDescription:@"registrationSucceededWithPayload:"];
 
