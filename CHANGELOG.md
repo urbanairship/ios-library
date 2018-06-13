@@ -3,6 +3,17 @@ iOS Changelog
 
 Migration Guides: Documentation/Migration
 
+Version 9.2.1 - June 13, 2018
+============================
+
+Patch release to fix a bug with channel registration. Applications concerned with unnecessary channel registrations
+are encouraged to upgrade.
+
+Changes
+-------
+- Fixed a bug which was causing an unnecessary registration on every app foreground and background.
+- Locale and Timezone info is now sent up with the channel registration even if analytics are disabled.
+
 Version 9.2.0 - May 31, 2018
 ============================
 
