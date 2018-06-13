@@ -18,9 +18,6 @@ UAConfig *config;
 
 @implementation UAChannelRegistrar
 
-@synthesize lastSuccessfulPayload = _lastSuccessfulPayload;
-@synthesize lastSuccessfulUpdateDate = _lastSuccessfulUpdateDate;
-
 -(id)initWithConfig:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
     self = [super init];
     if (self) {
@@ -242,7 +239,6 @@ UAConfig *config;
 }
 
 - (void)setLastSuccessfulPayload:(UAChannelRegistrationPayload *)payload {
-    _lastSuccessfulPayload = payload;
     [self.dataStore setObject:payload.asJSONData forKey:UALastSuccessfulPayloadKey];
 }
 
@@ -250,8 +246,7 @@ UAConfig *config;
     return [self.dataStore objectForKey:UALastSuccessfulUpdateKey] ?: [NSDate distantPast];
 }
 
-- (void)setLastSuccessUpdateDate:(NSDate *)date {
-    _lastSuccessfulUpdateDate = date;
+- (void)setLastSuccessfulUpdateDate:(NSDate *)date {
     [self.dataStore setObject:date forKey:UALastSuccessfulUpdateKey];
 }
 

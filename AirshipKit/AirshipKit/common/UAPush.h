@@ -72,7 +72,7 @@ static const UANotificationOptions UANotificationOptionNone =  0;
 @optional
 
 /**
- * Called when the device channel registers with Urban Airship. Successful
+ * Called after the device channel registers with Urban Airship. Successful
  * registrations could be disabling push, enabling push, or updating the device
  * registration settings.
  *
@@ -81,6 +81,10 @@ static const UANotificationOptions UANotificationOptionNone =  0;
  *
  * When registration finishes in the background, any async tasks that are triggered
  * from this call should request a background task.
+ *
+ * @note This method may be called at any time. It does not guarantee a channel 
+ * registration just occurred.
+ *
  * @param channelID The channel ID string.
  * @param deviceToken The device token string.
  */
