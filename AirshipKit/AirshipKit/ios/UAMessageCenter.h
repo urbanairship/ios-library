@@ -32,6 +32,11 @@
  */
 @property (nonatomic, strong) NSPredicate *filter;
 
+/**
+ * Disables 3D touching and long pressing on links in messages.
+ */
+@property (nonatomic) BOOL disableMessageLinkPreviewAndCallouts;
+
 ///---------------------------------------------------------------------------------------
 /// @name Default Message Center Factory
 ///---------------------------------------------------------------------------------------

@@ -4,6 +4,7 @@
 #import "UAWKWebViewNativeBridge.h"
 #import "UAInbox.h"
 #import "UAirship.h"
+#import "UAMessageCenter.h"
 #import "UAInboxMessageList.h"
 #import "UAInboxMessage.h"
 #import "UAUtils+Internal.h"
@@ -106,6 +107,7 @@ typedef enum MessageState {
     self.nativeBridge = [[UAWKWebViewNativeBridge alloc] init];
     self.nativeBridge.forwardDelegate = self;
     self.webView.navigationDelegate = self.nativeBridge;
+    self.webView.allowsLinkPreview = ![UAirship messageCenter].disableMessageLinkPreviewAndCallouts;
 
     if (@available(iOS 10.0, tvOS 10.0, *)) {
         // Allow the webView to detect data types (e.g. phone numbers, addresses) at will
@@ -427,6 +429,11 @@ static NSString *urlForBlankPage = @"about:blank";
     if (self.messageState != LOADING) {
         UA_LWARN(@"WARNING: messageState = %u. Should be \"LOADING\"",self.messageState);
     }
+    
+    if ([UAirship messageCenter].disableMessageLinkPreviewAndCallouts) {
+        [self.webView evaluateJavaScript:@"document.body.style.webkitTouchCallout='none';" completionHandler:nil];
+    }
+    
     if ([wv.URL.absoluteString isEqualToString:urlForBlankPage]) {
         [self loadMessageIntoWebView];
         return;
