@@ -20,8 +20,9 @@ NSString *const UAAutomationStoreFileFormat = @"Automation-%@.sqlite";
 
         NSString *storeName = [NSString stringWithFormat:UAAutomationStoreFileFormat, config.appKey];
 
-        self.automationEngine = [UAAutomationEngine automationEngineWithAutomationStore:[UAAutomationStore automationStoreWithStoreName:storeName]
-                                                                          scheduleLimit:UAAutomationScheduleLimit];
+        UAAutomationStore *store = [UAAutomationStore automationStoreWithStoreName:storeName scheduleLimit:UAAutomationScheduleLimit];
+        
+        self.automationEngine = [UAAutomationEngine automationEngineWithAutomationStore:store];
         self.automationEngine.delegate = self;
 
         if (self.componentEnabled) {

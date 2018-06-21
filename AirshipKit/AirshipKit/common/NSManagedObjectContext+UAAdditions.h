@@ -28,6 +28,15 @@ NS_ASSUME_NONNULL_BEGIN
             completionHandler:(void(^ __nonnull)(BOOL, NSError *))completionHandler;
 
 /**
+ * Adds an in-memory store to the managed object. Useful for testing.
+ *
+ * @param storeName The store name.
+ * @param completionHandler Completion handler called with the result.
+ */
+- (void)addPersistentInMemoryStore:(NSString *)storeName
+            completionHandler:(void(^ __nonnull)(BOOL, NSError *))completionHandler;
+
+/**
  * Calls `context save` but first checks if it has a persistent store.
  * @return `YES` if the context was able to save, otherwise `NO`.
  */

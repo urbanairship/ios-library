@@ -71,6 +71,21 @@ NSString *const UAManagedContextStoreDirectory = @"com.urbanairship.no-backup";
     }];
 }
 
+- (void)addPersistentInMemoryStore:(NSString *)storeName
+                 completionHandler:(void(^ __nonnull)(BOOL, NSError *))completionHandler {
+
+    NSDictionary *options = @{ NSMigratePersistentStoresAutomaticallyOption : @YES,
+                               NSInferMappingModelAutomaticallyOption : @YES };
+    NSError *error = nil;
+
+    if (![self.persistentStoreCoordinator addPersistentStoreWithType:NSInMemoryStoreType configuration:nil URL:nil options:options error:&error]) {
+        completionHandler(NO, error);
+        return;
+    };
+
+    completionHandler(YES, nil);
+}
+
 - (void)safePerformBlock:(void (^)(BOOL))block {
     [self performBlock:^{
         if (self.persistentStoreCoordinator.persistentStores.count) {
