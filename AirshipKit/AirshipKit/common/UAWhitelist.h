@@ -29,6 +29,27 @@ typedef NS_OPTIONS(NSUInteger, UAWhitelistScope) {
 };
 
 /**
+ * Delegate protocol for accepting and rejecting white-listed URLs.
+ */
+@protocol UAWhitelistDelegate <NSObject>
+
+///---------------------------------------------------------------------------------------
+/// @name Whitelist Delegate Optional Methods
+///---------------------------------------------------------------------------------------
+@optional
+
+/**
+ * Called when a URL has been whitelisted by the SDK, but before the URL is fetched.
+ *
+ * @param url The URL whitelisted by the SDK.
+ * @param scope The scope of the desired match.
+ * @return YES to accept whitelisting of this URL, NO to reject whitelisting of this URL.
+ */
+- (BOOL)acceptWhitelisting:(NSURL *)url scope:(UAWhitelistScope)scope;
+
+@end
+
+/**
  * Class for whitelisting and verifying webview URLs.
  *
  * Whitelist entries are written as URL patterns with optional wildcard matching:
@@ -53,7 +74,7 @@ typedef NS_OPTIONS(NSUInteger, UAWhitelistScope) {
 @interface UAWhitelist : NSObject
 
 ///---------------------------------------------------------------------------------------
-/// @name Properties
+/// @name Whitelist Properties
 ///---------------------------------------------------------------------------------------
 
 /**
@@ -61,6 +82,12 @@ typedef NS_OPTIONS(NSUInteger, UAWhitelistScope) {
  * all whitelist checks for this scope will be allowed.
  */
 @property(nonatomic, assign, getter=isOpenURLWhitelistingEnabled) BOOL openURLWhitelistingEnabled;
+
+/**
+ * The whitelist delegate.
+ * NOTE: The delegate is not retained.
+ */
+@property (nonatomic, weak, nullable) id <UAWhitelistDelegate> delegate;
 
 ///---------------------------------------------------------------------------------------
 /// @name Whitelist Creation
@@ -73,7 +100,6 @@ typedef NS_OPTIONS(NSUInteger, UAWhitelistScope) {
  * @return An instance of UAWhitelist
  */
 + (instancetype)whitelistWithConfig:(UAConfig *)config;
-
 
 ///---------------------------------------------------------------------------------------
 /// @name Whitelist Core Methods

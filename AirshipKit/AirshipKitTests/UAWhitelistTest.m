@@ -10,6 +10,9 @@
 @property(nonatomic, strong) UAWhitelist *whitelist;
 @property(nonnull, strong) NSArray *scopes;
 
+@property(nonatomic, strong) id mockWhitelistDelegate;
+
+
 @end
 
 @implementation UAWhitelistTest
@@ -17,7 +20,10 @@
 - (void)setUp {
     [super setUp];
     self.whitelist = [[UAWhitelist alloc] init];
+    
     self.scopes = @[@(UAWhitelistScopeJavaScriptInterface), @(UAWhitelistScopeOpenURL), @(UAWhitelistScopeAll)];
+    
+    self.mockWhitelistDelegate = [self mockForProtocol:@protocol(UAWhitelistDelegate)];
 }
 
 - (void)tearDown {
@@ -369,6 +375,57 @@
     XCTAssertTrue([self.whitelist isWhitelisted:[NSURL URLWithString:@"com.urbanairship.five:///"]]);
 
     XCTAssertFalse([self.whitelist isWhitelisted:[NSURL URLWithString:@"com.urbanairship.five:/cool"]]);
+}
+
+- (void)testDelegate {
+    // set up a simple whitelist
+    [self.whitelist addEntry:@"https://*.urbanairship.com"];
+    [self.whitelist addEntry:@"https://*.youtube.com" scope:UAWhitelistScopeOpenURL];
+    
+    // Matching URL to be checked
+    NSURL *matchingURLToReject = [NSURL URLWithString:@"https://www.youtube.com/watch?v=sYd_-pAfbBw"];
+    NSURL *matchingURLToAccept = [NSURL URLWithString:@"https://device-api.urbanairship.com/api/user"];
+    NSURL *nonMatchingURL = [NSURL URLWithString:@"https://maps.google.com"];
+
+    UAWhitelistScope scope = UAWhitelistScopeOpenURL;
+
+    // Whitelisting when delegate is off
+    XCTAssertTrue([self.whitelist isWhitelisted:matchingURLToReject scope:scope]);
+    XCTAssertTrue([self.whitelist isWhitelisted:matchingURLToAccept scope:scope]);
+    XCTAssertFalse([self.whitelist isWhitelisted:nonMatchingURL scope:scope]);
+
+    // Enable whitelist delegate
+    [[[self.mockWhitelistDelegate stub] andDo:^(NSInvocation *invocation) {
+        NSURL *url;
+        BOOL returnValue;
+        [invocation getArgument:&url atIndex:2];
+        if ([url isEqual:matchingURLToAccept]) {
+            returnValue = YES;
+            [invocation setReturnValue:&returnValue];
+        } else if ([url isEqual:matchingURLToReject]) {
+            returnValue = NO;
+            [invocation setReturnValue:&returnValue];
+        } else if ([url isEqual:nonMatchingURL]) {
+            XCTFail(@"Delegate should not be called when URL fails whitelisting");
+        } else {
+            XCTFail(@"Unknown error");
+        }
+    }] acceptWhitelisting:OCMOCK_ANY scope:scope];
+    self.whitelist.delegate = self.mockWhitelistDelegate;
+
+    // rejected URL should now fail whitelist test, others should be unchanged
+    XCTAssertFalse([self.whitelist isWhitelisted:matchingURLToReject scope:scope]);
+    XCTAssertTrue([self.whitelist isWhitelisted:matchingURLToAccept scope:scope]);
+    XCTAssertFalse([self.whitelist isWhitelisted:nonMatchingURL scope:scope]);
+    
+    // Disable whitelist delegate
+    self.whitelist.delegate = nil;
+
+    // Should go back to original state when delegate was off
+    XCTAssertTrue([self.whitelist isWhitelisted:matchingURLToReject scope:scope]);
+    XCTAssertTrue([self.whitelist isWhitelisted:matchingURLToAccept scope:scope]);
+    XCTAssertFalse([self.whitelist isWhitelisted:nonMatchingURL scope:scope]);
+
 }
 
 @end
