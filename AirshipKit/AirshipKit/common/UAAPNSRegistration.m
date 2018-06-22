@@ -7,36 +7,45 @@
 
 @synthesize registrationDelegate;
 
--(void)getCurrentAuthorizationOptionsWithCompletionHandler:(void (^)(UANotificationOptions))completionHandler NS_AVAILABLE_IOS(10.0) {
-    [[UNUserNotificationCenter currentNotificationCenter] getNotificationSettingsWithCompletionHandler:^(UNNotificationSettings * _Nonnull settings) {
+-(void)getAuthorizedSettingsWithCompletionHandler:(void (^)(UAAuthorizedNotificationSettings))completionHandler NS_AVAILABLE_IOS(10.0) {
+    [[UNUserNotificationCenter currentNotificationCenter] getNotificationSettingsWithCompletionHandler:^(UNNotificationSettings * _Nonnull notificationSettings) {
 
-        if (settings.authorizationStatus != UNAuthorizationStatusAuthorized) {
-            completionHandler(UANotificationOptionNone);
+        UAAuthorizedNotificationSettings authorizedSettings = UAAuthorizedNotificationSettingsNone;
+
+        if (notificationSettings.authorizationStatus != UNAuthorizationStatusAuthorized) {
+            completionHandler(authorizedSettings);
             return;
         }
 
-        UANotificationOptions options = UANotificationOptionNone;
 
-        if (settings.authorizationStatus == UNAuthorizationStatusAuthorized) {
+        if (notificationSettings.authorizationStatus == UNAuthorizationStatusAuthorized) {
 
 #if !TARGET_OS_TV
-            if (settings.alertSetting == UNNotificationSettingEnabled) {
-                options |= UANotificationOptionAlert;
+            if (notificationSettings.alertSetting == UNNotificationSettingEnabled) {
+                authorizedSettings |= UAAuthorizedNotificationSettingsAlert;
             }
 
-            if (settings.soundSetting == UNNotificationSettingEnabled) {
-                options |= UANotificationOptionSound;
+            if (notificationSettings.soundSetting == UNNotificationSettingEnabled) {
+                authorizedSettings |= UAAuthorizedNotificationSettingsSound;
             }
 
-            if (settings.carPlaySetting == UNNotificationSettingEnabled) {
-                options |= UANotificationOptionCarPlay;
+            if (notificationSettings.carPlaySetting == UNNotificationSettingEnabled) {
+                authorizedSettings |= UAAuthorizedNotificationSettingsCarPlay;
             }
 #endif
-            if (settings.badgeSetting == UNNotificationSettingEnabled) {
-                options |= UANotificationOptionBadge;
+            if (notificationSettings.badgeSetting == UNNotificationSettingEnabled) {
+                authorizedSettings |= UAAuthorizedNotificationSettingsBadge;
             }
 
-            completionHandler(options);
+            if (notificationSettings.lockScreenSetting == UNNotificationSettingEnabled) {
+                authorizedSettings |= UAAuthorizedNotificationSettingsBadge;
+            }
+
+            if (notificationSettings.notificationCenterSetting == UNNotificationSettingEnabled) {
+                authorizedSettings |= UAAuthorizedNotificationSettingsBadge;
+            }
+
+            completionHandler(authorizedSettings);
         }}];
 }
 
@@ -69,8 +78,8 @@
 
     [[UNUserNotificationCenter currentNotificationCenter] requestAuthorizationWithOptions:normalizedOptions
                                                                         completionHandler:^(BOOL granted, NSError * _Nullable error) {
-                                                                            [self getCurrentAuthorizationOptionsWithCompletionHandler:^(UANotificationOptions authorizedOptions) {
-                                                                                [self.registrationDelegate notificationRegistrationFinishedWithOptions:authorizedOptions];
+                                                                            [self getAuthorizedSettingsWithCompletionHandler:^(UAAuthorizedNotificationSettings authorizedSettings) {
+                                                                                [self.registrationDelegate notificationRegistrationFinishedWithAuthorizedSettings:authorizedSettings];
                                                                             }];
                                                                         }];
 }

@@ -134,7 +134,7 @@
 }
 
 + (BOOL)isNotificationsOptedIn {
-    return [UAirship push].userPushNotificationsEnabled && [UAirship push].authorizedNotificationOptions != UANotificationOptionNone;
+    return [UAirship push].userPushNotificationsEnabled && [UAirship push].authorizedNotificationSettings != UAAuthorizedNotificationSettingsNone;
 }
 
 + (NSData*)sha256DigestWithString:(NSString*)input {

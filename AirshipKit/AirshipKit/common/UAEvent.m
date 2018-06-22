@@ -62,18 +62,18 @@ static dispatch_once_t netInfoDispatchToken_;
 - (NSArray *)notificationTypes {
     NSMutableArray *notificationTypes = [NSMutableArray array];
 
-    UANotificationOptions authorizedOptions = [UAirship push].authorizedNotificationOptions;
+    UAAuthorizedNotificationSettings authorizedSettings = [UAirship push].authorizedNotificationSettings;
 
-    if ((UANotificationOptionBadge & authorizedOptions) > 0) {
+    if ((UANotificationOptionBadge & authorizedSettings) > 0) {
         [notificationTypes addObject:@"badge"];
     }
 
 #if !TARGET_OS_TV   // sound and alert notifications are not supported in tvOS
-    if ((UANotificationOptionSound & authorizedOptions) > 0) {
+    if ((UANotificationOptionSound & authorizedSettings) > 0) {
         [notificationTypes addObject:@"sound"];
     }
 
-    if ((UANotificationOptionAlert & authorizedOptions) > 0) {
+    if ((UANotificationOptionAlert & authorizedSettings) > 0) {
         [notificationTypes addObject:@"alert"];
     }
 #endif

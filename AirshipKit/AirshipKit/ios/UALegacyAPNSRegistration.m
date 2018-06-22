@@ -7,9 +7,31 @@
 
 @synthesize registrationDelegate;
 
--(void)getCurrentAuthorizationOptionsWithCompletionHandler:(void (^)(UANotificationOptions))completionHandler {
+- (UAAuthorizedNotificationSettings)authorizedSettingsForLegacySettings:(UIUserNotificationSettings *)legacySettings {
+    UAAuthorizedNotificationSettings authorizedSettings = UAAuthorizedNotificationSettingsNone;
+
+    UIUserNotificationType types = legacySettings.types;
+
+    if (types & UIUserNotificationTypeBadge) {
+        authorizedSettings |= UAAuthorizedNotificationSettingsBadge;
+    }
+
+    if (types & UIUserNotificationTypeSound) {
+        authorizedSettings |= UAAuthorizedNotificationSettingsSound;
+    }
+
+    if (types & UIUserNotificationTypeAlert) {
+        authorizedSettings |= UAAuthorizedNotificationSettingsAlert;
+        authorizedSettings |= UAAuthorizedNotificationSettingsLockScreen;
+        authorizedSettings |= UAAuthorizedNotificationSettingsNotificationCenter;
+    }
+
+    return authorizedSettings;
+}
+
+- (void)getAuthorizedSettingsWithCompletionHandler:(void (^)(UAAuthorizedNotificationSettings))completionHandler {
     UIUserNotificationSettings *settings = [[UIApplication sharedApplication] currentUserNotificationSettings];
-    completionHandler((UANotificationOptions)settings.types);
+    completionHandler([self authorizedSettingsForLegacySettings:settings]);
 }
 
 -(void)updateRegistrationWithOptions:(UANotificationOptions)options
@@ -32,8 +54,8 @@
 }
 
 - (void)application:(UIApplication *)application didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings {
-    UANotificationOptions options = (UANotificationOptions)notificationSettings.types;
-    [self.registrationDelegate notificationRegistrationFinishedWithOptions:options];
+    UAAuthorizedNotificationSettings authorizedSettings = [self authorizedSettingsForLegacySettings:notificationSettings];
+    [self.registrationDelegate notificationRegistrationFinishedWithAuthorizedSettings:authorizedSettings];
 }
 
 @end
