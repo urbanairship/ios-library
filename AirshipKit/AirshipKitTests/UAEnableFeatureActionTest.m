@@ -133,7 +133,7 @@
         void (^handler)(UANotificationOptions) = (__bridge void (^)(UANotificationOptions))arg;
         handler(UANotificationOptionNone);
         [settingsOpened fulfill];
-    }] getCurrentAuthorizationOptionsWithCompletionHandler:OCMOCK_ANY];
+    }] getAuthorizedSettingsWithCompletionHandler:OCMOCK_ANY];
 
     [[[self.mockPush stub] andReturnValue:@YES] userPromptedForNotifications];
 

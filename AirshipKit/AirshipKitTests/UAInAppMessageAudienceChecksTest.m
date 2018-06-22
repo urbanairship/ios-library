@@ -90,7 +90,7 @@
     }];
     
     [[[self.mockPush stub] andReturnValue:@YES] userPushNotificationsEnabled];
-    [[[self.mockPush stub] andReturnValue:@(UANotificationOptionAlert)] authorizedNotificationOptions];
+    [[[self.mockPush stub] andReturnValue:@(UAAuthorizedNotificationSettingsAlert)] authorizedNotificationSettings];
 
     // test
     XCTAssertTrue([UAInAppMessageAudienceChecks checkDisplayAudienceConditions:requiresOptedIn]);

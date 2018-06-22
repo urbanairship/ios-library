@@ -744,7 +744,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
         [expectedCategories addObject:[category asUNNotificationCategory]];
     }
 
-    UANotificationOptions expectedOptions = self.push.notificationOptions;
+    UAAuthorizedNotificationSettings expectedSettings = UAAuthorizedNotificationSettingsAlert;
 
     XCTestExpectation *delegateCalled = [self expectationWithDescription:@"Delegate called"];
 
@@ -760,11 +760,11 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
         typedef void (^NotificationAuthorizationBlock)(BOOL granted, NSError *__nullable error);
         NotificationAuthorizationBlock completionBlock = (__bridge NotificationAuthorizationBlock)arg;
         completionBlock((self.push.notificationOptions == (UANotificationOptions)normalizedOptions),nil);
-    }] ignoringNonObjectArgs] requestAuthorizationWithOptions:(UNAuthorizationOptions)expectedOptions completionHandler:OCMOCK_ANY];
+    }] ignoringNonObjectArgs] requestAuthorizationWithOptions:(UNAuthorizationOptions)self.push.notificationOptions completionHandler:OCMOCK_ANY];
 
     [[[self.mockRegistrationDelegate expect] andDo:^(NSInvocation *invocation) {
         [delegateCalled fulfill];
-    }]  notificationRegistrationFinishedWithOptions:self.notificationOptions categories:[OCMArg checkWithBlock:^BOOL(id obj) {
+    }]  notificationRegistrationFinishedWithAuthorizedSettings:expectedSettings categories:[OCMArg checkWithBlock:^BOOL(id obj) {
         NSSet *categories = (NSSet *)obj;
         return (categories.count == expectedCategories.count);
     }]];
@@ -784,16 +784,16 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
  */
 -(void)testSetAuthorizedTypesCallsRegistrationDelegate {
 
-    UANotificationOptions expectedOptions = 2;
+    UAAuthorizedNotificationSettings expectedSettings = 2;
 
     XCTestExpectation *delegateCalled = [self expectationWithDescription:@"Delegate called"];
 
     [[[self.mockRegistrationDelegate expect] andDo:^(NSInvocation *invocation) {
         [delegateCalled fulfill];
-    }]  notificationAuthorizedOptionsDidChange:expectedOptions];
+    }]  notificationAuthorizedSettingsDidChange:expectedSettings];
 
     // set authorized types
-    self.push.authorizedNotificationOptions = expectedOptions;
+    self.push.authorizedNotificationSettings = expectedSettings;
 
     [self waitForExpectationsWithTimeout:10 handler:nil];
 
@@ -1709,6 +1709,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     self.push.userPushNotificationsEnabled = YES;
 
     self.notificationOptions = UANotificationOptionAlert;
+    UAAuthorizedNotificationSettings expectedSettings = UAAuthorizedNotificationSettingsAlert;
     
     // SET EXPECTATIONS
     [[self.mockChannelRegistrar reject] registerWithChannelID:OCMOCK_ANY channelLocation:OCMOCK_ANY withPayload:OCMOCK_ANY forcefully:NO];
@@ -1720,7 +1721,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     XCTAssertNoThrow([self.mockChannelRegistrar verify]);
     
     XCTAssertTrue(self.push.userPromptedForNotifications);
-    XCTAssertEqual(self.push.authorizedNotificationOptions,self.notificationOptions);
+    XCTAssertEqual(self.push.authorizedNotificationSettings, expectedSettings);
 }
 
 /**
@@ -1731,6 +1732,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     [self.dataStore setBool:YES forKey:UAPushChannelCreationOnForeground];
     
     self.notificationOptions = UANotificationOptionAlert;
+    UAAuthorizedNotificationSettings expectedSettings = UAAuthorizedNotificationSettingsAlert;
 
     // Prevent beginRegistrationBackgroundTask early return
     [[[self.mockApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)30)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
@@ -1750,7 +1752,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     XCTAssertNoThrow([self.mockChannelRegistrar verify]);
     
     XCTAssertTrue(self.push.userPromptedForNotifications);
-    XCTAssertEqual(self.push.authorizedNotificationOptions,self.notificationOptions);
+    XCTAssertEqual(self.push.authorizedNotificationSettings, expectedSettings);
 }
 
 -(void)testApplicationBackgroundRefreshStatusChangedBackgroundAvailable {
@@ -2550,7 +2552,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
  * Test on first launch when user has not been prompted for notification.
  */
 - (void)testNotificationNotPrompted {
-    self.push.authorizedNotificationOptions = UANotificationOptionNone;
+    self.push.authorizedNotificationSettings = UAAuthorizedNotificationSettingsNone;
     XCTAssertFalse(self.push.userPromptedForNotifications);
 }
 
@@ -2559,13 +2561,13 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
  */
 - (void)testNotificationOptionsAuthorizedTwice {
     // SETUP
-    self.push.authorizedNotificationOptions = UANotificationOptionAlert;
+    self.push.authorizedNotificationSettings = UAAuthorizedNotificationSettingsAlert;
     
     // EXPECTATIONS
-    [[self.mockRegistrationDelegate reject] notificationAuthorizedOptionsDidChange:UANotificationOptionAlert];
+    [[self.mockRegistrationDelegate reject] notificationAuthorizedSettingsDidChange:UAAuthorizedNotificationSettingsAlert];
 
     // TEST
-    self.push.authorizedNotificationOptions = UANotificationOptionAlert;
+    self.push.authorizedNotificationSettings = UAAuthorizedNotificationSettingsAlert;
     
     // VERIFY
     XCTAssertNoThrow([self.mockRegistrationDelegate verify]);
@@ -2632,10 +2634,10 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     // SETUP
     self.push.requireSettingsAppToDisableUserNotifications = NO;
     self.push.userPushNotificationsEnabled = NO;
-    self.push.authorizedNotificationOptions = UANotificationOptionAlert;
+    self.push.authorizedNotificationSettings = UAAuthorizedNotificationSettingsAlert;
     
     // TEST & VERIFY
-    XCTAssert(self.push.authorizedNotificationOptions == UANotificationOptionNone);
+    XCTAssert(self.push.authorizedNotificationSettings == UAAuthorizedNotificationSettingsNone);
 }
 
 - (void)testEnablingDisabledPushUpdatesRegistration {
