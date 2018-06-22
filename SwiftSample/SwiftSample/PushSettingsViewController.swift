@@ -95,27 +95,27 @@ class PushSettingsViewController: UITableViewController {
 
     func pushTypeString () -> String {
 
-        let types = UAirship.push().authorizedNotificationOptions;
+        let authorizedSettings = UAirship.push().authorizedNotificationSettings;
 
-        var typeArray: [String] = []
+        var settingsArray: [String] = []
 
-        if (types.contains(.alert)) {
-            typeArray.append(NSLocalizedString("UA_Notification_Type_Alerts", tableName: "UAPushUI", comment: "Alerts"))
+        if (authorizedSettings.contains(.alert)) {
+            settingsArray.append(NSLocalizedString("UA_Notification_Type_Alerts", tableName: "UAPushUI", comment: "Alerts"))
         }
 
-        if (types.contains(.badge)){
-            typeArray.append(NSLocalizedString("UA_Notification_Type_Badges", tableName: "UAPushUI", comment: "Badges"))
+        if (authorizedSettings.contains(.badge)){
+            settingsArray.append(NSLocalizedString("UA_Notification_Type_Badges", tableName: "UAPushUI", comment: "Badges"))
         }
 
-        if (types.contains(.sound)) {
-            typeArray.append(NSLocalizedString("UA_Notification_Type_Sounds", tableName: "UAPushUI", comment: "Sounds"))
+        if (authorizedSettings.contains(.sound)) {
+            settingsArray.append(NSLocalizedString("UA_Notification_Type_Sounds", tableName: "UAPushUI", comment: "Sounds"))
         }
 
-        if (typeArray.count == 0) {
+        if (settingsArray.count == 0) {
             return NSLocalizedString("UA_Push_Settings_Link_Disabled_Title", tableName: "UAPushUI", comment: "Pushes Currently Disabled")
         }
 
-        return typeArray.joined(separator: ", ")
+        return settingsArray.joined(separator: ", ")
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

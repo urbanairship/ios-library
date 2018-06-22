@@ -71,27 +71,27 @@
 }
 
 - (NSString *)pushTypeString {
-    UANotificationOptions options = [UAirship push].authorizedNotificationOptions;
+    UAAuthorizedNotificationSettings authorizedSettings = [UAirship push].authorizedNotificationSettings;
 
-    NSMutableArray *typeArray = [NSMutableArray arrayWithCapacity:3];
+    NSMutableArray *settingsArray = [NSMutableArray arrayWithCapacity:3];
 
-    if (options & UANotificationOptionAlert) {
-        [typeArray addObject:NSLocalizedStringFromTable(@"UA_Notification_Type_Alerts", @"UAPushUI", @"Alerts")];
+    if (authorizedSettings & UAAuthorizedNotificationSettingsAlert) {
+        [settingsArray addObject:NSLocalizedStringFromTable(@"UA_Notification_Type_Alerts", @"UAPushUI", @"Alerts")];
     }
 
-    if (options & UANotificationOptionBadge) {
-        [typeArray addObject:NSLocalizedStringFromTable(@"UA_Notification_Type_Badges", @"UAPushUI", @"Badges")];
+    if (authorizedSettings & UAAuthorizedNotificationSettingsBadge) {
+        [settingsArray addObject:NSLocalizedStringFromTable(@"UA_Notification_Type_Badges", @"UAPushUI", @"Badges")];
     }
 
-    if (options & UANotificationOptionSound) {
-        [typeArray addObject:NSLocalizedStringFromTable(@"UA_Notification_Type_Sounds", @"UAPushUI", @"Sounds")];
+    if (authorizedSettings & UAAuthorizedNotificationSettingsSound) {
+        [settingsArray addObject:NSLocalizedStringFromTable(@"UA_Notification_Type_Sounds", @"UAPushUI", @"Sounds")];
     }
 
-    if (![typeArray count]) {
+    if (![settingsArray count]) {
         return NSLocalizedStringFromTable(@"UA_Push_Settings_Link_Disabled_Title", @"UAPushUI", @"Pushes Currently Disabled");
     }
 
-    return [typeArray componentsJoinedByString:@", "];
+    return [settingsArray componentsJoinedByString:@", "];
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
