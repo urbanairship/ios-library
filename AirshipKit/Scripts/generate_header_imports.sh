@@ -10,7 +10,7 @@ if [[ $# -lt 2 ]]; then
 fi
 
 echo "${ROOT_PATH}"
-TMP_LIB="/tmp/AirshipKit/$2"
+TMP_LIB="${ROOT_PATH}/GeneratedHeader/$2"
 TMP_LIB_HEADER="${TMP_LIB}/AirshipLib.h"
 SOURCE_LIB_HEADER="${ROOT_PATH}/AirshipKit/$2/AirshipLib.h"
 
