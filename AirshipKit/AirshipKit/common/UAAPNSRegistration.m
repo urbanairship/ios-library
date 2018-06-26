@@ -20,31 +20,31 @@
 
         if (notificationSettings.authorizationStatus == UNAuthorizationStatusAuthorized) {
 
-#if !TARGET_OS_TV
-            if (notificationSettings.alertSetting == UNNotificationSettingEnabled) {
-                authorizedSettings |= UAAuthorizedNotificationSettingsAlert;
+            if (notificationSettings.badgeSetting == UNNotificationSettingEnabled) {
+                authorizedSettings |= UAAuthorizedNotificationSettingsBadge;
             }
 
+#if !TARGET_OS_TV
             if (notificationSettings.soundSetting == UNNotificationSettingEnabled) {
                 authorizedSettings |= UAAuthorizedNotificationSettingsSound;
+            }
+
+            if (notificationSettings.alertSetting == UNNotificationSettingEnabled) {
+                authorizedSettings |= UAAuthorizedNotificationSettingsAlert;
             }
 
             if (notificationSettings.carPlaySetting == UNNotificationSettingEnabled) {
                 authorizedSettings |= UAAuthorizedNotificationSettingsCarPlay;
             }
-#endif
-            if (notificationSettings.badgeSetting == UNNotificationSettingEnabled) {
-                authorizedSettings |= UAAuthorizedNotificationSettingsBadge;
-            }
 
             if (notificationSettings.lockScreenSetting == UNNotificationSettingEnabled) {
-                authorizedSettings |= UAAuthorizedNotificationSettingsBadge;
+                authorizedSettings |= UAAuthorizedNotificationSettingsLockScreen;
             }
 
             if (notificationSettings.notificationCenterSetting == UNNotificationSettingEnabled) {
-                authorizedSettings |= UAAuthorizedNotificationSettingsBadge;
+                authorizedSettings |= UAAuthorizedNotificationSettingsNotificationCenter;
             }
-
+#endif
             completionHandler(authorizedSettings);
         }}];
 }

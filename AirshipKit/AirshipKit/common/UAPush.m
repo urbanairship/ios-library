@@ -222,14 +222,18 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
 
         id strongDelegate = self.registrationDelegate;
 
-        if ([strongDelegate respondsToSelector:@selector(notificationAuthorizedSettingsDidChange:)]) {
+        SEL newSelector = @selector(notificationAuthorizedSettingsDidChange:);
+        SEL oldSelector = @selector(notificationAuthorizedSettingsDidChange:);
+
+        if ([strongDelegate respondsToSelector:newSelector]) {
             [strongDelegate notificationAuthorizedSettingsDidChange:authorizedSettings];
         }
 
-        if ([strongDelegate respondsToSelector:@selector(notificationAuthorizedOptionsDidChange:)]) {
+        if ([strongDelegate respondsToSelector:oldSelector]) {
             UANotificationOptions legacyOptions = [self legacyOptionsForAuthorizedSettings:authorizedSettings];
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+            UA_LWARN(@"Warning: %@ is deprecated and will be removed in SDK 11. Please use %@", NSStringFromSelector(oldSelector), NSStringFromSelector(newSelector));
             [strongDelegate notificationAuthorizedOptionsDidChange:legacyOptions];
 #pragma GCC diagnostic pop
         }
@@ -826,6 +830,7 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
         options |= UANotificationOptionBadge;
     }
 
+#if !TARGET_OS_TV   // Only badges available on tvOS
     if (authorizedSettings & UAAuthorizedNotificationSettingsSound) {
         options |= UANotificationOptionSound;
     }
@@ -837,6 +842,7 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
     if (authorizedSettings & UAAuthorizedNotificationSettingsCarPlay) {
         options |= UANotificationOptionCarPlay;
     }
+#endif
 
     return options;
 }
@@ -853,17 +859,21 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
 
     id strongDelegate = self.registrationDelegate;
 
-    if ([strongDelegate respondsToSelector:@selector(notificationRegistrationFinishedWithAuthorizedSettings:categories:)]) {
+    SEL newSelector = @selector(notificationRegistrationFinishedWithAuthorizedSettings:categories:);
+    SEL oldSelector = @selector(notificationRegistrationFinishedWithOptions:categories:);
+
+    if ([strongDelegate respondsToSelector:newSelector]) {
         dispatch_async(dispatch_get_main_queue(), ^{
             [strongDelegate notificationRegistrationFinishedWithAuthorizedSettings:authorizedSettings categories:self.combinedCategories];
         });
     }
 
-    if ([strongDelegate respondsToSelector:@selector(notificationRegistrationFinishedWithOptions:categories:)]) {
+    if ([strongDelegate respondsToSelector:oldSelector]) {
         dispatch_async(dispatch_get_main_queue(), ^{
             UANotificationOptions legacyOptions = [self legacyOptionsForAuthorizedSettings:authorizedSettings];
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+            UA_LWARN(@"Warning: %@ is deprecated and will be removed in SDK 11. Please use %@", NSStringFromSelector(oldSelector), NSStringFromSelector(newSelector));
             [strongDelegate notificationRegistrationFinishedWithOptions:legacyOptions categories:self.combinedCategories];
 #pragma GCC diagnostic pop
         });

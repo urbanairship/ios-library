@@ -133,19 +133,19 @@ static const UANotificationOptions UANotificationOptionNone =  0;
  * @param options UANotificationOptions that were most recently registered.
  * @param categories NSSet of the categories that were most recently registered.
  *
- * @deprecated Deprecated. Please use notificationRegistrationFinishedWithAuthorizedSettings:categories:
+ * @deprecated Deprecated - to be removed in SDK version 11.0. Please use notificationRegistrationFinishedWithAuthorizedSettings:categories:
  */
 - (void)notificationRegistrationFinishedWithOptions:(UANotificationOptions)options
-                                         categories:(NSSet *)categories DEPRECATED_MSG_ATTRIBUTE("Deprecated - Please use notificationRegistrationFinishedWithAuthorizedSettings:categories");
+                                         categories:(NSSet *)categories DEPRECATED_MSG_ATTRIBUTE("Deprecated - to be removed in SDK version 11.0. Please use notificationRegistrationFinishedWithAuthorizedSettings:categories");
 
 /**
  * Called when APNS authentication changes with the new authorized options.
  *
  * @param options UANotificationOptions that were most recently registered.
  *
- * @deprecated Deprecated. Please use notificationAuthorizedSettingsDidChange:
+ * @deprecated Deprecated - to be removed in SDK version 11.0. Please use notificationAuthorizedSettingsDidChange:
  */
-- (void)notificationAuthorizedOptionsDidChange:(UANotificationOptions)options DEPRECATED_MSG_ATTRIBUTE("Deprecated - Please use notificationAuthorizedSettingsDidChange");
+- (void)notificationAuthorizedOptionsDidChange:(UANotificationOptions)options DEPRECATED_MSG_ATTRIBUTE("Deprecated - to be removed in SDK version 11.0. Please use notificationAuthorizedSettingsDidChange");
 
 /**
  * Called when the UIApplicationDelegate's application:didRegisterForRemoteNotificationsWithDeviceToken:
@@ -372,8 +372,10 @@ static const UANotificationOptions UANotificationOptionNone =  0;
 
 /**
  * The current authorized notification options.
+ 
+ * @deprecated Deprecated - to be removed in SDK version 11.0. Please use authorizedNotificationSettings.
  */
-@property (nonatomic, assign, readonly) UANotificationOptions authorizedNotificationOptions DEPRECATED_MSG_ATTRIBUTE("Deprecated - please use authorizedNotificationSettings");
+@property (nonatomic, assign, readonly) UANotificationOptions authorizedNotificationOptions DEPRECATED_MSG_ATTRIBUTE("Deprecated - to be removed in SDK version 11.0. Please use authorizedNotificationSettings");
 
 /**
  * Indicates whether the user has been prompted for notifications or not.
