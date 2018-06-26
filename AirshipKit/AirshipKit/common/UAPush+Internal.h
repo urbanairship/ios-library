@@ -154,6 +154,9 @@ extern NSString *const UAPushEnabledKey;
 
 /**
  * The current authorized notification settings.
+ *
+ * Note: this value reflects all the notification settings currently enabled in the
+ * Settings app and does not take into account which options were originally requested.
  */
 @property (nonatomic, assign) UAAuthorizedNotificationSettings authorizedNotificationSettings;
 

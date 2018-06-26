@@ -367,11 +367,18 @@ static const UANotificationOptions UANotificationOptionNone =  0;
 
 /**
  * The current authorized notification settings.
+ *
+ * Note: this value reflects all the notification settings currently enabled in the
+ * Settings app and does not take into account which options were originally requested.
  */
 @property (nonatomic, assign, readonly) UAAuthorizedNotificationSettings authorizedNotificationSettings;
 
 /**
  * The current authorized notification options.
+ *
+ * Note: Unlike authorizedNotificationSettings, this value may diverge from the settings enabled in the
+ * Settings app depending on whether user push notifications are enabled and which options were originally requested.
+ * This behavior has been maintained for backwards compatibility.
  
  * @deprecated Deprecated - to be removed in SDK version 11.0. Please use authorizedNotificationSettings.
  */

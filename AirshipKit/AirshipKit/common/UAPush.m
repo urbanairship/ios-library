@@ -199,10 +199,6 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
 #pragma mark Device Token Get/Set Methods
 
 - (UAAuthorizedNotificationSettings)authorizedNotificationSettings {
-    if (!self.userPushNotificationsEnabled) {
-        return UAAuthorizedNotificationSettingsNone;
-    }
-
     return (UAAuthorizedNotificationSettings) [self.dataStore integerForKey:UAPushTypesAuthorizedKey];
 }
 
@@ -223,7 +219,7 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
         id strongDelegate = self.registrationDelegate;
 
         SEL newSelector = @selector(notificationAuthorizedSettingsDidChange:);
-        SEL oldSelector = @selector(notificationAuthorizedSettingsDidChange:);
+        SEL oldSelector = @selector(notificationAuthorizedOptionsDidChange:);
 
         if ([strongDelegate respondsToSelector:newSelector]) {
             [strongDelegate notificationAuthorizedSettingsDidChange:authorizedSettings];
@@ -825,6 +821,10 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
 
 - (UANotificationOptions)legacyOptionsForAuthorizedSettings:(UAAuthorizedNotificationSettings)authorizedSettings {
     UANotificationOptions options = UANotificationOptionNone;
+
+    if (!self.userPushNotificationsEnabled) {
+        return options;
+    }
 
     if (authorizedSettings & UAAuthorizedNotificationSettingsBadge) {
         options |= UANotificationOptionBadge;
