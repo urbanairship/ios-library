@@ -105,7 +105,7 @@
         [endBackgroundTaskExpecation fulfill];
     }] endBackgroundTask:0];
 
-    [self waitForExpectationsWithTimeout:2 handler:nil];
+    [self waitForExpectationsWithTimeout:5 handler:nil];
     
     [self.mockChannelTagGroupsAPIClient verify];
     [self.mockNamedUserTagGroupsAPIClient verify];

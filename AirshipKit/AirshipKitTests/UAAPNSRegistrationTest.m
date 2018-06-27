@@ -91,7 +91,8 @@
 -(void)testGetCurrentAuthorization {
 
     // These expected options must match mocked UNNotificationSettings object below for the test to be valid
-    UANotificationOptions expectedOptions =  UANotificationOptionAlert | UANotificationOptionBadge | UANotificationOptionSound | UANotificationOptionCarPlay;
+    UAAuthorizedNotificationSettings expectedSettings =  UAAuthorizedNotificationSettingsAlert | UAAuthorizedNotificationSettingsBadge |
+        UAAuthorizedNotificationSettingsSound | UAAuthorizedNotificationSettingsCarPlay;
 
     // Mock UNNotificationSettings object to match expected options since we can't initialize one
     id mockNotificationSettings = [self mockForClass:[UNNotificationSettings class]];
@@ -111,8 +112,8 @@
 
     }] getNotificationSettingsWithCompletionHandler:OCMOCK_ANY];
 
-    [self.pushRegistration getCurrentAuthorizationOptionsWithCompletionHandler:^(UANotificationOptions options) {
-        XCTAssertTrue(options == expectedOptions);
+    [self.pushRegistration getAuthorizedSettingsWithCompletionHandler:^(UAAuthorizedNotificationSettings authorizedSettings) {
+        XCTAssertTrue(authorizedSettings == expectedSettings);
     }];
 }
 

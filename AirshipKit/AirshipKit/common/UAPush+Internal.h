@@ -153,9 +153,12 @@ extern NSString *const UAPushEnabledKey;
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 
 /**
- * The current authorized notification options.
+ * The current authorized notification settings.
+ *
+ * Note: this value reflects all the notification settings currently enabled in the
+ * Settings app and does not take into account which options were originally requested.
  */
-@property (nonatomic, assign) UANotificationOptions authorizedNotificationOptions;
+@property (nonatomic, assign) UAAuthorizedNotificationSettings authorizedNotificationSettings;
 
 /**
  * Indicates whether the user has been prompted for notifications or not.

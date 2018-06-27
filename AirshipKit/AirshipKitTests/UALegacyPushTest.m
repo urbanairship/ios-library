@@ -713,16 +713,16 @@ NSString *validLegacyDeviceToken = @"0123456789abcdef0123456789abcdef";
  */
 -(void)testSetAuthorizedTypesCallsRegistrationDelegate {
 
-    UANotificationOptions expectedOptions = 2;
+    UAAuthorizedNotificationSettings expectedSettings = 2;
 
     XCTestExpectation *delegateCalled = [self expectationWithDescription:@"Delegate called"];
 
     [[[self.mockRegistrationDelegate expect] andDo:^(NSInvocation *invocation) {
         [delegateCalled fulfill];
-    }]  notificationAuthorizedOptionsDidChange:expectedOptions];
+    }]  notificationAuthorizedSettingsDidChange:expectedSettings];
 
     // set authorized types
-    self.push.authorizedNotificationOptions = expectedOptions;
+    self.push.authorizedNotificationSettings = expectedSettings;
 
     [self waitForExpectationsWithTimeout:10 handler:nil];
 
@@ -2305,7 +2305,7 @@ NSString *validLegacyDeviceToken = @"0123456789abcdef0123456789abcdef";
  * Test on first launch when user has not been prompted for notification.
  */
 - (void)testNotificationNotPrompted {
-    self.push.authorizedNotificationOptions = UANotificationOptionNone;
+    self.push.authorizedNotificationSettings = UAAuthorizedNotificationSettingsNone;
     XCTAssertFalse(self.push.userPromptedForNotifications);
 }
 
@@ -2314,13 +2314,13 @@ NSString *validLegacyDeviceToken = @"0123456789abcdef0123456789abcdef";
  */
 - (void)testNotificationOptionsAuthorizedTwice {
     // SETUP
-    self.push.authorizedNotificationOptions = UANotificationOptionAlert;
+    self.push.authorizedNotificationSettings = UAAuthorizedNotificationSettingsAlert;
     
     // EXPECTATIONS
     [[self.mockRegistrationDelegate reject] notificationAuthorizedOptionsDidChange:UANotificationOptionAlert];
 
     // TEST
-    self.push.authorizedNotificationOptions = UANotificationOptionAlert;
+    self.push.authorizedNotificationSettings = UAAuthorizedNotificationSettingsAlert;
     
     // VERIFY
     XCTAssertNoThrow([self.mockRegistrationDelegate verify]);
@@ -2389,7 +2389,7 @@ NSString *validLegacyDeviceToken = @"0123456789abcdef0123456789abcdef";
     // SETUP
     self.push.requireSettingsAppToDisableUserNotifications = NO;
     self.push.userPushNotificationsEnabled = NO;
-    self.push.authorizedNotificationOptions = UANotificationOptionAlert;
+    self.push.authorizedNotificationSettings = UAAuthorizedNotificationSettingsAlert;
     
     // TEST & VERIFY
     XCTAssert(self.push.authorizedNotificationOptions == UANotificationOptionNone);

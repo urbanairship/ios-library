@@ -187,10 +187,10 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
 }
 
 - (void)updateAuthorizedNotificationTypes {
-    [self.pushRegistration getCurrentAuthorizationOptionsWithCompletionHandler:^(UANotificationOptions options) {
-        if (self.userPromptedForNotifications || options != UANotificationOptionNone) {
+    [self.pushRegistration getAuthorizedSettingsWithCompletionHandler:^(UAAuthorizedNotificationSettings authorizedSettings) {
+        if (self.userPromptedForNotifications || authorizedSettings != UAAuthorizedNotificationSettingsNone) {
             self.userPromptedForNotifications = YES;
-            self.authorizedNotificationOptions = options;
+            self.authorizedNotificationSettings = authorizedSettings;
         }
     }];
 }
@@ -198,25 +198,40 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
 #pragma mark -
 #pragma mark Device Token Get/Set Methods
 
+- (UAAuthorizedNotificationSettings)authorizedNotificationSettings {
+    return (UAAuthorizedNotificationSettings) [self.dataStore integerForKey:UAPushTypesAuthorizedKey];
+}
+
 - (UANotificationOptions)authorizedNotificationOptions {
-    if (!self.userPushNotificationsEnabled) {
-        return 0;
-    }
+    UANotificationOptions legacyOptions = [self legacyOptionsForAuthorizedSettings:self.authorizedNotificationSettings];
 
     // iOS 10 does not disable the types if they are already authorized. Hide any types
     // that are authorized but are no longer requested
-    return (UANotificationOptions) [self.dataStore integerForKey:UAPushTypesAuthorizedKey] & self.notificationOptions;
+    return legacyOptions & self.notificationOptions;
 }
 
-- (void)setAuthorizedNotificationOptions:(UANotificationOptions)types {
-    if (![self.dataStore objectForKey:UAPushTypesAuthorizedKey] || [self.dataStore integerForKey:UAPushTypesAuthorizedKey] != types) {
+- (void)setAuthorizedNotificationSettings:(UAAuthorizedNotificationSettings)authorizedSettings {
+    if (![self.dataStore objectForKey:UAPushTypesAuthorizedKey] || [self.dataStore integerForKey:UAPushTypesAuthorizedKey] != authorizedSettings) {
 
-        [self.dataStore setInteger:(NSInteger)types forKey:UAPushTypesAuthorizedKey];
+        [self.dataStore setInteger:(NSInteger)authorizedSettings forKey:UAPushTypesAuthorizedKey];
         [self updateRegistration];
 
         id strongDelegate = self.registrationDelegate;
-        if ([strongDelegate respondsToSelector:@selector(notificationAuthorizedOptionsDidChange:)]) {
-            [strongDelegate notificationAuthorizedOptionsDidChange:types];
+
+        SEL newSelector = @selector(notificationAuthorizedSettingsDidChange:);
+        SEL oldSelector = @selector(notificationAuthorizedOptionsDidChange:);
+
+        if ([strongDelegate respondsToSelector:newSelector]) {
+            [strongDelegate notificationAuthorizedSettingsDidChange:authorizedSettings];
+        }
+
+        if ([strongDelegate respondsToSelector:oldSelector]) {
+            UANotificationOptions legacyOptions = [self legacyOptionsForAuthorizedSettings:authorizedSettings];
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+            UA_LWARN(@"Warning: %@ is deprecated and will be removed in SDK 11. Please use %@", NSStringFromSelector(oldSelector), NSStringFromSelector(newSelector));
+            [strongDelegate notificationAuthorizedOptionsDidChange:legacyOptions];
+#pragma GCC diagnostic pop
         }
     }
 }
@@ -700,7 +715,7 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
 
     return self.deviceToken
     && self.userPushNotificationsEnabled
-    && self.authorizedNotificationOptions
+    && self.authorizedNotificationSettings
     && isRegisteredForRemoteNotifications
     && self.pushTokenRegistrationEnabled;
 }
@@ -794,8 +809,8 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
         return;
     }
 
-    [self.pushRegistration getCurrentAuthorizationOptionsWithCompletionHandler:^(UANotificationOptions authorizedOptions) {
-        if (authorizedOptions == UANotificationOptionNone && options == UANotificationOptionNone) {
+    [self.pushRegistration getAuthorizedSettingsWithCompletionHandler:^(UAAuthorizedNotificationSettings authorizedSettings) {
+        if (authorizedSettings == UAAuthorizedNotificationSettingsNone && options == UANotificationOptionNone) {
             // Skip updating registration to avoid prompting the user
             return;
         }
@@ -804,8 +819,35 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
     }];
 }
 
-- (void)notificationRegistrationFinishedWithOptions:(UANotificationOptions)options {
-    
+- (UANotificationOptions)legacyOptionsForAuthorizedSettings:(UAAuthorizedNotificationSettings)authorizedSettings {
+    UANotificationOptions options = UANotificationOptionNone;
+
+    if (!self.userPushNotificationsEnabled) {
+        return options;
+    }
+
+    if (authorizedSettings & UAAuthorizedNotificationSettingsBadge) {
+        options |= UANotificationOptionBadge;
+    }
+
+#if !TARGET_OS_TV   // Only badges available on tvOS
+    if (authorizedSettings & UAAuthorizedNotificationSettingsSound) {
+        options |= UANotificationOptionSound;
+    }
+
+    if (authorizedSettings & UAAuthorizedNotificationSettingsAlert) {
+        options |= UANotificationOptionAlert;
+    }
+
+    if (authorizedSettings & UAAuthorizedNotificationSettingsCarPlay) {
+        options |= UANotificationOptionCarPlay;
+    }
+#endif
+
+    return options;
+}
+
+- (void)notificationRegistrationFinishedWithAuthorizedSettings:(UAAuthorizedNotificationSettings)authorizedSettings {
     if (!self.deviceToken) {
         dispatch_async(dispatch_get_main_queue(), ^{
             [[UIApplication sharedApplication] registerForRemoteNotifications];
@@ -813,12 +855,27 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
     };
 
     self.userPromptedForNotifications = YES;
-    self.authorizedNotificationOptions = options;
+    self.authorizedNotificationSettings = authorizedSettings;
 
     id strongDelegate = self.registrationDelegate;
-    if ([strongDelegate respondsToSelector:@selector(notificationRegistrationFinishedWithOptions:categories:)]) {
+
+    SEL newSelector = @selector(notificationRegistrationFinishedWithAuthorizedSettings:categories:);
+    SEL oldSelector = @selector(notificationRegistrationFinishedWithOptions:categories:);
+
+    if ([strongDelegate respondsToSelector:newSelector]) {
         dispatch_async(dispatch_get_main_queue(), ^{
-            [strongDelegate notificationRegistrationFinishedWithOptions:options categories:self.combinedCategories];
+            [strongDelegate notificationRegistrationFinishedWithAuthorizedSettings:authorizedSettings categories:self.combinedCategories];
+        });
+    }
+
+    if ([strongDelegate respondsToSelector:oldSelector]) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            UANotificationOptions legacyOptions = [self legacyOptionsForAuthorizedSettings:authorizedSettings];
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+            UA_LWARN(@"Warning: %@ is deprecated and will be removed in SDK 11. Please use %@", NSStringFromSelector(oldSelector), NSStringFromSelector(newSelector));
+            [strongDelegate notificationRegistrationFinishedWithOptions:legacyOptions categories:self.combinedCategories];
+#pragma GCC diagnostic pop
         });
     }
 }
@@ -848,8 +905,6 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
     } else {
         [self endRegistrationBackgroundTask];
     }
-
-
 }
 
 - (void)registrationFailedWithPayload:(UAChannelRegistrationPayload *)payload {

@@ -66,11 +66,11 @@
     NSString *channelID = @"channel_id";
     NSString *namedUserID = @"named_user";
     NSArray *tags = @[@"tag1", @"tag2", @"tag3"];
-    UANotificationOptions expectedOptions = 1;
+    UAAuthorizedNotificationSettings expectedSettings = 1;
     
     [[[self.mockPush stub] andReturn:channelID] channelID];
     [(UAPush *)[[self.mockPush stub] andReturn:tags] tags];
-    [(UAPush *)[[self.mockPush stub] andReturnValue:OCMOCK_VALUE(expectedOptions)] authorizedNotificationOptions];
+    [(UAPush *)[[self.mockPush stub] andReturnValue:OCMOCK_VALUE(expectedSettings)] authorizedNotificationSettings];
     [(UANamedUser *)[[self.mockNamedUser stub] andReturn:namedUserID] identifier];
     
     __block BOOL actionPerformed = NO;
@@ -93,11 +93,11 @@
     NSString *channelID = @"channel_id";
     NSString *namedUserID = @"named_user";
     NSArray *tags = @[];
-    UANotificationOptions expectedOptions = 1;
+    UAAuthorizedNotificationSettings expectedSettings = 1;
     
     [[[self.mockPush stub] andReturn:channelID] channelID];
     [(UAPush *)[[self.mockPush stub] andReturn:tags] tags];
-    [(UAPush *)[[self.mockPush stub] andReturnValue:OCMOCK_VALUE(expectedOptions)] authorizedNotificationOptions];
+    [(UAPush *)[[self.mockPush stub] andReturnValue:OCMOCK_VALUE(expectedSettings)] authorizedNotificationSettings];
     [(UANamedUser *)[[self.mockNamedUser stub] andReturn:namedUserID] identifier];
     
     __block BOOL actionPerformed = NO;

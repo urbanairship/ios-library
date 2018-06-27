@@ -45,8 +45,8 @@ NSString *const UAEnableBackgroundLocationActionValue = @"background_location";
 }
 
 - (void)isNotificationsAuthorized:(void (^)(BOOL))callback {
-    [[UAirship push].pushRegistration getCurrentAuthorizationOptionsWithCompletionHandler:^(UANotificationOptions options) {
-        callback(options != UANotificationOptionNone);
+    [[UAirship push].pushRegistration getAuthorizedSettingsWithCompletionHandler:^(UAAuthorizedNotificationSettings authorizedSettings) {
+        callback(authorizedSettings != UAAuthorizedNotificationSettingsNone);
     }];
 }
 
