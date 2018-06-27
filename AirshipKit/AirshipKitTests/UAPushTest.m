@@ -2630,6 +2630,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     XCTAssertTrue([@"736f6d652d746f6b656e" isEqualToString:self.push.deviceToken]);
 }
 
+// Legacy behavior
 -(void)testAuthorizedNotificationOptionsWhenPushNotificationsDisabled {
     // SETUP
     self.push.requireSettingsAppToDisableUserNotifications = NO;
@@ -2637,7 +2638,21 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     self.push.authorizedNotificationSettings = UAAuthorizedNotificationSettingsAlert;
     
     // TEST & VERIFY
-    XCTAssert(self.push.authorizedNotificationSettings == UAAuthorizedNotificationSettingsNone);
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+    XCTAssert(self.push.authorizedNotificationOptions == UANotificationOptionNone);
+#pragma GCC diagnostic pop
+}
+
+// New behavior
+-(void)testAuthorizedNotificationSettingsWhenPushNotificationsDisabled {
+    // SETUP
+    self.push.requireSettingsAppToDisableUserNotifications = NO;
+    self.push.userPushNotificationsEnabled = NO;
+    self.push.authorizedNotificationSettings = UAAuthorizedNotificationSettingsAlert;
+
+    // TEST & VERIFY
+    XCTAssert(self.push.authorizedNotificationSettings == UAAuthorizedNotificationSettingsAlert);
 }
 
 - (void)testEnablingDisabledPushUpdatesRegistration {
