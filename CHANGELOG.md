@@ -3,6 +3,28 @@ iOS Changelog
 
 Migration Guides: Documentation/Migration
 
+Version 9.3.0 - June 27, 2018
+=============================
+
+Minor release that adds support for:
+
+- detection of quiet notifications vs. opted-out users,
+- disabling 3D-touch in a message center message,
+- rejecting whitelisted URLs before they are fetched.
+
+This release also fixes an issue with incremental builds. 
+
+Apps interested in the new features or experiencing the incremental build issue are encouraged to upgrade.
+
+Changes
+-------
+- Separates notification options from notification settings. Options now represent what is requested and settings represent what was granted.
+  - Note: In UAPush.m, a new  [`authorizedNotificationSettings`](https://docs.urbanairship.com/reference/libraries/ios/latest/Classes/UAPush.html#/c:objc(cs)UAPush(py)authorizedNotificationSettings) property has been added. It will always return the current authorized settings, even if push notifications are disabled through [`userPushNotificationsEnabled`](https://docs.urbanairship.com/reference/libraries/ios/latest/Classes/UAPush.html#/c:objc(cs)UAPush(py)userPushNotificationsEnabled). 
+- Adds mechanism to allow apps to disable message center link previews and callouts.
+- Adds mechanism to allow apps to reject whitelisted URLs before they are fetched.
+- Changes header generation script to use Apple's recommended temp directory. This solves a problem certain developers were having with incremental builds.
+- Migrates keychain security attribute to only allow access after first device unlock.
+
 Version 9.2.1 - June 13, 2018
 ============================
 
