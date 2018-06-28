@@ -58,16 +58,12 @@ NSString *const UAManagedContextStoreDirectory = @"com.urbanairship.no-backup";
             }
         }
 
-        NSError *error = nil;
         NSDictionary *options = @{ NSMigratePersistentStoresAutomaticallyOption : @YES,
                                    NSInferMappingModelAutomaticallyOption : @YES };
+        NSError *error = nil;
+        BOOL result = [self.persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL options:options error:&error];
 
-        if (![self.persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL options:options error:&error]) {
-            completionHandler(NO, error);
-            return;
-        }
-
-        completionHandler(YES, nil);
+        completionHandler(result, error);
     }];
 }
 
@@ -77,13 +73,9 @@ NSString *const UAManagedContextStoreDirectory = @"com.urbanairship.no-backup";
     NSDictionary *options = @{ NSMigratePersistentStoresAutomaticallyOption : @YES,
                                NSInferMappingModelAutomaticallyOption : @YES };
     NSError *error = nil;
+    BOOL result = [self.persistentStoreCoordinator addPersistentStoreWithType:NSInMemoryStoreType configuration:nil URL:nil options:options error:&error];
 
-    if (![self.persistentStoreCoordinator addPersistentStoreWithType:NSInMemoryStoreType configuration:nil URL:nil options:options error:&error]) {
-        completionHandler(NO, error);
-        return;
-    };
-
-    completionHandler(YES, nil);
+    completionHandler(result, error);
 }
 
 - (void)safePerformBlock:(void (^)(BOOL))block {

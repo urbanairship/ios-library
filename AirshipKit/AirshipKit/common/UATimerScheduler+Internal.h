@@ -2,16 +2,16 @@
 
 #import <Foundation/Foundation.h>
 
+/**
+ * Helper class for scheduling timers.
+ */
 @interface UATimerScheduler : NSObject
 
-/*
-- (NSTimer *)timerWithTimeInterval:(NSTimeInterval)interval
-                            target:(id)target
-                          selector:(SEL)selector
-                          userInfo:(id)userInfo
-                           repeats:(BOOL)yesOrNo;
+/**
+ * Schedules a timer on the current run loop.
+ *
+ * @param timer A timer.
  */
-
 - (void)scheduleTimer:(NSTimer *)timer;
 
 @end

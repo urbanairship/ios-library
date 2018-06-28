@@ -3,6 +3,8 @@
 #import <Foundation/Foundation.h>
 #import "UAScheduleTrigger+Internal.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @class UASchedule;
 @class UAScheduleData;
 @class UAScheduleTriggerData;
@@ -61,16 +63,16 @@
 /**
  * Deletes the schedule corresponding to the provided identifier.
  *
- * @param identifier A schedule identifier.
+ * @param scheduleID A schedule identifier.
  */
-- (void)deleteSchedule:(NSString *)identifier;
+- (void)deleteSchedule:(NSString *)scheduleID;
 
 /**
  * Deletes all schedules corresponding to the provided identifier.
  *
- * @param identifier A group identifier.
+ * @param groupID A group identifier.
  */
-- (void)deleteSchedules:(NSString *)identifier;
+- (void)deleteSchedules:(NSString *)groupID;
 
 /**
  * Deletes all schedules.
@@ -80,10 +82,10 @@
 /**
  * Gets all schedules corresponding to the provided identifier.
  *
- * @param identifier A group identifier.
+ * @param groupID A group identifier.
  * @param completionHandler Completion handler called back with the retrieved schedule data.
  */
-- (void)getSchedules:(NSString *)identifier completionHandler:(void (^)(NSArray<UAScheduleData *> *))completionHandler;
+- (void)getSchedules:(NSString *)groupID completionHandler:(void (^)(NSArray<UAScheduleData *> *))completionHandler;
 
 /**
  * Gets all schedules.
@@ -95,10 +97,10 @@
 /**
  * Gets the schedule corresponding to the provided identifier.
  *
- * @param identifier A schedule identifier.
+ * @param scheduleID A schedule identifier.
  * @param completionHandler Completion handler called back with the retrieved schedule data.
  */
-- (void)getSchedule:(NSString *)identifier completionHandler:(void (^)(NSArray<UAScheduleData *> *))completionHandler;
+- (void)getSchedule:(NSString *)scheduleID completionHandler:(void (^)(NSArray<UAScheduleData *> *))completionHandler;
 
 /**
  * Gets all expired schedules that have not exceeded their grace period.
@@ -117,11 +119,11 @@
 /**
  * Gets the schedule corresponding to the provided identifier and delayed execution date.
  *
- * @param identifier A schedule identifier.
+ * @param scheduleID A schedule identifier.
  * @param date The delayed execution date.
  * @param completionHandler Completion handler called back with the retrieved schedule data.
  */
-- (void)getDelayedSchedule:(NSString *)identifier executionDate:(NSDate *)date completionHandler:(void (^)(NSArray<UAScheduleData *> *))completionHandler;
+- (void)getDelayedSchedule:(NSString *)scheduleID executionDate:(NSDate *)date completionHandler:(void (^)(NSArray<UAScheduleData *> *))completionHandler;
 
 /**
  * Gets all currently paused schedules.
@@ -133,9 +135,10 @@
 /**
  * Gets a paused schedule corresponding to the provided identifier.
  *
+ * @param scheduleID A schedule identifier.
  * @param completionHandler Completion handler called back with the retrieved schedule data.
  */
-- (void)getPausedSchedule:(NSString *)identifier completionHandler:(void (^)(NSArray<UAScheduleData *> *))completionHandler;
+- (void)getPausedSchedule:(NSString *)scheduleID completionHandler:(void (^)(NSArray<UAScheduleData *> *))completionHandler;
 
 /**
  * Gets all currently pending schedules.
@@ -161,11 +164,11 @@
 /**
  * Gets all active triggers corresponding to the provided schedule identifier and trigger type.
  *
- * @param identifier A schedule identifier.
+ * @param scheduleID A schedule identifier. If this parameter is nil, all schedules will be queried.
  * @param type A trigger type
  * @param completionHandler Completion handler called back with the retrieved trigger data.
  */
-- (void)getActiveTriggers:(NSString *)identifier
+- (void)getActiveTriggers:(nullable NSString *)scheduleID
                      type:(UAScheduleTriggerType)type
         completionHandler:(void (^)(NSArray<UAScheduleTriggerData *> *triggers))completionHandler;
 
@@ -181,5 +184,6 @@
  */
 - (void)waitForIdle;
 
+NS_ASSUME_NONNULL_END
 
 @end

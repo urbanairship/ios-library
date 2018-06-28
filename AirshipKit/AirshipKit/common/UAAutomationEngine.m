@@ -628,6 +628,8 @@
 
     UA_WEAKIFY(self);
     [self.automationStore getPausedSchedule:identifier completionHandler:^(NSArray<UAScheduleData *> *schedules) {
+        UA_STRONGIFY(self);
+        
         if (schedules.count != 1) {
             return;
         }

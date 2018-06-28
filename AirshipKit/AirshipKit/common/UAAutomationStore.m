@@ -58,7 +58,7 @@
 }
 
 + (instancetype)automationStoreWithStoreName:(NSString *)storeName scheduleLimit:(NSUInteger)scheduleLimit inMemory:(BOOL)inMemory {
-    return [[UAAutomationStore alloc] initWithStoreName:storeName scheduleLimit:scheduleLimit inMemory:YES];
+    return [[UAAutomationStore alloc] initWithStoreName:storeName scheduleLimit:scheduleLimit inMemory:inMemory];
 }
 
 + (instancetype)automationStoreWithStoreName:(NSString *)storeName scheduleLimit:(NSUInteger)scheduleLimit {
@@ -123,13 +123,13 @@
     }];
 }
 
-- (void)deleteSchedule:(NSString *)identifier {
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"identifier == %@", identifier];
+- (void)deleteSchedule:(NSString *)scheduleID {
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"identifier == %@", scheduleID];
     [self deleteSchedulesWithPredicate:predicate];
 }
 
-- (void)deleteSchedules:(NSString *)identifier {
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"group == %@", identifier];
+- (void)deleteSchedules:(NSString *)groupID {
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"group == %@", groupID];
     [self deleteSchedulesWithPredicate:predicate];
 }
 
@@ -137,8 +137,8 @@
     [self deleteSchedulesWithPredicate:nil];
 }
 
-- (void)getSchedules:(NSString *)identifier completionHandler:(void (^)(NSArray<UAScheduleData *> *))completionHandler {
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"group == %@ && end >= %@", identifier, [NSDate date]];
+- (void)getSchedules:(NSString *)groupID completionHandler:(void (^)(NSArray<UAScheduleData *> *))completionHandler {
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"group == %@ && end >= %@", groupID, [NSDate date]];
     [self fetchSchedulesWithPredicate:predicate limit:self.scheduleLimit completionHandler:completionHandler];
 }
 
@@ -147,8 +147,8 @@
     [self fetchSchedulesWithPredicate:predicate limit:self.scheduleLimit completionHandler:completionHandler];
 }
 
-- (void)getSchedule:(NSString *)identifier completionHandler:(void (^)(NSArray<UAScheduleData *> *))completionHandler {
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"identifier == %@ && end >= %@", identifier, [NSDate date]];
+- (void)getSchedule:(NSString *)scheduleID completionHandler:(void (^)(NSArray<UAScheduleData *> *))completionHandler {
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"identifier == %@ && end >= %@", scheduleID, [NSDate date]];
     [self fetchSchedulesWithPredicate:predicate limit:1 completionHandler:completionHandler];
 }
 
@@ -163,9 +163,9 @@
     [self fetchSchedulesWithPredicate:predicate limit:self.scheduleLimit completionHandler:completionHandler];
 }
 
-- (void)getDelayedSchedule:(NSString *)identifier executionDate:(NSDate *)date completionHandler:(void (^)(NSArray<UAScheduleData *> *))completionHandler {
+- (void)getDelayedSchedule:(NSString *)scheduleID executionDate:(NSDate *)date completionHandler:(void (^)(NSArray<UAScheduleData *> *))completionHandler {
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"identifier == %@ AND executionState == %d AND delayedExecutionDate == %@",
-                              identifier, UAScheduleStatePendingExecution, date];
+                              scheduleID, UAScheduleStatePendingExecution, date];
     [self fetchSchedulesWithPredicate:predicate limit:1 completionHandler:completionHandler];
 }
 
@@ -174,14 +174,14 @@
     [self fetchSchedulesWithPredicate:predicate limit:self.scheduleLimit completionHandler:completionHandler];
 }
 
-- (void)getPausedSchedule:(NSString *)identifier completionHandler:(void (^)(NSArray<UAScheduleData *> *))completionHandler {
+- (void)getPausedSchedule:(NSString *)scheduleID completionHandler:(void (^)(NSArray<UAScheduleData *> *))completionHandler {
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"identifier == %@ AND executionState == %d",
-                              identifier, UAScheduleStatePaused];
+                              scheduleID, UAScheduleStatePaused];
     [self fetchSchedulesWithPredicate:predicate limit:1 completionHandler:completionHandler];
 }
 
 - (void)getPendingSchedules:(void (^)(NSArray<UAScheduleData *> *))completionHandler {
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"executionState == %d AND (delayedExecutionDate == nil OR delayedExecutionDate =< %@)", UAScheduleStatePendingExecution, [NSDate date]];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"executionState == %d AND (delayedExecutionDate == nil OR delayedExecutionDate <= %@)", UAScheduleStatePendingExecution, [NSDate date]];
     [self fetchSchedulesWithPredicate:predicate limit:self.scheduleLimit completionHandler:completionHandler];
 }
 
@@ -195,14 +195,14 @@
     [self fetchSchedulesWithPredicate:predicate limit:self.scheduleLimit completionHandler:completionHandler];
 }
 
-- (void)getActiveTriggers:(NSString *)identifier
+- (void)getActiveTriggers:(NSString *)scheduleID
                      type:(UAScheduleTriggerType)type
         completionHandler:(void (^)(NSArray<UAScheduleTriggerData *> *triggers))completionHandler {
 
-    identifier = identifier ? : @"*";
+    scheduleID = scheduleID ? : @"*";
 
     NSString *format = @"(schedule.identifier LIKE %@ AND type = %ld AND start <= %@) AND ((delay != nil AND schedule.executionState == %d) OR (delay == nil AND schedule.executionState == %d))";
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:format, identifier, type, [NSDate date], UAScheduleStatePendingExecution, UAScheduleStateIdle];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:format, scheduleID, type, [NSDate date], UAScheduleStatePendingExecution, UAScheduleStateIdle];
 
     [self fetchTriggersWithPredicate:predicate completionHandler:completionHandler];
 }
@@ -230,7 +230,7 @@
 
         NSError *error;
 
-        // NBatchDeleteRequeast is not compatible with in-memory stores
+        // NBatchDeleteRequest is not compatible with in-memory stores
         if (!self.inMemory && [[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){9, 0, 0}]) {
             NSBatchDeleteRequest *deleteRequest = [[NSBatchDeleteRequest alloc] initWithFetchRequest:request];
             [self.managedContext executeRequest:deleteRequest error:&error];
