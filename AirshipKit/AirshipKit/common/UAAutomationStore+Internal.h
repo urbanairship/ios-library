@@ -184,6 +184,11 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)waitForIdle;
 
+/**
+ * Shuts down the store and prevents any subsequent interaction with the managed context. Used by Unit Tests.
+ */
+- (void)shutDown;
+
 NS_ASSUME_NONNULL_END
 
 @end

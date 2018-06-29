@@ -20,6 +20,7 @@
 @property (nonatomic, copy) NSString *storeName;
 @property (nonatomic, assign) NSUInteger scheduleLimit;
 @property (nonatomic, assign) BOOL inMemory;
+@property (nonatomic, assign) BOOL finished;
 @end
 
 @implementation UAAutomationStore
@@ -31,6 +32,7 @@
         self.storeName = storeName;
         self.scheduleLimit = scheduleLimit;
         self.inMemory = inMemory;
+        self.finished = NO;
 
         NSURL *modelURL = [[UAirship resources] URLForResource:@"UAAutomation" withExtension:@"momd"];
         self.managedContext = [NSManagedObjectContext managedObjectContextForModelURL:modelURL
@@ -75,11 +77,19 @@
     }
 }
 
+- (void)safePerformBlock:(void (^)(BOOL))block {
+    @synchronized(self) {
+        if (!self.finished) {
+            [self.managedContext safePerformBlock:block];
+        }
+    }
+}
+
 #pragma mark -
 #pragma mark Data Access
 
 - (void)saveSchedule:(UASchedule *)schedule completionHandler:(void (^)(BOOL))completionHandler {
-    [self.managedContext safePerformBlock:^(BOOL isSafe) {
+    [self safePerformBlock:^(BOOL isSafe) {
         if (!isSafe) {
             completionHandler(NO);
             return;
@@ -100,7 +110,7 @@
 }
 
 - (void)saveSchedules:(NSArray<UASchedule *> *)schedules completionHandler:(void (^)(BOOL))completionHandler {
-    [self.managedContext safePerformBlock:^(BOOL isSafe) {
+    [self safePerformBlock:^(BOOL isSafe) {
         if (!isSafe) {
             completionHandler(NO);
             return;
@@ -208,7 +218,7 @@
 }
 
 - (void)getScheduleCount:(void (^)(NSNumber *))completionHandler {
-    [self.managedContext safePerformBlock:^(BOOL isSafe) {
+    [self safePerformBlock:^(BOOL isSafe) {
         if (!isSafe) {
             completionHandler(nil);
             return;
@@ -219,8 +229,20 @@
     }];
 }
 
+- (BOOL)batchDeleteAvailable {
+    // NBatchDeleteRequest is only available on iOS 9+
+    if (@available(iOS 9.0, *)) {
+        // NBatchDeleteRequest is not compatible with in-memory stores
+        if (!self.inMemory) {
+            return YES;
+        }
+    }
+
+    return NO;
+}
+
 - (void)deleteSchedulesWithPredicate:(NSPredicate *)predicate {
-    [self.managedContext safePerformBlock:^(BOOL isSafe) {
+    [self safePerformBlock:^(BOOL isSafe) {
         if (!isSafe) {
             return;
         }
@@ -230,8 +252,7 @@
 
         NSError *error;
 
-        // NBatchDeleteRequest is not compatible with in-memory stores
-        if (!self.inMemory && [[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){9, 0, 0}]) {
+        if ([self batchDeleteAvailable]) {
             NSBatchDeleteRequest *deleteRequest = [[NSBatchDeleteRequest alloc] initWithFetchRequest:request];
             [self.managedContext executeRequest:deleteRequest error:&error];
         } else {
@@ -252,7 +273,7 @@
 }
 
 - (void)fetchSchedulesWithPredicate:(NSPredicate *)predicate limit:(NSUInteger)limit completionHandler:(void (^)(NSArray<UAScheduleData *> *))completionHandler {
-    [self.managedContext safePerformBlock:^(BOOL isSafe) {
+    [self safePerformBlock:^(BOOL isSafe) {
         if (!isSafe) {
             completionHandler(@[]);
             return;
@@ -276,7 +297,7 @@
 }
 
 - (void)fetchTriggersWithPredicate:(NSPredicate *)predicate completionHandler:(void (^)(NSArray<UAScheduleTriggerData *> *))completionHandler {
-    [self.managedContext safePerformBlock:^(BOOL isSafe) {
+    [self safePerformBlock:^(BOOL isSafe) {
         if (!isSafe) {
             completionHandler(@[]);
             return;
@@ -367,6 +388,12 @@
 
 - (void)waitForIdle {
     [self.managedContext performBlockAndWait:^{}];
+}
+
+- (void)shutDown {
+    @synchronized(self) {
+        self.finished = YES;
+    }
 }
 
 

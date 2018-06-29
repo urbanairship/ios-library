@@ -60,6 +60,7 @@
 
 - (void)dealloc {
     [self stop];
+    [self.automationStore shutDown];
 }
 
 - (instancetype)initWithAutomationStore:(UAAutomationStore *)automationStore timerScheduler:(UATimerScheduler *)timerScheduler {
@@ -832,7 +833,9 @@
  * Called when one of the schedule conditions changes.
  */
 - (void)scheduleConditionsChanged {
+    UA_WEAKIFY(self)
     [self.automationStore getPendingSchedules:^(NSArray<UAScheduleData *> *schedules) {
+        UA_STRONGIFY(self);
         [self processTriggeredSchedules:schedules];
     }];
 }

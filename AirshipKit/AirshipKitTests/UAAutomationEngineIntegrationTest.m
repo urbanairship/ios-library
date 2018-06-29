@@ -61,6 +61,13 @@
 }
 
 - (void)tearDown {
+    [self.automationEngine stop];
+    [self.testStore shutDown];
+    [self.testStore waitForIdle];
+
+    self.automationEngine = nil;
+    self.testStore = nil;
+
     [super tearDown];
 }
 
