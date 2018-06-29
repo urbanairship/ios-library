@@ -5,38 +5,9 @@
 #import "UAScheduleEdits.h"
 #import "UASchedule.h"
 #import "UAScheduleInfo.h"
+#import "UATimerScheduler+Internal.h"
 
 NS_ASSUME_NONNULL_BEGIN
-
-/**
- * Schedule execution states.
- */
-typedef NS_ENUM(NSUInteger, UAScheduleState) {
-    /**
-     * Schedule is idle.
-     */
-    UAScheduleStateIdle = 0,
-
-    /**
-     * Schedule is pending execution.
-     */
-    UAScheduleStatePendingExecution = 1,
-
-    /**
-     * Schedule is executing.
-     */
-    UAScheduleStateExecuting = 2,
-
-    /**
-     * Schedule is paused.
-     */
-    UAScheduleStatePaused = 3,
-
-    /**
-     * Schedule is finished.
-     */
-    UAScheduleStateFinished = 4
-};
 
 /**
  * Automation engine delegate
@@ -93,15 +64,23 @@ typedef NS_ENUM(NSUInteger, UAScheduleState) {
  */
 @property (nonatomic, strong) UAAutomationStore *automationStore;
 
+/**
+ * Automation Engine constructor.
+ *
+ * @param automationStore An initialized UAAutomationStore
+ * @param timerScheduler A timer scheduler
+ * @return Initialized Automation Engine instance
+ */
++ (instancetype)automationEngineWithAutomationStore:(UAAutomationStore *)automationStore
+                                     timerScheduler:(UATimerScheduler *)timerScheduler;
 
 /**
  * Automation Engine constructor.
  *
  * @param automationStore An initialized UAAutomationStore
- * @param limit Maximum schedules to maintain
  * @return Initialized Automation Engine instance
  */
-+ (instancetype)automationEngineWithAutomationStore:(UAAutomationStore *)automationStore scheduleLimit:(NSUInteger)limit;
++ (instancetype)automationEngineWithAutomationStore:(UAAutomationStore *)automationStore;
 
 /**
  * Starts the Automation Engine.
