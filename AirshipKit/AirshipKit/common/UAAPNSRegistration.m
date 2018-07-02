@@ -17,7 +17,6 @@
             return;
         }
 
-
         if (notificationSettings.authorizationStatus == UNAuthorizationStatusAuthorized) {
 
             if (notificationSettings.badgeSetting == UNNotificationSettingEnabled) {
@@ -74,6 +73,12 @@
 #endif
 
     UNAuthorizationOptions normalizedOptions = (UNAuthorizationOptionAlert | UNAuthorizationOptionBadge | UNAuthorizationOptionSound | UNAuthorizationOptionCarPlay);
+
+    // Critical alert and provisional authorization are iOS 12+
+    if (@available(iOS 12.0, *)) {
+        normalizedOptions |= UNAuthorizationOptionCriticalAlert | UNAuthorizationOptionProvisional;
+    }
+
     normalizedOptions &= options;
 
     [[UNUserNotificationCenter currentNotificationCenter] requestAuthorizationWithOptions:normalizedOptions
