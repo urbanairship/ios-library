@@ -2,16 +2,18 @@
 
 #import "UAComponentDisabler+Internal.h"
 #import "UAVersionMatcher+Internal.h"
-#import "UAirshipVersion.h"
 #import "UAirship+Internal.h"
 #import "UARemoteDataManager+Internal.h"
 #import "UAComponent+Internal.h"
+#import "UAApplicationMetrics.h"
+#import "UAJSONPredicate.h"
 
 // Disable JSON keys
 NSString * const UADisableModulesKey = @"modules";
 NSString * const UADisableAllModules = @"all";
 NSString * const UADisableRefreshIntervalKey = @"remote_data_refresh_interval";
 NSString * const UADisableSDKVersionsKey = @"sdk_versions";
+NSString * const UADisableAppVersionsKey = @"app_versions";
 
 // Modules
 NSString * const UADisableModulesPush = @"push";
@@ -36,8 +38,11 @@ NSUInteger const UADisableRefreshIntervalDefault = 0; // default is no minimum r
     NSUInteger remoteDataRefreshInterval = UADisableRefreshIntervalDefault;
 
     for (NSDictionary *disableInfo in disableInfos) {
-        // Matches SDK
-        if (![self disableInfo:disableInfo matchesSDKVersion:[UAirshipVersion get]]) {
+        // If either SDK or App version constraint are provided but do not match, skip add
+        if (disableInfo[UADisableSDKVersionsKey] && !([self disableInfo:disableInfo matchesSDKVersion:[UAirshipVersion get]])) {
+            continue;
+        }
+        if (disableInfo[UADisableAppVersionsKey] && !([self disableInfo:disableInfo matchesAppVersion:[UAirship shared].applicationMetrics.currentAppVersion])) {
             continue;
         }
 
@@ -125,10 +130,6 @@ NSUInteger const UADisableRefreshIntervalDefault = 0; // default is no minimum r
 }
 
 - (BOOL)disableInfo:(NSDictionary *)info matchesSDKVersion:(NSString *)version {
-    if (!info[UADisableSDKVersionsKey]) {
-        return YES;
-    }
-
     if (![info[UADisableSDKVersionsKey] isKindOfClass:[NSArray class]]) {
         UA_LERR(@"Invalid sdk versions: %@", info[UADisableSDKVersionsKey]);
         return NO;
@@ -142,6 +143,27 @@ NSUInteger const UADisableRefreshIntervalDefault = 0; // default is no minimum r
     }
 
     return NO;
+}
+
+- (BOOL)disableInfo:(NSDictionary *)info matchesAppVersion:(NSString *)version {
+    if (![info[UADisableAppVersionsKey] isKindOfClass:[NSDictionary class]]) {
+        UA_LERR(@"Invalid app versions: %@", info[UADisableAppVersionsKey]);
+        return NO;
+    }
+
+    id versionPredicateJSON = info[UADisableAppVersionsKey];
+
+    NSError *error = nil;
+    UAJSONPredicate *versionPredicate = [UAJSONPredicate predicateWithJSON:versionPredicateJSON error:&error];
+
+    if (error) {
+        UA_LERR(@"Failed predicate JSON parsing with error: %@", error);
+        return NO;
+    }
+
+    id versionObject = version ? @{@"ios" : @{@"version": version}} : nil;
+
+    return versionObject && [versionPredicate evaluateObject:versionObject];
 }
 
 @end
