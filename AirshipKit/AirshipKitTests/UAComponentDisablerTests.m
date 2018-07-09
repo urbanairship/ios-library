@@ -6,6 +6,11 @@
 #import "UAirship+Internal.h"
 #import "UARemoteDataPayload+Internal.h"
 #import "UAComponent+Internal.h"
+#import "UAApplicationMetrics.h"
+#import "UAJSONValueMatcher.h"
+#import "UAJSONMatcher.h"
+#import "UAJSONPredicate.h"
+
 
 @interface UAComponentDisablerTests : UABaseTest
 @property(nonatomic, strong) id mockAirship;
@@ -184,5 +189,56 @@
     [[self.mockPushComponent verify] setComponentEnabled:NO];
     [[self.mockRemoteDataManager verify] setRemoteDataRefreshInterval:expectedRemoteDataRefreshInterval];
 }
+
+- (void)testAppVersion {
+    NSUInteger expectedRemoteDataRefreshInterval = 86400;
+
+    // setup
+    __block NSString *mockVersion;
+    id mockApplicationMetrics = [self mockForClass:[UAApplicationMetrics class]];
+    [[[mockApplicationMetrics stub] andDo:^(NSInvocation *invocation) {
+        [invocation setReturnValue:(void *)&mockVersion];
+    }] currentAppVersion];
+    [[[self.mockAirship stub] andReturn:mockApplicationMetrics] applicationMetrics];
+
+    mockVersion = @"1";
+
+    UAJSONMatcher *matcher = [UAJSONMatcher matcherWithValueMatcher:[UAJSONValueMatcher matcherWithVersionConstraint:@"[1.0, 2.0]"] scope:@[@"ios",@"version"]];
+
+    UAJSONPredicate *predicate = [UAJSONPredicate predicateWithJSONMatcher:matcher];
+
+    NSArray *disableInfos = @[
+                              @{
+                                  @"modules":@"all",
+                                  @"remote_data_refresh_interval":[NSNumber numberWithInteger:expectedRemoteDataRefreshInterval],
+                                  @"app_versions":predicate.payload
+                                  }
+                              ];
+
+    // test
+    [self.componentDisabler processDisableInfo:disableInfos];
+
+    // verify
+    [[self.mockIAMComponent verify] setComponentEnabled:NO];
+    [[self.mockPushComponent verify] setComponentEnabled:NO];
+
+    mockVersion = @"3";
+
+    disableInfos = @[
+                     @{
+                         @"modules":@"all",
+                         @"remote_data_refresh_interval":[NSNumber numberWithInteger:expectedRemoteDataRefreshInterval],
+                         @"app_versions":predicate.payload
+                         }
+                     ];
+
+    // test
+    [self.componentDisabler processDisableInfo:disableInfos];
+
+    // verify
+    [[self.mockIAMComponent verify] setComponentEnabled:YES];
+    [[self.mockPushComponent verify] setComponentEnabled:YES];
+}
+
 
 @end
