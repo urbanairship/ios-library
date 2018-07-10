@@ -92,7 +92,7 @@
 -(void)testRejectSystemRatingDialogLegacy {
     [[[self.mockConfig stub] andReturn:@"1195168544"] itunesID];
 
-    self.testOSMajorVersion = 9;
+    self.testOSMajorVersion = 10;
     self.testOSMinorVersion = 0;
 
     [[self.mockStoreReviewController reject] requestReview];
@@ -107,25 +107,6 @@
     [[[self.mockConfig stub] andReturn:@"1195168544"] itunesID];
 
     [[self.mockApplication expect] openURL:[NSURL URLWithString:@"itms-apps://itunes.apple.com/app/id1195168544?action=write-review"] options:@{} completionHandler:nil];
-    [[[self.mockApplication stub] andReturnValue:@YES] canOpenURL:OCMOCK_ANY];
-
-    [self.action performWithArguments:[UAActionArguments argumentsWithValue:@{ UARateAppShowLinkPromptKey:@NO, UARateAppLinkPromptTitleKey :@"Acceptable Header", UARateAppLinkPromptBodyKey :@"Acceptable decsription."} withSituation:UASituationManualInvocation] completionHandler:^(UAActionResult * result) {
-    }];
-
-    [self.mockApplication verify];
-}
-
--(void)testDirectAppstoreLinkLegacy {
-    self.testOSMajorVersion = 9;
-    self.testOSMinorVersion = 0;
-
-    [[[self.mockConfig stub] andReturn:@"1195168544"] itunesID];
-
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-    [[self.mockApplication expect] openURL:[NSURL URLWithString:@"itms-apps://itunes.apple.com/app/id1195168544?action=write-review"]];
-#pragma GCC diagnostic pop
-    
     [[[self.mockApplication stub] andReturnValue:@YES] canOpenURL:OCMOCK_ANY];
 
     [self.action performWithArguments:[UAActionArguments argumentsWithValue:@{ UARateAppShowLinkPromptKey:@NO, UARateAppLinkPromptTitleKey :@"Acceptable Header", UARateAppLinkPromptBodyKey :@"Acceptable decsription."} withSituation:UASituationManualInvocation] completionHandler:^(UAActionResult * result) {
@@ -155,7 +136,7 @@
 -(void)testlinkPromptLegacy {
     [[[self.mockConfig stub] andReturn:@"1195168544"] itunesID];
 
-    self.testOSMajorVersion = 9;
+    self.testOSMajorVersion = 10;
     self.testOSMinorVersion = 0;
 
     NSString *acceptableHeader = @"Acceptable Header";
@@ -175,7 +156,7 @@
 
 
 -(void)testlinkPromptBadURLLegacy {
-    self.testOSMajorVersion = 9;
+    self.testOSMajorVersion = 10;
     self.testOSMinorVersion = 0;
 
     NSString *acceptableHeader = @"Acceptable Header";
@@ -224,7 +205,7 @@
 
 // Tests acceptable arguments are accepted for the legacy implementation < 10.3
 - (void)testAcceptedArgumentsLegacy {
-    self.testOSMajorVersion = 9;
+    self.testOSMajorVersion = 10;
     self.testOSMinorVersion = 0;
 
     // Accept when itunes ID link prompt flag and itunes ID argument are set
@@ -285,7 +266,7 @@
 
 // Tests that unacceptable arguments are rejected for the legacy implementation < 10.3
 - (void)testRejectedArgumentsLegacy {
-    self.testOSMajorVersion = 9;
+    self.testOSMajorVersion = 10;
     self.testOSMinorVersion = 0;
 
     // Reject empty itunes ID arg

@@ -100,26 +100,7 @@
 
 }
 
-#if !TARGET_OS_TV    // UIUserNotificationCategory, UIUserNotificationAction and UNNotificationCategory not available on tvOS
-- (UIUserNotificationCategory *)asUIUserNotificationCategory {
-    UIMutableUserNotificationCategory *category = [[UIMutableUserNotificationCategory alloc] init];
-    category.identifier = self.identifier;
-
-    NSArray *uaActions = self.actions;
-    NSMutableArray *uiActions = [NSMutableArray array];
-    for (UANotificationAction *uaAction in uaActions) {
-        UIUserNotificationAction *converted = [uaAction asUIUserNotificationAction];
-        if (converted) {
-            [uiActions addObject:converted];
-        }
-    }
-
-    [category setActions:uiActions forContext:UIUserNotificationActionContextDefault];
-    [category setActions:uiActions forContext:UIUserNotificationActionContextMinimal];
-
-    return category;
-}
-
+#if !TARGET_OS_TV    // UNNotificationCategory not available on tvOS
 - (UNNotificationCategory *)asUNNotificationCategory {
     NSMutableArray *actions = [NSMutableArray array];
 
@@ -168,27 +149,6 @@
     }
     
 	return nil;
-}
-
-- (BOOL)isEqualToUIUserNotificationCategory:(UIUserNotificationCategory *)category {
-    NSArray *defaultUAActions = self.actions;
-
-    NSArray *defaultUIActions = [category actionsForContext:UIUserNotificationActionContextDefault];
-
-    if (defaultUAActions.count != defaultUIActions.count) {
-        return NO;
-    }
-
-    for (NSUInteger i = 0; i < defaultUAActions.count; i++) {
-        UANotificationAction *uaAction = defaultUAActions[i];
-        UIUserNotificationAction *uiAction = defaultUIActions[i];
-        if (![uaAction isEqualToUIUserNotificationAction:(UIUserNotificationAction *)uiAction]) {
-            return NO;
-        }
-    }
-
-    // identifiers are nullable, so they match as long as they are either equal or both nil
-    return [self.identifier isEqualToString:category.identifier] || (!self.identifier && !category.identifier);
 }
 
 - (BOOL)isEqualToUNNotificationCategory:(UNNotificationCategory *)category {

@@ -187,6 +187,8 @@
  * @param url The link's URL.
  * @returns YES if the link was handled, otherwise NO.
  */
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 - (BOOL)handleLinkClick:(NSURL *)url {
     // Send iTunes/Phobos urls to AppStore.app
     if ([[url host] isEqualToString:@"phobos.apple.com"] || [[url host] isEqualToString:@"itunes.apple.com"]) {
@@ -224,6 +226,7 @@
 
     return NO;
 }
+#pragma GCC diagnostic pop
 
 - (BOOL)isWhiteListedAirshipRequest:(NSURLRequest *)request {
     // uairship://command/[<arguments>][?<options>]

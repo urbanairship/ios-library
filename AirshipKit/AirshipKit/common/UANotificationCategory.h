@@ -104,34 +104,13 @@ static const UANotificationCategoryOptions UANotificationCategoryOptionNone NS_S
 /// @name Notification Category Utilities
 ///---------------------------------------------------------------------------------------
 
-#if TARGET_OS_IOS // UIUserNotificationAction and UNNotificationAction not available on tvOS
-
-/**
- * Converts a UANotificationCategory into a UIUserNotificationCategory.
- *
- * @return An instance of UIUserNotificationCategory.
- * @deprecated Deprecated in iOS 10.
- */
-- (UIUserNotificationCategory *)asUIUserNotificationCategory NS_DEPRECATED_IOS(8_0, 10_0, "Deprecated in iOS 10");
-
+#if TARGET_OS_IOS // UNNotificationAction not available on tvOS
 /**
  * Converts a UANotificationCategory into a UNNotificationCategory.
  *
  * @return An instance of UNNotificationCategory.
  */
 - (null_unspecified UNNotificationCategory *)asUNNotificationCategory __IOS_AVAILABLE(10.0);
-
-
-/**
- * Tests for equivalence with a UIUserNotificationCategory. As UANotificationCategory is a
- * drop-in replacement for UNNotificationCategory, any features not applicable
- * in UIUserNotificationCategory will be ignored.
- *
- * @param category The UIUserNotificationCategory to compare with.
- * @return `YES` if the two categories are equivalent, `NO` otherwise.
- * @deprecated Deprecated in iOS 10.
- */
-- (BOOL)isEqualToUIUserNotificationCategory:(UIUserNotificationCategory *)category NS_DEPRECATED_IOS(8_0, 10_0, "Deprecated in iOS 10");
 
 /**
  * Tests for equivalence with a UNNotificationCategory.

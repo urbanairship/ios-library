@@ -82,27 +82,6 @@ static dispatch_once_t onceToken;
     [self.appDelegateSwizzler swizzle:@selector(application:performFetchWithCompletionHandler:)
                              protocol:@protocol(UIApplicationDelegate)
                        implementation:(IMP)ApplicationPerformFetchWithCompletionHandler];
-
-#if !TARGET_OS_TV  // Delegate methods not supported on tvOS
-    // iOS 8 & 9 Only
-    if (![[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){10, 0, 0}]) {
-
-        // Notification action buttons
-        [self.appDelegateSwizzler swizzle:@selector(application:handleActionWithIdentifier:forRemoteNotification:completionHandler:)
-                                 protocol:@protocol(UIApplicationDelegate)
-                           implementation:(IMP)ApplicationHandleActionWithIdentifierForRemoteNotificationCompletionHandler];
-
-        // Notification action buttons with response info
-        [self.appDelegateSwizzler swizzle:@selector(application:handleActionWithIdentifier:forRemoteNotification:withResponseInfo:completionHandler:)
-                                 protocol:@protocol(UIApplicationDelegate)
-                           implementation:(IMP)ApplicationHandleActionWithIdentifierForRemoteNotificationWithResponseInfoCompletionHandler];
-
-        // Registered with user notification settings
-        [self.appDelegateSwizzler swizzle:@selector(application:didRegisterUserNotificationSettings:)
-                                 protocol:@protocol(UIApplicationDelegate)
-                           implementation:(IMP)ApplicationDidRegisterUserNotificationSettings];
-    }
-#endif
 }
 
 - (void)swizzleNotificationCenter NS_AVAILABLE_IOS(10.0) {
@@ -363,17 +342,6 @@ void ApplicationDidRegisterForRemoteNotificationsWithDeviceToken(id self, SEL _c
     }
 }
 
-#if !TARGET_OS_TV  // Delegate method not supported on tvOS
-void ApplicationDidRegisterUserNotificationSettings(id self, SEL _cmd, UIApplication *application, UIUserNotificationSettings *settings) {
-    [UAAppIntegration application:application didRegisterUserNotificationSettings:settings];
-
-    IMP original = [instance_.appDelegateSwizzler originalImplementation:_cmd];
-    if (original) {
-        ((void(*)(id, SEL, UIApplication *, UIUserNotificationSettings*))original)(self, _cmd, application, settings);
-    }
-}
-#endif
-
 void ApplicationDidFailToRegisterForRemoteNotificationsWithError(id self, SEL _cmd, UIApplication *application, NSError *error) {
     UA_LERR(@"Application failed to register for remote notifications with error: %@", error);
     [UAAppIntegration application:application didFailToRegisterForRemoteNotificationsWithError:error];
@@ -446,103 +414,5 @@ void ApplicationDidReceiveRemoteNotificationFetchCompletionHandler(id self,
     }];
 
 }
-
-
-#if !TARGET_OS_TV  // Delegate methods not supported on tvOS
-void ApplicationHandleActionWithIdentifierForRemoteNotificationCompletionHandler(id self,
-                                                                                 SEL _cmd,
-                                                                                 UIApplication *application,
-                                                                                 NSString *identifier,
-                                                                                 NSDictionary *userInfo,
-                                                                                 void (^handler)(void)) {
-    __block NSUInteger resultCount = 0;
-    __block NSUInteger expectedCount = 1;
-
-    IMP original = [instance_.appDelegateSwizzler originalImplementation:_cmd];
-    if (original) {
-        expectedCount = 2;
-
-        __block BOOL completionHandlerCalled = NO;
-        void (^completionHandler)(void) = ^() {
-
-            // Make sure the app's completion handler is called on the main queue
-            dispatch_async(dispatch_get_main_queue(), ^{
-                if (completionHandlerCalled) {
-                    UA_LERR(@"Completion handler called multiple times.");
-                    return;
-                }
-
-                completionHandlerCalled = YES;
-                resultCount++;
-
-                if (expectedCount == resultCount) {
-                    handler();
-                }
-            });
-
-        };
-
-        // Call the original implementation
-        ((void(*)(id, SEL, UIApplication *, NSString *, NSDictionary *, void (^)(void)))original)(self, _cmd, application, identifier, userInfo, completionHandler);
-    }
-
-    // Our completion handler is called by the action framework on the main queue
-    [UAAppIntegration application:application handleActionWithIdentifier:identifier forRemoteNotification:userInfo completionHandler:^{
-        resultCount++;
-
-        if (expectedCount == resultCount) {
-            handler();
-        }
-    }];
-}
-
-void ApplicationHandleActionWithIdentifierForRemoteNotificationWithResponseInfoCompletionHandler(id self,
-                                                                                                 SEL _cmd,
-                                                                                                 UIApplication *application,
-                                                                                                 NSString *identifier,
-                                                                                                 NSDictionary *userInfo,
-                                                                                                 NSDictionary *responseInfo,
-                                                                                                 void (^handler)(void)) {
-    __block NSUInteger resultCount = 0;
-    __block NSUInteger expectedCount = 1;
-
-    IMP original = [instance_.appDelegateSwizzler originalImplementation:_cmd];
-    if (original) {
-        expectedCount = 2;
-
-        __block BOOL completionHandlerCalled = NO;
-        void (^completionHandler)(void) = ^() {
-
-            // Make sure the app's completion handler is called on the main queue
-            dispatch_async(dispatch_get_main_queue(), ^{
-                if (completionHandlerCalled) {
-                    UA_LERR(@"Completion handler called multiple times.");
-                    return;
-                }
-
-                completionHandlerCalled = YES;
-                resultCount++;
-                
-                if (expectedCount == resultCount) {
-                    handler();
-                }
-            });
-            
-        };
-        
-        // Call the original implementation
-        ((void(*)(id, SEL, UIApplication *, NSString *, NSDictionary *, NSDictionary *, void (^)(void)))original)(self, _cmd, application, identifier, userInfo, responseInfo, completionHandler);
-    }
-    
-    // Our completion handler is called by the action framework on the main queue
-    [UAAppIntegration application:application handleActionWithIdentifier:identifier forRemoteNotification:userInfo withResponseInfo:responseInfo completionHandler:^{
-        resultCount++;
-        
-        if (expectedCount == resultCount) {
-            handler();
-        }
-    }];
-}
-#endif
 
 @end
