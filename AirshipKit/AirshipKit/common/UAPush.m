@@ -43,6 +43,7 @@ NSString *const UAPushChannelCreationOnForeground = @"UAPushChannelCreationOnFor
 NSString *const UAPushEnabledSettingsMigratedKey = @"UAPushEnabledSettingsMigrated";
 
 NSString *const UAPushTypesAuthorizedKey = @"UAPushTypesAuthorized";
+NSString *const UAPushAuthorizationProvisionalKey = @"UAPushAuthorizationProvisional";
 NSString *const UAPushUserPromptedForNotificationsKey = @"UAPushUserPromptedForNotifications";
 
 // Old push enabled key
@@ -177,11 +178,13 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
 }
 
 - (void)updateAuthorizedNotificationTypes {
-    [self.pushRegistration getAuthorizedSettingsWithCompletionHandler:^(UAAuthorizedNotificationSettings authorizedSettings) {
+    [self.pushRegistration getAuthorizedSettingsWithCompletionHandler:^(UAAuthorizedNotificationSettings authorizedSettings, BOOL provisional) {
         if (self.userPromptedForNotifications || authorizedSettings != UAAuthorizedNotificationSettingsNone) {
             self.userPromptedForNotifications = YES;
             self.authorizedNotificationSettings = authorizedSettings;
         }
+
+        self.authorizationProvisional = provisional;
     }];
 }
 
@@ -224,6 +227,18 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
 #pragma GCC diagnostic pop
         }
     }
+}
+
+- (void)setAuthorizationProvisional:(BOOL)authorizationProvisional {
+    BOOL previousValue = self.isAuthorizationProvisional;
+
+    if (authorizationProvisional != previousValue) {
+        [self.dataStore setBool:authorizationProvisional forKey:UAPushAuthorizationProvisionalKey];
+    }
+}
+
+- (BOOL)isAuthorizationProvisional {
+    return [self.dataStore boolForKey:UAPushAuthorizationProvisionalKey];
 }
 
 - (void)setDeviceToken:(NSString *)deviceToken {
@@ -737,7 +752,7 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
         return;
     }
 
-    [self.pushRegistration getAuthorizedSettingsWithCompletionHandler:^(UAAuthorizedNotificationSettings authorizedSettings) {
+    [self.pushRegistration getAuthorizedSettingsWithCompletionHandler:^(UAAuthorizedNotificationSettings authorizedSettings, BOOL provisional) {
         if (authorizedSettings == UAAuthorizedNotificationSettingsNone && options == UANotificationOptionNone) {
             // Skip updating registration to avoid prompting the user
             return;
@@ -775,7 +790,8 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
     return options;
 }
 
-- (void)notificationRegistrationFinishedWithAuthorizedSettings:(UAAuthorizedNotificationSettings)authorizedSettings {
+- (void)notificationRegistrationFinishedWithAuthorizedSettings:(UAAuthorizedNotificationSettings)authorizedSettings provisional:(BOOL)provisional {
+
     if (!self.deviceToken) {
         dispatch_async(dispatch_get_main_queue(), ^{
             [[UIApplication sharedApplication] registerForRemoteNotifications];
@@ -784,15 +800,25 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
 
     self.userPromptedForNotifications = YES;
     self.authorizedNotificationSettings = authorizedSettings;
+    self.authorizationProvisional = provisional;
 
     id strongDelegate = self.registrationDelegate;
 
     SEL newSelector = @selector(notificationRegistrationFinishedWithAuthorizedSettings:categories:);
+    SEL newSelectorWithProvisional = @selector(notificationRegistrationFinishedWithAuthorizedSettings:categories:provisional:);
     SEL oldSelector = @selector(notificationRegistrationFinishedWithOptions:categories:);
 
     if ([strongDelegate respondsToSelector:newSelector]) {
         dispatch_async(dispatch_get_main_queue(), ^{
             [strongDelegate notificationRegistrationFinishedWithAuthorizedSettings:authorizedSettings categories:self.combinedCategories];
+        });
+    }
+
+    if ([strongDelegate respondsToSelector:newSelectorWithProvisional]) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [strongDelegate notificationRegistrationFinishedWithAuthorizedSettings:authorizedSettings
+                                                                        categories:self.combinedCategories
+                                                                       provisional:provisional];
         });
     }
 
@@ -807,7 +833,6 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
         });
     }
 }
-
 
 - (void)registrationSucceeded {
     UA_LINFO(@"Channel registration updated successfully.");

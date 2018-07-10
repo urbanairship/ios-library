@@ -119,6 +119,17 @@ static const UANotificationOptions UANotificationOptionNone =  0;
  *
  * @param authorizedSettings The settings that were authorized at the time of registration.
  * @param categories NSSet of the categories that were most recently registered.
+ * @param provisional Whether the authorization status is provisional.
+ */
+- (void)notificationRegistrationFinishedWithAuthorizedSettings:(UAAuthorizedNotificationSettings)authorizedSettings
+                                                    categories:(NSSet *)categories
+                                                   provisional:(BOOL)provisional;
+
+/**
+ * Called when APNS registration completes.
+ *
+ * @param authorizedSettings The settings that were authorized at the time of registration.
+ * @param categories NSSet of the categories that were most recently registered.
  */
 - (void)notificationRegistrationFinishedWithAuthorizedSettings:(UAAuthorizedNotificationSettings)authorizedSettings
                                                     categories:(NSSet *)categories;
@@ -374,7 +385,12 @@ static const UANotificationOptions UANotificationOptionNone =  0;
  * Note: this value reflects all the notification settings currently enabled in the
  * Settings app and does not take into account which options were originally requested.
  */
-@property (nonatomic, assign, readonly) UAAuthorizedNotificationSettings authorizedNotificationSettings;
+@property (nonatomic, readonly) UAAuthorizedNotificationSettings authorizedNotificationSettings;
+
+/**
+ * Whether the current authorization status is provisional.
+ */
+@property (nonatomic, readonly, getter=isAuthorizationProvisional) BOOL authorizationProvisional;
 
 /**
  * The current authorized notification options.
