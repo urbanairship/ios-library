@@ -128,6 +128,11 @@ typedef NS_ENUM(NSUInteger, UAScheduleState) {
  */
 @property(nullable, nonatomic, retain) NSNumber *interval;
 
+/**
+ * Whether the scheudle has exceeded its limit.
+ */
+- (BOOL)isOverLimit;
+
 @end
 
 NS_ASSUME_NONNULL_END

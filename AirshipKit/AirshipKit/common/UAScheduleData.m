@@ -31,4 +31,11 @@
     [self setExecutionStateChangeDate:[NSDate date]];
 }
 
+- (BOOL)isOverLimit {
+    NSUInteger limit = [self.limit unsignedIntegerValue];
+    NSUInteger count = [self.triggeredCount unsignedIntegerValue];
+
+    return limit > 0 && count >= limit;
+}
+
 @end
