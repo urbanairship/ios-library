@@ -25,7 +25,12 @@
     
     NSArray *actions = @[watAction, yayAction, zizAction];
 
-    self.uaCategory = [UANotificationCategory categoryWithIdentifier:@"abilities" actions:actions intentIdentifiers:@[] hiddenPreviewsBodyPlaceholder:@"Push Notification" options:UANotificationCategoryOptionNone];
+    self.uaCategory = [UANotificationCategory categoryWithIdentifier:@"abilities"
+                                                             actions:actions
+                                                   intentIdentifiers:@[]
+                                       hiddenPreviewsBodyPlaceholder:@"Push Notification"
+                                               categorySummaryFormat:@"You have %u new messages from %@"
+                                                             options:UANotificationCategoryOptionNone];
 }
 
 @end
