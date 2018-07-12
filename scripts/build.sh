@@ -92,12 +92,15 @@ if [ $STATIC_LIB = true ]
 then
   echo -ne "\n\n *********** BUILDING STATIC LIB *********** \n\n"
 
+  # REVISIT - Xcode 10 betas have a bug where "clean" fails when not using DERIVED-DATA
+  # The 3 static library builds should probably have "clean" added back once bug is fixed.
+
   # Resource bundle
   xcrun xcodebuild -configuration "Release" \
   -project "${ROOT_PATH}/AirshipKit/AirshipKit.xcodeproj" \
   -target "AirshipResources" \
   -sdk "iphoneos" \
-  clean build \
+  build \
   ONLY_ACTIVE_ARCH=NO \
   BUILD_DIR="${TEMP_DIR}/AirshipResources" \
   SYMROOT="${TEMP_DIR}/AirshipResources" \
@@ -110,7 +113,7 @@ then
   -project "${ROOT_PATH}/AirshipKit/AirshipKit.xcodeproj" \
   -target "AirshipLib" \
   -sdk "iphoneos" \
-  clean build \
+  build \
   ONLY_ACTIVE_ARCH=NO \
   RUN_CLANG_STATIC_ANALYZER=NO \
   BUILD_DIR="${TEMP_DIR}/AirshipLib" \
@@ -125,7 +128,7 @@ then
   -target "AirshipLib" \
   -sdk "iphonesimulator" \
   -arch i386 -arch x86_64 \
-  clean build \
+  build \
   ONLY_ACTIVE_ARCH=NO \
   RUN_CLANG_STATIC_ANALYZER=NO \
   BUILD_DIR="${TEMP_DIR}/AirshipLib" \
