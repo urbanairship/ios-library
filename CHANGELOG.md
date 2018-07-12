@@ -3,6 +3,15 @@ iOS Changelog
 
 Migration Guides: Documentation/Migration
 
+Version 9.3.1 - July 12, 2018
+=============================
+Patch release to fix a problem with in-app automation limits. Any applications using in-app automation or action automation are encouraged to upgrade.
+
+Changes
+-------
+- Changed UAAutomationEngine to compare unsigned integers instead of the pointers to the NSNumbers that contain them.
+- Addressed causes of intermittent unit test failures in UAAutomation tests.
+
 Version 9.3.0 - June 27, 2018
 =============================
 
