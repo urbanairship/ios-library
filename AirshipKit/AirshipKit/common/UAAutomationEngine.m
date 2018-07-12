@@ -309,7 +309,7 @@
                 return completionHandler(nil);
             }
 
-            BOOL overLimit = [scheduleData.limit unsignedIntegerValue] > 0 && scheduleData.triggeredCount >= scheduleData.limit;
+            BOOL overLimit = [scheduleData isOverLimit];
             BOOL isExpired = [scheduleData.end compare:[NSDate date]] == NSOrderedAscending;
 
             // Check if the schedule needs to be rehabilitated or finished due to the edits
@@ -995,13 +995,13 @@
             scheduleData.triggeredCount = @([scheduleData.triggeredCount integerValue] + 1);
 
             BOOL deleteSchedule = NO;
+            BOOL overLimit = [scheduleData isOverLimit];
 
-            if ([scheduleData.limit unsignedIntegerValue] > 0 && scheduleData.triggeredCount >= scheduleData.limit) {
+            if (overLimit) {
                 UA_LDEBUG(@"Limit reached for schedule %@", scheduleData.identifier);
                 scheduleData.executionState = @(UAScheduleStateFinished);
                 deleteSchedule = [scheduleData.editGracePeriod doubleValue] <= 0;
             } else if ([scheduleData.executionState unsignedIntegerValue] != UAScheduleStateFinished) {
-
                 if (scheduleData.interval) {
                     scheduleData.executionState = @(UAScheduleStatePaused);
 

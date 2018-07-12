@@ -440,7 +440,7 @@
 		99666E671EDF2C9500BAE46B /* UAKeychainUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DBA11D8C996900BABD4F /* UAKeychainUtils.m */; };
 		99666E681EDF2C9A00BAE46B /* UADisposable.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DB5C1D8C996900BABD4F /* UADisposable.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		99666E691EDF2C9A00BAE46B /* UADisposable.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DB5D1D8C996900BABD4F /* UADisposable.m */; };
-		99666E6A1EDF2C9A00BAE46B /* NSManagedObjectContext+UAAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = CC04F1971DBFF0CB00B4842D /* NSManagedObjectContext+UAAdditions.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		99666E6A1EDF2C9A00BAE46B /* NSManagedObjectContext+UAAdditions+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC04F1971DBFF0CB00B4842D /* NSManagedObjectContext+UAAdditions+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		99666E6B1EDF2C9A00BAE46B /* NSManagedContext+UAAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = CC04F1981DBFF0CB00B4842D /* NSManagedContext+UAAdditions.m */; };
 		99666E6C1EDF2C9A00BAE46B /* UAAsyncOperation+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC04F1BA1DC16BB300B4842D /* UAAsyncOperation+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		99666E6D1EDF2C9A00BAE46B /* UAAsyncOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = CC04F1BB1DC16BB300B4842D /* UAAsyncOperation.m */; };
@@ -618,7 +618,7 @@
 		CC04F18F1DBEDA1900B4842D /* UAEventStore+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC04F18D1DBEDA1900B4842D /* UAEventStore+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CC04F1901DBEDA1900B4842D /* UAEventStore.m in Sources */ = {isa = PBXBuildFile; fileRef = CC04F18E1DBEDA1900B4842D /* UAEventStore.m */; };
 		CC04F1911DBEDA1900B4842D /* UAEventStore.m in Sources */ = {isa = PBXBuildFile; fileRef = CC04F18E1DBEDA1900B4842D /* UAEventStore.m */; };
-		CC04F1991DBFF0CB00B4842D /* NSManagedObjectContext+UAAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = CC04F1971DBFF0CB00B4842D /* NSManagedObjectContext+UAAdditions.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CC04F1991DBFF0CB00B4842D /* NSManagedObjectContext+UAAdditions+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC04F1971DBFF0CB00B4842D /* NSManagedObjectContext+UAAdditions+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CC04F19A1DBFF0CB00B4842D /* NSManagedContext+UAAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = CC04F1981DBFF0CB00B4842D /* NSManagedContext+UAAdditions.m */; };
 		CC04F19B1DBFF0CB00B4842D /* NSManagedContext+UAAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = CC04F1981DBFF0CB00B4842D /* NSManagedContext+UAAdditions.m */; };
 		CC04F1AA1DC018F600B4842D /* UAEventManager+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC04F1A81DC018F600B4842D /* UAEventManager+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1372,7 +1372,7 @@
 		DF7E22941ED62E0900C79C46 /* NSString+UAURLEncoding.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DAE41D8C996900BABD4F /* NSString+UAURLEncoding.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DF7E22951ED62E0900C79C46 /* UIWebView+UAAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DC031D8C996A00BABD4F /* UIWebView+UAAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DF7E22961ED62E0900C79C46 /* UADisposable.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DB5C1D8C996900BABD4F /* UADisposable.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DF7E22981ED62E0900C79C46 /* NSManagedObjectContext+UAAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = CC04F1971DBFF0CB00B4842D /* NSManagedObjectContext+UAAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		DF7E22981ED62E0900C79C46 /* NSManagedObjectContext+UAAdditions+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC04F1971DBFF0CB00B4842D /* NSManagedObjectContext+UAAdditions+Internal.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DF7E22991ED62E0900C79C46 /* NSOperationQueue+UAAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = CC04F1EE1DC949D500B4842D /* NSOperationQueue+UAAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DF7E229A1ED62E0900C79C46 /* UAActionJSDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DAF01D8C996900BABD4F /* UAActionJSDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DF7E229B1ED62E0900C79C46 /* UAJavaScriptDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DB971D8C996900BABD4F /* UAJavaScriptDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1718,7 +1718,7 @@
 		CC04F1891DBED9FA00B4842D /* UAEventData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAEventData.m; path = common/UAEventData.m; sourceTree = "<group>"; };
 		CC04F18D1DBEDA1900B4842D /* UAEventStore+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UAEventStore+Internal.h"; path = "common/UAEventStore+Internal.h"; sourceTree = "<group>"; };
 		CC04F18E1DBEDA1900B4842D /* UAEventStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAEventStore.m; path = common/UAEventStore.m; sourceTree = "<group>"; };
-		CC04F1971DBFF0CB00B4842D /* NSManagedObjectContext+UAAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSManagedObjectContext+UAAdditions.h"; path = "common/NSManagedObjectContext+UAAdditions.h"; sourceTree = "<group>"; };
+		CC04F1971DBFF0CB00B4842D /* NSManagedObjectContext+UAAdditions+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSManagedObjectContext+UAAdditions+Internal.h"; path = "common/NSManagedObjectContext+UAAdditions+Internal.h"; sourceTree = "<group>"; };
 		CC04F1981DBFF0CB00B4842D /* NSManagedContext+UAAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSManagedContext+UAAdditions.m"; path = "common/NSManagedContext+UAAdditions.m"; sourceTree = "<group>"; };
 		CC04F1A81DC018F600B4842D /* UAEventManager+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UAEventManager+Internal.h"; path = "common/UAEventManager+Internal.h"; sourceTree = "<group>"; };
 		CC04F1A91DC018F600B4842D /* UAEventManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAEventManager.m; path = common/UAEventManager.m; sourceTree = "<group>"; };
@@ -3274,7 +3274,7 @@
 				CC40DC041D8C996A00BABD4F /* UIWebView+UAAdditions.m */,
 				CC40DB5C1D8C996900BABD4F /* UADisposable.h */,
 				CC40DB5D1D8C996900BABD4F /* UADisposable.m */,
-				CC04F1971DBFF0CB00B4842D /* NSManagedObjectContext+UAAdditions.h */,
+				CC04F1971DBFF0CB00B4842D /* NSManagedObjectContext+UAAdditions+Internal.h */,
 				CC04F1981DBFF0CB00B4842D /* NSManagedContext+UAAdditions.m */,
 				CC04F1BA1DC16BB300B4842D /* UAAsyncOperation+Internal.h */,
 				CC04F1BB1DC16BB300B4842D /* UAAsyncOperation.m */,
@@ -3896,7 +3896,7 @@
 				CC40DD261D8C996A00BABD4F /* UAUtils+Internal.h in Headers */,
 				CC70E8EB1DDA985D000E2528 /* UA_Base64.h in Headers */,
 				3C3BCBAB20E19FC500D86E60 /* UATimerScheduler+Internal.h in Headers */,
-				CC04F1991DBFF0CB00B4842D /* NSManagedObjectContext+UAAdditions.h in Headers */,
+				CC04F1991DBFF0CB00B4842D /* NSManagedObjectContext+UAAdditions+Internal.h in Headers */,
 				CC40DC391D8C996A00BABD4F /* UAAnalytics.h in Headers */,
 				CC40DD001D8C996A00BABD4F /* UAPush.h in Headers */,
 				CC40DD091D8C996A00BABD4F /* UARetailEventTemplate.h in Headers */,
@@ -4118,7 +4118,7 @@
 				99666E641EDF2C9500BAE46B /* UAColorUtils+Internal.h in Headers */,
 				99666E771EDF2CD400BAE46B /* UAConfig+Internal.h in Headers */,
 				99666E781EDF2CD400BAE46B /* UAConfig.h in Headers */,
-				99666E6A1EDF2C9A00BAE46B /* NSManagedObjectContext+UAAdditions.h in Headers */,
+				99666E6A1EDF2C9A00BAE46B /* NSManagedObjectContext+UAAdditions+Internal.h in Headers */,
 				99666E2E1EDF2C8D00BAE46B /* UACustomEvent+Internal.h in Headers */,
 				99666E2F1EDF2C8D00BAE46B /* UACustomEvent.h in Headers */,
 				6E598D441FFC56C2005B234B /* UAActionScheduleInfo+Internal.h in Headers */,
@@ -4348,7 +4348,7 @@
 				DF7E22951ED62E0900C79C46 /* UIWebView+UAAdditions.h in Headers */,
 				DF7E22961ED62E0900C79C46 /* UADisposable.h in Headers */,
 				DF7E22911ED62E0900C79C46 /* UAUtils+Internal.h in Headers */,
-				DF7E22981ED62E0900C79C46 /* NSManagedObjectContext+UAAdditions.h in Headers */,
+				DF7E22981ED62E0900C79C46 /* NSManagedObjectContext+UAAdditions+Internal.h in Headers */,
 				DF7E22991ED62E0900C79C46 /* NSOperationQueue+UAAdditions.h in Headers */,
 				3C77BF8C2016AA3C00AD37F3 /* UAInAppMessageHTMLController+Internal.h in Headers */,
 				3C77BF8E2016AA3C00AD37F3 /* UAInAppMessageHTMLDisplayContent+Internal.h in Headers */,

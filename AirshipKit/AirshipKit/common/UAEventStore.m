@@ -4,7 +4,7 @@
 #import "NSJSONSerialization+UAAdditions.h"
 
 #import "UAEventStore+Internal.h"
-#import "NSManagedObjectContext+UAAdditions.h"
+#import "NSManagedObjectContext+UAAdditions+Internal.h"
 #import <CoreData/CoreData.h>
 #import "UAConfig.h"
 #import "UAEvent.h"

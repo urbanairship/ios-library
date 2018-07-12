@@ -1,6 +1,6 @@
 /* Copyright 2018 Urban Airship and Contributors */
 
-#import "NSManagedObjectContext+UAAdditions.h"
+#import "NSManagedObjectContext+UAAdditions+Internal.h"
 #import "UAAutomationStore+Internal.h"
 #import "UAScheduleData+Internal.h"
 #import "UAScheduleTriggerData+Internal.h"

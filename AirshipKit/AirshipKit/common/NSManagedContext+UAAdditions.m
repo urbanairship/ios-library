@@ -1,6 +1,6 @@
 /* Copyright 2018 Urban Airship and Contributors */
 
-#import "NSManagedObjectContext+UAAdditions.h"
+#import "NSManagedObjectContext+UAAdditions+Internal.h"
 #import "UAUtils+Internal.h"
 #import "UAGlobal.h"
 
@@ -61,9 +61,14 @@ NSString *const UAManagedContextStoreDirectory = @"com.urbanairship.no-backup";
         NSDictionary *options = @{ NSMigratePersistentStoresAutomaticallyOption : @YES,
                                    NSInferMappingModelAutomaticallyOption : @YES };
         NSError *error = nil;
-        BOOL result = [self.persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL options:options error:&error];
 
-        completionHandler(result, error);
+        NSPersistentStore *result = [self.persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType
+                                                                                  configuration:nil
+                                                                                            URL:storeURL
+                                                                                        options:options
+                                                                                          error:&error];
+
+        completionHandler(result != nil, error);
     }];
 }
 
@@ -73,9 +78,13 @@ NSString *const UAManagedContextStoreDirectory = @"com.urbanairship.no-backup";
     NSDictionary *options = @{ NSMigratePersistentStoresAutomaticallyOption : @YES,
                                NSInferMappingModelAutomaticallyOption : @YES };
     NSError *error = nil;
-    BOOL result = [self.persistentStoreCoordinator addPersistentStoreWithType:NSInMemoryStoreType configuration:nil URL:nil options:options error:&error];
+    NSPersistentStore *result = [self.persistentStoreCoordinator addPersistentStoreWithType:NSInMemoryStoreType
+                                                                              configuration:nil
+                                                                                        URL:nil
+                                                                                    options:options
+                                                                                      error:&error];
 
-    completionHandler(result, error);
+    completionHandler(result != nil, error);
 }
 
 - (void)safePerformBlock:(void (^)(BOOL))block {
