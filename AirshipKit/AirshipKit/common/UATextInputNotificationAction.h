@@ -27,20 +27,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property(nonatomic, copy, readonly) NSString *textInputPlaceholder;
 
-/**
- * Note: There appears to be a bug in iOS 9 that prevents the return 
- * of the user's response when the UIUserNotificationActivationMode
- * is UIUserNotificationActivationModeForeground.  
- *
- * If forceBackgroundActivationModeInIOS9 is YES (which is the default), 
- * the UIUserNotificationActivationMode will be forced to
- * UIUserNotificationActivationModeBackground.
- *
- * Set forceBackgroundActivationModeInIOS9 to NO to use 
- * UIUserNotificationActivationModeForeground.
- */
-@property(nonatomic, assign) BOOL forceBackgroundActivationModeInIOS9;
-
 ///---------------------------------------------------------------------------------------
 /// @name Text Input Notification Action Initialization
 ///---------------------------------------------------------------------------------------

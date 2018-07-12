@@ -44,7 +44,7 @@
 @end
 
 @interface UAAutomationEngine()
-@property (nonatomic, assign) NSUInteger scheduleLimit;
+@property (nonatomic, strong) UATimerScheduler *timerScheduler;
 @property (nonatomic, copy) NSString *currentScreen;
 @property (nonatomic, copy, nullable) NSString * currentRegion;
 @property (nonatomic, assign) BOOL isForegrounded;
@@ -60,14 +60,15 @@
 
 - (void)dealloc {
     [self stop];
+    [self.automationStore shutDown];
 }
 
-- (instancetype)initWithAutomationStore:(UAAutomationStore *)automationStore scheduleLimit:(NSUInteger)limit {
+- (instancetype)initWithAutomationStore:(UAAutomationStore *)automationStore timerScheduler:(UATimerScheduler *)timerScheduler {
     self = [super init];
 
     if (self) {
         self.automationStore = automationStore;
-        self.scheduleLimit = limit;
+        self.timerScheduler = timerScheduler ? : [UATimerScheduler new];
         self.activeTimers = [NSMutableArray array];
         self.isForegrounded = [UIApplication sharedApplication].applicationState == UIApplicationStateActive;
         self.isBackgrounded = [UIApplication sharedApplication].applicationState == UIApplicationStateBackground;
@@ -78,8 +79,12 @@
     return self;
 }
 
-+ (instancetype)automationEngineWithAutomationStore:(UAAutomationStore *)automationStore scheduleLimit:(NSUInteger)limit {
-    return [[UAAutomationEngine alloc] initWithAutomationStore:automationStore scheduleLimit:limit];
++ (instancetype)automationEngineWithAutomationStore:(UAAutomationStore *)automationStore timerScheduler:(UATimerScheduler *)timerScheduler {
+    return [[UAAutomationEngine alloc] initWithAutomationStore:automationStore timerScheduler:timerScheduler];
+}
+
++ (instancetype)automationEngineWithAutomationStore:(UAAutomationStore *)automationStore {
+    return [[UAAutomationEngine alloc] initWithAutomationStore:automationStore timerScheduler:nil];
 }
 
 #pragma mark -
@@ -171,7 +176,7 @@
     UASchedule *schedule = [UASchedule scheduleWithIdentifier:[NSUUID UUID].UUIDString info:scheduleInfo];
 
     // Try to save the schedule
-    [self.automationStore saveSchedule:schedule limit:self.scheduleLimit completionHandler:^(BOOL success) {
+    [self.automationStore saveSchedule:schedule completionHandler:^(BOOL success) {
         // If saving the schedule was successful, process any compound triggers
         if (success) {
             UA_WEAKIFY(self);
@@ -203,46 +208,44 @@
     if (!schedules.count) {
         // don't save if there are no schedules
         completionHandler(@[]);
-    } else {
-        // Try to save the schedules
-        [self.automationStore saveSchedules:schedules limit:self.scheduleLimit completionHandler:^(BOOL success) {
-            if (success) {
-                UA_WEAKIFY(self);
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    UA_STRONGIFY(self);
-                    [self checkCompoundTriggerState:schedules];
-                });
-            }
-
-            if (completionHandler) {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    completionHandler(schedules);
-                });
-            }
-        }];
+        return;
     }
+
+    // Try to save the schedules
+    [self.automationStore saveSchedules:schedules completionHandler:^(BOOL success) {
+        if (success) {
+            UA_WEAKIFY(self);
+            dispatch_async(dispatch_get_main_queue(), ^{
+                UA_STRONGIFY(self);
+                [self checkCompoundTriggerState:schedules];
+            });
+        }
+
+        if (completionHandler) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                completionHandler(schedules);
+            });
+        }
+    }];
 }
 
 - (void)cancelScheduleWithID:(NSString *)identifier {
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"identifier == %@", identifier];
-    [self.automationStore deleteSchedulesWithPredicate:predicate];
+    [self.automationStore deleteSchedule:identifier];
     [self cancelTimersWithIdentifiers:[NSSet setWithArray:@[identifier]]];
 }
 
 - (void)cancelAll {
-    [self.automationStore deleteSchedulesWithPredicate:nil];
+    [self.automationStore deleteAllSchedules];
     [self cancelTimers];
 }
 
 - (void)cancelSchedulesWithGroup:(NSString *)group {
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"group == %@", group];
-    [self.automationStore deleteSchedulesWithPredicate:predicate];
+    [self.automationStore deleteSchedules:group];
     [self cancelTimersWithGroup:group];
 }
 
 - (void)getScheduleWithID:(NSString *)identifier completionHandler:(void (^)(UASchedule *))completionHandler {
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"identifier == %@ && end >= %@", identifier, [NSDate date]];
-    [self.automationStore fetchSchedulesWithPredicate:predicate limit:1 completionHandler:^(NSArray<UAScheduleData *> *schedulesData) {
+    [self.automationStore getSchedule:identifier completionHandler:^(NSArray<UAScheduleData *> *schedulesData) {
         UASchedule *schedule;
         if (schedulesData.count) {
             UAScheduleData *scheduleData = schedulesData.firstObject;
@@ -256,8 +259,7 @@
 }
 
 - (void)getSchedules:(void (^)(NSArray<UASchedule *> *))completionHandler {
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"end >= %@", [NSDate date]];
-    [self.automationStore fetchSchedulesWithPredicate:predicate limit:self.scheduleLimit completionHandler:^(NSArray<UAScheduleData *> *schedulesData) {
+    [self.automationStore getSchedules:^(NSArray<UAScheduleData *> *schedulesData) {
         NSMutableArray *schedules = [NSMutableArray array];
         for (UAScheduleData *scheduleData in schedulesData) {
             UASchedule *schedule = [self scheduleFromData:scheduleData];
@@ -273,8 +275,7 @@
 }
 
 - (void)getSchedulesWithGroup:(NSString *)group completionHandler:(void (^)(NSArray<UASchedule *> *))completionHandler {
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"group == %@ && end >= %@", group, [NSDate date]];
-    [self.automationStore fetchSchedulesWithPredicate:predicate limit:self.scheduleLimit completionHandler:^(NSArray<UAScheduleData *> *schedulesData) {
+    [self.automationStore getSchedules:group completionHandler:^(NSArray<UAScheduleData *> *schedulesData) {
         NSMutableArray *schedules = [NSMutableArray array];
         for (UAScheduleData *scheduleData in schedulesData) {
             UASchedule *schedule = [self scheduleFromData:scheduleData];
@@ -293,8 +294,7 @@
                      edits:(UAScheduleEdits *)edits
          completionHandler:(void (^)(UASchedule *))completionHandler {
 
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"identifier == %@", identifier];
-    [self.automationStore fetchSchedulesWithPredicate:predicate limit:1 completionHandler:^(NSArray<UAScheduleData *> *schedulesData) {
+    [self.automationStore getSchedule:identifier completionHandler:^(NSArray<UAScheduleData *> *schedulesData) {
         UASchedule *schedule;
 
         if (schedulesData.count) {
@@ -338,8 +338,7 @@
 
 - (void)cleanSchedules {
     // Expired schedules
-    NSPredicate *expiredPredicate = [NSPredicate predicateWithFormat:@"end <= %@ && executionState != %d", [NSDate date], UAScheduleStateFinished];
-    [self.automationStore fetchSchedulesWithPredicate:expiredPredicate limit:self.scheduleLimit completionHandler:^(NSArray<UAScheduleData *> *schedulesData) {
+    [self.automationStore getActiveExpiredSchedules:^(NSArray<UAScheduleData *> *schedulesData) {
         for (UAScheduleData *scheduleData in schedulesData) {
             [self notifyExpiredSchedule:scheduleData];
             if ([scheduleData.editGracePeriod doubleValue] > 0) {
@@ -351,8 +350,7 @@
     }];
 
     // Finished schedules
-    NSPredicate *finishedPredicate = [NSPredicate predicateWithFormat:@"executionState == %d", UAScheduleStateFinished];
-    [self.automationStore fetchSchedulesWithPredicate:finishedPredicate limit:self.scheduleLimit completionHandler:^(NSArray<UAScheduleData *> *schedulesData) {
+    [self.automationStore getFinishedSchedules:^(NSArray<UAScheduleData *> *schedulesData) {
         for (UAScheduleData *scheduleData in schedulesData) {
             NSDate *finishDate = [scheduleData.executionStateChangeDate dateByAddingTimeInterval:[scheduleData.editGracePeriod doubleValue]];
             if ([finishDate compare:[NSDate date]] == NSOrderedAscending) {
@@ -361,8 +359,6 @@
         }
     }];
 }
-
-
 
 #pragma mark -
 #pragma mark Event listeners
@@ -463,12 +459,7 @@
 
     NSDate *start = [NSDate date];
 
-    // Only update schedule triggers and active cancellation triggers
-    NSString *format = @"(schedule.identifier LIKE %@ AND type = %ld AND start <= %@) AND ((delay != nil AND schedule.executionState == %d) OR (delay == nil AND schedule.executionState == %d))";
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:format, scheduleID, triggerType, start, UAScheduleStatePendingExecution, UAScheduleStateIdle];
-
-    [self.automationStore fetchTriggersWithPredicate:predicate completionHandler:^(NSArray<UAScheduleTriggerData *> *triggers) {
-
+    [self.automationStore getActiveTriggers:scheduleID type:triggerType completionHandler:^(NSArray<UAScheduleTriggerData *> *triggers) {
         // Capture what schedules need to be cancelled and executed in sets so we do not double process any schedules
         NSMutableSet *schedulesToCancel = [NSMutableSet set];
         NSMutableSet *schedulesToExecute = [NSMutableSet set];
@@ -527,7 +518,7 @@
 }
 
 - (void)updateTriggersWithType:(UAScheduleTriggerType)triggerType argument:(id)argument incrementAmount:(double)amount {
-    [self updateTriggersWithScheduleID:@"*" type:triggerType argument:argument incrementAmount:amount];
+    [self updateTriggersWithScheduleID:nil type:triggerType argument:argument incrementAmount:amount];
 }
 
 /**
@@ -574,8 +565,8 @@
         }
 
         UA_LTRACE(@"Starting automation timer for %f seconds with user info %@", timeInterval, timer.userInfo);
+        [self.timerScheduler scheduleTimer:timer];
         [self.activeTimers addObject:timer];
-        [[NSRunLoop mainRunLoop] addTimer:timer forMode:NSDefaultRunLoopMode];
     });
 }
 
@@ -600,11 +591,12 @@
 - (void)delayTimerFired:(NSTimer *)timer {
     // Called on the main queue
     UA_LTRACE(@"Automation delay timer fired: %@", timer.userInfo);
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"identifier == %@ AND executionState == %d AND delayedExecutionDate == %@",
-                              timer.userInfo[@"identifier"], UAScheduleStatePendingExecution, timer.userInfo[@"delayedExecutionDate"]];
+
+    NSString *identifier = timer.userInfo[@"identifier"];
+    NSDate *executionDate = timer.userInfo[@"delayedExecutionDate"];
 
     UA_WEAKIFY(self);
-    [self.automationStore fetchSchedulesWithPredicate:predicate limit:1 completionHandler:^(NSArray<UAScheduleData *> *schedules) {
+    [self.automationStore getDelayedSchedule:identifier executionDate:executionDate completionHandler:^(NSArray<UAScheduleData *> *schedules) {
 
         UA_STRONGIFY(self);
         if (schedules.count != 1) {
@@ -632,11 +624,13 @@
  */
 - (void)intervalTimerFired:(NSTimer *)timer {
     UA_LTRACE(@"Automation interval timer fired: %@", timer.userInfo);
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"identifier == %@ AND executionState == %d",
-                              timer.userInfo[@"identifier"], UAScheduleStatePaused];
+
+    NSString *identifier = timer.userInfo[@"identifier"];
 
     UA_WEAKIFY(self);
-    [self.automationStore fetchSchedulesWithPredicate:predicate limit:1 completionHandler:^(NSArray<UAScheduleData *> *schedules) {
+    [self.automationStore getPausedSchedule:identifier completionHandler:^(NSArray<UAScheduleData *> *schedules) {
+        UA_STRONGIFY(self);
+        
         if (schedules.count != 1) {
             return;
         }
@@ -717,12 +711,8 @@
     [self cancelTimers];
 
     // Delay timers
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"executionState == %d AND delayedExecutionDate > %@",
-                              UAScheduleStatePendingExecution, [NSDate date]];
-
     UA_WEAKIFY(self);
-    [self.automationStore fetchSchedulesWithPredicate:predicate limit:self.scheduleLimit completionHandler:^(NSArray<UAScheduleData *> *schedules) {
-
+    [self.automationStore getDelayedSchedules:^(NSArray<UAScheduleData *> *schedules) {
         UA_STRONGIFY(self);
         for (UAScheduleData *scheduleData in schedules) {
 
@@ -738,9 +728,7 @@
     }];
 
     // Interval timers
-    predicate = [NSPredicate predicateWithFormat:@"executionState == %d", UAScheduleStatePaused];
-    [self.automationStore fetchSchedulesWithPredicate:predicate limit:self.scheduleLimit completionHandler:^(NSArray<UAScheduleData *> *schedules) {
-
+    [self.automationStore getPausedSchedules:^(NSArray<UAScheduleData *> *schedules) {
         UA_STRONGIFY(self);
         for (UAScheduleData *scheduleData in schedules) {
             NSTimeInterval interval = [scheduleData.interval doubleValue];
@@ -761,8 +749,7 @@
  * Resets executing schedules back to pendingExecution.
  */
 - (void)resetExecutingSchedules {
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"executionState == %d", UAScheduleStateExecuting];
-    [self.automationStore fetchSchedulesWithPredicate:predicate limit:self.scheduleLimit completionHandler:^(NSArray<UAScheduleData *> *schedules) {
+    [self.automationStore getExecutingSchedules:^(NSArray<UAScheduleData *> *schedules) {
         for (UAScheduleData *scheduleData in schedules) {
             scheduleData.executionState = @(UAScheduleStateIdle);
         }
@@ -846,8 +833,9 @@
  * Called when one of the schedule conditions changes.
  */
 - (void)scheduleConditionsChanged {
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"executionState == %d AND (delayedExecutionDate == nil OR delayedExecutionDate =< %@)", UAScheduleStatePendingExecution, [NSDate date]];
-    [self.automationStore fetchSchedulesWithPredicate:predicate limit:self.scheduleLimit completionHandler:^(NSArray<UAScheduleData *> *schedules) {
+    UA_WEAKIFY(self)
+    [self.automationStore getPendingSchedules:^(NSArray<UAScheduleData *> *schedules) {
+        UA_STRONGIFY(self);
         [self processTriggeredSchedules:schedules];
     }];
 }
@@ -1000,9 +988,7 @@
 }
 
 - (void)scheduleFinishedExecuting:(NSString *)scheduleID {
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"identifier == %@", scheduleID];
-
-    [self.automationStore fetchSchedulesWithPredicate:predicate limit:1 completionHandler:^(NSArray<UAScheduleData *> *result) {
+    [self.automationStore getSchedule:scheduleID completionHandler:^(NSArray<UAScheduleData *> *result) {
         if (result.count > 0) {
             UAScheduleData *scheduleData = result.firstObject;
             scheduleData.delayedExecutionDate = nil;

@@ -165,12 +165,16 @@ NSString *const UAChannelPlaceHolder = @"CHANNEL";
 
 
     if (url) {
-
         UIAlertAction *urlAction  = [UIAlertAction actionWithTitle:[@"ua_notification_button_copy" localizedStringWithTable:@"UrbanAirship" defaultValue:@"Copy"]
                                                              style:UIAlertActionStyleDefault
                                                            handler:^(UIAlertAction *action) {
-                                                               [[UIApplication sharedApplication] openURL:url];
-                                                               UA_LINFO(@"Opened url: %@", url.absoluteString);
+                                                               [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:^(BOOL success) {
+                                                                   if (success) {
+                                                                       UA_LINFO(@"Opened url: %@", url.absoluteString);
+                                                                   } else {
+                                                                       UA_LDEBUG(@"Failed to open url: %@", url.absoluteString);
+                                                                   }
+                                                               }];
                                                            }];
         [controller addAction:urlAction];
     }

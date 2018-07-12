@@ -58,7 +58,14 @@ static const UANotificationCategoryOptions UANotificationCategoryOptionNone NS_S
  *
  * Note: This property is only applicable on iOS 11 and above.
  */
-@property(readonly, copy, nonatomic) NSString *hiddenPreviewsBodyPlaceholder;
+@property(readonly, copy, nonatomic, nullable) NSString *hiddenPreviewsBodyPlaceholder;
+
+/**
+ * A format string for a summary description when notifications from this category are grouped together.
+ *
+ * Note: This property is only applicable on iOS 12 and above.
+ */
+@property (readonly, nonatomic, nullable) NSString *categorySummaryFormat;
 
 /**
  * Options for how to handle notifications of this type.
@@ -74,7 +81,7 @@ static const UANotificationCategoryOptions UANotificationCategoryOptionNone NS_S
  *
  * @param identifier The category identifier
  * @param actions An array of user notification actions
- * @param intentIdentifiers The intents supported support for notifications of this category.
+ * @param intentIdentifiers The intents supported for notifications of this category.
  * @param options Constants indicating how to handle notifications associated with this category.
  * @return The user notification category created or `nil` if an error occurred.
  */
@@ -88,7 +95,7 @@ static const UANotificationCategoryOptions UANotificationCategoryOptionNone NS_S
  *
  * @param identifier The category identifier
  * @param actions An array of user notification actions
- * @param intentIdentifiers The intents supported support for notifications of this category.
+ * @param intentIdentifiers The intents supported for notifications of this category.
  * @param hiddenPreviewsBodyPlaceholder A placeholder string to display when the user has disabled
           notification previews for the app.
  * @param options Constants indicating how to handle notifications associated with this category.
@@ -97,41 +104,40 @@ static const UANotificationCategoryOptions UANotificationCategoryOptionNone NS_S
 + (instancetype)categoryWithIdentifier:(NSString *)identifier
                                actions:(NSArray<UANotificationAction *> *)actions
                      intentIdentifiers:(NSArray<NSString *> *)intentIdentifiers
-         hiddenPreviewsBodyPlaceholder:(NSString *)hiddenPreviewsBodyPlaceholder
+         hiddenPreviewsBodyPlaceholder:(nullable NSString *)hiddenPreviewsBodyPlaceholder
                                options:(UANotificationCategoryOptions)options;
+
+/**
+ * Creates a user notification category with the specified parameters.
+ *
+ * @param identifier The category identifier
+ * @param actions An array of user notification actions
+ * @param intentIdentifiers The intents supported for notifications of this category.
+ * @param hiddenPreviewsBodyPlaceholder A placeholder string to display when the user has disabled
+ notification previews for the app.
+ * @param format A format string for a summary description when notifications from this
+ category are grouped together
+ * @param options Constants indicating how to handle notifications associated with this category.
+ * @return The user notification category created or `nil` if an error occurred.
+ */
++ (instancetype)categoryWithIdentifier:(NSString *)identifier
+                               actions:(NSArray<UANotificationAction *> *)actions
+                     intentIdentifiers:(NSArray<NSString *> *)intentIdentifiers
+         hiddenPreviewsBodyPlaceholder:(nullable NSString *)hiddenPreviewsBodyPlaceholder
+                 categorySummaryFormat:(nullable NSString *)format
+                               options:(UANotificationCategoryOptions)options __IOS_AVAILABLE(10.0);
 
 ///---------------------------------------------------------------------------------------
 /// @name Notification Category Utilities
 ///---------------------------------------------------------------------------------------
 
-#if TARGET_OS_IOS // UIUserNotificationAction and UNNotificationAction not available on tvOS
-
-/**
- * Converts a UANotificationCategory into a UIUserNotificationCategory.
- *
- * @return An instance of UIUserNotificationCategory.
- * @deprecated Deprecated in iOS 10.
- */
-- (UIUserNotificationCategory *)asUIUserNotificationCategory NS_DEPRECATED_IOS(8_0, 10_0, "Deprecated in iOS 10");
-
+#if TARGET_OS_IOS // UNNotificationAction not available on tvOS
 /**
  * Converts a UANotificationCategory into a UNNotificationCategory.
  *
  * @return An instance of UNNotificationCategory.
  */
 - (null_unspecified UNNotificationCategory *)asUNNotificationCategory __IOS_AVAILABLE(10.0);
-
-
-/**
- * Tests for equivalence with a UIUserNotificationCategory. As UANotificationCategory is a
- * drop-in replacement for UNNotificationCategory, any features not applicable
- * in UIUserNotificationCategory will be ignored.
- *
- * @param category The UIUserNotificationCategory to compare with.
- * @return `YES` if the two categories are equivalent, `NO` otherwise.
- * @deprecated Deprecated in iOS 10.
- */
-- (BOOL)isEqualToUIUserNotificationCategory:(UIUserNotificationCategory *)category NS_DEPRECATED_IOS(8_0, 10_0, "Deprecated in iOS 10");
 
 /**
  * Tests for equivalence with a UNNotificationCategory.

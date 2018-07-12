@@ -88,15 +88,7 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
     if (self) {
         self.dataStore = dataStore;
 
-#if TARGET_OS_TV    // legacy APNS registration not available on tvOS
         self.pushRegistration = [[UAAPNSRegistration alloc] init];
-#else
-        if (![[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){10, 0, 0}]) {
-            self.pushRegistration = [[UALegacyAPNSRegistration alloc] init];
-        } else {
-            self.pushRegistration = [[UAAPNSRegistration alloc] init];
-        }
-#endif
         self.pushRegistration.registrationDelegate = self;
 
         self.channelTagRegistrationEnabled = YES;
@@ -355,13 +347,6 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
 - (void)setUserPushNotificationsEnabled:(BOOL)enabled {
     BOOL previousValue = self.userPushNotificationsEnabled;
 
-    // Do not allow disabling if the settings app is required,
-    // requireSettingsAppToDisableUserNotifications can only return YES for iOS 8 & 9
-    if (![[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){10, 0, 0}] && !enabled && self.requireSettingsAppToDisableUserNotifications) {
-        UA_LWARN(@"User notifications must be disabled via the iOS Settings app for iOS 8 & 9.");
-        return;
-    }
-
     [self.dataStore setBool:enabled forKey:UAUserPushNotificationsEnabledKey];
 
     if (enabled != previousValue) {
@@ -472,21 +457,11 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
 }
 
 - (void)setNotificationOptions:(UANotificationOptions)notificationOptions {
-    if (![[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){10, 0, 0}] && !notificationOptions) {
-        UA_LWARN(@"Registering for UANotificationOptionNone may disable the ability to register for other types without restarting the device first on iOS 8 & 9.");
-    }
-
     _notificationOptions = notificationOptions;
     self.shouldUpdateAPNSRegistration = YES;
 }
 
 - (void)setRequireSettingsAppToDisableUserNotifications:(BOOL)requireSettingsAppToDisableUserNotifications {
-    if (![[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){10, 0, 0}] && !requireSettingsAppToDisableUserNotifications) {
-        UA_LWARN(@"Allowing the application to disable notifications in iOS 8 & 9 will prevent your application from properly "
-                 "opt-ing out of notifications that include \"content-available\" background components in "
-                 "notifications that also include a user-visible component. Instead, direct users to the iOS "
-                 "settings app using the UIApplicationOpenSettingsURLString URL constant.");
-    }
     _requireSettingsAppToDisableUserNotifications = requireSettingsAppToDisableUserNotifications;
 }
 
@@ -635,12 +610,6 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
         [[UIApplication sharedApplication] registerForRemoteNotifications];
     } else {
         [self updateRegistration];
-    }
-}
-
-- (void)application:(UIApplication *)application didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings {
-    if ([self.pushRegistration respondsToSelector:@selector(application:didRegisterUserNotificationSettings:)]) {
-        [self.pushRegistration application:application didRegisterUserNotificationSettings:notificationSettings];
     }
 }
 #endif
@@ -1064,15 +1033,6 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
                         }
                     }];
                 }
-            } else { // iOS 8 & 9
-#if !TARGET_OS_TV    // UIUserNotificationTypeNone, currentUserNotificationSettings not available on tvOS
-                if ([[UIApplication sharedApplication] currentUserNotificationSettings].types != UIUserNotificationTypeNone) {
-
-                    NSLog(@"%lu", (unsigned long)[[UIApplication sharedApplication] currentUserNotificationSettings].types);
-                    UA_LDEBUG(@"Migrating userPushNotificationEnabled to YES because application was already registered for notification types");
-                    [self.dataStore setBool:YES forKey:UAUserPushNotificationsEnabledKey];
-                }
-#endif
             }
         }
     }

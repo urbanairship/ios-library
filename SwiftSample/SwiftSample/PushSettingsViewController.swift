@@ -81,16 +81,6 @@ class PushSettingsViewController: UITableViewController {
         } else {
             self.tagsSubtitleLabel?.text = NSLocalizedString("None", tableName: "UAPushUI", comment: "None")
         }
-
-
-        // iOS 8 & 9 - user notifications cannot be disabled, so remove switch and link to system settings
-        if (!ProcessInfo().isOperatingSystemAtLeast(OperatingSystemVersion(majorVersion: 10, minorVersion: 0, patchVersion: 0)) && UAirship.push().userPushNotificationsEnabled) {
-            pushSettingsLabel.text = NSLocalizedString("UA_Push_Settings_Title", tableName: "UAPushUI", comment: "System Push Settings Label")
-
-            pushSettingsSubtitleLabel.text = pushTypeString()
-            pushEnabledSwitch?.isHidden = true
-            pushEnabledCell.selectionStyle = .default
-        }
     }
 
     func pushTypeString () -> String {
@@ -121,27 +111,12 @@ class PushSettingsViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
 
-        switch ((indexPath as NSIndexPath).section, (indexPath as NSIndexPath).row) {
-            case ((tableView.indexPath(for: pushEnabledCell)! as NSIndexPath).section, (tableView.indexPath(for: pushEnabledCell)! as NSIndexPath).row) :
-
-                if #available(iOS 10,*) {
-                    // iOS 10 or later - do nothing
-                } else {
-                    // iOS 8 & 9 - redirect push enabled cell to system settings
-                    if (UAirship.push().userPushNotificationsEnabled) {
-                        UIApplication.shared.openURL(URL(string: UIApplicationOpenSettingsURLString)!)
-                    }
-                }
-
-                break
-            case ((tableView.indexPath(for: channelIDCell)! as NSIndexPath).section, (tableView.indexPath(for: channelIDCell)! as NSIndexPath).row) :
+        if ((indexPath as NSIndexPath).section == (tableView.indexPath(for: channelIDCell)! as NSIndexPath).section &&
+            ((indexPath as NSIndexPath).row) == (tableView.indexPath(for: channelIDCell)! as NSIndexPath).row) {
                 if ((UAirship.push().channelID) != nil) {
                     UIPasteboard.general.string = channelIDSubtitleLabel?.text
                     showCopyMessage()
                 }
-                break
-            default:
-                break
         }
     }
     

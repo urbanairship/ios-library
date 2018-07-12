@@ -48,21 +48,6 @@ NS_ASSUME_NONNULL_BEGIN
                           categories:(NSSet<UANotificationCategory *> *)categories;
 @optional
 
-
-#if !TARGET_OS_TV
-/**
- * Required for iOS 8 & 9.
- *
- * Called by the UIApplicationDelegate's application:didRegisterUserNotificationSettings:
- * so UAPush can forward the delegate call to its registration delegate.
- *
- * @param application The application instance.
- * @param notificationSettings The resulting notificaiton settings.
- *
- * @deprecated Deprecated in iOS 10.
- */
-- (void)application:(UIApplication *)application didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings NS_DEPRECATED_IOS(8_0, 10_0, "Deprecated in iOS 10");
-#endif
 @end
 
 NS_ASSUME_NONNULL_END

@@ -55,12 +55,6 @@
     [[UAirship push] application:application didFailToRegisterForRemoteNotificationsWithError:error];
 }
 
-#if !TARGET_OS_TV   // UIUserNotificationSettings is not available on tvOS
-+ (void)application:(UIApplication *)application didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings {
-    [[UAirship push] application:application didRegisterUserNotificationSettings:notificationSettings];
-}
-#endif
-
 + (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
     switch(application.applicationState) {
         UA_LTRACE(@"Received remote notification: %@", userInfo);
@@ -107,25 +101,6 @@
     }
 
 }
-
-#if !TARGET_OS_TV   // Delegate methods unavailable in tvOS
-+ (void)application:(UIApplication *)application handleActionWithIdentifier:(NSString *)identifier forRemoteNotification:(NSDictionary *)userInfo completionHandler:(void (^)(void))handler {
-    [self application:application handleActionWithIdentifier:identifier forRemoteNotification:userInfo withResponseInfo:nil completionHandler:handler];
-}
-
-+ (void)application:(UIApplication *)application handleActionWithIdentifier:(NSString *)identifier forRemoteNotification:(NSDictionary *)userInfo withResponseInfo:(NSDictionary *)responseInfo completionHandler:(void (^)(void))handler {
-    UA_LTRACE(@"Handling notification action: %@", identifier);
-
-    NSString *responseText = responseInfo ? responseInfo[UIUserNotificationActionResponseTypedTextKey] : nil;
-    UANotificationResponse *response = [UANotificationResponse notificationResponseWithNotificationInfo:userInfo
-                                                                                       actionIdentifier:identifier
-                                                                                        responseText:responseText];
-   [self handleNotificationResponse:response completionHandler:^(void) {
-       handler();
-   }];
-}
-#endif
-
 
 #pragma mark -
 #pragma mark NSNotification methods

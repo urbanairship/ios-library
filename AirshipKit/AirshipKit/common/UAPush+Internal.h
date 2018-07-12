@@ -7,10 +7,6 @@
 #import "UAAPNSRegistration+Internal.h"
 #import "UAComponent+Internal.h"
 
-#if !TARGET_OS_TV
-#import "UALegacyAPNSRegistration+Internal.h"
-#endif
-
 @class UAPreferenceDataStore;
 @class UAConfig;
 @class UATagGroupsAPIClient;
@@ -326,18 +322,6 @@ extern NSString *const UAPushEnabledKey;
  * @param error An NSError object that encapsulates information why registration did not succeed.
  */
 - (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error;
-#if !TARGET_OS_TV
-/**
- * Called by the UIApplicationDelegate's application:didRegisterUserNotificationSettings:
- * so UAPush can forward the delegate call to its registration delegate.
- *
- * @param application The application instance.
- * @param notificationSettings The resulting notification settings.
- *
- * @deprecated Deprecated in iOS 10.
- */
-- (void)application:(UIApplication *)application didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings NS_DEPRECATED_IOS(8_0, 10_0, "Deprecated in iOS 10");
-#endif
 
 /**
  * Called to update the tag groups for the current channel.

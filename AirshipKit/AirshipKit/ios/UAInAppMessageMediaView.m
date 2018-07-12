@@ -83,14 +83,7 @@ CGFloat const DefaultVideoAspectRatio = 16.0/9.0;
         config.allowsPictureInPictureMediaPlayback = YES;
 
         //This may work someday
-        if (@available(iOS 10.0, *)) {
-            config.mediaTypesRequiringUserActionForPlayback = WKAudiovisualMediaTypeAll;
-        } else {
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-            config.mediaPlaybackRequiresUserAction = YES;
-#pragma GCC diagnostic pop
-        }
+        config.mediaTypesRequiringUserActionForPlayback = WKAudiovisualMediaTypeAll;
 
         self.webView = [[WKWebView alloc] initWithFrame:self.frame configuration:config];
         [self.mediaContainer addSubview:self.webView];

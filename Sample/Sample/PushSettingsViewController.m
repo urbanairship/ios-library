@@ -60,14 +60,6 @@
     } else {
         self.tagsSubtitleLabel.text = NSLocalizedStringFromTable(@"None", @"UAPushUI", @"None");
     }
-
-    // iOS 8 & 9 - user notifications cannot be disabled, so remove switch and link to system settings
-    if (![[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){10, 0, 0}] && [UAirship push].userPushNotificationsEnabled) {
-        self.pushSettingsLabel.text = NSLocalizedStringFromTable(@"UA_Push_Settings_Title", @"UAPushUI", @"System Push Settings Label");
-        self.pushSettingsSubtitleLabel.text = [self pushTypeString];
-        self.pushEnabledSwitch.hidden = YES;
-        self.pushEnabledCell.selectionStyle = UITableViewCellSelectionStyleDefault;
-    }
 }
 
 - (NSString *)pushTypeString {
@@ -96,19 +88,6 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
-
-
-    // iOS 8 & 9 - redirect push enabled cell to system settings
-    if (![[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){10, 0, 0}] && [UAirship push].userPushNotificationsEnabled) {
-        if (indexPath.section == [tableView indexPathForCell:self.pushEnabledCell].section) {
-            if (indexPath.row == [tableView indexPathForCell:self.pushEnabledCell].row) {
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-                [[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]];
-#pragma GCC diagnostic pop
-            }
-        }
-    }
 
     if (indexPath.section == [tableView indexPathForCell:self.channelIDCell].section) {
         if (indexPath.row == [tableView indexPathForCell:self.channelIDCell].row) {
