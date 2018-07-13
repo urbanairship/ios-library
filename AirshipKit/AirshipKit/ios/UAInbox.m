@@ -11,7 +11,6 @@
 
 - (void)dealloc {
     [self.client.session cancelAllRequests];
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 - (instancetype)initWithUser:(UAUser *)user config:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {

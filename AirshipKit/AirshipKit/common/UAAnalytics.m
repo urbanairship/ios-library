@@ -26,6 +26,7 @@
 @property (nonatomic, strong) UAConfig *config;
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 @property (nonatomic, strong) UAEventManager *eventManager;
+@property (nonatomic, strong) NSNotificationCenter *notificationCenter;
 
 @property (nonatomic, assign) BOOL isEnteringForeground;
 
@@ -44,12 +45,11 @@ NSString *const UAEventKey = @"event";
 
 @implementation UAAnalytics
 
+- (instancetype)initWithConfig:(UAConfig *)airshipConfig
+                     dataStore:(UAPreferenceDataStore *)dataStore
+                  eventManager:(UAEventManager *)eventManager
+            notificationCenter:(NSNotificationCenter *)notificationCenter {
 
-- (void)dealloc {
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
-}
-
-- (instancetype)initWithConfig:(UAConfig *)airshipConfig dataStore:(UAPreferenceDataStore *)dataStore eventManager:(UAEventManager *)eventManager {
     self = [super initWithDataStore:dataStore];
 
     if (self) {
@@ -57,6 +57,7 @@ NSString *const UAEventKey = @"event";
         self.config = airshipConfig;
         self.dataStore = dataStore;
         self.eventManager = eventManager;
+        self.notificationCenter = notificationCenter;
 
         // Default analytics value
         if (![self.dataStore objectForKey:kUAAnalyticsEnabled]) {
@@ -66,28 +67,28 @@ NSString *const UAEventKey = @"event";
         self.eventManager.uploadsEnabled = self.isEnabled && self.componentEnabled;
 
         // Register for background notifications
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(enterBackground)
-                                                     name:UIApplicationDidEnterBackgroundNotification
-                                                   object:nil];
+        [self.notificationCenter addObserver:self
+                                    selector:@selector(enterBackground)
+                                        name:UIApplicationDidEnterBackgroundNotification
+                                      object:nil];
 
         // Register for foreground notifications
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(enterForeground)
-                                                     name:UIApplicationWillEnterForegroundNotification
-                                                   object:nil];
+        [self.notificationCenter addObserver:self
+                                    selector:@selector(enterForeground)
+                                        name:UIApplicationWillEnterForegroundNotification
+                                      object:nil];
 
         // App inactive/active for incoming calls, notification center, and taskbar
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(didBecomeActive)
-                                                     name:UIApplicationDidBecomeActiveNotification
-                                                   object:nil];
+        [self.notificationCenter addObserver:self
+                                    selector:@selector(didBecomeActive)
+                                        name:UIApplicationDidBecomeActiveNotification
+                                      object:nil];
 
         // Register for terminate notifications
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(willTerminate)
-                                                     name:UIApplicationWillTerminateNotification
-                                                   object:nil];
+        [self.notificationCenter addObserver:self
+                                    selector:@selector(willTerminate)
+                                        name:UIApplicationWillTerminateNotification
+                                      object:nil];
 
         [self startSession];
 
@@ -102,16 +103,18 @@ NSString *const UAEventKey = @"event";
 + (instancetype)analyticsWithConfig:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
     return [[UAAnalytics alloc] initWithConfig:config
                                      dataStore:dataStore
-                                  eventManager:[UAEventManager eventManagerWithConfig:config dataStore:dataStore]];
+                                  eventManager:[UAEventManager eventManagerWithConfig:config dataStore:dataStore]
+                            notificationCenter:[NSNotificationCenter defaultCenter]];
 }
 
 + (instancetype)analyticsWithConfig:(UAConfig *)config
                           dataStore:(UAPreferenceDataStore *)dataStore
-                       eventManager:(UAEventManager *)eventManager {
-
+                       eventManager:(UAEventManager *)eventManager
+                 notificationCenter:(NSNotificationCenter *)notificationCenter {
     return [[UAAnalytics alloc] initWithConfig:config
                                      dataStore:dataStore
-                                  eventManager:eventManager];
+                                  eventManager:eventManager
+                            notificationCenter:notificationCenter];
 
 }
 
@@ -188,15 +191,15 @@ NSString *const UAEventKey = @"event";
         UA_LTRACE(@"Event added: %@.", event);
 
         if ([event isKindOfClass:[UACustomEvent class]]) {
-            [[NSNotificationCenter defaultCenter] postNotificationName:UACustomEventAdded
-                                                                object:self
-                                                              userInfo:@{UAEventKey: event}];
+            [self.notificationCenter postNotificationName:UACustomEventAdded
+                                                   object:self
+                                                 userInfo:@{UAEventKey: event}];
         }
 
         if ([event isKindOfClass:[UARegionEvent class]]) {
-            [[NSNotificationCenter defaultCenter] postNotificationName:UARegionEventAdded
-                                                                object:self
-                                                              userInfo:@{UAEventKey: event}];
+            [self.notificationCenter postNotificationName:UARegionEventAdded
+                                                   object:self
+                                                 userInfo:@{UAEventKey: event}];
         }
     });
 }
@@ -262,9 +265,9 @@ NSString *const UAEventKey = @"event";
         return;
     }
 
-    [[NSNotificationCenter defaultCenter] postNotificationName:UAScreenTracked
-                                                        object:self
-                                                      userInfo:screen == nil ? @{} : @{UAScreenKey: screen}];
+    [self.notificationCenter postNotificationName:UAScreenTracked
+                                           object:self
+                                         userInfo:screen == nil ? @{} : @{UAScreenKey: screen}];
 
     // If there's a screen currently being tracked set it's stop time and add it to analytics
     if (self.currentScreen) {
@@ -278,7 +281,7 @@ NSString *const UAEventKey = @"event";
         // Add screen tracking event to next analytics batch
         [self addEvent:ste];
     }
-    
+
     self.currentScreen = screen;
     self.startTime = [NSDate date].timeIntervalSince1970;
 }
@@ -307,3 +310,5 @@ NSString *const UAEventKey = @"event";
 }
 
 @end
+
+

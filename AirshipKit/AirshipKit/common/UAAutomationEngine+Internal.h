@@ -68,19 +68,22 @@ NS_ASSUME_NONNULL_BEGIN
  * Automation Engine constructor.
  *
  * @param automationStore An initialized UAAutomationStore
- * @param timerScheduler A timer scheduler
- * @return Initialized Automation Engine instance
- */
-+ (instancetype)automationEngineWithAutomationStore:(UAAutomationStore *)automationStore
-                                     timerScheduler:(UATimerScheduler *)timerScheduler;
-
-/**
- * Automation Engine constructor.
- *
- * @param automationStore An initialized UAAutomationStore
  * @return Initialized Automation Engine instance
  */
 + (instancetype)automationEngineWithAutomationStore:(UAAutomationStore *)automationStore;
+
+/**
+ * Automation Engine constructor. Used for testing.
+ *
+ * @param automationStore An initialized UAAutomationStore
+ * @param timerScheduler A timer scheduler
+ * @param notificationCenter The notification center.
+ * @return Initialized Automation Engine instance
+ */
++ (instancetype)automationEngineWithAutomationStore:(UAAutomationStore *)automationStore
+                                     timerScheduler:(UATimerScheduler *)timerScheduler
+                                 notificationCenter:(NSNotificationCenter *)notificationCenter;
+
 
 /**
  * Starts the Automation Engine.

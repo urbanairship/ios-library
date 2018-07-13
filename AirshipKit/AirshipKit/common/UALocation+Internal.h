@@ -50,6 +50,16 @@ NS_ASSUME_NONNULL_BEGIN
  */
 + (instancetype)locationWithAnalytics:(UAAnalytics *)analytics dataStore:(UAPreferenceDataStore *)dataStore;
 
+/**
+ * Factory method to create a UALocation instance. Used for testing.
+ *
+ * @param analytics UAAnalytics instance.
+ * @param dataStore The preference data store.
+ * @param notificationCenter The notification center.
+ * @return UALocation instance.
+ */
++ (instancetype)locationWithAnalytics:(UAAnalytics *)analytics dataStore:(UAPreferenceDataStore *)dataStore notificationCenter:(NSNotificationCenter *)notificationCenter;
+
 NS_ASSUME_NONNULL_END
 
 @end

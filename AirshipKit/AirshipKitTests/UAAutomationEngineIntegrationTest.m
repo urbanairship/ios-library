@@ -23,6 +23,7 @@
 @property (nonatomic, strong) id mockMetrics;
 @property (nonatomic, strong) id mockAirship;
 @property (nonatomic, strong) id mockTimerScheduler;
+@property (nonatomic, strong) NSNotificationCenter *notificationCenter;
 @end
 
 #define UAAUTOMATIONENGINETESTS_SCHEDULE_LIMIT 100
@@ -50,7 +51,11 @@
     self.mockMetrics = [self mockForClass:[UAApplicationMetrics class]];
     [[[self.mockAirship stub] andReturn:self.mockMetrics] applicationMetrics];
 
-    self.automationEngine = [UAAutomationEngine automationEngineWithAutomationStore:self.testStore timerScheduler:self.mockTimerScheduler];
+
+    self.notificationCenter = [[NSNotificationCenter alloc] init];
+
+    self.automationEngine = [UAAutomationEngine automationEngineWithAutomationStore:self.testStore timerScheduler:self.mockTimerScheduler  notificationCenter:self.notificationCenter];
+
     self.automationEngine.delegate = self.mockDelegate;
     [self.automationEngine cancelAll];
 
@@ -574,8 +579,8 @@
     UAScheduleTrigger *trigger = [UAScheduleTrigger activeSessionTriggerWithCount:1];
 
     [self verifyTrigger:trigger triggerFireBlock:^{
-        [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationWillEnterForegroundNotification
-                                                            object:nil];
+        [self.notificationCenter postNotificationName:UIApplicationWillEnterForegroundNotification
+                                               object:nil];
     }];
 }
 
@@ -723,8 +728,8 @@
 
 - (void)testBackgroundDelay {
     // Start with a foreground state
-    [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationWillEnterForegroundNotification
-                                                        object:nil];
+    [self.notificationCenter postNotificationName:UIApplicationWillEnterForegroundNotification
+                                           object:nil];
 
 
     UAScheduleDelay *delay = [UAScheduleDelay delayWithBuilderBlock:^(UAScheduleDelayBuilder * builder) {
@@ -732,8 +737,8 @@
     }];
 
     [self verifyDelay:delay fulfillmentBlock:^{
-        [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationDidEnterBackgroundNotification
-                                                            object:nil];
+        [self.notificationCenter postNotificationName:UIApplicationDidEnterBackgroundNotification
+                                               object:nil];
     }];
 }
 
@@ -974,19 +979,19 @@
  * Helper method for simulating a full transition from the background to the active state.
  */
 - (void)simulateForegroundTransition {
-    [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationDidEnterBackgroundNotification
-                                                        object:nil];
+    [self.notificationCenter postNotificationName:UIApplicationDidEnterBackgroundNotification
+                                           object:nil];
 
-    [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationDidBecomeActiveNotification
-                                                        object:nil];
+    [self.notificationCenter postNotificationName:UIApplicationDidBecomeActiveNotification
+                                           object:nil];
 }
 
 - (void)simulateBackgroundTransition {
-    [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationDidBecomeActiveNotification
-                                                        object:nil];
+    [self.notificationCenter postNotificationName:UIApplicationDidBecomeActiveNotification
+                                           object:nil];
 
-    [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationDidEnterBackgroundNotification
-                                                        object:nil];
+    [self.notificationCenter postNotificationName:UIApplicationDidEnterBackgroundNotification
+                                           object:nil];
 }
 
 - (void)verifyDelay:(UAScheduleDelay *)delay fulfillmentBlock:(void (^)(void))fulfillmentBlock {
@@ -1124,22 +1129,22 @@
 
 - (void)emitEvent:(UAEvent *)event {
     if ([event isKindOfClass:[UACustomEvent class]]) {
-        [[NSNotificationCenter defaultCenter] postNotificationName:UACustomEventAdded
-                                                            object:self
-                                                          userInfo:@{UAEventKey: event}];
+        [self.notificationCenter postNotificationName:UACustomEventAdded
+                                               object:self
+                                             userInfo:@{UAEventKey: event}];
     }
 
     if ([event isKindOfClass:[UARegionEvent class]]) {
-        [[NSNotificationCenter defaultCenter] postNotificationName:UARegionEventAdded
-                                                            object:self
-                                                          userInfo:@{UAEventKey: event}];
+        [self.notificationCenter postNotificationName:UARegionEventAdded
+                                               object:self
+                                             userInfo:@{UAEventKey: event}];
     }
 }
 
 - (void)emitScreenTracked:(NSString *)screen {
-    [[NSNotificationCenter defaultCenter] postNotificationName:UAScreenTracked
-                                                        object:self
-                                                      userInfo:screen == nil ? @{} : @{UAScreenKey: screen}];
+    [self.notificationCenter postNotificationName:UAScreenTracked
+                                           object:self
+                                         userInfo:screen == nil ? @{} : @{UAScreenKey: screen}];
 }
 
 - (UAScheduleInfo *)createScheduleInfoWithBuilder:(UAScheduleInfoBuilder *)builder {
@@ -1147,3 +1152,6 @@
 }
 
 @end
+
+
+

@@ -76,6 +76,22 @@ NS_ASSUME_NONNULL_BEGIN
                              client:(UAInboxAPIClient *)client
                              config:(UAConfig *)config;
 
+/**
+ * Factory method for creating an Inbox Message List. Used for testing.
+ *
+ * @param user The user.
+ * @param client The internal inbox API client.
+ * @param config The config.
+ * @param inboxStore The inbox message store.
+ * @param notificationCenter The notification center.
+ * @return An allocated UAInboxMessageList instance.
+ */
++ (instancetype)messageListWithUser:(UAUser *)user
+                             client:(UAInboxAPIClient *)client
+                             config:(UAConfig *)config
+                         inboxStore:(UAInboxStore *)inboxStore
+                 notificationCenter:(NSNotificationCenter *)notificationCenter;
+
 @end
 
 NS_ASSUME_NONNULL_END

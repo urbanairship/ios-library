@@ -46,12 +46,6 @@ NSString *const UANamedUserLastUpdatedTokenKey = @"UANamedUserLastUpdatedToken";
     return self;
 }
 
-
-- (void)dealloc {
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
-}
-
-
 + (instancetype) namedUserWithPush:(UAPush *)push config:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore  {
     return [[UANamedUser alloc] initWithPush:push config:config dataStore:dataStore tagGroupsRegistrar:[UATagGroupsRegistrar namedUserTagGroupsRegistrarWithConfig:config dataStore:dataStore]];
 }

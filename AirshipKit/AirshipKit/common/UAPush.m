@@ -66,12 +66,8 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
 NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channel_id";
 
 @interface UAPush()
-
-/**
- * The UATagGroupsRegistrar that manages tag group registration with Urban Airship.
- */
 @property (nonatomic, strong) UATagGroupsRegistrar *tagGroupsRegistrar;
-
+@property (nonatomic, strong) NSNotificationCenter *notificationCenter;
 @end
 
 @implementation UAPush
@@ -79,14 +75,15 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
 // Both getter and setter are custom here, so give the compiler a hand with the synthesizing
 @synthesize requireSettingsAppToDisableUserNotifications = _requireSettingsAppToDisableUserNotifications;
 
-- (void)dealloc {
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
-}
+- (instancetype)initWithConfig:(UAConfig *)config
+                     dataStore:(UAPreferenceDataStore *)dataStore
+            tagGroupsRegistrar:(UATagGroupsRegistrar *)tagGroupsRegistrar
+            notificationCenter:(NSNotificationCenter *)notificationCenter {
 
-- (instancetype)initWithConfig:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore tagGroupsRegistrar:(UATagGroupsRegistrar *)tagGroupsRegistrar {
     self = [super initWithDataStore:dataStore];
     if (self) {
         self.dataStore = dataStore;
+        self.notificationCenter = notificationCenter;
 
 #if TARGET_OS_TV    // legacy APNS registration not available on tvOS
         self.pushRegistration = [[UAAPNSRegistration alloc] init];
@@ -130,28 +127,28 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
         }
 
         // For observing each foreground entry
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(enterForeground)
-                                                     name:UIApplicationWillEnterForegroundNotification
-                                                   object:nil];
+        [self.notificationCenter addObserver:self
+                                    selector:@selector(enterForeground)
+                                        name:UIApplicationWillEnterForegroundNotification
+                                      object:nil];
 
         // Only for observing the first call to app foreground
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(applicationDidBecomeActive)
-                                                     name:UIApplicationDidBecomeActiveNotification
-                                                   object:[UIApplication sharedApplication]];
+        [self.notificationCenter addObserver:self
+                                    selector:@selector(applicationDidBecomeActive)
+                                        name:UIApplicationDidBecomeActiveNotification
+                                      object:[UIApplication sharedApplication]];
 
         // Only for observing the first call to app background
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(applicationDidEnterBackground)
-                                                     name:UIApplicationDidEnterBackgroundNotification
-                                                   object:[UIApplication sharedApplication]];
+        [self.notificationCenter addObserver:self
+                                    selector:@selector(applicationDidEnterBackground)
+                                        name:UIApplicationDidEnterBackgroundNotification
+                                      object:[UIApplication sharedApplication]];
 
 #if !TARGET_OS_TV    // UIApplicationBackgroundRefreshStatusDidChangeNotification not available on tvOS
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(applicationBackgroundRefreshStatusChanged)
-                                                     name:UIApplicationBackgroundRefreshStatusDidChangeNotification
-                                                   object:[UIApplication sharedApplication]];
+        [self.notificationCenter addObserver:self
+                                    selector:@selector(applicationBackgroundRefreshStatusChanged)
+                                        name:UIApplicationBackgroundRefreshStatusDidChangeNotification
+                                      object:[UIApplication sharedApplication]];
 #endif
 
         // Do not remove migratePushSettings call from init. It needs to be run
@@ -179,11 +176,17 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
 }
 
 + (instancetype)pushWithConfig:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
-    return [[UAPush alloc] initWithConfig:config dataStore:dataStore tagGroupsRegistrar:[UATagGroupsRegistrar channelTagGroupsRegistrarWithConfig:config dataStore:dataStore]];
+    return [[UAPush alloc] initWithConfig:config
+                                dataStore:dataStore
+                       tagGroupsRegistrar:[UATagGroupsRegistrar channelTagGroupsRegistrarWithConfig:config dataStore:dataStore]
+                       notificationCenter:[NSNotificationCenter defaultCenter]];
 }
 
-+ (instancetype)pushWithConfig:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore tagGroupsRegistrar:(UATagGroupsRegistrar *)tagGroupsRegistrar {
-    return [[UAPush alloc] initWithConfig:config dataStore:dataStore tagGroupsRegistrar:tagGroupsRegistrar];
++ (instancetype)pushWithConfig:(UAConfig *)config
+                     dataStore:(UAPreferenceDataStore *)dataStore
+            tagGroupsRegistrar:(UATagGroupsRegistrar *)tagGroupsRegistrar
+            notificationCenter:(NSNotificationCenter *)notificationCenter {
+    return [[UAPush alloc] initWithConfig:config dataStore:dataStore tagGroupsRegistrar:tagGroupsRegistrar notificationCenter:notificationCenter];
 }
 
 - (void)updateAuthorizedNotificationTypes {
@@ -569,7 +572,7 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
         UA_LERR(@"Unable to set tags %@ for device tag group when channelTagRegistrationEnabled is true.", [tags description]);
         return;
     }
-    
+
     [self.tagGroupsRegistrar setTags:tags group:tagGroupID];
 }
 
@@ -610,7 +613,7 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
 
 - (void)applicationDidBecomeActive {
     [self enterForeground];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidBecomeActiveNotification object:nil];
+    [self.notificationCenter removeObserver:self name:UIApplicationDidBecomeActiveNotification object:nil];
 }
 
 - (void)applicationDidEnterBackground {
@@ -647,7 +650,7 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
 
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
     self.deviceToken = [UAUtils deviceTokenStringFromDeviceToken:deviceToken];
-    
+
     if (application.applicationState == UIApplicationStateBackground && self.channelID) {
         UA_LDEBUG(@"Skipping channel registration. The app is currently backgrounded and we already have a channel ID.");
     } else {
@@ -760,7 +763,7 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
     if (!self.componentEnabled) {
         return;
     }
-    
+
     // Only cancel in flight requests if the channel is already created
     if (!self.channelCreationEnabled) {
         UA_LDEBUG(@"Channel creation is currently disabled.");
@@ -896,9 +899,9 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
         [strongDelegate registrationSucceededForChannelID:self.channelID deviceToken:self.deviceToken];
     }
 
-    [[NSNotificationCenter defaultCenter] postNotificationName:UAChannelUpdatedEvent
-                                                        object:self
-                                                      userInfo:@{UAChannelUpdatedEventChannelKey: channelID}];
+    [self.notificationCenter postNotificationName:UAChannelUpdatedEvent
+                                           object:self
+                                         userInfo:@{UAChannelUpdatedEventChannelKey: channelID}];
 
     if (![payload isEqualToPayload:[self createChannelPayload]]) {
         [self updateChannelRegistrationForcefully:NO];
@@ -932,10 +935,10 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
             NSLog(@"Created channel with ID: %@", self.channelID);
         }
 
-        [[NSNotificationCenter defaultCenter] postNotificationName:UAChannelCreatedEvent
-                                                            object:self
-                                                          userInfo:@{UAChannelCreatedEventChannelKey: channelID,
-                                                                     UAChannelCreatedEventExistingKey: @(existing)}];
+        [self.notificationCenter postNotificationName:UAChannelCreatedEvent
+                                               object:self
+                                             userInfo:@{UAChannelCreatedEventChannelKey: channelID,
+                                                        UAChannelCreatedEventExistingKey: @(existing)}];
     } else {
         UA_LERR(@"Channel creation failed. Missing channelID: %@ or channelLocation: %@",
                 channelID, channelLocation);
@@ -1076,9 +1079,9 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
             }
         }
     }
-    
+
     [self.dataStore setBool:YES forKey:UAPushEnabledSettingsMigratedKey];
-    
+
     // Normalize tags for older SDK versions
     self.tags = [UATagUtils normalizeTags:self.tags];
 }
@@ -1093,3 +1096,5 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
 
 
 @end
+
+

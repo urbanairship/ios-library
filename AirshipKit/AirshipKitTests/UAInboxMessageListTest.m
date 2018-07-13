@@ -9,6 +9,7 @@
 #import "UAConfig.h"
 #import "UAInboxStore+Internal.h"
 #import "UAUtils+Internal.h"
+#import "UAInboxStore+Internal.h"
 
 static UAUser *mockUser_ = nil;
 
@@ -27,6 +28,8 @@ static UAUser *mockUser_ = nil;
 @property (nonatomic, strong) id mockMessageListNotificationObserver;
 
 @property (nonatomic, strong) UAInboxMessageList *messageList;
+@property (nonatomic, strong) NSNotificationCenter *notificationCenter;
+@property (nonatomic, strong) UAInboxStore *testStore;
 
 @end
 
@@ -41,6 +44,10 @@ static UAUser *mockUser_ = nil;
         [invocation setReturnValue:&self->_userCreated];
     }] isCreated];
 
+
+
+    self.testStore = [UAInboxStore storeWithName:@"UAInboxMessageListTest." inMemory:YES];
+
     self.mockInboxAPIClient = [self mockForClass:[UAInboxAPIClient class]];
 
     self.mockMessageListNotificationObserver = [self mockForProtocol:@protocol(UAInboxMessageListMockNotificationObserver)];
@@ -48,25 +55,26 @@ static UAUser *mockUser_ = nil;
     //order is important with these events, so we should be explicit about it
     [self.mockMessageListNotificationObserver setExpectationOrderMatters:YES];
 
-    self.messageList = [UAInboxMessageList messageListWithUser:self.mockUser client:self.mockInboxAPIClient config:[UAConfig config]];
+    self.notificationCenter = [[NSNotificationCenter alloc] init];
+    self.messageList = [UAInboxMessageList messageListWithUser:self.mockUser
+                                                        client:self.mockInboxAPIClient
+                                                        config:[UAConfig config]
+                                                    inboxStore:self.testStore
+                                            notificationCenter:self.notificationCenter];
 
     //inject the API client
     self.messageList.client = self.mockInboxAPIClient;
 
     //sign up for NSNotificationCenter events with our mock observer
-    [[NSNotificationCenter defaultCenter] addObserver:self.mockMessageListNotificationObserver selector:@selector(messageListWillUpdate) name:UAInboxMessageListWillUpdateNotification object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self.mockMessageListNotificationObserver selector:@selector(messageListUpdated) name:UAInboxMessageListUpdatedNotification object:nil];
+    [self.notificationCenter addObserver:self.mockMessageListNotificationObserver selector:@selector(messageListWillUpdate) name:UAInboxMessageListWillUpdateNotification object:nil];
+    [self.notificationCenter addObserver:self.mockMessageListNotificationObserver selector:@selector(messageListUpdated) name:UAInboxMessageListUpdatedNotification object:nil];
 }
 
 - (void)tearDown {
-    [self.mockUser stopMocking];
+    [self.testStore shutDown];
+    [self.testStore waitForIdle];
 
-    [[NSNotificationCenter defaultCenter] removeObserver:self.mockMessageListNotificationObserver name:UAInboxMessageListWillUpdateNotification object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self.mockMessageListNotificationObserver name:UAInboxMessageListUpdatedNotification object:nil];
-
-    [self.mockInboxAPIClient stopMocking];
-    [self.mockMessageListNotificationObserver stopMocking];
-
+    [self.notificationCenter removeObserver:self.mockMessageListNotificationObserver];
     [super tearDown];
 }
 
@@ -205,6 +213,7 @@ static UAUser *mockUser_ = nil;
     [[[self.mockMessageListNotificationObserver expect] andDo:^(NSInvocation *invocation) {
         [messageListWillUpdateExpectation fulfill];
     }] messageListWillUpdate];
+
     [[[self.mockMessageListNotificationObserver expect] andDo:^(NSInvocation *invocation) {
         [messageListUpdatedExpectation fulfill];
     }] messageListUpdated];

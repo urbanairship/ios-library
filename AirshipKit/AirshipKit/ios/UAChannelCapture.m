@@ -28,19 +28,21 @@ NSString *const UAChannelPlaceHolder = @"CHANNEL";
 
 - (instancetype)initWithConfig:(UAConfig *)config
                           push:(UAPush *)push
-                     dataStore:(UAPreferenceDataStore *)dataStore {
+                     dataStore:(UAPreferenceDataStore *)dataStore
+            notificationCenter:(NSNotificationCenter *)notificationCenter {
+
     self = [super init];
     if (self) {
         self.config = config;
         self.push = push;
         self.dataStore = dataStore;
-        
+
         if (config.channelCaptureEnabled) {
             // App inactive/active for incoming calls, notification center, and taskbar
-            [[NSNotificationCenter defaultCenter] addObserver:self
-                                                     selector:@selector(didBecomeActive)
-                                                         name:UIApplicationDidBecomeActiveNotification
-                                                       object:nil];
+            [notificationCenter addObserver:self
+                                   selector:@selector(didBecomeActive)
+                                       name:UIApplicationDidBecomeActiveNotification
+                                     object:nil];
             self.enableChannelCapture = true;
         }
     }
@@ -51,11 +53,14 @@ NSString *const UAChannelPlaceHolder = @"CHANNEL";
 + (instancetype)channelCaptureWithConfig:(UAConfig *)config
                                     push:(UAPush *)push
                                dataStore:(UAPreferenceDataStore *)dataStore {
-    return [[UAChannelCapture alloc] initWithConfig:config push:push dataStore:dataStore];
+    return [[UAChannelCapture alloc] initWithConfig:config push:push dataStore:dataStore notificationCenter:[NSNotificationCenter defaultCenter]];
 }
 
-- (void)dealloc {
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
++ (instancetype)channelCaptureWithConfig:(UAConfig *)config
+                                    push:(UAPush *)push
+                               dataStore:(UAPreferenceDataStore *)dataStore
+                      notificationCenter:(NSNotificationCenter *)notificationCenter {
+    return [[UAChannelCapture alloc] initWithConfig:config push:push dataStore:dataStore notificationCenter:notificationCenter];
 }
 
 - (void)enable:(NSTimeInterval)duration {
@@ -93,12 +98,12 @@ NSString *const UAChannelPlaceHolder = @"CHANNEL";
             return;
         }
     }
-    
+
     NSString *pasteBoardString = [UIPasteboard generalPasteboard].string;
     if (!pasteBoardString.length) {
         return;
     }
-    
+
     // Do the heavy lifting off the main queue
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
         NSData *base64Data = UA_dataFromBase64String(pasteBoardString);
@@ -200,3 +205,4 @@ NSString *const UAChannelPlaceHolder = @"CHANNEL";
 }
 
 @end
+

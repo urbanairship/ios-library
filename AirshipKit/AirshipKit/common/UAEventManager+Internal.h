@@ -67,13 +67,15 @@
  * @param eventStore The event data store.
  * @param client The event api client.
  * @param queue The operation queue.
+ * @param notificationCenter The notification center.
  * @return UAEventManager instance.
  */
 + (instancetype)eventManagerWithConfig:(UAConfig *)config
                              dataStore:(UAPreferenceDataStore *)dataStore
                             eventStore:(UAEventStore *)eventStore
                                 client:(UAEventAPIClient *)client
-                                 queue:(NSOperationQueue *)queue;
+                                 queue:(NSOperationQueue *)queue
+                    notificationCenter:(NSNotificationCenter *)notificationCenter;
 
 /**
  * Adds an analytic event to be batched and uploaded to Urban Airship.

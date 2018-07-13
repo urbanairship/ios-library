@@ -15,12 +15,12 @@
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 @property (nonatomic, strong) UAConfig *config;
 
-@property (nonatomic, strong) UAPush *push;
+@property (nonatomic, strong) NSNotificationCenter *notificationCenter;
+
+@property (nonatomic, strong) id mockPush;
 @property (nonatomic, strong) id mockUserClient;
 @property (nonatomic, strong) id mockKeychainUtils;
 @property (nonatomic, strong) id mockApplication;
-@property (nonatomic, strong) id mockedUserNotificationCenter;
-
 @end
 
 @implementation UAUserTest
@@ -28,34 +28,28 @@
 - (void)setUp {
     [super setUp];
 
-    // Set up mocked User Notification Center to avoid bug in XCode Beta
-    self.mockedUserNotificationCenter = [self mockForClass:[UNUserNotificationCenter class]];
-    [[[self.mockedUserNotificationCenter stub] andReturn:self.mockedUserNotificationCenter] currentNotificationCenter];
-
     self.config = [[UAConfig alloc] init];
     self.config.inProduction = NO;
     self.config.developmentAppKey = @"9Q1tVTl0RF16baYKYp8HPQ";
-    self.dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:@"user.test."];
-    self.push = [UAPush pushWithConfig:self.config dataStore:self.dataStore];
 
+    self.dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:@"user.test."];
+    [self.dataStore removeAll];
 
     [[[NSBundle mainBundle] infoDictionary] setValue:@"someBundleID" forKey:@"CFBundleIdentifier"];
     self.mockKeychainUtils = [self mockForClass:[UAKeychainUtils class]];
 
-    self.user = [UAUser userWithPush:self.push config:self.config dataStore:self.dataStore];
-    self.mockUserClient = [self partialMockForObject:self.user.apiClient];
+    self.mockPush = [self mockForClass:[UAPush class]];
+    self.mockUserClient = [self mockForClass:[UAUserAPIClient class]];
 
     self.mockApplication = [self mockForClass:[UIApplication class]];
     [[[self.mockApplication stub] andReturn:self.mockApplication] sharedApplication];
+
+    self.notificationCenter = [[NSNotificationCenter alloc] init];
+    self.user = [UAUser userWithPush:self.mockPush config:self.config dataStore:self.dataStore client:self.mockUserClient notificationCenter:self.notificationCenter];
  }
 
 - (void)tearDown {
-    [self.mockUserClient stopMocking];
-    [self.mockKeychainUtils stopMocking];
-    [self.mockApplication stopMocking];
-    [self.mockedUserNotificationCenter stopMocking];
     [self.dataStore removeAll];
-
     [super tearDown];
 }
 
@@ -65,9 +59,6 @@
     XCTAssertNil(self.user.username, @"user name should be nil");
     XCTAssertNil(self.user.password, @"password should be nil");
     XCTAssertNil(self.user.url, @"url should be nil");
-}
-
-- (void)testIsCreated {
     XCTAssertFalse(self.user.isCreated, @"Uninitialized user should not be created");
 }
 
@@ -80,9 +71,7 @@
     UAUserData *userData = [UAUserData dataWithUsername:@"userName" password:@"password" url:@"http://url.com"];
 
 
-    self.push.channelID = @"some-channel";
-    self.push.channelLocation = @"some-location";
-    self.push.deviceToken = nil;
+    [[[self.mockPush stub] andReturn:@"some-channel"] channelID];
 
     void (^andDoBlock)(NSInvocation *) = ^(NSInvocation *invocation) {
         void *arg;
@@ -125,8 +114,7 @@
  * Test createUser when the request fails
  */
 -(void)testCreateUserFailed {
-    self.push.channelID = @"some-channel";
-    self.push.channelLocation = @"some-channel-location";
+    [[[self.mockPush stub] andReturn:@"some-channel"] channelID];
 
     __block UAUserAPIClientFailureBlock failureBlock;
 
@@ -166,9 +154,8 @@
 }
 
 -(void)setupForUpdateUserTest {
-    self.push.channelID = @"some-channel";
-    self.push.channelLocation = @"some-location";
-    self.push.deviceToken = @"aaaaa";
+    [[[self.mockPush stub] andReturn:@"some-channel"] channelID];
+
 
     // Set up a default user
     self.user.username = @"username";
@@ -191,9 +178,6 @@
  * Test updateUser when no channel ID is present
  */
 -(void)testUpdateUserNoChannelID {
-    self.push.channelID = nil;
-    self.push.deviceToken = @"fakeDeviceToken";
-
     // Set up a default user
     self.user.username = @"username";
     self.user.password = @"password";
@@ -209,87 +193,10 @@
 }
 
 /**
- * Test updateUser when pushTokenRegistrationEnabled is enabled
- */
--(void)testUpdateUserNoDeviceToken {
-    self.push.channelID = @"some-channel";
-    self.push.channelLocation = @"some-location";
-    self.push.deviceToken = @"aaaaa";
-
-    // Set up a default user
-    self.user.username = @"username";
-    self.user.password = @"password";
-
-    [[self.mockUserClient expect] updateUser:self.user
-                                   channelID:@"some-channel"
-                                   onSuccess:OCMOCK_ANY
-                                   onFailure:OCMOCK_ANY];
-
-    // Mock background task so background task check passes
-    [[[self.mockApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)1)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
-
-    [self.user updateUser];
-
-    XCTAssertNoThrow([self.mockUserClient verify], @"User should call the client to be updated.");
-}
-
-/**
- * Test updateUser when pushTokenRegistrationEnabled is enabled
- */
--(void)testUpdateUserPushTokenRegistrationEnabledYes {
-    self.push.pushTokenRegistrationEnabled = YES;
-    self.push.channelID = @"some-channel";
-    self.push.channelLocation = @"some-location";
-    self.push.deviceToken = @"aaaaa";
-
-    // Set up a default user
-    self.user.username = @"username";
-    self.user.password = @"password";
-
-    [[self.mockUserClient expect] updateUser:self.user
-                                   channelID:@"some-channel"
-                                   onSuccess:OCMOCK_ANY
-                                   onFailure:OCMOCK_ANY];
-
-    // Mock background task so background task check passes
-    [[[self.mockApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)1)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
-
-    [self.user updateUser];
-
-    XCTAssertNoThrow([self.mockUserClient verify], @"User should call the client to be updated.");
-}
-
-/**
- * Test updateUser when pushTokenRegistrationEnabled is disabled
- */
--(void)testUpdateUserPushTokenRegistrationEnabledNo {
-    self.push.pushTokenRegistrationEnabled = NO;
-    self.push.channelID = @"some-channel";
-    self.push.channelLocation = @"some-location";
-    self.push.deviceToken = @"aaaaa";
-
-    // Set up a default user
-    self.user.username = @"username";
-    self.user.password = @"password";
-
-    [[self.mockUserClient expect] updateUser:self.user
-                                   channelID:@"some-channel"
-                                   onSuccess:OCMOCK_ANY
-                                   onFailure:OCMOCK_ANY];
-
-    // Mock background task so background task check passes
-    [[[self.mockApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)1)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
-
-    [self.user updateUser];
-
-    XCTAssertNoThrow([self.mockUserClient verify], @"User should call the client to be updated.");
-}
-
-/**
  * Test observing channel created notifications.
  */
 -(void)testObserveChannelCreated {
-    self.push.deviceToken = @"aaaaa";
+    [[[self.mockPush stub] andReturn:@"some-channel"] channelID];
 
     // Set up a default user
     self.user.username = @"username";
@@ -305,8 +212,10 @@
         [channelCreated fulfill];
     }] updateUser:OCMOCK_ANY channelID:OCMOCK_ANY onSuccess:OCMOCK_ANY onFailure:OCMOCK_ANY];
 
-    // Create the channel
-    [self.push channelCreated:@"some-channel" channelLocation:@"some-location" existing:NO];
+    // Trigger the channel created notification
+    [self.notificationCenter postNotificationName:UAChannelCreatedEvent
+                                           object:nil
+                                         userInfo:nil];
 
     [self waitForExpectationsWithTimeout:10 handler:nil];
 

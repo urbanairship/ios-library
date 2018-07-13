@@ -12,6 +12,7 @@
 @property(nonatomic, strong) UAConfig *config;
 @property(nonatomic, strong) UAChannelCapture *channelCapture;
 @property(nonatomic, strong) UAPreferenceDataStore *dataStore;
+@property(nonatomic, strong) NSNotificationCenter *notificationCenter;
 
 @property(nonatomic, strong) id mockPush;
 @property(nonatomic, strong) id mockPasteboard;
@@ -44,12 +45,15 @@
     self.config.developmentAppKey = @"App key";
     self.config.developmentAppSecret = @"App secret";
     self.config.inProduction = NO;
-    
+
     self.dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:@"test.channelCapture"];
+
+    self.notificationCenter = [[NSNotificationCenter alloc] init];
 
     self.channelCapture = [UAChannelCapture channelCaptureWithConfig:self.config
                                                                 push:self.mockPush
-                                                           dataStore:self.dataStore];
+                                                           dataStore:self.dataStore
+                                                  notificationCenter:self.notificationCenter];
 }
 
 - (void)tearDown {
@@ -58,7 +62,7 @@
     [self.mockWindow stopMocking];
     [self.mockPasteboard stopMocking];
     [self.mockApplication stopMocking];
-    
+
     self.config = nil;
     self.dataStore = nil;
     self.channelCapture = nil;
@@ -179,8 +183,8 @@
     }] animated:YES completion:nil];
 
     // Post the foreground notification
-    [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationDidBecomeActiveNotification
-                                                        object:nil];
+    [self.notificationCenter postNotificationName:UIApplicationDidBecomeActiveNotification
+                                           object:nil];
 
 
     // Wait for the test expectations
@@ -190,3 +194,4 @@
 
 
 @end
+

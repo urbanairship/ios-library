@@ -24,10 +24,22 @@ NS_ASSUME_NONNULL_BEGIN
 ///---------------------------------------------------------------------------------------
 
 /**
- * Initializes the inbox db manager with the given config.
- * @param config The Urban Airship config.
+ * Factory method for automation store.
+ *
+ * @param storeName The store name.
+ * @param inMemory Whether to use an in-memory database. If `NO` the store will default to SQLite.
+
+ * @return Automation store.
  */
-- (instancetype)initWithConfig:(UAConfig *)config;
++ (instancetype)storeWithName:(NSString *)storeName inMemory:(BOOL)inMemory;
+
+/**
+ * Factory method for automation store.
+ *
+ * @param storeName The store name.
+ * @return Automation store.
+ */
++ (instancetype)storeWithName:(NSString *)storeName;
 
 /**
  * Fetches messages with a specified predicate on the background context.
@@ -48,6 +60,17 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)syncMessagesWithResponse:(NSArray *)messages
                completionHandler:(void(^)(BOOL))completionHandler;
+
+
+/**
+ * Waits for the store to become idle and then returns. Used by Unit Tests.
+ */
+- (void)waitForIdle;
+
+/**
+ * Shuts down the store and prevents any subsequent interaction with the managed context. Used by Unit Tests.
+ */
+- (void)shutDown;
 
 @end
 

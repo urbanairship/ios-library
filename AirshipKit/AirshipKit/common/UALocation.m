@@ -14,7 +14,7 @@ NSString *const UALocationBackgroundUpdatesAllowed = @"UALocationBackgroundUpdat
 
 @implementation UALocation
 
-- (instancetype)initWithAnalytics:(UAAnalytics *)analytics dataStore:(UAPreferenceDataStore *)dataStore {
+- (instancetype)initWithAnalytics:(UAAnalytics *)analytics dataStore:(UAPreferenceDataStore *)dataStore notificationCenter:(NSNotificationCenter *)notificationCenter {
     self = [super initWithDataStore:dataStore];
 
     if (self) {
@@ -24,16 +24,17 @@ NSString *const UALocationBackgroundUpdatesAllowed = @"UALocationBackgroundUpdat
         self.analytics = analytics;
 
         // Update the location service on app background
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(updateLocationService)
-                                                     name:UIApplicationDidEnterBackgroundNotification
-                                                   object:nil];
+        [notificationCenter addObserver:self
+                               selector:@selector(updateLocationService)
+                                   name:UIApplicationDidEnterBackgroundNotification
+                                 object:nil];
 
         // Update the location service on app becoming active
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(updateLocationService)
-                                                     name:UIApplicationDidBecomeActiveNotification
-                                                   object:nil];
+        [notificationCenter addObserver:self
+                               selector:@selector(updateLocationService)
+                                   name:UIApplicationDidBecomeActiveNotification
+                                 object:nil];
+
         if (self.componentEnabled) {
             [self updateLocationService];
         }
@@ -42,12 +43,13 @@ NSString *const UALocationBackgroundUpdatesAllowed = @"UALocationBackgroundUpdat
     return self;
 }
 
-- (void)dealloc {
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
-}
 
 + (instancetype)locationWithAnalytics:(UAAnalytics *)analytics dataStore:(UAPreferenceDataStore *)dataStore {
-    return [[UALocation alloc] initWithAnalytics:analytics dataStore:dataStore];
+    return [[UALocation alloc] initWithAnalytics:analytics dataStore:dataStore notificationCenter:[NSNotificationCenter defaultCenter]];
+}
+
++ (instancetype)locationWithAnalytics:(UAAnalytics *)analytics dataStore:(UAPreferenceDataStore *)dataStore notificationCenter:(NSNotificationCenter *)notificationCenter {
+    return [[UALocation alloc] initWithAnalytics:analytics dataStore:dataStore notificationCenter:notificationCenter];
 }
 
 - (BOOL)isAutoRequestAuthorizationEnabled {

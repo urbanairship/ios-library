@@ -17,30 +17,40 @@ NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.noti
 
 typedef void (^UAInboxMessageFetchCompletionHandler)(NSArray *);
 
+@interface UAInboxMessageList()
+@property (nonatomic, strong) NSNotificationCenter *notificationCenter;
+@end
+
 @implementation UAInboxMessageList
 
 @synthesize messages = _messages;
 
 #pragma mark Create Inbox
 
-- (instancetype)initWithUser:(UAUser *)user client:(UAInboxAPIClient *)client config:(UAConfig *)config {
+- (instancetype)initWithUser:(UAUser *)user client:(UAInboxAPIClient *)client config:(UAConfig *)config inboxStore:(UAInboxStore *)inboxStore notificationCenter:(NSNotificationCenter *)notificationCenter {
     self = [super init];
 
     if (self) {
-        self.inboxStore = [[UAInboxStore alloc] initWithConfig:config];
+        self.inboxStore = inboxStore;
         self.user = user;
         self.client = client;
         self.batchOperationCount = 0;
         self.retrieveOperationCount = 0;
         self.unreadCount = -1;
         self.messages = @[];
+        self.notificationCenter = notificationCenter;
     }
 
     return self;
 }
 
-+ (instancetype)messageListWithUser:(UAUser *)user client:(UAInboxAPIClient *)client config:(UAConfig *)config{
-    return [[UAInboxMessageList alloc] initWithUser:user client:client config:config];
++ (instancetype)messageListWithUser:(UAUser *)user client:(UAInboxAPIClient *)client config:(UAConfig *)config {
+    UAInboxStore *inboxStore = [UAInboxStore storeWithName:[NSString stringWithFormat:kUACoreDataStoreName, config.appKey]];
+    return [UAInboxMessageList messageListWithUser:user client:client config:config inboxStore:inboxStore notificationCenter:[NSNotificationCenter defaultCenter]];
+}
+
++ (instancetype)messageListWithUser:(UAUser *)user client:(UAInboxAPIClient *)client config:(UAConfig *)config inboxStore:(UAInboxStore *)inboxStore notificationCenter:(nonnull NSNotificationCenter *)notificationCenter {
+    return [[UAInboxMessageList alloc] initWithUser:user client:client config:config inboxStore:inboxStore notificationCenter:notificationCenter];
 }
 
 #pragma mark Accessors
@@ -77,11 +87,11 @@ typedef void (^UAInboxMessageFetchCompletionHandler)(NSArray *);
 #pragma mark NSNotificationCenter helper methods
 
 - (void)sendMessageListWillUpdateNotification {
-    [[NSNotificationCenter defaultCenter] postNotificationName:UAInboxMessageListWillUpdateNotification object:nil];
+    [self.notificationCenter postNotificationName:UAInboxMessageListWillUpdateNotification object:nil];
 }
 
 - (void)sendMessageListUpdatedNotification {
-    [[NSNotificationCenter defaultCenter] postNotificationName:UAInboxMessageListUpdatedNotification object:nil];
+    [self.notificationCenter postNotificationName:UAInboxMessageListUpdatedNotification object:nil];
 }
 
 #pragma mark Update/Delete/Mark Messages
@@ -112,7 +122,6 @@ typedef void (^UAInboxMessageFetchCompletionHandler)(NSArray *);
         }
 
         if (success) {
-
             if (retrieveMessageListSuccessBlock) {
                 retrieveMessageListSuccessBlock();
             }
@@ -126,7 +135,10 @@ typedef void (^UAInboxMessageFetchCompletionHandler)(NSArray *);
     };
 
     // Fetch new messages
+    UA_WEAKIFY(self)
     [self.client retrieveMessageListOnSuccess:^(NSUInteger status, NSArray *messages) {
+        UA_STRONGIFY(self)
+
         // Sync client state
         [self syncLocalMessageState];
 
@@ -134,6 +146,7 @@ typedef void (^UAInboxMessageFetchCompletionHandler)(NSArray *);
             UA_LDEBUG(@"Refreshing message list.");
 
             [self.inboxStore syncMessagesWithResponse:messages completionHandler:^(BOOL success) {
+                UA_STRONGIFY(self)
                 if (!success) {
                     [self.client clearLastModifiedTime];
                     completionBlock(NO);
@@ -182,9 +195,10 @@ typedef void (^UAInboxMessageFetchCompletionHandler)(NSArray *);
         inboxMessageListCompletionBlock = nil;
     }];
 
+    UA_WEAKIFY(self)
     [self.inboxStore fetchMessagesWithPredicate:[NSPredicate predicateWithFormat:@"messageID IN %@", messageIDs]
                               completionHandler:^(NSArray<UAInboxMessageData *> *data) {
-
+                                  UA_STRONGIFY(self)
                                   UA_LDEBUG(@"Marking messages as read: %@.", messageIDs);
                                   for (UAInboxMessageData *messageData in data) {
                                       messageData.unreadClient = NO;
@@ -192,6 +206,7 @@ typedef void (^UAInboxMessageFetchCompletionHandler)(NSArray *);
 
                                   // Refresh the messages
                                   [self refreshInboxWithCompletionHandler:^{
+                                      UA_STRONGIFY(self)
                                       if (self.batchOperationCount > 0) {
                                           self.batchOperationCount--;
                                       }
@@ -225,8 +240,11 @@ typedef void (^UAInboxMessageFetchCompletionHandler)(NSArray *);
     }];
 
 
+    UA_WEAKIFY(self)
     [self.inboxStore fetchMessagesWithPredicate:[NSPredicate predicateWithFormat:@"messageID IN %@", messageIDs]
                               completionHandler:^(NSArray<UAInboxMessageData *> *data) {
+
+                                  UA_STRONGIFY(self)
 
                                   UA_LDEBUG(@"Marking messages as deleted %@.", messageIDs);
                                   for (UAInboxMessageData *messageData in data) {
@@ -266,7 +284,7 @@ typedef void (^UAInboxMessageFetchCompletionHandler)(NSArray *);
 
 
 /**
- * Refreshes the publicly exposed inbox messages on the private context. 
+ * Refreshes the publicly exposed inbox messages on the private context.
  * The completion handler is executed on the main context.
  *
  * @param completionHandler Optional completion handler.
@@ -275,8 +293,10 @@ typedef void (^UAInboxMessageFetchCompletionHandler)(NSArray *);
     NSString *predicateFormat = @"(messageExpiration == nil || messageExpiration >= %@) && (deletedClient == NO || deletedClient == nil)";
     NSPredicate *predicate = [NSPredicate predicateWithFormat:predicateFormat, [NSDate date]];
 
+    UA_WEAKIFY(self)
     [self.inboxStore fetchMessagesWithPredicate:predicate
                               completionHandler:^(NSArray<UAInboxMessageData *> *data) {
+                                  UA_STRONGIFY(self)
                                   NSInteger unreadCount = 0;
                                   NSMutableArray *messages = [NSMutableArray arrayWithCapacity:data.count];
 
@@ -309,8 +329,11 @@ typedef void (^UAInboxMessageFetchCompletionHandler)(NSArray *);
  * Synchronizes local read messages state with the server, on the private context.
  */
 - (void)syncReadMessageState {
+    UA_WEAKIFY(self)
     [self.inboxStore fetchMessagesWithPredicate:[NSPredicate predicateWithFormat:@"unreadClient == NO && unread == YES"]
                               completionHandler:^(NSArray<UAInboxMessageData *> *data) {
+                                  UA_STRONGIFY(self)
+
                                   if (!data.count) {
                                       // Nothing to do
                                       return;
@@ -344,8 +367,11 @@ typedef void (^UAInboxMessageFetchCompletionHandler)(NSArray *);
  */
 - (void)syncDeletedMessageState {
 
+    UA_WEAKIFY(self)
     [self.inboxStore fetchMessagesWithPredicate:[NSPredicate predicateWithFormat:@"deletedClient == YES"]
                               completionHandler:^(NSArray<UAInboxMessageData *> *data) {
+                                  UA_STRONGIFY(self)
+
                                   if (!data.count) {
                                       // Nothing to do
                                       return;
@@ -408,7 +434,7 @@ typedef void (^UAInboxMessageFetchCompletionHandler)(NSArray *);
         index++;
         characterIndex += line.length;
     }
-    
+
     return attributedString;
 }
 
@@ -429,3 +455,4 @@ typedef void (^UAInboxMessageFetchCompletionHandler)(NSArray *);
 }
 
 @end
+
