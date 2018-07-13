@@ -52,6 +52,39 @@
     }];
 }
 
+- (UNAuthorizationOptions)normalizedOptions:(UANotificationOptions)uaOptions {
+    UNAuthorizationOptions unOptions = UNAuthorizationOptionNone;
+
+    if ((uaOptions & UANotificationOptionBadge) == UANotificationOptionBadge) {
+        unOptions |= UNAuthorizationOptionBadge;
+    }
+
+    if ((uaOptions & UANotificationOptionSound) == UANotificationOptionSound) {
+        unOptions |= UNAuthorizationOptionSound;
+    }
+
+    if ((uaOptions & UANotificationOptionAlert) == UANotificationOptionAlert) {
+        unOptions |= UNAuthorizationOptionAlert;
+    }
+
+    if ((uaOptions & UANotificationOptionCarPlay) == UANotificationOptionCarPlay) {
+        unOptions |= UNAuthorizationOptionCarPlay;
+    }
+
+    // Critical alert and provisional authorization are iOS 12+
+    if (@available(iOS 12.0, *)) {
+        if ((uaOptions & UANotificationOptionCriticalAlert) == UANotificationOptionCriticalAlert) {
+            unOptions |= UNAuthorizationOptionCriticalAlert;
+        }
+
+        if ((uaOptions & UANotificationOptionProvisional) == UANotificationOptionProvisional) {
+            unOptions |= UNAuthorizationOptionProvisional;
+        }
+    }
+
+    return unOptions;
+}
+
 -(void)updateRegistrationWithOptions:(UANotificationOptions)options
                           categories:(NSSet<UANotificationCategory *> *)categories NS_AVAILABLE_IOS(10.0) {
 
@@ -76,17 +109,10 @@
     [[UNUserNotificationCenter currentNotificationCenter] setNotificationCategories:[NSSet setWithSet:normalizedCategories]];
 #endif
 
-    UNAuthorizationOptions normalizedOptions = (UNAuthorizationOptionAlert | UNAuthorizationOptionBadge | UNAuthorizationOptionSound | UNAuthorizationOptionCarPlay);
-
-    // Critical alert and provisional authorization are iOS 12+
-    if (@available(iOS 12.0, *)) {
-        normalizedOptions |= UNAuthorizationOptionCriticalAlert | UNAuthorizationOptionProvisional;
-    }
-
-    normalizedOptions &= options;
+    UNAuthorizationOptions normalizedOptions = [self normalizedOptions:options];
 
     UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
-
+    
     [center requestAuthorizationWithOptions:normalizedOptions
                           completionHandler:^(BOOL granted, NSError * _Nullable error) {
                               [self getAuthorizedSettingsWithCompletionHandler:^(UAAuthorizedNotificationSettings authorizedSettings, BOOL provisional) {

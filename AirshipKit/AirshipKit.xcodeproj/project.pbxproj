@@ -4818,7 +4818,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"$SRCROOT\"/Scripts/generate_header_imports.sh common ios";
+			shellScript = "\"$SRCROOT\"/Scripts/generate_header_imports.sh common ios\n";
 		};
 		CC899D5A1D8B716500A0CECC /* Generate AirshipLib.h */ = {
 			isa = PBXShellScriptBuildPhase;
