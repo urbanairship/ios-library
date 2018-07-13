@@ -3,36 +3,41 @@
 #import "UADelayOperation+Internal.h"
 
 @interface UADelayOperation()
-@property (nonatomic, assign) NSTimeInterval seconds;
-@property (nonatomic, strong) dispatch_semaphore_t semaphore;    // GCD objects use ARC
+@property (nonatomic, strong) UADelay *delay;
 @end
 
 @implementation UADelayOperation
 
-- (instancetype)initWithDelayInSeconds:(NSTimeInterval)seconds {
+- (instancetype)initWithDelay:(UADelay *)delay {
     self = [super init];
     if (self) {
-        self.semaphore = dispatch_semaphore_create(0);
+        self.delay = delay;
         __weak UADelayOperation *_self = self;
-
         [self addExecutionBlock:^{
-            //dispatch time is calculated as nanoseconds delta offset
-            dispatch_semaphore_wait(_self.semaphore, dispatch_time(DISPATCH_TIME_NOW, (seconds * NSEC_PER_SEC)));
+            [_self.delay start];
         }];
-
-        self.seconds = seconds;
     }
 
     return self;
 }
 
 - (void)cancel {
+    [self.delay cancel];
     [super cancel];
-    dispatch_semaphore_signal(self.semaphore);
+}
+
+- (NSTimeInterval)seconds {
+    return self.delay.seconds;
+}
+
++ (instancetype)operationWithDelay:(UADelay *)delay {
+    return [[UADelayOperation alloc] initWithDelay:delay];
 }
 
 + (instancetype)operationWithDelayInSeconds:(NSTimeInterval)seconds {
-    return [[self alloc] initWithDelayInSeconds:seconds];
+    return [[UADelayOperation alloc] initWithDelay:[UADelay delayWithSeconds:seconds]];
 }
 
+
 @end
+

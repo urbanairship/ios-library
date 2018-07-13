@@ -3,8 +3,22 @@
 #import "UADelayOperation+Internal.h"
 #import "UABaseTest.h"
 
-@interface UADelayOperationTest : UABaseTest
+@interface UATestDelay : UADelay
+@property (nonatomic, assign) BOOL started;
+@property (nonatomic, assign) BOOL cancelled;
+@end
 
+@implementation UATestDelay
+-(void)start {
+    self.started = YES;
+}
+
+- (void)cancel  {
+    self.cancelled = YES;
+}
+@end
+
+@interface UADelayOperationTest : UABaseTest
 @property (nonatomic, strong) NSOperationQueue *queue;
 @end
 
@@ -17,43 +31,22 @@
 }
 
 - (void)testDelay {
-    __block BOOL finished = NO;
-    [self.queue addOperation:[UADelayOperation operationWithDelayInSeconds:1]];
-    [self.queue addOperation:[NSBlockOperation blockOperationWithBlock:^{
-        @synchronized(self) {
-            finished = YES;
-        }
-    }]];
+    UATestDelay *testDelay = [[UATestDelay alloc] init];
+    UADelayOperation *delayOperation = [UADelayOperation operationWithDelay:testDelay];
 
-    @synchronized(self) {
-        XCTAssertFalse(finished, @"flag should not be set until after delay completes");
-    }
-    //give it enough time to complete
-    sleep(2);
-    @synchronized(self) {
-        XCTAssertTrue(finished, @"flag should be set once delay completes");
-    }
+    [self.queue addOperation:delayOperation];
+    [self.queue waitUntilAllOperationsAreFinished];
+
+    // Verify the operation starts the delay
+    XCTAssertTrue(testDelay.started);
 }
 
 - (void)testCancel {
-    __block BOOL finished = NO;
-    //add a long running delay
-    [self.queue addOperation:[UADelayOperation operationWithDelayInSeconds:20]];
-    [self.queue addOperation:[NSBlockOperation blockOperationWithBlock:^{
-        finished = YES;
-    }]];
+    UATestDelay *testDelay = [[UATestDelay alloc] init];
+    UADelayOperation *delayOperation = [UADelayOperation operationWithDelay:testDelay];
 
-    //give it some time to spin things up
-    sleep(1);
-
-    XCTAssertTrue(self.queue.operationCount == 2, @"we should have two operations running");
-    [self.queue cancelAllOperations];
-
-    //give it some time to wind things down
-    sleep(1);
-
-    XCTAssertFalse(finished, @"flag should still be unset");
-    XCTAssertTrue(self.queue.operationCount == 0, @"operation count should be zero");
+    [delayOperation cancel];
+    XCTAssertTrue(testDelay.cancelled);
 }
 
 - (void)tearDown {
