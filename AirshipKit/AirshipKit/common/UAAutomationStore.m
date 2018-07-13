@@ -229,18 +229,6 @@
     }];
 }
 
-- (BOOL)batchDeleteAvailable {
-    // NBatchDeleteRequest is only available on iOS 9+
-    if (@available(iOS 9.0, *)) {
-        // NBatchDeleteRequest is not compatible with in-memory stores
-        if (!self.inMemory) {
-            return YES;
-        }
-    }
-
-    return NO;
-}
-
 - (void)deleteSchedulesWithPredicate:(NSPredicate *)predicate {
     [self safePerformBlock:^(BOOL isSafe) {
         if (!isSafe) {
@@ -252,15 +240,15 @@
 
         NSError *error;
 
-        if ([self batchDeleteAvailable]) {
+        if (self.inMemory) {
+            request.includesPropertyValues = NO;
+            NSArray *events = [self.managedContext executeFetchRequest:request error:&error];
+            for (NSManagedObject *event in events) {
+                [self.managedContext deleteObject:event];
+            }
+        } else {
             NSBatchDeleteRequest *deleteRequest = [[NSBatchDeleteRequest alloc] initWithFetchRequest:request];
             [self.managedContext executeRequest:deleteRequest error:&error];
-        } else {
-            request.includesPropertyValues = NO;
-            NSArray *schedules = [self.managedContext executeFetchRequest:request error:&error];
-            for (NSManagedObject *schedule in schedules) {
-                [self.managedContext deleteObject:schedule];
-            }
         }
 
         if (error) {

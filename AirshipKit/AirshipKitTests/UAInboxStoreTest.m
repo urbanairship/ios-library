@@ -12,9 +12,15 @@
 
 - (void)setUp {
     [super setUp];
-    self.inboxStore = [[UAInboxStore alloc] initWithConfig:[UAConfig config]];
+    self.inboxStore = [UAInboxStore storeWithName:@"UAInboxStoreTest." inMemory:YES];
 }
 
+- (void)tearDown {
+    [self.inboxStore shutDown];
+    [self.inboxStore waitForIdle];
+
+    [super tearDown];
+}
 - (void)testDefaultValues {
 
     XCTestExpectation *testExpectation = [self expectationWithDescription:@"test finished"];

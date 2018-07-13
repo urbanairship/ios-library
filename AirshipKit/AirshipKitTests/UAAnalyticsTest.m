@@ -16,21 +16,23 @@
 @property (nonatomic, strong) UAAnalytics *analytics;
 @property (nonatomic, strong) id mockEventManager;
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
+@property (nonatomic, strong) NSNotificationCenter *notificationCenter;
 @end
 
 @implementation UAAnalyticsTest
 
 - (void)setUp {
     [super setUp];
-    
-    self.dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:[NSString stringWithFormat:@"uaanalytics.test.%@",self.name]];
+
+    self.notificationCenter = [[NSNotificationCenter alloc] init];
+    self.dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:[NSString stringWithFormat:@"uaanalytics.test.%@", self.name]];
     [self.dataStore removeAll];
-    
+
     self.mockEventManager = [self mockForClass:[UAEventManager class]];
 
     UAConfig *config = [[UAConfig alloc] init];
-    self.analytics = [UAAnalytics analyticsWithConfig:config dataStore:self.dataStore eventManager:self.mockEventManager];
- }
+    self.analytics = [UAAnalytics analyticsWithConfig:config dataStore:self.dataStore eventManager:self.mockEventManager notificationCenter:self.notificationCenter];
+}
 
 - (void)tearDown {
     [self.dataStore removeAll];
@@ -59,7 +61,7 @@
     self.analytics.enabled = NO;
 
     // Recreate analytics and see if its still disabled
-    self.analytics = [UAAnalytics analyticsWithConfig:[UAConfig config] dataStore:self.dataStore eventManager:self.mockEventManager];
+    self.analytics = [UAAnalytics analyticsWithConfig:[UAConfig config] dataStore:self.dataStore eventManager:self.mockEventManager notificationCenter:self.notificationCenter];
 
     XCTAssertFalse(self.analytics.enabled);
 }
@@ -82,7 +84,7 @@
 - (void)testIsEnabledConfigOverride {
     UAConfig *config = [UAConfig config];
     config.analyticsEnabled = NO;
-    self.analytics = [UAAnalytics analyticsWithConfig:config dataStore:self.dataStore eventManager:self.mockEventManager];
+    self.analytics = [UAAnalytics analyticsWithConfig:config dataStore:self.dataStore eventManager:self.mockEventManager notificationCenter:self.notificationCenter];
 
     self.analytics.enabled = YES;
     XCTAssertFalse(self.analytics.enabled);
@@ -253,8 +255,8 @@
     }] sessionID:OCMOCK_ANY];
 
     // Background
-    [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationDidEnterBackgroundNotification
-                                                        object:nil];
+    [self.notificationCenter postNotificationName:UIApplicationDidEnterBackgroundNotification
+                                           object:nil];
 
     [self waitForExpectationsWithTimeout:1 handler:nil];
 
@@ -283,8 +285,8 @@
     }] sessionID:OCMOCK_ANY];
 
     // Terminate
-    [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationWillTerminateNotification
-                                                        object:nil];
+    [self.notificationCenter postNotificationName:UIApplicationWillTerminateNotification
+                                           object:nil];
 
     [self waitForExpectationsWithTimeout:1 handler:nil];
 
@@ -323,27 +325,28 @@
 
 // Tests forwarding screens to the analytics delegate.
 - (void)testForwardScreenTracks {
-    id expectedUserInfo = @{ @"screen": @"screen"};
-
+    __block id event;
     XCTestExpectation *notificationFired = [self expectationWithDescription:@"Notification event fired"];
-
-    [self startNSNotificationCenterObservingWithBlock:^(NSNotification *notification) {
-        XCTAssertEqualObjects(expectedUserInfo, notification.userInfo);
+    [self.notificationCenter addObserverForName:UAScreenTracked object:nil queue:nil usingBlock:^(NSNotification *note) {
+        event = note.userInfo;
         [notificationFired fulfill];
-    } notificationName:UAScreenTracked sender:self.analytics];
+    }];
 
     [self.analytics trackScreen:@"screen"];
 
     [self waitForExpectationsWithTimeout:10 handler:nil];
+
+    id expectedEvent = @{ @"screen": @"screen"};
+    XCTAssertEqualObjects(expectedEvent, event);
 }
 
 // Tests forwarding region events to the analytics delegate.
 - (void)testForwardRegionEvents {
     XCTestExpectation *notificationFired = [self expectationWithDescription:@"Notification event fired"];
 
-    [self startNSNotificationCenterObservingWithBlock:^(NSNotification *notification) {
+    [self.notificationCenter addObserverForName:UARegionEventAdded object:nil queue:nil usingBlock:^(NSNotification * _Nonnull note) {
         [notificationFired fulfill];
-    } notificationName:UARegionEventAdded sender:self.analytics];
+    }];
 
     UARegionEvent *regionEnter = [UARegionEvent regionEventWithRegionID:@"region" source:@"test" boundaryEvent:UABoundaryEventEnter];
     [self.analytics addEvent:regionEnter];
@@ -355,9 +358,9 @@
 - (void)testForwardCustomEvents {
     XCTestExpectation *notificationFired = [self expectationWithDescription:@"Notification event fired"];
 
-    [self startNSNotificationCenterObservingWithBlock:^(NSNotification *notification) {
+    [self.notificationCenter addObserverForName:UACustomEventAdded object:nil queue:nil usingBlock:^(NSNotification * _Nonnull note) {
         [notificationFired fulfill];
-    } notificationName:UACustomEventAdded sender:self.analytics];
+    }];
 
     UACustomEvent *purchase = [UACustomEvent eventWithName:@"purchase" value:@(100)];
     [self.analytics addEvent:purchase];
@@ -370,23 +373,24 @@
     // expectations
     [[self.mockEventManager expect] setUploadsEnabled:NO];
     [[self.mockEventManager expect] cancelUpload];
-    
+
     // test
     self.analytics.componentEnabled = NO;
-    
+
     // verify
     [self.mockEventManager verify];
-    
+
     // expectations
     [[self.mockEventManager expect] setUploadsEnabled:YES];
     [[self.mockEventManager expect] scheduleUpload];
 
     // test
     self.analytics.componentEnabled = YES;
-    
+
     // verify
     [self.mockEventManager verify];
 }
 
 
 @end
+

@@ -40,6 +40,7 @@
 
 @property (nonatomic, strong) UAPush *push;
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
+@property (nonatomic, strong) NSNotificationCenter *notificationCenter;
 
 @property (nonatomic, strong) NSDictionary *notification;
 
@@ -110,7 +111,8 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     
     self.mockTagGroupsRegistrar = [self mockForClass:[UATagGroupsRegistrar class]];
 
-    self.push =  [UAPush pushWithConfig:[UAConfig defaultConfig] dataStore:self.dataStore tagGroupsRegistrar:self.mockTagGroupsRegistrar];
+    self.notificationCenter = [[NSNotificationCenter alloc] init];
+    self.push =  [UAPush pushWithConfig:[UAConfig defaultConfig] dataStore:self.dataStore tagGroupsRegistrar:self.mockTagGroupsRegistrar notificationCenter:self.notificationCenter];
 
     self.notification = @{
                           @"aps": @{
@@ -1243,7 +1245,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     config.channelCreationDelayEnabled = NO;
 
     // Init push
-    self.push =  [UAPush pushWithConfig:config dataStore:self.dataStore];
+    self.push =  [UAPush pushWithConfig:config dataStore:self.dataStore tagGroupsRegistrar:self.mockTagGroupsRegistrar notificationCenter:self.notificationCenter];
 
     // Ensure channel creation enabled is YES
     XCTAssertTrue(self.push.channelCreationEnabled);
@@ -1263,7 +1265,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     [[[mockDataStore stub] andReturn:@"someChannelLocation"] stringForKey:UAPushChannelLocationKey];
     [[[mockDataStore stub] andReturn:@"someChannelID"] stringForKey:UAPushChannelIDKey];
 
-    self.push =  [UAPush pushWithConfig:config dataStore:mockDataStore];
+    self.push =  [UAPush pushWithConfig:config dataStore:mockDataStore tagGroupsRegistrar:self.mockTagGroupsRegistrar notificationCenter:self.notificationCenter];
 
     // Ensure channel creation enabled is YES
     XCTAssertTrue(self.push.channelCreationEnabled);
@@ -1859,16 +1861,18 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     id expectedUserInfo = @{ UAChannelCreatedEventExistingKey: @(YES),
                              UAChannelCreatedEventChannelKey:@"someChannelID" };
 
-    XCTestExpectation *notificationFired = [self expectationWithDescription:@"Notification event fired"];
+    __block NSNotification *notification;
 
-    [self startNSNotificationCenterObservingWithBlock:^(NSNotification *notification) {
-        XCTAssertEqualObjects(expectedUserInfo, notification.userInfo);
+    XCTestExpectation *notificationFired = [self expectationWithDescription:@"Notification event fired"];
+    [self.notificationCenter addObserverForName:UAChannelCreatedEvent object:nil queue:nil usingBlock:^(NSNotification * _Nonnull note) {
+        notification = note;
         [notificationFired fulfill];
-    } notificationName:UAChannelCreatedEvent sender:self.push];
+    }];
 
     [self.push channelCreated:@"someChannelID" channelLocation:@"someLocation" existing:YES];
 
     [self waitForExpectationsWithTimeout:10 handler:nil];
+    XCTAssertEqualObjects(expectedUserInfo, notification.userInfo);
 }
 
 /**
@@ -1879,42 +1883,19 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     id expectedUserInfo = @{ UAChannelCreatedEventExistingKey: @(NO),
                              UAChannelCreatedEventChannelKey:@"someChannelID" };
 
-    XCTestExpectation *notificationFired = [self expectationWithDescription:@"Notification event fired"];
 
-    [self startNSNotificationCenterObservingWithBlock:^(NSNotification *notification) {
-        XCTAssertEqualObjects(expectedUserInfo, notification.userInfo);
+    __block NSNotification *notification;
+
+    XCTestExpectation *notificationFired = [self expectationWithDescription:@"Notification event fired"];
+    [self.notificationCenter addObserverForName:UAChannelCreatedEvent object:nil queue:nil usingBlock:^(NSNotification * _Nonnull note) {
+        notification = note;
         [notificationFired fulfill];
-    } notificationName:UAChannelCreatedEvent sender:self.push];
+    }];
 
     [self.push channelCreated:@"someChannelID" channelLocation:@"someLocation" existing:NO];
 
     [self waitForExpectationsWithTimeout:10 handler:nil];
-}
-
-/**
- * Test new channel created without a channel ID does basically nothing
- */
-- (void)testNewChannelCreatedWithNilChannelID {
-    // SETUP
-    id expectedUserInfo = @{ UAChannelCreatedEventExistingKey: @(NO),
-                             UAChannelCreatedEventChannelKey:@"someChannelID" };
-
-    // EXPECTATIONS
-    XCTestExpectation *notificationFired = [self expectationWithDescription:@"Notification event fired"];
-    notificationFired.inverted = YES;
-    [self startNSNotificationCenterObservingWithBlock:^(NSNotification *notification) {
-        XCTAssertEqualObjects(expectedUserInfo, notification.userInfo);
-        [notificationFired fulfill];
-    } notificationName:UAChannelCreatedEvent sender:self.push];
-
-    // TEST
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wnonnull"
-    [self.push channelCreated:nil channelLocation:@"someLocation" existing:NO];
-#pragma clang diagnostic pop
-    
-    // VERIFY
-    [self waitForExpectationsWithTimeout:0.1 handler:nil];
+    XCTAssertEqualObjects(expectedUserInfo, notification.userInfo);
 }
 
 /**
@@ -1928,10 +1909,9 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     self.push.channelLocation = @"someChannelLocation";
 
     XCTestExpectation *notificationFired = [self expectationWithDescription:@"Notification event fired"];
-
-    [self startNSNotificationCenterObservingWithBlock:^(NSNotification *notification) {
+    [self.notificationCenter addObserverForName:UAChannelUpdatedEvent object:nil queue:nil usingBlock:^(NSNotification * _Nonnull note) {
         [notificationFired fulfill];
-    } notificationName:UAChannelUpdatedEvent sender:self.push];
+    }];
 
     [self.push registrationSucceededWithPayload:payload];
 

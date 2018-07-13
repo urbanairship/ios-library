@@ -67,15 +67,18 @@ extern NSString *const UAScreenKey;
 
 
 /**
- * Factory method to create an analytics instance.
+ * Factory method to create an analytics instance. Used for testing.
+ *
  * @param airshipConfig The 'AirshipConfig.plist' file
  * @param dataStore The shared preference data store.
  * @param eventManager An event manager instance.
+ * @param notificationCenter The notification center.
  * @return A new analytics instance.
  */
 + (instancetype)analyticsWithConfig:(UAConfig *)airshipConfig
                           dataStore:(UAPreferenceDataStore *)dataStore
-                       eventManager:(UAEventManager *)eventManager;
+                       eventManager:(UAEventManager *)eventManager
+                 notificationCenter:(NSNotificationCenter *)notificationCenter;
 
 /**
  * Called to notify analytics the app was launched from a push notification.

@@ -31,6 +31,7 @@
 @interface UAEventManagerTest : UABaseTest
 @property (nonatomic, strong) UAEventManager *eventManager;
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
+@property (nonatomic, strong) NSNotificationCenter *notificationCenter;
 
 @property (nonatomic, strong) id mockQueue;
 @property (nonatomic, strong) id mockClient;
@@ -57,12 +58,14 @@
     [[[self.mockAirship stub] andReturn:self.mockPush] push];
 
 
+    self.notificationCenter = [[NSNotificationCenter alloc] init];
     self.dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:@"test.analytics"];
     self.eventManager = [UAEventManager eventManagerWithConfig:[UAConfig config]
                                                      dataStore:self.dataStore
                                                     eventStore:self.mockStore
                                                         client:self.mockClient
-                                                         queue:self.mockQueue];
+                                                         queue:self.mockQueue
+                                            notificationCenter:self.notificationCenter];
 
     // Set up a mocked application
     self.mockApplication = [self mockForClass:[UIApplication class]];
@@ -131,22 +134,22 @@
 }
 
 /**
-* Test adding an event when uploads are disabled.
-*/
+ * Test adding an event when uploads are disabled.
+ */
 - (void)testAddEventWhenUploadsAreDisabled {
     // setup
     self.eventManager.uploadsEnabled = NO;
-    
+
     // expectations
     [[[self.mockQueue reject] ignoringNonObjectArgs] addBackgroundOperation:OCMOCK_ANY delay:0];
-    
+
     UACustomEvent *event = [UACustomEvent eventWithName:@"cool"];
-    
+
     [[self.mockStore expect] saveEvent:event sessionID:@"story"];
-    
+
     // test
     [self.eventManager addEvent:event sessionID:@"story"];
-    
+
     // verify
     [self.mockStore verify];
     [self.mockQueue verify];
@@ -198,20 +201,20 @@
 - (void)testAddEventBackgroundWhenUploadsAreDisabled {
     // setup
     self.eventManager.uploadsEnabled = NO;
-    
+
     // Background application state
     [[[self.mockApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateBackground)] applicationState];
-    
+
     // expectations
     UACustomEvent *event = [UACustomEvent eventWithName:@"cool"];
-    
+
     [[[self.mockQueue reject] ignoringNonObjectArgs] addBackgroundOperation:OCMOCK_ANY delay:0];
-    
+
     [[self.mockStore expect] saveEvent:event sessionID:@"story"];
-    
+
     // test
     [self.eventManager addEvent:event sessionID:@"story"];
-    
+
     // verify
     [self.mockStore verify];
     [self.mockQueue verify];
@@ -267,8 +270,8 @@
 
     }] ignoringNonObjectArgs] addBackgroundOperation:OCMOCK_ANY delay:0];
 
-    [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationDidEnterBackgroundNotification
-                                                        object:nil];
+    [self.notificationCenter postNotificationName:UIApplicationDidEnterBackgroundNotification
+                                           object:nil];
 
     [self waitForExpectationsWithTimeout:1 handler:nil];
 
@@ -286,9 +289,9 @@
     // expectations
     [[[self.mockQueue reject] ignoringNonObjectArgs] addBackgroundOperation:OCMOCK_ANY delay:0];
 
-    [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationDidEnterBackgroundNotification
-                                                        object:nil];
-    
+    [self.notificationCenter postNotificationName:UIApplicationDidEnterBackgroundNotification
+                                           object:nil];
+
     [self.mockQueue verify];
 }
 
@@ -310,8 +313,8 @@
 
     }] ignoringNonObjectArgs] addBackgroundOperation:OCMOCK_ANY delay:0];
 
-    [[NSNotificationCenter defaultCenter] postNotificationName:UAChannelCreatedEvent
-                                                        object:nil];
+    [self.notificationCenter postNotificationName:UAChannelCreatedEvent
+                                           object:nil];
 
     [self waitForExpectationsWithTimeout:1 handler:nil];
 
@@ -331,14 +334,6 @@
 
     // Add a high priority event (delay 5ish seconds)
     [self testAddHighPriorityEvent];
-
-    XCTestExpectation *expectation = [self expectationWithDescription:@"Wait for async."];
-
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [expectation fulfill];
-    });
-
-    [self waitForExpectationsWithTimeout:2 handler:nil];
 
     [self.mockQueue verify];
 }
@@ -439,23 +434,23 @@
 - (void)testScheduleUploadWhenUploadsAreDisabled {
     // setup
     self.eventManager.uploadsEnabled = NO;
-    
+
     // Set a channel ID
     [[[self.mockPush stub] andReturn:@"channel ID"] channelID];
-    
+
     // expectations
     // Run the operation as when added
     [[[self.mockQueue reject] ignoringNonObjectArgs] addBackgroundOperation:OCMOCK_ANY delay:0];
-    
+
     // Reject any calls to the store
     [[[self.mockStore reject] ignoringNonObjectArgs] fetchEventsWithMaxBatchSize:0 completionHandler:OCMOCK_ANY];
-    
+
     // Reject any calls to the client
     [[self.mockClient reject] uploadEvents:OCMOCK_ANY completionHandler:OCMOCK_ANY];
-    
+
     // test
     [self.eventManager scheduleUpload];
-    
+
     // verify
     [self.mockQueue verify];
     [self.mockClient verify];
@@ -589,7 +584,7 @@
 
     // test
     self.eventManager.uploadsEnabled = YES;
-    
+
     // verify
     [self waitForExpectationsWithTimeout:1 handler:nil];
     [self.mockQueue verify];
@@ -598,20 +593,21 @@
 - (void)testDisableCancelsUploadsWhenCurrentlyEnabled {
     // setup
     self.eventManager.uploadsEnabled = YES;
-    
+
     // expectations
     XCTestExpectation *expectCancel = [self expectationWithDescription:@"Expect cancel via [self.queue addBackgroundOperation:delay:]"];
     [[[self.mockQueue expect] andDo:^(NSInvocation *invocation) {
         [expectCancel fulfill];
     }] cancelAllOperations];
-    
+
     // test
     self.eventManager.uploadsEnabled = NO;
-    
+
     // verify
     [self waitForExpectationsWithTimeout:1 handler:nil];
     [self.mockQueue verify];
 }
 
 @end
+
 

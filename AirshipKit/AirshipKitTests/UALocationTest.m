@@ -10,6 +10,8 @@
 
 @property (nonatomic, strong) UALocation *location;
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
+@property (nonatomic, strong) NSNotificationCenter *notificationCenter;
+
 @property (nonatomic, strong) id mockAnalytics;
 @property (nonatomic, strong) id mockLocationManager;
 @property (nonatomic, strong) id mockedApplication;
@@ -33,7 +35,9 @@
     self.mockAnalytics = [self mockForClass:[UAAnalytics class]];
     self.mockLocationManager = [self mockForClass:[CLLocationManager class]];
 
-    self.location = [UALocation locationWithAnalytics:self.mockAnalytics dataStore:self.dataStore];
+    self.notificationCenter = [[NSNotificationCenter alloc] init];
+
+    self.location = [UALocation locationWithAnalytics:self.mockAnalytics dataStore:self.dataStore notificationCenter:self.notificationCenter];
     self.location.locationManager = self.mockLocationManager;
     self.location.componentEnabled = YES;
 
@@ -52,6 +56,8 @@
         BOOL result = self.testOSMajorVersion >= arg.majorVersion;
         [invocation setReturnValue:&result];
     }] ignoringNonObjectArgs] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){0, 0, 0}];
+
+
 }
 
 - (void)tearDown {
@@ -98,22 +104,22 @@
 
     // Make the app inactive
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateInactive)] applicationState];
-    
+
     // Authorize location
     [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(kCLAuthorizationStatusAuthorizedAlways)] authorizationStatus];
-    
+
     // Make significant location available
     [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(YES)] significantLocationChangeMonitoringAvailable];
-    
+
     // Allow background location
     self.location.backgroundLocationUpdatesAllowed = YES;
-    
+
     // Reject calls to start monitoring significant location changes
     [[self.mockLocationManager reject] startMonitoringSignificantLocationChanges];
-    
+
     // Enable location
     self.location.locationUpdatesEnabled = YES;
-    
+
     // Verify we start location updates
     [self.mockLocationManager verify];
 }
@@ -227,22 +233,22 @@
 - (void)testDisableLocationComponentStopsUpdates {
     // Make the app active
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateActive)] applicationState];
-    
+
     // Authroize location
     [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(kCLAuthorizationStatusAuthorizedAlways)] authorizationStatus];
-    
+
     // Make significant location available
     [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(YES)] significantLocationChangeMonitoringAvailable];
-    
+
     // Enable location updates
     self.location.locationUpdatesEnabled = YES;
-    
+
     // Expect to stop monitoring significant location changes
     [[self.mockLocationManager expect] stopMonitoringSignificantLocationChanges];
-    
+
     // Disable location component
     self.location.componentEnabled = NO;
-    
+
     // Verify we stopped location updates
     [self.mockLocationManager verify];
 }
@@ -256,22 +262,22 @@
 
     // Make the app active
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateActive)] applicationState];
-    
+
     // Authroize location
     [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(kCLAuthorizationStatusAuthorizedAlways)] authorizationStatus];
-    
+
     // Make significant location available
     [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(YES)] significantLocationChangeMonitoringAvailable];
-    
+
     // Enable location updates
     self.location.locationUpdatesEnabled = YES;
-    
+
     // Expect to start monitoring significant location changes
     [[self.mockLocationManager expect] startMonitoringSignificantLocationChanges];
-    
+
     // Enable location component
     self.location.componentEnabled = YES;
-    
+
     // Verify we stopped location updates
     [self.mockLocationManager verify];
 }
@@ -336,25 +342,25 @@
 - (void)testAllowBackgroundUpdatesComponentDisabled {
     // Disable location component
     self.location.componentEnabled = NO;
-    
+
     // Background the app
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateBackground)] applicationState];
-    
+
     // Authroize location
     [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(kCLAuthorizationStatusAuthorizedAlways)] authorizationStatus];
-    
+
     // Make significant location available
     [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(YES)] significantLocationChangeMonitoringAvailable];
-    
+
     // Enable location updates
     self.location.locationUpdatesEnabled = YES;
-    
+
     // Expect to start monitoring significant location changes
     [[self.mockLocationManager reject] startMonitoringSignificantLocationChanges];
-    
+
     // Allow background location
     self.location.backgroundLocationUpdatesAllowed = YES;
-    
+
     // Verify we starting location services
     [self.mockLocationManager verify];
 }
@@ -407,8 +413,8 @@
     [[self.mockLocationManager expect] startMonitoringSignificantLocationChanges];
 
     // Send the app did become active notification
-    [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationDidBecomeActiveNotification
-                                                        object:nil];
+    [self.notificationCenter postNotificationName:UIApplicationDidBecomeActiveNotification
+                                           object:nil];
 
     // Verify we starting location services
     [self.mockLocationManager verify];
@@ -435,8 +441,8 @@
     [[self.mockLocationManager expect] stopMonitoringSignificantLocationChanges];
 
     // Send the app did become active notification
-    [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationDidEnterBackgroundNotification
-                                                        object:nil];
+    [self.notificationCenter postNotificationName:UIApplicationDidEnterBackgroundNotification
+                                           object:nil];
 
     // Verify we starting location services
     [self.mockLocationManager verify];
@@ -449,9 +455,9 @@
 - (void)testLocationEvent {
 
     CLLocation *testLocation = [UALocationTest createLocationWithLat:45.5231
-                                                             lon:122.6765
-                                                        accuracy:100.0
-                                                             age:0];
+                                                                 lon:122.6765
+                                                            accuracy:100.0
+                                                                 age:0];
 
     // Expect a location event
     [[self.mockAnalytics expect] addEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
@@ -773,11 +779,12 @@
  */
 + (CLLocation *)createLocationWithLat:(double)lat lon:(double)lon accuracy:(double)accuracy age:(double)age {
     return [[CLLocation alloc] initWithCoordinate:CLLocationCoordinate2DMake(lat, lon)
-                                  altitude:50.0
-                        horizontalAccuracy:accuracy
-                          verticalAccuracy:accuracy
-                                 timestamp:[NSDate dateWithTimeIntervalSinceNow:age]];
+                                         altitude:50.0
+                               horizontalAccuracy:accuracy
+                                 verticalAccuracy:accuracy
+                                        timestamp:[NSDate dateWithTimeIntervalSinceNow:age]];
 }
 
 
 @end
+

@@ -183,9 +183,13 @@ extern NSString *const UAPushEnabledKey;
  * @param config The Urban Airship config
  * @param dataStore The preference data store.
  * @param tagGroupsregistrar The tag groups registrar.
+ * @param notificationCenter The notification center.
  * @return A new push instance.
  */
-+ (instancetype)pushWithConfig:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore tagGroupsRegistrar:(UATagGroupsRegistrar *)tagGroupsregistrar;
++ (instancetype)pushWithConfig:(UAConfig *)config
+                     dataStore:(UAPreferenceDataStore *)dataStore
+            tagGroupsRegistrar:(UATagGroupsRegistrar *)tagGroupsregistrar
+            notificationCenter:(NSNotificationCenter *)notificationCenter;
 
 /**
  * Get the local time zone, considered the default.

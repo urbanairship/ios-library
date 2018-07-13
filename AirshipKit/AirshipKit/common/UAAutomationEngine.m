@@ -53,6 +53,8 @@
 @property (nonatomic, assign) UIBackgroundTaskIdentifier backgroundTaskIdentifier;
 @property (nonatomic, assign) BOOL isStarted;
 @property (nonnull, strong) NSMutableDictionary *stateConditions;
+@property (nonnull, strong) NSNotificationCenter *notificationCenter;
+
 @property (atomic, assign) BOOL paused;
 @end
 
@@ -63,28 +65,30 @@
     [self.automationStore shutDown];
 }
 
-- (instancetype)initWithAutomationStore:(UAAutomationStore *)automationStore timerScheduler:(UATimerScheduler *)timerScheduler {
+
+- (instancetype)initWithAutomationStore:(UAAutomationStore *)automationStore timerScheduler:(UATimerScheduler *)timerScheduler notificationCenter:(NSNotificationCenter *)notificationCenter {
     self = [super init];
 
     if (self) {
         self.automationStore = automationStore;
-        self.timerScheduler = timerScheduler ? : [UATimerScheduler new];
+        self.timerScheduler = timerScheduler;
         self.activeTimers = [NSMutableArray array];
         self.isForegrounded = [UIApplication sharedApplication].applicationState == UIApplicationStateActive;
         self.isBackgrounded = [UIApplication sharedApplication].applicationState == UIApplicationStateBackground;
         self.stateConditions = [NSMutableDictionary dictionary];
         self.paused = NO;
+        self.notificationCenter = notificationCenter;
     }
 
     return self;
 }
 
-+ (instancetype)automationEngineWithAutomationStore:(UAAutomationStore *)automationStore timerScheduler:(UATimerScheduler *)timerScheduler {
-    return [[UAAutomationEngine alloc] initWithAutomationStore:automationStore timerScheduler:timerScheduler];
++ (instancetype)automationEngineWithAutomationStore:(UAAutomationStore *)automationStore timerScheduler:(UATimerScheduler *)timerScheduler notificationCenter:(NSNotificationCenter *)notificationCenter{
+    return [[UAAutomationEngine alloc] initWithAutomationStore:automationStore timerScheduler:timerScheduler notificationCenter:notificationCenter];
 }
 
 + (instancetype)automationEngineWithAutomationStore:(UAAutomationStore *)automationStore {
-    return [[UAAutomationEngine alloc] initWithAutomationStore:automationStore timerScheduler:nil];
+    return [[UAAutomationEngine alloc] initWithAutomationStore:automationStore timerScheduler:[[UATimerScheduler alloc] init] notificationCenter:[NSNotificationCenter defaultCenter]];
 }
 
 #pragma mark -
@@ -95,30 +99,30 @@
         return;
     }
 
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(enterBackground)
-                                                 name:UIApplicationDidEnterBackgroundNotification
-                                               object:nil];
+    [self.notificationCenter addObserver:self
+                                selector:@selector(enterBackground)
+                                    name:UIApplicationDidEnterBackgroundNotification
+                                  object:nil];
 
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(didBecomeActive)
-                                                 name:UIApplicationDidBecomeActiveNotification
-                                               object:nil];
+    [self.notificationCenter addObserver:self
+                                selector:@selector(didBecomeActive)
+                                    name:UIApplicationDidBecomeActiveNotification
+                                  object:nil];
 
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(customEventAdded:)
-                                                 name:UACustomEventAdded
-                                               object:nil];
+    [self.notificationCenter addObserver:self
+                                selector:@selector(customEventAdded:)
+                                    name:UACustomEventAdded
+                                  object:nil];
 
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(screenTracked:)
-                                                 name:UAScreenTracked
-                                               object:nil];
+    [self.notificationCenter addObserver:self
+                                selector:@selector(screenTracked:)
+                                    name:UAScreenTracked
+                                  object:nil];
 
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(regionEventAdded:)
-                                                 name:UARegionEventAdded
-                                               object:nil];
+    [self.notificationCenter addObserver:self
+                                selector:@selector(regionEventAdded:)
+                                    name:UARegionEventAdded
+                                  object:nil];
 
     [self cleanSchedules];
     [self resetExecutingSchedules];
@@ -137,7 +141,7 @@
     }
 
     [self cancelTimers];
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [self.notificationCenter removeObserver:self];
     [self.stateConditions removeAllObjects];
     self.isStarted = NO;
 }
@@ -1137,3 +1141,4 @@
 }
 
 @end
+

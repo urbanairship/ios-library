@@ -11,34 +11,44 @@
 @interface UAInboxStore()
 @property (nonatomic, copy) NSString *storeName;
 @property (strong, nonatomic) NSManagedObjectContext *managedContext;
+@property (nonatomic, assign) BOOL inMemory;
+@property (nonatomic, assign) BOOL finished;
 @end
 
 @implementation UAInboxStore
 
 
-- (instancetype)initWithConfig:(UAConfig *)config {
+- (instancetype)initWithName:(NSString *)storeName inMemory:(BOOL)inMemory {
     self = [super init];
 
 
     if (self) {
-        self.storeName = [NSString stringWithFormat:kUACoreDataStoreName, config.appKey];
+        self.storeName = storeName;
+        self.inMemory = inMemory;
+        self.finished = NO;
 
         NSURL *modelURL = [[UAirship resources] URLForResource:@"UAInbox" withExtension:@"momd"];
         self.managedContext = [NSManagedObjectContext managedObjectContextForModelURL:modelURL
                                                                       concurrencyType:NSPrivateQueueConcurrencyType];
 
+        
         UA_WEAKIFY(self);
         [self.managedContext performBlock:^{
             UA_STRONGIFY(self)
             [self moveDatabase];
         }];
 
-        [self.managedContext addPersistentSqlStore:self.storeName completionHandler:^(BOOL success, NSError *error) {
+        void (^completion)(BOOL, NSError*) = ^void(BOOL success, NSError *error) {
             if (!success) {
-                UA_LERR(@"Failed to create inbox persistent store: %@", error);
-                return;
+                UA_LERR(@"Failed to create inbox message persistent store: %@", error);
             }
-        }];
+        };
+
+        if (inMemory) {
+            [self.managedContext addPersistentInMemoryStore:self.storeName completionHandler:completion];
+        } else {
+            [self.managedContext addPersistentSqlStore:self.storeName completionHandler:completion];
+        }
 
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(protectedDataAvailable)
@@ -47,6 +57,14 @@
     }
 
     return self;
+}
+
++ (instancetype)storeWithName:(NSString *)storeName inMemory:(BOOL)inMemory {
+    return [[UAInboxStore alloc] initWithName:storeName inMemory:inMemory];
+}
+
++ (instancetype)storeWithName:(NSString *)storeName {
+    return [UAInboxStore storeWithName:storeName inMemory:NO];
 }
 
 - (void)protectedDataAvailable {
@@ -63,7 +81,7 @@
 - (void)fetchMessagesWithPredicate:(NSPredicate *)predicate
                  completionHandler:(void(^)(NSArray<UAInboxMessageData *>*messages))completionHandler {
 
-    [self.managedContext safePerformBlock:^(BOOL isSafe) {
+    [self safePerformBlock:^(BOOL isSafe) {
         if (!isSafe) {
             completionHandler(@[]);
             return;
@@ -93,7 +111,7 @@
 }
 
 - (void)syncMessagesWithResponse:(NSArray *)messages completionHandler:(void(^)(BOOL))completionHandler {
-    [self.managedContext safePerformBlock:^(BOOL isSafe) {
+    [self safePerformBlock:^(BOOL isSafe) {
         if (!isSafe) {
             completionHandler(NO);
             return;
@@ -123,21 +141,20 @@
         request.predicate = [NSPredicate predicateWithFormat:@"NOT (messageID IN %@)", newMessageIDs];
 
         NSError *error;
-        if ([[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){9, 0, 0}]) {
-            NSBatchDeleteRequest *deleteRequest = [[NSBatchDeleteRequest alloc] initWithFetchRequest:request];
-            [self.managedContext executeRequest:deleteRequest error:&error];
-        } else {
+        if (self.inMemory) {
             request.includesPropertyValues = NO;
             NSArray *events = [self.managedContext executeFetchRequest:request error:&error];
             for (NSManagedObject *event in events) {
                 [self.managedContext deleteObject:event];
             }
+        } else {
+            NSBatchDeleteRequest *deleteRequest = [[NSBatchDeleteRequest alloc] initWithFetchRequest:request];
+            [self.managedContext executeRequest:deleteRequest error:&error];
         }
 
         completionHandler([self.managedContext safeSave]);
     }];
 }
-
 
 - (void)updateMessageData:(UAInboxMessageData *)data withDictionary:(NSDictionary *)dict {
 
@@ -204,10 +221,6 @@
     return NO;
 }
 
-- (void)dealloc {
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
-}
-
 - (void)moveDatabase {
     NSFileManager *fm = [NSFileManager defaultManager];
 
@@ -258,5 +271,24 @@
         }
     }
 }
+
+- (void)safePerformBlock:(void (^)(BOOL))block {
+    @synchronized(self) {
+        if (!self.finished) {
+            [self.managedContext safePerformBlock:block];
+        }
+    }
+}
+
+- (void)waitForIdle {
+    [self.managedContext performBlockAndWait:^{}];
+}
+
+- (void)shutDown {
+    @synchronized(self) {
+        self.finished = YES;
+    }
+}
+
 
 @end

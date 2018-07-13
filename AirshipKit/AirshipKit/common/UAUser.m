@@ -15,6 +15,7 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
 
 @interface UAUser()
 @property (nonatomic, strong) UAPush *push;
+@property (nonatomic, strong) NSNotificationCenter *notificationCenter;
 @end
 
 @implementation UAUser
@@ -22,26 +23,23 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
 + (void)setDefaultUsername:(NSString *)defaultUsername withPassword:(NSString *)defaultPassword {
 
     NSString *storedUsername = [UAKeychainUtils getUsername:[UAirship shared].config.appKey];
-    
+
     // If the keychain username is present a user already exists, if not, save
     if (storedUsername == nil) {
         //Store un/pw
         [UAKeychainUtils createKeychainValueForUsername:defaultUsername withPassword:defaultPassword forIdentifier:[UAirship shared].config.appKey];
     }
-    
+
 }
 
-- (void)dealloc {
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
-}
-
-- (instancetype)initWithPush:(UAPush *)push config:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
+- (instancetype)initWithPush:(UAPush *)push config:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore client:(UAUserAPIClient *)client  notificationCenter:(NSNotificationCenter *)notificationCenter {
     self = [super initWithDataStore:dataStore];
     if (self) {
         self.config = config;
-        self.apiClient = [UAUserAPIClient clientWithConfig:config];
+        self.apiClient = client;
         self.dataStore = dataStore;
         self.push = push;
+        self.notificationCenter = notificationCenter;
 
         NSString *storedUsername = [UAKeychainUtils getUsername:self.config.appKey];
         NSString *storedPassword = [UAKeychainUtils getPassword:self.config.appKey];
@@ -52,17 +50,21 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
             [[NSUserDefaults standardUserDefaults] setObject:self.username forKey:@"ua_user_id"];
         }
 
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(channelCreated)
-                                                     name:UAChannelCreatedEvent
-                                                   object:nil];
+        [self.notificationCenter addObserver:self
+                                    selector:@selector(channelCreated)
+                                        name:UAChannelCreatedEvent
+                                      object:nil];
     }
-    
+
     return self;
 }
 
 + (instancetype)userWithPush:(UAPush *)push config:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
-    return [[UAUser alloc] initWithPush:push config:config dataStore:dataStore];
+    return [[UAUser alloc] initWithPush:push config:config dataStore:dataStore client:[UAUserAPIClient clientWithConfig:config] notificationCenter:[NSNotificationCenter defaultCenter]];
+}
+
++ (instancetype)userWithPush:(UAPush *)push config:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore client:(UAUserAPIClient *)client notificationCenter:(NSNotificationCenter *)notificationCenter {
+    return [[UAUser alloc] initWithPush:push config:config dataStore:dataStore client:client notificationCenter:notificationCenter];
 }
 
 #pragma mark -
@@ -89,12 +91,12 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
             return;
         }
     }
-    
+
     // Update keychain with latest username and password
     [UAKeychainUtils updateKeychainValueForUsername:self.username
                                        withPassword:self.password
                                       forIdentifier:self.config.appKey];
-    
+
     NSDictionary *dictionary = [self.dataStore objectForKey:self.config.appKey];
     NSMutableDictionary *userDictionary = [NSMutableDictionary dictionaryWithDictionary:dictionary];
 
@@ -119,7 +121,7 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
 }
 
 - (void)sendUserCreatedNotification {
-    [[NSNotificationCenter defaultCenter] postNotificationName:UAUserCreatedNotification object:nil];
+    [self.notificationCenter postNotificationName:UAUserCreatedNotification object:nil];
 }
 
 - (void)createUser {
@@ -127,7 +129,7 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
         UA_LDEBUG(@"Skipping user creation, component disabled");
         return;
     }
-    
+
     if (!self.push.channelID) {
         UA_LDEBUG(@"Skipping user creation, no channel");
         return;
@@ -193,7 +195,7 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
         UA_LDEBUG(@"Skipping user update, component disabled");
         return;
     }
-    
+
     if (!self.isCreated) {
         UA_LDEBUG(@"Skipping user update, user not created yet.");
         return;
@@ -250,3 +252,4 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
 }
 
 @end
+
