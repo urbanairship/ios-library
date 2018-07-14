@@ -12,6 +12,9 @@ TEST_DESTINATION='platform=iOS Simulator,OS=latest,name=iPhone SE'
 
 # Set a derived data path for all scheme-based builds (for tests)
 DERIVED_DATA=$(mktemp -d /tmp/ci-derived-data-XXXXX)
+if [[ $BITRISE_IO ]]; then
+  envman add --key CI_DERIVED_DATA --value "$DERIVED_DATA"
+fi
 
 start_time=`date +%s`
 
