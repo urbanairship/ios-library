@@ -112,9 +112,9 @@
 
     }] getNotificationSettingsWithCompletionHandler:OCMOCK_ANY];
 
-    [self.pushRegistration getAuthorizedSettingsWithCompletionHandler:^(UAAuthorizedNotificationSettings authorizedSettings, BOOL provisional) {
+    [self.pushRegistration getAuthorizedSettingsWithCompletionHandler:^(UAAuthorizedNotificationSettings authorizedSettings, UAAuthorizationStatus status) {
         XCTAssertTrue(authorizedSettings == expectedSettings);
-        XCTAssertFalse(provisional);
+        XCTAssertFalse(status == UAAuthorizationStatusProvisional);
     }];
 }
 
@@ -140,9 +140,9 @@
 
     }] getNotificationSettingsWithCompletionHandler:OCMOCK_ANY];
 
-    [self.pushRegistration getAuthorizedSettingsWithCompletionHandler:^(UAAuthorizedNotificationSettings authorizedSettings, BOOL provisional) {
+    [self.pushRegistration getAuthorizedSettingsWithCompletionHandler:^(UAAuthorizedNotificationSettings authorizedSettings, UAAuthorizationStatus status) {
         XCTAssertTrue(authorizedSettings == expectedSettings);
-        XCTAssertTrue(provisional);
+        XCTAssertTrue(status == UAAuthorizationStatusProvisional);
     }];
 }
 

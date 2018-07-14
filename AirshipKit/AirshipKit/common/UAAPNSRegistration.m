@@ -7,21 +7,11 @@
 
 @synthesize registrationDelegate;
 
--(void)getAuthorizedSettingsWithCompletionHandler:(void (^)(UAAuthorizedNotificationSettings, BOOL))completionHandler NS_AVAILABLE_IOS(10.0) {
+-(void)getAuthorizedSettingsWithCompletionHandler:(void (^)(UAAuthorizedNotificationSettings, UAAuthorizationStatus))completionHandler NS_AVAILABLE_IOS(10.0) {
     [[UNUserNotificationCenter currentNotificationCenter] getNotificationSettingsWithCompletionHandler:^(UNNotificationSettings * _Nonnull notificationSettings) {
 
-        UNAuthorizationStatus status = notificationSettings.authorizationStatus;
+        UAAuthorizationStatus authorizationStatus = [self uaStatus:notificationSettings.authorizationStatus];
         UAAuthorizedNotificationSettings authorizedSettings = UAAuthorizedNotificationSettingsNone;
-        BOOL isProvisional = NO;
-
-        if (@available(iOS 12.0, *)) {
-            isProvisional = (status == UNAuthorizationStatusProvisional);
-        }
-
-        if (status != UNAuthorizationStatusAuthorized && !isProvisional) {
-            completionHandler(authorizedSettings, NO);
-            return;
-        }
 
         if (notificationSettings.badgeSetting == UNNotificationSettingEnabled) {
             authorizedSettings |= UAAuthorizedNotificationSettingsBadge;
@@ -48,8 +38,27 @@
             authorizedSettings |= UAAuthorizedNotificationSettingsNotificationCenter;
         }
 #endif
-        completionHandler(authorizedSettings, isProvisional);
+        completionHandler(authorizedSettings, authorizationStatus);
     }];
+}
+
+- (UAAuthorizationStatus)uaStatus:(UNAuthorizationStatus)status {
+    if (@available(iOS 12.0, *)) {
+        if (status == UNAuthorizationStatusProvisional) {
+            return UAAuthorizationStatusProvisional;
+        }
+    }
+
+    if (status == UNAuthorizationStatusNotDetermined) {
+        return UAAuthorizationStatusNotDetermined;
+    } else if (status == UNAuthorizationStatusDenied) {
+        return UAAuthorizationStatusDenied;
+    } else if (status == UNAuthorizationStatusAuthorized) {
+        return UAAuthorizationStatusAuthorized;
+    }
+
+    UA_LDEBUG(@"Unable to handle UNAuthorizationStatus: %ld", (long)status);
+    return UAAuthorizationStatusNotDetermined;
 }
 
 - (UNAuthorizationOptions)normalizedOptions:(UANotificationOptions)uaOptions {
@@ -115,8 +124,8 @@
     
     [center requestAuthorizationWithOptions:normalizedOptions
                           completionHandler:^(BOOL granted, NSError * _Nullable error) {
-                              [self getAuthorizedSettingsWithCompletionHandler:^(UAAuthorizedNotificationSettings authorizedSettings, BOOL provisional) {
-                                  [self.registrationDelegate notificationRegistrationFinishedWithAuthorizedSettings:authorizedSettings provisional:provisional];
+                              [self getAuthorizedSettingsWithCompletionHandler:^(UAAuthorizedNotificationSettings authorizedSettings, UAAuthorizationStatus status) {
+                                  [self.registrationDelegate notificationRegistrationFinishedWithAuthorizedSettings:authorizedSettings status:status];
                               }];
                           }];
 }

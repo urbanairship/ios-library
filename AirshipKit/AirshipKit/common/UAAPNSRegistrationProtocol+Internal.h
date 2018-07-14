@@ -14,7 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 @required
 
 - (void)notificationRegistrationFinishedWithAuthorizedSettings:(UAAuthorizedNotificationSettings)authorizedSettings
-                                                   provisional:(BOOL)provisional;
+                                                        status:(UAAuthorizationStatus)status;
 @end
 
 /**
@@ -33,10 +33,10 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Get authorized notification settings from iOS.
  *
- * @param completionHandler A completion handler that will be called with the current authorized notification settings, and a BOOL
- * indicating whether the authorization is provisional.
+ * @param completionHandler A completion handler that will be called with the current authorized notification settings, and the authorization
+ * status
  */
--(void)getAuthorizedSettingsWithCompletionHandler:(void (^)(UAAuthorizedNotificationSettings, BOOL))completionHandler;
+-(void)getAuthorizedSettingsWithCompletionHandler:(void (^)(UAAuthorizedNotificationSettings, UAAuthorizationStatus))completionHandler;
 
 /**
  * Updates APNS registration.

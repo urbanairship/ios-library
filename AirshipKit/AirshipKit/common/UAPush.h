@@ -70,6 +70,16 @@ typedef NS_OPTIONS(NSUInteger, UAAuthorizedNotificationSettings) {
 };
 
 /**
+ * Authorization status
+ */
+typedef NS_ENUM(NSInteger, UAAuthorizationStatus) {
+    UAAuthorizationStatusNotDetermined = 0,
+    UAAuthorizationStatusDenied,
+    UAAuthorizationStatusAuthorized,
+    UAAuthorizationStatusProvisional,
+};
+
+/**
  * Notification option for notification type `none`.
  * Not included in UANotificationOptions enum to maintain parity with UNAuthorizationOptions.
  */
@@ -119,11 +129,11 @@ static const UANotificationOptions UANotificationOptionNone =  0;
  *
  * @param authorizedSettings The settings that were authorized at the time of registration.
  * @param categories NSSet of the categories that were most recently registered.
- * @param provisional Whether the authorization status is provisional.
+ * @param status The authorization status.
  */
 - (void)notificationRegistrationFinishedWithAuthorizedSettings:(UAAuthorizedNotificationSettings)authorizedSettings
                                                     categories:(NSSet *)categories
-                                                   provisional:(BOOL)provisional;
+                                                        status:(UAAuthorizationStatus)status;
 
 /**
  * Called when APNS registration completes.
@@ -388,9 +398,9 @@ static const UANotificationOptions UANotificationOptionNone =  0;
 @property (nonatomic, readonly) UAAuthorizedNotificationSettings authorizedNotificationSettings;
 
 /**
- * Whether the current authorization status is provisional.
+ * The current authorization status.
  */
-@property (nonatomic, readonly, getter=isAuthorizationProvisional) BOOL authorizationProvisional;
+@property (nonatomic, readonly) UAAuthorizationStatus authorizationStatus;
 
 /**
  * The current authorized notification options.
