@@ -66,11 +66,7 @@
         void *arg;
         [invocation getArgument:&arg atIndex:4];
         UARequestCompletionHandler completionHandler = (__bridge UARequestCompletionHandler)arg;
-        
-        // delay call back a bit to simulate actually going to the cloud
-        dispatch_async(dispatch_get_main_queue(), ^{
-            completionHandler(responseData, (NSURLResponse *)response, nil);
-        });
+        completionHandler(responseData, (NSURLResponse *)response, nil);
     }] dataTaskWithRequest:OCMOCK_ANY retryWhere:OCMOCK_ANY completionHandler:OCMOCK_ANY];
     
     XCTestExpectation *refreshFinished = [self expectationWithDescription:@"Refresh finished"];
@@ -91,7 +87,6 @@
     [self waitForExpectationsWithTimeout:1 handler:^(NSError *error) {
         [self.mockSession verify];
     }];
-    
 }
 
 /**
