@@ -121,7 +121,7 @@ class PushSettingsViewController: UITableViewController, UARegistrationDelegate 
     }
 
     func notificationAuthorizedOptionsDidChange(_ options: UANotificationOptions = []) {
-        if (UAirship.push().authorizedNotificationOptions.rawValue == 0) {
+        if (UAirship.push()?.authorizedNotificationSettings.rawValue == 0) {
             pushEnabledCell.detailTextLabel?.text = "Enable In System Settings"
             pushEnabledCell.accessoryType = .none
         } else {

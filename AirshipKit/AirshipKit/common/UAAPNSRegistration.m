@@ -17,7 +17,7 @@
             authorizedSettings |= UAAuthorizedNotificationSettingsBadge;
         }
 
-#if !TARGET_OS_TV
+#if !TARGET_OS_TV // Only badge settings are available on tvOS
         if (notificationSettings.soundSetting == UNNotificationSettingEnabled) {
             authorizedSettings |= UAAuthorizedNotificationSettingsSound;
         }
@@ -43,7 +43,7 @@
 }
 
 - (UAAuthorizationStatus)uaStatus:(UNAuthorizationStatus)status {
-    if (@available(iOS 12.0, *)) {
+    if (@available(iOS 12.0, tvOS 12.0, *)) {
         if (status == UNAuthorizationStatusProvisional) {
             return UAAuthorizationStatusProvisional;
         }
@@ -81,7 +81,7 @@
     }
 
     // Critical alert and provisional authorization are iOS 12+
-    if (@available(iOS 12.0, *)) {
+    if (@available(iOS 12.0, tvOS 12.0, *)) {
         if ((uaOptions & UANotificationOptionCriticalAlert) == UANotificationOptionCriticalAlert) {
             unOptions |= UNAuthorizationOptionCriticalAlert;
         }

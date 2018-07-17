@@ -46,14 +46,12 @@ extern NSString *const UAChannelCreatedEventExistingKey;
  */
 typedef NS_OPTIONS(NSUInteger, UANotificationOptions) {
     UANotificationOptionBadge   = (1 << 0),
-#if !TARGET_OS_TV   // Only badges available on tvOS
     UANotificationOptionSound   = (1 << 1),
     UANotificationOptionAlert   = (1 << 2),
     UANotificationOptionCarPlay = (1 << 3),
     UANotificationOptionCriticalAlert = (1 << 4),
     UANotificationOptionProvidesAppNotificationSettings = (1 << 5),
     UANotificationOptionProvisional = (1 << 6),
-#endif
 };
 
 /**
