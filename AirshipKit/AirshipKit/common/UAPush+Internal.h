@@ -118,16 +118,6 @@ extern NSString *const UAPushEnabledKey;
 @property (nonatomic, assign, getter=isChannelCreationEnabled) BOOL channelCreationEnabled;
 
 /**
- * Channel ID as a string.
- */
-@property (nonatomic, copy, nullable) NSString *channelID;
-
-/**
- * Channel location as a string.
- */
-@property (nonatomic, copy, nullable) NSString *channelLocation;
-
-/**
  * The UAChannelRegistrar that handles registering the device with Urban Airship.
  */
 @property (nonatomic, strong) UAChannelRegistrar *channelRegistrar;
@@ -136,11 +126,6 @@ extern NSString *const UAPushEnabledKey;
  * Notification that launched the application.
  */
 @property (nullable, nonatomic, strong) UANotificationResponse *launchNotificationResponse;
-
-/**
- * Background task identifier used to do any registration in the background.
- */
-@property (nonatomic, assign) UIBackgroundTaskIdentifier registrationBackgroundTask;
 
 /**
  * Indicates whether APNS registration is out of date or not.
@@ -219,18 +204,6 @@ extern NSString *const UAPushEnabledKey;
  */
 - (void)applicationBackgroundRefreshStatusChanged;
 #endif
-
-/**
- * Called when the channel registrar failed to register.
- * @param payload The registration payload.
- */
-- (void)registrationFailedWithPayload:(UAChannelRegistrationPayload *)payload;
-
-/**
- * Called when the channel registrar succesfully registered.
- * @param payload The registration payload.
- */
-- (void)registrationSucceededWithPayload:(UAChannelRegistrationPayload *)payload;
 
 /**
  * Called when the channel registrar creates a new channel.

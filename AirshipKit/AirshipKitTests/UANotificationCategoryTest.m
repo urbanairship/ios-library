@@ -44,4 +44,9 @@
     XCTAssertTrue([self.uaCategory isEqualToUNNotificationCategory:unCategory]);
 }
 
+- (void)testAsUNNotificationCategory {
+    UNNotificationCategory *unCategory = [self.uaCategory asUNNotificationCategory];
+    XCTAssertTrue([self.uaCategory isEqualToUNNotificationCategory:unCategory]);
+}
+
 @end

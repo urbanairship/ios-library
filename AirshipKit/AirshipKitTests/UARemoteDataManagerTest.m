@@ -48,7 +48,6 @@
     [[[self.mockConfig stub] andReturn:[[NSProcessInfo processInfo] globallyUniqueString]] developmentAppKey];
     
     self.dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:@"uaremotedata.test."];
-    XCTAssertNotNil(self.dataStore);
     [self.dataStore removeAll]; // start with an empty datastore
     
     self.remoteDataManager = [UARemoteDataManager remoteDataManagerWithConfig:self.mockConfig dataStore:self.dataStore];

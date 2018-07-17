@@ -44,7 +44,6 @@
     }] subscribeWithTypes:OCMOCK_ANY block:OCMOCK_ANY];
     
     self.dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:[NSString stringWithFormat:@"UAInAppRemoteDataClientTest.%@",self.name]];
-    XCTAssertNotNil(self.dataStore);
     [self.dataStore removeAll]; // start with an empty datastore
     
     self.mockPush = [self mockForClass:[UAPush class]];

@@ -26,7 +26,6 @@
 - (void)setUp {
     [super setUp];
     self.dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:[NSString stringWithFormat:@"ualocation.test.%@",self.name]];
-    XCTAssertNotNil(self.dataStore);
     [self.dataStore removeAll]; // start with an empty datastore
 
     self.mockedApplication = [self mockForClass:[UIApplication class]];

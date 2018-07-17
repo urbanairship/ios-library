@@ -33,8 +33,6 @@ NSString *const UAPushTokenRegistrationEnabledKey = @"UAPushTokenRegistrationEna
 NSString *const UAPushAliasSettingsKey = @"UAPushAlias";
 NSString *const UAPushTagsSettingsKey = @"UAPushTags";
 NSString *const UAPushBadgeSettingsKey = @"UAPushBadge";
-NSString *const UAPushChannelIDKey = @"UAChannelID";
-NSString *const UAPushChannelLocationKey = @"UAChannelLocation";
 NSString *const UAPushDeviceTokenKey = @"UADeviceToken";
 
 NSString *const UAPushQuietTimeSettingsKey = @"UAPushQuietTime";
@@ -110,10 +108,7 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
         self.notificationOptions = self.notificationOptions|UANotificationOptionSound|UANotificationOptionAlert;
 #endif
 
-        self.registrationBackgroundTask = UIBackgroundTaskInvalid;
-
-        self.channelRegistrar = [UAChannelRegistrar channelRegistrarWithConfig:config dataStore:dataStore];
-        self.channelRegistrar.delegate = self;
+        self.channelRegistrar = [UAChannelRegistrar channelRegistrarWithConfig:config dataStore:dataStore delegate:self];
 
         self.tagGroupsRegistrar = tagGroupsRegistrar;
 
@@ -275,37 +270,8 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
 #pragma mark -
 #pragma mark Get/Set Methods
 
-- (void)setChannelID:(NSString *)channelID {
-    [self.dataStore setValue:channelID forKey:UAPushChannelIDKey];
-    // Log the channel ID at error level, but without logging
-    // it as an error.
-    if (uaLogLevel >= UALogLevelError) {
-        NSLog(@"Channel ID: %@", channelID);
-    }
-}
-
 - (NSString *)channelID {
-    // Get the channel location from data store instead of
-    // the channelLocation property, because that may cause an infinite loop.
-    if ([self.dataStore stringForKey:UAPushChannelLocationKey]) {
-        return [self.dataStore stringForKey:UAPushChannelIDKey];
-    } else {
-        return nil;
-    }
-}
-
-- (void)setChannelLocation:(NSString *)channelLocation {
-    [self.dataStore setValue:channelLocation forKey:UAPushChannelLocationKey];
-}
-
-- (NSString *)channelLocation {
-    // Get the channel ID from data store instead of
-    // the channelID property, because that may cause an infinite loop.
-    if ([self.dataStore stringForKey:UAPushChannelIDKey]) {
-        return [self.dataStore stringForKey:UAPushChannelLocationKey];
-    } else {
-        return nil;
-    }
+    return self.channelRegistrar.channelID;
 }
 
 - (BOOL)isAutobadgeEnabled {
@@ -770,17 +736,7 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
         return;
     }
 
-    if (![self beginRegistrationBackgroundTask]) {
-        UA_LDEBUG(@"Unable to perform registration, background task not granted.");
-        return;
-    }
-
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [self.channelRegistrar registerWithChannelID:self.channelID
-                                     channelLocation:self.channelLocation
-                                         withPayload:[self createChannelPayload]
-                                          forcefully:forcefully];
-    });
+    [self.channelRegistrar registerForcefully:forcefully];
 }
 
 - (void)updateChannelTagGroups {
@@ -884,7 +840,7 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
 }
 
 
-- (void)registrationSucceededWithPayload:(UAChannelRegistrationPayload *)payload {
+- (void)registrationSucceeded {
     UA_LINFO(@"Channel registration updated successfully.");
 
     NSString *channelID = self.channelID;
@@ -902,23 +858,15 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
     [self.notificationCenter postNotificationName:UAChannelUpdatedEvent
                                            object:self
                                          userInfo:@{UAChannelUpdatedEventChannelKey: channelID}];
-
-    if (![payload isEqualToPayload:[self createChannelPayload]]) {
-        [self updateChannelRegistrationForcefully:NO];
-    } else {
-        [self endRegistrationBackgroundTask];
-    }
 }
 
-- (void)registrationFailedWithPayload:(UAChannelRegistrationPayload *)payload {
+- (void)registrationFailed {
     UA_LINFO(@"Channel registration failed.");
 
     id strongDelegate = self.registrationDelegate;
     if ([strongDelegate respondsToSelector:@selector(registrationFailed)]) {
         [strongDelegate registrationFailed];
     }
-
-    [self endRegistrationBackgroundTask];
 }
 
 - (void)channelCreated:(NSString *)channelID
@@ -926,13 +874,8 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
               existing:(BOOL)existing {
 
     if (channelID && channelLocation) {
-        // WARNING: Order matters here. Some things observe channelID being changed,
-        // and if we do not have a channel location set, the channelID will return nil.
-        self.channelLocation = channelLocation;
-        self.channelID = channelID;
-
         if (uaLogLevel >= UALogLevelError) {
-            NSLog(@"Created channel with ID: %@", self.channelID);
+            NSLog(@"Created channel with ID: %@", channelID);
         }
 
         [self.notificationCenter postNotificationName:UAChannelCreatedEvent
@@ -1013,25 +956,6 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
 
 - (void)setUserPushNotificationsEnabledByDefault:(BOOL)enabled {
     _userPushNotificationsEnabledByDefault = enabled;
-}
-
-- (BOOL)beginRegistrationBackgroundTask {
-    if (self.registrationBackgroundTask == UIBackgroundTaskInvalid) {
-        self.registrationBackgroundTask = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
-            [self.channelRegistrar cancelAllRequests];
-            [[UIApplication sharedApplication] endBackgroundTask:self.registrationBackgroundTask];
-            self.registrationBackgroundTask = UIBackgroundTaskInvalid;
-        }];
-    }
-
-    return (BOOL) self.registrationBackgroundTask != UIBackgroundTaskInvalid;
-}
-
-- (void)endRegistrationBackgroundTask {
-    if (self.registrationBackgroundTask != UIBackgroundTaskInvalid) {
-        [[UIApplication sharedApplication] endBackgroundTask:self.registrationBackgroundTask];
-        self.registrationBackgroundTask = UIBackgroundTaskInvalid;
-    }
 }
 
 - (void)migratePushSettings {
