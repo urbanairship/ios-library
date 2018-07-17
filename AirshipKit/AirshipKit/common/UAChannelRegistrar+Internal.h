@@ -1,11 +1,12 @@
 /* Copyright 2018 Urban Airship and Contributors */
 
-#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
 @class UAChannelRegistrationPayload;
 @class UAChannelAPIClient;
 @class UAConfig;
 @class UAPreferenceDataStore;
+@class UADate;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -13,23 +14,27 @@ NS_ASSUME_NONNULL_BEGIN
  * The UAChannelRegistrarDelegate protocol for registration events.
  */
 @protocol UAChannelRegistrarDelegate <NSObject>
-@optional
 
 ///---------------------------------------------------------------------------------------
-/// @name Channel Registrar Delegate Methods
+/// @name Required Channel Registrar Delegate Methods
 ///---------------------------------------------------------------------------------------
+@required
+
+/**
+ * Get registration payload for current channel
+ * @return registration payload for channel
+ */
+- (UAChannelRegistrationPayload *)createChannelPayload;
 
 /**
  * Called when the channel registrar failed to register.
- * @param payload The registration payload.
  */
-- (void)registrationFailedWithPayload:(UAChannelRegistrationPayload *)payload;
+- (void)registrationFailed;
 
 /**
  * Called when the channel registrar successfully registered.
- * @param payload The registration payload.
  */
-- (void)registrationSucceededWithPayload:(UAChannelRegistrationPayload *)payload;
+- (void)registrationSucceeded;
 
 /**
  * Called when the channel registrar creates a new channel.
@@ -49,55 +54,20 @@ NS_ASSUME_NONNULL_BEGIN
 @interface UAChannelRegistrar : NSObject
 
 ///---------------------------------------------------------------------------------------
-/// @name Channel Registrar Properties
+/// @name Channel Registrar Factory
 ///---------------------------------------------------------------------------------------
-
-/**
- * A UAChannelRegistrarDelegate delegate.
- */
-@property (nonatomic, weak, nullable) id<UAChannelRegistrarDelegate> delegate;
-
-/**
-* Last successful payload date JSON key.
-*/
-extern NSString *const UALastSuccessfulUpdateKey;
-
-/**
- * Last payload JSON key.
- */
-extern NSString *const UALastSuccessfulPayloadKey;
-
-/**
- * The channel API client.
- */
-@property (nonatomic, strong) UAChannelAPIClient *channelAPIClient;
-
-/**
- * The last successful payload that was registered.
- */
-@property (nonatomic, strong, nullable) UAChannelRegistrationPayload *lastSuccessfulPayload;
-
-/**
- * The date of the last successful update.
- */
-@property (nonatomic, strong, nullable) NSDate *lastSuccessfulUpdateDate;
-
-/**
- * The preference data store.
- */
-@property (nonatomic, strong) UAPreferenceDataStore *dataStore;
-
-/**
- * A flag indicating if registration is in progress.
- */
-@property (atomic, assign) BOOL isRegistrationInProgress;
 
 /**
  * Factory method to create a channel registrar.
  * @param config The Urban Airship config.
+ * @param dataStore The shared preference data store.
+ * @param delegate The UAChannelRegistrarDelegate delegate.
  * @return A new channel registrar instance.
  */
-+ (instancetype)channelRegistrarWithConfig:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore;
++ (instancetype)channelRegistrarWithConfig:(UAConfig *)config
+                                 dataStore:(UAPreferenceDataStore *)dataStore
+                                  delegate:(id<UAChannelRegistrarDelegate>)delegate;
+
 
 ///---------------------------------------------------------------------------------------
 /// @name Channel Registrar Registration Management
@@ -106,15 +76,9 @@ extern NSString *const UALastSuccessfulPayloadKey;
 /**
  * Register the device with Urban Airship.
  *
- * @param channelID The channel ID to update.  If `nil` is supplied, a channel will be created.
- * @param channelLocation The channel location.  If `nil` is supplied, a channel will be created.
- * @param payload The payload for the registration.
- * @param forcefully To force the registration, skipping duplicate request checks.
+ * @param forcefully YES to force the registration.
  */
-- (void)registerWithChannelID:(nullable NSString *)channelID
-              channelLocation:(nullable NSString *)channelLocation
-                  withPayload:(UAChannelRegistrationPayload *)payload
-                   forcefully:(BOOL)forcefully;
+- (void)registerForcefully:(BOOL)forcefully;
 
 /**
  * Cancels all pending and current requests.
@@ -123,6 +87,55 @@ extern NSString *const UALastSuccessfulPayloadKey;
  * delegate calls.
  */
 - (void)cancelAllRequests;
+
+///---------------------------------------------------------------------------------------
+/// @name Channel Registrar Properties
+///---------------------------------------------------------------------------------------
+/**
+ * The channel ID for this device.
+ */
+@property (nonatomic, copy, nullable, readonly) NSString *channelID;
+
+///---------------------------------------------------------------------------------------
+/// @name Channel Registrar Factory (for testing)
+///---------------------------------------------------------------------------------------
+/**
+ * Factory method to create a channel registrar. (for testing)
+ * @param config The Urban Airship config.
+ * @param dataStore The shared preference data store.
+ * @param delegate The UAChannelRegistrarDelegate delegate.
+ * @param channelID The initial channel ID string.
+ * @param channelLocation The initial channel location string.
+ * @param channelAPIClient The channel API client.
+ * @param date The UADate object.
+ * @return A new channel registrar instance.
+ */
++ (instancetype)channelRegistrarWithConfig:(UAConfig *)config
+                                 dataStore:(UAPreferenceDataStore *)dataStore
+                                  delegate:(id<UAChannelRegistrarDelegate>)delegate
+                                 channelID:(NSString *)channelID
+                           channelLocation:(NSString *)channelLocation
+                          channelAPIClient:(UAChannelAPIClient *)channelAPIClient
+                                      date:(UADate *)date;
+
+///---------------------------------------------------------------------------------------
+/// @name Channel Registrar Properties (for testing)
+///---------------------------------------------------------------------------------------
+
+/**
+ * Channel location as a string.
+ */
+@property (nonatomic, copy, nullable, readonly) NSString *channelLocation;
+
+/**
+ * The last successful payload that was registered.
+ */
+@property (nonatomic, strong, nullable, readonly) UAChannelRegistrationPayload *lastSuccessfulPayload;
+
+/**
+ * The date of the last successful update.
+ */
+@property (nonatomic, strong, nullable, readonly) NSDate *lastSuccessfulUpdateDate;
 
 @end
 

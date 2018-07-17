@@ -156,10 +156,26 @@ NSString *const UABackgroundEnabledJSONKey = @"background";
     return copy;
 }
 
+- (BOOL)isEqual:(id)other {
+    if (other == self) {
+        return YES;
+    }
+    
+    if (![other isKindOfClass:[self class]]) {
+        return NO;
+    }
+    
+    return [self isEqualToPayload:(UAChannelRegistrationPayload *)other];
+}
+
 - (BOOL)isEqualToPayload:(UAChannelRegistrationPayload *)payload {
     return [[self payloadDictionary] isEqualToDictionary:[payload payloadDictionary]];
 }
 
+- (NSUInteger)hash {
+    NSUInteger result = [self.payloadDictionary hash];
+    return result;
+}
 - (NSString *)description {
     return [[self payloadDictionary] description];
 }

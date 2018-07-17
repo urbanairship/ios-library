@@ -39,7 +39,6 @@
     self.action = [[UADisplayInboxAction alloc] init];
     
     self.dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:[NSString stringWithFormat:@"uadisplayinbox.test.%@",self.name]];
-    XCTAssertNotNil(self.dataStore);
     [self.dataStore removeAll]; // start with an empty datastore
 
     self.mockInboxDelegate = [self mockForProtocol:@protocol(UAInboxDelegate)];
