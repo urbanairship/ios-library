@@ -80,10 +80,14 @@
         unOptions |= UNAuthorizationOptionCarPlay;
     }
 
-    // Critical alert and provisional authorization are iOS 12+
+    // These authorization options and settings are iOS 12+
     if (@available(iOS 12.0, tvOS 12.0, *)) {
         if ((uaOptions & UANotificationOptionCriticalAlert) == UANotificationOptionCriticalAlert) {
             unOptions |= UNAuthorizationOptionCriticalAlert;
+        }
+
+        if ((uaOptions & UANotificationOptionProvidesAppNotificationSettings) == UANotificationOptionProvidesAppNotificationSettings) {
+            unOptions |= UNAuthorizationOptionProvidesAppNotificationSettings;
         }
 
         if ((uaOptions & UANotificationOptionProvisional) == UANotificationOptionProvisional) {
