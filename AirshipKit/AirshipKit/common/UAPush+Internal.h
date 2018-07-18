@@ -142,6 +142,11 @@ extern NSString *const UAPushEnabledKey;
 @property (nonatomic, assign) UAAuthorizedNotificationSettings authorizedNotificationSettings;
 
 /**
+ * The current authorization status.
+ */
+@property (nonatomic, assign) UAAuthorizationStatus authorizationStatus;
+
+/**
  * Indicates whether the user has been prompted for notifications or not.
  */
 @property (nonatomic, assign) BOOL userPromptedForNotifications;

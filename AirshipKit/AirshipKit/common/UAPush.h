@@ -46,11 +46,12 @@ extern NSString *const UAChannelCreatedEventExistingKey;
  */
 typedef NS_OPTIONS(NSUInteger, UANotificationOptions) {
     UANotificationOptionBadge   = (1 << 0),
-#if !TARGET_OS_TV   // Only badges available on tvOS
     UANotificationOptionSound   = (1 << 1),
     UANotificationOptionAlert   = (1 << 2),
-    UANotificationOptionCarPlay = (1 << 3)
-#endif
+    UANotificationOptionCarPlay = (1 << 3),
+    UANotificationOptionCriticalAlert = (1 << 4),
+    UANotificationOptionProvidesAppNotificationSettings = (1 << 5),
+    UANotificationOptionProvisional = (1 << 6),
 };
 
 /**
@@ -64,6 +65,16 @@ typedef NS_OPTIONS(NSUInteger, UAAuthorizedNotificationSettings) {
     UAAuthorizedNotificationSettingsCarPlay = (1 << 3),
     UAAuthorizedNotificationSettingsLockScreen = (1 << 4),
     UAAuthorizedNotificationSettingsNotificationCenter = (1 << 5)
+};
+
+/**
+ * Authorization status
+ */
+typedef NS_ENUM(NSInteger, UAAuthorizationStatus) {
+    UAAuthorizationStatusNotDetermined = 0,
+    UAAuthorizationStatusDenied,
+    UAAuthorizationStatusAuthorized,
+    UAAuthorizationStatusProvisional,
 };
 
 /**
@@ -110,6 +121,17 @@ static const UANotificationOptions UANotificationOptionNone =  0;
  * from this call should request a background task.
  */
 - (void)registrationFailed;
+
+/**
+ * Called when APNS registration completes.
+ *
+ * @param authorizedSettings The settings that were authorized at the time of registration.
+ * @param categories NSSet of the categories that were most recently registered.
+ * @param status The authorization status.
+ */
+- (void)notificationRegistrationFinishedWithAuthorizedSettings:(UAAuthorizedNotificationSettings)authorizedSettings
+                                                    categories:(NSSet *)categories
+                                                        status:(UAAuthorizationStatus)status;
 
 /**
  * Called when APNS registration completes.
@@ -371,7 +393,12 @@ static const UANotificationOptions UANotificationOptionNone =  0;
  * Note: this value reflects all the notification settings currently enabled in the
  * Settings app and does not take into account which options were originally requested.
  */
-@property (nonatomic, assign, readonly) UAAuthorizedNotificationSettings authorizedNotificationSettings;
+@property (nonatomic, readonly) UAAuthorizedNotificationSettings authorizedNotificationSettings;
+
+/**
+ * The current authorization status.
+ */
+@property (nonatomic, readonly) UAAuthorizationStatus authorizationStatus;
 
 /**
  * The current authorized notification options.

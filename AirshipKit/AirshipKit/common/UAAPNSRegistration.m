@@ -7,46 +7,95 @@
 
 @synthesize registrationDelegate;
 
--(void)getAuthorizedSettingsWithCompletionHandler:(void (^)(UAAuthorizedNotificationSettings))completionHandler NS_AVAILABLE_IOS(10.0) {
+-(void)getAuthorizedSettingsWithCompletionHandler:(void (^)(UAAuthorizedNotificationSettings, UAAuthorizationStatus))completionHandler NS_AVAILABLE_IOS(10.0) {
     [[UNUserNotificationCenter currentNotificationCenter] getNotificationSettingsWithCompletionHandler:^(UNNotificationSettings * _Nonnull notificationSettings) {
 
+        UAAuthorizationStatus authorizationStatus = [self uaStatus:notificationSettings.authorizationStatus];
         UAAuthorizedNotificationSettings authorizedSettings = UAAuthorizedNotificationSettingsNone;
 
-        if (notificationSettings.authorizationStatus != UNAuthorizationStatusAuthorized) {
-            completionHandler(authorizedSettings);
-            return;
+        if (notificationSettings.badgeSetting == UNNotificationSettingEnabled) {
+            authorizedSettings |= UAAuthorizedNotificationSettingsBadge;
         }
 
+#if !TARGET_OS_TV // Only badge settings are available on tvOS
+        if (notificationSettings.soundSetting == UNNotificationSettingEnabled) {
+            authorizedSettings |= UAAuthorizedNotificationSettingsSound;
+        }
 
-        if (notificationSettings.authorizationStatus == UNAuthorizationStatusAuthorized) {
+        if (notificationSettings.alertSetting == UNNotificationSettingEnabled) {
+            authorizedSettings |= UAAuthorizedNotificationSettingsAlert;
+        }
 
-            if (notificationSettings.badgeSetting == UNNotificationSettingEnabled) {
-                authorizedSettings |= UAAuthorizedNotificationSettingsBadge;
-            }
+        if (notificationSettings.carPlaySetting == UNNotificationSettingEnabled) {
+            authorizedSettings |= UAAuthorizedNotificationSettingsCarPlay;
+        }
 
-#if !TARGET_OS_TV
-            if (notificationSettings.soundSetting == UNNotificationSettingEnabled) {
-                authorizedSettings |= UAAuthorizedNotificationSettingsSound;
-            }
+        if (notificationSettings.lockScreenSetting == UNNotificationSettingEnabled) {
+            authorizedSettings |= UAAuthorizedNotificationSettingsLockScreen;
+        }
 
-            if (notificationSettings.alertSetting == UNNotificationSettingEnabled) {
-                authorizedSettings |= UAAuthorizedNotificationSettingsAlert;
-            }
-
-            if (notificationSettings.carPlaySetting == UNNotificationSettingEnabled) {
-                authorizedSettings |= UAAuthorizedNotificationSettingsCarPlay;
-            }
-
-            if (notificationSettings.lockScreenSetting == UNNotificationSettingEnabled) {
-                authorizedSettings |= UAAuthorizedNotificationSettingsLockScreen;
-            }
-
-            if (notificationSettings.notificationCenterSetting == UNNotificationSettingEnabled) {
-                authorizedSettings |= UAAuthorizedNotificationSettingsNotificationCenter;
-            }
+        if (notificationSettings.notificationCenterSetting == UNNotificationSettingEnabled) {
+            authorizedSettings |= UAAuthorizedNotificationSettingsNotificationCenter;
+        }
 #endif
-            completionHandler(authorizedSettings);
-        }}];
+        completionHandler(authorizedSettings, authorizationStatus);
+    }];
+}
+
+- (UAAuthorizationStatus)uaStatus:(UNAuthorizationStatus)status {
+    if (@available(iOS 12.0, tvOS 12.0, *)) {
+        if (status == UNAuthorizationStatusProvisional) {
+            return UAAuthorizationStatusProvisional;
+        }
+    }
+
+    if (status == UNAuthorizationStatusNotDetermined) {
+        return UAAuthorizationStatusNotDetermined;
+    } else if (status == UNAuthorizationStatusDenied) {
+        return UAAuthorizationStatusDenied;
+    } else if (status == UNAuthorizationStatusAuthorized) {
+        return UAAuthorizationStatusAuthorized;
+    }
+
+    UA_LWARN(@"Unable to handle UNAuthorizationStatus: %ld", (long)status);
+    return UAAuthorizationStatusNotDetermined;
+}
+
+- (UNAuthorizationOptions)normalizedOptions:(UANotificationOptions)uaOptions {
+    UNAuthorizationOptions unOptions = UNAuthorizationOptionNone;
+
+    if ((uaOptions & UANotificationOptionBadge) == UANotificationOptionBadge) {
+        unOptions |= UNAuthorizationOptionBadge;
+    }
+
+    if ((uaOptions & UANotificationOptionSound) == UANotificationOptionSound) {
+        unOptions |= UNAuthorizationOptionSound;
+    }
+
+    if ((uaOptions & UANotificationOptionAlert) == UANotificationOptionAlert) {
+        unOptions |= UNAuthorizationOptionAlert;
+    }
+
+    if ((uaOptions & UANotificationOptionCarPlay) == UANotificationOptionCarPlay) {
+        unOptions |= UNAuthorizationOptionCarPlay;
+    }
+
+    // These authorization options and settings are iOS 12+
+    if (@available(iOS 12.0, tvOS 12.0, *)) {
+        if ((uaOptions & UANotificationOptionCriticalAlert) == UANotificationOptionCriticalAlert) {
+            unOptions |= UNAuthorizationOptionCriticalAlert;
+        }
+
+        if ((uaOptions & UANotificationOptionProvidesAppNotificationSettings) == UANotificationOptionProvidesAppNotificationSettings) {
+            unOptions |= UNAuthorizationOptionProvidesAppNotificationSettings;
+        }
+
+        if ((uaOptions & UANotificationOptionProvisional) == UANotificationOptionProvisional) {
+            unOptions |= UNAuthorizationOptionProvisional;
+        }
+    }
+
+    return unOptions;
 }
 
 -(void)updateRegistrationWithOptions:(UANotificationOptions)options
@@ -73,15 +122,16 @@
     [[UNUserNotificationCenter currentNotificationCenter] setNotificationCategories:[NSSet setWithSet:normalizedCategories]];
 #endif
 
-    UNAuthorizationOptions normalizedOptions = (UNAuthorizationOptionAlert | UNAuthorizationOptionBadge | UNAuthorizationOptionSound | UNAuthorizationOptionCarPlay);
-    normalizedOptions &= options;
+    UNAuthorizationOptions normalizedOptions = [self normalizedOptions:options];
 
-    [[UNUserNotificationCenter currentNotificationCenter] requestAuthorizationWithOptions:normalizedOptions
-                                                                        completionHandler:^(BOOL granted, NSError * _Nullable error) {
-                                                                            [self getAuthorizedSettingsWithCompletionHandler:^(UAAuthorizedNotificationSettings authorizedSettings) {
-                                                                                [self.registrationDelegate notificationRegistrationFinishedWithAuthorizedSettings:authorizedSettings];
-                                                                            }];
-                                                                        }];
+    UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
+    
+    [center requestAuthorizationWithOptions:normalizedOptions
+                          completionHandler:^(BOOL granted, NSError * _Nullable error) {
+                              [self getAuthorizedSettingsWithCompletionHandler:^(UAAuthorizedNotificationSettings authorizedSettings, UAAuthorizationStatus status) {
+                                  [self.registrationDelegate notificationRegistrationFinishedWithAuthorizedSettings:authorizedSettings status:status];
+                              }];
+                          }];
 }
 
 @end
