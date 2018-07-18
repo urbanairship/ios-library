@@ -57,7 +57,7 @@
         return UAAuthorizationStatusAuthorized;
     }
 
-    UA_LDEBUG(@"Unable to handle UNAuthorizationStatus: %ld", (long)status);
+    UA_LWARN(@"Unable to handle UNAuthorizationStatus: %ld", (long)status);
     return UAAuthorizationStatusNotDetermined;
 }
 
