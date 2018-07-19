@@ -31,9 +31,11 @@
 - (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy))decisionHandler {
     WKNavigationType navigationType = navigationAction.navigationType;
     NSURLRequest *request = navigationAction.request;
+
+    NSURL *originatingURL = webView.URL;
     
     // This will be nil if we are not loading a Rich Push message
-    UAInboxMessage *message = [[UAirship inbox].messageList messageForBodyURL:request.mainDocumentURL];
+    UAInboxMessage *message = [[UAirship inbox].messageList messageForBodyURL:originatingURL];
     
     __block WKNavigationActionPolicy policyForThisURL = WKNavigationActionPolicyAllow;
     
@@ -43,9 +45,10 @@
             policyForThisURL = delegatePolicyForThisURL;
         }];
     }
-    
+
     // Always handle uairship urls
-    if ([self isWhiteListedAirshipRequest:request]) {
+    if ([self isWhiteListedAirshipRequest:request originatingURL:originatingURL]) {
+
         if ((navigationType == WKNavigationTypeLinkActivated) || (navigationType == WKNavigationTypeOther)) {
             UAWebViewCallData *data = [UAWebViewCallData callDataForURL:request.URL
                                                                delegate:strongDelegate
