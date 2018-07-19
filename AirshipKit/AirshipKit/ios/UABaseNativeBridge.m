@@ -225,10 +225,17 @@
     return NO;
 }
 
-- (BOOL)isWhiteListedAirshipRequest:(NSURLRequest *)request {
+- (BOOL)isAirshipRequest:(NSURLRequest *)request {
+    return [[request.URL scheme] isEqualToString:@"uairship"];
+}
+
+- (BOOL)isWhitelisted:(NSURL *)url {
+    return [[UAirship shared].whitelist isWhitelisted:url scope:UAWhitelistScopeJavaScriptInterface];
+}
+
+- (BOOL)isWhiteListedAirshipRequest:(NSURLRequest *)request originatingURL:(NSURL *)originatingURL {
     // uairship://command/[<arguments>][?<options>]
-    NSURL *requestURL = (request.mainDocumentURL) ? request.mainDocumentURL : request.URL;
-    return ([[request.URL scheme] isEqualToString:@"uairship"] && ([[UAirship shared].whitelist isWhitelisted:requestURL scope:UAWhitelistScopeJavaScriptInterface]));
+    return [self isAirshipRequest:request] && [self isWhitelisted:originatingURL];
 }
 
 @end
