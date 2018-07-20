@@ -3,6 +3,14 @@ iOS Changelog
 
 Migration Guides: Documentation/Migration
 
+Version 9.3.2 - July 20, 2018
+=============================
+Patch release to fix a problem with `uairship:` schema links in our native bridge. Any applications using links in the Message Center, Landing Pages or any other uses of our native bridge are encouraged to upgrade.
+
+Changes
+-------
+- Fix native bridge `uairship:` schema links.
+
 Version 9.3.1 - July 12, 2018
 =============================
 Patch release to fix a problem with in-app automation limits. Any applications using in-app automation or action automation are encouraged to upgrade.

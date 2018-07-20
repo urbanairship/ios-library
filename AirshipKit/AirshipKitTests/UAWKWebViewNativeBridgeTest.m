@@ -180,7 +180,7 @@
 - (void)testShouldStartLoadRunsActions {
     // Action request
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"uairship://run-basic-actions?test_action=hi"]];
-    request.mainDocumentURL = [NSURL URLWithString:@"https://foo.urbanairship.com/whatever.html"];;
+    NSURL *originatingURL = [NSURL URLWithString:@"https://foo.urbanairship.com/whatever.html"];;
     [[[self.mockWKNavigationAction stub] andReturn:request] request];
 
     // Create an inbox message
@@ -192,7 +192,9 @@
     [[[message stub] andReturnValue:@(YES)] unread];
 
     // Associate the URL with the mock message
-    [[[self.mockMessageList stub] andReturn:message] messageForBodyURL:request.mainDocumentURL];
+    [[[self.mockMessageList stub] andReturn:message] messageForBodyURL:originatingURL];
+
+    [[[self.mockWKWebView stub] andReturn:originatingURL] URL];
 
     // Expect the js delegate to be called with the correct call data
     [[self.mockJSActionDelegate expect] callWithData:[OCMArg checkWithBlock:^BOOL(id obj) {
@@ -223,7 +225,10 @@
 - (void)testShouldStartLoadRejectsActionRunsNotWhitelisted {
     // Action request
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"uairship://run-basic-actions?test_action=hi"]];
-    request.mainDocumentURL = [NSURL URLWithString:@"https://foo.notwhitelisted.com/whatever.html"];;
+    NSURL *originatingURL = [NSURL URLWithString:@"https://foo.notwhitelisted.com/whatever.html"];;
+
+    [[[self.mockWKWebView stub] andReturn:originatingURL] URL];
+
     [[[self.mockWKNavigationAction stub] andReturn:request] request];
 
     // Reject any calls to the JS Delegate
