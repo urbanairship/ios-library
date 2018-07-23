@@ -38,16 +38,6 @@
 @property (nonatomic, copy) NSArray *messages;
 
 /**
- * The view displayed when there are no messages
- */
-@property (nonatomic, weak) IBOutlet UIView *coverView;
-
-/**
- * Label displayed in the coverView
- */
-@property (nonatomic, weak) IBOutlet UILabel *coverLabel;
-
-/**
  * The default tint color to use when overriding the inherited tint.
  */
 @property (nonatomic, strong) UIColor *defaultTintColor;
@@ -157,8 +147,6 @@
 
     [self createToolbarItems];
 
-    self.coverLabel.text = UAMessageCenterLocalizedString(@"ua_empty_message_list");
-
     if (self.style.listColor) {
         self.messageTable.backgroundColor = self.style.listColor;
     }
@@ -230,6 +218,12 @@
 }
 
 - (void)refreshStateChanged:(UIRefreshControl *)sender {
+
+    // Nothing to refresh if there's no user
+    if (![UAirship inboxUser].isCreated) {
+        [sender endRefreshing];
+    }
+
     if (sender.refreshing) {
         self.refreshControlAnimating = YES;
         UA_WEAKIFY(self)
@@ -307,9 +301,6 @@
     } else {
         [self handlePreviouslySelectedIndexPathsAnimated:NO];
     }
-
-    // Cover up if necessary
-    self.coverView.hidden = self.messages.count > 0;
     
     // Hide message view if necessary
     if (self.collapsed && (self.messages.count == 0) && (self.messageViewController == self.navigationController.visibleViewController)) {
