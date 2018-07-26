@@ -7,6 +7,7 @@
 #import "UAInAppMessageResolutionEvent+Internal.h"
 #import "UANotificationContent.h"
 #import "UANotificationResponse.h"
+#import "UAInAppMessage+Internal.h"
 #import "UAInAppMessageScheduleInfo.h"
 #import "UAInAppMessageManager.h"
 #import "UAInAppMessageBannerDisplayContent.h"
@@ -253,17 +254,20 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
 
         builder.triggers = @[trigger];
 
+
         builder.end = message.expiry;
 
         UAInAppMessage *newMessage = [UAInAppMessage messageWithBuilderBlock:^(UAInAppMessageBuilder * _Nonnull builder) {
             builder.displayContent = displayContent;
             builder.extras = message.extra;
-            builder.identifier = message.identifier;
 
             // Allow the app to customize the message builder if necessary
             if (extender && [extender respondsToSelector:@selector(extendMessageBuilder:message:)]) {
                 [extender extendMessageBuilder:builder message:message];
             }
+
+            builder.identifier = message.identifier;
+            builder.source = UAInAppMessageSourceLegacyPush;
         }];
 
         builder.message = newMessage;

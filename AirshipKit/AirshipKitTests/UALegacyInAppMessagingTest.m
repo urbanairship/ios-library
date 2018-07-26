@@ -14,6 +14,7 @@
 #import "UAInAppMessageBannerDisplayContent.h"
 #import "UAScheduleInfo+Internal.h"
 #import "UASchedule+Internal.h"
+#import "UAInAppMessage+Internal.h"
 
 @interface UALegacyInAppMessagingTest : UABaseTest
 @property(nonatomic, strong) id mockAnalytics;
@@ -302,6 +303,32 @@
     }] scheduleMessageWithScheduleInfo:[OCMArg isKindOfClass:[UAInAppMessageScheduleInfo class]] completionHandler:[OCMArg any]];
 
     [self.inAppMessaging handleRemoteNotification:response.notificationContent];
+}
+
+/**
+ * Test the source is set on the in-app messages.
+ */
+- (void)testLegacySource {
+    NSDictionary *notification = @{
+                                   @"_": @"send ID",
+                                   @"_uamid": @"some message ID",
+                                   @"aps": self.aps,
+                                   @"com.urbanairship.in_app": self.payload
+                                   };
+
+    UANotificationResponse *response = [UANotificationResponse notificationResponseWithNotificationInfo:notification
+                                                                                       actionIdentifier:UANotificationDefaultActionIdentifier
+                                                                                           responseText:nil];
+
+    [[[self.mockInAppMessageManager expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:2];
+        UAInAppMessageScheduleInfo *info = (__bridge UAInAppMessageScheduleInfo *)arg;
+        XCTAssertEqual(info.message.source, UAInAppMessageSourceLegacyPush);
+    }] scheduleMessageWithScheduleInfo:[OCMArg isKindOfClass:[UAInAppMessageScheduleInfo class]] completionHandler:[OCMArg any]];
+
+    [self.inAppMessaging handleRemoteNotification:response.notificationContent];
+    [self.mockInAppMessageManager verify];
 }
 
 @end
