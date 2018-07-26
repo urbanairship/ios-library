@@ -29,6 +29,8 @@ CGFloat const CircleTransparency = 0.25;
     if (self) {
         self.userInteractionEnabled = YES;
 
+        self.accessibilityLabel = @"Dismiss";
+
         // Default to dark gray if provided color is nil
         self.dismissButtonColor = color ?: [UIColor darkGrayColor];
         self.closeIcon = [UIImage imageNamed:iconImageName];
