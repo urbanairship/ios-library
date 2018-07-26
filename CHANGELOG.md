@@ -3,6 +3,11 @@ iOS Changelog
 
 Migration Guides: Documentation/Migration
 
+Version 9.3.3 - July 26, 2018
+============================
+Patch release to fix an issue with legacy in-app message attribution. Apps
+using legacy in-app messages are encouraged to upgrade.
+
 Version 9.3.2 - July 20, 2018
 =============================
 Patch release to fix a problem with `uairship:` schema links in our native bridge. Any applications using links in the Message Center, Landing Pages or any other uses of our native bridge are encouraged to upgrade.
