@@ -462,6 +462,8 @@ double const DefaultModalAnimationDuration = 0.2;
 
     // will make opaque as part of animation when view appears
     self.view.alpha = 0;
+    // disable voiceover interactions with visible items beneath the modal
+    self.view.accessibilityViewIsModal = YES;
 
     if (self.displayFullScreen) {
         // Detect view type
