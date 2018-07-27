@@ -64,7 +64,8 @@ typedef NS_OPTIONS(NSUInteger, UAAuthorizedNotificationSettings) {
     UAAuthorizedNotificationSettingsAlert   = (1 << 2),
     UAAuthorizedNotificationSettingsCarPlay = (1 << 3),
     UAAuthorizedNotificationSettingsLockScreen = (1 << 4),
-    UAAuthorizedNotificationSettingsNotificationCenter = (1 << 5)
+    UAAuthorizedNotificationSettingsNotificationCenter = (1 << 5),
+    UAAuthorizedNotificationSettingsCriticalAlert = (1 << 6),
 };
 
 /**

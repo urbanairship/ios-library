@@ -88,6 +88,10 @@ static dispatch_once_t netInfoDispatchToken_;
     if ((UAAuthorizedNotificationSettingsNotificationCenter & authorizedSettings) > 0) {
         [notificationTypes addObject:@"notification_center"];
     }
+    
+    if ((UAAuthorizedNotificationSettingsCriticalAlert & authorizedSettings) > 0) {
+        [notificationTypes addObject:@"critical_alert"];
+    }
 #endif
 
     return notificationTypes;

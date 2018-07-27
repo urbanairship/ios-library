@@ -37,7 +37,14 @@
         if (notificationSettings.notificationCenterSetting == UNNotificationSettingEnabled) {
             authorizedSettings |= UAAuthorizedNotificationSettingsNotificationCenter;
         }
+        
+        if (@available(iOS 12.0, *)) {
+            if (notificationSettings.criticalAlertSetting == UNNotificationSettingEnabled) {
+                authorizedSettings |= UAAuthorizedNotificationSettingsCriticalAlert;
+            }
+        }
 #endif
+
         completionHandler(authorizedSettings, authorizationStatus);
     }];
 }
