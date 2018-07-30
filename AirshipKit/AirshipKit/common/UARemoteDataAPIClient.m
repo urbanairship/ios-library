@@ -31,7 +31,6 @@ NSString * const kUALastRemoteDataModifiedTime = @"UALastRemoteDataModifiedTime"
 }
 
 - (UADisposable *)fetchRemoteData:(UARemoteDataRefreshSuccessBlock)successBlock onFailure:(UARemoteDataRefreshFailureBlock)failureBlock {
-    UA_LDEBUG(@"started");
     UARequest *refreshRequest = [self requestToRefreshRemoteData];
     
     __block UARemoteDataRefreshSuccessBlock refreshRemoteDataSuccessBlock = successBlock;

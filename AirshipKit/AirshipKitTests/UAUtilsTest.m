@@ -413,4 +413,48 @@
     XCTAssertFalse([UAUtils isAlertingPush:soundNotification]);
 }
 
+- (void)testMergeFetchResults {
+    NSMutableArray *fetchResults;
+
+    // nil fetchResults
+    XCTAssertEqual([UAUtils mergeFetchResults:fetchResults], UIBackgroundFetchResultNoData);
+
+    // empty fetchResults
+    fetchResults = [NSMutableArray array];
+    XCTAssertEqual([UAUtils mergeFetchResults:fetchResults], UIBackgroundFetchResultNoData);
+    
+    // new data
+    fetchResults[0] = [NSNumber numberWithInt:UIBackgroundFetchResultNewData];
+    XCTAssertEqual([UAUtils mergeFetchResults:fetchResults], UIBackgroundFetchResultNewData);
+     
+    // no data
+    fetchResults[0] = [NSNumber numberWithInt:UIBackgroundFetchResultNoData];
+    XCTAssertEqual([UAUtils mergeFetchResults:fetchResults], UIBackgroundFetchResultNoData);
+
+    // failed
+    fetchResults[0] = [NSNumber numberWithInt:UIBackgroundFetchResultFailed];
+    XCTAssertEqual([UAUtils mergeFetchResults:fetchResults], UIBackgroundFetchResultFailed);
+
+    // new data & no data
+    fetchResults[0] = [NSNumber numberWithInt:UIBackgroundFetchResultNewData];
+    fetchResults[1] = [NSNumber numberWithInt:UIBackgroundFetchResultNoData];
+    XCTAssertEqual([UAUtils mergeFetchResults:fetchResults], UIBackgroundFetchResultNewData);
+
+    // new data & failed
+    fetchResults[0] = [NSNumber numberWithInt:UIBackgroundFetchResultNewData];
+    fetchResults[1] = [NSNumber numberWithInt:UIBackgroundFetchResultFailed];
+    XCTAssertEqual([UAUtils mergeFetchResults:fetchResults], UIBackgroundFetchResultNewData);
+
+    // no data & failed
+    fetchResults[0] = [NSNumber numberWithInt:UIBackgroundFetchResultNoData];
+    fetchResults[1] = [NSNumber numberWithInt:UIBackgroundFetchResultFailed];
+    XCTAssertEqual([UAUtils mergeFetchResults:fetchResults], UIBackgroundFetchResultFailed);
+
+    // new data, no data, failed
+    fetchResults[0] = [NSNumber numberWithInt:UIBackgroundFetchResultNewData];
+    fetchResults[1] = [NSNumber numberWithInt:UIBackgroundFetchResultNoData];
+    fetchResults[2] = [NSNumber numberWithInt:UIBackgroundFetchResultFailed];
+    XCTAssertEqual([UAUtils mergeFetchResults:fetchResults], UIBackgroundFetchResultNewData);
+}
+
 @end

@@ -15,7 +15,14 @@
 
 - (void)setUp {
     [super setUp];
-    self.remoteDataStore = [[UARemoteDataStore alloc] initWithConfig:[UAConfig config]];
+    self.remoteDataStore = [UARemoteDataStore storeWithName:@"UARemoteDataStoreTest." inMemory:YES];
+}
+
+- (void)tearDown {
+    [self.remoteDataStore shutDown];
+    [self.remoteDataStore waitForIdle];
+
+    [super tearDown];
 }
 
 - (void)testFirstRemoteData {

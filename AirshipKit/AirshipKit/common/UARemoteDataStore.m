@@ -5,23 +5,25 @@
 #import "UARemoteDataPayload+Internal.h"
 #import "UARemoteDataStorePayload+Internal.h"
 #import "UAirship+Internal.h"
-#import "UAConfig.h"
 
-#define kUACoreDataStoreName @"RemoteData-%@.sqlite"
 #define kUARemoteDataDBEntityName @"UARemoteDataStorePayload"
 
 @interface UARemoteDataStore()
 @property (nonatomic, copy) NSString *storeName;
 @property (strong, nonatomic) NSManagedObjectContext *managedContext;
+@property (nonatomic, assign) BOOL inMemory;
+@property (nonatomic, assign) BOOL finished;
 @end
 
 @implementation UARemoteDataStore
 
-- (instancetype)initWithConfig:(UAConfig *)config {
+- (instancetype)initWithName:(NSString *)storeName inMemory:(BOOL)inMemory {
     self = [super init];
     
     if (self) {
-        self.storeName = [NSString stringWithFormat:kUACoreDataStoreName, config.appKey];
+        self.storeName = storeName;
+        self.inMemory = inMemory;
+        self.finished = NO;
         
         NSURL *modelURL = [[UAirship resources] URLForResource:@"UARemoteData" withExtension:@"momd"];
         self.managedContext = [NSManagedObjectContext managedObjectContextForModelURL:modelURL
@@ -42,6 +44,14 @@
     return self;
 }
 
++ (instancetype)storeWithName:(NSString *)storeName inMemory:(BOOL)inMemory {
+    return [[self alloc] initWithName:storeName inMemory:inMemory];
+}
+
++ (instancetype)storeWithName:(NSString *)storeName {
+    return [[self alloc] initWithName:storeName inMemory:NO];
+}
+
 - (void)protectedDataAvailable {
     if (!self.managedContext.persistentStoreCoordinator.persistentStores.count) {
         [self.managedContext addPersistentSqlStore:self.storeName completionHandler:^(BOOL success, NSError *error) {
@@ -53,10 +63,18 @@
     }
 }
 
+- (void)safePerformBlock:(void (^)(BOOL))block {
+    @synchronized(self) {
+        if (!self.finished) {
+            [self.managedContext safePerformBlock:block];
+        }
+    }
+}
+
 - (void)fetchRemoteDataFromCacheWithPredicate:(nullable NSPredicate *)predicate
                    completionHandler:(void(^)(NSArray<UARemoteDataStorePayload *>*remoteDataPayloads))completionHandler {
     
-    [self.managedContext safePerformBlock:^(BOOL isSafe) {
+    [self safePerformBlock:^(BOOL isSafe) {
         if (!isSafe) {
             completionHandler(@[]);
             return;
@@ -86,7 +104,7 @@
 
 - (void)overwriteCachedRemoteDataWithResponse:(NSArray<UARemoteDataPayload *> *)remoteDataPayloads
                  completionHandler:(void(^)(BOOL))completionHandler {
-    [self.managedContext safePerformBlock:^(BOOL isSafe) {
+    [self safePerformBlock:^(BOOL isSafe) {
         if (!isSafe) {
             completionHandler(NO);
             return;
@@ -115,6 +133,16 @@
     remoteDataStorePayload.type = remoteDataPayload.type;
     remoteDataStorePayload.timestamp = remoteDataPayload.timestamp;
     remoteDataStorePayload.data = remoteDataPayload.data;
+}
+
+- (void)waitForIdle {
+    [self.managedContext performBlockAndWait:^{}];
+}
+
+- (void)shutDown {
+    @synchronized(self) {
+        self.finished = YES;
+    }
 }
 
 @end
