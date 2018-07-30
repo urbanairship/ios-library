@@ -1152,22 +1152,25 @@
     // Should add the DisplayInboxAction
     expectedActionPayload[kUADisplayInboxActionDefaultRegistryAlias] = @"message_id";
 
-    [[self.mockedActionRunner expect] runActionsWithActionValues:expectedActionPayload
-                                                       situation:UASituationBackgroundPush
-                                                        metadata:OCMOCK_ANY
-                                               completionHandler:OCMOCK_ANY];
+    [self expectRunActionsWithActionValues:expectedActionPayload];
+    [self expectHandleRemoteNotification];
+    [self expectRetrieveMessageListWithSuccessBlock];
 
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateInactive)] applicationState];
 
-
     // Call the integration
+    XCTestExpectation *fetchCompletionHandlerExpectation = [self expectationWithDescription:@"fetchCompletionHandler handler for didReceiveRemoteNotification should be called"];
     [UAAppIntegration application:self.mockedApplication
      didReceiveRemoteNotification:richPushNotification
            fetchCompletionHandler:^(UIBackgroundFetchResult result) {
+               [fetchCompletionHandlerExpectation fulfill];
            }];
 
     // Verify everything
+    [self waitForExpectationsWithTimeout:1 handler:nil];
     [self.mockedActionRunner verify];
+    [self.mockedPush verify];
+    [self.mockedMessageList verify];
 }
 
 /**
@@ -1175,31 +1178,31 @@
  * already available.
  */
 - (void)testPushActionsInboxActionAlreadyDefined {
-
     // Notification with a message ID and a Overlay Inbox Message Action
     NSDictionary *richPushNotification = @{@"_uamid": @"message_id", @"^mco": @"MESSAGE_ID",};
 
     // Expected actions payload
     NSMutableDictionary *expectedActionPayload = [NSMutableDictionary dictionaryWithDictionary:richPushNotification];
     
-    [[self.mockedActionRunner expect] runActionsWithActionValues:expectedActionPayload
-                                                       situation:UASituationBackgroundPush
-                                                        metadata:OCMOCK_ANY
-                                               completionHandler:OCMOCK_ANY];
-    
-    
+    [self expectRunActionsWithActionValues:expectedActionPayload];
+    [self expectHandleRemoteNotification];
+    [self expectRetrieveMessageListWithSuccessBlock];
+
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateInactive)] applicationState];
     
-    
     // Call the integration
+    XCTestExpectation *fetchCompletionHandlerExpectation = [self expectationWithDescription:@"fetchCompletionHandler handler for didReceiveRemoteNotification should be called"];
     [UAAppIntegration application:self.mockedApplication
      didReceiveRemoteNotification:richPushNotification
            fetchCompletionHandler:^(UIBackgroundFetchResult result) {
+               [fetchCompletionHandlerExpectation fulfill];
            }];
     
     // Verify everything
+    [self waitForExpectationsWithTimeout:1 handler:nil];
     [self.mockedActionRunner verify];
-    
+    [self.mockedPush verify];
+    [self.mockedMessageList verify];
 }
 
 /**
@@ -1225,4 +1228,43 @@
     [self.mockedPush verify];
     XCTAssertTrue(handlerCalled);
 }
+
+- (void)expectRunActionsWithActionValues:(NSMutableDictionary *)expectedActionPayload {
+    XCTestExpectation *runActionsExpectation = [self expectationWithDescription:@"runActionsWithActionValues should be called"];
+    [[[self.mockedActionRunner expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:5];
+        UAActionCompletionHandler completionHandler = (__bridge UAActionCompletionHandler)arg;
+        completionHandler([UAActionResult resultWithValue:nil]);
+        [runActionsExpectation fulfill];
+    }] runActionsWithActionValues:expectedActionPayload
+                        situation:UASituationBackgroundPush
+                         metadata:OCMOCK_ANY
+                completionHandler:OCMOCK_ANY];
+}
+
+- (void)expectHandleRemoteNotification {
+    // Expect UAPush to be called
+    XCTestExpectation *handleRemoteNotificationExpectation = [self expectationWithDescription:@"handleRemoteNotificationExpectation should be called"];
+    [[[[self.mockedPush expect] ignoringNonObjectArgs] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:4];
+        void (^completionHandler)(UIBackgroundFetchResult fetchResult) = (__bridge void (^)(UIBackgroundFetchResult result))arg;
+        completionHandler(UIBackgroundFetchResultNewData);
+        [handleRemoteNotificationExpectation fulfill];
+    }] handleRemoteNotification:OCMOCK_ANY foreground:YES completionHandler:OCMOCK_ANY];
+}
+
+- (void)expectRetrieveMessageListWithSuccessBlock {
+    // Expect a call to retrieve messages
+    XCTestExpectation *retrieveMessageListExpectation = [self expectationWithDescription:@"retrieveMessageListWithSuccessBlock should be called"];
+    [[[self.mockedMessageList expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:2];
+        UAInboxMessageListCallbackBlock successBlock = (__bridge UAInboxMessageListCallbackBlock)arg;
+        successBlock();
+        [retrieveMessageListExpectation fulfill];
+    }] retrieveMessageListWithSuccessBlock:OCMOCK_ANY withFailureBlock:OCMOCK_ANY];
+}
+
 @end

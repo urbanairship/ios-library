@@ -284,7 +284,7 @@
         if (fetchResult.intValue == UIBackgroundFetchResultNewData) {
             return UIBackgroundFetchResultNewData;
         } else if (fetchResult.intValue == UIBackgroundFetchResultFailed) {
-            mergedResult = fetchResult.intValue;
+            mergedResult = UIBackgroundFetchResultFailed;
         }
     }
 

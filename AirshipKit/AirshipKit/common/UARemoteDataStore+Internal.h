@@ -19,12 +19,23 @@ NS_ASSUME_NONNULL_BEGIN
 ///---------------------------------------------------------------------------------------
 
 /**
- * Initializes the remote data db manager with the given config.
+ * Factory method for remote data store
  *
- * @param config The Urban Airship config.
- * @return Initialized configuration
+ * @param storeName The store name.
+ * @param inMemory Whether to use an in-memory database. If `NO` the store will default to SQLite.
+ *
+ * @return Remote Data store.
  */
-- (instancetype)initWithConfig:(UAConfig *)config;
++ (instancetype)storeWithName:(NSString *)storeName inMemory:(BOOL)inMemory;
+
+/**
+ * Factory method for remote data store.
+ *
+ * @param storeName The store name.
+ *
+ * @return Remote Data store.
+ */
++ (instancetype)storeWithName:(NSString *)storeName;
 
 /**
  * Updates the remote data store with the array of remote data.
@@ -44,6 +55,16 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)fetchRemoteDataFromCacheWithPredicate:(nullable NSPredicate *)predicate
                    completionHandler:(void(^)(NSArray<UARemoteDataStorePayload *>*remoteDataPayloads))completionHandler;
+
+/**
+ * Waits for the store to become idle and then returns. Used by Unit Tests.
+ */
+- (void)waitForIdle;
+
+/**
+ * Shuts down the store and prevents any subsequent interaction with the managed context. Used by Unit Tests.
+ */
+- (void)shutDown;
 
 @end
 

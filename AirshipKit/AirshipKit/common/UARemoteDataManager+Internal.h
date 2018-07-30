@@ -1,34 +1,16 @@
 /* Copyright 2018 Urban Airship and Contributors */
 
-#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
 @class UADisposable;
 @class UARemoteDataPayload;
+@class UARemoteDataStore;
 @class UAPreferenceDataStore;
 @class UAConfig;
 
 NS_ASSUME_NONNULL_BEGIN
 
 typedef void (^UARemoteDataPublishBlock)(NSArray<UARemoteDataPayload *> *remoteDataArray);
-
-/**
- * Delegate protocol for receiving callbacks related to
- * Remote Data delivery and display.
- */
-@protocol UARemoteDataRefreshDelegate <NSObject>
-
-@optional
-
-///---------------------------------------------------------------------------------------
-/// @name Remote Data Refresh Delegate Optional Methods
-///---------------------------------------------------------------------------------------
-
-/**
- * Called when a refresh succeeds.
- */
-- (void)refreshComplete:(BOOL)success;
-
-@end
 
 @interface UARemoteDataManager : NSObject
 
@@ -47,32 +29,15 @@ typedef void (^UARemoteDataPublishBlock)(NSArray<UARemoteDataPayload *> *remoteD
 - (UADisposable *)subscribeWithTypes:(NSArray<NSString *> *)payloadTypes block:(UARemoteDataPublishBlock)publishBlock;
 
 ///---------------------------------------------------------------------------------------
-/// @name Properties & Internal Methods
+/// @name Internal Properties & Methods
 ///---------------------------------------------------------------------------------------
 
 /**
- * The delegate that should be notified when each refresh completes.,
- * as an object conforming to the UARemoteDataRefreshDelegate protocol.
- * NOTE: The delegate is not retained.
+ * Refresh the remote data from the cloud, with completion handler
+ *
+ * @param completionHandler Optional completion handler called when refresh is complete, with result.
  */
-@property (nonatomic, weak, nullable) id <UARemoteDataRefreshDelegate> refreshDelegate;
-
-/**
- * The minimum amount of time in seconds between remote data refreshes. Increase this
- * value to reduce the frequency of refreshes.
- */
-@property (nonatomic, assign) NSUInteger remoteDataRefreshInterval;
-
-/**
- * Refresh the remote data from the cloud
- */
-- (void)refresh;
-
-/**
- * Refresh the remote data from the cloud only if the time since the last refresh
- * is greater than the minimum foreground refresh interval.
- */
-- (void)foregroundRefresh;
+- (void)refreshWithCompletionHandler:(nullable void(^)(BOOL success))completionHandler;
 
 /**
  * Create the remote data manager.
@@ -81,7 +46,34 @@ typedef void (^UARemoteDataPublishBlock)(NSArray<UARemoteDataPayload *> *remoteD
  * @param dataStore A UAPreferenceDataStore to store persistent preferences
  * @return The remote data manager instance.
  */
-+ (nonnull instancetype)remoteDataManagerWithConfig:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore;
++ (instancetype)remoteDataManagerWithConfig:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore;
+
+///---------------------------------------------------------------------------------------
+/// @name Test Properties & Internal Methods
+///---------------------------------------------------------------------------------------
+
+/**
+ * The minimum amount of time in seconds between remote data refreshes. Increase this
+ * value to reduce the frequency of refreshes.
+ */
+@property (nonatomic, assign) NSUInteger remoteDataRefreshInterval;
+
+/**
+ * Refresh the remote data from the cloud only if the time since the last refresh
+ * is greater than the minimum foreground refresh interval.
+ *
+ * @param completionHandler Optional completion handler called when refresh is complete, with result.
+ */
+- (void)foregroundRefreshWithCompletionHandler:(nullable void(^)(BOOL success))completionHandler;
+
+/**
+ * Create the remote data manager.
+ *
+ * @param config The Urban Airship config.
+ * @param dataStore A UAPreferenceDataStore to store persistent preferences
+ * @return The remote data manager instance.
+ */
++ (instancetype)remoteDataManagerWithConfig:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore remoteDataStore:(UARemoteDataStore *)remoteDataStore;
 
 @end
 

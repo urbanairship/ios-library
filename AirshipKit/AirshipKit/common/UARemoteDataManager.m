@@ -7,6 +7,7 @@
 #import "UARemoteDataPayload+Internal.h"
 #import "UAPreferenceDataStore+Internal.h"
 
+NSString * const kUACoreDataStoreName = @"RemoteData-%@.sqlite";
 NSString * const UARemoteDataRefreshIntervalKey = @"remotedata.REFRESH_INTERVAL";
 NSString * const UARemoteDataLastRefreshTimeKey = @"remotedata.LAST_REFRESH_TIME";
 NSString * const UARemoteDataLastRefreshAppVersionKey = @"remotedata.LAST_REFRESH_APP_VERSION";
@@ -68,20 +69,13 @@ NSInteger const UARemoteDataRefreshIntervalDefault = 0;
 
 @implementation UARemoteDataManager
 
-+ (UARemoteDataManager *)remoteDataManagerWithConfig:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
-    UARemoteDataManager *remoteDataManager;
-    if (config && dataStore) {
-        remoteDataManager = [[UARemoteDataManager alloc] initWithConfig:config dataStore:dataStore];
-    }
-    return remoteDataManager;
-}
-
-- (UARemoteDataManager *)initWithConfig:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
+- (UARemoteDataManager *)initWithConfig:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore remoteDataStore:(UARemoteDataStore *)remoteDataStore {
     self = [super init];
     if (self) {
         self.dataStore = dataStore;
         self.subscriptions = [NSMutableArray array];
-        self.remoteDataStore = [[UARemoteDataStore alloc] initWithConfig:config];
+        self.remoteDataStore = remoteDataStore;
+        
         self.remoteDataAPIClient = [UARemoteDataAPIClient clientWithConfig:config dataStore:dataStore];
         
         // Register for foreground notifications
@@ -104,6 +98,15 @@ NSInteger const UARemoteDataRefreshIntervalDefault = 0;
     return self;
 }
 
++ (UARemoteDataManager *)remoteDataManagerWithConfig:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
+    UARemoteDataStore *remoteDataStore = [UARemoteDataStore storeWithName:[NSString stringWithFormat:kUACoreDataStoreName, config.appKey]];
+    return [self remoteDataManagerWithConfig:config dataStore:dataStore remoteDataStore:remoteDataStore];
+}
+
++ (UARemoteDataManager *)remoteDataManagerWithConfig:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore remoteDataStore:(UARemoteDataStore *)remoteDataStore {
+    return [[UARemoteDataManager alloc] initWithConfig:config dataStore:dataStore remoteDataStore:remoteDataStore];
+}
+
 - (NSUInteger)remoteDataRefreshInterval {
     // if key isn't in the data store, default it.
     if (![self.dataStore keyExists:UARemoteDataRefreshIntervalKey]) {
@@ -117,6 +120,34 @@ NSInteger const UARemoteDataRefreshIntervalDefault = 0;
 - (void)setRemoteDataRefreshInterval:(NSUInteger)remoteDataRefreshInterval {
     // save in the data store
    [self.dataStore setInteger:remoteDataRefreshInterval forKey:UARemoteDataRefreshIntervalKey];
+}
+
+- (nonnull UADisposable *)subscribeWithTypes:(nonnull NSArray<NSString *> *)payloadTypes block:(nonnull UARemoteDataPublishBlock)publishBlock {
+    // store type and block in subscription object
+    UARemoteDataSubscription *subscription = [UARemoteDataSubscription remoteDataSubscriptionWithTypes:payloadTypes publishBlock:publishBlock];
+    
+    // add object to array of subscriptions
+    @synchronized(self.subscriptions) {
+        [self.subscriptions addObject:subscription];
+    }
+    
+    UA_WEAKIFY(self);
+    UADisposable *disposable = [UADisposable disposableWithBlock:^{
+        UA_STRONGIFY(self);
+        @synchronized(subscription) {
+            subscription.publishBlock = nil;
+            @synchronized(self.subscriptions) {
+                [self.subscriptions removeObject:subscription];
+            }
+        }
+    }];
+    
+    
+    // give subscriber any remote data we have already received
+    [self fetchRemoteDataFromCacheAndNotifySubscriber:subscription];
+    
+    // return subscription object
+    return disposable;
 }
 
 #pragma mark -
@@ -143,45 +174,27 @@ NSInteger const UARemoteDataRefreshIntervalDefault = 0;
 
 // foregroundRefresh refreshes only if the time since the last refresh is greater than the minimum foreground refresh interval
 - (void)foregroundRefresh {
+    [self foregroundRefreshWithCompletionHandler:nil];
+}
+
+- (void)foregroundRefreshWithCompletionHandler:(nullable void(^)(BOOL success))completionHandler {
     NSDate *lastRefreshTime = ([self.dataStore objectForKey:UARemoteDataLastRefreshTimeKey])?:[NSDate distantPast];
     
     NSTimeInterval timeSinceLastRefresh = - [lastRefreshTime timeIntervalSinceNow];
     if (self.remoteDataRefreshInterval <= timeSinceLastRefresh) {
-        [self refresh];
+        [self refreshWithCompletionHandler:completionHandler];
     } else {
-        [self notifyRefreshDelegate:YES];
-    }
-}
-
-- (nonnull UADisposable *)subscribeWithTypes:(nonnull NSArray<NSString *> *)payloadTypes block:(nonnull UARemoteDataPublishBlock)publishBlock {
-    // store type and block in subscription object
-    UARemoteDataSubscription *subscription = [UARemoteDataSubscription remoteDataSubscriptionWithTypes:payloadTypes publishBlock:publishBlock];
-
-    // add object to array of subscriptions
-    @synchronized(self.subscriptions) {
-        [self.subscriptions addObject:subscription];
-    }
-    
-    UA_WEAKIFY(self);
-    UADisposable *disposable = [UADisposable disposableWithBlock:^{
-        UA_STRONGIFY(self);
-        @synchronized(subscription) {
-            subscription.publishBlock = nil;
-            @synchronized(self.subscriptions) {
-                [self.subscriptions removeObject:subscription];
-            }
+        if (completionHandler) {
+            completionHandler(YES);
         }
-    }];
-    
-
-    // give subscriber any remote data we have already received
-    [self fetchRemoteDataFromCacheAndNotifySubscriber:subscription];
-
-    // return subscription object
-    return disposable;
+    }
 }
 
 - (void)refresh {
+    [self refreshWithCompletionHandler:nil];
+}
+
+- (void)refreshWithCompletionHandler:(void(^)(BOOL success))completionHandler {
     UA_WEAKIFY(self);
     [self.remoteDataAPIClient fetchRemoteData:^(NSUInteger statusCode, NSArray<UARemoteDataPayload *> *allRemoteDataFromCloud) {
         UA_STRONGIFY(self);
@@ -194,27 +207,30 @@ NSInteger const UARemoteDataRefreshIntervalDefault = 0;
                 UA_STRONGIFY(self);
                 if (!success) {
                     [self.remoteDataAPIClient clearLastModifiedTime];
-                    [self notifyRefreshDelegate:NO];
+                    if (completionHandler) {
+                        completionHandler(NO);
+                    }
                     return;
                 }
 
                 // notify remote data subscribers
                 [self notifySubscribersWithRemoteData:remoteDataPayloads completionHandler:^{
-                    [self notifyRefreshDelegate:YES];
+                    if (completionHandler) {
+                        completionHandler(YES);
+                    }
                 }];
             }];
         } else {
-            [self notifyRefreshDelegate:YES];
+            // statusCode == 304
+            if (completionHandler) {
+                completionHandler(YES);
+            }
         }
     } onFailure:^{
-        [self notifyRefreshDelegate:NO];
+        if (completionHandler) {
+            completionHandler(NO);
+        }
     }];
-}
-
-- (void)notifyRefreshDelegate:(BOOL)success {
-    if ([self.refreshDelegate respondsToSelector:@selector(refreshComplete:)]) {
-        [self.refreshDelegate refreshComplete:success];
-    }
 }
 
 /**

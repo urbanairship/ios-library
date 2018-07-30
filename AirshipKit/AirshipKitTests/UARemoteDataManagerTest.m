@@ -6,6 +6,7 @@
 #import "UARemoteDataManager+Internal.h"
 #import "UARemoteDataAPIClient+Internal.h"
 #import "UARemoteDataPayload+Internal.h"
+#import "UARemoteDataStore+Internal.h"
 
 #import "UAPreferenceDataStore+Internal.h"
 #import "UAConfig+Internal.h"
@@ -13,13 +14,26 @@
 
 #import "UABaseTest.h"
 
-@interface UATestPayload : NSObject
-@property (nonatomic, retain) NSString *type;
-@property (nonatomic, retain) NSDate *timestamp;
-@property (nonatomic, retain) NSDictionary *data;
+/**
+ * Used to test what UARemoteDataManager does when the cache fails underneath it.
+ */
+@interface UATestRemoteDataStore : UARemoteDataStore
+@property (nonatomic, assign) BOOL failOverwriteCachedRemoteDataWithResponse;
 @end
 
-@interface UARemoteDataManagerTest : UABaseTest <UARemoteDataRefreshDelegate>
+@implementation UATestRemoteDataStore
+
+- (void)overwriteCachedRemoteDataWithResponse:(NSArray<UARemoteDataPayload *> *)remoteDataPayloads completionHandler:(void (^)(BOOL))completionHandler {
+    if (self.failOverwriteCachedRemoteDataWithResponse) {
+        completionHandler(NO);
+    } else {
+        [super overwriteCachedRemoteDataWithResponse:remoteDataPayloads completionHandler:completionHandler];
+    }
+}
+
+@end
+
+@interface UARemoteDataManagerTest : UABaseTest
 
 @property (nonatomic, strong) id mockAPIClient;
 @property (nonatomic, strong) id mockAPIClientClass;
@@ -27,10 +41,10 @@
 
 @property (nonatomic, strong) UARemoteDataManager *remoteDataManager;
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
+@property (nonatomic, strong) UATestRemoteDataStore *testStore;
 
 @property (nonatomic, strong) NSArray<NSDictionary *> *remoteDataFromCloud;
-
-@property (nonatomic, strong) XCTestExpectation *refreshSucceededExpectation;
+@property (nonatomic, assign) BOOL expectAPIClientFetch;
 
 @end
 
@@ -50,12 +64,12 @@
     self.dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:@"uaremotedata.test."];
     [self.dataStore removeAll]; // start with an empty datastore
     
-    self.remoteDataManager = [UARemoteDataManager remoteDataManagerWithConfig:self.mockConfig dataStore:self.dataStore];
-    self.remoteDataManager.refreshDelegate = self;
+    self.testStore = [UATestRemoteDataStore storeWithName:@"UARemoteDataManagerTest." inMemory:YES];
+    self.remoteDataManager = [UARemoteDataManager remoteDataManagerWithConfig:self.mockConfig dataStore:self.dataStore remoteDataStore:self.testStore];
+    
+    self.expectAPIClientFetch = YES;
     
     XCTAssertNotNil(self.remoteDataManager);
-    
-    self.refreshSucceededExpectation = nil;
 }
 
 - (void)tearDown {
@@ -64,23 +78,10 @@
     
     [self.dataStore removeAll];
 
+    [self.testStore shutDown];
+    [self.testStore waitForIdle];
+    
     [super tearDown];
-}
-
-- (void)testNilConfig {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wnonnull"
-    __block UARemoteDataManager *nilManager = [UARemoteDataManager remoteDataManagerWithConfig:nil dataStore:self.dataStore];
-#pragma clang diagnostic pop
-    XCTAssertNil(nilManager);
-}
-
-- (void)testNilPreferenceDatastore {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wnonnull"
-    __block UARemoteDataManager *nilManager = [UARemoteDataManager remoteDataManagerWithConfig:self.mockConfig dataStore:nil];
-#pragma clang diagnostic pop
-    XCTAssertNil(nilManager);
 }
 
 - (void)testInvalidSubscription {
@@ -154,6 +155,79 @@
     // cleanup
     [subscription dispose];
 }
+
+// client (test) subscribes to remote data manager
+// simulate 504 failure from cloud
+- (void)testFailedRefresh {
+    // set up test data and expectations
+    NSMutableArray<UARemoteDataPayload *> *testPayloads = [[self createNPayloadsAndSetupTest:1 withHTTPStatus:504] mutableCopy];
+    
+    // subscribe to remote data manager and observe notifications
+    UADisposable *subscription = [self.remoteDataManager subscribeWithTypes:[testPayloads valueForKeyPath:@"type"] block:^(NSArray<UARemoteDataPayload *> * _Nonnull remoteDataArray) {
+        XCTFail("Callback should not fire on failed refresh");
+    }];
+    XCTAssertNotNil(subscription);
+    
+    // test
+    [self refresh];
+    
+    // verify
+    [self waitForExpectations];
+
+    // cleanup
+    [subscription dispose];
+}
+
+// client (test) subscribes to remote data manager
+// simulate API failure when fetching payload from cloud
+// payload should not be published to client
+- (void)testCacheFailedRefresh {
+    // simulate a failure when overwriting cache
+    self.testStore.failOverwriteCachedRemoteDataWithResponse = YES;
+    
+    // set up test data and expectations
+    NSMutableArray<UARemoteDataPayload *> *testPayloads = [[self createNPayloadsAndSetupTest:1] mutableCopy];
+    
+    // subscribe to remote data manager and observe notifications
+    UADisposable *subscription = [self.remoteDataManager subscribeWithTypes:[testPayloads valueForKeyPath:@"type"] block:^(NSArray<UARemoteDataPayload *> * _Nonnull remoteDataArray) {
+        XCTFail("Callback should not fire on failed refresh");
+    }];
+    XCTAssertNotNil(subscription);
+
+    // test
+    [self refresh];
+    
+    // verify
+    [self waitForExpectations];
+    
+    // cleanup
+    [subscription dispose];
+}
+
+// client (test) subscribes to remote data manager
+// simulate one payload from cloud
+// payload should be published to client
+- (void)testSuccessfulRefreshNoData {
+    // set up test data and expectations
+    [self createNPayloadsAndSetupTest:0 withHTTPStatus:200];
+    
+    // subscribe to remote data manager and observe notifications
+    NSArray<NSString *> *types = @[[[NSProcessInfo processInfo] globallyUniqueString]];
+    UADisposable *subscription = [self.remoteDataManager subscribeWithTypes:types block:^(NSArray<UARemoteDataPayload *> * _Nonnull remoteDataArray) {
+        XCTFail(@"Callback should not fire when there is no data");
+    }];
+    XCTAssertNotNil(subscription);
+    
+    // test
+    [self refresh];
+    
+    // verify
+    [self waitForExpectations];
+    
+    // cleanup
+    [subscription dispose];
+}
+
 
 // client (test) subscribes to remote data manager
 // simulate one payload from cloud
@@ -469,7 +543,7 @@
 // payloads should not be published to client
 - (void)testMultiplePayloadsPerTypeNoneHaveChanged {
     // setup
-    NSMutableArray<UARemoteDataPayload *> *testPayloads = [[self createNPayloadsAndSetupTest:2 andComment:@"First refresh"] mutableCopy];
+    NSMutableArray<UARemoteDataPayload *> *testPayloads = [[self createNPayloadsAndSetupTest:2] mutableCopy];
     // add a third payload that is of the same type as the first payload
     [testPayloads addObject:[self changePayload:testPayloads[0]]];
     [self replaceTestPayloads:testPayloads];
@@ -500,7 +574,7 @@
     [self waitForExpectationsWithComment:@"First refresh"];
     
     // setup with same payloads
-    [self setupTestWithPayloads:testPayloads andComment:@"Second refresh"];
+    [self setupTestWithPayloads:testPayloads];
     
     // test
     [self refresh];
@@ -521,7 +595,7 @@
 // only changed payloads for that single type should be published to client
 - (void)testMultiplePayloadsPerTypeOneOfMultiplePerTypeHasChanged {
     // setup
-    NSMutableArray<UARemoteDataPayload *> *testPayloads = [[self createNPayloadsAndSetupTest:2 andComment:@"First refresh"] mutableCopy];
+    NSMutableArray<UARemoteDataPayload *> *testPayloads = [[self createNPayloadsAndSetupTest:2] mutableCopy];
     // add a third payload that is of the same type as the first payload
     [testPayloads addObject:[self changePayload:testPayloads[0]]];
     [self replaceTestPayloads:testPayloads];
@@ -558,7 +632,7 @@
     
     // setup with changed payload
     testPayloads[0] = [self changePayload:testPayloads[2]];
-    [self setupTestWithPayloads:testPayloads andComment:@"Second refresh"];
+    [self setupTestWithPayloads:testPayloads];
     receivedDataExpectation = [self expectationWithDescription:[NSString stringWithFormat:@"Received remote data"]];
     
     // test
@@ -580,7 +654,7 @@
 // only changed payloads for that single type should be published to client
 - (void)testMultiplePayloadsPerTypeAllOfMultiplePerTypeHasChanged {
     // setup
-    NSMutableArray<UARemoteDataPayload *> *testPayloads = [[self createNPayloadsAndSetupTest:2 andComment:@"First refresh"] mutableCopy];
+    NSMutableArray<UARemoteDataPayload *> *testPayloads = [[self createNPayloadsAndSetupTest:2] mutableCopy];
     // add a third payload that is of the same type as the first payload
     [testPayloads addObject:[self changePayload:testPayloads[0]]];
     [self replaceTestPayloads:testPayloads];
@@ -620,7 +694,7 @@
     // setup with changed payload
     testPayloads[0] = [self changePayload:testPayloads[2]];
     testPayloads[2] = [self changePayload:testPayloads[2]];
-    [self setupTestWithPayloads:testPayloads andComment:@"Second refresh"];
+    [self setupTestWithPayloads:testPayloads];
     receivedDataExpectation = [self expectationWithDescription:[NSString stringWithFormat:@"Received remote data"]];
     
     // test
@@ -659,7 +733,7 @@
     receivedDataExpectation = [self expectationWithDescription:[NSString stringWithFormat:@"Received remote data of type: %@",testPayloads[0].type]];
     
     // test
-    [self refresh];
+    [self foregroundRefresh];
     
     // verify
     [self waitForExpectationsWithComment:@"First refresh"];
@@ -671,21 +745,24 @@
     
     // expect not to get data
     receivedDataExpectation = nil;
+    self.expectAPIClientFetch = NO;
     
     // test
-    [self refresh];
+    [self foregroundRefresh];
 
     // verify
     [self waitForExpectationsWithComment:@"Second refresh"];
 
     // setup
+    [self setupTestWithPayloads:testPayloads];
     self.remoteDataManager.remoteDataRefreshInterval = 0;
 
     // expect to get data from previous refresh
     receivedDataExpectation = [self expectationWithDescription:[NSString stringWithFormat:@"Received remote data of type: %@",testPayloads[0].type]];
+    self.expectAPIClientFetch = YES;
 
     // test
-    [self refresh];
+    [self foregroundRefresh];
     
     // verify
     [self waitForExpectationsWithComment:@"Third refresh"];
@@ -702,19 +779,15 @@
     // change the app version
     id mockedBundle = [self mockForClass:[NSBundle class]];
     [[[mockedBundle stub] andReturn:mockedBundle] mainBundle];
-//    [[[mockedBundle stub] andReturn:@"1.1.1"] objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
     [[[mockedBundle stub] andReturn:@{@"CFBundleShortVersionString": @"1.1.1"}] infoDictionary];
 
     // create a new remote data manager, which should cause a refresh due to the changed app version
-    self.refreshSucceededExpectation = [self expectationWithDescription:@"Refresh succeeded"];
     self.remoteDataManager = [UARemoteDataManager remoteDataManagerWithConfig:self.mockConfig dataStore:self.dataStore];
-    self.remoteDataManager.refreshDelegate = self;
     XCTAssertNotNil(self.remoteDataManager);
     
-    [self waitForExpectationsWithComment:@"First refresh"];
-
     // expect to get data
-    receivedDataExpectation = [self expectationWithDescription:[NSString stringWithFormat:@"Received remote data of type: %@",testPayloads[0].type]];
+    receivedDataExpectation = [self expectationWithDescription:[NSString stringWithFormat:@"First receipt of remote data of type: %@",testPayloads[0].type]];
+    receivedDataExpectation.assertForOverFulfill = NO; // NOTE: it's OK to be notified of data more than once
     
     UADisposable *subscription = [self.remoteDataManager subscribeWithTypes:[testPayloads valueForKeyPath:@"type"] block:^(NSArray<UARemoteDataPayload *> * _Nonnull remoteDataArray) {
         if (receivedDataExpectation) {
@@ -734,11 +807,11 @@
     // create a new remote data manager, which should not cause a refresh due to the unchanged app version
     [subscription dispose];
     self.remoteDataManager = [UARemoteDataManager remoteDataManagerWithConfig:self.mockConfig dataStore:self.dataStore];
-    self.remoteDataManager.refreshDelegate = self;
     XCTAssertNotNil(self.remoteDataManager);
 
     // expect to get data
-    receivedDataExpectation = [self expectationWithDescription:[NSString stringWithFormat:@"Received remote data of type: %@",testPayloads[0].type]];
+    receivedDataExpectation = [self expectationWithDescription:[NSString stringWithFormat:@"Second receipt remote data of type: %@",testPayloads[0].type]];
+    receivedDataExpectation.assertForOverFulfill = NO; // NOTE: it's OK to be notified of data more than once
     
     subscription = [self.remoteDataManager subscribeWithTypes:[testPayloads valueForKeyPath:@"type"] block:^(NSArray<UARemoteDataPayload *> * _Nonnull remoteDataArray) {
         if (receivedDataExpectation) {
@@ -776,41 +849,40 @@
 }
 
 - (NSArray<UARemoteDataPayload *> *)createNPayloadsAndSetupTest:(NSUInteger)numberOfPayloads {
-    return [self createNPayloadsAndSetupTest:numberOfPayloads andComment:nil];
+    return [self createNPayloadsAndSetupTest:numberOfPayloads withHTTPStatus:0];
 }
 
-- (NSArray<UARemoteDataPayload *> *)createNPayloadsAndSetupTest:(NSUInteger)numberOfPayloads andComment:(NSString *)comment {
+- (NSArray<UARemoteDataPayload *> *)createNPayloadsAndSetupTest:(NSUInteger)numberOfPayloads withHTTPStatus:(NSUInteger)statusCode {
     NSMutableArray *testPayloads = [NSMutableArray arrayWithCapacity:numberOfPayloads];
     UARemoteDataPayload *testPayload;
     for (NSUInteger index = 0;index < numberOfPayloads;index++) {
         testPayload = [[UARemoteDataPayload alloc] initWithType:[[NSProcessInfo processInfo] globallyUniqueString]
-                                                                           timestamp:[UAUtils parseISO8601DateFromString:@"2017-01-01T12:00:00"]
-                                                                                data:@{
-                                                                                       @"message_center":  @{
-                                                                                               @"background_color": @"0000FF",
-                                                                                               @"font": [[NSProcessInfo processInfo] globallyUniqueString]
-                                                                                               }
-                                                                                       }];
+                                                      timestamp:[UAUtils parseISO8601DateFromString:@"2017-01-01T12:00:00"]
+                                                           data:@{
+                                                                  @"message_center":  @{
+                                                                          @"background_color": @"0000FF",
+                                                                          @"font": [[NSProcessInfo processInfo] globallyUniqueString]
+                                                                          }
+                                                                  }];
         [testPayloads addObject:testPayload];
     }
     
-    [self setupTestWithPayloads:testPayloads andComment:comment];
+    [self setupTestWithPayloads:testPayloads withHTTPStatus:statusCode];
     
     return testPayloads;
 }
 
 - (void)setupTestWithPayloads:(NSArray<UARemoteDataPayload *> *)testPayloads {
-    [self setupTestWithPayloads:testPayloads andComment:nil];
+    return [self setupTestWithPayloads:testPayloads withHTTPStatus:0];
 }
 
-- (void)setupTestWithPayloads:(NSArray<UARemoteDataPayload *> *)testPayloads andComment:(NSString *)comment {
+- (void)setupTestWithPayloads:(NSArray<UARemoteDataPayload *> *)testPayloads withHTTPStatus:(NSUInteger)statusCode {
     NSArray *mockRemoteData = [self getMockedRemoteDataForPayloads:testPayloads];
-    [self setUpMockAPIClientToReturnHTTPStatus:0 andRemoteData:mockRemoteData];
+    [self setUpMockAPIClientToReturnHTTPStatus:statusCode andRemoteData:mockRemoteData];
 }
 
 - (void)replaceTestPayloads:(NSArray<UARemoteDataPayload *> *)testPayloads {
-    NSArray *mockRemoteData = [self getMockedRemoteDataForPayloads:testPayloads];
-    [self setUpMockAPIClientToReturnHTTPStatus:0 andRemoteData:mockRemoteData];
+    self.remoteDataFromCloud = [self getMockedRemoteDataForPayloads:testPayloads];
 }
 
 - (NSArray *)getMockedRemoteDataForPayloads:(NSArray<UARemoteDataPayload *> *)payloads {
@@ -829,7 +901,7 @@
     return mockedRemoteData;
 }
 
-- (void)setUpMockAPIClientToReturnHTTPStatus:(NSUInteger)statusCode andRemoteData:(NSArray<NSDictionary *> *)remoteData  {
+- (void)setUpMockAPIClientToReturnHTTPStatus:(NSUInteger)statusCode andRemoteData:(NSArray<NSDictionary *> *)remoteData {
     // a zero statusCode indicates that we should return 304 if the data is unchanged, 200 if it is changed
     if (statusCode == 0) {
         if ([[NSCountedSet setWithArray:self.remoteDataFromCloud] isEqualToSet:[NSCountedSet setWithArray:remoteData]]) {
@@ -841,7 +913,12 @@
     self.remoteDataFromCloud = remoteData;
     
     // safe to do set up expectation multiple times and no way to overwrite or cancel earlier ones
-    [[[self.mockAPIClient expect] andDo:^(NSInvocation *invocation) {
+    [[[self.mockAPIClient stub] andDo:^(NSInvocation *invocation) {
+        if (!self.expectAPIClientFetch) {
+            XCTFail(@"Expecting no APIClient fetch");
+            return;
+        }
+        
         void *arg;
         [invocation getArgument:&arg atIndex:2];
         UARemoteDataRefreshSuccessBlock successBlock = (__bridge UARemoteDataRefreshSuccessBlock) arg;
@@ -865,21 +942,21 @@
                 break;
             }
         }
-    }] fetchRemoteData:[OCMArg any] onFailure:[OCMArg any]];
+    }] fetchRemoteData:OCMOCK_ANY onFailure:OCMOCK_ANY];
 }
 
 - (void)refresh {
-    self.refreshSucceededExpectation = [self expectationWithDescription:@"Refresh succeeded"];
-    [self.remoteDataManager foregroundRefresh];
+    XCTestExpectation *expectation = [self expectationWithDescription:@"Refresh completion handler called"];
+    [self.remoteDataManager refreshWithCompletionHandler:^(BOOL success) {
+        [expectation fulfill];
+    }];
 }
 
-- (void)refreshComplete:(BOOL)success {
-    XCTAssertNotNil(self.refreshSucceededExpectation,@"Expect to have refresh succeeded expectation set before refresh is called");
-    if (success) {
-        [self.refreshSucceededExpectation fulfill];
-    } else {
-        XCTFail(@"Refresh failed");
-    }
+- (void)foregroundRefresh {
+    XCTestExpectation *expectation = [self expectationWithDescription:@"Refresh completion handler called"];
+    [self.remoteDataManager foregroundRefreshWithCompletionHandler:^(BOOL success) {
+        [expectation fulfill];
+    }];
 }
 
 - (void)waitForExpectations {
