@@ -42,7 +42,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Add tags to a tag group. To update the server, make all of your changes,
- * then call `updateTagGroupsForID:type:`.
+ * then call `updateTagGroupsForID:`.
  *
  * @param tags Array of tags to add.
  * @param tagGroupID Tag group ID string.
@@ -52,7 +52,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Remove tags from a tag group. To update the server, make all of your changes,
- * then call `updateTagGroupsForID:type:`.
+ * then call `updateTagGroupsForID:`.
  *
  * @param tags Array of tags to remove.
  * @param tagGroupID Tag group ID string.
@@ -62,7 +62,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Set tags for a tag group. To update the server, make all of your changes,
- * then call `updateTagGroupsForID:type:`.
+ * then call `updateTagGroupsForID:`.
  *
  * @param tags Array of tags to set.
  * @param tagGroupID Tag group ID string.

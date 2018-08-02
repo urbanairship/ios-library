@@ -9,6 +9,7 @@
 #import "UAirship+Internal.h"
 #import "UAConfig+Internal.h"
 #import "UAPreferenceDataStore+Internal.h"
+#import "UATagGroupsRegistrar+Internal.h"
 
 @interface UAUserTest : UABaseTest
 @property (nonatomic, strong) UAUser *user;
@@ -34,6 +35,9 @@
 
     self.dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:@"user.test."];
     [self.dataStore removeAll];
+
+    UATagGroupsRegistrar *tagGroupsRegistrar = [UATagGroupsRegistrar tagGroupsRegistrarWithConfig:self.config dataStore:self.dataStore];
+    self.push = [UAPush pushWithConfig:self.config dataStore:self.dataStore tagGroupsRegistrar:tagGroupsRegistrar];
 
     [[[NSBundle mainBundle] infoDictionary] setValue:@"someBundleID" forKey:@"CFBundleIdentifier"];
     self.mockKeychainUtils = [self mockForClass:[UAKeychainUtils class]];

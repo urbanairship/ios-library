@@ -1211,7 +1211,10 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     config.channelCreationDelayEnabled = NO;
 
     // Init push
-    self.push =  [UAPush pushWithConfig:config dataStore:self.dataStore tagGroupsRegistrar:self.mockTagGroupsRegistrar notificationCenter:self.notificationCenter];
+    self.push =  [UAPush pushWithConfig:config
+                              dataStore:self.dataStore
+                     tagGroupsRegistrar:self.mockTagGroupsRegistrar
+                     notificationCenter:self.notificationCenter];
 
     // Ensure channel creation enabled is YES
     XCTAssertTrue(self.push.channelCreationEnabled);
@@ -1262,7 +1265,6 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     }
 }
 
-
 - (void)testUpdateRegistrationForcefullyPushDisabled {
     self.push.userPushNotificationsEnabled = NO;
     self.push.deviceToken = validDeviceToken;
@@ -1281,6 +1283,24 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     
     XCTAssertNoThrow([self.mockChannelRegistrar verify],
                      @"updateRegistration should unregister with the channel registrar if push is disabled.");
+}
+
+- (void)testUpdateRegistrationInvalidBackgroundTask {
+    self.push.userPushNotificationsEnabled = YES;
+    self.push.deviceToken = validDeviceToken;
+
+    [[[self.mockApplication expect] andReturnValue:OCMOCK_VALUE((NSUInteger)UIBackgroundTaskInvalid)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
+
+    [[self.mockChannelRegistrar reject] registerWithChannelID:OCMOCK_ANY
+                                                channelLocation:OCMOCK_ANY
+                                                    withPayload:OCMOCK_ANY
+                                                     forcefully:YES];
+
+    [self.push updateChannelRegistrationForcefully:YES];
+
+
+    XCTAssertNoThrow([self.mockChannelRegistrar verify],
+                     @"updateRegistration should not call any registration without a valid background task");
 }
 
 /**
