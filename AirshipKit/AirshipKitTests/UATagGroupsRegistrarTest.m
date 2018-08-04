@@ -28,7 +28,10 @@
 
     self.operationQueue = [[NSOperationQueue alloc] init];
 
+    UATagGroupsMutationHistory *mutationHistory = [UATagGroupsMutationHistory historyWithDataStore:self.dataStore];
+
     self.registrar = [UATagGroupsRegistrar tagGroupsRegistrarWithDataStore:self.dataStore
+                                                           mutationHistory:mutationHistory
                                                                  apiClient:self.mockApiClient
                                                             operationQueue:self.operationQueue];
 }

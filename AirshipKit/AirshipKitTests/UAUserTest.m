@@ -36,7 +36,12 @@
     self.dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:@"user.test."];
     [self.dataStore removeAll];
 
-    UATagGroupsRegistrar *tagGroupsRegistrar = [UATagGroupsRegistrar tagGroupsRegistrarWithConfig:self.config dataStore:self.dataStore];
+    UATagGroupsMutationHistory *mutationHistory = [UATagGroupsMutationHistory historyWithDataStore:self.dataStore];
+
+    UATagGroupsRegistrar *tagGroupsRegistrar = [UATagGroupsRegistrar tagGroupsRegistrarWithConfig:self.config
+                                                                                        dataStore:self.dataStore
+                                                                                  mutationHistory:mutationHistory];
+    
     self.push = [UAPush pushWithConfig:self.config dataStore:self.dataStore tagGroupsRegistrar:tagGroupsRegistrar];
 
     [[[NSBundle mainBundle] infoDictionary] setValue:@"someBundleID" forKey:@"CFBundleIdentifier"];

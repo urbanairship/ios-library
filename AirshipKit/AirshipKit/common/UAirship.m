@@ -27,6 +27,7 @@
 #import "UARemoteConfigManager+Internal.h"
 #import "UAComponentDisabler+Internal.h"
 #import "UATagGroupsRegistrar+Internal.h"
+#import "UATagGroupsMutationHistory+Internal.h"
 
 #if !TARGET_OS_TV
 #import "UAInbox+Internal.h"
@@ -104,7 +105,12 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         self.applicationMetrics = [UAApplicationMetrics applicationMetricsWithDataStore:dataStore];
         self.actionRegistry = [UAActionRegistry defaultRegistry];
 
-        UATagGroupsRegistrar *tagGroupsRegistrar = [UATagGroupsRegistrar tagGroupsRegistrarWithConfig:config dataStore:dataStore];
+        UATagGroupsMutationHistory *tagGroupsMutationHistory = [UATagGroupsMutationHistory historyWithDataStore:dataStore];
+
+        UATagGroupsRegistrar *tagGroupsRegistrar = [UATagGroupsRegistrar tagGroupsRegistrarWithConfig:config
+                                                                                            dataStore:dataStore
+                                                                                      mutationHistory:tagGroupsMutationHistory];
+
         self.sharedPush = [UAPush pushWithConfig:config dataStore:dataStore tagGroupsRegistrar:tagGroupsRegistrar];
         self.sharedNamedUser = [UANamedUser namedUserWithPush:self.sharedPush config:config dataStore:dataStore tagGroupsRegistrar:tagGroupsRegistrar];
 
