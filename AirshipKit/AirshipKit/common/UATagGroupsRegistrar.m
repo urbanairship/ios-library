@@ -31,6 +31,9 @@ typedef void (^UATagGroupsMutator)(NSArray *, NSString *);
  */
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 
+/**
+ * The mutation history.
+ */
 @property (nonatomic, strong) UATagGroupsMutationHistory *mutationHistory;
 
 @end
@@ -55,7 +58,7 @@ typedef void (^UATagGroupsMutator)(NSArray *, NSString *);
         self.operationQueue = operationQueue;
         self.operationQueue.maxConcurrentOperationCount = 1;
     }
-    
+
     return self;
 }
 
@@ -128,10 +131,10 @@ typedef void (^UATagGroupsMutator)(NSArray *, NSString *);
         }
 
         // collapse mutations
-        [self.mutationHistory collapseHistory:type];
+        [self.mutationHistory collapsePendingMutations:type];
         
         // peek at top mutation
-        UATagGroupsMutation *mutation = [self.mutationHistory peekMutation:type];
+        UATagGroupsMutation *mutation = [self.mutationHistory peekPendingMutation:type];
         
         if (!mutation) {
             // no upload work to do - end background task, if necessary, and finish operation
@@ -144,18 +147,23 @@ typedef void (^UATagGroupsMutator)(NSArray *, NSString *);
         void (^apiCompletionBlock)(NSUInteger) = ^void(NSUInteger status) {
             UA_STRONGIFY(self);
             if (status >= 200 && status <= 299) {
-                // success - pop uploaded mutation and try to upload next mutation
-                [self.mutationHistory popMutation:type];
+                // Success - pop uploaded mutation and store the transaction record
+                UATagGroupsMutation *mutation = [self.mutationHistory popPendingMutation:type];
+
+                [self.mutationHistory addSentMutation:mutation date:[NSDate date]];
+
+                // Try to upload more mutations as long as the operation hasn't been canceled
                 if (operation.isCancelled) {
                     [self endBackgroundTask:backgroundTaskIdentifier];
                 } else {
-                    // upload next tag group mutation
                     [self uploadNextTagGroupMutationForID:identifier backgroundTaskIdentifier:backgroundTaskIdentifier type:type];
                 }
             } else if (status == 400 || status == 403) {
-                [self.mutationHistory popMutation:type];
+                // Unrecoverable failure - pop mutation and end the task
+                [self.mutationHistory popPendingMutation:type];
                 [self endBackgroundTask:backgroundTaskIdentifier];
             }
+
             [operation finish];
         };
         
@@ -195,7 +203,7 @@ typedef void (^UATagGroupsMutator)(NSArray *, NSString *);
 
         // rest runs on the operation queue
         [self.operationQueue addOperation:[NSBlockOperation blockOperationWithBlock:^{
-            [self.mutationHistory addMutation:mutation type:type];
+            [self.mutationHistory addPendingMutation:mutation type:type];
         }]];
     };
 }
@@ -239,7 +247,7 @@ typedef void (^UATagGroupsMutator)(NSArray *, NSString *);
 - (void)clearAllPendingTagUpdates:(UATagGroupsType) type {
     [self.operationQueue cancelAllOperations];
     [self.operationQueue addOperation:[NSBlockOperation blockOperationWithBlock:^{
-        [self.mutationHistory clearHistory:type];
+        [self.mutationHistory clearPendingMutations:type];
     }]];
 }
 

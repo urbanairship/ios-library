@@ -20,9 +20,9 @@
     [coder encodeObject:self.setTagGroups forKey:kUATagGroupsSetKey];
 }
 
-- (id)initWithCoder:(NSCoder *)coder;
-{
+- (id)initWithCoder:(NSCoder *)coder {
     self = [super init];
+    
     if (self) {
         self.addTagGroups = [coder decodeObjectForKey:kUATagGroupsAddKey];
         self.removeTagGroups = [coder decodeObjectForKey:kUATagGroupsRemoveKey];
@@ -65,7 +65,6 @@
     return mutation;
 }
 
-
 + (instancetype)mutationWithAddTags:(NSDictionary *)addTags
                          removeTags:(NSDictionary *)removeTags {
 
@@ -90,6 +89,46 @@
     }
 
     return [payload copy];
+}
+
+- (NSMutableSet *)mutableTagSet:(id)collection {
+    return [collection isKindOfClass:[NSSet class]] ? [(NSArray *)collection mutableCopy] : [NSMutableSet setWithArray:(NSArray *)collection];
+}
+
+- (NSDictionary *)applyToTagGroups:(NSDictionary *)tagGroups {
+    NSMutableDictionary *tagGroupsCopy = [tagGroups mutableCopy];
+
+    if (self.addTagGroups.count) {
+        for (NSString *group in self.addTagGroups) {
+            NSMutableSet *tagSet = [self mutableTagSet:tagGroupsCopy[group]];
+
+            for (NSString *tag in self.addTagGroups[group]) {
+                [tagSet addObject:tag];
+            }
+
+            tagGroupsCopy[group] = tagSet;
+        }
+    }
+
+    if (self.removeTagGroups.count) {
+        for (NSString *group in self.removeTagGroups) {
+            NSMutableSet *tagSet = [self mutableTagSet:tagGroupsCopy[group]];
+
+            for (NSString *tag in self.removeTagGroups[group]) {
+                [tagSet removeObject:tag];
+            }
+
+            tagGroupsCopy[group] = tagSet;
+        }
+    }
+
+    if (self.setTagGroups.count) {
+        for (NSString *group in self.setTagGroups) {
+            tagGroupsCopy[group] = self.setTagGroups[group];
+        }
+    }
+
+    return tagGroupsCopy;
 }
 
 + (NSArray<UATagGroupsMutation *> *)collapseMutations:(NSArray<UATagGroupsMutation *> *)mutations {

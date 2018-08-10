@@ -1,6 +1,5 @@
 /* Copyright 2018 Urban Airship and Contributors */
 
-
 #import <Foundation/Foundation.h>
 #import "UAAPIClient+Internal.h"
 #import "UATagGroupsType+Internal.h"
