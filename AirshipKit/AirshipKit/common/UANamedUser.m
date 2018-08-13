@@ -46,11 +46,10 @@ NSString *const UANamedUserLastUpdatedTokenKey = @"UANamedUserLastUpdatedToken";
     return self;
 }
 
-+ (instancetype) namedUserWithPush:(UAPush *)push config:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore  {
-    return [[UANamedUser alloc] initWithPush:push config:config dataStore:dataStore tagGroupsRegistrar:[UATagGroupsRegistrar namedUserTagGroupsRegistrarWithConfig:config dataStore:dataStore]];
-}
-
-+ (instancetype) namedUserWithPush:(UAPush *)push config:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore tagGroupsRegistrar:(nonnull UATagGroupsRegistrar *)tagGroupsRegistrar  {
++ (instancetype) namedUserWithPush:(UAPush *)push
+                            config:(UAConfig *)config
+                         dataStore:(UAPreferenceDataStore *)dataStore
+                tagGroupsRegistrar:(nonnull UATagGroupsRegistrar *)tagGroupsRegistrar  {
     return [[UANamedUser alloc] initWithPush:push config:config dataStore:dataStore tagGroupsRegistrar:tagGroupsRegistrar];
 }
 
@@ -107,7 +106,7 @@ NSString *const UANamedUserLastUpdatedTokenKey = @"UANamedUserLastUpdatedToken";
         [self update];
 
         // Clear pending tag group mutations
-        [self.tagGroupsRegistrar clearAllPendingTagUpdates];
+        [self.tagGroupsRegistrar clearAllPendingTagUpdates:UATagGroupsTypeNamedUser];
     } else {
         UA_LDEBUG(@"NamedUser - Skipping update. Named user ID trimmed already matches existing named user: %@", self.identifier);
     }
@@ -167,15 +166,15 @@ NSString *const UANamedUserLastUpdatedTokenKey = @"UANamedUserLastUpdatedToken";
 
 
 - (void)addTags:(NSArray *)tags group:(NSString *)tagGroupID {
-    [self.tagGroupsRegistrar addTags:tags group:tagGroupID];
+    [self.tagGroupsRegistrar addTags:tags group:tagGroupID type:UATagGroupsTypeNamedUser];
 }
 
 - (void)removeTags:(NSArray *)tags group:(NSString *)tagGroupID {
-    [self.tagGroupsRegistrar removeTags:tags group:tagGroupID];
+    [self.tagGroupsRegistrar removeTags:tags group:tagGroupID type:UATagGroupsTypeNamedUser];
 }
 
 - (void)setTags:(NSArray *)tags group:(NSString *)tagGroupID {
-    [self.tagGroupsRegistrar setTags:tags group:tagGroupID];
+    [self.tagGroupsRegistrar setTags:tags group:tagGroupID type:UATagGroupsTypeNamedUser];
 }
 
 - (void)updateTags {
@@ -184,7 +183,7 @@ NSString *const UANamedUserLastUpdatedTokenKey = @"UANamedUserLastUpdatedToken";
         return;
     }
     
-    [self.tagGroupsRegistrar updateTagGroupsForID:self.identifier];
+    [self.tagGroupsRegistrar updateTagGroupsForID:self.identifier type:UATagGroupsTypeNamedUser];
 }
 
 - (void)channelCreated:(NSNotification *)notification {
