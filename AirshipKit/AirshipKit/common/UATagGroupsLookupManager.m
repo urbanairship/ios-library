@@ -116,7 +116,7 @@ NSString * const UATagGroupsLookupManagerErrorDomain = @"com.urbanairship.tag_gr
                                      }];
 }
 
-- (void)getTagGroups:(UATagGroups *)requestedTagGroups completionHandler:(void(^)(UATagGroups *tagGroups, NSError *error)) completionHandler {
+- (void)getTagGroups:(UATagGroups *)requestedTagGroups completionHandler:(void(^)(UATagGroups  * _Nullable tagGroups, NSError *error)) completionHandler {
     __block NSError *error;
 
     if (!self.componentEnabled) {
