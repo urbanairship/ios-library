@@ -6,6 +6,7 @@
 #import "UAPush.h"
 #import "UATagGroupsLookupAPIClient+Internal.h"
 #import "UATagGroupsMutationHistory+Internal.h"
+#import "UATestDate.h"
 
 @interface UATagGroupsLookupManagerTest : UABaseTest
 @property (nonatomic, strong) UATagGroupsLookupManager *lookupManager;
@@ -16,6 +17,7 @@
 @property (nonatomic, strong) id mockCache;
 @property (nonatomic, strong) id mockMutationHistory;
 @property (nonatomic, strong) UATagGroups *requestedTagGroups;
+@property (nonatomic, strong) UATestDate *testDate;
 @end
 
 @implementation UATagGroupsLookupManagerTest
@@ -24,7 +26,10 @@
     [super setUp];
     self.requestedTagGroups = [UATagGroups tagGroupsWithTags:@{@"foo": @[@"bar", @"baz"]}];
     self.dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:@"UATagGroupsLookupManagerTest"];
+    self.testDate = [[UATestDate alloc] init];
+
     [self setupMocks:@"channel" channelTagsEnabled:NO];
+
     self.lookupManager.componentEnabled = YES;
 }
 
@@ -47,9 +52,10 @@
     [[[self.mockPush stub] andReturnValue:@(enabled)] isChannelTagRegistrationEnabled];
 
     self.lookupManager = [UATagGroupsLookupManager lookupManagerWithAPIClient:self.mockAPIClient
-                                                                    dataStore:self.dataStore
-                                                                        cache:self.mockCache
-                                                              mutationHistory:self.mockMutationHistory];
+                                                                     dataStore:self.dataStore
+                                                                         cache:self.mockCache
+                                                               mutationHistory:self.mockMutationHistory
+                                                                   currentTime:self.testDate];
 }
 
 - (void)testGetTagsComponentDisabled {
@@ -119,7 +125,10 @@
     [[[self.mockCache expect] andReturn:cacheCreationDate] creationDate];
     [[[self.mockCache expect] andReturnValue:@(NO)] needsRefresh];
 
-    [[[[self.mockMutationHistory expect] ignoringNonObjectArgs] andReturn:tagGroupsWithLocalMutations] applyHistory:response.tagGroups maxAge:0];
+    self.testDate.absoluteTime = [NSDate date];
+    NSTimeInterval expectedMaxAge = [[self.testDate now] timeIntervalSinceDate:cacheCreationDate] + self.lookupManager.preferLocalTagDataTime;
+
+    [[[self.mockMutationHistory expect] andReturn:tagGroupsWithLocalMutations] applyHistory:response.tagGroups maxAge:expectedMaxAge];
 
     [[self.mockAPIClient reject] lookupTagGroupsWithChannelID:OCMOCK_ANY requestedTagGroups:OCMOCK_ANY cachedResponse:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
@@ -151,7 +160,6 @@
                                                                      lastModifiedTimestamp:@"2018-03-02T22:56:09"];
 
     UATagGroups *tagGroupsWithLocalMutations = [UATagGroups tagGroupsWithTags:@{@"foo": @[@"bar", @"baz"], @"bleep" : @[@"bloop"]}];
-    [[[[self.mockMutationHistory expect] ignoringNonObjectArgs] andReturn:tagGroupsWithLocalMutations] applyHistory:response.tagGroups maxAge:0];
 
     XCTestExpectation *apiFetchCompleted = [self expectationWithDescription:@"API fetch completed"];
 
@@ -165,9 +173,15 @@
         [apiFetchCompleted fulfill];
     }] lookupTagGroupsWithChannelID:OCMOCK_ANY requestedTagGroups:OCMOCK_ANY cachedResponse:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
-    [[[self.mockCache expect] andReturn:[NSDate date]] creationDate];
+    NSDate *cacheCreationDate = [NSDate date];
+
+    [[[self.mockCache expect] andReturn:cacheCreationDate] creationDate];
     [[[self.mockCache expect] andReturn:response] response];
     [[[self.mockCache expect] andReturnValue:@(NO)] isStale];
+
+    self.testDate.absoluteTime = [NSDate date];
+    NSTimeInterval expectedMaxAge = [[self.testDate now] timeIntervalSinceDate:cacheCreationDate] + self.lookupManager.preferLocalTagDataTime;
+    [[[self.mockMutationHistory expect] andReturn:tagGroupsWithLocalMutations] applyHistory:response.tagGroups maxAge:expectedMaxAge];
 
     UATagGroups *expectedTagGroups = [UATagGroups tagGroupsWithTags:@{@"foo" : @[@"bar", @"baz"]}];
 
@@ -198,9 +212,6 @@
     [[[self.mockCache expect] andReturn:[NSDate distantPast]] creationDate];
     [[[self.mockCache expect] andReturnValue:@(YES)] needsRefresh];
 
-    UATagGroups *tagGroupsWithLocalMutations = [UATagGroups tagGroupsWithTags:@{@"foo": @[@"bar", @"baz"], @"bleep" : @[@"bloop"]}];
-    [[[[self.mockMutationHistory expect] ignoringNonObjectArgs] andReturn:tagGroupsWithLocalMutations] applyHistory:response.tagGroups maxAge:0];
-
     XCTestExpectation *apiFetchCompleted = [self expectationWithDescription:@"API fetch completed"];
 
     [[self.mockCache expect] setResponse:response];
@@ -214,8 +225,15 @@
         [apiFetchCompleted fulfill];
     }] lookupTagGroupsWithChannelID:OCMOCK_ANY requestedTagGroups:OCMOCK_ANY cachedResponse:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
-    [[[self.mockCache expect] andReturn:[NSDate date]] creationDate];
+    NSDate *cacheCreationDate = [NSDate date];
+
+    [[[self.mockCache expect] andReturn:cacheCreationDate] creationDate];
     [[[self.mockCache expect] andReturnValue:@(NO)] isStale];
+
+    self.testDate.absoluteTime = [NSDate date];
+    NSTimeInterval expectedMaxAge = [[self.testDate now] timeIntervalSinceDate:cacheCreationDate] + self.lookupManager.preferLocalTagDataTime;
+    UATagGroups *tagGroupsWithLocalMutations = [UATagGroups tagGroupsWithTags:@{@"foo": @[@"bar", @"baz"], @"bleep" : @[@"bloop"]}];
+    [[[self.mockMutationHistory expect] andReturn:tagGroupsWithLocalMutations] applyHistory:response.tagGroups maxAge:expectedMaxAge];
 
     UATagGroups *expectedTagGroups = [UATagGroups tagGroupsWithTags:@{@"foo" : @[@"bar", @"baz"]}];
 

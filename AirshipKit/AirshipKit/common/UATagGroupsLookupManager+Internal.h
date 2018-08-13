@@ -6,6 +6,7 @@
 #import "UATagGroupsLookupAPIClient+Internal.h"
 #import "UATagGroupsLookupResponseCache+Internal.h"
 #import "UATagGroupsMutationHistory+Internal.h"
+#import "UADate+Internal.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -40,17 +41,24 @@ extern NSString * const UATagGroupsLookupManagerErrorDomain;
 @interface UATagGroupsLookupManager : UAComponent
 
 /**
+ * The time interval to prefer local tag data over API responses. Defaults to 10 minutes.
+ */
+@property (nonatomic, assign) NSTimeInterval preferLocalTagDataTime;
+
+/**
  * UATagGroupsLookupManager class factory method.
  *
  * @param config An instance of UAConfig.
  * @param dataStore A data store.
  * @param cache A lookup response cache.
  * @param mutationHistory The tag groups mutation history.
+ * @param currentTime A UADate to be used for getting the current time.
  */
 + (instancetype)lookupManagerWithConfig:(UAConfig *)config
                               dataStore:(UAPreferenceDataStore *)dataStore
                                   cache:(UATagGroupsLookupResponseCache *)cache
-                        mutationHistory:(UATagGroupsMutationHistory *)mutationHistory;
+                        mutationHistory:(UATagGroupsMutationHistory *)mutationHistory
+                            currentTime:(UADate *)currentTime;
 /**
  * UATagGroupsLookupManager class factory method.
  *
@@ -58,11 +66,14 @@ extern NSString * const UATagGroupsLookupManagerErrorDomain;
  * @param dataStore A data store.
  * @param cache A lookup response cache.
  * @param mutationHistory The tag groups mutation history.
+ * @param currentTime A UADate to be used for getting the current time.
  */
 + (instancetype)lookupManagerWithAPIClient:(UATagGroupsLookupAPIClient *)client
                                  dataStore:(UAPreferenceDataStore *)dataStore
                                      cache:(UATagGroupsLookupResponseCache *)cache
-                           mutationHistory:(UATagGroupsMutationHistory *)mutationHistory;
+                           mutationHistory:(UATagGroupsMutationHistory *)mutationHistory
+                               currentTime:(UADate *)currentTime;
+
 
 /**
  * Performs a tag groups lookup.

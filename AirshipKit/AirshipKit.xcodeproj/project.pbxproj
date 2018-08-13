@@ -75,6 +75,7 @@
 		3C89DD4C2120BBA800864358 /* UATagGroups.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C89DD482120BBA800864358 /* UATagGroups.m */; };
 		3C89DD4D2120BBA800864358 /* UATagGroups.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C89DD482120BBA800864358 /* UATagGroups.m */; };
 		3C89DD4E2120BBA800864358 /* UATagGroups.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C89DD482120BBA800864358 /* UATagGroups.m */; };
+		3C89DD572122471E00864358 /* UATestDate.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C89DD562122471E00864358 /* UATestDate.m */; };
 		3CBCED4E2113C15A003B7239 /* UATagGroupsType+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CBCED4D2113C15A003B7239 /* UATagGroupsType+Internal.h */; };
 		3CBCED4F2113C15A003B7239 /* UATagGroupsType+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CBCED4D2113C15A003B7239 /* UATagGroupsType+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3CBCED502113EEE7003B7239 /* UATagGroupsType+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CBCED4D2113C15A003B7239 /* UATagGroupsType+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1609,6 +1610,8 @@
 		3C89DD402120B34E00864358 /* UATagGroupsLookupResponseCache.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = UATagGroupsLookupResponseCache.m; path = common/UATagGroupsLookupResponseCache.m; sourceTree = "<group>"; };
 		3C89DD472120BBA700864358 /* UATagGroups+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UATagGroups+Internal.h"; path = "common/UATagGroups+Internal.h"; sourceTree = "<group>"; };
 		3C89DD482120BBA800864358 /* UATagGroups.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UATagGroups.m; path = common/UATagGroups.m; sourceTree = "<group>"; };
+		3C89DD552122471E00864358 /* UATestDate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UATestDate.h; sourceTree = "<group>"; };
+		3C89DD562122471E00864358 /* UATestDate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UATestDate.m; sourceTree = "<group>"; };
 		3CBCED4D2113C15A003B7239 /* UATagGroupsType+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "UATagGroupsType+Internal.h"; path = "common/UATagGroupsType+Internal.h"; sourceTree = "<group>"; };
 		3CBCED5121150742003B7239 /* UATagGroupsMutationHistory+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "UATagGroupsMutationHistory+Internal.h"; path = "common/UATagGroupsMutationHistory+Internal.h"; sourceTree = "<group>"; };
 		3CBCED5221150742003B7239 /* UATagGroupsMutationHistory.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = UATagGroupsMutationHistory.m; path = common/UATagGroupsMutationHistory.m; sourceTree = "<group>"; };
@@ -2974,6 +2977,8 @@
 				CC64F0C51D8B781C009CEF27 /* UAUtilsTest.h */,
 				CC64F0C61D8B781C009CEF27 /* UAUtilsTest.m */,
 				DF702D801FABA38400E7A3DC /* UAVersionMatcherTests.m */,
+				3C89DD552122471E00864358 /* UATestDate.h */,
+				3C89DD562122471E00864358 /* UATestDate.m */,
 			);
 			name = Utils;
 			sourceTree = "<group>";
@@ -5251,6 +5256,7 @@
 				CC64F0E11D8B781C009CEF27 /* UAAddCustomEventActionTest.m in Sources */,
 				CC64F0DF1D8B781C009CEF27 /* UAActionRunnerTest.m in Sources */,
 				CC64F0F91D8B781C009CEF27 /* UAEventTest.m in Sources */,
+				3C89DD572122471E00864358 /* UATestDate.m in Sources */,
 				991A94671FCF2C7F00B57D24 /* UAInAppMessageButtonInfoTest.m in Sources */,
 				3C89DD3E211E4D4900864358 /* UATagGroupsLookupManagerTest.m in Sources */,
 				CC64F1101D8B781C009CEF27 /* UALocationTest.m in Sources */,

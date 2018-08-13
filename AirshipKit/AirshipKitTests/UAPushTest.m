@@ -1285,24 +1285,6 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
                      @"updateRegistration should unregister with the channel registrar if push is disabled.");
 }
 
-- (void)testUpdateRegistrationInvalidBackgroundTask {
-    self.push.userPushNotificationsEnabled = YES;
-    self.push.deviceToken = validDeviceToken;
-
-    [[[self.mockApplication expect] andReturnValue:OCMOCK_VALUE((NSUInteger)UIBackgroundTaskInvalid)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
-
-    [[self.mockChannelRegistrar reject] registerWithChannelID:OCMOCK_ANY
-                                                channelLocation:OCMOCK_ANY
-                                                    withPayload:OCMOCK_ANY
-                                                     forcefully:YES];
-
-    [self.push updateChannelRegistrationForcefully:YES];
-
-
-    XCTAssertNoThrow([self.mockChannelRegistrar verify],
-                     @"updateRegistration should not call any registration without a valid background task");
-}
-
 /**
  * Test registration payload when pushTokenRegistrationEnabled is NO does not include device token
  */

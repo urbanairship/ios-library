@@ -19,8 +19,8 @@ NSString * const UATagGroupsLookupManagerErrorDomain = @"com.urbanairship.tag_gr
 @property (nonatomic, strong) UATagGroupsMutationHistory *mutationHistory;
 @property (nonatomic, strong) UATagGroupsLookupAPIClient *lookupAPIClient;
 @property (nonatomic, strong) UATagGroupsLookupResponseCache *cache;
-@property (nonatomic, assign) NSTimeInterval preferLocalTagDataTime;
 @property (nonatomic, readonly) NSTimeInterval maxSentMutationAge;
+@property (nonatomic, strong) UADate *currentTime;
 
 @end
 
@@ -29,7 +29,8 @@ NSString * const UATagGroupsLookupManagerErrorDomain = @"com.urbanairship.tag_gr
 - (instancetype)initWithAPIClient:(UATagGroupsLookupAPIClient *)client
                         dataStore:(UAPreferenceDataStore *)dataStore
                             cache:(UATagGroupsLookupResponseCache *)cache
-                  mutationHistory:(UATagGroupsMutationHistory *)mutationHistory {
+                  mutationHistory:(UATagGroupsMutationHistory *)mutationHistory
+                      currentTime:(UADate *)currentTime {
 
     self = [super initWithDataStore:dataStore];
 
@@ -38,6 +39,7 @@ NSString * const UATagGroupsLookupManagerErrorDomain = @"com.urbanairship.tag_gr
         self.cache = cache;
         self.mutationHistory = mutationHistory;
         self.lookupAPIClient = client;
+        self.currentTime = currentTime;
     }
 
     return self;
@@ -46,20 +48,23 @@ NSString * const UATagGroupsLookupManagerErrorDomain = @"com.urbanairship.tag_gr
 + (instancetype)lookupManagerWithConfig:(UAConfig *)config
                               dataStore:(UAPreferenceDataStore *)dataStore
                                   cache:(UATagGroupsLookupResponseCache *)cache
-                        mutationHistory:(UATagGroupsMutationHistory *)mutationHistory {
+                        mutationHistory:(UATagGroupsMutationHistory *)mutationHistory
+                            currentTime:(UADate *)currentTime {
 
     return [[self alloc] initWithAPIClient:[UATagGroupsLookupAPIClient clientWithConfig:config]
                                  dataStore:dataStore
                                      cache:cache
-                           mutationHistory:mutationHistory];
+                           mutationHistory:mutationHistory
+                               currentTime:currentTime];
 }
 
 + (instancetype)lookupManagerWithAPIClient:(UATagGroupsLookupAPIClient *)client
                                  dataStore:(UAPreferenceDataStore *)dataStore
                                      cache:(UATagGroupsLookupResponseCache *)cache
-                           mutationHistory:(UATagGroupsMutationHistory *)mutationHistory {
+                           mutationHistory:(UATagGroupsMutationHistory *)mutationHistory
+                               currentTime:(UADate *)currentTime {
 
-    return [[self alloc] initWithAPIClient:client dataStore:dataStore cache:cache mutationHistory:mutationHistory];
+    return [[self alloc] initWithAPIClient:client dataStore:dataStore cache:cache mutationHistory:mutationHistory currentTime:currentTime];
 }
 
 - (NSTimeInterval)preferLocalTagDataTime {
@@ -88,7 +93,7 @@ NSString * const UATagGroupsLookupManagerErrorDomain = @"com.urbanairship.tag_gr
     UATagGroups *cachedTagGroups = cachedResponse.tagGroups;
 
     // Apply local history
-    NSTimeInterval maxAge = [[NSDate date] timeIntervalSinceDate:cacheCreationDate] - self.preferLocalTagDataTime;
+    NSTimeInterval maxAge = [[self.currentTime now] timeIntervalSinceDate:cacheCreationDate] + self.preferLocalTagDataTime;
     UATagGroups *locallyModifiedTagGroups = [self.mutationHistory applyHistory:cachedTagGroups maxAge:maxAge];
 
     // Override the device tags if needed

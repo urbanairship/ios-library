@@ -9,23 +9,7 @@
 #import "UANamedUser+Internal.h"
 #import "UAirship.h"
 #import "UAPreferenceDataStore+Internal.h"
-#import "UADate+Internal.h"
-
-@interface UATestDate : UADate
-@property (nonatomic, assign) NSTimeInterval timeOffset;
-@end
-
-@implementation UATestDate
-- (instancetype)init {
-    if (self = [super init]) {
-        self.timeOffset = 0;
-    }
-    return self;
-}
-- (NSDate *)now {
-    return [[NSDate date] dateByAddingTimeInterval:self.timeOffset];
-}
-@end
+#import "UATestDate.h"
 
 @interface UAChannelRegistrarTest : UABaseTest
 
