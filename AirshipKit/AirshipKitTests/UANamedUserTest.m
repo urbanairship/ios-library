@@ -366,7 +366,7 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
     // EXPECTATIONS
     [[self.mockTagGroupsRegistrar expect] updateTagGroupsForID:[OCMArg checkWithBlock:^BOOL(id obj) {
         return (obj != nil);
-    }]];
+    }] type:UATagGroupsTypeNamedUser];
     
     // TEST
     [self.namedUser updateTags];
