@@ -150,14 +150,11 @@ static dispatch_once_t onceToken;
 void UserNotificationCenterWillPresentNotificationWithCompletionHandler(id self, SEL _cmd, UNUserNotificationCenter *notificationCenter, UNNotification *notification, void (^handler)(UNNotificationPresentationOptions)) NS_AVAILABLE_IOS(10.0) {
 
     __block UNNotificationPresentationOptions mergedPresentationOptions = UNNotificationPresentationOptionNone;
-    __block NSUInteger resultCount = 0;
-    __block NSUInteger expectedCount = 1;
 
+    dispatch_group_t dispatchGroup = dispatch_group_create();
 
     IMP original = [instance_.notificationDelegateSwizzler originalImplementation:_cmd];
     if (original) {
-        expectedCount = 2;
-
         __block BOOL completionHandlerCalled = NO;
         void (^completionHandler)(UNNotificationPresentationOptions) NS_AVAILABLE_IOS(10.0) = ^(UNNotificationPresentationOptions options) {
 
@@ -165,53 +162,47 @@ void UserNotificationCenterWillPresentNotificationWithCompletionHandler(id self,
             dispatch_async(dispatch_get_main_queue(), ^{
                 if (completionHandlerCalled) {
                     UA_LERR(@"Completion handler called multiple times.");
+                    dispatch_group_leave(dispatchGroup);
                     return;
                 }
+                completionHandlerCalled = YES;
 
                 mergedPresentationOptions |= options;
 
-                completionHandlerCalled = YES;
-                resultCount++;
-
-                if (expectedCount == resultCount) {
-                    [UAAppIntegration handleForegroundNotification:notification mergedOptions:mergedPresentationOptions withCompletionHandler:^{
-                        handler(mergedPresentationOptions);
-                    }];
-                }
+                dispatch_group_leave(dispatchGroup);
             });
         };
 
+        dispatch_group_enter(dispatchGroup);
         ((void(*)(id, SEL, UNUserNotificationCenter *, UNNotification *, void (^)(UNNotificationPresentationOptions)))original)(self, _cmd, notificationCenter, notification, completionHandler);
     }
 
 
     // Call UAPush
+    dispatch_group_enter(dispatchGroup);
     [UAAppIntegration userNotificationCenter:notificationCenter willPresentNotification:notification withCompletionHandler:^(UNNotificationPresentationOptions options) {
         // Make sure the app's completion handler is called on the main queue
         dispatch_async(dispatch_get_main_queue(), ^{
             mergedPresentationOptions |= options;
-
-            resultCount++;
-
-            if (expectedCount == resultCount) {
-                [UAAppIntegration handleForegroundNotification:notification mergedOptions:mergedPresentationOptions withCompletionHandler:^{
-                    handler(mergedPresentationOptions);
-                }];
-            }
+            dispatch_group_leave(dispatchGroup);
         });
     }];
+    
+    dispatch_group_notify(dispatchGroup, dispatch_get_main_queue(),^{
+        // all processing of notification is complete
+        [UAAppIntegration handleForegroundNotification:notification mergedOptions:mergedPresentationOptions withCompletionHandler:^{
+            handler(mergedPresentationOptions);
+        }];
+    });
 }
 
 #if !TARGET_OS_TV  // Delegate method not supported on tvOS
 void UserNotificationCenterDidReceiveNotificationResponseWithCompletionHandler(id self, SEL _cmd, UNUserNotificationCenter *notificationCenter, UNNotificationResponse *response, void (^handler)(void)) NS_AVAILABLE_IOS(10.0) {
 
-    __block NSUInteger resultCount = 0;
-    __block NSUInteger expectedCount = 1;
+    dispatch_group_t dispatchGroup = dispatch_group_create();
 
     IMP original = [instance_.notificationDelegateSwizzler originalImplementation:_cmd];
     if (original) {
-        expectedCount = 2;
-
         __block BOOL completionHandlerCalled = NO;
         void (^completionHandler)(void) = ^() {
 
@@ -219,36 +210,31 @@ void UserNotificationCenterDidReceiveNotificationResponseWithCompletionHandler(i
             dispatch_async(dispatch_get_main_queue(), ^{
                 if (completionHandlerCalled) {
                     UA_LERR(@"Completion handler called multiple times.");
+                    dispatch_group_leave(dispatchGroup);
                     return;
                 }
-
-
                 completionHandlerCalled = YES;
-                resultCount++;
-
-                if (expectedCount == resultCount) {
-                    handler();
-                }
+                
+                dispatch_group_leave(dispatchGroup);
             });
         };
 
+        dispatch_group_enter(dispatchGroup);
         ((void(*)(id, SEL, UNUserNotificationCenter *, UNNotificationResponse *, void (^)(void)))original)(self, _cmd, notificationCenter, response, completionHandler);
     }
 
     // Call UAPush
+    dispatch_group_enter(dispatchGroup);
     [UAAppIntegration userNotificationCenter:notificationCenter
               didReceiveNotificationResponse:response
                        withCompletionHandler:^() {
-                           // Make sure we call it on the main queue
-                           dispatch_async(dispatch_get_main_queue(), ^{
-                               resultCount++;
-
-                               if (expectedCount == resultCount) {
-                                   handler();
-                               }
-                           });
+                           dispatch_group_leave(dispatchGroup);
                        }];
 
+    dispatch_group_notify(dispatchGroup, dispatch_get_main_queue(),^{
+        // all processing of response is complete
+        handler();
+    });
 }
 #endif
 
@@ -278,14 +264,13 @@ void ApplicationPerformFetchWithCompletionHandler(id self,
                                                   SEL _cmd,
                                                   UIApplication *application,
                                                   void (^handler)(UIBackgroundFetchResult)) {
+
     __block UIBackgroundFetchResult fetchResult = UIBackgroundFetchResultNoData;
 
-    __block NSUInteger resultCount = 0;
-    __block NSUInteger expectedCount = 1;
+    dispatch_group_t dispatchGroup = dispatch_group_create();
 
     IMP original = [instance_.appDelegateSwizzler originalImplementation:_cmd];
     if (original) {
-        expectedCount = 2;
         __block BOOL completionHandlerCalled = NO;
 
         void (^completionHandler)(UIBackgroundFetchResult) = ^(UIBackgroundFetchResult result) {
@@ -294,11 +279,10 @@ void ApplicationPerformFetchWithCompletionHandler(id self,
             dispatch_async(dispatch_get_main_queue(), ^{
                 if (completionHandlerCalled) {
                     UA_LERR(@"Completion handler called multiple times.");
+                    dispatch_group_leave(dispatchGroup);
                     return;
                 }
-
                 completionHandlerCalled = YES;
-                resultCount++;
 
                 // Merge the UIBackgroundFetchResults. If final fetchResult is not already UIBackgroundFetchResultNewData
                 // and the current result is not UIBackgroundFetchResultNoData, then set the fetchResult to result
@@ -307,30 +291,31 @@ void ApplicationPerformFetchWithCompletionHandler(id self,
                     fetchResult = result;
                 }
 
-                if (expectedCount == resultCount) {
-                    handler(fetchResult);
-                }
+                dispatch_group_leave(dispatchGroup);
             });
         };
 
         // Call the original implementation
+        dispatch_group_enter(dispatchGroup);
         ((void(*)(id, SEL, UIApplication *, void (^)(UIBackgroundFetchResult)))original)(self, _cmd, application, completionHandler);
     }
 
-    [UAAppIntegration application:application performFetchWithCompletionHandler:^(UIBackgroundFetchResult result){
-        resultCount++;
-
+    dispatch_group_enter(dispatchGroup);
+    [UAAppIntegration application:application performFetchWithCompletionHandler:^(UIBackgroundFetchResult result) {
         // Merge the UIBackgroundFetchResults. If final fetchResult is not already UIBackgroundFetchResultNewData
         // and the current result is not UIBackgroundFetchResultNoData, then set the fetchResult to result
         // (should be either UIBackgroundFetchFailed or UIBackgroundFetchResultNewData)
         if (fetchResult != UIBackgroundFetchResultNewData && result != UIBackgroundFetchResultNoData) {
             fetchResult = result;
         }
-
-        if (expectedCount == resultCount) {
-            handler(result);
-        }
+        dispatch_group_leave(dispatchGroup);
     }];
+    
+    dispatch_group_notify(dispatchGroup, dispatch_get_main_queue(),^{
+        // all processing of fetch is complete
+        handler(fetchResult);
+    });
+
 }
 
 void ApplicationDidRegisterForRemoteNotificationsWithDeviceToken(id self, SEL _cmd, UIApplication *application, NSData *deviceToken) {
@@ -358,13 +343,12 @@ void ApplicationDidReceiveRemoteNotificationFetchCompletionHandler(id self,
                                                                    NSDictionary *userInfo,
                                                                    void (^handler)(UIBackgroundFetchResult)) {
 
-    __block NSUInteger resultCount = 0;
-    __block NSUInteger expectedCount = 1;
     __block UIBackgroundFetchResult fetchResult = UIBackgroundFetchResultNoData;
+
+    dispatch_group_t dispatchGroup = dispatch_group_create();
 
     IMP original = [instance_.appDelegateSwizzler originalImplementation:_cmd];
     if (original) {
-        expectedCount = 2;
         __block BOOL completionHandlerCalled = NO;
 
         void (^completionHandler)(UIBackgroundFetchResult) = ^(UIBackgroundFetchResult result) {
@@ -373,11 +357,10 @@ void ApplicationDidReceiveRemoteNotificationFetchCompletionHandler(id self,
             dispatch_async(dispatch_get_main_queue(), ^{
                 if (completionHandlerCalled) {
                     UA_LERR(@"Completion handler called multiple times.");
-                    return;
+                    dispatch_group_leave(dispatchGroup);
+                   return;
                 }
-
                 completionHandlerCalled = YES;
-                resultCount++;
 
                 // Merge the UIBackgroundFetchResults. If final fetchResult is not already UIBackgroundFetchResultNewData
                 // and the current result is not UIBackgroundFetchResultNoData, then set the fetchResult to result
@@ -386,20 +369,19 @@ void ApplicationDidReceiveRemoteNotificationFetchCompletionHandler(id self,
                     fetchResult = result;
                 }
 
-                if (expectedCount == resultCount) {
-                    handler(fetchResult);
-                }
+                dispatch_group_leave(dispatchGroup);
             });
         };
 
         // Call the original implementation
+        dispatch_group_enter(dispatchGroup);
         ((void(*)(id, SEL, UIApplication *, NSDictionary *, void (^)(UIBackgroundFetchResult)))original)(self, _cmd, application, userInfo, completionHandler);
     }
 
 
     // Our completion handler is called by the action framework on the main queue
+    dispatch_group_enter(dispatchGroup);
     [UAAppIntegration application:application didReceiveRemoteNotification:userInfo fetchCompletionHandler:^(UIBackgroundFetchResult result) {
-        resultCount++;
 
         // Merge the UIBackgroundFetchResults. If final fetchResult is not already UIBackgroundFetchResultNewData
         // and the current result is not UIBackgroundFetchResultNoData, then set the fetchResult to result
@@ -408,11 +390,13 @@ void ApplicationDidReceiveRemoteNotificationFetchCompletionHandler(id self,
             fetchResult = result;
         }
 
-        if (expectedCount == resultCount) {
-            handler(fetchResult);
-        }
+        dispatch_group_leave(dispatchGroup);
     }];
 
+    dispatch_group_notify(dispatchGroup, dispatch_get_main_queue(),^{
+        // all processing of fetch is complete
+        handler(fetchResult);
+    });
 }
 
 @end
