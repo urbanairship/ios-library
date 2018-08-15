@@ -29,7 +29,8 @@
                                   @"badge": @2,
                                   @"sound": @"cat",
                                   @"category": @"category",
-                                  @"content-available": @1
+                                  @"content-available": @1,
+                                  @"thread-id" : @"test-thread",
                                   }
                           };
 
@@ -43,11 +44,14 @@
                                                   @"loc-args":@"localizationArguments",
                                                   @"title-loc-key": @"titleLocalizationKey",
                                                   @"title-loc-args": @"titleLocalizationArguments",
-                                                  @"launch-image":@"launchImage"
+                                                  @"launch-image":@"launchImage",
+                                                  @"summary-arg" : @"summary-arg-1",
+                                                  @"summary-arg-count" : @1
                                                   },
                                           @"badge": @2,
                                           @"sound": @"cat",
                                           @"category": @"category",
+                                          @"thread-id" : @"test-thread",
                                           @"content-available": @1
                                           },
                                   };
@@ -83,11 +87,15 @@
     // Category
     XCTAssertTrue([notification.categoryIdentifier isEqualToString:self.notificationWithBody[@"aps"][@"category"]]);
 
+    // Thread
+    XCTAssertTrue([notification.threadIdentifier isEqualToString:self.notificationWithBody[@"aps"][@"thread-id"]]);
+
     // Raw Notification
     XCTAssertTrue([notification.notificationInfo isEqualToDictionary:self.notification]);
 }
 
 // Tests notification content creation when the input notification dictionary includes an alert body
+
 -(void)testNotificationContentFromNotificationDictionaryWithAlertBody {
     UANotificationContent *notification = [UANotificationContent notificationWithNotificationInfo:self.notificationWithBody];
 
@@ -105,6 +113,15 @@
 
     // Category
     XCTAssertTrue([notification.categoryIdentifier isEqualToString:self.notificationWithBody[@"aps"][@"category"]]);
+
+    // Thread
+    XCTAssertTrue([notification.threadIdentifier isEqualToString:self.notificationWithBody[@"aps"][@"thread-id"]]);
+
+    // Summary Arg
+    XCTAssertTrue([notification.summaryArgument isEqualToString:self.notificationWithBody[@"aps"][@"alert"][@"summary-arg"]]);
+
+    // Summary Arg Count
+    XCTAssertTrue(notification.summaryArgumentCount == self.notificationWithBody[@"aps"][@"alert"][@"summary-arg-count"]);
 
     // Localization Keys
     XCTAssertTrue([notification.localizationKeys[@"loc-key"] isEqualToString:self.notificationWithBody[@"aps"][@"alert"][@"loc-key"]]);

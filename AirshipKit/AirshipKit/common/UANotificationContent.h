@@ -34,12 +34,27 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Badge number
  */
-@property (nonatomic, assign, nullable, readonly) NSNumber *badge;
+@property (nonatomic, strong, nullable, readonly) NSNumber *badge;
 
 /**
  * Content available
  */
 @property (nonatomic, strong, nullable, readonly) NSNumber *contentAvailable;
+
+/**
+ * Summary argument
+ */
+@property (nonatomic, copy, nullable, readonly) NSString *summaryArgument;
+
+/**
+ * Summary argument count
+ */
+@property (nonatomic, strong, nullable, readonly) NSNumber *summaryArgumentCount;
+
+/**
+ * Thread identifier
+ */
+@property (nonatomic, copy, nullable, readonly) NSString *threadIdentifier;
 
 /**
  * Category
