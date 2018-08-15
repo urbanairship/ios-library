@@ -46,6 +46,16 @@ extern NSString * const UATagGroupsLookupManagerErrorDomain;
 @property (nonatomic, assign) NSTimeInterval preferLocalTagDataTime;
 
 /**
+ * The maximum age before the cache should be refreshed.
+ */
+@property (nonatomic, assign) NSTimeInterval cacheMaxAgeTime;
+
+/**
+ * The amount of time that can pass before cache reads are considered stale.
+ */
+@property (nonatomic, assign) NSTimeInterval cacheStaleReadTime;
+
+/**
  * UATagGroupsLookupManager class factory method.
  *
  * @param config An instance of UAConfig.

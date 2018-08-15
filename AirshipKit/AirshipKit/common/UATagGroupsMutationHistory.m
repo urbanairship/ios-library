@@ -3,7 +3,7 @@
 #import "UATagGroupsMutationHistory+Internal.h"
 #import "UAPersistentQueue+Internal.h"
 
-#define kUATagGroupsTransactionRecordsDefaultMaxAge 60 * 60 * 24 // 1 Day
+#define kUATagGroupsSentMutationsDefaultMaxAge 60 * 60 * 24 // 1 Day
 
 // Legacy prefix for channel tag group keys
 #define kUAPushTagGroupsLegacyKeyPrefix @"UAPush"
@@ -17,10 +17,9 @@
 #define kUATagGroupsTransactionRecordsKey @"com.urbanairship.tag_groups.transaction_records"
 
 // Max record age
-#define kUATagGroupsTransactionRecordsMaxAgeKey @"com;urbanairship.tag_groups.transaction_records.max_age"
+#define kUATagGroupsSentMutationsMaxAgeKey @"com;urbanairship.tag_groups.transaction_records.max_age"
 
 @interface UATagGroupsMutationHistory ()
-@property (nonatomic, assign) NSTimeInterval maxRecordAge;
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 @property (nonatomic, strong) UAPersistentQueue *pendingChannelTagGroupsMutations;
 @property (nonatomic, strong) UAPersistentQueue *pendingNamedUserTagGroupsMutations;
@@ -103,12 +102,12 @@
     }
 }
 
-- (NSTimeInterval)maxRecordAge {
-    return [self.dataStore doubleForKey:kUATagGroupsTransactionRecordsMaxAgeKey defaultValue:kUATagGroupsTransactionRecordsDefaultMaxAge];
+- (NSTimeInterval)maxSentMutationAge {
+    return [self.dataStore doubleForKey:kUATagGroupsSentMutationsMaxAgeKey defaultValue:kUATagGroupsSentMutationsDefaultMaxAge];
 }
 
-- (void)setMaxRecordAge:(NSTimeInterval)maxAge {
-    [self.dataStore setDouble:maxAge forKey:kUATagGroupsTransactionRecordsMaxAgeKey];
+- (void)setMaxSentMutationAge:(NSTimeInterval)maxAge {
+    [self.dataStore setDouble:maxAge forKey:kUATagGroupsSentMutationsMaxAgeKey];
 }
 
 - (UAPersistentQueue *)pendingMutationsQueue:(UATagGroupsType)type {
@@ -154,10 +153,17 @@
     [[self pendingMutationsQueue:type] addObject:mutation];
 }
 
+- (void)cleanTransactionRecords {
+    NSArray<UATagGroupsTransactionRecord *> *recentTransactions = [self transactionRecordsWithMaxAge:self.maxSentMutationAge];
+    [self.tagGroupsTransactionRecords setObjects:recentTransactions];
+
+}
+
 - (void)addSentMutation:(UATagGroupsMutation *)mutation date:(NSDate *)date {
     UATagGroupsTransactionRecord *record = [UATagGroupsTransactionRecord transactionRecordWithMutation:mutation date:date];
     [self.tagGroupsTransactionRecords addObject:record];
-    [self.tagGroupsTransactionRecords setObjects:[self transactionRecordsWithMaxAge:self.maxRecordAge]];
+
+    [self cleanTransactionRecords];
 }
 
 - (UATagGroupsMutation *)peekPendingMutation:(UATagGroupsType)type {
@@ -200,8 +206,6 @@
 }
 
 - (UATagGroups *)applyHistory:(UATagGroups *)tagGroups maxAge:(NSTimeInterval)maxAge {
-    self.maxRecordAge = maxAge;
-
     NSDictionary *tags = tagGroups.tags;
     tags = [self applyMutations:[self sentMutationsWithMaxAge:maxAge] tags:tags];
     tags = [self applyMutations:[self pendingMutations] tags:tags];

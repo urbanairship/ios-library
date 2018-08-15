@@ -15,6 +15,14 @@ NS_ASSUME_NONNULL_BEGIN
 @interface UATagGroupsMutationHistory : NSObject
 
 /**
+ * The maximum age for stored sent mutations. Mutations older than this time interval will
+ * be periodically purged.
+ *
+ * If unset, defaults to one day. Subsequent changes are locally persisted.
+ */
+@property (nonatomic, assign) NSTimeInterval maxSentMutationAge;
+
+/**
  * UATagGroupsMutationHistory class factory method.
  *
  * @param dataStore A preference data store to use for persistence.

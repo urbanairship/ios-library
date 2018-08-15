@@ -40,6 +40,8 @@ NSString * const UATagGroupsLookupManagerErrorDomain = @"com.urbanairship.tag_gr
         self.mutationHistory = mutationHistory;
         self.lookupAPIClient = client;
         self.currentTime = currentTime;
+
+        [self updateMaxSentMutationAge];
     }
 
     return self;
@@ -74,7 +76,30 @@ NSString * const UATagGroupsLookupManagerErrorDomain = @"com.urbanairship.tag_gr
     [self.dataStore setDouble:preferLocalTagDataTime forKey:kUATagGroupsLookupManagerPreferLocalTagDataTimeKey];
 }
 
+- (NSTimeInterval)cacheMaxAgeTime {
+    return self.cache.maxAgeTime;
+}
+
+- (void)setCacheMaxAgeTime:(NSTimeInterval)cacheMaxAgeTime {
+    self.cache.maxAgeTime = cacheMaxAgeTime;
+    [self updateMaxSentMutationAge];
+}
+
+- (NSTimeInterval)cacheStaleReadTime {
+    return self.cache.staleReadTime;
+}
+
+- (void)setCacheStaleReadTime:(NSTimeInterval)cacheStaleReadTime {
+    self.cache.staleReadTime = cacheStaleReadTime;
+    [self updateMaxSentMutationAge];
+}
+
+- (void)updateMaxSentMutationAge {
+    self.mutationHistory.maxSentMutationAge = self.cache.staleReadTime + self.preferLocalTagDataTime;
+}
+
 - (NSTimeInterval)maxSentMutationAge {
+    return self.mutationHistory.maxSentMutationAge;
     return self.cache.staleReadTime + self.preferLocalTagDataTime;
 }
 
