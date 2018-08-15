@@ -65,16 +65,6 @@
     return self.tags.count == 1 && [self containsDeviceTags];
 }
 
-- (UATagGroups *)overrideDeviceTags {
-    if ([self containsDeviceTags]) {
-        NSMutableDictionary *newTags = [self.tags mutableCopy];
-        [newTags setObject:[UAirship push].tags forKey:@"device"];
-        return [UATagGroups tagGroupsWithTags:newTags];
-    }
-
-    return self;
-}
-
 - (BOOL)containsAllTags:(UATagGroups *)tagGroups {
     for (NSString *group in tagGroups.tags) {
         if (![[tagGroups.tags objectForKey:group] isSubsetOfSet:[self.tags objectForKey:group]]) {

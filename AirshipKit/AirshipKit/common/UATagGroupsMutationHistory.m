@@ -11,10 +11,10 @@
 // Legacy prefix for named user tag group keys
 #define kUANamedUserTagGroupsLegacyKeyPrefix @"UANamedUser"
 
-// Namespaces for pending mutations and transaction records
-#define kUAPendingChannelTagGroupsMutationsNameSpace @"com.urbanairship.tag_groups.pending_channel_tag_groups_mutations"
-#define kUAPendingNamedUserTagGroupsMutationsNameSpace @"com.urbanairship.tag_groups.pending_named_user_tag_groups_mutations"
-#define kUATagGroupsTransactionRecordsNameSpace @"com.urbanairship.tag_groups.transaction_records"
+// Keys for pending mutations and transaction records
+#define kUAPendingChannelTagGroupsMutationsKey @"com.urbanairship.tag_groups.pending_channel_tag_groups_mutations"
+#define kUAPendingNamedUserTagGroupsMutationsKey @"com.urbanairship.tag_groups.pending_named_user_tag_groups_mutations"
+#define kUATagGroupsTransactionRecordsKey @"com.urbanairship.tag_groups.transaction_records"
 
 // Max record age
 #define kUATagGroupsTransactionRecordsMaxAgeKey @"com;urbanairship.tag_groups.transaction_records.max_age"
@@ -36,11 +36,11 @@
         self.dataStore = dataStore;
 
         self.pendingChannelTagGroupsMutations = [UAPersistentQueue persistentQueueWithDataStore:dataStore
-                                                                                      nameSpace:kUAPendingChannelTagGroupsMutationsNameSpace];
+                                                                                            key:kUAPendingChannelTagGroupsMutationsKey];
         self.pendingNamedUserTagGroupsMutations = [UAPersistentQueue persistentQueueWithDataStore:dataStore
-                                                                                        nameSpace:kUAPendingNamedUserTagGroupsMutationsNameSpace];
+                                                                                              key:kUAPendingNamedUserTagGroupsMutationsKey];
         self.tagGroupsTransactionRecords = [UAPersistentQueue persistentQueueWithDataStore:dataStore
-                                                                                 nameSpace:kUATagGroupsTransactionRecordsNameSpace];
+                                                                                       key:kUATagGroupsTransactionRecordsKey];
         
         [self migrateLegacyDataStoreKeys];
     }
@@ -121,10 +121,10 @@
 }
 
 - (NSArray<UATagGroupsMutation *> *)pendingMutations {
-    NSArray<UATagGroupsMutation *> *pendingChannelTagGroupMutatiopns = (NSArray<UATagGroupsMutation *>*) [self.pendingChannelTagGroupsMutations objects];
+    NSArray<UATagGroupsMutation *> *pendingChannelTagGroupMutations = (NSArray<UATagGroupsMutation *>*) [self.pendingChannelTagGroupsMutations objects];
     NSArray<UATagGroupsMutation *> *pendingNamedUserTagGroupMutations = (NSArray<UATagGroupsMutation *>*) [self.pendingNamedUserTagGroupsMutations objects];
 
-    return [pendingNamedUserTagGroupMutations arrayByAddingObjectsFromArray:pendingChannelTagGroupMutatiopns];
+    return [pendingNamedUserTagGroupMutations arrayByAddingObjectsFromArray:pendingChannelTagGroupMutations];
 }
 
 - (NSArray<UATagGroupsTransactionRecord *> *)transactionRecordsWithMaxAge:(NSTimeInterval)maxAge {

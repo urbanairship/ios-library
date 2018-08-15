@@ -6,7 +6,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /**
- * Represents a respose from the tag groups lookup API.
+ * Represents a response from the tag groups lookup API.
  */
 @interface UATagGroupsLookupResponse : NSObject <NSCoding>
 

@@ -50,15 +50,11 @@ extern NSString * const UATagGroupsLookupManagerErrorDomain;
  *
  * @param config An instance of UAConfig.
  * @param dataStore A data store.
- * @param cache A lookup response cache.
  * @param mutationHistory The tag groups mutation history.
- * @param currentTime A UADate to be used for getting the current time.
  */
 + (instancetype)lookupManagerWithConfig:(UAConfig *)config
                               dataStore:(UAPreferenceDataStore *)dataStore
-                                  cache:(UATagGroupsLookupResponseCache *)cache
-                        mutationHistory:(UATagGroupsMutationHistory *)mutationHistory
-                            currentTime:(UADate *)currentTime;
+                        mutationHistory:(UATagGroupsMutationHistory *)mutationHistory;
 /**
  * UATagGroupsLookupManager class factory method.
  *

@@ -2,7 +2,7 @@
 #import "UATagGroupsLookupResponseCache+Internal.h"
 
 #define kUATagGroupsLookupResponseCacheResponseKey @"com.urbanairship.tag_groups.CACHED_RESPONSE"
-#define kUATagGroupsLookupResponseCacheCreationDateKey @"com.urbanairship.tag_groups.CACHE_CREATION_DATE"
+#define kUATagGroupsLookupResponseCacheRefreshDateKey @"com.urbanairship.tag_groups.CACHE_REFRESH_DATE"
 #define kUATagGroupsLookupResponseCacheRequestTagGroupsKey @"com.urbanairship.tag_groups.CACHED_REQUEST_TAG_GROUPS"
 #define kUATagGroupsLookupResponseCacheMaxAgeTimeKey @"com.urbanairship.tag_groups.CACHE_MAX_AGE_TIME"
 #define kUATagGroupsLookupResponseCacheStaleReadTimeKey @"com.urbanairship.tag_groups.CACHE_STALE_READ_TIME"
@@ -13,7 +13,7 @@
 
 @interface UATagGroupsLookupResponseCache ()
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
-@property (nonatomic, strong) NSDate *creationDate;
+@property (nonatomic, strong) NSDate *refreshDate;
 @end
 
 @implementation UATagGroupsLookupResponseCache
@@ -61,15 +61,15 @@
     NSData *encodedResonse = [NSKeyedArchiver archivedDataWithRootObject:response];
     [self.dataStore setObject:encodedResonse forKey:kUATagGroupsLookupResponseCacheResponseKey];
     
-    self.creationDate = [NSDate date];
+    self.refreshDate = [NSDate date];
 }
 
-- (NSDate *)creationDate {
-    return [self.dataStore objectForKey:kUATagGroupsLookupResponseCacheCreationDateKey];
+- (NSDate *)refreshDate {
+    return [self.dataStore objectForKey:kUATagGroupsLookupResponseCacheRefreshDateKey];
 }
 
-- (void)setCreationDate:(NSDate *)creationDate {
-    [self.dataStore setObject:creationDate forKey:kUATagGroupsLookupResponseCacheCreationDateKey];
+- (void)setRefreshDate:(NSDate *)refreshDate {
+    [self.dataStore setObject:refreshDate forKey:kUATagGroupsLookupResponseCacheRefreshDateKey];
 }
 
 - (UATagGroups *)requestedTagGroups {
@@ -83,11 +83,11 @@
 }
 
 - (BOOL)needsRefresh {
-    return self.response && self.creationDate && self.maxAgeTime <= [[NSDate date] timeIntervalSinceDate:self.creationDate];
+    return self.response && self.refreshDate && self.maxAgeTime <= [[NSDate date] timeIntervalSinceDate:self.refreshDate];
 }
 
 - (BOOL)isStale {
-    return self.staleReadTime <= [[NSDate date] timeIntervalSinceDate:self.creationDate];
+    return self.staleReadTime <= [[NSDate date] timeIntervalSinceDate:self.refreshDate];
 }
 
 @end

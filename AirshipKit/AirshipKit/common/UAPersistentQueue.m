@@ -4,35 +4,29 @@
 
 @interface UAPersistentQueue ()
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
-@property (nonatomic, copy) NSString *nameSpace;
+@property (nonatomic, copy) NSString *key;
 @end
 
 @implementation UAPersistentQueue
 
-- (instancetype)initWithDataStore:(UAPreferenceDataStore *)dataStore nameSpace:(NSString *)nameSpace {
+- (instancetype)initWithDataStore:(UAPreferenceDataStore *)dataStore key:(NSString *)key {
     self = [super init];
 
     if (self) {
         self.dataStore = dataStore;
-        self.nameSpace = nameSpace;
+        self.key = key;
     }
 
     return self;
 }
 
-+ (instancetype)persistentQueueWithDataStore:(UAPreferenceDataStore *)dataStore nameSpace:(NSString *)nameSpace {
-    return [[self alloc] initWithDataStore:dataStore nameSpace:nameSpace];
++ (instancetype)persistentQueueWithDataStore:(UAPreferenceDataStore *)dataStore key:(NSString *)key {
+    return [[self alloc] initWithDataStore:dataStore key:key];
 }
 
 - (void)addObject:(id<NSCoding>)object {
     @synchronized(self) {
         NSMutableArray<id<NSCoding>> *objects = [[self objects] mutableCopy];
-
-        if (!objects) {
-            [self setObjects:@[object]];
-            return;
-        }
-
         [objects addObject:object];
         [self setObjects:objects];
     }
@@ -81,7 +75,7 @@
 
 - (NSArray<id<NSCoding>> *)objects {
     @synchronized(self) {
-        NSData *encodedItems = [self.dataStore objectForKey:self.nameSpace];
+        NSData *encodedItems = [self.dataStore objectForKey:self.key];
 
         if (!encodedItems) {
             return @[];
@@ -94,13 +88,13 @@
 - (void)setObjects:(NSArray<id<NSCoding>> *)objects {
     @synchronized(self) {
         NSData *encodedObjects = [NSKeyedArchiver archivedDataWithRootObject:objects];
-        [self.dataStore setObject:encodedObjects forKey:self.nameSpace];
+        [self.dataStore setObject:encodedObjects forKey:self.key];
     }
 }
 
 - (void)clear {
     @synchronized(self) {
-        [self.dataStore removeObjectForKey:self.nameSpace];
+        [self.dataStore removeObjectForKey:self.key];
     }
 }
 

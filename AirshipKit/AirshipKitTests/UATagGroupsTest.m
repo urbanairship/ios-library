@@ -47,15 +47,6 @@
     XCTAssertTrue([onlyDeviceTags containsOnlyDeviceTags]);
 }
 
-- (void)testOverrideDeviceTags {
-    [UAirship push].tags = @[@"test"];
-    XCTAssertEqualObjects(self.tagGroups, [self.tagGroups overrideDeviceTags]);
-
-    UATagGroups *override = [UATagGroups tagGroupsWithTags:@{@"device" : @[@"override"]}];
-    UATagGroups *expected = [UATagGroups tagGroupsWithTags:@{@"device" : @[@"test"]}];
-    XCTAssertEqualObjects(expected, [override overrideDeviceTags]);
-}
-
 - (void)testContainsAllTags {
     UATagGroups *tagGroups = [UATagGroups tagGroupsWithTags:@{@"foo" : @[@"baz", @"boz"]}];
     XCTAssertTrue([self.tagGroups containsAllTags:tagGroups]);

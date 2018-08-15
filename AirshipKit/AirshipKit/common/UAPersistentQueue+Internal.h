@@ -16,9 +16,9 @@ NS_ASSUME_NONNULL_BEGIN
  * UAPersistentQueue class factory method.
  *
  * @param dataStore A preference dataStore.
- * @param nameSpace A namespace string used to differentiate the queue in the data store.
+ * @param key A key string used to differentiate the queue in the data store.
  */
-+ (instancetype)persistentQueueWithDataStore:(UAPreferenceDataStore *)dataStore nameSpace:(NSString *)nameSpace;
++ (instancetype)persistentQueueWithDataStore:(UAPreferenceDataStore *)dataStore key:(NSString *)key;
 
 /**
  * Adds an object to the queue.

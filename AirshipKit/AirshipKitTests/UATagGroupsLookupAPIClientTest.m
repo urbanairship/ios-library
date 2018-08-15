@@ -15,19 +15,15 @@
 - (void)setUp {
     [super setUp];
 
-    self.mockConfig = [OCMockObject niceMockForClass:[UAConfig class]];
-    self.mockSession = [OCMockObject niceMockForClass:[UARequestSession class]];
-    self.mockSessionClass = OCMClassMock([UARequestSession class]);
+    self.mockConfig = [self mockForClass:[UAConfig class]];
+    self.mockSession = [self mockForClass:[UARequestSession class]];
+    self.mockSessionClass = [self mockForClass:[UARequestSession class]];
     [[[self.mockSessionClass stub] andReturn:self.mockSession] sessionWithConfig:OCMOCK_ANY];
 
     self.client = [UATagGroupsLookupAPIClient clientWithConfig:self.mockConfig session:self.mockSession];
 }
 
 - (void)tearDown {
-    [self.mockSession stopMocking];
-    [self.mockConfig stopMocking];
-    [self.mockSessionClass stopMocking];
-
     [super tearDown];
 }
 

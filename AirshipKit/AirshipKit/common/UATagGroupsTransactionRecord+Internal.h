@@ -4,7 +4,7 @@
 #import "UATagGroupsMutation+Internal.h"
 
 /**
- * Represents a successful tag groups API transaction, containng a mutation and the
+ * Represents a successful tag groups API transaction, containing a mutation and the
  * date the transaction completed.
  */
 @interface UATagGroupsTransactionRecord : NSObject <NSCoding>

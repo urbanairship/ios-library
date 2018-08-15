@@ -7,6 +7,8 @@
 #import "UATagGroupsTransactionRecord+Internal.h"
 #import "UATagGroups+Internal.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  * Represents the local history of tag group mutations.
  */
@@ -98,3 +100,5 @@
 - (UATagGroups *)applyHistory:(UATagGroups *)tagGroups maxAge:(NSTimeInterval)maxAge;
 
 @end
+
+NS_ASSUME_NONNULL_END

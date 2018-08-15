@@ -3,6 +3,8 @@
 #import "UAPreferenceDataStore+Internal.h"
 #import "UATagGroupsLookupResponse+Internal.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  * A persistent cache for tag group lookup responses.
  */
@@ -21,7 +23,7 @@
 /**
  * The date the cache was last refreshed.
  */
-@property (nonatomic, readonly) NSDate *creationDate;
+@property (nonatomic, readonly) NSDate *refreshDate;
 
 /**
  * The maximum age before the cache should be refreshed.
@@ -55,3 +57,5 @@
 - (BOOL)isStale;
 
 @end
+
+NS_ASSUME_NONNULL_END

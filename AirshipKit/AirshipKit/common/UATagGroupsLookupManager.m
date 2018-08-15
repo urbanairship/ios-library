@@ -47,15 +47,13 @@ NSString * const UATagGroupsLookupManagerErrorDomain = @"com.urbanairship.tag_gr
 
 + (instancetype)lookupManagerWithConfig:(UAConfig *)config
                               dataStore:(UAPreferenceDataStore *)dataStore
-                                  cache:(UATagGroupsLookupResponseCache *)cache
-                        mutationHistory:(UATagGroupsMutationHistory *)mutationHistory
-                            currentTime:(UADate *)currentTime {
+                        mutationHistory:(UATagGroupsMutationHistory *)mutationHistory {
 
     return [[self alloc] initWithAPIClient:[UATagGroupsLookupAPIClient clientWithConfig:config]
                                  dataStore:dataStore
-                                     cache:cache
+                                     cache:[UATagGroupsLookupResponseCache cacheWithDataStore:dataStore]
                            mutationHistory:mutationHistory
-                               currentTime:currentTime];
+                               currentTime:[[UADate alloc] init]];
 }
 
 + (instancetype)lookupManagerWithAPIClient:(UATagGroupsLookupAPIClient *)client
@@ -86,19 +84,25 @@ NSString * const UATagGroupsLookupManagerErrorDomain = @"com.urbanairship.tag_gr
                            userInfo:@{NSLocalizedDescriptionKey:message}];
 }
 
+- (UATagGroups *)overrideDeviceTags:(UATagGroups *)tagGroups {
+    NSMutableDictionary *newTags = [tagGroups.tags mutableCopy];
+    [newTags setObject:[UAirship push].tags forKey:@"device"];
+    return [UATagGroups tagGroupsWithTags:newTags];
+}
+
 - (UATagGroups *)generateTagGroups:(UATagGroups *)requestedTagGroups
                     cachedResponse:(UATagGroupsLookupResponse *)cachedResponse
-                 cacheCreationDate:(NSDate *)cacheCreationDate {
+                       refreshDate:(NSDate *)refreshDate {
 
     UATagGroups *cachedTagGroups = cachedResponse.tagGroups;
 
     // Apply local history
-    NSTimeInterval maxAge = [[self.currentTime now] timeIntervalSinceDate:cacheCreationDate] + self.preferLocalTagDataTime;
+    NSTimeInterval maxAge = [[self.currentTime now] timeIntervalSinceDate:refreshDate] + self.preferLocalTagDataTime;
     UATagGroups *locallyModifiedTagGroups = [self.mutationHistory applyHistory:cachedTagGroups maxAge:maxAge];
 
     // Override the device tags if needed
     if ([UAirship push].isChannelTagRegistrationEnabled) {
-        locallyModifiedTagGroups = [locallyModifiedTagGroups overrideDeviceTags];
+        locallyModifiedTagGroups = [self overrideDeviceTags:locallyModifiedTagGroups];
     }
 
     // Only return the requested tags if available
@@ -136,10 +140,10 @@ NSString * const UATagGroupsLookupManagerErrorDomain = @"com.urbanairship.tag_gr
 
     // Requesting only device tag groups when channel tag registration is enabled
     if ([requestedTagGroups containsOnlyDeviceTags] && [UAirship push].isChannelTagRegistrationEnabled) {
-        return completionHandler([requestedTagGroups overrideDeviceTags], error);
+        return completionHandler([self overrideDeviceTags:requestedTagGroups], error);
     }
 
-    __block NSDate *cacheCreationDate = self.cache.creationDate;
+    __block NSDate *cacheRefreshDate = self.cache.refreshDate;
     __block UATagGroupsLookupResponse *cachedResponse;
 
     if ([self.cache.requestedTagGroups containsAllTags:requestedTagGroups]) {
@@ -149,26 +153,26 @@ NSString * const UATagGroupsLookupManagerErrorDomain = @"com.urbanairship.tag_gr
     if (cachedResponse && ![self.cache needsRefresh]) {
         return completionHandler([self generateTagGroups:requestedTagGroups
                                           cachedResponse:cachedResponse
-                                       cacheCreationDate:cacheCreationDate], error);
+                                             refreshDate:cacheRefreshDate], error);
     }
 
     [self refreshCacheWithRequestedTagGroups:requestedTagGroups completionHandler:^{
         cachedResponse = self.cache.response;
-        cacheCreationDate = self.cache.creationDate;
+        cacheRefreshDate = self.cache.refreshDate;
 
         if (!cachedResponse) {
             error = [self errorWithCode:UATagGroupsLookupManagerErrorCodeCacheRefresh message:@"Unable to refresh cache, missing response"];
             return completionHandler(nil, error);
         }
 
-        if (![self.cache isStale]) {
-            return completionHandler([self generateTagGroups:requestedTagGroups
-                                              cachedResponse:cachedResponse
-                                           cacheCreationDate:cacheCreationDate], error);
-        } else {
+        if ([self.cache isStale]) {
             error = [self errorWithCode:UATagGroupsLookupManagerErrorCodeCacheRefresh message:@"Unable to refresh cache, read is stale"];
-            completionHandler(nil, error);
+            return completionHandler(nil, error);
         }
+
+        completionHandler([self generateTagGroups:requestedTagGroups
+                                   cachedResponse:cachedResponse
+                                      refreshDate:cacheRefreshDate], error);
     }];
 }
 

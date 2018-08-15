@@ -2,6 +2,8 @@
 
 #import <Foundation/Foundation.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  * Convenience wrapper around sets of tag groups with common operations.
  */
@@ -38,14 +40,6 @@
 - (BOOL)containsOnlyDeviceTags;
 
 /**
- * Overrides any device tags with those found in UAPush.
- *
- * @return A new instance of UATagGroups, or the unchanged receiver if no device
- * tags are present.
- */
-- (UATagGroups *)overrideDeviceTags;
-
-/**
  * Produces the intersection of two tag groups.
  *
  * @param tagGroups The tag groups to intersect with the receiver.
@@ -59,3 +53,5 @@
 - (NSDictionary *)toJSON;
 
 @end
+
+NS_ASSUME_NONNULL_END
