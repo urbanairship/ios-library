@@ -18,15 +18,13 @@
 
 - (void)addResult:(UAActionResult *)result forAction:(NSString*)actionName {
     @synchronized(self) {
-        NSMutableDictionary *resultDictionary = (NSMutableDictionary *)self.value;
-        [resultDictionary setValue:result forKey:actionName];
+        [self.value setValue:result forKey:actionName];
         [self mergeFetchResult:result.fetchResult];
     }
 }
 
 - (UAActionResult *)resultForAction:(NSString*)actionName {
-    NSMutableDictionary *resultDictionary = (NSMutableDictionary *)self.value;
-    return [resultDictionary valueForKey:actionName];
+    return [self.value valueForKey:actionName];
 }
 
 - (void)mergeFetchResult:(UAActionFetchResult)result {

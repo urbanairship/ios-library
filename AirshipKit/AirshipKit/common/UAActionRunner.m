@@ -110,8 +110,6 @@ completionHandler:(UAActionCompletionHandler)completionHandler {
                  completionHandler:(UAActionCompletionHandler)completionHandler {
 
     __block UAAggregateActionResult *aggregateResult = [[UAAggregateActionResult alloc] init];
-    __block NSUInteger expectedCount = actionValues.count;
-    __block NSUInteger resultCount = 0;
 
     if (!actionValues.count) {
         UA_LTRACE("No actions to perform.");
@@ -121,6 +119,8 @@ completionHandler:(UAActionCompletionHandler)completionHandler {
         return;
     }
 
+    dispatch_group_t dispatchGroup = dispatch_group_create();
+    
     for (NSString *actionName in actionValues) {
         __block BOOL completionHandlerCalled = NO;
 
@@ -128,24 +128,29 @@ completionHandler:(UAActionCompletionHandler)completionHandler {
             @synchronized(self) {
                 if (completionHandlerCalled) {
                     UA_LERR(@"Action %@ completion handler called multiple times.", actionName);
+                    dispatch_group_leave(dispatchGroup);
                     return;
                 }
-
-                resultCount ++;
-
+                completionHandlerCalled = YES;
+                
                 [aggregateResult addResult:result forAction:actionName];
-
-                if (expectedCount == resultCount && completionHandler) {
-                    completionHandler(aggregateResult);
-                }
+                
+                dispatch_group_leave(dispatchGroup);
             }
         };
 
+        dispatch_group_enter(dispatchGroup);
         [self runActionWithName:actionName
                           value:actionValues[actionName]
                       situation:situation
                        metadata:metadata
               completionHandler:handler];
     }
+    
+    dispatch_group_notify(dispatchGroup, dispatch_get_main_queue(),^{
+        // all action(s) have run
+        completionHandler(aggregateResult);
+    });
+
 }
 @end

@@ -258,9 +258,7 @@ NSString *anotherActionName = @"AnotherActionName";
  * Test running a set of actions from a dictionary
  */
 - (void)testRunActionPayload {
-    __block BOOL didCompletionHandlerRun = NO;
     __block int actionRunCount = 0;
-
 
     UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
         actionRunCount++;
@@ -309,20 +307,21 @@ NSString *anotherActionName = @"AnotherActionName";
         return YES;
     }];
 
+    XCTestExpectation *expectation = [self expectationWithDescription:@"Completion handler ran"];
     NSDictionary *actionPayload = @{actionName : @"value", anotherActionName: @"another value"};
     [UAActionRunner runActionsWithActionValues:actionPayload situation:UASituationManualInvocation metadata:@{@"meta key": @"meta value"}
                              completionHandler:^(UAActionResult *finalResult) {
-                                 didCompletionHandlerRun = YES;
-
                                  // Should return an aggregate action result
                                  XCTAssertTrue([finalResult isKindOfClass:[UAAggregateActionResult class]], @"Running actions should return a UAAggregateActionResult");
 
                                  NSDictionary *resultDictionary = (NSDictionary  *)finalResult.value;
 
                                  XCTAssertEqual((NSUInteger) 2, resultDictionary.count, @"Action should have 2 results");
+ 
+                                 [expectation fulfill];
                              }];
 
-    XCTAssertTrue(didCompletionHandlerRun, @"Runner completion handler did not run");
+    [self waitForExpectationsWithTimeout:1 handler:nil];
     XCTAssertEqual(2, actionRunCount, @"Both actions should of ran");
 }
 
