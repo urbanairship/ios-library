@@ -8,8 +8,9 @@
 #define kUATagGroupsLookupResponseCacheStaleReadTimeKey @"com.urbanairship.tag_groups.CACHE_STALE_READ_TIME"
 
 #define kUATagGroupsLookupManagerMinCacheMaxAgeTimeSeconds 60 // 1 minute
-#define kUATagGroupsLookupResponseCacheDefaultMaxAgeTimeSeconds 60 * 10 // 10 minutes
-#define kUATagGroupsLookupResponseCacheDefaultStaleReadTimeSeconds 60 * 60 // 1 hour
+
+NSTimeInterval const UATagGroupsLookupResponseCacheDefaultMaxAgeTimeSeconds = 60 * 10; // 10 minutes
+NSTimeInterval const UATagGroupsLookupResponseCacheDefaultStaleReadTimeSeconds = 60 * 60; // 1 hour
 
 @interface UATagGroupsLookupResponseCache ()
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
@@ -34,7 +35,7 @@
 
 - (NSTimeInterval)maxAgeTime {
     NSTimeInterval maxAge = [self.dataStore doubleForKey:kUATagGroupsLookupResponseCacheMaxAgeTimeKey
-                                            defaultValue:kUATagGroupsLookupResponseCacheDefaultMaxAgeTimeSeconds];
+                                            defaultValue:UATagGroupsLookupResponseCacheDefaultMaxAgeTimeSeconds];
 
     return MAX(maxAge, kUATagGroupsLookupManagerMinCacheMaxAgeTimeSeconds);
 }
@@ -45,7 +46,7 @@
 
 - (NSTimeInterval)staleReadTime {
     return [self.dataStore doubleForKey:kUATagGroupsLookupResponseCacheStaleReadTimeKey
-                           defaultValue:kUATagGroupsLookupResponseCacheDefaultStaleReadTimeSeconds];
+                           defaultValue:UATagGroupsLookupResponseCacheDefaultStaleReadTimeSeconds];
 }
 
 - (void)setStaleReadTime:(NSTimeInterval)staleReadTime {

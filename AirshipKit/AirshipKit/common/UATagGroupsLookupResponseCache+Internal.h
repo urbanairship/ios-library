@@ -6,6 +6,16 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /**
+ * The default max age time.
+ */
+extern const NSTimeInterval UATagGroupsLookupResponseCacheDefaultMaxAgeTimeSeconds;
+
+/**
+ * The default stale read time.
+ */
+extern const NSTimeInterval UATagGroupsLookupResponseCacheDefaultStaleReadTimeSeconds;
+
+/**
  * A persistent cache for tag group lookup responses.
  */
 @interface UATagGroupsLookupResponseCache : NSObject
