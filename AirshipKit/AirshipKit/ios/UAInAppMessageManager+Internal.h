@@ -17,7 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
  * In-app message manager provides a control interface for creating,
  * canceling and executing in-app message schedules.
  */
-@interface UAInAppMessageManager ()
+@interface UAInAppMessageManager ()  <UAAutomationEngineDelegate>
 
 /**
  * Init method.
@@ -54,23 +54,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (UAScheduleInfo *)createScheduleInfoWithBuilder:(UAScheduleInfoBuilder *)builder;
 
-
-/**
- * Checks if a schedule is ready to execute.
- *
- * @param schedule The schedule.
- * @returns `YES` if the schedule should be executed, otherwise `NO`.
- */
-- (BOOL)isScheduleReadyToExecute:(UASchedule *)schedule;
-
-/**
- * Executes a schedule.
- *
- * @param schedule The schedule.
- * @param completionHandler Completion handler when the schedule is finished executing.
- */
-- (void)executeSchedule:(nonnull UASchedule *)schedule
-      completionHandler:(void (^)(void))completionHandler;
 
 @end
 

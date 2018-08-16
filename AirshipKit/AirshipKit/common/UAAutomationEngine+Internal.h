@@ -10,6 +10,16 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /**
+ * Prepare results
+ */
+typedef NS_ENUM(NSInteger, UAAutomationSchedulePrepareResult) {
+    UAAutomationSchedulePrepareResultContinue,
+    UAAutomationSchedulePrepareResultSkip,
+    UAAutomationSchedulePrepareResultPenalize,
+    UAAutomationSchedulePrepareResultCancel
+};
+
+/**
  * Automation engine delegate
  */
 @protocol UAAutomationEngineDelegate <NSObject>
@@ -21,6 +31,15 @@ NS_ASSUME_NONNULL_BEGIN
  * @returns Schedule info.
  */
 - (UAScheduleInfo *)createScheduleInfoWithBuilder:(UAScheduleInfoBuilder *)builder;
+
+/**
+ * Prepares the schedule.
+ *
+ * @param schedule The schedule.
+ * @param completionHandler Completion handler when the schedule is finished preparing.
+ */
+- (void)prepareSchedule:(UASchedule *)schedule
+      completionHandler:(void (^)(UAAutomationSchedulePrepareResult))completionHandler;
 
 /**
  * Checks if a schedule is ready to execute.

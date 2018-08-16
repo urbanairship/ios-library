@@ -100,7 +100,15 @@ NS_ASSUME_NONNULL_BEGIN
  * @param scheduleID A schedule identifier.
  * @param completionHandler Completion handler called back with the retrieved schedule data.
  */
-- (void)getSchedule:(NSString *)scheduleID completionHandler:(void (^)(NSArray<UAScheduleData *> *))completionHandler;
+- (void)getSchedule:(NSString *)scheduleID completionHandler:(void (^)(UAScheduleData *))completionHandler;
+
+/**
+ * Gets the schedules with the corresponding state.
+ *
+ * @param state An array of schedule state.
+ * @param completionHandler Completion handler called back with the retrieved schedule data.
+ */
+- (void)getSchedulesWithStates:(NSArray *)state completionHandler:(void (^)(NSArray<UAScheduleData *> *))completionHandler;
 
 /**
  * Gets all expired schedules that have not exceeded their grace period.
@@ -108,58 +116,6 @@ NS_ASSUME_NONNULL_BEGIN
  * @param completionHandler Completion handler called back with the retrieved schedule data.
  */
 - (void)getActiveExpiredSchedules:(void (^)(NSArray<UAScheduleData *> *))completionHandler;
-
-/**
- * Gets all currently delayed schedules.
- *
- * @param completionHandler Completion handler called back with the retrieved schedule data.
- */
-- (void)getDelayedSchedules:(void (^)(NSArray<UAScheduleData *> *))completionHandler;
-
-/**
- * Gets the schedule corresponding to the provided identifier and delayed execution date.
- *
- * @param scheduleID A schedule identifier.
- * @param date The delayed execution date.
- * @param completionHandler Completion handler called back with the retrieved schedule data.
- */
-- (void)getDelayedSchedule:(NSString *)scheduleID executionDate:(NSDate *)date completionHandler:(void (^)(NSArray<UAScheduleData *> *))completionHandler;
-
-/**
- * Gets all currently paused schedules.
- *
- * @param completionHandler Completion handler called back with the retrieved schedule data.
- */
-- (void)getPausedSchedules:(void (^)(NSArray<UAScheduleData *> *))completionHandler;
-
-/**
- * Gets a paused schedule corresponding to the provided identifier.
- *
- * @param scheduleID A schedule identifier.
- * @param completionHandler Completion handler called back with the retrieved schedule data.
- */
-- (void)getPausedSchedule:(NSString *)scheduleID completionHandler:(void (^)(NSArray<UAScheduleData *> *))completionHandler;
-
-/**
- * Gets all currently pending schedules.
- *
- * @param completionHandler Completion handler called back with the retrieved schedule data.
- */
-- (void)getPendingSchedules:(void (^)(NSArray<UAScheduleData *> *))completionHandler;
-
-/**
- * Gets all currently executing schedules.
- *
- * @param completionHandler Completion handler called back with the retrieved schedule data.
- */
-- (void)getExecutingSchedules:(void (^)(NSArray<UAScheduleData *> *))completionHandler;
-
-/**
- * Gets all finished schedules
- *
- * @param completionHandler Completion handler called back with the retrieved schedule data.
- */
-- (void)getFinishedSchedules:(void (^)(NSArray<UAScheduleData *> *))completionHandler;
 
 /**
  * Gets all active triggers corresponding to the provided schedule identifier and trigger type.

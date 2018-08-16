@@ -12,15 +12,27 @@ NS_ASSUME_NONNULL_BEGIN
  * Schedule execution states.
  */
 typedef NS_ENUM(NSUInteger, UAScheduleState) {
+    // The state values do not define the order.
+
     /**
      * Schedule is idle.
      */
     UAScheduleStateIdle = 0,
 
     /**
-     * Schedule is pending execution.
+     * Schedule is waiting for its time delay to expire.
      */
-    UAScheduleStatePendingExecution = 1,
+    UAScheduleStateTimeDelayed = 5,
+
+    /**
+     * Schedule is being prepared.
+     */
+    UAScheduleStatePreparingSchedule = 6,
+
+    /**
+     * Schedule is waiting for app state conditions to be met.
+     */
+    UAScheduleStateWaitingScheduleConditions = 1,
 
     /**
      * Schedule is executing.
@@ -132,6 +144,12 @@ typedef NS_ENUM(NSUInteger, UAScheduleState) {
  * Whether the scheudle has exceeded its limit.
  */
 - (BOOL)isOverLimit;
+
+/**
+ * Whether the scheudle has expired.
+ */
+- (BOOL)isExpired;
+
 
 @end
 

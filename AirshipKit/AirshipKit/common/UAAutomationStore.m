@@ -157,51 +157,20 @@
     [self fetchSchedulesWithPredicate:predicate limit:self.scheduleLimit completionHandler:completionHandler];
 }
 
-- (void)getSchedule:(NSString *)scheduleID completionHandler:(void (^)(NSArray<UAScheduleData *> *))completionHandler {
+- (void)getSchedulesWithStates:(NSArray *)state completionHandler:(void (^)(NSArray<UAScheduleData *> * _Nonnull))completionHandler {
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"executionState IN %@", state];
+    [self fetchSchedulesWithPredicate:predicate limit:self.scheduleLimit completionHandler:completionHandler];
+}
+
+- (void)getSchedule:(NSString *)scheduleID completionHandler:(void (^)(UAScheduleData *))completionHandler {
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"identifier == %@ && end >= %@", scheduleID, [NSDate date]];
-    [self fetchSchedulesWithPredicate:predicate limit:1 completionHandler:completionHandler];
+    [self fetchSchedulesWithPredicate:predicate limit:1 completionHandler:^(NSArray<UAScheduleData *> *result) {
+        completionHandler(result.count == 1 ? result.firstObject : nil);
+    }];
 }
 
 - (void)getActiveExpiredSchedules:(void (^)(NSArray<UAScheduleData *> *))completionHandler {
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"end <= %@ && executionState != %d", [NSDate date], UAScheduleStateFinished];
-    [self fetchSchedulesWithPredicate:predicate limit:self.scheduleLimit completionHandler:completionHandler];
-}
-
-- (void)getDelayedSchedules:(void (^)(NSArray<UAScheduleData *> *))completionHandler {
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"executionState == %d AND delayedExecutionDate > %@",
-                              UAScheduleStatePendingExecution, [NSDate date]];
-    [self fetchSchedulesWithPredicate:predicate limit:self.scheduleLimit completionHandler:completionHandler];
-}
-
-- (void)getDelayedSchedule:(NSString *)scheduleID executionDate:(NSDate *)date completionHandler:(void (^)(NSArray<UAScheduleData *> *))completionHandler {
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"identifier == %@ AND executionState == %d AND delayedExecutionDate == %@",
-                              scheduleID, UAScheduleStatePendingExecution, date];
-    [self fetchSchedulesWithPredicate:predicate limit:1 completionHandler:completionHandler];
-}
-
-- (void)getPausedSchedules:(void (^)(NSArray<UAScheduleData *> *))completionHandler {
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"executionState == %d", UAScheduleStatePaused];
-    [self fetchSchedulesWithPredicate:predicate limit:self.scheduleLimit completionHandler:completionHandler];
-}
-
-- (void)getPausedSchedule:(NSString *)scheduleID completionHandler:(void (^)(NSArray<UAScheduleData *> *))completionHandler {
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"identifier == %@ AND executionState == %d",
-                              scheduleID, UAScheduleStatePaused];
-    [self fetchSchedulesWithPredicate:predicate limit:1 completionHandler:completionHandler];
-}
-
-- (void)getPendingSchedules:(void (^)(NSArray<UAScheduleData *> *))completionHandler {
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"executionState == %d AND (delayedExecutionDate == nil OR delayedExecutionDate <= %@)", UAScheduleStatePendingExecution, [NSDate date]];
-    [self fetchSchedulesWithPredicate:predicate limit:self.scheduleLimit completionHandler:completionHandler];
-}
-
-- (void)getExecutingSchedules:(void (^)(NSArray<UAScheduleData *> *))completionHandler {
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"executionState == %d", UAScheduleStateExecuting];
-    [self fetchSchedulesWithPredicate:predicate limit:self.scheduleLimit completionHandler:completionHandler];
-}
-
-- (void)getFinishedSchedules:(void (^)(NSArray<UAScheduleData *> *))completionHandler {
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"executionState == %d", UAScheduleStateFinished];
     [self fetchSchedulesWithPredicate:predicate limit:self.scheduleLimit completionHandler:completionHandler];
 }
 
@@ -211,8 +180,10 @@
 
     scheduleID = scheduleID ? : @"*";
 
-    NSString *format = @"(schedule.identifier LIKE %@ AND type = %ld AND start <= %@) AND ((delay != nil AND schedule.executionState == %d) OR (delay == nil AND schedule.executionState == %d))";
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:format, scheduleID, type, [NSDate date], UAScheduleStatePendingExecution, UAScheduleStateIdle];
+    NSString *format = @"(schedule.identifier LIKE %@ AND type = %ld AND start <= %@) AND ((delay != nil AND schedule.executionState in %@) OR (delay == nil AND schedule.executionState == %d))";
+
+    NSArray *cancelTriggerState = @[@(UAScheduleStateTimeDelayed), @(UAScheduleStateWaitingScheduleConditions), @(UAScheduleStatePreparingSchedule)];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:format, scheduleID, type, [NSDate date], cancelTriggerState, UAScheduleStateIdle];
 
     [self fetchTriggersWithPredicate:predicate completionHandler:completionHandler];
 }

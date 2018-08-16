@@ -38,4 +38,8 @@
     return limit > 0 && count >= limit;
 }
 
+- (BOOL)isExpired {
+    return [self.end compare:[NSDate date]] == NSOrderedAscending;
+}
+
 @end

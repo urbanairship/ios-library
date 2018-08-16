@@ -43,6 +43,7 @@
                                                     remoteDataManager:[self mockForClass:[UARemoteDataManager class]]
                                                             dataStore:self.dataStore
                                                                  push:self.mockPush];
+    self.manager.paused = NO;
 
     self.manager.delegate = self.mockDelegate;
 
@@ -78,6 +79,14 @@
 
         builder.message = message;
     }];
+
+    //Set factory block with banner display type
+    UA_WEAKIFY(self)
+    [self.manager setFactoryBlock:^id<UAInAppMessageAdapterProtocol> _Nonnull(UAInAppMessage * _Nonnull message) {
+        UA_STRONGIFY(self)
+        return self.mockAdapter;
+    } forDisplayType:UAInAppMessageDisplayTypeBanner];
+
 }
 
 - (void)tearDown {
@@ -87,22 +96,11 @@
     [super tearDown];
 }
 
-- (void)testIsScheduleReady {
-    // Set factory for banner type
-    UA_WEAKIFY(self)
-    [self.manager setFactoryBlock:^id<UAInAppMessageAdapterProtocol> _Nonnull(UAInAppMessage * _Nonnull message) {
-        UA_STRONGIFY(self)
-        return self.mockAdapter;
-    } forDisplayType:UAInAppMessageDisplayTypeBanner];
-
+- (void)testPrepare {
     XCTestExpectation *prepareCalled = [self expectationWithDescription:@"prepare should be called"];
     [[[self.mockAdapter expect] andDo:^(NSInvocation *invocation) {
-        UA_STRONGIFY(self)
         void (^prepareBlock)(UAInAppMessagePrepareResult);
         [invocation getArgument:&prepareBlock atIndex:2];
-
-        // Expect schedule conditions changed when prepare completes/prep block runs
-        [[self.mockAutomationEngine expect] scheduleConditionsChanged];
         prepareBlock(UAInAppMessagePrepareResultSuccess);
         [prepareCalled fulfill];
     }] prepare:OCMOCK_ANY];
@@ -110,23 +108,20 @@
     [[self.mockDelegate expect] extendMessage:[OCMArg isKindOfClass:[UAInAppMessage class]]];
 
     UASchedule *schedule = [UASchedule scheduleWithIdentifier:@"test IAM schedule" info:self.scheduleInfo];
-    XCTAssertFalse([self.manager isScheduleReadyToExecute:schedule]);
 
-    [self waitForExpectationsWithTimeout:5 handler:nil];
+    XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare should be finished"];
+    [self.manager prepareSchedule:schedule completionHandler:^(UAAutomationSchedulePrepareResult result) {
+        XCTAssertEqual(UAAutomationSchedulePrepareResultContinue, result);
+        [prepareFinished fulfill];
+    }];
+
+    [self waitForTestExpectations];
     
     [self.mockAdapter verify];
     [self.mockDelegate verify];
-    [self.mockAutomationEngine verify];
 }
 
-- (void)testIsScheduleReadyCancelPrepareResult {
-    // Set factory for banner type
-    UA_WEAKIFY(self)
-    [self.manager setFactoryBlock:^id<UAInAppMessageAdapterProtocol> _Nonnull(UAInAppMessage * _Nonnull message) {
-        UA_STRONGIFY(self)
-        return self.mockAdapter;
-    } forDisplayType:UAInAppMessageDisplayTypeBanner];
-
+- (void)testPrepareCancel {
     XCTestExpectation *prepareCalled = [self expectationWithDescription:@"prepare should be called"];
     [[[self.mockAdapter expect] andDo:^(NSInvocation *invocation) {
         void (^prepareBlock)(UAInAppMessagePrepareResult);
@@ -135,29 +130,36 @@
         [prepareCalled fulfill];
     }] prepare:OCMOCK_ANY];
 
-    [self.mockAutomationEngine cancelScheduleWithID:@"test IAM schedule"];
-
     UASchedule *schedule = [UASchedule scheduleWithIdentifier:@"test IAM schedule" info:self.scheduleInfo];
-    XCTAssertFalse([self.manager isScheduleReadyToExecute:schedule]);
 
-    [self waitForExpectationsWithTimeout:5 handler:nil];
+    XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare should be finished"];
+    [self.manager prepareSchedule:schedule completionHandler:^(UAAutomationSchedulePrepareResult result) {
+        XCTAssertEqual(UAAutomationSchedulePrepareResultCancel, result);
+        [prepareFinished fulfill];
+    }];
+
+    [self waitForTestExpectations];
 
     [self.mockAdapter verify];
     [self.mockAutomationEngine verify];
 }
 
-- (void)testIsScheduleReadyNoFactorySet {
+- (void)testPrepareNoFactory {
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wnonnull"
     [self.manager setFactoryBlock:nil forDisplayType:UAInAppMessageDisplayTypeBanner];
 #pragma clang diagnostic pop
-    
-    [[[self mockAutomationEngine] expect] cancelScheduleWithID:@"test IAM schedule"];
 
     UASchedule *schedule = [UASchedule scheduleWithIdentifier:@"test IAM schedule" info:self.scheduleInfo];
-    XCTAssertFalse([self.manager isScheduleReadyToExecute:schedule]);
 
-    [self.mockAutomationEngine verify];
+    XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare should be finished"];
+    [self.manager prepareSchedule:schedule completionHandler:^(UAAutomationSchedulePrepareResult result) {
+        XCTAssertEqual(UAAutomationSchedulePrepareResultPenalize, result);
+        [prepareFinished fulfill];
+    }];
+
+    [self waitForTestExpectations];
+
     [self.mockAdapter verify];
 }
 
@@ -166,77 +168,65 @@
         return nil;
     } forDisplayType:UAInAppMessageDisplayTypeBanner];
 
-    [[[self mockAutomationEngine] expect] cancelScheduleWithID:@"test IAM schedule"];
-
     UASchedule *schedule = [UASchedule scheduleWithIdentifier:@"test IAM schedule" info:self.scheduleInfo];
-    XCTAssertFalse([self.manager isScheduleReadyToExecute:schedule]);
 
-    [self.mockAutomationEngine verify];
+    XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare should be finished"];
+    [self.manager prepareSchedule:schedule completionHandler:^(UAAutomationSchedulePrepareResult result) {
+        XCTAssertEqual(UAAutomationSchedulePrepareResultPenalize, result);
+        [prepareFinished fulfill];
+    }];
+
+    [self waitForTestExpectations];
+
     [self.mockAdapter verify];
 }
 
-- (void)testAudienceCheckFailure {
+- (void)testPrepareAudienceCheckFailure {
     UASchedule *testSchedule = [UASchedule scheduleWithIdentifier:@"expected_id" info:self.scheduleInfo];
-
-    //Set factory block with banner display type
-    UA_WEAKIFY(self)
-    [self.manager setFactoryBlock:^id<UAInAppMessageAdapterProtocol> _Nonnull(UAInAppMessage * _Nonnull message) {
-        UA_STRONGIFY(self)
-        return self.mockAdapter;
-    } forDisplayType:UAInAppMessageDisplayTypeBanner];
 
     // Mock the checks to reject the audience
     id checks = [self mockForClass:[UAInAppMessageAudienceChecks class]];
     [[[checks expect] andReturnValue:@(NO)] checkDisplayAudienceConditions:self.scheduleInfo.message.audience];
 
-    // should never display for display, as audience will fail first
-    [[self.mockAdapter reject] display:OCMOCK_ANY];
-    [[self.mockAdapter reject] prepare:OCMOCK_ANY];
-
-    __block BOOL executeCompletionCalled = NO;
-
-    // Execute schedule
-    [self.manager isScheduleReadyToExecute:testSchedule];
-    [self.manager executeSchedule:testSchedule completionHandler:^{
-        executeCompletionCalled = YES;
+    XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare should be finished"];
+    [self.manager prepareSchedule:testSchedule completionHandler:^(UAAutomationSchedulePrepareResult result) {
+        XCTAssertEqual(UAAutomationSchedulePrepareResultPenalize, result);
+        [prepareFinished fulfill];
     }];
 
-    // Ensure the delegate calls the execute completion block
-    XCTAssertTrue(executeCompletionCalled);
-    [self.mockAdapter verify];
-    [self.mockDelegate verify];
+    [self waitForTestExpectations];
+
     [checks verify];
 }
 
 - (void)testExecuteSchedule {
     UASchedule *testSchedule = [UASchedule scheduleWithIdentifier:@"expected_id" info:self.scheduleInfo];
 
-    //Set factory block with banner display type
-    UA_WEAKIFY(self)
-    [self.manager setFactoryBlock:^id<UAInAppMessageAdapterProtocol> _Nonnull(UAInAppMessage * _Nonnull message) {
-        UA_STRONGIFY(self)
-        return self.mockAdapter;
-    } forDisplayType:UAInAppMessageDisplayTypeBanner];
-
-    XCTestExpectation *prepareCalled = [self expectationWithDescription:@"prepare should be called"];
+    // Prepare
     [[[self.mockAdapter expect] andDo:^(NSInvocation *invocation) {
-        UA_STRONGIFY(self)
         void (^prepareBlock)(UAInAppMessagePrepareResult);
         [invocation getArgument:&prepareBlock atIndex:2];
-
-        // Expect schedule conditions changed when prepare completes/prep block runs
-        [[self.mockAutomationEngine expect] scheduleConditionsChanged];
         prepareBlock(UAInAppMessagePrepareResultSuccess);
-        [prepareCalled fulfill];
     }] prepare:OCMOCK_ANY];
 
+    XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare should be finished"];
+    [self.manager prepareSchedule:testSchedule completionHandler:^(UAAutomationSchedulePrepareResult result) {
+        XCTAssertEqual(UAAutomationSchedulePrepareResultContinue, result);
+        [prepareFinished fulfill];
+    }];
+
+    [self waitForTestExpectations];
+
+    // isReady
+    [[[self.mockAdapter stub] andReturnValue:@(YES)] isReadyToDisplay];
+    XCTAssertTrue([self.manager isScheduleReadyToExecute:testSchedule]);
+
+    // Display
     XCTestExpectation *displayBlockCalled = [self expectationWithDescription:@"display block should be called"];
     [[[self.mockAdapter expect] andDo:^(NSInvocation *invocation) {
         void (^displayBlock)(UAInAppMessageResolution *);
         [invocation getArgument:&displayBlock atIndex:2];
-
         displayBlock([UAInAppMessageResolution userDismissedResolution]);
-
         [displayBlockCalled fulfill];
     }] display:OCMOCK_ANY];
 
@@ -248,118 +238,39 @@
     [[self.mockDelegate expect] messageWillBeDisplayed:self.scheduleInfo.message scheduleID:testSchedule.identifier];
     [[self.mockDelegate expect] messageFinishedDisplaying:self.scheduleInfo.message scheduleID:testSchedule.identifier resolution:OCMOCK_ANY];
 
-    __block BOOL executeCompletionCalled = NO;
-
-    // Execute schedule
-    [self.manager isScheduleReadyToExecute:testSchedule];
+    XCTestExpectation *executeFinished = [self expectationWithDescription:@"execute finished"];
     [self.manager executeSchedule:testSchedule completionHandler:^{
-        executeCompletionCalled = YES;
+        [executeFinished fulfill];
     }];
 
-    [self waitForExpectationsWithTimeout:5 handler:nil];
+    [self waitForTestExpectations];
 
-    // Ensure the delegate calls the execute completion block
-    XCTAssertTrue(executeCompletionCalled);
     [self.mockAdapter verify];
     [self.mockDelegate verify];
     [self.mockActionRunner verify];
 }
 
-- (void)testDisplayLock {
-    UASchedule *testSchedule = [UASchedule scheduleWithIdentifier:@"expected_id" info:self.scheduleInfo];
-
-    //Set factory block with banner display type
-    UA_WEAKIFY(self)
-    [self.manager setFactoryBlock:^id<UAInAppMessageAdapterProtocol> _Nonnull(UAInAppMessage * _Nonnull message) {
-        UA_STRONGIFY(self)
-        return self.mockAdapter;
-    } forDisplayType:UAInAppMessageDisplayTypeBanner];
-
-    XCTestExpectation *prepareCalled = [self expectationWithDescription:@"prepare should be called"];
-    [[[self.mockAdapter expect] andDo:^(NSInvocation *invocation) {
-        UA_STRONGIFY(self)
-        void (^prepareBlock)(UAInAppMessagePrepareResult);
-        [invocation getArgument:&prepareBlock atIndex:2];
-
-        // Expect schedule conditions changed when prepare completes/prep block runs
-        [[self.mockAutomationEngine expect] scheduleConditionsChanged];
-        prepareBlock(UAInAppMessagePrepareResultSuccess);
-        [prepareCalled fulfill];
-    }] prepare:OCMOCK_ANY];
-
-    //Check Schedule to set current schedule ID
-    XCTAssertFalse([self.manager isScheduleReadyToExecute:testSchedule]);
-
-    // Shorten the display interval to 1 second
-    self.manager.displayInterval = 1;
-
-    XCTestExpectation *displayBlockCalled = [self expectationWithDescription:@"display block should be called"];
-
-    [[[self.mockAdapter expect] andDo:^(NSInvocation *invocation) {
-        void (^displayBlock)(UAInAppMessageResolution *);
-        [invocation getArgument:&displayBlock atIndex:2];
-
-        displayBlock([UAInAppMessageResolution messageClickResolution]);
-
-        // Schedule should not be ready immediately after display (2nd call to isScheduleReady)
-        XCTAssertFalse([self.manager isScheduleReadyToExecute:testSchedule]);
-
-        [displayBlockCalled fulfill];
-    }] display:OCMOCK_ANY];
-
-    // Call to executeSchedule should execute display block and lock display
-    [self.manager executeSchedule:testSchedule completionHandler:^{}];
-
-    [self waitForExpectationsWithTimeout:5 handler:nil];
-
-    // Expect update to schedule conditions changed on unlock
-    [[self.mockAutomationEngine expect] scheduleConditionsChanged];
-
-    // Wait for unlock interval
-    XCTestExpectation *unlockInterval = [self expectationWithDescription:@"wait interval"];
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(self.manager.displayInterval+1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [unlockInterval fulfill];
-    });
-    [self waitForExpectationsWithTimeout:5 handler:nil];
-
-
-    // Schedule should be return false but prepare once screen unlocks (3rd call to isScheduleReady)
-    XCTAssertFalse([self.manager isScheduleReadyToExecute:testSchedule]);
-
-    [self.mockAdapter verify];
-    [self.mockAutomationEngine verify];
-}
-
 - (void)testPauseDisplay {
     UASchedule *testSchedule = [UASchedule scheduleWithIdentifier:@"expected_id" info:self.scheduleInfo];
 
-    //Set factory block with banner display type
-    UA_WEAKIFY(self)
-    [self.manager setFactoryBlock:^id<UAInAppMessageAdapterProtocol> _Nonnull(UAInAppMessage * _Nonnull message) {
-        UA_STRONGIFY(self)
-        return self.mockAdapter;
-    } forDisplayType:UAInAppMessageDisplayTypeBanner];
-
-    // Add block to send a successful prepare result and expect schedule conditions change
-    XCTestExpectation *prepareCalled = [self expectationWithDescription:@"prepare should be called"];
+    // Prepare
     [[[self.mockAdapter expect] andDo:^(NSInvocation *invocation) {
         void (^prepareBlock)(UAInAppMessagePrepareResult);
         [invocation getArgument:&prepareBlock atIndex:2];
-
         prepareBlock(UAInAppMessagePrepareResultSuccess);
-        [prepareCalled fulfill];
     }] prepare:OCMOCK_ANY];
 
-    //Check Schedule to set current schedule ID
-    XCTAssertFalse([self.manager isScheduleReadyToExecute:testSchedule]);
-    // Wait for prepare to finish
-    [self waitForExpectationsWithTimeout:1 handler:nil];
+    XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare should be finished"];
+    [self.manager prepareSchedule:testSchedule completionHandler:^(UAAutomationSchedulePrepareResult result) {
+        XCTAssertEqual(UAAutomationSchedulePrepareResultContinue, result);
+        [prepareFinished fulfill];
+    }];
 
-    // Mock isReadyToDisplay to YES
-    [[[self.mockAdapter stub] andReturnValue:OCMOCK_VALUE(YES)] isReadyToDisplay];
+    [self waitForTestExpectations];
 
-    // Pause the manager
-    self.manager.paused = NO;
+    // isReady
+    [[[self.mockAdapter stub] andReturnValue:@(YES)] isReadyToDisplay];
+    XCTAssertTrue([self.manager isScheduleReadyToExecute:testSchedule]);
 
     // Should display when paused == NO
     XCTAssertTrue([self.manager isScheduleReadyToExecute:testSchedule]);
@@ -369,14 +280,6 @@
 
     // Should not display when paused
     XCTAssertFalse([self.manager isScheduleReadyToExecute:testSchedule]);
-
-    // Expect schedule conditions when paused to unpaused transition occurs
-    [[self.mockAutomationEngine expect] scheduleConditionsChanged];
-    // Unpause the manager from being previously paused
-    self.manager.paused = NO;
-
-    [self.mockAdapter verify];
-    [self.mockAutomationEngine verify];
 }
 
 - (void)testCancelMessage {

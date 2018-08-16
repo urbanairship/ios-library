@@ -27,7 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 NSTimeInterval const DefaultMessageDisplayInterval = 30;
 NSTimeInterval const MaxSchedules = 200;
-NSTimeInterval const MessagePrepareRetyDelay = 200;
+NSTimeInterval const MessagePrepareRetryDelay = 200;
 
 NSString *const UAInAppAutomationStoreFileFormat = @"In-app-automation-%@.sqlite";
 NSString *const UAInAppMessageManagerEnabledKey = @"UAInAppMessageManagerEnabled";
@@ -37,7 +37,6 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
 @property(nonatomic, strong, nonnull) id<UAInAppMessageAdapterProtocol> adapter;
 @property(nonatomic, copy, nonnull) NSString *scheduleID;
 @property(nonatomic, strong, nonnull) UAInAppMessage *message;
-@property(assign) BOOL isPrepareFinished;
 + (instancetype)dataWithAdapter:(id<UAInAppMessageAdapterProtocol>)adapter scheduleID:(NSString *)scheduleID message:(UAInAppMessage *)message;
 @end
 
@@ -60,7 +59,7 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
 @end
 
 
-@interface UAInAppMessageManager ()  <UAAutomationEngineDelegate>
+@interface UAInAppMessageManager () 
 
 @property(nonatomic, assign) BOOL isDisplayLocked;
 
@@ -218,52 +217,51 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
     return adapter;
 }
 
+- (void)prepareSchedule:(nonnull UASchedule *)schedule completionHandler:(void (^)(UAAutomationSchedulePrepareResult))completionHandler {
+    UAInAppMessageScheduleInfo *info = (UAInAppMessageScheduleInfo *)schedule.info;
+    UAInAppMessage *message = info.message;
+
+    // Allow the delegate to extend the message if desired.
+    if ([self.delegate respondsToSelector:@selector(extendMessage:)]) {
+        message = [self.delegate extendMessage:message];
+    }
+
+    // Create the adapter
+    id<UAInAppMessageAdapterProtocol> adapter = [self adapterForMessage:message];
+    if (!adapter) {
+        UA_LWARN(@"Failed to build adapter for message: %@. Skiping display.", message);
+        completionHandler(UAAutomationSchedulePrepareResultPenalize);
+        return;
+    }
+
+    // Check audience conditions
+    if (![UAInAppMessageAudienceChecks checkDisplayAudienceConditions:info.message.audience]) {
+        UA_LDEBUG(@"Message audience conditions not met, skipping display for schedule:  %@", schedule.identifier);
+        completionHandler(UAAutomationSchedulePrepareResultPenalize);
+    }
+
+    // Prepare the data
+    UAInAppMessageScheduleData *data = [UAInAppMessageScheduleData dataWithAdapter:adapter
+                                                                        scheduleID:schedule.identifier
+                                                                           message:message];
+
+    UA_WEAKIFY(self)
+    [self prepareMessageWithScheduleData:data delay:0 completionHandler:^(UAAutomationSchedulePrepareResult result) {
+        UA_STRONGIFY(self)
+        if (result == UAAutomationSchedulePrepareResultContinue) {
+            self.scheduleData[schedule.identifier] = data;
+        }
+        completionHandler(result);
+    }];
+}
+
 - (BOOL)isScheduleReadyToExecute:(UASchedule *)schedule {
     UA_LTRACE(@"Checking if schedule %@ is ready to execute.", schedule.identifier);
 
-    // Only ready if active or very soon to be active
+    // Require an active application
     if ([[UIApplication sharedApplication] applicationState] != UIApplicationStateActive) {
         UA_LTRACE(@"Application is not active. Schedule: %@ not ready", schedule.identifier);
         return NO;
-    }
-
-    UAInAppMessageScheduleInfo *info = (UAInAppMessageScheduleInfo *)schedule.info;
-    UAInAppMessageScheduleData *data = self.scheduleData[schedule.identifier];
-
-    if (!data) {
-        // Check the audience condtions before we create the adapter
-        if (![UAInAppMessageAudienceChecks checkDisplayAudienceConditions:info.message.audience]) {
-            UA_LDEBUG(@"Message audience conditions not met, skipping display for schedule:  %@", schedule.identifier);
-            return YES;
-        }
-
-        UAInAppMessage *message = info.message;
-
-        // Allow the delegate to extend the message if desired.
-        if ([self.delegate respondsToSelector:@selector(extendMessage:)]) {
-            message = [self.delegate extendMessage:message];
-        }
-
-        id<UAInAppMessageAdapterProtocol> adapter = [self adapterForMessage:message];
-        if (!adapter) {
-            UA_LWARN(@"Failed to build adapter for message: %@. Cancelling schedule.", info.message);
-            [self cancelScheduleWithID:schedule.identifier];
-            return NO;
-        }
-
-        UAInAppMessageScheduleData *data = [UAInAppMessageScheduleData dataWithAdapter:adapter
-                                                                            scheduleID:schedule.identifier
-                                                                               message:message];
-        self.scheduleData[schedule.identifier] = data;
-        [self prepareMessageWithScheduleData:data delay:0];
-        return NO;
-    }
-
-    // Check the audience again before we allow the schedule to be ready
-    if (![UAInAppMessageAudienceChecks checkDisplayAudienceConditions:info.message.audience]) {
-        UA_LDEBUG(@"Message audience conditions not met, skipping display for schedule:  %@", schedule.identifier);
-        [self.scheduleData removeObjectForKey:schedule.identifier];
-        return YES;
     }
 
     // If the display is locked via timer or manager
@@ -278,8 +276,10 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
         return NO;
     }
 
-    if (!data.isPrepareFinished) {
-        UA_LTRACE(@"Message not prepared. Schedule %@ is not ready.", schedule.identifier);
+    UAInAppMessageScheduleData *data = self.scheduleData[schedule.identifier];
+
+    if (!data) {
+        UA_LERR("No data for schedule: %@", schedule.identifier);
         return NO;
     }
 
@@ -287,7 +287,6 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
         UA_LTRACE(@"Adapter ready check failed. Schedule: %@ not ready.", schedule.identifier);
         return NO;
     }
-
 
     UA_LTRACE(@"Schedule %@ ready!", schedule.identifier);
     return YES;
@@ -368,7 +367,10 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
     [[UAirship analytics] addEvent:event];
 }
 
-- (void)prepareMessageWithScheduleData:(UAInAppMessageScheduleData *)scheduleData delay:(NSTimeInterval)delay {
+- (void)prepareMessageWithScheduleData:(UAInAppMessageScheduleData *)scheduleData
+                                 delay:(NSTimeInterval)delay
+                     completionHandler:(void (^)(UAAutomationSchedulePrepareResult))completionHandler {
+
     UA_LDEBUG(@"Preparing schedule: %@ delay: %f", scheduleData.scheduleID, delay);
 
     UA_WEAKIFY(self);
@@ -376,28 +378,21 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
         UA_LDEBUG(@"Operation for schedule: %@ delay: %f", scheduleData.scheduleID, delay);
 
         dispatch_async(dispatch_get_main_queue(), ^{
-            // Check the audience condtions to break the prepare loop
-            if (![UAInAppMessageAudienceChecks checkDisplayAudienceConditions:scheduleData.message.audience]) {
-                return;
-            }
-
             [scheduleData.adapter prepare:^(UAInAppMessagePrepareResult result) {
                 UA_STRONGIFY(self);
                 UA_LDEBUG(@"Prepare result: %ld schedule: %@", (unsigned long)result, scheduleData.scheduleID);
                 switch (result) {
                     case UAInAppMessagePrepareResultSuccess:
-                        scheduleData.isPrepareFinished = YES;
-                        [self.automationEngine scheduleConditionsChanged];
+                        completionHandler(UAAutomationSchedulePrepareResultContinue);
                         break;
 
                     case UAInAppMessagePrepareResultRetry:
-                        [self prepareMessageWithScheduleData:scheduleData delay:MessagePrepareRetyDelay];
+                        [self prepareMessageWithScheduleData:scheduleData delay:MessagePrepareRetryDelay completionHandler:completionHandler];
                         break;
 
                     case UAInAppMessagePrepareResultCancel:
                     default:
-                        [self cancelScheduleWithID:scheduleData.scheduleID];
-                        [self.scheduleData removeObjectForKey:scheduleData.scheduleID];
+                        completionHandler(UAAutomationSchedulePrepareResultCancel);
                         break;
                 }
                 [operation finish];
