@@ -74,6 +74,7 @@ NSString * const UATagGroupsLookupManagerErrorDomain = @"com.urbanairship.tag_gr
 
 - (void)setPreferLocalTagDataTime:(NSTimeInterval)preferLocalTagDataTime {
     [self.dataStore setDouble:preferLocalTagDataTime forKey:kUATagGroupsLookupManagerPreferLocalTagDataTimeKey];
+    [self updateMaxSentMutationAge];
 }
 
 - (NSTimeInterval)cacheMaxAgeTime {
@@ -82,7 +83,6 @@ NSString * const UATagGroupsLookupManagerErrorDomain = @"com.urbanairship.tag_gr
 
 - (void)setCacheMaxAgeTime:(NSTimeInterval)cacheMaxAgeTime {
     self.cache.maxAgeTime = cacheMaxAgeTime;
-    [self updateMaxSentMutationAge];
 }
 
 - (NSTimeInterval)cacheStaleReadTime {
