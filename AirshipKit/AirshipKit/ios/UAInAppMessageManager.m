@@ -23,6 +23,8 @@
 #import "UAirship.h"
 #import "UAActiveTimer+Internal.h"
 #import "UAInAppMessageAudience.h"
+#import "UAInAppMessagingRemoteConfig+Internal.h"
+#import "UATagGroupsLookupManager+Internal.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -68,8 +70,9 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
 @property(nonatomic, strong, nullable) UAAutomationEngine *automationEngine;
 @property(nonatomic, strong) UAInAppRemoteDataClient *remoteDataClient;
 @property(nonatomic, strong) UAPreferenceDataStore *dataStore;
-@property(nonatomic, strong, nonnull) NSOperationQueue *queue;
-@property(nonatomic, strong, nonnull) NSMutableDictionary *scheduleData;
+@property(nonatomic, strong) NSOperationQueue *queue;
+@property(nonatomic, strong) NSMutableDictionary *scheduleData;
+@property(nonatomic, strong) UATagGroupsLookupManager *tagGroupsLookupManager;
 @end
 
 @implementation UAInAppMessageManager
@@ -425,6 +428,19 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
 
 - (void)onComponentEnableChange {
     [self updateEnginePauseState];
+}
+
+- (Class)remoteConfigClass {
+    return [UAInAppMessagingRemoteConfig class];
+}
+
+- (void)onNewRemoteConfig:(UARemoteConfig *)config {
+    UAInAppMessagingRemoteConfig *newConfig = (UAInAppMessagingRemoteConfig *)config;
+
+    self.tagGroupsLookupManager.componentEnabled = newConfig.tagGroupsConfig.enabled;
+    self.tagGroupsLookupManager.cacheMaxAgeTime = newConfig.tagGroupsConfig.cacheMaxAgeTime;
+    self.tagGroupsLookupManager.cacheStaleReadTime = newConfig.tagGroupsConfig.cacheStaleReadTime;
+    self.tagGroupsLookupManager.preferLocalTagDataTime = newConfig.tagGroupsConfig.cachePreferLocalUntil;
 }
 
 - (void)setPaused:(BOOL)paused {

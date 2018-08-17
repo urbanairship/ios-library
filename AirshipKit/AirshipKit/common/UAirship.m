@@ -119,7 +119,13 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         self.sharedLocation = [UALocation locationWithAnalytics:self.sharedAnalytics dataStore:dataStore];
         self.sharedAutomation = [UAAutomation automationWithConfig:config dataStore:dataStore];
         self.sharedRemoteDataManager = [UARemoteDataManager remoteDataManagerWithConfig:config dataStore:dataStore];
-        self.sharedRemoteConfigManager = [UARemoteConfigManager remoteConfigManagerWithRemoteDataManager:self.sharedRemoteDataManager componentDisabler:[[UAComponentDisabler alloc] init]];
+
+        UAModules *modules = [[UAModules alloc] init];
+        UAComponentDisabler *componentDisabler = [UAComponentDisabler componentDisablerWithModules:modules];
+
+        self.sharedRemoteConfigManager = [UARemoteConfigManager remoteConfigManagerWithRemoteDataManager:self.sharedRemoteDataManager
+                                                                                       componentDisabler:componentDisabler
+                                                                                                 modules:modules];
 #if !TARGET_OS_TV
         // IAP Nib not supported on tvOS
         self.sharedInAppMessageManager = [UAInAppMessageManager managerWithConfig:config remoteDataManager:self.sharedRemoteDataManager dataStore:dataStore push:self.sharedPush];
