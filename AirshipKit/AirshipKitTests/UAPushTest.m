@@ -1211,7 +1211,10 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     config.channelCreationDelayEnabled = NO;
 
     // Init push
-    self.push =  [UAPush pushWithConfig:config dataStore:self.dataStore tagGroupsRegistrar:self.mockTagGroupsRegistrar notificationCenter:self.notificationCenter];
+    self.push =  [UAPush pushWithConfig:config
+                              dataStore:self.dataStore
+                     tagGroupsRegistrar:self.mockTagGroupsRegistrar
+                     notificationCenter:self.notificationCenter];
 
     // Ensure channel creation enabled is YES
     XCTAssertTrue(self.push.channelCreationEnabled);
@@ -1261,7 +1264,6 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
                          @"updateRegistration should register with the channel registrar if push is enabled.");
     }
 }
-
 
 - (void)testUpdateRegistrationForcefullyPushDisabled {
     self.push.userPushNotificationsEnabled = NO;

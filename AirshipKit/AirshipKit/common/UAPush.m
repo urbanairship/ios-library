@@ -170,7 +170,6 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
     return self;
 }
 
-
 + (instancetype)pushWithConfig:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore tagGroupsRegistrar:(UATagGroupsRegistrar *)tagGroupsRegistrar {
     return [[UAPush alloc] initWithConfig:config
                                 dataStore:dataStore

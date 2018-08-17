@@ -425,7 +425,7 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
 }
 
 - (BOOL)isPaused{
-    return [self.dataStore boolForKey:UAInAppMessageManagerPausedKey default:NO];
+    return [self.dataStore boolForKey:UAInAppMessageManagerPausedKey defaultValue:NO];
 }
 
 - (void)setEnabled:(BOOL)enabled {
@@ -434,7 +434,7 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
 }
 
 - (BOOL)isEnabled {
-    return [self.dataStore boolForKey:UAInAppMessageManagerEnabledKey default:YES];
+    return [self.dataStore boolForKey:UAInAppMessageManagerEnabledKey defaultValue:YES];
 }
 
 - (void)updateEnginePauseState {

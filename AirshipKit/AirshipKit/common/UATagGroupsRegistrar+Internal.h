@@ -3,9 +3,10 @@
 #import <Foundation/Foundation.h>
 
 #import "UAConfig.h"
+#import "UAPreferenceDataStore+Internal.h"
+#import "UATagGroupsMutationHistory+Internal.h"
 #import "UATagGroupsAPIClient+Internal.h"
 #import "UAComponent+Internal.h"
-#import "UAPreferenceDataStore+Internal.h"
 #import "UATagGroupsType+Internal.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -19,19 +20,26 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Factory method to create a tag groups registrar.
  * @param config The Urban Airship config.
- * @param dataStore The shared preference data store.
+ * @param dataStore The shared data store.
+ * @param mutationHistory The mutation history.
  * @return A new tag groups registrar instance.
  */
-+ (instancetype)tagGroupsRegistrarWithConfig:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore;
++ (instancetype)tagGroupsRegistrarWithConfig:(UAConfig *)config
+                                   dataStore:(UAPreferenceDataStore *)dataStore
+                             mutationHistory:(UATagGroupsMutationHistory *)mutationHistory;
 
 /**
  * Factory method to create a tag groups registrar. Used for testing.
- * @param dataStore The shared preference data store.
+ * @param dataStore The shared data store.
+ * @param mutationHistory The mutation history.
  * @param apiClient The internal tag groups API client.
  * @param operationQueue An NSOperation queue used to synchronize changes to tag groups.
  * @return A new tag groups registrar instance.
  */
-+ (instancetype)tagGroupsRegistrarWithDataStore:(UAPreferenceDataStore *)dataStore apiClient:(UATagGroupsAPIClient *)apiClient operationQueue:(NSOperationQueue *)operationQueue;
++ (instancetype)tagGroupsRegistrarWithDataStore:(UAPreferenceDataStore *)dataStore
+                                mutationHistory:(UATagGroupsMutationHistory *)mutationHistory
+                                      apiClient:(UATagGroupsAPIClient *)apiClient
+                                 operationQueue:(NSOperationQueue *)operationQueue;
 
 /**
  * Update the tag groups for the given identifier.

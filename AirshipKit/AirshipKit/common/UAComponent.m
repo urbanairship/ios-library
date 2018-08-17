@@ -33,7 +33,7 @@ BOOL const UAComponentEnabledDefault = YES;
 // getter and setter for component enabled flag
 - (BOOL)componentEnabled {
     // return value from the data store
-    return [self.componentDataStore boolForKey:[self componentEnabledKey] default:UAComponentEnabledDefault];
+    return [self.componentDataStore boolForKey:[self componentEnabledKey] defaultValue:UAComponentEnabledDefault];
 }
 
 - (void)setComponentEnabled:(BOOL)componentEnabled {
