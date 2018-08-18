@@ -7,6 +7,9 @@
 
 @interface UARemoteConfigManager : NSObject
 
+/**
+ * The modules used by the remote config manager.
+ */
 @property (nonatomic, readonly) UAModules *modules;
 
 /**

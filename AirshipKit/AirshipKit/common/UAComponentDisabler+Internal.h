@@ -5,6 +5,11 @@
 
 @interface UAComponentDisabler : NSObject
 
+/**
+ * UAComponentDisabler class factory method
+ *
+ * @param modules An instance of UAModules.
+ */
 + (instancetype)componentDisablerWithModules:(UAModules *)modules;
 
 /**
