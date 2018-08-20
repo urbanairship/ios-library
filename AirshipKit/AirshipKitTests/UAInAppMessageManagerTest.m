@@ -47,38 +47,7 @@
 
     self.manager.delegate = self.mockDelegate;
 
-    self.scheduleInfo = [UAInAppMessageScheduleInfo scheduleInfoWithBuilderBlock:^(UAInAppMessageScheduleInfoBuilder * _Nonnull builder) {
-        UAInAppMessage *message = [UAInAppMessage messageWithBuilderBlock:^(UAInAppMessageBuilder * _Nonnull builder) {
-            builder.identifier = @"test identifier";
-            builder.actions = @{@"cool": @"story"};
-
-            builder.displayContent = [UAInAppMessageBannerDisplayContent displayContentWithBuilderBlock:^(UAInAppMessageBannerDisplayContentBuilder *builder) {
-                builder.placement = UAInAppMessageBannerPlacementTop;
-                builder.buttonLayout = UAInAppMessageButtonLayoutTypeJoined;
-
-                UAInAppMessageTextInfo *heading = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
-                    builder.text = @"Here is a headline!";
-                }];
-                builder.heading = heading;
-
-                UAInAppMessageTextInfo *buttonTex = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
-                    builder.text = @"Dismiss";
-                }];
-
-                UAInAppMessageButtonInfo *button = [UAInAppMessageButtonInfo buttonInfoWithBuilderBlock:^(UAInAppMessageButtonInfoBuilder * _Nonnull builder) {
-                    builder.label = buttonTex;
-                    builder.identifier = @"button";
-                }];
-
-                builder.buttons = @[button];
-            }];
-            builder.audience = [UAInAppMessageAudience audienceWithBuilderBlock:^(UAInAppMessageAudienceBuilder * _Nonnull builder) {
-                builder.locationOptIn = @NO;
-            }];
-        }];
-
-        builder.message = message;
-    }];
+    self.scheduleInfo = [self sampleScheduleInfoWithMissBehavior:UAInAppMessageAudienceMissBehaviorPenalize];
 
     //Set factory block with banner display type
     UA_WEAKIFY(self)
@@ -95,6 +64,44 @@
 
     [super tearDown];
 }
+
+- (UAInAppMessageScheduleInfo *)sampleScheduleInfoWithMissBehavior:(UAInAppMessageAudienceMissBehaviorType)missBehavior {
+    UAInAppMessageScheduleInfo *scheduleInfo = [UAInAppMessageScheduleInfo scheduleInfoWithBuilderBlock:^(UAInAppMessageScheduleInfoBuilder * _Nonnull builder) {
+        UAInAppMessage *message = [UAInAppMessage messageWithBuilderBlock:^(UAInAppMessageBuilder * _Nonnull builder) {
+            builder.identifier = @"test identifier";
+            builder.actions = @{@"cool": @"story"};
+            
+            builder.displayContent = [UAInAppMessageBannerDisplayContent displayContentWithBuilderBlock:^(UAInAppMessageBannerDisplayContentBuilder *builder) {
+                builder.placement = UAInAppMessageBannerPlacementTop;
+                builder.buttonLayout = UAInAppMessageButtonLayoutTypeJoined;
+                
+                UAInAppMessageTextInfo *heading = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
+                    builder.text = @"Here is a headline!";
+                }];
+                builder.heading = heading;
+                
+                UAInAppMessageTextInfo *buttonTex = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
+                    builder.text = @"Dismiss";
+                }];
+                
+                UAInAppMessageButtonInfo *button = [UAInAppMessageButtonInfo buttonInfoWithBuilderBlock:^(UAInAppMessageButtonInfoBuilder * _Nonnull builder) {
+                    builder.label = buttonTex;
+                    builder.identifier = @"button";
+                }];
+                
+                builder.buttons = @[button];
+            }];
+            builder.audience = [UAInAppMessageAudience audienceWithBuilderBlock:^(UAInAppMessageAudienceBuilder * _Nonnull builder) {
+                builder.locationOptIn = @NO;
+                builder.missBehavior = missBehavior;
+            }];
+        }];
+        builder.message = message;
+    }];
+    return scheduleInfo;
+}
+
+
 
 - (void)testPrepare {
     XCTestExpectation *prepareCalled = [self expectationWithDescription:@"prepare should be called"];
@@ -181,7 +188,7 @@
     [self.mockAdapter verify];
 }
 
-- (void)testPrepareAudienceCheckFailure {
+- (void)testPrepareAudienceCheckFailureDefaultMissBehavior {
     UASchedule *testSchedule = [UASchedule scheduleWithIdentifier:@"expected_id" info:self.scheduleInfo];
 
     // Mock the checks to reject the audience
@@ -196,6 +203,66 @@
 
     [self waitForTestExpectations];
 
+    [checks verify];
+}
+
+- (void)testPrepareAudienceCheckFailureMissBehaviorCancel {
+    UAInAppMessageScheduleInfo *scheduleInfo = [self sampleScheduleInfoWithMissBehavior:UAInAppMessageAudienceMissBehaviorCancel];
+    
+    UASchedule *testSchedule = [UASchedule scheduleWithIdentifier:@"expected_id" info:scheduleInfo];
+    
+    // Mock the checks to reject the audience
+    id checks = [self mockForClass:[UAInAppMessageAudienceChecks class]];
+    [[[checks expect] andReturnValue:@(NO)] checkDisplayAudienceConditions:scheduleInfo.message.audience];
+    
+    XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare should be finished"];
+    [self.manager prepareSchedule:testSchedule completionHandler:^(UAAutomationSchedulePrepareResult result) {
+        XCTAssertEqual(UAAutomationSchedulePrepareResultCancel, result);
+        [prepareFinished fulfill];
+    }];
+    
+    [self waitForTestExpectations];
+    
+    [checks verify];
+}
+
+- (void)testPrepareAudienceCheckFailureMissBehaviorSkip {
+    UAInAppMessageScheduleInfo *scheduleInfo = [self sampleScheduleInfoWithMissBehavior:UAInAppMessageAudienceMissBehaviorSkip];
+    
+    UASchedule *testSchedule = [UASchedule scheduleWithIdentifier:@"expected_id" info:scheduleInfo];
+    
+    // Mock the checks to reject the audience
+    id checks = [self mockForClass:[UAInAppMessageAudienceChecks class]];
+    [[[checks expect] andReturnValue:@(NO)] checkDisplayAudienceConditions:scheduleInfo.message.audience];
+    
+    XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare should be finished"];
+    [self.manager prepareSchedule:testSchedule completionHandler:^(UAAutomationSchedulePrepareResult result) {
+        XCTAssertEqual(UAAutomationSchedulePrepareResultSkip, result);
+        [prepareFinished fulfill];
+    }];
+    
+    [self waitForTestExpectations];
+    
+    [checks verify];
+}
+
+- (void)testPrepareAudienceCheckFailureMissBehaviorPenalize {
+    UAInAppMessageScheduleInfo *scheduleInfo = [self sampleScheduleInfoWithMissBehavior:UAInAppMessageAudienceMissBehaviorPenalize];
+    
+    UASchedule *testSchedule = [UASchedule scheduleWithIdentifier:@"expected_id" info:scheduleInfo];
+    
+    // Mock the checks to reject the audience
+    id checks = [self mockForClass:[UAInAppMessageAudienceChecks class]];
+    [[[checks expect] andReturnValue:@(NO)] checkDisplayAudienceConditions:scheduleInfo.message.audience];
+    
+    XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare should be finished"];
+    [self.manager prepareSchedule:testSchedule completionHandler:^(UAAutomationSchedulePrepareResult result) {
+        XCTAssertEqual(UAAutomationSchedulePrepareResultPenalize, result);
+        [prepareFinished fulfill];
+    }];
+    
+    [self waitForTestExpectations];
+    
     [checks verify];
 }
 

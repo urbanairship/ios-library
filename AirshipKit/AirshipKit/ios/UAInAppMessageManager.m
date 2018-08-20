@@ -22,6 +22,7 @@
 #import "UAInAppMessageDisplayEvent+Internal.h"
 #import "UAirship.h"
 #import "UAActiveTimer+Internal.h"
+#import "UAInAppMessageAudience.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -236,8 +237,20 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
 
     // Check audience conditions
     if (![UAInAppMessageAudienceChecks checkDisplayAudienceConditions:info.message.audience]) {
-        UA_LDEBUG(@"Message audience conditions not met, skipping display for schedule:  %@", schedule.identifier);
-        completionHandler(UAAutomationSchedulePrepareResultPenalize);
+        UA_LDEBUG(@"Message audience conditions not met, processing audience check miss behavior for schedule:  %@", schedule.identifier);
+        UAAutomationSchedulePrepareResult result;
+        switch (info.message.audience.missBehavior) {
+            case UAInAppMessageAudienceMissBehaviorCancel:
+                result = UAAutomationSchedulePrepareResultCancel;
+                break;
+            case UAInAppMessageAudienceMissBehaviorSkip:
+                result = UAAutomationSchedulePrepareResultSkip;
+                break;
+            case UAInAppMessageAudienceMissBehaviorPenalize:
+                result = UAAutomationSchedulePrepareResultPenalize;
+                break;
+        }
+        completionHandler(result);
     }
 
     // Prepare the data

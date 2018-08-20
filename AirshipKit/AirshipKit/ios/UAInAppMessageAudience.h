@@ -8,6 +8,25 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/**
+ * Audience check miss behaviors
+ */
+typedef NS_ENUM(NSInteger, UAInAppMessageAudienceMissBehaviorType) {
+    /**
+     * Cancel the message's schedule when the audience check fails.
+     */
+    UAInAppMessageAudienceMissBehaviorCancel,
+    
+    /**
+     * Skip the message's schedule when the audience check fails.
+     */
+    UAInAppMessageAudienceMissBehaviorSkip,
+
+    /**
+     * Skip and penalize the message's schedule when the audience check fails.
+     */
+    UAInAppMessageAudienceMissBehaviorPenalize,
+};
 
 /**
  * Builder class for UAInAppMessageAudience.
@@ -38,6 +57,11 @@ NS_ASSUME_NONNULL_BEGIN
  * The app version predicate.
  */
 @property(nonatomic, strong, nullable) UAJSONPredicate *versionPredicate;
+
+/**
+ * The audience check miss behavior.
+ */
+@property(nonatomic, assign) UAInAppMessageAudienceMissBehaviorType missBehavior;
 
 /**
  * Checks if the builder is valid and will produce a audience.
@@ -78,14 +102,17 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, readonly, nullable) UAJSONPredicate *versionPredicate;
 
 /**
+ * The audience check miss behavior.
+ */
+@property(nonatomic, readonly, assign) UAInAppMessageAudienceMissBehaviorType missBehavior;
+
+/**
  * Factory method for building audience model from a builder block.
  *
  * @param builderBlock The builder block.
  * @returns `YES` if the builderBlock was able to be applied, otherwise `NO`.
  */
 + (instancetype)audienceWithBuilderBlock:(void(^)(UAInAppMessageAudienceBuilder *builder))builderBlock;
-
-
 
 @end
 
