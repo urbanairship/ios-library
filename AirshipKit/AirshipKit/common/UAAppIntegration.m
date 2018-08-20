@@ -109,7 +109,6 @@
     UA_LDEBUG(@"Notification center will present notification: %@", notification);
 
     UNNotificationPresentationOptions options = [[UAirship push] presentationOptionsForNotification:notification];
-    completionHandler(options);
 
     if (![UAirship shared].config.automaticSetupEnabled) {
         [self handleForegroundNotification:notification mergedOptions:options withCompletionHandler:^{

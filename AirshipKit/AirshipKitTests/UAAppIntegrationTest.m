@@ -233,8 +233,6 @@
  */
 - (void)testWillPresentNotificationAutomaticSetupDisabled {
 
-    __block BOOL completionHandlerCalled = NO;
-
     BOOL (^handlerCheck)(id obj) = ^(id obj) {
         void (^handler)(UAActionResult *) = obj;
         if (handler) {
@@ -275,18 +273,20 @@
     }]];
 
     // Call the integration
+    XCTestExpectation *handlerExpectation = [self expectationWithDescription:@"Completion handler called"];
     [UAAppIntegration userNotificationCenter:self.mockedUserNotificationCenter
                      willPresentNotification:self.mockedUNNotification
                        withCompletionHandler:^(UNNotificationPresentationOptions options) {
-                           completionHandlerCalled = YES;
+                           [handlerExpectation fulfill];
                            // Check that completion handler is called with expected options
                            XCTAssertEqual(options, expectedOptions);
                        }];
 
+    [self waitForExpectationsWithTimeout:1 handler:nil];
+    
     // Verify everything
     [self.mockedActionRunner verify];
     [self.mockedPush verify];
-    XCTAssertTrue(completionHandlerCalled, @"Completion handler should be called.");
 }
 
 /**

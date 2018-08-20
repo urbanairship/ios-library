@@ -73,7 +73,7 @@ static dispatch_once_t onceToken;
                              protocol:@protocol(UIApplicationDelegate)
                        implementation:(IMP)ApplicationDidFailToRegisterForRemoteNotificationsWithError];
 
-    // Silent notifications
+    // Content-available notifications
     [self.appDelegateSwizzler swizzle:@selector(application:didReceiveRemoteNotification:fetchCompletionHandler:)
                              protocol:@protocol(UIApplicationDelegate)
                        implementation:(IMP)ApplicationDidReceiveRemoteNotificationFetchCompletionHandler];
@@ -161,8 +161,7 @@ void UserNotificationCenterWillPresentNotificationWithCompletionHandler(id self,
             // Make sure the app's completion handler is called on the main queue
             dispatch_async(dispatch_get_main_queue(), ^{
                 if (completionHandlerCalled) {
-                    UA_LERR(@"Completion handler called multiple times.");
-                    dispatch_group_leave(dispatchGroup);
+                    UA_LWARN(@"Completion handler called multiple times.");
                     return;
                 }
                 completionHandlerCalled = YES;
@@ -179,11 +178,19 @@ void UserNotificationCenterWillPresentNotificationWithCompletionHandler(id self,
 
 
     // Call UAPush
+    __block BOOL completionHandlerCalled = NO;
     dispatch_group_enter(dispatchGroup);
     [UAAppIntegration userNotificationCenter:notificationCenter willPresentNotification:notification withCompletionHandler:^(UNNotificationPresentationOptions options) {
         // Make sure the app's completion handler is called on the main queue
         dispatch_async(dispatch_get_main_queue(), ^{
+            if (completionHandlerCalled) {
+                UA_LWARN(@"Completion handler called multiple times.");
+                return;
+            }
+            completionHandlerCalled = YES;
+            
             mergedPresentationOptions |= options;
+
             dispatch_group_leave(dispatchGroup);
         });
     }];
@@ -209,8 +216,7 @@ void UserNotificationCenterDidReceiveNotificationResponseWithCompletionHandler(i
             // Make sure the app's completion handler is called on the main queue
             dispatch_async(dispatch_get_main_queue(), ^{
                 if (completionHandlerCalled) {
-                    UA_LERR(@"Completion handler called multiple times.");
-                    dispatch_group_leave(dispatchGroup);
+                    UA_LWARN(@"Completion handler called multiple times.");
                     return;
                 }
                 completionHandlerCalled = YES;
@@ -224,10 +230,17 @@ void UserNotificationCenterDidReceiveNotificationResponseWithCompletionHandler(i
     }
 
     // Call UAPush
+    __block BOOL completionHandlerCalled = NO;
     dispatch_group_enter(dispatchGroup);
     [UAAppIntegration userNotificationCenter:notificationCenter
               didReceiveNotificationResponse:response
                        withCompletionHandler:^() {
+                           if (completionHandlerCalled) {
+                               UA_LWARN(@"Completion handler called multiple times.");
+                               return;
+                           }
+                           completionHandlerCalled = YES;
+                           
                            dispatch_group_leave(dispatchGroup);
                        }];
 
@@ -278,8 +291,7 @@ void ApplicationPerformFetchWithCompletionHandler(id self,
             // Make sure the app's completion handler is called on the main queue
             dispatch_async(dispatch_get_main_queue(), ^{
                 if (completionHandlerCalled) {
-                    UA_LERR(@"Completion handler called multiple times.");
-                    dispatch_group_leave(dispatchGroup);
+                    UA_LWARN(@"Completion handler called multiple times.");
                     return;
                 }
                 completionHandlerCalled = YES;
@@ -300,8 +312,15 @@ void ApplicationPerformFetchWithCompletionHandler(id self,
         ((void(*)(id, SEL, UIApplication *, void (^)(UIBackgroundFetchResult)))original)(self, _cmd, application, completionHandler);
     }
 
+    __block BOOL completionHandlerCalled = NO;
     dispatch_group_enter(dispatchGroup);
     [UAAppIntegration application:application performFetchWithCompletionHandler:^(UIBackgroundFetchResult result) {
+        if (completionHandlerCalled) {
+            UA_LWARN(@"Completion handler called multiple times.");
+            return;
+        }
+        completionHandlerCalled = YES;
+        
         // Merge the UIBackgroundFetchResults. If final fetchResult is not already UIBackgroundFetchResultNewData
         // and the current result is not UIBackgroundFetchResultNoData, then set the fetchResult to result
         // (should be either UIBackgroundFetchFailed or UIBackgroundFetchResultNewData)
@@ -356,8 +375,7 @@ void ApplicationDidReceiveRemoteNotificationFetchCompletionHandler(id self,
             // Make sure the app's completion handler is called on the main queue
             dispatch_async(dispatch_get_main_queue(), ^{
                 if (completionHandlerCalled) {
-                    UA_LERR(@"Completion handler called multiple times.");
-                    dispatch_group_leave(dispatchGroup);
+                    UA_LWARN(@"Completion handler called multiple times.");
                    return;
                 }
                 completionHandlerCalled = YES;
@@ -380,9 +398,15 @@ void ApplicationDidReceiveRemoteNotificationFetchCompletionHandler(id self,
 
 
     // Our completion handler is called by the action framework on the main queue
+    __block BOOL completionHandlerCalled = NO;
     dispatch_group_enter(dispatchGroup);
     [UAAppIntegration application:application didReceiveRemoteNotification:userInfo fetchCompletionHandler:^(UIBackgroundFetchResult result) {
-
+        if (completionHandlerCalled) {
+            UA_LWARN(@"Completion handler called multiple times.");
+            return;
+        }
+        completionHandlerCalled = YES;
+        
         // Merge the UIBackgroundFetchResults. If final fetchResult is not already UIBackgroundFetchResultNewData
         // and the current result is not UIBackgroundFetchResultNoData, then set the fetchResult to result
         // (should be either UIBackgroundFetchFailed or UIBackgroundFetchResultNewData)

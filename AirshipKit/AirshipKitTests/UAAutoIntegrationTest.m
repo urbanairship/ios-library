@@ -200,6 +200,7 @@
         [invocation getArgument:&arg atIndex:3];
         void (^handler)(UIBackgroundFetchResult result) = (__bridge void (^)(UIBackgroundFetchResult))arg;
         handler(fetchResult);
+        handler(fetchResult); // should handle being called multiple times
     };
 
     [[[self.mockAppIntegration stub] andDo:fetchBlock] application:self.mockApplication
@@ -355,6 +356,8 @@
         [invocation getArgument:&arg atIndex:4];
         void (^handler)(UIBackgroundFetchResult result) = (__bridge void (^)(UIBackgroundFetchResult))arg;
         handler(UIBackgroundFetchResultNewData);
+        handler(UIBackgroundFetchResultNewData); // should handle being called multiple times
+
     };
 
     [[[self.mockAppIntegration stub] andDo:pushBlock] application:self.mockApplication
@@ -414,6 +417,7 @@
         [invocation getArgument:&arg atIndex:4];
         void (^handler)(UNNotificationPresentationOptions) = (__bridge void (^)(UNNotificationPresentationOptions))arg;
         handler(expectedOptions);
+        handler(expectedOptions); // should handle being called multiple times
     };
     
     [[[self.mockAppIntegration stub] andDo:appIntegrationForWillPresentNotificationBlock] userNotificationCenter:self.mockUserNotificationCenter
@@ -493,6 +497,7 @@
         [invocation getArgument:&arg atIndex:4];
         void (^handler)(void) = (__bridge void(^)(void))arg;
         handler();
+        handler(); // should handle being called multiple times
     };
     
     [[[self.mockAppIntegration stub] andDo:appIntegrationBlock] userNotificationCenter:self.mockUserNotificationCenter
