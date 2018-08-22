@@ -21,6 +21,7 @@
 #import "UATagUtils+Internal.h"
 #import "UAPushReceivedEvent+Internal.h"
 #import "UATagGroupsRegistrar+Internal.h"
+#import "UARegistrationDelegateWrapper+Internal.h"
 
 #if !TARGET_OS_TV
 #import "UAInboxUtils.h"
@@ -67,6 +68,8 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
 @interface UAPush()
 @property (nonatomic, strong) UATagGroupsRegistrar *tagGroupsRegistrar;
 @property (nonatomic, strong) NSNotificationCenter *notificationCenter;
+@property (nonatomic, strong) UARegistrationDelegateWrapper *registrationDelegateWrapper;
+
 @end
 
 @implementation UAPush
@@ -83,6 +86,7 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
     if (self) {
         self.dataStore = dataStore;
         self.notificationCenter = notificationCenter;
+        self.registrationDelegateWrapper = [[UARegistrationDelegateWrapper alloc] init];
 
         self.pushRegistration = [[UAAPNSRegistration alloc] init];
         self.pushRegistration.registrationDelegate = self;
@@ -209,23 +213,8 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
         [self.dataStore setInteger:(NSInteger)authorizedSettings forKey:UAPushTypesAuthorizedKey];
         [self updateRegistration];
 
-        id strongDelegate = self.registrationDelegate;
-
-        SEL newSelector = @selector(notificationAuthorizedSettingsDidChange:);
-        SEL oldSelector = @selector(notificationAuthorizedOptionsDidChange:);
-
-        if ([strongDelegate respondsToSelector:newSelector]) {
-            [strongDelegate notificationAuthorizedSettingsDidChange:authorizedSettings];
-        }
-
-        if ([strongDelegate respondsToSelector:oldSelector]) {
-            UANotificationOptions legacyOptions = [self legacyOptionsForAuthorizedSettings:authorizedSettings];
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-            UA_LWARN(@"Warning: %@ is deprecated and will be removed in SDK 11. Please use %@", NSStringFromSelector(oldSelector), NSStringFromSelector(newSelector));
-            [strongDelegate notificationAuthorizedOptionsDidChange:legacyOptions];
-#pragma GCC diagnostic pop
-        }
+        [self.registrationDelegateWrapper notificationAuthorizedSettingsDidChange:authorizedSettings
+                                                                    legacyOptions:[self legacyOptionsForAuthorizedSettings:authorizedSettings]];
     }
 }
 
@@ -453,6 +442,14 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
     return _requireSettingsAppToDisableUserNotifications;
 }
 
+- (void)setRegistrationDelegate:(id<UARegistrationDelegate>)registrationDelegate {
+    self.registrationDelegateWrapper.delegate = registrationDelegate;
+}
+
+- (id<UARegistrationDelegate>)registrationDelegate {
+    return self.registrationDelegateWrapper.delegate;
+}
+
 #pragma mark -
 #pragma mark Open APIs - Property Setters
 
@@ -607,17 +604,12 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
         [self updateChannelRegistrationForcefully:NO];
     }
 
-    id strongDelegate = self.registrationDelegate;
-    if ([strongDelegate respondsToSelector:@selector(apnsRegistrationSucceededWithDeviceToken:)]) {
-        [strongDelegate apnsRegistrationSucceededWithDeviceToken:deviceToken];
-    }
+    [self.registrationDelegateWrapper apnsRegistrationSucceededWithDeviceToken:deviceToken];
 }
 
 - (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error {
-    id strongDelegate = self.registrationDelegate;
-    if ([strongDelegate respondsToSelector:@selector(apnsRegistrationFailedWithError:)]) {
-        [strongDelegate apnsRegistrationFailedWithError:error];
-    }
+    [self.registrationDelegateWrapper apnsRegistrationFailedWithError:error];
+
 }
 
 #pragma mark -
@@ -802,36 +794,10 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
     self.authorizedNotificationSettings = authorizedSettings;
     self.authorizationStatus = status;
 
-    id strongDelegate = self.registrationDelegate;
-
-    SEL newSelector = @selector(notificationRegistrationFinishedWithAuthorizedSettings:categories:);
-    SEL newSelectorWithStatus = @selector(notificationRegistrationFinishedWithAuthorizedSettings:categories:status:);
-    SEL oldSelector = @selector(notificationRegistrationFinishedWithOptions:categories:);
-
-    if ([strongDelegate respondsToSelector:newSelector]) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [strongDelegate notificationRegistrationFinishedWithAuthorizedSettings:authorizedSettings categories:self.combinedCategories];
-        });
-    }
-
-    if ([strongDelegate respondsToSelector:newSelectorWithStatus]) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [strongDelegate notificationRegistrationFinishedWithAuthorizedSettings:authorizedSettings
-                                                                        categories:self.combinedCategories
-                                                                            status:status];
-        });
-    }
-
-    if ([strongDelegate respondsToSelector:oldSelector]) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            UANotificationOptions legacyOptions = [self legacyOptionsForAuthorizedSettings:authorizedSettings];
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-            UA_LWARN(@"Warning: %@ is deprecated and will be removed in SDK 11. Please use %@", NSStringFromSelector(oldSelector), NSStringFromSelector(newSelector));
-            [strongDelegate notificationRegistrationFinishedWithOptions:legacyOptions categories:self.combinedCategories];
-#pragma GCC diagnostic pop
-        });
-    }
+    [self.registrationDelegateWrapper notificationRegistrationFinishedWithAuthorizedSettings:authorizedSettings
+                                                                               legacyOptions:[self legacyOptionsForAuthorizedSettings:authorizedSettings]
+                                                                                  categories:self.combinedCategories
+                                                                                      status:status];
 }
 
 - (void)registrationSucceeded {
@@ -844,24 +810,16 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
         return;
     }
 
-    id strongDelegate = self.registrationDelegate;
-    if ([strongDelegate respondsToSelector:@selector(registrationSucceededForChannelID:deviceToken:)]) {
-        [strongDelegate registrationSucceededForChannelID:self.channelID deviceToken:self.deviceToken];
-    }
-
     [self.notificationCenter postNotificationName:UAChannelUpdatedEvent
                                            object:self
                                          userInfo:@{UAChannelUpdatedEventChannelKey: channelID}];
+
+    [self.registrationDelegateWrapper registrationSucceededForChannelID:self.channelID deviceToken:self.deviceToken];
 }
 
 - (void)registrationFailed {
     UA_LINFO(@"Channel registration failed.");
-
-    id strongDelegate = self.registrationDelegate;
-    if ([strongDelegate respondsToSelector:@selector(registrationFailed)]) {
-        [strongDelegate registrationFailed];
-    }
-}
+    [self.registrationDelegateWrapper registrationFailed];}
 
 - (void)channelCreated:(NSString *)channelID
        channelLocation:(NSString *)channelLocation
@@ -1003,7 +961,4 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
     }
 }
 
-
 @end
-
-

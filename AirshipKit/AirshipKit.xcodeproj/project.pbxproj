@@ -196,6 +196,13 @@
 		6ED87FAB1FEB3A47003B652A /* UAInAppMessageButtonInfo+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6ED87FA91FEB3A47003B652A /* UAInAppMessageButtonInfo+Internal.h */; };
 		6ED87FAD1FEB5044003B652A /* UAInAppMessageTagSelector+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6ED87FAC1FEB5044003B652A /* UAInAppMessageTagSelector+Internal.h */; };
 		6ED87FAE1FEB5044003B652A /* UAInAppMessageTagSelector+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6ED87FAC1FEB5044003B652A /* UAInAppMessageTagSelector+Internal.h */; };
+		6EDEE20C212CD31500918B05 /* UARegistrationDelegateWrapper+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EDEE20A212CD31400918B05 /* UARegistrationDelegateWrapper+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		6EDEE20D212CD31500918B05 /* UARegistrationDelegateWrapper+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EDEE20A212CD31400918B05 /* UARegistrationDelegateWrapper+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		6EDEE20E212CD31500918B05 /* UARegistrationDelegateWrapper+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EDEE20A212CD31400918B05 /* UARegistrationDelegateWrapper+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		6EDEE20F212CD31500918B05 /* UARegistrationDelegateWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EDEE20B212CD31400918B05 /* UARegistrationDelegateWrapper.m */; };
+		6EDEE210212CD31500918B05 /* UARegistrationDelegateWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EDEE20B212CD31400918B05 /* UARegistrationDelegateWrapper.m */; };
+		6EDEE211212CD31500918B05 /* UARegistrationDelegateWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EDEE20B212CD31400918B05 /* UARegistrationDelegateWrapper.m */; };
+		6EDEE214212DBC0C00918B05 /* UARegistrationDelegateWrapperTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EDEE213212DBC0C00918B05 /* UARegistrationDelegateWrapperTests.m */; };
 		6EF0518B20F7FCA70004A62D /* UADelay+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EF0518920F7FCA70004A62D /* UADelay+Internal.h */; };
 		6EF0518C20F7FCA70004A62D /* UADelay+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EF0518920F7FCA70004A62D /* UADelay+Internal.h */; };
 		6EF0518D20F7FCA70004A62D /* UADelay+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EF0518920F7FCA70004A62D /* UADelay+Internal.h */; };
@@ -1627,6 +1634,9 @@
 		6ED87FA01FEB315B003B652A /* UAInAppMessageTextInfo+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UAInAppMessageTextInfo+Internal.h"; path = "ios/UAInAppMessageTextInfo+Internal.h"; sourceTree = "<group>"; };
 		6ED87FA91FEB3A47003B652A /* UAInAppMessageButtonInfo+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "UAInAppMessageButtonInfo+Internal.h"; path = "ios/UAInAppMessageButtonInfo+Internal.h"; sourceTree = "<group>"; };
 		6ED87FAC1FEB5044003B652A /* UAInAppMessageTagSelector+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "UAInAppMessageTagSelector+Internal.h"; path = "ios/UAInAppMessageTagSelector+Internal.h"; sourceTree = "<group>"; };
+		6EDEE20A212CD31400918B05 /* UARegistrationDelegateWrapper+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UARegistrationDelegateWrapper+Internal.h"; path = "common/UARegistrationDelegateWrapper+Internal.h"; sourceTree = "<group>"; };
+		6EDEE20B212CD31400918B05 /* UARegistrationDelegateWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UARegistrationDelegateWrapper.m; path = common/UARegistrationDelegateWrapper.m; sourceTree = "<group>"; };
+		6EDEE213212DBC0C00918B05 /* UARegistrationDelegateWrapperTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UARegistrationDelegateWrapperTests.m; sourceTree = "<group>"; };
 		6EF0518920F7FCA70004A62D /* UADelay+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "UADelay+Internal.h"; path = "common/UADelay+Internal.h"; sourceTree = "<group>"; };
 		6EF0518A20F7FCA70004A62D /* UADelay.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = UADelay.m; path = common/UADelay.m; sourceTree = "<group>"; };
 		6EF2DF0C1E5CB6F50062099A /* UAAutomation 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "UAAutomation 2.xcdatamodel"; sourceTree = "<group>"; };
@@ -2668,6 +2678,7 @@
 				CC64F0B81D8B781C009CEF27 /* UAPushTest.m */,
 				CC64F0C11D8B781C009CEF27 /* UATagUtilsTest.m */,
 				CC64F0B21D8B781C009CEF27 /* UANotificationContentTest.m */,
+				6EDEE213212DBC0C00918B05 /* UARegistrationDelegateWrapperTests.m */,
 			);
 			name = Push;
 			sourceTree = "<group>";
@@ -3058,6 +3069,8 @@
 				CC40DBD61D8C996A00BABD4F /* UAPush.m */,
 				CC40DBF01D8C996A00BABD4F /* UATagUtils+Internal.h */,
 				CC40DBF11D8C996A00BABD4F /* UATagUtils.m */,
+				6EDEE20B212CD31400918B05 /* UARegistrationDelegateWrapper.m */,
+				6EDEE20A212CD31400918B05 /* UARegistrationDelegateWrapper+Internal.h */,
 			);
 			name = Push;
 			sourceTree = "<group>";
@@ -3889,6 +3902,7 @@
 				6E3673DC1E8AE9F7005B5DFF /* UAEnableFeatureAction.h in Headers */,
 				CC40DC851D8C996A00BABD4F /* UADisplayInboxAction.h in Headers */,
 				DF6596D01FBA3B810055E97B /* UAComponent.h in Headers */,
+				6EDEE20C212CD31500918B05 /* UARegistrationDelegateWrapper+Internal.h in Headers */,
 				CC40DC7D1D8C996A00BABD4F /* UAMessageCenterSplitViewController.h in Headers */,
 				CC40DCB01D8C996A00BABD4F /* UAInboxMessage.h in Headers */,
 				CC40DCF01D8C996A00BABD4F /* UANotificationContent.h in Headers */,
@@ -4177,6 +4191,7 @@
 				99666E661EDF2C9500BAE46B /* UAKeychainUtils+Internal.h in Headers */,
 				99666DE71EDF2BF300BAE46B /* UALocation+Internal.h in Headers */,
 				99666DE81EDF2BF300BAE46B /* UALocation.h in Headers */,
+				6EDEE20D212CD31500918B05 /* UARegistrationDelegateWrapper+Internal.h in Headers */,
 				99666DDF1EDF2BF300BAE46B /* UALocationEvent.h in Headers */,
 				99666E311EDF2C8D00BAE46B /* UAMediaEventTemplate.h in Headers */,
 				99666DAF1EDF2BC900BAE46B /* UAModifyTagsAction.h in Headers */,
@@ -4349,6 +4364,7 @@
 				DF7E227E1ED62E0900C79C46 /* UAMessageCenterSplitViewController.h in Headers */,
 				DF7E227F1ED62E0900C79C46 /* UAMessageCenterStyle.h in Headers */,
 				DF7E22801ED62E0900C79C46 /* UALegacyInAppMessage.h in Headers */,
+				6EDEE20E212CD31500918B05 /* UARegistrationDelegateWrapper+Internal.h in Headers */,
 				99B6EE741F3BA1DF00C4E3F1 /* UAURLActionPredicate+Internal.h in Headers */,
 				DF6596D21FBA3B810055E97B /* UAComponent.h in Headers */,
 				DF7E22851ED62E0900C79C46 /* UALegacyInAppMessaging.h in Headers */,
@@ -4916,6 +4932,7 @@
 				CC40DCAA1D8C996A00BABD4F /* UAInbox.m in Sources */,
 				DFBBC7B11E36D80B00BA7315 /* UATextInputNotificationAction.m in Sources */,
 				9928146B1EF490DC00D0D388 /* UARateAppAction.m in Sources */,
+				6EDEE20F212CD31500918B05 /* UARegistrationDelegateWrapper.m in Sources */,
 				CC40DD081D8C996A00BABD4F /* UARemoveTagsAction.m in Sources */,
 				99912E8D1ECE57CE00295C67 /* UALandingPageActionPredicate.m in Sources */,
 				992814721EF4A14400D0D388 /* UARateAppPromptViewController.m in Sources */,
@@ -5236,6 +5253,7 @@
 				CCB902251DCBBCDA009A66D7 /* UAAsyncOperationTest.m in Sources */,
 				CC64F0E21D8B781C009CEF27 /* UAAggregateActionResultTest.m in Sources */,
 				DF0221F41FDB03B100EF8C9D /* UAInAppMessageAudienceChecksTest.m in Sources */,
+				6EDEE214212DBC0C00918B05 /* UARegistrationDelegateWrapperTests.m in Sources */,
 				CC64F1231D8B781C009CEF27 /* UAShareActionTest.m in Sources */,
 				45DCD83E2087C57C00BCF10F /* UAInAppMessageFullScreenStyleTest.m in Sources */,
 				CC64F11F1D8B781C009CEF27 /* UARetailEventTemplateTest.m in Sources */,
@@ -5289,6 +5307,7 @@
 				DFEB50111EC685CE0006B20F /* UAWKWebViewNativeBridge.m in Sources */,
 				DFEB500E1EC684560006B20F /* UAWebView.m in Sources */,
 				DFEB50101EC684790006B20F /* UAOverlayViewController.m in Sources */,
+				6EDEE211212CD31500918B05 /* UARegistrationDelegateWrapper.m in Sources */,
 				CC40DD341D8C9A1C00BABD4F /* NSString+UALocalizationAdditions.m in Sources */,
 				CC40DD351D8C9A1C00BABD4F /* NSString+UAURLEncoding.m in Sources */,
 				CC40DD361D8C9A1C00BABD4F /* UAAccountEventTemplate.m in Sources */,
@@ -5577,6 +5596,7 @@
 				99666D7E1EDF2B4E00BAE46B /* UADelayOperation.m in Sources */,
 				99666D881EDF2BA000BAE46B /* UACancelSchedulesAction.m in Sources */,
 				99666D801EDF2B7300BAE46B /* UAURLRequestOperation.m in Sources */,
+				6EDEE210212CD31500918B05 /* UARegistrationDelegateWrapper.m in Sources */,
 				99666E421EDF2C8D00BAE46B /* UAAssociateIdentifiersEvent.m in Sources */,
 				99666DC71EDF2BE600BAE46B /* UANotificationCategories.m in Sources */,
 				99666E291EDF2C7C00BAE46B /* UAEventStore.m in Sources */,
