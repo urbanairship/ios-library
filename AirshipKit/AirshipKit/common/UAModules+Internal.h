@@ -50,15 +50,15 @@ extern NSString * const UAModulesLocation;
  *
  * @return An array of module names.
  */
-- (NSArray<NSString *> *)allModules;
+- (NSArray<NSString *> *)allModuleNames;
 
 /**
  * Retrieves the component associated with the provided module name, or nil if one could not be found.
  *
- * @param module The module.
+ * @param moduleName The module name.
  * @return The corresponding component, or nil if one was not found.
  */
-- (nullable UAComponent *)airshipComponentForModule:(NSString *)module;
+- (nullable UAComponent *)airshipComponentForModuleName:(NSString *)moduleName;
 
 /**
  * Processes configs for all modules.

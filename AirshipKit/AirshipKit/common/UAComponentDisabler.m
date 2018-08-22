@@ -61,7 +61,7 @@ NSUInteger const UADisableRefreshIntervalDefault = 0; // default is no minimum r
                     UA_LERR("Invalid disable modules: %@", modules);
                     continue;
                 }
-                [disableModuleIDs addObjectsFromArray:[self.modules allModules]];
+                [disableModuleIDs addObjectsFromArray:[self.modules allModuleNames]];
             } else if ([modules isKindOfClass:[NSArray class]]) {
                 [disableModuleIDs addObjectsFromArray:modules];
             } else {
@@ -77,7 +77,7 @@ NSUInteger const UADisableRefreshIntervalDefault = 0; // default is no minimum r
         }
     }
     
-    NSMutableSet<NSString *> *enableModuleIDs = [NSMutableSet setWithArray:[self.modules allModules]];
+    NSMutableSet<NSString *> *enableModuleIDs = [NSMutableSet setWithArray:[self.modules allModuleNames]];
     [enableModuleIDs minusSet:disableModuleIDs];
 
     // Disable modules
@@ -95,7 +95,7 @@ NSUInteger const UADisableRefreshIntervalDefault = 0; // default is no minimum r
 }
 
 - (void)module:(NSString *)moduleID enable:(BOOL)enable {
-    UAComponent *component = [self.modules airshipComponentForModule:moduleID];
+    UAComponent *component = [self.modules airshipComponentForModuleName:moduleID];
     if ([component respondsToSelector:@selector(setComponentEnabled:)]) {
         [component setComponentEnabled:enable];
     } else {

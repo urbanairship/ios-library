@@ -37,21 +37,21 @@ NSString * const UAModulesLocation = @"location";
     return _moduleMap;
 }
 
-- (NSArray<NSString *> *)allModules {
+- (NSArray<NSString *> *)allModuleNames {
     return self.moduleMap.allKeys;
 }
 
-- (nullable UAComponent *)airshipComponentForModule:(NSString *)module {
-    NSString *airshipProperty = self.moduleMap[module];
-    if (!airshipProperty || !airshipProperty.length) {
-        UA_LERR(@"No module with name: %@", module);
+- (nullable UAComponent *)airshipComponentForModuleName:(NSString *)moduleName {
+    NSString *airshipProperty = self.moduleMap[moduleName];
+    if (!airshipProperty.length) {
+        UA_LERR(@"No module with name: %@", moduleName);
         return nil;
     }
 
     UAComponent *component = [[UAirship shared] valueForKey:airshipProperty];
 
     if (!component) {
-        UA_LERR(@"No airship property with name: %@", airshipProperty);
+        UA_LWARN(@"Unable to create component, no airship property with name: %@", airshipProperty);
         return nil;
     }
 
@@ -60,7 +60,7 @@ NSString * const UAModulesLocation = @"location";
 
 - (void)processConfigs:(NSDictionary *)configs {
     for (NSString *key in configs) {
-        UAComponent *component = [self airshipComponentForModule:key];
+        UAComponent *component = [self airshipComponentForModuleName:key];
 
         if (!component) {
             continue;
@@ -74,7 +74,7 @@ NSString * const UAModulesLocation = @"location";
             UARemoteConfig *config = [component.remoteConfigClass configWithJSON:payload.data];
 
             if (!config) {
-                UA_LERR(@"Unable to produce config for module: %@", key);
+                UA_LERR(@"Unable to produce config for module name: %@, payload: %@", key, payload);
                 continue;
             }
 
