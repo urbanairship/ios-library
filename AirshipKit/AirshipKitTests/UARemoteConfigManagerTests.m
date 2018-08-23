@@ -12,10 +12,9 @@
 @property(nonatomic, strong) id mockAirship;
 @property(nonatomic, strong) id mockRemoteDataManager;
 @property(nonatomic, strong) id mockComponentDisabler;
+@property(nonatomic, strong) id mockModules;
 @property(nonatomic, strong) UARemoteDataPublishBlock publishBlock;
-
 @property(nonatomic, strong) UARemoteConfigManager *remoteConfigManager;
-
 @end
 
 @implementation UARemoteConfigManagerTests
@@ -35,16 +34,19 @@
         [invocation getArgument:&arg atIndex:3];
         self.publishBlock = (__bridge UARemoteDataPublishBlock)arg;
     }] subscribeWithTypes:OCMOCK_ANY block:OCMOCK_ANY];
+
+    self.mockModules = [self mockForClass:[UAModules class]];
     
     self.mockComponentDisabler = [self mockForClass:[UAComponentDisabler class]];
 
     // create test instance of remote config manager
-    self.remoteConfigManager = [UARemoteConfigManager remoteConfigManagerWithRemoteDataManager:self.mockRemoteDataManager componentDisabler:self.mockComponentDisabler];
+    self.remoteConfigManager = [UARemoteConfigManager remoteConfigManagerWithRemoteDataManager:self.mockRemoteDataManager
+                                                                             componentDisabler:self.mockComponentDisabler
+                                                                                       modules:self.mockModules];
 }
 
 - (void)tearDown {
     self.remoteConfigManager = nil;
-    
     [super tearDown];
 }
 
@@ -72,8 +74,15 @@
 
     // set expectations
     __block NSArray *expectedRemoteConfigForDisable = @[];
+    __block NSDictionary *expectedRemoteConfigsForModules = @{};
+
     [[self.mockComponentDisabler expect] processDisableInfo:[OCMArg checkWithBlock:^BOOL(NSArray *remoteConfigForDisable) {
         XCTAssertEqualObjects(remoteConfigForDisable,expectedRemoteConfigForDisable);
+        return YES;
+    }]];
+
+    [[self.mockModules expect] processConfigs:[OCMArg checkWithBlock:^BOOL(NSDictionary *remoteConfigsForModules) {
+        XCTAssertEqualObjects(remoteConfigsForModules, expectedRemoteConfigsForModules);
         return YES;
     }]];
 
@@ -82,6 +91,7 @@
 
     // verify
     [self.mockComponentDisabler verify];
+    [self.mockModules verify];
 }
 
 - (void)testOnlyCommonRemoteConfig {
@@ -90,6 +100,7 @@
                                          @"blah": @"BLAH",
                                          @"goof": @"ball"
                                          };
+
     NSArray *expectedRemoteConfigForDisable = @[
                                             @{
                                                 @"modules":@"in_app_v2",
@@ -100,8 +111,12 @@
                                                 @"modules":@"push",
                                                 }
                                             ];
+
     NSDictionary *commonConfig = @{@"someclient":sampleRemoteConfig,
                                    @"disable_features":expectedRemoteConfigForDisable};
+
+    NSDictionary *expectedRemoteConfigsForModules = @{@"someclient" : @[sampleRemoteConfig]};
+
     UARemoteDataPayload *commonConfigDataPayload = [[UARemoteDataPayload alloc] initWithType:@"app_config" timestamp:[NSDate date] data:commonConfig];
 
     // set expectations
@@ -110,14 +125,30 @@
         return YES;
     }]];
 
+    [[self.mockModules expect] processConfigs:[OCMArg checkWithBlock:^BOOL(NSDictionary *remoteConfigsForModules) {
+        XCTAssertEqualObjects(remoteConfigsForModules, expectedRemoteConfigsForModules);
+        return YES;
+    }]];
+
     // execute
     self.publishBlock(@[commonConfigDataPayload]);
     
     // verify
     [self.mockComponentDisabler verify];
+    [self.mockModules verify];
 }
 
 - (void)testCommonAndiOSRemoteConfig {
+
+    NSDictionary *sampleRemoteConfig = @{
+                                         @"blah": @"BLAH",
+                                         @"goof": @"ball"
+                                         };
+    NSDictionary *otherRemoteConfig = @{
+                                        @"blah": @"BLAH",
+                                        @"goof": @"ball"
+                                        };
+
     // create test data
     NSDictionary *expectedCommonRemoteConfigForDisable = @{
                                                       @"modules":@"in_app_v2",
@@ -127,14 +158,17 @@
     NSDictionary *expectediOSRemoteConfigForDisable = @{
                                                    @"modules":@"push",
                                                    };
-    
-    NSDictionary *commonConfig = @{@"disable_features":@[expectedCommonRemoteConfigForDisable]};
-    NSDictionary *iosConfig = @{@"disable_features":@[expectediOSRemoteConfigForDisable]};
+
+    NSDictionary *commonConfig = @{@"disable_features":@[expectedCommonRemoteConfigForDisable], @"someclient": sampleRemoteConfig};
+    NSDictionary *iosConfig = @{@"disable_features":@[expectediOSRemoteConfigForDisable], @"someclient" : otherRemoteConfig};
     
     NSArray *expectedRemoteConfigForDisable = @[
                                                 expectedCommonRemoteConfigForDisable,
                                                 expectediOSRemoteConfigForDisable
                                                 ];
+
+    NSDictionary *expectedRemoteConfigsForModules = @{@"someclient": @[sampleRemoteConfig, otherRemoteConfig]};
+
     UARemoteDataPayload *commonConfigDataPayload = [[UARemoteDataPayload alloc] initWithType:@"app_config" timestamp:[NSDate date] data:commonConfig];
     UARemoteDataPayload *iosConfigDataPayload = [[UARemoteDataPayload alloc] initWithType:@"app_config:ios" timestamp:[NSDate date] data:iosConfig];
 
@@ -144,11 +178,17 @@
         return YES;
     }]];
 
+    [[self.mockModules expect] processConfigs:[OCMArg checkWithBlock:^BOOL(NSDictionary *remoteConfigsForModules) {
+        XCTAssertEqualObjects(remoteConfigsForModules, expectedRemoteConfigsForModules);
+        return YES;
+    }]];
+
     // execute
     self.publishBlock(@[commonConfigDataPayload,iosConfigDataPayload]);
     
     // verify
     [self.mockComponentDisabler verify];
+    [self.mockModules verify];
 }
 
 - (void)testDefaultingSomeOfRemoteConfig {
@@ -175,7 +215,7 @@
 
     // execute
     self.publishBlock(@[commonConfigDataPayload,iosConfigDataPayload]);
-    
+
     // verify
     [self.mockComponentDisabler verify];
 }

@@ -9,7 +9,8 @@
 #define kUATagGroupsLookupManagerEnabledKey @"com.urbanairship.tag_groups.FETCH_ENABLED"
 
 #define kUATagGroupsLookupManagerPreferLocalTagDataTimeKey @"com.urbanairship.tag_groups.PREFER_LOCAL_TAG_DATA_TIME"
-#define kUATagGroupsLookupManagerDefaultPreferLocalTagDataTimeSeconds 60 * 10 // 10 minutes
+
+NSTimeInterval const UATagGroupsLookupManagerDefaultPreferLocalTagDataTimeSeconds = 60 * 10; // 10 minutes
 
 NSString * const UATagGroupsLookupManagerErrorDomain = @"com.urbanairship.tag_groups_lookup_manager";
 
@@ -69,7 +70,7 @@ NSString * const UATagGroupsLookupManagerErrorDomain = @"com.urbanairship.tag_gr
 
 - (NSTimeInterval)preferLocalTagDataTime {
     return [self.dataStore doubleForKey:kUATagGroupsLookupManagerPreferLocalTagDataTimeKey
-                           defaultValue:kUATagGroupsLookupManagerDefaultPreferLocalTagDataTimeSeconds];
+                           defaultValue:UATagGroupsLookupManagerDefaultPreferLocalTagDataTimeSeconds];
 }
 
 - (void)setPreferLocalTagDataTime:(NSTimeInterval)preferLocalTagDataTime {

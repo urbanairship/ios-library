@@ -36,6 +36,11 @@ typedef NS_ENUM(NSInteger, UATagGroupsLookupManagerErrorCode) {
 extern NSString * const UATagGroupsLookupManagerErrorDomain;
 
 /**
+ * The default time interval to prefer local tag data over API responses.
+ */
+extern const NSTimeInterval UATagGroupsLookupManagerDefaultPreferLocalTagDataTimeSeconds;
+
+/**
  * High level interface for performing tag group lookups.
  */
 @interface UATagGroupsLookupManager : UAComponent
