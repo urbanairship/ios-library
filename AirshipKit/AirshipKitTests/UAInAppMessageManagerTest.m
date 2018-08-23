@@ -14,6 +14,7 @@
 #import "UALocation+Internal.h"
 #import "UAActionRunner+Internal.h"
 #import "UAInAppMessageAudienceChecks+Internal.h"
+#import "UATestDispatcher.h"
 
 @interface UAInAppMessageManagerTest : UABaseTest
 @property(nonatomic, strong) UAInAppMessageManager *manager;
@@ -24,6 +25,7 @@
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 @property (nonatomic, strong) id mockPush;
 @property (nonatomic, strong) id mockActionRunner;
+@property (nonatomic, strong) UATestDispatcher *testDispatcher;
 @end
 
 @implementation UAInAppMessageManagerTest
@@ -38,11 +40,13 @@
     [self.dataStore removeAll];
     self.mockPush = [self mockForClass:[UAPush class]];
     self.mockActionRunner = [self mockForClass:[UAActionRunner class]];
+    self.testDispatcher = [UATestDispatcher testDispatcher];
 
     self.manager = [UAInAppMessageManager managerWithAutomationEngine:self.mockAutomationEngine
                                                     remoteDataManager:[self mockForClass:[UARemoteDataManager class]]
                                                             dataStore:self.dataStore
-                                                                 push:self.mockPush];
+                                                                 push:self.mockPush
+                                                           dispatcher:self.testDispatcher];
     self.manager.paused = NO;
 
     self.manager.delegate = self.mockDelegate;
@@ -350,29 +354,19 @@
 }
 
 - (void)testCancelMessage {
-    UAInAppMessageManager *manager = [UAInAppMessageManager managerWithAutomationEngine:self.mockAutomationEngine
-                                                                      remoteDataManager:[self mockForClass:[UARemoteDataManager class]]
-                                                                              dataStore:self.dataStore
-                                                                                   push:self.mockPush];
-
     [[self.mockAutomationEngine expect] cancelSchedulesWithGroup:self.scheduleInfo.message.identifier];
 
-    [manager cancelMessagesWithID:self.scheduleInfo.message.identifier];
+    [self.manager cancelMessagesWithID:self.scheduleInfo.message.identifier];
 
     [self.mockAutomationEngine verify];
 }
 
 - (void)testCancelSchedule {
-    UAInAppMessageManager *manager = [UAInAppMessageManager managerWithAutomationEngine:self.mockAutomationEngine
-                                                                              remoteDataManager:[self mockForClass:[UARemoteDataManager class]]
-                                                                              dataStore:self.dataStore
-                                                                                   push:self.mockPush];
-
     UASchedule *testSchedule = [UASchedule scheduleWithIdentifier:@"expected_id" info:self.scheduleInfo];
 
     [[self.mockAutomationEngine expect] cancelScheduleWithID:testSchedule.identifier];
 
-    [manager cancelScheduleWithID:testSchedule.identifier];
+    [self.manager cancelScheduleWithID:testSchedule.identifier];
 
     [self.mockAutomationEngine verify];
 }
@@ -452,5 +446,74 @@
     XCTAssertTrue(completionHandlerCalled);
     [self.mockAutomationEngine verify];
 }
+
+- (void)testDisplayLock {
+    self.manager.displayInterval = 10000;
+
+    UASchedule *testSchedule = [UASchedule scheduleWithIdentifier:@"expected_id" info:self.scheduleInfo];
+
+    [[[self.mockAdapter stub] andDo:^(NSInvocation *invocation) {
+        void (^prepareBlock)(UAInAppMessagePrepareResult);
+        [invocation getArgument:&prepareBlock atIndex:2];
+        prepareBlock(UAInAppMessagePrepareResultSuccess);
+    }] prepare:OCMOCK_ANY];
+
+    [[[self.mockAdapter stub] andReturnValue:@(YES)] isReadyToDisplay];
+
+    // Prepare
+    XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare should be finished"];
+    [self.manager prepareSchedule:testSchedule completionHandler:^(UAAutomationSchedulePrepareResult result) {
+        XCTAssertEqual(UAAutomationSchedulePrepareResultContinue, result);
+        [prepareFinished fulfill];
+    }];
+
+    [self waitForTestExpectations];
+
+    // isReady
+    XCTAssertTrue([self.manager isScheduleReadyToExecute:testSchedule]);
+
+    // Display
+    XCTestExpectation *displayBlockCalled = [self expectationWithDescription:@"display block should be called"];
+    [[[self.mockAdapter expect] andDo:^(NSInvocation *invocation) {
+        void (^displayBlock)(UAInAppMessageResolution *);
+        [invocation getArgument:&displayBlock atIndex:2];
+        displayBlock([UAInAppMessageResolution userDismissedResolution]);
+        [displayBlockCalled fulfill];
+    }] display:OCMOCK_ANY];
+
+    XCTestExpectation *executeFinished = [self expectationWithDescription:@"execute finished"];
+    [self.manager executeSchedule:testSchedule completionHandler:^{
+        [executeFinished fulfill];
+    }];
+
+    [self waitForTestExpectations];
+
+    // Prepare again
+    prepareFinished = [self expectationWithDescription:@"prepare should be finished"];
+    [self.manager prepareSchedule:testSchedule completionHandler:^(UAAutomationSchedulePrepareResult result) {
+        XCTAssertEqual(UAAutomationSchedulePrepareResultContinue, result);
+        [prepareFinished fulfill];
+    }];
+
+    [self waitForTestExpectations];
+
+    // False - display is locked
+    XCTAssertFalse([self.manager isScheduleReadyToExecute:testSchedule]);
+
+    // Advance dispatcher
+    [self.testDispatcher advanceTime:9999];
+
+    // False - should still be locked
+    XCTAssertFalse([self.manager isScheduleReadyToExecute:testSchedule]);
+
+    // Advance dispatcher
+    [self.testDispatcher advanceTime:1];
+
+    // True - display is unlocked
+    XCTAssertTrue([self.manager isScheduleReadyToExecute:testSchedule]);
+
+    [self.mockAutomationEngine verify];
+}
+
 
 @end

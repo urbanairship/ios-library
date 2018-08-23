@@ -66,13 +66,14 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
 
 @property(nonatomic, assign) BOOL isDisplayLocked;
 
-@property(nonatomic, strong, nullable) NSMutableDictionary *adapterFactories;
-@property(nonatomic, strong, nullable) UAAutomationEngine *automationEngine;
+@property(nonatomic, strong) NSMutableDictionary *adapterFactories;
+@property(nonatomic, strong) UAAutomationEngine *automationEngine;
 @property(nonatomic, strong) UAInAppRemoteDataClient *remoteDataClient;
 @property(nonatomic, strong) UAPreferenceDataStore *dataStore;
 @property(nonatomic, strong) NSOperationQueue *queue;
 @property(nonatomic, strong) NSMutableDictionary *scheduleData;
 @property(nonatomic, strong) UATagGroupsLookupManager *tagGroupsLookupManager;
+@property(nonatomic, strong) UADispatcher *dispatcher;
 @end
 
 @implementation UAInAppMessageManager
@@ -80,8 +81,14 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
 + (instancetype)managerWithAutomationEngine:(UAAutomationEngine *)automationEngine
                           remoteDataManager:(UARemoteDataManager *)remoteDataManager
                                   dataStore:(UAPreferenceDataStore *)dataStore
-                                       push:(UAPush *)push {
-    return [[UAInAppMessageManager alloc] initWithAutomationEngine:automationEngine remoteDataManager:remoteDataManager dataStore:dataStore push:push];
+                                       push:(UAPush *)push
+                                 dispatcher:(UADispatcher *)dispatcher {
+
+    return [[UAInAppMessageManager alloc] initWithAutomationEngine:automationEngine
+                                                 remoteDataManager:remoteDataManager
+                                                         dataStore:dataStore
+                                                              push:push
+                                                        dispatcher:dispatcher];
 }
 
 + (instancetype)managerWithConfig:(UAConfig *)config
@@ -94,13 +101,19 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
     UAAutomationStore *store = [UAAutomationStore automationStoreWithStoreName:storeName scheduleLimit:MaxSchedules];
     UAAutomationEngine *automationEngine = [UAAutomationEngine automationEngineWithAutomationStore:store];
 
-    return [[UAInAppMessageManager alloc] initWithAutomationEngine:automationEngine remoteDataManager:remoteDataManager dataStore:dataStore push:push];
+    return [[UAInAppMessageManager alloc] initWithAutomationEngine:automationEngine
+                                                 remoteDataManager:remoteDataManager
+                                                         dataStore:dataStore
+                                                              push:push
+                                                        dispatcher:[UADispatcher mainDispatcher]];
 }
 
 - (instancetype)initWithAutomationEngine:(UAAutomationEngine *)automationEngine
                        remoteDataManager:(UARemoteDataManager *)remoteDataManager
                                dataStore:(UAPreferenceDataStore *)dataStore
-                                    push:(UAPush *)push {
+                                    push:(UAPush *)push
+                              dispatcher:(UADispatcher *)dispatcher {
+
     self = [super initWithDataStore:dataStore];
 
     if (self) {
@@ -113,6 +126,7 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
         self.automationEngine.delegate = self;
         self.displayInterval = DefaultMessageDisplayInterval;
         self.remoteDataClient = [UAInAppRemoteDataClient clientWithScheduler:self remoteDataManager:remoteDataManager dataStore:dataStore push:push];
+        self.dispatcher = dispatcher;
         [self setDefaultAdapterFactories];
 
         [self.automationEngine start];
@@ -191,17 +205,12 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
 }
 
 - (void)unlockDisplayAfter:(NSTimeInterval)interval {
-    if (interval > 0) {
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(interval * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            self.isDisplayLocked = NO;
-            [self.automationEngine scheduleConditionsChanged];
-        });
-    } else {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            self.isDisplayLocked = NO;
-            [self.automationEngine scheduleConditionsChanged];
-        });
-    }
+    UA_WEAKIFY(self)
+    [self.dispatcher dispatchAfter:interval block:^{
+        UA_STRONGIFY(self)
+        self.isDisplayLocked = NO;
+        [self.automationEngine scheduleConditionsChanged];
+    }];
 }
 
 - (void)lockDisplay {

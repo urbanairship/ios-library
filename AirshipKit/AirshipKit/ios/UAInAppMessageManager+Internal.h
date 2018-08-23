@@ -7,6 +7,7 @@
 #import "UAInAppMessageScheduleInfo.h"
 #import "UAInAppMessageAdapterProtocol.h"
 #import "UAComponent+Internal.h"
+#import "UADispatcher+Internal.h"
 
 @class UARemoteDataManager;
 @class UAPush;
@@ -20,23 +21,27 @@ NS_ASSUME_NONNULL_BEGIN
 @interface UAInAppMessageManager ()  <UAAutomationEngineDelegate>
 
 /**
- * Init method.
+ * Factory method. Use for testing.
  *
  * @param automationEngine Automation engine.
  * @param dataStore The preference data store.
  * @param push The system UAPush instance
+ * @param dispatcher GCD dispatcher.
+ * @return A in-app message manager instance.
  */
 + (instancetype)managerWithAutomationEngine:(UAAutomationEngine *)automationEngine
                           remoteDataManager:(UARemoteDataManager *)remoteDataManager
                                   dataStore:(UAPreferenceDataStore *)dataStore
-                                       push:(UAPush *)push;
+                                       push:(UAPush *)push
+                                 dispatcher:(UADispatcher *)dispatcher;
 
 /**
- * Init method.
+ * Factory method.
  *
  * @param config The UAConfigInstance.
  * @param dataStore The preference data store.
  * @param push The system UAPush instance
+ * @return A in-app message manager instance.
  */
 + (instancetype)managerWithConfig:(UAConfig *)config
                 remoteDataManager:(UARemoteDataManager *)remoteDataManager
