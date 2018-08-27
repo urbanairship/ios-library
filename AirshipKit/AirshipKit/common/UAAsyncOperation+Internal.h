@@ -35,4 +35,9 @@
  */
 - (void)finish;
 
+/**
+ * Blocked called on cancel.
+ */
+@property (nullable, copy) void (^cancelBlock)(void);
+
 @end

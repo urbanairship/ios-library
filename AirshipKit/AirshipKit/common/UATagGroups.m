@@ -91,6 +91,24 @@
     return [UATagGroups tagGroupsWithTags:dictionary];
 }
 
+- (UATagGroups *)merge:(UATagGroups *)tagGroups {
+    if (!tagGroups.tags.count) {
+        return self;
+    }
+
+    NSMutableDictionary *newTags = [NSMutableDictionary dictionaryWithDictionary:self.tags];
+
+    for (NSString *group in tagGroups.tags) {
+        if ([newTags objectForKey:group]) {
+            newTags[group] = [newTags[group] setByAddingObjectsFromSet:tagGroups.tags[group]];
+        } else {
+            [newTags setObject:tagGroups.tags[group] forKey:group];
+        }
+    }
+
+    return [UATagGroups tagGroupsWithTags:newTags];
+}
+
 - (NSDictionary *)toJSON {
     NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
 

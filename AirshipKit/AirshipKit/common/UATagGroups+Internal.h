@@ -48,6 +48,14 @@ NS_ASSUME_NONNULL_BEGIN
 - (UATagGroups *)intersect:(UATagGroups *)tagGroups;
 
 /**
+ * Merges the responder with another collection of tag groups.
+ *
+ * @param tagGroups The tag groups to merge into the responder.
+ * @return The merged tag groups.
+ */
+- (UATagGroups *)merge:(UATagGroups *)tagGroups;
+
+/**
  * Converts the tags to a JSON-compatible dictionary.
  */
 - (NSDictionary *)toJSON;

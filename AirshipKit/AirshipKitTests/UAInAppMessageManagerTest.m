@@ -15,6 +15,7 @@
 #import "UAActionRunner+Internal.h"
 #import "UAInAppMessageAudienceChecks+Internal.h"
 #import "UATestDispatcher.h"
+#import "UAInAppMessageTagSelector+Internal.h"
 
 @interface UAInAppMessageManagerTest : UABaseTest
 @property(nonatomic, strong) UAInAppMessageManager *manager;
@@ -22,10 +23,12 @@
 @property(nonatomic, strong) id mockAdapter;
 @property(nonatomic, strong) id mockAutomationEngine;
 @property(nonatomic, strong) UAInAppMessageScheduleInfo *scheduleInfo;
+@property(nonatomic, strong) UAInAppMessageScheduleInfo *scheduleInfoWithTagGroups;
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 @property (nonatomic, strong) id mockPush;
 @property (nonatomic, strong) id mockActionRunner;
 @property (nonatomic, strong) UATestDispatcher *testDispatcher;
+@property (nonatomic, strong) id mockTagGroupsLookupManager;
 @end
 
 @implementation UAInAppMessageManagerTest
@@ -41,8 +44,10 @@
     self.mockPush = [self mockForClass:[UAPush class]];
     self.mockActionRunner = [self mockForClass:[UAActionRunner class]];
     self.testDispatcher = [UATestDispatcher testDispatcher];
+    self.mockTagGroupsLookupManager = [self mockForClass:[UATagGroupsLookupManager class]];
 
     self.manager = [UAInAppMessageManager managerWithAutomationEngine:self.mockAutomationEngine
+                                               tagGroupsLookupManager:self.mockTagGroupsLookupManager
                                                     remoteDataManager:[self mockForClass:[UARemoteDataManager class]]
                                                             dataStore:self.dataStore
                                                                  push:self.mockPush
@@ -52,6 +57,9 @@
     self.manager.delegate = self.mockDelegate;
 
     self.scheduleInfo = [self sampleScheduleInfoWithMissBehavior:UAInAppMessageAudienceMissBehaviorPenalize];
+
+    self.scheduleInfoWithTagGroups = [self sampleScheduleInfoWithMissBehavior:UAInAppMessageAudienceMissBehaviorPenalize
+                                                             tagGroupAudience:[self sampleTagGroupAudienceWithMissBehavior:UAInAppMessageAudienceMissBehaviorPenalize]];
 
     //Set factory block with banner display type
     UA_WEAKIFY(self)
@@ -69,7 +77,22 @@
     [super tearDown];
 }
 
+- (UAInAppMessageAudience *)sampleTagGroupAudienceWithMissBehavior:(UAInAppMessageAudienceMissBehaviorType)missBehavior {
+    UAInAppMessageTagSelector *tagGroupSelector  = [UAInAppMessageTagSelector selectorWithJSON:@{@"group":@"group", @"tag" : @"cool"} error:nil];
+
+    UAInAppMessageAudience *tagGroupAudience = [UAInAppMessageAudience audienceWithBuilderBlock:^(UAInAppMessageAudienceBuilder * _Nonnull builder) {
+        builder.tagSelector = tagGroupSelector;
+        builder.missBehavior = missBehavior;
+    }];
+
+    return tagGroupAudience;
+}
+
 - (UAInAppMessageScheduleInfo *)sampleScheduleInfoWithMissBehavior:(UAInAppMessageAudienceMissBehaviorType)missBehavior {
+    return [self sampleScheduleInfoWithMissBehavior:missBehavior tagGroupAudience:nil];
+}
+
+- (UAInAppMessageScheduleInfo *)sampleScheduleInfoWithMissBehavior:(UAInAppMessageAudienceMissBehaviorType)missBehavior tagGroupAudience:(UAInAppMessageAudience *)tagGroupAudience {
     UAInAppMessageScheduleInfo *scheduleInfo = [UAInAppMessageScheduleInfo scheduleInfoWithBuilderBlock:^(UAInAppMessageScheduleInfoBuilder * _Nonnull builder) {
         UAInAppMessage *message = [UAInAppMessage messageWithBuilderBlock:^(UAInAppMessageBuilder * _Nonnull builder) {
             builder.identifier = @"test identifier";
@@ -95,17 +118,20 @@
                 
                 builder.buttons = @[button];
             }];
-            builder.audience = [UAInAppMessageAudience audienceWithBuilderBlock:^(UAInAppMessageAudienceBuilder * _Nonnull builder) {
-                builder.locationOptIn = @NO;
-                builder.missBehavior = missBehavior;
-            }];
+
+            if (tagGroupAudience) {
+                builder.audience = tagGroupAudience;
+            } else {
+                builder.audience = [UAInAppMessageAudience audienceWithBuilderBlock:^(UAInAppMessageAudienceBuilder * _Nonnull builder) {
+                    builder.locationOptIn = @NO;
+                    builder.missBehavior = missBehavior;
+                }];
+            }
         }];
         builder.message = message;
     }];
     return scheduleInfo;
 }
-
-
 
 - (void)testPrepare {
     XCTestExpectation *prepareCalled = [self expectationWithDescription:@"prepare should be called"];
@@ -116,9 +142,8 @@
         [prepareCalled fulfill];
     }] prepare:OCMOCK_ANY];
 
-    [[self.mockDelegate expect] extendMessage:[OCMArg isKindOfClass:[UAInAppMessage class]]];
-
     UASchedule *schedule = [UASchedule scheduleWithIdentifier:@"test IAM schedule" info:self.scheduleInfo];
+    [[[self.mockDelegate expect] andReturn:self.scheduleInfo.message] extendMessage:[OCMArg isKindOfClass:[UAInAppMessage class]]];
 
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare should be finished"];
     [self.manager prepareSchedule:schedule completionHandler:^(UAAutomationSchedulePrepareResult result) {
@@ -128,6 +153,22 @@
 
     [self waitForTestExpectations];
     
+    [self.mockAdapter verify];
+    [self.mockDelegate verify];
+}
+
+- (void)testPrepareExtendMessageFailed {
+    UASchedule *schedule = [UASchedule scheduleWithIdentifier:@"test IAM schedule" info:self.scheduleInfo];
+    [[[self.mockDelegate expect] andReturn:nil] extendMessage:[OCMArg isKindOfClass:[UAInAppMessage class]]];
+
+    XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare should be finished"];
+    [self.manager prepareSchedule:schedule completionHandler:^(UAAutomationSchedulePrepareResult result) {
+        XCTAssertEqual(UAAutomationSchedulePrepareResultPenalize, result);
+        [prepareFinished fulfill];
+    }];
+
+    [self waitForTestExpectations];
+
     [self.mockAdapter verify];
     [self.mockDelegate verify];
 }
@@ -142,6 +183,7 @@
     }] prepare:OCMOCK_ANY];
 
     UASchedule *schedule = [UASchedule scheduleWithIdentifier:@"test IAM schedule" info:self.scheduleInfo];
+    [[[self.mockDelegate expect] andReturn:self.scheduleInfo.message] extendMessage:[OCMArg isKindOfClass:[UAInAppMessage class]]];
 
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare should be finished"];
     [self.manager prepareSchedule:schedule completionHandler:^(UAAutomationSchedulePrepareResult result) {
@@ -197,7 +239,9 @@
 
     // Mock the checks to reject the audience
     id checks = [self mockForClass:[UAInAppMessageAudienceChecks class]];
-    [[[checks expect] andReturnValue:@(NO)] checkDisplayAudienceConditions:self.scheduleInfo.message.audience];
+    [[[checks expect] andReturnValue:@(NO)] checkDisplayAudienceConditions:self.scheduleInfo.message.audience tagGroups:nil];
+
+    [[[self.mockDelegate expect] andReturn:self.scheduleInfo.message] extendMessage:[OCMArg isKindOfClass:[UAInAppMessage class]]];
 
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare should be finished"];
     [self.manager prepareSchedule:testSchedule completionHandler:^(UAAutomationSchedulePrepareResult result) {
@@ -214,10 +258,12 @@
     UAInAppMessageScheduleInfo *scheduleInfo = [self sampleScheduleInfoWithMissBehavior:UAInAppMessageAudienceMissBehaviorCancel];
     
     UASchedule *testSchedule = [UASchedule scheduleWithIdentifier:@"expected_id" info:scheduleInfo];
+
+    [[[self.mockDelegate expect] andReturn:scheduleInfo.message] extendMessage:[OCMArg isKindOfClass:[UAInAppMessage class]]];
     
     // Mock the checks to reject the audience
     id checks = [self mockForClass:[UAInAppMessageAudienceChecks class]];
-    [[[checks expect] andReturnValue:@(NO)] checkDisplayAudienceConditions:scheduleInfo.message.audience];
+    [[[checks expect] andReturnValue:@(NO)] checkDisplayAudienceConditions:scheduleInfo.message.audience tagGroups:nil];
     
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare should be finished"];
     [self.manager prepareSchedule:testSchedule completionHandler:^(UAAutomationSchedulePrepareResult result) {
@@ -234,10 +280,12 @@
     UAInAppMessageScheduleInfo *scheduleInfo = [self sampleScheduleInfoWithMissBehavior:UAInAppMessageAudienceMissBehaviorSkip];
     
     UASchedule *testSchedule = [UASchedule scheduleWithIdentifier:@"expected_id" info:scheduleInfo];
+
+    [[[self.mockDelegate expect] andReturn:scheduleInfo.message] extendMessage:[OCMArg isKindOfClass:[UAInAppMessage class]]];
     
     // Mock the checks to reject the audience
     id checks = [self mockForClass:[UAInAppMessageAudienceChecks class]];
-    [[[checks expect] andReturnValue:@(NO)] checkDisplayAudienceConditions:scheduleInfo.message.audience];
+    [[[checks expect] andReturnValue:@(NO)] checkDisplayAudienceConditions:scheduleInfo.message.audience tagGroups:nil];
     
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare should be finished"];
     [self.manager prepareSchedule:testSchedule completionHandler:^(UAAutomationSchedulePrepareResult result) {
@@ -254,10 +302,12 @@
     UAInAppMessageScheduleInfo *scheduleInfo = [self sampleScheduleInfoWithMissBehavior:UAInAppMessageAudienceMissBehaviorPenalize];
     
     UASchedule *testSchedule = [UASchedule scheduleWithIdentifier:@"expected_id" info:scheduleInfo];
+
+    [[[self.mockDelegate expect] andReturn:scheduleInfo.message] extendMessage:[OCMArg isKindOfClass:[UAInAppMessage class]]];
     
     // Mock the checks to reject the audience
     id checks = [self mockForClass:[UAInAppMessageAudienceChecks class]];
-    [[[checks expect] andReturnValue:@(NO)] checkDisplayAudienceConditions:scheduleInfo.message.audience];
+    [[[checks expect] andReturnValue:@(NO)] checkDisplayAudienceConditions:scheduleInfo.message.audience tagGroups:nil];
     
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare should be finished"];
     [self.manager prepareSchedule:testSchedule completionHandler:^(UAAutomationSchedulePrepareResult result) {
@@ -270,6 +320,46 @@
     [checks verify];
 }
 
+- (void)testPrepareAudienceCheckWithTagGroups {
+    XCTestExpectation *prepareCalled = [self expectationWithDescription:@"prepare should be called"];
+    [[[self.mockAdapter expect] andDo:^(NSInvocation *invocation) {
+        void (^prepareBlock)(UAInAppMessagePrepareResult);
+        [invocation getArgument:&prepareBlock atIndex:2];
+        prepareBlock(UAInAppMessagePrepareResultSuccess);
+        [prepareCalled fulfill];
+    }] prepare:OCMOCK_ANY];
+
+    UASchedule *testSchedule = [UASchedule scheduleWithIdentifier:@"expected_id" info:self.scheduleInfoWithTagGroups];
+
+    // Mock the checks to accept the audience
+    id checks = [self mockForClass:[UAInAppMessageAudienceChecks class]];
+
+    UATagGroups *requestedTagGroups = [UATagGroups tagGroupsWithTags:@{@"group" : @[@"cool"]}];
+
+    [[[self.mockTagGroupsLookupManager expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void(^completionHandler)(UATagGroups * _Nullable tagGroups, NSError *error);
+        completionHandler = (__bridge void(^)(UATagGroups * _Nullable tagGroups, NSError *error))arg;
+        completionHandler(requestedTagGroups, nil);
+    }] getTagGroups:requestedTagGroups completionHandler:OCMOCK_ANY];
+
+    [[[checks expect] andReturnValue:@(YES)] checkDisplayAudienceConditions:self.scheduleInfoWithTagGroups.message.audience tagGroups:requestedTagGroups];
+
+    [[[self.mockDelegate expect] andReturn:self.scheduleInfoWithTagGroups.message] extendMessage:[OCMArg isKindOfClass:[UAInAppMessage class]]];
+
+    XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare should be finished"];
+    [self.manager prepareSchedule:testSchedule completionHandler:^(UAAutomationSchedulePrepareResult result) {
+        XCTAssertEqual(UAAutomationSchedulePrepareResultContinue, result);
+        [prepareFinished fulfill];
+    }];
+
+    [self waitForTestExpectations];
+
+    [checks verify];
+    [self.mockAdapter verify];
+}
+
 - (void)testExecuteSchedule {
     UASchedule *testSchedule = [UASchedule scheduleWithIdentifier:@"expected_id" info:self.scheduleInfo];
 
@@ -279,6 +369,8 @@
         [invocation getArgument:&prepareBlock atIndex:2];
         prepareBlock(UAInAppMessagePrepareResultSuccess);
     }] prepare:OCMOCK_ANY];
+
+    [[[self.mockDelegate expect] andReturn:self.scheduleInfo.message] extendMessage:[OCMArg isKindOfClass:[UAInAppMessage class]]];
 
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare should be finished"];
     [self.manager prepareSchedule:testSchedule completionHandler:^(UAAutomationSchedulePrepareResult result) {
@@ -330,6 +422,8 @@
         [invocation getArgument:&prepareBlock atIndex:2];
         prepareBlock(UAInAppMessagePrepareResultSuccess);
     }] prepare:OCMOCK_ANY];
+
+    [[[self.mockDelegate expect] andReturn:self.scheduleInfo.message] extendMessage:[OCMArg isKindOfClass:[UAInAppMessage class]]];
 
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare should be finished"];
     [self.manager prepareSchedule:testSchedule completionHandler:^(UAAutomationSchedulePrepareResult result) {
@@ -460,6 +554,8 @@
 
     [[[self.mockAdapter stub] andReturnValue:@(YES)] isReadyToDisplay];
 
+    [[[self.mockDelegate expect] andReturn:self.scheduleInfo.message] extendMessage:[OCMArg isKindOfClass:[UAInAppMessage class]]];
+
     // Prepare
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare should be finished"];
     [self.manager prepareSchedule:testSchedule completionHandler:^(UAAutomationSchedulePrepareResult result) {
@@ -487,6 +583,8 @@
     }];
 
     [self waitForTestExpectations];
+
+    [[[self.mockDelegate expect] andReturn:self.scheduleInfo.message] extendMessage:[OCMArg isKindOfClass:[UAInAppMessage class]]];
 
     // Prepare again
     prepareFinished = [self expectationWithDescription:@"prepare should be finished"];

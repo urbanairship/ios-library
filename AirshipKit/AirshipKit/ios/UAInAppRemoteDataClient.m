@@ -39,7 +39,8 @@ NSString * const UAInAppMessagesScheduledNewUserCutoffTimeKey = @"UAInAppRemoteD
                         dataStore:(UAPreferenceDataStore *)dataStore
                              push:(UAPush *)push {
     
-    self = [self init];
+    self = [super init];
+    
     if (self) {
         self.operationQueue = [[NSOperationQueue alloc] init];
         self.operationQueue.maxConcurrentOperationCount = 1;

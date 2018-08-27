@@ -8,9 +8,10 @@
 #import "UAInAppMessageAdapterProtocol.h"
 #import "UAComponent+Internal.h"
 #import "UADispatcher+Internal.h"
-
-@class UARemoteDataManager;
-@class UAPush;
+#import "UARemoteDataManager+Internal.h"
+#import "UAPush+Internal.h"
+#import "UATagGroupsLookupManager+Internal.h"
+#import "UATagGroupsMutationHistory+Internal.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -23,13 +24,16 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Factory method. Use for testing.
  *
- * @param automationEngine Automation engine.
+ * @param automationEngine The automation engine.
+ * @param tagGroupsLookupManager The tag groups lookup manager.
+ * @param remoteDataManager The remote data manager.
  * @param dataStore The preference data store.
  * @param push The system UAPush instance
  * @param dispatcher GCD dispatcher.
  * @return A in-app message manager instance.
  */
 + (instancetype)managerWithAutomationEngine:(UAAutomationEngine *)automationEngine
+                     tagGroupsLookupManager:(UATagGroupsLookupManager *)tagGroupsLookupManager
                           remoteDataManager:(UARemoteDataManager *)remoteDataManager
                                   dataStore:(UAPreferenceDataStore *)dataStore
                                        push:(UAPush *)push
@@ -39,11 +43,14 @@ NS_ASSUME_NONNULL_BEGIN
  * Factory method.
  *
  * @param config The UAConfigInstance.
+ * @param tagGroupsMutationHistory The tag groups mutation history.
+ * @param remoteDataManager The remote data manager.
  * @param dataStore The preference data store.
  * @param push The system UAPush instance
  * @return A in-app message manager instance.
  */
 + (instancetype)managerWithConfig:(UAConfig *)config
+         tagGroupsMutationHistory:(UATagGroupsMutationHistory *)tagGroupsMutationHistory
                 remoteDataManager:(UARemoteDataManager *)remoteDataManager
                         dataStore:(UAPreferenceDataStore *)dataStore
                              push:(UAPush *)push;

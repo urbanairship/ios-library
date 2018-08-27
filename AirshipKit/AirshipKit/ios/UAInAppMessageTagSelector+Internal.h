@@ -2,6 +2,7 @@
 
 #import <Foundation/Foundation.h>
 #import "UAInAppMessageTagSelector.h"
+#import "UATagGroups+Internal.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -20,6 +21,8 @@ typedef NS_ENUM(NSInteger, UAInAppMessageTagSelectorErrorCode) {
  */
 @interface UAInAppMessageTagSelector()
 
+@property (nonatomic, readonly) UATagGroups *tagGroups;
+
 /**
  * Parses a json value for a tag selector.
  *
@@ -30,12 +33,42 @@ typedef NS_ENUM(NSInteger, UAInAppMessageTagSelectorErrorCode) {
 + (nullable instancetype)selectorWithJSON:(NSDictionary *)json error:(NSError **)error;
 
 /**
+ * UAInAppMessageTagSelector class factory
+ *
+ * @param tag The tag.
+ */
++ (instancetype)tag:(NSString *)tag;
+
+/**
+ * UAInAppMessageTagSelector class factory
+ *
+ * @param tag The tag.
+ * @param group The tag group.
+ */
++ (instancetype)tag:(NSString *)tag group:(NSString *)group;
+
+/**
  * Convert a tag selector back to JSON
  *
  * @return JSON NSDictionary
  */
 - (NSDictionary *)toJSON;
 
+/**
+ * Applies the tag selector to an array of tags.
+ *
+ * @param tags The array of tags.
+ * @param tagGroups The tag groups.
+ * @return YES if the tag selector matches the tags, otherwise NO.
+ */
+- (BOOL)apply:(NSArray<NSString *> *)tags tagGroups:(nullable UATagGroups *)tagGroups;
+
+/**
+ * Indicates whether the tag selector contains tag groups.
+ *
+ * @return `YES` if the tag selector contains tag groups, `NO` otherwise.
+ */
+- (BOOL)containsTagGroups;
 
 @end
 

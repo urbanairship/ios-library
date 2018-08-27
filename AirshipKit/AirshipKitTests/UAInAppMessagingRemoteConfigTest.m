@@ -51,7 +51,7 @@
 
     UAInAppMessagingRemoteConfig *second = [UAInAppMessagingRemoteConfig configWithTagGroupsConfig:[UAInAppMessagingTagGroupsRemoteConfig configWithCacheMaxAgeTime:234 cacheStaleReadTime:345 cachePreferLocalUntil:456 enabled:YES]];
 
-    UAInAppMessagingRemoteConfig *combined = [first combineWithConfig:second];
+    UAInAppMessagingRemoteConfig *combined = (UAInAppMessagingRemoteConfig *)[first combineWithConfig:second];
 
     XCTAssertNotNil(combined);
     XCTAssertEqual(combined.tagGroupsConfig.enabled, NO);

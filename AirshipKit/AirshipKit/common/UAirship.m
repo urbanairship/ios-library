@@ -128,7 +128,12 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
                                                                                                  modules:modules];
 #if !TARGET_OS_TV
         // IAP Nib not supported on tvOS
-        self.sharedInAppMessageManager = [UAInAppMessageManager managerWithConfig:config remoteDataManager:self.sharedRemoteDataManager dataStore:dataStore push:self.sharedPush];
+        self.sharedInAppMessageManager = [UAInAppMessageManager managerWithConfig:config
+                                                         tagGroupsMutationHistory:tagGroupsMutationHistory
+                                                                remoteDataManager:self.sharedRemoteDataManager
+                                                                        dataStore:dataStore
+                                                                             push:self.sharedPush];
+
         self.sharedLegacyInAppMessaging = [UALegacyInAppMessaging inAppMessagingWithAnalytics:self.sharedAnalytics dataStore:dataStore inAppMessageManager:self.sharedInAppMessageManager];
         // Message center not supported on tvOS
         self.sharedInboxUser = [UAUser userWithPush:self.sharedPush config:config dataStore:dataStore];

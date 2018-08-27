@@ -25,22 +25,28 @@
 #import "UAInAppMessageAudience.h"
 #import "UAInAppMessagingRemoteConfig+Internal.h"
 #import "UATagGroupsLookupManager+Internal.h"
+#import "UARetriable+Internal.h"
+#import "UARetriablePipeline+Internal.h"
+#import "UAInAppMessageTagSelector+Internal.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 NSTimeInterval const DefaultMessageDisplayInterval = 30;
 NSTimeInterval const MaxSchedules = 200;
-NSTimeInterval const MessagePrepareRetryDelay = 200;
+NSTimeInterval const MessagePrepareRetryDelay = 30;
 
 NSString *const UAInAppAutomationStoreFileFormat = @"In-app-automation-%@.sqlite";
 NSString *const UAInAppMessageManagerEnabledKey = @"UAInAppMessageManagerEnabled";
 NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
 
 @interface UAInAppMessageScheduleData : NSObject
+
 @property(nonatomic, strong, nonnull) id<UAInAppMessageAdapterProtocol> adapter;
 @property(nonatomic, copy, nonnull) NSString *scheduleID;
 @property(nonatomic, strong, nonnull) UAInAppMessage *message;
+
 + (instancetype)dataWithAdapter:(id<UAInAppMessageAdapterProtocol>)adapter scheduleID:(NSString *)scheduleID message:(UAInAppMessage *)message;
+
 @end
 
 @implementation UAInAppMessageScheduleData
@@ -61,37 +67,41 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
 
 @end
 
-
 @interface UAInAppMessageManager () 
 
 @property(nonatomic, assign) BOOL isDisplayLocked;
-
 @property(nonatomic, strong) NSMutableDictionary *adapterFactories;
 @property(nonatomic, strong) UAAutomationEngine *automationEngine;
+@property(nonatomic, strong) NSMutableDictionary *adapters;
 @property(nonatomic, strong) UAInAppRemoteDataClient *remoteDataClient;
 @property(nonatomic, strong) UAPreferenceDataStore *dataStore;
 @property(nonatomic, strong) NSOperationQueue *queue;
 @property(nonatomic, strong) NSMutableDictionary *scheduleData;
 @property(nonatomic, strong) UATagGroupsLookupManager *tagGroupsLookupManager;
 @property(nonatomic, strong) UADispatcher *dispatcher;
+@property(nonatomic, strong) UARetriablePipeline *prepareSchedulePipeline;
+
 @end
 
 @implementation UAInAppMessageManager
 
 + (instancetype)managerWithAutomationEngine:(UAAutomationEngine *)automationEngine
+                     tagGroupsLookupManager:(UATagGroupsLookupManager *)tagGroupsLookupManager
                           remoteDataManager:(UARemoteDataManager *)remoteDataManager
                                   dataStore:(UAPreferenceDataStore *)dataStore
                                        push:(UAPush *)push
                                  dispatcher:(UADispatcher *)dispatcher {
 
-    return [[UAInAppMessageManager alloc] initWithAutomationEngine:automationEngine
-                                                 remoteDataManager:remoteDataManager
-                                                         dataStore:dataStore
-                                                              push:push
-                                                        dispatcher:dispatcher];
+    return [[self alloc] initWithAutomationEngine:automationEngine
+                           tagGroupsLookupManager:tagGroupsLookupManager
+                                remoteDataManager:remoteDataManager
+                                        dataStore:dataStore
+                                             push:push
+                                       dispatcher:dispatcher];
 }
 
 + (instancetype)managerWithConfig:(UAConfig *)config
+         tagGroupsMutationHistory:(UATagGroupsMutationHistory *)tagGroupsMutationHistory
                 remoteDataManager:(UARemoteDataManager *)remoteDataManager
                         dataStore:(UAPreferenceDataStore *)dataStore
                              push:(UAPush *)push {
@@ -101,14 +111,20 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
     UAAutomationStore *store = [UAAutomationStore automationStoreWithStoreName:storeName scheduleLimit:MaxSchedules];
     UAAutomationEngine *automationEngine = [UAAutomationEngine automationEngineWithAutomationStore:store];
 
-    return [[UAInAppMessageManager alloc] initWithAutomationEngine:automationEngine
-                                                 remoteDataManager:remoteDataManager
-                                                         dataStore:dataStore
-                                                              push:push
-                                                        dispatcher:[UADispatcher mainDispatcher]];
+    UATagGroupsLookupManager *tagGroupsLookupManager = [UATagGroupsLookupManager lookupManagerWithConfig:config
+                                                                                               dataStore:dataStore
+                                                                                         mutationHistory:tagGroupsMutationHistory];
+
+     return [[UAInAppMessageManager alloc] initWithAutomationEngine:automationEngine
+                                             tagGroupsLookupManager:tagGroupsLookupManager
+                                                  remoteDataManager:remoteDataManager
+                                                          dataStore:dataStore
+                                                               push:push
+                                                         dispatcher:[UADispatcher mainDispatcher]];
 }
 
 - (instancetype)initWithAutomationEngine:(UAAutomationEngine *)automationEngine
+                  tagGroupsLookupManager:(UATagGroupsLookupManager *)tagGroupsLookupManager
                        remoteDataManager:(UARemoteDataManager *)remoteDataManager
                                dataStore:(UAPreferenceDataStore *)dataStore
                                     push:(UAPush *)push
@@ -121,12 +137,16 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
         self.queue.maxConcurrentOperationCount = 1;
         self.scheduleData = [NSMutableDictionary dictionary];
         self.adapterFactories = [NSMutableDictionary dictionary];
+        self.adapters = [NSMutableDictionary dictionary];
         self.dataStore = dataStore;
         self.automationEngine = automationEngine;
         self.automationEngine.delegate = self;
+        self.tagGroupsLookupManager = tagGroupsLookupManager;
         self.displayInterval = DefaultMessageDisplayInterval;
         self.remoteDataClient = [UAInAppRemoteDataClient clientWithScheduler:self remoteDataManager:remoteDataManager dataStore:dataStore push:push];
         self.dispatcher = dispatcher;
+        self.prepareSchedulePipeline = [UARetriablePipeline pipeline];
+
         [self setDefaultAdapterFactories];
 
         [self.automationEngine start];
@@ -217,7 +237,7 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
     self.isDisplayLocked = YES;
 }
 
-- (id<UAInAppMessageAdapterProtocol>)adapterForMessage:(UAInAppMessage *)message {
+- (id<UAInAppMessageAdapterProtocol>)createAdapterForMessage:(UAInAppMessage *)message scheduleID:(NSString *)scheduleID {
     id<UAInAppMessageAdapterProtocol> (^factory)(UAInAppMessage* message) = self.adapterFactories[@(message.displayType)];
 
     if (!factory) {
@@ -226,8 +246,137 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
     }
 
     id<UAInAppMessageAdapterProtocol> adapter = factory(message);
+    [self.adapters setObject:adapter forKey:scheduleID];
 
     return adapter;
+}
+
+- (UARetriable *)adapterRetriableWithMessage:(UAInAppMessage *)message scheduleID:(NSString *)scheduleID resultHandler:(UARetriableCompletionHandler)resultHandler {
+    UA_WEAKIFY(self)
+    return [UARetriable retriableWithRunBlock:^(UARetriableCompletionHandler handler) {
+        UA_STRONGIFY(self)
+        id<UAInAppMessageAdapterProtocol> adapter = [self createAdapterForMessage:message scheduleID:scheduleID];
+
+        if (!adapter) {
+            handler(UARetriableResultCancel);
+        } else {
+            handler(UARetriableResultSuccess);
+        }
+    } resultHandler:resultHandler];
+}
+
+- (UARetriable *)audienceChecksRetriableWithMessage:(UAInAppMessage *)message resultHandler:(UARetriableCompletionHandler)resultHandler {
+    return [UARetriable retriableWithRunBlock:^(UARetriableCompletionHandler handler) {
+        void (^performAudienceCheck)(UATagGroups *) = ^(UATagGroups *tagGroups) {
+            if ([UAInAppMessageAudienceChecks checkDisplayAudienceConditions:message.audience tagGroups:tagGroups]) {
+                handler(UARetriableResultSuccess);
+            } else {
+                handler(UARetriableResultCancel);
+            }
+        };
+
+        UATagGroups *requestedTagGroups = message.audience.tagSelector.tagGroups;
+
+        if (requestedTagGroups.tags.count) {
+            [self.tagGroupsLookupManager getTagGroups:requestedTagGroups completionHandler:^(UATagGroups * _Nullable tagGroups, NSError * _Nonnull error) {
+                if (error) {
+                    handler(UARetriableResultRetry);
+                } else {
+                    performAudienceCheck(tagGroups);
+                }
+            }];
+        } else {
+            performAudienceCheck(nil);
+        }
+    } resultHandler:resultHandler];
+}
+
+- (UARetriable *)prepareMessageDataRetriableWithMessage:(UAInAppMessage *)message
+                                             scheduleID:(NSString *)scheduleID
+                                          resultHandler:(UARetriableCompletionHandler)resultHandler {
+
+    UA_WEAKIFY(self)
+    return [UARetriable retriableWithRunBlock:^(UARetriableCompletionHandler handler) {
+        UA_STRONGIFY(self)
+
+        id<UAInAppMessageAdapterProtocol> adapter = self.adapters[scheduleID];
+
+        if (!adapter) {
+            handler(UARetriableResultCancel);
+        }
+
+        UAInAppMessageScheduleData *data = [UAInAppMessageScheduleData dataWithAdapter:adapter
+                                                                            scheduleID:scheduleID
+                                                                               message:message];
+
+        [self.dispatcher dispatchAsync:^{
+            [adapter prepare:^(UAInAppMessagePrepareResult prepareResult) {
+                UA_STRONGIFY(self)
+
+                UA_LDEBUG(@"Prepare result: %ld schedule: %@", (unsigned long)prepareResult, scheduleID);
+                switch (prepareResult) {
+                    case UAInAppMessagePrepareResultSuccess:
+                        self.scheduleData[scheduleID] = data;
+                        handler(UARetriableResultSuccess);
+                        break;
+
+                    case UAInAppMessagePrepareResultRetry:
+                        handler(UARetriableResultRetry);
+                        break;
+
+                    case UAInAppMessagePrepareResultCancel:
+                        handler(UARetriableResultCancel);
+                        break;
+                }
+            }];
+        }];
+
+    } resultHandler:resultHandler];
+}
+
+- (void)prepareMessage:(UAInAppMessage *)message scheduleID:(NSString *)scheduleID completionHandler:(void (^)(UAAutomationSchedulePrepareResult))completionHandler {
+
+    // Create the adapter
+    UARetriable *createAdapter = [self adapterRetriableWithMessage:message scheduleID:scheduleID resultHandler:^(UARetriableResult result) {
+        if (result == UARetriableResultCancel) {
+            UA_LWARN(@"Failed to build adapter for message: %@, skipping display for schedule: %@", message, scheduleID);
+            completionHandler(UAAutomationSchedulePrepareResultPenalize);
+        }
+    }];
+
+    // Check audience conditions
+    UARetriable *audienceChecks = [self audienceChecksRetriableWithMessage:message resultHandler:^(UARetriableResult result) {
+        if (result == UARetriableResultCancel) {
+            UA_LDEBUG(@"Message audience conditions not met, skipping display for schedule: %@, missBehavior: %ld", scheduleID, (long)message.audience.missBehavior);
+            UAAutomationSchedulePrepareResult prepareResult;
+
+            switch(message.audience.missBehavior) {
+                case UAInAppMessageAudienceMissBehaviorCancel:
+                    prepareResult = UAAutomationSchedulePrepareResultCancel;
+                    break;
+                case UAInAppMessageAudienceMissBehaviorSkip:
+                    prepareResult = UAAutomationSchedulePrepareResultSkip;
+                    break;
+                case UAInAppMessageAudienceMissBehaviorPenalize:
+                    prepareResult = UAAutomationSchedulePrepareResultPenalize;
+                    break;
+            }
+
+            completionHandler(prepareResult);
+        }
+    }];
+
+    // Prepare the data
+    UARetriable *prepareMessageData = [self prepareMessageDataRetriableWithMessage:message scheduleID:scheduleID resultHandler:^(UARetriableResult result) {
+        if (result == UARetriableResultCancel) {
+            UA_LDEBUG(@"Unable to prepare message data, cancelling schedule: %@", scheduleID);
+            completionHandler(UAAutomationSchedulePrepareResultCancel);
+        } else if (result == UARetriableResultSuccess) {
+            completionHandler(UAAutomationSchedulePrepareResultContinue);
+        }
+    }];
+
+    [self.prepareSchedulePipeline addChainedRetriables:@[createAdapter, audienceChecks, prepareMessageData]];
 }
 
 - (void)prepareSchedule:(nonnull UASchedule *)schedule completionHandler:(void (^)(UAAutomationSchedulePrepareResult))completionHandler {
@@ -237,47 +386,14 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
     // Allow the delegate to extend the message if desired.
     if ([self.delegate respondsToSelector:@selector(extendMessage:)]) {
         message = [self.delegate extendMessage:message];
-    }
-
-    // Create the adapter
-    id<UAInAppMessageAdapterProtocol> adapter = [self adapterForMessage:message];
-    if (!adapter) {
-        UA_LWARN(@"Failed to build adapter for message: %@. Skiping display.", message);
-        completionHandler(UAAutomationSchedulePrepareResultPenalize);
-        return;
-    }
-
-    // Check audience conditions
-    if (![UAInAppMessageAudienceChecks checkDisplayAudienceConditions:info.message.audience]) {
-        UA_LDEBUG(@"Message audience conditions not met, processing audience check miss behavior for schedule:  %@", schedule.identifier);
-        UAAutomationSchedulePrepareResult result;
-        switch (info.message.audience.missBehavior) {
-            case UAInAppMessageAudienceMissBehaviorCancel:
-                result = UAAutomationSchedulePrepareResultCancel;
-                break;
-            case UAInAppMessageAudienceMissBehaviorSkip:
-                result = UAAutomationSchedulePrepareResultSkip;
-                break;
-            case UAInAppMessageAudienceMissBehaviorPenalize:
-                result = UAAutomationSchedulePrepareResultPenalize;
-                break;
+        if (!message) {
+            UA_LERR(@"Error extending message");
+            completionHandler(UAAutomationSchedulePrepareResultPenalize);
+            return;
         }
-        completionHandler(result);
     }
 
-    // Prepare the data
-    UAInAppMessageScheduleData *data = [UAInAppMessageScheduleData dataWithAdapter:adapter
-                                                                        scheduleID:schedule.identifier
-                                                                           message:message];
-
-    UA_WEAKIFY(self)
-    [self prepareMessageWithScheduleData:data delay:0 completionHandler:^(UAAutomationSchedulePrepareResult result) {
-        UA_STRONGIFY(self)
-        if (result == UAAutomationSchedulePrepareResultContinue) {
-            self.scheduleData[schedule.identifier] = data;
-        }
-        completionHandler(result);
-    }];
+    [self prepareMessage:message scheduleID:schedule.identifier completionHandler:completionHandler];
 }
 
 - (BOOL)isScheduleReadyToExecute:(UASchedule *)schedule {
@@ -354,6 +470,8 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
         UA_STRONGIFY(self);
         UA_LDEBUG(@"Schedule %@ finished displaying", schedule.identifier);
 
+        [self.adapters removeObjectForKey:schedule.identifier];
+
         // Resolution event
         [timer stop];
         UAEvent *event = [UAInAppMessageResolutionEvent eventWithMessage:message resolution:resolution displayTime:timer.time];
@@ -390,49 +508,6 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
     UAInAppMessageScheduleInfo *info = (UAInAppMessageScheduleInfo *)schedule.info;
     UAEvent *event = [UAInAppMessageResolutionEvent eventWithExpiredMessage:info.message expiredDate:info.end];
     [[UAirship analytics] addEvent:event];
-}
-
-- (void)prepareMessageWithScheduleData:(UAInAppMessageScheduleData *)scheduleData
-                                 delay:(NSTimeInterval)delay
-                     completionHandler:(void (^)(UAAutomationSchedulePrepareResult))completionHandler {
-
-    UA_LDEBUG(@"Preparing schedule: %@ delay: %f", scheduleData.scheduleID, delay);
-
-    UA_WEAKIFY(self);
-    NSOperation *operation = [UAAsyncOperation operationWithBlock:^(UAAsyncOperation *operation) {
-        UA_LDEBUG(@"Operation for schedule: %@ delay: %f", scheduleData.scheduleID, delay);
-
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [scheduleData.adapter prepare:^(UAInAppMessagePrepareResult result) {
-                UA_STRONGIFY(self);
-                UA_LDEBUG(@"Prepare result: %ld schedule: %@", (unsigned long)result, scheduleData.scheduleID);
-                switch (result) {
-                    case UAInAppMessagePrepareResultSuccess:
-                        completionHandler(UAAutomationSchedulePrepareResultContinue);
-                        break;
-
-                    case UAInAppMessagePrepareResultRetry:
-                        [self prepareMessageWithScheduleData:scheduleData delay:MessagePrepareRetryDelay completionHandler:completionHandler];
-                        break;
-
-                    case UAInAppMessagePrepareResultCancel:
-                    default:
-                        completionHandler(UAAutomationSchedulePrepareResultCancel);
-                        break;
-                }
-                [operation finish];
-            }];
-        });
-    }];
-
-    if (delay) {
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, delay * NSEC_PER_SEC), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
-            UA_STRONGIFY(self);
-            [self.queue addOperation:operation];
-        });
-    } else {
-        [self.queue addOperation:operation];
-    }
 }
 
 - (void)onComponentEnableChange {

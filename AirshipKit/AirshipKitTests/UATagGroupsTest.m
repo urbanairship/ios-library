@@ -65,4 +65,14 @@
     XCTAssertEqualObjects([tagGroups intersect:self.tagGroups], expected);
 }
 
+- (void)testMerge {
+    UATagGroups *tags = [UATagGroups tagGroupsWithTags:@{@"bar" : @[@"biz", @"bez"]}];
+    UATagGroups *moreTags = [UATagGroups tagGroupsWithTags:@{@"bar" : @[@"bloop"]}];
+
+    UATagGroups *expected = [UATagGroups tagGroupsWithTags:@{@"bar" : @[@"biz", @"bez", @"bloop"]}];
+
+    XCTAssertEqualObjects(expected, [tags merge:moreTags]);
+    XCTAssertEqualObjects(expected, [moreTags merge:tags]);
+}
+
 @end
