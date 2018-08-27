@@ -14,7 +14,7 @@
     return nil;
 }
 
-- (UARemoteConfig *)combineWithConfig:(UARemoteConfig *)config {
+- (instancetype)combineWithConfig:(UARemoteConfig *)config {
     // placeholder - sub-classes should override
     return nil;
 }

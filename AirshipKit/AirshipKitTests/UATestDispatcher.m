@@ -70,7 +70,7 @@
 
 - (void)dispatchAfter:(NSTimeInterval)delay block:(void (^)(void))block {
     if (delay <= 0) {
-        block()
+        block();
     } else {
         [self.scheduledBlocks addObject:[UAScheduledBlockEntry entryWithBlock:block time:self.currentTime + delay]];
     }

@@ -26,10 +26,8 @@
 		3C5A250F20115BE600F25829 /* UAInAppMessageHTMLView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C5A250D20115BE600F25829 /* UAInAppMessageHTMLView.m */; };
 		3C5A25182012BFB900F25829 /* UAInAppMessageHTMLView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3C5A25162012BFB900F25829 /* UAInAppMessageHTMLView.xib */; };
 		3C67E11C21264221006031EB /* UAInAppMessagingRemoteConfig+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C67E11A21264221006031EB /* UAInAppMessagingRemoteConfig+Internal.h */; };
-		3C67E11D21264221006031EB /* UAInAppMessagingRemoteConfig+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C67E11A21264221006031EB /* UAInAppMessagingRemoteConfig+Internal.h */; };
 		3C67E11E21264221006031EB /* UAInAppMessagingRemoteConfig+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C67E11A21264221006031EB /* UAInAppMessagingRemoteConfig+Internal.h */; };
 		3C67E11F21264221006031EB /* UAInAppMessagingRemoteConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C67E11B21264221006031EB /* UAInAppMessagingRemoteConfig.m */; };
-		3C67E12021264221006031EB /* UAInAppMessagingRemoteConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C67E11B21264221006031EB /* UAInAppMessagingRemoteConfig.m */; };
 		3C67E12121264221006031EB /* UAInAppMessagingRemoteConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C67E11B21264221006031EB /* UAInAppMessagingRemoteConfig.m */; };
 		3C67E12421266018006031EB /* UARemoteConfig+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C67E12221266018006031EB /* UARemoteConfig+Internal.h */; };
 		3C67E12521266018006031EB /* UARemoteConfig+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C67E12221266018006031EB /* UARemoteConfig+Internal.h */; };
@@ -4299,7 +4297,6 @@
 				99666D871EDF2BA000BAE46B /* UACancelSchedulesAction.h in Headers */,
 				99666DB81EDF2BDC00BAE46B /* UAChannelAPIClient+Internal.h in Headers */,
 				DF702D841FABA46B00E7A3DC /* UAVersionMatcher+Internal.h in Headers */,
-				3C67E11D21264221006031EB /* UAInAppMessagingRemoteConfig+Internal.h in Headers */,
 				99666DBA1EDF2BDC00BAE46B /* UAChannelRegistrar+Internal.h in Headers */,
 				99666DBD1EDF2BDC00BAE46B /* UAChannelRegistrationPayload+Internal.h in Headers */,
 				DF5ED8E31F7455C5002DDA24 /* UARemoteDataStore+Internal.h in Headers */,
@@ -5777,7 +5774,6 @@
 				99666DB51EDF2BD200BAE46B /* UANamedUser.m in Sources */,
 				99666E551EDF2C8D00BAE46B /* UAAssociatedIdentifiers.m in Sources */,
 				99666DD61EDF2BED00BAE46B /* UANotificationResponse.m in Sources */,
-				3C67E12021264221006031EB /* UAInAppMessagingRemoteConfig.m in Sources */,
 				99666E3A1EDF2C8D00BAE46B /* UAAppBackgroundEvent.m in Sources */,
 				99666E121EDF2C2600BAE46B /* UAAggregateActionResult.m in Sources */,
 				99666E5F1EDF2C9500BAE46B /* NSJSONSerialization+UAAdditions.m in Sources */,

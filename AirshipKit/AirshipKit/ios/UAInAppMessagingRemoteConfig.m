@@ -104,7 +104,7 @@
     return [[self alloc] initWithJSON:json];
 }
 
-- (UAInAppMessagingRemoteConfig *)combineWithConfig:(UAInAppMessagingRemoteConfig *)config {
+- (instancetype)combineWithConfig:(UAInAppMessagingRemoteConfig *)config {
     UAInAppMessagingTagGroupsRemoteConfig *tagGroupsConfig;
 
     if (self.tagGroupsConfig && config.tagGroupsConfig) {
