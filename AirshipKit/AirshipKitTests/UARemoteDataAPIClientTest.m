@@ -9,11 +9,13 @@
 #import "UARemoteDataAPIClient+Internal.h"
 #import "UAPreferenceDataStore+Internal.h"
 #import "UARemoteDataPayload+Internal.h"
+#import "UAirshipVersion.h"
 
 @interface UARemoteDataAPIClientTest : UABaseTest
 
 @property (nonatomic, strong) UARemoteDataAPIClient *remoteDataAPIClient;
-@property (nonatomic, strong) id mockConfig;
+@property (nonatomic, strong) UAConfig *config;
+
 @property (nonatomic, strong) id mockSession;
 @property (nonatomic, strong) id mockSessionClass;
 @property (nonatomic, strong) id mockDataStore;
@@ -25,21 +27,23 @@
 - (void)setUp {
     [super setUp];
     
-    self.mockConfig = [OCMockObject niceMockForClass:[UAConfig class]];
+    self.config = [UAConfig config];
+    self.config.developmentAppKey = @"appKey";
+    self.config.inProduction = NO;
+
     self.mockSession = [OCMockObject niceMockForClass:[UARequestSession class]];
     self.mockDataStore = [OCMockObject niceMockForClass:[UAPreferenceDataStore class]];
     self.mockSessionClass = OCMClassMock([UARequestSession class]);
     [[[self.mockSessionClass stub] andReturn:self.mockSession] sessionWithConfig:OCMOCK_ANY];
     
-    self.remoteDataAPIClient = [UARemoteDataAPIClient clientWithConfig:self.mockConfig dataStore:self.mockDataStore];
+    self.remoteDataAPIClient = [UARemoteDataAPIClient clientWithConfig:self.config dataStore:self.mockDataStore];
     
 }
 
 - (void)tearDown {
     [self.mockDataStore stopMocking];
     [self.mockSession stopMocking];
-    [self.mockConfig stopMocking];
-    
+
     [super tearDown];
 }
 
@@ -71,7 +75,12 @@
         dispatch_async(dispatch_get_main_queue(), ^{
             completionHandler(responseData, (NSURLResponse *)response, nil);
         });
-    }] dataTaskWithRequest:OCMOCK_ANY retryWhere:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    }] dataTaskWithRequest:[OCMArg checkWithBlock:^BOOL(id obj) {
+        UARequest *request = obj;
+        NSString *expected = [NSString stringWithFormat:@"https://remote-data.urbanairship.com/api/remote-data/app/appKey/ios?sdk_version=%@", [UAirshipVersion get]];
+
+        return [[request.URL absoluteString] isEqualToString:expected];
+    }] retryWhere:OCMOCK_ANY completionHandler:OCMOCK_ANY];
     
     XCTestExpectation *refreshFinished = [self expectationWithDescription:@"Refresh finished"];
     

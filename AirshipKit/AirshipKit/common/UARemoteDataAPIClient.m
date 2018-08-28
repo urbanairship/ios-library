@@ -5,14 +5,16 @@
 #import "UAUtils+Internal.h"
 #import "UAConfig+Internal.h"
 #import "NSURLResponse+UAAdditions.h"
+#import "UAirshipVersion.h"
 
 @interface UARemoteDataAPIClient()
-
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
-
+@property (nonatomic, strong, readonly) NSURL *URL;
 @end
 
 @implementation UARemoteDataAPIClient
+
+@synthesize URL = _URL;
 
 NSString * const kUALastRemoteDataModifiedTime = @"UALastRemoteDataModifiedTime";
 
@@ -32,7 +34,9 @@ NSString * const kUALastRemoteDataModifiedTime = @"UALastRemoteDataModifiedTime"
 
 - (UADisposable *)fetchRemoteData:(UARemoteDataRefreshSuccessBlock)successBlock onFailure:(UARemoteDataRefreshFailureBlock)failureBlock {
     UARequest *refreshRequest = [self requestToRefreshRemoteData];
-    
+
+    UA_LTRACE(@"Request to refresh remote data: %@", refreshRequest.URL);
+
     __block UARemoteDataRefreshSuccessBlock refreshRemoteDataSuccessBlock = successBlock;
     __block UARemoteDataRefreshFailureBlock refreshRemoteDataFailureBlock = failureBlock;
     
@@ -115,14 +119,11 @@ NSString * const kUALastRemoteDataModifiedTime = @"UALastRemoteDataModifiedTime"
 }
 
 - (UARequest *)requestToRefreshRemoteData {
-    
+    UA_WEAKIFY(self)
     UARequest *request = [UARequest requestWithBuilderBlock:^(UARequestBuilder * _Nonnull builder) {
-        
-        NSString *urlString = [NSString stringWithFormat: @"%@%@", self.config.remoteDataAPIURL, [NSString stringWithFormat: @"/api/remote-data/app/%@/%@", self.config.appKey, @"ios"]];
-        
-        NSURL *requestUrl = [NSURL URLWithString: urlString];
-        
-        builder.URL = requestUrl;
+        UA_STRONGIFY(self)
+
+        builder.URL = self.URL;
         builder.method = @"GET";
         
         NSString *lastModified = [self.dataStore stringForKey:kUALastRemoteDataModifiedTime];
@@ -130,11 +131,23 @@ NSString * const kUALastRemoteDataModifiedTime = @"UALastRemoteDataModifiedTime"
         if (lastModified) {
             [builder setValue:lastModified forHeader:@"If-Modified-Since"];
         }
-        
-        UA_LTRACE(@"Request to refresh remote data: %@", urlString);
     }];
     
     return request;
+}
+
+- (NSURL *)URL {
+    if (_URL) {
+        return _URL;
+    }
+
+    NSURLQueryItem *queryItem = [NSURLQueryItem queryItemWithName:@"sdk_version" value:[UAirshipVersion get]];
+    NSURLComponents *components = [NSURLComponents componentsWithString:self.config.remoteDataAPIURL];
+    components.path = [NSString stringWithFormat:@"/api/remote-data/app/%@/%@", self.config.appKey, @"ios"];
+    components.queryItems = @[queryItem];
+
+    _URL = [components URL];
+    return _URL;
 }
 
 - (void)clearLastModifiedTime {
