@@ -1,6 +1,7 @@
 /* Copyright 2018 Urban Airship and Contributors */
 
 #import "UATestDispatcher.h"
+#import "UAGlobal.h"
 
 @interface UAScheduledBlockEntry : NSObject
 @property (nonatomic, strong) void (^block)(void);
@@ -68,12 +69,19 @@
     [self.scheduledBlocks removeObjectsInArray:handled];
 }
 
-- (void)dispatchAfter:(NSTimeInterval)delay block:(void (^)(void))block {
-    if (delay <= 0) {
-        block();
-    } else {
-        [self.scheduledBlocks addObject:[UAScheduledBlockEntry entryWithBlock:block time:self.currentTime + delay]];
+- (UADisposable *)dispatchAfter:(NSTimeInterval)delay block:(void (^)(void))block {
+    if (delay < 0) {
+        delay = 0;
     }
+
+    id entry = [UAScheduledBlockEntry entryWithBlock:block time:self.currentTime + delay];
+    [self.scheduledBlocks addObject:entry];
+
+    UA_WEAKIFY(self)
+    return [UADisposable disposableWithBlock:^{
+        UA_STRONGIFY(self)
+        [self.scheduledBlocks removeObject:entry];
+    }];
 }
 
 - (void)dispatchAsync:(void (^)(void))block {

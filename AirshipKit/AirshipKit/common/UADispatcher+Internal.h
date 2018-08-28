@@ -2,6 +2,7 @@
 
 
 #import <Foundation/Foundation.h>
+#import "UADisposable.h"
 
 /**
  * Class that wraps commmon GCD calls.
@@ -24,13 +25,19 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)mainDispatcher;
 
 /**
+ * Shared dispatcher that dispatches on the background queue.
+ * @return The shared background dispatcher.
+ */
++ (instancetype)backgroundDispatcher;
+
+/**
  * Dispatches after a delay. If the delay <= 0, the block will
  * be dispatched asynchronously instead.
  *
  * @param delay The delay in seconds.
  * @param block The block to dispatch.
  */
-- (void)dispatchAfter:(NSTimeInterval)delay block:(void (^)(void))block;
+- (UADisposable *)dispatchAfter:(NSTimeInterval)delay block:(void (^)(void))block;
 
 /**
  * Dispatches a block asynchronously.

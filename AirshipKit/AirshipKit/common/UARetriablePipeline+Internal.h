@@ -2,10 +2,12 @@
 
 #import <Foundation/Foundation.h>
 #import "UARetriable+Internal.h"
+#import "UADispatcher+Internal.h"
 
 /**
  * An interface for running retriables with optional operation dependency semantics,
- * and automatic exponential backoff.
+ * and automatic exponential backoff. Retries will be scheduled using the dispatcher
+ * to avoid blocking other operations from executing.
  */
 @interface UARetriablePipeline : NSObject
 
@@ -15,11 +17,12 @@
 + (instancetype)pipeline;
 
 /**
- * UARetriablePipeline class factory.
+ * UARetriablePipeline class factory. For testing purposes.
  *
- * @param queue The NSOperation queue to use. For testing purposes.
+ * @param queue The NSOperation queue to use.
+ * @param dispatcher The dispatcher used for rescheduling retriables.
  */
-+ (instancetype)pipelineWithQueue:(NSOperationQueue *)queue;
++ (instancetype)pipelineWithQueue:(NSOperationQueue *)queue dispatcher:(UADispatcher *)dispatcher;
 
 /**
  * Adds a retriable to the queue.
@@ -31,10 +34,5 @@
  * array order.
  */
 - (void)addChainedRetriables:(NSArray<UARetriable *> *)retriables;
-
-/**
- * Cancels all operations.
- */
-- (void)cancel;
 
 @end
