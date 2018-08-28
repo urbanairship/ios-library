@@ -28,7 +28,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * The factory method for creating an HTML controller.
  *
- * @param identifier The message identifier.
+ * @param messageID The message identifier.
  * @param displayContent The display content.
  * @param style The HTML view styling.
  *
