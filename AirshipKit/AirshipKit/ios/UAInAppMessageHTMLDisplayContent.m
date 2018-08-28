@@ -27,6 +27,8 @@ NSString *const UAInAppMessageURLKey = @"url";
         self.url = content.url;
         self.backgroundColor = content.backgroundColor;
         self.dismissButtonColor = content.dismissButtonColor;
+        self.borderRadius = content.borderRadius;
+        self.allowFullScreenDisplay = content.allowFullScreenDisplay;
     }
 
     return self;
@@ -53,6 +55,8 @@ NSString *const UAInAppMessageURLKey = @"url";
 @property(nonatomic, copy) NSString *url;
 @property(nonatomic, strong) UIColor *backgroundColor;
 @property(nonatomic, strong) UIColor *dismissButtonColor;
+@property(nonatomic, assign) NSUInteger borderRadius;
+@property(nonatomic, assign) BOOL allowFullScreenDisplay;
 
 @end
 
@@ -114,6 +118,34 @@ NSString *const UAInAppMessageURLKey = @"url";
         builder.dismissButtonColor = [UAColorUtils colorWithHexString:dismissButtonColor];
     }
 
+    id borderRadius = json[UAInAppMessageBorderRadiusKey];
+    if (borderRadius) {
+        if (![borderRadius isKindOfClass:[NSNumber class]]) {
+            if (error) {
+                NSString *msg = [NSString stringWithFormat:@"Border radius must be a number. Invalid value: %@", borderRadius];
+                *error =  [NSError errorWithDomain:UAInAppMessageHTMLDisplayContentDomain
+                                              code:UAInAppMessageHTMLDisplayContentErrorCodeInvalidJSON
+                                          userInfo:@{NSLocalizedDescriptionKey:msg}];
+            }
+            return nil;
+        }
+        builder.borderRadius = [borderRadius unsignedIntegerValue];
+    }
+
+    id allowFullScreenDisplay = json[UAInAppMessageHTMLAllowsFullScreenKey];
+    if (allowFullScreenDisplay) {
+        if (![borderRadius isKindOfClass:[NSNumber class]]) {
+            if (error) {
+                NSString *msg = [NSString stringWithFormat:@"Allows full screen flag must be a boolean stored as an NSNumber. Invalid value: %@", allowFullScreenDisplay];
+                *error =  [NSError errorWithDomain:UAInAppMessageHTMLDisplayContentDomain
+                                              code:UAInAppMessageHTMLDisplayContentErrorCodeInvalidJSON
+                                          userInfo:@{NSLocalizedDescriptionKey:msg}];
+            }
+            return nil;
+        }
+        builder.allowFullScreenDisplay = [allowFullScreenDisplay boolValue];
+    }
+
     if (![builder isValid]) {
         if (error) {
             NSString *msg = [NSString stringWithFormat:@"Invalid HTML display content: %@", json];
@@ -140,6 +172,8 @@ NSString *const UAInAppMessageURLKey = @"url";
         self.url = builder.url;
         self.backgroundColor = builder.backgroundColor;
         self.dismissButtonColor = builder.dismissButtonColor;
+        self.allowFullScreenDisplay = builder.allowFullScreenDisplay;
+        self.borderRadius = builder.borderRadius;
     }
 
     return self;
@@ -151,6 +185,8 @@ NSString *const UAInAppMessageURLKey = @"url";
     [json setValue:self.url forKey:UAInAppMessageURLKey];
     [json setValue:[UAColorUtils hexStringWithColor:self.backgroundColor] forKey:UAInAppMessageBackgroundColorKey];
     [json setValue:[UAColorUtils hexStringWithColor:self.dismissButtonColor] forKey:UAInAppMessageDismissButtonColorKey];
+    [json setValue:@(self.borderRadius) forKey:UAInAppMessageBorderRadiusKey];
+    [json setValue:@(self.allowFullScreenDisplay) forKey:UAInAppMessageHTMLAllowsFullScreenKey];
 
     return [json copy];
 }
@@ -196,6 +232,14 @@ NSString *const UAInAppMessageURLKey = @"url";
         return NO;
     }
 
+    if (self.borderRadius != content.borderRadius) {
+        return NO;
+    }
+
+    if (self.allowFullScreenDisplay != content.allowFullScreenDisplay) {
+        return NO;
+    }
+
     return YES;
 }
 
@@ -204,6 +248,8 @@ NSString *const UAInAppMessageURLKey = @"url";
     result = 31 * result + [self.url hash];
     result = 31 * result + [[UAColorUtils hexStringWithColor:self.backgroundColor] hash];
     result = 31 * result + [[UAColorUtils hexStringWithColor:self.dismissButtonColor] hash];
+    result = 31 * result + self.borderRadius;
+    result = 31 * result + self.allowFullScreenDisplay;
 
     return result;
 }

@@ -17,14 +17,14 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * The factory method for creating a banner controller.
  *
- * @param identifer The message identifier.
+ * @param identifier The message identifier.
  * @param displayContent The display content.
  * @param mediaView The media view.
  * @param style The banner style.
  *
  * @return a configured UAInAppMessageBannerView instance.
  */
-+ (instancetype)bannerControllerWithBannerMessageID:(NSString *)identifer
++ (instancetype)bannerControllerWithBannerMessageID:(NSString *)identifier
                                      displayContent:(UAInAppMessageBannerDisplayContent *)displayContent
                                           mediaView:(nullable UAInAppMessageMediaView *)mediaView
                                               style:(nullable UAInAppMessageBannerStyle *)style;

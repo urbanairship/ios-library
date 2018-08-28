@@ -80,7 +80,7 @@ extern NSString *const UABannerMaxWidthKey;
 @property(nonatomic, strong, nullable) UAInAppMessageMediaStyle *mediaStyle;
 
 /**
- * The max width.
+ * The max width in points.
  */
 @property(nonatomic, strong, nullable) NSNumber *maxWidth;
 

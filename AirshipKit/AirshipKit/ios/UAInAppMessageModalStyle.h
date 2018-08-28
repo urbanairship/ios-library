@@ -74,12 +74,12 @@ extern NSString *const UAModalMaxHeightKey;
 @property(nonatomic, strong, nullable) NSString *dismissIconResource;
 
 /**
- * The max width.
+ * The max width in points.
  */
 @property(nonatomic, strong, nullable) NSNumber *maxWidth;
 
 /**
- * The max height.
+ * The max height in points.
  */
 @property(nonatomic, strong, nullable) NSNumber *maxHeight;
 

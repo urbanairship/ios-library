@@ -4,15 +4,19 @@
 #import "UAInAppMessageModalAdapter.h"
 #import "UAInAppMessageModalDisplayContent+Internal.h"
 #import "UAInAppMessageModalViewController+Internal.h"
+#import "UAInAppMessageHTMLViewController+Internal.h"
 #import "UAInAppMessageMediaView+Internal.h"
 #import "UAInAppMessageUtils+Internal.h"
 #import "UAUtils+Internal.h"
+#import "UAInAppMessageResizableViewController+Internal.h"
+
 
 NSString *const UAModalStyleFileName = @"UAInAppMessageModalStyle";
 
 @interface UAInAppMessageModalAdapter ()
 @property (nonatomic, strong) UAInAppMessage *message;
 @property (nonatomic, strong) UAInAppMessageModalViewController *modalController;
+@property (nonatomic, strong) UAInAppMessageResizableViewController *resizableContainerViewController;
 @property (nonatomic, strong) NSCache *imageCache;
 
 @end
@@ -55,7 +59,21 @@ NSString *const UAModalStyleFileName = @"UAInAppMessageModalStyle";
 }
 
 - (void)display:(void (^)(UAInAppMessageResolution *))completionHandler {
-    [self.modalController showWithCompletionHandler:completionHandler];
+
+    self.resizableContainerViewController = [UAInAppMessageResizableViewController resizableViewControllerWithChild:self.modalController];
+
+    self.resizableContainerViewController.backgroundColor = self.modalController.displayContent.backgroundColor;
+    self.resizableContainerViewController.allowFullScreenDisplay = self.modalController.displayContent.allowFullScreenDisplay;
+    self.resizableContainerViewController.additionalPadding = self.modalController.style.additionalPadding;
+    self.resizableContainerViewController.borderRadius = self.modalController.displayContent.borderRadius;
+    self.resizableContainerViewController.maxWidth = self.modalController.style.maxWidth;
+    self.resizableContainerViewController.maxHeight = self.modalController.style.maxHeight;
+
+    // Set weak link to parent
+    self.modalController.resizableParent = self.resizableContainerViewController;
+
+    // Show resizable view controller with child
+    [self.resizableContainerViewController showWithCompletionHandler:completionHandler];
 }
 
 - (void)dealloc {
@@ -67,5 +85,3 @@ NSString *const UAModalStyleFileName = @"UAInAppMessageModalStyle";
 }
 
 @end
-
-

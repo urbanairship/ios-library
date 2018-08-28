@@ -2,6 +2,8 @@
 
 #import <Foundation/Foundation.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  * NSOperation that executes an asynchronous block.
  */
@@ -41,3 +43,5 @@
 @property (nullable, copy) void (^cancelBlock)(void);
 
 @end
+
+NS_ASSUME_NONNULL_END

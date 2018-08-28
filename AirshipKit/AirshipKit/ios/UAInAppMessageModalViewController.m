@@ -12,6 +12,7 @@
 #import "UAInAppMessageDismissButton+Internal.h"
 #import "UAInAppMessageModalStyle.h"
 #import "UAViewUtils+Internal.h"
+#import "UAInAppMessageResizableViewController+Internal.h"
 
 
 NS_ASSUME_NONNULL_BEGIN
@@ -20,7 +21,6 @@ NS_ASSUME_NONNULL_BEGIN
 @class UAInAppMessageButtonView;
 @class UAInAppMessageMediaView;
 @class UAInAppMessageModalDisplayContent;
-
 
 /**
  * Default modal padding.
@@ -50,6 +50,9 @@ CGFloat const ModalAdditionalBodyPadding = 16.0;
  */
 CGFloat const ModalCloseButtonViewWidth = 46.0;
 
+/**
+ * Default animation duration for the modal view controller
+ */
 double const DefaultModalAnimationDuration = 0.2;
 
 /**
@@ -62,58 +65,14 @@ double const DefaultModalAnimationDuration = 0.2;
  */
 @property (nonatomic, assign) CGFloat borderRadius;
 
-/**
- * The flag that tells the view whether or not to round its border.
- */
-@property (nonatomic, assign) CGFloat allowBorderRounding;
-
-@end
-
-@implementation UAInAppMessageModalView
-
-- (void)layoutSubviews {
-    [super layoutSubviews];
-
-    [self applyBorderRounding];
-}
-
-- (void)applyBorderRounding {
-    if (!self.allowBorderRounding) {
-        //Don't round if display is full screen
-        return;
-    }
-
-    CAShapeLayer *maskLayer = [CAShapeLayer layer];
-    maskLayer.path = [UIBezierPath bezierPathWithRoundedRect:self.bounds
-                                           byRoundingCorners:UIRectCornerAllCorners
-                                                 cornerRadii:(CGSize){self.borderRadius, self.borderRadius}].CGPath;
-
-    self.layer.mask = maskLayer;
-}
-
 @end
 
 @interface UAInAppMessageModalViewController ()
 
 /**
- * The new window created in front of the app's existing window.
- */
-@property (strong, nonatomic, nullable) UIWindow *modalWindow;
-
-/**
  * The main view of this view controller. The modal view is built on it.
  */
 @property (strong, nonatomic) IBOutlet UIView *view;
-
-/**
- * The modal message view.
- */
-@property (weak, nonatomic) IBOutlet UAInAppMessageModalView *modalView;
-
-/**
- * The in-app message modal styling.
- */
-@property(nonatomic, strong) UAInAppMessageModalStyle *style;
 
 /**
  * The stack view that holds any scrollable content.
@@ -146,52 +105,9 @@ double const DefaultModalAnimationDuration = 0.2;
 @property (nonatomic, strong) NSString *messageID;
 
 /**
- * The flag indicating the state of the modal message.
- */
-@property (nonatomic, assign) BOOL isShowing;
-
-/**
  * The modal message's media view.
  */
 @property (nonatomic, strong) UAInAppMessageMediaView *mediaView;
-
-/**
- * The modal display content.
- */
-@property (nonatomic, strong) UAInAppMessageModalDisplayContent *displayContent;
-
-/**
- * The modal max width.
- */
-@property (strong, nonatomic) IBOutlet NSLayoutConstraint *modalMaxWidth;
-
-/**
- * The completion handler passed in when the message is shown.
- */
-@property (nonatomic, copy, nullable) void (^showCompletionHandler)(UAInAppMessageResolution *);
-
-/**
- * Flag indicating if the modal will display full screen.
- */
-@property (assign, nonatomic) BOOL displayFullScreen;
-
-/**
- * Modal constraints necessary to deactivate before stretching to full screen
- */
-@property (strong, nonatomic) IBOutlet NSLayoutConstraint *modalViewMaxWidthConstraint;
-@property (strong, nonatomic) IBOutlet NSLayoutConstraint *modalCenterXConstraint;
-@property (strong, nonatomic) IBOutlet NSLayoutConstraint *modalCenterYConstraint;
-@property (strong, nonatomic) IBOutlet NSLayoutConstraint *modalWidthConstraint;
-@property (strong, nonatomic) IBOutlet NSLayoutConstraint *modalHeightConstraint;
-@property (strong, nonatomic) IBOutlet NSLayoutConstraint *modalContainerAspect;
-
-/**
- * Shade view is used to shade the background when the view is in a modal
- * presentation. Shade view is rendered opaque and set to either background
- * color or black (media in horizontal display on iPhone X) during the full
- * screen presentation.
- */
-@property (strong, nonatomic) IBOutlet UIView *shadeView;
 
 @end
 
@@ -240,27 +156,6 @@ double const DefaultModalAnimationDuration = 0.2;
 #pragma mark -
 #pragma mark Core Functionality
 
-- (void)showWithCompletionHandler:(void (^)(UAInAppMessageResolution * _Nonnull))completionHandler {
-    if (self.isShowing) {
-        UA_LWARN(@"In-app message modal has already been displayed");
-        return;
-    }
-
-    self.showCompletionHandler = completionHandler;
-
-    // create a new window that covers the entire display
-    self.modalWindow = [[UIWindow alloc] initWithFrame:UIScreen.mainScreen.bounds];
-
-    // make sure window appears above any alerts already showing
-    self.modalWindow.windowLevel = UIWindowLevelAlert;
-
-    // add this view controller to the window
-    self.modalWindow.rootViewController = self;
-
-    // show the window
-    [self.modalWindow makeKeyAndVisible];
-}
-
 - (UAInAppMessageModalContentLayoutType)normalizeContentLayout:(UAInAppMessageModalDisplayContent *)content {
 
     // If there's no media, normalize to header body media
@@ -278,12 +173,6 @@ double const DefaultModalAnimationDuration = 0.2;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-
-    self.displayFullScreen = self.displayContent.allowFullScreenDisplay && (UI_USER_INTERFACE_IDIOM() != UIUserInterfaceIdiomPad);
-    self.modalView.allowBorderRounding = !(self.displayFullScreen);
-
-    self.modalView.borderRadius = self.displayContent.borderRadius;
-    self.modalView.backgroundColor = self.displayContent.backgroundColor;
 
     self.closeButton.dismissButtonColor = self.displayContent.dismissButtonColor;
     [self.closeButtonContainerView addSubview:self.closeButton];
@@ -454,115 +343,6 @@ double const DefaultModalAnimationDuration = 0.2;
     } else {
         [self.footerContainerView removeFromSuperview];
     }
-
-    // Add the style padding to the modal itself if not full screen
-    if (!self.displayFullScreen) {
-        [UAInAppMessageUtils applyPaddingToView:self.modalView padding:self.style.additionalPadding replace:NO];
-    }
-
-    // will make opaque as part of animation when view appears
-    self.view.alpha = 0;
-    // disable voiceover interactions with visible items beneath the modal
-    self.view.accessibilityViewIsModal = YES;
-
-    if (self.displayFullScreen) {
-        // Detect view type
-        [self stretchToFullScreen];
-        [self refreshViewForCurrentOrientation];
-    }
-
-    // Apply max width and height constraints from style if they are present
-    if (self.style.maxWidth) {
-        self.modalViewMaxWidthConstraint.active = NO;
-
-        // Set max width
-        [NSLayoutConstraint constraintWithItem:self.modalView
-                                     attribute:NSLayoutAttributeWidth
-                                     relatedBy:NSLayoutRelationLessThanOrEqual
-                                        toItem:nil
-                                     attribute:NSLayoutAttributeNotAnAttribute
-                                    multiplier:1
-                                      constant:[self.style.maxWidth floatValue]].active = YES;
-    }
-
-    // Apply max width and height constraints from style if they are present
-    if (self.style.maxHeight) {
-        // Set max width
-        [NSLayoutConstraint constraintWithItem:self.modalView
-                                     attribute:NSLayoutAttributeHeight
-                                     relatedBy:NSLayoutRelationLessThanOrEqual
-                                        toItem:nil
-                                     attribute:NSLayoutAttributeNotAnAttribute
-                                    multiplier:1
-                                      constant:[self.style.maxHeight floatValue]].active = YES;
-    }
-}
-
-// Alters contraints to cover the full screen.
-- (void)stretchToFullScreen {
-
-    // Deactivate necessary modal constraints
-    self.modalViewMaxWidthConstraint.active = NO;
-    self.modalCenterXConstraint.active = NO;
-    self.modalCenterYConstraint.active = NO;
-    self.modalWidthConstraint.active = NO;
-    self.modalHeightConstraint.active = NO;
-    self.modalContainerAspect.active = NO;
-
-    // Add full screen constraints
-    // (note the these are not to the safe area - so insets will need to be provided opn iPhone X)
-    [UAViewUtils applyContainerConstraintsToContainer:self.view containedView:self.modalContainer];
-
-    // Set shade view to background color
-    self.shadeView.opaque = YES;
-    self.shadeView.alpha = 1;
-    self.shadeView.backgroundColor = self.displayContent.backgroundColor;
-}
-
-- (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {
-    [self refreshViewForCurrentOrientation];
-}
-
-- (void)refreshViewForCurrentOrientation {
-    if (self.displayFullScreen) {
-        if (@available(iOS 11.0, *)) {
-            UIWindow *window = [UIApplication sharedApplication].keyWindow;
-            // Black out the inset and compensate for excess vertical safe area when iPhone X is horizontal
-            if (window.safeAreaInsets.top == 0 && window.safeAreaInsets.left > 0) {
-                self.shadeView.backgroundColor = [UIColor blackColor];
-                // Apply insets for iPhone X, use larger safe inset on rotation to balance the view
-                CGFloat largerInset = fmax(window.safeAreaInsets.left, window.safeAreaInsets.right);
-                [UAInAppMessageUtils applyPaddingForAttribute:NSLayoutAttributeTrailing onView:self.modalContainer padding:largerInset replace:YES];
-                [UAInAppMessageUtils applyPaddingForAttribute:NSLayoutAttributeLeading onView:self.modalContainer padding:largerInset replace:YES];
-                [UAInAppMessageUtils applyPaddingForAttribute:NSLayoutAttributeTop onView:self.modalContainer padding:window.safeAreaInsets.top replace:YES];
-                [UAInAppMessageUtils applyPaddingForAttribute:NSLayoutAttributeBottom onView:self.modalContainer padding:window.safeAreaInsets.bottom replace:YES];
-            } else if (window.safeAreaInsets.top > 0 && window.safeAreaInsets.left == 0) {
-                [UAInAppMessageUtils applyPaddingForAttribute:NSLayoutAttributeTrailing onView:self.modalContainer padding:0 replace:YES];
-                [UAInAppMessageUtils applyPaddingForAttribute:NSLayoutAttributeLeading onView:self.modalContainer padding:0 replace:YES];
-                [UAInAppMessageUtils applyPaddingForAttribute:NSLayoutAttributeTop onView:self.modalContainer padding:window.safeAreaInsets.top + ModalExcessiveSafeAreaPadding replace:YES];
-                [UAInAppMessageUtils applyPaddingForAttribute:NSLayoutAttributeBottom onView:self.modalContainer padding:window.safeAreaInsets.bottom replace:YES];
-                self.shadeView.backgroundColor = self.displayContent.backgroundColor;
-            }
-        }
-    }
-}
-
-- (void)viewDidAppear:(BOOL)animated {
-    [super viewDidAppear:animated];
-
-    // fade in modal message view
-    if (self.view.alpha == 0) {
-        UA_WEAKIFY(self);
-        [UIView animateWithDuration:DefaultModalAnimationDuration animations:^{
-            self.view.alpha = 1;
-
-            [self.view setNeedsLayout];
-            [self.view layoutIfNeeded];
-        } completion:^(BOOL finished) {
-            UA_STRONGIFY(self);
-            self.isShowing = YES;
-        }];
-    }
 }
 
 - (nullable UAInAppMessageButton *)createFooterButtonWithButtonInfo:(UAInAppMessageButtonInfo *)buttonInfo {
@@ -579,38 +359,16 @@ double const DefaultModalAnimationDuration = 0.2;
     return footerButton;
 }
 
-- (void)dismissWithResolution:(UAInAppMessageResolution *)resolution  {
-    if (self.showCompletionHandler) {
-        self.showCompletionHandler(resolution);
-        self.showCompletionHandler = nil;
-    }
-
-    // fade out modal message view
-    UA_WEAKIFY(self);
-    [UIView animateWithDuration:DefaultModalAnimationDuration animations:^{
-        self.view.alpha = 0;
-
-        [self.view setNeedsLayout];
-        [self.view layoutIfNeeded];
-    } completion:^(BOOL finished) {
-        UA_STRONGIFY(self);
-        // teardown
-        self.isShowing = NO;
-        [self.view removeFromSuperview];
-        self.modalWindow = nil;
-    }];
-}
-
 - (void)buttonTapped:(id)sender {
     // Check for close button
     if ([sender isKindOfClass:[UAInAppMessageDismissButton class]]) {
-        [self dismissWithResolution:[UAInAppMessageResolution userDismissedResolution]];
+        [self.resizableParent dismissWithResolution:[UAInAppMessageResolution userDismissedResolution]];
         return;
     }
 
     UAInAppMessageButton *button = (UAInAppMessageButton *)sender;
     [UAInAppMessageUtils runActionsForButton:button];
-    [self dismissWithResolution:[UAInAppMessageResolution buttonClickResolutionWithButtonInfo:button.buttonInfo]];
+    [self.resizableParent dismissWithResolution:[UAInAppMessageResolution buttonClickResolutionWithButtonInfo:button.buttonInfo]];
 }
 
 @end

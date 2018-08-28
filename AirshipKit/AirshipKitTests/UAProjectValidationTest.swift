@@ -17,7 +17,12 @@ class UAProjectValidationTest: XCTestCase {
         let xcodeprojPath = URL(fileURLWithPath: projectFilePath)
 
         // Load from the xcodeproj file
-        xcodeProject = try! XCProjectFile(xcodeprojURL: xcodeprojPath)
+        do {
+            xcodeProject = try XCProjectFile(xcodeprojURL: xcodeprojPath)
+        } catch let error {
+            XCTFail("Unable to load xcodeproj file - \(String(describing:error))")
+            return
+        }
         XCTAssert(xcodeProject != nil,"Unable to load xcodeproj file - something wrong with the plist?")
 
         // path to the source root
@@ -54,6 +59,9 @@ class UAProjectValidationTest: XCTestCase {
     }
 
     func getFilesSet(buildTarget : String) -> Array<URL> {
+        if (xcodeProject == nil) {
+            return []
+        }
         // get all of the files from the xcode project file for this target
         var filesFromProjectWithOptionals : Array<URL?> = []
 
@@ -83,7 +91,10 @@ class UAProjectValidationTest: XCTestCase {
 
     func validateProjectForTarget(buildTarget : String, buildOS : String, targetSubFolder : String? = nil) {
         let filesFromTarget : Array<URL> = getFilesSet(buildTarget: buildTarget)
-
+        if (filesFromTarget.count == 0) {
+            return
+        }
+        
         // get all of the URLs files from the directories for this target
         var filesFromDirectories : Array<URL> = []
         let fileManager = FileManager.default
@@ -135,6 +146,9 @@ class UAProjectValidationTest: XCTestCase {
     // Validates that each framework import corresponds to an import in UAirship.h
     func validateUAirshipHeader(buildTarget : String) {
         let filesFromProject : Array<URL> = getFilesSet(buildTarget: buildTarget)
+        if (filesFromProject.count == 0) {
+            return
+        }
 
         // Holds the string contents of UAirship.h
         var airshipHeaderContents:String?
