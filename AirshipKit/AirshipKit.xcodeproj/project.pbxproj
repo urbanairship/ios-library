@@ -135,7 +135,7 @@
 		4573662C213617C800C5993A /* UAJSONSerialization.m in Sources */ = {isa = PBXBuildFile; fileRef = 45736628213617C800C5993A /* UAJSONSerialization.m */; };
 		4573662D213617C800C5993A /* UAJSONSerialization.m in Sources */ = {isa = PBXBuildFile; fileRef = 45736628213617C800C5993A /* UAJSONSerialization.m */; };
 		4573662E213617C800C5993A /* UAJSONSerialization.m in Sources */ = {isa = PBXBuildFile; fileRef = 45736628213617C800C5993A /* UAJSONSerialization.m */; };
-		457366432137084B00C5993A /* UAJSONSerializationTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 457366422137084B00C5993A /* UAJSONSerializationTest.m */; };fembed
+		457366432137084B00C5993A /* UAJSONSerializationTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 457366422137084B00C5993A /* UAJSONSerializationTest.m */; };
 		457F47AB20ADDF7500DEEAD9 /* UAViewUtils+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 457F47A920ADDF7500DEEAD9 /* UAViewUtils+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		457F47AC20ADDF7500DEEAD9 /* UAViewUtils+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 457F47A920ADDF7500DEEAD9 /* UAViewUtils+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		457F47AD20ADDF7500DEEAD9 /* UAViewUtils+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 457F47A920ADDF7500DEEAD9 /* UAViewUtils+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
