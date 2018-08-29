@@ -95,11 +95,18 @@
     NSDictionary *oldRemoveTags = @{ @"group2": @[@"tag2"] };
     [self.dataStore setObject:oldRemoveTags forKey:@"UAPushRemoveTagGroups"];
 
+    UATagGroupsMutation *oldMutation = [UATagGroupsMutation mutationToAddTags:@[@"foo", @"bar"] group:@"group1"];
+    NSData *encodedMutations = [NSKeyedArchiver archivedDataWithRootObject:@[oldMutation]];
+    [self.dataStore setObject:encodedMutations forKey:@"UAPushTagGroupsMutations"];
+
     UATagGroupsMutationHistory *history = [UATagGroupsMutationHistory historyWithDataStore:self.dataStore];
 
-    UATagGroupsMutation *fromHistory = [history peekPendingMutation:UATagGroupsTypeChannel];
+    UATagGroupsMutation *oldAddRemoveFromHistory = [history popPendingMutation:UATagGroupsTypeChannel];
     NSDictionary *expected = @{ @"add": @{ @"group1": @[@"tag1"] }, @"remove": @{ @"group2": @[@"tag2"] } };
-    XCTAssertEqualObjects(expected, fromHistory.payload);
+    XCTAssertEqualObjects(expected, oldAddRemoveFromHistory.payload);
+
+    UATagGroupsMutation *oldMutationFromHistory = [history popPendingMutation:UATagGroupsTypeChannel];
+    XCTAssertEqualObjects(oldMutation.payload, oldMutationFromHistory.payload);
 }
 
 - (void)testApplyMutations {

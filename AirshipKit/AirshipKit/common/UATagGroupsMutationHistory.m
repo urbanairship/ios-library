@@ -86,7 +86,9 @@
 
         NSDictionary *addTags = [self.dataStore objectForKey:addTagsKey];
         NSDictionary *removeTags = [self.dataStore objectForKey:removeTagsKey];
-        NSArray<UATagGroupsMutation*> *mutations = [self.dataStore objectForKey:mutationsKey];
+
+        id encodedMutations = [self.dataStore objectForKey:mutationsKey];
+        NSArray *mutations = encodedMutations == nil ? nil : [NSKeyedUnarchiver unarchiveObjectWithData:encodedMutations];
 
         if (addTags || removeTags) {
             UATagGroupsMutation *mutation = [UATagGroupsMutation mutationWithAddTags:addTags removeTags:removeTags];
@@ -98,6 +100,7 @@
         if (mutations.count) {
             UAPersistentQueue *queue = [self pendingMutationsQueue:type];
             [queue addObjects:mutations];
+            [self.dataStore removeObjectForKey:mutationsKey];
         }
     }
 }
