@@ -7,6 +7,7 @@
 #import "UAUser.h"
 #import "UAUserData+Internal.h"
 #import "NSURLResponse+UAAdditions.h"
+#import "UAJSONSerialization+Internal.h"
 
 @implementation UAUserAPIClient
 
@@ -114,7 +115,7 @@
         [builder setValue:@"application/json" forHeader:@"Content-Type"];
         [builder setValue:@"application/vnd.urbanairship+json; version=3;" forHeader:@"Accept"];
 
-        builder.body = [NSJSONSerialization dataWithJSONObject:payload
+        builder.body = [UAJSONSerialization dataWithJSONObject:payload
                                                        options:0
                                                          error:nil];
 
@@ -139,7 +140,7 @@
         [builder setValue:@"application/json" forHeader:@"Content-Type"];
         [builder setValue:@"application/vnd.urbanairship+json; version=3;" forHeader:@"Accept"];
 
-        builder.body = [NSJSONSerialization dataWithJSONObject:payload
+        builder.body = [UAJSONSerialization dataWithJSONObject:payload
                                                        options:0
                                                          error:nil];
 

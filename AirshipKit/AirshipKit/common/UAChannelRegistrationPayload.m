@@ -3,6 +3,7 @@
 #import "UAChannelRegistrationPayload+Internal.h"
 #import "UAirship.h"
 #import "UAAnalytics.h"
+#import "UAJSONSerialization+Internal.h"
 
 NSString *const UAChannelIdentityHintsKey = @"identity_hints";
 NSString *const UAChannelUserIDKey = @"user_id";
@@ -80,7 +81,7 @@ NSString *const UABackgroundEnabledJSONKey = @"background";
 }
 
 - (NSData *)asJSONData {
-    return [NSJSONSerialization dataWithJSONObject:[self payloadDictionary]
+    return [UAJSONSerialization dataWithJSONObject:[self payloadDictionary]
                                            options:0
                                              error:nil];
 }

@@ -14,6 +14,7 @@
 #import "UAJSONPredicate.h"
 #import "UAConfig.h"
 #import "UAUtils+Internal.h"
+#import "UAJSONSerialization+Internal.h"
 
 @interface UAAutomationStore ()
 @property (nonatomic, strong) NSManagedObjectContext *managedContext;
@@ -339,7 +340,7 @@
     delayData.appState = @(delay.appState);
     delayData.regionID = delay.regionID;
     if (delay.screens != nil) {
-        NSData *screensData = [NSJSONSerialization dataWithJSONObject:delay.screens options:0 error:nil];
+        NSData *screensData = [UAJSONSerialization dataWithJSONObject:delay.screens options:0 error:nil];
         if (screensData != nil) {
             delayData.screens = [[NSString alloc] initWithData:screensData encoding:NSUTF8StringEncoding];
         }
@@ -362,7 +363,7 @@
         triggerData.start = scheduleStart;
 
         if (trigger.predicate) {
-            triggerData.predicateData = [NSJSONSerialization dataWithJSONObject:trigger.predicate.payload options:0 error:nil];
+            triggerData.predicateData = [UAJSONSerialization dataWithJSONObject:trigger.predicate.payload options:0 error:nil];
         }
 
         triggerData.schedule = schedule;
