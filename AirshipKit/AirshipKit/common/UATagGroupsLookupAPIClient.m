@@ -7,6 +7,8 @@
 #define kUATagGroupsLookupAPIClientLookupPath @"/api/channel-tags-lookup"
 #define kUATagGroupsLookupAPIClientChannelIDKey @"channel_id"
 #define kUATagGroupsLookupAPIClientTagGroupsKey @"tag_groups"
+#define kUATagGroupsLookupAPIClientDeviceTypeKey @"device_type"
+#define kUATagGroupsLookupAPIClientDeviceType @"ios"
 #define kUATagGroupsLookupAPIClientIfModifiedSinceKey @"if_modified_since"
 
 @implementation UATagGroupsLookupAPIClient
@@ -31,6 +33,7 @@
 
     [dictionary setValue:channelID forKey:kUATagGroupsLookupAPIClientChannelIDKey];
     [dictionary setValue:requestedTags forKey:kUATagGroupsLookupAPIClientTagGroupsKey];
+    [dictionary setValue:kUATagGroupsLookupAPIClientDeviceType forKey:kUATagGroupsLookupAPIClientDeviceTypeKey];
 
     if (cachedResponse) {
         [dictionary setValue:cachedResponse.lastModifiedTimestamp forKey:kUATagGroupsLookupAPIClientIfModifiedSinceKey];
