@@ -5,6 +5,7 @@
 #import "UAUtils+Internal.h"
 #import "NSJSONSerialization+UAAdditions.h"
 #import "NSURLResponse+UAAdditions.h"
+#import "UAJSONSerialization+Internal.h"
 
 #define kUANamedUserPath @"/api/named_users"
 #define kUANamedUserChannelIDKey @"channel_id"
@@ -130,7 +131,7 @@
         builder.password = self.config.appSecret;
         [builder setValue:@"application/vnd.urbanairship+json; version=3;" forHeader:@"Accept"];
         [builder setValue:@"application/json" forHeader:@"Content-Type"];
-        builder.body = [NSJSONSerialization dataWithJSONObject:payload
+        builder.body = [UAJSONSerialization dataWithJSONObject:payload
                                                        options:0
                                                          error:nil];
     }];

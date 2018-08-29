@@ -5,6 +5,7 @@
 #import "UAConfig.h"
 #import "NSJSONSerialization+UAAdditions.h"
 #import "NSURLResponse+UAAdditions.h"
+#import "UAJSONSerialization+Internal.h"
 
 #define kUAChannelTagGroupsPath @"/api/channels/tags/"
 #define kUANamedUserTagsPath @"/api/named_users/tags/"
@@ -74,7 +75,7 @@
         builder.method = @"POST";
         builder.username = self.config.appKey;
         builder.password = self.config.appSecret;
-        builder.body = [NSJSONSerialization dataWithJSONObject:payload options:NSJSONWritingPrettyPrinted error:nil];
+        builder.body = [UAJSONSerialization dataWithJSONObject:payload options:NSJSONWritingPrettyPrinted error:nil];
         [builder setValue:@"application/vnd.urbanairship+json; version=3;" forHeader:@"Accept"];
         [builder setValue:@"application/json" forHeader:@"Content-Type"];
     }];
