@@ -19,7 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
  * In-app message manager provides a control interface for creating,
  * canceling and executing in-app message schedules.
  */
-@interface UAInAppMessageManager ()  <UAAutomationEngineDelegate>
+@interface UAInAppMessageManager ()  <UAAutomationEngineDelegate, UATagGroupsLookupManagerDelegate>
 
 /**
  * Factory method. Use for testing.

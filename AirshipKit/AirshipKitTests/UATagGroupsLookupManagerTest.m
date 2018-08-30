@@ -18,6 +18,7 @@
 @property (nonatomic, strong) id mockMutationHistory;
 @property (nonatomic, strong) UATagGroups *requestedTagGroups;
 @property (nonatomic, strong) UATestDate *testDate;
+@property (nonatomic, strong) id mockDelegate;
 @end
 
 @implementation UATagGroupsLookupManagerTest
@@ -28,9 +29,18 @@
     self.dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:@"UATagGroupsLookupManagerTest"];
     self.testDate = [[UATestDate alloc] init];
 
+    self.mockDelegate = [self mockForProtocol:@protocol(UATagGroupsLookupManagerDelegate)];
+    [[[self.mockDelegate stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:2];
+        void (^completionHandler)(UATagGroups *) = (__bridge void(^)(UATagGroups *))arg;
+        completionHandler(self.requestedTagGroups);
+    }] gatherTagGroupsWithCompletionHandler:OCMOCK_ANY];
+
     [self setupMocks:@"channel" channelTagsEnabled:NO];
 
     self.lookupManager.componentEnabled = YES;
+    self.lookupManager.delegate = self.mockDelegate;
 }
 
 - (void)tearDown {
@@ -124,6 +134,7 @@
     [[[self.mockCache expect] andReturn:self.requestedTagGroups] requestedTagGroups];
     [[[self.mockCache expect] andReturn:cacheRefreshDate] refreshDate];
     [[[self.mockCache expect] andReturnValue:@(NO)] needsRefresh];
+    
 
     self.testDate.absoluteTime = [NSDate date];
     NSTimeInterval expectedMaxAge = [[self.testDate now] timeIntervalSinceDate:cacheRefreshDate] + self.lookupManager.preferLocalTagDataTime;

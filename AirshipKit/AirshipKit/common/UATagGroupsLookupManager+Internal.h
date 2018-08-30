@@ -41,6 +41,20 @@ extern NSString * const UATagGroupsLookupManagerErrorDomain;
 extern const NSTimeInterval UATagGroupsLookupManagerDefaultPreferLocalTagDataTimeSeconds;
 
 /**
+ * Tag Group Lookup Manager delegate.
+ */
+@protocol UATagGroupsLookupManagerDelegate <NSObject>
+@required
+
+/**
+ * Called to gather all the tags to request from the look-up API.
+ * @param completionHandler Completion handler that must be called with the tag groups.
+ */
+- (void)gatherTagGroupsWithCompletionHandler:(void(^)(UATagGroups *tagGroups))completionHandler;
+@end
+
+
+/**
  * High level interface for performing tag group lookups.
  */
 @interface UATagGroupsLookupManager : UAComponent
@@ -59,6 +73,11 @@ extern const NSTimeInterval UATagGroupsLookupManagerDefaultPreferLocalTagDataTim
  * The amount of time that can pass before cache reads are considered stale.
  */
 @property (nonatomic, assign) NSTimeInterval cacheStaleReadTime;
+
+/**
+ * The tag group manager delegate.
+ */
+@property (nonatomic, weak) NSObject<UATagGroupsLookupManagerDelegate> *delegate;
 
 /**
  * UATagGroupsLookupManager class factory method.

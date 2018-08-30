@@ -138,17 +138,21 @@ NSString * const UATagGroupsLookupManagerErrorDomain = @"com.urbanairship.tag_gr
 - (void)refreshCacheWithRequestedTagGroups:(UATagGroups *)requestedTagGroups
                          completionHandler:(void(^)(void))completionHandler {
 
-    [self.lookupAPIClient lookupTagGroupsWithChannelID:[UAirship push].channelID
-                                    requestedTagGroups:requestedTagGroups
-                                        cachedResponse:self.cache.response
-                                     completionHandler:^(UATagGroupsLookupResponse *response) {
-                                         if (response.status != 200) {
-                                             UA_LERR(@"Failed to refresh the cache. Status: %lu", (unsigned long)response.status);
-                                         } else {
-                                             self.cache.response = response;
-                                         }
-                                         completionHandler();
-                                     }];
+    [self.delegate gatherTagGroupsWithCompletionHandler:^(UATagGroups *tagGroups) {
+        tagGroups = [requestedTagGroups merge:tagGroups];
+        [self.lookupAPIClient lookupTagGroupsWithChannelID:[UAirship push].channelID
+                                        requestedTagGroups:tagGroups
+                                            cachedResponse:self.cache.response
+                                         completionHandler:^(UATagGroupsLookupResponse *response) {
+                                             if (response.status != 200) {
+                                                 UA_LERR(@"Failed to refresh the cache. Status: %lu", (unsigned long)response.status);
+                                             } else {
+                                                 self.cache.response = response;
+                                                 self.cache.requestedTagGroups = tagGroups;
+                                             }
+                                             completionHandler();
+                                         }];
+    }];
 }
 
 - (void)getTagGroups:(UATagGroups *)requestedTagGroups completionHandler:(void(^)(UATagGroups  * _Nullable tagGroups, NSError *error)) completionHandler {

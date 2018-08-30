@@ -67,7 +67,7 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
 
 @end
 
-@interface UAInAppMessageManager () 
+@interface UAInAppMessageManager ()
 
 @property(nonatomic, assign) BOOL isDisplayLocked;
 @property(nonatomic, strong) NSMutableDictionary *adapterFactories;
@@ -142,6 +142,7 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
         self.automationEngine = automationEngine;
         self.automationEngine.delegate = self;
         self.tagGroupsLookupManager = tagGroupsLookupManager;
+        self.tagGroupsLookupManager.delegate = self;
         self.displayInterval = DefaultMessageDisplayInterval;
         self.remoteDataClient = [UAInAppRemoteDataClient clientWithScheduler:self remoteDataManager:remoteDataManager dataStore:dataStore push:push];
         self.dispatcher = dispatcher;
@@ -561,6 +562,21 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
 - (void)dealloc {
     [self.automationEngine stop];
     self.automationEngine.delegate = nil;
+}
+
+- (void)gatherTagGroupsWithCompletionHandler:(void(^)(UATagGroups *tagGroups))completionHandler {
+    __block UATagGroups *tagGroups = [UATagGroups tagGroupsWithTags:@{}];
+
+    [self.automationEngine getSchedules:^(NSArray<UASchedule *> *schedules) {
+        for (UASchedule *schedule in schedules) {
+            UAInAppMessageScheduleInfo *info = (UAInAppMessageScheduleInfo *)schedule.info;
+            if ([info.message.audience.tagSelector containsTagGroups]) {
+                tagGroups = [tagGroups merge:info.message.audience.tagSelector.tagGroups];
+            }
+        }
+
+        completionHandler(tagGroups);
+    }];
 }
 
 @end
