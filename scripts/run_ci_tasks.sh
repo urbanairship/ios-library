@@ -2,6 +2,7 @@
 
 set -o pipefail
 set -e
+set -x
 
 SCRIPT_DIRECTORY=`dirname "$0"`
 ROOT_PATH=`dirname "${0}"`/../
@@ -110,7 +111,8 @@ then
 
   # Run pod lib lint
   cd $ROOT_PATH
-  pod lib lint
+  pod lib lint UrbanAirship-iOS-SDK.podspec UrbanAirship-iOS-AppExtensions.podspec
+  pod lib lint UrbanAirship-iOS-DebugLibrary.podspec --quick # debug library won't pass full lint until iOS SDK 10 is published
   cd -
 fi
 

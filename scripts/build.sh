@@ -2,6 +2,7 @@
 
 set -o pipefail
 set -e
+set -x
 
 JAZZY_VERSION=0.7.5
 SCRIPT_DIRECTORY=`dirname "$0"`

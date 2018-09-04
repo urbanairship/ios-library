@@ -16,7 +16,7 @@
 		DFE70136212F202500A708D5 /* TagsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFE7012F212F202500A708D5 /* TagsTableViewController.swift */; };
 		DFE70137212F202500A708D5 /* DeviceInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFE70130212F202500A708D5 /* DeviceInfoViewController.swift */; };
 		DFE7013B212F20A200A708D5 /* DeviceInfo.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DFE7013A212F20A200A708D5 /* DeviceInfo.storyboard */; };
-		DFE70152212F227800A708D5 /* AirshipKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DFE70146212F216600A708D5 /* AirshipKit.framework */; };
+		DFE70152212F227800A708D5 /* AirshipKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DFE70146212F216600A708D5 /* AirshipKit.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
