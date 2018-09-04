@@ -3,6 +3,20 @@ iOS Changelog
 
 Migration Guides: Documentation/Migration
 
+Version 9.4.0 - September 4, 2018
+=================================
+Minor release thats adds support for tag group audiences, miss behaviors and resizable HTML messages in
+In-App Automation. HTML in-app messages are now displayed as dialogs by default, with an option
+to display fullscreen on smaller devices. This release also fixes a bug that could result in crashes 
+when serializing JSON payloads for certain audience conditions. Apps using In-App Automation are
+encouraged to upgrade.
+
+Changes
+-------
+- Added support for tag group audience conditions for in-app messages.
+- Fixed a bug that could prevent modal in-app messages from being displayed as fullscreen.
+- Fixed a JSON serialization bug which could cause crashes for certain audience conditions.
+
 Version 9.3.3 - July 26, 2018
 ============================
 Patch release to fix an issue with legacy in-app message attribution. Apps
