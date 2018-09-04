@@ -9,7 +9,7 @@
 #import "UAUserAPIClient+Internal.h"
 #import "UAUser+Internal.h"
 #import "UAUserData+Internal.h"
-
+#import "UAJSONSerialization+Internal.h"
 
 @interface UAUserAPIClientTest : UABaseTest
 @property (nonatomic, strong) UAUserAPIClient *client;
@@ -101,7 +101,7 @@
 
     NSDictionary *responseDict = @{@"user_id": @"someUserName", @"password": @"somePassword", @"user_url": @"http://url.com"};
 
-    NSData *responseData =  [NSJSONSerialization dataWithJSONObject:responseDict
+    NSData *responseData =  [UAJSONSerialization dataWithJSONObject:responseDict
                                                             options:0
                                                               error:nil];
 
@@ -140,7 +140,7 @@
 
     NSDictionary *responseDict = @{@"user_id": @"someUserName", @"password": @"somePassword", @"user_url": @"http://url.com"};
 
-    NSData *responseData =  [NSJSONSerialization dataWithJSONObject:responseDict
+    NSData *responseData =  [UAJSONSerialization dataWithJSONObject:responseDict
                                                             options:0
                                                               error:nil];
 
@@ -197,7 +197,7 @@
             return NO;
         }
 
-        if (![request.body isEqualToData:[NSJSONSerialization dataWithJSONObject:expectedRequestBody options:0 error:nil]]) {
+        if (![request.body isEqualToData:[UAJSONSerialization dataWithJSONObject:expectedRequestBody options:0 error:nil]]) {
             return NO;
         }
 
@@ -267,7 +267,7 @@
 
     NSDictionary *responseDict = @{@"user_id": @"someUserName", @"password": @"somePassword", @"user_url": @"http://url.com"};
 
-    NSData *responseData =  [NSJSONSerialization dataWithJSONObject:responseDict
+    NSData *responseData =  [UAJSONSerialization dataWithJSONObject:responseDict
                                                             options:0
                                                               error:nil];
 
@@ -305,7 +305,7 @@
 
     NSDictionary *responseDict = @{@"user_id": @"someUserName", @"password": @"somePassword", @"user_url": @"http://url.com"};
 
-    NSData *responseData =  [NSJSONSerialization dataWithJSONObject:responseDict
+    NSData *responseData =  [UAJSONSerialization dataWithJSONObject:responseDict
                                                             options:0
                                                               error:nil];
 
@@ -364,7 +364,7 @@
             return NO;
         }
 
-        if (![request.body isEqualToData:[NSJSONSerialization dataWithJSONObject:expectedRequestBody options:0 error:nil]]) {
+        if (![request.body isEqualToData:[UAJSONSerialization dataWithJSONObject:expectedRequestBody options:0 error:nil]]) {
             return NO;
         }
 

@@ -22,20 +22,13 @@
 
 @implementation UAAsyncOperation
 
-- (instancetype)init {
-    self = [super init];
-    if (self) {
-        self.isExecuting = NO;
-        self.isFinished = NO;
-    }
-    return self;
-}
-
 - (instancetype)initWithBlock:(void (^)(UAAsyncOperation *))block {
-    self = [self init];
+    self = [super init];
+
     if (self) {
         self.block = block;
     }
+
     return self;
 }
 
@@ -61,11 +54,18 @@
 
 - (void)dealloc {
     self.block = nil;
+    self.cancelBlock = nil;
 }
 
 - (void)cancel {
     @synchronized (self) {
-        [super cancel];
+        if (!self.isCancelled && self.cancelBlock) {
+            [super cancel];
+            self.cancelBlock();
+            self.cancelBlock = nil;
+        } else {
+            [super cancel];
+        }
     }
 }
 
@@ -92,6 +92,7 @@
 - (void)finish {
     @synchronized (self) {
         self.block = nil;
+        self.cancelBlock = nil;
 
         if (self.isExecuting) {
             self.isExecuting = NO;

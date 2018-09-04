@@ -6,21 +6,20 @@
 @interface UAInAppMessageTagSelectorTest : UABaseTest
 
 @property (nonatomic, strong) UAInAppMessageTagSelector *selector;
+@property (nonatomic, strong) UAInAppMessageTagSelector *selectorWithTagGroups;
 @end
 
 @implementation UAInAppMessageTagSelectorTest
 
 - (void)setUp {
     [super setUp];
-    self.selector = [UAInAppMessageTagSelector or:@[
-                        [UAInAppMessageTagSelector and:@[
-                            [UAInAppMessageTagSelector tag:@"some-tag"],
-                            [UAInAppMessageTagSelector not:[UAInAppMessageTagSelector tag:@"not-tag"]]
-                            ]
-                        ],
-                        [UAInAppMessageTagSelector tag:@"some-other-tag"]
-                        ]
-                    ];
+    self.selector = [UAInAppMessageTagSelector or:@[[UAInAppMessageTagSelector and:@[[UAInAppMessageTagSelector tag:@"some-tag"],
+                                                                                     [UAInAppMessageTagSelector not:[UAInAppMessageTagSelector tag:@"not-tag"]]]],
+                                                    [UAInAppMessageTagSelector tag:@"some-other-tag"]]];
+
+    self.selectorWithTagGroups = [UAInAppMessageTagSelector and:@[[UAInAppMessageTagSelector tag:@"some-tag" group:@"some-group"],
+                                                                  [UAInAppMessageTagSelector tag:@"some-tag"],
+                                                                  [UAInAppMessageTagSelector not:[UAInAppMessageTagSelector tag:@"not-tag"]]]];
 }
 
 - (void)tearDown {
@@ -54,6 +53,38 @@
 
     // Contains "some-other-tag"
     XCTAssertTrue([self.selector apply:tags]);
+}
+
+- (void)testSelectorWithTagGroups {
+
+    NSMutableArray<NSString *> *tags = [NSMutableArray array];
+
+    [tags addObject:@"some-tag"];
+
+    UATagGroups *tagGroups = [UATagGroups tagGroupsWithTags:@{@"wrong-group" : @[@"some-tag"], @"some-group" : @[@"wrong-tag"]}];
+
+    // Wrong group for the right tag, wrong tag for right group
+    XCTAssertFalse([self.selectorWithTagGroups apply:tags tagGroups:tagGroups]);
+
+    tagGroups = [UATagGroups tagGroupsWithTags:@{@"wrong-group" : @[@"some-tag"], @"some-group" : @[@"some-tag"]}];
+
+    // The right group should now contain the right tag
+    XCTAssertTrue([self.selectorWithTagGroups apply:tags tagGroups:tagGroups]);
+}
+
+- (void)testContainsTagGroups {
+    XCTAssertFalse([self.selector containsTagGroups]);
+    XCTAssertTrue([self.selectorWithTagGroups containsTagGroups]);
+}
+
+- (void)testTagGroups {
+    UATagGroups *tagGroups = self.selectorWithTagGroups.tagGroups;
+
+    XCTAssertNotNil([tagGroups.tags objectForKey:@"some-group"]);
+    XCTAssertEqual(tagGroups.tags.count, 1);
+    XCTAssertEqualObjects(tagGroups.tags[@"some-group"], [NSSet setWithArray:@[@"some-tag"]]);
+    XCTAssertEqual([tagGroups.tags[@"some-group"] count], 1);
+
 }
 
 @end

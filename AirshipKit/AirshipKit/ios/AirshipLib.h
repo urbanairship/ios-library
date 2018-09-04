@@ -91,6 +91,7 @@
 #import "UAInAppMessageFullScreenStyle.h"
 #import "UAInAppMessageHTMLAdapter.h"
 #import "UAInAppMessageHTMLDisplayContent.h"
+#import "UAInAppMessageHTMLStyle.h"
 #import "UAInAppMessageManager.h"
 #import "UAInAppMessageMediaInfo.h"
 #import "UAInAppMessageMediaStyle.h"

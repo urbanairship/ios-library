@@ -6,11 +6,12 @@
 #import "UALocation+Internal.h"
 #import "UAApplicationMetrics+Internal.h"
 #import "UAPush+Internal.h"
-#import "UAInAppMessageTagSelector.h"
+#import "UAInAppMessageTagSelector+Internal.h"
 #import "UAVersionMatcher+Internal.h"
 #import "UAJSONPredicate.h"
 #import <CommonCrypto/CommonDigest.h>
 #import "UA_Base64.h"
+#import "UATagGroups+Internal.h"
 
 
 @implementation UAInAppMessageAudienceChecks
@@ -44,7 +45,7 @@
     return YES;
 }
 
-+ (BOOL)checkDisplayAudienceConditions:(UAInAppMessageAudience *)audience {
++ (BOOL)checkDisplayAudienceConditions:(UAInAppMessageAudience *)audience tagGroups:(UATagGroups *)tagGroups {
     if (!audience) {
         return YES;
     }
@@ -60,7 +61,7 @@
     }
 
     // Tag Selector
-    if (audience.tagSelector && ![audience.tagSelector apply:[UAirship push].tags]) {
+    if (audience.tagSelector && ![audience.tagSelector apply:[UAirship push].tags tagGroups:tagGroups]) {
         return NO;
     }
 
@@ -116,6 +117,9 @@
     return YES;
 }
 
++ (BOOL)checkDisplayAudienceConditions:(UAInAppMessageAudience *)audience {
+    return [self checkDisplayAudienceConditions:audience tagGroups:[UATagGroups tagGroupsWithTags:@{}]];
+}
 
 + (BOOL)isLocationOptedIn {
     if (![UAirship location].locationUpdatesEnabled) {

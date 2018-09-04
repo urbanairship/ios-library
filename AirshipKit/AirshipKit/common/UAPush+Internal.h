@@ -164,9 +164,13 @@ extern NSString *const UAPushEnabledKey;
  * Factory method to create a push instance.
  * @param config The Urban Airship config
  * @param dataStore The preference data store.
+ * @param tagGroupsregistrar The tag groups registrar.
  * @return A new push instance.
  */
-+ (instancetype)pushWithConfig:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore;
++ (instancetype)pushWithConfig:(UAConfig *)config
+                     dataStore:(UAPreferenceDataStore *)dataStore
+            tagGroupsRegistrar:(UATagGroupsRegistrar *)tagGroupsregistrar;
+
 
 /**
  * Factory method to create a push instance. For testing

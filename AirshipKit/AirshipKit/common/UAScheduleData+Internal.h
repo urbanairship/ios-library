@@ -12,15 +12,27 @@ NS_ASSUME_NONNULL_BEGIN
  * Schedule execution states.
  */
 typedef NS_ENUM(NSUInteger, UAScheduleState) {
+    // The state values do not define the order.
+
     /**
      * Schedule is idle.
      */
     UAScheduleStateIdle = 0,
 
     /**
-     * Schedule is pending execution.
+     * Schedule is waiting for its time delay to expire.
      */
-    UAScheduleStatePendingExecution = 1,
+    UAScheduleStateTimeDelayed = 5,
+
+    /**
+     * Schedule is being prepared.
+     */
+    UAScheduleStatePreparingSchedule = 6,
+
+    /**
+     * Schedule is waiting for app state conditions to be met.
+     */
+    UAScheduleStateWaitingScheduleConditions = 1,
 
     /**
      * Schedule is executing.
@@ -61,13 +73,14 @@ typedef NS_ENUM(NSUInteger, UAScheduleState) {
 @property (nullable, nonatomic, retain) NSString *group;
 
 /**
- * Number of times the actions will be triggered until the schedule is
- * canceled.
+ * The max number of times the schedule may be successfully executed.
  */
 @property (nullable, nonatomic, retain) NSNumber *limit;
 
 /**
- * The number of times the action has been triggered.
+ * The number of times the schedule has been triggered and executed.
+ *
+ * If the schedule prepare result is `skip`, this number will not be incremented.
  */
 @property (nullable, nonatomic, retain) NSNumber *triggeredCount;
 
@@ -83,8 +96,7 @@ typedef NS_ENUM(NSUInteger, UAScheduleState) {
 @property(nullable, nonatomic, retain) NSNumber *priority;
 
 /**
- * Set of triggers. Triggers define conditions on when to run
- * the actions.
+ * Array of triggers. Triggers define conditions on when to execute the schedule.
  */
 @property (nullable, nonatomic, retain) NSSet<UAScheduleTriggerData *> *triggers;
 
@@ -132,6 +144,12 @@ typedef NS_ENUM(NSUInteger, UAScheduleState) {
  * Whether the scheudle has exceeded its limit.
  */
 - (BOOL)isOverLimit;
+
+/**
+ * Whether the scheudle has expired.
+ */
+- (BOOL)isExpired;
+
 
 @end
 

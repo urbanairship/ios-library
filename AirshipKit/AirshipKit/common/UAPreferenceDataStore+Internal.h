@@ -94,6 +94,13 @@ NS_ASSUME_NONNULL_BEGIN
 - (double)doubleForKey:(NSString *)key;
 
 /**
+ * Returns the double associated with the key. If the key doesn't exist, return the default.
+ * @param key The preference key.
+ * @param defaultValue The value to return if there is no value for the preference key.
+ */
+- (double)doubleForKey:(NSString *)key defaultValue:(double)defaultValue;
+
+/**
  * Returns the BOOL associated with the key.
  * @param key The preference key.
  */
@@ -104,7 +111,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param key The preference key.
  * @param defaultValue The value to return if there is no value for the preference key.
  */
-- (BOOL)boolForKey:(NSString *)key default:(BOOL)defaultValue;
+- (BOOL)boolForKey:(NSString *)key defaultValue:(BOOL)defaultValue;
 
 /**
  * Returns the URL associated with the key.

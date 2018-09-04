@@ -3,6 +3,7 @@
 #import "UAEvent+Internal.h"
 #import "UAPush.h"
 #import "UAirship.h"
+#import "UAJSONSerialization+Internal.h"
 
 #if !TARGET_OS_TV   // CoreTelephony not supported in tvOS
 /*
@@ -121,7 +122,7 @@ static dispatch_once_t netInfoDispatchToken_;
     [eventDictionary setValue:self.eventID forKey:@"event_id"];
     [eventDictionary setValue:self.data forKey:@"data"];
 
-    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:eventDictionary
+    NSData *jsonData = [UAJSONSerialization dataWithJSONObject:eventDictionary
                                                        options:0
                                                          error:nil];
 

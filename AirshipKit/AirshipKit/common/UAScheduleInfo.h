@@ -27,14 +27,16 @@ extern NSUInteger const UAScheduleInfoMaxTriggers;
 @property(nonatomic, assign) NSInteger priority;
 
 /**
- * Number of times the actions will be triggered until the schedule is
- * finished.
+ * The max number of times the schedule may be executed.
+ *
+ * For in-app messages, if the audience condition checks fail, and
+ * the miss behavior is `skip`, the triggered schedule will not count towards
+ * the limit.
  */
 @property(nonatomic, assign) NSUInteger limit;
 
 /**
- * Array of triggers. Triggers define conditions on when to run
- * the actions.
+ * Array of triggers. Triggers define conditions on when to execute the schedule.
  */
 @property(nonatomic, strong, nullable) NSArray<UAScheduleTrigger *> *triggers;
 
@@ -82,14 +84,16 @@ extern NSUInteger const UAScheduleInfoMaxTriggers;
 @property(nonatomic, readonly) NSInteger priority;
 
 /**
- * Array of triggers. Triggers define conditions on when to run
- * the actions.
+ * Array of triggers. Triggers define conditions on when to execute the schedule.
  */
 @property(nonatomic, readonly) NSArray<UAScheduleTrigger *> *triggers;
 
 /**
- * Number of times the actions will be triggered until the schedule is
- * canceled.
+ * The max number of times the schedule may be executed.
+ *
+ * For in-app messages, if the audience condition checks fail, and
+ * the miss behavior is `skip`, the triggered schedule will not count towards
+ * the limit.
  */
 @property(nonatomic, readonly) NSUInteger limit;
 

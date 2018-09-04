@@ -83,6 +83,10 @@ NSString *const UAAutomationStoreFileFormat = @"Automation-%@.sqlite";
     return [[UAActionScheduleInfo alloc] initWithBuilder:builder];
 }
 
+- (void)prepareSchedule:(nonnull UASchedule *)schedule completionHandler:(void (^)(UAAutomationSchedulePrepareResult))completionHandler {
+    completionHandler(UAAutomationSchedulePrepareResultContinue);
+}
+
 -(BOOL)isScheduleReadyToExecute:(UASchedule *)schedule {
     return YES;
 }

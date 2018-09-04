@@ -5,6 +5,7 @@
 #import "UAConfig.h"
 #import "NSJSONSerialization+UAAdditions.h"
 #import "NSURLResponse+UAAdditions.h"
+#import "UAJSONSerialization+Internal.h"
 
 #define kUAChannelTagGroupsPath @"/api/channels/tags/"
 #define kUANamedUserTagsPath @"/api/named_users/tags/"
@@ -14,44 +15,44 @@
 #define kUATagGroupsResponseObjectWarningsKey @"warnings"
 #define kUATagGroupsResponseObjectErrorKey @"error"
 
-@interface UATagGroupsAPIClient()
-@property (nonatomic,strong) NSString *tagGroupsPath;
-@property (nonatomic,strong) NSString *tagGroupsKey;
-@end
-
 @implementation UATagGroupsAPIClient
 
-+ (instancetype)channelClientWithConfig:(UAConfig *)config {
-    UATagGroupsAPIClient *client = [self channelClientWithConfig:config session:[UARequestSession sessionWithConfig:config]];
++ (instancetype)clientWithConfig:(UAConfig *)config {
+    UATagGroupsAPIClient *client = [self clientWithConfig:config session:[UARequestSession sessionWithConfig:config]];
     return client;
 }
 
-+ (instancetype)channelClientWithConfig:(UAConfig *)config session:(UARequestSession *)session {
++ (instancetype)clientWithConfig:(UAConfig *)config session:(UARequestSession *)session {
     UATagGroupsAPIClient *client = [[self alloc] initWithConfig:config session:session];
-    client.tagGroupsPath = kUAChannelTagGroupsPath;
-    client.tagGroupsKey = kUATagGroupsIosChannelKey;
     return client;
 }
 
-+ (instancetype)namedUserClientWithConfig:(UAConfig *)config {
-    UATagGroupsAPIClient *client = [self namedUserClientWithConfig:config session:[UARequestSession sessionWithConfig:config]];
-    return client;
+- (NSString *)keyForType:(UATagGroupsType)type {
+    switch (type) {
+        case UATagGroupsTypeChannel:
+            return kUATagGroupsIosChannelKey;
+        case UATagGroupsTypeNamedUser:
+            return kUATagGroupsNamedUserIdKey;
+    }
 }
 
-+ (instancetype)namedUserClientWithConfig:(UAConfig *)config session:(UARequestSession *)session {
-    UATagGroupsAPIClient *client = [[self alloc] initWithConfig:config session:session];
-    client.tagGroupsPath = kUANamedUserTagsPath;
-    client.tagGroupsKey = kUATagGroupsNamedUserIdKey;
-    return client;
+- (NSString *)pathForType:(UATagGroupsType)type {
+    switch (type) {
+        case UATagGroupsTypeChannel:
+            return kUAChannelTagGroupsPath;
+        case UATagGroupsTypeNamedUser:
+            return kUANamedUserTagsPath;
+    }
 }
 
 - (void)updateTagGroupsForId:(NSString *)identifier
            tagGroupsMutation:(UATagGroupsMutation *)mutation
+                        type:(UATagGroupsType)type
            completionHandler:(void (^)(NSUInteger status))completionHandler {
 
     [self performTagGroupsMutation:mutation
-                              path:self.tagGroupsPath
-                          audience:@{self.tagGroupsKey : identifier}
+                              path:[self pathForType:type]
+                          audience:@{[self keyForType:type] : identifier}
                  completionHandler:completionHandler];
 }
 
@@ -74,7 +75,7 @@
         builder.method = @"POST";
         builder.username = self.config.appKey;
         builder.password = self.config.appSecret;
-        builder.body = [NSJSONSerialization dataWithJSONObject:payload options:NSJSONWritingPrettyPrinted error:nil];
+        builder.body = [UAJSONSerialization dataWithJSONObject:payload options:NSJSONWritingPrettyPrinted error:nil];
         [builder setValue:@"application/vnd.urbanairship+json; version=3;" forHeader:@"Accept"];
         [builder setValue:@"application/json" forHeader:@"Content-Type"];
     }];

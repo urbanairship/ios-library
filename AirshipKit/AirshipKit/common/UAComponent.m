@@ -33,7 +33,7 @@ BOOL const UAComponentEnabledDefault = YES;
 // getter and setter for component enabled flag
 - (BOOL)componentEnabled {
     // return value from the data store
-    return [self.componentDataStore boolForKey:[self componentEnabledKey] default:UAComponentEnabledDefault];
+    return [self.componentDataStore boolForKey:[self componentEnabledKey] defaultValue:UAComponentEnabledDefault];
 }
 
 - (void)setComponentEnabled:(BOOL)componentEnabled {
@@ -54,6 +54,15 @@ BOOL const UAComponentEnabledDefault = YES;
 
 - (void)onComponentEnableChange {
     // placeholder - sub-classes should override if they want notification when the components enable/disable state changes
+}
+
+- (void)onNewRemoteConfig:(UARemoteConfig *)config  {
+    // placeholder - sub-classes should override if they want remote config updates
+}
+
+- (Class)remoteConfigClass {
+    // placeholder - sub-classes should override if they want remote config updates
+    return nil;
 }
 
 @end

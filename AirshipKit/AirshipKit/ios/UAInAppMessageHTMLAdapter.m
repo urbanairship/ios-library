@@ -2,16 +2,21 @@
 
 #import "UAInAppMessageHTMLAdapter.h"
 #import "UAInAppMessageAdapterProtocol.h"
-#import "UAInAppMessageHTMLController+Internal.h"
+#import "UAInAppMessageHTMLViewController+Internal.h"
 #import "UAInAppMessageHTMLDisplayContent.h"
 #import "UAUtils+Internal.h"
 #import "UAirship.h"
+#import "UAInAppMessageResizableViewController+Internal.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
+NSString *const UAHTMLStyleFileName = @"UAInAppMessageHTMLStyle";
+
+
 @interface UAInAppMessageHTMLAdapter ()
-@property(nonatomic, strong) UAInAppMessageHTMLController *htmlController;
 @property(nonatomic, strong) UAInAppMessage *message;
+@property(nonatomic, strong) UAInAppMessageHTMLViewController *htmlViewController;
+@property(nonatomic, strong) UAInAppMessageResizableViewController *resizableContainerViewController;
 @end
 
 @implementation UAInAppMessageHTMLAdapter
@@ -25,6 +30,7 @@ NS_ASSUME_NONNULL_BEGIN
 
     if (self) {
         self.message = message;
+        self.style = [UAInAppMessageHTMLStyle styleWithContentsOfFile:UAHTMLStyleFileName];
     }
 
     return self;
@@ -36,13 +42,22 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)prepare:(nonnull void (^)(UAInAppMessagePrepareResult))completionHandler {
     UAInAppMessageHTMLDisplayContent *content = (UAInAppMessageHTMLDisplayContent *)self.message.displayContent;
+
     BOOL whitelisted = [[UAirship shared].whitelist isWhitelisted:[NSURL URLWithString:content.url] scope:UAWhitelistScopeOpenURL];
     if (!whitelisted) {
         UA_LERR(@"HTML in-app message URL is not whitelisted. Unable to display message.");
         return completionHandler(UAInAppMessagePrepareResultCancel);
     }
 
-    completionHandler([self isNetworkConnected] ? UAInAppMessagePrepareResultSuccess : UAInAppMessagePrepareResultRetry);
+    if (![self isNetworkConnected]) {
+        completionHandler(UAInAppMessagePrepareResultRetry);
+        return;
+    }
+
+    self.htmlViewController = [UAInAppMessageHTMLViewController htmlControllerWithMessageID:self.message.identifier
+                                                                             displayContent:content
+                                                                                      style:self.style];
+    completionHandler(UAInAppMessagePrepareResultSuccess);
 }
 
 - (BOOL)isReadyToDisplay {
@@ -50,12 +65,20 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (void)display:(nonnull void (^)(UAInAppMessageResolution * _Nonnull))completionHandler {
-    UAInAppMessageHTMLDisplayContent *displayContent = (UAInAppMessageHTMLDisplayContent *)self.message.displayContent;
+    self.resizableContainerViewController = [UAInAppMessageResizableViewController resizableViewControllerWithChild:self.htmlViewController];
 
-    self.htmlController = [UAInAppMessageHTMLController htmlControllerWithHTMLMessageID:self.message.identifier
-                                                                         displayContent:displayContent];
-    [self.htmlController showWithParentView:[UAUtils mainWindow]
-                          completionHandler:completionHandler];
+    self.resizableContainerViewController.backgroundColor = self.htmlViewController.displayContent.backgroundColor;
+    self.resizableContainerViewController.allowFullScreenDisplay = self.htmlViewController.displayContent.allowFullScreenDisplay;
+    self.resizableContainerViewController.additionalPadding = self.htmlViewController.style.additionalPadding;
+    self.resizableContainerViewController.borderRadius = self.htmlViewController.displayContent.borderRadius;
+    self.resizableContainerViewController.maxWidth = self.htmlViewController.style.maxWidth;
+    self.resizableContainerViewController.maxHeight = self.htmlViewController.style.maxHeight;
+
+    // Set resizable parent
+    self.htmlViewController.resizableParent = self.resizableContainerViewController;
+
+    // Show resizable view controller with child
+    [self.resizableContainerViewController showWithCompletionHandler:completionHandler];
 }
 
 @end

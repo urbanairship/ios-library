@@ -78,17 +78,6 @@ extern NSString *const UANamedUserRemoveTagGroupsSettingsKey;
 ///---------------------------------------------------------------------------------------
 
 /**
- * Factory method to create a named user.
- * @parm push The UAPush instance.
- * @param config The Urban Airship config.
- * @param dataStore The shared preference data store.
- * @return A named user instance.
- */
-+ (instancetype)namedUserWithPush:(UAPush *)push
-                           config:(UAConfig *)config
-                        dataStore:(UAPreferenceDataStore *)dataStore;
-
-/**
  * Factory method to create a named user. For testing.
  * @parm push The UAPush instance.
  * @param config The Urban Airship config.
