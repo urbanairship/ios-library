@@ -120,7 +120,6 @@
 		4515B6A22134AF1300284CFF /* UAInAppMessageResizableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4515B6A12134AF1200284CFF /* UAInAppMessageResizableViewController.m */; };
 		4515B6A42134AF1300284CFF /* UAInAppMessageResizableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4515B6A12134AF1200284CFF /* UAInAppMessageResizableViewController.m */; };
 		4515B6AA2134AFC300284CFF /* UAInAppMessageResizableViewController+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 4515B6A92134AFC200284CFF /* UAInAppMessageResizableViewController+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		4515B6AB2134AFC300284CFF /* UAInAppMessageResizableViewController+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 4515B6A92134AFC200284CFF /* UAInAppMessageResizableViewController+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4515B6B32134B20800284CFF /* UATagGroupsTransactionRecord.m in Sources */ = {isa = PBXBuildFile; fileRef = 4515B6B22134B20800284CFF /* UATagGroupsTransactionRecord.m */; };
 		4515B6B42134B20800284CFF /* UATagGroupsTransactionRecord.m in Sources */ = {isa = PBXBuildFile; fileRef = 4515B6B22134B20800284CFF /* UATagGroupsTransactionRecord.m */; };
 		4515B6B52134B20800284CFF /* UATagGroupsTransactionRecord.m in Sources */ = {isa = PBXBuildFile; fileRef = 4515B6B22134B20800284CFF /* UATagGroupsTransactionRecord.m */; };
@@ -184,7 +183,6 @@
 		45DCD83C2086AB0D00BCF10F /* UAInAppMessageMediaStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = 45DCD8382086AB0D00BCF10F /* UAInAppMessageMediaStyle.m */; };
 		45DCD83E2087C57C00BCF10F /* UAInAppMessageFullScreenStyleTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 45DCD83D2087C57C00BCF10F /* UAInAppMessageFullScreenStyleTest.m */; };
 		45F0CD3D2124E3B900EED496 /* UAInAppMessageResizableViewController+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 45F0CD3A2124E3B900EED496 /* UAInAppMessageResizableViewController+Internal.h */; };
-		45F0CD3F2124E3B900EED496 /* UAInAppMessageResizableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 45F0CD3B2124E3B900EED496 /* UAInAppMessageResizableViewController.m */; };
 		45F0CD422124E58000EED496 /* UAInAppMessageHTMLViewController+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 45F0CD402124E58000EED496 /* UAInAppMessageHTMLViewController+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		45F0CD432124E58000EED496 /* UAInAppMessageHTMLViewController+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 45F0CD402124E58000EED496 /* UAInAppMessageHTMLViewController+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		45F0CD442124E58000EED496 /* UAInAppMessageHTMLViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 45F0CD412124E58000EED496 /* UAInAppMessageHTMLViewController.m */; };
@@ -4641,7 +4639,6 @@
 				DF7E22931ED62E0900C79C46 /* NSString+UALocalizationAdditions.h in Headers */,
 				DF7E22941ED62E0900C79C46 /* NSString+UAURLEncoding.h in Headers */,
 				DF7E22951ED62E0900C79C46 /* UIWebView+UAAdditions.h in Headers */,
-				4515B6AB2134AFC300284CFF /* UAInAppMessageResizableViewController+Internal.h in Headers */,
 				DF7E22961ED62E0900C79C46 /* UADisposable.h in Headers */,
 				DF7E22911ED62E0900C79C46 /* UAUtils+Internal.h in Headers */,
 				DF7E22981ED62E0900C79C46 /* NSManagedObjectContext+UAAdditions+Internal.h in Headers */,
@@ -4922,7 +4919,7 @@
 		494DD94E1B0EB677009C134E /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0930;
+				LastUpgradeCheck = 1000;
 				ORGANIZATIONNAME = "Urban Airship";
 				TargetAttributes = {
 					494DD9561B0EB677009C134E = {
@@ -5510,7 +5507,6 @@
 				CC64F0F11D8B781C009CEF27 /* UACircularRegionTest.m in Sources */,
 				997AC8221FE5ACE000260440 /* UAInAppMessageFullScreenDisplayContentTest.m in Sources */,
 				DF8D7366200006850092FDEA /* UAInAppMessageModalDisplayContentTest.m in Sources */,
-				CC64F10E1D8B781C009CEF27 /* UALegacyAPNSRegistrationTest.m in Sources */,
 				457366432137084B00C5993A /* UAJSONSerializationTest.m in Sources */,
 				CC64F0E41D8B781C009CEF27 /* UAAPNSRegistrationTest.m in Sources */,
 				CC64F1171D8B781C009CEF27 /* UANotificationContentTest.m in Sources */,
@@ -5792,7 +5788,6 @@
 				CC40DDA71D8C9A1C00BABD4F /* UATagUtils.m in Sources */,
 				992F898D1EFD99B000E4C8FE /* UARateAppActionPredicate.m in Sources */,
 				45DCD83C2086AB0D00BCF10F /* UAInAppMessageMediaStyle.m in Sources */,
-				45F0CD3F2124E3B900EED496 /* UAInAppMessageResizableViewController.m in Sources */,
 				CC40DDA81D8C9A1C00BABD4F /* UAURLProtocol.m in Sources */,
 				CC40DDA91D8C9A1C00BABD4F /* UAUser.m in Sources */,
 				6E3673DE1E8AE9F7005B5DFF /* UAEnableFeatureAction.m in Sources */,
