@@ -13,9 +13,25 @@ NS_ASSUME_NONNULL_BEGIN
  * Prepare results
  */
 typedef NS_ENUM(NSInteger, UAAutomationSchedulePrepareResult) {
+    /**
+     * Schedule should continue executing.
+     */
     UAAutomationSchedulePrepareResultContinue,
+
+    /**
+     * Schedule should skip executing.
+     */
     UAAutomationSchedulePrepareResultSkip,
+
+    /**
+     * Schedule should skip executing. The schedule's execution count should be incremented
+     * and its execution interval should be handled.
+     */
     UAAutomationSchedulePrepareResultPenalize,
+
+    /**
+     * Schedule should be cancelled.
+     */
     UAAutomationSchedulePrepareResultCancel
 };
 
