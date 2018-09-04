@@ -74,6 +74,13 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (NSArray *)notificationTypes;
 
+/**
+ * Gets the current notification authorization as a string.
+ *
+ * @return The current notification authorization as a string.
+ */
+- (NSString *)notificationAuthorization;
+
 
 @end
 

@@ -33,6 +33,7 @@
     [data setValue:[UAUtils connectionType] forKey:@"connection_type"];
 
     [data setValue:[self notificationTypes] forKey:@"notification_types"];
+    [data setValue:[self notificationAuthorization] forKey:@"notification_authorization"];
 
     NSTimeZone *localtz = [NSTimeZone defaultTimeZone];
     [data setValue:[NSNumber numberWithDouble:[localtz secondsFromGMT]] forKey:@"time_zone"];

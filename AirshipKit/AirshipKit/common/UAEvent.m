@@ -97,6 +97,23 @@ static dispatch_once_t netInfoDispatchToken_;
     return notificationTypes;
 }
 
+- (NSString *)notificationAuthorization {
+    UAAuthorizationStatus authorizationStatus = [UAirship push].authorizationStatus;
+    
+    switch (authorizationStatus) {
+        case UAAuthorizationStatusNotDetermined:
+            return @"not_determined";
+        case UAAuthorizationStatusDenied:
+            return @"denied";
+        case UAAuthorizationStatusAuthorized:
+            return @"authorized";
+        case UAAuthorizationStatusProvisional:
+            return @"provisional";
+    }
+    
+    return @"not_determined";
+}
+
 - (NSUInteger)jsonEventSize {
     NSMutableDictionary *eventDictionary = [NSMutableDictionary dictionary];
     [eventDictionary setValue:self.eventType forKey:@"type"];

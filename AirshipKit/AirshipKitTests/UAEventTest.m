@@ -6,7 +6,7 @@
 
 #import "UAPush+Internal.h"
 #import "UAUser+Internal.h"
-#import "UAEvent.h"
+#import "UAEvent+Internal.h"
 #import "UAirship+Internal.h"
 #import "UAAnalytics.h"
 #import "UAAppInitEvent+Internal.h"
@@ -101,6 +101,8 @@
 
     [[[self.utils stub] andReturnValue:OCMOCK_VALUE(kUAConnectionTypeCell)] connectionType];
 
+    [[[self.push stub] andReturnValue:OCMOCK_VALUE(UAAuthorizationStatusNotDetermined)] authorizationStatus];
+
     NSDictionary *expectedData = @{@"user_id": @"user ID",
                                    @"connection_type": @"cell",
                                    @"push_id": @"push ID",
@@ -109,6 +111,7 @@
                                    @"time_zone": @2000,
                                    @"daylight_savings": @"true",
                                    @"notification_types": @[],
+                                   @"notification_authorization": @"not_determined",
                                    @"os_version": @"os version",
                                    @"lib_version": @"airship version",
                                    @"package_version": @"",
@@ -141,6 +144,8 @@
 
     [[[self.airshipVersion stub] andReturn:@"airship version"] get];
 
+    [[[self.push stub] andReturnValue:OCMOCK_VALUE(UAAuthorizationStatusProvisional)] authorizationStatus];
+
     // Same as app init but without the foreground key
     NSDictionary *expectedData = @{@"user_id": @"user ID",
                                    @"connection_type": @"cell",
@@ -150,6 +155,7 @@
                                    @"time_zone": @2000,
                                    @"daylight_savings": @"true",
                                    @"notification_types": @[],
+                                   @"notification_authorization": @"provisional",
                                    @"os_version": @"os version",
                                    @"lib_version": @"airship version",
                                    @"package_version": @""};
@@ -267,6 +273,41 @@
     XCTAssertEqualObjects(event.data, expectedData, @"Event data is unexpected.");
     XCTAssertEqualObjects(event.eventType, @"push_received", @"Event type is unexpected.");
     XCTAssertNotNil(event.eventID, @"Event should have an ID");
+}
+
+/**
+ * Test authorization status
+ */
+- (void)testAuthorizationStatus {
+    UAEvent *event = [[UAEvent alloc] init];
+    
+    __block UAAuthorizationStatus status;
+    [[[self.push stub] andDo:^(NSInvocation *invocation) {
+        [invocation setReturnValue:(void *)&status];
+    }] authorizationStatus];
+
+    status = UAAuthorizationStatusNotDetermined;
+    XCTAssertEqualObjects(event.notificationAuthorization, @"not_determined");
+    
+    status = UAAuthorizationStatusDenied;
+    XCTAssertEqualObjects(event.notificationAuthorization, @"denied");
+    
+    status = UAAuthorizationStatusAuthorized;
+    XCTAssertEqualObjects(event.notificationAuthorization, @"authorized");
+    
+    status = UAAuthorizationStatusProvisional;
+    XCTAssertEqualObjects(event.notificationAuthorization, @"provisional");
+    
+    // this tests that the next enum value returns "unknown". If an enum value is added
+    // without updating [UAEvent notificationAuthorization] and this test, the test will fail.
+    NSArray<NSNumber *> *allStatus = [NSArray arrayWithObjects:
+                                                 [NSNumber numberWithInteger:UAAuthorizationStatusNotDetermined],
+                                                 [NSNumber numberWithInteger:UAAuthorizationStatusDenied],
+                                                 [NSNumber numberWithInteger:UAAuthorizationStatusAuthorized],
+                                                 [NSNumber numberWithInteger:UAAuthorizationStatusProvisional],
+                                                 nil];
+    status = (UAAuthorizationStatus)([[allStatus valueForKeyPath:@"@max.self"] integerValue] + 1);
+    XCTAssertEqualObjects(event.notificationAuthorization, @"not_determined");
 }
 
 @end
