@@ -39,7 +39,7 @@ NSString * const UAJSONValueMatcherErrorDomain = @"com.urbanairship.json_value_m
     [payload setValue:self.isPresent forKey:UAJSONValueMatcherIsPresent];
     [payload setValue:self.versionConstraint forKey:UAJSONValueMatcherVersionConstraint];
     [payload setValue:self.arrayIndex forKey:UAJSONValueMatcherArrayIndex];
-    [payload setValue:self.arrayPredicate forKey:UAJSONValueMatcherArrayContains];
+    [payload setValue:self.arrayPredicate.payload forKey:UAJSONValueMatcherArrayContains];
 
     return payload;
 }

@@ -4,7 +4,10 @@
 #import <OCMock/OCMock.h>
 #import "UADisposable.h"
 
+extern const NSTimeInterval UATestExpectationTimeOut;
+
 @interface UABaseTest : XCTestCase
+
 
 /**
  * Creates a nice mock for a given class.
@@ -33,5 +36,16 @@
  * @return The partial mock instance.
  */
 - (id)partialMockForObject:(NSObject *)object;
+
+/**
+ * Waits for test expectations with the default timeout.
+ * @param expectations The test expectations.
+ */
+- (void)waitForTestExpectations:(NSArray<XCTestExpectation *> *)expectations;
+
+/**
+ * Waits for all test expectations with the default timeout.
+ */
+- (void)waitForTestExpectations;
 
 @end

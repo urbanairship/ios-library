@@ -8,6 +8,7 @@
 #import "UAPreferenceDataStore+Internal.h"
 #import "UAirship.h"
 #import "UAPush.h"
+#import "UAJSONSerialization+Internal.h"
 
 @interface UAInboxAPIClient()
 
@@ -132,7 +133,7 @@ NSString *const UALastMessageListModifiedTime = @"UALastMessageListModifiedTime.
     UARequest *request = [UARequest requestWithBuilderBlock:^(UARequestBuilder * _Nonnull builder) {
         NSDictionary *data = @{@"delete" : [messageURLs valueForKeyPath:@"absoluteString"] };
 
-        NSData* body = [NSJSONSerialization dataWithJSONObject:data
+        NSData* body = [UAJSONSerialization dataWithJSONObject:data
                                                        options:0
                                                          error:nil];
 
@@ -193,7 +194,7 @@ NSString *const UALastMessageListModifiedTime = @"UALastMessageListModifiedTime.
     UARequest *request = [UARequest requestWithBuilderBlock:^(UARequestBuilder * _Nonnull builder) {
         NSDictionary *data = @{@"mark_as_read" : [messageURLs valueForKeyPath:@"absoluteString"] };
 
-        NSData* body = [NSJSONSerialization dataWithJSONObject:data
+        NSData* body = [UAJSONSerialization dataWithJSONObject:data
                                                        options:0
                                                          error:nil];
 

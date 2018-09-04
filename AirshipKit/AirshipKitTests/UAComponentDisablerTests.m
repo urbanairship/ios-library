@@ -44,7 +44,7 @@
 
     //
     // create test instance of component disabler
-    self.componentDisabler = [[UAComponentDisabler alloc] init];
+    self.componentDisabler = [UAComponentDisabler componentDisablerWithModules:[[UAModules alloc] init]];
 }
 
 - (void)tearDown {

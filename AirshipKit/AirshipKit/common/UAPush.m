@@ -167,11 +167,11 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
     return self;
 }
 
-+ (instancetype)pushWithConfig:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
++ (instancetype)pushWithConfig:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore tagGroupsRegistrar:(UATagGroupsRegistrar *)tagGroupsRegistrar {
     return [[UAPush alloc] initWithConfig:config
                                 dataStore:dataStore
-                       tagGroupsRegistrar:[UATagGroupsRegistrar channelTagGroupsRegistrarWithConfig:config dataStore:dataStore]
-                       notificationCenter:[NSNotificationCenter defaultCenter]];
+                       tagGroupsRegistrar:tagGroupsRegistrar
+            notificationCenter:[NSNotificationCenter defaultCenter]];
 }
 
 + (instancetype)pushWithConfig:(UAConfig *)config
@@ -180,6 +180,7 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
             notificationCenter:(NSNotificationCenter *)notificationCenter {
     return [[UAPush alloc] initWithConfig:config dataStore:dataStore tagGroupsRegistrar:tagGroupsRegistrar notificationCenter:notificationCenter];
 }
+
 
 - (void)updateAuthorizedNotificationTypes {
     [self.pushRegistration getAuthorizedSettingsWithCompletionHandler:^(UAAuthorizedNotificationSettings authorizedSettings, UAAuthorizationStatus status) {
@@ -508,7 +509,7 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
         return;
     }
 
-    [self.tagGroupsRegistrar addTags:tags group:tagGroupID];
+    [self.tagGroupsRegistrar addTags:tags group:tagGroupID type:UATagGroupsTypeChannel];
 }
 
 - (void)removeTags:(NSArray *)tags group:(NSString *)tagGroupID {
@@ -517,7 +518,7 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
         return;
     }
 
-    [self.tagGroupsRegistrar removeTags:tags group:tagGroupID];
+    [self.tagGroupsRegistrar removeTags:tags group:tagGroupID type:UATagGroupsTypeChannel];
 }
 
 - (void)setTags:(NSArray *)tags group:(NSString *)tagGroupID {
@@ -526,7 +527,7 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
         return;
     }
 
-    [self.tagGroupsRegistrar setTags:tags group:tagGroupID];
+    [self.tagGroupsRegistrar setTags:tags group:tagGroupID type:UATagGroupsTypeChannel];
 }
 
 - (void)setBadgeNumber:(NSInteger)badgeNumber {
@@ -724,7 +725,7 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
         return;
     }
 
-    [self.tagGroupsRegistrar updateTagGroupsForID:self.channelID];
+    [self.tagGroupsRegistrar updateTagGroupsForID:self.channelID type:UATagGroupsTypeChannel];
 }
 
 - (void)updateAPNSRegistration {

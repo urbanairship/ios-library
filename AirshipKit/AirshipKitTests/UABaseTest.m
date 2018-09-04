@@ -6,6 +6,8 @@
 @property (nonatomic, strong) NSPointerArray *mocks;
 @end
 
+const NSTimeInterval UATestExpectationTimeOut = 5;
+
 @implementation UABaseTest
 
 - (void)tearDown {
@@ -46,6 +48,14 @@
         self.mocks = [NSPointerArray weakObjectsPointerArray];
     }
     [self.mocks addPointer:(__bridge void *)mock];
+}
+
+- (void)waitForTestExpectations:(NSArray<XCTestExpectation *> *)expectations {
+    [self waitForExpectations:expectations timeout:UATestExpectationTimeOut];
+}
+
+- (void)waitForTestExpectations {
+    [self waitForExpectationsWithTimeout:UATestExpectationTimeOut handler:nil];
 }
 
 @end

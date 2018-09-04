@@ -14,15 +14,22 @@ NSString * const UARemoteConfigDisableKey = @"disable_features";
 @interface UARemoteConfigManager()
 @property (nonatomic, strong) UADisposable *remoteDataSubscription;
 @property (nonatomic, strong) UAComponentDisabler *componentDisabler;
+@property (nonatomic, strong) UAModules *modules;
 @end
 
 @implementation UARemoteConfigManager
 
-+ (UARemoteConfigManager *)remoteConfigManagerWithRemoteDataManager:(UARemoteDataManager *)remoteDataManager componentDisabler:(UAComponentDisabler *)componentDisabler {
-    return [[UARemoteConfigManager alloc] initWithRemoteDataManager:remoteDataManager componentDisabler:componentDisabler];
++ (UARemoteConfigManager *)remoteConfigManagerWithRemoteDataManager:(UARemoteDataManager *)remoteDataManager
+                                                  componentDisabler:(UAComponentDisabler *)componentDisabler
+                                                            modules:(UAModules *)modules {
+
+    return [[UARemoteConfigManager alloc] initWithRemoteDataManager:remoteDataManager componentDisabler:componentDisabler modules:modules];
 }
 
-- (instancetype)initWithRemoteDataManager:(UARemoteDataManager *)remoteDataManager componentDisabler:(UAComponentDisabler *)componentDisabler {
+- (instancetype)initWithRemoteDataManager:(UARemoteDataManager *)remoteDataManager
+                        componentDisabler:(UAComponentDisabler *)componentDisabler
+                                  modules:(UAModules *)modules {
+
     self = [super init];
     
     if (self) {
@@ -31,6 +38,7 @@ NSString * const UARemoteConfigDisableKey = @"disable_features";
                                                                                block:^(NSArray<UARemoteDataPayload *> *remoteConfig) {
                                                                                    [self processRemoteConfig:remoteConfig];
                                                                                }];
+        self.modules = modules;
     }
     
     return self;
@@ -42,14 +50,24 @@ NSString * const UARemoteConfigDisableKey = @"disable_features";
 
 - (void)processRemoteConfig:(NSArray<UARemoteDataPayload *> *)remoteConfig {
     NSMutableArray *disableInfos = [NSMutableArray array];
+    NSMutableDictionary *configs = [NSMutableDictionary dictionary];
+
     for (UARemoteDataPayload *payload in remoteConfig) {
-        if (payload.data[UARemoteConfigDisableKey]) {
-            [disableInfos addObjectsFromArray:payload.data[UARemoteConfigDisableKey]];
+        for (NSString *key in payload.data) {
+            if ([key isEqualToString:UARemoteConfigDisableKey]) {
+                [disableInfos addObjectsFromArray:payload.data[UARemoteConfigDisableKey]];
+            } else {
+                if (!configs[key]) {
+                    [configs setObject:[NSMutableArray array] forKey:key];
+                }
+
+                [configs[key] addObject:payload.data[key]];
+            }
         }
     }
 
     [self.componentDisabler processDisableInfo:disableInfos];
+    [self.modules processConfigs:configs];
 }
-
 
 @end

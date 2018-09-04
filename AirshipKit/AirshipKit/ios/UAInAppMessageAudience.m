@@ -13,6 +13,11 @@ NSString * const UAInAppMessageAudienceLanguageTagsKey = @"locale";
 NSString * const UAInAppMessageAudienceTagSelectorKey = @"tags";
 NSString * const UAInAppMessageAudienceAppVersionKey = @"app_version";
 NSString * const UAInAppMessageAudienceTestDevicesKey = @"test_devices";
+NSString * const UAInAppMessageAudienceMissBehaviorKey = @"miss_behavior";
+
+NSString * const UAInAppMessageAudienceMissBehaviorCancelValue   = @"cancel";
+NSString * const UAInAppMessageAudienceMissBehaviorSkipValue     = @"skip";
+NSString * const UAInAppMessageAudienceMissBehaviorPenalizeValue = @"penalize";
 
 NSString * const UAInAppMessageAudienceErrorDomain = @"com.urbanairship.in_app_message_audience";
 
@@ -22,9 +27,21 @@ NSString * const UAInAppMessageAudienceErrorDomain = @"com.urbanairship.in_app_m
 @property(nonatomic, strong, nullable) NSArray<NSString *> *languageIDs;
 @property(nonatomic, strong, nullable) UAInAppMessageTagSelector *tagSelector;
 @property(nonatomic, strong, nullable) UAJSONPredicate *versionPredicate;
+@property(nonatomic, assign) UAInAppMessageAudienceMissBehaviorType missBehavior;
 @end
 
 @implementation UAInAppMessageAudienceBuilder
+
+// set default values for properties
+- (instancetype)init {
+    self = [super init];
+    
+    if (self) {
+        self.missBehavior = UAInAppMessageAudienceMissBehaviorPenalize;
+    }
+    
+    return self;
+}
 
 - (BOOL)isValid {
     return YES;
@@ -127,7 +144,36 @@ NSString * const UAInAppMessageAudienceErrorDomain = @"com.urbanairship.in_app_m
 
         builder.testDevices = testDevices;
     }
-
+    
+    id missBehaviorValue = json[UAInAppMessageAudienceMissBehaviorKey];
+    if (missBehaviorValue) {
+        if (![missBehaviorValue isKindOfClass:[NSString class]]) {
+            if (error) {
+                NSString *msg = [NSString stringWithFormat:@"Miss behavior must be a string. Invalid value: %@", missBehaviorValue];
+                *error =  [NSError errorWithDomain:UAInAppMessageAudienceErrorDomain
+                                              code:UAInAppMessageAudienceErrorCodeInvalidJSON
+                                          userInfo:@{NSLocalizedDescriptionKey:msg}];
+            }
+            return nil;
+        } else {
+            if ([UAInAppMessageAudienceMissBehaviorCancelValue isEqualToString:missBehaviorValue]) {
+                builder.missBehavior = UAInAppMessageAudienceMissBehaviorCancel;
+            } else if ([UAInAppMessageAudienceMissBehaviorSkipValue isEqualToString:missBehaviorValue]) {
+                builder.missBehavior = UAInAppMessageAudienceMissBehaviorSkip;
+            } else if ([UAInAppMessageAudienceMissBehaviorPenalizeValue isEqualToString:missBehaviorValue]) {
+                builder.missBehavior = UAInAppMessageAudienceMissBehaviorPenalize;
+            } else {
+                if (error) {
+                    NSString *msg = [NSString stringWithFormat:@"Invalid miss behavior: %@", missBehaviorValue];
+                    *error =  [NSError errorWithDomain:UAInAppMessageAudienceErrorDomain
+                                                  code:UAInAppMessageAudienceErrorCodeInvalidJSON
+                                              userInfo:@{NSLocalizedDescriptionKey:msg}];
+                }
+                return nil;
+            }
+        }
+    }
+    
     if (![builder isValid]) {
         if (error) {
             *error = [self invalidJSONErrorWithMsg:[NSString stringWithFormat:@"Invalid audience %@", json]];
@@ -169,6 +215,7 @@ NSString * const UAInAppMessageAudienceErrorDomain = @"com.urbanairship.in_app_m
         self.languageIDs = builder.languageTags;
         self.tagSelector = builder.tagSelector;
         self.versionPredicate = builder.versionPredicate;
+        self.missBehavior = builder.missBehavior;
 
     }
     return self;
@@ -194,6 +241,19 @@ NSString * const UAInAppMessageAudienceErrorDomain = @"com.urbanairship.in_app_m
     [json setValue:[self.tagSelector toJSON] forKey:UAInAppMessageAudienceTagSelectorKey];
     [json setValue:self.versionPredicate.payload forKey:UAInAppMessageAudienceAppVersionKey];
     [json setValue:self.testDevices forKey:UAInAppMessageAudienceTestDevicesKey];
+    
+    switch (self.missBehavior) {
+        case UAInAppMessageAudienceMissBehaviorCancel:
+            [json setValue:UAInAppMessageAudienceMissBehaviorCancelValue forKey:UAInAppMessageAudienceMissBehaviorKey];
+            break;
+        case UAInAppMessageAudienceMissBehaviorSkip:
+            [json setValue:UAInAppMessageAudienceMissBehaviorSkipValue forKey:UAInAppMessageAudienceMissBehaviorKey];
+            break;
+        case UAInAppMessageAudienceMissBehaviorPenalize:
+            [json setValue:UAInAppMessageAudienceMissBehaviorPenalizeValue forKey:UAInAppMessageAudienceMissBehaviorKey];
+            break;
+    }
+    
     return [json copy];
 }
 
@@ -231,6 +291,9 @@ NSString * const UAInAppMessageAudienceErrorDomain = @"com.urbanairship.in_app_m
     if ((self.testDevices != audience.testDevices) && ![self.testDevices isEqual:audience.testDevices]) {
         return NO;
     }
+    if (self.missBehavior != audience.missBehavior) {
+        return NO;
+    }
     return YES;
 }
 
@@ -243,6 +306,7 @@ NSString * const UAInAppMessageAudienceErrorDomain = @"com.urbanairship.in_app_m
     result = 31 * result + [self.tagSelector hash];
     result = 31 * result + [self.versionPredicate.payload hash];
     result = 31 * result + [self.testDevices hash];
+    result = 31 * result + self.missBehavior;
     return result;
 }
 

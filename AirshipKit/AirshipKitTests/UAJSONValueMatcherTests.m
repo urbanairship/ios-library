@@ -266,6 +266,9 @@
 
     XCTAssertNotNil(matcher);
 
+    // Validate matcher payload
+    XCTAssertTrue([matcher.payload[@"array_contains"] isKindOfClass:[NSDictionary class]]);
+
     // Invalid values
     XCTAssertFalse([matcher evaluateObject:@"1.0"]);
     XCTAssertFalse([matcher evaluateObject:@{@"bingo": @"what"}]);

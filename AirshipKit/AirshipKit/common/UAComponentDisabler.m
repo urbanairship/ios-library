@@ -7,6 +7,7 @@
 #import "UAComponent+Internal.h"
 #import "UAApplicationMetrics.h"
 #import "UAJSONPredicate.h"
+#import "UAModules+Internal.h"
 
 // Disable JSON keys
 NSString * const UADisableModulesKey = @"modules";
@@ -15,23 +16,28 @@ NSString * const UADisableRefreshIntervalKey = @"remote_data_refresh_interval";
 NSString * const UADisableSDKVersionsKey = @"sdk_versions";
 NSString * const UADisableAppVersionsKey = @"app_versions";
 
-// Modules
-NSString * const UADisableModulesPush = @"push";
-NSString * const UADisableModulesAnalytics = @"analytics";
-NSString * const UADisableModulesMessageCenter = @"message_center";
-NSString * const UADisableModulesInAppMessaging = @"in_app_v2";
-NSString * const UADisableModulesAutomation = @"automation";
-NSString * const UADisableModulesNamedUser = @"named_user";
-NSString * const UADisableModulesLocation = @"location";
-
 // Default values
 NSUInteger const UADisableRefreshIntervalDefault = 0; // default is no minimum refresh interval
 
 @interface UAComponentDisabler()
-@property (nonatomic, strong) NSDictionary<NSString *, NSString *> *moduleMap;
+@property (nonatomic, strong) UAModules *modules;
 @end
 
 @implementation UAComponentDisabler
+
+- (instancetype)initWithModules:(UAModules *)modules {
+    self = [super init];
+
+    if (self){
+        self.modules = modules;
+    }
+
+    return self;
+}
+
++ (instancetype)componentDisablerWithModules:(UAModules *)modules {
+    return [[self alloc] initWithModules:modules];
+}
 
 - (void)processDisableInfo:(NSArray *)disableInfos {
     NSMutableSet<NSString *> *disableModuleIDs = [NSMutableSet set];
@@ -55,7 +61,7 @@ NSUInteger const UADisableRefreshIntervalDefault = 0; // default is no minimum r
                     UA_LERR("Invalid disable modules: %@", modules);
                     continue;
                 }
-                [disableModuleIDs addObjectsFromArray:[self.moduleMap allKeys]];
+                [disableModuleIDs addObjectsFromArray:[self.modules allModuleNames]];
             } else if ([modules isKindOfClass:[NSArray class]]) {
                 [disableModuleIDs addObjectsFromArray:modules];
             } else {
@@ -71,7 +77,7 @@ NSUInteger const UADisableRefreshIntervalDefault = 0; // default is no minimum r
         }
     }
     
-    NSMutableSet<NSString *> *enableModuleIDs = [NSMutableSet setWithArray:[self.moduleMap allKeys]];
+    NSMutableSet<NSString *> *enableModuleIDs = [NSMutableSet setWithArray:[self.modules allModuleNames]];
     [enableModuleIDs minusSet:disableModuleIDs];
 
     // Disable modules
@@ -88,40 +94,8 @@ NSUInteger const UADisableRefreshIntervalDefault = 0; // default is no minimum r
     UAirship.remoteDataManager.remoteDataRefreshInterval = remoteDataRefreshInterval;
 }
 
-#pragma mark -
-#pragma mark Properties and constants
-- (NSDictionary<NSString *, NSString *> *)moduleMap {
-    if (!_moduleMap) {
-        _moduleMap = @{
-          UADisableModulesPush:NSStringFromSelector(@selector(sharedPush)),
-          UADisableModulesAnalytics:NSStringFromSelector(@selector(sharedAnalytics)),
-          UADisableModulesAutomation:NSStringFromSelector(@selector(sharedAutomation)),
-          UADisableModulesNamedUser:NSStringFromSelector(@selector(sharedNamedUser)),
-          UADisableModulesLocation:NSStringFromSelector(@selector(sharedLocation)),
-#if !TARGET_OS_TV
-          UADisableModulesMessageCenter:NSStringFromSelector(@selector(sharedInbox)),
-          UADisableModulesInAppMessaging:NSStringFromSelector(@selector(sharedInAppMessageManager)),
-#endif
-          };
-    }
-    return _moduleMap;
-}
-
-
-#pragma mark -
-#pragma mark Utility functions
-- (id)airshipComponentForIdentifier:(NSString *)identifier {
-    NSString *uairshipProperty = self.moduleMap[identifier];
-    if (uairshipProperty.length) {
-        return [UAirship.shared valueForKey:uairshipProperty];
-    } else {
-        UA_LERR(@"No comonent with ID: %@", identifier);
-        return nil;
-    }
-}
-
 - (void)module:(NSString *)moduleID enable:(BOOL)enable {
-    UAComponent *component = [self airshipComponentForIdentifier:moduleID];
+    UAComponent *component = [self.modules airshipComponentForModuleName:moduleID];
     if ([component respondsToSelector:@selector(setComponentEnabled:)]) {
         [component setComponentEnabled:enable];
     } else {

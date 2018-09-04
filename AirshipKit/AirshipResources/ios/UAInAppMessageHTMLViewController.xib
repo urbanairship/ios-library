@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14313.3.2" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina5_9" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14283.1"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="UAInAppMessageHTMLViewController">
+            <connections>
+                <outlet property="closeButtonContainerView" destination="rXH-Zz-p7n" id="iof-WH-coT"/>
+                <outlet property="containerView" destination="scV-ja-7hz" id="BLO-NY-4jn"/>
+                <outlet property="loadingIndicator" destination="jnK-Lb-tWS" id="2QD-2g-en6"/>
+                <outlet property="view" destination="iN0-l3-epB" id="ANJ-kq-CDj"/>
+                <outlet property="webView" destination="hEr-Uv-JrX" id="4Wb-Zb-5ZJ"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB" customClass="UAInAppMessageBannerContentView">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="scV-ja-7hz" userLabel="HTML container View">
+                    <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
+                    <subviews>
+                        <webView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleAspectFill" translatesAutoresizingMaskIntoConstraints="NO" id="hEr-Uv-JrX" customClass="UAWebView">
+                            <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
+                        </webView>
+                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="jnK-Lb-tWS" customClass="UABeveledLoadingIndicator">
+                            <rect key="frame" x="137.66666666666666" y="356" width="100" height="100"/>
+                            <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            <constraints>
+                                <constraint firstAttribute="width" constant="100" id="AHc-em-mkv"/>
+                                <constraint firstAttribute="height" constant="100" id="jRp-yA-6wV"/>
+                            </constraints>
+                        </view>
+                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="rXH-Zz-p7n" userLabel="Close Button Container View">
+                            <rect key="frame" x="329" y="0.0" width="46" height="46"/>
+                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="46" id="B00-4o-Jfd"/>
+                                <constraint firstAttribute="width" constant="46" id="g9k-sm-ZBy"/>
+                            </constraints>
+                        </view>
+                    </subviews>
+                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <accessibility key="accessibilityConfiguration" identifier="Modal View"/>
+                    <constraints>
+                        <constraint firstItem="rXH-Zz-p7n" firstAttribute="top" secondItem="scV-ja-7hz" secondAttribute="top" id="HPX-4O-pZc"/>
+                        <constraint firstItem="rXH-Zz-p7n" firstAttribute="trailing" secondItem="scV-ja-7hz" secondAttribute="trailing" id="PEt-hN-dso"/>
+                        <constraint firstItem="jnK-Lb-tWS" firstAttribute="centerY" secondItem="scV-ja-7hz" secondAttribute="centerY" id="Xnc-10-Kzy"/>
+                        <constraint firstItem="jnK-Lb-tWS" firstAttribute="centerX" secondItem="scV-ja-7hz" secondAttribute="centerX" id="bPW-gd-dBE"/>
+                        <constraint firstItem="hEr-Uv-JrX" firstAttribute="leading" secondItem="scV-ja-7hz" secondAttribute="leading" id="cwp-vi-gpS"/>
+                        <constraint firstItem="hEr-Uv-JrX" firstAttribute="top" secondItem="scV-ja-7hz" secondAttribute="top" id="ibq-0C-Vw2"/>
+                        <constraint firstAttribute="trailing" secondItem="hEr-Uv-JrX" secondAttribute="trailing" id="oFw-iy-ejv"/>
+                        <constraint firstAttribute="bottom" secondItem="hEr-Uv-JrX" secondAttribute="bottom" id="vTe-vl-2qM"/>
+                    </constraints>
+                </view>
+            </subviews>
+            <constraints>
+                <constraint firstItem="scV-ja-7hz" firstAttribute="bottom" secondItem="iN0-l3-epB" secondAttribute="bottom" id="0Ok-Pj-8Hq"/>
+                <constraint firstAttribute="top" secondItem="scV-ja-7hz" secondAttribute="top" id="3ZH-S4-Fzn"/>
+                <constraint firstItem="scV-ja-7hz" firstAttribute="width" secondItem="iN0-l3-epB" secondAttribute="width" id="7b7-dw-F3c"/>
+                <constraint firstItem="scV-ja-7hz" firstAttribute="height" secondItem="iN0-l3-epB" secondAttribute="height" id="8KK-tB-XBh"/>
+                <constraint firstItem="scV-ja-7hz" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="Aua-l0-qF6"/>
+                <constraint firstAttribute="trailing" secondItem="scV-ja-7hz" secondAttribute="trailing" id="JYO-3N-Z33"/>
+            </constraints>
+            <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
+            <point key="canvasLocation" x="220" y="8.1280788177339911"/>
+        </view>
+    </objects>
+</document>

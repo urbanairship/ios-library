@@ -9,10 +9,13 @@
 - (BOOL)addBackgroundOperation:(NSOperation *)operation
                          delay:(NSTimeInterval)seconds {
 
-    __weak NSOperation *weakOperation = operation;
+    NSPointerArray *operations = [NSPointerArray weakObjectsPointerArray];
+    [operations addPointer:(__bridge void *)operation];
 
     __block UIBackgroundTaskIdentifier backgroundTask = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
-        [weakOperation cancel];
+        for (id operation in operations) {
+            [operation cancel];
+        }
 
         if (backgroundTask != UIBackgroundTaskInvalid) {
             [[UIApplication sharedApplication] endBackgroundTask:backgroundTask];
@@ -36,11 +39,10 @@
         }
     };
 
-
     if (seconds) {
         UADelayOperation *delayOperation = [UADelayOperation operationWithDelayInSeconds:seconds];
+        [operations addPointer:(__bridge void *)delayOperation];
         [operation addDependency:delayOperation];
-
         [self addOperations:@[delayOperation, operation] waitUntilFinished:NO];
     } else {
         [self addOperation:operation];

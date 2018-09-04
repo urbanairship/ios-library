@@ -7,9 +7,11 @@
 #import "UAInAppMessageScheduleInfo.h"
 #import "UAInAppMessageAdapterProtocol.h"
 #import "UAComponent+Internal.h"
-
-@class UARemoteDataManager;
-@class UAPush;
+#import "UADispatcher+Internal.h"
+#import "UARemoteDataManager+Internal.h"
+#import "UAPush+Internal.h"
+#import "UATagGroupsLookupManager+Internal.h"
+#import "UATagGroupsMutationHistory+Internal.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -17,28 +19,38 @@ NS_ASSUME_NONNULL_BEGIN
  * In-app message manager provides a control interface for creating,
  * canceling and executing in-app message schedules.
  */
-@interface UAInAppMessageManager ()
+@interface UAInAppMessageManager ()  <UAAutomationEngineDelegate, UATagGroupsLookupManagerDelegate>
 
 /**
- * Init method.
+ * Factory method. Use for testing.
  *
- * @param automationEngine Automation engine.
+ * @param automationEngine The automation engine.
+ * @param tagGroupsLookupManager The tag groups lookup manager.
+ * @param remoteDataManager The remote data manager.
  * @param dataStore The preference data store.
  * @param push The system UAPush instance
+ * @param dispatcher GCD dispatcher.
+ * @return A in-app message manager instance.
  */
 + (instancetype)managerWithAutomationEngine:(UAAutomationEngine *)automationEngine
+                     tagGroupsLookupManager:(UATagGroupsLookupManager *)tagGroupsLookupManager
                           remoteDataManager:(UARemoteDataManager *)remoteDataManager
                                   dataStore:(UAPreferenceDataStore *)dataStore
-                                       push:(UAPush *)push;
+                                       push:(UAPush *)push
+                                 dispatcher:(UADispatcher *)dispatcher;
 
 /**
- * Init method.
+ * Factory method.
  *
  * @param config The UAConfigInstance.
+ * @param tagGroupsMutationHistory The tag groups mutation history.
+ * @param remoteDataManager The remote data manager.
  * @param dataStore The preference data store.
  * @param push The system UAPush instance
+ * @return A in-app message manager instance.
  */
 + (instancetype)managerWithConfig:(UAConfig *)config
+         tagGroupsMutationHistory:(UATagGroupsMutationHistory *)tagGroupsMutationHistory
                 remoteDataManager:(UARemoteDataManager *)remoteDataManager
                         dataStore:(UAPreferenceDataStore *)dataStore
                              push:(UAPush *)push;
@@ -54,23 +66,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (UAScheduleInfo *)createScheduleInfoWithBuilder:(UAScheduleInfoBuilder *)builder;
 
-
-/**
- * Checks if a schedule is ready to execute.
- *
- * @param schedule The schedule.
- * @returns `YES` if the schedule should be executed, otherwise `NO`.
- */
-- (BOOL)isScheduleReadyToExecute:(UASchedule *)schedule;
-
-/**
- * Executes a schedule.
- *
- * @param schedule The schedule.
- * @param completionHandler Completion handler when the schedule is finished executing.
- */
-- (void)executeSchedule:(nonnull UASchedule *)schedule
-      completionHandler:(void (^)(void))completionHandler;
 
 @end
 

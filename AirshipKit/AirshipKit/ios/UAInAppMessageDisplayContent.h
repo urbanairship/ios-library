@@ -74,6 +74,7 @@ extern NSString *const UAInAppMessageDismissButtonColorKey;
 extern NSString *const UAInAppMessageFooterKey;
 extern NSString *const UAInAppMessageDurationKey;
 extern NSString *const UAInAppMessageModalAllowsFullScreenKey;
+extern NSString *const UAInAppMessageHTMLAllowsFullScreenKey;
 
 
 /**

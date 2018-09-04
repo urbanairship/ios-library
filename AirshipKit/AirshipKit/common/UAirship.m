@@ -26,6 +26,8 @@
 #import "UARemoteDataManager+Internal.h"
 #import "UARemoteConfigManager+Internal.h"
 #import "UAComponentDisabler+Internal.h"
+#import "UATagGroupsRegistrar+Internal.h"
+#import "UATagGroupsMutationHistory+Internal.h"
 
 #if !TARGET_OS_TV
 #import "UAInbox+Internal.h"
@@ -102,17 +104,36 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         self.config = config;
         self.applicationMetrics = [UAApplicationMetrics applicationMetricsWithDataStore:dataStore];
         self.actionRegistry = [UAActionRegistry defaultRegistry];
-        self.sharedPush = [UAPush pushWithConfig:config dataStore:dataStore];
-        self.sharedNamedUser = [UANamedUser namedUserWithPush:self.sharedPush config:config dataStore:dataStore];
+
+        UATagGroupsMutationHistory *tagGroupsMutationHistory = [UATagGroupsMutationHistory historyWithDataStore:dataStore];
+
+        UATagGroupsRegistrar *tagGroupsRegistrar = [UATagGroupsRegistrar tagGroupsRegistrarWithConfig:config
+                                                                                            dataStore:dataStore
+                                                                                      mutationHistory:tagGroupsMutationHistory];
+
+        self.sharedPush = [UAPush pushWithConfig:config dataStore:dataStore tagGroupsRegistrar:tagGroupsRegistrar];
+        self.sharedNamedUser = [UANamedUser namedUserWithPush:self.sharedPush config:config dataStore:dataStore tagGroupsRegistrar:tagGroupsRegistrar];
+
         self.sharedAnalytics = [UAAnalytics analyticsWithConfig:config dataStore:dataStore];
         self.whitelist = [UAWhitelist whitelistWithConfig:config];
         self.sharedLocation = [UALocation locationWithAnalytics:self.sharedAnalytics dataStore:dataStore];
         self.sharedAutomation = [UAAutomation automationWithConfig:config dataStore:dataStore];
         self.sharedRemoteDataManager = [UARemoteDataManager remoteDataManagerWithConfig:config dataStore:dataStore];
-        self.sharedRemoteConfigManager = [UARemoteConfigManager remoteConfigManagerWithRemoteDataManager:self.sharedRemoteDataManager componentDisabler:[[UAComponentDisabler alloc] init]];
+
+        UAModules *modules = [[UAModules alloc] init];
+        UAComponentDisabler *componentDisabler = [UAComponentDisabler componentDisablerWithModules:modules];
+
+        self.sharedRemoteConfigManager = [UARemoteConfigManager remoteConfigManagerWithRemoteDataManager:self.sharedRemoteDataManager
+                                                                                       componentDisabler:componentDisabler
+                                                                                                 modules:modules];
 #if !TARGET_OS_TV
         // IAP Nib not supported on tvOS
-        self.sharedInAppMessageManager = [UAInAppMessageManager managerWithConfig:config remoteDataManager:self.sharedRemoteDataManager dataStore:dataStore push:self.sharedPush];
+        self.sharedInAppMessageManager = [UAInAppMessageManager managerWithConfig:config
+                                                         tagGroupsMutationHistory:tagGroupsMutationHistory
+                                                                remoteDataManager:self.sharedRemoteDataManager
+                                                                        dataStore:dataStore
+                                                                             push:self.sharedPush];
+
         self.sharedLegacyInAppMessaging = [UALegacyInAppMessaging inAppMessagingWithAnalytics:self.sharedAnalytics dataStore:dataStore inAppMessageManager:self.sharedInAppMessageManager];
         // Message center not supported on tvOS
         self.sharedInboxUser = [UAUser userWithPush:self.sharedPush config:config dataStore:dataStore];

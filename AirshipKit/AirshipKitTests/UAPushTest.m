@@ -433,7 +433,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     self.push.channelTagRegistrationEnabled = YES;
     
     // EXPECTATIONS
-    [[self.mockTagGroupsRegistrar reject] addTags:OCMOCK_ANY group:OCMOCK_ANY];
+    [[self.mockTagGroupsRegistrar reject] addTags:OCMOCK_ANY group:OCMOCK_ANY type:UATagGroupsTypeChannel];
     
     // TEST
     [self.push addTags:@[@"tag1"] group:@"device"];
@@ -450,7 +450,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     self.push.channelTagRegistrationEnabled = YES;
     
     // EXPECTATIONS
-    [[self.mockTagGroupsRegistrar reject] removeTags:OCMOCK_ANY group:OCMOCK_ANY];
+    [[self.mockTagGroupsRegistrar reject] removeTags:OCMOCK_ANY group:OCMOCK_ANY type:UATagGroupsTypeChannel];
     
     // TEST
     [self.push removeTags:@[@"tag1"] group:@"device"];
@@ -464,7 +464,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     self.push.channelTagRegistrationEnabled = YES;
     
     // EXPECTATIONS
-    [[self.mockTagGroupsRegistrar reject] setTags:OCMOCK_ANY group:OCMOCK_ANY];
+    [[self.mockTagGroupsRegistrar reject] setTags:OCMOCK_ANY group:OCMOCK_ANY type:UATagGroupsTypeChannel];
 
     // TEST
     [self.push setTags:@[@"tag1"] group:@"device"];
@@ -481,7 +481,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     // EXPECTATIONS
     [[self.mockTagGroupsRegistrar expect] updateTagGroupsForID:[OCMArg checkWithBlock:^BOOL(id obj) {
         return (obj != nil);
-    }]];
+    }] type:UATagGroupsTypeChannel];
 
     // TEST
     [self.push updateChannelTagGroups];
@@ -1211,7 +1211,10 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     config.channelCreationDelayEnabled = NO;
 
     // Init push
-    self.push =  [UAPush pushWithConfig:config dataStore:self.dataStore tagGroupsRegistrar:self.mockTagGroupsRegistrar notificationCenter:self.notificationCenter];
+    self.push =  [UAPush pushWithConfig:config
+                              dataStore:self.dataStore
+                     tagGroupsRegistrar:self.mockTagGroupsRegistrar
+                     notificationCenter:self.notificationCenter];
 
     // Ensure channel creation enabled is YES
     XCTAssertTrue(self.push.channelCreationEnabled);
@@ -1221,7 +1224,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     config.channelCreationDelayEnabled = YES;
 
     // Init push
-    self.push =  [UAPush pushWithConfig:config dataStore:self.dataStore];
+    self.push =  [UAPush pushWithConfig:config dataStore:self.dataStore tagGroupsRegistrar:self.mockTagGroupsRegistrar];
 
     // Ensure channel creation enabled is NO
     XCTAssertFalse(self.push.channelCreationEnabled);
@@ -1261,7 +1264,6 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
                          @"updateRegistration should register with the channel registrar if push is enabled.");
     }
 }
-
 
 - (void)testUpdateRegistrationForcefullyPushDisabled {
     self.push.userPushNotificationsEnabled = NO;

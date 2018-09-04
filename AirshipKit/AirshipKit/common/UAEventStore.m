@@ -10,6 +10,7 @@
 #import "UAEvent.h"
 #import "UAirship.h"
 #import "UASQLite+Internal.h"
+#import "UAJSONSerialization+Internal.h"
 
 NSString *const UAEventStoreFileFormat = @"Events-%@.sqlite";
 NSString *const UAEventDataEntityName = @"UAEventData";
@@ -252,7 +253,7 @@ NSString *const UAEventDataEntityName = @"UAEventData";
 
 - (void)storeEventWithID:(NSString *)eventID eventType:(NSString *)eventType eventTime:(NSString *)eventTime eventBody:(id)eventBody sessionID:(NSString *)sessionID {
     NSError *error;
-    id json = [NSJSONSerialization dataWithJSONObject:eventBody options:0 error:&error];
+    id json = [UAJSONSerialization dataWithJSONObject:eventBody options:0 error:&error];
     if (error) {
         UA_LERR(@"Unable to save event. %@", error);
         return;

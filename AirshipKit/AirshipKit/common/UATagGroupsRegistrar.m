@@ -2,16 +2,17 @@
 
 #import "UATagGroupsRegistrar+Internal.h"
 
+#import "UATagGroupsMutation+Internal.h"
 #import "UATagGroupsAPIClient+Internal.h"
-#import "UAPreferenceDataStore+InternalTagGroupsMutation.h"
 #import "UATagUtils+Internal.h"
 #import "UAAsyncOperation+Internal.h"
+#import "UATagGroupsMutationHistory+Internal.h"
 
-// Prefix for channel tag group keys
-NSString *const UAPushTagGroupsKeyPrefix = @"UAPush";
+// Typedef for generating tag group mutation factory blocks
+typedef UATagGroupsMutation * (^UATagGroupsMutationFactory)(NSArray *, NSString *);
 
-// Prefix for named user tag group keys
-NSString *const UANamedUserTagGroupsKeyPrefix = @"UANamedUser";
+// Typedef for generating tag group mutator blocks
+typedef void (^UATagGroupsMutator)(NSArray *, NSString *);
 
 @interface UATagGroupsRegistrar()
 
@@ -21,77 +22,72 @@ NSString *const UANamedUserTagGroupsKeyPrefix = @"UANamedUser";
 @property (nonatomic, strong) UATagGroupsAPIClient *tagGroupsAPIClient;
 
 /**
- * Add tag groups data store key.
- */
-@property (nonatomic, strong) NSString *addTagGroupsSettingsKey;
-
-/**
  * The queue on which to serialize tag groups operations.
  */
 @property (nonatomic,strong) NSOperationQueue *operationQueue;
-
-/**
- * Remove tag groups data store key.
- */
-@property (nonatomic, strong) NSString *removeTagGroupsSettingsKey;
-
-/**
- * Tag group mutations data store key.
- */
-@property (nonatomic, strong) NSString *tagGroupsMutationsKey;
 
 /**
  * The preference data store.
  */
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 
+/**
+ * The mutation history.
+ */
+@property (nonatomic, strong) UATagGroupsMutationHistory *mutationHistory;
+
 @end
 
 @implementation UATagGroupsRegistrar
 
-- (instancetype)initWithDataStore:(UAPreferenceDataStore *)dataStore keyPrefix:(NSString *)keyPrefix apiClient:(UATagGroupsAPIClient *)apiClient operationQueue:(NSOperationQueue *)operationQueue {
+- (instancetype)initWithDataStore:(UAPreferenceDataStore *)dataStore
+                  mutationHistory:(UATagGroupsMutationHistory *)mutationHistory
+                              apiClient:(UATagGroupsAPIClient *)apiClient
+                         operationQueue:(NSOperationQueue *)operationQueue {
+    
     self = [super initWithDataStore:dataStore];
+
     if (self) {
         self.dataStore = dataStore;
+
+        self.mutationHistory = mutationHistory;
         
         self.tagGroupsAPIClient = apiClient;
         self.tagGroupsAPIClient.enabled = self.componentEnabled;
         
-        self.addTagGroupsSettingsKey = [NSString stringWithFormat:@"%@AddTagGroups",keyPrefix];
-        self.removeTagGroupsSettingsKey = [NSString stringWithFormat:@"%@RemoveTagGroups",keyPrefix];
-        self.tagGroupsMutationsKey = [NSString stringWithFormat:@"%@TagGroupsMutations",keyPrefix];
-        
         self.operationQueue = operationQueue;
         self.operationQueue.maxConcurrentOperationCount = 1;
-
-        [self.dataStore migrateTagGroupSettingsForAddTagsKey:self.addTagGroupsSettingsKey
-                                               removeTagsKey:self.removeTagGroupsSettingsKey
-                                                      newKey:self.tagGroupsMutationsKey];
     }
+
     return self;
 }
 
-+ (instancetype)channelTagGroupsRegistrarWithConfig:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
-    return [[UATagGroupsRegistrar alloc] initWithDataStore:dataStore keyPrefix:UAPushTagGroupsKeyPrefix apiClient:[UATagGroupsAPIClient channelClientWithConfig:config] operationQueue:[[NSOperationQueue alloc] init]];
++ (instancetype)tagGroupsRegistrarWithConfig:(UAConfig *)config
+                                   dataStore:(UAPreferenceDataStore *)dataStore
+                             mutationHistory:(UATagGroupsMutationHistory *)mutationHistory {
+
+    return [[UATagGroupsRegistrar alloc] initWithDataStore:dataStore
+                                           mutationHistory:(UATagGroupsMutationHistory *)mutationHistory
+                                                 apiClient:[UATagGroupsAPIClient clientWithConfig:config]
+                                            operationQueue:[[NSOperationQueue alloc] init]];
 }
 
-+ (instancetype)channelTagGroupsRegistrarWithDataStore:(UAPreferenceDataStore *)dataStore apiClient:(UATagGroupsAPIClient *)apiClient operationQueue:(NSOperationQueue *)operationQueue {
-    return [[UATagGroupsRegistrar alloc] initWithDataStore:dataStore keyPrefix:UAPushTagGroupsKeyPrefix apiClient:apiClient operationQueue:operationQueue];
-}
++ (instancetype)tagGroupsRegistrarWithDataStore:(UAPreferenceDataStore *)dataStore
+                                mutationHistory:(UATagGroupsMutationHistory *)mutationHistory
+                                      apiClient:(UATagGroupsAPIClient *)apiClient
+                                 operationQueue:(NSOperationQueue *)operationQueue {
 
-+ (instancetype)namedUserTagGroupsRegistrarWithConfig:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
-    return [[UATagGroupsRegistrar alloc] initWithDataStore:dataStore keyPrefix:UANamedUserTagGroupsKeyPrefix apiClient:[UATagGroupsAPIClient namedUserClientWithConfig:config] operationQueue:[[NSOperationQueue alloc] init]];
-}
-
-+ (instancetype)namedUserTagGroupsRegistrarWithDataStore:(UAPreferenceDataStore *)dataStore apiClient:(UATagGroupsAPIClient *)apiClient operationQueue:(NSOperationQueue *)operationQueue {
-    return [[UATagGroupsRegistrar alloc] initWithDataStore:dataStore keyPrefix:UANamedUserTagGroupsKeyPrefix apiClient:apiClient operationQueue:operationQueue];
+    return [[UATagGroupsRegistrar alloc] initWithDataStore:dataStore
+                                           mutationHistory:(UATagGroupsMutationHistory *)mutationHistory
+                                                 apiClient:apiClient
+                                            operationQueue:operationQueue];
 }
 
 - (void)dealloc {
     [self.operationQueue cancelAllOperations];
 }
 
-- (void)updateTagGroupsForID:(NSString *)identifier {
+- (void)updateTagGroupsForID:(NSString *)identifier type:(UATagGroupsType)type {
     if (!self.componentEnabled) {
         return;
     }
@@ -112,11 +108,14 @@ NSString *const UANamedUserTagGroupsKeyPrefix = @"UANamedUser";
         return;
     }
     
-    [self uploadNextTagGroupMutationForID:identifier withBackgroundTaskIdentifier:backgroundTaskIdentifier];
+    [self uploadNextTagGroupMutationForID:identifier backgroundTaskIdentifier:backgroundTaskIdentifier type:type];
 }
 
 // this method runs asynchronously on the operation queue
-- (void)uploadNextTagGroupMutationForID:(NSString *)identifier withBackgroundTaskIdentifier:(UIBackgroundTaskIdentifier)backgroundTaskIdentifier {
+- (void)uploadNextTagGroupMutationForID:(NSString *)identifier
+               backgroundTaskIdentifier:(UIBackgroundTaskIdentifier)backgroundTaskIdentifier
+                                   type:(UATagGroupsType)type {
+
     UAAsyncOperation *operation = [UAAsyncOperation operationWithBlock:^(UAAsyncOperation *operation) {
         // return early if the operation has been cancelled
         if (operation.isCancelled) {
@@ -130,12 +129,12 @@ NSString *const UANamedUserTagGroupsKeyPrefix = @"UANamedUser";
             [operation finish];
             return;
         }
-        
+
         // collapse mutations
-        [self.dataStore collapseTagGroupsMutationForKey:self.tagGroupsMutationsKey];
+        [self.mutationHistory collapsePendingMutations:type];
         
         // peek at top mutation
-        UATagGroupsMutation *mutation = [self.dataStore peekTagGroupsMutationForKey:self.tagGroupsMutationsKey];
+        UATagGroupsMutation *mutation = [self.mutationHistory peekPendingMutation:type];
         
         if (!mutation) {
             // no upload work to do - end background task, if necessary, and finish operation
@@ -148,23 +147,29 @@ NSString *const UANamedUserTagGroupsKeyPrefix = @"UANamedUser";
         void (^apiCompletionBlock)(NSUInteger) = ^void(NSUInteger status) {
             UA_STRONGIFY(self);
             if (status >= 200 && status <= 299) {
-                // success - pop uploaded mutation and try to upload next mutation
-                [self.dataStore popTagGroupsMutationForKey:self.tagGroupsMutationsKey];
+                // Success - pop uploaded mutation and store the transaction record
+                UATagGroupsMutation *mutation = [self.mutationHistory popPendingMutation:type];
+
+                [self.mutationHistory addSentMutation:mutation date:[NSDate date]];
+
+                // Try to upload more mutations as long as the operation hasn't been canceled
                 if (operation.isCancelled) {
                     [self endBackgroundTask:backgroundTaskIdentifier];
                 } else {
-                    // upload next tag group mutation
-                    [self uploadNextTagGroupMutationForID:identifier withBackgroundTaskIdentifier:backgroundTaskIdentifier];
+                    [self uploadNextTagGroupMutationForID:identifier backgroundTaskIdentifier:backgroundTaskIdentifier type:type];
                 }
             } else if (status == 400 || status == 403) {
-                [self.dataStore popTagGroupsMutationForKey:self.tagGroupsMutationsKey];
+                // Unrecoverable failure - pop mutation and end the task
+                [self.mutationHistory popPendingMutation:type];
                 [self endBackgroundTask:backgroundTaskIdentifier];
             }
+
             [operation finish];
         };
         
         [self.tagGroupsAPIClient updateTagGroupsForId:identifier
                                     tagGroupsMutation:mutation
+                                                 type:type
                                     completionHandler:apiCompletionBlock];
         
     }];
@@ -179,63 +184,70 @@ NSString *const UANamedUserTagGroupsKeyPrefix = @"UANamedUser";
     }
 }
 
-// this method may finish asynchronously on the operation queue
-- (void)addTags:(NSArray *)tags group:(NSString *)tagGroupID {
-    NSArray *normalizedTags = [UATagUtils normalizeTags:tags];
-    NSString *normalizedTagGroupID = [UATagUtils normalizeTagGroupID:tagGroupID];
-    if (!normalizedTags.count || !normalizedTagGroupID.length) {
-        return;
-    }
-    
-    UATagGroupsMutation *mutation = [UATagGroupsMutation mutationToAddTags:normalizedTags
-                                                                     group:normalizedTagGroupID];
-    
-    // rest runs on the operation queue
-    [self.operationQueue addOperation:[NSBlockOperation blockOperationWithBlock:^{
-        [self.dataStore addTagGroupsMutation:mutation forKey:self.tagGroupsMutationsKey];
-    }]];
+- (UATagGroupsMutator)tagGroupsMutator:(UATagGroupsMutationFactory)factory
+                           requireTags:(BOOL)requireTags
+                                  type:(UATagGroupsType)type {
+    return ^(NSArray *tags, NSString *tagGroupID) {
+        NSArray *normalizedTags = [UATagUtils normalizeTags:tags];
+        NSString *normalizedTagGroupID = [UATagUtils normalizeTagGroupID:tagGroupID];
+
+        if (requireTags && !normalizedTags.count) {
+            return;
+        }
+
+        if (!normalizedTagGroupID.length) {
+            return;
+        }
+
+        UATagGroupsMutation *mutation = factory(normalizedTags, normalizedTagGroupID);
+
+        // rest runs on the operation queue
+        [self.operationQueue addOperation:[NSBlockOperation blockOperationWithBlock:^{
+            [self.mutationHistory addPendingMutation:mutation type:type];
+        }]];
+    };
 }
 
-// this method may finish asynchronously on the operation queue
-- (void)removeTags:(NSArray *)tags group:(NSString *)tagGroupID {
-    NSArray *normalizedTags = [UATagUtils normalizeTags:tags];
-    NSString *normalizedTagGroupID = [UATagUtils normalizeTagGroupID:tagGroupID];
-    
-    if (!normalizedTags.count || !normalizedTagGroupID.length) {
-        return;
-    }
-    
-    UATagGroupsMutation *mutation = [UATagGroupsMutation mutationToRemoveTags:normalizedTags
-                                                                        group:normalizedTagGroupID];
-    
-    // rest runs on the operation queue
-    [self.operationQueue addOperation:[NSBlockOperation blockOperationWithBlock:^{
-        [self.dataStore addTagGroupsMutation:mutation forKey:self.tagGroupsMutationsKey];
-    }]];
+- (UATagGroupsMutator) addTagsMutator:(UATagGroupsType)type {
+    return [self tagGroupsMutator:^(NSArray *normalizedTags, NSString *normalizedTagGroupID) {
+        return [UATagGroupsMutation mutationToAddTags:normalizedTags
+                                                group:normalizedTagGroupID];
+    } requireTags:YES type:type];
 }
 
-// this method may finish asynchronously on the operation queue
-- (void)setTags:(NSArray *)tags group:(NSString *)tagGroupID {
-    NSArray *normalizedTags = [UATagUtils normalizeTags:tags];
-    NSString *normalizedTagGroupID = [UATagUtils normalizeTagGroupID:tagGroupID];
-    
-    if (!normalizedTagGroupID.length) {
-        return;
-    }
-    
-    UATagGroupsMutation *mutation = [UATagGroupsMutation mutationToSetTags:normalizedTags
-                                                                     group:normalizedTagGroupID];
-    
-    // rest runs on the operation queue
-    [self.operationQueue addOperation:[NSBlockOperation blockOperationWithBlock:^{
-        [self.dataStore addTagGroupsMutation:mutation forKey:self.tagGroupsMutationsKey];
-    }]];
+- (UATagGroupsMutator) removeTagsMutator:(UATagGroupsType)type {
+    return [self tagGroupsMutator:^(NSArray *normalizedTags, NSString *normalizedTagGroupID){
+        return [UATagGroupsMutation mutationToRemoveTags:normalizedTags
+                                                   group:normalizedTagGroupID];
+    } requireTags:YES type:type];
 }
 
-- (void)clearAllPendingTagUpdates {
+- (UATagGroupsMutator) setTagsMutator:(UATagGroupsType)type {
+    return [self tagGroupsMutator:^(NSArray *normalizedTags, NSString *normalizedTagGroupID){
+        return [UATagGroupsMutation mutationToSetTags:normalizedTags
+                                                group:normalizedTagGroupID];
+    } requireTags:NO type:type];
+}
+
+// This method may finish asynchronously on the operation queue
+- (void)addTags:(NSArray *)tags group:(NSString *)tagGroupID type:(UATagGroupsType)type {
+    [self addTagsMutator:type](tags, tagGroupID);
+}
+
+// This method may finish asynchronously on the operation queue
+- (void)removeTags:(NSArray *)tags group:(NSString *)tagGroupID type:(UATagGroupsType)type {
+    [self removeTagsMutator:type](tags, tagGroupID);
+}
+
+// This method may finish asynchronously on the operation queue
+- (void)setTags:(NSArray *)tags group:(NSString *)tagGroupID type:(UATagGroupsType)type {
+    [self setTagsMutator:type](tags, tagGroupID);
+}
+
+- (void)clearAllPendingTagUpdates:(UATagGroupsType) type {
     [self.operationQueue cancelAllOperations];
     [self.operationQueue addOperation:[NSBlockOperation blockOperationWithBlock:^{
-        [self.dataStore removeObjectForKey:self.tagGroupsMutationsKey];
+        [self.mutationHistory clearPendingMutations:type];
     }]];
 }
 

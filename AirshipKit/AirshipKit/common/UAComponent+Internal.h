@@ -1,9 +1,10 @@
 /* Copyright 2018 Urban Airship and Contributors */
 
 #import <Foundation/Foundation.h>
-#import "UAComponent.h"
 
-@class UAPreferenceDataStore;
+#import "UAComponent.h"
+#import "UAPreferenceDataStore+Internal.h"
+#import "UARemoteConfig+Internal.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -13,6 +14,8 @@ NS_ASSUME_NONNULL_BEGIN
  * Flag indicating whether the component is enabled. Clear to disable. Set to enable.
  */
 @property (assign) BOOL componentEnabled;
+
+@property (readonly) Class remoteConfigClass;
 
 /**
  * Init method.
@@ -25,6 +28,11 @@ NS_ASSUME_NONNULL_BEGIN
  * Called when the component's componentEnabled flag has changed value.
  */
 - (void)onComponentEnableChange;
+
+/**
+ * Called when a new remote config is available.
+ */
+- (void)onNewRemoteConfig:(UARemoteConfig *)config;
 
 @end
 

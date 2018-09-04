@@ -163,7 +163,7 @@
  */
 - (void)testAssociateDeviceIdentifiers {
 
-    NSDictionary *identifiers = @{@"some identifer": @"some value"};
+    NSDictionary *identifiers = @{@"some identifier": @"some value"};
     XCTestExpectation *eventAdded = [self expectationWithDescription:@"Notification event added"];
     [[[self.mockEventManager expect] andDo:^(NSInvocation *invocation) {
         [eventAdded fulfill];
