@@ -134,7 +134,7 @@ NSString *const UAInAppMessageURLKey = @"url";
 
     id allowFullScreenDisplay = json[UAInAppMessageHTMLAllowsFullScreenKey];
     if (allowFullScreenDisplay) {
-        if (![borderRadius isKindOfClass:[NSNumber class]]) {
+        if (![allowFullScreenDisplay isKindOfClass:[NSNumber class]]) {
             if (error) {
                 NSString *msg = [NSString stringWithFormat:@"Allows full screen flag must be a boolean stored as an NSNumber. Invalid value: %@", allowFullScreenDisplay];
                 *error =  [NSError errorWithDomain:UAInAppMessageHTMLDisplayContentDomain
