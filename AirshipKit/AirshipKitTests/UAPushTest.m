@@ -530,50 +530,6 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 }
 
 /**
- * Test requireSettingsAppToDisableUserNotifications is ignored in iOS 10
- */
--(void)testRequireSettingsAppToDisableUserNotificationsDoesNothingOnIOS10 {
-    // Defaults to YES
-    XCTAssertTrue(self.push.requireSettingsAppToDisableUserNotifications);
-
-    // Verify it can be disabled
-    self.push.requireSettingsAppToDisableUserNotifications = NO;
-    XCTAssertFalse(self.push.requireSettingsAppToDisableUserNotifications);
-
-    // Set up push for user notifications
-    self.notificationOptions = UANotificationOptionAlert;
-    self.push.userPushNotificationsEnabled = YES;
-    self.push.deviceToken = validDeviceToken;
-    self.push.shouldUpdateAPNSRegistration = NO;
-
-    // Prevent disabling userPushNotificationsEnabled
-    self.push.requireSettingsAppToDisableUserNotifications = YES;
-    
-    OCMExpect([self.mockUserNotificationCenter setNotificationCategories:[OCMArg checkWithBlock:^BOOL(NSSet<UNNotificationCategory *> *categories) {
-        return (categories.count == 0);
-    }]]);
-    
-    // Verify we request empty authorization
-    OCMExpect([self.mockUserNotificationCenter requestAuthorizationWithOptions:UNAuthorizationOptionNone completionHandler:OCMOCK_ANY]).andDo(^(NSInvocation *invocation) {
-        void *arg;
-        UNAuthorizationOptions normalizedOptions;
-        [invocation getArgument:&normalizedOptions atIndex:2];
-        [invocation getArgument:&arg atIndex:3];
-        typedef void (^NotificationAuthorizationBlock)(BOOL granted, NSError *__nullable error);
-        NotificationAuthorizationBlock completionBlock = (__bridge NotificationAuthorizationBlock)arg;
-        completionBlock((self.push.notificationOptions == (UANotificationOptions)normalizedOptions),nil);
-    });
-    
-    self.push.userPushNotificationsEnabled = NO;
-
-    // Should disable
-    XCTAssertFalse(self.push.userPushNotificationsEnabled);
-
-    // Verify we did update user notification settings
-    [self.mockUserNotificationCenter verify];
-}
-
-/**
  * Test disabling userPushNotificationsEnabled saves its settings
  * to NSUserDefaults and updates registration.
  */
@@ -613,7 +569,6 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     }] ignoringNonObjectArgs] requestAuthorizationWithOptions:UNAuthorizationOptionNone completionHandler:OCMOCK_ANY];
     
     // TEST
-    self.push.requireSettingsAppToDisableUserNotifications = NO;
     self.push.userPushNotificationsEnabled = NO;
 
     XCTAssertFalse(self.push.userPushNotificationsEnabled,
@@ -786,6 +741,57 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     XCTAssertNoThrow([self.mockRegistrationDelegate verify]);
 
     XCTAssertFalse(self.push.shouldUpdateAPNSRegistration, @"Updating APNS registration should set shouldUpdateAPNSRegistration to NO");
+}
+
+/**
+ * Test enable push notifications updates APNS registration and receives a completion handler callback.
+ */
+- (void)testEnablePushNotificationsCompletionHandlerCalled {
+    self.push.customCategories = [NSSet set];
+    self.push.registrationDelegate = self.mockRegistrationDelegate;
+    self.notificationOptions = UANotificationOptionAlert;
+
+    // EXPECTATIONS
+    __block NSMutableSet *expectedCategories = [NSMutableSet set];
+    for (UANotificationCategory *category in self.push.combinedCategories) {
+        [expectedCategories addObject:[category asUNNotificationCategory]];
+    }
+
+    UAAuthorizedNotificationSettings expectedSettings = UAAuthorizedNotificationSettingsAlert;
+
+    XCTestExpectation *delegateCalled = [self expectationWithDescription:@"Delegate called"];
+    XCTestExpectation *completionHandlerCalled = [self expectationWithDescription:@"Enable push completion handler called"];
+
+    OCMExpect([self.mockUserNotificationCenter setNotificationCategories:[OCMArg checkWithBlock:^BOOL(NSSet<UNNotificationCategory *> *categories) {
+        return (categories.count == expectedCategories.count);
+    }]]);
+
+    [[[[self.mockUserNotificationCenter expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        UNAuthorizationOptions normalizedOptions;
+        [invocation getArgument:&normalizedOptions atIndex:2];
+        [invocation getArgument:&arg atIndex:3];
+        typedef void (^NotificationAuthorizationBlock)(BOOL granted, NSError *__nullable error);
+        NotificationAuthorizationBlock completionBlock = (__bridge NotificationAuthorizationBlock)arg;
+        completionBlock((self.push.notificationOptions == (UANotificationOptions)normalizedOptions),nil);
+    }] ignoringNonObjectArgs] requestAuthorizationWithOptions:(UNAuthorizationOptions)self.push.notificationOptions completionHandler:OCMOCK_ANY];
+
+    [[[self.mockRegistrationDelegate expect] andDo:^(NSInvocation *invocation) {
+        [delegateCalled fulfill];
+    }]  notificationRegistrationFinishedWithAuthorizedSettings:expectedSettings categories:[OCMArg checkWithBlock:^BOOL(id obj) {
+        NSSet *categories = (NSSet *)obj;
+        return (categories.count == expectedCategories.count);
+    }]];
+
+    // Enable push notifications
+    [self.push enableUserPushNotifications:^(BOOL success) {
+        [completionHandlerCalled fulfill];
+    }];
+
+    [self waitForExpectationsWithTimeout:1 handler:nil];
+
+    XCTAssertNoThrow([self.mockUserNotificationCenter verify]);
+    XCTAssertNoThrow([self.mockRegistrationDelegate verify]);
 }
 
 /**
@@ -1957,61 +1963,6 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 }
 
 /**
- * Test when allowUnregisteringUserNotificationTypes is NO it prevents UAPush from
- * unregistering user notification types.
- */
-- (void)testDisallowUnregisteringUserNotificationTypes {
-    self.push.userPushNotificationsEnabled = YES;
-    self.push.deviceToken = validDeviceToken;
-    self.push.shouldUpdateAPNSRegistration = NO;
-    self.push.requireSettingsAppToDisableUserNotifications = NO;
-
-    // Turn off allowing unregistering user notification types
-    self.push.allowUnregisteringUserNotificationTypes = NO;
-
-    // Make sure we have previously registered types
-    self.notificationOptions = UANotificationOptionBadge;
-    
-    // EXPECTATIONS
-    // Add a device token so we get a device api callback
-    XCTestExpectation *pushRegistrationUpdated = [self expectationWithDescription:@"Push registration updated"];
-    [[[self.mockChannelRegistrar expect] andDo:^(NSInvocation *invocation) {
-        [pushRegistrationUpdated fulfill];
-    }] registerForcefully:NO];
-
-    // The flag allowUnregisteringUserNotificationTypes should prevent unregistering notification types
-    __block NSMutableSet *expectedCategories = [NSMutableSet set];
-    for (UANotificationCategory *category in self.push.combinedCategories) {
-        [expectedCategories addObject:[category asUNNotificationCategory]];
-    }
-    OCMReject([self.mockUserNotificationCenter setNotificationCategories:OCMOCK_ANY]);
-    
-    [[[[self.mockUserNotificationCenter reject] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:3];
-        typedef void (^NotificationAuthorizationBlock)(BOOL granted, NSError *__nullable error);
-        NotificationAuthorizationBlock completionBlock = (__bridge NotificationAuthorizationBlock)arg;
-        completionBlock(YES,nil);
-    }] ignoringNonObjectArgs] requestAuthorizationWithOptions:0 completionHandler:OCMOCK_ANY];
-
-    self.push.userPushNotificationsEnabled = NO;
-
-    [self waitForExpectationsWithTimeout:1 handler:nil];
-    
-    XCTAssertFalse(self.push.userPushNotificationsEnabled,
-                   @"userPushNotificationsEnabled should be disabled when set to NO");
-
-    XCTAssertFalse([self.dataStore boolForKey:UAUserPushNotificationsEnabledKey],
-                   @"userPushNotificationsEnabled should be stored in standardUserDefaults");
-    
-    XCTAssertNoThrow([self.mockChannelRegistrar verify],
-                     @"Should call channel registrar");
-
-    XCTAssertNoThrow([self.mockUserNotificationCenter verify],
-                     @"userPushNotificationsEnabled should not unregister for remote notifications");
-}
-
-/**
  * Test handleRemoteNotification when auto badge is disabled does
  * not set the badge on the application
  */
@@ -2349,7 +2300,6 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 // Legacy behavior
 -(void)testAuthorizedNotificationOptionsWhenPushNotificationsDisabled {
     // SETUP
-    self.push.requireSettingsAppToDisableUserNotifications = NO;
     self.push.userPushNotificationsEnabled = NO;
     self.push.authorizedNotificationSettings = UAAuthorizedNotificationSettingsAlert;
     
@@ -2363,7 +2313,6 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 // New behavior
 -(void)testAuthorizedNotificationSettingsWhenPushNotificationsDisabled {
     // SETUP
-    self.push.requireSettingsAppToDisableUserNotifications = NO;
     self.push.userPushNotificationsEnabled = NO;
     self.push.authorizedNotificationSettings = UAAuthorizedNotificationSettingsAlert;
 

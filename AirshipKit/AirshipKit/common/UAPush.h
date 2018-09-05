@@ -272,10 +272,6 @@ static const UANotificationOptions UANotificationOptionNone =  0;
 /**
  * Enables/disables user notifications on this device through Urban Airship.
  * Defaults to `NO`. Once set to `YES`, the user will be prompted for remote notifications.
- *
- * On iOS 8+, we recommend that you do not change this value to `NO` and instead direct users to
- * the iOS Settings App. As such, the transition from `YES` to `NO` is disabled by default on iOS 8+.
- * Please see requireSettingsAppToDisableUserNotifications for details.
  */
 @property (nonatomic, assign) BOOL userPushNotificationsEnabled;
 
@@ -285,43 +281,6 @@ static const UANotificationOptions UANotificationOptionNone =  0;
  * notifications.
  */
 @property (nonatomic, assign) BOOL pushTokenRegistrationEnabled;
-
-/**
- * This setting controls the underlying behavior of the SDK when user notifications are disabled.
- * When set to `NO` and user notifications are disabled with the userPushNotificationsEnabled
- * property, this SDK will mark the device as opted-out on the Urban Airship server but the OS-level
- * settings will still show this device as able to receive user notifications.
- *
- * This is a temporary flag to work around an issue in iOS 8 where
- * unregistering user notification types may prevent the device from being able to
- * register with other types without a device restart. It will be removed once
- * the issue is addressed in iOS 8.
- *
- * This setting defaults to `YES` due to the new flag requireSettingsAppToDisableUserNotifications.
- * To enable UA SDK 5 behavior, set this flag and requireSettingsAppToDisableUserNotifications
- * to `NO`.
- *
- */
-@property (nonatomic, assign) BOOL allowUnregisteringUserNotificationTypes;
-
-/**
- * This setting controls the behavior of the userPushNotificationsEnabled setting. If set to `YES`, the
- * application will not be allowed to set userPushNotificationsEnabled to `NO`, and instead, the user should
- * be directed to the iOS Settings app via the UIApplicationOpenSettingsURLString URL constant. The iOS
- * Settings app is the preferred method of disabling user notifications as of iOS 8.
- * 
- * The setting defaults to `YES` on iOS 8+. Changing this setting to `NO` could allow notifications with user-visible components
- * (badge, alert, or sound) to be processed by the OS if the notification also has a background `content-available`
- * flag in the `aps` section of the notification.
- *
- * On versions of iOS prior to iOS 8, this flag will always return `NO`. Those iOS versions do not allow linking
- * to the Settings app and are unaffected by the opt-out after opt-in bug.
- *
- * To open the iOS Settings app directly to your application's settings:
- * `[[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]]`
- */
-@property (nonatomic, assign) BOOL requireSettingsAppToDisableUserNotifications;
-
 
 /**
  * Sets the default value for userPushNotificationsEnabled. The default is `NO`.
@@ -475,6 +434,17 @@ static const UANotificationOptions UANotificationOptionNone =  0;
  * server-side tagging. Defaults to `YES`.
  */
 @property (nonatomic, assign, getter=isChannelTagRegistrationEnabled) BOOL channelTagRegistrationEnabled;
+
+/**
+ * Enables user notifications on this device through Urban Airship.
+ *
+ * Note: The completion handler will return the success state of system push authorization as it is defined by the
+ * user's response to the push authorization prompt. The completion handler success state does NOT represent the
+ * state of the userPushNotificationsEnabled flag, which will be invariably set to YES after the completion of this call.
+ *
+ * @param completionHandler The completion handler with success flag representing the system authorization state.
+ */
+- (void)enableUserPushNotifications:(void(^)(BOOL success))completionHandler;
 
 /**
  * Adds a tag to the list of tags for the device.

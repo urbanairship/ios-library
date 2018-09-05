@@ -106,7 +106,8 @@
 }
 
 -(void)updateRegistrationWithOptions:(UANotificationOptions)options
-                          categories:(NSSet<UANotificationCategory *> *)categories NS_AVAILABLE_IOS(10.0) {
+                          categories:(NSSet<UANotificationCategory *> *)categories
+                   completionHandler:(nullable void(^)(BOOL success))completionHandler NS_AVAILABLE_IOS(10.0) {
 
 #if !TARGET_OS_TV   // UNNotificationCategory not supported on tvOS
     NSMutableSet *normalizedCategories;
@@ -132,9 +133,17 @@
     UNAuthorizationOptions normalizedOptions = [self normalizedOptions:options];
 
     UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
-    
+
     [center requestAuthorizationWithOptions:normalizedOptions
                           completionHandler:^(BOOL granted, NSError * _Nullable error) {
+                              if (error) {
+                                  UA_LERR(@"requestAuthorizationWithOptions failed with error: %@", error);
+                              }
+
+                              if (completionHandler) {
+                                  completionHandler(granted);
+                              }
+
                               [self getAuthorizedSettingsWithCompletionHandler:^(UAAuthorizedNotificationSettings authorizedSettings, UAAuthorizationStatus status) {
                                   [self.registrationDelegate notificationRegistrationFinishedWithAuthorizedSettings:authorizedSettings status:status];
                               }];

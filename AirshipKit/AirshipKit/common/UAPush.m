@@ -74,9 +74,6 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
 
 @implementation UAPush
 
-// Both getter and setter are custom here, so give the compiler a hand with the synthesizing
-@synthesize requireSettingsAppToDisableUserNotifications = _requireSettingsAppToDisableUserNotifications;
-
 - (instancetype)initWithConfig:(UAConfig *)config
                      dataStore:(UAPreferenceDataStore *)dataStore
             tagGroupsRegistrar:(UATagGroupsRegistrar *)tagGroupsRegistrar
@@ -94,11 +91,6 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
         self.channelTagRegistrationEnabled = YES;
         self.requireAuthorizationForDefaultCategories = YES;
         self.backgroundPushNotificationsEnabledByDefault = YES;
-
-        // Require use of the settings app to change push settings
-        // but allow the app to unregister to keep things in sync
-        self.requireSettingsAppToDisableUserNotifications = YES;
-        self.allowUnregisteringUserNotificationTypes = YES;
 
         self.notificationOptions = UANotificationOptionBadge;
 #if !TARGET_OS_TV
@@ -329,6 +321,11 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
     }
 }
 
+- (void)enableUserPushNotifications:(void(^)(BOOL success))completionHandler {
+    [self.dataStore setBool:YES forKey:UAUserPushNotificationsEnabledKey];
+    [self updateAPNSRegistration:completionHandler];
+}
+
 - (BOOL)userPromptedForNotifications {
     return [self.dataStore boolForKey:UAPushUserPromptedForNotificationsKey];
 }
@@ -433,14 +430,6 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
 - (void)setNotificationOptions:(UANotificationOptions)notificationOptions {
     _notificationOptions = notificationOptions;
     self.shouldUpdateAPNSRegistration = YES;
-}
-
-- (void)setRequireSettingsAppToDisableUserNotifications:(BOOL)requireSettingsAppToDisableUserNotifications {
-    _requireSettingsAppToDisableUserNotifications = requireSettingsAppToDisableUserNotifications;
-}
-
-- (BOOL)requireSettingsAppToDisableUserNotifications {
-    return _requireSettingsAppToDisableUserNotifications;
 }
 
 - (void)setRegistrationDelegate:(id<UARegistrationDelegate>)registrationDelegate {
@@ -729,6 +718,10 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
 }
 
 - (void)updateAPNSRegistration {
+    [self updateAPNSRegistration:nil];
+}
+
+- (void)updateAPNSRegistration:(nullable void(^)(BOOL success))completionHandler {
     self.shouldUpdateAPNSRegistration = NO;
 
     UANotificationOptions options = UANotificationOptionNone;
@@ -739,19 +732,16 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
         categories = self.combinedCategories;
     }
 
-    if (options == UANotificationOptionNone && !self.allowUnregisteringUserNotificationTypes) {
-        UA_LDEBUG(@"Skipping unregistered for user notification types.");
-        [self updateChannelRegistrationForcefully:NO];
-        return;
-    }
-
     [self.pushRegistration getAuthorizedSettingsWithCompletionHandler:^(UAAuthorizedNotificationSettings authorizedSettings, UAAuthorizationStatus status) {
         if (authorizedSettings == UAAuthorizedNotificationSettingsNone && options == UANotificationOptionNone) {
+            if (completionHandler) {
+                completionHandler(NO);
+            }
             // Skip updating registration to avoid prompting the user
             return;
         }
 
-        [self.pushRegistration updateRegistrationWithOptions:options categories:categories];
+        [self.pushRegistration updateRegistrationWithOptions:options categories:categories completionHandler:completionHandler];
     }];
 }
 

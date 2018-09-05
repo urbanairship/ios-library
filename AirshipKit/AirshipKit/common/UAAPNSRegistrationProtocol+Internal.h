@@ -43,10 +43,11 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @param options The notification options to register.
  * @param categories The categories to register
+ * @param completionHandler The completion handler. Success parameter is `YES` if permissions granted, `NO` otherwise.
  */
 -(void)updateRegistrationWithOptions:(UANotificationOptions)options
-                          categories:(NSSet<UANotificationCategory *> *)categories;
-@optional
+                          categories:(NSSet<UANotificationCategory *> *)categories
+                   completionHandler:(nullable void(^)(BOOL success))completionHandler;
 
 @end
 
