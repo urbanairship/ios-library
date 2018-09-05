@@ -3,6 +3,22 @@ iOS Changelog
 
 Migration Guides: Documentation/Migration
 
+Version 10.0.0-DP1 - September 5, 2018
+=======================================
+Developer Preview of iOS SDK 10
+
+- iOS 12 compatible preview.
+
+Changes
+-------
+- Dropped support for iOS 9.
+- Removed APIs deprecated in previous versions of the SDK.
+- Added support for critical notifications.
+- Added support for provisional authorization.
+- Added support for summary category arguments.
+- Updated UANotificationContent with thread id and new summary argument fields.
+
+
 Version 9.4.0 - September 4, 2018
 =================================
 Minor release thats adds support for tag group audiences, miss behaviors and resizable HTML messages in
