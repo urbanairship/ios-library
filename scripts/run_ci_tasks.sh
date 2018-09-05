@@ -111,8 +111,7 @@ then
 
   # Run pod lib lint
   cd $ROOT_PATH
-  pod lib lint UrbanAirship-iOS-SDK.podspec UrbanAirship-iOS-AppExtensions.podspec
-  pod lib lint UrbanAirship-iOS-DebugLibrary.podspec --quick # debug library won't pass full lint until iOS SDK 10 is published
+  pod lib lint
   cd -
 fi
 

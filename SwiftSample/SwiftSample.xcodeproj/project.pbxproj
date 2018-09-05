@@ -42,9 +42,6 @@
 		CCDA35C41B8D237300950AD5 /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = CCDA35C31B8D237300950AD5 /* AirshipConfig.plist */; };
 		CCDA35CB1B8D269700950AD5 /* AirshipKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCDA35CA1B8D265B00950AD5 /* AirshipKit.framework */; };
 		CCDA35D31B8D277900950AD5 /* AirshipKit.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = CCDA35CA1B8D265B00950AD5 /* AirshipKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		DFE7016E212F24E700A708D5 /* DebugViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFE7016D212F24E600A708D5 /* DebugViewController.swift */; };
-		DFE70172212F256600A708D5 /* AirshipDebugKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DFE70167212F244400A708D5 /* AirshipDebugKit.framework */; };
-		DFE70173212F26E500A708D5 /* AirshipDebugKit.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = DFE70167212F244400A708D5 /* AirshipDebugKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -125,13 +122,6 @@
 			remoteGlobalIDString = 494DD9561B0EB677009C134E;
 			remoteInfo = AirshipKit;
 		};
-		DFE70166212F244400A708D5 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = DFE70161212F244400A708D5 /* AirshipDebugKit.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = DFE7011F212F1FAA00A708D5;
-			remoteInfo = AirshipDebugKit;
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -171,7 +161,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				DFE70173212F26E500A708D5 /* AirshipDebugKit.framework in CopyFiles */,
 				61E30D8A1DDE33CB00B7EE28 /* AirshipAppExtensions.framework in CopyFiles */,
 				CCDA35D31B8D277900950AD5 /* AirshipKit.framework in CopyFiles */,
 			);
@@ -217,8 +206,6 @@
 		CCDA35B41B8D233A00950AD5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CCDA35C31B8D237300950AD5 /* AirshipConfig.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = AirshipConfig.plist; sourceTree = "<group>"; };
 		CCDA35C51B8D265B00950AD5 /* AirshipKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = AirshipKit.xcodeproj; path = ../AirshipKit/AirshipKit.xcodeproj; sourceTree = "<group>"; };
-		DFE70161212F244400A708D5 /* AirshipDebugKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = AirshipDebugKit.xcodeproj; path = ../AirshipDebugKit/AirshipDebugKit.xcodeproj; sourceTree = "<group>"; };
-		DFE7016D212F24E600A708D5 /* DebugViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DebugViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -235,7 +222,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				CCDA35CB1B8D269700950AD5 /* AirshipKit.framework in Frameworks */,
-				DFE70172212F256600A708D5 /* AirshipDebugKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -303,15 +289,13 @@
 		CCDA359A1B8D233A00950AD5 = {
 			isa = PBXGroup;
 			children = (
-				CCDA35C51B8D265B00950AD5 /* AirshipKit.xcodeproj */,
 				49251DDE1D6F987600EED4BD /* AirshipAppExtensions.xcodeproj */,
-				DFE70161212F244400A708D5 /* AirshipDebugKit.xcodeproj */,
+				CCDA35C51B8D265B00950AD5 /* AirshipKit.xcodeproj */,
 				CCDA35A51B8D233A00950AD5 /* SwiftSample */,
 				49251DEC1D6F9C1500EED4BD /* SampleServiceExtension */,
 				CCDA35C31B8D237300950AD5 /* AirshipConfig.plist */,
 				61E392371CC81EEA00D994E3 /* UAMessageCenterDefaultStyle.plist */,
 				CCDA35A41B8D233A00950AD5 /* Products */,
-				DFE7016F212F256300A708D5 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -337,7 +321,6 @@
 				61AD10D41BE7D88B0004C886 /* TagsTableViewController.swift */,
 				493F51121C5B2C9E00B050A1 /* MessageCenterViewController.swift */,
 				493F51281C5B423700B050A1 /* InboxDelegate.swift */,
-				DFE7016D212F24E600A708D5 /* DebugViewController.swift */,
 				613420361BD6C09B00236A18 /* Resources */,
 				CCDA35AC1B8D233A00950AD5 /* Main.storyboard */,
 				CCDA35B11B8D233A00950AD5 /* LaunchScreen.storyboard */,
@@ -355,14 +338,6 @@
 				99B68B871EE08D730038DAE3 /* AirshipResources tvOS.bundle */,
 				CC53F7701D9B12C9004D366C /* libUAirship.a */,
 				CC53F7721D9B12C9004D366C /* AirshipKitTests.xctest */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		DFE70162212F244400A708D5 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				DFE70167212F244400A708D5 /* AirshipDebugKit.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -467,10 +442,6 @@
 					ProjectRef = 49251DDE1D6F987600EED4BD /* AirshipAppExtensions.xcodeproj */;
 				},
 				{
-					ProductGroup = DFE70162212F244400A708D5 /* Products */;
-					ProjectRef = DFE70161212F244400A708D5 /* AirshipDebugKit.xcodeproj */;
-				},
-				{
 					ProductGroup = CCDA35C61B8D265B00950AD5 /* Products */;
 					ProjectRef = CCDA35C51B8D265B00950AD5 /* AirshipKit.xcodeproj */;
 				},
@@ -540,13 +511,6 @@
 			remoteRef = CCDA35C91B8D265B00950AD5 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		DFE70167212F244400A708D5 /* AirshipDebugKit.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = AirshipDebugKit.framework;
-			remoteRef = DFE70166212F244400A708D5 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 /* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
@@ -603,7 +567,6 @@
 				493F51131C5B2C9E00B050A1 /* MessageCenterViewController.swift in Sources */,
 				61AD10D51BE7D88B0004C886 /* TagsTableViewController.swift in Sources */,
 				614953E71BF106EE001E03AF /* AddNamedUserTableViewController.swift in Sources */,
-				DFE7016E212F24E700A708D5 /* DebugViewController.swift in Sources */,
 				CCDA35A71B8D233A00950AD5 /* AppDelegate.swift in Sources */,
 				614A39431BDFD611009CA7FB /* AddTagsTableViewController.swift in Sources */,
 				493F51291C5B423700B050A1 /* InboxDelegate.swift in Sources */,
