@@ -12,7 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * The full screen controller.
  */
-@interface UAInAppMessageFullScreenController : NSObject <UIGestureRecognizerDelegate>
+@interface UAInAppMessageFullScreenViewController : UIViewController <UIGestureRecognizerDelegate>
 
 /**
  * The factory method for creating a full screen controller.
@@ -30,13 +30,11 @@ NS_ASSUME_NONNULL_BEGIN
                                                       style:(UAInAppMessageFullScreenStyle *)style;
 
 /**
- * The method to show the full screen controller.
+ * The method to show the full screen view controller.
  *
- * @param parentView The parent view.
  * @param completionHandler The completion handler that's called when show operation completes.
  */
-- (void)showWithParentView:(UIView *)parentView
-         completionHandler:(void (^)(UAInAppMessageResolution *))completionHandler;
+- (void)showWithCompletionHandler:(void (^)(UAInAppMessageResolution *))completionHandler;
 
 @end
 
