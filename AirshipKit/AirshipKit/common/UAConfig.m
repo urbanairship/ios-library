@@ -306,7 +306,7 @@
             UA_LDEBUG(@"No profile found, but not a simulator: inProduction = YES");
             _usesProductionPushServer =  @(YES);
         } else {
-            UA_LERR(@"No profile found. Unable to automatically detect provisioning mode in the simulator. Falling back to inProduction as set: %d", _inProduction);
+            UA_LWARN(@"No profile found. Unable to automatically detect provisioning mode in the simulator. Falling back to inProduction as set: %d", _inProduction);
             _usesProductionPushServer =  @(_inProduction);
         }
     }
@@ -325,7 +325,7 @@
     UA_LTRACE(@"Profile path: %@", profilePath);
 
     if (err) {
-        UA_LERR(@"No mobile provision profile found or the profile could not be read. Defaulting to production mode.");
+        UA_LWARN(@"No mobile provision profile found or the profile could not be read. Defaulting to production mode.");
         return YES;
     }
 
@@ -364,7 +364,7 @@
 
     // Let the dev know if there's not an APS entitlement in the profile. Something is terribly wrong.
     if (!apsEnvironment) {
-        UA_LERR(@"aps-environment value is not set. If this is not a simulator, ensure that the app is properly provisioned for push");
+        UA_LWARN(@"aps-environment value is not set. If this is not a simulator, ensure that the app is properly provisioned for push");
     }
 
     return YES;// For safety, assume production unless the profile is explicitly set to development

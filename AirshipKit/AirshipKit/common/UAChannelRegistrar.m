@@ -166,17 +166,17 @@ UAConfig *config;
     NSTimeInterval timeSinceLastUpdate = [[self.date now] timeIntervalSinceDate:self.lastSuccessfulUpdateDate];
 
     if (self.lastSuccessfulPayload == nil) {
-        UA_LDEBUG(@"Should update registration. Last payload is nil.");
+        UA_LTRACE(@"Should update registration. Last payload is nil.");
         return true;
     }
 
     if (![payload isEqualToPayload:self.lastSuccessfulPayload]) {
-        UA_LDEBUG(@"Should update registration. Channel registration payload has changed.");
+        UA_LTRACE(@"Should update registration. Channel registration payload has changed.");
         return true;
     }
 
     if (timeSinceLastUpdate >= k24HoursInSeconds) {
-        UA_LDEBUG(@"Should update registration. Time since last registration time is greater than 24 hours.");
+        UA_LTRACE(@"Should update registration. Time since last registration time is greater than 24 hours.");
         return true;
     }
 
@@ -219,7 +219,7 @@ UAConfig *config;
         dispatch_async(dispatch_get_main_queue(), ^{
             UA_STRONGIFY(self);
             if (statusCode == 409) {
-                UA_LDEBUG(@"Channel conflict, recreating.");
+                UA_LTRACE(@"Channel conflict, recreating.");
                 [self createChannelWithPayload:payload];
             } else {
                 [self failedWithPayload:payload];

@@ -77,7 +77,7 @@ NSString *const UARateAppLinkPromptTimestampsKey = @"RateAppActionLinkPromptCoun
     id itunesID;
 
     if (arguments.value != nil && ![arguments.value isKindOfClass:[NSDictionary class]]) {
-        UA_LWARN(@"Unable to parse arguments: %@", arguments);
+        UA_LERR(@"Unable to parse arguments: %@", arguments);
         return NO;
     }
 
@@ -87,50 +87,50 @@ NSString *const UARateAppLinkPromptTimestampsKey = @"RateAppActionLinkPromptCoun
     itunesID = [arguments.value objectForKey:UARateAppItunesIDKey] ?: [[UAirship shared].config itunesID];
 
     if (!showLinkPrompt) {
-        UA_LWARN(@"show_link_prompt not provided in arguments: %@, show_link_prompt is required.", arguments);
+        UA_LERR(@"show_link_prompt not provided in arguments: %@, show_link_prompt is required.", arguments);
         return NO;
     }
 
     if (![showLinkPrompt isKindOfClass:[NSNumber class]]) {
-        UA_LWARN(@"Parsed an invalid show_link_prompt from arguments: %@. show_link_prompt must be an NSNumber or BOOL.", arguments);
+        UA_LERR(@"Parsed an invalid show_link_prompt from arguments: %@. show_link_prompt must be an NSNumber or BOOL.", arguments);
         return NO;
     }
 
     if (linkPromptTitle) {
         if (![linkPromptTitle isKindOfClass:[NSString class]]) {
-            UA_LWARN(@"Parsed an invalid link prompt title from arguments: %@. Link prompt title must be an NSString.", arguments);
+            UA_LERR(@"Parsed an invalid link prompt title from arguments: %@. Link prompt title must be an NSString.", arguments);
             return NO;
         }
 
         if ([linkPromptTitle length] > kMaxTitleChars) {
-            UA_LWARN(@"Parsed an invalid link prompt title from arguments: %@. Link prompt title must be shorter than 24 characters in length.", arguments);
+            UA_LERR(@"Parsed an invalid link prompt title from arguments: %@. Link prompt title must be shorter than 24 characters in length.", arguments);
             return NO;
         }
     }
 
     if (linkPromptBody) {
         if (![linkPromptBody isKindOfClass:[NSString class]]) {
-            UA_LWARN(@"Parsed an invalid link prompt body from arguments: %@. Link prompt body must be an NSString.", arguments);
+            UA_LERR(@"Parsed an invalid link prompt body from arguments: %@. Link prompt body must be an NSString.", arguments);
             return NO;
         }
 
         if ([linkPromptBody length] > kMaxBodyChars) {
-            UA_LWARN(@"Parsed an invalid link prompt body from arguments: %@. Link prompt body must be shorter than 50 characters in length.", arguments);
+            UA_LERR(@"Parsed an invalid link prompt body from arguments: %@. Link prompt body must be shorter than 50 characters in length.", arguments);
             return NO;
         }
     }
 
     if (!itunesID) {
-        UA_LWARN(@"iTunes ID is required.");
+        UA_LERR(@"iTunes ID is required.");
         return NO;
     } else {
         if (![itunesID isKindOfClass:[NSString class]]) {
-            UA_LWARN(@"Parsed an invalid itunes ID from arguments: %@. Link itunes ID must be an NSString.", arguments);
+            UA_LERR(@"Parsed an invalid itunes ID from arguments: %@. Link itunes ID must be an NSString.", arguments);
             return NO;
         }
 
         if ([itunesID length] == 0) {
-            UA_LWARN(@"Parsed an invalid itunes ID from arguments: %@ - itunes ID must not be an empty string.", arguments);
+            UA_LERR(@"Parsed an invalid itunes ID from arguments: %@ - itunes ID must not be an empty string.", arguments);
             return NO;
         }
     }

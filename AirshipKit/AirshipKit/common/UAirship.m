@@ -148,7 +148,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
             if ([UAirship resources]) {
                 self.sharedMessageCenter = [UAMessageCenter messageCenterWithConfig:self.config];
             } else {
-                UA_LINFO(@"Unable to initialize default message center: AirshipResources is missing");
+                UA_LWARN(@"Unable to initialize default message center: AirshipResources is missing");
             }
         }
 #endif

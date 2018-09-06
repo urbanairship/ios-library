@@ -52,7 +52,7 @@
                 //main queue
                 dispatchMainIfNecessary(^{
                     if (!result) {
-                        UA_LWARN("Action %@ called the completion handler with a nil result", [self description]);
+                        UA_LTRACE("Action %@ called the completion handler with a nil result", [self description]);
                     }
 
                     UAActionResult *normalizedResult = result ?: [UAActionResult emptyResult];

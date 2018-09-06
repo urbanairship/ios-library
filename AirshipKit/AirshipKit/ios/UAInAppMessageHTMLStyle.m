@@ -37,7 +37,7 @@ NSString *const UAHTMLMaxHeightKey = @"maxHeight";
         id dismissIconResource = normalizedHTMLStyleDict[UAHTMLDismissIconResourceKey];
         if (dismissIconResource) {
             if (![dismissIconResource isKindOfClass:[NSString class]]) {
-                UA_LWARN(@"Dismiss icon resource name must be a string");
+                UA_LERR(@"Dismiss icon resource name must be a string");
                 return nil;
             }
             style.dismissIconResource = dismissIconResource;

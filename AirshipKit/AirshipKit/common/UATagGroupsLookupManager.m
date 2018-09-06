@@ -145,7 +145,7 @@ NSString * const UATagGroupsLookupManagerErrorDomain = @"com.urbanairship.tag_gr
                                             cachedResponse:self.cache.response
                                          completionHandler:^(UATagGroupsLookupResponse *response) {
                                              if (response.status != 200) {
-                                                 UA_LERR(@"Failed to refresh the cache. Status: %lu", (unsigned long)response.status);
+                                                 UA_LTRACE(@"Failed to refresh the cache. Status: %lu", (unsigned long)response.status);
                                              } else {
                                                  self.cache.response = response;
                                                  self.cache.requestedTagGroups = tagGroups;

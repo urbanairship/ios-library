@@ -317,7 +317,7 @@ NSString *const UAInAppMessageTextInfoStyleUnderlineValue = @"underline";
         return [[UAInAppMessageTextInfo alloc] initWithBuilder:builder];
     }
 
-    UA_LINFO(@"Extended %@ with nil builderBlock. Returning self.", self);
+    UA_LDEBUG(@"Extended %@ with nil builderBlock. Returning self.", self);
     return self;
 }
 

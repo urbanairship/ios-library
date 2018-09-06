@@ -86,7 +86,7 @@
 +(UIColor *)createColor:(NSString *)colorString {
 
     if (![colorString isKindOfClass:[NSString class]] || ![UAColorUtils colorWithHexString:colorString]) {
-        UA_LDEBUG(@"Color must be a valid string representing a valid color hexidecimal");
+        UA_LERR(@"Color must be a valid string representing a valid color hexidecimal");
         return nil;
     }
 
@@ -96,7 +96,7 @@
 +(UIFont *)createFont:(NSDictionary *)fontDict {
 
     if (![fontDict isKindOfClass:[NSDictionary class]]) {
-        UA_LDEBUG(@"Font name must be a valid string stored under the key \"fontName\".");
+        UA_LERR(@"Font name must be a valid string stored under the key \"fontName\".");
         return nil;
     }
 
@@ -104,23 +104,23 @@
     NSString *fontSize = fontDict[@"fontSize"];
 
     if (![fontName isKindOfClass:[NSString class]]) {
-        UA_LDEBUG(@"Font name must be a valid string stored under the key \"fontName\".");
+        UA_LERR(@"Font name must be a valid string stored under the key \"fontName\".");
         return nil;
     }
 
     if (![fontSize isKindOfClass:[NSString class]]) {
-        UA_LDEBUG(@"Font size must be a valid string stored under the key \"fontSize\".");
+        UA_LERR(@"Font size must be a valid string stored under the key \"fontSize\".");
         return nil;
     }
 
     if (!([fontSize doubleValue] > 0)) {
-        UA_LDEBUG(@"Font name must be a valid string representing a double greater than 0.");
+        UA_LERR(@"Font name must be a valid string representing a double greater than 0.");
         return nil;
     }
 
     // Ensure font exists in bundle
     if (![UIFont fontWithName:fontName size:[fontSize doubleValue]]) {
-        UA_LDEBUG(@"Font must exist in app bundle.");
+        UA_LERR(@"Font must exist in app bundle.");
         return nil;
     }
 
@@ -131,7 +131,7 @@
 +(UIImage *)createIcon:(NSString *)iconString {
 
     if (![iconString isKindOfClass:[NSString class]] || ![UIImage imageNamed:iconString]) {
-        UA_LDEBUG(@"Icon key must be a valid image name string representing an image file in the bundle.");
+        UA_LERR(@"Icon key must be a valid image name string representing an image file in the bundle.");
         return nil;
     }
 

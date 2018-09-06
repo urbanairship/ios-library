@@ -39,7 +39,7 @@ NSString *const UAFullScreenMediaStyleKey = @"mediaStyle";
         id dismissIconResource = normalizedFullScreenStyleDict[UAFullScreenDismissIconResourceKey];
         if (dismissIconResource) {
             if (![dismissIconResource isKindOfClass:[NSString class]]) {
-                UA_LWARN(@"Dismiss icon resource name must be a string");
+                UA_LERR(@"Dismiss icon resource name must be a string");
                 return nil;
             }
             style.dismissIconResource = dismissIconResource;

@@ -389,7 +389,7 @@ CGFloat const CloseButtonHeight = 30;
                                          situation:UASituationManualInvocation
                                           metadata:nil
                                  completionHandler:^(UAActionResult *result) {
-                                     UA_LINFO(@"Button actions finished running.");
+                                     UA_LTRACE(@"Button actions finished running.");
                                  }];
     }
 }

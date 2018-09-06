@@ -87,7 +87,7 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
                 return;
             }
         } else {
-            UA_LDEBUG(@"Save failed: must have a username and password.");
+            UA_LERR(@"Save failed: must have a username and password.");
             return;
         }
     }

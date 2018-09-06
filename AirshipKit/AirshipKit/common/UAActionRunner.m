@@ -127,7 +127,7 @@ completionHandler:(UAActionCompletionHandler)completionHandler {
         UAActionCompletionHandler handler = ^(UAActionResult *result) {
             @synchronized(self) {
                 if (completionHandlerCalled) {
-                    UA_LERR(@"Action %@ completion handler called multiple times.", actionName);
+                    UA_LTRACE(@"Action %@ completion handler called multiple times.", actionName);
                     dispatch_group_leave(dispatchGroup);
                     return;
                 }

@@ -161,7 +161,7 @@ void UserNotificationCenterWillPresentNotificationWithCompletionHandler(id self,
             // Make sure the app's completion handler is called on the main queue
             dispatch_async(dispatch_get_main_queue(), ^{
                 if (completionHandlerCalled) {
-                    UA_LWARN(@"Completion handler called multiple times.");
+                    UA_LTRACE(@"Completion handler called multiple times.");
                     return;
                 }
                 completionHandlerCalled = YES;
@@ -184,7 +184,7 @@ void UserNotificationCenterWillPresentNotificationWithCompletionHandler(id self,
         // Make sure the app's completion handler is called on the main queue
         dispatch_async(dispatch_get_main_queue(), ^{
             if (completionHandlerCalled) {
-                UA_LWARN(@"Completion handler called multiple times.");
+                UA_LTRACE(@"Completion handler called multiple times.");
                 return;
             }
             completionHandlerCalled = YES;
@@ -216,7 +216,7 @@ void UserNotificationCenterDidReceiveNotificationResponseWithCompletionHandler(i
             // Make sure the app's completion handler is called on the main queue
             dispatch_async(dispatch_get_main_queue(), ^{
                 if (completionHandlerCalled) {
-                    UA_LWARN(@"Completion handler called multiple times.");
+                    UA_LTRACE(@"Completion handler called multiple times.");
                     return;
                 }
                 completionHandlerCalled = YES;
@@ -236,7 +236,7 @@ void UserNotificationCenterDidReceiveNotificationResponseWithCompletionHandler(i
               didReceiveNotificationResponse:response
                        withCompletionHandler:^() {
                            if (completionHandlerCalled) {
-                               UA_LWARN(@"Completion handler called multiple times.");
+                               UA_LTRACE(@"Completion handler called multiple times.");
                                return;
                            }
                            completionHandlerCalled = YES;
@@ -291,7 +291,7 @@ void ApplicationPerformFetchWithCompletionHandler(id self,
             // Make sure the app's completion handler is called on the main queue
             dispatch_async(dispatch_get_main_queue(), ^{
                 if (completionHandlerCalled) {
-                    UA_LWARN(@"Completion handler called multiple times.");
+                    UA_LTRACE(@"Completion handler called multiple times.");
                     return;
                 }
                 completionHandlerCalled = YES;
@@ -316,7 +316,7 @@ void ApplicationPerformFetchWithCompletionHandler(id self,
     dispatch_group_enter(dispatchGroup);
     [UAAppIntegration application:application performFetchWithCompletionHandler:^(UIBackgroundFetchResult result) {
         if (completionHandlerCalled) {
-            UA_LWARN(@"Completion handler called multiple times.");
+            UA_LTRACE(@"Completion handler called multiple times.");
             return;
         }
         completionHandlerCalled = YES;
@@ -375,7 +375,7 @@ void ApplicationDidReceiveRemoteNotificationFetchCompletionHandler(id self,
             // Make sure the app's completion handler is called on the main queue
             dispatch_async(dispatch_get_main_queue(), ^{
                 if (completionHandlerCalled) {
-                    UA_LWARN(@"Completion handler called multiple times.");
+                    UA_LTRACE(@"Completion handler called multiple times.");
                    return;
                 }
                 completionHandlerCalled = YES;
@@ -402,7 +402,7 @@ void ApplicationDidReceiveRemoteNotificationFetchCompletionHandler(id self,
     dispatch_group_enter(dispatchGroup);
     [UAAppIntegration application:application didReceiveRemoteNotification:userInfo fetchCompletionHandler:^(UIBackgroundFetchResult result) {
         if (completionHandlerCalled) {
-            UA_LWARN(@"Completion handler called multiple times.");
+            UA_LTRACE(@"Completion handler called multiple times.");
             return;
         }
         completionHandlerCalled = YES;

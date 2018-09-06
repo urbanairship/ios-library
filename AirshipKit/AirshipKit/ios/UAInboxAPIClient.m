@@ -106,14 +106,14 @@ NSString *const UALastMessageListModifiedTime = @"UALastMessageListModifiedTime.
                                messages = [jsonResponse objectForKey:@"messages"];
                                
                                if (!messages) {
-                                   UA_LDEBUG(@"Unable to parse inbox message body: %@ Error: %@", data, parseError);
+                                   UA_LERR(@"Unable to parse inbox message body: %@ Error: %@", data, parseError);
                                    failureBlock();
                                    return;
                                }
                                
                                UA_LTRACE(@"Retrieved message list with status: %ld jsonResponse: %@", (unsigned long)httpResponse.statusCode, jsonResponse);
                                
-                               UA_LDEBUG(@"Setting Last-Modified time to '%@' for user %@'s message list.", lastModified, self.user.username);
+                               UA_LTRACE(@"Setting Last-Modified time to '%@' for user %@'s message list.", lastModified, self.user.username);
                                [self.dataStore setValue:lastModified
                                                  forKey:[NSString stringWithFormat:UALastMessageListModifiedTime, self.user.username]];
                                

@@ -16,11 +16,11 @@ NSString * const UAAddCustomEventActionErrorDomain = @"UAAddCustomEventActionErr
         if (eventName) {
             return YES;
         } else {
-            UA_LDEBUG(@"UAAddCustomEventAction requires an event name in the event data.");
+            UA_LERR(@"UAAddCustomEventAction requires an event name in the event data.");
             return NO;
         }
     } else {
-        UA_LDEBUG(@"UAAddCustomEventAction requires a dictionary of event data.");
+        UA_LERR(@"UAAddCustomEventAction requires a dictionary of event data.");
         return NO;
     }
 }

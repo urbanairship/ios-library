@@ -40,7 +40,7 @@ const NSUInteger UAInteractiveNotificationEventCharacterLimit = 255;
     if (responseText) {
         NSString *userInputString = [responseText copy];
         if (userInputString.length > UAInteractiveNotificationEventCharacterLimit) {
-            UA_LDEBUG(@"Interactive Notification %@ value exceeds %lu characters. Truncating to max chars", @"user_input", (unsigned long)
+            UA_LWARN(@"Interactive Notification %@ value exceeds %lu characters. Truncating to max chars", @"user_input", (unsigned long)
                     UAInteractiveNotificationEventCharacterLimit);
             userInputString = [userInputString substringToIndex:UAInteractiveNotificationEventCharacterLimit];
         }

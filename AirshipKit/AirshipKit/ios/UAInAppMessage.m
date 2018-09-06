@@ -273,7 +273,7 @@ NSString *const UAInAppMessageSourceLegacyPushValue = @"legacy-push";
     self = [super init];
     
     if (![builder isValid]) {
-        UA_LDEBUG(@"UAInAppMessage could not be initialized, builder has missing or invalid parameters.");
+        UA_LERR(@"UAInAppMessage could not be initialized, builder has missing or invalid parameters.");
         return nil;
     }
     
@@ -305,7 +305,7 @@ NSString *const UAInAppMessageSourceLegacyPushValue = @"legacy-push";
         return [[UAInAppMessage alloc] initWithBuilder:builder];
     }
 
-    UA_LINFO(@"Extended %@ with nil builderBlock. Returning self.", self);
+    UA_LDEBUG(@"Extended %@ with nil builderBlock. Returning self.", self);
     return self;
 }
 

@@ -176,7 +176,7 @@ NSString *const UAEventKey = @"event";
 
 - (void)addEvent:(UAEvent *)event {
     if (!event.isValid) {
-        UA_LWARN(@"Dropping invalid event %@.", event);
+        UA_LERR(@"Dropping invalid event %@.", event);
         return;
     }
 

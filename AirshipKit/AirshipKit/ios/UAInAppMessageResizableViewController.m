@@ -203,7 +203,7 @@ double const DefaultResizableViewAnimationDuration = 0.2;
 
 - (void)showWithCompletionHandler:(void (^)(UAInAppMessageResolution * _Nonnull))completionHandler {
     if (self.isShowing) {
-        UA_LWARN(@"In-app message resizable view has already been displayed");
+        UA_LTRACE(@"In-app message resizable view has already been displayed");
         return;
     }
 

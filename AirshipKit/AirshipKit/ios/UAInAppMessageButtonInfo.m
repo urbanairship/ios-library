@@ -86,7 +86,7 @@ NSString *const UAInAppMessageButtonInfoBehaviorDismissValue = @"dismiss";
     self = [super init];
 
     if (![builder isValid]) {
-        UA_LDEBUG(@"UAInAppMessageButtonInfo instance could not be initialized, builder has missing or invalid parameters.");
+        UA_LERR(@"UAInAppMessageButtonInfo instance could not be initialized, builder has missing or invalid parameters.");
         return nil;
     }
 
@@ -289,7 +289,7 @@ NSString *const UAInAppMessageButtonInfoBehaviorDismissValue = @"dismiss";
         return [[UAInAppMessageButtonInfo alloc] initWithBuilder:builder];
     }
 
-    UA_LINFO(@"Extended %@ with nil builderBlock. Returning self.", self);
+    UA_LDEBUG(@"Extended %@ with nil builderBlock. Returning self.", self);
     return self;
 }
 

@@ -41,7 +41,7 @@ NSString * const kUALastRemoteDataModifiedTime = @"UALastRemoteDataModifiedTime"
     __block UARemoteDataRefreshFailureBlock refreshRemoteDataFailureBlock = failureBlock;
     
     UADisposable *disposable = [UADisposable disposableWithBlock:^{
-        UA_LDEBUG(@"disposed");
+        UA_LTRACE(@"Remote data refresh blocks disposed");
         refreshRemoteDataSuccessBlock = nil;
         refreshRemoteDataFailureBlock = nil;
     }];
