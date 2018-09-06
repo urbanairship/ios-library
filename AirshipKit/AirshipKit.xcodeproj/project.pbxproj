@@ -137,6 +137,7 @@
 		457366432137084B00C5993A /* UAJSONSerializationTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 457366422137084B00C5993A /* UAJSONSerializationTest.m */; };
 		457769FA2141A010008270FC /* UAInAppMessageHTMLViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 457769F92141A00F008270FC /* UAInAppMessageHTMLViewController.xib */; };
 		457769FC2141A124008270FC /* UAInAppMessageFullScreenViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 457769FB2141A123008270FC /* UAInAppMessageFullScreenViewController.xib */; };
+		457769FD2141A421008270FC /* UAInAppMessageBannerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 99E2DA3D1FBA29B200C9F2CC /* UAInAppMessageBannerViewController.m */; };
 		457F47AB20ADDF7500DEEAD9 /* UAViewUtils+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 457F47A920ADDF7500DEEAD9 /* UAViewUtils+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		457F47AC20ADDF7500DEEAD9 /* UAViewUtils+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 457F47A920ADDF7500DEEAD9 /* UAViewUtils+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		457F47AD20ADDF7500DEEAD9 /* UAViewUtils+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 457F47A920ADDF7500DEEAD9 /* UAViewUtils+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -674,10 +675,9 @@
 		99E2DA391FBA298C00C9F2CC /* UAInAppMessageBannerAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = 99E2DA361FBA298C00C9F2CC /* UAInAppMessageBannerAdapter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		99E2DA3A1FBA298C00C9F2CC /* UAInAppMessageBannerAdapter.m in Sources */ = {isa = PBXBuildFile; fileRef = 99E2DA371FBA298C00C9F2CC /* UAInAppMessageBannerAdapter.m */; };
 		99E2DA3B1FBA298C00C9F2CC /* UAInAppMessageBannerAdapter.m in Sources */ = {isa = PBXBuildFile; fileRef = 99E2DA371FBA298C00C9F2CC /* UAInAppMessageBannerAdapter.m */; };
-		99E2DA3E1FBA29B200C9F2CC /* UAInAppMessageBannerController+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 99E2DA3C1FBA29B200C9F2CC /* UAInAppMessageBannerController+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		99E2DA3F1FBA29B200C9F2CC /* UAInAppMessageBannerController+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 99E2DA3C1FBA29B200C9F2CC /* UAInAppMessageBannerController+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		99E2DA401FBA29B200C9F2CC /* UAInAppMessageBannerController.m in Sources */ = {isa = PBXBuildFile; fileRef = 99E2DA3D1FBA29B200C9F2CC /* UAInAppMessageBannerController.m */; };
-		99E2DA411FBA29B200C9F2CC /* UAInAppMessageBannerController.m in Sources */ = {isa = PBXBuildFile; fileRef = 99E2DA3D1FBA29B200C9F2CC /* UAInAppMessageBannerController.m */; };
+		99E2DA3E1FBA29B200C9F2CC /* UAInAppMessageBannerViewController+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 99E2DA3C1FBA29B200C9F2CC /* UAInAppMessageBannerViewController+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		99E2DA3F1FBA29B200C9F2CC /* UAInAppMessageBannerViewController+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 99E2DA3C1FBA29B200C9F2CC /* UAInAppMessageBannerViewController+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		99E2DA411FBA29B200C9F2CC /* UAInAppMessageBannerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 99E2DA3D1FBA29B200C9F2CC /* UAInAppMessageBannerViewController.m */; };
 		99E2DA441FBA2A0000C9F2CC /* UAInAppMessageBannerView+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 99E2DA421FBA2A0000C9F2CC /* UAInAppMessageBannerView+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		99E2DA451FBA2A0000C9F2CC /* UAInAppMessageBannerView+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 99E2DA421FBA2A0000C9F2CC /* UAInAppMessageBannerView+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		99E2DA461FBA2A0000C9F2CC /* UAInAppMessageBannerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 99E2DA431FBA2A0000C9F2CC /* UAInAppMessageBannerView.m */; };
@@ -1683,7 +1683,7 @@
 		45736628213617C800C5993A /* UAJSONSerialization.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = UAJSONSerialization.m; path = common/UAJSONSerialization.m; sourceTree = "<group>"; };
 		457366422137084B00C5993A /* UAJSONSerializationTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAJSONSerializationTest.m; sourceTree = "<group>"; };
 		457769F92141A00F008270FC /* UAInAppMessageHTMLViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UAInAppMessageHTMLViewController.xib; sourceTree = "<group>"; };
-		457769FB2141A123008270FC /* UAInAppMessageFullScreenViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = UAInAppMessageFullScreenViewController.xib; path = AirshipResources/ios/UAInAppMessageFullScreenViewController.xib; sourceTree = "<group>"; };
+		457769FB2141A123008270FC /* UAInAppMessageFullScreenViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = UAInAppMessageFullScreenViewController.xib; sourceTree = "<group>"; };
 		457F47A920ADDF7500DEEAD9 /* UAViewUtils+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "UAViewUtils+Internal.h"; path = "common/UAViewUtils+Internal.h"; sourceTree = "<group>"; };
 		457F47AA20ADDF7500DEEAD9 /* UAViewUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = UAViewUtils.m; path = common/UAViewUtils.m; sourceTree = "<group>"; };
 		459D4049208FE64D00C40E2D /* Valid-UAInAppMessageFullScreenStyle.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Valid-UAInAppMessageFullScreenStyle.plist"; sourceTree = "<group>"; };
@@ -1851,8 +1851,8 @@
 		99E2DA2A1FB6271400C9F2CC /* UAInAppMessageManager+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "UAInAppMessageManager+Internal.h"; path = "ios/UAInAppMessageManager+Internal.h"; sourceTree = "<group>"; };
 		99E2DA361FBA298C00C9F2CC /* UAInAppMessageBannerAdapter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = UAInAppMessageBannerAdapter.h; path = ios/UAInAppMessageBannerAdapter.h; sourceTree = "<group>"; };
 		99E2DA371FBA298C00C9F2CC /* UAInAppMessageBannerAdapter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = UAInAppMessageBannerAdapter.m; path = ios/UAInAppMessageBannerAdapter.m; sourceTree = "<group>"; };
-		99E2DA3C1FBA29B200C9F2CC /* UAInAppMessageBannerController+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "UAInAppMessageBannerController+Internal.h"; path = "ios/UAInAppMessageBannerController+Internal.h"; sourceTree = "<group>"; };
-		99E2DA3D1FBA29B200C9F2CC /* UAInAppMessageBannerController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = UAInAppMessageBannerController.m; path = ios/UAInAppMessageBannerController.m; sourceTree = "<group>"; };
+		99E2DA3C1FBA29B200C9F2CC /* UAInAppMessageBannerViewController+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "UAInAppMessageBannerViewController+Internal.h"; path = "ios/UAInAppMessageBannerViewController+Internal.h"; sourceTree = "<group>"; };
+		99E2DA3D1FBA29B200C9F2CC /* UAInAppMessageBannerViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = UAInAppMessageBannerViewController.m; path = ios/UAInAppMessageBannerViewController.m; sourceTree = "<group>"; };
 		99E2DA421FBA2A0000C9F2CC /* UAInAppMessageBannerView+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "UAInAppMessageBannerView+Internal.h"; path = "ios/UAInAppMessageBannerView+Internal.h"; sourceTree = "<group>"; };
 		99E2DA431FBA2A0000C9F2CC /* UAInAppMessageBannerView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = UAInAppMessageBannerView.m; path = ios/UAInAppMessageBannerView.m; sourceTree = "<group>"; };
 		99E2DA481FBA2A4400C9F2CC /* UAInAppMessageBannerView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = UAInAppMessageBannerView.xib; sourceTree = "<group>"; };
@@ -2536,7 +2536,6 @@
 		494DD94D1B0EB677009C134E = {
 			isa = PBXGroup;
 			children = (
-				457769FB2141A123008270FC /* UAInAppMessageFullScreenViewController.xib */,
 				CC40DDB31D8CAF7300BABD4F /* AirshipConfig.xcconfig */,
 				494DD9591B0EB677009C134E /* AirshipKit */,
 				CC89997D1D8B642D00A0CECC /* AirshipResources */,
@@ -2708,8 +2707,8 @@
 				99E2DA6D1FBB6B5D00C9F2CC /* UAInAppMessageBannerDisplayContent.m */,
 				45DCD81D2086A6D200BCF10F /* UAInAppMessageBannerStyle.h */,
 				45DCD81E2086A6D200BCF10F /* UAInAppMessageBannerStyle.m */,
-				99E2DA3C1FBA29B200C9F2CC /* UAInAppMessageBannerController+Internal.h */,
-				99E2DA3D1FBA29B200C9F2CC /* UAInAppMessageBannerController.m */,
+				99E2DA3C1FBA29B200C9F2CC /* UAInAppMessageBannerViewController+Internal.h */,
+				99E2DA3D1FBA29B200C9F2CC /* UAInAppMessageBannerViewController.m */,
 				99E2DA421FBA2A0000C9F2CC /* UAInAppMessageBannerView+Internal.h */,
 				99E2DA431FBA2A0000C9F2CC /* UAInAppMessageBannerView.m */,
 				998B22641FD89D4400C535AE /* UAInAppMessageBannerContentView+Internal.h */,
@@ -3900,6 +3899,7 @@
 				99978EEA1EBAB7E7000F4AF7 /* UADefaultActions.plist */,
 				CC8999A51D8B642D00A0CECC /* UAMessageCenterPlaceholderIcon.png */,
 				DFFA739F1FFDB42D00D2DA1A /* UAInAppMessageModalViewController.xib */,
+				457769FB2141A123008270FC /* UAInAppMessageFullScreenViewController.xib */,
 				454C85B22125FD0C00D10A7A /* UAInAppMessageResizableViewController.xib */,
 				99E2DA481FBA2A4400C9F2CC /* UAInAppMessageBannerView.xib */,
 				998B22621FD896EF00C535AE /* UAInAppMessageBannerContentView.xib */,
@@ -4049,7 +4049,7 @@
 				CC40DCF81D8C996A00BABD4F /* UAPasteboardAction.h in Headers */,
 				CC40DD1D1D8C996A00BABD4F /* UAURLProtocol.h in Headers */,
 				CC40DCF41D8C996A00BABD4F /* UAOpenExternalURLAction.h in Headers */,
-				99E2DA3E1FBA29B200C9F2CC /* UAInAppMessageBannerController+Internal.h in Headers */,
+				99E2DA3E1FBA29B200C9F2CC /* UAInAppMessageBannerViewController+Internal.h in Headers */,
 				CC40DCC21D8C996A00BABD4F /* UAJavaScriptDelegate.h in Headers */,
 				CC40DCB71D8C996A00BABD4F /* UAInboxUtils.h in Headers */,
 				45DCD82D2086AA7000BCF10F /* UAInAppMessageTextStyle.h in Headers */,
@@ -4541,7 +4541,7 @@
 				6ED87FA21FEB3161003B652A /* UAInAppMessageTextInfo+Internal.h in Headers */,
 				DF7E224B1ED62E0900C79C46 /* UAInbox.h in Headers */,
 				DF7E224C1ED62E0900C79C46 /* UAInboxMessage.h in Headers */,
-				99E2DA3F1FBA29B200C9F2CC /* UAInAppMessageBannerController+Internal.h in Headers */,
+				99E2DA3F1FBA29B200C9F2CC /* UAInAppMessageBannerViewController+Internal.h in Headers */,
 				DF7E224D1ED62E0900C79C46 /* UAInboxMessageList.h in Headers */,
 				DF7E224E1ED62E0900C79C46 /* UAInboxUtils.h in Headers */,
 				45DCD82E2086AA7000BCF10F /* UAInAppMessageTextStyle.h in Headers */,
@@ -5171,6 +5171,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				457769FD2141A421008270FC /* UAInAppMessageBannerViewController.m in Sources */,
 				3C805B1A200ED87D0079F56E /* UAInAppMessageHTMLDisplayContent.m in Sources */,
 				3C7B15F72009766800ECA6D0 /* UAInAppMessageHTMLAdapter.m in Sources */,
 				6E12138F1E5D1B95006738FD /* UAScheduleDelay.m in Sources */,
@@ -5207,7 +5208,6 @@
 				DF18CCE71FEC73B000652445 /* UAInAppMessageModalAdapter.m in Sources */,
 				CC7EEB2A1DF9F2270041DA8D /* UAirshipVersion.m in Sources */,
 				CC40DC741D8C996A00BABD4F /* UACustomEvent.m in Sources */,
-				99E2DA401FBA29B200C9F2CC /* UAInAppMessageBannerController.m in Sources */,
 				4515B6A22134AF1300284CFF /* UAInAppMessageResizableViewController.m in Sources */,
 				6EADE6FD1FA8F9FB0007F924 /* UAScheduleInfo.m in Sources */,
 				3C67E11F21264221006031EB /* UAInAppMessagingRemoteConfig.m in Sources */,
@@ -5610,7 +5610,7 @@
 				3C67E12121264221006031EB /* UAInAppMessagingRemoteConfig.m in Sources */,
 				6E598D6C200055A7005B234B /* UAInAppMessageDisplayEvent.m in Sources */,
 				6ED3C03F200801C4002A746B /* UAInAppMessageCustomDisplayContent.m in Sources */,
-				99E2DA411FBA29B200C9F2CC /* UAInAppMessageBannerController.m in Sources */,
+				99E2DA411FBA29B200C9F2CC /* UAInAppMessageBannerViewController.m in Sources */,
 				CC40DD3C1D8C9A1C00BABD4F /* UAActionRegistryEntry.m in Sources */,
 				CC40DD3D1D8C9A1C00BABD4F /* UAActionResult.m in Sources */,
 				4515B6A42134AF1300284CFF /* UAInAppMessageResizableViewController.m in Sources */,

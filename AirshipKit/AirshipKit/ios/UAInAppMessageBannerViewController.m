@@ -6,7 +6,7 @@
 #import "UAInAppMessageButtonView+Internal.h"
 #import "UAInAppMessageMediaView+Internal.h"
 #import "UAInAppMessageBannerContentView+Internal.h"
-#import "UAInAppMessageBannerController+Internal.h"
+#import "UAInAppMessageBannerViewController+Internal.h"
 #import "UAInAppMessageBannerView+Internal.h"
 #import "UAInAppMessageUtils+Internal.h"
 #import "UAInAppMessageManager+Internal.h"
@@ -35,8 +35,15 @@ double const MinimumSwipeVelocity = 100.0;
  */
 CGFloat const BannerExcessiveSafeAreaPadding = 14;
 
+/**
+ * The banner view controller.
+ */
+@interface UAInAppMessageBannerViewController ()
 
-@interface UAInAppMessageBannerController ()
+/**
+ * The new window created in front of the app's existing window.
+ */
+@property (strong, nonatomic, nullable) UIWindow *bannerWindow;
 
 /**
  * The idenfier of the banner message.
@@ -97,12 +104,12 @@ CGFloat const BannerExcessiveSafeAreaPadding = 14;
 
 @end
 
-@implementation UAInAppMessageBannerController
+@implementation UAInAppMessageBannerViewController
 
-+ (instancetype)bannerControllerWithBannerMessageID:(NSString *)messageID
-                                     displayContent:(UAInAppMessageBannerDisplayContent *)displayContent
-                                          mediaView:(nullable UAInAppMessageMediaView *)mediaView
-                                              style:(nullable UAInAppMessageBannerStyle *)style {
++ (instancetype)bannerViewControllerWithIdentifier:(NSString *)messageID
+                                    displayContent:(UAInAppMessageBannerDisplayContent *)displayContent
+                                         mediaView:(nullable UAInAppMessageMediaView *)mediaView
+                                             style:(nullable UAInAppMessageBannerStyle *)style {
 
     return [[self alloc] initWithBannerMessageID:messageID
                                   displayContent:displayContent
@@ -121,24 +128,112 @@ CGFloat const BannerExcessiveSafeAreaPadding = 14;
         self.displayContent = displayContent;
         self.mediaView = mediaView;
         self.style = style;
-
-        [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(orientationChanged:)
-                                                     name:UIDeviceOrientationDidChangeNotification
-                                                   object:nil];
     }
 
     return self;
 }
 
 #pragma mark -
+#pragma mark Lifecycle
+
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    [self scheduleDismissalTimer];
+
+    self.verticalConstraint.constant = 0;
+
+    UA_WEAKIFY(self);
+    [UIView animateWithDuration:DefaultAnimationDuration delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
+        [self.bannerWindow layoutIfNeeded];
+        [self.bannerView layoutIfNeeded];
+    } completion:^(BOOL finished) {
+        UA_STRONGIFY(self);
+        [self scheduleDismissalTimer];
+        self.isShowing = YES;
+    }];
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    self.bannerView.userInteractionEnabled = NO;
+    [self.bannerView.superview removeGestureRecognizer:self.panGestureRecognizer];
+    [self.dismissalTimer invalidate];
+    [self.bannerView removeFromSuperview];
+}
+
+- (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {
+    [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
+
+    BOOL statusBarShowing = !([UIApplication sharedApplication].isStatusBarHidden);
+    CGFloat styledDefaultBannerTopPadding = [self.style.additionalPadding.top floatValue] + DefaultBannerControllerPadding;
+
+    if (@available(iOS 11.0, *)) {
+        UIWindow *window = [UIApplication sharedApplication].keyWindow;
+
+        // If the orientation has a bar without inset
+        if (window.safeAreaInsets.top == 0 && statusBarShowing) {
+            [UAInAppMessageUtils applyPaddingForAttribute:NSLayoutAttributeTop
+                                                   onView:self.bannerView.containerView
+                                                  padding:styledDefaultBannerTopPadding
+                                                  replace:YES];
+            [self.bannerView layoutIfNeeded];
+            return;
+        }
+
+        // If the orientation has a bar with inset
+        if (window.safeAreaInsets.top > 0 && statusBarShowing) {
+            CGFloat adjustedDefaultPadding = window.safeAreaInsets.top - BannerExcessiveSafeAreaPadding;
+            CGFloat adjustedCustomPadding = adjustedDefaultPadding + [self.style.additionalPadding.top floatValue];
+
+            CGFloat topPadding = self.style.additionalPadding.top ?  adjustedCustomPadding : adjustedDefaultPadding;
+
+            [UAInAppMessageUtils applyPaddingForAttribute:NSLayoutAttributeTop
+                                                   onView:self.bannerView.containerView
+                                                  padding:topPadding
+                                                  replace:YES];
+            [self.bannerView layoutIfNeeded];
+            return;
+        }
+    } else {
+        // If status bar is showing
+        if (statusBarShowing) {
+            [UAInAppMessageUtils applyPaddingForAttribute:NSLayoutAttributeTop
+                                                   onView:self.bannerView.containerView
+                                                  padding:styledDefaultBannerTopPadding
+                                                  replace:YES];
+            [self.bannerView layoutIfNeeded];
+            return;
+        }
+    }
+
+    // Otherwise remove top padding
+    [UAInAppMessageUtils applyPaddingForAttribute:NSLayoutAttributeTop
+                                           onView:self.bannerView.containerView
+                                          padding:[self.style.additionalPadding.top floatValue]
+                                          replace:YES];
+    [self.bannerView layoutIfNeeded];
+}
+
+#pragma mark -
 #pragma mark Core Functionality
 
-- (void)showWithParentView:(UIView *)parentView completionHandler:(void (^)(UAInAppMessageResolution * _Nonnull))completionHandler {
+- (void)showWithCompletionHandler:(void (^)(UAInAppMessageResolution * _Nonnull))completionHandler {
     if (self.isShowing) {
         UA_LWARN(@"In-app message banner has already been displayed");
         return;
     }
+
+    // create a new window that covers the entire display
+    self.bannerWindow = [[UIWindow alloc] initWithFrame:UIScreen.mainScreen.bounds];
+
+    // make sure window appears above any alerts already showing
+    self.bannerWindow.windowLevel = UIWindowLevelAlert;
+
+    // add this view controller to the window
+    self.bannerWindow.rootViewController = self;
+
+    // show the window
+    [self.bannerWindow makeKeyAndVisible];
 
     UAInAppMessageTextInfo *heading = self.displayContent.heading;
     UAInAppMessageTextInfo *body = self.displayContent.body;
@@ -155,7 +250,6 @@ CGFloat const BannerExcessiveSafeAreaPadding = 14;
                                                                                                        bodyView:bodyView
                                                                                                       mediaView:self.mediaView];
 
-
     // Only add button view if buttons are present
     UAInAppMessageButtonView *buttonView;
     if (buttons.count) {
@@ -170,8 +264,8 @@ CGFloat const BannerExcessiveSafeAreaPadding = 14;
                                                                   bannerContentView:bannerContentView
                                                                          buttonView:buttonView
                                                                               style:self.style];
-    [parentView addSubview:self.bannerView];
-    [self addInitialConstraintsToParentView:parentView
+    [self.bannerWindow addSubview:self.bannerView];
+    [self addInitialConstraintsToParentView:self.bannerWindow
                                  bannerView:self.bannerView
                                   placement:self.displayContent.placement];
 
@@ -189,13 +283,7 @@ CGFloat const BannerExcessiveSafeAreaPadding = 14;
 
     self.showCompletionHandler = completionHandler;
 
-    [self bannerView:self.bannerView animateInWithParentView:parentView completionHandler:^{
-        [self scheduleDismissalTimer];
-        [self observeAppState];
-        self.isShowing = YES;
-    }];
-
-    [self initializeGestureRecognizersWithBannerView:self.bannerView parentView:parentView];
+    [self initializeGestureRecognizersWithBannerView:self.bannerView parentView:self.bannerWindow];
 }
 
 - (void)dismissWithResolution:(UAInAppMessageResolution *)resolution  {
@@ -204,13 +292,18 @@ CGFloat const BannerExcessiveSafeAreaPadding = 14;
         self.showCompletionHandler = nil;
     }
 
-    [self beginTeardown];
+    self.verticalConstraint.constant = self.bannerView.bounds.size.height;
 
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [self bannerView:self.bannerView animateOutWithParentView:self.bannerView.superview completionHandler:^{
-            [self finishTeardown];
-        }];
-    });
+    UA_WEAKIFY(self);
+    [UIView animateWithDuration:DefaultAnimationDuration delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
+        [self.bannerWindow layoutIfNeeded];
+        [self.bannerView layoutIfNeeded];
+    } completion:^(BOOL finished){
+        UA_STRONGIFY(self);
+        self.isShowing = NO;
+        [self.bannerView removeFromSuperview];
+        self.bannerWindow = nil;
+    }];
 }
 
 - (void)messageTapped {
@@ -320,31 +413,6 @@ CGFloat const BannerExcessiveSafeAreaPadding = 14;
 
     [parentView layoutIfNeeded];
     [bannerView layoutIfNeeded];
-}
-
-- (void)bannerView:(UAInAppMessageBannerView *)bannerView animateInWithParentView:(UIView *)parentView completionHandler:(void (^)(void))completionHandler {
-    self.verticalConstraint.constant = 0;
-
-    // Force orientation check on display
-    [self refreshViewForCurrentOrientation];
-
-    [UIView animateWithDuration:DefaultAnimationDuration delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
-        [parentView layoutIfNeeded];
-        [bannerView layoutIfNeeded];
-    } completion:^(BOOL finished) {
-        completionHandler();
-    }];
-}
-
-- (void)bannerView:(UAInAppMessageBannerView *)bannerView animateOutWithParentView:(UIView *)parentView completionHandler:(void (^)(void))completionHandler {
-    self.verticalConstraint.constant = bannerView.bounds.size.height;
-
-    [UIView animateWithDuration:DefaultAnimationDuration delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
-        [parentView layoutIfNeeded];
-        [bannerView layoutIfNeeded];
-    } completion:^(BOOL finished){
-        completionHandler();
-    }];
 }
 
 #pragma mark -
@@ -463,85 +531,6 @@ CGFloat const BannerExcessiveSafeAreaPadding = 14;
     }
 }
 
-- (void)refreshViewForCurrentOrientation {
-    BOOL statusBarShowing = !([UIApplication sharedApplication].isStatusBarHidden);
-    CGFloat styledDefaultBannerTopPadding = [self.style.additionalPadding.top floatValue] + DefaultBannerControllerPadding;
-
-    if (@available(iOS 11.0, *)) {
-        UIWindow *window = [UIApplication sharedApplication].keyWindow;
-
-        // If the orientation has a bar without inset
-        if (window.safeAreaInsets.top == 0 && statusBarShowing) {
-            [UAInAppMessageUtils applyPaddingForAttribute:NSLayoutAttributeTop
-                                                   onView:self.bannerView.containerView
-                                                  padding:styledDefaultBannerTopPadding
-                                                  replace:YES];
-            [self.bannerView layoutIfNeeded];
-            return;
-        }
-
-        // If the orientation has a bar with inset
-        if (window.safeAreaInsets.top > 0 && statusBarShowing) {
-            CGFloat adjustedDefaultPadding = window.safeAreaInsets.top - BannerExcessiveSafeAreaPadding;
-            CGFloat adjustedCustomPadding = adjustedDefaultPadding + [self.style.additionalPadding.top floatValue];
-
-            CGFloat topPadding = self.style.additionalPadding.top ?  adjustedCustomPadding : adjustedDefaultPadding;
-
-            [UAInAppMessageUtils applyPaddingForAttribute:NSLayoutAttributeTop
-                                                   onView:self.bannerView.containerView
-                                                  padding:topPadding
-                                                  replace:YES];
-            [self.bannerView layoutIfNeeded];
-            return;
-        }
-    } else {
-        // If status bar is showing
-        if (statusBarShowing) {
-            [UAInAppMessageUtils applyPaddingForAttribute:NSLayoutAttributeTop
-                                                   onView:self.bannerView.containerView
-                                                  padding:styledDefaultBannerTopPadding
-                                                  replace:YES];
-            [self.bannerView layoutIfNeeded];
-            return;
-        }
-    }
-
-    // Otherwise remove top padding
-    [UAInAppMessageUtils applyPaddingForAttribute:NSLayoutAttributeTop
-                                           onView:self.bannerView.containerView
-                                          padding:[self.style.additionalPadding.top floatValue]
-                                          replace:YES];
-    [self.bannerView layoutIfNeeded];
-}
-
-#pragma mark -
-#pragma mark App State
-
-- (void)orientationChanged:(NSNotification *)notification {
-    [self refreshViewForCurrentOrientation];
-}
-
-- (void)applicationDidBecomeActive {
-    [self scheduleDismissalTimer];
-
-}
-
-- (void)applicationWillResignActive {
-    [self.dismissalTimer invalidate];
-}
-
-- (void)observeAppState {
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(applicationDidBecomeActive)
-                                                 name:UIApplicationDidBecomeActiveNotification
-                                               object:[UIApplication sharedApplication]];
-
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(applicationWillResignActive)
-                                                 name:UIApplicationWillResignActiveNotification
-                                               object:[UIApplication sharedApplication]];
-}
-
 #pragma mark -
 #pragma mark Timer
 
@@ -557,42 +546,6 @@ CGFloat const BannerExcessiveSafeAreaPadding = 14;
 
 - (void)timerFired {
     [self dismissWithResolution:[UAInAppMessageResolution timedOutResolution]];
-}
-
-#pragma mark -
-#pragma mark Teardown
-
-/**
- * Releases all resources. This method can be safely called
- * in dealloc as a protection against unexpected early release.
- */
-- (void)teardown {
-    [self beginTeardown];
-    [self finishTeardown];
-}
-
-/**
- * Prepares the message view for dismissal by disabling interaction, removing
- * the pan gesture recognizer and releasing resources that can be disposed of
- * prior to starting the dismissal animation.
- */
-- (void)beginTeardown {
-    self.bannerView.userInteractionEnabled = NO;
-    [self.bannerView.superview removeGestureRecognizer:self.panGestureRecognizer];
-    [self.dismissalTimer invalidate];
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
-}
-
-/**
- * Finalizes dismissal by removing the message view from its
- * parent, and releasing the reference to self
- */
-- (void)finishTeardown {
-    [self.bannerView removeFromSuperview];
-}
-
-- (void)dealloc {
-    [self teardown];
 }
 
 @end

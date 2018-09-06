@@ -3,7 +3,7 @@
 #import "UAGlobal.h"
 #import "UAInAppMessageBannerAdapter.h"
 #import "UAInAppMessageBannerDisplayContent+Internal.h"
-#import "UAInAppMessageBannerController+Internal.h"
+#import "UAInAppMessageBannerViewController+Internal.h"
 #import "UAInAppMessageUtils+Internal.h"
 #import "UAUtils+Internal.h"
 
@@ -11,7 +11,7 @@ NSString *const UABannerStyleFileName = @"UAInAppMessageBannerStyle";
 
 @interface UAInAppMessageBannerAdapter ()
 @property (nonatomic, strong) UAInAppMessage *message;
-@property (nonatomic, strong) UAInAppMessageBannerController *bannerController;
+@property (nonatomic, strong) UAInAppMessageBannerViewController *bannerController;
 @property (nonatomic, strong) NSCache *imageCache;
 @end
 
@@ -37,7 +37,7 @@ NSString *const UABannerStyleFileName = @"UAInAppMessageBannerStyle";
     UAInAppMessageBannerDisplayContent *displayContent = (UAInAppMessageBannerDisplayContent *)self.message.displayContent;
     [UAInAppMessageUtils prepareMediaView:displayContent.media imageCache:self.imageCache completionHandler:^(UAInAppMessagePrepareResult result, UAInAppMessageMediaView *mediaView) {
         if (result == UAInAppMessagePrepareResultSuccess) {
-            self.bannerController = [UAInAppMessageBannerController bannerControllerWithBannerMessageID:self.message.identifier
+            self.bannerController = [UAInAppMessageBannerViewController bannerViewControllerWithIdentifier:self.message.identifier
                                                                                          displayContent:displayContent
                                                                                               mediaView:mediaView
                                                                                                   style:self.style];
@@ -53,8 +53,7 @@ NSString *const UABannerStyleFileName = @"UAInAppMessageBannerStyle";
 }
 
 - (void)display:(void (^)(UAInAppMessageResolution *))completionHandler {
-    [self.bannerController showWithParentView:[UAUtils mainWindow]
-                            completionHandler:completionHandler];
+    [self.bannerController showWithCompletionHandler:completionHandler];
 }
 
 - (void)dealloc {
