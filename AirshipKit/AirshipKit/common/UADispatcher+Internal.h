@@ -12,13 +12,6 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /**
- * Factory method.
- * @param queue The dispatcher's queue.
- * @return A UADispatcher instance.
- */
-+ (instancetype)dispatcherWithQueue:(dispatch_queue_t)queue;
-
-/**
  * Shared dispatcher that dispatches on the main queue.
  * @return The shared main dispatcher.
  */
