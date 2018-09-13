@@ -44,7 +44,7 @@ NSString * const UAJSONSerializationErrorDomain = @"com.urbanairship.json_serial
     if (!acceptingFragments ||
         ([jsonObject isKindOfClass:[NSArray class]] || [jsonObject isKindOfClass:[NSDictionary class]])) {
         if (![NSJSONSerialization isValidJSONObject:jsonObject]) {
-            UA_LWARN(@"Attempting to JSON-serialize a non-foundation object. Returning nil.");
+            UA_LERR(@"Attempting to JSON-serialize a non-foundation object. Returning nil.");
             if (error) {
                 NSString *msg = [NSString stringWithFormat:@"Attempted to serialize invalid object: %@", jsonObject];
                 NSDictionary *info = @{NSLocalizedDescriptionKey:msg};

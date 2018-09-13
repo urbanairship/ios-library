@@ -44,7 +44,7 @@ NSString * const UAModulesLocation = @"location";
 - (nullable UAComponent *)airshipComponentForModuleName:(NSString *)moduleName {
     NSString *airshipProperty = self.moduleMap[moduleName];
     if (!airshipProperty.length) {
-        UA_LERR(@"No module with name: %@", moduleName);
+        UA_LWARN(@"No module with name: %@", moduleName);
         return nil;
     }
 

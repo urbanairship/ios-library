@@ -29,14 +29,14 @@
 - (void)swizzle:(SEL)selector protocol:(Protocol *)protocol implementation:(IMP)implementation {
     Method method = class_getInstanceMethod(self.class, selector);
     if (method) {
-        UA_LDEBUG(@"Swizzling implementation for %@ class %@", NSStringFromSelector(selector), self.class);
+        UA_LTRACE(@"Swizzling implementation for %@ class %@", NSStringFromSelector(selector), self.class);
         IMP existing = method_setImplementation(method, implementation);
         if (implementation != existing) {
             [self storeOriginalImplementation:existing selector:selector];
         }
     } else {
         struct objc_method_description description = protocol_getMethodDescription(protocol, selector, NO, YES);
-        UA_LDEBUG(@"Adding implementation for %@ class %@", NSStringFromSelector(selector), self.class);
+        UA_LTRACE(@"Adding implementation for %@ class %@", NSStringFromSelector(selector), self.class);
         class_addMethod(self.class, selector, implementation, description.types);
     }
 }
@@ -44,13 +44,13 @@
 - (void)swizzle:(SEL)selector implementation:(IMP)implementation {
     Method method = class_getInstanceMethod(self.class, selector);
     if (method) {
-        UA_LDEBUG(@"Swizzling implementation for %@ class %@", NSStringFromSelector(selector), self.class);
+        UA_LTRACE(@"Swizzling implementation for %@ class %@", NSStringFromSelector(selector), self.class);
         IMP existing = method_setImplementation(method, implementation);
         if (implementation != existing) {
             [self storeOriginalImplementation:existing selector:selector];
         }
     } else {
-        UA_LDEBUG(@"Unable to swizzle method for %@ class %@, method not found.", NSStringFromSelector(selector), self.class);
+        UA_LTRACE(@"Unable to swizzle method for %@ class %@, method not found.", NSStringFromSelector(selector), self.class);
     }
 }
 
@@ -61,7 +61,7 @@
         IMP originalImplementation = [self originalImplementation:selector];
 
         if (originalImplementation) {
-            UA_LDEBUG(@"Unswizzling implementation for %@ class %@", NSStringFromSelector(selector), self.class);
+            UA_LTRACE(@"Unswizzling implementation for %@ class %@", NSStringFromSelector(selector), self.class);
             method_setImplementation(method, originalImplementation);
         }
     }

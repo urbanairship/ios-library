@@ -95,7 +95,7 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
         [self.inAppMessageManager getSchedulesWithMessageID:pendingMessageID completionHandler:^(NSArray<UASchedule *> *schedules) {
             UA_STRONGIFY(self);
             if (schedules.count) {
-                UA_LINFO(@"The in-app message delivery push was directly launched for message: %@", pendingMessageID);
+                UA_LTRACE(@"The in-app message delivery push was directly launched for message: %@", pendingMessageID);
                 [self.inAppMessageManager cancelMessagesWithID:pendingMessageID];
                 self.pendingMessageID = nil;
 

@@ -311,7 +311,7 @@ NSUInteger const UAInAppMessageModalMaxButtons = 2;
     self = [super init];
 
     if (![builder isValid]) {
-        UA_LDEBUG(@"UAInAppMessageModalDisplayContent could not be initialized, builder has missing or invalid parameters.");
+        UA_LERR(@"UAInAppMessageModalDisplayContent could not be initialized, builder has missing or invalid parameters.");
         return nil;
     }
 
@@ -387,7 +387,7 @@ NSUInteger const UAInAppMessageModalMaxButtons = 2;
         return [[UAInAppMessageModalDisplayContent alloc] initWithBuilder:builder];
     }
 
-    UA_LINFO(@"Extended %@ with nil builderBlock. Returning self.", self);
+    UA_LDEBUG(@"Extended %@ with nil builderBlock. Returning self.", self);
     return self;
 }
 

@@ -37,7 +37,7 @@ NSUInteger const UAAssociatedIdentifiersMaxCharacterCount = 255;
         if ([key isKindOfClass:[NSString class]] && [value isKindOfClass:[NSString class]]) {
             [associatedIdentifiers setIdentifier:value forKey:key];
         } else {
-            UA_LWARN(@"Unable to create associated identifiers instance when dictionary contains a non string key/value for key: %@", key);
+            UA_LERR(@"Unable to create associated identifiers instance when dictionary contains a non string key/value for key: %@", key);
         }
     }
 

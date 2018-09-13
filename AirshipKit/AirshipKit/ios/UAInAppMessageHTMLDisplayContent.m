@@ -164,7 +164,7 @@ NSString *const UAInAppMessageURLKey = @"url";
     self = [super init];
 
     if (![builder isValid]) {
-        UA_LDEBUG(@"UAInAppMessageHTMLScreenDisplayContent could not be initialized, builder has missing or invalid parameters.");
+        UA_LERR(@"UAInAppMessageHTMLScreenDisplayContent could not be initialized, builder has missing or invalid parameters.");
         return nil;
     }
 
@@ -198,7 +198,7 @@ NSString *const UAInAppMessageURLKey = @"url";
         return [[UAInAppMessageHTMLDisplayContent alloc] initWithBuilder:builder];
     }
 
-    UA_LINFO(@"Extended %@ with nil builderBlock. Returning self.", self);
+    UA_LDEBUG(@"Extended %@ with nil builderBlock. Returning self.", self);
     return self;
 }
 

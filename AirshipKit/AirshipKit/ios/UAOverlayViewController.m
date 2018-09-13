@@ -367,7 +367,7 @@ static NSMutableSet *overlayControllers_ = nil;
     for (id key in self.headers) {
         id value = [self.headers objectForKey:key];
         if (![key isKindOfClass:[NSString class]] || ![value isKindOfClass:[NSString class]]) {
-            UA_LERR(@"Invalid header value.  Only string values are accepted for header names and values.");
+            UA_LWARN(@"Invalid header value.  Only string values are accepted for header names and values.");
             continue;
         }
 
@@ -465,14 +465,14 @@ static NSMutableSet *overlayControllers_ = nil;
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 20.0 * NSEC_PER_SEC), dispatch_get_main_queue(), ^(void){
         UA_STRONGIFY(self)
         if (self) {
-            UA_LINFO(@"Retrying url: %@", self.url);
+            UA_LDEBUG(@"Retrying url: %@", self.url);
             [self load];
         }
     });
 }
 
 - (void)closeWindowAnimated:(BOOL)animated {
-    UA_LDEBUG(@"Closing overlay controller: %@", [self.url absoluteString]);
+    UA_LTRACE(@"Closing overlay controller: %@", [self.url absoluteString]);
     [self finish:animated];
 }
 

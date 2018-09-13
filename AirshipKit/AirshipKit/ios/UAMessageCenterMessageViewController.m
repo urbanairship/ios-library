@@ -134,7 +134,7 @@ typedef enum MessageState {
 #pragma GCC diagnostic pop
             break;
         default:
-            UA_LWARN(@"WARNING: messageState = %u. Should be \"NONE\", \"FETCHING\", or \"TO_LOAD\"",self.messageState);
+            UA_LWARN(@"MessageState = %u. Should be \"NONE\", \"FETCHING\", or \"TO_LOAD\"",self.messageState);
             break;
     }
     
@@ -185,7 +185,7 @@ typedef enum MessageState {
 
 - (void)delete:(id)sender {
     if (self.messageState != LOADED) {
-        UA_LWARN(@"WARNING: messageState = %u. Should be \"LOADED\"",self.messageState);
+        UA_LWARN(@"MessageState = %u. Should be \"LOADED\"",self.messageState);
     }
     if (self.message) {
         self.messageState = NONE;
@@ -391,7 +391,7 @@ static NSString *urlForBlankPage = @"about:blank";
 
 - (void)webView:(WKWebView *)wv decidePolicyForNavigationResponse:(WKNavigationResponse *)navigationResponse decisionHandler:(void (^)(WKNavigationResponsePolicy))decisionHandler {
     if (self.messageState != LOADING) {
-        UA_LWARN(@"WARNING: messageState = %u. Should be \"LOADING\"",self.messageState);
+        UA_LWARN(@"MessageState = %u. Should be \"LOADING\"",self.messageState);
     }
     if ([navigationResponse.response isKindOfClass:[NSHTTPURLResponse class]]) {
         NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)navigationResponse.response;
@@ -427,7 +427,7 @@ static NSString *urlForBlankPage = @"about:blank";
 
 - (void)webView:(WKWebView *)wv didFinishNavigation:(WKNavigation *)navigation {
     if (self.messageState != LOADING) {
-        UA_LWARN(@"WARNING: messageState = %u. Should be \"LOADING\"",self.messageState);
+        UA_LWARN(@"MessageState = %u. Should be \"LOADING\"",self.messageState);
     }
     
     if ([UAirship messageCenter].disableMessageLinkPreviewAndCallouts) {
@@ -451,11 +451,12 @@ static NSString *urlForBlankPage = @"about:blank";
 
 - (void)webView:(WKWebView *)wv didFailNavigation:(WKNavigation *)navigation withError:(NSError *)error {
     if (self.messageState != LOADING) {
-        UA_LWARN(@"WARNING: messageState = %u. Should be \"LOADING\"",self.messageState);
+        UA_LWARN(@"MessageState = %u. Should be \"LOADING\"",self.messageState);
     }
     if (error.code == NSURLErrorCancelled) {
         return;
     }
+
     UA_LDEBUG(@"Failed to load message: %@", error);
     
     self.messageState = NONE;

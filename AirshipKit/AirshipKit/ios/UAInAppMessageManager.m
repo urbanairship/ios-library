@@ -242,7 +242,7 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
     id<UAInAppMessageAdapterProtocol> (^factory)(UAInAppMessage* message) = self.adapterFactories[@(message.displayType)];
 
     if (!factory) {
-        UA_LWARN(@"Factory unavailable for message: %@", message);
+        UA_LERR(@"Factory unavailable for message: %@", message);
         return nil;
     }
 
@@ -340,7 +340,7 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
     // Create the adapter
     UARetriable *createAdapter = [self adapterRetriableWithMessage:message scheduleID:scheduleID resultHandler:^(UARetriableResult result) {
         if (result == UARetriableResultCancel) {
-            UA_LWARN(@"Failed to build adapter for message: %@, skipping display for schedule: %@", message, scheduleID);
+            UA_LDEBUG(@"Failed to build adapter for message: %@, skipping display for schedule: %@", message, scheduleID);
             completionHandler(UAAutomationSchedulePrepareResultPenalize);
         }
     }];

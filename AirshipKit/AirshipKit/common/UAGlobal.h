@@ -18,26 +18,36 @@ typedef NS_ENUM(NSInteger, UALogLevel) {
 
     /**
      * Log error messages.
+     *
+     * Used for critical errors, parse exceptions and other situations that cannot be gracefully handled.
      */
     UALogLevelError = 1,
 
     /**
      * Log warning messages.
+     *
+     * Used for API deprecations, invalid setup and other potentially problematic situations.
      */
     UALogLevelWarn = 2,
 
     /**
      * Log informative messages.
+     *
+     * Used for reporting general SDK status.
      */
     UALogLevelInfo = 3,
 
     /**
      * Log debugging messages.
+     *
+     * Used for reporting general SDK status with more detailed information.
      */
     UALogLevelDebug = 4,
 
     /**
      * Log detailed tracing messages.
+     *
+     * Used for reporting highly detailed SDK status that can be useful when debugging and troubleshooting.
      */
     UALogLevelTrace = 5
 };

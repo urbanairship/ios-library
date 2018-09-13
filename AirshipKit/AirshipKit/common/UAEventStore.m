@@ -203,7 +203,7 @@ NSString *const UAEventDataEntityName = @"UAEventData";
         return;
     }
 
-    UA_LDEBUG(@"Migrating old analytic store.");
+    UA_LTRACE(@"Migrating old analytic store.");
 
     NSArray *events = nil;
     do {

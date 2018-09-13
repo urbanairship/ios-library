@@ -19,7 +19,7 @@
 
     NSUInteger width = 8 * (hexString.length /2);
     if (width != 32 && width != 24) {
-        UA_LDEBUG(@"Invalid hex color string: %@ (must be 24 or 32 bits wide)", hexString);
+        UA_LERR(@"Invalid hex color string: %@ (must be 24 or 32 bits wide)", hexString);
         return nil;
     }
 
@@ -28,7 +28,7 @@
     NSScanner *scanner = [NSScanner scannerWithString:hexString];
 
     if (![scanner scanHexInt:&component]) {
-        UA_LDEBUG(@"Unable to scan hexString: %@", hexString);
+        UA_LERR(@"Unable to scan hexString: %@", hexString);
         return nil;
     };
 
@@ -52,7 +52,7 @@
     CGFloat red = 0.0, green = 0.0, blue = 0.0, alpha = 0.0;
 
     if (![color getRed:&red green:&green blue:&blue alpha:&alpha]) {
-        UA_LDEBUG(@"Unable to convert color %@ to RGBA colorspace", color);
+        UA_LERR(@"Unable to convert color %@ to RGBA colorspace", color);
         return nil;
     };
 

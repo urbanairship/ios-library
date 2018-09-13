@@ -119,7 +119,7 @@
                                                        options:0
                                                          error:nil];
 
-        UA_LDEBUG(@"Request to create user with body: %@", builder.body);
+        UA_LTRACE(@"Request to create user with body: %@", builder.body);
     }];
 
     return request;
@@ -144,7 +144,7 @@
                                                        options:0
                                                          error:nil];
 
-        UA_LDEBUG(@"Request to update user with body: %@", builder.body);
+        UA_LTRACE(@"Request to update user with body: %@", builder.body);
     }];
 
     return request;

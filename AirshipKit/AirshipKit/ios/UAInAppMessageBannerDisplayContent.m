@@ -348,7 +348,7 @@ NSUInteger const UAInAppMessageBannerMaxButtons = 2;
     self = [super init];
 
     if (![builder isValid]) {
-        UA_LDEBUG(@"UAInAppMessageBannerDisplayContent could not be initialized, builder has missing or invalid parameters.");
+        UA_LERR(@"UAInAppMessageBannerDisplayContent could not be initialized, builder has missing or invalid parameters.");
         return nil;
     }
 
@@ -377,7 +377,7 @@ NSUInteger const UAInAppMessageBannerMaxButtons = 2;
         return [[UAInAppMessageBannerDisplayContent alloc] initWithBuilder:builder];
     }
 
-    UA_LINFO(@"Extended %@ with nil builderBlock. Returning self.", self);
+    UA_LDEBUG(@"Extended %@ with nil builderBlock. Returning self.", self);
     return self;
 }
 

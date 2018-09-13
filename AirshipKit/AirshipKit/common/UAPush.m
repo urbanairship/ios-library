@@ -376,7 +376,7 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
     _customCategories = [categories filteredSetUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(id evaluatedObject, NSDictionary *bindings) {
         UANotificationCategory *category = evaluatedObject;
         if ([category.identifier hasPrefix:@"ua_"]) {
-            UA_LERR(@"Ignoring category %@, only Urban Airship notification categories are allowed to have prefix ua_.", category.identifier);
+            UA_LWARN(@"Ignoring category %@, only Urban Airship notification categories are allowed to have prefix ua_.", category.identifier);
             return NO;
         }
 
@@ -447,12 +447,12 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
                      endHour:(NSUInteger)endHour endMinute:(NSUInteger)endMinute {
 
     if (startHour >= 24 || startMinute >= 60) {
-        UA_LWARN(@"Unable to set quiet time, invalid start time: %ld:%02ld", (unsigned long)startHour, (unsigned long)startMinute);
+        UA_LERR(@"Unable to set quiet time, invalid start time: %ld:%02ld", (unsigned long)startHour, (unsigned long)startMinute);
         return;
     }
 
     if (endHour >= 24 || endMinute >= 60) {
-        UA_LWARN(@"Unable to set quiet time, invalid end time: %ld:%02ld", (unsigned long)endHour, (unsigned long)endMinute);
+        UA_LERR(@"Unable to set quiet time, invalid end time: %ld:%02ld", (unsigned long)endHour, (unsigned long)endMinute);
         return;
     }
 
@@ -920,7 +920,7 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
         // If the previous pushEnabled was set
         if ([self.dataStore objectForKey:UAPushEnabledKey]) {
             BOOL previousValue = [self.dataStore boolForKey:UAPushEnabledKey];
-            UA_LDEBUG(@"Migrating userPushNotificationEnabled to %@ from previous pushEnabledValue.", previousValue ? @"YES" : @"NO");
+            UA_LTRACE(@"Migrating userPushNotificationEnabled to %@ from previous pushEnabledValue.", previousValue ? @"YES" : @"NO");
             [self.dataStore setBool:previousValue forKey:UAUserPushNotificationsEnabledKey];
             [self.dataStore removeObjectForKey:UAPushEnabledKey];
         } else {
@@ -929,7 +929,7 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
                 if (@available(iOS 10.0, tvOS 10.0, *)) {
                     [[UNUserNotificationCenter currentNotificationCenter] getNotificationSettingsWithCompletionHandler:^(UNNotificationSettings * _Nonnull settings) {
                         if (settings.authorizationStatus == UNAuthorizationStatusAuthorized) {
-                            UA_LDEBUG(@"Migrating userPushNotificationEnabled to YES because application was authorized for notifications");
+                            UA_LTRACE(@"Migrating userPushNotificationEnabled to YES because application was authorized for notifications");
                             [self.dataStore setBool:YES forKey:UAUserPushNotificationsEnabledKey];
                         }
                     }];

@@ -246,7 +246,7 @@ typedef void (^UAInboxMessageFetchCompletionHandler)(NSArray *);
 
                                   UA_STRONGIFY(self)
 
-                                  UA_LDEBUG(@"Marking messages as deleted %@.", messageIDs);
+                                  UA_LTRACE(@"Marking messages as deleted %@.", messageIDs);
                                   for (UAInboxMessageData *messageData in data) {
                                       messageData.deletedClient = YES;
                                   }
@@ -311,7 +311,7 @@ typedef void (^UAInboxMessageFetchCompletionHandler)(NSArray *);
                                       [messages addObject:message];
                                   }
 
-                                  UA_LINFO(@"Inbox messages updated.");
+                                  UA_LDEBUG(@"Inbox messages updated.");
 
                                   UA_LTRACE(@"Loaded saved messages: %@.", messages);
                                   self.unreadCount = unreadCount;
@@ -342,7 +342,7 @@ typedef void (^UAInboxMessageFetchCompletionHandler)(NSArray *);
                                   NSArray *messageURLs = [data valueForKeyPath:@"messageURL"];
                                   NSArray *messageIDs = [data valueForKeyPath:@"messageID"];
 
-                                  UA_LDEBUG(@"Synchronizing locally read messages %@ on server.", messageIDs);
+                                  UA_LTRACE(@"Synchronizing locally read messages %@ on server.", messageIDs);
 
                                   [self.client performBatchMarkAsReadForMessageURLs:messageURLs onSuccess:^{
 
@@ -353,10 +353,10 @@ typedef void (^UAInboxMessageFetchCompletionHandler)(NSArray *);
                                                                         messageData.unread = NO;
                                                                     }
 
-                                                                    UA_LDEBUG(@"Successfully synchronized locally read messages on server.");
+                                                                    UA_LTRACE(@"Successfully synchronized locally read messages on server.");
                                                                 }];
                                   } onFailure:^() {
-                                      UA_LDEBUG(@"Failed to synchronize locally read messages on server.");
+                                      UA_LTRACE(@"Failed to synchronize locally read messages on server.");
                                   }];
 
                               }];
@@ -381,12 +381,12 @@ typedef void (^UAInboxMessageFetchCompletionHandler)(NSArray *);
                                   NSArray *messageURLs = [data valueForKeyPath:@"messageURL"];
                                   NSArray *messageIDs = [data valueForKeyPath:@"messageID"];
 
-                                  UA_LDEBUG(@"Synchronizing locally deleted messages %@ on server.", messageIDs);
+                                  UA_LTRACE(@"Synchronizing locally deleted messages %@ on server.", messageIDs);
 
                                   [self.client performBatchDeleteForMessageURLs:messageURLs onSuccess:^{
-                                      UA_LDEBUG(@"Successfully synchronized locally deleted messages on server.");
+                                      UA_LTRACE(@"Successfully synchronized locally deleted messages on server.");
                                   } onFailure:^() {
-                                      UA_LDEBUG(@"Failed to synchronize locally deleted messages on server.");
+                                      UA_LTRACE(@"Failed to synchronize locally deleted messages on server.");
                                   }];
                               }];
 }

@@ -297,7 +297,7 @@ const NSTimeInterval BackgroundLowPriorityEventUploadInterval = 900;
         return;
     }
 
-    UA_LDEBUG(@"Enqueuing attempt to schedule event upload with delay on main queue.");
+    UA_LTRACE(@"Enqueuing attempt to schedule event upload with delay on main queue.");
 
     UA_WEAKIFY(self);
     dispatch_async(dispatch_get_main_queue(), ^{
@@ -306,12 +306,12 @@ const NSTimeInterval BackgroundLowPriorityEventUploadInterval = 900;
             return;
         }
 
-        UA_LDEBUG(@"Attempting to schedule event upload with delay: %f seconds.", delay);
+        UA_LTRACE(@"Attempting to schedule event upload with delay: %f seconds.", delay);
 
         NSDate *uploadDate = [NSDate dateWithTimeIntervalSinceNow:delay];
         NSTimeInterval timeDifference = [self.nextUploadDate timeIntervalSinceDate:uploadDate];
         if (self.nextUploadDate && timeDifference >= 0 && timeDifference <= 1) {
-            UA_LDEBUG("Upload already scheduled for an earlier time.");
+            UA_LTRACE("Upload already scheduled for an earlier time.");
             return;
         }
 
@@ -320,7 +320,7 @@ const NSTimeInterval BackgroundLowPriorityEventUploadInterval = 900;
             self.nextUploadDate = nil;
         }
 
-        UA_LDEBUG(@"Scheduling upload.");
+        UA_LTRACE(@"Scheduling upload.");
         if ([self enqueueUploadOperationWithDelay:delay]) {
             self.nextUploadDate = uploadDate;
         }
@@ -339,10 +339,10 @@ const NSTimeInterval BackgroundLowPriorityEventUploadInterval = 900;
 
         self.nextUploadDate = nil;
 
-        UA_LDEBUG("Preparing events for upload");
+        UA_LTRACE("Preparing events for upload");
 
         if (![UAirship push].channelID) {
-            UA_LDEBUG("No Channel ID. Skipping analytic upload.");
+            UA_LTRACE("No Channel ID. Skipping analytic upload.");
             [operation finish];
             return;
         }
@@ -409,12 +409,12 @@ const NSTimeInterval BackgroundLowPriorityEventUploadInterval = 900;
                     self.lastSendTime = [NSDate date];
 
                     if (response.statusCode == 200) {
-                        UA_LDEBUG(@"Analytic upload success");
+                        UA_LTRACE(@"Analytic upload success");
                         UA_LTRACE(@"Response: %@", response);
                         [self.eventStore deleteEventsWithIDs:[preparedEvents valueForKey:@"event_id"]];
                         [self updateAnalyticsParametersWithResponse:response];
                     } else {
-                        UA_LDEBUG(@"Analytics upload request failed: %ld", (unsigned long)response.statusCode);
+                        UA_LTRACE(@"Analytics upload request failed: %ld", (unsigned long)response.statusCode);
                         [self scheduleUploadWithDelay:FailedUploadRetryDelay];
                     }
 

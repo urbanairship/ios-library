@@ -204,7 +204,7 @@ NSString * const UAInAppMessageAudienceErrorDomain = @"com.urbanairship.in_app_m
 - (instancetype)initWithBuilder:(UAInAppMessageAudienceBuilder *)builder {
     if (self = [super init]) {
         if (![builder isValid]) {
-            UA_LDEBUG(@"UAInAppMessageAudience could not be initialized, builder has missing or invalid parameters.");
+            UA_LERR(@"UAInAppMessageAudience could not be initialized, builder has missing or invalid parameters.");
             return nil;
         }
 
