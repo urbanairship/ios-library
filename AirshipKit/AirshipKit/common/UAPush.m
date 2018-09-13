@@ -686,10 +686,12 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
 
     BOOL backgroundPushAllowed = self.isRegisteredForRemoteNotifications;
 
+
+#if !TARGET_OS_TV
     if (!self.isBackgroundRefreshStatusAvailable) {
         backgroundPushAllowed = NO;
     }
-
+#endif
     return backgroundPushAllowed;
 }
 
