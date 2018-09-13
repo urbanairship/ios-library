@@ -30,19 +30,20 @@ class RegistrationDelegate: NSObject, UARegistrationDelegate {
         }
     }
 
-    func notificationRegistrationFinished(options: UANotificationOptions = [], categories: Set<AnyHashable>) {
+    @objc(notificationRegistrationFinishedWithAuthorizedSettings:categories:)
+    func notificationRegistrationFinished(withAuthorizedSettings authorizedSettings: UAAuthorizedNotificationSettings, categories: Set<AnyHashable>) {
         guard let delegate = forwardDelegate else { return }
 
-        if delegate.responds(to: #selector(UARegistrationDelegate.notificationRegistrationFinished(options:categories:))) {
-            forwardDelegate?.notificationRegistrationFinished!(options: options, categories: categories)
+        if delegate.responds(to: #selector(UARegistrationDelegate.notificationRegistrationFinished(withAuthorizedSettings:categories:))) {
+            forwardDelegate?.notificationRegistrationFinished!(withAuthorizedSettings: authorizedSettings, categories: categories)
         }
     }
 
-    func notificationAuthorizedOptionsDidChange(_ options: UANotificationOptions = []) {
+    func notificationAuthorizedSettingsDidChange(_ settings: UAAuthorizedNotificationSettings) {
         guard let delegate = forwardDelegate else { return }
 
-        if delegate.responds(to: #selector(UARegistrationDelegate.notificationAuthorizedOptionsDidChange(_:))) {
-            forwardDelegate?.notificationAuthorizedOptionsDidChange!(options)
+        if delegate.responds(to: #selector(UARegistrationDelegate.notificationAuthorizedSettingsDidChange(_:))) {
+            forwardDelegate?.notificationAuthorizedSettingsDidChange!(settings)
         }
     }
 
