@@ -649,7 +649,7 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
 - (BOOL)isRegisteredForRemoteNotifications {
     __block BOOL registered;
 
-    [[UADispatcher mainDispatcher] dispatchSync:^{
+    [[UADispatcher mainDispatcher] doSync:^{
         registered = [UIApplication sharedApplication].isRegisteredForRemoteNotifications;
     }];
 
@@ -659,7 +659,7 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
 - (BOOL)isBackgroundRefreshStatusAvailable {
     __block BOOL available;
 
-    [[UADispatcher mainDispatcher] dispatchSync:^{
+    [[UADispatcher mainDispatcher] doSync:^{
         available = [UIApplication sharedApplication].backgroundRefreshStatus == UIBackgroundRefreshStatusAvailable;
     }];
 

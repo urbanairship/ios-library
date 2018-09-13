@@ -79,12 +79,16 @@ typedef NS_ENUM(NSUInteger, UADispatcherType) {
 }
 
 - (void)dispatchSync:(void (^)(void))block {
+    dispatch_sync(self.queue, block);
+}
+
+- (void)doSync:(void (^)(void))block {
     void *context = self.type == UADispatcherTypeMain ? UADispatcherQueueSpecificContextMain : UADispatcherQueueSpecificContextBackground;
 
     if (dispatch_get_specific(UADispatcherQueueSpecificKey) == context) {
         block();
     } else {
-        dispatch_sync(self.queue, block);
+        [self dispatchSync:block];
     }
 }
 

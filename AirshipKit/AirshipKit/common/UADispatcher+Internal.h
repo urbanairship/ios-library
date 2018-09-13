@@ -44,6 +44,15 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)dispatchSync:(void (^)(void))block;
 
+/**
+ * Performs a block synchronously, either by dispatching onto
+ * the associated queue or by runnning the block directly if
+ * already on that queue.
+ *
+ * @param block The block to dispatch.
+ */
+- (void)doSync:(void (^)(void))block;
+
 NS_ASSUME_NONNULL_END
 
 @end
