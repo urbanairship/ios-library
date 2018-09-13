@@ -92,4 +92,8 @@
     block();
 }
 
+- (void)doSync:(void (^)(void))block {
+    block();
+}
+
 @end

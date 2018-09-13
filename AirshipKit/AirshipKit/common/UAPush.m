@@ -22,6 +22,7 @@
 #import "UAPushReceivedEvent+Internal.h"
 #import "UATagGroupsRegistrar+Internal.h"
 #import "UARegistrationDelegateWrapper+Internal.h"
+#import "UADispatcher+Internal.h"
 
 #if !TARGET_OS_TV
 #import "UAInboxUtils.h"
@@ -69,7 +70,8 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
 @property (nonatomic, strong) UATagGroupsRegistrar *tagGroupsRegistrar;
 @property (nonatomic, strong) NSNotificationCenter *notificationCenter;
 @property (nonatomic, strong) UARegistrationDelegateWrapper *registrationDelegateWrapper;
-
+@property (nonatomic, readonly) BOOL isRegisteredForRemoteNotifications;
+@property (nonatomic, readonly) BOOL isBackgroundRefreshStatusAvailable;
 @end
 
 @implementation UAPush
@@ -644,14 +646,31 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
     return payload;
 }
 
+- (BOOL)isRegisteredForRemoteNotifications {
+    __block BOOL registered;
+
+    [[UADispatcher mainDispatcher] doSync:^{
+        registered = [UIApplication sharedApplication].isRegisteredForRemoteNotifications;
+    }];
+
+    return registered;
+}
+
+- (BOOL)isBackgroundRefreshStatusAvailable {
+    __block BOOL available;
+
+    [[UADispatcher mainDispatcher] doSync:^{
+        available = [UIApplication sharedApplication].backgroundRefreshStatus == UIBackgroundRefreshStatusAvailable;
+    }];
+
+    return available;
+}
+
 - (BOOL)userPushNotificationsAllowed {
-
-    BOOL isRegisteredForRemoteNotifications = [UIApplication sharedApplication].isRegisteredForRemoteNotifications;
-
     return self.deviceToken
     && self.userPushNotificationsEnabled
     && self.authorizedNotificationSettings
-    && isRegisteredForRemoteNotifications
+    && self.isRegisteredForRemoteNotifications
     && self.pushTokenRegistrationEnabled;
 }
 
@@ -663,10 +682,10 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
         return NO;
     }
 
-    BOOL backgroundPushAllowed = [UIApplication sharedApplication].isRegisteredForRemoteNotifications;
+    BOOL backgroundPushAllowed = self.isRegisteredForRemoteNotifications;
 
 #if !TARGET_OS_TV    // UIBackgroundRefreshStatusAvailable not available on tvOS
-    if ([UIApplication sharedApplication].backgroundRefreshStatus != UIBackgroundRefreshStatusAvailable) {
+    if (!self.isBackgroundRefreshStatusAvailable) {
         backgroundPushAllowed = NO;
     }
 #endif
