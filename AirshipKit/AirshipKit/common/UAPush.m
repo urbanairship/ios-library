@@ -657,11 +657,13 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
 }
 
 - (BOOL)isBackgroundRefreshStatusAvailable {
-    __block BOOL available;
+    __block BOOL available = NO;
 
+#if !TARGET_OS_TV    // UIBackgroundRefreshStatusAvailable not available on tvOS
     [[UADispatcher mainDispatcher] doSync:^{
         available = [UIApplication sharedApplication].backgroundRefreshStatus == UIBackgroundRefreshStatusAvailable;
     }];
+#endif
 
     return available;
 }
@@ -684,12 +686,12 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
 
     BOOL backgroundPushAllowed = self.isRegisteredForRemoteNotifications;
 
-#if !TARGET_OS_TV    // UIBackgroundRefreshStatusAvailable not available on tvOS
+
+#if !TARGET_OS_TV
     if (!self.isBackgroundRefreshStatusAvailable) {
         backgroundPushAllowed = NO;
     }
 #endif
-
     return backgroundPushAllowed;
 }
 
