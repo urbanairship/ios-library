@@ -487,11 +487,8 @@
     if (!self.messageViewController) {
         [self createMessageViewController];
     }
-    
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-    [self.messageViewController loadMessage:message onlyIfChanged:YES];
-#pragma GCC diagnostic pop
+
+    [self.messageViewController loadMessageForID:message.messageID onlyIfChanged:YES onError:errorCompletion];
 
     if (message) {
         // only display the message if there is a message to display
@@ -947,10 +944,10 @@
         if (!messageToDisplay && self.selectedIndexPath) {
             messageToDisplay = [self messageForID:[self messageAtIndex:[self validateIndexPath:self.selectedIndexPath].row].messageID];
         }
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-        [self.messageViewController loadMessage:messageToDisplay onlyIfChanged:YES];
-#pragma GCC diagnostic pop
+
+        [self.messageViewController loadMessageForID:messageToDisplay.messageID onlyIfChanged:YES onError:^{
+            UA_LERR(@"Message load via chooseMessageDisplayAndReload resulted in error");
+        }];
 
         self.selectedMessage = messageToDisplay;
         

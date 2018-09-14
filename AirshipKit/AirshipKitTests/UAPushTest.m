@@ -230,36 +230,6 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
                    @"autobadgeEnabled should be stored in standardUserDefaults");
 }
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-- (void)testAlias {
-    self.push.alias = @"some-alias";
-    XCTAssertEqualObjects(@"some-alias", self.push.alias, @"alias is not being set correctly");
-    XCTAssertEqualObjects(@"some-alias", [self.dataStore stringForKey:UAPushAliasSettingsKey],
-                          @"alias should be stored in standardUserDefaults");
-
-    self.push.alias = nil;
-    XCTAssertNil(self.push.alias, @"alias should be able to be cleared");
-    XCTAssertNil([self.dataStore stringForKey:UAPushAliasSettingsKey],
-                 @"alias should be able to be cleared in standardUserDefaults");
-
-    self.push.alias = @"";
-    XCTAssertEqualObjects(@"", self.push.alias, @"alias is not being set correctly");
-    XCTAssertEqualObjects(@"", [self.dataStore stringForKey:UAPushAliasSettingsKey],
-                          @"alias should be stored in standardUserDefaults");
-
-    self.push.alias = @"   ";
-    XCTAssertEqualObjects(@"", self.push.alias, @"alias is not being trimmed and set correctly");
-    XCTAssertEqualObjects(@"", [self.dataStore stringForKey:UAPushAliasSettingsKey],
-                          @"alias should be stored in standardUserDefaults");
-
-    self.push.alias = @"   a   ";
-    XCTAssertEqualObjects(@"a", self.push.alias, @"alias is not being trimmed and set correctly");
-    XCTAssertEqualObjects(@"a", [self.dataStore stringForKey:UAPushAliasSettingsKey],
-                          @"alias should be stored in standardUserDefaults");
-}
-#pragma GCC diagnostic pop
-
 - (void)testTags {
     NSArray *tags = @[@"tag-one", @"tag-two"];
     self.push.tags = tags;
@@ -1298,10 +1268,6 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     // Set up UAPush to give a full, opted in payload
     self.push.pushTokenRegistrationEnabled = NO;
     self.push.deviceToken = validDeviceToken;
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-    self.push.alias = @"ALIAS";
-#pragma GCC diagnostic pop
     self.push.channelTagRegistrationEnabled = YES;
     self.push.tags = @[@"tag-one"];
     self.push.autobadgeEnabled = NO;
@@ -1332,10 +1298,6 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
  */
 - (void)testRegistrationPayload {
     self.push.deviceToken = validDeviceToken;
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-    self.push.alias = @"ALIAS";
-#pragma GCC diagnostic pop
     self.push.channelTagRegistrationEnabled = YES;
     self.push.tags = @[@"tag-one"];
     self.push.autobadgeEnabled = NO;
@@ -1492,10 +1454,6 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 - (void)testRegistrationPayloadNoDeviceToken {
     // Set up UAPush to give minimum payload
     self.push.deviceToken = nil;
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-    self.push.alias = nil;
-#pragma GCC diagnostic pop
     self.push.channelTagRegistrationEnabled = NO;
     self.push.autobadgeEnabled = NO;
     self.push.quietTimeEnabled = NO;

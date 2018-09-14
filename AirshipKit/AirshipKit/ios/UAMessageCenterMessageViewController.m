@@ -128,10 +128,7 @@ typedef enum MessageState {
             [self coverWithBlankViewAndShowLoadingIndicator];
             break;
         case TO_LOAD:
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
             [self loadMessage:self.message onlyIfChanged:NO];
-#pragma GCC diagnostic pop
             break;
         default:
             UA_LWARN(@"MessageState = %u. Should be \"NONE\", \"FETCHING\", or \"TO_LOAD\"",self.messageState);
@@ -254,10 +251,7 @@ static NSString *urlForBlankPage = @"about:blank";
             UAInboxMessage *message = [[UAirship inbox].messageList messageForID:messageID];
             if (message) {
                 // display the message
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
                 [self loadMessage:message onlyIfChanged:onlyIfChanged];
-#pragma GCC diagnostic pop
             } else {
                 // if the message no longer exists, clean up and show an error dialog
                 [self hideLoadingIndicator];
@@ -287,8 +281,6 @@ static NSString *urlForBlankPage = @"about:blank";
     }];
 }
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-implementations"
 - (void)loadMessage:(UAInboxMessage *)message onlyIfChanged:(BOOL)onlyIfChanged {
     if (!message) {
         if (self.messageState == LOADING) {
@@ -324,7 +316,6 @@ static NSString *urlForBlankPage = @"about:blank";
         }
     }
 }
-#pragma GCC diagnostic pop
 
 - (void)loadMessageIntoWebView {
     self.title = self.message.title;
@@ -404,10 +395,7 @@ static NSString *urlForBlankPage = @"about:blank";
                 UA_WEAKIFY(self);
                 [self displayFailedToLoadAlertOnOK:nil onRetry:^{
                     UA_STRONGIFY(self);
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
                     [self loadMessage:self.message onlyIfChanged:NO];
-#pragma GCC diagnostic pop
                 }];
             } else {
                 // Display a generic alert
@@ -467,10 +455,7 @@ static NSString *urlForBlankPage = @"about:blank";
     UA_WEAKIFY(self);
     [self displayFailedToLoadAlertOnOK:nil onRetry:^{
         UA_STRONGIFY(self);
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
         [self loadMessage:self.message onlyIfChanged:NO];
-#pragma GCC diagnostic pop
     }];
 }
 

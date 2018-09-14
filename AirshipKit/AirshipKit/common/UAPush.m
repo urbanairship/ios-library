@@ -624,11 +624,6 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
     payload.setTags = self.channelTagRegistrationEnabled;
     payload.tags = self.channelTagRegistrationEnabled ? [self.tags copy]: nil;
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-    payload.alias = self.alias;
-#pragma GCC diagnostic pop
-
     if (self.autobadgeEnabled) {
         payload.badge = [NSNumber numberWithInteger:[[UIApplication sharedApplication] applicationIconBadgeNumber]];
     } else {

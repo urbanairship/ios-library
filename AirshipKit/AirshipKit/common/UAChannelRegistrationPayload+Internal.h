@@ -68,11 +68,6 @@ extern NSString *const UABackgroundEnabledJSONKey;
 @property (nonatomic, strong, nullable) NSArray<NSString *> *tags;
 
 /**
- * The alias for this device.
- */
-@property (nonatomic, copy, nullable) NSString *alias;
-
-/**
  * Quiet time settings for this device.
  */
 @property (nonatomic, strong, nullable) NSDictionary *quietTime;

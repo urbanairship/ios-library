@@ -112,52 +112,6 @@
     XCTAssertFalse([matcher evaluateObject:@(YES)]);
 }
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-- (void)testMatcherWithKeyPayload {
-    NSDictionary *json = @{ @"value": @{ @"equals": @"cool" }, @"key": @"property" };
-    UAJSONMatcher *matcher = [UAJSONMatcher matcherWithValueMatcher:self.valueMatcher key:@"property"];
-
-    XCTAssertEqualObjects(json, matcher.payload);
-
-    // Verify the JSONValue recreates the expected payload
-    NSError *error = nil;
-    XCTAssertEqualObjects(json, [UAJSONMatcher matcherWithJSON:json error:&error].payload);
-    XCTAssertNil(error);
-}
-
-- (void)testMatcherWithKeyAndScope {
-    UAJSONMatcher *matcher = [UAJSONMatcher matcherWithValueMatcher:self.valueMatcher
-                                                                key:@"subproperty"
-                                                              scope:@[@"property"]];
-
-    XCTAssertTrue([matcher evaluateObject:@{@"property": @{ @"subproperty": @"cool"}}]);
-
-    XCTAssertFalse([matcher evaluateObject:@"property"]);
-    XCTAssertFalse([matcher evaluateObject:@{@"property": @"subproperty"}]);
-    XCTAssertFalse([matcher evaluateObject:@{@"property": @{ @"subproperty": @"not cool"}}]);
-
-    XCTAssertFalse([matcher evaluateObject:nil]);
-    XCTAssertFalse([matcher evaluateObject:matcher]);
-    XCTAssertFalse([matcher evaluateObject:@"not cool"]);
-    XCTAssertFalse([matcher evaluateObject:@(1)]);
-    XCTAssertFalse([matcher evaluateObject:@(YES)]);
-}
-
-- (void)testMatcherWithKeyAndScopePayload {
-    NSDictionary *json = @{ @"value": @{ @"equals": @"cool" }, @"key": @"subproperty", @"scope": @[@"property"] };
-    UAJSONMatcher *matcher = [UAJSONMatcher matcherWithValueMatcher:self.valueMatcher
-                                                                key:@"subproperty"
-                                                              scope:@[@"property"]];
-    XCTAssertEqualObjects(json, matcher.payload);
-
-    // Verify the JSONValue recreates the expected payload
-    NSError *error = nil;
-    XCTAssertEqualObjects(json, [UAJSONMatcher matcherWithJSON:json error:&error].payload);
-    XCTAssertNil(error);
-}
-#pragma GCC diagnostic pop
-
 - (void)testMatcherWithScopeIgnoreCase {
     UAJSONMatcher *matcher = [UAJSONMatcher matcherWithValueMatcher:self.valueMatcher scope:@[@"property"] ignoreCase:YES];
     XCTAssertNotNil(matcher);

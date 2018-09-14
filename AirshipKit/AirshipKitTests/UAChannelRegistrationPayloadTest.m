@@ -42,7 +42,6 @@
     self.payload.timeZone = @"timezone";
     self.payload.language = @"language";
     self.payload.country = @"country";
-    self.payload.alias = @"fakeAlias";
     self.payload.tags = @[@"tagOne", @"tagTwo"];
     self.payload.setTags = YES;
 }
@@ -73,7 +72,6 @@
     XCTAssertEqualObjects([NSNumber numberWithBool:self.payload.optedIn], [channel valueForKey:UAChannelOptInKey], @"opt-in should be present");
     XCTAssertEqualObjects([NSNumber numberWithBool:self.payload.backgroundEnabled], [channel valueForKey:UABackgroundEnabledJSONKey], @"background should be present");
     XCTAssertEqualObjects(self.payload.pushAddress, [channel valueForKey:UAChannelPushAddressKey], @"push address should be present");
-    XCTAssertEqualObjects(self.payload.alias, [channel valueForKey:UAChannelAliasJSONKey], @"alias should be present");
     XCTAssertEqualObjects([NSNumber numberWithBool:self.payload.setTags], [channel valueForKey:UAChannelSetTagsKey], @"set tags should be present");
     XCTAssertEqualObjects(self.payload.tags, [channel valueForKey:UAChannelTagsJSONKey], @"tags should be present");
 
@@ -202,10 +200,6 @@
     XCTAssertFalse([self.payload isEqualToPayload:payloadCopy], @"A payload should not be equal after a modification");
     payloadCopy.timeZone = self.payload.timeZone;
 
-    payloadCopy.alias = @"different-value";
-    XCTAssertFalse([self.payload isEqualToPayload:payloadCopy], @"A payload should not be equal after a modification");
-    payloadCopy.alias = self.payload.alias;
-
     payloadCopy.setTags = NO;
     XCTAssertFalse([self.payload isEqualToPayload:payloadCopy], @"A payload should not be equal after a modification");
     payloadCopy.setTags = self.payload.setTags;
@@ -250,7 +244,6 @@
     XCTAssertEqualObjects(@"ios", [channel valueForKey:UAChannelDeviceTypeKey], @"device type should be present");
     XCTAssertEqualObjects([NSNumber numberWithBool:self.payload.optedIn], [channel valueForKey:UAChannelOptInKey], @"opt-in should be present");
     XCTAssertEqualObjects(self.payload.pushAddress, [channel valueForKey:UAChannelPushAddressKey], @"push address should be present");
-    XCTAssertEqualObjects(self.payload.alias, [channel valueForKey:UAChannelAliasJSONKey], @"alias should be present");
     XCTAssertEqualObjects([NSNumber numberWithBool:self.payload.setTags], [channel valueForKey:UAChannelSetTagsKey], @"set tags should be present");
     XCTAssertEqualObjects(self.payload.tags, [channel valueForKey:UAChannelTagsJSONKey], @"tags should be present");
 
@@ -313,48 +306,6 @@
     NSDictionary *dict = [[NSDictionary alloc] initWithDictionary:[self.payload payloadDictionary]];
     XCTAssertNil([dict valueForKey:UAChannelIdentityHintsKey], @"identity hints section should not be included in the payload");
 }
-
-/**
- * Test that an empty alias is not included
- */
-- (void)testPayloadDictionaryEmptyAlias {
-    self.payload.alias = @"";
-
-    NSDictionary *dict = [[NSDictionary alloc] initWithDictionary:[self.payload payloadDictionary]];
-    XCTAssertNil([dict valueForKey:UAChannelAliasJSONKey], @"Alias should not be included in the payload");
-}
-
-/**
- * Test that an alias with just spaces is not included
- */
-- (void)testPayloadDictionarySpacesAlias {
-    self.payload.alias = @"     ";
-
-    NSDictionary *dict = [[NSDictionary alloc] initWithDictionary:[self.payload payloadDictionary]];
-    XCTAssertNil([dict valueForKey:UAChannelAliasJSONKey], @"Alias should not be included in the payload");
-}
-
-/**
- * Test that an alias with spaces is trimmed and included
- */
-- (void)testPayloadDictionarySpacesTrimmedAlias  {
-    self.payload.alias = @"     fakeAlias     ";
-
-    NSDictionary *dict = [[NSDictionary alloc] initWithDictionary:[self.payload payloadDictionary]];
-    NSDictionary *channel = [dict valueForKey:UAChannelKey];
-    XCTAssertEqualObjects(self.payload.alias, [channel valueForKey:UAChannelAliasJSONKey], @"alias should be present");
-}
-
-/**
- * Test that a nil alias is not included
- */
-- (void)testPayloadDictionaryNilAlias {
-    self.payload.alias = nil;
-
-    NSDictionary *dict = [[NSDictionary alloc] initWithDictionary:[self.payload payloadDictionary]];
-    XCTAssertNil([dict valueForKey:UAChannelAliasJSONKey], @"Alias should not be included in the payload");
-}
-
 
 // Helpers
 - (NSMutableDictionary *)buildQuietTimeWithStartDate:(NSDate *)startDate withEndDate:(NSDate *)endDate {

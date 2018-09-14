@@ -65,7 +65,6 @@ NSString *const UABackgroundEnabledJSONKey = @"background";
             self.backgroundEnabled = [topLevel[UABackgroundEnabledJSONKey] boolValue];
             self.setTags = [topLevel[UAChannelSetTagsKey] boolValue];
             self.tags = topLevel[UAChannelTagsJSONKey];
-            self.alias = topLevel[UAChannelAliasJSONKey];
             self.language = topLevel[UAChannelTopLevelLanguageJSONKey];
             self.country = topLevel[UAChannelTopLevelCountryJSONKey];
             self.timeZone = topLevel[UAChannelTopLevelTimeZoneJSONKey];
@@ -107,11 +106,6 @@ NSString *const UABackgroundEnabledJSONKey = @"background";
 #endif
     [channel setValue:self.pushAddress forKey:UAChannelPushAddressKey];
 
-    self.alias = [self.alias stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
-    if ([self.alias length] > 0) {
-        [channel setValue:self.alias forKey:UAChannelAliasJSONKey];
-    }
-
     [channel setValue:[NSNumber numberWithBool:self.setTags] forKey:UAChannelSetTagsKey];
     if (self.setTags) {
         [channel setValue:self.tags forKey:UAChannelTagsJSONKey];
@@ -146,7 +140,6 @@ NSString *const UABackgroundEnabledJSONKey = @"background";
         copy.pushAddress = self.pushAddress;
         copy.setTags = self.setTags;
         copy.tags = [self.tags copyWithZone:zone];
-        copy.alias = self.alias;
         copy.quietTime = [self.quietTime copyWithZone:zone];
         copy.timeZone = self.timeZone;
         copy.language = self.language;

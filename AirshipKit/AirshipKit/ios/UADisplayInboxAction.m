@@ -113,13 +113,6 @@
                 dispatch_async(dispatch_get_main_queue(), ^{
                     [inboxDelegate showMessageForID:message.messageID];
                 });
-            } else if ([inboxDelegate respondsToSelector:@selector(showInboxMessage:)]) {
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [inboxDelegate showInboxMessage:message];
-                });
-#pragma GCC diagnostic pop
             } else {
                 dispatch_async(dispatch_get_main_queue(), ^{
                     [[UAirship messageCenter] displayMessageForID:message.messageID];
@@ -133,13 +126,6 @@
                 dispatch_async(dispatch_get_main_queue(), ^{
                     [inboxDelegate showMessageForID:message.messageID];
                 });
-            } else if ([inboxDelegate respondsToSelector:@selector(showInboxMessage:)]) {
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [inboxDelegate showInboxMessage:message];
-                });
-#pragma GCC diagnostic pop
             } else {
                 dispatch_async(dispatch_get_main_queue(), ^{
                     [[UAirship messageCenter] displayMessageForID:message.messageID];
