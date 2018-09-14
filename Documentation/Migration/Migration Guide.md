@@ -74,7 +74,7 @@ notifications with hidden body previews.
 ### Added
 
 * `categorySummaryFormat`
-* `	categorywithIdentifier:actions:intentIdentifiers:hiddenBodyPreviewsPlaceholder:categorySummaryFormat:options:`
+* `categorywithIdentifier:actions:intentIdentifiers:hiddenBodyPreviewsPlaceholder:categorySummaryFormat:options:`
 
 ## UANotificationContent
 
@@ -85,6 +85,25 @@ Additional properties have been added to support the summary argument, summary a
 * `summaryArgument`
 * `summaryArgumentCount`
 * `threadIdentifier`
+
+## UAJSONMatcher
+
+### Removed (previously deprecated)
+
+* `matcherWithValueMatcher:key`
+* `matcherWithValueMatcher:key:scope`
+
+## UAInboxDelegate
+
+### Removed (previously deprecated)
+
+* `showInboxMessage:`
+
+## UAMessageCenterMessageViewProtocol
+
+### Removed (previously deprecated)
+
+* `loadMessage:onlyIfChanged:`
 
 # Urban Airship Library 8.x to 9.0
 
