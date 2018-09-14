@@ -1047,12 +1047,14 @@
             return;
         }
 
-        if (![self.delegate isScheduleReadyToExecute:schedule]) {
+        id<UAAutomationEngineDelegate> delegate = self.delegate;
+        
+        if (![delegate isScheduleReadyToExecute:schedule]) {
             UA_LDEBUG("Schedule:%@ is not ready to execute.", schedule);
             return;
         }
 
-        [self.delegate executeSchedule:schedule completionHandler:^{
+        [delegate executeSchedule:schedule completionHandler:^{
             UA_STRONGIFY(self)
             [self.automationStore getSchedule:schedule.identifier completionHandler:^(UAScheduleData *scheduleData) {
                 UA_STRONGIFY(self)

@@ -28,5 +28,4 @@ Pod::Spec.new do |s|
    s.libraries               = 'z', 'sqlite3'
    s.frameworks              = 'UserNotifications', 'CFNetwork', 'CoreGraphics', 'Foundation', 'MobileCoreServices', 'Security', 'SystemConfiguration', 'UIKit', 'CoreLocation', 'CoreData', 'StoreKit'
    s.ios.frameworks          = 'WebKit', 'CoreTelephony'
-   s.pod_target_xcconfig     = { 'GCC_PREPROCESSOR_DEFINITIONS' => 'UA_PREVIEW=1' }
 end

@@ -1876,7 +1876,6 @@
 		99EC01811FE0953000B9C408 /* UAInAppMessageFullScreenViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAInAppMessageFullScreenViewController.m; path = ios/UAInAppMessageFullScreenViewController.m; sourceTree = "<group>"; };
 		99EC01821FE0953100B9C408 /* UAInAppMessageFullScreenViewController+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UAInAppMessageFullScreenViewController+Internal.h"; path = "ios/UAInAppMessageFullScreenViewController+Internal.h"; sourceTree = "<group>"; };
 		99EC01901FE095B600B9C408 /* UAInAppMessageFullScreenDisplayContent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAInAppMessageFullScreenDisplayContent.h; path = ios/UAInAppMessageFullScreenDisplayContent.h; sourceTree = "<group>"; };
-		99EC01931FE0B0F500B9C408 /* UAInAppMessageFullScreenViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = UAInAppMessageFullScreenViewController.xib; sourceTree = "<group>"; };
 		99EC01971FE1FED100B9C408 /* UAInAppMessageFullScreenAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAInAppMessageFullScreenAdapter.h; path = ios/UAInAppMessageFullScreenAdapter.h; sourceTree = "<group>"; };
 		CC04F1851DBED84600B4842D /* UAEvents.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = UAEvents.xcdatamodel; sourceTree = "<group>"; };
 		CC04F1881DBED9FA00B4842D /* UAEventData+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UAEventData+Internal.h"; path = "common/UAEventData+Internal.h"; sourceTree = "<group>"; };
@@ -2525,14 +2524,6 @@
 			path = "In-app Messaging";
 			sourceTree = "<group>";
 		};
-		45FA217221419E5F00485F96 /* Recovered References */ = {
-			isa = PBXGroup;
-			children = (
-				99EC01931FE0B0F500B9C408 /* UAInAppMessageFullScreenViewController.xib */,
-			);
-			name = "Recovered References";
-			sourceTree = "<group>";
-		};
 		494DD94D1B0EB677009C134E = {
 			isa = PBXGroup;
 			children = (
@@ -2542,7 +2533,6 @@
 				CC64F0551D8B77E3009CEF27 /* AirshipKitTests */,
 				CC40D87A1D8C703E00BABD4F /* Frameworks */,
 				0A550D587E2599A4BD33CDF4 /* Pods */,
-				45FA217221419E5F00485F96 /* Recovered References */,
 			);
 			sourceTree = "<group>";
 		};
@@ -6069,7 +6059,6 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
-					"UA_PREVIEW=1",
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -6126,10 +6115,7 @@
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
-				"GCC_PREPROCESSOR_DEFINITIONS[arch=*]" = (
-					"$(inherited)",
-					"UA_PREVIEW=1",
-				);
+				"GCC_PREPROCESSOR_DEFINITIONS[arch=*]" = "$(inherited)";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
@@ -6166,7 +6152,6 @@
 				ENABLE_TESTABILITY = YES;
 				INFOPLIST_FILE = AirshipKit/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				ONLY_ACTIVE_ARCH = YES;
 				"OTHER_CFLAGS[arch=*]" = (
@@ -6201,7 +6186,6 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = AirshipKit/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				ONLY_ACTIVE_ARCH = YES;
 				"OTHER_CFLAGS[arch=*]" = (
@@ -6234,7 +6218,6 @@
 				DEVELOPMENT_TEAM = PGJV57GD94;
 				ENABLE_TESTABILITY = YES;
 				INFOPLIST_FILE = AirshipKitTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				OTHER_LDFLAGS = (
 					"-ObjC",
@@ -6259,7 +6242,6 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = NO;
 				DEVELOPMENT_TEAM = PGJV57GD94;
 				INFOPLIST_FILE = AirshipKitTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				OTHER_LDFLAGS = (
 					"-ObjC",
@@ -6295,14 +6277,12 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				INFOPLIST_FILE = "$(SRCROOT)/AirshipResources/ios/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.AirshipResources;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TVOS_DEPLOYMENT_TARGET = 10.0;
 				VERSIONING_SYSTEM = "";
 				WRAPPER_EXTENSION = bundle;
 			};
@@ -6331,7 +6311,6 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				INFOPLIST_FILE = "$(SRCROOT)/AirshipResources/ios/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.AirshipResources;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -6339,7 +6318,6 @@
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TVOS_DEPLOYMENT_TARGET = 10.0;
 				VERSIONING_SYSTEM = "";
 				WRAPPER_EXTENSION = bundle;
 			};

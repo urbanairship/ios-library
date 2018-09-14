@@ -60,7 +60,7 @@ BOOL const UAComponentEnabledDefault = YES;
     // placeholder - sub-classes should override if they want remote config updates
 }
 
-- (Class)remoteConfigClass {
+- (nullable Class)remoteConfigClass {
     // placeholder - sub-classes should override if they want remote config updates
     return nil;
 }

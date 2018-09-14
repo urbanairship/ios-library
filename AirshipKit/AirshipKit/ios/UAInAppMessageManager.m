@@ -238,7 +238,7 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
     self.isDisplayLocked = YES;
 }
 
-- (id<UAInAppMessageAdapterProtocol>)createAdapterForMessage:(UAInAppMessage *)message scheduleID:(NSString *)scheduleID {
+- (nullable id<UAInAppMessageAdapterProtocol>)createAdapterForMessage:(UAInAppMessage *)message scheduleID:(NSString *)scheduleID {
     id<UAInAppMessageAdapterProtocol> (^factory)(UAInAppMessage* message) = self.adapterFactories[@(message.displayType)];
 
     if (!factory) {
@@ -304,6 +304,7 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
 
         if (!adapter) {
             handler(UARetriableResultCancel);
+            return;
         }
 
         UAInAppMessageScheduleData *data = [UAInAppMessageScheduleData dataWithAdapter:adapter
@@ -385,8 +386,9 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
     UAInAppMessage *message = info.message;
 
     // Allow the delegate to extend the message if desired.
-    if ([self.delegate respondsToSelector:@selector(extendMessage:)]) {
-        message = [self.delegate extendMessage:message];
+    id<UAInAppMessagingDelegate> delegate = self.delegate;
+    if ([delegate respondsToSelector:@selector(extendMessage:)]) {
+        message = [delegate extendMessage:message];
         if (!message) {
             UA_LERR(@"Error extending message");
             completionHandler(UAAutomationSchedulePrepareResultPenalize);
@@ -454,8 +456,9 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
     [self lockDisplay];
 
     // Notify delegate that the message is about to be displayed
-    if ([self.delegate respondsToSelector:@selector(messageWillBeDisplayed:scheduleID:)]) {
-        [self.delegate messageWillBeDisplayed:message scheduleID:schedule.identifier];
+    id<UAInAppMessagingDelegate> delegate = self.delegate;
+    if ([delegate respondsToSelector:@selector(messageWillBeDisplayed:scheduleID:)]) {
+        [delegate messageWillBeDisplayed:message scheduleID:schedule.identifier];
     }
 
     // Display event
@@ -497,8 +500,9 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
         [self.scheduleData removeObjectForKey:schedule.identifier];
 
         // Notify delegate that the message has finished displaying
-        if ([self.delegate respondsToSelector:@selector(messageFinishedDisplaying:scheduleID:resolution:)]) {
-            [self.delegate messageFinishedDisplaying:message scheduleID:schedule.identifier resolution:resolution];
+        id<UAInAppMessagingDelegate> delegate = self.delegate;
+        if ([delegate respondsToSelector:@selector(messageFinishedDisplaying:scheduleID:resolution:)]) {
+            [delegate messageFinishedDisplaying:message scheduleID:schedule.identifier resolution:resolution];
         }
 
         completionHandler();
@@ -515,7 +519,7 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
     [self updateEnginePauseState];
 }
 
-- (Class)remoteConfigClass {
+- (nullable Class)remoteConfigClass {
     return [UAInAppMessagingRemoteConfig class];
 }
 

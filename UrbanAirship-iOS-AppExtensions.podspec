@@ -14,5 +14,4 @@ Pod::Spec.new do |s|
     s.ios.deployment_target   = "10.0"
     s.ios.source_files      = 'AirshipAppExtensions/AirshipAppExtensions/*.{h,m,mm}'
     s.ios.weak_frameworks = 'UserNotifications'
-    s.pod_target_xcconfig = { 'GCC_PREPROCESSOR_DEFINITIONS' => 'UA_PREVIEW=1' }
 end

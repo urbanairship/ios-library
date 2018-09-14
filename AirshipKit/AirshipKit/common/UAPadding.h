@@ -34,22 +34,22 @@ extern NSString *const UAPaddingLeadingKey;
 /**
  * The spacing constant added between the top of a view and its parent's top.
  */
-@property(nonatomic, strong) NSNumber *top;
+@property(nonatomic, strong, nullable) NSNumber *top;
 
 /**
  * The spacing constant added between the bottom of a view and its parent's bottom.
  */
-@property(nonatomic, strong) NSNumber *bottom;
+@property(nonatomic, strong, nullable) NSNumber *bottom;
 
 /**
  * The spacing constant added between the trailing edge of a view and its parent's trailing edge.
  */
-@property(nonatomic, strong) NSNumber *trailing;
+@property(nonatomic, strong, nullable) NSNumber *trailing;
 
 /**
  * The spacing constant added between the leading edge of a view and its parent's leading edge.
  */
-@property(nonatomic, strong) NSNumber *leading;
+@property(nonatomic, strong, nullable) NSNumber *leading;
 
 /**
  * Factory method to create a padding object.

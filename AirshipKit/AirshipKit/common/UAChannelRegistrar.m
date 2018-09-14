@@ -292,9 +292,10 @@ UAConfig *config;
     self.lastSuccessfulUpdateDate = [self.date now];
     self.isRegistrationInProgress = NO;
 
-    [self.delegate registrationSucceeded];
+    id<UAChannelRegistrarDelegate> delegate = self.delegate;
+    [delegate registrationSucceeded];
     
-    UAChannelRegistrationPayload *currentPayload = [self.delegate createChannelPayload];
+    UAChannelRegistrationPayload *currentPayload = [delegate createChannelPayload];
     if ([self shouldUpdateRegistration:currentPayload]) {
         [self updateChannelWithPayload:currentPayload];
     } else {

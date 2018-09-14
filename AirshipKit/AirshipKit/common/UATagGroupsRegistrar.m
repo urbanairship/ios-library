@@ -180,7 +180,6 @@ typedef void (^UATagGroupsMutator)(NSArray *, NSString *);
 - (void)endBackgroundTask:(UIBackgroundTaskIdentifier)backgroundTaskIdentifier {
     if (backgroundTaskIdentifier != UIBackgroundTaskInvalid) {
         [[UIApplication sharedApplication] endBackgroundTask:backgroundTaskIdentifier];
-        backgroundTaskIdentifier = UIBackgroundTaskInvalid;
     }
 }
 

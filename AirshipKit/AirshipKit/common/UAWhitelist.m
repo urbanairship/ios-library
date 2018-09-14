@@ -348,8 +348,9 @@ typedef BOOL (^UAWhitelistMatcher)(NSURL *);
     
     // if the url is whitelisted, allow the delegate to reject the whitelisting
     if (match) {
-        if ([self.delegate respondsToSelector:@selector(acceptWhitelisting:scope:)]) {
-            match = [self.delegate acceptWhitelisting:url scope:scope];
+        id<UAWhitelistDelegate> delegate = self.delegate;
+        if ([delegate respondsToSelector:@selector(acceptWhitelisting:scope:)]) {
+            match = [delegate acceptWhitelisting:url scope:scope];
         }
     }
     
