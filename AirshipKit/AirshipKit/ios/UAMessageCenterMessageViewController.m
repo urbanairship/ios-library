@@ -236,17 +236,25 @@ static NSString *urlForBlankPage = @"about:blank";
 }
 
 - (void)loadMessageForID:(NSString *)messageID onlyIfChanged:(BOOL)onlyIfChanged onError:(void (^)(void))errorCompletion {
+
+    UAInboxMessage *message = [[UAirship inbox].messageList messageForID:messageID];
+
+    if (message) {
+        [self loadMessage:message onlyIfChanged:onlyIfChanged];
+        return;
+    }
+
     // start by covering the view and showing the loading indicator
     [self coverWithBlankViewAndShowLoadingIndicator];
-    
+
     // Refresh the list to see if the message is available in the cloud
     self.messageState = FETCHING;
 
     UA_WEAKIFY(self);
 
     [[UAirship inbox].messageList retrieveMessageListWithSuccessBlock:^{
-         dispatch_async(dispatch_get_main_queue(),^{
-             UA_STRONGIFY(self)
+        dispatch_async(dispatch_get_main_queue(),^{
+            UA_STRONGIFY(self)
 
             UAInboxMessage *message = [[UAirship inbox].messageList messageForID:messageID];
             if (message) {
@@ -255,7 +263,7 @@ static NSString *urlForBlankPage = @"about:blank";
             } else {
                 // if the message no longer exists, clean up and show an error dialog
                 [self hideLoadingIndicator];
-                
+
                 [self displayNoLongerAvailableAlertOnOK:^{
                     UA_STRONGIFY(self);
                     self.messageState = NONE;
@@ -270,9 +278,9 @@ static NSString *urlForBlankPage = @"about:blank";
     } withFailureBlock:^{
         dispatch_async(dispatch_get_main_queue(),^{
             UA_STRONGIFY(self);
-            
+
             [self hideLoadingIndicator];
-            
+
             if (errorCompletion) {
                 errorCompletion();
             }
@@ -280,7 +288,6 @@ static NSString *urlForBlankPage = @"about:blank";
         return;
     }];
 }
-
 - (void)loadMessage:(UAInboxMessage *)message onlyIfChanged:(BOOL)onlyIfChanged {
     if (!message) {
         if (self.messageState == LOADING) {
@@ -448,7 +455,7 @@ static NSString *urlForBlankPage = @"about:blank";
     UA_LDEBUG(@"Failed to load message: %@", error);
     
     self.messageState = NONE;
-    
+
     [self hideLoadingIndicator];
 
     // Display a retry alert
