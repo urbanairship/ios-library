@@ -79,7 +79,9 @@
     [[UNUserNotificationCenter currentNotificationCenter] requestAuthorizationWithOptions:normalizedOptions
                                                                         completionHandler:^(BOOL granted, NSError * _Nullable error) {
                                                                             [self getAuthorizedSettingsWithCompletionHandler:^(UAAuthorizedNotificationSettings authorizedSettings) {
-                                                                                [self.registrationDelegate notificationRegistrationFinishedWithAuthorizedSettings:authorizedSettings];
+                                                                                dispatch_async(dispatch_get_main_queue(), ^{
+                                                                                    [self.registrationDelegate notificationRegistrationFinishedWithAuthorizedSettings:authorizedSettings];
+                                                                                });
                                                                             }];
                                                                         }];
 }
