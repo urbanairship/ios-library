@@ -117,6 +117,9 @@
 
         // grab the default tint color from a dummy view
         self.defaultTintColor = [[UIView alloc] init].tintColor;
+
+        // default to collapsed state
+        self.collapsed = YES;
     }
 
     return self;
