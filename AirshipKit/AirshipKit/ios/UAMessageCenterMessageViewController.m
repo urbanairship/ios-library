@@ -236,7 +236,11 @@ static NSString *urlForBlankPage = @"about:blank";
 }
 
 - (void)loadMessageForID:(NSString *)messageID onlyIfChanged:(BOOL)onlyIfChanged onError:(void (^)(void))errorCompletion {
-
+    if (!messageID) {
+        [self coverWithMessageAndHideLoadingIndicator:UAMessageCenterLocalizedString(@"ua_message_not_selected")];
+        return;
+    }
+    
     UAInboxMessage *message = [[UAirship inbox].messageList messageForID:messageID];
 
     if (message) {
