@@ -105,7 +105,7 @@
 /**
  * Split view controller managing the inbox and message views
  */
-@property (nonatomic, strong) UISplitViewController *splitViewController;
+@property (nonatomic, weak) UISplitViewController *splitViewController;
 
 @end
 
