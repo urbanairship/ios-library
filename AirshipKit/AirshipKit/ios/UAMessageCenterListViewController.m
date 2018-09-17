@@ -102,12 +102,23 @@
  */
 @property (nonatomic, strong) dispatch_queue_t iconFetchQueue;
 
+/**
+ * Split view controller managing the inbox and message views
+ */
+@property (nonatomic, weak) UISplitViewController *splitViewController;
+
 @end
 
 @implementation UAMessageCenterListViewController
 
 - (instancetype)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
+    return [self initWithNibName:nibNameOrNil bundle:nibBundleOrNil splitViewController:nil];
+}
+
+- (instancetype)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil splitViewController:(UISplitViewController *)splitViewController {
     if (self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil]) {
+        self.splitViewController = splitViewController;
+        
         self.iconCache = [[NSCache alloc] init];
         self.iconCache.countLimit = kUAIconImageCacheMaxCount;
         self.iconCache.totalCostLimit = kUAIconImageCacheMaxByteCost;
@@ -978,7 +989,6 @@
 }
 
 - (UIViewController *)primaryViewControllerForExpandingSplitViewController:(UISplitViewController *)splitViewController {
-    self.collapsed = NO;
     // Delay selection by a beat, to allow rotation to finish
 
     UA_WEAKIFY(self)
@@ -991,7 +1001,6 @@
 }
 
 - (UIViewController *)primaryViewControllerForCollapsingSplitViewController:(UISplitViewController *)splitViewController {
-    self.collapsed = YES;
     // Returning nil causes the split view controller to default to the the existing secondary view controller
     return nil;
 }
@@ -1114,6 +1123,13 @@
 - (NSString *)iconURLStringForMessage:(UAInboxMessage *) message {
     NSDictionary *icons = [message.rawMessageObject objectForKey:@"icons"];
     return [icons objectForKey:@"list_icon"];
+}
+
+- (BOOL)collapsed {
+    if (self.splitViewController) {
+        return self.splitViewController.collapsed;
+    }
+    return YES;
 }
 
 @end

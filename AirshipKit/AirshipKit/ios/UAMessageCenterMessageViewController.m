@@ -241,6 +241,11 @@ static NSString *urlForBlankPage = @"about:blank";
         return;
     }
     
+    if (![UAirship inboxUser].isCreated) {
+        UA_LWARN(@"User is not created, can't load message with ID: %@", messageID);
+        return;
+    }
+
     UAInboxMessage *message = [[UAirship inbox].messageList messageForID:messageID];
 
     if (message) {

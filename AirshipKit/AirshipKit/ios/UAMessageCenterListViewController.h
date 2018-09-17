@@ -58,4 +58,14 @@
  */
 - (void)displayMessageForID:(NSString *)messageID onError:(void (^)(void))completion;
 
+/**
+ * Initializes a Message Center List view controller.
+ *
+ * @param nibNameOrNil The name of the nib file to associate with the view controller.
+ * @param nibBundleOrNil The bundle in which to search for the nib file.
+ * @param splitViewController The UISplitViewController managing the inbox and message views.
+ * @return The initialized Message Center List view controller.
+ */
+- (instancetype)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil splitViewController:(UISplitViewController *)splitViewController;
+
 @end
