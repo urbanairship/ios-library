@@ -16,7 +16,6 @@
 
 @property (nonatomic, strong) UADisplayInboxAction *action;
 @property (nonatomic, strong) NSDictionary *notification;
-@property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 
 @property (nonatomic, strong) id mockMessage;
 @property (nonatomic, strong) id mockInbox;
@@ -38,9 +37,6 @@
 
     self.action = [[UADisplayInboxAction alloc] init];
     
-    self.dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:[NSString stringWithFormat:@"uadisplayinbox.test.%@",self.name]];
-    [self.dataStore removeAll]; // start with an empty datastore
-
     self.mockInboxDelegate = [self mockForProtocol:@protocol(UAInboxDelegate)];
 
     self.notification = @{@"_uamid": @"UAMID"};
@@ -59,13 +55,6 @@
     [[[self.mockAirship stub] andReturn:self.mockInbox] inbox];
 
 }
-
-- (void)tearDown {
-    [self.dataStore removeAll];
-
-    [super tearDown];
-}
-
 
 /**
  * Test the action accepts any foreground situation.

@@ -13,7 +13,6 @@
 @interface UAInAppRemoteDataClientTest : UABaseTest
 @property (nonatomic,strong) UAInAppRemoteDataClient *remoteDataClient;
 @property (nonatomic, strong) UARemoteDataPublishBlock publishBlock;
-@property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 @property (nonatomic, strong) id mockRemoteDataManager;
 @property (nonatomic, strong) id mockScheduler;
 @property (nonatomic, strong) id mockPush;
@@ -43,9 +42,6 @@
         XCTAssertNotNil(self.publishBlock);
     }] subscribeWithTypes:OCMOCK_ANY block:OCMOCK_ANY];
     
-    self.dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:[NSString stringWithFormat:@"UAInAppRemoteDataClientTest.%@",self.name]];
-    [self.dataStore removeAll]; // start with an empty datastore
-    
     self.mockPush = [self mockForClass:[UAPush class]];
     [[[self.mockPush expect] andReturn:nil] channelID];
 
@@ -65,12 +61,6 @@
     XCTAssertNotNil(self.publishBlock);
     [self.mockPush verify];
     [self.mockRemoteDataManager verify];
-}
-
-- (void)tearDown {
-    [self.dataStore removeAll];
-    
-    [super tearDown];
 }
 
 - (void)testMissingInAppMessageRemoteData {

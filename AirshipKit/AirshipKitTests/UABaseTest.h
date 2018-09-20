@@ -3,11 +3,17 @@
 #import <XCTest/XCTest.h>
 #import <OCMock/OCMock.h>
 #import "UADisposable.h"
+#import "UAPreferenceDataStore+Internal.h"
 
 extern const NSTimeInterval UATestExpectationTimeOut;
 
 @interface UABaseTest : XCTestCase
 
+/**
+ * A preference data store unique to this test. The dataStore is created
+ * lazily when first used.
+ */
+@property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 
 /**
  * Creates a nice mock for a given class.

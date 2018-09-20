@@ -10,7 +10,6 @@
 
 @interface UATagGroupsLookupManagerTest : UABaseTest
 @property (nonatomic, strong) UATagGroupsLookupManager *lookupManager;
-@property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 @property (nonatomic, strong) id mockAirship;
 @property (nonatomic, strong) id mockPush;
 @property (nonatomic, strong) id mockAPIClient;
@@ -26,7 +25,6 @@
 - (void)setUp {
     [super setUp];
     self.requestedTagGroups = [UATagGroups tagGroupsWithTags:@{@"foo": @[@"bar", @"baz"]}];
-    self.dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:@"UATagGroupsLookupManagerTest"];
     self.testDate = [[UATestDate alloc] init];
 
     self.mockDelegate = [self mockForProtocol:@protocol(UATagGroupsLookupManagerDelegate)];
@@ -41,11 +39,6 @@
 
     self.lookupManager.componentEnabled = YES;
     self.lookupManager.delegate = self.mockDelegate;
-}
-
-- (void)tearDown {
-    [self.dataStore removeAll];
-    [super tearDown];
 }
 
 - (void)setupMocks:(NSString *)channelID channelTagsEnabled:(BOOL)enabled {

@@ -40,7 +40,6 @@
 @property (nonatomic, strong) id mockConfig;
 
 @property (nonatomic, strong) UARemoteDataManager *remoteDataManager;
-@property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 @property (nonatomic, strong) UATestRemoteDataStore *testStore;
 
 @property (nonatomic, strong) NSArray<NSDictionary *> *remoteDataFromCloud;
@@ -61,9 +60,6 @@
     // set the AppKey so we get a new coredata store each time
     [[[self.mockConfig stub] andReturn:[[NSProcessInfo processInfo] globallyUniqueString]] developmentAppKey];
     
-    self.dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:@"uaremotedata.test."];
-    [self.dataStore removeAll]; // start with an empty datastore
-    
     self.testStore = [UATestRemoteDataStore storeWithName:@"UARemoteDataManagerTest." inMemory:YES];
     self.remoteDataManager = [UARemoteDataManager remoteDataManagerWithConfig:self.mockConfig dataStore:self.dataStore remoteDataStore:self.testStore];
     
@@ -76,8 +72,6 @@
     [self.mockAPIClient stopMocking];
     [self.mockAPIClientClass stopMocking];
     
-    [self.dataStore removeAll];
-
     [self.testStore shutDown];
     [self.testStore waitForIdle];
     

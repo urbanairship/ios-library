@@ -15,7 +15,6 @@
 @interface UAAnalyticsTest: UABaseTest
 @property (nonatomic, strong) UAAnalytics *analytics;
 @property (nonatomic, strong) id mockEventManager;
-@property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 @property (nonatomic, strong) NSNotificationCenter *notificationCenter;
 @end
 
@@ -25,8 +24,6 @@
     [super setUp];
 
     self.notificationCenter = [[NSNotificationCenter alloc] init];
-    self.dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:[NSString stringWithFormat:@"uaanalytics.test.%@", self.name]];
-    [self.dataStore removeAll];
 
     self.mockEventManager = [self mockForClass:[UAEventManager class]];
 
@@ -35,7 +32,6 @@
 }
 
 - (void)tearDown {
-    [self.dataStore removeAll];
     [self.mockEventManager stopMocking];
 
     [super tearDown];

@@ -39,7 +39,6 @@
 @property (nonatomic, strong) id mockUNNotification;
 
 @property (nonatomic, strong) UAPush *push;
-@property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 @property (nonatomic, strong) NSNotificationCenter *notificationCenter;
 
 @property (nonatomic, strong) NSDictionary *notification;
@@ -110,9 +109,6 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
         completionBlock(self.mockUNNotificationSettingsPartial);
     }] ignoringNonObjectArgs] getNotificationSettingsWithCompletionHandler:OCMOCK_ANY];
 
-    self.dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:@"uapush.test."];
-    [self.dataStore removeAll];
-    
     self.mockTagGroupsRegistrar = [self mockForClass:[UATagGroupsRegistrar class]];
 
     self.notificationCenter = [[NSNotificationCenter alloc] init];
@@ -192,8 +188,6 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     self.push.pushNotificationDelegate = nil;
     self.push.registrationDelegate = nil;
     self.push = nil;
-
-    [self.dataStore removeAll];
 
     [super tearDown];
 }

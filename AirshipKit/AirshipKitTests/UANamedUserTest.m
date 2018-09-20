@@ -14,7 +14,6 @@
 
 @property (nonatomic, strong) id mockedAirship;
 @property (nonatomic, strong) UANamedUser *namedUser;
-@property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 @property (nonatomic, strong) id mockedNamedUserClient;
 @property (nonatomic, strong) id mockedUAPush;
 @property (nonatomic, copy) NSString *pushChannelID;
@@ -34,8 +33,6 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
 
 - (void)setUp {
     [super setUp];
-
-    self.dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:@"uapush.test."];
 
     self.mockedUAPush = [self mockForClass:[UAPush class]];
     [[[self.mockedUAPush stub] andDo:^(NSInvocation *invocation) {
@@ -81,7 +78,6 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
 }
 
 - (void)tearDown {
-    [self.dataStore removeAll];
     [self.mockedNamedUserClient stopMocking];
     [self.mockedAirship stopMocking];
     [self.mockedUAPush stopMocking];

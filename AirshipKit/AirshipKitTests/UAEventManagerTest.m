@@ -30,7 +30,6 @@
 
 @interface UAEventManagerTest : UABaseTest
 @property (nonatomic, strong) UAEventManager *eventManager;
-@property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 @property (nonatomic, strong) NSNotificationCenter *notificationCenter;
 
 @property (nonatomic, strong) id mockQueue;
@@ -59,7 +58,6 @@
 
 
     self.notificationCenter = [[NSNotificationCenter alloc] init];
-    self.dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:@"test.analytics"];
     self.eventManager = [UAEventManager eventManagerWithConfig:[UAConfig config]
                                                      dataStore:self.dataStore
                                                     eventStore:self.mockStore
@@ -73,8 +71,6 @@
 }
 
 - (void)tearDown {
-    [self.dataStore removeAll];
-
     [self.mockStore stopMocking];
     [self.mockClient stopMocking];
     [self.mockQueue stopMocking];

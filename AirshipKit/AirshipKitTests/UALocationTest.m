@@ -9,7 +9,6 @@
 @interface UALocationTest : UABaseTest
 
 @property (nonatomic, strong) UALocation *location;
-@property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 @property (nonatomic, strong) NSNotificationCenter *notificationCenter;
 
 @property (nonatomic, strong) id mockAnalytics;
@@ -25,8 +24,6 @@
 
 - (void)setUp {
     [super setUp];
-    self.dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:[NSString stringWithFormat:@"ualocation.test.%@",self.name]];
-    [self.dataStore removeAll]; // start with an empty datastore
 
     self.mockedApplication = [self mockForClass:[UIApplication class]];
     [[[self.mockedApplication stub] andReturn:self.mockedApplication] sharedApplication];
@@ -65,7 +62,6 @@
     [self.mockedApplication stopMocking];
     [self.mockedBundle stopMocking];
 
-    [self.dataStore removeAll];
     self.location = nil;
 
     [super tearDown];

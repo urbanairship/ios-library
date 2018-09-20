@@ -20,7 +20,6 @@
 @property(nonatomic, strong) id mockAnalytics;
 @property(nonatomic, strong) id mockInAppMessageManager;
 
-@property(nonatomic, strong) UAPreferenceDataStore *dataStore;
 @property(nonatomic, strong) UALegacyInAppMessage *bannerMessage;
 @property(nonatomic, strong) UALegacyInAppMessage *nonBannerMessage;
 @property(nonatomic, strong) UALegacyInAppMessaging *inAppMessaging;
@@ -33,8 +32,6 @@
 
 - (void)setUp {
     [super setUp];
-
-    self.dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:@"UALegacyInAppMessagingTest"];
 
     self.mockAnalytics = [self mockForClass:[UAAnalytics class]];
     self.mockInAppMessageManager = [self mockForClass:[UAInAppMessageManager class]];
@@ -74,8 +71,6 @@
 - (void)tearDown {
     [self.mockAnalytics stopMocking];
     [self.mockInAppMessageManager stopMocking];
-
-    [self.dataStore removeAll];
 
     [super tearDown];
 }

@@ -24,7 +24,6 @@
 @property(nonatomic, strong) id mockAutomationEngine;
 @property(nonatomic, strong) UAInAppMessageScheduleInfo *scheduleInfo;
 @property(nonatomic, strong) UAInAppMessageScheduleInfo *scheduleInfoWithTagGroups;
-@property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 @property (nonatomic, strong) id mockPush;
 @property (nonatomic, strong) id mockActionRunner;
 @property (nonatomic, strong) UATestDispatcher *testDispatcher;
@@ -39,8 +38,7 @@
     self.mockDelegate = [self mockForProtocol:@protocol(UAInAppMessagingDelegate)];
     self.mockAdapter = [self mockForProtocol:@protocol(UAInAppMessageAdapterProtocol)];
     self.mockAutomationEngine = [self mockForClass:[UAAutomationEngine class]];
-    self.dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:@"UAInAppMessageManagerTest."];
-    [self.dataStore removeAll];
+
     self.mockPush = [self mockForClass:[UAPush class]];
     self.mockActionRunner = [self mockForClass:[UAActionRunner class]];
     self.testDispatcher = [UATestDispatcher testDispatcher];

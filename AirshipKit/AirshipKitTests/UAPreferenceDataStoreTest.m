@@ -5,20 +5,11 @@
 
 @interface UAPreferenceDataStoreTest : UABaseTest
 
-@property(nonatomic, strong) UAPreferenceDataStore *dataStore;
-
 @end
 
 @implementation UAPreferenceDataStoreTest
 
-- (void)setUp {
-    [super setUp];
-    self.dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:@"asfa"];
-}
-
 - (void)tearDown {
-    [self.dataStore removeAll];
-
     [super tearDown];
     [NSUserDefaults resetStandardUserDefaults];
 }

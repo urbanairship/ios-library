@@ -9,7 +9,6 @@
 
 @interface UALegacyInAppMessageTest : UABaseTest
 @property(nonatomic, strong) id mockAirship;
-@property(nonatomic, strong) UAPreferenceDataStore *dataStore;
 @property(nonatomic, strong) NSDictionary *payload;
 @end
 
@@ -19,7 +18,6 @@
     [super setUp];
 
     self.mockAirship = [self mockForClass:[UAirship class]];
-    self.dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:@"test"];
     [[[self.mockAirship stub] andReturn:self.mockAirship] shared];
     [[[self.mockAirship stub] andReturn:self.dataStore] dataStore];
 

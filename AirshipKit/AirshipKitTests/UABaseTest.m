@@ -2,6 +2,7 @@
 
 #import "UABaseTest.h"
 #import "UAirship+Internal.h"
+
 @interface UABaseTest()
 @property (nonatomic, strong) NSPointerArray *mocks;
 @end
@@ -16,6 +17,11 @@ const NSTimeInterval UATestExpectationTimeOut = 5;
     }
     self.mocks = nil;
     [UAirship land];
+    
+    if (_dataStore) {
+        [_dataStore removeAll];
+    }
+
     [super tearDown];
 }
 
@@ -56,6 +62,28 @@ const NSTimeInterval UATestExpectationTimeOut = 5;
 
 - (void)waitForTestExpectations {
     [self waitForExpectationsWithTimeout:UATestExpectationTimeOut handler:nil];
+}
+
+- (UAPreferenceDataStore *)dataStore {
+    if (_dataStore) {
+        return _dataStore;
+    }
+    
+    // self.name is "-[TEST_CLASS TEST_NAME]". For key prefix, re-format to "TEST_CLASS.TEST_NAME", e.g. UAAnalyticsTest.testAddEvent
+    NSString *prefStorePrefix = [self.name stringByReplacingOccurrencesOfString:@"\\s"
+                                                                     withString:@"."
+                                                                        options:NSRegularExpressionSearch
+                                                                          range:NSMakeRange(0, [self.name length])];
+    prefStorePrefix = [prefStorePrefix stringByReplacingOccurrencesOfString:@"-|\\[|\\]"
+                                                                 withString:@""
+                                                                    options:NSRegularExpressionSearch
+                                                                      range:NSMakeRange(0, [prefStorePrefix length])];
+    
+    _dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:prefStorePrefix];
+    
+    [_dataStore removeAll];
+
+    return _dataStore;
 }
 
 @end

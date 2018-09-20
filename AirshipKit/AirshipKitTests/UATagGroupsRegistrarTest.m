@@ -5,7 +5,6 @@
 #import "UATagGroupsMutation+Internal.h"
 
 @interface UATagGroupsRegistrarTest : UABaseTest
-@property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 @property (nonatomic, strong) UATagGroupsMutationHistory *mutationHistory;
 @property (nonatomic, strong) UATagGroupsRegistrar *registrar;
 @property (nonatomic, strong) NSOperationQueue *operationQueue;
@@ -20,9 +19,6 @@
     
     self.mockApplication = [self mockForClass:[UIApplication class]];
     [[[self.mockApplication stub] andReturn:self.mockApplication] sharedApplication];
-    
-    self.dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:@"uataggroupsregistrar.test."];
-    [self.dataStore removeAll];
     
     self.mockApiClient = [self mockForClass:[UATagGroupsAPIClient class]];
 
@@ -39,7 +35,6 @@
 - (void)tearDown {
     [self.operationQueue cancelAllOperations];
     [self.operationQueue waitUntilAllOperationsAreFinished];
-    [self.dataStore removeAll];
     [super tearDown];
 }
 

@@ -11,7 +11,6 @@
 @interface UAChannelCaptureActionTest : UABaseTest
 
 @property (nonatomic, strong) UAChannelCaptureAction *action;
-@property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 @property (nonatomic, strong) UAActionArguments *arguments;
 
 @property(nonatomic, strong) id mockChannelCapture;
@@ -25,7 +24,6 @@
     [super setUp];
     
     self.action = [[UAChannelCaptureAction alloc] init];
-    self.dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:@"test.channelCapture."];
     
     self.mockChannelCapture = [self mockForClass:[UAChannelCapture class]];
     self.airship = [self strictMockForClass:[UAirship class]];
@@ -39,7 +37,6 @@
     [self.mockChannelCapture stopMocking];
     [self.airship stopMocking];
     
-    [self.dataStore removeAll];
     [super tearDown];
 }
 

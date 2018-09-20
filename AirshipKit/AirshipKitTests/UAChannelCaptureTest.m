@@ -11,7 +11,6 @@
 @interface UAChannelCaptureTest : UABaseTest
 @property(nonatomic, strong) UAConfig *config;
 @property(nonatomic, strong) UAChannelCapture *channelCapture;
-@property(nonatomic, strong) UAPreferenceDataStore *dataStore;
 @property(nonatomic, strong) NSNotificationCenter *notificationCenter;
 
 @property(nonatomic, strong) id mockPush;
@@ -45,8 +44,6 @@
     self.config.developmentAppKey = @"App key";
     self.config.developmentAppSecret = @"App secret";
     self.config.inProduction = NO;
-
-    self.dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:@"test.channelCapture"];
 
     self.notificationCenter = [[NSNotificationCenter alloc] init];
 

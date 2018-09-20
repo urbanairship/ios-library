@@ -12,7 +12,6 @@
 
 @interface UAUserTest : UABaseTest
 @property (nonatomic, strong) UAUser *user;
-@property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 @property (nonatomic, strong) UAConfig *config;
 
 @property (nonatomic, strong) NSNotificationCenter *notificationCenter;
@@ -32,9 +31,6 @@
     self.config.inProduction = NO;
     self.config.developmentAppKey = @"9Q1tVTl0RF16baYKYp8HPQ";
 
-    self.dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:@"user.test."];
-    [self.dataStore removeAll];
-
     [[[NSBundle mainBundle] infoDictionary] setValue:@"someBundleID" forKey:@"CFBundleIdentifier"];
     self.mockKeychainUtils = [self mockForClass:[UAKeychainUtils class]];
 
@@ -47,11 +43,6 @@
     self.notificationCenter = [[NSNotificationCenter alloc] init];
     self.user = [UAUser userWithPush:self.mockPush config:self.config dataStore:self.dataStore client:self.mockUserClient notificationCenter:self.notificationCenter];
  }
-
-- (void)tearDown {
-    [self.dataStore removeAll];
-    [super tearDown];
-}
 
 - (void)testDefaultUser {
     //an uninitialized user will be non-nil but will have nil values

@@ -22,7 +22,6 @@
 @property (nonatomic, strong) UAChannelRegistrationPayload *payload;
 
 @property (nonatomic, strong) UAChannelRegistrar *registrar;
-@property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 @property (nonatomic, strong) UATestDate *testDate;
 
 @end
@@ -86,19 +85,10 @@ NSString * const ChannelCreateSuccessChannelLocation = @"newChannelLocation";
         failureBlock(self.failureCode);
     };
 
-    self.dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:[NSString stringWithFormat:@"uachannelregistrar.test.%@",self.name]];
-    [self.dataStore removeAll]; // start with an empty datastore
-    
     self.testDate = [[UATestDate alloc] init];
 
     // Create the registrar
     self.registrar = [self createRegistrarWithChannelID:nil location:nil];
-}
-
-- (void)tearDown {
-    [self.dataStore removeAll];
-
-    [super tearDown];
 }
 
 /**
