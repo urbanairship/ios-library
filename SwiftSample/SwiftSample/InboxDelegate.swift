@@ -10,12 +10,14 @@ class InboxDelegate : NSObject, UAInboxDelegate {
 
     init(rootViewController:UIViewController) {
         self.tabBarController = rootViewController as! UITabBarController
-        self.messageCenterViewController = self.tabBarController.viewControllers![2] as! MessageCenterViewController;
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+        self.messageCenterViewController = self.tabBarController.viewControllers![appDelegate.MessageCenterTab] as! MessageCenterViewController;
     }
     
     func showInbox() {
         DispatchQueue.main.async {
-            self.tabBarController.selectedIndex = 2
+            let appDelegate = UIApplication.shared.delegate as! AppDelegate
+            self.tabBarController.selectedIndex = appDelegate.MessageCenterTab
         }
     }
 

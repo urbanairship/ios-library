@@ -2,13 +2,13 @@
 
 import UIKit
 
-public class AirshipDebugKit {
+public class AirshipDebugKit : NSObject {
     /**
      * Loads one of the debug storyboards.
      * @param name Name of the storyboard you want loaded, e.g. "DeviceInfo".
      * @return Initial view controller for the instantiated storyboard.
      */
-    public class func instantiateStoryboard(_ name : String) -> UIViewController? {
+    @objc public class func instantiateStoryboard(_ name : String) -> UIViewController? {
         // find the bundle containing the storyboard
         var storyboardBundle : Bundle = Bundle(for: self)
         if (storyboardBundle.path(forResource: name, ofType: "storyboardc") == nil) {

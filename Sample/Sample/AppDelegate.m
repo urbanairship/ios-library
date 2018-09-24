@@ -5,7 +5,7 @@
 #import "AppDelegate.h"
 #import "InboxDelegate.h"
 #import "PushHandler.h"
-#import "PushSettingsViewController.h"
+#import "DebugViewController.h"
 #import "HomeViewController.h"
 #import "MessageCenterViewController.h"
 
@@ -14,10 +14,11 @@
 NSString *const HomeStoryboardID = @"home";
 NSString *const PushSettingsStoryboardID = @"push_settings";
 NSString *const MessageCenterStoryboardID = @"message_center";
+NSString *const DebugStoryboardID = @"debug";
 
-int const HomeTab = 0;
-int const PushSettingsTab = 1;
-int const MessageCenterTab = 2;
+NSUInteger const HomeTab = 0;
+NSUInteger const MessageCenterTab = 1;
+NSUInteger const DebugTab = 2;
 
 @interface AppDelegate () <UARegistrationDelegate, UADeepLinkDelegate>
 @property(nonatomic, strong) InboxDelegate *inboxDelegate;
@@ -108,7 +109,7 @@ int const MessageCenterTab = 2;
 
 - (void)refreshMessageCenterBadge {
     dispatch_async(dispatch_get_main_queue(), ^{
-        UITabBarItem *messageCenterTab = [[[(UITabBarController *)self.window.rootViewController tabBar] items] objectAtIndex:2];
+        UITabBarItem *messageCenterTab = [[[(UITabBarController *)self.window.rootViewController tabBar] items] objectAtIndex:MessageCenterTab];
         
         if ([UAirship inbox].messageList.unreadCount > 0) {
             [messageCenterTab setBadgeValue:[NSString stringWithFormat:@"%ld", (long)[UAirship inbox].messageList.unreadCount]];
@@ -178,12 +179,33 @@ int const MessageCenterTab = 2;
 
         if ([selectedVC isKindOfClass:[UINavigationController class]]) {
             UINavigationController *nav = (UINavigationController *)selectedVC;
-            if (![[nav topViewController] isKindOfClass:[PushSettingsViewController class]]) {
+            if (![[nav topViewController] isKindOfClass:[DebugViewController class]]) {
                 [nav popToRootViewControllerAnimated:YES];
             }
         }
 
-        [tabController setSelectedIndex:PushSettingsTab];
+        [tabController setSelectedIndex:DebugTab];
+        
+        selectedVC = tabController.selectedViewController;
+        
+        if ([selectedVC isKindOfClass:[UINavigationController class]]) {
+            UINavigationController *nav = (UINavigationController *)selectedVC;
+            if ([[nav topViewController] isKindOfClass:[DebugViewController class]]) {
+                DebugViewController *debugViewController = (DebugViewController *)nav.topViewController;
+                [debugViewController performSegueWithIdentifier:DeviceInfoSegue sender:nil];
+            }
+        }
+    } else if ([pathComponents containsObject:DebugStoryboardID]) {
+        id selectedVC = tabController.selectedViewController;
+        
+        if ([selectedVC isKindOfClass:[UINavigationController class]]) {
+            UINavigationController *nav = (UINavigationController *)selectedVC;
+            if (![[nav topViewController] isKindOfClass:[DebugViewController class]]) {
+                [nav popToRootViewControllerAnimated:YES];
+            }
+        }
+        
+        [tabController setSelectedIndex:DebugTab];
     } else if ([pathComponents containsObject:MessageCenterStoryboardID]) {
         [tabController setSelectedIndex:MessageCenterTab];
     }

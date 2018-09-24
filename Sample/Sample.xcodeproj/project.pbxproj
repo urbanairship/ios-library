@@ -27,12 +27,8 @@
 		764693A71C237B630090FE40 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 764693A61C237B630090FE40 /* main.m */; };
 		764693AA1C237B630090FE40 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 764693A91C237B630090FE40 /* AppDelegate.m */; };
 		764693AD1C237B630090FE40 /* HomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 764693AC1C237B630090FE40 /* HomeViewController.m */; };
-		764693B01C237B630090FE40 /* PushSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 764693AF1C237B630090FE40 /* PushSettingsViewController.m */; };
 		764693B81C237B630090FE40 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 764693B61C237B630090FE40 /* LaunchScreen.storyboard */; };
 		764693C01C237CAB0090FE40 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 764693BF1C237CAB0090FE40 /* Main.storyboard */; };
-		764693EE1C2389B40090FE40 /* AddTagsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 764693ED1C2389B40090FE40 /* AddTagsTableViewController.m */; };
-		764693F41C2389E90090FE40 /* AddNamedUserTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 764693F31C2389E90090FE40 /* AddNamedUserTableViewController.m */; };
-		764693F71C238A5E0090FE40 /* TagsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 764693F61C238A5E0090FE40 /* TagsTableViewController.m */; };
 		7646940D1C238E7C0090FE40 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 764693FC1C238E7C0090FE40 /* Images.xcassets */; };
 		7646940E1C238E7C0090FE40 /* LICENSE.txt in Resources */ = {isa = PBXBuildFile; fileRef = 764693FE1C238E7C0090FE40 /* LICENSE.txt */; };
 		7646940F1C238E7C0090FE40 /* Roboto-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 764693FF1C238E7C0090FE40 /* Roboto-Black.ttf */; };
@@ -42,8 +38,9 @@
 		7646941B1C238E7C0090FE40 /* urban-airship-logo-pacific.png in Resources */ = {isa = PBXBuildFile; fileRef = 7646940B1C238E7C0090FE40 /* urban-airship-logo-pacific.png */; };
 		7646941C1C238E7C0090FE40 /* urban-airship-pacific.png in Resources */ = {isa = PBXBuildFile; fileRef = 7646940C1C238E7C0090FE40 /* urban-airship-pacific.png */; };
 		76AE35651C2B6FD600D7F3B9 /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 76AE35641C2B6FD600D7F3B9 /* AirshipConfig.plist */; };
-		CC899CC01D8B6DC300A0CECC /* AirshipKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC899CB31D8B6AB400A0CECC /* AirshipKit.framework */; };
 		CC899CC41D8B6F3900A0CECC /* AirshipKit.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = CC899CB31D8B6AB400A0CECC /* AirshipKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		DF74B29721543E3E0010CACB /* AirshipDebugKit.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = DF74B28921543DC00010CACB /* AirshipDebugKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		DF74B29A215460A40010CACB /* DebugViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DF74B299215460A40010CACB /* DebugViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -124,6 +121,20 @@
 			remoteGlobalIDString = DF7E739E1E7B3F0A0039F65D;
 			remoteInfo = "AirshipResources tvOS";
 		};
+		DF74B28821543DC00010CACB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DF74B28321543DC00010CACB /* AirshipDebugKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = DFE7011F212F1FAA00A708D5;
+			remoteInfo = AirshipDebugKit;
+		};
+		DF74B28F21543DF20010CACB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DF74B28321543DC00010CACB /* AirshipDebugKit.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = DFE7011E212F1FAA00A708D5;
+			remoteInfo = AirshipDebugKit;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -163,6 +174,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				DF74B29721543E3E0010CACB /* AirshipDebugKit.framework in CopyFiles */,
 				61E30D821DDE324C00B7EE28 /* AirshipAppExtensions.framework in CopyFiles */,
 				CC899CC41D8B6F3900A0CECC /* AirshipKit.framework in CopyFiles */,
 			);
@@ -204,17 +216,9 @@
 		764693A91C237B630090FE40 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		764693AB1C237B630090FE40 /* HomeViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HomeViewController.h; sourceTree = "<group>"; };
 		764693AC1C237B630090FE40 /* HomeViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HomeViewController.m; sourceTree = "<group>"; };
-		764693AE1C237B630090FE40 /* PushSettingsViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PushSettingsViewController.h; sourceTree = "<group>"; };
-		764693AF1C237B630090FE40 /* PushSettingsViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PushSettingsViewController.m; sourceTree = "<group>"; };
 		764693B71C237B630090FE40 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		764693B91C237B630090FE40 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		764693BF1C237CAB0090FE40 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
-		764693EC1C2389B40090FE40 /* AddTagsTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddTagsTableViewController.h; sourceTree = "<group>"; };
-		764693ED1C2389B40090FE40 /* AddTagsTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddTagsTableViewController.m; sourceTree = "<group>"; };
-		764693F21C2389E90090FE40 /* AddNamedUserTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddNamedUserTableViewController.h; sourceTree = "<group>"; };
-		764693F31C2389E90090FE40 /* AddNamedUserTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddNamedUserTableViewController.m; sourceTree = "<group>"; };
-		764693F51C238A5E0090FE40 /* TagsTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TagsTableViewController.h; sourceTree = "<group>"; };
-		764693F61C238A5E0090FE40 /* TagsTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TagsTableViewController.m; sourceTree = "<group>"; };
 		764693FC1C238E7C0090FE40 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		764693FE1C238E7C0090FE40 /* LICENSE.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE.txt; sourceTree = "<group>"; };
 		764693FF1C238E7C0090FE40 /* Roboto-Black.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-Black.ttf"; sourceTree = "<group>"; };
@@ -233,6 +237,9 @@
 		7646940C1C238E7C0090FE40 /* urban-airship-pacific.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "urban-airship-pacific.png"; sourceTree = "<group>"; };
 		76AE35641C2B6FD600D7F3B9 /* AirshipConfig.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = AirshipConfig.plist; sourceTree = "<group>"; };
 		CC899CAD1D8B6AB400A0CECC /* AirshipKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = AirshipKit.xcodeproj; path = ../AirshipKit/AirshipKit.xcodeproj; sourceTree = "<group>"; };
+		DF74B28321543DC00010CACB /* AirshipDebugKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = AirshipDebugKit.xcodeproj; path = ../AirshipDebugKit/AirshipDebugKit.xcodeproj; sourceTree = "<group>"; };
+		DF74B298215460A40010CACB /* DebugViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DebugViewController.h; sourceTree = "<group>"; };
+		DF74B299215460A40010CACB /* DebugViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DebugViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -248,7 +255,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CC899CC01D8B6DC300A0CECC /* AirshipKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -307,6 +313,7 @@
 			children = (
 				CC899CAD1D8B6AB400A0CECC /* AirshipKit.xcodeproj */,
 				49251DCF1D6F95FC00EED4BD /* AirshipAppExtensions.xcodeproj */,
+				DF74B28321543DC00010CACB /* AirshipDebugKit.xcodeproj */,
 				764693A41C237B630090FE40 /* Sample */,
 				49D2C73C1D6F952D0049B0A0 /* SampleServiceExtension */,
 				76AE35641C2B6FD600D7F3B9 /* AirshipConfig.plist */,
@@ -334,18 +341,12 @@
 				61A672FB1CAB3E5A00BAF58A /* PushHandler.m */,
 				764693AB1C237B630090FE40 /* HomeViewController.h */,
 				764693AC1C237B630090FE40 /* HomeViewController.m */,
-				764693AE1C237B630090FE40 /* PushSettingsViewController.h */,
-				764693AF1C237B630090FE40 /* PushSettingsViewController.m */,
-				764693EC1C2389B40090FE40 /* AddTagsTableViewController.h */,
-				764693ED1C2389B40090FE40 /* AddTagsTableViewController.m */,
-				764693F21C2389E90090FE40 /* AddNamedUserTableViewController.h */,
-				764693F31C2389E90090FE40 /* AddNamedUserTableViewController.m */,
-				764693F51C238A5E0090FE40 /* TagsTableViewController.h */,
-				764693F61C238A5E0090FE40 /* TagsTableViewController.m */,
 				493F50E81C5B261100B050A1 /* MessageCenterViewController.h */,
 				493F50E91C5B261100B050A1 /* MessageCenterViewController.m */,
 				493F511F1C5B3A5100B050A1 /* InboxDelegate.h */,
 				493F51201C5B3A5100B050A1 /* InboxDelegate.m */,
+				DF74B298215460A40010CACB /* DebugViewController.h */,
+				DF74B299215460A40010CACB /* DebugViewController.m */,
 				764693BF1C237CAB0090FE40 /* Main.storyboard */,
 				764693B61C237B630090FE40 /* LaunchScreen.storyboard */,
 				764693B91C237B630090FE40 /* Info.plist */,
@@ -409,6 +410,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		DF74B28421543DC00010CACB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				DF74B28921543DC00010CACB /* AirshipDebugKit.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -444,8 +453,9 @@
 			buildRules = (
 			);
 			dependencies = (
-				61E30D741DDE2F9E00B7EE28 /* PBXTargetDependency */,
 				767A3A271D9EEEA700422A96 /* PBXTargetDependency */,
+				61E30D741DDE2F9E00B7EE28 /* PBXTargetDependency */,
+				DF74B29021543DF20010CACB /* PBXTargetDependency */,
 				49D2C7421D6F952D0049B0A0 /* PBXTargetDependency */,
 			);
 			name = Sample;
@@ -504,6 +514,10 @@
 				{
 					ProductGroup = 49251DD01D6F95FC00EED4BD /* Products */;
 					ProjectRef = 49251DCF1D6F95FC00EED4BD /* AirshipAppExtensions.xcodeproj */;
+				},
+				{
+					ProductGroup = DF74B28421543DC00010CACB /* Products */;
+					ProjectRef = DF74B28321543DC00010CACB /* AirshipDebugKit.xcodeproj */;
 				},
 				{
 					ProductGroup = CC899CAE1D8B6AB400A0CECC /* Products */;
@@ -575,6 +589,13 @@
 			remoteRef = DF0C33421F69B817002FEE40 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		DF74B28921543DC00010CACB /* AirshipDebugKit.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = AirshipDebugKit.framework;
+			remoteRef = DF74B28821543DC00010CACB /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 /* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
@@ -628,16 +649,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				764693B01C237B630090FE40 /* PushSettingsViewController.m in Sources */,
 				764693AA1C237B630090FE40 /* AppDelegate.m in Sources */,
 				61A672FC1CAB3E5A00BAF58A /* PushHandler.m in Sources */,
-				764693F71C238A5E0090FE40 /* TagsTableViewController.m in Sources */,
+				DF74B29A215460A40010CACB /* DebugViewController.m in Sources */,
 				764693AD1C237B630090FE40 /* HomeViewController.m in Sources */,
 				493F51211C5B3A5100B050A1 /* InboxDelegate.m in Sources */,
 				764693A71C237B630090FE40 /* main.m in Sources */,
-				764693F41C2389E90090FE40 /* AddNamedUserTableViewController.m in Sources */,
 				493F50EA1C5B261100B050A1 /* MessageCenterViewController.m in Sources */,
-				764693EE1C2389B40090FE40 /* AddTagsTableViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -658,6 +676,11 @@
 			isa = PBXTargetDependency;
 			name = AirshipKit;
 			targetProxy = 767A3A261D9EEEA700422A96 /* PBXContainerItemProxy */;
+		};
+		DF74B29021543DF20010CACB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = AirshipDebugKit;
+			targetProxy = DF74B28F21543DF20010CACB /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -827,6 +850,7 @@
 		764693BD1C237B630090FE40 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Sample/Sample.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
@@ -842,6 +866,7 @@
 		764693BE1C237B630090FE40 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Sample/Sample.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
