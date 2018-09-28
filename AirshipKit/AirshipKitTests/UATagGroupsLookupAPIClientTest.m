@@ -49,7 +49,8 @@
 
     UATagGroups *requestedTagGroups = [UATagGroups tagGroupsWithTags:@{@"foo" : @[@"bar", @"baz"]}];
 
-    [self.client lookupTagGroupsWithChannelID:@"channel-id" requestedTagGroups:requestedTagGroups
+    [self.client lookupTagGroupsWithChannelID:@"channel-id"
+                           requestedTagGroups:requestedTagGroups
                                cachedResponse:nil
                             completionHandler:^(UATagGroupsLookupResponse *lookupResponse) {
                                 XCTAssertEqual(lookupResponse.status, 200);
@@ -89,7 +90,8 @@
                                                                                           status:200
                                                                            lastModifiedTimestamp:@"2018-03-02T22:56:09"];
 
-    [self.client lookupTagGroupsWithChannelID:@"channel-id" requestedTagGroups:requestedTagGroups
+    [self.client lookupTagGroupsWithChannelID:@"channel-id"
+                           requestedTagGroups:requestedTagGroups
                                cachedResponse:cachedResponse
                             completionHandler:^(UATagGroupsLookupResponse *lookupResponse) {
                                 XCTAssertEqual(lookupResponse.status, 200);
@@ -101,6 +103,50 @@
     [self waitForExpectationsWithTimeout:1 handler:^(NSError *error) {
         [self.mockSession verify];
     }];
+}
+
+- (void)testURLAndPayloadSent {
+    NSDictionary *expectedPayload =     @{
+                                          @"channel_id" : @"channel-id",
+                                          @"device_type" : @"ios",
+                                          @"tag_groups" : @{
+                                                  @"foo" : @[
+                                                            @"bar",
+                                                            @"baz"
+                                                            ]
+                                                  }
+                                          };
+
+    NSString *expectedLookupBaseURL = @"https://go.urbanairship.com";
+    NSString *expectedLookupEndpoint = @"/api/channel-tags-lookup";
+    NSString *expectedLookupURL = [NSString stringWithFormat:@"%@%@",expectedLookupBaseURL, expectedLookupEndpoint];
+
+    NSData *expectedPayloadData = [NSJSONSerialization dataWithJSONObject:expectedPayload options:NSJSONWritingPrettyPrinted error:nil];
+
+    [[[self.mockConfig expect] andReturn:expectedLookupBaseURL] deviceAPIURL];
+
+    // Stub the session to inspect the request
+    [[[self.mockSession expect] andDo:^(NSInvocation *invocation) {
+        void *requestArg;
+        [invocation getArgument:&requestArg atIndex:2];
+
+        UARequest *request = (__bridge UARequest *)requestArg;
+
+        XCTAssertEqualObjects([request.URL absoluteString], expectedLookupURL);
+        XCTAssertEqualObjects(request.body, expectedPayloadData);
+
+    }] dataTaskWithRequest:OCMOCK_ANY retryWhere:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
+    UATagGroups *requestedTagGroups = [UATagGroups tagGroupsWithTags:@{@"foo" : @[@"bar", @"baz"]}];
+
+    [self.client lookupTagGroupsWithChannelID:@"channel-id"
+                           requestedTagGroups:requestedTagGroups
+                               cachedResponse:nil
+                            completionHandler:^(UATagGroupsLookupResponse *lookupResponse) {
+                            }];
+
+    [self.mockConfig verify];
+    [self.mockSession verify];
 }
 
 @end
