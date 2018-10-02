@@ -6,6 +6,7 @@
 #import "UASchedule.h"
 #import "UAScheduleInfo.h"
 #import "UATimerScheduler+Internal.h"
+#import "UADispatcher+Internal.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -113,12 +114,13 @@ typedef NS_ENUM(NSInteger, UAAutomationSchedulePrepareResult) {
  * @param automationStore An initialized UAAutomationStore
  * @param timerScheduler A timer scheduler
  * @param notificationCenter The notification center.
+ * @param dispatcher The dispatcher to dispatch main queue blocks.
  * @return Initialized Automation Engine instance
  */
 + (instancetype)automationEngineWithAutomationStore:(UAAutomationStore *)automationStore
                                      timerScheduler:(UATimerScheduler *)timerScheduler
-                                 notificationCenter:(NSNotificationCenter *)notificationCenter;
-
+                                 notificationCenter:(NSNotificationCenter *)notificationCenter
+                                         dispatcher:(UADispatcher *)dispatcher;
 
 /**
  * Starts the Automation Engine.

@@ -14,6 +14,7 @@
 #import "UAActionScheduleInfo.h"
 #import "UAAutomation+Internal.h"
 #import "UAApplicationMetrics+Internal.h"
+#import "UATestDispatcher.h"
 
 @interface UAAutomationEngineIntegrationTest : UABaseTest
 @property (nonatomic, strong) UAAutomationEngine *automationEngine;
@@ -24,6 +25,7 @@
 @property (nonatomic, strong) id mockAirship;
 @property (nonatomic, strong) id mockTimerScheduler;
 @property (nonatomic, strong) NSNotificationCenter *notificationCenter;
+@property (nonatomic, strong) UATestDispatcher *dispatcher;
 @end
 
 #define UAAUTOMATIONENGINETESTS_SCHEDULE_LIMIT 100
@@ -32,6 +34,8 @@
 @implementation UAAutomationEngineIntegrationTest
 - (void)setUp {
     [super setUp];
+
+    self.dispatcher = [UATestDispatcher testDispatcher];
 
     // Set up a mocked application
     self.mockedApplication = [self mockForClass:[UIApplication class]];
@@ -55,7 +59,10 @@
 
     self.notificationCenter = [[NSNotificationCenter alloc] init];
 
-    self.automationEngine = [UAAutomationEngine automationEngineWithAutomationStore:self.testStore timerScheduler:self.mockTimerScheduler  notificationCenter:self.notificationCenter];
+    self.automationEngine = [UAAutomationEngine automationEngineWithAutomationStore:self.testStore
+                                                                     timerScheduler:self.mockTimerScheduler
+                                                                 notificationCenter:self.notificationCenter
+                                                                         dispatcher:self.dispatcher];
 
     self.automationEngine.delegate = self.mockDelegate;
     [self.automationEngine cancelAll];
