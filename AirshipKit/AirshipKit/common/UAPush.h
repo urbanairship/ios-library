@@ -396,6 +396,8 @@ static const UANotificationOptions UANotificationOptionNone =  0;
 /**
  * Sets the badge number on the device and on the Urban Airship server.
  * 
+ * @note This method must be called on the main thread.
+ *
  * @param badgeNumber The new badge number
  */
 - (void)setBadgeNumber:(NSInteger)badgeNumber;
@@ -403,6 +405,8 @@ static const UANotificationOptions UANotificationOptionNone =  0;
 /**
  * Resets the badge to zero (0) on both the device and on Urban Airships servers. This is a
  * convenience method for `setBadgeNumber:0`.
+ *
+ * @note This method must be called on the main thread.
  */
 - (void)resetBadge;
 

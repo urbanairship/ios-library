@@ -7,6 +7,7 @@
 @class UAConfig;
 @class UAPreferenceDataStore;
 @class UADate;
+@class UADispatcher;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -22,6 +23,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Get registration payload for current channel
+ *
+ * @note This method will be called on the main thread.
+ *
  * @return registration payload for channel
  */
 - (UAChannelRegistrationPayload *)createChannelPayload;
@@ -76,6 +80,8 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Register the device with Urban Airship.
  *
+ * @note This method will execute asynchronously on the main thread.
+ *
  * @param forcefully YES to force the registration.
  */
 - (void)registerForcefully:(BOOL)forcefully;
@@ -108,6 +114,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param channelLocation The initial channel location string.
  * @param channelAPIClient The channel API client.
  * @param date The UADate object.
+ * @param dispatcher The dispatcher to dispatch main queue blocks.
  * @return A new channel registrar instance.
  */
 + (instancetype)channelRegistrarWithConfig:(UAConfig *)config
@@ -116,7 +123,8 @@ NS_ASSUME_NONNULL_BEGIN
                                  channelID:(NSString *)channelID
                            channelLocation:(NSString *)channelLocation
                           channelAPIClient:(UAChannelAPIClient *)channelAPIClient
-                                      date:(UADate *)date;
+                                      date:(UADate *)date
+                                dispatcher:(UADispatcher *)dispatcher;
 
 ///---------------------------------------------------------------------------------------
 /// @name Channel Registrar Properties (for testing)
