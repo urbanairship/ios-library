@@ -10,6 +10,7 @@
 #import "UAirship.h"
 #import "UAPreferenceDataStore+Internal.h"
 #import "UATestDate.h"
+#import "UATestDispatcher.h"
 
 @interface UAChannelRegistrarTest : UABaseTest
 
@@ -53,7 +54,14 @@ NSString * const ChannelCreateSuccessChannelLocation = @"newChannelLocation";
 
     self.payload = [[UAChannelRegistrationPayload alloc] init];
     self.payload.pushAddress = @"someDeviceToken";
-    [[[self.mockedRegistrarDelegate stub] andReturn:[self.payload copy]] createChannelPayload];
+    __block UAChannelRegistrationPayload *copyOfPayload;
+    [[[self.mockedRegistrarDelegate stub] andDo:^(NSInvocation *invocation) {
+        // verify that createChannelPayload is called on the main thread.
+        XCTAssertEqualObjects([NSThread currentThread],[NSThread mainThread]);
+
+        copyOfPayload = [self.payload copy];
+        [invocation setReturnValue:&copyOfPayload];
+    }] createChannelPayload];
 
     self.failureCode = 400;
 
@@ -530,7 +538,8 @@ NSString * const ChannelCreateSuccessChannelLocation = @"newChannelLocation";
                                                                          channelID:channelID
                                                                    channelLocation:channelLocation
                                                                   channelAPIClient:self.mockedChannelClient
-                                                                              date:self.testDate];
+                                                                              date:self.testDate
+                                                                        dispatcher:[UATestDispatcher testDispatcher]];
     return registrar;
 }
 

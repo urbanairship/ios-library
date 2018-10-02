@@ -7,7 +7,7 @@
 #import "UAGlobal.h"
 
 NSString * const UAInAppMessageAudienceNewUserKey = @"new_user";
-NSString * const UAInAppMessageAudienceNotificationOptInKey = @"notifications_opt_in";
+NSString * const UAInAppMessageAudienceNotificationOptInKey = @"notification_opt_in";
 NSString * const UAInAppMessageAudienceLocationOptInKey = @"location_opt_in";
 NSString * const UAInAppMessageAudienceLanguageTagsKey = @"locale";
 NSString * const UAInAppMessageAudienceTagSelectorKey = @"tags";

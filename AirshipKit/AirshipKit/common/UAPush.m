@@ -79,7 +79,8 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
 - (instancetype)initWithConfig:(UAConfig *)config
                      dataStore:(UAPreferenceDataStore *)dataStore
             tagGroupsRegistrar:(UATagGroupsRegistrar *)tagGroupsRegistrar
-            notificationCenter:(NSNotificationCenter *)notificationCenter {
+            notificationCenter:(NSNotificationCenter *)notificationCenter
+              pushRegistration:(id<UAAPNSRegistrationProtocol>)pushRegistration {
 
     self = [super initWithDataStore:dataStore];
     if (self) {
@@ -87,7 +88,7 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
         self.notificationCenter = notificationCenter;
         self.registrationDelegateWrapper = [[UARegistrationDelegateWrapper alloc] init];
 
-        self.pushRegistration = [[UAAPNSRegistration alloc] init];
+        self.pushRegistration = pushRegistration;
         self.pushRegistration.registrationDelegate = self;
 
         self.channelTagRegistrationEnabled = YES;
@@ -161,18 +162,26 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
     return self;
 }
 
-+ (instancetype)pushWithConfig:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore tagGroupsRegistrar:(UATagGroupsRegistrar *)tagGroupsRegistrar {
++ (instancetype)pushWithConfig:(UAConfig *)config
+                     dataStore:(UAPreferenceDataStore *)dataStore
+            tagGroupsRegistrar:(UATagGroupsRegistrar *)tagGroupsRegistrar {
     return [[UAPush alloc] initWithConfig:config
                                 dataStore:dataStore
                        tagGroupsRegistrar:tagGroupsRegistrar
-            notificationCenter:[NSNotificationCenter defaultCenter]];
+                       notificationCenter:[NSNotificationCenter defaultCenter]
+                         pushRegistration:[[UAAPNSRegistration alloc] init]];
 }
 
 + (instancetype)pushWithConfig:(UAConfig *)config
                      dataStore:(UAPreferenceDataStore *)dataStore
             tagGroupsRegistrar:(UATagGroupsRegistrar *)tagGroupsRegistrar
-            notificationCenter:(NSNotificationCenter *)notificationCenter {
-    return [[UAPush alloc] initWithConfig:config dataStore:dataStore tagGroupsRegistrar:tagGroupsRegistrar notificationCenter:notificationCenter];
+            notificationCenter:(NSNotificationCenter *)notificationCenter
+              pushRegistration:(id<UAAPNSRegistrationProtocol>)pushRegistration {
+    return [[UAPush alloc] initWithConfig:config
+                                dataStore:dataStore
+                       tagGroupsRegistrar:tagGroupsRegistrar
+                       notificationCenter:notificationCenter
+                         pushRegistration:pushRegistration];
 }
 
 
@@ -681,7 +690,6 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
 
     BOOL backgroundPushAllowed = self.isRegisteredForRemoteNotifications;
 
-
 #if !TARGET_OS_TV
     if (!self.isBackgroundRefreshStatusAvailable) {
         backgroundPushAllowed = NO;
@@ -717,7 +725,7 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
         UA_LDEBUG(@"Channel creation is currently disabled.");
         return;
     }
-
+    
     [self.channelRegistrar registerForcefully:forcefully];
 }
 
@@ -940,17 +948,12 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
             [self.dataStore setBool:previousValue forKey:UAUserPushNotificationsEnabledKey];
             [self.dataStore removeObjectForKey:UAPushEnabledKey];
         } else {
-            // If >= iOS 10
-            if ([[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){10, 0, 0}]) {
-                if (@available(iOS 10.0, tvOS 10.0, *)) {
-                    [[UNUserNotificationCenter currentNotificationCenter] getNotificationSettingsWithCompletionHandler:^(UNNotificationSettings * _Nonnull settings) {
-                        if (settings.authorizationStatus == UNAuthorizationStatusAuthorized) {
-                            UA_LTRACE(@"Migrating userPushNotificationEnabled to YES because application was authorized for notifications");
-                            [self.dataStore setBool:YES forKey:UAUserPushNotificationsEnabledKey];
-                        }
-                    }];
+            [self.pushRegistration getAuthorizedSettingsWithCompletionHandler:^(UAAuthorizedNotificationSettings authorizedSettings, UAAuthorizationStatus status) {
+                if (status == UAAuthorizationStatusAuthorized) {
+                    UA_LTRACE(@"Migrating userPushNotificationEnabled to YES because application was authorized for notifications");
+                    [self.dataStore setBool:YES forKey:UAUserPushNotificationsEnabledKey];
                 }
-            }
+            }];
         }
     }
 
