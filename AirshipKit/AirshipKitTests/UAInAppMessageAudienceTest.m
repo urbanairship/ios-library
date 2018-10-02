@@ -111,4 +111,30 @@
     XCTAssertNil(error);
 }
 
+- (void)testFullJson {
+    NSError *error;
+    NSDictionary *json = @{ @"new_user": @(true),
+                            @"notification_opt_in": @(true),
+                            @"location_opt_in": @(true),
+                            @"locale": @[@"en-us"],
+                            @"tags": @{
+                                    @"and": @[@{
+                                        @"not" : @{ @"tag": @"not-tag"}
+                                        }, @{ @"tag": @"cool", @"group": @"what" }
+                                        ]
+                                    },
+                            @"test_devices": @[@"test_device_one", @"test_device_two"],
+                            @"miss_behavior": @"cancel" };
+
+
+
+    UAInAppMessageAudience *audience = [UAInAppMessageAudience
+                                        audienceWithJSON:json
+                                        error:&error];
+
+    XCTAssertNil(error);
+    XCTAssertEqualObjects(json, [audience toJSON]);
+}
+
+
 @end
