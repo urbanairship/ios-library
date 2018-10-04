@@ -3,14 +3,16 @@ iOS Changelog
 
 Migration Guides: Documentation/Migration
 
-Version 10.0.1 - October 3, 2018
+Version 10.0.1 - October 4, 2018
 ================================
 Patch release to fix calling a UI main thread access warning as
-well as a few In-App Automation issues.
+well as a few In-App Automation issues. Apps that use In-App Automation
+banner messages, trigger delays, or schedule intervals should update.
 
 Changes
 -------
-- Fixed banners becomming modal (regression in 10.0.0).
+- Fixed banners becoming modal (regression in 10.0.0).
+- Fixed banners truncating header when using MEDIA_RIGHT template.
 - Fixed in-app automation notification opt in audience check.
 - Fixed rare crash when using in-app automation messages with an interval or delay.
 
