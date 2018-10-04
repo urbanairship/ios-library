@@ -3,6 +3,21 @@ iOS Changelog
 
 Migration Guides: Documentation/Migration
 
+Version 10.0.1 - October 4, 2018
+================================
+Patch release to fix calling a UI main thread access warning as
+well as a few In-App Automation issues. Apps that use In-App Automation
+banner messages, trigger delays, or schedule intervals should update.
+
+Changes
+-------
+- Fixed banners becoming modal (regression in 10.0.0).
+- Fixed banners truncating header when using MEDIA_RIGHT template.
+- Fixed in-app automation notification opt in audience check.
+- Fixed rare crash when using in-app automation messages with an interval or delay.
+
+Major release to support iOS 12
+
 Version 10.0.0 - September 14, 2018
 ===================================
 Major release to support iOS 12
@@ -37,7 +52,7 @@ Version 9.4.0 - September 4, 2018
 =================================
 Minor release thats adds support for tag group audiences, miss behaviors and resizable HTML messages in
 In-App Automation. HTML in-app messages are now displayed as dialogs by default, with an option
-to display fullscreen on smaller devices. This release also fixes a bug that could result in crashes 
+to display fullscreen on smaller devices. This release also fixes a bug that could result in crashes
 when serializing JSON payloads for certain audience conditions. Apps using In-App Automation are
 encouraged to upgrade.
 
@@ -78,14 +93,14 @@ Minor release that adds support for:
 - disabling 3D-touch in a message center message,
 - rejecting whitelisted URLs before they are fetched.
 
-This release also fixes an issue with incremental builds. 
+This release also fixes an issue with incremental builds.
 
 Apps interested in the new features or experiencing the incremental build issue are encouraged to upgrade.
 
 Changes
 -------
 - Separates notification options from notification settings. Options now represent what is requested and settings represent what was granted.
-  - Note: In UAPush.m, a new  [`authorizedNotificationSettings`](https://docs.urbanairship.com/reference/libraries/ios/latest/Classes/UAPush.html#/c:objc(cs)UAPush(py)authorizedNotificationSettings) property has been added. It will always return the current authorized settings, even if push notifications are disabled through [`userPushNotificationsEnabled`](https://docs.urbanairship.com/reference/libraries/ios/latest/Classes/UAPush.html#/c:objc(cs)UAPush(py)userPushNotificationsEnabled). 
+  - Note: In UAPush.m, a new  [`authorizedNotificationSettings`](https://docs.urbanairship.com/reference/libraries/ios/latest/Classes/UAPush.html#/c:objc(cs)UAPush(py)authorizedNotificationSettings) property has been added. It will always return the current authorized settings, even if push notifications are disabled through [`userPushNotificationsEnabled`](https://docs.urbanairship.com/reference/libraries/ios/latest/Classes/UAPush.html#/c:objc(cs)UAPush(py)userPushNotificationsEnabled).
 - Adds mechanism to allow apps to disable message center link previews and callouts.
 - Adds mechanism to allow apps to reject whitelisted URLs before they are fetched.
 - Changes header generation script to use Apple's recommended temp directory. This solves a problem certain developers were having with incremental builds.

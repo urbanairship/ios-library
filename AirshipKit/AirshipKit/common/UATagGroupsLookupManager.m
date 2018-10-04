@@ -163,14 +163,14 @@ NSString * const UATagGroupsLookupManagerErrorDomain = @"com.urbanairship.tag_gr
         return completionHandler(nil, error);
     }
 
-    if (![UAirship push].channelID) {
-        error = [self errorWithCode:UATagGroupsLookupManagerErrorCodeChannelRequired message:@"Channel ID is required"];
-        return completionHandler(nil, error);
-    }
-
     // Requesting only device tag groups when channel tag registration is enabled
     if ([requestedTagGroups containsOnlyDeviceTags] && [UAirship push].isChannelTagRegistrationEnabled) {
         return completionHandler([self overrideDeviceTags:requestedTagGroups], error);
+    }
+
+    if (![UAirship push].channelID) {
+        error = [self errorWithCode:UATagGroupsLookupManagerErrorCodeChannelRequired message:@"Channel ID is required"];
+        return completionHandler(nil, error);
     }
 
     __block NSDate *cacheRefreshDate = self.cache.refreshDate;
