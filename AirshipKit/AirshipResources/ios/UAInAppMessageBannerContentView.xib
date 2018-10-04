@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14313.18" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
-        <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14283.14"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -95,6 +94,12 @@
                         <stackView opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="755" axis="vertical" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="RRt-au-p4p" userLabel="Text Stack">
                             <rect key="frame" x="16" y="0.0" width="207" height="120"/>
                         </stackView>
+                        <view opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="1" translatesAutoresizingMaskIntoConstraints="NO" id="D2c-1J-1hn" userLabel="Text Expandable Padding View">
+                            <rect key="frame" x="0.0" y="120" width="207" height="0.0"/>
+                            <constraints>
+                                <constraint firstAttribute="height" priority="1" id="Mqo-66-hws"/>
+                            </constraints>
+                        </view>
                         <view opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="500" translatesAutoresizingMaskIntoConstraints="NO" id="VNH-yL-Bh8">
                             <rect key="frame" x="239" y="0.0" width="120" height="120"/>
                             <constraints>
@@ -108,11 +113,14 @@
                         <constraint firstAttribute="bottom" secondItem="Y02-V2-YH8" secondAttribute="bottom" id="7pC-Sy-FrF"/>
                         <constraint firstItem="VNH-yL-Bh8" firstAttribute="top" secondItem="AGo-BI-V0D" secondAttribute="top" id="AM7-gz-kqh"/>
                         <constraint firstItem="Y02-V2-YH8" firstAttribute="top" secondItem="VNH-yL-Bh8" secondAttribute="bottom" id="H0B-JU-7Ck"/>
+                        <constraint firstAttribute="bottom" secondItem="D2c-1J-1hn" secondAttribute="bottom" id="VZC-AE-0w3"/>
+                        <constraint firstAttribute="leading" secondItem="D2c-1J-1hn" secondAttribute="leading" id="XTL-n5-5x8"/>
                         <constraint firstAttribute="trailing" secondItem="RRt-au-p4p" secondAttribute="trailing" priority="998" constant="16" id="XrY-wy-SnL"/>
                         <constraint firstItem="VNH-yL-Bh8" firstAttribute="leading" secondItem="RRt-au-p4p" secondAttribute="trailing" constant="16" id="Y6Q-Nj-357"/>
-                        <constraint firstAttribute="bottom" secondItem="RRt-au-p4p" secondAttribute="bottom" id="ddg-Xu-e59"/>
+                        <constraint firstItem="D2c-1J-1hn" firstAttribute="width" secondItem="RRt-au-p4p" secondAttribute="width" id="h0X-ts-Iv1"/>
                         <constraint firstItem="Y02-V2-YH8" firstAttribute="width" secondItem="VNH-yL-Bh8" secondAttribute="width" id="hkH-Dn-gz9"/>
                         <constraint firstAttribute="trailing" secondItem="Y02-V2-YH8" secondAttribute="trailing" constant="16" id="pHs-HL-0yZ"/>
+                        <constraint firstItem="D2c-1J-1hn" firstAttribute="top" secondItem="RRt-au-p4p" secondAttribute="bottom" id="pyl-bA-2I2"/>
                         <constraint firstAttribute="trailing" secondItem="VNH-yL-Bh8" secondAttribute="trailing" constant="16" id="rWd-yr-435"/>
                         <constraint firstItem="RRt-au-p4p" firstAttribute="top" secondItem="AGo-BI-V0D" secondAttribute="top" id="tZ8-7Y-HVq"/>
                     </constraints>
