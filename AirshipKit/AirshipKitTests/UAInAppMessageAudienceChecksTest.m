@@ -14,7 +14,7 @@
 @interface UAInAppMessageAudienceChecksTest : UABaseTest
 
 @property (nonatomic, strong) id mockAirship;
-@property (nonatomic, strong) id mockLocationManager;
+@property (nonatomic, strong) id mockLocation;
 @property (nonatomic, strong) id mockPush;
 
 @end
@@ -29,7 +29,8 @@
     [[[self.mockAirship stub] andReturn:self.mockPush] sharedPush];
     [UAirship setSharedAirship:self.mockAirship];
 
-    self.mockLocationManager = [self mockForClass:[CLLocationManager class]];
+    self.mockLocation = [self strictMockForClass:[UALocation class]];
+    [[[self.mockAirship stub] andReturn:self.mockLocation] sharedLocation];
 }
 
 - (void)testEmptyAudience {
@@ -40,8 +41,6 @@
 }
 
 - (void)testLocationOptIn {
-    [[[self.mockLocationManager stub] andReturnValue:@(kCLAuthorizationStatusAuthorizedAlways)] authorizationStatus];
-
     // setup
     UAInAppMessageAudience *requiresOptedIn = [UAInAppMessageAudience audienceWithBuilderBlock:^(UAInAppMessageAudienceBuilder * _Nonnull builder) {
         builder.locationOptIn = @YES;
@@ -51,9 +50,8 @@
         builder.locationOptIn = @NO;
     }];
     
-    id mockLocation = [self strictMockForClass:[UALocation class]];
-    [[[mockLocation stub] andReturnValue:@YES] isLocationUpdatesEnabled];
-    [[[self.mockAirship stub] andReturn:mockLocation] sharedLocation];
+    [[[self.mockLocation stub] andReturnValue:@YES] isLocationOptedIn];
+    [[[self.mockLocation stub] andReturnValue:@YES] isLocationUpdatesEnabled];
 
     // test
     XCTAssertTrue([UAInAppMessageAudienceChecks checkDisplayAudienceConditions:requiresOptedIn]);
@@ -70,10 +68,9 @@
         builder.locationOptIn = @NO;
     }];
     
-    id mockLocation = [self strictMockForClass:[UALocation class]];
-    [[[mockLocation stub] andReturnValue:@NO] isLocationUpdatesEnabled];
-    [[[self.mockAirship stub] andReturn:mockLocation] sharedLocation];
-    
+    [[[self.mockLocation stub] andReturnValue:@NO] isLocationOptedIn];
+    [[[self.mockLocation stub] andReturnValue:@YES] isLocationUpdatesEnabled];
+
     // test
     XCTAssertFalse([UAInAppMessageAudienceChecks checkDisplayAudienceConditions:requiresOptedIn]);
     XCTAssertTrue([UAInAppMessageAudienceChecks checkDisplayAudienceConditions:requiresOptedOut]);

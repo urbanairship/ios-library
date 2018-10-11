@@ -214,7 +214,7 @@ NSString *const UALocationBackgroundUpdatesAllowed = @"UALocationBackgroundUpdat
 #endif
 }
 
--(BOOL)usageDescriptionsAreValid {
+- (BOOL)usageDescriptionsAreValid {
 #if TARGET_OS_TV
     // tvOS only needs the NSLocationWhenInUseUsageDescription to be valid
     if (![[NSBundle mainBundle] objectForInfoDictionaryKey:@"NSLocationWhenInUseUsageDescription"]) {
@@ -244,6 +244,54 @@ NSString *const UALocationBackgroundUpdatesAllowed = @"UALocationBackgroundUpdat
     return true;
 }
 
+- (BOOL)isLocationOptedIn {
+    if (!self.locationUpdatesEnabled) {
+        return NO;
+    }
+    
+    switch ([CLLocationManager authorizationStatus]) {
+        case kCLAuthorizationStatusDenied:
+        case kCLAuthorizationStatusRestricted:
+        case kCLAuthorizationStatusNotDetermined:
+            return NO;
+        case kCLAuthorizationStatusAuthorizedAlways:
+        case kCLAuthorizationStatusAuthorizedWhenInUse:
+            return YES;
+    }
+}
+
+- (BOOL)isLocationDeniedOrRestricted {
+    switch ([CLLocationManager authorizationStatus]) {
+        case kCLAuthorizationStatusDenied:
+        case kCLAuthorizationStatusRestricted:
+            return YES;
+        case kCLAuthorizationStatusNotDetermined:
+        case kCLAuthorizationStatusAuthorizedAlways:
+        case kCLAuthorizationStatusAuthorizedWhenInUse:
+            return NO;
+    }
+}
+
+- (NSString *)locationPermissionDescription {
+    if (![CLLocationManager locationServicesEnabled]) {
+        return @"SYSTEM_LOCATION_DISABLED";
+    } else {
+        switch ([CLLocationManager authorizationStatus]) {
+            case kCLAuthorizationStatusDenied:
+            case kCLAuthorizationStatusRestricted:
+                return @"NOT_ALLOWED";
+            case kCLAuthorizationStatusAuthorizedAlways:
+                return @"ALWAYS_ALLOWED";
+            case kCLAuthorizationStatusAuthorizedWhenInUse:
+                return @"FOREGROUND_ALLOWED";
+            case kCLAuthorizationStatusNotDetermined:
+                return @"UNPROMPTED";
+        }
+    }
+}
+
+
+
 #pragma mark -
 #pragma mark CLLocationManager Delegate
 
@@ -253,7 +301,7 @@ NSString *const UALocationBackgroundUpdatesAllowed = @"UALocationBackgroundUpdat
     [self updateLocationService];
 }
 
--(void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations {
+- (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations {
     UA_LINFO(@"Received location updates: %@", locations);
 
     id strongDelegate = self.delegate;

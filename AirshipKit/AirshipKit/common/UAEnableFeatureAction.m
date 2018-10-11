@@ -51,15 +51,7 @@ NSString *const UAEnableBackgroundLocationActionValue = @"background_location";
 }
 
 - (BOOL)isLocationDeniedOrRestricted {
-    switch ([CLLocationManager authorizationStatus]) {
-        case kCLAuthorizationStatusDenied:
-        case kCLAuthorizationStatusRestricted:
-            return YES;
-        case kCLAuthorizationStatusNotDetermined:
-        case kCLAuthorizationStatusAuthorizedAlways:
-        case kCLAuthorizationStatusAuthorizedWhenInUse:
-            return NO;
-    }
+    return UAirship.location.isLocationDeniedOrRestricted;
 }
 
 - (void)navigateToSystemSettings {
@@ -84,8 +76,8 @@ NSString *const UAEnableBackgroundLocationActionValue = @"background_location";
 }
 
 - (void)enableBackgroundLocation:(UAActionCompletionHandler)completionHandler {
-    [UAirship location].locationUpdatesEnabled = YES;
-    [UAirship location].backgroundLocationUpdatesAllowed = YES;
+    UAirship.location.locationUpdatesEnabled = YES;
+    UAirship.location.backgroundLocationUpdatesAllowed = YES;
 
     if ([self isLocationDeniedOrRestricted]) {
         [self navigateToSystemSettings];
@@ -95,7 +87,7 @@ NSString *const UAEnableBackgroundLocationActionValue = @"background_location";
 }
 
 - (void)enableLocation:(UAActionCompletionHandler)completionHandler {
-    [UAirship location].locationUpdatesEnabled = YES;
+    UAirship.location.locationUpdatesEnabled = YES;
     if ([self isLocationDeniedOrRestricted]) {
         [self navigateToSystemSettings];
     }

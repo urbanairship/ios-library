@@ -96,29 +96,11 @@
         [builder setValue:[[UAirship push] backgroundPushNotificationsAllowed] ? @"true" : @"false" forHeader:@"X-UA-Channel-Background-Enabled"];
 
         // Location settings
-        [builder setValue:[self locationPermission] forHeader:@"X-UA-Location-Permission"];
-        [builder setValue:[UAirship location].locationUpdatesEnabled ? @"true" : @"false" forHeader:@"X-UA-Location-Service-Enabled"];
+        [builder setValue:UAirship.location.locationPermissionDescription forHeader:@"X-UA-Location-Permission"];
+        [builder setValue:UAirship.location.locationUpdatesEnabled ? @"true" : @"false" forHeader:@"X-UA-Location-Service-Enabled"];
     }];
     
     return request;
-}
-
-- (NSString *)locationPermission {
-    if (![CLLocationManager locationServicesEnabled]) {
-        return @"SYSTEM_LOCATION_DISABLED";
-    } else {
-        switch ([CLLocationManager authorizationStatus]) {
-            case kCLAuthorizationStatusDenied:
-            case kCLAuthorizationStatusRestricted:
-                return @"NOT_ALLOWED";
-            case kCLAuthorizationStatusAuthorizedAlways:
-                return @"ALWAYS_ALLOWED";
-            case kCLAuthorizationStatusAuthorizedWhenInUse:
-                return @"FOREGROUND_ALLOWED";
-            case kCLAuthorizationStatusNotDetermined:
-                return @"UNPROMPTED";
-        }
-    }
 }
 
 @end

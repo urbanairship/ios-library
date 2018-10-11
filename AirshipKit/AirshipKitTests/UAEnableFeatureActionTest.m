@@ -17,7 +17,6 @@
 @property(nonatomic, strong) id mockPush;
 @property(nonatomic, strong) id mockLocation;
 @property(nonatomic, strong) id mockAirship;
-@property(nonatomic, strong) id mockLocationManager;
 @property(nonatomic, strong) id mockPushRegistration;
 @property(nonatomic, strong) id mockApplication;
 
@@ -33,7 +32,6 @@
     self.mockPush = [self strictMockForClass:[UAPush class]];
     self.mockLocation = [self strictMockForClass:[UALocation class]];
     self.mockAirship = [self strictMockForClass:[UAirship class]];
-    self.mockLocationManager = [self mockForClass:[CLLocationManager class]];
     self.mockPushRegistration = [self mockForProtocol:@protocol(UAAPNSRegistrationProtocol)];
     self.mockApplication = [self mockForClass:[UIApplication class]];
 
@@ -49,7 +47,6 @@
     [self.mockLocation stopMocking];
     [self.mockAirship stopMocking];
     [self.mockPushRegistration stopMocking];
-    [self.mockLocationManager stopMocking];
     [self.mockApplication stopMocking];
 
     [UAirship setSharedAirship:nil];
@@ -157,8 +154,7 @@
 - (void)testEnableLocation {
     __block BOOL actionPerformed = NO;
 
-    [[[self.mockLocationManager stub] andReturnValue:@(kCLAuthorizationStatusNotDetermined)] authorizationStatus];
-
+    [[[self.mockLocation stub] andReturnValue:@(NO)] isLocationDeniedOrRestricted];
 
     UAActionArguments *arguments = [[UAActionArguments alloc] init];
     arguments.value = UAEnableLocationActionValue;
@@ -180,7 +176,7 @@
 - (void)testEnableLocationOptedOut {
     __block BOOL actionPerformed = NO;
 
-    [[[self.mockLocationManager stub] andReturnValue:@(kCLAuthorizationStatusDenied)] authorizationStatus];
+    [[[self.mockLocation stub] andReturnValue:@(YES)] isLocationDeniedOrRestricted];
 
     UAActionArguments *arguments = [[UAActionArguments alloc] init];
     arguments.value = UAEnableLocationActionValue;
@@ -202,7 +198,7 @@
 - (void)testEnableBackgroundLocation {
     __block BOOL actionPerformed = NO;
 
-    [[[self.mockLocationManager stub] andReturnValue:@(kCLAuthorizationStatusNotDetermined)] authorizationStatus];
+    [[[self.mockLocation stub] andReturnValue:@(NO)] isLocationDeniedOrRestricted];
 
     UAActionArguments *arguments = [[UAActionArguments alloc] init];
     arguments.value = UAEnableBackgroundLocationActionValue;
@@ -225,7 +221,7 @@
 - (void)testEnableBackgroundLocationOptedOut {
     __block BOOL actionPerformed = NO;
 
-    [[[self.mockLocationManager stub] andReturnValue:@(kCLAuthorizationStatusDenied)] authorizationStatus];
+    [[[self.mockLocation stub] andReturnValue:@(NO)] isLocationDeniedOrRestricted];
 
     UAActionArguments *arguments = [[UAActionArguments alloc] init];
     arguments.value = UAEnableBackgroundLocationActionValue;

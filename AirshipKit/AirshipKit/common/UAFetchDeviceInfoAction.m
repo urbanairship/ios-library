@@ -30,7 +30,7 @@ NSString *const UALocationEnabledKey = @"location_enabled";
     BOOL optedIn = [UAirship push].authorizedNotificationSettings != 0;
     [dict setValue:@(optedIn) forKey:UAPushOptInKey];
     
-    BOOL locationEnabled = [UAirship location].locationUpdatesEnabled;
+    BOOL locationEnabled = UAirship.location.locationUpdatesEnabled;
     [dict setValue:@(locationEnabled) forKey:UALocationEnabledKey];
     
     completionHandler([UAActionResult resultWithValue:dict]);

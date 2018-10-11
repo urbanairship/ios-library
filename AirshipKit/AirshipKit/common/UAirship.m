@@ -1,7 +1,4 @@
 /* Copyright 2018 Urban Airship and Contributors */
-
-#import <CoreLocation/CoreLocation.h>
-
 #import "UAirship+Internal.h"
 
 #import "UAUser+Internal.h"

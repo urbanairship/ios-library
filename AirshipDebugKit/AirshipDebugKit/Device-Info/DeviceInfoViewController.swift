@@ -41,6 +41,8 @@ class DeviceInfoViewController: UITableViewController {
         
         UAirship.location().isLocationUpdatesEnabled = locationEnabledSwitch.isOn
         UAirship.shared().analytics.isEnabled = analyticsSwitch.isOn
+        
+        updateSwitches()
     }
     
     override func viewDidLoad() {
@@ -70,10 +72,18 @@ class DeviceInfoViewController: UITableViewController {
         // Simplified screen tracking name for easy testing of message triggers
         UAirship.analytics()?.trackScreen("DeviceInfoViewController")
         
-        // Initialize switches
+        updateSwitches()
+    }
+    
+    fileprivate func updateSwitches() {
+        // Update switches
         pushEnabledSwitch.isOn = UAirship.push().userPushNotificationsEnabled
+        let optedInToLocation = (UAirship.location()?.isLocationOptedIn())!
         locationEnabledSwitch.isOn = UAirship.location().isLocationUpdatesEnabled
-
+        if (UAirship.location().isLocationUpdatesEnabled && !optedInToLocation) {
+            locationEnabledSubtitleLabel.text = NSLocalizedString("UA_Location_Enabled_Detail", tableName: "UAPushUI", comment: "Enable GPS and WIFI Based Location detail label") + " - NOT OPTED IN"
+        }
+        
         analyticsSwitch.isOn = UAirship.shared().analytics.isEnabled
     }
     
@@ -100,7 +110,9 @@ class DeviceInfoViewController: UITableViewController {
         pushSettingsSubtitleLabel.text = pushTypeString()
         
         versionSubtitleLabel.text = UAirshipVersion.get()
-
+        
+        updateSwitches()
+        
         tableView.reloadData()
     }
     

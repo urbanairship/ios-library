@@ -11,7 +11,6 @@
 #import "UAInAppMessageBannerDisplayContent+Internal.h"
 #import "UAPush+Internal.h"
 #import "UAInAppMessageAudience.h"
-#import "UALocation+Internal.h"
 #import "UAActionRunner+Internal.h"
 #import "UAInAppMessageAudienceChecks+Internal.h"
 #import "UATestDispatcher.h"

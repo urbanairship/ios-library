@@ -51,7 +51,7 @@
     }
     
     // Location opt-in
-    if (audience.locationOptIn && ([audience.locationOptIn boolValue] != [self isLocationOptedIn])) {
+    if (audience.locationOptIn && ([audience.locationOptIn boolValue] != UAirship.location.isLocationOptedIn)) {
         return NO;
     }
     
@@ -121,21 +121,6 @@
     return [self checkDisplayAudienceConditions:audience tagGroups:[UATagGroups tagGroupsWithTags:@{}]];
 }
 
-+ (BOOL)isLocationOptedIn {
-    if (![UAirship location].locationUpdatesEnabled) {
-        return NO;
-    }
-
-    switch ([CLLocationManager authorizationStatus]) {
-        case kCLAuthorizationStatusDenied:
-        case kCLAuthorizationStatusRestricted:
-        case kCLAuthorizationStatusNotDetermined:
-            return NO;
-        case kCLAuthorizationStatusAuthorizedAlways:
-        case kCLAuthorizationStatusAuthorizedWhenInUse:
-            return YES;
-    }
-}
 
 + (BOOL)isNotificationsOptedIn {
     return [UAirship push].userPushNotificationsEnabled && [UAirship push].authorizedNotificationSettings != UAAuthorizedNotificationSettingsNone;

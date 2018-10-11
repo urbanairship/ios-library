@@ -1,7 +1,6 @@
 /* Copyright 2018 Urban Airship and Contributors */
 
 #import <Foundation/Foundation.h>
-#import <CoreLocation/CoreLocation.h>
 #import "UAEvent.h"
 
 @class UAProximityRegion;

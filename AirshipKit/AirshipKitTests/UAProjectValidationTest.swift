@@ -210,20 +210,14 @@ class UAProjectValidationTest: XCTestCase {
     }
 
     func testAirshipKit() {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
         validateProjectForTarget(buildTarget: "AirshipKit", buildOS: "ios")
     }
 
     func testAirshipKitTvOS() {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
         validateProjectForTarget(buildTarget: "AirshipKit tvOS", buildOS: "tvos", targetSubFolder: "AirshipKit")
     }
 
     func testAirshipLib() {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
         validateProjectForTarget(buildTarget: "AirshipLib", buildOS: "ios", targetSubFolder: "AirshipKit")
 
         // Validate that each framework import is represented in the UAirship header
