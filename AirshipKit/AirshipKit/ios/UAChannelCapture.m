@@ -93,10 +93,8 @@ NSString *const UAChannelPlaceHolder = @"CHANNEL";
         }
     }
 
-    if (@available(iOS 10.0, tvOS 10.0, *)) {
-        if (![UIPasteboard generalPasteboard].hasStrings) {
-            return;
-        }
+    if (![UIPasteboard generalPasteboard].hasStrings) {
+        return;
     }
 
     NSString *pasteBoardString = [UIPasteboard generalPasteboard].string;

@@ -99,10 +99,7 @@ NS_ASSUME_NONNULL_BEGIN
     self.closeButton.dismissButtonColor = self.displayContent.dismissButtonColor;
     [self.closeButtonContainerView addSubview:self.closeButton];
     [UAViewUtils applyContainerConstraintsToContainer:self.closeButtonContainerView containedView:self.closeButton];
-
-    if (@available(iOS 10.0, tvOS 10.0, *)) {
-        [self.webView.configuration setDataDetectorTypes:WKDataDetectorTypeNone];
-    }
+    [self.webView.configuration setDataDetectorTypes:WKDataDetectorTypeNone];
 }
 
 - (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {

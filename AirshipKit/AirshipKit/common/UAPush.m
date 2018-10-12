@@ -153,10 +153,7 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
         [[UIApplication sharedApplication] registerForRemoteNotifications];
 
         [self updateAuthorizedNotificationTypes];
-
-        if (@available(iOS 10.0, tvOS 10.0, *)) {
-            self.defaultPresentationOptions = UNNotificationPresentationOptionNone;
-        }
+        self.defaultPresentationOptions = UNNotificationPresentationOptionNone;
     }
 
     return self;
@@ -858,7 +855,7 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
 #pragma mark -
 #pragma mark Push handling
 
-- (UNNotificationPresentationOptions)presentationOptionsForNotification:(UNNotification *)notification NS_AVAILABLE_IOS(10.0) {
+- (UNNotificationPresentationOptions)presentationOptionsForNotification:(UNNotification *)notification {
     UNNotificationPresentationOptions options = UNNotificationPresentationOptionNone;
 
     id pushDelegate = self.pushNotificationDelegate;

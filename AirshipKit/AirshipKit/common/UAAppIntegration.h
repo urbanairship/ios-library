@@ -31,7 +31,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 + (void)userNotificationCenter:(UNUserNotificationCenter *)center
    didReceiveNotificationResponse:(UNNotificationResponse *)response
-         withCompletionHandler:(void(^)(void))completionHandler NS_AVAILABLE_IOS(10.0);
+         withCompletionHandler:(void(^)(void))completionHandler;
 #endif
 
 /**
@@ -46,7 +46,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 + (void)userNotificationCenter:(UNUserNotificationCenter *)center
        willPresentNotification:(UNNotification *)notification
-         withCompletionHandler:(void (^)(UNNotificationPresentationOptions options))completionHandler NS_AVAILABLE_IOS(10.0);
+         withCompletionHandler:(void (^)(UNNotificationPresentationOptions options))completionHandler;
 
 
 ///---------------------------------------------------------------------------------------

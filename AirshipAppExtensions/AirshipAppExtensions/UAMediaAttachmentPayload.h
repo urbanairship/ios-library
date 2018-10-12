@@ -5,7 +5,7 @@
 /**
  * Model object for notification content override.
  */
-__IOS_AVAILABLE(10.0) __TVOS_PROHIBITED __WATCHOS_PROHIBITED
+__TVOS_PROHIBITED __WATCHOS_PROHIBITED
 @interface UAMediaAttachmentContent : NSObject
 
 /**
@@ -28,7 +28,7 @@ __IOS_AVAILABLE(10.0) __TVOS_PROHIBITED __WATCHOS_PROHIBITED
 /**
  * Model object for the media attachment device payload
  */
-__IOS_AVAILABLE(10.0) __TVOS_PROHIBITED __WATCHOS_PROHIBITED
+__TVOS_PROHIBITED __WATCHOS_PROHIBITED
 @interface UAMediaAttachmentPayload : NSObject
 
 /**

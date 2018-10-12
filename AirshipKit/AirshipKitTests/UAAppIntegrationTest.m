@@ -51,7 +51,7 @@
 - (void)setUp {
     [super setUp];
 
-    self.testOSMajorVersion = 8;
+    self.testOSMajorVersion = 10;
     self.mockedProcessInfo = [self mockForClass:[NSProcessInfo class]];
     [[[self.mockedProcessInfo stub] andReturn:self.mockedProcessInfo] processInfo];
 
@@ -536,61 +536,6 @@
     [self.mockedPush verify];
     XCTAssertTrue(completionHandlerCalled, @"Completion handler should be called.");
 }
-
-/**
- * Test application:didReceiveRemoteNotification:fetchCompletionHandler in the
- * foreground.
- */
-- (void)testReceivedRemoteNotificationForeground {
-
-    XCTestExpectation *handlerExpectation = [self expectationWithDescription:@"Completion handler called"];
-
-    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateActive)] applicationState];
-
-    __block BOOL completionHandlerCalled = NO;
-    BOOL (^handlerCheck)(id obj) = ^(id obj) {
-        void (^handler)(UAActionResult *) = obj;
-        if (handler) {
-            handler([UAActionResult emptyResult]);
-        }
-        return YES;
-    };
-
-    NSDictionary *expectedMetadata = @{ UAActionMetadataForegroundPresentationKey: @(NO),
-                                        UAActionMetadataPushPayloadKey: self.notification };
-
-    // Expect actions to be run for the action identifier
-    [[self.mockedActionRunner expect] runActionsWithActionValues:self.notification
-                                                       situation:UASituationForegroundPush
-                                                        metadata:expectedMetadata
-                                               completionHandler:[OCMArg checkWithBlock:handlerCheck]];
-
-    // Expect the UAPush to be called
-    [[self.mockedPush expect] handleRemoteNotification:[OCMArg checkWithBlock:^BOOL(id obj) {
-        UANotificationContent *content = obj;
-        return [content.notificationInfo isEqualToDictionary:self.notification];
-    }] foreground:YES completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
-        void (^handler)(UIBackgroundFetchResult) = obj;
-        handler(UIBackgroundFetchResultNoData);
-        return YES;
-    }]];
-
-    // Call the integration
-    [UAAppIntegration application:self.mockedApplication
-     didReceiveRemoteNotification:self.notification
-           fetchCompletionHandler:^(UIBackgroundFetchResult result) {
-               completionHandlerCalled = YES;
-               XCTAssertEqual(result, UIBackgroundFetchResultNoData);
-               [handlerExpectation fulfill];
-           }];
-
-    // Verify everything
-    [self.mockedActionRunner verify];
-    [self.mockedPush verify];
-    [self waitForExpectationsWithTimeout:1 handler:nil];
-    XCTAssertTrue(completionHandlerCalled, @"Completion handler should be called.");
-}
-
 
 /**
  * Test application:didReceiveRemoteNotification:fetchCompletionHandler in the

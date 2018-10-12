@@ -125,7 +125,7 @@ static const UANotificationCategoryOptions UANotificationCategoryOptionNone NS_S
                      intentIdentifiers:(NSArray<NSString *> *)intentIdentifiers
          hiddenPreviewsBodyPlaceholder:(nullable NSString *)hiddenPreviewsBodyPlaceholder
                  categorySummaryFormat:(nullable NSString *)format
-                               options:(UANotificationCategoryOptions)options __IOS_AVAILABLE(10.0);
+                               options:(UANotificationCategoryOptions)options;
 
 ///---------------------------------------------------------------------------------------
 /// @name Notification Category Utilities
@@ -137,7 +137,7 @@ static const UANotificationCategoryOptions UANotificationCategoryOptionNone NS_S
  *
  * @return An instance of UNNotificationCategory.
  */
-- (null_unspecified UNNotificationCategory *)asUNNotificationCategory __IOS_AVAILABLE(10.0);
+- (null_unspecified UNNotificationCategory *)asUNNotificationCategory;
 
 /**
  * Tests for equivalence with a UNNotificationCategory.
@@ -145,7 +145,7 @@ static const UANotificationCategoryOptions UANotificationCategoryOptionNone NS_S
  * @param category The UNNotificationCategory to compare with.
  * @return `YES` if the two categories are equivalent, `NO` otherwise.
  */
-- (BOOL)isEqualToUNNotificationCategory:(UNNotificationCategory *)category NS_AVAILABLE_IOS(10.0);
+- (BOOL)isEqualToUNNotificationCategory:(UNNotificationCategory *)category;
 
 #endif
 

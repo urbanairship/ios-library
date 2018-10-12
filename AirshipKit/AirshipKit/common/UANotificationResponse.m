@@ -8,7 +8,7 @@
 @property (nonatomic, copy) NSString *responseText;
 @property (nonatomic, strong) UANotificationContent *notificationContent;
 #if !TARGET_OS_TV   // UNNotificationResponse unavailable in tvOS
-@property (nonatomic, strong) UNNotificationResponse *response NS_AVAILABLE_IOS(10.0);
+@property (nonatomic, strong) UNNotificationResponse *response;
 #endif
 @end
 
@@ -32,7 +32,7 @@ NSString *const UANotificationDismissActionIdentifier = @"com.apple.UNNotificati
 }
 
 #if !TARGET_OS_TV   // UNNotificationResponse unavailable in tvOS
-- (instancetype)initWithNotificationResponse:(UNNotificationResponse *)response NS_AVAILABLE_IOS(10.0) {
+- (instancetype)initWithNotificationResponse:(UNNotificationResponse *)response {
     self = [super init];
 
     if (self) {

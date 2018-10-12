@@ -109,10 +109,8 @@ typedef enum MessageState {
     self.webView.navigationDelegate = self.nativeBridge;
     self.webView.allowsLinkPreview = ![UAirship messageCenter].disableMessageLinkPreviewAndCallouts;
 
-    if (@available(iOS 10.0, tvOS 10.0, *)) {
-        // Allow the webView to detect data types (e.g. phone numbers, addresses) at will
-        [self.webView.configuration setDataDetectorTypes:WKDataDetectorTypeAll];
-    }
+    // Allow the webView to detect data types (e.g. phone numbers, addresses) at will
+    [self.webView.configuration setDataDetectorTypes:WKDataDetectorTypeAll];
 
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:UAMessageCenterLocalizedString(@"ua_delete")
                                                                                style:UIBarButtonItemStylePlain

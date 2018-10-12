@@ -16,7 +16,7 @@
 @property (nonatomic, copy, nullable) NSString *categoryIdentifier;
 @property (nonatomic, copy, nullable) NSString *launchImage;
 @property (nonatomic, copy, nonnull) NSDictionary *notificationInfo;
-@property (nonatomic, strong, nullable) UNNotification *notification NS_AVAILABLE_IOS(10.0);
+@property (nonatomic, strong, nullable) UNNotification *notification;
 @end
 
 @implementation UANotificationContent
@@ -74,7 +74,7 @@
 }
 
 
-- (instancetype)initWithUNNotification:(UNNotification *)notification NS_AVAILABLE_IOS(10.0) {
+- (instancetype)initWithUNNotification:(UNNotification *)notification {
     self = [super init];
     if (self) {
 #if !TARGET_OS_TV   // body, title, category and userInfo not available on tvOS

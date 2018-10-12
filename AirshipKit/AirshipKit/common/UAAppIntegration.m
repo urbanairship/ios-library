@@ -59,8 +59,8 @@
     switch(application.applicationState) {
         UA_LTRACE(@"Received remote notification: %@", userInfo);
         case UIApplicationStateActive:
-            if ([[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){10, 0, 0}] && ![UAUtils isSilentPush:userInfo]) {
-                // Handled by the new userNotificationCenter:willPresentNotification:withCompletionHandler:
+            if (![UAUtils isSilentPush:userInfo]) {
+                // Handled by the userNotificationCenter:willPresentNotification:withCompletionHandler:
                 completionHandler(UIBackgroundFetchResultNoData);
                 break;
             }
@@ -73,31 +73,12 @@
             break;
 
         case UIApplicationStateBackground:
+        case UIApplicationStateInactive:
             // Background push
             [self handleIncomingNotification:[UANotificationContent notificationWithNotificationInfo:userInfo]
                       foregroundPresentation:NO
                            completionHandler:completionHandler];
             break;
-
-        case UIApplicationStateInactive:
-
-            /*
-             * iOS 10+ will only ever call application:receivedRemoteNotification:fetchCompletion as a result of content-available push
-             */
-            if ([[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){10, 0, 0}] || [UAUtils isSilentPush:userInfo]) {
-                [self handleIncomingNotification:[UANotificationContent notificationWithNotificationInfo:userInfo]
-                          foregroundPresentation:NO
-                               completionHandler:completionHandler];
-            } else {
-                UANotificationResponse *response = [UANotificationResponse notificationResponseWithNotificationInfo:userInfo
-                                                                                                   actionIdentifier:UANotificationDefaultActionIdentifier
-                                                                                                       responseText:nil];
-
-                [self handleNotificationResponse:response
-                               completionHandler:^() {
-                                   completionHandler(UIBackgroundFetchResultNoData);
-                               }];
-            }
     }
 
 }
@@ -135,7 +116,7 @@
 #pragma mark -
 #pragma mark Notification handling
 
-+ (void)handleForegroundNotification:(UNNotification *)notification mergedOptions:(UNNotificationPresentationOptions)options withCompletionHandler:(void(^)(void))completionHandler NS_AVAILABLE_IOS(10.0) {
++ (void)handleForegroundNotification:(UNNotification *)notification mergedOptions:(UNNotificationPresentationOptions)options withCompletionHandler:(void(^)(void))completionHandler {
     BOOL foregroundPresentation = (options & UNNotificationPresentationOptionAlert) > 0;
 
     UANotificationContent *notificationContent = [UANotificationContent notificationWithUNNotification:notification];
