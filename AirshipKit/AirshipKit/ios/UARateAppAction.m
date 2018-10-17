@@ -163,17 +163,15 @@ NSString *const UARateAppLinkPromptTimestampsKey = @"RateAppActionLinkPromptCoun
     UAPreferenceDataStore *dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:[UAirship shared].config.appKey];
     NSNumber *todayTimestamp = [NSNumber numberWithDouble:[[NSDate date] timeIntervalSince1970]];
 
-    NSMutableArray *timestamps = [NSMutableArray arrayWithArray:[self getTimestampsForKey:key]];
-
     // Remove timestamps more than a year old
-    for (NSNumber *timestamp in timestamps) {
-        if ((todayTimestamp.doubleValue - timestamp.doubleValue) > kSecondsInYear) {
-            [timestamps removeObject:timestamp];
-        }
-    }
+    NSPredicate *predicate = [NSPredicate predicateWithBlock:^BOOL(id  _Nullable evaluatedObject, NSDictionary<NSString *,id> * _Nullable bindings) {
+        NSNumber *timestamp = evaluatedObject;
+        return (todayTimestamp.doubleValue - timestamp.doubleValue) <= kSecondsInYear;
+    }];
 
     // Store timestamp for this call
-    [timestamps addObject:todayTimestamp];
+    NSArray *timestamps = [[[self getTimestampsForKey:key] filteredArrayUsingPredicate:predicate] arrayByAddingObject:todayTimestamp];
+
     [dataStore setObject:timestamps forKey:key];
 }
 
