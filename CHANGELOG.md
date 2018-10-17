@@ -6,7 +6,7 @@ Migration Guides: Documentation/Migration
 Version 10.0.2 - October 17, 2018
 =================================
 Patch release to fix a crash in the rate app action involving timestamp
-storage. Apps that use the rate app action are encouraged to update.
+storage. Apps that use the rate app action are strongly encouraged to update.
 
 Version 10.0.1 - October 4, 2018
 ================================
