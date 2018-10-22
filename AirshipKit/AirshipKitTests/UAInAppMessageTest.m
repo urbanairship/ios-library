@@ -24,7 +24,7 @@
                                         },
                                 },
                   @"display_type": UAInAppMessageDisplayTypeBannerValue,
-                  @"extras": @{@"foo":@"baz", @"baz":@"foo"},
+                  @"extra": @{@"foo":@"baz", @"baz":@"foo"},
                   @"audience": @{@"new_user" : @YES},
                   @"actions": @{@"cool":@"story"},
                   @"source": @"remote-data",

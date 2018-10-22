@@ -67,7 +67,7 @@ NSString * const UAInAppMessageErrorDomain = @"com.urbanairship.in_app_message";
 NSString *const UAInAppMessageIDKey = @"message_id";
 NSString *const UAInAppMessageDisplayTypeKey = @"display_type";
 NSString *const UAInAppMessageDisplayContentKey = @"display";
-NSString *const UAInAppMessageExtrasKey = @"extras";
+NSString *const UAInAppMessageExtraKey = @"extra";
 NSString *const UAInAppMessageAudienceKey = @"audience";
 NSString *const UAInAppMessageActionsKey = @"actions";
 NSString *const UAInAppMessageCampaignsKey = @"campaigns";
@@ -161,11 +161,11 @@ NSString *const UAInAppMessageSourceLegacyPushValue = @"legacy-push";
         }
     }
     
-    id extras = json[UAInAppMessageExtrasKey];
+    id extras = json[UAInAppMessageExtraKey];
     if (extras) {
         if (![extras isKindOfClass:[NSDictionary class]]) {
             if (error) {
-                NSString *msg = [NSString stringWithFormat:@"Message extras must be a dictionary. Invalid value: %@", extras];
+                NSString *msg = [NSString stringWithFormat:@"Message extra must be a dictionary. Invalid value: %@", extras];
                 *error =  [NSError errorWithDomain:UAInAppMessageErrorDomain
                                               code:UAInAppMessageErrorCodeInvalidJSON
                                           userInfo:@{NSLocalizedDescriptionKey:msg}];
@@ -349,7 +349,7 @@ NSString *const UAInAppMessageSourceLegacyPushValue = @"legacy-push";
 
     [data setValue:[self.displayContent toJSON] forKey:UAInAppMessageDisplayContentKey];
     [data setValue:[self.audience toJSON] forKey:UAInAppMessageAudienceKey];
-    [data setValue:self.extras forKey:UAInAppMessageExtrasKey];
+    [data setValue:self.extras forKey:UAInAppMessageExtraKey];
     [data setValue:self.actions forKey:UAInAppMessageActionsKey];
     [data setValue:self.campaigns forKey:UAInAppMessageCampaignsKey];
 

@@ -62,7 +62,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, strong) NSDate *expiry;
 
 /**
- * Optional key value extras.
+ * Optional key value extra.
  */
 @property(nonatomic, copy, nullable) NSDictionary *extra;
 
