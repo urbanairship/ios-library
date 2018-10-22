@@ -3,6 +3,10 @@ iOS Changelog
 
 Migration Guides: Documentation/Migration
 
+Version 10.0.3 - October 22, 2018
+=================================
+Patch release to fix an issue with the "extra" object in In-App Automation.
+
 Version 10.0.2 - October 17, 2018
 =================================
 Patch release to fix a crash in the rate app action involving timestamp
