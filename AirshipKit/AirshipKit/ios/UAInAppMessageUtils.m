@@ -296,7 +296,7 @@ CGFloat const CloseButtonHeight = 30;
     [attributes setObject:font forKey:NSFontAttributeName];
 
     // Underline
-    if (textInfo.style == UAInAppMessageTextInfoStyleUnderline) {
+    if ((textInfo.style & UAInAppMessageTextInfoStyleUnderline) == UAInAppMessageTextInfoStyleUnderline) {
         [attributes setObject:[NSNumber numberWithInt:NSUnderlineStyleSingle] forKey:NSUnderlineStyleAttributeName];
     }
 
@@ -342,11 +342,11 @@ CGFloat const CloseButtonHeight = 30;
 
     UIFontDescriptorSymbolicTraits traits = 0;
 
-    if (textInfo.style == UAInAppMessageTextInfoStyleBold) {
+    if ((textInfo.style & UAInAppMessageTextInfoStyleBold) == UAInAppMessageTextInfoStyleBold) {
         traits = traits | UIFontDescriptorTraitBold;
     }
 
-    if (textInfo.style == UAInAppMessageTextInfoStyleItalic) {
+    if ((textInfo.style & UAInAppMessageTextInfoStyleItalic) == UAInAppMessageTextInfoStyleItalic) {
         traits = traits | UIFontDescriptorTraitItalic;
     }
 

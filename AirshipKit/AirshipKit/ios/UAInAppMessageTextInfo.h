@@ -32,7 +32,7 @@ typedef NS_OPTIONS(NSUInteger, UAInAppMessageTextInfoStyleType) {
 /**
  * Represents the possible text alignment options.
  */
-typedef NS_OPTIONS(NSUInteger, UAInAppMessageTextInfoAlignmentType) {
+typedef NS_ENUM(NSUInteger, UAInAppMessageTextInfoAlignmentType) {
     /**
      * Unspecified alignment (actual alignment specified by container)
      */
