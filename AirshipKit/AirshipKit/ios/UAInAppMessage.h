@@ -33,7 +33,7 @@ extern NSUInteger const UAInAppMessageIDLimit;
 @property(nonatomic, strong, nullable) UAInAppMessageDisplayContent *displayContent;
 
 /**
- * The extras for the messages.
+ * Optional extra information for the message.
  */
 @property(nonatomic, copy, nullable) NSDictionary *extras;
 
@@ -43,7 +43,7 @@ extern NSUInteger const UAInAppMessageIDLimit;
 @property(nonatomic, copy, nullable) NSDictionary *actions;
 
 /**
- * The audience conditions for the messages.
+ * The audience conditions for the message.
  */
 @property(nonatomic, strong, nullable) UAInAppMessageAudience *audience;
 
@@ -80,7 +80,7 @@ extern NSUInteger const UAInAppMessageIDLimit;
 @property(nonatomic, strong, readonly) UAInAppMessageDisplayContent *displayContent;
 
 /**
- * The extras for the messages.
+ * Optional extra information for the message.
  */
 @property(nonatomic, copy, nullable, readonly) NSDictionary *extras;
 
@@ -90,7 +90,7 @@ extern NSUInteger const UAInAppMessageIDLimit;
 @property(nonatomic, copy, nullable, readonly) NSDictionary *actions;
 
 /**
- * The audience conditions for the messages.
+ * The audience conditions for the message.
  */
 @property(nonatomic, strong, nullable, readonly) UAInAppMessageAudience *audience;
 
