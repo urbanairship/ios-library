@@ -111,7 +111,9 @@ then
 
   # Run pod lib lint
   cd $ROOT_PATH
-  pod lib lint
+  pod lib lint UrbanAirship-iOS-SDK.podspec
+  pod lib lint UrbanAirship-iOS-AppExtensions.podspec
+  ./${SCRIPT_DIRECTORY}/pod_lib_lint_debug_kit.sh
   cd -
 fi
 
