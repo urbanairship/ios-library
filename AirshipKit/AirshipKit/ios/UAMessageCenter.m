@@ -32,7 +32,7 @@
     return center;
 }
 
-- (void)display:(BOOL)animated {
+- (void)display:(BOOL)animated completion:(void(^)(void))completionHandler {
     if (!self.splitViewController) {
 
         self.splitViewController = [[UAMessageCenterSplitViewController alloc] initWithNibName:nil bundle:nil];
@@ -57,8 +57,12 @@
 
         self.splitViewController.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
 
-        [[UAUtils topController] presentViewController:self.splitViewController animated:animated completion:nil];
+        [[UAUtils topController] presentViewController:self.splitViewController animated:animated completion:completionHandler];
     }
+}
+
+- (void)display:(BOOL)animated {
+    [self display:animated completion:nil];
 }
 
 - (void)display {
@@ -66,8 +70,11 @@
 }
 
 - (void)displayMessageForID:(NSString *)messageID animated:(BOOL)animated {
-    [self display:animated];
-    [self.splitViewController.listViewController displayMessageForID:messageID];
+    UA_WEAKIFY(self)
+    [self display:animated completion:^{
+        UA_STRONGIFY(self)
+        [self.splitViewController.listViewController displayMessageForID:messageID];
+    }];
 }
 
 - (void)displayMessageForID:(NSString *)messageID {
