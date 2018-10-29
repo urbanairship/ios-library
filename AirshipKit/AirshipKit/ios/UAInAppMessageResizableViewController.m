@@ -217,7 +217,9 @@ double const DefaultResizableViewAnimationDuration = 0.2;
 
     // add this view controller to the window
     self.topWindow.rootViewController = self;
-
+    
+    self.oldWindow = [[UIApplication sharedApplication] keyWindow];
+    
     // show the window
     [self.topWindow makeKeyAndVisible];
 }
@@ -261,6 +263,7 @@ double const DefaultResizableViewAnimationDuration = 0.2;
         self.isShowing = NO;
         [self.view removeFromSuperview];
         self.topWindow = nil;
+        [self.oldWindow makeKeyAndVisible];
     }];
 }
 

@@ -29,6 +29,11 @@ NS_ASSUME_NONNULL_BEGIN
 @property (strong, nonatomic, nullable) UIWindow *topWindow;
 
 /**
+ * The old window before the new modal window is made visible
+ */
+@property (strong, nonatomic, nullable) UIWindow *oldWindow;
+
+/**
  * The background color to be applied to the shade view when the app is in full screen display.
  */
 @property (strong, nonatomic) UIColor *backgroundColor;
