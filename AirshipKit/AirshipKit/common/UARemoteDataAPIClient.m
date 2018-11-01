@@ -18,8 +18,10 @@
 
 NSString * const kUALastRemoteDataModifiedTime = @"UALastRemoteDataModifiedTime";
 
-- (UARemoteDataAPIClient *)initWithConfig:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
-    self = [super initWithConfig:config session:[UARequestSession sessionWithConfig:config]];
+- (UARemoteDataAPIClient *)initWithConfig:(UAConfig *)config
+                                dataStore:(UAPreferenceDataStore *)dataStore
+                                  session:(UARequestSession *)session {
+    self = [super initWithConfig:config session:session];
     
     if (self) {
         self.dataStore = dataStore;
@@ -29,7 +31,17 @@ NSString * const kUALastRemoteDataModifiedTime = @"UALastRemoteDataModifiedTime"
 }
 
 + (UARemoteDataAPIClient *)clientWithConfig:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
-    return [[[self class] alloc] initWithConfig:config dataStore:dataStore];
+    return [[self alloc] initWithConfig:config
+                              dataStore:dataStore
+                                session:[UARequestSession sessionWithConfig:config]];
+}
+
++ (UARemoteDataAPIClient *)clientWithConfig:(UAConfig *)config
+                                  dataStore:(UAPreferenceDataStore *)dataStore
+                                    session:(UARequestSession *)session {
+    return [[self alloc] initWithConfig:config
+                              dataStore:dataStore
+                                session:session];
 }
 
 - (UADisposable *)fetchRemoteData:(UARemoteDataRefreshSuccessBlock)successBlock onFailure:(UARemoteDataRefreshFailureBlock)failureBlock {

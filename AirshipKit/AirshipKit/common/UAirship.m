@@ -350,9 +350,6 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         return;
     }
 
-    // Invalidate UAAnalytics timer and cancel all queued operations
-    [sharedAirship_.sharedAnalytics cancelUpload];
-
     // Finally, release the airship!
     [UAirship setSharedAirship:nil];
 

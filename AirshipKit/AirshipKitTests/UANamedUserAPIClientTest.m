@@ -3,13 +3,12 @@
 #import "UABaseTest.h"
 #import "UAConfig.h"
 #import "UANamedUserAPIClient+Internal.h"
-#import "UAirship.h"
+#import "UAirship+Internal.h"
 
 @interface UANamedUserAPIClientTest : UABaseTest
 
 @property (nonatomic, strong) id mockAirship;
 @property (nonatomic, strong) id mockSession;
-@property (nonatomic, strong) UAConfig *config;
 @property (nonatomic, strong) UANamedUserAPIClient *client;
 
 @end
@@ -19,12 +18,10 @@
 - (void)setUp {
     [super setUp];
 
-    self.config = [UAConfig config];
-
     self.mockSession = [self mockForClass:[UARequestSession class]];
 
     self.mockAirship = [self mockForClass:[UAirship class]];
-    [[[self.mockAirship stub] andReturn:self.mockAirship] shared];
+    [UAirship setSharedAirship:self.mockAirship];
     [[[self.mockAirship stub] andReturn:self.config] config];
 
     self.client = [UANamedUserAPIClient clientWithConfig:self.config session:self.mockSession];

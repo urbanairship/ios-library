@@ -4,7 +4,6 @@
 
 @implementation UADate
 
-// Returns current date and time
 - (NSDate *)now {
     return [NSDate date];
 }

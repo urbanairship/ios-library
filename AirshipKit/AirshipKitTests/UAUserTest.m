@@ -12,8 +12,6 @@
 
 @interface UAUserTest : UABaseTest
 @property (nonatomic, strong) UAUser *user;
-@property (nonatomic, strong) UAConfig *config;
-
 @property (nonatomic, strong) NSNotificationCenter *notificationCenter;
 
 @property (nonatomic, strong) id mockPush;
@@ -36,12 +34,15 @@
 
     self.mockPush = [self mockForClass:[UAPush class]];
     self.mockUserClient = [self mockForClass:[UAUserAPIClient class]];
-
     self.mockApplication = [self mockForClass:[UIApplication class]];
-    [[[self.mockApplication stub] andReturn:self.mockApplication] sharedApplication];
 
     self.notificationCenter = [[NSNotificationCenter alloc] init];
-    self.user = [UAUser userWithPush:self.mockPush config:self.config dataStore:self.dataStore client:self.mockUserClient notificationCenter:self.notificationCenter];
+    self.user = [UAUser userWithPush:self.mockPush
+                              config:self.config
+                           dataStore:self.dataStore
+                              client:self.mockUserClient
+                  notificationCenter:self.notificationCenter
+                         application:self.mockApplication];
  }
 
 - (void)testDefaultUser {
@@ -208,7 +209,7 @@
                                            object:nil
                                          userInfo:nil];
 
-    [self waitForExpectationsWithTimeout:10 handler:nil];
+    [self waitForTestExpectations];
 
     XCTAssertNoThrow([self.mockUserClient verify]);
 }

@@ -9,19 +9,14 @@
 #import "UAAnalytics+Internal.h"
 
 @interface UAChannelAPIClientTest : UABaseTest
-
 @property (nonatomic, strong) id mockSession;
-@property (nonatomic, strong) UAConfig *config;
 @property (nonatomic, strong) UAChannelAPIClient *client;
-
 @end
 
 @implementation UAChannelAPIClientTest
 
-
 - (void)setUp {
     [super setUp];
-    self.config = [UAConfig config];
     self.mockSession = [self mockForClass:[UARequestSession class]];
     self.client = [UAChannelAPIClient clientWithConfig:self.config session:self.mockSession];
 }

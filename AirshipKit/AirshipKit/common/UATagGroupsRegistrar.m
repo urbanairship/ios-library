@@ -36,6 +36,11 @@ typedef void (^UATagGroupsMutator)(NSArray *, NSString *);
  */
 @property (nonatomic, strong) UATagGroupsMutationHistory *mutationHistory;
 
+/**
+ * The application.
+ */
+@property (nonatomic, strong) UIApplication *application;
+
 @end
 
 @implementation UATagGroupsRegistrar
@@ -43,15 +48,15 @@ typedef void (^UATagGroupsMutator)(NSArray *, NSString *);
 - (instancetype)initWithDataStore:(UAPreferenceDataStore *)dataStore
                   mutationHistory:(UATagGroupsMutationHistory *)mutationHistory
                               apiClient:(UATagGroupsAPIClient *)apiClient
-                         operationQueue:(NSOperationQueue *)operationQueue {
+                         operationQueue:(NSOperationQueue *)operationQueue
+                      application:application {
     
     self = [super initWithDataStore:dataStore];
 
     if (self) {
         self.dataStore = dataStore;
-
+        self.application = application;
         self.mutationHistory = mutationHistory;
-        
         self.tagGroupsAPIClient = apiClient;
         self.tagGroupsAPIClient.enabled = self.componentEnabled;
         
@@ -66,21 +71,24 @@ typedef void (^UATagGroupsMutator)(NSArray *, NSString *);
                                    dataStore:(UAPreferenceDataStore *)dataStore
                              mutationHistory:(UATagGroupsMutationHistory *)mutationHistory {
 
-    return [[UATagGroupsRegistrar alloc] initWithDataStore:dataStore
-                                           mutationHistory:(UATagGroupsMutationHistory *)mutationHistory
-                                                 apiClient:[UATagGroupsAPIClient clientWithConfig:config]
-                                            operationQueue:[[NSOperationQueue alloc] init]];
+    return [[self alloc] initWithDataStore:dataStore
+                           mutationHistory:(UATagGroupsMutationHistory *)mutationHistory
+                                 apiClient:[UATagGroupsAPIClient clientWithConfig:config]
+                            operationQueue:[[NSOperationQueue alloc] init]
+                               application:[UIApplication sharedApplication]];
 }
 
 + (instancetype)tagGroupsRegistrarWithDataStore:(UAPreferenceDataStore *)dataStore
                                 mutationHistory:(UATagGroupsMutationHistory *)mutationHistory
                                       apiClient:(UATagGroupsAPIClient *)apiClient
-                                 operationQueue:(NSOperationQueue *)operationQueue {
+                                 operationQueue:(NSOperationQueue *)operationQueue
+                                    application:(UIApplication *)application {
 
-    return [[UATagGroupsRegistrar alloc] initWithDataStore:dataStore
-                                           mutationHistory:(UATagGroupsMutationHistory *)mutationHistory
-                                                 apiClient:apiClient
-                                            operationQueue:operationQueue];
+    return [[self alloc] initWithDataStore:dataStore
+                           mutationHistory:(UATagGroupsMutationHistory *)mutationHistory
+                                 apiClient:apiClient
+                            operationQueue:operationQueue
+                               application:application];
 }
 
 - (void)dealloc {
@@ -94,7 +102,7 @@ typedef void (^UATagGroupsMutator)(NSArray *, NSString *);
     
     UA_WEAKIFY(self);
     
-    __block UIBackgroundTaskIdentifier backgroundTaskIdentifier = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
+    __block UIBackgroundTaskIdentifier backgroundTaskIdentifier = [self.application beginBackgroundTaskWithExpirationHandler:^{
         UA_STRONGIFY(self);
         
         UA_LTRACE(@"Tag groups background task expired.");
@@ -179,7 +187,7 @@ typedef void (^UATagGroupsMutator)(NSArray *, NSString *);
 
 - (void)endBackgroundTask:(UIBackgroundTaskIdentifier)backgroundTaskIdentifier {
     if (backgroundTaskIdentifier != UIBackgroundTaskInvalid) {
-        [[UIApplication sharedApplication] endBackgroundTask:backgroundTaskIdentifier];
+        [self.application endBackgroundTask:backgroundTaskIdentifier];
     }
 }
 
@@ -253,6 +261,5 @@ typedef void (^UATagGroupsMutator)(NSArray *, NSString *);
 - (void)onComponentEnableChange {
     self.tagGroupsAPIClient.enabled = self.componentEnabled;
 }
-
 
 @end

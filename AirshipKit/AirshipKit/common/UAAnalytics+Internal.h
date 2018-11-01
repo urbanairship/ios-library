@@ -3,6 +3,8 @@
 #import <Foundation/Foundation.h>
 #import "UAAnalytics.h"
 #import "UAComponent+Internal.h"
+#import "UADate+Internal.h"
+#import "UADispatcher+Internal.h"
 
 #define kUAAnalyticsEnabled @"UAAnalyticsEnabled"
 #define kUAMissingSendID @"MISSING_SEND_ID"
@@ -73,12 +75,16 @@ extern NSString *const UAScreenKey;
  * @param dataStore The shared preference data store.
  * @param eventManager An event manager instance.
  * @param notificationCenter The notification center.
+ * @param date A UADate instance.
+ * @param dispatcher The dispatcher.
  * @return A new analytics instance.
  */
 + (instancetype)analyticsWithConfig:(UAConfig *)airshipConfig
                           dataStore:(UAPreferenceDataStore *)dataStore
                        eventManager:(UAEventManager *)eventManager
-                 notificationCenter:(NSNotificationCenter *)notificationCenter;
+                 notificationCenter:(NSNotificationCenter *)notificationCenter
+                               date:(UADate *)date
+                         dispatcher:(UADispatcher *)dispatcher;
 
 /**
  * Called to notify analytics the app was launched from a push notification.

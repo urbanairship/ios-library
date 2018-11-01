@@ -1,12 +1,12 @@
 /* Copyright 2018 Urban Airship and Contributors */
 
-#import <XCTest/XCTest.h>
+#import "UABaseTest.h"
 #import "UARemoteDataStore+Internal.h"
 #import "UARemoteDataStorePayload+Internal.h"
 #import "UARemoteDataPayload+Internal.h"
 #import "UAConfig.h"
 
-@interface UARemoteDataStoreTest : XCTestCase
+@interface UARemoteDataStoreTest : UABaseTest
 @property UARemoteDataStore *remoteDataStore;
 
 @end
@@ -46,7 +46,7 @@
                                   [testExpectation fulfill];
                               }];
     
-    [self waitForExpectationsWithTimeout:5 handler:nil];
+    [self waitForTestExpectations];
 }
 
 - (void)testNewRemoteData {
@@ -108,7 +108,7 @@
                                          [secondFetch fulfill];
                                      }];
     
-    [self waitForExpectationsWithTimeout:5 handler:nil];
+    [self waitForTestExpectations];
     
     
 }

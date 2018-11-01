@@ -2,7 +2,7 @@
 
 #import "UABaseTest.h"
 #import "UAFetchDeviceInfoAction.h"
-#import "UAirship.h"
+#import "UAirship+Internal.h"
 #import "UAPush.h"
 #import "UANamedUser.h"
 #import "UAActionArguments+Internal.h"
@@ -24,7 +24,7 @@
     self.mockPush = [self mockForClass:[UAPush class]];
     self.mockNamedUser = [self mockForClass:[UANamedUser class]];
     self.mockAirship = [self mockForClass:[UAirship class]];
-    [[[self.mockAirship stub] andReturn:self.mockAirship] shared];
+    [UAirship setSharedAirship:self.mockAirship];
     [[[self.mockAirship stub] andReturn:self.mockPush] push];
     [[[self.mockAirship stub] andReturn:self.mockNamedUser] namedUser];
 

@@ -4,7 +4,7 @@
 #import "UAAction.h"
 #import "UAActionRunner+Internal.h"
 #import "UAActionRegistry.h"
-#import "UAirship.h"
+#import "UAirship+Internal.h"
 
 @interface UAActionRunnerTest : UABaseTest
 @property (nonatomic, strong) UAActionRegistry *registry;
@@ -23,7 +23,7 @@ NSString *anotherActionName = @"AnotherActionName";
 
     // Mock Airship
     self.mockAirship = [self mockForClass:[UAirship class]];
-    [[[self.mockAirship stub] andReturn:self.mockAirship] shared];
+    [UAirship setSharedAirship:self.mockAirship];
     [[[self.mockAirship stub] andReturn:self.registry] actionRegistry];
 }
 
@@ -321,7 +321,7 @@ NSString *anotherActionName = @"AnotherActionName";
                                  [expectation fulfill];
                              }];
 
-    [self waitForExpectationsWithTimeout:1 handler:nil];
+    [self waitForTestExpectations];
     XCTAssertEqual(2, actionRunCount, @"Both actions should of ran");
 }
 

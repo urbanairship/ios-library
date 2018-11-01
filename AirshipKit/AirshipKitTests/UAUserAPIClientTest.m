@@ -18,17 +18,12 @@
 @property (nonatomic, strong) id mockUAUtils;
 @property (nonatomic, strong) id mockUser;
 
-@property (nonatomic, strong) UAConfig *config;
-
 @end
 
 @implementation UAUserAPIClientTest
 
 - (void)setUp {
     [super setUp];
-
-    self.config = [UAConfig config];
-
     self.mockSession = [self mockForClass:[UARequestSession class]];
 
     self.mockRequest = [self mockForClass:[UARequest class]];

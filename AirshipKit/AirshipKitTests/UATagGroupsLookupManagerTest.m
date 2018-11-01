@@ -73,7 +73,7 @@
         [fetchCompleted fulfill];
     }];
 
-    [self waitForExpectationsWithTimeout:1.0 handler:nil];
+    [self waitForTestExpectations];
 }
 
 - (void)testGetTagsNoChannel {
@@ -88,7 +88,7 @@
         [fetchCompleted fulfill];
     }];
 
-    [self waitForExpectationsWithTimeout:1.0 handler:nil];
+    [self waitForTestExpectations];
 }
 
 - (void)testGetOnlyDeviceTags {
@@ -106,7 +106,7 @@
         [fetchCompleted fulfill];
     }];
 
-    [self waitForExpectationsWithTimeout:1.0 handler:nil];
+    [self waitForTestExpectations];
 
     [self.mockAPIClient verify];
 }
@@ -146,7 +146,7 @@
         [fetchCompleted fulfill];
     }];
 
-    [self waitForExpectationsWithTimeout:1.0 handler:nil];
+    [self waitForTestExpectations];
     [self.mockCache verify];
     [self.mockMutationHistory verify];
     [self.mockAPIClient verify];
@@ -197,7 +197,7 @@
         [fetchCompleted fulfill];
     }];
 
-    [self waitForExpectationsWithTimeout:1.0 handler:nil];
+    [self waitForTestExpectations];
     [self.mockCache verify];
     [self.mockMutationHistory verify];
     [self.mockAPIClient verify];
@@ -249,7 +249,7 @@
         [fetchCompleted fulfill];
     }];
 
-    [self waitForExpectationsWithTimeout:1.0 handler:nil];
+    [self waitForTestExpectations];
     [self.mockCache verify];
     [self.mockMutationHistory verify];
     [self.mockAPIClient verify];
@@ -289,7 +289,7 @@
         [fetchCompleted fulfill];
     }];
 
-    [self waitForExpectationsWithTimeout:1.0 handler:nil];
+    [self waitForTestExpectations];
     [self.mockCache verify];
     [self.mockAPIClient verify];
 }
@@ -331,7 +331,7 @@
         [fetchCompleted fulfill];
     }];
 
-    [self waitForExpectationsWithTimeout:1.0 handler:nil];
+    [self waitForTestExpectations];
     [self.mockCache verify];
     [self.mockAPIClient verify];
 }
@@ -375,7 +375,7 @@
         [fetchCompleted fulfill];
     }];
 
-    [self waitForExpectationsWithTimeout:1.0 handler:nil];
+    [self waitForTestExpectations];
     [self.mockCache verify];
     [self.mockAPIClient verify];
 }

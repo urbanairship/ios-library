@@ -4,7 +4,7 @@
 #import "UABaseTest.h"
 #import "UAOverlayInboxMessageAction.h"
 #import "UAActionArguments+Internal.h"
-#import "UAirship.h"
+#import "UAirship+Internal.h"
 #import "UAInbox.h"
 #import "UAInboxMessage.h"
 #import "UAInboxMessageList.h"
@@ -31,7 +31,7 @@
     self.action = [[UAOverlayInboxMessageAction alloc] init];
 
     self.mockAirship = [self strictMockForClass:[UAirship class]];
-    [[[self.mockAirship stub] andReturn:self.mockAirship] shared];
+    [UAirship setSharedAirship:self.mockAirship];
 
     self.mockInbox = [self strictMockForClass:[UAInbox class]];
     [[[self.mockAirship stub] andReturn:self.mockInbox] inbox];
@@ -45,15 +45,6 @@
     self.mockOverlayViewController = [self mockForClass:[UAOverlayViewController class]];
 }
 
-- (void)tearDown {
-    [self.mockAirship stopMocking];
-    [self.mockInbox stopMocking];
-    [self.mockMessageList stopMocking];
-    [self.mockOverlayViewController stopMocking];
-    [self.mockConfig stopMocking];
-    
-    [super tearDown];
-}
 
 /**
  * Test the action accepts message ID in foreground situations.

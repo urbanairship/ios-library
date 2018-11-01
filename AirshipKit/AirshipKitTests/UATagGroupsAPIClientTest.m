@@ -10,7 +10,6 @@
 
 @interface UATagGroupsAPIClientTest : UABaseTest
 @property (nonatomic, strong) id mockSession;
-@property (nonatomic, strong) UAConfig *config;
 @property (nonatomic, strong) UATagGroupsAPIClient *client;
 
 @end
@@ -19,9 +18,6 @@
 
 - (void)setUp {
     [super setUp];
-
-    self.config = [UAConfig config];
-
     self.mockSession = [self mockForClass:[UARequestSession class]];
     self.client = [UATagGroupsAPIClient clientWithConfig:self.config session:self.mockSession];
 }
@@ -178,7 +174,7 @@
                     }];
 
     // verify
-    [self waitForExpectationsWithTimeout:1 handler:nil];
+    [self waitForTestExpectations];
     
     [self.mockSession verify];
 }
@@ -249,7 +245,7 @@
                     }];
     
     // verify
-    [self waitForExpectationsWithTimeout:1 handler:nil];
+    [self waitForTestExpectations];
     
     [self.mockSession verify];
 }

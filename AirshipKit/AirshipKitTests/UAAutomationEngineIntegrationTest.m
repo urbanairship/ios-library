@@ -23,9 +23,10 @@
 @property (nonatomic, strong) id mockDelegate;
 @property (nonatomic, strong) id mockMetrics;
 @property (nonatomic, strong) id mockAirship;
-@property (nonatomic, strong) id mockTimerScheduler;
+@property (nonatomic, strong) UATimerScheduler *timerScheduler;
 @property (nonatomic, strong) NSNotificationCenter *notificationCenter;
 @property (nonatomic, strong) UATestDispatcher *dispatcher;
+@property (nonatomic, copy) void (^timerSchedulerBlock)(NSTimer *);
 @end
 
 #define UAAUTOMATIONENGINETESTS_SCHEDULE_LIMIT 100
@@ -39,7 +40,6 @@
 
     // Set up a mocked application
     self.mockedApplication = [self mockForClass:[UIApplication class]];
-    [[[self.mockedApplication stub] andReturn:self.mockedApplication] sharedApplication];
 
     self.mockDelegate = [self mockForProtocol:@protocol(UAAutomationEngineDelegate)];
     [[[self.mockDelegate stub] andCall:@selector(createScheduleInfoWithBuilder:) onObject:self] createScheduleInfoWithBuilder:OCMOCK_ANY];
@@ -49,9 +49,14 @@
                                                             inMemory:YES];
 
     self.mockAirship = [self mockForClass:[UAirship class]];
-    [[[self.mockAirship stub] andReturn:self.mockAirship] shared];
+    [UAirship setSharedAirship:self.mockAirship];
 
-    self.mockTimerScheduler = [self mockForClass:[UATimerScheduler class]];
+
+    self.timerScheduler = [UATimerScheduler timerSchedulerWithSchedulerBlock:^(NSTimer *timer) {
+        if (self.timerSchedulerBlock) {
+            self.timerSchedulerBlock(timer);
+        }
+    }];
 
     self.mockMetrics = [self mockForClass:[UAApplicationMetrics class]];
     [[[self.mockAirship stub] andReturn:self.mockMetrics] applicationMetrics];
@@ -60,9 +65,10 @@
     self.notificationCenter = [[NSNotificationCenter alloc] init];
 
     self.automationEngine = [UAAutomationEngine automationEngineWithAutomationStore:self.testStore
-                                                                     timerScheduler:self.mockTimerScheduler
+                                                                     timerScheduler:self.timerScheduler
                                                                  notificationCenter:self.notificationCenter
-                                                                         dispatcher:self.dispatcher];
+                                                                         dispatcher:self.dispatcher
+                                                                        application:self.mockedApplication];
 
     self.automationEngine.delegate = self.mockDelegate;
     [self.automationEngine cancelAll];
@@ -760,13 +766,11 @@
         builder.seconds = 1;
     }];
 
-    [self verifyDelay:delay fulfillmentBlock:^{
-        [[[self.mockTimerScheduler expect] andDo:^(NSInvocation *invocation) {
-            NSTimer *timer;
-            [invocation getArgument:&timer atIndex:2];
-            [timer fire];
-        }] scheduleTimer:OCMOCK_ANY];
-    }];
+    self.timerSchedulerBlock = ^(NSTimer *timer) {
+        [timer fire];
+    };
+
+    [self verifyDelay:delay fulfillmentBlock:^{}];
 }
 
 - (void)testCancellationTriggers {
@@ -1041,10 +1045,10 @@
 
     XCTestExpectation *timerScheduled = [self expectationWithDescription:@"timer scheduled"];
     __block NSTimer *timer;
-    [[[self.mockTimerScheduler expect] andDo:^(NSInvocation *invocation) {
-        [invocation getArgument:&timer atIndex:2];
+    self.timerSchedulerBlock = ^(NSTimer *t) {
+        timer = t;
         [timerScheduled fulfill];
-    }] scheduleTimer:OCMOCK_ANY];
+    };
 
     // Trigger the scheduled actions
     UACustomEvent *purchase = [UACustomEvent eventWithName:@"purchase"];
@@ -1337,6 +1341,7 @@
     return [[UAActionScheduleInfo alloc] initWithBuilder:builder];
 }
 @end
+
 
 
 

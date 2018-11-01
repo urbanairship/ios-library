@@ -3,7 +3,7 @@
 #import "UABaseTest.h"
 #import <StoreKit/StoreKit.h>
 #import "UAAction+Internal.h"
-#import "UAirship.h"
+#import "UAirship+Internal.h"
 #import "UAConfig.h"
 #import "UARateAppAction.h"
 #import "UARateAppPromptViewController+Internal.h"
@@ -45,7 +45,7 @@
     [[[self.mockConfig stub] andReturn:@"mockAppKey"] appKey];
 
     self.mockAirship = [self mockForClass:[UAirship class]];
-    [[[self.mockAirship stub] andReturn:self.mockAirship] shared];
+    [UAirship setSharedAirship:self.mockAirship];
     [[[self.mockAirship stub] andReturn:self.mockConfig] config];
 
     self.mockApplication = [self mockForClass:[UIApplication class]];

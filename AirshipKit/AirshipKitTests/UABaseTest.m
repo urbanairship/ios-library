@@ -17,11 +17,10 @@ const NSTimeInterval UATestExpectationTimeOut = 5;
     }
     self.mocks = nil;
     [UAirship land];
-    
+
     if (_dataStore) {
         [_dataStore removeAll];
     }
-
     [super tearDown];
 }
 
@@ -84,6 +83,19 @@ const NSTimeInterval UATestExpectationTimeOut = 5;
     [_dataStore removeAll];
 
     return _dataStore;
+}
+
+- (UAConfig *)config {
+    if (_config) {
+        return _config;
+    }
+
+    _config = [UAConfig config];
+    _config.developmentAppKey = [NSString stringWithFormat:@"dev-appKey-%@", self.name];
+    _config.developmentAppSecret = [NSString stringWithFormat:@"dev-appSecret-%@", self.name];
+    _config.productionAppKey = [NSString stringWithFormat:@"prod-appKey-%@", self.name];
+    _config.productionAppSecret = [NSString stringWithFormat:@"prod-appSecret-%@", self.name];
+    return _config;
 }
 
 @end

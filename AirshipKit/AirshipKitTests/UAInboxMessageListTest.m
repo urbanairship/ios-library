@@ -10,8 +10,7 @@
 #import "UAInboxStore+Internal.h"
 #import "UAUtils+Internal.h"
 #import "UAInboxStore+Internal.h"
-
-static UAUser *mockUser_ = nil;
+#import "UATestDispatcher.h"
 
 @protocol UAInboxMessageListMockNotificationObserver
 - (void)messageListWillUpdate;
@@ -44,8 +43,6 @@ static UAUser *mockUser_ = nil;
         [invocation setReturnValue:&self->_userCreated];
     }] isCreated];
 
-
-
     self.testStore = [UAInboxStore storeWithName:@"UAInboxMessageListTest." inMemory:YES];
 
     self.mockInboxAPIClient = [self mockForClass:[UAInboxAPIClient class]];
@@ -60,7 +57,8 @@ static UAUser *mockUser_ = nil;
                                                         client:self.mockInboxAPIClient
                                                         config:[UAConfig config]
                                                     inboxStore:self.testStore
-                                            notificationCenter:self.notificationCenter];
+                                            notificationCenter:self.notificationCenter
+                                                    dispatcher:[UATestDispatcher testDispatcher]];
 
     //inject the API client
     self.messageList.client = self.mockInboxAPIClient;
@@ -138,11 +136,7 @@ static UAUser *mockUser_ = nil;
         [testExpectation fulfill];
     }];
 
-    [self waitForExpectationsWithTimeout:5 handler:^(NSError *error){
-        if (error) {
-            XCTFail(@"Failed to run request with error %@.", error);
-        }
-    }];
+    [self waitForTestExpectations];
 
     XCTAssertNotNil(disposable, @"disposable should be non-nil");
     XCTAssertFalse(fail, @"success block should have been called");
@@ -177,11 +171,7 @@ static UAUser *mockUser_ = nil;
         [testExpectation fulfill];
     }];
 
-    [self waitForExpectationsWithTimeout:5 handler:^(NSError *error){
-        if (error) {
-            XCTFail(@"Failed to run request with error %@.", error);
-        }
-    }];
+    [self waitForTestExpectations];
 
     XCTAssertNotNil(disposable, @"disposable should be non-nil");
     XCTAssertTrue(fail, @"failure block should have been called");
@@ -238,11 +228,7 @@ static UAUser *mockUser_ = nil;
         [testExpectation fulfill];
     }
 
-    [self waitForExpectationsWithTimeout:5 handler:^(NSError *error){
-        if (error) {
-            XCTFail(@"Failed to run request with error %@.", error);
-        }
-    }];
+    [self waitForTestExpectations];
 
     XCTAssertFalse(fail, @"callback blocks should not have been executed");
     
@@ -298,11 +284,7 @@ static UAUser *mockUser_ = nil;
         [testExpectation fulfill];
     }
 
-    [self waitForExpectationsWithTimeout:5 handler:^(NSError *error){
-        if (error) {
-            XCTFail(@"Failed to run request with error %@.", error);
-        }
-    }];
+    [self waitForTestExpectations];
 
     XCTAssertFalse(fail, @"callback blocks should not have been executed");
 

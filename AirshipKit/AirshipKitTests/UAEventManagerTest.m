@@ -11,7 +11,7 @@
 #import "NSOperationQueue+UAAdditions.h"
 #import "UARegionEvent.h"
 #import "UAAsyncOperation+Internal.h"
-#import "UAirship.h"
+#import "UAirship+Internal.h"
 #import "UAPush.h"
 
 /**
@@ -53,9 +53,11 @@
     self.mockPush = [self mockForClass:[UAPush class]];
 
     self.mockAirship = [self mockForClass:[UAirship class]];
-    [[[self.mockAirship stub] andReturn:self.mockAirship] shared];
+    [UAirship setSharedAirship:self.mockAirship];
     [[[self.mockAirship stub] andReturn:self.mockPush] push];
 
+    // Set up a mocked application
+    self.mockApplication = [self mockForClass:[UIApplication class]];
 
     self.notificationCenter = [[NSNotificationCenter alloc] init];
     self.eventManager = [UAEventManager eventManagerWithConfig:[UAConfig config]
@@ -63,11 +65,8 @@
                                                     eventStore:self.mockStore
                                                         client:self.mockClient
                                                          queue:self.mockQueue
-                                            notificationCenter:self.notificationCenter];
-
-    // Set up a mocked application
-    self.mockApplication = [self mockForClass:[UIApplication class]];
-    [[[self.mockApplication stub] andReturn:self.mockApplication] sharedApplication];
+                                            notificationCenter:self.notificationCenter
+                                                   application:self.mockApplication];
 }
 
 - (void)tearDown {
@@ -120,7 +119,7 @@
     [self.eventManager addEvent:event sessionID:@"story"];
 
     // verify
-    [self waitForExpectationsWithTimeout:1 handler:nil];
+    [self waitForTestExpectations];
 
     [self.mockStore verify];
     [self.mockQueue verify];
@@ -182,7 +181,7 @@
     [self.eventManager addEvent:event sessionID:@"story"];
 
     // verify
-    [self waitForExpectationsWithTimeout:1 handler:nil];
+    [self waitForTestExpectations];
 
     [self.mockStore verify];
     [self.mockQueue verify];
@@ -240,7 +239,7 @@
 
     [self.eventManager addEvent:event sessionID:@"story"];
 
-    [self waitForExpectationsWithTimeout:1 handler:nil];
+    [self waitForTestExpectations];
 
     [self.mockStore verify];
     [self.mockQueue verify];
@@ -269,7 +268,7 @@
     [self.notificationCenter postNotificationName:UIApplicationDidEnterBackgroundNotification
                                            object:nil];
 
-    [self waitForExpectationsWithTimeout:1 handler:nil];
+    [self waitForTestExpectations];
 
     // Verify the delay is around 5 seconds
     XCTAssertEqualWithAccuracy(delay, 5, .1);
@@ -312,7 +311,7 @@
     [self.notificationCenter postNotificationName:UAChannelCreatedEvent
                                            object:nil];
 
-    [self waitForExpectationsWithTimeout:1 handler:nil];
+    [self waitForTestExpectations];
 
     // Verify the delay is around 15 seconds
     XCTAssertEqualWithAccuracy(delay, 15, 5);
@@ -417,7 +416,7 @@
     // Start the upload
     [self.eventManager scheduleUpload];
 
-    [self waitForExpectationsWithTimeout:1 handler:nil];
+    [self waitForTestExpectations];
 
     [self.mockQueue verify];
     [self.mockClient verify];
@@ -520,7 +519,7 @@
     // Start the upload
     [self.eventManager scheduleUpload];
 
-    [self waitForExpectationsWithTimeout:1 handler:nil];
+    [self waitForTestExpectations];
 
     // Verify the delay is around 60 seconds
     XCTAssertEqualWithAccuracy(retryDelay, 60, .1);
@@ -561,7 +560,7 @@
     // Start the upload
     [self.eventManager scheduleUpload];
 
-    [self waitForExpectationsWithTimeout:1 handler:nil];
+    [self waitForTestExpectations];
 
     [self.mockQueue verify];
     [self.mockClient verify];
@@ -582,7 +581,7 @@
     self.eventManager.uploadsEnabled = YES;
 
     // verify
-    [self waitForExpectationsWithTimeout:1 handler:nil];
+    [self waitForTestExpectations];
     [self.mockQueue verify];
 }
 
@@ -600,7 +599,7 @@
     self.eventManager.uploadsEnabled = NO;
 
     // verify
-    [self waitForExpectationsWithTimeout:1 handler:nil];
+    [self waitForTestExpectations];
     [self.mockQueue verify];
 }
 

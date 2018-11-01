@@ -16,7 +16,7 @@
     [super setUp];
 
     self.mockAirship = [self mockForClass:[UAirship class]];
-    [[[self.mockAirship stub] andReturn:self.mockAirship] shared];
+    [UAirship setSharedAirship:self.mockAirship];
 
     self.mockDelegate = [self mockForProtocol:@protocol(UADeepLinkDelegate)];
 
@@ -44,7 +44,7 @@
         [actionFinished fulfill];
     }];
 
-    [self waitForExpectationsWithTimeout:1 handler:nil];
+    [self waitForTestExpectations];
     [self.mockDelegate verify];
 }
 
@@ -60,7 +60,7 @@
         [actionFinished fulfill];
     }];
 
-    [self waitForExpectationsWithTimeout:1 handler:nil];
+    [self waitForTestExpectations];
     [self.mockDelegate verify];
 }
 

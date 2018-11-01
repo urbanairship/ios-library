@@ -18,8 +18,8 @@
     [super setUp];
 
     self.mockAirship = [self mockForClass:[UAirship class]];
-    [[[self.mockAirship stub] andReturn:self.mockAirship] shared];
     [[[self.mockAirship stub] andReturn:self.dataStore] dataStore];
+    [UAirship setSharedAirship:self.mockAirship];
 
     id expiry = @"2020-12-15T11:45:22";
     id extra = @{@"foo":@"bar", @"baz":@12345};

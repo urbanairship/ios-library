@@ -20,9 +20,6 @@
 @property (nonatomic, strong) id mockTagGroupsRegistrar;
 @property (nonatomic, strong) NSMutableDictionary *addTagGroups;
 @property (nonatomic, strong) NSMutableDictionary *removeTagGroups;
-@property (nonatomic, strong) id mockApplication;
-@property (nonatomic, strong) id mockConfig;
-
 @end
 
 @implementation UANamedUserTest
@@ -39,23 +36,21 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
         [invocation setReturnValue:&self->_pushChannelID];
     }] channelID];
 
-    self.mockConfig = [self mockForClass:[UAConfig class]];
-
 
     self.mockedAirship = [self mockForClass:[UAirship class]];
-    [[[self.mockedAirship stub] andReturn:self.mockedAirship] shared];
     [[[self.mockedAirship stub] andReturn:self.mockedUAPush] push];
+    [UAirship setSharedAirship:self.mockedAirship];
 
     self.pushChannelID = @"someChannel";
 
     self.mockTagGroupsRegistrar = [self mockForClass:[UATagGroupsRegistrar class]];
 
-    self.namedUser = [UANamedUser namedUserWithPush:self.mockedUAPush config:self.mockConfig dataStore:self.dataStore tagGroupsRegistrar:self.mockTagGroupsRegistrar];
+    self.namedUser = [UANamedUser namedUserWithPush:self.mockedUAPush config:self.config
+                                          dataStore:self.dataStore
+                                 tagGroupsRegistrar:self.mockTagGroupsRegistrar];
 
     self.mockedNamedUserClient = [self mockForClass:[UANamedUserAPIClient class]];
     self.namedUser.namedUserAPIClient = self.mockedNamedUserClient;
-    self.mockApplication = [self mockForClass:[UIApplication class]];
-    [[[self.mockApplication stub] andReturn:self.mockApplication] sharedApplication];
 
     // set up the named user
     self.namedUser.identifier = @"fakeNamedUser";
@@ -81,9 +76,6 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
     [self.mockedNamedUserClient stopMocking];
     [self.mockedAirship stopMocking];
     [self.mockedUAPush stopMocking];
-    [self.mockApplication stopMocking];
-    [self.mockConfig stopMocking];
-
     [super tearDown];
 }
 

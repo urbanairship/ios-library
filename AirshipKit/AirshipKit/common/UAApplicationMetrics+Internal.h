@@ -2,6 +2,8 @@
 
 #import <Foundation/Foundation.h>
 #import "UAApplicationMetrics.h"
+#import "UADate+Internal.h"
+#import "UAPreferenceDataStore+Internal.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -27,8 +29,16 @@ NS_ASSUME_NONNULL_BEGIN
  */
 + (instancetype)applicationMetricsWithDataStore:(UAPreferenceDataStore *)dataStore;
 
-- (void)didBecomeActive;
-- (NSString *)lastAppVersion;
+/**
+ * Application metrics factory method. Used for testing.
+ * @param dataStore The dataStore.
+ * @param notificationCenter The notification center.
+ * @param date The date.
+ * @return An application metrics instance.
+ */
++ (instancetype)applicationMetricsWithDataStore:(UAPreferenceDataStore *)dataStore
+                             notificationCenter:(NSNotificationCenter *)notificationCenter
+                                           date:(UADate *)date;
 
 @end
 

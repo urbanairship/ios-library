@@ -9,13 +9,7 @@ ROOT_PATH=`dirname "${0}"`/../
 
 # Target iOS SDK when building the projects
 TARGET_SDK='iphonesimulator'
-TEST_DESTINATION='platform=iOS Simulator,OS=latest,name=iPhone SE'
-
-# Set a derived data path for all scheme-based builds (for tests)
-DERIVED_DATA=$(mktemp -d /tmp/ci-derived-data-XXXXX)
-if [[ $BITRISE_IO ]]; then
-  envman add --key CI_DERIVED_DATA --value "$DERIVED_DATA"
-fi
+TEST_DESTINATION='platform=iOS Simulator,OS=latest,name=iPhone X'
 
 start_time=`date +%s`
 
@@ -55,6 +49,22 @@ echo -ne "Runnig CI tasks in mode:${MODE} \n\n";
 
 
 ##################################################################################################
+# Tests
+##################################################################################################
+
+if [ $TESTS = true ]
+then
+  pod install --project-directory=$ROOT_PATH
+  echo -ne "\n\n *********** RUNNING TESTS *********** \n\n"
+  # Run our Logic Tests
+  xcrun xcodebuild \
+  -destination "${TEST_DESTINATION}" \
+  -workspace "${ROOT_PATH}/Airship.xcworkspace" \
+  -scheme AirshipKitTests \
+  test
+fi
+
+##################################################################################################
 # Build SDK
 ##################################################################################################
 echo -ne "\n\n *********** BUILDING SDK *********** \n\n"
@@ -81,24 +91,19 @@ then
   cp -np ${ROOT_PATH}/SwiftSample/AirshipConfig.plist.sample ${ROOT_PATH}/SwiftSample/AirshipConfig.plist || true
 
   # Use Debug configurations and a simulator SDK so the build process doesn't attempt to sign the output
-  xcrun xcodebuild -project "${ROOT_PATH}/Sample/Sample.xcodeproj" -derivedDataPath "${DERIVED_DATA}" -scheme Sample -configuration Debug -sdk $TARGET_SDK -destination "${TEST_DESTINATION}"
-  xcrun xcodebuild -project "${ROOT_PATH}/SwiftSample/SwiftSample.xcodeproj" -derivedDataPath "${DERIVED_DATA}" -scheme SwiftSample -configuration Debug -sdk $TARGET_SDK  -destination "${TEST_DESTINATION}"
-fi
+  xcrun xcodebuild \
+  -configuration Debug \
+  -project "${ROOT_PATH}/Sample/Sample.xcodeproj" \
+  -scheme Sample \
+  -sdk $TARGET_SDK \
+  -destination "${TEST_DESTINATION}"
 
-##################################################################################################
-# Tests
-##################################################################################################
-
-if [ $TESTS = true ]
-then
-  echo -ne "\n\n *********** RUNNING TESTS *********** \n\n"
-  pod install --project-directory=$ROOT_PATH
-
-  rm -rf "${ROOT_PATH}/test-output"
-  mkdir -p "${ROOT_PATH}/test-output"
-
-  # Run our Logic Tests
-  xcrun xcodebuild -destination "${TEST_DESTINATION}" -workspace "${ROOT_PATH}/Airship.xcworkspace" -derivedDataPath "${DERIVED_DATA}" -scheme AirshipKitTests test | tee "${ROOT_PATH}/test-output/XCTEST-LOGIC.out"
+  xcrun xcodebuild \
+  -configuration Debug \
+  -project "${ROOT_PATH}/SwiftSample/SwiftSample.xcodeproj" \
+  -scheme SwiftSample \
+  -sdk $TARGET_SDK  \
+  -destination "${TEST_DESTINATION}"
 fi
 
 ##################################################################################################

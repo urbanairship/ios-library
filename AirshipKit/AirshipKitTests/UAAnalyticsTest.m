@@ -11,11 +11,14 @@
 #import "UARegionEvent.h"
 #import "UACustomEvent.h"
 #import "UAEventManager+Internal.h"
+#import "UATestDate.h"
+#import "UATestDispatcher.h"
 
 @interface UAAnalyticsTest: UABaseTest
 @property (nonatomic, strong) UAAnalytics *analytics;
 @property (nonatomic, strong) id mockEventManager;
 @property (nonatomic, strong) NSNotificationCenter *notificationCenter;
+@property (nonatomic, strong) UATestDate *testDate;
 @end
 
 @implementation UAAnalyticsTest
@@ -24,17 +27,10 @@
     [super setUp];
 
     self.notificationCenter = [[NSNotificationCenter alloc] init];
-
+    self.testDate = [[UATestDate alloc] init];
     self.mockEventManager = [self mockForClass:[UAEventManager class]];
 
-    UAConfig *config = [[UAConfig alloc] init];
-    self.analytics = [UAAnalytics analyticsWithConfig:config dataStore:self.dataStore eventManager:self.mockEventManager notificationCenter:self.notificationCenter];
-}
-
-- (void)tearDown {
-    [self.mockEventManager stopMocking];
-
-    [super tearDown];
+    self.analytics = [self createAnalytics];
 }
 
 /**
@@ -57,7 +53,7 @@
     self.analytics.enabled = NO;
 
     // Recreate analytics and see if its still disabled
-    self.analytics = [UAAnalytics analyticsWithConfig:[UAConfig config] dataStore:self.dataStore eventManager:self.mockEventManager notificationCenter:self.notificationCenter];
+   self.analytics = [self createAnalytics];
 
     XCTAssertFalse(self.analytics.enabled);
 }
@@ -78,9 +74,9 @@
  * Test isEnabled only returns NO when UAConfig disables analytics.
  */
 - (void)testIsEnabledConfigOverride {
-    UAConfig *config = [UAConfig config];
-    config.analyticsEnabled = NO;
-    self.analytics = [UAAnalytics analyticsWithConfig:config dataStore:self.dataStore eventManager:self.mockEventManager notificationCenter:self.notificationCenter];
+    self.config.analyticsEnabled = NO;
+
+    self.analytics = [self createAnalytics];
 
     self.analytics.enabled = YES;
     XCTAssertFalse(self.analytics.enabled);
@@ -127,7 +123,7 @@
     // Add valid event
     [self.analytics addEvent:mockEvent];
 
-    [self waitForExpectationsWithTimeout:1 handler:nil];
+    [self waitForTestExpectations];
     [self.mockEventManager verify];
     [mockEvent stopMocking];
 }
@@ -175,7 +171,7 @@
     // Associate the identifiers
     [self.analytics associateDeviceIdentifiers:[UAAssociatedIdentifiers identifiersWithDictionary:identifiers]];
 
-    [self waitForExpectationsWithTimeout:1 handler:nil];
+    [self waitForTestExpectations];
     XCTAssertEqualObjects(identifiers, [self.analytics currentAssociatedDeviceIdentifiers].allIDs, @"DeviceIdentifiers should match");
 
     // Verify the event was added
@@ -254,7 +250,7 @@
     [self.notificationCenter postNotificationName:UIApplicationDidEnterBackgroundNotification
                                            object:nil];
 
-    [self waitForExpectationsWithTimeout:1 handler:nil];
+    [self waitForTestExpectations];
 
     [self.mockEventManager verify];
 }
@@ -284,7 +280,7 @@
     [self.notificationCenter postNotificationName:UIApplicationWillTerminateNotification
                                            object:nil];
 
-    [self waitForExpectationsWithTimeout:1 handler:nil];
+    [self waitForTestExpectations];
 
     [self.mockEventManager verify];
 }
@@ -292,8 +288,8 @@
 // Tests that starting a screen tracking event when one is already started adds the event with the correct start and stop times
 - (void)testStartTrackScreenAddEvent {
 
+    self.testDate.absoluteTime = [NSDate dateWithTimeIntervalSince1970:0];
     [self.analytics trackScreen:@"first_screen"];
-    __block NSTimeInterval approxStartTime = [NSDate date].timeIntervalSince1970;
 
     // Expect that the mock event is added to the mock DB Manager
     XCTestExpectation *eventAdded = [self expectationWithDescription:@"Notification event added"];
@@ -306,15 +302,17 @@
 
         UAScreenTrackingEvent *event = obj;
 
-        XCTAssertEqualWithAccuracy(event.startTime, approxStartTime, 1);
-        XCTAssertEqualWithAccuracy(event.stopTime, [NSDate date].timeIntervalSince1970, 1);
+        XCTAssertEqualWithAccuracy(event.startTime, 0, 1);
+        XCTAssertEqualWithAccuracy(event.stopTime, 20, 1);
 
         return [event.screen isEqualToString:@"first_screen"];
     }] sessionID:OCMOCK_ANY];
 
+    self.testDate.timeOffset = 20;
+
     [self.analytics trackScreen:@"second_screen"];
 
-    [self waitForExpectationsWithTimeout:1 handler:nil];
+    [self waitForTestExpectations];
 
     [self.mockEventManager verify];
 }
@@ -330,7 +328,7 @@
 
     [self.analytics trackScreen:@"screen"];
 
-    [self waitForExpectationsWithTimeout:10 handler:nil];
+    [self waitForTestExpectations];
 
     id expectedEvent = @{ @"screen": @"screen"};
     XCTAssertEqualObjects(expectedEvent, event);
@@ -347,7 +345,7 @@
     UARegionEvent *regionEnter = [UARegionEvent regionEventWithRegionID:@"region" source:@"test" boundaryEvent:UABoundaryEventEnter];
     [self.analytics addEvent:regionEnter];
 
-    [self waitForExpectationsWithTimeout:10 handler:nil];
+    [self waitForTestExpectations];
 }
 
 // Tests forwarding custom events to the analytics delegate.
@@ -361,7 +359,7 @@
     UACustomEvent *purchase = [UACustomEvent eventWithName:@"purchase" value:@(100)];
     [self.analytics addEvent:purchase];
 
-    [self waitForExpectationsWithTimeout:10 handler:nil];
+    [self waitForTestExpectations];
 }
 
 // Test disabling / enabling the analytics component disables / enables eventmanager uploads
@@ -387,6 +385,15 @@
     [self.mockEventManager verify];
 }
 
+
+- (UAAnalytics *)createAnalytics {
+    return [UAAnalytics analyticsWithConfig:self.config
+                                  dataStore:self.dataStore
+                               eventManager:self.mockEventManager
+                         notificationCenter:self.notificationCenter
+                                       date:self.testDate
+                                 dispatcher:[UATestDispatcher testDispatcher]];
+}
 
 @end
 

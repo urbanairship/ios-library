@@ -50,7 +50,7 @@
     return self;
 }
 
-+ (instancetype) inboxWithUser:(UAUser *)user config:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
++ (instancetype)inboxWithUser:(UAUser *)user config:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
     return [[UAInbox alloc] initWithUser:user config:config dataStore:dataStore];
 }
 

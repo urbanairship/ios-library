@@ -1,5 +1,6 @@
 /* Copyright 2018 Urban Airship and Contributors */
 
+#import <UIKit/UIKit.h>
 #import "UAAutomationStore+Internal.h"
 #import "UAAnalytics+Internal.h"
 #import "UAScheduleEdits.h"
@@ -115,12 +116,14 @@ typedef NS_ENUM(NSInteger, UAAutomationSchedulePrepareResult) {
  * @param timerScheduler A timer scheduler
  * @param notificationCenter The notification center.
  * @param dispatcher The dispatcher to dispatch main queue blocks.
+ * @param application The main application.
  * @return Initialized Automation Engine instance
  */
 + (instancetype)automationEngineWithAutomationStore:(UAAutomationStore *)automationStore
                                      timerScheduler:(UATimerScheduler *)timerScheduler
                                  notificationCenter:(NSNotificationCenter *)notificationCenter
-                                         dispatcher:(UADispatcher *)dispatcher;
+                                         dispatcher:(UADispatcher *)dispatcher
+                                        application:(UIApplication *)application;
 
 /**
  * Starts the Automation Engine.

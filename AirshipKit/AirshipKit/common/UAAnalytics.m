@@ -27,6 +27,8 @@
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 @property (nonatomic, strong) UAEventManager *eventManager;
 @property (nonatomic, strong) NSNotificationCenter *notificationCenter;
+@property (nonatomic, strong) UADate *date;
+@property (nonatomic, strong) UADispatcher *dispatcher;
 
 @property (nonatomic, assign) BOOL isEnteringForeground;
 
@@ -48,7 +50,9 @@ NSString *const UAEventKey = @"event";
 - (instancetype)initWithConfig:(UAConfig *)airshipConfig
                      dataStore:(UAPreferenceDataStore *)dataStore
                   eventManager:(UAEventManager *)eventManager
-            notificationCenter:(NSNotificationCenter *)notificationCenter {
+            notificationCenter:(NSNotificationCenter *)notificationCenter
+                          date:(UADate *)date
+                    dispatcher:(UADispatcher *)dispatcher {
 
     self = [super initWithDataStore:dataStore];
 
@@ -58,6 +62,8 @@ NSString *const UAEventKey = @"event";
         self.dataStore = dataStore;
         self.eventManager = eventManager;
         self.notificationCenter = notificationCenter;
+        self.date = date;
+        self.dispatcher = dispatcher;
 
         // Default analytics value
         if (![self.dataStore objectForKey:kUAAnalyticsEnabled]) {
@@ -104,18 +110,24 @@ NSString *const UAEventKey = @"event";
     return [[UAAnalytics alloc] initWithConfig:config
                                      dataStore:dataStore
                                   eventManager:[UAEventManager eventManagerWithConfig:config dataStore:dataStore]
-                            notificationCenter:[NSNotificationCenter defaultCenter]];
+                            notificationCenter:[NSNotificationCenter defaultCenter]
+                                          date:[[UADate alloc] init]
+                                    dispatcher:[UADispatcher mainDispatcher]];
 }
 
-+ (instancetype)analyticsWithConfig:(UAConfig *)config
-                          dataStore:(UAPreferenceDataStore *)dataStore
-                       eventManager:(UAEventManager *)eventManager
-                 notificationCenter:(NSNotificationCenter *)notificationCenter {
-    return [[UAAnalytics alloc] initWithConfig:config
++ (instancetype)analyticsWithConfig:(UAConfig *)airshipConfig
+                     dataStore:(UAPreferenceDataStore *)dataStore
+                  eventManager:(UAEventManager *)eventManager
+            notificationCenter:(NSNotificationCenter *)notificationCenter
+                          date:(UADate *)date
+                         dispatcher:(UADispatcher *)dispatcher {
+
+    return [[UAAnalytics alloc] initWithConfig:airshipConfig
                                      dataStore:dataStore
                                   eventManager:eventManager
-                            notificationCenter:notificationCenter];
-
+                            notificationCenter:notificationCenter
+                                          date:date
+                                    dispatcher:dispatcher];
 }
 
 #pragma mark -
@@ -185,7 +197,11 @@ NSString *const UAEventKey = @"event";
         return;
     }
 
-    dispatch_async(dispatch_get_main_queue(), ^{
+
+    UA_WEAKIFY(self)
+    [self.dispatcher dispatchAsync:^{
+        UA_STRONGIFY(self)
+
         UA_LDEBUG(@"Adding %@ event %@.", event.eventType, event.eventID);
         [self.eventManager addEvent:event sessionID:self.sessionID];
         UA_LTRACE(@"Event added: %@.", event);
@@ -201,7 +217,7 @@ NSString *const UAEventKey = @"event";
                                                    object:self
                                                  userInfo:@{UAEventKey: event}];
         }
-    });
+    }];
 }
 
 
@@ -272,7 +288,7 @@ NSString *const UAEventKey = @"event";
     // If there's a screen currently being tracked set it's stop time and add it to analytics
     if (self.currentScreen) {
         UAScreenTrackingEvent *ste = [UAScreenTrackingEvent eventWithScreen:self.currentScreen startTime:self.startTime];
-        ste.stopTime = [NSDate date].timeIntervalSince1970;
+        ste.stopTime = self.date.now.timeIntervalSince1970;
         ste.previousScreen = self.previousScreen;
 
         // Set previous screen to last tracked screen
@@ -283,7 +299,7 @@ NSString *const UAEventKey = @"event";
     }
 
     self.currentScreen = screen;
-    self.startTime = [NSDate date].timeIntervalSince1970;
+    self.startTime = self.date.now.timeIntervalSince1970;
 }
 
 - (void)stopTrackingScreen {

@@ -34,12 +34,14 @@ NS_ASSUME_NONNULL_BEGIN
  * @param mutationHistory The mutation history.
  * @param apiClient The internal tag groups API client.
  * @param operationQueue An NSOperation queue used to synchronize changes to tag groups.
+ * @param application The application.
  * @return A new tag groups registrar instance.
  */
 + (instancetype)tagGroupsRegistrarWithDataStore:(UAPreferenceDataStore *)dataStore
                                 mutationHistory:(UATagGroupsMutationHistory *)mutationHistory
                                       apiClient:(UATagGroupsAPIClient *)apiClient
-                                 operationQueue:(NSOperationQueue *)operationQueue;
+                                 operationQueue:(NSOperationQueue *)operationQueue
+                                    application:(UIApplication *)application;
 
 /**
  * Update the tag groups for the given identifier.

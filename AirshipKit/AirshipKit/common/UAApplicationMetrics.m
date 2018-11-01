@@ -1,12 +1,11 @@
 /* Copyright 2018 Urban Airship and Contributors */
 
-
 #import "UAApplicationMetrics+Internal.h"
-#import "UAPreferenceDataStore+Internal.h"
 #import "UAUtils+Internal.h"
 
 @interface UAApplicationMetrics()
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
+@property (nonatomic, strong) UADate *date;
 @property (nonatomic, assign) BOOL isAppVersionUpdated;
 @end
 
@@ -14,15 +13,19 @@
 NSString *const UAApplicationMetricLastOpenDate = @"UAApplicationMetricLastOpenDate";
 NSString *const UAApplicationMetricsLastAppVersion = @"UAApplicationMetricsLastAppVersion";
 
-- (instancetype)initWithDataStore:(UAPreferenceDataStore *)dataStore {
+- (instancetype)initWithDataStore:(UAPreferenceDataStore *)dataStore
+               notificationCenter:(NSNotificationCenter *)notificationCenter
+                             date:(UADate *)date {
     self = [super init];
     if (self) {
         self.dataStore = dataStore;
+        self.date = date;
+
         // App inactive/active for incoming calls, notification center, and taskbar
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(didBecomeActive)
-                                                     name:UIApplicationDidBecomeActiveNotification
-                                                   object:nil];
+        [notificationCenter addObserver:self
+                               selector:@selector(didBecomeActive)
+                                   name:UIApplicationDidBecomeActiveNotification
+                                 object:nil];
         [self checkAppVersion];
     }
 
@@ -30,11 +33,21 @@ NSString *const UAApplicationMetricsLastAppVersion = @"UAApplicationMetricsLastA
 }
 
 + (instancetype)applicationMetricsWithDataStore:(UAPreferenceDataStore *)dataStore {
-    return [[UAApplicationMetrics alloc] initWithDataStore:dataStore];
+    return [[UAApplicationMetrics alloc] initWithDataStore:dataStore
+                                        notificationCenter:[NSNotificationCenter defaultCenter]
+                                                      date:[[UADate alloc] init]];
+}
+
++ (instancetype)applicationMetricsWithDataStore:(UAPreferenceDataStore *)dataStore
+                             notificationCenter:(NSNotificationCenter *)notificationCenter
+                                           date:(UADate *)date {
+    return [[UAApplicationMetrics alloc] initWithDataStore:dataStore
+                                        notificationCenter:notificationCenter
+                                                      date:date];
 }
 
 - (void)didBecomeActive {
-    self.lastApplicationOpenDate = [NSDate date];
+    self.lastApplicationOpenDate = [self.date now];
 }
 
 - (NSDate *)lastApplicationOpenDate {

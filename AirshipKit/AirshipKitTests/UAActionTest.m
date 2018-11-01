@@ -137,7 +137,7 @@
         }];
     });
 
-    [self waitForExpectationsWithTimeout:1 handler:nil];
+    [self waitForTestExpectations];
 }
 
 /*
@@ -164,7 +164,7 @@
         [testExpectation fulfill];
     }];
 
-    [self waitForExpectationsWithTimeout:1 handler:nil];
+    [self waitForTestExpectations];
 }
 
 /*

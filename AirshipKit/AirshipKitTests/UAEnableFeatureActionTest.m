@@ -111,9 +111,8 @@
     }];
 
     // Wait for the test expectations
-    [self waitForExpectationsWithTimeout:1 handler:^(NSError *error) {
-        [self.mockPush verify];
-    }];
+    [self waitForTestExpectations];
+    [self.mockPush verify];
 }
 
 - (void)testEnableUserNotificationsOptedOut {
@@ -145,6 +144,7 @@
         [actionPerformed fulfill];
     }];
 
+    // Wait for the test expectations
     [self waitForTestExpectations];
     [self.mockPush verify];
 }

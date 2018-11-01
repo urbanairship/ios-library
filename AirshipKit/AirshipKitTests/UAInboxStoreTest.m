@@ -39,7 +39,7 @@
         [testExpectation fulfill];
     }];
 
-     [self waitForExpectationsWithTimeout:5 handler:nil];
+     [self waitForTestExpectations];
 }
 
 - (void)testSyncMessages {
@@ -85,7 +85,7 @@
                                   [secondFetch fulfill];
                               }];
 
-    [self waitForExpectationsWithTimeout:5 handler:nil];
+    [self waitForTestExpectations];
 
 
 }

@@ -86,7 +86,7 @@
 
     // Mock Airship
     self.mockAirship = [self mockForClass:[UAirship class]];
-    [[[self.mockAirship stub] andReturn:self.mockAirship] shared];
+    [UAirship setSharedAirship:self.mockAirship];
     [[[self.mockAirship stub] andReturn:self.mockUAUser] inboxUser];
     [[[self.mockAirship stub] andReturn:self.mockInbox] inbox];
     [[[self.mockAirship stub] andReturn:self.mockPush] push];

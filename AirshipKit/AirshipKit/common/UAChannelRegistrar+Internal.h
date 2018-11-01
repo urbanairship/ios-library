@@ -115,6 +115,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param channelAPIClient The channel API client.
  * @param date The UADate object.
  * @param dispatcher The dispatcher to dispatch main queue blocks.
+ * @param application The application.
  * @return A new channel registrar instance.
  */
 + (instancetype)channelRegistrarWithConfig:(UAConfig *)config
@@ -124,7 +125,8 @@ NS_ASSUME_NONNULL_BEGIN
                            channelLocation:(NSString *)channelLocation
                           channelAPIClient:(UAChannelAPIClient *)channelAPIClient
                                       date:(UADate *)date
-                                dispatcher:(UADispatcher *)dispatcher;
+                                dispatcher:(UADispatcher *)dispatcher
+                               application:(UIApplication *)application;
 
 ///---------------------------------------------------------------------------------------
 /// @name Channel Registrar Properties (for testing)

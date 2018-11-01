@@ -236,17 +236,15 @@
             appDelegateResult = allBackgroundFetchResults[j];
 
             // Verify that the expected value is returned from combining the two results
-            [self.delegate application:[UIApplication sharedApplication]
-     performFetchWithCompletionHandler:^(UIBackgroundFetchResult result){
-                    XCTAssertEqual(expectedResult, result);
-                    [callBackFinished fulfill];
-                }];
+            [self.delegate application:[UIApplication sharedApplication] performFetchWithCompletionHandler:^(UIBackgroundFetchResult result){
+                XCTAssertEqual(expectedResult, result);
+                [callBackFinished fulfill];
+            }];
 
             // Wait for the test expectations
-            [self waitForExpectationsWithTimeout:1 handler:^(NSError *error) {
-                XCTAssertTrue(fetchCalled);
-                XCTAssertTrue(appDelegateCalled);
-            }];
+            [self waitForTestExpectations];
+            XCTAssertTrue(fetchCalled);
+            XCTAssertTrue(appDelegateCalled);
         }
     }
 
@@ -324,18 +322,17 @@
             appDelegateResult = allBackgroundFetchResults[j];
 
             // Verify that the expected value is returned from combining the two results
-            [self.delegate application:[UIApplication sharedApplication]
-          didReceiveRemoteNotification:expectedNotification
+            [self.delegate application:[UIApplication sharedApplication] didReceiveRemoteNotification:expectedNotification
                 fetchCompletionHandler:^(UIBackgroundFetchResult result){
                     XCTAssertEqual(expectedResult, result);
                     [callBackFinished fulfill];
                 }];
 
             // Wait for the test expectations
-            [self waitForExpectationsWithTimeout:1 handler:^(NSError *error) {
-                XCTAssertTrue(pushCalled);
-                XCTAssertTrue(appDelegateCalled);
-            }];
+            [self waitForTestExpectations];
+
+            XCTAssertTrue(pushCalled);
+            XCTAssertTrue(appDelegateCalled);
         }
     }
 }
@@ -454,12 +451,11 @@
                                           completionHandlerCalled = YES;
                                       }];
     
-    [self waitForExpectationsWithTimeout:100 handler:^(NSError *error) {
-        XCTAssertTrue(completionHandlerCalled);
-        XCTAssertTrue(notificationCenterDelegateCalled);
-        XCTAssertTrue(appIntegrationForWillPresentNotificationCalled);
-        XCTAssertTrue(appIntegrationForHandleForegroundNotificationCalled);
-    }];
+    [self waitForTestExpectations];
+    XCTAssertTrue(completionHandlerCalled);
+    XCTAssertTrue(notificationCenterDelegateCalled);
+    XCTAssertTrue(appIntegrationForWillPresentNotificationCalled);
+    XCTAssertTrue(appIntegrationForHandleForegroundNotificationCalled);
 }
 
 
@@ -516,12 +512,10 @@
                                           completionHandlerCalled = YES;
                                       }];
     
-    [self waitForExpectationsWithTimeout:1 handler:^(NSError *error) {
-        XCTAssertTrue(completionHandlerCalled);
-        XCTAssertTrue(notificationCenterDelegateCalled);
-        XCTAssertTrue(appIntegrationCalled);
-    }];
-    
+    [self waitForTestExpectations];
+    XCTAssertTrue(completionHandlerCalled);
+    XCTAssertTrue(notificationCenterDelegateCalled);
+    XCTAssertTrue(appIntegrationCalled);
 }
 
 

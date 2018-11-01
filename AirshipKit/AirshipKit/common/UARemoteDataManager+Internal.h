@@ -1,12 +1,13 @@
 /* Copyright 2018 Urban Airship and Contributors */
 
 #import <UIKit/UIKit.h>
-
-@class UADisposable;
-@class UARemoteDataPayload;
-@class UARemoteDataStore;
-@class UAPreferenceDataStore;
-@class UAConfig;
+#import "UADisposable.h"
+#import "UARemoteDataPayload+Internal.h"
+#import "UAConfig.h"
+#import "UADispatcher+Internal.h"
+#import "UAPreferenceDataStore+Internal.h"
+#import "UARemoteDataStore+Internal.h"
+#import "UARemoteDataAPIClient+Internal.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -67,13 +68,23 @@ typedef void (^UARemoteDataPublishBlock)(NSArray<UARemoteDataPayload *> *remoteD
 - (void)foregroundRefreshWithCompletionHandler:(nullable void(^)(BOOL success))completionHandler;
 
 /**
- * Create the remote data manager.
+ * Create the remote data manager. Used for testing.
  *
  * @param config The Urban Airship config.
  * @param dataStore A UAPreferenceDataStore to store persistent preferences
+ * @param remoteDataStore The remote data store.
+ * @param remoteDataAPIClient The remote data API client.
+ * @param notificationCenter The notification center.
+ * @param dispatcher The dispatcher.
  * @return The remote data manager instance.
  */
-+ (instancetype)remoteDataManagerWithConfig:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore remoteDataStore:(UARemoteDataStore *)remoteDataStore;
++ (instancetype)remoteDataManagerWithConfig:(UAConfig *)config
+                                  dataStore:(UAPreferenceDataStore *)dataStore
+                            remoteDataStore:(UARemoteDataStore *)remoteDataStore
+                        remoteDataAPIClient:(UARemoteDataAPIClient *)remoteDataAPIClient
+                         notificationCenter:(NSNotificationCenter *)notificationCenter
+                                 dispatcher:(UADispatcher *)dispatcher;
+
 
 @end
 

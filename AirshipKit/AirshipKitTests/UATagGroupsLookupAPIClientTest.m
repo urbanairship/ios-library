@@ -60,9 +60,8 @@
                             }];
 
     // Wait for the test expectations
-    [self waitForExpectationsWithTimeout:1 handler:^(NSError *error) {
-        [self.mockSession verify];
-    }];
+    [self waitForTestExpectations];
+    [self.mockSession verify];
 }
 
 - (void)testLookupTagGroupsCached {
@@ -100,9 +99,8 @@
                             }];
 
     // Wait for the test expectations
-    [self waitForExpectationsWithTimeout:1 handler:^(NSError *error) {
-        [self.mockSession verify];
-    }];
+    [self waitForTestExpectations];
+    [self.mockSession verify];
 }
 
 - (void)testURLAndPayloadSent {

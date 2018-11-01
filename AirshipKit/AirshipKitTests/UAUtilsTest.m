@@ -7,6 +7,7 @@
 
 @interface UAUtilsTest ()
 @property(nonatomic, strong) NSCalendar *gregorianUTC;
+@property(nonatomic, strong) id mockAirship;
 @end
 
 @implementation UAUtilsTest
@@ -17,11 +18,11 @@
                              initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
 
     self.gregorianUTC.timeZone = [NSTimeZone timeZoneForSecondsFromGMT:0];
+
+    self.mockAirship = [self mockForClass:[UAirship class]];
+    [UAirship setSharedAirship:self.mockAirship];
 }
 
-- (void)tearDown {
-    [super tearDown];
-}
 
 - (void)testConnectionType {
     // SETUP
@@ -68,9 +69,8 @@
     id mockUser = [self mockForClass:[UAUser class]];
     [[[mockUser stub] andReturn:@"someUser"] username];
     [[[mockUser stub] andReturn:@"somePassword"] password];
-    
-    id mockAirship = [self mockForClass:[UAirship class]];
-    [[[mockAirship stub] andReturn:mockUser] inboxUser];
+
+    [[[self.mockAirship stub] andReturn:mockUser] inboxUser];
 
     XCTAssertEqualObjects([UAUtils userAuthHeaderString],@"Basic c29tZVVzZXI6c29tZVBhc3N3b3Jk");
 }
@@ -82,9 +82,7 @@
     [[[mockUAConfig stub] andReturn:@"someAppKey"] appKey];
     [[[mockUAConfig stub] andReturn:@"someAppSecret"] appSecret];
 
-    id mockAirship = [self mockForClass:[UAirship class]];
-    [[[mockAirship stub] andReturn:mockAirship] shared];
-    [[[mockAirship stub] andReturn:mockUAConfig] config];
+    [[[self.mockAirship stub] andReturn:mockUAConfig] config];
     
     XCTAssertEqualObjects([UAUtils appAuthHeaderString],@"Basic c29tZUFwcEtleTpzb21lQXBwU2VjcmV0");
 }

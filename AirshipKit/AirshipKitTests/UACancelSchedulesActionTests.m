@@ -4,7 +4,7 @@
 #import "UACancelSchedulesAction.h"
 #import "UAActionArguments+Internal.h"
 #import "UAAutomation.h"
-#import "UAirship.h"
+#import "UAirship+Internal.h"
 
 @interface UACancelSchedulesActionTests : UABaseTest
 @property(nonatomic, strong) UACancelSchedulesAction *action;
@@ -19,7 +19,7 @@
 
     self.mockAutomation = [self mockForClass:[UAAutomation class]];
     self.mockAirship = [self mockForClass:[UAirship class]];
-    [[[self.mockAirship stub] andReturn:self.mockAirship] shared];
+    [UAirship setSharedAirship:self.mockAirship];
     [[[self.mockAirship stub] andReturn:self.mockAutomation] automation];
 
     self.action = [[UACancelSchedulesAction alloc] init];

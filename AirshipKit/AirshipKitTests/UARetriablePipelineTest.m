@@ -53,34 +53,39 @@
 }
 
 - (void)testRetry {
-    XCTestExpectation *firstExecuted = [self expectationWithDescription:@"first executed"];
+    __block NSUInteger firstRunCount = 0;
     UARetriable *first = [UARetriable retriableWithRunBlock:^(UARetriableCompletionHandler completionHandler) {
+        firstRunCount++;
         completionHandler(UARetriableResultSuccess);
-        [firstExecuted fulfill];
     }];
 
-    __block NSUInteger runCount = 0;
+    __block NSUInteger secondRunCount = 0;
     UARetriable *second = [UARetriable retriableWithRunBlock:^(UARetriableCompletionHandler completionHandler) {
+        secondRunCount++;
         completionHandler(UARetriableResultRetry);
-        runCount++;
     }];
 
     [self.pipeline addChainedRetriables:@[first, second]];
-
-    [self waitForTestExpectations];
     [self.queue waitUntilAllOperationsAreFinished];
 
-    XCTAssertEqual(1, runCount);
+    XCTAssertEqual(1, firstRunCount);
+    XCTAssertEqual(1, secondRunCount);
 
     [self.testDispatcher advanceTime:30];
     [self.queue waitUntilAllOperationsAreFinished];
 
-    XCTAssertEqual(2, runCount);
+    XCTAssertEqual(1, firstRunCount);
+    XCTAssertEqual(2, secondRunCount);
 
     [self.testDispatcher advanceTime:60];
     [self.queue waitUntilAllOperationsAreFinished];
 
-    XCTAssertEqual(3, runCount);
+    XCTAssertEqual(1, firstRunCount);
+    XCTAssertEqual(3, secondRunCount);
+
+    if ([self.testDispatcher.scheduledBlocks count]) {
+        NSLog(@"WHAT: %@", self.testDispatcher.scheduledBlocks);
+    }
 }
 
 - (void)testCancel {

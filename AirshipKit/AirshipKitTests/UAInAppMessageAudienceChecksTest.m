@@ -8,7 +8,7 @@
 #import "UAirship+Internal.h"
 #import "UAPush+Internal.h"
 #import "UAInAppMessageTagSelector.h"
-#import "UAApplicationMetrics+Internal.h"
+#import "UAApplicationMetrics.h"
 #import "UAJSONPredicate.h"
 
 @interface UAInAppMessageAudienceChecksTest : UABaseTest

@@ -3,6 +3,7 @@
 #import "UAInboxMessageList.h"
 #import "UAInboxAPIClient+Internal.h"
 #import "UAInboxStore+Internal.h"
+#import "UADispatcher+Internal.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -84,13 +85,16 @@ NS_ASSUME_NONNULL_BEGIN
  * @param config The config.
  * @param inboxStore The inbox message store.
  * @param notificationCenter The notification center.
+ * @param dispatcher The dispatcher.
  * @return An allocated UAInboxMessageList instance.
  */
 + (instancetype)messageListWithUser:(UAUser *)user
                              client:(UAInboxAPIClient *)client
                              config:(UAConfig *)config
                          inboxStore:(UAInboxStore *)inboxStore
-                 notificationCenter:(NSNotificationCenter *)notificationCenter;
+                 notificationCenter:(NSNotificationCenter *)notificationCenter
+                         dispatcher:(UADispatcher *)dispatcher;
+
 
 @end
 

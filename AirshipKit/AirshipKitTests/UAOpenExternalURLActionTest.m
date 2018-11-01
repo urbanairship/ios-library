@@ -131,11 +131,7 @@
         XCTAssertNil(performResult.error, @"result should have no error if the application successfully opens the url");
     }];
 
-    [self waitForExpectationsWithTimeout:5 handler:^(NSError *error) {
-        if (error) {
-            XCTFail(@"Failed to open URL with error %@.", error);
-        }
-    }];
+    [self waitForTestExpectations];
 
     XCTAssertNoThrow([self.mockApplication verify], @"application should try to open the url");
 }
@@ -166,11 +162,7 @@
         XCTAssertNil(performResult.error, @"result should have no error if the application successfully opens the url");
     }];
 
-    [self waitForExpectationsWithTimeout:5 handler:^(NSError *error) {
-        if (error) {
-            XCTFail(@"Failed to open URL with error %@.", error);
-        }
-    }];
+    [self waitForTestExpectations];
 
     XCTAssertNoThrow([self.mockApplication verify], @"application should try to open the url");
 }
@@ -202,11 +194,7 @@
         XCTAssertEqual(UAOpenExternalURLActionErrorCodeURLFailedToOpen, performResult.error.code, @"error code should be set to UAOpenExternalURLActionErrorCodeURLFailedToOpen");
     }];
 
-    [self waitForExpectationsWithTimeout:5 handler:^(NSError *error) {
-        if (error) {
-            XCTFail(@"Failed to open URL with error %@.", error);
-        }
-    }];
+    [self waitForTestExpectations];
 
     XCTAssertNoThrow([self.mockApplication verify], @"application should try to open the url");
 }
@@ -236,11 +224,7 @@
         XCTAssertEqualObjects(performResult.value, @"http://itunes.apple.com/some-app", @"results value should be http iTunes link");
     }];
 
-    [self waitForExpectationsWithTimeout:5 handler:^(NSError *error) {
-        if (error) {
-            XCTFail(@"Failed to open URL with error %@.", error);
-        }
-    }];
+    [self waitForTestExpectations];
 }
 
 @end

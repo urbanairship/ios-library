@@ -30,7 +30,7 @@
     [self.registry.registeredActionEntries removeAllObjects];
 
     self.mockAirship = [self mockForClass:[UAirship class]];
-    [[[self.mockAirship stub] andReturn:self.mockAirship] shared];
+    [UAirship setSharedAirship:self.mockAirship];
 
     self.mockMetrics = [self mockForClass:[UAApplicationMetrics class]];
     [[[self.mockAirship stub] andReturn:self.mockMetrics] applicationMetrics];

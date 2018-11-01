@@ -37,7 +37,7 @@
     }];
 
     [self.queue addOperation:operation];
-    [self waitForExpectationsWithTimeout:1 handler:nil];
+    [self waitForTestExpectations];
 }
 
 /**
@@ -65,7 +65,7 @@
     }];
 
     [self.queue addOperation:operation];
-    [self waitForExpectationsWithTimeout:1 handler:nil];
+    [self waitForTestExpectations];
 }
 
 @end

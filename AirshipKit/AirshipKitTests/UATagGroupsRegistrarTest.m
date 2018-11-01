@@ -18,8 +18,7 @@
     [super setUp];
     
     self.mockApplication = [self mockForClass:[UIApplication class]];
-    [[[self.mockApplication stub] andReturn:self.mockApplication] sharedApplication];
-    
+
     self.mockApiClient = [self mockForClass:[UATagGroupsAPIClient class]];
 
     self.operationQueue = [[NSOperationQueue alloc] init];
@@ -29,7 +28,8 @@
     self.registrar = [UATagGroupsRegistrar tagGroupsRegistrarWithDataStore:self.dataStore
                                                            mutationHistory:self.mutationHistory
                                                                  apiClient:self.mockApiClient
-                                                            operationQueue:self.operationQueue];
+                                                            operationQueue:self.operationQueue
+                                                               application:self.mockApplication];
 }
 
 - (void)tearDown {
@@ -91,7 +91,7 @@
         [endBackgroundTaskExpecation fulfill];
     }] endBackgroundTask:0];
 
-    [self waitForExpectationsWithTimeout:5 handler:nil];
+    [self waitForTestExpectations];
     
     [self.mockApiClient verify];
 }

@@ -67,6 +67,8 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
 NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channel_id";
 
 @interface UAPush()
+@property (nonatomic, strong) UADispatcher *dispatcher;
+@property (nonatomic, strong) UIApplication *application;
 @property (nonatomic, strong) UATagGroupsRegistrar *tagGroupsRegistrar;
 @property (nonatomic, strong) NSNotificationCenter *notificationCenter;
 @property (nonatomic, strong) UARegistrationDelegateWrapper *registrationDelegateWrapper;
@@ -80,10 +82,14 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
                      dataStore:(UAPreferenceDataStore *)dataStore
             tagGroupsRegistrar:(UATagGroupsRegistrar *)tagGroupsRegistrar
             notificationCenter:(NSNotificationCenter *)notificationCenter
-              pushRegistration:(id<UAAPNSRegistrationProtocol>)pushRegistration {
+              pushRegistration:(id<UAAPNSRegistrationProtocol>)pushRegistration
+                   application:(UIApplication *)application
+                    dispatcher:(UADispatcher *)dispatcher {
 
     self = [super initWithDataStore:dataStore];
     if (self) {
+        self.application = application;
+        self.dispatcher = dispatcher;
         self.dataStore = dataStore;
         self.notificationCenter = notificationCenter;
         self.registrationDelegateWrapper = [[UARegistrationDelegateWrapper alloc] init];
@@ -123,19 +129,19 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
         [self.notificationCenter addObserver:self
                                     selector:@selector(applicationDidBecomeActive)
                                         name:UIApplicationDidBecomeActiveNotification
-                                      object:[UIApplication sharedApplication]];
+                                      object:nil];
 
         // Only for observing the first call to app background
         [self.notificationCenter addObserver:self
                                     selector:@selector(applicationDidEnterBackground)
                                         name:UIApplicationDidEnterBackgroundNotification
-                                      object:[UIApplication sharedApplication]];
+                                      object:nil];
 
 #if !TARGET_OS_TV    // UIApplicationBackgroundRefreshStatusDidChangeNotification not available on tvOS
         [self.notificationCenter addObserver:self
                                     selector:@selector(applicationBackgroundRefreshStatusChanged)
                                         name:UIApplicationBackgroundRefreshStatusDidChangeNotification
-                                      object:[UIApplication sharedApplication]];
+                                      object:nil];
 #endif
 
         // Do not remove migratePushSettings call from init. It needs to be run
@@ -150,7 +156,7 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
 
         // Register for remote notifications right away. This does not prompt for permissions to show notifications,
         // but starts the device token registration.
-        [[UIApplication sharedApplication] registerForRemoteNotifications];
+        [self.application registerForRemoteNotifications];
 
         [self updateAuthorizedNotificationTypes];
         self.defaultPresentationOptions = UNNotificationPresentationOptionNone;
@@ -162,23 +168,30 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
 + (instancetype)pushWithConfig:(UAConfig *)config
                      dataStore:(UAPreferenceDataStore *)dataStore
             tagGroupsRegistrar:(UATagGroupsRegistrar *)tagGroupsRegistrar {
-    return [[UAPush alloc] initWithConfig:config
+    return [[self alloc] initWithConfig:config
                                 dataStore:dataStore
                        tagGroupsRegistrar:tagGroupsRegistrar
                        notificationCenter:[NSNotificationCenter defaultCenter]
-                         pushRegistration:[[UAAPNSRegistration alloc] init]];
+                         pushRegistration:[[UAAPNSRegistration alloc] init]
+                            application:[UIApplication sharedApplication]
+                             dispatcher:[UADispatcher mainDispatcher]];
 }
 
 + (instancetype)pushWithConfig:(UAConfig *)config
                      dataStore:(UAPreferenceDataStore *)dataStore
             tagGroupsRegistrar:(UATagGroupsRegistrar *)tagGroupsRegistrar
             notificationCenter:(NSNotificationCenter *)notificationCenter
-              pushRegistration:(id<UAAPNSRegistrationProtocol>)pushRegistration {
-    return [[UAPush alloc] initWithConfig:config
+              pushRegistration:(id<UAAPNSRegistrationProtocol>)pushRegistration
+                   application:(UIApplication *)application
+                    dispatcher:(UADispatcher *)dispatcher {
+
+    return [[self alloc] initWithConfig:config
                                 dataStore:dataStore
                        tagGroupsRegistrar:tagGroupsRegistrar
                        notificationCenter:notificationCenter
-                         pushRegistration:pushRegistration];
+                         pushRegistration:pushRegistration
+                            application:application
+                             dispatcher:dispatcher];
 }
 
 
@@ -529,13 +542,13 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
 
 - (void)setBadgeNumber:(NSInteger)badgeNumber {
 
-    if ([[UIApplication sharedApplication] applicationIconBadgeNumber] == badgeNumber) {
+    if ([self.application applicationIconBadgeNumber] == badgeNumber) {
         return;
     }
 
-    UA_LDEBUG(@"Change Badge from %ld to %ld", (long)[[UIApplication sharedApplication] applicationIconBadgeNumber], (long)badgeNumber);
+    UA_LDEBUG(@"Change Badge from %ld to %ld", (long)[self.application applicationIconBadgeNumber], (long)badgeNumber);
 
-    [[UIApplication sharedApplication] setApplicationIconBadgeNumber:badgeNumber];
+    [self.application setApplicationIconBadgeNumber:badgeNumber];
 
     // if the device token has already been set then
     // we are post-registration and will need to make
@@ -585,8 +598,8 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
 - (void)applicationBackgroundRefreshStatusChanged {
     UA_LTRACE(@"Background refresh status changed.");
 
-    if ([UIApplication sharedApplication].backgroundRefreshStatus == UIBackgroundRefreshStatusAvailable) {
-        [[UIApplication sharedApplication] registerForRemoteNotifications];
+    if (self.application.backgroundRefreshStatus == UIBackgroundRefreshStatusAvailable) {
+        [self.application registerForRemoteNotifications];
     } else {
         [self updateRegistration];
     }
@@ -631,7 +644,7 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
     payload.tags = self.channelTagRegistrationEnabled ? [self.tags copy]: nil;
 
     if (self.autobadgeEnabled) {
-        payload.badge = [NSNumber numberWithInteger:[[UIApplication sharedApplication] applicationIconBadgeNumber]];
+        payload.badge = [NSNumber numberWithInteger:[self.application applicationIconBadgeNumber]];
     } else {
         payload.badge = nil;
     }
@@ -650,8 +663,10 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
 - (BOOL)isRegisteredForRemoteNotifications {
     __block BOOL registered;
 
-    [[UADispatcher mainDispatcher] doSync:^{
-        registered = [UIApplication sharedApplication].isRegisteredForRemoteNotifications;
+    UA_WEAKIFY(self)
+    [self.dispatcher doSync:^{
+        UA_STRONGIFY(self)
+        registered = self.application.isRegisteredForRemoteNotifications;
     }];
 
     return registered;
@@ -661,8 +676,10 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
     __block BOOL available = NO;
 
 #if !TARGET_OS_TV    // UIBackgroundRefreshStatusAvailable not available on tvOS
-    [[UADispatcher mainDispatcher] doSync:^{
-        available = [UIApplication sharedApplication].backgroundRefreshStatus == UIBackgroundRefreshStatusAvailable;
+    UA_WEAKIFY(self)
+    [self.dispatcher doSync:^{
+        UA_STRONGIFY(self)
+        available = self.application.backgroundRefreshStatus == UIBackgroundRefreshStatusAvailable;
     }];
 #endif
 
@@ -797,9 +814,11 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
 - (void)notificationRegistrationFinishedWithAuthorizedSettings:(UAAuthorizedNotificationSettings)authorizedSettings status:(UAAuthorizationStatus)status {
 
     if (!self.deviceToken) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [[UIApplication sharedApplication] registerForRemoteNotifications];
-        });
+        UA_WEAKIFY(self)
+        [self.dispatcher dispatchAsync:^{
+            UA_STRONGIFY(self)
+            [self.application registerForRemoteNotifications];
+        }];
     };
 
     self.userPromptedForNotifications = YES;
@@ -888,7 +907,7 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
     if (foreground) {
 
         if (self.autobadgeEnabled) {
-            [[UIApplication sharedApplication] setApplicationIconBadgeNumber:notification.badge.integerValue];
+            [self.application setApplicationIconBadgeNumber:notification.badge.integerValue];
         }
 
         if ([delegate respondsToSelector:@selector(receivedForegroundNotification:completionHandler:)]) {

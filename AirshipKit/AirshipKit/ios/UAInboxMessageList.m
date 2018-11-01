@@ -19,6 +19,7 @@ typedef void (^UAInboxMessageFetchCompletionHandler)(NSArray *);
 
 @interface UAInboxMessageList()
 @property (nonatomic, strong) NSNotificationCenter *notificationCenter;
+@property (nonatomic, strong) UADispatcher *dispatcher;
 @end
 
 @implementation UAInboxMessageList
@@ -27,7 +28,12 @@ typedef void (^UAInboxMessageFetchCompletionHandler)(NSArray *);
 
 #pragma mark Create Inbox
 
-- (instancetype)initWithUser:(UAUser *)user client:(UAInboxAPIClient *)client config:(UAConfig *)config inboxStore:(UAInboxStore *)inboxStore notificationCenter:(NSNotificationCenter *)notificationCenter {
+- (instancetype)initWithUser:(UAUser *)user
+                      client:(UAInboxAPIClient *)client
+                      config:(UAConfig *)config
+                  inboxStore:(UAInboxStore *)inboxStore
+          notificationCenter:(NSNotificationCenter *)notificationCenter
+                  dispatcher:(UADispatcher *)dispatcher {
     self = [super init];
 
     if (self) {
@@ -39,6 +45,7 @@ typedef void (^UAInboxMessageFetchCompletionHandler)(NSArray *);
         self.unreadCount = -1;
         self.messages = @[];
         self.notificationCenter = notificationCenter;
+        self.dispatcher = dispatcher;
     }
 
     return self;
@@ -46,11 +53,28 @@ typedef void (^UAInboxMessageFetchCompletionHandler)(NSArray *);
 
 + (instancetype)messageListWithUser:(UAUser *)user client:(UAInboxAPIClient *)client config:(UAConfig *)config {
     UAInboxStore *inboxStore = [UAInboxStore storeWithName:[NSString stringWithFormat:kUACoreDataStoreName, config.appKey]];
-    return [UAInboxMessageList messageListWithUser:user client:client config:config inboxStore:inboxStore notificationCenter:[NSNotificationCenter defaultCenter]];
+
+    return [UAInboxMessageList messageListWithUser:user
+                                            client:client
+                                            config:config
+                                        inboxStore:inboxStore
+                                notificationCenter:[NSNotificationCenter defaultCenter]
+                                        dispatcher:[UADispatcher mainDispatcher]];
 }
 
-+ (instancetype)messageListWithUser:(UAUser *)user client:(UAInboxAPIClient *)client config:(UAConfig *)config inboxStore:(UAInboxStore *)inboxStore notificationCenter:(nonnull NSNotificationCenter *)notificationCenter {
-    return [[UAInboxMessageList alloc] initWithUser:user client:client config:config inboxStore:inboxStore notificationCenter:notificationCenter];
++ (instancetype)messageListWithUser:(UAUser *)user
+                             client:(UAInboxAPIClient *)client
+                             config:(UAConfig *)config
+                         inboxStore:(UAInboxStore *)inboxStore
+                 notificationCenter:(NSNotificationCenter *)notificationCenter
+                         dispatcher:(UADispatcher *)dispatcher {
+    
+    return [[UAInboxMessageList alloc] initWithUser:user
+                                             client:client
+                                             config:config
+                                         inboxStore:inboxStore
+                                 notificationCenter:notificationCenter
+                                         dispatcher:dispatcher];
 }
 
 #pragma mark Accessors
@@ -160,16 +184,18 @@ typedef void (^UAInboxMessageFetchCompletionHandler)(NSArray *);
             }];
         } else {
             UA_LDEBUG(@"Retrieve message list succeeded with status: %lu", (unsigned long)status);
-            dispatch_async(dispatch_get_main_queue(), ^{
+            [self.dispatcher dispatchAsync:^{
                 completionBlock(YES);
-            });
+            }];
         }
 
     } onFailure:^(){
+        UA_STRONGIFY(self)
+
         UA_LDEBUG(@"Retrieve message list failed");
-        dispatch_async(dispatch_get_main_queue(), ^{
+        [self.dispatcher dispatchAsync:^{
             completionBlock(NO);
-        });
+        }];
     }];
 
     return disposable;
@@ -318,9 +344,9 @@ typedef void (^UAInboxMessageFetchCompletionHandler)(NSArray *);
                                   self.messages = messages;
 
                                   if (completionHandler) {
-                                      dispatch_async(dispatch_get_main_queue(), ^{
+                                      [self.dispatcher dispatchAsync:^{
                                           completionHandler();
-                                      });
+                                      }];
                                   }
                               }];
 }

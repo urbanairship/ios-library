@@ -1,6 +1,8 @@
 
 /* Copyright 2018 Urban Airship and Contributors */
 
+#import <UIKit/UIKit.h>
+
 #import "UAEventManager+Internal.h"
 #import "UAPreferenceDataStore+Internal.h"
 #import "UAEventStore+Internal.h"
@@ -20,6 +22,7 @@
 @property (nonatomic, strong, nonnull) UAPreferenceDataStore *dataStore;
 @property (nonatomic, strong, nonnull) UAEventAPIClient *client;
 @property (nonatomic, strong, nonnull) NSNotificationCenter *notificationCenter;
+@property (nonatomic, strong, nonnull) UIApplication *application;
 
 @property (nonatomic, assign) NSUInteger maxTotalDBSize;
 @property (nonatomic, assign) NSUInteger maxBatchSize;
@@ -46,7 +49,7 @@ const NSTimeInterval BackgroundLowPriorityEventUploadInterval = 900;
                         client:(UAEventAPIClient *)client
                          queue:(NSOperationQueue *)queue
             notificationCenter:(NSNotificationCenter *)notificationCenter
-{
+                   application:(UIApplication *)application {
 
     self = [super init];
 
@@ -57,6 +60,7 @@ const NSTimeInterval BackgroundLowPriorityEventUploadInterval = 900;
         self.client = client;
         self.queue = queue;
         self.notificationCenter = notificationCenter;
+        self.application = application;
 
         _uploadsEnabled = YES;
 
@@ -102,12 +106,14 @@ const NSTimeInterval BackgroundLowPriorityEventUploadInterval = 900;
     NSOperationQueue *queue = [[NSOperationQueue alloc] init];
     queue.maxConcurrentOperationCount = 1;
 
-    return [[UAEventManager alloc] initWithConfig:config
-                                        dataStore:dataStore
-                                       eventStore:eventStore
-                                           client:client
-                                            queue:queue
-                               notificationCenter:[NSNotificationCenter defaultCenter]];
+    return [[self alloc] initWithConfig:config
+                              dataStore:dataStore
+                             eventStore:eventStore
+                                 client:client
+                                  queue:queue
+                     notificationCenter:[NSNotificationCenter defaultCenter]
+                            application:[UIApplication sharedApplication]];
+
 }
 
 + (instancetype)eventManagerWithConfig:(UAConfig *)config
@@ -115,14 +121,16 @@ const NSTimeInterval BackgroundLowPriorityEventUploadInterval = 900;
                             eventStore:(UAEventStore *)eventStore
                                 client:(UAEventAPIClient *)client
                                  queue:(NSOperationQueue *)queue
-                    notificationCenter:(NSNotificationCenter *)notificationCenter {
+                    notificationCenter:(NSNotificationCenter *)notificationCenter
+                           application:(UIApplication *)application {
 
-    return [[UAEventManager alloc] initWithConfig:config
-                                        dataStore:dataStore
-                                       eventStore:eventStore
-                                           client:client
-                                            queue:queue
-                               notificationCenter:notificationCenter];
+    return [[self alloc] initWithConfig:config
+                              dataStore:dataStore
+                             eventStore:eventStore
+                                 client:client
+                                  queue:queue
+                     notificationCenter:notificationCenter
+                            application:application];
 }
 
 - (void)setUploadsEnabled:(BOOL)uploadsEnabled {
@@ -240,7 +248,7 @@ const NSTimeInterval BackgroundLowPriorityEventUploadInterval = 900;
             break;
 
         case UAEventPriorityLow:
-            if ([[UIApplication sharedApplication] applicationState] == UIApplicationStateBackground) {
+            if (self.application.applicationState == UIApplicationStateBackground) {
                 NSTimeInterval timeSinceLastSend = [[NSDate date] timeIntervalSinceDate:self.lastSendTime];
                 if (timeSinceLastSend < BackgroundLowPriorityEventUploadInterval) {
                     UA_LTRACE("Skipping low priority background event send.");
@@ -273,7 +281,7 @@ const NSTimeInterval BackgroundLowPriorityEventUploadInterval = 900;
     }
 
     // Background time is limited, so bypass other time delays
-    if ([UIApplication sharedApplication].applicationState == UIApplicationStateBackground) {
+    if (self.application.applicationState == UIApplicationStateBackground) {
         [self scheduleUploadWithDelay:BackgroundUploadDelay];
         return;
     }
@@ -443,5 +451,6 @@ const NSTimeInterval BackgroundLowPriorityEventUploadInterval = 900;
 }
 
 @end
+
 
 

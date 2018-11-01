@@ -45,12 +45,9 @@ NSString * const ChannelCreateSuccessChannelLocation = @"newChannelLocation";
     [super setUp];
 
     self.mockedChannelClient = [self mockForClass:[UAChannelAPIClient class]];
-
     self.mockedRegistrarDelegate = [self mockForProtocol:@protocol(UAChannelRegistrarDelegate)];
-
-    // Set up a mocked application
     self.mockedApplication = [self mockForClass:[UIApplication class]];
-    [[[self.mockedApplication stub] andReturn:self.mockedApplication] sharedApplication];
+    self.testDate = [[UATestDate alloc] init];
 
     self.payload = [[UAChannelRegistrationPayload alloc] init];
     self.payload.pushAddress = @"someDeviceToken";
@@ -93,7 +90,6 @@ NSString * const ChannelCreateSuccessChannelLocation = @"newChannelLocation";
         failureBlock(self.failureCode);
     };
 
-    self.testDate = [[UATestDate alloc] init];
 
     // Create the registrar
     self.registrar = [self createRegistrarWithChannelID:nil location:nil];
@@ -127,7 +123,7 @@ NSString * const ChannelCreateSuccessChannelLocation = @"newChannelLocation";
     [self.registrar registerForcefully:NO];
 
     // Verify
-    [self waitForExpectationsWithTimeout:1 handler:nil];
+    [self waitForTestExpectations];
     [self verifyRegistrationFailedDelegateCallback];
     [self verifyBackgroundTaskWasStartedAndStopped];
     [self verifyChannelClientCreateChannelWithPayload];
@@ -153,7 +149,7 @@ NSString * const ChannelCreateSuccessChannelLocation = @"newChannelLocation";
     [self.registrar registerForcefully:NO];
 
     // Verify
-    [self waitForExpectationsWithTimeout:1 handler:nil];
+    [self waitForTestExpectations];
     [self verifyRegistrationSucceededDelegateCallback];
     [self verifyBackgroundTaskWasStartedAndStopped];
     [self verifyChannelClientCreateChannelWithPayload];
@@ -172,7 +168,7 @@ NSString * const ChannelCreateSuccessChannelLocation = @"newChannelLocation";
     [self.registrar registerForcefully:NO];
 
     // Verify
-    [self waitForExpectationsWithTimeout:1 handler:nil];
+    [self waitForTestExpectations];
     [self verifyRegistrationSucceededDelegateCallback];
     [self verifyBackgroundTaskWasStartedAndStopped];
     [self verifyChannelClientUpdateChannelWithLocation];
@@ -207,7 +203,7 @@ NSString * const ChannelCreateSuccessChannelLocation = @"newChannelLocation";
     [self.registrar registerForcefully:NO];
 
     // Verify
-    [self waitForExpectationsWithTimeout:1 handler:nil];
+    [self waitForTestExpectations];
     [self verifyRegistrationSucceededDelegateCallback];
     [self verifyBackgroundTaskWasStartedAndStopped];
     [self verifyChannelClientCreateChannelWithPayload];
@@ -223,7 +219,7 @@ NSString * const ChannelCreateSuccessChannelLocation = @"newChannelLocation";
     [self.registrar registerForcefully:YES];
 
     //Verify
-    [self waitForExpectationsWithTimeout:1 handler:nil];
+    [self waitForTestExpectations];
     [self verifyRegistrationSucceededDelegateCallback];
     [self verifyBackgroundTaskWasStartedAndStopped];
     [self verifyChannelClientUpdateChannelWithLocation];
@@ -253,17 +249,17 @@ NSString * const ChannelCreateSuccessChannelLocation = @"newChannelLocation";
     [[self.mockedChannelClient reject] createChannelWithPayload:OCMOCK_ANY onSuccess:OCMOCK_ANY onFailure:OCMOCK_ANY];
 
     // Register
-    XCTAssertNoThrow([self.registrar registerForcefully:NO], @"A pending request should ignore any further requests.");
-    XCTAssertNoThrow([self.registrar registerForcefully:YES], @"A pending request should ignore any further requests.");
-
-    // Finish original registration
-    successBlock(ChannelCreateSuccessChannelID, ChannelCreateSuccessChannelLocation, existing);
+    [self.registrar registerForcefully:NO];
+    [self.registrar registerForcefully:YES];
 
     // Wait until original registration completes
     [self expectBackgroundTaskToBeStopped];
 
+    // Finish original registration
+    successBlock(ChannelCreateSuccessChannelID, ChannelCreateSuccessChannelLocation, existing);
+
     // Verify
-    [self waitForExpectationsWithTimeout:1 handler:nil];
+    [self waitForTestExpectations];
     [self verifyBackgroundTaskWasStopped];
 }
 
@@ -380,7 +376,7 @@ NSString * const ChannelCreateSuccessChannelLocation = @"newChannelLocation";
     [self.registrar registerForcefully:NO];
 
     // Verify
-    [self waitForExpectationsWithTimeout:1 handler:nil];
+    [self waitForTestExpectations];
     [self verifyChannelClientUpdateChannelWithLocation];
     [self verifyChannelClientCreateChannelWithPayload];
     [self verifyRegistrationSucceededDelegateCallback];
@@ -410,7 +406,7 @@ NSString * const ChannelCreateSuccessChannelLocation = @"newChannelLocation";
     [self.registrar registerForcefully:NO];
 
     // Verify
-    [self waitForExpectationsWithTimeout:1 handler:nil];
+    [self waitForTestExpectations];
     [self verifyChannelClientUpdateChannelWithLocation];
     [self verifyChannelClientCreateChannelWithPayload];
     [self verifyRegistrationFailedDelegateCallback];
@@ -435,7 +431,7 @@ NSString * const ChannelCreateSuccessChannelLocation = @"newChannelLocation";
     [self.registrar registerForcefully:NO];
 
     // Verify
-    [self waitForExpectationsWithTimeout:1 handler:nil];
+    [self waitForTestExpectations];
     [self verifyRegistrationSucceededDelegateCallback];
     [self verifyBackgroundTaskWasStartedAndStopped];
     [self verifyChannelClientCreateChannelWithPayload];
@@ -456,7 +452,7 @@ NSString * const ChannelCreateSuccessChannelLocation = @"newChannelLocation";
     [self.registrar registerForcefully:NO];
 
     // Verify
-    [self waitForExpectationsWithTimeout:1 handler:nil];
+    [self waitForTestExpectations];
     [self verifyRegistrationSucceededDelegateCallback];
     [self verifyBackgroundTaskWasStartedAndStopped];
     [self verifyChannelClientCreateChannelWithPayload];
@@ -539,7 +535,8 @@ NSString * const ChannelCreateSuccessChannelLocation = @"newChannelLocation";
                                                                    channelLocation:channelLocation
                                                                   channelAPIClient:self.mockedChannelClient
                                                                               date:self.testDate
-                                                                        dispatcher:[UATestDispatcher testDispatcher]];
+                                                                        dispatcher:[UATestDispatcher testDispatcher]
+                                                                       application:self.mockedApplication];
     return registrar;
 }
 
@@ -558,13 +555,15 @@ NSString * const ChannelCreateSuccessChannelLocation = @"newChannelLocation";
     [self.registrar registerForcefully:existing];
 
     // Verify
-    [self waitForExpectationsWithTimeout:1 handler:nil];
+    [self waitForTestExpectations];
 }
 
 /**
  * Start registration but leave it in progress
  */
-- (void)startRegistrationButLeaveInProgressWithExisting:(BOOL)existing successBlock:(UAChannelAPIClientCreateSuccessBlock *)successBlock {
+- (void)startRegistrationButLeaveInProgressWithExisting:(BOOL)existing
+                                           successBlock:(UAChannelAPIClientCreateSuccessBlock *)successBlock {
+
     *successBlock = ^(NSString *channelID, NSString *channelLocation, BOOL existing) {
         XCTFail(@"This block should be overwritten during the test");
     };
@@ -583,7 +582,7 @@ NSString * const ChannelCreateSuccessChannelLocation = @"newChannelLocation";
     [self.registrar registerForcefully:NO];
 
     // Verify
-    [self waitForExpectationsWithTimeout:1 handler:nil];
+    [self waitForTestExpectations];
     [self verifyChannelClientCreateChannelWithPayload];
     [self verifyBackgroundTaskWasStarted];
     [self verifyChannelClientCreateChannelWithPayload];

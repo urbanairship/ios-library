@@ -6,7 +6,7 @@
 #import "UAActionJSDelegate.h"
 #import "NSJSONSerialization+UAAdditions.h"
 #import "UAWebViewCallData.h"
-#import "UAirship.h"
+#import "UAirship+Internal.h"
 #import "UAConfig.h"
 
 @interface UAActionJSDelegateTest : UABaseTest
@@ -28,7 +28,7 @@
 
     // Mock Airship
     self.mockAirship = [self mockForClass:[UAirship class]];
-    [[[self.mockAirship stub] andReturn:self.mockAirship] shared];
+    [UAirship setSharedAirship:self.mockAirship];
     [[[self.mockAirship stub] andReturn:self.registry] actionRegistry];
 
     self.jsContext = [[JSContext alloc] initWithVirtualMachine:[[JSVirtualMachine alloc] init]];

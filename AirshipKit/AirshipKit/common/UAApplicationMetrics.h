@@ -1,10 +1,7 @@
 /* Copyright 2018 Urban Airship and Contributors */
 
-
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
-
-@class UAPreferenceDataStore;
 
 NS_ASSUME_NONNULL_BEGIN
 

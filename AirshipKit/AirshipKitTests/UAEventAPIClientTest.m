@@ -4,7 +4,7 @@
 
 #import "UAEventAPIClient+Internal.h"
 #import "UAConfig.h"
-#import "UAirship.h"
+#import "UAirship+Internal.h"
 #import "UAPush+Internal.h"
 #import "UAKeychainUtils+Internal.h"
 
@@ -16,7 +16,6 @@
 @property (nonatomic, strong) id mockKeychainClass;
 
 @property (nonatomic, strong) id mockSession;
-@property (nonatomic, strong) UAConfig *config;
 @property (nonatomic, strong) UAEventAPIClient *client;
 @end
 
@@ -34,10 +33,9 @@
     self.mockPush = [self mockForClass:[UAPush class]];
 
     self.mockAirship = [self mockForClass:[UAirship class]];
-    [[[self.mockAirship stub] andReturn:self.mockAirship] shared];
+    [UAirship setSharedAirship:self.mockAirship];
     [[[self.mockAirship stub] andReturn:self.mockPush] push];
 
-    self.config = [UAConfig config];
     self.mockSession = [self mockForClass:[UARequestSession class]];
     self.client = [UAEventAPIClient clientWithConfig:self.config session:self.mockSession];
 }
@@ -167,7 +165,7 @@
         [expectation fulfill];
     }];
 
-    [self waitForExpectationsWithTimeout:10 handler:nil];
+    [self waitForTestExpectations];
 }
 
 

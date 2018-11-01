@@ -282,7 +282,7 @@
                            XCTAssertEqual(options, expectedOptions);
                        }];
 
-    [self waitForExpectationsWithTimeout:1 handler:nil];
+    [self waitForTestExpectations];
     
     // Verify everything
     [self.mockedActionRunner verify];
@@ -615,13 +615,10 @@
            }];
 
     // Verify everything
-    [self waitForExpectationsWithTimeout:1 handler:^(NSError * _Nullable error) {
-        if (error == nil) {
-            [self.mockedMessageList verify];
-            [self.mockedActionRunner verify];
-            [self.mockedPush verify];
-        }
-    }];
+    [self waitForTestExpectations];
+    [self.mockedMessageList verify];
+    [self.mockedActionRunner verify];
+    [self.mockedPush verify];
 
     XCTAssertTrue(completionHandlerCalled, @"Completion handler should be called.");
 }
@@ -682,13 +679,11 @@
            }];
 
     // Verify everything
-    [self waitForExpectationsWithTimeout:1 handler:^(NSError * _Nullable error) {
-        if (error == nil) {
-            [self.mockedMessageList verify];
-            [self.mockedActionRunner verify];
-            [self.mockedPush verify];
-        }
-    }];
+    [self waitForTestExpectations];
+    [self.mockedMessageList verify];
+    [self.mockedActionRunner verify];
+    [self.mockedPush verify];
+
 
     XCTAssertTrue(completionHandlerCalled, @"Completion handler should be called.");
 }
@@ -745,7 +740,7 @@
     // Verify everything
     //[self.mockedActionRunner verify];
     [self.mockedPush verify];
-    [self waitForExpectationsWithTimeout:1 handler:nil];
+    [self waitForTestExpectations];
     XCTAssertTrue(completionHandlerCalled, @"Completion handler should be called.");
 }
 
@@ -777,7 +772,7 @@
            }];
 
     // Verify everything
-    [self waitForExpectationsWithTimeout:1 handler:nil];
+    [self waitForTestExpectations];
     [self.mockedActionRunner verify];
     [self.mockedPush verify];
     [self.mockedMessageList verify];
@@ -809,7 +804,7 @@
            }];
     
     // Verify everything
-    [self waitForExpectationsWithTimeout:1 handler:nil];
+    [self waitForTestExpectations];
     [self.mockedActionRunner verify];
     [self.mockedPush verify];
     [self.mockedMessageList verify];
@@ -824,16 +819,11 @@
     __block BOOL handlerCalled = false;
 
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateBackground)] applicationState];
-
-
     [[self.mockedPush expect] updateAuthorizedNotificationTypes];
 
-
     [UAAppIntegration application:self.mockedApplication performFetchWithCompletionHandler:^(UIBackgroundFetchResult result) {
-
         handlerCalled = true;
     }];
-
 
     [self.mockedPush verify];
     XCTAssertTrue(handlerCalled);

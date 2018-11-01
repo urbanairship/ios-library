@@ -6,7 +6,7 @@
 #import "UARemoveTagsAction.h"
 #import "UAPush+Internal.h"
 #import "UAActionArguments+Internal.h"
-#import "UAirship.h"
+#import "UAirship+Internal.h"
 #import "UANamedUser.h"
 
 @interface UATagActionsTest : UABaseTest
@@ -49,7 +49,7 @@
     self.dictIntValuesArgs = [UAActionArguments argumentsWithValue:dictIntValues withSituation:UASituationWebViewInvocation];
 
     self.mockAirship = [self mockForClass:[UAirship class]];
-    [[[self.mockAirship stub] andReturn:self.mockAirship] shared];
+    [UAirship setSharedAirship:self.mockAirship];
     [[[self.mockAirship stub] andReturn:self.mockPush] push];
     [[[self.mockAirship stub] andReturn:self.mockNamedUser] namedUser];
 }

@@ -11,47 +11,28 @@
 #import "UARemoteDataPayload+Internal.h"
 #import "UAirshipVersion.h"
 
-
 @interface UARemoteDataAPIClientTest : UABaseTest
-
 @property (nonatomic, strong) UARemoteDataAPIClient *remoteDataAPIClient;
-@property (nonatomic, strong) UAConfig *config;
-
 @property (nonatomic, strong) id mockSession;
-@property (nonatomic, strong) id mockSessionClass;
-@property (nonatomic, strong) id mockDataStore;
-
 @end
 
 @implementation UARemoteDataAPIClientTest
 
 - (void)setUp {
     [super setUp];
+    self.mockSession = [self mockForClass:[UARequestSession class]];
+    self.remoteDataAPIClient = [UARemoteDataAPIClient clientWithConfig:self.config
+                                                             dataStore:self.dataStore
+                                                               session:self.mockSession];
 
-    self.config = [UAConfig config];
-    self.config.developmentAppKey = @"appKey";
-    self.config.inProduction = NO;
-
-    self.mockSession = [OCMockObject niceMockForClass:[UARequestSession class]];
-    self.mockDataStore = [OCMockObject niceMockForClass:[UAPreferenceDataStore class]];
-    self.mockSessionClass = OCMClassMock([UARequestSession class]);
-    [[[self.mockSessionClass stub] andReturn:self.mockSession] sessionWithConfig:OCMOCK_ANY];
-
-    self.remoteDataAPIClient = [UARemoteDataAPIClient clientWithConfig:self.config dataStore:self.mockDataStore];
-
-}
-
-- (void)tearDown {
-    [self.mockDataStore stopMocking];
-    [self.mockSession stopMocking];
-
-    [super tearDown];
 }
 
 /**
  * Test refreshing the remote data
  */
 - (void)testRefreshRemoteData {
+
+    self.config.developmentAppKey = @"appKey";
 
     // Create a successful response
     NSDictionary *remoteDataDict = @{ @"type": @"test_data_type",
@@ -94,9 +75,8 @@
     }];
 
     // Wait for the test expectations
-    [self waitForExpectationsWithTimeout:1 handler:^(NSError *error) {
-        [self.mockSession verify];
-    }];
+    [self waitForTestExpectations];
+    [self.mockSession verify];
 }
 
 /**
@@ -117,27 +97,26 @@
     NSString *expectedLastModifiedTimestamp = remoteDataDict[@"timestamp"];
     NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:200 HTTPVersion:nil headerFields:@{@"Last-Modified":expectedLastModifiedTimestamp}];
 
+
+    __block UARequestCompletionHandler completionHandler;
+
     // Stub the session to return the response
     [[[self.mockSession stub] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:4];
-        UARequestCompletionHandler completionHandler = (__bridge UARequestCompletionHandler)arg;
-
-        // delay call back a bit to simulate actually going to the cloud
-        dispatch_async(dispatch_get_main_queue(), ^{
-            completionHandler(responseData, (NSURLResponse *)response, nil);
-        });
+        completionHandler= (__bridge UARequestCompletionHandler)arg;
     }] dataTaskWithRequest:OCMOCK_ANY retryWhere:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     // Make call
     UADisposable *disposable = [self.remoteDataAPIClient fetchRemoteData:^(NSUInteger statusCode, NSArray<NSDictionary *> *remoteData) {
-        UA_LDEBUG(@"Callback");
         XCTFail(@"Should not call callbacks");
     } onFailure:^() {
         XCTFail(@"Should not call callbacks");
     }];
 
     [disposable dispose];
+
+    completionHandler(responseData, (NSURLResponse *)response, nil);
 
 }
 
@@ -202,10 +181,8 @@
     }];
 
     // Wait for the test expectations
-    [self waitForExpectationsWithTimeout:1 handler:^(NSError *error) {
-        [self.mockSession verify];
-    }];
-
+    [self waitForTestExpectations];
+    [self.mockSession verify];
 }
 
 /**
@@ -248,10 +225,8 @@
     }];
 
     // Wait for the test expectations
-    [self waitForExpectationsWithTimeout:1 handler:^(NSError *error) {
-        [self.mockSession verify];
-    }];
-
+    [self waitForTestExpectations];
+    [self.mockSession verify];
 }
 
 /**
@@ -287,10 +262,8 @@
     }];
 
     // Wait for the test expectations
-    [self waitForExpectationsWithTimeout:1 handler:^(NSError *error) {
-        [self.mockSession verify];
-    }];
-
+    [self waitForTestExpectations];
+    [self.mockSession verify];
 }
 
 /**
@@ -326,9 +299,8 @@
     }];
 
     // Wait for the test expectations
-    [self waitForExpectationsWithTimeout:1 handler:^(NSError *error) {
-        [self.mockSession verify];
-    }];
+    [self waitForTestExpectations];
+    [self.mockSession verify];
 }
 
 - (NSData *)createRemoteDataFromDictionary:(NSDictionary *)remoteDataDict ofType:(NSString *)type {

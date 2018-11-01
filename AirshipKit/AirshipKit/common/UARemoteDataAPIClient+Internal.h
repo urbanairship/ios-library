@@ -2,9 +2,9 @@
 
 #import <Foundation/Foundation.h>
 #import "UAAPIClient+Internal.h"
-
-@class UAPreferenceDataStore;
-@class UARemoteDataPayload;
+#import "UAPreferenceDataStore+Internal.h"
+#import "UARemoteDataPayload+Internal.h"
+#import "UARequestSession+Internal.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -40,6 +40,19 @@ typedef void (^UARemoteDataRefreshFailureBlock)(void);
  */
 + (UARemoteDataAPIClient *)clientWithConfig:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore;
 
+
+/**
+ * Create the remote data API client. Used for testing.
+ *
+ * @param config The Urban Airship config.
+ * @param dataStore A UAPreferenceDataStore to store persistent preferences
+ * @param session The UARequestSession session.
+ * @return The remote data API client instance.
+ */
++ (UARemoteDataAPIClient *)clientWithConfig:(UAConfig *)config
+                                  dataStore:(UAPreferenceDataStore *)dataStore
+                                    session:(UARequestSession *)session;
+
 /**
  * Refresh the remote data by calling the remote data cloud API.
  *
@@ -49,7 +62,8 @@ typedef void (^UARemoteDataRefreshFailureBlock)(void);
  *
  * Note: one block and only one block will be called.
  */
-- (UADisposable *)fetchRemoteData:(UARemoteDataRefreshSuccessBlock)successBlock onFailure:(UARemoteDataRefreshFailureBlock)failureBlock;
+- (UADisposable *)fetchRemoteData:(UARemoteDataRefreshSuccessBlock)successBlock
+                        onFailure:(UARemoteDataRefreshFailureBlock)failureBlock;
 
 /**
  * Clears the last modified time for message list requests.

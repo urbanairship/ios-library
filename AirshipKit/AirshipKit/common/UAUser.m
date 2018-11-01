@@ -16,6 +16,7 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
 @interface UAUser()
 @property (nonatomic, strong) UAPush *push;
 @property (nonatomic, strong) NSNotificationCenter *notificationCenter;
+@property (nonatomic, strong) UIApplication *application;
 @end
 
 @implementation UAUser
@@ -32,7 +33,13 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
 
 }
 
-- (instancetype)initWithPush:(UAPush *)push config:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore client:(UAUserAPIClient *)client  notificationCenter:(NSNotificationCenter *)notificationCenter {
+- (instancetype)initWithPush:(UAPush *)push
+                      config:(UAConfig *)config
+                   dataStore:(UAPreferenceDataStore *)dataStore
+                      client:(UAUserAPIClient *)client
+          notificationCenter:(NSNotificationCenter *)notificationCenter
+                 application:(UIApplication *)application {
+
     self = [super initWithDataStore:dataStore];
     if (self) {
         self.config = config;
@@ -40,6 +47,7 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
         self.dataStore = dataStore;
         self.push = push;
         self.notificationCenter = notificationCenter;
+        self.application = application;
 
         NSString *storedUsername = [UAKeychainUtils getUsername:self.config.appKey];
         NSString *storedPassword = [UAKeychainUtils getPassword:self.config.appKey];
@@ -60,11 +68,27 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
 }
 
 + (instancetype)userWithPush:(UAPush *)push config:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
-    return [[UAUser alloc] initWithPush:push config:config dataStore:dataStore client:[UAUserAPIClient clientWithConfig:config] notificationCenter:[NSNotificationCenter defaultCenter]];
+    return [[UAUser alloc] initWithPush:push
+                                 config:config
+                              dataStore:dataStore
+                                 client:[UAUserAPIClient clientWithConfig:config]
+                     notificationCenter:[NSNotificationCenter defaultCenter]
+                            application:[UIApplication sharedApplication]];
 }
 
-+ (instancetype)userWithPush:(UAPush *)push config:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore client:(UAUserAPIClient *)client notificationCenter:(NSNotificationCenter *)notificationCenter {
-    return [[UAUser alloc] initWithPush:push config:config dataStore:dataStore client:client notificationCenter:notificationCenter];
++ (instancetype)userWithPush:(UAPush *)push
+                      config:(UAConfig *)config
+                   dataStore:(UAPreferenceDataStore *)dataStore
+                      client:(UAUserAPIClient *)client
+          notificationCenter:(NSNotificationCenter *)notificationCenter
+                 application:(UIApplication *)application {
+
+    return [[UAUser alloc] initWithPush:push
+                                 config:config
+                              dataStore:dataStore
+                                 client:client
+                     notificationCenter:notificationCenter
+                           application:application];
 }
 
 #pragma mark -
@@ -140,8 +164,10 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
         return;
     }
 
-    __block UIBackgroundTaskIdentifier backgroundTask = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
-        [[UIApplication sharedApplication] endBackgroundTask:backgroundTask];
+    UA_WEAKIFY(self)
+    __block UIBackgroundTaskIdentifier backgroundTask = [self.application beginBackgroundTaskWithExpirationHandler:^{
+        UA_STRONGIFY(self)
+        [self.application endBackgroundTask:backgroundTask];
         backgroundTask = UIBackgroundTaskInvalid;
         [self.apiClient cancelAllRequests];
     }];
@@ -154,6 +180,7 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
     self.creatingUser = YES;
 
     UAUserAPIClientCreateSuccessBlock success = ^(UAUserData *data, NSDictionary *payload) {
+        UA_STRONGIFY(self)
         UA_LINFO(@"Created user %@.", data.username);
 
         self.creatingUser = NO;
@@ -169,16 +196,17 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
         }
 
         [self sendUserCreatedNotification];
-        [[UIApplication sharedApplication] endBackgroundTask:backgroundTask];
+        [self.application endBackgroundTask:backgroundTask];
         backgroundTask = UIBackgroundTaskInvalid;
     };
 
     UAUserAPIClientFailureBlock failure = ^(NSUInteger statusCode) {
+        UA_STRONGIFY(self)
         if (statusCode != UAAPIClientStatusDisabled) {
             UA_LINFO(@"Failed to create user");
         }
         self.creatingUser = NO;
-        [[UIApplication sharedApplication] endBackgroundTask:backgroundTask];
+        [self.application endBackgroundTask:backgroundTask];
         backgroundTask = UIBackgroundTaskInvalid;
     };
 
@@ -206,8 +234,10 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
         return;
     }
 
-    __block UIBackgroundTaskIdentifier backgroundTask = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
-        [[UIApplication sharedApplication] endBackgroundTask:backgroundTask];
+    UA_WEAKIFY(self)
+    __block UIBackgroundTaskIdentifier backgroundTask = [self.application beginBackgroundTaskWithExpirationHandler:^{
+        UA_STRONGIFY(self)
+        [self.application endBackgroundTask:backgroundTask];
         backgroundTask = UIBackgroundTaskInvalid;
         [self.apiClient cancelAllRequests];
     }];
@@ -221,13 +251,15 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
     [self.apiClient updateUser:self
                      channelID:self.push.channelID
                      onSuccess:^{
+                         UA_STRONGIFY(self)
                          UA_LINFO(@"Updated user %@ successfully.", self.username);
-                         [[UIApplication sharedApplication] endBackgroundTask:backgroundTask];
+                         [self.application endBackgroundTask:backgroundTask];
                          backgroundTask = UIBackgroundTaskInvalid;
                      }
                      onFailure:^(NSUInteger statusCode) {
+                         UA_STRONGIFY(self)
                          UA_LDEBUG(@"Failed to update user.");
-                         [[UIApplication sharedApplication] endBackgroundTask:backgroundTask];
+                         [self.application endBackgroundTask:backgroundTask];
                          backgroundTask = UIBackgroundTaskInvalid;
                      }];
 

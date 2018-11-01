@@ -3,12 +3,6 @@
 #import "UATestDispatcher.h"
 #import "UAGlobal.h"
 
-@interface UAScheduledBlockEntry : NSObject
-@property (nonatomic, strong) void (^block)(void);
-@property (nonatomic, assign) NSTimeInterval time;
-
-+ (instancetype)entryWithBlock:(void (^)(void))block time:(NSTimeInterval)time;
-@end
 
 @implementation UAScheduledBlockEntry
 - (instancetype)initWithBlock:(void (^)(void))block time:(NSTimeInterval)time {
@@ -23,12 +17,15 @@
 + (instancetype)entryWithBlock:(void (^)(void))block time:(NSTimeInterval)time {
     return [[self alloc] initWithBlock:block time:time];
 }
+
+- (NSString *)description {
+    return [NSString stringWithFormat:@"UAScheduledBlockEntry { time = %g }", self.time];
+}
 @end
 
 
 @interface UATestDispatcher()
 @property NSTimeInterval currentTime;
-@property NSMutableArray *scheduledBlocks;
 @end
 
 @implementation UATestDispatcher
@@ -60,7 +57,9 @@
 
     NSMutableArray *handled = [NSMutableArray array];
     for (UAScheduledBlockEntry *entry in self.scheduledBlocks) {
-        if (self.currentTime >= entry.time) {
+        NSDate *currentDate = [NSDate dateWithTimeIntervalSince1970:self.currentTime];
+        NSDate *entryDate = [NSDate dateWithTimeIntervalSince1970:entry.time];
+        if ([currentDate compare:entryDate] != NSOrderedAscending) {
             entry.block();
             [handled addObject:entry];
         }

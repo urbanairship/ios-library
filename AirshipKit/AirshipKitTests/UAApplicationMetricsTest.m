@@ -3,10 +3,12 @@
 #import "UABaseTest.h"
 #import "UAApplicationMetrics+Internal.h"
 #import "UAPreferenceDataStore+Internal.h"
+#import "UATestDate.h"
 
 @interface UAApplicationMetricsTest : UABaseTest
 @property (nonatomic, strong) UAApplicationMetrics *metrics;
-@property (nonatomic, strong) id mockDataStore;
+@property (nonatomic, strong) NSNotificationCenter *notificationCenter;
+@property (nonatomic, strong) UATestDate *testDate;
 @end
 
 @implementation UAApplicationMetricsTest
@@ -14,28 +16,23 @@
 - (void)setUp {
     [super setUp];
 
-    self.mockDataStore = [self mockForClass:[UAPreferenceDataStore class]];
-    self.metrics = [UAApplicationMetrics applicationMetricsWithDataStore:self.mockDataStore];
-}
+    self.testDate = [[UATestDate alloc] init];
+    self.testDate.absoluteTime = [NSDate date];
 
-- (void)tearDown {
-    [self.mockDataStore stopMocking];
-    [super tearDown];
+    self.notificationCenter = [[NSNotificationCenter alloc] init];
+    self.metrics = [UAApplicationMetrics applicationMetricsWithDataStore:self.dataStore
+                                                      notificationCenter:self.notificationCenter
+                                                                    date:self.testDate];
 }
 
 - (void)testApplicationActive {
-    // Make date always return our expected date
-    NSDate *expectedDate = [NSDate date];
-    id mockDate = [self strictMockForClass:[NSDate class]];
-    [[[mockDate stub] andReturn:expectedDate] date];
+    XCTAssertNil(self.metrics.lastApplicationOpenDate);
 
-    [[self.mockDataStore expect] setObject:expectedDate forKey:@"UAApplicationMetricLastOpenDate"];
+    [self.notificationCenter postNotificationName:UIApplicationDidBecomeActiveNotification
+                                           object:nil];
 
-    [self.metrics didBecomeActive];
+    XCTAssertEqualObjects([self.testDate now], self.metrics.lastApplicationOpenDate);
 
-    [self.mockDataStore verify];
-
-    [mockDate stopMocking];
 }
 
 @end

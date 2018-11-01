@@ -179,13 +179,17 @@ extern NSString *const UAPushEnabledKey;
  * @param tagGroupsregistrar The tag groups registrar.
  * @param notificationCenter The notification center.
  * @param pushRegistration The push registration instance.
+ * @param application The application.
+ * @param dispatcher The dispatcher.
  * @return A new push instance.
  */
 + (instancetype)pushWithConfig:(UAConfig *)config
                      dataStore:(UAPreferenceDataStore *)dataStore
             tagGroupsRegistrar:(UATagGroupsRegistrar *)tagGroupsregistrar
             notificationCenter:(NSNotificationCenter *)notificationCenter
-              pushRegistration:(id<UAAPNSRegistrationProtocol>)pushRegistration;
+              pushRegistration:(id<UAAPNSRegistrationProtocol>)pushRegistration
+                   application:(UIApplication *)application
+                    dispatcher:(UADispatcher *)dispatcher;
 
 /**
  * Get the local time zone, considered the default.

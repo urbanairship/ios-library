@@ -45,6 +45,10 @@
 
 @interface UAAutomationEngine()
 @property (nonatomic, strong) UATimerScheduler *timerScheduler;
+@property (nonnull, strong) UADispatcher *dispatcher;
+@property (nonnull, strong) UIApplication *application;
+@property (nonnull, strong) NSNotificationCenter *notificationCenter;
+
 @property (nonatomic, copy) NSString *currentScreen;
 @property (nonatomic, copy, nullable) NSString * currentRegion;
 @property (nonatomic, assign) BOOL isForegrounded;
@@ -53,10 +57,8 @@
 @property (nonatomic, assign) UIBackgroundTaskIdentifier backgroundTaskIdentifier;
 @property (nonatomic, assign) BOOL isStarted;
 @property (nonnull, strong) NSMutableDictionary *stateConditions;
-@property (nonnull, strong) NSNotificationCenter *notificationCenter;
-@property (nonnull, strong) UADispatcher *dispatcher;
-
 @property (atomic, assign) BOOL paused;
+
 @end
 
 @implementation UAAutomationEngine
@@ -70,19 +72,22 @@
 - (instancetype)initWithAutomationStore:(UAAutomationStore *)automationStore
                          timerScheduler:(UATimerScheduler *)timerScheduler
                      notificationCenter:(NSNotificationCenter *)notificationCenter
-                             dispatcher:(UADispatcher *)dispatcher {
+                             dispatcher:(UADispatcher *)dispatcher
+                            application:(UIApplication *)application {
     self = [super init];
 
     if (self) {
         self.automationStore = automationStore;
         self.timerScheduler = timerScheduler;
-        self.activeTimers = [NSMutableArray array];
-        self.isForegrounded = [UIApplication sharedApplication].applicationState == UIApplicationStateActive;
-        self.isBackgrounded = [UIApplication sharedApplication].applicationState == UIApplicationStateBackground;
-        self.stateConditions = [NSMutableDictionary dictionary];
-        self.paused = NO;
         self.notificationCenter = notificationCenter;
         self.dispatcher = dispatcher;
+        self.application = application;
+
+        self.activeTimers = [NSMutableArray array];
+        self.isForegrounded = self.application.applicationState == UIApplicationStateActive;
+        self.isBackgrounded = self.application.applicationState == UIApplicationStateBackground;
+        self.stateConditions = [NSMutableDictionary dictionary];
+        self.paused = NO;
     }
 
     return self;
@@ -91,19 +96,22 @@
 + (instancetype)automationEngineWithAutomationStore:(UAAutomationStore *)automationStore
                                      timerScheduler:(UATimerScheduler *)timerScheduler
                                  notificationCenter:(NSNotificationCenter *)notificationCenter
-                                         dispatcher:(UADispatcher *)dispatcher {
+                                         dispatcher:(UADispatcher *)dispatcher
+                                        application:(UIApplication *)application {
 
     return [[UAAutomationEngine alloc] initWithAutomationStore:automationStore
                                                 timerScheduler:timerScheduler
                                             notificationCenter:notificationCenter
-                                                    dispatcher:dispatcher];
+                                                    dispatcher:dispatcher
+                                                   application:application];
 }
 
 + (instancetype)automationEngineWithAutomationStore:(UAAutomationStore *)automationStore {
     return [[UAAutomationEngine alloc] initWithAutomationStore:automationStore
                                                 timerScheduler:[[UATimerScheduler alloc] init]
                                             notificationCenter:[NSNotificationCenter defaultCenter]
-                                                    dispatcher:[UADispatcher mainDispatcher]];
+                                                    dispatcher:[UADispatcher mainDispatcher]
+                                                   application:[UIApplication sharedApplication]];
 }
 
 #pragma mark -
@@ -563,6 +571,8 @@
 
     UA_WEAKIFY(self);
     [self.dispatcher dispatchAsync:^{
+        UA_STRONGIFY(self);
+
         NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
         [userInfo setValue:scheduleData.identifier forKey:@"identifier"];
         [userInfo setValue:scheduleData.group forKey:@"group"];
@@ -574,11 +584,9 @@
                                                userInfo:userInfo
                                                 repeats:NO];
 
-
-        UA_STRONGIFY(self);
         // Make sure we have a background task identifier before starting the timer
         if (self.backgroundTaskIdentifier == UIBackgroundTaskInvalid) {
-            self.backgroundTaskIdentifier = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
+            self.backgroundTaskIdentifier = [self.application beginBackgroundTaskWithExpirationHandler:^{
                 UA_LTRACE(@"Automation background task expired. Cancelling timer alarm.");
                 [self cancelTimers];
             }];
@@ -826,7 +834,7 @@
  */
 - (void)createStateConditions {
     UAAutomationStateCondition *activeSessionCondition = [[UAAutomationStateCondition alloc] initWithPredicate:^BOOL {
-        return [UIApplication sharedApplication].applicationState == UIApplicationStateActive;
+        return self.application.applicationState == UIApplicationStateActive;
     } argumentGenerator:nil];
 
     UAAutomationStateCondition *versionCondition = [[UAAutomationStateCondition alloc] initWithPredicate:^BOOL {
@@ -1167,7 +1175,7 @@
  */
 - (void)endBackgroundTask {
     if (self.backgroundTaskIdentifier != UIBackgroundTaskInvalid) {
-        [[UIApplication sharedApplication] endBackgroundTask:self.backgroundTaskIdentifier];
+        [self.application endBackgroundTask:self.backgroundTaskIdentifier];
         self.backgroundTaskIdentifier = UIBackgroundTaskInvalid;
     }
 }
