@@ -78,6 +78,39 @@
     [super tearDown];
 }
 
+// Tests removal of timestamps more than one year old
+- (void)testTimestampRemovalDataStore {
+    [[[self.mockConfig stub] andReturn:@"1195168544"] itunesID];
+
+    UAPreferenceDataStore *dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:[UAirship shared].config.appKey];
+
+    // Remove all keys to avoid test pollution
+    [dataStore removeAll];
+
+    NSNumber *todayTimestamp = [NSNumber numberWithDouble:[[NSDate date] timeIntervalSince1970]];
+
+    // Inject time stamps of zero one and two to indicate three timestamps long ago
+    [[NSUserDefaults standardUserDefaults] setObject:@[@0, @1, @2] forKey:[@"mockAppKey" stringByAppendingString:@"RateAppActionPromptCount"]];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+
+    // Make sure there are stored timestamps
+    NSArray *timestamps = [dataStore arrayForKey:@"RateAppActionPromptCount"];
+    XCTAssertTrue([timestamps containsObject:@0] && [timestamps containsObject:@1] && [timestamps containsObject:@2]);
+
+    [self.action performWithArguments:[UAActionArguments argumentsWithValue:@{ UARateAppShowLinkPromptKey:@YES, UARateAppLinkPromptTitleKey :@"Acceptable Header", UARateAppLinkPromptBodyKey :@"Acceptable description."} withSituation:UASituationManualInvocation] completionHandler:^(UAActionResult * result) {
+    }];
+
+    // Check timestamps after call to ensure long ago timestamps are removed and today's timestamp is present
+    timestamps = [dataStore arrayForKey:@"RateAppActionPromptCount"];
+    XCTAssertFalse([timestamps containsObject:@0] || [timestamps containsObject:@1] || [timestamps containsObject:@2]);
+    NSNumber *storedTimestamp = timestamps[0];
+    XCTAssertTrue((storedTimestamp.doubleValue-todayTimestamp.doubleValue) < 5);
+
+    // Remove all keys to avoid test pollution
+    [dataStore removeAll];
+}
+
+
 -(void)testSystemRatingDialog {
     [[[self.mockConfig stub] andReturn:@"1195168544"] itunesID];
 
