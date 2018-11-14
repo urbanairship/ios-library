@@ -7,6 +7,8 @@
 #import "UAGlobal.h"
 #import "UALocationEvent.h"
 #import "UAAnalytics.h"
+#import "UASystemVersion+Internal.h"
+
 
 NSString *const UALocationAutoRequestAuthorizationEnabled = @"UALocationAutoRequestAuthorizationEnabled";
 NSString *const UALocationUpdatesEnabled = @"UALocationUpdatesEnabled";
@@ -14,7 +16,7 @@ NSString *const UALocationBackgroundUpdatesAllowed = @"UALocationBackgroundUpdat
 
 @implementation UALocation
 
-- (instancetype)initWithAnalytics:(UAAnalytics *)analytics dataStore:(UAPreferenceDataStore *)dataStore notificationCenter:(NSNotificationCenter *)notificationCenter {
+- (instancetype)initWithAnalytics:(UAAnalytics *)analytics dataStore:(UAPreferenceDataStore *)dataStore notificationCenter:(NSNotificationCenter *)notificationCenter systemVersion:(UASystemVersion *)systemVersion {
     self = [super initWithDataStore:dataStore];
 
     if (self) {
@@ -22,6 +24,7 @@ NSString *const UALocationBackgroundUpdatesAllowed = @"UALocationBackgroundUpdat
         self.locationManager.delegate = self;
         self.dataStore = dataStore;
         self.analytics = analytics;
+        self.systemVersion = systemVersion;
 
         // Update the location service on app background
         [notificationCenter addObserver:self
@@ -44,12 +47,22 @@ NSString *const UALocationBackgroundUpdatesAllowed = @"UALocationBackgroundUpdat
 }
 
 
-+ (instancetype)locationWithAnalytics:(UAAnalytics *)analytics dataStore:(UAPreferenceDataStore *)dataStore {
-    return [[UALocation alloc] initWithAnalytics:analytics dataStore:dataStore notificationCenter:[NSNotificationCenter defaultCenter]];
++ (instancetype)locationWithAnalytics:(UAAnalytics *)analytics
+                            dataStore:(UAPreferenceDataStore *)dataStore {
+    return [[UALocation alloc] initWithAnalytics:analytics
+                                       dataStore:dataStore
+                              notificationCenter:[NSNotificationCenter defaultCenter]
+                                   systemVersion:[UASystemVersion systemVersion]];
 }
 
-+ (instancetype)locationWithAnalytics:(UAAnalytics *)analytics dataStore:(UAPreferenceDataStore *)dataStore notificationCenter:(NSNotificationCenter *)notificationCenter {
-    return [[UALocation alloc] initWithAnalytics:analytics dataStore:dataStore notificationCenter:notificationCenter];
++ (instancetype)locationWithAnalytics:(UAAnalytics *)analytics
+                            dataStore:(UAPreferenceDataStore *)dataStore
+                   notificationCenter:(NSNotificationCenter *)notificationCenter
+                        systemVersion:(UASystemVersion *)systemVersion {
+    return [[UALocation alloc] initWithAnalytics:analytics
+                                       dataStore:dataStore
+                              notificationCenter:notificationCenter
+                                   systemVersion:systemVersion];
 }
 
 - (BOOL)isAutoRequestAuthorizationEnabled {
@@ -222,7 +235,7 @@ NSString *const UALocationBackgroundUpdatesAllowed = @"UALocationBackgroundUpdat
         return false;
     }
 #else
-    if ([[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){11, 0, 0}]) {
+    if ([self.systemVersion isGreaterOrEqualToVersion:@"11.0.0"]) {
         // iOS >11 needs both the NSLocationWhenInUseUsageDescription && NSLocationAlwaysAndWhenInUseUsageDescription to be valid
         if (![[NSBundle mainBundle] objectForInfoDictionaryKey:@"NSLocationWhenInUseUsageDescription"]) {
             UA_LERR(@"NSLocationWhenInUseUsageDescription not set, unable to request always authorization.");

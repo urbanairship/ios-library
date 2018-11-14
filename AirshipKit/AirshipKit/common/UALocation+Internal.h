@@ -2,6 +2,7 @@
 
 #import "UALocation.h"
 #import "UAComponent+Internal.h"
+#import "UASystemVersion+Internal.h"
 
 @class UAPreferenceDataStore;
 @class UAAnalytics;
@@ -28,6 +29,11 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 
 /**
+ * The system version.
+ */
+@property (nonatomic, strong) UASystemVersion *systemVersion;
+
+/**
  * The Urban Airship analytics.
  */
 @property (nonatomic, strong) UAAnalytics *analytics;
@@ -50,15 +56,20 @@ NS_ASSUME_NONNULL_BEGIN
  */
 + (instancetype)locationWithAnalytics:(UAAnalytics *)analytics dataStore:(UAPreferenceDataStore *)dataStore;
 
+
 /**
  * Factory method to create a UALocation instance. Used for testing.
  *
  * @param analytics UAAnalytics instance.
  * @param dataStore The preference data store.
  * @param notificationCenter The notification center.
+ * @param systemVersion The system version manager.
  * @return UALocation instance.
  */
-+ (instancetype)locationWithAnalytics:(UAAnalytics *)analytics dataStore:(UAPreferenceDataStore *)dataStore notificationCenter:(NSNotificationCenter *)notificationCenter;
++ (instancetype)locationWithAnalytics:(UAAnalytics *)analytics
+                            dataStore:(UAPreferenceDataStore *)dataStore
+                   notificationCenter:(NSNotificationCenter *)notificationCenter
+                        systemVersion:(UASystemVersion *)systemVersion;
 
 NS_ASSUME_NONNULL_END
 

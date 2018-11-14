@@ -2,11 +2,12 @@
 
 #import <StoreKit/StoreKit.h>
 
-#import "UARateAppAction.h"
+#import "UARateAppAction+Internal.h"
 #import "UAirship.h"
 #import "UAConfig.h"
 #import "UAPreferenceDataStore+Internal.h"
 #import "UARateAppPromptViewController+Internal.h"
+#import "UASystemVersion+Internal.h"
 
 @interface UARateAppAction ()
 
@@ -68,8 +69,11 @@ NSString *const UARateAppLinkPromptTimestampsKey = @"RateAppActionLinkPromptCoun
 }
 
 -(BOOL)parseArguments:(UAActionArguments *)arguments {
+    if (self.systemVersion == nil) {
+        self.systemVersion = [UASystemVersion systemVersion];
+    }
 
-    legacy = ![[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){10, 3, 0}];
+    legacy = ![self.systemVersion isGreaterOrEqualToVersion:@"10.3.0"];
 
     id showLinkPrompt;
     id linkPromptTitle;

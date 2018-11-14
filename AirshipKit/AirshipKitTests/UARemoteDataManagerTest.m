@@ -54,6 +54,9 @@
 
     self.mockAPIClient = [self mockForClass:[UARemoteDataAPIClient class]];
 
+    self.mockAPIClientClass = OCMClassMock([UARemoteDataAPIClient class]);
+    OCMStub([self.mockAPIClientClass clientWithConfig:[OCMArg any] dataStore:[OCMArg any]]).andReturn(self.mockAPIClient);
+    
     self.testStore = [UATestRemoteDataStore storeWithName:@"UARemoteDataManagerTest." inMemory:YES];
     self.remoteDataManager = [self createManager];
     self.expectAPIClientFetch = YES;

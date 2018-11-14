@@ -140,7 +140,6 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         // UIPasteboard is not available in tvOS
         self.channelCapture = [UAChannelCapture channelCaptureWithConfig:config push:self.sharedPush dataStore:self.dataStore];
 
-       // Only create the default message center if running iOS 8 and above
         if ([UAirship resources]) {
             self.sharedMessageCenter = [UAMessageCenter messageCenterWithConfig:self.config];
         } else {

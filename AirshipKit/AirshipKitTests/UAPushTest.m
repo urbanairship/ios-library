@@ -34,7 +34,6 @@
 @property (nonatomic, strong) id mockUAUser;
 @property (nonatomic, strong) id mockDefaultNotificationCategories;
 @property (nonatomic, strong) id mockTagGroupsRegistrar;
-@property (nonatomic, strong) id mockProcessInfo;
 @property (nonatomic, strong) id mockUNNotification;
 @property (nonatomic, strong) id mockPushRegistration;
 

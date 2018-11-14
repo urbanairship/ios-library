@@ -30,7 +30,6 @@
 @property (nonatomic, strong) id mockedAnalytics;
 @property (nonatomic, strong) id mockedPush;
 @property (nonatomic, strong) id mockedActionRunner;
-@property (nonatomic, strong) id mockedProcessInfo;
 @property (nonatomic, strong) id mockedInbox;
 @property (nonatomic, strong) id mockedMessageList;
 
@@ -41,7 +40,6 @@
 @property (nonatomic, strong) id mockedUNNotificationRequest;
 @property (nonatomic, strong) id mockedUNNotificationContent;
 
-@property (nonatomic, assign) NSUInteger testOSMajorVersion;
 @property (nonatomic, strong) NSDictionary *notification;
 
 @end
@@ -50,18 +48,6 @@
 
 - (void)setUp {
     [super setUp];
-
-    self.testOSMajorVersion = 10;
-    self.mockedProcessInfo = [self mockForClass:[NSProcessInfo class]];
-    [[[self.mockedProcessInfo stub] andReturn:self.mockedProcessInfo] processInfo];
-
-    [[[[self.mockedProcessInfo stub] andDo:^(NSInvocation *invocation) {
-        NSOperatingSystemVersion arg;
-        [invocation getArgument:&arg atIndex:2];
-
-        BOOL result = self.testOSMajorVersion >= arg.majorVersion;
-        [invocation setReturnValue:&result];
-    }] ignoringNonObjectArgs] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){0, 0, 0}];
 
     // Set up a mocked application
     self.mockedApplication = [self mockForClass:[UIApplication class]];
@@ -131,7 +117,6 @@
     [self.mockedAirship stopMocking];
     [self.mockedActionRunner stopMocking];
     [self.mockedPush stopMocking];
-    [self.mockedProcessInfo stopMocking];
     [self.mockedUserNotificationCenter stopMocking];
     [self.mockedInbox stopMocking];
     [self.mockedMessageList stopMocking];
@@ -690,13 +675,11 @@
 
 /**
  * Test application:didReceiveRemoteNotification:fetchCompletionHandler when
- * it's launching the application on iOS 10 treats it as a default notification
- * response.
+ * it's launching the application treats it as a default notification response.
  */
 - (void)testReceivedRemoteNotificationLaunch {
     XCTestExpectation *handlerExpectation = [self expectationWithDescription:@"Completion handler called"];
 
-    self.testOSMajorVersion = 10;
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateInactive)] applicationState];
 
     __block BOOL completionHandlerCalled = NO;
@@ -814,8 +797,6 @@
  * Test background app refresh results in a call to update authorized notification types
  */
 - (void)testDidReceiveBackgroundAppRefresh {
-    self.testOSMajorVersion = 10;
-
     __block BOOL handlerCalled = false;
 
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateBackground)] applicationState];

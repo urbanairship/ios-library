@@ -5,6 +5,8 @@
 #import "UAPreferenceDataStore+Internal.h"
 #import "UAAnalytics.h"
 #import "UALocationEvent.h"
+#import "UATestSystemVersion.h"
+
 
 @interface UALocationTest : UABaseTest
 
@@ -15,8 +17,7 @@
 @property (nonatomic, strong) id mockLocationManager;
 @property (nonatomic, strong) id mockedApplication;
 @property (nonatomic, strong) id mockedBundle;
-@property (nonatomic, strong) id mockProcessInfo;
-@property (nonatomic, assign) NSUInteger testOSMajorVersion;
+@property (nonatomic, strong) UATestSystemVersion *testSystemVersion;
 
 @end
 
@@ -33,27 +34,16 @@
 
     self.notificationCenter = [[NSNotificationCenter alloc] init];
 
-    self.location = [UALocation locationWithAnalytics:self.mockAnalytics dataStore:self.dataStore notificationCenter:self.notificationCenter];
+    self.testSystemVersion = [[UATestSystemVersion alloc] init];
+    self.testSystemVersion.currentSystemVersion = @"10.0.0";
+
+    self.location = [UALocation locationWithAnalytics:self.mockAnalytics dataStore:self.dataStore notificationCenter:self.notificationCenter systemVersion:self.testSystemVersion];
     self.location.locationManager = self.mockLocationManager;
     self.location.componentEnabled = YES;
 
     self.mockedBundle = [self mockForClass:[NSBundle class]];
     [[[self.mockedBundle stub] andReturn:self.mockedBundle] mainBundle];
     [[[self.mockedBundle stub] andReturn:@"Always"] objectForInfoDictionaryKey:@"NSLocationAlwaysUsageDescription"];
-
-    self.testOSMajorVersion = 10;
-    self.mockProcessInfo = [self mockForClass:[NSProcessInfo class]];
-    [[[self.mockProcessInfo stub] andReturn:self.mockProcessInfo] processInfo];
-
-    [[[[self.mockProcessInfo stub] andDo:^(NSInvocation *invocation) {
-        NSOperatingSystemVersion arg;
-        [invocation getArgument:&arg atIndex:2];
-
-        BOOL result = self.testOSMajorVersion >= arg.majorVersion;
-        [invocation setReturnValue:&result];
-    }] ignoringNonObjectArgs] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){0, 0, 0}];
-
-
 }
 
 - (void)tearDown {
@@ -690,8 +680,9 @@
     [[[self.mockedBundle stub] andReturn:@"Always"] objectForInfoDictionaryKey:@"NSLocationAlwaysAndWhenInUseUsageDescription"];
     [[[self.mockedBundle stub] andReturn:@"When In Use"] objectForInfoDictionaryKey:@"NSLocationWhenInUseUsageDescription"];
 
-    // Set mock iOS version to 11+
-    self.testOSMajorVersion = 11;
+    // Set iOS system version to 11+
+    self.testSystemVersion.currentSystemVersion = @"11.0.0";
+
 
     // Make the app active
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateActive)] applicationState];
@@ -720,8 +711,8 @@
     // Stop mocking the bundle to remove the description
     [self.mockedBundle stopMocking];
 
-    // Set mock iOS version to 11+
-    self.testOSMajorVersion = 11;
+    // Set iOS system version to 11+
+    self.testSystemVersion.currentSystemVersion = @"11.0.0";
 
     // Make the app active
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateActive)] applicationState];
