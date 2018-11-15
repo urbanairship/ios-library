@@ -3,6 +3,7 @@
 #import "UAOpenExternalURLAction.h"
 #import "UAirship.h"
 #import "UAWhitelist.h"
+#import "UADispatcher+Internal.h"
 
 NSString * const UAOpenExternalURLActionErrorDomain = @"com.urbanairship.actions.externalurlaction";
 
@@ -41,7 +42,7 @@ NSString * const UAOpenExternalURLActionErrorDomain = @"com.urbanairship.actions
 }
 
 - (void)openURL:(NSURL *)url completionHandler:(UAActionCompletionHandler)completionHandler {
-    dispatch_async(dispatch_get_main_queue(), ^{
+   [[UADispatcher mainDispatcher] dispatchAsync:^{
         [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:^(BOOL success) {
             if (!success) {
                 // Unable to open url
@@ -54,8 +55,7 @@ NSString * const UAOpenExternalURLActionErrorDomain = @"com.urbanairship.actions
                 completionHandler([UAActionResult resultWithValue:url.absoluteString]);
             }
         }];
-
-    });
+   }];
 }
 
 + (NSURL *)parseURLFromArguments:(UAActionArguments *)arguments {

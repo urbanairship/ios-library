@@ -498,7 +498,7 @@ NSString *const UAInAppMessageFullScreenViewNibName = @"UAInAppMessageFullScreen
         self.showCompletionHandler = nil;
     }
 
-    dispatch_async(dispatch_get_main_queue(), ^{
+    [[UADispatcher mainDispatcher] dispatchAsync:^{
         self.verticalConstraint.constant = self.view.bounds.size.height;
 
         [UIView animateWithDuration:DefaultFullScreenAnimationDuration delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
@@ -509,7 +509,7 @@ NSString *const UAInAppMessageFullScreenViewNibName = @"UAInAppMessageFullScreen
             [self.view removeFromSuperview];
             self.fullScreenWindow = nil;
         }];
-    });
+    }];
 }
 
 - (void)buttonTapped:(id)sender {
@@ -574,4 +574,5 @@ NSString *const UAInAppMessageFullScreenViewNibName = @"UAInAppMessageFullScreen
 @end
 
 NS_ASSUME_NONNULL_END
+
 

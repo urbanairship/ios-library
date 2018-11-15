@@ -6,6 +6,7 @@
 #import "UAActionRunner+Internal.h"
 #import "UAUtils+Internal.h"
 #import "UAirship.h"
+#import "UADispatcher+Internal.h"
 
 NSString *const UADefaultSerifFont = @"Times New Roman";
 NSString *const UAInAppMessageAdapterCacheName = @"UAInAppMessageAdapterCache";
@@ -222,9 +223,9 @@ CGFloat const CloseButtonHeight = 30;
 
     // Call completion handler on main queue
     void (^complete)(NSString *, UAInAppMessagePrepareResult) = ^(NSString * key, UAInAppMessagePrepareResult result) {
-        dispatch_async(dispatch_get_main_queue(), ^{
+       [[UADispatcher mainDispatcher] dispatchAsync:^{
             completionHandler(key, result);
-        });
+       }];
     };
 
     [[[NSURLSession sharedSession]

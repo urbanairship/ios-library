@@ -12,7 +12,7 @@
 #import "UAMessageCenterLocalization.h"
 #import "UABeveledLoadingIndicator.h"
 #import "UAInAppMessageUtils+Internal.h"
-
+#import "UADispatcher+Internal.h"
 
 #define kMessageUp 0
 #define kMessageDown 1
@@ -260,7 +260,7 @@ static NSString *urlForBlankPage = @"about:blank";
     UA_WEAKIFY(self);
 
     [[UAirship inbox].messageList retrieveMessageListWithSuccessBlock:^{
-        dispatch_async(dispatch_get_main_queue(),^{
+        [[UADispatcher mainDispatcher] dispatchAsync:^{
             UA_STRONGIFY(self)
 
             UAInboxMessage *message = [[UAirship inbox].messageList messageForID:messageID];
@@ -281,17 +281,17 @@ static NSString *urlForBlankPage = @"about:blank";
                 }];
             }
             return;
-        });
+        }];
     } withFailureBlock:^{
-        dispatch_async(dispatch_get_main_queue(),^{
+        [[UADispatcher mainDispatcher] dispatchAsync:^{
             UA_STRONGIFY(self);
-
+            
             [self hideLoadingIndicator];
-
+            
             if (errorCompletion) {
                 errorCompletion();
             }
-        });
+        }];
         return;
     }];
 }

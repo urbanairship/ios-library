@@ -8,18 +8,16 @@
 #import "UA_Base64.h"
 #import "UAPreferenceDataStore+Internal.h"
 #import "UAUtils+Internal.h"
+#import "UADispatcher+Internal.h"
 
 NSString *const UAChannelCaptureEnabledKey = @"UAChannelCaptureEnabled";
 
 @interface UAChannelCapture()
-
 @property (nonatomic, strong) UAPush *push;
 @property (nonatomic, strong) UAConfig *config;
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 @property bool enableChannelCapture;
-
 @end
-
 
 @implementation UAChannelCapture
 
@@ -136,10 +134,10 @@ NSString *const UAChannelPlaceHolder = @"CHANNEL";
         }
 
         // Move back to the main queue to clear the clipboard and display the alert
-        dispatch_async(dispatch_get_main_queue(), ^{
+        [[UADispatcher mainDispatcher] dispatchAsync:^{
             [UIPasteboard generalPasteboard].string = @"";
             [self showAlertWithUrl:url];
-        });
+        }];
     });
 
 }
@@ -207,4 +205,5 @@ NSString *const UAChannelPlaceHolder = @"CHANNEL";
 }
 
 @end
+
 

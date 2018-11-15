@@ -4,6 +4,7 @@
 #import "UAAction+Internal.h"
 #import "UAActionResult+Internal.h"
 #import "UAGlobal.h"
+#import "UADispatcher+Internal.h"
 
 @implementation UAAction
 
@@ -22,25 +23,12 @@
 
 - (void)runWithArguments:(UAActionArguments *)arguments
        completionHandler:(UAActionCompletionHandler)completionHandler {
+
+    // If no completion handler was passed, use an empty block in its place
+    completionHandler = completionHandler ?: ^(UAActionResult *result) {};
     
-    completionHandler = completionHandler ?: ^(UAActionResult *result) {
-        //if no completion handler was passed, use an empty block in its place
-    };
-    
-    typedef void (^voidBlock)(void);
-    
-    //execute the passed block directly if we're on the main thread, otherwise
-    //dispatch it to the main queue
-    void (^dispatchMainIfNecessary)(voidBlock) = ^(voidBlock block) {
-        if (![[NSThread currentThread] isEqual:[NSThread mainThread]]) {
-            dispatch_async(dispatch_get_main_queue(), block);
-        } else {
-            block();
-        }
-    };
-    
-    //make sure the initial acceptsArguments/willPerform/perform is executed on the main queue
-    dispatchMainIfNecessary(^{
+    // Make sure the initial acceptsArguments/willPerform/perform is executed on the main queue
+    [[UADispatcher mainDispatcher] dispatchAsyncIfNecessary:^{
         if (![self acceptsArguments:arguments]) {
             UA_LDEBUG(@"Action %@ rejected arguments %@.", [self description], [arguments description]);
             completionHandler([UAActionResult rejectedArgumentsResult]);
@@ -48,9 +36,8 @@
             UA_LDEBUG(@"Action %@ performing with arguments %@.", [self description], [arguments description]);
             [self willPerformWithArguments:arguments];
             [self performWithArguments:arguments completionHandler:^(UAActionResult *result) {
-                //make sure the passed completion handler and didPerformWithArguments are executed on the
-                //main queue
-                dispatchMainIfNecessary(^{
+                // Make sure the passed completion handler and didPerformWithArguments are executed on the main queue
+                [[UADispatcher mainDispatcher] dispatchAsyncIfNecessary:^{
                     if (!result) {
                         UA_LTRACE("Action %@ called the completion handler with a nil result", [self description]);
                     }
@@ -58,10 +45,10 @@
                     UAActionResult *normalizedResult = result ?: [UAActionResult emptyResult];
                     [self didPerformWithArguments:arguments withResult:normalizedResult];
                     completionHandler(normalizedResult);
-                });
+                }];
             }];
         }
-    });
+    }];
 }
 
 

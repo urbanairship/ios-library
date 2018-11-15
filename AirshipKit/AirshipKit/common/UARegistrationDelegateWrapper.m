@@ -1,6 +1,7 @@
 /* Copyright 2018 Urban Airship and Contributors */
 
 #import "UARegistrationDelegateWrapper+Internal.h"
+#import "UADispatcher+Internal.h"
 
 @implementation UARegistrationDelegateWrapper
 
@@ -31,27 +32,27 @@
     SEL oldSelector = @selector(notificationRegistrationFinishedWithOptions:categories:);
 
     if ([strongDelegate respondsToSelector:newSelector]) {
-        dispatch_async(dispatch_get_main_queue(), ^{
+        [[UADispatcher mainDispatcher] dispatchAsync:^{
             [strongDelegate notificationRegistrationFinishedWithAuthorizedSettings:authorizedSettings categories:categories];
-        });
+        }];
     }
 
     if ([strongDelegate respondsToSelector:newSelectorWithStatus]) {
-        dispatch_async(dispatch_get_main_queue(), ^{
+        [[UADispatcher mainDispatcher] dispatchAsync:^{
             [strongDelegate notificationRegistrationFinishedWithAuthorizedSettings:authorizedSettings
                                                                         categories:categories
                                                                             status:status];
-        });
+        }];
     }
 
     if ([strongDelegate respondsToSelector:oldSelector]) {
-        dispatch_async(dispatch_get_main_queue(), ^{
+        [[UADispatcher mainDispatcher] dispatchAsync:^{
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
             UA_LWARN(@"Warning: %@ is deprecated and will be removed in SDK 11. Please use %@", NSStringFromSelector(oldSelector), NSStringFromSelector(newSelector));
             [strongDelegate notificationRegistrationFinishedWithOptions:legacyOptions categories:categories];
 #pragma GCC diagnostic pop
-        });
+        }];
     }
 }
 
@@ -91,3 +92,4 @@
 }
 
 @end
+

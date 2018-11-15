@@ -288,10 +288,10 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
     if (appDidFinishLaunchingNotification_) {
         // Set up can occur after takeoff, so handle the launch notification on the
         // next run loop to allow app setup to finish
-        dispatch_async(dispatch_get_main_queue(), ^() {
+        [[UADispatcher mainDispatcher] dispatchAsync: ^() {
             [UAirship handleAppDidFinishLaunchingNotification:appDidFinishLaunchingNotification_];
             appDidFinishLaunchingNotification_ = nil;
-        });
+        }];
     }
 }
 
@@ -304,12 +304,12 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 
         // Log takeoff errors on the next run loop to give time for apps that
         // use class loader to call takeoff.
-        dispatch_async(dispatch_get_main_queue(), ^() {
+        [[UADispatcher mainDispatcher] dispatchAsync:^{
             if (!sharedAirship_) {
                 UA_LERR(@"[UAirship takeOff] was not called in application:didFinishLaunchingWithOptions:");
                 UA_LERR(@"Please ensure that [UAirship takeOff] is called synchronously before application:didFinishLaunchingWithOptions: returns");
             }
-        });
+        }];
 
         return;
     }
@@ -328,9 +328,9 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 
     // Update registration on the next run loop to allow apps to customize
     // finish custom setup
-    dispatch_async(dispatch_get_main_queue(), ^() {
+    [[UADispatcher mainDispatcher] dispatchAsync:^{
         [sharedAirship_.sharedPush updateRegistration];
-    });
+    }];
 
 }
 

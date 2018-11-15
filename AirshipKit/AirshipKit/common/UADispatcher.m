@@ -83,12 +83,18 @@ typedef NS_ENUM(NSUInteger, UADispatcherType) {
 }
 
 - (void)doSync:(void (^)(void))block {
-    void *context = self.type == UADispatcherTypeMain ? UADispatcherQueueSpecificContextMain : UADispatcherQueueSpecificContextBackground;
-
-    if (dispatch_get_specific(UADispatcherQueueSpecificKey) == context) {
+    if ([self isCurrentQueueType]) {
         block();
     } else {
         [self dispatchSync:block];
+    }
+}
+
+- (void)dispatchAsyncIfNecessary:(void (^)(void))block {
+    if ([self isCurrentQueueType]) {
+        block();
+    } else {
+        [self dispatchAsync:block];
     }
 }
 
@@ -108,6 +114,12 @@ typedef NS_ENUM(NSUInteger, UADispatcherType) {
             dispatch_block_cancel(block);
         }
     }];
+}
+
+- (BOOL)isCurrentQueueType {
+    void *context = self.type == UADispatcherTypeMain ? UADispatcherQueueSpecificContextMain : UADispatcherQueueSpecificContextBackground;
+
+    return dispatch_get_specific(UADispatcherQueueSpecificKey) == context;
 }
 
 @end

@@ -14,6 +14,7 @@
 #import "UAPush.h"
 #import "UAirship.h"
 #import "NSOperationQueue+UAAdditions.h"
+#import "UADispatcher+Internal.h"
 
 @interface UAEventManager()
 
@@ -308,7 +309,7 @@ const NSTimeInterval BackgroundLowPriorityEventUploadInterval = 900;
     UA_LTRACE(@"Enqueuing attempt to schedule event upload with delay on main queue.");
 
     UA_WEAKIFY(self);
-    dispatch_async(dispatch_get_main_queue(), ^{
+    [[UADispatcher mainDispatcher] dispatchAsync:^{
         UA_STRONGIFY(self);
         if (!self.uploadsEnabled) {
             return;
@@ -332,7 +333,7 @@ const NSTimeInterval BackgroundLowPriorityEventUploadInterval = 900;
         if ([self enqueueUploadOperationWithDelay:delay]) {
             self.nextUploadDate = uploadDate;
         }
-    });
+    }];
 }
 
 - (BOOL)enqueueUploadOperationWithDelay:(NSTimeInterval)delay {
@@ -402,7 +403,7 @@ const NSTimeInterval BackgroundLowPriorityEventUploadInterval = 900;
             UA_LTRACE("Uploading events.");
 
             // Make sure the event upload request is queueed and on the main thread as it needs to access application state
-            dispatch_async(dispatch_get_main_queue(), ^{
+            [[UADispatcher mainDispatcher] dispatchAsync: ^{
 
                 // Make sure we are still not cancelled
                 if (operation.isCancelled) {
@@ -428,7 +429,7 @@ const NSTimeInterval BackgroundLowPriorityEventUploadInterval = 900;
 
                     [operation finish];
                 }];
-            });
+            }];
         }];
     }];
 
@@ -451,6 +452,7 @@ const NSTimeInterval BackgroundLowPriorityEventUploadInterval = 900;
 }
 
 @end
+
 
 
 

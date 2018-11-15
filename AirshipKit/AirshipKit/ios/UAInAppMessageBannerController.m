@@ -206,11 +206,11 @@ CGFloat const BannerExcessiveSafeAreaPadding = 14;
 
     [self beginTeardown];
 
-    dispatch_async(dispatch_get_main_queue(), ^{
+    [[UADispatcher mainDispatcher] dispatchAsync:^{
         [self bannerView:self.bannerView animateOutWithParentView:self.bannerView.superview completionHandler:^{
             [self finishTeardown];
         }];
-    });
+    }];
 }
 
 - (void)messageTapped {
@@ -598,4 +598,5 @@ CGFloat const BannerExcessiveSafeAreaPadding = 14;
 @end
 
 NS_ASSUME_NONNULL_END
+
 
