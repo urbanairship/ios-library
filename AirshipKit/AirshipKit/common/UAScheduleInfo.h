@@ -21,13 +21,16 @@ extern NSUInteger const UAScheduleInfoMaxTriggers;
 ///---------------------------------------------------------------------------------------
 
 /**
- * The schedule's priority. Priority is optional and defaults to 0. Schedules are
- * executed by priority in ascending order.
+ * The schedule's priority. Schedules are executed by priority in ascending order.
+ *
+ * Optional. Defaults to 0.
  */
 @property(nonatomic, assign) NSInteger priority;
 
 /**
  * The max number of times the schedule may be executed.
+ *
+ * Optional. Defaults to 1.
  *
  * For in-app messages, if the audience condition checks fail, and
  * the miss behavior is `skip`, the triggered schedule will not count towards
@@ -37,32 +40,44 @@ extern NSUInteger const UAScheduleInfoMaxTriggers;
 
 /**
  * Array of triggers. Triggers define conditions on when to execute the schedule.
+ *
+ * An array with between 1 and 10 triggers is required.
  */
-@property(nonatomic, strong, nullable) NSArray<UAScheduleTrigger *> *triggers;
+@property(nonatomic, copy, nullable) NSArray<UAScheduleTrigger *> *triggers;
 
 /**
  * The schedule's start time.
+ *
+ * Optional.
  */
 @property(nonatomic, strong, nullable) NSDate *start;
 
 /**
  * The schedule's end time. After the end time the schedule will be finished.
+ *
+ * Optional.
  */
 @property(nonatomic, strong, nullable) NSDate *end;
 
 /**
  * The schedule's delay.
+ *
+ * Optional.
  */
 @property(nonatomic, strong, nullable) UAScheduleDelay *delay;
 
 /**
  * The schedule's edit grace period. The amount of time the schedule will still be editable after it has expired
  * or finished executing.
+ *
+ * Optional. Defaults to 0.
  */
 @property(nonatomic, assign) NSTimeInterval editGracePeriod;
 
 /**
  * The schedule's interval. The amount of time to pause the schedule after executing.
+ *
+ * Optional. Defaults to 0.
  */
 @property(nonatomic, assign) NSTimeInterval interval;
 
@@ -70,6 +85,8 @@ extern NSUInteger const UAScheduleInfoMaxTriggers;
 
 /**
  * Defines the scheduled action.
+ *
+ * @note This object is built using `UAScheduleInfoBuilder`.
  */
 @interface UAScheduleInfo : NSObject
 
@@ -78,9 +95,8 @@ extern NSUInteger const UAScheduleInfoMaxTriggers;
 ///---------------------------------------------------------------------------------------
 
 /**
-* The schedule's priority. Priority is optional and defaults to 0. Schedules are
-* executed by priority in ascending order.
-*/
+ * The schedule's priority. Schedules are executed by priority in ascending order.
+ */
 @property(nonatomic, readonly) NSInteger priority;
 
 /**
@@ -100,17 +116,17 @@ extern NSUInteger const UAScheduleInfoMaxTriggers;
 /**
  * The schedule's start time.
  */
-@property(nonatomic, readonly) NSDate *start;
+@property(nonatomic, nullable, readonly) NSDate *start;
 
 /**
- * The schedule's end time. After the end time the schedule will be canceled.
+ * The schedule's end time. After the end time the schedule will be finished.
  */
-@property(nonatomic, readonly) NSDate *end;
+@property(nonatomic, nullable, readonly) NSDate *end;
 
 /**
  * The schedule's delay.
  */
-@property(nonatomic, readonly) UAScheduleDelay *delay;
+@property(nonatomic, nullable, readonly) UAScheduleDelay *delay;
 
 /**
  * The schedule's edit grace period.

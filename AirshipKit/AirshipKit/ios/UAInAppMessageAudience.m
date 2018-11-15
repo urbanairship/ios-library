@@ -54,7 +54,7 @@ NSString * const UAInAppMessageAudienceErrorDomain = @"com.urbanairship.in_app_m
 @synthesize isNewUser = _isNewUser;
 @synthesize testDevices = _testDevices;
 
-+ (instancetype)audienceWithJSON:(id)json error:(NSError **)error {
++ (nullable instancetype)audienceWithJSON:(id)json error:(NSError **)error {
     UAInAppMessageAudienceBuilder *builder = [[UAInAppMessageAudienceBuilder alloc] init];
 
     if (!json || ![json isKindOfClass:[NSDictionary class]]) {
@@ -191,7 +191,7 @@ NSString * const UAInAppMessageAudienceErrorDomain = @"com.urbanairship.in_app_m
                            userInfo:@{NSLocalizedDescriptionKey:msg}];
 }
 
-+ (instancetype)audienceWithBuilderBlock:(void(^)(UAInAppMessageAudienceBuilder *builder))builderBlock  {
++ (nullable instancetype)audienceWithBuilderBlock:(void(^)(UAInAppMessageAudienceBuilder *builder))builderBlock  {
     UAInAppMessageAudienceBuilder *builder = [[UAInAppMessageAudienceBuilder alloc] init];
 
     if (builderBlock) {
@@ -201,7 +201,7 @@ NSString * const UAInAppMessageAudienceErrorDomain = @"com.urbanairship.in_app_m
     return [[UAInAppMessageAudience alloc] initWithBuilder:builder];
 }
 
-- (instancetype)initWithBuilder:(UAInAppMessageAudienceBuilder *)builder {
+- (nullable instancetype)initWithBuilder:(UAInAppMessageAudienceBuilder *)builder {
     if (self = [super init]) {
         if (![builder isValid]) {
             UA_LERR(@"UAInAppMessageAudience could not be initialized, builder has missing or invalid parameters.");

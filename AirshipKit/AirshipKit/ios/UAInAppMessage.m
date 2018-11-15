@@ -50,11 +50,11 @@ NSUInteger const UAInAppMessageIDLimit = 100;
 @end
 
 @interface UAInAppMessage()
-@property(nonatomic, copy) NSString *identifier;
+@property(nonatomic, strong) NSString *identifier;
 @property(nonatomic, strong) UAInAppMessageDisplayContent *displayContent;
-@property(nonatomic, copy, nullable) NSDictionary *extras;
+@property(nonatomic, strong, nullable) NSDictionary *extras;
 @property(nonatomic, strong, nullable) UAInAppMessageAudience *audience;
-@property(nonatomic, copy, nullable) NSDictionary *actions;
+@property(nonatomic, strong, nullable) NSDictionary *actions;
 @end
 
 @implementation UAInAppMessage
@@ -259,7 +259,7 @@ NSString *const UAInAppMessageSourceLegacyPushValue = @"legacy-push";
     return [[UAInAppMessage alloc] initWithBuilder:builder];
 }
 
-+ (instancetype)messageWithBuilderBlock:(void(^)(UAInAppMessageBuilder *builder))builderBlock {
++ (nullable instancetype)messageWithBuilderBlock:(void(^)(UAInAppMessageBuilder *builder))builderBlock {
     UAInAppMessageBuilder *builder = [[UAInAppMessageBuilder alloc] init];
 
     if (builderBlock) {
@@ -269,7 +269,7 @@ NSString *const UAInAppMessageSourceLegacyPushValue = @"legacy-push";
     return [[UAInAppMessage alloc] initWithBuilder:builder];
 }
 
-- (instancetype)initWithBuilder:(UAInAppMessageBuilder *)builder {
+- (nullable instancetype)initWithBuilder:(UAInAppMessageBuilder *)builder {
     self = [super init];
     
     if (![builder isValid]) {
@@ -298,7 +298,7 @@ NSString *const UAInAppMessageSourceLegacyPushValue = @"legacy-push";
     return _campaigns;
 }
 
-- (UAInAppMessage *)extend:(void(^)(UAInAppMessageBuilder *builder))builderBlock {
+- (nullable UAInAppMessage *)extend:(void(^)(UAInAppMessageBuilder *builder))builderBlock {
     if (builderBlock) {
         UAInAppMessageBuilder *builder = [UAInAppMessageBuilder builderWithMessage:self];
         builderBlock(builder);

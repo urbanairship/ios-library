@@ -52,7 +52,7 @@ NSString *const UAInAppMessageURLKey = @"url";
 
 @interface UAInAppMessageHTMLDisplayContent ()
 
-@property(nonatomic, copy) NSString *url;
+@property(nonatomic, strong) NSString *url;
 @property(nonatomic, strong) UIColor *backgroundColor;
 @property(nonatomic, strong) UIColor *dismissButtonColor;
 @property(nonatomic, assign) NSUInteger borderRadius;
@@ -62,7 +62,7 @@ NSString *const UAInAppMessageURLKey = @"url";
 
 @implementation UAInAppMessageHTMLDisplayContent
 
-+ (instancetype)displayContentWithBuilderBlock:(void (^)(UAInAppMessageHTMLDisplayContentBuilder *))builderBlock {
++ (nullable instancetype)displayContentWithBuilderBlock:(void (^)(UAInAppMessageHTMLDisplayContentBuilder *))builderBlock {
     UAInAppMessageHTMLDisplayContentBuilder *builder = [[UAInAppMessageHTMLDisplayContentBuilder alloc] init];
 
     if (builderBlock) {
@@ -72,7 +72,7 @@ NSString *const UAInAppMessageURLKey = @"url";
     return [[UAInAppMessageHTMLDisplayContent alloc] initWithBuilder:builder];
 }
 
-+ (instancetype)displayContentWithJSON:(id)json error:(NSError * _Nullable __autoreleasing *)error {
++ (nullable instancetype)displayContentWithJSON:(id)json error:(NSError * _Nullable __autoreleasing *)error {
     UAInAppMessageHTMLDisplayContentBuilder *builder = [[UAInAppMessageHTMLDisplayContentBuilder alloc] init];
 
     if (![json isKindOfClass:[NSDictionary class]]) {
@@ -191,7 +191,7 @@ NSString *const UAInAppMessageURLKey = @"url";
     return [json copy];
 }
 
-- (UAInAppMessageHTMLDisplayContent *)extend:(void(^)(UAInAppMessageHTMLDisplayContentBuilder *builder))builderBlock {
+- (nullable UAInAppMessageHTMLDisplayContent *)extend:(void(^)(UAInAppMessageHTMLDisplayContentBuilder *builder))builderBlock {
     if (builderBlock) {
         UAInAppMessageHTMLDisplayContentBuilder *builder = [UAInAppMessageHTMLDisplayContentBuilder builderWithDisplayContent:self];
         builderBlock(builder);

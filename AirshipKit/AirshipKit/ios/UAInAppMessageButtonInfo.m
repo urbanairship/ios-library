@@ -24,12 +24,12 @@ NSString *const UAInAppMessageButtonInfoBehaviorDismissValue = @"dismiss";
 
 @interface UAInAppMessageButtonInfo ()
 @property(nonatomic, strong) UAInAppMessageTextInfo *label;
-@property(nonatomic, copy) NSString *identifier;
+@property(nonatomic, strong) NSString *identifier;
 @property(nonatomic, assign) UAInAppMessageButtonInfoBehaviorType behavior;
 @property(nonatomic, strong) UIColor *backgroundColor;
 @property(nonatomic, strong) UIColor *borderColor;
 @property(nonatomic, assign) NSUInteger borderRadius;
-@property(nonatomic, copy, nullable) NSDictionary *actions;
+@property(nonatomic, strong, nullable) NSDictionary *actions;
 @end
 
 @implementation UAInAppMessageButtonInfoBuilder
@@ -82,7 +82,7 @@ NSString *const UAInAppMessageButtonInfoBehaviorDismissValue = @"dismiss";
 
 @implementation UAInAppMessageButtonInfo
 
-- (instancetype)initWithBuilder:(UAInAppMessageButtonInfoBuilder *)builder {
+- (nullable instancetype)initWithBuilder:(UAInAppMessageButtonInfoBuilder *)builder {
     self = [super init];
 
     if (![builder isValid]) {
@@ -282,7 +282,7 @@ NSString *const UAInAppMessageButtonInfoBehaviorDismissValue = @"dismiss";
     return [json copy];
 }
 
-- (UAInAppMessageButtonInfo *)extend:(void(^)(UAInAppMessageButtonInfoBuilder *builder))builderBlock {
+- (nullable UAInAppMessageButtonInfo *)extend:(void(^)(UAInAppMessageButtonInfoBuilder *builder))builderBlock {
     if (builderBlock) {
         UAInAppMessageButtonInfoBuilder *builder = [UAInAppMessageButtonInfoBuilder builderWithInfo:self];
         builderBlock(builder);

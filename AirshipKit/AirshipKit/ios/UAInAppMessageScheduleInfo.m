@@ -56,6 +56,9 @@ NSString *const UAScheduleInfoInAppMessageKey = @"message";
 
 @end
 
+@interface UAInAppMessageScheduleInfo()
+@property(nonatomic, strong) UAInAppMessage *message;
+@end
 
 @implementation UAInAppMessageScheduleInfo
 @synthesize message = _message;
@@ -67,7 +70,7 @@ NSString *const UAScheduleInfoInAppMessageKey = @"message";
     return _message;
 }
 
-+ (instancetype)scheduleInfoWithBuilderBlock:(void(^)(UAInAppMessageScheduleInfoBuilder *builder))builderBlock {
++ (nullable instancetype)scheduleInfoWithBuilderBlock:(void(^)(UAInAppMessageScheduleInfoBuilder *builder))builderBlock {
     UAInAppMessageScheduleInfoBuilder *builder = [[UAInAppMessageScheduleInfoBuilder alloc] init];
     builder.limit = 1;
 
@@ -78,7 +81,7 @@ NSString *const UAScheduleInfoInAppMessageKey = @"message";
     return [[self alloc] initWithBuilder:builder];
 }
 
-+ (instancetype)scheduleInfoWithJSON:(id)json source:(UAInAppMessageSource)source error:(NSError **)error {
++ (nullable instancetype)scheduleInfoWithJSON:(id)json source:(UAInAppMessageSource)source error:(NSError **)error {
     UAInAppMessageScheduleInfoBuilder *builder = [[UAInAppMessageScheduleInfoBuilder alloc] init];
     if (![builder applyFromJson:json source:source error:error]) {
         return nil;

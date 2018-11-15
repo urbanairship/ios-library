@@ -25,8 +25,8 @@ NSString *const UAInAppMessageTextInfoStyleItalicValue = @"italic";
 NSString *const UAInAppMessageTextInfoStyleUnderlineValue = @"underline";
 
 @interface UAInAppMessageTextInfo ()
-@property(nonatomic, copy) NSString *text;
-@property(nonatomic, copy) NSArray<NSString *> *fontFamilies;
+@property(nonatomic, strong) NSString *text;
+@property(nonatomic, strong) NSArray<NSString *> *fontFamilies;
 @property(nonatomic, strong) UIColor *color;
 @property(nonatomic, assign) NSUInteger size;
 @property(nonatomic, assign) UAInAppMessageTextInfoAlignmentType alignment;
@@ -310,7 +310,7 @@ NSString *const UAInAppMessageTextInfoStyleUnderlineValue = @"underline";
     return [json copy];
 }
 
-- (UAInAppMessageTextInfo *)extend:(void(^)(UAInAppMessageTextInfoBuilder *builder))builderBlock {
+- (nullable UAInAppMessageTextInfo *)extend:(void(^)(UAInAppMessageTextInfoBuilder *builder))builderBlock {
     if (builderBlock) {
         UAInAppMessageTextInfoBuilder *builder = [UAInAppMessageTextInfoBuilder builderWithInfo:self];
         builderBlock(builder);

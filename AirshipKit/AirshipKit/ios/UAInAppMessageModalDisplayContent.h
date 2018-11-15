@@ -42,60 +42,81 @@ extern NSUInteger const UAInAppMessageModalMaxButtons;
 
 /**
  * The modal message's heading.
+ *
+ * Optional.
  */
 @property(nonatomic, strong, nullable) UAInAppMessageTextInfo *heading;
 
 /**
  * The modal message's body.
+ *
+ * Optional.
  */
 @property(nonatomic, strong, nullable) UAInAppMessageTextInfo *body;
 
 /**
  * The modal message's media.
+ *
+ * Optional.
  */
 @property(nonatomic, strong, nullable) UAInAppMessageMediaInfo *media;
 
 /**
  * The modal message's footer.
+ *
+ * Optional. Defaults to nil.
  */
 @property(nonatomic, strong, nullable) UAInAppMessageButtonInfo *footer;
 
 /**
  * The modal message's buttons.
+ *
+ * Required
  */
 @property(nonatomic, copy, nullable) NSArray<UAInAppMessageButtonInfo *> *buttons;
 
 /**
- * The modal message's button layout. Defaults to UAInAppMessageButtonLayoutSeparate.
+ * The modal message's button layout.
+ *
+ * Optional. Defaults to UAInAppMessageButtonLayoutSeparate.
  */
 @property(nonatomic, assign) UAInAppMessageButtonLayoutType buttonLayout;
 
 /**
- * The modal message's layout for the text and media. Defaults to
- * UAInAppMessageModalContentLayoutHeaderMediaBody
+ * The modal message's layout for the text and media.
+ *
+ * Optional. Defaults to UAInAppMessageModalContentLayoutHeaderMediaBody.
  */
 @property(nonatomic, assign) UAInAppMessageModalContentLayoutType contentLayout;
 
 /**
- * The modal message's background color. Defaults to white.
+ * The modal message's background color.
+ *
+ * Optional. Defaults to white.
  */
-@property(nonatomic, strong, nullable) UIColor *backgroundColor;
+@property(nonatomic, strong) UIColor *backgroundColor;
 
 /**
- * The modal message's dismiss button color. Defaults to black.
+ * The modal message's dismiss button color.
+ *
+ * Optional. Defaults to black.
  */
-@property(nonatomic, strong, nullable) UIColor *dismissButtonColor;
+@property(nonatomic, strong) UIColor *dismissButtonColor;
 
 /**
- * The modal message's border radius. Defaults to 0.
+ * The modal message's border radius.
+ *
+ * Optional. Defaults to 0.
  */
 @property(nonatomic, assign) NSUInteger borderRadius;
 
 /**
  * Flag indicating the modal should display as full screen on compact devices.
- * Defaults to NO.
+ *
+ * Optional. Defaults to `NO`.
  */
 @property(nonatomic, assign) BOOL allowFullScreenDisplay;
+
 
 /**
  * Checks if the builder is valid and will produce an display content instance.
@@ -107,65 +128,65 @@ extern NSUInteger const UAInAppMessageModalMaxButtons;
 
 /**
  * Display content for a modal in-app message.
+ *
+ * @note This object is built using `UAInAppMessageModalDisplayContentBuilder`.
  */
 @interface UAInAppMessageModalDisplayContent : UAInAppMessageDisplayContent
 
 /**
  * The modal message's heading.
  */
-@property(nonatomic, strong, nullable, readonly) UAInAppMessageTextInfo *heading;
+@property(nonatomic, nullable, readonly) UAInAppMessageTextInfo *heading;
 
 /**
  * The modal message's body.
  */
-@property(nonatomic, strong, nullable, readonly) UAInAppMessageTextInfo *body;
+@property(nonatomic, nullable, readonly) UAInAppMessageTextInfo *body;
 
 /**
  * The modal message's media.
  */
-@property(nonatomic, strong, nullable, readonly) UAInAppMessageMediaInfo *media;
+@property(nonatomic, nullable, readonly) UAInAppMessageMediaInfo *media;
 
 /**
  * The modal message's footer.
  */
-@property(nonatomic, strong, nullable, readonly) UAInAppMessageButtonInfo *footer;
+@property(nonatomic, nullable, readonly) UAInAppMessageButtonInfo *footer;
 
 /**
  * The modal message's buttons.
  */
-@property(nonatomic, copy, nullable, readonly) NSArray<UAInAppMessageButtonInfo *> *buttons;
+@property(nonatomic, readonly) NSArray<UAInAppMessageButtonInfo *> *buttons;
 
 /**
- * The modal message's button layout. Defaults to UAInAppMessageButtonLayoutSeparate.
+ * The modal message's button layout.
  */
-@property(nonatomic, assign, readonly) UAInAppMessageButtonLayoutType buttonLayout;
+@property(nonatomic, readonly) UAInAppMessageButtonLayoutType buttonLayout;
 
 /**
- * The modal message's layout for the text and media. Defaults to
- * UAInAppMessageModalContentLayoutHeaderMediaBody
+ * The modal message's layout for the text and media.
  */
-@property(nonatomic, assign, readonly) UAInAppMessageModalContentLayoutType contentLayout;
+@property(nonatomic, readonly) UAInAppMessageModalContentLayoutType contentLayout;
 
 /**
- * The modal message's background color. Defaults to white.
+ * The modal message's background color.
  */
-@property(nonatomic, strong, readonly) UIColor *backgroundColor;
+@property(nonatomic, readonly) UIColor *backgroundColor;
 
 /**
- * The modal message's dismiss button color. Defaults to black.
+ * The modal message's dismiss button color.
  */
-@property(nonatomic, strong, readonly) UIColor *dismissButtonColor;
+@property(nonatomic, readonly) UIColor *dismissButtonColor;
 
 /**
- * The modal message's border radius. Defaults to 0.
+ * The modal message's border radius.
  */
-@property(nonatomic, assign, readonly) NSUInteger borderRadius;
+@property(nonatomic, readonly) NSUInteger borderRadius;
 
 /**
  * Flag indicating the modal should display as full screen on compact devices.
- * Defaults to NO.
  */
-@property(nonatomic, assign, readonly) BOOL allowFullScreenDisplay;
+@property(nonatomic, readonly) BOOL allowFullScreenDisplay;
 
 /**
  * Factory method for building modal message display content with a builder block.
@@ -181,7 +202,7 @@ extern NSUInteger const UAInAppMessageModalMaxButtons;
  * @param builderBlock The builder block.
  * @return An extended instance of UAInAppMessageModalDisplayContent.
  */
-- (UAInAppMessageModalDisplayContent *)extend:(void(^)(UAInAppMessageModalDisplayContentBuilder *builder))builderBlock;
+- (nullable UAInAppMessageModalDisplayContent *)extend:(void(^)(UAInAppMessageModalDisplayContentBuilder *builder))builderBlock;
 
 @end
 

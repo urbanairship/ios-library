@@ -62,33 +62,45 @@ typedef NS_ENUM(NSUInteger, UAInAppMessageTextInfoAlignmentType) {
 
 /**
  * Text content.
+ *
+ * Required.
  */
-@property(nonatomic, copy) NSString *text;
+@property(nonatomic, copy, nullable) NSString *text;
 
 /**
- * Text color. Defaults to black.
+ * Text color.
+ *
+ * Optional. Defaults to black.
  */
 @property(nonatomic, strong) UIColor *color;
 
 /**
- * Text size. Defaults to 14sp.
+ * Text size.
+ *
+ * Optional. Defaults to 14sp.
  */
 @property(nonatomic, assign) NSUInteger size;
 
 /**
- * Text alignment. Defaults to UAInAppMessageTextInfoAlignmentNone.
+ * Text alignment.
+ *
+ * Optional. Defaults to UAInAppMessageTextInfoAlignmentNone.
  */
 @property(nonatomic, assign) UAInAppMessageTextInfoAlignmentType alignment;
 
 /**
  * Text styles.
+ *
+ * Optional. Defaults to no style (UAInAppMessageTextInfoStyleNormal).
  */
 @property(nonatomic, assign) UAInAppMessageTextInfoStyleType style;
 
 /**
  * Font families - first valid font name in collection is used.
+ *
+ * Optional
  */
-@property(nonatomic, copy) NSArray<NSString *> *fontFamilies;
+@property(nonatomic, copy, nullable) NSArray<NSString *> *fontFamilies;
 
 /**
  * Checks if the builder is valid and will produce a text info instance.
@@ -100,38 +112,40 @@ typedef NS_ENUM(NSUInteger, UAInAppMessageTextInfoAlignmentType) {
 
 /**
  * Defines the text that appears in an in-app message.
+ *
+ * @note This object is built using `UAInAppMessageTextInfoBuilder`.
  */
 @interface UAInAppMessageTextInfo : NSObject
 
 /**
  * Text content.
  */
-@property(nonatomic, copy, readonly, nullable) NSString *text;
+@property(nonatomic, readonly, nullable) NSString *text;
 
 /**
  * Text color. Defaults to black.
  */
-@property(nonatomic, strong, readonly, nullable) UIColor *color;
+@property(nonatomic, readonly, nullable) UIColor *color;
 
 /**
  * Text size. Defaults to 14sp.
  */
-@property(nonatomic, assign, readonly) NSUInteger size;
+@property(nonatomic, readonly) NSUInteger size;
 
 /**
- * Text alignment. Defaults to UAInAppMessageTextInfoAlignmentNone.
+ * Text alignment.
  */
-@property(nonatomic, assign, readonly) UAInAppMessageTextInfoAlignmentType alignment;
+@property(nonatomic, readonly) UAInAppMessageTextInfoAlignmentType alignment;
 
 /**
  * Text styles.
  */
-@property(nonatomic, assign, readonly) UAInAppMessageTextInfoStyleType style;
+@property(nonatomic, readonly) UAInAppMessageTextInfoStyleType style;
 
 /**
  * Font families.
  */
-@property(nonatomic, copy, readonly, nullable) NSArray<NSString *> *fontFamilies;
+@property(nonatomic, readonly, nullable) NSArray<NSString *> *fontFamilies;
 
 /**
  * Creates an in-app message text info with a builder block.
@@ -145,7 +159,7 @@ typedef NS_ENUM(NSUInteger, UAInAppMessageTextInfoAlignmentType) {
  *
  * @return An extended instance of UAInAppMessageTextInfo.
  */
-- (UAInAppMessageTextInfo *)extend:(void(^)(UAInAppMessageTextInfoBuilder *builder))builderBlock;
+- (nullable UAInAppMessageTextInfo *)extend:(void(^)(UAInAppMessageTextInfoBuilder *builder))builderBlock;
 
 @end
 

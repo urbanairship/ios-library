@@ -10,7 +10,6 @@
 NS_ASSUME_NONNULL_BEGIN
 
 // JSON keys
-NSString *const UAInAppMessageModalActionsKey = @"actions";
 NSString *const UAInAppMessageModalDisplayContentDomain = @"com.urbanairship.modal_display_content";
 
 NSString *const UAInAppMessageModalContentLayoutHeaderMediaBodyValue = @"header_media_body";
@@ -79,7 +78,7 @@ NSUInteger const UAInAppMessageModalMaxButtons = 2;
 @property(nonatomic, strong, nullable) UAInAppMessageTextInfo *body;
 @property(nonatomic, strong, nullable) UAInAppMessageMediaInfo *media;
 @property(nonatomic, strong, nullable) UAInAppMessageButtonInfo *footer;
-@property(nonatomic, copy, nullable) NSArray<UAInAppMessageButtonInfo *> *buttons;
+@property(nonatomic, strong, nullable) NSArray<UAInAppMessageButtonInfo *> *buttons;
 @property(nonatomic, assign) UAInAppMessageButtonLayoutType buttonLayout;
 @property(nonatomic, assign) UAInAppMessageModalContentLayoutType contentLayout;
 @property(nonatomic, strong) UIColor *backgroundColor;
@@ -380,7 +379,7 @@ NSUInteger const UAInAppMessageModalMaxButtons = 2;
     return [json copy];
 }
 
-- (UAInAppMessageModalDisplayContent *)extend:(void(^)(UAInAppMessageModalDisplayContentBuilder *builder))builderBlock {
+- (nullable UAInAppMessageModalDisplayContent *)extend:(void(^)(UAInAppMessageModalDisplayContentBuilder *builder))builderBlock {
     if (builderBlock) {
         UAInAppMessageModalDisplayContentBuilder *builder = [UAInAppMessageModalDisplayContentBuilder builderWithDisplayContent:self];
         builderBlock(builder);

@@ -32,17 +32,17 @@ typedef NS_ENUM(NSInteger, UAInAppMessageMediaInfoType) {
 /**
  * Media URL.
  */
-@property(nonatomic, copy, readonly) NSString *url;
+@property(nonatomic, readonly) NSString *url;
 
 /**
  * Media type - image, video or YouTube video.
  */
-@property(nonatomic, assign, readonly) UAInAppMessageMediaInfoType type;
+@property(nonatomic, readonly) UAInAppMessageMediaInfoType type;
 
 /**
  * Media description.
  */
-@property(nonatomic, copy, readonly) NSString *contentDescription;
+@property(nonatomic, readonly) NSString *contentDescription;
 
 /**
  * Creates in-app message media info with a builder block.

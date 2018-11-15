@@ -35,31 +35,43 @@ typedef NS_ENUM(NSInteger, UAInAppMessageAudienceMissBehaviorType) {
 
 /**
  * The notifications opt in flag.
+ *
+ * Optional.
  */
-@property(nonatomic, copy) NSNumber *notificationsOptIn;
+@property(nonatomic, strong, nullable) NSNumber *notificationsOptIn;
 
 /**
  * The location opt in flag.
+ *
+ * Optional.
  */
-@property(nonatomic, copy) NSNumber *locationOptIn;
+@property(nonatomic, strong, nullable) NSNumber *locationOptIn;
 
 /**
  * The language tags.
+ *
+ * Optional.
  */
-@property(nonatomic, strong, nullable) NSArray<NSString *> *languageTags;
+@property(nonatomic, copy, nullable) NSArray<NSString *> *languageTags;
 
 /**
  * The tag selector.
+ *
+ * Optional.
  */
 @property(nonatomic, strong, nullable) UAInAppMessageTagSelector *tagSelector;
 
 /**
  * The app version predicate.
+ *
+ * Optional.
  */
 @property(nonatomic, strong, nullable) UAJSONPredicate *versionPredicate;
 
 /**
  * The audience check miss behavior.
+ *
+ * Optional. Defaults to UAInAppMessageAudienceMissBehaviorPenalize.
  */
 @property(nonatomic, assign) UAInAppMessageAudienceMissBehaviorType missBehavior;
 
@@ -73,6 +85,8 @@ typedef NS_ENUM(NSInteger, UAInAppMessageAudienceMissBehaviorType) {
 
 /**
  * Model object for an in-app message audience constraint.
+ *
+ * @note This object is built using `UAInAppMessageAudienceBuilder`.
  */
 @interface UAInAppMessageAudience : NSObject
 
@@ -104,7 +118,7 @@ typedef NS_ENUM(NSInteger, UAInAppMessageAudienceMissBehaviorType) {
 /**
  * The audience check miss behavior.
  */
-@property(nonatomic, readonly, assign) UAInAppMessageAudienceMissBehaviorType missBehavior;
+@property(nonatomic, readonly) UAInAppMessageAudienceMissBehaviorType missBehavior;
 
 /**
  * Factory method for building audience model from a builder block.
@@ -112,7 +126,7 @@ typedef NS_ENUM(NSInteger, UAInAppMessageAudienceMissBehaviorType) {
  * @param builderBlock The builder block.
  * @returns `YES` if the builderBlock was able to be applied, otherwise `NO`.
  */
-+ (instancetype)audienceWithBuilderBlock:(void(^)(UAInAppMessageAudienceBuilder *builder))builderBlock;
++ (nullable instancetype)audienceWithBuilderBlock:(void(^)(UAInAppMessageAudienceBuilder *builder))builderBlock;
 
 @end
 

@@ -88,15 +88,15 @@ NSUInteger const UAInAppMessageBannerMaxButtons = 2;
 @property(nonatomic, strong, nullable) UAInAppMessageTextInfo *heading;
 @property(nonatomic, strong, nullable) UAInAppMessageTextInfo *body;
 @property(nonatomic, strong, nullable) UAInAppMessageMediaInfo *media;
-@property(nonatomic, copy, nullable) NSArray<UAInAppMessageButtonInfo *> *buttons;
+@property(nonatomic, strong, nullable) NSArray<UAInAppMessageButtonInfo *> *buttons;
 @property(nonatomic, assign) UAInAppMessageButtonLayoutType buttonLayout;
 @property(nonatomic, assign) UAInAppMessageBannerPlacementType placement;
 @property(nonatomic, assign) UAInAppMessageBannerContentLayoutType contentLayout;
 @property(nonatomic, assign) NSUInteger duration;
-@property(nonatomic, strong, nullable) UIColor *backgroundColor;
-@property(nonatomic, strong, nullable) UIColor *dismissButtonColor;
 @property(nonatomic, assign) NSUInteger borderRadius;
-@property(nonatomic, copy, nullable) NSDictionary *actions;
+@property(nonatomic, strong, nonnull) UIColor *backgroundColor;
+@property(nonatomic, strong, nonnull) UIColor *dismissButtonColor;
+@property(nonatomic, strong, nullable) NSDictionary *actions;
 @end
 
 @implementation UAInAppMessageBannerDisplayContent
@@ -370,7 +370,7 @@ NSUInteger const UAInAppMessageBannerMaxButtons = 2;
     return self;
 }
 
-- (UAInAppMessageBannerDisplayContent *)extend:(void(^)(UAInAppMessageBannerDisplayContentBuilder *builder))builderBlock {
+- (nullable UAInAppMessageBannerDisplayContent *)extend:(void(^)(UAInAppMessageBannerDisplayContentBuilder *builder))builderBlock {
     if (builderBlock) {
         UAInAppMessageBannerDisplayContentBuilder *builder = [UAInAppMessageBannerDisplayContentBuilder builderWithDisplayContent:self];
         builderBlock(builder);

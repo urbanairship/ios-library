@@ -104,7 +104,7 @@ NSString * const UAScheduleTriggerErrorDomain = @"com.urbanairship.schedule_trig
     return [UAScheduleTrigger triggerWithType:UAScheduleTriggerVersion goal:@(count) predicate:predicate];
 }
 
-+ (instancetype)triggerWithJSON:(id)json error:(NSError **)error {
++ (nullable instancetype)triggerWithJSON:(id)json error:(NSError **)error {
     if (![json isKindOfClass:[NSDictionary class]]) {
         if (error) {
             NSString *msg = [NSString stringWithFormat:@"Attempted to deserialize invalid object: %@", json];

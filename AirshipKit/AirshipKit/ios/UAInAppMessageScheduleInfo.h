@@ -22,6 +22,8 @@ extern NSString *const UAScheduleInfoInAppMessageKey;
 
 /**
  * Message to display when schedule is triggered.
+ *
+ * Required.
  */
 @property(nonatomic, strong, nullable) UAInAppMessage *message;
 
@@ -29,6 +31,8 @@ extern NSString *const UAScheduleInfoInAppMessageKey;
 
 /**
  * Defines the schedule and content for an in-app message.
+ *
+ * @note This object is built using `UAInAppMessageScheduleInfoBuilder`.
  */
 @interface UAInAppMessageScheduleInfo : UAScheduleInfo
 
@@ -41,13 +45,10 @@ extern NSString *const UAScheduleInfoInAppMessageKey;
  */
 @property(nonatomic, readonly) UAInAppMessage *message;
 
-
 /**
  * Creates an in-app message schedule info with a builder block.
- *
- * @return The in-app message schedule info.
  */
-+ (instancetype)scheduleInfoWithBuilderBlock:(void(^)(UAInAppMessageScheduleInfoBuilder *builder))builderBlock;
++ (nullable instancetype)scheduleInfoWithBuilderBlock:(void(^)(UAInAppMessageScheduleInfoBuilder *builder))builderBlock;
 
 /**
  * Return the message id from a JSON payload.

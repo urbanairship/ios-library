@@ -12,6 +12,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * The custom content.
+ *
+ * Optional.
  */
 @property (nonatomic, readonly) NSDictionary *value;
 

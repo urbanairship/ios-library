@@ -92,21 +92,27 @@ typedef NS_ENUM(NSInteger, UAScheduleDelayAppState) {
 
 /**
  * Minimum amount of time to wait in seconds before the schedule actions are able to execute.
+ *
+ * Optional.
  */
 @property(nonatomic, assign) NSTimeInterval seconds;
 
 /**
  * Specifies the names of the app screens that will trigger the schedule's actions if viewed.
  * Specifying screens requires the application to make use of UAAnalytic's screen tracking method `trackScreen:`.
+ *
+ * Optional.
  */
-@property(nonatomic, copy) NSArray *screens;
+@property(nonatomic, copy, nullable) NSArray *screens;
 
 /**
  * Specifies the ID of a region that the device must currently be in before the schedule's
  * actions are able to be executed. Specifying regions requires the application to add UARegionEvents
  * to UAAnalytics.
+ *
+ * Optional.
  */
-@property(nonatomic, copy) NSString *regionID;
+@property(nonatomic, copy, nullable) NSString *regionID;
 
 /**
  * Specifies the app state that is required before the schedule's actions are able to execute.
@@ -118,8 +124,10 @@ typedef NS_ENUM(NSInteger, UAScheduleDelayAppState) {
  * Array of cancellation triggers. Cancellation triggers define conditions on when to cancel the
  * pending execution of schedule's actions. If the delayed execution is cancelled, it will not
  * cancel the schedule or count against the schedule's limit.
+ *
+ * Optional.
  */
-@property(nonatomic, copy) NSArray<UAScheduleTrigger *> *cancellationTriggers;
+@property(nonatomic, copy, nullable) NSArray<UAScheduleTrigger *> *cancellationTriggers;
 
 @end
 
@@ -127,6 +135,8 @@ typedef NS_ENUM(NSInteger, UAScheduleDelayAppState) {
 /**
  * A delay defines an amount of time and/or app conditions that must be met before the actions
  * are able to be executed. The delay occurs after one of the triggers hits its goals.
+ *
+ * @note This object is built using `UAScheduleDelayBuilder`.
  */
 @interface UAScheduleDelay: NSObject
 
@@ -149,18 +159,17 @@ typedef NS_ENUM(NSInteger, UAScheduleDelayAppState) {
  * Specifies the names of the app screens that will trigger the schedule's actions if viewed.
  * Specifying screens requires the application to make use of UAAnalytic's screen tracking method `trackScreen:`.
  */
-@property(nonatomic, readonly) NSArray *screens;
+@property(nonatomic, nullable, readonly) NSArray *screens;
 
 /**
  * Specifies the ID of a region that the device must currently be in before the schedule's
  * actions are able to be executed. Specifying regions requires the application to add UARegionEvents
  * to UAAnalytics.
  */
-@property(nonatomic, readonly) NSString *regionID;
+@property(nonatomic, nullable, readonly) NSString *regionID;
 
 /**
  * Specifies the app state that is required before the schedule's actions are able to execute.
- * Defaults to `UAScheduleDelayAppStateAny`.
  */
 @property(nonatomic, readonly) UAScheduleDelayAppState appState;
 

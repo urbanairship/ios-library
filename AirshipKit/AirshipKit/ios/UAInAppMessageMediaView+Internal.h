@@ -18,7 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
  * window visible again when the full screen video is closed. Handles problem with full screen
  * video appearing behind modal message. Use whenever a message is creating a new UIWindow.
  *
- * Defaults to NO.
+ * Defaults to `NO`.
  */
 @property (nonatomic, assign) BOOL hideWindowWhenVideoIsFullScreen;
 

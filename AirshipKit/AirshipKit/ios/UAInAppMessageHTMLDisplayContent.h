@@ -13,28 +13,37 @@ NS_ASSUME_NONNULL_BEGIN
 @interface UAInAppMessageHTMLDisplayContentBuilder : NSObject
 
 /**
- * The message's background color. Defaults to white.
- */
-@property(nonatomic, strong, nullable) UIColor *backgroundColor;
-
-/**
- * The message's dismiss button color. Defaults to black.
- */
-@property(nonatomic, strong, nullable) UIColor *dismissButtonColor;
-
-/**
  * The message's URL.
+ *
+ * Required
  */
 @property(nonatomic, copy, nullable) NSString *url;
 
 /**
- * The HTML message's border radius. Defaults to 0.
+ * The message's background color.
+ *
+ * Optional. Defaults to white.
+ */
+@property(nonatomic, strong) UIColor *backgroundColor;
+
+/**
+ * The message's dismiss button color.
+ *
+ * Optional. Defaults to black.
+ */
+@property(nonatomic, strong) UIColor *dismissButtonColor;
+
+/**
+ * The HTML message's border radius.
+ *
+ * Optional. Defaults to 0.
  */
 @property(nonatomic, assign) NSUInteger borderRadius;
 
 /**
  * Flag indicating the HTML view should display as full screen on compact devices.
- * Defaults to NO.
+ *
+ * Optional. Defaults to `NO`.
  */
 @property(nonatomic, assign) BOOL allowFullScreenDisplay;
 
@@ -48,34 +57,35 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Display content for an HTML in-app message.
+ *
+ * @note This object is built using `UAInAppMessageHTMLDisplayContentBuilder`.
  */
 @interface UAInAppMessageHTMLDisplayContent : UAInAppMessageDisplayContent
 
 /**
  * The message's URL.
  */
-@property(nonatomic, copy, readonly) NSString *url;
+@property(nonatomic, readonly) NSString *url;
 
 /**
- * The message's background color. Defaults to white.
+ * The message's background color.
  */
-@property(nonatomic, strong, readonly) UIColor *backgroundColor;
+@property(nonatomic, readonly) UIColor *backgroundColor;
 
 /**
- * The message's dismiss button color. Defaults to black.
+ * The message's dismiss button color.
  */
-@property(nonatomic, strong, readonly) UIColor *dismissButtonColor;
+@property(nonatomic, readonly) UIColor *dismissButtonColor;
 
 /**
- * The HTML message's border radius. Defaults to 0.
+ * The HTML message's border radius.
  */
-@property(nonatomic, assign, readonly) NSUInteger borderRadius;
+@property(nonatomic, readonly) NSUInteger borderRadius;
 
 /**
  * Flag indicating the HTML view should display as full screen on compact devices.
- * Defaults to NO.
  */
-@property(nonatomic, assign, readonly) BOOL allowFullScreenDisplay;
+@property(nonatomic, readonly) BOOL allowFullScreenDisplay;
 
 /**
  * Factory method for building HTML display content with a builder block.
@@ -91,7 +101,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param builderBlock The builder block.
  * @return An extended instance of UAInAppMessageHTMLDisplayContent.
  */
-- (UAInAppMessageHTMLDisplayContent *)extend:(void(^)(UAInAppMessageHTMLDisplayContentBuilder *builder))builderBlock;
+- (nullable UAInAppMessageHTMLDisplayContent *)extend:(void(^)(UAInAppMessageHTMLDisplayContentBuilder *builder))builderBlock;
 
 @end
 

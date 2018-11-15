@@ -60,7 +60,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Flag indicating the resizable view should display as full screen on compact devices.
- * Defaults to NO.
+ * Defaults to `NO`.
  */
 @property(nonatomic, assign) BOOL allowFullScreenDisplay;
 
