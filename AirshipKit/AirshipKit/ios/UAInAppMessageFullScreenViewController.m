@@ -493,11 +493,6 @@ NSString *const UAInAppMessageFullScreenViewNibName = @"UAInAppMessageFullScreen
 }
 
 - (void)dismissWithResolution:(UAInAppMessageResolution *)resolution  {
-    if (self.showCompletionHandler) {
-        self.showCompletionHandler(resolution);
-        self.showCompletionHandler = nil;
-    }
-
     [[UADispatcher mainDispatcher] dispatchAsync:^{
         self.verticalConstraint.constant = self.view.bounds.size.height;
 
@@ -508,6 +503,11 @@ NSString *const UAInAppMessageFullScreenViewNibName = @"UAInAppMessageFullScreen
             self.isShowing = NO;
             [self.view removeFromSuperview];
             self.fullScreenWindow = nil;
+
+            if (self.showCompletionHandler) {
+                self.showCompletionHandler(resolution);
+                self.showCompletionHandler = nil;
+            }
         }];
     }];
 }

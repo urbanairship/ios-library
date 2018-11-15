@@ -199,16 +199,16 @@ CGFloat const BannerExcessiveSafeAreaPadding = 14;
 }
 
 - (void)dismissWithResolution:(UAInAppMessageResolution *)resolution  {
-    if (self.showCompletionHandler) {
-        self.showCompletionHandler(resolution);
-        self.showCompletionHandler = nil;
-    }
-
     [self beginTeardown];
 
     [[UADispatcher mainDispatcher] dispatchAsync:^{
         [self bannerView:self.bannerView animateOutWithParentView:self.bannerView.superview completionHandler:^{
             [self finishTeardown];
+
+            if (self.showCompletionHandler) {
+                self.showCompletionHandler(resolution);
+                self.showCompletionHandler = nil;
+            }            
         }];
     }];
 }
