@@ -24,6 +24,7 @@
         self.productionLogLevel = UALogLevelError;
         self.inProduction = NO;
         self.detectProvisioningMode = NO;
+        self.requestAuthorizationToUseNotifications = YES;
         self.automaticSetupEnabled = YES;
         self.analyticsEnabled = YES;
         self.profilePath = [[NSBundle mainBundle] pathForResource:@"embedded" ofType:@"mobileprovision"];
@@ -63,6 +64,7 @@
 
         _inProduction = config.inProduction;
         _detectProvisioningMode = config.detectProvisioningMode;
+        _requestAuthorizationToUseNotifications = config.requestAuthorizationToUseNotifications;
 
         _automaticSetupEnabled = config.automaticSetupEnabled;
         _analyticsEnabled = config.analyticsEnabled;
@@ -96,6 +98,7 @@
             "Production Log Level: %ld\n"
             "Resolved Log Level: %ld\n"
             "Detect Provisioning Mode: %d\n"
+            "Request Authorization To Use Notifications: %@\n"
             "Analytics Enabled: %d\n"
             "Analytics URL: %@\n"
             "Device API URL: %@\n"
@@ -124,6 +127,7 @@
             (long)self.productionLogLevel,
             (long)self.logLevel,
             self.detectProvisioningMode,
+            self.requestAuthorizationToUseNotifications ? @"YES" : @"NO",
             self.analyticsEnabled,
             self.analyticsURL,
             self.deviceAPIURL,

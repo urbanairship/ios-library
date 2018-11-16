@@ -183,6 +183,15 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, copy) NSDictionary *customConfig;
 
+/**
+ * If set to 'YES', the UA SDK will request authorization to use
+ * notifications from the user. Apps that set this flag to `NO` are
+ * required to request authorization themselves.
+ *
+ * Defaults to `YES`.
+ */
+@property (nonatomic, assign) BOOL requestAuthorizationToUseNotifications;
+
 ///---------------------------------------------------------------------------------------
 /// @name Resolved Options
 ///---------------------------------------------------------------------------------------

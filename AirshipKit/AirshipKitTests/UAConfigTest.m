@@ -335,6 +335,7 @@
     XCTAssertTrue(copy.defaultDetectProvisioningMode == config.defaultDetectProvisioningMode);
     XCTAssertTrue(copy.messageCenterStyleConfig == config.messageCenterStyleConfig);
     XCTAssertTrue(copy.itunesID == config.itunesID);
+    XCTAssertTrue(copy.requestAuthorizationToUseNotifications == config.requestAuthorizationToUseNotifications);
 }
 
 - (void) testInitialConfig {
@@ -358,6 +359,7 @@
     XCTAssertEqual(config.customConfig.count, 0);
     XCTAssertFalse(config.channelCreationDelayEnabled);
     XCTAssertTrue(config.defaultDetectProvisioningMode);
+    XCTAssertTrue(config.requestAuthorizationToUseNotifications);
 }
 
 @end

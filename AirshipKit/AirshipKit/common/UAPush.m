@@ -74,6 +74,8 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
 @property (nonatomic, strong) UARegistrationDelegateWrapper *registrationDelegateWrapper;
 @property (nonatomic, readonly) BOOL isRegisteredForRemoteNotifications;
 @property (nonatomic, readonly) BOOL isBackgroundRefreshStatusAvailable;
+@property (nonatomic, strong) UAConfig *config;
+
 @end
 
 @implementation UAPush
@@ -88,6 +90,7 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
 
     self = [super initWithDataStore:dataStore];
     if (self) {
+        self.config = config;
         self.application = application;
         self.dispatcher = dispatcher;
         self.dataStore = dataStore;
@@ -100,6 +103,8 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
         self.channelTagRegistrationEnabled = YES;
         self.requireAuthorizationForDefaultCategories = YES;
         self.backgroundPushNotificationsEnabledByDefault = YES;
+
+        self.isForegrounded = [UIApplication sharedApplication].applicationState == UIApplicationStateActive;
 
         self.notificationOptions = UANotificationOptionBadge;
 #if !TARGET_OS_TV
@@ -118,12 +123,6 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
             UA_LDEBUG(@"Channel creation disabled.");
             self.channelCreationEnabled = NO;
         }
-
-        // For observing each foreground entry
-        [self.notificationCenter addObserver:self
-                                    selector:@selector(enterForeground)
-                                        name:UIApplicationWillEnterForegroundNotification
-                                      object:nil];
 
         // Only for observing the first call to app foreground
         [self.notificationCenter addObserver:self
@@ -194,7 +193,6 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
                              dispatcher:dispatcher];
 }
 
-
 - (void)updateAuthorizedNotificationTypes {
     [self.pushRegistration getAuthorizedSettingsWithCompletionHandler:^(UAAuthorizedNotificationSettings authorizedSettings, UAAuthorizationStatus status) {
         if (self.userPromptedForNotifications || authorizedSettings != UAAuthorizedNotificationSettingsNone) {
@@ -203,6 +201,13 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
         }
 
         self.authorizationStatus = status;
+
+        if (!self.config.requestAuthorizationToUseNotifications) {
+            // if app is managing notification authorization update channel
+            // registration in case notification authorization has changed
+            [self updateChannelRegistrationForcefully:NO];
+        }
+
     }];
 }
 
@@ -566,7 +571,17 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
 #pragma mark -
 #pragma mark UIApplication State Observation
 
-- (void)enterForeground {
+- (void)applicationDidBecomeActive {
+    if (self.isForegrounded && self.config.requestAuthorizationToUseNotifications) {
+        // if the app is already in the foreground and the SDK is
+        // managing notification authorization, nothing needs to be done.
+        return;
+    }
+
+    // the app just moved into the foreground or the app is managing
+    // notification authorization
+    self.isForegrounded = YES;
+
     [self updateAuthorizedNotificationTypes];
 
     if ([self.dataStore boolForKey:UAPushChannelCreationOnForeground]) {
@@ -575,12 +590,9 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
     }
 }
 
-- (void)applicationDidBecomeActive {
-    [self enterForeground];
-    [self.notificationCenter removeObserver:self name:UIApplicationDidBecomeActiveNotification object:nil];
-}
-
 - (void)applicationDidEnterBackground {
+    self.isForegrounded = NO;
+    
     self.launchNotificationResponse = nil;
 
     // Set the UAPushChannelCreationOnForeground after first run
@@ -588,9 +600,11 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
 
     // Create a channel if we do not have a channel ID
     if (!self.channelID) {
+        UA_LTRACE(@"Application entered the background without a channelID. Updating registration.");
         [self updateChannelRegistrationForcefully:NO];
     }
 
+    UA_LTRACE(@"Application entered the background. Updating authorization.");
     [self updateAuthorizedNotificationTypes];
 }
 
@@ -771,6 +785,14 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
     }
 
     [self.pushRegistration getAuthorizedSettingsWithCompletionHandler:^(UAAuthorizedNotificationSettings authorizedSettings, UAAuthorizationStatus status) {
+        if (!self.config.requestAuthorizationToUseNotifications) {
+            // The app is handling notification authorization
+            if (completionHandler) {
+                completionHandler(YES);
+            }
+            [self notificationRegistrationFinishedWithAuthorizedSettings:authorizedSettings status:status];
+            return;
+        }
         if (authorizedSettings == UAAuthorizedNotificationSettingsNone && options == UANotificationOptionNone) {
             if (completionHandler) {
                 completionHandler(NO);

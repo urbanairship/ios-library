@@ -131,7 +131,7 @@ static const UANotificationOptions UANotificationOptionNone =  0;
  * @param status The authorization status.
  */
 - (void)notificationRegistrationFinishedWithAuthorizedSettings:(UAAuthorizedNotificationSettings)authorizedSettings
-                                                    categories:(NSSet *)categories
+                                                    categories:(NSSet<UANotificationCategory *> *)categories
                                                         status:(UAAuthorizationStatus)status;
 
 /**
@@ -141,7 +141,7 @@ static const UANotificationOptions UANotificationOptionNone =  0;
  * @param categories NSSet of the categories that were most recently registered.
  */
 - (void)notificationRegistrationFinishedWithAuthorizedSettings:(UAAuthorizedNotificationSettings)authorizedSettings
-                                                    categories:(NSSet *)categories;
+                                                    categories:(NSSet<UANotificationCategory *> *)categories;
 
 /**
  * Called when notification authentication changes with the new authorized settings.

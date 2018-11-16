@@ -156,6 +156,11 @@ extern NSString *const UAPushEnabledKey;
  */
 @property (nonatomic, strong) id<UAAPNSRegistrationProtocol> pushRegistration;
 
+/**
+ * Flag indicating app is running in the foreground
+ */
+@property (nonatomic, assign) BOOL isForegrounded;
+
 ///---------------------------------------------------------------------------------------
 /// @name Push Internal Methods
 ///---------------------------------------------------------------------------------------

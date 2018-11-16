@@ -22,7 +22,7 @@
 
 - (void)notificationRegistrationFinishedWithAuthorizedSettings:(UAAuthorizedNotificationSettings)authorizedSettings
                                                  legacyOptions:(UANotificationOptions)legacyOptions
-                                                    categories:(NSSet *)categories
+                                                    categories:(NSSet<UANotificationCategory *> *)categories
                                                         status:(UAAuthorizationStatus)status {
 
     id strongDelegate = self.delegate;
