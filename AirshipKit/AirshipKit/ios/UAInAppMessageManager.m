@@ -29,6 +29,7 @@
 #import "UARetriablePipeline+Internal.h"
 #import "UAInAppMessageTagSelector+Internal.h"
 #import "UAInAppMessageDefaultDisplayCoordinator.h"
+#import "NSObject+AnonymousKVO+Internal.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -406,12 +407,15 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
 
     UAInAppMessageScheduleInfo *info = (UAInAppMessageScheduleInfo *)schedule.info;
     UAInAppMessage *message = info.message;
-    id<UAInAppMessageDisplayCoordinator> displayCoordinator = [self displayCoordinatorForMessage:message];
+    NSObject<UAInAppMessageDisplayCoordinator> *displayCoordinator = (NSObject<UAInAppMessageDisplayCoordinator>*)[self displayCoordinatorForMessage:message];
 
-    // If display coordinator puts back pressure on display
+    // If display coordinator puts back pressure on display, check again when it's ready
     if (![displayCoordinator shouldDisplayMessage:message]) {
-        [displayCoordinator whenNextAvailable:^{
-            [self.automationEngine scheduleConditionsChanged];
+        __block UADisposable *disposable = [displayCoordinator observeAtKeyPath:@"isReady" withBlock:^(id value) {
+            if ([value boolValue]) {
+                [self.automationEngine scheduleConditionsChanged];
+                [disposable dispose];
+            }
         }];
 
         return NO;
@@ -470,14 +474,12 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
     UAActiveTimer *timer = [[UAActiveTimer alloc] init];
     [timer start];
 
-    // Inform coordinator that display is beginning, and obtain a continuation to call when display has finished
-    UAInAppMessageDisplayCoordinatorBlock coordinatorBlock = [displayCoordinator didBeginDisplayingMessage:message];
+    // Notify the coordinator that message display has begin
+    [displayCoordinator didBeginDisplayingMessage:message];
 
+    // After display has finished, notify the coordinator as well
     completionHandler = ^{
-        if (coordinatorBlock) {
-            coordinatorBlock();
-        }
-
+        [displayCoordinator didFinishDisplayingMessage:message];
         completionHandler();
     };
 

@@ -1,6 +1,5 @@
 /* Copyright 2018 Urban Airship and Contributors */
 
-#import "NSObject+AnonymousKVO.h"
 #import <Foundation/Foundation.h>
 #import "UADisposable.h"
 

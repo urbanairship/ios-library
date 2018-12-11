@@ -12,6 +12,11 @@ NS_ASSUME_NONNULL_BEGIN
 @interface UAInAppMessageDefaultDisplayCoordinator : NSObject <UAInAppMessageDisplayCoordinator>
 
 /**
+ * Indicates whether message display is ready.
+ */
+@property (nonatomic, readonly) BOOL isReady;
+
+/**
  * The allowed time interval between message displays. Defaults to 30 seconds.
  */
 @property (nonatomic, assign) NSTimeInterval displayInterval;

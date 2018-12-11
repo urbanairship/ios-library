@@ -4,16 +4,18 @@
 #import "UAInAppMessage.h"
 
 /**
- * A continuation block used to coordinate the display of in-app messages with the in-app message manager.
- */
-typedef void (^UAInAppMessageDisplayCoordinatorBlock)(void);
-
-/**
  * Protocol for coordinating the display of in-app messages with the in-app message manager. Useful for
  * putting time or count-based back pressure on message display, or for overriding the default coordination behavior for
  * particular message types.
  */
 @protocol UAInAppMessageDisplayCoordinator
+
+/**
+ * Indicates whether message display is ready.
+ *
+ * @note This property must be KVO compliant.
+ */
+@property (nonatomic, readonly) BOOL isReady;
 
 /**
  * Indicates whether a message should be displayed.
@@ -24,18 +26,17 @@ typedef void (^UAInAppMessageDisplayCoordinatorBlock)(void);
 - (BOOL)shouldDisplayMessage:(UAInAppMessage *)message;
 
 /**
- * Requests that the coordinator notify as soon as display is available.
- *
- * @param block A UAInAppMessageDisplayCoordinatorBlock which should be called upon availability.
- */
-- (void)whenNextAvailable:(UAInAppMessageDisplayCoordinatorBlock)block;
-
-/**
  * Notifies the coordinator that message display has begun.
  *
  * @param message The message.
- * @return A UAInAppMessageDisplayCoordinatorBlock to be called when message display has finished.
  */
-- (UAInAppMessageDisplayCoordinatorBlock)didBeginDisplayingMessage:(UAInAppMessage *)message;
+- (void)didBeginDisplayingMessage:(UAInAppMessage *)message;
+
+/**
+ * Notifies the coordinator that message display has finished.
+ *
+ * @param message The message.
+ */
+- (void)didFinishDisplayingMessage:(UAInAppMessage *)message;
 
 @end

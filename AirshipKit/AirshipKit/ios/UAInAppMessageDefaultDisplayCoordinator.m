@@ -6,9 +6,8 @@
 #define kUAInAppMessageDefaultDisplayInterval 30
 
 @interface UAInAppMessageDefaultDisplayCoordinator ()
-@property (nonatomic, assign) BOOL isDisplayLocked;
+@property (nonatomic, assign) BOOL isReady;
 @property (nonatomic, strong) UADispatcher *dispatcher;
-@property (nonatomic, strong) NSMutableArray<UAInAppMessageDisplayCoordinatorBlock> *blocks;
 @end
 
 @implementation UAInAppMessageDefaultDisplayCoordinator
@@ -19,7 +18,7 @@
     if (self) {
         self.displayInterval = kUAInAppMessageDefaultDisplayInterval;
         self.dispatcher = dispatcher;
-        self.blocks = [NSMutableArray array];
+        self.isReady = YES;
     }
 
     return self;
@@ -31,7 +30,7 @@
     if (self) {
         self.displayInterval = kUAInAppMessageDefaultDisplayInterval;
         self.dispatcher = [UADispatcher mainDispatcher];
-        self.blocks = [NSMutableArray array];
+        self.isReady = YES;
     }
 
     return self;
@@ -45,45 +44,24 @@
     return [[self alloc] initWithDispatcher:dispatcher];
 }
 
-- (UAInAppMessageDisplayCoordinatorBlock)didBeginDisplayingMessage:(UAInAppMessage *)message {
+- (void)didBeginDisplayingMessage:(UAInAppMessage *)message {
     [self lockDisplay];
-
-    return ^{
-        [self unlockDisplayAfter:self.displayInterval];
-    };
 }
 
-- (void)whenNextAvailable:(UAInAppMessageDisplayCoordinatorBlock)block {
-    if (block) {
-        [self.blocks addObject:block];
-
-        if (!self.isDisplayLocked) {
-            [self notifyAvailability];
-        }
-    }
-}
-
-- (void)notifyAvailability {
-    UAInAppMessageDisplayCoordinatorBlock block = [self.blocks firstObject];
-
-    if (block) {
-        [self.blocks removeObjectAtIndex:0];
-
-        block();
-    }
+- (void)didFinishDisplayingMessage:(UAInAppMessage *)message {
+    [self unlockDisplayAfter:self.displayInterval];
 }
 
 - (void)unlockDisplayAfter:(NSTimeInterval)interval {
     UA_WEAKIFY(self)
     [self.dispatcher dispatchAfter:interval block:^{
         UA_STRONGIFY(self)
-        self.isDisplayLocked = NO;
-        [self notifyAvailability];
+        self.isReady = YES;
     }];
 }
 
 - (void)lockDisplay {
-    self.isDisplayLocked = YES;
+    self.isReady = NO;
 }
 
 - (BOOL)shouldDisplayMessage:(UAInAppMessage *)message {
@@ -94,7 +72,7 @@
      }
 
     // Require a free display lock
-    if (self.isDisplayLocked) {
+    if (!self.isReady) {
         return NO;
     }
 

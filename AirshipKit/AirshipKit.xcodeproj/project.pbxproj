@@ -22,6 +22,8 @@
 		3C54A7DA20B4C8D50026887C /* NSURLResponse+UAAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C54A7D520B4C8D50026887C /* NSURLResponse+UAAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3C54A7DB20B4C8D50026887C /* NSURLResponse+UAAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C54A7D520B4C8D50026887C /* NSURLResponse+UAAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3C5649CF2127746C007E82D2 /* UAInAppMessagingRemoteConfigTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C5649CB2127746C007E82D2 /* UAInAppMessagingRemoteConfigTest.m */; };
+		3C5D1B2121C079D5007025C9 /* NSObject+AnonymousKVO+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C5D1B1F21C079D4007025C9 /* NSObject+AnonymousKVO+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		3C5D1B2221C079D5007025C9 /* NSObject+AnonymousKVO.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C5D1B2021C079D5007025C9 /* NSObject+AnonymousKVO.m */; };
 		3C67E11C21264221006031EB /* UAInAppMessagingRemoteConfig+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C67E11A21264221006031EB /* UAInAppMessagingRemoteConfig+Internal.h */; };
 		3C67E11E21264221006031EB /* UAInAppMessagingRemoteConfig+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C67E11A21264221006031EB /* UAInAppMessagingRemoteConfig+Internal.h */; };
 		3C67E11F21264221006031EB /* UAInAppMessagingRemoteConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C67E11B21264221006031EB /* UAInAppMessagingRemoteConfig.m */; };
@@ -1116,7 +1118,6 @@
 		CC64F0CE1D8B781C009CEF27 /* CustomNotificationCategories.plist in Resources */ = {isa = PBXBuildFile; fileRef = CC64F0611D8B781C009CEF27 /* CustomNotificationCategories.plist */; };
 		CC64F0D01D8B781C009CEF27 /* Invalid-UAMessageCenterDefaultStyle.plist in Resources */ = {isa = PBXBuildFile; fileRef = CC64F0631D8B781C009CEF27 /* Invalid-UAMessageCenterDefaultStyle.plist */; };
 		CC64F0D21D8B781C009CEF27 /* NSJSONSerialization_UAAdditionsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F0651D8B781C009CEF27 /* NSJSONSerialization_UAAdditionsTests.m */; };
-		CC64F0D31D8B781C009CEF27 /* NSObject+AnonymousKVO.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F0671D8B781C009CEF27 /* NSObject+AnonymousKVO.m */; };
 		CC64F0D41D8B781C009CEF27 /* NSObject+HideClass.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F0691D8B781C009CEF27 /* NSObject+HideClass.m */; };
 		CC64F0D51D8B781C009CEF27 /* NSString_UALocalizationAdditionsTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F06A1D8B781C009CEF27 /* NSString_UALocalizationAdditionsTest.m */; };
 		CC64F0D71D8B781C009CEF27 /* UAAccountEventTemplateTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F06C1D8B781C009CEF27 /* UAAccountEventTemplateTest.m */; };
@@ -1650,6 +1651,8 @@
 		3C54A7D420B4C8D50026887C /* NSURLResponse+UAAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSURLResponse+UAAdditions.m"; path = "common/NSURLResponse+UAAdditions.m"; sourceTree = "<group>"; };
 		3C54A7D520B4C8D50026887C /* NSURLResponse+UAAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSURLResponse+UAAdditions.h"; path = "common/NSURLResponse+UAAdditions.h"; sourceTree = "<group>"; };
 		3C5649CB2127746C007E82D2 /* UAInAppMessagingRemoteConfigTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessagingRemoteConfigTest.m; sourceTree = "<group>"; };
+		3C5D1B1F21C079D4007025C9 /* NSObject+AnonymousKVO+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSObject+AnonymousKVO+Internal.h"; path = "common/NSObject+AnonymousKVO+Internal.h"; sourceTree = "<group>"; };
+		3C5D1B2021C079D5007025C9 /* NSObject+AnonymousKVO.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSObject+AnonymousKVO.m"; path = "common/NSObject+AnonymousKVO.m"; sourceTree = "<group>"; };
 		3C67E11A21264221006031EB /* UAInAppMessagingRemoteConfig+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "UAInAppMessagingRemoteConfig+Internal.h"; path = "ios/UAInAppMessagingRemoteConfig+Internal.h"; sourceTree = "<group>"; };
 		3C67E11B21264221006031EB /* UAInAppMessagingRemoteConfig.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = UAInAppMessagingRemoteConfig.m; path = ios/UAInAppMessagingRemoteConfig.m; sourceTree = "<group>"; };
 		3C67E12221266018006031EB /* UARemoteConfig+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "UARemoteConfig+Internal.h"; path = "common/UARemoteConfig+Internal.h"; sourceTree = "<group>"; };
@@ -2180,8 +2183,6 @@
 		CC64F0621D8B781C009CEF27 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = ../Info.plist; sourceTree = "<group>"; };
 		CC64F0631D8B781C009CEF27 /* Invalid-UAMessageCenterDefaultStyle.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "Invalid-UAMessageCenterDefaultStyle.plist"; path = "../Invalid-UAMessageCenterDefaultStyle.plist"; sourceTree = "<group>"; };
 		CC64F0651D8B781C009CEF27 /* NSJSONSerialization_UAAdditionsTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSJSONSerialization_UAAdditionsTests.m; sourceTree = "<group>"; };
-		CC64F0661D8B781C009CEF27 /* NSObject+AnonymousKVO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+AnonymousKVO.h"; sourceTree = "<group>"; };
-		CC64F0671D8B781C009CEF27 /* NSObject+AnonymousKVO.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+AnonymousKVO.m"; sourceTree = "<group>"; };
 		CC64F0681D8B781C009CEF27 /* NSObject+HideClass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+HideClass.h"; sourceTree = "<group>"; };
 		CC64F0691D8B781C009CEF27 /* NSObject+HideClass.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+HideClass.m"; sourceTree = "<group>"; };
 		CC64F06A1D8B781C009CEF27 /* NSString_UALocalizationAdditionsTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSString_UALocalizationAdditionsTest.m; sourceTree = "<group>"; };
@@ -2809,8 +2810,6 @@
 				6E4A00781F2A4A4A0069D8A0 /* UABaseTest.m */,
 				CC64F0681D8B781C009CEF27 /* NSObject+HideClass.h */,
 				CC64F0691D8B781C009CEF27 /* NSObject+HideClass.m */,
-				CC64F0661D8B781C009CEF27 /* NSObject+AnonymousKVO.h */,
-				CC64F0671D8B781C009CEF27 /* NSObject+AnonymousKVO.m */,
 				CC40D87D1D8C719F00BABD4F /* JRSwizzle.h */,
 				CC40D87E1D8C719F00BABD4F /* JRSwizzle.m */,
 				6E5D60CB212DE3CC00C32E3F /* UATestDispatcher.h */,
@@ -3506,6 +3505,8 @@
 		CC40DDE71D91D8E600BABD4F /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				3C5D1B1F21C079D4007025C9 /* NSObject+AnonymousKVO+Internal.h */,
+				3C5D1B2021C079D5007025C9 /* NSObject+AnonymousKVO.m */,
 				452FFF9D2187C45D0086BD29 /* UASystemVersion.m */,
 				452FFF9E2187C45D0086BD29 /* UASystemVersion+Internal.h */,
 				3C54A7D520B4C8D50026887C /* NSURLResponse+UAAdditions.h */,
@@ -4174,6 +4175,7 @@
 				CC40DCFD1D8C996A00BABD4F /* UAProximityRegion.h in Headers */,
 				6E598D361FFC4FB4005B234B /* UAActionScheduleEdits.h in Headers */,
 				DFD442A71FD77308002E4FA1 /* UAInAppMessageAudience+Internal.h in Headers */,
+				3C5D1B2121C079D5007025C9 /* NSObject+AnonymousKVO+Internal.h in Headers */,
 				CC40DC971D8C996A00BABD4F /* UALegacyInAppMessage.h in Headers */,
 				DFA1815E1E688EBB00446942 /* UABaseNativeBridge.h in Headers */,
 				99978EE41EBA77AD000F4AF7 /* UAWalletAction.h in Headers */,
@@ -5278,6 +5280,7 @@
 				45DCD82F2086AA7000BCF10F /* UAInAppMessageTextStyle.m in Sources */,
 				CC40DCC11D8C996A00BABD4F /* UAirship.m in Sources */,
 				CC40DCF91D8C996A00BABD4F /* UAPasteboardAction.m in Sources */,
+				3C5D1B2221C079D5007025C9 /* NSObject+AnonymousKVO.m in Sources */,
 				DFD442AD1FD77BA5002E4FA1 /* UAInAppMessageTagSelector.m in Sources */,
 				DFB5F12C1FC4EAC90085F784 /* UAComponentDisabler.m in Sources */,
 				45DCD81B2086A6B500BCF10F /* UAInAppMessageModalStyle.m in Sources */,
@@ -5475,7 +5478,6 @@
 				CC64F0F31D8B781C009CEF27 /* UAColorUtilsTest.m in Sources */,
 				CC64F1241D8B781C009CEF27 /* UATagActionsTest.m in Sources */,
 				CC64F1001D8B781C009CEF27 /* UALegacyInAppMessagingTest.m in Sources */,
-				CC64F0D31D8B781C009CEF27 /* NSObject+AnonymousKVO.m in Sources */,
 				DF702D811FABA38400E7A3DC /* UAVersionMatcherTests.m in Sources */,
 				CC64F1181D8B781C009CEF27 /* UAOpenExternalURLActionTest.m in Sources */,
 				CC64F0E01D8B781C009CEF27 /* UAActionTest.m in Sources */,

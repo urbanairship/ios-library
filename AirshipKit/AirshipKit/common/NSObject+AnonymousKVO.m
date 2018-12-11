@@ -1,6 +1,6 @@
 /* Copyright 2018 Urban Airship and Contributors */
 
-#import "NSObject+AnonymousKVO.h"
+#import "NSObject+AnonymousKVO+Internal.h"
 #import "UAGlobal.h"
 #import <objc/runtime.h>
 
@@ -43,7 +43,7 @@
 - (UADisposable *)observeAtKeyPath:(NSString *)keyPath withBlock:(UAAnonymousKVOBlock)block {
 
     if (!block) {
-        UA_LINFO(@"KVO block must be non-null");
+        UA_LINFO(@"KVO block must be non-nil");
         return nil;
     }
 
