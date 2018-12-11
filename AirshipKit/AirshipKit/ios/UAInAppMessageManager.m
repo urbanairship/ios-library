@@ -28,10 +28,10 @@
 #import "UARetriable+Internal.h"
 #import "UARetriablePipeline+Internal.h"
 #import "UAInAppMessageTagSelector+Internal.h"
+#import "UAInAppMessageDefaultDisplayCoordinator.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-NSTimeInterval const DefaultMessageDisplayInterval = 30;
 NSTimeInterval const MaxSchedules = 200;
 NSTimeInterval const MessagePrepareRetryDelay = 30;
 
@@ -69,7 +69,6 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
 
 @interface UAInAppMessageManager ()
 
-@property(nonatomic, assign) BOOL isDisplayLocked;
 @property(nonatomic, strong) NSMutableDictionary *adapterFactories;
 @property(nonatomic, strong) UAAutomationEngine *automationEngine;
 @property(nonatomic, strong) NSMutableDictionary *adapters;
@@ -80,6 +79,7 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
 @property(nonatomic, strong) UATagGroupsLookupManager *tagGroupsLookupManager;
 @property(nonatomic, strong) UADispatcher *dispatcher;
 @property(nonatomic, strong) UARetriablePipeline *prepareSchedulePipeline;
+@property(nonatomic, strong) UAInAppMessageDefaultDisplayCoordinator *defaultDisplayCoordinator;
 
 @end
 
@@ -143,10 +143,10 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
         self.automationEngine.delegate = self;
         self.tagGroupsLookupManager = tagGroupsLookupManager;
         self.tagGroupsLookupManager.delegate = self;
-        self.displayInterval = DefaultMessageDisplayInterval;
         self.remoteDataClient = [UAInAppRemoteDataClient clientWithScheduler:self remoteDataManager:remoteDataManager dataStore:dataStore push:push];
         self.dispatcher = dispatcher;
         self.prepareSchedulePipeline = [UARetriablePipeline pipeline];
+        self.defaultDisplayCoordinator = [[UAInAppMessageDefaultDisplayCoordinator alloc] init];
 
         [self setDefaultAdapterFactories];
 
@@ -155,6 +155,10 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
     }
 
     return self;
+}
+
+- (void)setDisplayInterval:(NSTimeInterval)displayInterval {
+    self.defaultDisplayCoordinator.displayInterval = displayInterval;
 }
 
 // Sets the default adapter factories
@@ -223,19 +227,6 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
     } else {
         [self.adapterFactories removeObjectForKey:@(displayType)];
     }
-}
-
-- (void)unlockDisplayAfter:(NSTimeInterval)interval {
-    UA_WEAKIFY(self)
-    [self.dispatcher dispatchAfter:interval block:^{
-        UA_STRONGIFY(self)
-        self.isDisplayLocked = NO;
-        [self.automationEngine scheduleConditionsChanged];
-    }];
-}
-
-- (void)lockDisplay {
-    self.isDisplayLocked = YES;
 }
 
 - (nullable id<UAInAppMessageAdapterProtocol>)createAdapterForMessage:(UAInAppMessage *)message scheduleID:(NSString *)scheduleID {
@@ -399,18 +390,30 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
     [self prepareMessage:message scheduleID:schedule.identifier completionHandler:completionHandler];
 }
 
+- (id<UAInAppMessageDisplayCoordinator>)displayCoordinatorForMessage:(UAInAppMessage *)message {
+    id<UAInAppMessageDisplayCoordinator> displayCoordinator;
+    if ([self.delegate respondsToSelector:@selector(displayCoordinatorForMessage:)]) {
+        displayCoordinator = [self.delegate displayCoordinatorForMessage:message];
+    }
+
+    displayCoordinator = displayCoordinator ? : self.defaultDisplayCoordinator;
+
+    return displayCoordinator;
+}
+
 - (BOOL)isScheduleReadyToExecute:(UASchedule *)schedule {
     UA_LTRACE(@"Checking if schedule %@ is ready to execute.", schedule.identifier);
 
-    // Require an active application
-    if ([[UIApplication sharedApplication] applicationState] != UIApplicationStateActive) {
-        UA_LTRACE(@"Application is not active. Schedule: %@ not ready", schedule.identifier);
-        return NO;
-    }
+    UAInAppMessageScheduleInfo *info = (UAInAppMessageScheduleInfo *)schedule.info;
+    UAInAppMessage *message = info.message;
+    id<UAInAppMessageDisplayCoordinator> displayCoordinator = [self displayCoordinatorForMessage:message];
 
-    // If the display is locked via timer or manager
-    if (self.isDisplayLocked) {
-        UA_LTRACE(@"Display is locked. Schedule: %@ not ready.", schedule.identifier);
+    // If display coordinator puts back pressure on display
+    if (![displayCoordinator shouldDisplayMessage:message]) {
+        [displayCoordinator whenNextAvailable:^{
+            [self.automationEngine scheduleConditionsChanged];
+        }];
+
         return NO;
     }
 
@@ -451,9 +454,7 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
     }
 
     id<UAInAppMessageAdapterProtocol> adapter = scheduleData.adapter;
-
-    // Lock Display
-    [self lockDisplay];
+    id<UAInAppMessageDisplayCoordinator> displayCoordinator = [self displayCoordinatorForMessage:message];
 
     // Notify delegate that the message is about to be displayed
     id<UAInAppMessagingDelegate> delegate = self.delegate;
@@ -468,6 +469,17 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
     // Display time timer
     UAActiveTimer *timer = [[UAActiveTimer alloc] init];
     [timer start];
+
+    // Inform coordinator that display is beginning, and obtain a continuation to call when display has finished
+    UAInAppMessageDisplayCoordinatorBlock coordinatorBlock = [displayCoordinator didBeginDisplayingMessage:message];
+
+    completionHandler = ^{
+        if (coordinatorBlock) {
+            coordinatorBlock();
+        }
+
+        completionHandler();
+    };
 
     UA_WEAKIFY(self);
     [adapter display:^(UAInAppMessageResolution *resolution) {
@@ -495,8 +507,6 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
                                      }];
         }
 
-        // Start timer to unlock display after display interval
-        [self unlockDisplayAfter:self.displayInterval];
         [self.scheduleData removeObjectForKey:schedule.identifier];
 
         // Notify delegate that the message has finished displaying
