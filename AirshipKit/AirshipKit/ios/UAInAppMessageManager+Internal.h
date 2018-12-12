@@ -12,6 +12,7 @@
 #import "UAPush+Internal.h"
 #import "UATagGroupsLookupManager+Internal.h"
 #import "UATagGroupsMutationHistory+Internal.h"
+#import "UAInAppMessageDefaultDisplayCoordinator+Internal.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -37,7 +38,8 @@ NS_ASSUME_NONNULL_BEGIN
                           remoteDataManager:(UARemoteDataManager *)remoteDataManager
                                   dataStore:(UAPreferenceDataStore *)dataStore
                                        push:(UAPush *)push
-                                 dispatcher:(UADispatcher *)dispatcher;
+                                 dispatcher:(UADispatcher *)dispatcher
+                         displayCoordinator:(UAInAppMessageDefaultDisplayCoordinator *)displayCoordinator;
 
 /**
  * Factory method.

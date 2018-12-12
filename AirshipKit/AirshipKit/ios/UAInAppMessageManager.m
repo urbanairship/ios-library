@@ -91,14 +91,16 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
                           remoteDataManager:(UARemoteDataManager *)remoteDataManager
                                   dataStore:(UAPreferenceDataStore *)dataStore
                                        push:(UAPush *)push
-                                 dispatcher:(UADispatcher *)dispatcher {
+                                 dispatcher:(UADispatcher *)dispatcher
+                         displayCoordinator:(UAInAppMessageDefaultDisplayCoordinator *)displayCoordinator {
 
     return [[self alloc] initWithAutomationEngine:automationEngine
                            tagGroupsLookupManager:tagGroupsLookupManager
                                 remoteDataManager:remoteDataManager
                                         dataStore:dataStore
                                              push:push
-                                       dispatcher:dispatcher];
+                                       dispatcher:dispatcher
+                               displayCoordinator:displayCoordinator];
 }
 
 + (instancetype)managerWithConfig:(UAConfig *)config
@@ -121,7 +123,8 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
                                                   remoteDataManager:remoteDataManager
                                                           dataStore:dataStore
                                                                push:push
-                                                         dispatcher:[UADispatcher mainDispatcher]];
+                                                         dispatcher:[UADispatcher mainDispatcher]
+                                                 displayCoordinator:[[UAInAppMessageDefaultDisplayCoordinator alloc] init]];
 }
 
 - (instancetype)initWithAutomationEngine:(UAAutomationEngine *)automationEngine
@@ -129,7 +132,8 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
                        remoteDataManager:(UARemoteDataManager *)remoteDataManager
                                dataStore:(UAPreferenceDataStore *)dataStore
                                     push:(UAPush *)push
-                              dispatcher:(UADispatcher *)dispatcher {
+                              dispatcher:(UADispatcher *)dispatcher
+                      displayCoordinator:(UAInAppMessageDefaultDisplayCoordinator *)displayCoordinator {
 
     self = [super initWithDataStore:dataStore];
 
@@ -147,7 +151,7 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
         self.remoteDataClient = [UAInAppRemoteDataClient clientWithScheduler:self remoteDataManager:remoteDataManager dataStore:dataStore push:push];
         self.dispatcher = dispatcher;
         self.prepareSchedulePipeline = [UARetriablePipeline pipeline];
-        self.defaultDisplayCoordinator = [[UAInAppMessageDefaultDisplayCoordinator alloc] init];
+        self.defaultDisplayCoordinator = displayCoordinator;
 
         [self setDefaultAdapterFactories];
 
@@ -393,6 +397,7 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
 
 - (id<UAInAppMessageDisplayCoordinator>)displayCoordinatorForMessage:(UAInAppMessage *)message {
     id<UAInAppMessageDisplayCoordinator> displayCoordinator;
+
     if ([self.delegate respondsToSelector:@selector(displayCoordinatorForMessage:)]) {
         displayCoordinator = [self.delegate displayCoordinatorForMessage:message];
     }

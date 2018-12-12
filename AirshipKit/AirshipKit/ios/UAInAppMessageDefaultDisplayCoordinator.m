@@ -73,8 +73,6 @@
     [self didChangeValueForKey:UAInAppMessageDisplayCoordinatorIsReadyKey];
 }
 
-
-
 - (void)didBeginDisplayingMessage:(UAInAppMessage *)message {
     [self lockDisplay];
 }

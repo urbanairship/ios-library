@@ -24,6 +24,10 @@
 		3C5649CF2127746C007E82D2 /* UAInAppMessagingRemoteConfigTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C5649CB2127746C007E82D2 /* UAInAppMessagingRemoteConfigTest.m */; };
 		3C5D1B2121C079D5007025C9 /* NSObject+AnonymousKVO+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C5D1B1F21C079D4007025C9 /* NSObject+AnonymousKVO+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3C5D1B2221C079D5007025C9 /* NSObject+AnonymousKVO.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C5D1B2021C079D5007025C9 /* NSObject+AnonymousKVO.m */; };
+		3C5D1B2321C1B1FD007025C9 /* NSObject+AnonymousKVO.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C5D1B2021C079D5007025C9 /* NSObject+AnonymousKVO.m */; };
+		3C5D1B2421C1B209007025C9 /* NSObject+AnonymousKVO+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C5D1B1F21C079D4007025C9 /* NSObject+AnonymousKVO+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		3C5D1B2521C1B234007025C9 /* NSObject+AnonymousKVO.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C5D1B2021C079D5007025C9 /* NSObject+AnonymousKVO.m */; };
+		3C5D1B2621C1B241007025C9 /* NSObject+AnonymousKVO+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C5D1B1F21C079D4007025C9 /* NSObject+AnonymousKVO+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3C67E11C21264221006031EB /* UAInAppMessagingRemoteConfig+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C67E11A21264221006031EB /* UAInAppMessagingRemoteConfig+Internal.h */; };
 		3C67E11E21264221006031EB /* UAInAppMessagingRemoteConfig+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C67E11A21264221006031EB /* UAInAppMessagingRemoteConfig+Internal.h */; };
 		3C67E11F21264221006031EB /* UAInAppMessagingRemoteConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C67E11B21264221006031EB /* UAInAppMessagingRemoteConfig.m */; };
@@ -4418,6 +4422,7 @@
 				99666DBA1EDF2BDC00BAE46B /* UAChannelRegistrar+Internal.h in Headers */,
 				99666DBD1EDF2BDC00BAE46B /* UAChannelRegistrationPayload+Internal.h in Headers */,
 				DF5ED8E31F7455C5002DDA24 /* UARemoteDataStore+Internal.h in Headers */,
+				3C5D1B2421C1B209007025C9 /* NSObject+AnonymousKVO+Internal.h in Headers */,
 				99666DDC1EDF2BF300BAE46B /* UACircularRegion+Internal.h in Headers */,
 				DF17A0FF1F56327A00DC39E0 /* UARemoteDataManager+Internal.h in Headers */,
 				99666DDD1EDF2BF300BAE46B /* UACircularRegion.h in Headers */,
@@ -4671,6 +4676,7 @@
 				DF7E228D1ED62E0900C79C46 /* UAAnalytics.h in Headers */,
 				DF8D736820000B0C0092FDEA /* UAInAppMessageModalDisplayContent+Internal.h in Headers */,
 				DF7E228E1ED62E0900C79C46 /* UAApplicationMetrics.h in Headers */,
+				3C5D1B2621C1B241007025C9 /* NSObject+AnonymousKVO+Internal.h in Headers */,
 				DF7E228F1ED62E0900C79C46 /* UAAssociatedIdentifiers.h in Headers */,
 				DF7E22901ED62E0900C79C46 /* UAURLProtocol.h in Headers */,
 				DFD442A81FD77308002E4FA1 /* UAInAppMessageAudience+Internal.h in Headers */,
@@ -5148,7 +5154,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"$SRCROOT\"/Scripts/generate_header_imports.sh common ios";
+			shellScript = "\"$SRCROOT\"/Scripts/generate_header_imports.sh common ios\n";
 		};
 		D3775F1A08A9BD2223C1AC9E /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -5610,6 +5616,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3C5D1B2521C1B234007025C9 /* NSObject+AnonymousKVO.m in Sources */,
 				3C77BF892016A99700AD37F3 /* UAInAppMessageHTMLDisplayContent.m in Sources */,
 				3C77BF8A2016A99D00AD37F3 /* UAInAppMessageHTMLAdapter.m in Sources */,
 				996B956D1FAB95F8009B49BC /* UAInAppMessageManager.m in Sources */,
@@ -5849,6 +5856,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3C5D1B2321C1B1FD007025C9 /* NSObject+AnonymousKVO.m in Sources */,
 				DF5ED9031F7475FE002DDA24 /* UARemoteDataStorePayload.m in Sources */,
 				99666DB91EDF2BDC00BAE46B /* UAChannelAPIClient.m in Sources */,
 				99666E321EDF2C8D00BAE46B /* UAMediaEventTemplate.m in Sources */,
