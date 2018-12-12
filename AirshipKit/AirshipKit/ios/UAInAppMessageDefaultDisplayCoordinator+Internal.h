@@ -6,6 +6,6 @@
 
 @interface UAInAppMessageDefaultDisplayCoordinator ()
 
-+ (instancetype)coordinatorWithDispatcher:(UADispatcher *)dispatcher;
++ (instancetype)coordinatorWithDispatcher:(UADispatcher *)dispatcher notificationCenter:(NSNotificationCenter *)notificationCenter;
 
 @end

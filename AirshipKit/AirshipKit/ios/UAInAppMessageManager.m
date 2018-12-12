@@ -410,8 +410,8 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
     NSObject<UAInAppMessageDisplayCoordinator> *displayCoordinator = (NSObject<UAInAppMessageDisplayCoordinator>*)[self displayCoordinatorForMessage:message];
 
     // If display coordinator puts back pressure on display, check again when it's ready
-    if (![displayCoordinator shouldDisplayMessage:message]) {
-        __block UADisposable *disposable = [displayCoordinator observeAtKeyPath:@"isReady" withBlock:^(id value) {
+    if (![displayCoordinator isReady]) {
+        __block UADisposable *disposable = [displayCoordinator observeAtKeyPath:UAInAppMessageDisplayCoordinatorIsReadyKey withBlock:^(id value) {
             if ([value boolValue]) {
                 [self.automationEngine scheduleConditionsChanged];
                 [disposable dispose];

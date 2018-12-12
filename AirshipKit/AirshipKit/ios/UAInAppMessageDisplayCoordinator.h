@@ -4,6 +4,11 @@
 #import "UAInAppMessage.h"
 
 /**
+ * Key name for the isReady property. Use this for emitting change notifications.
+ */
+static NSString *const UAInAppMessageDisplayCoordinatorIsReadyKey = @"isReady";
+
+/**
  * Protocol for coordinating the display of in-app messages with the in-app message manager. Useful for
  * putting time or count-based back pressure on message display, or for overriding the default coordination behavior for
  * particular message types.
@@ -16,14 +21,6 @@
  * @note This property must be KVO compliant.
  */
 @property (nonatomic, readonly) BOOL isReady;
-
-/**
- * Indicates whether a message should be displayed.
- *
- * @param message The message.
- * @return `YES` if the message should be displayed, `NO` otherwise.
- */
-- (BOOL)shouldDisplayMessage:(UAInAppMessage *)message;
 
 /**
  * Notifies the coordinator that message display has begun.
