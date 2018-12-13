@@ -96,7 +96,7 @@
 - (BOOL)isReady {
     // Require an active application
     if ([[UIApplication sharedApplication] applicationState] != UIApplicationStateActive) {
-        UA_LTRACE(@"Application is not active. Display Coorinator not ready: %@", self);
+        UA_LTRACE(@"Application is not active. Display Coordinator not ready: %@", self);
         return NO;
     }
 

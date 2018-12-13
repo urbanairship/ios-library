@@ -45,25 +45,40 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
 @property(nonatomic, strong, nonnull) id<UAInAppMessageAdapterProtocol> adapter;
 @property(nonatomic, copy, nonnull) NSString *scheduleID;
 @property(nonatomic, strong, nonnull) UAInAppMessage *message;
+@property(nonatomic, strong, nonnull) id<UAInAppMessageDisplayCoordinator> displayCoordinator;
 
-+ (instancetype)dataWithAdapter:(id<UAInAppMessageAdapterProtocol>)adapter scheduleID:(NSString *)scheduleID message:(UAInAppMessage *)message;
++ (instancetype)dataWithAdapter:(id<UAInAppMessageAdapterProtocol>)adapter
+                     scheduleID:(NSString *)scheduleID
+                        message:(UAInAppMessage *)message
+             displayCoordinator:(id<UAInAppMessageDisplayCoordinator>)displayCoordinator;
 
 @end
 
 @implementation UAInAppMessageScheduleData
 
-- (instancetype)initWithAdapter:(id<UAInAppMessageAdapterProtocol>)adapter scheduleID:(NSString *)scheduleID message:(UAInAppMessage *)message {
+- (instancetype)initWithAdapter:(id<UAInAppMessageAdapterProtocol>)adapter
+                     scheduleID:(NSString *)scheduleID
+                        message:(UAInAppMessage *)message
+             displayCoordinator:(id<UAInAppMessageDisplayCoordinator>)displayCoordinator {
+
     self = [super init];
+
     if (self) {
         self.adapter = adapter;
         self.scheduleID = scheduleID;
         self.message = message;
+        self.displayCoordinator = displayCoordinator;
     }
+
     return self;
 }
 
-+ (instancetype)dataWithAdapter:(id<UAInAppMessageAdapterProtocol>)adapter scheduleID:(NSString *)scheduleID message:(UAInAppMessage *)message {
-    return [[self alloc] initWithAdapter:adapter scheduleID:scheduleID message:message];
++ (instancetype)dataWithAdapter:(id<UAInAppMessageAdapterProtocol>)adapter
+                     scheduleID:(NSString *)scheduleID
+                        message:(UAInAppMessage *)message
+             displayCoordinator:(id<UAInAppMessageDisplayCoordinator>)displayCoordinator {
+
+    return [[self alloc] initWithAdapter:adapter scheduleID:scheduleID message:message displayCoordinator:displayCoordinator];
 }
 
 @end
@@ -292,6 +307,8 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
                                              scheduleID:(NSString *)scheduleID
                                           resultHandler:(UARetriableCompletionHandler)resultHandler {
 
+    id<UAInAppMessageDisplayCoordinator> displayCoordinator = [self displayCoordinatorForMessage:message];
+
     UA_WEAKIFY(self)
     return [UARetriable retriableWithRunBlock:^(UARetriableCompletionHandler handler) {
         UA_STRONGIFY(self)
@@ -305,7 +322,8 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
 
         UAInAppMessageScheduleData *data = [UAInAppMessageScheduleData dataWithAdapter:adapter
                                                                             scheduleID:scheduleID
-                                                                               message:message];
+                                                                               message:message
+                                                                    displayCoordinator:displayCoordinator];
 
         [self.dispatcher dispatchAsync:^{
             [adapter prepare:^(UAInAppMessagePrepareResult prepareResult) {
@@ -411,11 +429,24 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
     UA_LTRACE(@"Checking if schedule %@ is ready to execute.", schedule.identifier);
 
     UAInAppMessageScheduleInfo *info = (UAInAppMessageScheduleInfo *)schedule.info;
-    UAInAppMessage *message = info.message;
-    NSObject<UAInAppMessageDisplayCoordinator> *displayCoordinator = (NSObject<UAInAppMessageDisplayCoordinator>*)[self displayCoordinatorForMessage:message];
+    UAInAppMessageScheduleData *data = self.scheduleData[schedule.identifier];
+
+    NSObject<UAInAppMessageDisplayCoordinator> *displayCoordinator = (NSObject<UAInAppMessageDisplayCoordinator>*)data.displayCoordinator;
+
+    // If manager is paused
+    if (self.isPaused) {
+        UA_LTRACE(@"Message display is currently paused. Schedule: %@ not ready.", schedule.identifier);
+        return NO;
+    }
+
+    if (!data) {
+        UA_LERR("No data for schedule: %@", schedule.identifier);
+        return NO;
+    }
 
     // If display coordinator puts back pressure on display, check again when it's ready
     if (![displayCoordinator isReady]) {
+        UA_LTRACE(@"Display coordinator %@ not ready. Retrying schedule %@ later.", displayCoordinator, schedule.identifier);
         __block UADisposable *disposable = [displayCoordinator observeAtKeyPath:UAInAppMessageDisplayCoordinatorIsReadyKey withBlock:^(id value) {
             if ([value boolValue]) {
                 [self.automationEngine scheduleConditionsChanged];
@@ -426,18 +457,6 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
         return NO;
     }
 
-    // If manager is paused
-    if (self.isPaused) {
-        UA_LTRACE(@"Message display is currently paused. Schedule: %@ not ready.", schedule.identifier);
-        return NO;
-    }
-
-    UAInAppMessageScheduleData *data = self.scheduleData[schedule.identifier];
-
-    if (!data) {
-        UA_LERR("No data for schedule: %@", schedule.identifier);
-        return NO;
-    }
 
     if (![data.adapter isReadyToDisplay]) {
         UA_LTRACE(@"Adapter ready check failed. Schedule: %@ not ready.", schedule.identifier);
@@ -463,7 +482,7 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
     }
 
     id<UAInAppMessageAdapterProtocol> adapter = scheduleData.adapter;
-    id<UAInAppMessageDisplayCoordinator> displayCoordinator = [self displayCoordinatorForMessage:message];
+    id<UAInAppMessageDisplayCoordinator> displayCoordinator = scheduleData.displayCoordinator;
 
     // Notify delegate that the message is about to be displayed
     id<UAInAppMessagingDelegate> delegate = self.delegate;
