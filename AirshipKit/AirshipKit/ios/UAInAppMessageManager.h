@@ -7,6 +7,7 @@
 #import "UAInAppMessageAdapterProtocol.h"
 #import "UAComponent.h"
 #import "UAInAppMessageScheduleEdits.h"
+#import "UAInAppMessageDisplayCoordinator.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -21,6 +22,14 @@ NS_ASSUME_NONNULL_BEGIN
 ///---------------------------------------------------------------------------------------
 /// @name In App Messaging Delegate Methods
 ///---------------------------------------------------------------------------------------
+
+/**
+ * Allows the delegate to provide a custom display coordinator for the provided message.
+ *
+ * @param message The message.
+ * @return An object implementing the UAInAppMessageDisplayCoordinator protocol.
+ */
+- (id<UAInAppMessageDisplayCoordinator>)displayCoordinatorForMessage:(UAInAppMessage *)message;
 
 /**
  * Allows the delegate to extend a message before display.

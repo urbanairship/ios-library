@@ -1,8 +1,9 @@
 /* Copyright 2018 Urban Airship and Contributors */
 
-#import "NSObject+AnonymousKVO.h"
 #import <Foundation/Foundation.h>
 #import "UADisposable.h"
+
+NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Typedef for blocks passing KVO values.
@@ -53,3 +54,5 @@ typedef void (^UAAnonymousKVOBlock)(id value);
 - (UADisposable *)observeAtKeyPath:(NSString *)keyPath withBlock:(UAAnonymousKVOBlock)block;
 
 @end
+
+NS_ASSUME_NONNULL_END
