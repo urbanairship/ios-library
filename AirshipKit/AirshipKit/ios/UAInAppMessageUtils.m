@@ -289,6 +289,17 @@ CGFloat const CloseButtonHeight = 30;
 #pragma mark -
 #pragma mark Helpers
 
++ (BOOL)isGifData:(NSData *)data {
+    BOOL isGifData = NO;
+    if (data.length > 3) {
+        uint8_t *bytes = (uint8_t *)data.bytes;
+        isGifData = ((bytes[0] == 'g' || bytes[0] == 'G') &&
+                     (bytes[1] == 'i' || bytes[1] == 'I') &&
+                     (bytes[2] == 'f' || bytes[2] == 'F'));
+    }
+    return isGifData;
+}
+
 + (NSDictionary *)attributesWithTextInfo:(UAInAppMessageTextInfo *)textInfo textStyle:(UAInAppMessageTextStyle *)style {
     NSMutableDictionary *attributes = [NSMutableDictionary dictionary];
 
@@ -427,7 +438,6 @@ CGFloat const CloseButtonHeight = 30;
         return;
     }
 
-
     // Prefetch image
     [UAInAppMessageUtils prefetchContentsOfURL:mediaURL
                                      WithCache:imageCache
@@ -436,8 +446,7 @@ CGFloat const CloseButtonHeight = 30;
                                  if (cacheKey){
                                      NSData *data = [imageCache objectForKey:cacheKey];
                                      if (data) {
-                                         UIImage *prefetchedImage = [UIImage imageWithData:data];
-                                         mediaView = [UAInAppMessageMediaView mediaViewWithImage:prefetchedImage];
+                                         mediaView = [UAInAppMessageMediaView mediaViewWithMediaInfo:media imageData:data];
                                      }
                                  }
                                  completionHandler(result,mediaView);

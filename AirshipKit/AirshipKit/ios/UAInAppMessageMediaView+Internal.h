@@ -40,11 +40,14 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)mediaViewWithMediaInfo:(UAInAppMessageMediaInfo *)mediaInfo;
 
 /**
- * Factory method for creating an in-app message media view with an image.
+ * Factory method for creating an in-app message media view with image data.
  *
- * @param image The image.
+ * @param mediaInfo The media info.
+ * @param imageData The image data.
  */
-+ (instancetype)mediaViewWithImage:(UIImage *)image;
+
++ (instancetype)mediaViewWithMediaInfo:(UAInAppMessageMediaInfo *)mediaInfo imageData:(NSData *)image;
+
 
 
 @end

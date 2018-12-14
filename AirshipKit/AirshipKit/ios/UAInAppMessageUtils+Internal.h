@@ -115,4 +115,13 @@
 + (NSDictionary *)normalizeStyleDictionary:(NSDictionary *)keyedValues;
 
 
+/**
+ * Checks if binary data represents a gif.
+ *
+ * @param data The image data to be checked.
+ * @return YES if binary data represesents a gif, NO otherwise.
+ */
++ (BOOL)isGifData:(NSData *)data;
+
+
 @end

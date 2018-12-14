@@ -19,7 +19,6 @@ CGFloat const DefaultVideoAspectRatio = 16.0/9.0;
 
 @property (nonatomic, strong) UAInAppMessageMediaInfo *mediaInfo;
 
-@property (nonatomic, strong, nullable) NSLayoutConstraint *aspectConstraint;
 @property (nonatomic, strong, nullable) NSLayoutConstraint *widthConstraint;
 @property (nonatomic, strong, nullable) NSLayoutConstraint *heightConstraint;
 
@@ -30,70 +29,75 @@ CGFloat const DefaultVideoAspectRatio = 16.0/9.0;
 @implementation UAInAppMessageMediaView
 
 + (instancetype)mediaViewWithMediaInfo:(UAInAppMessageMediaInfo *)mediaInfo {
-    return [[self alloc] initWithMediaInfo:mediaInfo];
+    return [[self alloc] initWithMediaInfo:mediaInfo imageData:nil];
 }
 
-+ (instancetype)mediaViewWithImage:(UIImage *)image {
-    return [[self alloc] initWithImage:image];
++ (instancetype)mediaViewWithMediaInfo:(UAInAppMessageMediaInfo *)mediaInfo imageData:(NSData *)imageData {
+    return [[self alloc] initWithMediaInfo:mediaInfo imageData:imageData];
 }
 
-- (instancetype)initWithImage:(UIImage *)image {
+- (instancetype)initWithMediaInfo:(UAInAppMessageMediaInfo *)mediaInfo imageData:(nullable NSData *)imageData {
     self = [super init];
 
     if (self) {
-        self.translatesAutoresizingMaskIntoConstraints = NO;
+        if ([UAInAppMessageUtils isGifData:imageData]) {
+            [self setUpWebBasedMediaView:mediaInfo];
+            self.webView.contentMode = UIViewContentModeScaleAspectFit;
+            [self.webView setBackgroundColor:[UIColor clearColor]];
+            [self.webView.scrollView setBackgroundColor:[UIColor clearColor]];
+            [self.webView loadData:imageData MIMEType:@"image/gif" characterEncodingName:@"UTF-8" baseURL:[NSURL URLWithString:self.mediaInfo.url]];
+        } else if (imageData) {
+            self.translatesAutoresizingMaskIntoConstraints = NO;
+            self.webView = nil;
+            self.mediaContainer = [[UIView alloc] init];
+            self.mediaContainer.backgroundColor = [UIColor clearColor];
+            self.mediaContainer.opaque = NO;
+            [self addSubview:self.mediaContainer];
+            [UAViewUtils applyContainerConstraintsToContainer:self containedView:self.mediaContainer];
 
-        self.webView = nil;
+            self.imageView = [[UIImageView alloc] initWithFrame:self.frame];
+            [self.mediaContainer addSubview:self.imageView];
+            UIImage *image = [UIImage imageWithData:imageData];
+            [self.imageView setImage:image];
+            [UAViewUtils applyContainerConstraintsToContainer:self.mediaContainer containedView:self.imageView];
 
-        self.mediaContainer = [[UIView alloc] init];
-        self.mediaContainer.backgroundColor = [UIColor clearColor];
-        self.mediaContainer.opaque = NO;
-        [self addSubview:self.mediaContainer];
-        [UAViewUtils applyContainerConstraintsToContainer:self containedView:self.mediaContainer];
-
-        self.imageView = [[UIImageView alloc] initWithFrame:self.frame];
-        [self.mediaContainer addSubview:self.imageView];
-        [self.imageView setImage:image];
-        [UAViewUtils applyContainerConstraintsToContainer:self.mediaContainer containedView:self.imageView];
-
-        // Apply style padding
-        [UAInAppMessageUtils applyPaddingToView:self.mediaContainer padding:self.style.additionalPadding replace:NO];
+            // Apply style padding
+            [UAInAppMessageUtils applyPaddingToView:self.mediaContainer padding:self.style.additionalPadding replace:NO];
+        } else {
+            [self setUpWebBasedMediaView:mediaInfo];
+            [self.webView setBackgroundColor:[UIColor blackColor]];
+            [self.webView.scrollView setBackgroundColor:[UIColor blackColor]];
+        }
     }
 
     return self;
 }
 
-- (instancetype)initWithMediaInfo:(UAInAppMessageMediaInfo *)mediaInfo {
-    self = [super init];
+- (void)setUpWebBasedMediaView:(UAInAppMessageMediaInfo *)mediaInfo {
+    self.translatesAutoresizingMaskIntoConstraints = NO;
+    self.mediaInfo = mediaInfo;
 
-    if (self) {
-        self.translatesAutoresizingMaskIntoConstraints = NO;
-        self.mediaInfo = mediaInfo;
+    self.imageView = nil;
 
-        self.imageView = nil;
+    self.mediaContainer = [[UIView alloc] init];
+    self.mediaContainer.backgroundColor = [UIColor clearColor];
+    self.mediaContainer.opaque = NO;
+    [self addSubview:self.mediaContainer];
+    [UAViewUtils applyContainerConstraintsToContainer:self containedView:self.mediaContainer];
 
-        self.mediaContainer = [[UIView alloc] init];
-        self.mediaContainer.backgroundColor = [UIColor clearColor];
-        self.mediaContainer.opaque = NO;
-        [self addSubview:self.mediaContainer];
-        [UAViewUtils applyContainerConstraintsToContainer:self containedView:self.mediaContainer];
+    WKWebViewConfiguration *config = [[WKWebViewConfiguration alloc] init];
+    config.allowsInlineMediaPlayback = YES;
+    config.allowsPictureInPictureMediaPlayback = YES;
 
-        WKWebViewConfiguration *config = [[WKWebViewConfiguration alloc] init];
-        config.allowsInlineMediaPlayback = YES;
-        config.allowsPictureInPictureMediaPlayback = YES;
+    self.webView = [[WKWebView alloc] initWithFrame:self.frame configuration:config];
+    [self.webView.scrollView setScrollEnabled:NO];
 
-        //This may work someday
-        config.mediaTypesRequiringUserActionForPlayback = WKAudiovisualMediaTypeAll;
+    [self.mediaContainer addSubview:self.webView];
 
-        self.webView = [[WKWebView alloc] initWithFrame:self.frame configuration:config];
-        [self.mediaContainer addSubview:self.webView];
-        [UAViewUtils applyContainerConstraintsToContainer:self.mediaContainer containedView:self.webView];
+    [UAViewUtils applyContainerConstraintsToContainer:self.mediaContainer containedView:self.webView];
 
-        // Apply style padding
-        [UAInAppMessageUtils applyPaddingToView:self.mediaContainer  padding:self.style.additionalPadding replace:NO];
-    }
-
-    return self;
+    // Apply style padding
+    [UAInAppMessageUtils applyPaddingToView:self.mediaContainer padding:self.style.additionalPadding replace:NO];
 }
 
 - (void)didMoveToSuperview {
@@ -103,41 +107,44 @@ CGFloat const DefaultVideoAspectRatio = 16.0/9.0;
         return;
     }
 
-    CGFloat aspectRatio = DefaultVideoAspectRatio;
     switch (self.mediaInfo.type) {
         case UAInAppMessageMediaInfoTypeVideo: {
-            self.imageView = nil;
-            [self.webView.scrollView setScrollEnabled:NO];
-            [self.webView setBackgroundColor:[UIColor blackColor]];
-            [self.webView.scrollView setBackgroundColor:[UIColor blackColor]];
-
             NSString *html = [NSString stringWithFormat:@"<body style=\"margin:0\"><video playsinline controls height=\"100%%\" width=\"100%%\" src=\"%@\"></video></body>", self.mediaInfo.url];
             [self.webView loadHTMLString:html baseURL:[NSURL URLWithString:self.mediaInfo.url]];
-
             break;
         }
         case UAInAppMessageMediaInfoTypeYouTube: {
-            [self.webView.scrollView setScrollEnabled:NO];
             NSString *urlString = [NSString stringWithFormat:@"%@%@", self.mediaInfo.url, @"?playsinline=1"];
             NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:urlString]];
             [self.webView loadRequest:request];
             break;
         }
         case UAInAppMessageMediaInfoTypeImage: {
-            if (self.imageView.image.size.height != 0) {
-                aspectRatio = self.imageView.image.size.width/self.imageView.image.size.height;
+            if (!self.imageView) {
+                // Skip setting aspect constraints as these are handled by webview
+                break;
             }
+
+            if (self.imageView.image.size.height != 0) {
+                CGFloat aspectRatio = self.imageView.image.size.width/self.imageView.image.size.height;
+
+                // If the image is taller than it is wide make the width breakable
+                if (aspectRatio < 1) {
+                    self.widthConstraint.priority = 750;
+                }
+
+                [NSLayoutConstraint constraintWithItem:self.imageView
+                                             attribute:NSLayoutAttributeWidth
+                                             relatedBy:NSLayoutRelationEqual
+                                                toItem:self.imageView
+                                             attribute:NSLayoutAttributeHeight
+                                            multiplier:aspectRatio
+                                              constant:0].active = YES;
+            }
+
             break;
         }
     }
-
-    self.aspectConstraint = [NSLayoutConstraint constraintWithItem:self.mediaContainer
-                                                         attribute:NSLayoutAttributeWidth
-                                                         relatedBy:NSLayoutRelationEqual
-                                                            toItem:self.mediaContainer
-                                                         attribute:NSLayoutAttributeHeight
-                                                        multiplier:aspectRatio
-                                                          constant:0];
 
     self.widthConstraint = [NSLayoutConstraint constraintWithItem:self
                                                         attribute:NSLayoutAttributeWidth
@@ -147,12 +154,8 @@ CGFloat const DefaultVideoAspectRatio = 16.0/9.0;
                                                        multiplier:1
                                                          constant:0];
 
-    // If the image is taller than it is wide make the width breakable
-    if (aspectRatio < 1) {
-        self.widthConstraint.priority = 750;
-    }
 
-    self.aspectConstraint.active = YES;
+
     self.widthConstraint.active = YES;
 }
 
