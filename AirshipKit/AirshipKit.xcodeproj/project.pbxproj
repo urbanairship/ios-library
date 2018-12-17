@@ -6124,7 +6124,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
-				ONLY_ACTIVE_ARCH = YES;
+				ONLY_ACTIVE_ARCH = NO;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -6153,7 +6153,6 @@
 				INFOPLIST_FILE = AirshipKit/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				ONLY_ACTIVE_ARCH = YES;
 				"OTHER_CFLAGS[arch=*]" = (
 					"-D_UA_VERSION=\\\"$(CURRENT_PROJECT_VERSION)\\\"",
 					"$(inherited)",
@@ -6187,7 +6186,6 @@
 				INFOPLIST_FILE = AirshipKit/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				ONLY_ACTIVE_ARCH = YES;
 				"OTHER_CFLAGS[arch=*]" = (
 					"-D_UA_VERSION=\\\"$(CURRENT_PROJECT_VERSION)\\\"",
 					"$(inherited)",
@@ -6311,7 +6309,6 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				INFOPLIST_FILE = "$(SRCROOT)/AirshipResources/ios/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
-				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.AirshipResources;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
@@ -6391,7 +6388,6 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				ENABLE_NS_ASSERTIONS = YES;
 				GCC_C_LANGUAGE_STANDARD = c99;
-				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = (
 					"-D_UA_VERSION=\\\"$(CURRENT_PROJECT_VERSION)\\\"",
 					"-fembed-bitcode",
@@ -6524,7 +6520,6 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				INFOPLIST_FILE = AirshipResources/tvos/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
-				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.AirshipResources;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
