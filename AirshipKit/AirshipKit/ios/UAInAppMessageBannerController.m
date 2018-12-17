@@ -546,7 +546,7 @@ CGFloat const BannerExcessiveSafeAreaPadding = 14;
 #pragma mark Timer
 
 - (void)scheduleDismissalTimer {
-    NSTimeInterval timeInterval = ((double)self.displayContent.duration / 1000);
+    NSTimeInterval timeInterval = ((double)self.displayContent.durationSeconds);
 
     self.dismissalTimer = [NSTimer scheduledTimerWithTimeInterval:timeInterval
                                                            target:self

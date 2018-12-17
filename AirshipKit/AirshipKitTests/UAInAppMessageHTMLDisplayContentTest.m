@@ -15,6 +15,7 @@
         builder.backgroundColor = [UIColor blueColor];
         builder.dismissButtonColor = [UIColor greenColor];
         builder.url = @"https://foo.bar.com";
+        builder.borderRadiusPoints = 10;
     }];
 
     UAInAppMessageHTMLDisplayContent *fromJSON = [UAInAppMessageHTMLDisplayContent displayContentWithJSON:[content toJSON] error:nil];
@@ -29,6 +30,7 @@
         builder.backgroundColor = [UIColor blueColor];
         builder.dismissButtonColor = [UIColor greenColor];
         builder.url = @"https://foo.bar.com";
+        builder.borderRadiusPoints = 10.5;
     }];
 
     UAInAppMessageHTMLDisplayContent *newContent = [content extend:^(UAInAppMessageHTMLDisplayContentBuilder * _Nonnull builder) {
@@ -41,6 +43,29 @@
     XCTAssertEqualObjects(newContent.dismissButtonColor, content.dismissButtonColor);
     XCTAssertEqualObjects(newContent.url, @"https://baz.boz.com");
 }
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+- (void)testBorderRadius {
+    UAInAppMessageHTMLDisplayContent *content =  [UAInAppMessageHTMLDisplayContent displayContentWithBuilderBlock:^(UAInAppMessageHTMLDisplayContentBuilder *builder) {
+        builder.url = @"https://foo.bar.com";
+        builder.borderRadius = 10;
+    }];
+    
+    XCTAssertNotNil(content);
+    XCTAssertEqual(content.borderRadius, 10);
+    XCTAssertEqual(content.borderRadiusPoints, 10);
+
+    content =  [UAInAppMessageHTMLDisplayContent displayContentWithBuilderBlock:^(UAInAppMessageHTMLDisplayContentBuilder *builder) {
+        builder.url = @"https://foo.bar.com";
+        builder.borderRadiusPoints = 10.5;
+    }];
+    
+    XCTAssertNotNil(content);
+    XCTAssertEqual(content.borderRadius, 10);
+    XCTAssertEqual(content.borderRadiusPoints, 10.5);
+}
+#pragma GCC diagnostic pop
 
 @end
 

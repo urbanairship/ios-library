@@ -1,11 +1,11 @@
 /* Copyright 2018 Urban Airship and Contributors */
 
 #import "UAUtils+Internal.h"
-#import "UAUtilsTest.h"
 #import "UAUser+Internal.h"
 #import "UAirship+Internal.h"
+#import "UABaseTest.h"
 
-@interface UAUtilsTest ()
+@interface UAUtilsTest : UABaseTest
 @property(nonatomic, strong) NSCalendar *gregorianUTC;
 @property(nonatomic, strong) id mockAirship;
 @end
@@ -453,6 +453,35 @@
     fetchResults[1] = [NSNumber numberWithInt:UIBackgroundFetchResultNoData];
     fetchResults[2] = [NSNumber numberWithInt:UIBackgroundFetchResultFailed];
     XCTAssertEqual([UAUtils mergeFetchResults:fetchResults], UIBackgroundFetchResultNewData);
+}
+
+- (void)testFloatingPointIsEqualsWithAccuracy {
+    // Positive numbers
+    XCTAssertTrue([UAUtils float:10 isEqualToFloat:10.1 withAccuracy:0.1]);
+    XCTAssertTrue([UAUtils float:10 isEqualToFloat:10.0 withAccuracy:0]);
+    XCTAssertTrue([UAUtils float:10 isEqualToFloat:9.9 withAccuracy:0.1]);
+
+    XCTAssertFalse([UAUtils float:10 isEqualToFloat:10.1 withAccuracy:0]);
+    XCTAssertFalse([UAUtils float:10 isEqualToFloat:10.1 withAccuracy:0.01]);
+    
+    // Around zero
+    XCTAssertTrue([UAUtils float:0 isEqualToFloat:0.1 withAccuracy:0.1]);
+    XCTAssertTrue([UAUtils float:0 isEqualToFloat:-0.1 withAccuracy:0.1]);
+
+    XCTAssertFalse([UAUtils float:0 isEqualToFloat:0.1 withAccuracy:0.099]);
+    XCTAssertFalse([UAUtils float:0 isEqualToFloat:-0.1 withAccuracy:0.099]);
+    
+    // Negative numbers
+    XCTAssertTrue([UAUtils float:-10 isEqualToFloat:-10.1 withAccuracy:0.1]);
+    XCTAssertTrue([UAUtils float:-10 isEqualToFloat:-10.0 withAccuracy:0]);
+    XCTAssertTrue([UAUtils float:-10 isEqualToFloat:-9.9 withAccuracy:0.1]);
+    
+    XCTAssertFalse([UAUtils float:-10 isEqualToFloat:-10.1 withAccuracy:0]);
+    XCTAssertFalse([UAUtils float:-10 isEqualToFloat:-10.1 withAccuracy:0.01]);
+    
+    // Large numbers
+    XCTAssertTrue([UAUtils float:1000000 isEqualToFloat:1000001 withAccuracy:1]);
+    XCTAssertTrue([UAUtils float:1000000 isEqualToFloat:999999 withAccuracy:1]);
 }
 
 @end

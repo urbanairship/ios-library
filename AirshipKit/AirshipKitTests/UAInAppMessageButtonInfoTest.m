@@ -25,12 +25,12 @@
             builder.alignment = NSTextAlignmentCenter;
             builder.color = [UIColor redColor];
             builder.style = UAInAppMessageTextInfoStyleBold | UAInAppMessageTextInfoStyleItalic | UAInAppMessageTextInfoStyleUnderline;
-            builder.size = 11;
+            builder.sizePoints = 11;
         }];
 
         builder.identifier = [@"" stringByPaddingToLength:UAInAppMessageButtonInfoIDLimit withString:@"ID" startingAtIndex:0];
         builder.behavior = UAInAppMessageButtonInfoBehaviorCancel;
-        builder.borderRadius = 11;
+        builder.borderRadiusPoints = 11.00000010001009;
         builder.backgroundColor = [UIColor redColor];
         builder.borderColor = [UIColor redColor];
         builder.actions = @{@"+^t":@"test"};
@@ -46,7 +46,7 @@
     UAInAppMessageButtonInfo *buttonInfo = [UAInAppMessageButtonInfo buttonInfoWithBuilderBlock:^(UAInAppMessageButtonInfoBuilder * _Nonnull builder) {
         builder.identifier = @"identifier";
         builder.behavior = UAInAppMessageButtonInfoBehaviorCancel;
-        builder.borderRadius = 11;
+        builder.borderRadiusPoints = 11.2;
         builder.backgroundColor = [UIColor redColor];
         builder.borderColor = [UIColor redColor];
         builder.actions = @{@"+^t":@"test"};
@@ -62,11 +62,11 @@
             builder.alignment = NSTextAlignmentCenter;
             builder.color = [UIColor redColor];
             builder.style = UAInAppMessageTextInfoStyleBold | UAInAppMessageTextInfoStyleItalic | UAInAppMessageTextInfoStyleUnderline;
-            builder.size = 11;
+            builder.sizePoints = 11;
         }];
 
         builder.behavior = UAInAppMessageButtonInfoBehaviorCancel;
-        builder.borderRadius = 11;
+        builder.borderRadiusPoints = 11.3;
         builder.backgroundColor = [UIColor redColor];
         builder.borderColor = [UIColor redColor];
         builder.actions = @{@"+^t":@"test"};
@@ -82,12 +82,12 @@
             builder.alignment = NSTextAlignmentCenter;
             builder.color = [UIColor redColor];
             builder.style = UAInAppMessageTextInfoStyleBold | UAInAppMessageTextInfoStyleItalic | UAInAppMessageTextInfoStyleUnderline;
-            builder.size = 11;
+            builder.sizePoints = 11;
         }];
 
         builder.identifier = @"";
         builder.behavior = UAInAppMessageButtonInfoBehaviorCancel;
-        builder.borderRadius = 11;
+        builder.borderRadiusPoints = 11.4;
         builder.backgroundColor = [UIColor redColor];
         builder.borderColor = [UIColor redColor];
         builder.actions = @{@"+^t":@"test"};
@@ -104,12 +104,12 @@
             builder.alignment = NSTextAlignmentCenter;
             builder.color = [UIColor redColor];
             builder.style = UAInAppMessageTextInfoStyleBold | UAInAppMessageTextInfoStyleItalic | UAInAppMessageTextInfoStyleUnderline;
-            builder.size = 11;
+            builder.sizePoints = 11;
         }];
 
         builder.identifier = [@"" stringByPaddingToLength:UAInAppMessageButtonInfoIDLimit + 1 withString:@"YOLO" startingAtIndex:0];
         builder.behavior = UAInAppMessageButtonInfoBehaviorCancel;
-        builder.borderRadius = 11;
+        builder.borderRadiusPoints = 11.5;
         builder.backgroundColor = [UIColor redColor];
         builder.borderColor = [UIColor redColor];
         builder.actions = @{@"+^t":@"test"};
@@ -125,12 +125,12 @@
             builder.alignment = NSTextAlignmentCenter;
             builder.color = [UIColor redColor];
             builder.style = UAInAppMessageTextInfoStyleBold | UAInAppMessageTextInfoStyleItalic | UAInAppMessageTextInfoStyleUnderline;
-            builder.size = 11;
+            builder.sizePoints = 11;
         }];
 
         builder.identifier = [@"" stringByPaddingToLength:UAInAppMessageButtonInfoIDLimit withString:@"ID" startingAtIndex:0];
         builder.behavior = UAInAppMessageButtonInfoBehaviorCancel;
-        builder.borderRadius = 11;
+        builder.borderRadiusPoints = 11.6;
         builder.backgroundColor = [UIColor redColor];
         builder.borderColor = [UIColor redColor];
         builder.actions = @{@"+^t":@"test"};
@@ -144,11 +144,46 @@
     XCTAssertFalse([newInfo isEqual:buttonInfo]);
     XCTAssertEqualObjects(newInfo.label, buttonInfo.label);
     XCTAssertEqual(newInfo.behavior, buttonInfo.behavior);
-    XCTAssertEqual(newInfo.borderRadius, buttonInfo.borderRadius);
+    XCTAssertEqual(newInfo.borderRadiusPoints, buttonInfo.borderRadiusPoints);
     XCTAssertEqualObjects(newInfo.backgroundColor, buttonInfo.backgroundColor);
     XCTAssertEqualObjects(newInfo.borderColor, buttonInfo.borderColor);
     XCTAssertEqualObjects(newInfo.actions, @{@"+^t":@"cool"});
 }
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+- (void)testBorderRadius {
+    UAInAppMessageButtonInfo *buttonInfo = [UAInAppMessageButtonInfo buttonInfoWithBuilderBlock:^(UAInAppMessageButtonInfoBuilder * _Nonnull builder) {
+        builder.borderRadius = 10;
+        builder.label = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
+            builder.text = @"text";
+        }];
+        builder.identifier = [@"" stringByPaddingToLength:UAInAppMessageButtonInfoIDLimit withString:@"ID" startingAtIndex:0];
+    }];
+    
+    XCTAssertNotNil(buttonInfo);
+    XCTAssertEqual(buttonInfo.borderRadius, 10);
+    XCTAssertEqual(buttonInfo.borderRadiusPoints, 10);
+
+    UAInAppMessageButtonInfo *fromJSON = [UAInAppMessageButtonInfo buttonInfoWithJSON:[buttonInfo toJSON] error:nil];
+    XCTAssertEqualObjects(fromJSON,buttonInfo);
+    
+    buttonInfo = [UAInAppMessageButtonInfo buttonInfoWithBuilderBlock:^(UAInAppMessageButtonInfoBuilder * _Nonnull builder) {
+        builder.borderRadiusPoints = 10.5;
+        builder.label = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
+            builder.text = @"text";
+        }];
+        builder.identifier = [@"" stringByPaddingToLength:UAInAppMessageButtonInfoIDLimit withString:@"ID" startingAtIndex:0];
+    }];
+    
+    XCTAssertNotNil(buttonInfo);
+    XCTAssertEqual(buttonInfo.borderRadius, 10);
+    XCTAssertEqual(buttonInfo.borderRadiusPoints, 10.5);
+    
+    fromJSON = [UAInAppMessageButtonInfo buttonInfoWithJSON:[buttonInfo toJSON] error:nil];
+    XCTAssertEqualObjects(fromJSON,buttonInfo);
+}
+#pragma GCC diagnostic pop
 
 @end
 

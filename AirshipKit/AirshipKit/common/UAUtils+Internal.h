@@ -24,6 +24,16 @@ NS_ASSUME_NONNULL_BEGIN
                withError:(nullable NSError *)error
             withResponse:(nullable NSHTTPURLResponse *)response;
 
+///---------------------------------------------------------------------------------------
+/// @name Math Utilities
+///---------------------------------------------------------------------------------------
+/**
+ * A utility method that compares two floating points and returns `YES` if the
+ * difference between them is less than or equal to the absolute value
+ * of the specified accuracy.
+ */
++ (BOOL)float:(CGFloat)float1 isEqualToFloat:(CGFloat)float2 withAccuracy:(CGFloat)accuracy;
+
 @end
 
 NS_ASSUME_NONNULL_END

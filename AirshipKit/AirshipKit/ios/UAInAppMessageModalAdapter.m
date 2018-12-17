@@ -65,7 +65,7 @@ NSString *const UAModalStyleFileName = @"UAInAppMessageModalStyle";
     self.resizableContainerViewController.backgroundColor = self.modalController.displayContent.backgroundColor;
     self.resizableContainerViewController.allowFullScreenDisplay = self.modalController.displayContent.allowFullScreenDisplay;
     self.resizableContainerViewController.additionalPadding = self.modalController.style.additionalPadding;
-    self.resizableContainerViewController.borderRadius = self.modalController.displayContent.borderRadius;
+    self.resizableContainerViewController.borderRadius = self.modalController.displayContent.borderRadiusPoints;
     self.resizableContainerViewController.maxWidth = self.modalController.style.maxWidth;
     self.resizableContainerViewController.maxHeight = self.modalController.style.maxHeight;
 

@@ -54,11 +54,21 @@ extern NSUInteger const UAInAppMessageButtonInfoIDLimit;
 @property(nonatomic, assign) UAInAppMessageButtonInfoBehaviorType behavior;
 
 /**
- * Button border radius.
+ * The button's border radius.
+ *
+ * Optional. Defaults to 0.
+ *
+ * @deprecated Deprecated - to be removed in SDK version 11.0. Please use `borderRadiusPoints`.
+ */
+@property(nonatomic, assign) NSUInteger borderRadius DEPRECATED_MSG_ATTRIBUTE("Deprecated - to be removed in SDK version 11.0. Please use borderRadiusPoints.");
+
+/**
+ * The button's border radius. Use to set the border radius
+ * to non-integer values.
  *
  * Optional. Defaults to 0.
  */
-@property(nonatomic, assign) NSUInteger borderRadius;
+@property(nonatomic, assign) CGFloat borderRadiusPoints;
 
 /**
  * Button background color.
@@ -113,9 +123,17 @@ extern NSUInteger const UAInAppMessageButtonInfoIDLimit;
 @property(nonatomic, readonly) UAInAppMessageButtonInfoBehaviorType behavior;
 
 /**
- * Button border radius.
+ * The button's border radius.
+ *
+ * @deprecated Deprecated - to be removed in SDK version 11.0. Please use `borderRadiusPoints`.
  */
-@property(nonatomic, readonly) NSUInteger borderRadius;
+@property(nonatomic, readonly) NSUInteger borderRadius DEPRECATED_MSG_ATTRIBUTE("Deprecated - to be removed in SDK version 11.0. Please use borderRadiusPoints.");
+
+/**
+ * The button's border radius. Use to set the border radius
+ * to non-integer values.
+ */
+@property(nonatomic, readonly) CGFloat borderRadiusPoints;
 
 /**
  * Button background color.

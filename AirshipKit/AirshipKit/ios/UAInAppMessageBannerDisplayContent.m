@@ -7,6 +7,7 @@
 #import "UAInAppMessageMediaInfo+Internal.h"
 #import "UAInAppMessageDisplayContent.h"
 #import "UAColorUtils+Internal.h"
+#import "UAUtils+Internal.h"
 
 // JSON keys
 NSString *const UAInAppMessageBannerActionsKey = @"actions";
@@ -17,7 +18,9 @@ NSString *const UAInAppMessageBannerContentLayoutMediaLeftValue = @"media_left";
 NSString *const UAInAppMessageBannerContentLayoutMediaRightValue = @"media_right";
 
 // Constants
-NSUInteger const UAInAppMessageBannerDefaultDuration = 30000;
+NSTimeInterval const UAInAppMessageBannerDefaultDuration = 30;
+NSTimeInterval const UAInAppMessageBannerMinDuration = 0;
+NSTimeInterval const UAInAppMessageBannerMaxDuration = 120;
 NSUInteger const UAInAppMessageBannerMaxButtons = 2;
 
 @implementation UAInAppMessageBannerDisplayContentBuilder
@@ -30,7 +33,7 @@ NSUInteger const UAInAppMessageBannerMaxButtons = 2;
         self.buttonLayout = UAInAppMessageButtonLayoutTypeSeparate;
         self.placement = UAInAppMessageBannerPlacementBottom;
         self.contentLayout = UAInAppMessageBannerContentLayoutTypeMediaLeft;
-        self.duration = UAInAppMessageBannerDefaultDuration;
+        self.durationSeconds = UAInAppMessageBannerDefaultDuration;
         self.backgroundColor = [UIColor whiteColor];
         self.dismissButtonColor = [UIColor blackColor];
     }
@@ -49,10 +52,10 @@ NSUInteger const UAInAppMessageBannerMaxButtons = 2;
         self.buttonLayout = content.buttonLayout;
         self.placement = content.placement;
         self.contentLayout = content.contentLayout;
-        self.duration = content.duration;
+        self.durationSeconds = content.durationSeconds;
         self.backgroundColor = content.backgroundColor;
         self.dismissButtonColor = content.dismissButtonColor;
-        self.borderRadius = content.borderRadius;
+        self.borderRadiusPoints = content.borderRadiusPoints;
         self.actions = content.actions;
     }
 
@@ -82,6 +85,22 @@ NSUInteger const UAInAppMessageBannerMaxButtons = 2;
     return YES;
 }
 
+- (NSUInteger)borderRadius {
+    return self.borderRadiusPoints;
+}
+
+- (void)setBorderRadius:(NSUInteger)borderRadius {
+    self.borderRadiusPoints = borderRadius;
+}
+
+- (NSUInteger)duration {
+    return self.durationSeconds;
+}
+
+- (void)setDuration:(NSUInteger)duration {
+    self.durationSeconds = duration;
+}
+
 @end
 
 @interface UAInAppMessageBannerDisplayContent()
@@ -92,8 +111,8 @@ NSUInteger const UAInAppMessageBannerMaxButtons = 2;
 @property(nonatomic, assign) UAInAppMessageButtonLayoutType buttonLayout;
 @property(nonatomic, assign) UAInAppMessageBannerPlacementType placement;
 @property(nonatomic, assign) UAInAppMessageBannerContentLayoutType contentLayout;
-@property(nonatomic, assign) NSUInteger duration;
-@property(nonatomic, assign) NSUInteger borderRadius;
+@property(nonatomic, assign) NSTimeInterval durationSeconds;
+@property(nonatomic, assign) CGFloat borderRadiusPoints;
 @property(nonatomic, strong, nonnull) UIColor *backgroundColor;
 @property(nonatomic, strong, nonnull) UIColor *dismissButtonColor;
 @property(nonatomic, strong, nullable) NSDictionary *actions;
@@ -270,7 +289,7 @@ NSUInteger const UAInAppMessageBannerMaxButtons = 2;
             }
             return nil;
         }
-        builder.duration = [durationValue integerValue];
+        builder.durationSeconds = [durationValue doubleValue];
     }
     
     id backgroundColorHex = json[UAInAppMessageBackgroundColorKey];
@@ -312,7 +331,7 @@ NSUInteger const UAInAppMessageBannerMaxButtons = 2;
             }
             return nil;
         }
-        builder.borderRadius = [borderRadius unsignedIntegerValue];
+        builder.borderRadiusPoints = [borderRadius doubleValue];
     }
 
     id actions = json[UAInAppMessageBannerActionsKey];
@@ -360,10 +379,10 @@ NSUInteger const UAInAppMessageBannerMaxButtons = 2;
         self.buttonLayout = builder.buttonLayout;
         self.placement = builder.placement;
         self.contentLayout = builder.contentLayout;
-        self.duration = builder.duration;
+        self.durationSeconds = builder.durationSeconds;
         self.backgroundColor = builder.backgroundColor;
         self.dismissButtonColor = builder.dismissButtonColor;
-        self.borderRadius = builder.borderRadius;
+        self.borderRadiusPoints = builder.borderRadiusPoints;
         self.actions = builder.actions;
     }
 
@@ -387,8 +406,8 @@ NSUInteger const UAInAppMessageBannerMaxButtons = 2;
     [json setValue:[self.heading toJSON] forKey:UAInAppMessageHeadingKey];
     [json setValue:[self.body toJSON] forKey:UAInAppMessageBodyKey];
     [json setValue:[self.media toJSON] forKey:UAInAppMessageMediaKey];
-    [json setValue:@(self.duration) forKey:UAInAppMessageDurationKey];
-    [json setValue:@(self.borderRadius) forKey:UAInAppMessageBorderRadiusKey];
+    [json setValue:@(self.durationSeconds) forKey:UAInAppMessageDurationKey];
+    [json setValue:@(self.borderRadiusPoints) forKey:UAInAppMessageBorderRadiusKey];
     [json setValue:[UAColorUtils hexStringWithColor:self.backgroundColor] forKey:UAInAppMessageBackgroundColorKey];
     [json setValue:[UAColorUtils hexStringWithColor:self.dismissButtonColor] forKey:UAInAppMessageDismissButtonColorKey];
     [json setValue:self.actions forKey:UAInAppMessageBannerActionsKey];
@@ -479,7 +498,7 @@ NSUInteger const UAInAppMessageBannerMaxButtons = 2;
         return NO;
     }
 
-    if (self.duration != content.duration) {
+    if (![UAUtils float:self.durationSeconds isEqualToFloat:content.durationSeconds withAccuracy:0.01]) {
         return NO;
     }
 
@@ -492,7 +511,7 @@ NSUInteger const UAInAppMessageBannerMaxButtons = 2;
         return NO;
     }
 
-    if (self.borderRadius != content.borderRadius) {
+    if (![UAUtils float:self.borderRadiusPoints isEqualToFloat:content.borderRadiusPoints withAccuracy:0.01]) {
         return NO;
     }
 
@@ -508,10 +527,10 @@ NSUInteger const UAInAppMessageBannerMaxButtons = 2;
     result = 31 * result + self.buttonLayout;
     result = 31 * result + self.placement;
     result = 31 * result + self.contentLayout;
-    result = 31 * result + self.duration;
+    result = 31 * result + self.durationSeconds;
     result = 31 * result + [[UAColorUtils hexStringWithColor:self.backgroundColor] hash];
     result = 31 * result + [[UAColorUtils hexStringWithColor:self.dismissButtonColor] hash];
-    result = 31 * result + self.borderRadius;
+    result = 31 * result + self.borderRadiusPoints;
 
     return result;
 }
@@ -522,6 +541,14 @@ NSUInteger const UAInAppMessageBannerMaxButtons = 2;
 
 -(UAInAppMessageDisplayType)displayType {
     return UAInAppMessageDisplayTypeBanner;
+}
+
+- (NSUInteger)borderRadius {
+    return self.borderRadiusPoints;
+}
+
+- (NSUInteger)duration {
+    return self.durationSeconds;
 }
 
 @end

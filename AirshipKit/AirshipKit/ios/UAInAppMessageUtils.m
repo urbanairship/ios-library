@@ -367,7 +367,7 @@ CGFloat const CloseButtonHeight = 30;
 
     UIFontDescriptor *fontDescriptor = [UIFontDescriptor fontDescriptorWithFontAttributes:attributes];
 
-    return [UIFont fontWithDescriptor:fontDescriptor size:textInfo.size];
+    return [UIFont fontWithDescriptor:fontDescriptor size:textInfo.sizePoints];
 }
 
 + (NSString *)resolveFontFamily:(NSArray *)fontFamilies {

@@ -190,12 +190,12 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
 - (UAInAppMessageScheduleInfo *)scheduleInfoForMessage:(UALegacyInAppMessage *)message {
     UIColor *primaryColor = message.primaryColor ? message.primaryColor : kUALegacyInAppMessageDefaultPrimaryColor;
     UIColor *secondaryColor = message.secondaryColor ? message.secondaryColor : kUALegacyInAppMessageDefaultSecondaryColor;
-    float borderRadius = 2;
+    CGFloat borderRadius = 2;
 
     UAInAppMessageBannerDisplayContent *displayContent = [UAInAppMessageBannerDisplayContent displayContentWithBuilderBlock:^(UAInAppMessageBannerDisplayContentBuilder * _Nonnull builder) {
         builder.backgroundColor = primaryColor;
         builder.dismissButtonColor = secondaryColor;
-        builder.borderRadius = borderRadius;
+        builder.borderRadiusPoints = borderRadius;
         builder.buttonLayout = UAInAppMessageButtonLayoutTypeSeparate;
         builder.placement = message.position == UALegacyInAppMessagePositionTop ? UAInAppMessageBannerPlacementTop : UAInAppMessageBannerPlacementBottom;
         builder.actions = message.onClick;
@@ -207,7 +207,7 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
 
         builder.body = textInfo;
 
-        builder.duration = message.duration * 1000;
+        builder.durationSeconds = message.duration;
 
         NSMutableArray<UAInAppMessageButtonInfo *> *buttonInfos = [NSMutableArray array];
 
@@ -226,7 +226,7 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
                 builder.actions = message.buttonActions[notificationAction.identifier];
                 builder.identifier = notificationAction.identifier;
                 builder.backgroundColor = secondaryColor;
-                builder.borderRadius = borderRadius;
+                builder.borderRadiusPoints = borderRadius;
                 builder.label = labelInfo;
             }];
 

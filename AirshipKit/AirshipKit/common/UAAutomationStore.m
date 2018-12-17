@@ -15,6 +15,7 @@
 #import "UAConfig.h"
 #import "UAUtils+Internal.h"
 #import "UAJSONSerialization+Internal.h"
+#import "UAScheduleDataMigrator+Internal.h"
 
 @interface UAAutomationStore ()
 @property (nonatomic, strong) NSManagedObjectContext *managedContext;
@@ -39,10 +40,15 @@
         self.managedContext = [NSManagedObjectContext managedObjectContextForModelURL:modelURL
                                                                       concurrencyType:NSPrivateQueueConcurrencyType];
 
+        UA_WEAKIFY(self)
         void (^completion)(BOOL, NSError*) = ^void(BOOL success, NSError *error) {
             if (!success) {
                 UA_LERR(@"Failed to create automation persistent store: %@", error);
+                return;
             }
+
+            UA_STRONGIFY(self);
+            [self migrateData];
         };
 
         if (inMemory) {
@@ -70,12 +76,43 @@
 
 - (void)protectedDataAvailable {
     if (!self.managedContext.persistentStoreCoordinator.persistentStores.count) {
+        UA_WEAKIFY(self)
         [self.managedContext addPersistentSqlStore:self.storeName completionHandler:^(BOOL success, NSError *error) {
             if (!success) {
                 UA_LERR(@"Failed to create automation persistent store: %@", error);
+                return;
             }
+
+            UA_STRONGIFY(self);
+            [self migrateData];
         }];
     }
+}
+
+- (void)migrateData {
+    [self safePerformBlock:^(BOOL isSafe) {
+        if (!isSafe) {
+            return;
+        }
+
+        NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"UAScheduleData"];
+        request.predicate = [NSPredicate predicateWithFormat:@"dataVersion < %d", UAScheduleDataVersion];
+        NSError *error;
+        NSArray *result = [self.managedContext executeFetchRequest:request error:&error];
+
+        if (error) {
+            UA_LERR(@"Error fetching schedules %@", error);
+            return;
+        }
+
+        for (UAScheduleData *scheduleData in result) {
+            [UAScheduleDataMigrator migrateScheduleData:scheduleData
+                                             oldVersion:[scheduleData.dataVersion unsignedIntegerValue]
+                                             newVersion:UAScheduleDataVersion];
+        }
+
+        [self.managedContext safeSave];
+    }];
 }
 
 - (void)safePerformBlock:(void (^)(BOOL))block {
@@ -295,6 +332,7 @@
     scheduleData.end = schedule.info.end;
     scheduleData.interval = @(schedule.info.interval);
     scheduleData.editGracePeriod = @(schedule.info.editGracePeriod);
+    scheduleData.dataVersion = @(UAScheduleDataVersion);
 
     if (schedule.info.delay) {
         scheduleData.delay = [self createDelayDataFromDelay:schedule.info.delay scheduleStart:schedule.info.start schedule:scheduleData];

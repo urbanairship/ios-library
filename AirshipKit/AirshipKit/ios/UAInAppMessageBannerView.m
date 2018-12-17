@@ -141,7 +141,7 @@ CGFloat const ShadowOpacity = 0.5;
 }
 
 - (void)applyLayerRounding {
-    NSUInteger bannerBorderRadius = self.displayContent.borderRadius;
+    CGFloat bannerBorderRadius = self.displayContent.borderRadiusPoints;
     CAShapeLayer * maskLayer = [CAShapeLayer layer];
     maskLayer.path = [UIBezierPath bezierPathWithRoundedRect:self.containerView.bounds
                                            byRoundingCorners:(UIRectCorner)self.rounding

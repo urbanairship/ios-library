@@ -112,7 +112,7 @@ CGFloat const DefaultButtonBorderWidth = 2;
 }
 
 -(void)applyLayerRounding {
-    CGFloat radius = self.buttonInfo.borderRadius;
+    CGFloat radius = self.buttonInfo.borderRadiusPoints;
 
     CAShapeLayer * maskLayer = [CAShapeLayer layer];
     maskLayer.path = [UIBezierPath bezierPathWithRoundedRect:self.bounds
@@ -124,7 +124,7 @@ CGFloat const DefaultButtonBorderWidth = 2;
 }
 
 -(void)applyBorderOfWidth:(CGFloat)width {
-    CGFloat radius = self.buttonInfo.borderRadius;
+    CGFloat radius = self.buttonInfo.borderRadiusPoints;
     CGPathRef borderPath = [UIBezierPath bezierPathWithRoundedRect:self.bounds
                                                  byRoundingCorners:(UIRectCorner)self.rounding
                                                        cornerRadii:(CGSize){radius, radius}].CGPath;

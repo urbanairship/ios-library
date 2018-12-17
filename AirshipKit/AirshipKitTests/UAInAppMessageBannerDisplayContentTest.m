@@ -175,14 +175,14 @@
             builder.alignment = NSTextAlignmentCenter;
             builder.color = [UIColor redColor];
             builder.style = UAInAppMessageTextInfoStyleBold | UAInAppMessageTextInfoStyleItalic | UAInAppMessageTextInfoStyleUnderline;
-            builder.size = 11;
+            builder.sizePoints = 11;
         }];
         builder.body = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
             builder.text = @"body";
             builder.alignment = NSTextAlignmentCenter;
             builder.color = [UIColor redColor];
             builder.style = UAInAppMessageTextInfoStyleBold | UAInAppMessageTextInfoStyleItalic;
-            builder.size = 11;
+            builder.sizePoints = 11;
         }];;
         builder.media = [UAInAppMessageMediaInfo mediaInfoWithURL:@"testurl"
                                                contentDescription:@"description"
@@ -193,12 +193,12 @@
                 builder.alignment = NSTextAlignmentCenter;
                 builder.color = [UIColor redColor];
                 builder.style = UAInAppMessageTextInfoStyleUnderline;
-                builder.size = 11;
+                builder.sizePoints = 11;
             }];
 
             builder.identifier = @"identifier";
             builder.behavior = UAInAppMessageButtonInfoBehaviorCancel;
-            builder.borderRadius = 11;
+            builder.borderRadiusPoints = 11;
             builder.backgroundColor = [UIColor redColor];
             builder.borderColor = [UIColor redColor];
             builder.actions = @{@"+^t":@"test"};
@@ -207,12 +207,12 @@
                 builder.text = @"button2";
                 builder.alignment = NSTextAlignmentCenter;
                 builder.color = [UIColor redColor];
-                builder.size = 11;
+                builder.sizePoints = 11;
             }];
 
             builder.identifier = @"identifier";
             builder.behavior = UAInAppMessageButtonInfoBehaviorCancel;
-            builder.borderRadius = 11;
+            builder.borderRadiusPoints = 11.1;
             builder.backgroundColor = [UIColor redColor];
             builder.borderColor = [UIColor redColor];
             builder.actions = @{@"+^t":@"test"};
@@ -221,9 +221,9 @@
         builder.buttonLayout = UAInAppMessageButtonLayoutTypeSeparate;
         builder.placement = UAInAppMessageBannerPlacementTop;
         builder.contentLayout = UAInAppMessageBannerContentLayoutTypeMediaLeft;
-        builder.duration = 11;
+        builder.durationSeconds = 11;
         builder.dismissButtonColor = [UIColor redColor];
-        builder.borderRadius = 11;
+        builder.borderRadiusPoints = 11.2;
         builder.actions = @{@"^+t": @"sometag"};
     }];
 
@@ -241,14 +241,14 @@
             builder.alignment = NSTextAlignmentCenter;
             builder.color = [UIColor redColor];
             builder.style = UAInAppMessageTextInfoStyleBold | UAInAppMessageTextInfoStyleItalic | UAInAppMessageTextInfoStyleUnderline;
-            builder.size = 11;
+            builder.sizePoints = 11;
         }];
         builder.body = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
             builder.text = @"body";
             builder.alignment = NSTextAlignmentCenter;
             builder.color = [UIColor redColor];
             builder.style = UAInAppMessageTextInfoStyleBold | UAInAppMessageTextInfoStyleItalic;
-            builder.size = 11;
+            builder.sizePoints = 11;
         }];;
         builder.media = [UAInAppMessageMediaInfo mediaInfoWithURL:@"testurl"
                                                contentDescription:@"description"
@@ -259,12 +259,12 @@
                 builder.alignment = NSTextAlignmentCenter;
                 builder.color = [UIColor redColor];
                 builder.style = UAInAppMessageTextInfoStyleUnderline;
-                builder.size = 11;
+                builder.sizePoints = 11;
             }];
 
             builder.identifier = @"identifier";
             builder.behavior = UAInAppMessageButtonInfoBehaviorCancel;
-            builder.borderRadius = 11;
+            builder.borderRadiusPoints = 11.3;
             builder.backgroundColor = [UIColor redColor];
             builder.borderColor = [UIColor redColor];
             builder.actions = @{@"+^t":@"test"};
@@ -273,12 +273,12 @@
                 builder.text = @"button2";
                 builder.alignment = NSTextAlignmentCenter;
                 builder.color = [UIColor redColor];
-                builder.size = 11;
+                builder.sizePoints = 11;
             }];
 
             builder.identifier = @"identifier";
             builder.behavior = UAInAppMessageButtonInfoBehaviorCancel;
-            builder.borderRadius = 11;
+            builder.borderRadiusPoints = 11.4;
             builder.backgroundColor = [UIColor redColor];
             builder.borderColor = [UIColor redColor];
             builder.actions = @{@"+^t":@"test"};
@@ -287,23 +287,79 @@
         builder.buttonLayout = UAInAppMessageButtonLayoutTypeSeparate;
         builder.placement = UAInAppMessageBannerPlacementTop;
         builder.contentLayout = UAInAppMessageBannerContentLayoutTypeMediaLeft;
-        builder.duration = 11;
+        builder.durationSeconds = 11;
         builder.dismissButtonColor = [UIColor redColor];
-        builder.borderRadius = 11;
+        builder.borderRadiusPoints = 11.5;
         builder.actions = @{@"^+t": @"sometag"};
     }];
 
     UAInAppMessageBannerDisplayContent *newBanner = [banner extend:^(UAInAppMessageBannerDisplayContentBuilder * _Nonnull builder) {
-        builder.duration = 22;
+        builder.durationSeconds = 22;
     }];
 
     XCTAssertNotNil(newBanner);
     XCTAssertFalse([newBanner isEqual:banner]);
     XCTAssertEqualObjects(newBanner.backgroundColor, banner.backgroundColor);
     XCTAssertEqualObjects(newBanner.dismissButtonColor, banner.dismissButtonColor);
-    XCTAssertEqual(newBanner.borderRadius, banner.borderRadius);
+    XCTAssertEqual(newBanner.borderRadiusPoints, banner.borderRadiusPoints);
     XCTAssertEqualObjects(newBanner.actions, banner.actions);
-    XCTAssertEqual(newBanner.duration, 22);
+    XCTAssertEqual(newBanner.durationSeconds, 22);
 }
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+- (void)testBorderRadius {
+    UAInAppMessageBannerDisplayContent *content =  [UAInAppMessageBannerDisplayContent displayContentWithBuilderBlock:^(UAInAppMessageBannerDisplayContentBuilder *builder) {
+        builder.borderRadius = 10;
+        builder.heading = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
+            builder.text = @"heading";
+        }];
+    }];
+    
+    XCTAssertNotNil(content);
+    XCTAssertEqual(content.borderRadius, 10);
+    XCTAssertEqual(content.borderRadiusPoints, 10);
+    
+    content =  [UAInAppMessageBannerDisplayContent displayContentWithBuilderBlock:^(UAInAppMessageBannerDisplayContentBuilder *builder) {
+        builder.borderRadiusPoints = 10.5;
+        builder.heading = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
+            builder.text = @"heading";
+        }];
+    }];
+    
+    XCTAssertNotNil(content);
+    XCTAssertEqual(content.borderRadius, 10);
+    XCTAssertEqual(content.borderRadiusPoints, 10.5);
+}
+#pragma GCC diagnostic pop
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+- (void)testDuration {
+    // specify duration
+    UAInAppMessageBannerDisplayContent *content =  [UAInAppMessageBannerDisplayContent displayContentWithBuilderBlock:^(UAInAppMessageBannerDisplayContentBuilder *builder) {
+        builder.duration = 10.5;
+        builder.heading = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
+            builder.text = @"heading";
+        }];
+    }];
+    
+    XCTAssertNotNil(content);
+    XCTAssertEqual(content.duration, 10);
+    XCTAssertEqual(content.durationSeconds, 10);
+    
+    // specify durationSeconds
+    content =  [UAInAppMessageBannerDisplayContent displayContentWithBuilderBlock:^(UAInAppMessageBannerDisplayContentBuilder *builder) {
+        builder.durationSeconds = 10.5;
+        builder.heading = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
+            builder.text = @"heading";
+        }];
+    }];
+    
+    XCTAssertNotNil(content);
+    XCTAssertEqual(content.duration, 10);
+    XCTAssertEqual(content.durationSeconds, 10.5);
+}
+#pragma GCC diagnostic pop
 
 @end

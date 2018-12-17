@@ -62,6 +62,8 @@ typedef NS_ENUM(NSUInteger, UAScheduleState) {
 /// @name Schedule Data Properties
 ///---------------------------------------------------------------------------------------
 
+extern NSUInteger const UAScheduleDataVersion;
+
 /**
  * The schedule's identifier.
  */
@@ -88,6 +90,11 @@ typedef NS_ENUM(NSUInteger, UAScheduleState) {
  * The schedule data payload.
  */
 @property (nullable, nonatomic, retain) NSString *data;
+
+/**
+ * The schedule's data version.
+ */
+@property (nonatomic, retain) NSNumber *dataVersion;
 
 /**
  * The schedule's priority. Priority is optional and defaults to 0. Schedules are

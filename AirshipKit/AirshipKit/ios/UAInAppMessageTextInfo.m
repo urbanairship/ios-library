@@ -4,6 +4,7 @@
 #import <UIKit/UIKit.h>
 #import "UAGlobal.h"
 #import "UAColorUtils+Internal.h"
+#import "UAUtils+Internal.h"
 
 NS_ASSUME_NONNULL_BEGIN
 NSString *const UAInAppMessageTextInfoDomain = @"com.urbanairship.in_app_message_text_info";
@@ -28,7 +29,7 @@ NSString *const UAInAppMessageTextInfoStyleUnderlineValue = @"underline";
 @property(nonatomic, strong) NSString *text;
 @property(nonatomic, strong) NSArray<NSString *> *fontFamilies;
 @property(nonatomic, strong) UIColor *color;
-@property(nonatomic, assign) NSUInteger size;
+@property(nonatomic, assign) CGFloat sizePoints;
 @property(nonatomic, assign) UAInAppMessageTextInfoAlignmentType alignment;
 @property(nonatomic, assign) UAInAppMessageTextInfoStyleType style;
 @end
@@ -40,7 +41,7 @@ NSString *const UAInAppMessageTextInfoStyleUnderlineValue = @"underline";
 
     if (self) {
         self.color = [UIColor blackColor];
-        self.size = 14;
+        self.sizePoints = 14;
         self.alignment = UAInAppMessageTextInfoAlignmentNone;
     }
 
@@ -53,7 +54,7 @@ NSString *const UAInAppMessageTextInfoStyleUnderlineValue = @"underline";
     if (self) {
         self.text = info.text;
         self.color = info.color;
-        self.size = info.size;
+        self.sizePoints = info.sizePoints;
         self.alignment = info.alignment;
         self.style = info.style;
         self.fontFamilies = info.fontFamilies;
@@ -75,6 +76,14 @@ NSString *const UAInAppMessageTextInfoStyleUnderlineValue = @"underline";
     return YES;
 }
 
+- (NSUInteger)size {
+    return self.sizePoints;
+}
+
+- (void)setSize:(NSUInteger)size {
+    self.sizePoints = size;
+}
+
 @end
 
 @implementation UAInAppMessageTextInfo
@@ -90,7 +99,7 @@ NSString *const UAInAppMessageTextInfoStyleUnderlineValue = @"underline";
     if (self) {
         self.text = builder.text;
         self.color = builder.color;
-        self.size = builder.size;
+        self.sizePoints = builder.sizePoints;
         self.alignment = builder.alignment;
         self.style = builder.style;
         self.fontFamilies = builder.fontFamilies;
@@ -162,7 +171,7 @@ NSString *const UAInAppMessageTextInfoStyleUnderlineValue = @"underline";
             }
             return nil;
         }
-        builder.size = [textSize unsignedIntegerValue];
+        builder.sizePoints = [textSize doubleValue];
     }
 
     id alignmentContents = json[UAInAppMessageTextInfoAlignmentKey];
@@ -282,7 +291,7 @@ NSString *const UAInAppMessageTextInfoStyleUnderlineValue = @"underline";
 
     [json setValue:self.text forKey:UAInAppMessageTextInfoTextKey];
     [json setValue:[UAColorUtils hexStringWithColor:self.color] forKey:UAInAppMessageTextInfoColorKey];
-    [json setValue:@(self.size) forKey:UAInAppMessageTextInfoSizeKey];
+    [json setValue:@(self.sizePoints) forKey:UAInAppMessageTextInfoSizeKey];
 
     switch (self.alignment) {
         case UAInAppMessageTextInfoAlignmentCenter:
@@ -344,7 +353,7 @@ NSString *const UAInAppMessageTextInfoStyleUnderlineValue = @"underline";
         return NO;
     }
 
-    if (info.size != self.size) {
+    if (![UAUtils float:self.sizePoints isEqualToFloat:info.sizePoints withAccuracy:0.01]) {
         return NO;
     }
 
@@ -367,7 +376,7 @@ NSString *const UAInAppMessageTextInfoStyleUnderlineValue = @"underline";
     NSUInteger result = 1;
     result = 31 * result + [self.text hash];
     result = 31 * result + [self.color hash];
-    result = 31 * result + self.size;
+    result = 31 * result + self.sizePoints;
     result = 31 * result + self.alignment;
     result = 31 * result + self.style;
     result = 31 * result + [self.fontFamilies hash];
@@ -395,6 +404,10 @@ NSString *const UAInAppMessageTextInfoStyleUnderlineValue = @"underline";
 
 - (NSString *)description {
     return [NSString stringWithFormat:@"<UAInAppMessageTextInfo: %@>", [self toJSON]];
+}
+
+- (NSUInteger)size {
+    return self.sizePoints;
 }
 
 @end

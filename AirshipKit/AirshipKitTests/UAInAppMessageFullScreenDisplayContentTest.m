@@ -108,7 +108,7 @@
         builder.heading = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
             builder.text = @"headline content";
             builder.color = [UIColor redColor];
-            builder.size = 11;
+            builder.sizePoints = 11;
             builder.alignment = NSTextAlignmentLeft;
             builder.style = UAInAppMessageTextInfoStyleBold | UAInAppMessageTextInfoStyleItalic | UAInAppMessageTextInfoStyleUnderline;
         }];;
@@ -116,7 +116,7 @@
         builder.body = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
             builder.text = @"body content";
             builder.color = [UIColor greenColor];
-            builder.size = 11;
+            builder.sizePoints = 11;
             builder.alignment = NSTextAlignmentLeft;
             builder.style = UAInAppMessageTextInfoStyleBold | UAInAppMessageTextInfoStyleItalic | UAInAppMessageTextInfoStyleUnderline;
         }];
@@ -125,7 +125,7 @@
             builder.label = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
                 builder.text = @"Dismiss";
                 builder.color = [UIColor blueColor];
-                builder.size = 11;
+                builder.sizePoints = 11;
                 builder.alignment = NSTextAlignmentLeft;
                 builder.style = UAInAppMessageTextInfoStyleBold | UAInAppMessageTextInfoStyleItalic | UAInAppMessageTextInfoStyleUnderline;
             }];
@@ -137,12 +137,12 @@
             builder.label = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
                 builder.text = @"Cancel";
                 builder.color = [UIColor redColor];
-                builder.size = 9;
+                builder.sizePoints = 9;
                 builder.alignment = NSTextAlignmentRight;
                 builder.style = UAInAppMessageTextInfoStyleBold | UAInAppMessageTextInfoStyleItalic | UAInAppMessageTextInfoStyleUnderline;
             }];
             builder.backgroundColor = [UIColor blueColor];
-            builder.borderRadius = 10;
+            builder.borderRadiusPoints = 10;
             builder.behavior = UAInAppMessageButtonInfoBehaviorCancel;
             builder.identifier = @"button";
         }];
@@ -151,12 +151,12 @@
             builder.label = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
                 builder.text = @"footer link";
                 builder.color = [UIColor redColor];
-                builder.size = 9;
+                builder.sizePoints = 9;
                 builder.alignment = NSTextAlignmentCenter;
                 builder.style = UAInAppMessageTextInfoStyleUnderline;
             }];
             builder.backgroundColor = [UIColor clearColor];
-            builder.borderRadius = 10;
+            builder.borderRadiusPoints = 10;
             builder.behavior = UAInAppMessageButtonInfoBehaviorCancel;
             builder.identifier = @"button";
         }];
@@ -185,7 +185,7 @@
         builder.heading = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
             builder.text = @"headline content";
             builder.color = [UIColor redColor];
-            builder.size = 11;
+            builder.sizePoints = 11;
             builder.alignment = NSTextAlignmentLeft;
             builder.style = UAInAppMessageTextInfoStyleBold | UAInAppMessageTextInfoStyleItalic | UAInAppMessageTextInfoStyleUnderline;
         }];;
@@ -193,7 +193,7 @@
         builder.body = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
             builder.text = @"body content";
             builder.color = [UIColor greenColor];
-            builder.size = 11;
+            builder.sizePoints = 11;
             builder.alignment = NSTextAlignmentLeft;
             builder.style = UAInAppMessageTextInfoStyleBold | UAInAppMessageTextInfoStyleItalic | UAInAppMessageTextInfoStyleUnderline;
         }];
@@ -202,7 +202,7 @@
             builder.label = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
                 builder.text = @"Dismiss";
                 builder.color = [UIColor blueColor];
-                builder.size = 11;
+                builder.sizePoints = 11;
                 builder.alignment = NSTextAlignmentLeft;
                 builder.style = UAInAppMessageTextInfoStyleBold | UAInAppMessageTextInfoStyleItalic | UAInAppMessageTextInfoStyleUnderline;
             }];
@@ -214,12 +214,12 @@
             builder.label = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
                 builder.text = @"Cancel";
                 builder.color = [UIColor redColor];
-                builder.size = 9;
+                builder.sizePoints = 9;
                 builder.alignment = NSTextAlignmentRight;
                 builder.style = UAInAppMessageTextInfoStyleBold | UAInAppMessageTextInfoStyleItalic | UAInAppMessageTextInfoStyleUnderline;
             }];
             builder.backgroundColor = [UIColor blueColor];
-            builder.borderRadius = 10;
+            builder.borderRadiusPoints = 10;
             builder.behavior = UAInAppMessageButtonInfoBehaviorCancel;
             builder.identifier = @"button";
         }];
@@ -228,12 +228,12 @@
             builder.label = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
                 builder.text = @"footer link";
                 builder.color = [UIColor redColor];
-                builder.size = 9;
+                builder.sizePoints = 9;
                 builder.alignment = NSTextAlignmentCenter;
                 builder.style = UAInAppMessageTextInfoStyleUnderline;
             }];
             builder.backgroundColor = [UIColor clearColor];
-            builder.borderRadius = 10;
+            builder.borderRadiusPoints = 10;
             builder.behavior = UAInAppMessageButtonInfoBehaviorCancel;
             builder.identifier = @"button";
         }];

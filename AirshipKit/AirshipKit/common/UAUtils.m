@@ -363,4 +363,23 @@
     return NSOrderedSame;
 }
 
+/**
+ * A utility method that compares two floating points and returns `YES` if the
+ * difference between them is less than or equal to the specified accuracy.
+ * This allows for minor differences due to errors injected through the
+ * transformation of floating point values to and from JSON.
+ */
++ (BOOL)float:(CGFloat)float1 isEqualToFloat:(CGFloat)float2 withAccuracy:(CGFloat)accuracy {
+    if (float1 == float2) {
+        return YES;
+    }
+    
+    CGFloat diff = fabs(float1 - float2);
+    if (diff > fabs(accuracy)) {
+        return NO;
+    }
+    
+    return YES;
+}
+
 @end
