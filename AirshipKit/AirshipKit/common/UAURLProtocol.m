@@ -8,6 +8,8 @@
 @property (nonatomic, strong) NSURLSessionDataTask *dataTask;
 @end
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-implementations"
 @implementation UAURLProtocol
 
 static NSMutableSet *cachableURLs_ = nil;
@@ -39,10 +41,13 @@ static NSURLCache *cache_ = nil;
 + (NSURLCache *)cache {
     static dispatch_once_t onceToken_;
     dispatch_once(&onceToken_, ^{
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
         cache_ = [[NSURLCache alloc] initWithMemoryCapacity:kUACacheMemorySizeInBytes
                                                diskCapacity:[UAirship shared].config.cacheDiskSizeInMB * 1024 * 1024
                                                    diskPath:@"UAURLCache"];
     });
+#pragma GCC diagnostic pop
 
     return cache_;
 }
@@ -112,5 +117,7 @@ static NSURLCache *cache_ = nil;
     [self.client URLProtocol:self didLoadData:data];
     [self.client URLProtocolDidFinishLoading:self];
 }
+
+#pragma GCC diagnostic pop
 
 @end
