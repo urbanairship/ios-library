@@ -169,6 +169,11 @@ NS_ASSUME_NONNULL_BEGIN
                 UA_LERR(@"Unable to decode resolution: %@, error: %@", jsonDecodedArgs, error);
             }
         }
+
+        if (completionHandler) {
+            completionHandler(nil);
+            return;
+        }
     }
 
     // Arguments not recognized, pass a nil script result
