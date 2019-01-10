@@ -4,8 +4,8 @@
 @implementation UAInAppMessageNativeBridge
 
 - (void)performJSDelegateWithData:(UAWebViewCallData *)data webView:(UIView *)webView {
-    if ([data.url.scheme isEqualToString:@"uairship"]) {
-        if ([data.name isEqualToString:@"dismiss"]) {
+    if ([data.url.scheme isEqualToString:UANativeBridgeUAirshipScheme]) {
+        if ([data.name isEqualToString:UANativeBridgeDismissCommand]) {
             if (self.messageJSDelegate) {
                 [self performAsyncJSCallWithDelegate:self.messageJSDelegate data:data webView:webView];
             }

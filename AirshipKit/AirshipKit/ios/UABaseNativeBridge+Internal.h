@@ -9,6 +9,16 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /**
+ * The UAirship scheme.
+ */
+extern NSString *const UANativeBridgeUAirshipScheme;
+
+/**
+ * The dismiss command.
+ */
+extern NSString *const UANativeBridgeDismissCommand;
+
+/**
  * Base class for UIWebView & WKWebView native bridges that automatically inject the 
  * Urban Airship Javascript interface on whitelisted URLs.
  */

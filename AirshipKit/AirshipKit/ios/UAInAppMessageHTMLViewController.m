@@ -149,7 +149,7 @@ NS_ASSUME_NONNULL_BEGIN
      * Expected format:
      * dismiss/<resolution>/
      */
-    if ([data.name isEqualToString:@"dismiss"]) {
+    if ([data.name isEqualToString:UANativeBridgeDismissCommand]) {
         id args = [data.arguments firstObject];
 
         // allow the reading of fragments so we can parse lower level JSON values
