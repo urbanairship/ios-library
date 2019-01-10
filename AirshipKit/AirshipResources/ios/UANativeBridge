@@ -18,6 +18,11 @@ if (typeof UAirship === 'undefined') {
       invoke('uairship://close')
     }
 
+    urbanAirship.dismiss = function(resolution) {
+      var encodedResolution = encodeURIComponent(JSON.stringify(resolution))
+      invoke('uairship://dismiss/' + encodedResolution)
+    }
+
     urbanAirship.runAction = function(actionName, argument, callback) {
       var callbackKey = 'ua-cb-' + (++callbackID)
 

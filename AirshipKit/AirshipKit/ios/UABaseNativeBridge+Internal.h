@@ -4,8 +4,19 @@
 #import <WebKit/WebKit.h>
 
 #import "UAWebViewCallData.h"
+#import "UAJavaScriptDelegate.h"
 
 NS_ASSUME_NONNULL_BEGIN
+
+/**
+ * The UAirship scheme.
+ */
+extern NSString *const UANativeBridgeUAirshipScheme;
+
+/**
+ * The dismiss command.
+ */
+extern NSString *const UANativeBridgeDismissCommand;
 
 /**
  * Base class for UIWebView & WKWebView native bridges that automatically inject the 
@@ -31,6 +42,13 @@ NS_ASSUME_NONNULL_BEGIN
  * @param webView The UIWebView or WKWebView.
  */
 - (void)performJSDelegateWithData:(UAWebViewCallData *)data webView:(UIView *)webView;
+
+/**
+ * Call the provided Javascript delegate with the call data and evaluate the returned Javascript.
+ */
+- (void)performAsyncJSCallWithDelegate:(id<UAJavaScriptDelegate>)delegate
+                                  data:(UAWebViewCallData *)data
+                               webView:(UIView *)webView;
 
 /**
  * Handles a link click.

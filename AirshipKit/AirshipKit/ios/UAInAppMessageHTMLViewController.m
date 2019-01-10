@@ -6,13 +6,14 @@
 #import "UAWebView+Internal.h"
 #import "UAInAppMessageHTMLDisplayContent.h"
 #import "UAInAppMessageDismissButton+Internal.h"
-#import "UAInAppMessageResolution.h"
+#import "UAInAppMessageResolution+Internal.h"
 #import "UAViewUtils+Internal.h"
-#import "UAWKWebViewNativeBridge.h"
+#import "UAInAppMessageNativeBridge+Internal.h"
+#import "NSJSONSerialization+UAAdditions.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface UAInAppMessageHTMLViewController () <UAWKWebViewDelegate>
+@interface UAInAppMessageHTMLViewController () <UAWKWebViewDelegate, UAJavaScriptDelegate>
 
 /**
  * The container view.
@@ -37,7 +38,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * The native bridge.
  */
-@property (nonatomic, strong) UAWKWebViewNativeBridge *nativeBridge;
+@property (nonatomic, strong) UAInAppMessageNativeBridge *nativeBridge;
 
 /**
  * Close button.
@@ -69,8 +70,9 @@ NS_ASSUME_NONNULL_BEGIN
         self.style = style;
 
         self.closeButton = [self createCloseButton];
-        self.nativeBridge = [[UAWKWebViewNativeBridge alloc] init];
+        self.nativeBridge = [[UAInAppMessageNativeBridge alloc] init];
         self.nativeBridge.forwardDelegate = self;
+        self.nativeBridge.messageJSDelegate = self;
     }
 
     return self;
@@ -136,6 +138,44 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)dismissWithResolution:(UAInAppMessageResolution *)resolution  {
     [self.resizableParent dismissWithResolution:resolution];
+}
+
+#pragma mark UAJavaScriptDelegate
+
+- (void)callWithData:(UAWebViewCallData *)data withCompletionHandler:(UAJavaScriptDelegateCompletionHandler)completionHandler {
+    /**
+     * dismiss calls dismissWithResolution:
+     *
+     * Expected format:
+     * dismiss/<resolution>/
+     */
+    if ([data.name isEqualToString:UANativeBridgeDismissCommand]) {
+        id args = [data.arguments firstObject];
+
+        // allow the reading of fragments so we can parse lower level JSON values
+        id jsonDecodedArgs = [NSJSONSerialization objectWithString:args
+                                                           options:NSJSONReadingMutableContainers | NSJSONReadingAllowFragments];
+        if (!jsonDecodedArgs) {
+            UA_LERR(@"Unable to json decode resolution: %@", args);
+        } else {
+            UA_LDEBUG(@"Decoded resolution value: %@", jsonDecodedArgs);
+
+            NSError *error;
+
+            UAInAppMessageResolution *resolution = [UAInAppMessageResolution resolutionWithJSON:jsonDecodedArgs error:&error];
+            if (resolution) {
+                [self dismissWithResolution:resolution];
+            } else {
+                UA_LERR(@"Unable to decode resolution: %@, error: %@", jsonDecodedArgs, error);
+            }
+        }
+
+        completionHandler(nil);
+        return;
+    }
+
+    // Arguments not recognized, pass a nil script result
+    completionHandler(nil);
 }
 
 #pragma mark UAWKWebViewDelegate

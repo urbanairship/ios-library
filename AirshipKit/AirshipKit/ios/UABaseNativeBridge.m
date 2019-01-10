@@ -18,6 +18,9 @@
 #import "UAPush.h"
 #import "UAConfig.h"
 
+NSString *const UANativeBridgeUAirshipScheme = @"uairship";
+NSString *const UANativeBridgeDismissCommand = @"dismiss";
+
 @implementation UABaseNativeBridge
 
 - (void)populateJavascriptEnvironmentIfWhitelisted:(UIView *)webView requestURL:(NSURL *)url {
@@ -136,7 +139,7 @@
     id <UAJavaScriptDelegate> actionJSDelegate = [UAirship shared].actionJSDelegate;
     id <UAJavaScriptDelegate> userJSDDelegate = [UAirship shared].jsDelegate;
 
-    if ([data.url.scheme isEqualToString:@"uairship"]) {
+    if ([data.url.scheme isEqualToString:UANativeBridgeUAirshipScheme]) {
         if ([data.name isEqualToString:@"run-actions"] ||
             [data.name isEqualToString:@"run-basic-actions"] ||
             [data.name isEqualToString:@"run-action-cb"] ||
@@ -229,7 +232,7 @@
 #pragma GCC diagnostic pop
 
 - (BOOL)isAirshipRequest:(NSURLRequest *)request {
-    return [[request.URL scheme] isEqualToString:@"uairship"];
+    return [[request.URL scheme] isEqualToString:UANativeBridgeUAirshipScheme];
 }
 
 - (BOOL)isWhitelisted:(NSURL *)url {
