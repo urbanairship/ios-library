@@ -170,16 +170,12 @@ NS_ASSUME_NONNULL_BEGIN
             }
         }
 
-        if (completionHandler) {
-            completionHandler(nil);
-            return;
-        }
+        completionHandler(nil);
+        return;
     }
 
     // Arguments not recognized, pass a nil script result
-    if (completionHandler) {
-        completionHandler(nil);
-    }
+    completionHandler(nil);
 }
 
 #pragma mark UAWKWebViewDelegate
