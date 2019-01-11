@@ -46,7 +46,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param imageData The image data.
  */
 
-+ (instancetype)mediaViewWithMediaInfo:(UAInAppMessageMediaInfo *)mediaInfo imageData:(NSData *)image;
++ (instancetype)mediaViewWithMediaInfo:(UAInAppMessageMediaInfo *)mediaInfo imageData:(NSData *)imageData;
 
 
 

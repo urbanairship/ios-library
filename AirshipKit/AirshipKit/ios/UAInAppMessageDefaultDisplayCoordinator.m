@@ -59,7 +59,7 @@
 }
 
 - (void)setIsDisplayLocked:(BOOL)isDisplayLocked {
-    if (!_isDisplayLocked == isDisplayLocked) {
+    if (_isDisplayLocked != isDisplayLocked) {
         _isDisplayLocked = isDisplayLocked;
 
         if (!isDisplayLocked && [[UIApplication sharedApplication] applicationState] == UIApplicationStateActive) {

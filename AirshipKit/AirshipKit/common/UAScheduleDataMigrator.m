@@ -23,7 +23,7 @@ NSString *const UAInAppMessageV2DurationKey = @"duration";
             [self perfrom0To1MigrationForScheduleData:scheduleData];
     }
 
-    UA_LTRACE(@"Migrated schedule data from %ld to %ld", oldVersion, newVersion);
+    UA_LTRACE(@"Migrated schedule data from %ld to %ld", (unsigned long)oldVersion, (unsigned long)newVersion);
 }
 + (void)perfrom0To1MigrationForScheduleData:(UAScheduleData *)scheduleData {
     // convert source data to a JSON dictionary
