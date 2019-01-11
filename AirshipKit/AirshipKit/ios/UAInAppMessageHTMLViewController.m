@@ -198,6 +198,10 @@ NS_ASSUME_NONNULL_BEGIN
     });
 }
 
+- (void)closeWindowAnimated:(BOOL)animated {
+    [self dismissWithResolution:[UAInAppMessageResolution userDismissedResolution]];
+}
+
 @end
 
 NS_ASSUME_NONNULL_END

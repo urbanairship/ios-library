@@ -317,13 +317,13 @@
 		6EADE70D1FA8FA210007F924 /* UAScheduleInfo+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EADE6FB1FA8F9FB0007F924 /* UAScheduleInfo+Internal.h */; };
 		6EADE70F1FA8FAC60007F924 /* AirshipLib.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EADE70E1FA8FAC50007F924 /* AirshipLib.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6EADE7111FA8FAF50007F924 /* AirshipLib.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EADE70E1FA8FAC50007F924 /* AirshipLib.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6ECF2BF21F1E92A10061247E /* UAInbox.xcdatamodeld in Resources */ = {isa = PBXBuildFile; fileRef = 6ECF2BF01F1E92A10061247E /* UAInbox.xcdatamodeld */; };
 		6ECEBF5621C452A300FAAB08 /* UAScheduleDataMigrator+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6ECEBF5421C452A300FAAB08 /* UAScheduleDataMigrator+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6ECEBF5721C452A300FAAB08 /* UAScheduleDataMigrator+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6ECEBF5421C452A300FAAB08 /* UAScheduleDataMigrator+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6ECEBF5821C452A300FAAB08 /* UAScheduleDataMigrator+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6ECEBF5421C452A300FAAB08 /* UAScheduleDataMigrator+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6ECEBF5921C452A300FAAB08 /* UAScheduleDataMigrator.m in Sources */ = {isa = PBXBuildFile; fileRef = 6ECEBF5521C452A300FAAB08 /* UAScheduleDataMigrator.m */; };
 		6ECEBF5A21C452A300FAAB08 /* UAScheduleDataMigrator.m in Sources */ = {isa = PBXBuildFile; fileRef = 6ECEBF5521C452A300FAAB08 /* UAScheduleDataMigrator.m */; };
 		6ECEBF5B21C452A300FAAB08 /* UAScheduleDataMigrator.m in Sources */ = {isa = PBXBuildFile; fileRef = 6ECEBF5521C452A300FAAB08 /* UAScheduleDataMigrator.m */; };
-		6ECF2BF21F1E92A10061247E /* UAInbox.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6ECF2BF01F1E92A10061247E /* UAInbox.xcdatamodeld */; };
 		6ED3C03C200801C4002A746B /* UAInAppMessageCustomDisplayContent.h in Headers */ = {isa = PBXBuildFile; fileRef = 6ED3C03A200801C4002A746B /* UAInAppMessageCustomDisplayContent.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6ED3C03D200801C4002A746B /* UAInAppMessageCustomDisplayContent.h in Headers */ = {isa = PBXBuildFile; fileRef = 6ED3C03A200801C4002A746B /* UAInAppMessageCustomDisplayContent.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6ED3C03E200801C4002A746B /* UAInAppMessageCustomDisplayContent.m in Sources */ = {isa = PBXBuildFile; fileRef = 6ED3C03B200801C4002A746B /* UAInAppMessageCustomDisplayContent.m */; };
@@ -697,8 +697,8 @@
 		99B6EE731F3BA1DF00C4E3F1 /* UAURLActionPredicate+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 99B6EE6E1F3BA1DF00C4E3F1 /* UAURLActionPredicate+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		99B6EE741F3BA1DF00C4E3F1 /* UAURLActionPredicate+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 99B6EE6E1F3BA1DF00C4E3F1 /* UAURLActionPredicate+Internal.h */; };
 		99CA7BDF1EDF32FD0051E2CA /* UrbanAirship.strings in Resources */ = {isa = PBXBuildFile; fileRef = CC70E98E1DDB8AF8000E2528 /* UrbanAirship.strings */; };
-		99CA7BE11EDF33A10051E2CA /* UAEvents.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = CC04F1841DBED84600B4842D /* UAEvents.xcdatamodeld */; };
-		99CA7BE21EDF33A80051E2CA /* UAAutomation.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = CC8999A01D8B642D00A0CECC /* UAAutomation.xcdatamodeld */; };
+		99CA7BE11EDF33A10051E2CA /* UAEvents.xcdatamodeld in Resources */ = {isa = PBXBuildFile; fileRef = CC04F1841DBED84600B4842D /* UAEvents.xcdatamodeld */; };
+		99CA7BE21EDF33A80051E2CA /* UAAutomation.xcdatamodeld in Resources */ = {isa = PBXBuildFile; fileRef = CC8999A01D8B642D00A0CECC /* UAAutomation.xcdatamodeld */; };
 		99CA7BEE1EDF41750051E2CA /* AirshipResources tvOS.bundle in Resources */ = {isa = PBXBuildFile; fileRef = DF7E739E1E7B3F0A0039F65D /* AirshipResources tvOS.bundle */; };
 		99E2DA2B1FB62D1400C9F2CC /* UAInAppMessage+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 997141211FB2431500EF5445 /* UAInAppMessage+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		99E2DA2C1FB62D1600C9F2CC /* UAInAppMessage+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 997141211FB2431500EF5445 /* UAInAppMessage+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -761,7 +761,7 @@
 		99EC01981FE1FED100B9C408 /* UAInAppMessageFullScreenAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = 99EC01971FE1FED100B9C408 /* UAInAppMessageFullScreenAdapter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		99EC01991FE1FED100B9C408 /* UAInAppMessageFullScreenAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = 99EC01971FE1FED100B9C408 /* UAInAppMessageFullScreenAdapter.h */; };
 		C7288C982C82D1A883F6764C /* Pods_AirshipKitTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F98742CB99EDEDE99A230C2 /* Pods_AirshipKitTests.framework */; };
-		CC04F1861DBED84600B4842D /* UAEvents.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = CC04F1841DBED84600B4842D /* UAEvents.xcdatamodeld */; };
+		CC04F1861DBED84600B4842D /* UAEvents.xcdatamodeld in Resources */ = {isa = PBXBuildFile; fileRef = CC04F1841DBED84600B4842D /* UAEvents.xcdatamodeld */; };
 		CC04F18B1DBED9FA00B4842D /* UAEventData.m in Sources */ = {isa = PBXBuildFile; fileRef = CC04F1891DBED9FA00B4842D /* UAEventData.m */; };
 		CC04F18C1DBED9FA00B4842D /* UAEventData.m in Sources */ = {isa = PBXBuildFile; fileRef = CC04F1891DBED9FA00B4842D /* UAEventData.m */; };
 		CC04F18F1DBEDA1900B4842D /* UAEventStore+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC04F18D1DBEDA1900B4842D /* UAEventStore+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1233,7 +1233,7 @@
 		CC7EEB291DF9F2270041DA8D /* UAirshipVersion.h in Headers */ = {isa = PBXBuildFile; fileRef = CC7EEB271DF9F2270041DA8D /* UAirshipVersion.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CC7EEB2A1DF9F2270041DA8D /* UAirshipVersion.m in Sources */ = {isa = PBXBuildFile; fileRef = CC7EEB281DF9F2270041DA8D /* UAirshipVersion.m */; };
 		CC7EEB2B1DF9F2270041DA8D /* UAirshipVersion.m in Sources */ = {isa = PBXBuildFile; fileRef = CC7EEB281DF9F2270041DA8D /* UAirshipVersion.m */; };
-		CC8999AA1D8B642D00A0CECC /* UAAutomation.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = CC8999A01D8B642D00A0CECC /* UAAutomation.xcdatamodeld */; };
+		CC8999AA1D8B642D00A0CECC /* UAAutomation.xcdatamodeld in Resources */ = {isa = PBXBuildFile; fileRef = CC8999A01D8B642D00A0CECC /* UAAutomation.xcdatamodeld */; };
 		CC8999AB1D8B642D00A0CECC /* UAMessageCenterListCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = CC8999A21D8B642D00A0CECC /* UAMessageCenterListCell.xib */; };
 		CC8999AC1D8B642D00A0CECC /* UAMessageCenterListViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CC8999A31D8B642D00A0CECC /* UAMessageCenterListViewController.xib */; };
 		CC8999AE1D8B642D00A0CECC /* UAMessageCenterPlaceholderIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = CC8999A51D8B642D00A0CECC /* UAMessageCenterPlaceholderIcon.png */; };
@@ -1311,8 +1311,8 @@
 		DF5ED8E51F7455C5002DDA24 /* UARemoteDataStore.m in Sources */ = {isa = PBXBuildFile; fileRef = DF5ED8E11F7455C5002DDA24 /* UARemoteDataStore.m */; };
 		DF5ED8E61F7455C5002DDA24 /* UARemoteDataStore.m in Sources */ = {isa = PBXBuildFile; fileRef = DF5ED8E11F7455C5002DDA24 /* UARemoteDataStore.m */; };
 		DF5ED8E71F7455C5002DDA24 /* UARemoteDataStore.m in Sources */ = {isa = PBXBuildFile; fileRef = DF5ED8E11F7455C5002DDA24 /* UARemoteDataStore.m */; };
-		DF5ED8EA1F745682002DDA24 /* UARemoteData.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = DF5ED8E81F745682002DDA24 /* UARemoteData.xcdatamodeld */; };
-		DF5ED8EB1F745682002DDA24 /* UARemoteData.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = DF5ED8E81F745682002DDA24 /* UARemoteData.xcdatamodeld */; };
+		DF5ED8EA1F745682002DDA24 /* UARemoteData.xcdatamodeld in Resources */ = {isa = PBXBuildFile; fileRef = DF5ED8E81F745682002DDA24 /* UARemoteData.xcdatamodeld */; };
+		DF5ED8EB1F745682002DDA24 /* UARemoteData.xcdatamodeld in Resources */ = {isa = PBXBuildFile; fileRef = DF5ED8E81F745682002DDA24 /* UARemoteData.xcdatamodeld */; };
 		DF5ED9001F7475FE002DDA24 /* UARemoteDataStorePayload+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = DF5ED8FE1F7475FE002DDA24 /* UARemoteDataStorePayload+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DF5ED9011F7475FE002DDA24 /* UARemoteDataStorePayload+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = DF5ED8FE1F7475FE002DDA24 /* UARemoteDataStorePayload+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DF5ED9021F7475FE002DDA24 /* UARemoteDataStorePayload.m in Sources */ = {isa = PBXBuildFile; fileRef = DF5ED8FF1F7475FE002DDA24 /* UARemoteDataStorePayload.m */; };
@@ -5007,7 +5007,7 @@
 		494DD94E1B0EB677009C134E /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1000;
+				LastUpgradeCheck = 1010;
 				ORGANIZATIONNAME = "Urban Airship";
 				TargetAttributes = {
 					494DD9561B0EB677009C134E = {
@@ -5130,6 +5130,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CC04F1861DBED84600B4842D /* UAEvents.xcdatamodeld in Resources */,
+				DF5ED8EA1F745682002DDA24 /* UARemoteData.xcdatamodeld in Resources */,
+				CC8999AA1D8B642D00A0CECC /* UAAutomation.xcdatamodeld in Resources */,
+				6ECF2BF21F1E92A10061247E /* UAInbox.xcdatamodeld in Resources */,
 				457769FC2141A124008270FC /* UAInAppMessageFullScreenViewController.xib in Resources */,
 				DFFA73A01FFDB42D00D2DA1A /* UAInAppMessageModalViewController.xib in Resources */,
 				6E7700AA1F04790C00B5E465 /* UANativeBridge in Resources */,
@@ -5162,6 +5166,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DF5ED8EB1F745682002DDA24 /* UARemoteData.xcdatamodeld in Resources */,
+				99CA7BE11EDF33A10051E2CA /* UAEvents.xcdatamodeld in Resources */,
+				99CA7BE21EDF33A80051E2CA /* UAAutomation.xcdatamodeld in Resources */,
 				DF7E7A091EE1DBBB00D4EF02 /* UADefaultActions.plist in Resources */,
 				99CA7BDF1EDF32FD0051E2CA /* UrbanAirship.strings in Resources */,
 			);
@@ -5651,10 +5658,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CC04F1861DBED84600B4842D /* UAEvents.xcdatamodeld in Sources */,
-				DF5ED8EA1F745682002DDA24 /* UARemoteData.xcdatamodeld in Sources */,
-				CC8999AA1D8B642D00A0CECC /* UAAutomation.xcdatamodeld in Sources */,
-				6ECF2BF21F1E92A10061247E /* UAInbox.xcdatamodeld in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6060,9 +6063,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DF5ED8EB1F745682002DDA24 /* UARemoteData.xcdatamodeld in Sources */,
-				99CA7BE11EDF33A10051E2CA /* UAEvents.xcdatamodeld in Sources */,
-				99CA7BE21EDF33A80051E2CA /* UAAutomation.xcdatamodeld in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6183,7 +6183,6 @@
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				VALID_ARCHS = "$(inherited)";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -6235,12 +6234,11 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
-				ONLY_ACTIVE_ARCH = YES;
+				ONLY_ACTIVE_ARCH = NO;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
-				VALID_ARCHS = "$(inherited)";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -6264,7 +6262,6 @@
 				INFOPLIST_FILE = AirshipKit/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				ONLY_ACTIVE_ARCH = YES;
 				"OTHER_CFLAGS[arch=*]" = (
 					"-D_UA_VERSION=\\\"$(CURRENT_PROJECT_VERSION)\\\"",
 					"$(inherited)",
@@ -6277,7 +6274,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.urbanairship.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				VALID_ARCHS = "$(inherited) i386 x86_64";
 			};
 			name = Debug;
 		};
@@ -6298,7 +6294,6 @@
 				INFOPLIST_FILE = AirshipKit/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				ONLY_ACTIVE_ARCH = YES;
 				"OTHER_CFLAGS[arch=*]" = (
 					"-D_UA_VERSION=\\\"$(CURRENT_PROJECT_VERSION)\\\"",
 					"$(inherited)",
@@ -6311,7 +6306,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.urbanairship.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				VALID_ARCHS = "$(inherited) i386 x86_64";
 			};
 			name = Release;
 		};
@@ -6422,7 +6416,6 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				INFOPLIST_FILE = "$(SRCROOT)/AirshipResources/ios/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
-				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.AirshipResources;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
@@ -6502,7 +6495,6 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				ENABLE_NS_ASSERTIONS = YES;
 				GCC_C_LANGUAGE_STANDARD = c99;
-				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = (
 					"-D_UA_VERSION=\\\"$(CURRENT_PROJECT_VERSION)\\\"",
 					"-fembed-bitcode",
@@ -6635,7 +6627,6 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				INFOPLIST_FILE = AirshipResources/tvos/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
-				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.AirshipResources;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;

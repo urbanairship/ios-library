@@ -3,6 +3,17 @@ iOS Changelog
 
 Migration Guides: Documentation/Migration
 
+Version 10.0.4 - January 10, 2019
+================================
+Patch release to fix a few minor issues. Apps experiencing any of these issues should update.
+
+- Fixed how build architectures are specified for AirshipKit.
+- Addressed "missing creator for mutated node" warning in AirshipResources build.
+- Addressed warning when displaying a Message Center message with an invalid identifier.
+- Fixed handling of text styles in In-App Automation.
+- Allow HTML IAA messages to be closed using the native bridge.
+- Updated project files for Xcode 10.1
+
 Version 10.0.3 - October 22, 2018
 =================================
 Patch release to fix an issue with the "extra" object in In-App Automation.
