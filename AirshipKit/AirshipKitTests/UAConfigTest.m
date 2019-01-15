@@ -325,7 +325,10 @@
     XCTAssertTrue(copy.automaticSetupEnabled == config.automaticSetupEnabled);
     XCTAssertTrue(copy.analyticsEnabled == config.analyticsEnabled);
     XCTAssertTrue(copy.profilePath == config.profilePath);
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
     XCTAssertTrue(copy.cacheDiskSizeInMB == config.cacheDiskSizeInMB);
+#pragma GCC diagnostic pop
     XCTAssertTrue(copy.clearUserOnAppRestore == config.clearUserOnAppRestore);
     XCTAssertTrue(copy.whitelist == config.whitelist);
     XCTAssertTrue(copy.clearNamedUserOnAppRestore == config.clearNamedUserOnAppRestore);
@@ -350,7 +353,10 @@
     XCTAssertTrue(config.detectProvisioningMode);   // True because defaultDetectProvisioningMode is set true after this is set false
     XCTAssertTrue(config.automaticSetupEnabled);
     XCTAssertTrue(config.analyticsEnabled);
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
     XCTAssertEqual(config.cacheDiskSizeInMB, 100);
+#pragma GCC diagnostic pop
     XCTAssertFalse(config.clearUserOnAppRestore);
     XCTAssertEqual(config.whitelist.count, 0);
     XCTAssertFalse(config.clearNamedUserOnAppRestore);

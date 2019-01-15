@@ -1060,9 +1060,6 @@
 
         NSURL *iconListURL = [NSURL URLWithString:iconListURLString];
 
-        // Tell the cache to remember the URL
-        [UAURLProtocol addCachableURL:iconListURL];
-
         // NOTE: All add/remove operations on the cache & in-progress set should be done
         // on the main thread. They'll be cleared below in a dispatch_async/main queue block.
 

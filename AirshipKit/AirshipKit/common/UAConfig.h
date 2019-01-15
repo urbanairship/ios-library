@@ -66,8 +66,9 @@ NS_ASSUME_NONNULL_BEGIN
  * mainDocumentURL or URL that have been added as a cachable URL will be considered
  * for caching.  By defualt it includes all of the Rich Application Page URLs.
  *
+ * @deprecated Deprecated - to be removed in SDK version 11.0. The UA Disk Cache is obsolete with the use of WKWebView.
  */
-@property (nonatomic, assign) NSUInteger cacheDiskSizeInMB;
+@property (nonatomic, assign) NSUInteger cacheDiskSizeInMB DEPRECATED_MSG_ATTRIBUTE("Deprecated - to be removed in SDK version 11.0. The UA Disk Cache is obsolete with the use of WKWebView");
 
 /**
  * If enabled, the UA library automatically registers for remote notifications when push is enabled

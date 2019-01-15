@@ -3,6 +3,9 @@
 #import "UABaseTest.h"
 #import "UAURLProtocol.h"
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+
 @interface UAURLProtocolTest : UABaseTest
 @property (nonatomic, strong) NSURL *cachableURL;
 @property (nonatomic, strong) NSURL *uncachableURL;
@@ -100,5 +103,6 @@
     }
 }
 
+#pragma GCC diagnostic pop
 
 @end

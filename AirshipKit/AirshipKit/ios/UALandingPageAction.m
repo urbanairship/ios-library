@@ -109,9 +109,6 @@ NSString *const UALandingPageFill = @"fill";
     // Include app auth for any content ID requests
     BOOL isContentUrl = [landingPageURL.absoluteString hasPrefix:UAirship.shared.config.landingPageContentURL];
 
-    // set cachable url
-    [UAURLProtocol addCachableURL:landingPageURL];
-
     if (arguments.situation == UASituationBackgroundPush) {
         // pre-fetch url so that it can be accessed later from the cache
         if (isContentUrl) {
@@ -141,10 +138,12 @@ NSString *const UALandingPageFill = @"fill";
         return NO;
     }
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
     if (arguments.situation == UASituationBackgroundPush && UAirship.shared.config.cacheDiskSizeInMB == 0) {
         return NO;
     }
-
+#pragma GCC diagnostic pop
     NSURL *url = [self parseURLFromValue:arguments.value];
     if (!url) {
         return NO;

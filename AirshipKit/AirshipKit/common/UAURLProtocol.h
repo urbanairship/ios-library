@@ -11,7 +11,10 @@ NS_ASSUME_NONNULL_BEGIN
  * who's URL or mainDocumentURL has been added as a cachableURL.
  * A failed response will always fall back to a cached response 
  * when available.
+ *
+ * @deprecated Deprecated - to be removed in SDK version 11.0. The UAURLProtocol is obsolete with the use of WKWebView.
  */
+DEPRECATED_MSG_ATTRIBUTE("Deprecated - to be removed in SDK version 11.0. The UAURLProtocol is obsolete with the use of WKWebView")
 @interface UAURLProtocol : NSURLProtocol
 
 ///---------------------------------------------------------------------------------------
