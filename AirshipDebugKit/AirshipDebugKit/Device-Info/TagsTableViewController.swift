@@ -18,7 +18,6 @@ class TagsTableViewController: UITableViewController {
         super.viewDidAppear(animated);
 
         tableView.reloadData()
-        UAirship.analytics()?.trackScreen("TagsTableViewController")
     }
 
     @objc func addTag () {

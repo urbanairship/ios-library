@@ -20,12 +20,6 @@ class AddAssociatedIdentifiersTableViewController: UITableViewController, UIText
         self.addCustomValueTextField.delegate = self
     }
 
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated);
-
-        UAirship.analytics()?.trackScreen("AddAssociatedIdentifiersTableViewController")
-    }
-
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
         return false
     }

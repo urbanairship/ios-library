@@ -15,6 +15,7 @@ NSString *const HomeStoryboardID = @"home";
 NSString *const PushSettingsStoryboardID = @"push_settings";
 NSString *const MessageCenterStoryboardID = @"message_center";
 NSString *const DebugStoryboardID = @"debug";
+NSString *const InAppAutomationStoryboardID = @"in_app_automation";
 
 NSUInteger const HomeTab = 0;
 NSUInteger const MessageCenterTab = 1;
@@ -192,7 +193,7 @@ NSUInteger const DebugTab = 2;
             UINavigationController *nav = (UINavigationController *)selectedVC;
             if ([[nav topViewController] isKindOfClass:[DebugViewController class]]) {
                 DebugViewController *debugViewController = (DebugViewController *)nav.topViewController;
-                [debugViewController performSegueWithIdentifier:DeviceInfoSegue sender:nil];
+                [debugViewController deviceInfo];
             }
         }
     } else if ([pathComponents containsObject:DebugStoryboardID]) {
@@ -206,6 +207,27 @@ NSUInteger const DebugTab = 2;
         }
         
         [tabController setSelectedIndex:DebugTab];
+    } else if ([pathComponents containsObject:InAppAutomationStoryboardID]) {
+        id selectedVC = tabController.selectedViewController;
+        
+        if ([selectedVC isKindOfClass:[UINavigationController class]]) {
+            UINavigationController *nav = (UINavigationController *)selectedVC;
+            if (![[nav topViewController] isKindOfClass:[DebugViewController class]]) {
+                [nav popToRootViewControllerAnimated:YES];
+            }
+        }
+        
+        [tabController setSelectedIndex:DebugTab];
+        
+        selectedVC = tabController.selectedViewController;
+        
+        if ([selectedVC isKindOfClass:[UINavigationController class]]) {
+            UINavigationController *nav = (UINavigationController *)selectedVC;
+            if ([[nav topViewController] isKindOfClass:[DebugViewController class]]) {
+                DebugViewController *debugViewController = (DebugViewController *)nav.topViewController;
+                [debugViewController inAppAutomation];
+            }
+        }
     } else if ([pathComponents containsObject:MessageCenterStoryboardID]) {
         [tabController setSelectedIndex:MessageCenterTab];
     }

@@ -1,6 +1,7 @@
 /* Copyright 2018 Urban Airship and Contributors */
 
 #import "UAInAppMessageTagSelector+Internal.h"
+#import "NSJSONSerialization+UAAdditions.h"
 
 /**
  * Represents the type of the tag selector.
@@ -315,6 +316,10 @@ NSString * const UAInAppMessageTagSelectorErrorDomain = @"com.urbanairship.in_ap
     result = 31 * result + [self.selectors hash];
 
     return result;
+}
+
+- (NSString *)debugDescription {
+    return [NSJSONSerialization stringWithObject:[self toJSON]];
 }
 
 @end

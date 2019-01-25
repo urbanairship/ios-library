@@ -189,7 +189,7 @@ extern NSUInteger const UAInAppMessageBannerMaxButtons;
 @property(nonatomic, readonly) NSArray<UAInAppMessageButtonInfo *> *buttons;
 
 /**
- * The banner's button layout.
+ * The banner's button layout. Defaults to UAInAppMessageButtonLayoutSeparate.
  */
 @property(nonatomic, readonly) UAInAppMessageButtonLayoutType buttonLayout;
 

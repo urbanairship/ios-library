@@ -88,11 +88,18 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)getSchedules:(NSString *)groupID completionHandler:(void (^)(NSArray<UAScheduleData *> *))completionHandler;
 
 /**
- * Gets all schedules.
+ * Gets all un-ended schedules.
  *
  * @param completionHandler Completion handler called back with the retrieved schedule data.
  */
 - (void)getSchedules:(void (^)(NSArray<UAScheduleData *> *))completionHandler;
+
+/**
+ * Gets all schedules, including schedules that have ended.
+ *
+ * @param completionHandler Completion handler called back with the retrieved schedule data.
+ */
+- (void)getAllSchedules:(void (^)(NSArray<UAScheduleData *> *))completionHandler;
 
 /**
  * Gets the schedule corresponding to the provided identifier.

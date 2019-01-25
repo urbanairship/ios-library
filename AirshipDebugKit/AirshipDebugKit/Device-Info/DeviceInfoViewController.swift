@@ -69,9 +69,6 @@ class DeviceInfoViewController: UITableViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated);
         
-        // Simplified screen tracking name for easy testing of message triggers
-        UAirship.analytics()?.trackScreen("DeviceInfoViewController")
-        
         updateSwitches()
     }
     
@@ -166,20 +163,12 @@ class DeviceInfoViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
-        
-        guard (tableView.indexPath(for: pushEnabledCell) != nil
-            && tableView.indexPath(for: channelIDCell) != nil
-            && tableView.indexPath(for: sdkVersionCell) != nil) else {
-            return
-        }
-        
-        switch (indexPath.section, indexPath.row) {
-        case ((tableView.indexPath(for: pushEnabledCell)! as NSIndexPath).section, (tableView.indexPath(for: pushEnabledCell)! as NSIndexPath).row) :
+        switch tableView.cellForRow(at: indexPath) {
+        case pushEnabledCell:
             // redirect click on push enabled cell to system settings
             UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!,options: [:],completionHandler: nil)
             break
-        case ((tableView.indexPath(for: channelIDCell)! as NSIndexPath).section, (tableView.indexPath(for: channelIDCell)! as NSIndexPath).row) :
+        case channelIDCell:
             if (UAirship.push().channelID != nil) {
                 UIPasteboard.general.string = channelIDSubtitleLabel?.text
                 
@@ -197,7 +186,7 @@ class DeviceInfoViewController: UITableViewController {
                 self.present(alert, animated: true, completion: nil)
             }
             break
-        case ((tableView.indexPath(for: sdkVersionCell)! as NSIndexPath).section, (tableView.indexPath(for: sdkVersionCell)! as NSIndexPath).row) :
+        case sdkVersionCell:
             UIPasteboard.general.string = UAirshipVersion.get()
             
             let message = NSLocalizedString("UA_Copied_To_Clipboard", tableName: "UAPushUI", comment: "Copied to clipboard string")
@@ -216,5 +205,7 @@ class DeviceInfoViewController: UITableViewController {
         default:
             break
         }
+        
+        tableView.deselectRow(at: indexPath, animated: true)
     }
 }

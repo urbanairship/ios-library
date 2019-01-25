@@ -338,7 +338,7 @@
     [self waitForTestExpectations];
 }
 
-- (void)testGetAll {
+- (void)testGetAllUnended {
     NSMutableArray *expectedSchedules = [NSMutableArray arrayWithCapacity:15];
 
     // Schedule some actions
@@ -360,7 +360,24 @@
         }];
     }
 
-    XCTestExpectation *testExpectation = [self expectationWithDescription:@"schedules fetched properly"];
+    // schedule action with end date in the past - should not be returned later
+    XCTestExpectation *testExpectation = [self expectationWithDescription:@"scheduled actions"];
+
+    UAActionScheduleInfo *scheduleInfo = [UAActionScheduleInfo scheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder *builder) {
+        UAScheduleTrigger *foregroundTrigger = [UAScheduleTrigger foregroundTriggerWithCount:2];
+        builder.actions = @{@"oh": @"hi"};
+        builder.triggers = @[foregroundTrigger];
+        builder.end = [NSDate dateWithTimeIntervalSince1970:0];
+    }];
+    
+    [self.automationEngine schedule:scheduleInfo completionHandler:^(UASchedule *schedule) {
+        XCTAssertEqual(scheduleInfo, schedule.info);
+        XCTAssertNotNil(schedule.identifier);
+        
+        [testExpectation fulfill];
+    }];
+
+    testExpectation = [self expectationWithDescription:@"schedules fetched properly"];
 
     // Verify we are able to get the schedules
     [self.automationEngine getSchedules:^(NSArray<UASchedule *> *result) {
@@ -368,6 +385,57 @@
         [testExpectation fulfill];
     }];
 
+    [self waitForTestExpectations];
+}
+
+- (void)testGetAll {
+    NSMutableArray *expectedSchedules = [NSMutableArray arrayWithCapacity:15];
+    
+    // Schedule some actions
+    for (int i = 0; i < 10; i++) {
+        XCTestExpectation *testExpectation = [self expectationWithDescription:@"scheduled actions"];
+        
+        UAActionScheduleInfo *scheduleInfo = [UAActionScheduleInfo scheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder *builder) {
+            UAScheduleTrigger *foregroundTrigger = [UAScheduleTrigger foregroundTriggerWithCount:2];
+            builder.actions = @{@"oh": @"hi"};
+            builder.triggers = @[foregroundTrigger];
+        }];
+        
+        [self.automationEngine schedule:scheduleInfo completionHandler:^(UASchedule *schedule) {
+            XCTAssertEqual(scheduleInfo, schedule.info);
+            XCTAssertNotNil(schedule.identifier);
+            
+            [expectedSchedules addObject:schedule];
+            [testExpectation fulfill];
+        }];
+    }
+    
+    // schedule action with end date in the past - should be returned later
+    XCTestExpectation *testExpectation = [self expectationWithDescription:@"scheduled actions"];
+    
+    UAActionScheduleInfo *scheduleInfo = [UAActionScheduleInfo scheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder *builder) {
+        UAScheduleTrigger *foregroundTrigger = [UAScheduleTrigger foregroundTriggerWithCount:2];
+        builder.actions = @{@"oh": @"hi"};
+        builder.triggers = @[foregroundTrigger];
+        builder.end = [NSDate dateWithTimeIntervalSince1970:0];
+    }];
+    
+    [self.automationEngine schedule:scheduleInfo completionHandler:^(UASchedule *schedule) {
+        XCTAssertEqual(scheduleInfo, schedule.info);
+        XCTAssertNotNil(schedule.identifier);
+        
+        [expectedSchedules addObject:schedule];
+        [testExpectation fulfill];
+    }];
+    
+    testExpectation = [self expectationWithDescription:@"schedules fetched properly"];
+    
+    // Verify we are able to get the schedules
+    [self.automationEngine getAllSchedules:^(NSArray<UASchedule *> *result) {
+        XCTAssertEqualObjects([NSSet setWithArray:expectedSchedules], [NSSet setWithArray:result]);
+        [testExpectation fulfill];
+    }];
+    
     [self waitForTestExpectations];
 }
 

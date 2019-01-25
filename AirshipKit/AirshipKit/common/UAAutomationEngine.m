@@ -311,6 +311,25 @@
     }];
 }
 
+- (void)getAllSchedules:(void (^)(NSArray<UASchedule *> *))completionHandler {
+    UA_WEAKIFY(self)
+    [self.automationStore getAllSchedules:^(NSArray<UAScheduleData *> *schedulesData) {
+        UA_STRONGIFY(self)
+        
+        NSMutableArray *schedules = [NSMutableArray array];
+        for (UAScheduleData *scheduleData in schedulesData) {
+            UASchedule *schedule = [self scheduleFromData:scheduleData];
+            if (schedule) {
+                [schedules addObject:schedule];
+            }
+        }
+        
+        [self.dispatcher dispatchAsync:^{
+            completionHandler(schedules);
+        }];
+    }];
+}
+
 - (void)getSchedulesWithGroup:(NSString *)group completionHandler:(void (^)(NSArray<UASchedule *> *))completionHandler {
     UA_WEAKIFY(self)
     [self.automationStore getSchedules:group completionHandler:^(NSArray<UAScheduleData *> *schedulesData) {

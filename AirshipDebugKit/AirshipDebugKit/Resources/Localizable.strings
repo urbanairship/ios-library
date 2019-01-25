@@ -1,0 +1,165 @@
+/* Copyright 2019 Urban Airship and Contributors */
+
+/**
+ * Swift Strings
+ */
+
+"ua_message_displaytype_banner" = "Banner";
+"ua_message_displaytype_fullscreen" = "Full Screen";
+"ua_message_displaytype_modal" = "Modal";
+"ua_message_displaytype_html" = "HTML";
+"ua_message_displaytype_custom" = "Custom";
+
+"ua_schedule_title" = "SCHEDULE";
+"ua_message_title" = "MESSAGE";
+"ua_displaycontent_title_banner" = "BANNER DISPLAY CONTENT";
+"ua_displaycontent_title_fullScreen" = "FULL SCREEN DISPLAY CONTENT";
+"ua_displaycontent_title_modal" = "MODAL DISPLAY CONTENT";
+"ua_displaycontent_title_HTML" = "HTML DISPLAY CONTENT";
+"ua_displaycontent_title_custom" = "CUSTOM DISPLAY CONTENT";
+"ua_displaycontent_title_unknown" = "UNKNOWN DISPLAY CONTENT";
+
+"ua_yesno_no" = "No";
+"ua_yesno_yes" = "Yes";
+
+"ua_color_default" = "DEFAULT";
+
+"ua_cancelSchedule_alert_message" = "Are you sure you want to cancel the schedule?";
+"ua_cancelSchedule_alert_button" = "Cancel Schedule";
+"ua_cancelSchedule_alert_cancel_button" = "Don't Cancel";
+
+"ua_displaycontent_placement_top" = "Top";
+"ua_displaycontent_placement_bottom" = "Bottom";
+
+"ua_displaycontent_contentLayout_mediaLeft" = "Media Left";
+"ua_displaycontent_contentLayout_mediaRight" = "Media Right";
+"ua_displaycontent_contentLayout_headerMediaBody" = "Header Media Body";
+"ua_displaycontent_contentLayout_mediaHeaderBody" = "Media Header Body";
+"ua_displaycontent_contentLayout_headerBodyMedia" = "Header Body Media";
+
+"ua_displaycontent_duration_format" = "%f seconds";
+
+"ua_timeinterval_description_years" = "%f years";
+"ua_timeinterval_description_months" = "%f months";
+"ua_timeinterval_description_weeks" = "%f weeks";
+"ua_timeinterval_description_days" = "%f days";
+"ua_timeinterval_description_hours" = "%f hours";
+"ua_timeinterval_description_minutes" = "%f minutes";
+"ua_timeinterval_description_seconds" = "%f seconds";
+
+"ua_displaycontent_buttonLayout_stacked" = "Stacked";
+"ua_displaycontent_buttonLayout_separate" = "Separate";
+"ua_displaycontent_buttonLayout_joined" = "Joined";
+
+"ua_mediainfo_type_image" = "Image";
+"ua_mediainfo_type_video" = "Video";
+"ua_mediainfo_type_youTube" = "YouTube";
+
+"ua_textinfo_title_heading" = "Heading Text Info";
+"ua_textinfo_title_body" = "Body Text Info";
+"ua_textinfo_title_button" = "Button Label Text Info";
+
+"ua_textinfo_alignment_none" = "None";
+"ua_textinfo_alignment_left" = "Left";
+"ua_textinfo_alignment_center" = "Center";
+"ua_textinfo_alignment_right" = "Right";
+
+"ua_textinfo_style_bold" = "Bold";
+"ua_textinfo_style_italic" = "Italic";
+"ua_textinfo_style_underline" = "Underline";
+"ua_textinfo_style_normal" = "Normal";
+
+"ua_audience_missBehavior_cancel" = "Cancel";
+"ua_audience_missBehavior_skip" = "Skip";
+"ua_audience_missBehavior_penalize" = "Penalize";
+
+"ua_button_behavior_dismiss" = "Dismiss behavior";
+"ua_button_behavior_cancel" = "Cancel behavior";
+
+"ua_trigger_type_activeSession" = "Active Session";
+"ua_trigger_type_appBackground" = "App Background";
+"ua_trigger_type_appForeground" = "App Foreground";
+"ua_trigger_type_appInit" = "App Init";
+"ua_trigger_type_customEventCount" = "Custom Event Count";
+"ua_trigger_type_customEventValue" = "Custom Event Value";
+"ua_trigger_type_regionEnter" = "Region Enter";
+"ua_trigger_type_regionExit" = "Region Exit";
+"ua_trigger_type_screen" = "Screen";
+"ua_trigger_type_version" = "Version";
+
+"ua_trigger_type_labelformat" = "%@ Trigger";
+
+"ua_trigger_goal_labelformat" = "Goal = %@";
+
+/**
+ * Storyboard Strings
+ */
+
+"ua_automation_tableview_title" = "In-App Automation";
+"ua_automation_detailview_title" = "In-App Automation Details";
+"ua_automation_textinfo_detailview_title" = "Text Info Details";
+"ua_automation_mediainfo_detailview_title" = "Media Info Details";
+"ua_automation_triggers_tableview_title" = "Triggers";
+"ua_automation_audience_detailview_title" = "Audience Details";
+"ua_automation_buttons_tableview_title" = "Buttons";
+"ua_automation_button_detailview_title" = "Button Details";
+
+"ua_scheduleinfo_identifier" = "Identifier";
+"ua_scheduleinfo_start" = "Start";
+"ua_scheduleinfo_end" = "End";
+"ua_scheduleinfo_priority" = "Priority";
+"ua_scheduleinfo_limit" = "Limit";
+"ua_scheduleinfo_triggers" = "Triggers";
+"ua_scheduleinfo_delay" = "Delay";
+"ua_scheduleinfo_editgraceperiod" = "Edit Grace Period";
+"ua_scheduleinfo_interval" = "Interval";
+"ua_scheduleinfo_isvalid" = "Schedule Is Valid";
+
+"ua_cancel_schedule" = "Cancel Schedule";
+
+"ua_message_identifier" = "Identifier";
+"ua_message_name" = "Name";
+"ua_message_displaytype" = "Display Type";
+"ua_message_audience" = "Audience";
+
+"ua_displaycontent_placement" = "Placement";
+"ua_displaycontent_contentlayout" = "Content Layout";
+"ua_displaycontent_heading" = "Heading";
+"ua_displaycontent_body" = "Body";
+"ua_displaycontent_media" = "Media";
+"ua_displaycontent_buttons" = "Buttons";
+"ua_displaycontent_actions" = "Actions";
+"ua_displaycontent_duration" = "Duration";
+"ua_displaycontent_borderradius" = "Border Radius";
+"ua_displaycontent_backgroundcolor" = "Background Color";
+"ua_displaycontent_dismissbuttoncolor" = "Dismiss Button Color";
+"ua_displaycontent_allowfullscreendisplay" = "Allow Full Screen Display";
+"ua_displaycontent_footer" = "Footer";
+"ua_displaycontent_url" = "URL";
+
+"ua_textinfo_text" = "Text";
+"ua_textinfo_alignment" = "Alignment";
+"ua_textinfo_style" = "Style";
+"ua_textinfo_fontFamilies" = "Font Families ";
+"ua_textinfo_size" = "Size";
+"ua_textinfo_color" = "Color";
+
+"ua_mediainfo_contentDescription" = "Content Description";
+"ua_mediainfo_url" = "URL";
+"ua_mediainfo_type" = "Type";
+
+"ua_audience_notificationsOptIn" = "Notifications Opt-In";
+"ua_audience_locationOptIn" = "Location Opt-In";
+"ua_audience_languageIDs" = "Language IDs ";
+"ua_audience_tagSelector" = "Tag Selector";
+"ua_audience_versionPredicate" = "Version Predicate";
+"ua_audience_missBehavior" = "Miss Behavior";
+"ua_audience_inAudience" = "Is User a Member of the Audience?";
+"ua_audience_checkAudience" = "Check Audience";
+
+"ua_button_buttonID" = "Identifier";
+"ua_button_buttonLabel" = "Label";
+"ua_button_behavior" = "Behavior";
+"ua_button_borderRadius" = "Border Radius";
+"ua_button_backgroundColor" = "Background Color";
+"ua_button_borderColor" = "Border Color";

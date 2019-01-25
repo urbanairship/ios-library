@@ -5,28 +5,32 @@ import AirshipDebugKit
 
 class DebugViewController: UITableViewController {
 
-    static let DeviceInfoSegue = "DeviceInfoSegue"
+    @IBOutlet var deviceInfoCell: UITableViewCell!
+    @IBOutlet var inAppAutomationCell: UITableViewCell!
     
-    override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
-        switch identifier {
-        case DebugViewController.DeviceInfoSegue:
-            performSegue(withIdentifier: identifier, sender: sender)
-            return false
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        switch tableView.cellForRow(at: indexPath) {
+        case deviceInfoCell:
+            deviceInfo()
+        case inAppAutomationCell:
+            inAppAutomation()
         default:
-            return true
+            break
+        }
+
+        tableView.deselectRow(at: indexPath, animated: true)
+    }
+
+    public func deviceInfo() {
+        if let deviceInfoViewController = AirshipDebugKit.deviceInfoViewController {
+            self.navigationController?.pushViewController(deviceInfoViewController, animated: true)
+        }
+    }
+
+    public func inAppAutomation() {
+        if let inAppAutomationViewController = AirshipDebugKit.automationViewController {
+            self.navigationController?.pushViewController(inAppAutomationViewController, animated: true)
         }
     }
     
-    override func performSegue(withIdentifier identifier: String, sender: Any?) {
-        switch identifier {
-        case DebugViewController.DeviceInfoSegue:
-            // get the initial view in the Device Info storyboard
-            if let deviceInfoViewController = AirshipDebugKit.instantiateStoryboard("DeviceInfo") {
-                // Push the view onto the navigation stack
-                self.navigationController?.pushViewController(deviceInfoViewController, animated: true)
-            }
-        default:
-            break;
-        }
-    }
 }

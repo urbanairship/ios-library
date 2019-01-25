@@ -212,6 +212,10 @@
     [self fetchSchedulesWithPredicate:predicate limit:self.scheduleLimit completionHandler:completionHandler];
 }
 
+- (void)getAllSchedules:(void (^)(NSArray<UAScheduleData *> *))completionHandler {
+    [self fetchSchedulesWithPredicate:nil limit:self.scheduleLimit completionHandler:completionHandler];
+}
+
 - (void)getActiveTriggers:(NSString *)scheduleID
                      type:(UAScheduleTriggerType)type
         completionHandler:(void (^)(NSArray<UAScheduleTriggerData *> *triggers))completionHandler {

@@ -13,6 +13,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UARegistrationDelegate, U
     let PushSettingsStoryboardID = "push_settings"
     let MessageCenterStoryboardID = "message_center"
     let DebugStoryboardID = "debug"
+    let InAppAutomationStoryboardID = "in_app_automation"
 
     let HomeTab = 0;
     let MessageCenterTab = 1;
@@ -157,7 +158,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UARegistrationDelegate, U
             if let nav = tabController.selectedViewController as? UINavigationController {
                 if nav.topViewController!.isKind(of: DebugViewController.self) {
                     let debugViewController = nav.topViewController as! DebugViewController
-                    debugViewController.performSegue(withIdentifier: DebugViewController.DeviceInfoSegue, sender: nil);
+                    debugViewController.deviceInfo()
                 }
             }
         } else if pathComponents.contains(DebugStoryboardID) {
@@ -168,6 +169,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UARegistrationDelegate, U
             }
             
             tabController.selectedIndex = DebugTab;
+        } else if pathComponents.contains(InAppAutomationStoryboardID) {
+            if let nav = tabController.selectedViewController as? UINavigationController {
+                if !nav.topViewController!.isKind(of: DebugViewController.self) {
+                    nav.popToRootViewController(animated: true);
+                }
+            }
+            
+            tabController.selectedIndex = DebugTab;
+            
+            if let nav = tabController.selectedViewController as? UINavigationController {
+                if nav.topViewController!.isKind(of: DebugViewController.self) {
+                    let debugViewController = nav.topViewController as! DebugViewController
+                    debugViewController.inAppAutomation()
+                }
+            }
         } else if pathComponents.contains(MessageCenterStoryboardID) {
             tabController.selectedIndex = MessageCenterTab;
         }

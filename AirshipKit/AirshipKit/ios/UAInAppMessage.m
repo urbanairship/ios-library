@@ -10,6 +10,8 @@
 #import "UAGlobal.h"
 
 NSUInteger const UAInAppMessageIDLimit = 100;
+NSUInteger const UAInAppMessageNameLimit = 100;
+
 
 @implementation UAInAppMessageBuilder
 
@@ -18,6 +20,7 @@ NSUInteger const UAInAppMessageIDLimit = 100;
 
     if (self) {
         self.identifier = message.identifier;
+        self.name = message.name;
         self.displayContent = message.displayContent;
         self.extras = message.extras;
         self.actions = message.actions;
@@ -39,6 +42,11 @@ NSUInteger const UAInAppMessageIDLimit = 100;
         return NO;
     }
 
+    if (self.name && (self.name.length < 1 || self.name.length > UAInAppMessageNameLimit)) {
+        UA_LERR(@"If provided, in-app message name must be between [1, 100] characters");
+        return NO;
+    }
+    
     if (!self.displayContent) {
         UA_LERR(@"Messages require display content.");
         return NO;
@@ -51,6 +59,7 @@ NSUInteger const UAInAppMessageIDLimit = 100;
 
 @interface UAInAppMessage()
 @property(nonatomic, strong) NSString *identifier;
+@property(nonatomic, copy) NSString *name;
 @property(nonatomic, strong) UAInAppMessageDisplayContent *displayContent;
 @property(nonatomic, strong, nullable) NSDictionary *extras;
 @property(nonatomic, strong, nullable) UAInAppMessageAudience *audience;
@@ -72,6 +81,7 @@ NSString *const UAInAppMessageAudienceKey = @"audience";
 NSString *const UAInAppMessageActionsKey = @"actions";
 NSString *const UAInAppMessageCampaignsKey = @"campaigns";
 NSString *const UAInAppMessageSourceKey = @"source";
+NSString *const UAInAppMessageNameKey = @"name";
 
 NSString *const UAInAppMessageDisplayTypeBannerValue = @"banner";
 NSString *const UAInAppMessageDisplayTypeFullScreenValue = @"fullscreen";
@@ -117,6 +127,21 @@ NSString *const UAInAppMessageSourceLegacyPushValue = @"legacy-push";
         builder.identifier = identifier;
     }
 
+    id name = json[UAInAppMessageNameKey];
+    if (name) {
+        if (![name isKindOfClass:[NSString class]]) {
+            if (error) {
+                NSString *msg = [NSString stringWithFormat:@"Message name must be a string. Invalid value: %@", name];
+                *error =  [NSError errorWithDomain:UAInAppMessageErrorDomain
+                                              code:UAInAppMessageErrorCodeInvalidJSON
+                                          userInfo:@{NSLocalizedDescriptionKey:msg}];
+            }
+            
+            return nil;
+        }
+        builder.name = name;
+    }
+    
     id displayContentDict = json[UAInAppMessageDisplayContentKey];
     if (displayContentDict) {
         if (![displayContentDict isKindOfClass:[NSDictionary class]]) {
@@ -245,7 +270,6 @@ NSString *const UAInAppMessageSourceLegacyPushValue = @"legacy-push";
         builder.source = defaultSource;
     }
 
-
     if (![builder isValid]) {
         if (error) {
             NSString *msg = [NSString stringWithFormat:@"Invalid message JSON: %@", json];
@@ -279,6 +303,7 @@ NSString *const UAInAppMessageSourceLegacyPushValue = @"legacy-push";
     
     if (self) {
         self.identifier = builder.identifier;
+        self.name = builder.name;
         self.displayContent = builder.displayContent;
         self.extras = builder.extras;
         self.audience = builder.audience;
@@ -315,6 +340,7 @@ NSString *const UAInAppMessageSourceLegacyPushValue = @"legacy-push";
     NSMutableDictionary *data = [NSMutableDictionary dictionary];
     
     [data setValue:self.identifier forKey:UAInAppMessageIDKey];
+    [data setValue:self.name forKey: UAInAppMessageNameKey];
     switch (self.displayType) {
         case UAInAppMessageDisplayTypeBanner:
             [data setValue:UAInAppMessageDisplayTypeBannerValue forKey:UAInAppMessageDisplayTypeKey];
@@ -361,6 +387,10 @@ NSString *const UAInAppMessageSourceLegacyPushValue = @"legacy-push";
         return NO;
     }
 
+    if (self.name != message.name && ![self.name isEqualToString:message.name]) {
+        return NO;
+    }
+    
     // Do we need to check type here first? make sure
     if (![self.displayContent isEqual:message.displayContent]) {
         return NO;
@@ -405,6 +435,7 @@ NSString *const UAInAppMessageSourceLegacyPushValue = @"legacy-push";
 - (NSUInteger)hash {
     NSUInteger result = 1;
     result = 31 * result + [self.identifier hash];
+    result = 31 * result + [self.name hash];
     result = 31 * result + [self.displayContent hash];
     result = 31 * result + [self.extras hash];
     result = 31 * result + [self.audience hash];

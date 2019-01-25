@@ -211,6 +211,10 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
     [self.automationEngine getSchedulesWithGroup:messageID completionHandler:completionHandler];
 }
 
+- (void)getAllSchedules:(void (^)(NSArray<UASchedule *> *))completionHandler {
+    [self.automationEngine getAllSchedules:completionHandler];
+}
+
 - (void)scheduleMessageWithScheduleInfo:(UAInAppMessageScheduleInfo *)scheduleInfo
                       completionHandler:(void (^)(UASchedule *))completionHandler {
     [self.automationEngine schedule:scheduleInfo completionHandler:completionHandler];;
@@ -277,29 +281,39 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
     } resultHandler:resultHandler];
 }
 
-- (UARetriable *)audienceChecksRetriableWithMessage:(UAInAppMessage *)message resultHandler:(UARetriableCompletionHandler)resultHandler {
-    return [UARetriable retriableWithRunBlock:^(UARetriableCompletionHandler handler) {
-        void (^performAudienceCheck)(UATagGroups *) = ^(UATagGroups *tagGroups) {
-            if ([UAInAppMessageAudienceChecks checkDisplayAudienceConditions:message.audience tagGroups:tagGroups]) {
-                handler(UARetriableResultSuccess);
-            } else {
-                handler(UARetriableResultCancel);
-            }
-        };
-
-        UATagGroups *requestedTagGroups = message.audience.tagSelector.tagGroups;
-
-        if (requestedTagGroups.tags.count) {
-            [self.tagGroupsLookupManager getTagGroups:requestedTagGroups completionHandler:^(UATagGroups * _Nullable tagGroups, NSError * _Nonnull error) {
-                if (error) {
-                    handler(UARetriableResultRetry);
-                } else {
-                    performAudienceCheck(tagGroups);
-                }
-            }];
+- (void)checkAudience:(UAInAppMessageAudience *)audience completionHandler:(void (^)(BOOL, NSError * _Nullable))completionHandler {
+    void (^performAudienceCheck)(UATagGroups *) = ^(UATagGroups *tagGroups) {
+        if ([UAInAppMessageAudienceChecks checkDisplayAudienceConditions:audience tagGroups:tagGroups]) {
+            completionHandler(YES, nil);
         } else {
-            performAudienceCheck(nil);
+            completionHandler(NO, nil);
         }
+    };
+    
+    UATagGroups *requestedTagGroups = audience.tagSelector.tagGroups;
+    
+    if (requestedTagGroups.tags.count) {
+        [self.tagGroupsLookupManager getTagGroups:requestedTagGroups completionHandler:^(UATagGroups * _Nullable tagGroups, NSError * _Nonnull error) {
+            if (error) {
+                completionHandler(NO, error);
+            } else {
+                performAudienceCheck(tagGroups);
+            }
+        }];
+    } else {
+        performAudienceCheck(nil);
+    }
+}
+
+- (UARetriable *)audienceChecksRetriableWithAudience:(UAInAppMessageAudience *)audience resultHandler:(UARetriableCompletionHandler)resultHandler {
+    return [UARetriable retriableWithRunBlock:^(UARetriableCompletionHandler _Nonnull handler) {
+        [self checkAudience:audience completionHandler:^(BOOL success, NSError *error) {
+            if (error) {
+                handler(UARetriableResultRetry);
+            } else {
+                handler(success ? UARetriableResultSuccess : UARetriableResultCancel);
+            }
+        }];
     } resultHandler:resultHandler];
 }
 
@@ -361,7 +375,7 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
     }];
 
     // Check audience conditions
-    UARetriable *audienceChecks = [self audienceChecksRetriableWithMessage:message resultHandler:^(UARetriableResult result) {
+    UARetriable *audienceChecks = [self audienceChecksRetriableWithAudience:message.audience resultHandler:^(UARetriableResult result) {
         if (result == UARetriableResultCancel) {
             UA_LDEBUG(@"Message audience conditions not met, skipping display for schedule: %@, missBehavior: %ld", scheduleID, (long)message.audience.missBehavior);
             UAAutomationSchedulePrepareResult prepareResult;

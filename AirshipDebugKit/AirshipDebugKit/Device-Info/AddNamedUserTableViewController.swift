@@ -13,12 +13,6 @@ class AddNamedUserTableViewController: UITableViewController, UITextFieldDelegat
         self.addNamedUserTextField.delegate = self
     }
 
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated);
-
-        UAirship.analytics()?.trackScreen("AddNamedUserTableViewController")
-    }
-
     override func viewWillAppear(_ animated: Bool) {
         if ((UAirship.namedUser().identifier) != nil) {
             addNamedUserTextField.text = UAirship.namedUser().identifier

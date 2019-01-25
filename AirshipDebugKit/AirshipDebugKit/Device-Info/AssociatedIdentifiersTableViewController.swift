@@ -28,8 +28,6 @@ class AssociatedIdentifiersTableViewController: UITableViewController, Associate
         super.viewDidAppear(animated);
 
         tableView.reloadData()
-
-        UAirship.analytics()?.trackScreen("AssociatedIdentifiersTableViewController")
     }
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {

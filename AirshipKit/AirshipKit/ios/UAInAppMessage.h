@@ -13,6 +13,11 @@ NS_ASSUME_NONNULL_BEGIN
 extern NSUInteger const UAInAppMessageIDLimit;
 
 /**
+ * Message name limit (100 characters).
+ */
+extern NSUInteger const UAInAppMessageNameLimit;
+
+/**
  * Builder class for UAInAppMessage.
  */
 @interface UAInAppMessageBuilder : NSObject
@@ -28,6 +33,10 @@ extern NSUInteger const UAInAppMessageIDLimit;
  */
 @property(nonatomic, copy, nullable) NSString *identifier;
 
+/**
+ * Message name. Optional. Must be between [1-100] characters.
+ */
+@property(nonatomic, copy, nullable) NSString *name;
 /**
  * The display content for the message.
  *
@@ -79,6 +88,11 @@ extern NSUInteger const UAInAppMessageIDLimit;
  * The unique identifier for the message.
  */
 @property(nonatomic, readonly) NSString *identifier;
+
+/**
+ * Message name. Optional. Must be between [1-100] characters.
+ */
+@property(nonatomic, copy, nullable, readonly) NSString *name;
 
 /**
  * The display type.

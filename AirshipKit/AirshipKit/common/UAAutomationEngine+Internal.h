@@ -198,11 +198,18 @@ typedef NS_ENUM(NSInteger, UAAutomationSchedulePrepareResult) {
         completionHandler:(void (^)(UASchedule * __nullable))completionHandler;
 
 /**
- * Gets all schedules.
+ * Gets all unended schedules.
  *
  * @param completionHandler The completion handler with the result.
  */
 - (void)getSchedules:(void (^)(NSArray<UASchedule *> *))completionHandler;
+
+/**
+ * Gets all schedules, including schedules that have ended.
+ *
+ * @param completionHandler The completion handler with the result.
+ */
+- (void)getAllSchedules:(void (^)(NSArray<UASchedule *> *))completionHandler;
 
 /**
  * Gets all schedules of the given group.

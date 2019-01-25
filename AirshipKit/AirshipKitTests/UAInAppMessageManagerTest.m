@@ -261,6 +261,53 @@
     [checks verify];
 }
 
+- (void)testCheckAudience {
+    // check an audience the user is in
+    XCTestExpectation *checkInAudienceFinished = [self expectationWithDescription:@"checkAudience1 should be finished"];
+    [self.manager checkAudience:self.scheduleInfo.message.audience completionHandler:^(BOOL inAudience, NSError * _Nullable error) {
+        XCTAssertTrue(inAudience);
+        XCTAssertNil(error);
+        [checkInAudienceFinished fulfill];
+    }];
+    
+    // check an audience the user is not in
+    UATagGroups *requestedTagGroups = [UATagGroups tagGroupsWithTags:@{@"group" : @[@""]}];
+    
+    [[[self.mockTagGroupsLookupManager expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void(^completionHandler)(UATagGroups * _Nullable tagGroups, NSError *error);
+        completionHandler = (__bridge void(^)(UATagGroups * _Nullable tagGroups, NSError *error))arg;
+        completionHandler(requestedTagGroups, nil);
+    }] getTagGroups:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
+    XCTestExpectation *checkNotInAudienceFinished = [self expectationWithDescription:@"checkAudience2 should be finished"];
+    [self.manager checkAudience:self.scheduleInfoWithTagGroups.message.audience completionHandler:^(BOOL inAudience, NSError * _Nullable error) {
+        XCTAssertFalse(inAudience);
+        XCTAssertNil(error);
+        [checkNotInAudienceFinished fulfill];
+    }];
+
+    // check an error getting the tag groups responds as user is not in audience
+    [[[self.mockTagGroupsLookupManager expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void(^completionHandler)(UATagGroups * _Nullable tagGroups, NSError *error);
+        completionHandler = (__bridge void(^)(UATagGroups * _Nullable tagGroups, NSError *error))arg;
+        NSError *error = [NSError errorWithDomain:@"com.urbanairship.test" code:1 userInfo:nil];
+        completionHandler(nil, error);
+    }] getTagGroups:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    
+    XCTestExpectation *checkErrorAudienceFinished = [self expectationWithDescription:@"checkAudience2 should be finished"];
+    [self.manager checkAudience:self.scheduleInfoWithTagGroups.message.audience completionHandler:^(BOOL inAudience, NSError * _Nullable error) {
+        XCTAssertFalse(inAudience);
+        XCTAssertNotNil(error);
+        [checkErrorAudienceFinished fulfill];
+    }];
+
+    [self waitForTestExpectations];
+}
+
 - (void)testPrepareAudienceCheckFailureMissBehaviorCancel {
     UAInAppMessageScheduleInfo *scheduleInfo = [self sampleScheduleInfoWithMissBehavior:UAInAppMessageAudienceMissBehaviorCancel];
     

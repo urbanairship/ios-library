@@ -11,7 +11,6 @@
 #import "UAColorUtils+Internal.h"
 #import "UAInAppMessageDismissButton+Internal.h"
 #import "UAInAppMessageFullScreenStyle.h"
-#import "UAInAppMessageMediaView+Internal.h"
 #import "UAViewUtils+Internal.h"
 
 NS_ASSUME_NONNULL_BEGIN

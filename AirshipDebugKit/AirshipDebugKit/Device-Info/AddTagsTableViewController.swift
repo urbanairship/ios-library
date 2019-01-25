@@ -12,12 +12,6 @@ class AddTagsTableViewController: UITableViewController, UITextFieldDelegate {
         self.addCustomTagTextField.delegate = self
     }
 
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated);
-
-        UAirship.analytics()?.trackScreen("AddTagsTableViewController")
-    }
-
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
         return false
     }

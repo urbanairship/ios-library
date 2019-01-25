@@ -19,6 +19,7 @@
     // setup
     NSDictionary *originalJSON = @{
                   @"message_id": @"blah",
+                  @"name": @"my name",
                   @"display": @{@"body": @{
                                         @"text":@"the body"
                                         },
@@ -38,6 +39,7 @@
     XCTAssertNil(error);
     
     XCTAssertEqualObjects(@"blah",messageFromOriginalJSON.identifier);
+    XCTAssertEqualObjects(@"my name",messageFromOriginalJSON.name);
     XCTAssertEqualObjects(@"the body",((UAInAppMessageBannerDisplayContent *)(messageFromOriginalJSON.displayContent)).body.text);
     XCTAssertEqual(UAInAppMessageDisplayTypeBanner, messageFromOriginalJSON.displayType);
     XCTAssertEqualObjects(@"baz",messageFromOriginalJSON.extras[@"foo"]);
@@ -53,6 +55,43 @@
     XCTAssertNotNil(messageFromToJSON);
     XCTAssertNil(error);
 
+    XCTAssertEqualObjects(messageFromOriginalJSON, messageFromToJSON);
+}
+
+- (void)testMinimalJSON {
+    // setup
+    NSDictionary *originalJSON = @{
+                                   @"message_id": @"blah",
+                                   @"display": @{@"body": @{
+                                                         @"text":@"the body"
+                                                         },
+                                                 },
+                                   @"display_type": UAInAppMessageDisplayTypeBannerValue,
+                                   };
+    
+    // test
+    NSError *error;
+    UAInAppMessage *messageFromOriginalJSON = [UAInAppMessage messageWithJSON:originalJSON error:&error];
+    XCTAssertNotNil(messageFromOriginalJSON);
+    XCTAssertNil(error);
+    
+    XCTAssertEqualObjects(@"blah",messageFromOriginalJSON.identifier);
+    XCTAssertEqualObjects(nil,messageFromOriginalJSON.name);
+    XCTAssertEqualObjects(@"the body",((UAInAppMessageBannerDisplayContent *)(messageFromOriginalJSON.displayContent)).body.text);
+    XCTAssertEqual(UAInAppMessageDisplayTypeBanner, messageFromOriginalJSON.displayType);
+    XCTAssertEqualObjects(nil,messageFromOriginalJSON.extras[@"foo"]);
+    XCTAssertEqualObjects(nil,messageFromOriginalJSON.extras[@"baz"]);
+    XCTAssertEqualObjects(nil,messageFromOriginalJSON.actions[@"cool"]);
+    XCTAssertEqualObjects(nil, messageFromOriginalJSON.audience.isNewUser);
+    XCTAssertEqualObjects(nil, messageFromOriginalJSON.campaigns);
+    XCTAssertEqual(UAInAppMessageSourceAppDefined, messageFromOriginalJSON.source);
+    
+    NSDictionary *toJSON = [messageFromOriginalJSON toJSON];
+    XCTAssertNotNil(toJSON);
+    UAInAppMessage *messageFromToJSON = [UAInAppMessage messageWithJSON:toJSON error:&error];
+    XCTAssertNotNil(messageFromToJSON);
+    XCTAssertNil(error);
+    
     XCTAssertEqualObjects(messageFromOriginalJSON, messageFromToJSON);
 }
 
