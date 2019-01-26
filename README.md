@@ -21,7 +21,7 @@ One of our engineers will verify receipt of the agreement before approving your 
 
 ## Installation
 
-Xcode 8.0+ is required for all projects and the static library. Projects must target >= iOS8.
+Xcode 10.0+ is required for all projects and the static library. Projects must target >= iOS 10.
 
 ### CocoaPods
 
