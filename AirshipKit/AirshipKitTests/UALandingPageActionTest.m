@@ -174,7 +174,6 @@
 - (void)verifyAcceptsArgumentsWithValue:(id)value shouldAccept:(BOOL)shouldAccept {
     NSArray *situations = @[[NSNumber numberWithInteger:UASituationWebViewInvocation],
                                      [NSNumber numberWithInteger:UASituationForegroundPush],
-                                     [NSNumber numberWithInteger:UASituationBackgroundPush],
                                      [NSNumber numberWithInteger:UASituationLaunchedFromPush],
                                      [NSNumber numberWithInteger:UASituationManualInvocation]];
 

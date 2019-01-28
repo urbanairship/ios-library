@@ -8,10 +8,6 @@
 #import "NSString+UAURLEncoding.h"
 #import "UAUtils+Internal.h"
 
-@interface UALandingPageAction()
-@property (nonatomic, strong) NSURLSessionDataTask *dataTask;
-@end
-
 @implementation UALandingPageAction
 
 NSString *const UALandingPageURLKey = @"url";
@@ -102,6 +98,7 @@ NSString *const UALandingPageFill = @"fill";
 - (void)performWithArguments:(UAActionArguments *)arguments
            completionHandler:(UAActionCompletionHandler)completionHandler {
 
+    NSMutableDictionary *headers = [NSMutableDictionary dictionary];
     NSURL *landingPageURL = [self parseURLFromValue:arguments.value];
     CGSize landingPageSize = [self parseSizeFromValue:arguments.value];
     BOOL aspectLock = [self parseAspectLockOptionFromValue:arguments.value];
@@ -109,41 +106,20 @@ NSString *const UALandingPageFill = @"fill";
     // Include app auth for any content ID requests
     BOOL isContentUrl = [landingPageURL.absoluteString hasPrefix:UAirship.shared.config.landingPageContentURL];
 
-    if (arguments.situation == UASituationBackgroundPush) {
-        // pre-fetch url so that it can be accessed later from the cache
-        if (isContentUrl) {
-            [self prefetchURL:landingPageURL
-                 withUsername:UAirship.shared.config.appKey
-                 withPassword:UAirship.shared.config.appSecret
-        withCompletionHandler:completionHandler];
-        } else {
-            [self prefetchURL:landingPageURL withUsername:nil
-                 withPassword:nil withCompletionHandler:completionHandler];
-        }
-    } else {
-        NSMutableDictionary *headers = [NSMutableDictionary dictionary];
-
-        if (isContentUrl) {
-            [headers setValue:[UAUtils appAuthHeaderString] forKey:@"Authorization"];
-        }
-
-        // load the landing page
-        [UAOverlayViewController showURL:landingPageURL withHeaders:headers size:landingPageSize aspectLock:aspectLock];
-        completionHandler([UAActionResult resultWithValue:nil withFetchResult:UAActionFetchResultNewData]);
+    if (isContentUrl) {
+        [headers setValue:[UAUtils appAuthHeaderString] forKey:@"Authorization"];
     }
+
+    // load the landing page
+    [UAOverlayViewController showURL:landingPageURL withHeaders:headers size:landingPageSize aspectLock:aspectLock];
+    completionHandler([UAActionResult resultWithValue:nil withFetchResult:UAActionFetchResultNewData]);
 }
 
 - (BOOL)acceptsArguments:(UAActionArguments *)arguments {
-    if (arguments.situation == UASituationBackgroundInteractiveButton) {
+    if (arguments.situation == UASituationBackgroundInteractiveButton || arguments.situation == UASituationBackgroundPush) {
         return NO;
     }
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-    if (arguments.situation == UASituationBackgroundPush && UAirship.shared.config.cacheDiskSizeInMB == 0) {
-        return NO;
-    }
-#pragma GCC diagnostic pop
     NSURL *url = [self parseURLFromValue:arguments.value];
     if (!url) {
         return NO;
@@ -155,50 +131,6 @@ NSString *const UALandingPageFill = @"fill";
     }
 
     return YES;
-}
-
-- (void)prefetchURL:(NSURL *)landingPageURL withUsername:(NSString *)username
-       withPassword:(NSString *)password withCompletionHandler:(UAActionCompletionHandler)completionHandler {
-
-    if (self.dataTask) {
-        [self.dataTask cancel];
-    }
-
-
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:landingPageURL];
-
-    if (username && password) {
-        NSString *credentials = [NSString stringWithFormat:@"%@:%@", username, password];
-        NSData *encodedCredentials = [credentials dataUsingEncoding:NSUTF8StringEncoding];
-        NSString *authoriazationValue = [NSString stringWithFormat: @"Basic %@",[encodedCredentials base64EncodedStringWithOptions:0]];
-        [request setValue:authoriazationValue forHTTPHeaderField:@"Authorization"];
-    }
-
-    self.dataTask = [[NSURLSession sharedSession] dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
-        if (error) {
-            UA_LTRACE(@"Error %@ for landing page pre-fetch request at url: %@", error, landingPageURL);
-            completionHandler([UAActionResult resultWithError:error withFetchResult:UAActionFetchResultFailed]);
-            return;
-        }
-
-
-        NSHTTPURLResponse *httpResponse = nil;
-        if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
-            httpResponse = (NSHTTPURLResponse *) response;
-        }
-
-        UA_LTRACE(@"Retrieved landing page with status code %ld at url: %@.",
-                  (long)httpResponse.statusCode, landingPageURL);
-
-        if (httpResponse.statusCode == 200) {
-            UA_LTRACE(@"Cached landing page.");
-            completionHandler([UAActionResult resultWithValue:nil withFetchResult:UAActionFetchResultNewData]);
-        } else {
-            completionHandler([UAActionResult resultWithValue:nil withFetchResult:UAActionFetchResultFailed]);
-        }
-    }];
-
-    [self.dataTask resume];
 }
 
 @end
