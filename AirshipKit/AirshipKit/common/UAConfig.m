@@ -28,7 +28,10 @@
         self.automaticSetupEnabled = YES;
         self.analyticsEnabled = YES;
         self.profilePath = [[NSBundle mainBundle] pathForResource:@"embedded" ofType:@"mobileprovision"];
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
         self.cacheDiskSizeInMB = 100;
+#pragma GCC diagnostic pop
         self.clearUserOnAppRestore = NO;
         self.whitelist = @[];
         self.clearNamedUserOnAppRestore = NO;
@@ -69,7 +72,10 @@
         _automaticSetupEnabled = config.automaticSetupEnabled;
         _analyticsEnabled = config.analyticsEnabled;
         _profilePath = config.profilePath;
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
         _cacheDiskSizeInMB = config.cacheDiskSizeInMB;
+#pragma GCC diagnostic pop
         _clearUserOnAppRestore = config.clearUserOnAppRestore;
         _whitelist = config.whitelist;
         _clearNamedUserOnAppRestore = config.clearNamedUserOnAppRestore;
@@ -132,7 +138,10 @@
             self.analyticsURL,
             self.deviceAPIURL,
             self.remoteDataAPIURL,
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
             (unsigned long)self.cacheDiskSizeInMB,
+#pragma GCC diagnostic pop
             self.landingPageContentURL,
             self.automaticSetupEnabled,
             self.clearUserOnAppRestore,

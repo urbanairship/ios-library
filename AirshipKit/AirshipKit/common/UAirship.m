@@ -209,11 +209,13 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
     [dataStore migrateUnprefixedKeys:@[UALibraryVersion]];
 
     // Cache
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
     if (config.cacheDiskSizeInMB > 0) {
         UA_LTRACE("Registering UAURLProtocol.");
         [NSURLProtocol registerClass:[UAURLProtocol class]];
     }
-
+#pragma GCC diagnostic pop
 
     // Clearing the key chain
     if ([[NSUserDefaults standardUserDefaults] boolForKey:UAResetKeychainKey]) {

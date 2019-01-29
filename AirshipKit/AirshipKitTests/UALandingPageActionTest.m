@@ -12,7 +12,6 @@
 
 @interface UALandingPageActionTest : UABaseTest
 
-@property (nonatomic, strong) id mockURLProtocol;
 @property (nonatomic, strong) id mockOverlayViewController;
 @property (nonatomic, strong) id mockAirship;
 @property (nonatomic, strong) id mockConfig;
@@ -27,7 +26,6 @@
 - (void)setUp {
     [super setUp];
     self.action = [[UALandingPageAction alloc] init];
-    self.mockURLProtocol = [self mockForClass:[UAURLProtocol class]];
     self.mockOverlayViewController = [self mockForClass:[UAOverlayViewController class]];
 
     self.mockConfig = [self mockForClass:[UAConfig class]];
@@ -41,14 +39,16 @@
     [[[self.mockConfig stub] andReturn:@"app-key"] appKey];
     [[[self.mockConfig stub] andReturn:kUAProductionLandingPageContentURL] landingPageContentURL];
     [[[self.mockConfig stub] andReturn:@"app-secret"] appSecret];
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
     [[[self.mockConfig stub] andReturnValue:OCMOCK_VALUE((NSUInteger)100)] cacheDiskSizeInMB];
+#pragma GCC diagnostic pop
 }
 
 - (void)tearDown {
     [self.mockAirship stopMocking];
     [self.mockWhitelist stopMocking];
     [self.mockConfig stopMocking];
-    [self.mockURLProtocol stopMocking];
     [self.mockOverlayViewController stopMocking];
 }
 
@@ -157,17 +157,12 @@
 
     __block BOOL finished = NO;
 
-    [[self.mockURLProtocol expect] addCachableURL:[OCMArg checkWithBlock:^(id obj) {
-        return (BOOL)([obj isKindOfClass:[NSURL class]] && [((NSURL *)obj).absoluteString isEqualToString:expectedUrl]);
-    }]];
-
     [self.action performWithArguments:args completionHandler:^(UAActionResult *result) {
         finished = YES;
         XCTAssertEqual(result.fetchResult, fetchResult,
                        @"fetch result %ld should match expect result %ld", result.fetchResult, fetchResult);
     }];
 
-    [self.mockURLProtocol verify];
     [mockedViewController verify];
 
     XCTAssertTrue(finished, @"action should have completed");
@@ -179,7 +174,6 @@
 - (void)verifyAcceptsArgumentsWithValue:(id)value shouldAccept:(BOOL)shouldAccept {
     NSArray *situations = @[[NSNumber numberWithInteger:UASituationWebViewInvocation],
                                      [NSNumber numberWithInteger:UASituationForegroundPush],
-                                     [NSNumber numberWithInteger:UASituationBackgroundPush],
                                      [NSNumber numberWithInteger:UASituationLaunchedFromPush],
                                      [NSNumber numberWithInteger:UASituationManualInvocation]];
 

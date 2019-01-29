@@ -331,8 +331,6 @@ typedef void (^UAInboxMessageFetchCompletionHandler)(NSArray *);
                                       if (message.unread) {
                                           unreadCount ++;
                                       }
-                                      // Add messsage's body url to the cachable urls
-                                      [UAURLProtocol addCachableURL:message.messageBodyURL];
 
                                       [messages addObject:message];
                                   }

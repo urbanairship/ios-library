@@ -34,18 +34,27 @@ const NSTimeInterval MaxBackOff = 3000;
 }
 
 + (instancetype)sessionWithConfig:(UAConfig *)config {
+
+    static dispatch_once_t onceToken;
+    static NSURLSession *_session;
+    dispatch_once(&onceToken, ^{
+        NSURLSessionConfiguration *sessionConfig = [NSURLSessionConfiguration defaultSessionConfiguration];
+
+        // Disable the default HTTP cache so that 304 responses can be received. API clients using
+        // UARequestSession are expected to provide their own caching.
+        sessionConfig.URLCache = nil;
+        sessionConfig.requestCachePolicy = NSURLRequestReloadIgnoringLocalCacheData;
+
+        // Force min 1.2 even though our backend will always negotiate 1.2+
+        sessionConfig.TLSMinimumSupportedProtocol = kTLSProtocol12;
+
+        _session = [NSURLSession sessionWithConfiguration:sessionConfig delegate:nil delegateQueue:nil];
+    });
+
     NSOperationQueue *queue = [[NSOperationQueue alloc] init];
     queue.maxConcurrentOperationCount = 1;
 
-    NSURLSessionConfiguration *sessionConfig = [NSURLSessionConfiguration defaultSessionConfiguration];
-
-    // Disable the default HTTP cache so that 304 responses can be received. API clients using
-    // UARequestSession are expected to provide their own caching.
-    sessionConfig.requestCachePolicy = NSURLRequestReloadIgnoringLocalCacheData;
-
-    NSURLSession *session = [NSURLSession sessionWithConfiguration:sessionConfig delegate:nil delegateQueue:nil];
-
-    return [[UARequestSession alloc] initWithConfig:config session:session queue:queue];
+    return [[UARequestSession alloc] initWithConfig:config session:_session queue:queue];
 }
 
 + (instancetype)sessionWithConfig:(UAConfig *)config NSURLSession:(NSURLSession *)session {
