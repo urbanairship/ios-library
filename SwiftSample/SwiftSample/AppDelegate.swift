@@ -1,4 +1,4 @@
-/* Copyright 2018 Urban Airship and Contributors */
+/* Copyright 2010-2019 Urban Airship and Contributors */
 
 import UIKit
 import AirshipKit
@@ -120,7 +120,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UARegistrationDelegate, U
         DispatchQueue.main.async {
             if self.window?.rootViewController is UITabBarController {
                 let messageCenterTab: UITabBarItem = (self.window!.rootViewController! as! UITabBarController).tabBar.items![2]
-                
+
                 if (UAirship.inbox().messageList.unreadCount > 0) {
                     messageCenterTab.badgeValue = String(stringInterpolationSegment:UAirship.inbox().messageList.unreadCount)
                 } else {

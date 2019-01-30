@@ -1,4 +1,4 @@
-/* Copyright 2018 Urban Airship and Contributors */
+/* Copyright 2010-2019 Urban Airship and Contributors */
 
 import UIKit
 import AirshipKit
@@ -58,5 +58,5 @@ class AddTagsDetailViewController: UIViewController, UITextFieldDelegate, UITabl
     func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
         return true
     }
-    
+
 }

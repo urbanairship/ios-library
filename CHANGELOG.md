@@ -3,6 +3,17 @@ iOS Changelog
 
 Migration Guides: Documentation/Migration
 
+Version 10.1.0 - January 29, 2019
+=================================
+Minor release that deprecates UAURLProtocol that was historically used for caching
+message center and landing pages, but was no longer being used because it's not
+compatible with WKWebView.
+
+Changes
+-------
+- UAURLProtocol is deprecated and no longer used.
+- Reuse a single NSURLSession for all Urban Airship requests.
+
 Version 10.0.4 - January 10, 2019
 ================================
 Patch release to fix a few minor issues. Apps experiencing any of these issues should update.

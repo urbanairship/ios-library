@@ -1,4 +1,4 @@
-/* Copyright 2018 Urban Airship and Contributors */
+/* Copyright 2010-2019 Urban Airship and Contributors */
 
 import AirshipKit
 import UIKit
@@ -73,7 +73,7 @@ class PushSettingsViewController: UITableViewController {
         pushEnabledSwitch.isOn = UAirship.push().userPushNotificationsEnabled
 
         channelIDSubtitleLabel?.text = UAirship.push().channelID
-        
+
         namedUserSubtitleLabel?.text = UAirship.namedUser().identifier == nil ? NSLocalizedString("None", tableName: "UAPushUI", comment: "None") : UAirship.namedUser().identifier
 
         if (UAirship.push().tags.count > 0) {
@@ -119,7 +119,7 @@ class PushSettingsViewController: UITableViewController {
                 }
         }
     }
-    
+
     func showCopyMessage () {
         let message = NSLocalizedString("UA_Copied_To_Clipboard", tableName: "UAPushUI", comment: "Copied to clipboard string")
 

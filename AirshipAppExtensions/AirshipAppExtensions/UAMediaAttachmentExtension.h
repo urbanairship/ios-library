@@ -1,4 +1,4 @@
-/* Copyright 2018 Urban Airship and Contributors */
+/* Copyright 2010-2019 Urban Airship and Contributors */
 
 #import <UserNotifications/UserNotifications.h>
 
@@ -10,7 +10,7 @@ __IOS_AVAILABLE(10.0) __TVOS_PROHIBITED __WATCHOS_PROHIBITED
 
 /**
  * Method for inferring a Uniform Type Identifier for a media attachment if the file lacks an extension.
- * 
+ *
  * @param data A memory-mapped NSData instance representing a downloaded attachment file
  * @return The inferred identifier, or nil if unsuccessful.
  */

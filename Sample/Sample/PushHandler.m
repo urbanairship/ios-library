@@ -1,4 +1,4 @@
-/* Copyright 2018 Urban Airship and Contributors */
+/* Copyright 2010-2019 Urban Airship and Contributors */
 
 #import "PushHandler.h"
 
@@ -28,9 +28,9 @@
         UIAlertController *alertController = [UIAlertController alertControllerWithTitle:alertTitle
                                                                                  message:notificationContent.alertBody
                                                                           preferredStyle:UIAlertControllerStyleAlert];
-        
+
         UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-            
+
             // If we have a message ID run the display inbox action to fetch and display the message.
             NSString *messageId = [UAInboxUtils inboxMessageIDFromNotification:notificationContent.notificationInfo];
             if (messageId) {
@@ -39,9 +39,9 @@
                                         situation:UASituationManualInvocation];
             }
         }];
-        
+
         [alertController addAction:okAction];
-        
+
         UIViewController *topController = [UIApplication sharedApplication].keyWindow.rootViewController;
         alertController.popoverPresentationController.sourceView = topController.view;
         [topController presentViewController:alertController animated:YES completion:nil];
@@ -58,7 +58,7 @@
     NSLog(@"Action Identifier:   %@",notificationResponse.actionIdentifier);
     NSLog(@"Category Identifier: %@",notificationContent.categoryIdentifier);
     NSLog(@"Response Text:       %@",notificationResponse.responseText);
-    
+
     completionHandler();
 }
 

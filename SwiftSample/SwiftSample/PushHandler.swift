@@ -1,4 +1,4 @@
-/* Copyright 2018 Urban Airship and Contributors */
+/* Copyright 2010-2019 Urban Airship and Contributors */
 
 import UIKit
 import AVFoundation
@@ -35,7 +35,7 @@ class PushHandler: NSObject, UAPushNotificationDelegate {
         NSLog("Action Identifier:   \(notificationResponse.actionIdentifier)")
         NSLog("Category Identifier: \(notificationContent.categoryIdentifier ?? "nil")")
         NSLog("Response Text:       \(notificationResponse.responseText)")
-        
+
         completionHandler()
     }
 

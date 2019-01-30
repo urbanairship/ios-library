@@ -1,4 +1,4 @@
-/* Copyright 2018 Urban Airship and Contributors */
+/* Copyright 2010-2019 Urban Airship and Contributors */
 
 import Foundation
 import AirshipKit
@@ -12,7 +12,7 @@ class InboxDelegate : NSObject, UAInboxDelegate {
         self.tabBarController = rootViewController as! UITabBarController
         self.messageCenterViewController = self.tabBarController.viewControllers![2] as! MessageCenterViewController;
     }
-    
+
     func showInbox() {
         DispatchQueue.main.async {
             self.tabBarController.selectedIndex = 2
