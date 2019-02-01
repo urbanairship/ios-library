@@ -43,7 +43,7 @@
                                 <rect key="frame" x="64" y="472" width="247" height="60"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="60" id="Lzm-Ff-eFQ"/>
-                                    <constraint firstAttribute="width" constant="247" id="olK-2Q-erH"/>
+                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="247" id="olK-2Q-erH"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" name="Roboto-Thin" family="Roboto" pointSize="36"/>
                                 <state key="normal" title="Enable Push">
@@ -62,10 +62,10 @@
                             <constraint firstItem="4ug-Mw-9AY" firstAttribute="top" secondItem="iZm-tj-QRc" secondAttribute="bottom" constant="80" id="ACe-2q-grX"/>
                             <constraint firstItem="iZm-tj-QRc" firstAttribute="top" secondItem="He6-LA-1je" secondAttribute="bottom" constant="8" symbolic="YES" id="Ebu-BA-oAv"/>
                             <constraint firstItem="UCg-eu-blq" firstAttribute="top" secondItem="He6-LA-1je" secondAttribute="bottom" constant="14" id="HuO-u1-gvx"/>
-                            <constraint firstItem="iZm-tj-QRc" firstAttribute="centerX" secondItem="UCg-eu-blq" secondAttribute="centerX" id="Kr3-v8-5cq"/>
                             <constraint firstItem="iZm-tj-QRc" firstAttribute="centerY" secondItem="UCg-eu-blq" secondAttribute="centerY" id="O9c-hB-hdL"/>
-                            <constraint firstItem="He6-LA-1je" firstAttribute="centerX" secondItem="UCg-eu-blq" secondAttribute="centerX" id="RI0-Of-3dK"/>
                             <constraint firstItem="He6-LA-1je" firstAttribute="top" secondItem="Ia1-K6-d13" secondAttribute="bottom" constant="8" symbolic="YES" id="iUm-ke-wO4"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="He6-LA-1je" secondAttribute="trailing" constant="29" id="p8g-LQ-eq7"/>
+                            <constraint firstItem="UCg-eu-blq" firstAttribute="centerX" secondItem="tsR-hK-woN" secondAttribute="centerX" id="pVU-2B-B55"/>
                         </constraints>
                     </view>
                     <tabBarItem key="tabBarItem" title="Urban Airship" image="Homescreen" id="acW-dT-cKf"/>
@@ -152,45 +152,87 @@
                                             <rect key="frame" x="0.0" y="0.0" width="562" height="43.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" fixedFrame="YES" text="View info related to this device and its push channel." textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="TKu-Ms-iuI">
-                                                    <rect key="frame" x="15" y="25" width="297" height="15"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="View info related to this device and its push channel." textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="TKu-Ms-iuI">
+                                                    <rect key="frame" x="20" y="26" width="81" height="13.5"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="11"/>
                                                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" fixedFrame="YES" text="Device Info" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gmR-ak-jyQ">
-                                                    <rect key="frame" x="15" y="5" width="213" height="20"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Device Info" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gmR-ak-jyQ">
+                                                    <rect key="frame" x="20" y="5" width="81" height="20"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="16"/>
                                                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                             </subviews>
+                                            <constraints>
+                                                <constraint firstItem="gmR-ak-jyQ" firstAttribute="leading" secondItem="TqB-RM-udY" secondAttribute="leading" constant="20" id="B6Z-MF-V9b"/>
+                                                <constraint firstAttribute="trailing" secondItem="gmR-ak-jyQ" secondAttribute="trailing" constant="461" id="NKr-hb-FOk"/>
+                                                <constraint firstItem="gmR-ak-jyQ" firstAttribute="top" secondItem="TqB-RM-udY" secondAttribute="top" constant="5" id="UKD-vs-wvZ"/>
+                                                <constraint firstItem="TKu-Ms-iuI" firstAttribute="firstBaseline" secondItem="gmR-ak-jyQ" secondAttribute="baseline" constant="16" symbolType="layoutAnchor" id="eHK-Oe-vyO"/>
+                                                <constraint firstItem="TKu-Ms-iuI" firstAttribute="leading" secondItem="gmR-ak-jyQ" secondAttribute="leading" id="nYa-uf-1LC"/>
+                                                <constraint firstItem="TKu-Ms-iuI" firstAttribute="trailing" secondItem="gmR-ak-jyQ" secondAttribute="trailing" id="ryo-zt-Iik"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" accessoryType="disclosureIndicator" indentationWidth="10" id="QdR-yR-FpN" userLabel="Custom Events Cell">
+                                        <rect key="frame" x="0.0" y="79" width="600" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="QdR-yR-FpN" id="gyD-u2-3Jf">
+                                            <rect key="frame" x="0.0" y="0.0" width="562" height="43.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Configure and add custom analytics events." textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="uiC-ox-mCM">
+                                                    <rect key="frame" x="20" y="26" width="230" height="13.5"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="11"/>
+                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Create Custom Events" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5Ol-Wz-01G">
+                                                    <rect key="frame" x="20" y="5" width="230" height="20"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="uiC-ox-mCM" firstAttribute="trailing" secondItem="5Ol-Wz-01G" secondAttribute="trailing" id="Eze-lP-2eO"/>
+                                                <constraint firstItem="uiC-ox-mCM" firstAttribute="firstBaseline" secondItem="5Ol-Wz-01G" secondAttribute="baseline" constant="16" symbolType="layoutAnchor" id="Gd8-TP-Jwa"/>
+                                                <constraint firstItem="5Ol-Wz-01G" firstAttribute="leading" secondItem="gyD-u2-3Jf" secondAttribute="leading" constant="20" id="Kfq-dT-lTA"/>
+                                                <constraint firstAttribute="trailing" secondItem="5Ol-Wz-01G" secondAttribute="trailing" constant="312" id="Obz-8J-Uov"/>
+                                                <constraint firstItem="uiC-ox-mCM" firstAttribute="leading" secondItem="5Ol-Wz-01G" secondAttribute="leading" id="k9H-fA-DFd"/>
+                                                <constraint firstItem="5Ol-Wz-01G" firstAttribute="top" secondItem="gyD-u2-3Jf" secondAttribute="top" constant="5" id="kqM-ij-GtH"/>
+                                            </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" accessoryType="disclosureIndicator" indentationWidth="10" id="gEA-Xd-plJ" userLabel="In-App Automation Cell">
-                                        <rect key="frame" x="0.0" y="79" width="600" height="44"/>
+                                        <rect key="frame" x="0.0" y="123" width="600" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="gEA-Xd-plJ" id="vL4-fd-pGv">
                                             <rect key="frame" x="0.0" y="0.0" width="562" height="43.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" fixedFrame="YES" text="View info related to In-App Automation." textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="e8Q-0z-el5">
-                                                    <rect key="frame" x="15" y="25" width="297" height="15"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="View info related to In-App Automation." textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="e8Q-0z-el5">
+                                                    <rect key="frame" x="20" y="26" width="207" height="13.5"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="11"/>
                                                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" fixedFrame="YES" text="In-App Automation" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="b96-s3-o8S">
-                                                    <rect key="frame" x="15" y="5" width="213" height="20"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="In-App Automation" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="b96-s3-o8S">
+                                                    <rect key="frame" x="20" y="5" width="207" height="20"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="16"/>
                                                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                             </subviews>
+                                            <constraints>
+                                                <constraint firstItem="b96-s3-o8S" firstAttribute="top" secondItem="vL4-fd-pGv" secondAttribute="top" constant="5" id="BHn-Dj-n4Y"/>
+                                                <constraint firstItem="b96-s3-o8S" firstAttribute="leading" secondItem="vL4-fd-pGv" secondAttribute="leading" constant="20" id="GBN-xZ-fR0"/>
+                                                <constraint firstItem="e8Q-0z-el5" firstAttribute="trailing" secondItem="b96-s3-o8S" secondAttribute="trailing" id="QKX-Rv-Vnd"/>
+                                                <constraint firstAttribute="trailing" secondItem="b96-s3-o8S" secondAttribute="trailing" constant="335" id="VZ6-zT-gxL"/>
+                                                <constraint firstItem="e8Q-0z-el5" firstAttribute="firstBaseline" secondItem="b96-s3-o8S" secondAttribute="baseline" constant="16" symbolType="layoutAnchor" id="biK-XG-pKh"/>
+                                                <constraint firstItem="e8Q-0z-el5" firstAttribute="leading" secondItem="b96-s3-o8S" secondAttribute="leading" id="nTJ-jr-lkl"/>
+                                            </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                 </cells>
@@ -207,6 +249,7 @@
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <size key="freeformSize" width="600" height="600"/>
                     <connections>
+                        <outlet property="customEventsCell" destination="QdR-yR-FpN" id="YLL-U4-teL"/>
                         <outlet property="deviceInfoCell" destination="PxV-7h-fo3" id="bXI-X7-h8o"/>
                         <outlet property="inAppAutomationCell" destination="gEA-Xd-plJ" id="Ncw-P7-4Qy"/>
                     </connections>

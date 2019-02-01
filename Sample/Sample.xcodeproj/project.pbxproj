@@ -792,7 +792,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				VALID_ARCHS = "$(inherited) x86_64 i386";
+				VALID_ARCHS = "$(inherited)";
 			};
 			name = Debug;
 		};

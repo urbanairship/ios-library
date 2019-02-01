@@ -4,13 +4,11 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-extern NSString * const DeviceInfoSegue;
-extern NSString * const InAppAutomationSegue;
-
 @interface DebugViewController : UITableViewController
 
 - (void)deviceInfo;
 - (void)inAppAutomation;
+- (void)customEvents;
 
 @end
 

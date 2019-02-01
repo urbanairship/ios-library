@@ -21,6 +21,8 @@
 
 "ua_yesno_no" = "No";
 "ua_yesno_yes" = "Yes";
+"ua_true_false_false" = "false";
+"ua_true_false_true" = "true";
 
 "ua_color_default" = "DEFAULT";
 
@@ -90,6 +92,32 @@
 "ua_trigger_type_labelformat" = "%@ Trigger";
 
 "ua_trigger_goal_labelformat" = "Goal = %@";
+
+"ua_type_boolean" = "Boolean";
+"ua_type_number" = "Number";
+"ua_type_string" = "String";
+"ua_type_strings" = "Strings";
+
+"ua_alert_title_notice" = "Notice";
+"ua_alert_title_success" = "Success";
+"ua_alert_ok" = "OK";
+
+"ua_property_added_to_custom_event_format" = "%@ property added to custom event!";
+"ua_custom_property_error" = "Custom property must have a value";
+
+"ua_custom_event_add_error" = "Custom Event must have a name and value set before it can be added";
+"ua_custom_event_set_custom_property_error" = "Custom event must have a name and a value before setting custom properties";
+"ua_custom_event_added" = "Custom Event added!";
+
+"ua_custom_event_event_name_title" = "Event Name";
+"ua_custom_event_event_value_title" = "Event Value";
+"ua_custom_event_interaction_id_title" = "Interaction ID";
+"ua_custom_event_interaction_type_title" = "Interaction Type";
+"ua_custom_event_transaction_id_title" = "Transaction ID";
+"ua_custom_event_add_custom_property_title" = "Add Custom Property";
+
+"ua_required" = "Required";
+"ua_optional" = "Optional";
 
 /**
  * Storyboard Strings
@@ -163,3 +191,14 @@
 "ua_button_borderRadius" = "Border Radius";
 "ua_button_backgroundColor" = "Background Color";
 "ua_button_borderColor" = "Border Color";
+
+"ua_custom_event_create_custom_events" = "Create Custom Events";
+"ua_custom_event_name" = "Event Name";
+"ua_custom_event_add_custom_property" = "Add Custom Property";
+
+"ua_custom_property_identifier" = "Identifier";
+"ua_custom_property_title" = "Custom Property";
+"ua_custom_property_type" = "Type";
+"ua_custom_property_value_title" = "Value";
+
+"ua_custom_strings_property" = "Add Custom Strings Property";

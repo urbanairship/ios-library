@@ -7,12 +7,21 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		DF4EDA9C21E7FF1500804CB3 /* CustomEventTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF4EDA9021E7FF1500804CB3 /* CustomEventTableViewCell.swift */; };
+		DF4EDA9D21E7FF1500804CB3 /* CustomPropertyAddStringsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF4EDA9121E7FF1500804CB3 /* CustomPropertyAddStringsTableViewController.swift */; };
+		DF4EDA9E21E7FF1500804CB3 /* CustomPropertyStringsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF4EDA9221E7FF1500804CB3 /* CustomPropertyStringsTableViewController.swift */; };
+		DF4EDA9F21E7FF1600804CB3 /* CustomPropertyTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF4EDA9321E7FF1500804CB3 /* CustomPropertyTableViewCell.swift */; };
+		DF4EDAA021E7FF1600804CB3 /* CustomPropertyTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF4EDA9421E7FF1500804CB3 /* CustomPropertyTableViewController.swift */; };
+		DF4EDAA121E7FF1600804CB3 /* CustomEventTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF4EDA9521E7FF1500804CB3 /* CustomEventTableViewController.swift */; };
+		DF4EDAA221E7FF1600804CB3 /* CustomPropertyAdderTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF4EDA9621E7FF1500804CB3 /* CustomPropertyAdderTableViewCell.swift */; };
+		DF4EDAA421E7FFDF00804CB3 /* CustomEvents.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DF4EDAA321E7FFDE00804CB3 /* CustomEvents.storyboard */; };
 		DF4EDA6121E41D3900804CB3 /* ButtonsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF4EDA6021E41D3900804CB3 /* ButtonsTableViewController.swift */; };
 		DF4EDA6821E4261700804CB3 /* ButtonDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF4EDA6721E4261700804CB3 /* ButtonDetailViewController.swift */; };
 		DF5514C52167D82200499E9C /* AutomationDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF5514BF2167D82200499E9C /* AutomationDetailViewController.swift */; };
 		DF55D7D621F15506005948DD /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = DF55D7D521F15505005948DD /* Localizable.strings */; };
 		DF5F8EC921641B9D009B5FB9 /* AutomationTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF5F8EC821641B9D009B5FB9 /* AutomationTableViewController.swift */; };
 		DF5F8ECB216420D3009B5FB9 /* Automation.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DF5F8ECA216420D3009B5FB9 /* Automation.storyboard */; };
+		DFC676B121FB8F2E0043EB89 /* DeviceInfo.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DFC676AB21FB8F2E0043EB89 /* DeviceInfo.storyboard */; };
 		DFC78783216BE58500198AF6 /* TextInfoDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFC78782216BE58500198AF6 /* TextInfoDetailViewController.swift */; };
 		DFC78785216BE65200198AF6 /* UAStaticTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFC78784216BE65200198AF6 /* UAStaticTableViewController.swift */; };
 		DFC78787216BE8C800198AF6 /* UADebugKitAutomationUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFC78786216BE8C800198AF6 /* UADebugKitAutomationUtilities.swift */; };
@@ -27,7 +36,6 @@
 		DFE70135212F202500A708D5 /* AddAssociatedIdentifiersTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFE7012E212F202400A708D5 /* AddAssociatedIdentifiersTableViewController.swift */; };
 		DFE70136212F202500A708D5 /* TagsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFE7012F212F202500A708D5 /* TagsTableViewController.swift */; };
 		DFE70137212F202500A708D5 /* DeviceInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFE70130212F202500A708D5 /* DeviceInfoViewController.swift */; };
-		DFE7013B212F20A200A708D5 /* DeviceInfo.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DFE7013A212F20A200A708D5 /* DeviceInfo.storyboard */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -83,12 +91,21 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		DF4EDA9021E7FF1500804CB3 /* CustomEventTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomEventTableViewCell.swift; sourceTree = "<group>"; };
+		DF4EDA9121E7FF1500804CB3 /* CustomPropertyAddStringsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomPropertyAddStringsTableViewController.swift; sourceTree = "<group>"; };
+		DF4EDA9221E7FF1500804CB3 /* CustomPropertyStringsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomPropertyStringsTableViewController.swift; sourceTree = "<group>"; };
+		DF4EDA9321E7FF1500804CB3 /* CustomPropertyTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomPropertyTableViewCell.swift; sourceTree = "<group>"; };
+		DF4EDA9421E7FF1500804CB3 /* CustomPropertyTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomPropertyTableViewController.swift; sourceTree = "<group>"; };
+		DF4EDA9521E7FF1500804CB3 /* CustomEventTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomEventTableViewController.swift; sourceTree = "<group>"; };
+		DF4EDA9621E7FF1500804CB3 /* CustomPropertyAdderTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomPropertyAdderTableViewCell.swift; sourceTree = "<group>"; };
+		DF4EDAA321E7FFDE00804CB3 /* CustomEvents.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = CustomEvents.storyboard; sourceTree = "<group>"; };
 		DF4EDA6021E41D3900804CB3 /* ButtonsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonsTableViewController.swift; sourceTree = "<group>"; };
 		DF4EDA6721E4261700804CB3 /* ButtonDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonDetailViewController.swift; sourceTree = "<group>"; };
 		DF5514BF2167D82200499E9C /* AutomationDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AutomationDetailViewController.swift; sourceTree = "<group>"; };
 		DF55D7D521F15505005948DD /* Localizable.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = Localizable.strings; sourceTree = "<group>"; };
 		DF5F8EC821641B9D009B5FB9 /* AutomationTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomationTableViewController.swift; sourceTree = "<group>"; };
 		DF5F8ECA216420D3009B5FB9 /* Automation.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Automation.storyboard; sourceTree = "<group>"; };
+		DFC676AB21FB8F2E0043EB89 /* DeviceInfo.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = DeviceInfo.storyboard; sourceTree = "<group>"; };
 		DFC78782216BE58500198AF6 /* TextInfoDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextInfoDetailViewController.swift; sourceTree = "<group>"; };
 		DFC78784216BE65200198AF6 /* UAStaticTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAStaticTableViewController.swift; sourceTree = "<group>"; };
 		DFC78786216BE8C800198AF6 /* UADebugKitAutomationUtilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UADebugKitAutomationUtilities.swift; sourceTree = "<group>"; };
@@ -105,7 +122,6 @@
 		DFE7012E212F202400A708D5 /* AddAssociatedIdentifiersTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddAssociatedIdentifiersTableViewController.swift; sourceTree = "<group>"; };
 		DFE7012F212F202500A708D5 /* TagsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TagsTableViewController.swift; sourceTree = "<group>"; };
 		DFE70130212F202500A708D5 /* DeviceInfoViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeviceInfoViewController.swift; sourceTree = "<group>"; };
-		DFE7013A212F20A200A708D5 /* DeviceInfo.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = DeviceInfo.storyboard; sourceTree = "<group>"; };
 		DFE7013C212F216600A708D5 /* AirshipKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = AirshipKit.xcodeproj; path = ../AirshipKit/AirshipKit.xcodeproj; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -120,6 +136,21 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		DF4EDA8F21E7FF1500804CB3 /* Custom-Events */ = {
+			isa = PBXGroup;
+			children = (
+				DF4EDA9021E7FF1500804CB3 /* CustomEventTableViewCell.swift */,
+				DF4EDA9121E7FF1500804CB3 /* CustomPropertyAddStringsTableViewController.swift */,
+				DF4EDA9221E7FF1500804CB3 /* CustomPropertyStringsTableViewController.swift */,
+				DF4EDA9321E7FF1500804CB3 /* CustomPropertyTableViewCell.swift */,
+				DF4EDA9421E7FF1500804CB3 /* CustomPropertyTableViewController.swift */,
+				DF4EDA9521E7FF1500804CB3 /* CustomEventTableViewController.swift */,
+				DF4EDA9621E7FF1500804CB3 /* CustomPropertyAdderTableViewCell.swift */,
+				DF4EDAA321E7FFDE00804CB3 /* CustomEvents.storyboard */,
+			);
+			path = "Custom-Events";
+			sourceTree = "<group>";
+		};
 		DF55D7CF21F154D0005948DD /* Resources */ = {
 			isa = PBXGroup;
 			children = (
@@ -170,6 +201,7 @@
 				DFE70122212F1FAA00A708D5 /* AirshipDebugKit.h */,
 				DFE7012B212F202400A708D5 /* AirshipDebugKit.swift */,
 				DFE70123212F1FAA00A708D5 /* Info.plist */,
+				DF4EDA8F21E7FF1500804CB3 /* Custom-Events */,
 				DF5F8EBE21641B44009B5FB9 /* Automation */,
 				DFE70138212F203D00A708D5 /* Device Info */,
 				DF55D7CF21F154D0005948DD /* Resources */,
@@ -186,7 +218,7 @@
 				DFE7012A212F202400A708D5 /* AddTagsTableViewController.swift */,
 				DFE7012C212F202400A708D5 /* AssociatedIdentifiersTableViewController.swift */,
 				DFE7012F212F202500A708D5 /* TagsTableViewController.swift */,
-				DFE7013A212F20A200A708D5 /* DeviceInfo.storyboard */,
+				DFC676AB21FB8F2E0043EB89 /* DeviceInfo.storyboard */,
 			);
 			name = "Device Info";
 			path = "Device-Info";
@@ -333,9 +365,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DFE7013B212F20A200A708D5 /* DeviceInfo.storyboard in Resources */,
-				DF55D7D621F15506005948DD /* Localizable.strings in Resources */,
 				DF5F8ECB216420D3009B5FB9 /* Automation.storyboard in Resources */,
+				DF4EDAA421E7FFDF00804CB3 /* CustomEvents.storyboard in Resources */,
+				DFC676B121FB8F2E0043EB89 /* DeviceInfo.storyboard in Resources */,
+				DF55D7D621F15506005948DD /* Localizable.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -349,6 +382,11 @@
 				DFE70134212F202500A708D5 /* AddNamedUserTableViewController.swift in Sources */,
 				DF5F8EC921641B9D009B5FB9 /* AutomationTableViewController.swift in Sources */,
 				DF4EDA6121E41D3900804CB3 /* ButtonsTableViewController.swift in Sources */,
+				DF4EDAA121E7FF1600804CB3 /* CustomEventTableViewController.swift in Sources */,
+				DF4EDAA021E7FF1600804CB3 /* CustomPropertyTableViewController.swift in Sources */,
+				DF4EDA9C21E7FF1500804CB3 /* CustomEventTableViewCell.swift in Sources */,
+				DF4EDAA221E7FF1600804CB3 /* CustomPropertyAdderTableViewCell.swift in Sources */,
+				DF4EDA9E21E7FF1500804CB3 /* CustomPropertyStringsTableViewController.swift in Sources */,
 				DFE70131212F202500A708D5 /* AddTagsTableViewController.swift in Sources */,
 				DFE70132212F202500A708D5 /* AirshipDebugKit.swift in Sources */,
 				DFE70137212F202500A708D5 /* DeviceInfoViewController.swift in Sources */,
@@ -361,8 +399,10 @@
 				DF4EDA6821E4261700804CB3 /* ButtonDetailViewController.swift in Sources */,
 				DFDE9855216F0EA0005846B6 /* AudienceDetailViewController.swift in Sources */,
 				DFE70136212F202500A708D5 /* TagsTableViewController.swift in Sources */,
+				DF4EDA9F21E7FF1600804CB3 /* CustomPropertyTableViewCell.swift in Sources */,
 				DFE70133212F202500A708D5 /* AssociatedIdentifiersTableViewController.swift in Sources */,
 				DF5514C52167D82200499E9C /* AutomationDetailViewController.swift in Sources */,
+				DF4EDA9D21E7FF1500804CB3 /* CustomPropertyAddStringsTableViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -524,7 +564,7 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				VALID_ARCHS = "$(inherited) x86_64 i386";
+				VALID_ARCHS = "$(inherited)";
 			};
 			name = Debug;
 		};
@@ -552,7 +592,7 @@
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				VALID_ARCHS = "$(inherited) x86_64 i386";
+				VALID_ARCHS = "$(inherited)";
 			};
 			name = Release;
 		};
