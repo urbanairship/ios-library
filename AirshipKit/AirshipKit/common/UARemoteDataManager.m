@@ -11,6 +11,8 @@ NSString * const kUACoreDataStoreName = @"RemoteData-%@.sqlite";
 NSString * const UARemoteDataRefreshIntervalKey = @"remotedata.REFRESH_INTERVAL";
 NSString * const UARemoteDataLastRefreshTimeKey = @"remotedata.LAST_REFRESH_TIME";
 NSString * const UARemoteDataLastRefreshAppVersionKey = @"remotedata.LAST_REFRESH_APP_VERSION";
+NSString * const UARemoteDataLastRefreshAppLocaleKey = @"remotedata.LAST_REFRESH_APP_LOCALE";
+
 NSInteger const UARemoteDataRefreshIntervalDefault = 0;
 
 @interface UARemoteDataSubscription : NSObject
@@ -79,10 +81,23 @@ NSInteger const UARemoteDataRefreshIntervalDefault = 0;
                                         name:UIApplicationDidBecomeActiveNotification
                                       object:nil];
 
+        // Register for locale change notification
+        [self.notificationCenter addObserver:self
+                                    selector:@selector(localeRefresh)
+                                        name:NSCurrentLocaleDidChangeNotification
+                                      object:nil];
+
         // if app version has changed, force a refresh
         NSString *appVersionAtTimeOfLastRefresh = ([self.dataStore objectForKey:UARemoteDataLastRefreshAppVersionKey]);
         NSString *currentAppVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
         if (currentAppVersion && ![appVersionAtTimeOfLastRefresh isEqualToString:currentAppVersion]) {
+            [self refresh];
+        }
+
+        // if app locale identifier has changed while the app was terminated, force a refresh
+        NSString *appLocaleAtTimeOfLastRefresh = ([self.dataStore objectForKey:UARemoteDataLastRefreshAppLocaleKey]);
+        NSString *currentAppLocale = [NSLocale currentLocale].localeIdentifier;
+        if (currentAppLocale && ![appLocaleAtTimeOfLastRefresh isEqualToString:currentAppLocale]) {
             [self refresh];
         }
     }
@@ -185,6 +200,11 @@ NSInteger const UARemoteDataRefreshIntervalDefault = 0;
     [self foregroundRefreshWithCompletionHandler:nil];
 }
 
+- (void)localeRefresh {
+    // if app locale has changed, force a refresh
+    [self refresh];
+}
+
 - (void)foregroundRefreshWithCompletionHandler:(nullable void(^)(BOOL success))completionHandler {
     NSDate *lastRefreshTime = ([self.dataStore objectForKey:UARemoteDataLastRefreshTimeKey])?:[NSDate distantPast];
 
@@ -208,8 +228,13 @@ NSInteger const UARemoteDataRefreshIntervalDefault = 0;
         UA_STRONGIFY(self);
         if (statusCode == 200) {
             [self.dataStore setObject:[NSDate date] forKey:UARemoteDataLastRefreshTimeKey];
+
             NSString *currentAppVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
             [self.dataStore setObject:currentAppVersion forKey:UARemoteDataLastRefreshAppVersionKey];
+
+            NSString *currentAppLocale = [NSLocale currentLocale].localeIdentifier;
+            [self.dataStore setObject:currentAppLocale forKey:UARemoteDataLastRefreshAppLocaleKey];
+
             NSArray<UARemoteDataPayload *> *remoteDataPayloads = [UARemoteDataPayload remoteDataPayloadsFromJSON:allRemoteDataFromCloud];
             [self.remoteDataStore overwriteCachedRemoteDataWithResponse:remoteDataPayloads completionHandler:^(BOOL success) {
                 UA_STRONGIFY(self);

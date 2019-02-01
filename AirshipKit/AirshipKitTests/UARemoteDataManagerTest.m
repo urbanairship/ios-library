@@ -742,6 +742,63 @@
     [subscription dispose];
 }
 
+// Tests app locale change when a locale change happens while the app is terminated
+- (void)testAppLocaleChange {
+    __block XCTestExpectation *receivedDataExpectation;
+
+    NSMutableArray<UARemoteDataPayload *> *testPayloads = [[self createNPayloadsAndSetupTest:1] mutableCopy];
+
+    // change the locale identifier to en_01
+    id mockedLocale = [self mockForClass:[NSLocale class]];
+    [[[mockedLocale stub] andReturn:mockedLocale] currentLocale];
+    [[[mockedLocale stub] andReturn:@"en_01"] localeIdentifier];
+
+    // create a new remote data manager, which should cause a refresh due to the changed app locale
+    self.remoteDataManager = [self createManager];
+
+    // expect to get data
+    receivedDataExpectation = [self expectationWithDescription:[NSString stringWithFormat:@"First receipt of remote data of type: %@",testPayloads[0].type]];
+    receivedDataExpectation.assertForOverFulfill = NO; // NOTE: it's OK to be notified of data more than once
+
+    UADisposable *subscription = [self.remoteDataManager subscribeWithTypes:[testPayloads valueForKeyPath:@"type"] block:^(NSArray<UARemoteDataPayload *> * _Nonnull remoteDataArray) {
+        if (receivedDataExpectation) {
+            [receivedDataExpectation fulfill];
+        } else {
+            XCTFail(@"Didn't expect to receive any data");
+        }
+    }];
+    XCTAssertNotNil(subscription);
+
+    // verify
+    [self waitForTestExpectations];
+
+    // set up new payloads
+    testPayloads = [[self createNPayloadsAndSetupTest:1] mutableCopy];
+
+    // create a new remote data manager, which should not cause a refresh due to the unchanged app locale
+    [subscription dispose];
+    self.remoteDataManager = [self createManager];
+
+    // expect to get data
+    receivedDataExpectation = [self expectationWithDescription:[NSString stringWithFormat:@"Second receipt remote data of type: %@",testPayloads[0].type]];
+    receivedDataExpectation.assertForOverFulfill = NO; // NOTE: it's OK to be notified of data more than once
+
+    subscription = [self.remoteDataManager subscribeWithTypes:[testPayloads valueForKeyPath:@"type"] block:^(NSArray<UARemoteDataPayload *> * _Nonnull remoteDataArray) {
+        if (receivedDataExpectation) {
+            [receivedDataExpectation fulfill];
+        } else {
+            XCTFail(@"Didn't expect to receive any data");
+        }
+    }];
+    XCTAssertNotNil(subscription);
+
+    // test
+    [self refresh];
+
+    // verify
+    [self waitForTestExpectations];
+}
+
 - (void)testAppVersionChange {
     __block XCTestExpectation *receivedDataExpectation;
 
