@@ -75,8 +75,10 @@
 
 + (void)getDeviceID:(void (^)(NSString *))completionHandler dispatcher:(nullable UADispatcher *)dispatcher {
     [[UADispatcher backgroundDispatcher] dispatchAsync:^{
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
         NSString *deviceID = [self deviceID];
-
+#pragma GCC diagnostic pop
         UADispatcher *completionDispatcher = dispatcher ? : [UADispatcher mainDispatcher];
 
         [completionDispatcher dispatchAsync:^{

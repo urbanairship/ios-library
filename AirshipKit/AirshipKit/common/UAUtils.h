@@ -31,9 +31,10 @@ NS_ASSUME_NONNULL_BEGIN
  * Gets the Urban Airship Device ID.
  *
  * @return The device ID, or an empty string if the ID cannot be retrieved or created.
+ *
+ * @deprecated Deprecated - to be removed in SDK version 11.0.
  */
-+ (NSString *)deviceID;
-
++ (NSString *)deviceID DEPRECATED_MSG_ATTRIBUTE("Deprecated - to be removed in SDK version 11.0.");
 
 #if !TARGET_OS_TV   // Inbox not supported on tvOS
 /**
