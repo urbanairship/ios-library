@@ -30,7 +30,13 @@
     self.client = [UAUserAPIClient clientWithConfig:self.config session:self.mockSession];
 
     self.mockUAUtils = [self mockForClass:[UAUtils class]];
-    [[[self.mockUAUtils stub] andReturn:@"deviceID"] deviceID];
+
+    [[[self.mockUAUtils stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:2];
+        void (^completionHandler)(NSString *)  = (__bridge void (^)(NSString *)) arg;
+        completionHandler(@"deviceID");
+    }] getDeviceID:OCMOCK_ANY dispatcher:OCMOCK_ANY] ;
 
     self.mockUser = [self mockForClass:[UAUser class]];
     [[[self.mockUser stub] andReturn:@"userName"] username];

@@ -110,10 +110,15 @@
         return NO;
     };
 
-    [(UARequestSession *)[self.mockSession expect] dataTaskWithRequest:[OCMArg checkWithBlock:checkRequestBlock]
-                                                     completionHandler:OCMOCK_ANY];
+    XCTestExpectation *uploadFinished = [self expectationWithDescription:@"upload finished"];
 
-    [self.client uploadEvents:@[@{@"some": @"event"}] completionHandler:^(NSHTTPURLResponse *response) {}];
+    [(UARequestSession *)[[self.mockSession expect] andDo:^(NSInvocation *invocation) {
+        [uploadFinished fulfill];
+    }] dataTaskWithRequest:[OCMArg checkWithBlock:checkRequestBlock] completionHandler:OCMOCK_ANY];
+
+    [self.client uploadEvents:@[@{@"some": @"event"}] completionHandler:^(NSHTTPURLResponse * response) {}];
+
+    [self waitForExpectationsWithTimeout:1.0 handler:nil];
     
     [self.mockSession verify];
 }
@@ -137,10 +142,16 @@
         return YES;
     };
 
-    [(UARequestSession *)[self.mockSession expect] dataTaskWithRequest:[OCMArg checkWithBlock:checkRequestBlock]
-                                                     completionHandler:OCMOCK_ANY];
+    XCTestExpectation *uploadFinished = [self expectationWithDescription:@"upload finished"];
+
+    [(UARequestSession *)[[self.mockSession expect] andDo:^(NSInvocation *invocation) {
+        [uploadFinished fulfill];
+    }] dataTaskWithRequest:[OCMArg checkWithBlock:checkRequestBlock] completionHandler:OCMOCK_ANY];
+
 
     [self.client uploadEvents:@[@{@"some": @"event"}] completionHandler:^(NSHTTPURLResponse * response) {}];
+
+    [self waitForExpectationsWithTimeout:1.0 handler:nil];
     
     [self.mockSession verify];
 }

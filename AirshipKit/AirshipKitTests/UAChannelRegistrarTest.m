@@ -52,13 +52,18 @@ NSString * const ChannelCreateSuccessChannelLocation = @"newChannelLocation";
     self.payload = [[UAChannelRegistrationPayload alloc] init];
     self.payload.pushAddress = @"someDeviceToken";
     __block UAChannelRegistrationPayload *copyOfPayload;
+
     [[[self.mockedRegistrarDelegate stub] andDo:^(NSInvocation *invocation) {
         // verify that createChannelPayload is called on the main thread.
         XCTAssertEqualObjects([NSThread currentThread],[NSThread mainThread]);
 
+        void *arg;
+        [invocation getArgument:&arg atIndex:2];
+        void (^completionHandler)(UAChannelRegistrationPayload *)  = (__bridge void (^)(UAChannelRegistrationPayload *)) arg;
+
         copyOfPayload = [self.payload copy];
-        [invocation setReturnValue:&copyOfPayload];
-    }] createChannelPayload];
+        completionHandler(copyOfPayload);
+    }] createChannelPayload:OCMOCK_ANY];
 
     self.failureCode = 400;
 
