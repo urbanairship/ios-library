@@ -26,9 +26,9 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @note This method will be called on the main thread.
  *
- * @return registration payload for channel
+ * @param completionHandler A completion handler which will be passed the created registration payload.
  */
-- (UAChannelRegistrationPayload *)createChannelPayload;
+- (void)createChannelPayload:(void (^)(UAChannelRegistrationPayload *))completionHandler;
 
 /**
  * Called when the channel registrar failed to register.

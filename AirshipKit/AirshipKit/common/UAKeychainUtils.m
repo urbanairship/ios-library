@@ -184,7 +184,8 @@ static NSString *cachedDeviceID_ = nil;
         return @"";
     }
 }
-
+// Note: Due to the unpredictability of the keychain after unlocking the device, this method should only be called
+// on a background queue.
 + (NSString *)getDeviceID {
 
     if (cachedDeviceID_) {

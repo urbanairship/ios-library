@@ -145,30 +145,34 @@ UAConfig *config;
 #pragma mark API Methods
 
 - (void)registerForcefully:(BOOL)forcefully {
-    UA_WEAKIFY(self);
+    UA_WEAKIFY(self)
     [self.dispatcher dispatchAsync:^{
-        UA_STRONGIFY(self);
+        UA_STRONGIFY(self)
         if (self.isRegistrationInProgress) {
             UA_LDEBUG(@"Ignoring registration request, one already in progress.");
             return;
         }
-        
-        UAChannelRegistrationPayload *payload = [self.delegate createChannelPayload];
-        if (!forcefully && ![self shouldUpdateRegistration:payload]) {
-            UA_LDEBUG(@"Ignoring registration request, registration is up to date.");
-            return;
-        } else if (![self beginRegistrationBackgroundTask]) {
-            UA_LDEBUG(@"Unable to perform registration, background task not granted.");
-            return;
-        }
-        
-        // proceed with registration
-        self.isRegistrationInProgress = YES;
-        if (!self.channelID || !self.channelLocation) {
-            [self createChannelWithPayload:payload];
-        } else {
-            [self updateChannelWithPayload:payload];
-        }
+
+        UA_WEAKIFY(self)
+        [self.delegate createChannelPayload:^(UAChannelRegistrationPayload *payload) {
+            UA_STRONGIFY(self)
+
+            if (!forcefully && ![self shouldUpdateRegistration:payload]) {
+                UA_LDEBUG(@"Ignoring registration request, registration is up to date.");
+                return;
+            } else if (![self beginRegistrationBackgroundTask]) {
+                UA_LDEBUG(@"Unable to perform registration, background task not granted.");
+                return;
+            }
+
+            // proceed with registration
+            self.isRegistrationInProgress = YES;
+            if (!self.channelID || !self.channelLocation) {
+                [self createChannelWithPayload:payload];
+            } else {
+                [self updateChannelWithPayload:payload];
+            }
+        }];
     }];
 }
 
@@ -322,13 +326,16 @@ UAConfig *config;
 
     id<UAChannelRegistrarDelegate> delegate = self.delegate;
     [delegate registrationSucceeded];
-    
-    UAChannelRegistrationPayload *currentPayload = [delegate createChannelPayload];
-    if ([self shouldUpdateRegistration:currentPayload]) {
-        [self updateChannelWithPayload:currentPayload];
-    } else {
-        [self endRegistrationBackgroundTask];
-    }
+
+    UA_WEAKIFY(self)
+    [delegate createChannelPayload:^(UAChannelRegistrationPayload *currentPayload) {
+        UA_STRONGIFY(self)
+        if ([self shouldUpdateRegistration:currentPayload]) {
+            [self updateChannelWithPayload:currentPayload];
+        } else {
+            [self endRegistrationBackgroundTask];
+        }
+    }];
 }
 
 #pragma mark -

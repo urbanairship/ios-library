@@ -234,9 +234,9 @@ extern NSString *const UAPushEnabledKey;
 /**
  * Creates a UAChannelRegistrationPayload.
  *
- * @return A UAChannelRegistrationPayload payload.
+ * @param completionHandler A completion handler that will be called with the created UAChannelRegistrationPayload payload.
  */
-- (UAChannelRegistrationPayload *)createChannelPayload;
+- (void)createChannelPayload:(void (^)(UAChannelRegistrationPayload *))completionHandler;
 
 /**
  * Registers or updates the current registration with an API call. If push notifications are

@@ -203,7 +203,6 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
     UA_LINFO(@"UAirship Take Off! Lib Version: %@ App Key: %@ Production: %@.",
              [UAirshipVersion get], config.appKey, config.inProduction ?  @"YES" : @"NO");
 
-
     // Data store
     UAPreferenceDataStore *dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:[NSString stringWithFormat:@"com.urbanairship.%@.", config.appKey]];
     [dataStore migrateUnprefixedKeys:@[UALibraryVersion]];
@@ -231,26 +230,27 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         [[NSUserDefaults standardUserDefaults] setBool:NO forKey:UAResetKeychainKey];
     }
 
-    NSString *previousDeviceId = [dataStore stringForKey:@"deviceId"];
-    NSString *currentDeviceId = [UAUtils getDeviceID];
+    [UAUtils getDeviceID:^(NSString *currentDeviceID) {
+        NSString *previousDeviceID = [dataStore stringForKey:@"deviceId"];
 
-    if (previousDeviceId && ![previousDeviceId isEqualToString:currentDeviceId]) {
-        // Device ID changed since the last open. Most likely due to an app restore
-        // on a different device.
-        UA_LDEBUG(@"Device ID changed.");
+        if (previousDeviceID && ![previousDeviceID isEqualToString:currentDeviceID]) {
+            // Device ID changed since the last open. Most likely due to an app restore
+            // on a different device.
+            UA_LDEBUG(@"Device ID changed.");
 
-        UA_LDEBUG(@"Clearing previous channel.");
-        [dataStore removeObjectForKey:UAPushChannelLocationKey];
-        [dataStore removeObjectForKey:UAPushChannelIDKey];
+            UA_LDEBUG(@"Clearing previous channel.");
+            [dataStore removeObjectForKey:UAPushChannelLocationKey];
+            [dataStore removeObjectForKey:UAPushChannelIDKey];
 
-        if (config.clearUserOnAppRestore) {
-            UA_LDEBUG(@"Deleting the keychain credentials");
-            [UAKeychainUtils deleteKeychainValue:config.appKey];
+            if (config.clearUserOnAppRestore) {
+                UA_LDEBUG(@"Deleting the keychain credentials");
+                [UAKeychainUtils deleteKeychainValue:config.appKey];
+            }
         }
-    }
 
-    // Save the Device ID to the data store to detect when it changes
-    [dataStore setObject:currentDeviceId forKey:@"deviceId"];
+        // Save the Device ID to the data store to detect when it changes
+        [dataStore setObject:currentDeviceID forKey:@"deviceId"];
+    }];
 
     // Create Airship
     [UAirship setSharedAirship:[[UAirship alloc] initWithConfig:config dataStore:dataStore]];

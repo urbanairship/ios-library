@@ -644,38 +644,40 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
 #pragma mark -
 #pragma mark UA Registration Methods
 
-- (UAChannelRegistrationPayload *)createChannelPayload {
-    UAChannelRegistrationPayload *payload = [[UAChannelRegistrationPayload alloc] init];
-    payload.deviceID = [UAUtils deviceID];
+- (void)createChannelPayload:(void (^)(UAChannelRegistrationPayload *))completionHandler {
+    [UAUtils getDeviceID:^(NSString *deviceID) {
+        UAChannelRegistrationPayload *payload = [[UAChannelRegistrationPayload alloc] init];
+        payload.deviceID = deviceID;
 #if !TARGET_OS_TV   // Inbox not supported on tvOS
-    payload.userID = [UAirship inboxUser].username;
+        payload.userID = [UAirship inboxUser].username;
 #endif
 
-    if (self.pushTokenRegistrationEnabled) {
-        payload.pushAddress = self.deviceToken;
-    }
+        if (self.pushTokenRegistrationEnabled) {
+            payload.pushAddress = self.deviceToken;
+        }
 
-    payload.optedIn = [self userPushNotificationsAllowed];
-    payload.backgroundEnabled = [self backgroundPushNotificationsAllowed];
+        payload.optedIn = [self userPushNotificationsAllowed];
+        payload.backgroundEnabled = [self backgroundPushNotificationsAllowed];
 
-    payload.setTags = self.channelTagRegistrationEnabled;
-    payload.tags = self.channelTagRegistrationEnabled ? [self.tags copy]: nil;
+        payload.setTags = self.channelTagRegistrationEnabled;
+        payload.tags = self.channelTagRegistrationEnabled ? [self.tags copy]: nil;
 
-    if (self.autobadgeEnabled) {
-        payload.badge = [NSNumber numberWithInteger:[self.application applicationIconBadgeNumber]];
-    } else {
-        payload.badge = nil;
-    }
+        if (self.autobadgeEnabled) {
+            payload.badge = [NSNumber numberWithInteger:[self.application applicationIconBadgeNumber]];
+        } else {
+            payload.badge = nil;
+        }
 
-    if (self.timeZone.name && self.quietTimeEnabled) {
-        payload.quietTime = [self.quietTime copy];
-    }
+        if (self.timeZone.name && self.quietTimeEnabled) {
+            payload.quietTime = [self.quietTime copy];
+        }
 
-    payload.timeZone = self.timeZone.name;
-    payload.language = [[NSLocale autoupdatingCurrentLocale] objectForKey:NSLocaleLanguageCode];
-    payload.country = [[NSLocale autoupdatingCurrentLocale] objectForKey: NSLocaleCountryCode];
+        payload.timeZone = self.timeZone.name;
+        payload.language = [[NSLocale autoupdatingCurrentLocale] objectForKey:NSLocaleLanguageCode];
+        payload.country = [[NSLocale autoupdatingCurrentLocale] objectForKey: NSLocaleCountryCode];
 
-    return payload;
+        completionHandler(payload);
+    } dispatcher:[UADispatcher mainDispatcher]];
 }
 
 - (BOOL)isRegisteredForRemoteNotifications {

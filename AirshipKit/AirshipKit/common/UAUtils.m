@@ -2,6 +2,7 @@
 
 #import "UAUtils+Internal.h"
 #import "UAActionResult.h"
+#import "UADispatcher+Internal.h"
 
 // Frameworks
 #import <CommonCrypto/CommonDigest.h>
@@ -70,6 +71,22 @@
 
 + (NSString *)deviceID {
     return [UAKeychainUtils getDeviceID];
+}
+
++ (void)getDeviceID:(void (^)(NSString *))completionHandler dispatcher:(nullable UADispatcher *)dispatcher {
+    [[UADispatcher backgroundDispatcher] dispatchAsync:^{
+        NSString *deviceID = [self deviceID];
+
+        UADispatcher *completionDispatcher = dispatcher ? : [UADispatcher mainDispatcher];
+
+        [completionDispatcher dispatchAsync:^{
+            completionHandler(deviceID);
+        }];
+    }];
+}
+
++ (void)getDeviceID:(void (^)(NSString *))completionHandler {
+    [self getDeviceID:completionHandler dispatcher:nil];
 }
 
 + (NSString *)deviceModelName {

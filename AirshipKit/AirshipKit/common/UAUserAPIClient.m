@@ -23,45 +23,45 @@
                       onSuccess:(UAUserAPIClientCreateSuccessBlock)successBlock
                       onFailure:(UAUserAPIClientFailureBlock)failureBlock {
 
-    NSMutableDictionary *payload = [NSMutableDictionary dictionaryWithDictionary:@{@"ua_device_id":[UAUtils deviceID]}];
+    [UAUtils getDeviceID:^(NSString *deviceID) {
+        NSMutableDictionary *payload = [NSMutableDictionary dictionaryWithDictionary:@{@"ua_device_id":deviceID}];
 
-    if (channelID.length) {
-        [payload setObject:@[channelID] forKey:@"ios_channels"];
-    }
-
-    UARequest *request = [self requestToCreateUserWithPayload:payload];
-
-
-    [self.session dataTaskWithRequest:request retryWhere:^BOOL(NSData * _Nullable data, NSURLResponse * _Nullable response) {
-        return [response hasRetriableStatus];
-    } completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
-        NSHTTPURLResponse *httpResponse = nil;
-        if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
-            httpResponse = (NSHTTPURLResponse *) response;
+        if (channelID.length) {
+            [payload setObject:@[channelID] forKey:@"ios_channels"];
         }
 
-        NSUInteger status = httpResponse.statusCode;
+        UARequest *request = [self requestToCreateUserWithPayload:payload];
 
-        // Failure
-        if (status != 201) {
-            UA_LTRACE(@"User creation failed with status: %ld error: %@", (unsigned long)status, error);
-            failureBlock(status);
-            return;
-        }
+        [self.session dataTaskWithRequest:request retryWhere:^BOOL(NSData * _Nullable data, NSURLResponse * _Nullable response) {
+            return [response hasRetriableStatus];
+        } completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+            NSHTTPURLResponse *httpResponse = nil;
+            if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
+                httpResponse = (NSHTTPURLResponse *) response;
+            }
 
-        // Success
-        NSDictionary *jsonResponse = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:nil];
+            NSUInteger status = httpResponse.statusCode;
 
-        NSString *username = [jsonResponse objectForKey:@"user_id"];
-        NSString *password = [jsonResponse objectForKey:@"password"];
-        NSString *url = [jsonResponse objectForKey:@"user_url"];
+            // Failure
+            if (status != 201) {
+                UA_LTRACE(@"User creation failed with status: %ld error: %@", (unsigned long)status, error);
+                failureBlock(status);
+                return;
+            }
 
-        UAUserData *userData = [UAUserData dataWithUsername:username password:password url:url];
+            // Success
+            NSDictionary *jsonResponse = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:nil];
 
-        UA_LTRACE(@"Created user: %@", username);
-        successBlock(userData, payload);
+            NSString *username = [jsonResponse objectForKey:@"user_id"];
+            NSString *password = [jsonResponse objectForKey:@"password"];
+            NSString *url = [jsonResponse objectForKey:@"user_url"];
 
-    }];
+            UAUserData *userData = [UAUserData dataWithUsername:username password:password url:url];
+
+            UA_LTRACE(@"Created user: %@", username);
+            successBlock(userData, payload);
+        }];
+    } dispatcher:[UADispatcher mainDispatcher]];
 }
 
 - (void)updateUser:(UAUser *)user
