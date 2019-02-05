@@ -232,7 +232,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
     }
 
     NSString *previousDeviceId = [dataStore stringForKey:@"deviceId"];
-    NSString *currentDeviceId = [UAKeychainUtils getDeviceID];
+    NSString *currentDeviceId = [UAUtils getDeviceID];
 
     if (previousDeviceId && ![previousDeviceId isEqualToString:currentDeviceId]) {
         // Device ID changed since the last open. Most likely due to an app restore
