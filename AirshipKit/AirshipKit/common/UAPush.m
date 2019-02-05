@@ -645,7 +645,9 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
 #pragma mark UA Registration Methods
 
 - (void)createChannelPayload:(void (^)(UAChannelRegistrationPayload *))completionHandler {
+    UA_WEAKIFY(self)
     [UAUtils getDeviceID:^(NSString *deviceID) {
+        UA_STRONGIFY(self)
         UAChannelRegistrationPayload *payload = [[UAChannelRegistrationPayload alloc] init];
         payload.deviceID = deviceID;
 #if !TARGET_OS_TV   // Inbox not supported on tvOS

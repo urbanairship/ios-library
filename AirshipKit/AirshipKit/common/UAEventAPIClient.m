@@ -48,7 +48,9 @@
 }
 
 - (void)requestWithEvents:(NSArray *)events completionHandler:(void (^)(UARequest *))completionHandler {
+    UA_WEAKIFY(self)
     [UAUtils getDeviceID:^(NSString *deviceID) {
+        UA_STRONGIFY(self)
         UARequest *request = [UARequest requestWithBuilderBlock:^(UARequestBuilder *builder) {
             builder.URL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@", self.config.analyticsURL, @"/warp9/"]];
             builder.method = @"POST";

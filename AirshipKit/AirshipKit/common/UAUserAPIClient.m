@@ -23,7 +23,10 @@
                       onSuccess:(UAUserAPIClientCreateSuccessBlock)successBlock
                       onFailure:(UAUserAPIClientFailureBlock)failureBlock {
 
+    UA_WEAKIFY(self)
     [UAUtils getDeviceID:^(NSString *deviceID) {
+        UA_STRONGIFY(self)
+
         NSMutableDictionary *payload = [NSMutableDictionary dictionaryWithDictionary:@{@"ua_device_id":deviceID}];
 
         if (channelID.length) {

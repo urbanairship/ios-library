@@ -74,7 +74,9 @@
 }
 
 + (void)getDeviceID:(void (^)(NSString *))completionHandler dispatcher:(nullable UADispatcher *)dispatcher {
+    UA_WEAKIFY(self)
     [[UADispatcher backgroundDispatcher] dispatchAsync:^{
+        UA_STRONGIFY(self)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
         NSString *deviceID = [self deviceID];

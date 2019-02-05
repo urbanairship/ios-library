@@ -61,6 +61,9 @@ NS_ASSUME_NONNULL_BEGIN
  * Gets the device ID, creating or refreshing if necessary. Device IDs will be regenerated if a
  * device change is detected (though UAUser IDs remain the same in that case).
  *
+ * Note: Due to the unpredictability of the keychain after unlocking the device, this method should only be called
+ * on a background queue.
+ *
  * @return The Urban Airship device ID or an empty string if an error occurred.
  */
 + (NSString *)getDeviceID;
