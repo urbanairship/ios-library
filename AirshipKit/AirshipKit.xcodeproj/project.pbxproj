@@ -430,7 +430,7 @@
 		99666DA81EDF2BC100BAE46B /* UAUser.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DBF61D8C996A00BABD4F /* UAUser.m */; };
 		99666DA91EDF2BC100BAE46B /* UAUserAPIClient+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DBF71D8C996A00BABD4F /* UAUserAPIClient+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		99666DAA1EDF2BC100BAE46B /* UAUserAPIClient.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DBF81D8C996A00BABD4F /* UAUserAPIClient.m */; };
-		99666DAB1EDF2BC100BAE46B /* UAUserData+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DBF91D8C996A00BABD4F /* UAUserData+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		99666DAB1EDF2BC100BAE46B /* UAUserData.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DBF91D8C996A00BABD4F /* UAUserData.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		99666DAC1EDF2BC100BAE46B /* UAUserData.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DBFA1D8C996A00BABD4F /* UAUserData.m */; };
 		99666DAD1EDF2BC900BAE46B /* UAAddTagsAction.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DB091D8C996900BABD4F /* UAAddTagsAction.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		99666DAE1EDF2BC900BAE46B /* UAAddTagsAction.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DB0A1D8C996900BABD4F /* UAAddTagsAction.m */; };
@@ -1016,7 +1016,7 @@
 		CC40DD211D8C996A00BABD4F /* UAUser.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DBF61D8C996A00BABD4F /* UAUser.m */; };
 		CC40DD221D8C996A00BABD4F /* UAUserAPIClient+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DBF71D8C996A00BABD4F /* UAUserAPIClient+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CC40DD231D8C996A00BABD4F /* UAUserAPIClient.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DBF81D8C996A00BABD4F /* UAUserAPIClient.m */; };
-		CC40DD241D8C996A00BABD4F /* UAUserData+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DBF91D8C996A00BABD4F /* UAUserData+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CC40DD241D8C996A00BABD4F /* UAUserData.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DBF91D8C996A00BABD4F /* UAUserData.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CC40DD251D8C996A00BABD4F /* UAUserData.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DBFA1D8C996A00BABD4F /* UAUserData.m */; };
 		CC40DD261D8C996A00BABD4F /* UAUtils+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DBFB1D8C996A00BABD4F /* UAUtils+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CC40DD271D8C996A00BABD4F /* UAUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DBFC1D8C996A00BABD4F /* UAUtils.m */; };
@@ -1388,7 +1388,7 @@
 		DF7E21FC1ED62D5E00C79C46 /* UAScheduleTrigger+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DBE31D8C996A00BABD4F /* UAScheduleTrigger+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DF7E21FD1ED62D7500C79C46 /* UAUser+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DBF41D8C996A00BABD4F /* UAUser+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DF7E21FE1ED62D7500C79C46 /* UAUserAPIClient+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DBF71D8C996A00BABD4F /* UAUserAPIClient+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DF7E21FF1ED62D7500C79C46 /* UAUserData+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DBF91D8C996A00BABD4F /* UAUserData+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		DF7E21FF1ED62D7500C79C46 /* UAUserData.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DBF91D8C996A00BABD4F /* UAUserData.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DF7E22001ED62D7500C79C46 /* UAInbox+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DB7D1D8C996900BABD4F /* UAInbox+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DF7E22011ED62D7500C79C46 /* UAInboxAPIClient+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DB801D8C996900BABD4F /* UAInboxAPIClient+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DF7E22021ED62D7500C79C46 /* UAInboxStore+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DB821D8C996900BABD4F /* UAInboxStore+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2195,7 +2195,7 @@
 		CC40DBF61D8C996A00BABD4F /* UAUser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAUser.m; path = common/UAUser.m; sourceTree = "<group>"; };
 		CC40DBF71D8C996A00BABD4F /* UAUserAPIClient+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UAUserAPIClient+Internal.h"; path = "common/UAUserAPIClient+Internal.h"; sourceTree = "<group>"; };
 		CC40DBF81D8C996A00BABD4F /* UAUserAPIClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAUserAPIClient.m; path = common/UAUserAPIClient.m; sourceTree = "<group>"; };
-		CC40DBF91D8C996A00BABD4F /* UAUserData+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UAUserData+Internal.h"; path = "common/UAUserData+Internal.h"; sourceTree = "<group>"; };
+		CC40DBF91D8C996A00BABD4F /* UAUserData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAUserData.h; path = common/UAUserData.h; sourceTree = "<group>"; };
 		CC40DBFA1D8C996A00BABD4F /* UAUserData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAUserData.m; path = common/UAUserData.m; sourceTree = "<group>"; };
 		CC40DBFB1D8C996A00BABD4F /* UAUtils+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UAUtils+Internal.h"; path = "common/UAUtils+Internal.h"; sourceTree = "<group>"; };
 		CC40DBFC1D8C996A00BABD4F /* UAUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAUtils.m; path = common/UAUtils.m; sourceTree = "<group>"; };
@@ -3303,7 +3303,7 @@
 				CC40DBF61D8C996A00BABD4F /* UAUser.m */,
 				CC40DBF71D8C996A00BABD4F /* UAUserAPIClient+Internal.h */,
 				CC40DBF81D8C996A00BABD4F /* UAUserAPIClient.m */,
-				CC40DBF91D8C996A00BABD4F /* UAUserData+Internal.h */,
+				CC40DBF91D8C996A00BABD4F /* UAUserData.h */,
 				CC40DBFA1D8C996A00BABD4F /* UAUserData.m */,
 			);
 			name = User;
@@ -4081,6 +4081,7 @@
 			files = (
 				3CADDEB321B89B0E00C482F4 /* UAInAppMessageDisplayCoordinator.h in Headers */,
 				3CADDEAC21B89AB000C482F4 /* UAInAppMessageDefaultDisplayCoordinator.h in Headers */,
+				CC40DD241D8C996A00BABD4F /* UAUserData.h in Headers */,
 				3C7B15F62009766800ECA6D0 /* UAInAppMessageHTMLAdapter.h in Headers */,
 				999028AB1FDAE8FE0021C7DF /* UAInAppMessageButton+Internal.h in Headers */,
 				3CE58FD4207427CF00076854 /* UAUtils.h in Headers */,
@@ -4266,7 +4267,6 @@
 				998767251FBD0EE300197AF4 /* UAInAppMessageMediaInfo.h in Headers */,
 				CC40DD221D8C996A00BABD4F /* UAUserAPIClient+Internal.h in Headers */,
 				996B95601FAB95D5009B49BC /* UAInAppMessageAdapterProtocol.h in Headers */,
-				CC40DD241D8C996A00BABD4F /* UAUserData+Internal.h in Headers */,
 				CC40DCA81D8C996A00BABD4F /* UAInbox+Internal.h in Headers */,
 				99E2DA5C1FBA2AE400C9F2CC /* UAInAppMessageTextView+Internal.h in Headers */,
 				CC40DCAD1D8C996A00BABD4F /* UAInboxStore+Internal.h in Headers */,
@@ -4389,6 +4389,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				99666DAB1EDF2BC100BAE46B /* UAUserData.h in Headers */,
 				99666E751EDF2CC500BAE46B /* AirshipKit.h in Headers */,
 				3CE58FD520742A8100076854 /* UAUtils.h in Headers */,
 				DF7E7A1F1EE2163A00D4EF02 /* AirshipLib.h in Headers */,
@@ -4575,7 +4576,6 @@
 				99666DA61EDF2BC100BAE46B /* UAUser+Internal.h in Headers */,
 				99666DA71EDF2BC100BAE46B /* UAUser.h in Headers */,
 				99666DA91EDF2BC100BAE46B /* UAUserAPIClient+Internal.h in Headers */,
-				99666DAB1EDF2BC100BAE46B /* UAUserData+Internal.h in Headers */,
 				99666E711EDF2CB900BAE46B /* UAWhitelist.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4587,6 +4587,7 @@
 				3CADDEB521B89B0E00C482F4 /* UAInAppMessageDisplayCoordinator.h in Headers */,
 				3CADDEAE21B89AB000C482F4 /* UAInAppMessageDefaultDisplayCoordinator.h in Headers */,
 				3C77BF8D2016AA3C00AD37F3 /* UAInAppMessageHTMLDisplayContent.h in Headers */,
+				DF7E21FF1ED62D7500C79C46 /* UAUserData.h in Headers */,
 				3CE58FD620742B8B00076854 /* UAUtils.h in Headers */,
 				3C77BF8F2016AA3C00AD37F3 /* UAInAppMessageHTMLAdapter.h in Headers */,
 				99E2DA2E1FB62D2400C9F2CC /* UAInAppMessageManager+Internal.h in Headers */,
@@ -4790,7 +4791,6 @@
 				457F47AD20ADDF7500DEEAD9 /* UAViewUtils+Internal.h in Headers */,
 				DF7E21FD1ED62D7500C79C46 /* UAUser+Internal.h in Headers */,
 				DF7E21FE1ED62D7500C79C46 /* UAUserAPIClient+Internal.h in Headers */,
-				DF7E21FF1ED62D7500C79C46 /* UAUserData+Internal.h in Headers */,
 				99E2DA631FBA2AF900C9F2CC /* UAInAppMessageButtonInfo.h in Headers */,
 				DF7E22001ED62D7500C79C46 /* UAInbox+Internal.h in Headers */,
 				DF7E22011ED62D7500C79C46 /* UAInboxAPIClient+Internal.h in Headers */,

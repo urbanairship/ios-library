@@ -45,6 +45,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @return An HTTP Basic Auth header string value for the user's credentials.
  */
 + (NSString *)userAuthHeaderString;
+
 #endif
 
 

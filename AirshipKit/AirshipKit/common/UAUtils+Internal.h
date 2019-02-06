@@ -56,6 +56,14 @@ NS_ASSUME_NONNULL_BEGIN
  */
 + (void)getDeviceID:(void (^)(NSString *))completionHandler dispatcher:(nullable UADispatcher *)dispatcher;
 
++ (void)getUsername:(NSString *)appKey completionHandler:(void (^)(NSString *))completionHandler;
+
++ (void)getUsername:(NSString *)appKey completionHandler:(void (^)(NSString *))completionHandler dispatcher:(nullable UADispatcher *)dispatcher;
+
++ (void)getPassword:(NSString *)appKey completionHandler:(void (^)(NSString *))completionHandler;
+
++ (void)getPassword:(NSString *)appKey completionHandler:(void (^)(NSString *))completionHandler dispatcher:(nullable UADispatcher *)dispatcher;
+
 @end
 
 NS_ASSUME_NONNULL_END

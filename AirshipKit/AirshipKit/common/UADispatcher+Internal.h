@@ -24,6 +24,15 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)backgroundDispatcher;
 
 /**
+ * Dispatcher that dispatches on the provided queue.
+ *
+ * @param queue The queue.
+ *
+ * @return The dispatcher.
+ */
++ (instancetype)dispatcherWithQueue:(dispatch_queue_t)queue;
+
+/**
  * Dispatches after a delay. If the delay <= 0, the block will
  * be dispatched asynchronously instead.
  *

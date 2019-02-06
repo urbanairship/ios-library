@@ -1,6 +1,7 @@
 /* Copyright 2010-2019 Urban Airship and Contributors */
 
 #import "UAUser.h"
+#import "UADispatcher+Internal.h"
 
 // Current dictionary keys
 #define kUserUrlKey @"UAUserUrlKey"
@@ -37,15 +38,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy, nullable) NSString *password;
 
 /**
- * The user's url.
+ * The user data.
  */
-@property (nonatomic, copy, nullable) NSString *url;
-
-
-/**
- * Flag indicating if the  user is being created
- */
-@property (nonatomic, assign) BOOL creatingUser;
+@property (nonatomic, strong, nullable) UAUserData *userData;
 
 /**
  * The preference data store
@@ -90,12 +85,21 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Updates the user's device token and or channel ID
  */
-- (void)updateUser;
+- (void)updateUser:(void (^_Nullable)(void))completionHandler;
 
 /**
- * Creates a user
+ * Creates a user, passing the user data to the completion handler if successful.
  */
-- (void)createUser;
+- (void)createUser:(void (^_Nullable)(UAUserData *))completionHandler;
+
+/**
+ * Gets the data associated with the user.
+ *
+ * @param completionHandler A completion handler which will be called with the user data.
+ * @param dispatcher The dispatcher on which to invoked the completion handler.
+ */
+- (void)getUserData:(void (^)(UAUserData * _Nullable))completionHandler dispatcher:(nullable UADispatcher *)dispatcher;
+
 
 /**
  * Removes the existing user from the keychain.

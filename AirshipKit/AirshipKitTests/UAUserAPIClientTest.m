@@ -8,7 +8,7 @@
 #import "UAirship+Internal.h"
 #import "UAUserAPIClient+Internal.h"
 #import "UAUser+Internal.h"
-#import "UAUserData+Internal.h"
+#import "UAUserData.h"
 #import "UAJSONSerialization+Internal.h"
 
 @interface UAUserAPIClientTest : UABaseTest

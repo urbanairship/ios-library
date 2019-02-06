@@ -5,7 +5,7 @@
 #import "UAUtils+Internal.h"
 #import "NSJSONSerialization+UAAdditions.h"
 #import "UAUser.h"
-#import "UAUserData+Internal.h"
+#import "UAUserData.h"
 #import "NSURLResponse+UAAdditions.h"
 #import "UAJSONSerialization+Internal.h"
 

@@ -1,6 +1,6 @@
 /* Copyright 2010-2019 Urban Airship and Contributors */
 
-#import "UAUserData+Internal.h"
+#import "UAUserData.h"
 
 @interface UAUserData()
 
