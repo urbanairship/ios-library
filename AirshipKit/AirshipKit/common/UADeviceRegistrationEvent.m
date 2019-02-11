@@ -3,7 +3,7 @@
 #import "UADeviceRegistrationEvent+Internal.h"
 #import "UAEvent+Internal.h"
 #import "UAPush.h"
-#import "UAUser.h"
+#import "UAUserData.h"
 #import "UAirship.h"
 
 @implementation UADeviceRegistrationEvent
@@ -18,11 +18,21 @@
     }
 
     [data setValue:[UAirship push].channelID forKey:@"channel_id"];
+
+    event.data = data;
+
+    return event;
+}
+
++ (instancetype)event:(UAUserData *)userData {
+    UADeviceRegistrationEvent *event = [self event];
+
 #if !TARGET_OS_TV   // Inbox not supported on tvOS
-    [data setValue:[UAirship inboxUser].username forKey:@"user_id"];
+    NSMutableDictionary *data = [event.data mutableCopy];
+    [data setValue:userData.username forKey:@"user_id"];
+    event.data = data;
 #endif
 
-    event.data = [data mutableCopy];
     return event;
 }
 

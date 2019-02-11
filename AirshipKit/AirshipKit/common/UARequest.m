@@ -77,6 +77,10 @@
     return self;
 }
 
++ (instancetype)requestWithBuilder:(UARequestBuilder *)builder {
+    return [[self alloc] initWithBuilder:builder];
+}
+
 + (instancetype)requestWithBuilderBlock:(void(^)(UARequestBuilder *builder))builderBlock {
     UARequestBuilder *builder = [[UARequestBuilder alloc] init];
     builder.compressBody = NO;

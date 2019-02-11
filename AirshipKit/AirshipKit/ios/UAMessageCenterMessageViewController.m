@@ -13,6 +13,7 @@
 #import "UABeveledLoadingIndicator.h"
 #import "UAInAppMessageUtils+Internal.h"
 #import "UADispatcher+Internal.h"
+#import "UAUser+Internal.h"
 
 #define kMessageUp 0
 #define kMessageDown 1
@@ -239,11 +240,6 @@ static NSString *urlForBlankPage = @"about:blank";
         return;
     }
     
-    if (![UAirship inboxUser].isCreated) {
-        UA_LWARN(@"User is not created, can't load message with ID: %@", messageID);
-        return;
-    }
-
     UAInboxMessage *message = [[UAirship inbox].messageList messageForID:messageID];
 
     if (message) {
@@ -336,11 +332,12 @@ static NSString *urlForBlankPage = @"about:blank";
     
     NSMutableURLRequest *requestObj = [NSMutableURLRequest requestWithURL:self.message.messageBodyURL];
     requestObj.timeoutInterval = 60;
-    
-    NSString *auth = [UAUtils userAuthHeaderString];
-    [requestObj setValue:auth forHTTPHeaderField:@"Authorization"];
-    
-    [self.webView loadRequest:requestObj];
+
+    [[UAirship inboxUser] getUserData:^(UAUserData *userData) {
+        NSString *auth = [UAUtils userAuthHeaderString:userData];
+        [requestObj setValue:auth forHTTPHeaderField:@"Authorization"];
+        [self.webView loadRequest:requestObj];
+    } dispatcher:[UADispatcher mainDispatcher]];
 }
 
 - (void)displayNoLongerAvailableAlertOnOK:(void (^)(void))okCompletion {

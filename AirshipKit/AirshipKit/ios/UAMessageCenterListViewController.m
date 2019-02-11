@@ -230,12 +230,6 @@
 }
 
 - (void)refreshStateChanged:(UIRefreshControl *)sender {
-
-    // Nothing to refresh if there's no user
-    if (![UAirship inboxUser].isCreated) {
-        [sender endRefreshing];
-    }
-
     if (sender.refreshing) {
         self.refreshControlAnimating = YES;
         UA_WEAKIFY(self)

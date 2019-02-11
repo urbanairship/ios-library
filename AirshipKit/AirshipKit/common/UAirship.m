@@ -322,16 +322,21 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         [sharedAirship_.sharedAnalytics launchedFromNotification:remoteNotification];
     }
 
-#endif
-    // Init event
-    [sharedAirship_.sharedAnalytics addEvent:[UAAppInitEvent event]];
+    [sharedAirship_.sharedInboxUser getUserData:^(UAUserData *userData) {
+        // Init event
+        [sharedAirship_.sharedAnalytics addEvent:[UAAppInitEvent event:userData]];
 
-    // Update registration on the next run loop to allow apps to customize
-    // finish custom setup
+        // Update registration on the next run loop to allow apps to customize
+        [sharedAirship_.sharedPush updateRegistration];
+    } dispatcher:[UADispatcher mainDispatcher]];
+#else
     [[UADispatcher mainDispatcher] dispatchAsync:^{
+        [sharedAirship_.sharedAnalytics addEvent:[UAAppInitEvent event]];
+
+        // Update registration on the next run loop to allow apps to customize
         [sharedAirship_.sharedPush updateRegistration];
     }];
-
+#endif
 }
 
 + (void)handleAppTerminationNotification:(NSNotification *)notification {

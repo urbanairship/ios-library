@@ -266,7 +266,7 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
 
         UAUserAPIClientFailureBlock failure = ^(NSUInteger statusCode) {
             UA_STRONGIFY(self)
-            if (statusCode != UAAPIClientStatusDisabled) {
+            if (statusCode != UAAPIClientStatusUnavailable) {
                 UA_LINFO(@"Failed to create user");
             }
 

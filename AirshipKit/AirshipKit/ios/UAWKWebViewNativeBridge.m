@@ -84,12 +84,12 @@
  */
 - (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation {
     id strongDelegate = self.forwardDelegate;
-    if ([strongDelegate respondsToSelector:@selector(webView:didFinishNavigation:)]) {
-        [strongDelegate webView:webView didFinishNavigation:navigation];
-    }
-    
-    [self populateJavascriptEnvironmentIfWhitelisted:webView requestURL:webView.URL];
 
+    [self populateJavascriptEnvironmentIfWhitelisted:webView requestURL:webView.URL completionHandler:^{
+        if ([strongDelegate respondsToSelector:@selector(webView:didFinishNavigation:)]) {
+            [strongDelegate webView:webView didFinishNavigation:navigation];
+        }
+    }];
 }
 
 /**

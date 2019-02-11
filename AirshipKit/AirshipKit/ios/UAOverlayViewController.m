@@ -8,6 +8,7 @@
 #import "UAirship.h"
 #import "UAGlobal.h"
 #import "UAInboxMessage.h"
+#import "UAUser+Internal.h"
 
 #import "UAWKWebViewNativeBridge.h"
 
@@ -295,8 +296,10 @@ static NSMutableSet *overlayControllers_ = nil;
 }
 
 + (void)showMessage:(UAInboxMessage *)message {
-    NSDictionary *headers = @{@"Authorization":[UAUtils userAuthHeaderString]};
-    [UAOverlayViewController showMessage:message withHeaders:headers];
+    [[UAirship inboxUser] getUserData:^(UAUserData *userData) {
+        NSDictionary *headers = @{@"Authorization":[UAUtils userAuthHeaderString:userData]};
+        [UAOverlayViewController showMessage:message withHeaders:headers];
+    } dispatcher:[UADispatcher mainDispatcher]];
 }
 
 + (void)showMessage:(UAInboxMessage *)message withHeaders:(NSDictionary *)headers {

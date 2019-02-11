@@ -76,6 +76,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Factory method to create a request.
+ * @param builder A UARequestBuilder
+ * @return A UARequest instance.
+ */
++ (instancetype)requestWithBuilder:(UARequestBuilder *)builder;
+
+/**
+ * Factory method to create a request.
  * @param builderBlock A block with a request builder to customize the UARequest instance.
  * @return A UARequest instance.
  */

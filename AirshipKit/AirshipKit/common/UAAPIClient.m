@@ -5,7 +5,7 @@
 #import "UAConfig.h"
 #import "UAirship.h"
 
-NSUInteger const UAAPIClientStatusDisabled = 0;
+NSUInteger const UAAPIClientStatusUnavailable = 0;
 
 @interface UAAPIClient()
 @property (nonatomic, strong) UAConfig *config;

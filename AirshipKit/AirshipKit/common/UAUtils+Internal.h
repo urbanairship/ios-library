@@ -2,6 +2,7 @@
 
 #import "UAUtils.h"
 #import "UADispatcher+Internal.h"
+#import "UAUserData.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -56,13 +57,14 @@ NS_ASSUME_NONNULL_BEGIN
  */
 + (void)getDeviceID:(void (^)(NSString *))completionHandler dispatcher:(nullable UADispatcher *)dispatcher;
 
-+ (void)getUsername:(NSString *)appKey completionHandler:(void (^)(NSString *))completionHandler;
-
-+ (void)getUsername:(NSString *)appKey completionHandler:(void (^)(NSString *))completionHandler dispatcher:(nullable UADispatcher *)dispatcher;
-
-+ (void)getPassword:(NSString *)appKey completionHandler:(void (^)(NSString *))completionHandler;
-
-+ (void)getPassword:(NSString *)appKey completionHandler:(void (^)(NSString *))completionHandler dispatcher:(nullable UADispatcher *)dispatcher;
+#if !TARGET_OS_TV   // Inbox not supported on tvOS
+/**
+ * Gets the user auth header string for the provided user data.
+ *
+ * @param userData The user data.
+ */
++ (NSString *)userAuthHeaderString:(UAUserData *)userData;
+#endif
 
 @end
 

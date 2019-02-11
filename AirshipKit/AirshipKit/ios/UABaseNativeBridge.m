@@ -2,7 +2,7 @@
 
 #import "UABaseNativeBridge.h"
 #import "UABaseNativeBridge+Internal.h"
-#import "UAUser.h"
+#import "UAUser+Internal.h"
 #import "UAWhitelist.h"
 #import "UAInboxMessage.h"
 #import "UAGlobal.h"
@@ -23,10 +23,10 @@ NSString *const UANativeBridgeDismissCommand = @"dismiss";
 
 @implementation UABaseNativeBridge
 
-- (void)populateJavascriptEnvironmentIfWhitelisted:(UIView *)webView requestURL:(NSURL *)url {
+- (void)populateJavascriptEnvironmentIfWhitelisted:(UIView *)webView requestURL:(NSURL *)url completionHandler:(void (^)(void))completionHandler {
     if (!(([webView isKindOfClass:[UIWebView class]]) || ([webView isKindOfClass:[WKWebView class]]))) {
         UA_LIMPERR(@"webView must be either UIWebView or WKWebView");
-        return;
+        return completionHandler();
     }
     
     if (![[UAirship shared].whitelist isWhitelisted:url scope:UAWhitelistScopeJavaScriptInterface]) {
@@ -34,7 +34,7 @@ NSString *const UANativeBridgeDismissCommand = @"dismiss";
         if (![url.absoluteString isEqualToString:@"about:blank"]) {
             UA_LDEBUG(@"URL %@ is not whitelisted, not populating JS interface", url);
         }
-        return;
+        return completionHandler();
     }
     
     // This will be nil if we are not loading a Rich Push message
@@ -58,88 +58,92 @@ NSString *const UANativeBridgeDismissCommand = @"dismiss";
         NSNumber *returnValue = value ?: @(-1);
         js = [js stringByAppendingFormat:@"_UAirship.%@ = function() {return %@;};", methodName, returnValue];
     };
-    
-    
-    /*
-     * Set the device model.
-     */
-    appendStringGetter(@"getDeviceModel", [UIDevice currentDevice].model);
-    
-    /*
-     * Set the UA user ID.
-     */
-    appendStringGetter(@"getUserId", [UAirship inboxUser].username);
-    
-    /*
-     * Set the current message ID.
-     */
-    appendStringGetter(@"getMessageId", message.messageID);
-    
-    /*
-     * Set the current message's title.
-     */
-    appendStringGetter(@"getMessageTitle", message.title);
-    
-    /*
-     * Set the named User ID
-     */
-    appendStringGetter(@"getNamedUser", [UAirship namedUser].identifier);
-    
-    /*
-     * Set the channel ID
-     */
-    appendStringGetter(@"getChannelId", [UAirship push].channelID);
-    
-    /*
-     * Set the application key
-     */
-    appendStringGetter(@"getAppKey", [UAirship shared].config.appKey);
-    
-    /*
-     * Set the current message's sent date
-     */
-    if (message.messageSent) {
-        NSTimeInterval messageSentDateMS = [message.messageSent timeIntervalSince1970] * 1000;
-        NSNumber *milliseconds = [NSNumber numberWithDouble:messageSentDateMS];
-        appendNumberGetter(@"getMessageSentDateMS", milliseconds);
-        
-        NSString *messageSentDate = [[UAUtils ISODateFormatterUTC] stringFromDate:message.messageSent];
-        appendStringGetter(@"getMessageSentDate", messageSentDate);
-        
-    } else {
-        appendNumberGetter(@"getMessageSentDateMS", nil);
-        appendStringGetter(@"getMessageSentDate", nil);
-    }
-    
-    /*
-     * Define action/native bridge functionality:
-     *
-     * UAirship.runAction,
-     * UAirship.finishAction
-     *
-     * See AirshipKit/AirshipResources/UANativeBridge for human-readable source
-     */
-    NSString *path = [[UAirship resources] pathForResource:@"UANativeBridge" ofType:@""];
-    NSString *bridge = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];
-    js = [js stringByAppendingString:bridge];
-    
-    /*
-     * Execute the JS we just constructed.
-     */
-    if ([webView isKindOfClass:[UIWebView class]]) {
-        [(UIWebView *)webView stringByEvaluatingJavaScriptFromString:js];
-    } else if ([webView isKindOfClass:[WKWebView class]]) {
-        [(WKWebView *)webView evaluateJavaScript:js completionHandler:nil];
-    } else {
-        UA_LIMPERR(@"webView must be either UIWebView or WKWebView");
-    }
+
+    [[UAirship inboxUser] getUserData:^(UAUserData *userData) {
+        /*
+         * Set the device model.
+         */
+        appendStringGetter(@"getDeviceModel", [UIDevice currentDevice].model);
+
+        /*
+         * Set the UA user ID.
+         */
+        appendStringGetter(@"getUserId", userData.username);
+
+        /*
+         * Set the current message ID.
+         */
+        appendStringGetter(@"getMessageId", message.messageID);
+
+        /*
+         * Set the current message's title.
+         */
+        appendStringGetter(@"getMessageTitle", message.title);
+
+        /*
+         * Set the named User ID
+         */
+        appendStringGetter(@"getNamedUser", [UAirship namedUser].identifier);
+
+        /*
+         * Set the channel ID
+         */
+        appendStringGetter(@"getChannelId", [UAirship push].channelID);
+
+        /*
+         * Set the application key
+         */
+        appendStringGetter(@"getAppKey", [UAirship shared].config.appKey);
+
+        /*
+         * Set the current message's sent date
+         */
+        if (message.messageSent) {
+            NSTimeInterval messageSentDateMS = [message.messageSent timeIntervalSince1970] * 1000;
+            NSNumber *milliseconds = [NSNumber numberWithDouble:messageSentDateMS];
+            appendNumberGetter(@"getMessageSentDateMS", milliseconds);
+
+            NSString *messageSentDate = [[UAUtils ISODateFormatterUTC] stringFromDate:message.messageSent];
+            appendStringGetter(@"getMessageSentDate", messageSentDate);
+
+        } else {
+            appendNumberGetter(@"getMessageSentDateMS", nil);
+            appendStringGetter(@"getMessageSentDate", nil);
+        }
+
+        /*
+         * Define action/native bridge functionality:
+         *
+         * UAirship.runAction,
+         * UAirship.finishAction
+         *
+         * See AirshipKit/AirshipResources/UANativeBridge for human-readable source
+         */
+        NSString *path = [[UAirship resources] pathForResource:@"UANativeBridge" ofType:@""];
+        NSString *bridge = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];
+        js = [js stringByAppendingString:bridge];
+
+        /*
+         * Execute the JS we just constructed.
+         */
+        if ([webView isKindOfClass:[UIWebView class]]) {
+            [(UIWebView *)webView stringByEvaluatingJavaScriptFromString:js];
+        } else if ([webView isKindOfClass:[WKWebView class]]) {
+            [(WKWebView *)webView evaluateJavaScript:js completionHandler:nil];
+        } else {
+            UA_LIMPERR(@"webView must be either UIWebView or WKWebView");
+        }
+
+        completionHandler();
+
+    } dispatcher:[UADispatcher mainDispatcher]];
 }
 
 - (void)performJSDelegateWithData:(UAWebViewCallData *)data webView:(UIView *)webView {
     id <UAJavaScriptDelegate> actionJSDelegate = [UAirship shared].actionJSDelegate;
     id <UAJavaScriptDelegate> userJSDDelegate = [UAirship shared].jsDelegate;
 
-    if ([data.url.scheme isEqualToString:UANativeBridgeUAirshipScheme]) {
+    if ([data.url.scheme isEqualToString:@"uairship"]) {
         if ([data.name isEqualToString:@"run-actions"] ||
             [data.name isEqualToString:@"run-basic-actions"] ||
             [data.name isEqualToString:@"run-action-cb"] ||

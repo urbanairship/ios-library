@@ -5,8 +5,8 @@
 
 @implementation UAAppForegroundEvent
 
-- (NSMutableDictionary *)gatherData {
-    NSMutableDictionary *data = [super gatherData];
+- (NSMutableDictionary *)gatherData:(UAUserData *)userData {
+    NSMutableDictionary *data = [super gatherData:userData];
     [data removeObjectForKey:@"foreground"];
     return data;
 }

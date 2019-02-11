@@ -3,6 +3,8 @@
 #import "UAInboxMessage+Internal.h"
 #import "UAInboxMessageList+Internal.h"
 #import "UAUtils+Internal.h"
+#import "UAUser+Internal.h"
+#import "UAirship.h"
 
 @interface UAInboxMessage()
 @property (nonatomic, copy) NSString *messageID;
@@ -110,7 +112,9 @@
 
     UIWebView *webView = [[UIWebView alloc] initWithFrame:[UIScreen mainScreen].bounds];
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:self.messageBodyURL];
-    NSString *auth = [UAUtils userAuthHeaderString];
+
+    UAUserData *userData = [[UAirship inboxUser] getUserDataSync];
+    NSString *auth = [UAUtils userAuthHeaderString:userData];
     [request setValue:auth forHTTPHeaderField:@"Authorization"];
 
     // Load the message body, spin the run loop and poll the webView with a 5 second timeout.

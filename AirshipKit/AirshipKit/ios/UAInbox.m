@@ -26,12 +26,10 @@
                                                      name:UIApplicationWillEnterForegroundNotification
                                                    object:nil];
 
-        if (!self.user.isCreated) {
-            [[NSNotificationCenter defaultCenter] addObserver:self
-                                                     selector:@selector(userCreated)
-                                                         name:UAUserCreatedNotification
-                                                       object:nil];
-        }
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(userCreated)
+                                                     name:UAUserCreatedNotification
+                                                   object:nil];
 
         [self.messageList loadSavedMessages];
 

@@ -91,43 +91,6 @@
     [self getDeviceID:completionHandler dispatcher:nil];
 }
 
-+ (void)getUsername:(NSString *)appKey completionHandler:(void (^)(NSString *))completionHandler dispatcher:(nullable UADispatcher *)dispatcher {
-    [[UADispatcher backgroundDispatcher] dispatchAsync:^{
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-        NSString *username = [UAKeychainUtils getUsername:appKey];
-#pragma GCC diagnostic pop
-        UADispatcher *completionDispatcher = dispatcher ? : [UADispatcher mainDispatcher];
-
-        [completionDispatcher dispatchAsync:^{
-            completionHandler(username);
-        }];
-    }];
-}
-
-+ (void)getUsername:(NSString *)appKey completionHandler:(void (^)(NSString *))completionHandler {
-    return [self getUsername:appKey completionHandler:completionHandler dispatcher:nil];
-}
-
-+ (void)getPassword:(NSString *)appKey completionHandler:(void (^)(NSString *))completionHandler dispatcher:(nullable UADispatcher *)dispatcher {
-    [[UADispatcher backgroundDispatcher] dispatchAsync:^{
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-        NSString *password = [UAKeychainUtils getPassword:appKey];
-#pragma GCC diagnostic pop
-        UADispatcher *completionDispatcher = dispatcher ? : [UADispatcher mainDispatcher];
-
-        [completionDispatcher dispatchAsync:^{
-            completionHandler(password);
-        }];
-    }];
-}
-
-+ (void)getPassword:(NSString *)appKey completionHandler:(void (^)(NSString *))completionHandler {
-    return [self getPassword:appKey completionHandler:completionHandler dispatcher:nil];
-}
-
-
 + (NSString *)deviceModelName {
     size_t size;
     
@@ -208,6 +171,13 @@
               [[response allHeaderFields] description],
               [response description]);
 }
+
+#if !TARGET_OS_TV   // Inbox not supported on tvOS
++ (NSString *)userAuthHeaderString:(UAUserData *)userData {
+    return [UAUtils authHeaderStringWithName:userData.username
+                                    password:userData.password];
+}
+#endif
 
 #if !TARGET_OS_TV   // Inbox not supported on tvOS
 + (NSString *)userAuthHeaderString {

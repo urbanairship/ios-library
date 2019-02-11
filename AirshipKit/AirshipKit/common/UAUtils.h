@@ -44,10 +44,9 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @return An HTTP Basic Auth header string value for the user's credentials.
  */
-+ (NSString *)userAuthHeaderString;
++ (NSString *)userAuthHeaderString DEPRECATED_MSG_ATTRIBUTE("Deprecated - to be removed in SDK version 11.0.");
 
 #endif
-
 
 /**
  * Returns a basic auth header string.

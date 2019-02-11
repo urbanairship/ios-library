@@ -1,6 +1,7 @@
 /* Copyright 2010-2019 Urban Airship and Contributors */
 
 #import "UAEvent.h"
+#import "UAUserData.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -12,6 +13,13 @@ NS_ASSUME_NONNULL_BEGIN
 ///---------------------------------------------------------------------------------------
 /// @name Device Registration Event Internal Factory
 ///---------------------------------------------------------------------------------------
+
+/**
+ * Factory method to create a UADeviceRegistrationEvent.
+ *
+ * @param userData The current inbox user data.
+ */
++ (instancetype)event:(UAUserData *)userData;
 
 /**
  * Factory method to create a UADeviceRegistrationEvent.

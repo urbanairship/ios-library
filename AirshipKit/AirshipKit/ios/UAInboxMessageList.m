@@ -123,10 +123,6 @@ typedef void (^UAInboxMessageFetchCompletionHandler)(NSArray *);
 - (UADisposable *)retrieveMessageListWithSuccessBlock:(UAInboxMessageListCallbackBlock)successBlock
                                      withFailureBlock:(UAInboxMessageListCallbackBlock)failureBlock {
 
-    if (!self.user.isCreated) {
-        return nil;
-    }
-
     UA_LDEBUG("Retrieving message list.");
 
     self.retrieveOperationCount++;

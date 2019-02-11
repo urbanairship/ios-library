@@ -12,11 +12,16 @@
 
 + (instancetype)event {
     UAAppInitEvent *event = [[self alloc] init];
-    event.data = [[event gatherData] mutableCopy];
     return event;
 }
 
-- (NSMutableDictionary *)gatherData {
++ (instancetype)event:(UAUserData *)userData {
+    UAAppInitEvent *event = [self event];
+    event.data = [[event gatherData:userData] mutableCopy];
+    return event;
+}
+
+- (NSMutableDictionary *)gatherData:(UAUserData *)userData {
     NSMutableDictionary *data = [NSMutableDictionary dictionary];
 
     UAAnalytics *analytics = [UAirship analytics];
@@ -26,7 +31,7 @@
     [data setValue:analytics.conversionRichPushID forKey:@"rich_push_id"];
 
 #if !TARGET_OS_TV   // Inbox not supported on tvOS
-    [data setValue:[UAirship inboxUser].username forKey:@"user_id"];
+    [data setValue:userData.username forKey:@"user_id"];
     [data setValue:[self carrierName] forKey:@"carrier"];
 #endif
 

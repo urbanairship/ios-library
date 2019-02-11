@@ -15,6 +15,8 @@
 #import "UAAssociateIdentifiersEvent+Internal.h"
 #import "UAAssociatedIdentifiers.h"
 #import "UACustomEvent.h"
+#import "UAUser+Internal.h"
+#import "UAirship.h"
 
 #if !TARGET_OS_TV
 #import "UAInboxUtils.h"
@@ -178,8 +180,14 @@ NSString *const UAEventKey = @"event";
         // Start a new session
         [self startSession];
 
-        //add app_foreground event
+#if !TARGET_OS_TV   // Inbox not supported on tvOS
+        [[UAirship inboxUser] getUserData:^(UAUserData *userData) {
+            //add app_foreground event
+            [self addEvent:[UAAppForegroundEvent event:userData]];
+        } dispatcher:[UADispatcher mainDispatcher]];
+#else
         [self addEvent:[UAAppForegroundEvent event]];
+#endif
     }
 }
 
