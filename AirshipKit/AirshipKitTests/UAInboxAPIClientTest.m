@@ -32,8 +32,15 @@
     [[[self.mockAirship stub] andReturn:self.mockPush] push];
 
     self.mockUser = [self mockForClass:[UAUser class]];
-    [[[self.mockUser stub] andReturn:@"userName"] username];
-    [[[self.mockUser stub] andReturn:@"userPassword"] password];
+
+    UAUserData *userData = [UAUserData dataWithUsername:@"username" password:@"password" url:@"url"];
+
+    [[[self.mockUser stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:2];
+        void (^completionHandler)(UAUserData * _Nullable) = (__bridge void (^)(UAUserData * _Nullable)) arg;
+        completionHandler(userData);
+    }] getUserData:OCMOCK_ANY];
 
     self.inboxAPIClient = [UAInboxAPIClient clientWithConfig:self.config
                                                      session:self.mockSession

@@ -64,15 +64,20 @@
 }
 
 - (void)testUserAuthHeaderString {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
     XCTAssertEqualObjects([UAUtils userAuthHeaderString],@"Basic KG51bGwpOihudWxsKQ==");
-    
+#pragma GCC diagnostic pop
     id mockUser = [self mockForClass:[UAUser class]];
     [[[mockUser stub] andReturn:@"someUser"] username];
     [[[mockUser stub] andReturn:@"somePassword"] password];
 
     [[[self.mockAirship stub] andReturn:mockUser] inboxUser];
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
     XCTAssertEqualObjects([UAUtils userAuthHeaderString],@"Basic c29tZVVzZXI6c29tZVBhc3N3b3Jk");
+#pragma GCC diagnostic pop
 }
 
 - (void)testAppAuthHeaderString {

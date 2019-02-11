@@ -39,9 +39,19 @@
 
     self.userCreated = YES;
     self.mockUser = [self mockForClass:[UAUser class]];
+
+    UAUserData *userData = [UAUserData dataWithUsername:@"username" password:@"password" url:@"url"];
+
     [[[self.mockUser stub] andDo:^(NSInvocation *invocation) {
-        [invocation setReturnValue:&self->_userCreated];
-    }] isCreated];
+        void *arg;
+        [invocation getArgument:&arg atIndex:2];
+        void (^completionHandler)(UAUserData * _Nullable) = (__bridge void (^)(UAUserData * _Nullable)) arg;
+        if (self.userCreated) {
+            completionHandler(userData);
+        } else {
+            completionHandler(nil);
+        }
+    }] getUserData:OCMOCK_ANY];
 
     self.testStore = [UAInboxStore storeWithName:@"UAInboxMessageListTest." inMemory:YES];
 
@@ -90,20 +100,18 @@
 #pragma mark block-based methods
 
 //if the user is not created, this method should do nothing.
-//the UADisposable return value should be nil.
 - (void)testRetrieveMessageListWithBlocksDefaultUserNotCreated {
     //if there's no user, the block version of this method should do nothing and return a nil disposable
     self.userCreated = NO;
 
     __block BOOL fail = NO;
 
-    UADisposable *disposable = [self.messageList retrieveMessageListWithSuccessBlock:^{
+    [self.messageList retrieveMessageListWithSuccessBlock:^{
         fail = YES;
     } withFailureBlock:^{
         fail = YES;
     }];
 
-    XCTAssertNil(disposable, @"disposable should be nil");
     XCTAssertFalse(fail, @"callback blocks should not have been executed");
 }
 

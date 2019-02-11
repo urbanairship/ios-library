@@ -33,6 +33,8 @@
 @property (nonatomic, strong) id user;
 @property (nonatomic, strong) id utils;
 
+@property (nonatomic, strong) UAUserData *userData;
+
 @end
 
 @implementation UAEventTest
@@ -64,6 +66,8 @@
 
     self.currentDevice = [self mockForClass:[UIDevice class]];
     [[[self.currentDevice stub] andReturn:self.currentDevice] currentDevice];
+
+    self.userData = [UAUserData dataWithUsername:@"user ID" password:@"password" url:@"url"];
 }
 
 - (void)tearDown {
@@ -83,8 +87,6 @@
  * Test app init event
  */
 - (void)testAppInitEvent {
-    [[[self.user stub] andReturn:@"user ID"] username];
-
     [[[self.analytics stub] andReturn:@"push ID"] conversionSendID];
     [[[self.analytics stub] andReturn:@"base64metadataString"] conversionPushMetadata];
     [[[self.analytics stub] andReturn:@"rich push ID"] conversionRichPushID];
@@ -103,7 +105,7 @@
 
     [[[self.push stub] andReturnValue:OCMOCK_VALUE(UAAuthorizationStatusNotDetermined)] authorizationStatus];
 
-    NSDictionary *expectedData = @{@"user_id": @"user ID",
+    NSDictionary *expectedData = @{@"user_id": self.userData.username,
                                    @"connection_type": @"cell",
                                    @"push_id": @"push ID",
                                    @"metadata": @"base64metadataString",
@@ -117,8 +119,7 @@
                                    @"package_version": @"",
                                    @"foreground": @"true"};
 
-
-    UAAppInitEvent *event = [UAAppInitEvent event];
+    UAAppInitEvent *event = [UAAppInitEvent event:self.userData];
 
     XCTAssertEqualObjects(event.data, expectedData, @"Event data is unexpected.");
     XCTAssertEqualObjects(event.eventType, @"app_init", @"Event type is unexpected.");
@@ -130,7 +131,6 @@
  * Test app foreground event
  */
 - (void)testAppForegroundEvent {
-    [[[self.user stub] andReturn:@"user ID"] username];
     [[[self.analytics stub] andReturn:@"push ID"] conversionSendID];
     [[[self.analytics stub] andReturn:@"base64metadataString"] conversionPushMetadata];
     [[[self.analytics stub] andReturn:@"rich push ID"] conversionRichPushID];
@@ -147,7 +147,7 @@
     [[[self.push stub] andReturnValue:OCMOCK_VALUE(UAAuthorizationStatusProvisional)] authorizationStatus];
 
     // Same as app init but without the foreground key
-    NSDictionary *expectedData = @{@"user_id": @"user ID",
+    NSDictionary *expectedData = @{@"user_id": self.userData.username,
                                    @"connection_type": @"cell",
                                    @"push_id": @"push ID",
                                    @"metadata": @"base64metadataString",
@@ -161,7 +161,7 @@
                                    @"package_version": @""};
 
 
-    UAAppForegroundEvent *event = [UAAppForegroundEvent event];
+    UAAppForegroundEvent *event = [UAAppForegroundEvent event:self.userData];
 
     XCTAssertEqualObjects(event.data, expectedData, @"Event data is unexpected.");
     XCTAssertEqualObjects(event.eventType, @"app_foreground", @"Event type is unexpected.");
@@ -210,13 +210,13 @@
     [[[self.push stub] andReturnValue:@YES] pushTokenRegistrationEnabled];
     [[[self.push stub] andReturn:@"a12312ad"] deviceToken];
     [[[self.push stub] andReturn:@"someChannelID"] channelID];
-    [[[self.user stub] andReturn:@"someUserID"] username];
 
     NSDictionary *expectedData = @{@"device_token": @"a12312ad",
                                    @"channel_id": @"someChannelID",
-                                   @"user_id": @"someUserID"};
+                                   @"user_id": self.userData.username};
 
-    UADeviceRegistrationEvent *event = [UADeviceRegistrationEvent event];
+    UADeviceRegistrationEvent *event = [UADeviceRegistrationEvent event:self.userData];
+
     XCTAssertEqualObjects(event.data, expectedData, @"Event data is unexpected.");
     XCTAssertEqualObjects(event.eventType, @"device_registration", @"Event type is unexpected.");
     XCTAssertNotNil(event.eventID, @"Event should have an ID");
@@ -229,12 +229,11 @@
     [[[self.push stub] andReturnValue:@NO] pushTokenRegistrationEnabled];
     [[[self.push stub] andReturn:@"a12312ad"] deviceToken];
     [[[self.push stub] andReturn:@"someChannelID"] channelID];
-    [[[self.user stub] andReturn:@"someUserID"] username];
 
     NSDictionary *expectedData = @{@"channel_id": @"someChannelID",
-                                   @"user_id": @"someUserID"};
+                                   @"user_id": self.userData.username};
 
-    UADeviceRegistrationEvent *event = [UADeviceRegistrationEvent event];
+    UADeviceRegistrationEvent *event = [UADeviceRegistrationEvent event:self.userData];
     XCTAssertEqualObjects(event.data, expectedData, @"Event data is unexpected.");
     XCTAssertEqualObjects(event.eventType, @"device_registration", @"Event type is unexpected.");
     XCTAssertNotNil(event.eventID, @"Event should have an ID");

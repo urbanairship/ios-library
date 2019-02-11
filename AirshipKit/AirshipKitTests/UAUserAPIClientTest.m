@@ -39,8 +39,15 @@
     }] getDeviceID:OCMOCK_ANY dispatcher:OCMOCK_ANY] ;
 
     self.mockUser = [self mockForClass:[UAUser class]];
-    [[[self.mockUser stub] andReturn:@"userName"] username];
-    [[[self.mockUser stub] andReturn:@"userPassword"] password];
+
+    UAUserData *userData = [UAUserData dataWithUsername:@"username" password:@"password" url:@"url"];
+
+    [[[self.mockUser stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:2];
+        void (^completionHandler)(UAUserData * _Nullable) = (__bridge void (^)(UAUserData * _Nullable)) arg;
+        completionHandler(userData);
+    }] getUserData:OCMOCK_ANY];
 }
 
 - (void)tearDown {
@@ -346,7 +353,7 @@
         UARequest *request = obj;
 
         // Check the url
-        if (![[request.URL absoluteString] isEqualToString:@"https://device-api.urbanairship.com/api/user/userName/"]) {
+        if (![[request.URL absoluteString] isEqualToString:@"https://device-api.urbanairship.com/api/user/username/"]) {
             return NO;
         }
 
@@ -372,13 +379,24 @@
         return YES;
     };
 
-    [[self.mockSession expect] dataTaskWithRequest:[OCMArg checkWithBlock:checkRequestBlock]
-                                        retryWhere:OCMOCK_ANY
-                                 completionHandler:OCMOCK_ANY];
+    [[[self.mockSession expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:4];
+        UARequestCompletionHandler completionHandler = (__bridge UARequestCompletionHandler)arg;
+        NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@"https://device-api.urbanairship.com/api/user/username/"]
+                                                                  statusCode:200 HTTPVersion:@"1.1"
+                                                                headerFields:nil];
+        completionHandler(nil, (NSURLResponse *)response, nil);
+    }] dataTaskWithRequest:[OCMArg checkWithBlock:checkRequestBlock] retryWhere:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
+    XCTestExpectation *expectation = [self expectationWithDescription:@"update succeeded"];
 
     [self.client updateUser:self.mockUser channelID:@"channelID" onSuccess:^() {
+        [expectation fulfill];
     } onFailure:^(NSUInteger statusCode) {
     }];
+
+    [self waitForExpectationsWithTimeout:1.0 handler:nil];
     
     [self.mockSession verify];
 }

@@ -7,7 +7,7 @@
 #import "UAWebView+Internal.h"
 #import "UAirship+Internal.h"
 #import "UAConfig.h"
-#import "UAUser.h"
+#import "UAUser+Internal.h"
 #import "UAInboxMessage.h"
 #import "UAUtils+Internal.h"
 #import "UAInbox.h"
@@ -273,7 +273,16 @@
 }
 
 - (void)commonTestDidFinishPopulateJavascriptEnvironmentWithUAWebView:(BOOL)testUAWebView {
-    [[[self.mockUAUser stub] andReturn:@"user name"] username];
+
+    UAUserData *userData = [UAUserData dataWithUsername:@"username" password:@"password" url:@"url"];
+
+    [[[self.mockUAUser stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:2];
+        void (^completionHandler)(UAUserData * _Nullable) = (__bridge void (^)(UAUserData * _Nullable)) arg;
+        completionHandler(userData);
+    }] getUserData:OCMOCK_ANY dispatcher:OCMOCK_ANY];
+
     [[[self.mockUIDevice stub] andReturn:@"device model"] model];
     [[[self.mockPush stub] andReturn:@"channel ID"] channelID];
     [[[self.mockNamedUser stub] andReturn:@"named user"] identifier];
@@ -302,14 +311,15 @@
     [self.nativeBridge webView:mockWebView didFinishNavigation:self.mockWKNavigation];
     
     XCTAssertNotNil(js, "Javascript environment was not populated");
-    
-    [self.jsc evaluateScript:js];
-    
+    if (js) {
+        [self.jsc evaluateScript:js];
+    }
+
     // Verify device model
     XCTAssertEqualObjects(@"device model", [self.jsc evaluateScript:@"UAirship.getDeviceModel()"].toString);
     
     // Verify user ID
-    XCTAssertEqualObjects(@"user name", [self.jsc evaluateScript:@"UAirship.getUserId()"].toString);
+    XCTAssertEqualObjects(@"username", [self.jsc evaluateScript:@"UAirship.getUserId()"].toString);
     
     // Verify channel ID
     XCTAssertEqualObjects(@"channel ID", [self.jsc evaluateScript:@"UAirship.getChannelId()"].toString);
@@ -373,11 +383,28 @@
 
     [[[self.mockWKWebView stub] andReturn:url] URL];
 
+    UAUserData *userData = [UAUserData dataWithUsername:@"username" password:@"password" url:@"url"];
+
+    XCTestExpectation *userDataRetrieved = [self expectationWithDescription:@"user data retrieved"];
+
+    [[[self.mockUAUser stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:2];
+        void (^completionHandler)(UAUserData * _Nullable) = (__bridge void (^)(UAUserData * _Nullable)) arg;
+        completionHandler(userData);
+        [userDataRetrieved fulfill];
+    }] getUserData:OCMOCK_ANY dispatcher:OCMOCK_ANY];
+
+
     [self.nativeBridge webView:self.mockWKWebView didFinishNavigation:self.mockWKNavigation];
+
+    [self waitForExpectationsWithTimeout:1.0 handler:nil];
 
     XCTAssertNotNil(js, "Javascript environment was not populated");
 
-    [self.jsc evaluateScript:js];
+    if (js) {
+        [self.jsc evaluateScript:js];
+    }
 
     // Verify message ID
     XCTAssertEqualObjects(@"messageID", [self.jsc evaluateScript:@"UAirship.getMessageId()"].toString);
@@ -432,11 +459,29 @@
 
     [[[self.mockWKWebView stub] andReturn:url] URL];
 
+    UAUserData *userData = [UAUserData dataWithUsername:@"username" password:@"password" url:@"url"];
+
+    XCTestExpectation *userDataRetrieved = [self expectationWithDescription:@"user data retrieved"];
+
+    [[[self.mockUAUser stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:2];
+        void (^completionHandler)(UAUserData * _Nullable) = (__bridge void (^)(UAUserData * _Nullable)) arg;
+        completionHandler(userData);
+        [userDataRetrieved fulfill];
+    }] getUserData:OCMOCK_ANY dispatcher:OCMOCK_ANY];
+
+
     [self.nativeBridge webView:self.mockWKWebView didFinishNavigation:self.mockWKNavigation];
+
+    [self waitForExpectationsWithTimeout:1.0 handler:nil];
+
 
     XCTAssertNotNil(js, "Javascript environment was not populated");
 
-    [self.jsc evaluateScript:js];
+    if (js) {
+        [self.jsc evaluateScript:js];
+    }
 
     // Verify message title
     XCTAssertEqualObjects(@"\"\t\b\r\n\f/title", [self.jsc evaluateScript:@"UAirship.getMessageTitle()"].toString);
