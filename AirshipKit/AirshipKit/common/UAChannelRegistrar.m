@@ -153,6 +153,9 @@ UAConfig *config;
             return;
         }
 
+        // proceed with registration
+        self.isRegistrationInProgress = YES;
+
         UA_WEAKIFY(self)
         [self.delegate createChannelPayload:^(UAChannelRegistrationPayload *payload) {
             UA_STRONGIFY(self)
@@ -165,8 +168,6 @@ UAConfig *config;
                 return;
             }
 
-            // proceed with registration
-            self.isRegistrationInProgress = YES;
             if (!self.channelID || !self.channelLocation) {
                 [self createChannelWithPayload:payload];
             } else {
