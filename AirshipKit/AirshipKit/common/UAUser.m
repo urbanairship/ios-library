@@ -132,14 +132,21 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
     }];
 }
 
-- (void)getUserData:(void (^)(UAUserData * _Nullable))completionHandler queue:(nullable dispatch_queue_t)queue {
-    UADispatcher *dispatcher = queue ? [UADispatcher dispatcherWithQueue:queue] : nil;
-    [self getUserData:completionHandler dispatcher:dispatcher];
-}
-
 - (void)getUserData:(void (^)(UAUserData * _Nullable))completionHandler {
     [[UADispatcher backgroundDispatcher] dispatchAsync:^{
         completionHandler([self getUserDataSync]);
+    }];
+}
+
+- (void)getUserData:(void (^)(UAUserData * _Nullable))completionHandler queue:(nullable dispatch_queue_t)queue {
+    [self getUserData:^(UAUserData *data) {
+        if (queue) {
+            dispatch_async(queue, ^{
+                completionHandler(data);
+            });
+        } else {
+            completionHandler(data);
+        }
     }];
 }
 

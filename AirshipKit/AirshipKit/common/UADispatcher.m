@@ -49,10 +49,6 @@ typedef NS_ENUM(NSUInteger, UADispatcherType) {
     return self;
 }
 
-- (instancetype)initWithQueue:(dispatch_queue_t)queue {
-    return [self initWithQueue:queue type:queue == dispatch_get_main_queue() ? UADispatcherTypeMain : UADispatcherTypeBackground];
-}
-
 + (instancetype)mainDispatcher {
     static dispatch_once_t mainDispatcherOnceToken;
     static UADispatcher *mainDispatcher;
@@ -80,10 +76,6 @@ typedef NS_ENUM(NSUInteger, UADispatcherType) {
 
 + (instancetype)dispatcherWithQueue:(dispatch_queue_t)queue type:(UADispatcherType)type {
     return [[self alloc] initWithQueue:queue type:type];
-}
-
-+ (instancetype)dispatcherWithQueue:(dispatch_queue_t)queue {
-    return [[self alloc] initWithQueue:queue];
 }
 
 - (void)dispatchSync:(void (^)(void))block {
