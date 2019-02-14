@@ -10,7 +10,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface UAAPIClient : NSObject
 
 /**
- * Status code to indicate the API client is disabled or otherwise unavailble
+ * Status code to indicate the API client is disabled or otherwise unavailable
  */
 extern NSUInteger const UAAPIClientStatusUnavailable;
 
