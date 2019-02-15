@@ -13,7 +13,6 @@
 @property (nonatomic, strong) id mockAirship;
 @property (nonatomic, strong) id mockTimeZoneClass;
 @property (nonatomic, strong) id mockLocaleClass;
-@property (nonatomic, strong) id mockKeychainClass;
 
 @property (nonatomic, strong) id mockSession;
 @property (nonatomic, strong) UAEventAPIClient *client;
@@ -23,9 +22,6 @@
 
 - (void)setUp {
     [super setUp];
-
-    self.mockKeychainClass = [self strictMockForClass:[UAKeychainUtils class]];
-    [[[[self.mockKeychainClass stub] classMethod] andReturn:@"some-device-ID"] getDeviceID];
 
     self.mockLocaleClass = [self strictMockForClass:[NSLocale class]];
     self.mockTimeZoneClass = [self strictMockForClass:[NSTimeZone class]];
@@ -46,7 +42,6 @@
     [self.mockTimeZoneClass stopMocking];
     [self.mockLocaleClass stopMocking];
     [self.mockSession stopMocking];
-    [self.mockKeychainClass stopMocking];
 
     [super tearDown];
 }

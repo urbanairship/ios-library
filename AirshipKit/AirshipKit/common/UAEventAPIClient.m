@@ -11,10 +11,6 @@
 #import "NSJSONSerialization+UAAdditions.h"
 #import "UAJSONSerialization+Internal.h"
 
-#if !TARGET_OS_TV
-#import "UAInbox.h"
-#endif
-
 @implementation UAEventAPIClient
 
 + (instancetype)clientWithConfig:(UAConfig *)config {
