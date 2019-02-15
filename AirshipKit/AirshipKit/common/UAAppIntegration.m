@@ -16,7 +16,6 @@
 #import "UAActionRunner+Internal.h"
 #import "UAActionRegistry+Internal.h"
 #import "UARemoteDataManager+Internal.h"
-#import "UAUser+Internal.h"
 
 #if !TARGET_OS_TV
 #import "UAInboxUtils.h"
@@ -45,15 +44,9 @@
 + (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
     UA_LINFO(@"Application registered device token: %@", [UAUtils deviceTokenStringFromDeviceToken:deviceToken]);
 
-#if !TARGET_OS_TV   // Inbox not supported on tvOS
-    [[UAirship inboxUser] getUserData:^(UAUserData *userData) {
-        [[UAirship analytics] addEvent:[UADeviceRegistrationEvent event:userData]];
-        [[UAirship push] application:application didRegisterForRemoteNotificationsWithDeviceToken:deviceToken];
-    } dispatcher:[UADispatcher mainDispatcher]];
-#else
     [[UAirship analytics] addEvent:[UADeviceRegistrationEvent event]];
+
     [[UAirship push] application:application didRegisterForRemoteNotificationsWithDeviceToken:deviceToken];
-#endif
 }
 
 + (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error {

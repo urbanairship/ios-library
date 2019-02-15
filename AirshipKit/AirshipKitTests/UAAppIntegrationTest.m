@@ -15,7 +15,6 @@
 #import "UAConfig.h"
 #import "UANotificationContent.h"
 #import "UAirship+Internal.h"
-#import "UAUser+Internal.h"
 
 #if !TARGET_OS_TV
 #import "UAInbox+Internal.h"
@@ -33,7 +32,6 @@
 @property (nonatomic, strong) id mockedActionRunner;
 @property (nonatomic, strong) id mockedInbox;
 @property (nonatomic, strong) id mockedMessageList;
-@property (nonatomic, strong) id mockedUser;
 
 @property (nonatomic, strong) id mockedUNNotificationResponse;
 
@@ -68,13 +66,10 @@
     self.mockedMessageList = [self mockForClass:[UAInboxMessageList class]];
     [[[self.mockedInbox stub] andReturn:self.mockedMessageList] messageList];
 
-    self.mockedUser = [self mockForClass:[UAUser class]];
-
     self.mockedAirship = [self mockForClass:[UAirship class]];
     [[[self.mockedAirship stub] andReturn:self.mockedAnalytics] sharedAnalytics];
     [[[self.mockedAirship stub] andReturn:self.mockedPush] push];
     [[[self.mockedAirship stub] andReturn:self.mockedInbox] inbox];
-    [[[self.mockedAirship stub] andReturn:self.mockedUser] inboxUser];
 
     [UAirship setSharedAirship:self.mockedAirship];
 
@@ -150,22 +145,8 @@
     // Expect UAPush to receive the device token
     [[self.mockedPush expect] application:self.mockedApplication didRegisterForRemoteNotificationsWithDeviceToken:token];
 
-    UAUserData *userData = [UAUserData dataWithUsername:@"username" password:@"password" url:@"url"];
-
-    XCTestExpectation *userDataRetrieved = [self expectationWithDescription:@"user data retrieved"];
-
-    [[[self.mockedUser stub] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:2];
-        void (^completionHandler)(UAUserData * _Nullable) = (__bridge void (^)(UAUserData * _Nullable)) arg;
-        completionHandler(userData);
-        [userDataRetrieved fulfill];
-    }] getUserData:OCMOCK_ANY dispatcher:OCMOCK_ANY];
-
     // Call the app integration
     [UAAppIntegration application:self.mockedApplication didRegisterForRemoteNotificationsWithDeviceToken:token];
-
-    [self waitForExpectationsWithTimeout:1.0 handler:nil];
 
     // Verify everything
     [self.mockedAnalytics verify];
