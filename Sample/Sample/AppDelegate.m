@@ -1,4 +1,4 @@
-/* Copyright 2018 Urban Airship and Contributors */
+/* Copyright 2010-2019 Urban Airship and Contributors */
 
 @import AirshipKit;
 
@@ -111,7 +111,7 @@ NSUInteger const DebugTab = 2;
 - (void)refreshMessageCenterBadge {
     dispatch_async(dispatch_get_main_queue(), ^{
         UITabBarItem *messageCenterTab = [[[(UITabBarController *)self.window.rootViewController tabBar] items] objectAtIndex:MessageCenterTab];
-        
+
         if ([UAirship inbox].messageList.unreadCount > 0) {
             [messageCenterTab setBadgeValue:[NSString stringWithFormat:@"%ld", (long)[UAirship inbox].messageList.unreadCount]];
         } else {

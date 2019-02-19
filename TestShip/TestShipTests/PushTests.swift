@@ -1,4 +1,4 @@
-/* Copyright 2018 Urban Airship and Contributors */
+/* Copyright 2010-2019 Urban Airship and Contributors */
 
 import XCTest
 import KIF
@@ -19,7 +19,7 @@ extension KIFTestActor {
 /**
  * Functional tests to test push notification receipt.
  *
- * Note: 
+ * Note:
  * - These tests must be run on a device.
  * - These tests require a valid master secret to be included in the AirshipConfig.plist.
  * - This class can only reliably test content-available pushes because responding to the

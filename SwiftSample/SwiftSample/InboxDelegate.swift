@@ -1,4 +1,4 @@
-/* Copyright 2018 Urban Airship and Contributors */
+/* Copyright 2010-2019 Urban Airship and Contributors */
 
 import Foundation
 import AirshipKit
@@ -13,7 +13,7 @@ class InboxDelegate : NSObject, UAInboxDelegate {
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         self.messageCenterViewController = self.tabBarController.viewControllers![appDelegate.MessageCenterTab] as! MessageCenterViewController;
     }
-    
+
     func showInbox() {
         DispatchQueue.main.async {
             let appDelegate = UIApplication.shared.delegate as! AppDelegate

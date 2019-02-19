@@ -1,4 +1,4 @@
-/* Copyright 2018 Urban Airship and Contributors */
+/* Copyright 2010-2019 Urban Airship and Contributors */
 
 import Foundation
 import UIKit
@@ -9,7 +9,7 @@ class MessageCenterViewController : UAMessageCenterSplitViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated);
         self.style = UAirship.messageCenter().style
- 
+
         // Match style of iOS Mail app
         self.style.cellTitleHighlightedColor = UIColor(red: 0, green: 0, blue: 0, alpha: 1)
     }

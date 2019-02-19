@@ -1,4 +1,4 @@
-/* Copyright 2018 Urban Airship and Contributors */
+/* Copyright 2010-2019 Urban Airship and Contributors */
 
 #import "UAInAppMessageDefaultDisplayCoordinator+Internal.h"
 #import "UAGlobal.h"
