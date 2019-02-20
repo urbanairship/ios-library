@@ -17,7 +17,9 @@ public class AirshipDebugKit : NSObject {
         // Set data manager as analytics event consumer on AirshipDebugKit start
         UAirship.shared().analytics.eventConsumer = EventDataManager.shared
     }
-    
+
+    let lastPushPayloadKey = "com.urbanairship.last_push"
+
     /**
      * Loads one of the debug storyboards.
      * @param name Name of the storyboard you want loaded, e.g. "DeviceInfo".
@@ -46,6 +48,39 @@ public class AirshipDebugKit : NSObject {
         return storyboard.instantiateViewController(withIdentifier: "InitialController")
     }
 
+    func observePayloadEvents() {
+        NotificationCenter.default.addObserver(self,
+                                               selector:#selector(receivedForegroundNotification(userInfo:)),
+                                               name: NSNotification.Name(rawValue: UAReceivedForegroundNotificationEvent),
+                                               object: nil)
+
+        NotificationCenter.default.addObserver(self,
+                                               selector:#selector(receivedBackgroundNotification(userInfo:)),
+                                               name: NSNotification.Name(rawValue: UAReceivedBackgroundNotificationEvent),
+                                               object: nil)
+
+        NotificationCenter.default.addObserver(self,
+                                               selector:#selector(receivedNotificationResponse(userInfo:)),
+                                               name: NSNotification.Name(rawValue: UAReceivedNotificationResponseEvent),
+                                               object: nil)
+
+    }
+
+    @objc func receivedForegroundNotification(userInfo: [AnyHashable : Any]) {
+        saveLastPayload(lastPayload: userInfo)
+    }
+
+    @objc func receivedBackgroundNotification(userInfo: [AnyHashable : Any]) {
+        saveLastPayload(lastPayload: userInfo)
+    }
+
+    @objc func receivedNotificationResponse(userInfo: [AnyHashable : Any]) {
+        saveLastPayload(lastPayload: userInfo)
+    }
+
+    func saveLastPayload(lastPayload : [AnyHashable : Any]) {
+        UserDefaults.standard.setValue(lastPayload, forKey: lastPushPayloadKey)
+    }
 }
 
 // MARK: Extensions for Localization
