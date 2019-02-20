@@ -58,7 +58,7 @@
         [expectation fulfill];
     }];
 
-    [self waitForExpectationsWithTimeout:1.0 handler:nil];
+    [self waitForExpectationsWithTimeout:3.0 handler:nil];
 
     XCTAssertNil(self.user.username, @"user name should be nil");
     XCTAssertNil(self.user.password, @"password should be nil");
@@ -107,7 +107,7 @@
         [userCreated fulfill];
     }];
 
-    [self waitForExpectationsWithTimeout:1.0 handler:nil];
+    [self waitForExpectationsWithTimeout:3.0 handler:nil];
 
     XCTAssertNoThrow([self.mockUserClient verify], @"User should call the client to be created");
     XCTAssertEqualObjects(self.user.userData, userData, @"Saved and response user data should match");
@@ -142,7 +142,7 @@
         [createFinished fulfill];
     }];
 
-    [self waitForExpectationsWithTimeout:1.0 handler:nil];
+    [self waitForExpectationsWithTimeout:3.0 handler:nil];
 
     XCTAssertNoThrow([self.mockUserClient verify], @"User should call the client to be created.");
 }
@@ -164,7 +164,7 @@
         [updated fulfill];
     }];
 
-    [self waitForExpectationsWithTimeout:1.0 handler:nil];
+    [self waitForExpectationsWithTimeout:3.0 handler:nil];
     
     //verify
     [self verifyUpdateUserTest];
@@ -213,7 +213,7 @@
         [updated fulfill];
     }];
 
-    [self waitForExpectationsWithTimeout:1.0 handler:nil];
+    [self waitForExpectationsWithTimeout:3.0 handler:nil];
 
     XCTAssertNoThrow([self.mockUserClient verify], @"User should not update if the channel ID is missing.");
 }

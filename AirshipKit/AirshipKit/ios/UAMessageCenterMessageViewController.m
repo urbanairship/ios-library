@@ -333,7 +333,9 @@ static NSString *urlForBlankPage = @"about:blank";
     NSMutableURLRequest *requestObj = [NSMutableURLRequest requestWithURL:self.message.messageBodyURL];
     requestObj.timeoutInterval = 60;
 
+    UA_WEAKIFY(self)
     [[UAirship inboxUser] getUserData:^(UAUserData *userData) {
+        UA_STRONGIFY(self)
         NSString *auth = [UAUtils userAuthHeaderString:userData];
         [requestObj setValue:auth forHTTPHeaderField:@"Authorization"];
         [self.webView loadRequest:requestObj];

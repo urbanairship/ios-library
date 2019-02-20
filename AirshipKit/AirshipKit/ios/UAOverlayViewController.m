@@ -296,10 +296,7 @@ static NSMutableSet *overlayControllers_ = nil;
 }
 
 + (void)showMessage:(UAInboxMessage *)message {
-    [[UAirship inboxUser] getUserData:^(UAUserData *userData) {
-        NSDictionary *headers = @{@"Authorization":[UAUtils userAuthHeaderString:userData]};
-        [UAOverlayViewController showMessage:message withHeaders:headers];
-    } dispatcher:[UADispatcher mainDispatcher]];
+    [UAOverlayViewController showMessage:message withHeaders:nil];
 }
 
 + (void)showMessage:(UAInboxMessage *)message withHeaders:(NSDictionary *)headers {
@@ -361,26 +358,50 @@ static NSMutableSet *overlayControllers_ = nil;
 }
 
 - (void)load {
+    [self showOverlay];
+    [self.overlayView.loadingIndicatorView show];
 
-    NSMutableURLRequest *requestObj = [NSMutableURLRequest requestWithURL:self.url];
+    UA_WEAKIFY(self)
+    void (^loadRequest)(void) = ^{
+        UA_STRONGIFY(self)
+        NSMutableURLRequest *requestObj = [NSMutableURLRequest requestWithURL:self.url];
 
-    for (id key in self.headers) {
-        id value = [self.headers objectForKey:key];
-        if (![key isKindOfClass:[NSString class]] || ![value isKindOfClass:[NSString class]]) {
-            UA_LWARN(@"Invalid header value.  Only string values are accepted for header names and values.");
-            continue;
+        for (id key in self.headers) {
+            id value = [self.headers objectForKey:key];
+            if (![key isKindOfClass:[NSString class]] || ![value isKindOfClass:[NSString class]]) {
+                UA_LWARN(@"Invalid header value.  Only string values are accepted for header names and values.");
+                continue;
+            }
+
+            [requestObj addValue:value forHTTPHeaderField:key];
         }
 
-        [requestObj addValue:value forHTTPHeaderField:key];
+        [requestObj setTimeoutInterval:30];
+
+        [self.overlayView.webView stopLoading];
+        [self.overlayView.webView loadRequest:requestObj];
+    };
+
+    if (self.message) {
+        UA_WEAKIFY(self)
+        [[UAirship inboxUser] getUserData:^(UAUserData *userData) {
+            UA_STRONGIFY(self)
+            NSDictionary *auth = @{@"Authorization":[UAUtils userAuthHeaderString:userData]};
+
+            if (!self.headers) {
+                self.headers = auth;
+            } else {
+                NSMutableDictionary *appended = [NSMutableDictionary dictionaryWithDictionary:self.headers];
+                [appended addEntriesFromDictionary:auth];
+                self.headers = appended;
+            }
+
+            loadRequest();
+
+        } dispatcher:[UADispatcher mainDispatcher]];
+    } else {
+        loadRequest();
     }
-
-    [requestObj setTimeoutInterval:30];
-
-    [self.overlayView.webView stopLoading];
-    [self.overlayView.webView loadRequest:requestObj];
-    [self showOverlay];
-
-    [self.overlayView.loadingIndicatorView show];
 }
 
 - (void)showOverlay {

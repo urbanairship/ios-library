@@ -83,9 +83,10 @@
  * Called when the navigation is complete.
  */
 - (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation {
-    id strongDelegate = self.forwardDelegate;
-
+    UA_WEAKIFY(self)
     [self populateJavascriptEnvironmentIfWhitelisted:webView requestURL:webView.URL completionHandler:^{
+        UA_STRONGIFY(self)
+        id strongDelegate = self.forwardDelegate;
         if ([strongDelegate respondsToSelector:@selector(webView:didFinishNavigation:)]) {
             [strongDelegate webView:webView didFinishNavigation:navigation];
         }
