@@ -239,10 +239,11 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
             UA_LDEBUG(@"Device ID changed.");
 
             [sharedAirship_.sharedPush resetChannel];
-
+#if !TARGET_OS_TV
             if (config.clearUserOnAppRestore) {
                 [sharedAirship_.sharedInboxUser resetUser];
             }
+#endif
         }
 
         // Save the Device ID to the data store to detect when it changes
