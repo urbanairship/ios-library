@@ -40,6 +40,7 @@
 
 
 NSString *const UACustomEventAdded = @"UACustomEventAdded";
+
 NSString *const UARegionEventAdded = @"UARegionEventAdded";
 NSString *const UAScreenTracked = @"UAScreenTracked";
 NSString *const UAScreenKey = @"screen";
@@ -205,6 +206,10 @@ NSString *const UAEventKey = @"event";
         UA_LDEBUG(@"Adding %@ event %@.", event.eventType, event.eventID);
         [self.eventManager addEvent:event sessionID:self.sessionID];
         UA_LTRACE(@"Event added: %@.", event);
+
+        if (self.eventConsumer) {
+            [self.eventConsumer eventAdded:event];
+        }
 
         if ([event isKindOfClass:[UACustomEvent class]]) {
             [self.notificationCenter postNotificationName:UACustomEventAdded

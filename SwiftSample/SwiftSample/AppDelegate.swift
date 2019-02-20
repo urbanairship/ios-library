@@ -2,6 +2,7 @@
 
 import UIKit
 import AirshipKit
+import AirshipDebugKit
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, UARegistrationDelegate, UADeepLinkDelegate {
@@ -46,6 +47,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UARegistrationDelegate, U
 
         // Call takeOff (which creates the UAirship singleton)
         UAirship.takeOff(config)
+
+        AirshipDebugKit.takeOff()
 
         // Print out the application configuration for debugging (optional)
         print("Config:\n \(config)")

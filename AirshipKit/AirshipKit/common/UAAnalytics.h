@@ -2,6 +2,7 @@
 
 #import <Foundation/Foundation.h>
 #import "UAComponent.h"
+#import "UAAnalyticsEventConsumerProtocol.h"
 
 @class UAEvent;
 @class UAAssociatedIdentifiers;
@@ -42,6 +43,14 @@ NS_ASSUME_NONNULL_BEGIN
  * @return NSDate representing the last attempt to send analytics
  */
 @property (nonatomic, strong, readonly) NSDate *lastSendTime;
+
+/**
+ * Optional event consumer.
+ *
+ * @note AirshipDebugKit uses the event consumer to capture events. Setting the event
+ * consumer for other purposes will result in an interruption to AirshipDebugKit's event stream.
+ */
+@property (nonatomic, strong, nullable) id<UAAnalyticsEventConsumerProtocol> eventConsumer;
 
 /**
  * Analytics enable flag. Disabling analytics will delete any locally stored events

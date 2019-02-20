@@ -17,6 +17,7 @@
 #import "UAAddTagsAction.h"
 #import "UAAggregateActionResult.h"
 #import "UAAnalytics.h"
+#import "UAAnalyticsEventConsumerProtocol.h"
 #import "UAAppIntegration.h"
 #import "UAApplicationMetrics.h"
 #import "UAAssociatedIdentifiers.h"

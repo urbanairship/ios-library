@@ -8,6 +8,7 @@
 @property (strong, nonatomic) IBOutlet UITableViewCell *deviceInfoCell;
 @property (strong, nonatomic) IBOutlet UITableViewCell *inAppAutomationCell;
 @property (strong, nonatomic) IBOutlet UITableViewCell *customEventsCell;
+@property (strong, nonatomic) IBOutlet UITableViewCell *eventsCell;
 
 @end
 
@@ -24,6 +25,8 @@
         [self inAppAutomation];
     } else if ([indexPath isEqual:[self.tableView indexPathForCell:self.customEventsCell]]) {
         [self customEvents];
+    } else if ([indexPath isEqual:[self.tableView indexPathForCell:self.eventsCell]]) {
+        [self events];
     }
 }
 
@@ -42,6 +45,12 @@
 - (void)customEvents {
     if (AirshipDebugKit.customEventsViewController) {
         [self.navigationController pushViewController:AirshipDebugKit.customEventsViewController animated:YES];
+    }
+}
+
+- (void)events {
+    if (AirshipDebugKit.eventsViewController) {
+        [self.navigationController pushViewController:AirshipDebugKit.eventsViewController animated:YES];
     }
 }
 

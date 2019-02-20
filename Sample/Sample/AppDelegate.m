@@ -1,6 +1,7 @@
 /* Copyright 2010-2019 Urban Airship and Contributors */
 
 @import AirshipKit;
+@import AirshipDebugKit;
 
 #import "AppDelegate.h"
 #import "InboxDelegate.h"
@@ -90,6 +91,8 @@ NSUInteger const DebugTab = 2;
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(refreshMessageCenterBadge)
                                                  name:UAInboxMessageListUpdatedNotification object:nil];
+
+    [AirshipDebugKit takeOff];
 
     return YES;
 }

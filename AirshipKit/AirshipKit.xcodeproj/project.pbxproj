@@ -171,6 +171,9 @@
 		457F47AE20ADDF7500DEEAD9 /* UAViewUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 457F47AA20ADDF7500DEEAD9 /* UAViewUtils.m */; };
 		457F47AF20ADDF7500DEEAD9 /* UAViewUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 457F47AA20ADDF7500DEEAD9 /* UAViewUtils.m */; };
 		457F47B020ADDF7500DEEAD9 /* UAViewUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 457F47AA20ADDF7500DEEAD9 /* UAViewUtils.m */; };
+		4582DB292217ABFB0018E02C /* UAAnalyticsEventConsumerProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 4582DB272217ABFB0018E02C /* UAAnalyticsEventConsumerProtocol.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4582DB2A2217ABFB0018E02C /* UAAnalyticsEventConsumerProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 4582DB272217ABFB0018E02C /* UAAnalyticsEventConsumerProtocol.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4582DB2B2217ABFB0018E02C /* UAAnalyticsEventConsumerProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 4582DB272217ABFB0018E02C /* UAAnalyticsEventConsumerProtocol.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		459D404A208FE64D00C40E2D /* Valid-UAInAppMessageFullScreenStyle.plist in Resources */ = {isa = PBXBuildFile; fileRef = 459D4049208FE64D00C40E2D /* Valid-UAInAppMessageFullScreenStyle.plist */; };
 		459D404C208FE6BB00C40E2D /* Invalid-UAInAppMessageFullScreenStyle.plist in Resources */ = {isa = PBXBuildFile; fileRef = 459D404B208FE6BA00C40E2D /* Invalid-UAInAppMessageFullScreenStyle.plist */; };
 		459D4051209245E500C40E2D /* UAInAppMessageBannerStyleTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 459D4050209245E500C40E2D /* UAInAppMessageBannerStyleTest.m */; };
@@ -317,13 +320,13 @@
 		6EADE70D1FA8FA210007F924 /* UAScheduleInfo+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EADE6FB1FA8F9FB0007F924 /* UAScheduleInfo+Internal.h */; };
 		6EADE70F1FA8FAC60007F924 /* AirshipLib.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EADE70E1FA8FAC50007F924 /* AirshipLib.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6EADE7111FA8FAF50007F924 /* AirshipLib.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EADE70E1FA8FAC50007F924 /* AirshipLib.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6ECF2BF21F1E92A10061247E /* UAInbox.xcdatamodeld in Resources */ = {isa = PBXBuildFile; fileRef = 6ECF2BF01F1E92A10061247E /* UAInbox.xcdatamodeld */; };
 		6ECEBF5621C452A300FAAB08 /* UAScheduleDataMigrator+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6ECEBF5421C452A300FAAB08 /* UAScheduleDataMigrator+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6ECEBF5721C452A300FAAB08 /* UAScheduleDataMigrator+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6ECEBF5421C452A300FAAB08 /* UAScheduleDataMigrator+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6ECEBF5821C452A300FAAB08 /* UAScheduleDataMigrator+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6ECEBF5421C452A300FAAB08 /* UAScheduleDataMigrator+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6ECEBF5921C452A300FAAB08 /* UAScheduleDataMigrator.m in Sources */ = {isa = PBXBuildFile; fileRef = 6ECEBF5521C452A300FAAB08 /* UAScheduleDataMigrator.m */; };
 		6ECEBF5A21C452A300FAAB08 /* UAScheduleDataMigrator.m in Sources */ = {isa = PBXBuildFile; fileRef = 6ECEBF5521C452A300FAAB08 /* UAScheduleDataMigrator.m */; };
 		6ECEBF5B21C452A300FAAB08 /* UAScheduleDataMigrator.m in Sources */ = {isa = PBXBuildFile; fileRef = 6ECEBF5521C452A300FAAB08 /* UAScheduleDataMigrator.m */; };
+		6ECF2BF21F1E92A10061247E /* UAInbox.xcdatamodeld in Resources */ = {isa = PBXBuildFile; fileRef = 6ECF2BF01F1E92A10061247E /* UAInbox.xcdatamodeld */; };
 		6ED3C03C200801C4002A746B /* UAInAppMessageCustomDisplayContent.h in Headers */ = {isa = PBXBuildFile; fileRef = 6ED3C03A200801C4002A746B /* UAInAppMessageCustomDisplayContent.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6ED3C03D200801C4002A746B /* UAInAppMessageCustomDisplayContent.h in Headers */ = {isa = PBXBuildFile; fileRef = 6ED3C03A200801C4002A746B /* UAInAppMessageCustomDisplayContent.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6ED3C03E200801C4002A746B /* UAInAppMessageCustomDisplayContent.m in Sources */ = {isa = PBXBuildFile; fileRef = 6ED3C03B200801C4002A746B /* UAInAppMessageCustomDisplayContent.m */; };
@@ -1735,6 +1738,7 @@
 		457769FB2141A123008270FC /* UAInAppMessageFullScreenViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = UAInAppMessageFullScreenViewController.xib; path = AirshipResources/ios/UAInAppMessageFullScreenViewController.xib; sourceTree = "<group>"; };
 		457F47A920ADDF7500DEEAD9 /* UAViewUtils+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "UAViewUtils+Internal.h"; path = "common/UAViewUtils+Internal.h"; sourceTree = "<group>"; };
 		457F47AA20ADDF7500DEEAD9 /* UAViewUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = UAViewUtils.m; path = common/UAViewUtils.m; sourceTree = "<group>"; };
+		4582DB272217ABFB0018E02C /* UAAnalyticsEventConsumerProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = UAAnalyticsEventConsumerProtocol.h; path = common/UAAnalyticsEventConsumerProtocol.h; sourceTree = "<group>"; };
 		459D4049208FE64D00C40E2D /* Valid-UAInAppMessageFullScreenStyle.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Valid-UAInAppMessageFullScreenStyle.plist"; sourceTree = "<group>"; };
 		459D404B208FE6BA00C40E2D /* Invalid-UAInAppMessageFullScreenStyle.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Invalid-UAInAppMessageFullScreenStyle.plist"; sourceTree = "<group>"; };
 		459D4050209245E500C40E2D /* UAInAppMessageBannerStyleTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageBannerStyleTest.m; sourceTree = "<group>"; };
@@ -3620,6 +3624,7 @@
 				CC40DB0D1D8C996900BABD4F /* UAAnalytics+Internal.h */,
 				CC40DB0E1D8C996900BABD4F /* UAAnalytics.h */,
 				CC40DB0F1D8C996900BABD4F /* UAAnalytics.m */,
+				4582DB272217ABFB0018E02C /* UAAnalyticsEventConsumerProtocol.h */,
 				CC40DB201D8C996900BABD4F /* UAApplicationMetrics+Internal.h */,
 				CC40DB211D8C996900BABD4F /* UAApplicationMetrics.h */,
 				CC40DB221D8C996900BABD4F /* UAApplicationMetrics.m */,
@@ -4274,6 +4279,7 @@
 				CC40DCB41D8C996A00BABD4F /* UAInboxMessageList+Internal.h in Headers */,
 				CC40DCC91D8C996A00BABD4F /* UAJSONValueTransformer+Internal.h in Headers */,
 				CC40DCDF1D8C996A00BABD4F /* UANamedUser+Internal.h in Headers */,
+				4582DB292217ABFB0018E02C /* UAAnalyticsEventConsumerProtocol.h in Headers */,
 				CC40DCE21D8C996A00BABD4F /* UANamedUserAPIClient+Internal.h in Headers */,
 				DF7E21EA1ED624DA00C79C46 /* UAChannelCapture+Internal.h in Headers */,
 				CC40DC5F1D8C996A00BABD4F /* UAChannelAPIClient+Internal.h in Headers */,
@@ -4401,6 +4407,7 @@
 				99666E351EDF2C8D00BAE46B /* UAAccountEventTemplate.h in Headers */,
 				6E598D211FFC44F3005B234B /* UAScheduleEdits.h in Headers */,
 				99666DF61EDF2C1F00BAE46B /* UAAction+Internal.h in Headers */,
+				4582DB2A2217ABFB0018E02C /* UAAnalyticsEventConsumerProtocol.h in Headers */,
 				99666DF71EDF2C1F00BAE46B /* UAAction+Operators.h in Headers */,
 				99666DF91EDF2C1F00BAE46B /* UAAction.h in Headers */,
 				99666DFB1EDF2C1F00BAE46B /* UAActionArguments+Internal.h in Headers */,
@@ -4777,6 +4784,7 @@
 				DF7E21F71ED62D5E00C79C46 /* UAAutomationStore+Internal.h in Headers */,
 				DF7E21F81ED62D5E00C79C46 /* UAScheduleTriggerData+Internal.h in Headers */,
 				996B956E1FABAAF0009B49BC /* UAInAppMessage.h in Headers */,
+				4582DB2B2217ABFB0018E02C /* UAAnalyticsEventConsumerProtocol.h in Headers */,
 				DF7E21F91ED62D5E00C79C46 /* UAScheduleDelayData+Internal.h in Headers */,
 				6ED87FAE1FEB5044003B652A /* UAInAppMessageTagSelector+Internal.h in Headers */,
 				DF7E21FA1ED62D5E00C79C46 /* UASchedule+Internal.h in Headers */,

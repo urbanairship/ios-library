@@ -1,11 +1,22 @@
 /* Copyright 2010-2019 Urban Airship and Contributors */
 
 import UIKit
+import AirshipKit
 
 public class AirshipDebugKit : NSObject {
     @objc public static var deviceInfoViewController : UIViewController? = instantiateStoryboard("DeviceInfo")
     @objc public static var automationViewController : UIViewController? = instantiateStoryboard("Automation")
     @objc public static var customEventsViewController : UIViewController? = instantiateStoryboard("CustomEvents")
+    @objc public static var eventsViewController : UIViewController? =
+        instantiateStoryboard("Events")
+
+    /**
+     * Provides an initialization point for AirshipDebugKit components.
+     */
+    @objc public static func takeOff() {
+        // Set data manager as analytics event consumer on AirshipDebugKit start
+        UAirship.shared().analytics.eventConsumer = EventDataManager.shared
+    }
     
     /**
      * Loads one of the debug storyboards.
