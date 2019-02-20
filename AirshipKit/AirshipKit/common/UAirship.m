@@ -238,9 +238,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
             // on a different device.
             UA_LDEBUG(@"Device ID changed.");
 
-            UA_LDEBUG(@"Clearing previous channel.");
-            [dataStore removeObjectForKey:UAPushChannelLocationKey];
-            [dataStore removeObjectForKey:UAPushChannelIDKey];
+            [sharedAirship_.sharedPush resetChannel];
 
             if (config.clearUserOnAppRestore) {
                 UA_LDEBUG(@"Deleting the keychain credentials");
@@ -250,7 +248,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 
         // Save the Device ID to the data store to detect when it changes
         [dataStore setObject:currentDeviceID forKey:@"deviceId"];
-    }];
+    } dispatcher:[UADispatcher mainDispatcher]];
 
     // Create Airship
     [UAirship setSharedAirship:[[UAirship alloc] initWithConfig:config dataStore:dataStore]];

@@ -325,6 +325,11 @@ extern NSString *const UAPushEnabledKey;
  */
 - (void)updateChannelTagGroups;
 
+/**
+ * Removes the existing channel and causes the registrar to create a new channel on next registration.
+ */
+- (void)resetChannel;
+
 @end
 
 NS_ASSUME_NONNULL_END

@@ -1029,4 +1029,8 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
     }
 }
 
+- (void)resetChannel {
+    [self.channelRegistrar resetChannel];
+}
+
 @end

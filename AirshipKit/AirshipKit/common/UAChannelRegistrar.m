@@ -190,6 +190,16 @@ UAConfig *config;
     self.isRegistrationInProgress = NO;
 }
 
+- (void)resetChannel {
+    [self cancelAllRequests];
+
+    UA_LDEBUG(@"Clearing previous channel.");
+    [self.dataStore removeObjectForKey:UAPushChannelLocationKey];
+    [self.dataStore removeObjectForKey:UAPushChannelIDKey];
+
+    [self registerForcefully:YES];
+}
+
 #pragma mark -
 #pragma mark Internal Methods
 
@@ -369,7 +379,7 @@ UAConfig *config;
 }
 
 - (NSString *)channelLocation {
-    // Get the channel ID from data store instead of
+    // Get the channel location from data store instead of
     // the channelID property, because that may cause an infinite loop.
     if ([self.dataStore stringForKey:UAPushChannelIDKey]) {
         return [self.dataStore stringForKey:UAPushChannelLocationKey];
