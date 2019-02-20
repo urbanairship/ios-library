@@ -27,6 +27,24 @@ extern NSString *const UAChannelCreatedEvent;
 extern NSString *const UAChannelUpdatedEvent;
 
 /**
+ * NSNotification event when a notification response is received.
+ * The event will contain the payload dictionary as user info.
+ */
+extern NSString *const UAReceivedNotificationResponseEvent;
+
+/**
+ * NSNotification event when a foreground notification is received.
+ * The event will contain the payload dictionary as user info.
+ */
+extern NSString *const UAReceivedForegroundNotificationEvent;
+
+/**
+ * NSNotification event when a background notification is received.
+ * The event will contain the payload dictionary as user info.
+ */
+extern NSString *const UAReceivedBackgroundNotificationEvent;
+
+/**
  * Channel ID key for the channel created event.
  */
 extern NSString *const UAChannelCreatedEventChannelKey;
