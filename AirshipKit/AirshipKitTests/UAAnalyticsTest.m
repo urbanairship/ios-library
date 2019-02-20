@@ -179,6 +179,39 @@
 }
 
 /**
+ * Test associate duplicate identifiers: associates a duplicate identifier
+ * and ensures event is only added once.
+ */
+- (void)testDuplicateAssociateDeviceIdentifiers {
+    NSDictionary *identifiers = @{@"some identifier": @"some value"};
+    XCTestExpectation *eventAdded = [self expectationWithDescription:@"Event added"];
+    [[[self.mockEventManager expect] andDo:^(NSInvocation *invocation) {
+        [eventAdded fulfill];
+    }] addEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
+        if (![obj isKindOfClass:[UAAssociateIdentifiersEvent class]]) {
+            return NO;
+        }
+
+        UAAssociateIdentifiersEvent *event = obj;
+        return [event.data isEqualToDictionary:identifiers];
+    }] sessionID:OCMOCK_ANY];
+
+    // Associate the identifiers
+    [self.analytics associateDeviceIdentifiers:[UAAssociatedIdentifiers identifiersWithDictionary:identifiers]];
+
+    [self waitForTestExpectations];
+
+    // Reject duplicate call
+    [[self.mockEventManager reject] addEvent:OCMOCK_ANY sessionID:OCMOCK_ANY];
+
+    // Associate the duplicate identifiers
+    [self.analytics associateDeviceIdentifiers:[UAAssociatedIdentifiers identifiersWithDictionary:identifiers]];
+
+    // Verify first event was added and duplicate was rejected
+    [self.mockEventManager verify];
+}
+
+/**
  * Test a MISSING_SEND_ID string is sent when the conversionSendID is missing.
  */
 - (void)testMissingSendID {

@@ -270,6 +270,13 @@ NSString *const UAEventKey = @"event";
 }
 
 - (void)associateDeviceIdentifiers:(UAAssociatedIdentifiers *)associatedIdentifiers {
+    NSDictionary *previous = [self.dataStore objectForKey:kUAAssociatedIdentifiers];
+
+    if ([previous isEqualToDictionary:associatedIdentifiers.allIDs]) {
+        UA_LINFO(@"Skipping analytics event addition for duplicate associated identifiers.");
+        return;
+    }
+
     [self.dataStore setObject:associatedIdentifiers.allIDs forKey:kUAAssociatedIdentifiers];
     [self addEvent:[UAAssociateIdentifiersEvent eventWithIDs:associatedIdentifiers]];
 }
