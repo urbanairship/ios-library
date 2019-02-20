@@ -97,7 +97,7 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
     __block UAUserData *userData;
 
     UA_WEAKIFY(self)
-    [[UADispatcher backgroundDispatcher] doSync:^{
+    [self.backgroundDispatcher doSync:^{
         if (self.userData) {
             userData = self.userData;
             return;
@@ -119,7 +119,7 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
 }
 
 - (void)getUserData:(void (^)(UAUserData * _Nullable))completionHandler dispatcher:(nullable UADispatcher *)dispatcher {
-    [[UADispatcher backgroundDispatcher] dispatchAsync:^{
+    [self.backgroundDispatcher dispatchAsync:^{
         UAUserData *userData = [self getUserDataSync];
 
         if (dispatcher) {
@@ -133,7 +133,7 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
 }
 
 - (void)getUserData:(void (^)(UAUserData * _Nullable))completionHandler {
-    [[UADispatcher backgroundDispatcher] dispatchAsync:^{
+    [self.backgroundDispatcher dispatchAsync:^{
         completionHandler([self getUserDataSync]);
     }];
 }
@@ -352,9 +352,14 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
 }
 
 - (void)resetUser {
-    UA_LDEBUG(@"Deleting the keychain credentials");
-    [self.apiClient cancelAllRequests];
-    [UAKeychainUtils deleteKeychainValue:self.config.appKey];
+    UA_WEAKIFY(self)
+    [self.backgroundDispatcher doSync:^{
+        UA_STRONGIFY(self)
+        UA_LDEBUG(@"Deleting the keychain credentials");
+        [self.apiClient cancelAllRequests];
+        [UAKeychainUtils deleteKeychainValue:self.config.appKey];
+        self.userData = nil;
+    }];
 }
 
 - (void)channelCreated {
