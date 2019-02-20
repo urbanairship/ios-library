@@ -61,6 +61,10 @@ NSString *const UAPushDefaultDeviceTagGroup = @"device";
 NSString *const UAChannelCreatedEvent = @"com.urbanairship.push.channel_created";
 NSString *const UAChannelUpdatedEvent = @"com.urbanairship.push.channel_updated";
 
+NSString *const UAReceivedNotificationResponseEvent = @"com.urbanairship.push.received_notification_response";
+NSString *const UAReceivedForegroundNotificationEvent = @"com.urbanairship.push.received_foreground_notification";
+NSString *const UAReceivedBackgroundNotificationEvent = @"com.urbanairship.push.received_background_notification";
+
 NSString *const UAChannelCreatedEventChannelKey = @"com.urbanairship.push.channel_id";
 NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.existing";
 
@@ -914,6 +918,10 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
         self.launchNotificationResponse = response;
     }
 
+    [self.notificationCenter postNotificationName:UAReceivedNotificationResponseEvent
+                                           object:self
+                                         userInfo:response.notificationContent.notificationInfo];
+
     id delegate = self.pushNotificationDelegate;
     if ([delegate respondsToSelector:@selector(receivedNotificationResponse:completionHandler:)]) {
         [delegate receivedNotificationResponse:response completionHandler:handler];
@@ -932,6 +940,10 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
             [self.application setApplicationIconBadgeNumber:notification.badge.integerValue];
         }
 
+        [self.notificationCenter postNotificationName:UAReceivedForegroundNotificationEvent
+                                               object:self
+                                             userInfo:notification.notificationInfo];
+
         if ([delegate respondsToSelector:@selector(receivedForegroundNotification:completionHandler:)]) {
             delegateCalled = YES;
             [delegate receivedForegroundNotification:notification completionHandler:^{
@@ -939,6 +951,10 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
             }];
         }
     } else {
+        [self.notificationCenter postNotificationName:UAReceivedBackgroundNotificationEvent
+                                               object:self
+                                             userInfo:notification.notificationInfo];
+
         if ([delegate respondsToSelector:@selector(receivedBackgroundNotification:completionHandler:)]) {
             delegateCalled = YES;
             [delegate receivedBackgroundNotification:notification completionHandler:^(UIBackgroundFetchResult fetchResult) {

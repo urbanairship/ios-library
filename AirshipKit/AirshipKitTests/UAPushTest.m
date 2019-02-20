@@ -2037,6 +2037,14 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     // Application should set icon badge number when autobadge is enabled
     [[self.mockApplication expect] setApplicationIconBadgeNumber:expectedNotificationContent.badge.integerValue];
 
+    __block NSNotification *notification;
+
+    XCTestExpectation *notificationFired = [self expectationWithDescription:@"Notification event fired"];
+    [self.notificationCenter addObserverForName:UAReceivedForegroundNotificationEvent object:nil queue:nil usingBlock:^(NSNotification * _Nonnull note) {
+        notification = note;
+        [notificationFired fulfill];
+    }];
+
     [[self.mockPushDelegate expect] receivedForegroundNotification:expectedNotificationContent completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
         void (^handler)(void) = obj;
         handler();
@@ -2054,6 +2062,9 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 
     // VERIFY
     [self waitForTestExpectations];
+
+    XCTAssertEqualObjects(expectedNotificationContent.notificationInfo, notification.userInfo);
+
     [self.mockApplication verify];
     [self.mockPushDelegate verify];
 }
@@ -2069,6 +2080,14 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     // Application should set icon badge number when autobadge is enabled
     [[self.mockApplication reject] setApplicationIconBadgeNumber:expectedNotificationContent.badge.integerValue];
 
+    __block NSNotification *notification;
+
+    XCTestExpectation *notificationFired = [self expectationWithDescription:@"Notification event fired"];
+    [self.notificationCenter addObserverForName:UAReceivedForegroundNotificationEvent object:nil queue:nil usingBlock:^(NSNotification * _Nonnull note) {
+        notification = note;
+        [notificationFired fulfill];
+    }];
+
     [[self.mockPushDelegate expect] receivedForegroundNotification:expectedNotificationContent completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
         void (^handler)(void) = obj;
         handler();
@@ -2086,6 +2105,9 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 
     // VERIFY
     [self waitForTestExpectations];
+
+    XCTAssertEqualObjects(expectedNotificationContent.notificationInfo, notification.userInfo);
+
     [self.mockApplication verify];
     XCTAssertNoThrow([self.mockPushDelegate verify], @"push delegate should be called");
 }
@@ -2095,6 +2117,14 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
  */
 - (void)testHandleRemoteNotificationBackground {
     UANotificationContent *expectedNotificationContent = [UANotificationContent notificationWithNotificationInfo:self.notification];
+
+    __block NSNotification *notification;
+
+    XCTestExpectation *notificationFired = [self expectationWithDescription:@"Notification event fired"];
+    [self.notificationCenter addObserverForName:UAReceivedBackgroundNotificationEvent object:nil queue:nil usingBlock:^(NSNotification * _Nonnull note) {
+        notification = note;
+        [notificationFired fulfill];
+    }];
 
     [[self.mockPushDelegate reject] receivedForegroundNotification:expectedNotificationContent completionHandler:OCMOCK_ANY];
 
@@ -2113,6 +2143,8 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 
     // VERIFY
     [self waitForTestExpectations];
+
+    XCTAssertEqualObjects(expectedNotificationContent.notificationInfo, notification.userInfo);
     XCTAssertNoThrow([self.mockPushDelegate verify], @"push delegate should be called");
 }
 
@@ -2126,6 +2158,14 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 
     XCTestExpectation *completionHandlerCalledExpectation = [self expectationWithDescription:@"handleRemoteNotification completionHandler should be called"];
 
+    __block NSNotification *notification;
+
+    XCTestExpectation *notificationFired = [self expectationWithDescription:@"Notification event fired"];
+    [self.notificationCenter addObserverForName:UAReceivedForegroundNotificationEvent object:nil queue:nil usingBlock:^(NSNotification * _Nonnull note) {
+        notification = note;
+        [notificationFired fulfill];
+    }];
+
     // TEST
     [self.push handleRemoteNotification:expectedNotificationContent foreground:YES completionHandler:^(UIBackgroundFetchResult result) {
         [completionHandlerCalledExpectation fulfill];
@@ -2134,6 +2174,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 
     // VERIFY
     [self waitForTestExpectations];
+    XCTAssertEqualObjects(expectedNotificationContent.notificationInfo, notification.userInfo);
 }
 
 /**
@@ -2146,12 +2187,23 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     // delegate needs to be unresponsive to receivedNotificationResponse callback
     self.push.pushNotificationDelegate = nil;
 
+    __block NSNotification *notification;
+
+    XCTestExpectation *notificationFired = [self expectationWithDescription:@"Notification event fired"];
+    [self.notificationCenter addObserverForName:UAReceivedNotificationResponseEvent object:nil queue:nil usingBlock:^(NSNotification * _Nonnull note) {
+        notification = note;
+        [notificationFired fulfill];
+    }];
+
     // Call handleNotificationResponse
     [self.push handleNotificationResponse:expectedNotificationLaunchFromPush completionHandler:^{
     }];
 
+    [self waitForTestExpectations];
+
     // Check that the launchNotificationReponse is set to expected response
     XCTAssertEqualObjects(self.push.launchNotificationResponse, expectedNotificationLaunchFromPush);
+    XCTAssertEqualObjects(expectedNotificationLaunchFromPush.notificationContent.notificationInfo, notification.userInfo);
 }
 
 /**
@@ -2170,6 +2222,14 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 
     XCTestExpectation *completionHandlerCalledExpectation = [self expectationWithDescription:@"handleRemoteNotification completionHandler should be called"];
 
+    __block NSNotification *notification;
+
+    XCTestExpectation *notificationFired = [self expectationWithDescription:@"Notification event fired"];
+    [self.notificationCenter addObserverForName:UAReceivedNotificationResponseEvent object:nil queue:nil usingBlock:^(NSNotification * _Nonnull note) {
+        notification = note;
+        [notificationFired fulfill];
+    }];
+
     // TEST
     [self.push handleNotificationResponse:expectedNotificationNotLaunchedFromPush completionHandler:^{
         [completionHandlerCalledExpectation fulfill];
@@ -2179,6 +2239,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     [self waitForTestExpectations];
     XCTAssertNil(self.push.launchNotificationResponse);
     XCTAssertNoThrow([self.mockPushDelegate verify], @"push delegate should be called");
+    XCTAssertEqualObjects(expectedNotificationNotLaunchedFromPush.notificationContent.notificationInfo, notification.userInfo);
 }
 
 /**
