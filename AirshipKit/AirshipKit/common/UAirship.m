@@ -241,8 +241,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
             [sharedAirship_.sharedPush resetChannel];
 
             if (config.clearUserOnAppRestore) {
-                UA_LDEBUG(@"Deleting the keychain credentials");
-                [UAKeychainUtils deleteKeychainValue:config.appKey];
+                [sharedAirship_.sharedInboxUser resetUser];
             }
         }
 

@@ -265,6 +265,12 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
 
 }
 
+- (void)resetUser {
+    UA_LDEBUG(@"Deleting the keychain credentials");
+    [self.apiClient cancelAllRequests];
+    [UAKeychainUtils deleteKeychainValue:self.config.appKey];
+}
+
 - (void)channelCreated {
     // Update the user if we already have a channelID
     if (self.push.channelID) {

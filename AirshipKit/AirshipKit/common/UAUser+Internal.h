@@ -97,6 +97,11 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)createUser;
 
+/**
+ * Removes the existing user from the keychain.
+ */
+- (void)resetUser;
+
 @end
 
 NS_ASSUME_NONNULL_END
