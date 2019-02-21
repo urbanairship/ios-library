@@ -42,7 +42,8 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
                    dataStore:(UAPreferenceDataStore *)dataStore
                       client:(UAUserAPIClient *)client
           notificationCenter:(NSNotificationCenter *)notificationCenter
-                 application:(UIApplication *)application {
+                 application:(UIApplication *)application
+                  dispatcher:(UADispatcher *)dispatcher {
 
     self = [super initWithDataStore:dataStore];
 
@@ -59,7 +60,7 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
                                         name:UAChannelCreatedEvent
                                       object:nil];
 
-        self.backgroundDispatcher = [UADispatcher backgroundDispatcher];
+        self.backgroundDispatcher = dispatcher;
     }
 
     return self;
@@ -71,7 +72,8 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
                               dataStore:dataStore
                                  client:[UAUserAPIClient clientWithConfig:config]
                      notificationCenter:[NSNotificationCenter defaultCenter]
-                            application:[UIApplication sharedApplication]];
+                            application:[UIApplication sharedApplication]
+                             dispatcher:[UADispatcher backgroundDispatcher]];
 }
 
 + (instancetype)userWithPush:(UAPush *)push
@@ -79,14 +81,16 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
                    dataStore:(UAPreferenceDataStore *)dataStore
                       client:(UAUserAPIClient *)client
           notificationCenter:(NSNotificationCenter *)notificationCenter
-                 application:(UIApplication *)application {
+                 application:(UIApplication *)application
+                  dispatcher:(UADispatcher *)dispatcher {
 
     return [[UAUser alloc] initWithPush:push
                                  config:config
                               dataStore:dataStore
                                  client:client
                      notificationCenter:notificationCenter
-                           application:application];
+                            application:application
+                             dispatcher:dispatcher];
 }
 
 #pragma mark -

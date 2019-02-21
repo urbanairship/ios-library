@@ -73,6 +73,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param client The API client.
  * @param notificationCenter The notification center.
  * @param application The application.
+ * @param dispatcher The dispatcher.
  * @return User instance.
  */
 + (instancetype)userWithPush:(UAPush *)push
@@ -80,7 +81,8 @@ NS_ASSUME_NONNULL_BEGIN
                    dataStore:(UAPreferenceDataStore *)dataStore
                       client:(UAUserAPIClient *)client
           notificationCenter:(NSNotificationCenter *)notificationCenter
-                 application:(UIApplication *)application;
+                 application:(UIApplication *)application
+                  dispatcher:(UADispatcher *)dispatcher;
 
 /**
  * Updates the user's device token and or channel ID
