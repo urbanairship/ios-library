@@ -32,7 +32,7 @@ extern NSString *const UANativeBridgeDismissCommand;
  * Populate Javascript environment if the webView is showing a whitelisted URL.
  *
  * @param webView The UIWebView or WKWebView.
- * @param requestURL The request URL.
+ * @param url The request URL.
  * @param completionHandler A completion handler to be called when the environment is fully populated.
  */
 - (void)populateJavascriptEnvironmentIfWhitelisted:(UIView *)webView requestURL:(NSURL *)url completionHandler:(void (^)(void))completionHandler;
