@@ -9,10 +9,12 @@
 #import "UAirship+Internal.h"
 #import "UAConfig+Internal.h"
 #import "UAPreferenceDataStore+Internal.h"
+#import "UATestDispatcher.h"
 
 @interface UAUserTest : UABaseTest
 @property (nonatomic, strong) UAUser *user;
 @property (nonatomic, strong) NSNotificationCenter *notificationCenter;
+@property (nonatomic, strong) UATestDispatcher *testDispatcher;
 
 @property (nonatomic, strong) id mockPush;
 @property (nonatomic, strong) id mockUserClient;
@@ -38,12 +40,16 @@
     [[[self.mockApplication stub] andReturn:self.mockApplication] sharedApplication];
 
     self.notificationCenter = [[NSNotificationCenter alloc] init];
+
+    self.testDispatcher = [UATestDispatcher testDispatcher];
+
     self.user = [UAUser userWithPush:self.mockPush
                               config:self.config
                            dataStore:self.dataStore
                               client:self.mockUserClient
                   notificationCenter:self.notificationCenter
-                         application:self.mockApplication];
+                         application:self.mockApplication
+                          dispatcher:self.testDispatcher];
  }
 
 - (void)testDefaultUser {
