@@ -39,7 +39,7 @@
 		7646941C1C238E7C0090FE40 /* urban-airship-pacific.png in Resources */ = {isa = PBXBuildFile; fileRef = 7646940C1C238E7C0090FE40 /* urban-airship-pacific.png */; };
 		76AE35651C2B6FD600D7F3B9 /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 76AE35641C2B6FD600D7F3B9 /* AirshipConfig.plist */; };
 		CC899CC41D8B6F3900A0CECC /* AirshipKit.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = CC899CB31D8B6AB400A0CECC /* AirshipKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		DF74B29721543E3E0010CACB /* AirshipDebugKit.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = DF74B28921543DC00010CACB /* AirshipDebugKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		DF4E4921221CD86F00F306A5 /* AirshipDebugKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DF74B28921543DC00010CACB /* AirshipDebugKit.framework */; };
 		DF74B29A215460A40010CACB /* DebugViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DF74B299215460A40010CACB /* DebugViewController.m */; };
 /* End PBXBuildFile section */
 
@@ -174,7 +174,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				DF74B29721543E3E0010CACB /* AirshipDebugKit.framework in CopyFiles */,
 				61E30D821DDE324C00B7EE28 /* AirshipAppExtensions.framework in CopyFiles */,
 				CC899CC41D8B6F3900A0CECC /* AirshipKit.framework in CopyFiles */,
 			);
@@ -255,6 +254,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DF4E4921221CD86F00F306A5 /* AirshipDebugKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -470,7 +470,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 0930;
-				ORGANIZATIONNAME = UA;
+				ORGANIZATIONNAME = "Urban Airship";
 				TargetAttributes = {
 					49D2C73A1D6F952D0049B0A0 = {
 						CreatedOnToolsVersion = 8.0;

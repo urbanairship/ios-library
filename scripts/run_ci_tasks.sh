@@ -45,7 +45,7 @@ case $MODE in
 esac
 shopt -u nocasematch
 
-echo -ne "Runnig CI tasks in mode:${MODE} \n\n";
+echo -ne "Running CI tasks in mode:${MODE} \n\n";
 
 
 ##################################################################################################

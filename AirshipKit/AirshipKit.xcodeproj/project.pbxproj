@@ -1735,7 +1735,7 @@
 		45736628213617C800C5993A /* UAJSONSerialization.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = UAJSONSerialization.m; path = common/UAJSONSerialization.m; sourceTree = "<group>"; };
 		457366422137084B00C5993A /* UAJSONSerializationTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAJSONSerializationTest.m; sourceTree = "<group>"; };
 		457769F92141A00F008270FC /* UAInAppMessageHTMLViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UAInAppMessageHTMLViewController.xib; sourceTree = "<group>"; };
-		457769FB2141A123008270FC /* UAInAppMessageFullScreenViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = UAInAppMessageFullScreenViewController.xib; path = AirshipResources/ios/UAInAppMessageFullScreenViewController.xib; sourceTree = "<group>"; };
+		457769FB2141A123008270FC /* UAInAppMessageFullScreenViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = UAInAppMessageFullScreenViewController.xib; sourceTree = "<group>"; };
 		457F47A920ADDF7500DEEAD9 /* UAViewUtils+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "UAViewUtils+Internal.h"; path = "common/UAViewUtils+Internal.h"; sourceTree = "<group>"; };
 		457F47AA20ADDF7500DEEAD9 /* UAViewUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = UAViewUtils.m; path = common/UAViewUtils.m; sourceTree = "<group>"; };
 		4582DB272217ABFB0018E02C /* UAAnalyticsEventConsumerProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = UAAnalyticsEventConsumerProtocol.h; path = common/UAAnalyticsEventConsumerProtocol.h; sourceTree = "<group>"; };
@@ -2429,7 +2429,6 @@
 		DFB5F1301FC4EE380085F784 /* UAComponentDisablerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAComponentDisablerTests.m; sourceTree = "<group>"; };
 		DFBBC7AE1E36D80B00BA7315 /* UATextInputNotificationAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UATextInputNotificationAction.m; path = common/UATextInputNotificationAction.m; sourceTree = "<group>"; };
 		DFBBC7AF1E36D80B00BA7315 /* UATextInputNotificationAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UATextInputNotificationAction.h; path = common/UATextInputNotificationAction.h; sourceTree = "<group>"; };
-		DFD382C321373EEE008C16B8 /* UAInAppMessageHTMLViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UAInAppMessageHTMLViewController.xib; sourceTree = "<group>"; };
 		DFD442A11FD77248002E4FA1 /* UAInAppMessageAudience.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = UAInAppMessageAudience.m; path = ios/UAInAppMessageAudience.m; sourceTree = "<group>"; };
 		DFD442A61FD77308002E4FA1 /* UAInAppMessageAudience+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "UAInAppMessageAudience+Internal.h"; path = "ios/UAInAppMessageAudience+Internal.h"; sourceTree = "<group>"; };
 		DFD442A91FD77BA5002E4FA1 /* UAInAppMessageTagSelector.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = UAInAppMessageTagSelector.h; path = ios/UAInAppMessageTagSelector.h; sourceTree = "<group>"; };
@@ -2583,13 +2582,13 @@
 		494DD94D1B0EB677009C134E = {
 			isa = PBXGroup;
 			children = (
-				457769FB2141A123008270FC /* UAInAppMessageFullScreenViewController.xib */,
 				CC40DDB31D8CAF7300BABD4F /* AirshipConfig.xcconfig */,
 				494DD9591B0EB677009C134E /* AirshipKit */,
 				CC89997D1D8B642D00A0CECC /* AirshipResources */,
 				CC64F0551D8B77E3009CEF27 /* AirshipKitTests */,
 				CC40D87A1D8C703E00BABD4F /* Frameworks */,
 				0A550D587E2599A4BD33CDF4 /* Pods */,
+				494DD9581B0EB677009C134E /* Products */,
 			);
 			sourceTree = "<group>";
 		};
@@ -2604,7 +2603,6 @@
 				DF7E739E1E7B3F0A0039F65D /* AirshipResources tvOS.bundle */,
 			);
 			name = Products;
-			path = ../..;
 			sourceTree = "<group>";
 		};
 		494DD9591B0EB677009C134E /* AirshipKit */ = {
@@ -3964,24 +3962,23 @@
 		DF7E79F61EE1D39800D4EF02 /* ios */ = {
 			isa = PBXGroup;
 			children = (
-				6E7700A81F04790C00B5E465 /* UANativeBridge */,
-				6E7700A91F04790C00B5E465 /* UANotificationCategories.plist */,
 				CC89997E1D8B642D00A0CECC /* Info.plist */,
 				99978EEA1EBAB7E7000F4AF7 /* UADefaultActions.plist */,
-				CC8999A51D8B642D00A0CECC /* UAMessageCenterPlaceholderIcon.png */,
-				DFFA739F1FFDB42D00D2DA1A /* UAInAppMessageModalViewController.xib */,
+				6E7700A81F04790C00B5E465 /* UANativeBridge */,
+				6E7700A91F04790C00B5E465 /* UANotificationCategories.plist */,
 				454C85B22125FD0C00D10A7A /* UAInAppMessageResizableViewController.xib */,
 				99E2DA481FBA2A4400C9F2CC /* UAInAppMessageBannerView.xib */,
 				998B22621FD896EF00C535AE /* UAInAppMessageBannerContentView.xib */,
-				DFD382C321373EEE008C16B8 /* UAInAppMessageHTMLViewController.xib */,
+				457769FB2141A123008270FC /* UAInAppMessageFullScreenViewController.xib */,
 				457769F92141A00F008270FC /* UAInAppMessageHTMLViewController.xib */,
+				DFFA739F1FFDB42D00D2DA1A /* UAInAppMessageModalViewController.xib */,
 				99E2DA4A1FBA2A6800C9F2CC /* UAInAppMessageButtonView.xib */,
 				CC8999A21D8B642D00A0CECC /* UAMessageCenterListCell.xib */,
 				CC8999A31D8B642D00A0CECC /* UAMessageCenterListViewController.xib */,
 				DFECEA761E64DC83006AA8EA /* UAMessageCenterMessageViewController.xib */,
+				CC8999A51D8B642D00A0CECC /* UAMessageCenterPlaceholderIcon.png */,
 				DFECEA841E65E900006AA8EA /* UAOverlayView.xib */,
 				992814751EF4A28300D0D388 /* UARateAppPromptView.xib */,
-				494DD9581B0EB677009C134E /* Products */,
 				6ECF2BF01F1E92A10061247E /* UAInbox.xcdatamodeld */,
 			);
 			path = ios;
@@ -5219,7 +5216,7 @@
 			files = (
 			);
 			inputPaths = (
-				"${SRCROOT}/../Pods/Target Support Files/Pods-AirshipKitTests/Pods-AirshipKitTests-frameworks.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-AirshipKitTests/Pods-AirshipKitTests-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/OCMock/OCMock.framework",
 				"${BUILT_PRODUCTS_DIR}/XcodeEdit/XcodeEdit.framework",
 			);
@@ -5230,7 +5227,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/../Pods/Target Support Files/Pods-AirshipKitTests/Pods-AirshipKitTests-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-AirshipKitTests/Pods-AirshipKitTests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		DF6DD5011E7A1EB8000C281A /* Generate AirshipLib.h */ = {
@@ -6256,10 +6253,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = CC40DDB31D8CAF7300BABD4F /* AirshipConfig.xcconfig */;
 			buildSettings = {
-				ARCHS = (
-					"$(ARCHS_STANDARD)",
-					armv7s,
-				);
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				DEFINES_MODULE = YES;
@@ -6439,10 +6432,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = CC40DDB31D8CAF7300BABD4F /* AirshipConfig.xcconfig */;
 			buildSettings = {
-				ARCHS = (
-					"$(ARCHS_STANDARD)",
-					armv7s,
-				);
 				CLANG_ANALYZER_NONNULL = YES_NONAGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "compiler-default";
 				CLANG_CXX_LIBRARY = "compiler-default";

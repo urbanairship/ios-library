@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		DF4E4928221CDB5B00F306A5 /* AirshipKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DFE70146212F216600A708D5 /* AirshipKit.framework */; };
+		DF4EDA6121E41D3900804CB3 /* ButtonsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF4EDA6021E41D3900804CB3 /* ButtonsTableViewController.swift */; };
+		DF4EDA6821E4261700804CB3 /* ButtonDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF4EDA6721E4261700804CB3 /* ButtonDetailViewController.swift */; };
 		4582DB302219EADF0018E02C /* DebugKitUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4582DB2F2219EADF0018E02C /* DebugKitUtils.swift */; };
 		4594E60622164F2F00DCD672 /* DebugKitData.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 4594E6012216466C00DCD672 /* DebugKitData.xcdatamodeld */; };
 		4594E6082217346600DCD672 /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4594E6072217346600DCD672 /* Event.swift */; };
@@ -15,8 +18,6 @@
 		459D70E52214E82B005A3BB9 /* EventsDetailTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 459D70E12214E82A005A3BB9 /* EventsDetailTableViewController.swift */; };
 		459D70E62214E82B005A3BB9 /* EventsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 459D70E22214E82A005A3BB9 /* EventsViewController.swift */; };
 		459D70EE2215FAED005A3BB9 /* EventDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 459D70ED2215FAED005A3BB9 /* EventDataManager.swift */; };
-		DF4EDA6121E41D3900804CB3 /* ButtonsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF4EDA6021E41D3900804CB3 /* ButtonsTableViewController.swift */; };
-		DF4EDA6821E4261700804CB3 /* ButtonDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF4EDA6721E4261700804CB3 /* ButtonDetailViewController.swift */; };
 		DF4EDA9C21E7FF1500804CB3 /* CustomEventTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF4EDA9021E7FF1500804CB3 /* CustomEventTableViewCell.swift */; };
 		DF4EDA9D21E7FF1500804CB3 /* CustomPropertyAddStringsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF4EDA9121E7FF1500804CB3 /* CustomPropertyAddStringsTableViewController.swift */; };
 		DF4EDA9E21E7FF1500804CB3 /* CustomPropertyStringsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF4EDA9221E7FF1500804CB3 /* CustomPropertyStringsTableViewController.swift */; };
@@ -146,6 +147,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DF4E4928221CDB5B00F306A5 /* AirshipKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -316,7 +318,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 1000;
-				ORGANIZATIONNAME = "Brian Batchelder";
+				ORGANIZATIONNAME = "Urban Airship";
 				TargetAttributes = {
 					DFE7011E212F1FAA00A708D5 = {
 						CreatedOnToolsVersion = 10.0;
