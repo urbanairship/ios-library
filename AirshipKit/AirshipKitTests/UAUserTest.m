@@ -35,6 +35,7 @@
     self.mockPush = [self mockForClass:[UAPush class]];
     self.mockUserClient = [self mockForClass:[UAUserAPIClient class]];
     self.mockApplication = [self mockForClass:[UIApplication class]];
+    [[[self.mockApplication stub] andReturn:self.mockApplication] sharedApplication];
 
     self.notificationCenter = [[NSNotificationCenter alloc] init];
     self.user = [UAUser userWithPush:self.mockPush
