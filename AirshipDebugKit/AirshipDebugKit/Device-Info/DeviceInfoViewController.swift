@@ -44,7 +44,7 @@ class DeviceInfoViewController: UITableViewController {
         
         updateSwitches()
     }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         

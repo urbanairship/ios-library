@@ -10,14 +10,17 @@ public class AirshipDebugKit : NSObject {
     @objc public static var eventsViewController : UIViewController? =
         instantiateStoryboard("Events")
 
+    static let lastPushPayloadKey = "com.urbanairship.debug.last_push"
+
     /**
      * Provides an initialization point for AirshipDebugKit components.
      */
     @objc public static func takeOff() {
         // Set data manager as analytics event consumer on AirshipDebugKit start
         UAirship.shared().analytics.eventConsumer = EventDataManager.shared
+        observePayloadEvents();
     }
-    
+
     /**
      * Loads one of the debug storyboards.
      * @param name Name of the storyboard you want loaded, e.g. "DeviceInfo".
@@ -46,6 +49,39 @@ public class AirshipDebugKit : NSObject {
         return storyboard.instantiateViewController(withIdentifier: "InitialController")
     }
 
+    static func observePayloadEvents() {
+        NotificationCenter.default.addObserver(self,
+                                               selector:#selector(receivedForegroundNotification(notification:)),
+                                               name: NSNotification.Name(rawValue: UAReceivedForegroundNotificationEvent),
+                                               object: nil)
+
+        NotificationCenter.default.addObserver(self,
+                                               selector:#selector(receivedBackgroundNotification(notification:)),
+                                               name: NSNotification.Name(rawValue: UAReceivedBackgroundNotificationEvent),
+                                               object: nil)
+
+        NotificationCenter.default.addObserver(self,
+                                               selector:#selector(receivedNotificationResponse(notification:)),
+                                               name: NSNotification.Name(rawValue: UAReceivedNotificationResponseEvent),
+                                               object: nil)
+
+    }
+
+    @objc static func receivedForegroundNotification(notification: NSNotification) {
+        saveLastPayload(lastPayload: notification.userInfo)
+    }
+
+    @objc static func receivedBackgroundNotification(notification: NSNotification) {
+        saveLastPayload(lastPayload: notification.userInfo)
+    }
+
+    @objc static func receivedNotificationResponse(notification: NSNotification) {
+        saveLastPayload(lastPayload: notification.userInfo)
+    }
+
+    static func saveLastPayload(lastPayload : [AnyHashable : Any]?) {
+        UserDefaults.standard.setValue(lastPayload, forKey: lastPushPayloadKey)
+    }
 }
 
 // MARK: Extensions for Localization
