@@ -314,7 +314,6 @@
                             <outlet property="delegate" destination="JMe-aP-DRm" id="Lrx-oK-q9o"/>
                         </connections>
                     </tableView>
-                    <tabBarItem key="tabBarItem" title="Device Info" image="Settings" id="Xw0-Wr-ycn" userLabel="Device Info"/>
                     <navigationItem key="navigationItem" title="Device Info" id="26T-dx-dfA"/>
                     <value key="contentSizeForViewInPopover" type="size" width="600" height="600"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
