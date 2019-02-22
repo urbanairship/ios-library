@@ -19,8 +19,6 @@
 		459D70E62214E82B005A3BB9 /* EventsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 459D70E22214E82A005A3BB9 /* EventsViewController.swift */; };
 		459D70EE2215FAED005A3BB9 /* EventDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 459D70ED2215FAED005A3BB9 /* EventDataManager.swift */; };
 		3C75AA98221CF5B40028AD9B /* LastPayloadTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C75AA92221CF5B40028AD9B /* LastPayloadTableViewController.swift */; };
-		DF4EDA6121E41D3900804CB3 /* ButtonsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF4EDA6021E41D3900804CB3 /* ButtonsTableViewController.swift */; };
-		DF4EDA6821E4261700804CB3 /* ButtonDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF4EDA6721E4261700804CB3 /* ButtonDetailViewController.swift */; };
 		DF4EDA9C21E7FF1500804CB3 /* CustomEventTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF4EDA9021E7FF1500804CB3 /* CustomEventTableViewCell.swift */; };
 		DF4EDA9D21E7FF1500804CB3 /* CustomPropertyAddStringsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF4EDA9121E7FF1500804CB3 /* CustomPropertyAddStringsTableViewController.swift */; };
 		DF4EDA9E21E7FF1500804CB3 /* CustomPropertyStringsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF4EDA9221E7FF1500804CB3 /* CustomPropertyStringsTableViewController.swift */; };
