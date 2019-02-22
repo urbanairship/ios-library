@@ -1,5 +1,4 @@
-/* Copyright 2019 Urban Airship and Contributors */
-
+/* Copyright Urban Airship and Contributors */
 
 #import <Foundation/Foundation.h>
 #import "UAEvent.h"

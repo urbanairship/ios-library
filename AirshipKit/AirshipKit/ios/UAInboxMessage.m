@@ -1,4 +1,4 @@
-/* Copyright 2010-2019 Urban Airship and Contributors */
+/* Copyright Urban Airship and Contributors */
 
 #import "UAInboxMessage+Internal.h"
 #import "UAInboxMessageList+Internal.h"

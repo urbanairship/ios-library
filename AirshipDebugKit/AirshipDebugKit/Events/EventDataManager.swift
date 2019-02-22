@@ -1,4 +1,4 @@
-/* Copyright 2019 Urban Airship and Contributors */
+/* Copyright Urban Airship and Contributors */
 
 import UIKit
 import CoreData
