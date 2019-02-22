@@ -10,7 +10,7 @@ public class AirshipDebugKit : NSObject {
     @objc public static var eventsViewController : UIViewController? =
         instantiateStoryboard("Events")
 
-    static let lastPushPayloadKey = "com.urbanairship.last_push"
+    static let lastPushPayloadKey = "com.urbanairship.debug.last_push"
 
     /**
      * Provides an initialization point for AirshipDebugKit components.

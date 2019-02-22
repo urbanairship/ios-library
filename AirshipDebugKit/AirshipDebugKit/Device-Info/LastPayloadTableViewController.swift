@@ -7,7 +7,7 @@ class LastPayloadTableViewController: UITableViewController {
 
     @IBOutlet var lastPushPayloadTextView: UITextView!
     
-    let lastPushPayloadKey = "com.urbanairship.last_push"
+    let lastPushPayloadKey = "com.urbanairship.debug.last_push"
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -31,12 +31,11 @@ class LastPayloadTableViewController: UITableViewController {
     }
     
     @objc func refreshView() {
-
-        guard UserDefaults.standard.value(forKey: lastPushPayloadKey) != nil else {
+        guard let lastPushPayload = UserDefaults.standard.value(forKey: lastPushPayloadKey) else {
             self.lastPushPayloadTextView.text = "Payload is empty. Send a push notification!"
             return
         }
-        
-        self.lastPushPayloadTextView.text = (UserDefaults.standard.value(forKey: lastPushPayloadKey)! as AnyObject).description
+
+        self.lastPushPayloadTextView.text = (lastPushPayload as AnyObject).description
     }
 }
