@@ -3,6 +3,21 @@ iOS Changelog
 
 Migration Guides: Documentation/Migration
 
+Version 10.2.0 - February 25, 2019
+==================================
+
+Minor release with enhancements to In-App Automation and modifications to make
+keychain access asynchronous throughout the SDK. This latter change is to 
+fix a rare issue with slow takeOff that can potentially affect the app review
+process. Apps experiencing this issue are encouraged to update.
+
+Changes:
+ 
+- GIF support for In-App Automation on iOS 11 and above.
+- Display coordinator architecture for more flexible custom IAA display management.
+- IAA button resolution events can be generated from HTML messages via the native bridge.
+- Keychain access is fully asynchronous. Synchronous properties on UAUser are now deprecated.
+
 Version 10.1.0 - January 29, 2019
 =================================
 Minor release that deprecates UAURLProtocol that was historically used for caching
