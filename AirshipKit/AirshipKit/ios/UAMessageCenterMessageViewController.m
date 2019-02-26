@@ -260,7 +260,7 @@ static NSString *urlForBlankPage = @"about:blank";
             UA_STRONGIFY(self)
 
             UAInboxMessage *message = [[UAirship inbox].messageList messageForID:messageID];
-            if (message) {
+            if (message && !message.isExpired) {
                 // display the message
                 [self loadMessage:message onlyIfChanged:onlyIfChanged];
             } else {
@@ -409,6 +409,14 @@ static NSString *urlForBlankPage = @"about:blank";
                 [self displayFailedToLoadAlertOnOK:nil onRetry:^{
                     UA_STRONGIFY(self);
                     [self loadMessage:self.message onlyIfChanged:NO];
+                }];
+            } else if (status == 410) {
+                // Gone: message has been permanently deleted from the backend.
+                // Alert the user that message is no longer available.
+                UA_WEAKIFY(self)
+                [self displayNoLongerAvailableAlertOnOK:^{
+                    UA_STRONGIFY(self)
+                    [self uncoverAndHideLoadingIndicator];
                 }];
             } else {
                 // Display a generic alert
