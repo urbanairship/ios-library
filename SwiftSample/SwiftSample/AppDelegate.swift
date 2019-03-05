@@ -48,11 +48,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UARegistrationDelegate, U
         // Call takeOff (which creates the UAirship singleton)
         UAirship.takeOff(config)
 
-        AirshipDebugKit.takeOff()
-
         // Print out the application configuration for debugging (optional)
         print("Config:\n \(config)")
 
+        // Call takeOff (which initializes the Airship DebugKit)
+        AirshipDebugKit.takeOff()
+        
         // Set the icon badge to zero on startup (optional)
         UAirship.push()?.resetBadge()
 

@@ -61,6 +61,9 @@ NSUInteger const DebugTab = 2;
     // Print out the application configuration for debugging (optional)
     NSLog(@"Config:\n%@", [config description]);
 
+    // Call takeOff (which initializes the Airship DebugKit)
+    [AirshipDebugKit takeOff];
+    
     // Set the icon badge to zero on startup (optional)
     [[UAirship push] resetBadge];
 
@@ -91,8 +94,6 @@ NSUInteger const DebugTab = 2;
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(refreshMessageCenterBadge)
                                                  name:UAInboxMessageListUpdatedNotification object:nil];
-
-    [AirshipDebugKit takeOff];
 
     return YES;
 }
