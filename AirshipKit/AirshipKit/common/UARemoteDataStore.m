@@ -72,7 +72,7 @@
 }
 
 - (void)fetchRemoteDataFromCacheWithPredicate:(nullable NSPredicate *)predicate
-                   completionHandler:(void(^)(NSArray<UARemoteDataStorePayload *>*remoteDataPayloads))completionHandler {
+                            completionHandler:(void(^)(NSArray<UARemoteDataStorePayload *>*remoteDataPayloads))completionHandler {
     
     [self safePerformBlock:^(BOOL isSafe) {
         if (!isSafe) {
@@ -133,6 +133,7 @@
     remoteDataStorePayload.type = remoteDataPayload.type;
     remoteDataStorePayload.timestamp = remoteDataPayload.timestamp;
     remoteDataStorePayload.data = remoteDataPayload.data;
+    remoteDataStorePayload.metadata = remoteDataPayload.metadata;
 }
 
 - (void)waitForIdle {

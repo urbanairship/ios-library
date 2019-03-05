@@ -38,6 +38,18 @@ NS_ASSUME_NONNULL_BEGIN
 + (BOOL)float:(CGFloat)float1 isEqualToFloat:(CGFloat)float2 withAccuracy:(CGFloat)accuracy;
 
 ///---------------------------------------------------------------------------------------
+/// @name String Utilities
+///---------------------------------------------------------------------------------------
+
+/**
+ * Returns nil if string is empty or nil, otherwise returns string.
+ *
+ * @param str The string to check.
+ * @return The input NSString, or nil if the input string is empty.
+ */
++ (nullable NSString *)nilIfEmpty:(nullable NSString *)str;
+
+///---------------------------------------------------------------------------------------
 /// @name Device ID
 ///---------------------------------------------------------------------------------------
 
@@ -64,6 +76,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param userData The user data.
  */
 + (NSString *)userAuthHeaderString:(UAUserData *)userData;
+
 #endif
 
 @end

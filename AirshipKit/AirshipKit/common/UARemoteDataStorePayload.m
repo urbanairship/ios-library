@@ -7,5 +7,6 @@
 @dynamic type;
 @dynamic timestamp;
 @dynamic data;
+@dynamic metadata;
 
 @end

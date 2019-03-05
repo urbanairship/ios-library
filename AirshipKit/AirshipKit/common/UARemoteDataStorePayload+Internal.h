@@ -31,6 +31,13 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nullable, nonatomic, retain) NSDictionary *data;
 
+/**
+ * The metadata associated with this payload
+ *
+ * Contains important metadata such as locale.
+ */
+@property (nullable, nonatomic, retain) NSDictionary *metadata;
+
 NS_ASSUME_NONNULL_END
 
 @end

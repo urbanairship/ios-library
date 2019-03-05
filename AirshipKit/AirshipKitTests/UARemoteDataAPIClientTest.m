@@ -61,7 +61,7 @@
         completionHandler(responseData, (NSURLResponse *)response, nil);
     }] dataTaskWithRequest:[OCMArg checkWithBlock:^BOOL(id obj) {
         UARequest *request = obj;
-        NSString *expected = [NSString stringWithFormat:@"https://remote-data.urbanairship.com/api/remote-data/app/appKey/ios?sdk_version=%@&language=%@&country=%@", [UAirshipVersion get],[NSLocale currentLocale].languageCode, [NSLocale currentLocale].countryCode];
+        NSString *expected = [NSString stringWithFormat:@"https://remote-data.urbanairship.com/api/remote-data/app/appKey/ios?sdk_version=%@&language=%@&country=%@", [UAirshipVersion get], [NSLocale currentLocale].languageCode, [NSLocale currentLocale].countryCode];
 
         return [[request.URL absoluteString] isEqualToString:expected];
     }] retryWhere:OCMOCK_ANY completionHandler:OCMOCK_ANY];

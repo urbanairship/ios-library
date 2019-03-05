@@ -9,12 +9,9 @@
 
 @interface UARemoteDataAPIClient()
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
-@property (nonatomic, strong, readonly) NSURL *URL;
 @end
 
 @implementation UARemoteDataAPIClient
-
-@synthesize URL = _URL;
 
 NSString * const kRemoteDataPath = @"api/remote-data/app";
 
@@ -46,7 +43,9 @@ NSString * const kUALastRemoteDataModifiedTime = @"UALastRemoteDataModifiedTime"
                                 session:session];
 }
 
-- (UADisposable *)fetchRemoteData:(UARemoteDataRefreshSuccessBlock)successBlock onFailure:(UARemoteDataRefreshFailureBlock)failureBlock {
+- (UADisposable *)fetchRemoteData:(UARemoteDataRefreshSuccessBlock)successBlock
+                        onFailure:(UARemoteDataRefreshFailureBlock)failureBlock {
+
     UARequest *refreshRequest = [self requestToRefreshRemoteData];
 
     UA_LTRACE(@"Request to refresh remote data: %@", refreshRequest.URL);
@@ -136,7 +135,7 @@ NSString * const kUALastRemoteDataModifiedTime = @"UALastRemoteDataModifiedTime"
     UARequest *request = [UARequest requestWithBuilderBlock:^(UARequestBuilder * _Nonnull builder) {
         UA_STRONGIFY(self)
 
-        builder.URL = self.URL;
+        builder.URL = [self createRemoteDataURL:[NSLocale autoupdatingCurrentLocale]];
         builder.method = @"GET";
         
         NSString *lastModified = [self.dataStore stringForKey:kUALastRemoteDataModifiedTime];
@@ -149,15 +148,11 @@ NSString * const kUALastRemoteDataModifiedTime = @"UALastRemoteDataModifiedTime"
     return request;
 }
 
-- (NSURL *)URL {
-    if (_URL) {
-        return _URL;
-    }
-
+- (NSURL *)createRemoteDataURL:(NSLocale *)locale {
     NSURLQueryItem *languageItem = [NSURLQueryItem queryItemWithName:@"language"
-                                                               value:[[NSLocale autoupdatingCurrentLocale] objectForKey:NSLocaleLanguageCode]];
+                                                               value:[locale objectForKey:NSLocaleLanguageCode]];
     NSURLQueryItem *countryItem = [NSURLQueryItem queryItemWithName:@"country"
-                                                              value:[[NSLocale autoupdatingCurrentLocale] objectForKey: NSLocaleCountryCode]];
+                                                              value:[locale objectForKey:NSLocaleCountryCode]];
     NSURLQueryItem *versionItem = [NSURLQueryItem queryItemWithName:@"sdk_version"
                                                               value:[UAirshipVersion get]];
 
@@ -178,8 +173,7 @@ NSString * const kUALastRemoteDataModifiedTime = @"UALastRemoteDataModifiedTime"
 
     components.queryItems = queryItems;
 
-    _URL = [components URL];
-    return _URL;
+    return [components URL];
 }
 
 - (void)clearLastModifiedTime {

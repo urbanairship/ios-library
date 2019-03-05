@@ -60,8 +60,21 @@ typedef void (^UARemoteDataPublishBlock)(NSArray<UARemoteDataPayload *> *remoteD
 @property (nonatomic, assign) NSUInteger remoteDataRefreshInterval;
 
 /**
+ * The metadata used to fetch the most recent payload.
+ */
+@property (nullable, nonatomic, strong) NSDictionary *lastMetadata;
+
+/**
+ * The last modified date.
+ *
+ * Exposed for testing purposes.
+ */
+@property (nullable, nonatomic, strong) NSDate *lastModified;
+
+/**
  * Refresh the remote data from the cloud only if the time since the last refresh
- * is greater than the minimum foreground refresh interval.
+ * is greater than the minimum foreground refresh interval or last stored metadata
+ * doesn't match current metadata.
  *
  * @param completionHandler Optional completion handler called when refresh is complete, with result.
  */
@@ -85,6 +98,20 @@ typedef void (^UARemoteDataPublishBlock)(NSArray<UARemoteDataPayload *> *remoteD
                          notificationCenter:(NSNotificationCenter *)notificationCenter
                                  dispatcher:(UADispatcher *)dispatcher;
 
+/**
+ * Creates the client metadata used to fetch the request.
+ *
+ * @param locale The locale with which to create the metadata.
+ * @return The metadata dictionary.
+ */
+-(NSDictionary *)createMetadata:(NSLocale *)locale;
+
+/**
+ * Checks if last stored metadata matches a metadata created with the current locale and app version.
+ *
+ * @return `YES` if the metadata is current, otherwise `NO`.
+ */
+-(BOOL)isLastMetadataCurrent;
 
 @end
 

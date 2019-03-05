@@ -86,7 +86,8 @@
     NSArray *inAppMessages = @[];
     UARemoteDataPayload *inAppRemoteDataPayload = [[UARemoteDataPayload alloc] initWithType:@"in_app_messages"
                                                                                   timestamp:[NSDate date]
-                                                                                       data:@{@"in_app_messages":inAppMessages}];
+                                                                                       data:@{@"in_app_messages":inAppMessages}
+                                                                                       metadata:@{@"cool" : @"story"}];
     
     // expectations
     __block NSUInteger callsToScheduleMessages = 0;
@@ -132,7 +133,8 @@
     NSUInteger expectedNumberOfScheduleInfos = inAppMessages.count;
     UARemoteDataPayload *inAppRemoteDataPayload = [[UARemoteDataPayload alloc] initWithType:@"in_app_messages"
                                                                                   timestamp:[NSDate date]
-                                                                                       data:@{@"in_app_messages":inAppMessages}];
+                                                                                       data:@{@"in_app_messages":inAppMessages}
+                                                                                   metadata:@{@"cool" : @"story"}];
     
     // expectations
     __block NSUInteger callsToScheduleMessages = 0;
@@ -191,7 +193,8 @@
     NSUInteger expectedNumberOfScheduleInfos = inAppMessages.count;
     UARemoteDataPayload *inAppRemoteDataPayload = [[UARemoteDataPayload alloc] initWithType:@"in_app_messages"
                                                                                   timestamp:[NSDate date]
-                                                                                       data:@{@"in_app_messages":inAppMessages}];
+                                                                                       data:@{@"in_app_messages":inAppMessages}
+                                                                                   metadata:@{@"cool" : @"story"}];
     
     // expectations
     __block NSUInteger callsToScheduleMessages = 0;
@@ -261,7 +264,8 @@
     NSUInteger expectedNumberOfScheduleInfos = inAppMessages.count;
     UARemoteDataPayload *inAppRemoteDataPayload = [[UARemoteDataPayload alloc] initWithType:@"in_app_messages"
                                                                                   timestamp:[NSDate date]
-                                                                                       data:@{@"in_app_messages":inAppMessages}];
+                                                                                       data:@{@"in_app_messages":inAppMessages}
+                                                                                   metadata:@{@"cool" : @"story"}];
     
     // expectations
     __block NSUInteger callsToScheduleMessages = 0;
@@ -296,7 +300,8 @@
     // setup to send same message again
     inAppRemoteDataPayload = [[UARemoteDataPayload alloc] initWithType:@"in_app_messages"
                                                              timestamp:[NSDate date]
-                                                                  data:@{@"in_app_messages":inAppMessages}];
+                                                                  data:@{@"in_app_messages":inAppMessages}
+                                                              metadata:@{@"cool" : @"story"}];
 
     // test
     self.publishBlock(@[inAppRemoteDataPayload]);
@@ -354,7 +359,8 @@
     NSArray *inAppMessages = @[message1,message2];
     UARemoteDataPayload *inAppRemoteDataPayload = [[UARemoteDataPayload alloc] initWithType:@"in_app_messages"
                                                                                   timestamp:[NSDate date]
-                                                                                       data:@{@"in_app_messages":inAppMessages}];
+                                                                                       data:@{@"in_app_messages":inAppMessages}
+                                                                                   metadata:@{@"cool" : @"story"}];
     __block NSUInteger scheduledMessages = 0;
     __block NSUInteger cancelledMessages = 0;
 
@@ -399,7 +405,8 @@
     inAppMessages = @[message2];
     inAppRemoteDataPayload = [[UARemoteDataPayload alloc] initWithType:@"in_app_messages"
                                                              timestamp:[NSDate date]
-                                                                  data:@{@"in_app_messages":inAppMessages}];
+                                                                  data:@{@"in_app_messages":inAppMessages}
+                                                              metadata:@{@"cool" : @"story"}];
 
     // test
     self.publishBlock(@[inAppRemoteDataPayload]);
@@ -458,7 +465,8 @@
     NSArray *inAppMessages = @[message1,message2];
     UARemoteDataPayload *inAppRemoteDataPayload = [[UARemoteDataPayload alloc] initWithType:@"in_app_messages"
                                                                                   timestamp:[NSDate date]
-                                                                                       data:@{@"in_app_messages":inAppMessages}];
+                                                                                       data:@{@"in_app_messages":inAppMessages}
+                                                                                   metadata:@{@"cool" : @"story"}];
     
     __block NSUInteger scheduledMessages = 0;
     __block NSUInteger cancelledMessages = 0;
@@ -501,7 +509,8 @@
     // setup empty payload
     UARemoteDataPayload *emptyInAppRemoteDataPayload = [[UARemoteDataPayload alloc] initWithType:@"in_app_messages"
                                                                                        timestamp:[NSDate date]
-                                                                                            data:@{}];
+                                                                                            data:@{}
+                                                                                        metadata:@{}];
     
     // test
     self.publishBlock(@[emptyInAppRemoteDataPayload]);

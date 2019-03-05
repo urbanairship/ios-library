@@ -69,6 +69,10 @@
     return connectionType;
 }
 
++ (nullable NSString *)nilIfEmpty:(nullable NSString *)str {
+    return str.length == 0 ? nil : str;
+}
+
 + (NSString *)deviceID {
     return [UAKeychainUtils getDeviceID];
 }

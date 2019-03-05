@@ -69,8 +69,8 @@
     // create test data
     NSDictionary *commonConfig = @{};
     NSDictionary *iosConfig = @{};
-    UARemoteDataPayload *commonConfigDataPayload = [[UARemoteDataPayload alloc] initWithType:@"app_config" timestamp:[NSDate date] data:commonConfig];
-    UARemoteDataPayload *iosConfigDataPayload = [[UARemoteDataPayload alloc] initWithType:@"app_config:ios" timestamp:[NSDate date] data:iosConfig];
+    UARemoteDataPayload *commonConfigDataPayload = [[UARemoteDataPayload alloc] initWithType:@"app_config" timestamp:[NSDate date] data:commonConfig metadata:@{@"cool" : @"story"}];
+    UARemoteDataPayload *iosConfigDataPayload = [[UARemoteDataPayload alloc] initWithType:@"app_config:ios" timestamp:[NSDate date] data:iosConfig metadata:@{@"cool" : @"story"}];
 
     // set expectations
     __block NSArray *expectedRemoteConfigForDisable = @[];
@@ -117,7 +117,7 @@
 
     NSDictionary *expectedRemoteConfigsForModules = @{@"someclient" : @[sampleRemoteConfig]};
 
-    UARemoteDataPayload *commonConfigDataPayload = [[UARemoteDataPayload alloc] initWithType:@"app_config" timestamp:[NSDate date] data:commonConfig];
+    UARemoteDataPayload *commonConfigDataPayload = [[UARemoteDataPayload alloc] initWithType:@"app_config" timestamp:[NSDate date] data:commonConfig metadata:@{}];
 
     // set expectations
     [[self.mockComponentDisabler expect] processDisableInfo:[OCMArg checkWithBlock:^BOOL(NSArray *remoteConfigForDisable) {
@@ -169,8 +169,8 @@
 
     NSDictionary *expectedRemoteConfigsForModules = @{@"someclient": @[sampleRemoteConfig, otherRemoteConfig]};
 
-    UARemoteDataPayload *commonConfigDataPayload = [[UARemoteDataPayload alloc] initWithType:@"app_config" timestamp:[NSDate date] data:commonConfig];
-    UARemoteDataPayload *iosConfigDataPayload = [[UARemoteDataPayload alloc] initWithType:@"app_config:ios" timestamp:[NSDate date] data:iosConfig];
+    UARemoteDataPayload *commonConfigDataPayload = [[UARemoteDataPayload alloc] initWithType:@"app_config" timestamp:[NSDate date] data:commonConfig metadata:@{@"cool" : @"story"}];
+    UARemoteDataPayload *iosConfigDataPayload = [[UARemoteDataPayload alloc] initWithType:@"app_config:ios" timestamp:[NSDate date] data:iosConfig metadata:@{@"cool" : @"story"}];
 
     // set expectations
     [[self.mockComponentDisabler expect] processDisableInfo:[OCMArg checkWithBlock:^BOOL(NSArray *remoteConfigForDisable) {
@@ -203,8 +203,8 @@
                                                            @"foot": @"ball"
                                                            }
                                                    };
-    UARemoteDataPayload *commonConfigDataPayload = [[UARemoteDataPayload alloc] initWithType:@"app_config" timestamp:[NSDate date] data:commonRemoteConfigForSomeClient];
-    UARemoteDataPayload *iosConfigDataPayload = [[UARemoteDataPayload alloc] initWithType:@"app_config:ios" timestamp:[NSDate date] data:iosRemoteConfigForSomeClient];
+    UARemoteDataPayload *commonConfigDataPayload = [[UARemoteDataPayload alloc] initWithType:@"app_config" timestamp:[NSDate date] data:commonRemoteConfigForSomeClient metadata:@{@"cool" : @"story"}];
+    UARemoteDataPayload *iosConfigDataPayload = [[UARemoteDataPayload alloc] initWithType:@"app_config:ios" timestamp:[NSDate date] data:iosRemoteConfigForSomeClient metadata:@{@"cool" : @"story"}];
 
     // set expectations
     __block NSArray *expectedRemoteConfigForDisable = @[];
