@@ -87,8 +87,8 @@ NSString *const UAAutomationStoreFileFormat = @"Automation-%@.sqlite";
     completionHandler(UAAutomationSchedulePrepareResultContinue);
 }
 
--(BOOL)isScheduleReadyToExecute:(UASchedule *)schedule {
-    return YES;
+-(UAAutomationScheduleReadyResult)isScheduleReadyToExecute:(UASchedule *)schedule {
+    return UAAutomationScheduleReadyResultContinue;
 }
 
 -(void)executeSchedule:(UASchedule *)schedule
