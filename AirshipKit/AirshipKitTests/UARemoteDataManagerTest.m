@@ -577,13 +577,6 @@
     [subscription dispose];
 }
 
-// send locale change notificaiton and ensure refresh gets called if metadata has changes
-- (void)testRefreshCalledWhenMetadataChanges{
-
-    
-
-}
-
 // client (test) subscribes to remote data manager
 // simulate multiple payloads from cloud, with at least two of a single type
 // all payloads should be published to client

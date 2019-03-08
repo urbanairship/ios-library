@@ -942,7 +942,7 @@
  * @param scheduleDelay The UAScheduleDelay to check.
  * @return YES if conditions are satisfied, otherwise NO.
  */
-- (BOOL)isScheduleDelaySatisfied:(UAScheduleDelay *)scheduleDelay {
+- (BOOL)isScheduleConditionsSatisfied:(UAScheduleDelay *)scheduleDelay {
     if (!scheduleDelay) {
         return YES;
     }
@@ -1062,7 +1062,9 @@
                     case UAAutomationSchedulePrepareResultSkip:
                         scheduleData.executionState = @(UAScheduleStateIdle);
                         break;
-
+                    case UAAutomationSchedulePrepareResultInvalidate:
+                        [self prepareSchedules:@[scheduleData]];
+                        break;
                     case UAAutomationSchedulePrepareResultPenalize:
                     default:
                         [self scheduleFinishedExecuting:scheduleData];
@@ -1073,6 +1075,13 @@
     }
 }
 
+- (void)prepareScheduleWithIdentifier:(NSString *)scheduleID {
+    UA_WEAKIFY(self)
+    [self.automationStore getSchedule:scheduleID completionHandler:^(UAScheduleData *schedule) {
+        UA_STRONGIFY(self)
+        [self prepareSchedules:@[schedule]];
+    }];
+}
 
 - (void)attemptExecution:(UAScheduleData *)scheduleData {
     if ([scheduleData.executionState intValue] != UAScheduleStateWaitingScheduleConditions) {
@@ -1091,8 +1100,6 @@
         return;
     }
 
-    __block BOOL scheduleExecuting = NO;
-
     // Conditions and action executions must be run on the main queue.
     UA_WEAKIFY(self)
     [self.dispatcher doSync:^{
@@ -1102,32 +1109,41 @@
             return;
         }
 
-        if (![self isScheduleDelaySatisfied:schedule.info.delay]) {
+        if (![self isScheduleConditionsSatisfied:schedule.info.delay]) {
             UA_LDEBUG("Schedule:%@ is not ready to execute. Conditions not satisfied", schedule);
             return;
         }
 
         id<UAAutomationEngineDelegate> delegate = self.delegate;
 
-        if (![delegate isScheduleReadyToExecute:schedule]) {
-            UA_LDEBUG("Schedule:%@ is not ready to execute.", schedule);
-            return;
+        switch ([delegate isScheduleReadyToExecute:schedule]) {
+            case UAAutomationScheduleReadyResultInvalidate: {
+                UA_LTRACE("Attempted to execute an invalid schedule:%@.", schedule);
+                scheduleData.executionState = @(UAScheduleStatePreparingSchedule);
+                [self prepareScheduleWithIdentifier:schedule.identifier];
+                break;
+            }
+            case UAAutomationScheduleReadyResultContinue: {
+                UA_LTRACE("Execute schedule:%@.", schedule);
+
+                [delegate executeSchedule:schedule completionHandler:^{
+                    UA_STRONGIFY(self)
+                    [self.automationStore getSchedule:schedule.identifier completionHandler:^(UAScheduleData *scheduleData) {
+                        UA_STRONGIFY(self)
+                        [self scheduleFinishedExecuting:scheduleData];
+                    }];
+                }];
+
+                scheduleData.executionState = @(UAScheduleStateExecuting); // executing
+                break;
+            }
+            case UAAutomationScheduleReadyResultNotReady: {
+                UA_LTRACE("Attempted to execute schedule:%@ that is not ready.", schedule);
+                break;
+            }
         }
-
-        [delegate executeSchedule:schedule completionHandler:^{
-            UA_STRONGIFY(self)
-            [self.automationStore getSchedule:schedule.identifier completionHandler:^(UAScheduleData *scheduleData) {
-                UA_STRONGIFY(self)
-                [self scheduleFinishedExecuting:scheduleData];
-            }];
-        }];
-
-        scheduleExecuting = YES;
     }];
 
-    if (scheduleExecuting) {
-        scheduleData.executionState = @(UAScheduleStateExecuting); // executing
-    }
 }
 
 - (void)handleExpiredScheduleData:(nonnull UAScheduleData *)scheduleData {

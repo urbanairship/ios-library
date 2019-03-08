@@ -32,9 +32,34 @@ typedef NS_ENUM(NSInteger, UAAutomationSchedulePrepareResult) {
     UAAutomationSchedulePrepareResultPenalize,
 
     /**
+     * Schedule should be marked invalidated due to stale metadata.
+     */
+    UAAutomationSchedulePrepareResultInvalidate,
+
+    /**
      * Schedule should be cancelled.
      */
     UAAutomationSchedulePrepareResultCancel
+};
+
+/**
+ * Ready results
+ */
+typedef NS_ENUM(NSInteger, UAAutomationScheduleReadyResult) {
+    /**
+     * Schedule should skip executing.
+     */
+    UAAutomationScheduleReadyResultNotReady,
+
+    /**
+     * Schedule is ready for execution.
+     */
+    UAAutomationScheduleReadyResultContinue,
+
+    /**
+     * Schedule is out of date and should be prepared again before it's able to be ready for execution.
+     */
+    UAAutomationScheduleReadyResultInvalidate,
 };
 
 /**
@@ -63,9 +88,9 @@ typedef NS_ENUM(NSInteger, UAAutomationSchedulePrepareResult) {
  * Checks if a schedule is ready to execute.
  *
  * @param schedule The schedule.
- * @returns `YES` if the schedule should be executed, otherwise `NO`.
+ * @returns Ready result of the schedule should be executed.
  */
-- (BOOL)isScheduleReadyToExecute:(UASchedule *)schedule;
+- (UAAutomationScheduleReadyResult)isScheduleReadyToExecute:(UASchedule *)schedule;
 
 /**
  * Executes a schedule.

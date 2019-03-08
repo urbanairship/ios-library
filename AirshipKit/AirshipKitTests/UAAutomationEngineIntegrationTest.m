@@ -999,6 +999,13 @@
     }];
 }
 
+- (void)testPrepareResultInvalidate {
+    [self verifyPrepareResult:UAAutomationSchedulePrepareResultInvalidate verifyWithCompletionHandler:^(UAScheduleData *data) {
+        XCTAssertNotNil(data);
+        XCTAssertEqual(0, [data.triggeredCount integerValue]);
+    }];
+}
+
 - (void)testPrepareResultPenalize {
     [self verifyPrepareResult:UAAutomationSchedulePrepareResultPenalize verifyWithCompletionHandler:^(UAScheduleData *data) {
         XCTAssertNotNil(data);

@@ -89,6 +89,7 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
 @property(nonatomic, strong) UAAutomationEngine *automationEngine;
 @property(nonatomic, strong) NSMutableDictionary *adapters;
 @property(nonatomic, strong) UAInAppRemoteDataClient *remoteDataClient;
+@property(nonatomic, strong) UARemoteDataManager *remoteDataManager;
 @property(nonatomic, strong) UAPreferenceDataStore *dataStore;
 @property(nonatomic, strong) NSOperationQueue *queue;
 @property(nonatomic, strong) NSMutableDictionary *scheduleData;
@@ -163,6 +164,7 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
         self.automationEngine.delegate = self;
         self.tagGroupsLookupManager = tagGroupsLookupManager;
         self.tagGroupsLookupManager.delegate = self;
+        self.remoteDataManager = remoteDataManager;
         self.remoteDataClient = [UAInAppRemoteDataClient clientWithScheduler:self remoteDataManager:remoteDataManager dataStore:dataStore push:push];
         self.dispatcher = dispatcher;
         self.prepareSchedulePipeline = [UARetriablePipeline pipeline];
@@ -439,7 +441,7 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
     return displayCoordinator;
 }
 
-- (BOOL)isScheduleReadyToExecute:(UASchedule *)schedule {
+- (UAAutomationScheduleReadyResult)isScheduleReadyToExecute:(UASchedule *)schedule {
     UA_LTRACE(@"Checking if schedule %@ is ready to execute.", schedule.identifier);
 
     UAInAppMessageScheduleData *data = self.scheduleData[schedule.identifier];
@@ -449,12 +451,12 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
     // If manager is paused
     if (self.isPaused) {
         UA_LTRACE(@"Message display is currently paused. Schedule: %@ not ready.", schedule.identifier);
-        return NO;
+        return UAAutomationScheduleReadyResultNotReady;
     }
 
     if (!data) {
         UA_LERR("No data for schedule: %@", schedule.identifier);
-        return NO;
+        return UAAutomationScheduleReadyResultNotReady;
     }
 
     // If display coordinator puts back pressure on display, check again when it's ready
@@ -467,17 +469,17 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
             }
         }];
 
-        return NO;
+        return UAAutomationScheduleReadyResultNotReady;
     }
 
 
     if (![data.adapter isReadyToDisplay]) {
         UA_LTRACE(@"Adapter ready check failed. Schedule: %@ not ready.", schedule.identifier);
-        return NO;
+        return UAAutomationScheduleReadyResultNotReady;
     }
 
     UA_LTRACE(@"Schedule %@ ready!", schedule.identifier);
-    return YES;
+    return UAAutomationScheduleReadyResultContinue;
 }
 
 - (void)executeSchedule:(nonnull UASchedule *)schedule

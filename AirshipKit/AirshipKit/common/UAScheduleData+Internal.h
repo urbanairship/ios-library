@@ -82,7 +82,7 @@ extern NSUInteger const UAScheduleDataVersion;
 /**
  * The number of times the schedule has been triggered and executed.
  *
- * If the schedule prepare result is `skip`, this number will not be incremented.
+ * If the schedule prepare result is `skip` or `invalidate`, this number will not be incremented.
  */
 @property (nullable, nonatomic, retain) NSNumber *triggeredCount;
 
