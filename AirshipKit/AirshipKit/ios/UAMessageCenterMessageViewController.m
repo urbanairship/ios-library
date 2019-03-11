@@ -466,10 +466,17 @@ static NSString *urlForBlankPage = @"about:blank";
 
     // Display a retry alert
     UA_WEAKIFY(self);
-    [self displayFailedToLoadAlertOnOK:nil onRetry:^{
+    [self displayFailedToLoadAlertOnOK:^{
+        self.message = nil;
+        [self.navigationController.navigationController popToRootViewControllerAnimated:YES];
+    } onRetry:^{
         UA_STRONGIFY(self);
         [self loadMessage:self.message onlyIfChanged:NO];
     }];
+}
+
+- (void)webView:(WKWebView *)webView didFailProvisionalNavigation:(WKNavigation *)navigation withError:(NSError *)error {
+    [self webView:webView didFailNavigation:navigation withError:error];
 }
 
 - (void)closeWindowAnimated:(BOOL)animated {

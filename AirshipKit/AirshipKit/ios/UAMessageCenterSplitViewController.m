@@ -83,7 +83,7 @@
     [super viewDidAppear:animated];
     if (self.showMessageViewOnViewDidAppear) {
         self.showMessageViewOnViewDidAppear = NO;
-        if (self.collapsed) {
+        if (self.collapsed && self.messageViewController.message) {
             [self.listViewController displayMessageForID:self.messageViewController.message.messageID];
         }
     }
