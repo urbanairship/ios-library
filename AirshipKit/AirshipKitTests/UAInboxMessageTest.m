@@ -3,8 +3,10 @@
 #import "UABaseTest.h"
 #import "UAInboxMessage+Internal.h"
 #import "UAInboxMessageList+Internal.h"
+#import "UATestDate.h"
 
 @interface UAInboxMessageTest : UABaseTest
+@property (nonatomic, strong) UATestDate *testDate;
 @end
 
 @implementation UAInboxMessageTest
@@ -19,23 +21,22 @@
         builder.unread = YES;
         builder.messageSent = [NSDate date];
         builder.messageExpiration = expiration;
+        builder.date = self.testDate;
     }];
 }
 
 - (void)setUp {
     [super setUp];
+
+    NSDate *currentDate = [NSDate date];
+    self.testDate = [[UATestDate alloc] initWithAbsoluteTime:currentDate];
 }
 
 /**
  * Test isExpired
  */
 - (void)testIsExpired {
-
-    NSDate *currentDate = [NSDate date];
-
-    // Mock the date to always return currentDate
-    id mockDate = [self mockForClass:[NSDate class]];
-    [[[mockDate stub] andReturn:currentDate] date];
+    NSDate *currentDate = [self.testDate now];
 
     UAInboxMessage *message = [self createMessageWithID:@"1234" expiration:nil];
     XCTAssertFalse([message isExpired], @"A message cannnot expire if the expiration date is nil");
@@ -48,8 +49,6 @@
 
     message = [self createMessageWithID:@"1234" expiration:[currentDate dateByAddingTimeInterval:-1]];
     XCTAssertTrue([message isExpired], @"messageExpiration is before the current date");
-
-    [mockDate stopMocking];
 }
 
 
