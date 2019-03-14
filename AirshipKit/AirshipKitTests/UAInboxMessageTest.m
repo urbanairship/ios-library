@@ -28,8 +28,7 @@
 - (void)setUp {
     [super setUp];
 
-    NSDate *currentDate = [NSDate date];
-    self.testDate = [[UATestDate alloc] initWithAbsoluteTime:currentDate];
+    self.testDate = [[UATestDate alloc] initWithAbsoluteTime:[NSDate date]];
 }
 
 /**
