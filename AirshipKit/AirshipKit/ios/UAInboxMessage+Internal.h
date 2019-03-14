@@ -2,6 +2,7 @@
 
 #import "UAInboxMessage.h"
 #import "UAInboxMessageData+Internal.h"
+#import "UADate+Internal.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -74,6 +75,11 @@ NS_ASSUME_NONNULL_BEGIN
  * The message list instance.
  */
 @property (nonatomic, weak) UAInboxMessageList *messageList;
+
+/**
+ * The UADate instance (used for testing).
+ */
+@property (nonatomic, strong) UADate *date;
 
 @end
 

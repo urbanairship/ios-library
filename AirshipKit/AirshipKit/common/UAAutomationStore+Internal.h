@@ -2,6 +2,7 @@
 
 #import <Foundation/Foundation.h>
 #import "UAScheduleTrigger+Internal.h"
+#import "UADate+Internal.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -25,10 +26,11 @@ NS_ASSUME_NONNULL_BEGIN
 * @param storeName The store name.
 * @param scheduleLimit The maximum number of schedules available for storage
 * @param inMemory Whether to use an in-memory database. If `NO` the store will default to SQLite.
-
+* @param date The UADate instance.
+*
 * @return Automation store.
 */
-+ (instancetype)automationStoreWithStoreName:(NSString *)storeName scheduleLimit:(NSUInteger)scheduleLimit inMemory:(BOOL)inMemory;
++ (instancetype)automationStoreWithStoreName:(NSString *)storeName scheduleLimit:(NSUInteger)scheduleLimit inMemory:(BOOL)inMemory date:(UADate *)date;
 
 /**
  * Factory method for automation store.

@@ -20,6 +20,7 @@
 @interface UAAutomationStore ()
 @property (nonatomic, strong) NSManagedObjectContext *managedContext;
 @property (nonatomic, copy) NSString *storeName;
+@property (nonatomic, strong) UADate *date;
 @property (nonatomic, assign) NSUInteger scheduleLimit;
 @property (nonatomic, assign) BOOL inMemory;
 @property (nonatomic, assign) BOOL finished;
@@ -27,13 +28,14 @@
 
 @implementation UAAutomationStore
 
-- (instancetype)initWithStoreName:(NSString *)storeName scheduleLimit:(NSUInteger)scheduleLimit inMemory:(BOOL)inMemory {
+- (instancetype)initWithStoreName:(NSString *)storeName scheduleLimit:(NSUInteger)scheduleLimit inMemory:(BOOL)inMemory date:(UADate *)date {
     self = [super init];
 
     if (self) {
         self.storeName = storeName;
         self.scheduleLimit = scheduleLimit;
         self.inMemory = inMemory;
+        self.date = date;
         self.finished = NO;
 
         NSURL *modelURL = [[UAirship resources] URLForResource:@"UAAutomation" withExtension:@"momd"];
@@ -66,12 +68,12 @@
     return self;
 }
 
-+ (instancetype)automationStoreWithStoreName:(NSString *)storeName scheduleLimit:(NSUInteger)scheduleLimit inMemory:(BOOL)inMemory {
-    return [[UAAutomationStore alloc] initWithStoreName:storeName scheduleLimit:scheduleLimit inMemory:inMemory];
++ (instancetype)automationStoreWithStoreName:(NSString *)storeName scheduleLimit:(NSUInteger)scheduleLimit inMemory:(BOOL)inMemory date:(UADate *)date {
+    return [[UAAutomationStore alloc] initWithStoreName:storeName scheduleLimit:scheduleLimit inMemory:inMemory date:date];
 }
 
 + (instancetype)automationStoreWithStoreName:(NSString *)storeName scheduleLimit:(NSUInteger)scheduleLimit {
-    return [[UAAutomationStore alloc] initWithStoreName:storeName scheduleLimit:scheduleLimit inMemory:NO];
+    return [[UAAutomationStore alloc] initWithStoreName:storeName scheduleLimit:scheduleLimit inMemory:NO date:[[UADate alloc] init]];
 }
 
 - (void)protectedDataAvailable {
@@ -186,12 +188,12 @@
 }
 
 - (void)getSchedules:(NSString *)groupID completionHandler:(void (^)(NSArray<UAScheduleData *> *))completionHandler {
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"group == %@ && end >= %@", groupID, [NSDate date]];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"group == %@ && end >= %@", groupID, self.date.now];
     [self fetchSchedulesWithPredicate:predicate limit:self.scheduleLimit completionHandler:completionHandler];
 }
 
 - (void)getSchedules:(void (^)(NSArray<UAScheduleData *> *))completionHandler {
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"end >= %@", [NSDate date]];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"end >= %@", self.date.now];
     [self fetchSchedulesWithPredicate:predicate limit:self.scheduleLimit completionHandler:completionHandler];
 }
 
@@ -201,14 +203,14 @@
 }
 
 - (void)getSchedule:(NSString *)scheduleID completionHandler:(void (^)(UAScheduleData *))completionHandler {
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"identifier == %@ && end >= %@", scheduleID, [NSDate date]];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"identifier == %@ && end >= %@", scheduleID, self.date.now];
     [self fetchSchedulesWithPredicate:predicate limit:1 completionHandler:^(NSArray<UAScheduleData *> *result) {
         completionHandler(result.count == 1 ? result.firstObject : nil);
     }];
 }
 
 - (void)getActiveExpiredSchedules:(void (^)(NSArray<UAScheduleData *> *))completionHandler {
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"end <= %@ && executionState != %d", [NSDate date], UAScheduleStateFinished];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"end <= %@ && executionState != %d", self.date.now, UAScheduleStateFinished];
     [self fetchSchedulesWithPredicate:predicate limit:self.scheduleLimit completionHandler:completionHandler];
 }
 
@@ -225,7 +227,7 @@
     NSString *format = @"(schedule.identifier LIKE %@ AND type = %ld AND start <= %@) AND ((delay != nil AND schedule.executionState in %@) OR (delay == nil AND schedule.executionState == %d))";
 
     NSArray *cancelTriggerState = @[@(UAScheduleStateTimeDelayed), @(UAScheduleStateWaitingScheduleConditions), @(UAScheduleStatePreparingSchedule)];
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:format, scheduleID, type, [NSDate date], cancelTriggerState, UAScheduleStateIdle];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:format, scheduleID, type, self.date.now, cancelTriggerState, UAScheduleStateIdle];
 
     [self fetchTriggersWithPredicate:predicate completionHandler:completionHandler];
 }

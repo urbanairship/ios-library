@@ -11,6 +11,8 @@
 #import "UAUtils+Internal.h"
 #import "UAInboxStore+Internal.h"
 #import "UATestDispatcher.h"
+#import "UATestDate.h"
+#import "UAInboxMessage.h"
 
 @protocol UAInboxMessageListMockNotificationObserver
 - (void)messageListWillUpdate;
@@ -29,6 +31,7 @@
 @property (nonatomic, strong) UAInboxMessageList *messageList;
 @property (nonatomic, strong) NSNotificationCenter *notificationCenter;
 @property (nonatomic, strong) UAInboxStore *testStore;
+@property (nonatomic, strong) UATestDate *testDate;
 
 @end
 
@@ -39,6 +42,7 @@
 
     self.userCreated = YES;
     self.mockUser = [self mockForClass:[UAUser class]];
+    self.testDate = [[UATestDate alloc] init];
 
     UAUserData *userData = [UAUserData dataWithUsername:@"username" password:@"password" url:@"url"];
 
@@ -68,7 +72,8 @@
                                                         config:[UAConfig config]
                                                     inboxStore:self.testStore
                                             notificationCenter:self.notificationCenter
-                                                    dispatcher:[UATestDispatcher testDispatcher]];
+                                                    dispatcher:[UATestDispatcher testDispatcher]
+                                                          date:self.testDate];
 
     //inject the API client
     self.messageList.client = self.mockInboxAPIClient;
@@ -187,6 +192,58 @@
     [self.mockMessageListNotificationObserver verify];
 }
 
+/**
+ * Test failed fetch will still refresh the message list by
+ * filtering out any expired messages.
+ */
+- (void)testFilterMessagesOnRefresh {
+
+    self.testDate.absoluteTime = [NSDate dateWithTimeIntervalSince1970:0];
+    NSDate *expiry = [NSDate dateWithTimeInterval:1 sinceDate:self.testDate.absoluteTime];
+
+    XCTestExpectation *inboxSynced = [self expectationWithDescription:@"inboxSynced"];
+
+    [self.testStore syncMessagesWithResponse:@[[self createMessageDictionaryWithMessageID:@"messageID" expiry:expiry]]
+                            completionHandler:^(BOOL success) {
+                                [inboxSynced fulfill];
+                            }];
+
+    [self waitForTestExpectations];
+
+    // Setup a failure response
+    [[[self.mockInboxAPIClient stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        UAInboxClientFailureBlock failureBlock = (__bridge UAInboxClientFailureBlock) arg;
+        failureBlock();
+    }] retrieveMessageListOnSuccess:[OCMArg any] onFailure:[OCMArg any]];
+
+    // Refresh the listing to pick up the inbox store change
+    XCTestExpectation *testExpectation = [self expectationWithDescription:@"updated message list"];
+    [self.messageList retrieveMessageListWithSuccessBlock:nil withFailureBlock:^{
+        [testExpectation fulfill];
+    }];
+
+    [self waitForTestExpectations];
+
+    XCTAssertEqual(1, self.messageList.messages.count);
+    XCTAssertEqual(@"messageID", self.messageList.messages[0].messageID);
+
+    // Move the data past the expiry
+    self.testDate.absoluteTime = [NSDate dateWithTimeInterval:1 sinceDate:expiry];
+
+    // Refresh the message again
+    testExpectation = [self expectationWithDescription:@"request finished"];
+    [self.messageList retrieveMessageListWithSuccessBlock:nil withFailureBlock:^{
+        [testExpectation fulfill];
+    }];
+
+    [self waitForTestExpectations];
+
+    // Verify the message was filtered out
+    XCTAssertEqual(0, self.messageList.messages.count);
+}
+
 //if successful, the observer should get messageListWillLoad and messageListLoaded callbacks.
 //UAInboxMessageListWillUpdateNotification and UAInboxMessageListUpdatedNotification should be emitted.
 //if dispose is called on the disposable, the succcessBlock should not be executed.
@@ -297,6 +354,20 @@
     XCTAssertFalse(fail, @"callback blocks should not have been executed");
 
     [self.mockMessageListNotificationObserver verify];
+}
+
+- (NSDictionary *)createMessageDictionaryWithMessageID:(NSString *)messageID expiry:(NSDate *)expiry {
+    NSMutableDictionary *payload = [[self createMessageDictionaryWithMessageID:messageID] mutableCopy];
+
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    dateFormatter.locale = [NSLocale localeWithLocaleIdentifier:@"en_US_POSIX"];
+    dateFormatter.timeZone = [NSTimeZone timeZoneForSecondsFromGMT:0];
+    dateFormatter.dateFormat = @"yyyy-MM-dd'T'HH:mm:ss.SSS";
+
+    NSString *expiryString = [dateFormatter stringFromDate:expiry];
+    [payload setValue:expiryString forKey:@"message_expiry"];
+
+    return [payload copy];
 }
 
 - (NSDictionary *)createMessageDictionaryWithMessageID:(NSString *)messageID {

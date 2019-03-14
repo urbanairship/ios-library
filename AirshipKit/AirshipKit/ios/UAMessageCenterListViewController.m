@@ -234,21 +234,20 @@
         self.refreshControlAnimating = YES;
         UA_WEAKIFY(self)
         void (^retrieveMessageCompletionBlock)(void) = ^(void){
-           [[UADispatcher mainDispatcher] dispatchAsync:^{
-                [CATransaction begin];
-                [CATransaction setCompletionBlock: ^{
-                    UA_STRONGIFY(self)
+            [CATransaction begin];
+            [CATransaction setCompletionBlock: ^{
+                UA_STRONGIFY(self)
 
-                    // refresh animation has finished
-                    self.refreshControlAnimating = NO;
-                    [self chooseMessageDisplayAndReload];
-                }];
-                [sender endRefreshing];
-                [CATransaction commit];
-           }];
+                // refresh animation has finished
+                self.refreshControlAnimating = NO;
+                [self chooseMessageDisplayAndReload];
+            }];
+            [sender endRefreshing];
+            [CATransaction commit];
         };
 
-        [[UAirship inbox].messageList retrieveMessageListWithSuccessBlock:retrieveMessageCompletionBlock withFailureBlock:retrieveMessageCompletionBlock];
+        [[UAirship inbox].messageList retrieveMessageListWithSuccessBlock:retrieveMessageCompletionBlock
+                                                         withFailureBlock:retrieveMessageCompletionBlock];
     } else {
         self.refreshControlAnimating = NO;
     }
@@ -673,17 +672,13 @@
     UA_WEAKIFY(self);
     if (sender == self.markAsReadButtonItem) {
         [[UAirship inbox].messageList markMessagesRead:selectedMessages completionHandler:^{
-            [[UADispatcher mainDispatcher] dispatchAsync:^{
-                UA_STRONGIFY(self)
-                [self refreshAfterBatchUpdate];
-            }];
+            UA_STRONGIFY(self)
+            [self refreshAfterBatchUpdate];
         }];
     } else {
         [[UAirship inbox].messageList markMessagesDeleted:selectedMessages completionHandler:^{
-            [[UADispatcher mainDispatcher] dispatchAsync:^{
-                UA_STRONGIFY(self)
-                [self refreshAfterBatchUpdate];
-            }];
+            UA_STRONGIFY(self)
+            [self refreshAfterBatchUpdate];
         }];
     }
 }
@@ -786,10 +781,8 @@
     if (message) {
         UA_WEAKIFY(self);
        [[UAirship inbox].messageList markMessagesDeleted:@[message] completionHandler:^{
-           [[UADispatcher mainDispatcher] dispatchAsync:^{
-               UA_STRONGIFY(self)
-               [self refreshAfterBatchUpdate];
-           }];
+           UA_STRONGIFY(self)
+           [self refreshAfterBatchUpdate];
         }];
     }
 }
@@ -923,17 +916,12 @@
 #pragma mark NSNotificationCenter callbacks
 
 - (void)messageListUpdated {
-    UA_WEAKIFY(self);
-   [[UADispatcher mainDispatcher] dispatchAsync:^{
-        UA_STRONGIFY(self)
+    // copy the back-end list of messages as it can change from under the UI
+    [self copyMessages];
 
-        // copy the back-end list of messages as it can change from under the UI
-        [self copyMessages];
-        
-        if (!self.refreshControlAnimating) {
-            [self chooseMessageDisplayAndReload];
-        }
-   }];
+    if (!self.refreshControlAnimating) {
+        [self chooseMessageDisplayAndReload];
+    }
 }
 
 - (void)chooseMessageDisplayAndReload {

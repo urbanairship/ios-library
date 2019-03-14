@@ -4,7 +4,7 @@
 #import "UAInboxAPIClient+Internal.h"
 #import "UAInboxStore+Internal.h"
 #import "UADispatcher+Internal.h"
-
+#import "UADate+Internal.h"
 NS_ASSUME_NONNULL_BEGIN
 
 /*
@@ -86,6 +86,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param inboxStore The inbox message store.
  * @param notificationCenter The notification center.
  * @param dispatcher The dispatcher.
+ * @param date The UADate instance.
  * @return An allocated UAInboxMessageList instance.
  */
 + (instancetype)messageListWithUser:(UAUser *)user
@@ -93,7 +94,8 @@ NS_ASSUME_NONNULL_BEGIN
                              config:(UAConfig *)config
                          inboxStore:(UAInboxStore *)inboxStore
                  notificationCenter:(NSNotificationCenter *)notificationCenter
-                         dispatcher:(UADispatcher *)dispatcher;
+                         dispatcher:(UADispatcher *)dispatcher
+                               date:(UADate *)date;
 
 
 @end
