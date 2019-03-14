@@ -4,7 +4,6 @@ import UIKit
 import AirshipKit
 
 class TagsTableViewController: UITableViewController {
-
     let addTagsSegue:String = "addTagsSegue"
 
     override func viewDidLoad() {
@@ -14,9 +13,15 @@ class TagsTableViewController: UITableViewController {
         navigationItem.rightBarButtonItem = addButton
     }
 
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated);
+    func setTableViewTheme() {
+        tableView.backgroundColor = ThemeManager.shared.currentTheme.Background
+        navigationController?.navigationBar.titleTextAttributes = [.foregroundColor:ThemeManager.shared.currentTheme.PrimaryText]
+        navigationController?.navigationBar.barTintColor = ThemeManager.shared.currentTheme.NavigationBarBackground;
+    }
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated);
+        setTableViewTheme()
         tableView.reloadData()
     }
 
@@ -39,6 +44,9 @@ class TagsTableViewController: UITableViewController {
             cell = UITableViewCell.init(style: UITableViewCell.CellStyle.default, reuseIdentifier:"tagCell")
         }
         cell.textLabel!.text = UAirship.push().tags[indexPath.row]
+        cell.textLabel?.textColor = ThemeManager.shared.currentTheme.PrimaryText
+        cell.detailTextLabel?.textColor = ThemeManager.shared.currentTheme.SecondaryText
+        cell.backgroundColor = ThemeManager.shared.currentTheme.Background
 
         return cell
     }

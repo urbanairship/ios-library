@@ -7,9 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		DF4E4928221CDB5B00F306A5 /* AirshipKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DFE70146212F216600A708D5 /* AirshipKit.framework */; };
-		DF4EDA6121E41D3900804CB3 /* ButtonsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF4EDA6021E41D3900804CB3 /* ButtonsTableViewController.swift */; };
-		DF4EDA6821E4261700804CB3 /* ButtonDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF4EDA6721E4261700804CB3 /* ButtonDetailViewController.swift */; };
+		3C75AA98221CF5B40028AD9B /* LastPayloadTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C75AA92221CF5B40028AD9B /* LastPayloadTableViewController.swift */; };
 		4582DB302219EADF0018E02C /* DebugKitUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4582DB2F2219EADF0018E02C /* DebugKitUtils.swift */; };
 		4594E60622164F2F00DCD672 /* DebugKitData.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 4594E6012216466C00DCD672 /* DebugKitData.xcdatamodeld */; };
 		4594E6082217346600DCD672 /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4594E6072217346600DCD672 /* Event.swift */; };
@@ -18,7 +16,11 @@
 		459D70E52214E82B005A3BB9 /* EventsDetailTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 459D70E12214E82A005A3BB9 /* EventsDetailTableViewController.swift */; };
 		459D70E62214E82B005A3BB9 /* EventsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 459D70E22214E82A005A3BB9 /* EventsViewController.swift */; };
 		459D70EE2215FAED005A3BB9 /* EventDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 459D70ED2215FAED005A3BB9 /* EventDataManager.swift */; };
-		3C75AA98221CF5B40028AD9B /* LastPayloadTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C75AA92221CF5B40028AD9B /* LastPayloadTableViewController.swift */; };
+		45EC352A222F5ADE00F5A97D /* ThemeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45EC3524222F5ADE00F5A97D /* ThemeManager.swift */; };
+		45EC3530223052E200F5A97D /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45EC352F223052E200F5A97D /* Theme.swift */; };
+		DF4E4928221CDB5B00F306A5 /* AirshipKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DFE70146212F216600A708D5 /* AirshipKit.framework */; };
+		DF4EDA6121E41D3900804CB3 /* ButtonsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF4EDA6021E41D3900804CB3 /* ButtonsTableViewController.swift */; };
+		DF4EDA6821E4261700804CB3 /* ButtonDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF4EDA6721E4261700804CB3 /* ButtonDetailViewController.swift */; };
 		DF4EDA9C21E7FF1500804CB3 /* CustomEventTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF4EDA9021E7FF1500804CB3 /* CustomEventTableViewCell.swift */; };
 		DF4EDA9D21E7FF1500804CB3 /* CustomPropertyAddStringsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF4EDA9121E7FF1500804CB3 /* CustomPropertyAddStringsTableViewController.swift */; };
 		DF4EDA9E21E7FF1500804CB3 /* CustomPropertyStringsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF4EDA9221E7FF1500804CB3 /* CustomPropertyStringsTableViewController.swift */; };
@@ -101,6 +103,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		3C75AA92221CF5B40028AD9B /* LastPayloadTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LastPayloadTableViewController.swift; sourceTree = "<group>"; };
 		4582DB2F2219EADF0018E02C /* DebugKitUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugKitUtils.swift; sourceTree = "<group>"; };
 		4594E6022216466C00DCD672 /* DebugKitData.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = DebugKitData.xcdatamodel; sourceTree = "<group>"; };
 		4594E6072217346600DCD672 /* Event.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
@@ -109,7 +112,8 @@
 		459D70E12214E82A005A3BB9 /* EventsDetailTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventsDetailTableViewController.swift; sourceTree = "<group>"; };
 		459D70E22214E82A005A3BB9 /* EventsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventsViewController.swift; sourceTree = "<group>"; };
 		459D70ED2215FAED005A3BB9 /* EventDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventDataManager.swift; sourceTree = "<group>"; };
-		3C75AA92221CF5B40028AD9B /* LastPayloadTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LastPayloadTableViewController.swift; sourceTree = "<group>"; };
+		45EC3524222F5ADE00F5A97D /* ThemeManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ThemeManager.swift; sourceTree = "<group>"; };
+		45EC352F223052E200F5A97D /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		DF4EDA6021E41D3900804CB3 /* ButtonsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonsTableViewController.swift; sourceTree = "<group>"; };
 		DF4EDA6721E4261700804CB3 /* ButtonDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonDetailViewController.swift; sourceTree = "<group>"; };
 		DF4EDA9021E7FF1500804CB3 /* CustomEventTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomEventTableViewCell.swift; sourceTree = "<group>"; };
@@ -172,13 +176,13 @@
 		DF4EDA8F21E7FF1500804CB3 /* Custom-Events */ = {
 			isa = PBXGroup;
 			children = (
-				DF4EDA9021E7FF1500804CB3 /* CustomEventTableViewCell.swift */,
 				DF4EDA9121E7FF1500804CB3 /* CustomPropertyAddStringsTableViewController.swift */,
-				DF4EDA9221E7FF1500804CB3 /* CustomPropertyStringsTableViewController.swift */,
+				DF4EDA9621E7FF1500804CB3 /* CustomPropertyAdderTableViewCell.swift */,
 				DF4EDA9321E7FF1500804CB3 /* CustomPropertyTableViewCell.swift */,
+				DF4EDA9021E7FF1500804CB3 /* CustomEventTableViewCell.swift */,
+				DF4EDA9221E7FF1500804CB3 /* CustomPropertyStringsTableViewController.swift */,
 				DF4EDA9421E7FF1500804CB3 /* CustomPropertyTableViewController.swift */,
 				DF4EDA9521E7FF1500804CB3 /* CustomEventTableViewController.swift */,
-				DF4EDA9621E7FF1500804CB3 /* CustomPropertyAdderTableViewCell.swift */,
 				DF4EDAA321E7FFDE00804CB3 /* CustomEvents.storyboard */,
 			);
 			path = "Custom-Events";
@@ -233,6 +237,8 @@
 			isa = PBXGroup;
 			children = (
 				DFE70122212F1FAA00A708D5 /* AirshipDebugKit.h */,
+				45EC3524222F5ADE00F5A97D /* ThemeManager.swift */,
+				45EC352F223052E200F5A97D /* Theme.swift */,
 				DFE7012B212F202400A708D5 /* AirshipDebugKit.swift */,
 				4582DB2F2219EADF0018E02C /* DebugKitUtils.swift */,
 				DFE70123212F1FAA00A708D5 /* Info.plist */,
@@ -431,6 +437,7 @@
 				459D70E52214E82B005A3BB9 /* EventsDetailTableViewController.swift in Sources */,
 				459D70EE2215FAED005A3BB9 /* EventDataManager.swift in Sources */,
 				DFE70132212F202500A708D5 /* AirshipDebugKit.swift in Sources */,
+				45EC352A222F5ADE00F5A97D /* ThemeManager.swift in Sources */,
 				DFE70137212F202500A708D5 /* DeviceInfoViewController.swift in Sources */,
 				DFE70135212F202500A708D5 /* AddAssociatedIdentifiersTableViewController.swift in Sources */,
 				DFC78785216BE65200198AF6 /* UAStaticTableViewController.swift in Sources */,
@@ -444,6 +451,7 @@
 				DF4EDA6821E4261700804CB3 /* ButtonDetailViewController.swift in Sources */,
 				DFDE9855216F0EA0005846B6 /* AudienceDetailViewController.swift in Sources */,
 				DFE70136212F202500A708D5 /* TagsTableViewController.swift in Sources */,
+				45EC3530223052E200F5A97D /* Theme.swift in Sources */,
 				DF4EDA9F21E7FF1600804CB3 /* CustomPropertyTableViewCell.swift in Sources */,
 				DFE70133212F202500A708D5 /* AssociatedIdentifiersTableViewController.swift in Sources */,
 				459D70E62214E82B005A3BB9 /* EventsViewController.swift in Sources */,

@@ -22,6 +22,17 @@ class UAStaticTableViewController: UITableViewController {
             return UITableView.automaticDimension
         }
     }
+
+    func setTableViewTheme() {
+        tableView.backgroundColor = ThemeManager.shared.currentTheme.Background;
+        navigationController?.navigationBar.titleTextAttributes = [.foregroundColor:ThemeManager.shared.currentTheme.PrimaryText]
+        navigationController?.navigationBar.barTintColor = ThemeManager.shared.currentTheme.NavigationBarBackground;
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setTableViewTheme()
+    }
     
     func heightForCell(_ cell: UITableViewCell, resizingLabel: UILabel) -> CGFloat {
         cell.layoutIfNeeded()

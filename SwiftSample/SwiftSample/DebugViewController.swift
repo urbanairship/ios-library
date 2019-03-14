@@ -5,10 +5,10 @@ import AirshipDebugKit
 
 class DebugViewController: UITableViewController {
 
-    @IBOutlet var deviceInfoCell: UITableViewCell!
-    @IBOutlet var inAppAutomationCell: UITableViewCell!
-    @IBOutlet var customEventsCell: UITableViewCell!
-    @IBOutlet var eventsCell: UITableViewCell!
+    @IBOutlet private weak var deviceInfoCell: UITableViewCell!
+    @IBOutlet private weak var inAppAutomationCell: UITableViewCell!
+    @IBOutlet private weak var customEventsCell: UITableViewCell!
+    @IBOutlet private weak var eventsCell: UITableViewCell!
 
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

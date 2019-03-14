@@ -8,8 +8,19 @@ import AirshipKit
  * in the table.
  */
 class TriggerCell: UITableViewCell {
-    @IBOutlet var triggerTypeLabel: UILabel!
-    @IBOutlet var triggerGoalLabel: UILabel!
+    @IBOutlet weak var triggerTypeLabel: UILabel!
+    @IBOutlet weak var triggerGoalLabel: UILabel!
+
+    func setCellTheme() {
+        triggerTypeLabel.textColor = ThemeManager.shared.currentTheme.PrimaryText
+        triggerGoalLabel.textColor = ThemeManager.shared.currentTheme.SecondaryText
+        backgroundColor = ThemeManager.shared.currentTheme.Background
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        setCellTheme()
+    }
 }
 
 /**
@@ -22,7 +33,16 @@ class TriggerTableViewController: UITableViewController {
     /* The UAScheduleTriggers to be displayed. */
     public var triggers : [UAScheduleTrigger]?
 
-    // MARK: - Table view data source
+    func setTableViewTheme() {
+        tableView.backgroundColor = ThemeManager.shared.currentTheme.Background;
+        navigationController?.navigationBar.titleTextAttributes = [.foregroundColor:ThemeManager.shared.currentTheme.PrimaryText]
+        navigationController?.navigationBar.barTintColor = ThemeManager.shared.currentTheme.NavigationBarBackground;
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setTableViewTheme()
+    }
 
     override func numberOfSections(in tableView: UITableView) -> Int {
         return 1

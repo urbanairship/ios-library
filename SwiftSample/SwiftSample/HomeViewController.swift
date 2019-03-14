@@ -5,8 +5,8 @@ import AirshipKit
 
 class HomeViewController: UIViewController {
 
-    @IBOutlet var enablePushButton: UIButton!
-    @IBOutlet var channelIDButton: UIButton!
+    @IBOutlet private weak var enablePushButton: UIButton!
+    @IBOutlet private weak var channelIDButton: UIButton!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -19,6 +19,7 @@ class HomeViewController: UIViewController {
     }
 
     override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         refreshView()
     }
 

@@ -3,10 +3,21 @@
 import UIKit
 
 class CustomEventTableViewCell: UITableViewCell {
-    @IBOutlet var eventPropertyLabel: UILabel!
-    @IBOutlet var textInputField: UITextField!
+    @IBOutlet weak var eventPropertyLabel: UILabel!
+    @IBOutlet weak var textInputField: UITextField!
 
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
+    }
+
+    func setCellTheme() {
+        eventPropertyLabel.textColor = ThemeManager.shared.currentTheme.PrimaryText
+        textInputField.textColor = ThemeManager.shared.currentTheme.SecondaryText
+        backgroundColor = ThemeManager.shared.currentTheme.Background
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        self.setCellTheme()
     }
 }

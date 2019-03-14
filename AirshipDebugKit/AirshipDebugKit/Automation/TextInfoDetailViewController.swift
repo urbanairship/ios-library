@@ -14,21 +14,60 @@ class TextInfoDetailViewController: UAStaticTableViewController {
     /* The UAInAppMessageTextInfo to be displayed. */
     public var textInfo : UAInAppMessageTextInfo?
 
-    @IBOutlet var textCell: UITableViewCell!
-    @IBOutlet var textLabel: UILabel!
-    @IBOutlet var alignmentCell: UITableViewCell!
-    @IBOutlet var alignmentLabel: UILabel!
-    @IBOutlet var styleCell: UITableViewCell!
-    @IBOutlet var styleLabel: UILabel!
-    @IBOutlet var fontFamiliesCell: UITableViewCell!
-    @IBOutlet var fontFamiliesLabel: UILabel!
-    @IBOutlet var sizeCell: UITableViewCell!
-    @IBOutlet var sizeLabel: UILabel!
-    @IBOutlet var colorCell: UITableViewCell!
-    @IBOutlet var colorLabel: UILabel!
-    
+    @IBOutlet private weak var textCell: UITableViewCell!
+    @IBOutlet private weak var textTitle: UILabel!
+    @IBOutlet private weak var textLabel: UILabel!
+
+    @IBOutlet private weak var alignmentCell: UITableViewCell!
+    @IBOutlet private weak var alignmentTitle: UILabel!
+    @IBOutlet private weak var alignmentLabel: UILabel!
+
+    @IBOutlet private weak var styleCell: UITableViewCell!
+    @IBOutlet private weak var styleTitle: UILabel!
+    @IBOutlet private weak var styleLabel: UILabel!
+
+    @IBOutlet private weak var fontFamiliesCell: UITableViewCell!
+    @IBOutlet private weak var fontFamiliesTitle: UILabel!
+    @IBOutlet private weak var fontFamiliesLabel: UILabel!
+
+    @IBOutlet private weak var sizeCell: UITableViewCell!
+    @IBOutlet private weak var sizeTitle: UILabel!
+    @IBOutlet private weak var sizeLabel: UILabel!
+
+    @IBOutlet private weak var colorCell: UITableViewCell!
+    @IBOutlet private weak var colorTitle: UILabel!
+    @IBOutlet private weak var colorLabel: UILabel!
+
+    func setCellTheme() {
+        textCell.backgroundColor = ThemeManager.shared.currentTheme.Background
+        textTitle.textColor = ThemeManager.shared.currentTheme.PrimaryText
+        textLabel.textColor = ThemeManager.shared.currentTheme.SecondaryText
+
+        alignmentCell.backgroundColor = ThemeManager.shared.currentTheme.Background
+        alignmentTitle.textColor = ThemeManager.shared.currentTheme.PrimaryText
+        alignmentLabel.textColor = ThemeManager.shared.currentTheme.SecondaryText
+
+        styleCell.backgroundColor = ThemeManager.shared.currentTheme.Background
+        styleTitle.textColor = ThemeManager.shared.currentTheme.PrimaryText
+        styleLabel.textColor = ThemeManager.shared.currentTheme.SecondaryText
+
+        fontFamiliesCell.backgroundColor = ThemeManager.shared.currentTheme.Background
+        fontFamiliesTitle.textColor = ThemeManager.shared.currentTheme.PrimaryText
+        fontFamiliesLabel.textColor = ThemeManager.shared.currentTheme.SecondaryText
+
+        sizeCell.backgroundColor = ThemeManager.shared.currentTheme.Background
+        sizeTitle.textColor = ThemeManager.shared.currentTheme.PrimaryText
+        sizeLabel.textColor = ThemeManager.shared.currentTheme.SecondaryText
+
+        colorCell.backgroundColor = ThemeManager.shared.currentTheme.Background
+        colorTitle.textColor = ThemeManager.shared.currentTheme.PrimaryText
+        colorLabel.textColor = ThemeManager.shared.currentTheme.SecondaryText
+    }
+
     override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         refreshView()
+        setCellTheme()
     }
     
     @objc func refreshView() {

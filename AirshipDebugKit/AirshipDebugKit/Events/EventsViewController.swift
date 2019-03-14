@@ -17,8 +17,8 @@ class EventCell:UITableViewCell {
 }
 
 class EventsViewController:UIViewController, UITableViewDataSource, UITableViewDelegate, EventDataManagerDelegate {
-    @IBOutlet var tableView:UITableView!
-    @IBOutlet var searchFooter:SearchFooter!
+    @IBOutlet private weak var tableView:UITableView!
+    @IBOutlet private weak var searchFooter:SearchFooter!
 
     let defaultEventCellHeight:CGFloat = 64
 
@@ -35,6 +35,12 @@ class EventsViewController:UIViewController, UITableViewDataSource, UITableViewD
 
         totalEventsCount += 1
         tableView.reloadData()
+    }
+
+    func setTableViewTheme() {
+        tableView.backgroundColor = ThemeManager.shared.currentTheme.Background;
+        navigationController?.navigationBar.titleTextAttributes = [.foregroundColor:ThemeManager.shared.currentTheme.PrimaryText]
+        navigationController?.navigationBar.barTintColor = ThemeManager.shared.currentTheme.NavigationBarBackground;
     }
 
     override func viewDidLoad() {
@@ -99,11 +105,13 @@ class EventsViewController:UIViewController, UITableViewDataSource, UITableViewD
     }
 
     override func viewWillAppear(_ animated:Bool) {
+        super.viewWillAppear(animated)
+
         if let selectionIndexPath = tableView.indexPathForSelectedRow {
             tableView.deselectRow(at:selectionIndexPath, animated:animated)
         }
 
-        super.viewWillAppear(animated)
+        setTableViewTheme()
     }
 
     override func didReceiveMemoryWarning() {
@@ -131,8 +139,12 @@ class EventsViewController:UIViewController, UITableViewDataSource, UITableViewD
         event = displayEvents[indexPath.row]
 
         cell.eventID.text = event.eventID
+        cell.eventID.textColor = ThemeManager.shared.currentTheme.SecondaryText
         cell.eventType.text = event.eventType
+        cell.eventType.textColor = ThemeManager.shared.currentTheme.PrimaryText
         cell.time.text = event.time.toPrettyDateString()
+        cell.time.textColor = ThemeManager.shared.currentTheme.SecondaryText
+        cell.backgroundColor = ThemeManager.shared.currentTheme.Background
 
         return cell
     }

@@ -18,11 +18,20 @@ class CustomPropertyStringsTableViewController: UITableViewController {
         tableView.dataSource = self
     }
 
+    func setTableViewTheme() {
+        self.tableView.backgroundColor = ThemeManager.shared.currentTheme.Background;
+        self.navigationController?.navigationBar.titleTextAttributes = [.foregroundColor:ThemeManager.shared.currentTheme.PrimaryText]
+        self.navigationController?.navigationBar.barTintColor = ThemeManager.shared.currentTheme.NavigationBarBackground;
+    }
+
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated);
 
         let customPropertyTVC = self.navigationController?.viewControllers[2] as! CustomPropertyTableViewController
         stringProperties = customPropertyTVC.stringProperties
+
+        setTableViewTheme()
 
         tableView.reloadData()
     }
@@ -51,6 +60,8 @@ class CustomPropertyStringsTableViewController: UITableViewController {
 
         if let strings = stringProperties {
             cell.textLabel!.text = strings[indexPath.row]
+            cell.textLabel!.textColor = ThemeManager.shared.currentTheme.PrimaryText
+            cell.backgroundColor = ThemeManager.shared.currentTheme.Background
         }
 
         return cell

@@ -4,12 +4,31 @@ import UIKit
 import AirshipKit
 
 class AddTagsTableViewController: UITableViewController, UITextFieldDelegate {
-
-    @IBOutlet var addCustomTagTextField: UITextField!
+    @IBOutlet private weak var addCustomTagCell: UITableViewCell!
+    @IBOutlet private weak var addTagTitle: UILabel!
+    @IBOutlet private weak var addCustomTagTextField: UITextField!
 
     override func viewDidLoad() {
         super.viewDidLoad()
         self.addCustomTagTextField.delegate = self
+    }
+
+    func setCellTheme() {
+        addCustomTagCell.backgroundColor = ThemeManager.shared.currentTheme.Background
+        addTagTitle.textColor = ThemeManager.shared.currentTheme.PrimaryText
+        addCustomTagTextField.textColor = ThemeManager.shared.currentTheme.PrimaryText
+    }
+
+    func setTableViewTheme() {
+        tableView.backgroundColor = ThemeManager.shared.currentTheme.Background;
+        navigationController?.navigationBar.titleTextAttributes = [.foregroundColor:ThemeManager.shared.currentTheme.PrimaryText]
+        navigationController?.navigationBar.barTintColor = ThemeManager.shared.currentTheme.NavigationBarBackground;
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated);
+        setCellTheme()
+        setTableViewTheme()
     }
 
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {

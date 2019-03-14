@@ -8,10 +8,21 @@ import AirshipKit
  * in the table.
  */
 class ButtonCell: UITableViewCell {
-    @IBOutlet var buttonID: UILabel!
-    @IBOutlet var buttonBehavior: UILabel!
+    @IBOutlet weak var buttonID: UILabel!
+    @IBOutlet weak var buttonBehavior: UILabel!
     
     var button : UAInAppMessageButtonInfo?
+
+    func setCellTheme() {
+        backgroundColor = ThemeManager.shared.currentTheme.Background
+        buttonID.textColor = ThemeManager.shared.currentTheme.PrimaryText
+        buttonBehavior.textColor = ThemeManager.shared.currentTheme.SecondaryText
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        setCellTheme()
+    }
 }
 
 /**
@@ -22,7 +33,18 @@ class ButtonsTableViewController: UITableViewController {
 
     /* The UAInAppMessageButtonInfos to be displayed. */
     public var buttons : [ UAInAppMessageButtonInfo ]?
-    
+
+    func setTableViewTheme() {
+        tableView.backgroundColor = ThemeManager.shared.currentTheme.Background;
+        navigationController?.navigationBar.titleTextAttributes = [.foregroundColor:ThemeManager.shared.currentTheme.PrimaryText]
+        navigationController?.navigationBar.barTintColor = ThemeManager.shared.currentTheme.NavigationBarBackground;
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setTableViewTheme()
+    }
+
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {

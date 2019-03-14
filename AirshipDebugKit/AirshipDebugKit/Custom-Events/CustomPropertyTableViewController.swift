@@ -4,19 +4,28 @@ import UIKit
 
 class CustomPropertyTableViewController: UITableViewController, UITextFieldDelegate, UIPickerViewDelegate, UIPickerViewDataSource {
 
-    @IBOutlet var identifierTextField: UITextField!
-    @IBOutlet var typeTableViewCell: UITableViewCell!
+    @IBOutlet private weak var identifierLabel: UILabel!
+    @IBOutlet private weak var identifierCell: UITableViewCell!
+    @IBOutlet private weak var identifierTextField: UITextField!
 
-    @IBOutlet var boolCell: UITableViewCell!
-    @IBOutlet var numberCell: UITableViewCell!
-    @IBOutlet var stringCell: UITableViewCell!
-    @IBOutlet var stringsCell: UITableViewCell!
+    @IBOutlet private weak var boolLabel: UILabel!
+    @IBOutlet private weak var boolCell: UITableViewCell!
+    @IBOutlet private weak var boolSwitch: UISwitch!
 
-    @IBOutlet var typePicker: UIPickerView!
+    @IBOutlet private weak var numberLabel: UILabel!
+    @IBOutlet private weak var numberCell: UITableViewCell!
+    @IBOutlet private weak var numberTextField: UITextField!
 
-    @IBOutlet var boolSwitch: UISwitch!
-    @IBOutlet var stringTextField: UITextField!
-    @IBOutlet var numberTextField: UITextField!
+    @IBOutlet private weak var stringLabel: UILabel!
+    @IBOutlet private weak var stringCell: UITableViewCell!
+    @IBOutlet private weak var stringTextField: UITextField!
+
+    @IBOutlet private weak var stringsTitleLabel: UILabel!
+    @IBOutlet private weak var stringsCell: UITableViewCell!
+
+    @IBOutlet private weak var typeLabel: UILabel!
+    @IBOutlet private weak var typeTableViewCell: UITableViewCell!
+    @IBOutlet private weak var typePicker: UIPickerView!
 
     // Properties
     var propertyKey:String?
@@ -25,7 +34,7 @@ class CustomPropertyTableViewController: UITableViewController, UITextFieldDeleg
     var stringProperty:String?
     var stringProperties:Array<String>?
 
-    @IBOutlet var stringsLabel: UILabel!
+    @IBOutlet private weak var stringsLabel: UILabel!
     
     var types:[String] = ["ua_type_boolean", "ua_type_number", "ua_type_string", "ua_type_strings"]
     
@@ -71,6 +80,41 @@ class CustomPropertyTableViewController: UITableViewController, UITextFieldDeleg
         view.addGestureRecognizer(tap)
     }
 
+    func setCellTheme() {
+        identifierTextField.textColor = ThemeManager.shared.currentTheme.SecondaryText
+        identifierCell.backgroundColor = ThemeManager.shared.currentTheme.Background
+        identifierLabel.textColor = ThemeManager.shared.currentTheme.PrimaryText
+
+        boolLabel.textColor = ThemeManager.shared.currentTheme.PrimaryText
+        boolCell.backgroundColor = ThemeManager.shared.currentTheme.Background
+        boolSwitch.tintColor = ThemeManager.shared.currentTheme.WidgetTint
+        boolSwitch.onTintColor = ThemeManager.shared.currentTheme.WidgetTint
+
+        typePicker.tintColor = ThemeManager.shared.currentTheme.WidgetTint
+        typeTableViewCell.backgroundColor = ThemeManager.shared.currentTheme.Background
+        typeLabel.textColor = ThemeManager.shared.currentTheme.PrimaryText
+        typePicker.backgroundColor = ThemeManager.shared.currentTheme.Background
+
+        numberLabel.textColor = ThemeManager.shared.currentTheme.PrimaryText
+        numberTextField.textColor = ThemeManager.shared.currentTheme.SecondaryText
+        numberCell.backgroundColor = ThemeManager.shared.currentTheme.Background
+
+        stringLabel.textColor = ThemeManager.shared.currentTheme.PrimaryText
+        stringTextField.textColor = ThemeManager.shared.currentTheme.SecondaryText
+        stringCell.backgroundColor = ThemeManager.shared.currentTheme.Background
+
+        stringsTitleLabel.textColor = ThemeManager.shared.currentTheme.PrimaryText
+        stringsLabel.textColor = ThemeManager.shared.currentTheme.SecondaryText
+        stringsCell.backgroundColor = ThemeManager.shared.currentTheme.Background
+    }
+
+    func setTableViewTheme() {
+        tableView.backgroundColor = ThemeManager.shared.currentTheme.Background;
+        navigationController?.navigationBar.titleTextAttributes = [.foregroundColor:ThemeManager.shared.currentTheme.PrimaryText]
+        navigationController?.navigationBar.barTintColor = ThemeManager.shared.currentTheme.NavigationBarBackground;
+        identifierCell.backgroundColor = ThemeManager.shared.currentTheme.Background;
+    }
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
@@ -78,6 +122,9 @@ class CustomPropertyTableViewController: UITableViewController, UITextFieldDeleg
 
         stringProperties = customPropertyTVC.stringProperties
         stringsLabel.text = stringProperties?.joined(separator: ", ")
+
+        setTableViewTheme()
+        setCellTheme()
 
         tableView.reloadData()
     }
@@ -173,8 +220,8 @@ class CustomPropertyTableViewController: UITableViewController, UITextFieldDeleg
         return types.count
     }
 
-    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
-        return types[row].localized()
+    func pickerView(_ pickerView: UIPickerView, attributedTitleForRow row: Int, forComponent component: Int) -> NSAttributedString? {
+        return NSAttributedString(string:types[row].localized(), attributes: [NSAttributedString.Key.foregroundColor: ThemeManager.shared.currentTheme.PrimaryText])
     }
 
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {

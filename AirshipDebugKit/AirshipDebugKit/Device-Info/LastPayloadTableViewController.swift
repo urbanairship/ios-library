@@ -5,8 +5,9 @@ import AirshipKit
 
 class LastPayloadTableViewController: UITableViewController {
 
-    @IBOutlet var lastPushPayloadTextView: UITextView!
-    
+    @IBOutlet private weak var lastPushPayloadTextView: UITextView!
+    @IBOutlet private weak var pushPayloadCell: UITableViewCell!
+
     let lastPushPayloadKey = "com.urbanairship.debug.last_push"
     
     override func viewDidLoad() {
@@ -18,11 +19,22 @@ class LastPayloadTableViewController: UITableViewController {
         navigationItem.rightBarButtonItem = refreshButton
     }
 
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated);
+    func setCellTheme() {
+        pushPayloadCell.backgroundColor = ThemeManager.shared.currentTheme.Background
+        lastPushPayloadTextView.backgroundColor = ThemeManager.shared.currentTheme.Background
+        lastPushPayloadTextView.textColor = ThemeManager.shared.currentTheme.PrimaryText
+    }
+
+    func setTableViewTheme() {
+        tableView.backgroundColor = ThemeManager.shared.currentTheme.Background;
+        navigationController?.navigationBar.titleTextAttributes = [.foregroundColor:ThemeManager.shared.currentTheme.PrimaryText]
+        navigationController?.navigationBar.barTintColor = ThemeManager.shared.currentTheme.NavigationBarBackground;
     }
 
     override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setCellTheme()
+        setTableViewTheme()
         refreshView()
     }
 

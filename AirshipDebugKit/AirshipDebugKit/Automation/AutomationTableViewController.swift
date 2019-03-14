@@ -7,11 +7,23 @@ import AirshipKit
  * The AutomationCell represents a single IAA schedule in the table.
  */
 class AutomationCell: UITableViewCell {
-    @IBOutlet var messageType: UILabel!
-    @IBOutlet var messageName: UILabel!
-    @IBOutlet var messageID: UILabel!
+    @IBOutlet weak var messageType: UILabel!
+    @IBOutlet weak var messageName: UILabel!
+    @IBOutlet weak var messageID: UILabel!
     
     var schedule : UASchedule?
+
+    func setCellTheme() {
+        backgroundColor = ThemeManager.shared.currentTheme.Background
+        messageID.textColor = ThemeManager.shared.currentTheme.PrimaryText
+        messageName.textColor = ThemeManager.shared.currentTheme.SecondaryText
+        messageType.textColor = ThemeManager.shared.currentTheme.WidgetTint
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        setCellTheme()
+    }
 }
 
 /**
@@ -21,6 +33,12 @@ class AutomationCell: UITableViewCell {
 class AutomationTableViewController: UITableViewController {    
     private let inAppMessageManager = UAirship.inAppMessageManager()
     private var schedules : Array<UASchedule>?
+
+    func setTableViewTheme() {
+        tableView.backgroundColor = ThemeManager.shared.currentTheme.Background;
+        navigationController?.navigationBar.titleTextAttributes = [.foregroundColor:ThemeManager.shared.currentTheme.PrimaryText]
+        navigationController?.navigationBar.barTintColor = ThemeManager.shared.currentTheme.NavigationBarBackground;
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -32,7 +50,8 @@ class AutomationTableViewController: UITableViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
- 
+
+        setTableViewTheme()
         refreshInAppAutomation()
     }
     

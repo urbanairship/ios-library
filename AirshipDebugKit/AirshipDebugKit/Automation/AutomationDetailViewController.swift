@@ -14,62 +14,122 @@ class AutomationDetailViewController: UAStaticTableViewController {
     public var schedule : UASchedule?
     
     // Schedule Cells
-    @IBOutlet var scheduleIDCell: UITableViewCell!
-    @IBOutlet weak var scheduleIDLabel: UILabel!
-    @IBOutlet var schedulePriorityCell: UITableViewCell!
-    @IBOutlet var schedulePriorityLabel: UILabel!
-    @IBOutlet var scheduleTriggersCell: UITableViewCell!
-    @IBOutlet var scheduleTriggersLabel: UILabel!
-    @IBOutlet var scheduleLimitLabel: UILabel!
-    @IBOutlet var scheduleStartCell: UITableViewCell!
-    @IBOutlet var scheduleStartLabel: UILabel!
-    @IBOutlet var scheduleEndCell: UITableViewCell!
-    @IBOutlet var scheduleEndLabel: UILabel!
-    @IBOutlet var scheduleDelayCell: UITableViewCell!
-    @IBOutlet var scheduleDelayLabel: UILabel!
-    @IBOutlet var scheduleEditGracePeriodLabel: UILabel!
-    @IBOutlet var scheduleIntervalLabel: UILabel!
-    @IBOutlet var scheduleIsValid: UILabel!
-    @IBOutlet var cancelScheduleCell: UITableViewCell!
-    
+    @IBOutlet private weak var scheduleIDCell: UITableViewCell!
+    @IBOutlet private weak var scheduleIDTitle: UILabel!
+    @IBOutlet private weak var scheduleIDLabel: UILabel!
+
+    @IBOutlet private weak var scheduleStartCell: UITableViewCell!
+    @IBOutlet private weak var scheduleStartTitle: UILabel!
+    @IBOutlet private weak var scheduleStartLabel: UILabel!
+
+    @IBOutlet private weak var scheduleEndTitle: UILabel!
+    @IBOutlet private weak var scheduleEndCell: UITableViewCell!
+    @IBOutlet private weak var scheduleEndLabel: UILabel!
+
+    @IBOutlet private weak var schedulePriorityTitle: UILabel!
+    @IBOutlet private weak var schedulePriorityCell: UITableViewCell!
+    @IBOutlet private weak var schedulePriorityLabel: UILabel!
+
+    @IBOutlet private weak var scheduleLimitTitle: UILabel!
+    @IBOutlet private weak var scheduleLimitCell: UITableViewCell!
+    @IBOutlet private weak var scheduleLimitLabel: UILabel!
+
+    @IBOutlet private weak var scheduleTriggersTitle: UILabel!
+    @IBOutlet private weak var scheduleTriggersCell: UITableViewCell!
+    @IBOutlet private weak var scheduleTriggersLabel: UILabel!
+
+    @IBOutlet private weak var scheduleDelayTitle: UILabel!
+    @IBOutlet private weak var scheduleDelayCell: UITableViewCell!
+    @IBOutlet private weak var scheduleDelayLabel: UILabel!
+
+    @IBOutlet private weak var scheduleEditGracePeriodTitle: UILabel!
+    @IBOutlet private weak var scheduleEditGracePeriodCell: UITableViewCell!
+    @IBOutlet private weak var scheduleEditGracePeriodLabel: UILabel!
+
+    @IBOutlet private weak var scheduleIntervalPeriodCell: UITableViewCell!
+    @IBOutlet private weak var scheduleIntervalPeriodTitle: UILabel!
+    @IBOutlet private weak var scheduleIntervalLabel: UILabel!
+
+    @IBOutlet private weak var scheduleIsValidTitle: UILabel!
+    @IBOutlet private weak var scheduleIsValid: UILabel!
+    @IBOutlet private weak var scheduleIsValidCell: UITableViewCell!
+
+    @IBOutlet private weak var cancelScheduleCell: UITableViewCell!
+    @IBOutlet private weak var cancelScheduleButtonTitle: UILabel!
+
     // Message Cells
-    @IBOutlet var messageIDCell: UITableViewCell!
-    @IBOutlet weak var messageIDLabel: UILabel!
-    @IBOutlet weak var displayTypeLabel: UILabel!
-    @IBOutlet var messageNameCell: UITableViewCell!
-    @IBOutlet var messageNameLabel: UILabel!
-    @IBOutlet var audienceCell: UITableViewCell!
-    @IBOutlet var audienceLabel: UILabel!
+    @IBOutlet private weak var messageNameCell: UITableViewCell!
+    @IBOutlet private weak var messageNameTitle: UILabel!
+    @IBOutlet private weak var messageNameLabel: UILabel!
+
+    @IBOutlet private weak var messageIDTitle: UILabel!
+    @IBOutlet private weak var messageIDCell: UITableViewCell!
+    @IBOutlet private weak var messageIDLabel: UILabel!
+
+    @IBOutlet private weak var displayTypeCell: UITableViewCell!
+    @IBOutlet private weak var displayTypeTitleLabel: UILabel!
+    @IBOutlet private weak var displayTypeLabel: UILabel!
+
+    @IBOutlet private weak var audienceCell: UITableViewCell!
+    @IBOutlet private weak var audienceTitle: UILabel!
+    @IBOutlet private weak var audienceLabel: UILabel!
     
     // Content Cells
-    @IBOutlet var placementCell: UITableViewCell!
-    @IBOutlet var placementLabel: UILabel!
-    @IBOutlet var layoutCell: UITableViewCell!
-    @IBOutlet var layoutLabel: UILabel!
-    @IBOutlet var headingCell: UITableViewCell!
-    @IBOutlet var headingLabel: UILabel!
-    @IBOutlet var bodyCell: UITableViewCell!
-    @IBOutlet var bodyLabel: UILabel!
-    @IBOutlet var mediaCell: UITableViewCell!
-    @IBOutlet var mediaLabel: UILabel!
-    @IBOutlet var buttonsCell: UITableViewCell!
-    @IBOutlet var buttonsLabel: UILabel!
-    @IBOutlet var durationCell: UITableViewCell!
-    @IBOutlet var durationLabel: UILabel!
-    @IBOutlet var actionsCell: UITableViewCell!
-    @IBOutlet var actionsLabel: UILabel!
-    @IBOutlet var borderRadiusCell: UITableViewCell!
-    @IBOutlet var borderRadiusLabel: UILabel!
-    @IBOutlet var backgroundColorCell: UITableViewCell!
-    @IBOutlet var backgroundColorLabel: UILabel!
-    @IBOutlet var dismissButtonColorCell: UITableViewCell!
-    @IBOutlet var dismissButtonColorLabel: UILabel!
-    @IBOutlet var footerCell: UITableViewCell!
-    @IBOutlet var footerLabel: UILabel!
-    @IBOutlet var urlCell: UITableViewCell!
-    @IBOutlet var urlLabel: UILabel!
-    @IBOutlet var allowFullScreenDisplayCell: UITableViewCell!
-    @IBOutlet var allowFullScreenDisplayLabel: UILabel!
+    @IBOutlet private weak var placementCell: UITableViewCell!
+    @IBOutlet private weak var placementTitle: UILabel!
+    @IBOutlet private weak var placementLabel: UILabel!
+
+    @IBOutlet private weak var layoutCell: UITableViewCell!
+    @IBOutlet private weak var layoutTitle: UILabel!
+    @IBOutlet private weak var layoutLabel: UILabel!
+
+    @IBOutlet private weak var headingCell: UITableViewCell!
+    @IBOutlet private weak var headingTitle: UILabel!
+    @IBOutlet private weak var headingLabel: UILabel!
+
+    @IBOutlet private weak var bodyCell: UITableViewCell!
+    @IBOutlet private weak var bodyTitle: UILabel!
+    @IBOutlet private weak var bodyLabel: UILabel!
+
+    @IBOutlet private weak var mediaCell: UITableViewCell!
+    @IBOutlet private weak var mediaTitle: UILabel!
+    @IBOutlet private weak var mediaLabel: UILabel!
+
+    @IBOutlet private weak var buttonsCell: UITableViewCell!
+    @IBOutlet private weak var buttonsTitle: UILabel!
+    @IBOutlet private weak var buttonsLabel: UILabel!
+
+    @IBOutlet private weak var durationCell: UITableViewCell!
+    @IBOutlet private weak var durationTitle: UILabel!
+    @IBOutlet private weak var durationLabel: UILabel!
+
+    @IBOutlet private weak var actionsCell: UITableViewCell!
+    @IBOutlet private weak var actionsTitle: UILabel!
+    @IBOutlet private weak var actionsLabel: UILabel!
+
+    @IBOutlet private weak var borderRadiusCell: UITableViewCell!
+    @IBOutlet private weak var borderRadiusTitle: UILabel!
+    @IBOutlet private weak var borderRadiusLabel: UILabel!
+
+    @IBOutlet private weak var backgroundColorCell: UITableViewCell!
+    @IBOutlet private weak var backgroundColorTitle: UILabel!
+    @IBOutlet private weak var backgroundColorLabel: UILabel!
+
+    @IBOutlet private weak var dismissButtonColorCell: UITableViewCell!
+    @IBOutlet private weak var dismissButtonColorTitle: UILabel!
+    @IBOutlet private weak var dismissButtonColorLabel: UILabel!
+
+    @IBOutlet private weak var footerCell: UITableViewCell!
+    @IBOutlet private weak var footerTitle: UILabel!
+    @IBOutlet private weak var footerLabel: UILabel!
+
+    @IBOutlet private weak var urlCell: UITableViewCell!
+    @IBOutlet private weak var urlTitle: UILabel!
+    @IBOutlet private weak var urlLabel: UILabel!
+
+    @IBOutlet private weak var allowFullScreenDisplayCell: UITableViewCell!
+    @IBOutlet private weak var allowFullScreenDisplayTitle: UILabel!
+    @IBOutlet private weak var allowFullScreenDisplayLabel: UILabel!
     
     fileprivate enum SECTIONS {
         static let SCHEDULE = 0
@@ -80,7 +140,126 @@ class AutomationDetailViewController: UAStaticTableViewController {
     private var message : UAInAppMessage?
     private let inAppMessageManager = UAirship.inAppMessageManager()
 
+    func setCellTheme() {
+        scheduleIDCell.backgroundColor = ThemeManager.shared.currentTheme.Background
+        scheduleIDTitle.textColor = ThemeManager.shared.currentTheme.PrimaryText
+        scheduleIDLabel.textColor = ThemeManager.shared.currentTheme.SecondaryText
+
+        scheduleStartCell.backgroundColor = ThemeManager.shared.currentTheme.Background
+        scheduleStartTitle.textColor = ThemeManager.shared.currentTheme.PrimaryText
+        scheduleStartLabel.textColor = ThemeManager.shared.currentTheme.SecondaryText
+
+        scheduleEndCell.backgroundColor = ThemeManager.shared.currentTheme.Background
+        scheduleEndTitle.textColor = ThemeManager.shared.currentTheme.PrimaryText
+        scheduleEndLabel.textColor = ThemeManager.shared.currentTheme.SecondaryText
+
+        schedulePriorityCell.backgroundColor = ThemeManager.shared.currentTheme.Background
+        schedulePriorityTitle.textColor = ThemeManager.shared.currentTheme.PrimaryText
+        schedulePriorityLabel.textColor = ThemeManager.shared.currentTheme.SecondaryText
+
+        scheduleLimitCell.backgroundColor = ThemeManager.shared.currentTheme.Background
+        scheduleLimitTitle.textColor = ThemeManager.shared.currentTheme.PrimaryText
+        scheduleLimitLabel.textColor = ThemeManager.shared.currentTheme.SecondaryText
+
+        scheduleTriggersCell.backgroundColor = ThemeManager.shared.currentTheme.Background
+        scheduleTriggersTitle.textColor = ThemeManager.shared.currentTheme.PrimaryText
+        scheduleTriggersLabel.textColor = ThemeManager.shared.currentTheme.SecondaryText
+
+        scheduleDelayCell.backgroundColor = ThemeManager.shared.currentTheme.Background
+        scheduleDelayTitle.textColor = ThemeManager.shared.currentTheme.PrimaryText
+        scheduleDelayLabel.textColor = ThemeManager.shared.currentTheme.SecondaryText
+
+        scheduleEditGracePeriodCell.backgroundColor = ThemeManager.shared.currentTheme.Background
+        scheduleEditGracePeriodTitle.textColor = ThemeManager.shared.currentTheme.PrimaryText
+        scheduleEditGracePeriodLabel.textColor = ThemeManager.shared.currentTheme.SecondaryText
+
+        scheduleIntervalPeriodCell.backgroundColor = ThemeManager.shared.currentTheme.Background
+        scheduleIntervalPeriodTitle.textColor = ThemeManager.shared.currentTheme.PrimaryText
+        scheduleIntervalLabel.textColor = ThemeManager.shared.currentTheme.SecondaryText
+
+        scheduleIsValidCell.backgroundColor = ThemeManager.shared.currentTheme.Background
+        scheduleIsValidTitle.textColor = ThemeManager.shared.currentTheme.PrimaryText
+        scheduleIsValid.textColor = ThemeManager.shared.currentTheme.SecondaryText
+
+        cancelScheduleCell.backgroundColor = ThemeManager.shared.currentTheme.ButtonBackground
+        cancelScheduleButtonTitle.textColor = ThemeManager.shared.currentTheme.PrimaryText
+
+        messageNameCell.backgroundColor = ThemeManager.shared.currentTheme.Background
+        messageNameTitle.textColor = ThemeManager.shared.currentTheme.PrimaryText
+        messageNameLabel.textColor = ThemeManager.shared.currentTheme.SecondaryText
+
+        messageIDCell.backgroundColor = ThemeManager.shared.currentTheme.Background
+        messageIDTitle.textColor = ThemeManager.shared.currentTheme.PrimaryText
+        messageIDLabel.textColor = ThemeManager.shared.currentTheme.SecondaryText
+
+        displayTypeCell.backgroundColor = ThemeManager.shared.currentTheme.Background
+        displayTypeTitleLabel.textColor = ThemeManager.shared.currentTheme.PrimaryText
+        displayTypeLabel.textColor = ThemeManager.shared.currentTheme.SecondaryText
+
+        audienceCell.backgroundColor = ThemeManager.shared.currentTheme.Background
+        audienceTitle.textColor = ThemeManager.shared.currentTheme.PrimaryText
+        audienceLabel.textColor = ThemeManager.shared.currentTheme.SecondaryText
+
+        placementCell.backgroundColor = ThemeManager.shared.currentTheme.Background
+        placementTitle.textColor = ThemeManager.shared.currentTheme.PrimaryText
+        placementLabel.textColor = ThemeManager.shared.currentTheme.SecondaryText
+
+        layoutCell.backgroundColor = ThemeManager.shared.currentTheme.Background
+        layoutTitle.textColor = ThemeManager.shared.currentTheme.PrimaryText
+        layoutLabel.textColor = ThemeManager.shared.currentTheme.SecondaryText
+
+        headingCell.backgroundColor = ThemeManager.shared.currentTheme.Background
+        headingTitle.textColor = ThemeManager.shared.currentTheme.PrimaryText
+        headingLabel.textColor = ThemeManager.shared.currentTheme.SecondaryText
+
+        bodyCell.backgroundColor = ThemeManager.shared.currentTheme.Background
+        bodyTitle.textColor = ThemeManager.shared.currentTheme.PrimaryText
+        bodyLabel.textColor = ThemeManager.shared.currentTheme.SecondaryText
+
+        mediaCell.backgroundColor = ThemeManager.shared.currentTheme.Background
+        mediaTitle.textColor = ThemeManager.shared.currentTheme.PrimaryText
+        mediaLabel.textColor = ThemeManager.shared.currentTheme.SecondaryText
+
+        buttonsCell.backgroundColor = ThemeManager.shared.currentTheme.Background
+        buttonsTitle.textColor = ThemeManager.shared.currentTheme.PrimaryText
+        buttonsLabel.textColor = ThemeManager.shared.currentTheme.SecondaryText
+
+        durationCell.backgroundColor = ThemeManager.shared.currentTheme.Background
+        durationTitle.textColor = ThemeManager.shared.currentTheme.PrimaryText
+        durationLabel.textColor = ThemeManager.shared.currentTheme.SecondaryText
+
+        actionsCell.backgroundColor = ThemeManager.shared.currentTheme.Background
+        actionsTitle.textColor = ThemeManager.shared.currentTheme.PrimaryText
+        actionsLabel.textColor = ThemeManager.shared.currentTheme.SecondaryText
+
+        borderRadiusCell.backgroundColor = ThemeManager.shared.currentTheme.Background
+        borderRadiusTitle.textColor = ThemeManager.shared.currentTheme.PrimaryText
+        borderRadiusLabel.textColor = ThemeManager.shared.currentTheme.SecondaryText
+
+        backgroundColorCell.backgroundColor = ThemeManager.shared.currentTheme.Background
+        backgroundColorTitle.textColor = ThemeManager.shared.currentTheme.PrimaryText
+        backgroundColorLabel.textColor = ThemeManager.shared.currentTheme.SecondaryText
+
+        dismissButtonColorCell.backgroundColor = ThemeManager.shared.currentTheme.Background
+        dismissButtonColorTitle.textColor = ThemeManager.shared.currentTheme.PrimaryText
+        dismissButtonColorLabel.textColor = ThemeManager.shared.currentTheme.SecondaryText
+
+        footerCell.backgroundColor = ThemeManager.shared.currentTheme.Background
+        footerTitle.textColor = ThemeManager.shared.currentTheme.PrimaryText
+        footerLabel.textColor = ThemeManager.shared.currentTheme.SecondaryText
+
+        urlCell.backgroundColor = ThemeManager.shared.currentTheme.Background
+        urlTitle.textColor = ThemeManager.shared.currentTheme.PrimaryText
+        urlLabel.textColor = ThemeManager.shared.currentTheme.SecondaryText
+
+        allowFullScreenDisplayCell.backgroundColor = ThemeManager.shared.currentTheme.Background
+        allowFullScreenDisplayTitle.textColor = ThemeManager.shared.currentTheme.PrimaryText
+        allowFullScreenDisplayLabel.textColor = ThemeManager.shared.currentTheme.SecondaryText
+    }
+    
     override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setCellTheme()
         refreshView()
     }
     

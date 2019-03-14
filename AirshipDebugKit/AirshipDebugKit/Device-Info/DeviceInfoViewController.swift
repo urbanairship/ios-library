@@ -4,33 +4,45 @@ import UIKit
 import AirshipKit
 
 class DeviceInfoViewController: UITableViewController {
-    
-    @IBOutlet weak var pushEnabledCell: UITableViewCell!
+    @IBOutlet weak var pushSettingCell: UITableViewCell!
+    @IBOutlet weak var pushSettingsTitle: UILabel!
+    @IBOutlet weak var pushSettingsSubtitleLabel: UILabel!
+
     @IBOutlet weak var channelIDCell: UITableViewCell!
+    @IBOutlet weak var channelIDTitle: UILabel!
+    @IBOutlet weak var channelIDSubtitleLabel: UILabel!
+
     @IBOutlet weak var namedUserCell: UITableViewCell!
+    @IBOutlet weak var namedUserTitle: UILabel!
+    @IBOutlet weak var namedUserSubtitleLabel: UILabel!
+
     @IBOutlet weak var tagsCell: UITableViewCell!
+    @IBOutlet weak var tagsTitle: UILabel!
+    @IBOutlet weak var tagsSubtitleLabel: UILabel!
+
+    @IBOutlet weak var associatedIdentifiersTitle: UILabel!
     @IBOutlet weak var associatedIdentifiersCell:UITableViewCell!
 
+    @IBOutlet weak var lastPayloadTitle: UILabel!
+    @IBOutlet weak var lastPayloadCell: UITableViewCell!
+
     @IBOutlet weak var sdkVersionCell: UITableViewCell!
+    @IBOutlet weak var sdkVersionTitle: UILabel!
+    @IBOutlet weak var sdkVersionSubtitleLabel: UILabel!
 
     @IBOutlet weak var locationEnabledCell: UITableViewCell!
+    @IBOutlet weak var locationEnabledTitle: UILabel!
+    @IBOutlet weak var locationEnabledSubtitleLabel: UILabel!
 
     @IBOutlet weak var pushEnabledSwitch: UISwitch!
     @IBOutlet weak var locationEnabledSwitch: UISwitch!
+
+    @IBOutlet weak var analyticsCell: UITableViewCell!
+    @IBOutlet weak var analyticsTitle: UILabel!
+    @IBOutlet weak var analyticsSubtitleLabel: UILabel!
     @IBOutlet weak var analyticsSwitch: UISwitch!
-    
-    @IBOutlet weak var pushSettingsLabel: UILabel!
-    @IBOutlet weak var pushSettingsSubtitleLabel: UILabel!
-    @IBOutlet weak var locationEnabledLabel: UILabel!
-    @IBOutlet weak var locationEnabledSubtitleLabel: UILabel!
-    
-    @IBOutlet weak var channelIDSubtitleLabel: UILabel!
-    @IBOutlet weak var namedUserSubtitleLabel: UILabel!
-    @IBOutlet weak var tagsSubtitleLabel: UILabel!
-    @IBOutlet weak var versionSubtitleLabel: UILabel!
-    
+
     @IBAction func switchValueChanged(_ sender: UISwitch) {
-        
         switch sender {
         case pushEnabledSwitch:
             UAirship.push().userPushNotificationsEnabled = pushEnabledSwitch.isOn
@@ -61,14 +73,57 @@ class DeviceInfoViewController: UITableViewController {
             name: UIApplication.didBecomeActiveNotification,
             object: nil)
         
-        locationEnabledLabel.text = NSLocalizedString("UA_Location_Enabled", tableName: "UAPushUI", comment: "Location Enabled label")
+        locationEnabledTitle.text = NSLocalizedString("UA_Location_Enabled", tableName: "UAPushUI", comment: "Location Enabled label")
         locationEnabledSubtitleLabel.text = NSLocalizedString("UA_Location_Enabled_Detail", tableName: "UAPushUI", comment: "Enable GPS and WIFI Based Location detail label")
         pushEnabledSwitch.isOn = UAirship.push().userPushNotificationsEnabled
+    }
+
+    func setCellTheme() {
+        pushSettingCell.backgroundColor = ThemeManager.shared.currentTheme.Background
+        pushSettingsTitle.textColor = ThemeManager.shared.currentTheme.PrimaryText
+        pushSettingsSubtitleLabel.textColor = ThemeManager.shared.currentTheme.SecondaryText
+
+        channelIDCell.backgroundColor = ThemeManager.shared.currentTheme.Background
+        channelIDTitle.textColor = ThemeManager.shared.currentTheme.PrimaryText
+        channelIDSubtitleLabel.textColor = ThemeManager.shared.currentTheme.SecondaryText
+
+        namedUserCell.backgroundColor = ThemeManager.shared.currentTheme.Background
+        namedUserTitle.textColor = ThemeManager.shared.currentTheme.PrimaryText
+        namedUserSubtitleLabel.textColor = ThemeManager.shared.currentTheme.SecondaryText
+
+        tagsCell.backgroundColor = ThemeManager.shared.currentTheme.Background
+        tagsTitle.textColor = ThemeManager.shared.currentTheme.PrimaryText
+        tagsSubtitleLabel.textColor = ThemeManager.shared.currentTheme.SecondaryText
+
+        associatedIdentifiersCell.backgroundColor = ThemeManager.shared.currentTheme.Background
+        associatedIdentifiersTitle.textColor = ThemeManager.shared.currentTheme.PrimaryText
+
+        lastPayloadCell.backgroundColor = ThemeManager.shared.currentTheme.Background
+        lastPayloadTitle.textColor = ThemeManager.shared.currentTheme.PrimaryText
+
+        sdkVersionCell.backgroundColor = ThemeManager.shared.currentTheme.Background
+        sdkVersionTitle.textColor = ThemeManager.shared.currentTheme.PrimaryText
+        sdkVersionSubtitleLabel.textColor = ThemeManager.shared.currentTheme.SecondaryText
+
+        locationEnabledCell.backgroundColor = ThemeManager.shared.currentTheme.Background
+        locationEnabledTitle.textColor = ThemeManager.shared.currentTheme.PrimaryText
+        locationEnabledSubtitleLabel.textColor = ThemeManager.shared.currentTheme.SecondaryText
+
+        analyticsCell.backgroundColor = ThemeManager.shared.currentTheme.Background
+        analyticsTitle.textColor = ThemeManager.shared.currentTheme.PrimaryText
+        analyticsSubtitleLabel.textColor = ThemeManager.shared.currentTheme.SecondaryText
+        analyticsSwitch.onTintColor = ThemeManager.shared.currentTheme.WidgetTint
+        analyticsSwitch.tintColor = ThemeManager.shared.currentTheme.WidgetTint
+    }
+
+    func setTableViewTheme() {
+        tableView.backgroundColor = ThemeManager.shared.currentTheme.Background;
+        navigationController?.navigationBar.titleTextAttributes = [.foregroundColor:ThemeManager.shared.currentTheme.PrimaryText]
+        navigationController?.navigationBar.barTintColor = ThemeManager.shared.currentTheme.NavigationBarBackground;
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated);
-        
         updateSwitches()
     }
     
@@ -90,6 +145,9 @@ class DeviceInfoViewController: UITableViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setCellTheme()
+        setTableViewTheme()
         refreshView()
     }
     
@@ -106,7 +164,7 @@ class DeviceInfoViewController: UITableViewController {
         
         pushSettingsSubtitleLabel.text = pushTypeString()
         
-        versionSubtitleLabel.text = UAirshipVersion.get()
+        sdkVersionSubtitleLabel.text = UAirshipVersion.get()
         
         updateSwitches()
         
@@ -156,7 +214,7 @@ class DeviceInfoViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         switch tableView.cellForRow(at: indexPath) {
-        case pushEnabledCell:
+        case pushSettingCell:
             // redirect click on push enabled cell to system settings
             UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!,options: [:],completionHandler: nil)
             break

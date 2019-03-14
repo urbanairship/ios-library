@@ -54,6 +54,7 @@ class PushSettingsViewController: UITableViewController, UARegistrationDelegate 
     }
 
     override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         refreshView()
     }
 

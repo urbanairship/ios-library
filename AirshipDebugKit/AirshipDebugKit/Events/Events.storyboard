@@ -102,7 +102,6 @@
         <!--Events Detail Table View Controller-->
         <scene sceneID="8R2-Xg-Z0t">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="1gp-Vu-QSr" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <tableViewController id="GEM-8N-2RK" customClass="EventsDetailTableViewController" customModule="AirshipDebugKit" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="myj-T9-VOA">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
@@ -192,11 +191,18 @@
                         </connections>
                     </tableView>
                     <connections>
+                        <outlet property="dataCell" destination="I2P-RL-C4k" id="oNN-Jw-Loq"/>
                         <outlet property="dataLabel" destination="QlS-vL-Jyq" id="CfE-Ps-glk"/>
+                        <outlet property="dataTitleLabel" destination="h1k-1f-zAL" id="5cb-LJ-1Qz"/>
+                        <outlet property="timeCell" destination="hEc-QS-YW6" id="jHB-d2-OyF"/>
                         <outlet property="timeLabel" destination="44L-Mp-sZF" id="RYe-5r-XcE"/>
+                        <outlet property="timeTitleLabel" destination="I6g-tp-5MC" id="Ycv-Q8-zbp"/>
+                        <outlet property="typeCell" destination="NwD-5b-dys" id="uh3-j3-1UX"/>
                         <outlet property="typeLabel" destination="BdU-ZY-blq" id="hFT-3J-MND"/>
+                        <outlet property="typeTitleLabel" destination="59w-YD-Sgv" id="3Ha-fq-EwI"/>
                     </connections>
                 </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="1gp-Vu-QSr" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1069.5999999999999" y="69.715142428785612"/>
         </scene>
