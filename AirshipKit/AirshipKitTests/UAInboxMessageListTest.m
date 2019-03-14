@@ -364,8 +364,6 @@
     dateFormatter.timeZone = [NSTimeZone timeZoneForSecondsFromGMT:0];
     dateFormatter.dateFormat = @"yyyy-MM-dd'T'HH:mm:ss.SSS";
 
-    NSString *cool = [dateFormatter stringFromDate:self.testDate.absoluteTime];
-
     NSString *expiryString = [dateFormatter stringFromDate:expiry];
     [payload setValue:expiryString forKey:@"message_expiry"];
 

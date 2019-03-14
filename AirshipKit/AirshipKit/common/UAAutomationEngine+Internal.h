@@ -117,13 +117,16 @@ typedef NS_ENUM(NSInteger, UAAutomationSchedulePrepareResult) {
  * @param notificationCenter The notification center.
  * @param dispatcher The dispatcher to dispatch main queue blocks.
  * @param application The main application.
+ * @param date The UADate instance.
+ *
  * @return Initialized Automation Engine instance
  */
 + (instancetype)automationEngineWithAutomationStore:(UAAutomationStore *)automationStore
                                      timerScheduler:(UATimerScheduler *)timerScheduler
                                  notificationCenter:(NSNotificationCenter *)notificationCenter
                                          dispatcher:(UADispatcher *)dispatcher
-                                        application:(UIApplication *)application;
+                                        application:(UIApplication *)application
+                                               date:(UADate *)date;
 
 /**
  * Starts the Automation Engine.
