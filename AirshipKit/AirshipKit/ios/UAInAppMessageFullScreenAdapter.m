@@ -13,7 +13,6 @@ NSString *const UAFullScreenStyleFileName = @"UAInAppMessageFullScreenStyle";
 @interface UAInAppMessageFullScreenAdapter ()
 @property (nonatomic, strong) UAInAppMessage *message;
 @property (nonatomic, strong) UAInAppMessageFullScreenViewController *fullScreenController;
-@property (nonatomic, strong) NSCache *imageCache;
 @end
 
 @implementation UAInAppMessageFullScreenAdapter
@@ -27,16 +26,15 @@ NSString *const UAFullScreenStyleFileName = @"UAInAppMessageFullScreenStyle";
 
     if (self) {
         self.message = message;
-        self.imageCache = [UAInAppMessageUtils createImageCache];
         self.style = [UAInAppMessageFullScreenStyle styleWithContentsOfFile:UAFullScreenStyleFileName];
     }
 
     return self;
 }
 
-- (void)prepare:(void (^)(UAInAppMessagePrepareResult))completionHandler {
+- (void)prepareWithAssets:(nonnull UAInAppMessageAssets *)assets completionHandler:(nonnull void (^)(UAInAppMessagePrepareResult))completionHandler {
     UAInAppMessageFullScreenDisplayContent *displayContent = (UAInAppMessageFullScreenDisplayContent *)self.message.displayContent;
-    [UAInAppMessageUtils prepareMediaView:displayContent.media imageCache:self.imageCache completionHandler:^(UAInAppMessagePrepareResult result, UAInAppMessageMediaView *mediaView) {
+    [UAInAppMessageUtils prepareMediaView:displayContent.media assets:assets completionHandler:^(UAInAppMessagePrepareResult result, UAInAppMessageMediaView *mediaView) {
         if (result == UAInAppMessagePrepareResultSuccess) {
             self.fullScreenController = [UAInAppMessageFullScreenViewController fullScreenControllerWithFullScreenMessageID:self.message.identifier
                                                                                                          displayContent:displayContent
@@ -54,14 +52,6 @@ NSString *const UAFullScreenStyleFileName = @"UAInAppMessageFullScreenStyle";
 
 - (void)display:(void (^)(UAInAppMessageResolution *))completionHandler {
     [self.fullScreenController showWithCompletionHandler:completionHandler];
-}
-
-- (void)dealloc {
-    if (self.imageCache) {
-        [self.imageCache removeAllObjects];
-    }
-
-    self.imageCache = nil;
 }
 
 @end

@@ -8,6 +8,7 @@
 #import "UAComponent.h"
 #import "UAInAppMessageScheduleEdits.h"
 #import "UAInAppMessageDisplayCoordinator.h"
+#import "UAInAppMessageAssetManager.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -80,6 +81,11 @@ NS_ASSUME_NONNULL_BEGIN
  * Message display interval.
  */
 @property(nonatomic, assign) NSTimeInterval displayInterval;
+
+/**
+ * In-app messaging asset manager.
+ */
+@property(nonatomic, strong, readonly) UAInAppMessageAssetManager *assetManager;
 
 /**
  * Allows setting factory blocks that builds InAppMessageAdapters for each given display type.

@@ -79,6 +79,26 @@ NS_ASSUME_NONNULL_BEGIN
 
 #endif
 
+///---------------------------------------------------------------------------------------
+/// @name SHA-256
+///---------------------------------------------------------------------------------------
+
+/**
+ * Generate SHA256 digest for input string
+ *
+ * @param input string for which to calculate SHA
+ * @return SHA256 digest as NSData
+ */
++ (NSData*)sha256DigestWithString:(NSString*)input;
+
+/**
+ * Generate SHA256 digest for input string
+ *
+ * @param input string for which to calculate SHA
+ * @return SHA256 digest as a hex string
+ */
++ (NSString *)sha256HashWithString:(NSString*)input;
+
 @end
 
 NS_ASSUME_NONNULL_END

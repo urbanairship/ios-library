@@ -13,6 +13,7 @@
 #import "UATagGroupsLookupManager+Internal.h"
 #import "UATagGroupsMutationHistory+Internal.h"
 #import "UAInAppMessageDefaultDisplayCoordinator+Internal.h"
+#import "UAInAppMessageAssetManager+Internal.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -21,6 +22,11 @@ NS_ASSUME_NONNULL_BEGIN
  * canceling and executing in-app message schedules.
  */
 @interface UAInAppMessageManager ()  <UAAutomationEngineDelegate, UATagGroupsLookupManagerDelegate>
+
+/**
+ * In-app messaging asset manager.
+ */
+@property(nonatomic, strong) UAInAppMessageAssetManager *assetManager;
 
 /**
  * Factory method. Use for testing.
@@ -39,7 +45,8 @@ NS_ASSUME_NONNULL_BEGIN
                                   dataStore:(UAPreferenceDataStore *)dataStore
                                        push:(UAPush *)push
                                  dispatcher:(UADispatcher *)dispatcher
-                         displayCoordinator:(UAInAppMessageDefaultDisplayCoordinator *)displayCoordinator;
+                         displayCoordinator:(UAInAppMessageDefaultDisplayCoordinator *)displayCoordinator
+                               assetManager:(UAInAppMessageAssetManager *)assetManager;
 
 /**
  * Factory method.

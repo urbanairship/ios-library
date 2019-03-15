@@ -412,4 +412,28 @@
     return YES;
 }
 
++ (NSData*)sha256DigestWithString:(NSString*)input {
+    NSData *dataIn = [input dataUsingEncoding:NSUTF8StringEncoding];
+    NSMutableData *dataOut = [NSMutableData dataWithLength:CC_SHA256_DIGEST_LENGTH];
+    CC_SHA256(dataIn.bytes, (CC_LONG) dataIn.length, dataOut.mutableBytes);
+    return dataOut;
+}
+
++ (NSString *)sha256HashWithString:(NSString*)input {
+    NSData *digest = [self sha256DigestWithString:input];
+
+    // convert digest to a byte buffer
+    const unsigned char *buffer = (const unsigned char *)[digest bytes];
+    if (!buffer) {
+        return [NSString string];
+    }
+    
+    NSMutableString *hash = [NSMutableString stringWithCapacity:(CC_SHA256_DIGEST_LENGTH * 2)];
+    for (int i = 0; i < CC_SHA256_DIGEST_LENGTH; i++) {
+        [hash appendFormat:@"%02x",buffer[i]];
+    }
+
+    return hash;
+}
+
 @end

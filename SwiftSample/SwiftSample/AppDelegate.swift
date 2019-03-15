@@ -5,8 +5,7 @@ import AirshipKit
 import AirshipDebugKit
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate, UARegistrationDelegate, UADeepLinkDelegate {
-
+class AppDelegate: UIResponder, UIApplicationDelegate, UARegistrationDelegate, UADeepLinkDelegate, UAInAppMessageCachePolicyDelegate {
     let simulatorWarningDisabledKey = "ua-simulator-warning-disabled"
     let pushHandler = PushHandler()
 
@@ -70,6 +69,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UARegistrationDelegate, U
         UAirship.push().pushNotificationDelegate = pushHandler
         UAirship.push().registrationDelegate = self
         UAirship.shared().deepLinkDelegate = self
+        UAirship.inAppMessageManager()?.assetManager.cachePolicyDelegate = self;
 
         NotificationCenter.default.addObserver(self, selector:#selector(AppDelegate.refreshMessageCenterBadge), name: NSNotification.Name.UAInboxMessageListUpdated, object: nil)
 
@@ -194,5 +194,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UARegistrationDelegate, U
 
         completionHandler()
     }
+
+    // MARK: UAInAppMessageCachePolicyDelegate
+    func shouldCache(onSchedule message: UAInAppMessage) -> Bool {
+        return true
+    }
+    
+    func shouldPersistCache(afterDisplay message: UAInAppMessage) -> Bool {
+        return true
+    }
 }
+
 

@@ -3,6 +3,7 @@
 #import <Foundation/Foundation.h>
 #import "UAInAppMessage.h"
 #import "UAInAppMessageResolution.h"
+#import "UAInAppMessageAssets.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -24,14 +25,20 @@ typedef NS_ENUM(NSUInteger, UAInAppMessagePrepareResult) {
     /**
      * Message preparation failed and should be canceled.
      */
-    UAInAppMessagePrepareResultCancel= 2
+    UAInAppMessagePrepareResultCancel = 2,
+    
+    /**
+     * Message preparation failed and the entire schedule
+     * preparation step should be retried.
+     */
+    UAInAppMessagePrepareResultInvalidate = 3
 };
 
 
 /**
  * In-app message adapter protocol. An adapter is responsible for displaying a particular type of in-app message.
  */
-@protocol UAInAppMessageAdapterProtocol
+@protocol UAInAppMessageAdapterProtocol <NSObject>
 
 /**
  * Factory method to create an in-app message adapter.
@@ -40,13 +47,29 @@ typedef NS_ENUM(NSUInteger, UAInAppMessagePrepareResult) {
  */
 + (instancetype)adapterForMessage:(UAInAppMessage *)message;
 
+@optional
+
+/**
+ * Prepares in-app message to display.
+ *
+ * @param assets the assets for this in-app message
+ * @param completionHandler the completion handler to be called when adapter has finished
+ * preparing the in-app message.
+ */
+- (void)prepareWithAssets:(UAInAppMessageAssets *)assets
+        completionHandler:(void (^)(UAInAppMessagePrepareResult result))completionHandler;
+
 /**
  * Prepares in-app message to display.
  *
  * @param completionHandler the completion handler to be called when adapter has finished
  * preparing the in-app message.
+ *
+ * @deprecated Deprecated - to be removed in SDK version 11.0. Please use `prepareWithAssetCache:completionHandler:`.
  */
-- (void)prepare:(void (^)(UAInAppMessagePrepareResult result))completionHandler;
+- (void)prepare:(void (^)(UAInAppMessagePrepareResult result))completionHandler DEPRECATED_MSG_ATTRIBUTE("Deprecated - to be removed in SDK version 11.0. Please use `prepareWithAssetCache:completionHandler:`.");
+
+@required
 
 /**
  * Informs the adapter of the ready state of the in-app message immediately before display.

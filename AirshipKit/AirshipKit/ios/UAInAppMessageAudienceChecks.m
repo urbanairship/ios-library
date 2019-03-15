@@ -12,7 +12,7 @@
 #import <CommonCrypto/CommonDigest.h>
 #import "UA_Base64.h"
 #import "UATagGroups+Internal.h"
-
+#import "UAUtils+Internal.h"
 
 @implementation UAInAppMessageAudienceChecks
 
@@ -31,7 +31,7 @@
             return NO;
         }
 
-        NSData *digest = [[self sha256DigestWithString:channel] subdataWithRange:NSMakeRange(0, 16)];
+        NSData *digest = [[UAUtils sha256DigestWithString:channel] subdataWithRange:NSMakeRange(0, 16)];
         for (NSString *testDevice in audience.testDevices) {
             NSData *decoded = UA_dataFromBase64String(testDevice);
             if ([decoded isEqual:digest]) {
@@ -110,14 +110,6 @@
 
 + (BOOL)isNotificationsOptedIn {
     return [UAirship push].userPushNotificationsEnabled && [UAirship push].authorizedNotificationSettings != UAAuthorizedNotificationSettingsNone;
-}
-
-+ (NSData*)sha256DigestWithString:(NSString*)input {
-    NSData *dataIn = [input dataUsingEncoding:NSUTF8StringEncoding];
-    NSMutableData *dataOut = [NSMutableData dataWithLength:CC_SHA256_DIGEST_LENGTH];
-
-    CC_SHA256(dataIn.bytes, (CC_LONG) dataIn.length, dataOut.mutableBytes);
-    return dataOut;
 }
 
 @end

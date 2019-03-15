@@ -106,7 +106,17 @@ typedef NS_ENUM(NSInteger, UAAutomationScheduleReadyResult) {
 /**
  * Called when a schedule is expired.
  */
-- (void)scheduleExpired:(nonnull UASchedule *)schedule;
+- (void)onScheduleExpired:(nonnull UASchedule *)schedule;
+
+/**
+ * Called when a schedule is cancelled.
+ */
+- (void)onScheduleCancelled:(nonnull UASchedule *)schedule;
+
+/**
+ * Called when a schedule's limit is reached.
+ */
+- (void)onScheduleLimitReached:(nonnull UASchedule *)schedule;
 
 @end
 

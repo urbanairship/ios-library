@@ -268,16 +268,29 @@
 }
 
 - (void)cancelScheduleWithID:(NSString *)identifier {
+    [self.automationStore getSchedule:identifier completionHandler:^(UAScheduleData * _Nonnull scheduleData) {
+        [self notifyDelegateOnScheduleCancelled:scheduleData];
+    }];
     [self.automationStore deleteSchedule:identifier];
     [self cancelTimersWithIdentifiers:[NSSet setWithArray:@[identifier]]];
 }
 
 - (void)cancelAll {
+    [self.automationStore getAllSchedules:^(NSArray<UAScheduleData *> * _Nonnull scheduleDatas) {
+        for (UAScheduleData *scheduleData in scheduleDatas) {
+            [self notifyDelegateOnScheduleCancelled:scheduleData];
+        }
+    }];
     [self.automationStore deleteAllSchedules];
     [self cancelTimers];
 }
 
 - (void)cancelSchedulesWithGroup:(NSString *)group {
+    [self.automationStore getSchedules:group completionHandler:^(NSArray<UAScheduleData *> * _Nonnull scheduleDatas) {
+        for (UAScheduleData *scheduleData in scheduleDatas) {
+            [self notifyDelegateOnScheduleCancelled:scheduleData];
+        }
+    }];
     [self.automationStore deleteSchedules:group];
     [self cancelTimersWithGroup:group];
 }
@@ -386,7 +399,13 @@
                     [self checkCompoundTriggerState:@[schedule] forStateNewerThanDate:finishDate];
                 }];
             } else if ([scheduleData.executionState unsignedIntegerValue] != UAScheduleStateFinished && (overLimit || isExpired)) {
-                scheduleData.executionState = @(UAScheduleStateFinished);
+                if (overLimit) {
+                    [self notifyDelegateOnScheduleLimitReached:scheduleData];
+                }
+                if (isExpired) {
+                    [self notifyDelegateOnScheduleExpired:scheduleData];
+                }
+                [self finishSchedule:scheduleData];
             }
         }
 
@@ -1059,6 +1078,7 @@
 
                 switch (prepareResult) {
                     case UAAutomationSchedulePrepareResultCancel:
+                        [self notifyDelegateOnScheduleCancelled:scheduleData];
                         [scheduleData.managedObjectContext deleteObject:scheduleData];
                         break;
                     case UAAutomationSchedulePrepareResultContinue:
@@ -1154,22 +1174,11 @@
 
 - (void)handleExpiredScheduleData:(nonnull UAScheduleData *)scheduleData {
     UA_LTRACE(@"Schedule expired: %@", scheduleData.identifier);
-    [self finishOrDeleteSchedule:scheduleData];
-
-    UA_WEAKIFY(self)
-    [self.dispatcher dispatchAsync:^{
-        UA_STRONGIFY(self)
-        id<UAAutomationEngineDelegate> delegate = self.delegate;
-        if ([delegate respondsToSelector:@selector(scheduleExpired:)]) {
-            UASchedule *schedule = [self scheduleFromData:scheduleData];
-            if (schedule) {
-                [delegate scheduleExpired:schedule];
-            }
-        }
-    }];
+    [self notifyDelegateOnScheduleExpired:scheduleData];
+    [self finishSchedule:scheduleData];
 }
 
-- (void)finishOrDeleteSchedule:(UAScheduleData *)scheduleData {
+- (void)finishSchedule:(UAScheduleData *)scheduleData {
     UA_LTRACE(@"Schedule expired: %@", scheduleData.identifier);
     scheduleData.executionState = @(UAScheduleStateFinished);
 
@@ -1198,7 +1207,8 @@
     if ([scheduleData isOverLimit]) {
         // Over limit
         UA_LDEBUG(@"Limit reached for schedule %@", scheduleData.identifier);
-        [self finishOrDeleteSchedule:scheduleData];
+        [self finishSchedule:scheduleData];
+        [self notifyDelegateOnScheduleLimitReached:scheduleData];
     } else if ([scheduleData.interval doubleValue] > 0) {
         // Paused
         scheduleData.executionState = @(UAScheduleStatePaused);
@@ -1209,6 +1219,48 @@
         // Back to idle
         scheduleData.executionState = @(UAScheduleStateIdle);
     }
+}
+
+- (void)notifyDelegateOnScheduleExpired:(UAScheduleData *)scheduleData {
+    UA_WEAKIFY(self)
+    [self.dispatcher dispatchAsync:^{
+        UA_STRONGIFY(self)
+        id<UAAutomationEngineDelegate> delegate = self.delegate;
+        if ([delegate respondsToSelector:@selector(onScheduleExpired:)]) {
+            UASchedule *schedule = [self scheduleFromData:scheduleData];
+            if (schedule) {
+                [delegate onScheduleExpired:schedule];
+            }
+        }
+    }];
+}
+
+- (void)notifyDelegateOnScheduleCancelled:(UAScheduleData *)scheduleData {
+    UA_WEAKIFY(self)
+    [self.dispatcher dispatchAsync:^{
+        UA_STRONGIFY(self)
+        id<UAAutomationEngineDelegate> delegate = self.delegate;
+        if ([delegate respondsToSelector:@selector(onScheduleCancelled:)]) {
+            UASchedule *schedule = [self scheduleFromData:scheduleData];
+            if (schedule) {
+                [delegate onScheduleCancelled:schedule];
+            }
+        }
+    }];
+}
+
+- (void)notifyDelegateOnScheduleLimitReached:(UAScheduleData *)scheduleData {
+    UA_WEAKIFY(self)
+    [self.dispatcher dispatchAsync:^{
+        UA_STRONGIFY(self)
+        id<UAAutomationEngineDelegate> delegate = self.delegate;
+        if ([delegate respondsToSelector:@selector(onScheduleLimitReached:)]) {
+            UASchedule *schedule = [self scheduleFromData:scheduleData];
+            if (schedule) {
+                [delegate onScheduleLimitReached:schedule];
+            }
+        }
+    }];
 }
 
 /**

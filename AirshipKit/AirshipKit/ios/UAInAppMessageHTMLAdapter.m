@@ -40,7 +40,7 @@ NSString *const UAHTMLStyleFileName = @"UAInAppMessageHTMLStyle";
     return ![[UAUtils connectionType] isEqualToString:kUAConnectionTypeNone];
 }
 
-- (void)prepare:(nonnull void (^)(UAInAppMessagePrepareResult))completionHandler {
+- (void)prepareWithAssets:(nonnull UAInAppMessageAssets *)assets completionHandler:(nonnull void (^)(UAInAppMessagePrepareResult))completionHandler {
     UAInAppMessageHTMLDisplayContent *content = (UAInAppMessageHTMLDisplayContent *)self.message.displayContent;
 
     BOOL whitelisted = [[UAirship shared].whitelist isWhitelisted:[NSURL URLWithString:content.url] scope:UAWhitelistScopeOpenURL];
