@@ -132,6 +132,16 @@
  */
 @property(nonatomic, strong) UIColor *markAsReadButtonTitleColor;
 
+/**
+ * The title color for the "Edit" button.
+ */
+@property(nonatomic, strong) UIColor *editButtonTitleColor;
+
+/**
+ * The title color for the "Cancel" button.
+ */
+@property(nonatomic, strong) UIColor *cancelButtonTitleColor;
+
 
 ///---------------------------------------------------------------------------------------
 /// @name Default Message Center Style Factories

@@ -159,14 +159,6 @@
 
     [self createToolbarItems];
 
-    if (self.style.listColor) {
-        self.messageTable.backgroundColor = self.style.listColor;
-    }
-
-    if (self.style.cellSeparatorColor) {
-        self.messageTable.separatorColor = self.style.cellSeparatorColor;
-    }
-
     [self.refreshControl addTarget:self action:@selector(refreshStateChanged:) forControlEvents:UIControlEventValueChanged];
 
     UITableViewController *tableController = [[UITableViewController alloc] initWithStyle:UITableViewStylePlain];
@@ -174,13 +166,7 @@
     tableController.refreshControl = self.refreshControl;
     tableController.clearsSelectionOnViewWillAppear = false;
 
-    if (self.style.listColor) {
-        self.refreshControl.backgroundColor = self.style.listColor;
-    }
-
-    if (self.style.refreshTintColor) {
-        self.refreshControl.tintColor = self.style.refreshTintColor;
-    }
+    [self applyStyle];
 
     // This allows us to use the UITableViewController for managing the refresh control, while keeping the
     // outer chrome of the list view controller intact
@@ -227,6 +213,38 @@
 
 - (void)setFilter:(NSPredicate *)filter {
     _filter = filter;
+}
+
+- (void)setStyle:(UAMessageCenterStyle *)style {
+    _style = style;
+    
+    [self applyStyle];
+}
+
+- (void)applyStyle {
+    if (self.style.editButtonTitleColor) {
+        self.editItem.tintColor = self.style.editButtonTitleColor;
+    }
+    
+    if (self.style.cancelButtonTitleColor) {
+        self.cancelItem.tintColor = self.style.cancelButtonTitleColor;
+    }
+    
+    if (self.style.listColor) {
+        self.messageTable.backgroundColor = self.style.listColor;
+    }
+    
+    if (self.style.cellSeparatorColor) {
+        self.messageTable.separatorColor = self.style.cellSeparatorColor;
+    }
+    
+    if (self.style.listColor) {
+        self.refreshControl.backgroundColor = self.style.listColor;
+    }
+    
+    if (self.style.refreshTintColor) {
+        self.refreshControl.tintColor = self.style.refreshTintColor;
+    }
 }
 
 - (void)refreshStateChanged:(UIRefreshControl *)sender {
