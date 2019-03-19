@@ -108,6 +108,11 @@
  */
 @property (nonatomic, weak) UISplitViewController *splitViewController;
 
+/**
+ * The message view's navigation controller to use for applying styles.
+ */
+@property (nonatomic, strong) UINavigationController *messageViewNavigationController;
+
 @end
 
 @implementation UAMessageCenterListViewController
@@ -232,18 +237,59 @@
     
     if (self.style.listColor) {
         self.messageTable.backgroundColor = self.style.listColor;
+        self.refreshControl.backgroundColor = self.style.listColor;
     }
     
     if (self.style.cellSeparatorColor) {
         self.messageTable.separatorColor = self.style.cellSeparatorColor;
     }
     
-    if (self.style.listColor) {
-        self.refreshControl.backgroundColor = self.style.listColor;
-    }
-    
     if (self.style.refreshTintColor) {
         self.refreshControl.tintColor = self.style.refreshTintColor;
+    }
+    
+    [self applyToolbarItemStyles];
+    
+    [self applyMessageViewNavBarStyles];
+
+    // apply styles to table cells
+    [self.messageTable reloadData];
+}
+
+- (void)applyToolbarItemStyles {
+    // Override any inherited tint color, to avoid potential clashes
+    self.selectAllButtonItem.tintColor = (self.style.selectAllButtonTitleColor) ? self.style.selectAllButtonTitleColor : self.defaultTintColor;
+    self.deleteItem.tintColor = (self.style.deleteButtonTitleColor) ? self.style.deleteButtonTitleColor : [UIColor redColor];
+    self.markAsReadButtonItem.tintColor = (self.style.markAsReadButtonTitleColor) ? self.style.markAsReadButtonTitleColor : self.defaultTintColor;
+}
+
+- (void)applyMessageViewNavBarStyles {
+    // apply styles to the message view's navigation bar
+    if (self.style.navigationBarColor) {
+        self.messageViewNavigationController.navigationBar.barTintColor = self.style.navigationBarColor;
+    }
+    
+    if (self.style.tintColor) {
+        self.messageViewNavigationController.navigationBar.tintColor = self.style.tintColor;
+    }
+    
+    // Only apply opaque property if a style is set
+    if (self.style) {
+        self.messageViewNavigationController.navigationBar.translucent = !self.style.navigationBarOpaque;
+    }
+    
+    NSMutableDictionary *titleAttributes = [NSMutableDictionary dictionary];
+    
+    if (self.style.titleColor) {
+        titleAttributes[NSForegroundColorAttributeName] = self.style.titleColor;
+    }
+    
+    if (self.style.titleFont) {
+        titleAttributes[NSFontAttributeName] = self.style.titleFont;
+    }
+
+    if (titleAttributes.count) {
+        self.messageViewNavigationController.navigationBar.titleTextAttributes = titleAttributes;
     }
 }
 
@@ -282,23 +328,17 @@
                                                                target:self
                                                                action:@selector(selectAllButtonPressed:)];
 
-    // Override any inherited tint color, to avoid potential clashes
-    self.selectAllButtonItem.tintColor = (self.style.selectAllButtonTitleColor) ? self.style.selectAllButtonTitleColor : self.defaultTintColor;
-
-
     self.deleteItem = [[UIBarButtonItem alloc] initWithTitle:UAMessageCenterLocalizedString(@"ua_delete")
                                                        style:UIBarButtonItemStylePlain
                                                       target:self
                                                       action:@selector(batchUpdateButtonPressed:)];
-    self.deleteItem.tintColor = (self.style.deleteButtonTitleColor) ? self.style.deleteButtonTitleColor : [UIColor redColor];
 
     self.markAsReadButtonItem = [[UIBarButtonItem alloc] initWithTitle:UAMessageCenterLocalizedString(@"ua_mark_read")
                                                                  style:UIBarButtonItemStylePlain
                                                                 target:self action:@selector(batchUpdateButtonPressed:)];
 
-    // Override any inherited tint color, to avoid potential clashes
-    self.markAsReadButtonItem.tintColor = (self.style.markAsReadButtonTitleColor) ? self.style.markAsReadButtonTitleColor : self.defaultTintColor;
-
+    [self applyToolbarItemStyles];
+    
     self.toolbarItems = @[self.selectAllButtonItem, flexibleSpace, self.deleteItem, flexibleSpace, self.markAsReadButtonItem];
 }
 
@@ -588,34 +628,15 @@
 - (void)displayMessageViewController {
     // if message view is not already displaying, get it displayed
     if (self.collapsed && (self.messageViewController != self.navigationController.visibleViewController)) {
-        UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:self.messageViewController];
+        if (!self.messageViewNavigationController) {
+            self.messageViewNavigationController = [[UINavigationController alloc] initWithRootViewController:self.messageViewController];
+            
+            [self applyMessageViewNavBarStyles];
 
-        if (self.style.navigationBarColor) {
-            nav.navigationBar.barTintColor = self.style.navigationBarColor;
+            // note: not sure why this is necessary but the navigation controller isn't sized properly otherwise
+            [self.messageViewNavigationController.view layoutSubviews];
         }
-
-        // Only apply opaque property if a style is set
-        if (self.style) {
-            nav.navigationBar.translucent = !self.style.navigationBarOpaque;
-        }
-
-        NSMutableDictionary *titleAttributes = [NSMutableDictionary dictionary];
-
-        if (self.style.titleColor) {
-            titleAttributes[NSForegroundColorAttributeName] = self.style.titleColor;
-        }
-
-        if (self.style.titleFont) {
-            titleAttributes[NSFontAttributeName] = self.style.titleFont;
-        }
-
-        if (titleAttributes.count) {
-            nav.navigationBar.titleTextAttributes = titleAttributes;
-        }
-
-        // note: not sure why this is necessary but the navigation controller isn't sized properly otherwise
-        [nav.view layoutSubviews];
-        [self showDetailViewController:nav sender:self];
+        [self showDetailViewController:self.messageViewNavigationController sender:self];
     }
 }
 
