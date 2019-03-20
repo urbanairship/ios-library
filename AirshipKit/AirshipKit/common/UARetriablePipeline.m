@@ -96,8 +96,4 @@
     }];
 }
 
-- (void)addAsyncOperationToQueue:(UAAsyncOperation *)operation {
-    [self.queue addOperation:operation];
-}
-
 @end

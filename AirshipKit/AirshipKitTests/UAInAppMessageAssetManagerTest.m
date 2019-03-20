@@ -9,9 +9,9 @@
 #import "UAInAppMessageBannerDisplayContent.h"
 #import "UAInAppMessageAssetCache+Internal.h"
 #import "UAUtils+Internal.h"
+#import "UAAsyncOperation+Internal.h"
 
 @interface UAInAppMessageAssetManagerTest : UABaseTest
-
 @property (nonatomic, strong) UAInAppMessageAssetManager *assetManager;
 @property (nonatomic, strong) NSString *mediaURL;
 @property (nonatomic, strong) NSString *bogusMediaURL;
@@ -20,6 +20,7 @@
 @property (nonatomic, strong) UASchedule *scheduleWithInvalidID;
 @property (nonatomic, strong) UASchedule *scheduleWithInvalidMediaURL;
 
+@property (nonatomic, strong) id mockQueue;
 @property (nonatomic, strong) id mockPrepareAssetDelegate;
 @property (nonatomic, strong) id mockCachePolicyDelegate;
 @property (nonatomic, strong) id mockAssetCache;
@@ -29,11 +30,23 @@
 @implementation UAInAppMessageAssetManagerTest
 
 - (void)setUp {
+    self.mockQueue = [self mockForClass:[NSOperationQueue class]];
+
+    // Stub the queue to run UAAsyncOperation immediately
+    [[[self.mockQueue stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:2];
+        NSOperation *operation = (__bridge NSOperation *)arg;
+        [operation start];
+    }] addOperation:[OCMArg checkWithBlock:^BOOL(id obj) {
+        return [obj isKindOfClass:[UAAsyncOperation class]];
+    }]];
+    
     self.mockAssetCache = [self mockForClass:[UAInAppMessageAssetCache class]];
     self.mockAssets = [self mockForClass:[UAInAppMessageAssets class]];
 
     // Create a UAInAppMessageAssetManager
-    self.assetManager = [UAInAppMessageAssetManager assetManagerWithAssetCache:self.mockAssetCache];
+    self.assetManager = [UAInAppMessageAssetManager assetManagerWithAssetCache:self.mockAssetCache operationQueue:self.mockQueue];
     
     // Get file system URL for test image
     NSBundle *bundle = [NSBundle bundleForClass:[self class]];
@@ -59,7 +72,6 @@
     self.assetManager.prepareAssetsDelegate = self.mockPrepareAssetDelegate;
     self.mockCachePolicyDelegate = [self mockForProtocol:@protocol(UAInAppMessageCachePolicyDelegate)];
     self.assetManager.cachePolicyDelegate = self.mockCachePolicyDelegate;
-
 }
 
 - (void)tearDown {
@@ -131,9 +143,7 @@
 
     // TEST
     // call OnSchedule()
-    [self.assetManager onSchedule:schedule completionHandler:^(UAInAppMessagePrepareResult result) {
-        XCTAssertEqual(result, UAInAppMessagePrepareResultSuccess);
-    }];
+    [self.assetManager onSchedule:schedule];
     
     // VERIFY
     [self.mockPrepareAssetDelegate verify];
@@ -173,9 +183,7 @@
 
     // TEST
     // call OnSchedule()
-    [self.assetManager onSchedule:schedule completionHandler:^(UAInAppMessagePrepareResult result) {
-        XCTAssertEqual(result, UAInAppMessagePrepareResultSuccess);
-    }];
+    [self.assetManager onSchedule:schedule];
 
     // VERIFY
     [self.mockPrepareAssetDelegate verify];
@@ -208,9 +216,7 @@
     
     // TEST
     // call OnSchedule()
-    [self.assetManager onSchedule:schedule completionHandler:^(UAInAppMessagePrepareResult result) {
-        XCTAssertEqual(result, UAInAppMessagePrepareResultSuccess);
-    }];
+    [self.assetManager onSchedule:schedule];
 
     // VERIFY
     [self.mockPrepareAssetDelegate verify];
@@ -542,11 +548,11 @@
     }]];
     
     // TEST
-    UAInAppMessageAssets *assets = [self.assetManager assetsForSchedule:schedule];
+    [self.assetManager assetsForSchedule:schedule completionHandler:^(UAInAppMessageAssets *assets) {
+        XCTAssertEqualObjects(assets, self.mockAssets);
+    }];
     
     // VERIFY
-    XCTAssertEqualObjects(assets, self.mockAssets);
-    
     [self.mockPrepareAssetDelegate verify];
     [self.mockCachePolicyDelegate verify];
     [self.mockAssetCache verify];

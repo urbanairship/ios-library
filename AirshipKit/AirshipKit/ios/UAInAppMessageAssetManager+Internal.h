@@ -20,7 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @param assetCache Instance of UAInAppMessageAssetCache
  */
-+ (instancetype)assetManagerWithAssetCache:(UAInAppMessageAssetCache *)assetCache;
++ (instancetype)assetManagerWithAssetCache:(UAInAppMessageAssetCache *)assetCache operationQueue:(NSOperationQueue *)queue;
 
 /**
  * Called when message is being scheduled.
@@ -29,9 +29,8 @@ NS_ASSUME_NONNULL_BEGIN
  * cache all assets for the schedule.
  *
  * @param schedule The schedule being scheduled
- * @param completionHandler The completion handler to call when caching is complete.
  */
-- (void)onSchedule:(UASchedule *)schedule completionHandler:(void (^)(UAInAppMessagePrepareResult))completionHandler;
+- (void)onSchedule:(UASchedule *)schedule;
 
 /**
  * Called when message is being prepared.
@@ -70,9 +69,9 @@ NS_ASSUME_NONNULL_BEGIN
  * Get the assets for this schedule
  *
  * @param schedule The schedule being finished
- * @return UAInAppMessageAssets instance for this schedule
+ * @param completionHandler The completion handler to call with the UAInAppMessageAssets instance for this schedule
  */
-- (UAInAppMessageAssets *)assetsForSchedule:(UASchedule *)schedule;
+- (void)assetsForSchedule:(UASchedule *)schedule completionHandler:(void (^)(UAInAppMessageAssets *))completionHandler;
 
 @end
 NS_ASSUME_NONNULL_END

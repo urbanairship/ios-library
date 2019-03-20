@@ -40,11 +40,4 @@
  */
 - (void)addChainedRetriables:(NSArray<UARetriable *> *)retriables;
 
-/**
- * Adds a UAAsyncOperation to the queue. The operation does not have to be retriable,
- * but will execute serially with retriable operations.
- *
- * @param operation The UAAsyncOperation to add to the queue.
- */
-- (void)addAsyncOperationToQueue:(UAAsyncOperation *)operation;
 @end
