@@ -173,10 +173,11 @@
 			};
 			buildConfigurationList = 49AA00F61D65158C0081989A /* Build configuration list for PBXProject "AirshipAppExtensions" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				Base,
 			);
 			mainGroup = 49AA00F21D65158C0081989A;
 			productRefGroup = 49AA00FD1D65158C0081989A /* Products */;
