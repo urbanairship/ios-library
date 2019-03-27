@@ -150,7 +150,7 @@ then
 
   # Verify architectures in the fat binary
   echo "☠️ ⛑ If the build fails at this step, it means one of the architectures is missing. 👉 Run 'xcrun -sdk iphoneos lipo \"${TEMP_DIR}/AirshipLib/libUAirship-${VERSION}.a\" -detailed_info' for more info. 👈 ⛑ ☠️"
-  xcrun -sdk iphoneos lipo "${TEMP_DIR}/AirshipLib/libUAirship-${VERSION}.a" -verify_arch armv7 armv7s i386 x86_64 arm64
+  xcrun -sdk iphoneos lipo "${TEMP_DIR}/AirshipLib/libUAirship-${VERSION}.a" -verify_arch armv7 i386 x86_64 arm64
 
   # Verify bitcode is enabled in the fat binary
   otool -l "${TEMP_DIR}/AirshipLib/libUAirship-${VERSION}.a" | grep __LLVM

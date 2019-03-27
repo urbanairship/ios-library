@@ -268,7 +268,7 @@
 			};
 			buildConfigurationList = CCDA359E1B8D233A00950AD5 /* Build configuration list for PBXProject "tvOSSample" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,

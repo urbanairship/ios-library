@@ -3,6 +3,16 @@ iOS Changelog
 
 Migration Guides: Documentation/Migration
 
+Version 10.2.1 - March 27, 2019
+=================================
+Patch release to fix Carthage build error in Xcode 10.2. Apps that use Carthage are
+encouraged to update.
+
+Changes
+-------
+- Removed armv7s from architectures
+- Streamlined expired message handling
+
 Version 10.2.0 - February 25, 2019
 ==================================
 
