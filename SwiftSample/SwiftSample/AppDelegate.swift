@@ -142,41 +142,53 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UARegistrationDelegate, U
             object: self,
             userInfo:nil)
     }
+    
+    // MARK Deep link handling
 
     func receivedDeepLink(_ url: URL, completionHandler: @escaping () -> ()) {
-        let pathComponents = url.pathComponents
+        var pathComponents = url.pathComponents
 
         let tabController = window!.rootViewController as! UITabBarController
 
-        if pathComponents.contains(HomeStoryboardID) {
+        // map existing deep links to new paths
+        switch (pathComponents[0]) {
+        case PushSettingsStoryboardID:
+            pathComponents = [DebugStoryboardID, "device_info"]
+        case InAppAutomationStoryboardID:
+            pathComponents = [DebugStoryboardID, "in_app_automation"]
+        default:
+            break
+        }
+        
+        // execute deep link
+        switch (pathComponents[0]) {
+        case HomeStoryboardID:
             tabController.selectedIndex = HomeTab
-        } else if pathComponents.contains(PushSettingsStoryboardID) {
+        case DebugStoryboardID:
             if let nav = tabController.selectedViewController as? UINavigationController {
                 if !nav.topViewController!.isKind(of: DebugViewController.self) {
                     nav.popToRootViewController(animated: true);
                 }
             }
-
+            
             tabController.selectedIndex = DebugTab;
             
+            if (pathComponents.count == 1) {
+                completionHandler()
+                return
+            }
+            
             if let nav = tabController.selectedViewController as? UINavigationController {
-                if nav.topViewController!.isKind(of: DebugViewController.self) {
+                if !nav.topViewController!.isKind(of: DebugViewController.self) {
+                    nav.popToRootViewController(animated: true);
+                }
+            }
+        case InAppAutomationStoryboardID:
+            if let nav = tabController.selectedViewController as? UINavigationController {
+                if !nav.topViewController!.isKind(of: DebugViewController.self) {
                     let debugViewController = nav.topViewController as! DebugViewController
-                    debugViewController.deviceInfo()
-                }
-            }
-        } else if pathComponents.contains(DebugStoryboardID) {
-            if let nav = tabController.selectedViewController as? UINavigationController {
-                if !nav.topViewController!.isKind(of: DebugViewController.self) {
-                    nav.popToRootViewController(animated: true);
-                }
-            }
-            
-            tabController.selectedIndex = DebugTab;
-        } else if pathComponents.contains(InAppAutomationStoryboardID) {
-            if let nav = tabController.selectedViewController as? UINavigationController {
-                if !nav.topViewController!.isKind(of: DebugViewController.self) {
-                    nav.popToRootViewController(animated: true);
+                    pathComponents.remove(at: 0)
+                    debugViewController.handleDeepLink(pathComponents)
                 }
             }
             
@@ -188,10 +200,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UARegistrationDelegate, U
                     debugViewController.inAppAutomation()
                 }
             }
-        } else if pathComponents.contains(MessageCenterStoryboardID) {
-            tabController.selectedIndex = MessageCenterTab;
+        case MessageCenterStoryboardID:
+            tabController.selectedIndex = MessageCenterTab
+        default:
+            break
         }
-
+ 
         completionHandler()
     }
 

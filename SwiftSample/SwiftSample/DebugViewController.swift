@@ -7,9 +7,21 @@ class DebugViewController: UITableViewController {
 
     @IBOutlet private weak var deviceInfoCell: UITableViewCell!
     @IBOutlet private weak var inAppAutomationCell: UITableViewCell!
-    @IBOutlet private weak var customEventsCell: UITableViewCell!
     @IBOutlet private weak var eventsCell: UITableViewCell!
+    
+    private var debugKitViewController : UIViewController?
 
+    let deviceInfoDeepLink = "device_info"
+    let inAppAutomationDeepLink = "in_app_automation"
+    let eventsDeepLink = "events"
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        if let debugKitViewController = self.debugKitViewController {
+            self.navigationController?.pushViewController(debugKitViewController, animated: true)
+            self.debugKitViewController = nil
+        }
+    }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         switch tableView.cellForRow(at: indexPath) {
@@ -17,8 +29,6 @@ class DebugViewController: UITableViewController {
             deviceInfo()
         case inAppAutomationCell:
             inAppAutomation()
-        case customEventsCell:
-            customEvents()
         case eventsCell:
             events()
         default:
@@ -29,27 +39,39 @@ class DebugViewController: UITableViewController {
     }
 
     public func deviceInfo() {
-        if let deviceInfoViewController = AirshipDebugKit.deviceInfoViewController {
-            self.navigationController?.pushViewController(deviceInfoViewController, animated: true)
-        }
+        self.showDebugKitViewController(AirshipDebugKit.deviceInfoViewController)
     }
 
     public func inAppAutomation() {
-        if let inAppAutomationViewController = AirshipDebugKit.automationViewController {
-            self.navigationController?.pushViewController(inAppAutomationViewController, animated: true)
-        }
-    }
-
-    public func customEvents() {
-        if let customEventsViewController = AirshipDebugKit.customEventsViewController {
-            self.navigationController?.pushViewController(customEventsViewController, animated: true)
-        }
+        self.showDebugKitViewController(AirshipDebugKit.automationViewController)
     }
 
     public func events() {
-        if let eventsViewController = AirshipDebugKit.eventsViewController {
-            self.navigationController?.pushViewController(eventsViewController, animated: true)
+        self.showDebugKitViewController(AirshipDebugKit.eventsViewController)
+    }
+    
+    public func handleDeepLink(_ pathComponents: Array<String>) {
+        switch (pathComponents[0]) {
+        case deviceInfoDeepLink:
+            self.deviceInfo()
+        case inAppAutomationDeepLink:
+            self.inAppAutomation()
+        case eventsDeepLink:
+            self.events()
+        default:
+            break
         }
+    }
+    
+    private func showDebugKitViewController(_ debugKitViewController: UIViewController?) {
+        if let debugKitViewController = debugKitViewController {
+            if (self.isViewLoaded && (self.view.window != nil)) {
+                self.navigationController?.pushViewController(debugKitViewController, animated: true)
+            } else {
+                self.debugKitViewController = debugKitViewController
+            }
+        }
+        
     }
 
 }

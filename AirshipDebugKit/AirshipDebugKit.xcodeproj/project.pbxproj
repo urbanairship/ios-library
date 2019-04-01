@@ -18,6 +18,7 @@
 		459D70EE2215FAED005A3BB9 /* EventDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 459D70ED2215FAED005A3BB9 /* EventDataManager.swift */; };
 		45EC352A222F5ADE00F5A97D /* ThemeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45EC3524222F5ADE00F5A97D /* ThemeManager.swift */; };
 		45EC3530223052E200F5A97D /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45EC352F223052E200F5A97D /* Theme.swift */; };
+		DF1C21D8224560E600B33D01 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DF1C21D12245605100B33D01 /* Images.xcassets */; };
 		DF4E4928221CDB5B00F306A5 /* AirshipKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DFE70146212F216600A708D5 /* AirshipKit.framework */; };
 		DF4EDA6121E41D3900804CB3 /* ButtonsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF4EDA6021E41D3900804CB3 /* ButtonsTableViewController.swift */; };
 		DF4EDA6821E4261700804CB3 /* ButtonDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF4EDA6721E4261700804CB3 /* ButtonDetailViewController.swift */; };
@@ -28,7 +29,6 @@
 		DF4EDAA021E7FF1600804CB3 /* CustomPropertyTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF4EDA9421E7FF1500804CB3 /* CustomPropertyTableViewController.swift */; };
 		DF4EDAA121E7FF1600804CB3 /* CustomEventTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF4EDA9521E7FF1500804CB3 /* CustomEventTableViewController.swift */; };
 		DF4EDAA221E7FF1600804CB3 /* CustomPropertyAdderTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF4EDA9621E7FF1500804CB3 /* CustomPropertyAdderTableViewCell.swift */; };
-		DF4EDAA421E7FFDF00804CB3 /* CustomEvents.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DF4EDAA321E7FFDE00804CB3 /* CustomEvents.storyboard */; };
 		DF5514C52167D82200499E9C /* AutomationDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF5514BF2167D82200499E9C /* AutomationDetailViewController.swift */; };
 		DF55D7D621F15506005948DD /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = DF55D7D521F15505005948DD /* Localizable.strings */; };
 		DF5F8EC921641B9D009B5FB9 /* AutomationTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF5F8EC821641B9D009B5FB9 /* AutomationTableViewController.swift */; };
@@ -114,6 +114,7 @@
 		459D70ED2215FAED005A3BB9 /* EventDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventDataManager.swift; sourceTree = "<group>"; };
 		45EC3524222F5ADE00F5A97D /* ThemeManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ThemeManager.swift; sourceTree = "<group>"; };
 		45EC352F223052E200F5A97D /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		DF1C21D12245605100B33D01 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		DF4EDA6021E41D3900804CB3 /* ButtonsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonsTableViewController.swift; sourceTree = "<group>"; };
 		DF4EDA6721E4261700804CB3 /* ButtonDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonDetailViewController.swift; sourceTree = "<group>"; };
 		DF4EDA9021E7FF1500804CB3 /* CustomEventTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomEventTableViewCell.swift; sourceTree = "<group>"; };
@@ -123,7 +124,6 @@
 		DF4EDA9421E7FF1500804CB3 /* CustomPropertyTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomPropertyTableViewController.swift; sourceTree = "<group>"; };
 		DF4EDA9521E7FF1500804CB3 /* CustomEventTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomEventTableViewController.swift; sourceTree = "<group>"; };
 		DF4EDA9621E7FF1500804CB3 /* CustomPropertyAdderTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomPropertyAdderTableViewCell.swift; sourceTree = "<group>"; };
-		DF4EDAA321E7FFDE00804CB3 /* CustomEvents.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = CustomEvents.storyboard; sourceTree = "<group>"; };
 		DF5514BF2167D82200499E9C /* AutomationDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AutomationDetailViewController.swift; sourceTree = "<group>"; };
 		DF55D7D521F15505005948DD /* Localizable.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = Localizable.strings; sourceTree = "<group>"; };
 		DF5F8EC821641B9D009B5FB9 /* AutomationTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomationTableViewController.swift; sourceTree = "<group>"; };
@@ -163,29 +163,21 @@
 		459D70B32212517C005A3BB9 /* Events */ = {
 			isa = PBXGroup;
 			children = (
+				459D70E22214E82A005A3BB9 /* EventsViewController.swift */,
 				459D70ED2215FAED005A3BB9 /* EventDataManager.swift */,
 				4594E6072217346600DCD672 /* Event.swift */,
 				459D70E12214E82A005A3BB9 /* EventsDetailTableViewController.swift */,
-				459D70E22214E82A005A3BB9 /* EventsViewController.swift */,
 				459D70DF2214E82A005A3BB9 /* SearchFooter.swift */,
+				DF4EDA9521E7FF1500804CB3 /* CustomEventTableViewController.swift */,
+				DF4EDA9421E7FF1500804CB3 /* CustomPropertyTableViewController.swift */,
+				DF4EDA9221E7FF1500804CB3 /* CustomPropertyStringsTableViewController.swift */,
+				DF4EDA9121E7FF1500804CB3 /* CustomPropertyAddStringsTableViewController.swift */,
+				DF4EDA9021E7FF1500804CB3 /* CustomEventTableViewCell.swift */,
+				DF4EDA9321E7FF1500804CB3 /* CustomPropertyTableViewCell.swift */,
+				DF4EDA9621E7FF1500804CB3 /* CustomPropertyAdderTableViewCell.swift */,
 				459D70B422125199005A3BB9 /* Events.storyboard */,
 			);
 			path = Events;
-			sourceTree = "<group>";
-		};
-		DF4EDA8F21E7FF1500804CB3 /* Custom-Events */ = {
-			isa = PBXGroup;
-			children = (
-				DF4EDA9121E7FF1500804CB3 /* CustomPropertyAddStringsTableViewController.swift */,
-				DF4EDA9621E7FF1500804CB3 /* CustomPropertyAdderTableViewCell.swift */,
-				DF4EDA9321E7FF1500804CB3 /* CustomPropertyTableViewCell.swift */,
-				DF4EDA9021E7FF1500804CB3 /* CustomEventTableViewCell.swift */,
-				DF4EDA9221E7FF1500804CB3 /* CustomPropertyStringsTableViewController.swift */,
-				DF4EDA9421E7FF1500804CB3 /* CustomPropertyTableViewController.swift */,
-				DF4EDA9521E7FF1500804CB3 /* CustomEventTableViewController.swift */,
-				DF4EDAA321E7FFDE00804CB3 /* CustomEvents.storyboard */,
-			);
-			path = "Custom-Events";
 			sourceTree = "<group>";
 		};
 		DF55D7CF21F154D0005948DD /* Resources */ = {
@@ -193,6 +185,7 @@
 			children = (
 				DF55D7D521F15505005948DD /* Localizable.strings */,
 				4594E6012216466C00DCD672 /* DebugKitData.xcdatamodeld */,
+				DF1C21D12245605100B33D01 /* Images.xcassets */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -242,7 +235,6 @@
 				DFE7012B212F202400A708D5 /* AirshipDebugKit.swift */,
 				4582DB2F2219EADF0018E02C /* DebugKitUtils.swift */,
 				DFE70123212F1FAA00A708D5 /* Info.plist */,
-				DF4EDA8F21E7FF1500804CB3 /* Custom-Events */,
 				459D70B32212517C005A3BB9 /* Events */,
 				DF5F8EBE21641B44009B5FB9 /* Automation */,
 				DFE70138212F203D00A708D5 /* Device Info */,
@@ -410,10 +402,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				DF5F8ECB216420D3009B5FB9 /* Automation.storyboard in Resources */,
-				DF4EDAA421E7FFDF00804CB3 /* CustomEvents.storyboard in Resources */,
 				DFC676B121FB8F2E0043EB89 /* DeviceInfo.storyboard in Resources */,
 				DF55D7D621F15506005948DD /* Localizable.strings in Resources */,
 				459D70DE2214E7E2005A3BB9 /* Events.storyboard in Resources */,
+				DF1C21D8224560E600B33D01 /* Images.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

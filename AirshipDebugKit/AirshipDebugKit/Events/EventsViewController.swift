@@ -46,8 +46,6 @@ class EventsViewController:UIViewController, UITableViewDataSource, UITableViewD
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title:"Storage Options", style:UIBarButtonItem.Style.plain, target:self, action:#selector(showOptions))
-
         searchController.searchResultsUpdater = self
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.searchBar.placeholder = "Search Events"
@@ -84,7 +82,7 @@ class EventsViewController:UIViewController, UITableViewDataSource, UITableViewD
         tableView.reloadData()
     }
 
-    @objc func showOptions() {
+    @IBAction func showOptions() {
         let actionSheet = UIAlertController(title:"Set Storage Days", message:"For how many days would you like events to be tracked? Current storage days: \(EventDataManager.shared.storageDays)", preferredStyle:.actionSheet)
 
         let actionInfos = ["2 Days": 2, "5 Days": 5, "10 Days": 10, "30 Days": 30]

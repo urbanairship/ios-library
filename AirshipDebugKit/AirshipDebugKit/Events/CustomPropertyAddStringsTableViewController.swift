@@ -59,7 +59,7 @@ class CustomPropertyAddStringsTableViewController: UITableViewController, UIText
         }
 
         if self.navigationController != nil {
-            let customPropertyTVC = self.navigationController?.viewControllers[2] as! CustomPropertyTableViewController
+            let customPropertyTVC = self.navigationController?.viewControllers[1] as! CustomPropertyTableViewController
 
             if let stringProperties = customPropertyTVC.stringProperties {
                 var strings = stringProperties
@@ -70,7 +70,7 @@ class CustomPropertyAddStringsTableViewController: UITableViewController, UIText
                 customPropertyTVC.stringProperties = [textField.text!]
             }
 
-            let customStringsPropertyTVC = self.navigationController?.viewControllers[3] as! CustomPropertyStringsTableViewController
+            let customStringsPropertyTVC = self.navigationController?.viewControllers[2] as! CustomPropertyStringsTableViewController
             if customStringsPropertyTVC.stringProperties != nil {
                 customStringsPropertyTVC.stringProperties?.append(textField.text!)
 

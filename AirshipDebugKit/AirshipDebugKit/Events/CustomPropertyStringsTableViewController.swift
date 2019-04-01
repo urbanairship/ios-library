@@ -28,7 +28,7 @@ class CustomPropertyStringsTableViewController: UITableViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated);
 
-        let customPropertyTVC = self.navigationController?.viewControllers[2] as! CustomPropertyTableViewController
+        let customPropertyTVC = self.navigationController?.viewControllers[1] as! CustomPropertyTableViewController
         stringProperties = customPropertyTVC.stringProperties
 
         setTableViewTheme()
@@ -68,7 +68,7 @@ class CustomPropertyStringsTableViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, commit editingStyle:UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        let customPropertyTVC = self.navigationController?.viewControllers[2] as! CustomPropertyTableViewController
+        let customPropertyTVC = self.navigationController?.viewControllers[1] as! CustomPropertyTableViewController
 
         if (editingStyle == .delete &&
             tableView.cellForRow(at: indexPath)?.textLabel?.text?.isEmpty == false) {

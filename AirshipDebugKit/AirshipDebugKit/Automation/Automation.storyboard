@@ -12,7 +12,7 @@
         <!--In-App Automation-->
         <scene sceneID="EqN-tZ-W2P">
             <objects>
-                <tableViewController storyboardIdentifier="InitialController" title="In-App Automation" id="LDr-Ef-g2S" customClass="AutomationTableViewController" customModule="AirshipDebugKit" sceneMemberID="viewController">
+                <tableViewController title="In-App Automation" id="LDr-Ef-g2S" customClass="AutomationTableViewController" customModule="AirshipDebugKit" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" delaysContentTouches="NO" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="44" estimatedRowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="eM8-Vl-VhJ">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="700"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

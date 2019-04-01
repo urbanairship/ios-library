@@ -6,7 +6,6 @@ import AirshipKit
 public class AirshipDebugKit : NSObject {
     @objc public static var deviceInfoViewController : UIViewController? = instantiateStoryboard("DeviceInfo")
     @objc public static var automationViewController : UIViewController? = instantiateStoryboard("Automation")
-    @objc public static var customEventsViewController : UIViewController? = instantiateStoryboard("CustomEvents")
     @objc public static var eventsViewController : UIViewController? =
         instantiateStoryboard("Events")
 
@@ -46,7 +45,7 @@ public class AirshipDebugKit : NSObject {
         // get the requested storyboard from the bundle
         let storyboard = UIStoryboard(name: name, bundle: storyboardBundle)
 
-        return storyboard.instantiateViewController(withIdentifier: "InitialController")
+        return storyboard.instantiateInitialViewController()
     }
 
     static func observePayloadEvents() {

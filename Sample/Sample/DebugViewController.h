@@ -6,9 +6,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface DebugViewController : UITableViewController
 
-- (void)deviceInfo;
-- (void)inAppAutomation;
-- (void)customEvents;
+- (void)handleDeepLink:(NSArray<NSString *> *)pathcomponents;
 
 @end
 

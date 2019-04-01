@@ -5,6 +5,9 @@ import AirshipKit
 
 class CustomEventTableViewController: UITableViewController, UITextFieldDelegate {
 
+    @IBOutlet var cancelButton: UIBarButtonItem!
+    @IBOutlet var doneButton: UIBarButtonItem!
+    
     var customEvent:UACustomEvent?
 
     var eventName:String?
@@ -42,13 +45,12 @@ class CustomEventTableViewController: UITableViewController, UITextFieldDelegate
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setTableViewTheme()
+        
+        self.doneButton.isEnabled = (customEvent != nil)
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        let addButton: UIBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(CustomEventTableViewController.addEvent))
-        navigationItem.rightBarButtonItem = addButton
 
         let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(CustomEventTableViewController.dismissKeyboard))
         tap.cancelsTouchesInView = false
@@ -65,7 +67,7 @@ class CustomEventTableViewController: UITableViewController, UITextFieldDelegate
         tableView.reloadData()
     }
 
-    @objc func addEvent () {
+    @IBAction func addEvent(_ sender: Any) {
         if (customEvent == nil) {
             displayMessage("ua_custom_event_add_error".localized())
             return
@@ -78,10 +80,15 @@ class CustomEventTableViewController: UITableViewController, UITextFieldDelegate
         clearFields()
     }
 
+    @IBAction func cancel(_ sender: Any) {
+        self.dismiss(animated:true)
+    }
+    
     func lazyLoadCustomEvent() {
         if (customEvent == nil) {
             customEvent = UACustomEvent(name: eventName!, value: NSDecimalNumber(string: eventValue!))
         }
+        self.doneButton.isEnabled = (customEvent != nil)
     }
 
     func isNumeric(_ numericString: String?) -> Bool {
@@ -99,10 +106,12 @@ class CustomEventTableViewController: UITableViewController, UITextFieldDelegate
     func displayMessage (_ messageString: String) {
         let alertController = UIAlertController(title: "Notice", message: messageString, preferredStyle: .alert)
         
-        let cancelAction = UIAlertAction(title: "OK", style: .cancel, handler: nil)
-        alertController.addAction(cancelAction)
-        
-        present(alertController, animated: true, completion: nil)
+        let completeAction = UIAlertAction(title: "ua_alert_ok".localized(), style: .cancel, handler: { controller in
+            self.dismiss(animated: true)
+        })
+        alertController.addAction(completeAction)
+
+        present(alertController, animated: true)
     }
 
     func textFieldDidEndEditing(_ textField: UITextField) {

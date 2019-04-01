@@ -12,7 +12,7 @@
         <!--Device Info-->
         <scene sceneID="bwW-Ou-v8F">
             <objects>
-                <tableViewController storyboardIdentifier="InitialController" id="JMe-aP-DRm" customClass="DeviceInfoViewController" customModule="AirshipDebugKit" sceneMemberID="viewController">
+                <tableViewController id="JMe-aP-DRm" customClass="DeviceInfoViewController" customModule="AirshipDebugKit" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" delaysContentTouches="NO" dataMode="static" style="grouped" separatorStyle="none" rowHeight="44" sectionHeaderHeight="18" sectionFooterHeight="18" id="Cve-AY-6hg">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="700"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

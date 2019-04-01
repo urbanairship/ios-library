@@ -4,6 +4,8 @@ import UIKit
 
 class CustomPropertyTableViewController: UITableViewController, UITextFieldDelegate, UIPickerViewDelegate, UIPickerViewDataSource {
 
+    @IBOutlet var doneButton: UIBarButtonItem!
+    
     @IBOutlet private weak var identifierLabel: UILabel!
     @IBOutlet private weak var identifierCell: UITableViewCell!
     @IBOutlet private weak var identifierTextField: UITextField!
@@ -72,9 +74,6 @@ class CustomPropertyTableViewController: UITableViewController, UITextFieldDeleg
         numberTextField.delegate = self
         stringTextField.delegate = self
 
-        let addButton: UIBarButtonItem = UIBarButtonItem(barButtonSystemItem:.add, target: self, action: #selector(CustomPropertyTableViewController.addProperty))
-        navigationItem.rightBarButtonItem = addButton
-
         let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(CustomPropertyTableViewController.dismissKeyboard))
         tap.cancelsTouchesInView = false
         view.addGestureRecognizer(tap)
@@ -118,7 +117,7 @@ class CustomPropertyTableViewController: UITableViewController, UITextFieldDeleg
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        let customPropertyTVC = self.navigationController?.viewControllers[2] as! CustomPropertyTableViewController
+        let customPropertyTVC = self.navigationController?.viewControllers[1] as! CustomPropertyTableViewController
 
         stringProperties = customPropertyTVC.stringProperties
         stringsLabel.text = stringProperties?.joined(separator: ", ")
@@ -157,7 +156,7 @@ class CustomPropertyTableViewController: UITableViewController, UITextFieldDeleg
         } else if (textField == identifierTextField) {
             if validateStringInput(input:text) {
                 propertyKey = text
-                
+                self.doneButton.isEnabled = (propertyKey != nil)
             } else {
                 textField.text = nil
                 displayMessage("String property must be non-empty")
@@ -242,13 +241,13 @@ class CustomPropertyTableViewController: UITableViewController, UITextFieldDeleg
         present(alertController, animated: true, completion: nil)
     }
 
-    @objc func addProperty() {
+    @IBAction func addProperty() {
         if (propertyKey == nil) {
             displayMessage("Custom property must have an identifier")
             return
         }
 
-        let customEventTVC = self.navigationController?.viewControllers[1] as! CustomEventTableViewController
+        let customEventTVC = self.navigationController?.viewControllers[0] as! CustomEventTableViewController
 
         if (booleanProperty != nil) {
             customEventTVC.customEvent!.setBoolProperty(booleanProperty!, forKey: propertyKey!);
@@ -263,17 +262,9 @@ class CustomPropertyTableViewController: UITableViewController, UITextFieldDeleg
             return
         }
 
-        let alertController = UIAlertController(title: "ua_alert_title_success".localized(), message: String(format:"ua_property_added_to_custom_event_format".localized(), types[typePicker.selectedRow(inComponent: 0)].localized()), preferredStyle: .alert)
-
-        let completeAction = UIAlertAction(title: "ua_alert_ok".localized(), style: .cancel, handler: { controller in
-            self.navigationController?.popViewController(animated: true)
-        })
-
-        alertController.addAction(completeAction)
-
-        present(alertController, animated: true, completion: nil)
-
         clearView()
+        
+        self.navigationController?.popViewController(animated: true)
     }
 
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {

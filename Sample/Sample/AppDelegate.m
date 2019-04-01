@@ -173,13 +173,21 @@ NSUInteger const DebugTab = 2;
 #pragma mark Deep link handling
 
 - (void)receivedDeepLink:(NSURL *_Nonnull)url completionHandler:(void (^_Nonnull)(void))completionHandler {
-    NSArray *pathComponents = url.pathComponents;
+    NSMutableArray *pathComponents = [url.pathComponents mutableCopy];
 
     UITabBarController *tabController = (UITabBarController *)self.window.rootViewController;
 
-    if ([pathComponents containsObject:HomeStoryboardID]) {
+    // map existing deep links to new paths
+    if ([pathComponents[0] isEqualToString:PushSettingsStoryboardID]) {
+        pathComponents = [NSMutableArray arrayWithObjects:DebugStoryboardID,@"device_info",nil];
+    } else if ([pathComponents[0] isEqualToString:InAppAutomationStoryboardID]) {
+        pathComponents = [NSMutableArray arrayWithObjects:DebugStoryboardID,@"in_app_automation",nil];
+    }
+    
+    // execute deep link
+    if ([pathComponents[0] isEqualToString:HomeStoryboardID]) {
         [tabController setSelectedIndex:HomeTab];
-    } else if ([pathComponents containsObject:PushSettingsStoryboardID]) {
+    } else if ([pathComponents[0] isEqualToString:DebugStoryboardID]) {
         id selectedVC = tabController.selectedViewController;
 
         if ([selectedVC isKindOfClass:[UINavigationController class]]) {
@@ -190,6 +198,11 @@ NSUInteger const DebugTab = 2;
         }
 
         [tabController setSelectedIndex:DebugTab];
+
+        if ([pathComponents count] == 1) {
+            completionHandler();
+            return;
+        }
         
         selectedVC = tabController.selectedViewController;
         
@@ -197,39 +210,8 @@ NSUInteger const DebugTab = 2;
             UINavigationController *nav = (UINavigationController *)selectedVC;
             if ([[nav topViewController] isKindOfClass:[DebugViewController class]]) {
                 DebugViewController *debugViewController = (DebugViewController *)nav.topViewController;
-                [debugViewController deviceInfo];
-            }
-        }
-    } else if ([pathComponents containsObject:DebugStoryboardID]) {
-        id selectedVC = tabController.selectedViewController;
-        
-        if ([selectedVC isKindOfClass:[UINavigationController class]]) {
-            UINavigationController *nav = (UINavigationController *)selectedVC;
-            if (![[nav topViewController] isKindOfClass:[DebugViewController class]]) {
-                [nav popToRootViewControllerAnimated:YES];
-            }
-        }
-        
-        [tabController setSelectedIndex:DebugTab];
-    } else if ([pathComponents containsObject:InAppAutomationStoryboardID]) {
-        id selectedVC = tabController.selectedViewController;
-        
-        if ([selectedVC isKindOfClass:[UINavigationController class]]) {
-            UINavigationController *nav = (UINavigationController *)selectedVC;
-            if (![[nav topViewController] isKindOfClass:[DebugViewController class]]) {
-                [nav popToRootViewControllerAnimated:YES];
-            }
-        }
-        
-        [tabController setSelectedIndex:DebugTab];
-        
-        selectedVC = tabController.selectedViewController;
-        
-        if ([selectedVC isKindOfClass:[UINavigationController class]]) {
-            UINavigationController *nav = (UINavigationController *)selectedVC;
-            if ([[nav topViewController] isKindOfClass:[DebugViewController class]]) {
-                DebugViewController *debugViewController = (DebugViewController *)nav.topViewController;
-                [debugViewController inAppAutomation];
+                [pathComponents removeObjectAtIndex:0];
+                [debugViewController handleDeepLink:pathComponents];
             }
         }
     } else if ([pathComponents containsObject:MessageCenterStoryboardID]) {

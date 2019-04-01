@@ -192,7 +192,7 @@
 "ua_button_backgroundColor" = "Background Color";
 "ua_button_borderColor" = "Border Color";
 
-"ua_custom_event_create_custom_events" = "Create Custom Events";
+"ua_custom_event_create_custom_event" = "Create Custom Event";
 "ua_custom_event_name" = "Event Name";
 "ua_custom_event_add_custom_property" = "Add Custom Property";
 
@@ -202,3 +202,5 @@
 "ua_custom_property_value_title" = "Value";
 
 "ua_custom_strings_property" = "Add Custom Strings Property";
+
+"ua_events" = "Events";
