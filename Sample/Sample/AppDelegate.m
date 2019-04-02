@@ -94,7 +94,6 @@ NSUInteger const DebugTab = 2;
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(refreshMessageCenterBadge)
                                                  name:UAInboxMessageListUpdatedNotification object:nil];
-
     return YES;
 }
 

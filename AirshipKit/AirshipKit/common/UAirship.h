@@ -2,13 +2,13 @@
 
 #import "UAGlobal.h"
 #import "UAJavaScriptDelegate.h"
+#import "UALocationProviderDelegate.h"
 #import "UAWhitelist.h"
 #import "UAirshipVersion.h"
 
 // Frameworks
 #import <SystemConfiguration/SystemConfiguration.h>
 #import <CoreData/CoreData.h>
-#import <CoreLocation/CoreLocation.h>
 #import <Security/Security.h>
 #import <QuartzCore/QuartzCore.h>
 #import <Availability.h>
@@ -34,10 +34,10 @@
 @class UAInAppMessageManager;
 @class UALegacyInAppMessaging;
 @class UAMessageCenter;
-@class UALocation;
 @class UAAutomation;
 @class UAChannelCapture;
 @class UARemoteDataManager;
+@class UAModules;
 
 #if !TARGET_OS_TV   // Inbox not supported on tvOS
 @class UAInbox;
@@ -116,6 +116,8 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
  * NOTE: this delegate is not retained.
  */
 @property (nonatomic, weak, nullable) id<UADeepLinkDelegate> deepLinkDelegate;
+
+@property (nonatomic, weak, nullable) id<UALocationProviderDelegate> locationPoviderDelegate;
 
 /**
  * The whitelist used for validating URLs for landing pages, wallet action, open external URL action,
@@ -255,11 +257,6 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
 + (nullable NSBundle *) resources;
 
 /**
- * Returns the `UALocation` instance.
- */
-+ (null_unspecified UALocation *)location;
-
-/**
  * Returns the `UAAutomation` instance.
  */
 + (null_unspecified UAAutomation *)automation;
@@ -268,6 +265,11 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
  * Returns the default `UAAnalytics` instance.
  */
 + (null_unspecified UAAnalytics *)analytics;
+
+/**
+ * Returns the `UAModules` instance.
+ */
++ (null_unspecified UAModules *) modules;
 
 NS_ASSUME_NONNULL_END
 

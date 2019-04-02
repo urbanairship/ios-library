@@ -95,7 +95,7 @@ NSUInteger const UADisableRefreshIntervalDefault = 0; // default is no minimum r
 }
 
 - (void)module:(NSString *)moduleID enable:(BOOL)enable {
-    UAComponent *component = [self.modules airshipComponentForModuleName:moduleID];
+    UAComponent *component = [self.modules componentForModuleName:moduleID];
     if ([component respondsToSelector:@selector(setComponentEnabled:)]) {
         [component setComponentEnabled:enable];
     } else {

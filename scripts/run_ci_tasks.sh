@@ -56,11 +56,19 @@ if [ $TESTS = true ]
 then
   pod install --project-directory=$ROOT_PATH
   echo -ne "\n\n *********** RUNNING TESTS *********** \n\n"
-  # Run our Logic Tests
+  
+  # Run AirshipKitTest Tests
   xcrun xcodebuild \
   -destination "${TEST_DESTINATION}" \
   -workspace "${ROOT_PATH}/Airship.xcworkspace" \
   -scheme AirshipKitTests \
+  test
+
+    # Run AirshipLocationKitTest Tests
+  xcrun xcodebuild \
+  -destination "${TEST_DESTINATION}" \
+  -workspace "${ROOT_PATH}/Airship.xcworkspace" \
+  -scheme AirshipLocationKitTests \
   test
 fi
 
@@ -118,7 +126,7 @@ then
   cd $ROOT_PATH
   pod lib lint UrbanAirship-iOS-SDK.podspec
   pod lib lint UrbanAirship-iOS-AppExtensions.podspec
-  ./${SCRIPT_DIRECTORY}/pod_lib_lint_debug_kit.sh
+  ./${SCRIPT_DIRECTORY}/pod_lib_lint_external_modules.sh
   cd -
 fi
 

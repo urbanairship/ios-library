@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# pod lib lint for Debug Library
+# pod lib lint for Debug and Location Libraries
 set -o pipefail
 set -e
 set -x
@@ -40,6 +40,9 @@ cat UrbanAirship-iOS-SDK.podspec | sed "s@s\.source .*@s.source = { :git => \"${
 
 echo "publish UrbanAirship-iOS-SDK pod locally"
 pod repo push ci-specs "${TEMP_PODSPEC_STORAGE}/UrbanAirship-iOS-SDK.podspec"
+
+echo "lint UrbanAirship-iOS-Location against local UrbanAirship-iOS-SDK pod"
+pod lib lint UrbanAirship-iOS-Location.podspec --sources=ci-specs
 
 echo "lint UrbanAirship-iOS-DebugKit against local UrbanAirship-iOS-SDK pod"
 pod lib lint UrbanAirship-iOS-DebugKit.podspec --sources=ci-specs

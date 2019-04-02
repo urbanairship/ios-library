@@ -3,7 +3,6 @@
 #import "UAInAppMessageAudienceChecks+Internal.h"
 #import "UAInAppMessageAudience+Internal.h"
 #import "UAirship+Internal.h"
-#import "UALocation+Internal.h"
 #import "UAApplicationMetrics+Internal.h"
 #import "UAPush+Internal.h"
 #import "UAInAppMessageTagSelector+Internal.h"
@@ -51,10 +50,10 @@
     }
     
     // Location opt-in
-    if (audience.locationOptIn && ([audience.locationOptIn boolValue] != UAirship.location.isLocationOptedIn)) {
+    if (audience.locationOptIn && ([audience.locationOptIn boolValue] != UAirship.shared.locationPoviderDelegate.isLocationOptedIn)) {
         return NO;
     }
-    
+
     // Notification opt-in
     if (audience.notificationsOptIn && ([audience.notificationsOptIn boolValue] != [self isNotificationsOptedIn])) {
         return NO;

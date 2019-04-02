@@ -7,7 +7,7 @@
 #import "UAConfig.h"
 #import "UAPreferenceDataStore+Internal.h"
 #import "UARateAppPromptViewController+Internal.h"
-#import "UASystemVersion+Internal.h"
+#import "UASystemVersion.h"
 
 @interface UARateAppAction ()
 

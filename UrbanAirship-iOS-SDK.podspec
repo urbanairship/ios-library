@@ -26,6 +26,6 @@ Pod::Spec.new do |s|
    s.tvos.private_header_files   = 'AirshipKit/AirshipKit/common/*+Internal*.h','AirshipKit/AirshipKit/tvos/*+Internal*.h'
 
    s.libraries               = 'z', 'sqlite3'
-   s.frameworks              = 'UserNotifications', 'CFNetwork', 'CoreGraphics', 'Foundation', 'MobileCoreServices', 'Security', 'SystemConfiguration', 'UIKit', 'CoreLocation', 'CoreData', 'StoreKit'
+   s.frameworks              = 'UserNotifications', 'CFNetwork', 'CoreGraphics', 'Foundation', 'MobileCoreServices', 'Security', 'SystemConfiguration', 'UIKit', 'CoreData', 'StoreKit'
    s.ios.frameworks          = 'WebKit', 'CoreTelephony'
 end

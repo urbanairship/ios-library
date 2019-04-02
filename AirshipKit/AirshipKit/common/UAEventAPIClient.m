@@ -7,9 +7,9 @@
 #import "UAirship.h"
 #import "UAPush+Internal.h"
 #import "UAUser.h"
-#import "UALocation.h"
 #import "NSJSONSerialization+UAAdditions.h"
 #import "UAJSONSerialization+Internal.h"
+#import "UALocationProviderDelegate.h"
 
 @implementation UAEventAPIClient
 
@@ -41,6 +41,20 @@
     }];
 }
 
+- (NSString *)locationProviderPermissionStatusString:(UALocationProviderPermissionStatus) status {
+    switch(status) {
+        case UALocationProviderPermissionStatusDisabled:
+            return @"SYSTEM_LOCATION_DISABLED";
+        case UALocationProviderPermissionStatusUnprompted:
+            return @"UNPROMPTED";
+        case UALocationProviderPermissionStatusNotAllowed:
+            return @"NOT_ALLOWED";
+        case UALocationProviderPermissionStatusForegroundAllowed:
+            return @"FOREGROUND_ALLOWED";
+        case UALocationProviderPermissionStatusAlwaysAllowed:
+            return @"ALWAYS_ALLOWED";
+    }
+}
 
 - (UARequest*)requestWithEvents:(NSArray *)events {
     UARequest *request = [UARequest requestWithBuilderBlock:^(UARequestBuilder *builder) {
@@ -88,9 +102,19 @@
         [builder setValue:[[UAirship push] backgroundPushNotificationsAllowed] ? @"true" : @"false" forHeader:@"X-UA-Channel-Background-Enabled"];
 
         // Location settings
-        // Location settings
-        [builder setValue:UAirship.location.locationPermissionDescription forHeader:@"X-UA-Location-Permission"];
-        [builder setValue:UAirship.location.locationUpdatesEnabled ? @"true" : @"false" forHeader:@"X-UA-Location-Service-Enabled"];
+        id<UALocationProviderDelegate> locationProviderDelegate = UAirship.shared.locationPoviderDelegate;
+        NSString *locationPermissionStatus;
+        NSString *locationUpdatesEnabled;
+        if (locationProviderDelegate) {
+            locationPermissionStatus = [self locationProviderPermissionStatusString:locationProviderDelegate.locationPermissionStatus];
+            locationUpdatesEnabled = locationProviderDelegate.locationUpdatesEnabled ? @"true" : @"false";
+        } else {
+            locationPermissionStatus = @"UNKNOWN";
+            locationUpdatesEnabled = @"false";
+        }
+
+        [builder setValue:locationPermissionStatus forHeader:@"X-UA-Location-Permission"];
+        [builder setValue:locationUpdatesEnabled forHeader:@"X-UA-Location-Service-Enabled"];
     }];
     
     return request;

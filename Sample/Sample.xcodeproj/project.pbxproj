@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3CF0C21A2256A37A00CE5463 /* AirshipLocationKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3CF0C2092256789300CE5463 /* AirshipLocationKit.framework */; };
+		3CF0C21B2256A37A00CE5463 /* AirshipLocationKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3CF0C2092256789300CE5463 /* AirshipLocationKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		493F50EA1C5B261100B050A1 /* MessageCenterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 493F50E91C5B261100B050A1 /* MessageCenterViewController.m */; };
 		493F50FB1C5B262100B050A1 /* Roboto-BlackItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 493F50EE1C5B262100B050A1 /* Roboto-BlackItalic.ttf */; };
 		493F50FD1C5B262100B050A1 /* Roboto-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 493F50F01C5B262100B050A1 /* Roboto-BoldItalic.ttf */; };
@@ -45,6 +47,27 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		3CF0C2082256789300CE5463 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3CF0C1FD2256789300CE5463 /* AirshipLocationKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 3C7A565B2252883100E07225;
+			remoteInfo = AirshipLocationKit;
+		};
+		3CF0C20A2256789300CE5463 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3CF0C1FD2256789300CE5463 /* AirshipLocationKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 3C7A56642252883100E07225;
+			remoteInfo = AirshipLocationKitTests;
+		};
+		3CF0C21C2256A37A00CE5463 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3CF0C1FD2256789300CE5463 /* AirshipLocationKit.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 3C7A565A2252883100E07225;
+			remoteInfo = AirshipLocationKit;
+		};
 		49251DD41D6F95FC00EED4BD /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 49251DCF1D6F95FC00EED4BD /* AirshipAppExtensions.xcodeproj */;
@@ -166,6 +189,7 @@
 			dstSubfolderSpec = 10;
 			files = (
 				DF4E4995221F376600F306A5 /* AirshipDebugKit.framework in Embed Frameworks */,
+				3CF0C21B2256A37A00CE5463 /* AirshipLocationKit.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -184,6 +208,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		3CF0C1FD2256789300CE5463 /* AirshipLocationKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = AirshipLocationKit.xcodeproj; path = ../AirshipLocationKit/AirshipLocationKit.xcodeproj; sourceTree = "<group>"; };
 		49251DCF1D6F95FC00EED4BD /* AirshipAppExtensions.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = AirshipAppExtensions.xcodeproj; path = ../AirshipAppExtensions/AirshipAppExtensions.xcodeproj; sourceTree = "<group>"; };
 		4929EA2E1D5156F000D7B322 /* Sample.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Sample.entitlements; sourceTree = "<group>"; };
 		493F50E81C5B261100B050A1 /* MessageCenterViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageCenterViewController.h; sourceTree = "<group>"; };
@@ -257,12 +282,22 @@
 			buildActionMask = 2147483647;
 			files = (
 				DF4E4921221CD86F00F306A5 /* AirshipDebugKit.framework in Frameworks */,
+				3CF0C21A2256A37A00CE5463 /* AirshipLocationKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		3CF0C1FE2256789300CE5463 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				3CF0C2092256789300CE5463 /* AirshipLocationKit.framework */,
+				3CF0C20B2256789300CE5463 /* AirshipLocationKitTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		49251DD01D6F95FC00EED4BD /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -313,6 +348,7 @@
 		764693991C237B630090FE40 = {
 			isa = PBXGroup;
 			children = (
+				3CF0C1FD2256789300CE5463 /* AirshipLocationKit.xcodeproj */,
 				CC899CAD1D8B6AB400A0CECC /* AirshipKit.xcodeproj */,
 				49251DCF1D6F95FC00EED4BD /* AirshipAppExtensions.xcodeproj */,
 				DF74B28321543DC00010CACB /* AirshipDebugKit.xcodeproj */,
@@ -459,6 +495,7 @@
 				61E30D741DDE2F9E00B7EE28 /* PBXTargetDependency */,
 				DF74B29021543DF20010CACB /* PBXTargetDependency */,
 				49D2C7421D6F952D0049B0A0 /* PBXTargetDependency */,
+				3CF0C21D2256A37A00CE5463 /* PBXTargetDependency */,
 			);
 			name = Sample;
 			productName = Sample;
@@ -525,6 +562,10 @@
 					ProductGroup = CC899CAE1D8B6AB400A0CECC /* Products */;
 					ProjectRef = CC899CAD1D8B6AB400A0CECC /* AirshipKit.xcodeproj */;
 				},
+				{
+					ProductGroup = 3CF0C1FE2256789300CE5463 /* Products */;
+					ProjectRef = 3CF0C1FD2256789300CE5463 /* AirshipLocationKit.xcodeproj */;
+				},
 			);
 			projectRoot = "";
 			targets = (
@@ -535,6 +576,20 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		3CF0C2092256789300CE5463 /* AirshipLocationKit.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = AirshipLocationKit.framework;
+			remoteRef = 3CF0C2082256789300CE5463 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		3CF0C20B2256789300CE5463 /* AirshipLocationKitTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = AirshipLocationKitTests.xctest;
+			remoteRef = 3CF0C20A2256789300CE5463 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		49251DD51D6F95FC00EED4BD /* AirshipAppExtensions.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
@@ -664,6 +719,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		3CF0C21D2256A37A00CE5463 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = AirshipLocationKit;
+			targetProxy = 3CF0C21C2256A37A00CE5463 /* PBXContainerItemProxy */;
+		};
 		49D2C7421D6F952D0049B0A0 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 49D2C73A1D6F952D0049B0A0 /* SampleServiceExtension */;
