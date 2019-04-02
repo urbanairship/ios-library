@@ -221,11 +221,11 @@ typedef enum MessageState {
         self.loadingAnimations();
     }
 
-    [self.loadingIndicatorView setHidden:NO];
+    [self.loadingIndicatorContainerView setHidden:NO];
 }
 
 - (void)hideLoadingIndicator {
-    [self.loadingIndicatorView setHidden:YES];
+    [self.loadingIndicatorContainerView setHidden:YES];
 }
 
 static NSString *urlForBlankPage = @"about:blank";
