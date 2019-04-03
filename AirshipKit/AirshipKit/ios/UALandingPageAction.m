@@ -16,17 +16,6 @@ NSString *const UALandingPageWidthKey = @"width";
 NSString *const UALandingPageAspectLockKey = @"aspect_lock";
 NSString *const UALandingPageFill = @"fill";
 
-- (NSURL *)parseShortURL:(NSString *)urlString {
-    if ([urlString length] <= 2) {
-        return nil;
-    }
-
-    NSString *contentID = [urlString substringFromIndex:2];
-    return [NSURL URLWithString:[UAirship.shared.config.landingPageContentURL stringByAppendingFormat:@"/%@/%@",
-                                 UAirship.shared.config.appKey,
-                                 [contentID urlEncodedString]]];
-}
-
 - (NSURL *)parseURLFromValue:(id)value {
 
     NSURL *url;
@@ -36,22 +25,14 @@ NSString *const UALandingPageFill = @"fill";
     }
 
     if ([value isKindOfClass:[NSString class]]) {
-        if ([value hasPrefix:@"u:"]) {
-            url = [self parseShortURL:value];
-        } else {
-            url = [NSURL URLWithString:value];
-        }
+        url = [NSURL URLWithString:value];
     }
 
     if ([value isKindOfClass:[NSDictionary class]]) {
         id urlValue = [value valueForKey:UALandingPageURLKey];
 
         if (urlValue && [urlValue isKindOfClass:[NSString class]]) {
-            if ([urlValue hasPrefix:@"u:"]) {
-                url = [self parseShortURL:urlValue];
-            } else {
-                url = [NSURL URLWithString:urlValue];
-            }
+            url = [NSURL URLWithString:urlValue];
         }
     }
 
@@ -102,13 +83,6 @@ NSString *const UALandingPageFill = @"fill";
     NSURL *landingPageURL = [self parseURLFromValue:arguments.value];
     CGSize landingPageSize = [self parseSizeFromValue:arguments.value];
     BOOL aspectLock = [self parseAspectLockOptionFromValue:arguments.value];
-
-    // Include app auth for any content ID requests
-    BOOL isContentUrl = [landingPageURL.absoluteString hasPrefix:UAirship.shared.config.landingPageContentURL];
-
-    if (isContentUrl) {
-        [headers setValue:[UAUtils appAuthHeaderString] forKey:@"Authorization"];
-    }
 
     // load the landing page
     [UAOverlayViewController showURL:landingPageURL withHeaders:headers size:landingPageSize aspectLock:aspectLock];

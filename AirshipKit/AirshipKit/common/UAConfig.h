@@ -128,11 +128,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) NSString *analyticsURL;
 
 /**
- * The Urban Airship landing page content url. This option is reserved for internal debugging.
- */
-@property (nonatomic, copy) NSString *landingPageContentURL;
-
-/**
  * The Urban Airship default message center style configuration file.
  */
 @property (nonatomic, copy) NSString *messageCenterStyleConfig;

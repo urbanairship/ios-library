@@ -19,7 +19,6 @@
         self.deviceAPIURL = kUAAirshipProductionServer;
         self.remoteDataAPIURL = kUARemoteDataProductionServer;
         self.analyticsURL = kUAAnalyticsProductionServer;
-        self.landingPageContentURL = kUAProductionLandingPageContentURL;
         self.developmentLogLevel = UALogLevelDebug;
         self.productionLogLevel = UALogLevelError;
         self.inProduction = NO;
@@ -61,7 +60,6 @@
         _deviceAPIURL = config.deviceAPIURL;
         _remoteDataAPIURL = config.remoteDataAPIURL;
         _analyticsURL = config.analyticsURL;
-        _landingPageContentURL = config.landingPageContentURL;
         _developmentLogLevel = config.developmentLogLevel;
         _productionLogLevel = config.productionLogLevel;
 
@@ -110,7 +108,6 @@
             "Device API URL: %@\n"
             "Remote Data API URL: %@\n"
             "Cache Size: %ld MB\n"
-            "Landing Page Content URL: %@\n"
             "Automatic Setup Enabled: %d\n"
             "Clear user on Application Restore: %d\n"
             "Whitelist: %@\n"
@@ -142,7 +139,6 @@
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
             (unsigned long)self.cacheDiskSizeInMB,
 #pragma GCC diagnostic pop
-            self.landingPageContentURL,
             self.automaticSetupEnabled,
             self.clearUserOnAppRestore,
             self.whitelist,
@@ -403,10 +399,6 @@
 
 - (void)setRemoteDataAPIURL:(NSString *)remoteDataAPIURL {
     _remoteDataAPIURL = [self normalizeURL:remoteDataAPIURL];
-}
-
-- (void)setLandingPageContentURL:(NSString *)landingPageContentURL {
-    _landingPageContentURL = [self normalizeURL:landingPageContentURL];
 }
 
 #pragma mark -

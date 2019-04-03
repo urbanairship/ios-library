@@ -37,7 +37,6 @@
     [UAirship setSharedAirship:self.mockAirship];
 
     [[[self.mockConfig stub] andReturn:@"app-key"] appKey];
-    [[[self.mockConfig stub] andReturn:kUAProductionLandingPageContentURL] landingPageContentURL];
     [[[self.mockConfig stub] andReturn:@"app-secret"] appSecret];
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
@@ -63,9 +62,6 @@
     [self verifyAcceptsArgumentsWithValue:@"http://foo.urbanairship.com" shouldAccept:YES];
     [self verifyAcceptsArgumentsWithValue:@"file://foo.urbanairship.com" shouldAccept:YES];
     [self verifyAcceptsArgumentsWithValue:[NSURL URLWithString:@"https://foo.urbanairship.com"] shouldAccept:YES];
-
-    // Verify UA content ID urls
-    [self verifyAcceptsArgumentsWithValue:@"u:content-id" shouldAccept:true];
 }
 
 /**
@@ -78,7 +74,6 @@
     [self verifyAcceptsArgumentsWithValue:nil shouldAccept:NO];
     [self verifyAcceptsArgumentsWithValue:[[NSObject alloc] init] shouldAccept:NO];
     [self verifyAcceptsArgumentsWithValue:@[] shouldAccept:NO];
-    [self verifyAcceptsArgumentsWithValue:@"u:" shouldAccept:NO];
 }
 
 /**
@@ -95,7 +90,7 @@
 }
 
 /**
- * Test perform in UASituationBackgroundPush
+ * Test perform in foreground situations
  */
 - (void)testPerformInForeground {
     [[[[self.mockWhitelist stub] andReturnValue:OCMOCK_VALUE(YES)] ignoringNonObjectArgs] isWhitelisted:OCMOCK_ANY scope:UAWhitelistScopeOpenURL];
@@ -108,12 +103,6 @@
     [self verifyPerformInForegroundWithValue:@"https://foo.urbanairship.com" expectedUrl:@"https://foo.urbanairship.com"];
     [self verifyPerformInForegroundWithValue:[NSURL URLWithString:@"https://foo.urbanairship.com"] expectedUrl:@"https://foo.urbanairship.com"];
     [self verifyPerformInForegroundWithValue:@"file://foo.urbanairship.com" expectedUrl:@"file://foo.urbanairship.com"];
-
-    // Verify content urls - https://dl.urbanairship.com/<app>/<id>
-    // u:<id> where id is ascii85 encoded... so it needs to be url encoded
-    [self verifyPerformInForegroundWithValue:@"u:<~@rH7,ASuTABk.~>"
-                                 expectedUrl:@"https://dl.urbanairship.com/aaa/app-key/%3C~%40rH7,ASuTABk.~%3E"
-                             expectedHeaders:@{@"Authorization": [UAUtils appAuthHeaderString]}];
 }
 
 

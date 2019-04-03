@@ -13,8 +13,7 @@
  * This action is registered under the names landing_page_action and ^p.
  *
  * Expected argument values:
- * ``url``: NSString or NSURL. Short url formats are in the form
- * of "u:<content-id>" and will be used to construct a new URL using the content-id.
+ * ``url``: NSString or NSURL.
  * ``width``: Optional Int or String. Width should be specified in points or
  * as "fill" to fill current screen. Defaults to fill.
  * ``height``: Optional Int or String. Height should be specified in points or

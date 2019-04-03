@@ -317,7 +317,6 @@
     XCTAssertTrue(copy.deviceAPIURL == config.deviceAPIURL);
     XCTAssertTrue(copy.remoteDataAPIURL == config.remoteDataAPIURL);
     XCTAssertTrue(copy.analyticsURL == config.analyticsURL);
-    XCTAssertTrue(copy.landingPageContentURL == config.landingPageContentURL);
     XCTAssertTrue(copy.developmentLogLevel == config.developmentLogLevel);
     XCTAssertTrue(copy.productionLogLevel == config.productionLogLevel);
     XCTAssertTrue(copy.inProduction == config.inProduction);
@@ -347,7 +346,6 @@
     XCTAssertEqualObjects(config.deviceAPIURL, kUAAirshipProductionServer);
     XCTAssertEqualObjects(config.remoteDataAPIURL, kUARemoteDataProductionServer);
     XCTAssertEqualObjects(config.analyticsURL, kUAAnalyticsProductionServer);
-    XCTAssertEqualObjects(config.landingPageContentURL, kUAProductionLandingPageContentURL);
     XCTAssertEqual(config.developmentLogLevel, UALogLevelDebug);
     XCTAssertEqual(config.productionLogLevel, UALogLevelError);
     XCTAssertFalse(config.inProduction);

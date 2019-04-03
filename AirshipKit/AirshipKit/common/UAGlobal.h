@@ -102,7 +102,6 @@ extern BOOL uaLoudImpErrorLoggingEnabled; // Default is YES
 // constants
 #define kUAAirshipProductionServer @"https://device-api.urbanairship.com"
 #define kUAAnalyticsProductionServer @"https://combine.urbanairship.com"
-#define kUAProductionLandingPageContentURL @"https://dl.urbanairship.com/aaa"
 #define kUARemoteDataProductionServer @"https://remote-data.urbanairship.com"
 
 
