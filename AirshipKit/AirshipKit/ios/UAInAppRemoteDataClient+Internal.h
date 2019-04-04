@@ -27,6 +27,11 @@
 @property (nonatomic, readonly) NSOperationQueue *operationQueue;
 
 /**
+ * The last payload's metadata.
+ */
+@property (nonatomic, readonly) NSDictionary *lastPayloadMetadata;
+
+/**
  * Create a remote data client for in-app messaging.
  *
  * @param delegate The delegate to be used to schedule in-app messages.

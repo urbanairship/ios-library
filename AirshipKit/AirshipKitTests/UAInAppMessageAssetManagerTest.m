@@ -8,6 +8,7 @@
 #import "UAInAppMessageAudience+Internal.h"
 #import "UAInAppMessageBannerDisplayContent.h"
 #import "UAInAppMessageAssetCache+Internal.h"
+#import "UARemoteDataManager+Internal.h"
 #import "UAUtils+Internal.h"
 #import "UAAsyncOperation+Internal.h"
 
@@ -25,6 +26,8 @@
 @property (nonatomic, strong) id mockCachePolicyDelegate;
 @property (nonatomic, strong) id mockAssetCache;
 @property (nonatomic, strong) id mockAssets;
+@property (nonatomic, strong) id mockRemoteDataManager;
+
 @end
 
 @implementation UAInAppMessageAssetManagerTest
@@ -53,19 +56,21 @@
     NSURL *url = [bundle URLForResource:@"airship" withExtension:@"jpg"];
     self.mediaURL = [url absoluteString];
 
+    self.mockRemoteDataManager = [self mockForClass:[UARemoteDataManager class]];
+
     // Create test schedules
     UAScheduleInfo *scheduleInfo = [self sampleScheduleInfoWithMediaURL:self.mediaURL];
-    self.scheduleWithMedia = [UASchedule scheduleWithIdentifier:@"Schedule With Media" info:scheduleInfo];
+    self.scheduleWithMedia = [UASchedule scheduleWithIdentifier:@"Schedule With Media" info:scheduleInfo metadata:@{}];
     
     scheduleInfo = [self sampleScheduleInfoWithMediaURL:nil];
-    self.scheduleWithoutMedia = [UASchedule scheduleWithIdentifier:@"Schedule Without Media" info:scheduleInfo];
+    self.scheduleWithoutMedia = [UASchedule scheduleWithIdentifier:@"Schedule Without Media" info:scheduleInfo metadata:@{}];
 
     scheduleInfo = [self sampleScheduleInfoWithMediaURL:nil];
-    self.scheduleWithInvalidID = [UASchedule scheduleWithIdentifier:@"" info:scheduleInfo];
+    self.scheduleWithInvalidID = [UASchedule scheduleWithIdentifier:@"" info:scheduleInfo metadata:@{}];
     
     self.bogusMediaURL = @"file:///BOGUS_URL";
     scheduleInfo = [self sampleScheduleInfoWithMediaURL:self.bogusMediaURL];
-    self.scheduleWithInvalidMediaURL = [UASchedule scheduleWithIdentifier:@"Schedule With Invalid Media URL" info:scheduleInfo];
+    self.scheduleWithInvalidMediaURL = [UASchedule scheduleWithIdentifier:@"Schedule With Invalid Media URL" info:scheduleInfo metadata:@{}];
     
     // set up asset manager delegates
     self.mockPrepareAssetDelegate = [self mockForProtocol:@protocol(UAInAppMessagePrepareAssetsDelegate)];

@@ -33,6 +33,18 @@ extern NSUInteger const UAAutomationScheduleLimit;
       completionHandler:(nullable void (^)(UASchedule * __nullable))completionHandler;
 
 /**
+ * Schedules actions with metadata.
+ *
+ * @param scheduleInfo The schedule information.
+ * @param metadata The schedule's metadata.
+ * @param completionHandler The completion handler when the action is scheduled.
+ * If the schedule info is invalid, the action schedule will be nil.
+ */
+- (void)scheduleActions:(UAActionScheduleInfo *)scheduleInfo
+               metadata:(NSDictionary *)metadata
+      completionHandler:(nullable void (^)(UASchedule * __nullable))completionHandler;
+
+/**
  * Cancels a schedule with the given identifier.
  *
  * @param identifier A schedule identifier.

@@ -1308,8 +1308,8 @@
 		DF4E48F7221CC79100F306A5 /* UAInAppMessageAssetManager.h in Headers */ = {isa = PBXBuildFile; fileRef = DF4E48F4221CC79100F306A5 /* UAInAppMessageAssetManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DF4E48F8221CC79100F306A5 /* UAInAppMessageAssetManager.m in Sources */ = {isa = PBXBuildFile; fileRef = DF4E48F5221CC79100F306A5 /* UAInAppMessageAssetManager.m */; };
 		DF4E48F9221CC79100F306A5 /* UAInAppMessageAssetManager.m in Sources */ = {isa = PBXBuildFile; fileRef = DF4E48F5221CC79100F306A5 /* UAInAppMessageAssetManager.m */; };
-		DF4E4968221F22E100F306A5 /* UAInAppMessageAssetManager+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = DF4E4965221F1DA700F306A5 /* UAInAppMessageAssetManager+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DF4E4969221F22E300F306A5 /* UAInAppMessageAssetManager+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = DF4E4965221F1DA700F306A5 /* UAInAppMessageAssetManager+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		DF4E4968221F22E100F306A5 /* UAInAppMessageAssetManager+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = DF4E4965221F1DA700F306A5 /* UAInAppMessageAssetManager+Internal.h */; };
+		DF4E4969221F22E300F306A5 /* UAInAppMessageAssetManager+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = DF4E4965221F1DA700F306A5 /* UAInAppMessageAssetManager+Internal.h */; };
 		DF4E496A221F22EB00F306A5 /* UAInAppMessageAssetCache+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = DF4E4967221F202800F306A5 /* UAInAppMessageAssetCache+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DF4E496B221F22EC00F306A5 /* UAInAppMessageAssetCache+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = DF4E4967221F202800F306A5 /* UAInAppMessageAssetCache+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DF4E49A5221F487500F306A5 /* UAInAppMessageAssetManagerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = DF4E49A4221F487500F306A5 /* UAInAppMessageAssetManagerTest.m */; };
@@ -1773,6 +1773,7 @@
 		459D40562092474A00C40E2D /* Valid-UAInAppMessageBannerStyle.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Valid-UAInAppMessageBannerStyle.plist"; sourceTree = "<group>"; };
 		459D40582092475500C40E2D /* Invalid-UAInAppMessageBannerStyle.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Invalid-UAInAppMessageBannerStyle.plist"; sourceTree = "<group>"; };
 		459D405A2092475C00C40E2D /* Invalid-UAInAppMessageModalStyle.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Invalid-UAInAppMessageModalStyle.plist"; sourceTree = "<group>"; };
+		459D70A12209027B005A3BB9 /* UAAutomation 5.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "UAAutomation 5.xcdatamodel"; sourceTree = "<group>"; };
 		459D70A3220E4AA4005A3BB9 /* UARemoteData 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "UARemoteData 2.xcdatamodel"; sourceTree = "<group>"; };
 		45DCD80B208670F400BCF10F /* UAInAppMessageStyleProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = UAInAppMessageStyleProtocol.h; path = ios/UAInAppMessageStyleProtocol.h; sourceTree = "<group>"; };
 		45DCD8112086A68900BCF10F /* UAInAppMessageFullScreenStyle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = UAInAppMessageFullScreenStyle.h; path = ios/UAInAppMessageFullScreenStyle.h; sourceTree = "<group>"; };
@@ -6826,12 +6827,13 @@
 		CC8999A01D8B642D00A0CECC /* UAAutomation.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				459D70A12209027B005A3BB9 /* UAAutomation 5.xcdatamodel */,
 				DF2A02CE21AF69C10038D8F6 /* UAAutomation 4.xcdatamodel */,
 				99EB9F6A1F7AD4A800C42D6A /* UAAutomation 3.xcdatamodel */,
 				6EF2DF0C1E5CB6F50062099A /* UAAutomation 2.xcdatamodel */,
 				CC8999A11D8B642D00A0CECC /* UAAutomation.xcdatamodel */,
 			);
-			currentVersion = DF2A02CE21AF69C10038D8F6 /* UAAutomation 4.xcdatamodel */;
+			currentVersion = 459D70A12209027B005A3BB9 /* UAAutomation 5.xcdatamodel */;
 			path = UAAutomation.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;

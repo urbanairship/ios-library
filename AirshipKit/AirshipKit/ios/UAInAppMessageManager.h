@@ -100,18 +100,22 @@ NS_ASSUME_NONNULL_BEGIN
  * Schedules an in-app message.
  *
  * @param scheduleInfo The schedule info for the message.
+ * @param metadata The schedule optional metadata.
  * @param completionHandler The completion handler to be called when scheduling completes.
  */
 - (void)scheduleMessageWithScheduleInfo:(UAInAppMessageScheduleInfo *)scheduleInfo
+                               metadata:(nullable NSDictionary *)metadata
                       completionHandler:(void (^)(UASchedule *))completionHandler;
 
 /**
  * Schedules multiple in-app messages.
  *
  * @param scheduleInfos The schedule info for the messages.
+ * @param metadata The schedules' optional metadata.
  * @param completionHandler The completion handler to be called when scheduling completes.
  */
 - (void)scheduleMessagesWithScheduleInfo:(NSArray<UAInAppMessageScheduleInfo *> *)scheduleInfos
+                                metadata:(nullable NSDictionary *)metadata
                        completionHandler:(void (^)(NSArray <UASchedule *> *))completionHandler;
 
 /**

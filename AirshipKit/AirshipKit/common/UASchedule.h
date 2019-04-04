@@ -24,6 +24,13 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property(nonatomic, readonly) UAScheduleInfo *info;
 
+/**
+ * The schedule's metadata.
+ *
+ * @note metadata includes the locale which can change at any time.
+ */
+@property(nonatomic, readonly) NSDictionary *metadata;
+
 ///---------------------------------------------------------------------------------------
 /// @name Schedule Management
 ///---------------------------------------------------------------------------------------

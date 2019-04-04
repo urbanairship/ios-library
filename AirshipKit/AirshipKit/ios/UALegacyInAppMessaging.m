@@ -158,7 +158,8 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
     void (^scheduleBlock)(void) = ^{
         // Schedule the new one
         self.pendingMessageID = messageID;
-        [self.inAppMessageManager scheduleMessageWithScheduleInfo:info completionHandler:^(UASchedule * schedule){
+
+        [self.inAppMessageManager scheduleMessageWithScheduleInfo:info metadata:@{} completionHandler:^(UASchedule * schedule){
             UA_LDEBUG(@"LegacyInAppMessageManager - saved schedule: %@", schedule);
         }];
     };

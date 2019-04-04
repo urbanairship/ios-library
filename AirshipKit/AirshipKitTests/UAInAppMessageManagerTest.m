@@ -35,6 +35,9 @@
 @property (nonatomic, strong) id mockAssetManager;
 @property (nonatomic, strong) id mockAssetCache;
 @property (nonatomic, strong) id mockAssets;
+@property (nonatomic, strong) id mockRemoteDataManager;
+@property (nonatomic, strong) NSDictionary *mockMetadata;
+@property (nonatomic, assign) BOOL isMetadataValid;
 
 @end
 
@@ -55,7 +58,12 @@
     self.mockDefaultDisplayCoordinator = [self mockForClass:[UAInAppMessageDefaultDisplayCoordinator class]];
 
     // Note: KVO fails for protocol mocks
-    self.mockDelegatedDisplayCoordinator = [self mockForClass:[UAInAppMessageDefaultDisplayCoordinator class]];;
+    self.mockDelegatedDisplayCoordinator = [self mockForClass:[UAInAppMessageDefaultDisplayCoordinator class]];
+
+    self.mockMetadata = @{@"cool":@"story"};
+    self.mockRemoteDataManager = [self mockForClass:[UARemoteDataManager class]];
+    [[[self.mockRemoteDataManager stub] andReturn:self.mockMetadata] lastMetadata];
+    [[[self.mockRemoteDataManager stub] andReturnValue:OCMOCK_VALUE(self.isMetadataValid)] isLastMetadataCurrent];
 
     self.mockAssetManager = [self mockForClass:[UAInAppMessageAssetManager class]];
     self.mockAssetCache = [self mockForClass:[UAInAppMessageAssetCache class]];
@@ -63,7 +71,7 @@
     
     self.manager = [UAInAppMessageManager managerWithAutomationEngine:self.mockAutomationEngine
                                                tagGroupsLookupManager:self.mockTagGroupsLookupManager
-                                                    remoteDataManager:[self mockForClass:[UARemoteDataManager class]]
+                                                    remoteDataManager:self.mockRemoteDataManager
                                                             dataStore:self.dataStore
                                                                  push:self.mockPush
                                                            dispatcher:self.testDispatcher
@@ -89,6 +97,7 @@
 - (void)tearDown {
     [self.mockDelegate stopMocking];
     [self.mockAdapter stopMocking];
+    [self.mockRemoteDataManager stopMocking];
 
     [super tearDown];
 }
@@ -149,8 +158,12 @@
     return scheduleInfo;
 }
 
-- (void)testPrepare {
-    XCTestExpectation *adapterPrepareCalled = [self expectationWithDescription:@"adapter prepare should be called"];
+- (void)testPrepareValidMetadata {
+    self.isMetadataValid = YES;
+    [self setUp];
+
+    XCTestExpectation *adapterPrepareCalled = [self expectationWithDescription:@"adapter prepare should be called when metadata is valid"];
+
     [[[self.mockAdapter expect] andDo:^(NSInvocation *invocation) {
         void (^prepareBlock)(UAInAppMessagePrepareResult);
         [invocation getArgument:&prepareBlock atIndex:3];
@@ -158,7 +171,8 @@
         [adapterPrepareCalled fulfill];
     }] prepareWithAssets:self.mockAssets completionHandler:OCMOCK_ANY];
 
-    UASchedule *testSchedule = [UASchedule scheduleWithIdentifier:@"test IAM schedule" info:self.scheduleInfo];
+    UASchedule *testSchedule = [UASchedule scheduleWithIdentifier:@"test IAM schedule" info:self.scheduleInfo metadata:self.mockMetadata];
+
     [[[self.mockDelegate expect] andReturn:self.scheduleInfo.message] extendMessage:[OCMArg isKindOfClass:[UAInAppMessage class]]];
 
     XCTestExpectation *assetManagerPrepareCalled = [self expectationWithDescription:@"asset manager prepare should be called"];
@@ -198,7 +212,87 @@
     }];
 
     [self waitForTestExpectations];
-    
+
+    [self.mockAdapter verify];
+    [self.mockDelegate verify];
+}
+
+- (void)testPrepareInvalidMetadata {
+    self.isMetadataValid = NO;
+    [self setUp];
+
+    [[self.mockAdapter reject] prepareWithAssets:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
+    UASchedule *schedule = [UASchedule scheduleWithIdentifier:@"test IAM schedule" info:self.scheduleInfo metadata:self.mockMetadata];
+    [[[self.mockDelegate expect] andReturn:self.scheduleInfo.message] extendMessage:[OCMArg isKindOfClass:[UAInAppMessage class]]];
+
+    XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare should be finished with invalid result"];
+    [self.manager prepareSchedule:schedule completionHandler:^(UAAutomationSchedulePrepareResult result) {
+        XCTAssertEqual(UAAutomationSchedulePrepareResultInvalidate, result);
+        [prepareFinished fulfill];
+    }];
+
+    [self waitForTestExpectations];
+
+    [self.mockAdapter verify];
+    [self.mockDelegate verify];
+    [self.mockAssetManager verify];
+    [self.mockAssetCache verify];
+}
+
+- (void)testPrepare {
+    self.isMetadataValid = YES;
+    [self setUp];
+
+    XCTestExpectation *adapterPrepareCalled = [self expectationWithDescription:@"adapter prepare should be called"];
+    [[[self.mockAdapter expect] andDo:^(NSInvocation *invocation) {
+        void (^prepareBlock)(UAInAppMessagePrepareResult);
+        [invocation getArgument:&prepareBlock atIndex:3];
+        prepareBlock(UAInAppMessagePrepareResultSuccess);
+        [adapterPrepareCalled fulfill];
+    }] prepareWithAssets:self.mockAssets completionHandler:OCMOCK_ANY];
+
+    UASchedule *testSchedule = [UASchedule scheduleWithIdentifier:@"test IAM schedule" info:self.scheduleInfo metadata:self.mockMetadata];
+    [[[self.mockDelegate expect] andReturn:self.scheduleInfo.message] extendMessage:[OCMArg isKindOfClass:[UAInAppMessage class]]];
+
+    XCTestExpectation *assetManagerPrepareCalled = [self expectationWithDescription:@"asset manager prepare should be called"];
+    [[[self.mockAssetManager expect] andDo:^(NSInvocation *invocation) {
+        void (^prepareBlock)(UAInAppMessagePrepareResult);
+        [invocation getArgument:&prepareBlock atIndex:3];
+        prepareBlock(UAInAppMessagePrepareResultSuccess);
+        [assetManagerPrepareCalled fulfill];
+    }] onPrepare:[OCMArg checkWithBlock:^BOOL(id obj)  {
+        UAInAppMessage *schedule = obj;
+        if (![schedule isEqual:testSchedule]) {
+            XCTFail(@"Schedule is not equal to test schedule");
+            return NO;
+        }
+        return YES;
+    }] completionHandler:OCMOCK_ANY];
+
+    XCTestExpectation *assetManagerAssetsForScheduleCalled = [self expectationWithDescription:@"asset manager assetsForSchedule should be called"];
+    [[[self.mockAssetManager expect] andDo:^(NSInvocation *invocation) {
+        void (^completionBlock)(UAInAppMessageAssets *);
+        [invocation getArgument:&completionBlock atIndex:3];
+        completionBlock(self.mockAssets);
+        [assetManagerAssetsForScheduleCalled fulfill];
+    }] assetsForSchedule:[OCMArg checkWithBlock:^BOOL(id obj)  {
+        UAInAppMessage *schedule = obj;
+        if (![schedule isEqual:testSchedule]) {
+            XCTFail(@"Schedule is not equal to test schedule");
+            return NO;
+        }
+        return YES;
+    }] completionHandler:OCMOCK_ANY];
+
+    XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare should be finished"];
+    [self.manager prepareSchedule:testSchedule completionHandler:^(UAAutomationSchedulePrepareResult result) {
+        XCTAssertEqual(UAAutomationSchedulePrepareResultContinue, result);
+        [prepareFinished fulfill];
+    }];
+
+    [self waitForTestExpectations];
+
     [self.mockAdapter verify];
     [self.mockDelegate verify];
     [self.mockAssetManager verify];
@@ -206,7 +300,7 @@
 }
 
 - (void)testPrepareExtendMessageFailed {
-    UASchedule *schedule = [UASchedule scheduleWithIdentifier:@"test IAM schedule" info:self.scheduleInfo];
+    UASchedule *schedule = [UASchedule scheduleWithIdentifier:@"test IAM schedule" info:self.scheduleInfo metadata:@{}];
     [[[self.mockDelegate expect] andReturn:nil] extendMessage:[OCMArg isKindOfClass:[UAInAppMessage class]]];
 
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare should be finished"];
@@ -222,6 +316,9 @@
 }
 
 - (void)testPrepareCancel {
+    self.isMetadataValid = YES;
+    [self setUp];
+
     XCTestExpectation *adapterPrepareCalled = [self expectationWithDescription:@"adapter prepare should be called"];
     [[[self.mockAdapter expect] andDo:^(NSInvocation *invocation) {
         void (^prepareBlock)(UAInAppMessagePrepareResult);
@@ -229,10 +326,13 @@
         prepareBlock(UAInAppMessagePrepareResultCancel);
         [adapterPrepareCalled fulfill];
     }] prepareWithAssets:self.mockAssets completionHandler:OCMOCK_ANY];
-    
-    UASchedule *testSchedule = [UASchedule scheduleWithIdentifier:@"test IAM schedule" info:self.scheduleInfo];
+
+    UASchedule *testSchedule = [UASchedule scheduleWithIdentifier:@"test IAM schedule"
+                                                             info:self.scheduleInfo
+                                                         metadata:self.mockMetadata];
+
     [[[self.mockDelegate expect] andReturn:self.scheduleInfo.message] extendMessage:[OCMArg isKindOfClass:[UAInAppMessage class]]];
-    
+
     XCTestExpectation *assetManagerPrepareCalled = [self expectationWithDescription:@"asset manager prepare should be called"];
     [[[self.mockAssetManager expect] andDo:^(NSInvocation *invocation) {
         void (^prepareBlock)(UAInAppMessagePrepareResult);
@@ -247,7 +347,7 @@
         }
         return YES;
     }] completionHandler:OCMOCK_ANY];
-    
+
     XCTestExpectation *assetManagerAssetsForScheduleCalled = [self expectationWithDescription:@"asset manager assetsForSchedule should be called"];
     [[[self.mockAssetManager expect] andDo:^(NSInvocation *invocation) {
         void (^completionBlock)(UAInAppMessageAssets *);
@@ -262,7 +362,9 @@
         }
         return YES;
     }] completionHandler:OCMOCK_ANY];
+
     
+
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare should be finished"];
     [self.manager prepareSchedule:testSchedule completionHandler:^(UAAutomationSchedulePrepareResult result) {
         XCTAssertEqual(UAAutomationSchedulePrepareResultCancel, result);
@@ -283,7 +385,7 @@
     [self.manager setFactoryBlock:nil forDisplayType:UAInAppMessageDisplayTypeBanner];
 #pragma clang diagnostic pop
 
-    UASchedule *schedule = [UASchedule scheduleWithIdentifier:@"test IAM schedule" info:self.scheduleInfo];
+    UASchedule *schedule = [UASchedule scheduleWithIdentifier:@"test IAM schedule" info:self.scheduleInfo metadata:@{}];
 
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare should be finished"];
     [self.manager prepareSchedule:schedule completionHandler:^(UAAutomationSchedulePrepareResult result) {
@@ -301,7 +403,7 @@
         return nil;
     } forDisplayType:UAInAppMessageDisplayTypeBanner];
 
-    UASchedule *schedule = [UASchedule scheduleWithIdentifier:@"test IAM schedule" info:self.scheduleInfo];
+    UASchedule *schedule = [UASchedule scheduleWithIdentifier:@"test IAM schedule" info:self.scheduleInfo metadata:@{}];
 
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare should be finished"];
     [self.manager prepareSchedule:schedule completionHandler:^(UAAutomationSchedulePrepareResult result) {
@@ -315,7 +417,10 @@
 }
 
 - (void)testPrepareAudienceCheckFailureDefaultMissBehavior {
-    UASchedule *testSchedule = [UASchedule scheduleWithIdentifier:@"expected_id" info:self.scheduleInfo];
+    self.isMetadataValid = YES;
+    [self setUp];
+
+    UASchedule *testSchedule = [UASchedule scheduleWithIdentifier:@"expected_id" info:self.scheduleInfo metadata:self.mockMetadata];
 
     // Mock the checks to reject the audience
     id checks = [self mockForClass:[UAInAppMessageAudienceChecks class]];
@@ -382,9 +487,12 @@
 }
 
 - (void)testPrepareAudienceCheckFailureMissBehaviorCancel {
+    self.isMetadataValid = YES;
+    [self setUp];
+
     UAInAppMessageScheduleInfo *scheduleInfo = [self sampleScheduleInfoWithMissBehavior:UAInAppMessageAudienceMissBehaviorCancel];
-    
-    UASchedule *testSchedule = [UASchedule scheduleWithIdentifier:@"expected_id" info:scheduleInfo];
+
+    UASchedule *testSchedule = [UASchedule scheduleWithIdentifier:@"expected_id" info:scheduleInfo metadata:self.mockMetadata];
 
     [[[self.mockDelegate expect] andReturn:scheduleInfo.message] extendMessage:[OCMArg isKindOfClass:[UAInAppMessage class]]];
     
@@ -404,9 +512,12 @@
 }
 
 - (void)testPrepareAudienceCheckFailureMissBehaviorSkip {
+    self.isMetadataValid = YES;
+    [self setUp];
+
     UAInAppMessageScheduleInfo *scheduleInfo = [self sampleScheduleInfoWithMissBehavior:UAInAppMessageAudienceMissBehaviorSkip];
-    
-    UASchedule *testSchedule = [UASchedule scheduleWithIdentifier:@"expected_id" info:scheduleInfo];
+
+    UASchedule *testSchedule = [UASchedule scheduleWithIdentifier:@"expected_id" info:scheduleInfo metadata:self.mockMetadata];
 
     [[[self.mockDelegate expect] andReturn:scheduleInfo.message] extendMessage:[OCMArg isKindOfClass:[UAInAppMessage class]]];
     
@@ -426,9 +537,12 @@
 }
 
 - (void)testPrepareAudienceCheckFailureMissBehaviorPenalize {
+    self.isMetadataValid = YES;
+    [self setUp];
+
     UAInAppMessageScheduleInfo *scheduleInfo = [self sampleScheduleInfoWithMissBehavior:UAInAppMessageAudienceMissBehaviorPenalize];
-    
-    UASchedule *testSchedule = [UASchedule scheduleWithIdentifier:@"expected_id" info:scheduleInfo];
+
+    UASchedule *testSchedule = [UASchedule scheduleWithIdentifier:@"expected_id" info:scheduleInfo metadata:self.mockMetadata];
 
     [[[self.mockDelegate expect] andReturn:scheduleInfo.message] extendMessage:[OCMArg isKindOfClass:[UAInAppMessage class]]];
     
@@ -448,6 +562,9 @@
 }
 
 - (void)testPrepareAudienceCheckWithTagGroups {
+    self.isMetadataValid = YES;
+    [self setUp];
+
     XCTestExpectation *prepareCalled = [self expectationWithDescription:@"prepare should be called"];
     [[[self.mockAdapter expect] andDo:^(NSInvocation *invocation) {
         void (^prepareBlock)(UAInAppMessagePrepareResult);
@@ -456,7 +573,7 @@
         [prepareCalled fulfill];
     }] prepareWithAssets:self.mockAssets completionHandler:OCMOCK_ANY];
 
-    UASchedule *testSchedule = [UASchedule scheduleWithIdentifier:@"expected_id" info:self.scheduleInfoWithTagGroups];
+    UASchedule *testSchedule = [UASchedule scheduleWithIdentifier:@"expected_id" info:self.scheduleInfoWithTagGroups metadata:self.mockMetadata];
 
     // Mock the checks to accept the audience
     id checks = [self mockForClass:[UAInAppMessageAudienceChecks class]];
@@ -520,9 +637,12 @@
 }
 
 - (void)testExecuteSchedule {
+    self.isMetadataValid = YES;
+    [self setUp];
+
     [[[self.mockDefaultDisplayCoordinator stub] andReturnValue:@(YES)] isReady];
 
-    UASchedule *testSchedule = [UASchedule scheduleWithIdentifier:@"expected_id" info:self.scheduleInfo];
+    UASchedule *testSchedule = [UASchedule scheduleWithIdentifier:@"expected_id" info:self.scheduleInfo metadata:self.mockMetadata];
 
     // Prepare
     [[[self.mockAdapter expect] andDo:^(NSInvocation *invocation) {
@@ -608,9 +728,12 @@
 }
 
 - (void)testPauseDisplay {
+    self.isMetadataValid = YES;
+    [self setUp];
+
     [[[self.mockDefaultDisplayCoordinator stub] andReturnValue:@(YES)] isReady];
 
-    UASchedule *testSchedule = [UASchedule scheduleWithIdentifier:@"expected_id" info:self.scheduleInfo];
+    UASchedule *testSchedule = [UASchedule scheduleWithIdentifier:@"expected_id" info:self.scheduleInfo metadata:self.mockMetadata];
 
     // Prepare
     [[[self.mockAdapter expect] andDo:^(NSInvocation *invocation) {
@@ -685,7 +808,7 @@
 }
 
 - (void)testCancelSchedule {
-    UASchedule *testSchedule = [UASchedule scheduleWithIdentifier:@"expected_id" info:self.scheduleInfo];
+    UASchedule *testSchedule = [UASchedule scheduleWithIdentifier:@"expected_id" info:self.scheduleInfo metadata:@{}];
 
     [[self.mockAutomationEngine expect] cancelScheduleWithID:testSchedule.identifier];
 
@@ -744,11 +867,11 @@
         builder.message = message;
     }];
     NSArray<UAInAppMessageScheduleInfo *> *submittedScheduleInfos = @[self.scheduleInfo,anotherScheduleInfo];
-    
+
     // expectations
     [[[self.mockAutomationEngine expect] andDo:^(NSInvocation *invocation) {
         void *arg;
-        [invocation getArgument:&arg atIndex:3];
+        [invocation getArgument:&arg atIndex:4];
         void (^completionHandler)(NSArray *) = (__bridge void (^)(NSArray *))arg;
         
         if (completionHandler) {
@@ -756,11 +879,11 @@
         }
     }] scheduleMultiple:[OCMArg checkWithBlock:^BOOL(NSArray<UAInAppMessageScheduleInfo *> *scheduleInfos) {
         return [scheduleInfos isEqualToArray:submittedScheduleInfos];
-    }] completionHandler:OCMOCK_ANY];
-    
+    }] metadata:@{} completionHandler:OCMOCK_ANY];
+
     // test
     __block BOOL completionHandlerCalled = NO;
-    [self.manager scheduleMessagesWithScheduleInfo:submittedScheduleInfos completionHandler:^(NSArray<UASchedule *> *schedules) {
+    [self.manager scheduleMessagesWithScheduleInfo:submittedScheduleInfos metadata:@{} completionHandler:^(NSArray<UASchedule *> *schedules) {
         completionHandlerCalled = YES;
 
     }];
@@ -776,7 +899,10 @@
 }
 
 - (void)testDisplayCoordination {
-    UASchedule *testSchedule = [UASchedule scheduleWithIdentifier:@"expected_id" info:self.scheduleInfo];
+    self.isMetadataValid = YES;
+    [self setUp];
+
+    UASchedule *testSchedule = [UASchedule scheduleWithIdentifier:@"expected_id" info:self.scheduleInfo metadata:self.mockMetadata];
 
     [[[self.mockAdapter stub] andDo:^(NSInvocation *invocation) {
         void (^prepareBlock)(UAInAppMessagePrepareResult);
@@ -863,9 +989,12 @@
 }
 
 - (void)testDelegatedDisplayCoordination {
+    self.isMetadataValid = YES;
+    [self setUp];
+
     [[[self.mockDelegate stub] andReturn:self.mockDelegatedDisplayCoordinator] displayCoordinatorForMessage:[OCMArg isKindOfClass:[UAInAppMessage class]]];
 
-    UASchedule *testSchedule = [UASchedule scheduleWithIdentifier:@"expected_id" info:self.scheduleInfo];
+    UASchedule *testSchedule = [UASchedule scheduleWithIdentifier:@"expected_id" info:self.scheduleInfo metadata:self.mockMetadata];
 
     [[[self.mockAdapter stub] andDo:^(NSInvocation *invocation) {
         void (^prepareBlock)(UAInAppMessagePrepareResult);

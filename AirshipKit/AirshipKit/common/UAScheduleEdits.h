@@ -87,4 +87,5 @@
  */
 @property(nonatomic, readonly, nullable) NSNumber *interval;
 
+
 @end

@@ -99,15 +99,19 @@
 - (void)testSchedule {
     XCTestExpectation *testExpectation = [self expectationWithDescription:@"scheduled action"];
 
+    NSDictionary *expectedMetadata = @{@"cool":@"story"};
+
     UAActionScheduleInfo *scheduleInfo = [UAActionScheduleInfo scheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder *builder) {
         UAScheduleTrigger *foregroundTrigger = [UAScheduleTrigger foregroundTriggerWithCount:2];
         builder.actions = @{@"oh": @"hi"};
         builder.triggers = @[foregroundTrigger];
     }];
 
-    [self.automationEngine schedule:scheduleInfo completionHandler:^(UASchedule *schedule) {
-        XCTAssertEqual(scheduleInfo, schedule.info);
+    [self.automationEngine schedule:scheduleInfo metadata:expectedMetadata completionHandler:^(UASchedule *schedule) {
+        XCTAssertEqualObjects(scheduleInfo, schedule.info);
         XCTAssertNotNil(schedule.identifier);
+        XCTAssertEqualObjects(expectedMetadata, schedule.metadata);
+
         [testExpectation fulfill];
     }];
 
@@ -115,6 +119,9 @@
 }
 
 - (void)testScheduleMultiple {
+
+    NSDictionary *expectedMetadata = @{@"cool":@"story"};
+
     // setup
     UAActionScheduleInfo *scheduleInfo1 = [UAActionScheduleInfo scheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder *builder) {
         UAScheduleTrigger *foregroundTrigger = [UAScheduleTrigger foregroundTriggerWithCount:2];
@@ -127,15 +134,19 @@
         builder.triggers = @[foregroundTrigger];
     }];
 
-    NSArray<UAActionScheduleInfo *> *submittedSchedules = @[scheduleInfo1,scheduleInfo2];
+    NSArray<UAActionScheduleInfo *> *submittedSchedules = @[scheduleInfo1, scheduleInfo2];
 
     XCTestExpectation *scheduledExpectation = [self expectationWithDescription:@"scheduled actions"];
 
     // test
-    [self.automationEngine scheduleMultiple:submittedSchedules completionHandler:^(NSArray<UASchedule *> *schedules) {
+    [self.automationEngine scheduleMultiple:submittedSchedules metadata:expectedMetadata completionHandler:^(NSArray<UASchedule *> *schedules) {
         XCTAssertEqual(schedules.count, submittedSchedules.count);
         NSArray *infos = @[schedules[0].info, schedules[1].info];
         XCTAssertEqualObjects(infos, submittedSchedules);
+
+        XCTAssertEqualObjects(schedules[0].metadata, expectedMetadata);
+        XCTAssertEqualObjects(schedules[1].metadata, expectedMetadata);
+
         [scheduledExpectation fulfill];
     }];
 
@@ -152,7 +163,7 @@
         builder.triggers = @[foregroundTrigger];
     }];
 
-    [self.automationEngine schedule:scheduleInfo completionHandler:^(UASchedule *schedule) {
+    [self.automationEngine schedule:scheduleInfo metadata:@{} completionHandler:^(UASchedule *schedule) {
         XCTAssertNil(schedule);
         [testExpectation fulfill];
     }];
@@ -171,7 +182,7 @@
     for (int i = 0; i < UAAutomationScheduleLimit; i++) {
         XCTestExpectation *testExpectation = [self expectationWithDescription:[NSString stringWithFormat:@"scheduled action: %d", i]];
 
-        [self.automationEngine schedule:scheduleInfo completionHandler:^(UASchedule *schedule) {
+        [self.automationEngine schedule:scheduleInfo metadata:@{} completionHandler:^(UASchedule *schedule) {
             XCTAssertEqualObjects(scheduleInfo, schedule.info);
             XCTAssertNotNil(schedule.identifier);
             [testExpectation fulfill];
@@ -181,7 +192,7 @@
     XCTestExpectation *testExpectation = [self expectationWithDescription:@"scheduled what"];
 
     // Try to schedule 1 more, verify it fails
-    [self.automationEngine schedule:scheduleInfo completionHandler:^(UASchedule *schedule) {
+    [self.automationEngine schedule:scheduleInfo metadata:@{} completionHandler:^(UASchedule *schedule) {
         XCTAssertNil(schedule);
         [testExpectation fulfill];
     }];
@@ -235,7 +246,7 @@
             builder.triggers = @[trigger];
         }];
 
-        [self.automationEngine schedule:info completionHandler:nil];
+        [self.automationEngine schedule:info metadata:@{} completionHandler:nil];
     }
 
     // Trigger the schedules with a foreground notification
@@ -261,7 +272,7 @@
             builder.group = @"foo";
         }];
 
-        [self.automationEngine schedule:scheduleInfo completionHandler:^(UASchedule *schedule) {
+        [self.automationEngine schedule:scheduleInfo metadata:@{} completionHandler:^(UASchedule *schedule) {
             XCTAssertEqualObjects(scheduleInfo, schedule.info);
             XCTAssertNotNil(schedule.identifier);
 
@@ -284,7 +295,7 @@
             builder.group = @"bar";
         }];
 
-        [self.automationEngine schedule:scheduleInfo completionHandler:^(UASchedule *schedule) {
+        [self.automationEngine schedule:scheduleInfo metadata:@{} completionHandler:^(UASchedule *schedule) {
             XCTAssertEqualObjects(scheduleInfo, schedule.info);
             XCTAssertNotNil(schedule.identifier);
 
@@ -323,7 +334,7 @@
         builder.triggers = @[foregroundTrigger];
     }];
 
-    [self.automationEngine schedule:scheduleInfo completionHandler:^(UASchedule *schedule) {
+    [self.automationEngine schedule:scheduleInfo metadata:@{} completionHandler:^(UASchedule *schedule) {
         XCTAssertEqualObjects(scheduleInfo, schedule.info);
         XCTAssertNotNil(schedule.identifier);
         scheduleIdentifier = schedule.identifier;
@@ -357,7 +368,7 @@
             builder.triggers = @[foregroundTrigger];
         }];
 
-        [self.automationEngine schedule:scheduleInfo completionHandler:^(UASchedule *schedule) {
+        [self.automationEngine schedule:scheduleInfo metadata:@{} completionHandler:^(UASchedule *schedule) {
             XCTAssertEqual(scheduleInfo, schedule.info);
             XCTAssertNotNil(schedule.identifier);
 
@@ -375,8 +386,8 @@
         builder.triggers = @[foregroundTrigger];
         builder.end = [NSDate dateWithTimeIntervalSince1970:0];
     }];
-    
-    [self.automationEngine schedule:scheduleInfo completionHandler:^(UASchedule *schedule) {
+
+    [self.automationEngine schedule:scheduleInfo metadata:@{} completionHandler:^(UASchedule *schedule) {
         XCTAssertEqual(scheduleInfo, schedule.info);
         XCTAssertNotNil(schedule.identifier);
         
@@ -406,8 +417,8 @@
             builder.actions = @{@"oh": @"hi"};
             builder.triggers = @[foregroundTrigger];
         }];
-        
-        [self.automationEngine schedule:scheduleInfo completionHandler:^(UASchedule *schedule) {
+
+        [self.automationEngine schedule:scheduleInfo metadata:@{} completionHandler:^(UASchedule *schedule) {
             XCTAssertEqual(scheduleInfo, schedule.info);
             XCTAssertNotNil(schedule.identifier);
             
@@ -425,8 +436,8 @@
         builder.triggers = @[foregroundTrigger];
         builder.end = [NSDate dateWithTimeIntervalSince1970:0];
     }];
-    
-    [self.automationEngine schedule:scheduleInfo completionHandler:^(UASchedule *schedule) {
+
+    [self.automationEngine schedule:scheduleInfo metadata:@{} completionHandler:^(UASchedule *schedule) {
         XCTAssertEqual(scheduleInfo, schedule.info);
         XCTAssertNotNil(schedule.identifier);
         
@@ -456,7 +467,7 @@
         builder.triggers = @[foregroundTrigger];
     }];
 
-    [self.automationEngine schedule:scheduleInfo completionHandler:^(UASchedule *schedule) {
+    [self.automationEngine schedule:scheduleInfo metadata:@{} completionHandler:^(UASchedule *schedule) {
         XCTAssertEqualObjects(scheduleInfo, schedule.info);
         XCTAssertNotNil(schedule.identifier);
         scheduleIdentifier = schedule.identifier;
@@ -489,7 +500,8 @@
             builder.triggers = @[foregroundTrigger];
             builder.group = @"foo";
         }];
-        [self.automationEngine schedule:scheduleInfo completionHandler:nil];
+
+        [self.automationEngine schedule:scheduleInfo metadata:@{} completionHandler:nil];
     }
 
     // Schedule 15 under "bar"
@@ -502,7 +514,7 @@
             builder.group = @"bar";
         }];
 
-        [self.automationEngine schedule:scheduleInfo completionHandler:^(UASchedule *schedule) {
+        [self.automationEngine schedule:scheduleInfo metadata:@{} completionHandler:^(UASchedule *schedule) {
             [barSchedules addObject:schedule];
         }];
     }
@@ -529,7 +541,7 @@
         builder.triggers = @[foregroundTrigger];
     }];
 
-    [self.automationEngine schedule:scheduleInfo completionHandler:nil];
+    [self.automationEngine schedule:scheduleInfo metadata:@{} completionHandler:nil];
 
     [self.automationEngine cancelAll];
 
@@ -559,7 +571,7 @@
 
     XCTestExpectation *scheduleExpectation = [self expectationWithDescription:@"scheduled action"];
 
-    [self.automationEngine schedule:scheduleInfo completionHandler:^(UASchedule *schedule) {
+    [self.automationEngine schedule:scheduleInfo metadata:@{} completionHandler:^(UASchedule *schedule) {
         XCTAssertEqual(scheduleInfo, schedule.info);
         XCTAssertNotNil(schedule.identifier);
 
@@ -619,7 +631,7 @@
 
     XCTestExpectation *scheduleExpectation = [self expectationWithDescription:@"scheduled action"];
 
-    [self.automationEngine schedule:scheduleInfo completionHandler:^(UASchedule *schedule) {
+    [self.automationEngine schedule:scheduleInfo metadata:@{} completionHandler:^(UASchedule *schedule) {
         XCTAssertEqual(scheduleInfo, schedule.info);
         XCTAssertNotNil(schedule.identifier);
         [scheduleExpectation fulfill];
@@ -638,7 +650,7 @@
         builder.triggers = @[foregroundTrigger];
     }];
 
-    [self.automationEngine schedule:scheduleInfo completionHandler:nil];
+    [self.automationEngine schedule:scheduleInfo metadata:@{} completionHandler:nil];
 
     // Verify we have the new schedule
     XCTestExpectation *allExpectation = [self expectationWithDescription:@"fetched schedule"];
@@ -865,7 +877,7 @@
     XCTestExpectation *actionsScheduled = [self expectationWithDescription:@"actions scheduled"];
 
     __block NSString *identifier;
-    [self.automationEngine schedule:scheduleInfo completionHandler:^(UASchedule *schedule) {
+    [self.automationEngine schedule:scheduleInfo metadata:@{} completionHandler:^(UASchedule *schedule) {
         identifier = schedule.identifier;
         [actionsScheduled fulfill];
     }];
@@ -915,7 +927,7 @@
 
     XCTestExpectation *actionsScheduled = [self expectationWithDescription:@"actions scheduled"];
     __block NSString *identifier;
-    [self.automationEngine schedule:scheduleInfo completionHandler:^(UASchedule *schedule) {
+    [self.automationEngine schedule:scheduleInfo metadata:@{} completionHandler:^(UASchedule *schedule) {
         identifier = schedule.identifier;
         [actionsScheduled fulfill];
     }];
@@ -1030,11 +1042,11 @@
         builder.triggers = @[[UAScheduleTrigger customEventTriggerWithPredicate:predicate count:1]];
     }];
 
-    [self.automationEngine schedule:scheduleInfo completionHandler:^(UASchedule *schedule) {}];
+    [self.automationEngine schedule:scheduleInfo metadata:@{} completionHandler:^(UASchedule *schedule) {}];
 
     XCTestExpectation *infoScheduled = [self expectationWithDescription:@"info scheduled"];
     __block NSString *scheduleId;
-    [self.automationEngine schedule:scheduleInfo completionHandler:^(UASchedule *schedule) {
+    [self.automationEngine schedule:scheduleInfo metadata:@{} completionHandler:^(UASchedule *schedule) {
         scheduleId = schedule.identifier;
         [infoScheduled fulfill];
     }];
@@ -1085,7 +1097,7 @@
 
     XCTestExpectation *infoScheduled = [self expectationWithDescription:@"info scheduled"];
     __block NSString *scheduleId;
-    [self.automationEngine schedule:scheduleInfo completionHandler:^(UASchedule *schedule) {
+    [self.automationEngine schedule:scheduleInfo metadata:@{} completionHandler:^(UASchedule *schedule) {
         scheduleId = schedule.identifier;
         [infoScheduled fulfill];
     }];
@@ -1196,7 +1208,7 @@
     XCTestExpectation *infoScheduled = [self expectationWithDescription:@"info scheduled"];
 
     __block NSString *scheduleId;
-    [self.automationEngine schedule:scheduleInfo completionHandler:^(UASchedule *schedule) {
+    [self.automationEngine schedule:scheduleInfo metadata:@{} completionHandler:^(UASchedule *schedule) {
         scheduleId = schedule.identifier;
         [infoScheduled fulfill];
     }];
@@ -1302,7 +1314,7 @@
     }] completionHandler:OCMOCK_ANY];
 
     // Schedule
-    [self.automationEngine schedule:info completionHandler:^(UASchedule *schedule) {
+    [self.automationEngine schedule:info metadata:@{} completionHandler:^(UASchedule *schedule) {
         [scheduled fulfill];
     }];
 
@@ -1336,7 +1348,7 @@
 
     __block NSString *scheduleId;
     XCTestExpectation *scheduled = [self expectationWithDescription:@"scheduled"];
-    [self.automationEngine schedule:info completionHandler:^(UASchedule *schedule) {
+    [self.automationEngine schedule:info metadata:@{} completionHandler:^(UASchedule *schedule) {
         scheduleId = schedule.identifier;
         [scheduled fulfill];
     }];

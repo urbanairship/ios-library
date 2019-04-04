@@ -16,6 +16,7 @@ NSUInteger const UAScheduleDataVersion = 1;
 @dynamic group;
 @dynamic limit;
 @dynamic triggeredCount;
+@dynamic metadata;
 @dynamic data;
 @dynamic priority;
 @dynamic triggers;

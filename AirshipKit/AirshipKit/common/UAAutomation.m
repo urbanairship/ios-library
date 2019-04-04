@@ -41,9 +41,14 @@ NSString *const UAAutomationStoreFileFormat = @"Automation-%@.sqlite";
 #pragma mark Public API
 
 - (void)scheduleActions:(UAActionScheduleInfo *)scheduleInfo
-      completionHandler:(void (^)(UASchedule *))completionHandler {
+               metadata:(NSDictionary *)metadata
+      completionHandler:(void (^)(UASchedule * _Nullable))completionHandler {
+    [self.automationEngine schedule:scheduleInfo metadata:metadata completionHandler:completionHandler];
+}
 
-    [self.automationEngine schedule:scheduleInfo completionHandler:completionHandler];
+- (void)scheduleActions:(UAActionScheduleInfo *)scheduleInfo
+      completionHandler:(void (^)(UASchedule *))completionHandler {
+    [self.automationEngine schedule:scheduleInfo metadata:@{} completionHandler:completionHandler];
 }
 
 - (void)cancelScheduleWithID:(NSString *)identifier {

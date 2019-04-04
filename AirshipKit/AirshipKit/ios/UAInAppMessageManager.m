@@ -45,11 +45,13 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
 
 @property(nonatomic, strong, nonnull) id<UAInAppMessageAdapterProtocol> adapter;
 @property(nonatomic, copy, nonnull) NSString *scheduleID;
+@property(nonatomic, strong, nonnull) NSDictionary *metadata;
 @property(nonatomic, strong, nonnull) UAInAppMessage *message;
 @property(nonatomic, strong, nonnull) id<UAInAppMessageDisplayCoordinator> displayCoordinator;
 
 + (instancetype)dataWithAdapter:(id<UAInAppMessageAdapterProtocol>)adapter
                      scheduleID:(NSString *)scheduleID
+                       metadata:(NSDictionary *)metadata
                         message:(UAInAppMessage *)message
              displayCoordinator:(id<UAInAppMessageDisplayCoordinator>)displayCoordinator;
 
@@ -59,6 +61,7 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
 
 - (instancetype)initWithAdapter:(id<UAInAppMessageAdapterProtocol>)adapter
                      scheduleID:(NSString *)scheduleID
+                       metadata:(NSDictionary *)metadata
                         message:(UAInAppMessage *)message
              displayCoordinator:(id<UAInAppMessageDisplayCoordinator>)displayCoordinator {
 
@@ -69,6 +72,7 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
         self.scheduleID = scheduleID;
         self.message = message;
         self.displayCoordinator = displayCoordinator;
+        self.metadata = metadata;
     }
 
     return self;
@@ -76,10 +80,11 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
 
 + (instancetype)dataWithAdapter:(id<UAInAppMessageAdapterProtocol>)adapter
                      scheduleID:(NSString *)scheduleID
+                       metadata:(NSDictionary *)metadata
                         message:(UAInAppMessage *)message
              displayCoordinator:(id<UAInAppMessageDisplayCoordinator>)displayCoordinator {
 
-    return [[self alloc] initWithAdapter:adapter scheduleID:scheduleID message:message displayCoordinator:displayCoordinator];
+    return [[self alloc] initWithAdapter:adapter scheduleID:scheduleID metadata:metadata message:message displayCoordinator:displayCoordinator];
 }
 
 @end
@@ -221,20 +226,29 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
 }
 
 - (void)scheduleMessageWithScheduleInfo:(UAInAppMessageScheduleInfo *)scheduleInfo
+                               metadata:(nullable NSDictionary *)metadata
                       completionHandler:(void (^)(UASchedule *))completionHandler {
-    [self.automationEngine schedule:scheduleInfo completionHandler:^(UASchedule *schedule) {
+    [self.automationEngine schedule:scheduleInfo
+                           metadata:metadata
+                  completionHandler:^(UASchedule *schedule) {
         // Schedule the assets
         [self scheduleAssets:@[schedule]];
         completionHandler(schedule);
     }];
+
+    [self.automationEngine schedule:scheduleInfo metadata:metadata completionHandler:completionHandler];
 }
 
-- (void)scheduleMessagesWithScheduleInfo:(NSArray<UAInAppMessageScheduleInfo *> *)scheduleInfos completionHandler:(void (^)(NSArray <UASchedule *> *))completionHandler {
-    [self.automationEngine scheduleMultiple:scheduleInfos completionHandler:^(NSArray<UASchedule *> *schedules) {
-        // Schedule the assets
-        [self scheduleAssets:schedules];
-        completionHandler(schedules);
-    }];
+- (void)scheduleMessagesWithScheduleInfo:(NSArray<UAInAppMessageScheduleInfo *> *)scheduleInfos
+                                metadata:(nullable NSDictionary *)metadata
+                       completionHandler:(void (^)(NSArray <UASchedule *> *))completionHandler {
+    [self.automationEngine scheduleMultiple:scheduleInfos
+                                   metadata:metadata
+                          completionHandler:^(NSArray<UASchedule *> *schedules) {
+                              // Schedule the assets
+                              [self scheduleAssets:schedules];
+                              completionHandler(schedules);
+                          }];
 }
 
 - (void)scheduleAssets:(NSArray<UASchedule *> *)schedules {
@@ -363,7 +377,7 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
 
     UAInAppMessageScheduleInfo *info = (UAInAppMessageScheduleInfo *)schedule.info;
     UAInAppMessage *message = info.message;
-    
+
     id<UAInAppMessageDisplayCoordinator> displayCoordinator = [self displayCoordinatorForMessage:message];
 
     UA_WEAKIFY(self)
@@ -379,6 +393,7 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
 
         UAInAppMessageScheduleData *data = [UAInAppMessageScheduleData dataWithAdapter:adapter
                                                                             scheduleID:schedule.identifier
+                                                                              metadata:schedule.metadata
                                                                                message:message
                                                                     displayCoordinator:displayCoordinator];
 
@@ -430,7 +445,13 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
             return;
         }
     }
-    
+
+    if ([self isScheduleInvalid:schedule]) {
+        UA_LTRACE(@"Metadata is out of date, invalidating schedule until metadata update can occur.");
+        completionHandler(UAAutomationSchedulePrepareResultInvalidate);
+        return;
+    }
+
     // Create the adapter
     UARetriable *createAdapter = [self adapterRetriableWithMessage:message scheduleID:schedule.identifier resultHandler:^(UARetriableResult result) {
         if (result == UARetriableResultCancel) {
@@ -515,6 +536,30 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
     return displayCoordinator;
 }
 
+/**
+ * Checks to see if a schedule from remote-data is still valid.
+ *
+ * @param schedule The in-app schedule.
+ * @return `YES` if the schedule is valid, otherwise `NO`.
+ */
+-(BOOL)isScheduleInvalid:(UASchedule *)schedule {
+    UAInAppMessageScheduleInfo *info = (UAInAppMessageScheduleInfo *)schedule.info;
+
+    if (!info || info.message.source != UAInAppMessageSourceRemoteData) {
+        return NO;
+    }
+
+    if (![self.remoteDataManager isLastMetadataCurrent]) {
+        return YES;
+    }
+
+    if (![self.remoteDataManager.lastMetadata isEqualToDictionary:schedule.metadata] ) {
+        return YES;
+    }
+
+    return NO;
+}
+
 - (UAAutomationScheduleReadyResult)isScheduleReadyToExecute:(UASchedule *)schedule {
     UA_LTRACE(@"Checking if schedule %@ is ready to execute.", schedule.identifier);
 
@@ -546,6 +591,11 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
         return UAAutomationScheduleReadyResultNotReady;
     }
 
+    if ([self isScheduleInvalid:schedule]) {
+        UA_LTRACE(@"Metadata is out of date, invalidating schedule with id: %@ until refresh can occur.", schedule.identifier);
+        [self.adapters removeObjectForKey:schedule.identifier];
+        return UAAutomationScheduleReadyResultInvalidate;
+    }
 
     if (![data.adapter isReadyToDisplay]) {
         UA_LTRACE(@"Adapter ready check failed. Schedule: %@ not ready.", schedule.identifier);

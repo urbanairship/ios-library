@@ -23,6 +23,13 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property(nonatomic, strong) UAScheduleInfo *info;
 
+/**
+ * The schedule's metadata.
+ *
+ * @note metadata includes the locale which can change at any time.
+ */
+@property(nonatomic, strong) NSDictionary *metadata;
+
 ///---------------------------------------------------------------------------------------
 /// @name Schedule Internal Methods
 ///---------------------------------------------------------------------------------------
@@ -31,8 +38,11 @@ NS_ASSUME_NONNULL_BEGIN
  * Factory method to create a schedule.
  * @param identifier The schedule's identifier.
  * @param info The schedule's info.
+ * @param metadata The schedule's metadata.
  */
-+ (instancetype)scheduleWithIdentifier:(NSString *)identifier info:(UAScheduleInfo *)info;
++ (instancetype)scheduleWithIdentifier:(NSString *)identifier
+                                  info:(UAScheduleInfo *)info
+                              metadata:(NSDictionary *)metadata;
 
 @end
 

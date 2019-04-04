@@ -191,7 +191,8 @@
         }
     }
 }
-- (void)schedule:(UAScheduleInfo *)scheduleInfo completionHandler:(void (^)(UASchedule *))completionHandler {
+
+- (void)schedule:(UAScheduleInfo *)scheduleInfo metadata:(NSDictionary *)metadata completionHandler:(nullable void (^)(UASchedule * __nullable))completionHandler {
     // Only allow valid schedules to be saved
     if (!scheduleInfo.isValid) {
         if (completionHandler) {
@@ -206,7 +207,9 @@
     [self cleanSchedules];
 
     // Create a schedule to save
-    UASchedule *schedule = [UASchedule scheduleWithIdentifier:[NSUUID UUID].UUIDString info:scheduleInfo];
+    UASchedule *schedule = [UASchedule scheduleWithIdentifier:[NSUUID UUID].UUIDString
+                                                         info:scheduleInfo
+                                                     metadata:metadata];
 
     // Try to save the schedule
     UA_WEAKIFY(self);
@@ -229,14 +232,15 @@
     }];
 }
 
-- (void)scheduleMultiple:(NSArray<UAScheduleInfo *> *)scheduleInfos completionHandler:(void (^)(NSArray <UASchedule *> *))completionHandler {
+- (void)scheduleMultiple:(NSArray<UAScheduleInfo *> *)scheduleInfos metadata:(NSDictionary *)metadata completionHandler:(void (^)(NSArray <UASchedule *> *))completionHandler {
     [self cleanSchedules];
 
     // Create schedules to save (only allow valid schedules)
     NSMutableArray<UASchedule *> *schedules = [NSMutableArray arrayWithCapacity:scheduleInfos.count];
+
     for (UAScheduleInfo *scheduleInfo in scheduleInfos) {
         if (scheduleInfo.isValid) {
-            UASchedule *schedule = [UASchedule scheduleWithIdentifier:[NSUUID UUID].UUIDString info:scheduleInfo];
+            UASchedule *schedule = [UASchedule scheduleWithIdentifier:[NSUUID UUID].UUIDString info:scheduleInfo metadata:metadata];
             [schedules addObject:schedule];
         }
     }
@@ -1296,7 +1300,9 @@
         UA_LERR(@"Info is invalid: %@", info);
         schedule = nil;
     } else {
-        schedule = [UASchedule scheduleWithIdentifier:scheduleData.identifier info:info];
+        schedule = [UASchedule scheduleWithIdentifier:scheduleData.identifier
+                                                 info:info
+                                             metadata:[NSJSONSerialization objectWithString:scheduleData.metadata] ?: @{}];
     }
 
     if (!schedule) {
@@ -1375,6 +1381,10 @@
 
     if (edits.priority) {
         scheduleData.priority = edits.priority;
+    }
+
+    if (edits.metadata) {
+        scheduleData.metadata = edits.metadata;
     }
 }
 

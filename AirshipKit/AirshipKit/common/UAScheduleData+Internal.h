@@ -92,6 +92,13 @@ extern NSUInteger const UAScheduleDataVersion;
 @property (nullable, nonatomic, retain) NSString *data;
 
 /**
+ * The metadata payload.
+ *
+ * Metadata payload contain important schedule metadata such as locale.
+ */
+@property (nullable, nonatomic, retain) NSString *metadata;
+
+/**
  * The schedule's data version.
  */
 @property (nonatomic, retain) NSNumber *dataVersion;

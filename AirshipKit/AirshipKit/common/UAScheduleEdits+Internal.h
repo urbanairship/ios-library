@@ -40,6 +40,11 @@ extern NSString * const UAScheduleEditsErrorDomain;
  */
 @property(nonatomic, copy, nullable) NSString *data;
 
+/**
+ * The schedule's metadata.
+ */
+@property(nonatomic, copy, nullable) NSString *metadata;
+
 @end
 
 @interface UAScheduleEdits ()
@@ -80,6 +85,11 @@ extern NSString * const UAScheduleEditsErrorDomain;
  * Schedule's data.
  */
 @property(nonatomic, copy, nullable) NSString *data;
+
+/**
+ * The schedule's metadata.
+ */
+@property(nonatomic, copy, nullable) NSString *metadata;
 
 /**
  * Default init method.
