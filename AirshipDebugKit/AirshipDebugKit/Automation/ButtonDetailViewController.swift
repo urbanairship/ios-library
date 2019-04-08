@@ -9,7 +9,7 @@ import AirshipKit
  * footers.
  */
 class ButtonDetailViewController: UAStaticTableViewController {
-    public static let segueID = "ShowButtonDetail"
+    public static let segueID = "ButtonDetailSegue"
     
     /* The UAInAppMessageButtonInfo to be displayed. */
     public var button : UAInAppMessageButtonInfo?

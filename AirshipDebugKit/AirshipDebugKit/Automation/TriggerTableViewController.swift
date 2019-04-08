@@ -28,7 +28,7 @@ class TriggerCell: UITableViewCell {
  * for debugging use.
  */
 class TriggerTableViewController: UITableViewController {
-    public static let segueID = "ShowTriggers"
+    public static let segueID = "TriggersSegue"
 
     /* The UAScheduleTriggers to be displayed. */
     public var triggers : [UAScheduleTrigger]?

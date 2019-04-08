@@ -8,9 +8,18 @@
 
 /* Begin PBXBuildFile section */
 		3C75AA98221CF5B40028AD9B /* LastPayloadTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C75AA92221CF5B40028AD9B /* LastPayloadTableViewController.swift */; };
+		453B259B2257D0710000478C /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DF1C21D12245605100B33D01 /* Images.xcassets */; };
 		4582DB302219EADF0018E02C /* DebugKitUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4582DB2F2219EADF0018E02C /* DebugKitUtils.swift */; };
 		4594E60622164F2F00DCD672 /* DebugKitData.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 4594E6012216466C00DCD672 /* DebugKitData.xcdatamodeld */; };
 		4594E6082217346600DCD672 /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4594E6072217346600DCD672 /* Event.swift */; };
+		45960BE32250463100ADB97B /* AutomationDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45960BE22250463100ADB97B /* AutomationDetailViewController.swift */; };
+		45960BF32254162B00ADB97B /* CustomPropertyStringsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45960BEC2254162A00ADB97B /* CustomPropertyStringsTableViewController.swift */; };
+		45960BF42254162B00ADB97B /* CustomEventTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45960BED2254162A00ADB97B /* CustomEventTableViewCell.swift */; };
+		45960BF52254162B00ADB97B /* CustomEventTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45960BEE2254162A00ADB97B /* CustomEventTableViewController.swift */; };
+		45960BF62254162B00ADB97B /* CustomPropertyAddStringsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45960BEF2254162A00ADB97B /* CustomPropertyAddStringsTableViewController.swift */; };
+		45960BF72254162B00ADB97B /* CustomPropertyTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45960BF02254162B00ADB97B /* CustomPropertyTableViewCell.swift */; };
+		45960BF92254162B00ADB97B /* CustomPropertyTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45960BF22254162B00ADB97B /* CustomPropertyTableViewController.swift */; };
+		45960BFB2254163500ADB97B /* CustomPropertyAdderTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45960BFA2254163400ADB97B /* CustomPropertyAdderTableViewCell.swift */; };
 		459D70DE2214E7E2005A3BB9 /* Events.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 459D70B422125199005A3BB9 /* Events.storyboard */; };
 		459D70E32214E82B005A3BB9 /* SearchFooter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 459D70DF2214E82A005A3BB9 /* SearchFooter.swift */; };
 		459D70E52214E82B005A3BB9 /* EventsDetailTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 459D70E12214E82A005A3BB9 /* EventsDetailTableViewController.swift */; };
@@ -18,18 +27,9 @@
 		459D70EE2215FAED005A3BB9 /* EventDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 459D70ED2215FAED005A3BB9 /* EventDataManager.swift */; };
 		45EC352A222F5ADE00F5A97D /* ThemeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45EC3524222F5ADE00F5A97D /* ThemeManager.swift */; };
 		45EC3530223052E200F5A97D /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45EC352F223052E200F5A97D /* Theme.swift */; };
-		DF1C21D8224560E600B33D01 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DF1C21D12245605100B33D01 /* Images.xcassets */; };
 		DF4E4928221CDB5B00F306A5 /* AirshipKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DFE70146212F216600A708D5 /* AirshipKit.framework */; };
 		DF4EDA6121E41D3900804CB3 /* ButtonsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF4EDA6021E41D3900804CB3 /* ButtonsTableViewController.swift */; };
 		DF4EDA6821E4261700804CB3 /* ButtonDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF4EDA6721E4261700804CB3 /* ButtonDetailViewController.swift */; };
-		DF4EDA9C21E7FF1500804CB3 /* CustomEventTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF4EDA9021E7FF1500804CB3 /* CustomEventTableViewCell.swift */; };
-		DF4EDA9D21E7FF1500804CB3 /* CustomPropertyAddStringsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF4EDA9121E7FF1500804CB3 /* CustomPropertyAddStringsTableViewController.swift */; };
-		DF4EDA9E21E7FF1500804CB3 /* CustomPropertyStringsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF4EDA9221E7FF1500804CB3 /* CustomPropertyStringsTableViewController.swift */; };
-		DF4EDA9F21E7FF1600804CB3 /* CustomPropertyTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF4EDA9321E7FF1500804CB3 /* CustomPropertyTableViewCell.swift */; };
-		DF4EDAA021E7FF1600804CB3 /* CustomPropertyTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF4EDA9421E7FF1500804CB3 /* CustomPropertyTableViewController.swift */; };
-		DF4EDAA121E7FF1600804CB3 /* CustomEventTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF4EDA9521E7FF1500804CB3 /* CustomEventTableViewController.swift */; };
-		DF4EDAA221E7FF1600804CB3 /* CustomPropertyAdderTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF4EDA9621E7FF1500804CB3 /* CustomPropertyAdderTableViewCell.swift */; };
-		DF5514C52167D82200499E9C /* AutomationDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF5514BF2167D82200499E9C /* AutomationDetailViewController.swift */; };
 		DF55D7D621F15506005948DD /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = DF55D7D521F15505005948DD /* Localizable.strings */; };
 		DF5F8EC921641B9D009B5FB9 /* AutomationTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF5F8EC821641B9D009B5FB9 /* AutomationTableViewController.swift */; };
 		DF5F8ECB216420D3009B5FB9 /* Automation.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DF5F8ECA216420D3009B5FB9 /* Automation.storyboard */; };
@@ -107,6 +107,14 @@
 		4582DB2F2219EADF0018E02C /* DebugKitUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugKitUtils.swift; sourceTree = "<group>"; };
 		4594E6022216466C00DCD672 /* DebugKitData.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = DebugKitData.xcdatamodel; sourceTree = "<group>"; };
 		4594E6072217346600DCD672 /* Event.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
+		45960BE22250463100ADB97B /* AutomationDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomationDetailViewController.swift; sourceTree = "<group>"; };
+		45960BEC2254162A00ADB97B /* CustomPropertyStringsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomPropertyStringsTableViewController.swift; sourceTree = "<group>"; };
+		45960BED2254162A00ADB97B /* CustomEventTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomEventTableViewCell.swift; sourceTree = "<group>"; };
+		45960BEE2254162A00ADB97B /* CustomEventTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomEventTableViewController.swift; sourceTree = "<group>"; };
+		45960BEF2254162A00ADB97B /* CustomPropertyAddStringsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomPropertyAddStringsTableViewController.swift; sourceTree = "<group>"; };
+		45960BF02254162B00ADB97B /* CustomPropertyTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomPropertyTableViewCell.swift; sourceTree = "<group>"; };
+		45960BF22254162B00ADB97B /* CustomPropertyTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomPropertyTableViewController.swift; sourceTree = "<group>"; };
+		45960BFA2254163400ADB97B /* CustomPropertyAdderTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomPropertyAdderTableViewCell.swift; sourceTree = "<group>"; };
 		459D70B422125199005A3BB9 /* Events.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Events.storyboard; sourceTree = "<group>"; };
 		459D70DF2214E82A005A3BB9 /* SearchFooter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchFooter.swift; sourceTree = "<group>"; };
 		459D70E12214E82A005A3BB9 /* EventsDetailTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventsDetailTableViewController.swift; sourceTree = "<group>"; };
@@ -117,14 +125,6 @@
 		DF1C21D12245605100B33D01 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		DF4EDA6021E41D3900804CB3 /* ButtonsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonsTableViewController.swift; sourceTree = "<group>"; };
 		DF4EDA6721E4261700804CB3 /* ButtonDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonDetailViewController.swift; sourceTree = "<group>"; };
-		DF4EDA9021E7FF1500804CB3 /* CustomEventTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomEventTableViewCell.swift; sourceTree = "<group>"; };
-		DF4EDA9121E7FF1500804CB3 /* CustomPropertyAddStringsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomPropertyAddStringsTableViewController.swift; sourceTree = "<group>"; };
-		DF4EDA9221E7FF1500804CB3 /* CustomPropertyStringsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomPropertyStringsTableViewController.swift; sourceTree = "<group>"; };
-		DF4EDA9321E7FF1500804CB3 /* CustomPropertyTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomPropertyTableViewCell.swift; sourceTree = "<group>"; };
-		DF4EDA9421E7FF1500804CB3 /* CustomPropertyTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomPropertyTableViewController.swift; sourceTree = "<group>"; };
-		DF4EDA9521E7FF1500804CB3 /* CustomEventTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomEventTableViewController.swift; sourceTree = "<group>"; };
-		DF4EDA9621E7FF1500804CB3 /* CustomPropertyAdderTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomPropertyAdderTableViewCell.swift; sourceTree = "<group>"; };
-		DF5514BF2167D82200499E9C /* AutomationDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AutomationDetailViewController.swift; sourceTree = "<group>"; };
 		DF55D7D521F15505005948DD /* Localizable.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = Localizable.strings; sourceTree = "<group>"; };
 		DF5F8EC821641B9D009B5FB9 /* AutomationTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomationTableViewController.swift; sourceTree = "<group>"; };
 		DF5F8ECA216420D3009B5FB9 /* Automation.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Automation.storyboard; sourceTree = "<group>"; };
@@ -160,21 +160,29 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		45960BFC2254163C00ADB97B /* Custom-Events */ = {
+			isa = PBXGroup;
+			children = (
+				45960BFA2254163400ADB97B /* CustomPropertyAdderTableViewCell.swift */,
+				45960BED2254162A00ADB97B /* CustomEventTableViewCell.swift */,
+				45960BEE2254162A00ADB97B /* CustomEventTableViewController.swift */,
+				45960BEF2254162A00ADB97B /* CustomPropertyAddStringsTableViewController.swift */,
+				45960BEC2254162A00ADB97B /* CustomPropertyStringsTableViewController.swift */,
+				45960BF02254162B00ADB97B /* CustomPropertyTableViewCell.swift */,
+				45960BF22254162B00ADB97B /* CustomPropertyTableViewController.swift */,
+			);
+			path = "Custom-Events";
+			sourceTree = "<group>";
+		};
 		459D70B32212517C005A3BB9 /* Events */ = {
 			isa = PBXGroup;
 			children = (
+				45960BFC2254163C00ADB97B /* Custom-Events */,
 				459D70E22214E82A005A3BB9 /* EventsViewController.swift */,
 				459D70ED2215FAED005A3BB9 /* EventDataManager.swift */,
 				4594E6072217346600DCD672 /* Event.swift */,
 				459D70E12214E82A005A3BB9 /* EventsDetailTableViewController.swift */,
 				459D70DF2214E82A005A3BB9 /* SearchFooter.swift */,
-				DF4EDA9521E7FF1500804CB3 /* CustomEventTableViewController.swift */,
-				DF4EDA9421E7FF1500804CB3 /* CustomPropertyTableViewController.swift */,
-				DF4EDA9221E7FF1500804CB3 /* CustomPropertyStringsTableViewController.swift */,
-				DF4EDA9121E7FF1500804CB3 /* CustomPropertyAddStringsTableViewController.swift */,
-				DF4EDA9021E7FF1500804CB3 /* CustomEventTableViewCell.swift */,
-				DF4EDA9321E7FF1500804CB3 /* CustomPropertyTableViewCell.swift */,
-				DF4EDA9621E7FF1500804CB3 /* CustomPropertyAdderTableViewCell.swift */,
 				459D70B422125199005A3BB9 /* Events.storyboard */,
 			);
 			path = Events;
@@ -194,7 +202,7 @@
 			isa = PBXGroup;
 			children = (
 				DF5F8EC821641B9D009B5FB9 /* AutomationTableViewController.swift */,
-				DF5514BF2167D82200499E9C /* AutomationDetailViewController.swift */,
+				45960BE22250463100ADB97B /* AutomationDetailViewController.swift */,
 				DFDE984D216EFFC4005846B6 /* TriggerTableViewController.swift */,
 				DFDE9854216F0EA0005846B6 /* AudienceDetailViewController.swift */,
 				DFC78782216BE58500198AF6 /* TextInfoDetailViewController.swift */,
@@ -323,7 +331,7 @@
 				TargetAttributes = {
 					DFE7011E212F1FAA00A708D5 = {
 						CreatedOnToolsVersion = 10.0;
-						LastSwiftMigration = 1000;
+						LastSwiftMigration = 1020;
 					};
 				};
 			};
@@ -402,10 +410,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				DF5F8ECB216420D3009B5FB9 /* Automation.storyboard in Resources */,
+				453B259B2257D0710000478C /* Images.xcassets in Resources */,
 				DFC676B121FB8F2E0043EB89 /* DeviceInfo.storyboard in Resources */,
 				DF55D7D621F15506005948DD /* Localizable.strings in Resources */,
 				459D70DE2214E7E2005A3BB9 /* Events.storyboard in Resources */,
-				DF1C21D8224560E600B33D01 /* Images.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -419,37 +427,37 @@
 				DFE70134212F202500A708D5 /* AddNamedUserTableViewController.swift in Sources */,
 				DF5F8EC921641B9D009B5FB9 /* AutomationTableViewController.swift in Sources */,
 				DF4EDA6121E41D3900804CB3 /* ButtonsTableViewController.swift in Sources */,
-				DF4EDAA121E7FF1600804CB3 /* CustomEventTableViewController.swift in Sources */,
 				4594E6082217346600DCD672 /* Event.swift in Sources */,
-				DF4EDAA021E7FF1600804CB3 /* CustomPropertyTableViewController.swift in Sources */,
-				DF4EDA9C21E7FF1500804CB3 /* CustomEventTableViewCell.swift in Sources */,
-				DF4EDAA221E7FF1600804CB3 /* CustomPropertyAdderTableViewCell.swift in Sources */,
-				DF4EDA9E21E7FF1500804CB3 /* CustomPropertyStringsTableViewController.swift in Sources */,
 				3C75AA98221CF5B40028AD9B /* LastPayloadTableViewController.swift in Sources */,
 				DFE70131212F202500A708D5 /* AddTagsTableViewController.swift in Sources */,
 				459D70E52214E82B005A3BB9 /* EventsDetailTableViewController.swift in Sources */,
 				459D70EE2215FAED005A3BB9 /* EventDataManager.swift in Sources */,
 				DFE70132212F202500A708D5 /* AirshipDebugKit.swift in Sources */,
 				45EC352A222F5ADE00F5A97D /* ThemeManager.swift in Sources */,
+				45960BF92254162B00ADB97B /* CustomPropertyTableViewController.swift in Sources */,
 				DFE70137212F202500A708D5 /* DeviceInfoViewController.swift in Sources */,
 				DFE70135212F202500A708D5 /* AddAssociatedIdentifiersTableViewController.swift in Sources */,
 				DFC78785216BE65200198AF6 /* UAStaticTableViewController.swift in Sources */,
+				45960BF62254162B00ADB97B /* CustomPropertyAddStringsTableViewController.swift in Sources */,
+				45960BF52254162B00ADB97B /* CustomEventTableViewController.swift in Sources */,
+				45960BFB2254163500ADB97B /* CustomPropertyAdderTableViewCell.swift in Sources */,
 				DFC78783216BE58500198AF6 /* TextInfoDetailViewController.swift in Sources */,
 				4594E60622164F2F00DCD672 /* DebugKitData.xcdatamodeld in Sources */,
 				DFC78787216BE8C800198AF6 /* UADebugKitAutomationUtilities.swift in Sources */,
 				459D70E32214E82B005A3BB9 /* SearchFooter.swift in Sources */,
 				4582DB302219EADF0018E02C /* DebugKitUtils.swift in Sources */,
+				45960BF32254162B00ADB97B /* CustomPropertyStringsTableViewController.swift in Sources */,
 				DFC78789216C07C900198AF6 /* MediaInfoDetailViewController.swift in Sources */,
 				DFDE984E216EFFC4005846B6 /* TriggerTableViewController.swift in Sources */,
 				DF4EDA6821E4261700804CB3 /* ButtonDetailViewController.swift in Sources */,
 				DFDE9855216F0EA0005846B6 /* AudienceDetailViewController.swift in Sources */,
 				DFE70136212F202500A708D5 /* TagsTableViewController.swift in Sources */,
 				45EC3530223052E200F5A97D /* Theme.swift in Sources */,
-				DF4EDA9F21E7FF1600804CB3 /* CustomPropertyTableViewCell.swift in Sources */,
 				DFE70133212F202500A708D5 /* AssociatedIdentifiersTableViewController.swift in Sources */,
 				459D70E62214E82B005A3BB9 /* EventsViewController.swift in Sources */,
-				DF5514C52167D82200499E9C /* AutomationDetailViewController.swift in Sources */,
-				DF4EDA9D21E7FF1500804CB3 /* CustomPropertyAddStringsTableViewController.swift in Sources */,
+				45960BF72254162B00ADB97B /* CustomPropertyTableViewCell.swift in Sources */,
+				45960BF42254162B00ADB97B /* CustomEventTableViewCell.swift in Sources */,
+				45960BE32250463100ADB97B /* AutomationDetailViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

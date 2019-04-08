@@ -50,6 +50,7 @@ class AutomationTableViewController: UITableViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        view.backgroundColor = ThemeManager.shared.currentTheme.Background;
 
         setTableViewTheme()
         refreshInAppAutomation()
@@ -71,6 +72,12 @@ class AutomationTableViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return self.schedules?.count ?? 0
+    }
+
+    override func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
+        if let headerView = view as? UITableViewHeaderFooterView {
+            headerView.textLabel?.textColor = ThemeManager.shared.currentTheme.WidgetTint
+        }
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -112,9 +119,9 @@ class AutomationTableViewController: UITableViewController {
     }
 
     // MARK: - Navigation
-
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         super.prepare(for: segue, sender: sender)
+
         switch(segue.identifier ?? "") {
         case AutomationDetailViewController.segueID:
             guard let automationDetailViewController = segue.destination as? AutomationDetailViewController else {

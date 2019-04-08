@@ -3,7 +3,6 @@
 import UIKit
 
 class CustomPropertyTableViewCell: UITableViewCell {
-
     @IBOutlet weak var propertyTypeLabel: UILabel!
     @IBOutlet weak var propertyLabel: UILabel!
     

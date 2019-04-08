@@ -32,6 +32,9 @@ class AddAssociatedIdentifiersTableViewController: UITableViewController, UIText
 
         addCustomValueCell.backgroundColor = ThemeManager.shared.currentTheme.Background
         addCustomValueTextField.textColor = ThemeManager.shared.currentTheme.PrimaryText
+
+        addCustomStringKeyField.attributedPlaceholder = NSAttributedString(string:"Custom String Key", attributes: [NSAttributedString.Key.foregroundColor:ThemeManager.shared.currentTheme.SecondaryText])
+        addCustomValueTextField.attributedPlaceholder = NSAttributedString(string:"Custom String Value", attributes: [NSAttributedString.Key.foregroundColor:ThemeManager.shared.currentTheme.SecondaryText])
     }
 
     func setTableViewTheme() {
@@ -44,6 +47,12 @@ class AddAssociatedIdentifiersTableViewController: UITableViewController, UIText
         super.viewWillAppear(animated);
         setCellTheme()
         setTableViewTheme()
+    }
+
+    override func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
+        if let headerView = view as? UITableViewHeaderFooterView {
+            headerView.textLabel?.textColor = ThemeManager.shared.currentTheme.WidgetTint
+        }
     }
 
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {

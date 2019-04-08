@@ -9,7 +9,7 @@ import AirshipKit
  * bodies and button labels.
  */
 class TextInfoDetailViewController: UAStaticTableViewController {
-    public static let segueID = "ShowTextInfoDetail"
+    public static let segueID = "TextInfoSegue"
     
     /* The UAInAppMessageTextInfo to be displayed. */
     public var textInfo : UAInAppMessageTextInfo?

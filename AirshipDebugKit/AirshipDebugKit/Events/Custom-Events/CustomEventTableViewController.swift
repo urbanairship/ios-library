@@ -37,20 +37,25 @@ class CustomEventTableViewController: UITableViewController, UITextFieldDelegate
     }
 
     func setTableViewTheme() {
-        self.tableView.backgroundColor = ThemeManager.shared.currentTheme.Background;
+        self.tableView.backgroundColor = ThemeManager.shared.currentTheme.Background
         self.navigationController?.navigationBar.titleTextAttributes = [.foregroundColor:ThemeManager.shared.currentTheme.PrimaryText]
-        self.navigationController?.navigationBar.barTintColor = ThemeManager.shared.currentTheme.NavigationBarBackground;
+        self.navigationController?.navigationBar.barTintColor = ThemeManager.shared.currentTheme.NavigationBarBackground
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setTableViewTheme()
+
+        self.cancelButton.tintColor = ThemeManager.shared.currentTheme.WidgetTint
+        self.doneButton.tintColor = ThemeManager.shared.currentTheme.WidgetTint
         
         self.doneButton.isEnabled = (customEvent != nil)
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        self.navigationController?.navigationBar.tintColor = ThemeManager.shared.currentTheme.WidgetTint
 
         let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(CustomEventTableViewController.dismissKeyboard))
         tap.cancelsTouchesInView = false
@@ -106,11 +111,10 @@ class CustomEventTableViewController: UITableViewController, UITextFieldDelegate
     func displayMessage (_ messageString: String) {
         let alertController = UIAlertController(title: "Notice", message: messageString, preferredStyle: .alert)
         
-        let completeAction = UIAlertAction(title: "ua_alert_ok".localized(), style: .cancel, handler: { controller in
-            self.dismiss(animated: true)
-        })
+        let completeAction = UIAlertAction(title: "ua_alert_ok".localized(), style: .cancel, handler:nil)
         alertController.addAction(completeAction)
 
+        alertController.popoverPresentationController?.sourceView = self.view
         present(alertController, animated: true)
     }
 
@@ -244,6 +248,16 @@ class CustomEventTableViewController: UITableViewController, UITextFieldDelegate
         let cell = tableView.dequeueReusableCell(withIdentifier: "customPropertyCell", for: indexPath)
         return cell
     }
+
+    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        super.tableView(tableView, titleForHeaderInSection: section)
+        
+        if section == 0 {
+            return "Event Properties"
+        }
+
+        return "Add Properties"
+    }
     
     func customEventCell(indexPath: IndexPath, label: String, placeholder: String, text: String?) -> CustomEventTableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "customEventCell", for: indexPath) as! CustomEventTableViewCell
@@ -253,6 +267,7 @@ class CustomEventTableViewController: UITableViewController, UITextFieldDelegate
         cell.textInputField.placeholder = placeholder
         cell.textInputField.text = text
         cell.textInputField.tag = indexPath.row
+        cell.textInputField.textColor = ThemeManager.shared.currentTheme.Background
         
         return cell
     }
@@ -276,6 +291,12 @@ class CustomEventTableViewController: UITableViewController, UITextFieldDelegate
         }
 
         return ""
+    }
+
+    override func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
+        if let headerView = view as? UITableViewHeaderFooterView {
+            headerView.textLabel?.textColor = ThemeManager.shared.currentTheme.WidgetTint
+        }
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

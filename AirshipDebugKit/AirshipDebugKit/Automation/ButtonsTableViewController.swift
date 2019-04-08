@@ -29,7 +29,7 @@ class ButtonCell: UITableViewCell {
  * The ButtonsTableViewController displays a list of IAA message buttons.
  */
 class ButtonsTableViewController: UITableViewController {
-    public static let segueID = "ShowButtonsTable"
+    public static let segueID = "ButtonsSegue"
 
     /* The UAInAppMessageButtonInfos to be displayed. */
     public var buttons : [ UAInAppMessageButtonInfo ]?

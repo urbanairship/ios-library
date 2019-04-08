@@ -20,6 +20,9 @@ class EventsViewController:UIViewController, UITableViewDataSource, UITableViewD
     @IBOutlet private weak var tableView:UITableView!
     @IBOutlet private weak var searchFooter:SearchFooter!
 
+    @IBOutlet var navAddButton: UIBarButtonItem!
+    @IBOutlet var storageOptionsButton: UIBarButtonItem!
+
     let defaultEventCellHeight:CGFloat = 64
 
     var detailViewController:EventsDetailTableViewController? = nil
@@ -99,6 +102,7 @@ class EventsViewController:UIViewController, UITableViewDataSource, UITableViewD
             self.dismiss(animated:true)
         }))
 
+        actionSheet.popoverPresentationController?.sourceView = self.view
         present(actionSheet, animated:true)
     }
 

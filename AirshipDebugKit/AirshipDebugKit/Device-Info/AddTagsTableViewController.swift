@@ -17,6 +17,7 @@ class AddTagsTableViewController: UITableViewController, UITextFieldDelegate {
         addCustomTagCell.backgroundColor = ThemeManager.shared.currentTheme.Background
         addTagTitle.textColor = ThemeManager.shared.currentTheme.PrimaryText
         addCustomTagTextField.textColor = ThemeManager.shared.currentTheme.PrimaryText
+        addCustomTagTextField.attributedPlaceholder = NSAttributedString(string:"Tag", attributes: [NSAttributedString.Key.foregroundColor:ThemeManager.shared.currentTheme.SecondaryText])
     }
 
     func setTableViewTheme() {

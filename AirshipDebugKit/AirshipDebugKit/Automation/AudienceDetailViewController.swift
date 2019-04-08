@@ -8,7 +8,7 @@ import AirshipKit
  * audience.
  */
 class AudienceDetailViewController: UAStaticTableViewController {
-    public static let segueID = "ShowAudienceDetail"
+    public static let segueID = "AudienceSegue"
 
     /* The UAInAppMessageAudience to be displayed. */
     public var audience : UAInAppMessageAudience?
@@ -86,7 +86,7 @@ class AudienceDetailViewController: UAStaticTableViewController {
         inAudienceTitle.textColor = ThemeManager.shared.currentTheme.PrimaryText
         inAudienceLabel.textColor = ThemeManager.shared.currentTheme.SecondaryText
 
-        checkAudienceCell.backgroundColor = ThemeManager.shared.currentTheme.Background
+        checkAudienceCell.backgroundColor = ThemeManager.shared.currentTheme.ButtonBackground
         checkAudienceTitle.textColor = ThemeManager.shared.currentTheme.PrimaryText
     }
 

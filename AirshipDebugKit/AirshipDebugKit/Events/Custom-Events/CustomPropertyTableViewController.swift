@@ -23,6 +23,7 @@ class CustomPropertyTableViewController: UITableViewController, UITextFieldDeleg
     @IBOutlet private weak var stringTextField: UITextField!
 
     @IBOutlet private weak var stringsTitleLabel: UILabel!
+    @IBOutlet private weak var stringsLabel: UILabel!
     @IBOutlet private weak var stringsCell: UITableViewCell!
 
     @IBOutlet private weak var typeLabel: UILabel!
@@ -36,8 +37,7 @@ class CustomPropertyTableViewController: UITableViewController, UITextFieldDeleg
     var stringProperty:String?
     var stringProperties:Array<String>?
 
-    @IBOutlet private weak var stringsLabel: UILabel!
-    
+
     var types:[String] = ["ua_type_boolean", "ua_type_number", "ua_type_string", "ua_type_strings"]
     
     fileprivate enum Sections : Int, CaseIterable {
@@ -80,7 +80,7 @@ class CustomPropertyTableViewController: UITableViewController, UITextFieldDeleg
     }
 
     func setCellTheme() {
-        identifierTextField.textColor = ThemeManager.shared.currentTheme.SecondaryText
+        identifierTextField.textColor = ThemeManager.shared.currentTheme.Background
         identifierCell.backgroundColor = ThemeManager.shared.currentTheme.Background
         identifierLabel.textColor = ThemeManager.shared.currentTheme.PrimaryText
 
@@ -95,15 +95,15 @@ class CustomPropertyTableViewController: UITableViewController, UITextFieldDeleg
         typePicker.backgroundColor = ThemeManager.shared.currentTheme.Background
 
         numberLabel.textColor = ThemeManager.shared.currentTheme.PrimaryText
-        numberTextField.textColor = ThemeManager.shared.currentTheme.SecondaryText
+        numberTextField.textColor = ThemeManager.shared.currentTheme.Background
         numberCell.backgroundColor = ThemeManager.shared.currentTheme.Background
 
         stringLabel.textColor = ThemeManager.shared.currentTheme.PrimaryText
-        stringTextField.textColor = ThemeManager.shared.currentTheme.SecondaryText
+        stringTextField.textColor = ThemeManager.shared.currentTheme.Background
         stringCell.backgroundColor = ThemeManager.shared.currentTheme.Background
 
         stringsTitleLabel.textColor = ThemeManager.shared.currentTheme.PrimaryText
-        stringsLabel.textColor = ThemeManager.shared.currentTheme.SecondaryText
+        stringsLabel.textColor = ThemeManager.shared.currentTheme.PrimaryText
         stringsCell.backgroundColor = ThemeManager.shared.currentTheme.Background
     }
 
@@ -125,7 +125,15 @@ class CustomPropertyTableViewController: UITableViewController, UITextFieldDeleg
         setTableViewTheme()
         setCellTheme()
 
+        doneButton.tintColor = ThemeManager.shared.currentTheme.WidgetTint
+
         tableView.reloadData()
+    }
+
+    override func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
+        if let headerView = view as? UITableViewHeaderFooterView {
+            headerView.textLabel?.textColor = ThemeManager.shared.currentTheme.WidgetTint
+        }
     }
 
     // Pass the strings array back in this way instead of the defaults BS

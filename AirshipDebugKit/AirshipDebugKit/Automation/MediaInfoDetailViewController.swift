@@ -9,7 +9,7 @@ import AirshipKit
  * bodies and button labels.
  */
 class MediaInfoDetailViewController: UAStaticTableViewController {
-    public static let segueID = "ShowMediaInfoDetail"
+    public static let segueID = "MediaSegue"
     
     /* The UAInAppMessageMediaInfo to be displayed. */
     public var mediaInfo : UAInAppMessageMediaInfo?
