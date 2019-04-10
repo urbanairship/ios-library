@@ -128,7 +128,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UARegistrationDelegate, U
                 let messageCenterTab: UITabBarItem = (self.window!.rootViewController! as! UITabBarController).tabBar.items![self.MessageCenterTab]
 
                 if (UAirship.inbox().messageList.unreadCount > 0) {
-                    messageCenterTab.badgeValue = String(stringInterpolationSegment:UAirship.inbox().messageList.unreadCount)
+                    messageCenterTab.badgeValue = String(UAirship.inbox().messageList.unreadCount)
                 } else {
                     messageCenterTab.badgeValue = nil
                 }
