@@ -4,6 +4,17 @@
  * Swift Strings
  */
 
+"ua_debug_kit_title" = "Airship Debug Kit";
+
+"ua_device_info_title" = "Device Info";
+"ua_device_info_subtitle" = "View info related to this device and its push channel.";
+
+"ua_events_title" = "Events";
+"ua_events_subtitle" = "View recent analytics events. Add custom events.";
+
+"ua_automation_title" = "In-App Automation";
+"ua_automation_subtitle" = "View info related to In-App Automation.";
+
  "ua_device_info_push_settings" = "Push Settings";
  "ua_device_info_enable_push" = "Enable Push";
 
