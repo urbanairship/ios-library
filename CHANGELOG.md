@@ -3,6 +3,17 @@ iOS Changelog
 
 Migration Guides: Documentation/Migration
 
+Version 10.2.2 - April 19, 2019
+===============================
+Patch release to fix issues with the Message Center message view and channel registration.
+
+Changes
+-------
+- Fixed an issue where the Message Center's loading view container intercepted touch events.
+- Fixed a registration regression introduced in 10.2, which could delay channel updates in some cases.
+
+Apps using the Message Center or segmentation are encouraged to update.
+
 Version 10.2.1 - March 27, 2019
 =================================
 Patch release to fix Carthage build error in Xcode 10.2. Apps that use Carthage are
@@ -17,12 +28,12 @@ Version 10.2.0 - February 25, 2019
 ==================================
 
 Minor release with enhancements to In-App Automation and modifications to make
-keychain access asynchronous throughout the SDK. This latter change is to 
+keychain access asynchronous throughout the SDK. This latter change is to
 fix a rare issue with slow takeOff that can potentially affect the app review
 process. Apps experiencing this issue are encouraged to update.
 
 Changes:
- 
+
 - GIF support for In-App Automation on iOS 11 and above.
 - Display coordinator architecture for more flexible custom IAA display management.
 - IAA button resolution events can be generated from HTML messages via the native bridge.
