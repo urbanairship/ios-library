@@ -127,7 +127,7 @@ class CustomPropertyTableViewController: UITableViewController, UITextFieldDeleg
 
         doneButton.tintColor = ThemeManager.shared.currentTheme.WidgetTint
 
-        tableView.reloadData()
+        animatedReload()
     }
 
     override func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
@@ -171,7 +171,7 @@ class CustomPropertyTableViewController: UITableViewController, UITextFieldDeleg
             }
         }
 
-        tableView.reloadData()
+        animatedReload()
     }
 
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
@@ -193,6 +193,14 @@ class CustomPropertyTableViewController: UITableViewController, UITextFieldDeleg
         }
 
         return true
+    }
+
+    func animatedReload() {
+        UIView.transition(with: tableView,
+                          duration: 0.35,
+                          options: .transitionCrossDissolve,
+                          animations: { () -> Void in self.tableView.reloadData() },
+                          completion: nil);
     }
 
     func validateStringInput(input:String?) -> Bool {
@@ -232,7 +240,7 @@ class CustomPropertyTableViewController: UITableViewController, UITextFieldDeleg
     }
 
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        self.tableView.reloadData()
+        animatedReload()
     }
 
     @objc func dismissKeyboard() {
@@ -288,6 +296,7 @@ class CustomPropertyTableViewController: UITableViewController, UITextFieldDeleg
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         let valueType = types[typePicker.selectedRow(inComponent: 0)];
+
         switch (indexPath.section) {
         case Sections.Identifier.rawValue:
             switch (indexPath.row) {
@@ -354,6 +363,7 @@ class CustomPropertyTableViewController: UITableViewController, UITextFieldDeleg
         stringTextField.text = nil
         numberTextField.text = nil
 
-        tableView.reloadData()
+        animatedReload()
+
     }
 }
