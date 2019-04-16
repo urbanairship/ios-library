@@ -19,6 +19,7 @@
  "ua_device_info_enable_push" = "Enable Push";
 
  "ua_device_info_channel_id" = "Channel ID";
+ "ua_device_info_username" = "Inbox Username";
  "ua_device_info_named_user" = "Named User";
  "ua_device_info_associated_identifiers" = "Associated Identifiers";
  "ua_device_info_tags" = "Tags";

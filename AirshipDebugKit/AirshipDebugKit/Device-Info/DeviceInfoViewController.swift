@@ -46,10 +46,11 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
     // Indexes
     private let pushEnabled = IndexPath(row: 0, section: 0),
     channelID = IndexPath(row: 0, section: 1),
-    namedUser = IndexPath(row: 1, section: 1),
-    tags = IndexPath(row: 2, section: 1),
-    associatedIdentifiers = IndexPath(row: 3, section: 1),
-    lastPayload = IndexPath(row: 4, section: 1),
+    username = IndexPath(row: 1, section: 1),
+    namedUser = IndexPath(row: 2, section: 1),
+    tags = IndexPath(row: 3, section: 1),
+    associatedIdentifiers = IndexPath(row: 4, section: 1),
+    lastPayload = IndexPath(row: 5, section: 1),
     sdkVersion = IndexPath(row: 0, section: 2),
     locationEnabled = IndexPath(row: 0, section: 3),
     analyticsEnabled = IndexPath(row: 0, section: 4)
@@ -140,7 +141,7 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
         case pushSettings:
             return 1
         case deviceSettings:
-            return 5
+            return 6
         case sdkSettings:
             return 1
         case analyticsSettings:
@@ -175,6 +176,13 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
         case channelID:
             cell.title.text = "ua_device_info_channel_id".localized()
             cell.subtitle.text = UAirship.push().channelID
+        case username:
+            UAirship.inboxUser()?.getData({ (userData) in
+                DispatchQueue.main.async {
+                    cell.title.text = "ua_device_info_username".localized()
+                    cell.subtitle.text = userData.username
+                }
+            })
         case namedUser:
             cell.title.text = "ua_device_info_named_user".localized()
             cell.subtitle?.text = UAirship.namedUser().identifier == nil ? localizedNone : UAirship.namedUser().identifier
@@ -241,20 +249,13 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
         case channelID:
             if (UAirship.push().channelID != nil) {
                 UIPasteboard.general.string = cell.subtitle?.text
-
-                let message = NSLocalizedString("UA_Copied_To_Clipboard", tableName: "UAPushUI", comment: "Copied to clipboard string")
-
-                let alert = UIAlertController(title: nil, message: message, preferredStyle: UIAlertController.Style.alert)
-                let buttonTitle = NSLocalizedString("UA_OK", tableName: "UAPushUI", comment: "OK button string")
-
-                let okAction = UIAlertAction(title: buttonTitle, style: UIAlertAction.Style.default, handler: { (action: UIAlertAction) in
-                    self.dismiss(animated: true, completion: nil)
-                })
-
-                alert.addAction(okAction)
-
-                self.present(alert, animated: true, completion: nil)
+                showCopiedAlert()
             }
+        case username:
+            UAirship.inboxUser()?.getData({ (userData) in
+                UIPasteboard.general.string = userData.username
+                self.showCopiedAlert()
+            })
         case namedUser:
             performSegue(withIdentifier: "namedUserSegue", sender: self)
         case tags:
@@ -265,7 +266,22 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
             performSegue(withIdentifier: "lastPayloadSegue", sender: self)
         case sdkVersion:
             UIPasteboard.general.string = cell.subtitle?.text
+            showCopiedAlert()
+        case analyticsEnabled:
+            cell.cellSwitch.setOn(!cell.cellSwitch.isOn, animated: true)
+            UAirship.shared().analytics.isEnabled = cell.cellSwitch.isOn
+        case locationEnabled:
+            cell.cellSwitch.setOn(!cell.cellSwitch.isOn, animated: true)
+            UAirship.location().isLocationUpdatesEnabled = cell.cellSwitch.isOn
+        default:
+            break
+        }
+        
+        tableView.deselectRow(at: indexPath, animated: true)
+    }
 
+    func showCopiedAlert() {
+        DispatchQueue.main.async {
             let message = NSLocalizedString("UA_Copied_To_Clipboard", tableName: "UAPushUI", comment: "Copied to clipboard string")
 
             let alert = UIAlertController(title: nil, message: message, preferredStyle: UIAlertController.Style.alert)
@@ -278,17 +294,7 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
             alert.addAction(okAction)
 
             self.present(alert, animated: true, completion: nil)
-        case analyticsEnabled:
-            cell.cellSwitch.setOn(!cell.cellSwitch.isOn, animated: true)
-            UAirship.shared().analytics.isEnabled = cell.cellSwitch.isOn
-        case locationEnabled:
-            cell.cellSwitch.setOn(!cell.cellSwitch.isOn, animated: true)
-            UAirship.location().isLocationUpdatesEnabled = cell.cellSwitch.isOn
-        default:
-            break
         }
-        
-        tableView.deselectRow(at: indexPath, animated: true)
     }
 
     func pushTypeString () -> String {
