@@ -29,7 +29,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @note metadata includes the locale which can change at any time.
  */
-@property(nonatomic, readonly) NSDictionary *metadata;
+@property(nullable, nonatomic, readonly) NSDictionary *metadata;
 
 ///---------------------------------------------------------------------------------------
 /// @name Schedule Management

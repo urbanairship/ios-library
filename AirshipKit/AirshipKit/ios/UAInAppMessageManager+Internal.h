@@ -14,6 +14,7 @@
 #import "UATagGroupsMutationHistory+Internal.h"
 #import "UAInAppMessageDefaultDisplayCoordinator+Internal.h"
 #import "UAInAppMessageAssetManager+Internal.h"
+#import "UAInAppRemoteDataClient+Internal.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -27,6 +28,11 @@ NS_ASSUME_NONNULL_BEGIN
  * In-app messaging asset manager.
  */
 @property(nonatomic, strong) UAInAppMessageAssetManager *assetManager;
+
+/**
+ * In-app remote data client. Exposed for testing purposes.
+ */
+@property(nonatomic, strong) UAInAppRemoteDataClient *remoteDataClient;
 
 /**
  * Factory method. Use for testing.

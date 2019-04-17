@@ -339,6 +339,7 @@
     scheduleData.interval = @(schedule.info.interval);
     scheduleData.editGracePeriod = @(schedule.info.editGracePeriod);
     scheduleData.dataVersion = @(UAScheduleDataVersion);
+    scheduleData.metadata = [NSJSONSerialization stringWithObject:schedule.metadata];
 
     if (schedule.info.delay) {
         scheduleData.delay = [self createDelayDataFromDelay:schedule.info.delay scheduleStart:schedule.info.start schedule:scheduleData];

@@ -11,7 +11,6 @@
 #import "UAInAppMessageHTMLAdapter.h"
 #import "UAGlobal.h"
 #import "UAConfig.h"
-#import "UAInAppRemoteDataClient+Internal.h"
 #import "UAPreferenceDataStore+Internal.h"
 #import "UAInAppMessageAudienceChecks+Internal.h"
 #import "UAPreferenceDataStore+Internal.h"
@@ -29,8 +28,8 @@
 #import "UARetriablePipeline+Internal.h"
 #import "UAInAppMessageTagSelector+Internal.h"
 #import "UAInAppMessageDefaultDisplayCoordinator.h"
-#import "NSObject+AnonymousKVO+Internal.h"
 #import "UAInAppMessageAssetManager+Internal.h"
+#import "NSObject+AnonymousKVO+Internal.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -94,7 +93,6 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
 @property(nonatomic, strong) NSMutableDictionary *adapterFactories;
 @property(nonatomic, strong) UAAutomationEngine *automationEngine;
 @property(nonatomic, strong) NSMutableDictionary *adapters;
-@property(nonatomic, strong) UAInAppRemoteDataClient *remoteDataClient;
 @property(nonatomic, strong) UARemoteDataManager *remoteDataManager;
 @property(nonatomic, strong) UAPreferenceDataStore *dataStore;
 @property(nonatomic, strong) NSMutableDictionary *scheduleData;
@@ -223,6 +221,11 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
 
 - (void)getAllSchedules:(void (^)(NSArray<UASchedule *> *))completionHandler {
     [self.automationEngine getAllSchedules:completionHandler];
+}
+
+- (void)scheduleMessageWithScheduleInfo:(UAInAppMessageScheduleInfo *)scheduleInfo
+                      completionHandler:(void (^)(UASchedule *))completionHandler {
+    [self scheduleMessageWithScheduleInfo:scheduleInfo metadata:nil completionHandler:completionHandler];
 }
 
 - (void)scheduleMessageWithScheduleInfo:(UAInAppMessageScheduleInfo *)scheduleInfo
@@ -447,8 +450,10 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
     }
 
     if ([self isScheduleInvalid:schedule]) {
-        UA_LTRACE(@"Metadata is out of date, invalidating schedule until metadata update can occur.");
-        completionHandler(UAAutomationSchedulePrepareResultInvalidate);
+        [self.remoteDataClient notifyOnMetadataUpdate:^{
+            completionHandler(UAAutomationSchedulePrepareResultInvalidate);
+        }];
+
         return;
     }
 
@@ -553,7 +558,7 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
         return YES;
     }
 
-    if (![self.remoteDataManager.lastMetadata isEqualToDictionary:schedule.metadata] ) {
+    if (![self.remoteDataManager.lastMetadata isEqualToDictionary:schedule.metadata]) {
         return YES;
     }
 

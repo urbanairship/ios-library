@@ -16,6 +16,7 @@
 #import "UAInAppMessageScheduleEdits+Internal.h"
 #import "UAScheduleEdits+Internal.h"
 #import "NSJSONSerialization+UAAdditions.h"
+#import "NSObject+AnonymousKVO+Internal.h"
 
 
 NSString * const UAInAppMessages = @"in_app_messages";
@@ -28,6 +29,8 @@ NSString * const UAInAppMessagesUpdatedJSONKey = @"last_updated";
 @property (nonatomic, strong) UADisposable *remoteDataSubscription;
 @property (nonatomic, copy) NSDictionary *scheduleIDMap;
 @property (nonatomic, strong) NSOperationQueue *operationQueue;
+@property (nonatomic, strong) UARemoteDataManager *remoteDataManager;
+
 @end
 
 @implementation UAInAppRemoteDataClient
@@ -48,7 +51,7 @@ NSString * const UAInAppMessagesScheduledNewUserCutoffTimeKey = @"UAInAppRemoteD
     if (self) {
         self.operationQueue = [[NSOperationQueue alloc] init];
         self.operationQueue.maxConcurrentOperationCount = 1;
-
+        self.remoteDataManager = remoteDataManager;
         self.inAppMessageManager = scheduler;
         self.dataStore = dataStore;
         UA_WEAKIFY(self);
@@ -82,6 +85,19 @@ NSString * const UAInAppMessagesScheduledNewUserCutoffTimeKey = @"UAInAppRemoteD
     [self.remoteDataSubscription dispose];
 }
 
+- (void)notifyOnMetadataUpdate:(void (^)(void))completionHandler {
+    [self.operationQueue addOperationWithBlock:^{
+        UA_LTRACE(@"Metadata is out of date, invalidating schedule until metadata update can occur.");
+        if ([self.remoteDataManager.lastMetadata isEqual:self.lastPayloadMetadata]) {
+            completionHandler();
+        } else {
+            __block UADisposable *disposable = [self observeAtKeyPath:@"lastPayloadMetadata" withBlock:^(id  _Nonnull value) {
+                completionHandler();
+                [disposable dispose];
+            }];
+        }
+    }];
+}
 
 - (void)processInAppMessageData:(UARemoteDataPayload *)messagePayload {
     NSDate *thisPayloadTimeStamp = messagePayload.timestamp;

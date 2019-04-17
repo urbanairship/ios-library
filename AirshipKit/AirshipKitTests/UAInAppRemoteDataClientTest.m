@@ -122,7 +122,6 @@
         completionHandler(schedules);
     }] scheduleMessagesWithScheduleInfo:OCMOCK_ANY metadata:metadataA completionHandler:OCMOCK_ANY];
 
-
     // test
     self.publishBlock(@[inAppRemoteDataPayload]);
     [self.remoteDataClient.operationQueue waitUntilAllOperationsAreFinished];

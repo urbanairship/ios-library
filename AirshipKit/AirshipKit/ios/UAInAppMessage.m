@@ -14,9 +14,17 @@ NSUInteger const UAInAppMessageNameLimit = 100;
 
 
 @implementation UAInAppMessageBuilder
+- (instancetype)init {
+    self = [super init];
+    if (self) {
+        // Set default source to app defined
+        self.source = UAInAppMessageSourceAppDefined;
+    }
+    return self;
+}
 
 - (instancetype)initWithMessage:(UAInAppMessage *)message {
-    self = [super init];
+    self = [self init];
 
     if (self) {
         self.identifier = message.identifier;
@@ -293,8 +301,17 @@ NSString *const UAInAppMessageSourceLegacyPushValue = @"legacy-push";
     return [[UAInAppMessage alloc] initWithBuilder:builder];
 }
 
-- (nullable instancetype)initWithBuilder:(UAInAppMessageBuilder *)builder {
+- (instancetype)init {
     self = [super init];
+    if (self) {
+        // Set default source to app defined
+        _source = UAInAppMessageSourceAppDefined;
+    }
+    return self;
+}
+
+- (nullable instancetype)initWithBuilder:(UAInAppMessageBuilder *)builder {
+    self = [self init];
     
     if (![builder isValid]) {
         UA_LERR(@"UAInAppMessage could not be initialized, builder has missing or invalid parameters.");

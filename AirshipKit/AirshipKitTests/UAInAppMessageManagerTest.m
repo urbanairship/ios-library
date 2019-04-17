@@ -18,6 +18,10 @@
 #import "UAInAppMessageDefaultDisplayCoordinator+Internal.h"
 #import "UAInAppMessageAssetManager+Internal.h"
 #import "UAInAppMessageAssetCache+Internal.h"
+#import "UAInAppMessage+Internal.h"
+#import "UAInAppRemoteDataClient+Internal.h"
+#import "NSObject+AnonymousKVO+Internal.h"
+
 
 @interface UAInAppMessageManagerTest : UABaseTest
 @property(nonatomic, strong) UAInAppMessageManager *manager;
@@ -36,6 +40,8 @@
 @property (nonatomic, strong) id mockAssetCache;
 @property (nonatomic, strong) id mockAssets;
 @property (nonatomic, strong) id mockRemoteDataManager;
+@property (nonatomic, strong) id mockRemoteDataClient;
+
 @property (nonatomic, strong) NSDictionary *mockMetadata;
 @property (nonatomic, assign) BOOL isMetadataValid;
 
@@ -68,7 +74,10 @@
     self.mockAssetManager = [self mockForClass:[UAInAppMessageAssetManager class]];
     self.mockAssetCache = [self mockForClass:[UAInAppMessageAssetCache class]];
     self.mockAssets = [self mockForClass:[UAInAppMessageAssets class]];
-    
+
+    self.mockRemoteDataClient = [self mockForClass:[UAInAppRemoteDataClient class]];
+
+
     self.manager = [UAInAppMessageManager managerWithAutomationEngine:self.mockAutomationEngine
                                                tagGroupsLookupManager:self.mockTagGroupsLookupManager
                                                     remoteDataManager:self.mockRemoteDataManager
@@ -77,6 +86,9 @@
                                                            dispatcher:self.testDispatcher
                                                    displayCoordinator:self.mockDefaultDisplayCoordinator
                                                          assetManager:self.mockAssetManager];
+
+    self.manager.remoteDataClient = self.mockRemoteDataClient;
+
     self.manager.paused = NO;
 
     self.manager.delegate = self.mockDelegate;
@@ -122,7 +134,7 @@
         UAInAppMessage *message = [UAInAppMessage messageWithBuilderBlock:^(UAInAppMessageBuilder * _Nonnull builder) {
             builder.identifier = @"test identifier";
             builder.actions = @{@"cool": @"story"};
-            
+            builder.source = UAInAppMessageSourceRemoteData;
             builder.displayContent = [UAInAppMessageBannerDisplayContent displayContentWithBuilderBlock:^(UAInAppMessageBannerDisplayContentBuilder *builder) {
                 builder.placement = UAInAppMessageBannerPlacementTop;
                 builder.buttonLayout = UAInAppMessageButtonLayoutTypeJoined;
@@ -153,6 +165,7 @@
                 }];
             }
         }];
+
         builder.message = message;
     }];
     return scheduleInfo;
@@ -225,6 +238,12 @@
 
     UASchedule *schedule = [UASchedule scheduleWithIdentifier:@"test IAM schedule" info:self.scheduleInfo metadata:self.mockMetadata];
     [[[self.mockDelegate expect] andReturn:self.scheduleInfo.message] extendMessage:[OCMArg isKindOfClass:[UAInAppMessage class]]];
+
+    [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
+        void (^block)(void);
+        [invocation getArgument:&block atIndex:2];
+        block();
+    }] notifyOnMetadataUpdate:OCMOCK_ANY];
 
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare should be finished with invalid result"];
     [self.manager prepareSchedule:schedule completionHandler:^(UAAutomationSchedulePrepareResult result) {

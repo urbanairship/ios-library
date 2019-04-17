@@ -96,6 +96,16 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)setFactoryBlock:(id<UAInAppMessageAdapterProtocol> (^)(UAInAppMessage* message))factory
          forDisplayType:(UAInAppMessageDisplayType)displayType;
 
+
+/**
+ * Schedules an in-app message.
+ *
+ * @param scheduleInfo The schedule info for the message.
+ * @param completionHandler The completion handler to be called when scheduling completes.
+ */
+- (void)scheduleMessageWithScheduleInfo:(UAInAppMessageScheduleInfo *)scheduleInfo
+                      completionHandler:(void (^)(UASchedule *))completionHandler;
+
 /**
  * Schedules an in-app message.
  *
