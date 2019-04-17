@@ -2,7 +2,6 @@
 
 import UIKit
 import AirshipKit
-import AirshipLocationKit
 
 public class AirshipDebugKit : NSObject {
     @objc public static var deviceInfoViewController : UIViewController? = instantiateStoryboard("DeviceInfo")
