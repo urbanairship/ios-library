@@ -1,7 +1,46 @@
 /* Copyright Urban Airship and Contributors */
 
-#import "UALocationEvent.h"
 #import "UAEvent+Internal.h"
+#import "UALocationEvent.h"
+
+@interface UALocationInfo ()
+@property (nonatomic, assign) double latitude;
+@property (nonatomic, assign) double longitude;
+@property (nonatomic, assign) double horizontalAccuracy;
+@property (nonatomic, assign) double verticalAccuracy;
+@end
+
+@implementation UALocationInfo
+
+- (instancetype)initWithLatitude:(double)latitude
+                       longitude:(double)longitude
+              horizontalAccuracy:(double)horizontalAccuracy
+                verticalAccuracy:(double)verticalAccuracy {
+
+    self = [super init];
+
+    if (self) {
+        self.latitude = latitude;
+        self.longitude = longitude;
+        self.horizontalAccuracy = horizontalAccuracy;
+        self.verticalAccuracy = verticalAccuracy;
+    }
+
+    return self;
+}
+
++ (instancetype)infoWithLatitude:(double)latitude
+                       longitude:(double)longitude
+              horizontalAccuracy:(double)horizontalAccuracy
+                verticalAccuracy:(double)verticalAccuracy {
+
+    return [[self alloc] initWithLatitude:latitude
+                                longitude:longitude
+                       horizontalAccuracy:horizontalAccuracy
+                         verticalAccuracy:verticalAccuracy];
+}
+
+@end
 
 @implementation UALocationEvent
 
@@ -27,96 +66,95 @@ UALocationServiceProviderType *const UALocationServiceProviderUnknown = @"UNKNOW
 
 NSString * const UAAnalyticsValueNone = @"NONE";
 
-+ (UALocationEvent *)locationEventWithLocation:(CLLocation *)location
-                                  providerType:(UALocationServiceProviderType *)providerType
-                               desiredAccuracy:(NSNumber *)desiredAccuracy
-                                distanceFilter:(NSNumber *)distanceFilter
-                                    updateType:(UALocationEventUpdateType *)updateType {
++ (UALocationEvent *)locationEventWithInfo:(UALocationInfo *)info
+                              providerType:(UALocationServiceProviderType *)providerType
+                           desiredAccuracy:(NSNumber *)desiredAccuracy
+                            distanceFilter:(NSNumber *)distanceFilter
+                                updateType:(UALocationEventUpdateType *)updateType {
 
     UALocationEvent *event = [[UALocationEvent alloc] init];
-    NSMutableDictionary *data = [NSMutableDictionary dictionary];
+    NSMutableDictionary *dict = [NSMutableDictionary dictionary];
 
-    [data setValue:updateType forKey:UALocationEventUpdateTypeKey];
-    [data setValue:[NSString stringWithFormat:@"%.7f", location.coordinate.latitude] forKey:UALocationEventLatitudeKey];
-    [data setValue:[NSString stringWithFormat:@"%.7f", location.coordinate.longitude] forKey:UALocationEventLongitudeKey];
-    [data setValue:[NSString stringWithFormat:@"%i", (int)location.horizontalAccuracy] forKey:UALocationEventHorizontalAccuracyKey];
-    [data setValue:[NSString stringWithFormat:@"%i", (int)location.verticalAccuracy] forKey:UALocationEventVerticalAccuracyKey];
+    [dict setValue:updateType forKey:UALocationEventUpdateTypeKey];
+    [dict setValue:[NSString stringWithFormat:@"%.7f", info.latitude] forKey:UALocationEventLatitudeKey];
+    [dict setValue:[NSString stringWithFormat:@"%.7f", info.longitude] forKey:UALocationEventLongitudeKey];
+    [dict setValue:[NSString stringWithFormat:@"%li", (long)info.horizontalAccuracy] forKey:UALocationEventHorizontalAccuracyKey];
+    [dict setValue:[NSString stringWithFormat:@"%li", (long)info.verticalAccuracy] forKey:UALocationEventVerticalAccuracyKey];
 
     if (providerType) {
-        [data setValue:providerType forKey:UALocationEventProviderKey];
+        [dict setValue:providerType forKey:UALocationEventProviderKey];
     } else {
-        [data setValue:UALocationServiceProviderUnknown forKey:UALocationEventProviderKey];
+        [dict setValue:UALocationServiceProviderUnknown forKey:UALocationEventProviderKey];
     }
 
     if (desiredAccuracy) {
-        [data setValue:[NSString stringWithFormat:@"%i", [desiredAccuracy intValue]] forKey:UALocationEventDesiredAccuracyKey];
+        [dict setValue:[NSString stringWithFormat:@"%i", [desiredAccuracy intValue]] forKey:UALocationEventDesiredAccuracyKey];
     } else {
-        [data setValue:UAAnalyticsValueNone forKey:UALocationEventDesiredAccuracyKey];
+        [dict setValue:UAAnalyticsValueNone forKey:UALocationEventDesiredAccuracyKey];
     }
 
     if (distanceFilter) {
-        [data setValue:[NSString stringWithFormat:@"%i", [distanceFilter intValue]] forKey:UALocationEventDistanceFilterKey];
+        [dict setValue:[NSString stringWithFormat:@"%i", [distanceFilter intValue]] forKey:UALocationEventDistanceFilterKey];
     } else {
-        [data setValue:UAAnalyticsValueNone forKey:UALocationEventDistanceFilterKey];
+        [dict setValue:UAAnalyticsValueNone forKey:UALocationEventDistanceFilterKey];
     }
 
     if ([UIApplication sharedApplication].applicationState == UIApplicationStateActive) {
-        [data setValue:@"true" forKey:UALocationEventForegroundKey];
+        [dict setValue:@"true" forKey:UALocationEventForegroundKey];
     } else {
-        [data setValue:@"false" forKey:UALocationEventForegroundKey];
+        [dict setValue:@"false" forKey:UALocationEventForegroundKey];
     }
 
-    event.data = [data mutableCopy];
+    event.data = [dict mutableCopy];
+
     return event;
 }
 
-+ (UALocationEvent *)locationEventWithLocation:(CLLocation *)location
-                                  providerType:(UALocationServiceProviderType *)providerType
-                               desiredAccuracy:(NSNumber *)desiredAccuracy
-                                distanceFilter:(NSNumber *)distanceFilter {
++ (UALocationEvent *)locationEventWithInfo:(UALocationInfo *)info
+                              providerType:(UALocationServiceProviderType *)providerType
+                           desiredAccuracy:(NSNumber *)desiredAccuracy
+                            distanceFilter:(NSNumber *)distanceFilter {
 
-    return [UALocationEvent locationEventWithLocation:location
-                                         providerType:providerType
-                                      desiredAccuracy:desiredAccuracy
-                                       distanceFilter:distanceFilter
-                                           updateType:UALocationEventUpdateTypeNone];
-
-}
-
-+ (UALocationEvent *)singleLocationEventWithLocation:(CLLocation *)location
-                                        providerType:(UALocationServiceProviderType *)providerType
-                                     desiredAccuracy:(NSNumber *)desiredAccuracy
-                                      distanceFilter:(NSNumber *)distanceFilter {
-
-    return [UALocationEvent locationEventWithLocation:location
-                                         providerType:providerType
-                                      desiredAccuracy:desiredAccuracy
-                                       distanceFilter:distanceFilter
-                                           updateType:UALocationEventUpdateTypeSingle];
-}
-
-+ (UALocationEvent *)significantChangeLocationEventWithLocation:(CLLocation *)location
-                                                   providerType:(UALocationServiceProviderType *)providerType {
-
-    return [UALocationEvent locationEventWithLocation:location
-                                         providerType:providerType
-                                      desiredAccuracy:nil
-                                       distanceFilter:nil
-                                           updateType:UALocationEventUpdateTypeChange];
+    return [UALocationEvent locationEventWithInfo:info
+                                     providerType:providerType
+                                  desiredAccuracy:desiredAccuracy
+                                   distanceFilter:distanceFilter
+                                       updateType:UALocationEventUpdateTypeNone];
 
 }
 
-+ (UALocationEvent *)standardLocationEventWithLocation:(CLLocation *)location
-                                          providerType:(UALocationServiceProviderType *)providerType
-                                       desiredAccuracy:(NSNumber *)desiredAccuracy
-                                        distanceFilter:(NSNumber *)distanceFilter {
++ (UALocationEvent *)singleLocationEventWithInfo:(UALocationInfo *)info
+                                    providerType:(UALocationServiceProviderType *)providerType
+                                 desiredAccuracy:(NSNumber *)desiredAccuracy
+                                  distanceFilter:(NSNumber *)distanceFilter {
 
-    return [UALocationEvent locationEventWithLocation:location
-                                         providerType:providerType
-                                      desiredAccuracy:desiredAccuracy
-                                       distanceFilter:distanceFilter
-                                           updateType:UALocationEventUpdateTypeContinuous];
+    return [UALocationEvent locationEventWithInfo:info
+                                     providerType:providerType
+                                  desiredAccuracy:desiredAccuracy
+                                   distanceFilter:distanceFilter
+                                       updateType:UALocationEventUpdateTypeSingle];
+}
 
++ (UALocationEvent *)significantChangeLocationEventWithInfo:(UALocationInfo *)info
+                                               providerType:(UALocationServiceProviderType *)providerType {
+
+    return [UALocationEvent locationEventWithInfo:info
+                                     providerType:providerType
+                                  desiredAccuracy:nil
+                                   distanceFilter:nil
+                                       updateType:UALocationEventUpdateTypeChange];
+}
+
++ (UALocationEvent *)standardLocationEventWithInfo:(UALocationInfo *)info
+                                      providerType:(UALocationServiceProviderType *)providerType
+                                   desiredAccuracy:(NSNumber *)desiredAccuracy
+                                    distanceFilter:(NSNumber *)distanceFilter {
+
+    return [UALocationEvent locationEventWithInfo:info
+                                     providerType:providerType
+                                  desiredAccuracy:desiredAccuracy
+                                   distanceFilter:distanceFilter
+                                       updateType:UALocationEventUpdateTypeContinuous];
 }
 
 - (NSString *)eventType {

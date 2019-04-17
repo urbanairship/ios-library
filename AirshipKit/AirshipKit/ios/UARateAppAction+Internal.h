@@ -1,7 +1,7 @@
 /* Copyright Urban Airship and Contributors */
 
 #import "UAAction.h"
-#import "UASystemVersion+Internal.h"
+#import "UASystemVersion.h"
 #import "UARateAppAction.h"
 
 @interface UARateAppAction()

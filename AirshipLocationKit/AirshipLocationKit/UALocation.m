@@ -1,14 +1,6 @@
 /* Copyright Urban Airship and Contributors */
 
-#import <UIKit/UIKit.h>
-
 #import "UALocation+Internal.h"
-#import "UAPreferenceDataStore+Internal.h"
-#import "UAGlobal.h"
-#import "UALocationEvent.h"
-#import "UAAnalytics.h"
-#import "UASystemVersion+Internal.h"
-
 
 NSString *const UALocationAutoRequestAuthorizationEnabled = @"UALocationAutoRequestAuthorizationEnabled";
 NSString *const UALocationUpdatesEnabled = @"UALocationUpdatesEnabled";
@@ -16,15 +8,21 @@ NSString *const UALocationBackgroundUpdatesAllowed = @"UALocationBackgroundUpdat
 
 @implementation UALocation
 
-- (instancetype)initWithAnalytics:(UAAnalytics *)analytics dataStore:(UAPreferenceDataStore *)dataStore notificationCenter:(NSNotificationCenter *)notificationCenter systemVersion:(UASystemVersion *)systemVersion {
++ (null_unspecified UALocation *)sharedLocation {
+    return (UALocation *)[[UAirship modules] componentForModuleName:UAModulesLocation];
+}
+
+- (instancetype)initWithDataStore:(UAPreferenceDataStore *)dataStore {
     self = [super initWithDataStore:dataStore];
 
     if (self) {
         self.locationManager = [[CLLocationManager alloc] init];
         self.locationManager.delegate = self;
         self.dataStore = dataStore;
-        self.analytics = analytics;
-        self.systemVersion = systemVersion;
+
+        self.systemVersion = [UASystemVersion systemVersion];
+
+        NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
 
         // Update the location service on app background
         [notificationCenter addObserver:self
@@ -46,23 +44,8 @@ NSString *const UALocationBackgroundUpdatesAllowed = @"UALocationBackgroundUpdat
     return self;
 }
 
-
-+ (instancetype)locationWithAnalytics:(UAAnalytics *)analytics
-                            dataStore:(UAPreferenceDataStore *)dataStore {
-    return [[UALocation alloc] initWithAnalytics:analytics
-                                       dataStore:dataStore
-                              notificationCenter:[NSNotificationCenter defaultCenter]
-                                   systemVersion:[UASystemVersion systemVersion]];
-}
-
-+ (instancetype)locationWithAnalytics:(UAAnalytics *)analytics
-                            dataStore:(UAPreferenceDataStore *)dataStore
-                   notificationCenter:(NSNotificationCenter *)notificationCenter
-                        systemVersion:(UASystemVersion *)systemVersion {
-    return [[UALocation alloc] initWithAnalytics:analytics
-                                       dataStore:dataStore
-                              notificationCenter:notificationCenter
-                                   systemVersion:systemVersion];
+- (void)airshipReady:(UAirship *)airship {
+    airship.locationPoviderDelegate = self;
 }
 
 - (BOOL)isAutoRequestAuthorizationEnabled {
@@ -285,25 +268,24 @@ NSString *const UALocationBackgroundUpdatesAllowed = @"UALocationBackgroundUpdat
     }
 }
 
-- (NSString *)locationPermissionDescription {
+
+- (UALocationProviderPermissionStatus)locationPermissionStatus {
     if (![CLLocationManager locationServicesEnabled]) {
-        return @"SYSTEM_LOCATION_DISABLED";
+        return UALocationProviderPermissionStatusDisabled;
     } else {
         switch ([CLLocationManager authorizationStatus]) {
             case kCLAuthorizationStatusDenied:
             case kCLAuthorizationStatusRestricted:
-                return @"NOT_ALLOWED";
+                return UALocationProviderPermissionStatusNotAllowed;
             case kCLAuthorizationStatusAuthorizedAlways:
-                return @"ALWAYS_ALLOWED";
+                return UALocationProviderPermissionStatusAlwaysAllowed;
             case kCLAuthorizationStatusAuthorizedWhenInUse:
-                return @"FOREGROUND_ALLOWED";
+                return UALocationProviderPermissionStatusForegroundAllowed;
             case kCLAuthorizationStatusNotDetermined:
-                return @"UNPROMPTED";
+                return UALocationProviderPermissionStatusUnprompted;
         }
     }
 }
-
-
 
 #pragma mark -
 #pragma mark CLLocationManager Delegate
@@ -335,9 +317,15 @@ NSString *const UALocationBackgroundUpdatesAllowed = @"UALocationBackgroundUpdat
         return;
     }
 
-    UALocationEvent *event = [UALocationEvent significantChangeLocationEventWithLocation:location
-                                                                            providerType:UALocationServiceProviderNetwork];
-    [self.analytics addEvent:event];
+    UALocationInfo *info = [UALocationInfo infoWithLatitude:location.coordinate.latitude
+                                                  longitude:location.coordinate.longitude
+                                         horizontalAccuracy:location.horizontalAccuracy
+                                           verticalAccuracy:location.verticalAccuracy];
+
+    UALocationEvent *event = [UALocationEvent significantChangeLocationEventWithInfo:info
+                                                                        providerType:UALocationServiceProviderNetwork];
+
+    [[UAirship analytics] addEvent:event];
 }
 
 - (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error {

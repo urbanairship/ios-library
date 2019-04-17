@@ -2,8 +2,6 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
-#import <CoreLocation/CoreLocation.h>
-
 #import "UAEvent.h"
 
 @protocol UALocationProviderProtocol;
@@ -36,6 +34,46 @@ extern UALocationServiceProviderType *const UALocationServiceProviderUnknown;
 
 extern NSString * const UAAnalyticsValueNone;
 
+/**
+ * Model object for location information.
+ */
+@interface UALocationInfo : NSObject
+
+/**
+ * The latitude.
+ */
+@property (nonatomic, readonly) double latitude;
+
+/**
+ * The longitude.
+ */
+@property (nonatomic, readonly) double longitude;
+
+/**
+ * The horizontal accuracy.
+ */
+@property (nonatomic, readonly) double horizontalAccuracy;
+
+/**
+ * The vertical accuracy.
+ */
+@property (nonatomic, readonly) double verticalAccuracy;
+
+/**
+ * UALocationEvent class factory method.
+ *
+ * @param latitude The latitude.
+ * @param longitude The longitude.
+ * @param horizontalAccuracy The horizontal accuracy.
+ * @param verticalAccuracy The vertical accuracy.
+ */
++ (instancetype)infoWithLatitude:(double)latitude
+                       longitude:(double)longitude
+              horizontalAccuracy:(double)horizontalAccuracy
+                verticalAccuracy:(double)verticalAccuracy;
+
+@end
+
 /** 
  * A UALocationEvent captures all the necessary information for
  * UAAnalytics.
@@ -49,56 +87,59 @@ extern NSString * const UAAnalyticsValueNone;
 /**
  * Creates a UALocationEvent.
  *
- * @param location Location going to UAAnalytics
- * @param providerType The type of provider that produced the location
+ * @param info The location info.
+ * @param providerType The type of provider that produced the location.
  * @param desiredAccuracy The requested accuracy.
  * @param distanceFilter The requested distance filter.
- * @return UALocationEvent populated with the necessary values
+ *
+ * @return UALocationEvent populated with the necessary values.
  */
-+ (UALocationEvent *)locationEventWithLocation:(CLLocation *)location
-                                  providerType:(nullable UALocationServiceProviderType *)providerType
-                               desiredAccuracy:(nullable NSNumber *)desiredAccuracy
-                                distanceFilter:(nullable NSNumber *)distanceFilter;
-
++ (UALocationEvent *)locationEventWithInfo:(UALocationInfo *)info
+                              providerType:(nullable UALocationServiceProviderType *)providerType
+                           desiredAccuracy:(nullable NSNumber *)desiredAccuracy
+                            distanceFilter:(nullable NSNumber *)distanceFilter;
 
 /**
  * Creates a UALocationEvent for a single location update.
  *
- * @param location Location going to UAAnalytics
- * @param providerType The type of provider that produced the location
+ * @param info The location info.
+ * @param providerType The type of provider that produced the location.
  * @param desiredAccuracy The requested accuracy.
  * @param distanceFilter The requested distance filter.
+ *
  * @return UALocationEvent populated with the necessary values
  */
-+ (UALocationEvent *)singleLocationEventWithLocation:(CLLocation *)location
-                                        providerType:(nullable UALocationServiceProviderType *)providerType
-                                     desiredAccuracy:(nullable NSNumber *)desiredAccuracy
-                                      distanceFilter:(nullable NSNumber *)distanceFilter;
++ (UALocationEvent *)singleLocationEventWithInfo:(UALocationInfo *)info
+                                    providerType:(nullable UALocationServiceProviderType *)providerType
+                                 desiredAccuracy:(nullable NSNumber *)desiredAccuracy
+                                  distanceFilter:(nullable NSNumber *)distanceFilter;
 
 
 /**
  * Creates a UALocationEvent for a significant location change.
  *
- * @param location Location going to UAAnalytics
- * @param providerType The type of provider that produced the location
+ * @param info The location info.
+ * @param providerType The type of provider that produced the location.
+ *
  * @return UALocationEvent populated with the necessary values
  */
-+ (UALocationEvent *)significantChangeLocationEventWithLocation:(CLLocation *)location
-                                                   providerType:(nullable UALocationServiceProviderType *)providerType;
++ (UALocationEvent *)significantChangeLocationEventWithInfo:(UALocationInfo *)info
+                                               providerType:(nullable UALocationServiceProviderType *)providerType;
 
 /**
  * Creates a UALocationEvent for a standard location change.
  *
- * @param location Location going to UAAnalytics
- * @param providerType The type of provider that produced the location
+ * @param info The location info.
+ * @param providerType The type of provider that produced the location.
  * @param desiredAccuracy The requested accuracy.
  * @param distanceFilter The requested distance filter.
- * @return UALocationEvent populated with the necessary values
+ *
+ * @return UALocationEvent populated with the necessary values.
  */
-+ (UALocationEvent *)standardLocationEventWithLocation:(CLLocation *)location
-                                          providerType:(nullable UALocationServiceProviderType *)providerType
-                                       desiredAccuracy:(nullable NSNumber *)desiredAccuracy
-                                        distanceFilter:(nullable NSNumber *)distanceFilter;
++ (UALocationEvent *)standardLocationEventWithInfo:(UALocationInfo *)info
+                                      providerType:(nullable UALocationServiceProviderType *)providerType
+                                   desiredAccuracy:(nullable NSNumber *)desiredAccuracy
+                                    distanceFilter:(nullable NSNumber *)distanceFilter;
 
 
 NS_ASSUME_NONNULL_END

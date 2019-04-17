@@ -2,6 +2,8 @@
 
 #import "UAEvent.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  * Represents the possible priorities for an event.
  */
@@ -23,8 +25,6 @@ typedef NS_ENUM(NSInteger, UAEventPriority) {
      */
     UAEventPriorityHigh
 };
-
-NS_ASSUME_NONNULL_BEGIN
 
 @interface UAEvent ()
 
@@ -48,14 +48,14 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) NSDictionary *data;
 
 /**
- * The event's priority.
- */
-@property (nonatomic, readonly) UAEventPriority priority;
-
-/**
  * The JSON event size in bytes.
  */
 @property (nonatomic, readonly) NSUInteger jsonEventSize;
+
+/**
+ * The event's priority.
+ */
+@property (nonatomic, readonly) UAEventPriority priority;
 
 ///---------------------------------------------------------------------------------------
 /// @name Event Internal Methods

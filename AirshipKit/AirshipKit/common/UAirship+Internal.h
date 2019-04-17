@@ -1,6 +1,7 @@
 /* Copyright Urban Airship and Contributors */
 
 #import "UAirship.h"
+#import "UAModules+Internal.h"
 
 @class UABaseAppDelegateSurrogate;
 @class UAJavaScriptDelegate;
@@ -60,11 +61,6 @@ NS_ASSUME_NONNULL_BEGIN
 #endif
 
 /**
- * The location manager.
- */
-@property (nonatomic, strong) UALocation *sharedLocation;
-
-/**
  * The named user.
  */
 @property (nonatomic, strong) UANamedUser *sharedNamedUser;
@@ -79,6 +75,11 @@ NS_ASSUME_NONNULL_BEGIN
  * The shared analytics manager.
  */
 @property (nonatomic, strong) UAAnalytics *sharedAnalytics;
+
+/**
+ * The shared modules.
+ */
+@property (nonatomic, strong) UAModules *sharedModules;
 
 /**
  * Shared remoteDataManager.

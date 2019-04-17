@@ -222,11 +222,11 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
             cell.title.text = "ua_device_info_enable_location_enabled".localized()
 
             cell.cellSwitch.isHidden = false
-            cell.cellSwitch.isOn = UAirship.location()?.isLocationUpdatesEnabled ?? false
+            cell.cellSwitch.isOn = UAirship.shared()?.locationPoviderDelegate?.isLocationUpdatesEnabled ?? false
 
-            let optedInToLocation = UAirship.location()?.isLocationOptedIn() ?? false
+            let optedInToLocation = UAirship.shared()?.locationPoviderDelegate?.isLocationOptedIn() ?? false
 
-            if (UAirship.location().isLocationUpdatesEnabled && !optedInToLocation) {
+            if (UAirship.shared().locationPoviderDelegate?.isLocationUpdatesEnabled ?? false && !optedInToLocation) {
                 cell.subtitle?.text = NSLocalizedString("UA_Location_Enabled_Detail", tableName: "UAPushUI", comment: "Enable GPS and WIFI Based Location detail label") + " - NOT OPTED IN"
             } else {
                 cell.subtitle?.text = localizedNone
@@ -272,7 +272,7 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
             UAirship.shared().analytics.isEnabled = cell.cellSwitch.isOn
         case locationEnabled:
             cell.cellSwitch.setOn(!cell.cellSwitch.isOn, animated: true)
-            UAirship.location().isLocationUpdatesEnabled = cell.cellSwitch.isOn
+            UAirship.shared().locationPoviderDelegate?.isLocationUpdatesEnabled = cell.cellSwitch.isOn
         default:
             break
         }

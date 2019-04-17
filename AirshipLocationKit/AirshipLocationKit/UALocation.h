@@ -2,7 +2,12 @@
 
 #import <Foundation/Foundation.h>
 #import <CoreLocation/CoreLocation.h>
-#import "UAComponent.h"
+
+#if STATIC
+#import "AirshipLib.h"
+#else
+@import AirshipKit;
+#endif
 
 /**
  * Location delegate protocol to receive callbacks for location updates.
@@ -42,7 +47,7 @@ NS_ASSUME_NONNULL_BEGIN
  * Main class for interacting with Urban Airship location. Used to send location
  * updates for the user to Urban Airship.
  */
-@interface UALocation : UAComponent
+@interface UALocation : UAComponent <UALocationProviderDelegate>
 
 ///---------------------------------------------------------------------------------------
 /// @name Location Properties
@@ -74,30 +79,32 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, readonly, nullable) CLLocation *lastLocation;
 
++ (null_unspecified UALocation *)sharedLocation;
+
 ///---------------------------------------------------------------------------------------
 /// @name Location Methods
 ///---------------------------------------------------------------------------------------
 
 /**
- * Check if user has opted in to location updates.
+ * Check if the user has opted in to location updates.
  *
- * @return YES if UALocation location updates are enabled and the user has authorized the app to use location services
+ * @return `YES` if UALocation location updates are enabled and the user has authorized the app to use location services.
  */
 - (BOOL)isLocationOptedIn;
 
 /**
- * Check if user has denied the app's request to use location services.
+ * Check if the user has denied the app's request to use location services.
  *
- * @return YES if UALocation location updates are enabled and the user has authorized the app to use location services
+ * @return `YES` if Uthe user has denied the app's request to use location services.
  */
 - (BOOL)isLocationDeniedOrRestricted;
 
 /**
- * Return a string describing the app's authorization status for location services.
+ * Returns an enum representing the app's permission status for location services.
  *
- * @return NSString describing the app's authorization status for location services
+ * @return The location permission status.
  */
-- (NSString *)locationPermissionDescription;
+- (UALocationProviderPermissionStatus)locationPermissionStatus;
 
 NS_ASSUME_NONNULL_END
 

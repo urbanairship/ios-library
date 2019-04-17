@@ -13,6 +13,8 @@ fi
 # Pods
 sed -i '' "s/\(s.version *= *\)\".*\"/\1\"$VERSION\"/g" $ROOT_PATH/UrbanAirship-iOS-SDK.podspec
 sed -i '' "s/\(s.version *= *\)\".*\"/\1\"$VERSION\"/g" $ROOT_PATH/UrbanAirship-iOS-AppExtensions.podspec
+sed -i '' "s/\(s.version *= *\)\".*\"/\1\"$VERSION\"/g" $ROOT_PATH/UrbanAirship-iOS-Location.podspec
+sed -i '' "s/\(s.dependency *\"UrbanAirship-iOS-SDK\", *\)\".*\"/\1\"$VERSION\"/g" $ROOT_PATH/UrbanAirship-iOS-Location.podspec
 
 # Airship Config
 sed -i '' "s/\CURRENT_PROJECT_VERSION.*/CURRENT_PROJECT_VERSION = $VERSION/g" $ROOT_PATH/AirshipKit/AirshipConfig.xcconfig

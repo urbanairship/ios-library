@@ -83,6 +83,27 @@ then
     echo "Error: tvOS AirshipResources.bundle executable exists."
     exit 1
   fi
+
+  echo -ne "\n\n *********** BUILDING AIRSHIPLOCATIONKIT *********** \n\n"
+
+  # iphoneOS
+  xcrun xcodebuild -configuration "Release" \
+  -project "${ROOT_PATH}/AirshipLocationKit/AirshipLocationKit.xcodeproj" \
+  -target "AirshipLocationKit" \
+  -sdk "iphoneos" \
+  BUILD_DIR="${TEMP_DIR}/AirshipLocationKit" \
+  SYMROOT="${TEMP_DIR}/AirshipLocationKit" \
+  OBJROOT="${TEMP_DIR}/AirshipLocationKit/obj" \
+  BUILD_ROOT="${TEMP_DIR}/AirshipLocationKit"
+  # tvOS
+  xcrun xcodebuild -configuration "Release" \
+  -project "${ROOT_PATH}/AirshipLocationKit/AirshipLocationKit.xcodeproj" \
+  -target "AirshipLocationKit tvOS" \
+  -sdk "appletvos" \
+  BUILD_DIR="${TEMP_DIR}/AirshipLocationKit" \
+  SYMROOT="${TEMP_DIR}/AirshipLocationKit" \
+  OBJROOT="${TEMP_DIR}/AirshipLocationKit/obj" \
+  BUILD_ROOT="${TEMP_DIR}/AirshipLocationKit"
 fi
 
 ######################
@@ -91,7 +112,7 @@ fi
 
 if [ $STATIC_LIB = true ]
 then
-  echo -ne "\n\n *********** BUILDING STATIC LIB *********** \n\n"
+  echo -ne "\n\n *********** BUILDING LIBUAIRSHIP *********** \n\n"
 
   # REVISIT - Xcode 10 betas have a bug where "clean" fails when not using DERIVED-DATA
   # The 3 static library builds should probably have "clean" added back once bug is fixed.
@@ -154,6 +175,47 @@ then
 
   # Verify bitcode is enabled in the fat binary
   otool -l "${TEMP_DIR}/AirshipLib/libUAirship-${VERSION}.a" | grep __LLVM
+
+  echo -ne "\n\n *********** BUILDING LIBUALocation *********** \n\n"
+
+  # iphoneOS
+  xcrun xcodebuild -configuration "Release" \
+  -project "${ROOT_PATH}/AirshipLocationKit/AirshipLocationKit.xcodeproj" \
+  -target "AirshipLocationLib" \
+  -sdk "iphoneos" \
+  build \
+  ONLY_ACTIVE_ARCH=NO \
+  RUN_CLANG_STATIC_ANALYZER=NO \
+  BUILD_DIR="${TEMP_DIR}/AirshipLocationLib" \
+  SYMROOT="${TEMP_DIR}/AirshipLocationLib" \
+  OBJROOT="${TEMP_DIR}/AirshipLocationLib/obj" \
+  BUILD_ROOT="${TEMP_DIR}/AirshipLocationLib" \
+  TARGET_BUILD_DIR="${TEMP_DIR}/AirshipLocationLib/iphoneos"
+
+  # iphonesimulator
+  xcrun xcodebuild -configuration "Release" \
+  -project "${ROOT_PATH}/AirshipLocationKit/AirshipLocationKit.xcodeproj" \
+  -target "AirshipLocationLib" \
+  -sdk "iphonesimulator" \
+  -arch i386 -arch x86_64 \
+  build \
+  ONLY_ACTIVE_ARCH=NO \
+  RUN_CLANG_STATIC_ANALYZER=NO \
+  BUILD_DIR="${TEMP_DIR}/AirshipLocationLib" \
+  SYMROOT="${TEMP_DIR}/AirshipLocationLib" \
+  OBJROOT="${TEMP_DIR}/AirshipLocationLib/obj" \
+  BUILD_ROOT="${TEMP_DIR}/AirshipLocationLib" \
+  TARGET_BUILD_DIR="${TEMP_DIR}/AirshipLocationLib/iphonesimulator"
+
+  # Create a universal static library the two static libraries
+  xcrun -sdk iphoneos lipo -create -output "${TEMP_DIR}/AirshipLocationLib/libUALocation-${VERSION}.a" "${TEMP_DIR}/AirshipLocationLib/iphoneos/libUALocation.a" "${TEMP_DIR}/AirshipLocationLib/iphonesimulator/libUALocation.a"
+
+  # Verify architectures in the fat binary
+  echo "☠️ ⛑ If the build fails at this step, it means one of the architectures is missing. 👉 Run 'xcrun -sdk iphoneos lipo \"${TEMP_DIR}/AirshipLocationLib/libUALocation-${VERSION}.a\" -detailed_info' for more info. 👈 ⛑ ☠️"
+  xcrun -sdk iphoneos lipo "${TEMP_DIR}/AirshipLocationLib/libUALocation-${VERSION}.a" -verify_arch i386 x86_64 arm64
+
+  # Verify bitcode is enabled in the fat binary
+  otool -l "${TEMP_DIR}/AirshipLocationLib/libUALocation-${VERSION}.a" | grep __LLVM
 fi
 
 
@@ -182,6 +244,20 @@ then
   --framework-root $ROOT_PATH/AirshipKit \
   --umbrella-header $ROOT_PATH/AirshipKit/AirshipKit/ios/AirshipLib.h \
   --output $STAGING/Documentation/AirshipKit \
+  --sdk iphonesimulator \
+  --skip-undocumented \
+  --hide-documentation-coverage \
+  --config Documentation/.jazzy.json
+
+    # AirshipKit
+  ruby -S jazzy _${JAZZY_VERSION}_ \
+  --objc \
+  --clean \
+  --module AirshipLocationKit  \
+  --module-version $VERSION \
+  --framework-root $ROOT_PATH/AirshipLocationKit \
+  --umbrella-header $ROOT_PATH/AirshipLocationKit/AirshipLocationKit/AirshipLocationLib.h \
+  --output $STAGING/Documentation/AirshipLocationKit \
   --sdk iphonesimulator \
   --skip-undocumented \
   --hide-documentation-coverage \
@@ -221,6 +297,10 @@ then
   echo "Staging AirshipKit"
   cp -R "${ROOT_PATH}/AirshipKit" "${STAGING}"
 
+  # Stage AirshipLocationKit
+  echo "Staging AirshipLocationKit"
+  cp -R "${ROOT_PATH}/AirshipLocationKit" "${STAGING}"
+
   # Stage AirshipAppExtensions
   echo "Staging AirshipAppExtensions"
   cp -R "${ROOT_PATH}/AirshipAppExtensions" "${STAGING}"
@@ -234,11 +314,14 @@ then
   cp -R "${ROOT_PATH}/SwiftSample" "${STAGING}"
 
   # Stage Static Library
+  
   echo "Staging Airship"
   mkdir -p ${STAGING}/Airship/Headers
   find ${ROOT_PATH}/AirshipKit/AirshipKit/common -type f -name '*.h' ! -name 'AirshipKit.h' ! -name '*+Internal*.h'  -exec cp {} ${STAGING}/Airship/Headers \;
   find ${ROOT_PATH}/AirshipKit/AirshipKit/ios -type f -name '*.h' ! -name 'AirshipKit.h' ! -name '*+Internal*.h'  -exec cp {} ${STAGING}/Airship/Headers \;
+  find ${ROOT_PATH}/AirshipLocationKit/AirshipLocationKit -type f -name '*.h' ! -name 'AirshipLocationKit.h' ! -name '*+Internal*.h'  -exec cp {} ${STAGING}/Airship/Headers \;
   cp "${TEMP_DIR}/AirshipLib/libUAirship-${VERSION}.a" "${STAGING}/Airship"
+  cp "${TEMP_DIR}/AirshipLib/libUALocation-${VERSION}.a" "${STAGING}/Airship"
   cp -R "${TEMP_DIR}/AirshipResources/Release-iphoneos/AirshipResources.bundle" "${STAGING}/Airship"
 
   # Copy LICENSE, README and CHANGELOG
