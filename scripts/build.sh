@@ -215,7 +215,8 @@ then
   xcrun -sdk iphoneos lipo "${TEMP_DIR}/AirshipLocationLib/libUALocation-${VERSION}.a" -verify_arch i386 x86_64 arm64
 
   # Verify bitcode is enabled in the fat binary
-  otool -l "${TEMP_DIR}/AirshipLocationLib/libUALocation-${VERSION}.a" | grep __LLVM
+  otool -arch arm64 -l "${TEMP_DIR}/AirshipLocationLib/libUALocation-${VERSION}.a" | grep __LLVM
+  otool -arch armv7 -l "${TEMP_DIR}/AirshipLocationLib/libUALocation-${VERSION}.a" | grep __LLVM
 fi
 
 
@@ -321,7 +322,7 @@ then
   find ${ROOT_PATH}/AirshipKit/AirshipKit/ios -type f -name '*.h' ! -name 'AirshipKit.h' ! -name '*+Internal*.h'  -exec cp {} ${STAGING}/Airship/Headers \;
   find ${ROOT_PATH}/AirshipLocationKit/AirshipLocationKit -type f -name '*.h' ! -name 'AirshipLocationKit.h' ! -name '*+Internal*.h'  -exec cp {} ${STAGING}/Airship/Headers \;
   cp "${TEMP_DIR}/AirshipLib/libUAirship-${VERSION}.a" "${STAGING}/Airship"
-  cp "${TEMP_DIR}/AirshipLib/libUALocation-${VERSION}.a" "${STAGING}/Airship"
+  cp "${TEMP_DIR}/AirshipLocationLib/libUALocation-${VERSION}.a" "${STAGING}/Airship"
   cp -R "${TEMP_DIR}/AirshipResources/Release-iphoneos/AirshipResources.bundle" "${STAGING}/Airship"
 
   # Copy LICENSE, README and CHANGELOG
