@@ -65,7 +65,11 @@ NSString *const UAHTMLStyleFileName = @"UAInAppMessageHTMLStyle";
 }
 
 - (void)display:(nonnull void (^)(UAInAppMessageResolution * _Nonnull))completionHandler {
-    self.resizableContainerViewController = [UAInAppMessageResizableViewController resizableViewControllerWithChild:self.htmlViewController];
+
+    CGSize size = CGSizeMake(self.htmlViewController.displayContent.width,
+                             self.htmlViewController.displayContent.height);
+
+    self.resizableContainerViewController = [UAInAppMessageResizableViewController resizableViewControllerWithChild:self.htmlViewController size:size aspectLock:self.htmlViewController.displayContent.aspectLock];
 
     self.resizableContainerViewController.backgroundColor = self.htmlViewController.displayContent.backgroundColor;
     self.resizableContainerViewController.allowFullScreenDisplay = self.htmlViewController.displayContent.allowFullScreenDisplay;

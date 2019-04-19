@@ -28,8 +28,11 @@ NSString *const UAInAppMessageDismissButtonColorKey = @"dismiss_button_color";
 NSString *const UAInAppMessageDurationKey = @"duration";
 NSString *const UAInAppMessageModalAllowsFullScreenKey = @"allow_fullscreen_display";
 NSString *const UAInAppMessageHTMLAllowsFullScreenKey = @"allow_fullscreen_display";
+NSString *const UAInAppMessageHTMLHeightKey = @"height";
+NSString *const UAInAppMessageHTMLWidthKey = @"width";
+NSString *const UAInAppMessageHTMLAspectLockKey = @"aspect_lock";
 
-/*
+/**
  * Sub-classes must override this method
  */
 - (NSDictionary *)toJSON {

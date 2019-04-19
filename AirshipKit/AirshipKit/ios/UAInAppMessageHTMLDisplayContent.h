@@ -58,6 +58,25 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, assign) BOOL allowFullScreenDisplay;
 
 /**
+ * The height of the manually sized HTML view.
+ */
+@property(nonatomic, assign) CGFloat height;
+
+/**
+ * The width of the manually sized HTML view.
+ */
+@property(nonatomic, assign) CGFloat width;
+
+/**
+ * Flag indicating if the HTML view should lock its aspect ratio when resizing to fit the screen.
+ *
+ * @note This is only applicable when overriding the width and/or height.
+ *
+ * Optional. Defaults to `NO`.
+ */
+@property(nonatomic, assign) BOOL aspectLock;
+
+/**
  * Checks if the builder is valid and will produce an display content instance.
  * @return YES if the builder is valid, otherwise NO.
  */
@@ -103,6 +122,25 @@ NS_ASSUME_NONNULL_BEGIN
  * Flag indicating the HTML view should display as full screen on compact devices.
  */
 @property(nonatomic, readonly) BOOL allowFullScreenDisplay;
+
+/**
+ * The height of the manually sized HTML view.
+ */
+@property(nonatomic, readonly) CGFloat height;
+
+/**
+ * The width of the manually sized HTML view.
+ */
+@property(nonatomic, readonly) CGFloat width;
+
+/**
+ * Flag indicating if the HTML view should lock its aspect ratio when resizing to fit the screen.
+ *
+ * @note This is only applicable when overriding the width and/or height.
+ *
+ * Optional. Defaults to `NO`.
+ */
+@property(nonatomic, readonly) BOOL aspectLock;
 
 /**
  * Factory method for building HTML display content with a builder block.

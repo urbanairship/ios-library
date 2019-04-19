@@ -74,13 +74,24 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property(nonatomic, assign) BOOL allowBorderRounding;
 
-
 /**
  * Factory method to initialize a resizable view controller with a child.
  *
  * @param vc The child view controller.
  */
 + (instancetype)resizableViewControllerWithChild:(UIViewController *)vc;
+
+/**
+ * Factory method to initialize a resizable view controller with a child and instrinsic
+ * size properties
+ *
+ * @param vc The child view controller.
+ * @param size The intrinsic size of the resizable view.
+ * @param aspectLock Flag indicating if the HTML view should lock its aspect ratio when resizing to fit the screen.
+ */
++ (instancetype)resizableViewControllerWithChild:(UIViewController *)vc
+                                            size:(CGSize)size
+                                      aspectLock:(BOOL)aspectLock;
 
 /**
  * The method to show the resizable view controller.
