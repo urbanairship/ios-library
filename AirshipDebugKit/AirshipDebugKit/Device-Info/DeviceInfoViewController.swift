@@ -28,6 +28,12 @@ class DeviceInfoCell: UITableViewCell {
 }
 
 class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+    @objc public static var tagsViewName = "tags"
+    let tagsSegue = "tagsSegue"
+
+    var launchPathComponents : [String]?
+    var launchCompletionHandler : (() -> Void)?
+
     private let localizedNone = NSLocalizedString("None", tableName: "UAPushUI", comment: "None")
 
     private let sectionCount = 5
@@ -93,6 +99,21 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated);
+
+        if let launchPathComponents = launchPathComponents {
+            if (launchPathComponents.count > 0) {
+                switch (launchPathComponents[0]) {
+                case DeviceInfoViewController.tagsViewName:
+                    performSegue(withIdentifier: tagsSegue, sender: self)
+                default:
+                    break
+                }
+            }
+        }
+        launchPathComponents = nil
+        if let launchCompletionHandler = launchCompletionHandler {
+            launchCompletionHandler()
+        }
     }
     
     // this is necessary to update the view when returning from the system settings screen

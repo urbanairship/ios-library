@@ -4,10 +4,52 @@ import UIKit
 import AirshipKit
 
 public class AirshipDebugKit : NSObject {
-    @objc public static var deviceInfoViewController : UIViewController? = instantiateStoryboard("DeviceInfo")
-    @objc public static var automationViewController : UIViewController? = instantiateStoryboard("Automation")
-    @objc public static var eventsViewController : UIViewController? =
-        instantiateStoryboard("Events")
+    @objc public static var deviceInfoViewName = "DeviceInfo"
+    @objc public static let automationViewName = "Automation"
+    @objc public static let eventsViewName = "Events"
+    @objc public static var tagsViewName = DeviceInfoViewController.tagsViewName
+
+    @objc public class var deviceInfoViewController : UIViewController? {
+        get {
+            if (_deviceInfoViewController == nil) {
+                _deviceInfoViewController = viewControllerForStoryboard(deviceInfoViewName)
+            }
+            return _deviceInfoViewController
+        }
+    }
+    @objc public class var automationViewController : UIViewController? {
+        get {
+            if (_automationViewController == nil) {
+                _automationViewController = viewControllerForStoryboard(automationViewName)
+            }
+            return _automationViewController
+        }
+    }
+    @objc public class var eventsViewController : UIViewController? {
+        get {
+            if (_eventsViewController == nil) {
+                _eventsViewController = viewControllerForStoryboard(eventsViewName)
+            }
+            return _eventsViewController
+        }
+    }
+    
+    /**
+     * Get the initial view controller for the requested storyboard
+     */
+    private static func viewControllerForStoryboard(_ storyBoardName : String) -> UIViewController? {
+        if let rootViewController = rootViewController {
+            return rootViewController.viewControllerForStoryboard(storyBoardName)
+        } else {
+            return instantiateViewControllerForStoryboard(storyBoardName)
+        }
+    }
+    
+    static var _deviceInfoViewController : UIViewController?
+    static var _automationViewController : UIViewController?
+    static var _eventsViewController : UIViewController?
+
+    static var rootViewController : RootTableViewController?
 
     static let lastPushPayloadKey = "com.urbanairship.debug.last_push"
 
@@ -20,30 +62,55 @@ public class AirshipDebugKit : NSObject {
         observePayloadEvents();
     }
 
+    @objc public class func showView(_ viewPath: URL) {
+        if let rootViewController = rootViewController {
+            rootViewController.showView(viewPath)
+        } else {
+            var pathComponents = viewPath.pathComponents
+            if (pathComponents[0] == "/") {
+                pathComponents.remove(at: 0)
+            }
+            
+            // get storyboard name from first segment of deeplink
+            let storyBoardName = pathComponents[0].lowercased()
+            pathComponents.remove(at: 0)
+            
+            // map storyboard name to view controller
+            if let viewController = instantiateViewControllerForStoryboard(storyBoardName) {
+                if var topController = UIApplication.shared.keyWindow?.rootViewController {
+                    while let presentedViewController = topController.presentedViewController {
+                        topController = presentedViewController
+                    }
+                    topController.navigationController?.pushViewController(viewController, animated: true)
+                }
+            }
+        }
+    }
+    
     /**
      * Loads one of the debug storyboards.
      * @param name Name of the storyboard you want loaded, e.g. "DeviceInfo".
      * @return Initial view controller for the instantiated storyboard.
      */
-    class func instantiateStoryboard(_ name : String) -> UIViewController? {
+    class func instantiateViewControllerForStoryboard(_ storyBoardName : String) -> UIViewController? {
         // find the bundle containing the storyboard
         var storyboardBundle : Bundle = Bundle(for: self)
-        if (storyboardBundle.path(forResource: name, ofType: "storyboardc") == nil) {
+        if (storyboardBundle.path(forResource: storyBoardName, ofType: "storyboardc") == nil) {
             // if it is not the main bundle, then it should be in the resource bundle
             let resourceBundlePath = storyboardBundle.path(forResource: "AirshipDebugResources", ofType: "bundle")
             if (resourceBundlePath == nil) {
-                print("ERROR: storyboard for \(name) not found")
+                print("ERROR: storyboard named \(storyBoardName) not found")
                 return nil
             }
             storyboardBundle = Bundle.init(path: resourceBundlePath!)!
-            if (storyboardBundle.path(forResource: name, ofType: "storyboardc") == nil) {
-                print("ERROR: storyboard for \(name) not found")
+            if (storyboardBundle.path(forResource: storyBoardName, ofType: "storyboardc") == nil) {
+                print("ERROR: storyboard named \(storyBoardName) not found")
                 return nil
             }
         }
         
         // get the requested storyboard from the bundle
-        let storyboard = UIStoryboard(name: name, bundle: storyboardBundle)
+        let storyboard = UIStoryboard(name: storyBoardName, bundle: storyboardBundle)
 
         return storyboard.instantiateInitialViewController()
     }

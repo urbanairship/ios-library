@@ -68,7 +68,7 @@
                                             </subviews>
                                         </tableViewCellContentView>
                                         <connections>
-                                            <segue destination="3Za-20-JwD" kind="show" id="e1f-EC-yOI"/>
+                                            <segue destination="3Za-20-JwD" kind="show" identifier="deviceInfoSegue" id="e1f-EC-yOI"/>
                                         </connections>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" accessoryType="disclosureIndicator" indentationWidth="10" id="oGR-YX-U5d" userLabel="Events Cell">
@@ -95,7 +95,7 @@
                                             </subviews>
                                         </tableViewCellContentView>
                                         <connections>
-                                            <segue destination="kjD-rX-QG9" kind="show" id="hBC-YA-81r"/>
+                                            <segue destination="kjD-rX-QG9" kind="show" identifier="eventsSegue" id="hBC-YA-81r"/>
                                         </connections>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" accessoryType="disclosureIndicator" indentationWidth="10" id="1zp-qI-Ic0" userLabel="In-App Automation Cell">
@@ -122,7 +122,7 @@
                                             </subviews>
                                         </tableViewCellContentView>
                                         <connections>
-                                            <segue destination="LrQ-Jg-gfK" kind="show" id="Hty-Z1-aPU"/>
+                                            <segue destination="LrQ-Jg-gfK" kind="show" identifier="automationSegue" id="Hty-Z1-aPU"/>
                                         </connections>
                                     </tableViewCell>
                                 </cells>
@@ -133,7 +133,6 @@
                             <outlet property="delegate" destination="wDJ-tH-PB8" id="u0K-ha-pOU"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" id="N4w-I7-Twv"/>
                     <connections>
                         <outlet property="automationCell" destination="1zp-qI-Ic0" id="W0A-RY-c9v"/>
                         <outlet property="automationSubtitle" destination="yc8-CS-4H9" id="4yj-eB-515"/>

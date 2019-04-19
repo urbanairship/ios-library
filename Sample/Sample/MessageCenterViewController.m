@@ -12,6 +12,10 @@
     self.style.cellTitleHighlightedColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:1];
 }
 
+- (void)showInbox {
+    [self.listViewController.navigationController popToRootViewControllerAnimated:YES];
+}
+
 - (void)displayMessageForID:(NSString *)messageID {
     [self.listViewController displayMessageForID:messageID];
 }

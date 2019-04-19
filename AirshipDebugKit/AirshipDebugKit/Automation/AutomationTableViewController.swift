@@ -31,6 +31,9 @@ class AutomationCell: UITableViewCell {
  * for debugging use.
  */
 class AutomationTableViewController: UITableViewController {    
+    var launchPathComponents : [String]?
+    var launchCompletionHandler : (() -> Void)?
+
     private let inAppMessageManager = UAirship.inAppMessageManager()
     private var schedules : Array<UASchedule>?
 

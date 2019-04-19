@@ -8,8 +8,8 @@ class InboxDelegate : NSObject, UAInboxDelegate {
     var tabBarController : UITabBarController;
     var messageCenterViewController : MessageCenterViewController;
 
-    init(rootViewController:UIViewController) {
-        self.tabBarController = rootViewController as! UITabBarController
+    init(tabBarController:UITabBarController) {
+        self.tabBarController = tabBarController
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         self.messageCenterViewController = self.tabBarController.viewControllers![appDelegate.MessageCenterTab] as! MessageCenterViewController;
     }
@@ -18,12 +18,15 @@ class InboxDelegate : NSObject, UAInboxDelegate {
         DispatchQueue.main.async {
             let appDelegate = UIApplication.shared.delegate as! AppDelegate
             self.tabBarController.selectedIndex = appDelegate.MessageCenterTab
+            self.messageCenterViewController.showInbox()
         }
     }
 
     func showMessage(forID messageID: String) {
         self.showInbox()
-        self.messageCenterViewController.displayMessageForID(messageID)
+        DispatchQueue.main.async {
+            self.messageCenterViewController.displayMessageForID(messageID)
+        }
     }
 }
 

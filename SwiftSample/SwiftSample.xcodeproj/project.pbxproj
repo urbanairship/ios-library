@@ -41,7 +41,6 @@
 		CCDA35D31B8D277900950AD5 /* AirshipKit.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = CCDA35CA1B8D265B00950AD5 /* AirshipKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		DF4E494F221D96CB00F306A5 /* AirshipDebugKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DFE70167212F244400A708D5 /* AirshipDebugKit.framework */; };
 		DF4E499C221F387400F306A5 /* AirshipDebugKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = DFE70167212F244400A708D5 /* AirshipDebugKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		DFE7016E212F24E700A708D5 /* DebugViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFE7016D212F24E600A708D5 /* DebugViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -241,7 +240,6 @@
 		CCDA35C31B8D237300950AD5 /* AirshipConfig.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = AirshipConfig.plist; sourceTree = "<group>"; };
 		CCDA35C51B8D265B00950AD5 /* AirshipKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = AirshipKit.xcodeproj; path = ../AirshipKit/AirshipKit.xcodeproj; sourceTree = "<group>"; };
 		DFE70161212F244400A708D5 /* AirshipDebugKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = AirshipDebugKit.xcodeproj; path = ../AirshipDebugKit/AirshipDebugKit.xcodeproj; sourceTree = "<group>"; };
-		DFE7016D212F24E600A708D5 /* DebugViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DebugViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -366,7 +364,6 @@
 				61A672E71CA9F4B000BAF58A /* PushHandler.swift */,
 				493F51121C5B2C9E00B050A1 /* MessageCenterViewController.swift */,
 				493F51281C5B423700B050A1 /* InboxDelegate.swift */,
-				DFE7016D212F24E600A708D5 /* DebugViewController.swift */,
 				613420361BD6C09B00236A18 /* Resources */,
 				CCDA35AC1B8D233A00950AD5 /* Main.storyboard */,
 				CCDA35B11B8D233A00950AD5 /* LaunchScreen.storyboard */,
@@ -656,7 +653,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				493F51131C5B2C9E00B050A1 /* MessageCenterViewController.swift in Sources */,
-				DFE7016E212F24E700A708D5 /* DebugViewController.swift in Sources */,
 				CCDA35A71B8D233A00950AD5 /* AppDelegate.swift in Sources */,
 				493F51291C5B423700B050A1 /* InboxDelegate.swift in Sources */,
 				CCDA35A91B8D233A00950AD5 /* HomeViewController.swift in Sources */,

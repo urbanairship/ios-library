@@ -23,6 +23,9 @@ class EventsViewController:UIViewController, UITableViewDataSource, UITableViewD
     @IBOutlet var navAddButton: UIBarButtonItem!
     @IBOutlet var storageOptionsButton: UIBarButtonItem!
 
+    var launchPathComponents : [String]?
+    var launchCompletionHandler : (() -> Void)?
+
     let defaultEventCellHeight:CGFloat = 64
 
     var detailViewController:EventsDetailTableViewController? = nil

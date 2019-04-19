@@ -43,7 +43,6 @@
 		CC899CC41D8B6F3900A0CECC /* AirshipKit.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = CC899CB31D8B6AB400A0CECC /* AirshipKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		DF4E4921221CD86F00F306A5 /* AirshipDebugKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DF74B28921543DC00010CACB /* AirshipDebugKit.framework */; };
 		DF4E4995221F376600F306A5 /* AirshipDebugKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = DF74B28921543DC00010CACB /* AirshipDebugKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		DF74B29A215460A40010CACB /* DebugViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DF74B299215460A40010CACB /* DebugViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -264,8 +263,6 @@
 		76AE35641C2B6FD600D7F3B9 /* AirshipConfig.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = AirshipConfig.plist; sourceTree = "<group>"; };
 		CC899CAD1D8B6AB400A0CECC /* AirshipKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = AirshipKit.xcodeproj; path = ../AirshipKit/AirshipKit.xcodeproj; sourceTree = "<group>"; };
 		DF74B28321543DC00010CACB /* AirshipDebugKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = AirshipDebugKit.xcodeproj; path = ../AirshipDebugKit/AirshipDebugKit.xcodeproj; sourceTree = "<group>"; };
-		DF74B298215460A40010CACB /* DebugViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DebugViewController.h; sourceTree = "<group>"; };
-		DF74B299215460A40010CACB /* DebugViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DebugViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -383,8 +380,6 @@
 				493F50E91C5B261100B050A1 /* MessageCenterViewController.m */,
 				493F511F1C5B3A5100B050A1 /* InboxDelegate.h */,
 				493F51201C5B3A5100B050A1 /* InboxDelegate.m */,
-				DF74B298215460A40010CACB /* DebugViewController.h */,
-				DF74B299215460A40010CACB /* DebugViewController.m */,
 				764693BF1C237CAB0090FE40 /* Main.storyboard */,
 				764693B61C237B630090FE40 /* LaunchScreen.storyboard */,
 				764693B91C237B630090FE40 /* Info.plist */,
@@ -708,7 +703,6 @@
 			files = (
 				764693AA1C237B630090FE40 /* AppDelegate.m in Sources */,
 				61A672FC1CAB3E5A00BAF58A /* PushHandler.m in Sources */,
-				DF74B29A215460A40010CACB /* DebugViewController.m in Sources */,
 				764693AD1C237B630090FE40 /* HomeViewController.m in Sources */,
 				493F51211C5B3A5100B050A1 /* InboxDelegate.m in Sources */,
 				764693A71C237B630090FE40 /* main.m in Sources */,

@@ -24,12 +24,15 @@
 - (void)showInbox {
     dispatch_async(dispatch_get_main_queue(), ^{
         self.tabBarController.selectedIndex = MessageCenterTab;
+        [self.messageCenterViewController showInbox];
     });
 }
 
 - (void)showMessageForID:(NSString *)messageID {
     [self showInbox];
-    [self.messageCenterViewController displayMessageForID:messageID];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.messageCenterViewController displayMessageForID:messageID];
+    });
 }
 
 @end

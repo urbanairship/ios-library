@@ -65,7 +65,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UARegistrationDelegate, U
         // UAirship.push()?.userPushNotificationsEnabled = true
 
         // Set a custom delegate for handling message center events
-        self.inboxDelegate = InboxDelegate(rootViewController: (window?.rootViewController)!)
+        self.inboxDelegate = InboxDelegate(tabBarController: window!.rootViewController as! UITabBarController)
         UAirship.inbox().delegate = self.inboxDelegate
         UAirship.push().pushNotificationDelegate = pushHandler
         UAirship.push().registrationDelegate = self
@@ -145,64 +145,84 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UARegistrationDelegate, U
     }
     
     // MARK Deep link handling
+    
+    // Available Deep Links:
+    //    - <scheme>://deeplink/home
+    //    - <scheme>://deeplink/inbox
+    //    - <scheme>://deeplink/inbox/message/<messageId>
+    //    - <scheme>://deeplink/settings
+    //    - <scheme>://deeplink/settings/tags
 
     func receivedDeepLink(_ url: URL, completionHandler: @escaping () -> ()) {
         var pathComponents = url.pathComponents
+        if (pathComponents[0] == "/") {
+            pathComponents.remove(at: 0)
+        }
 
         let tabController = window!.rootViewController as! UITabBarController
 
         // map existing deep links to new paths
-        switch (pathComponents[0]) {
+        switch (pathComponents[0].lowercased()) {
         case PushSettingsStoryboardID:
-            pathComponents = [DebugStoryboardID, "device_info"]
+            pathComponents = URL(string: "settings")!.pathComponents
         case InAppAutomationStoryboardID:
-            pathComponents = [DebugStoryboardID, "in_app_automation"]
+            pathComponents = URL(string: "\(DebugStoryboardID)/\(AirshipDebugKit.automationViewName)")!.pathComponents
         default:
             break
         }
         
+        // map deeplinks to storyboards paths
+        switch (pathComponents[0].lowercased()) {
+        case "home":
+            pathComponents[0] = HomeStoryboardID
+        case "inbox":
+            pathComponents[0] = MessageCenterStoryboardID
+        case "settings":
+            var newPathComponents = URL(string: "\(DebugStoryboardID)/\(AirshipDebugKit.deviceInfoViewName)")!.pathComponents
+            pathComponents.remove(at: 0)
+            if (pathComponents.count > 0) {
+                switch (pathComponents[0]) {
+                case "tags":
+                    newPathComponents.append(AirshipDebugKit.tagsViewName)
+                default:
+                    newPathComponents += pathComponents
+                }
+            }
+            pathComponents = newPathComponents
+        default:
+            break
+        }
+
         // execute deep link
-        switch (pathComponents[0]) {
+        switch (pathComponents[0].lowercased()) {
         case HomeStoryboardID:
+            // switch to home tab
             tabController.selectedIndex = HomeTab
-        case DebugStoryboardID:
-            if let nav = tabController.selectedViewController as? UINavigationController {
-                if !nav.topViewController!.isKind(of: DebugViewController.self) {
-                    nav.popToRootViewController(animated: true);
-                }
-            }
-            
-            tabController.selectedIndex = DebugTab;
-            
-            if (pathComponents.count == 1) {
-                completionHandler()
-                return
-            }
-            
-            if let nav = tabController.selectedViewController as? UINavigationController {
-                if !nav.topViewController!.isKind(of: DebugViewController.self) {
-                    nav.popToRootViewController(animated: true);
-                }
-            }
-        case InAppAutomationStoryboardID:
-            if let nav = tabController.selectedViewController as? UINavigationController {
-                if !nav.topViewController!.isKind(of: DebugViewController.self) {
-                    let debugViewController = nav.topViewController as! DebugViewController
-                    pathComponents.remove(at: 0)
-                    debugViewController.handleDeepLink(pathComponents)
-                }
-            }
-            
-            tabController.selectedIndex = DebugTab;
-            
-            if let nav = tabController.selectedViewController as? UINavigationController {
-                if nav.topViewController!.isKind(of: DebugViewController.self) {
-                    let debugViewController = nav.topViewController as! DebugViewController
-                    debugViewController.inAppAutomation()
-                }
-            }
         case MessageCenterStoryboardID:
+            // switch to inbox tab
             tabController.selectedIndex = MessageCenterTab
+
+            // get rest of deep link
+            pathComponents.remove(at: 0)
+            
+            if ((pathComponents.count == 0) || (pathComponents[0] != "message")) {
+                inboxDelegate?.showInbox()
+            } else {
+                // remove "message" from front of url
+                pathComponents.remove(at: 0)
+                var messageId = ""
+                if (pathComponents.count > 0) {
+                    messageId = pathComponents[0]
+                }
+                inboxDelegate?.showMessage(forID: messageId)
+            }
+        case DebugStoryboardID:
+            // switch to debug tab
+            tabController.selectedIndex = DebugTab
+
+            // get rest of deep link
+            pathComponents.remove(at: 0)
+            AirshipDebugKit.showView(URL(fileURLWithPath: (NSString.path(withComponents: pathComponents))))
         default:
             break
         }

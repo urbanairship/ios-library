@@ -14,6 +14,10 @@ class MessageCenterViewController : UAMessageCenterSplitViewController {
         self.style.cellTitleHighlightedColor = UIColor(red: 0, green: 0, blue: 0, alpha: 1)
     }
 
+    func showInbox() {
+        self.listViewController.navigationController?.popToRootViewController(animated: true)
+    }
+    
     func displayMessageForID(_ messageID: String) {
         self.listViewController.displayMessage(forID: messageID)
     }

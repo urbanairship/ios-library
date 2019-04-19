@@ -87,6 +87,11 @@
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="4Iy-HH-Xhx"/>
                     </view>
+                    <navigationItem key="navigationItem" id="NLx-ZK-Hdn">
+                        <userDefinedRuntimeAttributes>
+                            <userDefinedRuntimeAttribute type="string" keyPath="keyForLocalization" value="ua_device_info_title"/>
+                        </userDefinedRuntimeAttributes>
+                    </navigationItem>
                     <connections>
                         <outlet property="tableView" destination="af4-ep-TRA" id="cd3-Xl-l1d"/>
                         <segue destination="y2y-iH-58S" kind="show" identifier="namedUserSegue" id="iyU-JT-CBw"/>
@@ -177,6 +182,11 @@
                             <outlet property="delegate" destination="Jz3-3n-poh" id="UB9-R6-QEF"/>
                         </connections>
                     </tableView>
+                    <navigationItem key="navigationItem" id="fGD-ox-qFB">
+                        <userDefinedRuntimeAttributes>
+                            <userDefinedRuntimeAttribute type="string" keyPath="keyForLocalization" value="ua_device_info_tags"/>
+                        </userDefinedRuntimeAttributes>
+                    </navigationItem>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <size key="freeformSize" width="600" height="600"/>
                     <connections>
