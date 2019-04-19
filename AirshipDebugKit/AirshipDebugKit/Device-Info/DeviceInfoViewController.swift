@@ -12,6 +12,7 @@ class DeviceInfoCell: UITableViewCell {
 
     override func layoutSubviews() {
         super.layoutSubviews()
+
         guard let sub = subtitle.text else {
             return
         }
@@ -164,6 +165,8 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
 
         // Cell switch and disclosure indicator are hidden by default
         cell.cellSwitch.isHidden = true
+        // Cells will do the switching
+        cell.cellSwitch.isUserInteractionEnabled = false
         cell.accessoryType = .none
 
         switch indexPath {
