@@ -85,11 +85,6 @@ extern NSString *const UAPushEnabledSettingsMigratedKey;
 extern NSString *const UAPushChannelIDKey;
 
 /**
- * Channel location data store key.
- */
-extern NSString *const UAPushChannelLocationKey;
-
-/**
  * Old push enabled key.
  */
 extern NSString *const UAPushEnabledKey;
@@ -224,11 +219,9 @@ extern NSString *const UAPushEnabledKey;
 /**
  * Called when the channel registrar creates a new channel.
  * @param channelID The channel ID string.
- * @param channelLocation The channel location string.
  * @param existing Boolean to indicate if the channel previously existed or not.
  */
 - (void)channelCreated:(NSString *)channelID
-       channelLocation:(NSString *)channelLocation
               existing:(BOOL)existing;
 
 /**

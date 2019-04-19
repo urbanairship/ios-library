@@ -12,10 +12,9 @@ NS_ASSUME_NONNULL_BEGIN
  * A block called when the channel ID creation succeeded.
  *
  * @param channelID The channel identifier string.
- * @param channelLocation The channel location string.
  * @param existing Boolean to indicate if the channel previously existed or not.
  */
-typedef void (^UAChannelAPIClientCreateSuccessBlock)(NSString *channelID, NSString *channelLocation, BOOL existing);
+typedef void (^UAChannelAPIClientCreateSuccessBlock)(NSString *channelID, BOOL existing);
 
 /**
  * A block called when the channel update succeeded.
@@ -70,7 +69,7 @@ typedef void (^UAChannelAPIClientFailureBlock)(NSUInteger statusCode);
 /**
  * Update the channel.
  *
- * @param channelLocation The location of the channel
+ * @param channelID The channel identifier.
  * @param payload An instance of UAChannelRegistrationPayload.
  * @param successBlock A UAChannelAPIClientUpdateSuccessBlock that will be called
  *        if the channel was updated successfully.
@@ -78,10 +77,10 @@ typedef void (^UAChannelAPIClientFailureBlock)(NSUInteger statusCode);
  *        the channel update was unsuccessful.
  *
  */
-- (void)updateChannelWithLocation:(NSString *)channelLocation
-                      withPayload:(UAChannelRegistrationPayload *)payload
-                        onSuccess:(UAChannelAPIClientUpdateSuccessBlock)successBlock
-                        onFailure:(UAChannelAPIClientFailureBlock)failureBlock;
+- (void)updateChannelWithID:(NSString *)channelID
+                withPayload:(UAChannelRegistrationPayload *)payload
+                  onSuccess:(UAChannelAPIClientUpdateSuccessBlock)successBlock
+                  onFailure:(UAChannelAPIClientFailureBlock)failureBlock;
 
 @end
 

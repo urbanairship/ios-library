@@ -68,7 +68,7 @@
                                  completionHandler:OCMOCK_ANY];
 
     [self.client createChannelWithPayload:[[UAChannelRegistrationPayload alloc] init]
-                                onSuccess:^(NSString *channelID, NSString *channelLocation, BOOL existing){}
+                                onSuccess:^(NSString *channelID, BOOL existing){}
                                 onFailure:^(NSUInteger statusCode) {}];
 
     [self.mockSession verify];
@@ -81,7 +81,7 @@
 - (void)testCreateChannelOnSuccess {
 
     // Create a success response
-    NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:200 HTTPVersion:nil headerFields:@{@"Location":@"someChannelLocation"}];
+    NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:200 HTTPVersion:nil headerFields:@{}];
     NSData *responseData = [@"{ \"ok\":true, \"channel_id\": \"someChannelID\"}" dataUsingEncoding:NSUTF8StringEncoding];
 
     // Stub the session to return the response
@@ -93,22 +93,17 @@
     }] dataTaskWithRequest:OCMOCK_ANY retryWhere:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     __block NSString *channelID;
-    __block NSString *channelLocation;
 
     [self.client createChannelWithPayload:[[UAChannelRegistrationPayload alloc] init]
-                                onSuccess:^(NSString *cID, NSString *location, BOOL existing){
+                                onSuccess:^(NSString *cID, BOOL existing){
                                     channelID = cID;
-                                    channelLocation = location;
                                 }
                                 onFailure:^(NSUInteger status) {
                                     XCTFail(@"Should not be called");
                                 }];
 
     XCTAssertEqualObjects(@"someChannelID", channelID, @"Channel ID should match someChannelID from the response");
-    XCTAssertEqualObjects(@"someChannelLocation", channelLocation, @"Channel location should match location header from the response");
 }
-
-
 
 /**
  * Test create channel calls the onFailureBlock with the status code when
@@ -129,7 +124,7 @@
 
     __block NSUInteger failureCode = 0;
     [self.client createChannelWithPayload:[[UAChannelRegistrationPayload alloc] init]
-                                onSuccess:^(NSString *channelID, NSString *channelLocation, BOOL existing){
+                                onSuccess:^(NSString *channelID, BOOL existing){
                                     XCTFail(@"Should not be called");
                                 }
                                 onFailure:^(NSUInteger statusCode) {
@@ -182,7 +177,7 @@
                                  completionHandler:OCMOCK_ANY];
 
     [self.client createChannelWithPayload:payload
-                                onSuccess:^(NSString *channelID, NSString *channelLocation, BOOL existing){}
+                                onSuccess:^(NSString *channelID, BOOL existing){}
                                 onFailure:^(NSUInteger statusCode) {}];
 
     [self.mockSession verify];
@@ -230,10 +225,10 @@
                                         retryWhere:[OCMArg checkWithBlock:retryBlockCheck]
                                  completionHandler:OCMOCK_ANY];
 
-    [self.client updateChannelWithLocation:@"someLocation"
-                               withPayload:[[UAChannelRegistrationPayload alloc] init]
-                                 onSuccess:^{}
-                                 onFailure:^(NSUInteger statusCode) {}];
+    [self.client updateChannelWithID:@"someChannelID"
+                         withPayload:[[UAChannelRegistrationPayload alloc] init]
+                           onSuccess:^{}
+                           onFailure:^(NSUInteger statusCode) {}];
     [self.mockSession verify];
 }
 
@@ -242,7 +237,7 @@
  */
 - (void)testUpdateChannelOnSuccess {
     // Create a success response
-    NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:200 HTTPVersion:nil headerFields:@{@"Location":@"someChannelLocation"}];
+    NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:200 HTTPVersion:nil headerFields:@{}];
     NSData *responseData = [@"{ \"ok\":true, \"channel_id\": \"someChannelID\"}" dataUsingEncoding:NSUTF8StringEncoding];
 
     // Stub the session to return the response
@@ -254,15 +249,15 @@
     }] dataTaskWithRequest:OCMOCK_ANY retryWhere:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     __block BOOL  onSuccessCalled = NO;
-    [self.client updateChannelWithLocation:@"someLocation"
-                               withPayload:[[UAChannelRegistrationPayload alloc] init]
-                                 onSuccess:^{
-                                     onSuccessCalled = YES;
-                                 }
-                                 onFailure:^(NSUInteger status) {
-                                     XCTFail(@"Should not be called");
-                                 }];
-
+    [self.client updateChannelWithID:@"someChannelID"
+                         withPayload:[[UAChannelRegistrationPayload alloc] init]
+                           onSuccess:^{
+                               onSuccessCalled = YES;
+                           }
+                           onFailure:^(NSUInteger status) {
+                               XCTFail(@"Should not be called");
+                           }];
+    
     XCTAssertTrue(onSuccessCalled);
 }
 
@@ -284,14 +279,14 @@
     }] dataTaskWithRequest:OCMOCK_ANY retryWhere:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     __block NSUInteger failureCode = 0;
-    [self.client updateChannelWithLocation:@"someLocation"
-                               withPayload:[[UAChannelRegistrationPayload alloc] init]
-                                 onSuccess:^{
-                                     XCTFail(@"Should not be called");
-                                 }
-                                 onFailure:^(NSUInteger statusCode) {
-                                     failureCode = statusCode;
-                                 }];
+    [self.client updateChannelWithID:@"someChannelID"
+                         withPayload:[[UAChannelRegistrationPayload alloc] init]
+                           onSuccess:^{
+                               XCTFail(@"Should not be called");
+                           }
+                           onFailure:^(NSUInteger statusCode) {
+                               failureCode = statusCode;
+                           }];
 
     XCTAssertEqual(failureCode, 400);
 }
@@ -307,7 +302,7 @@
         UARequest *request = obj;
 
         // check the url
-        if (![[request.URL absoluteString] isEqualToString:@"https://device-api.urbanairship.com/someLocation"]) {
+        if (![[request.URL absoluteString] isEqualToString:@"https://device-api.urbanairship.com/api/channels/someChannelID"]) {
             return NO;
         }
 
@@ -338,10 +333,10 @@
                                         retryWhere:OCMOCK_ANY
                                  completionHandler:OCMOCK_ANY];
 
-    [self.client updateChannelWithLocation:@"https://device-api.urbanairship.com/someLocation"
-                               withPayload:payload
-                                 onSuccess:^{}
-                                 onFailure:^(NSUInteger statusCode){}];
+    [self.client updateChannelWithID:@"someChannelID"
+                         withPayload:payload
+                           onSuccess:^{}
+                           onFailure:^(NSUInteger statusCode){}];
     [self.mockSession verify];
 }
 

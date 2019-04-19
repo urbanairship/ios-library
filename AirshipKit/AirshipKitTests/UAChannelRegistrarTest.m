@@ -37,9 +37,7 @@ void (^channelCreateFailureDoBlock)(NSInvocation *, BOOL);
 void (^deviceRegisterSuccessDoBlock)(NSInvocation *);
 
 NSString * const MockChannelID = @"mockChannelID";
-NSString * const MockChannelLocation = @"mockChannelLocation";
 NSString * const ChannelCreateSuccessChannelID = @"newChannelID";
-NSString * const ChannelCreateSuccessChannelLocation = @"newChannelLocation";
 
 - (void)setUp {
     [super setUp];
@@ -85,7 +83,7 @@ NSString * const ChannelCreateSuccessChannelLocation = @"newChannelLocation";
         void *arg;
         [invocation getArgument:&arg atIndex:3];
         UAChannelAPIClientCreateSuccessBlock successBlock = (__bridge UAChannelAPIClientCreateSuccessBlock)arg;
-        successBlock(ChannelCreateSuccessChannelID, ChannelCreateSuccessChannelLocation, existing);
+        successBlock(ChannelCreateSuccessChannelID, existing);
     };
 
     channelCreateFailureDoBlock = ^(NSInvocation *invocation, BOOL existing) {
@@ -97,7 +95,7 @@ NSString * const ChannelCreateSuccessChannelLocation = @"newChannelLocation";
 
 
     // Create the registrar
-    self.registrar = [self createRegistrarWithChannelID:nil location:nil];
+    self.registrar = [self createRegistrarWithChannelID:nil];
 }
 
 /**
@@ -163,7 +161,7 @@ NSString * const ChannelCreateSuccessChannelLocation = @"newChannelLocation";
     self.testDate.timeOffset = (24 * 60 * 60);
 
     // Expect the channel client to be asked to update the channel. Simulate success.
-    [self expectChannelClientUpdateChannelWithLocation:ChannelCreateSuccessChannelLocation andDo:channelUpdateSuccessDoBlock];
+    [self expectChannelClientUpdateChannelWithID:ChannelCreateSuccessChannelID andDo:channelUpdateSuccessDoBlock];
 
     // Other expectations
     [self expectRegistrationSucceededDelegateCallback];
@@ -176,7 +174,7 @@ NSString * const ChannelCreateSuccessChannelLocation = @"newChannelLocation";
     [self waitForTestExpectations];
     [self verifyRegistrationSucceededDelegateCallback];
     [self verifyBackgroundTaskWasStartedAndStopped];
-    [self verifyChannelClientUpdateChannelWithLocation];
+    [self verifyChannelClientUpdateChannelWithID];
 
     // Try again with correct lastSuccessfulUpdateDate - should skip registration
     // Reject any update channel calls
@@ -214,7 +212,7 @@ NSString * const ChannelCreateSuccessChannelLocation = @"newChannelLocation";
     [self verifyChannelClientCreateChannelWithPayload];
 
     // Expect the channel client to update the channel and call the updateChannel block when we call run it forcefully
-    [self expectChannelClientUpdateChannelWithLocation:ChannelCreateSuccessChannelLocation andDo:channelUpdateSuccessDoBlock];
+    [self expectChannelClientUpdateChannelWithID:ChannelCreateSuccessChannelID andDo:channelUpdateSuccessDoBlock];
 
     // Other expectations
     [self expectRegistrationSucceededDelegateCallback];
@@ -227,7 +225,7 @@ NSString * const ChannelCreateSuccessChannelLocation = @"newChannelLocation";
     [self waitForTestExpectations];
     [self verifyRegistrationSucceededDelegateCallback];
     [self verifyBackgroundTaskWasStartedAndStopped];
-    [self verifyChannelClientUpdateChannelWithLocation];
+    [self verifyChannelClientUpdateChannelWithID];
 
     // Reject a update call on another non-forceful update with the same payload
     [self rejectChannelClientUpdateChannel];
@@ -250,7 +248,7 @@ NSString * const ChannelCreateSuccessChannelLocation = @"newChannelLocation";
     [self startRegistrationButLeaveInProgressWithExisting:existing successBlock:&successBlock];
 
     // Reject any registration requests
-    [[self.mockedChannelClient reject] updateChannelWithLocation:OCMOCK_ANY withPayload:OCMOCK_ANY onSuccess:OCMOCK_ANY onFailure:OCMOCK_ANY];
+    [[self.mockedChannelClient reject] updateChannelWithID:OCMOCK_ANY withPayload:OCMOCK_ANY onSuccess:OCMOCK_ANY onFailure:OCMOCK_ANY];
     [[self.mockedChannelClient reject] createChannelWithPayload:OCMOCK_ANY onSuccess:OCMOCK_ANY onFailure:OCMOCK_ANY];
 
     // Register
@@ -261,7 +259,7 @@ NSString * const ChannelCreateSuccessChannelLocation = @"newChannelLocation";
     [self expectBackgroundTaskToBeStopped];
 
     // Finish original registration
-    successBlock(ChannelCreateSuccessChannelID, ChannelCreateSuccessChannelLocation, existing);
+    successBlock(ChannelCreateSuccessChannelID, existing);
 
     // Verify
     [self waitForTestExpectations];
@@ -289,7 +287,7 @@ NSString * const ChannelCreateSuccessChannelLocation = @"newChannelLocation";
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIBackgroundTaskInvalid)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
 
     // Reject any registration requests
-    [[self.mockedChannelClient reject] updateChannelWithLocation:OCMOCK_ANY withPayload:OCMOCK_ANY onSuccess:OCMOCK_ANY onFailure:OCMOCK_ANY];
+    [[self.mockedChannelClient reject] updateChannelWithID:OCMOCK_ANY withPayload:OCMOCK_ANY onSuccess:OCMOCK_ANY onFailure:OCMOCK_ANY];
     [[self.mockedChannelClient reject] createChannelWithPayload:OCMOCK_ANY onSuccess:OCMOCK_ANY onFailure:OCMOCK_ANY];
 
     // Make a pending request
@@ -306,11 +304,11 @@ NSString * const ChannelCreateSuccessChannelLocation = @"newChannelLocation";
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIBackgroundTaskInvalid)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
 
     // Reject any registration requests
-    [[self.mockedChannelClient reject] updateChannelWithLocation:OCMOCK_ANY withPayload:OCMOCK_ANY onSuccess:OCMOCK_ANY onFailure:OCMOCK_ANY];
+    [[self.mockedChannelClient reject] updateChannelWithID:OCMOCK_ANY withPayload:OCMOCK_ANY onSuccess:OCMOCK_ANY onFailure:OCMOCK_ANY];
     [[self.mockedChannelClient reject] createChannelWithPayload:OCMOCK_ANY onSuccess:OCMOCK_ANY onFailure:OCMOCK_ANY];
 
     // Simulate active channel
-    self.registrar = [self createRegistrarWithChannelID:MockChannelID location:MockChannelLocation];
+    self.registrar = [self createRegistrarWithChannelID:MockChannelID];
 
     // Make a pending request
     [self.registrar registerForcefully:NO];
@@ -363,11 +361,11 @@ NSString * const ChannelCreateSuccessChannelLocation = @"newChannelLocation";
     BOOL existing = YES;
 
     // Assume we recently registered
-    self.registrar = [self createRegistrarWithChannelID:MockChannelID location:MockChannelLocation];
+    self.registrar = [self createRegistrarWithChannelID:MockChannelID];
 
     // Expect the channel client to try to update channel. Simulate failure.
     self.failureCode = 409;
-    [self expectChannelClientUpdateChannelWithLocation:MockChannelLocation andDo:channelUpdateFailureDoBlock];
+    [self expectChannelClientUpdateChannelWithID:MockChannelID andDo:channelUpdateFailureDoBlock];
 
     // Expect create channel to be called. Simulate success.
     [self expectChannelClientCreateChannelWithPayloadAndDo:channelCreateSuccessDoBlock withExisting:existing];
@@ -382,7 +380,7 @@ NSString * const ChannelCreateSuccessChannelLocation = @"newChannelLocation";
 
     // Verify
     [self waitForTestExpectations];
-    [self verifyChannelClientUpdateChannelWithLocation];
+    [self verifyChannelClientUpdateChannelWithID];
     [self verifyChannelClientCreateChannelWithPayload];
     [self verifyRegistrationSucceededDelegateCallback];
     [self verifyBackgroundTaskWasStartedAndStopped];
@@ -393,11 +391,11 @@ NSString * const ChannelCreateSuccessChannelLocation = @"newChannelLocation";
  */
 - (void)testChannelConflictFailed {
     // Assume we recently registered
-    self.registrar = [self createRegistrarWithChannelID:MockChannelID location:MockChannelLocation];
+    self.registrar = [self createRegistrarWithChannelID:MockChannelID];
 
     // Expect the channel client to try to update channel. Simulate failure.
     self.failureCode = 409;
-    [self expectChannelClientUpdateChannelWithLocation:MockChannelLocation andDo:channelUpdateFailureDoBlock];
+    [self expectChannelClientUpdateChannelWithID:MockChannelID andDo:channelUpdateFailureDoBlock];
 
     // Expect create channel to be called. Simulate failure.
     [self expectChannelClientCreateChannelWithPayloadAndDo:channelCreateFailureDoBlock withExisting:NO];
@@ -412,7 +410,7 @@ NSString * const ChannelCreateSuccessChannelLocation = @"newChannelLocation";
 
     // Verify
     [self waitForTestExpectations];
-    [self verifyChannelClientUpdateChannelWithLocation];
+    [self verifyChannelClientUpdateChannelWithID];
     [self verifyChannelClientCreateChannelWithPayload];
     [self verifyRegistrationFailedDelegateCallback];
     [self verifyBackgroundTaskWasStartedAndStopped];
@@ -464,11 +462,10 @@ NSString * const ChannelCreateSuccessChannelLocation = @"newChannelLocation";
 }
 
 /**
- * Test channel ID is returned when both channel ID and channel location exist.
+ * Test channel ID is returned when channel ID exists.
  */
 - (void)testChannelID {
     [self.dataStore setValue:@"channel ID" forKey:@"UAChannelID"];
-    [self.dataStore setValue:@"channel Location" forKey:@"UAChannelLocation"];
     
     XCTAssertEqualObjects(self.registrar.channelID, @"channel ID", @"Should return channel ID");
 }
@@ -478,66 +475,22 @@ NSString * const ChannelCreateSuccessChannelLocation = @"newChannelLocation";
  */
 - (void)testChannelIDNoChannel {
     [self.dataStore removeObjectForKey:@"UAChannelID"];
-    [self.dataStore setValue:@"channel Location" forKey:@"UAChannelLocation"];
     
     XCTAssertNil(self.registrar.channelID, @"Channel ID should be nil");
 }
-
-/**
- * Test channelID returns nil when channel location does not exist.
- */
-- (void)testChannelIDNoLocation {
-    [self.dataStore setValue:@"channel ID" forKey:@"UAChannelID"];
-    [self.dataStore removeObjectForKey:@"UAChannelLocation"];
-    
-    XCTAssertNil(self.registrar.channelID, @"Channel ID should be nil");
-}
-
-/**
- * Test channel location is returned when both channel ID and channel location exist.
- */
-- (void)testChannelLocation {
-    [self.dataStore setValue:@"channel ID" forKey:@"UAChannelID"];
-    [self.dataStore setValue:@"channel Location" forKey:@"UAChannelLocation"];
-    
-    XCTAssertEqualObjects(self.registrar.channelLocation, @"channel Location", @"Should return channel location");
-}
-
-/**
- * Test channelLocation returns nil when channel ID does not exist.
- */
-- (void)testChannelLocationNoChannel {
-    [self.dataStore removeObjectForKey:@"UAChannelID"];
-    [self.dataStore setValue:@"channel Location" forKey:@"UAChannelLocation"];
-    
-    XCTAssertNil(self.registrar.channelLocation, @"Channel location should be nil");
-}
-
-/**
- * Test channelLocation returns nil when channel location does not exist.
- */
-- (void)testChannelLocationNoLocation {
-    [self.dataStore setValue:@"channel ID" forKey:@"UAChannelID"];
-    [self.dataStore removeObjectForKey:@"UAChannelLocation"];
-    
-    XCTAssertNil(self.registrar.channelLocation, @"Channel location should be nil");
-}
-
-
 
 
 #pragma mark -
 #pragma mark Utility methods
 
 /**
- * Create a new registrar. Usually called by setup(), but also used in some tests when channelID & channelLocation need to be set
+ * Create a new registrar. Usually called by setup(), but also used in some tests when channelID needs to be set
  */
-- (UAChannelRegistrar *)createRegistrarWithChannelID:(NSString *)channelID location:(NSString *)channelLocation {
+- (UAChannelRegistrar *)createRegistrarWithChannelID:(NSString *)channelID {
     UAChannelRegistrar *registrar = [UAChannelRegistrar channelRegistrarWithConfig:[UAConfig config]
                                                                          dataStore:self.dataStore
                                                                           delegate:self.mockedRegistrarDelegate
                                                                          channelID:channelID
-                                                                   channelLocation:channelLocation
                                                                   channelAPIClient:self.mockedChannelClient
                                                                               date:self.testDate
                                                                         dispatcher:[UATestDispatcher testDispatcher]
@@ -569,7 +522,7 @@ NSString * const ChannelCreateSuccessChannelLocation = @"newChannelLocation";
 - (void)startRegistrationButLeaveInProgressWithExisting:(BOOL)existing
                                            successBlock:(UAChannelAPIClientCreateSuccessBlock *)successBlock {
 
-    *successBlock = ^(NSString *channelID, NSString *channelLocation, BOOL existing) {
+    *successBlock = ^(NSString *channelID, BOOL existing) {
         XCTFail(@"This block should be overwritten during the test");
     };
     void (^channelCreateSuccessDoDelayedBlock)(NSInvocation *, BOOL) = ^(NSInvocation *invocation, BOOL existing) {
@@ -619,15 +572,15 @@ NSString * const ChannelCreateSuccessChannelLocation = @"newChannelLocation";
 }
 
 - (void)expectChannelCreatedDelegateCallbackWithExisting:(BOOL)existing {
-    id channelCreatedExpectation = [self expectationWithDescription:@"channelCreated:location:existing:"];
+    id channelCreatedExpectation = [self expectationWithDescription:@"channelCreated:existing:"];
     [[[self.mockedRegistrarDelegate stub] andDo:^(NSInvocation *invocation) {
         [channelCreatedExpectation fulfill];
-    }] channelCreated:OCMOCK_ANY channelLocation:OCMOCK_ANY existing:existing];
+    }] channelCreated:OCMOCK_ANY existing:existing];
 }
 
 - (void)rejectChannelCreatedDelegateCallback {
-    [[self.mockedRegistrarDelegate reject] channelCreated:OCMOCK_ANY channelLocation:OCMOCK_ANY existing:YES];
-    [[self.mockedRegistrarDelegate reject] channelCreated:OCMOCK_ANY channelLocation:OCMOCK_ANY existing:NO];
+    [[self.mockedRegistrarDelegate reject] channelCreated:OCMOCK_ANY existing:YES];
+    [[self.mockedRegistrarDelegate reject] channelCreated:OCMOCK_ANY existing:NO];
 }
 
 - (void)expectBackgroundTaskToBeStartedAndStopped {
@@ -677,25 +630,25 @@ NSUInteger backgroundTaskID = 30;
     XCTAssertNoThrow([self.mockedChannelClient verify], @"UAChannelAPIClient's createChannelWithPayload should be called.");
 }
 
-- (void)expectChannelClientUpdateChannelWithLocation:(NSString *)channelLocation andDo:(void (^)(NSInvocation *))doBlock {
-    XCTestExpectation *expectation = [self expectationWithDescription:@"UAChannelAPIClient's updateChannelWithLocation should be called"];
+- (void)expectChannelClientUpdateChannelWithID:(NSString *)channelID andDo:(void (^)(NSInvocation *))doBlock {
+    XCTestExpectation *expectation = [self expectationWithDescription:@"UAChannelAPIClient's updateChannelWithID should be called"];
     [[[self.mockedChannelClient expect] andDo:^(NSInvocation *invocation) {
         [expectation fulfill];
         doBlock(invocation);
-    }] updateChannelWithLocation:channelLocation
-                     withPayload:[OCMArg checkWithSelector:@selector(isEqualToPayload:) onObject:self.payload]
-                       onSuccess:OCMOCK_ANY
-                       onFailure:OCMOCK_ANY];
+    }] updateChannelWithID:channelID
+               withPayload:[OCMArg checkWithSelector:@selector(isEqualToPayload:) onObject:self.payload]
+                 onSuccess:OCMOCK_ANY
+                 onFailure:OCMOCK_ANY];
 }
 
-- (void)verifyChannelClientUpdateChannelWithLocation {
+- (void)verifyChannelClientUpdateChannelWithID {
     XCTAssertNoThrow([self.mockedChannelClient verify], @"Expected updateChannel call.");
 }
 - (void)rejectChannelClientUpdateChannel {
-    [[self.mockedChannelClient reject] updateChannelWithLocation:OCMOCK_ANY
-                                                     withPayload:OCMOCK_ANY
-                                                       onSuccess:OCMOCK_ANY
-                                                       onFailure:OCMOCK_ANY];
+    [[self.mockedChannelClient reject] updateChannelWithID:OCMOCK_ANY
+                                               withPayload:OCMOCK_ANY
+                                                 onSuccess:OCMOCK_ANY
+                                                 onFailure:OCMOCK_ANY];
 }
 
 - (void)verifyRejectChannelClientUpdateChannel {

@@ -898,10 +898,9 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
     [self.registrationDelegateWrapper registrationFailed];}
 
 - (void)channelCreated:(NSString *)channelID
-       channelLocation:(NSString *)channelLocation
               existing:(BOOL)existing {
 
-    if (channelID && channelLocation) {
+    if (channelID) {
         if (uaLogLevel >= UALogLevelError) {
             NSLog(@"Created channel with ID: %@", channelID);
         }
@@ -911,8 +910,7 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
                                              userInfo:@{UAChannelCreatedEventChannelKey: channelID,
                                                         UAChannelCreatedEventExistingKey: @(existing)}];
     } else {
-        UA_LERR(@"Channel creation failed. Missing channelID: %@ or channelLocation: %@",
-                channelID, channelLocation);
+        UA_LERR(@"Channel creation failed. Missing channelID: %@", channelID);
     }
 }
 
@@ -1001,7 +999,7 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
 - (void)migratePushSettings {
     [self.dataStore migrateUnprefixedKeys:@[UAUserPushNotificationsEnabledKey, UABackgroundPushNotificationsEnabledKey,
                                             UAPushAliasSettingsKey, UAPushTagsSettingsKey, UAPushBadgeSettingsKey,
-                                            UAPushChannelIDKey, UAPushChannelLocationKey, UAPushDeviceTokenKey,
+                                            UAPushChannelIDKey, UAPushDeviceTokenKey,
                                             UAPushQuietTimeSettingsKey, UAPushQuietTimeEnabledSettingsKey,
                                             UAPushChannelCreationOnForeground, UAPushEnabledSettingsMigratedKey,
                                             UAPushEnabledKey, UAPushTimeZoneSettingsKey]];

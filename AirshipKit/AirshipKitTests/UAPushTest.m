@@ -48,7 +48,6 @@
 @property (nonatomic, assign) UAAuthorizedNotificationSettings authorizedNotificationSettings;
 
 @property (nonatomic, strong) NSString *channelIDFromMockChannelRegistrar;
-@property (nonatomic, strong) NSString *channelLocationFromMockChannelRegistrar;
 
 @end
 
@@ -107,23 +106,13 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     // Set up a mocked device api client
     self.mockChannelRegistrar = [self mockForClass:[UAChannelRegistrar class]];
 
-    // Simulate the channelID and channelLocation provided by the channel registrar
+    // Simulate the channelID provided by the channel registrar
     OCMStub([self.mockChannelRegistrar channelID]).andDo(^(NSInvocation *invocation) {
         NSString *channelID;
-        if (self.channelLocationFromMockChannelRegistrar) {
-            UA_LDEBUG(@"return self.channelIDFromMockChannelRegistrar = %@",self.channelIDFromMockChannelRegistrar);
-            channelID = self.channelIDFromMockChannelRegistrar;
-        } else {
-            UA_LDEBUG(@"return nil");
-            channelID = nil;
-        }
+        UA_LDEBUG(@"return self.channelIDFromMockChannelRegistrar = %@",self.channelIDFromMockChannelRegistrar);
+        channelID = self.channelIDFromMockChannelRegistrar;
         [invocation setReturnValue:&channelID];
     });
-
-    OCMStub([self.mockChannelRegistrar channelLocation]).andDo(^(NSInvocation *invocation) {
-        [invocation setReturnValue:&self->_channelLocationFromMockChannelRegistrar];
-    });
-
 
     self.mockAirship =[self mockForClass:[UAirship class]];
     [UAirship setSharedAirship:self.mockAirship];
@@ -413,7 +402,6 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 - (void)testUpdateTags {
     // SETUP
     self.channelIDFromMockChannelRegistrar = @"someChannel";
-    self.channelLocationFromMockChannelRegistrar = @"someChannelLocation";
 
     // EXPECTATIONS
     [[self.mockTagGroupsRegistrar expect] updateTagGroupsForID:[OCMArg checkWithBlock:^BOOL(id obj) {
@@ -550,7 +538,6 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 
     // SETUP
     self.channelIDFromMockChannelRegistrar = @"someChannelID";
-    self.channelLocationFromMockChannelRegistrar = @"someChannelLocation";
 
     // EXPECTATIONS
     [[self.mockChannelRegistrar expect] registerForcefully:NO];
@@ -581,7 +568,6 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 
     // SETUP
     self.channelIDFromMockChannelRegistrar = @"someChannelID";
-    self.channelLocationFromMockChannelRegistrar = @"someChannelLocation";
 
     // EXPECTATIONS
     [[self.mockChannelRegistrar expect] registerForcefully:NO];
@@ -1222,9 +1208,8 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     // Ensure channel creation enabled is NO
     XCTAssertFalse(self.push.channelCreationEnabled);
 
-    // Mock the datastore to populate a mock channel location and channel id in UAPush init
+    // Mock the datastore to populate a mock channel id in UAPush init
     id mockDataStore = [self mockForClass:[UAPreferenceDataStore class]];
-    [[[mockDataStore stub] andReturn:@"someChannelLocation"] stringForKey:UAPushChannelLocationKey];
     [[[mockDataStore stub] andReturn:@"someChannelID"] stringForKey:UAPushChannelIDKey];
 
     self.push = [UAPush pushWithConfig:config
@@ -1762,7 +1747,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
         [notificationFired fulfill];
     }];
 
-    [self.push channelCreated:@"someChannelID" channelLocation:@"someLocation" existing:YES];
+    [self.push channelCreated:@"someChannelID" existing:YES];
 
     [self waitForTestExpectations];
     XCTAssertEqualObjects(expectedUserInfo, notification.userInfo);
@@ -1785,7 +1770,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
         [notificationFired fulfill];
     }];
 
-    [self.push channelCreated:@"someChannelID" channelLocation:@"someLocation" existing:NO];
+    [self.push channelCreated:@"someChannelID" existing:NO];
 
     [self waitForTestExpectations];
     XCTAssertEqualObjects(expectedUserInfo, notification.userInfo);
@@ -1797,7 +1782,6 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 - (void)testChannelUpdatedNSNotification {
     self.push.deviceToken = validDeviceToken;
     self.channelIDFromMockChannelRegistrar = @"someChannelID";
-    self.channelLocationFromMockChannelRegistrar = @"someChannelLocation";
 
     XCTestExpectation *notificationFired = [self expectationWithDescription:@"Notification event fired"];
     [self.notificationCenter addObserverForName:UAChannelUpdatedEvent object:nil queue:nil usingBlock:^(NSNotification * _Nonnull note) {
@@ -1815,7 +1799,6 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 - (void)testRegistrationSucceeded {
     self.push.deviceToken = validDeviceToken;
     self.channelIDFromMockChannelRegistrar = @"someChannelID";
-    self.channelLocationFromMockChannelRegistrar = @"someChannelLocation";
 
     [[self.mockRegistrationDelegate expect] registrationSucceededForChannelID:@"someChannelID" deviceToken:validDeviceToken];
 
@@ -1857,16 +1840,6 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     [self waitForTestExpectations];
 
     XCTAssertNoThrow([self.mockRegistrationDelegate verify], @"Delegate should be called");
-}
-
-/**
- * Test setting the channel ID without a channel location returns nil.
- */
-- (void)testSetChannelIDNoLocation {
-    self.channelIDFromMockChannelRegistrar = @"someChannelID";
-    self.channelLocationFromMockChannelRegistrar = nil;
-
-    XCTAssertNil(self.push.channelID, @"Channel ID should be nil without location.");
 }
 
 /**
@@ -2346,7 +2319,6 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     // SETUP
     [[[self.mockApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateBackground)] applicationState];
 
-    self.channelLocationFromMockChannelRegistrar = @"someChannelLocation";
     self.channelIDFromMockChannelRegistrar = @"someChannelID";
 
     // EXPECTATIONS
@@ -2389,7 +2361,6 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 
 - (void)testEnablingDisabledPushUpdatesRegistration {
     // Setup
-    self.channelLocationFromMockChannelRegistrar = @"someChannelLocation";
     self.channelIDFromMockChannelRegistrar = @"someChannelID";
     self.push.componentEnabled = NO;
 
@@ -2414,7 +2385,6 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 - (void)testEnablingDisabledPushDoesNotUpdateRegistrationWhenAppIsHandlingAuthorization {
     // Setup
     self.config.requestAuthorizationToUseNotifications = NO;
-    self.channelLocationFromMockChannelRegistrar = @"someChannelLocation";
     self.channelIDFromMockChannelRegistrar = @"someChannelID";
     self.push.componentEnabled = NO;
     

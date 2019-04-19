@@ -43,11 +43,9 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Called when the channel registrar creates a new channel.
  * @param channelID The channel ID string.
- * @param channelLocation The channel location string.
  * @param existing Boolean to indicate if the channel previously existed or not.
  */
 - (void)channelCreated:(NSString *)channelID
-       channelLocation:(NSString *)channelLocation
               existing:(BOOL)existing;
 
 @end
@@ -116,7 +114,6 @@ NS_ASSUME_NONNULL_BEGIN
  * @param dataStore The shared preference data store.
  * @param delegate The UAChannelRegistrarDelegate delegate.
  * @param channelID The initial channel ID string.
- * @param channelLocation The initial channel location string.
  * @param channelAPIClient The channel API client.
  * @param date The UADate object.
  * @param dispatcher The dispatcher to dispatch main queue blocks.
@@ -127,7 +124,6 @@ NS_ASSUME_NONNULL_BEGIN
                                  dataStore:(UAPreferenceDataStore *)dataStore
                                   delegate:(id<UAChannelRegistrarDelegate>)delegate
                                  channelID:(NSString *)channelID
-                           channelLocation:(NSString *)channelLocation
                           channelAPIClient:(UAChannelAPIClient *)channelAPIClient
                                       date:(UADate *)date
                                 dispatcher:(UADispatcher *)dispatcher
@@ -136,11 +132,6 @@ NS_ASSUME_NONNULL_BEGIN
 ///---------------------------------------------------------------------------------------
 /// @name Channel Registrar Properties (for testing)
 ///---------------------------------------------------------------------------------------
-
-/**
- * Channel location as a string.
- */
-@property (nonatomic, copy, nullable, readonly) NSString *channelLocation;
 
 /**
  * The last successful payload that was registered.
