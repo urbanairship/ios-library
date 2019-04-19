@@ -63,7 +63,7 @@ NSString * const ChannelCreateSuccessChannelLocation = @"newChannelLocation";
 
         copyOfPayload = [self.payload copy];
         completionHandler(copyOfPayload);
-    }] createChannelPayload:OCMOCK_ANY];
+    }] createChannelPayload:OCMOCK_ANY dispatcher:OCMOCK_ANY];
 
     self.failureCode = 400;
 
@@ -112,6 +112,45 @@ NSString * const ChannelCreateSuccessChannelLocation = @"newChannelLocation";
     [self verifyBackgroundTaskWasStartedAndStopped];
     [self verifyChannelClientCreateChannelWithPayload];
 }
+
+/**
+ * Test for the CRA issue where if registration is already up to date, it would block future registrations
+ * even if the CRA payload was out of date. CUSTENG-1212.
+ */
+- (void)testRegistrationBlockedIssue {
+    // Expect the CRA to update for first registration
+    [self expectChannelClientCreateChannelWithPayloadAndDo:channelCreateSuccessDoBlock withExisting:NO];
+    [self expectRegistrationSucceededDelegateCallback];
+    [self expectBackgroundTaskToBeStartedAndStopped];
+    [self expectChannelCreatedDelegateCallbackWithExisting:NO];
+
+    // Register
+    [self.registrar registerForcefully:NO];
+
+    // Verify
+    [self waitForTestExpectations];
+    [self verifyRegistrationSucceededDelegateCallback];
+    [self verifyBackgroundTaskWasStartedAndStopped];
+    [self verifyChannelClientCreateChannelWithPayload];
+
+    // Register - should skip due to everything being up to date.
+    [self.registrar registerForcefully:NO];
+
+    // Register forcefully again to verify registration is not blocked
+    [self expectChannelClientUpdateChannelWithLocation:ChannelCreateSuccessChannelLocation andDo:channelUpdateSuccessDoBlock];
+    [self expectRegistrationSucceededDelegateCallback];
+    [self expectBackgroundTaskToBeStartedAndStopped];
+
+    // Register forcefully
+    [self.registrar registerForcefully:YES];
+
+    //Verify
+    [self waitForTestExpectations];
+    [self verifyRegistrationSucceededDelegateCallback];
+    [self verifyBackgroundTaskWasStartedAndStopped];
+    [self verifyChannelClientUpdateChannelWithLocation];
+}
+
 
 /**
  * Test failed registration
@@ -522,6 +561,7 @@ NSString * const ChannelCreateSuccessChannelLocation = @"newChannelLocation";
     
     XCTAssertNil(self.registrar.channelLocation, @"Channel location should be nil");
 }
+
 
 
 

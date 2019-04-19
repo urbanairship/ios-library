@@ -644,16 +644,10 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
 #pragma mark -
 #pragma mark UA Registration Methods
 
-#if !TARGET_OS_TV   // Inbox not supported on tvOS
-- (void)addInboxUser:(UAChannelRegistrationPayload *)payload completionHandler:(void (^)(void))completionHandler {
-    [[UAirship inboxUser] getUserData:^(UAUserData *userData) {
-        payload.userID = userData.username;
-        completionHandler();
-    } dispatcher:[UADispatcher mainDispatcher]];
-}
-#endif
 
-- (void)createChannelPayload:(void (^)(UAChannelRegistrationPayload *))completionHandler {
+- (void)createChannelPayload:(void (^)(UAChannelRegistrationPayload *))completionHandler
+                  dispatcher:(nullable UADispatcher *)dispatcher{
+
     UA_WEAKIFY(self)
     [UAUtils getDeviceID:^(NSString *deviceID) {
         UA_STRONGIFY(self)
@@ -686,15 +680,14 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
         payload.country = [[NSLocale autoupdatingCurrentLocale] objectForKey: NSLocaleCountryCode];
 
 #if !TARGET_OS_TV   // Inbox not supported on tvOS
-        [self addInboxUser:payload completionHandler:^{
+        [[UAirship inboxUser] getUserData:^(UAUserData *userData) {
+            payload.userID = userData.username;
             completionHandler(payload);
-        }];
+        } dispatcher:dispatcher];
 #else
         completionHandler(payload);
 #endif
-
-
-    } dispatcher:[UADispatcher mainDispatcher]];
+    } dispatcher:dispatcher];
 }
 
 - (BOOL)isRegisteredForRemoteNotifications {
