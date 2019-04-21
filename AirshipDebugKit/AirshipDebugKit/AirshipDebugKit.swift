@@ -65,26 +65,63 @@ public class AirshipDebugKit : NSObject {
     @objc public class func showView(_ viewPath: URL) {
         if let rootViewController = rootViewController {
             rootViewController.showView(viewPath)
-        } else {
-            var pathComponents = viewPath.pathComponents
-            if (pathComponents[0] == "/") {
-                pathComponents.remove(at: 0)
-            }
-            
-            // get storyboard name from first segment of deeplink
-            let storyBoardName = pathComponents[0].lowercased()
+            return
+        }
+        
+        // no rootViewController in use, so get the view controller
+        // from the appropriate storyboard and display it
+        var pathComponents = viewPath.pathComponents
+        if (pathComponents[0] == "/") {
             pathComponents.remove(at: 0)
-            
-            // map storyboard name to view controller
-            if let viewController = instantiateViewControllerForStoryboard(storyBoardName) {
-                if var topController = UIApplication.shared.keyWindow?.rootViewController {
-                    while let presentedViewController = topController.presentedViewController {
-                        topController = presentedViewController
-                    }
-                    topController.navigationController?.pushViewController(viewController, animated: true)
+        }
+        
+        if (pathComponents.count == 0) {
+            // just want the base debugkit view
+            _ = popToRootViewOfDestination()
+            return
+        }
+        
+        // get storyboard name from first segment of deeplink
+        let storyBoardName = pathComponents[0]
+        pathComponents.remove(at: 0)
+        
+        // map storyboard name to view controller
+        if let viewController = instantiateViewControllerForStoryboard(storyBoardName) {
+            if let topController = popToRootViewOfDestination() {
+                // set launch path (deep link)
+                if let deviceInfoViewController = viewController as? DeviceInfoViewController {
+                    deviceInfoViewController.launchPathComponents = pathComponents
+                } else if let eventsViewController = viewController as? EventsViewController {
+                    eventsViewController.launchPathComponents = pathComponents
+                } else if let automationTableViewController = viewController as? AutomationTableViewController {
+                    automationTableViewController.launchPathComponents = pathComponents
                 }
+                
+                // display the destination view, that view will deal with any remaining pathComponents
+                topController.navigationController?.pushViewController(viewController, animated: true)
             }
         }
+    }
+    
+    fileprivate static func popToRootViewOfDestination() -> UIViewController? {
+        if var topController = UIApplication.shared.keyWindow?.rootViewController {
+            while let presentedViewController = topController.presentedViewController {
+                topController = presentedViewController
+            }
+            
+            if let tabBarController = topController as? UITabBarController {
+                topController = tabBarController.selectedViewController!
+            }
+            if let navController = topController as? UINavigationController {
+                topController = navController.topViewController!
+            }
+            
+            let topControllerAfterPop = topController.navigationController?.viewControllers[0]
+            topController.navigationController?.popToRootViewController(animated: false)
+            
+            return topControllerAfterPop
+        }
+        return nil
     }
     
     /**
