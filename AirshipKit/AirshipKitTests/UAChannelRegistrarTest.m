@@ -135,7 +135,7 @@ NSString * const ChannelCreateSuccessChannelID = @"newChannelID";
     [self.registrar registerForcefully:NO];
 
     // Register forcefully again to verify registration is not blocked
-    [self expectChannelClientUpdateChannelWithLocation:ChannelCreateSuccessChannelLocation andDo:channelUpdateSuccessDoBlock];
+    [self expectChannelClientUpdateChannelWithID:ChannelCreateSuccessChannelID andDo:channelUpdateSuccessDoBlock];
     [self expectRegistrationSucceededDelegateCallback];
     [self expectBackgroundTaskToBeStartedAndStopped];
 
@@ -146,7 +146,7 @@ NSString * const ChannelCreateSuccessChannelID = @"newChannelID";
     [self waitForTestExpectations];
     [self verifyRegistrationSucceededDelegateCallback];
     [self verifyBackgroundTaskWasStartedAndStopped];
-    [self verifyChannelClientUpdateChannelWithLocation];
+    [self verifyChannelClientUpdateChannelWithID];
 }
 
 
