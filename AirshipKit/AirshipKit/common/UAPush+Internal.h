@@ -217,21 +217,6 @@ extern NSString *const UAPushEnabledKey;
 #endif
 
 /**
- * Called when the channel registrar creates a new channel.
- * @param channelID The channel ID string.
- * @param existing Boolean to indicate if the channel previously existed or not.
- */
-- (void)channelCreated:(NSString *)channelID
-              existing:(BOOL)existing;
-
-/**
- * Creates a UAChannelRegistrationPayload.
- *
- * @param completionHandler A completion handler that will be called with the created UAChannelRegistrationPayload payload.
- */
-- (void)createChannelPayload:(void (^)(UAChannelRegistrationPayload *))completionHandler;
-
-/**
  * Registers or updates the current registration with an API call. If push notifications are
  * not enabled, this unregisters the device token.
  *
