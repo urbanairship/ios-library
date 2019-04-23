@@ -1,7 +1,7 @@
 /* Copyright Urban Airship and Contributors */
 
 #import <Foundation/Foundation.h>
-#import "UAScheduleInfo.h"
+#import "UAScheduleInfo+Internal.h"
 #import "UAInAppMessageScheduleInfo.h"
 #import "UAInAppMessage+Internal.h"
 

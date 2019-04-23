@@ -110,6 +110,11 @@ extern NSString *const UAScheduleInfoEditGracePeriodKey;
 @property(nonatomic, copy, nullable) NSString *group;
 
 /**
+ * The schedule's rendered locale.
+ */
+@property(nonatomic, strong, nullable) NSDictionary *renderedLocale;
+
+/**
  * The schedule's edit grace period. The amount of time the schedule will still be editable after it has been expired
  * or finished executing.
  */
@@ -158,6 +163,11 @@ extern NSString *const UAScheduleInfoEditGracePeriodKey;
  * The schedule's group.
  */
 @property(nonatomic, copy, nullable) NSString *group;
+
+/**
+ * The schedule's rendered locale.
+ */
+@property(nonatomic, strong, nullable) NSDictionary *renderedLocale;
 
 @end
 

@@ -676,8 +676,11 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
 
         // Resolution event
         [timer stop];
-        UAEvent *event = [UAInAppMessageResolutionEvent eventWithMessage:message resolution:resolution displayTime:timer.time];
 
+        UAEvent *event = [UAInAppMessageResolutionEvent eventWithMessage:message
+                                                              resolution:resolution
+                                                             displayTime:timer.time
+                                                          renderedLocale:info.renderedLocale];
         if (info.message.isReportingEnabled) {
             [self.analytics addEvent:event];
         }
@@ -713,8 +716,10 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
 
 - (void)onScheduleExpired:(UASchedule *)schedule {
     UAInAppMessageScheduleInfo *info = (UAInAppMessageScheduleInfo *)schedule.info;
-    UAEvent *event = [UAInAppMessageResolutionEvent eventWithExpiredMessage:info.message expiredDate:info.end];
 
+    UAEvent *event = [UAInAppMessageResolutionEvent eventWithExpiredMessage:info.message
+                                                                expiredDate:info.end
+                                                             renderedLocale:info.renderedLocale];
     if (info.message.isReportingEnabled) {
         [self.analytics addEvent:event];
     }

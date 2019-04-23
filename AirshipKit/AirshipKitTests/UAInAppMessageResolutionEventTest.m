@@ -12,6 +12,7 @@
 @property (nonatomic, strong) id analytics;
 @property (nonatomic, strong) id airship;
 @property (nonatomic, strong) UAInAppMessageFullScreenDisplayContent *displayContent;
+@property (nonatomic, strong) NSDictionary *renderedLocale;
 @end
 
 @implementation UAInAppMessageResolutionEventTest
@@ -60,6 +61,8 @@
 
         builder.buttons = @[buttonOne, buttonTwo, buttonThree];
     }];
+
+    self.renderedLocale = @{@"language" : @"en", @"country" : @"US"};
 }
 
 - (void)tearDown {
@@ -76,7 +79,8 @@
                                     @"conversion_send_id": [self.analytics conversionSendID],
                                     @"conversion_metadata": [self.analytics conversionPushMetadata],
                                     @"source": @"urban-airship",
-                                    @"resolution": @{ @"type": @"direct_open" } };
+                                    @"resolution": @{ @"type": @"direct_open" }
+                                    };
 
 
     UAInAppMessageResolutionEvent *event = [UAInAppMessageResolutionEvent legacyDirectOpenEventWithMessageID:@"message id"];
@@ -92,7 +96,8 @@
                                     @"conversion_metadata": [self.analytics conversionPushMetadata],
                                     @"source": @"urban-airship",
                                     @"resolution": @{ @"type": @"replaced",
-                                                      @"replacement_id": @"replacement id"} };
+                                                      @"replacement_id": @"replacement id"}
+                                    };
 
     UAInAppMessageResolutionEvent *event = [UAInAppMessageResolutionEvent legacyReplacedEventWithMessageID:@"message id" replacementID:@"replacement id"];
 
@@ -106,11 +111,12 @@
 - (void)testExpiredResolutionEvent {
     NSDate *expired = [NSDate date];
     NSDictionary *expectedResolutionData =  @{ @"type": @"expired",
-                                               @"expiry": [[UAUtils ISODateFormatterUTCWithDelimiter] stringFromDate:expired] };
-
+                                               @"expiry": [[UAUtils ISODateFormatterUTCWithDelimiter] stringFromDate:expired]
+                                               };
 
     [self verifyEventWithEventBlock:^UAInAppMessageResolutionEvent *(UAInAppMessage *message) {
-        return [UAInAppMessageResolutionEvent eventWithExpiredMessage:message expiredDate:expired];
+        NSDictionary *renderedLocale = message.source == UAInAppMessageSourceRemoteData ? self.renderedLocale : nil;
+        return [UAInAppMessageResolutionEvent eventWithExpiredMessage:message expiredDate:expired renderedLocale:renderedLocale];
     } expectedResolutionData:expectedResolutionData];
 }
 
@@ -127,7 +133,8 @@
 
     UAInAppMessageResolution *resolution = [UAInAppMessageResolution buttonClickResolutionWithButtonInfo:self.displayContent.buttons[0]];
     [self verifyEventWithEventBlock:^UAInAppMessageResolutionEvent *(UAInAppMessage *message) {
-        return [UAInAppMessageResolutionEvent eventWithMessage:message resolution:resolution displayTime:3.141];
+        NSDictionary *renderedLocale = message.source == UAInAppMessageSourceRemoteData ? self.renderedLocale : nil;
+        return [UAInAppMessageResolutionEvent eventWithMessage:message resolution:resolution displayTime:3.141 renderedLocale:renderedLocale];
     } expectedResolutionData:expectedResolutionData];
 }
 
@@ -142,7 +149,8 @@
 
     UAInAppMessageResolution *resolution = [UAInAppMessageResolution buttonClickResolutionWithButtonInfo:self.displayContent.buttons[1]];
     [self verifyEventWithEventBlock:^UAInAppMessageResolutionEvent *(UAInAppMessage *message) {
-        return [UAInAppMessageResolutionEvent eventWithMessage:message resolution:resolution displayTime:3.141];
+        NSDictionary *renderedLocale = message.source == UAInAppMessageSourceRemoteData ? self.renderedLocale : nil;
+        return [UAInAppMessageResolutionEvent eventWithMessage:message resolution:resolution displayTime:3.141 renderedLocale:renderedLocale];
     } expectedResolutionData:expectedResolutionData];
 }
 
@@ -156,12 +164,12 @@
                                               @"display_time": @"3.141"};
 
     UAInAppMessageResolution *resolution = [UAInAppMessageResolution buttonClickResolutionWithButtonInfo:self.displayContent.buttons[2]];
+
     [self verifyEventWithEventBlock:^UAInAppMessageResolutionEvent *(UAInAppMessage *message) {
-        return [UAInAppMessageResolutionEvent eventWithMessage:message resolution:resolution displayTime:3.141];
+        NSDictionary *renderedLocale = message.source == UAInAppMessageSourceRemoteData ? self.renderedLocale : nil;
+        return [UAInAppMessageResolutionEvent eventWithMessage:message resolution:resolution displayTime:3.141 renderedLocale:renderedLocale];
     } expectedResolutionData:expectedResolutionData];
 }
-
-
 
 /**
  * Test in-app message clicked resolution event.
@@ -172,7 +180,8 @@
 
     UAInAppMessageResolution *resolution = [UAInAppMessageResolution messageClickResolution];
     [self verifyEventWithEventBlock:^UAInAppMessageResolutionEvent *(UAInAppMessage *message) {
-        return [UAInAppMessageResolutionEvent eventWithMessage:message resolution:resolution displayTime:3.141];
+        NSDictionary *renderedLocale = message.source == UAInAppMessageSourceRemoteData ? self.renderedLocale : nil;
+        return [UAInAppMessageResolutionEvent eventWithMessage:message resolution:resolution displayTime:3.141 renderedLocale:renderedLocale];
     } expectedResolutionData:expectedResolutionData];
 }
 
@@ -185,7 +194,8 @@
 
     UAInAppMessageResolution *resolution = [UAInAppMessageResolution userDismissedResolution];
     [self verifyEventWithEventBlock:^UAInAppMessageResolutionEvent *(UAInAppMessage *message) {
-        return [UAInAppMessageResolutionEvent eventWithMessage:message resolution:resolution displayTime:3.141];
+        NSDictionary *renderedLocale = message.source == UAInAppMessageSourceRemoteData ? self.renderedLocale : nil;
+        return [UAInAppMessageResolutionEvent eventWithMessage:message resolution:resolution displayTime:3.141 renderedLocale:renderedLocale];
     } expectedResolutionData:expectedResolutionData];}
 
 /**
@@ -197,8 +207,10 @@
 
     UAInAppMessageResolution *resolution = [UAInAppMessageResolution timedOutResolution];
     [self verifyEventWithEventBlock:^UAInAppMessageResolutionEvent *(UAInAppMessage *message) {
-        return [UAInAppMessageResolutionEvent eventWithMessage:message resolution:resolution displayTime:3.141];
-    } expectedResolutionData:expectedResolutionData];}
+        NSDictionary *renderedLocale = message.source == UAInAppMessageSourceRemoteData ? self.renderedLocale : nil;
+        return [UAInAppMessageResolutionEvent eventWithMessage:message resolution:resolution displayTime:3.141 renderedLocale:renderedLocale];
+    } expectedResolutionData:expectedResolutionData];
+}
 
 - (void)verifyEventWithEventBlock:(UAInAppMessageResolutionEvent * (^)(UAInAppMessage *))eventBlock
            expectedResolutionData:(NSDictionary *)expectedResolutionData {
@@ -217,7 +229,9 @@
                                     @"source": @"urban-airship",
                                     @"conversion_send_id": [self.analytics conversionSendID],
                                     @"conversion_metadata": [self.analytics conversionPushMetadata],
-                                    @"resolution": expectedResolutionData };
+                                    @"resolution": expectedResolutionData,
+                                    @"locale" : self.renderedLocale
+                                    };
 
     XCTAssertEqualObjects(event.data, expectedData);
     XCTAssertEqualObjects(event.eventType, @"in_app_resolution");
