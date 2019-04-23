@@ -18,6 +18,17 @@ extern NSUInteger const UAInAppMessageIDLimit;
 extern NSUInteger const UAInAppMessageNameLimit;
 
 /**
+ * The in-app message default display behavior. Usually displayed using the default coordinator
+ * that allows defining display interval.
+ */
+extern NSString *const UAInAppMessageDisplayBehaviorDefault;
+
+/**
+ * The in-app message should be displayed ASAP.
+ */
+extern NSString *const UAInAppMessageDisplayBehaviorImmediate;
+
+/**
  * Builder class for UAInAppMessage.
  */
 @interface UAInAppMessageBuilder : NSObject
@@ -64,6 +75,16 @@ extern NSUInteger const UAInAppMessageNameLimit;
  * Optional.
  */
 @property(nonatomic, strong, nullable) UAInAppMessageAudience *audience;
+
+/**
+ * Display behavior. Defaults to UAInAppMessageDisplayBehaviorDefault.
+ */
+@property(nonatomic, copy, nullable) NSString *displayBehavior;
+
+/**
+ * Flag indicating if reporting is enabled. Defaults to `NO`.
+ */
+@property(nonatomic, assign) BOOL isReportingEnabled;
 
 /**
  * Checks if the builder is valid and will produce a message instance.
@@ -118,6 +139,16 @@ extern NSUInteger const UAInAppMessageNameLimit;
  * The audience conditions for the message.
  */
 @property(nonatomic, nullable, readonly) UAInAppMessageAudience *audience;
+
+/**
+ * Display behavior. Defaults to UAInAppMessageDisplayBehaviorDefault.
+ */
+@property(nonatomic, copy, readonly) NSString *displayBehavior;
+
+/**
+ * Flag indicating if reporting is enabled. Defaults to `NO`.
+ */
+@property(nonatomic, assign, readonly) BOOL isReportingEnabled;
 
 ///---------------------------------------------------------------------------------------
 /// @name In App Message Methods

@@ -77,6 +77,11 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, assign) BOOL aspectLock;
 
 /**
+ * Flag indicating if the content requires connectivity to display correctly.
+ */
+@property(nonatomic, assign) BOOL requiresConnectivity;
+
+/**
  * Checks if the builder is valid and will produce an display content instance.
  * @return YES if the builder is valid, otherwise NO.
  */
@@ -141,6 +146,11 @@ NS_ASSUME_NONNULL_BEGIN
  * Optional. Defaults to `NO`.
  */
 @property(nonatomic, readonly) BOOL aspectLock;
+
+/**
+ * Flag indicating if the content requires connectivity to display correctly.
+ */
+@property(nonatomic, readonly) BOOL requireConnectivity;
 
 /**
  * Factory method for building HTML display content with a builder block.

@@ -1,6 +1,7 @@
 /* Copyright Urban Airship and Contributors */
 
 #import "UAAction.h"
+#import "UALandingPageAction.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -8,7 +9,7 @@ NS_ASSUME_NONNULL_BEGIN
 #define kUAOverlayInboxMessageActionDefaultRegistryName @"^mco"
 
 /**
- * Requests an inbox message to be displayed in an overlay.
+ * Requests an inbox message to be displayed ASAP in a landing page.
  *
  * This action is registered under the names open_mc_overlay_action and ^mco.
  *
@@ -23,7 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * Default predicate: Rejects situation UASituationForegroundPush.
  */
-@interface UAOverlayInboxMessageAction : UAAction
+@interface UAOverlayInboxMessageAction : UALandingPageAction
 
 @end
 

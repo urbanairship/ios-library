@@ -15,6 +15,7 @@ NSString *const UAHTMLStyleFileName = @"UAInAppMessageHTMLStyle";
 
 @interface UAInAppMessageHTMLAdapter ()
 @property(nonatomic, strong) UAInAppMessage *message;
+@property(nonatomic, strong) UAInAppMessageHTMLDisplayContent *displayContent;
 @property(nonatomic, strong) UAInAppMessageHTMLViewController *htmlViewController;
 @property(nonatomic, strong) UAInAppMessageResizableViewController *resizableContainerViewController;
 @end
@@ -31,6 +32,7 @@ NSString *const UAHTMLStyleFileName = @"UAInAppMessageHTMLStyle";
     if (self) {
         self.message = message;
         self.style = [UAInAppMessageHTMLStyle styleWithContentsOfFile:UAHTMLStyleFileName];
+        self.displayContent = (UAInAppMessageHTMLDisplayContent *)self.message.displayContent;
     }
 
     return self;
@@ -61,7 +63,7 @@ NSString *const UAHTMLStyleFileName = @"UAInAppMessageHTMLStyle";
 }
 
 - (BOOL)isReadyToDisplay {
-    return [self isNetworkConnected];
+    return !self.displayContent.requireConnectivity || [self isNetworkConnected];
 }
 
 - (void)display:(nonnull void (^)(UAInAppMessageResolution * _Nonnull))completionHandler {

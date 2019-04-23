@@ -43,6 +43,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param dataStore The preference data store.
  * @param push The system UAPush instance
  * @param dispatcher GCD dispatcher.
+ * @param analytics The system analytics instance.
  * @return A in-app message manager instance.
  */
 + (instancetype)managerWithAutomationEngine:(UAAutomationEngine *)automationEngine
@@ -52,7 +53,8 @@ NS_ASSUME_NONNULL_BEGIN
                                        push:(UAPush *)push
                                  dispatcher:(UADispatcher *)dispatcher
                          displayCoordinator:(UAInAppMessageDefaultDisplayCoordinator *)displayCoordinator
-                               assetManager:(UAInAppMessageAssetManager *)assetManager;
+                               assetManager:(UAInAppMessageAssetManager *)assetManager
+                                  analytics:(UAAnalytics *)analytics;
 
 /**
  * Factory method.

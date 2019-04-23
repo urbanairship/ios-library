@@ -31,6 +31,7 @@ NSString *const UAInAppMessageHTMLAllowsFullScreenKey = @"allow_fullscreen_displ
 NSString *const UAInAppMessageHTMLHeightKey = @"height";
 NSString *const UAInAppMessageHTMLWidthKey = @"width";
 NSString *const UAInAppMessageHTMLAspectLockKey = @"aspect_lock";
+NSString *const UAInAppMessageHTMLRequireConnectivityKey = @"require_connectivity";
 
 /**
  * Sub-classes must override this method

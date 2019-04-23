@@ -107,6 +107,14 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)dismissWithResolution:(UAInAppMessageResolution *)resolution;
 
+/**
+ * The method to dismiss the resizable view controller without a resolution.
+ *
+ * @note: This is necessary because the view controller currently does the final processing on
+ * the message URL. If the message URL fails to result in a message from the list, the
+ * view will be dismissed without a resolution.
+ */
+- (void)dismissWithoutResolution;
 
 @end
 

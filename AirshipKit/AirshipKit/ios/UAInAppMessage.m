@@ -12,13 +12,14 @@
 NSUInteger const UAInAppMessageIDLimit = 100;
 NSUInteger const UAInAppMessageNameLimit = 100;
 
-
 @implementation UAInAppMessageBuilder
 - (instancetype)init {
     self = [super init];
     if (self) {
-        // Set default source to app defined
+        // Set defaults
         self.source = UAInAppMessageSourceAppDefined;
+        self.displayBehavior = UAInAppMessageDisplayBehaviorDefault;
+        self.isReportingEnabled = YES;
     }
     return self;
 }
@@ -35,6 +36,8 @@ NSUInteger const UAInAppMessageNameLimit = 100;
         self.audience = message.audience;
         self.source = message.source;
         self.campaigns = message.campaigns;
+        self.displayBehavior = message.displayBehavior;
+        self.isReportingEnabled = message.isReportingEnabled;
     }
 
     return self;
@@ -72,6 +75,8 @@ NSUInteger const UAInAppMessageNameLimit = 100;
 @property(nonatomic, strong, nullable) NSDictionary *extras;
 @property(nonatomic, strong, nullable) UAInAppMessageAudience *audience;
 @property(nonatomic, strong, nullable) NSDictionary *actions;
+@property(nonatomic, copy) NSString *displayBehavior;
+@property(nonatomic, assign) BOOL isReportingEnabled;
 @end
 
 @implementation UAInAppMessage
@@ -91,11 +96,17 @@ NSString *const UAInAppMessageCampaignsKey = @"campaigns";
 NSString *const UAInAppMessageSourceKey = @"source";
 NSString *const UAInAppMessageNameKey = @"name";
 
+NSString *const UAInAppMessageDisplayBehaviorKey = @"display_behavior";
+NSString *const UAInAppMessageReportingEnabledKey = @"reporting_enabled";
+
 NSString *const UAInAppMessageDisplayTypeBannerValue = @"banner";
 NSString *const UAInAppMessageDisplayTypeFullScreenValue = @"fullscreen";
 NSString *const UAInAppMessageDisplayTypeModalValue = @"modal";
 NSString *const UAInAppMessageDisplayTypeHTMLValue = @"html";
 NSString *const UAInAppMessageDisplayTypeCustomValue = @"custom";
+
+NSString *const UAInAppMessageDisplayBehaviorDefault = @"default";
+NSString *const UAInAppMessageDisplayBehaviorImmediate = @"immediate";
 
 NSString *const UAInAppMessageSourceAppDefinedValue = @"app-defined";
 NSString *const UAInAppMessageSourceRemoteDataValue = @"remote-data";
@@ -278,6 +289,39 @@ NSString *const UAInAppMessageSourceLegacyPushValue = @"legacy-push";
         builder.source = defaultSource;
     }
 
+    id displayBehavior = json[UAInAppMessageDisplayBehaviorKey];
+    if (displayBehavior && [displayBehavior isKindOfClass:[NSString class]]) {
+        displayBehavior = [displayBehavior lowercaseString];
+
+        if ([UAInAppMessageDisplayBehaviorDefault isEqualToString:displayBehavior]) {
+            builder.displayBehavior = UAInAppMessageDisplayBehaviorDefault;
+        } else if ([UAInAppMessageDisplayBehaviorImmediate isEqualToString:displayBehavior]) {
+            builder.displayBehavior = UAInAppMessageDisplayBehaviorImmediate;
+        } else {
+            if (error) {
+                NSString *msg = [NSString stringWithFormat:@"Invalid display behavior: %@", displayBehavior];
+                *error =  [NSError errorWithDomain:UAInAppMessageErrorDomain
+                                              code:UAInAppMessageErrorCodeInvalidJSON
+                                          userInfo:@{NSLocalizedDescriptionKey:msg}];
+            }
+            return nil;
+        }
+    }
+
+    id isReportingEnabled = json[UAInAppMessageReportingEnabledKey];
+    if (isReportingEnabled) {
+        if (![isReportingEnabled isKindOfClass:[NSNumber class]]) {
+            if (error) {
+                NSString *msg = [NSString stringWithFormat:@"Reporting enabled flag must be a boolean stored as an NSNumber. Invalid value: %@", isReportingEnabled];
+                *error =  [NSError errorWithDomain:UAInAppMessageErrorDomain
+                                              code:UAInAppMessageErrorCodeInvalidJSON
+                                          userInfo:@{NSLocalizedDescriptionKey:msg}];
+            }
+            return nil;
+        }
+        builder.isReportingEnabled = [isReportingEnabled boolValue];
+    }
+
     if (![builder isValid]) {
         if (error) {
             NSString *msg = [NSString stringWithFormat:@"Invalid message JSON: %@", json];
@@ -304,8 +348,10 @@ NSString *const UAInAppMessageSourceLegacyPushValue = @"legacy-push";
 - (instancetype)init {
     self = [super init];
     if (self) {
-        // Set default source to app defined
+        // Set defaults
         _source = UAInAppMessageSourceAppDefined;
+        _displayBehavior = UAInAppMessageDisplayBehaviorDefault;
+        _isReportingEnabled = YES;
     }
     return self;
 }
@@ -325,6 +371,8 @@ NSString *const UAInAppMessageSourceLegacyPushValue = @"legacy-push";
         self.extras = builder.extras;
         self.audience = builder.audience;
         self.actions = builder.actions;
+        self.displayBehavior = builder.displayBehavior;
+        self.isReportingEnabled = builder.isReportingEnabled;
         _campaigns = builder.campaigns;
         _source = builder.source;
     }
@@ -358,6 +406,7 @@ NSString *const UAInAppMessageSourceLegacyPushValue = @"legacy-push";
     
     [data setValue:self.identifier forKey:UAInAppMessageIDKey];
     [data setValue:self.name forKey: UAInAppMessageNameKey];
+
     switch (self.displayType) {
         case UAInAppMessageDisplayTypeBanner:
             [data setValue:UAInAppMessageDisplayTypeBannerValue forKey:UAInAppMessageDisplayTypeKey];
@@ -390,6 +439,13 @@ NSString *const UAInAppMessageSourceLegacyPushValue = @"legacy-push";
             break;
     }
 
+    if (self.displayBehavior && [self.displayBehavior isEqualToString:UAInAppMessageDisplayBehaviorImmediate]) {
+        [data setValue:UAInAppMessageDisplayBehaviorImmediate forKey:UAInAppMessageDisplayBehaviorKey];
+    } else {
+        [data setValue:UAInAppMessageDisplayBehaviorDefault forKey:UAInAppMessageDisplayBehaviorKey];
+    }
+
+    [data setValue:@(self.isReportingEnabled) forKey:UAInAppMessageReportingEnabledKey];
     [data setValue:[self.displayContent toJSON] forKey:UAInAppMessageDisplayContentKey];
     [data setValue:[self.audience toJSON] forKey:UAInAppMessageAudienceKey];
     [data setValue:self.extras forKey:UAInAppMessageExtraKey];
@@ -429,6 +485,14 @@ NSString *const UAInAppMessageSourceLegacyPushValue = @"legacy-push";
         return NO;
     }
 
+    if (![self.displayBehavior isEqualToString:message.displayBehavior]) {
+        return NO;
+    }
+
+    if (self.isReportingEnabled != message.isReportingEnabled) {
+        return NO;
+    }
+
     if (self.source != message.source) {
         return NO;
     }
@@ -459,6 +523,8 @@ NSString *const UAInAppMessageSourceLegacyPushValue = @"legacy-push";
     result = 31 * result + [self.actions hash];
     result = 31 * result + [self.campaigns hash];
     result = 31 * result + self.source;
+    result = 31 * result + [self.displayBehavior hash];
+    result = 31 * result + self.isReportingEnabled;
 
     return result;
 }

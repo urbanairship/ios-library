@@ -78,7 +78,7 @@ extern NSString *const UAInAppMessageHTMLAllowsFullScreenKey;
 extern NSString *const UAInAppMessageHTMLHeightKey;
 extern NSString *const UAInAppMessageHTMLWidthKey;
 extern NSString *const UAInAppMessageHTMLAspectLockKey;
-
+extern NSString *const UAInAppMessageHTMLRequireConnectivityKey;
 
 /**
  * Buttons are stacked.

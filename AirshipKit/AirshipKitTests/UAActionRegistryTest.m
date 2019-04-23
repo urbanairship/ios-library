@@ -4,8 +4,7 @@
 #import "UAActionRegistry+Internal.h"
 #import "UAApplicationMetrics+Internal.h"
 #import "UAirship+Internal.h"
-#import "UALandingPageAction.h"
-#import "UALandingPageActionPredicate+Internal.h"
+#import "UAAddTagsAction.h"
 #import "UATagsActionPredicate+Internal.h"
 #import "UAActionRegistryEntry+Internal.h"
 
@@ -72,9 +71,9 @@
 - (void)testRegisterActionClass {
 
     Class actionClass = [UAAction class];
-    Class anotherActionClass = [UALandingPageAction class];
+    Class anotherActionClass = [UAAddTagsAction class];
 
-    id<UAActionPredicateProtocol> predicate = [[[UALandingPageActionPredicate class] alloc] init];
+    id<UAActionPredicateProtocol> predicate = [[[UATagsActionPredicate class] alloc] init];
 
     BOOL (^predicateBlock)(UAActionArguments *) = ^BOOL(UAActionArguments *args) {
         return [predicate applyActionArguments:args];
@@ -214,7 +213,7 @@
  */
 - (void)testUpdateActionClass {
     Class actionClass = [UAAction class];
-    Class anotherActionClass = [UALandingPageAction class];
+    Class anotherActionClass = [UAAddTagsAction class];
 
     [self.registry registerActionClass:actionClass name:@"name"];
 
@@ -242,7 +241,7 @@
  */
 - (void)testUpdateActionClassInvalid {
     Class actionClass = [UAAction class];
-    id<UAActionPredicateProtocol> predicate = [[[UALandingPageActionPredicate class] alloc] init];
+    id<UAActionPredicateProtocol> predicate = [[[UATagsActionPredicate class] alloc] init];
 
     BOOL (^predicateBlock)(UAActionArguments *) = ^BOOL(UAActionArguments *args) {
         return [predicate applyActionArguments:args];
@@ -400,40 +399,6 @@
     XCTAssertEqual((NSUInteger) 0, [self.registry.registeredEntries count], @"The entry should be dropped.");
 
     XCTAssertTrue([self.registry removeName:@"notFound"], @"Removing a name that does not exist should return YES.");
-}
-
-
-/**
- * Test landing page default predicate
- */
-- (void)testLandingPageDefaultPredicate {
-
-    __block NSDate *date;
-    [[[self.mockMetrics stub] andDo:^(NSInvocation *invocation) {
-        [invocation setReturnValue:&date];
-    }] lastApplicationOpenDate];
-
-
-    [self.registry registerDefaultActions];
-    UAActionRegistryEntry *entry = [self.registry registryEntryWithName:kUALandingPageActionDefaultRegistryName];
-
-    XCTAssertNotNil(entry, "Landing page should be registered by default");
-
-    XCTAssertNotNil(entry.predicate, "Landing page should have a default predicate class");
-
-
-    UAActionArguments *args = [UAActionArguments argumentsWithValue:@"some-value"
-                                                      withSituation:UASituationBackgroundPush];
-
-    UAActionPredicate predicate = entry.predicate;
-
-    XCTAssertFalse(predicate(args), "Should not accept background push if the app has never been opened before");
-
-    date = [NSDate dateWithTimeIntervalSince1970:0];
-    XCTAssertFalse(predicate(args), "Should not accept background push if the app has not been opened since 1970");
-
-    date = [NSDate date];
-    XCTAssertTrue(predicate(args), "Should accept background push if the app has been opened recently");
 }
 
 /**

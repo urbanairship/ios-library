@@ -30,6 +30,7 @@
 #import "UAInAppMessageDefaultDisplayCoordinator.h"
 #import "UAInAppMessageAssetManager+Internal.h"
 #import "NSObject+AnonymousKVO+Internal.h"
+#import "UAInAppMessageImmediateDisplayCoordinator.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -100,6 +101,8 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
 @property(nonatomic, strong) UADispatcher *dispatcher;
 @property(nonatomic, strong) UARetriablePipeline *prepareSchedulePipeline;
 @property(nonatomic, strong) UAInAppMessageDefaultDisplayCoordinator *defaultDisplayCoordinator;
+@property(nonatomic, strong) UAInAppMessageImmediateDisplayCoordinator *immediateDisplayCoordinator;
+@property(nonatomic, strong) UAAnalytics *analytics;
 
 @end
 
@@ -112,7 +115,8 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
                                        push:(UAPush *)push
                                  dispatcher:(UADispatcher *)dispatcher
                          displayCoordinator:(UAInAppMessageDefaultDisplayCoordinator *)displayCoordinator
-                               assetManager:(UAInAppMessageAssetManager *)assetManager {
+                               assetManager:(UAInAppMessageAssetManager *)assetManager
+                                  analytics:(UAAnalytics *)analytics {
 
     return [[self alloc] initWithAutomationEngine:automationEngine
                            tagGroupsLookupManager:tagGroupsLookupManager
@@ -121,7 +125,8 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
                                              push:push
                                        dispatcher:dispatcher
                                displayCoordinator:displayCoordinator
-                                     assetManager:assetManager];
+                                     assetManager:assetManager
+                                        analytics:analytics];
 }
 
 + (instancetype)managerWithConfig:(UAConfig *)config
@@ -140,13 +145,14 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
                                                                                          mutationHistory:tagGroupsMutationHistory];
 
     return [[UAInAppMessageManager alloc] initWithAutomationEngine:automationEngine
-                                            tagGroupsLookupManager:tagGroupsLookupManager
-                                                 remoteDataManager:remoteDataManager
-                                                         dataStore:dataStore
-                                                              push:push
-                                                        dispatcher:[UADispatcher mainDispatcher]
-                                                displayCoordinator:[[UAInAppMessageDefaultDisplayCoordinator alloc] init]
-                                                      assetManager:[UAInAppMessageAssetManager assetManager]];
+                                             tagGroupsLookupManager:tagGroupsLookupManager
+                                                  remoteDataManager:remoteDataManager
+                                                          dataStore:dataStore
+                                                               push:push
+                                                         dispatcher:[UADispatcher mainDispatcher]
+                                                 displayCoordinator:[[UAInAppMessageDefaultDisplayCoordinator alloc] init]
+                                                       assetManager:[UAInAppMessageAssetManager assetManager]
+                                                          analytics:[UAirship analytics]];
 }
 
 - (instancetype)initWithAutomationEngine:(UAAutomationEngine *)automationEngine
@@ -156,7 +162,8 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
                                     push:(UAPush *)push
                               dispatcher:(UADispatcher *)dispatcher
                       displayCoordinator:(UAInAppMessageDefaultDisplayCoordinator *)displayCoordinator
-                            assetManager:(UAInAppMessageAssetManager *)assetManager {
+                            assetManager:(UAInAppMessageAssetManager *)assetManager
+                               analytics:(UAAnalytics *)analytics {
 
     self = [super initWithDataStore:dataStore];
 
@@ -174,7 +181,9 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
         self.dispatcher = dispatcher;
         self.prepareSchedulePipeline = [UARetriablePipeline pipeline];
         self.defaultDisplayCoordinator = displayCoordinator;
+        self.immediateDisplayCoordinator = [UAInAppMessageImmediateDisplayCoordinator coordinator];
         self.assetManager = assetManager;
+        self.analytics = analytics ?: [UAirship analytics];
         
         [self setDefaultAdapterFactories];
 
@@ -234,12 +243,14 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
     [self.automationEngine schedule:scheduleInfo
                            metadata:metadata
                   completionHandler:^(UASchedule *schedule) {
+
         // Schedule the assets
-        [self scheduleAssets:@[schedule]];
+        if (schedule) {
+          [self scheduleAssets:@[schedule]];
+        }
+
         completionHandler(schedule);
     }];
-
-    [self.automationEngine schedule:scheduleInfo metadata:metadata completionHandler:completionHandler];
 }
 
 - (void)scheduleMessagesWithScheduleInfo:(NSArray<UAInAppMessageScheduleInfo *> *)scheduleInfos
@@ -536,9 +547,11 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
         displayCoordinator = [self.delegate displayCoordinatorForMessage:message];
     }
 
-    displayCoordinator = displayCoordinator ? : self.defaultDisplayCoordinator;
+    if ([message.displayBehavior isEqualToString:UAInAppMessageDisplayBehaviorImmediate]) {
+        displayCoordinator = self.immediateDisplayCoordinator;
+    }
 
-    return displayCoordinator;
+    return displayCoordinator ?: self.defaultDisplayCoordinator;
 }
 
 /**
@@ -636,7 +649,10 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
 
     // Display event
     UAEvent *event = [UAInAppMessageDisplayEvent eventWithMessage:message];
-    [[UAirship analytics] addEvent:event];
+
+    if (info.message.isReportingEnabled) {
+        [self.analytics addEvent:event];
+    }
 
     // Display time timer
     UAActiveTimer *timer = [[UAActiveTimer alloc] init];
@@ -661,7 +677,10 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
         // Resolution event
         [timer stop];
         UAEvent *event = [UAInAppMessageResolutionEvent eventWithMessage:message resolution:resolution displayTime:timer.time];
-        [[UAirship analytics] addEvent:event];
+
+        if (info.message.isReportingEnabled) {
+            [self.analytics addEvent:event];
+        }
 
         // Cancel button
         if (resolution.type == UAInAppMessageResolutionTypeButtonClick && resolution.buttonInfo.behavior == UAInAppMessageButtonInfoBehaviorCancel) {
@@ -695,8 +714,11 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
 - (void)onScheduleExpired:(UASchedule *)schedule {
     UAInAppMessageScheduleInfo *info = (UAInAppMessageScheduleInfo *)schedule.info;
     UAEvent *event = [UAInAppMessageResolutionEvent eventWithExpiredMessage:info.message expiredDate:info.end];
-    [[UAirship analytics] addEvent:event];
-    
+
+    if (info.message.isReportingEnabled) {
+        [self.analytics addEvent:event];
+    }
+
     [self.assetManager onScheduleFinished:schedule];
 }
 

@@ -22,6 +22,8 @@ static NSString *const UAInAppMessageDisplayCoordinatorIsReadyKey = @"isReady";
  */
 @property (nonatomic, readonly) BOOL isReady;
 
+@optional
+
 /**
  * Notifies the coordinator that message display has begun.
  *

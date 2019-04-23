@@ -13,6 +13,11 @@
  */
 @interface UAMessageCenter : NSObject
 
+/**
+ * The message scheme
+ */
+extern NSString *const UAMessageDataScheme;
+
 ///---------------------------------------------------------------------------------------
 /// @name Default Message Center Properties
 ///---------------------------------------------------------------------------------------

@@ -8,8 +8,11 @@
 #import "UAInbox.h"
 #import "UAInboxMessage.h"
 #import "UAInboxMessageList.h"
-#import "UAOverlayViewController.h"
 #import "UAConfig.h"
+#import "UAInAppMessageManager+Internal.h"
+#import "UAInAppMessageScheduleInfo+Internal.h"
+#import "UAInAppMessageHTMLDisplayContent+Internal.h"
+#import "UAMessageCenter.h"
 
 @interface UAOverlayInboxMessageActionTest : UABaseTest
 
@@ -18,7 +21,7 @@
 @property (nonatomic, strong) id mockInbox;
 @property (nonatomic, strong) id mockMessageList;
 @property (nonatomic, strong) id mockAirship;
-@property (nonatomic, strong) id mockOverlayViewController;
+@property (nonatomic, strong) id mockInAppMessageManager;
 @property (nonatomic, strong) id mockConfig;
 
 @end
@@ -39,10 +42,14 @@
     self.mockMessageList = [self mockForClass:[UAInboxMessageList class]];
     [[[self.mockInbox stub] andReturn:self.mockMessageList] messageList];
 
+    // Set an actual whitelist
+    UAWhitelist *whitelist = [UAWhitelist whitelistWithConfig:[UAConfig defaultConfig]];
+    [[[self.mockAirship stub] andReturn:whitelist] whitelist];
+
     self.mockConfig = [self mockForClass:[UAConfig class]];
+    self.mockInAppMessageManager = [self mockForClass:[UAInAppMessageManager class]];
     [[[self.mockAirship stub] andReturn:self.mockConfig] config];
-    
-    self.mockOverlayViewController = [self mockForClass:[UAOverlayViewController class]];
+    [[[self.mockAirship stub] andReturn:self.mockInAppMessageManager] sharedInAppMessageManager];
 }
 
 
@@ -120,154 +127,101 @@
  * Test perform with a message ID thats available in the message list is displayed
  * in a landing page controller.
  */
-- (void)commonPerform:(id)mockedViewController {
+- (void)verifyPerformWithArgValue:(id)value expectedURLString:(NSString *)expectedURLString metadata:(NSDictionary * __nullable)metadata {
     __block BOOL actionPerformed;
 
-    UAActionArguments *arguments = [UAActionArguments argumentsWithValue:@"MCRAP" withSituation:UASituationManualInvocation];
+    UASituation validSituations[6] = {
+        UASituationForegroundInteractiveButton,
+        UASituationLaunchedFromPush,
+        UASituationManualInvocation,
+        UASituationWebViewInvocation,
+        UASituationForegroundPush,
+        UASituationAutomation
+    };
 
-    UAInboxMessage *message = [self mockForClass:[UAInboxMessage class]];
-    [[[self.mockMessageList stub] andReturn:message] messageForID:@"MCRAP"];
+    for (int i = 0; i < 6; i++) {
+        UAActionArguments *arguments;
 
-    [[mockedViewController expect] showMessage:message];
+        if (metadata) {
+            arguments = [UAActionArguments argumentsWithValue:value withSituation:validSituations[i] metadata:metadata];
+        } else {
+            arguments = [UAActionArguments argumentsWithValue:value withSituation:validSituations[i]];
+        }
 
-    [self.action performWithArguments:arguments completionHandler:^(UAActionResult *result) {
-        actionPerformed = YES;
-        XCTAssertNil(result.value);
-        XCTAssertNil(result.error);
-    }];
+        [[[self.mockInAppMessageManager expect] andDo:^(NSInvocation *invocation) {
+            void *scheduleInfoArg;
+            [invocation getArgument:&scheduleInfoArg atIndex:2];
+            UAInAppMessageScheduleInfo *scheduleInfo = (__bridge UAInAppMessageScheduleInfo *)scheduleInfoArg;
 
-    XCTAssertTrue(actionPerformed);
-    [mockedViewController verify];
+            UAInAppMessage *message = scheduleInfo.message;
+
+            XCTAssertEqual(message.displayType, UAInAppMessageDisplayTypeHTML);
+            XCTAssertEqualObjects(message.displayBehavior, UAInAppMessageDisplayBehaviorImmediate);
+            XCTAssertEqual(message.isReportingEnabled, NO);
+
+            UAInAppMessageHTMLDisplayContent *displayContent = (UAInAppMessageHTMLDisplayContent *)message.displayContent;
+            XCTAssertEqual(displayContent.requireConnectivity, NO);
+            XCTAssertEqualObjects(displayContent.url, expectedURLString);
+
+            void *handlerArg;
+            [invocation getArgument:&handlerArg atIndex:3];
+            void (^handler)(UASchedule *) = (__bridge void (^)(UASchedule *))handlerArg;
+            handler(nil);
+
+        }] scheduleMessageWithScheduleInfo:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
+        [self.action performWithArguments:arguments completionHandler:^(UAActionResult *result) {
+            actionPerformed = YES;
+            XCTAssertNil(result.value);
+            XCTAssertNil(result.error);
+        }];
+
+        XCTAssertTrue(actionPerformed);
+        [self.mockInAppMessageManager verify];
+    }
 }
 
 - (void)testPerform {
-    [self commonPerform:self.mockOverlayViewController];
-}
+    NSString *expectedMessageID = @"MCRAP";
+    // Expected URL String should be message ID with prepended message scheme.
+    NSString *expectedURLString = [NSString stringWithFormat:@"%@:%@", UAMessageDataScheme, expectedMessageID];
+    id mockMessage = [self mockForClass:[UAInboxMessage class]];
+    [[[mockMessage stub] andReturn:expectedMessageID] messageID];
+    [[[self.mockMessageList stub] andReturn:mockMessage] messageForID:expectedMessageID];
 
-/**
- * Test perform with a message ID that is available after a message refresh is displayed
- * in a landing page controller.
- */
-- (void)commonPerformMessageListUpdate:(id)mockedViewController {
-    __block BOOL actionPerformed;
-
-    UAActionArguments *arguments = [UAActionArguments argumentsWithValue:@"MCRAP" withSituation:UASituationManualInvocation];
-
-    __block UAInboxMessage *message = [self mockForClass:[UAInboxMessage class]];
-    [[self.mockMessageList expect] retrieveMessageListWithSuccessBlock:[OCMArg checkWithBlock:^BOOL(id obj) {
-        // Return the message
-        [[[self.mockMessageList stub] andReturn:message] messageForID:@"MCRAP"];
-
-        UAInboxMessageListCallbackBlock block = obj;
-        block();
-        return YES;
-    }] withFailureBlock:OCMOCK_ANY];
-
-
-    [[mockedViewController expect] showMessage:message];
-
-    [self.action performWithArguments:arguments completionHandler:^(UAActionResult *result) {
-        actionPerformed = YES;
-        XCTAssertNil(result.value);
-        XCTAssertNil(result.error);
-        XCTAssertEqual(UAActionFetchResultNewData, result.fetchResult);
-    }];
-
-    XCTAssertTrue(actionPerformed);
-    [mockedViewController verify];
-}
-
-- (void)testPerformMessageListUpdate {
-    [self commonPerformMessageListUpdate:self.mockOverlayViewController];
-}
-
-/**
- * Test perform with a message ID when the message list fails to refresh should return
- * an error and a UAActionFetchResultFailed fetch result.
- */
-- (void)testPerformMessageListFailsToUpdate {
-    __block BOOL actionPerformed;
-
-    UAActionArguments *arguments = [UAActionArguments argumentsWithValue:@"MCRAP" withSituation:UASituationManualInvocation];
-
-    [[self.mockMessageList expect] retrieveMessageListWithSuccessBlock:OCMOCK_ANY
-                                                      withFailureBlock:[OCMArg checkWithBlock:^BOOL(id obj) {
-        UAInboxMessageListCallbackBlock block = obj;
-        block();
-        return YES;
-    }]];
-
-    [self.action performWithArguments:arguments completionHandler:^(UAActionResult *result) {
-        actionPerformed = YES;
-        XCTAssertNil(result.value);
-        XCTAssertNotNil(result.error);
-        XCTAssertEqual(UAActionFetchResultFailed, result.fetchResult);
-    }];
-
-    XCTAssertTrue(actionPerformed);
+    [self verifyPerformWithArgValue:expectedMessageID expectedURLString:expectedURLString metadata:nil];
 }
 
 /**
  * Test the action looks up the message in the inbox message metadata if the placeholder
  * is set for the arguments value.
  */
-- (void)commonPerformWithPlaceHolderInboxMessageMetadata:(id)mockedViewController {
-    __block BOOL actionPerformed;
-
-    UAInboxMessage *message = [self mockForClass:[UAInboxMessage class]];
-
-    UAActionArguments *arguments = [UAActionArguments argumentsWithValue:@"auto"
-                                                           withSituation:UASituationManualInvocation
-                                                                metadata:@{UAActionMetadataInboxMessageKey: message}];
-
-    [[mockedViewController expect] showMessage:message];
-
-    [self.action performWithArguments:arguments completionHandler:^(UAActionResult *result) {
-        actionPerformed = YES;
-        XCTAssertNil(result.value);
-        XCTAssertNil(result.error);
-    }];
-
-    XCTAssertTrue(actionPerformed);
-    [mockedViewController verify];
-}
-
 - (void)testPerformWithPlaceHolderInboxMessageMetadata {
-    [self commonPerformWithPlaceHolderInboxMessageMetadata:self.mockOverlayViewController];
+    NSString *expectedMessageID = @"MCRAP";
+    // Expected URL String should be message ID with prepended message scheme.
+    NSString *expectedURLString = [NSString stringWithFormat:@"%@:%@", UAMessageDataScheme, expectedMessageID];
+    id mockMessage = [self mockForClass:[UAInboxMessage class]];
+    [[[mockMessage stub] andReturn:expectedMessageID] messageID];
+    [[[self.mockMessageList stub] andReturn:mockMessage] messageForID:expectedMessageID];
+
+    [self verifyPerformWithArgValue:@"auto" expectedURLString:expectedURLString metadata:@{UAActionMetadataInboxMessageKey:(UAInboxMessage *)mockMessage}];
 }
 
 /**
  * Test the action looks up the message ID in the push notification metadata if the placeholder
  * is set for the arguments value.
  */
-- (void)commonPerformWithPlaceHolderPushMessageMetadata:(id)mockedViewController {
-    __block BOOL actionPerformed;
-
-    UAInboxMessage *message = [self mockForClass:[UAInboxMessage class]];
-
-    // Only need the relevent bits to reference the correct message ID
-    NSDictionary *notification = @{@"_uamid": @"MCRAP"};
-    [[[self.mockMessageList stub] andReturn:message] messageForID:@"MCRAP"];
-
-    UAActionArguments *arguments = [UAActionArguments argumentsWithValue:@"auto"
-                                                           withSituation:UASituationManualInvocation
-                                                                metadata:@{UAActionMetadataPushPayloadKey: notification}];
-
-    [[mockedViewController expect] showMessage:message];
-
-    [self.action performWithArguments:arguments completionHandler:^(UAActionResult *result) {
-        actionPerformed = YES;
-        XCTAssertNil(result.value);
-        XCTAssertNil(result.error);
-    }];
-
-
-    XCTAssertTrue(actionPerformed);
-    [mockedViewController verify];
-}
-
 - (void)testPerformWithPlaceHolderPushMessageMetadata {
-    [self commonPerformWithPlaceHolderPushMessageMetadata:self.mockOverlayViewController];
+    NSString *expectedMessageID = @"MCRAP";
+    // Expected URL String should be message ID with prepended message scheme.
+    NSString *expectedURLString = [NSString stringWithFormat:@"%@:%@", UAMessageDataScheme, expectedMessageID];
+    id mockMessage = [self mockForClass:[UAInboxMessage class]];
+    [[[mockMessage stub] andReturn:expectedMessageID] messageID];
+    [[[self.mockMessageList stub] andReturn:mockMessage] messageForID:expectedMessageID];
+
+    NSDictionary *notification = @{@"_uamid": @"MCRAP"};
+
+    [self verifyPerformWithArgValue:@"auto" expectedURLString:expectedURLString metadata:@{UAActionMetadataPushPayloadKey:notification}];
 }
 
 @end

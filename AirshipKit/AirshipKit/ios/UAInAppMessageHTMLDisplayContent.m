@@ -33,6 +33,7 @@ NSString *const UAInAppMessageURLKey = @"url";
         self.height = content.height;
         self.width = content.width;
         self.aspectLock = content.aspectLock;
+        self.requiresConnectivity = content.requireConnectivity;
     }
 
     return self;
@@ -72,6 +73,7 @@ NSString *const UAInAppMessageURLKey = @"url";
 @property(nonatomic, assign) CGFloat height;
 @property(nonatomic, assign) CGFloat width;
 @property(nonatomic, assign) BOOL aspectLock;
+@property(nonatomic, assign) BOOL requireConnectivity;
 
 @end
 
@@ -203,6 +205,20 @@ NSString *const UAInAppMessageURLKey = @"url";
         builder.aspectLock = [aspectLock boolValue];
     }
 
+    id requiresConnectivity = json[UAInAppMessageHTMLRequireConnectivityKey];
+    if (requiresConnectivity) {
+        if (![requiresConnectivity isKindOfClass:[NSNumber class]]) {
+            if (error) {
+                NSString *msg = [NSString stringWithFormat:@"Requires connectivity flag must be a boolean stored as an NSNumber. Invalid value: %@", requiresConnectivity];
+                *error =  [NSError errorWithDomain:UAInAppMessageHTMLDisplayContentDomain
+                                              code:UAInAppMessageHTMLDisplayContentErrorCodeInvalidJSON
+                                          userInfo:@{NSLocalizedDescriptionKey:msg}];
+            }
+            return nil;
+        }
+        builder.requiresConnectivity = [requiresConnectivity boolValue];
+    }
+
     if (![builder isValid]) {
         if (error) {
             NSString *msg = [NSString stringWithFormat:@"Invalid HTML display content: %@", json];
@@ -234,6 +250,7 @@ NSString *const UAInAppMessageURLKey = @"url";
         self.height = builder.height;
         self.width = builder.width;
         self.aspectLock = builder.aspectLock;
+        self.requireConnectivity = builder.requiresConnectivity;
     }
 
     return self;
@@ -250,6 +267,7 @@ NSString *const UAInAppMessageURLKey = @"url";
     [json setValue:@(self.height) forKey:UAInAppMessageHTMLHeightKey];
     [json setValue:@(self.width) forKey:UAInAppMessageHTMLWidthKey];
     [json setValue:@(self.aspectLock) forKey:UAInAppMessageHTMLAspectLockKey];
+    [json setValue:@(self.requireConnectivity) forKey:UAInAppMessageHTMLRequireConnectivityKey];
 
     return [json copy];
 }
@@ -299,6 +317,9 @@ NSString *const UAInAppMessageURLKey = @"url";
         return NO;
     }
 
+    if (self.requireConnectivity != content.requireConnectivity) {
+        return NO;
+    }
     if (self.allowFullScreenDisplay != content.allowFullScreenDisplay) {
         return NO;
     }
@@ -329,6 +350,7 @@ NSString *const UAInAppMessageURLKey = @"url";
     result = 31 * result + self.height;
     result = 31 * result + self.width;
     result = 31 * result + self.aspectLock;
+    result = 31 * result + self.requireConnectivity;
 
     return result;
 }

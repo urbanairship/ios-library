@@ -1,14 +1,14 @@
 /* Copyright Urban Airship and Contributors */
 
 #import "UAAction.h"
+#import "UAInAppMessage.h"
+#import "UAInAppMessageScheduleInfo.h"
 
 #define kUALandingPageActionDefaultRegistryName @"landing_page_action"
 #define kUALandingPageActionDefaultRegistryAlias @"^p"
 
-#define kUALandingPageActionLastOpenTimeLimitInSeconds @(7 * 86400) // 1 week
-
 /**
- * Opens a landing page URL in a rich content window.
+ * Schedules a landing page to display ASAP.
  *
  * This action is registered under the names landing_page_action and ^p.
  *
@@ -30,6 +30,34 @@
  * Fetch result: UAActionFetchResultNewData, or UAActionFetchResultFailed if the data could not be fetched.
  *
  */
+NS_ASSUME_NONNULL_BEGIN
+
+/**
+ * A protocol for extending the default conversion between legacy landing pages and scheduled HTML message landing pages.
+ */
+@protocol UALandingPageBuilderExtender <NSObject>
+
+@optional
+
+/**
+ * Extends the in-app message schedule info builder converted from a legacy landing page.
+ * Use this method to make use of the default conversion with minor overrides as needed.
+ *
+ * @param builder The automatically converted in-app message schedule info builder.
+ */
+- (void)extendScheduleInfoBuilder:(UAInAppMessageScheduleInfoBuilder *)builder;
+
+/**
+ * Extends the in-app message builder converted from a legacy landing page action.
+ * Use this method to make use of the automatic conversion process with minor overrides as needed.
+ *
+ * @param builder The automatically converted in-app message builder.
+ */
+- (void)extendMessageBuilder:(UAInAppMessageBuilder *)builder;
+
+
+@end
+
 @interface UALandingPageAction : UAAction
 
 /**
@@ -57,5 +85,22 @@ extern NSString *const UALandingPageAspectLockKey;
  */
 extern NSString *const UALandingPageFill;
 
+/**
+ * The default border radius in points.
+ */
+extern CGFloat const defaultBorderRadiusPoints;
+
+/**
+ * The border radius in points. Defaults to defaultBorderRadiusPoints if left unset.
+ */
+@property(nonatomic, assign, nullable) NSNumber *borderRadiusPoints;
+
+/**
+ * Optional message builder extender. Set this to customize aspects of the conversion between legacy landing pages and
+ * the new scheduled HTML messages.
+ */
+@property(nonatomic, weak) id<UALandingPageBuilderExtender> builderExtender;
 
 @end
+
+NS_ASSUME_NONNULL_END

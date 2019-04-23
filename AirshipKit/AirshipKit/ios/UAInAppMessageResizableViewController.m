@@ -17,7 +17,7 @@
 CGFloat const ResizingViewExcessiveSafeAreaPadding = -8;
 
 NSString *const ResizingViewControllerNibName = @"UAInAppMessageResizableViewController";
-CGFloat const ResizingViewControllerDefaulInnerViewPadding = 15;
+CGFloat const ResizingViewControllerDefaultInnerViewPadding = 15;
 
 CGFloat const DefaultViewToScreenHeightRatio = 0.50;
 CGFloat const DefaultViewToScreenWidthRatio = 0.75;
@@ -335,6 +335,17 @@ double const DefaultResizableViewAnimationDuration = 0.2;
     self.shadeView.backgroundColor = self.backgroundColor;
 }
 
+- (void)dismissWithoutResolution {
+    self.isShowing = NO;
+    [self.view removeFromSuperview];
+    self.topWindow = nil;
+
+    if (self.showCompletionHandler) {
+        self.showCompletionHandler(nil);
+        self.showCompletionHandler = nil;
+    }
+}
+
 - (void)dismissWithResolution:(UAInAppMessageResolution *)resolution {
     UA_WEAKIFY(self);
     [UIView animateWithDuration:DefaultResizableViewAnimationDuration animations:^{
@@ -463,19 +474,19 @@ double const DefaultResizableViewAnimationDuration = 0.2;
 }
 
 - (BOOL)validateWidth:(CGFloat)width {
-    CGSize screenSize = [UIScreen mainScreen].bounds.size;
+    CGSize screenSize = [self getMaxSafeSize];
     CGFloat maximumOverlayViewWidth = screenSize.width;
-    CGFloat minimumOverlayViewWidth = (ResizingViewControllerDefaulInnerViewPadding * 2) * 2;
+    CGFloat minimumOverlayViewWidth = (ResizingViewControllerDefaultInnerViewPadding * 2) * 2;
 
     if (width < minimumOverlayViewWidth) {
         if (width != 0) {
-            UA_LDEBUG(@"Overlay view width is less than the minimum allowed width. Resizing to fit screen.");
+            UA_LDEBUG(@"Overlay view width is less than the minimum allowed width.");
         }
         return NO;
     }
 
     if (width > maximumOverlayViewWidth) {
-        UA_LDEBUG(@"Overlay view width is greater than the maximum allowed width. Resizing to fit screen.");
+        UA_LDEBUG(@"Overlay view width is greater than the maximum allowed width.");
         return NO;
     }
 
@@ -485,17 +496,17 @@ double const DefaultResizableViewAnimationDuration = 0.2;
 - (BOOL)validateHeight:(CGFloat)height {
     CGSize maxScreenSize = [self getMaxSafeSize];
     CGFloat maximumOverlayViewHeight = maxScreenSize.height;
-    CGFloat minimumOverlayViewHeight = (ResizingViewControllerDefaulInnerViewPadding * 2) * 2;
+    CGFloat minimumOverlayViewHeight = (ResizingViewControllerDefaultInnerViewPadding * 2) * 2;
 
     if (height < minimumOverlayViewHeight) {
         if (height != 0) {
-            UA_LDEBUG(@"Overlay view height is less than the minimum allowed height. Resizing to fit screen.");
+            UA_LDEBUG(@"Overlay view height is less than the minimum allowed height.");
         }
         return NO;
     }
 
     if (height > maximumOverlayViewHeight) {
-        UA_LDEBUG(@"Overlay view height is greater than the maximum allowed height. Resizing to fit screen.");
+        UA_LDEBUG(@"Overlay view height is greater than the maximum allowed height.");
         return NO;
     }
 

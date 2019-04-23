@@ -1,111 +1,66 @@
 /* Copyright Urban Airship and Contributors */
 
-#import "UAOverlayInboxMessageAction.h"
+#import "UAOverlayInboxMessageAction+Internal.h"
 #import "UAActionArguments.h"
 #import "UAirship.h"
 #import "UAInbox.h"
 #import "UAInboxMessage.h"
 #import "UAInboxMessageList.h"
 #import "UAInboxUtils.h"
-#import "UAOverlayViewController.h"
+#import "UALandingPageAction+Internal.h"
+#import "UAMessageCenter.h"
 #import "UAConfig.h"
+#import "UAUtils.h"
 
-#define kUAOverlayInboxMessageActionMessageIDPlaceHolder @"auto"
-
+NSString * const UAOverlayInboxMessageActionMessageIDPlaceHolder  = @"auto";
+NSString * const UAMessageURLKey = @"url";
 NSString * const UAOverlayInboxMessageActionErrorDomain = @"UAOverlayInboxMessageActionError";
 
 @implementation UAOverlayInboxMessageAction
 
-- (BOOL)acceptsArguments:(UAActionArguments *)arguments {
+// Parses the messageID url and prepends the correct message scheme if it's not already prepended
+- (NSURL *)parseURLFromArguments:(UAActionArguments *)arguments {
+    NSString *messageID;
 
-    switch (arguments.situation) {
-        case UASituationManualInvocation:
-        case UASituationWebViewInvocation:
-        case UASituationLaunchedFromPush:
-        case UASituationForegroundInteractiveButton:
-        case UASituationForegroundPush:
-        case UASituationAutomation:
-            if (![arguments.value isKindOfClass:[NSString class]]) {
-                return NO;
-            }
+    id value = arguments.value;
 
-            if ([[arguments.value lowercaseString] isEqualToString:kUAOverlayInboxMessageActionMessageIDPlaceHolder]) {
-                return arguments.metadata[UAActionMetadataPushPayloadKey] ||
-                arguments.metadata[UAActionMetadataInboxMessageKey];
-            }
-            
-            return YES;
-        case UASituationBackgroundPush:
-        case UASituationBackgroundInteractiveButton:
-            return NO;
+    if (value == nil) {
+        return nil;
     }
-}
 
-- (void)performWithArguments:(UAActionArguments *)arguments
-           completionHandler:(UAActionCompletionHandler)completionHandler {
+    if ([value isKindOfClass:[NSString class]]) {
+        messageID = arguments.value;
+    }
 
-    [self fetchMessage:arguments.value arguments:arguments completionHandler:^(UAInboxMessage *message, UAActionFetchResult result) {
-        if (message) {
-            // Fall back to overlay controller
-            [UAOverlayViewController showMessage:message];
-            completionHandler([UAActionResult resultWithValue:nil withFetchResult:result]);
-        } else {
-            NSError *error = [NSError errorWithDomain:UAOverlayInboxMessageActionErrorDomain
-                                                 code:UAOverlayInboxMessageActionErrorCodeMessageUnavailable
-                                             userInfo:@{NSLocalizedDescriptionKey:@"Message unavailable"}];
+    if ([value isKindOfClass:[NSDictionary class]]) {
+        id urlValue = [arguments.value valueForKey:UAMessageURLKey];
 
-            completionHandler([UAActionResult resultWithError:error withFetchResult:result]);
+        if (urlValue && [urlValue isKindOfClass:[NSString class]]) {
+            messageID = urlValue;
         }
-
-    }];
-}
-
-/**
- * Fetches the specified message. If the messageID is "auto", either
- * the UAActionMetadataInboxMessageKey will be returned or the ID of the message
- * will be taken from the UAActionMetadataPushPayloadKey. If the message is not
- * available in the message list, the list will be refreshed.
- * 
- * Note: A copy of this method exists in UADisplayInboxAction
- * 
- * @param messageID The message ID.
- * @param arguments The action arguments.
- * @param completionHandler Completion handler to call when the operation is complete.
- */
-- (void)fetchMessage:(NSString *)messageID
-           arguments:(UAActionArguments *)arguments
-   completionHandler:(void (^)(UAInboxMessage *, UAActionFetchResult))completionHandler {
-
-    if (messageID == nil) {
-        completionHandler(nil, UAActionFetchResultNoData);
-        return;
     }
 
-    if ([[messageID lowercaseString] isEqualToString:kUAOverlayInboxMessageActionMessageIDPlaceHolder]) {
-        // If we have InboxMessage metadata show the message
-        if (arguments.metadata[UAActionMetadataInboxMessageKey]) {
+    if ([messageID isEqualToString:@""]) {
+        return nil;
+    }
+
+    if ([[messageID lowercaseString] isEqualToString:UAOverlayInboxMessageActionMessageIDPlaceHolder]) {
+        if (arguments.metadata && arguments.metadata[UAActionMetadataInboxMessageKey]) {
             UAInboxMessage *message = arguments.metadata[UAActionMetadataInboxMessageKey];
-            completionHandler(message, UAActionFetchResultNoData);
-            return;
+            messageID = message.messageID;
+        } else if (arguments.metadata && arguments.metadata[UAActionMetadataPushPayloadKey]) {
+            NSDictionary *notification = arguments.metadata[UAActionMetadataPushPayloadKey];
+            messageID = [UAInboxUtils inboxMessageIDFromNotification:notification];
+        } else {
+            return nil;
         }
-
-        // Try getting the message ID from the push notification
-        NSDictionary *notification = arguments.metadata[UAActionMetadataPushPayloadKey];
-        messageID = [UAInboxUtils inboxMessageIDFromNotification:notification];
     }
 
-    UAInboxMessage *message = [[UAirship inbox].messageList messageForID:messageID];
-    if (message) {
-        completionHandler(message, UAActionFetchResultNoData);
-        return;
+    if ([messageID.lowercaseString hasPrefix:[NSString stringWithFormat:@"%@:", UAMessageDataScheme]]) {
+        return [NSURL URLWithString:messageID];
     }
 
-    // Refresh the list to see if the message is available
-    [[UAirship inbox].messageList retrieveMessageListWithSuccessBlock:^{
-        completionHandler([[UAirship inbox].messageList messageForID:messageID], UAActionFetchResultNewData);
-    } withFailureBlock:^{
-        completionHandler(nil, UAActionFetchResultFailed);
-    }];
+    return [NSURL URLWithString:[NSString stringWithFormat:@"%@:%@", UAMessageDataScheme, messageID]];
 }
 
 @end

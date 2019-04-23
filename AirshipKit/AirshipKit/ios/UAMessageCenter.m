@@ -18,6 +18,8 @@
 
 @implementation UAMessageCenter
 
+NSString *const UAMessageDataScheme = @"message";
+
 - (instancetype)init {
     self = [super init];
     if (self) {
