@@ -14,9 +14,6 @@ NSString *const UAScheduleInfoTriggersKey = @"triggers";
 NSString *const UAScheduleInfoDelayKey = @"delay";
 NSString *const UAScheduleInfoIntervalKey = @"interval";
 NSString *const UAScheduleInfoEditGracePeriodKey = @"edit_grace_period";
-NSString *const UAScheduleInfoRenderedLocaleKey = @"rendered_locale";
-NSString *const UAScheduleInfoRenderedLocaleCountryKey = @"country";
-NSString *const UAScheduleInfoRenderedLocaleLanguageKey = @"language";
 
 NSString * const UAScheduleInfoErrorDomain = @"com.urbanairship.schedule_info";
 
@@ -199,49 +196,6 @@ NSString * const UAScheduleInfoErrorDomain = @"com.urbanairship.schedule_info";
         editGracePeriod = @([json[UAScheduleInfoEditGracePeriodKey] doubleValue] * 24 * 60 * 60);
     }
 
-    // Rendered Locale
-    NSDictionary *renderedLocale;
-    if (json[UAScheduleInfoRenderedLocaleKey]) {
-        if (![json[UAScheduleInfoRenderedLocaleKey] isKindOfClass:[NSDictionary class]]) {
-            if (error) {
-                NSString *msg = [NSString stringWithFormat:@"Rendered locale must be a dictionary. Invalid value: %@", json[UAScheduleInfoRenderedLocaleKey]];
-                *error =  [NSError errorWithDomain:UAScheduleInfoErrorDomain
-                                              code:UAScheduleInfoErrorCodeInvalidJSON
-                                          userInfo:@{NSLocalizedDescriptionKey:msg}];
-            }
-
-            return NO;
-        }
-
-        renderedLocale = json[UAScheduleInfoRenderedLocaleKey];
-
-        id language = renderedLocale[UAScheduleInfoRenderedLocaleLanguageKey];
-        id country = renderedLocale[UAScheduleInfoRenderedLocaleCountryKey];
-
-        if (!language || !country) {
-            if (error) {
-                NSString *msg = [NSString stringWithFormat:@"Rendered locale must contain one of \"country\" or \"language\" fields. \
-                                 Invalid value: %@", json[UAScheduleInfoRenderedLocaleKey]];
-                *error =  [NSError errorWithDomain:UAScheduleInfoErrorDomain
-                                              code:UAScheduleInfoErrorCodeInvalidJSON
-                                          userInfo:@{NSLocalizedDescriptionKey:msg}];
-            }
-
-            return NO;
-        }
-
-        if ((language && ![language isKindOfClass:[NSString class]]) || (country && ![country isKindOfClass:[NSString class]])) {
-            if (error) {
-                NSString *msg = [NSString stringWithFormat:@"Language and country codes must be strings. Invalid value: %@", json[UAScheduleInfoRenderedLocaleKey]];
-                *error =  [NSError errorWithDomain:UAScheduleInfoErrorDomain
-                                              code:UAScheduleInfoErrorCodeInvalidJSON
-                                          userInfo:@{NSLocalizedDescriptionKey:msg}];
-            }
-
-            return NO;
-        }
-    }
-
     if (triggers) {
         self.triggers = triggers;
     }
@@ -272,10 +226,6 @@ NSString * const UAScheduleInfoErrorDomain = @"com.urbanairship.schedule_info";
 
     if (editGracePeriod) {
         self.editGracePeriod = [editGracePeriod doubleValue];
-    }
-
-    if (renderedLocale) {
-        self.renderedLocale = renderedLocale;
     }
 
     if (priority) {
@@ -316,7 +266,6 @@ NSString * const UAScheduleInfoErrorDomain = @"com.urbanairship.schedule_info";
         self.start = builder.start ?: [NSDate distantPast];
         self.end = builder.end ?: [NSDate distantFuture];
         self.editGracePeriod = builder.editGracePeriod;
-        self.renderedLocale = builder.renderedLocale;
         self.interval = builder.interval;
     }
 

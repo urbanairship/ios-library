@@ -35,25 +35,21 @@ NS_ASSUME_NONNULL_BEGIN
  * @param message The in-app message.
  * @param resolution The in-app message resolution.
  * @param displayTime The amount of time the message was displayed.
- * @param renderedLocale The message schedule's rendered locale.
  * @return The resolution event.
  */
 + (instancetype)eventWithMessage:(UAInAppMessage *)message
                       resolution:(UAInAppMessageResolution *)resolution
-                     displayTime:(NSTimeInterval)displayTime
-                   renderedLocale:(NSDictionary<NSString*, NSString*> * _Nullable)renderedLocale;
+                     displayTime:(NSTimeInterval)displayTime;
 
 /**
  * Creates a resolution event for an expired message.
  *
  * @param message The in-app message.
  * @param expiredDate The expiry date.
- * @param renderedLocale The message schedule's rendered locale.
  * @return The resolution event.
  */
 + (instancetype)eventWithExpiredMessage:(UAInAppMessage *)message
-                            expiredDate:(NSDate *)expiredDate
-                          renderedLocale:(NSDictionary<NSString*, NSString*> * _Nullable)renderedLocale;
+                            expiredDate:(NSDate *)expiredDate;
 
 @end
 

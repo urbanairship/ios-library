@@ -64,21 +64,20 @@ NSString *const UAInAppMessageResolutionEventExpired = @"expired";
 
 + (instancetype)eventWithMessage:(UAInAppMessage *)message
                       resolution:(UAInAppMessageResolution *)resolution
-                     displayTime:(NSTimeInterval)displayTime
-                   renderedLocale:(NSDictionary<NSString *,NSString *> * _Nullable)renderedLocale {
+                     displayTime:(NSTimeInterval)displayTime{
 
     NSDictionary *resolutionData = [UAInAppMessageResolutionEvent createResolutionDataWithResolution:resolution
                                                                                          displayTime:displayTime];
     NSMutableDictionary *data = [UAInAppMessageEventUtils createDataForMessage:message];
+
     [data setValue:resolutionData forKey:UAInAppMessageResolutionEventResolutionKey];
-    [data setValue:renderedLocale forKey:UAInAppMessageResolutionEventLocaleKey];
+    [data setValue:message.renderedLocale forKey:UAInAppMessageResolutionEventLocaleKey];
 
     return [[self alloc] initWithData:data];
 }
 
 + (instancetype)eventWithExpiredMessage:(UAInAppMessage *)message
-                            expiredDate:(NSDate *)expiredDate
-                          renderedLocale:(NSDictionary<NSString *,NSString *> * _Nullable)renderedLocale {
+                            expiredDate:(NSDate *)expiredDate {
 
     NSMutableDictionary *resolutionData = [NSMutableDictionary dictionary];
     [resolutionData setValue:UAInAppMessageResolutionEventExpired forKey:UAInAppMessageResolutionEventTypeKey];
@@ -87,8 +86,9 @@ NSString *const UAInAppMessageResolutionEventExpired = @"expired";
     [resolutionData setValue:[formatter stringFromDate:expiredDate] forKey:UAInAppMessageResolutionEventExpiryKey];
 
     NSMutableDictionary *data = [UAInAppMessageEventUtils createDataForMessage:message];
+
     [data setValue:resolutionData forKey:UAInAppMessageResolutionEventResolutionKey];
-    [data setValue:renderedLocale forKey:UAInAppMessageResolutionEventLocaleKey];
+    [data setValue:message.renderedLocale forKey:UAInAppMessageResolutionEventLocaleKey];
 
     return [[self alloc] initWithData:data];
 }
