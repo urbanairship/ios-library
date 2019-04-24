@@ -39,7 +39,7 @@
     [UAirship setSharedAirship:self.mockAirship];
     [[[self.mockAirship stub] andReturn:self.mockPush] sharedPush];
 
-    [[[self.mockAirship stub] andReturn:self.mockLocationProviderDelegate] locationPoviderDelegate];
+    [[[self.mockAirship stub] andReturn:self.mockLocationProviderDelegate] locationProviderDelegate];
 
     [[[self.mockPush stub] andReturn:self.mockPushRegistration] pushRegistration];
     [[[self.mockApplication stub] andReturn:self.mockApplication] sharedApplication];

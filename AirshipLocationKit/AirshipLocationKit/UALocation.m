@@ -45,7 +45,7 @@ NSString *const UALocationBackgroundUpdatesAllowed = @"UALocationBackgroundUpdat
 }
 
 - (void)airshipReady:(UAirship *)airship {
-    airship.locationPoviderDelegate = self;
+    airship.locationProviderDelegate = self;
 }
 
 - (BOOL)isAutoRequestAuthorizationEnabled {

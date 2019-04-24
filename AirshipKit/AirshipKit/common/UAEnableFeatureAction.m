@@ -51,7 +51,7 @@ NSString *const UAEnableBackgroundLocationActionValue = @"background_location";
 }
 
 - (BOOL)isLocationDeniedOrRestricted {
-    id<UALocationProviderDelegate> locationProviderDelegate = UAirship.shared.locationPoviderDelegate;
+    id<UALocationProviderDelegate> locationProviderDelegate = UAirship.shared.locationProviderDelegate;
 
     if (locationProviderDelegate) {
         return locationProviderDelegate.isLocationDeniedOrRestricted;
@@ -82,7 +82,7 @@ NSString *const UAEnableBackgroundLocationActionValue = @"background_location";
 }
 
 - (void)enableBackgroundLocation:(UAActionCompletionHandler)completionHandler {
-    id<UALocationProviderDelegate> locationProviderDelegate = UAirship.shared.locationPoviderDelegate;
+    id<UALocationProviderDelegate> locationProviderDelegate = UAirship.shared.locationProviderDelegate;
 
     locationProviderDelegate.locationUpdatesEnabled = YES;
     locationProviderDelegate.backgroundLocationUpdatesAllowed = YES;
@@ -97,7 +97,7 @@ NSString *const UAEnableBackgroundLocationActionValue = @"background_location";
 }
 
 - (void)enableLocation:(UAActionCompletionHandler)completionHandler {
-    id<UALocationProviderDelegate> locationProviderDelegate = UAirship.shared.locationPoviderDelegate;
+    id<UALocationProviderDelegate> locationProviderDelegate = UAirship.shared.locationProviderDelegate;
 
     locationProviderDelegate.locationUpdatesEnabled = YES;
 

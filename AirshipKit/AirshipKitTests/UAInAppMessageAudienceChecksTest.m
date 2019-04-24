@@ -29,7 +29,7 @@
     [UAirship setSharedAirship:self.mockAirship];
 
     self.mockLocationProviderDelegate = [self mockForProtocol:@protocol(UALocationProviderDelegate)];
-    [[[self.mockAirship stub] andReturn:self.mockLocationProviderDelegate] locationPoviderDelegate];
+    [[[self.mockAirship stub] andReturn:self.mockLocationProviderDelegate] locationProviderDelegate];
 }
 
 - (void)testEmptyAudience {

@@ -50,7 +50,7 @@
     }
     
     // Location opt-in
-    if (audience.locationOptIn && ([audience.locationOptIn boolValue] != UAirship.shared.locationPoviderDelegate.isLocationOptedIn)) {
+    if (audience.locationOptIn && ([audience.locationOptIn boolValue] != UAirship.shared.locationProviderDelegate.isLocationOptedIn)) {
         return NO;
     }
 
