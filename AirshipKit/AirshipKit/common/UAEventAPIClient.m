@@ -102,7 +102,7 @@
         [builder setValue:[[UAirship push] backgroundPushNotificationsAllowed] ? @"true" : @"false" forHeader:@"X-UA-Channel-Background-Enabled"];
 
         // Location settings
-        id<UALocationProviderDelegate> locationProviderDelegate = UAirship.shared.locationPoviderDelegate;
+        id<UALocationProviderDelegate> locationProviderDelegate = UAirship.shared.locationProviderDelegate;
         NSString *locationPermissionStatus;
         NSString *locationUpdatesEnabled;
         if (locationProviderDelegate) {

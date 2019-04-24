@@ -117,7 +117,7 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
  */
 @property (nonatomic, weak, nullable) id<UADeepLinkDelegate> deepLinkDelegate;
 
-@property (nonatomic, weak, nullable) id<UALocationProviderDelegate> locationPoviderDelegate;
+@property (nonatomic, weak, nullable) id<UALocationProviderDelegate> locationProviderDelegate;
 
 /**
  * The whitelist used for validating URLs for landing pages, wallet action, open external URL action,
