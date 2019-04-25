@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UAAPNSRegistration+Internal.h"
 #import "UANotificationCategory.h"

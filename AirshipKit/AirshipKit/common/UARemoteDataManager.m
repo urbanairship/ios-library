@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UARemoteDataManager+Internal.h"
 #import "UARemoteDataAPIClient+Internal.h"

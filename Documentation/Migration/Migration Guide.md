@@ -1,4 +1,4 @@
-# Urban Airship iOS SDK Migration Guide
+# Airship iOS SDK Migration Guide
 
 # Urban Airship Library 10.x to 10.2
 

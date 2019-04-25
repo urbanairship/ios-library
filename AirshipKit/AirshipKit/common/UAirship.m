@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 #import "UAirship+Internal.h"
 
 #import "UAUser+Internal.h"
@@ -219,7 +219,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         UA_LDEBUG(@"Deleting the keychain credentials");
         [UAKeychainUtils deleteKeychainValue:config.appKey];
 
-        UA_LDEBUG(@"Deleting the UA device ID");
+        UA_LDEBUG(@"Deleting the Airship device ID");
         [UAKeychainUtils deleteKeychainValue:kUAKeychainDeviceIDKey];
 
         // Delete the Device ID in the data store so we don't clear the channel
@@ -267,7 +267,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 #endif
 
             if (previousVersion) {
-                UA_LINFO(@"Urban Airship library version changed from %@ to %@.", previousVersion, [UAirshipVersion get]);
+                UA_LINFO(@"Airship library version changed from %@ to %@.", previousVersion, [UAirshipVersion get]);
             }
         }
     }

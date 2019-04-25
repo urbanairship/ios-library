@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import <Foundation/Foundation.h>
 
@@ -19,7 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Factory method to create a tag groups registrar.
- * @param config The Urban Airship config.
+ * @param config The Airship config.
  * @param dataStore The shared data store.
  * @param mutationHistory The mutation history.
  * @return A new tag groups registrar instance.

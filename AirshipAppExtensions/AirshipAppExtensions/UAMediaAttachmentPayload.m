@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #define kUANotificationAttachmentServiceURLKey @"url"
 #define kUANotificationAttachmentServiceOptionsKey @"options"

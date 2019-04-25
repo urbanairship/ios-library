@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
@@ -10,7 +10,7 @@ NS_ASSUME_NONNULL_BEGIN
 extern NSString * const UAUserCreatedNotification;
 
 /**
- * Primary interface for working with the application's associated UA user.
+ * Primary interface for working with the application's associated Airship user.
  */
 @interface UAUser : UAComponent
 

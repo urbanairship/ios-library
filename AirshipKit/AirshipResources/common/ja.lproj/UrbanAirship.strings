@@ -1,7 +1,7 @@
 "ua_cancel" = "キャンセルする";
 "ua_channel_copy_toast" = "チャンネルがクリップボードにコピーされました！";
 "ua_channel_id" = "チャンネルID";
-"ua_channel_notification_ticker" = "Urban Airship チャンネル";
+"ua_channel_notification_ticker" = "Airship チャンネル";
 "ua_connection_error" = "接続エラー";
 "ua_content_error" = "コンテンツエラー";
 "ua_default_channel_description" = "一般的なアプリのアップデート";

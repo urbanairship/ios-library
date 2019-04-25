@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
@@ -10,13 +10,13 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /**
- * A WKWebView native bridge that automatically injects the Urban Airship
+ * A WKWebView native bridge that automatically injects the Airship
  * Javascript interface on whitelisted URLs.
  */
 @interface UAWKWebViewNativeBridge : UABaseNativeBridge <UAWKWebViewDelegate>
 
 ///---------------------------------------------------------------------------------------
-/// @name UA WKWebView Bridge Properties
+/// @name Airship WKWebView Bridge Properties
 ///---------------------------------------------------------------------------------------
 
 /**

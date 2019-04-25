@@ -2,13 +2,13 @@
 # Please fill out this template when submitting an issue.
 All lines beginning with an ℹ symbol indicate information that's important for you to provide to ensure your issue is resolved as quickly and efficiently as possible.
 
-❗For how-to inquiries involving Urban Airship functionality or use cases, please
+❗For how-to inquiries involving Airship functionality or use cases, please
 contact (support)[https://support.urbanairship.com/hc/en-us].
 
 # Preliminary Info
 
-### What Urban Airship dependencies are you using?
-ℹ Please include Urban Airship dependencies and their versions here.
+### What Airship dependencies are you using?
+ℹ Please include Airship dependencies and their versions here.
 
 ### What are the versions of any relevant development tools you are using?
 ℹ If applicable, please include any relevant information about the version of your

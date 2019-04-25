@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UAUser.h"
 #import "UADispatcher+Internal.h"
@@ -48,7 +48,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 
 /**
- * The Urban Airship config
+ * The Airship config
  */
 @property (nonatomic, strong) UAConfig *config;
 
@@ -59,7 +59,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Factory method to create a user instance.
  * @param push The push manager.
- * @param config The Urban Airship config.
+ * @param config The Airship config.
  * @param dataStore The preference data store.
  * @return User instance.
  */
@@ -68,7 +68,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Factory method to create a user instance. Used for testing.
  * @param push The push manager.
- * @param config The Urban Airship config.
+ * @param config The Airship config.
  * @param dataStore The preference data store.
  * @param client The API client.
  * @param notificationCenter The notification center.

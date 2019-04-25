@@ -68,7 +68,7 @@
                             <constraint firstItem="He6-LA-1je" firstAttribute="top" secondItem="Ia1-K6-d13" secondAttribute="bottom" constant="8" symbolic="YES" id="iUm-ke-wO4"/>
                         </constraints>
                     </view>
-                    <tabBarItem key="tabBarItem" title="Urban Airship" image="Homescreen" id="acW-dT-cKf"/>
+                    <tabBarItem key="tabBarItem" title="Airship" image="Homescreen" id="acW-dT-cKf"/>
                     <connections>
                         <outlet property="channelIDButton" destination="iZm-tj-QRc" id="T5D-wW-iVv"/>
                         <outlet property="enablePushButton" destination="UCg-eu-blq" id="40k-6K-g2a"/>

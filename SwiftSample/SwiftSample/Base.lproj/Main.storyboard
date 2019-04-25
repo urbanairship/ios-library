@@ -68,7 +68,7 @@
                             <constraint firstItem="UCg-eu-blq" firstAttribute="centerX" secondItem="tsR-hK-woN" secondAttribute="centerX" id="pVU-2B-B55"/>
                         </constraints>
                     </view>
-                    <tabBarItem key="tabBarItem" title="Urban Airship" image="Homescreen" id="acW-dT-cKf"/>
+                    <tabBarItem key="tabBarItem" title="Airship" image="Homescreen" id="acW-dT-cKf"/>
                     <connections>
                         <outlet property="channelIDButton" destination="iZm-tj-QRc" id="3qP-bJ-Xqd"/>
                         <outlet property="enablePushButton" destination="UCg-eu-blq" id="4Tu-5f-4vT"/>

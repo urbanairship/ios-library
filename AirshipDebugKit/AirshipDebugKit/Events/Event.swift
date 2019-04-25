@@ -1,10 +1,10 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 import UIKit
 import AirshipKit
 
 /**
- * A wrapper for representing an Urban Airship event in the Debug UI
+ * A wrapper for representing an Airship event in the Debug UI
  */
 struct Event {
     let prettyTypes:[String:String] = [

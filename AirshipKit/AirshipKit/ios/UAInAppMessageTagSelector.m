@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UAInAppMessageTagSelector+Internal.h"
 #import "NSJSONSerialization+UAAdditions.h"

@@ -1,9 +1,9 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import <Foundation/Foundation.h>
 
 /**
- * Urban Airship Version.
+ * Airship Version.
  */
 @interface UAirshipVersion : NSObject
 
@@ -12,7 +12,7 @@
 ///---------------------------------------------------------------------------------------
 
 /**
- * Returns the Urban Airship version.
+ * Returns the Airship version.
  */
 + (nonnull NSString *)get;
 

@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import <Foundation/Foundation.h>
 #import "UAAPIClient+Internal.h"
@@ -21,7 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Factory method to create a UATagGroupsAPIClient.
  *
- * @param config The Urban Airship config.
+ * @param config The Airship config.
  * @return UATagGroupsAPIClient instance.
  */
 + (instancetype)clientWithConfig:(UAConfig *)config;
@@ -29,7 +29,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Factory method to create a UATagGroupsAPIClient.
  *
- * @param config The Urban Airship config.
+ * @param config The Airship config.
  * @param session The request session.
  * @return UATagGroupsAPIClient instance.
  */

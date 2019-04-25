@@ -1,4 +1,4 @@
-/* Copyright 2010-2019 Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 import UIKit
 import AirshipKit

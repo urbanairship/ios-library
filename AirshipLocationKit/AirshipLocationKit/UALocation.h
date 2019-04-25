@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import <Foundation/Foundation.h>
 #import <CoreLocation/CoreLocation.h>
@@ -44,8 +44,8 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 /**
- * Main class for interacting with Urban Airship location. Used to send location
- * updates for the user to Urban Airship.
+ * Main class for interacting with Airship location. Used to send location
+ * updates for the user to Airship.
  */
 @interface UALocation : UAComponent <UALocationProviderDelegate>
 

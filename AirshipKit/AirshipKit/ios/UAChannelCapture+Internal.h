@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UAChannelCapture.h"
 
@@ -20,7 +20,7 @@ extern NSString *const UAChannelCaptureEnabledKey;
 /**
  * Factory method to create the UAChannelCapture.
  *
- * @param config The Urban Airship config.
+ * @param config The Airship config.
  * @param push The UAPush instance.
  * @param dataStore The UAPreferenceDataStore instance.
  *
@@ -33,7 +33,7 @@ extern NSString *const UAChannelCaptureEnabledKey;
 /**
  * Factory method to create the UAChannelCapture. Used for testing.
  *
- * @param config The Urban Airship config.
+ * @param config The Airship config.
  * @param push The UAPush instance.
  * @param dataStore The UAPreferenceDataStore instance.
  * @param notificationCenter The notification center.

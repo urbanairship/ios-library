@@ -1,7 +1,7 @@
 "ua_cancel" = "ביטול";
 "ua_channel_copy_toast" = "הערוץ הועתק ללוח העריכה!";
 "ua_channel_id" = "זיהוי הערוץ";
-"ua_channel_notification_ticker" = "ערוץ Urban Airship";
+"ua_channel_notification_ticker" = "ערוץ Airship";
 "ua_connection_error" = "שגיאת התחברות";
 "ua_content_error" = "שגיאת תוכן";
 "ua_default_channel_description" = "עדכוני אפליקציה כלליים";

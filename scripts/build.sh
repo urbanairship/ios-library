@@ -332,7 +332,7 @@ then
 
   # Build info
   BUILD_INFO=$STAGING/BUILD_INFO
-  echo "Urban Airship SDK v${VERSION}" >> $BUILD_INFO
+  echo "Airship SDK v${VERSION}" >> $BUILD_INFO
   echo "Build time: `date`" >> $BUILD_INFO
   echo "SDK commit: `git log -n 1 --format='%h'`" >> $BUILD_INFO
   echo "Xcode version: `xcrun xcodebuild -version | tr '\r\n' ' '`" >> $BUILD_INFO

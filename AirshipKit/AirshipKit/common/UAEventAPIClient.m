@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import <UIKit/UIKit.h>
 
@@ -84,7 +84,7 @@
         [builder setValue:[[NSLocale autoupdatingCurrentLocale] objectForKey: NSLocaleCountryCode] forHeader:@"X-UA-Locale-Country"];
         [builder setValue:[[NSLocale autoupdatingCurrentLocale] objectForKey: NSLocaleVariantCode] forHeader:@"X-UA-Locale-Variant"];
 
-        // Urban Airship identifiers
+        // Airship identifiers
         [builder setValue:[UAirship push].channelID forHeader:@"X-UA-Channel-ID"];
         [builder setValue:self.config.appKey forHeader:@"X-UA-App-Key"];
 

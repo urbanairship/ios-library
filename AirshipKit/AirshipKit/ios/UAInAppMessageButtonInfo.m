@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UAInAppMessageButtonInfo+Internal.h"
 #import "UAInAppMessageTextInfo+Internal.h"

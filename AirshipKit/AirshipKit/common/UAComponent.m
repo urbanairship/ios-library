@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UAComponent+Internal.h"
 #import "UAPreferenceDataStore+Internal.h"

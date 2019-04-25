@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import <CoreData/CoreData.h>
 
@@ -8,7 +8,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 /**
- * Creates a managed object context in the UA no backup directory.
+ * Creates a managed object context in the Airship no backup directory.
  * @param modelURL The url to coredata model.
  * @param concurrencyType The managed object's concurrency type.
  * @return A managed object context.
@@ -19,7 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Attempts to add a persistent sql store to the managed object. The store will be created
- * in an Urban Airship no backup directory.
+ * in an Airship no backup directory.
  *
  * @param storeName The store name.
  * @param completionHandler Completion handler called with the result.

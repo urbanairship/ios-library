@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
@@ -28,7 +28,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (NSString *)deviceModelName;
 
 /**
- * Gets the Urban Airship Device ID.
+ * Gets the Airship Device ID.
  *
  * @return The device ID, or an empty string if the ID cannot be retrieved or created.
  *
@@ -167,7 +167,7 @@ NS_ASSUME_NONNULL_BEGIN
 ///---------------------------------------------------------------------------------------
 
 /**
- * A utility method that takes an APNS-provided device token and returns the decoded UA device token
+ * A utility method that takes an APNS-provided device token and returns the decoded Airship device token
  */
 + (NSString *)deviceTokenStringFromDeviceToken:(NSData *)deviceToken;
 

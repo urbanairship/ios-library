@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UAAddTagsAction.h"
 #import "UATagsActionPredicate+Internal.h"

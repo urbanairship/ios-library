@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import <Foundation/Foundation.h>
 
@@ -87,7 +87,7 @@ extern NSString * const UAInboxMessageListUpdatedNotification;
 
 /**
  * Marks messages read. They will be marked locally as read and synced with
- * Urban Airship on the next message retrieval.
+ * Airship on the next message retrieval.
  *
  * @param messages The array of messages to be marked read.
  * @param completionHandler An optional completion handler.
@@ -99,7 +99,7 @@ extern NSString * const UAInboxMessageListUpdatedNotification;
 
 /**
  * Marks messages deleted. They will be marked locally as deleted and synced with
- * Urban Airship on the next message retrieval.
+ * Airship on the next message retrieval.
  *
  * @param messages The array of messages to be marked deleted.
  * @param completionHandler An optional completion handler.

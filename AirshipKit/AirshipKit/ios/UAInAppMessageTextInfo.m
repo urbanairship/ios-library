@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UAInAppMessageTextInfo+Internal.h"
 #import <UIKit/UIKit.h>

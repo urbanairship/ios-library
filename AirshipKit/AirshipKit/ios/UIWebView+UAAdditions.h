@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import <UIKit/UIKit.h>
 #import "UAInboxMessage.h"
@@ -6,7 +6,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /**
- * Category extensions for Urban Airship web view additions.
+ * Category extensions for Airship web view additions.
  */
 @interface UIWebView (UAAdditions)
 

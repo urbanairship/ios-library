@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UABaseTest.h"
 #import "UAPush+Internal.h"
@@ -863,7 +863,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
  * defaults user notification categories.
  */
 - (void)testRequireAuthorizationForDefaultCategories {
-    // Clear the custom categories so we can check only UA categories in comibinedCategories.
+    // Clear the custom categories so we can check only Airship categories in comibinedCategories.
     self.push.customCategories = [NSSet set];
 
     XCTAssertTrue(self.push.combinedCategories.count);

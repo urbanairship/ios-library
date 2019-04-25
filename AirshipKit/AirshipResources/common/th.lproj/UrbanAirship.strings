@@ -1,7 +1,7 @@
 "ua_cancel" = "ยกเลิก";
 "ua_channel_copy_toast" = "คัดลอกช่องไปยังคลิปบอร์ดแล้ว!";
 "ua_channel_id" = "ช่องไอดี";
-"ua_channel_notification_ticker" = "ช่อง Urban Airship";
+"ua_channel_notification_ticker" = "ช่อง Airship";
 "ua_connection_error" = "การเชื่อมต่อผิดพลาด";
 "ua_content_error" = "เนื้อหาผิดพลาด";
 "ua_default_channel_description" = "การอัปเดตแอปทั่วไป";

@@ -1,6 +1,6 @@
-# iOS Urban Airship SDK
+# Airship iOS SDK
 
-The Urban Airship SDK for iOS provides a simple way to integrate Urban Airship
+The Airship SDK for iOS provides a simple way to integrate Airship
 services into your iOS applications.
 
 ## Contributing Code
@@ -12,9 +12,9 @@ One of our engineers will verify receipt of the agreement before approving your 
 
 ## Resources
 
-- [AirshipKit Docs](http://docs.urbanairship.com/reference/libraries/ios/latest/)
-- [AirshipAppExtensions Docs](http://docs.urbanairship.com/reference/libraries/ios-extensions/latest/)
-- [Getting started guide](http://docs.urbanairship.com/platform/ios/)
+- [AirshipKit Docs](http://docs.airship.com/reference/libraries/ios/latest/)
+- [AirshipAppExtensions Docs](http://docs.airship.com/reference/libraries/ios-extensions/latest/)
+- [Getting started guide](http://docs.airship.com/platform/ios/)
 - [Migration Guides](Documentation/Migration/README.md)
 - [Sample Quickstart Guide](Sample/README.md)
 - [Swift Sample Quickstart Guide](SwiftSample/README.md)
@@ -36,7 +36,7 @@ Specify the UrbanAirship-iOS-SDK in your podfile with the use_frameworks! option
 ```txt
 use_frameworks!
 
-# Urban Airship SDK
+# Airship SDK
 target "<Your Target Name>" do
   pod 'UrbanAirship-iOS-SDK'
 end
@@ -56,7 +56,7 @@ to the new target:
 ```txt
 use_frameworks!
 
-# Urban Airship SDK
+# Airship SDK
 target "<Your Service Extension Target Name>" do
   pod 'UrbanAirship-iOS-AppExtensions'
 end
@@ -86,7 +86,7 @@ $ brew update
 $ brew install carthage
 ```
 
-Specify the Urban Airship iOS SDK in your cartfile:
+Specify the Airship iOS SDK in your cartfile:
 
 ```txt
 github "urbanairship/ios-library"
@@ -111,7 +111,7 @@ are a few additional steps:
 
 ### Other Installation Methods
 
-For other installation methods, please checkout - [Getting started guide](http://docs.urbanairship.com/platform/ios.html#installation).
+For other installation methods, please checkout - [Getting started guide](http://docs.airship.com/platform/ios.html#installation).
 
 
 ## Quickstart
@@ -119,14 +119,14 @@ For other installation methods, please checkout - [Getting started guide](http:/
 ### An Important Note about Location Permissions
 
 As of Spring 2019, Apple has begun rejecting applications that use, or appear to use, Core Location services
-without supplying usage descriptions in their `Info.plist` files. The Urban Airship SDK contains lightweight
+without supplying usage descriptions in their `Info.plist` files. The Airship SDK contains lightweight
 wrappers around Core Location APIs, but does not collect location data by default unless foreground or background 
 location is explicitly enabled in `UALocationManager`. To avoid this, you should add usage description strings to
 your `Info.plist` file under the `NSLocationAlwaysUsageDescription`, `NSLocationWhenInUseUsageDescription`, and `NSLocationAlwaysAndWhenInUseUsageDescription` keys.
 
 If your app does not use the location features of the SDK, these descriptions will not be visible to the user, and
 are simply an extra step required to satisfy Apple's submission requirements. On the other hand, if your app does
-use these features, see the [Location](https://docs.urbanairship.com/platform/ios/location/) setup instructions.
+use these features, see the [Location](https://docs.airship.com/platform/ios/location/) setup instructions.
 
 ### Capabilities
 
@@ -138,7 +138,7 @@ the main application target.
 The library uses a .plist configuration file named `AirshipConfig.plist` to manage your production and development
 application profiles. Example copies of this file are available in all of the sample projects. Place this file
 in your project and set the following values to the ones in your application at http://go.urbanairship.com.  To
-view all the possible keys and values, see the [UAConfig class reference](http://docs.urbanairship.com/reference/libraries/ios/latest/Classes/UAConfig.html)
+view all the possible keys and values, see the [UAConfig class reference](http://docs.airship.com/reference/libraries/ios/latest/Classes/UAConfig.html)
 
 You can also edit the file as plain-text:
 

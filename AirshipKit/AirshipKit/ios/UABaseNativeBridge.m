@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UABaseNativeBridge.h"
 #import "UABaseNativeBridge+Internal.h"
@@ -66,7 +66,7 @@ NSString *const UANativeBridgeDismissCommand = @"dismiss";
         appendStringGetter(@"getDeviceModel", [UIDevice currentDevice].model);
 
         /*
-         * Set the UA user ID.
+         * Set the Airship user ID.
          */
         appendStringGetter(@"getUserId", userData.username);
 

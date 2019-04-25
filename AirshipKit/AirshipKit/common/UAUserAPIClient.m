@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UAUserAPIClient+Internal.h"
 #import "UAConfig.h"

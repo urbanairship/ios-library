@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UAPush.h"
 #import "UAirship.h"
@@ -109,7 +109,7 @@ extern NSString *const UAPushEnabledKey;
 @property (nonatomic, assign, getter=isChannelCreationEnabled) BOOL channelCreationEnabled;
 
 /**
- * The UAChannelRegistrar that handles registering the device with Urban Airship.
+ * The UAChannelRegistrar that handles registering the device with Airship.
  */
 @property (nonatomic, strong) UAChannelRegistrar *channelRegistrar;
 
@@ -162,7 +162,7 @@ extern NSString *const UAPushEnabledKey;
 
 /**
  * Factory method to create a push instance.
- * @param config The Urban Airship config
+ * @param config The Airship config
  * @param dataStore The preference data store.
  * @param tagGroupsregistrar The tag groups registrar.
  * @return A new push instance.
@@ -174,7 +174,7 @@ extern NSString *const UAPushEnabledKey;
 
 /**
  * Factory method to create a push instance. For testing
- * @param config The Urban Airship config
+ * @param config The Airship config
  * @param dataStore The preference data store.
  * @param tagGroupsregistrar The tag groups registrar.
  * @param notificationCenter The notification center.

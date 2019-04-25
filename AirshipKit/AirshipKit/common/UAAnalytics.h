@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import <Foundation/Foundation.h>
 #import "UAComponent.h"
@@ -10,7 +10,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /**
- * The UAAnalytics object provides an interface to the Urban Airship Analytics API.
+ * The UAAnalytics object provides an interface to the Airship Analytics API.
  */
 @interface UAAnalytics : UAComponent
 

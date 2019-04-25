@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UAMessageCenterListViewController.h"
 #import "UAMessageCenterListCell.h"
@@ -83,7 +83,7 @@
 /**
  * An icon cache that stores UIImage representations of fetched icon images
  * The default limit is 1MB or 100 items
- * Images are also stored in the UA HTTP Cache, so a re-fetch will typically only
+ * Images are also stored in the Airship HTTP Cache, so a re-fetch will typically only
  * incur the decoding (PNG->UIImage) costs.
  */
 @property (nonatomic, strong) NSCache *iconCache;

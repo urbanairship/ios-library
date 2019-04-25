@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UAAutoIntegration+Internal.h"
 #import "UAirship+Internal.h"

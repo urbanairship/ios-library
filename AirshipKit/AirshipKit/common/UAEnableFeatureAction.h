@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UAAction.h"
 
@@ -22,7 +22,7 @@ extern NSString *const UAEnableBackgroundLocationActionValue;
 
 
 /**
- * Enables an Urban Airship feature.
+ * Enables an Airship feature.
  *
  * This action is registered under the names enable_feature and ^ef.
  *

@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UAInboxMessage.h"
 #import "UAInboxMessageData+Internal.h"
@@ -9,7 +9,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface UAInboxMessageBuilder : NSObject
 
 /**
- * The Urban Airship message ID.
+ * The Airship message ID.
  * This ID may be used to match an incoming push notification to a specific message.
  */
 @property (nonatomic, copy) NSString *messageID;

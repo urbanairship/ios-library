@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UALegacyInAppMessaging+Internal.h"
 #import "UALegacyInAppMessage.h"

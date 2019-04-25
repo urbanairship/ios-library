@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UAActionRunner.h"
 #import "UAAction+Internal.h"
@@ -61,7 +61,7 @@ NSString * const UAActionRunnerErrorDomain = @"com.urbanairship.actions.runner";
 
         //log a warning if the name begins with a carat prefix.
         if ([actionName hasPrefix:@"^"]) {
-            UA_LWARN(@"Extra names beginning with the carat (^) character are reserved by Urban Airship \
+            UA_LWARN(@"Extra names beginning with the carat (^) character are reserved by Airship \
                      and may be subject to future use.");
         }
 

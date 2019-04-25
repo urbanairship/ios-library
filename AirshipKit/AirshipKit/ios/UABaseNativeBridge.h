@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import <UIKit/UIKit.h>
 #import <WebKit/WebKit.h>
@@ -9,7 +9,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Base class for UIWebView & WKWebView delegates that automatically inject the 
- * Urban Airship Javascript interface on whitelisted URLs.
+ * Airship Javascript interface on whitelisted URLs.
  */
 @interface UABaseNativeBridge : NSObject
 

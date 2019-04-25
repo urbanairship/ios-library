@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import <Foundation/Foundation.h>
 #import "UADisposable.h"
@@ -23,7 +23,7 @@ typedef void (^UAInboxMessageCallbackBlock)(UAInboxMessage *message);
 ///---------------------------------------------------------------------------------------
 
 /**
- * The Urban Airship message ID.
+ * The Airship message ID.
  * This ID may be used to match an incoming push notification to a specific message.
  */
 @property (nonatomic, readonly) NSString *messageID;

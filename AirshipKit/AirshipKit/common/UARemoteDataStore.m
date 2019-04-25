@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UARemoteDataStore+Internal.h"
 #import "NSManagedObjectContext+UAAdditions+Internal.h"

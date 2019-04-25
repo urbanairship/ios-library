@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UABaseTest.h"
 #import "UARetailEventTemplate.h"
@@ -65,7 +65,7 @@
     eventTemplate.identifier = @"12345";
     eventTemplate.eventDescription = @"Browsed retail event.";
     eventTemplate.transactionID = @"1122334455";
-    eventTemplate.brand = @"Urban Airship";
+    eventTemplate.brand = @"Airship";
     eventTemplate.isNewItem = YES;
     UACustomEvent *customEvent = [eventTemplate createEvent];
     [customEvent track];
@@ -77,7 +77,7 @@
     XCTAssertEqualObjects(@"\"retail-category\"", customEvent.data[@"properties"][@"category"], @"Unexpected category.");
     XCTAssertEqualObjects(@"\"12345\"", customEvent.data[@"properties"][@"id"], @"Unexpected ID.");
     XCTAssertEqualObjects(@"\"Browsed retail event.\"", customEvent.data[@"properties"][@"description"], @"Unexpected description.");
-    XCTAssertEqualObjects(@"\"Urban Airship\"", customEvent.data[@"properties"][@"brand"], @"Unexpected category.");
+    XCTAssertEqualObjects(@"\"Airship\"", customEvent.data[@"properties"][@"brand"], @"Unexpected category.");
     XCTAssertEqualObjects(@"true", customEvent.data[@"properties"][@"new_item"], @"Unexpected new item value.");
     XCTAssertEqualObjects(@"retail", [customEvent.data objectForKey:@"template_type"], @"Unexpected event template type.");
 }
@@ -118,7 +118,7 @@
     eventTemplate.identifier = @"12345";
     eventTemplate.eventDescription = @"Added to cart retail event.";
     eventTemplate.transactionID = @"1122334455";
-    eventTemplate.brand = @"Urban Airship";
+    eventTemplate.brand = @"Airship";
     eventTemplate.isNewItem = YES;
     UACustomEvent *customEvent = [eventTemplate createEvent];
     [customEvent track];
@@ -130,7 +130,7 @@
     XCTAssertEqualObjects(@"\"retail-category\"", customEvent.data[@"properties"][@"category"], @"Unexpected category.");
     XCTAssertEqualObjects(@"\"12345\"", customEvent.data[@"properties"][@"id"], @"Unexpected ID.");
     XCTAssertEqualObjects(@"\"Added to cart retail event.\"", customEvent.data[@"properties"][@"description"], @"Unexpected description.");
-    XCTAssertEqualObjects(@"\"Urban Airship\"", customEvent.data[@"properties"][@"brand"], @"Unexpected category.");
+    XCTAssertEqualObjects(@"\"Airship\"", customEvent.data[@"properties"][@"brand"], @"Unexpected category.");
     XCTAssertEqualObjects(@"true", customEvent.data[@"properties"][@"new_item"], @"Unexpected new item value.");
     XCTAssertEqualObjects(@"retail", [customEvent.data objectForKey:@"template_type"], @"Unexpected event template type.");
 }
@@ -171,7 +171,7 @@
     eventTemplate.identifier = @"12345";
     eventTemplate.eventDescription = @"Starred product retail event.";
     eventTemplate.transactionID = @"1122334455";
-    eventTemplate.brand = @"Urban Airship";
+    eventTemplate.brand = @"Airship";
     eventTemplate.isNewItem = YES;
     UACustomEvent *customEvent = [eventTemplate createEvent];
     [customEvent track];
@@ -183,7 +183,7 @@
     XCTAssertEqualObjects(@"\"retail-category\"", customEvent.data[@"properties"][@"category"], @"Unexpected category.");
     XCTAssertEqualObjects(@"\"12345\"", customEvent.data[@"properties"][@"id"], @"Unexpected ID.");
     XCTAssertEqualObjects(@"\"Starred product retail event.\"", customEvent.data[@"properties"][@"description"], @"Unexpected description.");
-    XCTAssertEqualObjects(@"\"Urban Airship\"", customEvent.data[@"properties"][@"brand"], @"Unexpected category.");
+    XCTAssertEqualObjects(@"\"Airship\"", customEvent.data[@"properties"][@"brand"], @"Unexpected category.");
     XCTAssertEqualObjects(@"true", customEvent.data[@"properties"][@"new_item"], @"Unexpected new item value.");
     XCTAssertEqualObjects(@"retail", [customEvent.data objectForKey:@"template_type"], @"Unexpected event template type.");
 }
@@ -224,7 +224,7 @@
     eventTemplate.identifier = @"12345";
     eventTemplate.eventDescription = @"Purchased retail event.";
     eventTemplate.transactionID = @"1122334455";
-    eventTemplate.brand = @"Urban Airship";
+    eventTemplate.brand = @"Airship";
     eventTemplate.isNewItem = YES;
     UACustomEvent *customEvent = [eventTemplate createEvent];
     [customEvent track];
@@ -236,7 +236,7 @@
     XCTAssertEqualObjects(@"\"retail-category\"", customEvent.data[@"properties"][@"category"], @"Unexpected category.");
     XCTAssertEqualObjects(@"\"12345\"", customEvent.data[@"properties"][@"id"], @"Unexpected ID.");
     XCTAssertEqualObjects(@"\"Purchased retail event.\"", customEvent.data[@"properties"][@"description"], @"Unexpected description.");
-    XCTAssertEqualObjects(@"\"Urban Airship\"", customEvent.data[@"properties"][@"brand"], @"Unexpected category.");
+    XCTAssertEqualObjects(@"\"Airship\"", customEvent.data[@"properties"][@"brand"], @"Unexpected category.");
     XCTAssertEqualObjects(@"true", customEvent.data[@"properties"][@"new_item"], @"Unexpected new item value.");
     XCTAssertEqualObjects(@"retail", [customEvent.data objectForKey:@"template_type"], @"Unexpected event template type.");
 }
@@ -277,7 +277,7 @@
     eventTemplate.identifier = @"12345";
     eventTemplate.eventDescription = @"Shared product retail event.";
     eventTemplate.transactionID = @"1122334455";
-    eventTemplate.brand = @"Urban Airship";
+    eventTemplate.brand = @"Airship";
     eventTemplate.isNewItem = YES;
     UACustomEvent *customEvent = [eventTemplate createEvent];
     [customEvent track];
@@ -289,7 +289,7 @@
     XCTAssertEqualObjects(@"\"retail-category\"", customEvent.data[@"properties"][@"category"], @"Unexpected category.");
     XCTAssertEqualObjects(@"\"12345\"", customEvent.data[@"properties"][@"id"], @"Unexpected ID.");
     XCTAssertEqualObjects(@"\"Shared product retail event.\"", customEvent.data[@"properties"][@"description"], @"Unexpected description.");
-    XCTAssertEqualObjects(@"\"Urban Airship\"", customEvent.data[@"properties"][@"brand"], @"Unexpected category.");
+    XCTAssertEqualObjects(@"\"Airship\"", customEvent.data[@"properties"][@"brand"], @"Unexpected category.");
     XCTAssertEqualObjects(@"true", customEvent.data[@"properties"][@"new_item"], @"Unexpected new item value.");
     XCTAssertEqualObjects(@"retail", [customEvent.data objectForKey:@"template_type"], @"Unexpected event template type.");
 }
@@ -334,7 +334,7 @@
     eventTemplate.identifier = @"12345";
     eventTemplate.eventDescription = @"Shared product retail event.";
     eventTemplate.transactionID = @"1122334455";
-    eventTemplate.brand = @"Urban Airship";
+    eventTemplate.brand = @"Airship";
     eventTemplate.isNewItem = YES;
     UACustomEvent *customEvent = [eventTemplate createEvent];
     [customEvent track];
@@ -348,7 +348,7 @@
     XCTAssertEqualObjects(@"\"retail-category\"", customEvent.data[@"properties"][@"category"], @"Unexpected category.");
     XCTAssertEqualObjects(@"\"12345\"", customEvent.data[@"properties"][@"id"], @"Unexpected ID.");
     XCTAssertEqualObjects(@"\"Shared product retail event.\"", customEvent.data[@"properties"][@"description"], @"Unexpected description.");
-    XCTAssertEqualObjects(@"\"Urban Airship\"", customEvent.data[@"properties"][@"brand"], @"Unexpected category.");
+    XCTAssertEqualObjects(@"\"Airship\"", customEvent.data[@"properties"][@"brand"], @"Unexpected category.");
     XCTAssertEqualObjects(@"true", customEvent.data[@"properties"][@"new_item"], @"Unexpected new item value.");
     XCTAssertEqualObjects(@"retail", [customEvent.data objectForKey:@"template_type"], @"Unexpected event template type.");
 }

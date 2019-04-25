@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UANamedUser.h"
 
@@ -80,7 +80,7 @@ extern NSString *const UANamedUserRemoveTagGroupsSettingsKey;
 /**
  * Factory method to create a named user. For testing.
  * @parm push The UAPush instance.
- * @param config The Urban Airship config.
+ * @param config The Airship config.
  * @param dataStore The shared preference data store.
  * @param tagGroupsRegistrar The tag groups registrar.
  * @return A named user instance.

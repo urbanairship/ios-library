@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import <UIKit/UIKit.h>
 
@@ -406,7 +406,7 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
     _customCategories = [categories filteredSetUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(id evaluatedObject, NSDictionary *bindings) {
         UANotificationCategory *category = evaluatedObject;
         if ([category.identifier hasPrefix:@"ua_"]) {
-            UA_LWARN(@"Ignoring category %@, only Urban Airship notification categories are allowed to have prefix ua_.", category.identifier);
+            UA_LWARN(@"Ignoring category %@, only Airship notification categories are allowed to have prefix ua_.", category.identifier);
             return NO;
         }
 
@@ -497,7 +497,7 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
 
 
 #pragma mark -
-#pragma mark Open APIs - UA Registration Tags APIs
+#pragma mark Open APIs - Airship Registration Tags APIs
 
 - (void)addTag:(NSString *)tag {
     [self addTags:[NSArray arrayWithObject:tag]];
@@ -520,7 +520,7 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
 }
 
 #pragma mark -
-#pragma mark Open APIs - UA Tag Groups APIs
+#pragma mark Open APIs - Airship Tag Groups APIs
 
 - (void)addTags:(NSArray *)tags group:(NSString *)tagGroupID {
     if (self.channelTagRegistrationEnabled && [UAPushDefaultDeviceTagGroup isEqualToString:tagGroupID]) {
@@ -563,7 +563,7 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
     // we are post-registration and will need to make
     // an update call
     if (self.autobadgeEnabled && (self.deviceToken || self.channelID)) {
-        UA_LDEBUG(@"Sending autobadge update to UA server.");
+        UA_LDEBUG(@"Sending autobadge update to Airship server.");
         [self updateChannelRegistrationForcefully:YES];
     }
 }
@@ -642,7 +642,7 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
 }
 
 #pragma mark -
-#pragma mark UA Registration Methods
+#pragma mark Airship Registration Methods
 
 
 - (void)createChannelPayload:(void (^)(UAChannelRegistrationPayload *))completionHandler
@@ -752,7 +752,7 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
         [self updateAPNSRegistration];
     } else if (self.userPushNotificationsEnabled && !self.channelID) {
         UA_LDEBUG(@"Push is enabled but we have not yet generated a channel ID. "
-                  "Urban Airship registration will automatically run when the device token is registered, "
+                  "Airship registration will automatically run when the device token is registered, "
                   "the next time the app is backgrounded, or the next time the app is foregrounded.");
     } else {
         [self updateChannelRegistrationForcefully:NO];

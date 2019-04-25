@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UAKeychainUtils+Internal.h"
 #import "UAGlobal.h"
@@ -13,7 +13,7 @@ static NSString *cachedDeviceID_ = nil;
 + (NSMutableDictionary *)searchDictionaryWithIdentifier:(NSString *)identifier;
 
 /**
- * Creates a new UA Device ID (UUID) and stores it in the keychain.
+ * Creates a new Airship Device ID (UUID) and stores it in the keychain.
  *
  * @return The device ID.
  */
@@ -158,7 +158,7 @@ static NSString *cachedDeviceID_ = nil;
 }
 
 #pragma mark -
-#pragma UA Device ID
+#pragma Airship Device ID
 
 + (NSString *)createDeviceID {
     NSString *deviceID = [NSUUID UUID].UUIDString;

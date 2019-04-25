@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UABaseTest.h"
 #import <JavaScriptCore/JavaScriptCore.h>
@@ -175,7 +175,7 @@
 
 /**
  * Test webView:decidePolicyForNavigationAction:decisionHandler: forwards uairship:// schemes
- * to the Urban Airship Action JS delegate with the associated inbox message.
+ * to the Airship Action JS delegate with the associated inbox message.
  */
 - (void)testShouldStartLoadRunsActions {
     // Action request
@@ -220,7 +220,7 @@
 
 /**
  * Test webView:shouldStartLoadWithRequest:navigationType: does not forward uairship:// schemes
- * to the Urban Airship Action JS delegate if the URL is not whitelisted.
+ * to the Airship Action JS delegate if the URL is not whitelisted.
  */
 - (void)testShouldStartLoadRejectsActionRunsNotWhitelisted {
     // Action request
@@ -259,14 +259,14 @@
 }
 
 /**
- * Test webView:didFinishNavigation: injects the UA Javascript interface.
+ * Test webView:didFinishNavigation: injects the Airship Javascript interface.
  */
 - (void)testDidFinishPopulateJavascriptEnvironmentWithWKWebView {
     [self commonTestDidFinishPopulateJavascriptEnvironmentWithUAWebView:NO];
 }
 
 /**
- * Test webView:didFinishNavigation: injects the UA Javascript interface.
+ * Test webView:didFinishNavigation: injects the Airship Javascript interface.
  */
 - (void)testDidFinishPopulateJavascriptEnvironmentWithUAWebView {
     [self commonTestDidFinishPopulateJavascriptEnvironmentWithUAWebView:YES];
@@ -348,7 +348,7 @@
 }
 
 /**
- * Test webView:didFinishNavigation: injects the UA Javascript interface with the
+ * Test webView:didFinishNavigation: injects the Airship Javascript interface with the
  * inbox message information if the web view's main document url points to
  * a message's body URL.
  */

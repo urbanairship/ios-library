@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import <Foundation/Foundation.h>
 #import "UAAPIClient+Internal.h"
@@ -30,14 +30,14 @@ typedef void (^UANamedUserAPIClientFailureBlock)(NSUInteger status);
 
 /**
  * Factory method to create a UANamedUserAPIClient.
- * @param config the Urban Airship config.
+ * @param config The Airship config.
  * @return UANamedUserAPIClient instance.
  */
 + (instancetype)clientWithConfig:(UAConfig *)config;
 
 /**
  * Factory method to create a UANamedUserAPIClient.
- * @param config the Urban Airship config.
+ * @param config The Airship config.
  * @param session the request session.
  * @return UANamedUserAPIClient instance.
  */

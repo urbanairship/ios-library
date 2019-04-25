@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UAInbox.h"
 
@@ -34,7 +34,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Factory method to create an inbox.
  * @param user The inbox user.
- * @param config The Urban Airship config.
+ * @param config The Airship config.
  * @param dataStore The preference data store.
  * @return The user's inbox.
  */

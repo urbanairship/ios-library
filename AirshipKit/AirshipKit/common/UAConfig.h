@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import <Foundation/Foundation.h>
 
@@ -56,22 +56,22 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) UALogLevel productionLogLevel;
 
 /**
- * The size in MB for the UA Disk Cache.  Defaults to 100.
+ * The size in MB for the Airship Disk Cache.  Defaults to 100.
  *
  * Only items that are small enough (1/20th of the size) of the cache will be 
  * cached.
  * 
- * Any size greater than 0 will cause the UA Disk Cache to become active. 
+ * Any size greater than 0 will cause the Airship Disk Cache to become active. 
  * UAURLProtocol will be registered as a NSURLProtocol.  Only requests whose
  * mainDocumentURL or URL that have been added as a cachable URL will be considered
  * for caching.  By defualt it includes all of the Rich Application Page URLs.
  *
- * @deprecated Deprecated - to be removed in SDK version 11.0. The UA Disk Cache is obsolete with the use of WKWebView.
+ * @deprecated Deprecated - to be removed in SDK version 11.0. The Airship Disk Cache is obsolete with the use of WKWebView.
  */
-@property (nonatomic, assign) NSUInteger cacheDiskSizeInMB DEPRECATED_MSG_ATTRIBUTE("Deprecated - to be removed in SDK version 11.0. The UA Disk Cache is obsolete with the use of WKWebView");
+@property (nonatomic, assign) NSUInteger cacheDiskSizeInMB DEPRECATED_MSG_ATTRIBUTE("Deprecated - to be removed in SDK version 11.0. The Airship Disk Cache is obsolete with the use of WKWebView");
 
 /**
- * If enabled, the UA library automatically registers for remote notifications when push is enabled
+ * If enabled, the Airship library automatically registers for remote notifications when push is enabled
  * and intercepts incoming notifications in both the foreground and upon launch.
  *
  * Defaults to YES. If this is disabled, you will need to register for remote notifications
@@ -94,7 +94,7 @@ NS_ASSUME_NONNULL_BEGIN
 ///---------------------------------------------------------------------------------------
 
 /**
- * Toggles Urban Airship analytics. Defaults to `YES`. If set to `NO`, many UA features will not be
+ * Toggles Airship analytics. Defaults to `YES`. If set to `NO`, many Airship features will not be
  * available to this application.
  */
 @property (nonatomic, assign, getter=isAnalyticsEnabled) BOOL analyticsEnabled;
@@ -118,17 +118,17 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) BOOL detectProvisioningMode;
 
 /**
- * The Urban Airship device API url. This option is reserved for internal debugging.
+ * The Airship device API url. This option is reserved for internal debugging.
  */
 @property (nonatomic, copy) NSString *deviceAPIURL;
 
 /**
- * The Urban Airship analytics API url. This option is reserved for internal debugging.
+ * The Airship analytics API url. This option is reserved for internal debugging.
  */
 @property (nonatomic, copy) NSString *analyticsURL;
 
 /**
- * The Urban Airship default message center style configuration file.
+ * The Airship default message center style configuration file.
  */
 @property (nonatomic, copy) NSString *messageCenterStyleConfig;
 
@@ -138,7 +138,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) NSString *itunesID;
 
 /**
- * If set to `YES`, the Urban Airship user will be cleared if the application is
+ * If set to `YES`, the Airship user will be cleared if the application is
  * restored on a different device from an encrypted backup.
  *
  * Defaults to `NO`.
@@ -180,7 +180,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) NSDictionary *customConfig;
 
 /**
- * If set to 'YES', the UA SDK will request authorization to use
+ * If set to 'YES', the Airship SDK will request authorization to use
  * notifications from the user. Apps that set this flag to `NO` are
  * required to request authorization themselves.
  *

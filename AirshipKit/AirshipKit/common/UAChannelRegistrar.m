@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UAChannelRegistrar+Internal.h"
 #import "UAChannelAPIClient+Internal.h"

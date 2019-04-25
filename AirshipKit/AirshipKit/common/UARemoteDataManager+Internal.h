@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import <UIKit/UIKit.h>
 #import "UADisposable.h"
@@ -43,7 +43,7 @@ typedef void (^UARemoteDataPublishBlock)(NSArray<UARemoteDataPayload *> *remoteD
 /**
  * Create the remote data manager.
  *
- * @param config The Urban Airship config.
+ * @param config The Airship config.
  * @param dataStore A UAPreferenceDataStore to store persistent preferences
  * @return The remote data manager instance.
  */
@@ -83,7 +83,7 @@ typedef void (^UARemoteDataPublishBlock)(NSArray<UARemoteDataPayload *> *remoteD
 /**
  * Create the remote data manager. Used for testing.
  *
- * @param config The Urban Airship config.
+ * @param config The Airship config.
  * @param dataStore A UAPreferenceDataStore to store persistent preferences
  * @param remoteDataStore The remote data store.
  * @param remoteDataAPIClient The remote data API client.

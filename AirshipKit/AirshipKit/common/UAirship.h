@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UAGlobal.h"
 #import "UAJavaScriptDelegate.h"
@@ -55,7 +55,7 @@
 @optional
 
 /**
- * Called when a deep link has been triggered from Urban Airship. If implemented, the delegate is responsible for processing the provided url.
+ * Called when a deep link has been triggered from Airship. If implemented, the delegate is responsible for processing the provided url.
  *
  * @param url The url for the deep link.
  * @param completionHandler The completion handler to execute when the deep link processing is complete.
@@ -74,7 +74,7 @@ NS_ASSUME_NONNULL_BEGIN
 extern NSString * const UAirshipTakeOffBackgroundThreadException;
 
 /**
- * UAirship manages the shared state for all Urban Airship services. [UAirship takeOff:] should be
+ * UAirship manages the shared state for all Airship services. [UAirship takeOff:] should be
  * called from within your application delegate's `application:didFinishLaunchingWithOptions:` method
  * to initialize the shared instance.
  */
@@ -148,7 +148,7 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
 + (void)setLogging:(BOOL)enabled;
 
 /**
- * Sets the log level for the Urban Airship library. The log level defaults to `UALogLevelDebug`
+ * Sets the log level for the Airship library. The log level defaults to `UALogLevelDebug`
  * for development apps, and `UALogLevelError` for production apps (when the inProduction
  * AirshipConfig flag is set to `YES`). Values set with this method prior to `takeOff` will be overridden
  * during takeOff.

@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import <UIKit/UIKit.h>
 
@@ -72,9 +72,9 @@ typedef NS_ENUM(NSInteger, UALogLevel) {
     do { \
         if (uaLoggingEnabled && uaLogLevel >= UALogLevelError) { \
             if (uaLoudImpErrorLoggingEnabled) { \
-                NSLog((@"🚨Urban Airship Implementation Error🚨 - " fmt), ##__VA_ARGS__); \
+                NSLog((@"🚨Airship Implementation Error🚨 - " fmt), ##__VA_ARGS__); \
             } else { \
-                NSLog((@"Urban Airship Implementation Error - " fmt), ##__VA_ARGS__); \
+                NSLog((@"Airship Implementation Error - " fmt), ##__VA_ARGS__); \
             } \
         } \
     } while(0)
@@ -115,13 +115,13 @@ _Pragma("clang diagnostic pop") \
 
 #define UA_PREVIEW_WARNING \
 NSLog(@"\n\n" \
-      "\t                    URBAN AIRSHIP PREVIEW RELEASE                    \n"\
+      "\t                       AIRSHIP PREVIEW RELEASE                       \n"\
       "\t                                                                     \n"\
-      "\t  THIS URBAN AIRSHIP SDK IS RELEASED AS A DEVELOPER PREVIEW VERSION  \n"\
-      "\t  AND MAY CONTAIN BUGS, ERRORS, DEFECTS, HARMFUL COMPONENTS AND MAY  \n"\
-      "\t  NOT BE COMPATIBLE WITH THE FINAL VERSION OF THE APPLICABLE THIRD   \n"\
-      "\t  PARTY OPERATING SYSTEM. ACCORDINGLY, URBAN AIRSHIP IS PROVIDING    \n"\
-      "\t  THE LICENSE ON AN “AS IS” BASIS  AND NOT FOR USE IN PRODUCTION.    \n"\
+      "\t  THIS AIRSHIP SDK IS RELEASED AS A DEVELOPER PREVIEW VERSION AND    \n"\
+      "\t  MAY CONTAIN BUGS, ERRORS, DEFECTS, HARMFUL COMPONENTS AND MAY NOT  \n"\
+      "\t  BE COMPATIBLE WITH THE FINAL VERSION OF THE APPLICABLE THIRD PARTY \n"\
+      "\t  OPERATING SYSTEM. ACCORDINGLY, AIRSHIP IS PROVIDING THE LICENSE ON \n"\
+      "\t  AN “AS IS” BASIS AND NOT FOR USE IN PRODUCTION.                    \n"\
       "\t                            _..--=--..._                             \n"\
       "\t                         .-'            '-.  .-.                     \n"\
       "\t                        /.'              '.\\/  /                    \n"\

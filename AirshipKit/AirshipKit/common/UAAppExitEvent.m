@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UAAppExitEvent+Internal.h"
 #import "UAEvent+Internal.h"

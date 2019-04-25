@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import <UIKit/UIKit.h>
 
@@ -63,7 +63,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Factory method to create a channel registrar.
- * @param config The Urban Airship config.
+ * @param config The Airship config.
  * @param dataStore The shared preference data store.
  * @param delegate The UAChannelRegistrarDelegate delegate.
  * @return A new channel registrar instance.
@@ -78,7 +78,7 @@ NS_ASSUME_NONNULL_BEGIN
 ///---------------------------------------------------------------------------------------
 
 /**
- * Register the device with Urban Airship.
+ * Register the device with Airship.
  *
  * @note This method will execute asynchronously on the main thread.
  *
@@ -112,7 +112,7 @@ NS_ASSUME_NONNULL_BEGIN
 ///---------------------------------------------------------------------------------------
 /**
  * Factory method to create a channel registrar. (for testing)
- * @param config The Urban Airship config.
+ * @param config The Airship config.
  * @param dataStore The shared preference data store.
  * @param delegate The UAChannelRegistrarDelegate delegate.
  * @param channelID The initial channel ID string.

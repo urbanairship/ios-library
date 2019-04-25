@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UANamedUser+Internal.h"
 #import "UANamedUserAPIClient+Internal.h"
@@ -16,7 +16,7 @@ NSString *const UANamedUserLastUpdatedTokenKey = @"UANamedUserLastUpdatedToken";
 @interface UANamedUser()
 
 /**
- * The UATagGroupsRegistrar that manages tag group registration with Urban Airship.
+ * The UATagGroupsRegistrar that manages tag group registration with Airship.
  */
 @property (nonatomic, strong) UATagGroupsRegistrar *tagGroupsRegistrar;
 

@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import <UIKit/UIKit.h>
 #import <WebKit/WebKit.h>
@@ -20,7 +20,7 @@ extern NSString *const UANativeBridgeDismissCommand;
 
 /**
  * Base class for UIWebView & WKWebView native bridges that automatically inject the 
- * Urban Airship Javascript interface on whitelisted URLs.
+ * Airship Javascript interface on whitelisted URLs.
  */
 @interface UABaseNativeBridge()
 

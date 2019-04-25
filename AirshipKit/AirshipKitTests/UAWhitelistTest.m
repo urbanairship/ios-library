@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import <UIKit/UIKit.h>
 #import "UABaseTest.h"
@@ -45,7 +45,7 @@
 }
 
 /**
- * Test the default white list accepts Urban Airship URLs.
+ * Test the default white list accepts Airship URLs.
  */
 - (void)testDefaultWhitelist {
     UAConfig *config = [UAConfig config];
