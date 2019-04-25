@@ -38,6 +38,7 @@ NSUInteger const UAInAppMessageNameLimit = 100;
         self.campaigns = message.campaigns;
         self.displayBehavior = message.displayBehavior;
         self.isReportingEnabled = message.isReportingEnabled;
+        self.renderedLocale = message.renderedLocale;
     }
 
     return self;
@@ -82,6 +83,7 @@ NSUInteger const UAInAppMessageNameLimit = 100;
 @implementation UAInAppMessage
 @synthesize campaigns = _campaigns;
 @synthesize source = _source;
+@synthesize renderedLocale = _renderedLocale;
 
 NSString * const UAInAppMessageErrorDomain = @"com.urbanairship.in_app_message";
 
@@ -95,6 +97,9 @@ NSString *const UAInAppMessageActionsKey = @"actions";
 NSString *const UAInAppMessageCampaignsKey = @"campaigns";
 NSString *const UAInAppMessageSourceKey = @"source";
 NSString *const UAInAppMessageNameKey = @"name";
+NSString *const UAInAppMessageRenderedLocaleKey = @"rendered_locale";
+NSString *const UAInAppMessageRenderedLocaleLanguageKey = @"language";
+NSString *const UAInAppMessageRenderedLocaleCountryKey = @"country";
 
 NSString *const UAInAppMessageDisplayBehaviorKey = @"display_behavior";
 NSString *const UAInAppMessageReportingEnabledKey = @"reporting_enabled";
@@ -322,6 +327,48 @@ NSString *const UAInAppMessageSourceLegacyPushValue = @"legacy-push";
         builder.isReportingEnabled = [isReportingEnabled boolValue];
     }
 
+    id renderedLocale = json[UAInAppMessageRenderedLocaleKey];
+    if (renderedLocale) {
+        if (![renderedLocale isKindOfClass:[NSDictionary class]]) {
+            if (error) {
+                NSString *msg = [NSString stringWithFormat:@"Rendered locale must be a dictionary. Invalid value: %@", renderedLocale];
+                *error =  [NSError errorWithDomain:UAInAppMessageErrorDomain
+                                              code:UAInAppMessageErrorCodeInvalidJSON
+                                          userInfo:@{NSLocalizedDescriptionKey:msg}];
+            }
+
+            return nil;
+        }
+
+        id language = renderedLocale[UAInAppMessageRenderedLocaleLanguageKey];
+        id country = renderedLocale[UAInAppMessageRenderedLocaleCountryKey];
+
+        if (!language && !country) {
+            if (error) {
+                NSString *msg = [NSString stringWithFormat:@"Rendered locale must contain one of \"country\" or \"language\" fields. \
+                                 Invalid value: %@", renderedLocale];
+                *error =  [NSError errorWithDomain:UAInAppMessageErrorDomain
+                                              code:UAInAppMessageErrorCodeInvalidJSON
+                                          userInfo:@{NSLocalizedDescriptionKey:msg}];
+            }
+
+            return nil;
+        }
+
+        if ((language && ![language isKindOfClass:[NSString class]]) || (country && ![country isKindOfClass:[NSString class]])) {
+            if (error) {
+                NSString *msg = [NSString stringWithFormat:@"Language and country codes must be strings. Invalid value: %@", renderedLocale];
+                *error =  [NSError errorWithDomain:UAInAppMessageErrorDomain
+                                              code:UAInAppMessageErrorCodeInvalidJSON
+                                          userInfo:@{NSLocalizedDescriptionKey:msg}];
+            }
+
+            return nil;
+        }
+
+        builder.renderedLocale = renderedLocale;
+    }
+
     if (![builder isValid]) {
         if (error) {
             NSString *msg = [NSString stringWithFormat:@"Invalid message JSON: %@", json];
@@ -375,6 +422,7 @@ NSString *const UAInAppMessageSourceLegacyPushValue = @"legacy-push";
         self.isReportingEnabled = builder.isReportingEnabled;
         _campaigns = builder.campaigns;
         _source = builder.source;
+        _renderedLocale = builder.renderedLocale;
     }
 
     return self;
@@ -386,6 +434,10 @@ NSString *const UAInAppMessageSourceLegacyPushValue = @"legacy-push";
 
 - (NSDictionary *)campaigns {
     return _campaigns;
+}
+
+- (NSDictionary<NSString *, NSString *> *)renderedLocale {
+    return _renderedLocale;
 }
 
 - (nullable UAInAppMessage *)extend:(void(^)(UAInAppMessageBuilder *builder))builderBlock {
@@ -451,6 +503,7 @@ NSString *const UAInAppMessageSourceLegacyPushValue = @"legacy-push";
     [data setValue:self.extras forKey:UAInAppMessageExtraKey];
     [data setValue:self.actions forKey:UAInAppMessageActionsKey];
     [data setValue:self.campaigns forKey:UAInAppMessageCampaignsKey];
+    [data setValue:self.renderedLocale forKey:UAInAppMessageRenderedLocaleKey];
 
     return [data copy];
 }

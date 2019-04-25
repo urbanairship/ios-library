@@ -11,11 +11,15 @@
 
 @interface UAInAppMessageTest : UABaseTest
 @property(nonatomic, strong) NSDictionary *json;
+@property(nonatomic, strong) NSDictionary<NSString*, NSString*> *renderedLocale;
 @end
 
 @implementation UAInAppMessageTest
 
 - (void)testJSON {
+
+    self.renderedLocale =  @{@"language" : @"en", @"country" : @"US"};
+
     // setup
     NSDictionary *originalJSON = @{
                   @"message_id": @"blah",
@@ -31,7 +35,8 @@
                   @"source": @"remote-data",
                   @"campaigns": @{ @"some": @"campaign info"},
                   @"reporting_enabled": @NO,
-                  @"display_behavior":@"default"
+                  @"display_behavior":@"default",
+                  @"rendered_locale" : self.renderedLocale
                   };
     
     // test
@@ -50,6 +55,8 @@
     XCTAssertEqualObjects(@YES, messageFromOriginalJSON.audience.isNewUser);
     XCTAssertEqualObjects(@{ @"some": @"campaign info"}, messageFromOriginalJSON.campaigns);
     XCTAssertEqualObjects(UAInAppMessageDisplayBehaviorDefault, messageFromOriginalJSON.displayBehavior);
+    XCTAssertEqualObjects(self.renderedLocale, messageFromOriginalJSON.renderedLocale);
+
     XCTAssertFalse(messageFromOriginalJSON.isReportingEnabled);
 
     NSDictionary *toJSON = [messageFromOriginalJSON toJSON];

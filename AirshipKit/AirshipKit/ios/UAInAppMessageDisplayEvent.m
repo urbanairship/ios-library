@@ -5,6 +5,7 @@
 #import "UAInAppMessageEventUtils+Internal.h"
 
 NSString *const UAInAppMessageDisplayEventType = @"in_app_display";
+NSString *const UAInAppMessageDisplayEventLocaleKey = @"locale";
 
 @implementation UAInAppMessageDisplayEvent
 
@@ -12,6 +13,8 @@ NSString *const UAInAppMessageDisplayEventType = @"in_app_display";
     self = [super init];
     if (self) {
         self.data = [UAInAppMessageEventUtils createDataForMessage:message];
+        [self.data setValue:message.renderedLocale forKey:UAInAppMessageDisplayEventLocaleKey];
+
         return self;
     }
     return nil;

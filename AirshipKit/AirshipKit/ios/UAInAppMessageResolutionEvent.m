@@ -19,6 +19,7 @@ NSString *const UAInAppMessageResolutionEventButtonIDKey = @"button_id";
 NSString *const UAInAppMessageResolutionEventButtonDescriptionKey = @"button_description";
 NSString *const UAInAppMessageResolutionEventReplacementIDKey = @"replacement_id";
 NSString *const UAInAppMessageResolutionEventExpiryKey = @"expiry";
+NSString *const UAInAppMessageResolutionEventLocaleKey = @"locale";
 
 // Resolution types
 NSString *const UAInAppMessageResolutionEventReplaced = @"replaced";
@@ -68,7 +69,9 @@ NSString *const UAInAppMessageResolutionEventExpired = @"expired";
     NSDictionary *resolutionData = [UAInAppMessageResolutionEvent createResolutionDataWithResolution:resolution
                                                                                          displayTime:displayTime];
     NSMutableDictionary *data = [UAInAppMessageEventUtils createDataForMessage:message];
+
     [data setValue:resolutionData forKey:UAInAppMessageResolutionEventResolutionKey];
+    [data setValue:message.renderedLocale forKey:UAInAppMessageResolutionEventLocaleKey];
 
     return [[self alloc] initWithData:data];
 }
@@ -83,7 +86,9 @@ NSString *const UAInAppMessageResolutionEventExpired = @"expired";
     [resolutionData setValue:[formatter stringFromDate:expiredDate] forKey:UAInAppMessageResolutionEventExpiryKey];
 
     NSMutableDictionary *data = [UAInAppMessageEventUtils createDataForMessage:message];
+
     [data setValue:resolutionData forKey:UAInAppMessageResolutionEventResolutionKey];
+    [data setValue:message.renderedLocale forKey:UAInAppMessageResolutionEventLocaleKey];
 
     return [[self alloc] initWithData:data];
 }

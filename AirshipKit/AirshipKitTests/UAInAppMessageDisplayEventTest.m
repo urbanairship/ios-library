@@ -12,6 +12,7 @@
 @property (nonatomic, strong) id analytics;
 @property (nonatomic, strong) id airship;
 @property (nonatomic, strong) UAInAppMessageBannerDisplayContent *displayContent;
+@property (nonatomic, strong) NSDictionary<NSString*, NSString*> *renderedLocale;
 @end
 
 @implementation UAInAppMessageDisplayEventTest
@@ -50,6 +51,7 @@
 
     [UAirship setSharedAirship:self.airship];
 
+    self.renderedLocale = @{@"language" : @"en", @"country" : @"US"};
 }
 
 - (void)tearDown {
@@ -65,6 +67,7 @@
         builder.source = UAInAppMessageSourceRemoteData;
         builder.campaigns = @{@"some": @"campaigns object"};
         builder.displayContent = self.displayContent;
+        builder.renderedLocale = @{@"language" : @"en", @"country" : @"US"};
     }];
 
     UAInAppMessageDisplayEvent *event = [UAInAppMessageDisplayEvent eventWithMessage:remoteDataMessage];
@@ -73,7 +76,9 @@
                                                @"campaigns": @{@"some": @"campaigns object"} },
                                     @"source": @"urban-airship",
                                     @"conversion_send_id": [self.analytics conversionSendID],
-                                    @"conversion_metadata": [self.analytics conversionPushMetadata] };
+                                    @"conversion_metadata": [self.analytics conversionPushMetadata],
+                                    @"locale" : self.renderedLocale
+                                    };
 
     XCTAssertEqualObjects(event.data, expectedData);
     XCTAssertEqualObjects(event.eventType, @"in_app_display");
