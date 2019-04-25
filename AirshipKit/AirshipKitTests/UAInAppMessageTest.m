@@ -57,7 +57,6 @@
     XCTAssertEqualObjects(UAInAppMessageDisplayBehaviorDefault, messageFromOriginalJSON.displayBehavior);
     XCTAssertEqualObjects(self.renderedLocale, messageFromOriginalJSON.renderedLocale);
 
-
     XCTAssertFalse(messageFromOriginalJSON.isReportingEnabled);
 
     NSDictionary *toJSON = [messageFromOriginalJSON toJSON];
