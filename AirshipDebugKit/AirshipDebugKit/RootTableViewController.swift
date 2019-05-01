@@ -71,6 +71,12 @@ class RootTableViewController: UITableViewController {
     
     func showView(_ viewPath: URL) {
         var pathComponents = viewPath.pathComponents
+        
+        if (pathComponents.isEmpty) {
+            self.navigationController?.popToRootViewController(animated: false)
+            return
+        }
+
         if (pathComponents[0] == "/") {
             pathComponents.remove(at: 0)
         }

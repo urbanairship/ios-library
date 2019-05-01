@@ -71,6 +71,12 @@ public class AirshipDebugKit : NSObject {
         // no rootViewController in use, so get the view controller
         // from the appropriate storyboard and display it
         var pathComponents = viewPath.pathComponents
+
+        if (pathComponents.isEmpty) {
+            _ = popToRootViewOfDestination()
+            return
+        }
+
         if (pathComponents[0] == "/") {
             pathComponents.remove(at: 0)
         }
