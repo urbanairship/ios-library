@@ -20,5 +20,5 @@ Pod::Spec.new do |s|
    s.resources               = ['AirshipDebugKit/AirshipDebugKit/*/*storyboard', 'AirshipDebugKit/AirshipDebugKit/Resources/*' ]
 
    s.frameworks              = 'UIKit'
-   s.dependency                'UrbanAirship-iOS-SDK', '~> 10.0'
+   s.dependency                'UrbanAirship-iOS-SDK', '~> 11.0.0'
 end
