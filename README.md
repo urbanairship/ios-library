@@ -13,6 +13,7 @@ One of our engineers will verify receipt of the agreement before approving your 
 ## Resources
 
 - [AirshipKit Docs](http://docs.airship.com/reference/libraries/ios/latest/)
+- [AirshipLocationKit Docs](http://docs.airship.com/reference/libraries/ios-location/latest/)
 - [AirshipAppExtensions Docs](http://docs.airship.com/reference/libraries/ios-extensions/latest/)
 - [Getting started guide](http://docs.airship.com/platform/ios/)
 - [Migration Guides](Documentation/Migration/README.md)
