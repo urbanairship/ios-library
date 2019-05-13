@@ -13,6 +13,7 @@ One of our engineers will verify receipt of the agreement before approving your 
 ## Resources
 
 - [AirshipKit Docs](http://docs.airship.com/reference/libraries/ios/latest/)
+- [AirshipLocationKit Docs](http://docs.airship.com/reference/libraries/ios-location/latest/)
 - [AirshipAppExtensions Docs](http://docs.airship.com/reference/libraries/ios-extensions/latest/)
 - [Getting started guide](http://docs.airship.com/platform/ios/)
 - [Migration Guides](Documentation/Migration/README.md)
@@ -31,7 +32,8 @@ Make sure you have the [CocoaPods](http://cocoapods.org) dependency manager inst
 $ gem install cocoapods
 ```
 
-Specify the UrbanAirship-iOS-SDK in your podfile with the use_frameworks! option:
+Specify the UrbanAirship-iOS-SDK, and optionally, the UrbanAirship-iOS-Location pods in your `podfile`
+with the use_frameworks! option:
 
 ```txt
 use_frameworks!
@@ -39,6 +41,8 @@ use_frameworks!
 # Airship SDK
 target "<Your Target Name>" do
   pod 'UrbanAirship-iOS-SDK'
+  # Optional: uncomment to install AirshipLocationKit
+  # pod 'UrbanAirship-iOS-Location'
 end
 ```
 
@@ -111,22 +115,26 @@ are a few additional steps:
 
 ### Other Installation Methods
 
-For other installation methods, please checkout - [Getting started guide](http://docs.airship.com/platform/ios.html#installation).
-
+For other installation methods, see the - [Getting started guide](http://docs.airship.com/platform/ios.html#installation).
 
 ## Quickstart
 
-### An Important Note about Location Permissions
+### An Important Note about Location
 
-As of Spring 2019, Apple has begun rejecting applications that use, or appear to use, Core Location services
-without supplying usage descriptions in their `Info.plist` files. The Airship SDK contains lightweight
-wrappers around Core Location APIs, but does not collect location data by default unless foreground or background 
-location is explicitly enabled in `UALocationManager`. To avoid this, you should add usage description strings to
-your `Info.plist` file under the `NSLocationAlwaysUsageDescription`, `NSLocationWhenInUseUsageDescription`, and `NSLocationAlwaysAndWhenInUseUsageDescription` keys.
+In Spring 2019, Apple began rejecting applications that use, or appear to use, Core Location services
+without supplying usage descriptions in their `Info.plist` files. In Airship SDK 11.0, all references to
+CoreLocation have been removed from the core library and placed in a separate location module. Developers with
+no need for location services can continue to use AirshipKit as before, but for those who have been using the
+`UALocation` class, see the [Location](https://docs.airship.com/platform/ios/location/) sections for updated
+setup instructions.
 
-If your app does not use the location features of the SDK, these descriptions will not be visible to the user, and
-are simply an extra step required to satisfy Apple's submission requirements. On the other hand, if your app does
-use these features, see the [Location](https://docs.airship.com/platform/ios/location/) setup instructions.
+## Warning
+
+As of SDK 10.2 and Apple's current App Store review policies, apps bulding against AirshipKit without location usage
+descriptions in  `Info.plist` are likely to be rejected. The easiest way to avoid this, if location services are not
+needed, is to use Airship SDK 11.0 or greater. If building against previous Airship SDKs, you will need to add add
+usage description strings to your `Info.plist` file under the `NSLocationAlwaysUsageDescription`,
+`NSLocationWhenInUseUsageDescription`, and `NSLocationAlwaysAndWhenInUseUsageDescription` keys.
 
 ### Capabilities
 
@@ -261,6 +269,3 @@ Base64              | BSD       | Copyright 2009-2010 Matt Gallagher.
 Third party Package | License   | Copyright / Creator
 ------------------- | --------- | -----------------------------------
 JRSwizzle           | MIT       | Copyright 2012 Jonathan Rentzsch
-
-
-
