@@ -146,7 +146,7 @@ extern NSString *const UAInAppMessageDisplayBehaviorImmediate;
 @property(nonatomic, copy, readonly) NSString *displayBehavior;
 
 /**
- * Flag indicating if reporting is enabled. Defaults to `NO`.
+ * Flag indicating if reporting is enabled. Defaults to `YES`.
  */
 @property(nonatomic, assign, readonly) BOOL isReportingEnabled;
 

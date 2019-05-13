@@ -127,7 +127,8 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
                                                          tagGroupsMutationHistory:tagGroupsMutationHistory
                                                                 remoteDataManager:self.sharedRemoteDataManager
                                                                         dataStore:dataStore
-                                                                             push:self.sharedPush];
+                                                                             push:self.sharedPush
+                                                                        analytics:self.sharedAnalytics];
 
         self.sharedLegacyInAppMessaging = [UALegacyInAppMessaging inAppMessagingWithAnalytics:self.sharedAnalytics dataStore:dataStore inAppMessageManager:self.sharedInAppMessageManager];
         // Message center not supported on tvOS

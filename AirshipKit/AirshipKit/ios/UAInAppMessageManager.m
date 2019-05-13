@@ -133,7 +133,8 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
          tagGroupsMutationHistory:(UATagGroupsMutationHistory *)tagGroupsMutationHistory
                 remoteDataManager:(UARemoteDataManager *)remoteDataManager
                         dataStore:(UAPreferenceDataStore *)dataStore
-                             push:(UAPush *)push {
+                             push:(UAPush *)push
+                        analytics:(UAAnalytics *)analytics {
 
     NSString *storeName = [NSString stringWithFormat:UAInAppAutomationStoreFileFormat, config.appKey];
 
@@ -152,7 +153,7 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
                                                          dispatcher:[UADispatcher mainDispatcher]
                                                  displayCoordinator:[[UAInAppMessageDefaultDisplayCoordinator alloc] init]
                                                        assetManager:[UAInAppMessageAssetManager assetManager]
-                                                          analytics:[UAirship analytics]];
+                                                          analytics:analytics];
 }
 
 - (instancetype)initWithAutomationEngine:(UAAutomationEngine *)automationEngine
@@ -183,7 +184,7 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
         self.defaultDisplayCoordinator = displayCoordinator;
         self.immediateDisplayCoordinator = [UAInAppMessageImmediateDisplayCoordinator coordinator];
         self.assetManager = assetManager;
-        self.analytics = analytics ?: [UAirship analytics];
+        self.analytics = analytics;
         
         [self setDefaultAdapterFactories];
 
@@ -647,10 +648,9 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
         [delegate messageWillBeDisplayed:message scheduleID:schedule.identifier];
     }
 
-    // Display event
-    UAEvent *event = [UAInAppMessageDisplayEvent eventWithMessage:message];
-
     if (info.message.isReportingEnabled) {
+        // Display event
+        UAEvent *event = [UAInAppMessageDisplayEvent eventWithMessage:message];
         [self.analytics addEvent:event];
     }
 

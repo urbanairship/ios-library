@@ -63,14 +63,16 @@ NS_ASSUME_NONNULL_BEGIN
  * @param tagGroupsMutationHistory The tag groups mutation history.
  * @param remoteDataManager The remote data manager.
  * @param dataStore The preference data store.
- * @param push The system UAPush instance
+ * @param push The system UAPush instance.
+ * @param analytics The system analytics instance.
  * @return A in-app message manager instance.
  */
 + (instancetype)managerWithConfig:(UAConfig *)config
          tagGroupsMutationHistory:(UATagGroupsMutationHistory *)tagGroupsMutationHistory
                 remoteDataManager:(UARemoteDataManager *)remoteDataManager
                         dataStore:(UAPreferenceDataStore *)dataStore
-                             push:(UAPush *)push;
+                             push:(UAPush *)push
+                        analytics:(UAAnalytics *)analytics;
 
 
 // UAAutomationEngineDelegate methods for testing
