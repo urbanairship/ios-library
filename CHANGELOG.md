@@ -6,7 +6,8 @@ Migration Guides: Documentation/Migration
 Version 11.0.0 - May 17, 2019
 =============================
 Major update removing the `UALocation` module from the core SDK. Location services are now available
-in an optional external module named `AirshipLocationKit`.
+in an optional external module named `AirshipLocationKit`. This version also adds support for
+localized messages in In-App Automation.
 
 Changes
 -------
@@ -15,6 +16,7 @@ Changes
 - Added `AirshipLocationKit` and `AirshipLocationLib` targets
 - Apps that don't use location services no longer need to include location usage descriptions
   in their `Info.plist` files when submitting to the App Store
+- Added support for localized messages in In-App Automation
 
 New apps or apps experiencing difficulties with App Store submission regarding location usage
 descriptions are encouraged to update.
