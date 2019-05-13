@@ -540,7 +540,7 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
     [self.prepareSchedulePipeline addChainedRetriables:@[createAdapter, audienceChecks, prepareMessageAssets, prepareMessageData]];
 }
 
-- (id<UAInAppMessageDisplayCoordinator>)displayCoordinatorForMessage:(UAInAppMessage *)message {
+- (nullable id<UAInAppMessageDisplayCoordinator>)displayCoordinatorForMessage:(UAInAppMessage *)message {
     id<UAInAppMessageDisplayCoordinator> displayCoordinator;
 
     if ([self.delegate respondsToSelector:@selector(displayCoordinatorForMessage:)]) {

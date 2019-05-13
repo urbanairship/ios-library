@@ -28,9 +28,10 @@ NS_ASSUME_NONNULL_BEGIN
  * Allows the delegate to provide a custom display coordinator for the provided message.
  *
  * @param message The message.
- * @return An object implementing the UAInAppMessageDisplayCoordinator protocol.
+ * @return An object implementing the UAInAppMessageDisplayCoordinator protocol or nil
+ * if no suitable display coordinator is available.
  */
-- (id<UAInAppMessageDisplayCoordinator>)displayCoordinatorForMessage:(UAInAppMessage *)message;
+- (nullable id<UAInAppMessageDisplayCoordinator>)displayCoordinatorForMessage:(UAInAppMessage *)message;
 
 /**
  * Allows the delegate to extend a message before display.
