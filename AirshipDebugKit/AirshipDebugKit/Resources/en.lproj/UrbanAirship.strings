@@ -19,7 +19,7 @@
 "ua_device_info_enable_push" = "Enable Push";
 
 "ua_device_info_channel_id" = "Channel ID";
- "ua_device_info_username" = "Inbox Username";
+"ua_device_info_username" = "Inbox Username";
 "ua_device_info_named_user" = "Named User";
 "ua_device_info_associated_identifiers" = "Associated Identifiers";
 "ua_device_info_tags" = "Tags";
@@ -28,13 +28,24 @@
 "ua_device_info_analytics_enabled" = "Analytics Enabled";
 "ua_device_info_enable_analytics_tracking" = "Enable analytics tracking";
 "ua_device_info_enable_location_enabled" = "Location Enabled";
+"ua_location_enabled_detail" = "Enable GPS and WIFI Based Location";
 
 "ua_device_info_device_settings" = "Device Settings";
 "ua_device_info_SDK_settings" = "SDK Settings";
 "ua_device_info_location_settings" = "Location Settings";
 "ua_device_info_analytics_settings" = "Analytics Settings";
 
-"ua_device_info_nav_bar_right_settings_button" = "Settings";
+"ua_push_payload_empty" = "Payload is empty. Send a push notification!";
+
+/* Notification Types */
+"ua_notification_type_alerts" = "Alerts";
+"ua_notification_type_badges" = "Badges";
+"ua_notification_type_sounds" = "Sounds";
+"ua_notification_type_car_play" = "CarPlay";
+"ua_notification_type_lock_screen" = "Lock Screen";
+"ua_notification_type_notification_center" = "Notification Center";
+"ua_notification_type_critical_alert" = "Critical Alert";
+"ua_push_settings_link_disabled_title" = "⚠ Push is Disabled with iOS";
 
 "ua_message_displaytype_banner" = "Banner";
 "ua_message_displaytype_fullscreen" = "Full Screen";
@@ -131,21 +142,14 @@
 "ua_type_strings" = "Strings";
 
 "ua_alert_title_notice" = "Notice";
-"ua_alert_title_success" = "Success";
 "ua_alert_ok" = "OK";
+"ua_ok" = "OK";
 
-"ua_property_added_to_custom_event_format" = "%@ property added to custom event!";
 "ua_custom_property_error" = "Custom property must have a value";
 
 "ua_custom_event_add_error" = "Custom Event must have a name and value set before it can be added";
 "ua_custom_event_set_custom_property_error" = "Custom event must have a name and a value before setting custom properties";
 "ua_custom_event_added" = "Custom Event added!";
-
-"ua_custom_event_event_name_title" = "Event Name";
-"ua_custom_event_event_value_title" = "Event Value";
-"ua_custom_event_interaction_id_title" = "Interaction ID";
-"ua_custom_event_interaction_type_title" = "Interaction Type";
-"ua_custom_event_transaction_id_title" = "Transaction ID";
 "ua_custom_event_add_custom_property_title" = "Add Custom Property";
 
 "ua_required" = "Required";
@@ -156,7 +160,6 @@
  */
 
 "ua_automation_tableview_title" = "In-App Automation";
-"ua_automation_detailview_title" = "In-App Automation Details";
 "ua_automation_textinfo_detailview_title" = "Text Info Details";
 "ua_automation_mediainfo_detailview_title" = "Media Info Details";
 "ua_automation_triggers_tableview_title" = "Triggers";
@@ -235,4 +238,6 @@
 
 "ua_custom_strings_property" = "Add Custom Strings Property";
 
-"ua_events" = "Events";
+"ua_copied_to_clipboard" = "Copied to clipboard!";
+
+"ua_none" = "None";

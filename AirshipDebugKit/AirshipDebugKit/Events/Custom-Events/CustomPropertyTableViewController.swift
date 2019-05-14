@@ -108,10 +108,10 @@ class CustomPropertyTableViewController: UITableViewController, UITextFieldDeleg
     }
 
     func setTableViewTheme() {
-        tableView.backgroundColor = ThemeManager.shared.currentTheme.Background;
+        tableView.backgroundColor = ThemeManager.shared.currentTheme.Background
         navigationController?.navigationBar.titleTextAttributes = [.foregroundColor:ThemeManager.shared.currentTheme.PrimaryText]
-        navigationController?.navigationBar.barTintColor = ThemeManager.shared.currentTheme.NavigationBarBackground;
-        identifierCell.backgroundColor = ThemeManager.shared.currentTheme.Background;
+        navigationController?.navigationBar.barTintColor = ThemeManager.shared.currentTheme.NavigationBarBackground
+        identifierCell.backgroundColor = ThemeManager.shared.currentTheme.Background
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -200,7 +200,7 @@ class CustomPropertyTableViewController: UITableViewController, UITextFieldDeleg
                           duration: 0.35,
                           options: .transitionCrossDissolve,
                           animations: { () -> Void in self.tableView.reloadData() },
-                          completion: nil);
+                          completion: nil)
     }
 
     func validateStringInput(input:String?) -> Bool {
@@ -266,11 +266,11 @@ class CustomPropertyTableViewController: UITableViewController, UITextFieldDeleg
         let customEventTVC = self.navigationController?.viewControllers[0] as! CustomEventTableViewController
 
         if (booleanProperty != nil) {
-            customEventTVC.customEvent!.setBoolProperty(booleanProperty!, forKey: propertyKey!);
+            customEventTVC.customEvent!.setBoolProperty(booleanProperty!, forKey: propertyKey!)
         } else if (numberProperty != nil) {
-            customEventTVC.customEvent!.setNumberProperty(numberProperty!, forKey: propertyKey!);
+            customEventTVC.customEvent!.setNumberProperty(numberProperty!, forKey: propertyKey!)
         } else if (stringProperty != nil) {
-            customEventTVC.customEvent!.setStringProperty(stringProperty!, forKey: propertyKey!);
+            customEventTVC.customEvent!.setStringProperty(stringProperty!, forKey: propertyKey!)
         } else if (stringProperties != nil) {
             customEventTVC.customEvent!.setStringArrayProperty(stringProperties!, forKey: propertyKey!)
         } else {
@@ -286,16 +286,16 @@ class CustomPropertyTableViewController: UITableViewController, UITextFieldDeleg
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch (section) {
         case Sections.Identifier.rawValue:
-            return "ua_custom_property_title".localized();
+            return "ua_custom_property_title".localized()
         case Sections.Value.rawValue:
-            return "ua_custom_property_value_title".localized();
+            return "ua_custom_property_value_title".localized()
         default:
-            return "";
+            return ""
         }
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        let valueType = types[typePicker.selectedRow(inComponent: 0)];
+        let valueType = types[typePicker.selectedRow(inComponent: 0)]
 
         switch (indexPath.section) {
         case Sections.Identifier.rawValue:

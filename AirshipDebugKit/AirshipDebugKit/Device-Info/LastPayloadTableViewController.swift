@@ -44,7 +44,7 @@ class LastPayloadTableViewController: UITableViewController {
     
     @objc func refreshView() {
         guard let lastPushPayload = UserDefaults.standard.value(forKey: lastPushPayloadKey) else {
-            self.lastPushPayloadTextView.text = "Payload is empty. Send a push notification!"
+            self.lastPushPayloadTextView.text = "ua_push_payload_empty".localized()
             return
         }
 

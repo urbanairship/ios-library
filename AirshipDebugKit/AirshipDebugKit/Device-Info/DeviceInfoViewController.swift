@@ -34,7 +34,7 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
     var launchPathComponents : [String]?
     var launchCompletionHandler : (() -> Void)?
 
-    private let localizedNone = NSLocalizedString("None", tableName: "UAPushUI", comment: "None")
+    private let localizedNone = "ua_none".localized(comment: "None")
 
     private let sectionCount = 5
 
@@ -251,7 +251,7 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
             let optedInToLocation = UAirship.shared()?.locationProviderDelegate?.isLocationOptedIn() ?? false
 
             if (UAirship.shared().locationProviderDelegate?.isLocationUpdatesEnabled ?? false && !optedInToLocation) {
-                cell.subtitle?.text = NSLocalizedString("UA_Location_Enabled_Detail", tableName: "UAPushUI", comment: "Enable GPS and WIFI Based Location detail label") + " - NOT OPTED IN"
+                cell.subtitle?.text = "ua_location_enabled_detail".localized(comment: "Enable GPS and WIFI Based Location detail label") + " - NOT OPTED IN"
             } else {
                 cell.subtitle?.text = localizedNone
             }
@@ -306,10 +306,10 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
 
     func showCopiedAlert() {
         DispatchQueue.main.async {
-            let message = NSLocalizedString("UA_Copied_To_Clipboard", tableName: "UAPushUI", comment: "Copied to clipboard string")
+            let message = "ua_copied_to_clipboard".localized(comment: "Copied to clipboard string")
 
             let alert = UIAlertController(title: nil, message: message, preferredStyle: UIAlertController.Style.alert)
-            let buttonTitle = NSLocalizedString("UA_OK", tableName: "UAPushUI", comment: "OK button string")
+            let buttonTitle = "ua_ok".localized()
 
             let okAction = UIAlertAction(title: buttonTitle, style: UIAlertAction.Style.default, handler: { (action: UIAlertAction) in
                 self.dismiss(animated: true, completion: nil)
@@ -328,35 +328,35 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
         var settingsArray: [String] = []
 
         if (authorizedSettings.contains(.alert)) {
-            settingsArray.append(NSLocalizedString("UA_Notification_Type_Alerts", tableName: "UAPushUI", comment: "Alerts"))
+            settingsArray.append("ua_notification_type_alerts".localized(comment: "Alerts"))
         }
 
         if (authorizedSettings.contains(.badge)){
-            settingsArray.append(NSLocalizedString("UA_Notification_Type_Badges", tableName: "UAPushUI", comment: "Badges"))
+            settingsArray.append("ua_notification_type_badges".localized(comment: "Badges"))
         }
 
         if (authorizedSettings.contains(.sound)) {
-            settingsArray.append(NSLocalizedString("UA_Notification_Type_Sounds", tableName: "UAPushUI", comment: "Sounds"))
+            settingsArray.append("ua_notification_type_sounds".localized(comment: "Sounds"))
         }
 
         if (authorizedSettings.contains(.carPlay)) {
-            settingsArray.append(NSLocalizedString("UA_Notification_Type_CarPlay", tableName: "UAPushUI", comment: "CarPlay"))
+            settingsArray.append("ua_notification_type_car_play".localized(comment: "CarPlay"))
         }
 
         if (authorizedSettings.contains(.lockScreen)) {
-            settingsArray.append(NSLocalizedString("UA_Notification_Type_LockScreen", tableName: "UAPushUI", comment: "Lock Screen"))
+            settingsArray.append("ua_notification_type_lock_screen".localized(comment: "Lock Screen"))
         }
 
         if (authorizedSettings.contains(.notificationCenter)) {
-            settingsArray.append(NSLocalizedString("UA_Notification_Type_NotificationCenter", tableName: "UAPushUI", comment: "Notification Center"))
+            settingsArray.append("ua_notification_type_notification_center".localized(comment: "Notification Center"))
         }
 
         if (authorizedSettings.contains(.criticalAlert)) {
-            settingsArray.append(NSLocalizedString("UA_Notification_Type_CriticalAlert", tableName: "UAPushUI", comment: "Critical Alert"))
+            settingsArray.append("ua_notification_type_critical_alert".localized(comment: "Critical Alert"))
         }
 
         if (settingsArray.count == 0) {
-            return NSLocalizedString("UA_Push_Settings_Link_Disabled_Title", tableName: "UAPushUI", comment: "Pushes Currently Disabled")
+            settingsArray.append("ua_push_settings_link_disabled_title".localized(comment: "Pushes Currently Disabled"))
         }
 
         return settingsArray.joined(separator: ", ")

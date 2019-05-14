@@ -199,8 +199,8 @@ public class AirshipDebugKit : NSObject {
  * Translate the string using the DebugKit strings file
  */
 internal extension String {
-    func localized(bundle: Bundle = Bundle(for: AirshipDebugKit.self), tableName: String = "Localizable") -> String {
-        return NSLocalizedString(self, tableName: tableName, bundle: bundle, comment: "")
+    func localized(bundle: Bundle = Bundle(for: AirshipDebugKit.self), tableName: String = "UrbanAirship", comment: String = "") -> String {
+        return NSLocalizedString(self, tableName: tableName, bundle: bundle, comment: comment)
     }
 }
 

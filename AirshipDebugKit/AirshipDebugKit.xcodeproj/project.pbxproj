@@ -32,7 +32,7 @@
 		DF4E4928221CDB5B00F306A5 /* AirshipKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DFE70146212F216600A708D5 /* AirshipKit.framework */; };
 		DF4EDA6121E41D3900804CB3 /* ButtonsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF4EDA6021E41D3900804CB3 /* ButtonsTableViewController.swift */; };
 		DF4EDA6821E4261700804CB3 /* ButtonDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF4EDA6721E4261700804CB3 /* ButtonDetailViewController.swift */; };
-		DF55D7D621F15506005948DD /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = DF55D7D521F15505005948DD /* Localizable.strings */; };
+		DF508A49228508AC0011D9C7 /* UrbanAirship.strings in Resources */ = {isa = PBXBuildFile; fileRef = DF508A4B228508AC0011D9C7 /* UrbanAirship.strings */; };
 		DF5F8EC921641B9D009B5FB9 /* AutomationTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF5F8EC821641B9D009B5FB9 /* AutomationTableViewController.swift */; };
 		DF5F8ECB216420D3009B5FB9 /* Automation.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DF5F8ECA216420D3009B5FB9 /* Automation.storyboard */; };
 		DFC676B121FB8F2E0043EB89 /* DeviceInfo.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DFC676AB21FB8F2E0043EB89 /* DeviceInfo.storyboard */; };
@@ -129,7 +129,7 @@
 		DF1C21D12245605100B33D01 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		DF4EDA6021E41D3900804CB3 /* ButtonsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonsTableViewController.swift; sourceTree = "<group>"; };
 		DF4EDA6721E4261700804CB3 /* ButtonDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonDetailViewController.swift; sourceTree = "<group>"; };
-		DF55D7D521F15505005948DD /* Localizable.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = Localizable.strings; sourceTree = "<group>"; };
+		DF508A4A228508AC0011D9C7 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
 		DF5F8EC821641B9D009B5FB9 /* AutomationTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomationTableViewController.swift; sourceTree = "<group>"; };
 		DF5F8ECA216420D3009B5FB9 /* Automation.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Automation.storyboard; sourceTree = "<group>"; };
 		DFC676AB21FB8F2E0043EB89 /* DeviceInfo.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = DeviceInfo.storyboard; sourceTree = "<group>"; };
@@ -195,7 +195,7 @@
 		DF55D7CF21F154D0005948DD /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				DF55D7D521F15505005948DD /* Localizable.strings */,
+				DF508A4B228508AC0011D9C7 /* UrbanAirship.strings */,
 				4594E6012216466C00DCD672 /* DebugKitData.xcdatamodeld */,
 				DF1C21D12245605100B33D01 /* Images.xcassets */,
 				453B25C9225C0E2E0000478C /* DebugKit.storyboard */,
@@ -419,7 +419,7 @@
 				453B259B2257D0710000478C /* Images.xcassets in Resources */,
 				DFC676B121FB8F2E0043EB89 /* DeviceInfo.storyboard in Resources */,
 				453B25CA225C0E2E0000478C /* DebugKit.storyboard in Resources */,
-				DF55D7D621F15506005948DD /* Localizable.strings in Resources */,
+				DF508A49228508AC0011D9C7 /* UrbanAirship.strings in Resources */,
 				459D70DE2214E7E2005A3BB9 /* Events.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -478,6 +478,17 @@
 			targetProxy = DF6FE6C521518EEB009B457B /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		DF508A4B228508AC0011D9C7 /* UrbanAirship.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				DF508A4A228508AC0011D9C7 /* en */,
+			);
+			name = UrbanAirship.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		DFE70125212F1FAA00A708D5 /* Debug */ = {

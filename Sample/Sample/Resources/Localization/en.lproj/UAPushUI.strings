@@ -14,11 +14,6 @@
 /* Notification Handler */
 "UA_Notification_Title" = "Notification";
 
-/* Notification Types */
-"UA_Notification_Type_Alerts" = "Alerts";
-"UA_Notification_Type_Badges" = "Badges";
-"UA_Notification_Type_Sounds" = "Sounds";
-
 "UA_Push_Settings_Link_Disabled_Title" = "⚠ Push is Disabled with iOS";
 "UA_Push_Settings_Link_Partially_Disabled_Title" = "System Push Settings";
 
