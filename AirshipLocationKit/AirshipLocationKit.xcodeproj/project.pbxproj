@@ -351,7 +351,6 @@
 		3C7A56522252883100E07225 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				DefaultBuildSystemTypeForWorkspace = Original;
 				LastUpgradeCheck = 1020;
 				ORGANIZATIONNAME = "Urban Airship";
 				TargetAttributes = {
@@ -847,7 +846,6 @@
 					"@loader_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.AirshipLocationKit;
-				PRODUCT_MODULE_NAME = "$(PRODUCT_NAME:c99extidentifier)";
 				PRODUCT_NAME = AirshipLocationKit;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
@@ -875,7 +873,6 @@
 					"@loader_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.AirshipLocationKit;
-				PRODUCT_MODULE_NAME = "$(PRODUCT_NAME:c99extidentifier)";
 				PRODUCT_NAME = AirshipLocationKit;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;

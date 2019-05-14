@@ -9,7 +9,9 @@ ROOT_PATH=`dirname "${0}"`/../
 
 # Target iOS SDK when building the projects
 TARGET_SDK='iphonesimulator'
+TARGET_SDK_TVOS='appletvsimulator'
 TEST_DESTINATION='platform=iOS Simulator,OS=latest,name=iPhone X'
+TEST_DESTINATION_TVOS='platform=tvOS Simulator,OS=latest,name=Apple TV'
 
 start_time=`date +%s`
 
@@ -97,6 +99,7 @@ then
   # Make sure AirshipConfig.plist exists
   cp -np ${ROOT_PATH}/Sample/AirshipConfig.plist.sample ${ROOT_PATH}/Sample/AirshipConfig.plist || true
   cp -np ${ROOT_PATH}/SwiftSample/AirshipConfig.plist.sample ${ROOT_PATH}/SwiftSample/AirshipConfig.plist || true
+  cp -np ${ROOT_PATH}/tvOSSample/AirshipConfig.plist.sample ${ROOT_PATH}/tvOSSample/AirshipConfig.plist || true
 
   # Use Debug configurations and a simulator SDK so the build process doesn't attempt to sign the output
   xcrun xcodebuild \
@@ -112,6 +115,13 @@ then
   -scheme SwiftSample \
   -sdk $TARGET_SDK  \
   -destination "${TEST_DESTINATION}"
+
+  xcrun xcodebuild \
+  -configuration Debug \
+  -project "${ROOT_PATH}/tvOSSample/tvOSSample.xcodeproj" \
+  -scheme tvOSSample \
+  -sdk $TARGET_SDK_TVOS  \
+  -destination "${TEST_DESTINATION_TVOS}"
 fi
 
 ##################################################################################################

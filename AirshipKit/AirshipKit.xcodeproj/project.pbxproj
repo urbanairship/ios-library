@@ -5325,7 +5325,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"$SRCROOT\"/Scripts/generate_header_imports.sh common tvos";
+			shellScript = "\"$SRCROOT\"/Scripts/generate_header_imports.sh common tvos\n";
 		};
 		F177E7D1D04156E5342D8FCC /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
