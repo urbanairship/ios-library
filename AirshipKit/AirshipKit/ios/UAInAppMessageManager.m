@@ -659,11 +659,15 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
     [timer start];
 
     // Notify the coordinator that message display has begin
-    [displayCoordinator didBeginDisplayingMessage:message];
+    if ([displayCoordinator respondsToSelector:@selector(didBeginDisplayingMessage:)]) {
+        [displayCoordinator didBeginDisplayingMessage:message];
+    }
 
     // After display has finished, notify the coordinator as well
     completionHandler = ^{
-        [displayCoordinator didFinishDisplayingMessage:message];
+        if ([displayCoordinator respondsToSelector:@selector(didFinishDisplayingMessage:)]) {
+            [displayCoordinator didFinishDisplayingMessage:message];
+        }
         completionHandler();
     };
 
