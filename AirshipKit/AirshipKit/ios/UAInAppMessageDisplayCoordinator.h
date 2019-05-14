@@ -13,7 +13,7 @@ static NSString *const UAInAppMessageDisplayCoordinatorIsReadyKey = @"isReady";
  * putting time or count-based back pressure on message display, or for overriding the default coordination behavior for
  * particular message types.
  */
-@protocol UAInAppMessageDisplayCoordinator
+@protocol UAInAppMessageDisplayCoordinator <NSObject>
 
 /**
  * Indicates whether message display is ready.
