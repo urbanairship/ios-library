@@ -26,7 +26,7 @@ class CustomPropertyAddStringsTableViewController: UITableViewController, UIText
 
     func setTableViewTheme() {
         tableView.backgroundColor = ThemeManager.shared.currentTheme.Background;
-        navigationController?.navigationBar.titleTextAttributes = [.foregroundColor:ThemeManager.shared.currentTheme.PrimaryText]
+        navigationController?.navigationBar.titleTextAttributes = [.foregroundColor:ThemeManager.shared.currentTheme.NavigationBarText]
         navigationController?.navigationBar.barTintColor = ThemeManager.shared.currentTheme.NavigationBarBackground;
     }
 

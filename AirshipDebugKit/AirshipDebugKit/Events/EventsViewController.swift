@@ -45,7 +45,7 @@ class EventsViewController:UIViewController, UITableViewDataSource, UITableViewD
 
     func setTableViewTheme() {
         tableView.backgroundColor = ThemeManager.shared.currentTheme.Background;
-        navigationController?.navigationBar.titleTextAttributes = [.foregroundColor:ThemeManager.shared.currentTheme.PrimaryText]
+        navigationController?.navigationBar.titleTextAttributes = [.foregroundColor:ThemeManager.shared.currentTheme.NavigationBarText]
         navigationController?.navigationBar.barTintColor = ThemeManager.shared.currentTheme.NavigationBarBackground;
     }
 
@@ -72,7 +72,10 @@ class EventsViewController:UIViewController, UITableViewDataSource, UITableViewD
 
         searchController.searchBar.searchBarStyle = .prominent
         searchController.searchBar.showsScopeBar = false
-        searchController.searchBar.tintColor = #colorLiteral(red: 0.5333333333, green: 0.7137254902, blue: 0.7843137255, alpha: 1)
+        searchController.searchBar.tintColor = ThemeManager.shared.currentTheme.NavigationBarText
+        searchController.searchBar.barTintColor = ThemeManager.shared.currentTheme.NavigationBarText
+        searchController.searchBar.setPlaceholderTextColor(color:ThemeManager.shared.currentTheme.NavigationBarText
+)
 
         searchController.searchBar.delegate = self
         tableView.delegate = self
@@ -228,5 +231,14 @@ extension EventsViewController:UISearchResultsUpdating {
         let searchBar = searchController.searchBar
         let scope = scopeTitleToTimeWindow(title:searchBar.scopeButtonTitles![searchBar.selectedScopeButtonIndex])
         filterContentForSearchText(searchController.searchBar.text!, timeWindow:scope)
+    }
+}
+
+extension UISearchBar {
+    func setPlaceholderTextColor(color: UIColor) {
+        let textFieldInsideSearchBar = self.value(forKey: "searchField") as? UITextField
+        textFieldInsideSearchBar?.textColor = color
+        let textFieldInsideSearchBarLabel = textFieldInsideSearchBar!.value(forKey: "placeholderLabel") as? UILabel
+        textFieldInsideSearchBarLabel?.textColor = color
     }
 }

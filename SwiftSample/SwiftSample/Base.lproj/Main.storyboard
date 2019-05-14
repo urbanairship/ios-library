@@ -9,8 +9,11 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <customFonts key="customFonts">
-        <array key="Roboto-Thin.ttf">
-            <string>Roboto-Thin</string>
+        <array key="GT-America-Mono-Regular.otf">
+            <string>GTAmericaMono-Regular</string>
+        </array>
+        <array key="GT-America-Standard-Regular.otf">
+            <string>GTAmerica-Regular</string>
         </array>
     </customFonts>
     <scenes>
@@ -26,14 +29,14 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="urban-airship-logo-pacific.png" translatesAutoresizingMaskIntoConstraints="NO" id="He6-LA-1je">
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="airshipMark" translatesAutoresizingMaskIntoConstraints="NO" id="He6-LA-1je">
                                 <rect key="frame" x="45" y="28" width="285" height="430"/>
                             </imageView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="iZm-tj-QRc">
                                 <rect key="frame" x="0.0" y="466" width="375" height="72"/>
-                                <fontDescription key="fontDescription" name="Roboto-Thin" family="Roboto" pointSize="15"/>
+                                <fontDescription key="fontDescription" name="GTAmericaMono-Regular" family="GT America Mono" pointSize="12"/>
                                 <state key="normal" title="00000000-aaaa-1111-bbbb-222222222222">
-                                    <color key="titleColor" red="0.18039215689999999" green="0.22352941179999999" blue="0.23137254900000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 </state>
                                 <connections>
                                     <action selector="buttonTapped:" destination="9pv-A4-QxB" eventType="touchUpInside" id="TqZ-yX-cii"/>
@@ -45,16 +48,16 @@
                                     <constraint firstAttribute="height" constant="60" id="Lzm-Ff-eFQ"/>
                                     <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="247" id="olK-2Q-erH"/>
                                 </constraints>
-                                <fontDescription key="fontDescription" name="Roboto-Thin" family="Roboto" pointSize="36"/>
+                                <fontDescription key="fontDescription" name="GTAmerica-Regular" family="GT America" pointSize="36"/>
                                 <state key="normal" title="Enable Push">
-                                    <color key="titleColor" red="0.18039215689999999" green="0.22352941179999999" blue="0.23137254900000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 </state>
                                 <connections>
                                     <action selector="buttonTapped:" destination="9pv-A4-QxB" eventType="touchUpInside" id="Pcx-co-GZe"/>
                                 </connections>
                             </button>
                         </subviews>
-                        <color key="backgroundColor" red="0.99607843139999996" green="0.74509803919999995" blue="0.12549019610000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="backgroundColor" red="1" green="0.12844113600000001" blue="0.23472949409999999" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                         <constraints>
                             <constraint firstItem="He6-LA-1je" firstAttribute="leading" secondItem="tsR-hK-woN" secondAttribute="leadingMargin" constant="29" id="1EW-w2-ROQ"/>
                             <constraint firstItem="iZm-tj-QRc" firstAttribute="leading" secondItem="tsR-hK-woN" secondAttribute="leading" id="2B5-pp-G8Y"/>
@@ -101,7 +104,7 @@
         <!--Message Center-->
         <scene sceneID="NvI-WN-tRz">
             <objects>
-                <viewController title="Message Center" id="gZ5-Hw-Q4m" customClass="MessageCenterViewController" customModule="SwiftSample" sceneMemberID="viewController">
+                <viewController title="Message Center" id="gZ5-Hw-Q4m" customClass="MessageCenterViewController" customModule="SwiftSample" customModuleProvider="target" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" title="Message Center" image="Inbox" id="bOP-nI-w2f"/>
                     <navigationItem key="navigationItem" id="3Bi-uC-yfA"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
@@ -115,12 +118,12 @@
         <scene sceneID="tG2-Gv-bE1">
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="JRz-Sl-iGG" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Debug" image="Settings" id="WBy-UI-qSz"/>
+                    <tabBarItem key="tabBarItem" title="Debug" image="outline_bug_report_black_36pt" id="WBy-UI-qSz"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="vX8-Md-Jzb">
                         <rect key="frame" x="0.0" y="20" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
-                        <color key="barTintColor" red="0.95886272019999996" green="0.67048806260000005" blue="0.1054162679" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="barTintColor" red="1" green="0.12844113600000001" blue="0.23472949409999999" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
                     <connections>
@@ -143,10 +146,10 @@
         </scene>
     </scenes>
     <resources>
-        <image name="Homescreen" width="32" height="32"/>
-        <image name="Inbox" width="32" height="32"/>
-        <image name="Settings" width="24" height="24"/>
-        <image name="urban-airship-logo-pacific.png" width="1000" height="469"/>
+        <image name="Homescreen" width="24" height="24"/>
+        <image name="Inbox" width="24" height="24"/>
+        <image name="airshipMark" width="512.5" height="348.5"/>
+        <image name="outline_bug_report_black_36pt" width="36" height="36"/>
     </resources>
     <color key="tintColor" red="0.53333333329999999" green="0.71372549019999998" blue="0.7843137255" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
 </document>

@@ -1,0 +1,32 @@
+Grilli Type App Fonts 
+End User License Agreement
+
+Version 1.0 / April 2014
+
+1) This is an agreement between you, the purchaser and licensee, and GrilliType GmbH (hereafter Grilli Type). By purchasing, or downloading, or installing, or using, or otherwise handling the digital typeface software (hereafter fonts), you accept the terms of this agreement. In accepting the terms of this agreement, you acknowledge understanding and complying with its terms. This agreement replaces and supersedes any previously made oral or written proposal or agreement between you and Grilli Type. You are purchasing a license for the embedded use of fonts in applications, also called “software” or “apps” (hereafter applications).
+
+2a) You are purchasing a certain amount of licenses to embed fonts by Grilli Type in a certain number of applications created within your organization, by a certain number of developers, designers, and other creators of the app using the fonts. You are not purchasing the copyright to the design or any other part of the fonts, but the rights to use the fonts as specified in this agreement. Once you have privately or publicly released or distributed any application with the font embedded, it is counting towards your limit of applications covered by your license. Even if you do no longer actively or passively distribute that application, it still counts towards your limit of applications covered by your license.
+
+2b) “Embed” and “use” shall both mean the use of fonts in applications, meaning the embedding of the font files through various means (depending on the operating system and programming platform) into the application or an application package. The fonts are used by said application to style dynamic or static text inside those applications.
+
+2c) “Applications” shall mean applications able to run and function on one of the following operating system platforms: Microsoft Windows, Apple OS X, Apple iOS, Android. All release versions of the aforementioned operating systems are covered in this agreement, insofar as they support the font files as they are supplied by Grilli Type. The list of supported operating systems may change at any time, depending on technological developments and the operating systems’ support of font technology, and at Grilli Type’s discretion.
+
+2d) “Within your organization” shall mean usage inside your company or organization, across all your business locations, but shall not include usage by business clients or other third parties, including self-employed parties who are working for you but not at one of your business locations. Self-employed third parties temporarily working at one of your business locations on your devices are considered part of your organization.
+
+3a) The use of the fonts on devices in your organization is restricted to preparing their use in applications, for activities generally called “application design” and “application development”. The fonts may not be used to create logos or any other design elements that lies outside of the fonts’ use as embedded fonts in your applications.
+
+3b) The amount of devices you may install the fonts on depends on the amount of licenses purchased, as referenced during your purchase and on your invoice. You may not install the fonts on any further devices aside from the archival copies as stipulated under 4).
+
+4) You can make archival copies of the fonts for your own purposes, counting additionally to the amount of devices you licensed the fonts for. You shall not distribute the fonts to people outside of your organization. A copy of the fonts may be sent to a third-party app developer if absolutely necessary. The fonts may not be embedded into any other format or in any other way under this license. Embedding of the font with the CSS @font-face technology is expressly prohibited. Embedding of the font into computer files other than application files (for example document formats like PDF, EPS, and PS) is expressly prohibited. 
+
+5) You may not use the fonts to create or save bitmap or vector images, except for usage as follows. Allowed usage includes the creation of preview images of the application you are designing, to receive feedback on your application design, or show the application design in your portfolio. You expressly may not use this license to create any bitmap or vector images for any other use. You may not create a wordmark or logo file with the fonts.
+
+6) You may modify the fonts for your own purposes after receiving written permission from Grilli Type. Any rights, including but not limited to copyrights and trademarks, of both the original version and the edited version remains with Grilli Type and their respective owners, and the number of devices and applications covered by the license remains the same overall. You may not modify the fonts without first gaining written permission from Grilli Type. Outside of their legal use as described in this license, you may not distribute, lend, rent, sell, give away, publicly or privately share any modified or unmodified version of the fonts. Grilli Type does not offer any support for or guarantee the proper functioning of any modified fonts.
+
+7) We try to produce our fonts to the highest and most up-to-date technical standards. If you do experience any difficulties with our fonts, we will do everything that we can to work with you to resolve any issues. If, after we have worked with you to resolve any technical issues, you are still not satisfied with our product, we will be pleased to refund your money, which shall be the limit of our liability in this transaction. Any such refund terminates your license to use the fonts. Only technical issues are reason for refund, and you have to show clearly that they do exist and can not be resolved by Grilli Type. You must give Grilli Type notice of such problems in the first 30 days after your purchase. The actual refund can only be given in the first 60 days after the purchase, and not at any time after that.
+
+8) Any breach of the terms and conditions of this agreement terminates your license to use the fonts. After any termination of the agreement you must destroy any copies of the fonts, including your archival copies.
+
+9) Any and all rights not expressly granted in this agreement are reserved to Grilli Type.
+
+10) The agreement shall be governed by and construed in accordance with Swiss law. Place of performance is Zurich, Switzerland. The courts of Zurich, Switzerland shall have jurisdiction.
