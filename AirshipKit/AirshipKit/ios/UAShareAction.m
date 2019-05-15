@@ -65,9 +65,6 @@
 
     activityViewController.dismissalBlock = dismissalBlock = ^{
         UA_STRONGIFY(self)
-
-        completionHandler([UAActionResult emptyResult]);
-
         self.lastActivityViewController = nil;
     };
 
@@ -83,6 +80,8 @@
     } else {
         displayShareBlock();
     }
+
+    completionHandler([UAActionResult emptyResult]);
 }
 
 @end
