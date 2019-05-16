@@ -613,18 +613,18 @@
  *
  * @param scheduleData The schedule's data.
  */
+
 - (void)startTimerForSchedule:(UAScheduleData *)scheduleData
                  timeInterval:(NSTimeInterval)timeInterval
                      selector:(SEL)selector {
 
+    NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
+    [userInfo setValue:scheduleData.identifier forKey:@"identifier"];
+    [userInfo setValue:scheduleData.group forKey:@"group"];
+
     UA_WEAKIFY(self);
     [self.dispatcher dispatchAsync:^{
         UA_STRONGIFY(self);
-
-        NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
-        [userInfo setValue:scheduleData.identifier forKey:@"identifier"];
-        [userInfo setValue:scheduleData.group forKey:@"group"];
-
 
         NSTimer *timer = [NSTimer timerWithTimeInterval:timeInterval <= 0 ? .1 : timeInterval
                                                  target:self
@@ -1114,8 +1114,10 @@
 }
 
 - (void)attemptExecution:(UAScheduleData *)scheduleData {
-    if ([scheduleData.executionState intValue] != UAScheduleStateWaitingScheduleConditions) {
-        UA_LERR(@"Unable to execute schedule. Schedule is in the wrong state: %@", scheduleData.executionState);
+    NSNumber *currentExecutionState = scheduleData.executionState;
+
+    if ([currentExecutionState intValue] != UAScheduleStateWaitingScheduleConditions) {
+        UA_LERR(@"Unable to execute schedule. Schedule is in the wrong state: %@", currentExecutionState);
         return;
     }
 
@@ -1126,9 +1128,13 @@
     }
 
     UASchedule *schedule = [self scheduleFromData:scheduleData];
+
     if (!schedule) {
         return;
     }
+
+    // Execution state must be read and written on the context's private queue
+    __block NSNumber *nextExecutionState = currentExecutionState;
 
     // Conditions and action executions must be run on the main queue.
     UA_WEAKIFY(self)
@@ -1149,7 +1155,7 @@
         switch ([delegate isScheduleReadyToExecute:schedule]) {
             case UAAutomationScheduleReadyResultInvalidate: {
                 UA_LTRACE("Attempted to execute an invalid schedule:%@.", schedule);
-                scheduleData.executionState = @(UAScheduleStatePreparingSchedule);
+                nextExecutionState = @(UAScheduleStatePreparingSchedule);
                 [self prepareScheduleWithIdentifier:schedule.identifier];
                 break;
             }
@@ -1164,7 +1170,7 @@
                     }];
                 }];
 
-                scheduleData.executionState = @(UAScheduleStateExecuting); // executing
+                nextExecutionState = @(UAScheduleStateExecuting); // executing
                 break;
             }
             case UAAutomationScheduleReadyResultNotReady: {
@@ -1174,6 +1180,10 @@
         }
     }];
 
+    // Update execution state if necessary
+    if (![currentExecutionState isEqual:nextExecutionState]) {
+        scheduleData.executionState = nextExecutionState;
+    }
 }
 
 - (void)handleExpiredScheduleData:(nonnull UAScheduleData *)scheduleData {
