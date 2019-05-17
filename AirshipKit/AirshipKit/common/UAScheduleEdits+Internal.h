@@ -1,7 +1,6 @@
 /* Copyright Airship and Contributors */
 
 #import "UAScheduleEdits.h"
-#import "UAInAppMessage+Internal.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -31,17 +30,6 @@ extern NSString * const UAScheduleEditsErrorDomain;
  * @returns `YES` if the json was able to be applied, otherwise `NO`.
  */
 - (BOOL)applyFromJson:(id)json error:(NSError * _Nullable *)error;
-
-/**
- * Applies fields from a JSON object.
- *
- * @param json The json object.
- * @param source The source of the message.
- * @param error The optional error.
- * @returns `YES` if the json was able to be applied, otherwise `NO`.
- */
-- (BOOL)applyFromJson:(id)json source:(UAInAppMessageSource)source error:(NSError * _Nullable *)error;
-
 
 ///---------------------------------------------------------------------------------------
 /// @name Schedule Edits Builder Properties
