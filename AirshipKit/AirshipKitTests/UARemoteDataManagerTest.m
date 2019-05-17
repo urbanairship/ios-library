@@ -527,7 +527,7 @@
 // simulate multiple payloads from cloud
 // payloads should be published to client
 // simulate some changed payloads from cloud
-// only changed payloads should be published to client
+// all payloads should be published to client
 - (void)testMultiplePayloadsSomeHaveChanged {
     // setup
     NSMutableArray<UARemoteDataPayload *> *testPayloads = [[self createNPayloadsAndSetupTest:2 metadata:self.expectedMetadata] mutableCopy];
@@ -545,8 +545,7 @@
                 XCTAssertEqualObjects([NSCountedSet setWithArray:testPayloads],[NSCountedSet setWithArray:remoteDataArray]);
                 break;
             case 1:
-                XCTAssert([remoteDataArray count] == 1);
-                XCTAssertEqualObjects(testPayloads[1],remoteDataArray[0]);
+                XCTAssertEqualObjects(testPayloads, remoteDataArray);
                 break;
             default:
                 XCTFail(@"Should only be one notification");
@@ -554,6 +553,7 @@
         }
         callbackCount++;
     }];
+
     XCTAssertNotNil(subscription);
 
     [self refresh];
@@ -623,127 +623,6 @@
     // verify
     [self waitForTestExpectations];
     XCTAssert(callbackCount == 1);
-
-    // cleanup
-    [subscription dispose];
-}
-
-// client (test) subscribes to remote data manager
-// simulate multiple payloads from cloud, with at least two of a single type
-// all payloads should be published to client
-// change one of the payloads for that single type
-// simulate changed payloads from cloud
-// only changed payloads for that single type should be published to client
-- (void)testMultiplePayloadsPerTypeOneOfMultiplePerTypeHasChanged {
-    // setup
-    NSMutableArray<UARemoteDataPayload *> *testPayloads = [[self createNPayloadsAndSetupTest:2 metadata:[self.remoteDataManager createMetadata:[NSLocale autoupdatingCurrentLocale]]] mutableCopy];
-    // add a third payload that is of the same type as the first payload
-    [testPayloads addObject:[self changePayload:testPayloads[0]]];
-    [self replaceTestPayloads:testPayloads];
-
-    __block XCTestExpectation *receivedDataExpectation = [self expectationWithDescription:[NSString stringWithFormat:@"Received remote data"",testPayload.type"]];
-
-    // test
-    // subscribe to remote data manager and observe notifications
-    __block NSUInteger callbackCount = 0;
-    UADisposable *subscription = [self.remoteDataManager subscribeWithTypes:[testPayloads valueForKeyPath:@"type"] block:^(NSArray<UARemoteDataPayload *> * _Nonnull remoteDataArray) {
-        [receivedDataExpectation fulfill];
-        switch(callbackCount) {
-            case 0:
-                XCTAssert([remoteDataArray count] == 3,@"array count is %lu, but should be 3",remoteDataArray.count);
-                XCTAssertTrue([[NSCountedSet setWithArray:testPayloads] isEqualToSet:[NSCountedSet setWithArray:remoteDataArray]],@"published data does not match cloud data");
-                break;
-            case 1: {
-                XCTAssert([remoteDataArray count] == 1,@"array count is %lu, but should be 1",remoteDataArray.count);
-                XCTAssertEqualObjects(testPayloads[0],remoteDataArray[0],@"published data does not match cloud data");
-                break;
-            }
-            default:
-                XCTFail(@"Should only be two notifications");
-                break;
-        }
-        callbackCount++;
-    }];
-    XCTAssertNotNil(subscription);
-
-    [self refresh];
-
-    // verify
-    [self waitForTestExpectations];
-
-    // setup with changed payload
-    testPayloads[0] = [self changePayload:testPayloads[2]];
-    [self setupTestWithPayloads:testPayloads];
-    receivedDataExpectation = [self expectationWithDescription:[NSString stringWithFormat:@"Received remote data"]];
-
-    // test
-    [self refresh];
-
-    // verify
-    [self waitForTestExpectations];
-    XCTAssert(callbackCount == 2);
-
-    // cleanup
-    [subscription dispose];
-}
-
-// client (test) subscribes to remote data manager
-// simulate multiple payloads from cloud, with at least two of a single type
-// all payloads should be published to client
-// change all of the payloads for that single type
-// simulate changed payloads from cloud
-// only changed payloads for that single type should be published to client
-- (void)testMultiplePayloadsPerTypeAllOfMultiplePerTypeHasChanged {
-    // setup
-    NSMutableArray<UARemoteDataPayload *> *testPayloads = [[self createNPayloadsAndSetupTest:2 metadata:[self.remoteDataManager createMetadata:[NSLocale autoupdatingCurrentLocale]]] mutableCopy];
-    // add a third payload that is of the same type as the first payload
-    [testPayloads addObject:[self changePayload:testPayloads[0]]];
-    [self replaceTestPayloads:testPayloads];
-
-    __block XCTestExpectation *receivedDataExpectation = [self expectationWithDescription:[NSString stringWithFormat:@"Received remote data"",testPayload.type"]];
-
-    // test
-    // subscribe to remote data manager and observe notifications
-    __block NSUInteger callbackCount = 0;
-    UADisposable *subscription = [self.remoteDataManager subscribeWithTypes:[testPayloads valueForKeyPath:@"type"] block:^(NSArray<UARemoteDataPayload *> * _Nonnull remoteDataArray) {
-        [receivedDataExpectation fulfill];
-        switch(callbackCount) {
-            case 0:
-                XCTAssert([remoteDataArray count] == 3,@"array count is %lu, but should be 3",remoteDataArray.count);
-                XCTAssertTrue([[NSCountedSet setWithArray:testPayloads] isEqualToSet:[NSCountedSet setWithArray:remoteDataArray]],@"published data does not match cloud data");
-                break;
-            case 1: {
-                XCTAssert([remoteDataArray count] == 2,@"array count is %lu, but should be 2",remoteDataArray.count);
-                NSMutableArray *expectedPayloads = [testPayloads mutableCopy];
-                [expectedPayloads removeObjectAtIndex:1];
-                XCTAssertTrue([[NSCountedSet setWithArray:expectedPayloads] isEqualToSet:[NSCountedSet setWithArray:remoteDataArray]],@"published data does not match cloud data");
-                break;
-            }
-            default:
-                XCTFail(@"Should only be two notifications");
-                break;
-        }
-        callbackCount++;
-    }];
-    XCTAssertNotNil(subscription);
-
-    [self refresh];
-
-    // verify
-    [self waitForTestExpectations];
-
-    // setup with changed payload
-    testPayloads[0] = [self changePayload:testPayloads[2]];
-    testPayloads[2] = [self changePayload:testPayloads[2]];
-    [self setupTestWithPayloads:testPayloads];
-    receivedDataExpectation = [self expectationWithDescription:[NSString stringWithFormat:@"Received remote data"]];
-
-    // test
-    [self refresh];
-
-    // verify
-    [self waitForTestExpectations];
-    XCTAssert(callbackCount == 2);
 
     // cleanup
     [subscription dispose];

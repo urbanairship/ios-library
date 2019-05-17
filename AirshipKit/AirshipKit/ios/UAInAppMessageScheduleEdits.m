@@ -17,7 +17,7 @@
     }
 }
 
-- (BOOL)applyFromJson:(id)json error:(NSError * _Nullable *)error {
+- (BOOL)applyFromJson:(id)json source:(UAInAppMessageSource)source error:(NSError * _Nullable *)error {
     if (![super applyFromJson:json error:error]) {
         return NO;
     }
@@ -36,13 +36,17 @@
             return NO;
         }
 
-        self.message = [UAInAppMessage messageWithJSON:messagePayload error:error];
+        self.message = [UAInAppMessage messageWithJSON:messagePayload defaultSource:source error:error];
         if (!self.message) {
             return NO;
         }
     }
 
     return YES;
+}
+
+- (BOOL)applyFromJson:(id)json error:(NSError * _Nullable *)error {
+    return [self applyFromJson:json source:UAInAppMessageSourceAppDefined error:error];
 }
 
 @end

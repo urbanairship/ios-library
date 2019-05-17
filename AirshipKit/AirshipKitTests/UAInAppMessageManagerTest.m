@@ -71,7 +71,7 @@
     self.mockMetadata = @{@"cool":@"story"};
     self.mockRemoteDataManager = [self mockForClass:[UARemoteDataManager class]];
     [[[self.mockRemoteDataManager stub] andReturn:self.mockMetadata] lastMetadata];
-    [[[self.mockRemoteDataManager stub] andReturnValue:OCMOCK_VALUE(self.isMetadataValid)] isLastMetadataCurrent];
+    [[[self.mockRemoteDataManager stub] andReturnValue:OCMOCK_VALUE(self.isMetadataValid)] isMetadataCurrent:OCMOCK_ANY];
 
     self.mockAssetManager = [self mockForClass:[UAInAppMessageAssetManager class]];
     self.mockAssetCache = [self mockForClass:[UAInAppMessageAssetCache class]];

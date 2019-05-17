@@ -1109,7 +1109,9 @@
     UA_WEAKIFY(self)
     [self.automationStore getSchedule:scheduleID completionHandler:^(UAScheduleData *schedule) {
         UA_STRONGIFY(self)
-        [self prepareSchedules:@[schedule]];
+        if (schedule) {
+            [self prepareSchedules:@[schedule]];
+        }
     }];
 }
 

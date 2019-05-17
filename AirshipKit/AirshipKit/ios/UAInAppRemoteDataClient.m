@@ -88,9 +88,10 @@ NSString * const UAInAppMessagesScheduledNewUserCutoffTimeKey = @"UAInAppRemoteD
 - (void)notifyOnMetadataUpdate:(void (^)(void))completionHandler {
     [self.operationQueue addOperationWithBlock:^{
         UA_LTRACE(@"Metadata is out of date, invalidating schedule until metadata update can occur.");
-        if ([self.remoteDataManager.lastMetadata isEqual:self.lastPayloadMetadata]) {
+        if ([self.remoteDataManager isMetadataCurrent:self.lastPayloadMetadata]) {
             completionHandler();
         } else {
+            // Otherwise wait until change to lastPayloadMetadata to invalidate
             __block UADisposable *disposable = [self observeAtKeyPath:@"lastPayloadMetadata" withBlock:^(id  _Nonnull value) {
                 completionHandler();
                 [disposable dispose];
@@ -104,12 +105,12 @@ NSString * const UAInAppMessagesScheduledNewUserCutoffTimeKey = @"UAInAppRemoteD
     NSDictionary *thisPayloadMetadata = messagePayload.metadata;
 
     NSDate *lastUpdate = [self.dataStore objectForKey:UAInAppMessagesLastPayloadTimeStampKey] ?: [NSDate distantPast];
-    NSDictionary *lastMetadata = [self.dataStore objectForKey:UAInAppMessagesLastPayloadMetadataKey] ?: @{};
+    NSDictionary *lastMetadata = self.lastPayloadMetadata ?: @{};
 
     BOOL isMetadataCurrent = [thisPayloadMetadata isEqualToDictionary:lastMetadata];
 
-    // Skip if the payload timestamp is same as the last updated timestamp
-    if ([thisPayloadTimeStamp isEqualToDate:lastUpdate]) {
+    // Skip if the payload timestamp is same as the last updated timestamp and metadata is current
+    if ([thisPayloadTimeStamp isEqualToDate:lastUpdate] && isMetadataCurrent) {
         return;
     }
 
@@ -180,11 +181,11 @@ NSString * const UAInAppMessagesScheduledNewUserCutoffTimeKey = @"UAInAppRemoteD
                 [newSchedules addObject:scheduleInfo];
             }
         } else if (scheduleIDMap[messageID]) {
-            // Update
+            // Edit with new info and/or metadata
             __block NSError *error;
 
             UAInAppMessageScheduleEdits *edits = [UAInAppMessageScheduleEdits editsWithBuilderBlock:^(UAInAppMessageScheduleEditsBuilder *builder) {
-                [builder applyFromJson:message error:&error];
+                [builder applyFromJson:message source:UAInAppMessageSourceRemoteData error:&error];
 
                 builder.metadata = [NSJSONSerialization stringWithObject:thisPayloadMetadata];
 
@@ -264,12 +265,18 @@ NSString * const UAInAppMessagesScheduledNewUserCutoffTimeKey = @"UAInAppRemoteD
     // Save state
     self.scheduleIDMap = scheduleIDMap;
 
-    [self.dataStore setObject:thisPayloadMetadata forKey:UAInAppMessagesLastPayloadMetadataKey];
+    self.lastPayloadMetadata = thisPayloadMetadata;
     [self.dataStore setObject:thisPayloadTimeStamp forKey:UAInAppMessagesLastPayloadTimeStampKey];
 }
 
 - (NSDictionary *)lastPayloadMetadata {
     return [self.dataStore objectForKey:UAInAppMessagesLastPayloadMetadataKey];
+}
+
+- (void)setLastPayloadMetadata:(NSDictionary *)metadata {
+    [self willChangeValueForKey:@"lastPayloadMetadata"];
+    [self.dataStore setObject:metadata forKey:UAInAppMessagesLastPayloadMetadataKey];
+    [self didChangeValueForKey:@"lastPayloadMetadata"];
 }
 
 - (BOOL)checkSchedule:(UAInAppMessageScheduleInfo *)scheduleInfo createdTimeStamp:(NSDate *)createdTimeStamp {

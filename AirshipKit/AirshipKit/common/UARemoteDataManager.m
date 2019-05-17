@@ -8,6 +8,8 @@
 #import "UAPreferenceDataStore+Internal.h"
 #import "UAirshipVersion.h"
 #import "UAUtils+Internal.h"
+#import "UAInAppRemoteDataClient+Internal.h"
+
 
 NSString * const kUACoreDataStoreName = @"RemoteData-%@.sqlite";
 NSString * const UARemoteDataRefreshIntervalKey = @"remotedata.REFRESH_INTERVAL";
@@ -25,7 +27,7 @@ NSInteger const UARemoteDataRefreshIntervalDefault = 0;
 
 @property (nonatomic, copy) NSSet<NSString *> *payloadTypes;
 @property (nonatomic, copy) UARemoteDataPublishBlock publishBlock;
-@property (nonatomic, strong) NSDate *lastNotified;
+@property (nonatomic, strong) NSArray<UARemoteDataPayload *> *previousPayloads;
 
 @end
 
@@ -40,9 +42,33 @@ NSInteger const UARemoteDataRefreshIntervalDefault = 0;
     if (self) {
         self.payloadTypes = [NSSet setWithArray:payloadTypes];
         self.publishBlock = publishBlock;
-        self.lastNotified = [NSDate dateWithTimeIntervalSince1970:0];
     }
     return self;
+}
+
+/**
+ * Notifies a single remote data subscriber.
+ *
+ * @param remoteDataPayloads The remote data payloads to be sent to the subscriber.
+ * @param completionHandler Optional completion handler called after the subscriber has been notified.
+ */
+- (void)notifyRemoteData:(NSArray<UARemoteDataPayload *> *)remoteDataPayloads
+              dispatcher:(UADispatcher *)dispatcher
+       completionHandler:(void (^)(void))completionHandler {
+
+    [dispatcher dispatchAsync:^{
+        if (remoteDataPayloads.count && ![self.previousPayloads isEqualToArray:remoteDataPayloads]) {
+            @synchronized(self) {
+                if (self.publishBlock) {
+                    self.publishBlock(remoteDataPayloads);
+                }
+                self.previousPayloads = remoteDataPayloads;
+            }
+        }
+        if (completionHandler) {
+            completionHandler();
+        }
+    }];
 }
 
 @end
@@ -141,6 +167,10 @@ NSInteger const UARemoteDataRefreshIntervalDefault = 0;
     return [self.dataStore objectForKey:UARemoteDataLastRefreshMetadataKey];
 }
 
+- (void)setLastMetadata:(NSDictionary *)metadata {
+    [self.dataStore setObject:metadata forKey:UARemoteDataLastRefreshMetadataKey];
+}
+
 - (void)setRemoteDataRefreshInterval:(NSUInteger)remoteDataRefreshInterval {
     // save in the data store
     [self.dataStore setInteger:remoteDataRefreshInterval forKey:UARemoteDataRefreshIntervalKey];
@@ -234,7 +264,7 @@ NSInteger const UARemoteDataRefreshIntervalDefault = 0;
         return true;
     }
 
-    if (![self isLastLocaleCurrent]) {
+    if (![self isLastMetadataCurrent]) {
         return true;
     }
 
@@ -245,9 +275,6 @@ NSInteger const UARemoteDataRefreshIntervalDefault = 0;
          metadata:(NSDictionary *)metadata
      lastModified:(NSDate *)lastModified
 completionHandler:(void(^)(BOOL success))completionHandler {
-    [self.dataStore setObject:lastModified forKey:UARemoteDataLastRefreshTimeKey];
-    [self.dataStore setObject:metadata forKey:UARemoteDataLastRefreshMetadataKey];
-
     // The result from this can be empty if any expected fields are missing from JSON
     NSArray<UARemoteDataPayload *> *payloads = [UARemoteDataPayload remoteDataPayloadsFromJSON:remoteData metadata:metadata];
 
@@ -262,6 +289,9 @@ completionHandler:(void(^)(BOOL success))completionHandler {
             return;
         }
 
+        [self.dataStore setObject:lastModified forKey:UARemoteDataLastRefreshTimeKey];
+        self.lastMetadata = metadata;
+
         // notify remote data subscribers
         [self notifySubscribersWithRemoteData:payloads completionHandler:^{
             if (completionHandler) {
@@ -273,6 +303,11 @@ completionHandler:(void(^)(BOOL success))completionHandler {
 
 - (void)refreshWithCompletionHandler:(void(^)(BOOL success))completionHandler {
     UA_WEAKIFY(self);
+
+    if (![self isLastMetadataCurrent]) {
+        [self.remoteDataAPIClient clearLastModifiedTime];
+    }
+
     [self.remoteDataAPIClient fetchRemoteData:^(NSUInteger statusCode, NSArray<UARemoteDataPayload *> *allRemoteDataFromCloud) {
         UA_STRONGIFY(self);
         if (statusCode == 200) {
@@ -305,26 +340,11 @@ completionHandler:(void(^)(BOOL success))completionHandler {
     return true;
 }
 
--(BOOL)isLastLocaleCurrent {
-    NSDictionary *metadataAtTimeOfLastRefresh = self.lastMetadata;
 
-    if (metadataAtTimeOfLastRefresh) {
-        NSLocale *currentLocale = [NSLocale autoupdatingCurrentLocale];
+-(BOOL)isMetadataCurrent:(NSDictionary *)metadata {
+    NSDictionary *currentMetadata = [self createMetadata:[NSLocale autoupdatingCurrentLocale]];
 
-        NSString *languageAtTimeOfLastRefresh = metadataAtTimeOfLastRefresh[UARemoteDataMetadataLanguageKey];
-        NSString *currentLanguage = currentLocale.languageCode;
-        if (languageAtTimeOfLastRefresh && ![languageAtTimeOfLastRefresh isEqualToString:currentLanguage]) {
-            return false;
-        }
-
-        NSString *countryAtTimeOfLastRefresh = metadataAtTimeOfLastRefresh[UARemoteDataMetadataCountryKey];
-        NSString *currentCountry = currentLocale.countryCode;
-        if (countryAtTimeOfLastRefresh && ![countryAtTimeOfLastRefresh isEqualToString:currentCountry]) {
-            return false;
-        }
-    }
-
-    return true;
+    return [currentMetadata isEqualToDictionary:metadata];
 }
 
 -(BOOL)isLastMetadataCurrent {
@@ -359,9 +379,10 @@ completionHandler:(void(^)(BOOL success))completionHandler {
     for (UARemoteDataSubscription *subscription in subscriptions) {
         dispatch_group_enter(dispatchGroup);
 
-        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"((type IN %@) AND (timestamp > %@))",subscription.payloadTypes,subscription.lastNotified];
-        NSArray *remoteDataPayloadsForThisSubscriber = [remoteDataPayloads filteredArrayUsingPredicate:predicate];
-        [self notifySubscriber:subscription remoteData:remoteDataPayloadsForThisSubscriber completionHandler:^{
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(type IN %@)", subscription.payloadTypes];
+        NSArray *filteredPayloads = [remoteDataPayloads filteredArrayUsingPredicate:predicate];
+
+        [subscription notifyRemoteData:filteredPayloads dispatcher:self.dispatcher completionHandler:^{
             dispatch_group_leave(dispatchGroup);
         }];
     }
@@ -382,7 +403,7 @@ completionHandler:(void(^)(BOOL success))completionHandler {
  */
 - (void)fetchRemoteDataFromCacheAndNotifySubscriber:(UARemoteDataSubscription *)subscription {
     // only send remote data newer than cached last modified timestamps
-    NSPredicate *fetchPredicate = [NSPredicate predicateWithFormat:@"((type IN %@) AND (timestamp > %@))",subscription.payloadTypes,subscription.lastNotified];
+    NSPredicate *fetchPredicate = [NSPredicate predicateWithFormat:@"(type IN %@)", subscription.payloadTypes];
 
     UA_WEAKIFY(self);
     [self.remoteDataStore fetchRemoteDataFromCacheWithPredicate:fetchPredicate completionHandler:^(NSArray<UARemoteDataStorePayload *> *payloads) {
@@ -394,35 +415,11 @@ completionHandler:(void(^)(BOOL success))completionHandler {
             [remoteDataPayloads addObject:remoteData];
         }
 
-        [self notifySubscriber:subscription remoteData:remoteDataPayloads completionHandler:nil];
+        [subscription notifyRemoteData:remoteDataPayloads dispatcher:self.dispatcher completionHandler:nil];
     }];
 }
 
-/**
- * Notifies a single remote data subscriber.
- *
- * @param subscription The subscriber's subscription
- * @param remoteDataPayloads The remote data payloads to be sent to the subscriber.
- * @param completionHandler Optional completion handler called after the subscriber has been notified.
- */
-- (void)notifySubscriber:(UARemoteDataSubscription *)subscription
-              remoteData:(NSArray<UARemoteDataPayload *> *)remoteDataPayloads
-       completionHandler:(void (^)(void))completionHandler {
 
-    [self.dispatcher dispatchAsync:^{
-        if (remoteDataPayloads.count) {
-            @synchronized(subscription) {
-                if (subscription.publishBlock) {
-                    subscription.publishBlock(remoteDataPayloads);
-                }
-                subscription.lastNotified = [remoteDataPayloads valueForKeyPath:@"@max.timestamp"];
-            }
-        }
-        if (completionHandler) {
-            completionHandler();
-        }
-    }];
-}
 
 @end
 

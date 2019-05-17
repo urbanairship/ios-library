@@ -107,11 +107,11 @@ typedef void (^UARemoteDataPublishBlock)(NSArray<UARemoteDataPayload *> *remoteD
 -(NSDictionary *)createMetadata:(NSLocale *)locale;
 
 /**
- * Checks if last stored metadata matches a metadata created with the current locale and app version.
+ * Checks if provided metadata matches a metadata created with the current locale and app version.
  *
  * @return `YES` if the metadata is current, otherwise `NO`.
  */
--(BOOL)isLastMetadataCurrent;
+-(BOOL)isMetadataCurrent:(NSDictionary *)metadata;
 
 @end
 

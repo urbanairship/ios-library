@@ -353,6 +353,18 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
     }
 }
 
+- (UARetriable *)metadataChecksWithSchedule:(UASchedule *)schedule resultHandler:(UARetriableCompletionHandler)resultHandler {
+    return [UARetriable retriableWithRunBlock:^(UARetriableCompletionHandler _Nonnull handler) {
+        if ([self isScheduleInvalid:schedule]) {
+            [self.remoteDataClient notifyOnMetadataUpdate:^{
+                handler(UARetriableResultInvalidate);
+            }];
+        } else {
+            handler(UARetriableResultSuccess);
+        }
+    } resultHandler:resultHandler];
+}
+
 - (UARetriable *)audienceChecksRetriableWithAudience:(UAInAppMessageAudience *)audience resultHandler:(UARetriableCompletionHandler)resultHandler {
     return [UARetriable retriableWithRunBlock:^(UARetriableCompletionHandler _Nonnull handler) {
         [self checkAudience:audience completionHandler:^(BOOL success, NSError *error) {
@@ -461,13 +473,12 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
         }
     }
 
-    if ([self isScheduleInvalid:schedule]) {
-        [self.remoteDataClient notifyOnMetadataUpdate:^{
+    // Check the metadata
+    UARetriable *metadataCheck = [self metadataChecksWithSchedule:schedule resultHandler:^(UARetriableResult result) {
+        if (result == UARetriableResultInvalidate) {
             completionHandler(UAAutomationSchedulePrepareResultInvalidate);
-        }];
-
-        return;
-    }
+        }
+    }];
 
     // Create the adapter
     UARetriable *createAdapter = [self adapterRetriableWithMessage:message scheduleID:schedule.identifier resultHandler:^(UARetriableResult result) {
@@ -538,7 +549,7 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
         completionHandler(prepareResult);
     }];
 
-    [self.prepareSchedulePipeline addChainedRetriables:@[createAdapter, audienceChecks, prepareMessageAssets, prepareMessageData]];
+    [self.prepareSchedulePipeline addChainedRetriables:@[metadataCheck, createAdapter, audienceChecks, prepareMessageAssets, prepareMessageData]];
 }
 
 - (nullable id<UAInAppMessageDisplayCoordinator>)displayCoordinatorForMessage:(UAInAppMessage *)message {
@@ -568,11 +579,7 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
         return NO;
     }
 
-    if (![self.remoteDataManager isLastMetadataCurrent]) {
-        return YES;
-    }
-
-    if (![self.remoteDataManager.lastMetadata isEqualToDictionary:schedule.metadata]) {
+    if (![self.remoteDataManager isMetadataCurrent:schedule.metadata]) {
         return YES;
     }
 
