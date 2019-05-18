@@ -14,10 +14,10 @@ Pod::Spec.new do |s|
    s.ios.deployment_target   = "10.0"
    s.requires_arc            = true
 
-   s.source_files            = [ 'AirshipDebugKit/AirshipDebugKit/*.{h,m,swift}', 'AirshipDebugKit/AirshipDebugKit/*/*.{h,m,swift}' ]
+   s.source_files            = [ 'AirshipDebugKit/AirshipDebugKit/**/*.{h,m,swift}' ]
    s.swift_version           = "4.2"
 
-   s.resources               = ['AirshipDebugKit/AirshipDebugKit/*/*storyboard', 'AirshipDebugKit/AirshipDebugKit/Resources/*' ]
+   s.resources               = ['AirshipDebugKit/AirshipDebugKit/**/*storyboard', 'AirshipDebugKit/AirshipDebugKit/Resources/**' ]
 
    s.frameworks              = 'UIKit'
    s.dependency                'UrbanAirship-iOS-SDK', '~> 11.0.0'
