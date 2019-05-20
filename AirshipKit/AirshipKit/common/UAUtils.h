@@ -6,6 +6,10 @@
 #import <UIKit/UIKit.h>
 #import <SystemConfiguration/SCNetworkReachability.h>
 
+#if !TARGET_OS_TV   // Inbox not supported on tvOS
+#import "UAUserData.h"
+#endif
+
 NS_ASSUME_NONNULL_BEGIN
 
 #define kUAConnectionTypeNone @"none"
@@ -45,6 +49,13 @@ NS_ASSUME_NONNULL_BEGIN
  * @return An HTTP Basic Auth header string value for the user's credentials.
  */
 + (NSString *)userAuthHeaderString DEPRECATED_MSG_ATTRIBUTE("Deprecated - to be removed in SDK version 11.0.");
+
+/**
+ * Gets the user auth header string for the provided user data.
+ *
+ * @param userData The user data.
+ */
++ (NSString *)userAuthHeaderString:(UAUserData *)userData;
 
 #endif
 
