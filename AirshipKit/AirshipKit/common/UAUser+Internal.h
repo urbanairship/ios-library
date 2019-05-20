@@ -102,7 +102,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)getUserData:(void (^)(UAUserData * _Nullable))completionHandler dispatcher:(nullable UADispatcher *)dispatcher;
 
-
 /**
  * Removes the existing user from the keychain.
  */
