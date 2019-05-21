@@ -79,14 +79,6 @@ NSString *const UAInAppMessageButtonInfoBehaviorDismissValue = @"dismiss";
     return YES;
 }
 
-- (NSUInteger)borderRadius {
-    return self.borderRadiusPoints;
-}
-
-- (void)setBorderRadius:(NSUInteger)borderRadius {
-    self.borderRadiusPoints = borderRadius;
-}
-
 @end
 
 @implementation UAInAppMessageButtonInfo
@@ -364,10 +356,6 @@ NSString *const UAInAppMessageButtonInfoBehaviorDismissValue = @"dismiss";
 
 - (NSString *)description {
     return [NSString stringWithFormat:@"<UAInAppMessageButtonInfo: %@>", [self toJSON]];
-}
-
-- (NSUInteger)borderRadius {
-    return self.borderRadiusPoints;
 }
 
 @end

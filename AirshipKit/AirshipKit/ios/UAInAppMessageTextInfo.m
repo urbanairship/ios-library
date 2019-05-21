@@ -76,14 +76,6 @@ NSString *const UAInAppMessageTextInfoStyleUnderlineValue = @"underline";
     return YES;
 }
 
-- (NSUInteger)size {
-    return self.sizePoints;
-}
-
-- (void)setSize:(NSUInteger)size {
-    self.sizePoints = size;
-}
-
 @end
 
 @implementation UAInAppMessageTextInfo
@@ -404,10 +396,6 @@ NSString *const UAInAppMessageTextInfoStyleUnderlineValue = @"underline";
 
 - (NSString *)description {
     return [NSString stringWithFormat:@"<UAInAppMessageTextInfo: %@>", [self toJSON]];
-}
-
-- (NSUInteger)size {
-    return self.sizePoints;
 }
 
 @end

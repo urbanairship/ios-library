@@ -5,6 +5,15 @@ set -o pipefail
 set -e
 set -x
 
+# this script requires that all changes have been committed
+set +e
+git diff-index --quiet HEAD -- 
+if [ $? -ne 0 ]; then
+    echo "WARNING: This script may run incorrectly since there are uncommitted changes in your local repo. Please commit your changes."
+    exit 1
+fi
+set -e
+
 # different paths on Bitrise and local build
 if [[ $BITRISE_IO ]]; then
   SOURCE_ROOT="${BITRISE_SOURCE_DIR}"

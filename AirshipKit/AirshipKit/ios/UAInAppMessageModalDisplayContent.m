@@ -71,14 +71,6 @@ NSUInteger const UAInAppMessageModalMaxButtons = 2;
     return YES;
 }
 
-- (NSUInteger)borderRadius {
-    return self.borderRadiusPoints;
-}
-
-- (void)setBorderRadius:(NSUInteger)borderRadius {
-    self.borderRadiusPoints = borderRadius;
-}
-
 @end
 
 @interface UAInAppMessageModalDisplayContent()
@@ -486,10 +478,6 @@ NSUInteger const UAInAppMessageModalMaxButtons = 2;
 
 -(UAInAppMessageDisplayType)displayType {
     return UAInAppMessageDisplayTypeModal;
-}
-
-- (NSUInteger)borderRadius {
-    return self.borderRadiusPoints;
 }
 
 @end

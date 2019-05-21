@@ -22,7 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface UAUtils : NSObject
 
 ///---------------------------------------------------------------------------------------
-/// @name Device ID Utils
+/// @name Device Utils
 ///---------------------------------------------------------------------------------------
 
 /**
@@ -31,24 +31,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 + (NSString *)deviceModelName;
 
-/**
- * Gets the Airship Device ID.
- *
- * @return The device ID, or an empty string if the ID cannot be retrieved or created.
- *
- * @deprecated Deprecated - to be removed in SDK version 11.0.
- */
-+ (NSString *)deviceID DEPRECATED_MSG_ATTRIBUTE("Deprecated - to be removed in SDK version 11.0.");
-
 #if !TARGET_OS_TV   // Inbox not supported on tvOS
-/**
- * Returns a basic auth header string.
- *
- * The return value takes the form of: `Basic [Base64 Encoded "username:password"]`
- *
- * @return An HTTP Basic Auth header string value for the user's credentials.
- */
-+ (NSString *)userAuthHeaderString DEPRECATED_MSG_ATTRIBUTE("Deprecated - to be removed in SDK version 11.0.");
 
 /**
  * Gets the user auth header string for the provided user data.

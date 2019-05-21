@@ -67,7 +67,6 @@
 #import "UAScheduleTrigger.h"
 #import "UASystemVersion.h"
 #import "UATextInputNotificationAction.h"
-#import "UAURLProtocol.h"
 #import "UAUser.h"
 #import "UAUserData.h"
 #import "UAUtils.h"

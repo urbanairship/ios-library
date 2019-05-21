@@ -121,9 +121,6 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     self.mockRegistrationDelegate = [self mockForProtocol:@protocol(UARegistrationDelegate)];
     self.mockActionRunner = [self strictMockForClass:[UAActionRunner class]];
 
-    self.mockUAUtils = [self mockForClass:[UAUtils class]];
-    [[[self.mockUAUtils stub] andReturn:@"someDeviceID"] deviceID];
-
     self.mockUAUser = [self mockForClass:[UAUser class]];
     [[[self.mockAirship stub] andReturn:self.mockUAUser] inboxUser];
     [[[self.mockUAUser stub] andReturn:@"someUser"] username];
@@ -160,7 +157,6 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     self.push.deviceToken = @"invalid characters";
 
     XCTAssertNil(self.push.deviceToken, @"setDeviceToken should ignore device tokens with invalid characters.");
-
 
     self.push.deviceToken = validDeviceToken;
     XCTAssertEqualObjects(validDeviceToken, self.push.deviceToken, @"setDeviceToken should set tokens with valid characters");
@@ -2334,20 +2330,6 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     XCTAssertNoThrow([self.mockChannelRegistrar verify], @"should not update channel registration");
 }
 
-// Legacy behavior
--(void)testAuthorizedNotificationOptionsWhenPushNotificationsDisabled {
-    // SETUP
-    self.push.userPushNotificationsEnabled = NO;
-    self.push.authorizedNotificationSettings = UAAuthorizedNotificationSettingsAlert;
-
-    // TEST & VERIFY
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-    XCTAssert(self.push.authorizedNotificationOptions == UANotificationOptionNone);
-#pragma GCC diagnostic pop
-}
-
-// New behavior
 -(void)testAuthorizedNotificationSettingsWhenPushNotificationsDisabled {
     // SETUP
     self.push.userPushNotificationsEnabled = NO;

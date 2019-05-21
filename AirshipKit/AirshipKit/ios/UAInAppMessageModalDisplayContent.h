@@ -104,15 +104,6 @@ extern NSUInteger const UAInAppMessageModalMaxButtons;
 @property(nonatomic, strong) UIColor *dismissButtonColor;
 
 /**
- * The modal message's border radius.
- *
- * Optional. Defaults to 0.
- *
- * @deprecated Deprecated - to be removed in SDK version 11.0. Please use `borderRadiusPoints`.
- */
-@property(nonatomic, assign) NSUInteger borderRadius DEPRECATED_MSG_ATTRIBUTE("Deprecated - to be removed in SDK version 11.0. Please use borderRadiusPoints.");
-
-/**
  * The modal message's border radius. Use to set the border radius
  * to non-integer values.
  *
@@ -186,13 +177,6 @@ extern NSUInteger const UAInAppMessageModalMaxButtons;
  * The modal message's dismiss button color.
  */
 @property(nonatomic, readonly) UIColor *dismissButtonColor;
-
-/**
- * The modal message's border radius.
- *
- * @deprecated Deprecated - to be removed in SDK version 11.0. Please use `borderRadiusPoints`.
- */
-@property(nonatomic, assign, readonly) NSUInteger borderRadius DEPRECATED_MSG_ATTRIBUTE("Deprecated - to be removed in SDK version 11.0. Please use borderRadiusPoints.");
 
 /**
  * The modal message's border radius in points.

@@ -78,15 +78,6 @@ typedef NS_ENUM(NSUInteger, UAInAppMessageTextInfoAlignmentType) {
  * Text size.
  *
  * Optional. Defaults to 14sp.
- *
- * @deprecated Deprecated - to be removed in SDK version 11.0. Please use `sizePoints`.
- */
-@property(nonatomic, assign) NSUInteger size DEPRECATED_MSG_ATTRIBUTE("Deprecated - to be removed in SDK version 11.0. Please use sizePoints.");
-
-/**
- * Text size.
- *
- * Optional. Defaults to 14sp.
  */
 @property(nonatomic, assign) CGFloat sizePoints;
 
@@ -135,13 +126,6 @@ typedef NS_ENUM(NSUInteger, UAInAppMessageTextInfoAlignmentType) {
  * Text color.
  */
 @property(nonatomic, readonly, nullable) UIColor *color;
-
-/**
- * Text size.
- *
- * @deprecated Deprecated - to be removed in SDK version 11.0. Please use `sizePoints`.
- */
-@property(nonatomic, readonly) NSUInteger size DEPRECATED_MSG_ATTRIBUTE("Deprecated - to be removed in SDK version 11.0. Please use sizePoints.");
 
 /**
  * Text size.

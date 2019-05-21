@@ -73,26 +73,15 @@
     return str.length == 0 ? nil : str;
 }
 
-+ (NSString *)deviceID {
-    return [UAKeychainUtils getDeviceID];
-}
-
 + (void)getDeviceID:(void (^)(NSString *))completionHandler dispatcher:(nullable UADispatcher *)dispatcher {
     [[UADispatcher backgroundDispatcher] dispatchAsync:^{
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-        NSString *deviceID = [self deviceID];
-#pragma GCC diagnostic pop
+        NSString *deviceID = [UAKeychainUtils getDeviceID];
         UADispatcher *completionDispatcher = dispatcher ? : [UADispatcher mainDispatcher];
 
         [completionDispatcher dispatchAsync:^{
             completionHandler(deviceID);
         }];
     }];
-}
-
-+ (void)getDeviceID:(void (^)(NSString *))completionHandler {
-    [self getDeviceID:completionHandler dispatcher:nil];
 }
 
 + (NSString *)deviceModelName {
@@ -180,13 +169,6 @@
 + (NSString *)userAuthHeaderString:(UAUserData *)userData {
     return [UAUtils authHeaderStringWithName:userData.username
                                     password:userData.password];
-}
-#endif
-
-#if !TARGET_OS_TV   // Inbox not supported on tvOS
-+ (NSString *)userAuthHeaderString {
-    return [UAUtils authHeaderStringWithName:[UAirship inboxUser].username
-                                    password:[UAirship inboxUser].password];
 }
 #endif
 

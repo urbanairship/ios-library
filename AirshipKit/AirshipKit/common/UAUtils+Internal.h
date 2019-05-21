@@ -54,14 +54,6 @@ NS_ASSUME_NONNULL_BEGIN
 ///---------------------------------------------------------------------------------------
 
 /**
- * Gets the device ID from the Keychain. The completion handler will be invoked
- * on a background queue.
- *
- * @param completionHandler A completion handler which will be passed the device ID.
- */
-+ (void)getDeviceID:(void (^)(NSString *))completionHandler;
-
-/**
  * Gets the device ID from the Keychain.
  *
  * @param completionHandler A completion handler which will be passed the device ID.

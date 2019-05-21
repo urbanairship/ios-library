@@ -445,14 +445,7 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
                             break;
                     }
                 };
-                if ([adapter respondsToSelector:@selector(prepareWithAssets:completionHandler:)]) {
-                    [adapter prepareWithAssets:assets completionHandler:completionHandler];
-                } else {
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-                    [adapter prepare:completionHandler];
-#pragma GCC diagnostic pop
-                }
+                [adapter prepareWithAssets:assets completionHandler:completionHandler];
             }];
         }];
     } resultHandler:resultHandler];

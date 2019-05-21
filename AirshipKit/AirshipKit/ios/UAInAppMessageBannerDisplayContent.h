@@ -103,15 +103,6 @@ extern NSUInteger const UAInAppMessageBannerMaxButtons;
  * The banner's display duration in seconds.
  *
  * Optional. Defaults to 30 seconds.
- *
- * @deprecated Deprecated - to be removed in SDK version 11.0. Please use `durationSeconds`.
- */
-@property(nonatomic, assign) NSUInteger duration DEPRECATED_MSG_ATTRIBUTE("Deprecated - to be removed in SDK version 11.0. Please use durationSeconds.");
-
-/**
- * The banner's display duration in seconds.
- *
- * Optional. Defaults to 30 seconds.
  */
 @property(nonatomic, assign) NSTimeInterval durationSeconds;
 
@@ -128,15 +119,6 @@ extern NSUInteger const UAInAppMessageBannerMaxButtons;
  * Optional. Defaults to black.
  */
 @property(nonatomic, strong) UIColor *dismissButtonColor;
-
-/**
- * The banner's border radius.
- *
- * Optional. Defaults to 0.
- *
- * @deprecated Deprecated - to be removed in SDK version 11.0. Please use `borderRadiusPoints`.
- */
-@property(nonatomic, assign) NSUInteger borderRadius DEPRECATED_MSG_ATTRIBUTE("Deprecated - to be removed in SDK version 11.0. Please use borderRadiusPoints.");
 
 /**
  * The banner's border radius. Use to set the border radius
@@ -205,13 +187,6 @@ extern NSUInteger const UAInAppMessageBannerMaxButtons;
 
 /**
  * The banner's display duration in seconds.
- *
- * @deprecated Deprecated - to be removed in SDK version 11.0. Please use `durationSeconds`.
- */
-@property(nonatomic, readonly) NSUInteger duration DEPRECATED_MSG_ATTRIBUTE("Deprecated - to be removed in SDK version 11.0. Please use durationSeconds.");
-
-/**
- * The banner's display duration in seconds.
  */
 @property(nonatomic, readonly) NSTimeInterval durationSeconds;
 
@@ -225,13 +200,6 @@ extern NSUInteger const UAInAppMessageBannerMaxButtons;
  * The banner's dismiss button color.
  */
 @property(nonatomic, readonly) UIColor *dismissButtonColor;
-
-/**
- * The banner's border radius.
- *
- * @deprecated Deprecated - to be removed in SDK version 11.0. Please use `borderRadiusPoints`.
- */
-@property(nonatomic, assign, readonly) NSUInteger borderRadius DEPRECATED_MSG_ATTRIBUTE("Deprecated - to be removed in SDK version 11.0. Please use borderRadiusPoints.");
 
 /**
  * The banner's border radius in points.

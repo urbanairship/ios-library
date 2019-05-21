@@ -222,14 +222,6 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
     return (UAAuthorizedNotificationSettings) [self.dataStore integerForKey:UAPushTypesAuthorizedKey];
 }
 
-- (UANotificationOptions)authorizedNotificationOptions {
-    UANotificationOptions legacyOptions = [self legacyOptionsForAuthorizedSettings:self.authorizedNotificationSettings];
-
-    // iOS 10 does not disable the types if they are already authorized. Hide any types
-    // that are authorized but are no longer requested
-    return legacyOptions & self.notificationOptions;
-}
-
 - (void)setAuthorizedNotificationSettings:(UAAuthorizedNotificationSettings)authorizedSettings {
     if (![self.dataStore objectForKey:UAPushTypesAuthorizedKey] || [self.dataStore integerForKey:UAPushTypesAuthorizedKey] != authorizedSettings) {
 

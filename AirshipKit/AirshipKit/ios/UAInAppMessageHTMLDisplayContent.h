@@ -34,15 +34,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, strong) UIColor *dismissButtonColor;
 
 /**
- * The HTML message's border radius.
- *
- * Optional. Defaults to 0.
- *
- * @deprecated Deprecated - to be removed in SDK version 11.0. Please use `borderRadiusPoints`.
- */
-@property(nonatomic, assign) NSUInteger borderRadius DEPRECATED_MSG_ATTRIBUTE("Deprecated - to be removed in SDK version 11.0. Please use borderRadiusPoints.");
-
-/**
  * The HTML message's border radius. Use to set the border radius
  * to non-integer values.
  *
@@ -110,13 +101,6 @@ NS_ASSUME_NONNULL_BEGIN
  * The message's dismiss button color.
  */
 @property(nonatomic, readonly) UIColor *dismissButtonColor;
-
-/**
- * The HTML message's border radius.
- *
- * @deprecated Deprecated - to be removed in SDK version 11.0. Please use `borderRadiusPoints`.
- */
-@property(nonatomic, readonly) NSUInteger borderRadius DEPRECATED_MSG_ATTRIBUTE("Deprecated - to be removed in SDK version 11.0. Please use borderRadiusPoints.");
 
 /**
  * The HTML message's border radius.

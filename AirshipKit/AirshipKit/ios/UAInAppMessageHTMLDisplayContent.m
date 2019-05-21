@@ -53,14 +53,6 @@ NSString *const UAInAppMessageURLKey = @"url";
     return YES;
 }
 
-- (NSUInteger)borderRadius {
-    return self.borderRadiusPoints;
-}
-
-- (void)setBorderRadius:(NSUInteger)borderRadius {
-    self.borderRadiusPoints = borderRadius;
-}
-
 @end
 
 @interface UAInAppMessageHTMLDisplayContent ()
@@ -361,10 +353,6 @@ NSString *const UAInAppMessageURLKey = @"url";
 
 - (UAInAppMessageDisplayType)displayType {
     return UAInAppMessageDisplayTypeHTML;
-}
-
-- (NSUInteger)borderRadius {
-    return self.borderRadiusPoints;
 }
 
 @end

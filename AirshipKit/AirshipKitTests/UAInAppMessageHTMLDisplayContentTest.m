@@ -61,29 +61,6 @@
     XCTAssertEqualObjects(newContent.url, @"https://baz.boz.com");
 }
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-- (void)testBorderRadius {
-    UAInAppMessageHTMLDisplayContent *content =  [UAInAppMessageHTMLDisplayContent displayContentWithBuilderBlock:^(UAInAppMessageHTMLDisplayContentBuilder *builder) {
-        builder.url = @"https://foo.bar.com";
-        builder.borderRadius = 10;
-    }];
-    
-    XCTAssertNotNil(content);
-    XCTAssertEqual(content.borderRadius, 10);
-    XCTAssertEqual(content.borderRadiusPoints, 10);
-
-    content =  [UAInAppMessageHTMLDisplayContent displayContentWithBuilderBlock:^(UAInAppMessageHTMLDisplayContentBuilder *builder) {
-        builder.url = @"https://foo.bar.com";
-        builder.borderRadiusPoints = 10.5;
-    }];
-    
-    XCTAssertNotNil(content);
-    XCTAssertEqual(content.borderRadius, 10);
-    XCTAssertEqual(content.borderRadiusPoints, 10.5);
-}
-#pragma GCC diagnostic pop
-
 @end
 
 

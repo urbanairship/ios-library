@@ -112,10 +112,7 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
         NSString *password = [UAKeychainUtils getPassword:appKey];
 
         if (username && password) {
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
             self.userData = userData = [UAUserData dataWithUsername:username password:password url:self.url];
-#pragma GCC diagnostic pop
         }
     }];
 

@@ -262,31 +262,4 @@
     XCTAssertFalse(newContent.allowFullScreenDisplay);
 }
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-- (void)testBorderRadius {
-    UAInAppMessageModalDisplayContent *content =  [UAInAppMessageModalDisplayContent displayContentWithBuilderBlock:^(UAInAppMessageModalDisplayContentBuilder *builder) {
-        builder.borderRadius = 10;
-        builder.heading = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
-            builder.text = @"headline content";
-        }];;
-    }];
-    
-    XCTAssertNotNil(content);
-    XCTAssertEqual(content.borderRadius, 10);
-    XCTAssertEqual(content.borderRadiusPoints, 10);
-    
-    content = [UAInAppMessageModalDisplayContent displayContentWithBuilderBlock:^(UAInAppMessageModalDisplayContentBuilder *builder) {
-        builder.borderRadiusPoints = 10.5;
-        builder.heading = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
-            builder.text = @"headline content";
-        }];;
-    }];
-    
-    XCTAssertNotNil(content);
-    XCTAssertEqual(content.borderRadius, 10);
-    XCTAssertEqual(content.borderRadiusPoints, 10.5);
-}
-#pragma GCC diagnostic pop
-
 @end

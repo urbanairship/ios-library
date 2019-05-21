@@ -86,48 +86,4 @@
     XCTAssertEqualObjects(newInfo.text, @"new text");
 }
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-- (void)testSize {
-    UAInAppMessageTextInfo *textInfo = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
-        builder.text = @"text";
-        builder.size = 11;
-    }];
-    
-    XCTAssertNotNil(textInfo);
-    XCTAssertEqual(textInfo.size, 11);
-    XCTAssertEqual(textInfo.sizePoints, 11);
-    
-    UAInAppMessageTextInfo *fromJSON = [UAInAppMessageTextInfo textInfoWithJSON:[textInfo toJSON] error:nil];
-    XCTAssertEqualObjects(fromJSON, textInfo);
-    
-    textInfo = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
-        builder.text = @"text";
-        builder.sizePoints = 11.5;
-    }];
-    
-    XCTAssertNotNil(textInfo);
-    XCTAssertEqual(textInfo.size, 11);
-    XCTAssertEqual(textInfo.sizePoints, 11.5);
-    
-    fromJSON = [UAInAppMessageTextInfo textInfoWithJSON:[textInfo toJSON] error:nil];
-    XCTAssertEqualObjects(fromJSON, textInfo);
-    
-    UAInAppMessageTextInfo *textInfoFloatingPointAcceptableError = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
-        builder.text = @"text";
-        builder.sizePoints = 11.50000001;
-    }];
-    
-    XCTAssertEqualObjects(textInfo, textInfoFloatingPointAcceptableError);
-    
-    UAInAppMessageTextInfo *textInfoFloatingPointUnacceptableError = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
-        builder.text = @"text";
-        builder.sizePoints = 11.52;
-    }];
-    
-    XCTAssertNotEqualObjects(textInfo, textInfoFloatingPointUnacceptableError);
-
-}
-#pragma GCC diagnostic pop
-
 @end

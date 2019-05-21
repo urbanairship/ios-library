@@ -47,7 +47,7 @@ typedef NS_ENUM(NSUInteger, UAInAppMessagePrepareResult) {
  */
 + (instancetype)adapterForMessage:(UAInAppMessage *)message;
 
-@optional
+@required
 
 /**
  * Prepares in-app message to display.
@@ -58,18 +58,6 @@ typedef NS_ENUM(NSUInteger, UAInAppMessagePrepareResult) {
  */
 - (void)prepareWithAssets:(UAInAppMessageAssets *)assets
         completionHandler:(void (^)(UAInAppMessagePrepareResult result))completionHandler;
-
-/**
- * Prepares in-app message to display.
- *
- * @param completionHandler the completion handler to be called when adapter has finished
- * preparing the in-app message.
- *
- * @deprecated Deprecated - to be removed in SDK version 11.0. Please use `prepareWithAssetCache:completionHandler:`.
- */
-- (void)prepare:(void (^)(UAInAppMessagePrepareResult result))completionHandler DEPRECATED_MSG_ATTRIBUTE("Deprecated - to be removed in SDK version 11.0. Please use `prepareWithAssetCache:completionHandler:`.");
-
-@required
 
 /**
  * Informs the adapter of the ready state of the in-app message immediately before display.

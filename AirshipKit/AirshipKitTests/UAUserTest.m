@@ -65,11 +65,6 @@
 
     XCTAssertNil(self.user.username, @"user name should be nil");
     XCTAssertNil(self.user.password, @"password should be nil");
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-    XCTAssertNil(self.user.url, @"url should be nil");
-    XCTAssertFalse(self.user.isCreated, @"Uninitialized user should not be created");
-#pragma GCC diagnostic pop
 }
 
 /**
