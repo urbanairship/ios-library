@@ -7,7 +7,7 @@
 
 NSString *const UACloudSiteEUConfigName = @"EU";
 NSString *const UACloudSiteUSConfigName = @"US";
-NSString *const UACloutSiteKeyName = @"site";
+NSString *const UACloudSiteKeyName = @"site";
 
 @interface UAConfig()
 
@@ -92,7 +92,7 @@ NSString *const UACloutSiteKeyName = @"site";
     return [NSString stringWithFormat:@"In Production (resolved): %d\n"
             "In Production (as set): %d\n"
             "Resolved App Key: %@\n"
-            "Resolved App Key: %@\n"
+            "Resolved App Secret: %@\n"
             "Resolved Log Level: %ld\n"
             "Default App Key: %@\n"
             "Default App Secret: %@\n"
@@ -286,14 +286,14 @@ NSString *const UACloutSiteKeyName = @"site";
             UA_LWARN(@"%@ is a legacy config key, use %@ instead", key, oldKeyMap[key]);
         }
 
-        if ([key isEqualToString:UACloutSiteKeyName]) {
-            id value = keyedValues[UACloutSiteKeyName];
+        if ([key isEqualToString:UACloudSiteKeyName]) {
+            id value = keyedValues[UACloudSiteKeyName];
             if ([value isKindOfClass:[NSString class]]) {
                 if([UACloudSiteUSConfigName caseInsensitiveCompare:value] == NSOrderedSame ) {
-                    newKeyedValues[UACloutSiteKeyName] = @(UACloudSiteUS);
+                    newKeyedValues[UACloudSiteKeyName] = @(UACloudSiteUS);
                     continue;
                 } else if([UACloudSiteEUConfigName caseInsensitiveCompare:value] == NSOrderedSame ) {
-                    newKeyedValues[UACloutSiteKeyName] = @(UACloudSiteEU);
+                    newKeyedValues[UACloudSiteKeyName] = @(UACloudSiteEU);
                     continue;
                 } else {
                     UA_LWARN(@"Invalid site %@", value);
