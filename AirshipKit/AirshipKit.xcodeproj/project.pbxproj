@@ -5328,7 +5328,7 @@
 			files = (
 			);
 			inputPaths = (
-				"${SRCROOT}/../Pods/Target Support Files/Pods-AirshipKitTests/Pods-AirshipKitTests-frameworks.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-AirshipKitTests/Pods-AirshipKitTests-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/OCMock/OCMock.framework",
 				"${BUILT_PRODUCTS_DIR}/XcodeEdit/XcodeEdit.framework",
 			);
@@ -5339,7 +5339,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/../Pods/Target Support Files/Pods-AirshipKitTests/Pods-AirshipKitTests-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-AirshipKitTests/Pods-AirshipKitTests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		DF6DD5011E7A1EB8000C281A /* Generate AirshipLib.h */ = {
@@ -6382,10 +6382,7 @@
 				INFOPLIST_FILE = AirshipKit/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				"OTHER_CFLAGS[arch=*]" = (
-					"-D_UA_VERSION=\\\"$(CURRENT_PROJECT_VERSION)\\\"",
-					"$(inherited)",
-				);
+				"OTHER_CFLAGS[arch=*]" = "-D_UA_VERSION=\\\"$(CURRENT_PROJECT_VERSION)\\\" $(inherited)";
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-weak_framework",
@@ -6411,10 +6408,7 @@
 				INFOPLIST_FILE = AirshipKit/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				"OTHER_CFLAGS[arch=*]" = (
-					"-D_UA_VERSION=\\\"$(CURRENT_PROJECT_VERSION)\\\"",
-					"$(inherited)",
-				);
+				"OTHER_CFLAGS[arch=*]" = "-D_UA_VERSION=\\\"$(CURRENT_PROJECT_VERSION)\\\" $(inherited)";
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-weak_framework",
@@ -6640,10 +6634,7 @@
 				INFOPLIST_FILE = AirshipKit/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				"OTHER_CFLAGS[arch=*]" = (
-					"-D_UA_VERSION=\\\"$(CURRENT_PROJECT_VERSION)\\\"",
-					"$(inherited)",
-				);
+				"OTHER_CFLAGS[arch=*]" = "-D_UA_VERSION=\\\"$(CURRENT_PROJECT_VERSION)\\\" $(inherited)";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.AirshipKit;
 				PRODUCT_NAME = AirshipKit;
@@ -6668,10 +6659,7 @@
 				INFOPLIST_FILE = AirshipKit/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				"OTHER_CFLAGS[arch=*]" = (
-					"-D_UA_VERSION=\\\"$(CURRENT_PROJECT_VERSION)\\\"",
-					"$(inherited)",
-				);
+				"OTHER_CFLAGS[arch=*]" = "-D_UA_VERSION=\\\"$(CURRENT_PROJECT_VERSION)\\\" $(inherited)";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.AirshipKit;
 				PRODUCT_NAME = AirshipKit;

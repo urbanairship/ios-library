@@ -123,7 +123,7 @@ NSString *const UACloudSiteKeyName = @"site";
             _inProduction,
             self.appKey,
             self.appSecret,
-            self.logLevel,
+            (long)self.logLevel,
             self.defaultAppKey,
             self.defaultAppSecret,
             self.developmentAppKey,
