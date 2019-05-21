@@ -4,7 +4,7 @@
 #import <OCMock/OCMock.h>
 #import "UADisposable.h"
 #import "UAPreferenceDataStore+Internal.h"
-#import "UAConfig.h"
+#import "UATestRuntimeConfig.h"
 
 extern const NSTimeInterval UATestExpectationTimeOut;
 
@@ -20,7 +20,7 @@ extern const NSTimeInterval UATestExpectationTimeOut;
  * A preference airship with unique appkey/secret. The config is created
  * lazily when first used.
  */
-@property (nonatomic, strong) UAConfig *config;
+@property (nonatomic, strong) UATestRuntimeConfig *config;
 
 /**
  * Creates a nice mock for a given class.

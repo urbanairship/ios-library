@@ -3,7 +3,7 @@
 #import "UARemoteDataAPIClient+Internal.h"
 #import "UAPreferenceDataStore+Internal.h"
 #import "UAUtils+Internal.h"
-#import "UAConfig+Internal.h"
+#import "UARuntimeConfig.h"
 #import "NSURLResponse+UAAdditions.h"
 #import "UAirshipVersion.h"
 
@@ -17,7 +17,7 @@ NSString * const kRemoteDataPath = @"api/remote-data/app";
 
 NSString * const kUALastRemoteDataModifiedTime = @"UALastRemoteDataModifiedTime";
 
-- (UARemoteDataAPIClient *)initWithConfig:(UAConfig *)config
+- (UARemoteDataAPIClient *)initWithConfig:(UARuntimeConfig *)config
                                 dataStore:(UAPreferenceDataStore *)dataStore
                                   session:(UARequestSession *)session {
     self = [super initWithConfig:config session:session];
@@ -29,13 +29,13 @@ NSString * const kUALastRemoteDataModifiedTime = @"UALastRemoteDataModifiedTime"
     return self;
 }
 
-+ (UARemoteDataAPIClient *)clientWithConfig:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
++ (UARemoteDataAPIClient *)clientWithConfig:(UARuntimeConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
     return [[self alloc] initWithConfig:config
                               dataStore:dataStore
                                 session:[UARequestSession sessionWithConfig:config]];
 }
 
-+ (UARemoteDataAPIClient *)clientWithConfig:(UAConfig *)config
++ (UARemoteDataAPIClient *)clientWithConfig:(UARuntimeConfig *)config
                                   dataStore:(UAPreferenceDataStore *)dataStore
                                     session:(UARequestSession *)session {
     return [[self alloc] initWithConfig:config

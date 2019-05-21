@@ -2,7 +2,7 @@
 
 #import <Foundation/Foundation.h>
 
-#import "UAConfig.h"
+#import "UARuntimeConfig.h"
 #import "UAPreferenceDataStore+Internal.h"
 #import "UATagGroupsMutationHistory+Internal.h"
 #import "UATagGroupsAPIClient+Internal.h"
@@ -24,7 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param mutationHistory The mutation history.
  * @return A new tag groups registrar instance.
  */
-+ (instancetype)tagGroupsRegistrarWithConfig:(UAConfig *)config
++ (instancetype)tagGroupsRegistrarWithConfig:(UARuntimeConfig *)config
                                    dataStore:(UAPreferenceDataStore *)dataStore
                              mutationHistory:(UATagGroupsMutationHistory *)mutationHistory;
 

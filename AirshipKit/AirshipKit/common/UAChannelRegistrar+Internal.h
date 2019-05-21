@@ -4,7 +4,7 @@
 
 @class UAChannelRegistrationPayload;
 @class UAChannelAPIClient;
-@class UAConfig;
+@class UARuntimeConfig;
 @class UAPreferenceDataStore;
 @class UADate;
 @class UADispatcher;
@@ -68,7 +68,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param delegate The UAChannelRegistrarDelegate delegate.
  * @return A new channel registrar instance.
  */
-+ (instancetype)channelRegistrarWithConfig:(UAConfig *)config
++ (instancetype)channelRegistrarWithConfig:(UARuntimeConfig *)config
                                  dataStore:(UAPreferenceDataStore *)dataStore
                                   delegate:(id<UAChannelRegistrarDelegate>)delegate;
 
@@ -122,7 +122,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param application The application.
  * @return A new channel registrar instance.
  */
-+ (instancetype)channelRegistrarWithConfig:(UAConfig *)config
++ (instancetype)channelRegistrarWithConfig:(UARuntimeConfig *)config
                                  dataStore:(UAPreferenceDataStore *)dataStore
                                   delegate:(id<UAChannelRegistrarDelegate>)delegate
                                  channelID:(NSString *)channelID

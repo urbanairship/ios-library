@@ -59,7 +59,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Factory method.
  *
- * @param config The UAConfigInstance.
+ * @param config The UARuntimeConfigInstance.
  * @param tagGroupsMutationHistory The tag groups mutation history.
  * @param remoteDataManager The remote data manager.
  * @param dataStore The preference data store.
@@ -67,7 +67,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param analytics The system analytics instance.
  * @return A in-app message manager instance.
  */
-+ (instancetype)managerWithConfig:(UAConfig *)config
++ (instancetype)managerWithConfig:(UARuntimeConfig *)config
          tagGroupsMutationHistory:(UATagGroupsMutationHistory *)tagGroupsMutationHistory
                 remoteDataManager:(UARemoteDataManager *)remoteDataManager
                         dataStore:(UAPreferenceDataStore *)dataStore

@@ -19,7 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 ///---------------------------------------------------------------------------------------
 
 // Setters for public readonly-getters
-@property (nonatomic, strong) UAConfig *config;
+@property (nonatomic, strong) UARuntimeConfig *config;
 @property (nonatomic, strong) UAActionRegistry *actionRegistry;
 @property (nonatomic, assign) BOOL remoteNotificationBackgroundModeEnabled;
 @property (nonatomic, strong, nullable) id<UAJavaScriptDelegate> actionJSDelegate;

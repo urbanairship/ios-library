@@ -38,7 +38,7 @@ typedef void (^UARemoteDataRefreshFailureBlock)(void);
  * @param dataStore A UAPreferenceDataStore to store persistent preferences
  * @return The remote data API client instance.
  */
-+ (UARemoteDataAPIClient *)clientWithConfig:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore;
++ (UARemoteDataAPIClient *)clientWithConfig:(UARuntimeConfig *)config dataStore:(UAPreferenceDataStore *)dataStore;
 
 
 /**
@@ -49,7 +49,7 @@ typedef void (^UARemoteDataRefreshFailureBlock)(void);
  * @param session The UARequestSession session.
  * @return The remote data API client instance.
  */
-+ (UARemoteDataAPIClient *)clientWithConfig:(UAConfig *)config
++ (UARemoteDataAPIClient *)clientWithConfig:(UARuntimeConfig *)config
                                   dataStore:(UAPreferenceDataStore *)dataStore
                                     session:(UARequestSession *)session;
 

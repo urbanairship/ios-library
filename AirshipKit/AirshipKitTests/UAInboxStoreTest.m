@@ -2,7 +2,7 @@
 
 #import "UABaseTest.h"
 #import "UAInboxStore+Internal.h"
-#import "UAConfig.h"
+#import "UARuntimeConfig.h"
 
 @interface UAInboxStoreTest : UABaseTest
 @property UAInboxStore *inboxStore;

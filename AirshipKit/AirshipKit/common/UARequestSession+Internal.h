@@ -2,7 +2,7 @@
 
 #import <Foundation/Foundation.h>
 #import "UARequest+Internal.h"
-#import "UAConfig.h"
+#import "UARuntimeConfig.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -16,27 +16,27 @@ typedef BOOL (^UARequestRetryBlock)(NSData * _Nullable data, NSURLResponse * _Nu
 
 /**
  * UARequestSession factory method.
- * @param config The UAConfig instance.
+ * @param config The UARuntimeConfig instance.
  * @return A UARequestSession instance.
  */
-+ (instancetype)sessionWithConfig:(UAConfig *)config;
++ (instancetype)sessionWithConfig:(UARuntimeConfig *)config;
 
 /**
  * UARequestSession factory method.
- * @param config The UAConfig instance.
+ * @param config The UARuntimeConfig instance.
  * @param session A NSURLSession instance.
  * @return A UARequestSession instance.
  */
-+ (instancetype)sessionWithConfig:(UAConfig *)config NSURLSession:(NSURLSession *)session;
++ (instancetype)sessionWithConfig:(UARuntimeConfig *)config NSURLSession:(NSURLSession *)session;
 
 /**
  * UARequestSession factory method.
- * @param config The UAConfig instance.
+ * @param config The UARuntimeConfig instance.
  * @param session A NSURLSession instance.
  * @param queue A NSOperation to perform retries on.
  * @return A UARequestSession instance.
  */
-+ (instancetype)sessionWithConfig:(UAConfig *)config NSURLSession:(NSURLSession *)session queue:(NSOperationQueue *)queue;
++ (instancetype)sessionWithConfig:(UARuntimeConfig *)config NSURLSession:(NSURLSession *)session queue:(NSOperationQueue *)queue;
 
 /**
  * Sets a http request header for all requests.

@@ -3,14 +3,13 @@
 #import "UAInboxMessageList+Internal.h"
 
 #import "UAirship.h"
-#import "UAConfig.h"
+#import "UARuntimeConfig.h"
 #import "UADisposable.h"
 #import "UAInboxAPIClient+Internal.h"
 #import "UAInboxMessage+Internal.h"
 #import "UAInboxStore+Internal.h"
 #import "UAUtils+Internal.h"
 #import "UAUser.h"
-#import "UAURLProtocol.h"
 #import "UADate+Internal.h"
 
 NSString * const UAInboxMessageListWillUpdateNotification = @"com.urbanairship.notification.message_list_will_update";
@@ -33,7 +32,7 @@ typedef void (^UAInboxMessageFetchCompletionHandler)(NSArray *);
 
 - (instancetype)initWithUser:(UAUser *)user
                       client:(UAInboxAPIClient *)client
-                      config:(UAConfig *)config
+                      config:(UARuntimeConfig *)config
                   inboxStore:(UAInboxStore *)inboxStore
           notificationCenter:(NSNotificationCenter *)notificationCenter
                   dispatcher:(UADispatcher *)dispatcher
@@ -57,7 +56,7 @@ typedef void (^UAInboxMessageFetchCompletionHandler)(NSArray *);
     return self;
 }
 
-+ (instancetype)messageListWithUser:(UAUser *)user client:(UAInboxAPIClient *)client config:(UAConfig *)config {
++ (instancetype)messageListWithUser:(UAUser *)user client:(UAInboxAPIClient *)client config:(UARuntimeConfig *)config {
     UAInboxStore *inboxStore = [UAInboxStore storeWithName:[NSString stringWithFormat:kUACoreDataStoreName, config.appKey]];
 
     return [UAInboxMessageList messageListWithUser:user
@@ -71,7 +70,7 @@ typedef void (^UAInboxMessageFetchCompletionHandler)(NSArray *);
 
 + (instancetype)messageListWithUser:(UAUser *)user
                              client:(UAInboxAPIClient *)client
-                             config:(UAConfig *)config
+                             config:(UARuntimeConfig *)config
                          inboxStore:(UAInboxStore *)inboxStore
                  notificationCenter:(NSNotificationCenter *)notificationCenter
                          dispatcher:(UADispatcher *)dispatcher

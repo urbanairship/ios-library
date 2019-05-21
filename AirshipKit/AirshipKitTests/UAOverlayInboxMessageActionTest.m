@@ -8,7 +8,7 @@
 #import "UAInbox.h"
 #import "UAInboxMessage.h"
 #import "UAInboxMessageList.h"
-#import "UAConfig.h"
+#import "UARuntimeConfig.h"
 #import "UAInAppMessageManager+Internal.h"
 #import "UAInAppMessageScheduleInfo+Internal.h"
 #import "UAInAppMessageHTMLDisplayContent+Internal.h"
@@ -43,10 +43,10 @@
     [[[self.mockInbox stub] andReturn:self.mockMessageList] messageList];
 
     // Set an actual whitelist
-    UAWhitelist *whitelist = [UAWhitelist whitelistWithConfig:[UAConfig defaultConfig]];
+    UAWhitelist *whitelist = [UAWhitelist whitelistWithConfig:self.config];
     [[[self.mockAirship stub] andReturn:whitelist] whitelist];
 
-    self.mockConfig = [self mockForClass:[UAConfig class]];
+    self.mockConfig = [self mockForClass:[UARuntimeConfig class]];
     self.mockInAppMessageManager = [self mockForClass:[UAInAppMessageManager class]];
     [[[self.mockAirship stub] andReturn:self.mockConfig] config];
     [[[self.mockAirship stub] andReturn:self.mockInAppMessageManager] sharedInAppMessageManager];

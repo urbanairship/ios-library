@@ -3,7 +3,7 @@
 #import "UANamedUser.h"
 
 @class UANamedUserAPIClient;
-@class UAConfig;
+@class UARuntimeConfig;
 @class UATagGroupsRegistrar;
 @class UAPush;
 
@@ -71,7 +71,7 @@ extern NSString *const UANamedUserRemoveTagGroupsSettingsKey;
 /**
  * The airship config.
  */
-@property (nonatomic, strong) UAConfig *config;
+@property (nonatomic, strong) UARuntimeConfig *config;
 
 ///---------------------------------------------------------------------------------------
 /// @name Named User Internal Methods
@@ -86,7 +86,7 @@ extern NSString *const UANamedUserRemoveTagGroupsSettingsKey;
  * @return A named user instance.
  */
 + (instancetype)namedUserWithPush:(UAPush *)push
-                           config:(UAConfig *)config
+                           config:(UARuntimeConfig *)config
                         dataStore:(UAPreferenceDataStore *)dataStore
                tagGroupsRegistrar:(UATagGroupsRegistrar *)tagGroupsRegistrar;
 

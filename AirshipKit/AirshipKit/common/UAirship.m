@@ -8,11 +8,11 @@
 #import "UAGlobal.h"
 #import "UAPush+Internal.h"
 #import "UAConfig.h"
+#import "UARuntimeConfig+Internal.h"
 #import "UAApplicationMetrics+Internal.h"
 #import "UAActionRegistry.h"
 #import "UAAutoIntegration+Internal.h"
 #import "NSJSONSerialization+UAAdditions.h"
-#import "UAURLProtocol.h"
 #import "UAAppInitEvent+Internal.h"
 #import "UAAppExitEvent+Internal.h"
 #import "UAPreferenceDataStore+Internal.h"
@@ -86,7 +86,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 #pragma mark -
 #pragma mark Object Lifecycle
 
-- (instancetype)initWithConfig:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
+- (instancetype)initWithRuntimeConfig:(UARuntimeConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
     self = [super init];
     if (self) {
 #if TARGET_OS_TV   // remote-notification background mode not supported in tvOS
@@ -186,39 +186,32 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         return;
     }
 
-    [UAirship setLogLevel:config.logLevel];
-
-    if (config.inProduction) {
-        [UAirship setLoudImpErrorLogging:NO];
-    }
+    UARuntimeConfig *runtimeConfig = [UARuntimeConfig runtimeConfigWithConfig:config];
 
     // Ensure that app credentials are valid
-    if (![config validate]) {
+    if (!runtimeConfig) {
         UA_LIMPERR(@"The UAConfig is invalid, no application credentials were specified at runtime.");
         // Bail now. Don't continue the takeOff sequence.
         return;
     }
 
+    [UAirship setLogLevel:runtimeConfig.logLevel];
+
+    if (runtimeConfig.inProduction) {
+        [UAirship setLoudImpErrorLogging:NO];
+    }
+
     UA_LINFO(@"UAirship Take Off! Lib Version: %@ App Key: %@ Production: %@.",
-             [UAirshipVersion get], config.appKey, config.inProduction ?  @"YES" : @"NO");
+             [UAirshipVersion get], runtimeConfig.appKey, runtimeConfig.inProduction ?  @"YES" : @"NO");
 
     // Data store
-    UAPreferenceDataStore *dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:[NSString stringWithFormat:@"com.urbanairship.%@.", config.appKey]];
+    UAPreferenceDataStore *dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:[NSString stringWithFormat:@"com.urbanairship.%@.", runtimeConfig.appKey]];
     [dataStore migrateUnprefixedKeys:@[UALibraryVersion]];
-
-    // Cache
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-    if (config.cacheDiskSizeInMB > 0) {
-        UA_LTRACE("Registering UAURLProtocol.");
-        [NSURLProtocol registerClass:[UAURLProtocol class]];
-    }
-#pragma GCC diagnostic pop
 
     // Clearing the key chain
     if ([[NSUserDefaults standardUserDefaults] boolForKey:UAResetKeychainKey]) {
         UA_LDEBUG(@"Deleting the keychain credentials");
-        [UAKeychainUtils deleteKeychainValue:config.appKey];
+        [UAKeychainUtils deleteKeychainValue:runtimeConfig.appKey];
 
         UA_LDEBUG(@"Deleting the Airship device ID");
         [UAKeychainUtils deleteKeychainValue:kUAKeychainDeviceIDKey];
@@ -239,7 +232,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 
             [sharedAirship_.sharedPush resetChannel];
 #if !TARGET_OS_TV
-            if (config.clearUserOnAppRestore) {
+            if (runtimeConfig.clearUserOnAppRestore) {
                 [sharedAirship_.sharedInboxUser resetUser];
             }
 #endif
@@ -250,7 +243,8 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
     } dispatcher:[UADispatcher mainDispatcher]];
 
     // Create Airship
-    [UAirship setSharedAirship:[[UAirship alloc] initWithConfig:config dataStore:dataStore]];
+    [UAirship setSharedAirship:[[UAirship alloc] initWithRuntimeConfig:runtimeConfig
+                                                             dataStore:dataStore]];
 
     // Save the version
     if ([[UAirshipVersion get] isEqualToString:@"0.0.0"]) {
@@ -274,7 +268,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
     }
 
     // Validate any setup issues
-    if (!config.inProduction) {
+    if (!runtimeConfig.inProduction) {
         [sharedAirship_ validate];
     }
 

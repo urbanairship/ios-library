@@ -7,7 +7,7 @@
 #import "NSJSONSerialization+UAAdditions.h"
 #import "UAWebViewCallData.h"
 #import "UAirship+Internal.h"
-#import "UAConfig.h"
+#import "UARuntimeConfig.h"
 
 @interface UAActionJSDelegateTest : UABaseTest
 @property (nonatomic, strong) UAActionJSDelegate *jsDelegate;
@@ -38,7 +38,7 @@
 
     self.mockWKWebViewDelegate = [self mockForProtocol:@protocol(UAWKWebViewDelegate)];
     
-    self.mockConfig = [self mockForClass:[UAConfig class]];
+    self.mockConfig = [self mockForClass:[UARuntimeConfig class]];
     [[[self.mockAirship stub] andReturn:self.mockConfig] config];
 }
 

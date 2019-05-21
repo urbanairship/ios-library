@@ -2,7 +2,7 @@
 
 #import "UAMessageCenterStyle.h"
 #import "UAirship.h"
-#import "UAConfig.h"
+#import "UARuntimeConfig.h"
 #import "UAColorUtils+Internal.h"
 #import "UAMessageCenterStyle.h"
 

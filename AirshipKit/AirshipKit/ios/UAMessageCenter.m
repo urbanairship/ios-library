@@ -10,7 +10,7 @@
 #import "UAMessageCenterMessageViewController.h"
 #import "UAMessageCenterSplitViewController.h"
 #import "UAMessageCenterStyle.h"
-#import "UAConfig.h"
+#import "UARuntimeConfig.h"
 
 @interface UAMessageCenter()
 @property(nonatomic, strong) UAMessageCenterSplitViewController *splitViewController;
@@ -28,7 +28,7 @@ NSString *const UAMessageDataScheme = @"message";
     return self;
 }
 
-+ (instancetype)messageCenterWithConfig:(UAConfig *)config {
++ (instancetype)messageCenterWithConfig:(UARuntimeConfig *)config {
     UAMessageCenter *center = [[UAMessageCenter alloc] init];
     center.style = [UAMessageCenterStyle styleWithContentsOfFile:config.messageCenterStyleConfig];
     return center;

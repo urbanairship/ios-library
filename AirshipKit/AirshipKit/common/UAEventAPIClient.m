@@ -13,11 +13,11 @@
 
 @implementation UAEventAPIClient
 
-+ (instancetype)clientWithConfig:(UAConfig *)config {
++ (instancetype)clientWithConfig:(UARuntimeConfig *)config {
     return [[UAEventAPIClient alloc] initWithConfig:config session:[UARequestSession sessionWithConfig:config]];
 }
 
-+ (instancetype)clientWithConfig:(UAConfig *)config session:(UARequestSession *)session {
++ (instancetype)clientWithConfig:(UARuntimeConfig *)config session:(UARequestSession *)session {
     return [[UAEventAPIClient alloc] initWithConfig:config session:session];
 }
 

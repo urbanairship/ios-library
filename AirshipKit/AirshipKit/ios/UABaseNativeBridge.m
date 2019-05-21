@@ -16,7 +16,7 @@
 #import "NSString+UAURLEncoding.h"
 #import "UANamedUser.h"
 #import "UAPush.h"
-#import "UAConfig.h"
+#import "UARuntimeConfig.h"
 
 NSString *const UANativeBridgeUAirshipScheme = @"uairship";
 NSString *const UANativeBridgeDismissCommand = @"dismiss";

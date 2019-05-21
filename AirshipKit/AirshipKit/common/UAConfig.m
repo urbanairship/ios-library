@@ -2,9 +2,20 @@
 
 #import <objc/runtime.h>
 
-#import "UAConfig+Internal.h"
+#import "UAConfig.h"
 #import "UAGlobal.h"
 
+NSString *const UACloudSiteEUConfigName = @"EU";
+NSString *const UACloudSiteUSConfigName = @"US";
+NSString *const UACloutSiteKeyName = @"site";
+
+@interface UAConfig()
+
+@property (nonatomic, copy, nullable) NSString *profilePath;
+@property (nonatomic, assign) BOOL defaultDetectProvisioningMode;
+@property (nonatomic, strong) NSNumber *usesProductionPushServer;
+
+@end
 @implementation UAConfig
 
 @synthesize inProduction = _inProduction;
@@ -16,9 +27,7 @@
 - (instancetype)init {
     self = [super init];
     if (self) {
-        self.deviceAPIURL = kUAAirshipProductionServer;
-        self.remoteDataAPIURL = kUARemoteDataProductionServer;
-        self.analyticsURL = kUAAnalyticsProductionServer;
+        self.site = UACloudSiteUS;
         self.developmentLogLevel = UALogLevelDebug;
         self.productionLogLevel = UALogLevelError;
         self.inProduction = NO;
@@ -27,10 +36,6 @@
         self.automaticSetupEnabled = YES;
         self.analyticsEnabled = YES;
         self.profilePath = [[NSBundle mainBundle] pathForResource:@"embedded" ofType:@"mobileprovision"];
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-        self.cacheDiskSizeInMB = 100;
-#pragma GCC diagnostic pop
         self.clearUserOnAppRestore = NO;
         self.whitelist = @[];
         self.clearNamedUserOnAppRestore = NO;
@@ -46,12 +51,10 @@
 
 -(id)copyWithZone:(NSZone *)zone {
     UAConfig *configCopy = [[[self class] alloc] init];
-
     return [configCopy configWithConfig:self];
 }
 
 -(UAConfig *) configWithConfig:(UAConfig *) config {
-
     if (config) {
         _developmentAppKey = config.developmentAppKey;
         _developmentAppSecret = config.developmentAppSecret;
@@ -70,10 +73,6 @@
         _automaticSetupEnabled = config.automaticSetupEnabled;
         _analyticsEnabled = config.analyticsEnabled;
         _profilePath = config.profilePath;
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-        _cacheDiskSizeInMB = config.cacheDiskSizeInMB;
-#pragma GCC diagnostic pop
         _clearUserOnAppRestore = config.clearUserOnAppRestore;
         _whitelist = config.whitelist;
         _clearNamedUserOnAppRestore = config.clearNamedUserOnAppRestore;
@@ -90,24 +89,25 @@
 }
 
 - (NSString *)description {
-    return [NSString stringWithFormat:@"Resolved App Key: %@\n"
-            "Resolved App Secret: %@\n"
-            "In Production (resolved): %d\n"
+    return [NSString stringWithFormat:@"In Production (resolved): %d\n"
             "In Production (as set): %d\n"
+            "Resolved App Key: %@\n"
+            "Resolved App Key: %@\n"
+            "Resolved Log Level: %ld\n"
+            "Default App Key: %@\n"
+            "Default App Secret: %@\n"
             "Development App Key: %@\n"
             "Development App Secret: %@\n"
+            "Development Log Level: %ld\n"
             "Production App Key: %@\n"
             "Production App Secret: %@\n"
-            "Development Log Level: %ld\n"
             "Production Log Level: %ld\n"
-            "Resolved Log Level: %ld\n"
             "Detect Provisioning Mode: %d\n"
             "Request Authorization To Use Notifications: %@\n"
             "Analytics Enabled: %d\n"
             "Analytics URL: %@\n"
             "Device API URL: %@\n"
             "Remote Data API URL: %@\n"
-            "Cache Size: %ld MB\n"
             "Automatic Setup Enabled: %d\n"
             "Clear user on Application Restore: %d\n"
             "Whitelist: %@\n"
@@ -117,28 +117,27 @@
             "Custom Config: %@\n"
             "Delay Channel Creation: %d\n"
             "Default Message Center Style Config File: %@\n"
-            "Use iTunes ID: %@\n",
-            self.appKey,
-            self.appSecret,
+            "Use iTunes ID: %@\n"
+            "Site:  %ld\n",
             self.inProduction,
             _inProduction,
+            self.appKey,
+            self.appSecret,
+            self.logLevel,
+            self.defaultAppKey,
+            self.defaultAppSecret,
             self.developmentAppKey,
             self.developmentAppSecret,
+            (long)self.developmentLogLevel,
             self.productionAppKey,
             self.productionAppSecret,
-            (long)self.developmentLogLevel,
             (long)self.productionLogLevel,
-            (long)self.logLevel,
             self.detectProvisioningMode,
             self.requestAuthorizationToUseNotifications ? @"YES" : @"NO",
             self.analyticsEnabled,
             self.analyticsURL,
             self.deviceAPIURL,
             self.remoteDataAPIURL,
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-            (unsigned long)self.cacheDiskSizeInMB,
-#pragma GCC diagnostic pop
             self.automaticSetupEnabled,
             self.clearUserOnAppRestore,
             self.whitelist,
@@ -148,7 +147,8 @@
             self.customConfig,
             self.channelCreationDelayEnabled,
             self.messageCenterStyleConfig,
-            self.itunesID];
+            self.itunesID,
+            (long) self.site];
 }
 
 #pragma mark -
@@ -180,16 +180,26 @@
 #pragma mark -
 #pragma Resolved values
 
+- (UALogLevel)logLevel {
+    return self.inProduction ? self.productionLogLevel : self.developmentLogLevel;
+}
+
 - (NSString *)appKey {
-    return self.inProduction ? self.productionAppKey : self.developmentAppKey;
+    NSString *key = self.inProduction ? self.productionAppKey : self.developmentAppKey;
+    if (!key) {
+        key = self.defaultAppKey;
+    }
+
+    return key ?: @"";
 }
 
 - (NSString *)appSecret {
-    return self.inProduction ? self.productionAppSecret : self.developmentAppSecret;
-}
+    NSString *secret = self.inProduction ? self.productionAppSecret : self.developmentAppSecret;
+    if (!secret) {
+        secret = self.defaultAppSecret;
+    }
 
-- (UALogLevel)logLevel {
-    return self.inProduction ? self.productionLogLevel : self.developmentLogLevel;
+    return secret ?: @"";
 }
 
 - (BOOL)isInProduction {
@@ -276,6 +286,21 @@
             UA_LWARN(@"%@ is a legacy config key, use %@ instead", key, oldKeyMap[key]);
         }
 
+        if ([key isEqualToString:UACloutSiteKeyName]) {
+            id value = keyedValues[UACloutSiteKeyName];
+            if ([value isKindOfClass:[NSString class]]) {
+                if([UACloudSiteUSConfigName caseInsensitiveCompare:value] == NSOrderedSame ) {
+                    newKeyedValues[UACloutSiteKeyName] = @(UACloudSiteUS);
+                    continue;
+                } else if([UACloudSiteEUConfigName caseInsensitiveCompare:value] == NSOrderedSame ) {
+                    newKeyedValues[UACloutSiteKeyName] = @(UACloudSiteEU);
+                    continue;
+                } else {
+                    UA_LWARN(@"Invalid site %@", value);
+                }
+            }
+        }
+
         NSString *realKey = [oldKeyMap objectForKey:key] ?: key;
         id value = [keyedValues objectForKey:key];
 
@@ -298,6 +323,7 @@
 
         [newKeyedValues setValue:value forKey:realKey];
     }
+
 
     return newKeyedValues;
 }

@@ -5,7 +5,7 @@
 #import "UAChannelRegistrar+Internal.h"
 #import "UAChannelRegistrationPayload+Internal.h"
 #import "UAPush.h"
-#import "UAConfig.h"
+#import "UARuntimeConfig.h"
 #import "UANamedUser+Internal.h"
 #import "UAirship.h"
 #import "UAPreferenceDataStore+Internal.h"
@@ -527,7 +527,7 @@ NSString * const ChannelCreateSuccessChannelID = @"newChannelID";
  * Create a new registrar. Usually called by setup(), but also used in some tests when channelID needs to be set
  */
 - (UAChannelRegistrar *)createRegistrarWithChannelID:(NSString *)channelID {
-    UAChannelRegistrar *registrar = [UAChannelRegistrar channelRegistrarWithConfig:[UAConfig config]
+    UAChannelRegistrar *registrar = [UAChannelRegistrar channelRegistrarWithConfig:self.config
                                                                          dataStore:self.dataStore
                                                                           delegate:self.mockedRegistrarDelegate
                                                                          channelID:channelID

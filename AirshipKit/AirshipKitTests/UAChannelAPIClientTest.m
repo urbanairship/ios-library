@@ -5,7 +5,7 @@
 #import "UAChannelRegistrationPayload+Internal.h"
 #import "UAChannelAPIClient+Internal.h"
 #import "UAirship.h"
-#import "UAConfig.h"
+#import "UARuntimeConfig.h"
 #import "UAAnalytics+Internal.h"
 
 @interface UAChannelAPIClientTest : UABaseTest

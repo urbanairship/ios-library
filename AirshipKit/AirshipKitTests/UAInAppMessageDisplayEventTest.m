@@ -60,7 +60,6 @@
     [super tearDown];
 }
 
-
 - (void)testEventData {
     UAInAppMessage *remoteDataMessage = [UAInAppMessage messageWithBuilderBlock:^(UAInAppMessageBuilder *builder) {
         builder.identifier = @"remote-data-message";

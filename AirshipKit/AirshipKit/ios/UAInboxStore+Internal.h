@@ -8,7 +8,7 @@
 #define kUACoreDataDirectory @"UAInbox"
 #define kUAInboxDBEntityName @"UAInboxMessage"
 
-@class UAConfig;
+@class UARuntimeConfig;
 
 NS_ASSUME_NONNULL_BEGIN
 

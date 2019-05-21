@@ -4,7 +4,7 @@
 
 #import "UARateAppAction+Internal.h"
 #import "UAirship.h"
-#import "UAConfig.h"
+#import "UARuntimeConfig.h"
 #import "UAPreferenceDataStore+Internal.h"
 #import "UARateAppPromptViewController+Internal.h"
 #import "UASystemVersion.h"

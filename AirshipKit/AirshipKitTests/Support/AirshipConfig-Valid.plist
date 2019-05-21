@@ -27,5 +27,7 @@
 	<true/>
 	<key>messageCenterStyleConfig</key>
 	<string>ValidUAMessageCenterDefaultStyle</string>
+	<key>site</key>
+	<string>EU</string>
 </dict>
 </plist>

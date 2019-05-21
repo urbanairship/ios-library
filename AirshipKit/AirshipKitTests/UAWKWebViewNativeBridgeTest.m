@@ -6,7 +6,7 @@
 #import "UAWKWebViewNativeBridge.h"
 #import "UAWebView+Internal.h"
 #import "UAirship+Internal.h"
-#import "UAConfig.h"
+#import "UARuntimeConfig.h"
 #import "UAUser+Internal.h"
 #import "UAInboxMessage.h"
 #import "UAUtils+Internal.h"
@@ -72,8 +72,8 @@
     // Mock UAUser
     self.mockUAUser = [self mockForClass:[UAUser class]];
 
-    // Mock UAConfig
-    self.mockConfig = [self mockForClass:[UAConfig class]];
+    // Mock UARuntimeConfig
+    self.mockConfig = [self mockForClass:[UARuntimeConfig class]];
     
     // Mock UIDevice
     self.mockUIDevice = [self mockForClass:[UIDevice class]];
@@ -98,7 +98,7 @@
     [[[self.mockAirship stub] andReturn:self.mockJSActionDelegate] actionJSDelegate];
 
     // Set an actual whitelist
-    UAWhitelist *whitelist = [UAWhitelist whitelistWithConfig:[UAConfig defaultConfig]];
+    UAWhitelist *whitelist = [UAWhitelist whitelistWithConfig:self.config];
     [[[self.mockAirship stub] andReturn:whitelist] whitelist];
 
     // Set up a Javascript environment

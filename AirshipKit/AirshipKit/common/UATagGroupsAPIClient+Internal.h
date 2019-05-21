@@ -4,7 +4,7 @@
 #import "UAAPIClient+Internal.h"
 #import "UATagGroupsType+Internal.h"
 
-@class UAConfig;
+@class UARuntimeConfig;
 @class UATagGroupsMutation;
 
 NS_ASSUME_NONNULL_BEGIN
@@ -24,7 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param config The Airship config.
  * @return UATagGroupsAPIClient instance.
  */
-+ (instancetype)clientWithConfig:(UAConfig *)config;
++ (instancetype)clientWithConfig:(UARuntimeConfig *)config;
 
 /**
  * Factory method to create a UATagGroupsAPIClient.
@@ -33,7 +33,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param session The request session.
  * @return UATagGroupsAPIClient instance.
  */
-+ (instancetype)clientWithConfig:(UAConfig *)config session:(UARequestSession *)session;
++ (instancetype)clientWithConfig:(UARuntimeConfig *)config session:(UARequestSession *)session;
 
 /**
  * Update the tag group for the identifier.

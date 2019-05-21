@@ -82,7 +82,7 @@ NSInteger const UARemoteDataRefreshIntervalDefault = 0;
 
 @implementation UARemoteDataManager
 
-- (UARemoteDataManager *)initWithConfig:(UAConfig *)config
+- (UARemoteDataManager *)initWithConfig:(UARuntimeConfig *)config
                               dataStore:(UAPreferenceDataStore *)dataStore
                         remoteDataStore:(UARemoteDataStore *)remoteDataStore
                     remoteDataAPIClient:(UARemoteDataAPIClient *)remoteDataAPIClient
@@ -121,7 +121,7 @@ NSInteger const UARemoteDataRefreshIntervalDefault = 0;
     return self;
 }
 
-+ (UARemoteDataManager *)remoteDataManagerWithConfig:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
++ (UARemoteDataManager *)remoteDataManagerWithConfig:(UARuntimeConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
     UARemoteDataStore *remoteDataStore = [UARemoteDataStore storeWithName:[NSString stringWithFormat:kUACoreDataStoreName, config.appKey]];
     return [self remoteDataManagerWithConfig:config
                                    dataStore:dataStore
@@ -132,7 +132,7 @@ NSInteger const UARemoteDataRefreshIntervalDefault = 0;
 }
 
 
-+ (instancetype)remoteDataManagerWithConfig:(UAConfig *)config
++ (instancetype)remoteDataManagerWithConfig:(UARuntimeConfig *)config
                                   dataStore:(UAPreferenceDataStore *)dataStore
                             remoteDataStore:(UARemoteDataStore *)remoteDataStore
                         remoteDataAPIClient:(UARemoteDataAPIClient *)remoteDataAPIClient

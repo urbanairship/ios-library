@@ -3,7 +3,7 @@
 #import <Foundation/Foundation.h>
 #import "UAAPIClient+Internal.h"
 
-@class UAConfig;
+@class UARuntimeConfig;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -33,7 +33,7 @@ typedef void (^UANamedUserAPIClientFailureBlock)(NSUInteger status);
  * @param config The Airship config.
  * @return UANamedUserAPIClient instance.
  */
-+ (instancetype)clientWithConfig:(UAConfig *)config;
++ (instancetype)clientWithConfig:(UARuntimeConfig *)config;
 
 /**
  * Factory method to create a UANamedUserAPIClient.
@@ -41,7 +41,7 @@ typedef void (^UANamedUserAPIClientFailureBlock)(NSUInteger status);
  * @param session the request session.
  * @return UANamedUserAPIClient instance.
  */
-+ (instancetype)clientWithConfig:(UAConfig *)config session:(UARequestSession *)session;
++ (instancetype)clientWithConfig:(UARuntimeConfig *)config session:(UARequestSession *)session;
 
 /**
  * Associates the channel to the named user ID.

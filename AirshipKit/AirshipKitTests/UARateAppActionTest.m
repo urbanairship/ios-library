@@ -4,7 +4,7 @@
 #import <StoreKit/StoreKit.h>
 #import "UAAction+Internal.h"
 #import "UAirship+Internal.h"
-#import "UAConfig.h"
+#import "UARuntimeConfig.h"
 #import "UARateAppAction+Internal.h"
 #import "UARateAppPromptViewController+Internal.h"
 #import "UATestSystemVersion.h"
@@ -35,7 +35,7 @@
     id shutUp = [[[self.mockRateAppPromptViewControler stub] andReturn:self.mockRateAppPromptViewControler] initWithNibName:OCMOCK_ANY bundle:OCMOCK_ANY];
     [shutUp self];
 
-    self.mockConfig = [self mockForClass:[UAConfig class]];
+    self.mockConfig = [self mockForClass:[UARuntimeConfig class]];
     [[[self.mockConfig stub] andReturn:@"mockAppKey"] appKey];
 
     self.mockAirship = [self mockForClass:[UAirship class]];

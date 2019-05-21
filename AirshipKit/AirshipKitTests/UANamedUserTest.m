@@ -7,7 +7,7 @@
 #import "UANamedUser+Internal.h"
 #import "UANamedUserAPIClient+Internal.h"
 #import "UAPush+Internal.h"
-#import "UAConfig.h"
+#import "UARuntimeConfig.h"
 #import "UATagGroupsRegistrar+Internal.h"
 
 @interface UANamedUserTest : UABaseTest

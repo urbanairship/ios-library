@@ -4,7 +4,7 @@
 #import <OCMock/OCMock.h>
 
 #import "UABaseTest.h"
-#import "UAConfig.h"
+#import "UARuntimeConfig.h"
 #import "UARequestSession+Internal.h"
 #import "UARemoteDataAPIClient+Internal.h"
 #import "UAPreferenceDataStore+Internal.h"
@@ -37,8 +37,7 @@
  * Test refreshing the remote data
  */
 - (void)testRefreshRemoteData {
-
-    self.config.developmentAppKey = @"appKey";
+    self.config.appKey = @"appKey";
 
     // Create a successful response
     NSDictionary *remoteDataDict = @{ @"type": @"test_data_type",

@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 #import "UABaseTest.h"
-#import "UAConfig.h"
+#import "UARuntimeConfig.h"
 #import "UAChannelCapture+Internal.h"
 #import "UAPreferenceDataStore+Internal.h"
 #import "UAPush+Internal.h"

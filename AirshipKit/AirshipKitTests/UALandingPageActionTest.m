@@ -2,10 +2,9 @@
 
 #import "UABaseTest.h"
 #import "UALandingPageAction.h"
-#import "UAURLProtocol.h"
 #import "UAAction+Internal.h"
 #import "UAirship+Internal.h"
-#import "UAConfig.h"
+#import "UARuntimeConfig.h"
 #import "UAUtils+Internal.h"
 #import "NSString+UAURLEncoding.h"
 #import "UAInAppMessageManager+Internal.h"
@@ -30,7 +29,7 @@
     [super setUp];
     self.action = [[UALandingPageAction alloc] init];
 
-    self.mockConfig = [self mockForClass:[UAConfig class]];
+    self.mockConfig = [self mockForClass:[UARuntimeConfig class]];
     self.mockAirship = [self mockForClass:[UAirship class]];
     self.mockWhitelist =  [self mockForClass:[UAWhitelist class]];
 
@@ -40,13 +39,9 @@
 
     [[[self.mockConfig stub] andReturn:@"app-key"] appKey];
     [[[self.mockConfig stub] andReturn:@"app-secret"] appSecret];
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-    [[[self.mockConfig stub] andReturnValue:OCMOCK_VALUE((NSUInteger)100)] cacheDiskSizeInMB];
-#pragma GCC diagnostic pop
 
     // Set an actual whitelist
-    UAWhitelist *whitelist = [UAWhitelist whitelistWithConfig:[UAConfig defaultConfig]];
+    UAWhitelist *whitelist = [UAWhitelist whitelistWithConfig:self.mockConfig];
     [[[self.mockAirship stub] andReturn:whitelist] whitelist];
 
     self.mockInAppMessageManager = [self mockForClass:[UAInAppMessageManager class]];

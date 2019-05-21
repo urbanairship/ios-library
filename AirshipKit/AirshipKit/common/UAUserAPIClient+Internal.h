@@ -4,7 +4,7 @@
 #import "UAAPIClient+Internal.h"
 
 @class UAUser;
-@class UAConfig;
+@class UARuntimeConfig;
 @class UAUserData;
 
 NS_ASSUME_NONNULL_BEGIN
@@ -43,7 +43,7 @@ typedef void (^UAUserAPIClientFailureBlock)(NSUInteger statusCode);
  * @param config The Airship config.
  * @return UAUserAPIClient instance.
  */
-+ (instancetype)clientWithConfig:(UAConfig *)config;
++ (instancetype)clientWithConfig:(UARuntimeConfig *)config;
 
 /**
  * Factory method to create a UAUserAPIClient.
@@ -51,7 +51,7 @@ typedef void (^UAUserAPIClientFailureBlock)(NSUInteger statusCode);
  * @param session The request session.
  * @return UAUserAPIClient instance.
  */
-+ (instancetype)clientWithConfig:(UAConfig *)config session:(UARequestSession *)session;
++ (instancetype)clientWithConfig:(UARuntimeConfig *)config session:(UARequestSession *)session;
 
 /**
  * Create a user.

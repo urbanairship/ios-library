@@ -5,7 +5,7 @@
 
 @class UAInboxMessage;
 @class UAMessageCenterStyle;
-@class UAConfig;
+@class UARuntimeConfig;
 
 /**
  * The UAMessageCenter class provides a default implementation of a
@@ -51,7 +51,7 @@ extern NSString *const UAMessageDataScheme;
  *
  * @return A Message Center instance initialized with the style specified in the provided config.
  */
-+ (instancetype)messageCenterWithConfig:(UAConfig *)config;
++ (instancetype)messageCenterWithConfig:(UARuntimeConfig *)config;
 
 ///---------------------------------------------------------------------------------------
 /// @name Default Message Center Display

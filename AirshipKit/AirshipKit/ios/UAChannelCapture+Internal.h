@@ -26,7 +26,7 @@ extern NSString *const UAChannelCaptureEnabledKey;
  *
  * @return A channel capture instance.
  */
-+ (instancetype)channelCaptureWithConfig:(UAConfig *)config
++ (instancetype)channelCaptureWithConfig:(UARuntimeConfig *)config
                                     push:(UAPush *)push
                                dataStore:(UAPreferenceDataStore *)dataStore;
 
@@ -39,7 +39,7 @@ extern NSString *const UAChannelCaptureEnabledKey;
  * @param notificationCenter The notification center.
  * @return A channel capture instance.
  */
-+ (instancetype)channelCaptureWithConfig:(UAConfig *)config
++ (instancetype)channelCaptureWithConfig:(UARuntimeConfig *)config
                                     push:(UAPush *)push
                                dataStore:(UAPreferenceDataStore *)dataStore
                       notificationCenter:(NSNotificationCenter *)notificationCenter;

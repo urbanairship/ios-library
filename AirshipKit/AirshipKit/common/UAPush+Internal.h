@@ -8,7 +8,7 @@
 #import "UAComponent+Internal.h"
 
 @class UAPreferenceDataStore;
-@class UAConfig;
+@class UARuntimeConfig;
 @class UATagGroupsAPIClient;
 @class UATagGroupsRegistrar;
 
@@ -167,7 +167,7 @@ extern NSString *const UAPushEnabledKey;
  * @param tagGroupsregistrar The tag groups registrar.
  * @return A new push instance.
  */
-+ (instancetype)pushWithConfig:(UAConfig *)config
++ (instancetype)pushWithConfig:(UARuntimeConfig *)config
                      dataStore:(UAPreferenceDataStore *)dataStore
             tagGroupsRegistrar:(UATagGroupsRegistrar *)tagGroupsregistrar;
 
@@ -183,7 +183,7 @@ extern NSString *const UAPushEnabledKey;
  * @param dispatcher The dispatcher.
  * @return A new push instance.
  */
-+ (instancetype)pushWithConfig:(UAConfig *)config
++ (instancetype)pushWithConfig:(UARuntimeConfig *)config
                      dataStore:(UAPreferenceDataStore *)dataStore
             tagGroupsRegistrar:(UATagGroupsRegistrar *)tagGroupsregistrar
             notificationCenter:(NSNotificationCenter *)notificationCenter

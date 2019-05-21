@@ -12,7 +12,7 @@
 #import "UANotificationCategory.h"
 #import "UAActionArguments.h"
 #import "UAUtils+Internal.h"
-#import "UAConfig.h"
+#import "UARuntimeConfig.h"
 #import "UAActionRunner+Internal.h"
 #import "UAActionRegistry+Internal.h"
 #import "UARemoteDataManager+Internal.h"

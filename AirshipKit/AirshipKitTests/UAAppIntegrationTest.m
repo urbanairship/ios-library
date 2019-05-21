@@ -12,7 +12,7 @@
 #import "UAActionRunner+Internal.h"
 #import "UAActionRegistry+Internal.h"
 #import "UADeviceRegistrationEvent+Internal.h"
-#import "UAConfig.h"
+#import "UARuntimeConfig.h"
 #import "UANotificationContent.h"
 #import "UAirship+Internal.h"
 
@@ -176,8 +176,8 @@
 
     __block BOOL completionHandlerCalled = NO;
 
-    // Mock UAConfig instance to so we can return a mocked automatic setup
-    id mockConfig = [self strictMockForClass:[UAConfig class]];
+    // Mock UARuntimeConfig instance to so we can return a mocked automatic setup
+    id mockConfig = [self strictMockForClass:[UARuntimeConfig class]];
     [[[self.mockedAirship stub] andReturn:mockConfig] config];
 
     //Mock automatic setup to be enabled
@@ -226,8 +226,8 @@
         return YES;
     };
 
-    // Mock UAConfig instance to so we can return a mocked automatic setup
-    id mockConfig = [self strictMockForClass:[UAConfig class]];
+    // Mock UARuntimeConfig instance to so we can return a mocked automatic setup
+    id mockConfig = [self strictMockForClass:[UARuntimeConfig class]];
     [[[self.mockedAirship stub] andReturn:mockConfig] config];
     UNNotificationPresentationOptions expectedOptions = UNNotificationPresentationOptionAlert;
 

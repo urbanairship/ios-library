@@ -83,11 +83,11 @@
 - (void)testAppAuthHeaderString {
     XCTAssertEqualObjects([UAUtils appAuthHeaderString],@"Basic KG51bGwpOihudWxsKQ==");
     
-    id mockUAConfig = [self mockForClass:[UAConfig class]];
-    [[[mockUAConfig stub] andReturn:@"someAppKey"] appKey];
-    [[[mockUAConfig stub] andReturn:@"someAppSecret"] appSecret];
+    id mockUARuntimeConfig = [self mockForClass:[UARuntimeConfig class]];
+    [[[mockUARuntimeConfig stub] andReturn:@"someAppKey"] appKey];
+    [[[mockUARuntimeConfig stub] andReturn:@"someAppSecret"] appSecret];
 
-    [[[self.mockAirship stub] andReturn:mockUAConfig] config];
+    [[[self.mockAirship stub] andReturn:mockUARuntimeConfig] config];
     
     XCTAssertEqualObjects([UAUtils appAuthHeaderString],@"Basic c29tZUFwcEtleTpzb21lQXBwU2VjcmV0");
 }

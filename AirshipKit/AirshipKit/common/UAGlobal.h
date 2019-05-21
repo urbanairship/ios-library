@@ -99,12 +99,6 @@ extern BOOL uaLoudImpErrorLoggingEnabled; // Default is YES
 
 #define UALOG UA_LDEBUG
 
-// constants
-#define kUAAirshipProductionServer @"https://device-api.urbanairship.com"
-#define kUAAnalyticsProductionServer @"https://combine.urbanairship.com"
-#define kUARemoteDataProductionServer @"https://remote-data.urbanairship.com"
-
-
 #define UA_SUPPRESS_PERFORM_SELECTOR_LEAK_WARNING(THE_CODE) \
 do { \
 _Pragma("clang diagnostic push") \

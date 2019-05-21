@@ -27,7 +27,7 @@
 #import "UACancelSchedulesAction.h"
 #import "UACircularRegion.h"
 #import "UAComponent.h"
-#import "UAConfig.h"
+#import "UARuntimeConfig.h"
 #import "UACustomEvent.h"
 #import "UADeepLinkAction.h"
 #import "UADisposable.h"

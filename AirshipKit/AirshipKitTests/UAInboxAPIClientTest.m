@@ -2,7 +2,7 @@
 
 #import "UABaseTest.h"
 
-#import "UAConfig+Internal.h"
+#import "UARuntimeConfig.h"
 #import "UAirship+Internal.h"
 #import "UAPush+Internal.h"
 #import "UAUser+Internal.h"

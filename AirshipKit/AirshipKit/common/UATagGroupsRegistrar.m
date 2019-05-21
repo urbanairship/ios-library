@@ -67,7 +67,7 @@ typedef void (^UATagGroupsMutator)(NSArray *, NSString *);
     return self;
 }
 
-+ (instancetype)tagGroupsRegistrarWithConfig:(UAConfig *)config
++ (instancetype)tagGroupsRegistrarWithConfig:(UARuntimeConfig *)config
                                    dataStore:(UAPreferenceDataStore *)dataStore
                              mutationHistory:(UATagGroupsMutationHistory *)mutationHistory {
 

@@ -2,7 +2,7 @@
 
 #import "UAChannelAPIClient+Internal.h"
 #import "UAChannelRegistrationPayload+Internal.h"
-#import "UAConfig.h"
+#import "UARuntimeConfig.h"
 #import "UAUtils+Internal.h"
 #import "UAirship.h"
 #import "UAAnalytics+Internal.h"
@@ -13,11 +13,11 @@
 
 @implementation UAChannelAPIClient
 
-+ (instancetype)clientWithConfig:(UAConfig *)config {
++ (instancetype)clientWithConfig:(UARuntimeConfig *)config {
     return [UAChannelAPIClient clientWithConfig:config session:[UARequestSession sessionWithConfig:config]];
 }
 
-+ (instancetype)clientWithConfig:(UAConfig *)config session:(UARequestSession *)session {
++ (instancetype)clientWithConfig:(UARuntimeConfig *)config session:(UARequestSession *)session {
     return [[UAChannelAPIClient alloc] initWithConfig:config session:session];
 }
 

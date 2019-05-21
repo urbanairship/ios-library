@@ -9,7 +9,7 @@ NS_ASSUME_NONNULL_BEGIN
 @class UASchedule;
 @class UAScheduleData;
 @class UAScheduleTriggerData;
-@class UAConfig;
+@class UARuntimeConfig;
 
 /**
  * Manager class for the Automation CoreData store.

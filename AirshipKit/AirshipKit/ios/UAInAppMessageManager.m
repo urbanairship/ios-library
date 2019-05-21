@@ -10,7 +10,7 @@
 #import "UAInAppMessageModalAdapter.h"
 #import "UAInAppMessageHTMLAdapter.h"
 #import "UAGlobal.h"
-#import "UAConfig.h"
+#import "UARuntimeConfig.h"
 #import "UAPreferenceDataStore+Internal.h"
 #import "UAInAppMessageAudienceChecks+Internal.h"
 #import "UAPreferenceDataStore+Internal.h"
@@ -129,7 +129,7 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
                                         analytics:analytics];
 }
 
-+ (instancetype)managerWithConfig:(UAConfig *)config
++ (instancetype)managerWithConfig:(UARuntimeConfig *)config
          tagGroupsMutationHistory:(UATagGroupsMutationHistory *)tagGroupsMutationHistory
                 remoteDataManager:(UARemoteDataManager *)remoteDataManager
                         dataStore:(UAPreferenceDataStore *)dataStore

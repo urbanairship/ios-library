@@ -15,17 +15,17 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * UATagGroupsLookupAPIClient class factory method.
  *
- * @param config An instance of UAConfig.
+ * @param config An instance of UARuntimeConfig.
  */
-+ (instancetype)clientWithConfig:(UAConfig *)config;
++ (instancetype)clientWithConfig:(UARuntimeConfig *)config;
 
 /**
  * UATagGroupsLookupAPIClient class factory method.
  *
- * @param config An instance of UAConfig.
+ * @param config An instance of UARuntimeConfig.
  * @param session An instance of UARequestSession.
  */
-+ (instancetype)clientWithConfig:(UAConfig *)config session:(UARequestSession *)session;
++ (instancetype)clientWithConfig:(UARuntimeConfig *)config session:(UARequestSession *)session;
 
 /**
  * Performs a tag group lookup.

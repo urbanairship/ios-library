@@ -59,7 +59,7 @@ NS_ASSUME_NONNULL_BEGIN
  * location segmentation, push to local time).
  *
  * Note: This property will always return `NO` if analytics is disabled in
- * UAConfig.
+ * UARuntimeConfig.
  */
 @property (nonatomic, assign, getter=isEnabled) BOOL enabled;
 

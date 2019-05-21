@@ -3,7 +3,7 @@
 #import <Foundation/Foundation.h>
 #import "UAAPIClient+Internal.h"
 
-@class UAConfig;
+@class UARuntimeConfig;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -22,7 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param config The Airship config.
  * @return A UAEventAPIClient instance.
  */
-+ (instancetype)clientWithConfig:(UAConfig *)config;
++ (instancetype)clientWithConfig:(UARuntimeConfig *)config;
 
 /**
  * Factory method to create a UAEventAPIClient.
@@ -31,7 +31,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param session The UARequestSession instance.
  * @return UAEventAPIClient instance.
  */
-+ (instancetype)clientWithConfig:(UAConfig *)config session:(UARequestSession *)session;
++ (instancetype)clientWithConfig:(UARuntimeConfig *)config session:(UARequestSession *)session;
 
 /**
  * Uploads analytic events.

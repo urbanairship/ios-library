@@ -12,7 +12,7 @@
 #import "UAScheduleTrigger+Internal.h"
 #import "UAirship.h"
 #import "UAJSONPredicate.h"
-#import "UAConfig.h"
+#import "UARuntimeConfig.h"
 #import "UAUtils+Internal.h"
 #import "UAJSONSerialization+Internal.h"
 #import "UAScheduleDataMigrator+Internal.h"

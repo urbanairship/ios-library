@@ -2,7 +2,7 @@
 
 #import "UATagGroupsAPIClient+Internal.h"
 #import "UATagGroupsMutation+Internal.h"
-#import "UAConfig.h"
+#import "UARuntimeConfig.h"
 #import "NSJSONSerialization+UAAdditions.h"
 #import "NSURLResponse+UAAdditions.h"
 #import "UAJSONSerialization+Internal.h"
@@ -17,12 +17,12 @@
 
 @implementation UATagGroupsAPIClient
 
-+ (instancetype)clientWithConfig:(UAConfig *)config {
++ (instancetype)clientWithConfig:(UARuntimeConfig *)config {
     UATagGroupsAPIClient *client = [self clientWithConfig:config session:[UARequestSession sessionWithConfig:config]];
     return client;
 }
 
-+ (instancetype)clientWithConfig:(UAConfig *)config session:(UARequestSession *)session {
++ (instancetype)clientWithConfig:(UARuntimeConfig *)config session:(UARequestSession *)session {
     UATagGroupsAPIClient *client = [[self alloc] initWithConfig:config session:session];
     return client;
 }

@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 #import "UANamedUserAPIClient+Internal.h"
-#import "UAConfig.h"
+#import "UARuntimeConfig.h"
 #import "UAUtils+Internal.h"
 #import "NSJSONSerialization+UAAdditions.h"
 #import "NSURLResponse+UAAdditions.h"
@@ -14,11 +14,11 @@
 
 @implementation UANamedUserAPIClient
 
-+ (instancetype)clientWithConfig:(UAConfig *)config {
++ (instancetype)clientWithConfig:(UARuntimeConfig *)config {
     return [[self alloc] initWithConfig:config session:[UARequestSession sessionWithConfig:config]];
 }
 
-+ (instancetype)clientWithConfig:(UAConfig *)config session:(UARequestSession *)session {
++ (instancetype)clientWithConfig:(UARuntimeConfig *)config session:(UARequestSession *)session {
     return [[self alloc] initWithConfig:config session:session];
 }
 

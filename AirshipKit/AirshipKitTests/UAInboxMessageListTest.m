@@ -6,7 +6,7 @@
 #import "UAInboxAPIClient+Internal.h"
 #import "UAActionArguments+Internal.h"
 #import "UAirship.h"
-#import "UAConfig.h"
+#import "UARuntimeConfig.h"
 #import "UAInboxStore+Internal.h"
 #import "UAUtils+Internal.h"
 #import "UAInboxStore+Internal.h"
@@ -69,7 +69,7 @@
     self.notificationCenter = [[NSNotificationCenter alloc] init];
     self.messageList = [UAInboxMessageList messageListWithUser:self.mockUser
                                                         client:self.mockInboxAPIClient
-                                                        config:[UAConfig config]
+                                                        config:self.config
                                                     inboxStore:self.testStore
                                             notificationCenter:self.notificationCenter
                                                     dispatcher:[UATestDispatcher testDispatcher]

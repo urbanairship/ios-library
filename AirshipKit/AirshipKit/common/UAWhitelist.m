@@ -2,7 +2,7 @@
 
 #import "UAWhitelist.h"
 #import "UAGlobal.h"
-#import "UAConfig.h"
+#import "UARuntimeConfig.h"
 
 /**
  * Block mapping URLs to whitelist status
@@ -61,7 +61,7 @@ typedef BOOL (^UAWhitelistMatcher)(NSURL *);
     return self;
 }
 
-+ (instancetype)whitelistWithConfig:(UAConfig *)config {
++ (instancetype)whitelistWithConfig:(UARuntimeConfig *)config {
     UAWhitelist *whitelist = [[self alloc] init];
 
     [whitelist addEntry:@"https://*.urbanairship.com"];

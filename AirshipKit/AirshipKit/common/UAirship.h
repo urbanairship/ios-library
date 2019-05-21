@@ -81,10 +81,9 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
 @interface UAirship : NSObject
 
 /**
- * The application configuration. This is set on takeOff.
+ * The application configuration.
  */
-@property (nonatomic, strong, readonly) UAConfig *config;
-
+@property (nonatomic, strong, readonly) UARuntimeConfig *config;
 
 /**
  * The default action registry.

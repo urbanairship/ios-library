@@ -2,7 +2,7 @@
 
 #import <Foundation/Foundation.h>
 
-@class UAConfig;
+@class UARuntimeConfig;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -96,10 +96,10 @@ typedef NS_OPTIONS(NSUInteger, UAWhitelistScope) {
 /**
  * Create a default whitelist with entries specified in a config object.
  * @note The entry "*.urbanairship.com" is added by default.
- * @param config An instance of UAConfig.
+ * @param config An instance of UARuntimeConfig.
  * @return An instance of UAWhitelist
  */
-+ (instancetype)whitelistWithConfig:(UAConfig *)config;
++ (instancetype)whitelistWithConfig:(UARuntimeConfig *)config;
 
 ///---------------------------------------------------------------------------------------
 /// @name Whitelist Core Methods

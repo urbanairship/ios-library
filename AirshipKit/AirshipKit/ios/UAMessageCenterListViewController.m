@@ -7,10 +7,9 @@
 #import "UAirship.h"
 #import "UAInbox.h"
 #import "UAInboxMessageList.h"
-#import "UAURLProtocol.h"
 #import "UAMessageCenterLocalization.h"
 #import "UAMessageCenterStyle.h"
-#import "UAConfig.h"
+#import "UARuntimeConfig.h"
 #import "UADispatcher+Internal.h"
 
 /*

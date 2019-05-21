@@ -15,7 +15,7 @@
 - (void)setUp {
     [super setUp];
 
-    self.mockConfig = [self mockForClass:[UAConfig class]];
+    self.mockConfig = [self mockForClass:[UARuntimeConfig class]];
     self.mockSession = [self mockForClass:[UARequestSession class]];
     self.mockSessionClass = [self mockForClass:[UARequestSession class]];
     [[[self.mockSessionClass stub] andReturn:self.mockSession] sessionWithConfig:OCMOCK_ANY];

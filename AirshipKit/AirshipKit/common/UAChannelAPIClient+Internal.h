@@ -4,7 +4,7 @@
 #import "UAAPIClient+Internal.h"
 
 @class UAChannelRegistrationPayload;
-@class UAConfig;
+@class UARuntimeConfig;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -42,7 +42,7 @@ typedef void (^UAChannelAPIClientFailureBlock)(NSUInteger statusCode);
  * @param config The Airship config.
  * @return UAChannelAPIClient instance.
  */
-+ (instancetype)clientWithConfig:(UAConfig *)config;
++ (instancetype)clientWithConfig:(UARuntimeConfig *)config;
 
 /**
  * Factory method to create a UAChannelAPIClient.
@@ -50,7 +50,7 @@ typedef void (^UAChannelAPIClientFailureBlock)(NSUInteger statusCode);
  * @param session The UARequestSession instance.
  * @return UAChannelAPIClient instance.
  */
-+ (instancetype)clientWithConfig:(UAConfig *)config session:(UARequestSession *)session;
++ (instancetype)clientWithConfig:(UARuntimeConfig *)config session:(UARequestSession *)session;
 
 /**
  * Create the channel ID.

@@ -3,7 +3,7 @@
 #import <Foundation/Foundation.h>
 
 @class UAEvent;
-@class UAConfig;
+@class UARuntimeConfig;
 @class UAPreferenceDataStore;
 @class UAEventAPIClient;
 @class UAEventStore;
@@ -57,7 +57,7 @@
  * @param dataStore The preference data store.
  * @return UAEventManager instance.
  */
-+ (instancetype)eventManagerWithConfig:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore;
++ (instancetype)eventManagerWithConfig:(UARuntimeConfig *)config dataStore:(UAPreferenceDataStore *)dataStore;
 
 /**
  * Factory method used for testing.
@@ -71,7 +71,7 @@
  * @param application The application.
  * @return UAEventManager instance.
  */
-+ (instancetype)eventManagerWithConfig:(UAConfig *)config
++ (instancetype)eventManagerWithConfig:(UARuntimeConfig *)config
                              dataStore:(UAPreferenceDataStore *)dataStore
                             eventStore:(UAEventStore *)eventStore
                                 client:(UAEventAPIClient *)client

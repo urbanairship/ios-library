@@ -3,7 +3,7 @@
 #import "UABaseTest.h"
 
 #import "UAAnalytics+Internal.h"
-#import "UAConfig.h"
+#import "UARuntimeConfig.h"
 #import "UAPreferenceDataStore+Internal.h"
 #import "UAEvent.h"
 #import "UAAssociateIdentifiersEvent+Internal.h"
@@ -59,7 +59,7 @@
 }
 
 /**
- * Test isEnabled always returns YES only if UAConfig enables analytics and the
+ * Test isEnabled always returns YES only if UARuntimeConfig enables analytics and the
  * runtime setting is enabled.
  */
 - (void)testIsEnabled {
@@ -71,7 +71,7 @@
 }
 
 /**
- * Test isEnabled only returns NO when UAConfig disables analytics.
+ * Test isEnabled only returns NO when UARuntimeConfig disables analytics.
  */
 - (void)testIsEnabledConfigOverride {
     self.config.analyticsEnabled = NO;

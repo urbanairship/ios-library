@@ -3,26 +3,10 @@
 #import "UABaseTest.h"
 #import "UAConfig+Internal.h"
 
-
 @interface UAConfigTest : UABaseTest
-
 @end
 
-
 @implementation UAConfigTest
-
-/* setup and teardown */
-
-- (void)setUp {
-    [super setUp];
-
-}
-
-- (void)tearDown {
-    [super tearDown];
-}
-
-/* tests */
 
 - (void)testUnknownKeyHandling {
     // ensure that unknown values don't crash the app with an unkown key exception
@@ -169,6 +153,7 @@
     XCTAssertTrue([config validate], @"AirshipConfig (modern) File is invalid.");
     XCTAssertTrue(config.detectProvisioningMode, @"detectProvisioningMode should be true");
     XCTAssertTrue(config.inProduction, @"inProduction should be true");
+    XCTAssertEqual(UACloudSiteEU, config.site);
 }
 
 - (void)testOldPlistFormat {
@@ -324,10 +309,6 @@
     XCTAssertTrue(copy.automaticSetupEnabled == config.automaticSetupEnabled);
     XCTAssertTrue(copy.analyticsEnabled == config.analyticsEnabled);
     XCTAssertTrue(copy.profilePath == config.profilePath);
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-    XCTAssertTrue(copy.cacheDiskSizeInMB == config.cacheDiskSizeInMB);
-#pragma GCC diagnostic pop
     XCTAssertTrue(copy.clearUserOnAppRestore == config.clearUserOnAppRestore);
     XCTAssertTrue(copy.whitelist == config.whitelist);
     XCTAssertTrue(copy.clearNamedUserOnAppRestore == config.clearNamedUserOnAppRestore);
@@ -342,20 +323,17 @@
 
 - (void) testInitialConfig {
     UAConfig *config = [UAConfig config];
-    
-    XCTAssertEqualObjects(config.deviceAPIURL, kUAAirshipProductionServer);
-    XCTAssertEqualObjects(config.remoteDataAPIURL, kUARemoteDataProductionServer);
-    XCTAssertEqualObjects(config.analyticsURL, kUAAnalyticsProductionServer);
+
+    XCTAssertEqual(UACloudSiteUS, config.site);
+    XCTAssertNil(config.deviceAPIURL);
+    XCTAssertNil(config.remoteDataAPIURL);
+    XCTAssertNil(config.analyticsURL);
     XCTAssertEqual(config.developmentLogLevel, UALogLevelDebug);
     XCTAssertEqual(config.productionLogLevel, UALogLevelError);
     XCTAssertFalse(config.inProduction);
     XCTAssertTrue(config.detectProvisioningMode);   // True because defaultDetectProvisioningMode is set true after this is set false
     XCTAssertTrue(config.automaticSetupEnabled);
     XCTAssertTrue(config.analyticsEnabled);
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-    XCTAssertEqual(config.cacheDiskSizeInMB, 100);
-#pragma GCC diagnostic pop
     XCTAssertFalse(config.clearUserOnAppRestore);
     XCTAssertEqual(config.whitelist.count, 0);
     XCTAssertFalse(config.clearNamedUserOnAppRestore);

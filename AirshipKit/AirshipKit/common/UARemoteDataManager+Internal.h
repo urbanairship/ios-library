@@ -3,7 +3,7 @@
 #import <UIKit/UIKit.h>
 #import "UADisposable.h"
 #import "UARemoteDataPayload+Internal.h"
-#import "UAConfig.h"
+#import "UARuntimeConfig.h"
 #import "UADispatcher+Internal.h"
 #import "UAPreferenceDataStore+Internal.h"
 #import "UARemoteDataStore+Internal.h"
@@ -47,7 +47,7 @@ typedef void (^UARemoteDataPublishBlock)(NSArray<UARemoteDataPayload *> *remoteD
  * @param dataStore A UAPreferenceDataStore to store persistent preferences
  * @return The remote data manager instance.
  */
-+ (instancetype)remoteDataManagerWithConfig:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore;
++ (instancetype)remoteDataManagerWithConfig:(UARuntimeConfig *)config dataStore:(UAPreferenceDataStore *)dataStore;
 
 ///---------------------------------------------------------------------------------------
 /// @name Test Properties & Internal Methods
@@ -91,7 +91,7 @@ typedef void (^UARemoteDataPublishBlock)(NSArray<UARemoteDataPayload *> *remoteD
  * @param dispatcher The dispatcher.
  * @return The remote data manager instance.
  */
-+ (instancetype)remoteDataManagerWithConfig:(UAConfig *)config
++ (instancetype)remoteDataManagerWithConfig:(UARuntimeConfig *)config
                                   dataStore:(UAPreferenceDataStore *)dataStore
                             remoteDataStore:(UARemoteDataStore *)remoteDataStore
                         remoteDataAPIClient:(UARemoteDataAPIClient *)remoteDataAPIClient

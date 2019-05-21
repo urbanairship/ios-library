@@ -4,7 +4,7 @@
 #import "UAAPIClient+Internal.h"
 
 @class UAUser;
-@class UAConfig;
+@class UARuntimeConfig;
 @class UAPreferenceDataStore;
 
 NS_ASSUME_NONNULL_BEGIN
@@ -46,7 +46,7 @@ typedef void (^UAInboxClientFailureBlock)(void);
  * @param dataStore The preference data store.
  * @return UAInboxAPIClient instance.
  */
-+ (instancetype)clientWithConfig:(UAConfig *)config
++ (instancetype)clientWithConfig:(UARuntimeConfig *)config
                          session:(UARequestSession *)session
                             user:(UAUser *)user
                        dataStore:(UAPreferenceDataStore *)dataStore;

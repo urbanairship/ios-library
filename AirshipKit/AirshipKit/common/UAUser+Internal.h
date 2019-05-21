@@ -7,7 +7,7 @@
 #define kUserUrlKey @"UAUserUrlKey"
 
 @class UAUserAPIClient;
-@class UAConfig;
+@class UARuntimeConfig;
 @class UAPreferenceDataStore;
 @class UAPush;
 
@@ -50,7 +50,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * The Airship config
  */
-@property (nonatomic, strong) UAConfig *config;
+@property (nonatomic, strong) UARuntimeConfig *config;
 
 ///---------------------------------------------------------------------------------------
 /// @name User Internal Methods
@@ -63,7 +63,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param dataStore The preference data store.
  * @return User instance.
  */
-+ (instancetype)userWithPush:(UAPush *)push config:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore;
++ (instancetype)userWithPush:(UAPush *)push config:(UARuntimeConfig *)config dataStore:(UAPreferenceDataStore *)dataStore;
 
 /**
  * Factory method to create a user instance. Used for testing.
@@ -77,7 +77,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @return User instance.
  */
 + (instancetype)userWithPush:(UAPush *)push
-                      config:(UAConfig *)config
+                      config:(UARuntimeConfig *)config
                    dataStore:(UAPreferenceDataStore *)dataStore
                       client:(UAUserAPIClient *)client
           notificationCenter:(NSNotificationCenter *)notificationCenter

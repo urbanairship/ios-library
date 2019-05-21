@@ -1,9 +1,8 @@
 /* Copyright Airship and Contributors */
 
 #import "UALandingPageAction.h"
-#import "UAURLProtocol.h"
 #import "UAirship.h"
-#import "UAConfig.h"
+#import "UARuntimeConfig.h"
 #import "NSString+UAURLEncoding.h"
 #import "UAUtils+Internal.h"
 #import "UAInAppMessageScheduleInfo+Internal.h"

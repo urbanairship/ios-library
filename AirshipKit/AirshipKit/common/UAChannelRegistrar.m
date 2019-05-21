@@ -5,7 +5,7 @@
 #import "UAGlobal.h"
 #import "UAUtils+Internal.h"
 #import "UAChannelRegistrationPayload+Internal.h"
-#import "UAConfig.h"
+#import "UARuntimeConfig.h"
 #import "UAPreferenceDataStore+Internal.h"
 #import "UADate+Internal.h"
 #import "UADispatcher+Internal.h"
@@ -75,7 +75,7 @@ NSString *const UALastSuccessfulPayloadKey = @"payload-key";
 
 @end
 
-UAConfig *config;
+UARuntimeConfig *config;
 
 @implementation UAChannelRegistrar
 
@@ -101,7 +101,7 @@ UAConfig *config;
     return self;
 }
 
-+ (instancetype)channelRegistrarWithConfig:(UAConfig *)config
++ (instancetype)channelRegistrarWithConfig:(UARuntimeConfig *)config
                                  dataStore:(UAPreferenceDataStore *)dataStore
                                   delegate:(id<UAChannelRegistrarDelegate>)delegate {
     return [[self alloc] initWithDataStore:dataStore
@@ -113,7 +113,7 @@ UAConfig *config;
 }
 
 // Constructor for unit tests
-+ (instancetype)channelRegistrarWithConfig:(UAConfig *)config
++ (instancetype)channelRegistrarWithConfig:(UARuntimeConfig *)config
                                  dataStore:(UAPreferenceDataStore *)dataStore
                                   delegate:(id<UAChannelRegistrarDelegate>)delegate
                                  channelID:(NSString *)channelID

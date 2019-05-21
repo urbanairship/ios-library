@@ -4,7 +4,7 @@
 #import "NSString+UALocalizationAdditions.h"
 #import "UAirship.h"
 #import "UAPush+Internal.h"
-#import "UAConfig.h"
+#import "UARuntimeConfig.h"
 #import "UA_Base64.h"
 #import "UAPreferenceDataStore+Internal.h"
 #import "UAUtils+Internal.h"
@@ -14,7 +14,7 @@ NSString *const UAChannelCaptureEnabledKey = @"UAChannelCaptureEnabled";
 
 @interface UAChannelCapture()
 @property (nonatomic, strong) UAPush *push;
-@property (nonatomic, strong) UAConfig *config;
+@property (nonatomic, strong) UARuntimeConfig *config;
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 @property bool enableChannelCapture;
 @end
@@ -24,7 +24,7 @@ NSString *const UAChannelCaptureEnabledKey = @"UAChannelCaptureEnabled";
 NSString *const UAChannelBaseURL = @"https://go.urbanairship.com/";
 NSString *const UAChannelPlaceHolder = @"CHANNEL";
 
-- (instancetype)initWithConfig:(UAConfig *)config
+- (instancetype)initWithConfig:(UARuntimeConfig *)config
                           push:(UAPush *)push
                      dataStore:(UAPreferenceDataStore *)dataStore
             notificationCenter:(NSNotificationCenter *)notificationCenter {
@@ -48,13 +48,13 @@ NSString *const UAChannelPlaceHolder = @"CHANNEL";
     return self;
 }
 
-+ (instancetype)channelCaptureWithConfig:(UAConfig *)config
++ (instancetype)channelCaptureWithConfig:(UARuntimeConfig *)config
                                     push:(UAPush *)push
                                dataStore:(UAPreferenceDataStore *)dataStore {
     return [[UAChannelCapture alloc] initWithConfig:config push:push dataStore:dataStore notificationCenter:[NSNotificationCenter defaultCenter]];
 }
 
-+ (instancetype)channelCaptureWithConfig:(UAConfig *)config
++ (instancetype)channelCaptureWithConfig:(UARuntimeConfig *)config
                                     push:(UAPush *)push
                                dataStore:(UAPreferenceDataStore *)dataStore
                       notificationCenter:(NSNotificationCenter *)notificationCenter {

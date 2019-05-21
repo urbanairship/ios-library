@@ -4,7 +4,7 @@
 
 @class UARemoteDataStorePayload;
 @class UARemoteDataPayload;
-@class UAConfig;
+@class UARuntimeConfig;
 
 NS_ASSUME_NONNULL_BEGIN
 

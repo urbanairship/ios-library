@@ -13,7 +13,7 @@
 @class UACustomEvent;
 @class UARegionEvent;
 @class UAPreferenceDataStore;
-@class UAConfig;
+@class UARuntimeConfig;
 @class UAEventManager;
 
 NS_ASSUME_NONNULL_BEGIN
@@ -64,7 +64,7 @@ extern NSString *const UAScreenKey;
  * @param dataStore The shared preference data store.
  * @return A new analytics instance.
  */
-+ (instancetype)analyticsWithConfig:(UAConfig *)airshipConfig
++ (instancetype)analyticsWithConfig:(UARuntimeConfig *)airshipConfig
                           dataStore:(UAPreferenceDataStore *)dataStore;
 
 
@@ -79,7 +79,7 @@ extern NSString *const UAScreenKey;
  * @param dispatcher The dispatcher.
  * @return A new analytics instance.
  */
-+ (instancetype)analyticsWithConfig:(UAConfig *)airshipConfig
++ (instancetype)analyticsWithConfig:(UARuntimeConfig *)airshipConfig
                           dataStore:(UAPreferenceDataStore *)dataStore
                        eventManager:(UAEventManager *)eventManager
                  notificationCenter:(NSNotificationCenter *)notificationCenter

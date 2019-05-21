@@ -48,7 +48,7 @@ NSString * const UATagGroupsLookupManagerErrorDomain = @"com.urbanairship.tag_gr
     return self;
 }
 
-+ (instancetype)lookupManagerWithConfig:(UAConfig *)config
++ (instancetype)lookupManagerWithConfig:(UARuntimeConfig *)config
                               dataStore:(UAPreferenceDataStore *)dataStore
                         mutationHistory:(UATagGroupsMutationHistory *)mutationHistory {
 

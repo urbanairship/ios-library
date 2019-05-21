@@ -5,7 +5,7 @@
 #import "UAUserAPIClient+Internal.h"
 #import "UAPush.h"
 #import "UAUtils+Internal.h"
-#import "UAConfig.h"
+#import "UARuntimeConfig.h"
 #import "UAKeychainUtils+Internal.h"
 #import "UAPreferenceDataStore+Internal.h"
 #import "UAirship.h"
@@ -38,7 +38,7 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
 }
 
 - (instancetype)initWithPush:(UAPush *)push
-                      config:(UAConfig *)config
+                      config:(UARuntimeConfig *)config
                    dataStore:(UAPreferenceDataStore *)dataStore
                       client:(UAUserAPIClient *)client
           notificationCenter:(NSNotificationCenter *)notificationCenter
@@ -66,7 +66,7 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
     return self;
 }
 
-+ (instancetype)userWithPush:(UAPush *)push config:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
++ (instancetype)userWithPush:(UAPush *)push config:(UARuntimeConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
     return [[UAUser alloc] initWithPush:push
                                  config:config
                               dataStore:dataStore
@@ -77,7 +77,7 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
 }
 
 + (instancetype)userWithPush:(UAPush *)push
-                      config:(UAConfig *)config
+                      config:(UARuntimeConfig *)config
                    dataStore:(UAPreferenceDataStore *)dataStore
                       client:(UAUserAPIClient *)client
           notificationCenter:(NSNotificationCenter *)notificationCenter

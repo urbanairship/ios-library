@@ -9,7 +9,7 @@
 #import "UAInboxUtils.h"
 #import "UALandingPageAction+Internal.h"
 #import "UAMessageCenter.h"
-#import "UAConfig.h"
+#import "UARuntimeConfig.h"
 #import "UAUtils.h"
 
 NSString * const UAOverlayInboxMessageActionMessageIDPlaceHolder  = @"auto";

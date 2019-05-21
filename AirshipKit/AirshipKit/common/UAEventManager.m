@@ -10,7 +10,7 @@
 #import "UAAsyncOperation+Internal.h"
 #import "UAEventAPIClient+Internal.h"
 #import "UAEvent+Internal.h"
-#import "UAConfig.h"
+#import "UARuntimeConfig.h"
 #import "UAPush.h"
 #import "UAirship.h"
 #import "NSOperationQueue+UAAdditions.h"
@@ -18,7 +18,7 @@
 
 @interface UAEventManager()
 
-@property (nonatomic, strong, nonnull) UAConfig *config;
+@property (nonatomic, strong, nonnull) UARuntimeConfig *config;
 @property (nonatomic, strong, nonnull) UAEventStore *eventStore;
 @property (nonatomic, strong, nonnull) UAPreferenceDataStore *dataStore;
 @property (nonatomic, strong, nonnull) UAEventAPIClient *client;
@@ -44,7 +44,7 @@ const NSTimeInterval BackgroundLowPriorityEventUploadInterval = 900;
 
 @implementation UAEventManager
 
-- (instancetype)initWithConfig:(UAConfig *)config
+- (instancetype)initWithConfig:(UARuntimeConfig *)config
                      dataStore:(UAPreferenceDataStore *)dataStore
                     eventStore:(UAEventStore *)eventStore
                         client:(UAEventAPIClient *)client
@@ -100,7 +100,7 @@ const NSTimeInterval BackgroundLowPriorityEventUploadInterval = 900;
     [self cancelUpload];
 }
 
-+ (instancetype)eventManagerWithConfig:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
++ (instancetype)eventManagerWithConfig:(UARuntimeConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
     UAEventStore *eventStore = [UAEventStore eventStoreWithConfig:config];
     UAEventAPIClient *client = [UAEventAPIClient clientWithConfig:config];
 
@@ -117,7 +117,7 @@ const NSTimeInterval BackgroundLowPriorityEventUploadInterval = 900;
 
 }
 
-+ (instancetype)eventManagerWithConfig:(UAConfig *)config
++ (instancetype)eventManagerWithConfig:(UARuntimeConfig *)config
                              dataStore:(UAPreferenceDataStore *)dataStore
                             eventStore:(UAEventStore *)eventStore
                                 client:(UAEventAPIClient *)client

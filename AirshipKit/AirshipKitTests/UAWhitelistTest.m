@@ -48,8 +48,7 @@
  * Test the default white list accepts Airship URLs.
  */
 - (void)testDefaultWhitelist {
-    UAConfig *config = [UAConfig config];
-    UAWhitelist *whitelist = [UAWhitelist whitelistWithConfig:config];
+    UAWhitelist *whitelist = [UAWhitelist whitelistWithConfig:self.config];
 
     for (NSNumber *number in self.scopes) {
         UAWhitelistScope scope = (UAWhitelistScope)number.unsignedIntegerValue;

@@ -4,7 +4,7 @@
 #import "UARemoteDataStore+Internal.h"
 #import "UARemoteDataStorePayload+Internal.h"
 #import "UARemoteDataPayload+Internal.h"
-#import "UAConfig.h"
+#import "UARuntimeConfig.h"
 
 @interface UARemoteDataStoreTest : UABaseTest
 @property UARemoteDataStore *remoteDataStore;

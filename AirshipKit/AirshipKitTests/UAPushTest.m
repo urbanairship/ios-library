@@ -17,7 +17,7 @@
 #import "UANotificationAction.h"
 #import "UANotificationCategory.h"
 #import "UAPreferenceDataStore+Internal.h"
-#import "UAConfig.h"
+#import "UARuntimeConfig.h"
 #import "UATagGroupsRegistrar+Internal.h"
 #import "UANotificationCategory.h"
 #import "UAPushReceivedEvent+Internal.h"
@@ -1177,11 +1177,10 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
  */
 - (void)testEnableChannelDelayWithChannelID {
     // Set channelCreationDelayEnabled to NO
-    UAConfig *config = [UAConfig defaultConfig];
-    config.channelCreationDelayEnabled = NO;
+    self.config.channelCreationDelayEnabled = NO;
 
     // Init push
-    self.push = [UAPush pushWithConfig:config
+    self.push = [UAPush pushWithConfig:self.config
                              dataStore:self.dataStore
                     tagGroupsRegistrar:self.mockTagGroupsRegistrar
                     notificationCenter:self.notificationCenter
@@ -1193,11 +1192,10 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     XCTAssertTrue(self.push.channelCreationEnabled);
 
     // Set channelCreationDelayEnabled to YES
-    config = [UAConfig defaultConfig];
-    config.channelCreationDelayEnabled = YES;
+    self.config.channelCreationDelayEnabled = YES;
 
     // Init push
-    self.push = [UAPush pushWithConfig:config
+    self.push = [UAPush pushWithConfig:self.config
                              dataStore:self.dataStore
                     tagGroupsRegistrar:self.mockTagGroupsRegistrar
                     notificationCenter:self.notificationCenter
@@ -1212,7 +1210,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     id mockDataStore = [self mockForClass:[UAPreferenceDataStore class]];
     [[[mockDataStore stub] andReturn:@"someChannelID"] stringForKey:UAPushChannelIDKey];
 
-    self.push = [UAPush pushWithConfig:config
+    self.push = [UAPush pushWithConfig:self.config
                              dataStore:mockDataStore
                     tagGroupsRegistrar:self.mockTagGroupsRegistrar
                     notificationCenter:self.notificationCenter

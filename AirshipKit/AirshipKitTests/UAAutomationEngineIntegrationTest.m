@@ -7,7 +7,7 @@
 #import "UACustomEvent.h"
 #import "UAAutomationStore+Internal.h"
 #import "UAJSONPredicate.h"
-#import "UAConfig.h"
+#import "UARuntimeConfig.h"
 #import "UAScheduleDelay.h"
 #import "UAScheduleData+Internal.h"
 #import "UAScheduleInfo+Internal.h"

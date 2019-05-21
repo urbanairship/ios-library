@@ -3,7 +3,7 @@
 #import "UABaseTest.h"
 
 #import "UAEventAPIClient+Internal.h"
-#import "UAConfig.h"
+#import "UARuntimeConfig.h"
 #import "UAirship+Internal.h"
 #import "UAPush+Internal.h"
 #import "UAKeychainUtils+Internal.h"

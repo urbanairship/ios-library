@@ -16,7 +16,7 @@
 #import "UANotificationCategories+Internal.h"
 #import "UANotificationCategory.h"
 #import "UAPreferenceDataStore+Internal.h"
-#import "UAConfig.h"
+#import "UARuntimeConfig.h"
 #import "UANotificationCategory.h"
 #import "UATagUtils+Internal.h"
 #import "UAPushReceivedEvent+Internal.h"
@@ -78,13 +78,13 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
 @property (nonatomic, strong) UARegistrationDelegateWrapper *registrationDelegateWrapper;
 @property (nonatomic, readonly) BOOL isRegisteredForRemoteNotifications;
 @property (nonatomic, readonly) BOOL isBackgroundRefreshStatusAvailable;
-@property (nonatomic, strong) UAConfig *config;
+@property (nonatomic, strong) UARuntimeConfig *config;
 
 @end
 
 @implementation UAPush
 
-- (instancetype)initWithConfig:(UAConfig *)config
+- (instancetype)initWithConfig:(UARuntimeConfig *)config
                      dataStore:(UAPreferenceDataStore *)dataStore
             tagGroupsRegistrar:(UATagGroupsRegistrar *)tagGroupsRegistrar
             notificationCenter:(NSNotificationCenter *)notificationCenter
@@ -168,7 +168,7 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
     return self;
 }
 
-+ (instancetype)pushWithConfig:(UAConfig *)config
++ (instancetype)pushWithConfig:(UARuntimeConfig *)config
                      dataStore:(UAPreferenceDataStore *)dataStore
             tagGroupsRegistrar:(UATagGroupsRegistrar *)tagGroupsRegistrar {
     return [[self alloc] initWithConfig:config
@@ -180,7 +180,7 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
                              dispatcher:[UADispatcher mainDispatcher]];
 }
 
-+ (instancetype)pushWithConfig:(UAConfig *)config
++ (instancetype)pushWithConfig:(UARuntimeConfig *)config
                      dataStore:(UAPreferenceDataStore *)dataStore
             tagGroupsRegistrar:(UATagGroupsRegistrar *)tagGroupsRegistrar
             notificationCenter:(NSNotificationCenter *)notificationCenter

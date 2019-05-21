@@ -3,7 +3,7 @@
 #import "UAInbox.h"
 
 @class UAUser;
-@class UAConfig;
+@class UARuntimeConfig;
 @class UAPreferenceDataStore;
 
 NS_ASSUME_NONNULL_BEGIN
@@ -39,7 +39,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @return The user's inbox.
  */
 + (instancetype)inboxWithUser:(UAUser *)user
-                       config:(UAConfig *)config
+                       config:(UARuntimeConfig *)config
                     dataStore:(UAPreferenceDataStore *)dataStore;
 
 @end

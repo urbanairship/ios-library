@@ -7,7 +7,7 @@
 #import "UAMessageCenterStyle.h"
 #import "UAirship.h"
 #import "UAMessageCenterLocalization.h"
-#import "UAConfig.h"
+#import "UARuntimeConfig.h"
 #import "UAInboxMessage.h"
 
 @interface UAMessageCenterSplitViewController ()

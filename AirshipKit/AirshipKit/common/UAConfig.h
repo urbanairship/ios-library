@@ -7,6 +7,23 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /**
+ * Represents the possible sites.
+ */
+typedef NS_ENUM(NSUInteger, UACloudSite) {
+    /**
+     * Represents the US cloud site. This is the default value.
+     * Projects avialable at go.airship.com must use this value.
+     */
+    UACloudSiteUS = 0,
+
+    /**
+     * Represents the EU cloud site.
+     * Projects avialable at go.airship.eu must use this value.
+     */
+    UACloudSiteEU = 1,
+};
+
+/**
  * The UAConfig object provides an interface for passing common configurable values to [UAirship takeOff].
  * The simplest way to use this class is to add an AirshipConfig.plist file in your app's bundle and set
  * the desired options. The plist keys use the same names as this class's configuration options. Older,
@@ -55,20 +72,26 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, assign) UALogLevel productionLogLevel;
 
+@property (nonatomic, assign) UACloudSite site;
+
 /**
- * The size in MB for the Airship Disk Cache.  Defaults to 100.
- *
- * Only items that are small enough (1/20th of the size) of the cache will be 
- * cached.
- * 
- * Any size greater than 0 will cause the Airship Disk Cache to become active. 
- * UAURLProtocol will be registered as a NSURLProtocol.  Only requests whose
- * mainDocumentURL or URL that have been added as a cachable URL will be considered
- * for caching.  By defualt it includes all of the Rich Application Page URLs.
- *
- * @deprecated Deprecated - to be removed in SDK version 11.0. The Airship Disk Cache is obsolete with the use of WKWebView.
+ * The default app key. Depending on the `inProduction` status,
+ * `developmentAppKey` or `productionAppKey` will take priority.
  */
-@property (nonatomic, assign) NSUInteger cacheDiskSizeInMB DEPRECATED_MSG_ATTRIBUTE("Deprecated - to be removed in SDK version 11.0. The Airship Disk Cache is obsolete with the use of WKWebView");
+@property (nonatomic, copy, nullable) NSString *defaultAppKey;
+
+/**
+ * The default app secret. Depending on the `inProduction` status,
+ * `developmentAppSecret` or `productionAppSecret` will take priority.
+ */
+@property (nonatomic, copy, nullable) NSString *defaultAppSecret;
+
+
+/**
+ * The production status of this application. This may be set directly, or it may be determined
+ * automatically if the detectProvisioningMode flag is set to `YES`.
+ */
+@property (nonatomic, assign, getter=isInProduction) BOOL inProduction;
 
 /**
  * If enabled, the Airship library automatically registers for remote notifications when push is enabled
@@ -88,6 +111,11 @@ NS_ASSUME_NONNULL_BEGIN
  * @note See UAWhitelist for pattern entry syntax.
  */
 @property (nonatomic, strong) NSArray<NSString *> *whitelist;
+
+/**
+ * The iTunes ID used for Rate App Actions.
+ */
+@property (nonatomic, copy) NSString *itunesID;
 
 ///---------------------------------------------------------------------------------------
 /// @name Advanced Configuration Options
@@ -118,24 +146,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) BOOL detectProvisioningMode;
 
 /**
- * The Airship device API url. This option is reserved for internal debugging.
- */
-@property (nonatomic, copy) NSString *deviceAPIURL;
-
-/**
- * The Airship analytics API url. This option is reserved for internal debugging.
- */
-@property (nonatomic, copy) NSString *analyticsURL;
-
-/**
  * The Airship default message center style configuration file.
  */
 @property (nonatomic, copy) NSString *messageCenterStyleConfig;
-
-/**
- * The iTunes ID used for Rate App Actions.
- */
-@property (nonatomic, copy) NSString *itunesID;
 
 /**
  * If set to `YES`, the Airship user will be cleared if the application is
@@ -189,29 +202,22 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) BOOL requestAuthorizationToUseNotifications;
 
 ///---------------------------------------------------------------------------------------
-/// @name Resolved Options
+/// @name Internal Configuration Options
 ///---------------------------------------------------------------------------------------
+/**
+ * The Airship device API url. This option is reserved for internal debugging.
+ */
+@property (nonatomic, copy) NSString *deviceAPIURL;
 
 /**
- * The current app key (resolved using the inProduction flag).
+ * The Airship analytics API url. This option is reserved for internal debugging.
  */
-@property (nonatomic, readonly, nullable) NSString *appKey;
+@property (nonatomic, copy) NSString *analyticsURL;
 
 /**
- * The current app secret (resolved using the inProduction flag).
+ * The Airship remote data API url. This option is reserved for internal debugging.
  */
-@property (nonatomic, readonly, nullable) NSString *appSecret;
-
-/**
- * The current log level for the library's UA_L<level> macros (resolved using the inProduction flag).
- */
-@property (nonatomic, readonly) UALogLevel logLevel;
-
-/**
- * The production status of this application. This may be set directly, or it may be determined
- * automatically if the detectProvisioningMode flag is set to `YES`.
- */
-@property (nonatomic, assign, getter=isInProduction) BOOL inProduction;
+@property (nonatomic, copy) NSString *remoteDataAPIURL;
 
 ///---------------------------------------------------------------------------------------
 /// @name Factory Methods
@@ -235,6 +241,28 @@ NS_ASSUME_NONNULL_BEGIN
  * @return A UAConfig with empty values.
  */
 + (UAConfig *)config;
+
+///---------------------------------------------------------------------------------------
+/// @name Resolved values
+///---------------------------------------------------------------------------------------
+
+/**
+ * Returns the resolved app key.
+ * @return The resolved app key or an empty string.
+ */
+@property (readonly, nonnull) NSString *appKey;
+
+/**
+ * Returns the resolved app secret.
+ * @return The resolved app key or an empty string.
+ */
+@property (readonly, nonnull) NSString *appSecret;
+
+/**
+ * Returns the resolved log level.
+ * @return The resolved log level.
+ */
+ @property (readonly) UALogLevel logLevel;
 
 ///---------------------------------------------------------------------------------------
 /// @name Utilities, Helpers

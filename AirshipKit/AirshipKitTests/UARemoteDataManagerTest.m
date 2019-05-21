@@ -10,7 +10,7 @@
 #import "UARemoteDataStore+Internal.h"
 
 #import "UAPreferenceDataStore+Internal.h"
-#import "UAConfig+Internal.h"
+#import "UARuntimeConfig.h"
 #import "UAUtils+Internal.h"
 
 #import "UABaseTest.h"

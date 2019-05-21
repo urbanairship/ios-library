@@ -7,10 +7,10 @@
 #import "UAKeychainUtils+Internal.h"
 #import "UAPush+Internal.h"
 #import "UAirship+Internal.h"
-#import "UAConfig+Internal.h"
+#import "UARuntimeConfig.h"
 #import "UAPreferenceDataStore+Internal.h"
 #import "UATestDispatcher.h"
-
+#import "UARuntimeConfig+Internal.h"
 @interface UAUserTest : UABaseTest
 @property (nonatomic, strong) UAUser *user;
 @property (nonatomic, strong) NSNotificationCenter *notificationCenter;
@@ -26,10 +26,6 @@
 
 - (void)setUp {
     [super setUp];
-
-    self.config = [[UAConfig alloc] init];
-    self.config.inProduction = NO;
-    self.config.developmentAppKey = @"9Q1tVTl0RF16baYKYp8HPQ";
 
     [[[NSBundle mainBundle] infoDictionary] setValue:@"someBundleID" forKey:@"CFBundleIdentifier"];
     self.mockKeychainUtils = [self mockForClass:[UAKeychainUtils class]];

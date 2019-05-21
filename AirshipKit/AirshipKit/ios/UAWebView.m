@@ -2,7 +2,7 @@
 
 #import "UAWebView+Internal.h"
 #import "UAirship.h"
-#import "UAConfig.h"
+#import "UARuntimeConfig.h"
 #import "UAUtils.h"
 
 // Had to create this class because Interface Builder doesn't directly support WKWebView

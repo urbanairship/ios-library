@@ -2,7 +2,7 @@
 
 #import <UIKit/UIKit.h>
 
-@class UAConfig;
+@class UARuntimeConfig;
 @class UAPush;
 
 NS_ASSUME_NONNULL_BEGIN
