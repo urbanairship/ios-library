@@ -3,7 +3,7 @@ iOS Changelog
 
 Migration Guides: Documentation/Migration
 
-Version 11.0.0 - May 17, 2019
+Version 11.0.0 - May 22, 2019
 =============================
 Major update removing the `UALocation` module from the core SDK. Location services are now available
 in an optional external module named `AirshipLocationKit`. This version also adds support for
