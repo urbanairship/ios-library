@@ -1,7 +1,5 @@
 # Airship iOS SDK Migration Guide (Legacy)
 
-***See [current migration guide](Migration%20Guide.md) for more recent migrations***
-
 # Urban Airship Library 8.x to 9.0
 
 ## Automation
