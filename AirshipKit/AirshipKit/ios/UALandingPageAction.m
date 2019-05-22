@@ -16,6 +16,7 @@ NSString *const UALandingPageURLKey = @"url";
 NSString *const UALandingPageHeightKey = @"height";
 NSString *const UALandingPageWidthKey = @"width";
 NSString *const UALandingPageAspectLockKey = @"aspect_lock";
+NSString *const UALandingPageAspectLockLegacyKey = @"aspectLock";
 
 CGFloat const defaultBorderRadiusPoints = 2;
 
@@ -67,11 +68,17 @@ CGFloat const defaultBorderRadiusPoints = 2;
 
 - (BOOL)parseAspectLockOptionFromValue:(id)value {
     if ([value isKindOfClass:[NSDictionary class]]) {
-        if ([[value valueForKey:UALandingPageAspectLockKey] isKindOfClass:[NSNumber class]]) {
-            // key "aspectLock" is still accepted by the API
-            NSNumber *aspectLock = (NSNumber *)[value valueForKey:UALandingPageAspectLockKey];
+        id aspectLockValue = [value valueForKey:UALandingPageAspectLockKey];
 
-            return aspectLock.boolValue;
+        if ([aspectLockValue isKindOfClass:[NSNumber class]]) {
+            return [(NSNumber *)aspectLockValue boolValue];
+        }
+
+        id legacyAspectLockValue = [value valueForKey:UALandingPageAspectLockLegacyKey];
+
+        if ([legacyAspectLockValue isKindOfClass:[NSNumber class]]) {
+            // key "aspectLock" is still accepted by the API
+            return [(NSNumber *)legacyAspectLockValue boolValue];
         }
     }
 
