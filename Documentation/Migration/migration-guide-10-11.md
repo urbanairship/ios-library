@@ -60,6 +60,16 @@ the `locationProviderDelegate` property on `UAirship` to set a custom provider, 
 used in place of the `UALocation` module, while allowing features such as location reporting and
 location-based In-App Automation audience conditions to function normally.
 
+## UAInAppMessageAdapterProtocol
+UAInAppMessageAdapterProtocol implementations must now support `prepareWithAssets:completionHandler:`. 
+The `UAInAppMessageAssets` instance is used to get the assets needed to prepare the message for display. 
+
+### Added
+* `prepareWithAssets:completionHandler:`
+
+### Removed
+* `prepare:` 
+
 # Airship Library 10.x to 10.2
 
 This release consists mostly of bugfixes and enhancements to In-App Automation, but some deprecations were made due
