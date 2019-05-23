@@ -9,93 +9,6 @@
 /* Begin PBXBuildFile section */
 		3CF0C21A2256A37A00CE5463 /* AirshipLocationKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3CF0C2092256789300CE5463 /* AirshipLocationKit.framework */; };
 		3CF0C21B2256A37A00CE5463 /* AirshipLocationKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3CF0C2092256789300CE5463 /* AirshipLocationKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		45BE0BBD2282540A008302F1 /* GT-America-Extended-Black.otf in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0B6622825409008302F1 /* GT-America-Extended-Black.otf */; };
-		45BE0BBE2282540A008302F1 /* GT-America-Standard-Thin.otf in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0B6722825409008302F1 /* GT-America-Standard-Thin.otf */; };
-		45BE0BBF2282540A008302F1 /* GT-America-Extended-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0B6822825409008302F1 /* GT-America-Extended-Regular.otf */; };
-		45BE0BC02282540A008302F1 /* GT-America-Expanded-Medium-Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0B6922825409008302F1 /* GT-America-Expanded-Medium-Italic.otf */; };
-		45BE0BC12282540A008302F1 /* GT-America-Expanded-Ultra-Light-Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0B6A22825409008302F1 /* GT-America-Expanded-Ultra-Light-Italic.otf */; };
-		45BE0BC22282540A008302F1 /* GT-America-Compressed-Light-Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0B6B22825409008302F1 /* GT-America-Compressed-Light-Italic.otf */; };
-		45BE0BC32282540A008302F1 /* GT-America-Condensed-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0B6C22825409008302F1 /* GT-America-Condensed-Bold.otf */; };
-		45BE0BC42282540A008302F1 /* GT-America-Compressed-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0B6D22825409008302F1 /* GT-America-Compressed-Bold.otf */; };
-		45BE0BC52282540A008302F1 /* GT-America-Compressed-Bold-Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0B6E22825409008302F1 /* GT-America-Compressed-Bold-Italic.otf */; };
-		45BE0BC62282540A008302F1 /* GT-America-Condensed-Thin.otf in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0B6F22825409008302F1 /* GT-America-Condensed-Thin.otf */; };
-		45BE0BC72282540A008302F1 /* GT-America-Compressed-Thin.otf in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0B7022825409008302F1 /* GT-America-Compressed-Thin.otf */; };
-		45BE0BC82282540A008302F1 /* GT-America-Condensed-Thin-Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0B7122825409008302F1 /* GT-America-Condensed-Thin-Italic.otf */; };
-		45BE0BC92282540A008302F1 /* GT-America-Extended-Black-Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0B7222825409008302F1 /* GT-America-Extended-Black-Italic.otf */; };
-		45BE0BCA2282540A008302F1 /* GT-America-Mono-Light-Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0B7322825409008302F1 /* GT-America-Mono-Light-Italic.otf */; };
-		45BE0BCB2282540A008302F1 /* GT-America-Compressed-Regular-Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0B7422825409008302F1 /* GT-America-Compressed-Regular-Italic.otf */; };
-		45BE0BCC2282540A008302F1 /* GT-America-Expanded-Black-Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0B7522825409008302F1 /* GT-America-Expanded-Black-Italic.otf */; };
-		45BE0BCD2282540A008302F1 /* GT-America-Mono-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0B7622825409008302F1 /* GT-America-Mono-Regular.otf */; };
-		45BE0BCE2282540A008302F1 /* GT-America-Compressed-Ultra-Light-Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0B7722825409008302F1 /* GT-America-Compressed-Ultra-Light-Italic.otf */; };
-		45BE0BCF2282540A008302F1 /* GT-America-Mono-Thin-Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0B7822825409008302F1 /* GT-America-Mono-Thin-Italic.otf */; };
-		45BE0BD02282540A008302F1 /* GT-America-Mono-Medium-Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0B7922825409008302F1 /* GT-America-Mono-Medium-Italic.otf */; };
-		45BE0BD12282540A008302F1 /* GT-America-Standard-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0B7A22825409008302F1 /* GT-America-Standard-Bold.otf */; };
-		45BE0BD22282540A008302F1 /* GT-America-Extended-Thin-Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0B7B22825409008302F1 /* GT-America-Extended-Thin-Italic.otf */; };
-		45BE0BD32282540A008302F1 /* GT-America-Expanded-Bold-Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0B7C22825409008302F1 /* GT-America-Expanded-Bold-Italic.otf */; };
-		45BE0BD42282540A008302F1 /* GT-America-Condensed-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0B7D22825409008302F1 /* GT-America-Condensed-Medium.otf */; };
-		45BE0BD52282540A008302F1 /* GT-America-Mono-Bold-Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0B7E22825409008302F1 /* GT-America-Mono-Bold-Italic.otf */; };
-		45BE0BD62282540A008302F1 /* GT-America-Condensed-Black-Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0B7F22825409008302F1 /* GT-America-Condensed-Black-Italic.otf */; };
-		45BE0BD72282540A008302F1 /* GT-America-Compressed-Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0B8022825409008302F1 /* GT-America-Compressed-Light.otf */; };
-		45BE0BD82282540A008302F1 /* GT-America-Expanded-Thin-Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0B8122825409008302F1 /* GT-America-Expanded-Thin-Italic.otf */; };
-		45BE0BD92282540A008302F1 /* GT-America-Extended-Bold-Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0B8222825409008302F1 /* GT-America-Extended-Bold-Italic.otf */; };
-		45BE0BDA2282540A008302F1 /* GT-America-Condensed-Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0B8322825409008302F1 /* GT-America-Condensed-Light.otf */; };
-		45BE0BDB2282540A008302F1 /* GT-America-Mono-Black.otf in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0B8422825409008302F1 /* GT-America-Mono-Black.otf */; };
-		45BE0BDC2282540A008302F1 /* GT-America-Standard-Ultra-Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0B8522825409008302F1 /* GT-America-Standard-Ultra-Light.otf */; };
-		45BE0BDD2282540A008302F1 /* GT-America-Condensed-Bold-Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0B8622825409008302F1 /* GT-America-Condensed-Bold-Italic.otf */; };
-		45BE0BDE2282540A008302F1 /* GT-America-Extended-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0B8722825409008302F1 /* GT-America-Extended-Bold.otf */; };
-		45BE0BDF2282540A008302F1 /* GT-America-Standard-Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0B8822825409008302F1 /* GT-America-Standard-Light.otf */; };
-		45BE0BE02282540A008302F1 /* GT-America-Expanded-Black.otf in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0B8922825409008302F1 /* GT-America-Expanded-Black.otf */; };
-		45BE0BE12282540A008302F1 /* GT-America-Extended-Medium-Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0B8A22825409008302F1 /* GT-America-Extended-Medium-Italic.otf */; };
-		45BE0BE22282540A008302F1 /* GT-America-Extended-Thin.otf in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0B8B22825409008302F1 /* GT-America-Extended-Thin.otf */; };
-		45BE0BE32282540A008302F1 /* GT-America-Compressed-Medium-Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0B8C2282540A008302F1 /* GT-America-Compressed-Medium-Italic.otf */; };
-		45BE0BE42282540A008302F1 /* GT-America-Compressed-Thin-Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0B8D2282540A008302F1 /* GT-America-Compressed-Thin-Italic.otf */; };
-		45BE0BE52282540A008302F1 /* GT-America-Condensed-Ultra-Light-Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0B8E2282540A008302F1 /* GT-America-Condensed-Ultra-Light-Italic.otf */; };
-		45BE0BE62282540A008302F1 /* GT-America-Standard-Light-Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0B8F2282540A008302F1 /* GT-America-Standard-Light-Italic.otf */; };
-		45BE0BE72282540A008302F1 /* GT-America-Mono-Ultra-Light-Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0B902282540A008302F1 /* GT-America-Mono-Ultra-Light-Italic.otf */; };
-		45BE0BE82282540A008302F1 /* GT-America-Condensed-Medium-Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0B912282540A008302F1 /* GT-America-Condensed-Medium-Italic.otf */; };
-		45BE0BE92282540A008302F1 /* GT-America-Condensed-Regular-Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0B922282540A008302F1 /* GT-America-Condensed-Regular-Italic.otf */; };
-		45BE0BEA2282540A008302F1 /* GT-America-Expanded-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0B932282540A008302F1 /* GT-America-Expanded-Medium.otf */; };
-		45BE0BEB2282540A008302F1 /* GT-America-Mono-Regular-Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0B942282540A008302F1 /* GT-America-Mono-Regular-Italic.otf */; };
-		45BE0BEC2282540A008302F1 /* GT-America-Compressed-Black-Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0B952282540A008302F1 /* GT-America-Compressed-Black-Italic.otf */; };
-		45BE0BED2282540A008302F1 /* GT-America-Extended-Ultra-Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0B962282540A008302F1 /* GT-America-Extended-Ultra-Light.otf */; };
-		45BE0BEE2282540A008302F1 /* GT-America-Mono-Ultra-Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0B972282540A008302F1 /* GT-America-Mono-Ultra-Light.otf */; };
-		45BE0BEF2282540A008302F1 /* GT-America-Compressed-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0B982282540A008302F1 /* GT-America-Compressed-Regular.otf */; };
-		45BE0BF02282540A008302F1 /* GT-America-Expanded-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0B992282540A008302F1 /* GT-America-Expanded-Bold.otf */; };
-		45BE0BF12282540A008302F1 /* GT-America-Standard-Bold-Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0B9A2282540A008302F1 /* GT-America-Standard-Bold-Italic.otf */; };
-		45BE0BF22282540A008302F1 /* GT America.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0B9B2282540A008302F1 /* GT America.pdf */; };
-		45BE0BF32282540A008302F1 /* GT-America-Condensed-Ultra-Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0B9C2282540A008302F1 /* GT-America-Condensed-Ultra-Light.otf */; };
-		45BE0BF42282540A008302F1 /* GT-America-Compressed-Black.otf in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0B9D2282540A008302F1 /* GT-America-Compressed-Black.otf */; };
-		45BE0BF52282540A008302F1 /* GT-America-Mono-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0B9E2282540A008302F1 /* GT-America-Mono-Medium.otf */; };
-		45BE0BF62282540A008302F1 /* GT-America-Expanded-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0B9F2282540A008302F1 /* GT-America-Expanded-Regular.otf */; };
-		45BE0BF72282540A008302F1 /* GT-America-Condensed-Black.otf in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0BA02282540A008302F1 /* GT-America-Condensed-Black.otf */; };
-		45BE0BF82282540A008302F1 /* GT-America-Compressed-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0BA12282540A008302F1 /* GT-America-Compressed-Medium.otf */; };
-		45BE0BF92282540A008302F1 /* GT-America-Expanded-Thin.otf in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0BA22282540A008302F1 /* GT-America-Expanded-Thin.otf */; };
-		45BE0BFA2282540A008302F1 /* GT-America-Mono-Black-Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0BA32282540A008302F1 /* GT-America-Mono-Black-Italic.otf */; };
-		45BE0BFB2282540A008302F1 /* GT-America-Extended-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0BA42282540A008302F1 /* GT-America-Extended-Medium.otf */; };
-		45BE0BFC2282540A008302F1 /* GT-America-Extended-Light-Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0BA52282540A008302F1 /* GT-America-Extended-Light-Italic.otf */; };
-		45BE0BFD2282540A008302F1 /* GT-America-Condensed-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0BA62282540A008302F1 /* GT-America-Condensed-Regular.otf */; };
-		45BE0BFE2282540A008302F1 /* GT-America-Expanded-Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0BA72282540A008302F1 /* GT-America-Expanded-Light.otf */; };
-		45BE0BFF2282540A008302F1 /* GT-America-Standard-Medium-Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0BA82282540A008302F1 /* GT-America-Standard-Medium-Italic.otf */; };
-		45BE0C002282540A008302F1 /* EULA-app.txt in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0BA92282540A008302F1 /* EULA-app.txt */; };
-		45BE0C012282540A008302F1 /* GT-America-Mono-Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0BAA2282540A008302F1 /* GT-America-Mono-Light.otf */; };
-		45BE0C022282540A008302F1 /* GT-America-Expanded-Light-Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0BAB2282540A008302F1 /* GT-America-Expanded-Light-Italic.otf */; };
-		45BE0C032282540A008302F1 /* GT-America-Standard-Black.otf in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0BAC2282540A008302F1 /* GT-America-Standard-Black.otf */; };
-		45BE0C042282540A008302F1 /* GT-America-Extended-Ultra-Light-Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0BAD2282540A008302F1 /* GT-America-Extended-Ultra-Light-Italic.otf */; };
-		45BE0C052282540A008302F1 /* GT-America-Mono-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0BAE2282540A008302F1 /* GT-America-Mono-Bold.otf */; };
-		45BE0C062282540A008302F1 /* GT-America-Condensed-Light-Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0BAF2282540A008302F1 /* GT-America-Condensed-Light-Italic.otf */; };
-		45BE0C072282540A008302F1 /* GT-America-Standard-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0BB02282540A008302F1 /* GT-America-Standard-Regular.otf */; };
-		45BE0C082282540A008302F1 /* GT-America-Extended-Regular-Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0BB12282540A008302F1 /* GT-America-Extended-Regular-Italic.otf */; };
-		45BE0C092282540A008302F1 /* GT-America-Compressed-Ultra-Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0BB22282540A008302F1 /* GT-America-Compressed-Ultra-Light.otf */; };
-		45BE0C0A2282540A008302F1 /* GT-America-Expanded-Regular-Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0BB32282540A008302F1 /* GT-America-Expanded-Regular-Italic.otf */; };
-		45BE0C0B2282540A008302F1 /* GT-America-Extended-Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0BB42282540A008302F1 /* GT-America-Extended-Light.otf */; };
-		45BE0C0C2282540A008302F1 /* GT-America-Standard-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0BB52282540A008302F1 /* GT-America-Standard-Medium.otf */; };
-		45BE0C0D2282540A008302F1 /* GT-America-Standard-Black-Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0BB62282540A008302F1 /* GT-America-Standard-Black-Italic.otf */; };
-		45BE0C0E2282540A008302F1 /* GT-America-Standard-Regular-Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0BB72282540A008302F1 /* GT-America-Standard-Regular-Italic.otf */; };
-		45BE0C0F2282540A008302F1 /* EULA-app.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0BB82282540A008302F1 /* EULA-app.pdf */; };
-		45BE0C102282540A008302F1 /* GT-America-Standard-Ultra-Light-Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0BB92282540A008302F1 /* GT-America-Standard-Ultra-Light-Italic.otf */; };
-		45BE0C112282540A008302F1 /* GT-America-Standard-Thin-Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0BBA2282540A008302F1 /* GT-America-Standard-Thin-Italic.otf */; };
-		45BE0C122282540A008302F1 /* GT-America-Mono-Thin.otf in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0BBB2282540A008302F1 /* GT-America-Mono-Thin.otf */; };
-		45BE0C132282540A008302F1 /* GT-America-Expanded-Ultra-Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0BBC2282540A008302F1 /* GT-America-Expanded-Ultra-Light.otf */; };
 		493F50EA1C5B261100B050A1 /* MessageCenterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 493F50E91C5B261100B050A1 /* MessageCenterViewController.m */; };
 		493F510B1C5B275100B050A1 /* UAPushUI.strings in Resources */ = {isa = PBXBuildFile; fileRef = 493F51091C5B275100B050A1 /* UAPushUI.strings */; };
 		493F51211C5B3A5100B050A1 /* InboxDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 493F51201C5B3A5100B050A1 /* InboxDelegate.m */; };
@@ -138,6 +51,20 @@
 			proxyType = 1;
 			remoteGlobalIDString = 3C7A565A2252883100E07225;
 			remoteInfo = AirshipLocationKit;
+		};
+		4560A1AE22961C36000FF3B2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3CF0C1FD2256789300CE5463 /* AirshipLocationKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 3CD47D2922601606005F1987;
+			remoteInfo = AirshipLocationLib;
+		};
+		4560A1B022961C36000FF3B2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3CF0C1FD2256789300CE5463 /* AirshipLocationKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 3CD47D5C22603B82005F1987;
+			remoteInfo = "AirshipLocationKit tvOS";
 		};
 		49251DD41D6F95FC00EED4BD /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -280,93 +207,6 @@
 
 /* Begin PBXFileReference section */
 		3CF0C1FD2256789300CE5463 /* AirshipLocationKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = AirshipLocationKit.xcodeproj; path = ../AirshipLocationKit/AirshipLocationKit.xcodeproj; sourceTree = "<group>"; };
-		45BE0B6622825409008302F1 /* GT-America-Extended-Black.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GT-America-Extended-Black.otf"; sourceTree = "<group>"; };
-		45BE0B6722825409008302F1 /* GT-America-Standard-Thin.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GT-America-Standard-Thin.otf"; sourceTree = "<group>"; };
-		45BE0B6822825409008302F1 /* GT-America-Extended-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GT-America-Extended-Regular.otf"; sourceTree = "<group>"; };
-		45BE0B6922825409008302F1 /* GT-America-Expanded-Medium-Italic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GT-America-Expanded-Medium-Italic.otf"; sourceTree = "<group>"; };
-		45BE0B6A22825409008302F1 /* GT-America-Expanded-Ultra-Light-Italic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GT-America-Expanded-Ultra-Light-Italic.otf"; sourceTree = "<group>"; };
-		45BE0B6B22825409008302F1 /* GT-America-Compressed-Light-Italic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GT-America-Compressed-Light-Italic.otf"; sourceTree = "<group>"; };
-		45BE0B6C22825409008302F1 /* GT-America-Condensed-Bold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GT-America-Condensed-Bold.otf"; sourceTree = "<group>"; };
-		45BE0B6D22825409008302F1 /* GT-America-Compressed-Bold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GT-America-Compressed-Bold.otf"; sourceTree = "<group>"; };
-		45BE0B6E22825409008302F1 /* GT-America-Compressed-Bold-Italic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GT-America-Compressed-Bold-Italic.otf"; sourceTree = "<group>"; };
-		45BE0B6F22825409008302F1 /* GT-America-Condensed-Thin.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GT-America-Condensed-Thin.otf"; sourceTree = "<group>"; };
-		45BE0B7022825409008302F1 /* GT-America-Compressed-Thin.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GT-America-Compressed-Thin.otf"; sourceTree = "<group>"; };
-		45BE0B7122825409008302F1 /* GT-America-Condensed-Thin-Italic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GT-America-Condensed-Thin-Italic.otf"; sourceTree = "<group>"; };
-		45BE0B7222825409008302F1 /* GT-America-Extended-Black-Italic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GT-America-Extended-Black-Italic.otf"; sourceTree = "<group>"; };
-		45BE0B7322825409008302F1 /* GT-America-Mono-Light-Italic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GT-America-Mono-Light-Italic.otf"; sourceTree = "<group>"; };
-		45BE0B7422825409008302F1 /* GT-America-Compressed-Regular-Italic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GT-America-Compressed-Regular-Italic.otf"; sourceTree = "<group>"; };
-		45BE0B7522825409008302F1 /* GT-America-Expanded-Black-Italic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GT-America-Expanded-Black-Italic.otf"; sourceTree = "<group>"; };
-		45BE0B7622825409008302F1 /* GT-America-Mono-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GT-America-Mono-Regular.otf"; sourceTree = "<group>"; };
-		45BE0B7722825409008302F1 /* GT-America-Compressed-Ultra-Light-Italic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GT-America-Compressed-Ultra-Light-Italic.otf"; sourceTree = "<group>"; };
-		45BE0B7822825409008302F1 /* GT-America-Mono-Thin-Italic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GT-America-Mono-Thin-Italic.otf"; sourceTree = "<group>"; };
-		45BE0B7922825409008302F1 /* GT-America-Mono-Medium-Italic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GT-America-Mono-Medium-Italic.otf"; sourceTree = "<group>"; };
-		45BE0B7A22825409008302F1 /* GT-America-Standard-Bold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GT-America-Standard-Bold.otf"; sourceTree = "<group>"; };
-		45BE0B7B22825409008302F1 /* GT-America-Extended-Thin-Italic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GT-America-Extended-Thin-Italic.otf"; sourceTree = "<group>"; };
-		45BE0B7C22825409008302F1 /* GT-America-Expanded-Bold-Italic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GT-America-Expanded-Bold-Italic.otf"; sourceTree = "<group>"; };
-		45BE0B7D22825409008302F1 /* GT-America-Condensed-Medium.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GT-America-Condensed-Medium.otf"; sourceTree = "<group>"; };
-		45BE0B7E22825409008302F1 /* GT-America-Mono-Bold-Italic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GT-America-Mono-Bold-Italic.otf"; sourceTree = "<group>"; };
-		45BE0B7F22825409008302F1 /* GT-America-Condensed-Black-Italic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GT-America-Condensed-Black-Italic.otf"; sourceTree = "<group>"; };
-		45BE0B8022825409008302F1 /* GT-America-Compressed-Light.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GT-America-Compressed-Light.otf"; sourceTree = "<group>"; };
-		45BE0B8122825409008302F1 /* GT-America-Expanded-Thin-Italic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GT-America-Expanded-Thin-Italic.otf"; sourceTree = "<group>"; };
-		45BE0B8222825409008302F1 /* GT-America-Extended-Bold-Italic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GT-America-Extended-Bold-Italic.otf"; sourceTree = "<group>"; };
-		45BE0B8322825409008302F1 /* GT-America-Condensed-Light.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GT-America-Condensed-Light.otf"; sourceTree = "<group>"; };
-		45BE0B8422825409008302F1 /* GT-America-Mono-Black.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GT-America-Mono-Black.otf"; sourceTree = "<group>"; };
-		45BE0B8522825409008302F1 /* GT-America-Standard-Ultra-Light.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GT-America-Standard-Ultra-Light.otf"; sourceTree = "<group>"; };
-		45BE0B8622825409008302F1 /* GT-America-Condensed-Bold-Italic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GT-America-Condensed-Bold-Italic.otf"; sourceTree = "<group>"; };
-		45BE0B8722825409008302F1 /* GT-America-Extended-Bold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GT-America-Extended-Bold.otf"; sourceTree = "<group>"; };
-		45BE0B8822825409008302F1 /* GT-America-Standard-Light.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GT-America-Standard-Light.otf"; sourceTree = "<group>"; };
-		45BE0B8922825409008302F1 /* GT-America-Expanded-Black.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GT-America-Expanded-Black.otf"; sourceTree = "<group>"; };
-		45BE0B8A22825409008302F1 /* GT-America-Extended-Medium-Italic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GT-America-Extended-Medium-Italic.otf"; sourceTree = "<group>"; };
-		45BE0B8B22825409008302F1 /* GT-America-Extended-Thin.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GT-America-Extended-Thin.otf"; sourceTree = "<group>"; };
-		45BE0B8C2282540A008302F1 /* GT-America-Compressed-Medium-Italic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GT-America-Compressed-Medium-Italic.otf"; sourceTree = "<group>"; };
-		45BE0B8D2282540A008302F1 /* GT-America-Compressed-Thin-Italic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GT-America-Compressed-Thin-Italic.otf"; sourceTree = "<group>"; };
-		45BE0B8E2282540A008302F1 /* GT-America-Condensed-Ultra-Light-Italic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GT-America-Condensed-Ultra-Light-Italic.otf"; sourceTree = "<group>"; };
-		45BE0B8F2282540A008302F1 /* GT-America-Standard-Light-Italic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GT-America-Standard-Light-Italic.otf"; sourceTree = "<group>"; };
-		45BE0B902282540A008302F1 /* GT-America-Mono-Ultra-Light-Italic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GT-America-Mono-Ultra-Light-Italic.otf"; sourceTree = "<group>"; };
-		45BE0B912282540A008302F1 /* GT-America-Condensed-Medium-Italic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GT-America-Condensed-Medium-Italic.otf"; sourceTree = "<group>"; };
-		45BE0B922282540A008302F1 /* GT-America-Condensed-Regular-Italic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GT-America-Condensed-Regular-Italic.otf"; sourceTree = "<group>"; };
-		45BE0B932282540A008302F1 /* GT-America-Expanded-Medium.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GT-America-Expanded-Medium.otf"; sourceTree = "<group>"; };
-		45BE0B942282540A008302F1 /* GT-America-Mono-Regular-Italic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GT-America-Mono-Regular-Italic.otf"; sourceTree = "<group>"; };
-		45BE0B952282540A008302F1 /* GT-America-Compressed-Black-Italic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GT-America-Compressed-Black-Italic.otf"; sourceTree = "<group>"; };
-		45BE0B962282540A008302F1 /* GT-America-Extended-Ultra-Light.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GT-America-Extended-Ultra-Light.otf"; sourceTree = "<group>"; };
-		45BE0B972282540A008302F1 /* GT-America-Mono-Ultra-Light.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GT-America-Mono-Ultra-Light.otf"; sourceTree = "<group>"; };
-		45BE0B982282540A008302F1 /* GT-America-Compressed-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GT-America-Compressed-Regular.otf"; sourceTree = "<group>"; };
-		45BE0B992282540A008302F1 /* GT-America-Expanded-Bold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GT-America-Expanded-Bold.otf"; sourceTree = "<group>"; };
-		45BE0B9A2282540A008302F1 /* GT-America-Standard-Bold-Italic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GT-America-Standard-Bold-Italic.otf"; sourceTree = "<group>"; };
-		45BE0B9B2282540A008302F1 /* GT America.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "GT America.pdf"; sourceTree = "<group>"; };
-		45BE0B9C2282540A008302F1 /* GT-America-Condensed-Ultra-Light.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GT-America-Condensed-Ultra-Light.otf"; sourceTree = "<group>"; };
-		45BE0B9D2282540A008302F1 /* GT-America-Compressed-Black.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GT-America-Compressed-Black.otf"; sourceTree = "<group>"; };
-		45BE0B9E2282540A008302F1 /* GT-America-Mono-Medium.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GT-America-Mono-Medium.otf"; sourceTree = "<group>"; };
-		45BE0B9F2282540A008302F1 /* GT-America-Expanded-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GT-America-Expanded-Regular.otf"; sourceTree = "<group>"; };
-		45BE0BA02282540A008302F1 /* GT-America-Condensed-Black.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GT-America-Condensed-Black.otf"; sourceTree = "<group>"; };
-		45BE0BA12282540A008302F1 /* GT-America-Compressed-Medium.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GT-America-Compressed-Medium.otf"; sourceTree = "<group>"; };
-		45BE0BA22282540A008302F1 /* GT-America-Expanded-Thin.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GT-America-Expanded-Thin.otf"; sourceTree = "<group>"; };
-		45BE0BA32282540A008302F1 /* GT-America-Mono-Black-Italic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GT-America-Mono-Black-Italic.otf"; sourceTree = "<group>"; };
-		45BE0BA42282540A008302F1 /* GT-America-Extended-Medium.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GT-America-Extended-Medium.otf"; sourceTree = "<group>"; };
-		45BE0BA52282540A008302F1 /* GT-America-Extended-Light-Italic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GT-America-Extended-Light-Italic.otf"; sourceTree = "<group>"; };
-		45BE0BA62282540A008302F1 /* GT-America-Condensed-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GT-America-Condensed-Regular.otf"; sourceTree = "<group>"; };
-		45BE0BA72282540A008302F1 /* GT-America-Expanded-Light.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GT-America-Expanded-Light.otf"; sourceTree = "<group>"; };
-		45BE0BA82282540A008302F1 /* GT-America-Standard-Medium-Italic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GT-America-Standard-Medium-Italic.otf"; sourceTree = "<group>"; };
-		45BE0BA92282540A008302F1 /* EULA-app.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "EULA-app.txt"; sourceTree = "<group>"; };
-		45BE0BAA2282540A008302F1 /* GT-America-Mono-Light.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GT-America-Mono-Light.otf"; sourceTree = "<group>"; };
-		45BE0BAB2282540A008302F1 /* GT-America-Expanded-Light-Italic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GT-America-Expanded-Light-Italic.otf"; sourceTree = "<group>"; };
-		45BE0BAC2282540A008302F1 /* GT-America-Standard-Black.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GT-America-Standard-Black.otf"; sourceTree = "<group>"; };
-		45BE0BAD2282540A008302F1 /* GT-America-Extended-Ultra-Light-Italic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GT-America-Extended-Ultra-Light-Italic.otf"; sourceTree = "<group>"; };
-		45BE0BAE2282540A008302F1 /* GT-America-Mono-Bold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GT-America-Mono-Bold.otf"; sourceTree = "<group>"; };
-		45BE0BAF2282540A008302F1 /* GT-America-Condensed-Light-Italic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GT-America-Condensed-Light-Italic.otf"; sourceTree = "<group>"; };
-		45BE0BB02282540A008302F1 /* GT-America-Standard-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GT-America-Standard-Regular.otf"; sourceTree = "<group>"; };
-		45BE0BB12282540A008302F1 /* GT-America-Extended-Regular-Italic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GT-America-Extended-Regular-Italic.otf"; sourceTree = "<group>"; };
-		45BE0BB22282540A008302F1 /* GT-America-Compressed-Ultra-Light.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GT-America-Compressed-Ultra-Light.otf"; sourceTree = "<group>"; };
-		45BE0BB32282540A008302F1 /* GT-America-Expanded-Regular-Italic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GT-America-Expanded-Regular-Italic.otf"; sourceTree = "<group>"; };
-		45BE0BB42282540A008302F1 /* GT-America-Extended-Light.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GT-America-Extended-Light.otf"; sourceTree = "<group>"; };
-		45BE0BB52282540A008302F1 /* GT-America-Standard-Medium.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GT-America-Standard-Medium.otf"; sourceTree = "<group>"; };
-		45BE0BB62282540A008302F1 /* GT-America-Standard-Black-Italic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GT-America-Standard-Black-Italic.otf"; sourceTree = "<group>"; };
-		45BE0BB72282540A008302F1 /* GT-America-Standard-Regular-Italic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GT-America-Standard-Regular-Italic.otf"; sourceTree = "<group>"; };
-		45BE0BB82282540A008302F1 /* EULA-app.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "EULA-app.pdf"; sourceTree = "<group>"; };
-		45BE0BB92282540A008302F1 /* GT-America-Standard-Ultra-Light-Italic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GT-America-Standard-Ultra-Light-Italic.otf"; sourceTree = "<group>"; };
-		45BE0BBA2282540A008302F1 /* GT-America-Standard-Thin-Italic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GT-America-Standard-Thin-Italic.otf"; sourceTree = "<group>"; };
-		45BE0BBB2282540A008302F1 /* GT-America-Mono-Thin.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GT-America-Mono-Thin.otf"; sourceTree = "<group>"; };
-		45BE0BBC2282540A008302F1 /* GT-America-Expanded-Ultra-Light.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GT-America-Expanded-Ultra-Light.otf"; sourceTree = "<group>"; };
 		49251DCF1D6F95FC00EED4BD /* AirshipAppExtensions.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = AirshipAppExtensions.xcodeproj; path = ../AirshipAppExtensions/AirshipAppExtensions.xcodeproj; sourceTree = "<group>"; };
 		4929EA2E1D5156F000D7B322 /* Sample.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Sample.entitlements; sourceTree = "<group>"; };
 		493F50E81C5B261100B050A1 /* MessageCenterViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageCenterViewController.h; sourceTree = "<group>"; };
@@ -422,102 +262,10 @@
 			children = (
 				3CF0C2092256789300CE5463 /* AirshipLocationKit.framework */,
 				3CF0C20B2256789300CE5463 /* AirshipLocationKitTests.xctest */,
+				4560A1AF22961C36000FF3B2 /* libUALocation.a */,
+				4560A1B122961C36000FF3B2 /* AirshipLocationKit.framework */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		45BE0B6522825409008302F1 /* GTAmerica */ = {
-			isa = PBXGroup;
-			children = (
-				45BE0B6622825409008302F1 /* GT-America-Extended-Black.otf */,
-				45BE0B6722825409008302F1 /* GT-America-Standard-Thin.otf */,
-				45BE0B6822825409008302F1 /* GT-America-Extended-Regular.otf */,
-				45BE0B6922825409008302F1 /* GT-America-Expanded-Medium-Italic.otf */,
-				45BE0B6A22825409008302F1 /* GT-America-Expanded-Ultra-Light-Italic.otf */,
-				45BE0B6B22825409008302F1 /* GT-America-Compressed-Light-Italic.otf */,
-				45BE0B6C22825409008302F1 /* GT-America-Condensed-Bold.otf */,
-				45BE0B6D22825409008302F1 /* GT-America-Compressed-Bold.otf */,
-				45BE0B6E22825409008302F1 /* GT-America-Compressed-Bold-Italic.otf */,
-				45BE0B6F22825409008302F1 /* GT-America-Condensed-Thin.otf */,
-				45BE0B7022825409008302F1 /* GT-America-Compressed-Thin.otf */,
-				45BE0B7122825409008302F1 /* GT-America-Condensed-Thin-Italic.otf */,
-				45BE0B7222825409008302F1 /* GT-America-Extended-Black-Italic.otf */,
-				45BE0B7322825409008302F1 /* GT-America-Mono-Light-Italic.otf */,
-				45BE0B7422825409008302F1 /* GT-America-Compressed-Regular-Italic.otf */,
-				45BE0B7522825409008302F1 /* GT-America-Expanded-Black-Italic.otf */,
-				45BE0B7622825409008302F1 /* GT-America-Mono-Regular.otf */,
-				45BE0B7722825409008302F1 /* GT-America-Compressed-Ultra-Light-Italic.otf */,
-				45BE0B7822825409008302F1 /* GT-America-Mono-Thin-Italic.otf */,
-				45BE0B7922825409008302F1 /* GT-America-Mono-Medium-Italic.otf */,
-				45BE0B7A22825409008302F1 /* GT-America-Standard-Bold.otf */,
-				45BE0B7B22825409008302F1 /* GT-America-Extended-Thin-Italic.otf */,
-				45BE0B7C22825409008302F1 /* GT-America-Expanded-Bold-Italic.otf */,
-				45BE0B7D22825409008302F1 /* GT-America-Condensed-Medium.otf */,
-				45BE0B7E22825409008302F1 /* GT-America-Mono-Bold-Italic.otf */,
-				45BE0B7F22825409008302F1 /* GT-America-Condensed-Black-Italic.otf */,
-				45BE0B8022825409008302F1 /* GT-America-Compressed-Light.otf */,
-				45BE0B8122825409008302F1 /* GT-America-Expanded-Thin-Italic.otf */,
-				45BE0B8222825409008302F1 /* GT-America-Extended-Bold-Italic.otf */,
-				45BE0B8322825409008302F1 /* GT-America-Condensed-Light.otf */,
-				45BE0B8422825409008302F1 /* GT-America-Mono-Black.otf */,
-				45BE0B8522825409008302F1 /* GT-America-Standard-Ultra-Light.otf */,
-				45BE0B8622825409008302F1 /* GT-America-Condensed-Bold-Italic.otf */,
-				45BE0B8722825409008302F1 /* GT-America-Extended-Bold.otf */,
-				45BE0B8822825409008302F1 /* GT-America-Standard-Light.otf */,
-				45BE0B8922825409008302F1 /* GT-America-Expanded-Black.otf */,
-				45BE0B8A22825409008302F1 /* GT-America-Extended-Medium-Italic.otf */,
-				45BE0B8B22825409008302F1 /* GT-America-Extended-Thin.otf */,
-				45BE0B8C2282540A008302F1 /* GT-America-Compressed-Medium-Italic.otf */,
-				45BE0B8D2282540A008302F1 /* GT-America-Compressed-Thin-Italic.otf */,
-				45BE0B8E2282540A008302F1 /* GT-America-Condensed-Ultra-Light-Italic.otf */,
-				45BE0B8F2282540A008302F1 /* GT-America-Standard-Light-Italic.otf */,
-				45BE0B902282540A008302F1 /* GT-America-Mono-Ultra-Light-Italic.otf */,
-				45BE0B912282540A008302F1 /* GT-America-Condensed-Medium-Italic.otf */,
-				45BE0B922282540A008302F1 /* GT-America-Condensed-Regular-Italic.otf */,
-				45BE0B932282540A008302F1 /* GT-America-Expanded-Medium.otf */,
-				45BE0B942282540A008302F1 /* GT-America-Mono-Regular-Italic.otf */,
-				45BE0B952282540A008302F1 /* GT-America-Compressed-Black-Italic.otf */,
-				45BE0B962282540A008302F1 /* GT-America-Extended-Ultra-Light.otf */,
-				45BE0B972282540A008302F1 /* GT-America-Mono-Ultra-Light.otf */,
-				45BE0B982282540A008302F1 /* GT-America-Compressed-Regular.otf */,
-				45BE0B992282540A008302F1 /* GT-America-Expanded-Bold.otf */,
-				45BE0B9A2282540A008302F1 /* GT-America-Standard-Bold-Italic.otf */,
-				45BE0B9B2282540A008302F1 /* GT America.pdf */,
-				45BE0B9C2282540A008302F1 /* GT-America-Condensed-Ultra-Light.otf */,
-				45BE0B9D2282540A008302F1 /* GT-America-Compressed-Black.otf */,
-				45BE0B9E2282540A008302F1 /* GT-America-Mono-Medium.otf */,
-				45BE0B9F2282540A008302F1 /* GT-America-Expanded-Regular.otf */,
-				45BE0BA02282540A008302F1 /* GT-America-Condensed-Black.otf */,
-				45BE0BA12282540A008302F1 /* GT-America-Compressed-Medium.otf */,
-				45BE0BA22282540A008302F1 /* GT-America-Expanded-Thin.otf */,
-				45BE0BA32282540A008302F1 /* GT-America-Mono-Black-Italic.otf */,
-				45BE0BA42282540A008302F1 /* GT-America-Extended-Medium.otf */,
-				45BE0BA52282540A008302F1 /* GT-America-Extended-Light-Italic.otf */,
-				45BE0BA62282540A008302F1 /* GT-America-Condensed-Regular.otf */,
-				45BE0BA72282540A008302F1 /* GT-America-Expanded-Light.otf */,
-				45BE0BA82282540A008302F1 /* GT-America-Standard-Medium-Italic.otf */,
-				45BE0BA92282540A008302F1 /* EULA-app.txt */,
-				45BE0BAA2282540A008302F1 /* GT-America-Mono-Light.otf */,
-				45BE0BAB2282540A008302F1 /* GT-America-Expanded-Light-Italic.otf */,
-				45BE0BAC2282540A008302F1 /* GT-America-Standard-Black.otf */,
-				45BE0BAD2282540A008302F1 /* GT-America-Extended-Ultra-Light-Italic.otf */,
-				45BE0BAE2282540A008302F1 /* GT-America-Mono-Bold.otf */,
-				45BE0BAF2282540A008302F1 /* GT-America-Condensed-Light-Italic.otf */,
-				45BE0BB02282540A008302F1 /* GT-America-Standard-Regular.otf */,
-				45BE0BB12282540A008302F1 /* GT-America-Extended-Regular-Italic.otf */,
-				45BE0BB22282540A008302F1 /* GT-America-Compressed-Ultra-Light.otf */,
-				45BE0BB32282540A008302F1 /* GT-America-Expanded-Regular-Italic.otf */,
-				45BE0BB42282540A008302F1 /* GT-America-Extended-Light.otf */,
-				45BE0BB52282540A008302F1 /* GT-America-Standard-Medium.otf */,
-				45BE0BB62282540A008302F1 /* GT-America-Standard-Black-Italic.otf */,
-				45BE0BB72282540A008302F1 /* GT-America-Standard-Regular-Italic.otf */,
-				45BE0BB82282540A008302F1 /* EULA-app.pdf */,
-				45BE0BB92282540A008302F1 /* GT-America-Standard-Ultra-Light-Italic.otf */,
-				45BE0BBA2282540A008302F1 /* GT-America-Standard-Thin-Italic.otf */,
-				45BE0BBB2282540A008302F1 /* GT-America-Mono-Thin.otf */,
-				45BE0BBC2282540A008302F1 /* GT-America-Expanded-Ultra-Light.otf */,
-			);
-			path = GTAmerica;
 			sourceTree = "<group>";
 		};
 		49251DD01D6F95FC00EED4BD /* Products */ = {
@@ -605,7 +353,6 @@
 		764693FB1C238E7C0090FE40 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				45BE0B6522825409008302F1 /* GTAmerica */,
 				493F51081C5B275100B050A1 /* Localization */,
 				764693FC1C238E7C0090FE40 /* Images.xcassets */,
 			);
@@ -767,6 +514,20 @@
 			remoteRef = 3CF0C20A2256789300CE5463 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		4560A1AF22961C36000FF3B2 /* libUALocation.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libUALocation.a;
+			remoteRef = 4560A1AE22961C36000FF3B2 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		4560A1B122961C36000FF3B2 /* AirshipLocationKit.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = AirshipLocationKit.framework;
+			remoteRef = 4560A1B022961C36000FF3B2 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		49251DD51D6F95FC00EED4BD /* AirshipAppExtensions.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
@@ -844,99 +605,12 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				45BE0BCF2282540A008302F1 /* GT-America-Mono-Thin-Italic.otf in Resources */,
-				45BE0C002282540A008302F1 /* EULA-app.txt in Resources */,
-				45BE0C012282540A008302F1 /* GT-America-Mono-Light.otf in Resources */,
-				45BE0BC72282540A008302F1 /* GT-America-Compressed-Thin.otf in Resources */,
-				45BE0BD92282540A008302F1 /* GT-America-Extended-Bold-Italic.otf in Resources */,
-				45BE0BFC2282540A008302F1 /* GT-America-Extended-Light-Italic.otf in Resources */,
-				45BE0BF22282540A008302F1 /* GT America.pdf in Resources */,
-				45BE0C082282540A008302F1 /* GT-America-Extended-Regular-Italic.otf in Resources */,
-				45BE0BD42282540A008302F1 /* GT-America-Condensed-Medium.otf in Resources */,
-				45BE0BD62282540A008302F1 /* GT-America-Condensed-Black-Italic.otf in Resources */,
 				764693B81C237B630090FE40 /* LaunchScreen.storyboard in Resources */,
-				45BE0BCA2282540A008302F1 /* GT-America-Mono-Light-Italic.otf in Resources */,
-				45BE0BF32282540A008302F1 /* GT-America-Condensed-Ultra-Light.otf in Resources */,
 				7646940D1C238E7C0090FE40 /* Images.xcassets in Resources */,
-				45BE0BCD2282540A008302F1 /* GT-America-Mono-Regular.otf in Resources */,
-				45BE0BC52282540A008302F1 /* GT-America-Compressed-Bold-Italic.otf in Resources */,
-				45BE0BEC2282540A008302F1 /* GT-America-Compressed-Black-Italic.otf in Resources */,
-				45BE0BD52282540A008302F1 /* GT-America-Mono-Bold-Italic.otf in Resources */,
-				45BE0BC12282540A008302F1 /* GT-America-Expanded-Ultra-Light-Italic.otf in Resources */,
 				764693C01C237CAB0090FE40 /* Main.storyboard in Resources */,
-				45BE0BD32282540A008302F1 /* GT-America-Expanded-Bold-Italic.otf in Resources */,
-				45BE0BDC2282540A008302F1 /* GT-America-Standard-Ultra-Light.otf in Resources */,
-				45BE0BF12282540A008302F1 /* GT-America-Standard-Bold-Italic.otf in Resources */,
-				45BE0BEE2282540A008302F1 /* GT-America-Mono-Ultra-Light.otf in Resources */,
-				45BE0BD02282540A008302F1 /* GT-America-Mono-Medium-Italic.otf in Resources */,
-				45BE0BEB2282540A008302F1 /* GT-America-Mono-Regular-Italic.otf in Resources */,
-				45BE0BC32282540A008302F1 /* GT-America-Condensed-Bold.otf in Resources */,
-				45BE0BBE2282540A008302F1 /* GT-America-Standard-Thin.otf in Resources */,
-				45BE0C032282540A008302F1 /* GT-America-Standard-Black.otf in Resources */,
-				45BE0C0B2282540A008302F1 /* GT-America-Extended-Light.otf in Resources */,
-				45BE0BE02282540A008302F1 /* GT-America-Expanded-Black.otf in Resources */,
-				45BE0BFF2282540A008302F1 /* GT-America-Standard-Medium-Italic.otf in Resources */,
 				76AE35651C2B6FD600D7F3B9 /* AirshipConfig.plist in Resources */,
-				45BE0BD72282540A008302F1 /* GT-America-Compressed-Light.otf in Resources */,
-				45BE0BC02282540A008302F1 /* GT-America-Expanded-Medium-Italic.otf in Resources */,
-				45BE0BDA2282540A008302F1 /* GT-America-Condensed-Light.otf in Resources */,
-				45BE0BED2282540A008302F1 /* GT-America-Extended-Ultra-Light.otf in Resources */,
-				45BE0BE22282540A008302F1 /* GT-America-Extended-Thin.otf in Resources */,
-				45BE0BCE2282540A008302F1 /* GT-America-Compressed-Ultra-Light-Italic.otf in Resources */,
-				45BE0C0E2282540A008302F1 /* GT-America-Standard-Regular-Italic.otf in Resources */,
-				45BE0BD12282540A008302F1 /* GT-America-Standard-Bold.otf in Resources */,
-				45BE0C112282540A008302F1 /* GT-America-Standard-Thin-Italic.otf in Resources */,
-				45BE0BE52282540A008302F1 /* GT-America-Condensed-Ultra-Light-Italic.otf in Resources */,
-				45BE0BE62282540A008302F1 /* GT-America-Standard-Light-Italic.otf in Resources */,
-				45BE0C052282540A008302F1 /* GT-America-Mono-Bold.otf in Resources */,
-				45BE0BDD2282540A008302F1 /* GT-America-Condensed-Bold-Italic.otf in Resources */,
-				45BE0C0A2282540A008302F1 /* GT-America-Expanded-Regular-Italic.otf in Resources */,
-				45BE0BBD2282540A008302F1 /* GT-America-Extended-Black.otf in Resources */,
-				45BE0BFB2282540A008302F1 /* GT-America-Extended-Medium.otf in Resources */,
-				45BE0BF72282540A008302F1 /* GT-America-Condensed-Black.otf in Resources */,
-				45BE0BF62282540A008302F1 /* GT-America-Expanded-Regular.otf in Resources */,
-				45BE0BFE2282540A008302F1 /* GT-America-Expanded-Light.otf in Resources */,
-				45BE0C072282540A008302F1 /* GT-America-Standard-Regular.otf in Resources */,
 				61E392311CC81EA800D994E3 /* UAMessageCenterDefaultStyle.plist in Resources */,
-				45BE0C092282540A008302F1 /* GT-America-Compressed-Ultra-Light.otf in Resources */,
-				45BE0BE42282540A008302F1 /* GT-America-Compressed-Thin-Italic.otf in Resources */,
-				45BE0BE12282540A008302F1 /* GT-America-Extended-Medium-Italic.otf in Resources */,
-				45BE0BC22282540A008302F1 /* GT-America-Compressed-Light-Italic.otf in Resources */,
-				45BE0BC42282540A008302F1 /* GT-America-Compressed-Bold.otf in Resources */,
-				45BE0BDF2282540A008302F1 /* GT-America-Standard-Light.otf in Resources */,
-				45BE0BC82282540A008302F1 /* GT-America-Condensed-Thin-Italic.otf in Resources */,
-				45BE0C0C2282540A008302F1 /* GT-America-Standard-Medium.otf in Resources */,
-				45BE0BBF2282540A008302F1 /* GT-America-Extended-Regular.otf in Resources */,
-				45BE0BCB2282540A008302F1 /* GT-America-Compressed-Regular-Italic.otf in Resources */,
-				45BE0BF92282540A008302F1 /* GT-America-Expanded-Thin.otf in Resources */,
-				45BE0BE72282540A008302F1 /* GT-America-Mono-Ultra-Light-Italic.otf in Resources */,
-				45BE0BCC2282540A008302F1 /* GT-America-Expanded-Black-Italic.otf in Resources */,
-				45BE0C042282540A008302F1 /* GT-America-Extended-Ultra-Light-Italic.otf in Resources */,
-				45BE0C0D2282540A008302F1 /* GT-America-Standard-Black-Italic.otf in Resources */,
-				45BE0BDE2282540A008302F1 /* GT-America-Extended-Bold.otf in Resources */,
-				45BE0BE32282540A008302F1 /* GT-America-Compressed-Medium-Italic.otf in Resources */,
-				45BE0C122282540A008302F1 /* GT-America-Mono-Thin.otf in Resources */,
-				45BE0C0F2282540A008302F1 /* EULA-app.pdf in Resources */,
-				45BE0BC62282540A008302F1 /* GT-America-Condensed-Thin.otf in Resources */,
-				45BE0BD22282540A008302F1 /* GT-America-Extended-Thin-Italic.otf in Resources */,
-				45BE0BF82282540A008302F1 /* GT-America-Compressed-Medium.otf in Resources */,
-				45BE0BDB2282540A008302F1 /* GT-America-Mono-Black.otf in Resources */,
-				45BE0BE92282540A008302F1 /* GT-America-Condensed-Regular-Italic.otf in Resources */,
-				45BE0BEA2282540A008302F1 /* GT-America-Expanded-Medium.otf in Resources */,
-				45BE0C132282540A008302F1 /* GT-America-Expanded-Ultra-Light.otf in Resources */,
-				45BE0BEF2282540A008302F1 /* GT-America-Compressed-Regular.otf in Resources */,
-				45BE0C102282540A008302F1 /* GT-America-Standard-Ultra-Light-Italic.otf in Resources */,
-				45BE0BFA2282540A008302F1 /* GT-America-Mono-Black-Italic.otf in Resources */,
-				45BE0C022282540A008302F1 /* GT-America-Expanded-Light-Italic.otf in Resources */,
 				493F510B1C5B275100B050A1 /* UAPushUI.strings in Resources */,
-				45BE0BF52282540A008302F1 /* GT-America-Mono-Medium.otf in Resources */,
-				45BE0BC92282540A008302F1 /* GT-America-Extended-Black-Italic.otf in Resources */,
-				45BE0BF42282540A008302F1 /* GT-America-Compressed-Black.otf in Resources */,
-				45BE0BF02282540A008302F1 /* GT-America-Expanded-Bold.otf in Resources */,
-				45BE0BE82282540A008302F1 /* GT-America-Condensed-Medium-Italic.otf in Resources */,
-				45BE0BFD2282540A008302F1 /* GT-America-Condensed-Regular.otf in Resources */,
-				45BE0C062282540A008302F1 /* GT-America-Condensed-Light-Italic.otf in Resources */,
-				45BE0BD82282540A008302F1 /* GT-America-Expanded-Thin-Italic.otf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
