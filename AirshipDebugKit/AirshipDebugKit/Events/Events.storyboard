@@ -104,7 +104,7 @@
                             </barButtonItem>
                         </rightBarButtonItems>
                         <userDefinedRuntimeAttributes>
-                            <userDefinedRuntimeAttribute type="string" keyPath="keyForLocalization" value="ua_events"/>
+                            <userDefinedRuntimeAttribute type="string" keyPath="keyForLocalization" value="ua_events_title"/>
                         </userDefinedRuntimeAttributes>
                     </navigationItem>
                     <connections>
@@ -247,7 +247,7 @@
                                             <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                             <nil key="highlightedColor"/>
                                             <userDefinedRuntimeAttributes>
-                                                <userDefinedRuntimeAttribute type="string" keyPath="keyForLocalization" value="ua_custom_event_name"/>
+                                                <userDefinedRuntimeAttribute type="string" keyPath="keyForLocalization" value="ua_custom_event_event_name_title"/>
                                             </userDefinedRuntimeAttributes>
                                         </label>
                                         <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Required" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="R6Z-Ld-GQf" userLabel="Add Named User Text Field">
@@ -287,7 +287,7 @@
                                             <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                             <nil key="highlightedColor"/>
                                             <userDefinedRuntimeAttributes>
-                                                <userDefinedRuntimeAttribute type="string" keyPath="keyForLocalization" value="ua_custom_event_add_custom_property"/>
+                                                <userDefinedRuntimeAttribute type="string" keyPath="keyForLocalization" value="ua_custom_event_add_custom_property_title"/>
                                             </userDefinedRuntimeAttributes>
                                         </label>
                                     </subviews>
@@ -625,7 +625,7 @@
                             </connections>
                         </barButtonItem>
                         <userDefinedRuntimeAttributes>
-                            <userDefinedRuntimeAttribute type="string" keyPath="keyForLocalization" value="ua_custom_event_add_custom_property"/>
+                            <userDefinedRuntimeAttribute type="string" keyPath="keyForLocalization" value="ua_custom_event_add_custom_property_title"/>
                         </userDefinedRuntimeAttributes>
                     </navigationItem>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
