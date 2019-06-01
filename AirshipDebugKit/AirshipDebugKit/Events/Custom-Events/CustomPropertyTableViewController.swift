@@ -37,6 +37,7 @@ class CustomPropertyTableViewController: UITableViewController, UITextFieldDeleg
     var stringProperty:String?
     var stringProperties:Array<String>?
 
+    var selectedType:String?
 
     var types:[String] = ["ua_type_boolean", "ua_type_number", "ua_type_string", "ua_type_strings"]
     
@@ -77,6 +78,12 @@ class CustomPropertyTableViewController: UITableViewController, UITextFieldDeleg
         let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(CustomPropertyTableViewController.dismissKeyboard))
         tap.cancelsTouchesInView = false
         view.addGestureRecognizer(tap)
+
+        // Switch values need an inital state
+        booleanProperty = boolSwitch.isOn
+
+        // Default type is boolean
+        selectedType = types[0]
     }
 
     func setCellTheme() {
@@ -130,6 +137,11 @@ class CustomPropertyTableViewController: UITableViewController, UITextFieldDeleg
         animatedReload()
     }
 
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        processInputsSilently()
+    }
+
     override func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
         if let headerView = view as? UITableViewHeaderFooterView {
             headerView.textLabel?.textColor = ThemeManager.shared.currentTheme.WidgetTint
@@ -143,35 +155,59 @@ class CustomPropertyTableViewController: UITableViewController, UITextFieldDeleg
     }
 
     func textFieldDidEndEditing(_ textField: UITextField) {
+        processField(textField, displayWarnings:true)
+
+        if (textField == identifierTextField) {
+            // Identifer text field is the only field that adjusts the view
+            animatedReload()
+        }
+    }
+
+    func processInputsSilently() {
+        [identifierTextField, stringTextField, numberTextField].forEach{ processField($0!, displayWarnings:false) }
+        booleanProperty = boolSwitch.isOn
+    }
+
+    func processField(_ textField: UITextField, displayWarnings:Bool) {
         guard let text = textField.text else {
             return
         }
 
-        if (textField == numberTextField) {
+        switch textField {
+        case numberTextField:
             if validateNumberInput(input:text) {
                 numberProperty = NSDecimalNumber(string: text)
-            } else {
-                textField.text = nil
+                return
+            }
+
+            textField.text = nil
+            if (displayWarnings) {
                 displayMessage("Number property must be a valid number")
             }
-        } else if (textField == stringTextField) {
+        case stringTextField:
             if validateStringInput(input:text) {
                 stringProperty = text
-            } else {
-                textField.text = nil
+                return
+            }
+
+            textField.text = nil
+            if (displayWarnings) {
                 displayMessage("String property must be non-empty")
             }
-        } else if (textField == identifierTextField) {
+        case identifierTextField:
             if validateStringInput(input:text) {
                 propertyKey = text
                 self.doneButton.isEnabled = (propertyKey != nil)
-            } else {
-                textField.text = nil
+                return
+            }
+
+            textField.text = nil
+            if (displayWarnings) {
                 displayMessage("String property must be non-empty")
             }
+        default:
+            return
         }
-
-        animatedReload()
     }
 
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
@@ -240,6 +276,7 @@ class CustomPropertyTableViewController: UITableViewController, UITextFieldDeleg
     }
 
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        selectedType = types[row]
         animatedReload()
     }
 
@@ -265,15 +302,20 @@ class CustomPropertyTableViewController: UITableViewController, UITextFieldDeleg
 
         let customEventTVC = self.navigationController?.viewControllers[0] as! CustomEventTableViewController
 
-        if (booleanProperty != nil) {
+        switch (selectedType) {
+        case "ua_type_boolean":
+            guard booleanProperty != nil else { break }
             customEventTVC.customEvent!.setBoolProperty(booleanProperty!, forKey: propertyKey!)
-        } else if (numberProperty != nil) {
+        case "ua_type_number":
+            guard numberProperty != nil else { break }
             customEventTVC.customEvent!.setNumberProperty(numberProperty!, forKey: propertyKey!)
-        } else if (stringProperty != nil) {
+        case "ua_type_string":
+            guard stringProperty != nil else { break }
             customEventTVC.customEvent!.setStringProperty(stringProperty!, forKey: propertyKey!)
-        } else if (stringProperties != nil) {
+        case "ua_type_strings":
+            guard stringProperties != nil else { break }
             customEventTVC.customEvent!.setStringArrayProperty(stringProperties!, forKey: propertyKey!)
-        } else {
+        default:
             displayMessage("ua_custom_property_error".localized())
             return
         }
@@ -364,6 +406,5 @@ class CustomPropertyTableViewController: UITableViewController, UITextFieldDeleg
         numberTextField.text = nil
 
         animatedReload()
-
     }
 }

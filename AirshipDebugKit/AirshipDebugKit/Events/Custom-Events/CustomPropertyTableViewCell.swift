@@ -3,7 +3,7 @@
 import UIKit
 
 class CustomPropertyTableViewCell: UITableViewCell {
-    @IBOutlet weak var propertyTypeLabel: UILabel!
+    @IBOutlet weak var propertyIdentifierLabel: UILabel!
     @IBOutlet weak var propertyLabel: UILabel!
     
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -11,8 +11,8 @@ class CustomPropertyTableViewCell: UITableViewCell {
     }
 
     func setCellTheme() {
-        propertyLabel.textColor = ThemeManager.shared.currentTheme.PrimaryText
-        propertyTypeLabel.textColor = ThemeManager.shared.currentTheme.SecondaryText
+        propertyIdentifierLabel.textColor = ThemeManager.shared.currentTheme.PrimaryText
+        propertyLabel.textColor = ThemeManager.shared.currentTheme.SecondaryText
         backgroundColor = ThemeManager.shared.currentTheme.Background
     }
 

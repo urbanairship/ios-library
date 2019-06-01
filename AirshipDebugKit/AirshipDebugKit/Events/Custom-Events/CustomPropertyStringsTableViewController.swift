@@ -3,7 +3,6 @@
 import UIKit
 import AirshipKit
 
-
 class CustomPropertyStringsTableViewController: UITableViewController {
     let addStringsSegue:String = "addStringsSegue"
     var stringProperties:Array<String>?
@@ -23,7 +22,6 @@ class CustomPropertyStringsTableViewController: UITableViewController {
         self.navigationController?.navigationBar.titleTextAttributes = [.foregroundColor:ThemeManager.shared.currentTheme.NavigationBarText]
         self.navigationController?.navigationBar.barTintColor = ThemeManager.shared.currentTheme.NavigationBarBackground;
     }
-
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated);

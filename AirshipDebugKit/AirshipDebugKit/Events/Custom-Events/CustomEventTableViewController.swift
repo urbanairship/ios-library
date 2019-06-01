@@ -16,7 +16,9 @@ class CustomEventTableViewController: UITableViewController, UITextFieldDelegate
     var interactionType:String?
     var transactionID:String?
 
-    var isCleared:Bool = true
+    private var orderedProperties:[(identifier:String, value:String)]?
+
+    private var isCleared:Bool = true
 
     fileprivate enum Sections : Int, CaseIterable {
         case StandardEventProperties = 0
@@ -50,6 +52,8 @@ class CustomEventTableViewController: UITableViewController, UITextFieldDelegate
         self.doneButton.tintColor = ThemeManager.shared.currentTheme.WidgetTint
         
         self.doneButton.isEnabled = (customEvent != nil)
+
+        generateOrderedProperties()
     }
 
     override func viewDidLoad() {
@@ -62,14 +66,24 @@ class CustomEventTableViewController: UITableViewController, UITextFieldDelegate
         view.addGestureRecognizer(tap)
     }
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-    }
-
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated);
 
         tableView.reloadData()
+    }
+
+    func generateOrderedProperties() {
+        var orderedTuples:[(identifier:String, value:String)] = []
+
+        guard let unorderedProperties = self.customEvent?.properties else { return }
+
+        for (identifier, value) in unorderedProperties {
+            guard let stringID = identifier as? String else { continue }
+
+            orderedTuples.append((stringID, valueToString(value)))
+        }
+
+        orderedProperties = orderedTuples
     }
 
     @IBAction func addEvent(_ sender: Any) {
@@ -93,6 +107,7 @@ class CustomEventTableViewController: UITableViewController, UITextFieldDelegate
         if (customEvent == nil) {
             customEvent = UACustomEvent(name: eventName!, value: NSDecimalNumber(string: eventValue!))
         }
+
         self.doneButton.isEnabled = (customEvent != nil)
     }
 
@@ -185,7 +200,6 @@ class CustomEventTableViewController: UITableViewController, UITextFieldDelegate
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-
         switch (section) {
         case Sections.StandardEventProperties.rawValue:
             return StandardEventRows.allCases.count
@@ -232,14 +246,13 @@ class CustomEventTableViewController: UITableViewController, UITextFieldDelegate
             }
         case (Sections.CustomEventProperties.rawValue):
             let cell = tableView.dequeueReusableCell(withIdentifier: "customPropertyCell", for: indexPath) as! CustomPropertyTableViewCell
-            if customEvent != nil {
-                let customPropertyKeys = Array(customEvent!.properties.keys)
-                let customPropertyValues = Array(customEvent!.properties.values)
-                
-                let typeText = toString(customPropertyValues[indexPath.row])
-                cell.propertyLabel?.text = typeText
-                cell.propertyTypeLabel?.text = customPropertyKeys[indexPath.row] as? String
-            }
+            guard self.customEvent != nil else { return cell }
+            guard let orderedProperties = self.orderedProperties else { return cell }
+
+            let propertyTuple = orderedProperties[indexPath.row]
+
+            cell.propertyIdentifierLabel?.text = propertyTuple.identifier
+            cell.propertyLabel?.text = propertyTuple.value
 
             return cell
         default:
@@ -273,13 +286,13 @@ class CustomEventTableViewController: UITableViewController, UITextFieldDelegate
     }
 
     // Helper to convert property to printable form
-    func toString(_ value:Any) -> String {
-        if let boolVal = value as? Bool {
-            return boolVal ? "ua_true_false_true".localized() : "ua_true_false_false".localized()
+    func valueToString(_ value:Any) -> String {
+        if let numVal = value as? NSNumber, CFGetTypeID(numVal) != CFBooleanGetTypeID() {
+            return String(describing:numVal)
         }
 
-        if let numVal = value as? NSDecimalNumber {
-            return String(describing:numVal)
+        if let boolVal = value as? Bool {
+            return boolVal ? "ua_true_false_true".localized() : "ua_true_false_false".localized()
         }
 
         if let stringVal = value as? String {

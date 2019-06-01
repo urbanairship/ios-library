@@ -86,7 +86,7 @@
                             <constraint firstItem="Mqs-KN-8rF" firstAttribute="leading" secondItem="E08-Qo-0pM" secondAttribute="leading" id="O19-38-iDX"/>
                             <constraint firstItem="ZFk-wZ-rXo" firstAttribute="width" secondItem="p60-Kt-8Qr" secondAttribute="width" id="VvC-hS-KH9"/>
                             <constraint firstItem="E08-Qo-0pM" firstAttribute="trailing" secondItem="Mqs-KN-8rF" secondAttribute="trailing" id="fTt-yv-JwO"/>
-                            <constraint firstItem="ZFk-wZ-rXo" firstAttribute="height" secondItem="p60-Kt-8Qr" secondAttribute="height" id="s9B-DY-GpG"/>
+                            <constraint firstItem="ZFk-wZ-rXo" firstAttribute="top" secondItem="E08-Qo-0pM" secondAttribute="top" id="ssY-No-wFB"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="E08-Qo-0pM"/>
                     </view>
@@ -337,8 +337,8 @@
                                     </constraints>
                                 </tableViewCellContentView>
                                 <connections>
+                                    <outlet property="propertyIdentifierLabel" destination="gaJ-Oz-sq5" id="rJ6-bk-b66"/>
                                     <outlet property="propertyLabel" destination="8UQ-84-M46" id="Cin-fR-quh"/>
-                                    <outlet property="propertyTypeLabel" destination="gaJ-Oz-sq5" id="P5b-f8-rGJ"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>
