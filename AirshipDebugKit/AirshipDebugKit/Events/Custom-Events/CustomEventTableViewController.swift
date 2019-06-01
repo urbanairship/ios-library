@@ -38,7 +38,7 @@ class CustomEventTableViewController: UITableViewController, UITextFieldDelegate
 
     func setTableViewTheme() {
         self.tableView.backgroundColor = ThemeManager.shared.currentTheme.Background
-        self.navigationController?.navigationBar.titleTextAttributes = [.foregroundColor:ThemeManager.shared.currentTheme.PrimaryText]
+        self.navigationController?.navigationBar.titleTextAttributes = [.foregroundColor:ThemeManager.shared.currentTheme.NavigationBarText]
         self.navigationController?.navigationBar.barTintColor = ThemeManager.shared.currentTheme.NavigationBarBackground
     }
 

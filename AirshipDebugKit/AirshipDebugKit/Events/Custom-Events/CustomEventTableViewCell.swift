@@ -12,7 +12,7 @@ class CustomEventTableViewCell: UITableViewCell {
 
     func setCellTheme() {
         eventPropertyLabel.textColor = ThemeManager.shared.currentTheme.PrimaryText
-        textInputField.textColor = ThemeManager.shared.currentTheme.Background
+        textInputField.textColor = ThemeManager.shared.currentTheme.PrimaryText
         backgroundColor = ThemeManager.shared.currentTheme.Background
     }
     

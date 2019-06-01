@@ -15,8 +15,8 @@ class AutomationCell: UITableViewCell {
 
     func setCellTheme() {
         backgroundColor = ThemeManager.shared.currentTheme.Background
-        messageID.textColor = ThemeManager.shared.currentTheme.PrimaryText
-        messageName.textColor = ThemeManager.shared.currentTheme.SecondaryText
+        messageName.textColor = ThemeManager.shared.currentTheme.PrimaryText
+        messageID.textColor = ThemeManager.shared.currentTheme.SecondaryText
         messageType.textColor = ThemeManager.shared.currentTheme.WidgetTint
     }
 

@@ -52,7 +52,7 @@
 			remoteGlobalIDString = 3C7A565A2252883100E07225;
 			remoteInfo = AirshipLocationKit;
 		};
-		4560A1AE22961C36000FF3B2 /* PBXContainerItemProxy */ = {
+		455BE7BC229B04A5007D2687 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 3CF0C1FD2256789300CE5463 /* AirshipLocationKit.xcodeproj */;
 			proxyType = 2;

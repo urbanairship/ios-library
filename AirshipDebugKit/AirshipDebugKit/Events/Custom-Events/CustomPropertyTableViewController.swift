@@ -80,7 +80,7 @@ class CustomPropertyTableViewController: UITableViewController, UITextFieldDeleg
     }
 
     func setCellTheme() {
-        identifierTextField.textColor = ThemeManager.shared.currentTheme.Background
+        identifierTextField.textColor = ThemeManager.shared.currentTheme.PrimaryText
         identifierCell.backgroundColor = ThemeManager.shared.currentTheme.Background
         identifierLabel.textColor = ThemeManager.shared.currentTheme.PrimaryText
 
@@ -95,11 +95,11 @@ class CustomPropertyTableViewController: UITableViewController, UITextFieldDeleg
         typePicker.backgroundColor = ThemeManager.shared.currentTheme.Background
 
         numberLabel.textColor = ThemeManager.shared.currentTheme.PrimaryText
-        numberTextField.textColor = ThemeManager.shared.currentTheme.Background
+        numberTextField.textColor = ThemeManager.shared.currentTheme.PrimaryText
         numberCell.backgroundColor = ThemeManager.shared.currentTheme.Background
 
         stringLabel.textColor = ThemeManager.shared.currentTheme.PrimaryText
-        stringTextField.textColor = ThemeManager.shared.currentTheme.Background
+        stringTextField.textColor = ThemeManager.shared.currentTheme.PrimaryText
         stringCell.backgroundColor = ThemeManager.shared.currentTheme.Background
 
         stringsTitleLabel.textColor = ThemeManager.shared.currentTheme.PrimaryText

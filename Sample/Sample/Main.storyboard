@@ -54,7 +54,7 @@
                                 </connections>
                             </button>
                         </subviews>
-                        <color key="backgroundColor" red="1" green="0.12844113600000001" blue="0.23472949409999999" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                        <color key="backgroundColor" cocoaTouchSystemColor="darkTextColor"/>
                         <constraints>
                             <constraint firstItem="He6-LA-1je" firstAttribute="leading" secondItem="tsR-hK-woN" secondAttribute="leadingMargin" constant="29" id="1EW-w2-ROQ"/>
                             <constraint firstItem="iZm-tj-QRc" firstAttribute="leading" secondItem="tsR-hK-woN" secondAttribute="leading" id="2B5-pp-G8Y"/>
@@ -103,11 +103,11 @@
             <objects>
                 <navigationController storyboardIdentifier="message_center" id="uCE-kh-Bmv" customClass="MessageCenterViewController" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" title="Message Center" image="Inbox" id="puz-9M-buY"/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="QwL-7h-v1G">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" translucent="NO" id="QwL-7h-v1G">
                         <rect key="frame" x="0.0" y="20" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <color key="tintColor" red="0.039215686270000001" green="0.3411764706" blue="0.49019607840000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                        <color key="barTintColor" red="1" green="0.12844113600000001" blue="0.23472949409999999" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                        <color key="barTintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <textAttributes key="titleTextAttributes">
                             <fontDescription key="fontDescription" name="Roboto-Thin" family="Roboto" pointSize="0.0"/>
                             <color key="textColor" red="0.039215686270000001" green="0.3411764706" blue="0.49019607840000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -124,10 +124,10 @@
                 <navigationController title="Debug Kit" automaticallyAdjustsScrollViewInsets="NO" id="che-5b-1hJ" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" title="Debug" image="outline_bug_report_black_36pt" id="1RL-FV-UGR"/>
                     <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="pcT-LK-8R6">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" translucent="NO" id="pcT-LK-8R6">
                         <rect key="frame" x="0.0" y="20" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
-                        <color key="barTintColor" red="1" green="0.12844113600000001" blue="0.23472949409999999" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                        <color key="barTintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
                     <connections>

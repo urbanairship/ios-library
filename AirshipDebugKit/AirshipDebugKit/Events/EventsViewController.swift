@@ -74,8 +74,6 @@ class EventsViewController:UIViewController, UITableViewDataSource, UITableViewD
         searchController.searchBar.showsScopeBar = false
         searchController.searchBar.tintColor = ThemeManager.shared.currentTheme.NavigationBarText
         searchController.searchBar.barTintColor = ThemeManager.shared.currentTheme.NavigationBarText
-        searchController.searchBar.setPlaceholderTextColor(color:ThemeManager.shared.currentTheme.NavigationBarText
-)
 
         searchController.searchBar.delegate = self
         tableView.delegate = self
@@ -120,6 +118,11 @@ class EventsViewController:UIViewController, UITableViewDataSource, UITableViewD
         }
 
         setTableViewTheme()
+    }
+
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+        searchController.searchBar.setSearchTheme(color: ThemeManager.shared.currentTheme.SecondaryText)
     }
 
     override func didReceiveMemoryWarning() {
@@ -235,10 +238,40 @@ extension EventsViewController:UISearchResultsUpdating {
 }
 
 extension UISearchBar {
-    func setPlaceholderTextColor(color: UIColor) {
-        let textFieldInsideSearchBar = self.value(forKey: "searchField") as? UITextField
+
+    func getSearchField() -> UITextField? {
+        return self.value(forKey: "searchField") as? UITextField
+    }
+
+    func setSearchTheme(color: UIColor) {
+        setTextColor(color: color)
+        setPlaceholderTextColor(color: color)
+        setMagnifyingGlassColorTo(color: color)
+        setClearButtonColorTo(color: color)
+    }
+
+    func setTextColor(color: UIColor) {
+        let textFieldInsideSearchBar = getSearchField()
         textFieldInsideSearchBar?.textColor = color
-        let textFieldInsideSearchBarLabel = textFieldInsideSearchBar!.value(forKey: "placeholderLabel") as? UILabel
+    }
+
+    func setPlaceholderTextColor(color: UIColor) {
+        guard let textFieldInsideSearchBar = getSearchField() else { return }
+        let textFieldInsideSearchBarLabel = textFieldInsideSearchBar.value(forKey: "placeholderLabel") as? UILabel
         textFieldInsideSearchBarLabel?.textColor = color
+    }
+
+    func setMagnifyingGlassColorTo(color: UIColor) {
+        let textFieldInsideSearchBar = getSearchField()
+        let glassIconView = textFieldInsideSearchBar?.leftView as? UIImageView
+        glassIconView?.image = glassIconView?.image?.withRenderingMode(.alwaysTemplate)
+        glassIconView?.tintColor = color
+    }
+
+    func setClearButtonColorTo(color: UIColor) {
+        let textFieldInsideSearchBar = getSearchField()
+        let crossIconView = textFieldInsideSearchBar?.value(forKey: "clearButton") as? UIButton
+        crossIconView?.setImage(crossIconView?.currentImage?.withRenderingMode(.alwaysTemplate), for: .normal)
+        crossIconView?.tintColor = color
     }
 }

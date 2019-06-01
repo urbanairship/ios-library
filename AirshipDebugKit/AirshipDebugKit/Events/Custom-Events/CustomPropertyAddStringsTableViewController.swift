@@ -20,7 +20,7 @@ class CustomPropertyAddStringsTableViewController: UITableViewController, UIText
 
     func setCellTheme() {
         addStringLabel.textColor = ThemeManager.shared.currentTheme.PrimaryText
-        addStringTextField.textColor = ThemeManager.shared.currentTheme.Background
+        addStringTextField.textColor = ThemeManager.shared.currentTheme.PrimaryText
         addStringCell.backgroundColor = ThemeManager.shared.currentTheme.Background
     }
 

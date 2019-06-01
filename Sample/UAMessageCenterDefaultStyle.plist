@@ -10,11 +10,11 @@
 		<string>17</string>
 	</dict>
 	<key>titleColor</key>
-	<string>#ffffff</string>
+	<string>#FFFFFF</string>
 	<key>tintColor</key>
 	<string>#004BFF</string>
 	<key>navigationBarColor</key>
-	<string>#FF0B48</string>
+	<string>#202020</string>
 	<key>iconsEnabled</key>
 	<false/>
 	<key>cellTitleFont</key>
