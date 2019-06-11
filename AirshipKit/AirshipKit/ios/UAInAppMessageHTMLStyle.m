@@ -8,6 +8,7 @@ NSString *const UAHTMLDismissIconResourceKey = @"dismissIconResource";
 NSString *const UAHTMLAdditionalPaddingKey = @"additionalPadding";
 NSString *const UAHTMLMaxWidthKey = @"maxWidth";
 NSString *const UAHTMLMaxHeightKey = @"maxHeight";
+NSString *const UAHTMLHideDismissIconKey = @"hideDismissIcon";
 
 @implementation UAInAppMessageHTMLStyle
 
@@ -54,6 +55,13 @@ NSString *const UAHTMLMaxHeightKey = @"maxHeight";
         if (maxHeightObj) {
             if ([maxHeightObj isKindOfClass:[NSNumber class]]) {
                 style.maxHeight = (NSNumber *)maxHeightObj;
+            }
+        }
+
+        id hideDismissIconObj = normalizedHTMLStyleDict[UAHTMLHideDismissIconKey];
+        if (hideDismissIconObj) {
+            if ([hideDismissIconObj isKindOfClass:[NSNumber class]]) {
+                style.hideDismissIcon = [hideDismissIconObj boolValue];
             }
         }
 

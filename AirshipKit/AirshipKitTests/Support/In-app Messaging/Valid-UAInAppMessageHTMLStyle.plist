@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>hideDismissIcon</key>
+	<true/>
+	<key>additionalPadding</key>
+	<dict>
+		<key>top</key>
+		<integer>1</integer>
+		<key>bottom</key>
+		<integer>2</integer>
+		<key>leading</key>
+		<integer>3</integer>
+		<key>trailing</key>
+		<integer>4</integer>
+	</dict>
+	<key>dismissIconResource</key>
+	<string>testDismissIconResourceName</string>
+	<key>maxWidth</key>
+	<integer>28</integer>
+	<key>maxHeight</key>
+	<integer>29</integer>
+</dict>
+</plist>

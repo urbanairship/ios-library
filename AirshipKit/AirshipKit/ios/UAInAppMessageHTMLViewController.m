@@ -80,7 +80,10 @@ NS_ASSUME_NONNULL_BEGIN
 
         self.style = style;
 
-        self.closeButton = [self createCloseButton];
+        if (!self.style.hideDismissIcon) {
+            self.closeButton = [self createCloseButton];
+        }
+
         self.nativeBridge = [[UAInAppMessageNativeBridge alloc] init];
         self.nativeBridge.forwardDelegate = self;
         self.nativeBridge.messageJSDelegate = self;
@@ -109,8 +112,13 @@ NS_ASSUME_NONNULL_BEGIN
 
     self.webView.navigationDelegate = self.nativeBridge;
 
-    self.closeButton.dismissButtonColor = self.displayContent.dismissButtonColor;
-    [self.closeButtonContainerView addSubview:self.closeButton];
+    if (self.style.hideDismissIcon) {
+        [self.closeButtonContainerView setHidden:YES];
+    } else {
+        self.closeButton.dismissButtonColor = self.displayContent.dismissButtonColor;
+        [self.closeButtonContainerView addSubview:self.closeButton];
+    }
+
     [UAViewUtils applyContainerConstraintsToContainer:self.closeButtonContainerView containedView:self.closeButton];
     [self.webView.configuration setDataDetectorTypes:WKDataDetectorTypeNone];
 }
