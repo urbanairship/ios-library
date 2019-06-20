@@ -29,11 +29,13 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="airshipMark" translatesAutoresizingMaskIntoConstraints="NO" id="He6-LA-1je">
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="airshipMark" translatesAutoresizingMaskIntoConstraints="NO" id="He6-LA-1je" userLabel="airshipMark">
                                 <rect key="frame" x="45" y="28" width="285" height="430"/>
+                                <accessibility key="accessibilityConfiguration" identifier="airshipMark"/>
                             </imageView>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="iZm-tj-QRc">
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="iZm-tj-QRc" userLabel="channelIdButton">
                                 <rect key="frame" x="0.0" y="466" width="375" height="72"/>
+                                <accessibility key="accessibilityConfiguration" identifier="channelIdButton"/>
                                 <fontDescription key="fontDescription" name="GTAmericaMono-Regular" family="GT America Mono" pointSize="12"/>
                                 <state key="normal" title="00000000-aaaa-1111-bbbb-222222222222">
                                     <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -42,8 +44,9 @@
                                     <action selector="buttonTapped:" destination="9pv-A4-QxB" eventType="touchUpInside" id="TqZ-yX-cii"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="UCg-eu-blq" userLabel="Enable Push Button">
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="UCg-eu-blq" userLabel="enablePushButton">
                                 <rect key="frame" x="64" y="472" width="247" height="60"/>
+                                <accessibility key="accessibilityConfiguration" identifier="enablePushButton"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="60" id="Lzm-Ff-eFQ"/>
                                     <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="247" id="olK-2Q-erH"/>
