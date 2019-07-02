@@ -237,10 +237,15 @@
     if (self.style.listColor) {
         self.messageTable.backgroundColor = self.style.listColor;
         self.refreshControl.backgroundColor = self.style.listColor;
+    } else if (@available(iOS 13.0, *)) {
+        self.messageTable.backgroundColor = [UIColor systemBackgroundColor];
+        self.refreshControl.backgroundColor = [UIColor systemBackgroundColor];
     }
     
     if (self.style.cellSeparatorColor) {
         self.messageTable.separatorColor = self.style.cellSeparatorColor;
+    } else if (@available(iOS 13.0, *)) {
+        self.messageTable.separatorColor = [UIColor separatorColor];
     }
     
     if (self.style.refreshTintColor) {
@@ -256,9 +261,19 @@
 }
 
 - (void)applyToolbarItemStyles {
+
     // Override any inherited tint color, to avoid potential clashes
     self.selectAllButtonItem.tintColor = (self.style.selectAllButtonTitleColor) ? self.style.selectAllButtonTitleColor : self.defaultTintColor;
-    self.deleteItem.tintColor = (self.style.deleteButtonTitleColor) ? self.style.deleteButtonTitleColor : [UIColor redColor];
+
+    UIColor *red;
+    if (@available(iOS 13.0, *)) {
+        red = [UIColor systemRedColor];
+    } else {
+        red = [UIColor redColor];
+    }
+
+    self.deleteItem.tintColor = (self.style.deleteButtonTitleColor) ? self.style.deleteButtonTitleColor : red;
+
     self.markAsReadButtonItem.tintColor = (self.style.markAsReadButtonTitleColor) ? self.style.markAsReadButtonTitleColor : self.defaultTintColor;
 }
 
