@@ -4,7 +4,9 @@
 #import <CoreLocation/CoreLocation.h>
 
 
-#if __has_include("AirshipLib.h")
+#if __has_include(<AirshipKit/AirshipLib.h>)
+#import <AirshipKit/AirshipLib.h>
+#elif __has_include("AirshipLib.h")
 #import "AirshipLib.h"
 #else
 @import AirshipKit;
