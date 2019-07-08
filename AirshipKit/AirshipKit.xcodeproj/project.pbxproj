@@ -420,6 +420,8 @@
 		6EDEE210212CD31500918B05 /* UARegistrationDelegateWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EDEE20B212CD31400918B05 /* UARegistrationDelegateWrapper.m */; };
 		6EDEE211212CD31500918B05 /* UARegistrationDelegateWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EDEE20B212CD31400918B05 /* UARegistrationDelegateWrapper.m */; };
 		6EDEE214212DBC0C00918B05 /* UARegistrationDelegateWrapperTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EDEE213212DBC0C00918B05 /* UARegistrationDelegateWrapperTests.m */; };
+		6EE6529122A7E2DA00F7D54D /* UAInAppMessageHTMLStyleTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EE6529022A7E2DA00F7D54D /* UAInAppMessageHTMLStyleTest.m */; };
+		6EE6529322A7E3B800F7D54D /* Valid-UAInAppMessageHTMLStyle.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6EE6529222A7E3B800F7D54D /* Valid-UAInAppMessageHTMLStyle.plist */; };
 		6EF0518B20F7FCA70004A62D /* UADelay+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EF0518920F7FCA70004A62D /* UADelay+Internal.h */; };
 		6EF0518C20F7FCA70004A62D /* UADelay+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EF0518920F7FCA70004A62D /* UADelay+Internal.h */; };
 		6EF0518D20F7FCA70004A62D /* UADelay+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EF0518920F7FCA70004A62D /* UADelay+Internal.h */; };
@@ -1895,6 +1897,8 @@
 		6EDEE20A212CD31400918B05 /* UARegistrationDelegateWrapper+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UARegistrationDelegateWrapper+Internal.h"; path = "common/UARegistrationDelegateWrapper+Internal.h"; sourceTree = "<group>"; };
 		6EDEE20B212CD31400918B05 /* UARegistrationDelegateWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UARegistrationDelegateWrapper.m; path = common/UARegistrationDelegateWrapper.m; sourceTree = "<group>"; };
 		6EDEE213212DBC0C00918B05 /* UARegistrationDelegateWrapperTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UARegistrationDelegateWrapperTests.m; sourceTree = "<group>"; };
+		6EE6529022A7E2DA00F7D54D /* UAInAppMessageHTMLStyleTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageHTMLStyleTest.m; sourceTree = "<group>"; };
+		6EE6529222A7E3B800F7D54D /* Valid-UAInAppMessageHTMLStyle.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Valid-UAInAppMessageHTMLStyle.plist"; sourceTree = "<group>"; };
 		6EF0518920F7FCA70004A62D /* UADelay+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "UADelay+Internal.h"; path = "common/UADelay+Internal.h"; sourceTree = "<group>"; };
 		6EF0518A20F7FCA70004A62D /* UADelay.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = UADelay.m; path = common/UADelay.m; sourceTree = "<group>"; };
 		6EF2DF0C1E5CB6F50062099A /* UAAutomation 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "UAAutomation 2.xcdatamodel"; sourceTree = "<group>"; };
@@ -2620,6 +2624,7 @@
 				459D40562092474A00C40E2D /* Valid-UAInAppMessageBannerStyle.plist */,
 				459D40542092474300C40E2D /* Valid-UAInAppMessageModalStyle.plist */,
 				459D4049208FE64D00C40E2D /* Valid-UAInAppMessageFullScreenStyle.plist */,
+				6EE6529222A7E3B800F7D54D /* Valid-UAInAppMessageHTMLStyle.plist */,
 				459D40582092475500C40E2D /* Invalid-UAInAppMessageBannerStyle.plist */,
 				459D405A2092475C00C40E2D /* Invalid-UAInAppMessageModalStyle.plist */,
 				459D404B208FE6BA00C40E2D /* Invalid-UAInAppMessageFullScreenStyle.plist */,
@@ -3139,6 +3144,7 @@
 				6E598D531FFDA0CC005B234B /* UAInAppMessageScheduleEditsTests.m */,
 				3C77BF912016B22900AD37F3 /* UAInAppMessageHTMLDisplayContentTest.m */,
 				6E0B841B20227F01008A1F96 /* UAInAppMessageScheduleInfoTest.m */,
+				6EE6529022A7E2DA00F7D54D /* UAInAppMessageHTMLStyleTest.m */,
 			);
 			name = "In-app Messaging";
 			sourceTree = "<group>";
@@ -5229,6 +5235,7 @@
 				CC64F1521D8B7954009CEF27 /* production-embedded.mobileprovision in Resources */,
 				459D404A208FE64D00C40E2D /* Valid-UAInAppMessageFullScreenStyle.plist in Resources */,
 				CC64F12F1D8B781C009CEF27 /* Valid-UAMessageCenterDefaultStyle.plist in Resources */,
+				6EE6529322A7E3B800F7D54D /* Valid-UAInAppMessageHTMLStyle.plist in Resources */,
 				CC64F0CE1D8B781C009CEF27 /* CustomNotificationCategories.plist in Resources */,
 				459D40572092474B00C40E2D /* Valid-UAInAppMessageBannerStyle.plist in Resources */,
 				CC64F14C1D8B7954009CEF27 /* AirshipConfig-InProduction.plist in Resources */,
@@ -5680,6 +5687,7 @@
 				459D4051209245E500C40E2D /* UAInAppMessageBannerStyleTest.m in Sources */,
 				6E598D862003F014005B234B /* UAInAppMessageResolutionEventTest.m in Sources */,
 				6E0B841C20227F01008A1F96 /* UAInAppMessageScheduleInfoTest.m in Sources */,
+				6EE6529122A7E2DA00F7D54D /* UAInAppMessageHTMLStyleTest.m in Sources */,
 				CC64F1031D8B781C009CEF27 /* UAInboxMessageListTest.m in Sources */,
 				9928146E1EF494BA00D0D388 /* UARateAppActionTest.m in Sources */,
 				CC64F1201D8B781C009CEF27 /* UAScheduleActionTests.m in Sources */,
@@ -6382,7 +6390,10 @@
 				INFOPLIST_FILE = AirshipKit/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				"OTHER_CFLAGS[arch=*]" = "-D_UA_VERSION=\\\"$(CURRENT_PROJECT_VERSION)\\\" $(inherited)";
+				"OTHER_CFLAGS[arch=*]" = (
+					"-D_UA_VERSION=\\\"$(CURRENT_PROJECT_VERSION)\\\"",
+					"$(inherited)",
+				);
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-weak_framework",
@@ -6408,7 +6419,10 @@
 				INFOPLIST_FILE = AirshipKit/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				"OTHER_CFLAGS[arch=*]" = "-D_UA_VERSION=\\\"$(CURRENT_PROJECT_VERSION)\\\" $(inherited)";
+				"OTHER_CFLAGS[arch=*]" = (
+					"-D_UA_VERSION=\\\"$(CURRENT_PROJECT_VERSION)\\\"",
+					"$(inherited)",
+				);
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-weak_framework",
@@ -6634,7 +6648,10 @@
 				INFOPLIST_FILE = AirshipKit/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				"OTHER_CFLAGS[arch=*]" = "-D_UA_VERSION=\\\"$(CURRENT_PROJECT_VERSION)\\\" $(inherited)";
+				"OTHER_CFLAGS[arch=*]" = (
+					"-D_UA_VERSION=\\\"$(CURRENT_PROJECT_VERSION)\\\"",
+					"$(inherited)",
+				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.AirshipKit;
 				PRODUCT_NAME = AirshipKit;
@@ -6659,7 +6676,10 @@
 				INFOPLIST_FILE = AirshipKit/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				"OTHER_CFLAGS[arch=*]" = "-D_UA_VERSION=\\\"$(CURRENT_PROJECT_VERSION)\\\" $(inherited)";
+				"OTHER_CFLAGS[arch=*]" = (
+					"-D_UA_VERSION=\\\"$(CURRENT_PROJECT_VERSION)\\\"",
+					"$(inherited)",
+				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.AirshipKit;
 				PRODUCT_NAME = AirshipKit;

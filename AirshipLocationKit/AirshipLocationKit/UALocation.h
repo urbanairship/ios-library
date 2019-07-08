@@ -3,11 +3,15 @@
 #import <Foundation/Foundation.h>
 #import <CoreLocation/CoreLocation.h>
 
-#if STATIC
+
+#if __has_include(<AirshipKit/AirshipLib.h>)
+#import <AirshipKit/AirshipLib.h>
+#elif __has_include("AirshipLib.h")
 #import "AirshipLib.h"
 #else
 @import AirshipKit;
 #endif
+
 
 /**
  * Location delegate protocol to receive callbacks for location updates.

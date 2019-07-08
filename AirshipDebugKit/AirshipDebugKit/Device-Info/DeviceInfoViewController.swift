@@ -46,21 +46,30 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
      */
     let pushSettings = 0,
     deviceSettings = 1,
-    sdkSettings = 2,
-    analyticsSettings = 3,
-    locationSettings = 4
+    analyticsSettings = 2,
+    locationSettings = 3,
+    sdkInfo = 4
 
-    // Indexes
+    // Push settings
     private let pushEnabled = IndexPath(row: 0, section: 0),
-    channelID = IndexPath(row: 0, section: 1),
+    lastPayload = IndexPath(row: 1, section: 0)
+
+    // Device settings
+    private let channelID = IndexPath(row: 0, section: 1),
     username = IndexPath(row: 1, section: 1),
     namedUser = IndexPath(row: 2, section: 1),
     tags = IndexPath(row: 3, section: 1),
-    associatedIdentifiers = IndexPath(row: 4, section: 1),
-    lastPayload = IndexPath(row: 5, section: 1),
-    sdkVersion = IndexPath(row: 0, section: 2),
-    locationEnabled = IndexPath(row: 0, section: 3),
-    analyticsEnabled = IndexPath(row: 0, section: 4)
+    associatedIdentifiers = IndexPath(row: 4, section: 1)
+
+    // Analytics settigns
+    private let analyticsEnabled = IndexPath(row: 0, section: 2)
+
+    // Location settings
+    private let locationEnabled = IndexPath(row: 0, section: 3)
+
+    // SDK Info
+    private let sdkVersion = IndexPath(row: 0, section: 4),
+    localeInfo = IndexPath(row: 1, section: 4)
 
     @objc func pushSettingsButtonTapped(sender:Any) {
         UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!, options: [:],completionHandler: nil)
@@ -141,8 +150,8 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
             return "ua_device_info_push_settings".localized()
         case deviceSettings:
             return "ua_device_info_device_settings".localized()
-        case sdkSettings:
-            return "ua_device_info_SDK_settings".localized()
+        case sdkInfo:
+            return "ua_device_info_SDK_info".localized()
         case analyticsSettings:
             return "ua_device_info_location_settings".localized()
         case locationSettings:
@@ -161,15 +170,15 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
         case pushSettings:
-            return 1
+            return 2
         case deviceSettings:
-            return 6
-        case sdkSettings:
-            return 1
+            return 5
         case analyticsSettings:
             return 1
         case locationSettings:
             return 1
+        case sdkInfo:
+            return 2
         default:
             return 0
         }
@@ -230,12 +239,9 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
             }
             cell.accessoryType = .disclosureIndicator
         case lastPayload:
-            cell.title.text = "ua_device_info_last_payload".localized()
+            cell.title.text = "ua_device_info_last_push_payload".localized()
             cell.subtitle.text = ""
             cell.accessoryType = .disclosureIndicator
-        case sdkVersion:
-            cell.title.text = "ua_device_info_sdk_version".localized()
-            cell.subtitle?.text = UAirshipVersion.get()
         case analyticsEnabled:
             cell.title.text = "ua_device_info_analytics_enabled".localized()
             cell.subtitle?.text = "ua_device_info_enable_analytics_tracking".localized()
@@ -255,6 +261,12 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
             } else {
                 cell.subtitle?.text = localizedNone
             }
+        case sdkVersion:
+            cell.title.text = "ua_device_info_sdk_version".localized()
+            cell.subtitle?.text = UAirshipVersion.get()
+        case localeInfo:
+            cell.title.text = "ua_device_info_locale".localized()
+            cell.subtitle?.text = NSLocale.autoupdatingCurrent.identifier
 
         default:
             break

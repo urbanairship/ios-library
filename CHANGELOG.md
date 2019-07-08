@@ -3,6 +3,18 @@ iOS Changelog
 
 Migration Guides: Documentation/Migration
 
+Version 11.1.0 - July 8, 2019
+=============================
+Minor update that fixes an issue with the location kits header import, and adds an option to
+the HTML in-app automation style to hide the close button. There are no critical changes in this
+release, so only apps that want the new behavior or are having issues with the location kit import
+should update.
+
+Changes
+-------
+- Updated the AirshipLocationKit header import statement for AirshipKit
+- Added an option to the HTML in-app automation style to hide the close button
+
 Version 11.0.0 - May 22, 2019
 =============================
 Major update removing the `UALocation` module from the core SDK. Location services are now available

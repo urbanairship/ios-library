@@ -115,7 +115,7 @@ For other installation methods, see the - [Getting started guide](http://docs.ai
 ### An Important Note about Location
 
 In Spring 2019, Apple began rejecting applications that use, or appear to use, Core Location services
-without supplying usage descriptions in their `Info.plist` files. In Airship SDK 11.0, all references to
+without supplying usage descriptions in their `Info.plist` files. In Airship SDK 11, all references to
 CoreLocation have been removed from the core library and placed in a separate location module. Developers with
 no need for location services can continue to use AirshipKit as before, but for those who have been using the
 `UALocation` class, see the [Location](https://docs.airship.com/platform/ios/location/) sections for updated
@@ -123,15 +123,15 @@ setup instructions.
 
 ## Warning
 
-As of SDK 10.2 and Apple's current App Store review policies, apps bulding against AirshipKit without location usage
+As of SDK 10.2 and Apple's current App Store review policies, apps building against AirshipKit without location usage
 descriptions in  `Info.plist` are likely to be rejected. The easiest way to avoid this, if location services are not
-needed, is to use Airship SDK 11.0 or greater. If building against previous Airship SDKs, you will need to add add
+needed, is to use Airship SDK 11 or greater. If building against previous Airship SDKs, you will need to add add
 usage description strings to your `Info.plist` file under the `NSLocationAlwaysUsageDescription`,
 `NSLocationWhenInUseUsageDescription`, and `NSLocationAlwaysAndWhenInUseUsageDescription` keys.
 
 ### Capabilities
 
-Enable Push Notifications and Remote Notifications Background mode under the capabilties section for
+Enable Push Notifications and Remote Notifications Background mode under the capabilities section for
 the main application target.
 
 ### Adding an Airship Config File

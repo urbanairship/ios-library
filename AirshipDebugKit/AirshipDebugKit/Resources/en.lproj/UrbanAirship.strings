@@ -24,14 +24,16 @@
 "ua_device_info_associated_identifiers" = "Associated Identifiers";
 "ua_device_info_tags" = "Tags";
 "ua_device_info_sdk_version" = "SDK Version";
-"ua_device_info_last_payload" = "Last Payload";
+"ua_device_info_locale" = "Locale";
+
+"ua_device_info_last_push_payload" = "Last Push Payload";
 "ua_device_info_analytics_enabled" = "Analytics Enabled";
 "ua_device_info_enable_analytics_tracking" = "Enable analytics tracking";
 "ua_device_info_enable_location_enabled" = "Location Enabled";
 "ua_location_enabled_detail" = "Enable GPS and WIFI Based Location";
 
 "ua_device_info_device_settings" = "Device Settings";
-"ua_device_info_SDK_settings" = "SDK Settings";
+"ua_device_info_SDK_info" = "SDK Info";
 "ua_device_info_location_settings" = "Location Settings";
 "ua_device_info_analytics_settings" = "Analytics Settings";
 
