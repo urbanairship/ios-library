@@ -9,6 +9,15 @@ class CoreUITests: XCTestCase {
         // Ensure we don't try to continue to run after entering an unexpected state
         continueAfterFailure = false
         XCUIApplication().launch()
+
+        self.addUIInterruptionMonitor(withDescription: "Alert handler") { (element) -> Bool in
+
+            if element.label == "Notice" {
+                element.buttons["Disable Warning"].tap()
+            }
+
+            return true
+        }
     }
 
     /// Tests app launches to expected initial home screen
@@ -80,17 +89,15 @@ class CoreUITests: XCTestCase {
 
         // Inside first event view
         app.checkLocalization()
-
         app.navigationBars["AirshipDebugKit.EventsDetailTableView"].buttons["Events"].tap()
         app.navigationBars["Events"].buttons["Add"].tap()
-        tablesQuery.cells.containing(.staticText, identifier:"Event Name").textFields["Required"].tap()
-
-        app.typeInTestString("ui test", withReturn:true)
+        let eventsTextField = tablesQuery.cells.containing(.staticText, identifier:"Event Name").textFields["Required"]
+        eventsTextField.tap()
+        eventsTextField.typeText("ui test")
 
         let requiredTextField = tablesQuery/*@START_MENU_TOKEN@*/.textFields["Required"]/*[[".cells.textFields[\"Required\"]",".textFields[\"Required\"]"],[[[-1,1],[-1,0]]],[0]]@END_MENU_TOKEN@*/
         requiredTextField.tap()
-
-        app.typeInTestString("1111", withReturn:true)
+        requiredTextField.typeText("1111")
 
         tablesQuery/*@START_MENU_TOKEN@*/.staticTexts["Add Custom Property"]/*[[".cells.staticTexts[\"Add Custom Property\"]",".staticTexts[\"Add Custom Property\"]"],[[[-1,1],[-1,0]]],[0]]@END_MENU_TOKEN@*/.tap()
 
@@ -98,8 +105,7 @@ class CoreUITests: XCTestCase {
         app.checkLocalization()
 
         requiredTextField.tap()
-
-        app.typeInTestString("ui test custom property", withReturn:true)
+        requiredTextField.typeText("ui test custom property")
 
         tablesQuery.pickerWheels.element.adjust(toPickerWheelValue: "Boolean")
         tablesQuery.pickerWheels.element.adjust(toPickerWheelValue: "Number")
