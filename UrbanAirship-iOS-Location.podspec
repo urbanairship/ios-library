@@ -1,5 +1,5 @@
 Pod::Spec.new do |s|
-   s.version                 = "11.0.0"
+   s.version                 = "11.1.0"
    s.name                    = "UrbanAirship-iOS-Location"
    s.summary                 = "Airship iOS Location"
 
@@ -18,5 +18,5 @@ Pod::Spec.new do |s|
    s.private_header_files    = 'AirshipLocationKit/AirshipLocationKit/*+Internal*.h'
 
    s.frameworks              = 'Foundation', 'CoreLocation'
-   s.dependency              "UrbanAirship-iOS-SDK", "11.0.0"
+   s.dependency              "UrbanAirship-iOS-SDK", "11.1.0"
 end
