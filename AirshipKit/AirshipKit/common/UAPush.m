@@ -70,6 +70,14 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
 
 NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channel_id";
 
+// The foreground presentation options that can be defined from API or dashboard
+NSString *const UAPresentationOptionBadge = @"badge";
+NSString *const UAPresentationOptionAlert = @"alert";
+NSString *const UAPresentationOptionSound = @"sound";
+
+// Foreground presentation key
+NSString *const UAForegroundPresentationkey = @"foreground_presentation";
+
 @interface UAPush()
 @property (nonatomic, strong) UADispatcher *dispatcher;
 @property (nonatomic, strong) UIApplication *application;
@@ -913,15 +921,33 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
 #pragma mark Push handling
 
 - (UNNotificationPresentationOptions)presentationOptionsForNotification:(UNNotification *)notification {
-    UNNotificationPresentationOptions options = UNNotificationPresentationOptionNone;
-
-    id pushDelegate = self.pushNotificationDelegate;
-    if ([pushDelegate respondsToSelector:@selector(presentationOptionsForNotification:)]) {
-        options = [pushDelegate presentationOptionsForNotification:notification];
-    } else {
-        options = self.defaultPresentationOptions;
+    
+    UNNotificationPresentationOptions options = [self foregroundPresentationOptionsForNotification:notification];
+    if (options == UNNotificationPresentationOptionNone) {
+        id pushDelegate = self.pushNotificationDelegate;
+        if ([pushDelegate respondsToSelector:@selector(presentationOptionsForNotification:)]) {
+            options = [pushDelegate presentationOptionsForNotification:notification];
+        } else {
+            options = self.defaultPresentationOptions;
+        }
     }
+    return options;
+}
 
+- (UNNotificationPresentationOptions)foregroundPresentationOptionsForNotification:(UNNotification *)notification {
+    
+    __block UNNotificationPresentationOptions options = UNNotificationPresentationOptionNone;
+    NSArray *presentationOptions = [notification.request.content.userInfo objectForKey:UAForegroundPresentationkey];
+    //Case: Foreground presentation options defined from the push API/dashboard
+    [presentationOptions enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        if ([UAPresentationOptionBadge isEqualToString:obj]) {
+            options |= UNAuthorizationOptionBadge;
+        } else if ([UAPresentationOptionAlert isEqualToString:obj]) {
+            options |= UNAuthorizationOptionAlert;
+        } else if ([UAPresentationOptionSound isEqualToString:obj]) {
+            options |= UNAuthorizationOptionSound;
+        }
+    }];
     return options;
 }
 
