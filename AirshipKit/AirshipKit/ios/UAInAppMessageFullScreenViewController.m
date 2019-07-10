@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-#import "UAirship.h"
+#import "UAirship+Internal.h"
 #import "UAUtils+Internal.h"
 #import "UAInAppMessageTextView+Internal.h"
 #import "UAInAppMessageButtonView+Internal.h"
@@ -146,6 +146,8 @@ NSString *const UAInAppMessageFullScreenViewNibName = @"UAInAppMessageFullScreen
  * The full screen's media view.
  */
 @property (nonatomic, strong) UAInAppMessageMediaView *mediaView;
+
+@property (nonatomic, strong, nullable) UIWindowScene *scene API_AVAILABLE(ios(13.0));
 
 @end
 
@@ -464,8 +466,19 @@ NSString *const UAInAppMessageFullScreenViewNibName = @"UAInAppMessageFullScreen
     // add this view controller to the window
     self.fullScreenWindow.rootViewController = self;
 
+    if (@available(iOS 13.0, *)) {
+        if (self.scene) {
+            self.fullScreenWindow.windowScene = (UIWindowScene *)self.scene;
+        }
+    }
+
     // show the window
     [self.fullScreenWindow makeKeyAndVisible];
+}
+
+- (void)showWithCompletionHandler:(void (^)(UAInAppMessageResolution *))completionHandler scene:(nullable UIWindowScene *)scene {
+    self.scene = scene;
+    [self showWithCompletionHandler:completionHandler];
 }
 
 - (nullable UAInAppMessageDismissButton *)createCloseButton {

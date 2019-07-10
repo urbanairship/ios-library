@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 #import "UAInAppMessageResizableViewController+Internal.h"
-#import "UAirship.h"
+#import "UAirship+Internal.h"
 #import "UAViewUtils+Internal.h"
 #import "UAInAppMessageResolution.h"
 #import "UAInAppMessageUtils+Internal.h"
@@ -123,6 +123,11 @@ CGFloat const DefaultViewToScreenWidthRatio = 0.75;
  * The flag that determines if the view is overriding the default size.
  */
 @property (nonatomic, assign) BOOL overrideSize;
+
+/**
+ * The window scene to use for displaying the message.
+ */
+@property (nonatomic, strong, nullable) UIWindowScene *scene API_AVAILABLE(ios(13.0));
 
 @end
 
@@ -310,8 +315,19 @@ double const DefaultResizableViewAnimationDuration = 0.2;
     // add this view controller to the window
     self.topWindow.rootViewController = self;
 
+    if (@available(iOS 13.0, *)) {
+        if (self.scene) {
+            self.topWindow.windowScene = (UIWindowScene *)self.scene;
+        }
+    }
+
     // show the window
     [self.topWindow makeKeyAndVisible];
+}
+
+- (void)showWithCompletionHandler:(void (^)(UAInAppMessageResolution * _Nonnull))completionHandler scene:(nullable UIWindowScene *)scene {
+    self.scene = scene;
+    [self showWithCompletionHandler:completionHandler];
 }
 
 // Alters contraints to cover the full screen.

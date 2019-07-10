@@ -18,6 +18,7 @@ NSString *const UAHTMLStyleFileName = @"UAInAppMessageHTMLStyle";
 @property(nonatomic, strong) UAInAppMessageHTMLDisplayContent *displayContent;
 @property(nonatomic, strong) UAInAppMessageHTMLViewController *htmlViewController;
 @property(nonatomic, strong) UAInAppMessageResizableViewController *resizableContainerViewController;
+@property(nonatomic, strong, nullable) UIWindowScene *scene API_AVAILABLE(ios(13.0));
 @end
 
 @implementation UAInAppMessageHTMLAdapter
@@ -83,8 +84,17 @@ NSString *const UAHTMLStyleFileName = @"UAInAppMessageHTMLStyle";
     // Set resizable parent
     self.htmlViewController.resizableParent = self.resizableContainerViewController;
 
-    // Show resizable view controller with child
-    [self.resizableContainerViewController showWithCompletionHandler:completionHandler];
+    if (@available(iOS 13.0, *)) {
+        [self.resizableContainerViewController showWithCompletionHandler:completionHandler scene:self.scene];
+    } else {
+        [self.resizableContainerViewController showWithCompletionHandler:completionHandler];
+    }
+}
+
+- (void)display:(nonnull void (^)(UAInAppMessageResolution * _Nonnull))completionHandler
+          scene:(nullable UIWindowScene *)scene  API_AVAILABLE(ios(13.0)){
+    self.scene = scene;
+    [self display:completionHandler];
 }
 
 @end

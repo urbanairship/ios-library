@@ -264,7 +264,6 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
  * Returns the default `UAAnalytics` instance.
  */
 + (null_unspecified UAAnalytics *)analytics;
-
 /**
  * Returns the `UAModules` instance.
  */

@@ -17,6 +17,7 @@ NSString *const UAModalStyleFileName = @"UAInAppMessageModalStyle";
 @property (nonatomic, strong) UAInAppMessage *message;
 @property (nonatomic, strong) UAInAppMessageModalViewController *modalController;
 @property (nonatomic, strong) UAInAppMessageResizableViewController *resizableContainerViewController;
+@property (nonatomic, strong, nullable) UIWindowScene *scene API_AVAILABLE(ios(13.0));
 
 @end
 
@@ -71,7 +72,17 @@ NSString *const UAModalStyleFileName = @"UAInAppMessageModalStyle";
     self.modalController.resizableParent = self.resizableContainerViewController;
 
     // Show resizable view controller with child
-    [self.resizableContainerViewController showWithCompletionHandler:completionHandler];
+    if (@available(iOS 13.0, *)) {
+        [self.resizableContainerViewController showWithCompletionHandler:completionHandler scene:self.scene];
+    } else {
+        [self.resizableContainerViewController showWithCompletionHandler:completionHandler];
+    }
+}
+
+- (void)display:(void (^)(UAInAppMessageResolution *))completionHandler
+          scene:(nullable UIWindowScene *)scene API_AVAILABLE(ios(13.0)){
+    self.scene = scene;
+    [self display:completionHandler];
 }
 
 @end

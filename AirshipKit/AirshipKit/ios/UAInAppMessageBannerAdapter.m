@@ -12,6 +12,7 @@ NSString *const UABannerStyleFileName = @"UAInAppMessageBannerStyle";
 @interface UAInAppMessageBannerAdapter ()
 @property (nonatomic, strong) UAInAppMessage *message;
 @property (nonatomic, strong) UAInAppMessageBannerController *bannerController;
+@property (nonatomic, strong, nullable) UIWindowScene *scene API_AVAILABLE(ios(13.0));
 @end
 
 @implementation UAInAppMessageBannerAdapter
@@ -51,8 +52,23 @@ NSString *const UABannerStyleFileName = @"UAInAppMessageBannerStyle";
 }
 
 - (void)display:(void (^)(UAInAppMessageResolution *))completionHandler {
+    UIWindow *window;
+
+    if (@available(iOS 13.0, *)) {
+        window = [UAUtils mainWindow:self.scene];
+    } else {
+        window = [UAUtils mainWindow];
+    }
+
     [self.bannerController showWithParentView:[UAUtils mainWindow]
                             completionHandler:completionHandler];
+
+}
+
+- (void)display:(void (^)(UAInAppMessageResolution *))completionHandler
+          scene:(nullable UIWindowScene *)scene  API_AVAILABLE(ios(13.0)){
+    self.scene = scene;
+    [self display:completionHandler];
 }
 
 @end

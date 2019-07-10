@@ -38,6 +38,12 @@
 		3C5D1B2421C1B209007025C9 /* NSObject+AnonymousKVO+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C5D1B1F21C079D4007025C9 /* NSObject+AnonymousKVO+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3C5D1B2521C1B234007025C9 /* NSObject+AnonymousKVO.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C5D1B2021C079D5007025C9 /* NSObject+AnonymousKVO.m */; };
 		3C5D1B2621C1B241007025C9 /* NSObject+AnonymousKVO+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C5D1B1F21C079D4007025C9 /* NSObject+AnonymousKVO+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		3C6573A122D80AF3008F72F5 /* UASceneTracker+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C65739F22D80AF3008F72F5 /* UASceneTracker+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		3C6573A222D80AF3008F72F5 /* UASceneTracker+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C65739F22D80AF3008F72F5 /* UASceneTracker+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		3C6573A322D80AF3008F72F5 /* UASceneTracker+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C65739F22D80AF3008F72F5 /* UASceneTracker+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		3C6573A422D80AF3008F72F5 /* UASceneTracker.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C6573A022D80AF3008F72F5 /* UASceneTracker.m */; };
+		3C6573A522D80AF3008F72F5 /* UASceneTracker.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C6573A022D80AF3008F72F5 /* UASceneTracker.m */; };
+		3C6573A622D80AF3008F72F5 /* UASceneTracker.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C6573A022D80AF3008F72F5 /* UASceneTracker.m */; };
 		3C67E11C21264221006031EB /* UAInAppMessagingRemoteConfig+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C67E11A21264221006031EB /* UAInAppMessagingRemoteConfig+Internal.h */; };
 		3C67E11E21264221006031EB /* UAInAppMessagingRemoteConfig+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C67E11A21264221006031EB /* UAInAppMessagingRemoteConfig+Internal.h */; };
 		3C67E11F21264221006031EB /* UAInAppMessagingRemoteConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C67E11B21264221006031EB /* UAInAppMessagingRemoteConfig.m */; };
@@ -1707,6 +1713,8 @@
 		3C5649CB2127746C007E82D2 /* UAInAppMessagingRemoteConfigTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessagingRemoteConfigTest.m; sourceTree = "<group>"; };
 		3C5D1B1F21C079D4007025C9 /* NSObject+AnonymousKVO+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSObject+AnonymousKVO+Internal.h"; path = "common/NSObject+AnonymousKVO+Internal.h"; sourceTree = "<group>"; };
 		3C5D1B2021C079D5007025C9 /* NSObject+AnonymousKVO.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSObject+AnonymousKVO.m"; path = "common/NSObject+AnonymousKVO.m"; sourceTree = "<group>"; };
+		3C65739F22D80AF3008F72F5 /* UASceneTracker+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "UASceneTracker+Internal.h"; path = "common/UASceneTracker+Internal.h"; sourceTree = "<group>"; };
+		3C6573A022D80AF3008F72F5 /* UASceneTracker.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = UASceneTracker.m; path = common/UASceneTracker.m; sourceTree = "<group>"; };
 		3C67E11A21264221006031EB /* UAInAppMessagingRemoteConfig+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "UAInAppMessagingRemoteConfig+Internal.h"; path = "ios/UAInAppMessagingRemoteConfig+Internal.h"; sourceTree = "<group>"; };
 		3C67E11B21264221006031EB /* UAInAppMessagingRemoteConfig.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = UAInAppMessagingRemoteConfig.m; path = ios/UAInAppMessagingRemoteConfig.m; sourceTree = "<group>"; };
 		3C67E12221266018006031EB /* UARemoteConfig+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "UARemoteConfig+Internal.h"; path = "common/UARemoteConfig+Internal.h"; sourceTree = "<group>"; };
@@ -2698,6 +2706,8 @@
 				CC7EEB281DF9F2270041DA8D /* UAirshipVersion.m */,
 				3CBCED61211A6259003B7239 /* UAPersistentQueue+Internal.h */,
 				3CBCED62211A6259003B7239 /* UAPersistentQueue.m */,
+				3C65739F22D80AF3008F72F5 /* UASceneTracker+Internal.h */,
+				3C6573A022D80AF3008F72F5 /* UASceneTracker.m */,
 			);
 			path = AirshipKit;
 			sourceTree = "<group>";
@@ -4320,6 +4330,7 @@
 				CC40DC321D8C996A00BABD4F /* UAAddCustomEventAction.h in Headers */,
 				3CD9C1D521D1AC7A00B129A6 /* UAInAppMessageNativeBridge+Internal.h in Headers */,
 				3CC7DC64225299F300670DC2 /* UACircularRegion+Internal.h in Headers */,
+				3C6573A122D80AF3008F72F5 /* UASceneTracker+Internal.h in Headers */,
 				6E598D361FFC4FB4005B234B /* UAActionScheduleEdits.h in Headers */,
 				3CC7DC61225299F300670DC2 /* UARegionEvent+Internal.h in Headers */,
 				3CC7DC5B225299F300670DC2 /* UAProximityRegion+Internal.h in Headers */,
@@ -4573,6 +4584,7 @@
 				99666DEA1EDF2BFC00BAE46B /* UABespokeCloseView.h in Headers */,
 				6E90F0D7228F53EB00E1FCB0 /* UARuntimeConfig+Internal.h in Headers */,
 				3CC7DC65225299F300670DC2 /* UACircularRegion+Internal.h in Headers */,
+				3C6573A222D80AF3008F72F5 /* UASceneTracker+Internal.h in Headers */,
 				99666DEC1EDF2BFC00BAE46B /* UABeveledLoadingIndicator.h in Headers */,
 				3CC7DC62225299F300670DC2 /* UARegionEvent+Internal.h in Headers */,
 				99B6EE731F3BA1DF00C4E3F1 /* UAURLActionPredicate+Internal.h in Headers */,
@@ -4830,6 +4842,7 @@
 				DF7E228B1ED62E0900C79C46 /* UAEvent.h in Headers */,
 				45FD232D21890EB30056F111 /* UARateAppAction+Internal.h in Headers */,
 				DF7E228C1ED62E0900C79C46 /* UAInstallAttributionEvent.h in Headers */,
+				3C6573A322D80AF3008F72F5 /* UASceneTracker+Internal.h in Headers */,
 				DF7E228D1ED62E0900C79C46 /* UAAnalytics.h in Headers */,
 				DF8D736820000B0C0092FDEA /* UAInAppMessageModalDisplayContent+Internal.h in Headers */,
 				6E90F0F2228F559F00E1FCB0 /* UAConfig+Internal.h in Headers */,
@@ -5506,6 +5519,7 @@
 				452FFF9F2187C45D0086BD29 /* UASystemVersion.m in Sources */,
 				99912E851ECE575F00295C67 /* UAFetchDeviceInfoActionPredicate.m in Sources */,
 				99EC01791FE0752900B9C408 /* UAInAppMessageFullScreenAdapter.m in Sources */,
+				3C6573A422D80AF3008F72F5 /* UASceneTracker.m in Sources */,
 				CC40DC371D8C996A00BABD4F /* UAAggregateActionResult.m in Sources */,
 				CC944EC01DB0225000C42269 /* UARequest.m in Sources */,
 				CC04F18B1DBED9FA00B4842D /* UAEventData.m in Sources */,
@@ -5914,6 +5928,7 @@
 				CC944EEF1DB6EE3900C42269 /* UARequestSession.m in Sources */,
 				452FFFA12187C45D0086BD29 /* UASystemVersion.m in Sources */,
 				CC40DD621D8C9A1C00BABD4F /* UAMessageCenterListViewController.m in Sources */,
+				3C6573A622D80AF3008F72F5 /* UASceneTracker.m in Sources */,
 				6E3673E21E8C8187005B5DFF /* UAChannelCaptureAction.m in Sources */,
 				CC40DD641D8C9A1C00BABD4F /* UAMessageCenterSplitViewController.m in Sources */,
 				99EC017A1FE0752900B9C408 /* UAInAppMessageFullScreenAdapter.m in Sources */,
@@ -6046,6 +6061,7 @@
 				99666E321EDF2C8D00BAE46B /* UAMediaEventTemplate.m in Sources */,
 				99666DFA1EDF2C1F00BAE46B /* UAAction.m in Sources */,
 				99666E061EDF2C1F00BAE46B /* UAActionResult.m in Sources */,
+				3C6573A522D80AF3008F72F5 /* UASceneTracker.m in Sources */,
 				DF9666781FB521B200CC243C /* UARemoteConfigManager.m in Sources */,
 				99666E451EDF2C8D00BAE46B /* UAEvent.m in Sources */,
 				99666DD91EDF2BED00BAE46B /* UAPush.m in Sources */,

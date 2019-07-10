@@ -15,6 +15,7 @@
 #import "UAInAppMessageDefaultDisplayCoordinator+Internal.h"
 #import "UAInAppMessageAssetManager+Internal.h"
 #import "UAInAppRemoteDataClient+Internal.h"
+#import "UASceneTracker+Internal.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -54,7 +55,8 @@ NS_ASSUME_NONNULL_BEGIN
                                  dispatcher:(UADispatcher *)dispatcher
                          displayCoordinator:(UAInAppMessageDefaultDisplayCoordinator *)displayCoordinator
                                assetManager:(UAInAppMessageAssetManager *)assetManager
-                                  analytics:(UAAnalytics *)analytics;
+                                  analytics:(UAAnalytics *)analytics
+                               sceneTracker:(UASceneTracker *)sceneTracker;
 
 /**
  * Factory method.
@@ -72,8 +74,8 @@ NS_ASSUME_NONNULL_BEGIN
                 remoteDataManager:(UARemoteDataManager *)remoteDataManager
                         dataStore:(UAPreferenceDataStore *)dataStore
                              push:(UAPush *)push
-                        analytics:(UAAnalytics *)analytics;
-
+                        analytics:(UAAnalytics *)analytics
+                     sceneTracker:(UASceneTracker *)sceneTracker;
 
 // UAAutomationEngineDelegate methods for testing
 

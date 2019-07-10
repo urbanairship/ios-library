@@ -13,6 +13,7 @@ NSString *const UAFullScreenStyleFileName = @"UAInAppMessageFullScreenStyle";
 @interface UAInAppMessageFullScreenAdapter ()
 @property (nonatomic, strong) UAInAppMessage *message;
 @property (nonatomic, strong) UAInAppMessageFullScreenViewController *fullScreenController;
+@property (nonatomic, strong, nullable) UIWindowScene *scene API_AVAILABLE(ios(13.0));
 @end
 
 @implementation UAInAppMessageFullScreenAdapter
@@ -51,7 +52,17 @@ NSString *const UAFullScreenStyleFileName = @"UAInAppMessageFullScreenStyle";
 }
 
 - (void)display:(void (^)(UAInAppMessageResolution *))completionHandler {
-    [self.fullScreenController showWithCompletionHandler:completionHandler];
+    if (@available(iOS 13.0, *)) {
+        [self.fullScreenController showWithCompletionHandler:completionHandler scene:self.scene];
+    } else {
+        [self.fullScreenController showWithCompletionHandler:completionHandler];
+    }
+}
+
+- (void)display:(void (^)(UAInAppMessageResolution *))completionHandler
+          scene:(nullable UIWindowScene *)scene API_AVAILABLE(ios(13.0)){
+    self.scene = scene;
+    [self display:completionHandler];
 }
 
 @end

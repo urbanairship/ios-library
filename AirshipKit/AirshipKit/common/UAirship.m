@@ -128,7 +128,8 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
                                                                 remoteDataManager:self.sharedRemoteDataManager
                                                                         dataStore:dataStore
                                                                              push:self.sharedPush
-                                                                        analytics:self.sharedAnalytics];
+                                                                        analytics:self.sharedAnalytics
+                                                                     sceneTracker:[UASceneTracker sceneObserver:[NSNotificationCenter defaultCenter]]];
 
         self.sharedLegacyInAppMessaging = [UALegacyInAppMessaging inAppMessagingWithAnalytics:self.sharedAnalytics dataStore:dataStore inAppMessageManager:self.sharedInAppMessageManager];
         // Message center not supported on tvOS
