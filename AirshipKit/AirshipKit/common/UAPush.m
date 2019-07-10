@@ -922,6 +922,7 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
 
 - (UNNotificationPresentationOptions)presentationOptionsForNotification:(UNNotification *)notification {
     
+    //Get foreground presentation options defined from the push API/dashboard
     UNNotificationPresentationOptions options = [self foregroundPresentationOptionsForNotification:notification];
     if (options == UNNotificationPresentationOptionNone) {
         id pushDelegate = self.pushNotificationDelegate;
@@ -937,17 +938,19 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
 - (UNNotificationPresentationOptions)foregroundPresentationOptionsForNotification:(UNNotification *)notification {
     
     __block UNNotificationPresentationOptions options = UNNotificationPresentationOptionNone;
+#if !TARGET_OS_TV
+    // get the presentation options from the the notification
     NSArray *presentationOptions = [notification.request.content.userInfo objectForKey:UAForegroundPresentationkey];
-    //Case: Foreground presentation options defined from the push API/dashboard
-    [presentationOptions enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        if ([UAPresentationOptionBadge isEqualToString:obj]) {
+    for (id presentationOption in presentationOptions) {
+        if ([UAPresentationOptionBadge isEqualToString:presentationOption]) {
             options |= UNAuthorizationOptionBadge;
-        } else if ([UAPresentationOptionAlert isEqualToString:obj]) {
+        } else if ([UAPresentationOptionAlert isEqualToString:presentationOption]) {
             options |= UNAuthorizationOptionAlert;
-        } else if ([UAPresentationOptionSound isEqualToString:obj]) {
+        } else if ([UAPresentationOptionSound isEqualToString:presentationOption]) {
             options |= UNAuthorizationOptionSound;
         }
-    }];
+    }
+#endif
     return options;
 }
 
