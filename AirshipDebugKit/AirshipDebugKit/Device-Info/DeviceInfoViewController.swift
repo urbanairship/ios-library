@@ -36,7 +36,7 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
 
     private let localizedNone = "ua_none".localized(comment: "None")
 
-    private let sectionCount = 5
+    private let sectionCount = 6
 
     @IBOutlet private var tableView: UITableView!
 
@@ -46,9 +46,10 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
      */
     let pushSettings = 0,
     deviceSettings = 1,
-    analyticsSettings = 2,
-    locationSettings = 3,
-    sdkInfo = 4
+    locationSettings = 2,
+    analyticsSettings = 3,
+    sdkInfo = 4,
+    appInfo = 5
 
     // Push settings
     private let pushEnabled = IndexPath(row: 0, section: 0),
@@ -61,16 +62,20 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
     tags = IndexPath(row: 3, section: 1),
     associatedIdentifiers = IndexPath(row: 4, section: 1)
 
-    // Analytics settigns
-    private let analyticsEnabled = IndexPath(row: 0, section: 2)
-
     // Location settings
-    private let locationEnabled = IndexPath(row: 0, section: 3)
+    private let locationEnabled = IndexPath(row: 0, section: 2),
+    timezone = IndexPath(row: 1, section: 2)
 
+    // Analytics settigns
+    private let analyticsEnabled = IndexPath(row: 0, section: 3)
+    
     // SDK Info
     private let sdkVersion = IndexPath(row: 0, section: 4),
     localeInfo = IndexPath(row: 1, section: 4)
 
+    // App Info
+    private let appVersion = IndexPath(row: 0, section: 5)
+    
     @objc func pushSettingsButtonTapped(sender:Any) {
         UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!, options: [:],completionHandler: nil)
     }
@@ -153,9 +158,11 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
         case sdkInfo:
             return "ua_device_info_SDK_info".localized()
         case analyticsSettings:
-            return "ua_device_info_location_settings".localized()
-        case locationSettings:
             return "ua_device_info_analytics_settings".localized()
+        case locationSettings:
+            return "ua_device_info_location_settings".localized()
+        case appInfo:
+            return "ua_device_info_app_info".localized()
         default:
             return ""
         }
@@ -176,9 +183,11 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
         case analyticsSettings:
             return 1
         case locationSettings:
-            return 1
+            return 2
         case sdkInfo:
             return 2
+        case appInfo:
+            return 1
         default:
             return 0
         }
@@ -267,7 +276,13 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
         case localeInfo:
             cell.title.text = "ua_device_info_locale".localized()
             cell.subtitle?.text = NSLocale.autoupdatingCurrent.identifier
-
+        case appVersion:
+            cell.title.text = "ua_device_info_app_version".localized()
+            cell.subtitle?.text = Bundle.main.infoDictionary!["CFBundleShortVersionString"] as? String
+        case timezone:
+            cell.title.text = "ua_device_info_timezone".localized()
+            cell.subtitle?.text = TimeZone.current.identifier
+            
         default:
             break
         }

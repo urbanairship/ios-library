@@ -25,6 +25,8 @@
 "ua_device_info_tags" = "Tags";
 "ua_device_info_sdk_version" = "SDK Version";
 "ua_device_info_locale" = "Locale";
+"ua_device_info_app_version" = "Application Version";
+"ua_device_info_timezone" = "Time zone";
 
 "ua_device_info_last_push_payload" = "Last Push Payload";
 "ua_device_info_analytics_enabled" = "Analytics Enabled";
@@ -36,6 +38,7 @@
 "ua_device_info_SDK_info" = "SDK Info";
 "ua_device_info_location_settings" = "Location Settings";
 "ua_device_info_analytics_settings" = "Analytics Settings";
+"ua_device_info_app_info" = "Application Info";
 
 "ua_push_payload_empty" = "Payload is empty. Send a push notification!";
 
