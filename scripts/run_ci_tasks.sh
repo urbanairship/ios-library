@@ -6,12 +6,13 @@ set -x
 
 SCRIPT_DIRECTORY=`dirname "$0"`
 ROOT_PATH=`dirname "${0}"`/../
+LATEST='13.0'
 
 # Target iOS SDK when building the projects
 TARGET_SDK='iphonesimulator'
 TARGET_SDK_TVOS='appletvsimulator'
-TEST_DESTINATION='platform=iOS Simulator,OS=latest,name=iPhone X'
-TEST_DESTINATION_TVOS='platform=tvOS Simulator,OS=latest,name=Apple TV'
+TEST_DESTINATION="platform=iOS Simulator,OS=${LATEST},name=iPhone 8"
+TEST_DESTINATION_TVOS="platform=tvOS Simulator,OS=${LATEST},name=Apple TV"
 
 start_time=`date +%s`
 
