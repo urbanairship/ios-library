@@ -922,36 +922,44 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
 
 - (UNNotificationPresentationOptions)presentationOptionsForNotification:(UNNotification *)notification {
     
+    UNNotificationPresentationOptions options = UNNotificationPresentationOptionNone;
+    
     //Get foreground presentation options defined from the push API/dashboard
-    UNNotificationPresentationOptions options = [self foregroundPresentationOptionsForNotification:notification];
-    if (options == UNNotificationPresentationOptionNone) {
-        id pushDelegate = self.pushNotificationDelegate;
-        if ([pushDelegate respondsToSelector:@selector(presentationOptionsForNotification:)]) {
-            options = [pushDelegate presentationOptionsForNotification:notification];
-        } else {
-            options = self.defaultPresentationOptions;
+    NSArray *payloadPresentationOptions = [self foregroundPresentationOptionsForNotification:notification];
+    if (payloadPresentationOptions.count) {
+        // build the options bitmask from the array
+        UNNotificationPresentationOptions options = UNNotificationPresentationOptionNone;
+        for (id presentationOption in payloadPresentationOptions) {
+            if ([UAPresentationOptionBadge isEqualToString:presentationOption]) {
+                options |= UNAuthorizationOptionBadge;
+            } else if ([UAPresentationOptionAlert isEqualToString:presentationOption]) {
+                options |= UNAuthorizationOptionAlert;
+            } else if ([UAPresentationOptionSound isEqualToString:presentationOption]) {
+                options |= UNAuthorizationOptionSound;
+            }
         }
+    } else {
+        options = self.defaultPresentationOptions;
     }
+    
+    id pushDelegate = self.pushNotificationDelegate;
+    if ([pushDelegate respondsToSelector:@selector(extendPresentationOptions:)]) {
+        options = [pushDelegate extendPresentationOptions:options];
+    } else if ([pushDelegate respondsToSelector:@selector(presentationOptionsForNotification:)]) {
+        options = [pushDelegate presentationOptionsForNotification:notification];
+    }
+    
     return options;
 }
 
-- (UNNotificationPresentationOptions)foregroundPresentationOptionsForNotification:(UNNotification *)notification {
+- (NSArray *)foregroundPresentationOptionsForNotification:(UNNotification *)notification {
     
-    __block UNNotificationPresentationOptions options = UNNotificationPresentationOptionNone;
+    NSArray *presentationOptions = nil;
 #if !TARGET_OS_TV
     // get the presentation options from the the notification
-    NSArray *presentationOptions = [notification.request.content.userInfo objectForKey:UAForegroundPresentationkey];
-    for (id presentationOption in presentationOptions) {
-        if ([UAPresentationOptionBadge isEqualToString:presentationOption]) {
-            options |= UNAuthorizationOptionBadge;
-        } else if ([UAPresentationOptionAlert isEqualToString:presentationOption]) {
-            options |= UNAuthorizationOptionAlert;
-        } else if ([UAPresentationOptionSound isEqualToString:presentationOption]) {
-            options |= UNAuthorizationOptionSound;
-        }
-    }
+    presentationOptions = [notification.request.content.userInfo objectForKey:UAForegroundPresentationkey];
 #endif
-    return options;
+    return presentationOptions;
 }
 
 - (void)handleNotificationResponse:(UANotificationResponse *)response completionHandler:(void (^)(void))handler {

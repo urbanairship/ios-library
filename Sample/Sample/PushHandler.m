@@ -34,4 +34,8 @@
     return UNNotificationPresentationOptionAlert | UNNotificationPresentationOptionSound;
 }
 
+- (UNNotificationPresentationOptions)extendPresentationOptions:(UNNotificationPresentationOptions)options {
+    return options | UNNotificationPresentationOptionSound | UNNotificationPresentationOptionAlert;
+}
+
 @end
