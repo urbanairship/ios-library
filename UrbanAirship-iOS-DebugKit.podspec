@@ -1,5 +1,7 @@
+AIRSHIP_VERSION="11.1.0"
+
 Pod::Spec.new do |s|
-   s.version                 = "0.1.0"
+   s.version                 = AIRSHIP_VERSION
    s.name                    = "UrbanAirship-iOS-DebugKit"
    s.summary                 = "Airship iOS SDK Debug Library"
 
@@ -20,5 +22,5 @@ Pod::Spec.new do |s|
    s.resources               = ['AirshipDebugKit/AirshipDebugKit/**/*storyboard', 'AirshipDebugKit/AirshipDebugKit/Resources/**' ]
 
    s.frameworks              = 'UIKit'
-   s.dependency                'UrbanAirship-iOS-SDK', '~> 11.0.0'
+   s.dependency                'UrbanAirship-iOS-SDK', AIRSHIP_VERSION
 end

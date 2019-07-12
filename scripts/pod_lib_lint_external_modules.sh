@@ -24,9 +24,13 @@ git init --bare
 
 echo "add local specs repo to cocoapods"
 COCOAPODS_PATH="${HOME}/.cocoapods/repos"
-
-[ -d "${COCOAPODS_PATH}/ci-specs/" ] && pod repo remove ci-specs
+COCOAPODS_CI_SPECS_REPO="$COCOAPODS_PATH/ci-specs/"
+[ -d "${COCOAPODS_CI_SPECS_REPO}" ] && pod repo remove ci-specs
 pod repo add ci-specs "${SPEC_REPO_LOCATION}"
+
+# Cocoapods 1.7 requires a master branch in the remote before "pod repo push" is run.
+git -C "${COCOAPODS_CI_SPECS_REPO}" commit --allow-empty -m "Create empty master branch"
+git -C "${COCOAPODS_CI_SPECS_REPO}" push
 
 echo "make a dev copy of UrbanAirship-iOS-SDK.podspec for local publishing"
 [ -d "${TEMP_PODSPEC_STORAGE}" ] && rm -rf "${TEMP_PODSPEC_STORAGE}"
