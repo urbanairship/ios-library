@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		3C207629225C1AA100C19D08 /* AirshipLocationKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C207626225C1A8800C19D08 /* AirshipLocationKit.framework */; };
 		3C20762A225C1AA100C19D08 /* AirshipLocationKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3C207626225C1A8800C19D08 /* AirshipLocationKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		456156E622B6F8FE00A68ADA /* UITestUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 456156E522B6F8FE00A68ADA /* UITestUtils.swift */; };
 		45AF558122B562FE006CAE7F /* CoreUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45AF558022B562FE006CAE7F /* CoreUITests.swift */; };
 		45BE0C9822837B7A008302F1 /* UAMessageCenterDefaultStyle.plist in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0C9222834F6B008302F1 /* UAMessageCenterDefaultStyle.plist */; };
 		49251DEE1D6F9C1500EED4BD /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49251DED1D6F9C1500EED4BD /* NotificationService.swift */; };
@@ -214,6 +215,7 @@
 
 /* Begin PBXFileReference section */
 		3C20761A225C1A8800C19D08 /* AirshipLocationKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = AirshipLocationKit.xcodeproj; path = ../AirshipLocationKit/AirshipLocationKit.xcodeproj; sourceTree = "<group>"; };
+		456156E522B6F8FE00A68ADA /* UITestUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITestUtils.swift; sourceTree = "<group>"; };
 		45AF557E22B562FE006CAE7F /* SwiftSampleUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SwiftSampleUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		45AF558022B562FE006CAE7F /* CoreUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreUITests.swift; sourceTree = "<group>"; };
 		45AF558222B562FE006CAE7F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -282,6 +284,7 @@
 			isa = PBXGroup;
 			children = (
 				45AF558022B562FE006CAE7F /* CoreUITests.swift */,
+				456156E522B6F8FE00A68ADA /* UITestUtils.swift */,
 				45AF558222B562FE006CAE7F /* Info.plist */,
 			);
 			path = SwiftSampleUITests;
@@ -672,6 +675,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				45AF558122B562FE006CAE7F /* CoreUITests.swift in Sources */,
+				456156E622B6F8FE00A68ADA /* UITestUtils.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
