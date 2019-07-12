@@ -928,7 +928,6 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
     NSArray *payloadPresentationOptions = [self foregroundPresentationOptionsForNotification:notification];
     if (payloadPresentationOptions.count) {
         // build the options bitmask from the array
-        UNNotificationPresentationOptions options = UNNotificationPresentationOptionNone;
         for (id presentationOption in payloadPresentationOptions) {
             if ([UAPresentationOptionBadge isEqualToString:presentationOption]) {
                 options |= UNAuthorizationOptionBadge;
