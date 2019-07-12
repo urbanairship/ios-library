@@ -116,7 +116,7 @@ typedef BOOL (^UAWhitelistMatcher)(NSURL *);
 /**
  * Generates matcher that compares a URL component (scheme/host/path) with a supplied regex
  */
-- (UAWhitelistMatcher)matcherForURLComponent:(NSString *)componentKey withRegexString:(NSString *)regexString {
+- (UAWhitelistMatcher)matcherForURLComponent:(NSString *)componentKey withRegexString:(nonnull NSString *)regexString {
 
     if (![regexString hasPrefix:@"^"]) {
         regexString = [@"^" stringByAppendingString:regexString];

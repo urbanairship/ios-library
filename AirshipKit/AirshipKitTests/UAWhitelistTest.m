@@ -91,6 +91,7 @@
 
     // Missing host
     XCTAssertFalse([self.whitelist addEntry:@"*://"]);
+    XCTAssertFalse([self.whitelist addEntry:@"*.://"]);
 
     // Missing file path
     XCTAssertFalse([self.whitelist addEntry:@"file://"]);
