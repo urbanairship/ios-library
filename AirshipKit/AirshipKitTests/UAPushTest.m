@@ -2286,7 +2286,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 
     [[[self.mockAirship stub] andReturn:self.push] push];
 
-    [[[self.mockPushDelegate stub] andReturnValue:OCMOCK_VALUE(UNNotificationPresentationOptionAlert)] presentationOptionsForNotification:self.mockUNNotification];
+    [[[self.mockPushDelegate stub] andReturnValue:OCMOCK_VALUE(UNNotificationPresentationOptionAlert)] extendPresentationOptions:UNNotificationPresentationOptionNone];
 
     UNNotificationPresentationOptions result = [self.push presentationOptionsForNotification:self.mockUNNotification];
 
