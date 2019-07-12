@@ -40,7 +40,11 @@ CGFloat const defaultBorderRadiusPoints = 2;
     }
 
     if  (url && !url.scheme.length) {
-        url = [NSURL URLWithString:[@"https://" stringByAppendingString:[url absoluteString]]];
+        NSString *absoluteURLPath = [url absoluteString];
+        if (!absoluteURLPath) {
+            return nil;
+        }
+        url = [NSURL URLWithString:[@"https://" stringByAppendingString:absoluteURLPath]];
     }
 
     return url;

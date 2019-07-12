@@ -120,9 +120,17 @@ NSString *const UANativeBridgeDismissCommand = @"dismiss";
          * See AirshipKit/AirshipResources/UANativeBridge for human-readable source
          */
         NSString *path = [[UAirship resources] pathForResource:@"UANativeBridge" ofType:@""];
-        NSString *bridge = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];
-        js = [js stringByAppendingString:bridge];
-
+        if (path) {
+            NSString *bridge = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];
+            if (bridge) {
+                js = [js stringByAppendingString:bridge];
+            } else {
+                UA_LIMPERR(@"UANativeBridge resource file is not decodable.");
+            }
+        } else {
+            UA_LIMPERR(@"UANativeBridge resource file is missing.");
+        }
+        
         /*
          * Execute the JS we just constructed.
          */
@@ -176,14 +184,16 @@ NSString *const UANativeBridgeDismissCommand = @"dismiss";
     }
 }
 
-- (NSURL *)createValidPhoneNumberUrlFromUrl:(NSURL *)url {
+- (nullable NSURL *)createValidPhoneNumberUrlFromUrl:(NSURL *)url {
 
     NSString *decodedURLString = [url.absoluteString stringByRemovingPercentEncoding];
     NSCharacterSet *characterSet = [[NSCharacterSet characterSetWithCharactersInString:@"+-.0123456789"] invertedSet];
     NSString *strippedNumber = [[decodedURLString componentsSeparatedByCharactersInSet:characterSet] componentsJoinedByString:@""];
-
+    if (!strippedNumber) {
+        return nil;
+    }
+    
     NSString *scheme = [decodedURLString hasPrefix:@"sms"] ? @"sms:" : @"tel:";
-
     return [NSURL URLWithString:[scheme stringByAppendingString:strippedNumber]];
 }
 
