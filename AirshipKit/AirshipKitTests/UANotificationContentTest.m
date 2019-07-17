@@ -31,6 +31,7 @@
                                   @"category": @"category",
                                   @"content-available": @1,
                                   @"thread-id" : @"test-thread",
+                                  @"target-content-id" : @"test-target",
                                   }
                           };
 
@@ -52,6 +53,7 @@
                                           @"sound": @"cat",
                                           @"category": @"category",
                                           @"thread-id" : @"test-thread",
+                                          @"target-content-id" : @"test-target",
                                           @"content-available": @1
                                           },
                                   };
@@ -90,6 +92,9 @@
     // Thread
     XCTAssertTrue([notification.threadIdentifier isEqualToString:self.notificationWithBody[@"aps"][@"thread-id"]]);
 
+    //Traget identifier
+    XCTAssertTrue([notification.targetContentIdentifier isEqualToString:self.notificationWithBody[@"aps"][@"target-content-id"]]);
+    
     // Raw Notification
     XCTAssertTrue([notification.notificationInfo isEqualToDictionary:self.notification]);
 }
@@ -117,6 +122,9 @@
     // Thread
     XCTAssertTrue([notification.threadIdentifier isEqualToString:self.notificationWithBody[@"aps"][@"thread-id"]]);
 
+    //Traget identifier
+    XCTAssertTrue([notification.targetContentIdentifier isEqualToString:self.notificationWithBody[@"aps"][@"target-content-id"]]);
+    
     // Summary Arg
     XCTAssertTrue([notification.summaryArgument isEqualToString:self.notificationWithBody[@"aps"][@"alert"][@"summary-arg"]]);
 

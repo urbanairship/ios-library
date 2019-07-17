@@ -13,6 +13,7 @@
 @property (nonatomic, copy, nullable) NSString *summaryArgument;
 @property (nonatomic, strong, nullable) NSNumber *summaryArgumentCount;
 @property (nonatomic, copy, nullable) NSString *threadIdentifier;
+@property (nonatomic, copy, nullable) NSString *targetContentIdentifier;
 @property (nonatomic, copy, nullable) NSString *categoryIdentifier;
 @property (nonatomic, copy, nullable) NSString *launchImage;
 @property (nonatomic, copy, nonnull) NSDictionary *notificationInfo;
@@ -64,6 +65,9 @@
 
             // Thread
             self.threadIdentifier = apsDict[@"thread-id"];
+            
+            //Traget content identifier
+            self.targetContentIdentifier = apsDict[@"target-content-id"];
         }
 
         // Original notification
@@ -83,10 +87,12 @@
         self.categoryIdentifier = notification.request.content.categoryIdentifier;
         self.notificationInfo = notification.request.content.userInfo;
         self.threadIdentifier = notification.request.content.threadIdentifier;
-
         if (@available(iOS 12.0, *)) {
             self.summaryArgument = notification.request.content.summaryArgument;
             self.summaryArgumentCount = [NSNumber numberWithUnsignedLong:notification.request.content.summaryArgumentCount];
+        }
+        if (@available(iOS 13.0, *)) {
+            self.targetContentIdentifier = notification.request.content.targetContentIdentifier;
         }
 #endif
         self.badge = notification.request.content.badge;
