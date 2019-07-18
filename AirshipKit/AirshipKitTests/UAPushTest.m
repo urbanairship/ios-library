@@ -36,6 +36,7 @@
 @property (nonatomic, strong) id mockTagGroupsRegistrar;
 @property (nonatomic, strong) id mockUNNotification;
 @property (nonatomic, strong) id mockPushRegistration;
+@property (nonatomic, strong) id mockUserInfo;
 
 @property (nonatomic, strong) UAPush *push;
 @property (nonatomic, strong) NSNotificationCenter *notificationCenter;
@@ -101,6 +102,18 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     // Mock the nested apple types with unavailable init methods
     self.mockUNNotification = [self mockForClass:[UNNotification class]];
 
+    //Mock the notification request
+    id mockUNNotificationRequest = [self mockForClass:[UNNotificationRequest class]];
+    [[[self.mockUNNotification stub] andReturn:mockUNNotificationRequest] request];
+    
+    //Mock the notification content
+    id mockUNNotificationContent = [self mockForClass:[UNNotificationContent class]];
+    [[[mockUNNotificationRequest stub] andReturn:mockUNNotificationContent] content];
+    
+    //Mock the notification userInfo
+    self.mockUserInfo = [self mockForClass:[NSDictionary class]];
+    [[[mockUNNotificationContent stub] andReturn:self.mockUserInfo] userInfo];
+    
     // Set up a mocked application
     self.mockApplication = [self mockForClass:[UIApplication class]];
 
@@ -125,7 +138,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     });
 
 
-    self.mockAirship =[self mockForClass:[UAirship class]];
+    self.mockAirship = [self mockForClass:[UAirship class]];
     [UAirship setSharedAirship:self.mockAirship];
 
     self.mockPushDelegate = [self mockForProtocol:@protocol(UAPushNotificationDelegate)];
@@ -2291,6 +2304,45 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     UNNotificationPresentationOptions result = [self.push presentationOptionsForNotification:self.mockUNNotification];
 
     XCTAssertEqual(result, UNNotificationPresentationOptionAlert);
+}
+
+/**
+ * Test presentationOptionsForNotification when notification contains foreground options and delegate method is unimplemented.
+ */
+- (void)testPresentationOptionsForNotificationWithForegroundOptionsWithoutDelegate {
+    // SETUP
+    NSArray *array = @[@"alert", @"sound", @"badge"];
+    [[[self.mockUserInfo stub] andReturnValue:OCMOCK_VALUE(array)] objectForKey:@"foreground_presentation"];
+    self.push.pushNotificationDelegate = nil;
+    
+    // EXPECTATIONS
+    UNNotificationPresentationOptions options = UNNotificationPresentationOptionAlert | UNNotificationPresentationOptionSound | UNNotificationPresentationOptionBadge;
+    
+    // TEST
+    UNNotificationPresentationOptions result = [self.push presentationOptionsForNotification:self.mockUNNotification];
+    
+    // VERIFY
+    XCTAssertEqual(result, options);
+}
+
+/**
+ * Test presentationOptionsForNotification when notification foreground options array is empty and delegate method is unimplemented.
+ */
+- (void)testPresentationOptionsForNotificationWithoutForegroundOptionsWithoutDelegate {
+    // SETUP
+    NSArray *array = @[];
+    [[[self.mockUserInfo stub] andReturnValue:OCMOCK_VALUE(array)] objectForKey:@"foreground_presentation"];
+    self.push.defaultPresentationOptions = UNNotificationPresentationOptionAlert;
+    self.push.pushNotificationDelegate = nil;
+    
+    // EXPECTATIONS
+    UNNotificationPresentationOptions options = UNNotificationPresentationOptionAlert;
+    
+    // TEST
+    UNNotificationPresentationOptions result = [self.push presentationOptionsForNotification:self.mockUNNotification];
+    
+    // VERIFY
+    XCTAssertEqual(result, options);
 }
 
 /**
