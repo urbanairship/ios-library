@@ -134,6 +134,20 @@ CGFloat const BannerExcessiveSafeAreaPadding = 14;
 #pragma mark -
 #pragma mark Core Functionality
 
+- (void)observeSceneEvents API_AVAILABLE(ios(13.0)) {
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(sceneRemoved:)
+                                                 name:UISceneWillDeactivateNotification
+                                               object:nil];
+}
+
+- (void)sceneRemoved:(NSNotification *)notification API_AVAILABLE(ios(13.0)) {
+    UIWindow *window = [UAUtils windowForView:self.bannerView];
+    if ([(UIScene *)notification.object isEqual:window.windowScene]) {
+        [self dismissWithResolution:[UAInAppMessageResolution userDismissedResolution]];
+    }
+}
+
 - (void)showWithParentView:(UIView *)parentView completionHandler:(void (^)(UAInAppMessageResolution * _Nonnull))completionHandler {
     if (self.isShowing) {
         UA_LTRACE(@"In-app message banner has already been displayed");
@@ -188,6 +202,10 @@ CGFloat const BannerExcessiveSafeAreaPadding = 14;
     [UAInAppMessageUtils applyPaddingToView:self.mediaView.mediaContainer padding:self.style.mediaStyle.additionalPadding replace:NO];
 
     self.showCompletionHandler = completionHandler;
+
+    if (@available(iOS 13.0, *)) {
+        [self observeSceneEvents];
+    }
 
     [self bannerView:self.bannerView animateInWithParentView:parentView completionHandler:^{
         [self scheduleDismissalTimer];

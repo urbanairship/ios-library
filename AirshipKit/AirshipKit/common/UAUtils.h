@@ -123,7 +123,15 @@ NS_ASSUME_NONNULL_BEGIN
  * @param scene The scene in which to find the window.
  * @return The main window, or `nil` if the window cannot be found.
  */
-+ (UIWindow *)mainWindow:(UIWindowScene *)scene API_AVAILABLE(ios(13.0));
++ (nullable UIWindow *)mainWindow:(UIWindowScene *)scene API_AVAILABLE(ios(13.0));
+
+/**
+ * Returns the window containing the provided view.
+ *
+ * @param view The view.
+ * @return The window containing the view, or nil if the view is not currently displayed.
+ */
++ (nullable UIWindow *)windowForView:(UIView *)view;
 
 /**
  * A utility method that grabs the top-most view controller for the main application window.

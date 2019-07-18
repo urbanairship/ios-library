@@ -40,12 +40,8 @@
     }
 }
 
-- (NSArray<UIScene *>*)scenes  API_AVAILABLE(ios(13.0)){
-    return [NSArray arrayWithArray:_scenes];
-}
-
 - (nullable UIWindowScene *)primaryWindowScene {
-    for (UIScene *scene in _scenes) {
+    for (UIScene *scene in self.scenes) {
         if ([scene isKindOfClass:[UIWindowScene class]]) {
             return (UIWindowScene *)scene;
         }
@@ -55,15 +51,11 @@
 }
 
 - (void)sceneAdded:(NSNotification *)notification {
-    [_scenes addObject:notification.object];
+    [self.scenes addObject:notification.object];
 }
 
 - (void)sceneRemoved:(NSNotification *)notification  {
-    [_scenes removeObject:notification.object];
-}
-
-- (void)dealloc {
-    [self.notificationCenter removeObserver:self];
+    [self.scenes removeObject:notification.object];
 }
 
 @end

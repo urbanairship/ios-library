@@ -263,9 +263,19 @@
     return window;
 }
 
-+ (UIWindow *)mainWindow:(UIWindowScene *)scene API_AVAILABLE(ios(13.0)){
++ (nullable UIWindow *)mainWindow:(UIWindowScene *)scene API_AVAILABLE(ios(13.0)){
     // Try to get the primary window of the scene, and fall back on the application's window if necessary.
     return ((UIWindowScene *)scene).windows.firstObject ? : [self mainWindow];
+}
+
++ (nullable UIWindow *)windowForView:(UIView *)view {
+    UIWindow *window;
+    while (view.superview) {
+        if ([view.superview isKindOfClass:[UIWindow class]]) {
+            window = (UIWindow *)view.superview;
+        }
+    }
+    return window;
 }
 
 /**

@@ -13,7 +13,6 @@ NSString *const UAFullScreenStyleFileName = @"UAInAppMessageFullScreenStyle";
 @interface UAInAppMessageFullScreenAdapter ()
 @property (nonatomic, strong) UAInAppMessage *message;
 @property (nonatomic, strong) UAInAppMessageFullScreenViewController *fullScreenController;
-@property (nonatomic, strong, nullable) UIWindowScene *scene API_AVAILABLE(ios(13.0));
 @end
 
 @implementation UAInAppMessageFullScreenAdapter
@@ -38,9 +37,9 @@ NSString *const UAFullScreenStyleFileName = @"UAInAppMessageFullScreenStyle";
     [UAInAppMessageUtils prepareMediaView:displayContent.media assets:assets completionHandler:^(UAInAppMessagePrepareResult result, UAInAppMessageMediaView *mediaView) {
         if (result == UAInAppMessagePrepareResultSuccess) {
             self.fullScreenController = [UAInAppMessageFullScreenViewController fullScreenControllerWithFullScreenMessageID:self.message.identifier
-                                                                                                         displayContent:displayContent
-                                                                                                              mediaView:mediaView
-                                                                                                                  style:self.style];
+                                                                                                             displayContent:displayContent
+                                                                                                                  mediaView:mediaView
+                                                                                                                      style:self.style];
         }
         completionHandler(result);
     }];
@@ -52,17 +51,12 @@ NSString *const UAFullScreenStyleFileName = @"UAInAppMessageFullScreenStyle";
 }
 
 - (void)display:(void (^)(UAInAppMessageResolution *))completionHandler {
-    if (@available(iOS 13.0, *)) {
-        [self.fullScreenController showWithCompletionHandler:completionHandler scene:self.scene];
-    } else {
-        [self.fullScreenController showWithCompletionHandler:completionHandler];
-    }
+    [self.fullScreenController showWithCompletionHandler:completionHandler];
 }
 
 - (void)display:(void (^)(UAInAppMessageResolution *))completionHandler
-          scene:(nullable UIWindowScene *)scene API_AVAILABLE(ios(13.0)){
-    self.scene = scene;
-    [self display:completionHandler];
+          scene:(UIWindowScene *)scene API_AVAILABLE(ios(13.0)){
+    [self.fullScreenController showWithCompletionHandler:completionHandler scene:scene];
 }
 
 @end

@@ -17,8 +17,6 @@ NSString *const UAModalStyleFileName = @"UAInAppMessageModalStyle";
 @property (nonatomic, strong) UAInAppMessage *message;
 @property (nonatomic, strong) UAInAppMessageModalViewController *modalController;
 @property (nonatomic, strong) UAInAppMessageResizableViewController *resizableContainerViewController;
-@property (nonatomic, strong, nullable) UIWindowScene *scene API_AVAILABLE(ios(13.0));
-
 @end
 
 @implementation UAInAppMessageModalAdapter
@@ -57,8 +55,7 @@ NSString *const UAModalStyleFileName = @"UAInAppMessageModalStyle";
     return [UAInAppMessageUtils isReadyToDisplayWithMedia:modalContent.media];
 }
 
-- (void)display:(void (^)(UAInAppMessageResolution *))completionHandler {
-
+- (void)createContainerViewController {
     self.resizableContainerViewController = [UAInAppMessageResizableViewController resizableViewControllerWithChild:self.modalController];
 
     self.resizableContainerViewController.backgroundColor = self.modalController.displayContent.backgroundColor;
@@ -70,19 +67,17 @@ NSString *const UAModalStyleFileName = @"UAInAppMessageModalStyle";
 
     // Set weak link to parent
     self.modalController.resizableParent = self.resizableContainerViewController;
+}
 
-    // Show resizable view controller with child
-    if (@available(iOS 13.0, *)) {
-        [self.resizableContainerViewController showWithCompletionHandler:completionHandler scene:self.scene];
-    } else {
-        [self.resizableContainerViewController showWithCompletionHandler:completionHandler];
-    }
+- (void)display:(void (^)(UAInAppMessageResolution *))completionHandler {
+    [self createContainerViewController];
+    [self.resizableContainerViewController showWithCompletionHandler:completionHandler];
 }
 
 - (void)display:(void (^)(UAInAppMessageResolution *))completionHandler
-          scene:(nullable UIWindowScene *)scene API_AVAILABLE(ios(13.0)){
-    self.scene = scene;
-    [self display:completionHandler];
+          scene:(UIWindowScene *)scene API_AVAILABLE(ios(13.0)){
+    [self createContainerViewController];
+    [self.resizableContainerViewController showWithCompletionHandler:completionHandler scene:scene];
 }
 
 @end

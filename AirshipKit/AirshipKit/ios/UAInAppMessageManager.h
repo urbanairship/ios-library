@@ -63,7 +63,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param defaultScene The window scene chosen for displaying the message, or nil if one could not be found.
  * @return A window scene if the delegate chooses to override the choice of scene, or nil otherwise.
  */
-- (UIWindowScene *)sceneForMessage:(UAInAppMessage *)message defaultScene:(nullable UIWindowScene *)scene API_AVAILABLE(ios(13.0));
+- (UIWindowScene *)sceneForMessage:(UAInAppMessage *)message defaultScene:(nullable UIWindowScene *)defaultScene API_AVAILABLE(ios(13.0));
 
 @end
 
