@@ -244,13 +244,13 @@
                                      situation:situation
                                       metadata:metadata
                              completionHandler:^(UAActionResult *result) {
-                                 [fetchResults addObject:[NSNumber numberWithInt:(UIBackgroundFetchResult)[result fetchResult]]];
+                                 [fetchResults addObject:[NSNumber numberWithInteger:(UIBackgroundFetchResult)[result fetchResult]]];
 
                                  [[UAirship push] handleRemoteNotification:notificationContent
                                                                 foreground:(situation == UASituationForegroundPush)
                                                          completionHandler:^(UIBackgroundFetchResult fetchResult) {
                                                              @synchronized (fetchResults) {
-                                                                 [fetchResults addObject:[NSNumber numberWithInt:fetchResult]];
+                                                                 [fetchResults addObject:[NSNumber numberWithInteger:fetchResult]];
                                                              }
                                                              dispatch_group_leave(dispatchGroup);
                                                          }];

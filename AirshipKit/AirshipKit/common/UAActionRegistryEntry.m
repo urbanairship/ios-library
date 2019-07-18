@@ -43,7 +43,7 @@
 }
 
 - (UAAction *)actionForSituation:(UASituation)situation {
-    return [self.situationOverrides objectForKey:[NSNumber numberWithInt:situation]] ?: self.action;
+    return [self.situationOverrides objectForKey:[NSNumber numberWithInteger:situation]] ?: self.action;
 }
 
 - (void)addSituationOverride:(UASituation)situation withAction:(UAAction *)action {
