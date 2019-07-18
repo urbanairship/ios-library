@@ -66,7 +66,7 @@
             // Thread
             self.threadIdentifier = apsDict[@"thread-id"];
             
-            //Traget content identifier
+            //Target content identifier
             self.targetContentIdentifier = apsDict[@"target-content-id"];
         }
 

@@ -92,7 +92,7 @@
     // Thread
     XCTAssertTrue([notification.threadIdentifier isEqualToString:self.notificationWithBody[@"aps"][@"thread-id"]]);
 
-    //Traget identifier
+    //Target identifier
     XCTAssertTrue([notification.targetContentIdentifier isEqualToString:self.notificationWithBody[@"aps"][@"target-content-id"]]);
     
     // Raw Notification
@@ -122,7 +122,7 @@
     // Thread
     XCTAssertTrue([notification.threadIdentifier isEqualToString:self.notificationWithBody[@"aps"][@"thread-id"]]);
 
-    //Traget identifier
+    //Target identifier
     XCTAssertTrue([notification.targetContentIdentifier isEqualToString:self.notificationWithBody[@"aps"][@"target-content-id"]]);
     
     // Summary Arg
