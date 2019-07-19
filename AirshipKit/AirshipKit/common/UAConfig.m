@@ -9,6 +9,15 @@ NSString *const UACloudSiteEUConfigName = @"EU";
 NSString *const UACloudSiteUSConfigName = @"US";
 NSString *const UACloudSiteKeyName = @"site";
 
+NSString *const UALogLevelKeyName = @"developmentLogLevel";
+NSString *const UALogLevelUndefinedName = @"UNDEFINED";
+NSString *const UALogLevelNoneName = @"NONE";
+NSString *const UALogLevelErrorName = @"ERROR";
+NSString *const UALogLevelWarnName = @"WARNING";
+NSString *const UALogLevelInfoName = @"INFO";
+NSString *const UALogLevelDebugName = @"DEBUG";
+NSString *const UALogLevelTraceName = @"TRACE";
+
 @interface UAConfig()
 
 @property (nonatomic, copy, nullable) NSString *profilePath;
@@ -297,6 +306,45 @@ NSString *const UACloudSiteKeyName = @"site";
                     continue;
                 } else {
                     UA_LWARN(@"Invalid site %@", value);
+                }
+            }
+        }
+        
+        if ([key isEqualToString:UALogLevelKeyName]) {
+            //The log level value
+            id value = keyedValues[UALogLevelKeyName];
+            if ([value isKindOfClass:[NSString class]]) {
+                if([UALogLevelUndefinedName caseInsensitiveCompare:value] == NSOrderedSame ) {
+                    //Case: Undefined
+                    newKeyedValues[UALogLevelKeyName] = @(UALogLevelUndefined);
+                    continue;
+                } else if([UALogLevelNoneName caseInsensitiveCompare:value] == NSOrderedSame ) {
+                    //Case: None
+                    newKeyedValues[UALogLevelKeyName] = @(UALogLevelNone);
+                    continue;
+                }  else if([UALogLevelErrorName caseInsensitiveCompare:value] == NSOrderedSame ) {
+                    //Case: Error
+                    newKeyedValues[UALogLevelKeyName] = @(UALogLevelError);
+                    continue;
+                } else if([UALogLevelWarnName caseInsensitiveCompare:value] == NSOrderedSame ) {
+                    //Case: Warning
+                    newKeyedValues[UALogLevelKeyName] = @(UALogLevelWarn);
+                    continue;
+                } else if([UALogLevelInfoName caseInsensitiveCompare:value] == NSOrderedSame ) {
+                    //Case: Info
+                    newKeyedValues[UALogLevelKeyName] = @(UALogLevelInfo);
+                    continue;
+                } else if([UALogLevelDebugName caseInsensitiveCompare:value] == NSOrderedSame ) {
+                    //Case: Debug
+                    newKeyedValues[UALogLevelKeyName] = @(UALogLevelDebug);
+                    continue;
+                }else if([UALogLevelTraceName caseInsensitiveCompare:value] == NSOrderedSame ) {
+                    //Case: Trace
+                    newKeyedValues[UALogLevelKeyName] = @(UALogLevelTrace);
+                    continue;
+                } else {
+                    //Others
+                    UA_LWARN(@"Invalid log level %@", value);
                 }
             }
         }
