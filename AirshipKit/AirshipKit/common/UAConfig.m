@@ -9,7 +9,8 @@ NSString *const UACloudSiteEUConfigName = @"EU";
 NSString *const UACloudSiteUSConfigName = @"US";
 NSString *const UACloudSiteKeyName = @"site";
 
-NSString *const UALogLevelKeyName = @"developmentLogLevel";
+NSString *const UADevelopmentLogLevelKeyName = @"developmentLogLevel";
+NSString *const UAProductionLogLevelKeyName = @"productionLogLevel";
 NSString *const UALogLevelUndefinedName = @"UNDEFINED";
 NSString *const UALogLevelNoneName = @"NONE";
 NSString *const UALogLevelErrorName = @"ERROR";
@@ -310,37 +311,37 @@ NSString *const UALogLevelTraceName = @"TRACE";
             }
         }
         
-        if ([key isEqualToString:UALogLevelKeyName]) {
+        if ([key isEqualToString:UADevelopmentLogLevelKeyName] || [key isEqualToString:UAProductionLogLevelKeyName]) {
             //The log level value
-            id value = keyedValues[UALogLevelKeyName];
+            id value = keyedValues[key];
             if ([value isKindOfClass:[NSString class]]) {
                 if([UALogLevelUndefinedName caseInsensitiveCompare:value] == NSOrderedSame ) {
                     //Case: Undefined
-                    newKeyedValues[UALogLevelKeyName] = @(UALogLevelUndefined);
+                    newKeyedValues[key] = @(UALogLevelUndefined);
                     continue;
                 } else if([UALogLevelNoneName caseInsensitiveCompare:value] == NSOrderedSame ) {
                     //Case: None
-                    newKeyedValues[UALogLevelKeyName] = @(UALogLevelNone);
+                    newKeyedValues[key] = @(UALogLevelNone);
                     continue;
                 }  else if([UALogLevelErrorName caseInsensitiveCompare:value] == NSOrderedSame ) {
                     //Case: Error
-                    newKeyedValues[UALogLevelKeyName] = @(UALogLevelError);
+                    newKeyedValues[key] = @(UALogLevelError);
                     continue;
                 } else if([UALogLevelWarnName caseInsensitiveCompare:value] == NSOrderedSame ) {
                     //Case: Warning
-                    newKeyedValues[UALogLevelKeyName] = @(UALogLevelWarn);
+                    newKeyedValues[key] = @(UALogLevelWarn);
                     continue;
                 } else if([UALogLevelInfoName caseInsensitiveCompare:value] == NSOrderedSame ) {
                     //Case: Info
-                    newKeyedValues[UALogLevelKeyName] = @(UALogLevelInfo);
+                    newKeyedValues[key] = @(UALogLevelInfo);
                     continue;
                 } else if([UALogLevelDebugName caseInsensitiveCompare:value] == NSOrderedSame ) {
                     //Case: Debug
-                    newKeyedValues[UALogLevelKeyName] = @(UALogLevelDebug);
+                    newKeyedValues[key] = @(UALogLevelDebug);
                     continue;
                 }else if([UALogLevelTraceName caseInsensitiveCompare:value] == NSOrderedSame ) {
                     //Case: Trace
-                    newKeyedValues[UALogLevelKeyName] = @(UALogLevelTrace);
+                    newKeyedValues[key] = @(UALogLevelTrace);
                     continue;
                 } else {
                     //Others
