@@ -1,8 +1,8 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import <Foundation/Foundation.h>
 
-#import "UAConfig.h"
+#import "UARuntimeConfig.h"
 #import "UAPreferenceDataStore+Internal.h"
 #import "UATagGroupsMutationHistory+Internal.h"
 #import "UATagGroupsAPIClient+Internal.h"
@@ -19,12 +19,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Factory method to create a tag groups registrar.
- * @param config The Urban Airship config.
+ * @param config The Airship config.
  * @param dataStore The shared data store.
  * @param mutationHistory The mutation history.
  * @return A new tag groups registrar instance.
  */
-+ (instancetype)tagGroupsRegistrarWithConfig:(UAConfig *)config
++ (instancetype)tagGroupsRegistrarWithConfig:(UARuntimeConfig *)config
                                    dataStore:(UAPreferenceDataStore *)dataStore
                              mutationHistory:(UATagGroupsMutationHistory *)mutationHistory;
 

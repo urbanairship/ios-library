@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "NSManagedObjectContext+UAAdditions+Internal.h"
 #import "UAAutomationStore+Internal.h"
@@ -12,7 +12,7 @@
 #import "UAScheduleTrigger+Internal.h"
 #import "UAirship.h"
 #import "UAJSONPredicate.h"
-#import "UAConfig.h"
+#import "UARuntimeConfig.h"
 #import "UAUtils+Internal.h"
 #import "UAJSONSerialization+Internal.h"
 #import "UAScheduleDataMigrator+Internal.h"
@@ -339,6 +339,7 @@
     scheduleData.interval = @(schedule.info.interval);
     scheduleData.editGracePeriod = @(schedule.info.editGracePeriod);
     scheduleData.dataVersion = @(UAScheduleDataVersion);
+    scheduleData.metadata = [NSJSONSerialization stringWithObject:schedule.metadata];
 
     if (schedule.info.delay) {
         scheduleData.delay = [self createDelayDataFromDelay:schedule.info.delay scheduleStart:schedule.info.start schedule:scheduleData];

@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UAMessageCenterSplitViewController.h"
 #import "UAMessageCenterListViewController.h"
@@ -7,7 +7,7 @@
 #import "UAMessageCenterStyle.h"
 #import "UAirship.h"
 #import "UAMessageCenterLocalization.h"
-#import "UAConfig.h"
+#import "UARuntimeConfig.h"
 #import "UAInboxMessage.h"
 
 @interface UAMessageCenterSplitViewController ()
@@ -83,7 +83,7 @@
     [super viewDidAppear:animated];
     if (self.showMessageViewOnViewDidAppear) {
         self.showMessageViewOnViewDidAppear = NO;
-        if (self.collapsed) {
+        if (self.collapsed && self.messageViewController.message) {
             [self.listViewController displayMessageForID:self.messageViewController.message.messageID];
         }
     }

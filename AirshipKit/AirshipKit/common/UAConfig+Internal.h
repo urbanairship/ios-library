@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UAConfig.h"
 
@@ -19,11 +19,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, copy, nullable) NSString *profilePath;
 
-/*
- * The master secret for running functional tests. Not for use in production!
- */
-@property (nonatomic, copy, nullable) NSString *testingMasterSecret;
-
 /**
  * Defaults to `YES` if the current device is a simulator. Exposed for testing/mocking purposes.
  */
@@ -41,10 +36,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, strong) NSNumber *usesProductionPushServer;
 
-/**
- * The Urban Airship remote data API url. This option is reserved for internal debugging.
- */
-@property (nonatomic, copy) NSString *remoteDataAPIURL;
 
 ///---------------------------------------------------------------------------------------
 /// @name Config Internal Methods

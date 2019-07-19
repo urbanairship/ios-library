@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import <XCTest/XCTest.h>
 #import "UABaseTest.h"
@@ -149,41 +149,6 @@
     XCTAssertEqualObjects(newInfo.borderColor, buttonInfo.borderColor);
     XCTAssertEqualObjects(newInfo.actions, @{@"+^t":@"cool"});
 }
-
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-- (void)testBorderRadius {
-    UAInAppMessageButtonInfo *buttonInfo = [UAInAppMessageButtonInfo buttonInfoWithBuilderBlock:^(UAInAppMessageButtonInfoBuilder * _Nonnull builder) {
-        builder.borderRadius = 10;
-        builder.label = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
-            builder.text = @"text";
-        }];
-        builder.identifier = [@"" stringByPaddingToLength:UAInAppMessageButtonInfoIDLimit withString:@"ID" startingAtIndex:0];
-    }];
-    
-    XCTAssertNotNil(buttonInfo);
-    XCTAssertEqual(buttonInfo.borderRadius, 10);
-    XCTAssertEqual(buttonInfo.borderRadiusPoints, 10);
-
-    UAInAppMessageButtonInfo *fromJSON = [UAInAppMessageButtonInfo buttonInfoWithJSON:[buttonInfo toJSON] error:nil];
-    XCTAssertEqualObjects(fromJSON,buttonInfo);
-    
-    buttonInfo = [UAInAppMessageButtonInfo buttonInfoWithBuilderBlock:^(UAInAppMessageButtonInfoBuilder * _Nonnull builder) {
-        builder.borderRadiusPoints = 10.5;
-        builder.label = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
-            builder.text = @"text";
-        }];
-        builder.identifier = [@"" stringByPaddingToLength:UAInAppMessageButtonInfoIDLimit withString:@"ID" startingAtIndex:0];
-    }];
-    
-    XCTAssertNotNil(buttonInfo);
-    XCTAssertEqual(buttonInfo.borderRadius, 10);
-    XCTAssertEqual(buttonInfo.borderRadiusPoints, 10.5);
-    
-    fromJSON = [UAInAppMessageButtonInfo buttonInfoWithJSON:[buttonInfo toJSON] error:nil];
-    XCTAssertEqualObjects(fromJSON,buttonInfo);
-}
-#pragma GCC diagnostic pop
 
 @end
 

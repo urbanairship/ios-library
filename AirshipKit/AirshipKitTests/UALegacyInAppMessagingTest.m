@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import <UIKit/UIKit.h>
 #import "UABaseTest.h"
@@ -118,7 +118,7 @@
         void *arg;
         [invocation getArgument:&arg atIndex:3];
         void (^completionHandler)(NSArray<UASchedule *> *schedules) = (__bridge void(^)(NSArray<UASchedule *> *))arg;
-        UASchedule *dummySchedule = [UASchedule scheduleWithIdentifier:@"foo" info:[UAScheduleInfo new]];
+        UASchedule *dummySchedule = [UASchedule scheduleWithIdentifier:@"foo" info:[UAScheduleInfo new] metadata:@{}];
         completionHandler(@[dummySchedule]);
     }] getSchedulesWithMessageID:[OCMArg any] completionHandler:[OCMArg any]];
 
@@ -209,8 +209,7 @@
     UANotificationResponse *response = [UANotificationResponse notificationResponseWithNotificationInfo:notification
                                                                                        actionIdentifier:UANotificationDefaultActionIdentifier
                                                                                            responseText:nil];
-
-    [[self.mockInAppMessageManager expect] scheduleMessageWithScheduleInfo:[OCMArg isKindOfClass:[UAInAppMessageScheduleInfo class]] completionHandler:[OCMArg any]];
+    [[self.mockInAppMessageManager expect] scheduleMessageWithScheduleInfo:[OCMArg isKindOfClass:[UAInAppMessageScheduleInfo class]] metadata:@{} completionHandler:[OCMArg any]];
 
     [self.inAppMessaging handleRemoteNotification:response.notificationContent];
     XCTAssertNotNil(self.inAppMessaging.pendingMessageID);
@@ -252,7 +251,6 @@
     UANotificationResponse *response = [UANotificationResponse notificationResponseWithNotificationInfo:notification
                                                                                        actionIdentifier:UANotificationDefaultActionIdentifier
                                                                                            responseText:nil];
-
     [[[self.mockInAppMessageManager expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:2];
@@ -260,7 +258,7 @@
         UAInAppMessageBannerDisplayContent *displayContent = (UAInAppMessageBannerDisplayContent *)info.message.displayContent;
         BOOL containsOpenInboxAction = displayContent.actions[kUADisplayInboxActionDefaultRegistryName] || displayContent.actions[kUADisplayInboxActionDefaultRegistryAlias];
         XCTAssertTrue(containsOpenInboxAction);
-    }] scheduleMessageWithScheduleInfo:[OCMArg isKindOfClass:[UAInAppMessageScheduleInfo class]] completionHandler:[OCMArg any]];
+    }] scheduleMessageWithScheduleInfo:[OCMArg isKindOfClass:[UAInAppMessageScheduleInfo class]] metadata:@{} completionHandler:[OCMArg any]];
 
     [self.inAppMessaging handleRemoteNotification:response.notificationContent];
     XCTAssertNotNil(self.inAppMessaging.pendingMessageID);
@@ -288,14 +286,13 @@
     UANotificationResponse *response = [UANotificationResponse notificationResponseWithNotificationInfo:notification
                                                                                        actionIdentifier:UANotificationDefaultActionIdentifier
                                                                                            responseText:nil];
-
     [[[self.mockInAppMessageManager expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:2];
         UAInAppMessageScheduleInfo *info = (__bridge UAInAppMessageScheduleInfo *)arg;
         UAInAppMessageBannerDisplayContent *displayContent = (UAInAppMessageBannerDisplayContent *)info.message.displayContent;
         XCTAssertEqualObjects(displayContent.actions[@"^mc"], @"AUTO");
-    }] scheduleMessageWithScheduleInfo:[OCMArg isKindOfClass:[UAInAppMessageScheduleInfo class]] completionHandler:[OCMArg any]];
+    }] scheduleMessageWithScheduleInfo:[OCMArg isKindOfClass:[UAInAppMessageScheduleInfo class]] metadata:@{} completionHandler:[OCMArg any]];
 
     [self.inAppMessaging handleRemoteNotification:response.notificationContent];
 }
@@ -320,7 +317,7 @@
         [invocation getArgument:&arg atIndex:2];
         UAInAppMessageScheduleInfo *info = (__bridge UAInAppMessageScheduleInfo *)arg;
         XCTAssertEqual(info.message.source, UAInAppMessageSourceLegacyPush);
-    }] scheduleMessageWithScheduleInfo:[OCMArg isKindOfClass:[UAInAppMessageScheduleInfo class]] completionHandler:[OCMArg any]];
+    }] scheduleMessageWithScheduleInfo:[OCMArg isKindOfClass:[UAInAppMessageScheduleInfo class]] metadata:@{} completionHandler:[OCMArg any]];
 
     [self.inAppMessaging handleRemoteNotification:response.notificationContent];
     [self.mockInAppMessageManager verify];

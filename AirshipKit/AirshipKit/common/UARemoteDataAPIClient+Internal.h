@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import <Foundation/Foundation.h>
 #import "UAAPIClient+Internal.h"
@@ -34,22 +34,22 @@ typedef void (^UARemoteDataRefreshFailureBlock)(void);
 /**
  * Create the remote data API client.
  *
- * @param config The Urban Airship config.
+ * @param config The Airship config.
  * @param dataStore A UAPreferenceDataStore to store persistent preferences
  * @return The remote data API client instance.
  */
-+ (UARemoteDataAPIClient *)clientWithConfig:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore;
++ (UARemoteDataAPIClient *)clientWithConfig:(UARuntimeConfig *)config dataStore:(UAPreferenceDataStore *)dataStore;
 
 
 /**
  * Create the remote data API client. Used for testing.
  *
- * @param config The Urban Airship config.
+ * @param config The Airship config.
  * @param dataStore A UAPreferenceDataStore to store persistent preferences
  * @param session The UARequestSession session.
  * @return The remote data API client instance.
  */
-+ (UARemoteDataAPIClient *)clientWithConfig:(UAConfig *)config
++ (UARemoteDataAPIClient *)clientWithConfig:(UARuntimeConfig *)config
                                   dataStore:(UAPreferenceDataStore *)dataStore
                                     session:(UARequestSession *)session;
 

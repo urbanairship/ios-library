@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UARegistrationDelegateWrapper+Internal.h"
 #import "UADispatcher+Internal.h"
@@ -29,7 +29,6 @@
 
     SEL newSelector = @selector(notificationRegistrationFinishedWithAuthorizedSettings:categories:);
     SEL newSelectorWithStatus = @selector(notificationRegistrationFinishedWithAuthorizedSettings:categories:status:);
-    SEL oldSelector = @selector(notificationRegistrationFinishedWithOptions:categories:);
 
     if ([strongDelegate respondsToSelector:newSelector]) {
         [[UADispatcher mainDispatcher] dispatchAsync:^{
@@ -44,16 +43,6 @@
                                                                             status:status];
         }];
     }
-
-    if ([strongDelegate respondsToSelector:oldSelector]) {
-        [[UADispatcher mainDispatcher] dispatchAsync:^{
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-            UA_LWARN(@"Warning: %@ is deprecated and will be removed in SDK 11. Please use %@", NSStringFromSelector(oldSelector), NSStringFromSelector(newSelector));
-            [strongDelegate notificationRegistrationFinishedWithOptions:legacyOptions categories:categories];
-#pragma GCC diagnostic pop
-        }];
-    }
 }
 
 - (void)notificationAuthorizedSettingsDidChange:(UAAuthorizedNotificationSettings)authorizedSettings
@@ -62,18 +51,9 @@
     id strongDelegate = self.delegate;
 
     SEL newSelector = @selector(notificationAuthorizedSettingsDidChange:);
-    SEL oldSelector = @selector(notificationAuthorizedOptionsDidChange:);
 
     if ([strongDelegate respondsToSelector:newSelector]) {
         [strongDelegate notificationAuthorizedSettingsDidChange:authorizedSettings];
-    }
-
-    if ([strongDelegate respondsToSelector:oldSelector]) {
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-        UA_LWARN(@"Warning: %@ is deprecated and will be removed in SDK 11. Please use %@", NSStringFromSelector(oldSelector), NSStringFromSelector(newSelector));
-        [strongDelegate notificationAuthorizedOptionsDidChange:legacyOptions];
-#pragma GCC diagnostic pop
     }
 }
 

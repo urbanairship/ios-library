@@ -1,11 +1,11 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UANamedUser+Internal.h"
 #import "UANamedUserAPIClient+Internal.h"
 #import "UAPush+Internal.h"
 #import "UATagGroupsRegistrar+Internal.h"
 #import "UATagUtils+Internal.h"
-#import "UAConfig+Internal.h"
+#import "UARuntimeConfig.h"
 
 #define kUAMaxNamedUserIDLength 128
 
@@ -16,7 +16,7 @@ NSString *const UANamedUserLastUpdatedTokenKey = @"UANamedUserLastUpdatedToken";
 @interface UANamedUser()
 
 /**
- * The UATagGroupsRegistrar that manages tag group registration with Urban Airship.
+ * The UATagGroupsRegistrar that manages tag group registration with Airship.
  */
 @property (nonatomic, strong) UATagGroupsRegistrar *tagGroupsRegistrar;
 
@@ -24,7 +24,7 @@ NSString *const UANamedUserLastUpdatedTokenKey = @"UANamedUserLastUpdatedToken";
 
 @implementation UANamedUser
 
-- (instancetype)initWithPush:(UAPush *)push config:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore tagGroupsRegistrar:(UATagGroupsRegistrar *)tagGroupsRegistrar {
+- (instancetype)initWithPush:(UAPush *)push config:(UARuntimeConfig *)config dataStore:(UAPreferenceDataStore *)dataStore tagGroupsRegistrar:(UATagGroupsRegistrar *)tagGroupsRegistrar {
     self = [super initWithDataStore:dataStore];
     if (self) {
         self.config = config;
@@ -47,7 +47,7 @@ NSString *const UANamedUserLastUpdatedTokenKey = @"UANamedUserLastUpdatedToken";
 }
 
 + (instancetype) namedUserWithPush:(UAPush *)push
-                            config:(UAConfig *)config
+                            config:(UARuntimeConfig *)config
                          dataStore:(UAPreferenceDataStore *)dataStore
                 tagGroupsRegistrar:(nonnull UATagGroupsRegistrar *)tagGroupsRegistrar  {
     return [[UANamedUser alloc] initWithPush:push config:config dataStore:dataStore tagGroupsRegistrar:tagGroupsRegistrar];

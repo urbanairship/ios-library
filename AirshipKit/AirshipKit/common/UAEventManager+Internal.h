@@ -1,15 +1,15 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import <Foundation/Foundation.h>
 
 @class UAEvent;
-@class UAConfig;
+@class UARuntimeConfig;
 @class UAPreferenceDataStore;
 @class UAEventAPIClient;
 @class UAEventStore;
 
 /**
- * Event manager handles storing and uploading events to Urban Airship.
+ * Event manager handles storing and uploading events to Airship.
  */
 @interface UAEventManager : NSObject
 
@@ -57,7 +57,7 @@
  * @param dataStore The preference data store.
  * @return UAEventManager instance.
  */
-+ (instancetype)eventManagerWithConfig:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore;
++ (instancetype)eventManagerWithConfig:(UARuntimeConfig *)config dataStore:(UAPreferenceDataStore *)dataStore;
 
 /**
  * Factory method used for testing.
@@ -71,7 +71,7 @@
  * @param application The application.
  * @return UAEventManager instance.
  */
-+ (instancetype)eventManagerWithConfig:(UAConfig *)config
++ (instancetype)eventManagerWithConfig:(UARuntimeConfig *)config
                              dataStore:(UAPreferenceDataStore *)dataStore
                             eventStore:(UAEventStore *)eventStore
                                 client:(UAEventAPIClient *)client
@@ -80,7 +80,7 @@
                            application:(UIApplication *)application;
 
 /**
- * Adds an analytic event to be batched and uploaded to Urban Airship.
+ * Adds an analytic event to be batched and uploaded to Airship.
  *
  * @param event The analytic event.
  * @param sessionID The analytic session ID.

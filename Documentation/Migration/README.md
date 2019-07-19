@@ -1,4 +1,5 @@
 
-# Urban Airship iOS SDK Migration Guides
-* [Current Migration Guide](Migration%20Guide.md)
-* [Legacy Migration Guide](Migration%20Guide%20(Legacy).md)
+# Airship iOS SDK Migration Guides
+* [SDK 10.x to 11.x](migration-guide-10-11.md)
+* [SDK 9.x to 10.x](migration-guide-9-10.md)
+* [Older versions](migration-guide-legacy.md)

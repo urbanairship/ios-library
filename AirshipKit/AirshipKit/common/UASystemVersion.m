@@ -1,6 +1,6 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 #import "UAUtils+Internal.h"
-#import "UASystemVersion+Internal.h"
+#import "UASystemVersion.h"
 
 @implementation UASystemVersion
 

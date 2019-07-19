@@ -1,10 +1,10 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import <Foundation/Foundation.h>
 #import "UAAPIClient+Internal.h"
 
 @class UAUser;
-@class UAConfig;
+@class UARuntimeConfig;
 @class UAUserData;
 
 NS_ASSUME_NONNULL_BEGIN
@@ -40,18 +40,18 @@ typedef void (^UAUserAPIClientFailureBlock)(NSUInteger statusCode);
 
 /**
  * Factory method to create a UAUserAPIClient.
- * @param config The Urban Airship config.
+ * @param config The Airship config.
  * @return UAUserAPIClient instance.
  */
-+ (instancetype)clientWithConfig:(UAConfig *)config;
++ (instancetype)clientWithConfig:(UARuntimeConfig *)config;
 
 /**
  * Factory method to create a UAUserAPIClient.
- * @param config The Urban Airship config.
+ * @param config The Airship config.
  * @param session The request session.
  * @return UAUserAPIClient instance.
  */
-+ (instancetype)clientWithConfig:(UAConfig *)config session:(UARequestSession *)session;
++ (instancetype)clientWithConfig:(UARuntimeConfig *)config session:(UARequestSession *)session;
 
 /**
  * Create a user.

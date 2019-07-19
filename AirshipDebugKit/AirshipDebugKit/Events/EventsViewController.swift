@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 import UIKit
 import AirshipKit
@@ -17,8 +17,14 @@ class EventCell:UITableViewCell {
 }
 
 class EventsViewController:UIViewController, UITableViewDataSource, UITableViewDelegate, EventDataManagerDelegate {
-    @IBOutlet var tableView:UITableView!
-    @IBOutlet var searchFooter:SearchFooter!
+    @IBOutlet private weak var tableView:UITableView!
+    @IBOutlet private weak var searchFooter:SearchFooter!
+
+    @IBOutlet var navAddButton: UIBarButtonItem!
+    @IBOutlet var storageOptionsButton: UIBarButtonItem!
+
+    var launchPathComponents : [String]?
+    var launchCompletionHandler : (() -> Void)?
 
     let defaultEventCellHeight:CGFloat = 64
 
@@ -37,10 +43,14 @@ class EventsViewController:UIViewController, UITableViewDataSource, UITableViewD
         tableView.reloadData()
     }
 
+    func setTableViewTheme() {
+        tableView.backgroundColor = ThemeManager.shared.currentTheme.Background;
+        navigationController?.navigationBar.titleTextAttributes = [.foregroundColor:ThemeManager.shared.currentTheme.NavigationBarText]
+        navigationController?.navigationBar.barTintColor = ThemeManager.shared.currentTheme.NavigationBarBackground;
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title:"Storage Options", style:UIBarButtonItem.Style.plain, target:self, action:#selector(showOptions))
 
         searchController.searchResultsUpdater = self
         searchController.obscuresBackgroundDuringPresentation = false
@@ -62,7 +72,8 @@ class EventsViewController:UIViewController, UITableViewDataSource, UITableViewD
 
         searchController.searchBar.searchBarStyle = .prominent
         searchController.searchBar.showsScopeBar = false
-        searchController.searchBar.tintColor = #colorLiteral(red: 0.5333333333, green: 0.7137254902, blue: 0.7843137255, alpha: 1)
+        searchController.searchBar.tintColor = ThemeManager.shared.currentTheme.NavigationBarText
+        searchController.searchBar.barTintColor = ThemeManager.shared.currentTheme.NavigationBarText
 
         searchController.searchBar.delegate = self
         tableView.delegate = self
@@ -78,7 +89,7 @@ class EventsViewController:UIViewController, UITableViewDataSource, UITableViewD
         tableView.reloadData()
     }
 
-    @objc func showOptions() {
+    @IBAction func showOptions() {
         let actionSheet = UIAlertController(title:"Set Storage Days", message:"For how many days would you like events to be tracked? Current storage days: \(EventDataManager.shared.storageDays)", preferredStyle:.actionSheet)
 
         let actionInfos = ["2 Days": 2, "5 Days": 5, "10 Days": 10, "30 Days": 30]
@@ -95,15 +106,23 @@ class EventsViewController:UIViewController, UITableViewDataSource, UITableViewD
             self.dismiss(animated:true)
         }))
 
+        actionSheet.popoverPresentationController?.sourceView = self.view
         present(actionSheet, animated:true)
     }
 
     override func viewWillAppear(_ animated:Bool) {
+        super.viewWillAppear(animated)
+
         if let selectionIndexPath = tableView.indexPathForSelectedRow {
             tableView.deselectRow(at:selectionIndexPath, animated:animated)
         }
 
-        super.viewWillAppear(animated)
+        setTableViewTheme()
+    }
+
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+        searchController.searchBar.setSearchTheme(color: ThemeManager.shared.currentTheme.SecondaryText)
     }
 
     override func didReceiveMemoryWarning() {
@@ -131,8 +150,12 @@ class EventsViewController:UIViewController, UITableViewDataSource, UITableViewD
         event = displayEvents[indexPath.row]
 
         cell.eventID.text = event.eventID
+        cell.eventID.textColor = ThemeManager.shared.currentTheme.SecondaryText
         cell.eventType.text = event.eventType
+        cell.eventType.textColor = ThemeManager.shared.currentTheme.PrimaryText
         cell.time.text = event.time.toPrettyDateString()
+        cell.time.textColor = ThemeManager.shared.currentTheme.SecondaryText
+        cell.backgroundColor = ThemeManager.shared.currentTheme.Background
 
         return cell
     }
@@ -211,5 +234,44 @@ extension EventsViewController:UISearchResultsUpdating {
         let searchBar = searchController.searchBar
         let scope = scopeTitleToTimeWindow(title:searchBar.scopeButtonTitles![searchBar.selectedScopeButtonIndex])
         filterContentForSearchText(searchController.searchBar.text!, timeWindow:scope)
+    }
+}
+
+extension UISearchBar {
+
+    func getSearchField() -> UITextField? {
+        return self.value(forKey: "searchField") as? UITextField
+    }
+
+    func setSearchTheme(color: UIColor) {
+        setTextColor(color: color)
+        setPlaceholderTextColor(color: color)
+        setMagnifyingGlassColorTo(color: color)
+        setClearButtonColorTo(color: color)
+    }
+
+    func setTextColor(color: UIColor) {
+        let textFieldInsideSearchBar = getSearchField()
+        textFieldInsideSearchBar?.textColor = color
+    }
+
+    func setPlaceholderTextColor(color: UIColor) {
+        guard let textFieldInsideSearchBar = getSearchField() else { return }
+        let textFieldInsideSearchBarLabel = textFieldInsideSearchBar.value(forKey: "placeholderLabel") as? UILabel
+        textFieldInsideSearchBarLabel?.textColor = color
+    }
+
+    func setMagnifyingGlassColorTo(color: UIColor) {
+        let textFieldInsideSearchBar = getSearchField()
+        let glassIconView = textFieldInsideSearchBar?.leftView as? UIImageView
+        glassIconView?.image = glassIconView?.image?.withRenderingMode(.alwaysTemplate)
+        glassIconView?.tintColor = color
+    }
+
+    func setClearButtonColorTo(color: UIColor) {
+        let textFieldInsideSearchBar = getSearchField()
+        let crossIconView = textFieldInsideSearchBar?.value(forKey: "clearButton") as? UIButton
+        crossIconView?.setImage(crossIconView?.currentImage?.withRenderingMode(.alwaysTemplate), for: .normal)
+        crossIconView?.tintColor = color
     }
 }

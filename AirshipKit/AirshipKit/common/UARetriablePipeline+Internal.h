@@ -1,8 +1,9 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import <Foundation/Foundation.h>
 #import "UARetriable+Internal.h"
 #import "UADispatcher+Internal.h"
+#import "UAAsyncOperation+Internal.h"
 
 /**
  * An interface for running retriables with optional operation dependency semantics,
@@ -26,12 +27,16 @@
 
 /**
  * Adds a retriable to the queue.
+ *
+ * @param retriable The UARetriable to add to the queue.
  */
 - (void)addRetriable:(UARetriable *)retriable;
 
 /**
  * Adds an array of retriables to the queue, with implicit operation dependencies in
  * array order.
+ *
+ * @param retriables An NSArray of UARetriables to add to the queue.
  */
 - (void)addChainedRetriables:(NSArray<UARetriable *> *)retriables;
 

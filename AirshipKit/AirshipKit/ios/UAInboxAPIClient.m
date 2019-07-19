@@ -1,7 +1,7 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UAInboxAPIClient+Internal.h"
-#import "UAConfig.h"
+#import "UARuntimeConfig.h"
 #import "UAUser.h"
 #import "UAUtils+Internal.h"
 #import "NSJSONSerialization+UAAdditions.h"
@@ -21,7 +21,7 @@
 
 NSString *const UALastMessageListModifiedTime = @"UALastMessageListModifiedTime.%@";
 
-- (instancetype)initWithConfig:(UAConfig *)config session:(UARequestSession *)session user:(UAUser *)user dataStore:(UAPreferenceDataStore *)dataStore {
+- (instancetype)initWithConfig:(UARuntimeConfig *)config session:(UARequestSession *)session user:(UAUser *)user dataStore:(UAPreferenceDataStore *)dataStore {
     self = [super initWithConfig:config session:session];
 
     if (self) {
@@ -32,7 +32,7 @@ NSString *const UALastMessageListModifiedTime = @"UALastMessageListModifiedTime.
     return self;
 }
 
-+ (instancetype)clientWithConfig:(UAConfig *)config session:(UARequestSession *)session user:(UAUser *)user dataStore:(UAPreferenceDataStore *)dataStore {
++ (instancetype)clientWithConfig:(UARuntimeConfig *)config session:(UARequestSession *)session user:(UAUser *)user dataStore:(UAPreferenceDataStore *)dataStore {
     return [[UAInboxAPIClient alloc] initWithConfig:config session:session user:user dataStore:dataStore];
 }
 

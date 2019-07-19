@@ -1,23 +1,23 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UAChannelAPIClient+Internal.h"
 #import "UAChannelRegistrationPayload+Internal.h"
-#import "UAConfig.h"
+#import "UARuntimeConfig.h"
 #import "UAUtils+Internal.h"
 #import "UAirship.h"
 #import "UAAnalytics+Internal.h"
 #import "NSJSONSerialization+UAAdditions.h"
 #import "NSURLResponse+UAAdditions.h"
 
-#define kUAChannelCreateLocation @"/api/channels/"
+#define kUAChannelAPIPath @"/api/channels/"
 
 @implementation UAChannelAPIClient
 
-+ (instancetype)clientWithConfig:(UAConfig *)config {
++ (instancetype)clientWithConfig:(UARuntimeConfig *)config {
     return [UAChannelAPIClient clientWithConfig:config session:[UARequestSession sessionWithConfig:config]];
 }
 
-+ (instancetype)clientWithConfig:(UAConfig *)config session:(UARequestSession *)session {
++ (instancetype)clientWithConfig:(UARuntimeConfig *)config session:(UARequestSession *)session {
     return [[UAChannelAPIClient alloc] initWithConfig:config session:session];
 }
 
@@ -28,7 +28,7 @@
     UA_LTRACE(@"Creating channel with: %@.", payload);
 
     UARequest *request = [UARequest requestWithBuilderBlock:^(UARequestBuilder *builder) {
-        NSString *urlString = [NSString stringWithFormat:@"%@%@", self.config.deviceAPIURL, kUAChannelCreateLocation];
+        NSString *urlString = [NSString stringWithFormat:@"%@%@", self.config.deviceAPIURL, kUAChannelAPIPath];
         builder.URL = [NSURL URLWithString:urlString];
         builder.method = @"POST";
         builder.username = self.config.appKey;
@@ -60,19 +60,20 @@
 
         // Parse the response
         NSString *channelID = [jsonResponse valueForKey:@"channel_id"];
-        NSString *channelLocation = [httpResponse.allHeaderFields valueForKey:@"Location"];
         BOOL existing = httpResponse.statusCode == 200;
 
-        successBlock(channelID, channelLocation, existing);
+        successBlock(channelID, existing);
     }];
 }
 
-- (void)updateChannelWithLocation:(NSString *)channelLocation
-                      withPayload:(UAChannelRegistrationPayload *)payload
-                        onSuccess:(UAChannelAPIClientUpdateSuccessBlock)successBlock
-                        onFailure:(UAChannelAPIClientFailureBlock)failureBlock {
+- (void)updateChannelWithID:(NSString *)channelID
+                withPayload:(UAChannelRegistrationPayload *)payload
+                  onSuccess:(UAChannelAPIClientUpdateSuccessBlock)successBlock
+                  onFailure:(UAChannelAPIClientFailureBlock)failureBlock {
 
     UA_LTRACE(@"Updating channel with: %@.", payload);
+    
+    NSString *channelLocation = [NSString stringWithFormat:@"%@%@%@", self.config.deviceAPIURL, kUAChannelAPIPath, channelID];
 
     UARequest *request = [UARequest requestWithBuilderBlock:^(UARequestBuilder *builder) {
         builder.URL = [NSURL URLWithString:channelLocation];

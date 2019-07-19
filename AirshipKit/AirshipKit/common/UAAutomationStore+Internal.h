@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import <Foundation/Foundation.h>
 #import "UAScheduleTrigger+Internal.h"
@@ -9,7 +9,7 @@ NS_ASSUME_NONNULL_BEGIN
 @class UASchedule;
 @class UAScheduleData;
 @class UAScheduleTriggerData;
-@class UAConfig;
+@class UARuntimeConfig;
 
 /**
  * Manager class for the Automation CoreData store.

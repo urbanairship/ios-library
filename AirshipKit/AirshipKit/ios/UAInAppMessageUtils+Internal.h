@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
@@ -10,6 +10,7 @@
 #import "UAInAppMessageAdapterProtocol.h"
 #import "UAInAppMessageMediaView+Internal.h"
 #import "UAInAppMessageDismissButton+Internal.h"
+#import "UAInAppMessageAssets.h"
 
 @interface UAInAppMessageUtils : NSObject
 
@@ -47,28 +48,11 @@
 + (void)applyCloseButtonImageConstraintsToContainer:(UIView *)container closeButtonImageView:(UIImageView *)contained;
 
 /**
- * Caches url data contents using a background thread. Calls completion handler on main thread
- * with cache key under which the cached contents are stored.
- *
- * @param url The url of the data contents you wish to cache.
- * @param cache The cache instance.
- * @param completionHandler The completion handler with cache key for pulling conents out of cache, and a result status.
- */
-+ (void)prefetchContentsOfURL:(NSURL *)url WithCache:(NSCache *)cache completionHandler:(void (^)(NSString *cacheKey, UAInAppMessagePrepareResult result))completionHandler;
-
-/**
  * Runs actions for a button.
  *
  * @param button The button.
  */
 + (void)runActionsForButton:(UAInAppMessageButton *)button;
-
-/**
- * Creates an NSCache for the adapter's media.
- *
- * @return The NSCache
- */
-+ (NSCache *)createImageCache;
 
 /**
  * Applies padding on the view to match the provided padding style object.
@@ -93,10 +77,10 @@
  * Prepares in-app message to display.
  *
  * @param media media info object for this message
- * @param imageCache the cache for images
+ * @param assets the assets for this message
  * @param completionHandler the completion handler to be called when media is ready.
  */
-+ (void)prepareMediaView:(UAInAppMessageMediaInfo *)media imageCache:(NSCache *)imageCache completionHandler:(void (^)(UAInAppMessagePrepareResult, UAInAppMessageMediaView *))completionHandler;
++ (void)prepareMediaView:(UAInAppMessageMediaInfo *)media assets:(UAInAppMessageAssets *)assets completionHandler:(void (^)(UAInAppMessagePrepareResult, UAInAppMessageMediaView *))completionHandler;
 
 /**
  * Informs the adapter of the ready state of the in-app message immediately before display.

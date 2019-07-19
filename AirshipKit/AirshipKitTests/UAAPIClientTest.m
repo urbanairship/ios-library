@@ -1,8 +1,8 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UABaseTest.h"
 #import "UAAPIClient+Internal.h"
-#import "UAConfig.h"
+#import "UARuntimeConfig.h"
 
 @interface UAAPIClientTest : UABaseTest
 @property(nonatomic, strong) UAAPIClient *client;
@@ -14,7 +14,7 @@
 - (void)setUp {
     [super setUp];
     self.mockSession = [self mockForClass:[UARequestSession class]];
-    self.client = [[UAAPIClient alloc] initWithConfig:[UAConfig config] session:self.mockSession];
+    self.client = [[UAAPIClient alloc] initWithConfig:self.config session:self.mockSession];
 }
 
 

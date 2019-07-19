@@ -1,15 +1,16 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import <XCTest/XCTest.h>
 #import <OCMock/OCMock.h>
 
-#import "UARemoteDataManager+Internal.h"
 #import "UARemoteDataAPIClient+Internal.h"
+#import "UARemoteDataManager+Internal.h"
+
 #import "UARemoteDataPayload+Internal.h"
 #import "UARemoteDataStore+Internal.h"
 
 #import "UAPreferenceDataStore+Internal.h"
-#import "UAConfig+Internal.h"
+#import "UARuntimeConfig.h"
 #import "UAUtils+Internal.h"
 
 #import "UABaseTest.h"
@@ -42,8 +43,11 @@
 @property (nonatomic, strong) UARemoteDataManager *remoteDataManager;
 @property (nonatomic, strong) UATestRemoteDataStore *testStore;
 
+@property (nonatomic, strong) NSDictionary *expectedMetadata;
+
 @property (nonatomic, strong) NSArray<NSDictionary *> *remoteDataFromCloud;
 @property (nonatomic, assign) BOOL expectAPIClientFetch;
+
 
 @end
 
@@ -60,6 +64,7 @@
     self.testStore = [UATestRemoteDataStore storeWithName:@"UARemoteDataManagerTest." inMemory:YES];
     self.remoteDataManager = [self createManager];
     self.expectAPIClientFetch = YES;
+    self.expectedMetadata = [self.remoteDataManager createMetadata:[NSLocale autoupdatingCurrentLocale]];
 }
 
 - (void)tearDown {
@@ -74,7 +79,7 @@
 
 - (void)testUnsubscribe {
     // set up test data and expectations
-    NSMutableArray<UARemoteDataPayload *> *testPayloads = [[self createNPayloadsAndSetupTest:1] mutableCopy];
+    NSMutableArray<UARemoteDataPayload *> *testPayloads = [[self createNPayloadsAndSetupTest:1 metadata:self.expectedMetadata] mutableCopy];
 
     UADisposable *subscription = [self.remoteDataManager subscribeWithTypes:[testPayloads valueForKeyPath:@"type"] block:^(NSArray<UARemoteDataPayload *> * _Nonnull remoteDataArray) {
         XCTFail(@"Should never get any data");
@@ -95,7 +100,7 @@
 // payload should be published to client
 - (void)testSuccessfulRefresh {
     // set up test data and expectations
-    NSMutableArray<UARemoteDataPayload *> *testPayloads = [[self createNPayloadsAndSetupTest:1] mutableCopy];
+    NSMutableArray<UARemoteDataPayload *> *testPayloads = [[self createNPayloadsAndSetupTest:1 metadata:self.expectedMetadata] mutableCopy];
 
     __block XCTestExpectation *receivedDataExpectation = [self expectationWithDescription:[NSString stringWithFormat:@"Received remote data"]];
 
@@ -107,7 +112,7 @@
                 [receivedDataExpectation fulfill];
 
                 XCTAssert([remoteDataArray count] == 1);
-                XCTAssertEqualObjects([NSCountedSet setWithArray:testPayloads],[NSCountedSet setWithArray:remoteDataArray]);
+                XCTAssertEqualObjects([NSCountedSet setWithArray:testPayloads], [NSCountedSet setWithArray:remoteDataArray]);
                 break;
             default:
                 XCTFail(@"Should only be one notification");
@@ -131,7 +136,7 @@
 // simulate 504 failure from cloud
 - (void)testFailedRefresh {
     // set up test data and expectations
-    NSMutableArray<UARemoteDataPayload *> *testPayloads = [[self createNPayloadsAndSetupTest:1 withHTTPStatus:504] mutableCopy];
+    NSMutableArray<UARemoteDataPayload *> *testPayloads = [[self createNPayloadsAndSetupTest:1 metadata:self.expectedMetadata withHTTPStatus:504] mutableCopy];
 
     // subscribe to remote data manager and observe notifications
     UADisposable *subscription = [self.remoteDataManager subscribeWithTypes:[testPayloads valueForKeyPath:@"type"] block:^(NSArray<UARemoteDataPayload *> * _Nonnull remoteDataArray) {
@@ -157,7 +162,7 @@
     self.testStore.failOverwriteCachedRemoteDataWithResponse = YES;
 
     // set up test data and expectations
-    NSMutableArray<UARemoteDataPayload *> *testPayloads = [[self createNPayloadsAndSetupTest:1] mutableCopy];
+    NSMutableArray<UARemoteDataPayload *> *testPayloads = [[self createNPayloadsAndSetupTest:1 metadata:self.expectedMetadata] mutableCopy];
 
     // subscribe to remote data manager and observe notifications
     UADisposable *subscription = [self.remoteDataManager subscribeWithTypes:[testPayloads valueForKeyPath:@"type"] block:^(NSArray<UARemoteDataPayload *> * _Nonnull remoteDataArray) {
@@ -177,14 +182,12 @@
 
 // client (test) subscribes to remote data manager
 // simulate one payload from cloud
-// payload should be published to client
-- (void)testSuccessfulRefreshNoData {
+// payload should not be published to client
+- (void)testFailedRefreshNoData {
     // set up test data and expectations
-    [self createNPayloadsAndSetupTest:0 withHTTPStatus:200];
+     NSArray<UARemoteDataPayload *> *testPayloads = [self createNPayloadsAndSetupTest:0 metadata:self.expectedMetadata withHTTPStatus:200];
 
-    // subscribe to remote data manager and observe notifications
-    NSArray<NSString *> *types = @[[[NSProcessInfo processInfo] globallyUniqueString]];
-    UADisposable *subscription = [self.remoteDataManager subscribeWithTypes:types block:^(NSArray<UARemoteDataPayload *> * _Nonnull remoteDataArray) {
+    UADisposable *subscription = [self.remoteDataManager subscribeWithTypes:[testPayloads valueForKeyPath:@"type"] block:^(NSArray<UARemoteDataPayload *> * _Nonnull remoteDataArray) {
         XCTFail(@"Callback should not fire when there is no data");
     }];
     XCTAssertNotNil(subscription);
@@ -199,7 +202,6 @@
     [subscription dispose];
 }
 
-
 // client (test) subscribes to remote data manager
 // simulate one payload from cloud
 // payload should be published to client
@@ -207,7 +209,7 @@
 // payload should not be published to client
 - (void)testSuccessfulRefreshPayloadDoesntChange {
     // set up test 1
-    NSMutableArray<UARemoteDataPayload *> *testPayloads = [[self createNPayloadsAndSetupTest:1] mutableCopy];
+    NSMutableArray<UARemoteDataPayload *> *testPayloads = [[self createNPayloadsAndSetupTest:1 metadata:self.expectedMetadata] mutableCopy];
 
     __block XCTestExpectation *receivedDataExpectation = [self expectationWithDescription:[NSString stringWithFormat:@"Received remote data"]];
 
@@ -256,7 +258,7 @@
 // payload should be published to client
 - (void)testSuccessfulRefreshPayloadChanged {
     // set up test data and expectations
-    NSMutableArray<UARemoteDataPayload *> *testPayloads = [[self createNPayloadsAndSetupTest:1] mutableCopy];
+    NSMutableArray<UARemoteDataPayload *> *testPayloads = [[self createNPayloadsAndSetupTest:1 metadata:self.expectedMetadata] mutableCopy];
 
     __block XCTestExpectation *receivedDataExpectation = [self expectationWithDescription:[NSString stringWithFormat:@"Received remote data of type: %@",testPayloads[0].type]];
 
@@ -301,13 +303,81 @@
 }
 
 // client (test) subscribes to remote data manager
+// simulate one payload from cloud
+// payload should be published to client
+// simulate changed metadata from cloud
+// payload with new metadata should be published to client
+- (void)testSuccessfulRefreshMetadataChanged {
+    // set up test data and expectations
+    NSMutableArray<UARemoteDataPayload *> *testPayloads = [[self createNPayloadsAndSetupTest:1 metadata:self.expectedMetadata] mutableCopy];
+
+    __block XCTestExpectation *receivedDataExpectation = [self expectationWithDescription:[NSString stringWithFormat:@"Received remote data of type: %@", testPayloads[0].type]];
+
+    // test
+    // subscribe to remote data manager and observe notifications
+    __block NSUInteger callbackCount = 0;
+    UADisposable *subscription = [self.remoteDataManager subscribeWithTypes:[testPayloads valueForKeyPath:@"type"] block:^(NSArray<UARemoteDataPayload *> * _Nonnull remoteDataArray) {
+        switch(callbackCount) {
+            case 0:
+                [receivedDataExpectation fulfill];
+
+                XCTAssert([remoteDataArray count] == 1);
+                XCTAssertEqualObjects([NSCountedSet setWithArray:testPayloads], [NSCountedSet setWithArray:remoteDataArray]);
+                break;
+            case 1:
+                [receivedDataExpectation fulfill];
+
+                XCTAssert([remoteDataArray count] == 1);
+
+                // Make the expected metadata change to the expected payload
+                XCTAssertEqualObjects([NSCountedSet setWithArray:testPayloads], [NSCountedSet setWithArray:remoteDataArray]);
+                break;
+            default:
+                XCTFail(@"Should only be two notifications");
+                break;
+        }
+        callbackCount++;
+    }];
+
+    XCTAssertNotNil(subscription);
+
+    [self refresh];
+
+    // verify
+    [self waitForTestExpectations];
+
+    // setup with changed mocked payload
+    NSString *expectedChangedLocaleString = @"changed-locale";
+    NSLocale *locale = [[NSLocale alloc] initWithLocaleIdentifier:expectedChangedLocaleString];
+    id mockLocaleClass = [self strictMockForClass:[NSLocale class]];
+    [[[mockLocaleClass stub] andReturn:locale] autoupdatingCurrentLocale];
+
+    // Update with mocked metadata locale
+    testPayloads[0] = [self updatePayloadMetadata:testPayloads[0]];
+    [self setupTestWithPayloads:testPayloads];
+
+    receivedDataExpectation = [self expectationWithDescription:[NSString stringWithFormat:@"Received remote data"]];
+
+    // test
+    [self refresh];
+
+    // verify
+    [self waitForTestExpectations];
+
+    // cleanup
+    [subscription dispose];
+
+    [mockLocaleClass stopMocking];
+}
+
+// client (test) subscribes to remote data manager
 // simulate multiple payloads from cloud
 // payloads should be published to client
 // simulate same payloads from cloud
 // payloads should not be published to client
 - (void)testMultiplePayloadsNoneHaveChanged {
     // setup
-    NSMutableArray<UARemoteDataPayload *> *testPayloads = [[self createNPayloadsAndSetupTest:2] mutableCopy];
+    NSMutableArray<UARemoteDataPayload *> *testPayloads = [[self createNPayloadsAndSetupTest:2 metadata:self.expectedMetadata] mutableCopy];
 
     __block XCTestExpectation *receivedDataExpectation = [self expectationWithDescription:[NSString stringWithFormat:@"Received remote data"",testPayload.type"]];
 
@@ -355,7 +425,7 @@
 // payloads should be published to client
 - (void)testMultiplePayloadsAllHaveChanged {
     // setup
-    NSMutableArray<UARemoteDataPayload *> *testPayloads = [[self createNPayloadsAndSetupTest:2] mutableCopy];
+    NSMutableArray<UARemoteDataPayload *> *testPayloads = [[self createNPayloadsAndSetupTest:2 metadata:self.expectedMetadata] mutableCopy];
 
     __block XCTestExpectation *receivedDataExpectation = [self expectationWithDescription:[NSString stringWithFormat:@"Received remote data"]];
 
@@ -407,7 +477,7 @@
 // all changed payloads should be published to client
 - (void)testMultiplePayloadsAllHaveChangedDataReceivedBeforeSubscription {
     // setup
-    NSMutableArray<UARemoteDataPayload *> *testPayloads = [[self createNPayloadsAndSetupTest:2] mutableCopy];
+    NSMutableArray<UARemoteDataPayload *> *testPayloads = [[self createNPayloadsAndSetupTest:2 metadata:self.expectedMetadata] mutableCopy];
 
     [self refresh];
     [self waitForTestExpectations];
@@ -457,10 +527,10 @@
 // simulate multiple payloads from cloud
 // payloads should be published to client
 // simulate some changed payloads from cloud
-// only changed payloads should be published to client
+// all payloads should be published to client
 - (void)testMultiplePayloadsSomeHaveChanged {
     // setup
-    NSMutableArray<UARemoteDataPayload *> *testPayloads = [[self createNPayloadsAndSetupTest:2] mutableCopy];
+    NSMutableArray<UARemoteDataPayload *> *testPayloads = [[self createNPayloadsAndSetupTest:2 metadata:self.expectedMetadata] mutableCopy];
 
     __block XCTestExpectation *receivedDataExpectation = [self expectationWithDescription:[NSString stringWithFormat:@"Received remote data"]];
 
@@ -475,8 +545,7 @@
                 XCTAssertEqualObjects([NSCountedSet setWithArray:testPayloads],[NSCountedSet setWithArray:remoteDataArray]);
                 break;
             case 1:
-                XCTAssert([remoteDataArray count] == 1);
-                XCTAssertEqualObjects(testPayloads[1],remoteDataArray[0]);
+                XCTAssertEqualObjects(testPayloads, remoteDataArray);
                 break;
             default:
                 XCTFail(@"Should only be one notification");
@@ -484,6 +553,7 @@
         }
         callbackCount++;
     }];
+
     XCTAssertNotNil(subscription);
 
     [self refresh];
@@ -514,7 +584,7 @@
 // payloads should not be published to client
 - (void)testMultiplePayloadsPerTypeNoneHaveChanged {
     // setup
-    NSMutableArray<UARemoteDataPayload *> *testPayloads = [[self createNPayloadsAndSetupTest:2] mutableCopy];
+    NSMutableArray<UARemoteDataPayload *> *testPayloads = [[self createNPayloadsAndSetupTest:2 metadata:self.expectedMetadata] mutableCopy];
     // add a third payload that is of the same type as the first payload
     [testPayloads addObject:[self changePayload:testPayloads[0]]];
     [self replaceTestPayloads:testPayloads];
@@ -558,127 +628,6 @@
     [subscription dispose];
 }
 
-// client (test) subscribes to remote data manager
-// simulate multiple payloads from cloud, with at least two of a single type
-// all payloads should be published to client
-// change one of the payloads for that single type
-// simulate changed payloads from cloud
-// only changed payloads for that single type should be published to client
-- (void)testMultiplePayloadsPerTypeOneOfMultiplePerTypeHasChanged {
-    // setup
-    NSMutableArray<UARemoteDataPayload *> *testPayloads = [[self createNPayloadsAndSetupTest:2] mutableCopy];
-    // add a third payload that is of the same type as the first payload
-    [testPayloads addObject:[self changePayload:testPayloads[0]]];
-    [self replaceTestPayloads:testPayloads];
-
-    __block XCTestExpectation *receivedDataExpectation = [self expectationWithDescription:[NSString stringWithFormat:@"Received remote data"",testPayload.type"]];
-
-    // test
-    // subscribe to remote data manager and observe notifications
-    __block NSUInteger callbackCount = 0;
-    UADisposable *subscription = [self.remoteDataManager subscribeWithTypes:[testPayloads valueForKeyPath:@"type"] block:^(NSArray<UARemoteDataPayload *> * _Nonnull remoteDataArray) {
-        [receivedDataExpectation fulfill];
-        switch(callbackCount) {
-            case 0:
-                XCTAssert([remoteDataArray count] == 3,@"array count is %lu, but should be 3",remoteDataArray.count);
-                XCTAssertTrue([[NSCountedSet setWithArray:testPayloads] isEqualToSet:[NSCountedSet setWithArray:remoteDataArray]],@"published data does not match cloud data");
-                break;
-            case 1: {
-                XCTAssert([remoteDataArray count] == 1,@"array count is %lu, but should be 1",remoteDataArray.count);
-                XCTAssertEqualObjects(testPayloads[0],remoteDataArray[0],@"published data does not match cloud data");
-                break;
-            }
-            default:
-                XCTFail(@"Should only be two notifications");
-                break;
-        }
-        callbackCount++;
-    }];
-    XCTAssertNotNil(subscription);
-
-    [self refresh];
-
-    // verify
-    [self waitForTestExpectations];
-
-    // setup with changed payload
-    testPayloads[0] = [self changePayload:testPayloads[2]];
-    [self setupTestWithPayloads:testPayloads];
-    receivedDataExpectation = [self expectationWithDescription:[NSString stringWithFormat:@"Received remote data"]];
-
-    // test
-    [self refresh];
-
-    // verify
-    [self waitForTestExpectations];
-    XCTAssert(callbackCount == 2);
-
-    // cleanup
-    [subscription dispose];
-}
-
-// client (test) subscribes to remote data manager
-// simulate multiple payloads from cloud, with at least two of a single type
-// all payloads should be published to client
-// change all of the payloads for that single type
-// simulate changed payloads from cloud
-// only changed payloads for that single type should be published to client
-- (void)testMultiplePayloadsPerTypeAllOfMultiplePerTypeHasChanged {
-    // setup
-    NSMutableArray<UARemoteDataPayload *> *testPayloads = [[self createNPayloadsAndSetupTest:2] mutableCopy];
-    // add a third payload that is of the same type as the first payload
-    [testPayloads addObject:[self changePayload:testPayloads[0]]];
-    [self replaceTestPayloads:testPayloads];
-
-    __block XCTestExpectation *receivedDataExpectation = [self expectationWithDescription:[NSString stringWithFormat:@"Received remote data"",testPayload.type"]];
-
-    // test
-    // subscribe to remote data manager and observe notifications
-    __block NSUInteger callbackCount = 0;
-    UADisposable *subscription = [self.remoteDataManager subscribeWithTypes:[testPayloads valueForKeyPath:@"type"] block:^(NSArray<UARemoteDataPayload *> * _Nonnull remoteDataArray) {
-        [receivedDataExpectation fulfill];
-        switch(callbackCount) {
-            case 0:
-                XCTAssert([remoteDataArray count] == 3,@"array count is %lu, but should be 3",remoteDataArray.count);
-                XCTAssertTrue([[NSCountedSet setWithArray:testPayloads] isEqualToSet:[NSCountedSet setWithArray:remoteDataArray]],@"published data does not match cloud data");
-                break;
-            case 1: {
-                XCTAssert([remoteDataArray count] == 2,@"array count is %lu, but should be 2",remoteDataArray.count);
-                NSMutableArray *expectedPayloads = [testPayloads mutableCopy];
-                [expectedPayloads removeObjectAtIndex:1];
-                XCTAssertTrue([[NSCountedSet setWithArray:expectedPayloads] isEqualToSet:[NSCountedSet setWithArray:remoteDataArray]],@"published data does not match cloud data");
-                break;
-            }
-            default:
-                XCTFail(@"Should only be two notifications");
-                break;
-        }
-        callbackCount++;
-    }];
-    XCTAssertNotNil(subscription);
-
-    [self refresh];
-
-    // verify
-    [self waitForTestExpectations];
-
-    // setup with changed payload
-    testPayloads[0] = [self changePayload:testPayloads[2]];
-    testPayloads[2] = [self changePayload:testPayloads[2]];
-    [self setupTestWithPayloads:testPayloads];
-    receivedDataExpectation = [self expectationWithDescription:[NSString stringWithFormat:@"Received remote data"]];
-
-    // test
-    [self refresh];
-
-    // verify
-    [self waitForTestExpectations];
-    XCTAssert(callbackCount == 2);
-
-    // cleanup
-    [subscription dispose];
-}
-
 - (void)testSettingRefreshInterval {
     XCTAssertEqual(self.remoteDataManager.remoteDataRefreshInterval,0);
     self.remoteDataManager.remoteDataRefreshInterval = 9999;
@@ -687,7 +636,7 @@
 
 - (void)testRefreshInterval {
     // set up test data
-    NSMutableArray<UARemoteDataPayload *> *testPayloads = [[self createNPayloadsAndSetupTest:1] mutableCopy];
+    NSMutableArray<UARemoteDataPayload *> *testPayloads = [[self createNPayloadsAndSetupTest:1 metadata:self.expectedMetadata] mutableCopy];
 
     __block XCTestExpectation *receivedDataExpectation;
 
@@ -746,7 +695,7 @@
 - (void)testAppLocaleChange {
     __block XCTestExpectation *receivedDataExpectation;
 
-    NSMutableArray<UARemoteDataPayload *> *testPayloads = [[self createNPayloadsAndSetupTest:1] mutableCopy];
+    NSMutableArray<UARemoteDataPayload *> *testPayloads = [[self createNPayloadsAndSetupTest:1 metadata:self.expectedMetadata] mutableCopy];
 
     // change the locale identifier to en_01
     id mockedLocale = [self mockForClass:[NSLocale class]];
@@ -773,7 +722,7 @@
     [self waitForTestExpectations];
 
     // set up new payloads
-    testPayloads = [[self createNPayloadsAndSetupTest:1] mutableCopy];
+    testPayloads = [[self createNPayloadsAndSetupTest:1 metadata:self.expectedMetadata] mutableCopy];
 
     // create a new remote data manager, which should not cause a refresh due to the unchanged app locale
     [subscription dispose];
@@ -802,7 +751,7 @@
 - (void)testAppVersionChange {
     __block XCTestExpectation *receivedDataExpectation;
 
-    NSMutableArray<UARemoteDataPayload *> *testPayloads = [[self createNPayloadsAndSetupTest:1] mutableCopy];
+    NSMutableArray<UARemoteDataPayload *> *testPayloads = [[self createNPayloadsAndSetupTest:1 metadata:self.expectedMetadata] mutableCopy];
 
     // change the app version
     id mockedBundle = [self mockForClass:[NSBundle class]];
@@ -829,7 +778,7 @@
     [self waitForTestExpectations];
 
     // set up new payloads
-    testPayloads = [[self createNPayloadsAndSetupTest:1] mutableCopy];
+    testPayloads = [[self createNPayloadsAndSetupTest:1 metadata:self.expectedMetadata] mutableCopy];
 
     // create a new remote data manager, which should not cause a refresh due to the unchanged app version
     [subscription dispose];
@@ -858,6 +807,17 @@
 #pragma mark -
 #pragma mark Utility Methods
 
+- (UARemoteDataPayload *)updatePayloadMetadata:(UARemoteDataPayload *)testPayload {
+    UARemoteDataPayload *newTestPayload = [testPayload copy];
+
+    NSTimeInterval secondsPerHour = 60 * 60;
+
+    newTestPayload.timestamp = [testPayload.timestamp dateByAddingTimeInterval:1 * secondsPerHour];
+    newTestPayload.metadata = [self.remoteDataManager createMetadata:[NSLocale autoupdatingCurrentLocale]];
+
+    return newTestPayload;
+}
+
 - (UARemoteDataPayload *)changePayload:(UARemoteDataPayload *)testPayload {
     UARemoteDataPayload *newTestPayload = [testPayload copy];
 
@@ -874,11 +834,11 @@
     return newTestPayload;
 }
 
-- (NSArray<UARemoteDataPayload *> *)createNPayloadsAndSetupTest:(NSUInteger)numberOfPayloads {
-    return [self createNPayloadsAndSetupTest:numberOfPayloads withHTTPStatus:0];
+- (NSArray<UARemoteDataPayload *> *)createNPayloadsAndSetupTest:(NSUInteger)numberOfPayloads metadata:(NSDictionary *)metadata {
+    return [self createNPayloadsAndSetupTest:numberOfPayloads metadata:metadata withHTTPStatus:0];
 }
 
-- (NSArray<UARemoteDataPayload *> *)createNPayloadsAndSetupTest:(NSUInteger)numberOfPayloads withHTTPStatus:(NSUInteger)statusCode {
+- (NSArray<UARemoteDataPayload *> *)createNPayloadsAndSetupTest:(NSUInteger)numberOfPayloads metadata:(NSDictionary *)metadata withHTTPStatus:(NSUInteger)statusCode {
     NSMutableArray *testPayloads = [NSMutableArray arrayWithCapacity:numberOfPayloads];
     UARemoteDataPayload *testPayload;
     for (NSUInteger index = 0;index < numberOfPayloads;index++) {
@@ -889,7 +849,7 @@
                                                                           @"background_color": @"0000FF",
                                                                           @"font": [[NSProcessInfo processInfo] globallyUniqueString]
                                                                           }
-                                                                  }];
+                                                                  } metadata:metadata];
         [testPayloads addObject:testPayload];
     }
 
@@ -897,6 +857,7 @@
 
     return testPayloads;
 }
+
 
 - (void)setupTestWithPayloads:(NSArray<UARemoteDataPayload *> *)testPayloads {
     return [self setupTestWithPayloads:testPayloads withHTTPStatus:0];
@@ -918,11 +879,14 @@
         XCTAssertNotNil(payloads[index].type);
         XCTAssertNotNil([isoDateFormatter stringFromDate:payloads[index].timestamp]);
         XCTAssertNotNil(payloads[index].data);
-        [mockedRemoteData addObject: @{
-                                       @"type": payloads[index].type,
-                                       @"timestamp": [isoDateFormatter stringFromDate:payloads[index].timestamp],
-                                       @"data": payloads[index].data
-                                       }];
+        NSMutableDictionary *payload =  [NSMutableDictionary dictionaryWithDictionary:@{
+                                          @"type": payloads[index].type,
+                                          @"timestamp": [isoDateFormatter stringFromDate:payloads[index].timestamp],
+                                          @"data": payloads[index].data,
+                                          @"metadata": payloads[index].metadata,
+                                          }];
+
+        [mockedRemoteData addObject:payload];
     }
     return mockedRemoteData;
 }

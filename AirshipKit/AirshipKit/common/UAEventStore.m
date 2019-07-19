@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UAEventData+Internal.h"
 #import "NSJSONSerialization+UAAdditions.h"
@@ -6,7 +6,7 @@
 #import "UAEventStore+Internal.h"
 #import "NSManagedObjectContext+UAAdditions+Internal.h"
 #import <CoreData/CoreData.h>
-#import "UAConfig.h"
+#import "UARuntimeConfig.h"
 #import "UAEvent.h"
 #import "UAirship.h"
 #import "UASQLite+Internal.h"
@@ -23,7 +23,7 @@ NSString *const UAEventDataEntityName = @"UAEventData";
 
 @implementation UAEventStore
 
-- (instancetype)initWithConfig:(UAConfig *)config {
+- (instancetype)initWithConfig:(UARuntimeConfig *)config {
     self = [super init];
 
     if (self) {
@@ -38,7 +38,7 @@ NSString *const UAEventDataEntityName = @"UAEventData";
     return self;
 }
 
-+ (instancetype)eventStoreWithConfig:(UAConfig *)config {
++ (instancetype)eventStoreWithConfig:(UARuntimeConfig *)config {
     return [[UAEventStore alloc] initWithConfig:config];
 }
 

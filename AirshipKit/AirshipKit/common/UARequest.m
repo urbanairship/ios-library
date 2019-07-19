@@ -1,11 +1,11 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import <zlib.h>
 
 #import "UARequest+Internal.h"
 #import "UAirship.h"
 #import "UADisposable.h"
-#import "UAConfig.h"
+#import "UARuntimeConfig.h"
 #import "UADelayOperation+Internal.h"
 
 @interface UARequestBuilder()

@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina5_9" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
-        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
-        <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -39,7 +37,7 @@
                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     <constraints>
                         <constraint firstAttribute="height" priority="1" constant="500" id="EMT-Ai-vaC"/>
-                        <constraint firstAttribute="width" relation="lessThanOrEqual" constant="420" id="Ucg-Xu-csp"/>
+                        <constraint firstAttribute="width" relation="lessThanOrEqual" priority="999" constant="420" id="Ucg-Xu-csp"/>
                         <constraint firstAttribute="height" secondItem="Gmc-md-UHv" secondAttribute="width" multiplier="16:9" priority="1" id="t8p-lZ-HZn"/>
                     </constraints>
                 </view>
@@ -48,10 +46,10 @@
             <constraints>
                 <constraint firstItem="KZc-00-wWo" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="Ajh-9C-jj5"/>
                 <constraint firstItem="KZc-00-wWo" firstAttribute="height" secondItem="iN0-l3-epB" secondAttribute="height" id="Iep-YR-FEQ"/>
-                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="Gmc-md-UHv" secondAttribute="trailing" priority="998" constant="24" id="RpM-2c-Vq7"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="Gmc-md-UHv" secondAttribute="trailing" priority="999" constant="24" id="RpM-2c-Vq7"/>
                 <constraint firstItem="KZc-00-wWo" firstAttribute="width" secondItem="iN0-l3-epB" secondAttribute="width" id="UF7-YB-cPG"/>
-                <constraint firstItem="Gmc-md-UHv" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="vUN-kp-3ea" secondAttribute="leading" priority="998" constant="24" id="VgD-Wa-SUZ"/>
-                <constraint firstItem="Gmc-md-UHv" firstAttribute="height" relation="lessThanOrEqual" secondItem="iN0-l3-epB" secondAttribute="height" multiplier="0.75" priority="999" id="ijq-fT-ON3"/>
+                <constraint firstItem="Gmc-md-UHv" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="vUN-kp-3ea" secondAttribute="leading" priority="999" constant="24" id="VgD-Wa-SUZ"/>
+                <constraint firstItem="Gmc-md-UHv" firstAttribute="height" relation="lessThanOrEqual" secondItem="iN0-l3-epB" secondAttribute="height" multiplier="0.75" priority="200" id="ijq-fT-ON3"/>
                 <constraint firstItem="Gmc-md-UHv" firstAttribute="width" relation="greaterThanOrEqual" secondItem="iN0-l3-epB" secondAttribute="width" multiplier="0.5" priority="200" id="jhd-FM-oN8"/>
                 <constraint firstItem="KZc-00-wWo" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="kgj-9D-TpW"/>
                 <constraint firstItem="Gmc-md-UHv" firstAttribute="centerX" secondItem="vUN-kp-3ea" secondAttribute="centerX" priority="999" id="nP9-Sr-HcU"/>

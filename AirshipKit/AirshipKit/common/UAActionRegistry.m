@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UAActionRegistry+Internal.h"
 #import "UAActionRegistryEntry+Internal.h"
@@ -25,7 +25,6 @@
 
 #import "UAShareActionPredicate+Internal.h"
 #import "UAOverlayInboxMessageActionPredicate+Internal.h"
-#import "UALandingPageActionPredicate+Internal.h"
 #endif
 
 #import "UAFetchDeviceInfoActionPredicate+Internal.h"

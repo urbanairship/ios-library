@@ -1,10 +1,10 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import <Foundation/Foundation.h>
 #import "UAEventData+Internal.h"
 
 @class UAEvent;
-@class UAConfig;
+@class UARuntimeConfig;
 
 /**
  * Storage access for analytic events.
@@ -21,7 +21,7 @@
  * @param config The airship config.
  * @return UAEventStore instance.
  */
-+ (instancetype)eventStoreWithConfig:(UAConfig *)config;
++ (instancetype)eventStoreWithConfig:(UARuntimeConfig *)config;
 
 /**
  * Saves an event.

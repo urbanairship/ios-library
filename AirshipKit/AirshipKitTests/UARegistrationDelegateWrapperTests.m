@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import <UIKit/UIKit.h>
 #import "UABaseTest.h"
@@ -62,32 +62,10 @@
         [withStatus fulfill];
     }] notificationRegistrationFinishedWithAuthorizedSettings:authorizedSettings categories:categories status:status];
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-    XCTestExpectation *deprecated = [self expectationWithDescription:@"notificationRegistrationFinishedWithOptions:categories:"];
-    [[[self.mockDelegate expect] andDo:^(NSInvocation *invocation) {
-        [deprecated fulfill];
-    }] notificationRegistrationFinishedWithOptions:legacyOptions categories:categories];
-#pragma GCC diagnostic pop
-
     [self.wrapper notificationRegistrationFinishedWithAuthorizedSettings:authorizedSettings legacyOptions:legacyOptions categories:categories status:status];
 
     [self waitForTestExpectations];
     [self.mockDelegate verify];
-}
-
-- (void)testAuthorizedSettingsDidChange {
-    UAAuthorizedNotificationSettings authorizedSettings = UAAuthorizedNotificationSettingsAlert | UAAuthorizedNotificationSettingsBadge;
-    UANotificationOptions legacyOptions = UANotificationOptionAlert;
-
-    [[self.mockDelegate expect] notificationAuthorizedSettingsDidChange:authorizedSettings];
-
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-    [[self.mockDelegate expect] notificationAuthorizedOptionsDidChange:legacyOptions];
-#pragma GCC diagnostic pop
-
-    [self.wrapper notificationAuthorizedSettingsDidChange:authorizedSettings legacyOptions:legacyOptions];
 }
 
 @end

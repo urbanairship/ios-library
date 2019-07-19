@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UABaseTest.h"
 #import "UAInAppRemoteDataClient+Internal.h"
@@ -10,6 +10,9 @@
 #import "UAInAppMessageManager.h"
 #import "UAPush+Internal.h"
 #import "UASchedule+Internal.h"
+#import "UAScheduleEdits+Internal.h"
+#import "NSJSONSerialization+UAAdditions.h"
+
 @interface UAInAppRemoteDataClientTest : UABaseTest
 @property (nonatomic,strong) UAInAppRemoteDataClient *remoteDataClient;
 @property (nonatomic, strong) UARemoteDataPublishBlock publishBlock;
@@ -63,12 +66,106 @@
     [self.mockRemoteDataManager verify];
 }
 
+- (void)testMetadataChange {
+    NSDictionary *metadataA = @{@"cool":@"story"};
+    NSDictionary *metadataB = @{@"millennial":@"potato"};
+
+    // setup
+    NSString *messageID = [NSUUID UUID].UUIDString;
+    NSDictionary *simpleMessage = @{@"message": @{
+                                            @"name": @"Simple Message",
+                                            @"message_id": messageID,
+                                            @"push_id": [NSUUID UUID].UUIDString,
+                                            @"display_type": @"banner",
+                                            @"display": @{
+                                                    @"body" : @{
+                                                            @"text" : @"hi there"
+                                                            },
+                                                    },
+                                            },
+                                    @"created": @"2017-12-04T19:07:54.564",
+                                    @"last_updated": @"2017-12-04T19:07:54.564",
+                                    @"triggers": @[
+                                            @{
+                                                @"type":@"app_init",
+                                                @"goal":@1
+                                                }
+                                            ]
+                                    };
+    NSArray *inAppMessages = @[simpleMessage];
+    NSUInteger expectedNumberOfScheduleInfos = inAppMessages.count;
+    UARemoteDataPayload *inAppRemoteDataPayload = [[UARemoteDataPayload alloc] initWithType:@"in_app_messages"
+                                                                                  timestamp:[NSDate date]
+                                                                                       data:@{@"in_app_messages":inAppMessages}
+                                                                                   metadata:metadataA];
+
+    // expectations
+    __block NSUInteger callsToScheduleMessages = 0;
+    [[[self.mockScheduler expect] andDo:^(NSInvocation *invocation) {
+        callsToScheduleMessages++;
+
+        void *arg;
+        [invocation getArgument:&arg atIndex:2];
+        NSArray<UAInAppMessageScheduleInfo *> *scheduleInfo = (__bridge NSArray<UAInAppMessageScheduleInfo *> *)arg;
+
+        XCTAssertEqual(scheduleInfo.count, expectedNumberOfScheduleInfos);
+
+        [invocation getArgument:&arg atIndex:4];
+        void (^completionHandler)(NSArray<UASchedule *> *) = (__bridge void (^)(NSArray<UASchedule *> *))arg;
+
+        NSMutableArray *schedules = [NSMutableArray array];
+        for (UAInAppMessageScheduleInfo *info in scheduleInfo) {
+            [schedules addObject:[UASchedule scheduleWithIdentifier:info.message.identifier info:info metadata:metadataA]];
+
+        }
+
+        completionHandler(schedules);
+    }] scheduleMessagesWithScheduleInfo:OCMOCK_ANY metadata:metadataA completionHandler:OCMOCK_ANY];
+
+    // test
+    self.publishBlock(@[inAppRemoteDataPayload]);
+    [self.remoteDataClient.operationQueue waitUntilAllOperationsAreFinished];
+
+    // verify
+    [self.mockScheduler verify];
+    XCTAssertEqual(callsToScheduleMessages, 1);
+
+    XCTestExpectation *editCalled = [self expectationWithDescription:@"Edit call should be made for metadata change"];
+
+    [[[self.mockScheduler expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+
+        [invocation getArgument:&arg atIndex:3];
+        UAInAppMessageScheduleEdits *edits = (__bridge UAInAppMessageScheduleEdits *)arg;
+
+        XCTAssertEqualObjects(edits.metadata, [NSJSONSerialization stringWithObject:metadataB]);
+
+        [editCalled fulfill];
+
+    }] editScheduleWithID:OCMOCK_ANY edits:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
+    // setup to same message with metadata B
+    inAppRemoteDataPayload = [[UARemoteDataPayload alloc] initWithType:@"in_app_messages"
+                                                             timestamp:[NSDate date]
+                                                                  data:@{@"in_app_messages":inAppMessages}
+                                                              metadata:metadataB];
+    // test
+    self.publishBlock(@[inAppRemoteDataPayload]);
+
+    [self waitForTestExpectations];
+
+    // verify
+    [self.mockScheduler verify];
+    XCTAssertEqual(callsToScheduleMessages,1);
+}
+
+
 - (void)testMissingInAppMessageRemoteData {
     // expectations
     __block NSUInteger callsToScheduleMessages = 0;
     [[[self.mockScheduler stub] andDo:^(NSInvocation *invocation) {
         XCTFail(@"No messages should be scheduled");
-    }] scheduleMessagesWithScheduleInfo:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    }] scheduleMessagesWithScheduleInfo:OCMOCK_ANY metadata:OCMOCK_ANY completionHandler:OCMOCK_ANY];
     [[[self.mockScheduler stub] andDo:^(NSInvocation *invocation) {
         XCTFail(@"No messages should be cancelled");
     }] cancelMessagesWithID:OCMOCK_ANY];
@@ -86,13 +183,14 @@
     NSArray *inAppMessages = @[];
     UARemoteDataPayload *inAppRemoteDataPayload = [[UARemoteDataPayload alloc] initWithType:@"in_app_messages"
                                                                                   timestamp:[NSDate date]
-                                                                                       data:@{@"in_app_messages":inAppMessages}];
+                                                                                       data:@{@"in_app_messages":inAppMessages}
+                                                                                       metadata:@{@"cool" : @"story"}];
     
     // expectations
     __block NSUInteger callsToScheduleMessages = 0;
     [[[self.mockScheduler stub] andDo:^(NSInvocation *invocation) {
         XCTFail(@"No messages should be scheduled");
-    }] scheduleMessagesWithScheduleInfo:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    }] scheduleMessagesWithScheduleInfo:OCMOCK_ANY metadata:OCMOCK_ANY completionHandler:OCMOCK_ANY];
     [[[self.mockScheduler stub] andDo:^(NSInvocation *invocation) {
         XCTFail(@"No messages should be cancelled");
     }] cancelMessagesWithID:OCMOCK_ANY];
@@ -132,7 +230,8 @@
     NSUInteger expectedNumberOfScheduleInfos = inAppMessages.count;
     UARemoteDataPayload *inAppRemoteDataPayload = [[UARemoteDataPayload alloc] initWithType:@"in_app_messages"
                                                                                   timestamp:[NSDate date]
-                                                                                       data:@{@"in_app_messages":inAppMessages}];
+                                                                                       data:@{@"in_app_messages":inAppMessages}
+                                                                                   metadata:@{@"cool" : @"story"}];
     
     // expectations
     __block NSUInteger callsToScheduleMessages = 0;
@@ -145,15 +244,15 @@
         
         XCTAssertEqual(scheduleInfo.count, expectedNumberOfScheduleInfos);
         
-        [invocation getArgument:&arg atIndex:3];
+        [invocation getArgument:&arg atIndex:4];
         void (^completionHandler)(NSArray<UASchedule *> *) = (__bridge void (^)(NSArray<UASchedule *> *))arg;
 
         NSMutableArray *schedules = [NSMutableArray array];
         for (UAInAppMessageScheduleInfo *info in schedules) {
-            [schedules addObject:[UASchedule scheduleWithIdentifier:info.message.identifier info:info]];
+            [schedules addObject:[UASchedule scheduleWithIdentifier:info.message.identifier info:info metadata:@{}]];
         }
         completionHandler(schedules);
-    }] scheduleMessagesWithScheduleInfo:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    }] scheduleMessagesWithScheduleInfo:OCMOCK_ANY metadata:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     // test
     self.publishBlock(@[inAppRemoteDataPayload]);
@@ -191,7 +290,8 @@
     NSUInteger expectedNumberOfScheduleInfos = inAppMessages.count;
     UARemoteDataPayload *inAppRemoteDataPayload = [[UARemoteDataPayload alloc] initWithType:@"in_app_messages"
                                                                                   timestamp:[NSDate date]
-                                                                                       data:@{@"in_app_messages":inAppMessages}];
+                                                                                       data:@{@"in_app_messages":inAppMessages}
+                                                                                   metadata:@{@"cool" : @"story"}];
     
     // expectations
     __block NSUInteger callsToScheduleMessages = 0;
@@ -204,15 +304,15 @@
         
         XCTAssertEqual(scheduleInfo.count, expectedNumberOfScheduleInfos);
         
-        [invocation getArgument:&arg atIndex:3];
+        [invocation getArgument:&arg atIndex:4];
         void (^completionHandler)(NSArray<UASchedule *> *) = (__bridge void (^)(NSArray<UASchedule *> *))arg;
         
         NSMutableArray *schedules = [NSMutableArray array];
         for (UAInAppMessageScheduleInfo *info in schedules) {
-            [schedules addObject:[UASchedule scheduleWithIdentifier:info.message.identifier info:info]];
+            [schedules addObject:[UASchedule scheduleWithIdentifier:info.message.identifier info:info metadata:@{}]];
         }
         completionHandler(schedules);
-    }] scheduleMessagesWithScheduleInfo:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    }] scheduleMessagesWithScheduleInfo:OCMOCK_ANY metadata:OCMOCK_ANY completionHandler:OCMOCK_ANY];
     
     [[[self.mockScheduler stub] andDo:^(NSInvocation *invocation) {
         XCTFail(@"No messages should be cancelled");
@@ -261,7 +361,8 @@
     NSUInteger expectedNumberOfScheduleInfos = inAppMessages.count;
     UARemoteDataPayload *inAppRemoteDataPayload = [[UARemoteDataPayload alloc] initWithType:@"in_app_messages"
                                                                                   timestamp:[NSDate date]
-                                                                                       data:@{@"in_app_messages":inAppMessages}];
+                                                                                       data:@{@"in_app_messages":inAppMessages}
+                                                                                   metadata:@{@"cool" : @"story"}];
     
     // expectations
     __block NSUInteger callsToScheduleMessages = 0;
@@ -274,15 +375,15 @@
         
         XCTAssertEqual(scheduleInfo.count, expectedNumberOfScheduleInfos);
         
-        [invocation getArgument:&arg atIndex:3];
+        [invocation getArgument:&arg atIndex:4];
         void (^completionHandler)(NSArray<UASchedule *> *) = (__bridge void (^)(NSArray<UASchedule *> *))arg;
         
         NSMutableArray *schedules = [NSMutableArray array];
         for (UAInAppMessageScheduleInfo *info in scheduleInfo) {
-            [schedules addObject:[UASchedule scheduleWithIdentifier:info.message.identifier info:info]];
+            [schedules addObject:[UASchedule scheduleWithIdentifier:info.message.identifier info:info metadata:@{}]];
         }
         completionHandler(schedules);
-    }] scheduleMessagesWithScheduleInfo:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    }] scheduleMessagesWithScheduleInfo:OCMOCK_ANY metadata:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     
     // test
@@ -296,7 +397,8 @@
     // setup to send same message again
     inAppRemoteDataPayload = [[UARemoteDataPayload alloc] initWithType:@"in_app_messages"
                                                              timestamp:[NSDate date]
-                                                                  data:@{@"in_app_messages":inAppMessages}];
+                                                                  data:@{@"in_app_messages":inAppMessages}
+                                                              metadata:@{@"cool" : @"story"}];
 
     // test
     self.publishBlock(@[inAppRemoteDataPayload]);
@@ -354,7 +456,8 @@
     NSArray *inAppMessages = @[message1,message2];
     UARemoteDataPayload *inAppRemoteDataPayload = [[UARemoteDataPayload alloc] initWithType:@"in_app_messages"
                                                                                   timestamp:[NSDate date]
-                                                                                       data:@{@"in_app_messages":inAppMessages}];
+                                                                                       data:@{@"in_app_messages":inAppMessages}
+                                                                                   metadata:@{@"cool" : @"story"}];
     __block NSUInteger scheduledMessages = 0;
     __block NSUInteger cancelledMessages = 0;
 
@@ -365,15 +468,15 @@
 
         scheduledMessages += scheduleInfo.count;
 
-        [invocation getArgument:&arg atIndex:3];
+        [invocation getArgument:&arg atIndex:4];
         void (^completionHandler)(NSArray<UASchedule *> *) = (__bridge void (^)(NSArray<UASchedule *> *))arg;
         
         NSMutableArray *schedules = [NSMutableArray array];
         for (UAInAppMessageScheduleInfo *info in scheduleInfo) {
-            [schedules addObject:[UASchedule scheduleWithIdentifier:info.message.identifier info:info]];
+            [schedules addObject:[UASchedule scheduleWithIdentifier:info.message.identifier info:info metadata:@{}]];
         }
         completionHandler(schedules);
-    }] scheduleMessagesWithScheduleInfo:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    }] scheduleMessagesWithScheduleInfo:OCMOCK_ANY metadata:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     [[[self.mockScheduler stub] andDo:^(NSInvocation *invocation) {
         cancelledMessages += 1;
@@ -399,7 +502,8 @@
     inAppMessages = @[message2];
     inAppRemoteDataPayload = [[UARemoteDataPayload alloc] initWithType:@"in_app_messages"
                                                              timestamp:[NSDate date]
-                                                                  data:@{@"in_app_messages":inAppMessages}];
+                                                                  data:@{@"in_app_messages":inAppMessages}
+                                                              metadata:@{@"cool" : @"story"}];
 
     // test
     self.publishBlock(@[inAppRemoteDataPayload]);
@@ -458,7 +562,8 @@
     NSArray *inAppMessages = @[message1,message2];
     UARemoteDataPayload *inAppRemoteDataPayload = [[UARemoteDataPayload alloc] initWithType:@"in_app_messages"
                                                                                   timestamp:[NSDate date]
-                                                                                       data:@{@"in_app_messages":inAppMessages}];
+                                                                                       data:@{@"in_app_messages":inAppMessages}
+                                                                                   metadata:@{@"cool" : @"story"}];
     
     __block NSUInteger scheduledMessages = 0;
     __block NSUInteger cancelledMessages = 0;
@@ -471,15 +576,15 @@
 
         scheduledMessages += scheduleInfo.count;
 
-        [invocation getArgument:&arg atIndex:3];
+        [invocation getArgument:&arg atIndex:4];
         void (^completionHandler)(NSArray<UASchedule *> *) = (__bridge void (^)(NSArray<UASchedule *> *))arg;
 
         NSMutableArray *schedules = [NSMutableArray array];
         for (UAInAppMessageScheduleInfo *info in scheduleInfo) {
-            [schedules addObject:[UASchedule scheduleWithIdentifier:info.message.identifier info:info]];
+            [schedules addObject:[UASchedule scheduleWithIdentifier:info.message.identifier info:info metadata:@{}]];
         }
         completionHandler(schedules);
-    }] scheduleMessagesWithScheduleInfo:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    }] scheduleMessagesWithScheduleInfo:OCMOCK_ANY metadata:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     [[[self.mockScheduler stub] andDo:^(NSInvocation *invocation) {
         cancelledMessages += 1;
@@ -501,7 +606,8 @@
     // setup empty payload
     UARemoteDataPayload *emptyInAppRemoteDataPayload = [[UARemoteDataPayload alloc] initWithType:@"in_app_messages"
                                                                                        timestamp:[NSDate date]
-                                                                                            data:@{}];
+                                                                                            data:@{}
+                                                                                        metadata:@{}];
     
     // test
     self.publishBlock(@[emptyInAppRemoteDataPayload]);

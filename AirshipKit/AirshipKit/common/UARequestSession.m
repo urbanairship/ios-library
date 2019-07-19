@@ -1,10 +1,10 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 
 #import "UARequestSession+Internal.h"
 #import "UAURLRequestOperation+Internal.h"
 #import "UADelayOperation+Internal.h"
-#import "UAConfig.h"
+#import "UARuntimeConfig.h"
 #import "UAirship.h"
 
 @interface UARequestSession()
@@ -18,7 +18,7 @@ const NSTimeInterval MaxBackOff = 3000;
 
 @implementation UARequestSession
 
-- (instancetype)initWithConfig:(UAConfig *)config session:(NSURLSession *)session queue:(NSOperationQueue *)queue {
+- (instancetype)initWithConfig:(UARuntimeConfig *)config session:(NSURLSession *)session queue:(NSOperationQueue *)queue {
     self = [super init];
 
     if (self) {
@@ -33,7 +33,7 @@ const NSTimeInterval MaxBackOff = 3000;
     return self;
 }
 
-+ (instancetype)sessionWithConfig:(UAConfig *)config {
++ (instancetype)sessionWithConfig:(UARuntimeConfig *)config {
 
     static dispatch_once_t onceToken;
     static NSURLSession *_session;
@@ -57,14 +57,14 @@ const NSTimeInterval MaxBackOff = 3000;
     return [[UARequestSession alloc] initWithConfig:config session:_session queue:queue];
 }
 
-+ (instancetype)sessionWithConfig:(UAConfig *)config NSURLSession:(NSURLSession *)session {
++ (instancetype)sessionWithConfig:(UARuntimeConfig *)config NSURLSession:(NSURLSession *)session {
     NSOperationQueue *queue = [[NSOperationQueue alloc] init];
     queue.maxConcurrentOperationCount = 1;
 
     return [[UARequestSession alloc] initWithConfig:config session:session queue:queue];
 }
 
-+ (instancetype)sessionWithConfig:(UAConfig *)config NSURLSession:(NSURLSession *)session queue:(NSOperationQueue *)queue {
++ (instancetype)sessionWithConfig:(UARuntimeConfig *)config NSURLSession:(NSURLSession *)session queue:(NSOperationQueue *)queue {
     return [[UARequestSession alloc] initWithConfig:config session:session queue:queue];
 }
 

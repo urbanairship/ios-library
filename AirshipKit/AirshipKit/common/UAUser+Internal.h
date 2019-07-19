@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UAUser.h"
 #import "UADispatcher+Internal.h"
@@ -7,7 +7,7 @@
 #define kUserUrlKey @"UAUserUrlKey"
 
 @class UAUserAPIClient;
-@class UAConfig;
+@class UARuntimeConfig;
 @class UAPreferenceDataStore;
 @class UAPush;
 
@@ -48,9 +48,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 
 /**
- * The Urban Airship config
+ * The Airship config
  */
-@property (nonatomic, strong) UAConfig *config;
+@property (nonatomic, strong) UARuntimeConfig *config;
 
 ///---------------------------------------------------------------------------------------
 /// @name User Internal Methods
@@ -59,16 +59,16 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Factory method to create a user instance.
  * @param push The push manager.
- * @param config The Urban Airship config.
+ * @param config The Airship config.
  * @param dataStore The preference data store.
  * @return User instance.
  */
-+ (instancetype)userWithPush:(UAPush *)push config:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore;
++ (instancetype)userWithPush:(UAPush *)push config:(UARuntimeConfig *)config dataStore:(UAPreferenceDataStore *)dataStore;
 
 /**
  * Factory method to create a user instance. Used for testing.
  * @param push The push manager.
- * @param config The Urban Airship config.
+ * @param config The Airship config.
  * @param dataStore The preference data store.
  * @param client The API client.
  * @param notificationCenter The notification center.
@@ -77,7 +77,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @return User instance.
  */
 + (instancetype)userWithPush:(UAPush *)push
-                      config:(UAConfig *)config
+                      config:(UARuntimeConfig *)config
                    dataStore:(UAPreferenceDataStore *)dataStore
                       client:(UAUserAPIClient *)client
           notificationCenter:(NSNotificationCenter *)notificationCenter
@@ -101,7 +101,6 @@ NS_ASSUME_NONNULL_BEGIN
  * @param dispatcher The dispatcher on which to invoked the completion handler.
  */
 - (void)getUserData:(void (^)(UAUserData * _Nullable))completionHandler dispatcher:(nullable UADispatcher *)dispatcher;
-
 
 /**
  * Removes the existing user from the keychain.

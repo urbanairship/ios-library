@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import <UIKit/UIKit.h>
 #import <UserNotifications/UserNotifications.h>
@@ -6,8 +6,8 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /**
- * Application hooks required by Urban Airship. If `automaticSetupEnabled` is enabled
- * (enabled by default), Urban Airship will automatically integrate these calls into
+ * Application hooks required by Airship. If `automaticSetupEnabled` is enabled
+ * (enabled by default), Airship will automatically integrate these calls into
  * the application by swizzling methods. If `automaticSetupEnabled` is disabled,
  * the application must call through to every method provided by this class.
  */

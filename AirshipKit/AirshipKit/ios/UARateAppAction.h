@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UAAction.h"
 
@@ -11,8 +11,8 @@
  * This action is registered under the names rate_app_action and ^ra.
  *
  * The rate app action requires your application to provide an itunes ID as an argument value, or have it
- * set on the UAConfig instance used for takeoff. The itunes ID can be set on the UAConfig instance directly
- * via UAConfig's itunesID property, or by setting the itunesID as an NSString value in the AirshipConfig.plist
+ * set on the UARuntimeConfig instance used for takeoff. The itunes ID can be set on the UARuntimeConfig instance directly
+ * via UARuntimeConfig's itunesID property, or by setting the itunesID as an NSString value in the AirshipConfig.plist
  * under the key ``itunesID``.
  *
  * Expected argument values:

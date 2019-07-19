@@ -1,7 +1,7 @@
 "ua_cancel" = "Cancel";
 "ua_channel_copy_toast" = "Channel copied to clipboard!";
 "ua_channel_id" = "Channel ID";
-"ua_channel_notification_ticker" = "Urban Airship Channel";
+"ua_channel_notification_ticker" = "Airship Channel";
 "ua_connection_error" = "Connection Error";
 "ua_content_error" = "Content Error";
 "ua_default_channel_description" = "General app updates";

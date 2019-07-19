@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UAUtils.h"
 #import "UADispatcher+Internal.h"
@@ -38,16 +38,20 @@ NS_ASSUME_NONNULL_BEGIN
 + (BOOL)float:(CGFloat)float1 isEqualToFloat:(CGFloat)float2 withAccuracy:(CGFloat)accuracy;
 
 ///---------------------------------------------------------------------------------------
-/// @name Device ID
+/// @name String Utilities
 ///---------------------------------------------------------------------------------------
 
 /**
- * Gets the device ID from the Keychain. The completion handler will be invoked
- * on a background queue.
+ * Returns nil if string is empty or nil, otherwise returns string.
  *
- * @param completionHandler A completion handler which will be passed the device ID.
+ * @param str The string to check.
+ * @return The input NSString, or nil if the input string is empty.
  */
-+ (void)getDeviceID:(void (^)(NSString *))completionHandler;
++ (nullable NSString *)nilIfEmpty:(nullable NSString *)str;
+
+///---------------------------------------------------------------------------------------
+/// @name Device ID
+///---------------------------------------------------------------------------------------
 
 /**
  * Gets the device ID from the Keychain.
@@ -64,7 +68,28 @@ NS_ASSUME_NONNULL_BEGIN
  * @param userData The user data.
  */
 + (NSString *)userAuthHeaderString:(UAUserData *)userData;
+
 #endif
+
+///---------------------------------------------------------------------------------------
+/// @name SHA-256
+///---------------------------------------------------------------------------------------
+
+/**
+ * Generate SHA256 digest for input string
+ *
+ * @param input string for which to calculate SHA
+ * @return SHA256 digest as NSData
+ */
++ (NSData*)sha256DigestWithString:(NSString*)input;
+
+/**
+ * Generate SHA256 digest for input string
+ *
+ * @param input string for which to calculate SHA
+ * @return SHA256 digest as a hex string
+ */
++ (NSString *)sha256HashWithString:(NSString*)input;
 
 @end
 

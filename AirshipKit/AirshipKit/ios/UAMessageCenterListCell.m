@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UAMessageCenterListCell.h"
 #import "UAInboxMessage.h"
@@ -35,6 +35,8 @@
 
     if (style.cellColor) {
         self.backgroundColor = style.cellColor;
+    } else if (@available(iOS 13.0, *)) {
+        self.backgroundColor = [UIColor systemBackgroundColor];
     }
 
     if (style.cellHighlightedColor) {
@@ -49,6 +51,8 @@
 
     if (style.cellTitleColor) {
         self.title.textColor = style.cellTitleColor;
+    } else if (@available(iOS 13.0, *)) {
+        self.title.textColor = [UIColor labelColor];
     }
 
     if (style.cellTitleHighlightedColor) {
@@ -61,6 +65,8 @@
     
     if (style.cellDateColor) {
         self.date.textColor = style.cellDateColor;
+    } else if (@available(iOS 13.0, *)) {
+        self.date.textColor = [UIColor secondaryLabelColor];
     }
 
     if (style.cellDateHighlightedColor) {

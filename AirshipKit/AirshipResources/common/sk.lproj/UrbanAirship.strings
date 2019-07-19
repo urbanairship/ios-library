@@ -1,7 +1,7 @@
 "ua_cancel" = "Zrušiť";
 "ua_channel_copy_toast" = "Kanál bol skopírovaný do schránky!";
 "ua_channel_id" = "ID kanála";
-"ua_channel_notification_ticker" = "Kanál Urban Airship";
+"ua_channel_notification_ticker" = "Kanál Airship";
 "ua_connection_error" = "Chyba pripojenia";
 "ua_content_error" = "Chyba obsahu";
 "ua_default_channel_description" = "Všeobecné aktualizácie aplikácie";

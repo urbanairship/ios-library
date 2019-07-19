@@ -1,9 +1,9 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import <Foundation/Foundation.h>
 #import "UAAPIClient+Internal.h"
 
-@class UAConfig;
+@class UARuntimeConfig;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -30,18 +30,18 @@ typedef void (^UANamedUserAPIClientFailureBlock)(NSUInteger status);
 
 /**
  * Factory method to create a UANamedUserAPIClient.
- * @param config the Urban Airship config.
+ * @param config The Airship config.
  * @return UANamedUserAPIClient instance.
  */
-+ (instancetype)clientWithConfig:(UAConfig *)config;
++ (instancetype)clientWithConfig:(UARuntimeConfig *)config;
 
 /**
  * Factory method to create a UANamedUserAPIClient.
- * @param config the Urban Airship config.
+ * @param config The Airship config.
  * @param session the request session.
  * @return UANamedUserAPIClient instance.
  */
-+ (instancetype)clientWithConfig:(UAConfig *)config session:(UARequestSession *)session;
++ (instancetype)clientWithConfig:(UARuntimeConfig *)config session:(UARequestSession *)session;
 
 /**
  * Associates the channel to the named user ID.

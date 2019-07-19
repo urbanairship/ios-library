@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import <Foundation/Foundation.h>
 
@@ -64,7 +64,7 @@ NS_ASSUME_NONNULL_BEGIN
  * Note: Due to the unpredictability of the keychain after unlocking the device, this method should only be called
  * on a background queue.
  *
- * @return The Urban Airship device ID or an empty string if an error occurred.
+ * @return The Airship device ID or an empty string if an error occurred.
  */
 + (NSString *)getDeviceID;
 

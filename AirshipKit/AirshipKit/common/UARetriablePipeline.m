@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UARetriablePipeline+Internal.h"
 #import "UAGlobal.h"
@@ -62,15 +62,16 @@
         UARetriableCompletionHandler handler = ^(UARetriableResult result) {
             UA_STRONGIFY(self)
             switch(result) {
-                case UARetriableResultRetry: {
+                case UARetriableResultRetry:
                     [self scheduleRetryWithBackoff:nextBackoff chain:chain];
                     break;
-                }
                 case UARetriableResultSuccess:
                     [chain.retriables removeObjectAtIndex:0];
                     [self executeChain:chain backoff:0];
                     break;
                 case UARetriableResultCancel:
+                    break;
+                case UARetriableResultInvalidate:
                     break;
             }
 
@@ -94,4 +95,5 @@
         [self executeChain:chain backoff:backoff];
     }];
 }
+
 @end

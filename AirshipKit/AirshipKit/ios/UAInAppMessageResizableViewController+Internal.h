@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import <UIKit/UIKit.h>
 #import "UAInAppMessageResolution.h"
@@ -74,13 +74,24 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property(nonatomic, assign) BOOL allowBorderRounding;
 
-
 /**
  * Factory method to initialize a resizable view controller with a child.
  *
  * @param vc The child view controller.
  */
 + (instancetype)resizableViewControllerWithChild:(UIViewController *)vc;
+
+/**
+ * Factory method to initialize a resizable view controller with a child and instrinsic
+ * size properties
+ *
+ * @param vc The child view controller.
+ * @param size The intrinsic size of the resizable view.
+ * @param aspectLock Flag indicating if the HTML view should lock its aspect ratio when resizing to fit the screen.
+ */
++ (instancetype)resizableViewControllerWithChild:(UIViewController *)vc
+                                            size:(CGSize)size
+                                      aspectLock:(BOOL)aspectLock;
 
 /**
  * The method to show the resizable view controller.
@@ -96,6 +107,14 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)dismissWithResolution:(UAInAppMessageResolution *)resolution;
 
+/**
+ * The method to dismiss the resizable view controller without a resolution.
+ *
+ * @note: This is necessary because the view controller currently does the final processing on
+ * the message URL. If the message URL fails to result in a message from the list, the
+ * view will be dismissed without a resolution.
+ */
+- (void)dismissWithoutResolution;
 
 @end
 

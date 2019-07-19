@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UAPreferenceDataStore+Internal.h"
 
@@ -17,7 +17,7 @@
     return dataStore;
 }
 
-- (NSString *)prefixKey:(NSString *)key {
+- (NSString *)prefixKey:(nonnull NSString *)key {
     return [self.keyPrefix stringByAppendingString:key];
 }
 

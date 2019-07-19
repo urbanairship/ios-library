@@ -1,10 +1,10 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 
 #import "UABaseTest.h"
 #import <UIKit/UIKit.h>
 
-#import "UAConfig.h"
+#import "UARuntimeConfig.h"
 #import "UATagGroupsAPIClient+Internal.h"
 #import "UATagGroupsMutation+Internal.h"
 

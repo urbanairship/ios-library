@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UAComponent+Internal.h"
 #import "UAPreferenceDataStore+Internal.h"
@@ -61,8 +61,12 @@ BOOL const UAComponentEnabledDefault = YES;
 }
 
 - (nullable Class)remoteConfigClass {
-    // placeholder - sub-classes should override if they want remote config updates
+    // placeholder - subclasses should override if they want remote config updates
     return nil;
+}
+
+- (void)airshipReady:(UAirship *)airship {
+    // placeholder – subclasses should override if they need to know when the shared airship is ready.
 }
 
 @end

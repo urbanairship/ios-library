@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UAInAppMessageButtonInfo+Internal.h"
 #import "UAInAppMessageTextInfo+Internal.h"
@@ -77,14 +77,6 @@ NSString *const UAInAppMessageButtonInfoBehaviorDismissValue = @"dismiss";
     }
 
     return YES;
-}
-
-- (NSUInteger)borderRadius {
-    return self.borderRadiusPoints;
-}
-
-- (void)setBorderRadius:(NSUInteger)borderRadius {
-    self.borderRadiusPoints = borderRadius;
 }
 
 @end
@@ -364,10 +356,6 @@ NSString *const UAInAppMessageButtonInfoBehaviorDismissValue = @"dismiss";
 
 - (NSString *)description {
     return [NSString stringWithFormat:@"<UAInAppMessageButtonInfo: %@>", [self toJSON]];
-}
-
-- (NSUInteger)borderRadius {
-    return self.borderRadiusPoints;
 }
 
 @end

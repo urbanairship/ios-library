@@ -1,8 +1,8 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UAMessageCenterStyle.h"
 #import "UAirship.h"
-#import "UAConfig.h"
+#import "UARuntimeConfig.h"
 #import "UAColorUtils+Internal.h"
 #import "UAMessageCenterStyle.h"
 
@@ -167,8 +167,9 @@
     BOOL haveEqualselectAllButtonTitleColor = (!self.selectAllButtonTitleColor && !style.selectAllButtonTitleColor) || [self.selectAllButtonTitleColor isEqual:style.selectAllButtonTitleColor];
     BOOL haveEqualdeleteButtonTitleColor = (!self.deleteButtonTitleColor && !style.deleteButtonTitleColor) || [self.deleteButtonTitleColor isEqual:style.deleteButtonTitleColor];
     BOOL haveEqualmarkAsReadButtonTitleColor = (!self.markAsReadButtonTitleColor && !style.markAsReadButtonTitleColor) || [self.markAsReadButtonTitleColor isEqual:style.markAsReadButtonTitleColor];
+    BOOL haveEqualEditButtonTitleColor = (!self.editButtonTitleColor && !style.editButtonTitleColor) || [self.editButtonTitleColor isEqual:style.editButtonTitleColor];
+    BOOL haveEqualCancelButtonTitleColor = (!self.cancelButtonTitleColor && !style.cancelButtonTitleColor) || [self.cancelButtonTitleColor isEqual:style.cancelButtonTitleColor];
 
-    
     return haveEqualTitleFont &&
         haveEqualtitleColor &&
         haveEqualtintColor &&
@@ -191,7 +192,9 @@
         haveEqualunreadIndicatorColor &&
         haveEqualselectAllButtonTitleColor &&
         haveEqualdeleteButtonTitleColor &&
-        haveEqualmarkAsReadButtonTitleColor;
+        haveEqualmarkAsReadButtonTitleColor &&
+        haveEqualEditButtonTitleColor &&
+        haveEqualCancelButtonTitleColor;
 }
 
 - (BOOL)isEqual:(id)object {
@@ -204,6 +207,36 @@
     }
     
     return [self isEqualToMessageCenterStyle:(UAMessageCenterStyle *)object];
+}
+
+- (NSUInteger)hash {
+    NSUInteger result = 1;
+    result = 31 * result + [self.titleColor hash];
+    result = 31 * result + [self.tintColor hash];
+    result = 31 * result + [self.navigationBarColor hash];
+    result = 31 * result + self.navigationBarOpaque;
+    result = 31 * result + [self.listColor hash];
+    result = 31 * result + [self.refreshTintColor hash];
+    result = 31 * result + self.iconsEnabled;
+    result = 31 * result + [self.placeholderIcon hash];
+    result = 31 * result + [self.cellTitleFont hash];
+    result = 31 * result + [self.cellDateFont hash];
+    result = 31 * result + [self.cellColor hash];
+    result = 31 * result + [self.cellHighlightedColor hash];
+    result = 31 * result + [self.cellTitleColor hash];
+    result = 31 * result + [self.cellTitleHighlightedColor hash];
+    result = 31 * result + [self.cellDateColor hash];
+    result = 31 * result + [self.cellDateHighlightedColor hash];
+    result = 31 * result + [self.cellSeparatorColor hash];
+    result = 31 * result + [self.cellTintColor hash];
+    result = 31 * result + [self.unreadIndicatorColor hash];
+    result = 31 * result + [self.selectAllButtonTitleColor hash];
+    result = 31 * result + [self.deleteButtonTitleColor hash];
+    result = 31 * result + [self.markAsReadButtonTitleColor hash];
+    result = 31 * result + [self.editButtonTitleColor hash];
+    result = 31 * result + [self.cancelButtonTitleColor hash];
+
+    return result;
 }
 
 

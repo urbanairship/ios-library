@@ -1,7 +1,7 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import <Foundation/Foundation.h>
-#import "UASystemVersion+Internal.h"
+#import "UASystemVersion.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

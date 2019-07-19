@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UAInAppMessageTextInfo+Internal.h"
 #import <UIKit/UIKit.h>
@@ -74,14 +74,6 @@ NSString *const UAInAppMessageTextInfoStyleUnderlineValue = @"underline";
     }
 
     return YES;
-}
-
-- (NSUInteger)size {
-    return self.sizePoints;
-}
-
-- (void)setSize:(NSUInteger)size {
-    self.sizePoints = size;
 }
 
 @end
@@ -404,10 +396,6 @@ NSString *const UAInAppMessageTextInfoStyleUnderlineValue = @"underline";
 
 - (NSString *)description {
     return [NSString stringWithFormat:@"<UAInAppMessageTextInfo: %@>", [self toJSON]];
-}
-
-- (NSUInteger)size {
-    return self.sizePoints;
 }
 
 @end

@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UAMessageCenterListViewController.h"
 #import "UAMessageCenterListCell.h"
@@ -7,10 +7,9 @@
 #import "UAirship.h"
 #import "UAInbox.h"
 #import "UAInboxMessageList.h"
-#import "UAURLProtocol.h"
 #import "UAMessageCenterLocalization.h"
 #import "UAMessageCenterStyle.h"
-#import "UAConfig.h"
+#import "UARuntimeConfig.h"
 #import "UADispatcher+Internal.h"
 
 /*
@@ -83,7 +82,7 @@
 /**
  * An icon cache that stores UIImage representations of fetched icon images
  * The default limit is 1MB or 100 items
- * Images are also stored in the UA HTTP Cache, so a re-fetch will typically only
+ * Images are also stored in the Airship HTTP Cache, so a re-fetch will typically only
  * incur the decoding (PNG->UIImage) costs.
  */
 @property (nonatomic, strong) NSCache *iconCache;
@@ -107,6 +106,11 @@
  * Split view controller managing the inbox and message views
  */
 @property (nonatomic, weak) UISplitViewController *splitViewController;
+
+/**
+ * The message view's navigation controller to use for applying styles.
+ */
+@property (nonatomic, strong) UINavigationController *messageViewNavigationController;
 
 @end
 
@@ -159,14 +163,6 @@
 
     [self createToolbarItems];
 
-    if (self.style.listColor) {
-        self.messageTable.backgroundColor = self.style.listColor;
-    }
-
-    if (self.style.cellSeparatorColor) {
-        self.messageTable.separatorColor = self.style.cellSeparatorColor;
-    }
-
     [self.refreshControl addTarget:self action:@selector(refreshStateChanged:) forControlEvents:UIControlEventValueChanged];
 
     UITableViewController *tableController = [[UITableViewController alloc] initWithStyle:UITableViewStylePlain];
@@ -174,13 +170,7 @@
     tableController.refreshControl = self.refreshControl;
     tableController.clearsSelectionOnViewWillAppear = false;
 
-    if (self.style.listColor) {
-        self.refreshControl.backgroundColor = self.style.listColor;
-    }
-
-    if (self.style.refreshTintColor) {
-        self.refreshControl.tintColor = self.style.refreshTintColor;
-    }
+    [self applyStyle];
 
     // This allows us to use the UITableViewController for managing the refresh control, while keeping the
     // outer chrome of the list view controller intact
@@ -229,6 +219,94 @@
     _filter = filter;
 }
 
+- (void)setStyle:(UAMessageCenterStyle *)style {
+    _style = style;
+    
+    [self applyStyle];
+}
+
+- (void)applyStyle {
+    if (self.style.editButtonTitleColor) {
+        self.editItem.tintColor = self.style.editButtonTitleColor;
+    }
+    
+    if (self.style.cancelButtonTitleColor) {
+        self.cancelItem.tintColor = self.style.cancelButtonTitleColor;
+    }
+    
+    if (self.style.listColor) {
+        self.messageTable.backgroundColor = self.style.listColor;
+        self.refreshControl.backgroundColor = self.style.listColor;
+    } else if (@available(iOS 13.0, *)) {
+        self.messageTable.backgroundColor = [UIColor systemBackgroundColor];
+        self.refreshControl.backgroundColor = [UIColor systemBackgroundColor];
+    }
+    
+    if (self.style.cellSeparatorColor) {
+        self.messageTable.separatorColor = self.style.cellSeparatorColor;
+    } else if (@available(iOS 13.0, *)) {
+        self.messageTable.separatorColor = [UIColor separatorColor];
+    }
+    
+    if (self.style.refreshTintColor) {
+        self.refreshControl.tintColor = self.style.refreshTintColor;
+    }
+    
+    [self applyToolbarItemStyles];
+    
+    [self applyMessageViewNavBarStyles];
+
+    // apply styles to table cells
+    [self.messageTable reloadData];
+}
+
+- (void)applyToolbarItemStyles {
+
+    // Override any inherited tint color, to avoid potential clashes
+    self.selectAllButtonItem.tintColor = (self.style.selectAllButtonTitleColor) ? self.style.selectAllButtonTitleColor : self.defaultTintColor;
+
+    UIColor *red;
+    if (@available(iOS 13.0, *)) {
+        red = [UIColor systemRedColor];
+    } else {
+        red = [UIColor redColor];
+    }
+
+    self.deleteItem.tintColor = (self.style.deleteButtonTitleColor) ? self.style.deleteButtonTitleColor : red;
+
+    self.markAsReadButtonItem.tintColor = (self.style.markAsReadButtonTitleColor) ? self.style.markAsReadButtonTitleColor : self.defaultTintColor;
+}
+
+- (void)applyMessageViewNavBarStyles {
+    // apply styles to the message view's navigation bar
+    if (self.style.navigationBarColor) {
+        self.messageViewNavigationController.navigationBar.barTintColor = self.style.navigationBarColor;
+    }
+    
+    if (self.style.tintColor) {
+        self.messageViewNavigationController.navigationBar.tintColor = self.style.tintColor;
+    }
+    
+    // Only apply opaque property if a style is set
+    if (self.style) {
+        self.messageViewNavigationController.navigationBar.translucent = !self.style.navigationBarOpaque;
+    }
+    
+    NSMutableDictionary *titleAttributes = [NSMutableDictionary dictionary];
+    
+    if (self.style.titleColor) {
+        titleAttributes[NSForegroundColorAttributeName] = self.style.titleColor;
+    }
+    
+    if (self.style.titleFont) {
+        titleAttributes[NSFontAttributeName] = self.style.titleFont;
+    }
+
+    if (titleAttributes.count) {
+        self.messageViewNavigationController.navigationBar.titleTextAttributes = titleAttributes;
+    }
+}
+
 - (void)refreshStateChanged:(UIRefreshControl *)sender {
     if (sender.refreshing) {
         self.refreshControlAnimating = YES;
@@ -264,23 +342,17 @@
                                                                target:self
                                                                action:@selector(selectAllButtonPressed:)];
 
-    // Override any inherited tint color, to avoid potential clashes
-    self.selectAllButtonItem.tintColor = (self.style.selectAllButtonTitleColor) ? self.style.selectAllButtonTitleColor : self.defaultTintColor;
-
-
     self.deleteItem = [[UIBarButtonItem alloc] initWithTitle:UAMessageCenterLocalizedString(@"ua_delete")
                                                        style:UIBarButtonItemStylePlain
                                                       target:self
                                                       action:@selector(batchUpdateButtonPressed:)];
-    self.deleteItem.tintColor = (self.style.deleteButtonTitleColor) ? self.style.deleteButtonTitleColor : [UIColor redColor];
 
     self.markAsReadButtonItem = [[UIBarButtonItem alloc] initWithTitle:UAMessageCenterLocalizedString(@"ua_mark_read")
                                                                  style:UIBarButtonItemStylePlain
                                                                 target:self action:@selector(batchUpdateButtonPressed:)];
 
-    // Override any inherited tint color, to avoid potential clashes
-    self.markAsReadButtonItem.tintColor = (self.style.markAsReadButtonTitleColor) ? self.style.markAsReadButtonTitleColor : self.defaultTintColor;
-
+    [self applyToolbarItemStyles];
+    
     self.toolbarItems = @[self.selectAllButtonItem, flexibleSpace, self.deleteItem, flexibleSpace, self.markAsReadButtonItem];
 }
 
@@ -570,34 +642,15 @@
 - (void)displayMessageViewController {
     // if message view is not already displaying, get it displayed
     if (self.collapsed && (self.messageViewController != self.navigationController.visibleViewController)) {
-        UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:self.messageViewController];
+        if (!self.messageViewNavigationController) {
+            self.messageViewNavigationController = [[UINavigationController alloc] initWithRootViewController:self.messageViewController];
+            
+            [self applyMessageViewNavBarStyles];
 
-        if (self.style.navigationBarColor) {
-            nav.navigationBar.barTintColor = self.style.navigationBarColor;
+            // note: not sure why this is necessary but the navigation controller isn't sized properly otherwise
+            [self.messageViewNavigationController.view layoutSubviews];
         }
-
-        // Only apply opaque property if a style is set
-        if (self.style) {
-            nav.navigationBar.translucent = !self.style.navigationBarOpaque;
-        }
-
-        NSMutableDictionary *titleAttributes = [NSMutableDictionary dictionary];
-
-        if (self.style.titleColor) {
-            titleAttributes[NSForegroundColorAttributeName] = self.style.titleColor;
-        }
-
-        if (self.style.titleFont) {
-            titleAttributes[NSFontAttributeName] = self.style.titleFont;
-        }
-
-        if (titleAttributes.count) {
-            nav.navigationBar.titleTextAttributes = titleAttributes;
-        }
-
-        // note: not sure why this is necessary but the navigation controller isn't sized properly otherwise
-        [nav.view layoutSubviews];
-        [self showDetailViewController:nav sender:self];
+        [self showDetailViewController:self.messageViewNavigationController sender:self];
     }
 }
 

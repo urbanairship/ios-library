@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UAAppIntegration.h"
 #import "UAirship+Internal.h"
@@ -12,7 +12,7 @@
 #import "UANotificationCategory.h"
 #import "UAActionArguments.h"
 #import "UAUtils+Internal.h"
-#import "UAConfig.h"
+#import "UARuntimeConfig.h"
 #import "UAActionRunner+Internal.h"
 #import "UAActionRegistry+Internal.h"
 #import "UARemoteDataManager+Internal.h"
@@ -244,13 +244,13 @@
                                      situation:situation
                                       metadata:metadata
                              completionHandler:^(UAActionResult *result) {
-                                 [fetchResults addObject:[NSNumber numberWithInt:(UIBackgroundFetchResult)[result fetchResult]]];
+                                 [fetchResults addObject:[NSNumber numberWithInteger:(UIBackgroundFetchResult)[result fetchResult]]];
 
                                  [[UAirship push] handleRemoteNotification:notificationContent
                                                                 foreground:(situation == UASituationForegroundPush)
                                                          completionHandler:^(UIBackgroundFetchResult fetchResult) {
                                                              @synchronized (fetchResults) {
-                                                                 [fetchResults addObject:[NSNumber numberWithInt:fetchResult]];
+                                                                 [fetchResults addObject:[NSNumber numberWithInteger:fetchResult]];
                                                              }
                                                              dispatch_group_leave(dispatchGroup);
                                                          }];

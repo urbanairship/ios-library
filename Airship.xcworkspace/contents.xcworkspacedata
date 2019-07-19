@@ -5,6 +5,9 @@
       location = "group:AirshipKit/AirshipKit.xcodeproj">
    </FileRef>
    <FileRef
+      location = "group:AirshipLocationKit/AirshipLocationKit.xcodeproj">
+   </FileRef>
+   <FileRef
       location = "group:AirshipAppExtensions/AirshipAppExtensions.xcodeproj">
    </FileRef>
    <FileRef

@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UAirship.h"
 #import "UAInAppMessageHTMLViewController+Internal.h"
@@ -10,6 +10,12 @@
 #import "UAViewUtils+Internal.h"
 #import "UAInAppMessageNativeBridge+Internal.h"
 #import "NSJSONSerialization+UAAdditions.h"
+#import "UAMessageCenter.h"
+#import "UAInbox.h"
+#import "UAInboxMessage+Internal.h"
+#import "UAInboxMessageList.h"
+#import "UAUtils+Internal.h"
+#import "UAUser+Internal.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -50,6 +56,11 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, strong) NSString *messageID;
 
+/**
+ * The request headers. These are populated and used when displaying an inbox message.
+ */
+@property (nonatomic, strong) NSDictionary *headers;
+
 @end
 
 @implementation UAInAppMessageHTMLViewController
@@ -69,7 +80,10 @@ NS_ASSUME_NONNULL_BEGIN
 
         self.style = style;
 
-        self.closeButton = [self createCloseButton];
+        if (!self.style.hideDismissIcon) {
+            self.closeButton = [self createCloseButton];
+        }
+
         self.nativeBridge = [[UAInAppMessageNativeBridge alloc] init];
         self.nativeBridge.forwardDelegate = self;
         self.nativeBridge.messageJSDelegate = self;
@@ -98,8 +112,13 @@ NS_ASSUME_NONNULL_BEGIN
 
     self.webView.navigationDelegate = self.nativeBridge;
 
-    self.closeButton.dismissButtonColor = self.displayContent.dismissButtonColor;
-    [self.closeButtonContainerView addSubview:self.closeButton];
+    if (self.style.hideDismissIcon) {
+        [self.closeButtonContainerView setHidden:YES];
+    } else {
+        self.closeButton.dismissButtonColor = self.displayContent.dismissButtonColor;
+        [self.closeButtonContainerView addSubview:self.closeButton];
+    }
+
     [UAViewUtils applyContainerConstraintsToContainer:self.closeButtonContainerView containedView:self.closeButton];
     [self.webView.configuration setDataDetectorTypes:WKDataDetectorTypeNone];
 }
@@ -119,12 +138,71 @@ NS_ASSUME_NONNULL_BEGIN
     [self.loadingIndicator hide];
 }
 
+- (void)loadInboxMessage:(UAInboxMessage *)message {
+    [self showOverlay];
+
+    NSURL *url = message.messageBodyURL;
+
+    UA_WEAKIFY(self)
+    void (^loadRequest)(void) = ^{
+        UA_STRONGIFY(self)
+        NSMutableURLRequest *requestObj = [NSMutableURLRequest requestWithURL:url];
+
+        for (NSString *headerKey in self.headers) {
+            NSString *headerValue = [self.headers objectForKey:headerKey];
+            [requestObj addValue:headerValue forHTTPHeaderField:headerKey];
+        }
+
+        [self loadRequestWithDefaultTimeoutInterval:requestObj];
+    };
+
+    if (message) {
+        UA_WEAKIFY(self)
+        [[UAirship inboxUser] getUserData:^(UAUserData *userData) {
+            UA_STRONGIFY(self)
+            NSDictionary *auth = @{@"Authorization":[UAUtils userAuthHeaderString:userData]};
+
+            NSMutableDictionary *appended = [NSMutableDictionary dictionaryWithDictionary:self.headers];
+            [appended addEntriesFromDictionary:auth];
+            self.headers = appended;
+
+            loadRequest();
+        } dispatcher:[UADispatcher mainDispatcher]];
+    } else {
+        loadRequest();
+    }
+}
+
 - (void)load {
+    NSString *urlString = self.displayContent.url;
+    NSURL *url = [NSURL URLWithString:self.displayContent.url];
+
+    // Check the scheme, if it's a message: scheme, attempt message loading
+    if ([[url scheme].lowercaseString isEqualToString:UAMessageDataScheme.lowercaseString]) {
+        NSString *fullSchemeString = [NSString stringWithFormat:@"%@:", url.scheme];
+        NSString *messageID = [urlString stringByReplacingOccurrencesOfString:fullSchemeString withString:@""];
+
+        [self fetchMessage:messageID completionHandler:^(UAInboxMessage *message) {
+            if (!message) {
+                [self dismissWithoutResolution];
+                return;
+            }
+
+            [self loadInboxMessage:message];
+        }];
+        return;
+    }
+
     NSMutableURLRequest *requestObj = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:self.displayContent.url]];
-    [requestObj setTimeoutInterval:30];
+
+    [self loadRequestWithDefaultTimeoutInterval:requestObj];
+}
+
+- (void)loadRequestWithDefaultTimeoutInterval:(NSMutableURLRequest *)request {
+    [request setTimeoutInterval:30];
 
     [self.webView stopLoading];
-    [self.webView loadRequest:requestObj];
+    [self.webView loadRequest:request];
     [self showOverlay];
 }
 
@@ -134,6 +212,10 @@ NS_ASSUME_NONNULL_BEGIN
         [self dismissWithResolution:[UAInAppMessageResolution userDismissedResolution]];
         return;
     }
+}
+
+- (void)dismissWithoutResolution  {
+    [self.resizableParent dismissWithoutResolution];
 }
 
 - (void)dismissWithResolution:(UAInAppMessageResolution *)resolution  {
@@ -200,6 +282,34 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)closeWindowAnimated:(BOOL)animated {
     [self dismissWithResolution:[UAInAppMessageResolution userDismissedResolution]];
+}
+
+/**
+ * Fetches the specified message.
+ *
+ * @param messageID The message ID.
+ * @param completionHandler Completion handler to call when the operation is complete.
+ */
+- (void)fetchMessage:(NSString *)messageID
+   completionHandler:(void (^)(UAInboxMessage * __nullable))completionHandler {
+
+    if (messageID == nil) {
+        completionHandler(nil);
+        return;
+    }
+
+    UAInboxMessage *message = [[UAirship inbox].messageList messageForID:messageID];
+    if (message) {
+        completionHandler(message);
+        return;
+    }
+
+    // Refresh the list to see if the message is available
+    [[UAirship inbox].messageList retrieveMessageListWithSuccessBlock:^{
+        completionHandler([[UAirship inbox].messageList messageForID:messageID]);
+    } withFailureBlock:^{
+        completionHandler(nil);
+    }];
 }
 
 @end

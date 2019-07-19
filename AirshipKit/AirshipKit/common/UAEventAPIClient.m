@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import <UIKit/UIKit.h>
 
@@ -7,17 +7,17 @@
 #import "UAirship.h"
 #import "UAPush+Internal.h"
 #import "UAUser.h"
-#import "UALocation.h"
 #import "NSJSONSerialization+UAAdditions.h"
 #import "UAJSONSerialization+Internal.h"
+#import "UALocationProviderDelegate.h"
 
 @implementation UAEventAPIClient
 
-+ (instancetype)clientWithConfig:(UAConfig *)config {
++ (instancetype)clientWithConfig:(UARuntimeConfig *)config {
     return [[UAEventAPIClient alloc] initWithConfig:config session:[UARequestSession sessionWithConfig:config]];
 }
 
-+ (instancetype)clientWithConfig:(UAConfig *)config session:(UARequestSession *)session {
++ (instancetype)clientWithConfig:(UARuntimeConfig *)config session:(UARequestSession *)session {
     return [[UAEventAPIClient alloc] initWithConfig:config session:session];
 }
 
@@ -41,6 +41,20 @@
     }];
 }
 
+- (NSString *)locationProviderPermissionStatusString:(UALocationProviderPermissionStatus) status {
+    switch(status) {
+        case UALocationProviderPermissionStatusDisabled:
+            return @"SYSTEM_LOCATION_DISABLED";
+        case UALocationProviderPermissionStatusUnprompted:
+            return @"UNPROMPTED";
+        case UALocationProviderPermissionStatusNotAllowed:
+            return @"NOT_ALLOWED";
+        case UALocationProviderPermissionStatusForegroundAllowed:
+            return @"FOREGROUND_ALLOWED";
+        case UALocationProviderPermissionStatusAlwaysAllowed:
+            return @"ALWAYS_ALLOWED";
+    }
+}
 
 - (UARequest*)requestWithEvents:(NSArray *)events {
     UARequest *request = [UARequest requestWithBuilderBlock:^(UARequestBuilder *builder) {
@@ -70,7 +84,7 @@
         [builder setValue:[[NSLocale autoupdatingCurrentLocale] objectForKey: NSLocaleCountryCode] forHeader:@"X-UA-Locale-Country"];
         [builder setValue:[[NSLocale autoupdatingCurrentLocale] objectForKey: NSLocaleVariantCode] forHeader:@"X-UA-Locale-Variant"];
 
-        // Urban Airship identifiers
+        // Airship identifiers
         [builder setValue:[UAirship push].channelID forHeader:@"X-UA-Channel-ID"];
         [builder setValue:self.config.appKey forHeader:@"X-UA-App-Key"];
 
@@ -88,9 +102,19 @@
         [builder setValue:[[UAirship push] backgroundPushNotificationsAllowed] ? @"true" : @"false" forHeader:@"X-UA-Channel-Background-Enabled"];
 
         // Location settings
-        // Location settings
-        [builder setValue:UAirship.location.locationPermissionDescription forHeader:@"X-UA-Location-Permission"];
-        [builder setValue:UAirship.location.locationUpdatesEnabled ? @"true" : @"false" forHeader:@"X-UA-Location-Service-Enabled"];
+        id<UALocationProviderDelegate> locationProviderDelegate = UAirship.shared.locationProviderDelegate;
+        NSString *locationPermissionStatus;
+        NSString *locationUpdatesEnabled;
+        if (locationProviderDelegate) {
+            locationPermissionStatus = [self locationProviderPermissionStatusString:locationProviderDelegate.locationPermissionStatus];
+            locationUpdatesEnabled = locationProviderDelegate.locationUpdatesEnabled ? @"true" : @"false";
+        } else {
+            locationPermissionStatus = @"UNKNOWN";
+            locationUpdatesEnabled = @"false";
+        }
+
+        [builder setValue:locationPermissionStatus forHeader:@"X-UA-Location-Permission"];
+        [builder setValue:locationUpdatesEnabled forHeader:@"X-UA-Location-Service-Enabled"];
     }];
     
     return request;

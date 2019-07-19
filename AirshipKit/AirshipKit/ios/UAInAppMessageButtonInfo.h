@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import <UIKit/UIKit.h>
 #import "UAInAppMessageTextInfo.h"
@@ -18,7 +18,6 @@ typedef NS_ENUM(NSInteger, UAInAppMessageButtonInfoBehaviorType) {
      * Cancel behavior
      */
     UAInAppMessageButtonInfoBehaviorCancel,
-    
 };
 
 /**
@@ -52,15 +51,6 @@ extern NSUInteger const UAInAppMessageButtonInfoIDLimit;
  * Optional. Defaults to UAInAppMessageButtonInfoBehaviorDismiss.
  */
 @property(nonatomic, assign) UAInAppMessageButtonInfoBehaviorType behavior;
-
-/**
- * The button's border radius.
- *
- * Optional. Defaults to 0.
- *
- * @deprecated Deprecated - to be removed in SDK version 11.0. Please use `borderRadiusPoints`.
- */
-@property(nonatomic, assign) NSUInteger borderRadius DEPRECATED_MSG_ATTRIBUTE("Deprecated - to be removed in SDK version 11.0. Please use borderRadiusPoints.");
 
 /**
  * The button's border radius. Use to set the border radius
@@ -121,13 +111,6 @@ extern NSUInteger const UAInAppMessageButtonInfoIDLimit;
  * Button tap behavior.
  */
 @property(nonatomic, readonly) UAInAppMessageButtonInfoBehaviorType behavior;
-
-/**
- * The button's border radius.
- *
- * @deprecated Deprecated - to be removed in SDK version 11.0. Please use `borderRadiusPoints`.
- */
-@property(nonatomic, readonly) NSUInteger borderRadius DEPRECATED_MSG_ATTRIBUTE("Deprecated - to be removed in SDK version 11.0. Please use borderRadiusPoints.");
 
 /**
  * The button's border radius. Use to set the border radius

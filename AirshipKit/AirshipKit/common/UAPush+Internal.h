@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UAPush.h"
 #import "UAirship.h"
@@ -8,7 +8,7 @@
 #import "UAComponent+Internal.h"
 
 @class UAPreferenceDataStore;
-@class UAConfig;
+@class UARuntimeConfig;
 @class UATagGroupsAPIClient;
 @class UATagGroupsRegistrar;
 
@@ -85,11 +85,6 @@ extern NSString *const UAPushEnabledSettingsMigratedKey;
 extern NSString *const UAPushChannelIDKey;
 
 /**
- * Channel location data store key.
- */
-extern NSString *const UAPushChannelLocationKey;
-
-/**
  * Old push enabled key.
  */
 extern NSString *const UAPushEnabledKey;
@@ -114,7 +109,7 @@ extern NSString *const UAPushEnabledKey;
 @property (nonatomic, assign, getter=isChannelCreationEnabled) BOOL channelCreationEnabled;
 
 /**
- * The UAChannelRegistrar that handles registering the device with Urban Airship.
+ * The UAChannelRegistrar that handles registering the device with Airship.
  */
 @property (nonatomic, strong) UAChannelRegistrar *channelRegistrar;
 
@@ -167,19 +162,19 @@ extern NSString *const UAPushEnabledKey;
 
 /**
  * Factory method to create a push instance.
- * @param config The Urban Airship config
+ * @param config The Airship config
  * @param dataStore The preference data store.
  * @param tagGroupsregistrar The tag groups registrar.
  * @return A new push instance.
  */
-+ (instancetype)pushWithConfig:(UAConfig *)config
++ (instancetype)pushWithConfig:(UARuntimeConfig *)config
                      dataStore:(UAPreferenceDataStore *)dataStore
             tagGroupsRegistrar:(UATagGroupsRegistrar *)tagGroupsregistrar;
 
 
 /**
  * Factory method to create a push instance. For testing
- * @param config The Urban Airship config
+ * @param config The Airship config
  * @param dataStore The preference data store.
  * @param tagGroupsregistrar The tag groups registrar.
  * @param notificationCenter The notification center.
@@ -188,7 +183,7 @@ extern NSString *const UAPushEnabledKey;
  * @param dispatcher The dispatcher.
  * @return A new push instance.
  */
-+ (instancetype)pushWithConfig:(UAConfig *)config
++ (instancetype)pushWithConfig:(UARuntimeConfig *)config
                      dataStore:(UAPreferenceDataStore *)dataStore
             tagGroupsRegistrar:(UATagGroupsRegistrar *)tagGroupsregistrar
             notificationCenter:(NSNotificationCenter *)notificationCenter

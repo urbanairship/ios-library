@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UAUtils+Internal.h"
 #import "UAUser+Internal.h"
@@ -63,31 +63,14 @@
     XCTAssertEqualObjects([UAUtils getReadableFileSizeFromBytes:  1024.0*1024.0*1024.0*1024.0],   @"1.00 TB");
 }
 
-- (void)testUserAuthHeaderString {
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-    XCTAssertEqualObjects([UAUtils userAuthHeaderString],@"Basic KG51bGwpOihudWxsKQ==");
-#pragma GCC diagnostic pop
-    id mockUser = [self mockForClass:[UAUser class]];
-    [[[mockUser stub] andReturn:@"someUser"] username];
-    [[[mockUser stub] andReturn:@"somePassword"] password];
-
-    [[[self.mockAirship stub] andReturn:mockUser] inboxUser];
-
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-    XCTAssertEqualObjects([UAUtils userAuthHeaderString],@"Basic c29tZVVzZXI6c29tZVBhc3N3b3Jk");
-#pragma GCC diagnostic pop
-}
-
 - (void)testAppAuthHeaderString {
     XCTAssertEqualObjects([UAUtils appAuthHeaderString],@"Basic KG51bGwpOihudWxsKQ==");
     
-    id mockUAConfig = [self mockForClass:[UAConfig class]];
-    [[[mockUAConfig stub] andReturn:@"someAppKey"] appKey];
-    [[[mockUAConfig stub] andReturn:@"someAppSecret"] appSecret];
+    id mockUARuntimeConfig = [self mockForClass:[UARuntimeConfig class]];
+    [[[mockUARuntimeConfig stub] andReturn:@"someAppKey"] appKey];
+    [[[mockUARuntimeConfig stub] andReturn:@"someAppSecret"] appSecret];
 
-    [[[self.mockAirship stub] andReturn:mockUAConfig] config];
+    [[[self.mockAirship stub] andReturn:mockUARuntimeConfig] config];
     
     XCTAssertEqualObjects([UAUtils appAuthHeaderString],@"Basic c29tZUFwcEtleTpzb21lQXBwU2VjcmV0");
 }

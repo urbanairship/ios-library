@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UATagGroupsLookupAPIClient+Internal.h"
 #import "UATagGroupsLookupResponse+Internal.h"
@@ -13,11 +13,11 @@
 
 @implementation UATagGroupsLookupAPIClient
 
-+ (instancetype)clientWithConfig:(UAConfig *)config {
++ (instancetype)clientWithConfig:(UARuntimeConfig *)config {
     return [self clientWithConfig:config session:[UARequestSession sessionWithConfig:config]];
 }
 
-+ (instancetype)clientWithConfig:(UAConfig *)config session:(UARequestSession *)session {
++ (instancetype)clientWithConfig:(UARuntimeConfig *)config session:(UARequestSession *)session {
     return [[self alloc] initWithConfig:config session:session];
 }
 

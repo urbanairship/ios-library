@@ -1,11 +1,13 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 import UIKit
 import AirshipKit
 
 class AddNamedUserTableViewController: UITableViewController, UITextFieldDelegate {
 
-    @IBOutlet var addNamedUserTextField: UITextField!
+    @IBOutlet private weak var addNamedUserCell: UITableViewCell!
+    @IBOutlet private weak var addNamedUserTitle: UILabel!
+    @IBOutlet private weak var addNamedUserTextField: UITextField!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -13,7 +15,25 @@ class AddNamedUserTableViewController: UITableViewController, UITextFieldDelegat
         self.addNamedUserTextField.delegate = self
     }
 
+    func setCellTheme() {
+        addNamedUserCell.backgroundColor = ThemeManager.shared.currentTheme.Background
+        addNamedUserTitle.textColor = ThemeManager.shared.currentTheme.PrimaryText
+        addNamedUserTextField.textColor = ThemeManager.shared.currentTheme.PrimaryText
+    }
+
+    func setTableViewTheme() {
+        tableView.backgroundColor = ThemeManager.shared.currentTheme.Background;
+        navigationController?.navigationBar.titleTextAttributes = [.foregroundColor:ThemeManager.shared.currentTheme.NavigationBarText]
+        navigationController?.navigationBar.barTintColor = ThemeManager.shared.currentTheme.NavigationBarBackground;
+
+        addNamedUserTextField.attributedPlaceholder = NSAttributedString(string:"Named User", attributes: [NSAttributedString.Key.foregroundColor:ThemeManager.shared.currentTheme.SecondaryText])
+    }
+
     override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated);
+        setCellTheme()
+        setTableViewTheme()
+
         if ((UAirship.namedUser().identifier) != nil) {
             addNamedUserTextField.text = UAirship.namedUser().identifier
         }

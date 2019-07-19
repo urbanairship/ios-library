@@ -1,8 +1,8 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UAirshipVersion.h"
 
-NSString *const versionString = @"10.2.2";
+NSString *const versionString = @"11.1.0";
 
 @implementation UAirshipVersion
 

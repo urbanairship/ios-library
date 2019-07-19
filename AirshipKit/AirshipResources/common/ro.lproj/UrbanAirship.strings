@@ -1,7 +1,7 @@
 "ua_cancel" = "Anulează";
 "ua_channel_copy_toast" = "Canal copiat în memoria temporară!";
 "ua_channel_id" = "ID Canal";
-"ua_channel_notification_ticker" = "Canalul Urban Airship";
+"ua_channel_notification_ticker" = "Canalul Airship";
 "ua_connection_error" = "Eroare de Conexiune";
 "ua_content_error" = "Eroare de conținut";
 "ua_default_channel_description" = "Actualizări generale aplicație";

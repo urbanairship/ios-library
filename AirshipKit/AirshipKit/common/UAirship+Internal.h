@@ -1,6 +1,7 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UAirship.h"
+#import "UAModules+Internal.h"
 
 @class UABaseAppDelegateSurrogate;
 @class UAJavaScriptDelegate;
@@ -18,7 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 ///---------------------------------------------------------------------------------------
 
 // Setters for public readonly-getters
-@property (nonatomic, strong) UAConfig *config;
+@property (nonatomic, strong) UARuntimeConfig *config;
 @property (nonatomic, strong) UAActionRegistry *actionRegistry;
 @property (nonatomic, assign) BOOL remoteNotificationBackgroundModeEnabled;
 @property (nonatomic, strong, nullable) id<UAJavaScriptDelegate> actionJSDelegate;
@@ -60,11 +61,6 @@ NS_ASSUME_NONNULL_BEGIN
 #endif
 
 /**
- * The location manager.
- */
-@property (nonatomic, strong) UALocation *sharedLocation;
-
-/**
  * The named user.
  */
 @property (nonatomic, strong) UANamedUser *sharedNamedUser;
@@ -79,6 +75,11 @@ NS_ASSUME_NONNULL_BEGIN
  * The shared analytics manager.
  */
 @property (nonatomic, strong) UAAnalytics *sharedAnalytics;
+
+/**
+ * The shared modules.
+ */
+@property (nonatomic, strong) UAModules *sharedModules;
 
 /**
  * Shared remoteDataManager.

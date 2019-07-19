@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UAShareAction.h"
 #import "UAUtils+Internal.h"
@@ -65,9 +65,6 @@
 
     activityViewController.dismissalBlock = dismissalBlock = ^{
         UA_STRONGIFY(self)
-
-        completionHandler([UAActionResult emptyResult]);
-
         self.lastActivityViewController = nil;
     };
 
@@ -83,6 +80,8 @@
     } else {
         displayShareBlock();
     }
+
+    completionHandler([UAActionResult emptyResult]);
 }
 
 @end

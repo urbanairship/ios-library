@@ -1,10 +1,10 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UABaseTest.h"
 #import "UIWebView+UAAdditions.h"
 #import <JavaScriptCore/JavaScriptCore.h>
 #import "UAirship.h"
-#import "UAConfig.h"
+#import "UARuntimeConfig.h"
 #import "UAUser.h"
 
 @interface UIWebView_UAAdditionsTest : UABaseTest

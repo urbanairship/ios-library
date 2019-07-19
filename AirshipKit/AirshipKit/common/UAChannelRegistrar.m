@@ -1,11 +1,11 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UAChannelRegistrar+Internal.h"
 #import "UAChannelAPIClient+Internal.h"
 #import "UAGlobal.h"
 #import "UAUtils+Internal.h"
 #import "UAChannelRegistrationPayload+Internal.h"
-#import "UAConfig.h"
+#import "UARuntimeConfig.h"
 #import "UAPreferenceDataStore+Internal.h"
 #import "UADate+Internal.h"
 #import "UADispatcher+Internal.h"
@@ -13,7 +13,6 @@
 NSTimeInterval const k24HoursInSeconds = 24 * 60 * 60;
 
 NSString *const UAPushChannelIDKey = @"UAChannelID";
-NSString *const UAPushChannelLocationKey = @"UAChannelLocation";
 NSString *const UALastSuccessfulUpdateKey = @"last-update-key";
 NSString *const UALastSuccessfulPayloadKey = @"payload-key";
 
@@ -33,11 +32,6 @@ NSString *const UALastSuccessfulPayloadKey = @"payload-key";
  * The channel ID for this device.
  */
 @property (nonatomic, copy, nullable) NSString *channelID;
-
-/**
- * Channel location as a string.
- */
-@property (nonatomic, copy, nullable) NSString *channelLocation;
 
 /**
  * The last successful payload that was registered.
@@ -81,7 +75,7 @@ NSString *const UALastSuccessfulPayloadKey = @"payload-key";
 
 @end
 
-UAConfig *config;
+UARuntimeConfig *config;
 
 @implementation UAChannelRegistrar
 
@@ -107,7 +101,7 @@ UAConfig *config;
     return self;
 }
 
-+ (instancetype)channelRegistrarWithConfig:(UAConfig *)config
++ (instancetype)channelRegistrarWithConfig:(UARuntimeConfig *)config
                                  dataStore:(UAPreferenceDataStore *)dataStore
                                   delegate:(id<UAChannelRegistrarDelegate>)delegate {
     return [[self alloc] initWithDataStore:dataStore
@@ -119,11 +113,10 @@ UAConfig *config;
 }
 
 // Constructor for unit tests
-+ (instancetype)channelRegistrarWithConfig:(UAConfig *)config
++ (instancetype)channelRegistrarWithConfig:(UARuntimeConfig *)config
                                  dataStore:(UAPreferenceDataStore *)dataStore
                                   delegate:(id<UAChannelRegistrarDelegate>)delegate
                                  channelID:(NSString *)channelID
-                           channelLocation:(NSString *)channelLocation
                           channelAPIClient:(UAChannelAPIClient *)channelAPIClient
                                       date:(UADate *)date
                                 dispatcher:(UADispatcher *)dispatcher
@@ -136,7 +129,6 @@ UAConfig *config;
                                                                  dispatcher:dispatcher
                                                                 application:application];
     channelRegistrar.channelID = channelID;
-    channelRegistrar.channelLocation = channelLocation;
     return channelRegistrar;
 }
 
@@ -167,8 +159,7 @@ UAConfig *config;
 
         // Proceed with registration
         self.isRegistrationInProgress = YES;
-
-        if (!self.channelID || !self.channelLocation) {
+        if (!self.channelID) {
             [self createChannelWithPayload:payload];
         } else {
             [self updateChannelWithPayload:payload];
@@ -193,7 +184,6 @@ UAConfig *config;
     [self cancelAllRequests];
 
     UA_LDEBUG(@"Clearing previous channel.");
-    [self.dataStore removeObjectForKey:UAPushChannelLocationKey];
     [self.dataStore removeObjectForKey:UAPushChannelIDKey];
 
     [self registerForcefully:YES];
@@ -269,29 +259,28 @@ UAConfig *config;
         }];
     };
 
-    [self.channelAPIClient updateChannelWithLocation:self.channelLocation
-                                         withPayload:payload
-                                           onSuccess:updateChannelSuccessBlock
-                                           onFailure:updateChannelFailureBlock];
+    [self.channelAPIClient updateChannelWithID:self.channelID
+                                   withPayload:payload
+                                     onSuccess:updateChannelSuccessBlock
+                                     onFailure:updateChannelFailureBlock];
 }
 
 // Must be called on main queue
 - (void)createChannelWithPayload:(UAChannelRegistrationPayload *)payload {
     UA_WEAKIFY(self);
 
-    UAChannelAPIClientCreateSuccessBlock createChannelSuccessBlock = ^(NSString *newChannelID, NSString *newChannelLocation, BOOL existing) {
+    UAChannelAPIClientCreateSuccessBlock createChannelSuccessBlock = ^(NSString *newChannelID, BOOL existing) {
         UA_STRONGIFY(self);
         [self.dispatcher dispatchAsync:^{
             UA_STRONGIFY(self);
-            if (!newChannelID || !newChannelLocation) {
-                UA_LDEBUG(@"Channel ID: %@ or channel location: %@ is missing. Channel creation failed", newChannelID, newChannelLocation);
+            if (!newChannelID) {
+                UA_LDEBUG(@"Channel ID is missing. Channel creation failed.");
                 [self failedWithPayload:payload];
             } else {
-                UA_LDEBUG(@"Channel %@ created successfully. Channel location: %@.", newChannelID, newChannelLocation);
+                UA_LDEBUG(@"Channel %@ created successfully.", newChannelID);
                 self.channelID = newChannelID;
-                self.channelLocation = newChannelLocation;
 
-                [self.delegate channelCreated:newChannelID channelLocation:newChannelLocation existing:existing];
+                [self.delegate channelCreated:newChannelID existing:existing];
                 [self succeededWithPayload:payload];
             }
         }];
@@ -355,27 +344,7 @@ UAConfig *config;
 }
 
 - (NSString *)channelID {
-    // Get the channel location from data store instead of
-    // the channelLocation property, because that may cause an infinite loop.
-    if ([self.dataStore stringForKey:UAPushChannelLocationKey]) {
-        return [self.dataStore stringForKey:UAPushChannelIDKey];
-    } else {
-        return nil;
-    }
-}
-
-- (void)setChannelLocation:(NSString *)channelLocation {
-    [self.dataStore setValue:channelLocation forKey:UAPushChannelLocationKey];
-}
-
-- (NSString *)channelLocation {
-    // Get the channel location from data store instead of
-    // the channelID property, because that may cause an infinite loop.
-    if ([self.dataStore stringForKey:UAPushChannelIDKey]) {
-        return [self.dataStore stringForKey:UAPushChannelLocationKey];
-    } else {
-        return nil;
-    }
+    return [self.dataStore stringForKey:UAPushChannelIDKey];
 }
 
 - (UAChannelRegistrationPayload *)lastSuccessfulPayload {

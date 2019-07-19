@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import <Foundation/Foundation.h>
 #import "UASchedule.h"
@@ -30,6 +30,18 @@ extern NSUInteger const UAAutomationScheduleLimit;
  * If the schedule info is invalid, the action schedule will be nil.
  */
 - (void)scheduleActions:(UAActionScheduleInfo *)scheduleInfo
+      completionHandler:(nullable void (^)(UASchedule * __nullable))completionHandler;
+
+/**
+ * Schedules actions with metadata.
+ *
+ * @param scheduleInfo The schedule information.
+ * @param metadata The schedule's metadata.
+ * @param completionHandler The completion handler when the action is scheduled.
+ * If the schedule info is invalid, the action schedule will be nil.
+ */
+- (void)scheduleActions:(UAActionScheduleInfo *)scheduleInfo
+               metadata:(NSDictionary *)metadata
       completionHandler:(nullable void (^)(UASchedule * __nullable))completionHandler;
 
 /**

@@ -1,14 +1,14 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UAGlobal.h"
 #import "UAJavaScriptDelegate.h"
+#import "UALocationProviderDelegate.h"
 #import "UAWhitelist.h"
 #import "UAirshipVersion.h"
 
 // Frameworks
 #import <SystemConfiguration/SystemConfiguration.h>
 #import <CoreData/CoreData.h>
-#import <CoreLocation/CoreLocation.h>
 #import <Security/Security.h>
 #import <QuartzCore/QuartzCore.h>
 #import <Availability.h>
@@ -34,10 +34,10 @@
 @class UAInAppMessageManager;
 @class UALegacyInAppMessaging;
 @class UAMessageCenter;
-@class UALocation;
 @class UAAutomation;
 @class UAChannelCapture;
 @class UARemoteDataManager;
+@class UAModules;
 
 #if !TARGET_OS_TV   // Inbox not supported on tvOS
 @class UAInbox;
@@ -55,7 +55,7 @@
 @optional
 
 /**
- * Called when a deep link has been triggered from Urban Airship. If implemented, the delegate is responsible for processing the provided url.
+ * Called when a deep link has been triggered from Airship. If implemented, the delegate is responsible for processing the provided url.
  *
  * @param url The url for the deep link.
  * @param completionHandler The completion handler to execute when the deep link processing is complete.
@@ -74,17 +74,16 @@ NS_ASSUME_NONNULL_BEGIN
 extern NSString * const UAirshipTakeOffBackgroundThreadException;
 
 /**
- * UAirship manages the shared state for all Urban Airship services. [UAirship takeOff:] should be
+ * UAirship manages the shared state for all Airship services. [UAirship takeOff:] should be
  * called from within your application delegate's `application:didFinishLaunchingWithOptions:` method
  * to initialize the shared instance.
  */
 @interface UAirship : NSObject
 
 /**
- * The application configuration. This is set on takeOff.
+ * The application configuration.
  */
-@property (nonatomic, strong, readonly) UAConfig *config;
-
+@property (nonatomic, strong, readonly) UARuntimeConfig *config;
 
 /**
  * The default action registry.
@@ -117,6 +116,8 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
  */
 @property (nonatomic, weak, nullable) id<UADeepLinkDelegate> deepLinkDelegate;
 
+@property (nonatomic, weak, nullable) id<UALocationProviderDelegate> locationProviderDelegate;
+
 /**
  * The whitelist used for validating URLs for landing pages, wallet action, open external URL action,
  * deep link action (if delegate is not set), and HTML in-app messages.
@@ -146,7 +147,7 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
 + (void)setLogging:(BOOL)enabled;
 
 /**
- * Sets the log level for the Urban Airship library. The log level defaults to `UALogLevelDebug`
+ * Sets the log level for the Airship library. The log level defaults to `UALogLevelDebug`
  * for development apps, and `UALogLevelError` for production apps (when the inProduction
  * AirshipConfig flag is set to `YES`). Values set with this method prior to `takeOff` will be overridden
  * during takeOff.
@@ -255,11 +256,6 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
 + (nullable NSBundle *) resources;
 
 /**
- * Returns the `UALocation` instance.
- */
-+ (null_unspecified UALocation *)location;
-
-/**
  * Returns the `UAAutomation` instance.
  */
 + (null_unspecified UAAutomation *)automation;
@@ -268,6 +264,11 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
  * Returns the default `UAAnalytics` instance.
  */
 + (null_unspecified UAAnalytics *)analytics;
+
+/**
+ * Returns the `UAModules` instance.
+ */
++ (null_unspecified UAModules *) modules;
 
 NS_ASSUME_NONNULL_END
 

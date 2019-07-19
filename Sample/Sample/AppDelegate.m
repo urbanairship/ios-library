@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 @import AirshipKit;
 @import AirshipDebugKit;
@@ -6,7 +6,6 @@
 #import "AppDelegate.h"
 #import "InboxDelegate.h"
 #import "PushHandler.h"
-#import "DebugViewController.h"
 #import "HomeViewController.h"
 #import "MessageCenterViewController.h"
 
@@ -61,6 +60,9 @@ NSUInteger const DebugTab = 2;
     // Print out the application configuration for debugging (optional)
     NSLog(@"Config:\n%@", [config description]);
 
+    // Call takeOff (which initializes the Airship DebugKit)
+    [AirshipDebugKit takeOff];
+    
     // Set the icon badge to zero on startup (optional)
     [[UAirship push] resetBadge];
 
@@ -91,9 +93,6 @@ NSUInteger const DebugTab = 2;
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(refreshMessageCenterBadge)
                                                  name:UAInboxMessageListUpdatedNotification object:nil];
-
-    [AirshipDebugKit takeOff];
-
     return YES;
 }
 
@@ -124,7 +123,6 @@ NSUInteger const DebugTab = 2;
 }
 
 - (void)failIfSimulator {
-
     // If it's not a simulator return early
     if (TARGET_OS_SIMULATOR == 0 && TARGET_IPHONE_SIMULATOR == 0) {
         return;
@@ -171,68 +169,75 @@ NSUInteger const DebugTab = 2;
 #pragma mark -
 #pragma mark Deep link handling
 
+// Available Deep Links:
+//    - <scheme>://deeplink/home
+//    - <scheme>://deeplink/inbox
+//    - <scheme>://deeplink/inbox/message/<messageId>
+//    - <scheme>://deeplink/settings
+//    - <scheme>://deeplink/settings/tags
+
 - (void)receivedDeepLink:(NSURL *_Nonnull)url completionHandler:(void (^_Nonnull)(void))completionHandler {
-    NSArray *pathComponents = url.pathComponents;
+    NSMutableArray<NSString *>*pathComponents = [url.pathComponents mutableCopy];
+    if ([pathComponents[0] isEqualToString:@"/"]) {
+        [pathComponents removeObjectAtIndex:0];
+    }
 
     UITabBarController *tabController = (UITabBarController *)self.window.rootViewController;
 
-    if ([pathComponents containsObject:HomeStoryboardID]) {
-        [tabController setSelectedIndex:HomeTab];
-    } else if ([pathComponents containsObject:PushSettingsStoryboardID]) {
-        id selectedVC = tabController.selectedViewController;
+    // map existing deep links to new paths
+    if ([[pathComponents[0] lowercaseString] isEqualToString:PushSettingsStoryboardID]) {
+        pathComponents = [[[NSURL URLWithString:@"settings"] pathComponents] mutableCopy];
+    } else if ([[pathComponents[0] lowercaseString] isEqualToString:InAppAutomationStoryboardID]) {
+        pathComponents = [[[NSURL URLWithString:[NSString stringWithFormat:@"%@/%@",DebugStoryboardID,AirshipDebugKit.automationViewName]] pathComponents] mutableCopy];
+    }
+    
+    // map deeplinks to storyboards paths
+    if ([[pathComponents[0] lowercaseString] isEqualToString:@"home"]) {
+        pathComponents[0] = HomeStoryboardID;
+    } else if ([[pathComponents[0] lowercaseString] isEqualToString:@"inbox"]) {
+        pathComponents[0] = MessageCenterStoryboardID;
+    } else if ([[pathComponents[0] lowercaseString] isEqualToString:@"settings"]) {
+        NSMutableArray<NSString *>*newPathComponents = [[[NSURL URLWithString:[NSString stringWithFormat:@"%@/%@",DebugStoryboardID,AirshipDebugKit.deviceInfoViewName]] pathComponents] mutableCopy];
+        [pathComponents removeObjectAtIndex:0];
+        if (pathComponents.count > 0) {
+            if ([[pathComponents[0] lowercaseString] isEqualToString:@"tags"]) {
+                [newPathComponents addObject:AirshipDebugKit.tagsViewName];
+            } else {
+                [newPathComponents addObjectsFromArray:pathComponents];
+            }
+        }
+        pathComponents = newPathComponents;
+    }
 
-        if ([selectedVC isKindOfClass:[UINavigationController class]]) {
-            UINavigationController *nav = (UINavigationController *)selectedVC;
-            if (![[nav topViewController] isKindOfClass:[DebugViewController class]]) {
-                [nav popToRootViewControllerAnimated:YES];
+    // execute deep link
+    if ([[pathComponents[0] lowercaseString] isEqualToString:HomeStoryboardID]) {
+        // switch to home tab
+        tabController.selectedIndex = HomeTab;
+    } else if ([[pathComponents[0] lowercaseString] isEqualToString:MessageCenterStoryboardID]) {
+        // switch to inbox tab
+        tabController.selectedIndex = MessageCenterTab;
+        
+        // get rest of deep link
+        [pathComponents removeObjectAtIndex:0];
+        
+        if ((pathComponents.count == 0) || (![pathComponents[0] isEqualToString:@"message"])) {
+            [self.inboxDelegate showInbox];
+        } else {
+            // remove "message" from front of url
+            [pathComponents removeObjectAtIndex:0];
+            NSString *messageId;
+            if (pathComponents.count > 0) {
+                messageId = pathComponents[0];
             }
+            [self.inboxDelegate showMessageForID:messageId];
         }
-
-        [tabController setSelectedIndex:DebugTab];
+    } else if ([[pathComponents[0] lowercaseString] isEqualToString:DebugStoryboardID]) {
+        // switch to debug tab
+        tabController.selectedIndex = DebugTab;
         
-        selectedVC = tabController.selectedViewController;
-        
-        if ([selectedVC isKindOfClass:[UINavigationController class]]) {
-            UINavigationController *nav = (UINavigationController *)selectedVC;
-            if ([[nav topViewController] isKindOfClass:[DebugViewController class]]) {
-                DebugViewController *debugViewController = (DebugViewController *)nav.topViewController;
-                [debugViewController deviceInfo];
-            }
-        }
-    } else if ([pathComponents containsObject:DebugStoryboardID]) {
-        id selectedVC = tabController.selectedViewController;
-        
-        if ([selectedVC isKindOfClass:[UINavigationController class]]) {
-            UINavigationController *nav = (UINavigationController *)selectedVC;
-            if (![[nav topViewController] isKindOfClass:[DebugViewController class]]) {
-                [nav popToRootViewControllerAnimated:YES];
-            }
-        }
-        
-        [tabController setSelectedIndex:DebugTab];
-    } else if ([pathComponents containsObject:InAppAutomationStoryboardID]) {
-        id selectedVC = tabController.selectedViewController;
-        
-        if ([selectedVC isKindOfClass:[UINavigationController class]]) {
-            UINavigationController *nav = (UINavigationController *)selectedVC;
-            if (![[nav topViewController] isKindOfClass:[DebugViewController class]]) {
-                [nav popToRootViewControllerAnimated:YES];
-            }
-        }
-        
-        [tabController setSelectedIndex:DebugTab];
-        
-        selectedVC = tabController.selectedViewController;
-        
-        if ([selectedVC isKindOfClass:[UINavigationController class]]) {
-            UINavigationController *nav = (UINavigationController *)selectedVC;
-            if ([[nav topViewController] isKindOfClass:[DebugViewController class]]) {
-                DebugViewController *debugViewController = (DebugViewController *)nav.topViewController;
-                [debugViewController inAppAutomation];
-            }
-        }
-    } else if ([pathComponents containsObject:MessageCenterStoryboardID]) {
-        [tabController setSelectedIndex:MessageCenterTab];
+        // get rest of deep link
+        [pathComponents removeObjectAtIndex:0];
+        [AirshipDebugKit showView:[NSURL fileURLWithPath:[NSString pathWithComponents:pathComponents]]];
     }
 
     completionHandler();

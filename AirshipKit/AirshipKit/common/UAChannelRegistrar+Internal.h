@@ -1,10 +1,10 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import <UIKit/UIKit.h>
 
 @class UAChannelRegistrationPayload;
 @class UAChannelAPIClient;
-@class UAConfig;
+@class UARuntimeConfig;
 @class UAPreferenceDataStore;
 @class UADate;
 @class UADispatcher;
@@ -45,11 +45,9 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Called when the channel registrar creates a new channel.
  * @param channelID The channel ID string.
- * @param channelLocation The channel location string.
  * @param existing Boolean to indicate if the channel previously existed or not.
  */
 - (void)channelCreated:(NSString *)channelID
-       channelLocation:(NSString *)channelLocation
               existing:(BOOL)existing;
 
 @end
@@ -65,12 +63,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Factory method to create a channel registrar.
- * @param config The Urban Airship config.
+ * @param config The Airship config.
  * @param dataStore The shared preference data store.
  * @param delegate The UAChannelRegistrarDelegate delegate.
  * @return A new channel registrar instance.
  */
-+ (instancetype)channelRegistrarWithConfig:(UAConfig *)config
++ (instancetype)channelRegistrarWithConfig:(UARuntimeConfig *)config
                                  dataStore:(UAPreferenceDataStore *)dataStore
                                   delegate:(id<UAChannelRegistrarDelegate>)delegate;
 
@@ -80,7 +78,7 @@ NS_ASSUME_NONNULL_BEGIN
 ///---------------------------------------------------------------------------------------
 
 /**
- * Register the device with Urban Airship.
+ * Register the device with Airship.
  *
  * @note This method will execute asynchronously on the main thread.
  *
@@ -114,22 +112,20 @@ NS_ASSUME_NONNULL_BEGIN
 ///---------------------------------------------------------------------------------------
 /**
  * Factory method to create a channel registrar. (for testing)
- * @param config The Urban Airship config.
+ * @param config The Airship config.
  * @param dataStore The shared preference data store.
  * @param delegate The UAChannelRegistrarDelegate delegate.
  * @param channelID The initial channel ID string.
- * @param channelLocation The initial channel location string.
  * @param channelAPIClient The channel API client.
  * @param date The UADate object.
  * @param dispatcher The dispatcher to dispatch main queue blocks.
  * @param application The application.
  * @return A new channel registrar instance.
  */
-+ (instancetype)channelRegistrarWithConfig:(UAConfig *)config
++ (instancetype)channelRegistrarWithConfig:(UARuntimeConfig *)config
                                  dataStore:(UAPreferenceDataStore *)dataStore
                                   delegate:(id<UAChannelRegistrarDelegate>)delegate
                                  channelID:(NSString *)channelID
-                           channelLocation:(NSString *)channelLocation
                           channelAPIClient:(UAChannelAPIClient *)channelAPIClient
                                       date:(UADate *)date
                                 dispatcher:(UADispatcher *)dispatcher
@@ -138,11 +134,6 @@ NS_ASSUME_NONNULL_BEGIN
 ///---------------------------------------------------------------------------------------
 /// @name Channel Registrar Properties (for testing)
 ///---------------------------------------------------------------------------------------
-
-/**
- * Channel location as a string.
- */
-@property (nonatomic, copy, nullable, readonly) NSString *channelLocation;
 
 /**
  * The last successful payload that was registered.

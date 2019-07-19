@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import <Foundation/Foundation.h>
 #import "UAGlobal.h"
@@ -8,7 +8,7 @@
 #define kUACoreDataDirectory @"UAInbox"
 #define kUAInboxDBEntityName @"UAInboxMessage"
 
-@class UAConfig;
+@class UARuntimeConfig;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -54,7 +54,6 @@ NS_ASSUME_NONNULL_BEGIN
  * Updates the inbox store with the array of messages.
  *
  * @param messages An array of messages.
- * Urban Airship JSON API for retrieving inbox messages.
  * @param completionHandler The completion handler with the sync result.
  *
  */

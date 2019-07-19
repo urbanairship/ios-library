@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UABaseTest.h"
 
@@ -6,7 +6,7 @@
 #import "UAEventStore+Internal.h"
 #import "UAEventAPIClient+Internal.h"
 #import "UAPreferenceDataStore+Internal.h"
-#import "UAConfig.h"
+#import "UARuntimeConfig.h"
 #import "UACustomEvent.h"
 #import "NSOperationQueue+UAAdditions.h"
 #import "UARegionEvent.h"
@@ -60,7 +60,7 @@
     self.mockApplication = [self mockForClass:[UIApplication class]];
 
     self.notificationCenter = [[NSNotificationCenter alloc] init];
-    self.eventManager = [UAEventManager eventManagerWithConfig:[UAConfig config]
+    self.eventManager = [UAEventManager eventManagerWithConfig:self.config
                                                      dataStore:self.dataStore
                                                     eventStore:self.mockStore
                                                         client:self.mockClient

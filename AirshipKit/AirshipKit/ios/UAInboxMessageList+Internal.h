@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UAInboxMessageList.h"
 #import "UAInboxAPIClient+Internal.h"
@@ -75,7 +75,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 + (instancetype)messageListWithUser:(UAUser *)user
                              client:(UAInboxAPIClient *)client
-                             config:(UAConfig *)config;
+                             config:(UARuntimeConfig *)config;
 
 /**
  * Factory method for creating an Inbox Message List. Used for testing.
@@ -91,7 +91,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 + (instancetype)messageListWithUser:(UAUser *)user
                              client:(UAInboxAPIClient *)client
-                             config:(UAConfig *)config
+                             config:(UARuntimeConfig *)config
                          inboxStore:(UAInboxStore *)inboxStore
                  notificationCenter:(NSNotificationCenter *)notificationCenter
                          dispatcher:(UADispatcher *)dispatcher

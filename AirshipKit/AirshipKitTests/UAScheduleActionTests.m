@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 
 #import "UABaseTest.h"
@@ -84,7 +84,7 @@
 
     [[self.mockAutomation expect] scheduleActions:expectedInfo completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
         void(^completionBlock)(UASchedule *) = obj;
-        UASchedule *schedule = [UASchedule scheduleWithIdentifier:@"test" info:expectedInfo];
+        UASchedule *schedule = [UASchedule scheduleWithIdentifier:@"test" info:expectedInfo metadata:@{}];
         completionBlock(schedule);
         return YES;
     }]];

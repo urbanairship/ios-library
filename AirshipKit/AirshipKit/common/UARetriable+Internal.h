@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import <Foundation/Foundation.h>
 
@@ -20,6 +20,10 @@ typedef NS_ENUM(NSUInteger, UARetriableResult) {
      * Represents a cancel condition.
      */
     UARetriableResultCancel = 2,
+    /**
+     * Represents an invalidation of the retriable chain.
+     */
+    UARetriableResultInvalidate = 3
 };
 
 /**

@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UATagGroupsLookupManager+Internal.h"
 #import "UATagGroupsLookupAPIClient+Internal.h"
@@ -48,7 +48,7 @@ NSString * const UATagGroupsLookupManagerErrorDomain = @"com.urbanairship.tag_gr
     return self;
 }
 
-+ (instancetype)lookupManagerWithConfig:(UAConfig *)config
++ (instancetype)lookupManagerWithConfig:(UARuntimeConfig *)config
                               dataStore:(UAPreferenceDataStore *)dataStore
                         mutationHistory:(UATagGroupsMutationHistory *)mutationHistory {
 

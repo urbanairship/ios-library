@@ -1,10 +1,10 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UABaseTest.h"
 #import "UARemoteDataStore+Internal.h"
 #import "UARemoteDataStorePayload+Internal.h"
 #import "UARemoteDataPayload+Internal.h"
-#import "UAConfig.h"
+#import "UARuntimeConfig.h"
 
 @interface UARemoteDataStoreTest : UABaseTest
 @property UARemoteDataStore *remoteDataStore;
@@ -42,6 +42,7 @@
                                   XCTAssertEqualObjects(testPayload.type, dataStorePayload.type);
                                   XCTAssertEqualObjects(testPayload.timestamp, dataStorePayload.timestamp);
                                   XCTAssertEqualObjects(testPayload.data, dataStorePayload.data);
+                                  XCTAssertEqualObjects(testPayload.metadata, dataStorePayload.metadata);
 
                                   [testExpectation fulfill];
                               }];
@@ -75,6 +76,7 @@
                                                  if ([testPayload.type isEqualToString:dataStorePayload.type]) {
                                                      XCTAssertEqualObjects(testPayload.timestamp, dataStorePayload.timestamp);
                                                      XCTAssertEqualObjects(testPayload.data, dataStorePayload.data);
+                                                     XCTAssertEqualObjects(testPayload.metadata, dataStorePayload.metadata);
                                                      matchedPayloadTypes = YES;
                                                  }
                                              }
@@ -104,6 +106,7 @@
                                          XCTAssertEqualObjects(testPayload.type, dataStorePayload.type);
                                          XCTAssertEqualObjects(testPayload.timestamp, dataStorePayload.timestamp);
                                          XCTAssertEqualObjects(testPayload.data, dataStorePayload.data);
+                                         XCTAssertEqualObjects(testPayload.metadata, dataStorePayload.metadata);
                                          
                                          [secondFetch fulfill];
                                      }];
@@ -121,7 +124,8 @@
                                                                                            @"background_color": [[NSProcessInfo processInfo] globallyUniqueString],
                                                                                            @"font": [[NSProcessInfo processInfo] globallyUniqueString]
                                                                                            }
-                                                                                   }];
+                                                                                   }
+                                                                        metadata:@{@"cool" : @"story"}];
     return testPayload;
 }
 

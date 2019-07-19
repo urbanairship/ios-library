@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UATagGroupsRegistrar+Internal.h"
 
@@ -67,7 +67,7 @@ typedef void (^UATagGroupsMutator)(NSArray *, NSString *);
     return self;
 }
 
-+ (instancetype)tagGroupsRegistrarWithConfig:(UAConfig *)config
++ (instancetype)tagGroupsRegistrarWithConfig:(UARuntimeConfig *)config
                                    dataStore:(UAPreferenceDataStore *)dataStore
                              mutationHistory:(UATagGroupsMutationHistory *)mutationHistory {
 

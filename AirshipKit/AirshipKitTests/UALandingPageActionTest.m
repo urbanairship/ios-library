@@ -1,22 +1,24 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UABaseTest.h"
 #import "UALandingPageAction.h"
-#import "UAURLProtocol.h"
-#import "UAOverlayViewController.h"
 #import "UAAction+Internal.h"
 #import "UAirship+Internal.h"
-#import "UAConfig.h"
+#import "UARuntimeConfig.h"
 #import "UAUtils+Internal.h"
 #import "NSString+UAURLEncoding.h"
+#import "UAInAppMessageManager+Internal.h"
+#import "UAInAppMessageScheduleInfo+Internal.h"
+#import "UAInAppMessageHTMLDisplayContent+Internal.h"
+#import "UAMessageCenter.h"
 
 @interface UALandingPageActionTest : UABaseTest
 
-@property (nonatomic, strong) id mockOverlayViewController;
 @property (nonatomic, strong) id mockAirship;
 @property (nonatomic, strong) id mockConfig;
 @property (nonatomic, strong) UALandingPageAction *action;
 @property (nonatomic, assign) id mockWhitelist;
+@property (nonatomic, strong) id mockInAppMessageManager;
 
 
 @end
@@ -26,9 +28,8 @@
 - (void)setUp {
     [super setUp];
     self.action = [[UALandingPageAction alloc] init];
-    self.mockOverlayViewController = [self mockForClass:[UAOverlayViewController class]];
 
-    self.mockConfig = [self mockForClass:[UAConfig class]];
+    self.mockConfig = [self mockForClass:[UARuntimeConfig class]];
     self.mockAirship = [self mockForClass:[UAirship class]];
     self.mockWhitelist =  [self mockForClass:[UAWhitelist class]];
 
@@ -37,19 +38,21 @@
     [UAirship setSharedAirship:self.mockAirship];
 
     [[[self.mockConfig stub] andReturn:@"app-key"] appKey];
-    [[[self.mockConfig stub] andReturn:kUAProductionLandingPageContentURL] landingPageContentURL];
     [[[self.mockConfig stub] andReturn:@"app-secret"] appSecret];
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-    [[[self.mockConfig stub] andReturnValue:OCMOCK_VALUE((NSUInteger)100)] cacheDiskSizeInMB];
-#pragma GCC diagnostic pop
+
+    // Set an actual whitelist
+    UAWhitelist *whitelist = [UAWhitelist whitelistWithConfig:self.mockConfig];
+    [[[self.mockAirship stub] andReturn:whitelist] whitelist];
+
+    self.mockInAppMessageManager = [self mockForClass:[UAInAppMessageManager class]];
+    [[[self.mockAirship stub] andReturn:self.mockConfig] config];
+    [[[self.mockAirship stub] andReturn:self.mockInAppMessageManager] sharedInAppMessageManager];
 }
 
 - (void)tearDown {
     [self.mockAirship stopMocking];
     [self.mockWhitelist stopMocking];
     [self.mockConfig stopMocking];
-    [self.mockOverlayViewController stopMocking];
 }
 
 /**
@@ -63,9 +66,6 @@
     [self verifyAcceptsArgumentsWithValue:@"http://foo.urbanairship.com" shouldAccept:YES];
     [self verifyAcceptsArgumentsWithValue:@"file://foo.urbanairship.com" shouldAccept:YES];
     [self verifyAcceptsArgumentsWithValue:[NSURL URLWithString:@"https://foo.urbanairship.com"] shouldAccept:YES];
-
-    // Verify UA content ID urls
-    [self verifyAcceptsArgumentsWithValue:@"u:content-id" shouldAccept:true];
 }
 
 /**
@@ -78,7 +78,6 @@
     [self verifyAcceptsArgumentsWithValue:nil shouldAccept:NO];
     [self verifyAcceptsArgumentsWithValue:[[NSObject alloc] init] shouldAccept:NO];
     [self verifyAcceptsArgumentsWithValue:@[] shouldAccept:NO];
-    [self verifyAcceptsArgumentsWithValue:@"u:" shouldAccept:NO];
 }
 
 /**
@@ -95,77 +94,73 @@
 }
 
 /**
- * Test perform in UASituationBackgroundPush
+ * Test perform in foreground situations
  */
 - (void)testPerformInForeground {
     [[[[self.mockWhitelist stub] andReturnValue:OCMOCK_VALUE(YES)] ignoringNonObjectArgs] isWhitelisted:OCMOCK_ANY scope:UAWhitelistScopeOpenURL];
 
-    // Verify https is added to schemeless urls
-    [self verifyPerformInForegroundWithValue:@"foo.urbanairship.com" expectedUrl:@"https://foo.urbanairship.com"];
-
-    // Verify common scheme types
-    [self verifyPerformInForegroundWithValue:@"http://foo.urbanairship.com" expectedUrl:@"http://foo.urbanairship.com"];
-    [self verifyPerformInForegroundWithValue:@"https://foo.urbanairship.com" expectedUrl:@"https://foo.urbanairship.com"];
-    [self verifyPerformInForegroundWithValue:[NSURL URLWithString:@"https://foo.urbanairship.com"] expectedUrl:@"https://foo.urbanairship.com"];
-    [self verifyPerformInForegroundWithValue:@"file://foo.urbanairship.com" expectedUrl:@"file://foo.urbanairship.com"];
-
-    // Verify content urls - https://dl.urbanairship.com/<app>/<id>
-    // u:<id> where id is ascii85 encoded... so it needs to be url encoded
-    [self verifyPerformInForegroundWithValue:@"u:<~@rH7,ASuTABk.~>"
-                                 expectedUrl:@"https://dl.urbanairship.com/aaa/app-key/%3C~%40rH7,ASuTABk.~%3E"
-                             expectedHeaders:@{@"Authorization": [UAUtils appAuthHeaderString]}];
+    NSString *urlString = @"www.airship.com";
+    // Expected URL String should be message ID with prepended message scheme.
+    NSString *expectedURLString = [NSString stringWithFormat:@"%@%@", @"https://", urlString];
+    [self verifyPerformWithArgValue:urlString expectedURLString:expectedURLString metadata:nil];
 }
 
-
 /**
- * Helper method to verify perform in foreground situations
+ * Test perform with a message ID thats available in the message list is displayed
+ * in a landing page controller.
  */
-- (void)commonVerifyPerformInForegroundWithValue:(id)value expectedUrl:(NSString *)expectedUrl expectedHeaders:(NSDictionary *)headers mockedViewController:(id)mockedViewController {
-    NSArray *situations = @[[NSNumber numberWithInteger:UASituationWebViewInvocation],
-                            [NSNumber numberWithInteger:UASituationForegroundPush],
-                            [NSNumber numberWithInteger:UASituationLaunchedFromPush],
-                            [NSNumber numberWithInteger:UASituationManualInvocation],
-                            [NSNumber numberWithInteger:UASituationAutomation]];
-    
-    for (NSNumber *situationNumber in situations) {
-        [[[mockedViewController expect] ignoringNonObjectArgs] showURL:[OCMArg checkWithBlock:^(id obj) {
-            return (BOOL)([obj isKindOfClass:[NSURL class]] && [((NSURL *)obj).absoluteString isEqualToString:expectedUrl]);
-        }] withHeaders:[OCMArg checkWithBlock:^(id obj) {
-            return (BOOL) ([headers count] ? [headers isEqualToDictionary:obj] : [obj count] == 0);
-        }] size:CGSizeZero aspectLock:false];
+- (void)verifyPerformWithArgValue:(id)value expectedURLString:(NSString *)expectedURLString metadata:(NSDictionary * __nullable)metadata {
+    __block BOOL actionPerformed;
 
-        UAActionArguments *args = [UAActionArguments argumentsWithValue:value withSituation:[situationNumber integerValue]];
-        [self verifyPerformWithArgs:args withExpectedUrl:expectedUrl withExpectedFetchResult:UAActionFetchResultNewData mockedViewController:mockedViewController];
+    UASituation validSituations[6] = {
+        UASituationForegroundInteractiveButton,
+        UASituationLaunchedFromPush,
+        UASituationManualInvocation,
+        UASituationWebViewInvocation,
+        UASituationForegroundPush,
+        UASituationAutomation
+    };
+
+    for (int i = 0; i < 6; i++) {
+        UAActionArguments *arguments;
+
+        if (metadata) {
+            arguments = [UAActionArguments argumentsWithValue:value withSituation:validSituations[i] metadata:metadata];
+        } else {
+            arguments = [UAActionArguments argumentsWithValue:value withSituation:validSituations[i]];
+        }
+
+        [[[self.mockInAppMessageManager expect] andDo:^(NSInvocation *invocation) {
+            void *scheduleInfoArg;
+            [invocation getArgument:&scheduleInfoArg atIndex:2];
+            UAInAppMessageScheduleInfo *scheduleInfo = (__bridge UAInAppMessageScheduleInfo *)scheduleInfoArg;
+
+            UAInAppMessage *message = scheduleInfo.message;
+
+            XCTAssertEqual(message.displayType, UAInAppMessageDisplayTypeHTML);
+            XCTAssertEqualObjects(message.displayBehavior, UAInAppMessageDisplayBehaviorImmediate);
+            XCTAssertEqual(message.isReportingEnabled, NO);
+
+            UAInAppMessageHTMLDisplayContent *displayContent = (UAInAppMessageHTMLDisplayContent *)message.displayContent;
+            XCTAssertEqual(displayContent.requireConnectivity, NO);
+            XCTAssertEqualObjects(displayContent.url, expectedURLString);
+
+            void *handlerArg;
+            [invocation getArgument:&handlerArg atIndex:3];
+            void (^handler)(UASchedule *) = (__bridge void (^)(UASchedule *))handlerArg;
+            handler(nil);
+
+        }] scheduleMessageWithScheduleInfo:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
+        [self.action performWithArguments:arguments completionHandler:^(UAActionResult *result) {
+            actionPerformed = YES;
+            XCTAssertNil(result.value);
+            XCTAssertNil(result.error);
+        }];
+
+        XCTAssertTrue(actionPerformed);
+        [self.mockInAppMessageManager verify];
     }
-}
-
-- (void)verifyPerformInForegroundWithValue:(id)value expectedUrl:(NSString *)expectedUrl expectedHeaders:(NSDictionary *)headers {
-    [self commonVerifyPerformInForegroundWithValue:value expectedUrl:expectedUrl expectedHeaders:headers mockedViewController:self.mockOverlayViewController];
-}
-
-/**
- * Helper method to verify perform in foreground situations with no expected headers
- */
-- (void)verifyPerformInForegroundWithValue:(id)value expectedUrl:(NSString *)expectedUrl {
-    [self verifyPerformInForegroundWithValue:value expectedUrl:expectedUrl expectedHeaders:nil];
-}
-
-/**
- * Helper method to verify perform
- */
-- (void)verifyPerformWithArgs:(UAActionArguments *)args withExpectedUrl:(NSString *)expectedUrl withExpectedFetchResult:(UAActionFetchResult)fetchResult mockedViewController:(id)mockedViewController {
-
-    __block BOOL finished = NO;
-
-    [self.action performWithArguments:args completionHandler:^(UAActionResult *result) {
-        finished = YES;
-        XCTAssertEqual(result.fetchResult, fetchResult,
-                       @"fetch result %ld should match expect result %ld", result.fetchResult, fetchResult);
-    }];
-
-    [mockedViewController verify];
-
-    XCTAssertTrue(finished, @"action should have completed");
 }
 
 /**

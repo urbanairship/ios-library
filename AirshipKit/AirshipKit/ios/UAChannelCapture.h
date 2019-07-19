@@ -1,8 +1,8 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import <UIKit/UIKit.h>
 
-@class UAConfig;
+@class UARuntimeConfig;
 @class UAPush;
 
 NS_ASSUME_NONNULL_BEGIN

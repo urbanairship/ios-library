@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UARemoteDataStorePayload+Internal.h"
 
@@ -7,5 +7,6 @@
 @dynamic type;
 @dynamic timestamp;
 @dynamic data;
+@dynamic metadata;
 
 @end

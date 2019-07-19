@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UABaseTest.h"
 
@@ -11,11 +11,15 @@
 
 @interface UAInAppMessageTest : UABaseTest
 @property(nonatomic, strong) NSDictionary *json;
+@property(nonatomic, strong) NSDictionary<NSString*, NSString*> *renderedLocale;
 @end
 
 @implementation UAInAppMessageTest
 
 - (void)testJSON {
+
+    self.renderedLocale =  @{@"language" : @"en", @"country" : @"US"};
+
     // setup
     NSDictionary *originalJSON = @{
                   @"message_id": @"blah",
@@ -29,7 +33,10 @@
                   @"audience": @{@"new_user" : @YES},
                   @"actions": @{@"cool":@"story"},
                   @"source": @"remote-data",
-                  @"campaigns": @{ @"some": @"campaign info"}
+                  @"campaigns": @{ @"some": @"campaign info"},
+                  @"reporting_enabled": @NO,
+                  @"display_behavior":@"default",
+                  @"rendered_locale" : self.renderedLocale
                   };
     
     // test
@@ -38,16 +45,19 @@
     XCTAssertNotNil(messageFromOriginalJSON);
     XCTAssertNil(error);
     
-    XCTAssertEqualObjects(@"blah",messageFromOriginalJSON.identifier);
-    XCTAssertEqualObjects(@"my name",messageFromOriginalJSON.name);
-    XCTAssertEqualObjects(@"the body",((UAInAppMessageBannerDisplayContent *)(messageFromOriginalJSON.displayContent)).body.text);
+    XCTAssertEqualObjects(@"blah", messageFromOriginalJSON.identifier);
+    XCTAssertEqualObjects(@"my name", messageFromOriginalJSON.name);
+    XCTAssertEqualObjects(@"the body", ((UAInAppMessageBannerDisplayContent *)(messageFromOriginalJSON.displayContent)).body.text);
     XCTAssertEqual(UAInAppMessageDisplayTypeBanner, messageFromOriginalJSON.displayType);
-    XCTAssertEqualObjects(@"baz",messageFromOriginalJSON.extras[@"foo"]);
-    XCTAssertEqualObjects(@"foo",messageFromOriginalJSON.extras[@"baz"]);
-    XCTAssertEqualObjects(@"story",messageFromOriginalJSON.actions[@"cool"]);
+    XCTAssertEqualObjects(@"baz", messageFromOriginalJSON.extras[@"foo"]);
+    XCTAssertEqualObjects(@"foo", messageFromOriginalJSON.extras[@"baz"]);
+    XCTAssertEqualObjects(@"story", messageFromOriginalJSON.actions[@"cool"]);
     XCTAssertEqualObjects(@YES, messageFromOriginalJSON.audience.isNewUser);
     XCTAssertEqualObjects(@{ @"some": @"campaign info"}, messageFromOriginalJSON.campaigns);
-    XCTAssertEqual(UAInAppMessageSourceRemoteData, messageFromOriginalJSON.source);
+    XCTAssertEqualObjects(UAInAppMessageDisplayBehaviorDefault, messageFromOriginalJSON.displayBehavior);
+    XCTAssertEqualObjects(self.renderedLocale, messageFromOriginalJSON.renderedLocale);
+
+    XCTAssertFalse(messageFromOriginalJSON.isReportingEnabled);
 
     NSDictionary *toJSON = [messageFromOriginalJSON toJSON];
     XCTAssertNotNil(toJSON);

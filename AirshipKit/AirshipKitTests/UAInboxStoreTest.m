@@ -1,8 +1,8 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UABaseTest.h"
 #import "UAInboxStore+Internal.h"
-#import "UAConfig.h"
+#import "UARuntimeConfig.h"
 
 @interface UAInboxStoreTest : UABaseTest
 @property UAInboxStore *inboxStore;

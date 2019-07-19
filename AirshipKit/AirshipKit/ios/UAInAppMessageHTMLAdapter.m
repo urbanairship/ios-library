@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UAInAppMessageHTMLAdapter.h"
 #import "UAInAppMessageAdapterProtocol.h"
@@ -15,6 +15,7 @@ NSString *const UAHTMLStyleFileName = @"UAInAppMessageHTMLStyle";
 
 @interface UAInAppMessageHTMLAdapter ()
 @property(nonatomic, strong) UAInAppMessage *message;
+@property(nonatomic, strong) UAInAppMessageHTMLDisplayContent *displayContent;
 @property(nonatomic, strong) UAInAppMessageHTMLViewController *htmlViewController;
 @property(nonatomic, strong) UAInAppMessageResizableViewController *resizableContainerViewController;
 @end
@@ -31,6 +32,7 @@ NSString *const UAHTMLStyleFileName = @"UAInAppMessageHTMLStyle";
     if (self) {
         self.message = message;
         self.style = [UAInAppMessageHTMLStyle styleWithContentsOfFile:UAHTMLStyleFileName];
+        self.displayContent = (UAInAppMessageHTMLDisplayContent *)self.message.displayContent;
     }
 
     return self;
@@ -40,7 +42,7 @@ NSString *const UAHTMLStyleFileName = @"UAInAppMessageHTMLStyle";
     return ![[UAUtils connectionType] isEqualToString:kUAConnectionTypeNone];
 }
 
-- (void)prepare:(nonnull void (^)(UAInAppMessagePrepareResult))completionHandler {
+- (void)prepareWithAssets:(nonnull UAInAppMessageAssets *)assets completionHandler:(nonnull void (^)(UAInAppMessagePrepareResult))completionHandler {
     UAInAppMessageHTMLDisplayContent *content = (UAInAppMessageHTMLDisplayContent *)self.message.displayContent;
 
     BOOL whitelisted = [[UAirship shared].whitelist isWhitelisted:[NSURL URLWithString:content.url] scope:UAWhitelistScopeOpenURL];
@@ -61,11 +63,15 @@ NSString *const UAHTMLStyleFileName = @"UAInAppMessageHTMLStyle";
 }
 
 - (BOOL)isReadyToDisplay {
-    return [self isNetworkConnected];
+    return !self.displayContent.requireConnectivity || [self isNetworkConnected];
 }
 
 - (void)display:(nonnull void (^)(UAInAppMessageResolution * _Nonnull))completionHandler {
-    self.resizableContainerViewController = [UAInAppMessageResizableViewController resizableViewControllerWithChild:self.htmlViewController];
+
+    CGSize size = CGSizeMake(self.htmlViewController.displayContent.width,
+                             self.htmlViewController.displayContent.height);
+
+    self.resizableContainerViewController = [UAInAppMessageResizableViewController resizableViewControllerWithChild:self.htmlViewController size:size aspectLock:self.htmlViewController.displayContent.aspectLock];
 
     self.resizableContainerViewController.backgroundColor = self.htmlViewController.displayContent.backgroundColor;
     self.resizableContainerViewController.allowFullScreenDisplay = self.htmlViewController.displayContent.allowFullScreenDisplay;

@@ -3,6 +3,36 @@ iOS Changelog
 
 Migration Guides: Documentation/Migration
 
+Version 11.1.0 - July 8, 2019
+=============================
+Minor update that fixes an issue with the location kits header import, and adds an option to
+the HTML in-app automation style to hide the close button. There are no critical changes in this
+release, so only apps that want the new behavior or are having issues with the location kit import
+should update.
+
+Changes
+-------
+- Updated the AirshipLocationKit header import statement for AirshipKit
+- Added an option to the HTML in-app automation style to hide the close button
+
+Version 11.0.0 - May 22, 2019
+=============================
+Major update removing the `UALocation` module from the core SDK. Location services are now available
+in an optional external module named `AirshipLocationKit`. This version also adds support for
+localized messages in In-App Automation.
+
+Changes
+-------
+- Removed `UALocation` and all `CoreLocation` framework references from the core SDK
+- Added the `UALocationProviderDelegate` protocol
+- Added `AirshipLocationKit` and `AirshipLocationLib` targets
+- Apps that don't use location services no longer need to include location usage descriptions
+  in their `Info.plist` files when submitting to the App Store
+- Added support for localized messages in In-App Automation
+
+New apps or apps experiencing difficulties with App Store submission regarding location usage
+descriptions are encouraged to update.
+
 Version 10.2.2 - April 19, 2019
 ===============================
 Patch release to fix issues with the Message Center message view and channel registration.

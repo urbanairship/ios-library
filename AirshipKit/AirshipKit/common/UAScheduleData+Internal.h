@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
@@ -82,7 +82,7 @@ extern NSUInteger const UAScheduleDataVersion;
 /**
  * The number of times the schedule has been triggered and executed.
  *
- * If the schedule prepare result is `skip`, this number will not be incremented.
+ * If the schedule prepare result is `skip` or `invalidate`, this number will not be incremented.
  */
 @property (nullable, nonatomic, retain) NSNumber *triggeredCount;
 
@@ -90,6 +90,13 @@ extern NSUInteger const UAScheduleDataVersion;
  * The schedule data payload.
  */
 @property (nullable, nonatomic, retain) NSString *data;
+
+/**
+ * The metadata payload.
+ *
+ * Metadata payload contain important schedule metadata such as locale.
+ */
+@property (nullable, nonatomic, retain) NSString *metadata;
 
 /**
  * The schedule's data version.

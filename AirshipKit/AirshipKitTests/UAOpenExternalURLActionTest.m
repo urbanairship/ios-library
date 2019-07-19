@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UABaseTest.h"
 #import "UAOpenExternalURLAction.h"
@@ -211,6 +211,48 @@
     }];
 
     [self waitForTestExpectations];
+}
+
+- (void)testParseURLFromArguments {
+    // Arguments contain an invalid class
+    self.arguments.value = [NSNumber numberWithBool:YES];
+    NSURL *url = [UAOpenExternalURLAction parseURLFromArguments:self.arguments];
+    XCTAssertNil(url);
+
+    // Arguments contain a valid string
+    self.arguments.value = @"http://google.com";
+    url = [UAOpenExternalURLAction parseURLFromArguments:self.arguments];
+    XCTAssertEqualObjects(url.absoluteString, self.arguments.value);
+
+    // Arguments contain a valid URL
+    self.arguments.value = [NSURL URLWithString:@"http://google.com"];
+    url = [UAOpenExternalURLAction parseURLFromArguments:self.arguments];
+    XCTAssertEqualObjects(url, self.arguments.value);
+    
+    // Arguments contain an apple itunes URL
+    self.arguments.value = @"ims://phobos.apple.com";
+    url = [UAOpenExternalURLAction parseURLFromArguments:self.arguments];
+    XCTAssertEqualObjects(url.absoluteString, @"http://phobos.apple.com");
+    
+    // valid number
+    self.arguments.value = @"sms:999-999-9999";
+    url = [UAOpenExternalURLAction parseURLFromArguments:self.arguments];
+    XCTAssertEqualObjects(url.absoluteString, self.arguments.value);
+
+    // valid number
+    self.arguments.value = @"sms:999%20999-9999";
+    url = [UAOpenExternalURLAction parseURLFromArguments:self.arguments];
+    XCTAssertEqualObjects(url.absoluteString, @"sms:999999-9999");
+
+    // Valid percent encoding
+    self.arguments.value = @"sms:%28999%29999-9999";
+    url = [UAOpenExternalURLAction parseURLFromArguments:self.arguments];
+    XCTAssertEqualObjects(url.absoluteString, @"sms:999999-9999");
+
+    // invalid percent encoding
+    self.arguments.value = @"sms:9999%95";
+    url = [UAOpenExternalURLAction parseURLFromArguments:self.arguments];
+    XCTAssertNil(url);
 }
 
 @end

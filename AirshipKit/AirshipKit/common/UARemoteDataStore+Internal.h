@@ -1,10 +1,10 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import <Foundation/Foundation.h>
 
 @class UARemoteDataStorePayload;
 @class UARemoteDataPayload;
-@class UAConfig;
+@class UARuntimeConfig;
 
 NS_ASSUME_NONNULL_BEGIN
 

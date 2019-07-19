@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import <Foundation/Foundation.h>
 #import "UAInAppMessage.h"
@@ -13,7 +13,7 @@ static NSString *const UAInAppMessageDisplayCoordinatorIsReadyKey = @"isReady";
  * putting time or count-based back pressure on message display, or for overriding the default coordination behavior for
  * particular message types.
  */
-@protocol UAInAppMessageDisplayCoordinator
+@protocol UAInAppMessageDisplayCoordinator <NSObject>
 
 /**
  * Indicates whether message display is ready.
@@ -21,6 +21,8 @@ static NSString *const UAInAppMessageDisplayCoordinatorIsReadyKey = @"isReady";
  * @note This property must be KVO compliant.
  */
 @property (nonatomic, readonly) BOOL isReady;
+
+@optional
 
 /**
  * Notifies the coordinator that message display has begun.

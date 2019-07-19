@@ -1,21 +1,28 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UASchedule+Internal.h"
 
 @implementation UASchedule
 
-- (instancetype)initWithIdentifier:(NSString *)identifier info:(UAScheduleInfo *)info {
+- (instancetype)initWithIdentifier:(NSString *)identifier
+                              info:(UAScheduleInfo *)info
+                          metadata:(NSDictionary *)metadata {
     self = [super init];
     if (self) {
         self.identifier = identifier;
         self.info = info;
+        self.metadata = metadata;
     }
 
     return self;
 }
 
-+ (instancetype)scheduleWithIdentifier:(NSString *)identifier info:(UAScheduleInfo *)info {
-    return [[UASchedule alloc] initWithIdentifier:identifier info:info];
++ (instancetype)scheduleWithIdentifier:(NSString *)identifier
+                                  info:(UAScheduleInfo *)info
+                              metadata:(NSDictionary *)metadata {
+    return [[UASchedule alloc] initWithIdentifier:identifier
+                                             info:info
+                                         metadata:metadata];
 }
 
 - (BOOL)isEqualToSchedule:(UASchedule *)schedule {
@@ -24,6 +31,10 @@
     }
 
     if (![self.identifier isEqualToString:schedule.identifier]) {
+        return NO;
+    }
+
+    if (![self.metadata isEqualToDictionary:schedule.metadata]) {
         return NO;
     }
 
@@ -52,11 +63,13 @@
     NSUInteger result = 1;
     result = 31 * result + [self.info hash];
     result = 31 * result + [self.identifier hash];
+    result = 31 * result + [self.metadata hash];
+
     return result;
 }
 
 - (NSString *)description {
-    return [NSString stringWithFormat:@"UASchedule: %@", self.identifier];
+    return [NSString stringWithFormat:@"UASchedule: %@ metadata: %@", self.identifier, self.metadata];
 }
 
 @end

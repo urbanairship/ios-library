@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 import UIKit
 import AirshipKit
@@ -8,21 +8,43 @@ import AirshipKit
  * in the table.
  */
 class ButtonCell: UITableViewCell {
-    @IBOutlet var buttonID: UILabel!
-    @IBOutlet var buttonBehavior: UILabel!
+    @IBOutlet weak var buttonID: UILabel!
+    @IBOutlet weak var buttonBehavior: UILabel!
     
     var button : UAInAppMessageButtonInfo?
+
+    func setCellTheme() {
+        backgroundColor = ThemeManager.shared.currentTheme.Background
+        buttonID.textColor = ThemeManager.shared.currentTheme.PrimaryText
+        buttonBehavior.textColor = ThemeManager.shared.currentTheme.SecondaryText
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        setCellTheme()
+    }
 }
 
 /**
  * The ButtonsTableViewController displays a list of IAA message buttons.
  */
 class ButtonsTableViewController: UITableViewController {
-    public static let segueID = "ShowButtonsTable"
+    public static let segueID = "ButtonsSegue"
 
     /* The UAInAppMessageButtonInfos to be displayed. */
     public var buttons : [ UAInAppMessageButtonInfo ]?
-    
+
+    func setTableViewTheme() {
+        tableView.backgroundColor = ThemeManager.shared.currentTheme.Background;
+        navigationController?.navigationBar.titleTextAttributes = [.foregroundColor:ThemeManager.shared.currentTheme.NavigationBarText]
+        navigationController?.navigationBar.barTintColor = ThemeManager.shared.currentTheme.NavigationBarBackground;
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setTableViewTheme()
+    }
+
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {

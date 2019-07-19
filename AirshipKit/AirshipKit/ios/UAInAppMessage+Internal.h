@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import <Foundation/Foundation.h>
 #import "UAInAppMessage.h"
@@ -43,6 +43,11 @@ typedef NS_ENUM(NSInteger, UAInAppMessageSource) {
 @property (nonatomic, assign) UAInAppMessageSource source;
 
 /**
+ * The message's rendered locale.
+ */
+@property(nonatomic, strong, nullable) NSDictionary<NSString *, NSString *> *renderedLocale;
+
+/**
  * In-app message campaigns info.
  */
 @property (nonatomic, copy) NSDictionary *campaigns;
@@ -83,6 +88,11 @@ extern NSString *const UAInAppMessageDisplayTypeCustomValue;
  * In-app message campaigns info.
  */
 @property (nonatomic, readonly) NSDictionary *campaigns;
+
+/**
+ * The message's rendered locale.
+ */
+@property(nonatomic, readonly, nullable) NSDictionary<NSString *, NSString *> *renderedLocale;
 
 /**
  * Class factory method for constructing an in-app message from JSON.

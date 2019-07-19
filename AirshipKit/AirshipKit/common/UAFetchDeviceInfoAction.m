@@ -1,9 +1,8 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 
 #import "UAFetchDeviceInfoAction.h"
 #import "UAirship.h"
-#import "UALocation.h"
 #import "UAPush.h"
 #import "UANamedUser.h"
 
@@ -29,10 +28,10 @@ NSString *const UALocationEnabledKey = @"location_enabled";
 
     BOOL optedIn = [UAirship push].authorizedNotificationSettings != 0;
     [dict setValue:@(optedIn) forKey:UAPushOptInKey];
-    
-    BOOL locationEnabled = UAirship.location.locationUpdatesEnabled;
+
+    BOOL locationEnabled = UAirship.shared.locationProviderDelegate.locationUpdatesEnabled;
     [dict setValue:@(locationEnabled) forKey:UALocationEnabledKey];
-    
+
     completionHandler([UAActionResult resultWithValue:dict]);
 }
 

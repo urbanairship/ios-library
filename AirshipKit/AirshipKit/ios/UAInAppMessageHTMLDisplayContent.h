@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import <UIKit/UIKit.h>
 #import <Foundation/Foundation.h>
@@ -34,15 +34,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, strong) UIColor *dismissButtonColor;
 
 /**
- * The HTML message's border radius.
- *
- * Optional. Defaults to 0.
- *
- * @deprecated Deprecated - to be removed in SDK version 11.0. Please use `borderRadiusPoints`.
- */
-@property(nonatomic, assign) NSUInteger borderRadius DEPRECATED_MSG_ATTRIBUTE("Deprecated - to be removed in SDK version 11.0. Please use borderRadiusPoints.");
-
-/**
  * The HTML message's border radius. Use to set the border radius
  * to non-integer values.
  *
@@ -56,6 +47,30 @@ NS_ASSUME_NONNULL_BEGIN
  * Optional. Defaults to `NO`.
  */
 @property(nonatomic, assign) BOOL allowFullScreenDisplay;
+
+/**
+ * The height of the manually sized HTML view.
+ */
+@property(nonatomic, assign) CGFloat height;
+
+/**
+ * The width of the manually sized HTML view.
+ */
+@property(nonatomic, assign) CGFloat width;
+
+/**
+ * Flag indicating if the HTML view should lock its aspect ratio when resizing to fit the screen.
+ *
+ * @note This is only applicable when overriding the width and/or height.
+ *
+ * Optional. Defaults to `NO`.
+ */
+@property(nonatomic, assign) BOOL aspectLock;
+
+/**
+ * Flag indicating if the content requires connectivity to display correctly.
+ */
+@property(nonatomic, assign) BOOL requiresConnectivity;
 
 /**
  * Checks if the builder is valid and will produce an display content instance.
@@ -89,13 +104,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * The HTML message's border radius.
- *
- * @deprecated Deprecated - to be removed in SDK version 11.0. Please use `borderRadiusPoints`.
- */
-@property(nonatomic, readonly) NSUInteger borderRadius DEPRECATED_MSG_ATTRIBUTE("Deprecated - to be removed in SDK version 11.0. Please use borderRadiusPoints.");
-
-/**
- * The HTML message's border radius.
  */
 @property(nonatomic, readonly) CGFloat borderRadiusPoints;
 
@@ -103,6 +111,30 @@ NS_ASSUME_NONNULL_BEGIN
  * Flag indicating the HTML view should display as full screen on compact devices.
  */
 @property(nonatomic, readonly) BOOL allowFullScreenDisplay;
+
+/**
+ * The height of the manually sized HTML view.
+ */
+@property(nonatomic, readonly) CGFloat height;
+
+/**
+ * The width of the manually sized HTML view.
+ */
+@property(nonatomic, readonly) CGFloat width;
+
+/**
+ * Flag indicating if the HTML view should lock its aspect ratio when resizing to fit the screen.
+ *
+ * @note This is only applicable when overriding the width and/or height.
+ *
+ * Optional. Defaults to `NO`.
+ */
+@property(nonatomic, readonly) BOOL aspectLock;
+
+/**
+ * Flag indicating if the content requires connectivity to display correctly.
+ */
+@property(nonatomic, readonly) BOOL requireConnectivity;
 
 /**
  * Factory method for building HTML display content with a builder block.

@@ -1,12 +1,12 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 import UIKit
+
 import AirshipKit
 import AirshipDebugKit
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate, UARegistrationDelegate, UADeepLinkDelegate {
-
+class AppDelegate: UIResponder, UIApplicationDelegate, UARegistrationDelegate, UADeepLinkDelegate, UAInAppMessageCachePolicyDelegate {
     let simulatorWarningDisabledKey = "ua-simulator-warning-disabled"
     let pushHandler = PushHandler()
 
@@ -48,11 +48,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UARegistrationDelegate, U
         // Call takeOff (which creates the UAirship singleton)
         UAirship.takeOff(config)
 
-        AirshipDebugKit.takeOff()
-
         // Print out the application configuration for debugging (optional)
         print("Config:\n \(config)")
 
+        // Call takeOff (which initializes the Airship DebugKit)
+        AirshipDebugKit.takeOff()
+        
         // Set the icon badge to zero on startup (optional)
         UAirship.push()?.resetBadge()
 
@@ -64,11 +65,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UARegistrationDelegate, U
         // UAirship.push()?.userPushNotificationsEnabled = true
 
         // Set a custom delegate for handling message center events
-        self.inboxDelegate = InboxDelegate(rootViewController: (window?.rootViewController)!)
+        self.inboxDelegate = InboxDelegate(tabBarController: window!.rootViewController as! UITabBarController)
         UAirship.inbox().delegate = self.inboxDelegate
         UAirship.push().pushNotificationDelegate = pushHandler
         UAirship.push().registrationDelegate = self
         UAirship.shared().deepLinkDelegate = self
+        UAirship.inAppMessageManager()?.assetManager.cachePolicyDelegate = self;
 
         NotificationCenter.default.addObserver(self, selector:#selector(AppDelegate.refreshMessageCenterBadge), name: NSNotification.Name.UAInboxMessageListUpdated, object: nil)
 
@@ -141,57 +143,101 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UARegistrationDelegate, U
             object: self,
             userInfo:nil)
     }
+    
+    // MARK Deep link handling
+    
+    // Available Deep Links:
+    //    - <scheme>://deeplink/home
+    //    - <scheme>://deeplink/inbox
+    //    - <scheme>://deeplink/inbox/message/<messageId>
+    //    - <scheme>://deeplink/settings
+    //    - <scheme>://deeplink/settings/tags
 
     func receivedDeepLink(_ url: URL, completionHandler: @escaping () -> ()) {
-        let pathComponents = url.pathComponents
+        var pathComponents = url.pathComponents
+        if (pathComponents[0] == "/") {
+            pathComponents.remove(at: 0)
+        }
 
         let tabController = window!.rootViewController as! UITabBarController
 
-        if pathComponents.contains(HomeStoryboardID) {
-            tabController.selectedIndex = HomeTab
-        } else if pathComponents.contains(PushSettingsStoryboardID) {
-            if let nav = tabController.selectedViewController as? UINavigationController {
-                if !nav.topViewController!.isKind(of: DebugViewController.self) {
-                    nav.popToRootViewController(animated: true);
+        // map existing deep links to new paths
+        switch (pathComponents[0].lowercased()) {
+        case PushSettingsStoryboardID:
+            pathComponents = URL(string: "settings")!.pathComponents
+        case InAppAutomationStoryboardID:
+            pathComponents = URL(string: "\(DebugStoryboardID)/\(AirshipDebugKit.automationViewName)")!.pathComponents
+        default:
+            break
+        }
+        
+        // map deeplinks to storyboards paths
+        switch (pathComponents[0].lowercased()) {
+        case "home":
+            pathComponents[0] = HomeStoryboardID
+        case "inbox":
+            pathComponents[0] = MessageCenterStoryboardID
+        case "settings":
+            var newPathComponents = URL(string: "\(DebugStoryboardID)/\(AirshipDebugKit.deviceInfoViewName)")!.pathComponents
+            pathComponents.remove(at: 0)
+            if (pathComponents.count > 0) {
+                switch (pathComponents[0]) {
+                case "tags":
+                    newPathComponents.append(AirshipDebugKit.tagsViewName)
+                default:
+                    newPathComponents += pathComponents
                 }
             }
-
-            tabController.selectedIndex = DebugTab;
-            
-            if let nav = tabController.selectedViewController as? UINavigationController {
-                if nav.topViewController!.isKind(of: DebugViewController.self) {
-                    let debugViewController = nav.topViewController as! DebugViewController
-                    debugViewController.deviceInfo()
-                }
-            }
-        } else if pathComponents.contains(DebugStoryboardID) {
-            if let nav = tabController.selectedViewController as? UINavigationController {
-                if !nav.topViewController!.isKind(of: DebugViewController.self) {
-                    nav.popToRootViewController(animated: true);
-                }
-            }
-            
-            tabController.selectedIndex = DebugTab;
-        } else if pathComponents.contains(InAppAutomationStoryboardID) {
-            if let nav = tabController.selectedViewController as? UINavigationController {
-                if !nav.topViewController!.isKind(of: DebugViewController.self) {
-                    nav.popToRootViewController(animated: true);
-                }
-            }
-            
-            tabController.selectedIndex = DebugTab;
-            
-            if let nav = tabController.selectedViewController as? UINavigationController {
-                if nav.topViewController!.isKind(of: DebugViewController.self) {
-                    let debugViewController = nav.topViewController as! DebugViewController
-                    debugViewController.inAppAutomation()
-                }
-            }
-        } else if pathComponents.contains(MessageCenterStoryboardID) {
-            tabController.selectedIndex = MessageCenterTab;
+            pathComponents = newPathComponents
+        default:
+            break
         }
 
+        // execute deep link
+        switch (pathComponents[0].lowercased()) {
+        case HomeStoryboardID:
+            // switch to home tab
+            tabController.selectedIndex = HomeTab
+        case MessageCenterStoryboardID:
+            // switch to inbox tab
+            tabController.selectedIndex = MessageCenterTab
+
+            // get rest of deep link
+            pathComponents.remove(at: 0)
+            
+            if ((pathComponents.count == 0) || (pathComponents[0] != "message")) {
+                inboxDelegate?.showInbox()
+            } else {
+                // remove "message" from front of url
+                pathComponents.remove(at: 0)
+                var messageId = ""
+                if (pathComponents.count > 0) {
+                    messageId = pathComponents[0]
+                }
+                inboxDelegate?.showMessage(forID: messageId)
+            }
+        case DebugStoryboardID:
+            // switch to debug tab
+            tabController.selectedIndex = DebugTab
+
+            // get rest of deep link
+            pathComponents.remove(at: 0)
+            AirshipDebugKit.showView(URL(fileURLWithPath: (NSString.path(withComponents: pathComponents))))
+        default:
+            break
+        }
+ 
         completionHandler()
     }
+
+    // MARK: UAInAppMessageCachePolicyDelegate
+    func shouldCache(onSchedule message: UAInAppMessage) -> Bool {
+        return true
+    }
+    
+    func shouldPersistCache(afterDisplay message: UAInAppMessage) -> Bool {
+        return true
+    }
 }
+
 

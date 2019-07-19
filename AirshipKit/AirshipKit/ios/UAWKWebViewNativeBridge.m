@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UAWKWebViewNativeBridge.h"
 #import "UAUser.h"
@@ -15,7 +15,7 @@
 #import "NSString+UAURLEncoding.h"
 #import "UANamedUser.h"
 #import "UAPush.h"
-#import "UAConfig.h"
+#import "UARuntimeConfig.h"
 #import "UAWebView+Internal.h"
 #import "UABaseNativeBridge+Internal.h"
 

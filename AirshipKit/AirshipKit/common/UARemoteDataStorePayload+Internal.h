@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import <CoreData/CoreData.h>
 
@@ -30,6 +30,13 @@ NS_ASSUME_NONNULL_BEGIN
  * The actual data associated with this payload
  */
 @property (nullable, nonatomic, retain) NSDictionary *data;
+
+/**
+ * The metadata associated with this payload
+ *
+ * Contains important metadata such as locale.
+ */
+@property (nullable, nonatomic, retain) NSDictionary *metadata;
 
 NS_ASSUME_NONNULL_END
 

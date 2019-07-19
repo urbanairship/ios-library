@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import <UIKit/UIKit.h>
 #import "UABaseTest.h"
@@ -45,11 +45,10 @@
 }
 
 /**
- * Test the default white list accepts Urban Airship URLs.
+ * Test the default white list accepts Airship URLs.
  */
 - (void)testDefaultWhitelist {
-    UAConfig *config = [UAConfig config];
-    UAWhitelist *whitelist = [UAWhitelist whitelistWithConfig:config];
+    UAWhitelist *whitelist = [UAWhitelist whitelistWithConfig:self.config];
 
     for (NSNumber *number in self.scopes) {
         UAWhitelistScope scope = (UAWhitelistScope)number.unsignedIntegerValue;
@@ -92,6 +91,7 @@
 
     // Missing host
     XCTAssertFalse([self.whitelist addEntry:@"*://"]);
+    XCTAssertFalse([self.whitelist addEntry:@"*.://"]);
 
     // Missing file path
     XCTAssertFalse([self.whitelist addEntry:@"file://"]);

@@ -1,10 +1,27 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import <Foundation/Foundation.h>
 
 #import "UAGlobal.h"
 
 NS_ASSUME_NONNULL_BEGIN
+
+/**
+ * Represents the possible sites.
+ */
+typedef NS_ENUM(NSUInteger, UACloudSite) {
+    /**
+     * Represents the US cloud site. This is the default value.
+     * Projects avialable at go.airship.com must use this value.
+     */
+    UACloudSiteUS = 0,
+
+    /**
+     * Represents the EU cloud site.
+     * Projects avialable at go.airship.eu must use this value.
+     */
+    UACloudSiteEU = 1,
+};
 
 /**
  * The UAConfig object provides an interface for passing common configurable values to [UAirship takeOff].
@@ -55,23 +72,29 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, assign) UALogLevel productionLogLevel;
 
-/**
- * The size in MB for the UA Disk Cache.  Defaults to 100.
- *
- * Only items that are small enough (1/20th of the size) of the cache will be 
- * cached.
- * 
- * Any size greater than 0 will cause the UA Disk Cache to become active. 
- * UAURLProtocol will be registered as a NSURLProtocol.  Only requests whose
- * mainDocumentURL or URL that have been added as a cachable URL will be considered
- * for caching.  By defualt it includes all of the Rich Application Page URLs.
- *
- * @deprecated Deprecated - to be removed in SDK version 11.0. The UA Disk Cache is obsolete with the use of WKWebView.
- */
-@property (nonatomic, assign) NSUInteger cacheDiskSizeInMB DEPRECATED_MSG_ATTRIBUTE("Deprecated - to be removed in SDK version 11.0. The UA Disk Cache is obsolete with the use of WKWebView");
+@property (nonatomic, assign) UACloudSite site;
 
 /**
- * If enabled, the UA library automatically registers for remote notifications when push is enabled
+ * The default app key. Depending on the `inProduction` status,
+ * `developmentAppKey` or `productionAppKey` will take priority.
+ */
+@property (nonatomic, copy, nullable) NSString *defaultAppKey;
+
+/**
+ * The default app secret. Depending on the `inProduction` status,
+ * `developmentAppSecret` or `productionAppSecret` will take priority.
+ */
+@property (nonatomic, copy, nullable) NSString *defaultAppSecret;
+
+
+/**
+ * The production status of this application. This may be set directly, or it may be determined
+ * automatically if the detectProvisioningMode flag is set to `YES`.
+ */
+@property (nonatomic, assign, getter=isInProduction) BOOL inProduction;
+
+/**
+ * If enabled, the Airship library automatically registers for remote notifications when push is enabled
  * and intercepts incoming notifications in both the foreground and upon launch.
  *
  * Defaults to YES. If this is disabled, you will need to register for remote notifications
@@ -89,12 +112,17 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, strong) NSArray<NSString *> *whitelist;
 
+/**
+ * The iTunes ID used for Rate App Actions.
+ */
+@property (nonatomic, copy) NSString *itunesID;
+
 ///---------------------------------------------------------------------------------------
 /// @name Advanced Configuration Options
 ///---------------------------------------------------------------------------------------
 
 /**
- * Toggles Urban Airship analytics. Defaults to `YES`. If set to `NO`, many UA features will not be
+ * Toggles Airship analytics. Defaults to `YES`. If set to `NO`, many Airship features will not be
  * available to this application.
  */
 @property (nonatomic, assign, getter=isAnalyticsEnabled) BOOL analyticsEnabled;
@@ -118,32 +146,12 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) BOOL detectProvisioningMode;
 
 /**
- * The Urban Airship device API url. This option is reserved for internal debugging.
- */
-@property (nonatomic, copy) NSString *deviceAPIURL;
-
-/**
- * The Urban Airship analytics API url. This option is reserved for internal debugging.
- */
-@property (nonatomic, copy) NSString *analyticsURL;
-
-/**
- * The Urban Airship landing page content url. This option is reserved for internal debugging.
- */
-@property (nonatomic, copy) NSString *landingPageContentURL;
-
-/**
- * The Urban Airship default message center style configuration file.
+ * The Airship default message center style configuration file.
  */
 @property (nonatomic, copy) NSString *messageCenterStyleConfig;
 
 /**
- * The iTunes ID used for Rate App Actions.
- */
-@property (nonatomic, copy) NSString *itunesID;
-
-/**
- * If set to `YES`, the Urban Airship user will be cleared if the application is
+ * If set to `YES`, the Airship user will be cleared if the application is
  * restored on a different device from an encrypted backup.
  *
  * Defaults to `NO`.
@@ -185,7 +193,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) NSDictionary *customConfig;
 
 /**
- * If set to 'YES', the UA SDK will request authorization to use
+ * If set to 'YES', the Airship SDK will request authorization to use
  * notifications from the user. Apps that set this flag to `NO` are
  * required to request authorization themselves.
  *
@@ -194,29 +202,22 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) BOOL requestAuthorizationToUseNotifications;
 
 ///---------------------------------------------------------------------------------------
-/// @name Resolved Options
+/// @name Internal Configuration Options
 ///---------------------------------------------------------------------------------------
+/**
+ * The Airship device API url. This option is reserved for internal debugging.
+ */
+@property (nonatomic, copy) NSString *deviceAPIURL;
 
 /**
- * The current app key (resolved using the inProduction flag).
+ * The Airship analytics API url. This option is reserved for internal debugging.
  */
-@property (nonatomic, readonly, nullable) NSString *appKey;
+@property (nonatomic, copy) NSString *analyticsURL;
 
 /**
- * The current app secret (resolved using the inProduction flag).
+ * The Airship remote data API url. This option is reserved for internal debugging.
  */
-@property (nonatomic, readonly, nullable) NSString *appSecret;
-
-/**
- * The current log level for the library's UA_L<level> macros (resolved using the inProduction flag).
- */
-@property (nonatomic, readonly) UALogLevel logLevel;
-
-/**
- * The production status of this application. This may be set directly, or it may be determined
- * automatically if the detectProvisioningMode flag is set to `YES`.
- */
-@property (nonatomic, assign, getter=isInProduction) BOOL inProduction;
+@property (nonatomic, copy) NSString *remoteDataAPIURL;
 
 ///---------------------------------------------------------------------------------------
 /// @name Factory Methods
@@ -240,6 +241,28 @@ NS_ASSUME_NONNULL_BEGIN
  * @return A UAConfig with empty values.
  */
 + (UAConfig *)config;
+
+///---------------------------------------------------------------------------------------
+/// @name Resolved values
+///---------------------------------------------------------------------------------------
+
+/**
+ * Returns the resolved app key.
+ * @return The resolved app key or an empty string.
+ */
+@property (readonly, nonnull) NSString *appKey;
+
+/**
+ * Returns the resolved app secret.
+ * @return The resolved app key or an empty string.
+ */
+@property (readonly, nonnull) NSString *appSecret;
+
+/**
+ * Returns the resolved log level.
+ * @return The resolved log level.
+ */
+ @property (readonly) UALogLevel logLevel;
 
 ///---------------------------------------------------------------------------------------
 /// @name Utilities, Helpers

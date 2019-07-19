@@ -1,11 +1,13 @@
-Pod::Spec.new do |s|
-   s.version                 = "10.2.2"
-   s.name                    = "UrbanAirship-iOS-SDK"
-   s.summary                 = "Urban Airship iOS SDK"
+AIRSHIP_VERSION="11.1.0"
 
-   s.documentation_url       = "http://docs.urbanairship.com/platform/ios.html"
-   s.homepage                = "https://www.urbanairship.com"
-   s.author                  = { "Urban Airship" => "support@urbanairship.com" }
+Pod::Spec.new do |s|
+   s.version                 = AIRSHIP_VERSION
+   s.name                    = "UrbanAirship-iOS-SDK"
+   s.summary                 = "Airship iOS SDK"
+
+   s.documentation_url       = "https://docs.airship.com/platform/ios"
+   s.homepage                = "https://www.airship.com"
+   s.author                  = { "Airship" => "support@airship.com" }
 
    s.license                 = { :type => 'Apache License, Version 2.0', :file => 'LICENSE' }
    s.source                  = { :git => "https://github.com/urbanairship/ios-library.git", :tag => s.version.to_s }
@@ -26,6 +28,6 @@ Pod::Spec.new do |s|
    s.tvos.private_header_files   = 'AirshipKit/AirshipKit/common/*+Internal*.h','AirshipKit/AirshipKit/tvos/*+Internal*.h'
 
    s.libraries               = 'z', 'sqlite3'
-   s.frameworks              = 'UserNotifications', 'CFNetwork', 'CoreGraphics', 'Foundation', 'MobileCoreServices', 'Security', 'SystemConfiguration', 'UIKit', 'CoreLocation', 'CoreData', 'StoreKit'
+   s.frameworks              = 'UserNotifications', 'CFNetwork', 'CoreGraphics', 'Foundation', 'MobileCoreServices', 'Security', 'SystemConfiguration', 'UIKit', 'CoreData', 'StoreKit'
    s.ios.frameworks          = 'WebKit', 'CoreTelephony'
 end

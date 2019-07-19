@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UABaseTest.h"
 #import "UAirship+Internal.h"
@@ -7,7 +7,7 @@
 #import "UANamedUser+Internal.h"
 #import "UANamedUserAPIClient+Internal.h"
 #import "UAPush+Internal.h"
-#import "UAConfig.h"
+#import "UARuntimeConfig.h"
 #import "UATagGroupsRegistrar+Internal.h"
 
 @interface UANamedUserTest : UABaseTest

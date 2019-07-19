@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UAScheduleData+Internal.h"
 
@@ -16,6 +16,7 @@ NSUInteger const UAScheduleDataVersion = 1;
 @dynamic group;
 @dynamic limit;
 @dynamic triggeredCount;
+@dynamic metadata;
 @dynamic data;
 @dynamic priority;
 @dynamic triggers;

@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UAGlobal.h"
 #import "UAirship.h"
@@ -115,7 +115,7 @@ static const UANotificationOptions UANotificationOptionNone =  0;
 @optional
 
 /**
- * Called after the device channel registers with Urban Airship. Successful
+ * Called after the device channel registers with Airship. Successful
  * registrations could be disabling push, enabling push, or updating the device
  * registration settings.
  *
@@ -134,7 +134,7 @@ static const UANotificationOptions UANotificationOptionNone =  0;
 - (void)registrationSucceededForChannelID:(NSString *)channelID deviceToken:(NSString *)deviceToken;
 
 /**
- * Called when the device channel failed to register with Urban Airship.
+ * Called when the device channel failed to register with Airship.
  *
  * When registration finishes in the background, any async tasks that are triggered
  * from this call should request a background task.
@@ -167,26 +167,6 @@ static const UANotificationOptions UANotificationOptionNone =  0;
  * @param authorizedSettings UAAuthorizedNotificationSettings The newly changed authorized settings.
  */
 - (void)notificationAuthorizedSettingsDidChange:(UAAuthorizedNotificationSettings)authorizedSettings;
-
-/**
- * Called when APNS registration completes.
- *
- * @param options UANotificationOptions that were most recently registered.
- * @param categories NSSet of the categories that were most recently registered.
- *
- * @deprecated Deprecated - to be removed in SDK version 11.0. Please use notificationRegistrationFinishedWithAuthorizedSettings:categories:
- */
-- (void)notificationRegistrationFinishedWithOptions:(UANotificationOptions)options
-                                         categories:(NSSet *)categories DEPRECATED_MSG_ATTRIBUTE("Deprecated - to be removed in SDK version 11.0. Please use notificationRegistrationFinishedWithAuthorizedSettings:categories");
-
-/**
- * Called when APNS authentication changes with the new authorized options.
- *
- * @param options UANotificationOptions that were most recently registered.
- *
- * @deprecated Deprecated - to be removed in SDK version 11.0. Please use notificationAuthorizedSettingsDidChange:
- */
-- (void)notificationAuthorizedOptionsDidChange:(UANotificationOptions)options DEPRECATED_MSG_ATTRIBUTE("Deprecated - to be removed in SDK version 11.0. Please use notificationAuthorizedSettingsDidChange");
 
 /**
  * Called when the UIApplicationDelegate's application:didRegisterForRemoteNotificationsWithDeviceToken:
@@ -276,7 +256,7 @@ static const UANotificationOptions UANotificationOptionNone =  0;
 //---------------------------------------------------------------------------------------
 
 /**
- * This singleton provides an interface to the functionality provided by the Urban Airship iOS Push API.
+ * This singleton provides an interface to the functionality provided by the Airship iOS Push API.
  */
 @interface UAPush : UAComponent
 
@@ -286,7 +266,7 @@ static const UANotificationOptions UANotificationOptionNone =  0;
 ///---------------------------------------------------------------------------------------
 
 /**
- * Enables/disables background remote notifications on this device through Urban Airship.
+ * Enables/disables background remote notifications on this device through Airship.
  * Defaults to `YES`.
  */
 @property (nonatomic, assign) BOOL backgroundPushNotificationsEnabled;
@@ -299,7 +279,7 @@ static const UANotificationOptions UANotificationOptionNone =  0;
 @property (nonatomic, assign) BOOL backgroundPushNotificationsEnabledByDefault;
 
 /**
- * Enables/disables user notifications on this device through Urban Airship.
+ * Enables/disables user notifications on this device through Airship.
  * Defaults to `NO`. Once set to `YES`, the user will be prompted for remote notifications.
  */
 @property (nonatomic, assign) BOOL userPushNotificationsEnabled;
@@ -338,7 +318,7 @@ static const UANotificationOptions UANotificationOptionNone =  0;
 @property (nonatomic, assign) UANotificationOptions notificationOptions;
 
 /**
- * Custom notification categories. Urban Airship default notification
+ * Custom notification categories. Airship default notification
  * categories will be unaffected by this field.
  *
  * Changes to this value will not take effect until the next time the app registers
@@ -348,12 +328,12 @@ static const UANotificationOptions UANotificationOptionNone =  0;
 
 /**
  * The combined set of notification categories from `customCategories` set by the app
- * and the Urban Airship provided categories.
+ * and the Airship provided categories.
  */
 @property (nonatomic, readonly) NSSet<UANotificationCategory *> *combinedCategories;
 
 /**
- * Sets authorization required for the default Urban Airship categories. Only applies
+ * Sets authorization required for the default Airship categories. Only applies
  * to background user notification actions.
  *
  * Changes to this value will not take effect until the next time the app registers
@@ -390,17 +370,6 @@ static const UANotificationOptions UANotificationOptionNone =  0;
 @property (nonatomic, readonly) UAAuthorizationStatus authorizationStatus;
 
 /**
- * The current authorized notification options.
- *
- * Note: Unlike authorizedNotificationSettings, this value may diverge from the settings enabled in the
- * Settings app depending on whether user push notifications are enabled and which options were originally requested.
- * This behavior has been maintained for backwards compatibility.
- 
- * @deprecated Deprecated - to be removed in SDK version 11.0. Please use authorizedNotificationSettings.
- */
-@property (nonatomic, assign, readonly) UANotificationOptions authorizedNotificationOptions DEPRECATED_MSG_ATTRIBUTE("Deprecated - to be removed in SDK version 11.0. Please use authorizedNotificationSettings");
-
-/**
  * Indicates whether the user has been prompted for notifications or not.
  */
 @property (nonatomic, assign, readonly) BOOL userPromptedForNotifications;
@@ -417,13 +386,13 @@ static const UANotificationOptions UANotificationOptionNone =  0;
 ///---------------------------------------------------------------------------------------
 
 /**
- * Toggle the Urban Airship auto-badge feature. Defaults to `NO` If enabled, this will update the
- * badge number stored by Urban Airship every time the app is started or foregrounded.
+ * Toggle the Airship auto-badge feature. Defaults to `NO` If enabled, this will update the
+ * badge number stored by Airship every time the app is started or foregrounded.
  */
 @property (nonatomic, assign, getter=isAutobadgeEnabled) BOOL autobadgeEnabled;
 
 /**
- * Sets the badge number on the device and on the Urban Airship server.
+ * Sets the badge number on the device and on the Airship server.
  * 
  * @note This method must be called on the main thread.
  *
@@ -432,7 +401,7 @@ static const UANotificationOptions UANotificationOptionNone =  0;
 - (void)setBadgeNumber:(NSInteger)badgeNumber;
 
 /**
- * Resets the badge to zero (0) on both the device and on Urban Airships servers. This is a
+ * Resets the badge to zero (0) on both the device and on Airships servers. This is a
  * convenience method for `setBadgeNumber:0`.
  *
  * @note This method must be called on the main thread.
@@ -457,7 +426,7 @@ static const UANotificationOptions UANotificationOptionNone =  0;
 @property (nonatomic, assign, getter=isChannelTagRegistrationEnabled) BOOL channelTagRegistrationEnabled;
 
 /**
- * Enables user notifications on this device through Urban Airship.
+ * Enables user notifications on this device through Airship.
  *
  * Note: The completion handler will return the success state of system push authorization as it is defined by the
  * user's response to the push authorization prompt. The completion handler success state does NOT represent the
@@ -470,7 +439,7 @@ static const UANotificationOptions UANotificationOptionNone =  0;
 /**
  * Adds a tag to the list of tags for the device.
  * To update the server, make all of your changes, then call
- * `updateRegistration` to update the Urban Airship server.
+ * `updateRegistration` to update the Airship server.
  *
  * @note When updating multiple server-side values (tags, alias, time zone, quiet time), set the
  * values first, then call `updateRegistration`. Batching these calls improves performance.

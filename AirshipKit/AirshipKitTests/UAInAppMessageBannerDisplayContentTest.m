@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import <XCTest/XCTest.h>
 #import "UAInAppMessageBannerDisplayContent+Internal.h"
@@ -305,61 +305,5 @@
     XCTAssertEqualObjects(newBanner.actions, banner.actions);
     XCTAssertEqual(newBanner.durationSeconds, 22);
 }
-
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-- (void)testBorderRadius {
-    UAInAppMessageBannerDisplayContent *content =  [UAInAppMessageBannerDisplayContent displayContentWithBuilderBlock:^(UAInAppMessageBannerDisplayContentBuilder *builder) {
-        builder.borderRadius = 10;
-        builder.heading = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
-            builder.text = @"heading";
-        }];
-    }];
-    
-    XCTAssertNotNil(content);
-    XCTAssertEqual(content.borderRadius, 10);
-    XCTAssertEqual(content.borderRadiusPoints, 10);
-    
-    content =  [UAInAppMessageBannerDisplayContent displayContentWithBuilderBlock:^(UAInAppMessageBannerDisplayContentBuilder *builder) {
-        builder.borderRadiusPoints = 10.5;
-        builder.heading = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
-            builder.text = @"heading";
-        }];
-    }];
-    
-    XCTAssertNotNil(content);
-    XCTAssertEqual(content.borderRadius, 10);
-    XCTAssertEqual(content.borderRadiusPoints, 10.5);
-}
-#pragma GCC diagnostic pop
-
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-- (void)testDuration {
-    // specify duration
-    UAInAppMessageBannerDisplayContent *content =  [UAInAppMessageBannerDisplayContent displayContentWithBuilderBlock:^(UAInAppMessageBannerDisplayContentBuilder *builder) {
-        builder.duration = 10.5;
-        builder.heading = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
-            builder.text = @"heading";
-        }];
-    }];
-    
-    XCTAssertNotNil(content);
-    XCTAssertEqual(content.duration, 10);
-    XCTAssertEqual(content.durationSeconds, 10);
-    
-    // specify durationSeconds
-    content =  [UAInAppMessageBannerDisplayContent displayContentWithBuilderBlock:^(UAInAppMessageBannerDisplayContentBuilder *builder) {
-        builder.durationSeconds = 10.5;
-        builder.heading = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
-            builder.text = @"heading";
-        }];
-    }];
-    
-    XCTAssertNotNil(content);
-    XCTAssertEqual(content.duration, 10);
-    XCTAssertEqual(content.durationSeconds, 10.5);
-}
-#pragma GCC diagnostic pop
 
 @end

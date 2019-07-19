@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import <Foundation/Foundation.h>
 #import "UAInAppMessageManager.h"
@@ -13,6 +13,8 @@
 #import "UATagGroupsLookupManager+Internal.h"
 #import "UATagGroupsMutationHistory+Internal.h"
 #import "UAInAppMessageDefaultDisplayCoordinator+Internal.h"
+#import "UAInAppMessageAssetManager+Internal.h"
+#import "UAInAppRemoteDataClient+Internal.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -23,6 +25,16 @@ NS_ASSUME_NONNULL_BEGIN
 @interface UAInAppMessageManager ()  <UAAutomationEngineDelegate, UATagGroupsLookupManagerDelegate>
 
 /**
+ * In-app messaging asset manager.
+ */
+@property(nonatomic, strong) UAInAppMessageAssetManager *assetManager;
+
+/**
+ * In-app remote data client. Exposed for testing purposes.
+ */
+@property(nonatomic, strong) UAInAppRemoteDataClient *remoteDataClient;
+
+/**
  * Factory method. Use for testing.
  *
  * @param automationEngine The automation engine.
@@ -31,6 +43,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param dataStore The preference data store.
  * @param push The system UAPush instance
  * @param dispatcher GCD dispatcher.
+ * @param analytics The system analytics instance.
  * @return A in-app message manager instance.
  */
 + (instancetype)managerWithAutomationEngine:(UAAutomationEngine *)automationEngine
@@ -39,23 +52,27 @@ NS_ASSUME_NONNULL_BEGIN
                                   dataStore:(UAPreferenceDataStore *)dataStore
                                        push:(UAPush *)push
                                  dispatcher:(UADispatcher *)dispatcher
-                         displayCoordinator:(UAInAppMessageDefaultDisplayCoordinator *)displayCoordinator;
+                         displayCoordinator:(UAInAppMessageDefaultDisplayCoordinator *)displayCoordinator
+                               assetManager:(UAInAppMessageAssetManager *)assetManager
+                                  analytics:(UAAnalytics *)analytics;
 
 /**
  * Factory method.
  *
- * @param config The UAConfigInstance.
+ * @param config The UARuntimeConfigInstance.
  * @param tagGroupsMutationHistory The tag groups mutation history.
  * @param remoteDataManager The remote data manager.
  * @param dataStore The preference data store.
- * @param push The system UAPush instance
+ * @param push The system UAPush instance.
+ * @param analytics The system analytics instance.
  * @return A in-app message manager instance.
  */
-+ (instancetype)managerWithConfig:(UAConfig *)config
++ (instancetype)managerWithConfig:(UARuntimeConfig *)config
          tagGroupsMutationHistory:(UATagGroupsMutationHistory *)tagGroupsMutationHistory
                 remoteDataManager:(UARemoteDataManager *)remoteDataManager
                         dataStore:(UAPreferenceDataStore *)dataStore
-                             push:(UAPush *)push;
+                             push:(UAPush *)push
+                        analytics:(UAAnalytics *)analytics;
 
 
 // UAAutomationEngineDelegate methods for testing

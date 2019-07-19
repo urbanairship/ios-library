@@ -1,14 +1,14 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import <Foundation/Foundation.h>
 #import "UAAPIClient+Internal.h"
 
-@class UAConfig;
+@class UARuntimeConfig;
 
 NS_ASSUME_NONNULL_BEGIN
 
 /**
- * API client to upload events to Urban Airship.
+ * API client to upload events to Airship.
  */
 @interface UAEventAPIClient : UAAPIClient
 
@@ -19,19 +19,19 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Default factory method.
  *
- * @param config The Urban Airship config.
+ * @param config The Airship config.
  * @return A UAEventAPIClient instance.
  */
-+ (instancetype)clientWithConfig:(UAConfig *)config;
++ (instancetype)clientWithConfig:(UARuntimeConfig *)config;
 
 /**
  * Factory method to create a UAEventAPIClient.
  *
- * @param config The Urban Airship config.
+ * @param config The Airship config.
  * @param session The UARequestSession instance.
  * @return UAEventAPIClient instance.
  */
-+ (instancetype)clientWithConfig:(UAConfig *)config session:(UARequestSession *)session;
++ (instancetype)clientWithConfig:(UARuntimeConfig *)config session:(UARequestSession *)session;
 
 /**
  * Uploads analytic events.

@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UAScheduleEdits+Internal.h"
 #import "UAScheduleInfo+Internal.h"
@@ -146,6 +146,7 @@ NSString * const UAScheduleEditsErrorDomain = @"com.urbanairship.schedule_edits"
         self.end = builder.end;
         self.editGracePeriod = builder.editGracePeriod;
         self.interval = builder.interval;
+        self.metadata = builder.metadata;
     }
 
     return self;

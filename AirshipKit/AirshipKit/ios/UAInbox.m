@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UAInbox+Internal.h"
 #import "UAirship.h"
@@ -13,7 +13,7 @@
     [self.client.session cancelAllRequests];
 }
 
-- (instancetype)initWithUser:(UAUser *)user config:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
+- (instancetype)initWithUser:(UAUser *)user config:(UARuntimeConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
     self = [super initWithDataStore:dataStore];
     if (self) {
         self.user = user;
@@ -48,7 +48,7 @@
     return self;
 }
 
-+ (instancetype)inboxWithUser:(UAUser *)user config:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
++ (instancetype)inboxWithUser:(UAUser *)user config:(UARuntimeConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
     return [[UAInbox alloc] initWithUser:user config:config dataStore:dataStore];
 }
 

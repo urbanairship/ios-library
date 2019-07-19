@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import <Foundation/Foundation.h>
 #import "UAScheduleInfo.h"
@@ -23,6 +23,13 @@ NS_ASSUME_NONNULL_BEGIN
  * The schedule's information.
  */
 @property(nonatomic, readonly) UAScheduleInfo *info;
+
+/**
+ * The schedule's metadata.
+ *
+ * @note metadata includes the locale which can change at any time.
+ */
+@property(nullable, nonatomic, readonly) NSDictionary *metadata;
 
 ///---------------------------------------------------------------------------------------
 /// @name Schedule Management

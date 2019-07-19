@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import <Foundation/Foundation.h>
 
@@ -86,5 +86,6 @@
  * The schedule's interval. The amount of time to pause the schedule after executing.
  */
 @property(nonatomic, readonly, nullable) NSNumber *interval;
+
 
 @end

@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 import AirshipKit
 import UIKit
@@ -40,7 +40,7 @@ class PushSettingsViewController: UITableViewController, UARegistrationDelegate 
             object: nil);
 
         pushEnabled = UAirship.push().userPushNotificationsEnabled
-        locationEnabled = UAirship.location().isLocationUpdatesEnabled
+        locationEnabled = UAirship.shared()?.locationProviderDelegate?.isLocationUpdatesEnabled ?? false
         analytics = UAirship.analytics().isEnabled
 
         refreshView()
@@ -54,6 +54,7 @@ class PushSettingsViewController: UITableViewController, UARegistrationDelegate 
     }
 
     override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         refreshView()
     }
 
@@ -112,7 +113,7 @@ class PushSettingsViewController: UITableViewController, UARegistrationDelegate 
             break
         case (locationEnabledIndexPath!.section, locationEnabledIndexPath!.row) :
             locationEnabled = !locationEnabled;
-            UAirship.location().isLocationUpdatesEnabled = locationEnabled
+            UAirship.shared()?.locationProviderDelegate?.isLocationUpdatesEnabled = locationEnabled
             refreshView()
             break
         default:

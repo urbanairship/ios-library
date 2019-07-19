@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UAOpenExternalURLAction.h"
 #import "UAirship.h"
@@ -58,7 +58,7 @@ NSString * const UAOpenExternalURLActionErrorDomain = @"com.urbanairship.actions
    }];
 }
 
-+ (NSURL *)parseURLFromArguments:(UAActionArguments *)arguments {
++ (nullable NSURL *)parseURLFromArguments:(UAActionArguments *)arguments {
     if (![arguments.value isKindOfClass:[NSString class]] && ![arguments.value isKindOfClass:[NSURL class]]) {
         return nil;
     }
@@ -73,7 +73,10 @@ NSString * const UAOpenExternalURLActionErrorDomain = @"com.urbanairship.actions
         NSString *decodedUrlString = [url.absoluteString stringByRemovingPercentEncoding];
         NSCharacterSet *characterSet = [[NSCharacterSet characterSetWithCharactersInString:@"+-.0123456789"] invertedSet];
         NSString *strippedNumber = [[decodedUrlString componentsSeparatedByCharactersInSet:characterSet] componentsJoinedByString:@""];
-
+        if (!strippedNumber) {
+            return nil;
+        }
+        
         NSString *scheme = [decodedUrlString hasPrefix:@"sms"] ? @"sms:" : @"tel:";
         url = [NSURL URLWithString:[scheme stringByAppendingString:strippedNumber]];
     }

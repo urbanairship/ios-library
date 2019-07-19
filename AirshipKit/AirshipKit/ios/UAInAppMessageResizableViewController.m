@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UAInAppMessageResizableViewController+Internal.h"
 #import "UAirship.h"
@@ -8,12 +8,19 @@
 #import "UAInAppMessageModalViewController+Internal.h"
 #import "UAInAppMessageHTMLViewController+Internal.h"
 #import "UAInAppMessageResolution.h"
+#import "UAUtils.h"
 
 /*
  * Hand tuned value that removes excess vertical safe area to make the
  * top padding look more consistent with the iPhone X nub
  */
 CGFloat const ResizingViewExcessiveSafeAreaPadding = -8;
+
+NSString *const ResizingViewControllerNibName = @"UAInAppMessageResizableViewController";
+CGFloat const ResizingViewControllerDefaultInnerViewPadding = 15;
+
+CGFloat const DefaultViewToScreenHeightRatio = 0.50;
+CGFloat const DefaultViewToScreenWidthRatio = 0.75;
 
 /**
  * The in-app message resizing view interface necessary for rounded corners.
@@ -30,18 +37,25 @@ CGFloat const ResizingViewExcessiveSafeAreaPadding = -8;
  */
 @property (nonatomic, assign) BOOL allowBorderRounding;
 
+/**
+ * The size of the resizing view when default size is overridden.
+ */
+@property(nonatomic, assign) CGSize size;
+
+/**
+ * Flag indicating if the resizing view should lock its aspect ratio when resizing to fit the screen.
+ * Only applicable when default size is overridden.
+ *
+ * Optional. Defaults to `NO` when default size is overridden.
+ */
+@property(nonatomic, assign) BOOL aspectLock;
+
 @end
 
 /**
  * The in-app message resizing view implementation necessary for rounded corners.
  */
 @implementation UAInAppMessageResizableView
-
-- (void)layoutSubviews {
-    [super layoutSubviews];
-
-    [self applyBorderRounding];
-}
 
 - (void)applyBorderRounding {
     if (!self.allowBorderRounding) {
@@ -56,8 +70,13 @@ CGFloat const ResizingViewExcessiveSafeAreaPadding = -8;
     self.layer.mask = maskLayer;
 }
 
-@end
+- (void)layoutSubviews {
+    [super layoutSubviews];
 
+    [self applyBorderRounding];
+}
+
+@end
 
 /**
  * Resizing view controller that acts as a dynamic container for modal and HTML child views
@@ -89,6 +108,21 @@ CGFloat const ResizingViewExcessiveSafeAreaPadding = -8;
  */
 @property (nonatomic, copy, nullable) void (^showCompletionHandler)(UAInAppMessageResolution *);
 
+/**
+ * The intrinsic size of the resizable view.
+ */
+@property (nonatomic, assign) CGSize size;
+
+/**
+ * The flag that determines if the view will lock the aspect ratio of its intrinsic size
+ * when the view needs to resize to fit the screen.
+ */
+@property (nonatomic, assign) BOOL aspectLock;
+
+/**
+ * The flag that determines if the view is overriding the default size.
+ */
+@property (nonatomic, assign) BOOL overrideSize;
 
 @end
 
@@ -96,19 +130,74 @@ CGFloat const ResizingViewExcessiveSafeAreaPadding = -8;
 
 double const DefaultResizableViewAnimationDuration = 0.2;
 
-+ (instancetype)resizableViewControllerWithChild:(UIViewController *)vc {
-    return [[self alloc] initWithViewController:vc];
 
++ (instancetype)resizableViewControllerWithChild:(UIViewController *)vc {
+    /**
+    * The default size is proportional to the size of the screen - and therefore
+    * is innately aspect-locking. Initializing with size CGSizeZero will elicit the default size.
+    */
+    return [[self alloc] initWithViewController:vc];
+}
+
++ (instancetype)resizableViewControllerWithChild:(UIViewController *)vc
+                                            size:(CGSize)size
+                                      aspectLock:(BOOL)aspectLock {
+    return [[self alloc] initWithViewController:vc
+                                           size:size
+                                     aspectLock:aspectLock];
 }
 
 - (instancetype)initWithViewController:(UIViewController *)vc {
     self = [self initFromNib];
 
     if (self) {
+        self.overrideSize = NO;
+        self.size = [self defaultScreenRelativeSize];
+        self.aspectLock = NO;
         [self addChildViewController:vc];
     }
 
     return self;
+}
+
+- (instancetype)initWithViewController:(UIViewController *)vc
+                                  size:(CGSize)size
+                            aspectLock:(BOOL)aspectLock  {
+    self = [self initFromNib];
+
+    if (self) {
+        self.overrideSize = !CGSizeEqualToSize(size, CGSizeZero);
+        self.size = size;
+        self.aspectLock = aspectLock;
+        [self addChildViewController:vc];
+    }
+
+    return self;
+}
+
+- (void)overrideSizeConstraintsForSize:(CGSize)size {
+    CGSize normalizedSize = [self normalizeSize:size];
+
+    // Apply height and width constraints
+    self.widthConstraint.active = NO;
+    self.widthConstraint = [NSLayoutConstraint constraintWithItem:self.resizingContainerView
+                                                        attribute:NSLayoutAttributeWidth
+                                                        relatedBy:NSLayoutRelationEqual
+                                                           toItem:nil
+                                                        attribute:NSLayoutAttributeNotAnAttribute
+                                                       multiplier:1
+                                                         constant:normalizedSize.width];
+    self.widthConstraint.active = YES;
+
+    self.heightConstraint.active = NO;
+    self.heightConstraint = [NSLayoutConstraint constraintWithItem:self.resizingContainerView
+                                                         attribute:NSLayoutAttributeHeight
+                                                         relatedBy:NSLayoutRelationEqual
+                                                            toItem:nil
+                                                         attribute:NSLayoutAttributeNotAnAttribute
+                                                        multiplier:1
+                                                          constant:normalizedSize.height];
+    self.heightConstraint.active = YES;
 }
 
 - (void)addInAppMessageChildViewController:(UIViewController *)child  {
@@ -125,7 +214,7 @@ double const DefaultResizableViewAnimationDuration = 0.2;
 
     if (self.childViewControllers.count > 0) {
         UIViewController *child = self.childViewControllers[0];
-        
+
         [self addInAppMessageChildViewController:child];
         [child didMoveToParentViewController:self];
     }
@@ -143,6 +232,10 @@ double const DefaultResizableViewAnimationDuration = 0.2;
     // disable voiceover interactions with visible items beneath the modal
     self.view.accessibilityViewIsModal = YES;
 
+    if (self.overrideSize) {
+        [self overrideSizeConstraintsForSize:self.size];
+    }
+
     if (self.displayFullScreen) {
         // Detect view type
         [self stretchToFullScreen];
@@ -152,7 +245,6 @@ double const DefaultResizableViewAnimationDuration = 0.2;
     // Apply max width and height constraints from style if they are present
     if (self.maxWidth) {
         self.maxWidthConstraint.active = NO;
-
         // Set max width
         [NSLayoutConstraint constraintWithItem:self.resizingContainerView
                                      attribute:NSLayoutAttributeWidth
@@ -243,6 +335,17 @@ double const DefaultResizableViewAnimationDuration = 0.2;
     self.shadeView.backgroundColor = self.backgroundColor;
 }
 
+- (void)dismissWithoutResolution {
+    self.isShowing = NO;
+    [self.view removeFromSuperview];
+    self.topWindow = nil;
+
+    if (self.showCompletionHandler) {
+        self.showCompletionHandler(nil);
+        self.showCompletionHandler = nil;
+    }
+}
+
 - (void)dismissWithResolution:(UAInAppMessageResolution *)resolution {
     UA_WEAKIFY(self);
     [UIView animateWithDuration:DefaultResizableViewAnimationDuration animations:^{
@@ -262,11 +365,6 @@ double const DefaultResizableViewAnimationDuration = 0.2;
             self.showCompletionHandler = nil;
         }
     }];
-}
-
-- (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {
-    [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
-    [self refreshViewForCurrentOrientation];
 }
 
 - (void)refreshViewForCurrentOrientation {
@@ -291,6 +389,139 @@ double const DefaultResizableViewAnimationDuration = 0.2;
             }
         }
     }
+}
+
+#pragma mark -
+#pragma mark Resizing Helpers
+
+- (CGSize)getMaxSafeSize {
+    CGSize screenSize = [UIScreen mainScreen].bounds.size;
+
+    // Get insets for max size
+    CGFloat topInset = 0;
+    CGFloat bottomInset = 0;
+    CGFloat leftInset = 0;
+    CGFloat rightInset = 0;
+
+    if (@available(iOS 11.0, *)) {
+        UIWindow *window = [UAUtils mainWindow];
+        topInset = window.safeAreaInsets.top;
+        bottomInset = window.safeAreaInsets.bottom;
+        leftInset = window.safeAreaInsets.left;
+        rightInset = window.safeAreaInsets.right;
+    }
+
+    CGFloat maxOverlayWidth = screenSize.width - (fabs(leftInset) + fabs(rightInset));
+    CGFloat maxOverlayHeight = screenSize.height - (fabs(topInset) + fabs(bottomInset));
+
+    return CGSizeMake(maxOverlayWidth, maxOverlayHeight);
+}
+
+// Helper that generates default screen-relative size - this was previously done in the storyboard
+- (CGSize)defaultScreenRelativeSize {
+    CGSize maxSafeSize = [self getMaxSafeSize];
+
+    return CGSizeMake(maxSafeSize.width * DefaultViewToScreenWidthRatio,
+                      maxSafeSize.height * DefaultViewToScreenHeightRatio);
+}
+
+// Normalizes the provided size to aspect fill the current screen
+- (CGSize)normalizeSize:(CGSize)size {
+    CGFloat requestedAspect = size.width/size.height;
+
+    CGSize maxSafeOverlaySize = [self getMaxSafeSize];
+    CGFloat screenAspect = maxSafeOverlaySize.width/maxSafeOverlaySize.height;
+
+    // If aspect ratio is invalid, remove aspect lock
+    if (![self validateAspectRatio:requestedAspect]) {
+        self.aspectLock = NO;
+    }
+
+    BOOL sizeIsValid = ([self validateWidth:size.width] && [self validateHeight:size.height]);
+
+    // If aspect lock is on and size is invalid, adjust size
+    if (self.aspectLock && !sizeIsValid) {
+        if (screenAspect > requestedAspect) {
+            return CGSizeMake(size.width * (maxSafeOverlaySize.height/size.height), maxSafeOverlaySize.height);
+        } else {
+            return CGSizeMake(maxSafeOverlaySize.width, size.height * (maxSafeOverlaySize.width/size.width));
+        }
+    }
+
+    // Fill screen width if width is invalid
+    if (![self validateWidth:size.width]) {
+        size.width = maxSafeOverlaySize.width;
+    }
+
+    // Fill screen height if height is invalid
+    if (![self validateHeight:size.height]) {
+        size.height = maxSafeOverlaySize.height;
+    }
+
+    return size;
+}
+
+-(BOOL)validateAspectRatio:(CGFloat)aspectRatio {
+    if (isnan(aspectRatio) || aspectRatio > INTMAX_MAX) {
+        return NO;
+    }
+
+    if (aspectRatio == 0) {
+        return NO;
+    }
+
+    return YES;
+}
+
+- (BOOL)validateWidth:(CGFloat)width {
+    CGSize screenSize = [self getMaxSafeSize];
+    CGFloat maximumOverlayViewWidth = screenSize.width;
+    CGFloat minimumOverlayViewWidth = (ResizingViewControllerDefaultInnerViewPadding * 2) * 2;
+
+    if (width < minimumOverlayViewWidth) {
+        if (width != 0) {
+            UA_LDEBUG(@"Overlay view width is less than the minimum allowed width.");
+        }
+        return NO;
+    }
+
+    if (width > maximumOverlayViewWidth) {
+        UA_LDEBUG(@"Overlay view width is greater than the maximum allowed width.");
+        return NO;
+    }
+
+    return YES;
+}
+
+- (BOOL)validateHeight:(CGFloat)height {
+    CGSize maxScreenSize = [self getMaxSafeSize];
+    CGFloat maximumOverlayViewHeight = maxScreenSize.height;
+    CGFloat minimumOverlayViewHeight = (ResizingViewControllerDefaultInnerViewPadding * 2) * 2;
+
+    if (height < minimumOverlayViewHeight) {
+        if (height != 0) {
+            UA_LDEBUG(@"Overlay view height is less than the minimum allowed height.");
+        }
+        return NO;
+    }
+
+    if (height > maximumOverlayViewHeight) {
+        UA_LDEBUG(@"Overlay view height is greater than the maximum allowed height.");
+        return NO;
+    }
+
+    return YES;
+}
+
+- (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {
+    [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
+
+    // apply the size if size is being overridden
+    if (self.overrideSize) {
+        [self overrideSizeConstraintsForSize:self.size];
+    }
+
+    [self refreshViewForCurrentOrientation];
 }
 
 

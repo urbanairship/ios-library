@@ -1,10 +1,10 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UABaseTest.h"
 #import "UAUserAPIClient+Internal.h"
 #import "NSJSONSerialization+UAAdditions.h"
 #import "UAUtils+Internal.h"
-#import "UAConfig+Internal.h"
+#import "UARuntimeConfig.h"
 #import "UAirship+Internal.h"
 #import "UAUserAPIClient+Internal.h"
 #import "UAUser+Internal.h"

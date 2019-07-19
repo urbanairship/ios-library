@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import <UIKit/UIKit.h>
 #import "UAAutomationStore+Internal.h"
@@ -32,9 +32,34 @@ typedef NS_ENUM(NSInteger, UAAutomationSchedulePrepareResult) {
     UAAutomationSchedulePrepareResultPenalize,
 
     /**
+     * Schedule should be marked invalidated due to stale metadata.
+     */
+    UAAutomationSchedulePrepareResultInvalidate,
+
+    /**
      * Schedule should be cancelled.
      */
     UAAutomationSchedulePrepareResultCancel
+};
+
+/**
+ * Ready results
+ */
+typedef NS_ENUM(NSInteger, UAAutomationScheduleReadyResult) {
+    /**
+     * Schedule should skip executing.
+     */
+    UAAutomationScheduleReadyResultNotReady,
+
+    /**
+     * Schedule is ready for execution.
+     */
+    UAAutomationScheduleReadyResultContinue,
+
+    /**
+     * Schedule is out of date and should be prepared again before it's able to be ready for execution.
+     */
+    UAAutomationScheduleReadyResultInvalidate,
 };
 
 /**
@@ -63,9 +88,9 @@ typedef NS_ENUM(NSInteger, UAAutomationSchedulePrepareResult) {
  * Checks if a schedule is ready to execute.
  *
  * @param schedule The schedule.
- * @returns `YES` if the schedule should be executed, otherwise `NO`.
+ * @returns Ready result of the schedule should be executed.
  */
-- (BOOL)isScheduleReadyToExecute:(UASchedule *)schedule;
+- (UAAutomationScheduleReadyResult)isScheduleReadyToExecute:(UASchedule *)schedule;
 
 /**
  * Executes a schedule.
@@ -81,7 +106,17 @@ typedef NS_ENUM(NSInteger, UAAutomationSchedulePrepareResult) {
 /**
  * Called when a schedule is expired.
  */
-- (void)scheduleExpired:(nonnull UASchedule *)schedule;
+- (void)onScheduleExpired:(nonnull UASchedule *)schedule;
+
+/**
+ * Called when a schedule is cancelled.
+ */
+- (void)onScheduleCancelled:(nonnull UASchedule *)schedule;
+
+/**
+ * Called when a schedule's limit is reached.
+ */
+- (void)onScheduleLimitReached:(nonnull UASchedule *)schedule;
 
 @end
 
@@ -152,20 +187,22 @@ typedef NS_ENUM(NSInteger, UAAutomationSchedulePrepareResult) {
  * Schedules a single schedule.
  *
  * @param scheduleInfo The schedule information.
+ * @param metadata The schedule metadata.
  * @param completionHandler A completion handler.
  * If the schedule info is invalid, the schedule will be nil.
  */
-- (void)schedule:(UAScheduleInfo *)scheduleInfo completionHandler:(nullable void (^)(UASchedule * __nullable))completionHandler;
+- (void)schedule:(UAScheduleInfo *)scheduleInfo metadata:(NSDictionary *)metadata completionHandler:(nullable void (^)(UASchedule * __nullable))completionHandler;
 
 /**
  * Schedules multiple schedules.
  *
  * @param scheduleInfos The schedule information.
+ * @param metadata Metadata corresponding to the provided schedule infos.
  * @param completionHandler A completion handler.
  * Note: If any schedule info is invalid, that schedule won't be scheduled and it will be [NSNull null] in the schedules
  *       returned in the completionHandler.
  */
-- (void)scheduleMultiple:(NSArray<UAScheduleInfo *> *)scheduleInfos completionHandler:(void (^)(NSArray <UASchedule *> *))completionHandler;
+- (void)scheduleMultiple:(NSArray<UAScheduleInfo *> *)scheduleInfos metadata:(NSDictionary *)metadata completionHandler:(void (^)(NSArray <UASchedule *> *))completionHandler;
 
 /**
  * Called when one of the schedule conditions changes.

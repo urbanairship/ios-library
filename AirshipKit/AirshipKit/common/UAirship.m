@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 #import "UAirship+Internal.h"
 
 #import "UAUser+Internal.h"
@@ -8,12 +8,11 @@
 #import "UAGlobal.h"
 #import "UAPush+Internal.h"
 #import "UAConfig.h"
+#import "UARuntimeConfig+Internal.h"
 #import "UAApplicationMetrics+Internal.h"
 #import "UAActionRegistry.h"
-#import "UALocation+Internal.h"
 #import "UAAutoIntegration+Internal.h"
 #import "NSJSONSerialization+UAAdditions.h"
-#import "UAURLProtocol.h"
 #import "UAAppInitEvent+Internal.h"
 #import "UAAppExitEvent+Internal.h"
 #import "UAPreferenceDataStore+Internal.h"
@@ -42,7 +41,6 @@ NSString * const UAirshipTakeOffBackgroundThreadException = @"UAirshipTakeOffBac
 NSString * const UAResetKeychainKey = @"com.urbanairship.reset_keychain";
 
 NSString * const UALibraryVersion = @"com.urbanairship.library_version";
-
 
 static UAirship *sharedAirship_;
 
@@ -88,7 +86,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 #pragma mark -
 #pragma mark Object Lifecycle
 
-- (instancetype)initWithConfig:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
+- (instancetype)initWithRuntimeConfig:(UARuntimeConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
     self = [super init];
     if (self) {
 #if TARGET_OS_TV   // remote-notification background mode not supported in tvOS
@@ -113,23 +111,24 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 
         self.sharedAnalytics = [UAAnalytics analyticsWithConfig:config dataStore:dataStore];
         self.whitelist = [UAWhitelist whitelistWithConfig:config];
-        self.sharedLocation = [UALocation locationWithAnalytics:self.sharedAnalytics dataStore:dataStore];
         self.sharedAutomation = [UAAutomation automationWithConfig:config dataStore:dataStore];
         self.sharedRemoteDataManager = [UARemoteDataManager remoteDataManagerWithConfig:config dataStore:dataStore];
 
-        UAModules *modules = [[UAModules alloc] init];
-        UAComponentDisabler *componentDisabler = [UAComponentDisabler componentDisablerWithModules:modules];
+        self.sharedModules = [[UAModules alloc] initWithDataStore:dataStore];
+
+        UAComponentDisabler *componentDisabler = [UAComponentDisabler componentDisablerWithModules:self.sharedModules];
 
         self.sharedRemoteConfigManager = [UARemoteConfigManager remoteConfigManagerWithRemoteDataManager:self.sharedRemoteDataManager
                                                                                        componentDisabler:componentDisabler
-                                                                                                 modules:modules];
+                                                                                                 modules:self.sharedModules];
 #if !TARGET_OS_TV
         // IAP Nib not supported on tvOS
         self.sharedInAppMessageManager = [UAInAppMessageManager managerWithConfig:config
                                                          tagGroupsMutationHistory:tagGroupsMutationHistory
                                                                 remoteDataManager:self.sharedRemoteDataManager
                                                                         dataStore:dataStore
-                                                                             push:self.sharedPush];
+                                                                             push:self.sharedPush
+                                                                        analytics:self.sharedAnalytics];
 
         self.sharedLegacyInAppMessaging = [UALegacyInAppMessaging inAppMessagingWithAnalytics:self.sharedAnalytics dataStore:dataStore inAppMessageManager:self.sharedInAppMessageManager];
         // Message center not supported on tvOS
@@ -187,41 +186,34 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         return;
     }
 
-    [UAirship setLogLevel:config.logLevel];
-
-    if (config.inProduction) {
-        [UAirship setLoudImpErrorLogging:NO];
-    }
+    UARuntimeConfig *runtimeConfig = [UARuntimeConfig runtimeConfigWithConfig:config];
 
     // Ensure that app credentials are valid
-    if (![config validate]) {
+    if (!runtimeConfig) {
         UA_LIMPERR(@"The UAConfig is invalid, no application credentials were specified at runtime.");
         // Bail now. Don't continue the takeOff sequence.
         return;
     }
 
+    [UAirship setLogLevel:runtimeConfig.logLevel];
+
+    if (runtimeConfig.inProduction) {
+        [UAirship setLoudImpErrorLogging:NO];
+    }
+
     UA_LINFO(@"UAirship Take Off! Lib Version: %@ App Key: %@ Production: %@.",
-             [UAirshipVersion get], config.appKey, config.inProduction ?  @"YES" : @"NO");
+             [UAirshipVersion get], runtimeConfig.appKey, runtimeConfig.inProduction ?  @"YES" : @"NO");
 
     // Data store
-    UAPreferenceDataStore *dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:[NSString stringWithFormat:@"com.urbanairship.%@.", config.appKey]];
+    UAPreferenceDataStore *dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:[NSString stringWithFormat:@"com.urbanairship.%@.", runtimeConfig.appKey]];
     [dataStore migrateUnprefixedKeys:@[UALibraryVersion]];
-
-    // Cache
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-    if (config.cacheDiskSizeInMB > 0) {
-        UA_LTRACE("Registering UAURLProtocol.");
-        [NSURLProtocol registerClass:[UAURLProtocol class]];
-    }
-#pragma GCC diagnostic pop
 
     // Clearing the key chain
     if ([[NSUserDefaults standardUserDefaults] boolForKey:UAResetKeychainKey]) {
         UA_LDEBUG(@"Deleting the keychain credentials");
-        [UAKeychainUtils deleteKeychainValue:config.appKey];
+        [UAKeychainUtils deleteKeychainValue:runtimeConfig.appKey];
 
-        UA_LDEBUG(@"Deleting the UA device ID");
+        UA_LDEBUG(@"Deleting the Airship device ID");
         [UAKeychainUtils deleteKeychainValue:kUAKeychainDeviceIDKey];
 
         // Delete the Device ID in the data store so we don't clear the channel
@@ -240,7 +232,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 
             [sharedAirship_.sharedPush resetChannel];
 #if !TARGET_OS_TV
-            if (config.clearUserOnAppRestore) {
+            if (runtimeConfig.clearUserOnAppRestore) {
                 [sharedAirship_.sharedInboxUser resetUser];
             }
 #endif
@@ -251,7 +243,8 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
     } dispatcher:[UADispatcher mainDispatcher]];
 
     // Create Airship
-    [UAirship setSharedAirship:[[UAirship alloc] initWithConfig:config dataStore:dataStore]];
+    [UAirship setSharedAirship:[[UAirship alloc] initWithRuntimeConfig:runtimeConfig
+                                                             dataStore:dataStore]];
 
     // Save the version
     if ([[UAirshipVersion get] isEqualToString:@"0.0.0"]) {
@@ -269,13 +262,13 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 #endif
 
             if (previousVersion) {
-                UA_LINFO(@"Urban Airship library version changed from %@ to %@.", previousVersion, [UAirshipVersion get]);
+                UA_LINFO(@"Airship library version changed from %@ to %@.", previousVersion, [UAirshipVersion get]);
             }
         }
     }
 
     // Validate any setup issues
-    if (!config.inProduction) {
+    if (!runtimeConfig.inProduction) {
         [sharedAirship_ validate];
     }
 
@@ -292,6 +285,13 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
             [UAirship handleAppDidFinishLaunchingNotification:appDidFinishLaunchingNotification_];
             appDidFinishLaunchingNotification_ = nil;
         }];
+    }
+
+    // Notify all modules that the shared airship is ready
+    UAModules *modules = sharedAirship_.sharedModules;
+    for (NSString *moduleName in modules.allModuleNames) {
+        UAComponent *component = [modules componentForModuleName:moduleName];
+        [component airshipReady:sharedAirship_];
     }
 }
 
@@ -391,10 +391,6 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 
 #endif
 
-+ (UALocation *)location {
-    return sharedAirship_.sharedLocation;
-}
-
 + (UANamedUser *)namedUser {
     return sharedAirship_.sharedNamedUser;
 }
@@ -413,6 +409,10 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 
 + (UARemoteDataManager *)remoteDataManager {
     return sharedAirship_.sharedRemoteDataManager;
+}
+
++ (UAModules *)modules {
+    return sharedAirship_.sharedModules;
 }
 
 + (NSBundle *)resources {
@@ -471,7 +471,6 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
     if (![[NSJSONSerialization class] respondsToSelector:@selector(stringWithObject:)]) {
         UA_LIMPERR(@"UAirship library requires the '-ObjC' linker flag set in 'Other linker flags'.");
     }
-
 }
 
 @end

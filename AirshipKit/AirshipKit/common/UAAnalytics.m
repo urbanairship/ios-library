@@ -1,10 +1,10 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import <UIKit/UIKit.h>
 #import "UAAnalytics+Internal.h"
 #import "UAPreferenceDataStore+Internal.h"
 #import "UAEventManager+Internal.h"
-#import "UAConfig.h"
+#import "UARuntimeConfig.h"
 #import "UAEvent.h"
 #import "UAUtils+Internal.h"
 
@@ -23,7 +23,7 @@
 #define kUAAssociatedIdentifiers @"UAAssociatedIdentifiers"
 
 @interface UAAnalytics()
-@property (nonatomic, strong) UAConfig *config;
+@property (nonatomic, strong) UARuntimeConfig *config;
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 @property (nonatomic, strong) UAEventManager *eventManager;
 @property (nonatomic, strong) NSNotificationCenter *notificationCenter;
@@ -48,7 +48,7 @@ NSString *const UAEventKey = @"event";
 
 @implementation UAAnalytics
 
-- (instancetype)initWithConfig:(UAConfig *)airshipConfig
+- (instancetype)initWithConfig:(UARuntimeConfig *)airshipConfig
                      dataStore:(UAPreferenceDataStore *)dataStore
                   eventManager:(UAEventManager *)eventManager
             notificationCenter:(NSNotificationCenter *)notificationCenter
@@ -107,7 +107,7 @@ NSString *const UAEventKey = @"event";
     return self;
 }
 
-+ (instancetype)analyticsWithConfig:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
++ (instancetype)analyticsWithConfig:(UARuntimeConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
     return [[UAAnalytics alloc] initWithConfig:config
                                      dataStore:dataStore
                                   eventManager:[UAEventManager eventManagerWithConfig:config dataStore:dataStore]
@@ -116,7 +116,7 @@ NSString *const UAEventKey = @"event";
                                     dispatcher:[UADispatcher mainDispatcher]];
 }
 
-+ (instancetype)analyticsWithConfig:(UAConfig *)airshipConfig
++ (instancetype)analyticsWithConfig:(UARuntimeConfig *)airshipConfig
                      dataStore:(UAPreferenceDataStore *)dataStore
                   eventManager:(UAEventManager *)eventManager
             notificationCenter:(NSNotificationCenter *)notificationCenter

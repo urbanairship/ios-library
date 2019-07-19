@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 import UIKit
 import AirshipKit
@@ -7,11 +7,23 @@ import AirshipKit
  * The AutomationCell represents a single IAA schedule in the table.
  */
 class AutomationCell: UITableViewCell {
-    @IBOutlet var messageType: UILabel!
-    @IBOutlet var messageName: UILabel!
-    @IBOutlet var messageID: UILabel!
+    @IBOutlet weak var messageType: UILabel!
+    @IBOutlet weak var messageName: UILabel!
+    @IBOutlet weak var messageID: UILabel!
     
     var schedule : UASchedule?
+
+    func setCellTheme() {
+        backgroundColor = ThemeManager.shared.currentTheme.Background
+        messageName.textColor = ThemeManager.shared.currentTheme.PrimaryText
+        messageID.textColor = ThemeManager.shared.currentTheme.SecondaryText
+        messageType.textColor = ThemeManager.shared.currentTheme.WidgetTint
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        setCellTheme()
+    }
 }
 
 /**
@@ -19,8 +31,17 @@ class AutomationCell: UITableViewCell {
  * for debugging use.
  */
 class AutomationTableViewController: UITableViewController {    
+    var launchPathComponents : [String]?
+    var launchCompletionHandler : (() -> Void)?
+
     private let inAppMessageManager = UAirship.inAppMessageManager()
     private var schedules : Array<UASchedule>?
+
+    func setTableViewTheme() {
+        tableView.backgroundColor = ThemeManager.shared.currentTheme.Background;
+        navigationController?.navigationBar.titleTextAttributes = [.foregroundColor:ThemeManager.shared.currentTheme.NavigationBarText]
+        navigationController?.navigationBar.barTintColor = ThemeManager.shared.currentTheme.NavigationBarBackground;
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -32,7 +53,9 @@ class AutomationTableViewController: UITableViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
- 
+        view.backgroundColor = ThemeManager.shared.currentTheme.Background;
+
+        setTableViewTheme()
         refreshInAppAutomation()
     }
     
@@ -52,6 +75,12 @@ class AutomationTableViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return self.schedules?.count ?? 0
+    }
+
+    override func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
+        if let headerView = view as? UITableViewHeaderFooterView {
+            headerView.textLabel?.textColor = ThemeManager.shared.currentTheme.WidgetTint
+        }
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -93,9 +122,9 @@ class AutomationTableViewController: UITableViewController {
     }
 
     // MARK: - Navigation
-
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         super.prepare(for: segue, sender: sender)
+
         switch(segue.identifier ?? "") {
         case AutomationDetailViewController.segueID:
             guard let automationDetailViewController = segue.destination as? AutomationDetailViewController else {

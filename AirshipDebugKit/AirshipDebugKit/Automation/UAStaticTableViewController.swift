@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 import UIKit
 
@@ -21,6 +21,17 @@ class UAStaticTableViewController: UITableViewController {
         } else {
             return UITableView.automaticDimension
         }
+    }
+
+    func setTableViewTheme() {
+        tableView.backgroundColor = ThemeManager.shared.currentTheme.Background;
+        navigationController?.navigationBar.titleTextAttributes = [.foregroundColor:ThemeManager.shared.currentTheme.NavigationBarText]
+        navigationController?.navigationBar.barTintColor = ThemeManager.shared.currentTheme.NavigationBarBackground;
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setTableViewTheme()
     }
     
     func heightForCell(_ cell: UITableViewCell, resizingLabel: UILabel) -> CGFloat {

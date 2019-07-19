@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UATextInputNotificationAction.h"
 #import "UANotificationAction.h"

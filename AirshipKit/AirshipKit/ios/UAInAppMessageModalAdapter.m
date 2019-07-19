@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UAGlobal.h"
 #import "UAInAppMessageModalAdapter.h"
@@ -17,7 +17,6 @@ NSString *const UAModalStyleFileName = @"UAInAppMessageModalStyle";
 @property (nonatomic, strong) UAInAppMessage *message;
 @property (nonatomic, strong) UAInAppMessageModalViewController *modalController;
 @property (nonatomic, strong) UAInAppMessageResizableViewController *resizableContainerViewController;
-@property (nonatomic, strong) NSCache *imageCache;
 
 @end
 
@@ -32,16 +31,15 @@ NSString *const UAModalStyleFileName = @"UAInAppMessageModalStyle";
 
     if (self) {
         self.message = message;
-        self.imageCache = [UAInAppMessageUtils createImageCache];
         self.style = [UAInAppMessageModalStyle styleWithContentsOfFile:UAModalStyleFileName];
     }
 
     return self;
 }
 
-- (void)prepare:(void (^)(UAInAppMessagePrepareResult))completionHandler {
+- (void)prepareWithAssets:(nonnull UAInAppMessageAssets *)assets completionHandler:(nonnull void (^)(UAInAppMessagePrepareResult))completionHandler {
     UAInAppMessageModalDisplayContent *displayContent = (UAInAppMessageModalDisplayContent *)self.message.displayContent;
-    [UAInAppMessageUtils prepareMediaView:displayContent.media imageCache:self.imageCache completionHandler:^(UAInAppMessagePrepareResult result, UAInAppMessageMediaView *mediaView) {
+    [UAInAppMessageUtils prepareMediaView:displayContent.media assets:assets completionHandler:^(UAInAppMessagePrepareResult result, UAInAppMessageMediaView *mediaView) {
         if (result == UAInAppMessagePrepareResultSuccess) {
             mediaView.hideWindowWhenVideoIsFullScreen = YES;
             self.modalController = [UAInAppMessageModalViewController modalControllerWithModalMessageID:self.message.identifier
@@ -74,14 +72,6 @@ NSString *const UAModalStyleFileName = @"UAInAppMessageModalStyle";
 
     // Show resizable view controller with child
     [self.resizableContainerViewController showWithCompletionHandler:completionHandler];
-}
-
-- (void)dealloc {
-    if (self.imageCache) {
-        [self.imageCache removeAllObjects];
-    }
-
-    self.imageCache = nil;
 }
 
 @end

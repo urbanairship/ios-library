@@ -1,8 +1,8 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import <Foundation/Foundation.h>
 #import "UAComponent+Internal.h"
-#import "UAConfig.h"
+#import "UARuntimeConfig.h"
 #import "UATagGroupsLookupAPIClient+Internal.h"
 #import "UATagGroupsLookupResponseCache+Internal.h"
 #import "UATagGroupsMutationHistory+Internal.h"
@@ -82,11 +82,11 @@ extern const NSTimeInterval UATagGroupsLookupManagerDefaultPreferLocalTagDataTim
 /**
  * UATagGroupsLookupManager class factory method.
  *
- * @param config An instance of UAConfig.
+ * @param config An instance of UARuntimeConfig.
  * @param dataStore A data store.
  * @param mutationHistory The tag groups mutation history.
  */
-+ (instancetype)lookupManagerWithConfig:(UAConfig *)config
++ (instancetype)lookupManagerWithConfig:(UARuntimeConfig *)config
                               dataStore:(UAPreferenceDataStore *)dataStore
                         mutationHistory:(UATagGroupsMutationHistory *)mutationHistory;
 /**

@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UAInAppMessageStyleProtocol.h"
 #import "UAPadding.h"
@@ -29,6 +29,11 @@ extern NSString *const UAHTMLMaxWidthKey;
 extern NSString *const UAHTMLMaxHeightKey;
 
 /**
+ * The key representing the hide dismiss icon flag in a style plist.
+ */
+extern NSString *const UAHTMLHideDismissIconKey;
+
+/**
  * Model object representing a custom style to be applied
  * to HTML in-app messages.
  */
@@ -57,6 +62,11 @@ extern NSString *const UAHTMLMaxHeightKey;
  * The max height in points.
  */
 @property(nonatomic, strong, nullable) NSNumber *maxHeight;
+
+/**
+ * Flag to hide the dismiss icon.
+ */
+@property(nonatomic, assign) BOOL hideDismissIcon;
 
 @end
 

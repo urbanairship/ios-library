@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UABaseTest.h"
 #import "UARequestSession+Internal.h"
@@ -29,7 +29,9 @@
     }]];
 
     self.mockNSURLSession = [self mockForClass:[NSURLSession class]];
-    self.session = [UARequestSession sessionWithConfig:[UAConfig config] NSURLSession:self.mockNSURLSession queue:self.mockQueue];
+    self.session = [UARequestSession sessionWithConfig:self.config
+                                          NSURLSession:self.mockNSURLSession
+                                                 queue:self.mockQueue];
 }
 
 - (void)testDataTask {

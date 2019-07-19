@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import <XCTest/XCTest.h>
 #import "UAInAppMessageHTMLDisplayContent+Internal.h"
@@ -16,6 +16,10 @@
         builder.dismissButtonColor = [UIColor greenColor];
         builder.url = @"https://foo.bar.com";
         builder.borderRadiusPoints = 10;
+        builder.requiresConnectivity = YES;
+        builder.width = 99;
+        builder.height = 99;
+        builder.aspectLock = YES;
     }];
 
     UAInAppMessageHTMLDisplayContent *fromJSON = [UAInAppMessageHTMLDisplayContent displayContentWithJSON:[content toJSON] error:nil];
@@ -31,10 +35,16 @@
         builder.dismissButtonColor = [UIColor greenColor];
         builder.url = @"https://foo.bar.com";
         builder.borderRadiusPoints = 10.5;
+        builder.requiresConnectivity = YES;
+        builder.width = 99;
+        builder.height = 99;
+        builder.aspectLock = YES;
     }];
 
     UAInAppMessageHTMLDisplayContent *newContent = [content extend:^(UAInAppMessageHTMLDisplayContentBuilder * _Nonnull builder) {
         builder.url = @"https://baz.boz.com";
+        builder.requiresConnectivity = YES;
+        builder.aspectLock = NO;
     }];
 
     XCTAssertNotNil(newContent);
@@ -42,30 +52,14 @@
     XCTAssertEqualObjects(newContent.backgroundColor, content.backgroundColor);
     XCTAssertEqualObjects(newContent.dismissButtonColor, content.dismissButtonColor);
     XCTAssertEqualObjects(newContent.url, @"https://baz.boz.com");
-}
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-- (void)testBorderRadius {
-    UAInAppMessageHTMLDisplayContent *content =  [UAInAppMessageHTMLDisplayContent displayContentWithBuilderBlock:^(UAInAppMessageHTMLDisplayContentBuilder *builder) {
-        builder.url = @"https://foo.bar.com";
-        builder.borderRadius = 10;
-    }];
-    
-    XCTAssertNotNil(content);
-    XCTAssertEqual(content.borderRadius, 10);
-    XCTAssertEqual(content.borderRadiusPoints, 10);
+    XCTAssertEqual(newContent.width, content.width);
+    XCTAssertEqual(newContent.height, content.height);
+    XCTAssertNotEqual(newContent.aspectLock, content.aspectLock);
 
-    content =  [UAInAppMessageHTMLDisplayContent displayContentWithBuilderBlock:^(UAInAppMessageHTMLDisplayContentBuilder *builder) {
-        builder.url = @"https://foo.bar.com";
-        builder.borderRadiusPoints = 10.5;
-    }];
-    
-    XCTAssertNotNil(content);
-    XCTAssertEqual(content.borderRadius, 10);
-    XCTAssertEqual(content.borderRadiusPoints, 10.5);
+    XCTAssertEqualObjects(newContent.dismissButtonColor, content.dismissButtonColor);
+    XCTAssertEqualObjects(newContent.url, @"https://baz.boz.com");
 }
-#pragma GCC diagnostic pop
 
 @end
 

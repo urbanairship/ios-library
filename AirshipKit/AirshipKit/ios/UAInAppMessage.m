@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UAInAppMessage+Internal.h"
 #import "UAInAppMessageBannerDisplayContent+Internal.h"
@@ -12,11 +12,20 @@
 NSUInteger const UAInAppMessageIDLimit = 100;
 NSUInteger const UAInAppMessageNameLimit = 100;
 
-
 @implementation UAInAppMessageBuilder
+- (instancetype)init {
+    self = [super init];
+    if (self) {
+        // Set defaults
+        self.source = UAInAppMessageSourceAppDefined;
+        self.displayBehavior = UAInAppMessageDisplayBehaviorDefault;
+        self.isReportingEnabled = YES;
+    }
+    return self;
+}
 
 - (instancetype)initWithMessage:(UAInAppMessage *)message {
-    self = [super init];
+    self = [self init];
 
     if (self) {
         self.identifier = message.identifier;
@@ -27,6 +36,9 @@ NSUInteger const UAInAppMessageNameLimit = 100;
         self.audience = message.audience;
         self.source = message.source;
         self.campaigns = message.campaigns;
+        self.displayBehavior = message.displayBehavior;
+        self.isReportingEnabled = message.isReportingEnabled;
+        self.renderedLocale = message.renderedLocale;
     }
 
     return self;
@@ -64,11 +76,14 @@ NSUInteger const UAInAppMessageNameLimit = 100;
 @property(nonatomic, strong, nullable) NSDictionary *extras;
 @property(nonatomic, strong, nullable) UAInAppMessageAudience *audience;
 @property(nonatomic, strong, nullable) NSDictionary *actions;
+@property(nonatomic, copy) NSString *displayBehavior;
+@property(nonatomic, assign) BOOL isReportingEnabled;
 @end
 
 @implementation UAInAppMessage
 @synthesize campaigns = _campaigns;
 @synthesize source = _source;
+@synthesize renderedLocale = _renderedLocale;
 
 NSString * const UAInAppMessageErrorDomain = @"com.urbanairship.in_app_message";
 
@@ -82,12 +97,21 @@ NSString *const UAInAppMessageActionsKey = @"actions";
 NSString *const UAInAppMessageCampaignsKey = @"campaigns";
 NSString *const UAInAppMessageSourceKey = @"source";
 NSString *const UAInAppMessageNameKey = @"name";
+NSString *const UAInAppMessageRenderedLocaleKey = @"rendered_locale";
+NSString *const UAInAppMessageRenderedLocaleLanguageKey = @"language";
+NSString *const UAInAppMessageRenderedLocaleCountryKey = @"country";
+
+NSString *const UAInAppMessageDisplayBehaviorKey = @"display_behavior";
+NSString *const UAInAppMessageReportingEnabledKey = @"reporting_enabled";
 
 NSString *const UAInAppMessageDisplayTypeBannerValue = @"banner";
 NSString *const UAInAppMessageDisplayTypeFullScreenValue = @"fullscreen";
 NSString *const UAInAppMessageDisplayTypeModalValue = @"modal";
 NSString *const UAInAppMessageDisplayTypeHTMLValue = @"html";
 NSString *const UAInAppMessageDisplayTypeCustomValue = @"custom";
+
+NSString *const UAInAppMessageDisplayBehaviorDefault = @"default";
+NSString *const UAInAppMessageDisplayBehaviorImmediate = @"immediate";
 
 NSString *const UAInAppMessageSourceAppDefinedValue = @"app-defined";
 NSString *const UAInAppMessageSourceRemoteDataValue = @"remote-data";
@@ -270,6 +294,81 @@ NSString *const UAInAppMessageSourceLegacyPushValue = @"legacy-push";
         builder.source = defaultSource;
     }
 
+    id displayBehavior = json[UAInAppMessageDisplayBehaviorKey];
+    if (displayBehavior && [displayBehavior isKindOfClass:[NSString class]]) {
+        displayBehavior = [displayBehavior lowercaseString];
+
+        if ([UAInAppMessageDisplayBehaviorDefault isEqualToString:displayBehavior]) {
+            builder.displayBehavior = UAInAppMessageDisplayBehaviorDefault;
+        } else if ([UAInAppMessageDisplayBehaviorImmediate isEqualToString:displayBehavior]) {
+            builder.displayBehavior = UAInAppMessageDisplayBehaviorImmediate;
+        } else {
+            if (error) {
+                NSString *msg = [NSString stringWithFormat:@"Invalid display behavior: %@", displayBehavior];
+                *error =  [NSError errorWithDomain:UAInAppMessageErrorDomain
+                                              code:UAInAppMessageErrorCodeInvalidJSON
+                                          userInfo:@{NSLocalizedDescriptionKey:msg}];
+            }
+            return nil;
+        }
+    }
+
+    id isReportingEnabled = json[UAInAppMessageReportingEnabledKey];
+    if (isReportingEnabled) {
+        if (![isReportingEnabled isKindOfClass:[NSNumber class]]) {
+            if (error) {
+                NSString *msg = [NSString stringWithFormat:@"Reporting enabled flag must be a boolean stored as an NSNumber. Invalid value: %@", isReportingEnabled];
+                *error =  [NSError errorWithDomain:UAInAppMessageErrorDomain
+                                              code:UAInAppMessageErrorCodeInvalidJSON
+                                          userInfo:@{NSLocalizedDescriptionKey:msg}];
+            }
+            return nil;
+        }
+        builder.isReportingEnabled = [isReportingEnabled boolValue];
+    }
+
+    id renderedLocale = json[UAInAppMessageRenderedLocaleKey];
+    if (renderedLocale) {
+        if (![renderedLocale isKindOfClass:[NSDictionary class]]) {
+            if (error) {
+                NSString *msg = [NSString stringWithFormat:@"Rendered locale must be a dictionary. Invalid value: %@", renderedLocale];
+                *error =  [NSError errorWithDomain:UAInAppMessageErrorDomain
+                                              code:UAInAppMessageErrorCodeInvalidJSON
+                                          userInfo:@{NSLocalizedDescriptionKey:msg}];
+            }
+
+            return nil;
+        }
+
+        id language = renderedLocale[UAInAppMessageRenderedLocaleLanguageKey];
+        id country = renderedLocale[UAInAppMessageRenderedLocaleCountryKey];
+
+        if (!language && !country) {
+            if (error) {
+                NSString *msg = [NSString stringWithFormat:@"Rendered locale must contain one of \"country\" or \"language\" fields. \
+                                 Invalid value: %@", renderedLocale];
+                *error =  [NSError errorWithDomain:UAInAppMessageErrorDomain
+                                              code:UAInAppMessageErrorCodeInvalidJSON
+                                          userInfo:@{NSLocalizedDescriptionKey:msg}];
+            }
+
+            return nil;
+        }
+
+        if ((language && ![language isKindOfClass:[NSString class]]) || (country && ![country isKindOfClass:[NSString class]])) {
+            if (error) {
+                NSString *msg = [NSString stringWithFormat:@"Language and country codes must be strings. Invalid value: %@", renderedLocale];
+                *error =  [NSError errorWithDomain:UAInAppMessageErrorDomain
+                                              code:UAInAppMessageErrorCodeInvalidJSON
+                                          userInfo:@{NSLocalizedDescriptionKey:msg}];
+            }
+
+            return nil;
+        }
+
+        builder.renderedLocale = renderedLocale;
+    }
+
     if (![builder isValid]) {
         if (error) {
             NSString *msg = [NSString stringWithFormat:@"Invalid message JSON: %@", json];
@@ -293,8 +392,19 @@ NSString *const UAInAppMessageSourceLegacyPushValue = @"legacy-push";
     return [[UAInAppMessage alloc] initWithBuilder:builder];
 }
 
-- (nullable instancetype)initWithBuilder:(UAInAppMessageBuilder *)builder {
+- (instancetype)init {
     self = [super init];
+    if (self) {
+        // Set defaults
+        _source = UAInAppMessageSourceAppDefined;
+        _displayBehavior = UAInAppMessageDisplayBehaviorDefault;
+        _isReportingEnabled = YES;
+    }
+    return self;
+}
+
+- (nullable instancetype)initWithBuilder:(UAInAppMessageBuilder *)builder {
+    self = [self init];
     
     if (![builder isValid]) {
         UA_LERR(@"UAInAppMessage could not be initialized, builder has missing or invalid parameters.");
@@ -308,8 +418,11 @@ NSString *const UAInAppMessageSourceLegacyPushValue = @"legacy-push";
         self.extras = builder.extras;
         self.audience = builder.audience;
         self.actions = builder.actions;
+        self.displayBehavior = builder.displayBehavior;
+        self.isReportingEnabled = builder.isReportingEnabled;
         _campaigns = builder.campaigns;
         _source = builder.source;
+        _renderedLocale = builder.renderedLocale;
     }
 
     return self;
@@ -321,6 +434,10 @@ NSString *const UAInAppMessageSourceLegacyPushValue = @"legacy-push";
 
 - (NSDictionary *)campaigns {
     return _campaigns;
+}
+
+- (NSDictionary<NSString *, NSString *> *)renderedLocale {
+    return _renderedLocale;
 }
 
 - (nullable UAInAppMessage *)extend:(void(^)(UAInAppMessageBuilder *builder))builderBlock {
@@ -341,6 +458,7 @@ NSString *const UAInAppMessageSourceLegacyPushValue = @"legacy-push";
     
     [data setValue:self.identifier forKey:UAInAppMessageIDKey];
     [data setValue:self.name forKey: UAInAppMessageNameKey];
+
     switch (self.displayType) {
         case UAInAppMessageDisplayTypeBanner:
             [data setValue:UAInAppMessageDisplayTypeBannerValue forKey:UAInAppMessageDisplayTypeKey];
@@ -373,11 +491,19 @@ NSString *const UAInAppMessageSourceLegacyPushValue = @"legacy-push";
             break;
     }
 
+    if (self.displayBehavior && [self.displayBehavior isEqualToString:UAInAppMessageDisplayBehaviorImmediate]) {
+        [data setValue:UAInAppMessageDisplayBehaviorImmediate forKey:UAInAppMessageDisplayBehaviorKey];
+    } else {
+        [data setValue:UAInAppMessageDisplayBehaviorDefault forKey:UAInAppMessageDisplayBehaviorKey];
+    }
+
+    [data setValue:@(self.isReportingEnabled) forKey:UAInAppMessageReportingEnabledKey];
     [data setValue:[self.displayContent toJSON] forKey:UAInAppMessageDisplayContentKey];
     [data setValue:[self.audience toJSON] forKey:UAInAppMessageAudienceKey];
     [data setValue:self.extras forKey:UAInAppMessageExtraKey];
     [data setValue:self.actions forKey:UAInAppMessageActionsKey];
     [data setValue:self.campaigns forKey:UAInAppMessageCampaignsKey];
+    [data setValue:self.renderedLocale forKey:UAInAppMessageRenderedLocaleKey];
 
     return [data copy];
 }
@@ -412,6 +538,14 @@ NSString *const UAInAppMessageSourceLegacyPushValue = @"legacy-push";
         return NO;
     }
 
+    if (![self.displayBehavior isEqualToString:message.displayBehavior]) {
+        return NO;
+    }
+
+    if (self.isReportingEnabled != message.isReportingEnabled) {
+        return NO;
+    }
+
     if (self.source != message.source) {
         return NO;
     }
@@ -442,6 +576,8 @@ NSString *const UAInAppMessageSourceLegacyPushValue = @"legacy-push";
     result = 31 * result + [self.actions hash];
     result = 31 * result + [self.campaigns hash];
     result = 31 * result + self.source;
+    result = 31 * result + [self.displayBehavior hash];
+    result = 31 * result + self.isReportingEnabled;
 
     return result;
 }

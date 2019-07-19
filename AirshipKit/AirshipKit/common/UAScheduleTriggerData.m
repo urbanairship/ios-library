@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UAScheduleTriggerData+Internal.h"
 #import "UAScheduleData+Internal.h"

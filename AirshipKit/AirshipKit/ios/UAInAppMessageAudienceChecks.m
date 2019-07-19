@@ -1,9 +1,8 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UAInAppMessageAudienceChecks+Internal.h"
 #import "UAInAppMessageAudience+Internal.h"
 #import "UAirship+Internal.h"
-#import "UALocation+Internal.h"
 #import "UAApplicationMetrics+Internal.h"
 #import "UAPush+Internal.h"
 #import "UAInAppMessageTagSelector+Internal.h"
@@ -12,7 +11,7 @@
 #import <CommonCrypto/CommonDigest.h>
 #import "UA_Base64.h"
 #import "UATagGroups+Internal.h"
-
+#import "UAUtils+Internal.h"
 
 @implementation UAInAppMessageAudienceChecks
 
@@ -31,7 +30,7 @@
             return NO;
         }
 
-        NSData *digest = [[self sha256DigestWithString:channel] subdataWithRange:NSMakeRange(0, 16)];
+        NSData *digest = [[UAUtils sha256DigestWithString:channel] subdataWithRange:NSMakeRange(0, 16)];
         for (NSString *testDevice in audience.testDevices) {
             NSData *decoded = UA_dataFromBase64String(testDevice);
             if ([decoded isEqual:digest]) {
@@ -51,10 +50,10 @@
     }
     
     // Location opt-in
-    if (audience.locationOptIn && ([audience.locationOptIn boolValue] != UAirship.location.isLocationOptedIn)) {
+    if (audience.locationOptIn && ([audience.locationOptIn boolValue] != UAirship.shared.locationProviderDelegate.isLocationOptedIn)) {
         return NO;
     }
-    
+
     // Notification opt-in
     if (audience.notificationsOptIn && ([audience.notificationsOptIn boolValue] != [self isNotificationsOptedIn])) {
         return NO;
@@ -110,14 +109,6 @@
 
 + (BOOL)isNotificationsOptedIn {
     return [UAirship push].userPushNotificationsEnabled && [UAirship push].authorizedNotificationSettings != UAAuthorizedNotificationSettingsNone;
-}
-
-+ (NSData*)sha256DigestWithString:(NSString*)input {
-    NSData *dataIn = [input dataUsingEncoding:NSUTF8StringEncoding];
-    NSMutableData *dataOut = [NSMutableData dataWithLength:CC_SHA256_DIGEST_LENGTH];
-
-    CC_SHA256(dataIn.bytes, (CC_LONG) dataIn.length, dataOut.mutableBytes);
-    return dataOut;
 }
 
 @end

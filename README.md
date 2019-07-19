@@ -1,20 +1,14 @@
-# iOS Urban Airship SDK
+# Airship iOS SDK
 
-The Urban Airship SDK for iOS provides a simple way to integrate Urban Airship
+The Airship SDK for iOS provides a simple way to integrate Airship
 services into your iOS applications.
-
-## Contributing Code
-
-We accept pull requests! If you would like to submit a pull request, please fill out and submit our
-[Contributor License Agreement](https://docs.google.com/forms/d/e/1FAIpQLScErfiz-fXSPpVZ9r8Di2Tr2xDFxt5MgzUel0__9vqUgvko7Q/viewform).
-
-One of our engineers will verify receipt of the agreement before approving your pull request.
 
 ## Resources
 
-- [AirshipKit Docs](http://docs.urbanairship.com/reference/libraries/ios/latest/)
-- [AirshipAppExtensions Docs](http://docs.urbanairship.com/reference/libraries/ios-extensions/latest/)
-- [Getting started guide](http://docs.urbanairship.com/platform/ios/)
+- [AirshipKit Docs](http://docs.airship.com/reference/libraries/ios/latest/)
+- [AirshipLocationKit Docs](http://docs.airship.com/reference/libraries/ios-location/latest/)
+- [AirshipAppExtensions Docs](http://docs.airship.com/reference/libraries/ios-extensions/latest/)
+- [Getting started guide](http://docs.airship.com/platform/ios/)
 - [Migration Guides](Documentation/Migration/README.md)
 - [Sample Quickstart Guide](Sample/README.md)
 - [Swift Sample Quickstart Guide](SwiftSample/README.md)
@@ -31,14 +25,17 @@ Make sure you have the [CocoaPods](http://cocoapods.org) dependency manager inst
 $ gem install cocoapods
 ```
 
-Specify the UrbanAirship-iOS-SDK in your podfile with the use_frameworks! option:
+Specify the UrbanAirship-iOS-SDK, and optionally, the UrbanAirship-iOS-Location pods in your `podfile`
+with the use_frameworks! option:
 
 ```txt
 use_frameworks!
 
-# Urban Airship SDK
+# Airship SDK
 target "<Your Target Name>" do
   pod 'UrbanAirship-iOS-SDK'
+  # Optional: uncomment to install AirshipLocationKit
+  # pod 'UrbanAirship-iOS-Location'
 end
 ```
 
@@ -56,7 +53,7 @@ to the new target:
 ```txt
 use_frameworks!
 
-# Urban Airship SDK
+# Airship SDK
 target "<Your Service Extension Target Name>" do
   pod 'UrbanAirship-iOS-AppExtensions'
 end
@@ -86,7 +83,7 @@ $ brew update
 $ brew install carthage
 ```
 
-Specify the Urban Airship iOS SDK in your cartfile:
+Specify the Airship iOS SDK in your cartfile:
 
 ```txt
 github "urbanairship/ios-library"
@@ -111,26 +108,30 @@ are a few additional steps:
 
 ### Other Installation Methods
 
-For other installation methods, please checkout - [Getting started guide](http://docs.urbanairship.com/platform/ios.html#installation).
-
+For other installation methods, see the - [Getting started guide](http://docs.airship.com/platform/ios.html#installation).
 
 ## Quickstart
 
-### An Important Note about Location Permissions
+### An Important Note about Location
 
-As of Spring 2019, Apple has begun rejecting applications that use, or appear to use, Core Location services
-without supplying usage descriptions in their `Info.plist` files. The Urban Airship SDK contains lightweight
-wrappers around Core Location APIs, but does not collect location data by default unless foreground or background 
-location is explicitly enabled in `UALocationManager`. To avoid this, you should add usage description strings to
-your `Info.plist` file under the `NSLocationAlwaysUsageDescription`, `NSLocationWhenInUseUsageDescription`, and `NSLocationAlwaysAndWhenInUseUsageDescription` keys.
+In Spring 2019, Apple began rejecting applications that use, or appear to use, Core Location services
+without supplying usage descriptions in their `Info.plist` files. In Airship SDK 11, all references to
+CoreLocation have been removed from the core library and placed in a separate location module. Developers with
+no need for location services can continue to use AirshipKit as before, but for those who have been using the
+`UALocation` class, see the [Location](https://docs.airship.com/platform/ios/location/) sections for updated
+setup instructions.
 
-If your app does not use the location features of the SDK, these descriptions will not be visible to the user, and
-are simply an extra step required to satisfy Apple's submission requirements. On the other hand, if your app does
-use these features, see the [Location](https://docs.urbanairship.com/platform/ios/location/) setup instructions.
+## Warning
+
+As of SDK 10.2 and Apple's current App Store review policies, apps building against AirshipKit without location usage
+descriptions in  `Info.plist` are likely to be rejected. The easiest way to avoid this, if location services are not
+needed, is to use Airship SDK 11 or greater. If building against previous Airship SDKs, you will need to add add
+usage description strings to your `Info.plist` file under the `NSLocationAlwaysUsageDescription`,
+`NSLocationWhenInUseUsageDescription`, and `NSLocationAlwaysAndWhenInUseUsageDescription` keys.
 
 ### Capabilities
 
-Enable Push Notifications and Remote Notifications Background mode under the capabilties section for
+Enable Push Notifications and Remote Notifications Background mode under the capabilities section for
 the main application target.
 
 ### Adding an Airship Config File
@@ -138,7 +139,7 @@ the main application target.
 The library uses a .plist configuration file named `AirshipConfig.plist` to manage your production and development
 application profiles. Example copies of this file are available in all of the sample projects. Place this file
 in your project and set the following values to the ones in your application at http://go.urbanairship.com.  To
-view all the possible keys and values, see the [UAConfig class reference](http://docs.urbanairship.com/reference/libraries/ios/latest/Classes/UAConfig.html)
+view all the possible keys and values, see the [UAConfig class reference](http://docs.airship.com/reference/libraries/ios/latest/Classes/UAConfig.html)
 
 You can also edit the file as plain-text:
 
@@ -261,6 +262,3 @@ Base64              | BSD       | Copyright 2009-2010 Matt Gallagher.
 Third party Package | License   | Copyright / Creator
 ------------------- | --------- | -----------------------------------
 JRSwizzle           | MIT       | Copyright 2012 Jonathan Rentzsch
-
-
-

@@ -1,13 +1,13 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import <StoreKit/StoreKit.h>
 
 #import "UARateAppAction+Internal.h"
 #import "UAirship.h"
-#import "UAConfig.h"
+#import "UARuntimeConfig.h"
 #import "UAPreferenceDataStore+Internal.h"
 #import "UARateAppPromptViewController+Internal.h"
-#import "UASystemVersion+Internal.h"
+#import "UASystemVersion.h"
 
 @interface UARateAppAction ()
 
@@ -63,9 +63,9 @@ NSString *const UARateAppLinkPromptTimestampsKey = @"RateAppActionLinkPromptCoun
         return;
     }
 
-    [self displayLinkPrompt:linkString completionHandler:^(BOOL dismissed) {
-        completionHandler([UAActionResult emptyResult]);
-    }];
+    [self displayLinkPrompt:linkString];
+
+    completionHandler([UAActionResult emptyResult]);
 }
 
 -(BOOL)parseArguments:(UAActionArguments *)arguments {
@@ -206,7 +206,7 @@ NSString *const UARateAppLinkPromptTimestampsKey = @"RateAppActionLinkPromptCoun
 }
 
 // Rate app action for iOS 8+ with application's track ID using a store URL link
--(void)displayLinkPrompt:(NSString *)linkString completionHandler:(void (^)(BOOL dismissed))completionHandler {
+-(void)displayLinkPrompt:(NSString *)linkString {
 
     if (![self canLinkToStore:linkString]) {
         return;
@@ -224,8 +224,6 @@ NSString *const UARateAppLinkPromptTimestampsKey = @"RateAppActionLinkPromptCoun
         if ([self getTimestampsForKey:UARateAppLinkPromptTimestampsKey].count >= 3) {
             UA_LWARN(@"System rating link prompt has attempted to display 3 or more times this year.");
         }
-
-        completionHandler(dismissed);
     }];
 }
 

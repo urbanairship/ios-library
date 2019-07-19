@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 import UIKit
 import AirshipKit
@@ -9,20 +9,64 @@ import AirshipKit
  * footers.
  */
 class ButtonDetailViewController: UAStaticTableViewController {
-    public static let segueID = "ShowButtonDetail"
+    public static let segueID = "ButtonDetailSegue"
     
     /* The UAInAppMessageButtonInfo to be displayed. */
     public var button : UAInAppMessageButtonInfo?
-    
-    @IBOutlet var buttonIDLabel: UILabel!
-    @IBOutlet var buttonLabelCell: UITableViewCell!
-    @IBOutlet var buttonLabelLabel: UILabel!
-    @IBOutlet var buttonDismissBehaviorLabel: UILabel!
-    @IBOutlet var borderRadiusLabel: UILabel!
-    @IBOutlet var backgroundColorLabel: UILabel!
-    @IBOutlet var borderColorLabel: UILabel!
-    
+
+    @IBOutlet private weak var buttonIDCell: UITableViewCell!
+    @IBOutlet private weak var buttonIDTitle: UILabel!
+    @IBOutlet private weak var buttonIDLabel: UILabel!
+
+    @IBOutlet private weak var buttonLabelCell: UITableViewCell!
+    @IBOutlet private weak var buttonLabelTitle: UILabel!
+    @IBOutlet private weak var buttonLabelLabel: UILabel!
+
+    @IBOutlet private weak var buttonDismissBehaviorCell: UITableViewCell!
+    @IBOutlet private weak var buttonDismissBehaviorTitle: UILabel!
+    @IBOutlet private weak var buttonDismissBehaviorLabel: UILabel!
+
+    @IBOutlet private weak var borderRadiusCell: UITableViewCell!
+    @IBOutlet private weak var borderRadiusTitle: UILabel!
+    @IBOutlet private weak var borderRadiusLabel: UILabel!
+
+    @IBOutlet private weak var backgroundColorCell: UITableViewCell!
+    @IBOutlet private weak var backgroundColorTitle: UILabel!
+    @IBOutlet private weak var backgroundColorLabel: UILabel!
+
+    @IBOutlet private weak var borderColorCell: UITableViewCell!
+    @IBOutlet private weak var borderColorTitle: UILabel!
+    @IBOutlet private weak var borderColorLabel: UILabel!
+
+    func setCellTheme() {
+        buttonIDCell.backgroundColor = ThemeManager.shared.currentTheme.Background
+        buttonIDTitle.textColor = ThemeManager.shared.currentTheme.PrimaryText
+        buttonIDLabel.textColor = ThemeManager.shared.currentTheme.SecondaryText
+
+        buttonLabelCell.backgroundColor = ThemeManager.shared.currentTheme.Background
+        buttonLabelTitle.textColor = ThemeManager.shared.currentTheme.PrimaryText
+        buttonLabelLabel.textColor = ThemeManager.shared.currentTheme.SecondaryText
+
+        buttonDismissBehaviorCell.backgroundColor = ThemeManager.shared.currentTheme.Background
+        buttonDismissBehaviorTitle.textColor = ThemeManager.shared.currentTheme.PrimaryText
+        buttonDismissBehaviorLabel.textColor = ThemeManager.shared.currentTheme.SecondaryText
+
+        borderRadiusCell.backgroundColor = ThemeManager.shared.currentTheme.Background
+        borderRadiusTitle.textColor = ThemeManager.shared.currentTheme.PrimaryText
+        borderRadiusLabel.textColor = ThemeManager.shared.currentTheme.SecondaryText
+
+        backgroundColorCell.backgroundColor = ThemeManager.shared.currentTheme.Background
+        backgroundColorTitle.textColor = ThemeManager.shared.currentTheme.PrimaryText
+        backgroundColorLabel.textColor = ThemeManager.shared.currentTheme.SecondaryText
+
+        borderColorCell.backgroundColor = ThemeManager.shared.currentTheme.Background
+        borderColorTitle.textColor = ThemeManager.shared.currentTheme.PrimaryText
+        borderColorLabel.textColor = ThemeManager.shared.currentTheme.SecondaryText
+    }
+
     override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setCellTheme()
         refreshView()
     }
     

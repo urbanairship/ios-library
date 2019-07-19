@@ -1,8 +1,8 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UABaseTest.h"
 #import "UAirship+Internal.h"
-
+#import "UARuntimeConfig+Internal.h"
 @interface UABaseTest()
 @property (nonatomic, strong) NSPointerArray *mocks;
 @end
@@ -85,16 +85,14 @@ const NSTimeInterval UATestExpectationTimeOut = 5;
     return _dataStore;
 }
 
-- (UAConfig *)config {
+- (UATestRuntimeConfig *)config {
     if (_config) {
         return _config;
     }
 
-    _config = [UAConfig config];
-    _config.developmentAppKey = [NSString stringWithFormat:@"dev-appKey-%@", self.name];
-    _config.developmentAppSecret = [NSString stringWithFormat:@"dev-appSecret-%@", self.name];
-    _config.productionAppKey = [NSString stringWithFormat:@"prod-appKey-%@", self.name];
-    _config.productionAppSecret = [NSString stringWithFormat:@"prod-appSecret-%@", self.name];
+    _config = [UATestRuntimeConfig testConfig];
+    _config.appKey = [NSString stringWithFormat:@"dev-appKey-%@", self.name];
+    _config.appSecret = [NSString stringWithFormat:@"dev-appSecret-%@", self.name];
     return _config;
 }
 

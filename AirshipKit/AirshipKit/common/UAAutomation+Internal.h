@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 
 #import "UAAutomation.h"
@@ -34,6 +34,6 @@
 /**
  * Automation constructor.
  */
-+ (instancetype)automationWithConfig:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore;
++ (instancetype)automationWithConfig:(UARuntimeConfig *)config dataStore:(UAPreferenceDataStore *)dataStore;
 
 @end

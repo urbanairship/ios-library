@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UABaseTest.h"
 #import "UAUser+Internal.h"
@@ -7,10 +7,10 @@
 #import "UAKeychainUtils+Internal.h"
 #import "UAPush+Internal.h"
 #import "UAirship+Internal.h"
-#import "UAConfig+Internal.h"
+#import "UARuntimeConfig.h"
 #import "UAPreferenceDataStore+Internal.h"
 #import "UATestDispatcher.h"
-
+#import "UARuntimeConfig+Internal.h"
 @interface UAUserTest : UABaseTest
 @property (nonatomic, strong) UAUser *user;
 @property (nonatomic, strong) NSNotificationCenter *notificationCenter;
@@ -26,10 +26,6 @@
 
 - (void)setUp {
     [super setUp];
-
-    self.config = [[UAConfig alloc] init];
-    self.config.inProduction = NO;
-    self.config.developmentAppKey = @"9Q1tVTl0RF16baYKYp8HPQ";
 
     [[[NSBundle mainBundle] infoDictionary] setValue:@"someBundleID" forKey:@"CFBundleIdentifier"];
     self.mockKeychainUtils = [self mockForClass:[UAKeychainUtils class]];
@@ -69,11 +65,6 @@
 
     XCTAssertNil(self.user.username, @"user name should be nil");
     XCTAssertNil(self.user.password, @"password should be nil");
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-    XCTAssertNil(self.user.url, @"url should be nil");
-    XCTAssertFalse(self.user.isCreated, @"Uninitialized user should not be created");
-#pragma GCC diagnostic pop
 }
 
 /**

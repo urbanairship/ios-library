@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UAInAppMessageScheduleEdits+Internal.h"
 #import "UABaseTest.h"
@@ -7,6 +7,8 @@
 #import "UAInAppMessageBannerDisplayContent.h"
 #import "UAUtils+Internal.h"
 #import "UAScheduleInfo+Internal.h"
+#import "UAScheduleEdits+Internal.h"
+
 
 @interface UAInAppMessageScheduleEditsTests : UABaseTest
 
@@ -49,7 +51,7 @@
                                     UAScheduleInfoEndKey:[[UAUtils ISODateFormatterUTCWithDelimiter] stringFromDate:end],
                                     UAScheduleInfoStartKey:[[UAUtils ISODateFormatterUTCWithDelimiter] stringFromDate:start],
                                     UAScheduleInfoEditGracePeriodKey: @(1),
-                                    UAScheduleInfoIntervalKey: @(20)
+                                    UAScheduleInfoIntervalKey: @(20),
                                     };
 
     NSError *error = nil;

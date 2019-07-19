@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import <Foundation/Foundation.h>
 
@@ -75,7 +75,10 @@ extern NSString *const UAInAppMessageFooterKey;
 extern NSString *const UAInAppMessageDurationKey;
 extern NSString *const UAInAppMessageModalAllowsFullScreenKey;
 extern NSString *const UAInAppMessageHTMLAllowsFullScreenKey;
-
+extern NSString *const UAInAppMessageHTMLHeightKey;
+extern NSString *const UAInAppMessageHTMLWidthKey;
+extern NSString *const UAInAppMessageHTMLAspectLockKey;
+extern NSString *const UAInAppMessageHTMLRequireConnectivityKey;
 
 /**
  * Buttons are stacked.

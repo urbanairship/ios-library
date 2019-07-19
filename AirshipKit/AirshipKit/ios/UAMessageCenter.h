@@ -1,17 +1,22 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
 @class UAInboxMessage;
 @class UAMessageCenterStyle;
-@class UAConfig;
+@class UARuntimeConfig;
 
 /**
  * The UAMessageCenter class provides a default implementation of a
  * message center, as well as a high-level interface for its configuration and display.
  */
 @interface UAMessageCenter : NSObject
+
+/**
+ * The message scheme
+ */
+extern NSString *const UAMessageDataScheme;
 
 ///---------------------------------------------------------------------------------------
 /// @name Default Message Center Properties
@@ -46,7 +51,7 @@
  *
  * @return A Message Center instance initialized with the style specified in the provided config.
  */
-+ (instancetype)messageCenterWithConfig:(UAConfig *)config;
++ (instancetype)messageCenterWithConfig:(UARuntimeConfig *)config;
 
 ///---------------------------------------------------------------------------------------
 /// @name Default Message Center Display

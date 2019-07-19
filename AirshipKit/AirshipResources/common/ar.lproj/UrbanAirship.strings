@@ -1,7 +1,7 @@
 "ua_cancel" = "إلغاء";
 "ua_channel_copy_toast" = "تم نسخ القناة إلى الحافظة!";
 "ua_channel_id" = "معرف القناة";
-"ua_channel_notification_ticker" = "قناة Urban Airship";
+"ua_channel_notification_ticker" = "قناة Airship";
 "ua_connection_error" = "خطأ في الإتصال";
 "ua_content_error" = "خطأ في المحتوى";
 "ua_default_channel_description" = "تحديثات التطبيق العامة";

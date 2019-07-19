@@ -1,10 +1,10 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import <XCTest/XCTest.h>
 #import <OCMock/OCMock.h>
 
 #import "UABaseTest.h"
-#import "UAConfig.h"
+#import "UARuntimeConfig.h"
 #import "UARequestSession+Internal.h"
 #import "UARemoteDataAPIClient+Internal.h"
 #import "UAPreferenceDataStore+Internal.h"
@@ -37,8 +37,7 @@
  * Test refreshing the remote data
  */
 - (void)testRefreshRemoteData {
-
-    self.config.developmentAppKey = @"appKey";
+    self.config.appKey = @"appKey";
 
     // Create a successful response
     NSDictionary *remoteDataDict = @{ @"type": @"test_data_type",
@@ -61,7 +60,7 @@
         completionHandler(responseData, (NSURLResponse *)response, nil);
     }] dataTaskWithRequest:[OCMArg checkWithBlock:^BOOL(id obj) {
         UARequest *request = obj;
-        NSString *expected = [NSString stringWithFormat:@"https://remote-data.urbanairship.com/api/remote-data/app/appKey/ios?sdk_version=%@&language=%@&country=%@", [UAirshipVersion get],[NSLocale currentLocale].languageCode, [NSLocale currentLocale].countryCode];
+        NSString *expected = [NSString stringWithFormat:@"https://remote-data.urbanairship.com/api/remote-data/app/appKey/ios?sdk_version=%@&language=%@&country=%@", [UAirshipVersion get], [NSLocale currentLocale].languageCode, [NSLocale currentLocale].countryCode];
 
         return [[request.URL absoluteString] isEqualToString:expected];
     }] retryWhere:OCMOCK_ANY completionHandler:OCMOCK_ANY];

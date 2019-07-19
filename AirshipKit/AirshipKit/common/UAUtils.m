@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UAUtils+Internal.h"
 #import "UAActionResult.h"
@@ -7,13 +7,13 @@
 // Frameworks
 #import <CommonCrypto/CommonDigest.h>
 
-// UA external libraries
+// Airship external libraries
 #import "UA_Base64.h"
 
 // UALib
 #import "UAUser.h"
 #import "UAirship.h"
-#import "UAConfig.h"
+#import "UARuntimeConfig.h"
 #import "UAKeychainUtils+Internal.h"
 #import "UARequest+Internal.h"
 
@@ -69,26 +69,19 @@
     return connectionType;
 }
 
-+ (NSString *)deviceID {
-    return [UAKeychainUtils getDeviceID];
++ (nullable NSString *)nilIfEmpty:(nullable NSString *)str {
+    return str.length == 0 ? nil : str;
 }
 
 + (void)getDeviceID:(void (^)(NSString *))completionHandler dispatcher:(nullable UADispatcher *)dispatcher {
     [[UADispatcher backgroundDispatcher] dispatchAsync:^{
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-        NSString *deviceID = [self deviceID];
-#pragma GCC diagnostic pop
+        NSString *deviceID = [UAKeychainUtils getDeviceID];
         UADispatcher *completionDispatcher = dispatcher ? : [UADispatcher mainDispatcher];
 
         [completionDispatcher dispatchAsync:^{
             completionHandler(deviceID);
         }];
     }];
-}
-
-+ (void)getDeviceID:(void (^)(NSString *))completionHandler {
-    [self getDeviceID:completionHandler dispatcher:nil];
 }
 
 + (NSString *)deviceModelName {
@@ -176,13 +169,6 @@
 + (NSString *)userAuthHeaderString:(UAUserData *)userData {
     return [UAUtils authHeaderStringWithName:userData.username
                                     password:userData.password];
-}
-#endif
-
-#if !TARGET_OS_TV   // Inbox not supported on tvOS
-+ (NSString *)userAuthHeaderString {
-    return [UAUtils authHeaderStringWithName:[UAirship inboxUser].username
-                                    password:[UAirship inboxUser].password];
 }
 #endif
 
@@ -354,7 +340,7 @@
 }
 
 /**
- * A utility method that takes an APNS-provided device token and returns the decoded UA device token
+ * A utility method that takes an APNS-provided device token and returns the decoded Airship device token
  */
 + (NSString *)deviceTokenStringFromDeviceToken:(NSData *)deviceToken {
     NSMutableString *deviceTokenString = [NSMutableString stringWithCapacity:([deviceToken length] * 2)];
@@ -406,6 +392,30 @@
     }
     
     return YES;
+}
+
++ (NSData*)sha256DigestWithString:(NSString*)input {
+    NSData *dataIn = [input dataUsingEncoding:NSUTF8StringEncoding];
+    NSMutableData *dataOut = [NSMutableData dataWithLength:CC_SHA256_DIGEST_LENGTH];
+    CC_SHA256(dataIn.bytes, (CC_LONG) dataIn.length, dataOut.mutableBytes);
+    return dataOut;
+}
+
++ (NSString *)sha256HashWithString:(NSString*)input {
+    NSData *digest = [self sha256DigestWithString:input];
+
+    // convert digest to a byte buffer
+    const unsigned char *buffer = (const unsigned char *)[digest bytes];
+    if (!buffer) {
+        return [NSString string];
+    }
+    
+    NSMutableString *hash = [NSMutableString stringWithCapacity:(CC_SHA256_DIGEST_LENGTH * 2)];
+    for (int i = 0; i < CC_SHA256_DIGEST_LENGTH; i++) {
+        [hash appendFormat:@"%02x",buffer[i]];
+    }
+
+    return hash;
 }
 
 @end

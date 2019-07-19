@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import <Foundation/Foundation.h>
 #import "UAInAppMessage.h"
@@ -8,6 +8,7 @@
 #import "UAComponent.h"
 #import "UAInAppMessageScheduleEdits.h"
 #import "UAInAppMessageDisplayCoordinator.h"
+#import "UAInAppMessageAssetManager.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -27,9 +28,10 @@ NS_ASSUME_NONNULL_BEGIN
  * Allows the delegate to provide a custom display coordinator for the provided message.
  *
  * @param message The message.
- * @return An object implementing the UAInAppMessageDisplayCoordinator protocol.
+ * @return An object implementing the UAInAppMessageDisplayCoordinator protocol or nil
+ * if no suitable display coordinator is available.
  */
-- (id<UAInAppMessageDisplayCoordinator>)displayCoordinatorForMessage:(UAInAppMessage *)message;
+- (nullable id<UAInAppMessageDisplayCoordinator>)displayCoordinatorForMessage:(UAInAppMessage *)message;
 
 /**
  * Allows the delegate to extend a message before display.
@@ -82,6 +84,11 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, assign) NSTimeInterval displayInterval;
 
 /**
+ * In-app messaging asset manager.
+ */
+@property(nonatomic, strong, readonly) UAInAppMessageAssetManager *assetManager;
+
+/**
  * Allows setting factory blocks that builds InAppMessageAdapters for each given display type.
  *
  * @param displayType The display type.
@@ -89,6 +96,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)setFactoryBlock:(id<UAInAppMessageAdapterProtocol> (^)(UAInAppMessage* message))factory
          forDisplayType:(UAInAppMessageDisplayType)displayType;
+
 
 /**
  * Schedules an in-app message.
@@ -100,12 +108,25 @@ NS_ASSUME_NONNULL_BEGIN
                       completionHandler:(void (^)(UASchedule *))completionHandler;
 
 /**
+ * Schedules an in-app message.
+ *
+ * @param scheduleInfo The schedule info for the message.
+ * @param metadata The schedule optional metadata.
+ * @param completionHandler The completion handler to be called when scheduling completes.
+ */
+- (void)scheduleMessageWithScheduleInfo:(UAInAppMessageScheduleInfo *)scheduleInfo
+                               metadata:(nullable NSDictionary *)metadata
+                      completionHandler:(void (^)(UASchedule *))completionHandler;
+
+/**
  * Schedules multiple in-app messages.
  *
  * @param scheduleInfos The schedule info for the messages.
+ * @param metadata The schedules' optional metadata.
  * @param completionHandler The completion handler to be called when scheduling completes.
  */
 - (void)scheduleMessagesWithScheduleInfo:(NSArray<UAInAppMessageScheduleInfo *> *)scheduleInfos
+                                metadata:(nullable NSDictionary *)metadata
                        completionHandler:(void (^)(NSArray <UASchedule *> *))completionHandler;
 
 /**

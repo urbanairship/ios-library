@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UAProximityRegion+Internal.h"
 #import "UARegionEvent+Internal.h"

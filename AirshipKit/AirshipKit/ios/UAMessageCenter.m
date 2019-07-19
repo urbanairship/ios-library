@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UAMessageCenter.h"
 #import "UAirship.h"
@@ -10,13 +10,15 @@
 #import "UAMessageCenterMessageViewController.h"
 #import "UAMessageCenterSplitViewController.h"
 #import "UAMessageCenterStyle.h"
-#import "UAConfig.h"
+#import "UARuntimeConfig.h"
 
 @interface UAMessageCenter()
 @property(nonatomic, strong) UAMessageCenterSplitViewController *splitViewController;
 @end
 
 @implementation UAMessageCenter
+
+NSString *const UAMessageDataScheme = @"message";
 
 - (instancetype)init {
     self = [super init];
@@ -26,7 +28,7 @@
     return self;
 }
 
-+ (instancetype)messageCenterWithConfig:(UAConfig *)config {
++ (instancetype)messageCenterWithConfig:(UARuntimeConfig *)config {
     UAMessageCenter *center = [[UAMessageCenter alloc] init];
     center.style = [UAMessageCenterStyle styleWithContentsOfFile:config.messageCenterStyleConfig];
     return center;

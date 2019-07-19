@@ -1,7 +1,7 @@
 "ua_cancel" = "Mégse";
 "ua_channel_copy_toast" = "A csatornát rámásoltam a vágólapra";
 "ua_channel_id" = "Csatornaazonosító";
-"ua_channel_notification_ticker" = "Urban Airship csatorna";
+"ua_channel_notification_ticker" = "Airship csatorna";
 "ua_connection_error" = "Kapcsolati hiba";
 "ua_content_error" = "Tartalmi hiba";
 "ua_default_channel_description" = "Általános alkalmazásfrissítések";

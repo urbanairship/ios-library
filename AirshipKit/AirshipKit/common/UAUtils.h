@@ -1,10 +1,14 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 #import <SystemConfiguration/SCNetworkReachability.h>
+
+#if !TARGET_OS_TV   // Inbox not supported on tvOS
+#import "UAUserData.h"
+#endif
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -18,7 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface UAUtils : NSObject
 
 ///---------------------------------------------------------------------------------------
-/// @name Device ID Utils
+/// @name Device Utils
 ///---------------------------------------------------------------------------------------
 
 /**
@@ -27,24 +31,14 @@ NS_ASSUME_NONNULL_BEGIN
  */
 + (NSString *)deviceModelName;
 
-/**
- * Gets the Urban Airship Device ID.
- *
- * @return The device ID, or an empty string if the ID cannot be retrieved or created.
- *
- * @deprecated Deprecated - to be removed in SDK version 11.0.
- */
-+ (NSString *)deviceID DEPRECATED_MSG_ATTRIBUTE("Deprecated - to be removed in SDK version 11.0.");
-
 #if !TARGET_OS_TV   // Inbox not supported on tvOS
+
 /**
- * Returns a basic auth header string.
+ * Gets the user auth header string for the provided user data.
  *
- * The return value takes the form of: `Basic [Base64 Encoded "username:password"]`
- *
- * @return An HTTP Basic Auth header string value for the user's credentials.
+ * @param userData The user data.
  */
-+ (NSString *)userAuthHeaderString DEPRECATED_MSG_ATTRIBUTE("Deprecated - to be removed in SDK version 11.0.");
++ (NSString *)userAuthHeaderString:(UAUserData *)userData;
 
 #endif
 
@@ -167,7 +161,7 @@ NS_ASSUME_NONNULL_BEGIN
 ///---------------------------------------------------------------------------------------
 
 /**
- * A utility method that takes an APNS-provided device token and returns the decoded UA device token
+ * A utility method that takes an APNS-provided device token and returns the decoded Airship device token
  */
 + (NSString *)deviceTokenStringFromDeviceToken:(NSData *)deviceToken;
 

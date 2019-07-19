@@ -1,7 +1,7 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import <Foundation/Foundation.h>
-#import "UAConfig.h"
+#import "UARuntimeConfig.h"
 #import "UARequest+Internal.h"
 #import "UARequestSession+Internal.h"
 
@@ -15,9 +15,9 @@ NS_ASSUME_NONNULL_BEGIN
 extern NSUInteger const UAAPIClientStatusUnavailable;
 
 /**
- * The UAConfig instance.
+ * The UARuntimeConfig instance.
  */
-@property (nonatomic, readonly) UAConfig *config;
+@property (nonatomic, readonly) UARuntimeConfig *config;
 
 /**
  * The UARequestSession instance. Should be used to perform requests.
@@ -31,10 +31,10 @@ extern NSUInteger const UAAPIClientStatusUnavailable;
 
 /**
  * Init method.
- * @param config The UAConfig instance.
+ * @param config The UARuntimeConfig instance.
  * @param session The UARequestSession instance.
  */
-- (instancetype)initWithConfig:(UAConfig *)config session:(UARequestSession *)session;
+- (instancetype)initWithConfig:(UARuntimeConfig *)config session:(UARequestSession *)session;
 
 /**
  * Cancels all in-flight API requests.

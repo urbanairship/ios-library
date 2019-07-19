@@ -1,9 +1,9 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UANamedUser.h"
 
 @class UANamedUserAPIClient;
-@class UAConfig;
+@class UARuntimeConfig;
 @class UATagGroupsRegistrar;
 @class UAPush;
 
@@ -71,7 +71,7 @@ extern NSString *const UANamedUserRemoveTagGroupsSettingsKey;
 /**
  * The airship config.
  */
-@property (nonatomic, strong) UAConfig *config;
+@property (nonatomic, strong) UARuntimeConfig *config;
 
 ///---------------------------------------------------------------------------------------
 /// @name Named User Internal Methods
@@ -80,13 +80,13 @@ extern NSString *const UANamedUserRemoveTagGroupsSettingsKey;
 /**
  * Factory method to create a named user. For testing.
  * @parm push The UAPush instance.
- * @param config The Urban Airship config.
+ * @param config The Airship config.
  * @param dataStore The shared preference data store.
  * @param tagGroupsRegistrar The tag groups registrar.
  * @return A named user instance.
  */
 + (instancetype)namedUserWithPush:(UAPush *)push
-                           config:(UAConfig *)config
+                           config:(UARuntimeConfig *)config
                         dataStore:(UAPreferenceDataStore *)dataStore
                tagGroupsRegistrar:(UATagGroupsRegistrar *)tagGroupsRegistrar;
 

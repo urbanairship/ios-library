@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UAAutomation+Internal.h"
 #import "UASchedule+Internal.h"
@@ -6,14 +6,14 @@
 #import "UAScheduleInfo+Internal.h"
 #import "UAActionRunner+Internal.h"
 #import "UAAutomationEngine+Internal.h"
-#import "UAConfig.h"
+#import "UARuntimeConfig.h"
 
 NSUInteger const UAAutomationScheduleLimit = 100;
 NSString *const UAAutomationStoreFileFormat = @"Automation-%@.sqlite";
 
 @implementation UAAutomation
 
-- (instancetype)initWithConfig:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
+- (instancetype)initWithConfig:(UARuntimeConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
     self = [super initWithDataStore:dataStore];
 
     if (self) {
@@ -33,7 +33,7 @@ NSString *const UAAutomationStoreFileFormat = @"Automation-%@.sqlite";
     return self;
 }
 
-+ (instancetype)automationWithConfig:(UAConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
++ (instancetype)automationWithConfig:(UARuntimeConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
     return [[UAAutomation alloc] initWithConfig:config dataStore:dataStore];
 }
 
@@ -41,9 +41,14 @@ NSString *const UAAutomationStoreFileFormat = @"Automation-%@.sqlite";
 #pragma mark Public API
 
 - (void)scheduleActions:(UAActionScheduleInfo *)scheduleInfo
-      completionHandler:(void (^)(UASchedule *))completionHandler {
+               metadata:(NSDictionary *)metadata
+      completionHandler:(void (^)(UASchedule * _Nullable))completionHandler {
+    [self.automationEngine schedule:scheduleInfo metadata:metadata completionHandler:completionHandler];
+}
 
-    [self.automationEngine schedule:scheduleInfo completionHandler:completionHandler];
+- (void)scheduleActions:(UAActionScheduleInfo *)scheduleInfo
+      completionHandler:(void (^)(UASchedule *))completionHandler {
+    [self.automationEngine schedule:scheduleInfo metadata:@{} completionHandler:completionHandler];
 }
 
 - (void)cancelScheduleWithID:(NSString *)identifier {
@@ -87,8 +92,8 @@ NSString *const UAAutomationStoreFileFormat = @"Automation-%@.sqlite";
     completionHandler(UAAutomationSchedulePrepareResultContinue);
 }
 
--(BOOL)isScheduleReadyToExecute:(UASchedule *)schedule {
-    return YES;
+-(UAAutomationScheduleReadyResult)isScheduleReadyToExecute:(UASchedule *)schedule {
+    return UAAutomationScheduleReadyResultContinue;
 }
 
 -(void)executeSchedule:(UASchedule *)schedule

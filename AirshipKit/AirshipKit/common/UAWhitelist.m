@@ -1,8 +1,8 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UAWhitelist.h"
 #import "UAGlobal.h"
-#import "UAConfig.h"
+#import "UARuntimeConfig.h"
 
 /**
  * Block mapping URLs to whitelist status
@@ -61,7 +61,7 @@ typedef BOOL (^UAWhitelistMatcher)(NSURL *);
     return self;
 }
 
-+ (instancetype)whitelistWithConfig:(UAConfig *)config {
++ (instancetype)whitelistWithConfig:(UARuntimeConfig *)config {
     UAWhitelist *whitelist = [[self alloc] init];
 
     [whitelist addEntry:@"https://*.urbanairship.com"];
@@ -116,7 +116,7 @@ typedef BOOL (^UAWhitelistMatcher)(NSURL *);
 /**
  * Generates matcher that compares a URL component (scheme/host/path) with a supplied regex
  */
-- (UAWhitelistMatcher)matcherForURLComponent:(NSString *)componentKey withRegexString:(NSString *)regexString {
+- (UAWhitelistMatcher)matcherForURLComponent:(NSString *)componentKey withRegexString:(nonnull NSString *)regexString {
 
     if (![regexString hasPrefix:@"^"]) {
         regexString = [@"^" stringByAppendingString:regexString];

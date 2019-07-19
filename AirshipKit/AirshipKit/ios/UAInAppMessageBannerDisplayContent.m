@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UAirship.h"
 #import "UAInAppMessageBannerDisplayContent+Internal.h"
@@ -83,22 +83,6 @@ NSUInteger const UAInAppMessageBannerMaxButtons = 2;
     }
 
     return YES;
-}
-
-- (NSUInteger)borderRadius {
-    return self.borderRadiusPoints;
-}
-
-- (void)setBorderRadius:(NSUInteger)borderRadius {
-    self.borderRadiusPoints = borderRadius;
-}
-
-- (NSUInteger)duration {
-    return self.durationSeconds;
-}
-
-- (void)setDuration:(NSUInteger)duration {
-    self.durationSeconds = duration;
 }
 
 @end
@@ -541,14 +525,6 @@ NSUInteger const UAInAppMessageBannerMaxButtons = 2;
 
 -(UAInAppMessageDisplayType)displayType {
     return UAInAppMessageDisplayTypeBanner;
-}
-
-- (NSUInteger)borderRadius {
-    return self.borderRadiusPoints;
-}
-
-- (NSUInteger)duration {
-    return self.durationSeconds;
 }
 
 @end

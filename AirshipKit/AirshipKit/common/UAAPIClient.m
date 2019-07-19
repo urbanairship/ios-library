@@ -1,20 +1,20 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UAAPIClient+Internal.h"
 #import "UARequestSession+Internal.h"
-#import "UAConfig.h"
+#import "UARuntimeConfig.h"
 #import "UAirship.h"
 
 NSUInteger const UAAPIClientStatusUnavailable = 0;
 
 @interface UAAPIClient()
-@property (nonatomic, strong) UAConfig *config;
+@property (nonatomic, strong) UARuntimeConfig *config;
 @property (nonatomic, strong) UARequestSession *session;
 @end
 
 @implementation UAAPIClient
 
-- (instancetype)initWithConfig:(UAConfig *)config session:(UARequestSession *)session {
+- (instancetype)initWithConfig:(UARuntimeConfig *)config session:(UARequestSession *)session {
     self = [super init];
 
     if (self) {

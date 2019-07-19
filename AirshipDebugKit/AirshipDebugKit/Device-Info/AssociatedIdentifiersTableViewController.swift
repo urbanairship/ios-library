@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 import UIKit
 import AdSupport.ASIdentifierManager
@@ -24,9 +24,15 @@ class AssociatedIdentifiersTableViewController: UITableViewController, Associate
         }
     }
 
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated);
+    func setTableViewTheme() {
+        tableView.backgroundColor = ThemeManager.shared.currentTheme.Background
+        navigationController?.navigationBar.titleTextAttributes = [.foregroundColor:ThemeManager.shared.currentTheme.NavigationBarText]
+        navigationController?.navigationBar.barTintColor = ThemeManager.shared.currentTheme.NavigationBarBackground;
+    }
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setTableViewTheme()
         tableView.reloadData()
     }
 
@@ -80,6 +86,10 @@ class AssociatedIdentifiersTableViewController: UITableViewController, Associate
         guard let customKey = identifierKeyForIndexPath(indexPath) else { return cell }
         
         cell.textLabel!.text = customKey + ":" + (customIdentifiers[customKey] ?? "")
+        
+        cell.textLabel?.textColor = ThemeManager.shared.currentTheme.PrimaryText
+        cell.detailTextLabel?.textColor = ThemeManager.shared.currentTheme.SecondaryText
+        cell.backgroundColor = ThemeManager.shared.currentTheme.Background
         
         return cell
     }

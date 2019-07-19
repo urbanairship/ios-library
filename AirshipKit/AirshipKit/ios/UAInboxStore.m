@@ -1,11 +1,11 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import <CoreData/CoreData.h>
 
 #import "UAInboxStore+Internal.h"
 #import "UAirship+Internal.h"
 #import "NSManagedObjectContext+UAAdditions+Internal.h"
-#import "UAConfig.h"
+#import "UARuntimeConfig.h"
 #import "UAUtils+Internal.h"
 
 @interface UAInboxStore()

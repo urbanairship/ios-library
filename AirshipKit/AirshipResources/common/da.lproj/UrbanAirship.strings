@@ -1,7 +1,7 @@
 "ua_cancel" = "Annullér";
 "ua_channel_copy_toast" = "Kanal kopieret til udklipsholderen!";
 "ua_channel_id" = "Kanal-id";
-"ua_channel_notification_ticker" = "Urban Airship-kanal";
+"ua_channel_notification_ticker" = "Airship-kanal";
 "ua_connection_error" = "Forbindelsesfejl";
 "ua_content_error" = "Fejl i indhold";
 "ua_default_channel_description" = "Generelle appopdateringer";

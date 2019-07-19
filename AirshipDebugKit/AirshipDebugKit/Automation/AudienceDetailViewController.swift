@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 import UIKit
 import AirshipKit
@@ -8,33 +8,88 @@ import AirshipKit
  * audience.
  */
 class AudienceDetailViewController: UAStaticTableViewController {
-    public static let segueID = "ShowAudienceDetail"
+    public static let segueID = "AudienceSegue"
 
     /* The UAInAppMessageAudience to be displayed. */
     public var audience : UAInAppMessageAudience?
-    
-    @IBOutlet var notificationsOptInCell: UITableViewCell!
-    @IBOutlet var notificationsOptInLabel: UILabel!
-    @IBOutlet var locationOptInCell: UITableViewCell!
-    @IBOutlet var locationOptInLabel: UILabel!
-    @IBOutlet var languageIDsCell: UITableViewCell!
-    @IBOutlet var languageIDsLabel: UILabel!
-    @IBOutlet var tagSelectorCell: UITableViewCell!
-    @IBOutlet var tagSelectorLabel: UILabel!
-    @IBOutlet var versionPredicateCell: UITableViewCell!
-    @IBOutlet var versionPredicateLabel: UILabel!
-    @IBOutlet var missBehaviorLabel: UILabel!
-    @IBOutlet var inAudienceCell: UITableViewCell!
-    @IBOutlet var inAudienceLabel: UILabel!
-    @IBOutlet var checkAudienceCell: UITableViewCell!
+
+    @IBOutlet private weak var notificationsOptInCell: UITableViewCell!
+    @IBOutlet private weak var notificationsOptInTitle: UILabel!
+    @IBOutlet private weak var notificationsOptInLabel: UILabel!
+
+    @IBOutlet private weak var locationOptInCell: UITableViewCell!
+    @IBOutlet private weak var locationOptInTitle: UILabel!
+    @IBOutlet private weak var locationOptInLabel: UILabel!
+
+    @IBOutlet private weak var languageIDsCell: UITableViewCell!
+    @IBOutlet private weak var languageIDsTitle: UILabel!
+    @IBOutlet private weak var languageIDsLabel: UILabel!
+
+    @IBOutlet private weak var tagSelectorCell: UITableViewCell!
+    @IBOutlet private weak var tagSelectorTitle: UILabel!
+    @IBOutlet private weak var tagSelectorLabel: UILabel!
+
+    @IBOutlet private weak var versionPredicateTitle: UILabel!
+    @IBOutlet private weak var versionPredicateCell: UITableViewCell!
+    @IBOutlet private weak var versionPredicateLabel: UILabel!
+
+    @IBOutlet private weak var missBehaviorTitle: UILabel!
+    @IBOutlet private weak var missBehaviorLabel: UILabel!
+    @IBOutlet private weak var missBehaviorCell: UITableViewCell!
+
+    @IBOutlet private weak var inAudienceTitle: UILabel!
+    @IBOutlet private weak var inAudienceCell: UITableViewCell!
+    @IBOutlet private weak var inAudienceLabel: UILabel!
+
+    @IBOutlet private weak var checkAudienceTitle: UILabel!
+    @IBOutlet private weak var checkAudienceCell: UITableViewCell!
     
     private let inAppMessageManager = UAirship.inAppMessageManager()
     private var inAudience : Bool?
-    
+
     override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setCellTheme()
         refreshView()
     }
-    
+
+    func setCellTheme() {
+        notificationsOptInCell.backgroundColor = ThemeManager.shared.currentTheme.Background
+        notificationsOptInTitle.textColor = ThemeManager.shared.currentTheme.PrimaryText
+        notificationsOptInLabel.textColor = ThemeManager.shared.currentTheme.SecondaryText
+
+        locationOptInCell.backgroundColor = ThemeManager.shared.currentTheme.Background
+        locationOptInTitle.textColor = ThemeManager.shared.currentTheme.PrimaryText
+        locationOptInLabel.textColor = ThemeManager.shared.currentTheme.SecondaryText
+
+        locationOptInCell.backgroundColor = ThemeManager.shared.currentTheme.Background
+        locationOptInTitle.textColor = ThemeManager.shared.currentTheme.PrimaryText
+        locationOptInLabel.textColor = ThemeManager.shared.currentTheme.SecondaryText
+
+        languageIDsCell.backgroundColor = ThemeManager.shared.currentTheme.Background
+        languageIDsTitle.textColor = ThemeManager.shared.currentTheme.PrimaryText
+        languageIDsLabel.textColor = ThemeManager.shared.currentTheme.SecondaryText
+
+        tagSelectorCell.backgroundColor = ThemeManager.shared.currentTheme.Background
+        tagSelectorTitle.textColor = ThemeManager.shared.currentTheme.PrimaryText
+        tagSelectorLabel.textColor = ThemeManager.shared.currentTheme.SecondaryText
+
+        versionPredicateCell.backgroundColor = ThemeManager.shared.currentTheme.Background
+        versionPredicateTitle.textColor = ThemeManager.shared.currentTheme.PrimaryText
+        versionPredicateLabel.textColor = ThemeManager.shared.currentTheme.SecondaryText
+
+        missBehaviorCell.backgroundColor = ThemeManager.shared.currentTheme.Background
+        missBehaviorTitle.textColor = ThemeManager.shared.currentTheme.PrimaryText
+        missBehaviorLabel.textColor = ThemeManager.shared.currentTheme.SecondaryText
+
+        inAudienceCell.backgroundColor = ThemeManager.shared.currentTheme.Background
+        inAudienceTitle.textColor = ThemeManager.shared.currentTheme.PrimaryText
+        inAudienceLabel.textColor = ThemeManager.shared.currentTheme.SecondaryText
+
+        checkAudienceCell.backgroundColor = ThemeManager.shared.currentTheme.ButtonBackground
+        checkAudienceTitle.textColor = ThemeManager.shared.currentTheme.PrimaryText
+    }
+
     func refreshView() {
         guard let audience = audience else { return }
         

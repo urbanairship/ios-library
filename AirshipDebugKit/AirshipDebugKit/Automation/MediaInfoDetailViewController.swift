@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 import UIKit
 import AirshipKit
@@ -9,24 +9,49 @@ import AirshipKit
  * bodies and button labels.
  */
 class MediaInfoDetailViewController: UAStaticTableViewController {
-    public static let segueID = "ShowMediaInfoDetail"
+    public static let segueID = "MediaSegue"
     
     /* The UAInAppMessageMediaInfo to be displayed. */
     public var mediaInfo : UAInAppMessageMediaInfo?
     
-    @IBOutlet var contentDescriptionCell: UITableViewCell!
-    @IBOutlet var contentDescriptionLabel: UILabel!
-    @IBOutlet var typeCell: UITableViewCell!
-    @IBOutlet var typeLabel: UILabel!
-    @IBOutlet var urlCell: UITableViewCell!
-    @IBOutlet var urlLabel: UILabel!
-    @IBOutlet var mediaCell: UITableViewCell!
-    @IBOutlet var imageView: UIImageView!
+    @IBOutlet private weak var contentDescriptionCell: UITableViewCell!
+    @IBOutlet private weak var contentDescriptionTitle: UILabel!
+    @IBOutlet private weak var contentDescriptionLabel: UILabel!
+
+    @IBOutlet private weak var typeCell: UITableViewCell!
+    @IBOutlet private weak var typeTitle: UILabel!
+    @IBOutlet private weak var typeLabel: UILabel!
+
+    @IBOutlet private weak var urlCell: UITableViewCell!
+    @IBOutlet private weak var urlTitle: UILabel!
+    @IBOutlet private weak var urlLabel: UILabel!
+
+    @IBOutlet private weak var mediaCell: UITableViewCell!
+    @IBOutlet private weak var imageView: UIImageView!
     
     fileprivate var webView : WKWebView?
     fileprivate let aspectRatio = CGFloat(16.0/9.0)
-    
+
+    func setCellTheme() {
+        contentDescriptionCell.backgroundColor = ThemeManager.shared.currentTheme.Background
+        contentDescriptionTitle.textColor = ThemeManager.shared.currentTheme.PrimaryText
+        contentDescriptionLabel.textColor = ThemeManager.shared.currentTheme.SecondaryText
+
+        typeCell.backgroundColor = ThemeManager.shared.currentTheme.Background
+        typeTitle.textColor = ThemeManager.shared.currentTheme.PrimaryText
+        typeLabel.textColor = ThemeManager.shared.currentTheme.SecondaryText
+
+        urlCell.backgroundColor = ThemeManager.shared.currentTheme.Background
+        urlTitle.textColor = ThemeManager.shared.currentTheme.PrimaryText
+        urlLabel.textColor = ThemeManager.shared.currentTheme.SecondaryText
+
+        mediaCell.backgroundColor = ThemeManager.shared.currentTheme.Background
+        imageView.backgroundColor = ThemeManager.shared.currentTheme.Background
+    }
+
     override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setCellTheme()
         refreshView()
     }
     

@@ -1,7 +1,7 @@
 "ua_cancel" = "İptal";
 "ua_channel_copy_toast" = "Kanal panoya kopyalandı!";
 "ua_channel_id" = "Kanal kimliği";
-"ua_channel_notification_ticker" = "Urban Airship Kanalı";
+"ua_channel_notification_ticker" = "Airship Kanalı";
 "ua_connection_error" = "Bağlantı Hatası";
 "ua_content_error" = "İçerik hatası";
 "ua_default_channel_description" = "Genel uygulama güncellemeleri";

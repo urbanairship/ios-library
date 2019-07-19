@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UAInAppMessageHTMLDisplayContent+Internal.h"
 #import "UAColorUtils+Internal.h"
@@ -30,6 +30,10 @@ NSString *const UAInAppMessageURLKey = @"url";
         self.dismissButtonColor = content.dismissButtonColor;
         self.borderRadiusPoints = content.borderRadiusPoints;
         self.allowFullScreenDisplay = content.allowFullScreenDisplay;
+        self.height = content.height;
+        self.width = content.width;
+        self.aspectLock = content.aspectLock;
+        self.requiresConnectivity = content.requireConnectivity;
     }
 
     return self;
@@ -49,14 +53,6 @@ NSString *const UAInAppMessageURLKey = @"url";
     return YES;
 }
 
-- (NSUInteger)borderRadius {
-    return self.borderRadiusPoints;
-}
-
-- (void)setBorderRadius:(NSUInteger)borderRadius {
-    self.borderRadiusPoints = borderRadius;
-}
-
 @end
 
 @interface UAInAppMessageHTMLDisplayContent ()
@@ -66,6 +62,10 @@ NSString *const UAInAppMessageURLKey = @"url";
 @property(nonatomic, strong) UIColor *dismissButtonColor;
 @property(nonatomic, assign) CGFloat borderRadiusPoints;
 @property(nonatomic, assign) BOOL allowFullScreenDisplay;
+@property(nonatomic, assign) CGFloat height;
+@property(nonatomic, assign) CGFloat width;
+@property(nonatomic, assign) BOOL aspectLock;
+@property(nonatomic, assign) BOOL requireConnectivity;
 
 @end
 
@@ -155,6 +155,62 @@ NSString *const UAInAppMessageURLKey = @"url";
         builder.allowFullScreenDisplay = [allowFullScreenDisplay boolValue];
     }
 
+    id height = json[UAInAppMessageHTMLHeightKey];
+    if (height) {
+        if (![height isKindOfClass:[NSNumber class]]) {
+            if (error) {
+                NSString *msg = [NSString stringWithFormat:@"Height must be a number. Invalid value: %@", height];
+                *error =  [NSError errorWithDomain:UAInAppMessageHTMLDisplayContentDomain
+                                              code:UAInAppMessageHTMLDisplayContentErrorCodeInvalidJSON
+                                          userInfo:@{NSLocalizedDescriptionKey:msg}];
+            }
+            return nil;
+        }
+        builder.height = [height floatValue];
+    }
+
+    id width = json[UAInAppMessageHTMLWidthKey];
+    if (width) {
+        if (![width isKindOfClass:[NSNumber class]]) {
+            if (error) {
+                NSString *msg = [NSString stringWithFormat:@"Width must be a number. Invalid value: %@", width];
+                *error =  [NSError errorWithDomain:UAInAppMessageHTMLDisplayContentDomain
+                                              code:UAInAppMessageHTMLDisplayContentErrorCodeInvalidJSON
+                                          userInfo:@{NSLocalizedDescriptionKey:msg}];
+            }
+            return nil;
+        }
+        builder.width = [width floatValue];
+    }
+
+    id aspectLock = json[UAInAppMessageHTMLAspectLockKey];
+    if (aspectLock) {
+        if (![aspectLock isKindOfClass:[NSNumber class]]) {
+            if (error) {
+                NSString *msg = [NSString stringWithFormat:@"Aspect lock flag must be a boolean stored as an NSNumber. Invalid value: %@", aspectLock];
+                *error =  [NSError errorWithDomain:UAInAppMessageHTMLDisplayContentDomain
+                                              code:UAInAppMessageHTMLDisplayContentErrorCodeInvalidJSON
+                                          userInfo:@{NSLocalizedDescriptionKey:msg}];
+            }
+            return nil;
+        }
+        builder.aspectLock = [aspectLock boolValue];
+    }
+
+    id requiresConnectivity = json[UAInAppMessageHTMLRequireConnectivityKey];
+    if (requiresConnectivity) {
+        if (![requiresConnectivity isKindOfClass:[NSNumber class]]) {
+            if (error) {
+                NSString *msg = [NSString stringWithFormat:@"Requires connectivity flag must be a boolean stored as an NSNumber. Invalid value: %@", requiresConnectivity];
+                *error =  [NSError errorWithDomain:UAInAppMessageHTMLDisplayContentDomain
+                                              code:UAInAppMessageHTMLDisplayContentErrorCodeInvalidJSON
+                                          userInfo:@{NSLocalizedDescriptionKey:msg}];
+            }
+            return nil;
+        }
+        builder.requiresConnectivity = [requiresConnectivity boolValue];
+    }
+
     if (![builder isValid]) {
         if (error) {
             NSString *msg = [NSString stringWithFormat:@"Invalid HTML display content: %@", json];
@@ -183,6 +239,10 @@ NSString *const UAInAppMessageURLKey = @"url";
         self.dismissButtonColor = builder.dismissButtonColor;
         self.allowFullScreenDisplay = builder.allowFullScreenDisplay;
         self.borderRadiusPoints = builder.borderRadiusPoints;
+        self.height = builder.height;
+        self.width = builder.width;
+        self.aspectLock = builder.aspectLock;
+        self.requireConnectivity = builder.requiresConnectivity;
     }
 
     return self;
@@ -196,6 +256,10 @@ NSString *const UAInAppMessageURLKey = @"url";
     [json setValue:[UAColorUtils hexStringWithColor:self.dismissButtonColor] forKey:UAInAppMessageDismissButtonColorKey];
     [json setValue:@(self.borderRadiusPoints) forKey:UAInAppMessageBorderRadiusKey];
     [json setValue:@(self.allowFullScreenDisplay) forKey:UAInAppMessageHTMLAllowsFullScreenKey];
+    [json setValue:@(self.height) forKey:UAInAppMessageHTMLHeightKey];
+    [json setValue:@(self.width) forKey:UAInAppMessageHTMLWidthKey];
+    [json setValue:@(self.aspectLock) forKey:UAInAppMessageHTMLAspectLockKey];
+    [json setValue:@(self.requireConnectivity) forKey:UAInAppMessageHTMLRequireConnectivityKey];
 
     return [json copy];
 }
@@ -245,9 +309,25 @@ NSString *const UAInAppMessageURLKey = @"url";
         return NO;
     }
 
+    if (self.requireConnectivity != content.requireConnectivity) {
+        return NO;
+    }
     if (self.allowFullScreenDisplay != content.allowFullScreenDisplay) {
         return NO;
     }
+
+    if (![UAUtils float:self.height isEqualToFloat:content.height withAccuracy:0.01]) {
+        return NO;
+    }
+
+    if (![UAUtils float:self.width isEqualToFloat:content.width withAccuracy:0.01]) {
+        return NO;
+    }
+
+    if (self.aspectLock != content.aspectLock) {
+        return NO;
+    }
+
 
     return YES;
 }
@@ -259,6 +339,10 @@ NSString *const UAInAppMessageURLKey = @"url";
     result = 31 * result + [[UAColorUtils hexStringWithColor:self.dismissButtonColor] hash];
     result = 31 * result + self.borderRadiusPoints;
     result = 31 * result + self.allowFullScreenDisplay;
+    result = 31 * result + self.height;
+    result = 31 * result + self.width;
+    result = 31 * result + self.aspectLock;
+    result = 31 * result + self.requireConnectivity;
 
     return result;
 }
@@ -269,10 +353,6 @@ NSString *const UAInAppMessageURLKey = @"url";
 
 - (UAInAppMessageDisplayType)displayType {
     return UAInAppMessageDisplayTypeHTML;
-}
-
-- (NSUInteger)borderRadius {
-    return self.borderRadiusPoints;
 }
 
 @end

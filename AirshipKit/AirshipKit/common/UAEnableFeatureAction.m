@@ -1,9 +1,9 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "UAEnableFeatureAction.h"
 #import "UAirship.h"
-#import "UALocation.h"
 #import "UAPush+Internal.h"
+#import "UALocationProviderDelegate.h"
 
 
 NSString *const UAEnableUserNotificationsActionValue = @"user_notifications";
@@ -51,7 +51,13 @@ NSString *const UAEnableBackgroundLocationActionValue = @"background_location";
 }
 
 - (BOOL)isLocationDeniedOrRestricted {
-    return UAirship.location.isLocationDeniedOrRestricted;
+    id<UALocationProviderDelegate> locationProviderDelegate = UAirship.shared.locationProviderDelegate;
+
+    if (locationProviderDelegate) {
+        return locationProviderDelegate.isLocationDeniedOrRestricted;
+    }
+
+    return YES;
 }
 
 - (void)navigateToSystemSettingsWithCompletionHandler:(UAActionCompletionHandler)completionHandler {
@@ -76,23 +82,32 @@ NSString *const UAEnableBackgroundLocationActionValue = @"background_location";
 }
 
 - (void)enableBackgroundLocation:(UAActionCompletionHandler)completionHandler {
-    UAirship.location.locationUpdatesEnabled = YES;
-    UAirship.location.backgroundLocationUpdatesAllowed = YES;
+    id<UALocationProviderDelegate> locationProviderDelegate = UAirship.shared.locationProviderDelegate;
+
+    locationProviderDelegate.locationUpdatesEnabled = YES;
+    locationProviderDelegate.backgroundLocationUpdatesAllowed = YES;
 
     if ([self isLocationDeniedOrRestricted]) {
         [self navigateToSystemSettingsWithCompletionHandler:completionHandler];
     } else {
         completionHandler([UAActionResult emptyResult]);
     }
+
+    completionHandler([UAActionResult emptyResult]);
 }
 
 - (void)enableLocation:(UAActionCompletionHandler)completionHandler {
-    UAirship.location.locationUpdatesEnabled = YES;
+    id<UALocationProviderDelegate> locationProviderDelegate = UAirship.shared.locationProviderDelegate;
+
+    locationProviderDelegate.locationUpdatesEnabled = YES;
+
     if ([self isLocationDeniedOrRestricted]) {
         [self navigateToSystemSettingsWithCompletionHandler:completionHandler];
     } else {
         completionHandler([UAActionResult emptyResult]);
     }
+
+    completionHandler([UAActionResult emptyResult]);
 }
 
 @end

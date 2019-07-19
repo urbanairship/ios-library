@@ -7,15 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3CF0C21A2256A37A00CE5463 /* AirshipLocationKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3CF0C2092256789300CE5463 /* AirshipLocationKit.framework */; };
+		3CF0C21B2256A37A00CE5463 /* AirshipLocationKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3CF0C2092256789300CE5463 /* AirshipLocationKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		493F50EA1C5B261100B050A1 /* MessageCenterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 493F50E91C5B261100B050A1 /* MessageCenterViewController.m */; };
-		493F50FB1C5B262100B050A1 /* Roboto-BlackItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 493F50EE1C5B262100B050A1 /* Roboto-BlackItalic.ttf */; };
-		493F50FD1C5B262100B050A1 /* Roboto-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 493F50F01C5B262100B050A1 /* Roboto-BoldItalic.ttf */; };
-		493F50FF1C5B262100B050A1 /* Roboto-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 493F50F21C5B262100B050A1 /* Roboto-Light.ttf */; };
-		493F51001C5B262100B050A1 /* Roboto-LightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 493F50F31C5B262100B050A1 /* Roboto-LightItalic.ttf */; };
-		493F51011C5B262100B050A1 /* Roboto-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 493F50F41C5B262100B050A1 /* Roboto-Medium.ttf */; };
-		493F51021C5B262100B050A1 /* Roboto-MediumItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 493F50F51C5B262100B050A1 /* Roboto-MediumItalic.ttf */; };
-		493F51041C5B262100B050A1 /* Roboto-Thin.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 493F50F71C5B262100B050A1 /* Roboto-Thin.ttf */; };
-		493F51051C5B262100B050A1 /* Roboto-ThinItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 493F50F81C5B262100B050A1 /* Roboto-ThinItalic.ttf */; };
 		493F510B1C5B275100B050A1 /* UAPushUI.strings in Resources */ = {isa = PBXBuildFile; fileRef = 493F51091C5B275100B050A1 /* UAPushUI.strings */; };
 		493F51211C5B3A5100B050A1 /* InboxDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 493F51201C5B3A5100B050A1 /* InboxDelegate.m */; };
 		49D2C73F1D6F952D0049B0A0 /* NotificationService.m in Sources */ = {isa = PBXBuildFile; fileRef = 49D2C73E1D6F952D0049B0A0 /* NotificationService.m */; };
@@ -30,21 +24,48 @@
 		764693B81C237B630090FE40 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 764693B61C237B630090FE40 /* LaunchScreen.storyboard */; };
 		764693C01C237CAB0090FE40 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 764693BF1C237CAB0090FE40 /* Main.storyboard */; };
 		7646940D1C238E7C0090FE40 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 764693FC1C238E7C0090FE40 /* Images.xcassets */; };
-		7646940E1C238E7C0090FE40 /* LICENSE.txt in Resources */ = {isa = PBXBuildFile; fileRef = 764693FE1C238E7C0090FE40 /* LICENSE.txt */; };
-		7646940F1C238E7C0090FE40 /* Roboto-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 764693FF1C238E7C0090FE40 /* Roboto-Black.ttf */; };
-		764694111C238E7C0090FE40 /* Roboto-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 764694011C238E7C0090FE40 /* Roboto-Bold.ttf */; };
-		764694131C238E7C0090FE40 /* Roboto-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 764694031C238E7C0090FE40 /* Roboto-Italic.ttf */; };
-		764694181C238E7C0090FE40 /* Roboto-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 764694081C238E7C0090FE40 /* Roboto-Regular.ttf */; };
-		7646941B1C238E7C0090FE40 /* urban-airship-logo-pacific.png in Resources */ = {isa = PBXBuildFile; fileRef = 7646940B1C238E7C0090FE40 /* urban-airship-logo-pacific.png */; };
-		7646941C1C238E7C0090FE40 /* urban-airship-pacific.png in Resources */ = {isa = PBXBuildFile; fileRef = 7646940C1C238E7C0090FE40 /* urban-airship-pacific.png */; };
 		76AE35651C2B6FD600D7F3B9 /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 76AE35641C2B6FD600D7F3B9 /* AirshipConfig.plist */; };
 		CC899CC41D8B6F3900A0CECC /* AirshipKit.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = CC899CB31D8B6AB400A0CECC /* AirshipKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		DF4E4921221CD86F00F306A5 /* AirshipDebugKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DF74B28921543DC00010CACB /* AirshipDebugKit.framework */; };
 		DF4E4995221F376600F306A5 /* AirshipDebugKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = DF74B28921543DC00010CACB /* AirshipDebugKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		DF74B29A215460A40010CACB /* DebugViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DF74B299215460A40010CACB /* DebugViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		3CF0C2082256789300CE5463 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3CF0C1FD2256789300CE5463 /* AirshipLocationKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 3C7A565B2252883100E07225;
+			remoteInfo = AirshipLocationKit;
+		};
+		3CF0C20A2256789300CE5463 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3CF0C1FD2256789300CE5463 /* AirshipLocationKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 3C7A56642252883100E07225;
+			remoteInfo = AirshipLocationKitTests;
+		};
+		3CF0C21C2256A37A00CE5463 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3CF0C1FD2256789300CE5463 /* AirshipLocationKit.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 3C7A565A2252883100E07225;
+			remoteInfo = AirshipLocationKit;
+		};
+		455BE7BC229B04A5007D2687 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3CF0C1FD2256789300CE5463 /* AirshipLocationKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 3CD47D2922601606005F1987;
+			remoteInfo = AirshipLocationLib;
+		};
+		4560A1B022961C36000FF3B2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3CF0C1FD2256789300CE5463 /* AirshipLocationKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 3CD47D5C22603B82005F1987;
+			remoteInfo = "AirshipLocationKit tvOS";
+		};
 		49251DD41D6F95FC00EED4BD /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 49251DCF1D6F95FC00EED4BD /* AirshipAppExtensions.xcodeproj */;
@@ -166,6 +187,7 @@
 			dstSubfolderSpec = 10;
 			files = (
 				DF4E4995221F376600F306A5 /* AirshipDebugKit.framework in Embed Frameworks */,
+				3CF0C21B2256A37A00CE5463 /* AirshipLocationKit.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -184,23 +206,11 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		3CF0C1FD2256789300CE5463 /* AirshipLocationKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = AirshipLocationKit.xcodeproj; path = ../AirshipLocationKit/AirshipLocationKit.xcodeproj; sourceTree = "<group>"; };
 		49251DCF1D6F95FC00EED4BD /* AirshipAppExtensions.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = AirshipAppExtensions.xcodeproj; path = ../AirshipAppExtensions/AirshipAppExtensions.xcodeproj; sourceTree = "<group>"; };
 		4929EA2E1D5156F000D7B322 /* Sample.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Sample.entitlements; sourceTree = "<group>"; };
 		493F50E81C5B261100B050A1 /* MessageCenterViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageCenterViewController.h; sourceTree = "<group>"; };
 		493F50E91C5B261100B050A1 /* MessageCenterViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MessageCenterViewController.m; sourceTree = "<group>"; };
-		493F50EC1C5B262100B050A1 /* LICENSE.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE.txt; sourceTree = "<group>"; };
-		493F50ED1C5B262100B050A1 /* Roboto-Black.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-Black.ttf"; sourceTree = "<group>"; };
-		493F50EE1C5B262100B050A1 /* Roboto-BlackItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-BlackItalic.ttf"; sourceTree = "<group>"; };
-		493F50EF1C5B262100B050A1 /* Roboto-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-Bold.ttf"; sourceTree = "<group>"; };
-		493F50F01C5B262100B050A1 /* Roboto-BoldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-BoldItalic.ttf"; sourceTree = "<group>"; };
-		493F50F11C5B262100B050A1 /* Roboto-Italic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-Italic.ttf"; sourceTree = "<group>"; };
-		493F50F21C5B262100B050A1 /* Roboto-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-Light.ttf"; sourceTree = "<group>"; };
-		493F50F31C5B262100B050A1 /* Roboto-LightItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-LightItalic.ttf"; sourceTree = "<group>"; };
-		493F50F41C5B262100B050A1 /* Roboto-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-Medium.ttf"; sourceTree = "<group>"; };
-		493F50F51C5B262100B050A1 /* Roboto-MediumItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-MediumItalic.ttf"; sourceTree = "<group>"; };
-		493F50F61C5B262100B050A1 /* Roboto-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-Regular.ttf"; sourceTree = "<group>"; };
-		493F50F71C5B262100B050A1 /* Roboto-Thin.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-Thin.ttf"; sourceTree = "<group>"; };
-		493F50F81C5B262100B050A1 /* Roboto-ThinItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-ThinItalic.ttf"; sourceTree = "<group>"; };
 		493F510A1C5B275100B050A1 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/UAPushUI.strings; sourceTree = "<group>"; };
 		493F511F1C5B3A5100B050A1 /* InboxDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InboxDelegate.h; sourceTree = "<group>"; };
 		493F51201C5B3A5100B050A1 /* InboxDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InboxDelegate.m; sourceTree = "<group>"; };
@@ -221,26 +231,9 @@
 		764693B91C237B630090FE40 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		764693BF1C237CAB0090FE40 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		764693FC1C238E7C0090FE40 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		764693FE1C238E7C0090FE40 /* LICENSE.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE.txt; sourceTree = "<group>"; };
-		764693FF1C238E7C0090FE40 /* Roboto-Black.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-Black.ttf"; sourceTree = "<group>"; };
-		764694001C238E7C0090FE40 /* Roboto-BlackItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-BlackItalic.ttf"; sourceTree = "<group>"; };
-		764694011C238E7C0090FE40 /* Roboto-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-Bold.ttf"; sourceTree = "<group>"; };
-		764694021C238E7C0090FE40 /* Roboto-BoldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-BoldItalic.ttf"; sourceTree = "<group>"; };
-		764694031C238E7C0090FE40 /* Roboto-Italic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-Italic.ttf"; sourceTree = "<group>"; };
-		764694041C238E7C0090FE40 /* Roboto-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-Light.ttf"; sourceTree = "<group>"; };
-		764694051C238E7C0090FE40 /* Roboto-LightItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-LightItalic.ttf"; sourceTree = "<group>"; };
-		764694061C238E7C0090FE40 /* Roboto-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-Medium.ttf"; sourceTree = "<group>"; };
-		764694071C238E7C0090FE40 /* Roboto-MediumItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-MediumItalic.ttf"; sourceTree = "<group>"; };
-		764694081C238E7C0090FE40 /* Roboto-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-Regular.ttf"; sourceTree = "<group>"; };
-		764694091C238E7C0090FE40 /* Roboto-Thin.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-Thin.ttf"; sourceTree = "<group>"; };
-		7646940A1C238E7C0090FE40 /* Roboto-ThinItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-ThinItalic.ttf"; sourceTree = "<group>"; };
-		7646940B1C238E7C0090FE40 /* urban-airship-logo-pacific.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "urban-airship-logo-pacific.png"; sourceTree = "<group>"; };
-		7646940C1C238E7C0090FE40 /* urban-airship-pacific.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "urban-airship-pacific.png"; sourceTree = "<group>"; };
 		76AE35641C2B6FD600D7F3B9 /* AirshipConfig.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = AirshipConfig.plist; sourceTree = "<group>"; };
 		CC899CAD1D8B6AB400A0CECC /* AirshipKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = AirshipKit.xcodeproj; path = ../AirshipKit/AirshipKit.xcodeproj; sourceTree = "<group>"; };
 		DF74B28321543DC00010CACB /* AirshipDebugKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = AirshipDebugKit.xcodeproj; path = ../AirshipDebugKit/AirshipDebugKit.xcodeproj; sourceTree = "<group>"; };
-		DF74B298215460A40010CACB /* DebugViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DebugViewController.h; sourceTree = "<group>"; };
-		DF74B299215460A40010CACB /* DebugViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DebugViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -257,12 +250,24 @@
 			buildActionMask = 2147483647;
 			files = (
 				DF4E4921221CD86F00F306A5 /* AirshipDebugKit.framework in Frameworks */,
+				3CF0C21A2256A37A00CE5463 /* AirshipLocationKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		3CF0C1FE2256789300CE5463 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				3CF0C2092256789300CE5463 /* AirshipLocationKit.framework */,
+				3CF0C20B2256789300CE5463 /* AirshipLocationKitTests.xctest */,
+				4560A1AF22961C36000FF3B2 /* libUALocation.a */,
+				4560A1B122961C36000FF3B2 /* AirshipLocationKit.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		49251DD01D6F95FC00EED4BD /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -270,26 +275,6 @@
 				49251DD71D6F95FC00EED4BD /* AirshipAppExtensionsTests.xctest */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		493F50EB1C5B262100B050A1 /* Roboto */ = {
-			isa = PBXGroup;
-			children = (
-				493F50EC1C5B262100B050A1 /* LICENSE.txt */,
-				493F50ED1C5B262100B050A1 /* Roboto-Black.ttf */,
-				493F50EE1C5B262100B050A1 /* Roboto-BlackItalic.ttf */,
-				493F50EF1C5B262100B050A1 /* Roboto-Bold.ttf */,
-				493F50F01C5B262100B050A1 /* Roboto-BoldItalic.ttf */,
-				493F50F11C5B262100B050A1 /* Roboto-Italic.ttf */,
-				493F50F21C5B262100B050A1 /* Roboto-Light.ttf */,
-				493F50F31C5B262100B050A1 /* Roboto-LightItalic.ttf */,
-				493F50F41C5B262100B050A1 /* Roboto-Medium.ttf */,
-				493F50F51C5B262100B050A1 /* Roboto-MediumItalic.ttf */,
-				493F50F61C5B262100B050A1 /* Roboto-Regular.ttf */,
-				493F50F71C5B262100B050A1 /* Roboto-Thin.ttf */,
-				493F50F81C5B262100B050A1 /* Roboto-ThinItalic.ttf */,
-			);
-			path = Roboto;
 			sourceTree = "<group>";
 		};
 		493F51081C5B275100B050A1 /* Localization */ = {
@@ -313,6 +298,7 @@
 		764693991C237B630090FE40 = {
 			isa = PBXGroup;
 			children = (
+				3CF0C1FD2256789300CE5463 /* AirshipLocationKit.xcodeproj */,
 				CC899CAD1D8B6AB400A0CECC /* AirshipKit.xcodeproj */,
 				49251DCF1D6F95FC00EED4BD /* AirshipAppExtensions.xcodeproj */,
 				DF74B28321543DC00010CACB /* AirshipDebugKit.xcodeproj */,
@@ -347,8 +333,6 @@
 				493F50E91C5B261100B050A1 /* MessageCenterViewController.m */,
 				493F511F1C5B3A5100B050A1 /* InboxDelegate.h */,
 				493F51201C5B3A5100B050A1 /* InboxDelegate.m */,
-				DF74B298215460A40010CACB /* DebugViewController.h */,
-				DF74B299215460A40010CACB /* DebugViewController.m */,
 				764693BF1C237CAB0090FE40 /* Main.storyboard */,
 				764693B61C237B630090FE40 /* LaunchScreen.storyboard */,
 				764693B91C237B630090FE40 /* Info.plist */,
@@ -370,33 +354,9 @@
 			isa = PBXGroup;
 			children = (
 				493F51081C5B275100B050A1 /* Localization */,
-				493F50EB1C5B262100B050A1 /* Roboto */,
 				764693FC1C238E7C0090FE40 /* Images.xcassets */,
-				764693FD1C238E7C0090FE40 /* Roboto */,
-				7646940B1C238E7C0090FE40 /* urban-airship-logo-pacific.png */,
-				7646940C1C238E7C0090FE40 /* urban-airship-pacific.png */,
 			);
 			path = Resources;
-			sourceTree = "<group>";
-		};
-		764693FD1C238E7C0090FE40 /* Roboto */ = {
-			isa = PBXGroup;
-			children = (
-				764693FE1C238E7C0090FE40 /* LICENSE.txt */,
-				764693FF1C238E7C0090FE40 /* Roboto-Black.ttf */,
-				764694001C238E7C0090FE40 /* Roboto-BlackItalic.ttf */,
-				764694011C238E7C0090FE40 /* Roboto-Bold.ttf */,
-				764694021C238E7C0090FE40 /* Roboto-BoldItalic.ttf */,
-				764694031C238E7C0090FE40 /* Roboto-Italic.ttf */,
-				764694041C238E7C0090FE40 /* Roboto-Light.ttf */,
-				764694051C238E7C0090FE40 /* Roboto-LightItalic.ttf */,
-				764694061C238E7C0090FE40 /* Roboto-Medium.ttf */,
-				764694071C238E7C0090FE40 /* Roboto-MediumItalic.ttf */,
-				764694081C238E7C0090FE40 /* Roboto-Regular.ttf */,
-				764694091C238E7C0090FE40 /* Roboto-Thin.ttf */,
-				7646940A1C238E7C0090FE40 /* Roboto-ThinItalic.ttf */,
-			);
-			path = Roboto;
 			sourceTree = "<group>";
 		};
 		CC899CAE1D8B6AB400A0CECC /* Products */ = {
@@ -459,6 +419,7 @@
 				61E30D741DDE2F9E00B7EE28 /* PBXTargetDependency */,
 				DF74B29021543DF20010CACB /* PBXTargetDependency */,
 				49D2C7421D6F952D0049B0A0 /* PBXTargetDependency */,
+				3CF0C21D2256A37A00CE5463 /* PBXTargetDependency */,
 			);
 			name = Sample;
 			productName = Sample;
@@ -525,6 +486,10 @@
 					ProductGroup = CC899CAE1D8B6AB400A0CECC /* Products */;
 					ProjectRef = CC899CAD1D8B6AB400A0CECC /* AirshipKit.xcodeproj */;
 				},
+				{
+					ProductGroup = 3CF0C1FE2256789300CE5463 /* Products */;
+					ProjectRef = 3CF0C1FD2256789300CE5463 /* AirshipLocationKit.xcodeproj */;
+				},
 			);
 			projectRoot = "";
 			targets = (
@@ -535,6 +500,34 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		3CF0C2092256789300CE5463 /* AirshipLocationKit.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = AirshipLocationKit.framework;
+			remoteRef = 3CF0C2082256789300CE5463 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		3CF0C20B2256789300CE5463 /* AirshipLocationKitTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = AirshipLocationKitTests.xctest;
+			remoteRef = 3CF0C20A2256789300CE5463 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		4560A1AF22961C36000FF3B2 /* libUALocation.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libUALocation.a;
+			remoteRef = 4560A1AE22961C36000FF3B2 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		4560A1B122961C36000FF3B2 /* AirshipLocationKit.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = AirshipLocationKit.framework;
+			remoteRef = 4560A1B022961C36000FF3B2 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		49251DD51D6F95FC00EED4BD /* AirshipAppExtensions.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
@@ -614,25 +607,10 @@
 			files = (
 				764693B81C237B630090FE40 /* LaunchScreen.storyboard in Resources */,
 				7646940D1C238E7C0090FE40 /* Images.xcassets in Resources */,
-				7646941B1C238E7C0090FE40 /* urban-airship-logo-pacific.png in Resources */,
 				764693C01C237CAB0090FE40 /* Main.storyboard in Resources */,
-				493F51001C5B262100B050A1 /* Roboto-LightItalic.ttf in Resources */,
 				76AE35651C2B6FD600D7F3B9 /* AirshipConfig.plist in Resources */,
-				493F51021C5B262100B050A1 /* Roboto-MediumItalic.ttf in Resources */,
-				493F51041C5B262100B050A1 /* Roboto-Thin.ttf in Resources */,
 				61E392311CC81EA800D994E3 /* UAMessageCenterDefaultStyle.plist in Resources */,
-				7646941C1C238E7C0090FE40 /* urban-airship-pacific.png in Resources */,
-				7646940E1C238E7C0090FE40 /* LICENSE.txt in Resources */,
-				493F50FD1C5B262100B050A1 /* Roboto-BoldItalic.ttf in Resources */,
 				493F510B1C5B275100B050A1 /* UAPushUI.strings in Resources */,
-				493F50FB1C5B262100B050A1 /* Roboto-BlackItalic.ttf in Resources */,
-				764694131C238E7C0090FE40 /* Roboto-Italic.ttf in Resources */,
-				493F50FF1C5B262100B050A1 /* Roboto-Light.ttf in Resources */,
-				493F51011C5B262100B050A1 /* Roboto-Medium.ttf in Resources */,
-				493F51051C5B262100B050A1 /* Roboto-ThinItalic.ttf in Resources */,
-				764694181C238E7C0090FE40 /* Roboto-Regular.ttf in Resources */,
-				764694111C238E7C0090FE40 /* Roboto-Bold.ttf in Resources */,
-				7646940F1C238E7C0090FE40 /* Roboto-Black.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -653,7 +631,6 @@
 			files = (
 				764693AA1C237B630090FE40 /* AppDelegate.m in Sources */,
 				61A672FC1CAB3E5A00BAF58A /* PushHandler.m in Sources */,
-				DF74B29A215460A40010CACB /* DebugViewController.m in Sources */,
 				764693AD1C237B630090FE40 /* HomeViewController.m in Sources */,
 				493F51211C5B3A5100B050A1 /* InboxDelegate.m in Sources */,
 				764693A71C237B630090FE40 /* main.m in Sources */,
@@ -664,6 +641,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		3CF0C21D2256A37A00CE5463 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = AirshipLocationKit;
+			targetProxy = 3CF0C21C2256A37A00CE5463 /* PBXContainerItemProxy */;
+		};
 		49D2C7421D6F952D0049B0A0 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 49D2C73A1D6F952D0049B0A0 /* SampleServiceExtension */;
