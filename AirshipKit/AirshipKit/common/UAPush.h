@@ -255,17 +255,18 @@ static const UANotificationOptions UANotificationOptionNone =  0;
  * @param notification The notification.
  * @return a UNNotificationPresentationOptions enum value indicating the presentation options for the notification.
  *
- * @deprecated Deprecated - to be removed in SDK version 12.0. Please use extendPresentationOptions:
+ * @deprecated Deprecated - to be removed in SDK version 12.0. Please use extendPresentationOptions:notification:
  */
-- (UNNotificationPresentationOptions)presentationOptionsForNotification:(UNNotification *)notification DEPRECATED_MSG_ATTRIBUTE("Deprecated - to be removed in SDK version 12.0. Please use extendPresentationOptions:");
+- (UNNotificationPresentationOptions)presentationOptionsForNotification:(UNNotification *)notification DEPRECATED_MSG_ATTRIBUTE("Deprecated - to be removed in SDK version 12.0. Please use extendPresentationOptions:notification:");
 
 /**
  * Called when a notification has arrived in the foreground and is available for display.
  *
  * @param options The notification presentation options.
+ * @param notification The notification.
  * @return a UNNotificationPresentationOptions enum value indicating the presentation options for the notification.
  */
-- (UNNotificationPresentationOptions)extendPresentationOptions:(UNNotificationPresentationOptions)options;
+- (UNNotificationPresentationOptions)extendPresentationOptions:(UNNotificationPresentationOptions)options notification:(UNNotification *)notification;
 
 @end
 

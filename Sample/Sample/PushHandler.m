@@ -30,7 +30,7 @@
     completionHandler();
 }
 
-- (UNNotificationPresentationOptions)extendPresentationOptions:(UNNotificationPresentationOptions)options {
+- (UNNotificationPresentationOptions)extendPresentationOptions:(UNNotificationPresentationOptions)options notification:(UNNotification *)notification {
     return options | UNNotificationPresentationOptionSound | UNNotificationPresentationOptionAlert;
 }
 

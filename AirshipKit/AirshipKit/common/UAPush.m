@@ -942,8 +942,8 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
     }
     
     id pushDelegate = self.pushNotificationDelegate;
-    if ([pushDelegate respondsToSelector:@selector(extendPresentationOptions:)]) {
-        options = [pushDelegate extendPresentationOptions:options];
+    if ([pushDelegate respondsToSelector:@selector(extendPresentationOptions:notification:)]) {
+        options = [pushDelegate extendPresentationOptions:options notification:notification];
     } else if ([pushDelegate respondsToSelector:@selector(presentationOptionsForNotification:)]) {
         options = [pushDelegate presentationOptionsForNotification:notification];
     }
