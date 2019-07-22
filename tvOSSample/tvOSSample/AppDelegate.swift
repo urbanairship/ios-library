@@ -100,13 +100,5 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             self.window?.rootViewController?.present(alertController, animated: true, completion: nil)
         }
     }
-
-    func registrationSucceeded(forChannelID channelID: String, deviceToken: String) {
-        NotificationCenter.default.post(
-            name: Notification.Name(rawValue: "channelIDUpdated"),
-            object: self,
-            userInfo:nil)
-    }
-
 }
 

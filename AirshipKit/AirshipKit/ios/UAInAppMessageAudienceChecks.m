@@ -5,6 +5,7 @@
 #import "UAirship+Internal.h"
 #import "UAApplicationMetrics+Internal.h"
 #import "UAPush+Internal.h"
+#import "UAChannel.h"
 #import "UAInAppMessageTagSelector+Internal.h"
 #import "UAVersionMatcher+Internal.h"
 #import "UAJSONPredicate.h"
@@ -25,7 +26,7 @@
     }
 
     if (audience.testDevices.count) {
-        NSString *channel = [UAirship push].channelID;
+        NSString *channel = [UAirship channel].identifier;
         if (!channel) {
             return NO;
         }
@@ -60,7 +61,7 @@
     }
 
     // Tag Selector
-    if (audience.tagSelector && ![audience.tagSelector apply:[UAirship push].tags tagGroups:tagGroups]) {
+    if (audience.tagSelector && ![audience.tagSelector apply:[UAirship channel].tags tagGroups:tagGroups]) {
         return NO;
     }
 

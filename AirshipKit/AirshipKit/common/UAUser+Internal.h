@@ -9,7 +9,7 @@
 @class UAUserAPIClient;
 @class UARuntimeConfig;
 @class UAPreferenceDataStore;
-@class UAPush;
+@class UAChannel;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -58,16 +58,16 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Factory method to create a user instance.
- * @param push The push manager.
+ * @param channel The channel.
  * @param config The Airship config.
  * @param dataStore The preference data store.
  * @return User instance.
  */
-+ (instancetype)userWithPush:(UAPush *)push config:(UARuntimeConfig *)config dataStore:(UAPreferenceDataStore *)dataStore;
++ (instancetype)userWithChannel:(UAChannel *)channel config:(UARuntimeConfig *)config dataStore:(UAPreferenceDataStore *)dataStore;
 
 /**
  * Factory method to create a user instance. Used for testing.
- * @param push The push manager.
+ * @param channel The channel.
  * @param config The Airship config.
  * @param dataStore The preference data store.
  * @param client The API client.
@@ -76,7 +76,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param dispatcher The dispatcher.
  * @return User instance.
  */
-+ (instancetype)userWithPush:(UAPush *)push
++ (instancetype)userWithChannel:(UAChannel *)channel
                       config:(UARuntimeConfig *)config
                    dataStore:(UAPreferenceDataStore *)dataStore
                       client:(UAUserAPIClient *)client

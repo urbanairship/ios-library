@@ -3,7 +3,8 @@
 #import "UAUser+Internal.h"
 #import "UAUserData.h"
 #import "UAUserAPIClient+Internal.h"
-#import "UAPush.h"
+#import "UAChannel.h"
+#import "UAChannelNotificationCenterEvents.h"
 #import "UAUtils+Internal.h"
 #import "UARuntimeConfig.h"
 #import "UAKeychainUtils+Internal.h"
@@ -17,7 +18,7 @@
 NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.user_created";
 
 @interface UAUser()
-@property (nonatomic, strong) UAPush *push;
+@property (nonatomic, strong) UAChannel *channel;
 @property (nonatomic, strong) NSNotificationCenter *notificationCenter;
 @property (nonatomic, strong) UIApplication *application;
 @property (nonatomic, strong) UADispatcher *backgroundDispatcher;
@@ -37,7 +38,7 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
 
 }
 
-- (instancetype)initWithPush:(UAPush *)push
+- (instancetype)initWithChannel:(UAChannel *)channel
                       config:(UARuntimeConfig *)config
                    dataStore:(UAPreferenceDataStore *)dataStore
                       client:(UAUserAPIClient *)client
@@ -51,7 +52,7 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
         self.config = config;
         self.apiClient = client;
         self.dataStore = dataStore;
-        self.push = push;
+        self.channel = channel;
         self.notificationCenter = notificationCenter;
         self.application = application;
 
@@ -66,31 +67,31 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
     return self;
 }
 
-+ (instancetype)userWithPush:(UAPush *)push config:(UARuntimeConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
-    return [[UAUser alloc] initWithPush:push
-                                 config:config
-                              dataStore:dataStore
-                                 client:[UAUserAPIClient clientWithConfig:config]
-                     notificationCenter:[NSNotificationCenter defaultCenter]
-                            application:[UIApplication sharedApplication]
-                             dispatcher:[UADispatcher backgroundDispatcher]];
++ (instancetype)userWithChannel:(UAChannel *)channel config:(UARuntimeConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
+    return [[UAUser alloc] initWithChannel:channel
+                                    config:config
+                                 dataStore:dataStore
+                                    client:[UAUserAPIClient clientWithConfig:config]
+                        notificationCenter:[NSNotificationCenter defaultCenter]
+                               application:[UIApplication sharedApplication]
+                                dispatcher:[UADispatcher backgroundDispatcher]];
 }
 
-+ (instancetype)userWithPush:(UAPush *)push
-                      config:(UARuntimeConfig *)config
-                   dataStore:(UAPreferenceDataStore *)dataStore
-                      client:(UAUserAPIClient *)client
-          notificationCenter:(NSNotificationCenter *)notificationCenter
-                 application:(UIApplication *)application
-                  dispatcher:(UADispatcher *)dispatcher {
++ (instancetype)userWithChannel:(UAChannel *)channel
+                         config:(UARuntimeConfig *)config
+                      dataStore:(UAPreferenceDataStore *)dataStore
+                         client:(UAUserAPIClient *)client
+             notificationCenter:(NSNotificationCenter *)notificationCenter
+                    application:(UIApplication *)application
+                     dispatcher:(UADispatcher *)dispatcher {
 
-    return [[UAUser alloc] initWithPush:push
-                                 config:config
-                              dataStore:dataStore
-                                 client:client
-                     notificationCenter:notificationCenter
-                            application:application
-                             dispatcher:dispatcher];
+    return [[UAUser alloc] initWithChannel:channel
+                                    config:config
+                                 dataStore:dataStore
+                                    client:client
+                        notificationCenter:notificationCenter
+                               application:application
+                                dispatcher:dispatcher];
 }
 
 #pragma mark -
@@ -226,7 +227,7 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
         return completionHandler(nil);
     }
 
-    if (!self.push.channelID) {
+    if (!self.channel.identifier) {
         UA_LDEBUG(@"Skipping user creation, no channel");
         return completionHandler(nil);
     }
@@ -284,7 +285,7 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
             completionHandler(nil);
         };
 
-        [self.apiClient createUserWithChannelID:self.push.channelID
+        [self.apiClient createUserWithChannelID:self.channel.identifier
                                       onSuccess:success
                                       onFailure:failure];
 
@@ -306,7 +307,7 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
         return completionHandler();
     }
 
-    if (!self.push.channelID.length) {
+    if (!self.channel.identifier.length) {
         UA_LDEBUG(@"Skipping user update, no channel.");
         return completionHandler();
     }
@@ -334,7 +335,7 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
         UA_LTRACE(@"Updating user");
 
         [self.apiClient updateUser:self
-                         channelID:self.push.channelID
+                         channelID:self.channel.identifier
                          onSuccess:^{
                              UA_STRONGIFY(self)
                              UA_LINFO(@"Updated user %@ successfully.", data.username);
@@ -365,7 +366,7 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
 
 - (void)channelCreated {
     // Update the user if we already have a channelID
-    if (self.push.channelID) {
+    if (self.channel.identifier) {
         UA_WEAKIFY(self)
         [self getUserData:^(UAUserData *data) {
             UA_STRONGIFY(self)

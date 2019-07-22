@@ -2,7 +2,7 @@
 
 #import "UANamedUser+Internal.h"
 #import "UANamedUserAPIClient+Internal.h"
-#import "UAPush+Internal.h"
+#import "UAChannel.h"
 #import "UATagGroupsRegistrar+Internal.h"
 #import "UATagUtils+Internal.h"
 #import "UARuntimeConfig.h"
@@ -24,11 +24,11 @@ NSString *const UANamedUserLastUpdatedTokenKey = @"UANamedUserLastUpdatedToken";
 
 @implementation UANamedUser
 
-- (instancetype)initWithPush:(UAPush *)push config:(UARuntimeConfig *)config dataStore:(UAPreferenceDataStore *)dataStore tagGroupsRegistrar:(UATagGroupsRegistrar *)tagGroupsRegistrar {
+- (instancetype)initWithChannel:(UAChannel *)channel config:(UARuntimeConfig *)config dataStore:(UAPreferenceDataStore *)dataStore tagGroupsRegistrar:(UATagGroupsRegistrar *)tagGroupsRegistrar {
     self = [super initWithDataStore:dataStore];
     if (self) {
         self.config = config;
-        self.push = push;
+        self.channel = channel;
         self.dataStore = dataStore;
         self.namedUserAPIClient = [UANamedUserAPIClient clientWithConfig:config];
         self.namedUserAPIClient.enabled = self.componentEnabled;
@@ -46,11 +46,11 @@ NSString *const UANamedUserLastUpdatedTokenKey = @"UANamedUserLastUpdatedToken";
     return self;
 }
 
-+ (instancetype) namedUserWithPush:(UAPush *)push
++ (instancetype) namedUserWithChannel:(UAChannel *)channel
                             config:(UARuntimeConfig *)config
                          dataStore:(UAPreferenceDataStore *)dataStore
                 tagGroupsRegistrar:(nonnull UATagGroupsRegistrar *)tagGroupsRegistrar  {
-    return [[UANamedUser alloc] initWithPush:push config:config dataStore:dataStore tagGroupsRegistrar:tagGroupsRegistrar];
+    return [[UANamedUser alloc] initWithChannel:channel config:config dataStore:dataStore tagGroupsRegistrar:tagGroupsRegistrar];
 }
 
 - (void)update {
@@ -66,7 +66,7 @@ NSString *const UANamedUserLastUpdatedTokenKey = @"UANamedUserLastUpdatedToken";
         return;
     }
 
-    if (!self.push.channelID) {
+    if (!self.channel.identifier) {
         // Skip since we don't have a channel ID.
         UA_LDEBUG(@"The channel ID does not exist. Will retry when channel ID is available.");
         return;
@@ -130,7 +130,7 @@ NSString *const UANamedUserLastUpdatedTokenKey = @"UANamedUserLastUpdatedToken";
 
 - (void)associateNamedUser {
     NSString *token = self.changeToken;
-    [self.namedUserAPIClient associate:self.identifier channelID:self.push.channelID
+    [self.namedUserAPIClient associate:self.identifier channelID:self.channel.identifier
                              onSuccess:^{
                                  self.lastUpdatedToken = token;
                                  UA_LDEBUG(@"Named user associated to channel successfully.");
@@ -142,7 +142,7 @@ NSString *const UANamedUserLastUpdatedTokenKey = @"UANamedUserLastUpdatedToken";
 
 - (void)disassociateNamedUser {
     NSString *token = self.changeToken;
-    [self.namedUserAPIClient disassociate:self.push.channelID
+    [self.namedUserAPIClient disassociate:self.channel.identifier
                                 onSuccess:^{
                                     self.lastUpdatedToken = token;
                                     UA_LDEBUG(@"Named user disassociated from channel successfully.");

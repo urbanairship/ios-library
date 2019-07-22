@@ -30,6 +30,11 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) UAChannelCapture *channelCapture;
 
 /**
+ * The channel
+ */
+@property (nonatomic, strong) UAChannel *sharedChannel;
+
+/**
  * The push manager.
  */
 @property (nonatomic, strong) UAPush *sharedPush;

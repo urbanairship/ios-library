@@ -7,7 +7,7 @@
 #import "NSJSONSerialization+UAAdditions.h"
 #import "UAPreferenceDataStore+Internal.h"
 #import "UAirship.h"
-#import "UAPush.h"
+#import "UAChannel.h"
 #import "UAJSONSerialization+Internal.h"
 
 @interface UAInboxAPIClient()
@@ -63,7 +63,7 @@ NSString *const UALastMessageListModifiedTime = @"UALastMessageListModifiedTime.
             builder.username = userData.username;
             builder.password = userData.password;
 
-            [builder setValue:[UAirship push].channelID forHeader:kUAChannelIDHeader];
+            [builder setValue:[UAirship channel].identifier forHeader:kUAChannelIDHeader];
 
             NSString *lastModified = [self.dataStore stringForKey:[NSString stringWithFormat:UALastMessageListModifiedTime, userData.username]];
             if (lastModified) {
@@ -166,7 +166,7 @@ NSString *const UALastMessageListModifiedTime = @"UALastMessageListModifiedTime.
             builder.body = body;
             [builder setValue:@"application/vnd.urbanairship+json; version=3;" forHeader:@"Accept"];
             [builder setValue:@"application/json" forHeader:@"Content-Type"];
-            [builder setValue:[UAirship push].channelID forHeader:kUAChannelIDHeader ];
+            [builder setValue:[UAirship channel].identifier forHeader:kUAChannelIDHeader ];
 
             UA_LTRACE(@"Request to perform batch delete: %@  body: %@", urlString, body);
 
@@ -234,7 +234,7 @@ NSString *const UALastMessageListModifiedTime = @"UALastMessageListModifiedTime.
             builder.body = body;
             [builder setValue:@"application/vnd.urbanairship+json; version=3;" forHeader:@"Accept"];
             [builder setValue:@"application/json" forHeader:@"Content-Type"];
-            [builder setValue:[UAirship push].channelID forHeader:kUAChannelIDHeader];
+            [builder setValue:[UAirship channel].identifier forHeader:kUAChannelIDHeader];
 
             UA_LTRACE(@"Request to perfom batch mark messages as read: %@ body: %@", urlString, body);
         }];

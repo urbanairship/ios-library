@@ -529,12 +529,13 @@ NSString * const ChannelCreateSuccessChannelID = @"newChannelID";
 - (UAChannelRegistrar *)createRegistrarWithChannelID:(NSString *)channelID {
     UAChannelRegistrar *registrar = [UAChannelRegistrar channelRegistrarWithConfig:self.config
                                                                          dataStore:self.dataStore
-                                                                          delegate:self.mockedRegistrarDelegate
                                                                          channelID:channelID
                                                                   channelAPIClient:self.mockedChannelClient
                                                                               date:self.testDate
                                                                         dispatcher:[UATestDispatcher testDispatcher]
                                                                        application:self.mockedApplication];
+    registrar.delegate = self.mockedRegistrarDelegate;
+    
     return registrar;
 }
 

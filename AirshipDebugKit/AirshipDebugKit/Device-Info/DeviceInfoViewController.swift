@@ -94,7 +94,7 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(DeviceInfoViewController.refreshView),
-            name: NSNotification.Name(rawValue: "channelIDUpdated"),
+            name: NSNotification.Name(rawValue: UAChannelUpdatedEvent),
             object: nil);
         
         // add observer to didBecomeActive to update upon retrun from system settings screen
@@ -220,7 +220,7 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
             cell.subtitle?.numberOfLines = 1;
         case channelID:
             cell.title.text = "ua_device_info_channel_id".localized()
-            cell.subtitle.text = UAirship.push().channelID
+            cell.subtitle.text = UAirship.channel()?.identifier
         case username:
             UAirship.inboxUser()?.getData({ (userData) in
                 DispatchQueue.main.async {
@@ -234,8 +234,8 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
             cell.accessoryType = .disclosureIndicator
         case tags:
             cell.title.text = "ua_device_info_tags".localized()
-            if (UAirship.push().tags.count > 0) {
-                cell.subtitle?.text = UAirship.push().tags.joined(separator: ", ")
+            if (UAirship.channel().tags.count > 0) {
+                cell.subtitle?.text = UAirship.channel().tags.joined(separator: ", ")
             } else {
                 cell.subtitle?.text = localizedNone
             }
@@ -301,7 +301,7 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
             cell.cellSwitch.setOn(!cell.cellSwitch.isOn, animated: true)
             UAirship.push().userPushNotificationsEnabled = cell.cellSwitch.isOn
         case channelID:
-            if (UAirship.push().channelID != nil) {
+            if (UAirship.channel()?.identifier != nil) {
                 UIPasteboard.general.string = cell.subtitle?.text
                 showCopiedAlert()
             }

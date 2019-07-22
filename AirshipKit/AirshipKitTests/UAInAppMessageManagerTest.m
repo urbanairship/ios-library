@@ -10,7 +10,7 @@
 #import "UARemoteDataManager+Internal.h"
 #import "UAInAppMessageBannerDisplayContent+Internal.h"
 #import "UAInAppMessageCustomDisplayContent+Internal.h"
-#import "UAPush+Internal.h"
+#import "UAChannel.h"
 #import "UAInAppMessageAudience.h"
 #import "UAActionRunner+Internal.h"
 #import "UAInAppMessageAudienceChecks+Internal.h"
@@ -31,7 +31,7 @@
 @property(nonatomic, strong) id mockAutomationEngine;
 @property(nonatomic, strong) UAInAppMessageScheduleInfo *scheduleInfo;
 @property(nonatomic, strong) UAInAppMessageScheduleInfo *scheduleInfoWithTagGroups;
-@property (nonatomic, strong) id mockPush;
+@property (nonatomic, strong) id mockChannel;
 @property (nonatomic, strong) id mockActionRunner;
 @property (nonatomic, strong) UATestDispatcher *testDispatcher;
 @property (nonatomic, strong) id mockTagGroupsLookupManager;
@@ -61,7 +61,7 @@
     self.mockAdapter = [self mockForProtocol:@protocol(UAInAppMessageAdapterProtocol)];
     self.mockAutomationEngine = [self mockForClass:[UAAutomationEngine class]];
 
-    self.mockPush = [self mockForClass:[UAPush class]];
+    self.mockChannel = [self mockForClass:[UAChannel class]];
     self.mockActionRunner = [self mockForClass:[UAActionRunner class]];
     self.testDispatcher = [UATestDispatcher testDispatcher];
     self.mockTagGroupsLookupManager = [self mockForClass:[UATagGroupsLookupManager class]];
@@ -94,7 +94,7 @@
                                                tagGroupsLookupManager:self.mockTagGroupsLookupManager
                                                     remoteDataManager:self.mockRemoteDataManager
                                                             dataStore:self.dataStore
-                                                                 push:self.mockPush
+                                                              channel:self.mockChannel
                                                            dispatcher:self.testDispatcher
                                                    displayCoordinator:self.mockDefaultDisplayCoordinator
                                                          assetManager:self.mockAssetManager

@@ -24,6 +24,8 @@
 #import "UAComponentDisabler+Internal.h"
 #import "UATagGroupsRegistrar+Internal.h"
 #import "UATagGroupsMutationHistory+Internal.h"
+#import "UAChannel+Internal.h"
+#import "UAChannelRegistrar+Internal.h"
 
 #if !TARGET_OS_TV
 #import "UAInbox+Internal.h"
@@ -102,12 +104,25 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 
         UATagGroupsMutationHistory *tagGroupsMutationHistory = [UATagGroupsMutationHistory historyWithDataStore:dataStore];
 
+        UAChannelRegistrar *channelRegistrar = [UAChannelRegistrar channelRegistrarWithConfig:config dataStore:dataStore];
+
         UATagGroupsRegistrar *tagGroupsRegistrar = [UATagGroupsRegistrar tagGroupsRegistrarWithConfig:config
                                                                                             dataStore:dataStore
                                                                                       mutationHistory:tagGroupsMutationHistory];
 
-        self.sharedPush = [UAPush pushWithConfig:config dataStore:dataStore tagGroupsRegistrar:tagGroupsRegistrar];
-        self.sharedNamedUser = [UANamedUser namedUserWithPush:self.sharedPush config:config dataStore:dataStore tagGroupsRegistrar:tagGroupsRegistrar];
+        self.sharedChannel = [UAChannel channelWithDataStore:dataStore
+                                                      config:config
+                                          notificationCenter:[NSNotificationCenter defaultCenter]
+                                            channelRegistrar:channelRegistrar
+                                          tagGroupsRegistrar:tagGroupsRegistrar];
+
+        self.sharedPush = [UAPush pushWithConfig:config dataStore:dataStore channel:self.sharedChannel];
+        self.sharedChannel.pushProviderDelegate = self.sharedPush;
+
+        self.sharedNamedUser = [UANamedUser namedUserWithChannel:self.sharedChannel
+                                                          config:config
+                                                       dataStore:dataStore
+                                              tagGroupsRegistrar:tagGroupsRegistrar];
 
         self.sharedAnalytics = [UAAnalytics analyticsWithConfig:config dataStore:dataStore];
         self.whitelist = [UAWhitelist whitelistWithConfig:config];
@@ -127,18 +142,21 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
                                                          tagGroupsMutationHistory:tagGroupsMutationHistory
                                                                 remoteDataManager:self.sharedRemoteDataManager
                                                                         dataStore:dataStore
-                                                                             push:self.sharedPush
+                                                                          channel:self.sharedChannel
                                                                         analytics:self.sharedAnalytics
                                                                      sceneTracker:[UASceneTracker sceneObserver:[NSNotificationCenter defaultCenter]]];
 
         self.sharedLegacyInAppMessaging = [UALegacyInAppMessaging inAppMessagingWithAnalytics:self.sharedAnalytics dataStore:dataStore inAppMessageManager:self.sharedInAppMessageManager];
         // Message center not supported on tvOS
-        self.sharedInboxUser = [UAUser userWithPush:self.sharedPush config:config dataStore:dataStore];
+        self.sharedInboxUser = [UAUser userWithChannel:self.sharedChannel config:config dataStore:dataStore];
         self.sharedInbox = [UAInbox inboxWithUser:self.sharedInboxUser config:config dataStore:dataStore];
         // Not supporting Javascript in tvOS
         self.actionJSDelegate = [[UAActionJSDelegate alloc] init];
         // UIPasteboard is not available in tvOS
-        self.channelCapture = [UAChannelCapture channelCaptureWithConfig:config push:self.sharedPush dataStore:self.dataStore];
+        self.channelCapture = [UAChannelCapture channelCaptureWithConfig:config
+                                                                 channel:self.sharedChannel
+                                                    pushProviderDelegate:self.sharedPush
+                                                               dataStore:self.dataStore];
 
         if ([UAirship resources]) {
             self.sharedMessageCenter = [UAMessageCenter messageCenterWithConfig:self.config];
@@ -231,7 +249,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
             // on a different device.
             UA_LDEBUG(@"Device ID changed.");
 
-            [sharedAirship_.sharedPush resetChannel];
+            [sharedAirship_.sharedChannel reset];
 #if !TARGET_OS_TV
             if (runtimeConfig.clearUserOnAppRestore) {
                 [sharedAirship_.sharedInboxUser resetUser];
@@ -363,6 +381,10 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 
 + (UAirship *)shared {
     return sharedAirship_;
+}
+
++ (UAChannel *)channel {
+    return sharedAirship_.sharedChannel;
 }
 
 + (UAPush *)push {

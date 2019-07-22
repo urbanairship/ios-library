@@ -3,6 +3,7 @@
 #import "UADeviceRegistrationEvent+Internal.h"
 #import "UAEvent+Internal.h"
 #import "UAPush.h"
+#import "UAChannel.h"
 #import "UAUser.h"
 #import "UAirship.h"
 
@@ -17,7 +18,7 @@
         [data setValue:[UAirship push].deviceToken forKey:@"device_token"];
     }
 
-    [data setValue:[UAirship push].channelID forKey:@"channel_id"];
+    [data setValue:[UAirship channel].identifier forKey:@"channel_id"];
 
     event.data = [data mutableCopy];
     return event;

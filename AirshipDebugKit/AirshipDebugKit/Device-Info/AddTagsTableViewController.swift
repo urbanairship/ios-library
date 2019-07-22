@@ -43,7 +43,7 @@ class AddTagsTableViewController: UITableViewController, UITextFieldDelegate {
         
         self.view.endEditing(true)
         
-        UAirship.push().addTag(textField.text!)
+        UAirship.channel().addTag(textField.text!)
         
         UAirship.push().updateRegistration()
 

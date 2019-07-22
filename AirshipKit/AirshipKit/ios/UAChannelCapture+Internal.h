@@ -1,6 +1,8 @@
 /* Copyright Airship and Contributors */
 
 #import "UAChannelCapture.h"
+#import "UAPushProviderDelegate.h"
+#import "UAChannel.h"
 
 @class UAPreferenceDataStore;
 
@@ -21,26 +23,30 @@ extern NSString *const UAChannelCaptureEnabledKey;
  * Factory method to create the UAChannelCapture.
  *
  * @param config The Airship config.
- * @param push The UAPush instance.
+ * @param channel The channel.
+ * @param pushProviderDelegate The push provider delegate.
  * @param dataStore The UAPreferenceDataStore instance.
  *
  * @return A channel capture instance.
  */
 + (instancetype)channelCaptureWithConfig:(UARuntimeConfig *)config
-                                    push:(UAPush *)push
+                                 channel:(UAChannel *)channel
+                    pushProviderDelegate:(id<UAPushProviderDelegate>)pushProviderDelegate
                                dataStore:(UAPreferenceDataStore *)dataStore;
 
 /**
  * Factory method to create the UAChannelCapture. Used for testing.
  *
  * @param config The Airship config.
- * @param push The UAPush instance.
+ * @param channel The channel.
+ * @param pushProviderDelegate The push provider delegate.
  * @param dataStore The UAPreferenceDataStore instance.
  * @param notificationCenter The notification center.
  * @return A channel capture instance.
  */
 + (instancetype)channelCaptureWithConfig:(UARuntimeConfig *)config
-                                    push:(UAPush *)push
+                                 channel:(UAChannel *)channel
+                    pushProviderDelegate:(id<UAPushProviderDelegate>)pushProviderDelegate
                                dataStore:(UAPreferenceDataStore *)dataStore
                       notificationCenter:(NSNotificationCenter *)notificationCenter;
 

@@ -12,16 +12,11 @@
 
 NSTimeInterval const k24HoursInSeconds = 24 * 60 * 60;
 
-NSString *const UAPushChannelIDKey = @"UAChannelID";
+NSString *const UAChannelRegistrarChannelIDKey = @"UAChannelID";
 NSString *const UALastSuccessfulUpdateKey = @"last-update-key";
 NSString *const UALastSuccessfulPayloadKey = @"payload-key";
 
 @interface UAChannelRegistrar ()
-
-/**
- * The UAChannelRegistrarDelegate delegate.
- */
-@property (nonatomic, weak, nullable) id<UAChannelRegistrarDelegate> delegate;
 
 /**
  * The preference data store.
@@ -80,7 +75,6 @@ UARuntimeConfig *config;
 @implementation UAChannelRegistrar
 
 - (id)initWithDataStore:(UAPreferenceDataStore *)dataStore
-               delegate:(id<UAChannelRegistrarDelegate>)delegate
        channelAPIClient:(UAChannelAPIClient *)channelAPIClient
                    date:(UADate *)date
              dispatcher:(UADispatcher *)dispatcher
@@ -88,7 +82,6 @@ UARuntimeConfig *config;
     self = [super init];
     if (self) {
         self.dataStore = dataStore;
-        self.delegate = delegate;
         self.channelAPIClient = channelAPIClient;
         self.date = date;
         self.dispatcher = dispatcher;
@@ -102,10 +95,8 @@ UARuntimeConfig *config;
 }
 
 + (instancetype)channelRegistrarWithConfig:(UARuntimeConfig *)config
-                                 dataStore:(UAPreferenceDataStore *)dataStore
-                                  delegate:(id<UAChannelRegistrarDelegate>)delegate {
+                                 dataStore:(UAPreferenceDataStore *)dataStore {
     return [[self alloc] initWithDataStore:dataStore
-                                  delegate:delegate
                           channelAPIClient:[UAChannelAPIClient clientWithConfig:config]
                                       date:[[UADate alloc] init]
                                 dispatcher:[UADispatcher mainDispatcher]
@@ -115,7 +106,6 @@ UARuntimeConfig *config;
 // Constructor for unit tests
 + (instancetype)channelRegistrarWithConfig:(UARuntimeConfig *)config
                                  dataStore:(UAPreferenceDataStore *)dataStore
-                                  delegate:(id<UAChannelRegistrarDelegate>)delegate
                                  channelID:(NSString *)channelID
                           channelAPIClient:(UAChannelAPIClient *)channelAPIClient
                                       date:(UADate *)date
@@ -123,7 +113,6 @@ UARuntimeConfig *config;
                                application:(UIApplication *)application {
 
     UAChannelRegistrar *channelRegistrar =  [[self alloc] initWithDataStore:dataStore
-                                                                   delegate:delegate
                                                            channelAPIClient:channelAPIClient
                                                                        date:date
                                                                  dispatcher:dispatcher
@@ -184,7 +173,7 @@ UARuntimeConfig *config;
     [self cancelAllRequests];
 
     UA_LDEBUG(@"Clearing previous channel.");
-    [self.dataStore removeObjectForKey:UAPushChannelIDKey];
+    [self.dataStore removeObjectForKey:UAChannelRegistrarChannelIDKey];
 
     [self registerForcefully:YES];
 }
@@ -335,7 +324,7 @@ UARuntimeConfig *config;
 /// @name Computed properties (stored in preference datastore)
 ///---------------------------------------------------------------------------------------
 - (void)setChannelID:(NSString *)channelID {
-    [self.dataStore setValue:channelID forKey:UAPushChannelIDKey];
+    [self.dataStore setValue:channelID forKey:UAChannelRegistrarChannelIDKey];
     // Log the channel ID at error level, but without logging
     // it as an error.
     if (uaLogLevel >= UALogLevelError) {
@@ -344,7 +333,7 @@ UARuntimeConfig *config;
 }
 
 - (NSString *)channelID {
-    return [self.dataStore stringForKey:UAPushChannelIDKey];
+    return [self.dataStore stringForKey:UAChannelRegistrarChannelIDKey];
 }
 
 - (UAChannelRegistrationPayload *)lastSuccessfulPayload {

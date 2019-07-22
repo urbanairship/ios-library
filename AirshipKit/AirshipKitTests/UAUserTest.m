@@ -16,7 +16,7 @@
 @property (nonatomic, strong) NSNotificationCenter *notificationCenter;
 @property (nonatomic, strong) UATestDispatcher *testDispatcher;
 
-@property (nonatomic, strong) id mockPush;
+@property (nonatomic, strong) id mockChannel;
 @property (nonatomic, strong) id mockUserClient;
 @property (nonatomic, strong) id mockKeychainUtils;
 @property (nonatomic, strong) id mockApplication;
@@ -30,7 +30,7 @@
     [[[NSBundle mainBundle] infoDictionary] setValue:@"someBundleID" forKey:@"CFBundleIdentifier"];
     self.mockKeychainUtils = [self mockForClass:[UAKeychainUtils class]];
 
-    self.mockPush = [self mockForClass:[UAPush class]];
+    self.mockChannel = [self mockForClass:[UAChannel class]];
     self.mockUserClient = [self mockForClass:[UAUserAPIClient class]];
     self.mockApplication = [self mockForClass:[UIApplication class]];
     [[[self.mockApplication stub] andReturn:self.mockApplication] sharedApplication];
@@ -39,13 +39,13 @@
 
     self.testDispatcher = [UATestDispatcher testDispatcher];
 
-    self.user = [UAUser userWithPush:self.mockPush
-                              config:self.config
-                           dataStore:self.dataStore
-                              client:self.mockUserClient
-                  notificationCenter:self.notificationCenter
-                         application:self.mockApplication
-                          dispatcher:self.testDispatcher];
+    self.user = [UAUser userWithChannel:self.mockChannel
+                                 config:self.config
+                              dataStore:self.dataStore
+                                 client:self.mockUserClient
+                     notificationCenter:self.notificationCenter
+                            application:self.mockApplication
+                             dispatcher:self.testDispatcher];
  }
 
 - (void)testDefaultUser {
@@ -75,7 +75,7 @@
 
     UAUserData *userData = [UAUserData dataWithUsername:@"userName" password:@"password" url:@"http://url.com"];
 
-    [[[self.mockPush stub] andReturn:@"some-channel"] channelID];
+    [[[self.mockChannel stub] andReturn:@"some-channel"] identifier];
 
     void (^andDoBlock)(NSInvocation *) = ^(NSInvocation *invocation) {
         void *arg;
@@ -115,7 +115,7 @@
  * Test createUser when the request fails
  */
 -(void)testCreateUserFailed {
-    [[[self.mockPush stub] andReturn:@"some-channel"] channelID];
+    [[[self.mockChannel stub] andReturn:@"some-channel"] identifier];
 
     __block UAUserAPIClientFailureBlock failureBlock;
 
@@ -169,7 +169,7 @@
 }
 
 -(void)setupForUpdateUserTest:(XCTestExpectation *)updateCalledExpectation {
-    [[[self.mockPush stub] andReturn:@"some-channel"] channelID];
+    [[[self.mockChannel stub] andReturn:@"some-channel"] identifier];
 
     // Set up a default user
     self.user.userData = [UAUserData dataWithUsername:@"username" password:@"password" url:@"url"];
@@ -220,7 +220,7 @@
  * Test observing channel created notifications.
  */
 -(void)testObserveChannelCreated {
-    [[[self.mockPush stub] andReturn:@"some-channel"] channelID];
+    [[[self.mockChannel stub] andReturn:@"some-channel"] identifier];
 
     // Set up a default user
     self.user.userData = [UAUserData dataWithUsername:@"username" password:@"password" url:@"url"];

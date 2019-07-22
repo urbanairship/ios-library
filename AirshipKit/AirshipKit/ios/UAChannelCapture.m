@@ -3,6 +3,8 @@
 #import "UAChannelCapture.h"
 #import "NSString+UALocalizationAdditions.h"
 #import "UAirship.h"
+#import "UAChannel.h"
+#import "UAPushProviderDelegate.h"
 #import "UAPush+Internal.h"
 #import "UARuntimeConfig.h"
 #import "UA_Base64.h"
@@ -13,7 +15,8 @@
 NSString *const UAChannelCaptureEnabledKey = @"UAChannelCaptureEnabled";
 
 @interface UAChannelCapture()
-@property (nonatomic, strong) UAPush *push;
+@property (nonatomic, strong) UAChannel *channel;
+@property (nonatomic, strong) id<UAPushProviderDelegate> pushProviderDelegate;
 @property (nonatomic, strong) UARuntimeConfig *config;
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 @property bool enableChannelCapture;
@@ -25,14 +28,16 @@ NSString *const UAChannelBaseURL = @"https://go.urbanairship.com/";
 NSString *const UAChannelPlaceHolder = @"CHANNEL";
 
 - (instancetype)initWithConfig:(UARuntimeConfig *)config
-                          push:(UAPush *)push
+                       channel:(UAChannel *)channel
+          pushProviderDelegate:(id<UAPushProviderDelegate>)pushProviderDelegate
                      dataStore:(UAPreferenceDataStore *)dataStore
             notificationCenter:(NSNotificationCenter *)notificationCenter {
 
     self = [super init];
     if (self) {
         self.config = config;
-        self.push = push;
+        self.channel = channel;
+        self.pushProviderDelegate = pushProviderDelegate;
         self.dataStore = dataStore;
 
         if (config.channelCaptureEnabled) {
@@ -49,16 +54,26 @@ NSString *const UAChannelPlaceHolder = @"CHANNEL";
 }
 
 + (instancetype)channelCaptureWithConfig:(UARuntimeConfig *)config
-                                    push:(UAPush *)push
+                                 channel:(UAChannel *)channel
+                    pushProviderDelegate:(id<UAPushProviderDelegate>)pushProviderDelegate
                                dataStore:(UAPreferenceDataStore *)dataStore {
-    return [[UAChannelCapture alloc] initWithConfig:config push:push dataStore:dataStore notificationCenter:[NSNotificationCenter defaultCenter]];
+    return [[UAChannelCapture alloc] initWithConfig:config
+                                            channel:channel
+                               pushProviderDelegate:pushProviderDelegate
+                                          dataStore:dataStore
+                                 notificationCenter:[NSNotificationCenter defaultCenter]];
 }
 
 + (instancetype)channelCaptureWithConfig:(UARuntimeConfig *)config
-                                    push:(UAPush *)push
+                                 channel:(UAChannel *)channel
+                    pushProviderDelegate:(id<UAPushProviderDelegate>)pushProviderDelegate
                                dataStore:(UAPreferenceDataStore *)dataStore
                       notificationCenter:(NSNotificationCenter *)notificationCenter {
-    return [[UAChannelCapture alloc] initWithConfig:config push:push dataStore:dataStore notificationCenter:notificationCenter];
+    return [[UAChannelCapture alloc] initWithConfig:config
+                                            channel:channel
+                               pushProviderDelegate:pushProviderDelegate
+                                          dataStore:dataStore
+                                 notificationCenter:notificationCenter];
 }
 
 - (void)enable:(NSTimeInterval)duration {
@@ -80,11 +95,11 @@ NSString *const UAChannelPlaceHolder = @"CHANNEL";
  * Checks the clipboard for the token and displays an alert if the token is available.
  */
 - (void)checkClipboard {
-    if (!self.push.channelID || !self.enableChannelCapture) {
+    if (!self.channel.identifier || !self.enableChannelCapture) {
         return;
     }
 
-    if ([self.push backgroundPushNotificationsAllowed]) {
+    if (self.pushProviderDelegate.backgroundPushNotificationsAllowed) {
         NSDate *enabledUntilDate = [self.dataStore objectForKey:UAChannelCaptureEnabledKey];
         if (!enabledUntilDate || [enabledUntilDate compare:[NSDate date]] == NSOrderedAscending) {
             return;
@@ -125,7 +140,7 @@ NSString *const UAChannelPlaceHolder = @"CHANNEL";
                                                                                      withString:UAChannelBaseURL];
 
             urlString = [urlString stringByReplacingOccurrencesOfString:UAChannelPlaceHolder
-                                                             withString:self.push.channelID];
+                                                             withString:self.channel.identifier];
 
             urlString = [urlString stringByTrimmingCharactersInSet:
                          [NSCharacterSet whitespaceAndNewlineCharacterSet]];
@@ -146,7 +161,7 @@ NSString *const UAChannelPlaceHolder = @"CHANNEL";
 
 
     UIAlertController *controller = [UIAlertController alertControllerWithTitle:[@"ua_channel_id" localizedStringWithTable:@"UrbanAirship" defaultValue:@"Channel ID"]
-                                                                        message:self.push.channelID
+                                                                        message:self.channel.identifier
                                                                  preferredStyle:UIAlertControllerStyleAlert];
 
     UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:[@"ua_cancel" localizedStringWithTable:@"UrbanAirship" defaultValue:@"Cancel"]
@@ -155,7 +170,7 @@ NSString *const UAChannelPlaceHolder = @"CHANNEL";
 
     [controller addAction:cancelAction];
 
-    NSString *channelID = self.push.channelID;
+    NSString *channelID = self.channel.identifier;
     UIAlertAction *copyAction  = [UIAlertAction actionWithTitle:[@"ua_notification_button_copy" localizedStringWithTable:@"UrbanAirship" defaultValue:@"Copy"]
                                                           style:UIAlertActionStyleDefault
                                                         handler:^(UIAlertAction *action) {

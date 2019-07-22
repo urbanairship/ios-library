@@ -12,7 +12,8 @@
 @property(nonatomic, strong) UAChannelCapture *channelCapture;
 @property(nonatomic, strong) NSNotificationCenter *notificationCenter;
 
-@property(nonatomic, strong) id mockPush;
+@property(nonatomic, strong) id mockChannel;
+@property(nonatomic, strong) id mockPushProviderDelegate;
 @property(nonatomic, strong) id mockPasteboard;
 @property(nonatomic, strong) id mockApplication;
 @property(nonatomic, strong) id mockWindow;
@@ -24,8 +25,10 @@
 - (void)setUp {
     [super setUp];
 
-    self.mockPush = [self mockForClass:[UAPush class]];
-    [[[self.mockPush stub] andReturn:@"pushChannelID"] channelID];
+    self.mockChannel = [self mockForClass:[UAChannel class]];
+    [[[self.mockChannel stub] andReturn:@"pushChannelID"] identifier];
+
+    self.mockPushProviderDelegate = [self mockForProtocol:@protocol(UAPushProviderDelegate)];
 
     self.mockPasteboard = [self mockForClass:[UIPasteboard class]];
     [[[self.mockPasteboard stub] andReturn:self.mockPasteboard] generalPasteboard];
@@ -41,13 +44,14 @@
     self.notificationCenter = [[NSNotificationCenter alloc] init];
 
     self.channelCapture = [UAChannelCapture channelCaptureWithConfig:self.config
-                                                                push:self.mockPush
+                                                             channel:self.mockChannel
+                                                pushProviderDelegate:self.mockPushProviderDelegate
                                                            dataStore:self.dataStore
                                                   notificationCenter:self.notificationCenter];
 }
 
 - (void)tearDown {
-    [self.mockPush stopMocking];
+    [self.mockChannel stopMocking];
     [self.mockRootViewController stopMocking];
     [self.mockWindow stopMocking];
     [self.mockPasteboard stopMocking];
@@ -65,7 +69,7 @@
  */
 - (void)testChannelCapture {
     [self.channelCapture enable:1000];
-    [[[self.mockPush stub] andReturnValue:@(YES)] backgroundPushNotificationsAllowed];
+    [[[self.mockPushProviderDelegate stub] andReturnValue:@(YES)] backgroundPushNotificationsAllowed];
     [self verifyChannelCaptureDisplayedWithUrl:@"oh/hi?channel=CHANNEL"];
 }
 
@@ -74,7 +78,7 @@
  * Test channel capture tool always works when backgorundPushNotificationsAllowed is NO.
  */
 - (void)testChannelCaptureToolBackgroundRefreshDisabled {
-    [[[self.mockPush stub] andReturnValue:@(NO)] backgroundPushNotificationsAllowed];
+    [[[self.mockPushProviderDelegate stub] andReturnValue:@(NO)] backgroundPushNotificationsAllowed];
     [self verifyChannelCaptureDisplayedWithUrl:@"oh/hi?channel=CHANNEL"];
 }
 
@@ -83,7 +87,7 @@
  */
 - (void)testChannelCaptureNoTokenURL {
     [self.channelCapture enable:1000];
-    [[[self.mockPush stub] andReturnValue:@(NO)] backgroundPushNotificationsAllowed];
+    [[[self.mockPushProviderDelegate stub] andReturnValue:@(NO)] backgroundPushNotificationsAllowed];
     [self verifyChannelCaptureDisplayedWithUrl:nil];
 }
 

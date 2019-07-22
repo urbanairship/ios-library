@@ -6,6 +6,7 @@
 #import "UAUtils+Internal.h"
 #import "UAirship.h"
 #import "UAPush+Internal.h"
+#import "UAChannel.h"
 #import "UAUser.h"
 #import "NSJSONSerialization+UAAdditions.h"
 #import "UAJSONSerialization+Internal.h"
@@ -85,7 +86,7 @@
         [builder setValue:[[NSLocale autoupdatingCurrentLocale] objectForKey: NSLocaleVariantCode] forHeader:@"X-UA-Locale-Variant"];
 
         // Airship identifiers
-        [builder setValue:[UAirship push].channelID forHeader:@"X-UA-Channel-ID"];
+        [builder setValue:[UAirship channel].identifier forHeader:@"X-UA-Channel-ID"];
         [builder setValue:self.config.appKey forHeader:@"X-UA-App-Key"];
 
         // SDK Version

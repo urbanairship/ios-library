@@ -2,10 +2,11 @@
 
 #import "UAPush.h"
 #import "UAirship.h"
-#import "UAChannelRegistrar+Internal.h"
 #import "UAAPNSRegistrationProtocol+Internal.h"
 #import "UAAPNSRegistration+Internal.h"
 #import "UAComponent+Internal.h"
+#import "UAChannel+Internal.h"
+#import "UADispatcher+Internal.h"
 
 @class UAPreferenceDataStore;
 @class UARuntimeConfig;
@@ -36,6 +37,9 @@ extern NSString *const UAPushAliasSettingsKey;
 
 /**
  * Tags data store key.
+ *
+ * Note: This should only be used for migration purposes, as
+ * tags are now handled directly by UAChannel.
  */
 extern NSString *const UAPushTagsSettingsKey;
 
@@ -70,26 +74,16 @@ extern NSString *const UAPushQuietTimeStartKey;
 extern NSString *const UAPushQuietTimeEndKey;
 
 /**
- * If channel creation should occur on foreground data store key.
- */
-extern NSString *const UAPushChannelCreationOnForeground;
-
-/**
  * If push enabled settings have been migrated data store key.
  */
 extern NSString *const UAPushEnabledSettingsMigratedKey;
-
-/**
- * Channel ID data store key.
- */
-extern NSString *const UAPushChannelIDKey;
 
 /**
  * Old push enabled key.
  */
 extern NSString *const UAPushEnabledKey;
 
-@interface UAPush () <UAChannelRegistrarDelegate, UAAPNSRegistrationDelegate>
+@interface UAPush () <UAAPNSRegistrationDelegate, UAPushProviderDelegate>
 
 ///---------------------------------------------------------------------------------------
 /// @name Push Internal Properties
@@ -99,19 +93,6 @@ extern NSString *const UAPushEnabledKey;
  * Device token as a string.
  */
 @property (nonatomic, copy, nullable) NSString *deviceToken;
-
-/**
- * Allows disabling channel registration before a channel is created.  Channel registration will resume
- * when this flag is set to `YES`.
- *
- * Set this to `NO` to disable channel registration. Defaults to `YES`.
- */
-@property (nonatomic, assign, getter=isChannelCreationEnabled) BOOL channelCreationEnabled;
-
-/**
- * The UAChannelRegistrar that handles registering the device with Airship.
- */
-@property (nonatomic, strong) UAChannelRegistrar *channelRegistrar;
 
 /**
  * Notification that launched the application.
@@ -164,19 +145,18 @@ extern NSString *const UAPushEnabledKey;
  * Factory method to create a push instance.
  * @param config The Airship config
  * @param dataStore The preference data store.
- * @param tagGroupsregistrar The tag groups registrar.
+ * @param channel The channel.
  * @return A new push instance.
  */
 + (instancetype)pushWithConfig:(UARuntimeConfig *)config
                      dataStore:(UAPreferenceDataStore *)dataStore
-            tagGroupsRegistrar:(UATagGroupsRegistrar *)tagGroupsregistrar;
-
+                       channel:(UAChannel *)channel;
 
 /**
  * Factory method to create a push instance. For testing
  * @param config The Airship config
  * @param dataStore The preference data store.
- * @param tagGroupsregistrar The tag groups registrar.
+ * @param channel The channel.
  * @param notificationCenter The notification center.
  * @param pushRegistration The push registration instance.
  * @param application The application.
@@ -185,7 +165,7 @@ extern NSString *const UAPushEnabledKey;
  */
 + (instancetype)pushWithConfig:(UARuntimeConfig *)config
                      dataStore:(UAPreferenceDataStore *)dataStore
-            tagGroupsRegistrar:(UATagGroupsRegistrar *)tagGroupsregistrar
+                       channel:(UAChannel *)channel
             notificationCenter:(NSNotificationCenter *)notificationCenter
               pushRegistration:(id<UAAPNSRegistrationProtocol>)pushRegistration
                    application:(UIApplication *)application
@@ -215,16 +195,6 @@ extern NSString *const UAPushEnabledKey;
  */
 - (void)applicationBackgroundRefreshStatusChanged;
 #endif
-
-/**
- * Registers or updates the current registration with an API call. If push notifications are
- * not enabled, this unregisters the device token.
- *
- * Add a `UARegistrationDelegate` to `UAPush` to receive success and failure callbacks.
- *
- * @param forcefully Tells the device api client to do any device api call forcefully.
- */
-- (void)updateChannelRegistrationForcefully:(BOOL)forcefully;
 
 /**
  * Returns YES if background push is enabled and configured for the device. Used
@@ -297,16 +267,6 @@ extern NSString *const UAPushEnabledKey;
  * @param error An NSError object that encapsulates information why registration did not succeed.
  */
 - (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error;
-
-/**
- * Called to update the tag groups for the current channel.
- */
-- (void)updateChannelTagGroups;
-
-/**
- * Removes the existing channel and causes the registrar to create a new channel on next registration.
- */
-- (void)resetChannel;
 
 @end
 

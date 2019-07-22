@@ -30,7 +30,7 @@ class PushSettingsViewController: UITableViewController, UARegistrationDelegate 
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(PushSettingsViewController.refreshView),
-            name: NSNotification.Name("channelIDUpdated"),
+            name: NSNotification.Name(UAChannelUpdatedEvent),
             object: nil);
 
         NotificationCenter.default.addObserver(
@@ -59,14 +59,14 @@ class PushSettingsViewController: UITableViewController, UARegistrationDelegate 
     }
 
     @objc func refreshView() {
-        channelIDCell?.detailTextLabel?.text = UAirship.push().channelID ?? "Not Set"
+        channelIDCell?.detailTextLabel?.text = UAirship.channel()?.identifier ?? "Not Set"
 
         analyticsEnabledCell.accessoryType = analytics ? .checkmark : .none
         locationEnabledCell.accessoryType = locationEnabled ? .checkmark : .none
 
         namedUserCell.detailTextLabel?.text = UAirship.namedUser().identifier ?? "Not Set"
-        tagsCell.detailTextLabel?.text = (UAirship.push().tags.count > 0) ?
-            UAirship.push().tags.joined(separator: ", ") : "Not Set"
+        tagsCell.detailTextLabel?.text = (UAirship.channel().tags.count > 0) ?
+            UAirship.channel().tags.joined(separator: ", ") : "Not Set"
     }
 
     override func tableView(_ tableView: UITableView, didUpdateFocusIn context: UITableViewFocusUpdateContext, with coordinator: UIFocusAnimationCoordinator) {

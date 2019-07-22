@@ -18,8 +18,8 @@ class AddTagsDetailViewController: UIViewController, UITextFieldDelegate, UITabl
 
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         guard let text = textField.text else { return false }
-        UAirship.push().addTag(text)
-        UAirship.push().updateRegistration()
+        UAirship.channel().addTag(text)
+        UAirship.channel().updateRegistration()
 
         tagsTableView.reloadData()
         refreshMasterView()
@@ -35,18 +35,18 @@ class AddTagsDetailViewController: UIViewController, UITextFieldDelegate, UITabl
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "tagCell")
 
-        cell?.textLabel?.text = UAirship.push().tags[indexPath.row]
+        cell?.textLabel?.text = UAirship.channel().tags[indexPath.row]
         cell?.detailTextLabel?.text = "Remove"
 
         return cell!
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return UAirship.push().tags.count
+        return UAirship.channel().tags.count
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        UAirship.push().removeTag(UAirship.push().tags[indexPath.row])
+        UAirship.channel().removeTag(UAirship.channel().tags[indexPath.row])
         tagsTableView.reloadData()
         refreshMasterView()
     }

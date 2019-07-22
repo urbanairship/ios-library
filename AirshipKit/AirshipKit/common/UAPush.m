@@ -5,13 +5,10 @@
 #import "UAPush+Internal.h"
 #import "UAirship+Internal.h"
 #import "UAAnalytics+Internal.h"
-#import "UADeviceRegistrationEvent+Internal.h"
 
 #import "UAUtils+Internal.h"
 #import "UAActionRegistry+Internal.h"
 #import "UAActionRunner+Internal.h"
-#import "UAChannelRegistrationPayload+Internal.h"
-#import "UAUser+Internal.h"
 #import "UAInteractiveNotificationEvent+Internal.h"
 #import "UANotificationCategories+Internal.h"
 #import "UANotificationCategory.h"
@@ -20,7 +17,6 @@
 #import "UANotificationCategory.h"
 #import "UATagUtils+Internal.h"
 #import "UAPushReceivedEvent+Internal.h"
-#import "UATagGroupsRegistrar+Internal.h"
 #import "UARegistrationDelegateWrapper+Internal.h"
 #import "UADispatcher+Internal.h"
 
@@ -41,7 +37,6 @@ NSString *const UAPushQuietTimeSettingsKey = @"UAPushQuietTime";
 NSString *const UAPushQuietTimeEnabledSettingsKey = @"UAPushQuietTimeEnabled";
 NSString *const UAPushTimeZoneSettingsKey = @"UAPushTimeZone";
 
-NSString *const UAPushChannelCreationOnForeground = @"UAPushChannelCreationOnForeground";
 NSString *const UAPushEnabledSettingsMigratedKey = @"UAPushEnabledSettingsMigrated";
 
 NSString *const UAPushTypesAuthorizedKey = @"UAPushTypesAuthorized";
@@ -58,17 +53,9 @@ NSString *const UAPushQuietTimeEndKey = @"end";
 // The default device tag group.
 NSString *const UAPushDefaultDeviceTagGroup = @"device";
 
-NSString *const UAChannelCreatedEvent = @"com.urbanairship.push.channel_created";
-NSString *const UAChannelUpdatedEvent = @"com.urbanairship.push.channel_updated";
-
 NSString *const UAReceivedNotificationResponseEvent = @"com.urbanairship.push.received_notification_response";
 NSString *const UAReceivedForegroundNotificationEvent = @"com.urbanairship.push.received_foreground_notification";
 NSString *const UAReceivedBackgroundNotificationEvent = @"com.urbanairship.push.received_background_notification";
-
-NSString *const UAChannelCreatedEventChannelKey = @"com.urbanairship.push.channel_id";
-NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.existing";
-
-NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channel_id";
 
 // The foreground presentation options that can be defined from API or dashboard
 NSString *const UAPresentationOptionBadge = @"badge";
@@ -81,12 +68,12 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
 @interface UAPush()
 @property (nonatomic, strong) UADispatcher *dispatcher;
 @property (nonatomic, strong) UIApplication *application;
-@property (nonatomic, strong) UATagGroupsRegistrar *tagGroupsRegistrar;
 @property (nonatomic, strong) NSNotificationCenter *notificationCenter;
 @property (nonatomic, strong) UARegistrationDelegateWrapper *registrationDelegateWrapper;
 @property (nonatomic, readonly) BOOL isRegisteredForRemoteNotifications;
 @property (nonatomic, readonly) BOOL isBackgroundRefreshStatusAvailable;
 @property (nonatomic, strong) UARuntimeConfig *config;
+@property (nonatomic, strong) UAChannel *channel;
 
 @end
 
@@ -94,7 +81,7 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
 
 - (instancetype)initWithConfig:(UARuntimeConfig *)config
                      dataStore:(UAPreferenceDataStore *)dataStore
-            tagGroupsRegistrar:(UATagGroupsRegistrar *)tagGroupsRegistrar
+                        channel:(UAChannel *)channel
             notificationCenter:(NSNotificationCenter *)notificationCenter
               pushRegistration:(id<UAAPNSRegistrationProtocol>)pushRegistration
                    application:(UIApplication *)application
@@ -106,13 +93,13 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
         self.application = application;
         self.dispatcher = dispatcher;
         self.dataStore = dataStore;
+        self.channel = channel;
         self.notificationCenter = notificationCenter;
         self.registrationDelegateWrapper = [[UARegistrationDelegateWrapper alloc] init];
 
         self.pushRegistration = pushRegistration;
         self.pushRegistration.registrationDelegate = self;
 
-        self.channelTagRegistrationEnabled = YES;
         self.requireAuthorizationForDefaultCategories = YES;
         self.backgroundPushNotificationsEnabledByDefault = YES;
 
@@ -123,47 +110,11 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
         self.notificationOptions = self.notificationOptions|UANotificationOptionSound|UANotificationOptionAlert;
 #endif
 
-        self.channelRegistrar = [UAChannelRegistrar channelRegistrarWithConfig:config dataStore:dataStore delegate:self];
-
-        self.tagGroupsRegistrar = tagGroupsRegistrar;
-
-        // Check config to see if user wants to delay channel creation
-        // If channel ID exists or channel creation delay is disabled then channelCreationEnabled
-        if (self.channelID || !config.isChannelCreationDelayEnabled) {
-            self.channelCreationEnabled = YES;
-        } else {
-            UA_LDEBUG(@"Channel creation disabled.");
-            self.channelCreationEnabled = NO;
-        }
-
-        // Only for observing the first call to app foreground
-        [self.notificationCenter addObserver:self
-                                    selector:@selector(applicationDidBecomeActive)
-                                        name:UIApplicationDidBecomeActiveNotification
-                                      object:nil];
-
-        // Only for observing the first call to app background
-        [self.notificationCenter addObserver:self
-                                    selector:@selector(applicationDidEnterBackground)
-                                        name:UIApplicationDidEnterBackgroundNotification
-                                      object:nil];
-
-#if !TARGET_OS_TV    // UIApplicationBackgroundRefreshStatusDidChangeNotification not available on tvOS
-        [self.notificationCenter addObserver:self
-                                    selector:@selector(applicationBackgroundRefreshStatusChanged)
-                                        name:UIApplicationBackgroundRefreshStatusDidChangeNotification
-                                      object:nil];
-#endif
+        [self observeNotificationCenterEvents];
 
         // Do not remove migratePushSettings call from init. It needs to be run
         // prior to allowing the application to set defaults.
         [self migratePushSettings];
-
-        // Log the channel ID at error level, but without logging
-        // it as an error.
-        if (self.channelID && uaLogLevel >= UALogLevelError) {
-            NSLog(@"Channel ID: %@", self.channelID);
-        }
 
         // Register for remote notifications right away. This does not prompt for permissions to show notifications,
         // but starts the device token registration.
@@ -178,31 +129,61 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
 
 + (instancetype)pushWithConfig:(UARuntimeConfig *)config
                      dataStore:(UAPreferenceDataStore *)dataStore
-            tagGroupsRegistrar:(UATagGroupsRegistrar *)tagGroupsRegistrar {
+                       channel:(UAChannel *)channel {
     return [[self alloc] initWithConfig:config
-                                dataStore:dataStore
-                       tagGroupsRegistrar:tagGroupsRegistrar
-                       notificationCenter:[NSNotificationCenter defaultCenter]
-                         pushRegistration:[[UAAPNSRegistration alloc] init]
+                              dataStore:dataStore
+                                channel:channel
+                     notificationCenter:[NSNotificationCenter defaultCenter]
+                       pushRegistration:[[UAAPNSRegistration alloc] init]
                             application:[UIApplication sharedApplication]
                              dispatcher:[UADispatcher mainDispatcher]];
 }
 
 + (instancetype)pushWithConfig:(UARuntimeConfig *)config
                      dataStore:(UAPreferenceDataStore *)dataStore
-            tagGroupsRegistrar:(UATagGroupsRegistrar *)tagGroupsRegistrar
+                       channel:(UAChannel *)channel
             notificationCenter:(NSNotificationCenter *)notificationCenter
               pushRegistration:(id<UAAPNSRegistrationProtocol>)pushRegistration
                    application:(UIApplication *)application
                     dispatcher:(UADispatcher *)dispatcher {
 
     return [[self alloc] initWithConfig:config
-                                dataStore:dataStore
-                       tagGroupsRegistrar:tagGroupsRegistrar
-                       notificationCenter:notificationCenter
-                         pushRegistration:pushRegistration
+                              dataStore:dataStore
+                                channel:channel
+                     notificationCenter:notificationCenter
+                       pushRegistration:pushRegistration
                             application:application
                              dispatcher:dispatcher];
+}
+
+- (void)observeNotificationCenterEvents {
+    // Only for observing the first call to app foreground
+    [self.notificationCenter addObserver:self
+                                selector:@selector(applicationDidBecomeActive)
+                                    name:UIApplicationDidBecomeActiveNotification
+                                  object:nil];
+
+    // Only for observing the first call to app background
+    [self.notificationCenter addObserver:self
+                                selector:@selector(applicationDidEnterBackground)
+                                    name:UIApplicationDidEnterBackgroundNotification
+                                  object:nil];
+
+#if !TARGET_OS_TV    // UIApplicationBackgroundRefreshStatusDidChangeNotification not available on tvOS
+    [self.notificationCenter addObserver:self
+                                selector:@selector(applicationBackgroundRefreshStatusChanged)
+                                    name:UIApplicationBackgroundRefreshStatusDidChangeNotification
+                                  object:nil];
+#endif
+    [self.notificationCenter addObserver:self
+                                selector:@selector(channelUpdated:)
+                                    name:UAChannelUpdatedEvent
+                                  object:nil];
+
+    [self.notificationCenter addObserver:self
+                                selector:@selector(channelRegistrationFailed)
+                                    name:UAChannelRegistrationFailedEvent
+                                  object:nil];
 }
 
 - (void)updateAuthorizedNotificationTypes {
@@ -217,7 +198,7 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
         if (!self.config.requestAuthorizationToUseNotifications) {
             // if app is managing notification authorization update channel
             // registration in case notification authorization has changed
-            [self updateChannelRegistrationForcefully:NO];
+            [self.channel updateRegistration];
         }
 
     }];
@@ -234,7 +215,7 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
     if (![self.dataStore objectForKey:UAPushTypesAuthorizedKey] || [self.dataStore integerForKey:UAPushTypesAuthorizedKey] != authorizedSettings) {
 
         [self.dataStore setInteger:(NSInteger)authorizedSettings forKey:UAPushTypesAuthorizedKey];
-        [self updateRegistration];
+        [self.channel updateRegistration];
 
         [self.registrationDelegateWrapper notificationAuthorizedSettingsDidChange:authorizedSettings
                                                                     legacyOptions:[self legacyOptionsForAuthorizedSettings:authorizedSettings]];
@@ -289,8 +270,16 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
 #pragma mark -
 #pragma mark Get/Set Methods
 
+- (void)setChannelTagRegistrationEnabled:(BOOL)channelTagRegistrationEnabled {
+    self.channel.channelTagRegistrationEnabled = channelTagRegistrationEnabled;
+}
+
+- (BOOL)isChannelTagRegistrationEnabled {
+    return self.channel.channelTagRegistrationEnabled;
+}
+
 - (NSString *)channelID {
-    return self.channelRegistrar.channelID;
+    return self.channel.identifier;
 }
 
 - (BOOL)isAutobadgeEnabled {
@@ -311,22 +300,15 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
 }
 
 - (NSArray *)tags {
-    NSArray *currentTags = [self.dataStore objectForKey:UAPushTagsSettingsKey];
-    if (!currentTags) {
-        currentTags = [NSArray array];
-    }
-    return currentTags;
+    return self.channel.tags;
 }
 
 - (void)setTags:(NSArray *)tags {
-    [self.dataStore setObject:[UATagUtils normalizeTags:tags] forKey:UAPushTagsSettingsKey];
+    self.channel.tags = tags;
 }
 
 - (void)enableChannelCreation {
-    if (!self.channelCreationEnabled) {
-        self.channelCreationEnabled = YES;
-        [self updateRegistration];
-    }
+    [self.channel enableChannelCreation];
 }
 
 - (BOOL)userPushNotificationsEnabled {
@@ -346,8 +328,7 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
     [self.dataStore setBool:enabled forKey:UAUserPushNotificationsEnabledKey];
 
     if (enabled != previousValue) {
-        self.shouldUpdateAPNSRegistration = YES;
-        [self updateRegistration];
+        [self updateAPNSRegistration];
     }
 }
 
@@ -381,7 +362,7 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
     [self.dataStore setBool:enabled forKey:UABackgroundPushNotificationsEnabledKey];
 
     if (enabled != previousValue) {
-        [self updateRegistration];
+        [self.channel updateRegistration];
     }
 }
 
@@ -398,7 +379,7 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
     [self.dataStore setBool:enabled forKey:UAPushTokenRegistrationEnabledKey];
 
     if (enabled != previousValue) {
-        [self updateRegistration];
+        [self.channel updateRegistration];
     }
 }
 
@@ -500,53 +481,40 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
 #pragma mark Open APIs - Airship Registration Tags APIs
 
 - (void)addTag:(NSString *)tag {
-    [self addTags:[NSArray arrayWithObject:tag]];
+    [self.channel addTag:tag];
 }
 
 - (void)addTags:(NSArray *)tags {
-    NSMutableSet *updatedTags = [NSMutableSet setWithArray:self.tags];
-    [updatedTags addObjectsFromArray:tags];
-    [self setTags:[updatedTags allObjects]];
+    [self.channel addTags:tags];
 }
 
 - (void)removeTag:(NSString *)tag {
-    [self removeTags:[NSArray arrayWithObject:tag]];
+    [self.channel removeTag:tag];
 }
 
 - (void)removeTags:(NSArray *)tags {
-    NSMutableArray *mutableTags = [NSMutableArray arrayWithArray:self.tags];
-    [mutableTags removeObjectsInArray:tags];
-    [self.dataStore setObject:mutableTags forKey:UAPushTagsSettingsKey];
+    [self.channel removeTags:tags];
 }
 
 #pragma mark -
 #pragma mark Open APIs - Airship Tag Groups APIs
 
 - (void)addTags:(NSArray *)tags group:(NSString *)tagGroupID {
-    if (self.channelTagRegistrationEnabled && [UAPushDefaultDeviceTagGroup isEqualToString:tagGroupID]) {
-        UA_LERR(@"Unable to add tags %@ to device tag group when channelTagRegistrationEnabled is true.", [tags description]);
-        return;
-    }
-
-    [self.tagGroupsRegistrar addTags:tags group:tagGroupID type:UATagGroupsTypeChannel];
+    [self.channel addTags:tags group:tagGroupID];
 }
 
 - (void)removeTags:(NSArray *)tags group:(NSString *)tagGroupID {
-    if (self.channelTagRegistrationEnabled && [UAPushDefaultDeviceTagGroup isEqualToString:tagGroupID]) {
-        UA_LERR(@"Unable to remove tags %@ from device tag group when channelTagRegistrationEnabled is true.", [tags description]);
-        return;
-    }
-
-    [self.tagGroupsRegistrar removeTags:tags group:tagGroupID type:UATagGroupsTypeChannel];
+    [self.channel removeTags:tags group:tagGroupID];
 }
 
 - (void)setTags:(NSArray *)tags group:(NSString *)tagGroupID {
-    if (self.channelTagRegistrationEnabled && [UAPushDefaultDeviceTagGroup isEqualToString:tagGroupID]) {
-        UA_LERR(@"Unable to set tags %@ for device tag group when channelTagRegistrationEnabled is true.", [tags description]);
-        return;
-    }
+    [self.channel setTags:tags group:tagGroupID];
+}
 
-    [self.tagGroupsRegistrar setTags:tags group:tagGroupID type:UATagGroupsTypeChannel];
+#pragma mark Badges
+
+- (NSInteger)badgeNumber {
+    return [self.application applicationIconBadgeNumber];
 }
 
 - (void)setBadgeNumber:(NSInteger)badgeNumber {
@@ -562,15 +530,16 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
     // if the device token has already been set then
     // we are post-registration and will need to make
     // an update call
-    if (self.autobadgeEnabled && (self.deviceToken || self.channelID)) {
+    if (self.autobadgeEnabled && (self.deviceToken || self.channel.identifier)) {
         UA_LDEBUG(@"Sending autobadge update to Airship server.");
-        [self updateChannelRegistrationForcefully:YES];
+        [self.channel updateRegistrationForcefully:YES];
     }
 }
 
 - (void)resetBadge {
     [self setBadgeNumber:0];
 }
+
 
 #pragma mark -
 #pragma mark UIApplication State Observation
@@ -587,26 +556,12 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
     self.isForegrounded = YES;
 
     [self updateAuthorizedNotificationTypes];
-
-    if ([self.dataStore boolForKey:UAPushChannelCreationOnForeground]) {
-        UA_LTRACE(@"Application did become active. Updating registration.");
-        [self updateChannelRegistrationForcefully:NO];
-    }
 }
 
 - (void)applicationDidEnterBackground {
     self.isForegrounded = NO;
     
     self.launchNotificationResponse = nil;
-
-    // Set the UAPushChannelCreationOnForeground after first run
-    [self.dataStore setBool:YES forKey:UAPushChannelCreationOnForeground];
-
-    // Create a channel if we do not have a channel ID
-    if (!self.channelID) {
-        UA_LTRACE(@"Application entered the background without a channelID. Updating registration.");
-        [self updateChannelRegistrationForcefully:NO];
-    }
 
     UA_LTRACE(@"Application entered the background. Updating authorization.");
     [self updateAuthorizedNotificationTypes];
@@ -619,7 +574,7 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
     if (self.application.backgroundRefreshStatus == UIBackgroundRefreshStatusAvailable) {
         [self.application registerForRemoteNotifications];
     } else {
-        [self updateRegistration];
+        [self.channel updateRegistration];
     }
 }
 #endif
@@ -627,10 +582,10 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
     self.deviceToken = [UAUtils deviceTokenStringFromDeviceToken:deviceToken];
 
-    if (application.applicationState == UIApplicationStateBackground && self.channelID) {
+    if (application.applicationState == UIApplicationStateBackground && self.channel.identifier) {
         UA_LDEBUG(@"Skipping channel registration. The app is currently backgrounded and we already have a channel ID.");
     } else {
-        [self updateChannelRegistrationForcefully:NO];
+        [self.channel updateRegistration];
     }
 
     [self.registrationDelegateWrapper apnsRegistrationSucceededWithDeviceToken:deviceToken];
@@ -643,52 +598,6 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
 
 #pragma mark -
 #pragma mark Airship Registration Methods
-
-
-- (void)createChannelPayload:(void (^)(UAChannelRegistrationPayload *))completionHandler
-                  dispatcher:(nullable UADispatcher *)dispatcher{
-
-    UA_WEAKIFY(self)
-    [UAUtils getDeviceID:^(NSString *deviceID) {
-        UA_STRONGIFY(self)
-        UAChannelRegistrationPayload *payload = [[UAChannelRegistrationPayload alloc] init];
-
-        payload.deviceID = deviceID;
-
-        if (self.pushTokenRegistrationEnabled) {
-            payload.pushAddress = self.deviceToken;
-        }
-
-        payload.optedIn = [self userPushNotificationsAllowed];
-        payload.backgroundEnabled = [self backgroundPushNotificationsAllowed];
-
-        payload.setTags = self.channelTagRegistrationEnabled;
-        payload.tags = self.channelTagRegistrationEnabled ? [self.tags copy]: nil;
-
-        if (self.autobadgeEnabled) {
-            payload.badge = [NSNumber numberWithInteger:[self.application applicationIconBadgeNumber]];
-        } else {
-            payload.badge = nil;
-        }
-
-        if (self.timeZone.name && self.quietTimeEnabled) {
-            payload.quietTime = [self.quietTime copy];
-        }
-
-        payload.timeZone = self.timeZone.name;
-        payload.language = [[NSLocale autoupdatingCurrentLocale] objectForKey:NSLocaleLanguageCode];
-        payload.country = [[NSLocale autoupdatingCurrentLocale] objectForKey: NSLocaleCountryCode];
-
-#if !TARGET_OS_TV   // Inbox not supported on tvOS
-        [[UAirship inboxUser] getUserData:^(UAUserData *userData) {
-            payload.userID = userData.username;
-            completionHandler(payload);
-        } dispatcher:dispatcher];
-#else
-        completionHandler(payload);
-#endif
-    } dispatcher:dispatcher];
-}
 
 - (BOOL)isRegisteredForRemoteNotifications {
     __block BOOL registered;
@@ -743,46 +652,17 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
 }
 
 - (void)updateRegistration {
-    // Update channel tag groups
-    [self updateChannelTagGroups];
-
     // APNS registration will cause a channel registration
     if (self.shouldUpdateAPNSRegistration) {
         UA_LDEBUG(@"APNS registration is out of date, updating.");
         [self updateAPNSRegistration];
-    } else if (self.userPushNotificationsEnabled && !self.channelID) {
+    } else if (self.userPushNotificationsEnabled && !self.channel.identifier) {
         UA_LDEBUG(@"Push is enabled but we have not yet generated a channel ID. "
                   "Airship registration will automatically run when the device token is registered, "
                   "the next time the app is backgrounded, or the next time the app is foregrounded.");
     } else {
-        [self updateChannelRegistrationForcefully:NO];
+        [self.channel updateRegistration];
     }
-}
-
-- (void)updateChannelRegistrationForcefully:(BOOL)forcefully {
-    if (!self.componentEnabled) {
-        return;
-    }
-
-    // Only cancel in flight requests if the channel is already created
-    if (!self.channelCreationEnabled) {
-        UA_LDEBUG(@"Channel creation is currently disabled.");
-        return;
-    }
-    
-    [self.channelRegistrar registerForcefully:forcefully];
-}
-
-- (void)updateChannelTagGroups {
-    if (!self.componentEnabled) {
-        return;
-    }
-
-    if (!self.channelID) {
-        return;
-    }
-
-    [self.tagGroupsRegistrar updateTagGroupsForID:self.channelID type:UATagGroupsTypeChannel];
 }
 
 - (void)updateAPNSRegistration {
@@ -873,42 +753,16 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
                                                                                       status:status];
 }
 
-- (void)registrationSucceeded {
-    UA_LINFO(@"Channel registration updated successfully.");
+#pragma mark -
+#pragma mark Channel Registration Events
 
-    NSString *channelID = self.channelID;
-
-    if (!channelID) {
-        UA_LWARN(@"Channel ID is nil after successful registration.");
-        return;
-    }
-
-    [self.notificationCenter postNotificationName:UAChannelUpdatedEvent
-                                           object:self
-                                         userInfo:@{UAChannelUpdatedEventChannelKey: channelID}];
-
-    [self.registrationDelegateWrapper registrationSucceededForChannelID:self.channelID deviceToken:self.deviceToken];
+- (void)channelUpdated:(NSNotification *)notification {
+    NSString *channelID = notification.userInfo[UAChannelUpdatedEventChannelKey];
+    [self.registrationDelegateWrapper registrationSucceededForChannelID:channelID deviceToken:self.deviceToken];
 }
 
-- (void)registrationFailed {
-    UA_LINFO(@"Channel registration failed.");
-    [self.registrationDelegateWrapper registrationFailed];}
-
-- (void)channelCreated:(NSString *)channelID
-              existing:(BOOL)existing {
-
-    if (channelID) {
-        if (uaLogLevel >= UALogLevelError) {
-            NSLog(@"Created channel with ID: %@", channelID);
-        }
-
-        [self.notificationCenter postNotificationName:UAChannelCreatedEvent
-                                               object:self
-                                             userInfo:@{UAChannelCreatedEventChannelKey: channelID,
-                                                        UAChannelCreatedEventExistingKey: @(existing)}];
-    } else {
-        UA_LERR(@"Channel creation failed. Missing channelID: %@", channelID);
-    }
+- (void)channelRegistrationFailed {
+    [self.registrationDelegateWrapper registrationFailed];
 }
 
 #pragma mark -
@@ -1024,10 +878,8 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
 - (void)migratePushSettings {
     [self.dataStore migrateUnprefixedKeys:@[UAUserPushNotificationsEnabledKey, UABackgroundPushNotificationsEnabledKey,
                                             UAPushAliasSettingsKey, UAPushTagsSettingsKey, UAPushBadgeSettingsKey,
-                                            UAPushChannelIDKey, UAPushDeviceTokenKey,
-                                            UAPushQuietTimeSettingsKey, UAPushQuietTimeEnabledSettingsKey,
-                                            UAPushChannelCreationOnForeground, UAPushEnabledSettingsMigratedKey,
-                                            UAPushEnabledKey, UAPushTimeZoneSettingsKey]];
+                                            UAPushDeviceTokenKey, UAPushQuietTimeSettingsKey, UAPushQuietTimeEnabledSettingsKey,
+                                            UAPushEnabledSettingsMigratedKey, UAPushEnabledKey, UAPushTimeZoneSettingsKey]];
 
     if ([self.dataStore boolForKey:UAPushEnabledSettingsMigratedKey]) {
         // Already migrated
@@ -1055,20 +907,13 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
 
     [self.dataStore setBool:YES forKey:UAPushEnabledSettingsMigratedKey];
 
-    // Normalize tags for older SDK versions
-    self.tags = [UATagUtils normalizeTags:self.tags];
-}
+    // Normalize tags for older SDK versions, and migrate to UAChannel as necessary
+    NSArray *existingTags = [self.dataStore objectForKey:UAPushTagsSettingsKey];
 
-- (void)onComponentEnableChange {
-    self.tagGroupsRegistrar.componentEnabled = self.componentEnabled;
-    if (self.componentEnabled) {
-        // if component was disabled and is now enabled, register the channel
-        [self updateRegistration];
+    if (existingTags) {
+        self.channel.tags = [UATagUtils normalizeTags:existingTags];
+        [self.dataStore removeObjectForKey:UAPushTagsSettingsKey];
     }
-}
-
-- (void)resetChannel {
-    [self.channelRegistrar resetChannel];
 }
 
 @end
