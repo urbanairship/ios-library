@@ -5,7 +5,7 @@ use_frameworks!
 target 'AirshipKitTests' do
    project 'AirshipKit/AirshipKit.xcodeproj'
    pod 'OCMock', '~> 3.4.1'
-   pod 'XcodeEdit', '~> 2.4', :inhibit_warnings => true
+   pod 'XcodeEdit', '~> 2.7'
 end
 
 target 'TestShipTests' do
