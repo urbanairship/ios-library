@@ -270,9 +270,9 @@
 
 + (nullable UIWindow *)windowForView:(UIView *)view {
     UIWindow *window;
-    while (view.superview) {
-        if ([view.superview isKindOfClass:[UIWindow class]]) {
-            window = (UIWindow *)view.superview;
+    while ((view = view.superview)) {
+        if ([view isKindOfClass:[UIWindow class]]) {
+            window = (UIWindow *)view;
         }
     }
     return window;

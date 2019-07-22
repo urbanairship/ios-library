@@ -3,7 +3,7 @@
 
 @interface UASceneTracker ()
 
-@property(nonatomic, strong) NSMutableArray *scenes;
+@property(nonatomic, strong) NSMutableArray<UIScene *> *scenes API_AVAILABLE(ios(13.0));
 @property(nonatomic, strong) NSNotificationCenter *notificationCenter;
 
 @end
@@ -15,10 +15,14 @@
 
     if (self) {
         self.notificationCenter = notificationCenter;
-        self.scenes = [NSMutableArray array];
+        if (@available(iOS 13.0, *)) {
+            self.scenes = [NSMutableArray array];
+        }
     }
 
-    [self observeSceneEvents];
+    if (@available(iOS 13.0, *)) {
+        [self observeSceneEvents];
+    }
 
     return self;
 }
@@ -27,17 +31,15 @@
     return [[self alloc] initWithNotificationCenter:notificationCenter];
 }
 
-- (void)observeSceneEvents {
-    if (@available(iOS 13.0, *)) {
+- (void)observeSceneEvents API_AVAILABLE(ios(13.0)) {
         [self.notificationCenter addObserver:self
                                     selector:@selector(sceneAdded:) name:UISceneWillConnectNotification
                                       object:nil];
 
         [self.notificationCenter addObserver:self
                                     selector:@selector(sceneRemoved:)
-                                        name:UISceneWillDeactivateNotification
+                                        name:UISceneDidDisconnectNotification
                                       object:nil];
-    }
 }
 
 - (nullable UIWindowScene *)primaryWindowScene {
@@ -50,11 +52,11 @@
     return nil;
 }
 
-- (void)sceneAdded:(NSNotification *)notification {
+- (void)sceneAdded:(NSNotification *)notification API_AVAILABLE(ios(13.0)) {
     [self.scenes addObject:notification.object];
 }
 
-- (void)sceneRemoved:(NSNotification *)notification  {
+- (void)sceneRemoved:(NSNotification *)notification API_AVAILABLE(ios(13.0))  {
     [self.scenes removeObject:notification.object];
 }
 

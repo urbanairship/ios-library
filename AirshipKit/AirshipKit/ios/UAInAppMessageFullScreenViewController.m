@@ -465,7 +465,7 @@ NSString *const UAInAppMessageFullScreenViewNibName = @"UAInAppMessageFullScreen
 - (void)observeSceneEvents API_AVAILABLE(ios(13.0)) {
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(sceneRemoved:)
-                                                 name:UISceneWillDeactivateNotification
+                                                 name:UISceneDidDisconnectNotification
                                                object:nil];
 }
 

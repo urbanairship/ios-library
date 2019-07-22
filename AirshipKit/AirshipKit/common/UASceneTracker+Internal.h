@@ -5,7 +5,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /**
- * Tracks the adding and removal of scenes.
+ * Tracks the adding and removal of UIScene instances.
  */
 @interface UASceneTracker : NSObject
 
