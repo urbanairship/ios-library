@@ -4,7 +4,7 @@ set -o pipefail
 set -e
 set -x
 
-JAZZY_VERSION=0.7.5
+JAZZY_VERSION=0.10.0
 SCRIPT_DIRECTORY=`dirname "$0"`
 ROOT_PATH=`dirname "${0}"`/..
 TEMP_DIR=$(mktemp -d /tmp/build-XXXXX)
