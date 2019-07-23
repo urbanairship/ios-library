@@ -70,6 +70,14 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.push.exist
 
 NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channel_id";
 
+// The foreground presentation options that can be defined from API or dashboard
+NSString *const UAPresentationOptionBadge = @"badge";
+NSString *const UAPresentationOptionAlert = @"alert";
+NSString *const UAPresentationOptionSound = @"sound";
+
+// Foreground presentation key
+NSString *const UAForegroundPresentationkey = @"foreground_presentation";
+
 @interface UAPush()
 @property (nonatomic, strong) UADispatcher *dispatcher;
 @property (nonatomic, strong) UIApplication *application;
@@ -903,16 +911,44 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.push.channe
 #pragma mark Push handling
 
 - (UNNotificationPresentationOptions)presentationOptionsForNotification:(UNNotification *)notification {
+    
     UNNotificationPresentationOptions options = UNNotificationPresentationOptionNone;
-
-    id pushDelegate = self.pushNotificationDelegate;
-    if ([pushDelegate respondsToSelector:@selector(presentationOptionsForNotification:)]) {
-        options = [pushDelegate presentationOptionsForNotification:notification];
+    
+    //Get foreground presentation options defined from the push API/dashboard
+    NSArray *payloadPresentationOptions = [self foregroundPresentationOptionsForNotification:notification];
+    if (payloadPresentationOptions.count) {
+        // build the options bitmask from the array
+        for (id presentationOption in payloadPresentationOptions) {
+            if ([UAPresentationOptionBadge isEqualToString:presentationOption]) {
+                options |= UNAuthorizationOptionBadge;
+            } else if ([UAPresentationOptionAlert isEqualToString:presentationOption]) {
+                options |= UNAuthorizationOptionAlert;
+            } else if ([UAPresentationOptionSound isEqualToString:presentationOption]) {
+                options |= UNAuthorizationOptionSound;
+            }
+        }
     } else {
         options = self.defaultPresentationOptions;
     }
-
+    
+    id pushDelegate = self.pushNotificationDelegate;
+    if ([pushDelegate respondsToSelector:@selector(extendPresentationOptions:notification:)]) {
+        options = [pushDelegate extendPresentationOptions:options notification:notification];
+    } else if ([pushDelegate respondsToSelector:@selector(presentationOptionsForNotification:)]) {
+        options = [pushDelegate presentationOptionsForNotification:notification];
+    }
+    
     return options;
+}
+
+- (NSArray *)foregroundPresentationOptionsForNotification:(UNNotification *)notification {
+    
+    NSArray *presentationOptions = nil;
+#if !TARGET_OS_TV
+    // get the presentation options from the the notification
+    presentationOptions = [notification.request.content.userInfo objectForKey:UAForegroundPresentationkey];
+#endif
+    return presentationOptions;
 }
 
 - (void)handleNotificationResponse:(UANotificationResponse *)response completionHandler:(void (^)(void))handler {
