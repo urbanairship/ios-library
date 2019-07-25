@@ -43,6 +43,12 @@
                 authorizedSettings |= UAAuthorizedNotificationSettingsCriticalAlert;
             }
         }
+        
+        if (@available(iOS 13.0, *)) {
+            if (notificationSettings.announcementSetting == UNNotificationSettingEnabled) {
+                authorizedSettings |= UAAuthorizedNotificationSettingsAnnouncement;
+            }
+        }
 #endif
 
         completionHandler(authorizedSettings, authorizationStatus);
@@ -102,6 +108,15 @@
         }
     }
 
+    // These authorization options and settings are iOS 13+
+#if !TARGET_OS_TV   // UNAuthorizationOptionAnnouncement not supported on tvOS
+    if (@available(iOS 13.0, *)) {
+        if ((uaOptions & UANotificationOptionAnnouncement) == UANotificationOptionAnnouncement) {
+            unOptions |= UNAuthorizationOptionAnnouncement;
+        }
+    }
+#endif
+    
     return unOptions;
 }
 

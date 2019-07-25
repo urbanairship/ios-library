@@ -163,8 +163,6 @@
                                                   actions:actions
                                         intentIdentifiers:self.intentIdentifiers
                                                   options:(UNNotificationCategoryOptions)self.options];
-
-    return nil;
 }
 
 - (BOOL)isEqualToUNNotificationCategory:(UNNotificationCategory *)category {

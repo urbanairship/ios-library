@@ -19,9 +19,15 @@ typedef NS_OPTIONS(NSUInteger, UANotificationCategoryOptions) {
     UANotificationCategoryOptionCustomDismissAction = (1 << 0),
 
     /**
-     * Category is allowed in Car Play.
+     * Category allows CarPlay to display notifications.
      */
-    UANotificationCategoryOptionAllowInCarPlay = (2 << 0),
+    UANotificationCategoryOptionAllowInCarPlay = (1 << 1),
+    
+    /**
+     * Category allows notifications to be automatically read by Siri when the user is using AirPods.
+     */
+    UANotificationCategoryOptionAllowAnnouncement = (1 << 4)
+
 };
 
 static const UANotificationCategoryOptions UANotificationCategoryOptionNone NS_SWIFT_UNAVAILABLE("Use [] instead.") = 0;

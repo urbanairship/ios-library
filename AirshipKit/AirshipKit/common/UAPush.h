@@ -70,6 +70,7 @@ typedef NS_OPTIONS(NSUInteger, UANotificationOptions) {
     UANotificationOptionCriticalAlert = (1 << 4),
     UANotificationOptionProvidesAppNotificationSettings = (1 << 5),
     UANotificationOptionProvisional = (1 << 6),
+    UANotificationOptionAnnouncement = (1 << 7),
 };
 
 /**
@@ -84,6 +85,7 @@ typedef NS_OPTIONS(NSUInteger, UAAuthorizedNotificationSettings) {
     UAAuthorizedNotificationSettingsLockScreen = (1 << 4),
     UAAuthorizedNotificationSettingsNotificationCenter = (1 << 5),
     UAAuthorizedNotificationSettingsCriticalAlert = (1 << 6),
+    UAAuthorizedNotificationSettingsAnnouncement = (1 << 7),
 };
 
 /**

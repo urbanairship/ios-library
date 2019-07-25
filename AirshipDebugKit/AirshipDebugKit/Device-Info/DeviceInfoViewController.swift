@@ -215,6 +215,9 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
             cell.cellSwitch.isHidden = false
             cell.cellSwitch.isOn = UAirship.push()?.userPushNotificationsEnabled ?? false
             cell.subtitle?.text = pushTypeString()
+            cell.subtitle?.adjustsFontSizeToFitWidth = true;
+            cell.subtitle?.minimumScaleFactor = 0.25;
+            cell.subtitle?.numberOfLines = 1;
         case channelID:
             cell.title.text = "ua_device_info_channel_id".localized()
             cell.subtitle.text = UAirship.push().channelID
@@ -382,6 +385,10 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
             settingsArray.append("ua_notification_type_critical_alert".localized(comment: "Critical Alert"))
         }
 
+        if (authorizedSettings.contains(.announcement)) {
+            settingsArray.append("ua_notification_type_announcement".localized(comment: "AirPod Announcement"))
+        }
+        
         if (settingsArray.count == 0) {
             settingsArray.append("ua_push_settings_link_disabled_title".localized(comment: "Pushes Currently Disabled"))
         }

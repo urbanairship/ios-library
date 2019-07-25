@@ -50,6 +50,7 @@
 "ua_notification_type_lock_screen" = "Lock Screen";
 "ua_notification_type_notification_center" = "Notification Center";
 "ua_notification_type_critical_alert" = "Critical Alert";
+"ua_notification_type_announcement" = "AirPod Announcement";
 "ua_push_settings_link_disabled_title" = "⚠ Push is Disabled with iOS";
 
 "ua_message_displaytype_banner" = "Banner";

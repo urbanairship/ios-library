@@ -844,6 +844,10 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
     if (authorizedSettings & UAAuthorizedNotificationSettingsCarPlay) {
         options |= UANotificationOptionCarPlay;
     }
+    
+    if (authorizedSettings & UAAuthorizedNotificationSettingsAnnouncement) {
+        options |= UANotificationOptionAnnouncement;
+    }
 #endif
 
     return options;
