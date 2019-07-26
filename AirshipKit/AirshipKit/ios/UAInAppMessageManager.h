@@ -56,6 +56,15 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)messageFinishedDisplaying:(UAInAppMessage *)message scheduleID:(NSString *)scheduleID resolution:(UAInAppMessageResolution *)resolution;
 
+/**
+ * Allows the delegate to override the the choice of window scene for displaying the message.
+ *
+ * @param message The message.
+ * @param defaultScene The window scene chosen for displaying the message, or nil if one could not be found.
+ * @return A window scene if the delegate chooses to override the choice of scene, or nil otherwise.
+ */
+- (UIWindowScene *)sceneForMessage:(UAInAppMessage *)message defaultScene:(nullable UIWindowScene *)defaultScene API_AVAILABLE(ios(13.0));
+
 @end
 
 /**

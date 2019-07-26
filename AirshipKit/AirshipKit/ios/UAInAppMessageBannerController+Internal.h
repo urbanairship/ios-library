@@ -33,7 +33,7 @@ NS_ASSUME_NONNULL_BEGIN
  * The method to show the banner controller.
  *
  * @param parentView The parent view.
- * @param completionHandler The completion handler that's called when show operation completes.
+ * @param completionHandler The completion handler that's called when the show operation completes.
  */
 - (void)showWithParentView:(UIView *)parentView completionHandler:(void (^)(UAInAppMessageResolution *))completionHandler;
 

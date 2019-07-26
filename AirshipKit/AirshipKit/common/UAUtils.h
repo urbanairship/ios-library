@@ -116,6 +116,24 @@ NS_ASSUME_NONNULL_BEGIN
 + (nullable UIWindow *)mainWindow;
 
 /**
+ * Returns the main window for the app. This window will
+ * be positioned underneath any other windows added and removed at runtime, by
+ * classes such a UIAlertView or UIActionSheet.
+ *
+ * @param scene The scene in which to find the window.
+ * @return The main window, or `nil` if the window cannot be found.
+ */
++ (nullable UIWindow *)mainWindow:(UIWindowScene *)scene API_AVAILABLE(ios(13.0));
+
+/**
+ * Returns the window containing the provided view.
+ *
+ * @param view The view.
+ * @return The window containing the view, or nil if the view is not currently displayed.
+ */
++ (nullable UIWindow *)windowForView:(UIView *)view;
+
+/**
  * A utility method that grabs the top-most view controller for the main application window.
  * May return nil if a suitable view controller cannot be found.
  * @return The top-most view controller or `nil` if controller cannot be found.

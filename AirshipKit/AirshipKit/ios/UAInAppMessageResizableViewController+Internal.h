@@ -96,9 +96,18 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * The method to show the resizable view controller.
  *
- * @param completionHandler The completion handler that's called when show operation completes.
+ * @param completionHandler The completion handler that's called when the show operation completes.
  */
 - (void)showWithCompletionHandler:(void (^)(UAInAppMessageResolution *))completionHandler;
+
+/**
+ * The method to show the resizable view controller.
+ *
+ * @param completionHandler The completion handler that's called when the show operation completes.
+ * @param scene The window scene in which to show the message.
+ */
+- (void)showWithCompletionHandler:(void (^)(UAInAppMessageResolution *))completionHandler
+                            scene:(UIWindowScene *)scene API_AVAILABLE(ios(13.0));
 
 /**
  * The method to dismiss the resizable view controller.

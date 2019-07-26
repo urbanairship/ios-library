@@ -53,6 +53,13 @@ NSString *const UABannerStyleFileName = @"UAInAppMessageBannerStyle";
 - (void)display:(void (^)(UAInAppMessageResolution *))completionHandler {
     [self.bannerController showWithParentView:[UAUtils mainWindow]
                             completionHandler:completionHandler];
+
+}
+
+- (void)display:(void (^)(UAInAppMessageResolution *))completionHandler
+          scene:(UIWindowScene *)scene  API_AVAILABLE(ios(13.0)){
+    [self.bannerController showWithParentView:[UAUtils mainWindow:scene]
+                            completionHandler:completionHandler];
 }
 
 @end

@@ -2,6 +2,7 @@
 
 #import "UAirship.h"
 #import "UAModules+Internal.h"
+#import "UASceneTracker+Internal.h"
 
 @class UABaseAppDelegateSurrogate;
 @class UAJavaScriptDelegate;

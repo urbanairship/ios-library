@@ -37,9 +37,9 @@ NSString *const UAFullScreenStyleFileName = @"UAInAppMessageFullScreenStyle";
     [UAInAppMessageUtils prepareMediaView:displayContent.media assets:assets completionHandler:^(UAInAppMessagePrepareResult result, UAInAppMessageMediaView *mediaView) {
         if (result == UAInAppMessagePrepareResultSuccess) {
             self.fullScreenController = [UAInAppMessageFullScreenViewController fullScreenControllerWithFullScreenMessageID:self.message.identifier
-                                                                                                         displayContent:displayContent
-                                                                                                              mediaView:mediaView
-                                                                                                                  style:self.style];
+                                                                                                             displayContent:displayContent
+                                                                                                                  mediaView:mediaView
+                                                                                                                      style:self.style];
         }
         completionHandler(result);
     }];
@@ -52,6 +52,11 @@ NSString *const UAFullScreenStyleFileName = @"UAInAppMessageFullScreenStyle";
 
 - (void)display:(void (^)(UAInAppMessageResolution *))completionHandler {
     [self.fullScreenController showWithCompletionHandler:completionHandler];
+}
+
+- (void)display:(void (^)(UAInAppMessageResolution *))completionHandler
+          scene:(UIWindowScene *)scene API_AVAILABLE(ios(13.0)){
+    [self.fullScreenController showWithCompletionHandler:completionHandler scene:scene];
 }
 
 @end

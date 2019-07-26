@@ -31,6 +31,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		3CD872D622D3EED000849E16 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3CF0C1FD2256789300CE5463 /* AirshipLocationKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 3CD47D2922601606005F1987;
+			remoteInfo = AirshipLocationLib;
+		};
 		3CF0C2082256789300CE5463 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 3CF0C1FD2256789300CE5463 /* AirshipLocationKit.xcodeproj */;
@@ -51,13 +58,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 3C7A565A2252883100E07225;
 			remoteInfo = AirshipLocationKit;
-		};
-		455BE7BC229B04A5007D2687 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3CF0C1FD2256789300CE5463 /* AirshipLocationKit.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 3CD47D2922601606005F1987;
-			remoteInfo = AirshipLocationLib;
 		};
 		4560A1B022961C36000FF3B2 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -262,7 +262,7 @@
 			children = (
 				3CF0C2092256789300CE5463 /* AirshipLocationKit.framework */,
 				3CF0C20B2256789300CE5463 /* AirshipLocationKitTests.xctest */,
-				4560A1AF22961C36000FF3B2 /* libUALocation.a */,
+				3CD872D722D3EED000849E16 /* libUALocation.a */,
 				4560A1B122961C36000FF3B2 /* AirshipLocationKit.framework */,
 			);
 			name = Products;
@@ -500,6 +500,13 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		3CD872D722D3EED000849E16 /* libUALocation.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libUALocation.a;
+			remoteRef = 3CD872D622D3EED000849E16 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		3CF0C2092256789300CE5463 /* AirshipLocationKit.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
@@ -512,13 +519,6 @@
 			fileType = wrapper.cfbundle;
 			path = AirshipLocationKitTests.xctest;
 			remoteRef = 3CF0C20A2256789300CE5463 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		4560A1AF22961C36000FF3B2 /* libUALocation.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libUALocation.a;
-			remoteRef = 4560A1AE22961C36000FF3B2 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		4560A1B122961C36000FF3B2 /* AirshipLocationKit.framework */ = {

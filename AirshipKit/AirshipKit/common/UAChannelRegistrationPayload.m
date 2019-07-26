@@ -1,9 +1,8 @@
 /* Copyright Airship and Contributors */
 
 #import "UAChannelRegistrationPayload+Internal.h"
-#import "UAirship.h"
-#import "UAAnalytics.h"
 #import "UAJSONSerialization+Internal.h"
+#import "UAGlobal.h"
 
 NSString *const UAChannelIdentityHintsKey = @"identity_hints";
 NSString *const UAChannelUserIDKey = @"user_id";

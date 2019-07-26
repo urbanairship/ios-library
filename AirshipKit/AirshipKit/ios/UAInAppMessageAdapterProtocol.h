@@ -71,8 +71,20 @@ typedef NS_ENUM(NSUInteger, UAInAppMessagePrepareResult) {
  *
  * @param completionHandler the completion handler to be called when adapter has finished
  * displaying the in-app message.
+ * @note This method is only called when running on iOS 12 and below.
  */
 - (void)display:(void (^)(UAInAppMessageResolution *))completionHandler;
+
+/**
+ * Displays the in-app message.
+ *
+ * @param completionHandler the completion handler to be called when adapter has finished
+ * displaying the in-app message.
+ * @param scene The window scene in which to display the message.
+ * @note This method is only called when running on iOS 13 and above.
+ */
+- (void)display:(void (^)(UAInAppMessageResolution *))completionHandler
+          scene:(UIWindowScene *)scene API_AVAILABLE(ios(13.0));
 
 @end
 

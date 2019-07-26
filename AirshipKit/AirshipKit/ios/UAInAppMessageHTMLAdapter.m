@@ -66,8 +66,7 @@ NSString *const UAHTMLStyleFileName = @"UAInAppMessageHTMLStyle";
     return !self.displayContent.requireConnectivity || [self isNetworkConnected];
 }
 
-- (void)display:(nonnull void (^)(UAInAppMessageResolution * _Nonnull))completionHandler {
-
+- (void)createContainerViewController {
     CGSize size = CGSizeMake(self.htmlViewController.displayContent.width,
                              self.htmlViewController.displayContent.height);
 
@@ -82,9 +81,17 @@ NSString *const UAHTMLStyleFileName = @"UAInAppMessageHTMLStyle";
 
     // Set resizable parent
     self.htmlViewController.resizableParent = self.resizableContainerViewController;
+}
 
-    // Show resizable view controller with child
+- (void)display:(nonnull void (^)(UAInAppMessageResolution * _Nonnull))completionHandler {
+    [self createContainerViewController];
     [self.resizableContainerViewController showWithCompletionHandler:completionHandler];
+}
+
+- (void)display:(nonnull void (^)(UAInAppMessageResolution * _Nonnull))completionHandler
+          scene:(UIWindowScene *)scene  API_AVAILABLE(ios(13.0)){
+    [self createContainerViewController];
+    [self.resizableContainerViewController showWithCompletionHandler:completionHandler scene:scene];
 }
 
 @end

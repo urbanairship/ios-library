@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 #import "UAInAppMessageResizableViewController+Internal.h"
-#import "UAirship.h"
+#import "UAirship+Internal.h"
 #import "UAViewUtils+Internal.h"
 #import "UAInAppMessageResolution.h"
 #import "UAInAppMessageUtils+Internal.h"
@@ -293,14 +293,7 @@ double const DefaultResizableViewAnimationDuration = 0.2;
 #pragma mark -
 #pragma mark Core Functionality
 
-- (void)showWithCompletionHandler:(void (^)(UAInAppMessageResolution * _Nonnull))completionHandler {
-    if (self.isShowing) {
-        UA_LTRACE(@"In-app message resizable view has already been displayed");
-        return;
-    }
-
-    self.showCompletionHandler = completionHandler;
-
+- (void)createWindow {
     // create a new window that covers the entire display
     self.topWindow = [[UIWindow alloc] initWithFrame:UIScreen.mainScreen.bounds];
 
@@ -309,9 +302,46 @@ double const DefaultResizableViewAnimationDuration = 0.2;
 
     // add this view controller to the window
     self.topWindow.rootViewController = self;
+}
 
-    // show the window
+- (void)displayWindow:(void (^)(UAInAppMessageResolution * _Nonnull))completionHandler {
+    self.showCompletionHandler = completionHandler;
     [self.topWindow makeKeyAndVisible];
+}
+
+- (void)observeSceneEvents API_AVAILABLE(ios(13.0)) {
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(sceneRemoved:)
+                                                 name:UISceneDidDisconnectNotification
+                                               object:nil];
+}
+
+- (void)sceneRemoved:(NSNotification *)notification API_AVAILABLE(ios(13.0)) {
+    if ([(UIScene *)notification.object isEqual:self.topWindow.windowScene]) {
+        [self dismissWithResolution:[UAInAppMessageResolution userDismissedResolution]];
+    }
+}
+
+- (void)showWithCompletionHandler:(void (^)(UAInAppMessageResolution * _Nonnull))completionHandler {
+    if (self.isShowing) {
+        UA_LTRACE(@"In-app message resizable view has already been displayed");
+        return;
+    }
+
+    [self createWindow];
+    [self displayWindow:completionHandler];
+}
+
+- (void)showWithCompletionHandler:(void (^)(UAInAppMessageResolution * _Nonnull))completionHandler scene:(UIWindowScene *)scene {
+    if (self.isShowing) {
+        UA_LTRACE(@"In-app message resizable view has already been displayed");
+        return;
+    }
+
+    [self createWindow];
+    self.topWindow.windowScene = scene;
+    [self observeSceneEvents];
+    [self displayWindow:completionHandler];
 }
 
 // Alters contraints to cover the full screen.
@@ -335,10 +365,16 @@ double const DefaultResizableViewAnimationDuration = 0.2;
     self.shadeView.backgroundColor = self.backgroundColor;
 }
 
-- (void)dismissWithoutResolution {
+- (void)tearDown {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+
     self.isShowing = NO;
     [self.view removeFromSuperview];
     self.topWindow = nil;
+}
+
+- (void)dismissWithoutResolution {
+    [self tearDown];
 
     if (self.showCompletionHandler) {
         self.showCompletionHandler(nil);
@@ -355,10 +391,7 @@ double const DefaultResizableViewAnimationDuration = 0.2;
         [self.view layoutIfNeeded];
     } completion:^(BOOL finished) {
         UA_STRONGIFY(self);
-        // teardown
-        self.isShowing = NO;
-        [self.view removeFromSuperview];
-        self.topWindow = nil;
+        [self tearDown];
 
         if (self.showCompletionHandler) {
             self.showCompletionHandler(resolution);
