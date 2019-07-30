@@ -174,15 +174,9 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (void)load {
-    NSString *urlString = self.displayContent.url;
-    NSURL *url = [NSURL URLWithString:self.displayContent.url];
-
-    // Check the scheme, if it's a message: scheme, attempt message loading
-    if ([[url scheme].lowercaseString isEqualToString:UAMessageDataScheme.lowercaseString]) {
-        NSString *fullSchemeString = [NSString stringWithFormat:@"%@:", url.scheme];
-        NSString *messageID = [urlString stringByReplacingOccurrencesOfString:fullSchemeString withString:@""];
-
-        [self fetchMessage:messageID completionHandler:^(UAInboxMessage *message) {
+    NSString *inboxMessageID = [self inboxMessageID];
+    if (inboxMessageID) {
+        [self fetchMessage:inboxMessageID completionHandler:^(UAInboxMessage *message) {
             if (!message) {
                 [self dismissWithoutResolution];
                 return;
@@ -264,6 +258,15 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)webView:(WKWebView *)webView didFinishNavigation:(null_unspecified WKNavigation *)navigation {
     [self hideOverlay];
+
+    NSString *inboxMessageId = [self inboxMessageID];
+    // If inbox message ID is available, we should load the inbox message instead of the URL
+    if (inboxMessageId) {
+        UAInboxMessage  *message = [[UAirship inbox].messageList messageForID:inboxMessageId];
+        if (message.unread) {
+            [message markMessageReadWithCompletionHandler:nil];
+        }
+    }
 }
 
 - (void)webView:(WKWebView *)webView didFailNavigation:(null_unspecified WKNavigation *)navigation withError:(nonnull NSError *)error {
@@ -310,6 +313,23 @@ NS_ASSUME_NONNULL_BEGIN
     } withFailureBlock:^{
         completionHandler(nil);
     }];
+}
+
+/**
+ * Parses the inbox message ID from the URL.
+ * @return The message ID if its an message URL, otherwise nil.
+ */
+- (NSString *)inboxMessageID {
+    NSString *urlString = self.displayContent.url;
+    NSURL *url = [NSURL URLWithString:self.displayContent.url];
+
+    // Check the scheme, if it's a message: scheme
+    if ([[url scheme] caseInsensitiveCompare:UAMessageDataScheme] == NSOrderedSame) {
+        NSString *fullSchemeString = [NSString stringWithFormat:@"%@:", url.scheme];
+        return [urlString stringByReplacingOccurrencesOfString:fullSchemeString withString:@""];
+    }
+
+    return nil;
 }
 
 @end
