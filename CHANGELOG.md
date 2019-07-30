@@ -3,6 +3,10 @@ iOS Changelog
 
 Migration Guides: Documentation/Migration
 
+Version 11.1.1 - July 30, 2019
+==============================
+- Fixed an issue where Message Center messages were not being properly marked as read after displaying via in-app automation.
+
 Version 11.1.0 - July 8, 2019
 =============================
 Minor update that fixes an issue with the location kits header import, and adds an option to

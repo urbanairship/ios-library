@@ -10,7 +10,7 @@ ROOT_PATH=`dirname "${0}"`/../
 # Target iOS SDK when building the projects
 TARGET_SDK='iphonesimulator'
 TARGET_SDK_TVOS='appletvsimulator'
-TEST_DESTINATION='platform=iOS Simulator,OS=latest,name=iPhone X'
+TEST_DESTINATION='platform=iOS Simulator,OS=latest,name=iPhone Xʀ'
 TEST_DESTINATION_TVOS='platform=tvOS Simulator,OS=latest,name=Apple TV'
 
 start_time=`date +%s`
