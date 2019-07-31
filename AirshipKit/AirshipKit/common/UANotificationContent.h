@@ -57,6 +57,11 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy, nullable, readonly) NSString *threadIdentifier;
 
 /**
+ * Target content identifier
+ */
+@property (nonatomic, copy, nullable, readonly) NSString *targetContentIdentifier;
+
+/**
  * Category
  */
 @property (nonatomic, copy, nullable, readonly) NSString *categoryIdentifier;
