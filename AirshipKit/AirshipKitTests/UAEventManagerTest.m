@@ -54,7 +54,7 @@
 
     self.mockAirship = [self mockForClass:[UAirship class]];
     [UAirship setSharedAirship:self.mockAirship];
-    [[[self.mockAirship stub] andReturn:self.mockChannel] push];
+    [[[self.mockAirship stub] andReturn:self.mockChannel] channel];
 
     // Set up a mocked application
     self.mockApplication = [self mockForClass:[UIApplication class]];

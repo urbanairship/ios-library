@@ -2,7 +2,7 @@
 
 #import "UAModifyTagsAction.h"
 #import "UAirship.h"
-#import "UAPush.h"
+#import "UAChannel.h"
 #import "UANamedUser.h"
 
 NSString *const UAModifyTagsNamedUserKey = @"named_user";
@@ -97,7 +97,7 @@ NSString *const UAModifyTagsDeviceKey = @"device";
     }
 
     if (updateChannelRegistration) {
-        [[UAirship push] updateRegistration];
+        [[UAirship channel] updateRegistration];
     }
 
     completionHandler([UAActionResult emptyResult]);

@@ -11,6 +11,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+extern NSString *const UAChannelRegistrarChannelIDKey;
+
 /**
  * The UAChannelRegistrarDelegate protocol for registration events.
  */

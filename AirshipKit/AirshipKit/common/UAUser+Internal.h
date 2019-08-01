@@ -2,6 +2,7 @@
 
 #import "UAUser.h"
 #import "UADispatcher+Internal.h"
+#import "UAUserProviderDelegate+Internal.h"
 
 // Current dictionary keys
 #define kUserUrlKey @"UAUserUrlKey"
@@ -16,7 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 /*
  * SDK-private extensions to UAUser
  */
-@interface UAUser()
+@interface UAUser() <UAUserProviderDelegate>
 
 ///---------------------------------------------------------------------------------------
 /// @name User Internal Properties

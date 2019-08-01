@@ -4,10 +4,27 @@
 #import "UAChannelRegistrar+Internal.h"
 #import "UATagGroupsRegistrar+Internal.h"
 #import "UAPushProviderDelegate.h"
+#import "UAUserProviderDelegate+Internal.h"
+
+extern NSString *const UAChannelTagsSettingsKey;
+extern NSString *const UAChannelCreationOnForeground;
 
 @interface UAChannel () <UAChannelRegistrarDelegate>
 
+/**
+ * The push provider delegate.
+ */
 @property (nonatomic, strong) id<UAPushProviderDelegate> pushProviderDelegate;
+
+/**
+ * The user provider delegate;
+ */
+@property (nonatomic, strong) id<UAUserProviderDelegate> userProviderDelegate;
+
+/**
+ * Flag indicating app is running in the foreground
+ */
+@property (nonatomic, assign) BOOL isForegrounded;
 
 /**
  * Allows disabling channel registration before a channel is created.  Channel registration will resume
@@ -22,6 +39,17 @@
                   notificationCenter:(NSNotificationCenter *)notificationCenter
                     channelRegistrar:(UAChannelRegistrar *)channelRegistrar
                   tagGroupsRegistrar:(UATagGroupsRegistrar *)tagGroupsRegistrar;
+
+/**
+ * Called when the application becomes active. Triggers registration updates.
+ */
+- (void)applicationDidBecomeActive;
+
+/**
+ * Called when the application enters the background. Used to clear a flag set on foreground
+ * to prevent double registration on app init.
+ */
+- (void)applicationDidEnterBackground;
 
 /**
  * Registers or updates the current registration with an API call. If push notifications are

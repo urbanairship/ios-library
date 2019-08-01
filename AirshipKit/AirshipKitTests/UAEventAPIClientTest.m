@@ -10,6 +10,7 @@
 
 @interface UAEventAPIClientTest : UABaseTest
 @property (nonatomic, strong) id mockPush;
+@property (nonatomic, strong) id mockChannel;
 @property (nonatomic, strong) id mockAirship;
 @property (nonatomic, strong) id mockTimeZoneClass;
 @property (nonatomic, strong) id mockLocaleClass;
@@ -26,18 +27,20 @@
     self.mockLocaleClass = [self strictMockForClass:[NSLocale class]];
     self.mockTimeZoneClass = [self strictMockForClass:[NSTimeZone class]];
 
+    self.mockChannel = [self mockForClass:[UAChannel class]];
     self.mockPush = [self mockForClass:[UAPush class]];
 
     self.mockAirship = [self mockForClass:[UAirship class]];
     [UAirship setSharedAirship:self.mockAirship];
     [[[self.mockAirship stub] andReturn:self.mockPush] push];
+    [[[self.mockAirship stub] andReturn:self.mockChannel] channel];
 
     self.mockSession = [self mockForClass:[UARequestSession class]];
     self.client = [UAEventAPIClient clientWithConfig:self.config session:self.mockSession];
 }
 
 - (void)tearDown {
-    [self.mockPush stopMocking];
+    [self.mockChannel stopMocking];
     [self.mockAirship stopMocking];
     [self.mockTimeZoneClass stopMocking];
     [self.mockLocaleClass stopMocking];
@@ -57,7 +60,7 @@
 
     // Channel ID
     NSString *channelIDString = @"someChannelID";
-    [[[self.mockPush stub] andReturn:channelIDString] channelID];
+    [[[self.mockChannel stub] andReturn:channelIDString] identifier];
 
     // Opted in for both notifications and background push
     [[[self.mockPush stub] andReturnValue:OCMOCK_VALUE(YES)] userPushNotificationsAllowed];

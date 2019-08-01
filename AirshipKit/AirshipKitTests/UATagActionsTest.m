@@ -4,13 +4,13 @@
 #import "UAAction+Internal.h"
 #import "UAAddTagsAction.h"
 #import "UARemoveTagsAction.h"
-#import "UAPush+Internal.h"
+#import "UAChannel.h"
 #import "UAActionArguments+Internal.h"
 #import "UAirship+Internal.h"
 #import "UANamedUser.h"
 
 @interface UATagActionsTest : UABaseTest
-@property (nonatomic, strong) id mockPush;
+@property (nonatomic, strong) id mockChannel;
 @property (nonatomic, strong) id mockAirship;
 @property (nonatomic, strong) id mockNamedUser;
 
@@ -28,7 +28,7 @@
 
 - (void)setUp {
     [super setUp];
-    self.mockPush = [self mockForClass:[UAPush class]];
+    self.mockChannel = [self mockForClass:[UAChannel class]];
     self.mockNamedUser = [self mockForClass:[UANamedUser class]];
 
     self.stringArgs = [UAActionArguments argumentsWithValue:@"hi" withSituation:UASituationWebViewInvocation];
@@ -50,7 +50,7 @@
 
     self.mockAirship = [self mockForClass:[UAirship class]];
     [UAirship setSharedAirship:self.mockAirship];
-    [[[self.mockAirship stub] andReturn:self.mockPush] push];
+    [[[self.mockAirship stub] andReturn:self.mockChannel] channel];
     [[[self.mockAirship stub] andReturn:self.mockNamedUser] namedUser];
 }
 
@@ -130,30 +130,30 @@
     UAAddTagsAction *action = [[UAAddTagsAction alloc] init];
     [self validateArgumentsForAddRemoveTagsAction:action];
 
-    [[self.mockPush expect] addTags:[OCMArg any]];
-    [[self.mockPush expect] updateRegistration];
+    [[self.mockChannel expect] addTags:[OCMArg any]];
+    [[self.mockChannel expect] updateRegistration];
 
     [action runWithArguments:self.stringArgs
            completionHandler:^(UAActionResult *result) {
-           [self.mockPush verify];
+           [self.mockChannel verify];
     }];
 
-    [[self.mockPush expect] addTags:[OCMArg any]];
-    [[self.mockPush expect] updateRegistration];
+    [[self.mockChannel expect] addTags:[OCMArg any]];
+    [[self.mockChannel expect] updateRegistration];
 
     [action runWithArguments:self.arrayArgs completionHandler:^(UAActionResult *result) {
-           [self.mockPush verify];
+           [self.mockChannel verify];
     }];
 
-    [[self.mockPush expect] addTags:@[@"device tag", @"another device tag"]];
-    [[self.mockPush expect] addTags:@[@"tag1", @"tag2"] group:@"group1"];
-    [[self.mockPush expect] addTags:@[@"tag3", @"tag4"] group:@"group2"];
+    [[self.mockChannel expect] addTags:@[@"device tag", @"another device tag"]];
+    [[self.mockChannel expect] addTags:@[@"tag1", @"tag2"] group:@"group1"];
+    [[self.mockChannel expect] addTags:@[@"tag3", @"tag4"] group:@"group2"];
     [[self.mockNamedUser expect] addTags:@[@"tag5", @"tag6"] group:@"group3"];
-    [[self.mockPush expect] updateRegistration];
+    [[self.mockChannel expect] updateRegistration];
     [[self.mockNamedUser expect] updateTags];
 
     [action runWithArguments:self.dictArgs completionHandler:^(UAActionResult *result) {
-        [self.mockPush verify];
+        [self.mockChannel verify];
         [self.mockNamedUser verify];
     }];
 }
@@ -166,29 +166,29 @@
 
     [self validateArgumentsForAddRemoveTagsAction:action];
 
-    [[self.mockPush expect] removeTags:[OCMArg any]];
-    [[self.mockPush expect] updateRegistration];
+    [[self.mockChannel expect] removeTags:[OCMArg any]];
+    [[self.mockChannel expect] updateRegistration];
 
     [action runWithArguments:self.stringArgs completionHandler:^(UAActionResult *result) {
-           [self.mockPush verify];
+           [self.mockChannel verify];
     }];
 
-    [[self.mockPush expect] removeTags:[OCMArg any]];
-    [[self.mockPush expect] updateRegistration];
+    [[self.mockChannel expect] removeTags:[OCMArg any]];
+    [[self.mockChannel expect] updateRegistration];
 
     [action runWithArguments:self.arrayArgs completionHandler:^(UAActionResult *result) {
-           [self.mockPush verify];
+           [self.mockChannel verify];
     }];
 
-    [[self.mockPush expect] removeTags:@[@"device tag", @"another device tag"]];
-    [[self.mockPush expect] removeTags:@[@"tag1", @"tag2"] group:@"group1"];
-    [[self.mockPush expect] removeTags:@[@"tag3", @"tag4"] group:@"group2"];
+    [[self.mockChannel expect] removeTags:@[@"device tag", @"another device tag"]];
+    [[self.mockChannel expect] removeTags:@[@"tag1", @"tag2"] group:@"group1"];
+    [[self.mockChannel expect] removeTags:@[@"tag3", @"tag4"] group:@"group2"];
     [[self.mockNamedUser expect] removeTags:@[@"tag5", @"tag6"] group:@"group3"];
-    [[self.mockPush expect] updateRegistration];
+    [[self.mockChannel expect] updateRegistration];
     [[self.mockNamedUser expect] updateTags];
     
     [action runWithArguments:self.dictArgs completionHandler:^(UAActionResult *result) {
-        [self.mockPush verify];
+        [self.mockChannel verify];
         [self.mockNamedUser verify];
     }];
 }

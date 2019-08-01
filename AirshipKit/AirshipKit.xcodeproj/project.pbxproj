@@ -16,6 +16,10 @@
 		3C3BCBAE20E19FC500D86E60 /* UATimerScheduler.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C3BCBAA20E19FC500D86E60 /* UATimerScheduler.m */; };
 		3C3BCBAF20E19FC500D86E60 /* UATimerScheduler.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C3BCBAA20E19FC500D86E60 /* UATimerScheduler.m */; };
 		3C3BCBB020E19FC500D86E60 /* UATimerScheduler.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C3BCBAA20E19FC500D86E60 /* UATimerScheduler.m */; };
+		3C3DAA0C22EF9ABC00202570 /* UAChannelTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C3DAA0B22EF9ABC00202570 /* UAChannelTest.m */; };
+		3C3DAA0E22F26E0100202570 /* UAUserProviderDelegate+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C3DAA0D22F26E0100202570 /* UAUserProviderDelegate+Internal.h */; };
+		3C3DAA0F22F26E0100202570 /* UAUserProviderDelegate+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C3DAA0D22F26E0100202570 /* UAUserProviderDelegate+Internal.h */; };
+		3C3DAA1022F26F1100202570 /* UAUserProviderDelegate+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C3DAA0D22F26E0100202570 /* UAUserProviderDelegate+Internal.h */; };
 		3C4FDDFF225BBED400A54E32 /* UALocationEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C4FDDFD225BBED300A54E32 /* UALocationEvent.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3C4FDE00225BBED400A54E32 /* UALocationEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C4FDDFD225BBED300A54E32 /* UALocationEvent.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3C4FDE01225BBED400A54E32 /* UALocationEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C4FDDFE225BBED400A54E32 /* UALocationEvent.m */; };
@@ -1720,6 +1724,8 @@
 		3C3BCBA720E16C8300D86E60 /* UAAutomationEngineIntegrationTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAAutomationEngineIntegrationTest.m; sourceTree = "<group>"; };
 		3C3BCBA920E19FC500D86E60 /* UATimerScheduler+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "UATimerScheduler+Internal.h"; path = "common/UATimerScheduler+Internal.h"; sourceTree = "<group>"; };
 		3C3BCBAA20E19FC500D86E60 /* UATimerScheduler.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = UATimerScheduler.m; path = common/UATimerScheduler.m; sourceTree = "<group>"; };
+		3C3DAA0B22EF9ABC00202570 /* UAChannelTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAChannelTest.m; sourceTree = "<group>"; };
+		3C3DAA0D22F26E0100202570 /* UAUserProviderDelegate+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "UAUserProviderDelegate+Internal.h"; path = "common/UAUserProviderDelegate+Internal.h"; sourceTree = "<group>"; };
 		3C4FDDFD225BBED300A54E32 /* UALocationEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UALocationEvent.h; path = common/UALocationEvent.h; sourceTree = "<group>"; };
 		3C4FDDFE225BBED400A54E32 /* UALocationEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UALocationEvent.m; path = common/UALocationEvent.m; sourceTree = "<group>"; };
 		3C5264AB20DAEE2A00FCA903 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
@@ -3015,7 +3021,6 @@
 				CC70E8CC1DD3DEE1000E2528 /* Tag groups */,
 				CC04F2071DCAB4DE00B4842D /* Actions */,
 				CC04F2081DCAB4EB00B4842D /* Named User */,
-				CC04F2091DCAB4FD00B4842D /* Channel */,
 				CC04F20A1DCAB50C00B4842D /* APNS */,
 				CC04F20B1DCAB52900B4842D /* Interactive */,
 				CC64F0B81D8B781C009CEF27 /* UAPushTest.m */,
@@ -3050,6 +3055,7 @@
 				CC64F0841D8B781C009CEF27 /* UAChannelCaptureTest.m */,
 				CC64F0851D8B781C009CEF27 /* UAChannelRegistrarTest.m */,
 				CC64F0861D8B781C009CEF27 /* UAChannelRegistrationPayloadTest.m */,
+				3C3DAA0B22EF9ABC00202570 /* UAChannelTest.m */,
 			);
 			name = Channel;
 			sourceTree = "<group>";
@@ -3411,6 +3417,7 @@
 				CC40DBF81D8C996A00BABD4F /* UAUserAPIClient.m */,
 				CC40DBF91D8C996A00BABD4F /* UAUserData.h */,
 				CC40DBFA1D8C996A00BABD4F /* UAUserData.m */,
+				3C3DAA0D22F26E0100202570 /* UAUserProviderDelegate+Internal.h */,
 			);
 			name = User;
 			sourceTree = "<group>";
@@ -3907,6 +3914,7 @@
 				CC944EDA1DB6AEAF00C42269 /* HTTP */,
 				CC04F1FF1DCAB22E00B4842D /* Automation */,
 				CC04F2031DCAB3DD00B4842D /* Inbox */,
+				CC04F2091DCAB4FD00B4842D /* Channel */,
 				CC04F2061DCAB4C000B4842D /* Push */,
 				CC04F20C1DCAB57200B4842D /* Location */,
 				CC04F20E1DCAB5C600B4842D /* Actions Framework */,
@@ -4286,6 +4294,7 @@
 				6E598D431FFC56C2005B234B /* UAActionScheduleInfo+Internal.h in Headers */,
 				99E2DA441FBA2A0000C9F2CC /* UAInAppMessageBannerView+Internal.h in Headers */,
 				3C67E12421266018006031EB /* UARemoteConfig+Internal.h in Headers */,
+				3C3DAA0E22F26E0100202570 /* UAUserProviderDelegate+Internal.h in Headers */,
 				CC40DC551D8C996A00BABD4F /* UAAutomation.h in Headers */,
 				CC40DD071D8C996A00BABD4F /* UARemoveTagsAction.h in Headers */,
 				CC40DC4E1D8C996A00BABD4F /* UAAssociatedIdentifiers.h in Headers */,
@@ -4715,6 +4724,7 @@
 				99666E4A1EDF2C8D00BAE46B /* UAScreenTrackingEvent+Internal.h in Headers */,
 				99666E2A1EDF2C7C00BAE46B /* UASQLite+Internal.h in Headers */,
 				9960B9011EDE4D86007D6D97 /* UASwizzler+Internal.h in Headers */,
+				3C3DAA1022F26F1100202570 /* UAUserProviderDelegate+Internal.h in Headers */,
 				99666DCD1EDF2BED00BAE46B /* UATagGroupsAPIClient+Internal.h in Headers */,
 				99666DCF1EDF2BED00BAE46B /* UATagGroupsMutation+Internal.h in Headers */,
 				99666E071EDF2C1F00BAE46B /* UATagsActionPredicate+Internal.h in Headers */,
@@ -4812,6 +4822,7 @@
 				DF7E225C1ED62E0900C79C46 /* UAPush.h in Headers */,
 				DF3C3F1E20F54F4F006D6B72 /* UADate+Internal.h in Headers */,
 				3C67E12621266018006031EB /* UARemoteConfig+Internal.h in Headers */,
+				3C3DAA0F22F26E0100202570 /* UAUserProviderDelegate+Internal.h in Headers */,
 				6E598D4C1FFC5C27005B234B /* UAInAppMessageScheduleEdits+Internal.h in Headers */,
 				996B95541FAB932B009B49BC /* UAInAppMessageScheduleInfo.h in Headers */,
 				6E598D3F1FFC51E3005B234B /* UAInAppMessageScheduleEdits.h in Headers */,
@@ -5731,6 +5742,7 @@
 				CC64F11A1D8B781C009CEF27 /* UAPasteboardActionTest.m in Sources */,
 				CC64F0FF1D8B781C009CEF27 /* UALegacyInAppMessageTest.m in Sources */,
 				9987672A1FBE6B4200197AF4 /* UAInAppMessageBannerDisplayContentTest.m in Sources */,
+				3C3DAA0C22EF9ABC00202570 /* UAChannelTest.m in Sources */,
 				991A94691FCF2CEF00B57D24 /* UAInAppMessageMediaInfoTest.m in Sources */,
 				6E3942281F33DA52003D1C50 /* UAInboxStoreTest.m in Sources */,
 				53911BDD1E23EBA500EE7007 /* UAChannelCaptureActionTest.m in Sources */,

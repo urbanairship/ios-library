@@ -215,7 +215,7 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
     if (![self.dataStore objectForKey:UAPushTypesAuthorizedKey] || [self.dataStore integerForKey:UAPushTypesAuthorizedKey] != authorizedSettings) {
 
         [self.dataStore setInteger:(NSInteger)authorizedSettings forKey:UAPushTypesAuthorizedKey];
-        [self.channel updateRegistration];
+        [self updateRegistration];
 
         [self.registrationDelegateWrapper notificationAuthorizedSettingsDidChange:authorizedSettings
                                                                     legacyOptions:[self legacyOptionsForAuthorizedSettings:authorizedSettings]];
@@ -328,7 +328,8 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
     [self.dataStore setBool:enabled forKey:UAUserPushNotificationsEnabledKey];
 
     if (enabled != previousValue) {
-        [self updateAPNSRegistration];
+        self.shouldUpdateAPNSRegistration = YES;
+        [self updateRegistration];
     }
 }
 
@@ -574,7 +575,7 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
     if (self.application.backgroundRefreshStatus == UIBackgroundRefreshStatusAvailable) {
         [self.application registerForRemoteNotifications];
     } else {
-        [self.channel updateRegistration];
+        [self updateRegistration];
     }
 }
 #endif
@@ -913,6 +914,13 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
     if (existingTags) {
         self.channel.tags = [UATagUtils normalizeTags:existingTags];
         [self.dataStore removeObjectForKey:UAPushTagsSettingsKey];
+    }
+}
+
+- (void)onComponentEnableChange {
+    if (self.componentEnabled) {
+        // if component was disabled and is now enabled, register the channel
+        [self updateRegistration];
     }
 }
 

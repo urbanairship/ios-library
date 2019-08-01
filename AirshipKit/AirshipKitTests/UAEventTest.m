@@ -28,6 +28,7 @@
 @property (nonatomic, strong) id airshipVersion;
 @property (nonatomic, strong) id application;
 @property (nonatomic, strong) id push;
+@property (nonatomic, strong) id channel;
 @property (nonatomic, strong) id currentDevice;
 @property (nonatomic, strong) id utils;
 
@@ -40,11 +41,14 @@
 
     self.analytics = [self mockForClass:[UAAnalytics class]];
     self.push = [self mockForClass:[UAPush class]];
+    self.channel = [self mockForClass:[UAChannel class]];
 
     self.airship = [self mockForClass:[UAirship class]];
 
     [[[self.airship stub] andReturn:self.analytics] sharedAnalytics];
     [[[self.airship stub] andReturn:self.push] push];
+    [[[self.airship stub] andReturn:self.channel] channel];
+
 
     [UAirship setSharedAirship:self.airship];
 
@@ -199,7 +203,7 @@
 - (void)testRegistrationEvent {
     [[[self.push stub] andReturnValue:@YES] pushTokenRegistrationEnabled];
     [[[self.push stub] andReturn:@"a12312ad"] deviceToken];
-    [[[self.push stub] andReturn:@"someChannelID"] channelID];
+    [[[self.channel stub] andReturn:@"someChannelID"] identifier];
 
     NSDictionary *expectedData = @{@"device_token": @"a12312ad",
                                    @"channel_id": @"someChannelID",
@@ -218,7 +222,7 @@
 - (void)testRegistrationEventPushTokenRegistrationEnabledNo {
     [[[self.push stub] andReturnValue:@NO] pushTokenRegistrationEnabled];
     [[[self.push stub] andReturn:@"a12312ad"] deviceToken];
-    [[[self.push stub] andReturn:@"someChannelID"] channelID];
+    [[[self.channel stub] andReturn:@"someChannelID"] identifier];
 
     NSDictionary *expectedData = @{@"channel_id": @"someChannelID"};
 

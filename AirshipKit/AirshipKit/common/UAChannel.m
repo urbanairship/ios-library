@@ -29,7 +29,6 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
 @property (nonatomic, strong) UAChannelRegistrar *channelRegistrar;
 @property (nonatomic, strong) UATagGroupsRegistrar *tagGroupsRegistrar;
 @property (nonatomic, assign) BOOL shouldPerformChannelRegistrationOnForeground;
-@property (nonatomic, assign) BOOL isForegrounded;
 @end
 
 @implementation UAChannel
@@ -111,11 +110,11 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
     return self.channelRegistrar.channelID;
 }
 
-- (BOOL)shouldPerformChannelCreationOnForeground {
+- (BOOL)shouldPerformChannelRegistrationOnForeground {
     return [self.dataStore boolForKey:UAChannelCreationOnForeground];
 }
 
-- (void)setShouldPerformChannelCreationOnForeground:(BOOL)value {
+- (void)setShouldPerformChannelRegistrationOnForeground:(BOOL)value {
     [self.dataStore setBool:value forKey:UAChannelCreationOnForeground];
 }
 
@@ -296,10 +295,14 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
         payload.timeZone = self.pushProviderDelegate.timeZone.name;
 
 #if !TARGET_OS_TV   // Inbox not supported on tvOS
-        [[UAirship inboxUser] getUserData:^(UAUserData *userData) {
-            payload.userID = userData.username;
+        if (self.userProviderDelegate) {
+            [self.userProviderDelegate getUserData:^(UAUserData *userData) {
+                payload.userID = userData.username;
+                completionHandler(payload);
+            } dispatcher:dispatcher];
+        } else {
             completionHandler(payload);
-        } dispatcher:dispatcher];
+        }
 #else
         completionHandler(payload);
 #endif

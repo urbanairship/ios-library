@@ -3,7 +3,7 @@
 #import "UABaseTest.h"
 #import "UATagGroupsLookupManager+Internal.h"
 #import "UAirship.h"
-#import "UAPush.h"
+#import "UAChannel.h"
 #import "UATagGroupsLookupAPIClient+Internal.h"
 #import "UATagGroupsMutationHistory+Internal.h"
 #import "UATestDate.h"
@@ -11,7 +11,7 @@
 @interface UATagGroupsLookupManagerTest : UABaseTest
 @property (nonatomic, strong) UATagGroupsLookupManager *lookupManager;
 @property (nonatomic, strong) id mockAirship;
-@property (nonatomic, strong) id mockPush;
+@property (nonatomic, strong) id mockChannel;
 @property (nonatomic, strong) id mockAPIClient;
 @property (nonatomic, strong) id mockCache;
 @property (nonatomic, strong) id mockMutationHistory;
@@ -43,16 +43,16 @@
 
 - (void)setupMocks:(NSString *)channelID channelTagsEnabled:(BOOL)enabled {
     self.mockAirship = [self mockForClass:[UAirship class]];
-    self.mockPush = [self mockForClass:[UAPush class]];
+    self.mockChannel = [self mockForClass:[UAChannel class]];
     self.mockAPIClient = [self mockForClass:[UATagGroupsLookupAPIClient class]];
     self.mockMutationHistory = [self mockForClass:[UATagGroupsMutationHistory class]];
     self.mockCache = [self mockForClass:[UATagGroupsLookupResponseCache class]];
 
-    [[[self.mockAirship stub] andReturn:self.mockPush] push];
+    [[[self.mockAirship stub] andReturn:self.mockChannel] channel];
 
-    [[[self.mockPush stub] andReturn:@[@"test"]] tags];
-    [[[self.mockPush stub] andReturn:channelID] channelID];
-    [[[self.mockPush stub] andReturnValue:@(enabled)] isChannelTagRegistrationEnabled];
+    [[[self.mockChannel stub] andReturn:@[@"test"]] tags];
+    [[[self.mockChannel stub] andReturn:channelID] identifier];
+    [[[self.mockChannel stub] andReturnValue:@(enabled)] isChannelTagRegistrationEnabled];
 
     self.lookupManager = [UATagGroupsLookupManager lookupManagerWithAPIClient:self.mockAPIClient
                                                                      dataStore:self.dataStore
