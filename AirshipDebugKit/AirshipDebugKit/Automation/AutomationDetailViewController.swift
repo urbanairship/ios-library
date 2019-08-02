@@ -242,6 +242,10 @@ class AutomationDetailViewController: UIViewController, UITableViewDelegate, UIT
             return createHTMLContentCell(indexPath, displayContent: displayContent)
         case .custom:  // TODO - IMPLEMENT
             let _ = message.displayContent as! UAInAppMessageCustomDisplayContent
+        @unknown default:
+            let cell = defaultAutomationDetailCell(indexPath)
+            cell.title.text = "ua_displaycontent_unknown".localized()
+            return cell
         }
 
         return UITableViewCell()
@@ -344,6 +348,8 @@ class AutomationDetailViewController: UIViewController, UITableViewDelegate, UIT
                 subtitle = "ua_displaycontent_contentLayout_mediaHeaderBody".localized()
             case .headerBodyMedia:
                 subtitle = "ua_displaycontent_contentLayout_headerBodyMedia".localized()
+            @unknown default:
+                subtitle = "ua_displaycontent_contentLayout_unknown".localized()
             }
 
             cell.subtitle.text = subtitle
@@ -426,6 +432,8 @@ class AutomationDetailViewController: UIViewController, UITableViewDelegate, UIT
                 subtitle = "ua_displaycontent_contentLayout_mediaHeaderBody".localized()
             case .headerBodyMedia:
                 subtitle = "ua_displaycontent_contentLayout_headerBodyMedia".localized()
+            @unknown default:
+                subtitle = "ua_displaycontent_contentLayout_unknown".localized()
             }
 
             cell.subtitle.text = subtitle
@@ -687,6 +695,8 @@ class AutomationDetailViewController: UIViewController, UITableViewDelegate, UIT
                 subtitle = "ua_mediainfo_type_video".localized()
             case .youTube:
                 subtitle = "ua_mediainfo_type_youTube".localized()
+            @unknown default:
+                subtitle = "ua_mediainfo_type_unknown".localized()
             }
             subtitle = subtitle! + ": \(mediaInfo.contentDescription)"
         }
@@ -717,6 +727,8 @@ class AutomationDetailViewController: UIViewController, UITableViewDelegate, UIT
                     return "ua_displaycontent_title_HTML".localized()
                 case .custom:
                     return "ua_displaycontent_title_custom".localized()
+                @unknown default:
+                    return "ua_displaycontent_title_unknown".localized()
                 }
             } else {
                 return "ua_displaycontent_title_unknown".localized()
@@ -736,6 +748,8 @@ class AutomationDetailViewController: UIViewController, UITableViewDelegate, UIT
                 mediaDescription = "ua_mediainfo_type_video".localized()
             case .youTube:
                 mediaDescription = "ua_mediainfo_type_youTube".localized()
+            @unknown default:
+                mediaDescription = "ua_mediainfo_type_unknown".localized()
             }
             mediaDescription = mediaDescription! + ": \(mediaInfo.contentDescription)"
         }
@@ -754,6 +768,8 @@ class AutomationDetailViewController: UIViewController, UITableViewDelegate, UIT
                     buttonsDescription = buttonsDescription! + String(format:": %@","ua_displaycontent_buttonLayout_separate".localized())
                 case .joined:
                     buttonsDescription = buttonsDescription! + String(format:": %@","ua_displaycontent_buttonLayout_joined".localized())
+                @unknown default:
+                    buttonsDescription = buttonsDescription! + String(format:": %@","ua_displaycontent_buttonLayout_unknown".localized())
                 }
             }
         }
@@ -802,6 +818,8 @@ class AutomationDetailViewController: UIViewController, UITableViewDelegate, UIT
         case .custom:
             let _ = message.displayContent as! UAInAppMessageCustomDisplayContent
             // TODO - Implement custom detail view
+        @unknown default:
+            break
         }
 
         switch(segue.identifier ?? "") {

@@ -80,6 +80,8 @@ class ButtonDetailViewController: UAStaticTableViewController {
             buttonDismissBehaviorLabel.text = "ua_button_behavior_dismiss".localized()
         case .cancel:
             buttonDismissBehaviorLabel.text = "ua_button_behavior_cancel".localized()
+        @unknown default:
+            buttonDismissBehaviorLabel.text = "ua_button_behavior_unknown".localized()
         }
         borderRadiusLabel.text = "\(button.borderRadiusPoints)"
         backgroundColorLabel.text = descriptionForColor(button.backgroundColor)

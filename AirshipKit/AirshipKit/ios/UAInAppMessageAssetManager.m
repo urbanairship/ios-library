@@ -43,8 +43,9 @@
         
         // ask delegate if we should cache the assets onSchedule
         BOOL shouldCacheOnSchedule = NO;
-        if (self.cachePolicyDelegate && [self.cachePolicyDelegate respondsToSelector:@selector(shouldCacheOnSchedule:)]) {
-            shouldCacheOnSchedule = [self.cachePolicyDelegate shouldCacheOnSchedule:message];
+        id<UAInAppMessageCachePolicyDelegate> cachePolicyDelegate = self.cachePolicyDelegate;
+        if (cachePolicyDelegate && [cachePolicyDelegate respondsToSelector:@selector(shouldCacheOnSchedule:)]) {
+            shouldCacheOnSchedule = [cachePolicyDelegate shouldCacheOnSchedule:message];
         }
         if (!shouldCacheOnSchedule) {
             [operation finish];
@@ -101,9 +102,10 @@
         
         // should we cache the assets onSchedule?
         BOOL shouldPersistCacheAfterDisplay = NO;
-        if (self.cachePolicyDelegate && [self.cachePolicyDelegate respondsToSelector:@selector(shouldPersistCacheAfterDisplay:)]) {
+        id<UAInAppMessageCachePolicyDelegate> cachePolicyDelegate = self.cachePolicyDelegate;
+        if (cachePolicyDelegate && [cachePolicyDelegate respondsToSelector:@selector(shouldPersistCacheAfterDisplay:)]) {
             message = ((UAInAppMessageScheduleInfo *)schedule.info).message;
-            shouldPersistCacheAfterDisplay = [self.cachePolicyDelegate shouldPersistCacheAfterDisplay:message];
+            shouldPersistCacheAfterDisplay = [cachePolicyDelegate shouldPersistCacheAfterDisplay:message];
         }
         
         // Release the assets instance for this schedule

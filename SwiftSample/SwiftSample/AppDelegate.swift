@@ -23,7 +23,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UARegistrationDelegate, U
     var window: UIWindow?
     var inboxDelegate: InboxDelegate?
 
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey : Any]? = nil) -> Bool {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
         self.failIfSimulator()
 
         // Populate AirshipConfig.plist with your app's info from https://go.urbanairship.com
@@ -79,7 +79,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UARegistrationDelegate, U
 
     func showInvalidConfigAlert() {
         let alertController = UIAlertController.init(title: "Invalid AirshipConfig.plist", message: "The AirshipConfig.plist must be a part of the app bundle and include a valid appkey and secret for the selected production level.", preferredStyle:.actionSheet)
-        alertController.addAction(UIAlertAction.init(title: "Exit Application", style: UIAlertActionStyle.default, handler: { (UIAlertAction) in
+        alertController.addAction(UIAlertAction.init(title: "Exit Application", style: UIAlertAction.Style.default, handler: { (UIAlertAction) in
             exit(1)
         }))
 
@@ -102,12 +102,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UARegistrationDelegate, U
 
         let alertController = UIAlertController(title: "Notice", message: "You will not be able to receive push notifications in the simulator.", preferredStyle: .alert)
 
-        let disableAction = UIAlertAction(title: "Disable Warning", style: UIAlertActionStyle.default){ (UIAlertAction) -> Void in
+        let disableAction = UIAlertAction(title: "Disable Warning", style: UIAlertAction.Style.default){ (UIAlertAction) -> Void in
             UserDefaults.standard.set(true, forKey:self.simulatorWarningDisabledKey)
         }
         alertController.addAction(disableAction)
 
-        let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel, handler: nil)
+        let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel, handler: nil)
         alertController.addAction(cancelAction)
 
         // Let the UI finish launching first so it doesn't complain about the lack of a root view controller

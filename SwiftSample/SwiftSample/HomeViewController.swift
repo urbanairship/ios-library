@@ -47,10 +47,10 @@ class HomeViewController: UIViewController {
 
                 let message = NSLocalizedString("UA_Copied_To_Clipboard", tableName: "UAPushUI", comment: "Copied to clipboard string")
 
-                let alert = UIAlertController(title: nil, message: message, preferredStyle: UIAlertControllerStyle.alert)
+                let alert = UIAlertController(title: nil, message: message, preferredStyle: UIAlertController.Style.alert)
                 let buttonTitle = NSLocalizedString("UA_OK", tableName: "UAPushUI", comment: "OK button string")
 
-                let okAction = UIAlertAction(title: buttonTitle, style: UIAlertActionStyle.default, handler: { (action: UIAlertAction) in
+                let okAction = UIAlertAction(title: buttonTitle, style: UIAlertAction.Style.default, handler: { (action: UIAlertAction) in
                     self.dismiss(animated: true, completion: nil)
                 })
 

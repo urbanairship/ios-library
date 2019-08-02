@@ -1159,8 +1159,9 @@
 }
 
 - (BOOL)collapsed {
-    if (self.splitViewController) {
-        return self.splitViewController.collapsed;
+    UISplitViewController *splitViewController = self.splitViewController;
+    if (splitViewController) {
+        return splitViewController.collapsed;
     }
     return YES;
 }

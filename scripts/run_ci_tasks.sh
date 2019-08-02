@@ -58,7 +58,16 @@ echo -ne "Running CI tasks in mode:${MODE} \n\n";
 
 if [ $TESTS = true ]
 then
+  set +e
   pod install --project-directory=$ROOT_PATH
+  if [ $? != 0 ]; then
+    # Cocoapods failed. Try updating the repo and then installing again
+    set -e
+    pod repo update
+    pod install --project-directory=$ROOT_PATH
+  else
+    set -e
+  fi
   echo -ne "\n\n *********** RUNNING TESTS *********** \n\n"
   
   # Run AirshipKitTest Tests

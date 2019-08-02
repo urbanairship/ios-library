@@ -69,6 +69,8 @@ class MediaInfoDetailViewController: UAStaticTableViewController {
             typeLabel.text = "ua_mediainfo_type_video".localized()
         case .youTube:
             typeLabel.text = "ua_mediainfo_type_youTube".localized()
+        @unknown default:
+            typeLabel.text = "ua_mediainfo_type_unknown".localized()
         }
         
         urlLabel.text? = mediaInfo.url
@@ -125,7 +127,11 @@ class MediaInfoDetailViewController: UAStaticTableViewController {
                 guard let url = URL(string:String(format: "%@%@", mediaInfo.url, "?playsinline=1")) else { return }
                 let request = URLRequest(url: url)
                 webView.load(request)
+            @unknown default:
+                break
             }
+        @unknown default:
+            break
         }
         
         tableView.reloadData()

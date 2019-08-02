@@ -556,9 +556,9 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
 
 - (nullable id<UAInAppMessageDisplayCoordinator>)displayCoordinatorForMessage:(UAInAppMessage *)message {
     id<UAInAppMessageDisplayCoordinator> displayCoordinator;
-
-    if ([self.delegate respondsToSelector:@selector(displayCoordinatorForMessage:)]) {
-        displayCoordinator = [self.delegate displayCoordinatorForMessage:message];
+    id<UAInAppMessagingDelegate> delegate = self.delegate;
+    if ([delegate respondsToSelector:@selector(displayCoordinatorForMessage:)]) {
+        displayCoordinator = [delegate displayCoordinatorForMessage:message];
     }
 
     if ([message.displayBehavior isEqualToString:UAInAppMessageDisplayBehaviorImmediate]) {
@@ -728,8 +728,9 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
         UIWindowScene *scene = [self.sceneTracker primaryWindowScene];
         if (scene) {
             // Give the delegate a chance to override
-            if ([self.delegate respondsToSelector:@selector(sceneForMessage:defaultScene:)]) {
-                scene = [self.delegate sceneForMessage:message defaultScene:scene] ?: scene;
+            id<UAInAppMessagingDelegate> delegate = self.delegate;
+            if ([delegate respondsToSelector:@selector(sceneForMessage:defaultScene:)]) {
+                scene = [delegate sceneForMessage:message defaultScene:scene] ?: scene;
             }
 
             [adapter display:displayCompletionHandler scene:scene];

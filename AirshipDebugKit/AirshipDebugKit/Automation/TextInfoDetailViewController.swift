@@ -89,6 +89,8 @@ class TextInfoDetailViewController: UAStaticTableViewController {
             alignmentLabel.text = "ua_textinfo_alignment_center".localized()
         case .right:
             alignmentLabel.text = "ua_textinfo_alignment_right".localized()
+        @unknown default:
+            alignmentLabel.text = "ua_textinfo_alignment_unknown".localized()
         }
         
         // style

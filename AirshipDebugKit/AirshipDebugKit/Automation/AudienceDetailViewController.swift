@@ -139,6 +139,8 @@ class AudienceDetailViewController: UAStaticTableViewController {
             missBehaviorLabel.text = "ua_audience_missBehavior_skip".localized()
         case .penalize:
             missBehaviorLabel.text = "ua_audience_missBehavior_penalize".localized()
+        @unknown default:
+            missBehaviorLabel.text = "ua_audience_missBehavior_unknown".localized()
         }
         
         // is the user a member of the audience?

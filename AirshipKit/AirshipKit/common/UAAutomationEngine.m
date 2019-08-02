@@ -192,7 +192,7 @@
     }
 }
 
-- (void)schedule:(UAScheduleInfo *)scheduleInfo metadata:(NSDictionary *)metadata completionHandler:(nullable void (^)(UASchedule * __nullable))completionHandler {
+- (void)schedule:(UAScheduleInfo *)scheduleInfo metadata:(nullable NSDictionary *)metadata completionHandler:(nullable void (^)(UASchedule * __nullable))completionHandler {
     // Only allow valid schedules to be saved
     if (!scheduleInfo.isValid) {
         if (completionHandler) {
@@ -232,7 +232,7 @@
     }];
 }
 
-- (void)scheduleMultiple:(NSArray<UAScheduleInfo *> *)scheduleInfos metadata:(NSDictionary *)metadata completionHandler:(void (^)(NSArray <UASchedule *> *))completionHandler {
+- (void)scheduleMultiple:(NSArray<UAScheduleInfo *> *)scheduleInfos metadata:(nullable NSDictionary *)metadata completionHandler:(void (^)(NSArray <UASchedule *> *))completionHandler {
     [self cleanSchedules];
 
     // Create schedules to save (only allow valid schedules)

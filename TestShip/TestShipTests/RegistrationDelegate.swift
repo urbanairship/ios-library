@@ -31,7 +31,7 @@ class RegistrationDelegate: NSObject, UARegistrationDelegate {
     }
 
     @objc(notificationRegistrationFinishedWithAuthorizedSettings:categories:)
-    func notificationRegistrationFinished(withAuthorizedSettings authorizedSettings: UAAuthorizedNotificationSettings, categories: Set<AnyHashable>) {
+    func notificationRegistrationFinished(withAuthorizedSettings authorizedSettings: UAAuthorizedNotificationSettings, categories: Set<UANotificationCategory>) {
         guard let delegate = forwardDelegate else { return }
 
         if delegate.responds(to: #selector(UARegistrationDelegate.notificationRegistrationFinished(withAuthorizedSettings:categories:))) {

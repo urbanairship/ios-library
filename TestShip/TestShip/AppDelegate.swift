@@ -9,7 +9,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UARegistrationDelegate {
     var window: UIWindow?
     var inboxDelegate: InboxDelegate?
 
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey : Any]? = nil) -> Bool {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
 
 
         let config = UAConfig.default()

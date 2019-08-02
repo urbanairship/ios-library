@@ -30,7 +30,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param onlyIfChanged Only load the message if the message has changed
  * @param errorCompletion Called on loading error
  */
-- (void)loadMessageForID:(NSString *)messageID onlyIfChanged:(BOOL)onlyIfChanged onError:(nullable void (^)(void))errorCompletion;
+- (void)loadMessageForID:(nullable NSString *)messageID onlyIfChanged:(BOOL)onlyIfChanged onError:(nullable void (^)(void))errorCompletion;
 
 
 @optional

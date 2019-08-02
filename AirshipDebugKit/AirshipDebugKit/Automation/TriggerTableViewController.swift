@@ -81,6 +81,8 @@ class TriggerTableViewController: UITableViewController {
                 triggerType = "ua_trigger_type_screen".localized()
             case .version:
                 triggerType = "ua_trigger_type_version".localized()
+            @unknown default:
+                triggerType = "ua_trigger_type_unknown".localized()
             }
             if let triggerType = triggerType {
                 cell.triggerTypeLabel.text = String(format: "ua_trigger_type_labelformat".localized(), triggerType)

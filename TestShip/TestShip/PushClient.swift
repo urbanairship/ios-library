@@ -14,7 +14,7 @@ class PushClient: NSObject {
      */
     func pushPayload(payload:()->([String : Any]?)) {
         let customConfig: NSDictionary = UAirship.shared().config.customConfig as NSDictionary
-        let appKey: String = UAirship.shared().config.appKey!
+        let appKey: String = UAirship.shared().config.appKey
         var masterSecret: String = "";
 
         guard let payload = payload() else {

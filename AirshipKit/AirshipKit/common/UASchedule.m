@@ -6,7 +6,7 @@
 
 - (instancetype)initWithIdentifier:(NSString *)identifier
                               info:(UAScheduleInfo *)info
-                          metadata:(NSDictionary *)metadata {
+                          metadata:(nullable NSDictionary *)metadata {
     self = [super init];
     if (self) {
         self.identifier = identifier;
@@ -19,7 +19,7 @@
 
 + (instancetype)scheduleWithIdentifier:(NSString *)identifier
                                   info:(UAScheduleInfo *)info
-                              metadata:(NSDictionary *)metadata {
+                              metadata:(nullable NSDictionary *)metadata {
     return [[UASchedule alloc] initWithIdentifier:identifier
                                              info:info
                                          metadata:metadata];

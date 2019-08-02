@@ -15,12 +15,12 @@
 
     if (self) {
         self.notificationCenter = notificationCenter;
-        if (@available(iOS 13.0, *)) {
+        if (@available(iOS 13.0, tvOS 13.0, *)) {
             self.scenes = [NSMutableArray array];
         }
     }
 
-    if (@available(iOS 13.0, *)) {
+    if (@available(iOS 13.0, tvOS 13.0, *)) {
         [self observeSceneEvents];
     }
 

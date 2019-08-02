@@ -319,7 +319,7 @@ NS_ASSUME_NONNULL_BEGIN
  * Parses the inbox message ID from the URL.
  * @return The message ID if its an message URL, otherwise nil.
  */
-- (NSString *)inboxMessageID {
+- (nullable NSString *)inboxMessageID {
     NSString *urlString = self.displayContent.url;
     NSURL *url = [NSURL URLWithString:self.displayContent.url];
 

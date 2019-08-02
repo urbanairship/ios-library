@@ -234,7 +234,7 @@ static NSString *urlForBlankPage = @"about:blank";
     [self loadMessageForID:messageID onlyIfChanged:NO onError:nil];
 }
 
-- (void)loadMessageForID:(NSString *)messageID onlyIfChanged:(BOOL)onlyIfChanged onError:(void (^)(void))errorCompletion {
+- (void)loadMessageForID:(nullable NSString *)messageID onlyIfChanged:(BOOL)onlyIfChanged onError:(void (^)(void))errorCompletion {
     if (!messageID) {
         [self coverWithMessageAndHideLoadingIndicator:UAMessageCenterLocalizedString(@"ua_message_not_selected")];
         return;

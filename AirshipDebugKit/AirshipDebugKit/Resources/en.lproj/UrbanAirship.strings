@@ -87,6 +87,7 @@
 "ua_displaycontent_contentLayout_headerMediaBody" = "Header Media Body";
 "ua_displaycontent_contentLayout_mediaHeaderBody" = "Media Header Body";
 "ua_displaycontent_contentLayout_headerBodyMedia" = "Header Body Media";
+"ua_displaycontent_contentLayout_unknown" = "Unknown";
 
 "ua_displaycontent_duration_format" = "%f seconds";
 
@@ -101,10 +102,12 @@
 "ua_displaycontent_buttonLayout_stacked" = "Stacked";
 "ua_displaycontent_buttonLayout_separate" = "Separate";
 "ua_displaycontent_buttonLayout_joined" = "Joined";
+"ua_displaycontent_buttonLayout_unknown" = "Unknown";
 
 "ua_mediainfo_type_image" = "Image";
 "ua_mediainfo_type_video" = "Video";
 "ua_mediainfo_type_youTube" = "YouTube";
+"ua_mediainfo_type_unknown" = "Unknown";
 
 "ua_textinfo_title_heading" = "Heading Text Info";
 "ua_textinfo_title_body" = "Body Text Info";
@@ -114,6 +117,7 @@
 "ua_textinfo_alignment_left" = "Left";
 "ua_textinfo_alignment_center" = "Center";
 "ua_textinfo_alignment_right" = "Right";
+"ua_textinfo_alignment_unknown" = "Unknown";
 
 "ua_textinfo_style_bold" = "Bold";
 "ua_textinfo_style_italic" = "Italic";
@@ -123,9 +127,11 @@
 "ua_audience_missBehavior_cancel" = "Cancel";
 "ua_audience_missBehavior_skip" = "Skip";
 "ua_audience_missBehavior_penalize" = "Penalize";
+"ua_audience_missBehavior_unknown" = "Unknown";
 
 "ua_button_behavior_dismiss" = "Dismiss behavior";
 "ua_button_behavior_cancel" = "Cancel behavior";
+"ua_button_behavior_unknown" = "Unknown behavior";
 
 "ua_trigger_type_activeSession" = "Active Session";
 "ua_trigger_type_appBackground" = "App Background";
@@ -137,6 +143,7 @@
 "ua_trigger_type_regionExit" = "Region Exit";
 "ua_trigger_type_screen" = "Screen";
 "ua_trigger_type_version" = "Version";
+"ua_trigger_type_unknown" = "Unknown";
 
 "ua_trigger_type_labelformat" = "%@ Trigger";
 
@@ -198,6 +205,7 @@
 "ua_displaycontent_allowfullscreendisplay" = "Allow Full Screen Display";
 "ua_displaycontent_footer" = "Footer";
 "ua_displaycontent_url" = "URL";
+"ua_displaycontent_unknown" = "Unknown";
 
 "ua_textinfo_text" = "Text";
 "ua_textinfo_alignment" = "Alignment";

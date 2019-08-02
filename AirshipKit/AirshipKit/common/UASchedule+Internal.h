@@ -42,7 +42,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 + (instancetype)scheduleWithIdentifier:(NSString *)identifier
                                   info:(UAScheduleInfo *)info
-                              metadata:(NSDictionary *)metadata;
+                              metadata:(nullable NSDictionary *)metadata;
 
 @end
 

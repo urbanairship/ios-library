@@ -108,6 +108,8 @@ class AutomationTableViewController: UITableViewController {
                 cell.messageType.text = "H"
             case .custom:
                 cell.messageType.text = "C"
+            @unknown default:
+                break
             }
             cell.messageName.text = message.name
             cell.messageID.text = message.identifier

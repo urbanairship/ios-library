@@ -72,6 +72,8 @@ class ButtonsTableViewController: UITableViewController {
                 cell.buttonBehavior.text = "ua_button_behavior_dismiss".localized()
             case .cancel:
                 cell.buttonBehavior.text = "ua_button_behavior_cancel".localized()
+            @unknown default:
+                cell.buttonBehavior.text = "ua_button_behavior_unknown".localized()
             }
         }
 
