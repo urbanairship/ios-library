@@ -220,7 +220,7 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
             cell.subtitle?.numberOfLines = 1;
         case channelID:
             cell.title.text = "ua_device_info_channel_id".localized()
-            cell.subtitle.text = UAirship.channel()?.identifier
+            cell.subtitle.text = UAirship.channel().identifier
         case username:
             UAirship.inboxUser()?.getData({ (userData) in
                 DispatchQueue.main.async {
@@ -301,7 +301,7 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
             cell.cellSwitch.setOn(!cell.cellSwitch.isOn, animated: true)
             UAirship.push().userPushNotificationsEnabled = cell.cellSwitch.isOn
         case channelID:
-            if (UAirship.channel()?.identifier != nil) {
+            if (UAirship.channel().identifier != nil) {
                 UIPasteboard.general.string = cell.subtitle?.text
                 showCopiedAlert()
             }

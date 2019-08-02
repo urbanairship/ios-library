@@ -25,7 +25,7 @@ class HomeViewController: UIViewController {
 
     @objc func refreshView () {
         if (UAirship.shared() != nil && UAirship.push().userPushNotificationsEnabled) {
-            channelIDButton.setTitle(UAirship.channel()?.identifier, for: [])
+            channelIDButton.setTitle(UAirship.channel().identifier, for: [])
             channelIDButton.isHidden = false
             enablePushButton.isHidden = true
             return
@@ -42,8 +42,8 @@ class HomeViewController: UIViewController {
 
         //The channel ID will need to wait for push registration to return the channel ID
         if (sender == channelIDButton) {
-            if ((UAirship.channel()?.identifier) != nil) {
-                UIPasteboard.general.string = UAirship.channel()?.identifier
+            if ((UAirship.channel().identifier) != nil) {
+                UIPasteboard.general.string = UAirship.channel().identifier
 
                 let message = NSLocalizedString("UA_Copied_To_Clipboard", tableName: "UAPushUI", comment: "Copied to clipboard string")
 
