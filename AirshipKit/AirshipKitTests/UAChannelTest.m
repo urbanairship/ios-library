@@ -62,10 +62,6 @@
     });
 }
 
-- (void)tearDown {
-    // Put teardown code here. This method is called after the invocation of each test method in the class.
-}
-
 - (UAChannel *)createChannel {
     UAChannel *channel = [UAChannel channelWithDataStore:self.dataStore
                                     config:self.config

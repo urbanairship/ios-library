@@ -155,16 +155,6 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     [super tearDown];
 }
 
-- (UAPush *)createPush {
-    return  [UAPush pushWithConfig:self.config
-                         dataStore:self.dataStore
-                           channel:self.mockChannel
-                notificationCenter:self.notificationCenter
-                  pushRegistration:self.mockPushRegistration
-                       application:self.mockApplication
-                        dispatcher:[UATestDispatcher testDispatcher]];
-}
-
 - (void)testSetDeviceToken {
     self.push.deviceToken = nil;
 

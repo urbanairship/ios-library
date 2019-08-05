@@ -541,7 +541,6 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
     [self setBadgeNumber:0];
 }
 
-
 #pragma mark -
 #pragma mark UIApplication State Observation
 

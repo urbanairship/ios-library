@@ -32,8 +32,7 @@ NS_ASSUME_NONNULL_BEGIN
 ///---------------------------------------------------------------------------------------
 
 /**
- * Adds a tag to the list of tags for the device.
- * To update the server, make all of your changes, then call
+ * Adds a tag to the list of tags for the device. To update the server, make all of your changes, then call
  * `updateRegistration` to update the Airship server.
  *
  * @note When updating multiple server-side values (tags, alias, time zone, quiet time), set the
@@ -44,7 +43,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)addTag:(NSString *)tag;
 
 /**
- * Adds a group of tags to the current list of device tags. To update the server, make all of your
+ * Adds a collection of tags to the current list of device tags. To update the server, make all of your
  * changes, then call `updateRegistration`.
  *
  * @note When updating multiple server-side values (tags, alias, time zone, quiet time), set the
@@ -66,7 +65,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)removeTag:(NSString *)tag;
 
 /**
- * Removes a group of tags from a device. To update the server, make all of your changes, then call
+ * Removes a collection of tags from a device. To update the server, make all of your changes, then call
  * `updateRegistration`.
  *
  * @note When updating multiple server-side values (tags, alias, time zone, quiet time), set the

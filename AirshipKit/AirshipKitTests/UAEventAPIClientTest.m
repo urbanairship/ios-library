@@ -39,16 +39,6 @@
     self.client = [UAEventAPIClient clientWithConfig:self.config session:self.mockSession];
 }
 
-- (void)tearDown {
-    [self.mockChannel stopMocking];
-    [self.mockAirship stopMocking];
-    [self.mockTimeZoneClass stopMocking];
-    [self.mockLocaleClass stopMocking];
-    [self.mockSession stopMocking];
-
-    [super tearDown];
-}
-
 /**
  * Test the event request
  */
