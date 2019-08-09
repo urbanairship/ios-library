@@ -11,7 +11,7 @@
 #import "UAInAppMessageScheduleInfo+Internal.h"
 #import "UAInAppMessageManager.h"
 #import "UAInAppMessageAudienceChecks+Internal.h"
-#import "UAPush+Internal.h"
+#import "UAChannel.h"
 #import "UAInAppMessage+Internal.h"
 #import "UAInAppMessageScheduleEdits+Internal.h"
 #import "UAScheduleEdits+Internal.h"
@@ -44,7 +44,7 @@ NSString * const UAInAppMessagesScheduledNewUserCutoffTimeKey = @"UAInAppRemoteD
 - (instancetype)initWithScheduler:(UAInAppMessageManager *)scheduler
                 remoteDataManager:(UARemoteDataManager *)remoteDataManager
                         dataStore:(UAPreferenceDataStore *)dataStore
-                             push:(UAPush *)push {
+                          channel:(UAChannel *)channel {
     
     self = [super init];
     
@@ -57,14 +57,14 @@ NSString * const UAInAppMessagesScheduledNewUserCutoffTimeKey = @"UAInAppRemoteD
         UA_WEAKIFY(self);
         self.remoteDataSubscription = [remoteDataManager subscribeWithTypes:@[UAInAppMessages]
                                                                       block:^(NSArray<UARemoteDataPayload *> * _Nonnull messagePayloads) {
-                                                                          UA_STRONGIFY(self);
-                                                                          [self.operationQueue addOperationWithBlock:^{
-                                                                              UA_STRONGIFY(self);
-                                                                              [self processInAppMessageData:[messagePayloads firstObject]];
-                                                                          }];
-                                                                      }];
+            UA_STRONGIFY(self);
+            [self.operationQueue addOperationWithBlock:^{
+                UA_STRONGIFY(self);
+                [self processInAppMessageData:[messagePayloads firstObject]];
+            }];
+        }];
         if (!self.scheduleNewUserCutOffTime) {
-            self.scheduleNewUserCutOffTime = (push.channelID) ? [NSDate distantPast] : [NSDate date];
+            self.scheduleNewUserCutOffTime = (channel.identifier) ? [NSDate distantPast] : [NSDate date];
         }
     }
 
@@ -74,11 +74,11 @@ NSString * const UAInAppMessagesScheduledNewUserCutoffTimeKey = @"UAInAppRemoteD
 + (instancetype)clientWithScheduler:(UAInAppMessageManager *)scheduler
                   remoteDataManager:(UARemoteDataManager *)remoteDataManager
                           dataStore:(UAPreferenceDataStore *)dataStore
-                               push:(UAPush *)push {
+                            channel:(UAChannel *)channel {
     return [[UAInAppRemoteDataClient alloc] initWithScheduler:scheduler
                                             remoteDataManager:remoteDataManager
                                                     dataStore:dataStore
-                                                         push:push];
+                                                      channel:channel];
 }
 
 - (void)dealloc {

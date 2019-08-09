@@ -12,7 +12,10 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refreshView) name:@"channelIDUpdated" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(refreshView)
+                                                 name:UAChannelUpdatedEvent
+                                               object:nil];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -26,8 +29,8 @@
         [UAirship push].userPushNotificationsEnabled = YES;
     }
 
-    if (sender == self.channelIDButton && [UAirship push].channelID) {
-        [UIPasteboard generalPasteboard].string = [UAirship push].channelID;
+    if (sender == self.channelIDButton && [UAirship channel].identifier) {
+        [UIPasteboard generalPasteboard].string = [UAirship channel].identifier;
 
         UIAlertController* alert = [UIAlertController alertControllerWithTitle:nil
                                                                        message:NSLocalizedStringFromTable(@"UA_Copied_To_Clipboard", @"UAPushUI", @"Copied to clipboard string")
@@ -47,7 +50,7 @@
 
 - (void)refreshView {
     if ([UAirship push].userPushNotificationsEnabled) {
-        [self.channelIDButton setTitle:[UAirship push].channelID forState:UIControlStateNormal];
+        [self.channelIDButton setTitle:[UAirship channel].identifier forState:UIControlStateNormal];
         self.channelIDButton.hidden = NO;
         self.enablePushButton.hidden = YES;
         return;

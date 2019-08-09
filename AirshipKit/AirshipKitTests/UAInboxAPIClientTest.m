@@ -4,7 +4,7 @@
 
 #import "UARuntimeConfig.h"
 #import "UAirship+Internal.h"
-#import "UAPush+Internal.h"
+#import "UAChannel.h"
 #import "UAUser+Internal.h"
 #import "UAPreferenceDataStore+Internal.h"
 #import "UAInboxAPIClient+Internal.h"
@@ -14,7 +14,7 @@
 @property (nonatomic, strong) UAInboxAPIClient *inboxAPIClient;
 @property (nonatomic, strong) id mockUser;
 @property (nonatomic, strong) id mockAirship;
-@property (nonatomic, strong) id mockPush;
+@property (nonatomic, strong) id mockChannel;
 @property (nonatomic, strong) id mockSession;
 @end
 
@@ -22,14 +22,14 @@
 
 - (void)setUp {
     [super setUp];
-    self.mockPush = [self mockForClass:[UAPush class]];
-    [[[self.mockPush stub] andReturn:@"mockChannelID"] channelID];
+    self.mockChannel = [self mockForClass:[UAChannel class]];
+    [[[self.mockChannel stub] andReturn:@"mockChannelID"] identifier];
 
     self.mockSession = [self mockForClass:[UARequestSession class]];
 
     self.mockAirship = [self mockForClass:[UAirship class]];
     [UAirship setSharedAirship:self.mockAirship];
-    [[[self.mockAirship stub] andReturn:self.mockPush] push];
+    [[[self.mockAirship stub] andReturn:self.mockChannel] channel];
 
     self.mockUser = [self mockForClass:[UAUser class]];
 
@@ -50,7 +50,7 @@
 
 - (void)tearDown {
     [self.mockAirship stopMocking];
-    [self.mockPush stopMocking];
+    [self.mockChannel stopMocking];
     [self.mockUser stopMocking];
     [self.mockSession stopMocking];
 

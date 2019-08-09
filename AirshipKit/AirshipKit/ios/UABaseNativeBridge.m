@@ -15,8 +15,8 @@
 #import "UAWebViewCallData.h"
 #import "NSString+UAURLEncoding.h"
 #import "UANamedUser.h"
-#import "UAPush.h"
 #import "UARuntimeConfig.h"
+#import "UAChannel.h"
 
 NSString *const UANativeBridgeUAirshipScheme = @"uairship";
 NSString *const UANativeBridgeDismissCommand = @"dismiss";
@@ -88,7 +88,7 @@ NSString *const UANativeBridgeDismissCommand = @"dismiss";
         /*
          * Set the channel ID
          */
-        appendStringGetter(@"getChannelId", [UAirship push].channelID);
+        appendStringGetter(@"getChannelId", [UAirship channel].identifier);
 
         /*
          * Set the application key

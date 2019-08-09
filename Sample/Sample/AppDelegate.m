@@ -161,11 +161,6 @@ NSUInteger const DebugTab = 2;
     [self refreshMessageCenterBadge];
 }
 
-- (void)registrationSucceededForChannelID:(NSString *)channelID deviceToken:(nonnull NSString *)deviceToken {
-
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"channelIDUpdated" object:self userInfo:nil];
-}
-
 #pragma mark -
 #pragma mark Deep link handling
 

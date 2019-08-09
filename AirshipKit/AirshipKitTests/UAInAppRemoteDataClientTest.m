@@ -18,7 +18,7 @@
 @property (nonatomic, strong) UARemoteDataPublishBlock publishBlock;
 @property (nonatomic, strong) id mockRemoteDataManager;
 @property (nonatomic, strong) id mockScheduler;
-@property (nonatomic, strong) id mockPush;
+@property (nonatomic, strong) id mockChannel;
 @end
 
 @implementation UAInAppRemoteDataClientTest
@@ -45,8 +45,8 @@
         XCTAssertNotNil(self.publishBlock);
     }] subscribeWithTypes:OCMOCK_ANY block:OCMOCK_ANY];
     
-    self.mockPush = [self mockForClass:[UAPush class]];
-    [[[self.mockPush expect] andReturn:nil] channelID];
+    self.mockChannel = [self mockForClass:[UAChannel class]];
+    [[[self.mockChannel expect] andReturn:nil] identifier];
 
     self.mockScheduler = [self mockForClass:[UAInAppMessageManager class]];
     [[[self.mockScheduler stub] andDo:^(NSInvocation *invocation) {
@@ -56,13 +56,13 @@
         completionHandler(@[]);
     }] getSchedulesWithMessageID:OCMOCK_ANY completionHandler:OCMOCK_ANY];
     
-    self.remoteDataClient = [UAInAppRemoteDataClient clientWithScheduler:self.mockScheduler remoteDataManager:self.mockRemoteDataManager dataStore:self.dataStore push:self.mockPush];
+    self.remoteDataClient = [UAInAppRemoteDataClient clientWithScheduler:self.mockScheduler remoteDataManager:self.mockRemoteDataManager dataStore:self.dataStore channel:self.mockChannel];
     XCTAssertNotNil(self.remoteDataClient);
     
     // verify setup
     XCTAssertNotNil(self.remoteDataClient);
     XCTAssertNotNil(self.publishBlock);
-    [self.mockPush verify];
+    [self.mockChannel verify];
     [self.mockRemoteDataManager verify];
 }
 
@@ -627,7 +627,7 @@
     self.remoteDataClient = nil;
     
     // test
-    self.remoteDataClient = [UAInAppRemoteDataClient clientWithScheduler:self.mockScheduler remoteDataManager:self.mockRemoteDataManager dataStore:self.dataStore push:self.mockPush];
+    self.remoteDataClient = [UAInAppRemoteDataClient clientWithScheduler:self.mockScheduler remoteDataManager:self.mockRemoteDataManager dataStore:self.dataStore channel:self.mockChannel];
     XCTAssertNotNil(self.remoteDataClient);
 
     // verify
@@ -639,11 +639,11 @@
     [self.dataStore removeAll];
 
     // an existing user already has a channelID
-    self.mockPush = [self mockForClass:[UAPush class]];
-    [[[self.mockPush expect] andReturn:@"sample-channel-id"] channelID];
+    self.mockChannel = [self mockForClass:[UAChannel class]];
+    [[[self.mockChannel expect] andReturn:@"sample-channel-id"] identifier];
     
     // test
-    self.remoteDataClient = [UAInAppRemoteDataClient clientWithScheduler:self.mockScheduler remoteDataManager:self.mockRemoteDataManager dataStore:self.dataStore push:self.mockPush];
+    self.remoteDataClient = [UAInAppRemoteDataClient clientWithScheduler:self.mockScheduler remoteDataManager:self.mockRemoteDataManager dataStore:self.dataStore channel:self.mockChannel];
     XCTAssertNotNil(self.remoteDataClient);
 
     // verify

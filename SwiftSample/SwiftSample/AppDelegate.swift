@@ -136,13 +136,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UARegistrationDelegate, U
             }
         }
     }
-
-    func registrationSucceeded(forChannelID channelID: String, deviceToken: String) {
-        NotificationCenter.default.post(
-            name: Notification.Name(rawValue: "channelIDUpdated"),
-            object: self,
-            userInfo:nil)
-    }
     
     // MARK Deep link handling
     

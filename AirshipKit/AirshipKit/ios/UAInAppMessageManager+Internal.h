@@ -9,7 +9,7 @@
 #import "UAComponent+Internal.h"
 #import "UADispatcher+Internal.h"
 #import "UARemoteDataManager+Internal.h"
-#import "UAPush+Internal.h"
+#import "UAChannel.h"
 #import "UATagGroupsLookupManager+Internal.h"
 #import "UATagGroupsMutationHistory+Internal.h"
 #import "UAInAppMessageDefaultDisplayCoordinator+Internal.h"
@@ -42,7 +42,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param tagGroupsLookupManager The tag groups lookup manager.
  * @param remoteDataManager The remote data manager.
  * @param dataStore The preference data store.
- * @param push The system UAPush instance
+ * @param channel The channel.
  * @param dispatcher GCD dispatcher.
  * @param analytics The system analytics instance.
  * @return A in-app message manager instance.
@@ -51,7 +51,7 @@ NS_ASSUME_NONNULL_BEGIN
                      tagGroupsLookupManager:(UATagGroupsLookupManager *)tagGroupsLookupManager
                           remoteDataManager:(UARemoteDataManager *)remoteDataManager
                                   dataStore:(UAPreferenceDataStore *)dataStore
-                                       push:(UAPush *)push
+                                    channel:(UAChannel *)channel
                                  dispatcher:(UADispatcher *)dispatcher
                          displayCoordinator:(UAInAppMessageDefaultDisplayCoordinator *)displayCoordinator
                                assetManager:(UAInAppMessageAssetManager *)assetManager
@@ -65,7 +65,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param tagGroupsMutationHistory The tag groups mutation history.
  * @param remoteDataManager The remote data manager.
  * @param dataStore The preference data store.
- * @param push The system UAPush instance.
+ * @param channel The channel.
  * @param analytics The system analytics instance.
  * @return A in-app message manager instance.
  */
@@ -73,9 +73,10 @@ NS_ASSUME_NONNULL_BEGIN
          tagGroupsMutationHistory:(UATagGroupsMutationHistory *)tagGroupsMutationHistory
                 remoteDataManager:(UARemoteDataManager *)remoteDataManager
                         dataStore:(UAPreferenceDataStore *)dataStore
-                             push:(UAPush *)push
+                          channel:(UAChannel *)channel
                         analytics:(UAAnalytics *)analytics
                      sceneTracker:(UASceneTracker *)sceneTracker;
+
 
 // UAAutomationEngineDelegate methods for testing
 

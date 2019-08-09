@@ -6,7 +6,7 @@
 #import "UANamedUser.h"
 #import "UANamedUser+Internal.h"
 #import "UANamedUserAPIClient+Internal.h"
-#import "UAPush+Internal.h"
+#import "UAChannel.h"
 #import "UARuntimeConfig.h"
 #import "UATagGroupsRegistrar+Internal.h"
 
@@ -15,7 +15,7 @@
 @property (nonatomic, strong) id mockedAirship;
 @property (nonatomic, strong) UANamedUser *namedUser;
 @property (nonatomic, strong) id mockedNamedUserClient;
-@property (nonatomic, strong) id mockedUAPush;
+@property (nonatomic, strong) id mockChannel;
 @property (nonatomic, copy) NSString *pushChannelID;
 @property (nonatomic, strong) id mockTagGroupsRegistrar;
 @property (nonatomic, strong) NSMutableDictionary *addTagGroups;
@@ -31,23 +31,24 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
 - (void)setUp {
     [super setUp];
 
-    self.mockedUAPush = [self mockForClass:[UAPush class]];
-    [[[self.mockedUAPush stub] andDo:^(NSInvocation *invocation) {
+    self.mockChannel = [self mockForClass:[UAChannel class]];
+    [[[self.mockChannel stub] andDo:^(NSInvocation *invocation) {
         [invocation setReturnValue:&self->_pushChannelID];
-    }] channelID];
+    }] identifier];
 
 
     self.mockedAirship = [self mockForClass:[UAirship class]];
-    [[[self.mockedAirship stub] andReturn:self.mockedUAPush] push];
+    [[[self.mockedAirship stub] andReturn:self.mockChannel] channel];
     [UAirship setSharedAirship:self.mockedAirship];
 
     self.pushChannelID = @"someChannel";
 
     self.mockTagGroupsRegistrar = [self mockForClass:[UATagGroupsRegistrar class]];
 
-    self.namedUser = [UANamedUser namedUserWithPush:self.mockedUAPush config:self.config
-                                          dataStore:self.dataStore
-                                 tagGroupsRegistrar:self.mockTagGroupsRegistrar];
+    self.namedUser = [UANamedUser namedUserWithChannel:self.mockChannel
+                                                config:self.config
+                                             dataStore:self.dataStore
+                                    tagGroupsRegistrar:self.mockTagGroupsRegistrar];
 
     self.mockedNamedUserClient = [self mockForClass:[UANamedUserAPIClient class]];
     self.namedUser.namedUserAPIClient = self.mockedNamedUserClient;
@@ -75,7 +76,7 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
 - (void)tearDown {
     [self.mockedNamedUserClient stopMocking];
     [self.mockedAirship stopMocking];
-    [self.mockedUAPush stopMocking];
+    [self.mockChannel stopMocking];
     [super tearDown];
 }
 

@@ -4,6 +4,7 @@
 #import "UAFetchDeviceInfoAction.h"
 #import "UAirship+Internal.h"
 #import "UAPush.h"
+#import "UAChannel.h"
 #import "UANamedUser.h"
 #import "UAActionArguments+Internal.h"
 
@@ -12,6 +13,7 @@
 @property(nonatomic, strong) UAFetchDeviceInfoAction *action;
 @property(nonatomic, strong) id mockAirship;
 @property(nonatomic, strong) id mockPush;
+@property(nonatomic, strong) id mockChannel;
 @property(nonatomic, strong) id mockNamedUser;
 
 @end
@@ -22,10 +24,12 @@
     [super setUp];
     
     self.mockPush = [self mockForClass:[UAPush class]];
+    self.mockChannel = [self mockForClass:[UAChannel class]];
     self.mockNamedUser = [self mockForClass:[UANamedUser class]];
     self.mockAirship = [self mockForClass:[UAirship class]];
     [UAirship setSharedAirship:self.mockAirship];
     [[[self.mockAirship stub] andReturn:self.mockPush] push];
+    [[[self.mockAirship stub] andReturn:self.mockChannel] channel];
     [[[self.mockAirship stub] andReturn:self.mockNamedUser] namedUser];
 
     self.action = [[UAFetchDeviceInfoAction alloc] init];
@@ -68,8 +72,8 @@
     NSArray *tags = @[@"tag1", @"tag2", @"tag3"];
     UAAuthorizedNotificationSettings expectedSettings = 1;
     
-    [[[self.mockPush stub] andReturn:channelID] channelID];
-    [(UAPush *)[[self.mockPush stub] andReturn:tags] tags];
+    [[[self.mockChannel stub] andReturn:channelID] identifier];
+    [(UAChannel *)[[self.mockChannel stub] andReturn:tags] tags];
     [(UAPush *)[[self.mockPush stub] andReturnValue:OCMOCK_VALUE(expectedSettings)] authorizedNotificationSettings];
     [(UANamedUser *)[[self.mockNamedUser stub] andReturn:namedUserID] identifier];
     
@@ -95,8 +99,8 @@
     NSArray *tags = @[];
     UAAuthorizedNotificationSettings expectedSettings = 1;
     
-    [[[self.mockPush stub] andReturn:channelID] channelID];
-    [(UAPush *)[[self.mockPush stub] andReturn:tags] tags];
+    [[[self.mockChannel stub] andReturn:channelID] identifier];
+    [(UAChannel *)[[self.mockChannel stub] andReturn:tags] tags];
     [(UAPush *)[[self.mockPush stub] andReturnValue:OCMOCK_VALUE(expectedSettings)] authorizedNotificationSettings];
     [(UANamedUser *)[[self.mockNamedUser stub] andReturn:namedUserID] identifier];
     

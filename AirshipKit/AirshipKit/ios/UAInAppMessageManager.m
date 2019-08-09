@@ -114,7 +114,7 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
                      tagGroupsLookupManager:(UATagGroupsLookupManager *)tagGroupsLookupManager
                           remoteDataManager:(UARemoteDataManager *)remoteDataManager
                                   dataStore:(UAPreferenceDataStore *)dataStore
-                                       push:(UAPush *)push
+                                    channel:(UAChannel *)channel
                                  dispatcher:(UADispatcher *)dispatcher
                          displayCoordinator:(UAInAppMessageDefaultDisplayCoordinator *)displayCoordinator
                                assetManager:(UAInAppMessageAssetManager *)assetManager
@@ -125,7 +125,7 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
                            tagGroupsLookupManager:tagGroupsLookupManager
                                 remoteDataManager:remoteDataManager
                                         dataStore:dataStore
-                                             push:push
+                                          channel:channel
                                        dispatcher:dispatcher
                                displayCoordinator:displayCoordinator
                                      assetManager:assetManager
@@ -137,10 +137,9 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
          tagGroupsMutationHistory:(UATagGroupsMutationHistory *)tagGroupsMutationHistory
                 remoteDataManager:(UARemoteDataManager *)remoteDataManager
                         dataStore:(UAPreferenceDataStore *)dataStore
-                             push:(UAPush *)push
+                          channel:(UAChannel *)channel
                         analytics:(UAAnalytics *)analytics
                      sceneTracker:(UASceneTracker *)sceneTracker {
-
 
     NSString *storeName = [NSString stringWithFormat:UAInAppAutomationStoreFileFormat, config.appKey];
 
@@ -155,7 +154,7 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
                                              tagGroupsLookupManager:tagGroupsLookupManager
                                                   remoteDataManager:remoteDataManager
                                                           dataStore:dataStore
-                                                               push:push
+                                                           channel:channel
                                                          dispatcher:[UADispatcher mainDispatcher]
                                                  displayCoordinator:[[UAInAppMessageDefaultDisplayCoordinator alloc] init]
                                                        assetManager:[UAInAppMessageAssetManager assetManager]
@@ -167,7 +166,7 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
                   tagGroupsLookupManager:(UATagGroupsLookupManager *)tagGroupsLookupManager
                        remoteDataManager:(UARemoteDataManager *)remoteDataManager
                                dataStore:(UAPreferenceDataStore *)dataStore
-                                    push:(UAPush *)push
+                                 channel:(UAChannel *)channel
                               dispatcher:(UADispatcher *)dispatcher
                       displayCoordinator:(UAInAppMessageDefaultDisplayCoordinator *)displayCoordinator
                             assetManager:(UAInAppMessageAssetManager *)assetManager
@@ -186,7 +185,7 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
         self.tagGroupsLookupManager = tagGroupsLookupManager;
         self.tagGroupsLookupManager.delegate = self;
         self.remoteDataManager = remoteDataManager;
-        self.remoteDataClient = [UAInAppRemoteDataClient clientWithScheduler:self remoteDataManager:remoteDataManager dataStore:dataStore push:push];
+        self.remoteDataClient = [UAInAppRemoteDataClient clientWithScheduler:self remoteDataManager:remoteDataManager dataStore:dataStore channel:channel];
         self.dispatcher = dispatcher;
         self.prepareSchedulePipeline = [UARetriablePipeline pipeline];
         self.defaultDisplayCoordinator = displayCoordinator;

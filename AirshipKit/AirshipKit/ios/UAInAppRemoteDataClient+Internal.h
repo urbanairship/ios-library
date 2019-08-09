@@ -5,7 +5,7 @@
 @class UAInAppMessageManager;
 @class UARemoteDataManager;
 @class UAPreferenceDataStore;
-@class UAPush;
+@class UAChannel;
 
 /**
  * Client class to connect the Remote Data and the In App Messaging services.
@@ -37,12 +37,12 @@
  * @param delegate The delegate to be used to schedule in-app messages.
  * @param remoteDataManager The remote data manager.
  * @param dataStore A UAPreferenceDataStore to store persistent preferences
- * @param push The system UAPush instance
+ * @param channel The channel.
  */
 + (instancetype)clientWithScheduler:(UAInAppMessageManager *)delegate
                   remoteDataManager:(UARemoteDataManager *)remoteDataManager
                           dataStore:(UAPreferenceDataStore *)dataStore
-                               push:(UAPush *)push;
+                               channel:(UAChannel *)channel;
 
 /**
  * Facilitates KVO observation on the lastPayloadMetadata on the remote data client's operation queue

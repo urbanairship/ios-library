@@ -4,7 +4,7 @@
 #import "UATagGroupsLookupAPIClient+Internal.h"
 #import "UATagGroupsLookupResponse+Internal.h"
 #import "UAirship.h"
-#import "UAPush.h"
+#import "UAChannel.h"
 
 #define kUATagGroupsLookupManagerEnabledKey @"com.urbanairship.tag_groups.FETCH_ENABLED"
 
@@ -112,7 +112,7 @@ NSString * const UATagGroupsLookupManagerErrorDomain = @"com.urbanairship.tag_gr
 
 - (UATagGroups *)overrideDeviceTags:(UATagGroups *)tagGroups {
     NSMutableDictionary *newTags = [tagGroups.tags mutableCopy];
-    [newTags setObject:[UAirship push].tags forKey:@"device"];
+    [newTags setObject:[UAirship channel].tags forKey:@"device"];
     return [UATagGroups tagGroupsWithTags:newTags];
 }
 
@@ -127,7 +127,7 @@ NSString * const UATagGroupsLookupManagerErrorDomain = @"com.urbanairship.tag_gr
     UATagGroups *locallyModifiedTagGroups = [self.mutationHistory applyHistory:cachedTagGroups maxAge:maxAge];
 
     // Override the device tags if needed
-    if ([UAirship push].isChannelTagRegistrationEnabled) {
+    if ([UAirship channel].isChannelTagRegistrationEnabled) {
         locallyModifiedTagGroups = [self overrideDeviceTags:locallyModifiedTagGroups];
     }
 
@@ -140,7 +140,7 @@ NSString * const UATagGroupsLookupManagerErrorDomain = @"com.urbanairship.tag_gr
 
     [self.delegate gatherTagGroupsWithCompletionHandler:^(UATagGroups *tagGroups) {
         tagGroups = [requestedTagGroups merge:tagGroups];
-        [self.lookupAPIClient lookupTagGroupsWithChannelID:[UAirship push].channelID
+        [self.lookupAPIClient lookupTagGroupsWithChannelID:[UAirship channel].identifier
                                         requestedTagGroups:tagGroups
                                             cachedResponse:self.cache.response
                                          completionHandler:^(UATagGroupsLookupResponse *response) {
@@ -164,11 +164,11 @@ NSString * const UATagGroupsLookupManagerErrorDomain = @"com.urbanairship.tag_gr
     }
 
     // Requesting only device tag groups when channel tag registration is enabled
-    if ([requestedTagGroups containsOnlyDeviceTags] && [UAirship push].isChannelTagRegistrationEnabled) {
+    if ([requestedTagGroups containsOnlyDeviceTags] && [UAirship channel].isChannelTagRegistrationEnabled) {
         return completionHandler([self overrideDeviceTags:requestedTagGroups], error);
     }
 
-    if (![UAirship push].channelID) {
+    if (![UAirship channel].identifier) {
         error = [self errorWithCode:UATagGroupsLookupManagerErrorCodeChannelRequired message:@"Channel ID is required"];
         return completionHandler(nil, error);
     }

@@ -11,6 +11,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+extern NSString *const UAChannelRegistrarChannelIDKey;
+
 /**
  * The UAChannelRegistrarDelegate protocol for registration events.
  */
@@ -65,12 +67,10 @@ NS_ASSUME_NONNULL_BEGIN
  * Factory method to create a channel registrar.
  * @param config The Airship config.
  * @param dataStore The shared preference data store.
- * @param delegate The UAChannelRegistrarDelegate delegate.
  * @return A new channel registrar instance.
  */
 + (instancetype)channelRegistrarWithConfig:(UARuntimeConfig *)config
-                                 dataStore:(UAPreferenceDataStore *)dataStore
-                                  delegate:(id<UAChannelRegistrarDelegate>)delegate;
+                                 dataStore:(UAPreferenceDataStore *)dataStore;
 
 
 ///---------------------------------------------------------------------------------------
@@ -102,6 +102,13 @@ NS_ASSUME_NONNULL_BEGIN
 ///---------------------------------------------------------------------------------------
 /// @name Channel Registrar Properties
 ///---------------------------------------------------------------------------------------
+///
+
+/**
+ * The UAChannelRegistrarDelegate delegate.
+ */
+@property (nonatomic, weak, nullable) id<UAChannelRegistrarDelegate> delegate;
+
 /**
  * The channel ID for this device.
  */
@@ -114,7 +121,6 @@ NS_ASSUME_NONNULL_BEGIN
  * Factory method to create a channel registrar. (for testing)
  * @param config The Airship config.
  * @param dataStore The shared preference data store.
- * @param delegate The UAChannelRegistrarDelegate delegate.
  * @param channelID The initial channel ID string.
  * @param channelAPIClient The channel API client.
  * @param date The UADate object.
@@ -124,7 +130,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 + (instancetype)channelRegistrarWithConfig:(UARuntimeConfig *)config
                                  dataStore:(UAPreferenceDataStore *)dataStore
-                                  delegate:(id<UAChannelRegistrarDelegate>)delegate
                                  channelID:(NSString *)channelID
                           channelAPIClient:(UAChannelAPIClient *)channelAPIClient
                                       date:(UADate *)date

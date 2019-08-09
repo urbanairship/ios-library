@@ -38,6 +38,7 @@
 @class UAChannelCapture;
 @class UARemoteDataManager;
 @class UAModules;
+@class UAChannel;
 
 #if !TARGET_OS_TV   // Inbox not supported on tvOS
 @class UAInbox;
@@ -200,6 +201,12 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
  * @return The `UAirship` instance.
  */
 + (null_unspecified UAirship *)shared;
+
+/**
+ * Returns the UAChannel instance. Used for channel registration and
+ * tag APIs.
+ */
++ (null_unspecified UAChannel *)channel;
 
 /**
  * Returns the `UAPush` instance. Used for configuring and managing push

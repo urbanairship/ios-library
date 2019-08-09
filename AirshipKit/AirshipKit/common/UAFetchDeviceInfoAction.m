@@ -4,6 +4,7 @@
 #import "UAFetchDeviceInfoAction.h"
 #import "UAirship.h"
 #import "UAPush.h"
+#import "UAChannel.h"
 #import "UANamedUser.h"
 
 @implementation UAFetchDeviceInfoAction
@@ -18,10 +19,10 @@ NSString *const UALocationEnabledKey = @"location_enabled";
            completionHandler:(UAActionCompletionHandler)completionHandler {
     
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
-    [dict setValue:[UAirship push].channelID forKey:UAChannelIDKey];
+    [dict setValue:[UAirship channel].identifier forKey:UAChannelIDKey];
     [dict setValue:[UAirship namedUser].identifier forKey:UANamedUserKey];
     
-    NSArray *tags = [[UAirship push] tags];
+    NSArray *tags = [[UAirship channel] tags];
     if (tags.count) {
         [dict setValue:tags forKey:UATagsKey];
     }

@@ -12,7 +12,7 @@
 #import "UARegionEvent.h"
 #import "UAAsyncOperation+Internal.h"
 #import "UAirship+Internal.h"
-#import "UAPush.h"
+#import "UAchannel.h"
 
 /**
  * Test event data class to work around not being able to mock UAEventData
@@ -37,7 +37,7 @@
 @property (nonatomic, strong) id mockStore;
 @property (nonatomic, strong) id mockApplication;
 @property (nonatomic, strong) id mockAirship;
-@property (nonatomic, strong) id mockPush;
+@property (nonatomic, strong) id mockChannel;
 
 @end
 
@@ -50,11 +50,11 @@
     self.mockStore = [self mockForClass:[UAEventStore class]];
     self.mockQueue = [self mockForClass:[NSOperationQueue class]];
 
-    self.mockPush = [self mockForClass:[UAPush class]];
+    self.mockChannel = [self mockForClass:[UAChannel class]];
 
     self.mockAirship = [self mockForClass:[UAirship class]];
     [UAirship setSharedAirship:self.mockAirship];
-    [[[self.mockAirship stub] andReturn:self.mockPush] push];
+    [[[self.mockAirship stub] andReturn:self.mockChannel] channel];
 
     // Set up a mocked application
     self.mockApplication = [self mockForClass:[UIApplication class]];
@@ -75,7 +75,7 @@
     [self.mockQueue stopMocking];
     [self.mockApplication stopMocking];
     [self.mockAirship stopMocking];
-    [self.mockPush stopMocking];
+    [self.mockChannel stopMocking];
 
     [super tearDown];
 }
@@ -338,7 +338,7 @@
  */
 - (void)testScheduleUpload {
     // Set a channel ID
-    [[[self.mockPush stub] andReturn:@"channel ID"] channelID];
+    [[[self.mockChannel stub] andReturn:@"channel ID"] identifier];
 
     XCTestExpectation *expectation = [self expectationWithDescription:@"Wait for async"];
 
@@ -431,7 +431,7 @@
     self.eventManager.uploadsEnabled = NO;
 
     // Set a channel ID
-    [[[self.mockPush stub] andReturn:@"channel ID"] channelID];
+    [[[self.mockChannel stub] andReturn:@"channel ID"] identifier];
 
     // expectations
     // Run the operation as when added
@@ -457,7 +457,7 @@
  */
 - (void)testRetryFailedUpload {
     // Set a channel ID
-    [[[self.mockPush stub] andReturn:@"channel ID"] channelID];
+    [[[self.mockChannel stub] andReturn:@"channel ID"] identifier];
 
     XCTestExpectation *expectation = [self expectationWithDescription:@"Wait for async."];
 
@@ -534,7 +534,7 @@
  */
 - (void)testUploadNoChannel {
     // Set a channel ID
-    [[[self.mockPush stub] andReturn:nil] channelID];
+    [[[self.mockChannel stub] andReturn:nil] identifier];
 
     XCTestExpectation *expectation = [self expectationWithDescription:@"Wait for async"];
 

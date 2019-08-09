@@ -5,7 +5,7 @@
 @class UANamedUserAPIClient;
 @class UARuntimeConfig;
 @class UATagGroupsRegistrar;
-@class UAPush;
+@class UAChannel;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -66,7 +66,7 @@ extern NSString *const UANamedUserRemoveTagGroupsSettingsKey;
 /**
  * The push instance.
  */
-@property (nonatomic, strong) UAPush *push;
+@property (nonatomic, strong) UAChannel *channel;
 
 /**
  * The airship config.
@@ -79,13 +79,13 @@ extern NSString *const UANamedUserRemoveTagGroupsSettingsKey;
 
 /**
  * Factory method to create a named user. For testing.
- * @parm push The UAPush instance.
+ * @parm channel The UAChannel instance.
  * @param config The Airship config.
  * @param dataStore The shared preference data store.
  * @param tagGroupsRegistrar The tag groups registrar.
  * @return A named user instance.
  */
-+ (instancetype)namedUserWithPush:(UAPush *)push
++ (instancetype)namedUserWithChannel:(UAChannel *)channel
                            config:(UARuntimeConfig *)config
                         dataStore:(UAPreferenceDataStore *)dataStore
                tagGroupsRegistrar:(UATagGroupsRegistrar *)tagGroupsRegistrar;

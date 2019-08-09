@@ -15,6 +15,7 @@
 @property (nonatomic, strong) id mockAirship;
 @property (nonatomic, strong) id mockLocationProviderDelegate;
 @property (nonatomic, strong) id mockPush;
+@property (nonatomic, strong) id mockChannel;
 
 @end
 
@@ -25,7 +26,11 @@
 
     self.mockAirship = [self mockForClass:[UAirship class]];
     self.mockPush = [self mockForClass:[UAPush class]];
+    self.mockChannel = [self mockForClass:[UAChannel class]];
+
     [[[self.mockAirship stub] andReturn:self.mockPush] sharedPush];
+    [[[self.mockAirship stub] andReturn:self.mockChannel] sharedChannel];
+
     [UAirship setSharedAirship:self.mockAirship];
 
     self.mockLocationProviderDelegate = [self mockForProtocol:@protocol(UALocationProviderDelegate)];
@@ -131,7 +136,7 @@
     // setup
     NSMutableArray<NSString *> *tags = [NSMutableArray array];
     
-    [[[self.mockPush stub] andDo:^(NSInvocation *invocation) {
+    [[[self.mockChannel stub] andDo:^(NSInvocation *invocation) {
         [invocation setReturnValue:(void *)&tags];
     }] tags];
 
@@ -148,7 +153,7 @@
 
 
 - (void)testTestDevices {
-    [[[self.mockPush stub] andReturn:@"test channel"] channelID];
+    [[[self.mockChannel stub] andReturn:@"test channel"] identifier];
 
     UAInAppMessageAudience *audience = [UAInAppMessageAudience audienceWithBuilderBlock:^(UAInAppMessageAudienceBuilder * _Nonnull builder) {
         builder.testDevices = @[@"obIvSbh47TjjqfCrPatbXQ==\n"]; // test channel
@@ -158,7 +163,7 @@
 }
 
 - (void)testNotTestDevice {
-    [[[self.mockPush stub] andReturn:@"some other channel"] channelID];
+    [[[self.mockChannel stub] andReturn:@"some other channel"] identifier];
 
     UAInAppMessageAudience *audience = [UAInAppMessageAudience audienceWithBuilderBlock:^(UAInAppMessageAudienceBuilder * _Nonnull builder) {
         builder.testDevices = @[@"obIvSbh47TjjqfCrPatbXQ==\n"]; // test channel

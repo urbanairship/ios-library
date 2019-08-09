@@ -14,7 +14,7 @@
 #import "UAInboxMessageList.h"
 #import "UAActionJSDelegate.h"
 #import "UAWebViewCallData.h"
-#import "UAPush.h"
+#import "UAChannel.h"
 #import "UANamedUser.h"
 
 @interface UAWKWebViewNativeBridgeTest : UABaseTest
@@ -33,7 +33,7 @@
 @property (strong, nonatomic) id mockJSActionDelegate;
 @property (nonatomic, strong) id mockMessageList;
 @property (nonatomic, strong) id mockInbox;
-@property (nonatomic, strong) id mockPush;
+@property (nonatomic, strong) id mockChannel;
 @property (nonatomic, strong) id mockNamedUser;
 @property (nonatomic, strong) id mockConfig;
 
@@ -51,8 +51,8 @@
     self.nativeBridge.forwardDelegate = self.mockForwardDelegate;
 
 
-    // Mock UAPush
-    self.mockPush = [self mockForClass:[UAPush class]];
+    // Mock UAChannel
+    self.mockChannel = [self mockForClass:[UAChannel class]];
 
     // Mock UANamedUser
     self.mockNamedUser = [self mockForClass:[UANamedUser class]];
@@ -89,7 +89,7 @@
     [UAirship setSharedAirship:self.mockAirship];
     [[[self.mockAirship stub] andReturn:self.mockUAUser] inboxUser];
     [[[self.mockAirship stub] andReturn:self.mockInbox] inbox];
-    [[[self.mockAirship stub] andReturn:self.mockPush] push];
+    [[[self.mockAirship stub] andReturn:self.mockChannel] channel];
     [[[self.mockAirship stub] andReturn:self.mockNamedUser] namedUser];
     [[[self.mockAirship stub] andReturn:self.mockConfig] config];
 
@@ -118,7 +118,7 @@
 
     [self.mockMessageList stopMocking];
     [self.mockInbox stopMocking];
-    [self.mockPush stopMocking];
+    [self.mockChannel stopMocking];
     [self.mockNamedUser stopMocking];
 
     [super tearDown];
@@ -284,7 +284,7 @@
     }] getUserData:OCMOCK_ANY dispatcher:OCMOCK_ANY];
 
     [[[self.mockUIDevice stub] andReturn:@"device model"] model];
-    [[[self.mockPush stub] andReturn:@"channel ID"] channelID];
+    [[[self.mockChannel stub] andReturn:@"channel ID"] identifier];
     [[[self.mockNamedUser stub] andReturn:@"named user"] identifier];
     [[[self.mockConfig stub] andReturn:@"application key"] appKey];
     

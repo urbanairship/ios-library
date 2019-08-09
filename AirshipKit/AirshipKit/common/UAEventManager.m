@@ -11,7 +11,7 @@
 #import "UAEventAPIClient+Internal.h"
 #import "UAEvent+Internal.h"
 #import "UARuntimeConfig.h"
-#import "UAPush.h"
+#import "UAChannel.h"
 #import "UAirship.h"
 #import "NSOperationQueue+UAAdditions.h"
 #import "UADispatcher+Internal.h"
@@ -350,7 +350,7 @@ const NSTimeInterval BackgroundLowPriorityEventUploadInterval = 900;
 
         UA_LTRACE("Preparing events for upload");
 
-        if (![UAirship push].channelID) {
+        if (![UAirship channel].identifier) {
             UA_LTRACE("No Channel ID. Skipping analytic upload.");
             [operation finish];
             return;

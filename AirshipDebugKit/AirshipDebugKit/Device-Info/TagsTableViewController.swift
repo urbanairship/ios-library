@@ -34,7 +34,7 @@ class TagsTableViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return UAirship.push().tags.count
+        return UAirship.channel().tags.count
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -43,7 +43,7 @@ class TagsTableViewController: UITableViewController {
         if cell.isEqual(nil) {
             cell = UITableViewCell.init(style: UITableViewCell.CellStyle.default, reuseIdentifier:"tagCell")
         }
-        cell.textLabel!.text = UAirship.push().tags[indexPath.row]
+        cell.textLabel!.text = UAirship.channel().tags[indexPath.row]
         cell.textLabel?.textColor = ThemeManager.shared.currentTheme.PrimaryText
         cell.detailTextLabel?.textColor = ThemeManager.shared.currentTheme.SecondaryText
         cell.backgroundColor = ThemeManager.shared.currentTheme.Background
@@ -55,7 +55,7 @@ class TagsTableViewController: UITableViewController {
         if (editingStyle == .delete &&
             tableView.cellForRow(at: indexPath)?.textLabel?.text?.isEmpty == false) {
 
-            UAirship.push().removeTag((tableView.cellForRow(at: indexPath)?.textLabel?.text)!)
+            UAirship.channel().removeTag((tableView.cellForRow(at: indexPath)?.textLabel?.text)!)
             tableView.deleteRows(at: [indexPath], with: .fade)
 
             UAirship.push().updateRegistration()
