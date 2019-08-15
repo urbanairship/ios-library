@@ -1,8 +1,6 @@
 
 /* Copyright Airship and Contributors */
 
-#import <UIKit/UIKit.h>
-
 #import "UAEventManager+Internal.h"
 #import "UAPreferenceDataStore+Internal.h"
 #import "UAEventStore+Internal.h"
@@ -15,15 +13,16 @@
 #import "UAirship.h"
 #import "NSOperationQueue+UAAdditions.h"
 #import "UADispatcher+Internal.h"
+#import "UAAppStateTrackerFactory.h"
 
-@interface UAEventManager()
+@interface UAEventManager() <UAAppStateTrackerDelegate>
 
 @property (nonatomic, strong, nonnull) UARuntimeConfig *config;
 @property (nonatomic, strong, nonnull) UAEventStore *eventStore;
 @property (nonatomic, strong, nonnull) UAPreferenceDataStore *dataStore;
 @property (nonatomic, strong, nonnull) UAEventAPIClient *client;
 @property (nonatomic, strong, nonnull) NSNotificationCenter *notificationCenter;
-@property (nonatomic, strong, nonnull) UIApplication *application;
+@property (nonatomic, strong, nonnull) id<UAAppStateTracker> appStateTracker;
 
 @property (nonatomic, assign) NSUInteger maxTotalDBSize;
 @property (nonatomic, assign) NSUInteger maxBatchSize;
@@ -50,7 +49,7 @@ const NSTimeInterval BackgroundLowPriorityEventUploadInterval = 900;
                         client:(UAEventAPIClient *)client
                          queue:(NSOperationQueue *)queue
             notificationCenter:(NSNotificationCenter *)notificationCenter
-                   application:(UIApplication *)application {
+               appStateTracker:(id<UAAppStateTracker>)appStateTracker {
 
     self = [super init];
 
@@ -61,28 +60,13 @@ const NSTimeInterval BackgroundLowPriorityEventUploadInterval = 900;
         self.client = client;
         self.queue = queue;
         self.notificationCenter = notificationCenter;
-        self.application = application;
+        self.appStateTracker = appStateTracker;
+        self.appStateTracker.stateTrackerDelegate = self;
 
         _uploadsEnabled = YES;
 
         // Set the intial delay
         self.earliestForegroundSendTime = [NSDate dateWithTimeIntervalSinceNow:InitialForegroundUploadDelay];
-
-        [self.notificationCenter addObserver:self
-                                    selector:@selector(enterForeground)
-                                        name:UIApplicationWillEnterForegroundNotification
-                                      object:nil];
-
-        [self.notificationCenter addObserver:self
-                                    selector:@selector(didBecomeActive)
-                                        name:UIApplicationDidBecomeActiveNotification
-                                      object:nil];
-
-        // Schedule upload on background
-        [self.notificationCenter addObserver:self
-                                    selector:@selector(enterBackground)
-                                        name:UIApplicationDidEnterBackgroundNotification
-                                      object:nil];
 
 
         // Schedule upload on channel creation
@@ -113,7 +97,7 @@ const NSTimeInterval BackgroundLowPriorityEventUploadInterval = 900;
                                  client:client
                                   queue:queue
                      notificationCenter:[NSNotificationCenter defaultCenter]
-                            application:[UIApplication sharedApplication]];
+                        appStateTracker:[UAAppStateTrackerFactory tracker]];
 
 }
 
@@ -123,7 +107,7 @@ const NSTimeInterval BackgroundLowPriorityEventUploadInterval = 900;
                                 client:(UAEventAPIClient *)client
                                  queue:(NSOperationQueue *)queue
                     notificationCenter:(NSNotificationCenter *)notificationCenter
-                           application:(UIApplication *)application {
+                       appStateTracker:(id<UAAppStateTracker>)appStateTracker {
 
     return [[self alloc] initWithConfig:config
                               dataStore:dataStore
@@ -131,7 +115,7 @@ const NSTimeInterval BackgroundLowPriorityEventUploadInterval = 900;
                                  client:client
                                   queue:queue
                      notificationCenter:notificationCenter
-                            application:application];
+                        appStateTracker:appStateTracker];
 }
 
 - (void)setUploadsEnabled:(BOOL)uploadsEnabled {
@@ -148,23 +132,14 @@ const NSTimeInterval BackgroundLowPriorityEventUploadInterval = 900;
 #pragma mark -
 #pragma mark App foreground
 
-- (void)didBecomeActive {
-    [self enterForeground];
-
-    // This handles the first active. enterForeground will handle future background->foreground
-    [self.notificationCenter removeObserver:self
-                                       name:UIApplicationDidBecomeActiveNotification
-                                     object:nil];
-}
-
-- (void)enterForeground {
+- (void)applicationWillEnterForeground {
     [self cancelUpload];
 
     // Reset the initial delay
     self.earliestForegroundSendTime = [NSDate dateWithTimeIntervalSinceNow:InitialForegroundUploadDelay];
 }
 
-- (void)enterBackground {
+- (void)applicationDidEnterBackground {
     [self scheduleUploadWithDelay:BackgroundUploadDelay];
 }
 
@@ -249,7 +224,7 @@ const NSTimeInterval BackgroundLowPriorityEventUploadInterval = 900;
             break;
 
         case UAEventPriorityLow:
-            if (self.application.applicationState == UIApplicationStateBackground) {
+            if (self.appStateTracker.state == UAApplicationStateBackground) {
                 NSTimeInterval timeSinceLastSend = [[NSDate date] timeIntervalSinceDate:self.lastSendTime];
                 if (timeSinceLastSend < BackgroundLowPriorityEventUploadInterval) {
                     UA_LTRACE("Skipping low priority background event send.");
@@ -282,7 +257,7 @@ const NSTimeInterval BackgroundLowPriorityEventUploadInterval = 900;
     }
 
     // Background time is limited, so bypass other time delays
-    if (self.application.applicationState == UIApplicationStateBackground) {
+    if (self.appStateTracker.state == UAApplicationStateBackground) {
         [self scheduleUploadWithDelay:BackgroundUploadDelay];
         return;
     }

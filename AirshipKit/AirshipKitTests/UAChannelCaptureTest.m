@@ -6,16 +6,17 @@
 #import "UAPreferenceDataStore+Internal.h"
 #import "UAPush+Internal.h"
 #import "UA_Base64.h"
+#import "UAUtils.h"
 
 
 @interface UAChannelCaptureTest : UABaseTest
 @property(nonatomic, strong) UAChannelCapture *channelCapture;
-@property(nonatomic, strong) NSNotificationCenter *notificationCenter;
 
 @property(nonatomic, strong) id mockChannel;
 @property(nonatomic, strong) id mockPushProviderDelegate;
 @property(nonatomic, strong) id mockPasteboard;
-@property(nonatomic, strong) id mockApplication;
+@property(nonatomic, strong) id mockAppStateTracker;
+@property(nonatomic, strong) id mockUtils;
 @property(nonatomic, strong) id mockWindow;
 @property(nonatomic, strong) id mockRootViewController;
 @end
@@ -37,17 +38,16 @@
     self.mockWindow = [self mockForClass:[UIWindow class]];
     [[[self.mockWindow stub] andReturn:self.mockRootViewController] rootViewController];
 
-    self.mockApplication = [self mockForClass:[UIApplication class]];
-    [[[self.mockApplication stub] andReturn:self.mockApplication] sharedApplication];
-    [[[self.mockApplication stub] andReturn:@[self.mockWindow]] windows];
+    self.mockUtils = [self mockForClass:[UAUtils class]];
+    [[[self.mockUtils stub] andReturn:self.mockWindow] mainWindow];
 
-    self.notificationCenter = [[NSNotificationCenter alloc] init];
+    self.mockAppStateTracker = [self mockForProtocol:@protocol(UAAppStateTracker)];
 
     self.channelCapture = [UAChannelCapture channelCaptureWithConfig:self.config
                                                              channel:self.mockChannel
                                                 pushProviderDelegate:self.mockPushProviderDelegate
                                                            dataStore:self.dataStore
-                                                  notificationCenter:self.notificationCenter];
+                                                     appStateTracker:self.mockAppStateTracker];
 }
 
 - (void)tearDown {
@@ -55,7 +55,7 @@
     [self.mockRootViewController stopMocking];
     [self.mockWindow stopMocking];
     [self.mockPasteboard stopMocking];
-    [self.mockApplication stopMocking];
+    [self.mockAppStateTracker stopMocking];
 
     self.config = nil;
     self.dataStore = nil;
@@ -72,7 +72,6 @@
     [[[self.mockPushProviderDelegate stub] andReturnValue:@(YES)] backgroundPushNotificationsAllowed];
     [self verifyChannelCaptureDisplayedWithUrl:@"oh/hi?channel=CHANNEL"];
 }
-
 
 /**
  * Test channel capture tool always works when backgorundPushNotificationsAllowed is NO.
@@ -146,7 +145,6 @@
     [[[self.mockPasteboard stub] andReturn:[self generateTokenWithURLString:url]] string];
     [[[self.mockPasteboard stub] andReturnValue:@(YES)] hasStrings];
 
-
     // We get a warning when we mock the init method
     [[[self.mockRootViewController expect] andDo:^(NSInvocation *invocation) {
         [alertDisplayed fulfill];
@@ -176,10 +174,7 @@
 
     }] animated:YES completion:nil];
 
-    // Post the foreground notification
-    [self.notificationCenter postNotificationName:UIApplicationDidBecomeActiveNotification
-                                           object:nil];
-
+    [self.channelCapture applicationDidBecomeActive];
 
     // Wait for the test expectations
     [self waitForTestExpectations];

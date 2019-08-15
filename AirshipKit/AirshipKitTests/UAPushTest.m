@@ -1,3 +1,4 @@
+
 /* Copyright Airship and Contributors */
 
 #import "UABaseTest.h"
@@ -28,6 +29,7 @@
 @interface UAPushTest : UABaseTest
 @property (nonatomic, strong) id mockApplication;
 @property (nonatomic, strong) id mockChannel;
+@property (nonatomic, strong) id mockAppStateTracker;
 @property (nonatomic, strong) id mockAirship;
 @property (nonatomic, strong) id mockPushDelegate;
 @property (nonatomic, strong) id mockRegistrationDelegate;
@@ -79,24 +81,24 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     self.notificationCenter = [[NSNotificationCenter alloc] init];
 
     self.notification = @{
-                          @"aps": @{
-                                  @"alert": @"sample alert!",
-                                  @"badge": @2,
-                                  @"sound": @"cat",
-                                  @"category": @"notificationCategory"
-                                  },
-                          @"com.urbanairship.interactive_actions": @{
-                                  @"backgroundIdentifier": @{
-                                          @"backgroundAction": @"backgroundActionValue"
-                                          },
-                                  @"foregroundIdentifier": @{
-                                          @"foregroundAction": @"foregroundActionValue",
-                                          @"otherForegroundAction": @"otherForegroundActionValue"
+        @"aps": @{
+                @"alert": @"sample alert!",
+                @"badge": @2,
+                @"sound": @"cat",
+                @"category": @"notificationCategory"
+        },
+        @"com.urbanairship.interactive_actions": @{
+                @"backgroundIdentifier": @{
+                        @"backgroundAction": @"backgroundActionValue"
+                },
+                @"foregroundIdentifier": @{
+                        @"foregroundAction": @"foregroundActionValue",
+                        @"otherForegroundAction": @"otherForegroundActionValue"
 
-                                          },
-                                  },
-                          @"someActionKey": @"someActionValue",
-                          };
+                },
+        },
+        @"someActionKey": @"someActionValue",
+    };
 
     // Mock the nested apple types with unavailable init methods
     self.mockUNNotification = [self mockForClass:[UNNotification class]];
@@ -104,15 +106,15 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     //Mock the notification request
     id mockUNNotificationRequest = [self mockForClass:[UNNotificationRequest class]];
     [[[self.mockUNNotification stub] andReturn:mockUNNotificationRequest] request];
-    
+
     //Mock the notification content
     id mockUNNotificationContent = [self mockForClass:[UNNotificationContent class]];
     [[[mockUNNotificationRequest stub] andReturn:mockUNNotificationContent] content];
-    
+
     //Mock the notification userInfo
     self.mockUserInfo = [self mockForClass:[NSDictionary class]];
     [[[mockUNNotificationContent stub] andReturn:self.mockUserInfo] userInfo];
-    
+
     // Set up a mocked application
     self.mockApplication = [self mockForClass:[UIApplication class]];
 
@@ -132,9 +134,12 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 
     self.mockChannel = [self mockForClass:[UAChannel class]];
 
+    self.mockAppStateTracker = [self mockForProtocol:@protocol(UAAppStateTracker)];
+
     self.push = [UAPush pushWithConfig:self.config
                              dataStore:self.dataStore
                                channel:self.mockChannel
+                       appStateTracker:self.mockAppStateTracker
                     notificationCenter:self.notificationCenter
                       pushRegistration:self.mockPushRegistration
                            application:self.mockApplication
@@ -271,17 +276,17 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     // SETUP
     self.config.requestAuthorizationToUseNotifications = NO;
     self.push.userPushNotificationsEnabled = NO;
-    
+
     // EXPECTATIONS
     [self rejectUpdatePushRegistrationWithOptions];
-    
+
     // TEST
     self.push.userPushNotificationsEnabled = YES;
-    
+
     // VERIFY
     XCTAssertTrue(self.push.userPushNotificationsEnabled,
                   @"userPushNotificationsEnabled should be enabled when set to YES");
-    
+
     XCTAssertTrue([self.dataStore boolForKey:UAUserPushNotificationsEnabledKey],
                   @"userPushNotificationsEnabled should be stored in standardUserDefaults");
     XCTAssertNoThrow([self.mockPushRegistration verify], @"[UAAPNSRegistration updateRegistrationWithOptions:categories:completionHandler:] should not be called");
@@ -320,23 +325,23 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 - (void)testUserPushNotificationsDisabledWhenAppIsHandlingAuthorization {
     // SETUP
     self.config.requestAuthorizationToUseNotifications = NO;
-    
+
     self.push.userPushNotificationsEnabled = YES;
     self.push.deviceToken = validDeviceToken;
     self.push.shouldUpdateAPNSRegistration = NO;
-    
+
     // Make sure we have previously registered types
     self.authorizedNotificationSettings = UAAuthorizedNotificationSettingsBadge;
-    
+
     // Make sure push is set to YES
     XCTAssertTrue(self.push.userPushNotificationsEnabled,
                   @"userPushNotificationsEnabled should default to YES");
-    
+
     [self rejectUpdatePushRegistrationWithOptions];
-    
+
     // TEST
     self.push.userPushNotificationsEnabled = NO;
-    
+
     // VERIFY
     XCTAssertFalse(self.push.userPushNotificationsEnabled,
                    @"userPushNotificationsEnabled should be disabled when set to NO");
@@ -497,19 +502,19 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 - (void)testUpdateAPNSRegistrationUserNotificationsEnabledWhenAppIsHandlingAuthorization {
     // SETUP
     self.config.requestAuthorizationToUseNotifications = NO;
-    
+
     self.push.userPushNotificationsEnabled = YES;
     self.push.shouldUpdateAPNSRegistration = YES;
     self.push.customCategories = [NSSet set];
     self.push.notificationOptions = UANotificationOptionAlert;
     self.authorizedNotificationSettings = UAAuthorizedNotificationSettingsAlert;
-    
+
     // EXPECTATIONS
     [self rejectUpdatePushRegistrationWithOptions];
-    
+
     // TEST
     [self.push updateAPNSRegistration];
-    
+
     // VERIFY
     XCTAssertFalse(self.push.shouldUpdateAPNSRegistration, @"Updating APNS registration should set shouldUpdateAPNSRegistration to NO");
     XCTAssertNoThrow([self.mockPushRegistration verify], @"[UAAPNSRegistration updateRegistrationWithOptions:categories:completionHandler:] should not be called");
@@ -553,18 +558,18 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 - (void)testEnablePushNotificationsCompletionHandlerCalledWhenAppIsHandlingAuthorization {
     // SETUP
     self.config.requestAuthorizationToUseNotifications = NO;
-    
+
     self.push.customCategories = [NSSet set];
     self.push.notificationOptions = UANotificationOptionAlert;
     self.authorizedNotificationSettings = UAAuthorizedNotificationSettingsAlert;
-    
+
     // EXPECTATIONS
     __block NSMutableSet *expectedCategories = [NSMutableSet set];
     for (UANotificationCategory *category in self.push.combinedCategories) {
         [expectedCategories addObject:[category asUNNotificationCategory]];
     }
     [self rejectUpdatePushRegistrationWithOptions];
-    
+
     XCTestExpectation *delegateCalled = [self expectationWithDescription:@"Delegate called"];
     XCTestExpectation *completionHandlerCalled = [self expectationWithDescription:@"Enable push completion handler called"];
     [[[self.mockRegistrationDelegate expect] andDo:^(NSInvocation *invocation) {
@@ -573,12 +578,12 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
         NSSet *categories = (NSSet *)obj;
         return (categories.count == expectedCategories.count);
     }]];
-    
+
     // TEST
     [self.push enableUserPushNotifications:^(BOOL success) {
         [completionHandlerCalled fulfill];
     }];
-    
+
     // VERIFY
     [self waitForExpectationsWithTimeout:1 handler:nil];
     XCTAssertNoThrow([self.mockPushRegistration verify], @"[UAAPNSRegistration updateRegistrationWithOptions:categories:completionHandler:] should not be called");
@@ -610,7 +615,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
  * Test receiving a call to application:didRegisterForRemoteNotificationsWithDeviceToken: results in that call being forwarded to the registration delegate
  */
 -(void)testPushForwardsDidRegisterForRemoteNotificationsWithDeviceTokenToRegistrationDelegateForeground {
-    [[[self.mockApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateActive)] applicationState];
+    [[[self.mockAppStateTracker stub] andReturnValue:@(UAApplicationStateActive)] state];
 
     XCTestExpectation *delegateCalled = [self expectationWithDescription:@"Registration delegate called"];
 
@@ -639,7 +644,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
  * Test receiving a call to application:didRegisterForRemoteNotificationsWithDeviceToken: results in that call being forwarded to the registration delegate
  */
 -(void)testPushForwardsDidRegisterForRemoteNotificationsWithDeviceTokenToRegistrationDelegateBackground {
-    [[[self.mockApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateBackground)] applicationState];
+    [[[self.mockAppStateTracker stub] andReturnValue:@(UAApplicationStateBackground)] state];
 
     // EXPECTATIONS
     [[self.mockRegistrationDelegate expect] apnsRegistrationSucceededWithDeviceToken:self.validAPNSDeviceToken];
@@ -753,18 +758,18 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 - (void)testUpdateAPNSRegistrationUserNotificationsDisabledWhenAppIsHandlingAuthorization {
     // SETUP
     self.config.requestAuthorizationToUseNotifications = NO;
-    
+
     // Make sure we have previously registered types
     self.authorizedNotificationSettings = UAAuthorizedNotificationSettingsBadge;
-    
+
     self.push.userPushNotificationsEnabled = NO;
-    
+
     // EXPECTATIONS
     [self rejectUpdatePushRegistrationWithOptions];
-    
+
     // TEST
     [self.push updateAPNSRegistration];
-    
+
     // VERIFY
     XCTAssertNoThrow([self.mockPushRegistration verify], @"[UAAPNSRegistration updateRegistrationWithOptions:categories:completionHandler:] should not be called");
 }
@@ -1055,12 +1060,10 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 }
 
 /**
- * Test applicationDidBecomeActive, when run at launch, doesn't register channel
+ * Test applicationDidTransitionToForeground, when run at launch, doesn't register channel
  */
-- (void)testApplicationDidBecomeActive {
+- (void)testApplicationDidTransitionToForeground {
     // SETUP
-    self.push.isForegrounded = NO;
-    
     self.push.userPushNotificationsEnabled = YES;
     self.push.notificationOptions = UANotificationOptionAlert;
 
@@ -1077,8 +1080,10 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     UANotificationOptions expectedOptions = UANotificationOptionAlert;
     [self expectUpdatePushRegistrationWithOptions:expectedOptions categories:expectedCategories];
 
+    [[[self.mockAppStateTracker expect] andReturnValue:@(UAApplicationStateActive)] state];
+
     // TEST
-    [self.push applicationDidBecomeActive];
+    [self.push applicationDidTransitionToForeground];
 
     // VERIFY
     XCTAssertTrue(self.push.userPromptedForNotifications);
@@ -1087,85 +1092,33 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     XCTAssertNoThrow([self.mockPushRegistration verify], @"[UAAPNSRegistration updateRegistrationWithOptions:categories:completionHandler:] should be called");
 }
 
-- (void)testApplicationDidBecomeActiveWhenAppIsHandlingAuthorization {
+- (void)testApplicationDidTransitionToForegroundWhenAppIsHandlingAuthorization {
     // SETUP
-    self.push.isForegrounded = NO;
-
     self.config.requestAuthorizationToUseNotifications = NO;
     self.push.userPushNotificationsEnabled = YES;
     self.push.notificationOptions = UANotificationOptionAlert;
-    
+
     self.authorizedNotificationSettings = UAAuthorizedNotificationSettingsAlert;
     UAAuthorizedNotificationSettings expectedSettings = UAAuthorizedNotificationSettingsAlert;
-    
+
     // EXPECTATIONS
     [[self.mockChannel expect] updateRegistration];
 
     [self rejectUpdatePushRegistrationWithOptions];
-    
+
+    [[[self.mockAppStateTracker expect] andReturnValue:@(UAApplicationStateActive)] state];
+
     // TEST
-    [self.push applicationDidBecomeActive];
-    
+    [self.push applicationDidTransitionToForeground];
+
     // VERIFY
     XCTAssertTrue(self.push.userPromptedForNotifications);
     XCTAssertEqual(self.push.authorizedNotificationSettings, expectedSettings);
-    
+
     XCTAssertNoThrow([self.mockChannel verify], @"[UAChannel updateRegistration] should be called");
     XCTAssertNoThrow([self.mockPushRegistration verify], @"[UAAPNSRegistration updateRegistrationWithOptions:categories:completionHandler:] should not be called");
 }
 
-/**
- * Test after returning from dialog, when SDK is managing authorization nothing happens
- */
-- (void)testApplicationReturnsFromADialog {
-    // SETUP
-    self.push.userPushNotificationsEnabled = YES;
-
-    [self.dataStore setBool:YES forKey:UAChannelCreationOnForeground];
-    self.push.isForegrounded = YES;
-
-    self.authorizedNotificationSettings = UAAuthorizedNotificationSettingsAlert;
-    UAAuthorizedNotificationSettings expectedSettings = UAAuthorizedNotificationSettingsNone;
-    
-    // Expect UAPush to not update its registration
-    [[self.mockChannel reject] updateRegistration];
-    
-    // TEST
-    [self.push applicationDidBecomeActive];
-    
-    // VERIFY
-    XCTAssertFalse(self.push.userPromptedForNotifications);
-    XCTAssertEqual(self.push.authorizedNotificationSettings, expectedSettings);
-    
-    XCTAssertNoThrow([self.mockChannel verify], @"should not update channel registration");
-}
-
-/**
- * Test after returning from dialog, when SDK is not managing authorization
- */
-- (void)testApplicationReturnsFromADialogWhenAppIsHandlingAuthorization {
-    // SETUP
-    self.config.requestAuthorizationToUseNotifications = NO;
-    self.push.userPushNotificationsEnabled = YES;
-
-    [self.dataStore setBool:YES forKey:UAChannelCreationOnForeground];
-    self.push.isForegrounded = YES;
-
-    self.authorizedNotificationSettings = UAAuthorizedNotificationSettingsAlert;
-    UAAuthorizedNotificationSettings expectedSettings = UAAuthorizedNotificationSettingsAlert;
-    
-    // Expect UAPush to update channel registration
-    [[self.mockChannel expect] updateRegistration];
-    
-    // TEST
-    [self.push applicationDidBecomeActive];
-    
-    // VERIFY
-    XCTAssertTrue(self.push.userPromptedForNotifications);
-    XCTAssertEqual(self.push.authorizedNotificationSettings, expectedSettings);
-    
-    XCTAssertNoThrow([self.mockChannel verify], @"should not update channel registration");
-}
 -(void)testApplicationBackgroundRefreshStatusChangedBackgroundAvailable {
     // SETUP
     [[[self.mockApplication stub] andReturnValue:@(UIBackgroundRefreshStatusAvailable)] backgroundRefreshStatus];
@@ -1208,13 +1161,13 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     // set an option so channel registration happens
     self.push.notificationOptions = UANotificationOptionSound;
     self.authorizedNotificationSettings = UAAuthorizedNotificationSettingsSound;
-    
+
     // EXPECTATIONS
     [self rejectUpdatePushRegistrationWithOptions];
-    
+
     // TEST
     [self.push applicationBackgroundRefreshStatusChanged];
-    
+
     // VERIFY
     XCTAssertNoThrow([self.mockPushRegistration verify], @"[UAAPNSRegistration updateRegistrationWithOptions:categories:completionHandler:] should not be called");
 }
@@ -1723,13 +1676,13 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     NSArray *array = @[@"alert", @"sound", @"badge"];
     [[[self.mockUserInfo stub] andReturnValue:OCMOCK_VALUE(array)] objectForKey:@"foreground_presentation"];
     self.push.pushNotificationDelegate = nil;
-    
+
     // EXPECTATIONS
     UNNotificationPresentationOptions options = UNNotificationPresentationOptionAlert | UNNotificationPresentationOptionSound | UNNotificationPresentationOptionBadge;
-    
+
     // TEST
     UNNotificationPresentationOptions result = [self.push presentationOptionsForNotification:self.mockUNNotification];
-    
+
     // VERIFY
     XCTAssertEqual(result, options);
 }
@@ -1743,13 +1696,13 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     [[[self.mockUserInfo stub] andReturnValue:OCMOCK_VALUE(array)] objectForKey:@"foreground_presentation"];
     self.push.defaultPresentationOptions = UNNotificationPresentationOptionAlert;
     self.push.pushNotificationDelegate = nil;
-    
+
     // EXPECTATIONS
     UNNotificationPresentationOptions options = UNNotificationPresentationOptionAlert;
-    
+
     // TEST
     UNNotificationPresentationOptions result = [self.push presentationOptionsForNotification:self.mockUNNotification];
-    
+
     // VERIFY
     XCTAssertEqual(result, options);
 }
@@ -1785,7 +1738,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
  */
 - (void)testRegisteredDeviceToken {
     // SETUP
-    [[[self.mockApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateBackground)] applicationState];
+    [[[self.mockAppStateTracker stub] andReturnValue:@(UAApplicationStateBackground)] state];
 
     // Expect UAPush to update channel registration
     [[self.mockChannel expect] updateRegistration];
@@ -1805,7 +1758,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 
 -(void)testDidRegisterForRemoteNotificationsWithDeviceTokenDoesntRegisterChannelWhenInBackground {
     // SETUP
-    [[[self.mockApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateBackground)] applicationState];
+    [[[self.mockAppStateTracker stub] andReturnValue:@(UAApplicationStateBackground)] state];
 
     [[[self.mockChannel stub] andReturn:@"someChannelID"] identifier];
 
@@ -1862,13 +1815,13 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 
     [[self.mockChannel stub] andReturn:@"someChannelID"];
     self.push.componentEnabled = NO;
-    
+
     // EXPECTATIONS
     [self rejectUpdatePushRegistrationWithOptions];
-    
+
     // Test
     self.push.componentEnabled = YES;
-    
+
     // verify
     XCTAssertTrue(self.push.userPushNotificationsEnabled,
                   @"userPushNotificationsEnabled should be enabled when set to YES");
@@ -1882,16 +1835,16 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     self.config.requestAuthorizationToUseNotifications = NO;
     self.authorizedNotificationSettings = UAAuthorizedNotificationSettingsAlert | UAAuthorizedNotificationSettingsBadge;
     self.authorizationStatus = UAAuthorizationStatusAuthorized;
-    
+
     // EXPECTATIONS
     XCTestExpectation *channelRegisterExpectation = [self expectationWithDescription:@"Called registerForcefully:NO"];
     [[[self.mockChannel expect] andDo:^(NSInvocation *invocation) {
         [channelRegisterExpectation fulfill];
     }] updateRegistration];
-    
+
     // TEST
     [self.push updateAuthorizedNotificationTypes];
-    
+
     // VERIFY
     [self waitForTestExpectations];
     XCTAssertNoThrow([self.mockChannel verify], @"updateRegistration should be called");
@@ -1922,5 +1875,3 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 }
 
 @end
-
-

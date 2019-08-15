@@ -8,12 +8,13 @@
 #import "UAPreferenceDataStore+Internal.h"
 #import "UARemoteDataStore+Internal.h"
 #import "UARemoteDataAPIClient+Internal.h"
+#import "UAAppStateTracker.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 typedef void (^UARemoteDataPublishBlock)(NSArray<UARemoteDataPayload *> *remoteDataArray);
 
-@interface UARemoteDataManager : NSObject
+@interface UARemoteDataManager : NSObject <UAAppStateTrackerDelegate>
 
 ///---------------------------------------------------------------------------------------
 /// @name Remote Data Manager Client API
@@ -47,7 +48,8 @@ typedef void (^UARemoteDataPublishBlock)(NSArray<UARemoteDataPayload *> *remoteD
  * @param dataStore A UAPreferenceDataStore to store persistent preferences
  * @return The remote data manager instance.
  */
-+ (instancetype)remoteDataManagerWithConfig:(UARuntimeConfig *)config dataStore:(UAPreferenceDataStore *)dataStore;
++ (instancetype)remoteDataManagerWithConfig:(UARuntimeConfig *)config
+                                  dataStore:(UAPreferenceDataStore *)dataStore;
 
 ///---------------------------------------------------------------------------------------
 /// @name Test Properties & Internal Methods

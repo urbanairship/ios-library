@@ -1,14 +1,14 @@
 /* Copyright Airship and Contributors */
 
-
 #import "UAActiveTimer+Internal.h"
-#import <UIKit/UIKit.h>
+#import "UAAppStateTrackerFactory.h"
 
-@interface UAActiveTimer()
+@interface UAActiveTimer() <UAAppStateTrackerDelegate>
 @property (assign, getter=isStarted) BOOL started;
 @property (assign, getter=isActive) BOOL active;
 @property (assign) NSTimeInterval elapsedTime;
 @property (strong) NSDate *activeStartDate;
+@property (nonatomic, strong) id<UAAppStateTracker> appStateTracker;
 @end
 
 @implementation UAActiveTimer
@@ -16,17 +16,10 @@
 - (instancetype)init {
     self = [super init];
     if (self) {
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(didBecomeActive)
-                                                     name:UIApplicationDidBecomeActiveNotification
-                                                   object:nil];
+        self.appStateTracker = [UAAppStateTrackerFactory tracker];
+        self.appStateTracker.stateTrackerDelegate = self;
 
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(willResignActive)
-                                                     name:UIApplicationWillResignActiveNotification
-                                                   object:nil];
-
-        self.active = ([UIApplication sharedApplication].applicationState == UIApplicationStateActive);
+        self.active = self.appStateTracker.state == UAApplicationStateActive;
     }
 
     return self;
@@ -57,14 +50,14 @@
     self.started = NO;
 }
 
-- (void)didBecomeActive {
+- (void)applicationDidBecomeActive {
     self.active = YES;
     if (self.started) {
         self.activeStartDate = [NSDate date];
     }
 }
 
-- (void)willResignActive {
+- (void)applicationWillResignActive {
     self.active = NO;
     if (self.started && self.activeStartDate) {
         self.elapsedTime += [[NSDate date] timeIntervalSinceDate:self.activeStartDate];

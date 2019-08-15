@@ -21,6 +21,7 @@
 @property (nonatomic, strong) UAAutomationEngine *automationEngine;
 @property (nonatomic, strong) UAAutomationStore *testStore;
 @property (nonatomic, strong) id mockedApplication;
+@property (nonatomic, strong) id mockAppStateTracker;
 @property (nonatomic, strong) id mockDelegate;
 @property (nonatomic, strong) id mockMetrics;
 @property (nonatomic, strong) id mockAirship;
@@ -42,8 +43,8 @@
 
     self.dispatcher = [UATestDispatcher testDispatcher];
 
-    // Set up a mocked application
     self.mockedApplication = [self mockForClass:[UIApplication class]];
+    self.mockAppStateTracker = [self mockForProtocol:@protocol(UAAppStateTracker)];
 
     self.mockDelegate = [self mockForProtocol:@protocol(UAAutomationEngineDelegate)];
     [[[self.mockDelegate stub] andCall:@selector(createScheduleInfoWithBuilder:) onObject:self] createScheduleInfoWithBuilder:OCMOCK_ANY];
@@ -70,6 +71,7 @@
     self.notificationCenter = [[NSNotificationCenter alloc] init];
 
     self.automationEngine = [UAAutomationEngine automationEngineWithAutomationStore:self.testStore
+                                                                    appStateTracker:self.mockAppStateTracker
                                                                      timerScheduler:self.timerScheduler
                                                                  notificationCenter:self.notificationCenter
                                                                          dispatcher:self.dispatcher
@@ -829,17 +831,15 @@
 
 - (void)testBackgroundDelay {
     // Start with a foreground state
-    [self.notificationCenter postNotificationName:UIApplicationWillEnterForegroundNotification
-                                           object:nil];
-
+    [self.automationEngine applicationDidTransitionToForeground];
 
     UAScheduleDelay *delay = [UAScheduleDelay delayWithBuilderBlock:^(UAScheduleDelayBuilder * builder) {
         builder.appState = UAScheduleDelayAppStateBackground;
     }];
 
     [self verifyDelay:delay fulfillmentBlock:^{
-        [self.notificationCenter postNotificationName:UIApplicationDidEnterBackgroundNotification
-                                               object:nil];
+        [[[self.mockAppStateTracker expect] andReturnValue:@(UAApplicationStateBackground)] state];
+        [self.automationEngine applicationDidEnterBackground];
     }];
 }
 
@@ -1177,19 +1177,11 @@
  * Helper method for simulating a full transition from the background to the active state.
  */
 - (void)simulateForegroundTransition {
-    [self.notificationCenter postNotificationName:UIApplicationDidEnterBackgroundNotification
-                                           object:nil];
-
-    [self.notificationCenter postNotificationName:UIApplicationDidBecomeActiveNotification
-                                           object:nil];
+    [self.automationEngine applicationDidTransitionToForeground];
 }
 
 - (void)simulateBackgroundTransition {
-    [self.notificationCenter postNotificationName:UIApplicationDidBecomeActiveNotification
-                                           object:nil];
-
-    [self.notificationCenter postNotificationName:UIApplicationDidEnterBackgroundNotification
-                                           object:nil];
+    [self.automationEngine applicationDidEnterBackground];
 }
 
 - (void)verifyDelay:(UAScheduleDelay *)delay fulfillmentBlock:(void (^)(void))fulfillmentBlock {

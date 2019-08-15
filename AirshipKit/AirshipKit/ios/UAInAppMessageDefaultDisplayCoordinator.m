@@ -21,8 +21,8 @@
         self.dispatcher = dispatcher;
         self.notificationCenter = notificationCenter;
 
-        [self.notificationCenter addObserver:self selector:@selector(didBecomeActive) name:UIApplicationDidBecomeActiveNotification object:nil];
-        [self.notificationCenter addObserver:self selector:@selector(didEnterBackground) name:UIApplicationDidEnterBackgroundNotification object:nil];
+        [self.notificationCenter addObserver:self selector:@selector(applicationDidBecomeActive) name:UIApplicationDidBecomeActiveNotification object:nil];
+        [self.notificationCenter addObserver:self selector:@selector(applicationDidEnterBackground) name:UIApplicationDidEnterBackgroundNotification object:nil];
     }
 
     return self;
@@ -48,13 +48,13 @@
     return [super automaticallyNotifiesObserversForKey:key];
 }
 
-- (void)didBecomeActive {
+- (void)applicationDidBecomeActive {
     if (!self.isDisplayLocked) {
         [self emitChangeNotification:YES];
     }
 }
 
-- (void)didEnterBackground {
+- (void)applicationDidEnterBackground {
     [self emitChangeNotification:NO];
 }
 

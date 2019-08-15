@@ -3,6 +3,7 @@
 #import "UAirship.h"
 #import "UAModules+Internal.h"
 #import "UASceneTracker+Internal.h"
+#import "UAAppStateTracker.h"
 
 @class UABaseAppDelegateSurrogate;
 @class UAJavaScriptDelegate;
@@ -11,7 +12,7 @@
 @class UAInAppMessageManager;
 @class UARemoteConfigManager;
 
-@interface UAirship()
+@interface UAirship() <UAAppStateTrackerDelegate>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -105,21 +106,7 @@ NS_ASSUME_NONNULL_BEGIN
 ///---------------------------------------------------------------------------------------
 /// @name Airship Internal Methods
 ///---------------------------------------------------------------------------------------
-
-/**
- * Handle app init. This should be called from NSNotification center
- * and will record a launch from notification and record the app init even
- * for analytics.
- * @param notification The app did finish launching notification
- */
-+ (void)handleAppDidFinishLaunchingNotification:(NSNotification *)notification;
-
-/**
- * Handle a termination event from NSNotification center (forward it to land)
- * @param notification The app termination notification
- */
-+ (void)handleAppTerminationNotification:(NSNotification *)notification;
-
+///
 /**
  * Perform teardown on the shared instance. This will automatically be called when an application
  * terminates.

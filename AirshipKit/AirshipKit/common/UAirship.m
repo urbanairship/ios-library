@@ -26,6 +26,7 @@
 #import "UATagGroupsMutationHistory+Internal.h"
 #import "UAChannel+Internal.h"
 #import "UAChannelRegistrar+Internal.h"
+#import "UAAppStateTrackerFactory.h"
 
 #if !TARGET_OS_TV
 #import "UAInbox+Internal.h"
@@ -36,7 +37,6 @@
 #import "UALegacyInAppMessaging+Internal.h"
 #import "UAInAppMessageManager+Internal.h"
 #endif
-
 
 // Exceptions
 NSString * const UAirshipTakeOffBackgroundThreadException = @"UAirshipTakeOffBackgroundThreadException";
@@ -50,11 +50,14 @@ static NSBundle *resourcesBundle_;
 
 static dispatch_once_t takeOffPred_;
 
-// Its possible that plugins that use load to call takeoff will trigger after
-// handleAppDidFinishLaunchingNotification.  We need to store that notification
-// and call handleAppDidFinishLaunchingNotification in takeoff.
-static NSNotification *appDidFinishLaunchingNotification_;
+static id<UAAppStateTracker> appStateTracker_;
 
+// Its possible that plugins that use load to call takeoff will trigger after
+// didFinishLaunching. We need to store the launch notification
+// and call didFinishLaunching in takeoff.
+static NSDictionary *launchNotification_;
+
+static BOOL handledLaunch_;
 
 // Logging info
 // Default to ON and ERROR - options/plist will override
@@ -79,11 +82,9 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 }
 
 + (void)load {
-    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
-    [center addObserver:[UAirship class] selector:@selector(handleAppDidFinishLaunchingNotification:) name:UIApplicationDidFinishLaunchingNotification object:nil];
-    [center addObserver:[UAirship class] selector:@selector(handleAppTerminationNotification:) name:UIApplicationWillTerminateNotification object:nil];
+    appStateTracker_ = [UAAppStateTrackerFactory tracker];
+    appStateTracker_.stateTrackerDelegate = (id<UAAppStateTrackerDelegate>)self;
 }
-
 
 #pragma mark -
 #pragma mark Object Lifecycle
@@ -126,8 +127,13 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 
         self.sharedAnalytics = [UAAnalytics analyticsWithConfig:config dataStore:dataStore];
         self.whitelist = [UAWhitelist whitelistWithConfig:config];
+
+
         self.sharedAutomation = [UAAutomation automationWithConfig:config dataStore:dataStore];
-        self.sharedRemoteDataManager = [UARemoteDataManager remoteDataManagerWithConfig:config dataStore:dataStore];
+
+
+        self.sharedRemoteDataManager = [UARemoteDataManager remoteDataManagerWithConfig:config
+                                                                              dataStore:dataStore];
 
         self.sharedModules = [[UAModules alloc] initWithDataStore:dataStore];
 
@@ -300,12 +306,11 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         [UAAutoIntegration integrate];
     }
 
-    if (appDidFinishLaunchingNotification_) {
+    if (!handledLaunch_) {
         // Set up can occur after takeoff, so handle the launch notification on the
         // next run loop to allow app setup to finish
         [[UADispatcher mainDispatcher] dispatchAsync: ^() {
-            [UAirship handleAppDidFinishLaunchingNotification:appDidFinishLaunchingNotification_];
-            appDidFinishLaunchingNotification_ = nil;
+            [UAirship applicationDidFinishLaunching:launchNotification_];
         }];
     }
 
@@ -317,12 +322,13 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
     }
 }
 
-+ (void)handleAppDidFinishLaunchingNotification:(NSNotification *)notification {
-
-    [[NSNotificationCenter defaultCenter] removeObserver:[UAirship class] name:UIApplicationDidFinishLaunchingNotification object:nil];
++ (void)applicationDidFinishLaunching:(nullable NSDictionary *)remoteNotification {
+    if (handledLaunch_) {
+        return;
+    }
 
     if (!sharedAirship_) {
-        appDidFinishLaunchingNotification_ = notification;
+        launchNotification_ = remoteNotification;
 
         // Log takeoff errors on the next run loop to give time for apps that
         // use class loader to call takeoff.
@@ -336,16 +342,11 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         return;
     }
 
-#if !TARGET_OS_TV    // UIApplicationLaunchOptionsRemoteNotificationKey not available on tvOS
-    NSDictionary *remoteNotification = [notification.userInfo objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey];
-
     // Required before the app init event to track conversion push ID
     if (remoteNotification) {
         [sharedAirship_.sharedAnalytics launchedFromNotification:remoteNotification];
     }
-
-
-#endif
+ 
     // Init event
     [sharedAirship_.sharedAnalytics addEvent:[UAAppInitEvent event]];
 
@@ -354,11 +355,11 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
     dispatch_async(dispatch_get_main_queue(), ^() {
         [sharedAirship_.sharedPush updateRegistration];
     });
+
+    handledLaunch_ = YES;
 }
 
-+ (void)handleAppTerminationNotification:(NSNotification *)notification {
-    [[NSNotificationCenter defaultCenter] removeObserver:[UAirship class]  name:UIApplicationWillTerminateNotification object:nil];
-
++ (void)willTerminate {
     // Add app_exit event
     [UAirship.analytics addEvent:[UAAppExitEvent event]];
 

@@ -19,6 +19,7 @@
 #import "UAPushReceivedEvent+Internal.h"
 #import "UARegistrationDelegateWrapper+Internal.h"
 #import "UADispatcher+Internal.h"
+#import "UAAppStateTrackerFactory.h"
 
 #if !TARGET_OS_TV
 #import "UAInboxUtils.h"
@@ -74,7 +75,7 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
 @property (nonatomic, readonly) BOOL isBackgroundRefreshStatusAvailable;
 @property (nonatomic, strong) UARuntimeConfig *config;
 @property (nonatomic, strong) UAChannel *channel;
-
+@property (nonatomic, strong) id<UAAppStateTracker> appStateTracker;
 @end
 
 @implementation UAPush
@@ -82,6 +83,7 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
 - (instancetype)initWithConfig:(UARuntimeConfig *)config
                      dataStore:(UAPreferenceDataStore *)dataStore
                         channel:(UAChannel *)channel
+               appStateTracker:(id<UAAppStateTracker>)appStateTracker
             notificationCenter:(NSNotificationCenter *)notificationCenter
               pushRegistration:(id<UAAPNSRegistrationProtocol>)pushRegistration
                    application:(UIApplication *)application
@@ -94,6 +96,10 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
         self.dispatcher = dispatcher;
         self.dataStore = dataStore;
         self.channel = channel;
+
+        self.appStateTracker = appStateTracker;
+        self.appStateTracker.stateTrackerDelegate = self;
+
         self.notificationCenter = notificationCenter;
         self.registrationDelegateWrapper = [[UARegistrationDelegateWrapper alloc] init];
 
@@ -103,14 +109,19 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
         self.requireAuthorizationForDefaultCategories = YES;
         self.backgroundPushNotificationsEnabledByDefault = YES;
 
-        self.isForegrounded = [UIApplication sharedApplication].applicationState == UIApplicationStateActive;
-
         self.notificationOptions = UANotificationOptionBadge;
 #if !TARGET_OS_TV
         self.notificationOptions = self.notificationOptions|UANotificationOptionSound|UANotificationOptionAlert;
 #endif
 
         [self observeNotificationCenterEvents];
+
+#if !TARGET_OS_TV    // UIApplicationBackgroundRefreshStatusDidChangeNotification not available on tvOS
+        [self.notificationCenter addObserver:self
+                                    selector:@selector(applicationBackgroundRefreshStatusChanged)
+                                        name:UIApplicationBackgroundRefreshStatusDidChangeNotification
+                                      object:nil];
+#endif
 
         // Do not remove migratePushSettings call from init. It needs to be run
         // prior to allowing the application to set defaults.
@@ -133,6 +144,7 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
     return [[self alloc] initWithConfig:config
                               dataStore:dataStore
                                 channel:channel
+                        appStateTracker:[UAAppStateTrackerFactory tracker]
                      notificationCenter:[NSNotificationCenter defaultCenter]
                        pushRegistration:[[UAAPNSRegistration alloc] init]
                             application:[UIApplication sharedApplication]
@@ -142,6 +154,7 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
 + (instancetype)pushWithConfig:(UARuntimeConfig *)config
                      dataStore:(UAPreferenceDataStore *)dataStore
                        channel:(UAChannel *)channel
+               appStateTracker:(id<UAAppStateTracker>)appStateTracker
             notificationCenter:(NSNotificationCenter *)notificationCenter
               pushRegistration:(id<UAAPNSRegistrationProtocol>)pushRegistration
                    application:(UIApplication *)application
@@ -150,6 +163,7 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
     return [[self alloc] initWithConfig:config
                               dataStore:dataStore
                                 channel:channel
+                        appStateTracker:(id<UAAppStateTracker>)appStateTracker
                      notificationCenter:notificationCenter
                        pushRegistration:pushRegistration
                             application:application
@@ -157,18 +171,6 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
 }
 
 - (void)observeNotificationCenterEvents {
-    // Only for observing the first call to app foreground
-    [self.notificationCenter addObserver:self
-                                selector:@selector(applicationDidBecomeActive)
-                                    name:UIApplicationDidBecomeActiveNotification
-                                  object:nil];
-
-    // Only for observing the first call to app background
-    [self.notificationCenter addObserver:self
-                                selector:@selector(applicationDidEnterBackground)
-                                    name:UIApplicationDidEnterBackgroundNotification
-                                  object:nil];
-
 #if !TARGET_OS_TV    // UIApplicationBackgroundRefreshStatusDidChangeNotification not available on tvOS
     [self.notificationCenter addObserver:self
                                 selector:@selector(applicationBackgroundRefreshStatusChanged)
@@ -542,25 +544,13 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
 }
 
 #pragma mark -
-#pragma mark UIApplication State Observation
+#pragma mark App State Observation
 
-- (void)applicationDidBecomeActive {
-    if (self.isForegrounded && self.config.requestAuthorizationToUseNotifications) {
-        // if the app is already in the foreground and the SDK is
-        // managing notification authorization, nothing needs to be done.
-        return;
-    }
-
-    // the app just moved into the foreground or the app is managing
-    // notification authorization
-    self.isForegrounded = YES;
-
+- (void)applicationDidTransitionToForeground {
     [self updateAuthorizedNotificationTypes];
 }
 
 - (void)applicationDidEnterBackground {
-    self.isForegrounded = NO;
-    
     self.launchNotificationResponse = nil;
 
     UA_LTRACE(@"Application entered the background. Updating authorization.");
@@ -582,7 +572,7 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
     self.deviceToken = [UAUtils deviceTokenStringFromDeviceToken:deviceToken];
 
-    if (application.applicationState == UIApplicationStateBackground && self.channel.identifier) {
+    if (self.appStateTracker.state == UAApplicationStateBackground && self.channel.identifier) {
         UA_LDEBUG(@"Skipping channel registration. The app is currently backgrounded and we already have a channel ID.");
     } else {
         [self.channel updateRegistration];
@@ -593,7 +583,6 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
 
 - (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error {
     [self.registrationDelegateWrapper apnsRegistrationFailedWithError:error];
-
 }
 
 #pragma mark -
