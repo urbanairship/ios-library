@@ -3,6 +3,15 @@ iOS Changelog
 
 Migration Guides: Documentation/Migration
 
+Version 12.0.0-beta.1 - August 15, 2019
+=======================================
+- Updated with initial support for iOS 13 and XCode 11
+- Added multi-window and target scene compatibility
+- Added dark mode compatibility for message center and in-app automation
+- Added spoken notification compatibility
+- Added support for latest location permissions
+
+
 Version 11.1.1 - July 30, 2019
 ==============================
 - Fixed an issue where Message Center messages were not being properly marked as read after displaying via in-app automation.
