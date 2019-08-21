@@ -152,6 +152,25 @@ NSString * const UAScheduleEditsErrorDomain = @"com.urbanairship.schedule_edits"
     return self;
 }
 
+- (NSString *)description {
+    return [NSString stringWithFormat:@"Data: %@\n"
+            "Priority: %@\n"
+            "Limit: %@\n"
+            "Start: %@\n"
+            "End: %@\n"
+            "Edit Grace Period: %@\n"
+            "Interval: %@\n"
+            "Metadata: %@",
+            self.data,
+            self.priority,
+            self.limit,
+            self.start,
+            self.end,
+            self.editGracePeriod,
+            self.interval,
+            self.metadata];
+}
+
 @end
 
 
