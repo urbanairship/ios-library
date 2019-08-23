@@ -2,10 +2,12 @@
 
 #import "UAApplicationMetrics+Internal.h"
 #import "UAUtils+Internal.h"
+#import "UAAppStateTrackerFactory.h"
 
 @interface UAApplicationMetrics()
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 @property (nonatomic, strong) UADate *date;
+@property (nonatomic, strong) id<UAAppStateTracker> appStateTracker;
 @property (nonatomic, assign) BOOL isAppVersionUpdated;
 @end
 
@@ -20,12 +22,9 @@ NSString *const UAApplicationMetricsLastAppVersion = @"UAApplicationMetricsLastA
     if (self) {
         self.dataStore = dataStore;
         self.date = date;
+        self.appStateTracker = [UAAppStateTrackerFactory tracker];
+        self.appStateTracker.stateTrackerDelegate = self;
 
-        // App inactive/active for incoming calls, notification center, and taskbar
-        [notificationCenter addObserver:self
-                               selector:@selector(didBecomeActive)
-                                   name:UIApplicationDidBecomeActiveNotification
-                                 object:nil];
         [self checkAppVersion];
     }
 
@@ -46,7 +45,7 @@ NSString *const UAApplicationMetricsLastAppVersion = @"UAApplicationMetricsLastA
                                                       date:date];
 }
 
-- (void)didBecomeActive {
+- (void)applicationDidBecomeActive {
     self.lastApplicationOpenDate = [self.date now];
 }
 

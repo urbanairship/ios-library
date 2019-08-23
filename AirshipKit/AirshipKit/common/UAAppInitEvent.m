@@ -1,12 +1,12 @@
 /* Copyright Airship and Contributors */
 
-#import <UIKit/UIKit.h>
 #import "UAAppInitEvent+Internal.h"
 #import "UAEvent+Internal.h"
 #import "UAAnalytics.h"
 #import "UAirship.h"
 #import "UAUser.h"
 #import "UAUtils+Internal.h"
+#import "UAAppStateTrackerFactory.h"
 
 @implementation UAAppInitEvent
 
@@ -46,7 +46,7 @@
     [data setValue:packageVersion forKey:@"package_version"];
 
     // Foreground
-    BOOL isInForeground = ([UIApplication sharedApplication].applicationState != UIApplicationStateBackground);
+    BOOL isInForeground = [UAAppStateTrackerFactory tracker].state != UAApplicationStateBackground;
     [data setValue:(isInForeground ? @"true" : @"false") forKey:@"foreground"];
 
     return data;
