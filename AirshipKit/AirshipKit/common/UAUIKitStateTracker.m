@@ -5,7 +5,8 @@
 @interface UAUIKitStateTracker ()
 @property (nonatomic, strong) UIApplication *application;
 @property (nonatomic, strong) NSNotificationCenter *notificationCenter;
-@property (nonatomic, assign) BOOL hasTransitionedFromBackground;
+@property (nonatomic, assign) BOOL isForegrounded;
+@property (nonatomic, assign) BOOL isBackgrounded;
 @end
 
 @implementation UAUIKitStateTracker
@@ -19,7 +20,8 @@
     if (self) {
         self.application = application;
         self.notificationCenter = notificationCenter;
-        self.hasTransitionedFromBackground = self.application.applicationState == UIApplicationStateActive;
+        self.isForegrounded = self.application.applicationState == UIApplicationStateActive;
+        self.isBackgrounded = self.application.applicationState == UIApplicationStateBackground;
 
         [self observeStateEvents];
     }
@@ -90,16 +92,18 @@
 }
 
 - (void)applicationDidBecomeActive {
+    self.isBackgrounded = NO;
+
     if ([self.stateTrackerDelegate respondsToSelector:@selector(applicationDidBecomeActive)]) {
         [self.stateTrackerDelegate applicationDidBecomeActive];
     }
 
-    if (!self.hasTransitionedFromBackground) {
+    if (!self.isForegrounded) {
         if ([self.stateTrackerDelegate respondsToSelector:@selector(applicationDidTransitionToForeground)]) {
             [self.stateTrackerDelegate applicationDidTransitionToForeground];
         }
 
-        self.hasTransitionedFromBackground = YES;
+        self.isForegrounded = YES;
     }
 }
 
@@ -110,10 +114,18 @@
 }
 
 - (void)applicationDidEnterBackground {
-    self.hasTransitionedFromBackground = NO;
+    self.isForegrounded = NO;
 
     if ([self.stateTrackerDelegate respondsToSelector:@selector(applicationDidEnterBackground)]) {
         [self.stateTrackerDelegate applicationDidEnterBackground];
+    }
+
+    if (!self.isBackgrounded) {
+        if ([self.stateTrackerDelegate respondsToSelector:@selector(applicationDidTransitionToBackground)]) {
+            [self.stateTrackerDelegate applicationDidTransitionToBackground];
+        }
+
+        self.isBackgrounded = YES;
     }
 }
 

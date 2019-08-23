@@ -839,7 +839,7 @@
 
     [self verifyDelay:delay fulfillmentBlock:^{
         [[[self.mockAppStateTracker expect] andReturnValue:@(UAApplicationStateBackground)] state];
-        [self.automationEngine applicationDidEnterBackground];
+        [self.automationEngine applicationDidTransitionToBackground];
     }];
 }
 
@@ -1181,7 +1181,7 @@
 }
 
 - (void)simulateBackgroundTransition {
-    [self.automationEngine applicationDidEnterBackground];
+    [self.automationEngine applicationDidTransitionToBackground];
 }
 
 - (void)verifyDelay:(UAScheduleDelay *)delay fulfillmentBlock:(void (^)(void))fulfillmentBlock {

@@ -40,6 +40,11 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)applicationDidTransitionToForeground;
 
 /**
+ * The application fully transitioned from a foreground state into the background state.
+ */
+- (void)applicationDidTransitionToBackground;
+
+/**
  * The application is about to leave the active state.
  */
 - (void)applicationWillResignActive;

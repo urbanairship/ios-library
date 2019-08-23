@@ -466,7 +466,7 @@
     [self scheduleConditionsChanged];
 }
 
-- (void)applicationDidEnterBackground {
+- (void)applicationDidTransitionToBackground {
     [self updateTriggersWithType:UAScheduleTriggerAppBackground argument:nil incrementAmount:1.0];
     [self scheduleConditionsChanged];
 }
