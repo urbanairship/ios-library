@@ -24,13 +24,8 @@ class CoreUITests: XCTestCase {
     func testHomeView() {
         // Note: these string identifiers are accessibility identifers set in the storyboard
         let airshipMark = app.images["airshipMark"]
-        let enablePushButton:XCUIElement = app.buttons["enablePushButton"]
 
         XCTAssert(airshipMark.exists)
-
-        // Enable push button appears and can be touched
-        XCTAssert(enablePushButton.isEnabled)
-        XCTAssert(enablePushButton.isHittable)
 
         // Check localization on home view
         app.checkLocalization()
@@ -40,7 +35,7 @@ class CoreUITests: XCTestCase {
         app.tabBars.buttons["Debug"].tap()
 
         let tablesQuery = app.tables
-        tablesQuery/*@START_MENU_TOKEN@*/.staticTexts["Device Info"]/*[[".cells.staticTexts[\"Device Info\"]",".staticTexts[\"Device Info\"]"],[[[-1,1],[-1,0]]],[0]]@END_MENU_TOKEN@*/.tap()
+        tablesQuery.staticTexts["Device Info"].tap()
         // Inside device info view
         app.checkLocalization()
 
@@ -48,8 +43,8 @@ class CoreUITests: XCTestCase {
         // Inside named user addition view
         app.checkLocalization()
 
-        app.navigationBars["AirshipDebugKit.AddNamedUserTableView"].buttons["Device Info"].tap()
-        app.tables/*@START_MENU_TOKEN@*/.staticTexts["Tags"]/*[[".cells.staticTexts[\"Tags\"]",".staticTexts[\"Tags\"]"],[[[-1,1],[-1,0]]],[0]]@END_MENU_TOKEN@*/.tap()
+        app.navigationBars.buttons.element(boundBy: 0).tap()
+        app.tables.staticTexts["Tags"].tap()
         // Inside tags view
         app.checkLocalization()
 
@@ -57,9 +52,8 @@ class CoreUITests: XCTestCase {
         // Inside tags addition view
         app.checkLocalization()
 
-        app.navigationBars["AirshipDebugKit.AddTagsTableView"].buttons["Tags"].tap()
-        app.navigationBars["Tags"].buttons["Device Info"].tap()
-
+        app.goBack()
+        app.goBack()
         tablesQuery.staticTexts["Associated Identifiers"].tap()
         // Inside Associated Identifiers view
         app.checkLocalization()
@@ -68,19 +62,18 @@ class CoreUITests: XCTestCase {
         // Inside associated identifiers addition view
         app.checkLocalization()
 
-        app.navigationBars["AirshipDebugKit.AddAssociatedIdentifiersTableView"].buttons["Back"].tap()
-        app.navigationBars["AirshipDebugKit.AssociatedIdentifiersTableView"].buttons["Device Info"].tap()
+        app.goBack()
+        app.goBack()
 
-        tablesQuery/*@START_MENU_TOKEN@*/.staticTexts["Last Payload"]/*[[".cells.staticTexts[\"Last Payload\"]",".staticTexts[\"Last Payload\"]"],[[[-1,1],[-1,0]]],[0]]@END_MENU_TOKEN@*/.tap()
-        // Inside last payload view
-        app.checkLocalization()
+        // Don't check in last payload view
+        tablesQuery.staticTexts["Last Push Payload"].tap()
     }
 
     func testDebugEventsView() {
         app.tabBars.buttons["Debug"].tap()
 
         let tablesQuery = app.tables.element
-        tablesQuery/*@START_MENU_TOKEN@*/.staticTexts["Events"]/*[[".cells.staticTexts[\"Events\"]",".staticTexts[\"Events\"]"],[[[-1,1],[-1,0]]],[0]]@END_MENU_TOKEN@*/.tap()
+        tablesQuery.staticTexts["Events"].tap()
 
         // Inside events view
         app.checkLocalization()
@@ -89,40 +82,40 @@ class CoreUITests: XCTestCase {
 
         // Inside first event view
         app.checkLocalization()
-        app.navigationBars["AirshipDebugKit.EventsDetailTableView"].buttons["Events"].tap()
-        app.navigationBars["Events"].buttons["Add"].tap()
-        let eventsTextField = tablesQuery.cells.containing(.staticText, identifier:"Event Name").textFields["Required"]
-        eventsTextField.tap()
-        eventsTextField.typeText("ui test")
 
-        let requiredTextField = tablesQuery/*@START_MENU_TOKEN@*/.textFields["Required"]/*[[".cells.textFields[\"Required\"]",".textFields[\"Required\"]"],[[[-1,1],[-1,0]]],[0]]@END_MENU_TOKEN@*/
-        requiredTextField.tap()
-        requiredTextField.typeText("1111")
+        app.buttons["Add"].tap()
+        let eventNameTextField = tablesQuery.cells.containing(.staticText, identifier:"Event Name").textFields["Required"]
+        eventNameTextField.tap()
+        eventNameTextField.typeText("ui test")
 
-        tablesQuery/*@START_MENU_TOKEN@*/.staticTexts["Add Custom Property"]/*[[".cells.staticTexts[\"Add Custom Property\"]",".staticTexts[\"Add Custom Property\"]"],[[[-1,1],[-1,0]]],[0]]@END_MENU_TOKEN@*/.tap()
+        let eventValueTextField = XCUIApplication().tables.cells.containing(.staticText, identifier:"Event Value").textFields["Required"]
+        eventValueTextField.tap()
+        eventValueTextField.typeText("1111")
+
+        tablesQuery.staticTexts["Add Custom Property"].tap()
 
         // Inside add custom event view
         app.checkLocalization()
 
-        requiredTextField.tap()
-        requiredTextField.typeText("ui test custom property")
+        let identifierTextField = XCUIApplication().tables.cells.containing(.staticText, identifier:"Identifier").textFields["Required"]
+        identifierTextField.tap()
+        identifierTextField.typeText("ui test custom property")
 
         tablesQuery.pickerWheels.element.adjust(toPickerWheelValue: "Boolean")
         tablesQuery.pickerWheels.element.adjust(toPickerWheelValue: "Number")
         tablesQuery.pickerWheels.element.adjust(toPickerWheelValue: "String")
         tablesQuery.pickerWheels.element.adjust(toPickerWheelValue: "Strings")
 
-        app.tables/*@START_MENU_TOKEN@*/.staticTexts["Strings"]/*[[".cells.staticTexts[\"Strings\"]",".staticTexts[\"Strings\"]"],[[[-1,1],[-1,0]]],[0]]@END_MENU_TOKEN@*/.tap()
+        app.tables.staticTexts["Strings"].tap()
 
         // Inside add strings event view
         app.checkLocalization()
 
         let addCustomStringsPropertyNavigationBar = app.navigationBars["Add Custom Strings Property"]
         addCustomStringsPropertyNavigationBar.buttons["Add"].tap()
-        app.navigationBars["AirshipDebugKit.CustomPropertyAddStringsTableView"].buttons["Add Custom Strings Property"].tap()
-        addCustomStringsPropertyNavigationBar.buttons["Add Custom Property"].tap()
-        app.navigationBars["Add Custom Property"].buttons["Done"].tap()
-
+        app.goBack()
+        app.goBack()
+        app.goBack()
         let createCustomEventNavigationBar = app.navigationBars["Create Custom Event"]
         createCustomEventNavigationBar.buttons["Done"].tap()
 

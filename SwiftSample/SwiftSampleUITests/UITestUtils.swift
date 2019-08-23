@@ -3,6 +3,10 @@
 import XCTest
 
 extension XCUIApplication {
+    func goBack() {
+        self.navigationBars.buttons.element(boundBy: 0).tap()
+    }
+
     func checkLocalization() {
         let predicate = NSPredicate(format: "label contains[c] %@", "ua_")
 

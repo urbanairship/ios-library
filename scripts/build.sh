@@ -523,8 +523,4 @@ then
 
   # Workaround the missing module version
   find $STAGING/Documentation -name '*.html' -print0 | xargs -0 sed -i "" "s/\$AIRSHIP_VERSION/${VERSION}/g"
-
-  # Copy images for documents
-  cp -r Documentation/Migration/images $STAGING/Documentation/AirshipKit
-  cp -r Documentation/Migration/images $STAGING/Documentation/AirshipAppExtensions
 fi

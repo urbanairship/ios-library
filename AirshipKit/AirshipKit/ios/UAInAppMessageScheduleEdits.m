@@ -75,5 +75,9 @@
     return [[self alloc] initWithBuilder:builder];
 }
 
+- (NSString *)description {
+    return [NSString stringWithFormat:@"%@\nMessage: %@\n", [super description], self.message];
+}
+
 @end
 

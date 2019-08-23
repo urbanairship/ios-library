@@ -376,7 +376,7 @@
          completionHandler:(void (^)(UASchedule *))completionHandler {
 
     UA_WEAKIFY(self)
-    [self.automationStore getSchedule:identifier completionHandler:^(UAScheduleData *scheduleData) {
+    [self.automationStore getSchedule:identifier includingExpired:YES completionHandler:^(UAScheduleData *scheduleData) {
         UA_STRONGIFY(self)
 
         UASchedule *schedule = nil;
