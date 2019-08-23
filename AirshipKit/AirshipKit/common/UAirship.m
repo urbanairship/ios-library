@@ -128,13 +128,11 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         self.sharedAnalytics = [UAAnalytics analyticsWithConfig:config dataStore:dataStore];
         self.whitelist = [UAWhitelist whitelistWithConfig:config];
 
-
         self.sharedAutomation = [UAAutomation automationWithConfig:config dataStore:dataStore];
 
 
         self.sharedRemoteDataManager = [UARemoteDataManager remoteDataManagerWithConfig:config
                                                                               dataStore:dataStore];
-
         self.sharedModules = [[UAModules alloc] initWithDataStore:dataStore];
 
         UAComponentDisabler *componentDisabler = [UAComponentDisabler componentDisablerWithModules:self.sharedModules];

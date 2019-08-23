@@ -68,10 +68,10 @@ NSString *const UAChannelPlaceHolder = @"CHANNEL";
                                dataStore:(UAPreferenceDataStore *)dataStore
                          appStateTracker:(id<UAAppStateTracker>)appStateTracker {
     return [[UAChannelCapture alloc] initWithConfig:config
-                                             channel:channel
-                                pushProviderDelegate:pushProviderDelegate
-                                           dataStore:dataStore
-                                     appStateTracker:appStateTracker];
+                                            channel:channel
+                               pushProviderDelegate:pushProviderDelegate
+                                          dataStore:dataStore
+                                    appStateTracker:appStateTracker];
 }
 
 - (void)enable:(NSTimeInterval)duration {

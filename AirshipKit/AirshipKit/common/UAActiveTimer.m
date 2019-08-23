@@ -19,7 +19,7 @@
         self.appStateTracker = [UAAppStateTrackerFactory tracker];
         self.appStateTracker.stateTrackerDelegate = self;
 
-        self.active = self.appStateTracker.state == UAApplicationStateActive;
+        self.active = (self.appStateTracker.state == UAApplicationStateActive);
     }
 
     return self;

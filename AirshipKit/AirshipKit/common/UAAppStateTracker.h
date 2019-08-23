@@ -6,7 +6,8 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /**
- * Delegate protocol for app state tracker callbacks.
+ * Delegate protocol for app state tracker callbacks. These methods directly correspond to those
+ * on UIApplicationDelegate, with a few additions for custom use cases.
  */
 @protocol UAAppStateTrackerDelegate <NSObject>
 @optional
@@ -14,7 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * The application finished launching.
  *
- * @param remoteNotification The optiona. remote notification that launched the app.
+ * @param remoteNotification The remote notification that launched the app. If nil, the app was not launched by a remote notification.
  */
 - (void)applicationDidFinishLaunching:(nullable NSDictionary *)remoteNotification;
 

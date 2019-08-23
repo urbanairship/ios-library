@@ -50,20 +50,6 @@
                                                      appStateTracker:self.mockAppStateTracker];
 }
 
-- (void)tearDown {
-    [self.mockChannel stopMocking];
-    [self.mockRootViewController stopMocking];
-    [self.mockWindow stopMocking];
-    [self.mockPasteboard stopMocking];
-    [self.mockAppStateTracker stopMocking];
-
-    self.config = nil;
-    self.dataStore = nil;
-    self.channelCapture = nil;
-
-    [super tearDown];
-}
-
 /**
  * Test channel capture tool with a token and URL.
  */

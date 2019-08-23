@@ -116,13 +116,6 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
 
         [self observeNotificationCenterEvents];
 
-#if !TARGET_OS_TV    // UIApplicationBackgroundRefreshStatusDidChangeNotification not available on tvOS
-        [self.notificationCenter addObserver:self
-                                    selector:@selector(applicationBackgroundRefreshStatusChanged)
-                                        name:UIApplicationBackgroundRefreshStatusDidChangeNotification
-                                      object:nil];
-#endif
-
         // Do not remove migratePushSettings call from init. It needs to be run
         // prior to allowing the application to set defaults.
         [self migratePushSettings];

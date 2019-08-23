@@ -69,17 +69,6 @@
                                                appStateTracker:self.mockAppStateTracker];
 }
 
-- (void)tearDown {
-    [self.mockStore stopMocking];
-    [self.mockClient stopMocking];
-    [self.mockQueue stopMocking];
-    [self.mockAppStateTracker stopMocking];
-    [self.mockAirship stopMocking];
-    [self.mockChannel stopMocking];
-
-    [super tearDown];
-}
-
 /*
  * Test deleting all events.
  */
@@ -194,12 +183,9 @@
  * Test adding an event in the background defaults when uploads are disabled.
  */
 - (void)testAddEventBackgroundWhenUploadsAreDisabled {
-    // setup
-    self.eventManager.uploadsEnabled = NO;
-
     // Background application state
-    // TODO: fix
-    //[[[self.mockApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateBackground)] applicationState];
+    [[[self.mockAppStateTracker stub] andReturnValue:@(UAApplicationStateBackground)] state];
+    self.eventManager.uploadsEnabled = NO;
 
     // expectations
     UACustomEvent *event = [UACustomEvent eventWithName:@"cool"];

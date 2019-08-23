@@ -11,7 +11,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)trackerWithApplication:(UIApplication *)application
                     notificationCenter:(NSNotificationCenter *)notificationCenter;
 
-@property(nonatomic, readonly) UAApplicationState state;
+@property (nonatomic, readonly) UAApplicationState state;
 
 @end
 
