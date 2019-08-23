@@ -112,6 +112,12 @@
  */
 @property (nonatomic, strong) UINavigationController *messageViewNavigationController;
 
+/**
+ * The previous navigation bar style. Used for resetting the bar style to the style set before message center display.
+ * Note: 0 for default Bar style, 1 for black bar style.
+ */
+@property (nonatomic, strong, nullable) NSNumber *previousNavigationBarStyle;
+
 @end
 
 @implementation UAMessageCenterListViewController
@@ -185,11 +191,19 @@
                                                  name:UAInboxMessageListUpdatedNotification object:nil];
 }
 
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+
+    [self restoreNavigationBarStyle];
+}
+
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     
     self.navigationItem.backBarButtonItem = nil;
-    
+
+    [self setNavigationBarStyle];
+
     [self reload];
 }
 
@@ -262,12 +276,35 @@
     self.markAsReadButtonItem.tintColor = (self.style.markAsReadButtonTitleColor) ? self.style.markAsReadButtonTitleColor : self.defaultTintColor;
 }
 
+- (void)restoreNavigationBarStyle {
+    // Restore the previous style to the containing navigation controller
+    if (self.style && self.style.navigationBarStyle && self.previousNavigationBarStyle) {
+        self.navigationController.navigationBar.barStyle = [self.previousNavigationBarStyle intValue];
+    }
+
+    self.previousNavigationBarStyle = nil;
+}
+
+// Note: This method should only be called once in viewWillAppear or it may not fuction as expected
+- (void)setNavigationBarStyle {
+    if (self.style && self.style.navigationBarStyle) {
+        // Save the previous style of containing navigation controller, and set specified style
+        if (!self.previousNavigationBarStyle) {
+            // Only set once to prevent overwriting from multiple calls
+            self.previousNavigationBarStyle = @(self.navigationController.navigationBar.barStyle);
+        }
+
+        self.navigationController.navigationBar.barStyle = self.style.navigationBarStyle;
+        self.messageViewNavigationController.navigationBar.barStyle = self.style.navigationBarStyle;
+    }
+}
+
 - (void)applyMessageViewNavBarStyles {
     // apply styles to the message view's navigation bar
     if (self.style.navigationBarColor) {
         self.messageViewNavigationController.navigationBar.barTintColor = self.style.navigationBarColor;
     }
-    
+
     if (self.style.tintColor) {
         self.messageViewNavigationController.navigationBar.tintColor = self.style.tintColor;
     }
@@ -276,7 +313,7 @@
     if (self.style) {
         self.messageViewNavigationController.navigationBar.translucent = !self.style.navigationBarOpaque;
     }
-    
+
     NSMutableDictionary *titleAttributes = [NSMutableDictionary dictionary];
     
     if (self.style.titleColor) {

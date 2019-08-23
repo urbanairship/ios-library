@@ -2,6 +2,22 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
+
+/**
+ * The navigation bar style.
+ */
+typedef NS_ENUM(NSUInteger, UANavigationBarStyle) {
+    /**
+     * The default navigation bar style.
+     */
+    UANavigationBarStyleDefault,
+
+    /**
+     * The black navigation bar style with white status bar text color.
+     */
+    UANavigationBarStyleBlack
+};
+
 /**
  * Model object representing a custom style to be applied
  * to the default message center.
@@ -12,6 +28,20 @@
  * center at display time.
  */
 @interface UAMessageCenterStyle : NSObject
+
+///---------------------------------------------------------------------------------------
+/// @name Default Message Center Style Constants
+///---------------------------------------------------------------------------------------
+
+/**
+ * The default navigation bar style.
+ */
+extern NSString *const UANavigationBarStyleDefaultKey;
+
+/**
+ * The black navigation bar style with white status bar text color.
+ */
+extern NSString *const UANavigationBarStyleBlackKey;
 
 ///---------------------------------------------------------------------------------------
 /// @name Default Message Center Style Properties
@@ -41,6 +71,12 @@
  * Whether the navigation bar should be translucent.
  */
 @property(nonatomic, assign) BOOL navigationBarOpaque;
+
+/**
+ * The navigation bar style.
+ * Note: `default` for default Bar style, `black` for black bar style.
+ */
+@property (nonatomic, assign) UANavigationBarStyle navigationBarStyle;
 
 /**
  * The background color of the message list.
