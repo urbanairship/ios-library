@@ -279,7 +279,7 @@
 - (void)restoreNavigationBarStyle {
     // Restore the previous style to the containing navigation controller
     if (self.style && self.style.navigationBarStyle && self.previousNavigationBarStyle) {
-        self.navigationController.navigationBar.barStyle = [self.previousNavigationBarStyle intValue];
+        self.navigationController.navigationBar.barStyle = (UIBarStyle)[self.previousNavigationBarStyle intValue];
     }
 
     self.previousNavigationBarStyle = nil;
@@ -294,8 +294,8 @@
             self.previousNavigationBarStyle = @(self.navigationController.navigationBar.barStyle);
         }
 
-        self.navigationController.navigationBar.barStyle = self.style.navigationBarStyle;
-        self.messageViewNavigationController.navigationBar.barStyle = self.style.navigationBarStyle;
+        self.navigationController.navigationBar.barStyle = (UIBarStyle)self.style.navigationBarStyle;
+        self.messageViewNavigationController.navigationBar.barStyle = (UIBarStyle)self.style.navigationBarStyle;
     }
 }
 
