@@ -270,6 +270,7 @@
 		459D40572092474B00C40E2D /* Valid-UAInAppMessageBannerStyle.plist in Resources */ = {isa = PBXBuildFile; fileRef = 459D40562092474A00C40E2D /* Valid-UAInAppMessageBannerStyle.plist */; };
 		459D40592092475600C40E2D /* Invalid-UAInAppMessageBannerStyle.plist in Resources */ = {isa = PBXBuildFile; fileRef = 459D40582092475500C40E2D /* Invalid-UAInAppMessageBannerStyle.plist */; };
 		459D405C2092476100C40E2D /* Invalid-UAInAppMessageModalStyle.plist in Resources */ = {isa = PBXBuildFile; fileRef = 459D405A2092475C00C40E2D /* Invalid-UAInAppMessageModalStyle.plist */; };
+		45A8ADF023134B38004AD8CA /* testMCColorsCatalog.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 45A8ADD123133E51004AD8CA /* testMCColorsCatalog.xcassets */; };
 		45C6EC0C22653A12002AA7CC /* UALandingPageAction+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 45C6EC0B22653A11002AA7CC /* UALandingPageAction+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		45C6EC0D22653A12002AA7CC /* UALandingPageAction+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 45C6EC0B22653A11002AA7CC /* UALandingPageAction+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		45DCD80D208670F400BCF10F /* UAInAppMessageStyleProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 45DCD80B208670F400BCF10F /* UAInAppMessageStyleProtocol.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1852,6 +1853,7 @@
 		459D405A2092475C00C40E2D /* Invalid-UAInAppMessageModalStyle.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Invalid-UAInAppMessageModalStyle.plist"; sourceTree = "<group>"; };
 		459D70A12209027B005A3BB9 /* UAAutomation 5.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "UAAutomation 5.xcdatamodel"; sourceTree = "<group>"; };
 		459D70A3220E4AA4005A3BB9 /* UARemoteData 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "UARemoteData 2.xcdatamodel"; sourceTree = "<group>"; };
+		45A8ADD123133E51004AD8CA /* testMCColorsCatalog.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = testMCColorsCatalog.xcassets; sourceTree = "<group>"; };
 		45C6EC0B22653A11002AA7CC /* UALandingPageAction+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UALandingPageAction+Internal.h"; path = "ios/UALandingPageAction+Internal.h"; sourceTree = "<group>"; };
 		45DCD80B208670F400BCF10F /* UAInAppMessageStyleProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = UAInAppMessageStyleProtocol.h; path = ios/UAInAppMessageStyleProtocol.h; sourceTree = "<group>"; };
 		45DCD8112086A68900BCF10F /* UAInAppMessageFullScreenStyle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = UAInAppMessageFullScreenStyle.h; path = ios/UAInAppMessageFullScreenStyle.h; sourceTree = "<group>"; };
@@ -3985,6 +3987,7 @@
 				CC64F1461D8B7954009CEF27 /* AirshipConfig-Valid-NeXTStep.plist */,
 				CC64F1471D8B7954009CEF27 /* AirshipConfig-Valid.plist */,
 				CC64F1481D8B7954009CEF27 /* AirshipConfig-Without-InProduction-And-DetectProvisioningMode.plist */,
+				45A8ADD123133E51004AD8CA /* testMCColorsCatalog.xcassets */,
 				CC64F1491D8B7954009CEF27 /* development-embedded.mobileprovision */,
 				CC64F14A1D8B7954009CEF27 /* production-embedded.mobileprovision */,
 			);
@@ -5349,6 +5352,7 @@
 				CC64F0CE1D8B781C009CEF27 /* CustomNotificationCategories.plist in Resources */,
 				459D40572092474B00C40E2D /* Valid-UAInAppMessageBannerStyle.plist in Resources */,
 				CC64F14C1D8B7954009CEF27 /* AirshipConfig-InProduction.plist in Resources */,
+				45A8ADF023134B38004AD8CA /* testMCColorsCatalog.xcassets in Resources */,
 				459D404C208FE6BB00C40E2D /* Invalid-UAInAppMessageFullScreenStyle.plist in Resources */,
 				CC64F1501D8B7954009CEF27 /* AirshipConfig-Without-InProduction-And-DetectProvisioningMode.plist in Resources */,
 				459D40552092474400C40E2D /* Valid-UAInAppMessageModalStyle.plist in Resources */,

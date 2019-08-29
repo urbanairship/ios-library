@@ -10,7 +10,7 @@
 		<string>11</string>
 	</dict>
 	<key>titleColor</key>
-	<string>#FF0000</string>
+	<string>seapunkTestColor</string>
 	<key>tintColor</key>
 	<string>#00FF00</string>
 	<key>navigationBarColor</key>

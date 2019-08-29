@@ -74,7 +74,6 @@
 }
 
 - (void)testValidStyle {
-
     id mockImage = [self mockForClass:[UIImage class]];
     [[[mockImage stub] andReturn:mockImage] imageNamed:OCMOCK_ANY];
 
@@ -89,9 +88,19 @@
     UIColor *greenTestColor = [UAColorUtils colorWithHexString:@"#00FF00"];
     UIColor *blueTestColor = [UAColorUtils colorWithHexString:@"#0000FF"];
 
+    // Test color
+    UIColor *seapunkTestColor;
+
+    // Remove check when iOS10 support is dropped
+    if (@available(iOS 11, *)) {
+        seapunkTestColor = [UIColor colorNamed:@"seapunkTestColor"];
+
+        // Title color is set to "seapunkTestColor" in valid plist
+        XCTAssertEqualObjects(seapunkTestColor, validStyle.titleColor);
+    }
+
     // properties in the valid style plist should match what's set in the style
     XCTAssertEqualObjects(helveticaTestFont, validStyle.titleFont);
-    XCTAssertEqualObjects(redTestColor, validStyle.titleColor);
     XCTAssertEqualObjects(greenTestColor, validStyle.tintColor);
     XCTAssertEqualObjects(blueTestColor, validStyle.navigationBarColor);
     XCTAssertTrue(validStyle.navigationBarOpaque);
