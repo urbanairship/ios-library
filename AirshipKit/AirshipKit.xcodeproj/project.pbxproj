@@ -227,6 +227,10 @@
 		459D40572092474B00C40E2D /* Valid-UAInAppMessageBannerStyle.plist in Resources */ = {isa = PBXBuildFile; fileRef = 459D40562092474A00C40E2D /* Valid-UAInAppMessageBannerStyle.plist */; };
 		459D40592092475600C40E2D /* Invalid-UAInAppMessageBannerStyle.plist in Resources */ = {isa = PBXBuildFile; fileRef = 459D40582092475500C40E2D /* Invalid-UAInAppMessageBannerStyle.plist */; };
 		459D405C2092476100C40E2D /* Invalid-UAInAppMessageModalStyle.plist in Resources */ = {isa = PBXBuildFile; fileRef = 459D405A2092475C00C40E2D /* Invalid-UAInAppMessageModalStyle.plist */; };
+		45A8AED22315A99A004AD8CA /* UALandingPageActionPredicate.m in Sources */ = {isa = PBXBuildFile; fileRef = 45A8AED02315A999004AD8CA /* UALandingPageActionPredicate.m */; };
+		45A8AED32315A99A004AD8CA /* UALandingPageActionPredicate+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 45A8AED12315A99A004AD8CA /* UALandingPageActionPredicate+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		45A8AED42315A9FF004AD8CA /* UALandingPageActionPredicate.m in Sources */ = {isa = PBXBuildFile; fileRef = 45A8AED02315A999004AD8CA /* UALandingPageActionPredicate.m */; };
+		45A8AED52315A9FF004AD8CA /* UALandingPageActionPredicate+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 45A8AED12315A99A004AD8CA /* UALandingPageActionPredicate+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		45C6EC0C22653A12002AA7CC /* UALandingPageAction+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 45C6EC0B22653A11002AA7CC /* UALandingPageAction+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		45C6EC0D22653A12002AA7CC /* UALandingPageAction+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 45C6EC0B22653A11002AA7CC /* UALandingPageAction+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		45DCD80D208670F400BCF10F /* UAInAppMessageStyleProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 45DCD80B208670F400BCF10F /* UAInAppMessageStyleProtocol.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1794,6 +1798,8 @@
 		459D405A2092475C00C40E2D /* Invalid-UAInAppMessageModalStyle.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Invalid-UAInAppMessageModalStyle.plist"; sourceTree = "<group>"; };
 		459D70A12209027B005A3BB9 /* UAAutomation 5.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "UAAutomation 5.xcdatamodel"; sourceTree = "<group>"; };
 		459D70A3220E4AA4005A3BB9 /* UARemoteData 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "UARemoteData 2.xcdatamodel"; sourceTree = "<group>"; };
+		45A8AED02315A999004AD8CA /* UALandingPageActionPredicate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UALandingPageActionPredicate.m; path = ios/UALandingPageActionPredicate.m; sourceTree = "<group>"; };
+		45A8AED12315A99A004AD8CA /* UALandingPageActionPredicate+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UALandingPageActionPredicate+Internal.h"; path = "ios/UALandingPageActionPredicate+Internal.h"; sourceTree = "<group>"; };
 		45C6EC0B22653A11002AA7CC /* UALandingPageAction+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UALandingPageAction+Internal.h"; path = "ios/UALandingPageAction+Internal.h"; sourceTree = "<group>"; };
 		45DCD80B208670F400BCF10F /* UAInAppMessageStyleProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = UAInAppMessageStyleProtocol.h; path = ios/UAInAppMessageStyleProtocol.h; sourceTree = "<group>"; };
 		45DCD8112086A68900BCF10F /* UAInAppMessageFullScreenStyle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = UAInAppMessageFullScreenStyle.h; path = ios/UAInAppMessageFullScreenStyle.h; sourceTree = "<group>"; };
@@ -2858,6 +2864,8 @@
 				992F89891EFD99B000E4C8FE /* UARateAppActionPredicate.m */,
 				99912E7D1ECCFEA800295C67 /* UATagsActionPredicate+Internal.h */,
 				99912E7E1ECCFEA800295C67 /* UATagsActionPredicate.m */,
+				45A8AED02315A999004AD8CA /* UALandingPageActionPredicate.m */,
+				45A8AED12315A99A004AD8CA /* UALandingPageActionPredicate+Internal.h */,
 				99912E821ECE575F00295C67 /* UAFetchDeviceInfoActionPredicate+Internal.h */,
 				99912E831ECE575F00295C67 /* UAFetchDeviceInfoActionPredicate.m */,
 				99B6EE651F3B9B5300C4E3F1 /* UAEnableFeatureActionPredicate+Internal.h */,
@@ -4219,6 +4227,7 @@
 				CC40DCEB1D8C996A00BABD4F /* UANotificationCategories.h in Headers */,
 				CC40DC271D8C996A00BABD4F /* UAActionRunner.h in Headers */,
 				DF0A22E61FBCFFE00058F6D6 /* UAComponent+Internal.h in Headers */,
+				45A8AED32315A99A004AD8CA /* UALandingPageActionPredicate+Internal.h in Headers */,
 				CC40DC771D8C996A00BABD4F /* UAMessageCenterListCell.h in Headers */,
 				CC40DC161D8C996A00BABD4F /* UAAction.h in Headers */,
 				998767331FC4F1CF00197AF4 /* UAInAppMessageUtils+Internal.h in Headers */,
@@ -5002,6 +5011,7 @@
 				DF7E22411ED62D9B00C79C46 /* UAAutoIntegration+Internal.h in Headers */,
 				3CBCED5D2118DF91003B7239 /* UATagGroupsTransactionRecord+Internal.h in Headers */,
 				3C89DD4B2120BBA800864358 /* UATagGroups+Internal.h in Headers */,
+				45A8AED52315A9FF004AD8CA /* UALandingPageActionPredicate+Internal.h in Headers */,
 				45DCD80E208670F400BCF10F /* UAInAppMessageStyleProtocol.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -5490,6 +5500,7 @@
 				DF702D7C1FAB96E000E7A3DC /* UAVersionMatcher.m in Sources */,
 				CC40DC281D8C996A00BABD4F /* UAActionRunner.m in Sources */,
 				DFECEA7E1E64DE66006AA8EA /* UAWKWebViewNativeBridge.m in Sources */,
+				45A8AED22315A99A004AD8CA /* UALandingPageActionPredicate.m in Sources */,
 				CC40DD291D8C996A00BABD4F /* UAWebViewCallData.m in Sources */,
 				CC40DC841D8C996A00BABD4F /* UADeviceRegistrationEvent.m in Sources */,
 				53BC50201E202FAA00E24306 /* UAChannelCaptureAction.m in Sources */,
@@ -5994,6 +6005,7 @@
 				4573662E213617C800C5993A /* UAJSONSerialization.m in Sources */,
 				CC40DD941D8C9A1C00BABD4F /* UANotificationContent.m in Sources */,
 				CC40DD951D8C9A1C00BABD4F /* UANotificationResponse.m in Sources */,
+				45A8AED42315A9FF004AD8CA /* UALandingPageActionPredicate.m in Sources */,
 				3C89DD22211D12BD00864358 /* UATagGroupsLookupManager.m in Sources */,
 				CC40DD961D8C9A1C00BABD4F /* UAOpenExternalURLAction.m in Sources */,
 				CC40DD971D8C9A1C00BABD4F /* UAOverlayInboxMessageAction.m in Sources */,
