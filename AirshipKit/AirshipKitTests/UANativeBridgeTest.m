@@ -17,7 +17,7 @@
 - (void)setUp {
     [super setUp];
 
-    self.mockWebView = [self mockForClass:[UIWebView class]];
+    self.mockWebView = [self mockForClass:[WKWebView class]];
 
     NSString *path = [[UAirship resources] pathForResource:@"UANativeBridge" ofType:@""];
     self.nativeBridge = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];
@@ -25,7 +25,7 @@
 
     self.jsc = [[JSContext alloc] initWithVirtualMachine:[[JSVirtualMachine alloc] init]];
 
-    //UAirship and window are only used for storage – the former is injected when setting up a UIWebView,
+    //UAirship and window are only used for storage – the former is injected when setting up a WKWebView,
     //and the latter appears to be non-existant in JavaScriptCore
     [self.jsc evaluateScript:@"_UAirship = {}"];
     [self.jsc evaluateScript:@"window = {}"];

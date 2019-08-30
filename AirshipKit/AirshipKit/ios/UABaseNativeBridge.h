@@ -8,7 +8,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /**
- * Base class for UIWebView & WKWebView delegates that automatically inject the 
+ * Base class for WKWebView delegates that automatically inject the 
  * Airship Javascript interface on whitelisted URLs.
  */
 @interface UABaseNativeBridge : NSObject

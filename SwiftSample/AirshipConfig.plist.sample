@@ -12,7 +12,5 @@
     <string>Your Production App Key</string>
     <key>productionAppSecret</key>
     <string>Your Production App Secret</string>
-    <key>useWKWebView</key>
-    <true/>
 </dict>
 </plist>

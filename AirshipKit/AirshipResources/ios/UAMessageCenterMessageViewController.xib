@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14295.6" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" colorMatched="YES">
-    <device id="retina4_7" orientation="portrait">
-        <adaptation id="fullscreen"/>
-    </device>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14854.2" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
-        <deployment version="4096" identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14270.1"/>
+        <deployment version="4352" identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14806.4"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -15,7 +13,7 @@
                 <outlet property="coverView" destination="tHp-A9-9NO" id="Hd7-G3-8wT"/>
                 <outlet property="loadingIndicatorContainerView" destination="YyG-xI-ocx" id="FCE-c4-HRx"/>
                 <outlet property="view" destination="1" id="24"/>
-                <outlet property="webView" destination="3" id="25"/>
+                <outlet property="webView" destination="OX7-dF-5oP" id="TlW-lb-ZmP"/>
             </connections>
         </placeholder>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
@@ -23,15 +21,18 @@
             <rect key="frame" x="0.0" y="0.0" width="320" height="436"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
             <subviews>
-                <webView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="3" customClass="UAWebView">
+                <wkWebView clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="OX7-dF-5oP">
                     <rect key="frame" x="0.0" y="0.0" width="320" height="436"/>
-                    <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                </webView>
+                    <wkWebViewConfiguration key="configuration">
+                        <audiovisualMediaTypes key="mediaTypesRequiringUserActionForPlayback" none="YES"/>
+                        <wkPreferences key="preferences"/>
+                    </wkWebViewConfiguration>
+                </wkWebView>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="tHp-A9-9NO" userLabel="Cover View">
                     <rect key="frame" x="0.0" y="0.0" width="320" height="436"/>
                     <subviews>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Cover Message" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="x6z-On-PSG" userLabel="label">
-                            <rect key="frame" x="104" y="208" width="113" height="19"/>
+                            <rect key="frame" x="103.5" y="208.5" width="113" height="19"/>
                             <fontDescription key="fontDescription" name="Helvetica" family="Helvetica" pointSize="16"/>
                             <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             <nil key="highlightedColor"/>
@@ -56,21 +57,23 @@
             </subviews>
             <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
             <constraints>
-                <constraint firstItem="3" firstAttribute="top" secondItem="1" secondAttribute="top" id="42q-f4-ACH"/>
+                <constraint firstItem="OX7-dF-5oP" firstAttribute="height" secondItem="1" secondAttribute="height" id="6hz-W4-qiG"/>
                 <constraint firstItem="tHp-A9-9NO" firstAttribute="width" secondItem="1" secondAttribute="width" id="8uR-XX-mW4"/>
                 <constraint firstItem="tHp-A9-9NO" firstAttribute="top" secondItem="1" secondAttribute="top" id="CmV-uv-afz"/>
                 <constraint firstItem="tHp-A9-9NO" firstAttribute="leading" secondItem="1" secondAttribute="leading" id="Dc6-4g-huR"/>
-                <constraint firstItem="3" firstAttribute="width" secondItem="1" secondAttribute="width" id="FRF-HQ-7zj"/>
-                <constraint firstItem="3" firstAttribute="height" secondItem="1" secondAttribute="height" id="cIz-Zj-HGn"/>
+                <constraint firstAttribute="trailing" secondItem="OX7-dF-5oP" secondAttribute="trailing" id="DpZ-zX-W3S"/>
+                <constraint firstAttribute="bottom" secondItem="OX7-dF-5oP" secondAttribute="bottom" id="Fqv-ey-Xed"/>
+                <constraint firstItem="OX7-dF-5oP" firstAttribute="top" secondItem="1" secondAttribute="top" id="MNE-FT-RRh"/>
                 <constraint firstItem="YyG-xI-ocx" firstAttribute="centerX" secondItem="1" secondAttribute="centerX" id="hf0-DS-Lgf"/>
                 <constraint firstItem="YyG-xI-ocx" firstAttribute="centerY" secondItem="1" secondAttribute="centerY" id="ld3-Ta-zRa"/>
-                <constraint firstItem="3" firstAttribute="leading" secondItem="1" secondAttribute="leading" id="uKm-0j-pz6"/>
+                <constraint firstItem="OX7-dF-5oP" firstAttribute="leading" secondItem="1" secondAttribute="leading" id="mBl-Nd-8Uu"/>
+                <constraint firstItem="OX7-dF-5oP" firstAttribute="width" secondItem="1" secondAttribute="width" id="wMM-DC-2lF"/>
                 <constraint firstItem="tHp-A9-9NO" firstAttribute="height" secondItem="1" secondAttribute="height" id="y5A-RY-lOR"/>
             </constraints>
             <nil key="simulatedStatusBarMetrics"/>
             <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
-            <point key="canvasLocation" x="75" y="53"/>
+            <point key="canvasLocation" x="108.69565217391305" y="35.491071428571423"/>
         </view>
     </objects>
 </document>

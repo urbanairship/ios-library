@@ -23,12 +23,7 @@ NSString *const UANativeBridgeDismissCommand = @"dismiss";
 
 @implementation UABaseNativeBridge
 
-- (void)populateJavascriptEnvironmentIfWhitelisted:(UIView *)webView requestURL:(NSURL *)url completionHandler:(void (^)(void))completionHandler {
-    if (!(([webView isKindOfClass:[UIWebView class]]) || ([webView isKindOfClass:[WKWebView class]]))) {
-        UA_LIMPERR(@"webView must be either UIWebView or WKWebView");
-        return completionHandler();
-    }
-    
+- (void)populateJavascriptEnvironmentIfWhitelisted:(WKWebView *)webView requestURL:(NSURL *)url completionHandler:(void (^)(void))completionHandler {
     if (![[UAirship shared].whitelist isWhitelisted:url scope:UAWhitelistScopeJavaScriptInterface]) {
         // Don't log in the special case of about:blank URLs
         if (![url.absoluteString isEqualToString:@"about:blank"]) {
@@ -134,20 +129,14 @@ NSString *const UANativeBridgeDismissCommand = @"dismiss";
         /*
          * Execute the JS we just constructed.
          */
-        if ([webView isKindOfClass:[UIWebView class]]) {
-            [(UIWebView *)webView stringByEvaluatingJavaScriptFromString:js];
-        } else if ([webView isKindOfClass:[WKWebView class]]) {
-            [(WKWebView *)webView evaluateJavaScript:js completionHandler:nil];
-        } else {
-            UA_LIMPERR(@"webView must be either UIWebView or WKWebView");
-        }
+        [webView evaluateJavaScript:js completionHandler:nil];
 
         completionHandler();
 
     } dispatcher:[UADispatcher mainDispatcher]];
 }
 
-- (void)performJSDelegateWithData:(UAWebViewCallData *)data webView:(UIView *)webView {
+- (void)performJSDelegateWithData:(UAWebViewCallData *)data webView:(WKWebView *)webView {
     id <UAJavaScriptDelegate> actionJSDelegate = [UAirship shared].actionJSDelegate;
     id <UAJavaScriptDelegate> userJSDDelegate = [UAirship shared].jsDelegate;
 
@@ -165,22 +154,13 @@ NSString *const UANativeBridgeDismissCommand = @"dismiss";
 
 - (void)performAsyncJSCallWithDelegate:(id<UAJavaScriptDelegate>)delegate
                                   data:(UAWebViewCallData *)data
-                               webView:(UIView *)webView {
+                               webView:(WKWebView *)webView {
 
     if ([delegate respondsToSelector:@selector(callWithData:withCompletionHandler:)]) {
-        if ([webView isKindOfClass:[UIWebView class]]) {
-            __weak UIWebView *weakWebView = (UIWebView *)webView;
-            [delegate callWithData:data withCompletionHandler:^(NSString *script){
-                [weakWebView stringByEvaluatingJavaScriptFromString:script];
-            }];
-        } else if ([webView isKindOfClass:[WKWebView class]]) {
-            __weak WKWebView *weakWebView = (WKWebView *)webView;
-            [delegate callWithData:data withCompletionHandler:^(NSString *script){
-                [weakWebView evaluateJavaScript:script completionHandler:nil];
-            }];
-        } else {
-            UA_LIMPERR(@"webView must be either UIWebView or WKWebView");
-        }
+        __weak WKWebView *weakWebView = webView;
+        [delegate callWithData:data withCompletionHandler:^(NSString *script){
+            [weakWebView evaluateJavaScript:script completionHandler:nil];
+        }];
     }
 }
 
