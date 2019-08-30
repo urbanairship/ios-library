@@ -7,6 +7,7 @@
 #import "UAComponent+Internal.h"
 #import "UAChannel+Internal.h"
 #import "UADispatcher+Internal.h"
+#import "UAAppStateTracker.h"
 
 @class UAPreferenceDataStore;
 @class UARuntimeConfig;
@@ -83,7 +84,8 @@ extern NSString *const UAPushEnabledSettingsMigratedKey;
  */
 extern NSString *const UAPushEnabledKey;
 
-@interface UAPush () <UAAPNSRegistrationDelegate, UAPushProviderDelegate>
+
+@interface UAPush () <UAAPNSRegistrationDelegate, UAPushProviderDelegate, UAAppStateTrackerDelegate>
 
 ///---------------------------------------------------------------------------------------
 /// @name Push Internal Properties
@@ -132,11 +134,6 @@ extern NSString *const UAPushEnabledKey;
  */
 @property (nonatomic, strong) id<UAAPNSRegistrationProtocol> pushRegistration;
 
-/**
- * Flag indicating app is running in the foreground
- */
-@property (nonatomic, assign) BOOL isForegrounded;
-
 ///---------------------------------------------------------------------------------------
 /// @name Push Internal Methods
 ///---------------------------------------------------------------------------------------
@@ -157,6 +154,7 @@ extern NSString *const UAPushEnabledKey;
  * @param config The Airship config
  * @param dataStore The preference data store.
  * @param channel The channel.
+ * @param appStateTracker The app state tracker
  * @param notificationCenter The notification center.
  * @param pushRegistration The push registration instance.
  * @param application The application.
@@ -166,6 +164,7 @@ extern NSString *const UAPushEnabledKey;
 + (instancetype)pushWithConfig:(UARuntimeConfig *)config
                      dataStore:(UAPreferenceDataStore *)dataStore
                        channel:(UAChannel *)channel
+               appStateTracker:(id<UAAppStateTracker>)appStateTracker
             notificationCenter:(NSNotificationCenter *)notificationCenter
               pushRegistration:(id<UAAPNSRegistrationProtocol>)pushRegistration
                    application:(UIApplication *)application
@@ -176,18 +175,6 @@ extern NSString *const UAPushEnabledKey;
  * @return The local time zone.
  */
 - (NSTimeZone *)defaultTimeZoneForQuietTime;
-
-/**
- * Called on active NSNotificationCenter notifications (on "active" rather than "foreground" so that we
- * can capture the push ID sent with a converting push). Triggers an updateRegistration.
- */
-- (void)applicationDidBecomeActive;
-
-/**
- * Used to clear a flag set on foreground to prevent double registration on
- * app init.
- */
-- (void)applicationDidEnterBackground;
 
 #if !TARGET_OS_TV    // UIBackgroundRefreshStatusAvailable not available on tvOS
 /**

@@ -5,6 +5,7 @@
 #import "UAAnalytics+Internal.h"
 #import <UIKit/UIKit.h>
 #import "UAAutomationEngine+Internal.h"
+
 @class UAAutomationStore;
 @class UAPreferenceDataStore;
 
@@ -34,6 +35,7 @@
 /**
  * Automation constructor.
  */
-+ (instancetype)automationWithConfig:(UARuntimeConfig *)config dataStore:(UAPreferenceDataStore *)dataStore;
++ (instancetype)automationWithConfig:(UARuntimeConfig *)config
+                           dataStore:(UAPreferenceDataStore *)dataStore;
 
 @end

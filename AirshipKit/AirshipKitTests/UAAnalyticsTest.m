@@ -279,6 +279,8 @@
         return [event.screen isEqualToString:@"test_screen"];
     }] sessionID:OCMOCK_ANY];
 
+    [self.analytics applicationDidEnterBackground];
+
     // Background
     [self.notificationCenter postNotificationName:UIApplicationDidEnterBackgroundNotification
                                            object:nil];
@@ -310,8 +312,7 @@
     }] sessionID:OCMOCK_ANY];
 
     // Terminate
-    [self.notificationCenter postNotificationName:UIApplicationWillTerminateNotification
-                                           object:nil];
+    [self.analytics applicationWillTerminate];
 
     [self waitForTestExpectations];
 

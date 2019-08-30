@@ -22,19 +22,8 @@ NSString *const UALocationBackgroundUpdatesAllowed = @"UALocationBackgroundUpdat
 
         self.systemVersion = [UASystemVersion systemVersion];
 
-        NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
-
-        // Update the location service on app background
-        [notificationCenter addObserver:self
-                               selector:@selector(updateLocationService)
-                                   name:UIApplicationDidEnterBackgroundNotification
-                                 object:nil];
-
-        // Update the location service on app becoming active
-        [notificationCenter addObserver:self
-                               selector:@selector(updateLocationService)
-                                   name:UIApplicationDidBecomeActiveNotification
-                                 object:nil];
+        self.appStateTracker = [UAAppStateTrackerFactory tracker];
+        self.appStateTracker.stateTrackerDelegate = self;
 
         if (self.componentEnabled) {
             [self updateLocationService];
@@ -46,6 +35,14 @@ NSString *const UALocationBackgroundUpdatesAllowed = @"UALocationBackgroundUpdat
 
 - (void)airshipReady:(UAirship *)airship {
     airship.locationProviderDelegate = self;
+}
+
+- (void)applicationDidBecomeActive {
+    [self updateLocationService];
+}
+
+- (void)applicationDidEnterBackground {
+    [self updateLocationService];
 }
 
 - (BOOL)isAutoRequestAuthorizationEnabled {
@@ -84,7 +81,7 @@ NSString *const UALocationBackgroundUpdatesAllowed = @"UALocationBackgroundUpdat
 
     [self.dataStore setBool:backgroundLocationUpdatesAllowed forKey:UALocationBackgroundUpdatesAllowed];
 
-    if ([UIApplication sharedApplication].applicationState != UIApplicationStateActive) {
+    if (self.appStateTracker.state != UAApplicationStateActive) {
         [self updateLocationService];
     }
 }
@@ -114,7 +111,7 @@ NSString *const UALocationBackgroundUpdatesAllowed = @"UALocationBackgroundUpdat
 #endif
 
     // Check if location updates are allowed in the background if we are in the background
-    if ([[UIApplication sharedApplication] applicationState] != UIApplicationStateActive && !self.isBackgroundLocationUpdatesAllowed) {
+    if (self.appStateTracker.state != UAApplicationStateActive && !self.isBackgroundLocationUpdatesAllowed) {
         [self stopLocationUpdates];
         return;
     }
@@ -192,7 +189,7 @@ NSString *const UALocationBackgroundUpdatesAllowed = @"UALocationBackgroundUpdat
         return;
     }
 
-    if ([UIApplication sharedApplication].applicationState != UIApplicationStateActive) {
+    if (self.appStateTracker.state != UAApplicationStateActive) {
         UA_LINFO("Location updates require authorization, but app is not active. Authorization will be requested next time the app is active.");
         return;
     }

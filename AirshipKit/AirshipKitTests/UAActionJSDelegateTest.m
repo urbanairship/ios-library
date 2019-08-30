@@ -33,7 +33,7 @@
 
     self.jsContext = [[JSContext alloc] initWithVirtualMachine:[[JSVirtualMachine alloc] init]];
 
-    // UAirship is only used for storage here, since it's normally injected when setting up a UIWebView
+    // UAirship is only used for storage here, since it's normally injected when setting up a WKWebView
     [self.jsContext evaluateScript:@"UAirship = {}"];
 
     self.mockWKWebViewDelegate = [self mockForProtocol:@protocol(UAWKWebViewDelegate)];

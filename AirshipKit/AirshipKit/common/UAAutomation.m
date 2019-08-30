@@ -7,13 +7,15 @@
 #import "UAActionRunner+Internal.h"
 #import "UAAutomationEngine+Internal.h"
 #import "UARuntimeConfig.h"
+#import "UAAppStateTrackerFactory.h"
 
 NSUInteger const UAAutomationScheduleLimit = 100;
 NSString *const UAAutomationStoreFileFormat = @"Automation-%@.sqlite";
 
 @implementation UAAutomation
 
-- (instancetype)initWithConfig:(UARuntimeConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
+- (instancetype)initWithConfig:(UARuntimeConfig *)config
+                     dataStore:(UAPreferenceDataStore *)dataStore {
     self = [super initWithDataStore:dataStore];
 
     if (self) {
@@ -33,7 +35,8 @@ NSString *const UAAutomationStoreFileFormat = @"Automation-%@.sqlite";
     return self;
 }
 
-+ (instancetype)automationWithConfig:(UARuntimeConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
++ (instancetype)automationWithConfig:(UARuntimeConfig *)config
+                           dataStore:(UAPreferenceDataStore *)dataStore {
     return [[UAAutomation alloc] initWithConfig:config dataStore:dataStore];
 }
 

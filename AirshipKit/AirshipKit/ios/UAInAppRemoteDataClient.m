@@ -18,7 +18,6 @@
 #import "NSJSONSerialization+UAAdditions.h"
 #import "NSObject+AnonymousKVO+Internal.h"
 
-
 NSString * const UAInAppMessages = @"in_app_messages";
 NSString * const UAInAppMessagesCreatedJSONKey = @"created";
 NSString * const UAInAppMessagesUpdatedJSONKey = @"last_updated";
@@ -27,7 +26,6 @@ NSString * const UAInAppMessagesUpdatedJSONKey = @"last_updated";
 @property (nonatomic,strong) UAInAppMessageManager *inAppMessageManager;
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 @property (nonatomic, strong) UADisposable *remoteDataSubscription;
-@property (nonatomic, copy) NSDictionary *scheduleIDMap;
 @property (nonatomic, strong) NSOperationQueue *operationQueue;
 @property (nonatomic, strong) UARemoteDataManager *remoteDataManager;
 
@@ -106,8 +104,33 @@ NSString * const UAInAppMessagesScheduledNewUserCutoffTimeKey = @"UAInAppRemoteD
 
     NSDate *lastUpdate = [self.dataStore objectForKey:UAInAppMessagesLastPayloadTimeStampKey] ?: [NSDate distantPast];
     NSDictionary *lastMetadata = self.lastPayloadMetadata ?: @{};
-
     BOOL isMetadataCurrent = [thisPayloadMetadata isEqualToDictionary:lastMetadata];
+    
+    // generate messageId to scheduleId map for existing schedules
+    NSMutableDictionary<NSString *, NSString *> *scheduleIDMap = [NSMutableDictionary dictionary];
+    dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
+    [self.inAppMessageManager getAllSchedules:^(NSArray<UASchedule *> *schedules) {
+        for (UASchedule *schedule in schedules) {
+            UAInAppMessage *message = (UAInAppMessage *)((UAInAppMessageScheduleInfo *)schedule.info).message;
+            if (message.source != UAInAppMessageSourceRemoteData) {
+                continue;
+            }
+            
+            NSString *messageID = message.identifier;
+            if (!messageID.length) {
+                continue;
+            }
+            
+            scheduleIDMap[messageID] = schedule.identifier;
+        }
+        dispatch_semaphore_signal(semaphore);
+    }];
+    dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
+
+    // cached messageId to scheduleId map is no longer used
+    if ([self.dataStore dictionaryForKey:UAInAppMessagesScheduledMessagesKey]) {
+        [self.dataStore removeObjectForKey:UAInAppMessagesScheduledMessagesKey];
+    }
 
     // Skip if the payload timestamp is same as the last updated timestamp and metadata is current
     if ([thisPayloadTimeStamp isEqualToDate:lastUpdate] && isMetadataCurrent) {
@@ -122,8 +145,7 @@ NSString * const UAInAppMessagesScheduledNewUserCutoffTimeKey = @"UAInAppRemoteD
     } else {
         messages = messageData[UAInAppMessages];
     }
-
-    __block NSMutableDictionary *scheduleIDMap = [NSMutableDictionary dictionaryWithDictionary:self.scheduleIDMap];
+    
     NSMutableArray<NSString *> *messageIDs = [NSMutableArray array];
     NSMutableArray<UAInAppMessageScheduleInfo *> *newSchedules = [NSMutableArray array];
 
@@ -150,20 +172,6 @@ NSString * const UAInAppMessagesScheduledNewUserCutoffTimeKey = @"UAInAppRemoteD
         // Ignore any messages that have not updated since the last payload
         if (isMetadataCurrent && [lastUpdate compare:lastUpdatedTimeStamp] != NSOrderedAscending) {
             continue;
-        }
-
-        // If we do not have a schedule ID for the message ID, try to look it up first
-        if (!scheduleIDMap[messageID]) {
-            dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
-            [self.inAppMessageManager getSchedulesWithMessageID:messageID completionHandler:^(NSArray<UASchedule *> *schedules) {
-                dispatch_semaphore_signal(semaphore);
-
-                // Make sure we only have a single schedule for the message ID
-                if (schedules.count == 1) {
-                    scheduleIDMap[messageID] = schedules[0].identifier;
-                }
-            }];
-            dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
         }
 
         if ([createdTimeStamp compare:lastUpdate] == NSOrderedDescending) {
@@ -246,15 +254,6 @@ NSString * const UAInAppMessagesScheduledNewUserCutoffTimeKey = @"UAInAppRemoteD
         dispatch_group_enter(dispatchGroup);
 
         [self.inAppMessageManager scheduleMessagesWithScheduleInfo:newSchedules metadata:thisPayloadMetadata completionHandler:^(NSArray<UASchedule *> *schedules) {
-            for (UASchedule *schedule in schedules) {
-                if (!schedule) {
-                    continue;
-                }
-                UAInAppMessageScheduleInfo *info = (UAInAppMessageScheduleInfo *)schedule.info;
-                UA_LTRACE(@"Scheduled new in-app messages: %@", info.message.identifier);
-                scheduleIDMap[info.message.identifier] = schedule.identifier;
-            }
-
             dispatch_group_leave(dispatchGroup);
         }];
     }
@@ -263,8 +262,6 @@ NSString * const UAInAppMessagesScheduledNewUserCutoffTimeKey = @"UAInAppRemoteD
     dispatch_group_wait(dispatchGroup,  DISPATCH_TIME_FOREVER);
 
     // Save state
-    self.scheduleIDMap = scheduleIDMap;
-
     self.lastPayloadMetadata = thisPayloadMetadata;
     [self.dataStore setObject:thisPayloadTimeStamp forKey:UAInAppMessagesLastPayloadTimeStampKey];
 }
@@ -283,14 +280,6 @@ NSString * const UAInAppMessagesScheduledNewUserCutoffTimeKey = @"UAInAppRemoteD
     UAInAppMessageAudience *audience = scheduleInfo.message.audience;
     BOOL isNewUser = ([createdTimeStamp compare:self.scheduleNewUserCutOffTime] == NSOrderedAscending);
     return [UAInAppMessageAudienceChecks checkScheduleAudienceConditions:audience isNewUser:isNewUser];
-}
-
-- (void)setScheduleIDMap:(NSDictionary *)scheduleIDMap {
-    [self.dataStore setObject:scheduleIDMap forKey:UAInAppMessagesScheduledMessagesKey];
-}
-
-- (NSDictionary *)scheduleIDMap {
-    return [self.dataStore dictionaryForKey:UAInAppMessagesScheduledMessagesKey];
 }
 
 - (NSDate *)scheduleNewUserCutOffTime {

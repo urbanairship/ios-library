@@ -13,6 +13,7 @@
 @property(nonatomic, strong) id mockPushProviderDelegate;
 @property(nonatomic, strong) id mockUserProviderDelegate;
 @property(nonatomic, strong) id mockUtils;
+@property(nonatomic, strong) id mockAppStateTracker;
 @property(nonatomic, strong) NSNotificationCenter *notificationCenter;
 @property(nonatomic, strong) UAChannel *channel;
 @property(nonatomic, strong) NSString *channelIDFromMockChannelRegistrar;
@@ -39,6 +40,8 @@
 
     self.mockUtils = [self mockForClass:[UAUtils class]];
 
+    self.mockAppStateTracker = [self mockForProtocol:@protocol(UAAppStateTracker)];
+
     [[[self.mockUtils stub] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:2];
@@ -64,10 +67,11 @@
 
 - (UAChannel *)createChannel {
     UAChannel *channel = [UAChannel channelWithDataStore:self.dataStore
-                                    config:self.config
-                        notificationCenter:self.notificationCenter
-                          channelRegistrar:self.mockChannelRegistrar
-                        tagGroupsRegistrar:self.mockTagGroupsRegistrar];
+                                                  config:self.config
+                                      notificationCenter:self.notificationCenter
+                                        channelRegistrar:self.mockChannelRegistrar
+                                      tagGroupsRegistrar:self.mockTagGroupsRegistrar
+                                         appStateTracker:self.mockAppStateTracker];
 
     channel.pushProviderDelegate = self.mockPushProviderDelegate;
     channel.userProviderDelegate = self.mockUserProviderDelegate;
@@ -430,15 +434,13 @@
  */
 - (void)testApplicationDidBecomeActiveAfterBackgrounding {
     // SETUP
-    self.channel.isForegrounded = NO;
-
     [self.dataStore setBool:YES forKey:UAChannelCreationOnForeground];
 
     // Expect UAChannel to update channel registration
     [[self.mockChannelRegistrar expect] registerForcefully:NO];
 
     // TEST
-    [self.channel applicationDidBecomeActive];
+    [self.channel applicationDidTransitionToForeground];
 
     // VERIFY
     XCTAssertNoThrow([self.mockChannelRegistrar verify], @"should update channel registration");

@@ -3,6 +3,7 @@
 #import "UAChannelCapture.h"
 #import "UAPushProviderDelegate.h"
 #import "UAChannel.h"
+#import "UAAppStateTracker.h"
 
 @class UAPreferenceDataStore;
 
@@ -13,7 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 extern NSString *const UAChannelCaptureEnabledKey;
 
-@interface UAChannelCapture ()
+@interface UAChannelCapture () <UAAppStateTrackerDelegate>
 
 ///---------------------------------------------------------------------------------------
 /// @name Channel Capture Factory
@@ -41,14 +42,14 @@ extern NSString *const UAChannelCaptureEnabledKey;
  * @param channel The channel.
  * @param pushProviderDelegate The push provider delegate.
  * @param dataStore The UAPreferenceDataStore instance.
- * @param notificationCenter The notification center.
+ * @param appStateTracker The app state tracker.
  * @return A channel capture instance.
  */
 + (instancetype)channelCaptureWithConfig:(UARuntimeConfig *)config
                                  channel:(UAChannel *)channel
                     pushProviderDelegate:(id<UAPushProviderDelegate>)pushProviderDelegate
                                dataStore:(UAPreferenceDataStore *)dataStore
-                      notificationCenter:(NSNotificationCenter *)notificationCenter;
+                         appStateTracker:(id<UAAppStateTracker>)appStateTracker;
 
 @end
 

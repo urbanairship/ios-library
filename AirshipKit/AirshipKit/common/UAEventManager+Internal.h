@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
 #import <Foundation/Foundation.h>
+#import "UAAppStateTracker.h"
 
 @class UAEvent;
 @class UARuntimeConfig;
@@ -11,7 +12,7 @@
 /**
  * Event manager handles storing and uploading events to Airship.
  */
-@interface UAEventManager : NSObject
+@interface UAEventManager : NSObject <UAAppStateTrackerDelegate>
 
 // Max database size
 #define kMaxTotalDBSizeBytes (NSUInteger)5*1024*1024 // local max of 5MB
@@ -68,7 +69,7 @@
  * @param client The event api client.
  * @param queue The operation queue.
  * @param notificationCenter The notification center.
- * @param application The application.
+ * @param appStateTracker The app state tracker..
  * @return UAEventManager instance.
  */
 + (instancetype)eventManagerWithConfig:(UARuntimeConfig *)config
@@ -77,7 +78,7 @@
                                 client:(UAEventAPIClient *)client
                                  queue:(NSOperationQueue *)queue
                     notificationCenter:(NSNotificationCenter *)notificationCenter
-                           application:(UIApplication *)application;
+                       appStateTracker:(id<UAAppStateTracker>)appStateTracker;
 
 /**
  * Adds an analytic event to be batched and uploaded to Airship.

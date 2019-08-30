@@ -6,6 +6,7 @@
 #import "UAInboxMessageList+Internal.h"
 #import "UAInboxAPIClient+Internal.h"
 #import "UAComponent+Internal.h"
+#import "UAAppStateTrackerFactory.h"
 
 @implementation UAInbox
 
@@ -13,18 +14,18 @@
     [self.client.session cancelAllRequests];
 }
 
-- (instancetype)initWithUser:(UAUser *)user config:(UARuntimeConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
+- (instancetype)initWithUser:(UAUser *)user
+                      config:(UARuntimeConfig *)config
+                   dataStore:(UAPreferenceDataStore *)dataStore {
     self = [super initWithDataStore:dataStore];
     if (self) {
         self.user = user;
         self.client = [UAInboxAPIClient clientWithConfig:config session:[UARequestSession sessionWithConfig:config] user:user dataStore:dataStore];
         self.client.enabled = self.componentEnabled;
         self.messageList = [UAInboxMessageList messageListWithUser:self.user client:self.client config:config];
+        self.appStateTracker = [UAAppStateTrackerFactory tracker];
+        self.appStateTracker.stateTrackerDelegate = self;
 
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(enterForeground)
-                                                     name:UIApplicationWillEnterForegroundNotification
-                                                   object:nil];
 
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(userCreated)
@@ -33,14 +34,6 @@
 
         [self.messageList loadSavedMessages];
 
-        // Register for didBecomeActive to refresh the inbox on the first active
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(didBecomeActive)
-                                                     name:UIApplicationDidBecomeActiveNotification
-                                                   object:nil];
-
-
-
         // delete legacy UAInboxCache if present
         [self deleteInboxCache];
     }
@@ -48,23 +41,23 @@
     return self;
 }
 
-+ (instancetype)inboxWithUser:(UAUser *)user config:(UARuntimeConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
++ (instancetype)inboxWithUser:(UAUser *)user
+                       config:(UARuntimeConfig *)config
+                    dataStore:(UAPreferenceDataStore *)dataStore {
     return [[UAInbox alloc] initWithUser:user config:config dataStore:dataStore];
 }
 
-- (void)enterForeground {
+- (void)didEnterForeground {
     [self.messageList retrieveMessageListWithSuccessBlock:nil withFailureBlock:nil];
 }
 
-
-- (void)didBecomeActive {
-    [self.messageList retrieveMessageListWithSuccessBlock:nil withFailureBlock:nil];
-
+- (void)applicationDidBecomeActive {
     // We only want to refresh the inbox on the first active. enterForeground will
     // handle any background->foreground inbox refresh
-    [[NSNotificationCenter defaultCenter] removeObserver:self
-                                                    name:UIApplicationDidBecomeActiveNotification
-                                                  object:nil];
+    if (!self.becameActive) {
+        [self.messageList retrieveMessageListWithSuccessBlock:nil withFailureBlock:nil];
+        self.becameActive = YES;
+    }
 }
 
 - (void)userCreated {

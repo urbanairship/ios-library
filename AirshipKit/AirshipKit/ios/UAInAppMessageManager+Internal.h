@@ -16,6 +16,7 @@
 #import "UAInAppMessageAssetManager+Internal.h"
 #import "UAInAppRemoteDataClient+Internal.h"
 #import "UASceneTracker+Internal.h"
+#import "UAAppStateTracker.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -45,6 +46,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param channel The channel.
  * @param dispatcher GCD dispatcher.
  * @param analytics The system analytics instance.
+ * @param sceneTracker The scene tracker.
  * @return A in-app message manager instance.
  */
 + (instancetype)managerWithAutomationEngine:(UAAutomationEngine *)automationEngine
@@ -67,6 +69,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param dataStore The preference data store.
  * @param channel The channel.
  * @param analytics The system analytics instance.
+ * @param sceneTracker The scene tracker.
  * @return A in-app message manager instance.
  */
 + (instancetype)managerWithConfig:(UARuntimeConfig *)config

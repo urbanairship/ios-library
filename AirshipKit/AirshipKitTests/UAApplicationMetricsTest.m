@@ -20,6 +20,7 @@
     self.testDate.absoluteTime = [NSDate date];
 
     self.notificationCenter = [[NSNotificationCenter alloc] init];
+    
     self.metrics = [UAApplicationMetrics applicationMetricsWithDataStore:self.dataStore
                                                       notificationCenter:self.notificationCenter
                                                                     date:self.testDate];
@@ -28,8 +29,7 @@
 - (void)testApplicationActive {
     XCTAssertNil(self.metrics.lastApplicationOpenDate);
 
-    [self.notificationCenter postNotificationName:UIApplicationDidBecomeActiveNotification
-                                           object:nil];
+    [self.metrics applicationDidBecomeActive];
 
     XCTAssertEqualObjects([self.testDate now], self.metrics.lastApplicationOpenDate);
 

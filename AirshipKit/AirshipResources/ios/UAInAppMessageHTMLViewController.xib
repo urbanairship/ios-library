@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14313.3.2" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
-    <device id="retina5_9" orientation="portrait">
-        <adaptation id="fullscreen"/>
-    </device>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14854.2" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina5_9" orientation="portrait" appearance="light"/>
     <dependencies>
-        <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14283.1"/>
+        <deployment version="4352" identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14806.4"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -16,7 +14,7 @@
                 <outlet property="containerView" destination="scV-ja-7hz" id="BLO-NY-4jn"/>
                 <outlet property="loadingIndicator" destination="jnK-Lb-tWS" id="2QD-2g-en6"/>
                 <outlet property="view" destination="iN0-l3-epB" id="ANJ-kq-CDj"/>
-                <outlet property="webView" destination="hEr-Uv-JrX" id="4Wb-Zb-5ZJ"/>
+                <outlet property="webView" destination="ot5-A9-Fxk" id="0bJ-bn-MCo"/>
             </connections>
         </placeholder>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
@@ -27,9 +25,13 @@
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="scV-ja-7hz" userLabel="HTML container View">
                     <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                     <subviews>
-                        <webView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleAspectFill" translatesAutoresizingMaskIntoConstraints="NO" id="hEr-Uv-JrX" customClass="UAWebView">
+                        <wkWebView clipsSubviews="YES" contentMode="scaleAspectFill" translatesAutoresizingMaskIntoConstraints="NO" id="ot5-A9-Fxk" customClass="UAWebView">
                             <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
-                        </webView>
+                            <wkWebViewConfiguration key="configuration">
+                                <audiovisualMediaTypes key="mediaTypesRequiringUserActionForPlayback" none="YES"/>
+                                <wkPreferences key="preferences"/>
+                            </wkWebViewConfiguration>
+                        </wkWebView>
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="jnK-Lb-tWS" customClass="UABeveledLoadingIndicator">
                             <rect key="frame" x="137.66666666666666" y="356" width="100" height="100"/>
                             <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -50,14 +52,14 @@
                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     <accessibility key="accessibilityConfiguration" identifier="Modal View"/>
                     <constraints>
+                        <constraint firstAttribute="bottom" secondItem="ot5-A9-Fxk" secondAttribute="bottom" id="A44-vb-WLW"/>
+                        <constraint firstAttribute="trailing" secondItem="ot5-A9-Fxk" secondAttribute="trailing" id="B1L-ei-q3G"/>
                         <constraint firstItem="rXH-Zz-p7n" firstAttribute="top" secondItem="scV-ja-7hz" secondAttribute="top" id="HPX-4O-pZc"/>
                         <constraint firstItem="rXH-Zz-p7n" firstAttribute="trailing" secondItem="scV-ja-7hz" secondAttribute="trailing" id="PEt-hN-dso"/>
                         <constraint firstItem="jnK-Lb-tWS" firstAttribute="centerY" secondItem="scV-ja-7hz" secondAttribute="centerY" id="Xnc-10-Kzy"/>
                         <constraint firstItem="jnK-Lb-tWS" firstAttribute="centerX" secondItem="scV-ja-7hz" secondAttribute="centerX" id="bPW-gd-dBE"/>
-                        <constraint firstItem="hEr-Uv-JrX" firstAttribute="leading" secondItem="scV-ja-7hz" secondAttribute="leading" id="cwp-vi-gpS"/>
-                        <constraint firstItem="hEr-Uv-JrX" firstAttribute="top" secondItem="scV-ja-7hz" secondAttribute="top" id="ibq-0C-Vw2"/>
-                        <constraint firstAttribute="trailing" secondItem="hEr-Uv-JrX" secondAttribute="trailing" id="oFw-iy-ejv"/>
-                        <constraint firstAttribute="bottom" secondItem="hEr-Uv-JrX" secondAttribute="bottom" id="vTe-vl-2qM"/>
+                        <constraint firstItem="ot5-A9-Fxk" firstAttribute="top" secondItem="scV-ja-7hz" secondAttribute="top" id="qZf-Yd-EXc"/>
+                        <constraint firstItem="ot5-A9-Fxk" firstAttribute="leading" secondItem="scV-ja-7hz" secondAttribute="leading" id="tCF-Sd-qeT"/>
                     </constraints>
                 </view>
             </subviews>

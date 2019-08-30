@@ -25,7 +25,7 @@
 /**
  * The WebView used to display the message content.
  */
-@property (nonatomic, strong) WKWebView *webView;
+@property (nonatomic, strong) IBOutlet WKWebView *webView;
 
 /**
  * The custom loading indicator container view.

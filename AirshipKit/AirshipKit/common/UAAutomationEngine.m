@@ -18,6 +18,7 @@
 #import "UAirship.h"
 #import "UAApplicationMetrics.h"
 #import "UAScheduleEdits+Internal.h"
+#import "UAAppStateTrackerFactory.h"
 
 @interface UAAutomationStateCondition : NSObject
 
@@ -44,6 +45,7 @@
 @end
 
 @interface UAAutomationEngine()
+@property (nonatomic, strong) id<UAAppStateTracker> appStateTracker;
 @property (nonatomic, strong) UATimerScheduler *timerScheduler;
 @property (nonnull, strong) UADispatcher *dispatcher;
 @property (nonnull, strong) UIApplication *application;
@@ -52,13 +54,12 @@
 
 @property (nonatomic, copy) NSString *currentScreen;
 @property (nonatomic, copy, nullable) NSString * currentRegion;
-@property (nonatomic, assign) BOOL isForegrounded;
-@property (nonatomic, assign) BOOL isBackgrounded;
 @property (nonatomic, strong) NSMutableArray *activeTimers;
 @property (nonatomic, assign) UIBackgroundTaskIdentifier backgroundTaskIdentifier;
 @property (nonatomic, assign) BOOL isStarted;
 @property (nonnull, strong) NSMutableDictionary *stateConditions;
 @property (atomic, assign) BOOL paused;
+@property (nonatomic, readonly) BOOL isForegrounded;
 
 @end
 
@@ -71,6 +72,7 @@
 
 
 - (instancetype)initWithAutomationStore:(UAAutomationStore *)automationStore
+                        appStateTracker:(id<UAAppStateTracker>)appStateTracker
                          timerScheduler:(UATimerScheduler *)timerScheduler
                      notificationCenter:(NSNotificationCenter *)notificationCenter
                              dispatcher:(UADispatcher *)dispatcher
@@ -80,6 +82,7 @@
 
     if (self) {
         self.automationStore = automationStore;
+        self.appStateTracker = appStateTracker;
         self.timerScheduler = timerScheduler;
         self.notificationCenter = notificationCenter;
         self.dispatcher = dispatcher;
@@ -87,8 +90,6 @@
         self.date = date;
 
         self.activeTimers = [NSMutableArray array];
-        self.isForegrounded = self.application.applicationState == UIApplicationStateActive;
-        self.isBackgrounded = self.application.applicationState == UIApplicationStateBackground;
         self.stateConditions = [NSMutableDictionary dictionary];
         self.paused = NO;
     }
@@ -97,6 +98,7 @@
 }
 
 + (instancetype)automationEngineWithAutomationStore:(UAAutomationStore *)automationStore
+                                    appStateTracker:(id<UAAppStateTracker>)appStateTracker
                                      timerScheduler:(UATimerScheduler *)timerScheduler
                                  notificationCenter:(NSNotificationCenter *)notificationCenter
                                          dispatcher:(UADispatcher *)dispatcher
@@ -104,6 +106,7 @@
                                                date:(UADate *)date {
 
     return [[UAAutomationEngine alloc] initWithAutomationStore:automationStore
+                                               appStateTracker:appStateTracker
                                                 timerScheduler:timerScheduler
                                             notificationCenter:notificationCenter
                                                     dispatcher:dispatcher
@@ -113,11 +116,12 @@
 
 + (instancetype)automationEngineWithAutomationStore:(UAAutomationStore *)automationStore {
     return [[UAAutomationEngine alloc] initWithAutomationStore:automationStore
-                                                 timerScheduler:[[UATimerScheduler alloc] init]
-                                             notificationCenter:[NSNotificationCenter defaultCenter]
-                                                     dispatcher:[UADispatcher mainDispatcher]
-                                                    application:[UIApplication sharedApplication]
-                                                           date:[[UADate alloc] init]];
+                                               appStateTracker:[UAAppStateTrackerFactory tracker]
+                                                timerScheduler:[[UATimerScheduler alloc] init]
+                                            notificationCenter:[NSNotificationCenter defaultCenter]
+                                                    dispatcher:[UADispatcher mainDispatcher]
+                                                   application:[UIApplication sharedApplication]
+                                                          date:[[UADate alloc] init]];
 }
 
 #pragma mark -
@@ -128,15 +132,8 @@
         return;
     }
 
-    [self.notificationCenter addObserver:self
-                                selector:@selector(enterBackground)
-                                    name:UIApplicationDidEnterBackgroundNotification
-                                  object:nil];
+    self.appStateTracker.stateTrackerDelegate = self;
 
-    [self.notificationCenter addObserver:self
-                                selector:@selector(didBecomeActive)
-                                    name:UIApplicationDidBecomeActiveNotification
-                                  object:nil];
 
     [self.notificationCenter addObserver:self
                                 selector:@selector(customEventAdded:)
@@ -170,6 +167,7 @@
     }
 
     [self cancelTimers];
+    self.appStateTracker.stateTrackerDelegate = nil;
     [self.notificationCenter removeObserver:self];
     [self.stateConditions removeAllObjects];
     self.isStarted = NO;
@@ -376,7 +374,7 @@
          completionHandler:(void (^)(UASchedule *))completionHandler {
 
     UA_WEAKIFY(self)
-    [self.automationStore getSchedule:identifier completionHandler:^(UAScheduleData *scheduleData) {
+    [self.automationStore getSchedule:identifier includingExpired:YES completionHandler:^(UAScheduleData *scheduleData) {
         UA_STRONGIFY(self)
 
         UASchedule *schedule = nil;
@@ -421,6 +419,13 @@
     }];
 }
 
+#pragma mark -
+#pragma mark Private
+
+- (BOOL)isForegrounded {
+    return self.appStateTracker.state == UAApplicationStateActive;
+}
+
 - (void)cleanSchedules {
     UA_WEAKIFY(self)
     // Expired schedules
@@ -445,16 +450,7 @@
 #pragma mark -
 #pragma mark Event listeners
 
-- (void)didBecomeActive {
-    if (!self.isForegrounded) {
-        [self enterForeground];
-    }
-}
-
-- (void)enterForeground {
-    self.isForegrounded = YES;
-    self.isBackgrounded = NO;
-
+- (void)applicationDidTransitionToForeground {
     if (!self.activeTimers) {
         [self rescheduleTimers];
     }
@@ -470,14 +466,9 @@
     [self scheduleConditionsChanged];
 }
 
-- (void)enterBackground {
-    if (!self.isBackgrounded) {
-        self.isForegrounded = NO;
-        self.isBackgrounded = YES;
-
-        [self updateTriggersWithType:UAScheduleTriggerAppBackground argument:nil incrementAmount:1.0];
-        [self scheduleConditionsChanged];
-    }
+- (void)applicationDidTransitionToBackground {
+    [self updateTriggersWithType:UAScheduleTriggerAppBackground argument:nil incrementAmount:1.0];
+    [self scheduleConditionsChanged];
 }
 
 -(void)customEventAdded:(NSNotification *)notification {

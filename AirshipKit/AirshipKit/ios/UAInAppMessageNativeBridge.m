@@ -3,7 +3,7 @@
 
 @implementation UAInAppMessageNativeBridge
 
-- (void)performJSDelegateWithData:(UAWebViewCallData *)data webView:(UIView *)webView {
+- (void)performJSDelegateWithData:(UAWebViewCallData *)data webView:(WKWebView *)webView {
     if ([data.url.scheme isEqualToString:UANativeBridgeUAirshipScheme]) {
         if ([data.name isEqualToString:UANativeBridgeDismissCommand]) {
             id <UAJavaScriptDelegate> messageJSDelegate = self.messageJSDelegate;

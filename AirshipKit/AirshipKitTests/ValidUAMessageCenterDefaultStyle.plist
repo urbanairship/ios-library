@@ -9,10 +9,10 @@
 		<key>fontSize</key>
 		<string>17</string>
 	</dict>
-	<key>titleColor</key>
-	<string>#00698f</string>
 	<key>tintColor</key>
 	<string>#00698f</string>
+	<key>titleColor</key>
+	<string>seapunkTestColor</string>
 	<key>navigationBarColor</key>
 	<string>#eaaa00</string>
 	<key>listColor</key>

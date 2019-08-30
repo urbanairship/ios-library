@@ -1,6 +1,5 @@
 /* Copyright Airship and Contributors */
 
-#import <UIKit/UIKit.h>
 #import "UAAnalytics+Internal.h"
 #import "UAPreferenceDataStore+Internal.h"
 #import "UAEventManager+Internal.h"
@@ -15,6 +14,7 @@
 #import "UAAssociateIdentifiersEvent+Internal.h"
 #import "UAAssociatedIdentifiers.h"
 #import "UACustomEvent.h"
+#import "UAAppStateTrackerFactory.h"
 
 #if !TARGET_OS_TV
 #import "UAInboxUtils.h"
@@ -29,6 +29,7 @@
 @property (nonatomic, strong) NSNotificationCenter *notificationCenter;
 @property (nonatomic, strong) UADate *date;
 @property (nonatomic, strong) UADispatcher *dispatcher;
+@property (nonatomic, strong) id<UAAppStateTracker> appStateTracker;
 
 @property (nonatomic, assign) BOOL isEnteringForeground;
 
@@ -73,29 +74,8 @@ NSString *const UAEventKey = @"event";
 
         self.eventManager.uploadsEnabled = self.isEnabled && self.componentEnabled;
 
-        // Register for background notifications
-        [self.notificationCenter addObserver:self
-                                    selector:@selector(enterBackground)
-                                        name:UIApplicationDidEnterBackgroundNotification
-                                      object:nil];
-
-        // Register for foreground notifications
-        [self.notificationCenter addObserver:self
-                                    selector:@selector(enterForeground)
-                                        name:UIApplicationWillEnterForegroundNotification
-                                      object:nil];
-
-        // App inactive/active for incoming calls, notification center, and taskbar
-        [self.notificationCenter addObserver:self
-                                    selector:@selector(didBecomeActive)
-                                        name:UIApplicationDidBecomeActiveNotification
-                                      object:nil];
-
-        // Register for terminate notifications
-        [self.notificationCenter addObserver:self
-                                    selector:@selector(willTerminate)
-                                        name:UIApplicationWillTerminateNotification
-                                      object:nil];
+        self.appStateTracker = [UAAppStateTrackerFactory tracker];
+        self.appStateTracker.stateTrackerDelegate = self;
 
         [self startSession];
 
@@ -134,7 +114,7 @@ NSString *const UAEventKey = @"event";
 #pragma mark -
 #pragma mark Application State
 
-- (void)enterForeground {
+- (void)applicationWillEnterForeground {
     UA_LTRACE(@"Enter Foreground.");
 
     // Start tracking previous screen before backgrounding began
@@ -146,7 +126,7 @@ NSString *const UAEventKey = @"event";
     self.isEnteringForeground = YES;
 }
 
-- (void)enterBackground {
+- (void)applicationDidEnterBackground {
     UA_LTRACE(@"Enter Background.");
 
     [self stopTrackingScreen];
@@ -160,13 +140,12 @@ NSString *const UAEventKey = @"event";
     self.conversionPushMetadata = nil;
 }
 
-- (void)willTerminate {
+- (void)applicationWillTerminate {
     UA_LTRACE(@"Application is terminating.");
-
     [self stopTrackingScreen];
 }
 
-- (void)didBecomeActive {
+- (void)applicationDidBecomeActive {
     UA_LTRACE(@"Application did become active.");
 
     // If this is the first 'inactive->active' transition in this session,

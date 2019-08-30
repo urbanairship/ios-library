@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
 #import "UAInbox.h"
+#import "UAAppStateTrackerFactory.h"
 
 @class UAUser;
 @class UARuntimeConfig;
@@ -11,7 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 /*
  * SDK-private extensions to UAInbox
  */
-@interface UAInbox ()
+@interface UAInbox () <UAAppStateTrackerDelegate>
 
 ///---------------------------------------------------------------------------------------
 /// @name Inbox Internal Properties
@@ -26,6 +27,16 @@ NS_ASSUME_NONNULL_BEGIN
  * The inbox user.
  */
 @property (nonatomic, strong) UAUser *user;
+
+/**
+ *The app state tracker.
+ */
+@property (nonatomic, strong) id<UAAppStateTracker> appStateTracker;
+
+/**
+ * Whether the application has already become active for the first time.
+ */
+@property (nonatomic, assign) BOOL becameActive;
 
 ///---------------------------------------------------------------------------------------
 /// @name Inbox Internal Methods

@@ -30,7 +30,7 @@ typedef void (^UAJavaScriptDelegateCompletionHandler)(NSString * __nullable scri
  * Delegates must implement this method. Implementations take a model object representing
  * call data, which includes the command name, an array of string arguments,
  * and a dictionary of key-value pairs (all strings). After processing them, they pass a string
- * containing Javascript that will be evaluated in a message's UIWebView.
+ * containing Javascript that will be evaluated in a message's WKWebView.
  *
  * If the passed command name is not one the delegate responds to, or if no JavaScript side effect
  * is desired, it implementations should pass nil.

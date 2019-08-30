@@ -66,7 +66,6 @@
 #pragma mark -
 #pragma mark Mark As Read Delegate Methods
 
-
 - (UADisposable *)markMessageReadWithCompletionHandler:(UAInboxMessageCallbackBlock)completionHandler {
     if (!self.unread) {
         return nil;
@@ -88,11 +87,10 @@
     return NO;
 }
 
-
 #pragma mark -
 #pragma mark Quick Look methods
 
-- (BOOL)waitWithTimeoutInterval:(NSTimeInterval)interval pollingWebView:(UIWebView *)webView {
+- (BOOL)waitWithTimeoutInterval:(NSTimeInterval)interval pollingWebView:(WKWebView *)webView {
     NSDate *timeoutDate = [NSDate dateWithTimeInterval:interval sinceDate:self.date.now];
 
     // The webView may not have begun loading at this point
@@ -104,33 +102,35 @@
             // Break once the webView has transitioned from a loading to non-loading state
             break;
         }
+
         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
                                  beforeDate:[NSDate dateWithTimeInterval:0.1 sinceDate:self.date.now]];
     }
 
     return [timeoutDate timeIntervalSinceDate:self.date.now] > 0;
-}
+ }
 
-- (id)debugQuickLookObject {
+ - (id)debugQuickLookObject {
+     WKWebView *webView = [[WKWebView alloc] initWithFrame:[UIScreen mainScreen].bounds];
+     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:self.messageBodyURL];
 
-    UIWebView *webView = [[UIWebView alloc] initWithFrame:[UIScreen mainScreen].bounds];
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:self.messageBodyURL];
+     UAUserData *userData = [[UAirship inboxUser] getUserDataSync];
+     NSString *auth = [UAUtils userAuthHeaderString:userData];
+     [request setValue:auth forHTTPHeaderField:@"Authorization"];
 
-    UAUserData *userData = [[UAirship inboxUser] getUserDataSync];
-    NSString *auth = [UAUtils userAuthHeaderString:userData];
-    [request setValue:auth forHTTPHeaderField:@"Authorization"];
+     // Load the message body, spin the run loop and poll the webView with a 5 second timeout.
+     [webView loadRequest:request];
+     [self waitWithTimeoutInterval:5 pollingWebView:webView];
 
-    // Load the message body, spin the run loop and poll the webView with a 5 second timeout.
-    [webView loadRequest:request];
-    [self waitWithTimeoutInterval:5 pollingWebView:webView];
+     // Return a UIImage rendered from the webView
+     UIGraphicsBeginImageContext(webView.bounds.size);
+     CGContextRef context = UIGraphicsGetCurrentContext();
 
-    // Return a UIImage rendered from the webView
-    UIGraphicsBeginImageContext(webView.bounds.size);
-    CGContextRef context = UIGraphicsGetCurrentContext();
-    [webView.layer renderInContext:context];
-    UIImage *img = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
-    return img;
+     [webView.layer renderInContext:context];
+     UIImage *img = UIGraphicsGetImageFromCurrentImageContext();
+     UIGraphicsEndImageContext();
+
+     return img;
 }
 
 @end

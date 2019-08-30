@@ -7,6 +7,7 @@
 #import "UAUtils+Internal.h"
 #import "UAChannelRegistrationPayload+Internal.h"
 #import "UAUser+Internal.h"
+#import "UAAppStateTrackerFactory.h"
 
 NSString *const UAChannelTagsSettingsKey = @"com.urbanairship.channel.tags";
 
@@ -28,6 +29,7 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
 @property (nonatomic, strong) NSNotificationCenter *notificationCenter;
 @property (nonatomic, strong) UAChannelRegistrar *channelRegistrar;
 @property (nonatomic, strong) UATagGroupsRegistrar *tagGroupsRegistrar;
+@property (nonatomic, strong) id<UAAppStateTracker> appStateTracker;
 @property (nonatomic, assign) BOOL shouldPerformChannelRegistrationOnForeground;
 @end
 
@@ -37,7 +39,8 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
                            config:(UARuntimeConfig *)config
                notificationCenter:(NSNotificationCenter *)notificationCenter
                  channelRegistrar:(UAChannelRegistrar *)channelRegistrar
-               tagGroupsRegistrar:(UATagGroupsRegistrar *)tagGroupsRegistrar {
+               tagGroupsRegistrar:(UATagGroupsRegistrar *)tagGroupsRegistrar
+                  appStateTracker:(id<UAAppStateTracker>)appStateTracker {
     self = [super initWithDataStore:dataStore];
 
     if (self) {
@@ -46,6 +49,8 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
         self.channelRegistrar = channelRegistrar;
         self.channelRegistrar.delegate = self;
         self.tagGroupsRegistrar = tagGroupsRegistrar;
+        self.appStateTracker = appStateTracker;
+        self.appStateTracker.stateTrackerDelegate = self;
         self.channelTagRegistrationEnabled = YES;
 
         // Check config to see if user wants to delay channel creation
@@ -78,22 +83,25 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
                                     config:config
                         notificationCenter:notificationCenter
                           channelRegistrar:channelRegistrar
-                        tagGroupsRegistrar:tagGroupsRegistrar];
+                        tagGroupsRegistrar:tagGroupsRegistrar
+                           appStateTracker:[UAAppStateTrackerFactory tracker]];
+}
+
++ (instancetype)channelWithDataStore:(UAPreferenceDataStore *)dataStore
+                              config:(UARuntimeConfig *)config
+                  notificationCenter:(NSNotificationCenter *)notificationCenter
+                    channelRegistrar:(UAChannelRegistrar *)channelRegistrar
+                  tagGroupsRegistrar:(UATagGroupsRegistrar *)tagGroupsRegistrar
+                     appStateTracker:(id<UAAppStateTracker>)appStateTracker {
+    return [[self alloc] initWithDataStore:dataStore
+                                    config:config
+                        notificationCenter:notificationCenter
+                          channelRegistrar:channelRegistrar
+                        tagGroupsRegistrar:tagGroupsRegistrar
+                           appStateTracker:appStateTracker];
 }
 
 - (void)observeNotificationCenterEvents {
-    // Only for observing the first call to app foreground
-    [self.notificationCenter addObserver:self
-                                selector:@selector(applicationDidBecomeActive)
-                                    name:UIApplicationDidBecomeActiveNotification
-                                  object:nil];
-
-    // Only for observing the first call to app background
-    [self.notificationCenter addObserver:self
-                                selector:@selector(applicationDidEnterBackground)
-                                    name:UIApplicationDidEnterBackgroundNotification
-                                  object:nil];
-
 #if !TARGET_OS_TV    // UIApplicationBackgroundRefreshStatusDidChangeNotification not available on tvOS
     [self.notificationCenter addObserver:self
                                 selector:@selector(applicationBackgroundRefreshStatusChanged)
@@ -119,15 +127,9 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
 }
 
 #pragma mark -
-#pragma mark UIApplication State Observation
+#pragma mark Application State Observation
 
-- (void)applicationDidBecomeActive {
-    if (self.isForegrounded) {
-        return;
-    }
-
-    self.isForegrounded = YES;
-
+- (void)applicationDidTransitionToForeground {
     if (self.shouldPerformChannelRegistrationOnForeground) {
         UA_LTRACE(@"Application did become active. Updating registration.");
         [self updateRegistration];
@@ -135,8 +137,6 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
 }
 
 - (void)applicationDidEnterBackground {
-    self.isForegrounded = NO;
-
     // Enable forground channel registration after first run
     self.shouldPerformChannelRegistrationOnForeground = YES;
 

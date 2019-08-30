@@ -3,7 +3,7 @@
 #import "UAScheduleData+Internal.h"
 
 // Data version - for migration
-NSUInteger const UAScheduleDataVersion = 1;
+NSUInteger const UAScheduleDataVersion = 2;
 
 @interface UAScheduleData()
 @property (nullable, nonatomic, retain) NSDate *executionStateChangeDate;

@@ -83,17 +83,34 @@
     return normalizedValues;
 }
 
-+(UIColor *)createColor:(NSString *)colorString {
++ (UIColor *)createColor:(NSString *)colorString {
+    NSString *errorMessage = @"Color must be a valid string representing either a valid color hexidecimal or a named color corresponding to a color asset in the main bundle.";
 
-    if (![colorString isKindOfClass:[NSString class]] || ![UAColorUtils colorWithHexString:colorString]) {
-        UA_LERR(@"Color must be a valid string representing a valid color hexidecimal");
+    if (![colorString isKindOfClass:[NSString class]]) {
+         UA_LERR(@"%@", errorMessage);
+         return nil;
+     }
+
+    UIColor *hexColor = [UAColorUtils colorWithHexString:colorString];
+    UIColor *namedColor;
+
+    // Remove check when dropping iOS10 support
+    if (@available(iOS 11, *)) {
+        // Pull named color from main bundle
+        namedColor = [UIColor colorNamed:colorString];
+    }
+
+    // Neither a hex nor named color can be determined using the color string
+    if (!hexColor && !namedColor) {
+        UA_LERR(@"%@", errorMessage);
         return nil;
     }
 
-    return [UAColorUtils colorWithHexString:colorString];;
+    // Favor named colors
+    return namedColor ?: hexColor;
 }
 
-+(UIFont *)createFont:(NSDictionary *)fontDict {
++ (UIFont *)createFont:(NSDictionary *)fontDict {
 
     if (![fontDict isKindOfClass:[NSDictionary class]]) {
         UA_LERR(@"Font name must be a valid string stored under the key \"fontName\".");
@@ -128,7 +145,7 @@
                            size:[fontDict[@"fontSize"] doubleValue]];;
 }
 
-+(UIImage *)createIcon:(NSString *)iconString {
++ (UIImage *)createIcon:(NSString *)iconString {
 
     if (![iconString isKindOfClass:[NSString class]] || ![UIImage imageNamed:iconString]) {
         UA_LERR(@"Icon key must be a valid image name string representing an image file in the bundle.");

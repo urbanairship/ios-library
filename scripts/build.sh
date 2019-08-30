@@ -10,6 +10,9 @@ ROOT_PATH=`dirname "${0}"`/..
 TEMP_DIR=$(mktemp -d /tmp/build-XXXXX)
 DESTINATION=$ROOT_PATH/build
 STAGING=$DESTINATION/staging
+STATIC_DESTINATION=$STAGING/static
+CORE_DESTINATION=$STAGING/core
+LOCATION_DESTINATION=$STAGING/location
 
 VERSION=$(awk <$ROOT_PATH/AirshipKit/AirshipConfig.xcconfig "\$1 == \"CURRENT_PROJECT_VERSION\" { print \$3 }")
 
@@ -17,19 +20,22 @@ DOCS=false
 STATIC_LIB=false
 PACKAGE=false
 FRAMEWORK=false
+XC_FRAMEWORK=false
 
-OPTS=`getopt hadlpf $*`
+# Parameters must be added this OPTS string
+OPTS=`getopt hadlpfx $*`
 if [ $? != 0 ] ; then echo "Failed parsing options." >&2 ; exit 1 ; fi
 eval set -- "$OPTS"
 
 while true; do
   case "$1" in
-    -h  ) echo -ne " -a for all \n-d for docs \n -l for static lib \n -p to package the release. This option includes all. \n"; exit 0;;
-    -a  ) DOCS=true;STATIC_LIB=true;PACKAGE=true;FRAMEWORK=true;;
+    -h  ) echo -ne " -a for all \n -d for docs \n -l for static lib \n -f for framework \n -x for xcframework \n -p to package the release. This option includes all. \n"; exit 0;;
+    -a  ) DOCS=true;STATIC_LIB=true;PACKAGE=true;FRAMEWORK=true;XC_FRAMEWORK=true;;
     -d  ) DOCS=true;;
     -l  ) STATIC_LIB=true;;
     -f  ) FRAMEWORK=true;;
-    -p  ) DOCS=true;STATIC_LIB=true;PACKAGE=true;FRAMEWORK=true;;
+    -x  ) XC_FRAMEWORK=true;;
+    -p  ) DOCS=true;STATIC_LIB=true;PACKAGE=true;FRAMEWORK=true,XC_FRAMEWORK=true;;
     --  ) ;;
     *   ) break ;;
   esac
@@ -52,7 +58,7 @@ then
   echo -ne "\n\n *********** BUILDING AIRSHIPKIT *********** \n\n"
 
   # iphoneOS
-  xcrun xcodebuild -configuration "Release" \
+  xcrun xcodebuild -quiet -configuration "Release" \
   -project "${ROOT_PATH}/AirshipKit/AirshipKit.xcodeproj" \
   -target "AirshipKit" \
   -sdk "iphoneos" \
@@ -61,7 +67,7 @@ then
   OBJROOT="${TEMP_DIR}/AirshipKit/obj" \
   BUILD_ROOT="${TEMP_DIR}/AirshipKit"
   # tvOS
-  xcrun xcodebuild -configuration "Release" \
+  xcrun xcodebuild -quiet -configuration "Release" \
   -project "${ROOT_PATH}/AirshipKit/AirshipKit.xcodeproj" \
   -target "AirshipKit tvOS" \
   -sdk "appletvos" \
@@ -87,7 +93,7 @@ then
   echo -ne "\n\n *********** BUILDING AIRSHIPLOCATIONKIT *********** \n\n"
 
   # iphoneOS
-  xcrun xcodebuild -configuration "Release" \
+  xcrun xcodebuild -quiet -configuration "Release" \
   -project "${ROOT_PATH}/AirshipLocationKit/AirshipLocationKit.xcodeproj" \
   -target "AirshipLocationKit" \
   -sdk "iphoneos" \
@@ -96,7 +102,7 @@ then
   OBJROOT="${TEMP_DIR}/AirshipLocationKit/obj" \
   BUILD_ROOT="${TEMP_DIR}/AirshipLocationKit"
   # tvOS
-  xcrun xcodebuild -configuration "Release" \
+  xcrun xcodebuild -quiet -configuration "Release" \
   -project "${ROOT_PATH}/AirshipLocationKit/AirshipLocationKit.xcodeproj" \
   -target "AirshipLocationKit tvOS" \
   -sdk "appletvos" \
@@ -104,6 +110,157 @@ then
   SYMROOT="${TEMP_DIR}/AirshipLocationKit" \
   OBJROOT="${TEMP_DIR}/AirshipLocationKit/obj" \
   BUILD_ROOT="${TEMP_DIR}/AirshipLocationKit"
+fi
+
+####################
+# Build XC Framework
+####################
+
+if [ $XC_FRAMEWORK = true ]
+then
+  echo -ne "\n\n *********** BUILDING XCFRAMEWORK ARCHIVES *********** \n\n"
+
+  # iphoneOS
+  xcrun xcodebuild archive -quiet \
+  -project "${ROOT_PATH}/AirshipKit/AirshipKit.xcodeproj" \
+  -scheme AirshipKit \
+  -destination="iOS" \
+  -archivePath "${TEMP_DIR}/ios.xcarchive" \
+  -derivedDataPath "${TEMP_DIR}/iphoneos" \
+  -sdk iphoneos \
+  SKIP_INSTALL=NO \
+  BUILD_LIBRARIES_FOR_DISTRIBUTION=YES \
+
+  # iphoneOS simulator
+  xcrun xcodebuild archive -quiet \
+  -project "${ROOT_PATH}/AirshipKit/AirshipKit.xcodeproj" \
+  -scheme AirshipKit \
+  -destination="iOS Simulator" \
+  -archivePath "${TEMP_DIR}/iossimulator.xcarchive" \
+  -derivedDataPath "${TEMP_DIR}/iphoneos" \
+  -sdk iphonesimulator \
+  SKIP_INSTALL=NO \
+  BUILD_LIBRARIES_FOR_DISTRIBUTION=YES \
+
+  # iphoneOS location
+  xcrun xcodebuild archive -quiet \
+  -project "${ROOT_PATH}/AirshipLocationKit/AirshipLocationKit.xcodeproj" \
+  -scheme AirshipLocationKit \
+  -destination="iOS" \
+  -archivePath "${TEMP_DIR}/ioslocation.xcarchive" \
+  -derivedDataPath "${TEMP_DIR}/iphoneos" \
+  -sdk iphoneos \
+  SKIP_INSTALL=NO \
+  BUILD_LIBRARIES_FOR_DISTRIBUTION=YES \
+
+  # iphoneOS simulator location
+  xcrun xcodebuild archive -quiet \
+  -project "${ROOT_PATH}/AirshipLocationKit/AirshipLocationKit.xcodeproj" \
+  -scheme AirshipLocationKit \
+  -destination="iOS Simulator" \
+  -archivePath "${TEMP_DIR}/iossimulatorlocation.xcarchive" \
+  -derivedDataPath "${TEMP_DIR}/iphoneos" \
+  -sdk iphonesimulator \
+  SKIP_INSTALL=NO \
+  BUILD_LIBRARIES_FOR_DISTRIBUTION=YES \
+
+  # tvOS
+  xcrun xcodebuild archive -quiet \
+  -project "${ROOT_PATH}/AirshipKit/AirshipKit.xcodeproj" \
+  -scheme "AirshipKit tvOS" \
+  -destination="tvOS" \
+  -archivePath "${TEMP_DIR}/tvos.xcarchive" \
+  -derivedDataPath "${TEMP_DIR}/appletvos" \
+  -sdk appletvos \
+  SKIP_INSTALL=NO \
+  BUILD_LIBRARIES_FOR_DISTRIBUTION=YES \
+
+  # tvOS Simulator
+  xcrun xcodebuild archive -quiet \
+  -project "${ROOT_PATH}/AirshipKit/AirshipKit.xcodeproj" \
+  -scheme "AirshipKit tvOS" \
+  -destination="tvOS Simulator" \
+  -archivePath "${TEMP_DIR}/tvossimulator.xcarchive" \
+  -derivedDataPath "${TEMP_DIR}/appletvos" \
+  -sdk appletvsimulator \
+  SKIP_INSTALL=NO \
+  BUILD_LIBRARIES_FOR_DISTRIBUTION=YES \
+
+  # tvOS location
+  xcrun xcodebuild archive -quiet \
+  -project "${ROOT_PATH}/AirshipLocationKit/AirshipLocationKit.xcodeproj" \
+  -scheme "AirshipLocationKit tvOS" \
+  -destination="tvOS" \
+  -archivePath "${TEMP_DIR}/appletvoslocation.xcarchive" \
+  -derivedDataPath "${TEMP_DIR}/appletvos" \
+  -sdk appletvos \
+  SKIP_INSTALL=NO \
+  BUILD_LIBRARIES_FOR_DISTRIBUTION=YES \
+
+  # tvOS simulator location
+  xcrun xcodebuild archive -quiet \
+  -project "${ROOT_PATH}/AirshipLocationKit/AirshipLocationKit.xcodeproj" \
+  -scheme "AirshipLocationKit tvOS" \
+  -destination="tvOS Simulator" \
+  -archivePath "${TEMP_DIR}/appletvsimulatorlocation.xcarchive" \
+  -derivedDataPath "${TEMP_DIR}/appletvos" \
+  -sdk appletvsimulator \
+  SKIP_INSTALL=NO \
+  BUILD_LIBRARIES_FOR_DISTRIBUTION=YES \
+
+#  # macOS
+#  xcrun xcodebuild archive \
+#  -scheme AirshipKit macOS \
+#  -destination="macOS" \
+#  -archivePath "${TEMP_DIR}/macos.xcarchive" \
+#  -derivedDataPath "${TEMP_DIR}/macos" \
+#  -sdk macosx \
+#  SKIP_INSTALL=NO \
+#  BUILD_LIBRARIES_FOR_DISTRIBUTION=YES \
+
+#  # watchOS
+#  xcrun xcodebuild archive \
+#  -scheme AirshipKit watchOS \
+#  -destination="watchOS" \
+#  -archivePath "${TEMP_DIR}/watchos.xcarchive" \
+#  -derivedDataPath "${TEMP_DIR}/watchos" \
+#  -sdk watchos \
+#  SKIP_INSTALL=NO \
+#  BUILD_LIBRARIES_FOR_DISTRIBUTION=YES \
+
+#  # watchOS Simulator
+#  xcrun xcodebuild archive \
+#  -scheme AirshipKit watchOS \
+#  -destination="watchOS" \
+#  -archivePath "${TEMP_DIR}/watchossimulator.xcarchive" \
+#  -derivedDataPath "${TEMP_DIR}/watchos" \
+#  -sdk watchsimulator \
+#  SKIP_INSTALL=NO \
+#  BUILD_LIBRARIES_FOR_DISTRIBUTION=YES \
+
+echo -ne "\n\n *********** BUILDING XCFRAMEWORK *********** \n\n"
+
+  # Wrap up into XCFramework
+  xcodebuild -create-xcframework \
+  -framework "${TEMP_DIR}/ios.xcarchive/Products/Library/Frameworks/AirshipKit.framework" \
+  -framework "${TEMP_DIR}/iossimulator.xcarchive/Products/Library/Frameworks/AirshipKit.framework" \
+  -framework "${TEMP_DIR}/tvos.xcarchive/Products/Library/Frameworks/AirshipKit.framework" \
+  -framework "${TEMP_DIR}/tvossimulator.xcarchive/Products/Library/Frameworks/AirshipKit.framework" \
+  -output "${TEMP_DIR}/AirshipKit.xcframework" \
+
+  # To add when macOS and watchOS compatibility is added
+  #-framework "${TEMP_DIR}/macos.xcarchive/Products/Library/Frameworks/AirshipKit.framework" \
+  #-framework "${TEMP_DIR}/watchos.xcarchive/Products/Library/Frameworks/AirshipKit.framework" \
+  #-framework "${TEMP_DIR}/watchsimulator.xcarchive/Products/Library/Frameworks/AirshipKit.framework" \
+
+  # Wrap up Location XCFramework
+  xcodebuild -create-xcframework \
+  -framework "${TEMP_DIR}/ioslocation.xcarchive/Products/Library/Frameworks/AirshipKit.framework" \
+  -framework "${TEMP_DIR}/iossimulatorlocation.xcarchive/Products/Library/Frameworks/AirshipKit.framework" \
+  -framework "${TEMP_DIR}/appletvoslocation.xcarchive/Products/Library/Frameworks/AirshipKit.framework" \
+  -framework "${TEMP_DIR}/appletvsimulatorlocation.xcarchive/Products/Library/Frameworks/AirshipKit.framework" \
+  -output "${TEMP_DIR}/AirshipKitLocation.xcframework" \
+
 fi
 
 ######################
@@ -118,7 +275,7 @@ then
   # The 3 static library builds should probably have "clean" added back once bug is fixed.
 
   # Resource bundle
-  xcrun xcodebuild -configuration "Release" \
+  xcrun xcodebuild -quiet -configuration "Release" \
   -project "${ROOT_PATH}/AirshipKit/AirshipKit.xcodeproj" \
   -target "AirshipResources" \
   -sdk "iphoneos" \
@@ -131,7 +288,7 @@ then
   TARGET_BUILD_DIR="${TEMP_DIR}/AirshipResources/Release-iphoneos"
 
   # iphoneOS
-  xcrun xcodebuild -configuration "Release" \
+  xcrun xcodebuild -quiet -configuration "Release" \
   -project "${ROOT_PATH}/AirshipKit/AirshipKit.xcodeproj" \
   -target "AirshipLib" \
   -sdk "iphoneos" \
@@ -145,7 +302,7 @@ then
   TARGET_BUILD_DIR="${TEMP_DIR}/AirshipLib/iphoneos"
 
   # iphonesimulator
-  xcrun xcodebuild -configuration "Release" \
+  xcrun xcodebuild -quiet -configuration "Release" \
   -project "${ROOT_PATH}/AirshipKit/AirshipKit.xcodeproj" \
   -target "AirshipLib" \
   -sdk "iphonesimulator" \
@@ -179,7 +336,7 @@ then
   echo -ne "\n\n *********** BUILDING LIBUALocation *********** \n\n"
 
   # iphoneOS
-  xcrun xcodebuild -configuration "Release" \
+  xcrun xcodebuild -quiet -configuration "Release" \
   -project "${ROOT_PATH}/AirshipLocationKit/AirshipLocationKit.xcodeproj" \
   -target "AirshipLocationLib" \
   -sdk "iphoneos" \
@@ -193,7 +350,7 @@ then
   TARGET_BUILD_DIR="${TEMP_DIR}/AirshipLocationLib/iphoneos"
 
   # iphonesimulator
-  xcrun xcodebuild -configuration "Release" \
+  xcrun xcodebuild -quiet -configuration "Release" \
   -project "${ROOT_PATH}/AirshipLocationKit/AirshipLocationKit.xcodeproj" \
   -target "AirshipLocationLib" \
   -sdk "iphonesimulator" \
@@ -217,73 +374,6 @@ then
   # Verify bitcode is enabled in the fat binary
   otool -arch arm64 -l "${TEMP_DIR}/AirshipLocationLib/libUALocation-${VERSION}.a" | grep __LLVM
   otool -arch armv7 -l "${TEMP_DIR}/AirshipLocationLib/libUALocation-${VERSION}.a" | grep __LLVM
-fi
-
-
-############
-# Build docs
-############
-
-if [ $DOCS = true ]
-then
-  echo -ne "\n\n *********** BUILDING DOCS *********** \n\n"
-
-  # Make sure Jazzy is installed
-  if [ `gem list -i jazzy --version ${JAZZY_VERSION}` == 'false' ]; then
-  echo "Installing jazzy"
-  gem install jazzy -v $JAZZY_VERSION
-  fi
-
-  ruby -S jazzy _${JAZZY_VERSION}_ -v
-
-  # AirshipKit
-  ruby -S jazzy _${JAZZY_VERSION}_ \
-  --objc \
-  --clean \
-  --module AirshipKit  \
-  --module-version $VERSION \
-  --framework-root $ROOT_PATH/AirshipKit \
-  --umbrella-header $ROOT_PATH/AirshipKit/AirshipKit/ios/AirshipLib.h \
-  --output $STAGING/Documentation/AirshipKit \
-  --sdk iphonesimulator \
-  --skip-undocumented \
-  --hide-documentation-coverage \
-  --config Documentation/.jazzy.json
-
-    # AirshipKit
-  ruby -S jazzy _${JAZZY_VERSION}_ \
-  --objc \
-  --clean \
-  --module AirshipLocationKit  \
-  --module-version $VERSION \
-  --framework-root $ROOT_PATH/AirshipLocationKit \
-  --umbrella-header $ROOT_PATH/AirshipLocationKit/AirshipLocationKit/AirshipLocationLib.h \
-  --output $STAGING/Documentation/AirshipLocationKit \
-  --sdk iphonesimulator \
-  --skip-undocumented \
-  --hide-documentation-coverage \
-  --config Documentation/.jazzy.json
-
-  # AirshipAppExtensions
-  ruby -S jazzy _${JAZZY_VERSION}_ \
-  --objc \
-  --clean \
-  --module-version $VERSION \
-  --umbrella-header $ROOT_PATH/AirshipAppExtensions/AirshipAppExtensions/AirshipAppExtensions.h \
-  --framework-root $ROOT_PATH/AirshipAppExtensions \
-  --module AirshipAppExtensions  \
-  --output $STAGING/Documentation/AirshipAppExtensions \
-  --sdk iphonesimulator \
-  --skip-undocumented \
-  --hide-documentation-coverage \
-  --config Documentation/.jazzy.json
-
-  # Workaround the missing module version
-  find $STAGING/Documentation -name '*.html' -print0 | xargs -0 sed -i "" "s/\$AIRSHIP_VERSION/${VERSION}/g"
-
-  # Copy images for documents
-  cp -r Documentation/Migration/images $STAGING/Documentation/AirshipKit
-  cp -r Documentation/Migration/images $STAGING/Documentation/AirshipAppExtensions
 fi
 
 ######################
@@ -315,15 +405,24 @@ then
   cp -R "${ROOT_PATH}/SwiftSample" "${STAGING}"
 
   # Stage Static Library
-  
   echo "Staging Airship"
-  mkdir -p ${STAGING}/Airship/Headers
-  find ${ROOT_PATH}/AirshipKit/AirshipKit/common -type f -name '*.h' ! -name 'AirshipKit.h' ! -name '*+Internal*.h'  -exec cp {} ${STAGING}/Airship/Headers \;
-  find ${ROOT_PATH}/AirshipKit/AirshipKit/ios -type f -name '*.h' ! -name 'AirshipKit.h' ! -name '*+Internal*.h'  -exec cp {} ${STAGING}/Airship/Headers \;
-  find ${ROOT_PATH}/AirshipLocationKit/AirshipLocationKit -type f -name '*.h' ! -name 'AirshipLocationKit.h' ! -name '*+Internal*.h'  -exec cp {} ${STAGING}/Airship/Headers \;
-  cp "${TEMP_DIR}/AirshipLib/libUAirship-${VERSION}.a" "${STAGING}/Airship"
-  cp "${TEMP_DIR}/AirshipLocationLib/libUALocation-${VERSION}.a" "${STAGING}/Airship"
-  cp -R "${TEMP_DIR}/AirshipResources/Release-iphoneos/AirshipResources.bundle" "${STAGING}/Airship"
+  mkdir -p ${STATIC_DESTINATION}/Airship/Headers
+  find ${ROOT_PATH}/AirshipKit/AirshipKit/common -type f -name '*.h' ! -name 'AirshipKit.h' ! -name '*+Internal*.h'  -exec cp {} ${STATIC_DESTINATION}/Airship/Headers \;
+  find ${ROOT_PATH}/AirshipKit/AirshipKit/ios -type f -name '*.h' ! -name 'AirshipKit.h' ! -name '*+Internal*.h'  -exec cp {} ${STATIC_DESTINATION}/Airship/Headers \;
+  find ${ROOT_PATH}/AirshipLocationKit/AirshipLocationKit -type f -name '*.h' ! -name 'AirshipLocationKit.h' ! -name '*+Internal*.h'  -exec cp {} ${STATIC_DESTINATION}/Airship/Headers \;
+  cp "${TEMP_DIR}/AirshipLib/libUAirship-${VERSION}.a" "${STATIC_DESTINATION}/Airship"
+  cp "${TEMP_DIR}/AirshipLocationLib/libUALocation-${VERSION}.a" "${STATIC_DESTINATION}/Airship"
+  cp -R "${TEMP_DIR}/AirshipResources/Release-iphoneos/AirshipResources.bundle" "${STATIC_DESTINATION}/Airship"
+
+  # Stage Core XCFramework
+  echo "Staging Core XCFramework"
+  mkdir -p "${CORE_DESTINATION}/AirshipKit.xcframework"
+  cp -a "${TEMP_DIR}/AirshipKit.xcframework/." "${CORE_DESTINATION}/AirshipKit.xcframework/"
+
+  # Stage Location XCFramework
+  echo "Staging Location XCFramework"
+  mkdir -p "${LOCATION_DESTINATION}/AirshipKitLocation.xcframework"
+  cp -a "${TEMP_DIR}/AirshipKitLocation.xcframework/." "${LOCATION_DESTINATION}/AirshipKitLocation.xcframework/"
 
   # Copy LICENSE, README and CHANGELOG
   cp "${ROOT_PATH}/CHANGELOG.md" "${STAGING}"
@@ -362,4 +461,66 @@ then
 
   # Move zip
   mv $STAGING/libUAirship-$VERSION.zip $DESTINATION
+fi
+
+############
+# Build docs
+############
+
+if [ $DOCS = true ]
+then
+  echo -ne "\n\n *********** BUILDING DOCS *********** \n\n"
+
+  # Make sure Jazzy is installed
+  if [ `gem list -i jazzy --version ${JAZZY_VERSION}` == 'false' ]; then
+  echo "Installing jazzy"
+  gem install jazzy -v $JAZZY_VERSION
+  fi
+
+  ruby -S jazzy _${JAZZY_VERSION}_ -v
+
+  # AirshipKit
+  ruby -S jazzy _${JAZZY_VERSION}_ \
+  --objc \
+  --clean \
+  --module AirshipKit  \
+  --module-version $VERSION \
+  --framework-root $ROOT_PATH/AirshipKit \
+  --umbrella-header $ROOT_PATH/AirshipKit/AirshipKit/ios/AirshipLib.h \
+  --output $STAGING/Documentation/AirshipKit \
+  --sdk iphonesimulator \
+  --skip-undocumented \
+  --hide-documentation-coverage \
+  --config Documentation/.jazzy.json
+
+  # AirshipLocationKit
+  ruby -S jazzy _${JAZZY_VERSION}_ \
+  --objc \
+  --clean \
+  --module AirshipLocationKit  \
+  --module-version $VERSION \
+  --framework-root $ROOT_PATH/AirshipLocationKit \
+  --umbrella-header $ROOT_PATH/AirshipLocationKit/AirshipLocationKit/AirshipLocationLib.h \
+  --output $STAGING/Documentation/AirshipLocationKit \
+  --sdk iphonesimulator \
+  --skip-undocumented \
+  --hide-documentation-coverage \
+  --config Documentation/.jazzy.json
+
+  # AirshipAppExtensions
+  ruby -S jazzy _${JAZZY_VERSION}_ \
+  --objc \
+  --clean \
+  --module-version $VERSION \
+  --umbrella-header $ROOT_PATH/AirshipAppExtensions/AirshipAppExtensions/AirshipAppExtensions.h \
+  --framework-root $ROOT_PATH/AirshipAppExtensions \
+  --module AirshipAppExtensions  \
+  --output $STAGING/Documentation/AirshipAppExtensions \
+  --sdk iphonesimulator \
+  --skip-undocumented \
+  --hide-documentation-coverage \
+  --config Documentation/.jazzy.json
+
+  # Workaround the missing module version
+  find $STAGING/Documentation -name '*.html' -print0 | xargs -0 sed -i "" "s/\$AIRSHIP_VERSION/${VERSION}/g"
 fi
