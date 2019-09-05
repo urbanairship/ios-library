@@ -123,7 +123,6 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 
     self.mockUAUser = [self mockForClass:[UAUser class]];
     [[[self.mockAirship stub] andReturn:self.mockUAUser] inboxUser];
-    [[[self.mockUAUser stub] andReturn:@"someUser"] username];
 
     self.mockDefaultNotificationCategories = [self mockForClass:[UANotificationCategories class]];
 

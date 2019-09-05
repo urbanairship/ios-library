@@ -6,61 +6,60 @@
 #import "UAPush.h"
 #import "UAUtils+Internal.h"
 #import "UARuntimeConfig.h"
-#import "UAKeychainUtils+Internal.h"
 #import "UAPreferenceDataStore+Internal.h"
 #import "UAirship.h"
 #import "UAComponent+Internal.h"
 
-#define kUAUserIDKey @"ua_user_id"
-#define kUAUserURLKey @"UserURLKey"
-
+NSString * const UAUserRegisteredChannelIDKey= @"UAUserRegisteredChannelID";
 NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.user_created";
 
 @interface UAUser()
 @property (nonatomic, strong) UAPush *push;
 @property (nonatomic, strong) NSNotificationCenter *notificationCenter;
 @property (nonatomic, strong) UIApplication *application;
+@property (nonatomic, strong) UAUserDataDAO *userDataDAO;
+@property (nonatomic, strong) UAUserAPIClient *apiClient;
+@property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 @property (nonatomic, strong) UADispatcher *backgroundDispatcher;
+@property (copy) NSString *registeredChannelID;
+@property (assign) BOOL registrationInProgress;
 @end
 
 @implementation UAUser
 
-+ (void)setDefaultUsername:(NSString *)defaultUsername withPassword:(NSString *)defaultPassword {
-
-    NSString *storedUsername = [UAKeychainUtils getUsername:[UAirship shared].config.appKey];
-
-    // If the keychain username is present a user already exists, if not, save
-    if (storedUsername == nil) {
-        //Store un/pw
-        [UAKeychainUtils createKeychainValueForUsername:defaultUsername withPassword:defaultPassword forIdentifier:[UAirship shared].config.appKey];
-    }
-
-}
-
 - (instancetype)initWithPush:(UAPush *)push
-                      config:(UARuntimeConfig *)config
                    dataStore:(UAPreferenceDataStore *)dataStore
                       client:(UAUserAPIClient *)client
           notificationCenter:(NSNotificationCenter *)notificationCenter
                  application:(UIApplication *)application
-                  dispatcher:(UADispatcher *)dispatcher {
+        backgroundDispatcher:(UADispatcher *)backgroundDispatcher
+                 userDataDAO:(UAUserDataDAO *)userDataDAO {
 
     self = [super initWithDataStore:dataStore];
 
     if (self) {
-        self.config = config;
-        self.apiClient = client;
-        self.dataStore = dataStore;
         self.push = push;
+        self.dataStore = dataStore;
+        self.apiClient = client;
         self.notificationCenter = notificationCenter;
         self.application = application;
+        self.backgroundDispatcher = backgroundDispatcher;
+        self.userDataDAO = userDataDAO;
 
         [self.notificationCenter addObserver:self
-                                    selector:@selector(channelCreated)
+                                    selector:@selector(performUserRegistration)
                                         name:UAChannelCreatedEvent
                                       object:nil];
 
-        self.backgroundDispatcher = dispatcher;
+        [self.notificationCenter addObserver:self
+                                    selector:@selector(didBecomeActive)
+                                        name:UIApplicationDidBecomeActiveNotification
+                                      object:nil];
+
+        [self.notificationCenter addObserver:self
+                                    selector:@selector(enterForeground)
+                                        name:UIApplicationWillEnterForegroundNotification
+                                      object:nil];
     }
 
     return self;
@@ -68,322 +67,219 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
 
 + (instancetype)userWithPush:(UAPush *)push config:(UARuntimeConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
     return [[UAUser alloc] initWithPush:push
-                                 config:config
                               dataStore:dataStore
                                  client:[UAUserAPIClient clientWithConfig:config]
                      notificationCenter:[NSNotificationCenter defaultCenter]
                             application:[UIApplication sharedApplication]
-                             dispatcher:[UADispatcher backgroundDispatcher]];
+                   backgroundDispatcher:[UADispatcher backgroundDispatcher]
+                            userDataDAO:[UAUserDataDAO userDataDAOWithConfig:config]];
 }
 
 + (instancetype)userWithPush:(UAPush *)push
-                      config:(UARuntimeConfig *)config
                    dataStore:(UAPreferenceDataStore *)dataStore
                       client:(UAUserAPIClient *)client
           notificationCenter:(NSNotificationCenter *)notificationCenter
                  application:(UIApplication *)application
-                  dispatcher:(UADispatcher *)dispatcher {
+        backgroundDispatcher:(UADispatcher *)backgroundDispatcher
+                 userDataDAO:(UAUserDataDAO *)userDataDAO {
 
     return [[UAUser alloc] initWithPush:push
-                                 config:config
                               dataStore:dataStore
                                  client:client
                      notificationCenter:notificationCenter
                             application:application
-                             dispatcher:dispatcher];
+                   backgroundDispatcher:backgroundDispatcher
+                            userDataDAO:userDataDAO];
 }
 
-#pragma mark -
-#pragma mark Get/Update/Save User Data
-
 - (nullable UAUserData *)getUserDataSync {
-    NSString *appKey = self.config.appKey;
-    __block UAUserData *userData;
-
-    UA_WEAKIFY(self)
-    [self.backgroundDispatcher doSync:^{
-        if (self.userData) {
-            userData = self.userData;
-            return;
-        }
-
-        UA_STRONGIFY(self)
-        NSString *username = [UAKeychainUtils getUsername:appKey];
-        NSString *password = [UAKeychainUtils getPassword:appKey];
-
-        if (username && password) {
-            self.userData = userData = [UAUserData dataWithUsername:username password:password url:self.url];
-        }
-    }];
-
-    return userData;
+    return [self.userDataDAO getUserDataSync];
 }
 
 - (void)getUserData:(void (^)(UAUserData * _Nullable))completionHandler dispatcher:(nullable UADispatcher *)dispatcher {
-    [self.backgroundDispatcher dispatchAsync:^{
-        UAUserData *userData = [self getUserDataSync];
-
-        if (dispatcher) {
-            [dispatcher dispatchAsync:^{
-                completionHandler(userData);
-            }];
-        } else {
-            completionHandler(userData);
-        }
-    }];
+    return [self.userDataDAO getUserData:completionHandler dispatcher:dispatcher];
 }
 
 - (void)getUserData:(void (^)(UAUserData * _Nullable))completionHandler {
-    [self.backgroundDispatcher dispatchAsync:^{
-        completionHandler([self getUserDataSync]);
-    }];
+    return [self.userDataDAO getUserData:completionHandler];
 }
 
 - (void)getUserData:(void (^)(UAUserData * _Nullable))completionHandler queue:(nullable dispatch_queue_t)queue {
-    [self getUserData:^(UAUserData *data) {
-        if (queue) {
-            dispatch_async(queue, ^{
-                completionHandler(data);
-            });
-        } else {
-            completionHandler(data);
-        }
-    }];
+    return [self.userDataDAO getUserData:completionHandler queue:queue];
 }
 
-- (NSString *)username {
-    UAUserData *userData = [self getUserDataSync];
-    return userData.username;
+- (NSString *)registeredChannelID {
+    return [self.dataStore stringForKey:UAUserRegisteredChannelIDKey];
 }
 
-- (NSString *)password {
-    UAUserData *userData = [self getUserDataSync];
-    return userData.password;
+- (void)setRegisteredChannelID:(NSString *)registeredChannelID {
+    [self.dataStore setValue:registeredChannelID forKey:UAUserRegisteredChannelIDKey];
 }
 
-- (NSString *)url {
-    return [self.dataStore objectForKey:kUAUserURLKey];
+- (void)enterForeground {
+    [self ensureUserUpToDate];
 }
 
-/**
- * Save username and password data to disk.
- */
-- (void)saveUserData:(UAUserData *)data completionHandler:(void (^)(BOOL))completionHandler; {
-    // No username object stored in the keychain for this app, so let's create it
-    // but only if we indeed have a username and password to store
-    UA_WEAKIFY(self)
-    [self getUserData:^(UAUserData *savedData) {
-        UA_STRONGIFY(self)
-        if (!savedData) {
-            if (![UAKeychainUtils createKeychainValueForUsername:data.username withPassword:data.password forIdentifier:self.config.appKey]) {
-                UA_LERR(@"Save failed: unable to create keychain for username.");
-                return completionHandler(NO);
-            }
-        }
-
-        self.userData = data;
-
-        // Update keychain with latest username and password
-        [UAKeychainUtils updateKeychainValueForUsername:data.username
-                                           withPassword:data.password
-                                          forIdentifier:self.config.appKey];
-
-        // Persist URL in datastore
-        [self.dataStore setObject:data.url forKey:kUAUserURLKey];
-
-        // Save in NSUserDefaults for access with a Settings bundle
-        NSMutableDictionary *userDictionary = [NSMutableDictionary dictionary];
-        [userDictionary setValue:data.url forKey:kUserUrlKey];
-
-        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-        [defaults setObject:data.username forKey:kUAUserIDKey];
-        [defaults setObject:userDictionary forKey:self.config.appKey];
-        [defaults synchronize];
-
-        completionHandler(YES);
-    }];
+- (void)didBecomeActive {
+    [self ensureUserUpToDate];
+    [self.notificationCenter removeObserver:self
+                                       name:UIApplicationDidBecomeActiveNotification
+                                     object:nil];
 }
 
-#pragma mark -
-#pragma mark Create
-
-- (BOOL)isCreated {
-    if (self.password.length && self.username.length) {
-        return YES;
-    }
-    return NO;
-}
-
-- (void)sendUserCreatedNotification {
-    [self.notificationCenter postNotificationName:UAUserCreatedNotification object:nil];
-}
-
-- (void)createUser:(void (^_Nullable)(UAUserData *))completionHandler {
-    completionHandler = completionHandler ? : ^(UAUserData *data){};
-
-    if (!self.componentEnabled) {
-        UA_LDEBUG(@"Skipping user creation, component disabled");
-        return completionHandler(nil);
-    }
-
+- (void)ensureUserUpToDate {
     if (!self.push.channelID) {
-        UA_LDEBUG(@"Skipping user creation, no channel");
-        return completionHandler(nil);
-    }
-
-    [self getUserData:^(UAUserData *data) {
-        if (data) {
-            UA_LDEBUG(@"User already created");
-            return completionHandler(data);
-        }
-
-        UA_WEAKIFY(self)
-        __block UIBackgroundTaskIdentifier backgroundTask = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
-            UA_STRONGIFY(self)
-            [self.application endBackgroundTask:backgroundTask];
-            backgroundTask = UIBackgroundTaskInvalid;
-            [self.apiClient cancelAllRequests];
-        }];
-
-        if (backgroundTask == UIBackgroundTaskInvalid) {
-            UA_LDEBUG(@"Unable to create background task to create user.");
-            return completionHandler(nil);
-        }
-
-        UAUserAPIClientCreateSuccessBlock success = ^(UAUserData *data, NSDictionary *payload) {
-            UA_STRONGIFY(self)
-            UA_LINFO(@"Created user %@.", data.username);
-
-            [self saveUserData:data completionHandler:^(BOOL success) {
-                if (success) {
-                    // if we didn't send a channel on creation, try again
-                    if (![payload valueForKey:@"ios_channels"]) {
-                        [self updateUser:nil];
-                    }
-
-                    [self sendUserCreatedNotification];
-                    [self.application endBackgroundTask:backgroundTask];
-                    backgroundTask = UIBackgroundTaskInvalid;
-
-                    completionHandler(data);
-                } else {
-                    completionHandler(nil);
-                }
-            }];
-        };
-
-        UAUserAPIClientFailureBlock failure = ^(NSUInteger statusCode) {
-            UA_STRONGIFY(self)
-            if (statusCode != UAAPIClientStatusUnavailable) {
-                UA_LINFO(@"Failed to create user");
-            }
-
-            [self.application endBackgroundTask:backgroundTask];
-            backgroundTask = UIBackgroundTaskInvalid;
-
-            completionHandler(nil);
-        };
-
-        [self.apiClient createUserWithChannelID:self.push.channelID
-                                      onSuccess:success
-                                      onFailure:failure];
-
-    }];
-}
-
-- (void)createUser {
-    [self createUser:nil];
-}
-
-#pragma mark -
-#pragma mark Update
-
-- (void)updateUser:(void (^_Nullable)(void))completionHandler {
-    completionHandler = completionHandler ? : ^{};
-
-    if (!self.componentEnabled) {
-        UA_LDEBUG(@"Skipping user update, component disabled");
-        return completionHandler();
-    }
-
-    if (!self.push.channelID.length) {
-        UA_LDEBUG(@"Skipping user update, no channel.");
-        return completionHandler();
+        return;
     }
 
     UA_WEAKIFY(self)
-    __block UIBackgroundTaskIdentifier backgroundTask = [self.application beginBackgroundTaskWithExpirationHandler:^{
-        UA_STRONGIFY(self)
-        [self.application endBackgroundTask:backgroundTask];
-        backgroundTask = UIBackgroundTaskInvalid;
-        [self.apiClient cancelAllRequests];
-    }];
-
-    if (backgroundTask == UIBackgroundTaskInvalid) {
-        UA_LDEBUG(@"Unable to create background task to update user.");
-        return completionHandler();
-    }
-
     [self getUserData:^(UAUserData *data) {
-
-        if (!data) {
-            UA_LDEBUG(@"Skipping user update, user not created yet.");
-            return completionHandler();
+        UA_STRONGIFY(self)
+        if (self.registrationInProgress) {
+            return;
         }
 
-        UA_LTRACE(@"Updating user");
-
-        [self.apiClient updateUser:self
-                         channelID:self.push.channelID
-                         onSuccess:^{
-                             UA_STRONGIFY(self)
-                             UA_LINFO(@"Updated user %@ successfully.", data.username);
-                             [self.application endBackgroundTask:backgroundTask];
-                             backgroundTask = UIBackgroundTaskInvalid;
-                             completionHandler();
-                         }
-                         onFailure:^(NSUInteger statusCode) {
-                             UA_STRONGIFY(self)
-                             UA_LDEBUG(@"Failed to update user.");
-                             [self.application endBackgroundTask:backgroundTask];
-                             backgroundTask = UIBackgroundTaskInvalid;
-                             completionHandler();
-                         }];
-    }];
+        if (!data || ![self.registeredChannelID isEqualToString:self.push.channelID]) {
+            [self performUserRegistration];
+        }
+    } dispatcher:self.backgroundDispatcher];
 }
 
 - (void)resetUser {
     UA_WEAKIFY(self)
-    [self.backgroundDispatcher doSync:^{
-        UA_STRONGIFY(self)
-        UA_LDEBUG(@"Deleting the keychain credentials");
-        [self.apiClient cancelAllRequests];
-        [UAKeychainUtils deleteKeychainValue:self.config.appKey];
-        self.userData = nil;
-    }];
-}
+    [self getUserData:^(UAUserData *data) {
+        if (!data) {
+            return;
+        }
 
-- (void)channelCreated {
-    // Update the user if we already have a channelID
-    if (self.push.channelID) {
-        UA_WEAKIFY(self)
-        [self getUserData:^(UAUserData *data) {
-            UA_STRONGIFY(self)
-            if (data) {
-                [self updateUser:nil];
-            } else {
-                [self createUser:nil];
-            }
-        }];
-    }
+        UA_STRONGIFY(self)
+        self.registeredChannelID = nil;
+        self.registrationInProgress = NO;
+        [self.userDataDAO clearUser];
+        [self performUserRegistration];
+    } dispatcher:self.backgroundDispatcher];
 }
 
 - (void)onComponentEnableChange {
     if (self.componentEnabled) {
-        // if component was disabled and is now enabled, update the user in case we missed channel creation
-        [self channelCreated];
+        [self ensureUserUpToDate];
     }
 }
 
-@end
+/**
+ * Performs either a create or update on the user depending on if the user data is available in the DAO. Perform registration
+ * will no-op if the component is disabled, channelID is unavailable, or if a background task fails to create.
+ */
+- (void)performUserRegistration {
+    if (!self.componentEnabled) {
+        UA_LDEBUG(@"Skipping user registration, component disabled.");
+        return;
+    }
 
+    NSString *channelID = self.push.channelID;
+    if (!channelID) {
+        UA_LDEBUG(@"Skipping user registration, no channel.");
+        return;
+    }
+
+    UA_WEAKIFY(self)
+
+    __block UIBackgroundTaskIdentifier backgroundTask = [self.application beginBackgroundTaskWithExpirationHandler:^{
+        UA_STRONGIFY(self)
+        [self.apiClient cancelAllRequests];
+        if (backgroundTask != UIBackgroundTaskInvalid) {
+            [self.application endBackgroundTask:backgroundTask];
+            backgroundTask = UIBackgroundTaskInvalid;
+        }
+        self.registrationInProgress = NO;
+    }];
+
+    if (backgroundTask == UIBackgroundTaskInvalid) {
+        UA_LDEBUG(@"Skipping user registration, unable to create background task.");
+        return;
+    }
+
+    void (^completionHandler)(BOOL) = ^(BOOL success) {
+        UA_STRONGIFY(self)
+        [self.backgroundDispatcher dispatchAsync:^{
+            UA_STRONGIFY(self)
+            self.registrationInProgress = NO;
+            if (success) {
+                self.registeredChannelID = channelID;
+            }
+            if (backgroundTask != UIBackgroundTaskInvalid) {
+                [self.application endBackgroundTask:backgroundTask];
+                backgroundTask = UIBackgroundTaskInvalid;
+            }
+        }];
+    };
+
+    [self getUserData:^(UAUserData *data) {
+        UA_STRONGIFY(self)
+
+        // Checking for registrationInProgress here instead of above so its only
+        // accessed on the background queue.
+        if (self.registrationInProgress) {
+            UA_LDEBUG(@"Skipping user registration, already in progress");
+            completionHandler(NO);
+            return;
+        }
+
+        self.registrationInProgress = YES;
+        if (data) {
+            [self updateUserWithUserData:data channelID:channelID completionHandler:completionHandler];
+        } else {
+            [self createUserWithChannelID:channelID completionHandler:completionHandler];
+        }
+    } dispatcher:self.backgroundDispatcher];
+}
+
+/**
+ *  Updates the user with the latest channel. Called from `performUserRegistration`.
+ *  @param userData The current user's data.
+ *  @param channelID The Airship channel ID.
+ *  @param completionHandler Completion handler.
+ */
+- (void)updateUserWithUserData:(UAUserData *)userData channelID:(NSString *)channelID completionHandler:(void(^)(BOOL))completionHandler {
+    UA_LTRACE(@"Updating user");
+    [self.apiClient updateUserWithData:userData
+                             channelID:channelID
+                             onSuccess:^{
+                                 UA_LINFO(@"Updated user %@ successfully.", userData.username);
+                                 completionHandler(YES);
+                             }
+                             onFailure:^(NSUInteger statusCode) {
+                                 UA_LDEBUG(@"Failed to update user.");
+                                 completionHandler(NO);
+                             }];
+}
+
+/**
+ *  Creates the user with the latest channel and saves the user data to the DAO. Called from `performUserRegistration`.
+ *  @param channelID The Airship channel ID.
+ *  @param completionHandler Completion handler.
+ */
+- (void)createUserWithChannelID:(NSString *)channelID completionHandler:(void(^)(BOOL))completionHandler {
+    UA_LTRACE(@"Creating user");
+    UA_WEAKIFY(self)
+    [self.apiClient createUserWithChannelID:channelID
+                                  onSuccess:^(UAUserData *data) {
+                                      UA_STRONGIFY(self)
+                                      UA_LINFO(@"Created user %@.", data.username);
+                                      [self.userDataDAO saveUserData:data completionHandler:^(BOOL success) {
+                                          UA_STRONGIFY(self)
+                                          if (success) {
+                                              [self.notificationCenter postNotificationName:UAUserCreatedNotification object:nil];
+                                          } else {
+                                              UA_LINFO(@"Failed to save user");
+                                          }
+                                          completionHandler(success);
+                                      }];
+                                  }
+                                  onFailure:^(NSUInteger statusCode) {
+                                      UA_LINFO(@"Failed to create user");
+                                      completionHandler(NO);
+                                  }];
+}
+
+@end
