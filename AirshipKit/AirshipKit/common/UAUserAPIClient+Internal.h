@@ -13,9 +13,8 @@ NS_ASSUME_NONNULL_BEGIN
  * A block called when user creation succeeded.
  *
  * @param data The user data.
- * @param payload The request payload.
  */
-typedef void (^UAUserAPIClientCreateSuccessBlock)(UAUserData *data, NSDictionary *payload);
+typedef void (^UAUserAPIClientCreateSuccessBlock)(UAUserData *data);
 
 /**
  * A block called when the user update succeeded.
@@ -67,15 +66,15 @@ typedef void (^UAUserAPIClientFailureBlock)(NSUInteger statusCode);
 /**
  * Update a user.
  *
- * @param user The specified user to update.
+ * @param userData The user data to update.
  * @param channelID The user's channel ID.
  * @param successBlock A UAUserAPIClientUpdateSuccessBlock that will be called if the update was successful.
  * @param failureBlock A UAUserAPIClientFailureBlock that will be called if the update was unsuccessful.
  */
-- (void)updateUser:(UAUser *)user
-         channelID:(NSString *)channelID
-         onSuccess:(UAUserAPIClientUpdateSuccessBlock)successBlock
-         onFailure:(UAUserAPIClientFailureBlock)failureBlock;
+- (void)updateUserWithData:(UAUserData *)userData
+                 channelID:(NSString *)channelID
+                 onSuccess:(UAUserAPIClientUpdateSuccessBlock)successBlock
+                 onFailure:(UAUserAPIClientFailureBlock)failureBlock;
 
 @end
 

@@ -14,33 +14,9 @@ NS_ASSUME_NONNULL_BEGIN
  * Gets the data associated with the user.
  *
  * @param completionHandler A completion handler which will be called with the user data.
- * @param queue The queue on which to invoke the completion handler.
- */
-- (void)getUserData:(void (^)(UAUserData * _Nullable))completionHandler queue:(nullable dispatch_queue_t)queue;
-
-/**
- * Gets the data associated with the user.
- *
- * @param completionHandler A completion handler which will be called with the user data.
- */
-- (void)getUserData:(void (^)(UAUserData *))completionHandler;
-
-/**
- * Gets the data associated with the user, synchronously.
- *
- * Note: This method may block the calling thread, and thus should be avoided while working on the main queue.
- *
- * @return The user data, or `nil` if no data is available.
- */
-- (nullable UAUserData *)getUserDataSync;
-
-/**
- * Gets the data associated with the user.
- *
- * @param completionHandler A completion handler which will be called with the user data.
  * @param dispatcher The dispatcher on which to invoked the completion handler.
  */
-- (void)getUserData:(void (^)(UAUserData * _Nullable))completionHandler dispatcher:(nullable UADispatcher *)dispatcher;
+- (void)getUserData:(void (^)(UAUserData *))completionHandler dispatcher:(nullable UADispatcher *)dispatcher;
 
 @end
 

@@ -4,7 +4,6 @@
 #import "UARuntimeConfig.h"
 #import "UAUtils+Internal.h"
 #import "NSJSONSerialization+UAAdditions.h"
-#import "UAUser.h"
 #import "UAUserData.h"
 #import "NSURLResponse+UAAdditions.h"
 #import "UAJSONSerialization+Internal.h"
@@ -23,54 +22,49 @@
                       onSuccess:(UAUserAPIClientCreateSuccessBlock)successBlock
                       onFailure:(UAUserAPIClientFailureBlock)failureBlock {
 
-    UA_WEAKIFY(self)
-    [UAUtils getDeviceID:^(NSString *deviceID) {
-        UA_STRONGIFY(self)
+    NSMutableDictionary *payload = [NSMutableDictionary dictionary];
 
-        NSMutableDictionary *payload = [NSMutableDictionary dictionaryWithDictionary:@{@"ua_device_id":deviceID}];
+    if (channelID.length) {
+        [payload setObject:@[channelID] forKey:@"ios_channels"];
+    }
 
-        if (channelID.length) {
-            [payload setObject:@[channelID] forKey:@"ios_channels"];
+    UARequest *request = [self requestToCreateUserWithPayload:payload];
+
+    [self.session dataTaskWithRequest:request retryWhere:^BOOL(NSData * _Nullable data, NSURLResponse * _Nullable response) {
+        return [response hasRetriableStatus];
+    } completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+        NSHTTPURLResponse *httpResponse = nil;
+        if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
+            httpResponse = (NSHTTPURLResponse *) response;
         }
 
-        UARequest *request = [self requestToCreateUserWithPayload:payload];
+        NSUInteger status = httpResponse.statusCode;
 
-        [self.session dataTaskWithRequest:request retryWhere:^BOOL(NSData * _Nullable data, NSURLResponse * _Nullable response) {
-            return [response hasRetriableStatus];
-        } completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
-            NSHTTPURLResponse *httpResponse = nil;
-            if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
-                httpResponse = (NSHTTPURLResponse *) response;
-            }
+        // Failure
+        if (status != 201) {
+            UA_LTRACE(@"User creation failed with status: %ld error: %@", (unsigned long)status, error);
+            failureBlock(status);
+            return;
+        }
 
-            NSUInteger status = httpResponse.statusCode;
+        // Success
+        NSDictionary *jsonResponse = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:nil];
 
-            // Failure
-            if (status != 201) {
-                UA_LTRACE(@"User creation failed with status: %ld error: %@", (unsigned long)status, error);
-                failureBlock(status);
-                return;
-            }
+        NSString *username = [jsonResponse objectForKey:@"user_id"];
+        NSString *password = [jsonResponse objectForKey:@"password"];
+        NSString *url = [jsonResponse objectForKey:@"user_url"];
 
-            // Success
-            NSDictionary *jsonResponse = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:nil];
+        UAUserData *userData = [UAUserData dataWithUsername:username password:password url:url];
 
-            NSString *username = [jsonResponse objectForKey:@"user_id"];
-            NSString *password = [jsonResponse objectForKey:@"password"];
-            NSString *url = [jsonResponse objectForKey:@"user_url"];
-
-            UAUserData *userData = [UAUserData dataWithUsername:username password:password url:url];
-
-            UA_LTRACE(@"Created user: %@", username);
-            successBlock(userData, payload);
-        }];
-    } dispatcher:[UADispatcher mainDispatcher]];
+        UA_LTRACE(@"Created user: %@", username);
+        successBlock(userData);
+    }];
 }
 
-- (void)updateUser:(UAUser *)user
-         channelID:(NSString *)channelID
-         onSuccess:(UAUserAPIClientUpdateSuccessBlock)successBlock
-         onFailure:(UAUserAPIClientFailureBlock)failureBlock {
+- (void)updateUserWithData:(UAUserData *)userData
+                 channelID:(NSString *)channelID
+                 onSuccess:(UAUserAPIClientUpdateSuccessBlock)successBlock
+                 onFailure:(UAUserAPIClientFailureBlock)failureBlock {
 
     NSMutableDictionary *payload = [NSMutableDictionary dictionary];
 
@@ -78,33 +72,28 @@
         [payload setValue:@{@"add": @[channelID]} forKey:@"ios_channels"];
     }
 
-    UA_WEAKIFY(self)
-    [user getUserData:^(UAUserData *userData) {
-        UA_STRONGIFY(self)
-        UARequest *request = [self requestToUpdateUser:userData payload:payload];
+    UARequest *request = [self requestToUpdateUser:userData payload:payload];
+    [self.session dataTaskWithRequest:request retryWhere:^BOOL(NSData * _Nullable data, NSURLResponse * _Nullable response) {
+        return [response hasRetriableStatus];
+    } completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+        NSHTTPURLResponse *httpResponse = nil;
+        if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
+            httpResponse = (NSHTTPURLResponse *) response;
+        }
 
-        [self.session dataTaskWithRequest:request retryWhere:^BOOL(NSData * _Nullable data, NSURLResponse * _Nullable response) {
-            return [response hasRetriableStatus];
-        } completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
-            NSHTTPURLResponse *httpResponse = nil;
-            if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
-                httpResponse = (NSHTTPURLResponse *) response;
-            }
+        NSUInteger status = httpResponse.statusCode;
 
-            NSUInteger status = httpResponse.statusCode;
+        // Failure
+        if (status != 200 && status != 201) {
+            UA_LTRACE(@"User update failed with status: %ld error: %@", (unsigned long)status, error);
+            failureBlock(status);
 
-            // Failure
-            if (status != 200 && status != 201) {
-                UA_LTRACE(@"User update failed with status: %ld error: %@", (unsigned long)status, error);
-                failureBlock(status);
+            return;
+        }
 
-                return;
-            }
-
-            // Success
-            UA_LTRACE(@"Successfully updated user: %@", user);
-            successBlock();
-        }];
+        // Success
+        UA_LTRACE(@"Successfully updated user: %@", userData.username);
+        successBlock();
     }];
 }
 
