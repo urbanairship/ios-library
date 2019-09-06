@@ -13,6 +13,7 @@
 #import "UATestDispatcher.h"
 #import "UATestDate.h"
 #import "UAInboxMessage.h"
+#import "UAUserData+Internal.h"
 
 @protocol UAInboxMessageListMockNotificationObserver
 - (void)messageListWillUpdate;
@@ -44,7 +45,7 @@
     self.mockUser = [self mockForClass:[UAUser class]];
     self.testDate = [[UATestDate alloc] init];
 
-    UAUserData *userData = [UAUserData dataWithUsername:@"username" password:@"password" url:@"url"];
+    UAUserData *userData = [UAUserData dataWithUsername:@"username" password:@"password"];
 
     [[[self.mockUser stub] andDo:^(NSInvocation *invocation) {
         void *arg;

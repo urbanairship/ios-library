@@ -8,7 +8,7 @@
 #import "UAirship+Internal.h"
 #import "UAUserAPIClient+Internal.h"
 #import "UAUser+Internal.h"
-#import "UAUserData.h"
+#import "UAUserData+Internal.h"
 #import "UAJSONSerialization+Internal.h"
 
 @interface UAUserAPIClientTest : UABaseTest
@@ -27,7 +27,7 @@
     self.mockRequest = [self mockForClass:[UARequest class]];
     self.client = [UAUserAPIClient clientWithConfig:self.config session:self.mockSession];
 
-    self.userData = [UAUserData dataWithUsername:@"username" password:@"password" url:@"url"];
+    self.userData = [UAUserData dataWithUsername:@"username" password:@"password"];
 }
 
 /**
@@ -107,7 +107,6 @@
 
     XCTAssertEqualObjects(successData.username, [responseDict valueForKey:@"user_id"]);
     XCTAssertEqualObjects(successData.password, [responseDict valueForKey:@"password"]);
-    XCTAssertEqualObjects(successData.url, [responseDict valueForKey:@"user_url"]);
 }
 
 /**

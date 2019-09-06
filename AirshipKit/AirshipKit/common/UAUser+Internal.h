@@ -42,7 +42,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param userDataDAO The user data DAO.
  * @return User instance.
  */
-+ (instancetype)userWithChannel:(UAPush *)push
++ (instancetype)userWithChannel:(UAChannel *)channel
                       dataStore:(UAPreferenceDataStore *)dataStore
                          client:(UAUserAPIClient *)client
              notificationCenter:(NSNotificationCenter *)notificationCenter

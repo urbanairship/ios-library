@@ -3,6 +3,7 @@
 #import "UAUserDataDAO+Internal.h"
 #import "UAKeychainUtils+Internal.h"
 #import "UAGlobal.h"
+#import "UAUserData+Internal.h"
 
 @interface UAUserDataDAO()
 @property (nonatomic, strong) UARuntimeConfig *config;
@@ -42,12 +43,7 @@
         NSString *password = [UAKeychainUtils getPassword:self.config.appKey];
 
         if (username && password) {
-            NSString *url = [NSString stringWithFormat:@"%@%@%@/",
-                             self.config.deviceAPIURL,
-                             @"/api/user/",
-                             userData.username];
-
-            self.userData = userData = [UAUserData dataWithUsername:username password:password url:url];
+            self.userData = userData = [UAUserData dataWithUsername:username password:password];
         }
     }];
 

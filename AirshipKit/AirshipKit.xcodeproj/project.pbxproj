@@ -334,6 +334,9 @@
 		6E163929231ED22400E38A29 /* UAUserDataDAO.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E163928231ED22300E38A29 /* UAUserDataDAO.m */; };
 		6E16392A231ED22400E38A29 /* UAUserDataDAO.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E163928231ED22300E38A29 /* UAUserDataDAO.m */; };
 		6E16392B231ED22400E38A29 /* UAUserDataDAO.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E163928231ED22300E38A29 /* UAUserDataDAO.m */; };
+		6E18E7372321C1C0004E09DF /* UAUserData+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E18E7352321C1BF004E09DF /* UAUserData+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		6E18E7382322BF4C004E09DF /* UAUserData+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E18E7352321C1BF004E09DF /* UAUserData+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		6E18E7392322BF4C004E09DF /* UAUserData+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E18E7352321C1BF004E09DF /* UAUserData+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6E2E6D741EB3A34B006056BF /* UASwizzler+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E2E6D721EB3A34B006056BF /* UASwizzler+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6E2E6D751EB3A34B006056BF /* UASwizzler.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E2E6D731EB3A34B006056BF /* UASwizzler.m */; };
 		6E2E6D761EB3A34B006056BF /* UASwizzler.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E2E6D731EB3A34B006056BF /* UASwizzler.m */; };
@@ -1898,6 +1901,7 @@
 		6E12138D1E5D1B95006738FD /* UAScheduleDelay.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAScheduleDelay.m; path = common/UAScheduleDelay.m; sourceTree = "<group>"; };
 		6E163924231ED21C00E38A29 /* UAUserDataDAO+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UAUserDataDAO+Internal.h"; path = "common/UAUserDataDAO+Internal.h"; sourceTree = "<group>"; };
 		6E163928231ED22300E38A29 /* UAUserDataDAO.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAUserDataDAO.m; path = common/UAUserDataDAO.m; sourceTree = "<group>"; };
+		6E18E7352321C1BF004E09DF /* UAUserData+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UAUserData+Internal.h"; path = "common/UAUserData+Internal.h"; sourceTree = "<group>"; };
 		6E2E6D721EB3A34B006056BF /* UASwizzler+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UASwizzler+Internal.h"; path = "common/UASwizzler+Internal.h"; sourceTree = "<group>"; };
 		6E2E6D731EB3A34B006056BF /* UASwizzler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UASwizzler.m; path = common/UASwizzler.m; sourceTree = "<group>"; };
 		6E3673DA1E8AE9F7005B5DFF /* UAEnableFeatureAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAEnableFeatureAction.h; path = common/UAEnableFeatureAction.h; sourceTree = "<group>"; };
@@ -3457,6 +3461,7 @@
 		CC40DDDB1D91D4A100BABD4F /* User */ = {
 			isa = PBXGroup;
 			children = (
+				6E18E7352321C1BF004E09DF /* UAUserData+Internal.h */,
 				6E163924231ED21C00E38A29 /* UAUserDataDAO+Internal.h */,
 				6E163928231ED22300E38A29 /* UAUserDataDAO.m */,
 				CC40DBF41D8C996A00BABD4F /* UAUser+Internal.h */,
@@ -4420,6 +4425,7 @@
 				3CD9C1D521D1AC7A00B129A6 /* UAInAppMessageNativeBridge+Internal.h in Headers */,
 				3CC7DC64225299F300670DC2 /* UACircularRegion+Internal.h in Headers */,
 				3C6573A122D80AF3008F72F5 /* UASceneTracker+Internal.h in Headers */,
+				6E18E7372321C1C0004E09DF /* UAUserData+Internal.h in Headers */,
 				6E598D361FFC4FB4005B234B /* UAActionScheduleEdits.h in Headers */,
 				3CC7DC61225299F300670DC2 /* UARegionEvent+Internal.h in Headers */,
 				3CC7DC5B225299F300670DC2 /* UAProximityRegion+Internal.h in Headers */,
@@ -4610,6 +4616,7 @@
 				3CC7DC5F225299F300670DC2 /* UACircularRegion.h in Headers */,
 				3CC7DC71225299F300670DC2 /* UAProximityRegion.h in Headers */,
 				3CC7DC68225299F300670DC2 /* UARegionEvent.h in Headers */,
+				6E18E7382322BF4C004E09DF /* UAUserData+Internal.h in Headers */,
 				99666DAB1EDF2BC100BAE46B /* UAUserData.h in Headers */,
 				99666E751EDF2CC500BAE46B /* AirshipKit.h in Headers */,
 				3CE58FD520742A8100076854 /* UAUtils.h in Headers */,
@@ -4958,6 +4965,7 @@
 				3CD9C1D621D1AC7A00B129A6 /* UAInAppMessageNativeBridge+Internal.h in Headers */,
 				DF7E228E1ED62E0900C79C46 /* UAApplicationMetrics.h in Headers */,
 				3C5D1B2621C1B241007025C9 /* NSObject+AnonymousKVO+Internal.h in Headers */,
+				6E18E7392322BF4C004E09DF /* UAUserData+Internal.h in Headers */,
 				DF7E228F1ED62E0900C79C46 /* UAAssociatedIdentifiers.h in Headers */,
 				DFD442A81FD77308002E4FA1 /* UAInAppMessageAudience+Internal.h in Headers */,
 				6ECEBF5821C452A300FAAB08 /* UAScheduleDataMigrator+Internal.h in Headers */,

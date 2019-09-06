@@ -3,7 +3,7 @@
 #import "UABaseTest.h"
 #import "UAUser+Internal.h"
 #import "UAUserAPIClient+Internal.h"
-#import "UAUserData.h"
+#import "UAUserData+Internal.h"
 #import "UAKeychainUtils+Internal.h"
 #import "UAirship+Internal.h"
 #import "UARuntimeConfig.h"
@@ -53,7 +53,7 @@
                    backgroundDispatcher:self.testDispatcher
                             userDataDAO:self.userDataDAO];
 
-    self.userData = [UAUserData dataWithUsername:@"userName" password:@"password" url:@"http://url.com"];
+    self.userData = [UAUserData dataWithUsername:@"userName" password:@"password"];
  }
 
 - (void)testDefaultUser {

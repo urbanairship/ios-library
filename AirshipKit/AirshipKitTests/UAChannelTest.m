@@ -6,6 +6,7 @@
 #import "UAChannelRegistrationPayload+Internal.h"
 #import "UATestDispatcher.h"
 #import "UAUtils+Internal.h"
+#import "UAUserData+Internal.h"
 
 @interface UAChannelTest : UABaseTest
 @property(nonatomic, strong) id mockTagGroupsRegistrar;
@@ -35,7 +36,7 @@
         void *arg;
         [invocation getArgument:&arg atIndex:2];
         void (^completionHandler)(UAUserData * _Nullable) = (__bridge void (^)(UAUserData * _Nullable))arg;
-        completionHandler([UAUserData dataWithUsername:@"user" password:@"password" url:@"https://foo.bar.com"]);
+        completionHandler([UAUserData dataWithUsername:@"user" password:@"password"]);
     }] getUserData:OCMOCK_ANY dispatcher:OCMOCK_ANY];
 
     self.mockUtils = [self mockForClass:[UAUtils class]];

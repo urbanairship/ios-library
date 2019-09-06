@@ -8,6 +8,7 @@
 #import "UAUser+Internal.h"
 #import "UAPreferenceDataStore+Internal.h"
 #import "UAInboxAPIClient+Internal.h"
+#import "UAUserData+Internal.h"
 
 @interface UAInboxAPIClientTest : UABaseTest
 
@@ -33,7 +34,7 @@
 
     self.mockUser = [self mockForClass:[UAUser class]];
 
-    UAUserData *userData = [UAUserData dataWithUsername:@"username" password:@"password" url:@"url"];
+    UAUserData *userData = [UAUserData dataWithUsername:@"username" password:@"password"];
 
     [[[self.mockUser stub] andDo:^(NSInvocation *invocation) {
         void *arg;

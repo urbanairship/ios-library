@@ -4,7 +4,7 @@
 #import "UARuntimeConfig.h"
 #import "UAUtils+Internal.h"
 #import "NSJSONSerialization+UAAdditions.h"
-#import "UAUserData.h"
+#import "UAUserData+Internal.h"
 #import "NSURLResponse+UAAdditions.h"
 #import "UAJSONSerialization+Internal.h"
 
@@ -52,11 +52,15 @@
 
         NSString *username = [jsonResponse objectForKey:@"user_id"];
         NSString *password = [jsonResponse objectForKey:@"password"];
-        NSString *url = [jsonResponse objectForKey:@"user_url"];
 
-        UAUserData *userData = [UAUserData dataWithUsername:username password:password url:url];
+        if (!username || !password) {
+            UA_LTRACE(@"User creation failed. Missing ID or password");
+            failureBlock(status);
+            return;
+        }
 
         UA_LTRACE(@"Created user: %@", username);
+        UAUserData *userData = [UAUserData dataWithUsername:username password:password];
         successBlock(userData);
     }];
 }
