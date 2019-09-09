@@ -116,11 +116,8 @@ NSString * const UANavigationBarStyleKey = @"navigationBarStyle";
     UIColor *hexColor = [UAColorUtils colorWithHexString:colorString];
     UIColor *namedColor;
 
-    // Remove check when dropping iOS10 support
-    if (@available(iOS 11, *)) {
-        // Pull named color from main bundle
-        namedColor = [UIColor colorNamed:colorString];
-    }
+    // Pull named color from main bundle
+    namedColor = [UIColor colorNamed:colorString];
 
     // Neither a hex nor named color can be determined using the color string
     if (!hexColor && !namedColor) {

@@ -206,8 +206,6 @@ static const UANotificationOptions UANotificationOptionNone =  0;
 /**
  * Called when a notification has arrived in the foreground and is available for display.
  *
- * Note: this method is relevant only for iOS 10 and above.
- *
  * @param notification The notification.
  * @return a UNNotificationPresentationOptions enum value indicating the presentation options for the notification.
  *
@@ -354,8 +352,6 @@ static const UANotificationOptions UANotificationOptionNone =  0;
 
 /**
  * The default presentation options to use for foreground notifications.
- *
- * Note: this property is relevant only for iOS 10 and above.
  */
 @property (nonatomic, assign) UNNotificationPresentationOptions defaultPresentationOptions;
 

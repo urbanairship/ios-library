@@ -484,44 +484,32 @@ CGFloat const BannerExcessiveSafeAreaPadding = 14;
 - (void)refreshViewForCurrentOrientation {
     BOOL statusBarShowing = !([UIApplication sharedApplication].isStatusBarHidden);
     CGFloat styledDefaultBannerTopPadding = [self.style.additionalPadding.top floatValue] + DefaultBannerControllerPadding;
-
-    if (@available(iOS 11.0, *)) {
-        UIWindow *window = [UIApplication sharedApplication].keyWindow;
-
-        // If the orientation has a bar without inset
-        if (window.safeAreaInsets.top == 0 && statusBarShowing) {
-            [UAInAppMessageUtils applyPaddingForAttribute:NSLayoutAttributeTop
-                                                   onView:self.bannerView.containerView
-                                                  padding:styledDefaultBannerTopPadding
-                                                  replace:YES];
-            [self.bannerView layoutIfNeeded];
-            return;
-        }
-
-        // If the orientation has a bar with inset
-        if (window.safeAreaInsets.top > 0 && statusBarShowing) {
-            CGFloat adjustedDefaultPadding = window.safeAreaInsets.top - BannerExcessiveSafeAreaPadding;
-            CGFloat adjustedCustomPadding = adjustedDefaultPadding + [self.style.additionalPadding.top floatValue];
-
-            CGFloat topPadding = self.style.additionalPadding.top ?  adjustedCustomPadding : adjustedDefaultPadding;
-
-            [UAInAppMessageUtils applyPaddingForAttribute:NSLayoutAttributeTop
-                                                   onView:self.bannerView.containerView
-                                                  padding:topPadding
-                                                  replace:YES];
-            [self.bannerView layoutIfNeeded];
-            return;
-        }
-    } else {
-        // If status bar is showing
-        if (statusBarShowing) {
-            [UAInAppMessageUtils applyPaddingForAttribute:NSLayoutAttributeTop
-                                                   onView:self.bannerView.containerView
-                                                  padding:styledDefaultBannerTopPadding
-                                                  replace:YES];
-            [self.bannerView layoutIfNeeded];
-            return;
-        }
+    
+    UIWindow *window = [UIApplication sharedApplication].keyWindow;
+    
+    // If the orientation has a bar without inset
+    if (window.safeAreaInsets.top == 0 && statusBarShowing) {
+        [UAInAppMessageUtils applyPaddingForAttribute:NSLayoutAttributeTop
+                                               onView:self.bannerView.containerView
+                                              padding:styledDefaultBannerTopPadding
+                                              replace:YES];
+        [self.bannerView layoutIfNeeded];
+        return;
+    }
+    
+    // If the orientation has a bar with inset
+    if (window.safeAreaInsets.top > 0 && statusBarShowing) {
+        CGFloat adjustedDefaultPadding = window.safeAreaInsets.top - BannerExcessiveSafeAreaPadding;
+        CGFloat adjustedCustomPadding = adjustedDefaultPadding + [self.style.additionalPadding.top floatValue];
+        
+        CGFloat topPadding = self.style.additionalPadding.top ?  adjustedCustomPadding : adjustedDefaultPadding;
+        
+        [UAInAppMessageUtils applyPaddingForAttribute:NSLayoutAttributeTop
+                                               onView:self.bannerView.containerView
+                                              padding:topPadding
+                                              replace:YES];
+        [self.bannerView layoutIfNeeded];
+        return;
     }
 
     // Otherwise remove top padding

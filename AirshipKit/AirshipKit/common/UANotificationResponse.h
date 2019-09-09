@@ -8,7 +8,7 @@ NS_ASSUME_NONNULL_BEGIN
 @class UNNotificationResponse;
 
 /**
- * Clone of UNNotificationResponse for iOS 8-9 support. Contains the
+ * iOS version-independent wrapper for UNNotificationResponse. Contains the
  * user's reponse to a notification.
  */
 @interface UANotificationResponse : NSObject
@@ -45,7 +45,6 @@ extern NSString *const UANotificationDismissActionIdentifier;
 #if !TARGET_OS_TV    // UNNotificationResponse not available on tvOS
 /**
  * The UNNotificationResponse that generated the UANotificationResponse.
- * Note: Only available on iOS 10+. Will be nil otherwise.
  */
 @property (nonatomic, readonly, nullable, strong) UNNotificationResponse *response;
 

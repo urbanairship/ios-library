@@ -52,7 +52,7 @@ NSString * const UAModulesLocation = @"location";
                        UAModulesAnalytics : NSStringFromSelector(@selector(sharedAnalytics)),
                        UAModulesAutomation : NSStringFromSelector(@selector(sharedAutomation)),
                        UAModulesNamedUser : NSStringFromSelector(@selector(sharedNamedUser)),
-#if !TARGET_OS_TV
+#if !TARGET_OS_TV  // Inbox and IAM not available on tvOS
                        UAModulesMessageCenter : NSStringFromSelector(@selector(sharedInbox)),
                        UAModulesInAppMessaging : NSStringFromSelector(@selector(sharedInAppMessageManager)),
 #endif

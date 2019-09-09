@@ -31,7 +31,7 @@
     return [[self alloc] initWithIdentifier:identifier title:title options:options];
 }
 
-#if !TARGET_OS_TV    //UNNotificationAction not available on tvOS
+#if !TARGET_OS_TV    // UNNotificationAction not available on tvOS
 - (UNNotificationAction *)asUNNotificationAction {
     return [UNNotificationAction actionWithIdentifier:self.identifier
                                                 title:self.title

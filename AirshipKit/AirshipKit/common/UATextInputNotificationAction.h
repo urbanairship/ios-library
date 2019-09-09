@@ -5,11 +5,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /**
- * Clone of UNTextInputNotificationAction for iOS 8-10 support.
- *
- * Note that in iOS 8, UATextInputNotificationAction actions will not be registered 
- * as custom actions with the operating system, as text input notification actions 
- * are not supported in iOS 8.
+ * iOS version-independent wrapper for UNTextInputNotificationAction.
  */
 @interface UATextInputNotificationAction : UANotificationAction
 

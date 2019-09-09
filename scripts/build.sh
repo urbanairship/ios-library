@@ -306,7 +306,7 @@ then
   -project "${ROOT_PATH}/AirshipKit/AirshipKit.xcodeproj" \
   -target "AirshipLib" \
   -sdk "iphonesimulator" \
-  -arch i386 -arch x86_64 \
+  -arch x86_64 \
   build \
   ONLY_ACTIVE_ARCH=NO \
   RUN_CLANG_STATIC_ANALYZER=NO \
@@ -328,7 +328,7 @@ then
 
   # Verify architectures in the fat binary
   echo "☠️ ⛑ If the build fails at this step, it means one of the architectures is missing. 👉 Run 'xcrun -sdk iphoneos lipo \"${TEMP_DIR}/AirshipLib/libUAirship-${VERSION}.a\" -detailed_info' for more info. 👈 ⛑ ☠️"
-  xcrun -sdk iphoneos lipo "${TEMP_DIR}/AirshipLib/libUAirship-${VERSION}.a" -verify_arch armv7 i386 x86_64 arm64
+  xcrun -sdk iphoneos lipo "${TEMP_DIR}/AirshipLib/libUAirship-${VERSION}.a" -verify_arch x86_64 arm64
 
   # Verify bitcode is enabled in the fat binary
   otool -l "${TEMP_DIR}/AirshipLib/libUAirship-${VERSION}.a" | grep __LLVM
@@ -354,7 +354,7 @@ then
   -project "${ROOT_PATH}/AirshipLocationKit/AirshipLocationKit.xcodeproj" \
   -target "AirshipLocationLib" \
   -sdk "iphonesimulator" \
-  -arch i386 -arch x86_64 \
+  -arch x86_64 \
   build \
   ONLY_ACTIVE_ARCH=NO \
   RUN_CLANG_STATIC_ANALYZER=NO \
@@ -369,11 +369,11 @@ then
 
   # Verify architectures in the fat binary
   echo "☠️ ⛑ If the build fails at this step, it means one of the architectures is missing. 👉 Run 'xcrun -sdk iphoneos lipo \"${TEMP_DIR}/AirshipLocationLib/libUALocation-${VERSION}.a\" -detailed_info' for more info. 👈 ⛑ ☠️"
-  xcrun -sdk iphoneos lipo "${TEMP_DIR}/AirshipLocationLib/libUALocation-${VERSION}.a" -verify_arch i386 x86_64 arm64
+  xcrun -sdk iphoneos lipo "${TEMP_DIR}/AirshipLocationLib/libUALocation-${VERSION}.a" -verify_arch x86_64 arm64
 
   # Verify bitcode is enabled in the fat binary
   otool -arch arm64 -l "${TEMP_DIR}/AirshipLocationLib/libUALocation-${VERSION}.a" | grep __LLVM
-  otool -arch armv7 -l "${TEMP_DIR}/AirshipLocationLib/libUALocation-${VERSION}.a" | grep __LLVM
+
 fi
 
 ######################

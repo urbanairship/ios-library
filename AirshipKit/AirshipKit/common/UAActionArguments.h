@@ -86,7 +86,7 @@ extern NSString * const UAActionMetadataUserNotificationActionIDKey;
 /**
  * Metadata key for the user notification action response info. Available when an
  * action is triggered from a user notification action with the behavior
- * `UIUserNotificationActionBehaviorTextInput` (iOS 9 and above).
+ * `UIUserNotificationActionBehaviorTextInput`.
  */
 extern NSString * const UAActionMetadataResponseInfoKey;
 

@@ -23,8 +23,6 @@ NS_ASSUME_NONNULL_BEGIN
  * Must be called by the UNUserNotificationDelegate's
  * userNotificationCenter:willPresentNotification:withCompletionHandler.
  *
- * Note: This method is relevant only for iOS 10 and above.
- *
  * @param center The notification center.
  * @param response The notification response.
  * @param completionHandler A completion handler.
@@ -37,8 +35,6 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Must be called by the UNUserNotificationDelegate's
  * userNotificationCenter:willPresentNotification:withCompletionHandler.
- *
- * Note: this method is relevant only for iOS 10 and above.
  *
  * @param center The notification center.
  * @param notification The notification about to be presented.

@@ -13,7 +13,7 @@ Pod::Spec.new do |s|
 
     s.module_name = "AirshipAppExtensions"
     s.requires_arc = true
-    s.ios.deployment_target   = "10.0"
+    s.ios.deployment_target   = "11.0"
     s.ios.source_files      = 'AirshipAppExtensions/AirshipAppExtensions/*.{h,m,mm}'
     s.ios.weak_frameworks = 'UserNotifications'
 end

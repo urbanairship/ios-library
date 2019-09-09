@@ -36,7 +36,7 @@ extern NSString *const UAEnableBackgroundLocationActionValue;
  * UASituationWebViewInvocation, UASituationManualInvocation,
  * UASituationForegroundInteractiveButton, and UASituationAutomation
  *
- * Default predicate: Rejects foreground pushes with visible display options on iOS 10 and above.
+ * Default predicate: Rejects foreground pushes with visible display options.
  *
  * Result value: Empty.
  */

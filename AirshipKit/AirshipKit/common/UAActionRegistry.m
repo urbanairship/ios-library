@@ -13,7 +13,7 @@
 #import "UAFetchDeviceInfoAction.h"
 #import "UAEnableFeatureAction.h"
 
-#if !TARGET_OS_TV
+#if !TARGET_OS_TV   // Inbox and other features not supported on tvOS
 #import "UADisplayInboxAction.h"
 #import "UAPasteboardAction.h"
 #import "UAOverlayInboxMessageAction.h"

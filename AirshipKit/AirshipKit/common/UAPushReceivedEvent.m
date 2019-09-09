@@ -5,7 +5,7 @@
 #import "UAEvent+Internal.h"
 #import "UAAnalytics+Internal.h"
 
-#if !TARGET_OS_TV
+#if !TARGET_OS_TV   // Inbox not supported on tvOS
 #import "UAInboxUtils.h"
 #endif
 

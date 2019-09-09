@@ -16,7 +16,7 @@
 #import "UANotificationContent.h"
 #import "UAirship+Internal.h"
 
-#if !TARGET_OS_TV
+#if !TARGET_OS_TV   // Inbox not supported on tvOS
 #import "UAInbox+Internal.h"
 #import "UAInboxMessageList.h"
 #import "UAInboxUtils.h"

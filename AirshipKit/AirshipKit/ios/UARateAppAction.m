@@ -21,8 +21,6 @@
 
 @implementation UARateAppAction
 
-BOOL legacy;
-
 int const kMaxTitleChars = 24;
 int const kMaxBodyChars = 50;
 
@@ -41,14 +39,14 @@ NSString *const UARateAppPromptTimestampsKey = @"RateAppActionPromptCount";
 NSString *const UARateAppLinkPromptTimestampsKey = @"RateAppActionLinkPromptCount";
 
 - (void)performWithArguments:(UAActionArguments *)arguments
-           completionHandler:(UAActionCompletionHandler)completionHandler NS_AVAILABLE_IOS(10.3) {
+           completionHandler:(UAActionCompletionHandler)completionHandler {
 
     if (![self parseArguments:arguments]) {
         return;
     }
 
     // Display SKStoreReviewController
-    if (!legacy && self.showLinkPrompt) {
+    if (self.showLinkPrompt) {
         [self displaySystemLinkPrompt];
         completionHandler([UAActionResult emptyResult]);
         return;
@@ -72,8 +70,6 @@ NSString *const UARateAppLinkPromptTimestampsKey = @"RateAppActionLinkPromptCoun
     if (self.systemVersion == nil) {
         self.systemVersion = [UASystemVersion systemVersion];
     }
-
-    legacy = ![self.systemVersion isGreaterOrEqualToVersion:@"10.3.0"];
 
     id showLinkPrompt;
     id linkPromptTitle;
@@ -147,7 +143,7 @@ NSString *const UARateAppLinkPromptTimestampsKey = @"RateAppActionLinkPromptCoun
     return YES;
 }
 
--(void)displaySystemLinkPrompt NS_AVAILABLE_IOS(10.3) {
+-(void)displaySystemLinkPrompt {
     [SKStoreReviewController requestReview];
 
     [self storeTimestamp:UARateAppPromptTimestampsKey];
@@ -205,7 +201,7 @@ NSString *const UARateAppLinkPromptTimestampsKey = @"RateAppActionLinkPromptCoun
     [[UIApplication sharedApplication] openURL:[NSURL URLWithString:linkString] options:@{} completionHandler:nil];
 }
 
-// Rate app action for iOS 8+ with application's track ID using a store URL link
+// Rate app action with application's track ID using a store URL link
 -(void)displayLinkPrompt:(NSString *)linkString {
 
     if (![self canLinkToStore:linkString]) {

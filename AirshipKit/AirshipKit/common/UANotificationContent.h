@@ -7,7 +7,7 @@ NS_ASSUME_NONNULL_BEGIN
 @class UNNotification;
 
 /**
- * Clone of UNNotificationContent for iOS 8-9 support. Contains convenient accessors
+ * iOS version-independent wrapper for UNNotificationContent. Contains convenient accessors
  * to the notification's content.
  */
 @interface UANotificationContent : NSObject
@@ -83,8 +83,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * UNNotification used to generate the UANotification.
- * This will be nil on iOS versions prior to 10.0, or when receiving silent,
- * `content-available` pushes in the background.
+ * This will be nil when receiving silent, `content-available` pushes in the background.
  */
 @property (nonatomic, strong, nullable, readonly) UNNotification *notification;
 
