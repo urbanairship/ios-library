@@ -116,6 +116,7 @@
 #import "UAInAppMessageModalDisplayContent.h"
 #import "UAInAppMessageModalStyle.h"
 #import "UAInAppMessageResolution.h"
+#import "UAInAppMessageSceneManager.h"
 #import "UAInAppMessageScheduleEdits.h"
 #import "UAInAppMessageScheduleInfo.h"
 #import "UAInAppMessageStyleProtocol.h"

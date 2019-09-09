@@ -147,8 +147,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
                                                                 remoteDataManager:self.sharedRemoteDataManager
                                                                         dataStore:dataStore
                                                                           channel:self.sharedChannel
-                                                                        analytics:self.sharedAnalytics
-                                                                     sceneTracker:[UASceneTracker sceneObserver:[NSNotificationCenter defaultCenter]]];
+                                                                        analytics:self.sharedAnalytics];
 
         self.sharedLegacyInAppMessaging = [UALegacyInAppMessaging inAppMessagingWithAnalytics:self.sharedAnalytics dataStore:dataStore inAppMessageManager:self.sharedInAppMessageManager];
 

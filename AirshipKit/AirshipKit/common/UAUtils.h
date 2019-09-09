@@ -123,7 +123,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param scene The scene in which to find the window.
  * @return The main window, or `nil` if the window cannot be found.
  */
-+ (nullable UIWindow *)mainWindow:(UIWindowScene *)scene API_AVAILABLE(ios(13.0));
++ (nullable UIWindow *)mainWindow:(nullable UIWindowScene *)scene API_AVAILABLE(ios(13.0));
 
 /**
  * Returns the window containing the provided view.

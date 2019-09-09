@@ -9,7 +9,7 @@
 #import "UAInAppMessageUtils+Internal.h"
 #import "UAUtils+Internal.h"
 #import "UAInAppMessageResizableViewController+Internal.h"
-
+#import "UAInAppMessageSceneManager.h"
 
 NSString *const UAModalStyleFileName = @"UAInAppMessageModalStyle";
 
@@ -71,13 +71,13 @@ NSString *const UAModalStyleFileName = @"UAInAppMessageModalStyle";
 
 - (void)display:(void (^)(UAInAppMessageResolution *))completionHandler {
     [self createContainerViewController];
-    [self.resizableContainerViewController showWithCompletionHandler:completionHandler];
-}
 
-- (void)display:(void (^)(UAInAppMessageResolution *))completionHandler
-          scene:(UIWindowScene *)scene API_AVAILABLE(ios(13.0)){
-    [self createContainerViewController];
-    [self.resizableContainerViewController showWithCompletionHandler:completionHandler scene:scene];
+    if (@available(iOS 13.0, *)) {
+          UIWindowScene *scene = [[UAInAppMessageSceneManager shared] sceneForMessage:self.message];
+          [self.resizableContainerViewController showWithScene:scene completionHandler:completionHandler];
+      } else {
+          [self.resizableContainerViewController showWithCompletionHandler:completionHandler];
+      }
 }
 
 @end

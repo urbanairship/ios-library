@@ -485,14 +485,16 @@ NSString *const UAInAppMessageFullScreenViewNibName = @"UAInAppMessageFullScreen
     [self displayWindow:completionHandler];
 }
 
-- (void)showWithCompletionHandler:(void (^)(UAInAppMessageResolution * _Nonnull))completionHandler scene:(UIWindowScene *)scene {
+- (void)showWithScene:(nullable UIWindowScene *)scene completionHandler:(void (^)(UAInAppMessageResolution * _Nonnull))completionHandler {
     if (self.isShowing) {
         UA_LTRACE(@"In-app message resizable view has already been displayed");
         return;
     }
 
     [self createWindow];
-    self.fullScreenWindow.windowScene = scene;
+    if (scene) {
+        self.fullScreenWindow.windowScene = scene;
+    }
     [self observeSceneEvents];
     [self displayWindow:completionHandler];
 }

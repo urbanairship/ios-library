@@ -332,14 +332,16 @@ double const DefaultResizableViewAnimationDuration = 0.2;
     [self displayWindow:completionHandler];
 }
 
-- (void)showWithCompletionHandler:(void (^)(UAInAppMessageResolution * _Nonnull))completionHandler scene:(UIWindowScene *)scene {
+- (void)showWithScene:(UIWindowScene *)scene completionHandler:(void (^)(UAInAppMessageResolution * _Nonnull))completionHandler {
     if (self.isShowing) {
         UA_LTRACE(@"In-app message resizable view has already been displayed");
         return;
     }
 
     [self createWindow];
-    self.topWindow.windowScene = scene;
+    if (scene) {
+        self.topWindow.windowScene = scene;
+    }
     [self observeSceneEvents];
     [self displayWindow:completionHandler];
 }
