@@ -21,6 +21,7 @@
 #include <sys/types.h>
 #include <sys/sysctl.h>
 #include <sys/xattr.h>
+#include <sys/utsname.h>
 #include <netinet/in.h>
 
 @implementation UAUtils
@@ -85,30 +86,11 @@
 }
 
 + (NSString *)deviceModelName {
-    size_t size;
-    
-    // Set 'oldp' parameter to NULL to get the size of the data
-    // returned so we can allocate appropriate amount of space
-    sysctlbyname("hw.machine", NULL, &size, NULL, 0);
+    struct utsname systemInfo;
+    uname(&systemInfo);
 
-    char *name;
-    
-    // Allocate the space to store name
-    if (!(name = malloc(size))) {
-        UA_LERR(@"Out of memory");
-        return @"";
-    };
-    
-    // Get the platform name
-    sysctlbyname("hw.machine", name, &size, NULL, 0);
-    
-    // Place name into a string
-    NSString *machine = [NSString stringWithCString:name encoding:NSUTF8StringEncoding];
-    
-    // Done with this
-    free(name);
-    
-    return machine;
+    return [NSString stringWithCString:systemInfo.machine
+                              encoding:NSUTF8StringEncoding];
 }
 
 + (NSString *)pluralize:(int)count singularForm:(NSString*)singular
