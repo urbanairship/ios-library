@@ -21,7 +21,7 @@
 #import "UADispatcher+Internal.h"
 #import "UAAppStateTrackerFactory.h"
 
-#if !TARGET_OS_TV
+#if !TARGET_OS_TV  // Inbox not supported on tvOS
 #import "UAInboxUtils.h"
 #endif
 
@@ -110,7 +110,7 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
         self.backgroundPushNotificationsEnabledByDefault = YES;
 
         self.notificationOptions = UANotificationOptionBadge;
-#if !TARGET_OS_TV
+#if !TARGET_OS_TV  // Sound and Alert not supported on tvOS
         self.notificationOptions = self.notificationOptions|UANotificationOptionSound|UANotificationOptionAlert;
 #endif
 
@@ -164,12 +164,11 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
 }
 
 - (void)observeNotificationCenterEvents {
-#if !TARGET_OS_TV    // UIApplicationBackgroundRefreshStatusDidChangeNotification not available on tvOS
     [self.notificationCenter addObserver:self
                                 selector:@selector(applicationBackgroundRefreshStatusChanged)
                                     name:UIApplicationBackgroundRefreshStatusDidChangeNotification
                                   object:nil];
-#endif
+
     [self.notificationCenter addObserver:self
                                 selector:@selector(channelUpdated:)
                                     name:UAChannelUpdatedEvent
@@ -550,7 +549,6 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
     [self updateAuthorizedNotificationTypes];
 }
 
-#if !TARGET_OS_TV    // UIBackgroundRefreshStatusAvailable not available on tvOS
 - (void)applicationBackgroundRefreshStatusChanged {
     UA_LTRACE(@"Background refresh status changed.");
 
@@ -560,7 +558,6 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
         [self updateRegistration];
     }
 }
-#endif
 
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
     self.deviceToken = [UAUtils deviceTokenStringFromDeviceToken:deviceToken];
@@ -596,13 +593,11 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
 - (BOOL)isBackgroundRefreshStatusAvailable {
     __block BOOL available = NO;
 
-#if !TARGET_OS_TV    // UIBackgroundRefreshStatusAvailable not available on tvOS
     UA_WEAKIFY(self)
     [self.dispatcher doSync:^{
         UA_STRONGIFY(self)
         available = self.application.backgroundRefreshStatus == UIBackgroundRefreshStatusAvailable;
     }];
-#endif
 
     return available;
 }
@@ -625,11 +620,10 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
 
     BOOL backgroundPushAllowed = self.isRegisteredForRemoteNotifications;
 
-#if !TARGET_OS_TV
     if (!self.isBackgroundRefreshStatusAvailable) {
         backgroundPushAllowed = NO;
     }
-#endif
+
     return backgroundPushAllowed;
 }
 
@@ -784,7 +778,7 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
 - (NSArray *)foregroundPresentationOptionsForNotification:(UNNotification *)notification {
     
     NSArray *presentationOptions = nil;
-#if !TARGET_OS_TV
+#if !TARGET_OS_TV   // UNNotificationContent.userInfo not available on tvOS
     // get the presentation options from the the notification
     presentationOptions = [notification.request.content.userInfo objectForKey:UAForegroundPresentationkey];
 #endif

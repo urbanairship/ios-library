@@ -10,22 +10,16 @@
 
 /**
  * The intents supported by notifications of this category.
- *
- * Note: This property is only applicable on iOS 10 and above.
  */
 @property(nonatomic, copy, nullable) NSArray<NSString *> *intentIdentifiers;
 
 /**
  * Flag to indicate a placeholder string was specified.
- *
- * Note: This property is only applicable on iOS 11 and above.
  */
 @property(assign, nonatomic) BOOL hiddenPreviewsBodyPlaceholderSpecified;
 
 /**
  * A placeholder string to display when the user has disabled notification previews for the app.
- *
- * Note: This property is only applicable on iOS 11 and above.
  */
 @property(copy, nonatomic) NSString *hiddenPreviewsBodyPlaceholder;
 
@@ -155,14 +149,7 @@
             return [UNNotificationCategory categoryWithIdentifier:self.identifier actions:actions intentIdentifiers:self.intentIdentifiers hiddenPreviewsBodyPlaceholder:self.hiddenPreviewsBodyPlaceholder categorySummaryFormat:self.categorySummaryFormat options:(UNNotificationCategoryOptions)self.options];
     }
 
-    if (@available(iOS 11.0, *)) {
-            return [UNNotificationCategory categoryWithIdentifier:self.identifier actions:actions intentIdentifiers:self.intentIdentifiers hiddenPreviewsBodyPlaceholder:self.hiddenPreviewsBodyPlaceholder options:(UNNotificationCategoryOptions)self.options];
-    }
-
-    return [UNNotificationCategory categoryWithIdentifier:self.identifier
-                                                  actions:actions
-                                        intentIdentifiers:self.intentIdentifiers
-                                                  options:(UNNotificationCategoryOptions)self.options];
+    return [UNNotificationCategory categoryWithIdentifier:self.identifier actions:actions intentIdentifiers:self.intentIdentifiers hiddenPreviewsBodyPlaceholder:self.hiddenPreviewsBodyPlaceholder options:(UNNotificationCategoryOptions)self.options];
 }
 
 - (BOOL)isEqualToUNNotificationCategory:(UNNotificationCategory *)category {
@@ -186,10 +173,8 @@
         return NO;
     }
 
-    if (@available(iOS 11.0, *)) {
-        if (![self.hiddenPreviewsBodyPlaceholder isEqualToString:[category valueForKey:@"hiddenPreviewsBodyPlaceholder"]]) {
-            return NO;
-        }
+    if (![self.hiddenPreviewsBodyPlaceholder isEqualToString:[category valueForKey:@"hiddenPreviewsBodyPlaceholder"]]) {
+        return NO;
     }
 
     if (@available(iOS 12.0, *)) {

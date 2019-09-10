@@ -46,7 +46,7 @@ NSString * const UAAddCustomEventActionErrorDomain = @"UAAddCustomEventActionErr
     } else {
         id message = [arguments.metadata objectForKey:UAActionMetadataInboxMessageKey];
         if (message) {
-#if !TARGET_OS_TV
+#if !TARGET_OS_TV   // Inbox not supported on tvOS
             [event setInteractionFromMessage:message];
 #endif
         }

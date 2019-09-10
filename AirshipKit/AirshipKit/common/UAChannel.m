@@ -102,12 +102,10 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
 }
 
 - (void)observeNotificationCenterEvents {
-#if !TARGET_OS_TV    // UIApplicationBackgroundRefreshStatusDidChangeNotification not available on tvOS
     [self.notificationCenter addObserver:self
                                 selector:@selector(applicationBackgroundRefreshStatusChanged)
                                     name:UIApplicationBackgroundRefreshStatusDidChangeNotification
                                   object:nil];
-#endif
 }
 
 - (void)reset {
@@ -147,12 +145,10 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
     }
 }
 
-#if !TARGET_OS_TV    // UIBackgroundRefreshStatusAvailable not available on tvOS
 - (void)applicationBackgroundRefreshStatusChanged {
     UA_LTRACE(@"Background refresh status changed.");
     [self updateRegistration];
 }
-#endif
 
 #pragma mark -
 #pragma mark Channel Tags

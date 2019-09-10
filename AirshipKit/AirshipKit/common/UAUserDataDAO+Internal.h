@@ -1,22 +1,23 @@
 /* Copyright Airship and Contributors */
 
 #import <Foundation/Foundation.h>
-#import <UIKit/UIKit.h>
-#import "UAComponent.h"
 #import "UAUserData.h"
+#import "UADispatcher+Internal.h"
+#import "UARuntimeConfig.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-extern NSString * const UAUserCreatedNotification;
+/**
+ * Data access object for user data.
+ */
+@interface UAUserDataDAO : NSObject
 
 /**
- * Primary interface for working with the application's associated Airship user.
+ * User DAO factory method.
+ * @param config The runtime config.
+ * @return A user DAO object.
  */
-@interface UAUser : UAComponent
-
-///---------------------------------------------------------------------------------------
-/// @name User Properties
-///---------------------------------------------------------------------------------------
++ (instancetype)userDataDAOWithConfig:(UARuntimeConfig *)config;
 
 /**
  * Gets the data associated with the user.
@@ -34,6 +35,15 @@ extern NSString * const UAUserCreatedNotification;
 - (void)getUserData:(void (^)(UAUserData *))completionHandler;
 
 /**
+ * Gets the data associated with the user.
+ *
+ * @param completionHandler A completion handler which will be called with the user data.
+ * @param dispatcher The dispatcher on which to invoked the completion handler.
+ */
+- (void)getUserData:(void (^)(UAUserData * _Nullable))completionHandler dispatcher:(nullable UADispatcher *)dispatcher;
+
+
+/**
  * Gets the data associated with the user, synchronously.
  *
  * Note: This method may block the calling thread, and thus should be avoided while working on the main queue.
@@ -42,7 +52,16 @@ extern NSString * const UAUserCreatedNotification;
  */
 - (nullable UAUserData *)getUserDataSync;
 
+/**
+ * Save username and password data to disk.
+ */
+- (void)saveUserData:(UAUserData *)data completionHandler:(void (^)(BOOL))completionHandler;
+
+/**
+ * Removes the existing user from the keychain.
+ */
+- (void)clearUser;
+
 @end
 
 NS_ASSUME_NONNULL_END
-

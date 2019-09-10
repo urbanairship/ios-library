@@ -1,4 +1,4 @@
-AIRSHIP_VERSION="12.0.0-beta.2"
+AIRSHIP_VERSION="12.0.0-beta.3"
 
 Pod::Spec.new do |s|
    s.version                 = AIRSHIP_VERSION
@@ -13,8 +13,8 @@ Pod::Spec.new do |s|
    s.source                  = { :git => "https://github.com/urbanairship/ios-library.git", :tag => s.version.to_s }
 
    s.module_name             = "AirshipKit"
-   s.ios.deployment_target   = "10.0"
-   s.tvos.deployment_target  = "10.0"
+   s.ios.deployment_target   = "11.0"
+   s.tvos.deployment_target  = "11.0"
    s.requires_arc            = true
 
    s.ios.resource_bundle     = { 'AirshipResources' =>  ['AirshipKit/AirshipResources/common/*', 'AirshipKit/AirshipResources/ios/*'] }

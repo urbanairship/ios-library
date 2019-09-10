@@ -8,16 +8,14 @@
 #import "UAirship+Internal.h"
 #import "UAUserAPIClient+Internal.h"
 #import "UAUser+Internal.h"
-#import "UAUserData.h"
+#import "UAUserData+Internal.h"
 #import "UAJSONSerialization+Internal.h"
 
 @interface UAUserAPIClientTest : UABaseTest
 @property (nonatomic, strong) UAUserAPIClient *client;
 @property (nonatomic, strong) id mockRequest;
 @property (nonatomic, strong) id mockSession;
-@property (nonatomic, strong) id mockUAUtils;
-@property (nonatomic, strong) id mockUser;
-
+@property (nonatomic, strong) UAUserData *userData;
 @end
 
 @implementation UAUserAPIClientTest
@@ -29,34 +27,7 @@
     self.mockRequest = [self mockForClass:[UARequest class]];
     self.client = [UAUserAPIClient clientWithConfig:self.config session:self.mockSession];
 
-    self.mockUAUtils = [self mockForClass:[UAUtils class]];
-
-    [[[self.mockUAUtils stub] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:2];
-        void (^completionHandler)(NSString *)  = (__bridge void (^)(NSString *)) arg;
-        completionHandler(@"deviceID");
-    }] getDeviceID:OCMOCK_ANY dispatcher:OCMOCK_ANY] ;
-
-    self.mockUser = [self mockForClass:[UAUser class]];
-
-    UAUserData *userData = [UAUserData dataWithUsername:@"username" password:@"password" url:@"url"];
-
-    [[[self.mockUser stub] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:2];
-        void (^completionHandler)(UAUserData * _Nullable) = (__bridge void (^)(UAUserData * _Nullable)) arg;
-        completionHandler(userData);
-    }] getUserData:OCMOCK_ANY];
-}
-
-- (void)tearDown {
-    [self.mockRequest stopMocking];
-    [self.mockUAUtils stopMocking];
-    [self.mockUser stopMocking];
-    [self.mockSession stopMocking];
-
-    [super tearDown];
+    self.userData = [UAUserData dataWithUsername:@"username" password:@"password"];
 }
 
 /**
@@ -89,7 +60,7 @@
                                  completionHandler:OCMOCK_ANY];
 
     [self.client createUserWithChannelID:@"channelID"
-                               onSuccess:^(UAUserData *data, NSDictionary *payload){
+                               onSuccess:^(UAUserData *data){
                                    XCTFail(@"Should not be called");
                                }
                                onFailure:^(NSUInteger statusCode){
@@ -125,7 +96,7 @@
     __block UAUserData *successData;
 
     [self.client createUserWithChannelID:@"channelID"
-                               onSuccess:^(UAUserData *data, NSDictionary *payload){
+                               onSuccess:^(UAUserData *data){
                                    successData = data;
                                }
                                onFailure:^(NSUInteger statusCode){
@@ -136,7 +107,6 @@
 
     XCTAssertEqualObjects(successData.username, [responseDict valueForKey:@"user_id"]);
     XCTAssertEqualObjects(successData.password, [responseDict valueForKey:@"password"]);
-    XCTAssertEqualObjects(successData.url, [responseDict valueForKey:@"user_url"]);
 }
 
 /**
@@ -164,10 +134,10 @@
     __block NSUInteger failureStatusCode = 0;
 
     [self.client createUserWithChannelID:@"channelID"
-                               onSuccess:^(UAUserData *data, NSDictionary *payload){
+                               onSuccess:^(UAUserData *data) {
                                    XCTFail(@"Should not be called");
                                }
-                               onFailure:^(NSUInteger statusCode){
+                               onFailure:^(NSUInteger statusCode) {
                                    failureStatusCode = statusCode;
                                }];
 
@@ -180,7 +150,7 @@
  * Test create user request with a channel ID
  */
 -(void)testCreateUserRequestChannelID {
-    NSDictionary *expectedRequestBody = @{@"ua_device_id": @"deviceID", @"ios_channels": @[@"channelID"]};
+    NSDictionary *expectedRequestBody = @{@"ios_channels": @[@"channelID"]};
 
     BOOL (^checkRequestBlock)(id obj) = ^(id obj) {
         UARequest *request = obj;
@@ -217,10 +187,10 @@
                                  completionHandler:OCMOCK_ANY];
 
 
-    [self.client createUserWithChannelID:@"channelID" onSuccess:^(UAUserData * _Nonnull data, NSDictionary * _Nonnull payload) {
+    [self.client createUserWithChannelID:@"channelID" onSuccess:^(UAUserData * _Nonnull data) {
     } onFailure:^(NSUInteger statusCode) {
     }];
-    
+
     [self.mockSession verify];
 }
 
@@ -253,14 +223,14 @@
                                         retryWhere:[OCMArg checkWithBlock:retryBlockCheck]
                                  completionHandler:OCMOCK_ANY];
 
-    [self.client updateUser:self.mockUser
-                  channelID:@"channelID"
-                  onSuccess:^(){
-                      XCTFail(@"Should not be called");
-                  }
-                  onFailure:^(NSUInteger statusCode){
-                      XCTFail(@"Should not be called");
-                  }];
+    [self.client updateUserWithData:self.userData
+                          channelID:@"channelID"
+                          onSuccess:^(){
+                              XCTFail(@"Should not be called");
+                          }
+                          onFailure:^(NSUInteger statusCode){
+                              XCTFail(@"Should not be called");
+                          }];
 
 
     XCTAssertNoThrow([self.mockSession verify], @"Update user should call retry on 5xx status codes");
@@ -290,14 +260,14 @@
 
     __block BOOL successBlockCalled = false;
 
-    [self.client updateUser:self.mockUser
-                  channelID:@"channelID"
-                  onSuccess:^(){
-                      successBlockCalled = YES;
-                  }
-                  onFailure:^(NSUInteger statusCode){
-                      XCTFail(@"Should not be called");
-                  }];
+    [self.client updateUserWithData:self.userData
+                          channelID:@"channelID"
+                          onSuccess:^(){
+                              successBlockCalled = YES;
+                          }
+                          onFailure:^(NSUInteger statusCode){
+                              XCTFail(@"Should not be called");
+                          }];
 
     XCTAssertNoThrow([self.mockSession verify], @"Update user should succeed on 200.");
 
@@ -328,14 +298,14 @@
 
     __block NSUInteger failureStatusCode = 0;
 
-    [self.client updateUser:self.mockUser
-                  channelID:@"channelID"
-                  onSuccess:^(){
-                      XCTFail(@"Should not be called");
-                  }
-                  onFailure:^(NSUInteger statusCode){
-                      failureStatusCode = statusCode;
-                  }];
+    [self.client updateUserWithData:self.userData
+                          channelID:@"channelID"
+                          onSuccess:^(){
+                              XCTFail(@"Should not be called");
+                          }
+                          onFailure:^(NSUInteger statusCode){
+                              failureStatusCode = statusCode;
+                          }];
 
     XCTAssertNoThrow([self.mockSession verify], @"Update user should fail on 400.");
 
@@ -391,14 +361,15 @@
 
     XCTestExpectation *expectation = [self expectationWithDescription:@"update succeeded"];
 
-    [self.client updateUser:self.mockUser channelID:@"channelID" onSuccess:^() {
+    [self.client updateUserWithData:self.userData channelID:@"channelID" onSuccess:^() {
         [expectation fulfill];
     } onFailure:^(NSUInteger statusCode) {
     }];
 
     [self waitForExpectationsWithTimeout:1.0 handler:nil];
-    
+
     [self.mockSession verify];
 }
 
 @end
+

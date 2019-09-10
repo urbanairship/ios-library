@@ -6,6 +6,7 @@
 #import "UAInAppMessageBannerController+Internal.h"
 #import "UAInAppMessageUtils+Internal.h"
 #import "UAUtils+Internal.h"
+#import "UAInAppMessageSceneManager.h"
 
 NSString *const UABannerStyleFileName = @"UAInAppMessageBannerStyle";
 
@@ -51,15 +52,14 @@ NSString *const UABannerStyleFileName = @"UAInAppMessageBannerStyle";
 }
 
 - (void)display:(void (^)(UAInAppMessageResolution *))completionHandler {
-    [self.bannerController showWithParentView:[UAUtils mainWindow]
-                            completionHandler:completionHandler];
-
-}
-
-- (void)display:(void (^)(UAInAppMessageResolution *))completionHandler
-          scene:(UIWindowScene *)scene  API_AVAILABLE(ios(13.0)){
-    [self.bannerController showWithParentView:[UAUtils mainWindow:scene]
-                            completionHandler:completionHandler];
+    if (@available(iOS 13.0, *)) {
+        UIWindowScene *scene = [[UAInAppMessageSceneManager shared] sceneForMessage:self.message];
+        [self.bannerController showWithParentView:[UAUtils mainWindow:scene]
+                                completionHandler:completionHandler];
+    } else {
+        [self.bannerController showWithParentView:[UAUtils mainWindow]
+                                completionHandler:completionHandler];
+    }
 }
 
 @end

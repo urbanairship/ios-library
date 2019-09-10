@@ -15,7 +15,7 @@
 #import "UAColorUtils+Internal.h"
 #import "UAGlobal.h"
 
-#if !TARGET_OS_TV
+#if !TARGET_OS_TV   // Inbox not supported on tvOS
 #import "UAInboxUtils.h"
 #import "UADisplayInboxAction.h"
 #import "UAOverlayInboxMessageAction.h"

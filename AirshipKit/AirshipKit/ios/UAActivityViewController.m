@@ -19,7 +19,7 @@
     return CGRectInset(windowBounds, CGRectGetWidth(windowBounds)/4.0, CGRectGetHeight(windowBounds)/4.0);
 }
 
-// Called whenever a rotation is about to occur for iOS 8.0+ iPad
+// Called whenever a rotation is about to occur for iPad
 - (void)popoverPresentationController:(UIPopoverPresentationController *)popoverPresentationController
           willRepositionPopoverToRect:(inout CGRect *)rect
                                inView:(inout UIView *__autoreleasing *)view {

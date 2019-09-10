@@ -2,7 +2,6 @@
 
 #import "UAirship.h"
 #import "UAModules+Internal.h"
-#import "UASceneTracker+Internal.h"
 #import "UAAppStateTracker.h"
 
 @class UABaseAppDelegateSurrogate;
@@ -40,7 +39,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, strong) UAPush *sharedPush;
 
-#if !TARGET_OS_TV
+#if !TARGET_OS_TV   // Inbox not supported on tvOS
 /**
  * The inbox user.
  */

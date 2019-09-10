@@ -110,7 +110,7 @@ extern NSString *const UACustomEventInteractionTypeKey;
 /// @name Custom Event Management
 ///---------------------------------------------------------------------------------------
 
-#if !TARGET_OS_TV
+#if !TARGET_OS_TV   // Inbox not supported on tvOS
 /**
  * Sets the custom event's interaction type and ID from a UAInboxMessage.
  * @param message The UAInboxMessage to set the custom event's interaction type

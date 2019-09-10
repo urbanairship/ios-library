@@ -3,6 +3,13 @@ iOS Changelog
 
 Migration Guides: Documentation/Migration
 
+Version 12.0.0-beta.3 - September 9, 2019
+=========================================
+- Updated minimum target to iOS 11
+- Added more robust user creation and background task usage
+- Added ability to style the Message Center with named colors
+- Re-introduced the landing page action predicate
+
 Version 12.0.0-beta.2 - August 30, 2019
 =======================================
 - Updated with support for macOS

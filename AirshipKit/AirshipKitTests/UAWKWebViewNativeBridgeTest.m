@@ -8,6 +8,7 @@
 #import "UAirship+Internal.h"
 #import "UARuntimeConfig.h"
 #import "UAUser+Internal.h"
+#import "UAUserData+Internal.h"
 #import "UAInboxMessage.h"
 #import "UAUtils+Internal.h"
 #import "UAInbox.h"
@@ -274,7 +275,7 @@
 
 - (void)commonTestDidFinishPopulateJavascriptEnvironmentWithUAWebView:(BOOL)testUAWebView {
 
-    UAUserData *userData = [UAUserData dataWithUsername:@"username" password:@"password" url:@"url"];
+    UAUserData *userData = [UAUserData dataWithUsername:@"username" password:@"password"];
 
     [[[self.mockUAUser stub] andDo:^(NSInvocation *invocation) {
         void *arg;
@@ -383,7 +384,7 @@
 
     [[[self.mockWKWebView stub] andReturn:url] URL];
 
-    UAUserData *userData = [UAUserData dataWithUsername:@"username" password:@"password" url:@"url"];
+    UAUserData *userData = [UAUserData dataWithUsername:@"username" password:@"password"];
 
     XCTestExpectation *userDataRetrieved = [self expectationWithDescription:@"user data retrieved"];
 
@@ -459,7 +460,7 @@
 
     [[[self.mockWKWebView stub] andReturn:url] URL];
 
-    UAUserData *userData = [UAUserData dataWithUsername:@"username" password:@"password" url:@"url"];
+    UAUserData *userData = [UAUserData dataWithUsername:@"username" password:@"password"];
 
     XCTestExpectation *userDataRetrieved = [self expectationWithDescription:@"user data retrieved"];
 

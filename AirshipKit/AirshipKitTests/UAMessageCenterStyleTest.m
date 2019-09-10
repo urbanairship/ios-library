@@ -91,13 +91,10 @@
     // Test color
     UIColor *seapunkTestColor;
 
-    // Remove check when iOS10 support is dropped
-    if (@available(iOS 11, *)) {
-        seapunkTestColor = [UIColor colorNamed:@"seapunkTestColor"];
+    seapunkTestColor = [UIColor colorNamed:@"seapunkTestColor"];
 
-        // Title color is set to "seapunkTestColor" in valid plist
-        XCTAssertEqualObjects(seapunkTestColor, validStyle.titleColor);
-    }
+    // Title color is set to "seapunkTestColor" in valid plist
+    XCTAssertEqualObjects(seapunkTestColor, validStyle.titleColor);
 
     // properties in the valid style plist should match what's set in the style
     XCTAssertEqualObjects(helveticaTestFont, validStyle.titleFont);

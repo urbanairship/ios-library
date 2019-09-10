@@ -6,6 +6,12 @@
 #import "UAColorUtils+Internal.h"
 #import "UAMessageCenterStyle.h"
 
+NSString * const UANavigationBarStyleDefaultKey = @"default";
+NSString * const UANavigationBarStyleBlackKey = @"black";
+
+NSString * const UANavigationBarStyleKey = @"navigationBarStyle";
+
+
 @implementation UAMessageCenterStyle
 
 - (instancetype)init {
@@ -37,13 +43,29 @@
     }
 
     NSDictionary *styleDict = [[NSDictionary alloc] initWithContentsOfFile:path];
-    NSDictionary *normalizedStyleDict = [UAMessageCenterStyle normalizeDictionary:styleDict];
 
-    [style setValuesForKeysWithDictionary:normalizedStyleDict];
+    NSDictionary *normalizedStyleDict = [UAMessageCenterStyle normalizeDictionary:styleDict];
+    NSMutableDictionary *mutableStyle = [normalizedStyleDict mutableCopy];
+    [mutableStyle removeObjectForKey:UANavigationBarStyleKey];
+
+    [style setValuesForKeysWithDictionary:mutableStyle];
+
+    UANavigationBarStyle navBarStyle = [UAMessageCenterStyle parseNavigationBarStyle:normalizedStyleDict];
+    style.navigationBarStyle = navBarStyle;
 
     UA_LTRACE(@"Message Center style options: %@", [normalizedStyleDict description]);
 
     return style;
+}
+
++ (UANavigationBarStyle)parseNavigationBarStyle:(NSDictionary *)styleDict {
+    NSString *barStyleString = styleDict[UANavigationBarStyleKey];
+
+    if ([barStyleString isEqualToString:UANavigationBarStyleBlackKey]) {
+         return UANavigationBarStyleBlack;
+     }
+
+     return UANavigationBarStyleDefault;
 }
 
 // Validates and normalizes style values
@@ -94,11 +116,8 @@
     UIColor *hexColor = [UAColorUtils colorWithHexString:colorString];
     UIColor *namedColor;
 
-    // Remove check when dropping iOS10 support
-    if (@available(iOS 11, *)) {
-        // Pull named color from main bundle
-        namedColor = [UIColor colorNamed:colorString];
-    }
+    // Pull named color from main bundle
+    namedColor = [UIColor colorNamed:colorString];
 
     // Neither a hex nor named color can be determined using the color string
     if (!hexColor && !namedColor) {
@@ -162,54 +181,56 @@
     
     // properties in the valid style plist should match what's set in the style
     BOOL haveEqualTitleFont = (!self.titleFont && !style.titleFont) || [self.titleFont isEqual:style.titleFont];
-    BOOL haveEqualtitleColor = (!self.titleColor && !style.titleColor) || [self.titleColor isEqual:style.titleColor];
-    BOOL haveEqualtintColor = (!self.tintColor && !style.tintColor) || [self.tintColor isEqual:style.tintColor];
-    BOOL haveEqualnavigationBarColor = (!self.navigationBarColor && !style.navigationBarColor) || [self.navigationBarColor isEqual:style.navigationBarColor];
-    BOOL haveEqualnavigationBarOpaque = (self.navigationBarOpaque == style.navigationBarOpaque);
-    BOOL haveEquallistColor = (!self.listColor && !style.listColor) || [self.listColor isEqual:style.listColor];
-    BOOL haveEqualrefreshTintColor = (!self.refreshTintColor && !style.refreshTintColor) || [self.refreshTintColor isEqual:style.refreshTintColor];
-    BOOL haveEqualiconsEnabled = (self.iconsEnabled == style.iconsEnabled);
-    BOOL haveEqualplaceholderIcon = (!self.placeholderIcon && !style.placeholderIcon) || [self.placeholderIcon isEqual:style.placeholderIcon];
-    BOOL haveEqualcellTitleFont = (!self.cellTitleFont && !style.cellTitleFont) || [self.cellTitleFont isEqual:style.cellTitleFont];
-    BOOL haveEqualcellDateFont = (!self.cellDateFont && !style.cellDateFont) || [self.cellDateFont isEqual:style.cellDateFont];
-    BOOL haveEqualcellColor = (!self.cellColor && !style.cellColor) || [self.cellColor isEqual:style.cellColor];
-    BOOL haveEqualcellHighlightedColor = (!self.cellHighlightedColor && !style.cellHighlightedColor) || [self.cellHighlightedColor isEqual:style.cellHighlightedColor];
-    BOOL haveEqualcellTitleColor = (!self.cellTitleColor && !style.cellTitleColor) || [self.cellTitleColor isEqual:style.cellTitleColor];
-    BOOL haveEqualcellTitleHighlightedColor = (!self.cellTitleHighlightedColor && !style.cellTitleHighlightedColor) || [self.cellTitleHighlightedColor isEqual:style.cellTitleHighlightedColor];
-    BOOL haveEqualcellDateColor = (!self.cellDateColor && !style.cellDateColor) || [self.cellDateColor isEqual:style.cellDateColor];
-    BOOL haveEqualcellDateHighlightedColor = (!self.cellDateHighlightedColor && !style.cellDateHighlightedColor) || [self.cellDateHighlightedColor isEqual:style.cellDateHighlightedColor];
-    BOOL haveEqualcellSeparatorColor = (!self.cellSeparatorColor && !style.cellSeparatorColor) || [self.cellSeparatorColor isEqual:style.cellSeparatorColor];
-    BOOL haveEqualcellTintColor = (!self.cellTintColor && !style.cellTintColor) || [self.cellTintColor isEqual:style.cellTintColor];
-    BOOL haveEqualunreadIndicatorColor = (!self.unreadIndicatorColor && !style.unreadIndicatorColor) || [self.unreadIndicatorColor isEqual:style.unreadIndicatorColor];
-    BOOL haveEqualselectAllButtonTitleColor = (!self.selectAllButtonTitleColor && !style.selectAllButtonTitleColor) || [self.selectAllButtonTitleColor isEqual:style.selectAllButtonTitleColor];
-    BOOL haveEqualdeleteButtonTitleColor = (!self.deleteButtonTitleColor && !style.deleteButtonTitleColor) || [self.deleteButtonTitleColor isEqual:style.deleteButtonTitleColor];
-    BOOL haveEqualmarkAsReadButtonTitleColor = (!self.markAsReadButtonTitleColor && !style.markAsReadButtonTitleColor) || [self.markAsReadButtonTitleColor isEqual:style.markAsReadButtonTitleColor];
+    BOOL haveEqualTitleColor = (!self.titleColor && !style.titleColor) || [self.titleColor isEqual:style.titleColor];
+    BOOL haveEqualTintColor = (!self.tintColor && !style.tintColor) || [self.tintColor isEqual:style.tintColor];
+    BOOL haveEqualNavigationBarColor = (!self.navigationBarColor && !style.navigationBarColor) || [self.navigationBarColor isEqual:style.navigationBarColor];
+    BOOL haveEqualNavigationBarStyle = self.navigationBarStyle == style.navigationBarStyle;
+    BOOL haveEqualNavigationBarOpaque = (self.navigationBarOpaque == style.navigationBarOpaque);
+    BOOL haveEqualListColor = (!self.listColor && !style.listColor) || [self.listColor isEqual:style.listColor];
+    BOOL haveEqualRefreshTintColor = (!self.refreshTintColor && !style.refreshTintColor) || [self.refreshTintColor isEqual:style.refreshTintColor];
+    BOOL haveEqualIconsEnabled = (self.iconsEnabled == style.iconsEnabled);
+    BOOL haveEqualPlaceholderIcon = (!self.placeholderIcon && !style.placeholderIcon) || [self.placeholderIcon isEqual:style.placeholderIcon];
+    BOOL haveEqualCellTitleFont = (!self.cellTitleFont && !style.cellTitleFont) || [self.cellTitleFont isEqual:style.cellTitleFont];
+    BOOL haveEqualCellDateFont = (!self.cellDateFont && !style.cellDateFont) || [self.cellDateFont isEqual:style.cellDateFont];
+    BOOL haveEqualCellColor = (!self.cellColor && !style.cellColor) || [self.cellColor isEqual:style.cellColor];
+    BOOL haveEqualCellHighlightedColor = (!self.cellHighlightedColor && !style.cellHighlightedColor) || [self.cellHighlightedColor isEqual:style.cellHighlightedColor];
+    BOOL haveEqualCellTitleColor = (!self.cellTitleColor && !style.cellTitleColor) || [self.cellTitleColor isEqual:style.cellTitleColor];
+    BOOL haveEqualCellTitleHighlightedColor = (!self.cellTitleHighlightedColor && !style.cellTitleHighlightedColor) || [self.cellTitleHighlightedColor isEqual:style.cellTitleHighlightedColor];
+    BOOL haveEqualCellDateColor = (!self.cellDateColor && !style.cellDateColor) || [self.cellDateColor isEqual:style.cellDateColor];
+    BOOL haveEqualCellDateHighlightedColor = (!self.cellDateHighlightedColor && !style.cellDateHighlightedColor) || [self.cellDateHighlightedColor isEqual:style.cellDateHighlightedColor];
+    BOOL haveEqualCellSeparatorColor = (!self.cellSeparatorColor && !style.cellSeparatorColor) || [self.cellSeparatorColor isEqual:style.cellSeparatorColor];
+    BOOL haveEqualCellTintColor = (!self.cellTintColor && !style.cellTintColor) || [self.cellTintColor isEqual:style.cellTintColor];
+    BOOL haveEqualUnreadIndicatorColor = (!self.unreadIndicatorColor && !style.unreadIndicatorColor) || [self.unreadIndicatorColor isEqual:style.unreadIndicatorColor];
+    BOOL haveEqualSelectAllButtonTitleColor = (!self.selectAllButtonTitleColor && !style.selectAllButtonTitleColor) || [self.selectAllButtonTitleColor isEqual:style.selectAllButtonTitleColor];
+    BOOL haveEqualDeleteButtonTitleColor = (!self.deleteButtonTitleColor && !style.deleteButtonTitleColor) || [self.deleteButtonTitleColor isEqual:style.deleteButtonTitleColor];
+    BOOL haveEqualMarkAsReadButtonTitleColor = (!self.markAsReadButtonTitleColor && !style.markAsReadButtonTitleColor) || [self.markAsReadButtonTitleColor isEqual:style.markAsReadButtonTitleColor];
     BOOL haveEqualEditButtonTitleColor = (!self.editButtonTitleColor && !style.editButtonTitleColor) || [self.editButtonTitleColor isEqual:style.editButtonTitleColor];
     BOOL haveEqualCancelButtonTitleColor = (!self.cancelButtonTitleColor && !style.cancelButtonTitleColor) || [self.cancelButtonTitleColor isEqual:style.cancelButtonTitleColor];
 
     return haveEqualTitleFont &&
-        haveEqualtitleColor &&
-        haveEqualtintColor &&
-        haveEqualnavigationBarColor &&
-        haveEqualnavigationBarOpaque &&
-        haveEquallistColor &&
-        haveEqualrefreshTintColor &&
-        haveEqualiconsEnabled &&
-        haveEqualplaceholderIcon &&
-        haveEqualcellTitleFont &&
-        haveEqualcellDateFont &&
-        haveEqualcellColor &&
-        haveEqualcellHighlightedColor &&
-        haveEqualcellTitleColor &&
-        haveEqualcellTitleHighlightedColor &&
-        haveEqualcellDateColor &&
-        haveEqualcellDateHighlightedColor &&
-        haveEqualcellSeparatorColor &&
-        haveEqualcellTintColor &&
-        haveEqualunreadIndicatorColor &&
-        haveEqualselectAllButtonTitleColor &&
-        haveEqualdeleteButtonTitleColor &&
-        haveEqualmarkAsReadButtonTitleColor &&
+        haveEqualTitleColor &&
+        haveEqualTintColor &&
+        haveEqualNavigationBarColor &&
+        haveEqualNavigationBarStyle &&
+        haveEqualNavigationBarOpaque &&
+        haveEqualListColor &&
+        haveEqualRefreshTintColor &&
+        haveEqualIconsEnabled &&
+        haveEqualPlaceholderIcon &&
+        haveEqualCellTitleFont &&
+        haveEqualCellDateFont &&
+        haveEqualCellColor &&
+        haveEqualCellHighlightedColor &&
+        haveEqualCellTitleColor &&
+        haveEqualCellTitleHighlightedColor &&
+        haveEqualCellDateColor &&
+        haveEqualCellDateHighlightedColor &&
+        haveEqualCellSeparatorColor &&
+        haveEqualCellTintColor &&
+        haveEqualUnreadIndicatorColor &&
+        haveEqualSelectAllButtonTitleColor &&
+        haveEqualDeleteButtonTitleColor &&
+        haveEqualMarkAsReadButtonTitleColor &&
         haveEqualEditButtonTitleColor &&
         haveEqualCancelButtonTitleColor;
 }
@@ -231,6 +252,7 @@
     result = 31 * result + [self.titleColor hash];
     result = 31 * result + [self.tintColor hash];
     result = 31 * result + [self.navigationBarColor hash];
+    result = 31 * result + self.navigationBarStyle;
     result = 31 * result + self.navigationBarOpaque;
     result = 31 * result + [self.listColor hash];
     result = 31 * result + [self.refreshTintColor hash];

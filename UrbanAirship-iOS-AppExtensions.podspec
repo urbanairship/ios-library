@@ -1,4 +1,4 @@
-AIRSHIP_VERSION="12.0.0-beta.2"
+AIRSHIP_VERSION="12.0.0-beta.3"
 
 Pod::Spec.new do |s|
     s.version                 = AIRSHIP_VERSION
@@ -13,7 +13,7 @@ Pod::Spec.new do |s|
 
     s.module_name = "AirshipAppExtensions"
     s.requires_arc = true
-    s.ios.deployment_target   = "10.0"
+    s.ios.deployment_target   = "11.0"
     s.ios.source_files      = 'AirshipAppExtensions/AirshipAppExtensions/*.{h,m,mm}'
     s.ios.weak_frameworks = 'UserNotifications'
 end

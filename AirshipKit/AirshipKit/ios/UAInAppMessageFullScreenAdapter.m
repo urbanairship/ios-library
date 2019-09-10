@@ -7,6 +7,7 @@
 #import "UAInAppMessageUtils+Internal.h"
 #import "UAInAppMessageMediaView+Internal.h"
 #import "UAUtils+Internal.h"
+#import "UAInAppMessageSceneManager.h"
 
 NSString *const UAFullScreenStyleFileName = @"UAInAppMessageFullScreenStyle";
 
@@ -51,13 +52,16 @@ NSString *const UAFullScreenStyleFileName = @"UAInAppMessageFullScreenStyle";
 }
 
 - (void)display:(void (^)(UAInAppMessageResolution *))completionHandler {
+    if (@available(iOS 13.0, *)) {
+        UIWindowScene *scene = [[UAInAppMessageSceneManager shared] sceneForMessage:self.message];
+        [self.fullScreenController showWithScene:scene completionHandler:completionHandler];
+    } else {
+        [self.fullScreenController showWithCompletionHandler:completionHandler];
+    }
+
     [self.fullScreenController showWithCompletionHandler:completionHandler];
 }
 
-- (void)display:(void (^)(UAInAppMessageResolution *))completionHandler
-          scene:(UIWindowScene *)scene API_AVAILABLE(ios(13.0)){
-    [self.fullScreenController showWithCompletionHandler:completionHandler scene:scene];
-}
 
 @end
 

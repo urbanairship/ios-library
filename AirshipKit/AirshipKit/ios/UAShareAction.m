@@ -40,7 +40,6 @@
 
         self.lastActivityViewController = activityViewController;
 
-        // iOS 8.0+
         if ([activityViewController respondsToSelector:@selector(popoverPresentationController)]) {
 
             UIPopoverPresentationController * popoverPresentationController = activityViewController.popoverPresentationController;

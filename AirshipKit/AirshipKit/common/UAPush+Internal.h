@@ -176,12 +176,10 @@ extern NSString *const UAPushEnabledKey;
  */
 - (NSTimeZone *)defaultTimeZoneForQuietTime;
 
-#if !TARGET_OS_TV    // UIBackgroundRefreshStatusAvailable not available on tvOS
 /**
  * Used to update channel registration when the background refresh status changes.
  */
 - (void)applicationBackgroundRefreshStatusChanged;
-#endif
 
 /**
  * Returns YES if background push is enabled and configured for the device. Used
@@ -213,7 +211,7 @@ extern NSString *const UAPushEnabledKey;
 - (void)updateAuthorizedNotificationTypes;
 
 /**
- * Called to return the presentation options for an iOS 10 notification.
+ * Called to return the presentation options for a notification.
  *
  * @param notification The notification.
  * @return Foreground presentation options.

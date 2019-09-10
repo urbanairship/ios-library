@@ -7,6 +7,7 @@
 #import "UAUtils+Internal.h"
 #import "UAirship.h"
 #import "UAInAppMessageResizableViewController+Internal.h"
+#import "UAInAppMessageSceneManager.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -85,13 +86,13 @@ NSString *const UAHTMLStyleFileName = @"UAInAppMessageHTMLStyle";
 
 - (void)display:(nonnull void (^)(UAInAppMessageResolution * _Nonnull))completionHandler {
     [self createContainerViewController];
-    [self.resizableContainerViewController showWithCompletionHandler:completionHandler];
-}
 
-- (void)display:(nonnull void (^)(UAInAppMessageResolution * _Nonnull))completionHandler
-          scene:(UIWindowScene *)scene  API_AVAILABLE(ios(13.0)){
-    [self createContainerViewController];
-    [self.resizableContainerViewController showWithCompletionHandler:completionHandler scene:scene];
+    if (@available(iOS 13.0, *)) {
+        UIWindowScene *scene = [[UAInAppMessageSceneManager shared] sceneForMessage:self.message];
+        [self.resizableContainerViewController showWithScene:scene completionHandler:completionHandler];
+    } else {
+        [self.resizableContainerViewController showWithCompletionHandler:completionHandler];
+    }
 }
 
 @end

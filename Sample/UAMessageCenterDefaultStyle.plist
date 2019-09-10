@@ -14,7 +14,7 @@
 	<key>tintColor</key>
 	<string>#004BFF</string>
 	<key>navigationBarColor</key>
-	<string>#202020</string>
+	<string>#000000</string>
 	<key>iconsEnabled</key>
 	<false/>
 	<key>cellTitleFont</key>
@@ -31,5 +31,9 @@
 		<key>fontSize</key>
 		<string>17</string>
 	</dict>
+	<key>navigationBarOpaque</key>
+	<true/>
+	<key>navigationBarStyle</key>
+	<string>black</string>
 </dict>
 </plist>

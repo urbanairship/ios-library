@@ -39,11 +39,10 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * The method to show the full screen view controller.
  *
- * @param completionHandler The completion handler that's called when the show operation completes.
  * @param scene The window scene in which to show the  message.
+ * @param completionHandler The completion handler that's called when the show operation completes.
  */
-- (void)showWithCompletionHandler:(void (^)(UAInAppMessageResolution *))completionHandler
-                            scene:(UIWindowScene *)scene API_AVAILABLE(ios(13.0));
+- (void)showWithScene:(nullable UIWindowScene *)scene completionHandler:(void (^)(UAInAppMessageResolution *))completionHandler API_AVAILABLE(ios(13.0));
 
 @end
 

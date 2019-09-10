@@ -17,7 +17,7 @@
 #import "UAActionRegistry+Internal.h"
 #import "UARemoteDataManager+Internal.h"
 
-#if !TARGET_OS_TV
+#if !TARGET_OS_TV   // Inbox and other features not supported on tvOS
 #import "UAInboxUtils.h"
 #import "UAOverlayInboxMessageAction.h"
 #import "UADisplayInboxAction.h"
@@ -133,8 +133,8 @@
 
     UA_LINFO(@"Received notification response: %@", response);
 
-    // Clear any legacy in-app messages (nibs unavailable in tvOS)
-#if !TARGET_OS_TV
+#if !TARGET_OS_TV   // Legacy IAM not supported on tvOS
+    // Clear any legacy in-app messages
     [[UAirship legacyInAppMessaging] handleNotificationResponse:response];
 #endif
     
@@ -189,8 +189,8 @@
 
     UA_LINFO(@"Received notification: %@", notificationContent);
 
-    // Process any legacy in-app messages (nibs unavailable in tvOS)
-#if !TARGET_OS_TV
+#if !TARGET_OS_TV   // Legacy IAM not supported on tvOS
+    // Process any legacy in-app messages
     [[UAirship legacyInAppMessaging] handleRemoteNotification:notificationContent];
 #endif
     
@@ -220,7 +220,7 @@
     NSDictionary *metadata = @{ UAActionMetadataForegroundPresentationKey: @(foregroundPresentation),
                                 UAActionMetadataPushPayloadKey: notificationContent.notificationInfo };
 
-#if !TARGET_OS_TV   // Message Center not supported on tvOS
+#if !TARGET_OS_TV   // Inbox not supported on tvOS
     // Refresh the message center, call completion block when finished
     if ([UAInboxUtils inboxMessageIDFromNotification:notificationContent.notificationInfo]) {
         dispatch_group_enter(dispatchGroup);

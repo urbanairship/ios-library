@@ -7,7 +7,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /**
- * Clone of UNNotificationActionOptions for iOS 8-10 support.
+ * iOS version-independent wrapper for UNNotificationActionOptions.
  */
 typedef NS_OPTIONS(NSUInteger, UANotificationActionOptions) {
 
@@ -30,7 +30,7 @@ typedef NS_OPTIONS(NSUInteger, UANotificationActionOptions) {
 static const UANotificationActionOptions UANotificationActionOptionNone NS_SWIFT_UNAVAILABLE("Use [] instead.") = 0;
 
 /**
- * Clone of UNNotificationAction for iOS 8-10 support.
+ * iOS version-independent wrapper for UNNotificationAction.
  */
 @interface UANotificationAction : NSObject
 
@@ -94,9 +94,9 @@ static const UANotificationActionOptions UANotificationActionOptionNone NS_SWIFT
 /**
  * Converts a UANotificationAction into a UNNotificationAction.
  *
- * @return An instance of UNUNotificationAction or nil if conversion fails.
+ * @return An instance of UNotificationAction.
  */
-- (nullable UNNotificationAction *)asUNNotificationAction;
+- (UNNotificationAction *)asUNNotificationAction;
 
 /**
  * Tests for equivalence with a UNNotificationAction.

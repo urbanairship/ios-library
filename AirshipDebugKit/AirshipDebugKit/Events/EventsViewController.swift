@@ -56,12 +56,8 @@ class EventsViewController:UIViewController, UITableViewDataSource, UITableViewD
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.searchBar.placeholder = "Search Events"
 
-        if #available(iOS 11.0, *) {
-            navigationItem.searchController = searchController
-            navigationItem.hidesSearchBarWhenScrolling = false
-        } else {
-            tableView.tableHeaderView = searchController.searchBar
-        }
+        navigationItem.searchController = searchController
+        navigationItem.hidesSearchBarWhenScrolling = false
 
         definesPresentationContext = true
 

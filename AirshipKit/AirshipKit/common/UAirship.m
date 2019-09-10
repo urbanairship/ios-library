@@ -28,7 +28,7 @@
 #import "UAChannelRegistrar+Internal.h"
 #import "UAAppStateTrackerFactory.h"
 
-#if !TARGET_OS_TV
+#if !TARGET_OS_TV   // Inbox and other features not supported on tvOS
 #import "UAInbox+Internal.h"
 #import "UAActionJSDelegate.h"
 #import "UAChannelCapture+Internal.h"
@@ -92,12 +92,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 - (instancetype)initWithRuntimeConfig:(UARuntimeConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
     self = [super init];
     if (self) {
-#if TARGET_OS_TV   // remote-notification background mode not supported in tvOS
-        // REVISIT - Replace this with a try-except block on objectForInfoDictionaryKey:@"UIBackgroundModes" - assume yes if no UIBackgroundModes but tvOS?
-        self.remoteNotificationBackgroundModeEnabled = YES;
-#else
         self.remoteNotificationBackgroundModeEnabled = [[[NSBundle mainBundle] objectForInfoDictionaryKey:@"UIBackgroundModes"] containsObject:@"remote-notification"];
-#endif
         self.dataStore = dataStore;
         self.config = config;
         self.applicationMetrics = [UAApplicationMetrics applicationMetricsWithDataStore:dataStore];
@@ -140,15 +135,13 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         self.sharedRemoteConfigManager = [UARemoteConfigManager remoteConfigManagerWithRemoteDataManager:self.sharedRemoteDataManager
                                                                                        componentDisabler:componentDisabler
                                                                                                  modules:self.sharedModules];
-#if !TARGET_OS_TV
-        // IAP Nib not supported on tvOS
+#if !TARGET_OS_TV   // IAM not supported on tvOS
         self.sharedInAppMessageManager = [UAInAppMessageManager managerWithConfig:config
                                                          tagGroupsMutationHistory:tagGroupsMutationHistory
                                                                 remoteDataManager:self.sharedRemoteDataManager
                                                                         dataStore:dataStore
                                                                           channel:self.sharedChannel
-                                                                        analytics:self.sharedAnalytics
-                                                                     sceneTracker:[UASceneTracker sceneObserver:[NSNotificationCenter defaultCenter]]];
+                                                                        analytics:self.sharedAnalytics];
 
         self.sharedLegacyInAppMessaging = [UALegacyInAppMessaging inAppMessagingWithAnalytics:self.sharedAnalytics dataStore:dataStore inAppMessageManager:self.sharedInAppMessageManager];
 
@@ -257,7 +250,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
             UA_LDEBUG(@"Device ID changed.");
 
             [sharedAirship_.sharedChannel reset];
-#if !TARGET_OS_TV
+#if !TARGET_OS_TV   // Inbox not supported on tvOS
             if (runtimeConfig.clearUserOnAppRestore) {
                 [sharedAirship_.sharedInboxUser resetUser];
             }

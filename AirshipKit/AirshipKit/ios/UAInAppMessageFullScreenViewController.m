@@ -368,47 +368,36 @@ NSString *const UAInAppMessageFullScreenViewNibName = @"UAInAppMessageFullScreen
 
 - (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {
     BOOL statusBarShowing = !([UIApplication sharedApplication].isStatusBarHidden);
-
-    if (@available(iOS 11.0, *)) {
-        UIWindow *window = [UIApplication sharedApplication].keyWindow;
-
-        // Black out the inset and compensate for excess vertical safe area when iPhone X is horizontal
-        if (window.safeAreaInsets.top == 0 && window.safeAreaInsets.left > 0) {
-            self.view.backgroundColor = [UIColor blackColor];
-        } else if (window.safeAreaInsets.top > 0 && window.safeAreaInsets.left == 0) {
-            self.view.backgroundColor = self.displayContent.backgroundColor;
-        }
-
-        // If the orientation has a bar without inset
-        if (window.safeAreaInsets.top == 0 && statusBarShowing) {
-            [UAInAppMessageUtils applyPaddingForAttribute:NSLayoutAttributeTop
-                                                   onView:self.wrapperView
-                                                  padding:FullScreenDefaultPadding
-                                                  replace:YES];
-            [self.wrapperView layoutIfNeeded];
-            return;
-        }
-
-        // If the orientation has a bar with inset
-        if (window.safeAreaInsets.top > 0 && statusBarShowing) {
-            [UAInAppMessageUtils applyPaddingForAttribute:NSLayoutAttributeTop
-                                                   onView:self.wrapperView
-                                                  padding:FullScreenExcessiveSafeAreaPadding
-                                                  replace:YES];
-            [self.wrapperView layoutIfNeeded];
-            return;
-        }
-    } else {
-        if (statusBarShowing) {
-            [UAInAppMessageUtils applyPaddingForAttribute:NSLayoutAttributeTop
-                                                   onView:self.wrapperView
-                                                  padding:FullScreenDefaultPadding
-                                                  replace:YES];
-            [self.wrapperView layoutIfNeeded];
-            return;
-        }
+    
+    UIWindow *window = [UIApplication sharedApplication].keyWindow;
+    
+    // Black out the inset and compensate for excess vertical safe area when iPhone X is horizontal
+    if (window.safeAreaInsets.top == 0 && window.safeAreaInsets.left > 0) {
+        self.view.backgroundColor = [UIColor blackColor];
+    } else if (window.safeAreaInsets.top > 0 && window.safeAreaInsets.left == 0) {
+        self.view.backgroundColor = self.displayContent.backgroundColor;
     }
-
+    
+    // If the orientation has a bar without inset
+    if (window.safeAreaInsets.top == 0 && statusBarShowing) {
+        [UAInAppMessageUtils applyPaddingForAttribute:NSLayoutAttributeTop
+                                               onView:self.wrapperView
+                                              padding:FullScreenDefaultPadding
+                                              replace:YES];
+        [self.wrapperView layoutIfNeeded];
+        return;
+    }
+    
+    // If the orientation has a bar with inset
+    if (window.safeAreaInsets.top > 0 && statusBarShowing) {
+        [UAInAppMessageUtils applyPaddingForAttribute:NSLayoutAttributeTop
+                                               onView:self.wrapperView
+                                              padding:FullScreenExcessiveSafeAreaPadding
+                                              replace:YES];
+        [self.wrapperView layoutIfNeeded];
+        return;
+    }
+    
     // Otherwise remove top padding
     [UAInAppMessageUtils applyPaddingForAttribute:NSLayoutAttributeTop
                                            onView:self.wrapperView
@@ -485,14 +474,16 @@ NSString *const UAInAppMessageFullScreenViewNibName = @"UAInAppMessageFullScreen
     [self displayWindow:completionHandler];
 }
 
-- (void)showWithCompletionHandler:(void (^)(UAInAppMessageResolution * _Nonnull))completionHandler scene:(UIWindowScene *)scene {
+- (void)showWithScene:(nullable UIWindowScene *)scene completionHandler:(void (^)(UAInAppMessageResolution * _Nonnull))completionHandler {
     if (self.isShowing) {
         UA_LTRACE(@"In-app message resizable view has already been displayed");
         return;
     }
 
     [self createWindow];
-    self.fullScreenWindow.windowScene = scene;
+    if (scene) {
+        self.fullScreenWindow.windowScene = scene;
+    }
     [self observeSceneEvents];
     [self displayWindow:completionHandler];
 }

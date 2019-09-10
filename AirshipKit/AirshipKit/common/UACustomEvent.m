@@ -5,7 +5,7 @@
 #import "UAirship.h"
 #import "NSJSONSerialization+UAAdditions.h"
 
-#if !TARGET_OS_TV
+#if !TARGET_OS_TV   // Inbox not supported on tvOS
 #import "UAInboxMessage.h"
 #endif
 
@@ -179,7 +179,7 @@ NSString *const UACustomEventTemplateTypeKey = @"template_type";
     return isValid;
 }
 
-#if !TARGET_OS_TV
+#if !TARGET_OS_TV   // Inbox not supported on tvOS
 - (void)setInteractionFromMessage:(UAInboxMessage *)message {
     if (message) {
         self.interactionID = message.messageID;

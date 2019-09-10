@@ -31,7 +31,6 @@
 #import "UAInAppMessageAssetManager+Internal.h"
 #import "NSObject+AnonymousKVO+Internal.h"
 #import "UAInAppMessageImmediateDisplayCoordinator.h"
-#import "UASceneTracker+Internal.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -104,7 +103,6 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
 @property(nonatomic, strong) UAInAppMessageDefaultDisplayCoordinator *defaultDisplayCoordinator;
 @property(nonatomic, strong) UAInAppMessageImmediateDisplayCoordinator *immediateDisplayCoordinator;
 @property(nonatomic, strong) UAAnalytics *analytics;
-@property(nonatomic, strong, nonnull) UASceneTracker *sceneTracker;
 
 @end
 
@@ -118,8 +116,7 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
                                  dispatcher:(UADispatcher *)dispatcher
                          displayCoordinator:(UAInAppMessageDefaultDisplayCoordinator *)displayCoordinator
                                assetManager:(UAInAppMessageAssetManager *)assetManager
-                                  analytics:(UAAnalytics *)analytics
-                               sceneTracker:(UASceneTracker *)sceneTracker {
+                                  analytics:(UAAnalytics *)analytics {
 
     return [[self alloc] initWithAutomationEngine:automationEngine
                            tagGroupsLookupManager:tagGroupsLookupManager
@@ -129,8 +126,7 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
                                        dispatcher:dispatcher
                                displayCoordinator:displayCoordinator
                                      assetManager:assetManager
-                                        analytics:analytics
-                                     sceneTracker:(UASceneTracker *)sceneTracker];
+                                        analytics:analytics];
 }
 
 + (instancetype)managerWithConfig:(UARuntimeConfig *)config
@@ -138,8 +134,7 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
                 remoteDataManager:(UARemoteDataManager *)remoteDataManager
                         dataStore:(UAPreferenceDataStore *)dataStore
                           channel:(UAChannel *)channel
-                        analytics:(UAAnalytics *)analytics
-                     sceneTracker:(UASceneTracker *)sceneTracker {
+                        analytics:(UAAnalytics *)analytics {
 
     NSString *storeName = [NSString stringWithFormat:UAInAppAutomationStoreFileFormat, config.appKey];
 
@@ -158,8 +153,7 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
                                                          dispatcher:[UADispatcher mainDispatcher]
                                                  displayCoordinator:[[UAInAppMessageDefaultDisplayCoordinator alloc] init]
                                                        assetManager:[UAInAppMessageAssetManager assetManager]
-                                                          analytics:analytics
-                                                       sceneTracker:sceneTracker];
+                                                          analytics:analytics];
 }
 
 - (instancetype)initWithAutomationEngine:(UAAutomationEngine *)automationEngine
@@ -170,8 +164,7 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
                               dispatcher:(UADispatcher *)dispatcher
                       displayCoordinator:(UAInAppMessageDefaultDisplayCoordinator *)displayCoordinator
                             assetManager:(UAInAppMessageAssetManager *)assetManager
-                               analytics:(UAAnalytics *)analytics
-                            sceneTracker:(UASceneTracker *)sceneTracker {
+                               analytics:(UAAnalytics *)analytics {
 
     self = [super initWithDataStore:dataStore];
 
@@ -192,8 +185,6 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
         self.immediateDisplayCoordinator = [UAInAppMessageImmediateDisplayCoordinator coordinator];
         self.assetManager = assetManager;
         self.analytics = analytics;
-        self.sceneTracker = sceneTracker;
-        
         [self setDefaultAdapterFactories];
 
         [self.automationEngine start];
@@ -721,22 +712,6 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
 
         completionHandler();
     };
-
-    if (@available(iOS 13.0, *)) {
-        // Default to the primary window scene
-        UIWindowScene *scene = [self.sceneTracker primaryWindowScene];
-        if (scene) {
-            // Give the delegate a chance to override
-            id<UAInAppMessagingDelegate> delegate = self.delegate;
-            if ([delegate respondsToSelector:@selector(sceneForMessage:defaultScene:)]) {
-                scene = [delegate sceneForMessage:message defaultScene:scene] ?: scene;
-            }
-
-            [adapter display:displayCompletionHandler scene:scene];
-
-            return;
-        }
-    }
 
     [adapter display:displayCompletionHandler];
 }

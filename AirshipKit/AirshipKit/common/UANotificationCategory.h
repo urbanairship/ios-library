@@ -9,7 +9,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /**
- * Category options for UANotificationCategory. All options only affects iOS 10+.
+ * iOS version-independent wrapper for UNNotificationCategoryOptions
  */
 typedef NS_OPTIONS(NSUInteger, UANotificationCategoryOptions) {
 
@@ -34,7 +34,7 @@ static const UANotificationCategoryOptions UANotificationCategoryOptionNone NS_S
 
 
 /**
- * Clone of UNNotificationCategory for iOS 8-9 support.
+ * iOS version-independent wrapper for UNNotificationCategory.
  */
 @interface UANotificationCategory : NSObject
 
@@ -54,15 +54,11 @@ static const UANotificationCategoryOptions UANotificationCategoryOptionNone NS_S
 
 /**
  * The intents supported by notifications of this category.
- *
- * Note: This property is only applicable on iOS 10 and above.
  */
 @property(readonly, copy, nonatomic) NSArray<NSString *> *intentIdentifiers;
 
 /**
  * A placeholder string to display when the user has disabled notification previews for the app.
- *
- * Note: This property is only applicable on iOS 11 and above.
  */
 @property(readonly, copy, nonatomic, nullable) NSString *hiddenPreviewsBodyPlaceholder;
 

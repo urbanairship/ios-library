@@ -332,14 +332,16 @@ double const DefaultResizableViewAnimationDuration = 0.2;
     [self displayWindow:completionHandler];
 }
 
-- (void)showWithCompletionHandler:(void (^)(UAInAppMessageResolution * _Nonnull))completionHandler scene:(UIWindowScene *)scene {
+- (void)showWithScene:(UIWindowScene *)scene completionHandler:(void (^)(UAInAppMessageResolution * _Nonnull))completionHandler {
     if (self.isShowing) {
         UA_LTRACE(@"In-app message resizable view has already been displayed");
         return;
     }
 
     [self createWindow];
-    self.topWindow.windowScene = scene;
+    if (scene) {
+        self.topWindow.windowScene = scene;
+    }
     [self observeSceneEvents];
     [self displayWindow:completionHandler];
 }
@@ -402,24 +404,22 @@ double const DefaultResizableViewAnimationDuration = 0.2;
 
 - (void)refreshViewForCurrentOrientation {
     if (self.displayFullScreen) {
-        if (@available(iOS 11.0, *)) {
-            UIWindow *window = [UIApplication sharedApplication].keyWindow;
-            // Black out the inset and compensate for excess vertical safe area when iPhone X is horizontal
-            if (window.safeAreaInsets.top == 0 && window.safeAreaInsets.left > 0) {
-                self.shadeView.backgroundColor = [UIColor blackColor];
-                // Apply insets for iPhone X, use larger safe inset on rotation to balance the view
-                CGFloat largerInset = fmax(window.safeAreaInsets.left, window.safeAreaInsets.right);
-                [UAInAppMessageUtils applyPaddingForAttribute:NSLayoutAttributeTrailing onView:self.resizingContainerView padding:largerInset replace:YES];
-                [UAInAppMessageUtils applyPaddingForAttribute:NSLayoutAttributeLeading onView:self.resizingContainerView padding:largerInset replace:YES];
-                [UAInAppMessageUtils applyPaddingForAttribute:NSLayoutAttributeTop onView:self.resizingContainerView padding:window.safeAreaInsets.top replace:YES];
-                [UAInAppMessageUtils applyPaddingForAttribute:NSLayoutAttributeBottom onView:self.resizingContainerView padding:window.safeAreaInsets.bottom replace:YES];
-            } else if (window.safeAreaInsets.top > 0 && window.safeAreaInsets.left == 0) {
-                [UAInAppMessageUtils applyPaddingForAttribute:NSLayoutAttributeTrailing onView:self.resizingContainerView padding:0 replace:YES];
-                [UAInAppMessageUtils applyPaddingForAttribute:NSLayoutAttributeLeading onView:self.resizingContainerView padding:0 replace:YES];
-                [UAInAppMessageUtils applyPaddingForAttribute:NSLayoutAttributeTop onView:self.resizingContainerView padding:window.safeAreaInsets.top + ResizingViewExcessiveSafeAreaPadding replace:YES];
-                [UAInAppMessageUtils applyPaddingForAttribute:NSLayoutAttributeBottom onView:self.resizingContainerView padding:window.safeAreaInsets.bottom replace:YES];
-                self.shadeView.backgroundColor = self.backgroundColor;
-            }
+        UIWindow *window = [UIApplication sharedApplication].keyWindow;
+        // Black out the inset and compensate for excess vertical safe area when iPhone X is horizontal
+        if (window.safeAreaInsets.top == 0 && window.safeAreaInsets.left > 0) {
+            self.shadeView.backgroundColor = [UIColor blackColor];
+            // Apply insets for iPhone X, use larger safe inset on rotation to balance the view
+            CGFloat largerInset = fmax(window.safeAreaInsets.left, window.safeAreaInsets.right);
+            [UAInAppMessageUtils applyPaddingForAttribute:NSLayoutAttributeTrailing onView:self.resizingContainerView padding:largerInset replace:YES];
+            [UAInAppMessageUtils applyPaddingForAttribute:NSLayoutAttributeLeading onView:self.resizingContainerView padding:largerInset replace:YES];
+            [UAInAppMessageUtils applyPaddingForAttribute:NSLayoutAttributeTop onView:self.resizingContainerView padding:window.safeAreaInsets.top replace:YES];
+            [UAInAppMessageUtils applyPaddingForAttribute:NSLayoutAttributeBottom onView:self.resizingContainerView padding:window.safeAreaInsets.bottom replace:YES];
+        } else if (window.safeAreaInsets.top > 0 && window.safeAreaInsets.left == 0) {
+            [UAInAppMessageUtils applyPaddingForAttribute:NSLayoutAttributeTrailing onView:self.resizingContainerView padding:0 replace:YES];
+            [UAInAppMessageUtils applyPaddingForAttribute:NSLayoutAttributeLeading onView:self.resizingContainerView padding:0 replace:YES];
+            [UAInAppMessageUtils applyPaddingForAttribute:NSLayoutAttributeTop onView:self.resizingContainerView padding:window.safeAreaInsets.top + ResizingViewExcessiveSafeAreaPadding replace:YES];
+            [UAInAppMessageUtils applyPaddingForAttribute:NSLayoutAttributeBottom onView:self.resizingContainerView padding:window.safeAreaInsets.bottom replace:YES];
+            self.shadeView.backgroundColor = self.backgroundColor;
         }
     }
 }
@@ -436,13 +436,11 @@ double const DefaultResizableViewAnimationDuration = 0.2;
     CGFloat leftInset = 0;
     CGFloat rightInset = 0;
 
-    if (@available(iOS 11.0, *)) {
-        UIWindow *window = [UAUtils mainWindow];
-        topInset = window.safeAreaInsets.top;
-        bottomInset = window.safeAreaInsets.bottom;
-        leftInset = window.safeAreaInsets.left;
-        rightInset = window.safeAreaInsets.right;
-    }
+    UIWindow *window = [UAUtils mainWindow];
+    topInset = window.safeAreaInsets.top;
+    bottomInset = window.safeAreaInsets.bottom;
+    leftInset = window.safeAreaInsets.left;
+    rightInset = window.safeAreaInsets.right;
 
     CGFloat maxOverlayWidth = screenSize.width - (fabs(leftInset) + fabs(rightInset));
     CGFloat maxOverlayHeight = screenSize.height - (fabs(topInset) + fabs(bottomInset));

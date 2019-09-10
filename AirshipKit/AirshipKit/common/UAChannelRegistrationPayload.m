@@ -98,11 +98,7 @@ NSString *const UABackgroundEnabledJSONKey = @"background";
     NSMutableDictionary *channel = [NSMutableDictionary dictionary];
     [channel setValue:@"ios" forKey:UAChannelDeviceTypeKey];
     [channel setValue:[NSNumber numberWithBool:self.optedIn] forKey:UAChannelOptInKey];
-#if TARGET_OS_TV    // REVISIT - do we need to force self.backgroundEnabled to YES?? - may be a hacking artifact
-    [channel setValue:[NSNumber numberWithBool:YES] forKey:UABackgroundEnabledJSONKey];
-#else
     [channel setValue:[NSNumber numberWithBool:self.backgroundEnabled] forKey:UABackgroundEnabledJSONKey];
-#endif
     [channel setValue:self.pushAddress forKey:UAChannelPushAddressKey];
 
     [channel setValue:[NSNumber numberWithBool:self.setTags] forKey:UAChannelSetTagsKey];
