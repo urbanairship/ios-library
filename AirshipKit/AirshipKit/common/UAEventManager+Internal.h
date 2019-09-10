@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 #import <Foundation/Foundation.h>
-#import "UAAppStateTracker.h"
+#import "UAAppStateTracker+Internal.h"
 
 @class UAEvent;
 @class UARuntimeConfig;

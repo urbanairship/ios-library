@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 #import "UAInbox.h"
-#import "UAAppStateTrackerFactory.h"
+#import "UAAppStateTrackerFactory+Internal.h"
 
 @class UAUser;
 @class UARuntimeConfig;

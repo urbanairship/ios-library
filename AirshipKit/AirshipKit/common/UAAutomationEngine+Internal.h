@@ -8,7 +8,7 @@
 #import "UAScheduleInfo.h"
 #import "UATimerScheduler+Internal.h"
 #import "UADispatcher+Internal.h"
-#import "UAAppStateTracker.h"
+#import "UAAppStateTracker+Internal.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

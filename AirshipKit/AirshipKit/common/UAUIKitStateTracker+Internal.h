@@ -2,7 +2,7 @@
 
 #import <UIKit/UIKit.h>
 
-#import "UAAppStateTracker.h"
+#import "UAAppStateTracker+Internal.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

@@ -26,7 +26,7 @@
 #import "UATagGroupsMutationHistory+Internal.h"
 #import "UAChannel+Internal.h"
 #import "UAChannelRegistrar+Internal.h"
-#import "UAAppStateTrackerFactory.h"
+#import "UAAppStateTrackerFactory+Internal.h"
 
 #if !TARGET_OS_TV   // Inbox and other features not supported on tvOS
 #import "UAInbox+Internal.h"

@@ -7,7 +7,7 @@
 #import "UAActionRunner+Internal.h"
 #import "UAAutomationEngine+Internal.h"
 #import "UARuntimeConfig.h"
-#import "UAAppStateTrackerFactory.h"
+#import "UAAppStateTrackerFactory+Internal.h"
 
 NSUInteger const UAAutomationScheduleLimit = 100;
 NSString *const UAAutomationStoreFileFormat = @"Automation-%@.sqlite";

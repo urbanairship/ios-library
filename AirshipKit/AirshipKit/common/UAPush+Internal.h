@@ -7,7 +7,7 @@
 #import "UAComponent+Internal.h"
 #import "UAChannel+Internal.h"
 #import "UADispatcher+Internal.h"
-#import "UAAppStateTracker.h"
+#import "UAAppStateTracker+Internal.h"
 
 @class UAPreferenceDataStore;
 @class UARuntimeConfig;

@@ -4,7 +4,7 @@
 #import "UAApplicationMetrics.h"
 #import "UADate+Internal.h"
 #import "UAPreferenceDataStore+Internal.h"
-#import "UAAppStateTracker.h"
+#import "UAAppStateTracker+Internal.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

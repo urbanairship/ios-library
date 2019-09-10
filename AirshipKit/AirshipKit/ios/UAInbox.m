@@ -6,7 +6,7 @@
 #import "UAInboxMessageList+Internal.h"
 #import "UAInboxAPIClient+Internal.h"
 #import "UAComponent+Internal.h"
-#import "UAAppStateTrackerFactory.h"
+#import "UAAppStateTrackerFactory+Internal.h"
 
 @implementation UAInbox
 

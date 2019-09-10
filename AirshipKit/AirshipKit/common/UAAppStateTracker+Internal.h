@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 #import <Foundation/Foundation.h>
-#import "UAApplicationState.h"
+#import "UAApplicationState+Internal.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

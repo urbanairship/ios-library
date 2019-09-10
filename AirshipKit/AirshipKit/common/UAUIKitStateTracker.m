@@ -82,25 +82,28 @@
 }
 
 - (void)applicationDidFinishLaunching:(NSNotification *)notification {
-    if ([self.stateTrackerDelegate respondsToSelector:@selector(applicationDidFinishLaunching:)]) {
+    id <UAAppStateTrackerDelegate> strongDelegate = self.stateTrackerDelegate;
+    if ([strongDelegate respondsToSelector:@selector(applicationDidFinishLaunching:)]) {
         NSDictionary *remoteNotification;
 #if !TARGET_OS_TV    // UIApplicationLaunchOptionsRemoteNotificationKey not available on tvOS
         remoteNotification = [notification.userInfo objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey];
 #endif
-        [self.stateTrackerDelegate applicationDidFinishLaunching:remoteNotification];
+        [strongDelegate applicationDidFinishLaunching:remoteNotification];
     }
 }
 
 - (void)applicationDidBecomeActive {
     self.isBackgrounded = NO;
 
-    if ([self.stateTrackerDelegate respondsToSelector:@selector(applicationDidBecomeActive)]) {
-        [self.stateTrackerDelegate applicationDidBecomeActive];
+    id <UAAppStateTrackerDelegate> strongDelegate = self.stateTrackerDelegate;
+
+    if ([strongDelegate respondsToSelector:@selector(applicationDidBecomeActive)]) {
+        [strongDelegate applicationDidBecomeActive];
     }
 
     if (!self.isForegrounded) {
-        if ([self.stateTrackerDelegate respondsToSelector:@selector(applicationDidTransitionToForeground)]) {
-            [self.stateTrackerDelegate applicationDidTransitionToForeground];
+        if ([strongDelegate respondsToSelector:@selector(applicationDidTransitionToForeground)]) {
+            [strongDelegate applicationDidTransitionToForeground];
         }
 
         self.isForegrounded = YES;
@@ -108,21 +111,25 @@
 }
 
 - (void)applicationWillEnterForeground {
-    if ([self.stateTrackerDelegate respondsToSelector:@selector(applicationWillEnterForeground)]) {
-        [self.stateTrackerDelegate applicationWillEnterForeground];
+    id <UAAppStateTrackerDelegate> strongDelegate = self.stateTrackerDelegate;
+
+    if ([strongDelegate respondsToSelector:@selector(applicationWillEnterForeground)]) {
+        [strongDelegate applicationWillEnterForeground];
     }
 }
 
 - (void)applicationDidEnterBackground {
     self.isForegrounded = NO;
 
-    if ([self.stateTrackerDelegate respondsToSelector:@selector(applicationDidEnterBackground)]) {
-        [self.stateTrackerDelegate applicationDidEnterBackground];
+    id <UAAppStateTrackerDelegate> strongDelegate = self.stateTrackerDelegate;
+
+    if ([strongDelegate respondsToSelector:@selector(applicationDidEnterBackground)]) {
+        [strongDelegate applicationDidEnterBackground];
     }
 
     if (!self.isBackgrounded) {
-        if ([self.stateTrackerDelegate respondsToSelector:@selector(applicationDidTransitionToBackground)]) {
-            [self.stateTrackerDelegate applicationDidTransitionToBackground];
+        if ([strongDelegate respondsToSelector:@selector(applicationDidTransitionToBackground)]) {
+            [strongDelegate applicationDidTransitionToBackground];
         }
 
         self.isBackgrounded = YES;
@@ -130,14 +137,18 @@
 }
 
 - (void)applicationWillTerminate {
-    if ([self.stateTrackerDelegate respondsToSelector:@selector(applicationWillTerminate)]) {
-        [self.stateTrackerDelegate applicationWillTerminate];
+    id <UAAppStateTrackerDelegate> strongDelegate = self.stateTrackerDelegate;
+
+    if ([strongDelegate respondsToSelector:@selector(applicationWillTerminate)]) {
+        [strongDelegate applicationWillTerminate];
     }
 }
 
 - (void)applicationWillResignActive {
-    if ([self.stateTrackerDelegate respondsToSelector:@selector(applicationWillResignActive)]) {
-        [self.stateTrackerDelegate applicationWillResignActive];
+    id <UAAppStateTrackerDelegate> strongDelegate = self.stateTrackerDelegate;
+
+    if ([strongDelegate respondsToSelector:@selector(applicationWillResignActive)]) {
+        [strongDelegate applicationWillResignActive];
     }
 }
 

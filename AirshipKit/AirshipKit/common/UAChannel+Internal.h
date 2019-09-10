@@ -5,7 +5,7 @@
 #import "UATagGroupsRegistrar+Internal.h"
 #import "UAPushProviderDelegate.h"
 #import "UAUserProviderDelegate+Internal.h"
-#import "UAAppStateTracker.h"
+#import "UAAppStateTracker+Internal.h"
 
 extern NSString *const UAChannelTagsSettingsKey;
 extern NSString *const UAChannelCreationOnForeground;

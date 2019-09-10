@@ -19,7 +19,7 @@
 #import "UAPushReceivedEvent+Internal.h"
 #import "UARegistrationDelegateWrapper+Internal.h"
 #import "UADispatcher+Internal.h"
-#import "UAAppStateTrackerFactory.h"
+#import "UAAppStateTrackerFactory+Internal.h"
 
 #if !TARGET_OS_TV  // Inbox not supported on tvOS
 #import "UAInboxUtils.h"

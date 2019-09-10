@@ -8,7 +8,7 @@
 /*
  * SDK-private extensions to UALocation
  */
-@interface UALocation() <CLLocationManagerDelegate, UAAppStateTrackerDelegate>
+@interface UALocation() <CLLocationManagerDelegate>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -30,11 +30,6 @@ NS_ASSUME_NONNULL_BEGIN
  * The system version.
  */
 @property (nonatomic, strong) UASystemVersion *systemVersion;
-
-/**
- * The app state tracker.
- */
-@property (nonatomic, strong) id<UAAppStateTracker> appStateTracker;
 
 /**
  * Flag indicating if location updates have been started or not.

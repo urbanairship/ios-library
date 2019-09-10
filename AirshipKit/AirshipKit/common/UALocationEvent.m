@@ -2,7 +2,7 @@
 
 #import "UAEvent+Internal.h"
 #import "UALocationEvent.h"
-#import "UAAppStateTrackerFactory.h"
+#import "UAAppStateTrackerFactory+Internal.h"
 
 @interface UALocationInfo ()
 @property (nonatomic, assign) double latitude;

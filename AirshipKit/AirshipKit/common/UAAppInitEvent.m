@@ -6,7 +6,7 @@
 #import "UAirship.h"
 #import "UAUser.h"
 #import "UAUtils+Internal.h"
-#import "UAAppStateTrackerFactory.h"
+#import "UAAppStateTrackerFactory+Internal.h"
 
 @implementation UAAppInitEvent
 

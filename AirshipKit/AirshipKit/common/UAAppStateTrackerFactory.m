@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-#import "UAAppStateTrackerFactory.h"
+#import "UAAppStateTrackerFactory+Internal.h"
 #import "UAUIKitStateTracker+Internal.h"
 
 @implementation UAAppStateTrackerFactory

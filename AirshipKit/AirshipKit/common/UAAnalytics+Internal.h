@@ -5,7 +5,7 @@
 #import "UAComponent+Internal.h"
 #import "UADate+Internal.h"
 #import "UADispatcher+Internal.h"
-#import "UAAppStateTracker.h"
+#import "UAAppStateTracker+Internal.h"
 
 #define kUAAnalyticsEnabled @"UAAnalyticsEnabled"
 #define kUAMissingSendID @"MISSING_SEND_ID"

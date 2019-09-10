@@ -14,7 +14,7 @@
 #import "UAAssociateIdentifiersEvent+Internal.h"
 #import "UAAssociatedIdentifiers.h"
 #import "UACustomEvent.h"
-#import "UAAppStateTrackerFactory.h"
+#import "UAAppStateTrackerFactory+Internal.h"
 
 #if !TARGET_OS_TV   // Inbox not supported on tvOS
 #import "UAInboxUtils.h"

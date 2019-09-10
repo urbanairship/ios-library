@@ -3,7 +3,7 @@
 #import "UAChannelCapture.h"
 #import "UAPushProviderDelegate.h"
 #import "UAChannel.h"
-#import "UAAppStateTracker.h"
+#import "UAAppStateTracker+Internal.h"
 
 @class UAPreferenceDataStore;
 

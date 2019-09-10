@@ -13,7 +13,7 @@
 #import "UAirship.h"
 #import "NSOperationQueue+UAAdditions.h"
 #import "UADispatcher+Internal.h"
-#import "UAAppStateTrackerFactory.h"
+#import "UAAppStateTrackerFactory+Internal.h"
 
 @interface UAEventManager() <UAAppStateTrackerDelegate>
 

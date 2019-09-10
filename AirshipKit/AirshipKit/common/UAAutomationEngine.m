@@ -18,7 +18,7 @@
 #import "UAirship.h"
 #import "UAApplicationMetrics.h"
 #import "UAScheduleEdits+Internal.h"
-#import "UAAppStateTrackerFactory.h"
+#import "UAAppStateTrackerFactory+Internal.h"
 
 @interface UAAutomationStateCondition : NSObject
 

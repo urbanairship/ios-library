@@ -8,7 +8,7 @@
 #import "UAPreferenceDataStore+Internal.h"
 #import "UAirshipVersion.h"
 #import "UAUtils+Internal.h"
-#import "UAAppStateTrackerFactory.h"
+#import "UAAppStateTrackerFactory+Internal.h"
 
 NSString * const kUACoreDataStoreName = @"RemoteData-%@.sqlite";
 NSString * const UARemoteDataRefreshIntervalKey = @"remotedata.REFRESH_INTERVAL";
