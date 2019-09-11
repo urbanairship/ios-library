@@ -58,8 +58,6 @@ NSString *const UAFullScreenStyleFileName = @"UAInAppMessageFullScreenStyle";
     } else {
         [self.fullScreenController showWithCompletionHandler:completionHandler];
     }
-
-    [self.fullScreenController showWithCompletionHandler:completionHandler];
 }
 
 
