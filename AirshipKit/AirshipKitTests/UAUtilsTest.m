@@ -41,7 +41,11 @@
     
     // VERIFY
     XCTAssertNotNil(deviceModelName);
+
+    // Simulator should return x86_64
+    XCTAssertEqualObjects(@"x86_64", deviceModelName);
 }
+
 
 - (void)testPluralize {
     XCTAssertEqualObjects([UAUtils pluralize:0 singularForm:@"singular" pluralForm:@"plural"],@"plural");

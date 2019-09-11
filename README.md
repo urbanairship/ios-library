@@ -256,9 +256,3 @@ set by updating `jenkins-enviornment.properties` file.
 Third party Package | License   | Copyright / Creator
 ------------------- | --------- | -----------------------------------
 Base64              | BSD       | Copyright 2009-2010 Matt Gallagher.
-
-### Test Code
-
-Third party Package | License   | Copyright / Creator
-------------------- | --------- | -----------------------------------
-JRSwizzle           | MIT       | Copyright 2012 Jonathan Rentzsch

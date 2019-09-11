@@ -13,7 +13,6 @@
 #import "UAChannelRegistrationPayload+Internal.h"
 #import "UAChannelRegistrar+Internal.h"
 #import "UAEvent.h"
-#import "NSObject+HideClass.h"
 #import "UAInteractiveNotificationEvent+Internal.h"
 #import "UANotificationCategories+Internal.h"
 #import "UANotificationAction.h"
