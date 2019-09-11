@@ -3,6 +3,27 @@ iOS Changelog
 
 Migration Guides: Documentation/Migration
 
+Version 12.0.0-beta.3 - September 9, 2019
+=========================================
+- Updated minimum target to iOS 11
+- Added more robust user creation and background task usage
+- Added ability to style the Message Center with named colors
+- Re-introduced the landing page action predicate
+
+Version 12.0.0-beta.2 - August 30, 2019
+=======================================
+- Updated with support for macOS
+- Added improved darkmode capability for message center
+- Updated packaging to include XCFrameworks
+
+Version 12.0.0-beta.1 - August 15, 2019
+=======================================
+- Updated with initial support for iOS 13 and XCode 11
+- Added multi-window and target scene compatibility
+- Added dark mode compatibility for message center and in-app automation
+- Added spoken notification compatibility
+- Added support for latest location permissions
+
 Version 11.1.2 - August 14, 2019
 ================================
 - Fixed an issue where In-App Automation messages were continuing to display after they were cancelled.
@@ -12,7 +33,7 @@ Apps using In-App Automation are encouraged to upgrade.
 Note for apps that directly schedule In-App Messages using the SDK
 ------------------------------------------------------------------
 Some apps may be using the `UAInAppMessageManager`'s `scheduleMessageWithScheduleInfo` or `scheduleMessagesWithScheduleInfo` methods to directly schedule In-App messages through the SDK.
-The first time the app runs with this version of the SDK, any In-App Messages that were directly scheduled 
+The first time the app runs with this version of the SDK, any In-App Messages that were directly scheduled
 by the app will be canceled and removed. The app will need to re-schedule those messages.
 
 Apps whose in-app messages are scheduled only through the Airship message composers (go.urbanairship.com) don't need to take any additional action after upgrading to this version.
