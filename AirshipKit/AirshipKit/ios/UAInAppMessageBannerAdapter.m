@@ -13,6 +13,7 @@ NSString *const UABannerStyleFileName = @"UAInAppMessageBannerStyle";
 @interface UAInAppMessageBannerAdapter ()
 @property (nonatomic, strong) UAInAppMessage *message;
 @property (nonatomic, strong) UAInAppMessageBannerController *bannerController;
+@property (nonatomic, strong) UIWindowScene *scene API_AVAILABLE(ios(13.0));
 @end
 
 @implementation UAInAppMessageBannerAdapter
@@ -48,14 +49,29 @@ NSString *const UABannerStyleFileName = @"UAInAppMessageBannerStyle";
 
 - (BOOL)isReadyToDisplay {
     UAInAppMessageBannerDisplayContent* displayContent = (UAInAppMessageBannerDisplayContent *)self.message.displayContent;
-    return [UAInAppMessageUtils isReadyToDisplayWithMedia:displayContent.media];
+    if (![UAInAppMessageUtils isReadyToDisplayWithMedia:displayContent.media]) {
+        return NO;
+    }
+
+    if (@available(iOS 13.0, *)) {
+        self.scene = [[UAInAppMessageSceneManager shared] sceneForMessage:self.message];
+        if (!self.scene) {
+            UA_LDEBUG(@"Unable to display message %@, no scene.", self.message.identifier);
+            return NO;
+        }
+    }
+
+    return YES;
 }
 
 - (void)display:(void (^)(UAInAppMessageResolution *))completionHandler {
     if (@available(iOS 13.0, *)) {
-        UIWindowScene *scene = [[UAInAppMessageSceneManager shared] sceneForMessage:self.message];
-        [self.bannerController showWithParentView:[UAUtils mainWindow:scene]
-                                completionHandler:completionHandler];
+        UA_WEAKIFY(self)
+        [self.bannerController showWithParentView:[UAUtils mainWindow:self.scene] completionHandler:^(UAInAppMessageResolution *result) {
+            UA_STRONGIFY(self)
+            self.scene = nil;
+            completionHandler(result);
+        }];
     } else {
         [self.bannerController showWithParentView:[UAUtils mainWindow]
                                 completionHandler:completionHandler];

@@ -339,9 +339,7 @@ double const DefaultResizableViewAnimationDuration = 0.2;
     }
 
     [self createWindow];
-    if (scene) {
-        self.topWindow.windowScene = scene;
-    }
+    self.topWindow.windowScene = scene;
     [self observeSceneEvents];
     [self displayWindow:completionHandler];
 }

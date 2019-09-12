@@ -9,16 +9,15 @@
 #import "UAInAppMessageResizableViewController+Internal.h"
 #import "UAInAppMessageSceneManager.h"
 
-NS_ASSUME_NONNULL_BEGIN
-
 NSString *const UAHTMLStyleFileName = @"UAInAppMessageHTMLStyle";
 
 
 @interface UAInAppMessageHTMLAdapter ()
-@property(nonatomic, strong) UAInAppMessage *message;
-@property(nonatomic, strong) UAInAppMessageHTMLDisplayContent *displayContent;
-@property(nonatomic, strong) UAInAppMessageHTMLViewController *htmlViewController;
-@property(nonatomic, strong) UAInAppMessageResizableViewController *resizableContainerViewController;
+@property (nonatomic, strong) UAInAppMessage *message;
+@property (nonatomic, strong) UAInAppMessageHTMLDisplayContent *displayContent;
+@property (nonatomic, strong) UAInAppMessageHTMLViewController *htmlViewController;
+@property (nonatomic, strong) UAInAppMessageResizableViewController *resizableContainerViewController;
+@property (nonatomic, strong) UIWindowScene *scene API_AVAILABLE(ios(13.0));
 @end
 
 @implementation UAInAppMessageHTMLAdapter
@@ -64,7 +63,19 @@ NSString *const UAHTMLStyleFileName = @"UAInAppMessageHTMLStyle";
 }
 
 - (BOOL)isReadyToDisplay {
-    return !self.displayContent.requireConnectivity || [self isNetworkConnected];
+    if (self.displayContent.requireConnectivity && ![self isNetworkConnected]) {
+        return NO;
+    }
+
+    if (@available(iOS 13.0, *)) {
+        self.scene = [[UAInAppMessageSceneManager shared] sceneForMessage:self.message];
+        if (!self.scene) {
+            UA_LDEBUG(@"Unable to display message %@, no scene.", self.message.identifier);
+            return NO;
+        }
+    }
+
+    return YES;
 }
 
 - (void)createContainerViewController {
@@ -88,13 +99,15 @@ NSString *const UAHTMLStyleFileName = @"UAInAppMessageHTMLStyle";
     [self createContainerViewController];
 
     if (@available(iOS 13.0, *)) {
-        UIWindowScene *scene = [[UAInAppMessageSceneManager shared] sceneForMessage:self.message];
-        [self.resizableContainerViewController showWithScene:scene completionHandler:completionHandler];
+        UA_WEAKIFY(self)
+        [self.resizableContainerViewController showWithScene:self.scene completionHandler:^(UAInAppMessageResolution *result) {
+            UA_STRONGIFY(self)
+            self.scene = nil;
+            completionHandler(result);
+        }];
     } else {
         [self.resizableContainerViewController showWithCompletionHandler:completionHandler];
     }
 }
 
 @end
-
-NS_ASSUME_NONNULL_END

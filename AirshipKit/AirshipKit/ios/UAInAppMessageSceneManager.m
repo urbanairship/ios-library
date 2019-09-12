@@ -56,11 +56,21 @@ static UAInAppMessageSceneManager *shared_;
 
 - (nullable UIWindowScene *)sceneForMessage:(UAInAppMessage *)message {
     UIWindowScene *messageScene = nil;
+    UIWindowScene *activeMessageScene = nil;
+
     for (UIScene *scene in self.scenes) {
-        if ([scene isKindOfClass:[UIWindowScene class]]) {
-            messageScene = (UIWindowScene *)scene;
+        if (![scene isKindOfClass:[UIWindowScene class]]) {
+            continue;
+        }
+
+        messageScene = (UIWindowScene *)scene;
+        if (messageScene.activationState == UISceneActivationStateForegroundActive) {
+            activeMessageScene = messageScene;
         }
     }
+
+    // Prefer the last active message scene
+    messageScene = activeMessageScene ?: messageScene;
 
     // Give the delegate a chance to override
     id<UAInAppMessageSceneDelegate> delegate = self.delegate;
