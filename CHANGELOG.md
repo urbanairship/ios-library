@@ -3,26 +3,24 @@ iOS Changelog
 
 Migration Guides: Documentation/Migration
 
-Version 12.0.0-beta.3 - September 9, 2019
-=========================================
-- Updated minimum target to iOS 11
-- Added more robust user creation and background task usage
-- Added ability to style the Message Center with named colors
-- Re-introduced the landing page action predicate
+Version 12.0.0 - September 12, 2019
+===================================
+Major update for compatibility with iOS 13 and macOS Catalyst.
 
-Version 12.0.0-beta.2 - August 30, 2019
-=======================================
-- Updated with support for macOS
-- Added improved darkmode capability for message center
-- Updated packaging to include XCFrameworks
+Changes
+-------
 
-Version 12.0.0-beta.1 - August 15, 2019
-=======================================
-- Updated with initial support for iOS 13 and XCode 11
+- Updated with support for iOS 13 and Xcode 11
+- Updated minimum target to iOS 11, removing support for iOS 10 and below
+- Added support for macOS using Catalyst
 - Added multi-window and target scene compatibility
-- Added dark mode compatibility for message center and in-app automation
+- Added dark mode support and named color styling for Message Center
 - Added spoken notification compatibility
-- Added support for latest location permissions
+- Added support for new iOS 13 location permissions
+- Introduced a new `UAChannel` class
+- Deprecated channel-related functionality in `UAPush`, in favor of `UAChannel`
+- More robust user creation and background task usage
+- Fixed error logs involving `UALandingPageActionPredicate`
 
 Version 11.1.2 - August 14, 2019
 ================================
