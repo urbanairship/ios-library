@@ -99,6 +99,11 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)scheduleUpload;
 
+/**
+ * Registers an SDK extension with the analytics module.
+ */
+- (void)registerSDKExtension:(NSString *)extension version:(NSString *)version;
+
 @end
 
 NS_ASSUME_NONNULL_END

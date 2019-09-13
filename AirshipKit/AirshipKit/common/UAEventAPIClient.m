@@ -11,6 +11,7 @@
 #import "NSJSONSerialization+UAAdditions.h"
 #import "UAJSONSerialization+Internal.h"
 #import "UALocationProviderDelegate.h"
+#import "UAAnalytics+Internal.h"
 
 @implementation UAEventAPIClient
 
@@ -116,6 +117,25 @@
 
         [builder setValue:locationPermissionStatus forHeader:@"X-UA-Location-Permission"];
         [builder setValue:locationUpdatesEnabled forHeader:@"X-UA-Location-Service-Enabled"];
+
+        // SDK Extensions
+        NSString *extensionHeaderValue = @"";
+        NSUInteger i = 0;
+
+        NSDictionary<NSString*, NSString*> *sdkExtensions = [UAirship shared].analytics.sdkExtensions;
+
+        for (NSString *extensionName in sdkExtensions) {
+            NSString *version = sdkExtensions[extensionName];
+            extensionHeaderValue = [extensionHeaderValue stringByAppendingString:[NSString stringWithFormat:@"%@:%@", extensionName, version]];
+
+            i++;
+
+            if (i < sdkExtensions.count) {
+                extensionHeaderValue = [extensionHeaderValue stringByAppendingString:@", "];
+            }
+        }
+
+        [builder setValue:extensionHeaderValue forHeader:@"X-UA-Frameworks"];
     }];
     
     return request;

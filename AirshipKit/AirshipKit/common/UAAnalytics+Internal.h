@@ -55,6 +55,12 @@ extern NSString *const UAScreenKey;
  */
 @property (nonatomic, copy, nullable) NSString *sessionID;
 
+/**
+ * The registered SDK extensions.
+ */
+@property (nonatomic, readonly) NSDictionary<NSString*, NSString*> *sdkExtensions;
+
+
 ///---------------------------------------------------------------------------------------
 /// @name Analytics Internal Methods
 ///---------------------------------------------------------------------------------------

@@ -2,6 +2,7 @@
 
 #import <Foundation/Foundation.h>
 #import "UAAPIClient+Internal.h"
+#import "UAAnalytics+Internal.h"
 
 @class UARuntimeConfig;
 

@@ -419,6 +419,16 @@
     [self.mockEventManager verify];
 }
 
+- (void)testRegisterSDKExtension {
+    [self.analytics registerSDKExtension:@"fake" version:@"nope"];
+    [self.analytics registerSDKExtension:@"cordova" version:@"1.2.3"];
+    [self.analytics registerSDKExtension:@"unity" version:@"5,.6,.7,,,"];
+
+    id expectedExtensions = @{@"cordova":@"1.2.3", @"unity" : @"5.6.7"};
+
+    XCTAssertEqualObjects(self.analytics.sdkExtensions, expectedExtensions);
+}
+
 
 - (UAAnalytics *)createAnalytics {
     return [UAAnalytics analyticsWithConfig:self.config

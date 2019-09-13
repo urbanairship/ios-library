@@ -30,7 +30,7 @@
 @property (nonatomic, strong) UADate *date;
 @property (nonatomic, strong) UADispatcher *dispatcher;
 @property (nonatomic, strong) id<UAAppStateTracker> appStateTracker;
-
+@property (nonatomic, strong) NSMutableDictionary<NSString*, NSString*> *mutableSDKExtensions;
 @property (nonatomic, assign) BOOL isEnteringForeground;
 
 // Screen tracking state
@@ -66,6 +66,7 @@ NSString *const UAEventKey = @"event";
         self.notificationCenter = notificationCenter;
         self.date = date;
         self.dispatcher = dispatcher;
+        self.mutableSDKExtensions = [NSMutableDictionary dictionary];
 
         // Default analytics value
         if (![self.dataStore objectForKey:kUAAnalyticsEnabled]) {
@@ -314,6 +315,18 @@ NSString *const UAEventKey = @"event";
         // if component was enabled and is now disabled, cancel any pending uploads
         [self cancelUpload];
     }
+}
+
+- (void)registerSDKExtension:(NSString *)extension version:(NSString *)version {
+    NSArray *whitelistedExtensions = @[@"cordova", @"xamarin", @"flutter", @"unity", @"react-native"];
+    if ([whitelistedExtensions containsObject:extension]) {
+        NSString *sanitizedVersion = [version stringByReplacingOccurrencesOfString:@"," withString:@""];
+        [self.mutableSDKExtensions setValue:sanitizedVersion forKey:extension];
+    }
+}
+
+- (NSDictionary<NSString*, NSString*>*)sdkExtensions {
+    return [NSDictionary dictionaryWithDictionary:self.mutableSDKExtensions];
 }
 
 @end
