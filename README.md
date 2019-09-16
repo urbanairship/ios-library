@@ -15,7 +15,7 @@ services into your iOS applications.
 
 ## Installation
 
-Xcode 10.0+ is required for all projects and the static library. Projects must target >= iOS 10.
+Xcode 11.0+ is required for all projects and the static library. Projects must target >= iOS 11.
 
 ### CocoaPods
 
@@ -95,7 +95,7 @@ Execute the following command in the same directory as the cartfile:
 $ carthage update
 ```
 
-In order to take advantage of iOS 10 notification attachments, you will need to create a notification service extension
+In order to take advantage of notification attachments, you will need to create a notification service extension
 alongside your main application. Most of the work is already done for you, but since this involves creating a new target there
 are a few additional steps:
 
