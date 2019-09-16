@@ -5,6 +5,13 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+//---------------------------------------------------------------------------------------
+// UAChannel Class
+//---------------------------------------------------------------------------------------
+
+/**
+* This singleton provides an interface to the channel functionality provided by the Airship iOS Push API.
+*/
 @interface UAChannel : UAComponent
 
 /**
