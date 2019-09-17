@@ -29,6 +29,7 @@
 		459D70EE2215FAED005A3BB9 /* EventDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 459D70ED2215FAED005A3BB9 /* EventDataManager.swift */; };
 		45EC352A222F5ADE00F5A97D /* ThemeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45EC3524222F5ADE00F5A97D /* ThemeManager.swift */; };
 		45EC3530223052E200F5A97D /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45EC352F223052E200F5A97D /* Theme.swift */; };
+		876ED180233123990020C187 /* DispayIntervalTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 876ED17A233123990020C187 /* DispayIntervalTableViewController.swift */; };
 		DF4E4928221CDB5B00F306A5 /* AirshipKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DFE70146212F216600A708D5 /* AirshipKit.framework */; };
 		DF4EDA6121E41D3900804CB3 /* ButtonsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF4EDA6021E41D3900804CB3 /* ButtonsTableViewController.swift */; };
 		DF4EDA6821E4261700804CB3 /* ButtonDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF4EDA6721E4261700804CB3 /* ButtonDetailViewController.swift */; };
@@ -126,6 +127,7 @@
 		459D70ED2215FAED005A3BB9 /* EventDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventDataManager.swift; sourceTree = "<group>"; };
 		45EC3524222F5ADE00F5A97D /* ThemeManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ThemeManager.swift; sourceTree = "<group>"; };
 		45EC352F223052E200F5A97D /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		876ED17A233123990020C187 /* DispayIntervalTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DispayIntervalTableViewController.swift; sourceTree = "<group>"; };
 		DF1C21D12245605100B33D01 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		DF4EDA6021E41D3900804CB3 /* ButtonsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonsTableViewController.swift; sourceTree = "<group>"; };
 		DF4EDA6721E4261700804CB3 /* ButtonDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonDetailViewController.swift; sourceTree = "<group>"; };
@@ -261,6 +263,7 @@
 			isa = PBXGroup;
 			children = (
 				DFE70130212F202500A708D5 /* DeviceInfoViewController.swift */,
+				876ED17A233123990020C187 /* DispayIntervalTableViewController.swift */,
 				DFE7012E212F202400A708D5 /* AddAssociatedIdentifiersTableViewController.swift */,
 				DFE7012D212F202400A708D5 /* AddNamedUserTableViewController.swift */,
 				DFE7012A212F202400A708D5 /* AddTagsTableViewController.swift */,
@@ -463,6 +466,7 @@
 				45EC3530223052E200F5A97D /* Theme.swift in Sources */,
 				DFE70133212F202500A708D5 /* AssociatedIdentifiersTableViewController.swift in Sources */,
 				459D70E62214E82B005A3BB9 /* EventsViewController.swift in Sources */,
+				876ED180233123990020C187 /* DispayIntervalTableViewController.swift in Sources */,
 				45960BF72254162B00ADB97B /* CustomPropertyTableViewCell.swift in Sources */,
 				45960BF42254162B00ADB97B /* CustomEventTableViewCell.swift in Sources */,
 				45960BE32250463100ADB97B /* AutomationDetailViewController.swift in Sources */,

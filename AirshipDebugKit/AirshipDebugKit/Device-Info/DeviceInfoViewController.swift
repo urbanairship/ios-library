@@ -35,9 +35,14 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
     var launchCompletionHandler : (() -> Void)?
 
     private let localizedNone = "ua_none".localized(comment: "None")
-
-    private let sectionCount = 6
-
+    private let sectionCount = 7
+    private let inAppAutomationKey = "in_App_automation_enabled"
+    
+    var isInAppAutomationEnabled: Bool {
+        get {return UserDefaults.standard.bool(forKey:inAppAutomationKey)}
+        set (value) {UserDefaults.standard.set(value, forKey:inAppAutomationKey)}
+    }
+    
     @IBOutlet private var tableView: UITableView!
 
     /* Section
@@ -45,36 +50,41 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
      * table view data source methods
      */
     let pushSettings = 0,
-    deviceSettings = 1,
-    locationSettings = 2,
-    analyticsSettings = 3,
-    sdkInfo = 4,
-    appInfo = 5
+    inAppAutomationSettings = 1,
+    deviceSettings = 2,
+    locationSettings = 3,
+    analyticsSettings = 4,
+    sdkInfo = 5,
+    appInfo = 6
 
     // Push settings
     private let pushEnabled = IndexPath(row: 0, section: 0),
     lastPayload = IndexPath(row: 1, section: 0)
 
+    // In-App automation settings
+    private let inAppAutomationEnabled = IndexPath(row: 0, section: 1),
+    displayInterval = IndexPath(row: 1, section: 1)
+    
     // Device settings
-    private let channelID = IndexPath(row: 0, section: 1),
-    username = IndexPath(row: 1, section: 1),
-    namedUser = IndexPath(row: 2, section: 1),
-    tags = IndexPath(row: 3, section: 1),
-    associatedIdentifiers = IndexPath(row: 4, section: 1)
+    private let channelID = IndexPath(row: 0, section: 2),
+    username = IndexPath(row: 1, section: 2),
+    namedUser = IndexPath(row: 2, section: 2),
+    tags = IndexPath(row: 3, section: 2),
+    associatedIdentifiers = IndexPath(row: 4, section: 2)
 
     // Location settings
-    private let locationEnabled = IndexPath(row: 0, section: 2),
-    timezone = IndexPath(row: 1, section: 2)
+    private let locationEnabled = IndexPath(row: 0, section: 3),
+    timezone = IndexPath(row: 1, section: 3)
 
     // Analytics settigns
-    private let analyticsEnabled = IndexPath(row: 0, section: 3)
+    private let analyticsEnabled = IndexPath(row: 0, section: 4)
     
     // SDK Info
-    private let sdkVersion = IndexPath(row: 0, section: 4),
-    localeInfo = IndexPath(row: 1, section: 4)
+    private let sdkVersion = IndexPath(row: 0, section: 5),
+    localeInfo = IndexPath(row: 1, section: 5)
 
     // App Info
-    private let appVersion = IndexPath(row: 0, section: 5)
+    private let appVersion = IndexPath(row: 0, section: 6)
     
     @objc func pushSettingsButtonTapped(sender:Any) {
         UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!, options: [:],completionHandler: nil)
@@ -153,6 +163,8 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
         switch section {
         case pushSettings:
             return "ua_device_info_push_settings".localized()
+        case inAppAutomationSettings:
+            return "ua_device_info_in_app_automation_settings".localized()
         case deviceSettings:
             return "ua_device_info_device_settings".localized()
         case sdkInfo:
@@ -177,6 +189,8 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
         case pushSettings:
+            return 2
+        case inAppAutomationSettings:
             return 2
         case deviceSettings:
             return 5
@@ -218,6 +232,21 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
             cell.subtitle?.adjustsFontSizeToFitWidth = true;
             cell.subtitle?.minimumScaleFactor = 0.25;
             cell.subtitle?.numberOfLines = 1;
+        case inAppAutomationEnabled:
+            cell.title.text = "ua_device_info_in_app_automation_settings".localized()
+            cell.subtitle?.text = " "
+            cell.cellSwitch.isHidden = false
+            cell.cellSwitch.isOn = isInAppAutomationEnabled
+            cell.subtitle?.adjustsFontSizeToFitWidth = true;
+            cell.subtitle?.minimumScaleFactor = 0.25;
+            cell.subtitle?.numberOfLines = 1;
+        case displayInterval:
+            cell.title.text = "ua_device_info_in_app_automation_display_interval".localized()
+            cell.subtitle.text = " "
+            cell.subtitle?.adjustsFontSizeToFitWidth = true;
+            cell.subtitle?.minimumScaleFactor = 0.25;
+            cell.subtitle?.numberOfLines = 1;
+            cell.accessoryType = .disclosureIndicator
         case channelID:
             cell.title.text = "ua_device_info_channel_id".localized()
             cell.subtitle.text = UAirship.channel().identifier
@@ -305,6 +334,13 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
                 UIPasteboard.general.string = cell.subtitle?.text
                 showCopiedAlert()
             }
+        case inAppAutomationEnabled:
+            cell.cellSwitch.setOn(!cell.cellSwitch.isOn, animated: true)
+            let isEnabled = cell.cellSwitch.isOn
+            UAirship.inAppMessageManager().isEnabled = isEnabled
+            isInAppAutomationEnabled = isEnabled
+        case displayInterval:
+            performSegue(withIdentifier: "displayIntervalSegue", sender: self)
         case username:
             UAirship.inboxUser()?.getData({ (userData) in
                 UIPasteboard.general.string = userData.username
