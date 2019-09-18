@@ -8,64 +8,6 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--Dispay Interval Table View Controller-->
-        <scene sceneID="1so-AJ-NZd">
-            <objects>
-                <viewController id="Qy1-a9-6vd" customClass="DispayIntervalTableViewController" customModule="AirshipDebugKit" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="Sp7-wT-Swl">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="580"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Display interval :" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2yd-uC-e4P">
-                                <rect key="frame" x="20" y="71.5" width="125" height="20.5"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="30" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="moD-Fs-GJx">
-                                <rect key="frame" x="486" y="30" width="94" height="25.5"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
-                                <textInputTraits key="textInputTraits" returnKeyType="go" enablesReturnKeyAutomatically="YES"/>
-                            </textField>
-                            <stepper opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" highlighted="YES" selected="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="1" minimumValue="1" maximumValue="120" translatesAutoresizingMaskIntoConstraints="NO" id="FQw-4y-1E7">
-                                <rect key="frame" x="486" y="65.5" width="94" height="32"/>
-                                <color key="backgroundColor" systemColor="secondarySystemGroupedBackgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <color key="tintColor" systemColor="tertiarySystemGroupedBackgroundColor" red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <connections>
-                                    <action selector="stepperValueChanged:" destination="Qy1-a9-6vd" eventType="valueChanged" id="HkW-XY-TqG"/>
-                                </connections>
-                            </stepper>
-                        </subviews>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
-                        <constraints>
-                            <constraint firstItem="moD-Fs-GJx" firstAttribute="width" secondItem="FQw-4y-1E7" secondAttribute="width" id="2CL-oq-6Oy"/>
-                            <constraint firstItem="moD-Fs-GJx" firstAttribute="top" secondItem="E4a-bg-VbU" secondAttribute="top" constant="30" id="8Tr-Kb-aLb"/>
-                            <constraint firstItem="FQw-4y-1E7" firstAttribute="centerY" secondItem="2yd-uC-e4P" secondAttribute="centerY" id="bgU-hZ-Pjb"/>
-                            <constraint firstItem="E4a-bg-VbU" firstAttribute="trailing" secondItem="FQw-4y-1E7" secondAttribute="trailing" constant="20" id="gSA-jO-jMG"/>
-                            <constraint firstItem="FQw-4y-1E7" firstAttribute="top" secondItem="moD-Fs-GJx" secondAttribute="bottom" constant="10" id="ojF-JJ-jQQ"/>
-                            <constraint firstItem="2yd-uC-e4P" firstAttribute="leading" secondItem="E4a-bg-VbU" secondAttribute="leading" constant="20" id="pTG-5k-xbH"/>
-                            <constraint firstItem="FQw-4y-1E7" firstAttribute="centerX" secondItem="moD-Fs-GJx" secondAttribute="centerX" id="ruk-ec-pbO"/>
-                        </constraints>
-                        <viewLayoutGuide key="safeArea" id="E4a-bg-VbU"/>
-                    </view>
-                    <navigationItem key="navigationItem" id="2dq-KA-ALm">
-                        <barButtonItem key="rightBarButtonItem" title="Apply" id="l5X-4H-Ysx">
-                            <connections>
-                                <action selector="applyDisplayInterval:" destination="Qy1-a9-6vd" id="iae-sx-Smn"/>
-                            </connections>
-                        </barButtonItem>
-                    </navigationItem>
-                    <size key="freeformSize" width="600" height="600"/>
-                    <connections>
-                        <outlet property="displayIntervalStepper" destination="FQw-4y-1E7" id="1kE-Wp-lrI"/>
-                        <outlet property="displayIntervalText" destination="2yd-uC-e4P" id="J5X-O5-76n"/>
-                        <outlet property="displayIntervalValue" destination="moD-Fs-GJx" id="2AL-BC-eZA"/>
-                    </connections>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="QlO-H1-0vs" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="-467" y="-275"/>
-        </scene>
         <!--Device Info View Controller-->
         <scene sceneID="XaT-iP-LgU">
             <objects>
@@ -110,13 +52,30 @@
                                                     </constraints>
                                                     <color key="onTintColor" red="0.53333333329999999" green="0.71372549019999998" blue="0.7843137255" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 </switch>
+                                                <stepper hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" maximumValue="100" translatesAutoresizingMaskIntoConstraints="NO" id="8W8-cO-BSd">
+                                                    <rect key="frame" x="246.5" y="6" width="94" height="32"/>
+                                                    <connections>
+                                                        <action selector="stepperValueChanged:" destination="XUr-gs-epy" eventType="valueChanged" id="qm1-zy-TTX"/>
+                                                    </connections>
+                                                </stepper>
+                                                <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="BLN-Js-4Y6">
+                                                    <rect key="frame" x="241.5" y="22" width="0.0" height="0.0"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
                                             </subviews>
                                             <constraints>
+                                                <constraint firstItem="BLN-Js-4Y6" firstAttribute="centerY" secondItem="xu2-pW-ZrJ" secondAttribute="centerY" id="780-zv-Dso"/>
+                                                <constraint firstItem="mrV-TZ-Gqg" firstAttribute="trailing" secondItem="8W8-cO-BSd" secondAttribute="trailing" id="7Kd-dN-l2L"/>
                                                 <constraint firstItem="mrV-TZ-Gqg" firstAttribute="trailing" secondItem="xu2-pW-ZrJ" secondAttribute="trailingMargin" id="7xt-Zs-qET"/>
                                                 <constraint firstItem="sC2-Yq-gEX" firstAttribute="centerY" secondItem="xu2-pW-ZrJ" secondAttribute="centerY" priority="990" id="Ggg-fc-8PL"/>
                                                 <constraint firstItem="sC2-Yq-gEX" firstAttribute="leading" secondItem="xu2-pW-ZrJ" secondAttribute="leadingMargin" id="IeF-3P-2gC"/>
+                                                <constraint firstItem="8W8-cO-BSd" firstAttribute="centerY" secondItem="xu2-pW-ZrJ" secondAttribute="centerY" id="Pnd-tG-n2r"/>
+                                                <constraint firstItem="BLN-Js-4Y6" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="hv8-Y6-lCt" secondAttribute="trailing" id="Req-a0-Tfj"/>
                                                 <constraint firstItem="mrV-TZ-Gqg" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="hv8-Y6-lCt" secondAttribute="trailing" id="XDD-p1-giG"/>
                                                 <constraint firstAttribute="bottomMargin" secondItem="hv8-Y6-lCt" secondAttribute="bottom" constant="-6" id="XeR-HO-k97"/>
+                                                <constraint firstItem="8W8-cO-BSd" firstAttribute="leading" secondItem="BLN-Js-4Y6" secondAttribute="trailing" constant="5" id="fvu-1I-qdk"/>
                                                 <constraint firstItem="mrV-TZ-Gqg" firstAttribute="centerY" secondItem="xu2-pW-ZrJ" secondAttribute="centerY" id="fz2-me-e5O"/>
                                                 <constraint firstItem="hv8-Y6-lCt" firstAttribute="leading" secondItem="sC2-Yq-gEX" secondAttribute="leading" id="rE3-gG-nmW"/>
                                                 <constraint firstItem="sC2-Yq-gEX" firstAttribute="top" secondItem="xu2-pW-ZrJ" secondAttribute="topMargin" priority="999" constant="-6" id="u6I-D3-wxM"/>
@@ -125,6 +84,8 @@
                                         </tableViewCellContentView>
                                         <connections>
                                             <outlet property="cellSwitch" destination="mrV-TZ-Gqg" id="pKQ-Vh-j2a"/>
+                                            <outlet property="displayIntervalStepper" destination="8W8-cO-BSd" id="HKI-Iw-el3"/>
+                                            <outlet property="displayIntervalValue" destination="BLN-Js-4Y6" id="V6H-kP-IOL"/>
                                             <outlet property="subtitle" destination="hv8-Y6-lCt" id="7vr-lc-C3u"/>
                                             <outlet property="title" destination="sC2-Yq-gEX" id="Hhp-vE-Itv"/>
                                             <outlet property="titleTopConstraint" destination="u6I-D3-wxM" id="g3C-fc-sJF"/>
@@ -154,7 +115,6 @@
                         <segue destination="Jz3-3n-poh" kind="show" identifier="tagsSegue" id="tvw-dQ-img"/>
                         <segue destination="ddW-EA-kMe" kind="show" identifier="associatedIdentifiersSegue" id="u0Y-Lw-wlQ"/>
                         <segue destination="0uZ-eE-JSV" kind="show" identifier="lastPayloadSegue" id="sZ4-54-C1b"/>
-                        <segue destination="Qy1-a9-6vd" kind="show" identifier="displayIntervalSegue" id="kYl-Ly-dMS"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="wah-MZ-J0J" userLabel="First Responder" sceneMemberID="firstResponder"/>

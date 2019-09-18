@@ -7,6 +7,8 @@ class DeviceInfoCell: UITableViewCell {
     @IBOutlet weak var title: UILabel!
     @IBOutlet weak var subtitle: UILabel!
     @IBOutlet weak var cellSwitch: UISwitch!
+    @IBOutlet weak var displayIntervalValue: UILabel!
+    @IBOutlet weak var displayIntervalStepper: UIStepper!
 
     @IBOutlet var titleTopConstraint: NSLayoutConstraint!
 
@@ -25,6 +27,33 @@ class DeviceInfoCell: UITableViewCell {
 
         layoutIfNeeded()
     }
+    
+    @IBAction func stepperValueChanged(_ sender: UIStepper) {
+        let stepperValue = Int(sender.value)
+        displayIntervalValue.text = stepperValue.description
+        inAppAutomationDisplayInterval = stepperValue
+    }
+    
+}
+
+public let inAppAutomationKey = "AirshipDebugKit-inAppAutomationEnabled"
+public let inAppAutomationDisplayIntervalKey = "AirshipDebugKit-inAppAutomationDisplayInterval"
+public var isInAppAutomationEnabled: Bool {
+    get {
+        return UserDefaults.standard.bool(forKey:inAppAutomationKey)
+    }
+    set (value) {
+        UserDefaults.standard.set(value, forKey:inAppAutomationKey)
+    }
+}
+
+public var inAppAutomationDisplayInterval: Int {
+    get {
+        return UserDefaults.standard.integer(forKey:inAppAutomationDisplayIntervalKey)
+    }
+    set (value) {
+        UserDefaults.standard.set(value, forKey:inAppAutomationDisplayIntervalKey)
+    }
 }
 
 class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
@@ -36,12 +65,6 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
 
     private let localizedNone = "ua_none".localized(comment: "None")
     private let sectionCount = 7
-    private let inAppAutomationKey = "in_App_automation_enabled"
-    
-    var isInAppAutomationEnabled: Bool {
-        get {return UserDefaults.standard.bool(forKey:inAppAutomationKey)}
-        set (value) {UserDefaults.standard.set(value, forKey:inAppAutomationKey)}
-    }
     
     @IBOutlet private var tableView: UITableView!
 
@@ -215,6 +238,8 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
         cell.subtitle?.textColor = ThemeManager.shared.currentTheme.SecondaryText
         cell.cellSwitch.onTintColor = ThemeManager.shared.currentTheme.WidgetTint
         cell.cellSwitch.tintColor = ThemeManager.shared.currentTheme.WidgetTint
+        cell.displayIntervalValue.textColor = ThemeManager.shared.currentTheme.SecondaryText
+        cell.displayIntervalStepper.backgroundColor = ThemeManager.shared.currentTheme.Background;
 
         // Cell switch and disclosure indicator are hidden by default
         cell.cellSwitch.isHidden = true
@@ -242,11 +267,13 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
             cell.subtitle?.numberOfLines = 1;
         case displayInterval:
             cell.title.text = "ua_device_info_in_app_automation_display_interval".localized()
-            cell.subtitle.text = " "
             cell.subtitle?.adjustsFontSizeToFitWidth = true;
             cell.subtitle?.minimumScaleFactor = 0.25;
             cell.subtitle?.numberOfLines = 1;
-            cell.accessoryType = .disclosureIndicator
+            cell.displayIntervalValue.isHidden = false;
+            cell.displayIntervalStepper.isHidden = false;
+            cell.displayIntervalStepper.value = Double(inAppAutomationDisplayInterval)
+            cell.displayIntervalValue.text = String(inAppAutomationDisplayInterval)
         case channelID:
             cell.title.text = "ua_device_info_channel_id".localized()
             cell.subtitle.text = UAirship.channel().identifier
@@ -339,8 +366,6 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
             let isEnabled = cell.cellSwitch.isOn
             UAirship.inAppMessageManager().isEnabled = isEnabled
             isInAppAutomationEnabled = isEnabled
-        case displayInterval:
-            performSegue(withIdentifier: "displayIntervalSegue", sender: self)
         case username:
             UAirship.inboxUser()?.getData({ (userData) in
                 UIPasteboard.general.string = userData.username
