@@ -267,6 +267,7 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
             cell.subtitle?.numberOfLines = 1;
         case displayInterval:
             cell.title.text = "ua_device_info_in_app_automation_display_interval".localized()
+            cell.subtitle?.text = " "
             cell.subtitle?.adjustsFontSizeToFitWidth = true;
             cell.subtitle?.minimumScaleFactor = 0.25;
             cell.subtitle?.numberOfLines = 1;

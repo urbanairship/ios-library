@@ -60,6 +60,13 @@ public class AirshipDebugKit : NSObject {
         // Set data manager as analytics event consumer on AirshipDebugKit start
         UAirship.shared().analytics.eventConsumer = EventDataManager.shared
         observePayloadEvents();
+        
+        // Update and store the in-App automation settings
+        if (inAppAutomationDisplayInterval == 0) {
+            inAppAutomationDisplayInterval = 5
+        }
+        UAirship.inAppMessageManager().displayInterval = TimeInterval(inAppAutomationDisplayInterval)
+        UAirship.inAppMessageManager().isEnabled = isInAppAutomationEnabled
     }
 
     @objc public class func showView(_ viewPath: URL) {
