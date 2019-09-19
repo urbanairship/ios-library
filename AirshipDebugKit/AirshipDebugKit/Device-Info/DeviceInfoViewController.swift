@@ -36,9 +36,9 @@ class DeviceInfoCell: UITableViewCell {
     
 }
 
-public let inAppAutomationKey = "AirshipDebugKit-inAppAutomationEnabled"
-public let inAppAutomationDisplayIntervalKey = "AirshipDebugKit-inAppAutomationDisplayInterval"
-public var isInAppAutomationEnabled: Bool {
+let inAppAutomationKey = "AirshipDebugKit-inAppAutomationEnabled"
+let inAppAutomationDisplayIntervalKey = "AirshipDebugKit-inAppAutomationDisplayInterval"
+var isInAppAutomationEnabled: Bool {
     get {
         return UserDefaults.standard.bool(forKey:inAppAutomationKey)
     }
@@ -47,12 +47,13 @@ public var isInAppAutomationEnabled: Bool {
     }
 }
 
-public var inAppAutomationDisplayInterval: Int {
+var inAppAutomationDisplayInterval: Int {
     get {
         return UserDefaults.standard.integer(forKey:inAppAutomationDisplayIntervalKey)
     }
     set (value) {
         UserDefaults.standard.set(value, forKey:inAppAutomationDisplayIntervalKey)
+        UAirship.inAppMessageManager().displayInterval = TimeInterval(value)
     }
 }
 
