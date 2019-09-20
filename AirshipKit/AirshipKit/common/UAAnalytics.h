@@ -126,6 +126,9 @@ typedef NS_ENUM(NSUInteger, UASDKExtension) {
 
 /**
  * Registers an SDK extension with the analytics module. For internal use only.
+ *
+ *  @param extension The SDK extension.
+ *  @param version The version.
  */
 - (void)registerSDKExtension:(UASDKExtension)extension version:(NSString *)version;
 

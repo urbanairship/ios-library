@@ -106,8 +106,10 @@ extern NSString *const UAScreenKey;
 
 /**
  * Returns the name associated with an SDK extension.
+ *
+ * @param extension The SDK extension.
  */
-- (NSString *)nameForSDKExtension:(UASDKExtension)extensio;
+- (NSString *)nameForSDKExtension:(UASDKExtension)extension;
 
 @end
 
