@@ -30,7 +30,7 @@
 @property (nonatomic, strong) UADate *date;
 @property (nonatomic, strong) UADispatcher *dispatcher;
 @property (nonatomic, strong) id<UAAppStateTracker> appStateTracker;
-
+@property (nonatomic, strong) NSMutableDictionary<NSNumber*, NSString*> *mutableSDKExtensions;
 @property (nonatomic, assign) BOOL isEnteringForeground;
 
 // Screen tracking state
@@ -66,6 +66,7 @@ NSString *const UAEventKey = @"event";
         self.notificationCenter = notificationCenter;
         self.date = date;
         self.dispatcher = dispatcher;
+        self.mutableSDKExtensions = [NSMutableDictionary dictionary];
 
         // Default analytics value
         if (![self.dataStore objectForKey:kUAAnalyticsEnabled]) {
@@ -313,6 +314,30 @@ NSString *const UAEventKey = @"event";
     } else {
         // if component was enabled and is now disabled, cancel any pending uploads
         [self cancelUpload];
+    }
+}
+
+- (void)registerSDKExtension:(UASDKExtension)extension version:(NSString *)version {
+    NSString *sanitizedVersion = [version stringByReplacingOccurrencesOfString:@"," withString:@""];
+    [self.mutableSDKExtensions setObject:sanitizedVersion forKey:@(extension)];
+}
+
+- (NSDictionary<NSNumber*, NSString*>*)sdkExtensions {
+    return [NSDictionary dictionaryWithDictionary:self.mutableSDKExtensions];
+}
+
+- (NSString *)nameForSDKExtension:(UASDKExtension)extension {
+    switch(extension) {
+        case UASDKExtensionCordova:
+            return @"cordova";
+        case UASDKExtensionXamarin:
+            return @"xamarin";
+        case UASDKExtensionUnity:
+            return @"unity";
+        case UASDKExtensionFlutter:
+            return @"flutter";
+        case UASDKExtensionReactNative:
+            return @"react-native";
     }
 }
 

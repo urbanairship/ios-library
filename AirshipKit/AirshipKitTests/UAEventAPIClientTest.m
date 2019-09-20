@@ -14,8 +14,8 @@
 @property (nonatomic, strong) id mockAirship;
 @property (nonatomic, strong) id mockTimeZoneClass;
 @property (nonatomic, strong) id mockLocaleClass;
-
 @property (nonatomic, strong) id mockSession;
+@property (nonatomic, strong) id mockAnalytics;
 @property (nonatomic, strong) UAEventAPIClient *client;
 @end
 
@@ -34,6 +34,9 @@
     [UAirship setSharedAirship:self.mockAirship];
     [[[self.mockAirship stub] andReturn:self.mockPush] push];
     [[[self.mockAirship stub] andReturn:self.mockChannel] channel];
+
+    self.mockAnalytics = [self mockForClass:[UAAnalytics class]];
+    [[[self.mockAirship stub] andReturn:self.mockAnalytics] analytics];
 
     self.mockSession = [self mockForClass:[UARequestSession class]];
     self.client = [UAEventAPIClient clientWithConfig:self.config session:self.mockSession];
@@ -64,6 +67,11 @@
     NSLocale *locale = [[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"];
     [[[self.mockLocaleClass stub] andReturn:locale] currentLocale];
 
+    // SDK Extensions
+    [[[self.mockAnalytics stub] andReturn:@{@(UASDKExtensionCordova) : @"1.2.3"}] sdkExtensions];
+    [[[self.mockAnalytics stub] andReturn:@"cordova"] nameForSDKExtension:UASDKExtensionCordova];
+
+
     BOOL (^checkRequestBlock)(id obj) = ^(id obj) {
         UARequest *request = obj;
 
@@ -90,7 +98,8 @@
             [request.headers[@"X-UA-Locale-Country"] isEqualToString:@"US"] &&
             [request.headers[@"X-UA-Locale-Variant"] isEqualToString:@"POSIX"] &&
             request.headers[@"X-UA-Channel-Opted-In"] &&
-            request.headers[@"X-UA-Channel-Background-Enabled"]) {
+            request.headers[@"X-UA-Channel-Background-Enabled"] &&
+            [request.headers[@"X-UA-Frameworks"] isEqualToString:@"cordova:1.2.3"]) {
 
             return YES;
         }

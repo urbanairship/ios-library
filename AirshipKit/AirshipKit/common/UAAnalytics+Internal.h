@@ -55,6 +55,12 @@ extern NSString *const UAScreenKey;
  */
 @property (nonatomic, copy, nullable) NSString *sessionID;
 
+/**
+ * The registered SDK extensions.
+ */
+@property (nonatomic, readonly) NSDictionary<NSNumber*, NSString*> *sdkExtensions;
+
+
 ///---------------------------------------------------------------------------------------
 /// @name Analytics Internal Methods
 ///---------------------------------------------------------------------------------------
@@ -97,6 +103,13 @@ extern NSString *const UAScreenKey;
  * Cancels any scheduled event uploads.
  */
 - (void)cancelUpload;
+
+/**
+ * Returns the name associated with an SDK extension.
+ *
+ * @param extension The SDK extension.
+ */
+- (NSString *)nameForSDKExtension:(UASDKExtension)extension;
 
 @end
 

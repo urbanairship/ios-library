@@ -10,6 +10,31 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /**
+ * Allowed SDK extension types. For internal use only.
+ */
+typedef NS_ENUM(NSUInteger, UASDKExtension) {
+    /**
+     * The Cordova SDK extension.
+     */
+    UASDKExtensionCordova,
+    /**
+     * The Xamarin SDK extension.
+     */
+    UASDKExtensionXamarin,
+    /**
+     * The Unity SDK extension.
+     */
+    UASDKExtensionUnity,
+    /**
+     * The Flutter SDK extension.
+     */
+    UASDKExtensionFlutter,
+    /**
+     * The React Native SDK extension.
+     */
+    UASDKExtensionReactNative
+};
+/**
  * The UAAnalytics object provides an interface to the Airship Analytics API.
  */
 @interface UAAnalytics : UAComponent
@@ -98,6 +123,14 @@ NS_ASSUME_NONNULL_BEGIN
  * Schedules an event upload if one is not already scheduled.
  */
 - (void)scheduleUpload;
+
+/**
+ * Registers an SDK extension with the analytics module. For internal use only.
+ *
+ *  @param extension The SDK extension.
+ *  @param version The version.
+ */
+- (void)registerSDKExtension:(UASDKExtension)extension version:(NSString *)version;
 
 @end
 
