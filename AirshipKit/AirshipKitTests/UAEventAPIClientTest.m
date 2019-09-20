@@ -68,7 +68,9 @@
     [[[self.mockLocaleClass stub] andReturn:locale] currentLocale];
 
     // SDK Extensions
-    [[[self.mockAnalytics stub] andReturn:@{@"cordova" : @"1.2.3"}] sdkExtensions];
+    [[[self.mockAnalytics stub] andReturn:@{@(UASDKExtensionCordova) : @"1.2.3"}] sdkExtensions];
+    [[[self.mockAnalytics stub] andReturn:@"cordova"] nameForSDKExtension:UASDKExtensionCordova];
+
 
     BOOL (^checkRequestBlock)(id obj) = ^(id obj) {
         UARequest *request = obj;

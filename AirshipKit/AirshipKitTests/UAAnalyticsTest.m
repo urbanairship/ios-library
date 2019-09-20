@@ -420,11 +420,10 @@
 }
 
 - (void)testRegisterSDKExtension {
-    [self.analytics registerSDKExtension:@"fake" version:@"nope"];
-    [self.analytics registerSDKExtension:@"cordova" version:@"1.2.3"];
-    [self.analytics registerSDKExtension:@"unity" version:@"5,.6,.7,,,"];
+    [self.analytics registerSDKExtension:UASDKExtensionCordova version:@"1.2.3"];
+    [self.analytics registerSDKExtension:UASDKExtensionUnity version:@"5,.6,.7,,,"];
 
-    id expectedExtensions = @{@"cordova":@"1.2.3", @"unity" : @"5.6.7"};
+    id expectedExtensions = @{@(UASDKExtensionCordova):@"1.2.3", @(UASDKExtensionUnity) : @"5.6.7"};
 
     XCTAssertEqualObjects(self.analytics.sdkExtensions, expectedExtensions);
 }

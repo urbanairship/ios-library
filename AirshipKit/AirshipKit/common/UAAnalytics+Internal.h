@@ -58,7 +58,7 @@ extern NSString *const UAScreenKey;
 /**
  * The registered SDK extensions.
  */
-@property (nonatomic, readonly) NSDictionary<NSString*, NSString*> *sdkExtensions;
+@property (nonatomic, readonly) NSDictionary<NSNumber*, NSString*> *sdkExtensions;
 
 
 ///---------------------------------------------------------------------------------------
@@ -103,6 +103,11 @@ extern NSString *const UAScreenKey;
  * Cancels any scheduled event uploads.
  */
 - (void)cancelUpload;
+
+/**
+ * Returns the name associated with an SDK extension.
+ */
+- (NSString *)nameForSDKExtension:(UASDKExtension)extensio;
 
 @end
 

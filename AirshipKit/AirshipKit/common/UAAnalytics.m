@@ -30,7 +30,7 @@
 @property (nonatomic, strong) UADate *date;
 @property (nonatomic, strong) UADispatcher *dispatcher;
 @property (nonatomic, strong) id<UAAppStateTracker> appStateTracker;
-@property (nonatomic, strong) NSMutableDictionary<NSString*, NSString*> *mutableSDKExtensions;
+@property (nonatomic, strong) NSMutableDictionary<NSNumber*, NSString*> *mutableSDKExtensions;
 @property (nonatomic, assign) BOOL isEnteringForeground;
 
 // Screen tracking state
@@ -317,16 +317,28 @@ NSString *const UAEventKey = @"event";
     }
 }
 
-- (void)registerSDKExtension:(NSString *)extension version:(NSString *)version {
-    NSArray *whitelistedExtensions = @[@"cordova", @"xamarin", @"flutter", @"unity", @"react-native"];
-    if ([whitelistedExtensions containsObject:extension]) {
-        NSString *sanitizedVersion = [version stringByReplacingOccurrencesOfString:@"," withString:@""];
-        [self.mutableSDKExtensions setValue:sanitizedVersion forKey:extension];
-    }
+- (void)registerSDKExtension:(UASDKExtension)extension version:(NSString *)version {
+    NSString *sanitizedVersion = [version stringByReplacingOccurrencesOfString:@"," withString:@""];
+    [self.mutableSDKExtensions setObject:sanitizedVersion forKey:@(extension)];
 }
 
-- (NSDictionary<NSString*, NSString*>*)sdkExtensions {
+- (NSDictionary<NSNumber*, NSString*>*)sdkExtensions {
     return [NSDictionary dictionaryWithDictionary:self.mutableSDKExtensions];
+}
+
+- (NSString *)nameForSDKExtension:(UASDKExtension)extension {
+    switch(extension) {
+        case UASDKExtensionCordova:
+            return @"cordova";
+        case UASDKExtensionXamarin:
+            return @"xamarin";
+        case UASDKExtensionUnity:
+            return @"unity";
+        case UASDKExtensionFlutter:
+            return @"flutter";
+        case UASDKExtensionReactNative:
+            return @"react-native";
+    }
 }
 
 @end

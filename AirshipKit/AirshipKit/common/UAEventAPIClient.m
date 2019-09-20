@@ -122,11 +122,12 @@
         NSString *extensionHeaderValue = @"";
         NSUInteger i = 0;
 
-        NSDictionary<NSString*, NSString*> *sdkExtensions = [UAirship shared].analytics.sdkExtensions;
+        NSDictionary<NSNumber*, NSString*> *sdkExtensions = [UAirship shared].analytics.sdkExtensions;
 
-        for (NSString *extensionName in sdkExtensions) {
-            NSString *version = sdkExtensions[extensionName];
-            extensionHeaderValue = [extensionHeaderValue stringByAppendingString:[NSString stringWithFormat:@"%@:%@", extensionName, version]];
+        for (NSNumber *extensionNumber in sdkExtensions) {
+            NSString *version = sdkExtensions[extensionNumber];
+            NSString *name = [[UAirship shared].analytics nameForSDKExtension:extensionNumber.unsignedIntValue];
+            extensionHeaderValue = [extensionHeaderValue stringByAppendingString:[NSString stringWithFormat:@"%@:%@", name, version]];
 
             i++;
 
