@@ -36,23 +36,20 @@ class DeviceInfoCell: UITableViewCell {
     
 }
 
-let inAppAutomationKey = "AirshipDebugKit-inAppAutomationEnabled"
-let inAppAutomationDisplayIntervalKey = "AirshipDebugKit-inAppAutomationDisplayInterval"
 var isInAppAutomationEnabled: Bool {
     get {
-        return UserDefaults.standard.bool(forKey:inAppAutomationKey)
+        return UAirship.inAppMessageManager().isEnabled
     }
     set (value) {
-        UserDefaults.standard.set(value, forKey:inAppAutomationKey)
+        UAirship.inAppMessageManager().isEnabled = value
     }
 }
 
 var inAppAutomationDisplayInterval: Int {
     get {
-        return UserDefaults.standard.integer(forKey:inAppAutomationDisplayIntervalKey)
+        return Int(UAirship.inAppMessageManager()!.displayInterval)
     }
     set (value) {
-        UserDefaults.standard.set(value, forKey:inAppAutomationDisplayIntervalKey)
         UAirship.inAppMessageManager().displayInterval = TimeInterval(value)
     }
 }
@@ -366,7 +363,6 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
         case inAppAutomationEnabled:
             cell.cellSwitch.setOn(!cell.cellSwitch.isOn, animated: true)
             let isEnabled = cell.cellSwitch.isOn
-            UAirship.inAppMessageManager().isEnabled = isEnabled
             isInAppAutomationEnabled = isEnabled
         case username:
             UAirship.inboxUser()?.getData({ (userData) in
