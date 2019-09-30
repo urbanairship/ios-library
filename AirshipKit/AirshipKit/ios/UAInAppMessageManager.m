@@ -201,7 +201,10 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
 }
 
 - (NSTimeInterval)displayInterval {
-    return [self.dataStore integerForKey:UAInAppMessageManagerDisplayIntervalKey];
+    if ([self.dataStore objectForKey:UAInAppMessageManagerDisplayIntervalKey]) {
+        return [self.dataStore integerForKey:UAInAppMessageManagerDisplayIntervalKey];
+    }
+    return kUAInAppMessageDefaultDisplayInterval;
 }
 
 // Sets the default adapter factories
