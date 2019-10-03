@@ -52,7 +52,7 @@
                                                     </constraints>
                                                     <color key="onTintColor" red="0.53333333329999999" green="0.71372549019999998" blue="0.7843137255" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 </switch>
-                                                <stepper hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" maximumValue="100" translatesAutoresizingMaskIntoConstraints="NO" id="8W8-cO-BSd">
+                                                <stepper hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" maximumValue="120" translatesAutoresizingMaskIntoConstraints="NO" id="8W8-cO-BSd">
                                                     <rect key="frame" x="246.5" y="6" width="94" height="32"/>
                                                     <connections>
                                                         <action selector="stepperValueChanged:" destination="XUr-gs-epy" eventType="valueChanged" id="qm1-zy-TTX"/>
