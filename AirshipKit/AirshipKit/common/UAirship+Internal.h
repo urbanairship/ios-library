@@ -23,7 +23,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) UARuntimeConfig *config;
 @property (nonatomic, strong) UAActionRegistry *actionRegistry;
 @property (nonatomic, assign) BOOL remoteNotificationBackgroundModeEnabled;
-@property (nonatomic, strong, nullable) id<UAJavaScriptDelegate> actionJSDelegate;
 @property (nonatomic, strong) UAApplicationMetrics *applicationMetrics;
 @property (nonatomic, strong) UAWhitelist *whitelist;
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;

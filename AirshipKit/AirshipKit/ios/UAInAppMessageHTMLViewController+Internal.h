@@ -1,6 +1,5 @@
 /* Copyright Airship and Contributors */
 
-#import "UAWKWebViewDelegate.h"
 #import "UAInAppMessageHTMLDisplayContent+Internal.h"
 #import "UAInAppMessageHTMLStyle.h"
 #import "UAInAppMessageResizableViewController+Internal.h"

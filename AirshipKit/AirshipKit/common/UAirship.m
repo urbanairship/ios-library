@@ -30,7 +30,6 @@
 
 #if !TARGET_OS_TV   // Inbox and other features not supported on tvOS
 #import "UAInbox+Internal.h"
-#import "UAActionJSDelegate.h"
 #import "UAChannelCapture+Internal.h"
 #import "UAMessageCenter.h"
 #import "UAInboxAPIClient+Internal.h"
@@ -150,8 +149,6 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         self.sharedChannel.userProviderDelegate = self.sharedInboxUser;
 
         self.sharedInbox = [UAInbox inboxWithUser:self.sharedInboxUser config:config dataStore:dataStore];
-        // Not supporting Javascript in tvOS
-        self.actionJSDelegate = [[UAActionJSDelegate alloc] init];
         // UIPasteboard is not available in tvOS
         self.channelCapture = [UAChannelCapture channelCaptureWithConfig:config
                                                                  channel:self.sharedChannel

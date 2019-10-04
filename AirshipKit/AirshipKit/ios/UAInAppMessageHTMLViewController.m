@@ -8,7 +8,6 @@
 #import "UAInAppMessageDismissButton+Internal.h"
 #import "UAInAppMessageResolution+Internal.h"
 #import "UAViewUtils+Internal.h"
-#import "UAInAppMessageNativeBridge+Internal.h"
 #import "NSJSONSerialization+UAAdditions.h"
 #import "UAMessageCenter.h"
 #import "UAInbox.h"
@@ -16,10 +15,15 @@
 #import "UAInboxMessageList.h"
 #import "UAUtils+Internal.h"
 #import "UAUser+Internal.h"
+#import "UANativeBridge.h"
+#import "UAMessageCenterNativeBridgeExtension.h"
+#import <WebKit/WebKit.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface UAInAppMessageHTMLViewController () <UAWKWebViewDelegate, UAJavaScriptDelegate>
+NSString *const UAInAppNativeBridgeDismissCommand = @"dismiss";
+
+@interface UAInAppMessageHTMLViewController () <WKNavigationDelegate, UANativeBridgeDelegate, UAJavaScriptCommandDelegate>
 
 /**
  * The container view.
@@ -44,9 +48,14 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * The native bridge.
  */
-@property (nonatomic, strong) UAInAppMessageNativeBridge *nativeBridge;
+@property (nonatomic, strong) UANativeBridge *nativeBridge;
 
 /**
+ * The Message Center native bridge extension.
+ */
+@property (nonatomic, strong) UAMessageCenterNativeBridgeExtension *messageCenterNativeBridgeExtension;
+
+/*
  * Close button.
  */
 @property (strong, nonatomic) UAInAppMessageDismissButton *closeButton;
@@ -62,6 +71,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) NSDictionary *headers;
 
 @end
+
 
 @implementation UAInAppMessageHTMLViewController
 
@@ -83,10 +93,6 @@ NS_ASSUME_NONNULL_BEGIN
         if (!self.style.hideDismissIcon) {
             self.closeButton = [self createCloseButton];
         }
-
-        self.nativeBridge = [[UAInAppMessageNativeBridge alloc] init];
-        self.nativeBridge.forwardDelegate = self;
-        self.nativeBridge.messageJSDelegate = self;
     }
 
     return self;
@@ -109,6 +115,16 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+
+    self.nativeBridge = [UANativeBridge nativeBridge];
+    self.nativeBridge.forwardNavigationDelegate = self;
+    self.nativeBridge.javaScriptCommandDelegate = self;
+    self.nativeBridge.nativeBridgeDelegate = self;
+
+    if (self.messageID) {
+        self.messageCenterNativeBridgeExtension = [[UAMessageCenterNativeBridgeExtension alloc] init];
+        self.nativeBridge.nativeBridgeExtensionDelegate = self.messageCenterNativeBridgeExtension;
+    }
 
     self.webView.navigationDelegate = self.nativeBridge;
 
@@ -216,75 +232,32 @@ NS_ASSUME_NONNULL_BEGIN
     [self.resizableParent dismissWithResolution:resolution];
 }
 
-#pragma mark UAJavaScriptDelegate
+#pragma mark UAJavaScriptCommandDelegate
 
-- (void)callWithData:(UAWebViewCallData *)data withCompletionHandler:(UAJavaScriptDelegateCompletionHandler)completionHandler {
-    /**
-     * dismiss calls dismissWithResolution:
-     *
-     * Expected format:
-     * dismiss/<resolution>/
-     */
-    if ([data.name isEqualToString:UANativeBridgeDismissCommand]) {
-        id args = [data.arguments firstObject];
+- (BOOL)performCommand:(UAJavaScriptCommand *)command webView:(WKWebView *)webView {
+    if (![command.name isEqualToString:UAInAppNativeBridgeDismissCommand]) {
+        return NO;
+    }
 
-        // allow the reading of fragments so we can parse lower level JSON values
-        id jsonDecodedArgs = [NSJSONSerialization objectWithString:args
-                                                           options:NSJSONReadingMutableContainers | NSJSONReadingAllowFragments];
-        if (!jsonDecodedArgs) {
-            UA_LERR(@"Unable to json decode resolution: %@", args);
+    id args = [command.arguments firstObject];
+
+    // allow the reading of fragments so we can parse lower level JSON values
+    id jsonDecodedArgs = [NSJSONSerialization objectWithString:args
+                                                       options:NSJSONReadingMutableContainers | NSJSONReadingAllowFragments];
+    if (!jsonDecodedArgs) {
+        UA_LERR(@"Unable to json decode resolution: %@", args);
+    } else {
+        UA_LDEBUG(@"Decoded resolution value: %@", jsonDecodedArgs);
+        NSError *error;
+        UAInAppMessageResolution *resolution = [UAInAppMessageResolution resolutionWithJSON:jsonDecodedArgs error:&error];
+        if (resolution) {
+            [self dismissWithResolution:resolution];
         } else {
-            UA_LDEBUG(@"Decoded resolution value: %@", jsonDecodedArgs);
-
-            NSError *error;
-
-            UAInAppMessageResolution *resolution = [UAInAppMessageResolution resolutionWithJSON:jsonDecodedArgs error:&error];
-            if (resolution) {
-                [self dismissWithResolution:resolution];
-            } else {
-                UA_LERR(@"Unable to decode resolution: %@, error: %@", jsonDecodedArgs, error);
-            }
-        }
-
-        completionHandler(nil);
-        return;
-    }
-
-    // Arguments not recognized, pass a nil script result
-    completionHandler(nil);
-}
-
-#pragma mark UAWKWebViewDelegate
-
-- (void)webView:(WKWebView *)webView didFinishNavigation:(null_unspecified WKNavigation *)navigation {
-    [self hideOverlay];
-
-    NSString *inboxMessageId = [self inboxMessageID];
-    // If inbox message ID is available, we should load the inbox message instead of the URL
-    if (inboxMessageId) {
-        UAInboxMessage  *message = [[UAirship inbox].messageList messageForID:inboxMessageId];
-        if (message.unread) {
-            [message markMessageReadWithCompletionHandler:nil];
+            UA_LERR(@"Unable to decode resolution: %@, error: %@", jsonDecodedArgs, error);
         }
     }
-}
 
-- (void)webView:(WKWebView *)webView didFailNavigation:(null_unspecified WKNavigation *)navigation withError:(nonnull NSError *)error {
-
-    UA_WEAKIFY(self);
-
-    // Wait twenty seconds, try again if necessary
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 20.0 * NSEC_PER_SEC), dispatch_get_main_queue(), ^(void){
-        UA_STRONGIFY(self)
-        if (self) {
-            UA_LINFO(@"Retrying url: %@", self.displayContent.url);
-            [self load];
-        }
-    });
-}
-
-- (void)closeWindowAnimated:(BOOL)animated {
-    [self dismissWithResolution:[UAInAppMessageResolution userDismissedResolution]];
+    return YES;
 }
 
 /**
@@ -330,6 +303,40 @@ NS_ASSUME_NONNULL_BEGIN
     }
 
     return nil;
+}
+
+#pragma mark WKNavigationDelegate
+
+- (void)webView:(WKWebView *)webView didFinishNavigation:(null_unspecified WKNavigation *)navigation {
+    [self hideOverlay];
+
+    NSString *inboxMessageId = [self inboxMessageID];
+    // If inbox message ID is available, we should load the inbox message instead of the URL
+    if (inboxMessageId) {
+        UAInboxMessage  *message = [[UAirship inbox].messageList messageForID:inboxMessageId];
+        if (message.unread) {
+            [message markMessageReadWithCompletionHandler:nil];
+        }
+    }
+}
+
+- (void)webView:(WKWebView *)webView didFailNavigation:(null_unspecified WKNavigation *)navigation withError:(nonnull NSError *)error {
+    UA_WEAKIFY(self);
+
+    // Wait twenty seconds, try again if necessary
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 20.0 * NSEC_PER_SEC), dispatch_get_main_queue(), ^(void){
+        UA_STRONGIFY(self)
+        if (self) {
+            UA_LINFO(@"Retrying url: %@", self.displayContent.url);
+            [self load];
+        }
+    });
+}
+
+#pragma mark UANativeBridgeDelegate
+
+- (void)close {
+    [self dismissWithResolution:[UAInAppMessageResolution userDismissedResolution]];
 }
 
 @end

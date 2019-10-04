@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 #import "UAMessageCenterMessageViewController.h"
-#import "UAWKWebViewNativeBridge.h"
+#import "UAMessageCenterNativeBridgeExtension.h"
 #import "UAInbox.h"
 #import "UAirship.h"
 #import "UAMessageCenter.h"
@@ -14,13 +14,13 @@
 #import "UAInAppMessageUtils+Internal.h"
 #import "UADispatcher+Internal.h"
 #import "UAUser+Internal.h"
+#import "UANativeBridge.h"
+#import <WebKit/WebKit.h>
 
 #define kMessageUp 0
 #define kMessageDown 1
 
-@interface UAMessageCenterMessageViewController () <UAWKWebViewDelegate, UAMessageCenterMessageViewProtocol>
-
-@property (nonatomic, strong) UAWKWebViewNativeBridge *nativeBridge;
+@interface UAMessageCenterMessageViewController () <UAMessageCenterMessageViewProtocol, UANativeBridgeDelegate, WKNavigationDelegate>
 
 /**
  * The WebView used to display the message content.
@@ -74,6 +74,8 @@ typedef enum MessageState {
 } MessageState;
 
 @property (nonatomic, assign) MessageState messageState;
+@property (nonatomic, strong) UANativeBridge *nativeBridge;
+@property (nonatomic, strong) UAMessageCenterNativeBridgeExtension *nativeBridgeExtension;
 
 @end
 
@@ -105,8 +107,13 @@ typedef enum MessageState {
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-    self.nativeBridge = [[UAWKWebViewNativeBridge alloc] init];
-    self.nativeBridge.forwardDelegate = self;
+    self.nativeBridge = [UANativeBridge nativeBridge];
+    self.nativeBridgeExtension = [[UAMessageCenterNativeBridgeExtension alloc] init];
+
+    self.nativeBridge.nativeBridgeExtensionDelegate = self.nativeBridgeExtension;
+    self.nativeBridge.nativeBridgeDelegate = self;
+    self.nativeBridge.forwardNavigationDelegate = self;
+
     self.webView.navigationDelegate = self.nativeBridge;
     self.webView.allowsLinkPreview = ![UAirship messageCenter].disableMessageLinkPreviewAndCallouts;
 
@@ -391,7 +398,7 @@ static NSString *urlForBlankPage = @"about:blank";
     [self presentViewController:alert animated:YES completion:nil];
 }
 
-#pragma mark UAWKWebViewDelegate
+#pragma mark WKNavigationDelegate
 
 - (void)webView:(WKWebView *)wv decidePolicyForNavigationResponse:(WKNavigationResponse *)navigationResponse decisionHandler:(void (^)(WKNavigationResponsePolicy))decisionHandler {
     if (self.messageState != LOADING) {
@@ -487,11 +494,13 @@ static NSString *urlForBlankPage = @"about:blank";
     [self webView:webView didFailNavigation:navigation withError:error];
 }
 
-- (void)closeWindowAnimated:(BOOL)animated {
+#pragma mark UANativeBridgeDelegate
+
+- (void)close {
     if (self.closeBlock) {
-        self.closeBlock(animated);
+        self.closeBlock(YES);
     }
-    self.message=nil;
+    self.message = nil;
 }
 
 @end

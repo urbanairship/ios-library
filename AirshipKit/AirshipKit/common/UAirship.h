@@ -1,7 +1,6 @@
 /* Copyright Airship and Contributors */
 
 #import "UAGlobal.h"
-#import "UAJavaScriptDelegate.h"
 #import "UALocationProviderDelegate.h"
 #import "UAWhitelist.h"
 #import "UAirshipVersion.h"
@@ -21,7 +20,7 @@
 #import <CoreTelephony/CTTelephonyNetworkInfo.h>
 #import <CoreTelephony/CTCarrier.h>
 #import <WebKit/WebKit.h>
-
+#import "UAJavaScriptCommandDelegate.h"
 #endif
 
 @class UAConfig;
@@ -103,12 +102,16 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
  */
 @property (nonatomic, assign, readonly) BOOL remoteNotificationBackgroundModeEnabled;
 
+#if !TARGET_OS_TV
+
 /**
- * A user configurable JavaScript delegate.
+ * A user configurable UAJavaScriptCommandDelegate.
  *
  * NOTE: this delegate is not retained.
  */
-@property (nonatomic, weak, nullable) id<UAJavaScriptDelegate> jsDelegate;
+@property (nonatomic, weak, nullable) id<UAJavaScriptCommandDelegate> javaScriptCommandDelegate;
+
+#endif
 
 /**
  * A user configurable deep link delegate.

@@ -1,17 +1,20 @@
 /* Copyright Airship and Contributors */
 
-#import "UAWebViewCallData.h"
+#import "UAJavaScriptCommand.h"
 #import "NSString+UAURLEncoding.h"
 
-@implementation UAWebViewCallData
+@interface UAJavaScriptCommand()
+@property (nonatomic, copy, nullable) NSString *name;
+@property (nonatomic, strong, nullable) NSArray<NSString *> *arguments;
+@property (nonatomic, strong, nullable) NSDictionary *options;
+@property (nonatomic, strong) NSURL *URL;
+@end
 
-+ (UAWebViewCallData *)callDataForURL:(NSURL *)url delegate:(id <UAWKWebViewDelegate>)delegate {
-    return [UAWebViewCallData callDataForURL:url delegate:delegate message:nil];
-}
+@implementation UAJavaScriptCommand
 
-+ (UAWebViewCallData *)callDataForURL:(NSURL *)url delegate:(id <UAWKWebViewDelegate>)delegate message:(UAInboxMessage *)message {
++ (instancetype)commandForURL:(NSURL *)URL {
 
-    NSURLComponents *components = [NSURLComponents componentsWithURL:url resolvingAgainstBaseURL:NO];
+    NSURLComponents *components = [NSURLComponents componentsWithURL:URL resolvingAgainstBaseURL:NO];
     NSString *encodedUrlPath = components.percentEncodedPath;
     if ([encodedUrlPath hasPrefix:@"/"]) {
         encodedUrlPath = [encodedUrlPath substringFromIndex:1]; //trim the leading slash
@@ -35,8 +38,6 @@
         arguments = [NSArray array];//empty
     }
 
-
-
     // Dictionary of options - primitive parsing, so external docs should mention the limitations
     NSMutableDictionary* options = [NSMutableDictionary dictionary];
 
@@ -53,16 +54,12 @@
         }
     }
 
-    UAWebViewCallData *data = [[UAWebViewCallData alloc] init];
-
-    data.name = url.host;
-    data.arguments = arguments;
-    data.options = options;
-    data.delegate = delegate;
-    data.url = url;
-    data.message = message;
-
-    return data;
+    UAJavaScriptCommand *command = [[UAJavaScriptCommand alloc] init];
+    command.name = URL.host;
+    command.arguments = arguments;
+    command.options = options;
+    command.URL = URL;
+    return command;
 }
 
 @end

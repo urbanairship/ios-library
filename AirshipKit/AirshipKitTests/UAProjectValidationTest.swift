@@ -128,6 +128,8 @@ class UAProjectValidationTest: XCTestCase {
             let filesMissingFromFolders = filesFromTargetAsSet.subtracting(filesFromFoldersesAsSet)
             if (filesMissingFromFolders.count > 0) {
                 print(filesMissingFromFolders.count, " files missing from the folders")
+                print(filesMissingFromFolders, " files missing from the folders")
+
             }
             for file in filesMissingFromFolders {
                 print(file.path + " is not in the folders")
