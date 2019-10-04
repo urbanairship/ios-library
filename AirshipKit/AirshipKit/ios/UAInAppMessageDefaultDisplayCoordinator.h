@@ -3,8 +3,6 @@
 #import <Foundation/Foundation.h>
 #import "UAInAppMessageDisplayCoordinator.h"
 
-#define kUAInAppMessageDefaultDisplayInterval 30
-
 NS_ASSUME_NONNULL_BEGIN
 
 /**
