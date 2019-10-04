@@ -7,7 +7,6 @@ class DeviceInfoCell: UITableViewCell {
     @IBOutlet weak var title: UILabel!
     @IBOutlet weak var subtitle: UILabel!
     @IBOutlet weak var cellSwitch: UISwitch!
-    @IBOutlet weak var displayIntervalValue: UILabel!
     @IBOutlet weak var displayIntervalStepper: UIStepper!
 
     @IBOutlet var titleTopConstraint: NSLayoutConstraint!
@@ -30,7 +29,7 @@ class DeviceInfoCell: UITableViewCell {
     
     @IBAction func stepperValueChanged(_ sender: UIStepper) {
         let stepperValue = Int(sender.value)
-        displayIntervalValue.text = stepperValue.description
+        subtitle.text = "ua_timeinterval_description_seconds".localizedWithFormat(count:stepperValue)
         inAppAutomationDisplayInterval = stepperValue
     }
     
@@ -236,7 +235,6 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
         cell.subtitle?.textColor = ThemeManager.shared.currentTheme.SecondaryText
         cell.cellSwitch.onTintColor = ThemeManager.shared.currentTheme.WidgetTint
         cell.cellSwitch.tintColor = ThemeManager.shared.currentTheme.WidgetTint
-        cell.displayIntervalValue.textColor = ThemeManager.shared.currentTheme.SecondaryText
         cell.displayIntervalStepper.backgroundColor = ThemeManager.shared.currentTheme.Background;
 
         // Cell switch and disclosure indicator are hidden by default
@@ -265,14 +263,12 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
             cell.subtitle?.numberOfLines = 1;
         case displayInterval:
             cell.title.text = "ua_device_info_in_app_automation_display_interval".localized()
-            cell.subtitle?.text = " "
+            cell.subtitle?.text = "ua_timeinterval_description_seconds".localizedWithFormat(count:inAppAutomationDisplayInterval)
             cell.subtitle?.adjustsFontSizeToFitWidth = true;
             cell.subtitle?.minimumScaleFactor = 0.25;
             cell.subtitle?.numberOfLines = 1;
-            cell.displayIntervalValue.isHidden = false;
             cell.displayIntervalStepper.isHidden = false;
             cell.displayIntervalStepper.value = Double(inAppAutomationDisplayInterval)
-            cell.displayIntervalValue.text = String(inAppAutomationDisplayInterval)
         case channelID:
             cell.title.text = "ua_device_info_channel_id".localized()
             cell.subtitle.text = UAirship.channel().identifier

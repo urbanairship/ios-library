@@ -58,24 +58,15 @@
                                                         <action selector="stepperValueChanged:" destination="XUr-gs-epy" eventType="valueChanged" id="qm1-zy-TTX"/>
                                                     </connections>
                                                 </stepper>
-                                                <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="BLN-Js-4Y6">
-                                                    <rect key="frame" x="241.5" y="22" width="0.0" height="0.0"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                    <nil key="textColor"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
                                             </subviews>
                                             <constraints>
-                                                <constraint firstItem="BLN-Js-4Y6" firstAttribute="centerY" secondItem="xu2-pW-ZrJ" secondAttribute="centerY" id="780-zv-Dso"/>
                                                 <constraint firstItem="mrV-TZ-Gqg" firstAttribute="trailing" secondItem="8W8-cO-BSd" secondAttribute="trailing" id="7Kd-dN-l2L"/>
                                                 <constraint firstItem="mrV-TZ-Gqg" firstAttribute="trailing" secondItem="xu2-pW-ZrJ" secondAttribute="trailingMargin" id="7xt-Zs-qET"/>
                                                 <constraint firstItem="sC2-Yq-gEX" firstAttribute="centerY" secondItem="xu2-pW-ZrJ" secondAttribute="centerY" priority="990" id="Ggg-fc-8PL"/>
                                                 <constraint firstItem="sC2-Yq-gEX" firstAttribute="leading" secondItem="xu2-pW-ZrJ" secondAttribute="leadingMargin" id="IeF-3P-2gC"/>
                                                 <constraint firstItem="8W8-cO-BSd" firstAttribute="centerY" secondItem="xu2-pW-ZrJ" secondAttribute="centerY" id="Pnd-tG-n2r"/>
-                                                <constraint firstItem="BLN-Js-4Y6" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="hv8-Y6-lCt" secondAttribute="trailing" id="Req-a0-Tfj"/>
                                                 <constraint firstItem="mrV-TZ-Gqg" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="hv8-Y6-lCt" secondAttribute="trailing" id="XDD-p1-giG"/>
                                                 <constraint firstAttribute="bottomMargin" secondItem="hv8-Y6-lCt" secondAttribute="bottom" constant="-6" id="XeR-HO-k97"/>
-                                                <constraint firstItem="8W8-cO-BSd" firstAttribute="leading" secondItem="BLN-Js-4Y6" secondAttribute="trailing" constant="5" id="fvu-1I-qdk"/>
                                                 <constraint firstItem="mrV-TZ-Gqg" firstAttribute="centerY" secondItem="xu2-pW-ZrJ" secondAttribute="centerY" id="fz2-me-e5O"/>
                                                 <constraint firstItem="hv8-Y6-lCt" firstAttribute="leading" secondItem="sC2-Yq-gEX" secondAttribute="leading" id="rE3-gG-nmW"/>
                                                 <constraint firstItem="sC2-Yq-gEX" firstAttribute="top" secondItem="xu2-pW-ZrJ" secondAttribute="topMargin" priority="999" constant="-6" id="u6I-D3-wxM"/>
@@ -85,7 +76,6 @@
                                         <connections>
                                             <outlet property="cellSwitch" destination="mrV-TZ-Gqg" id="pKQ-Vh-j2a"/>
                                             <outlet property="displayIntervalStepper" destination="8W8-cO-BSd" id="HKI-Iw-el3"/>
-                                            <outlet property="displayIntervalValue" destination="BLN-Js-4Y6" id="V6H-kP-IOL"/>
                                             <outlet property="subtitle" destination="hv8-Y6-lCt" id="7vr-lc-C3u"/>
                                             <outlet property="title" destination="sC2-Yq-gEX" id="Hhp-vE-Itv"/>
                                             <outlet property="titleTopConstraint" destination="u6I-D3-wxM" id="g3C-fc-sJF"/>

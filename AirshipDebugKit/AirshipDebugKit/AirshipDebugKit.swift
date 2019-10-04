@@ -202,6 +202,11 @@ internal extension String {
     func localized(bundle: Bundle = Bundle(for: AirshipDebugKit.self), tableName: String = "UrbanAirship", comment: String = "") -> String {
         return NSLocalizedString(self, tableName: tableName, bundle: bundle, comment: comment)
     }
+    
+    func localizedWithFormat(count:Int) -> String {
+        let format = NSLocalizedString(self, bundle:Bundle(for: AirshipDebugKit.self), comment: "")
+        return String.localizedStringWithFormat(format, count)
+    }
 }
 
 /**
