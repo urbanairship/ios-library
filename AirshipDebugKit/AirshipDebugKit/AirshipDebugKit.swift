@@ -204,7 +204,7 @@ internal extension String {
     }
     
     func localizedWithFormat(count:Int) -> String {
-        let format = NSLocalizedString(self, bundle:Bundle(for: AirshipDebugKit.self), comment: "")
+        let format = localized()
         return String.localizedStringWithFormat(format, count)
     }
 }
