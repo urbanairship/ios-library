@@ -204,8 +204,7 @@ internal extension String {
     }
     
     func localizedWithFormat(count:Int) -> String {
-        let format = localized()
-        return String.localizedStringWithFormat(format, count)
+        return String.localizedStringWithFormat(localized(), count)
     }
 }
 
