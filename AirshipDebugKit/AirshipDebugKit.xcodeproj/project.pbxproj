@@ -29,6 +29,7 @@
 		459D70EE2215FAED005A3BB9 /* EventDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 459D70ED2215FAED005A3BB9 /* EventDataManager.swift */; };
 		45EC352A222F5ADE00F5A97D /* ThemeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45EC3524222F5ADE00F5A97D /* ThemeManager.swift */; };
 		45EC3530223052E200F5A97D /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45EC352F223052E200F5A97D /* Theme.swift */; };
+		87D3ADA8234E35CE00CA3C3D /* UrbanAirship.stringsdict in Resources */ = {isa = PBXBuildFile; fileRef = 87D3ADA1234E35CE00CA3C3D /* UrbanAirship.stringsdict */; };
 		DF4E4928221CDB5B00F306A5 /* AirshipKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DFE70146212F216600A708D5 /* AirshipKit.framework */; };
 		DF4EDA6121E41D3900804CB3 /* ButtonsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF4EDA6021E41D3900804CB3 /* ButtonsTableViewController.swift */; };
 		DF4EDA6821E4261700804CB3 /* ButtonDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF4EDA6721E4261700804CB3 /* ButtonDetailViewController.swift */; };
@@ -126,6 +127,7 @@
 		459D70ED2215FAED005A3BB9 /* EventDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventDataManager.swift; sourceTree = "<group>"; };
 		45EC3524222F5ADE00F5A97D /* ThemeManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ThemeManager.swift; sourceTree = "<group>"; };
 		45EC352F223052E200F5A97D /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		87D3ADA2234E35CE00CA3C3D /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = en; path = en.lproj/UrbanAirship.stringsdict; sourceTree = "<group>"; };
 		DF1C21D12245605100B33D01 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		DF4EDA6021E41D3900804CB3 /* ButtonsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonsTableViewController.swift; sourceTree = "<group>"; };
 		DF4EDA6721E4261700804CB3 /* ButtonDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonDetailViewController.swift; sourceTree = "<group>"; };
@@ -195,6 +197,7 @@
 		DF55D7CF21F154D0005948DD /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				87D3ADA1234E35CE00CA3C3D /* UrbanAirship.stringsdict */,
 				DF508A4B228508AC0011D9C7 /* UrbanAirship.strings */,
 				4594E6012216466C00DCD672 /* DebugKitData.xcdatamodeld */,
 				DF1C21D12245605100B33D01 /* Images.xcassets */,
@@ -415,6 +418,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				87D3ADA8234E35CE00CA3C3D /* UrbanAirship.stringsdict in Resources */,
 				DF5F8ECB216420D3009B5FB9 /* Automation.storyboard in Resources */,
 				453B259B2257D0710000478C /* Images.xcassets in Resources */,
 				DFC676B121FB8F2E0043EB89 /* DeviceInfo.storyboard in Resources */,
@@ -480,6 +484,14 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
+		87D3ADA1234E35CE00CA3C3D /* UrbanAirship.stringsdict */ = {
+			isa = PBXVariantGroup;
+			children = (
+				87D3ADA2234E35CE00CA3C3D /* en */,
+			);
+			name = UrbanAirship.stringsdict;
+			sourceTree = "<group>";
+		};
 		DF508A4B228508AC0011D9C7 /* UrbanAirship.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
