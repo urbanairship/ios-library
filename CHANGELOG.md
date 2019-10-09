@@ -12,6 +12,7 @@ Changes
 
 - Updated with support for iOS 13 and Xcode 11
 - Updated minimum target to iOS 11, removing support for iOS 10 and below
+- XCode 11 is now required for building the SDK
 - Added support for macOS using Catalyst
 - Added multi-window and target scene compatibility
 - Added dark mode support and named color styling for Message Center
