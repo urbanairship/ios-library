@@ -39,6 +39,7 @@ NSTimeInterval const MessagePrepareRetryDelay = 30;
 
 NSString *const UAInAppAutomationStoreFileFormat = @"In-app-automation-%@.sqlite";
 NSString *const UAInAppMessageManagerEnabledKey = @"UAInAppMessageManagerEnabled";
+NSString *const UAInAppMessageManagerDisplayIntervalKey = @"UAInAppMessageManagerDisplayInterval";
 NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
 
 @interface UAInAppMessageScheduleData : NSObject
@@ -182,6 +183,7 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
         self.dispatcher = dispatcher;
         self.prepareSchedulePipeline = [UARetriablePipeline pipeline];
         self.defaultDisplayCoordinator = displayCoordinator;
+        self.defaultDisplayCoordinator.displayInterval = self.displayInterval;
         self.immediateDisplayCoordinator = [UAInAppMessageImmediateDisplayCoordinator coordinator];
         self.assetManager = assetManager;
         self.analytics = analytics;
@@ -196,6 +198,14 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
 
 - (void)setDisplayInterval:(NSTimeInterval)displayInterval {
     self.defaultDisplayCoordinator.displayInterval = displayInterval;
+    [self.dataStore setInteger:displayInterval forKey:UAInAppMessageManagerDisplayIntervalKey];
+}
+
+- (NSTimeInterval)displayInterval {
+    if ([self.dataStore objectForKey:UAInAppMessageManagerDisplayIntervalKey]) {
+        return [self.dataStore integerForKey:UAInAppMessageManagerDisplayIntervalKey];
+    }
+    return kUAInAppMessageDefaultDisplayInterval;
 }
 
 // Sets the default adapter factories

@@ -2760,7 +2760,6 @@
 				CC40DDE91D91DAA900BABD4F /* Analytics */,
 				CC40DDE71D91D8E600BABD4F /* Utils */,
 				CC40DDED1D91DD0200BABD4F /* Native Bridge */,
-				CC40DADC1D8C996900BABD4F /* External */,
 				494DD95A1B0EB677009C134E /* Supporting Files */,
 				DF7E7A2A1EE2220700D4EF02 /* os-specific */,
 				6EFB37922345B659005E4E44 /* AirshipKit.h */,
@@ -3424,15 +3423,6 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		CC40DADC1D8C996900BABD4F /* External */ = {
-			isa = PBXGroup;
-			children = (
-				CC70E8E91DDA985D000E2528 /* UA_Base64.h */,
-				CC70E8EA1DDA985D000E2528 /* UA_Base64.m */,
-			);
-			name = External;
-			sourceTree = "<group>";
-		};
 		CC40DDD61D91D40800BABD4F /* Action Automation */ = {
 			isa = PBXGroup;
 			children = (
@@ -3821,6 +3811,8 @@
 				DF3C3F1B20F54F4F006D6B72 /* UADate.m */,
 				6E5D60B8212DD07C00C32E3F /* UADispatcher+Internal.h */,
 				6E5D60B9212DD07C00C32E3F /* UADispatcher.m */,
+				CC70E8E91DDA985D000E2528 /* UA_Base64.h */,
+				CC70E8EA1DDA985D000E2528 /* UA_Base64.m */,
 			);
 			name = Utils;
 			sourceTree = "<group>";

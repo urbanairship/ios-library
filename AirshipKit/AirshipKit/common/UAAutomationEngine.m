@@ -439,7 +439,16 @@
     // Finished schedules
     [self.automationStore getSchedulesWithStates:@[@(UAScheduleStateFinished)] completionHandler:^(NSArray<UAScheduleData *> *schedulesData) {
         for (UAScheduleData *scheduleData in schedulesData) {
-            NSDate *finishDate = [scheduleData.executionStateChangeDate dateByAddingTimeInterval:[scheduleData.editGracePeriod doubleValue]];
+            NSDate *finishDate;
+
+            // If grace period is unset - use the executionStateChangeDate as finishDate to avoid unnecessarily keeping schedules around until distant future.
+            if (scheduleData.editGracePeriod == 0) {
+                finishDate = scheduleData.executionStateChangeDate;
+            } else {
+                // If the grace period is set - follow the end date behavior outlined in the specification.
+                finishDate = [scheduleData.end dateByAddingTimeInterval:[scheduleData.editGracePeriod doubleValue]];
+            }
+
             if ([finishDate compare:self.date.now] == NSOrderedAscending) {
                 [scheduleData.managedObjectContext deleteObject:scheduleData];
             }

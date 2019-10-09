@@ -3,8 +3,6 @@
 #import "UAInAppMessageDefaultDisplayCoordinator+Internal.h"
 #import "UAGlobal.h"
 
-#define kUAInAppMessageDefaultDisplayInterval 30
-
 @interface UAInAppMessageDefaultDisplayCoordinator ()
 @property (nonatomic, assign) BOOL isDisplayLocked;
 @property (nonatomic, strong) UADispatcher *dispatcher;
@@ -17,7 +15,6 @@
     self = [super init];
 
     if (self) {
-        self.displayInterval = kUAInAppMessageDefaultDisplayInterval;
         self.dispatcher = dispatcher;
         self.notificationCenter = notificationCenter;
 

@@ -17,6 +17,8 @@
 
 "ua_device_info_push_settings" = "Push Settings";
 "ua_device_info_enable_push" = "Enable Push";
+"ua_device_info_in_app_automation_settings" = "In-App Automation Settings";
+"ua_device_info_in_app_automation_display_interval" = "Display interval";
 
 "ua_device_info_channel_id" = "Channel ID";
 "ua_device_info_username" = "Inbox Username";
