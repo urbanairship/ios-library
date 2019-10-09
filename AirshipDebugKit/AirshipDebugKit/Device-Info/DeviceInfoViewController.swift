@@ -29,7 +29,7 @@ class DeviceInfoCell: UITableViewCell {
     
     @IBAction func stepperValueChanged(_ sender: UIStepper) {
         let stepperValue = Int(sender.value)
-        subtitle.text = "ua_timeinterval_description_seconds".localizedWithFormat(count:stepperValue)
+        subtitle.text = "ua_timeinterval_description_integer_seconds".localizedWithFormat(count:stepperValue)
         inAppAutomationDisplayInterval = stepperValue
     }
     
@@ -263,7 +263,7 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
             cell.subtitle?.numberOfLines = 1;
         case displayInterval:
             cell.title.text = "ua_device_info_in_app_automation_display_interval".localized()
-            cell.subtitle?.text = "ua_timeinterval_description_seconds".localizedWithFormat(count:inAppAutomationDisplayInterval)
+            cell.subtitle?.text = "ua_timeinterval_description_integer_seconds".localizedWithFormat(count:inAppAutomationDisplayInterval)
             cell.subtitle?.adjustsFontSizeToFitWidth = true;
             cell.subtitle?.minimumScaleFactor = 0.25;
             cell.subtitle?.numberOfLines = 1;
