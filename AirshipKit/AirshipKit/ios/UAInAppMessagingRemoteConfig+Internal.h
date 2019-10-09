@@ -1,66 +1,38 @@
 /* Copyright Airship and Contributors */
 
 #import <Foundation/Foundation.h>
-#import "UARemoteConfig+Internal.h"
+#import "UAInAppMessagingTagGroupsConfig+Internal.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 /**
- * Remote config class for in-app messaging tag group fetching.
- */
-@interface UAInAppMessagingTagGroupsRemoteConfig : UARemoteConfig
-
-/**
- * Whether tag group fetching is enabled. Defaults to `YES`.
- */
-@property (nonatomic, readonly) BOOL enabled;
-
-/**
- * The cache max age time. Defaults to 10 minutes.
- */
-@property (nonatomic, readonly) NSTimeInterval cacheMaxAgeTime;
-
-/**
- * The cache stale read time. Defaults to 1 hour.
- */
-@property (nonatomic, readonly) NSTimeInterval cacheStaleReadTime;
-
-/**
- * The time interval to prefer local tag data. Defaults to 10 minutes.
- */
-@property (nonatomic, readonly) NSTimeInterval cachePreferLocalUntil;
-
-/**
- * UAInAppMessagingTagGroupsRemoteConfig class factory method.
- *
- * @param cacheMaxAgeTime The cache max age time.
- * @param cacheStaleReadTime The cache stale read time.
- * @param cachePreferLocalUntil The cache prefer local until time.
- * @param enabled Whether tag group fetching is enabled.
- */
-+ (instancetype)configWithCacheMaxAgeTime:(NSTimeInterval)cacheMaxAgeTime
-                       cacheStaleReadTime:(NSTimeInterval)cacheStaleReadTime
-                    cachePreferLocalUntil:(NSTimeInterval)cachePreferLocalUntil
-                                  enabled:(BOOL)enabled;
-
-@end
-
-/**
  * Remote config class for in-app messaging.
  */
-@interface UAInAppMessagingRemoteConfig : UARemoteConfig
+@interface UAInAppMessagingRemoteConfig : NSObject
 
 /**
  * The inner config for tag group fetching.
  */
-@property (nonatomic, readonly) UAInAppMessagingTagGroupsRemoteConfig *tagGroupsConfig;
+@property (nonatomic, readonly) UAInAppMessagingTagGroupsConfig *tagGroupsConfig;
 
 /**
  * UAInAppMessagingRemoteConfig class factory method.
  *
- * @param tagGroupsConfig A UAInAppMessagingTagGroupsRemoteConfig.
+ * @param tagGroupsConfig A UAInAppMessagingTagGroupsConfig.
  */
-+ (instancetype)configWithTagGroupsConfig:(UAInAppMessagingTagGroupsRemoteConfig *)tagGroupsConfig;
++ (instancetype)configWithTagGroupsConfig:(UAInAppMessagingTagGroupsConfig *)tagGroupsConfig;
+
+/**
+ * Creates a default config.
+ * @return The default config.
+ */
++ (instancetype)defaultConfig;
+
+/**
+ * Parses a config from JSON.
+ * @return The UAInAppMessaginTagGroupsConfig instance, or nil if the JSON is invalid.
+ */
++ (instancetype)configWithJSON:(id)JSON;
 
 @end
 

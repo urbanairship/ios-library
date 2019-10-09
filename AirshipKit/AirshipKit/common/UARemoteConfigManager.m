@@ -2,43 +2,61 @@
 
 #import "UARemoteConfigManager+Internal.h"
 #import "UADisposable.h"
-#import "UAirship+Internal.h"
+#import "UAirshipVersion.h"
 #import "UARemoteDataManager+Internal.h"
 #import "UARemoteDataPayload+Internal.h"
-#import "UAComponentDisabler+Internal.h"
+#import "UAApplicationMetrics.h"
+#import "UARemoteConfigDisableInfo+Internal.h"
+#import "UARemoteConfigModuleNames+Internal.h"
 
 NSString * const UAAppConfigCommon = @"app_config";
 NSString * const UAAppConfigIOS = @"app_config:ios";
+
+// Disable config key
 NSString * const UARemoteConfigDisableKey = @"disable_features";
 
 @interface UARemoteConfigManager()
 @property (nonatomic, strong) UADisposable *remoteDataSubscription;
-@property (nonatomic, strong) UAComponentDisabler *componentDisabler;
-@property (nonatomic, strong) UAModules *modules;
+@property (nonatomic, strong) UARemoteConfigModuleAdapter *moduleAdapter;
+@property (nonatomic, strong) UARemoteDataManager *remoteDataManager;
+@property (nonatomic, strong) UAApplicationMetrics *applicationMetrics;
 @end
 
 @implementation UARemoteConfigManager
 
-+ (UARemoteConfigManager *)remoteConfigManagerWithRemoteDataManager:(UARemoteDataManager *)remoteDataManager
-                                                  componentDisabler:(UAComponentDisabler *)componentDisabler
-                                                            modules:(UAModules *)modules {
++ (instancetype)remoteConfigManagerWithRemoteDataManager:(UARemoteDataManager *)remoteDataManager
+                                      applicationMetrics:(UAApplicationMetrics *)applicationMetrics {
 
-    return [[UARemoteConfigManager alloc] initWithRemoteDataManager:remoteDataManager componentDisabler:componentDisabler modules:modules];
+    return [[UARemoteConfigManager alloc] initWithRemoteDataManager:remoteDataManager
+                                                 applicationMetrics:applicationMetrics
+                                                      moduleAdapter:[[UARemoteConfigModuleAdapter alloc] init]];
+}
+
++ (instancetype)remoteConfigManagerWithRemoteDataManager:(UARemoteDataManager *)remoteDataManager
+                                      applicationMetrics:(UAApplicationMetrics *)applicationMetrics
+                                           moduleAdapter:(UARemoteConfigModuleAdapter *)moduleAdapter {
+
+
+    return [[UARemoteConfigManager alloc] initWithRemoteDataManager:remoteDataManager
+                                                 applicationMetrics:applicationMetrics
+                                                      moduleAdapter:moduleAdapter];
 }
 
 - (instancetype)initWithRemoteDataManager:(UARemoteDataManager *)remoteDataManager
-                        componentDisabler:(UAComponentDisabler *)componentDisabler
-                                  modules:(UAModules *)modules {
+                       applicationMetrics:(UAApplicationMetrics *)applicationMetrics
+                            moduleAdapter:(UARemoteConfigModuleAdapter *)moduleAdapter {
 
     self = [super init];
     
     if (self) {
-        self.componentDisabler = componentDisabler;
+        self.remoteDataManager = remoteDataManager;
+        self.applicationMetrics = applicationMetrics;
+        self.moduleAdapter = moduleAdapter;
+
         self.remoteDataSubscription = [remoteDataManager subscribeWithTypes:@[UAAppConfigCommon, UAAppConfigIOS]
                                                                                block:^(NSArray<UARemoteDataPayload *> *remoteConfig) {
                                                                                    [self processRemoteConfig:remoteConfig];
                                                                                }];
-        self.modules = modules;
     }
     
     return self;
@@ -48,26 +66,110 @@ NSString * const UARemoteConfigDisableKey = @"disable_features";
     [self.remoteDataSubscription dispose];
 }
 
-- (void)processRemoteConfig:(NSArray<UARemoteDataPayload *> *)remoteConfig {
+- (void)processRemoteConfig:(NSArray<UARemoteDataPayload *> *)payloads {
+    // Combine the data
+    NSMutableDictionary *combinedData = [NSMutableDictionary dictionary];
+    for (UARemoteDataPayload *payload in payloads) {
+        [combinedData addEntriesFromDictionary:payload.data];
+    }
+
+    // Disable features
+    [self applyDisableInfosFromRemoteData:combinedData];
+
+    // Module config
+    [self applyConfigsFromRemoteData:combinedData];
+}
+
+- (void)applyDisableInfosFromRemoteData:(NSDictionary *)data {
+    id disableJSONArray = data[UARemoteConfigDisableKey];
+    if (!disableJSONArray) {
+        return;
+    }
+
+    if (![disableJSONArray isKindOfClass:[NSArray class]]) {
+        UA_LERR("Invalid disable info: %@", disableJSONArray);
+        return;
+    }
+
+    // Parse the disable info
     NSMutableArray *disableInfos = [NSMutableArray array];
-    NSMutableDictionary *configs = [NSMutableDictionary dictionary];
+    for (id disableJSON in disableJSONArray) {
+        UARemoteConfigDisableInfo *disableInfo = [UARemoteConfigDisableInfo disableInfoWithJSON:disableJSON];
+        if (!disableInfo) {
+            UA_LERR("Invalid disable info: %@", disableJSON);
+            continue;
+        }
+        [disableInfos addObject:disableInfo];
+    }
 
-    for (UARemoteDataPayload *payload in remoteConfig) {
-        for (NSString *key in payload.data) {
-            if ([key isEqualToString:UARemoteConfigDisableKey]) {
-                [disableInfos addObjectsFromArray:payload.data[UARemoteConfigDisableKey]];
-            } else {
-                if (!configs[key]) {
-                    [configs setObject:[NSMutableArray array] forKey:key];
-                }
+    // Filter out any that do not apply
+    NSArray *filteredDisableInfos = [UARemoteConfigManager filterDisableInfos:disableInfos
+                                                                   sdkVersion:[UAirshipVersion get]
+                                                                   appVersion:self.applicationMetrics.currentAppVersion];
 
-                [configs[key] addObject:payload.data[key]];
-            }
+    NSMutableSet<NSString *> *disableModuleNames = [NSMutableSet set];
+    NSUInteger remoteDataRefreshInterval = UARemoteConfigDisableRefreshIntervalDefault;
+
+    // Pass through all the filtered disable info to find the disabled modules and the max remote data refresh
+    for (UARemoteConfigDisableInfo *disableInfo in filteredDisableInfos) {
+        [disableModuleNames addObjectsFromArray:disableInfo.disableModuleNames];
+        if (disableInfo.remoteDataRefreshInterval) {
+            remoteDataRefreshInterval = MAX([disableInfo.remoteDataRefreshInterval unsignedIntegerValue], remoteDataRefreshInterval);
         }
     }
 
-    [self.componentDisabler processDisableInfo:disableInfos];
-    [self.modules processConfigs:configs];
+    // Disable modules
+    for (NSString *moduleID in disableModuleNames) {
+        [self.moduleAdapter setComponentsEnabled:NO forModuleName:moduleID];
+    }
+
+    // Enable modules
+    NSMutableSet<NSString *> *enableModulesNames = [NSMutableSet setWithArray:kUARemoteConfigModuleAllModules];
+    [enableModulesNames minusSet:disableModuleNames];
+    for (NSString *moduleID in enableModulesNames) {
+        [self.moduleAdapter setComponentsEnabled:YES forModuleName:moduleID];
+    }
+
+    // Update remote data refresh interval
+    self.remoteDataManager.remoteDataRefreshInterval = remoteDataRefreshInterval;
 }
+
+- (void)applyConfigsFromRemoteData:(NSDictionary *)data {
+    for (NSString *moduleName in kUARemoteConfigModuleAllModules) {
+        [self.moduleAdapter applyConfig:data[moduleName] forModuleName:moduleName];
+    }
+}
+
++ (NSArray<UARemoteConfigDisableInfo *> *)filterDisableInfos:(NSArray<UARemoteConfigDisableInfo *> *)disableInfos
+                                                  sdkVersion:(NSString *)sdkVersion
+                                                  appVersion:(NSString *)appVersion {
+
+    id versionObject = @{ @"ios" : @{ @"version": appVersion } };
+
+    return [disableInfos filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(id object, NSDictionary *bindings) {
+        UARemoteConfigDisableInfo *disableInfo = (UARemoteConfigDisableInfo *)object;
+
+        if (disableInfo.appVersionConstraint && ![disableInfo.appVersionConstraint evaluateObject:versionObject]) {
+            return NO;
+        }
+
+        if (disableInfo.sdkVersionConstraints.count) {
+            BOOL sdkVersionMatch = NO;
+            for (UAVersionMatcher *sdkVersionMatcher in disableInfo.sdkVersionConstraints) {
+                if ([sdkVersionMatcher evaluateObject:sdkVersion]) {
+                    sdkVersionMatch = YES;
+                    break;
+                }
+            }
+
+            if (!sdkVersionMatch) {
+                return NO;
+            }
+        }
+
+        return YES;
+    }]];
+}
+
 
 @end

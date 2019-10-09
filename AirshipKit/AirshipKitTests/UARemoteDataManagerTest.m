@@ -577,6 +577,26 @@
     [subscription dispose];
 }
 
+/**
+ * Test that the result is sorted by the subscribe order.
+ */
+- (void)testSortUpdates {
+    NSMutableArray<UARemoteDataPayload *> *testPayloads = [[self createNPayloadsAndSetupTest:2 metadata:self.expectedMetadata] mutableCopy];
+    NSArray *reversed = [[testPayloads reverseObjectEnumerator] allObjects];
+
+    __block XCTestExpectation *receivedDataExpectation = [self expectationWithDescription:@"Received data"];
+    UADisposable *subscription = [self.remoteDataManager subscribeWithTypes:[reversed valueForKeyPath:@"type"] block:^(NSArray<UARemoteDataPayload *> * _Nonnull remoteDataArray) {
+        [receivedDataExpectation fulfill];
+        XCTAssertEqualObjects(reversed, remoteDataArray);
+    }];
+
+    [self refresh];
+    [self waitForTestExpectations];
+
+    // cleanup
+    [subscription dispose];
+}
+
 // client (test) subscribes to remote data manager
 // simulate multiple payloads from cloud, with at least two of a single type
 // all payloads should be published to client

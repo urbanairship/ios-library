@@ -739,17 +739,13 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
     [self updateEnginePauseState];
 }
 
-- (nullable Class)remoteConfigClass {
-    return [UAInAppMessagingRemoteConfig class];
-}
+- (void)applyRemoteConfig:(nullable id)config {
+    UAInAppMessagingRemoteConfig *inAppConfig = [UAInAppMessagingRemoteConfig configWithJSON:config] ?: [UAInAppMessagingRemoteConfig defaultConfig];
 
-- (void)onNewRemoteConfig:(UARemoteConfig *)config {
-    UAInAppMessagingRemoteConfig *newConfig = (UAInAppMessagingRemoteConfig *)config;
-
-    self.tagGroupsLookupManager.componentEnabled = newConfig.tagGroupsConfig.enabled;
-    self.tagGroupsLookupManager.cacheMaxAgeTime = newConfig.tagGroupsConfig.cacheMaxAgeTime;
-    self.tagGroupsLookupManager.cacheStaleReadTime = newConfig.tagGroupsConfig.cacheStaleReadTime;
-    self.tagGroupsLookupManager.preferLocalTagDataTime = newConfig.tagGroupsConfig.cachePreferLocalUntil;
+    self.tagGroupsLookupManager.enabled = inAppConfig.tagGroupsConfig.enabled;
+    self.tagGroupsLookupManager.cacheMaxAgeTime = inAppConfig.tagGroupsConfig.cacheMaxAgeTime;
+    self.tagGroupsLookupManager.cacheStaleReadTime = inAppConfig.tagGroupsConfig.cacheStaleReadTime;
+    self.tagGroupsLookupManager.preferLocalTagDataTime = inAppConfig.tagGroupsConfig.cachePreferLocalUntil;
 }
 
 - (void)setPaused:(BOOL)paused {

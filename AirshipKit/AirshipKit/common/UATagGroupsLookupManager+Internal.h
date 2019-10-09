@@ -57,7 +57,12 @@ extern const NSTimeInterval UATagGroupsLookupManagerDefaultPreferLocalTagDataTim
 /**
  * High level interface for performing tag group lookups.
  */
-@interface UATagGroupsLookupManager : UAComponent
+@interface UATagGroupsLookupManager : NSObject
+
+/**
+ * Enables/disables tag lookups.
+ */
+@property (nonatomic, assign) BOOL enabled;
 
 /**
  * The time interval to prefer local tag data over API responses. Defaults to 10 minutes.

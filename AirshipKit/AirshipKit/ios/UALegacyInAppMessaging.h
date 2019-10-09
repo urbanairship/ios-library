@@ -2,6 +2,7 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+#import "UAComponent.h"
 
 @class UALegacyInAppMessage;
 @class UAInAppMessageScheduleInfo;
@@ -58,7 +59,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Manager class for in-app messaging.
  */
-@interface UALegacyInAppMessaging : NSObject <UALegacyInAppMessageFactoryDelegate>
+@interface UALegacyInAppMessaging : UAComponent <UALegacyInAppMessageFactoryDelegate>
 
 /**
  * Sets whether legacy messages will display immediately upon arrival, instead of waiting

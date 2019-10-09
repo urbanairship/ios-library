@@ -36,8 +36,8 @@
 @class UAAutomation;
 @class UAChannelCapture;
 @class UARemoteDataManager;
-@class UAModules;
 @class UAChannel;
+@class UAComponent;
 
 #if !TARGET_OS_TV   // Inbox not supported on tvOS
 @class UAInbox;
@@ -66,6 +66,8 @@
 
 
 NS_ASSUME_NONNULL_BEGIN
+
+extern NSString * const UALocationClassName;
 
 /**
  * The takeOff method must be called on the main thread. Not doing so results in 
@@ -263,7 +265,7 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
  * Returns the AirshipResources bundle, or nil if the the bundle
  * cannot be located at runtime.
  */
-+ (nullable NSBundle *) resources;
++ (nullable NSBundle *)resources;
 
 /**
  * Returns the `UAAutomation` instance.
@@ -274,12 +276,16 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
  * Returns the default `UAAnalytics` instance.
  */
 + (null_unspecified UAAnalytics *)analytics;
+
 /**
- * Returns the `UAModules` instance.
+ * Returns an UAComponent for a given class name.
+ * @param className The classname of the component.
+ * @return The component, or nil if the component is not available.
  */
-+ (null_unspecified UAModules *) modules;
+- (nullable UAComponent *)componentForClassName:(NSString *)className;
 
 NS_ASSUME_NONNULL_END
+
 
 @end
 

@@ -10,6 +10,8 @@
 
 #define kUATagGroupsLookupManagerPreferLocalTagDataTimeKey @"com.urbanairship.tag_groups.PREFER_LOCAL_TAG_DATA_TIME"
 
+
+
 NSTimeInterval const UATagGroupsLookupManagerDefaultPreferLocalTagDataTimeSeconds = 60 * 10; // 10 minutes
 
 NSString * const UATagGroupsLookupManagerErrorDomain = @"com.urbanairship.tag_groups_lookup_manager";
@@ -22,7 +24,6 @@ NSString * const UATagGroupsLookupManagerErrorDomain = @"com.urbanairship.tag_gr
 @property (nonatomic, strong) UATagGroupsLookupResponseCache *cache;
 @property (nonatomic, readonly) NSTimeInterval maxSentMutationAge;
 @property (nonatomic, strong) UADate *currentTime;
-
 @end
 
 @implementation UATagGroupsLookupManager
@@ -33,7 +34,7 @@ NSString * const UATagGroupsLookupManagerErrorDomain = @"com.urbanairship.tag_gr
                   mutationHistory:(UATagGroupsMutationHistory *)mutationHistory
                       currentTime:(UADate *)currentTime {
 
-    self = [super initWithDataStore:dataStore];
+    self = [super init];
 
     if (self) {
         self.dataStore = dataStore;
@@ -42,6 +43,7 @@ NSString * const UATagGroupsLookupManagerErrorDomain = @"com.urbanairship.tag_gr
         self.lookupAPIClient = client;
         self.currentTime = currentTime;
 
+        self.lookupAPIClient.enabled = self.enabled;
         [self updateMaxSentMutationAge];
     }
 
@@ -66,6 +68,15 @@ NSString * const UATagGroupsLookupManagerErrorDomain = @"com.urbanairship.tag_gr
                                currentTime:(UADate *)currentTime {
 
     return [[self alloc] initWithAPIClient:client dataStore:dataStore cache:cache mutationHistory:mutationHistory currentTime:currentTime];
+}
+
+- (BOOL)enabled {
+    return [self.dataStore boolForKey:kUATagGroupsLookupManagerEnabledKey defaultValue:YES];
+}
+
+- (void)setEnabled:(BOOL)enabled {
+    [self.dataStore setBool:enabled forKey:kUATagGroupsLookupManagerEnabledKey];
+    self.lookupAPIClient.enabled = self.enabled;
 }
 
 - (NSTimeInterval)preferLocalTagDataTime {
@@ -158,8 +169,8 @@ NSString * const UATagGroupsLookupManagerErrorDomain = @"com.urbanairship.tag_gr
 - (void)getTagGroups:(UATagGroups *)requestedTagGroups completionHandler:(void(^)(UATagGroups  * _Nullable tagGroups, NSError *error)) completionHandler {
     __block NSError *error;
 
-    if (!self.componentEnabled) {
-        error = [self errorWithCode:UATagGroupsLookupManagerErrorCodeComponentDisabled message:@"Component is disabled"];
+    if (!self.enabled) {
+        error = [self errorWithCode:UATagGroupsLookupManagerErrorCodeComponentDisabled message:@"Tag group lookup is disabled"];
         return completionHandler(nil, error);
     }
 
@@ -204,10 +215,6 @@ NSString * const UATagGroupsLookupManagerErrorDomain = @"com.urbanairship.tag_gr
                                    cachedResponse:cachedResponse
                                       refreshDate:cacheRefreshDate], error);
     }];
-}
-
-- (void)onComponentEnableChange {
-    self.lookupAPIClient.enabled = self.componentEnabled;
 }
 
 @end

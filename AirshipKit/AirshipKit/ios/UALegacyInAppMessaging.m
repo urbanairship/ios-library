@@ -46,7 +46,7 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
                         dataStore:(UAPreferenceDataStore *)dataStore
               inAppMessageManager:(UAInAppMessageManager *)inAppMessageManager {
 
-    self = [super init];
+    self = [super initWithDataStore:dataStore];
     if (self) {
         // Clean up the old datastore
         [self.dataStore removeObjectForKey:kUAPendingInAppMessageDataStoreKey];

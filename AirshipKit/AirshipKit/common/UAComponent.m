@@ -56,13 +56,8 @@ BOOL const UAComponentEnabledDefault = YES;
     // placeholder - sub-classes should override if they want notification when the components enable/disable state changes
 }
 
-- (void)onNewRemoteConfig:(UARemoteConfig *)config  {
+- (void)applyRemoteConfig:(nullable id)config  {
     // placeholder - sub-classes should override if they want remote config updates
-}
-
-- (nullable Class)remoteConfigClass {
-    // placeholder - subclasses should override if they want remote config updates
-    return nil;
 }
 
 - (void)airshipReady:(UAirship *)airship {

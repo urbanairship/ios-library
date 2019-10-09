@@ -24,7 +24,7 @@ NSInteger const UARemoteDataRefreshIntervalDefault = 0;
 /// @name Properties
 ///---------------------------------------------------------------------------------------
 
-@property (nonatomic, copy) NSSet<NSString *> *payloadTypes;
+@property (nonatomic, copy) NSArray<NSString *> *payloadTypes;
 @property (nonatomic, copy) UARemoteDataPublishBlock publishBlock;
 @property (nonatomic, strong) NSArray<UARemoteDataPayload *> *previousPayloads;
 
@@ -39,7 +39,7 @@ NSInteger const UARemoteDataRefreshIntervalDefault = 0;
 - (nonnull instancetype)initWithTypes:(NSArray<NSString *> *)payloadTypes block:(UARemoteDataPublishBlock)publishBlock {
     self = [super init];
     if (self) {
-        self.payloadTypes = [NSSet setWithArray:payloadTypes];
+        self.payloadTypes = payloadTypes;
         self.publishBlock = publishBlock;
     }
     return self;
@@ -90,7 +90,7 @@ NSInteger const UARemoteDataRefreshIntervalDefault = 0;
                     remoteDataAPIClient:(UARemoteDataAPIClient *)remoteDataAPIClient
                      notificationCenter:(NSNotificationCenter *)notificationCenter
                              dispatcher:(UADispatcher *)dispatcher {
-    self = [super init];
+    self = [super initWithDataStore:dataStore];
     if (self) {
         self.dataStore = dataStore;
         self.subscriptions = [NSMutableArray array];
@@ -363,7 +363,18 @@ completionHandler:(void(^)(BOOL success))completionHandler {
         NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(type IN %@)", subscription.payloadTypes];
         NSArray *filteredPayloads = [remoteDataPayloads filteredArrayUsingPredicate:predicate];
 
-        [subscription notifyRemoteData:filteredPayloads dispatcher:self.dispatcher completionHandler:^{
+        NSArray *sorted = [filteredPayloads sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
+            UARemoteDataPayload *payload1 = (UARemoteDataPayload *)obj1;
+            UARemoteDataPayload *payload2 = (UARemoteDataPayload *)obj2;
+            NSUInteger indexObj1 = [subscription.payloadTypes indexOfObject:payload1.type];
+            NSUInteger indexObj2 = [subscription.payloadTypes indexOfObject:payload2.type];
+            if (indexObj1 == indexObj2) {
+                return NSOrderedSame;
+            }
+            return indexObj1 > indexObj2 ? NSOrderedDescending : NSOrderedAscending;
+        }];
+
+        [subscription notifyRemoteData:sorted dispatcher:self.dispatcher completionHandler:^{
             dispatch_group_leave(dispatchGroup);
         }];
     }

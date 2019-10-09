@@ -37,7 +37,7 @@
 
     [self setupMocks:@"channel" channelTagsEnabled:NO];
 
-    self.lookupManager.componentEnabled = YES;
+    self.lookupManager.enabled = YES;
     self.lookupManager.delegate = self.mockDelegate;
 }
 
@@ -62,7 +62,7 @@
 }
 
 - (void)testGetTagsComponentDisabled {
-    self.lookupManager.componentEnabled = NO;
+    self.lookupManager.enabled = NO;
 
     XCTestExpectation *fetchCompleted = [self expectationWithDescription:@"fetch completed"];
 

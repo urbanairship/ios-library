@@ -1,7 +1,6 @@
 /* Copyright Airship and Contributors */
 
 #import "UAirship.h"
-#import "UAModules+Internal.h"
 #import "UAAppStateTracker+Internal.h"
 
 @class UABaseAppDelegateSurrogate;
@@ -27,6 +26,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) UAWhitelist *whitelist;
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 @property (nonatomic, strong) UAChannelCapture *channelCapture;
+@property (nonatomic, copy) NSArray<UAComponent *> *components;
 
 /**
  * The channel
@@ -80,11 +80,6 @@ NS_ASSUME_NONNULL_BEGIN
  * The shared analytics manager.
  */
 @property (nonatomic, strong) UAAnalytics *sharedAnalytics;
-
-/**
- * The shared modules.
- */
-@property (nonatomic, strong) UAModules *sharedModules;
 
 /**
  * Shared remoteDataManager.

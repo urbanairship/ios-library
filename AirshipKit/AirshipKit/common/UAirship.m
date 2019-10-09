@@ -21,7 +21,6 @@
 #import "UAAppIntegration.h"
 #import "UARemoteDataManager+Internal.h"
 #import "UARemoteConfigManager+Internal.h"
-#import "UAComponentDisabler+Internal.h"
 #import "UATagGroupsRegistrar+Internal.h"
 #import "UATagGroupsMutationHistory+Internal.h"
 #import "UAChannel+Internal.h"
@@ -42,6 +41,9 @@ NSString * const UAirshipTakeOffBackgroundThreadException = @"UAirshipTakeOffBac
 NSString * const UAResetKeychainKey = @"com.urbanairship.reset_keychain";
 
 NSString * const UALibraryVersion = @"com.urbanairship.library_version";
+
+// Optional components
+NSString * const UALocationClassName = @"UALocation";
 
 static UAirship *sharedAirship_;
 
@@ -91,66 +93,78 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 - (instancetype)initWithRuntimeConfig:(UARuntimeConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
     self = [super init];
     if (self) {
+
+        NSMutableArray *components = [NSMutableArray array];
+
         self.remoteNotificationBackgroundModeEnabled = [[[NSBundle mainBundle] objectForInfoDictionaryKey:@"UIBackgroundModes"] containsObject:@"remote-notification"];
         self.dataStore = dataStore;
         self.config = config;
-        self.applicationMetrics = [UAApplicationMetrics applicationMetricsWithDataStore:dataStore];
+
         self.actionRegistry = [UAActionRegistry defaultRegistry];
+        self.whitelist = [UAWhitelist whitelistWithConfig:config];
+        self.applicationMetrics = [UAApplicationMetrics applicationMetricsWithDataStore:dataStore];
 
-        UATagGroupsMutationHistory *tagGroupsMutationHistory = [UATagGroupsMutationHistory historyWithDataStore:dataStore];
-
-        UAChannelRegistrar *channelRegistrar = [UAChannelRegistrar channelRegistrarWithConfig:config dataStore:dataStore];
-
-        UATagGroupsRegistrar *tagGroupsRegistrar = [UATagGroupsRegistrar tagGroupsRegistrarWithConfig:config
-                                                                                            dataStore:dataStore
+        UATagGroupsMutationHistory *tagGroupsMutationHistory = [UATagGroupsMutationHistory historyWithDataStore:self.dataStore];
+        UATagGroupsRegistrar *tagGroupsRegistrar = [UATagGroupsRegistrar tagGroupsRegistrarWithConfig:self.config
+                                                                                            dataStore:self.dataStore
                                                                                       mutationHistory:tagGroupsMutationHistory];
 
-        self.sharedChannel = [UAChannel channelWithDataStore:dataStore
-                                                      config:config
+        UAChannelRegistrar *channelRegistrar = [UAChannelRegistrar channelRegistrarWithConfig:self.config dataStore:self.dataStore];
+
+        self.sharedChannel = [UAChannel channelWithDataStore:self.dataStore
+                                                      config:self.config
                                           notificationCenter:[NSNotificationCenter defaultCenter]
                                             channelRegistrar:channelRegistrar
                                           tagGroupsRegistrar:tagGroupsRegistrar];
+        [components addObject:self.sharedChannel];
 
-        self.sharedPush = [UAPush pushWithConfig:config dataStore:dataStore channel:self.sharedChannel];
-        self.sharedChannel.pushProviderDelegate = self.sharedPush;
+
+        self.sharedPush = [UAPush pushWithConfig:self.config dataStore:self.dataStore channel:self.sharedChannel];
+        [components addObject:self.sharedPush];
 
         self.sharedNamedUser = [UANamedUser namedUserWithChannel:self.sharedChannel
-                                                          config:config
-                                                       dataStore:dataStore
+                                                          config:self.config
+                                                       dataStore:self.dataStore
                                               tagGroupsRegistrar:tagGroupsRegistrar];
-
-        self.sharedAnalytics = [UAAnalytics analyticsWithConfig:config dataStore:dataStore];
-        self.whitelist = [UAWhitelist whitelistWithConfig:config];
-
-        self.sharedAutomation = [UAAutomation automationWithConfig:config dataStore:dataStore];
+        [components addObject:self.sharedNamedUser];
 
 
-        self.sharedRemoteDataManager = [UARemoteDataManager remoteDataManagerWithConfig:config
-                                                                              dataStore:dataStore];
-        self.sharedModules = [[UAModules alloc] initWithDataStore:dataStore];
+        self.sharedAnalytics = [UAAnalytics analyticsWithConfig:self.config dataStore:self.dataStore];
+        [components addObject:self.sharedAnalytics];
 
-        UAComponentDisabler *componentDisabler = [UAComponentDisabler componentDisablerWithModules:self.sharedModules];
+        self.sharedAutomation = [UAAutomation automationWithConfig:self.config dataStore:self.dataStore];
+        [components addObject:self.sharedAutomation];
+
+        self.sharedRemoteDataManager = [UARemoteDataManager remoteDataManagerWithConfig:self.config dataStore:self.dataStore];
+        [components addObject:self.sharedRemoteDataManager];
 
         self.sharedRemoteConfigManager = [UARemoteConfigManager remoteConfigManagerWithRemoteDataManager:self.sharedRemoteDataManager
-                                                                                       componentDisabler:componentDisabler
-                                                                                                 modules:self.sharedModules];
+                                                                                      applicationMetrics:self.applicationMetrics];
+
 #if !TARGET_OS_TV   // IAM not supported on tvOS
-        self.sharedInAppMessageManager = [UAInAppMessageManager managerWithConfig:config
+        self.sharedInAppMessageManager = [UAInAppMessageManager managerWithConfig:self.config
                                                          tagGroupsMutationHistory:tagGroupsMutationHistory
                                                                 remoteDataManager:self.sharedRemoteDataManager
-                                                                        dataStore:dataStore
+                                                                        dataStore:self.dataStore
                                                                           channel:self.sharedChannel
                                                                         analytics:self.sharedAnalytics];
+        [components addObject:self.sharedInAppMessageManager];
 
-        self.sharedLegacyInAppMessaging = [UALegacyInAppMessaging inAppMessagingWithAnalytics:self.sharedAnalytics dataStore:dataStore inAppMessageManager:self.sharedInAppMessageManager];
+
+        self.sharedLegacyInAppMessaging = [UALegacyInAppMessaging inAppMessagingWithAnalytics:self.sharedAnalytics
+                                                                                    dataStore:self.dataStore
+                                                                          inAppMessageManager:self.sharedInAppMessageManager];
+        [components addObject:self.sharedLegacyInAppMessaging];
 
         // Message center not supported on tvOS
-        self.sharedInboxUser = [UAUser userWithChannel:self.sharedChannel config:config dataStore:dataStore];
-        self.sharedChannel.userProviderDelegate = self.sharedInboxUser;
+        self.sharedInboxUser = [UAUser userWithChannel:self.sharedChannel config:self.config dataStore:self.dataStore];
+        [components addObject:self.sharedInboxUser];
 
-        self.sharedInbox = [UAInbox inboxWithUser:self.sharedInboxUser config:config dataStore:dataStore];
+        self.sharedInbox = [UAInbox inboxWithUser:self.sharedInboxUser config:self.config dataStore:self.dataStore];
+        [components addObject:self.sharedInbox];
+
         // UIPasteboard is not available in tvOS
-        self.channelCapture = [UAChannelCapture channelCaptureWithConfig:config
+        self.channelCapture = [UAChannelCapture channelCaptureWithConfig:self.config
                                                                  channel:self.sharedChannel
                                                     pushProviderDelegate:self.sharedPush
                                                                dataStore:self.dataStore];
@@ -161,6 +175,19 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
             UA_LWARN(@"Unable to initialize default message center: AirshipResources is missing");
         }
 #endif
+
+        UAComponent *location = [UAirship loadExternalComponent:UALocationClassName dataStore:self.dataStore];
+        if (location) {
+            [components addObject:location];
+        }
+
+        self.sharedChannel.pushProviderDelegate = self.sharedPush;
+
+#if !TARGET_OS_TV
+        self.sharedChannel.userProviderDelegate = self.sharedInboxUser;
+#endif
+
+        self.components = components;
     }
 
     return self;
@@ -302,10 +329,8 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         }];
     }
 
-    // Notify all modules that the shared airship is ready
-    UAModules *modules = sharedAirship_.sharedModules;
-    for (NSString *moduleName in modules.allModuleNames) {
-        UAComponent *component = [modules componentForModuleName:moduleName];
+    // Notify all the components that airship is ready
+    for (UAComponent *component in sharedAirship_.components) {
         [component airshipReady:sharedAirship_];
     }
 }
@@ -426,10 +451,6 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
     return sharedAirship_.sharedRemoteDataManager;
 }
 
-+ (UAModules *)modules {
-    return sharedAirship_.sharedModules;
-}
-
 + (NSBundle *)resources {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
@@ -486,6 +507,33 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
     if (![[NSJSONSerialization class] respondsToSelector:@selector(stringWithObject:)]) {
         UA_LIMPERR(@"UAirship library requires the '-ObjC' linker flag set in 'Other linker flags'.");
     }
+}
+
+
+- (UAComponent *)componentForClassName:(NSString *)className {
+    Class cls = NSClassFromString(className);
+    if (!cls) {
+        return nil;
+    }
+
+    for (UAComponent *component in self.components) {
+        if ([component isKindOfClass:cls]) {
+            return component;
+        }
+    }
+
+    return nil;
+}
+
+
++ (UAComponent *)loadExternalComponent:(NSString *)className dataStore:(UAPreferenceDataStore *)dataStore {
+    Class cls = NSClassFromString(className);
+    if ([cls isSubclassOfClass:[UAComponent class]]) {
+        UAComponent *component = [(UAComponent *)[cls alloc] initWithDataStore:dataStore];
+        return component;
+    }
+
+    return nil;
 }
 
 @end

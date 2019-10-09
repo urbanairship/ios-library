@@ -4,7 +4,6 @@
 
 #import "UAComponent.h"
 #import "UAPreferenceDataStore+Internal.h"
-#import "UARemoteConfig+Internal.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -14,8 +13,6 @@ NS_ASSUME_NONNULL_BEGIN
  * Flag indicating whether the component is enabled. Clear to disable. Set to enable.
  */
 @property (assign) BOOL componentEnabled;
-
-@property (readonly, nullable) Class remoteConfigClass;
 
 /**
  * Init method.
@@ -30,9 +27,11 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)onComponentEnableChange;
 
 /**
- * Called when a new remote config is available.
+ * Called when remote config is loaded. If no config is available for the component, config will be nil.
+ *
+ * @config The config or nil if no config is available for the module.
  */
-- (void)onNewRemoteConfig:(UARemoteConfig *)config;
+- (void)applyRemoteConfig:(nullable id)config;
 
 @end
 

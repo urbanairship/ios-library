@@ -45,7 +45,6 @@
 #import "UALocationProviderDelegate.h"
 #import "UAMediaEventTemplate.h"
 #import "UAModifyTagsAction.h"
-#import "UAModules.h"
 #import "UANamedUser.h"
 #import "UANotificationAction.h"
 #import "UANotificationCategories.h"

@@ -2,85 +2,17 @@
 
 #import "UAInAppMessagingRemoteConfig+Internal.h"
 #import "UATagGroupsLookupManager+Internal.h"
+#import "UAInAppMessagingTagGroupsConfig+Internal.h"
 
 #define kUAInAppMessagingRemoteConfigTagGroupsKey @"tag_groups"
-#define kUAInAppMessagingTagGroupsRemoteConfigFetchEnabledKey @"enabled"
-#define kUAInAppMessagingTagGroupsRemoteConfigCacheMaxAgeSeconds @"cache_max_age_seconds"
-#define kUAInAppMessagingTagGroupsRemoteConfigCacheStaleReadTimeSeconds @"cache_stale_read_time_seconds"
-#define kUAInAppMessagingTagGroupsRemoteConfigCachePreferLocalUntilSeconds @"cache_prefer_local_until_seconds"
-
-@interface UAInAppMessagingTagGroupsRemoteConfig ()
-
-@property (nonatomic, assign) BOOL enabled;
-@property (nonatomic, assign) NSTimeInterval cacheMaxAgeTime;
-@property (nonatomic, assign) NSTimeInterval cacheStaleReadTime;
-@property (nonatomic, assign) NSTimeInterval cachePreferLocalUntil;
-
-- (UAInAppMessagingTagGroupsRemoteConfig *)combineWithConfig:(UAInAppMessagingTagGroupsRemoteConfig *)config;
-
-@end
-
-@implementation UAInAppMessagingTagGroupsRemoteConfig
-
-- (instancetype)initWithCacheMaxAgeTime:(NSTimeInterval)cacheMaxAgeTime
-                     cacheStaleReadTime:(NSTimeInterval)cacheStaleReadTime
-                  cachePreferLocalUntil:(NSTimeInterval)cachePreferLocalUntil
-                                enabled:(BOOL)enabled {
-
-    self = [super init];
-
-    if (self) {
-        self.cacheMaxAgeTime = cacheMaxAgeTime;
-        self.cacheStaleReadTime = cacheStaleReadTime;
-        self.cachePreferLocalUntil = cachePreferLocalUntil;
-        self.enabled = enabled;
-    }
-
-    return self;
-}
-
-- (instancetype)initWithJSON:(NSDictionary *)json {
-    NSNumber *maxAgeNumber = json[kUAInAppMessagingTagGroupsRemoteConfigCacheMaxAgeSeconds];
-    NSNumber *staleReadNumber = json[kUAInAppMessagingTagGroupsRemoteConfigCacheStaleReadTimeSeconds];
-    NSNumber *preferLocalUntilNumber = json[kUAInAppMessagingTagGroupsRemoteConfigCachePreferLocalUntilSeconds];
-    NSNumber *enabledNumber = json[kUAInAppMessagingTagGroupsRemoteConfigFetchEnabledKey];
-
-    NSTimeInterval maxAge = maxAgeNumber ? [maxAgeNumber doubleValue] : UATagGroupsLookupResponseCacheDefaultMaxAgeTimeSeconds;
-    NSTimeInterval staleRead = staleReadNumber ? [staleReadNumber doubleValue] : UATagGroupsLookupResponseCacheDefaultStaleReadTimeSeconds;
-    NSTimeInterval preferLocalUntil = preferLocalUntilNumber ? [preferLocalUntilNumber doubleValue] : UATagGroupsLookupManagerDefaultPreferLocalTagDataTimeSeconds;
-    BOOL enabled = enabledNumber ? [enabledNumber boolValue] : YES;
-
-    return [self initWithCacheMaxAgeTime:maxAge cacheStaleReadTime:staleRead cachePreferLocalUntil:preferLocalUntil enabled:enabled];
-}
-
-+ (instancetype)configWithCacheMaxAgeTime:(NSTimeInterval)cacheMaxAgeTime
-                       cacheStaleReadTime:(NSTimeInterval)cacheStaleReadTime
-                    cachePreferLocalUntil:(NSTimeInterval)cachePreferLocalUntil
-                                  enabled:(BOOL)enabled {
-
-    return [[self alloc] initWithCacheMaxAgeTime:cacheMaxAgeTime cacheStaleReadTime:cacheStaleReadTime cachePreferLocalUntil:cachePreferLocalUntil enabled:enabled];
-}
-
-+ (instancetype)configWithJSON:(NSDictionary *)json {
-    return [[self alloc] initWithJSON:json];
-}
-
-- (UAInAppMessagingTagGroupsRemoteConfig *)combineWithConfig:(UAInAppMessagingTagGroupsRemoteConfig *)config {
-    return [UAInAppMessagingTagGroupsRemoteConfig configWithCacheMaxAgeTime:MAX(self.cacheMaxAgeTime, config.cacheMaxAgeTime)
-                                                         cacheStaleReadTime:MAX(self.cacheStaleReadTime, config.cacheStaleReadTime)
-                                                      cachePreferLocalUntil:MAX(self.cachePreferLocalUntil, config.cachePreferLocalUntil)
-                                                                    enabled:self.enabled && config.enabled];
-}
-
-@end
 
 @interface UAInAppMessagingRemoteConfig ()
-@property (nonatomic, strong) UAInAppMessagingTagGroupsRemoteConfig *tagGroupsConfig;
+@property (nonatomic, strong) UAInAppMessagingTagGroupsConfig *tagGroupsConfig;
 @end
 
 @implementation UAInAppMessagingRemoteConfig
 
-- (instancetype)initWithTagGroupsConfig:(UAInAppMessagingTagGroupsRemoteConfig *)tagGroupsConfig {
+- (instancetype)initWithTagGroupsConfig:(UAInAppMessagingTagGroupsConfig *)tagGroupsConfig {
     self = [super init];
 
     if (self) {
@@ -90,32 +22,26 @@
     return self;
 }
 
-- (instancetype)initWithJSON:(NSDictionary *)json {
-    NSDictionary *tagGroupsConfigJSON = json[kUAInAppMessagingRemoteConfigTagGroupsKey];
-    UAInAppMessagingTagGroupsRemoteConfig *tagGroupsConfig = [UAInAppMessagingTagGroupsRemoteConfig configWithJSON:tagGroupsConfigJSON];
-    return [self initWithTagGroupsConfig:tagGroupsConfig];
-}
-
-+ (instancetype)configWithTagGroupsConfig:(UAInAppMessagingTagGroupsRemoteConfig *)tagGroupsConfig {
++ (instancetype)configWithTagGroupsConfig:(UAInAppMessagingTagGroupsConfig *)tagGroupsConfig {
     return [[self alloc] initWithTagGroupsConfig:tagGroupsConfig];
 }
 
-+ (instancetype)configWithJSON:(NSDictionary *)json {
-    return [[self alloc] initWithJSON:json];
++ (instancetype)defaultConfig {
+    return [[self alloc] initWithTagGroupsConfig:[UAInAppMessagingTagGroupsConfig defaultConfig]];
 }
 
-- (instancetype)combineWithConfig:(UAInAppMessagingRemoteConfig *)config {
-    UAInAppMessagingTagGroupsRemoteConfig *tagGroupsConfig;
-
-    if (self.tagGroupsConfig && config.tagGroupsConfig) {
-        tagGroupsConfig = [self.tagGroupsConfig combineWithConfig:config.tagGroupsConfig];
-    } else if (self.tagGroupsConfig) {
-        tagGroupsConfig = self.tagGroupsConfig;
-    } else if (config.tagGroupsConfig) {
-        tagGroupsConfig = config.tagGroupsConfig;
++ (instancetype)configWithJSON:(id)JSON {
+    if (![JSON isKindOfClass:[NSDictionary class]]) {
+        UA_LERR(@"Invalid in-app config: %@", JSON);
+        return nil;
     }
 
-    return [UAInAppMessagingRemoteConfig configWithTagGroupsConfig:tagGroupsConfig];
+    UAInAppMessagingTagGroupsConfig *tagGroupsConfig = [UAInAppMessagingTagGroupsConfig configWithJSON:JSON[kUAInAppMessagingRemoteConfigTagGroupsKey]];
+    if (!tagGroupsConfig) {
+        return nil;
+    }
+
+    return [[self alloc] initWithTagGroupsConfig:tagGroupsConfig];
 }
 
 @end
