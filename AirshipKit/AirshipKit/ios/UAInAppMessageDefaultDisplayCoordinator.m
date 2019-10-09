@@ -15,7 +15,6 @@
     self = [super init];
 
     if (self) {
-        self.displayInterval = kUAInAppMessageDefaultDisplayInterval;
         self.dispatcher = dispatcher;
         self.notificationCenter = notificationCenter;
 

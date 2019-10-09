@@ -184,6 +184,7 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
         self.prepareSchedulePipeline = [UARetriablePipeline pipeline];
         self.defaultDisplayCoordinator = displayCoordinator;
         self.immediateDisplayCoordinator = [UAInAppMessageImmediateDisplayCoordinator coordinator];
+        self.displayInterval = kUAInAppMessageDefaultDisplayInterval;
         self.assetManager = assetManager;
         self.analytics = analytics;
         [self setDefaultAdapterFactories];
