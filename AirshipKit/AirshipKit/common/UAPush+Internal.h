@@ -8,6 +8,7 @@
 #import "UAChannel+Internal.h"
 #import "UADispatcher+Internal.h"
 #import "UAAppStateTracker+Internal.h"
+#import "UAPushProviderDelegate.h"
 
 @class UAPreferenceDataStore;
 @class UARuntimeConfig;
@@ -147,7 +148,7 @@ extern NSString *const UAPushEnabledKey;
  */
 + (instancetype)pushWithConfig:(UARuntimeConfig *)config
                      dataStore:(UAPreferenceDataStore *)dataStore
-                       channel:(UAChannel *)channel;
+                       channel:(UAChannel<UAExtendableChannelRegistration> *)channel;
 
 /**
  * Factory method to create a push instance. For testing
@@ -163,7 +164,7 @@ extern NSString *const UAPushEnabledKey;
  */
 + (instancetype)pushWithConfig:(UARuntimeConfig *)config
                      dataStore:(UAPreferenceDataStore *)dataStore
-                       channel:(UAChannel *)channel
+                       channel:(UAChannel<UAExtendableChannelRegistration> *)channel
                appStateTracker:(id<UAAppStateTracker>)appStateTracker
             notificationCenter:(NSNotificationCenter *)notificationCenter
               pushRegistration:(id<UAAPNSRegistrationProtocol>)pushRegistration

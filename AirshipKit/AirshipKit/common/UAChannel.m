@@ -6,7 +6,6 @@
 #import "UATagUtils+Internal.h"
 #import "UAUtils+Internal.h"
 #import "UAChannelRegistrationPayload+Internal.h"
-#import "UAUser+Internal.h"
 #import "UAAppStateTrackerFactory+Internal.h"
 
 NSString *const UAChannelTagsSettingsKey = @"com.urbanairship.channel.tags";
@@ -31,6 +30,8 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
 @property (nonatomic, strong) UATagGroupsRegistrar *tagGroupsRegistrar;
 @property (nonatomic, strong) id<UAAppStateTracker> appStateTracker;
 @property (nonatomic, assign) BOOL shouldPerformChannelRegistrationOnForeground;
+@property (nonatomic, strong) NSMutableArray<UAChannelRegistrationExtenderBlock> *registrationExtenderBlocks;
+
 @end
 
 @implementation UAChannel
@@ -52,6 +53,7 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
         self.appStateTracker = appStateTracker;
         self.appStateTracker.stateTrackerDelegate = self;
         self.channelTagRegistrationEnabled = YES;
+        self.registrationExtenderBlocks = [NSMutableArray array];
 
         // Check config to see if user wants to delay channel creation
         // If channel ID exists or channel creation delay is disabled then channelCreationEnabled
@@ -257,53 +259,32 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
 
 # pragma mark Channel Registrar Delegate
 
+
+
+
+
+// Called from main queue
 - (void)createChannelPayload:(void (^)(UAChannelRegistrationPayload *))completionHandler
-                  dispatcher:(nullable UADispatcher *)dispatcher{
+                  dispatcher:(nullable UADispatcher *)dispatcher {
 
-    UA_WEAKIFY(self)
-    [UAUtils getDeviceID:^(NSString *deviceID) {
-        UA_STRONGIFY(self)
-        UAChannelRegistrationPayload *payload = [[UAChannelRegistrationPayload alloc] init];
+    UAChannelRegistrationPayload *payload = [[UAChannelRegistrationPayload alloc] init];
+    payload.language = [[NSLocale autoupdatingCurrentLocale] objectForKey:NSLocaleLanguageCode];
+    payload.country = [[NSLocale autoupdatingCurrentLocale] objectForKey: NSLocaleCountryCode];
+    payload.timeZone = [NSTimeZone localTimeZone].name;
 
-        payload.deviceID = deviceID;
+    if (self.channelTagRegistrationEnabled) {
+        payload.tags = self.tags;
+        payload.setTags = YES;
+    } else {
+        payload.setTags = NO;
+    }
 
-        payload.setTags = self.channelTagRegistrationEnabled;
-        payload.tags = self.channelTagRegistrationEnabled ? [self.tags copy]: nil;
-
-        payload.language = [[NSLocale autoupdatingCurrentLocale] objectForKey:NSLocaleLanguageCode];
-        payload.country = [[NSLocale autoupdatingCurrentLocale] objectForKey: NSLocaleCountryCode];
-
-        if (self.pushProviderDelegate.pushTokenRegistrationEnabled) {
-            payload.pushAddress = self.pushProviderDelegate.deviceToken;
-        }
-
-        payload.optedIn = self.pushProviderDelegate.userPushNotificationsAllowed;
-        payload.backgroundEnabled = self.pushProviderDelegate.backgroundPushNotificationsAllowed;
-
-        if (self.pushProviderDelegate.autobadgeEnabled) {
-            payload.badge = @(self.pushProviderDelegate.badgeNumber);
-        }
-
-        if (self.pushProviderDelegate.timeZone.name && self.pushProviderDelegate.quietTimeEnabled) {
-            payload.quietTime = [self.pushProviderDelegate.quietTime copy];
-        }
-
-        payload.timeZone = self.pushProviderDelegate.timeZone.name;
-
-#if !TARGET_OS_TV   // Inbox not supported on tvOS
-        if (self.userProviderDelegate) {
-            [self.userProviderDelegate getUserData:^(UAUserData *userData) {
-                payload.userID = userData.username;
-                completionHandler(payload);
-            } dispatcher:dispatcher];
-        } else {
+    id extendersCopy = [self.registrationExtenderBlocks mutableCopy];
+    [UAChannel extendPayload:payload extenders:extendersCopy completionHandler:^(UAChannelRegistrationPayload *payload) {
+        [dispatcher dispatchAsync:^{
             completionHandler(payload);
-        }
-#else
-        completionHandler(payload);
-#endif
-        
-    } dispatcher:dispatcher];
+        }];
+    }];
 }
 
 - (void)registrationSucceeded {
@@ -353,6 +334,31 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
     }
 }
 
+- (void)addChannelExtenderBlock:(UAChannelRegistrationExtenderBlock)extender {
+    [self.registrationExtenderBlocks addObject:extender];
+}
+
+/**
+ * Helper method to extend the CRA payload sequentially with extender blocks.
+ * @param payload The CRA payload.
+ * @param extenders The remaining extender blocks.
+ * @param completionHandler The completion handler.
+ */
++ (void)extendPayload:(UAChannelRegistrationPayload *)payload
+            extenders:(NSMutableArray<UAChannelRegistrationExtenderBlock> *)remainingExtenderBlocks
+    completionHandler:(void (^)(UAChannelRegistrationPayload *))completionHandler {
+
+    if (!remainingExtenderBlocks.count) {
+        completionHandler(payload);
+        return;
+    }
+
+    UAChannelRegistrationExtenderBlock block = remainingExtenderBlocks.firstObject;
+    [remainingExtenderBlocks removeObjectAtIndex:0];
+
+    block(payload, ^(UAChannelRegistrationPayload *payload) {
+        [self extendPayload:payload extenders:remainingExtenderBlocks completionHandler:completionHandler];
+    });
+}
 
 @end
-

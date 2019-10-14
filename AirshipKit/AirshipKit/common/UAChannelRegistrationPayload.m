@@ -55,6 +55,7 @@ NSString *const UABackgroundEnabledJSONKey = @"background";
             if (platform != nil) {
                 self.badge = platform[UAChannelBadgeJSONKey];
                 self.quietTime = platform[UAChannelQuietTimeJSONKey];
+                self.quietTimeTimeZone = platform[UAChannelTimeZoneJSONKey];
             }
 
             self.deviceID = topLevel[UAChannelDeviceIDKey];
@@ -106,11 +107,15 @@ NSString *const UABackgroundEnabledJSONKey = @"background";
         [channel setValue:self.tags forKey:UAChannelTagsJSONKey];
     }
 
-    if (self.badge || self.quietTime) {
-        NSMutableDictionary *ios = [NSMutableDictionary dictionary];
-        [ios setValue:self.badge forKey:UAChannelBadgeJSONKey];
+    NSMutableDictionary *ios = [NSMutableDictionary dictionary];
+    [ios setValue:self.badge forKey:UAChannelBadgeJSONKey];
+
+    if (self.quietTime) {
         [ios setValue:self.quietTime forKey:UAChannelQuietTimeJSONKey];
-        [ios setValue:self.timeZone forKey:UAChannelTimeZoneJSONKey];
+        [ios setValue:(self.quietTimeTimeZone ?: self.timeZone) forKey:UAChannelTimeZoneJSONKey];
+    }
+
+    if (ios.count) {
         [channel setValue:ios forKey:UAChanneliOSKey];
     }
 
@@ -136,6 +141,7 @@ NSString *const UABackgroundEnabledJSONKey = @"background";
         copy.setTags = self.setTags;
         copy.tags = [self.tags copyWithZone:zone];
         copy.quietTime = [self.quietTime copyWithZone:zone];
+        copy.quietTimeTimeZone = self.quietTimeTimeZone;
         copy.timeZone = self.timeZone;
         copy.language = self.language;
         copy.country = self.country;

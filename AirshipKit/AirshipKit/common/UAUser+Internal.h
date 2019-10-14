@@ -7,14 +7,14 @@
 #import "UAUserAPIClient+Internal.h"
 #import "UARuntimeConfig.h"
 #import "UAPreferenceDataStore.h"
-#import "UAUserProviderDelegate+Internal.h"
+#import "UAExtendableChannelRegistration.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 /*
  * SDK-private extensions to UAUser
  */
-@interface UAUser() <UAUserProviderDelegate>
+@interface UAUser()
 
 ///---------------------------------------------------------------------------------------
 /// @name User Internal Methods
@@ -27,7 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param dataStore The preference data store.
  * @return User instance.
  */
-+ (instancetype)userWithChannel:(UAChannel *)channel
++ (instancetype)userWithChannel:(UAChannel<UAExtendableChannelRegistration> *)channel
                          config:(UARuntimeConfig *)config
                       dataStore:(UAPreferenceDataStore *)dataStore;
 
@@ -42,7 +42,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param userDataDAO The user data DAO.
  * @return User instance.
  */
-+ (instancetype)userWithChannel:(UAChannel *)channel
++ (instancetype)userWithChannel:(UAChannel<UAExtendableChannelRegistration> *)channel
                       dataStore:(UAPreferenceDataStore *)dataStore
                          client:(UAUserAPIClient *)client
              notificationCenter:(NSNotificationCenter *)notificationCenter

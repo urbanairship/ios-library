@@ -26,6 +26,7 @@
 @property (nonatomic, strong) UAUserData *userData;
 @property (nonatomic, strong) UAUserDataDAO *userDataDAO;
 @property (nonatomic, strong) NSString *channelID;
+@property (nonatomic, copy) UAChannelRegistrationExtenderBlock extenderBlock;
 @end
 
 @implementation UAUserTest
@@ -37,6 +38,13 @@
         NSString *channelID = self.channelID;
         [invocation setReturnValue:(void *)&channelID];
     }] identifier];
+
+    // Capture the channel payload extender
+    [[[self.mockChannel stub] andDo:^(NSInvocation *invocation) {
+          void *arg;
+          [invocation getArgument:&arg atIndex:2];
+          self.extenderBlock =  (__bridge UAChannelRegistrationExtenderBlock)arg;
+    }] addChannelExtenderBlock:OCMOCK_ANY];
 
     self.mockUserClient = [self mockForClass:[UAUserAPIClient class]];
     self.mockApplication = [self mockForClass:[UIApplication class]];
@@ -128,6 +136,22 @@
         self.user.componentEnabled = NO;
         self.user.componentEnabled = YES;
     }];
+}
+
+/**
+ * Test user ID is added to the CRA payload.
+ */
+- (void)testRegistrationPayload {
+    [self.userDataDAO saveUserData:self.userData completionHandler:^(BOOL success) {}];
+
+    UAChannelRegistrationPayload *payload = [[UAChannelRegistrationPayload alloc] init];
+    XCTestExpectation *extendedPayload = [self expectationWithDescription:@"extended payload"];
+    self.extenderBlock(payload, ^(UAChannelRegistrationPayload * _Nonnull payload) {
+        XCTAssertEqualObjects(self.userData.username, payload.userID);
+        [extendedPayload fulfill];
+    });
+
+    [self waitForTestExpectations];
 }
 
 - (void)verifyUserUpdateWithInitBlock:(void (^)(void))initBlock {

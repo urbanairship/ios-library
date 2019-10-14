@@ -3,24 +3,13 @@
 #import "UAChannel.h"
 #import "UAChannelRegistrar+Internal.h"
 #import "UATagGroupsRegistrar+Internal.h"
-#import "UAPushProviderDelegate.h"
-#import "UAUserProviderDelegate+Internal.h"
 #import "UAAppStateTracker+Internal.h"
+#import "UAExtendableChannelRegistration.h"
 
 extern NSString *const UAChannelTagsSettingsKey;
 extern NSString *const UAChannelCreationOnForeground;
 
-@interface UAChannel () <UAChannelRegistrarDelegate, UAAppStateTrackerDelegate>
-
-/**
- * The push provider delegate.
- */
-@property (nonatomic, strong) id<UAPushProviderDelegate> pushProviderDelegate;
-
-/**
- * The user provider delegate;
- */
-@property (nonatomic, strong) id<UAUserProviderDelegate> userProviderDelegate;
+@interface UAChannel () <UAChannelRegistrarDelegate, UAAppStateTrackerDelegate, UAExtendableChannelRegistration>
 
 /**
  * Allows disabling channel registration before a channel is created.  Channel registration will resume

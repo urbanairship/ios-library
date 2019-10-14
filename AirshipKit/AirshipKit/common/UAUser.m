@@ -14,7 +14,7 @@ NSString * const UAUserRegisteredChannelIDKey= @"UAUserRegisteredChannelID";
 NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.user_created";
 
 @interface UAUser()
-@property (nonatomic, strong) UAChannel *channel;
+@property (nonatomic, strong) UAChannel<UAExtendableChannelRegistration> *channel;
 @property (nonatomic, strong) NSNotificationCenter *notificationCenter;
 @property (nonatomic, strong) UIApplication *application;
 @property (nonatomic, strong) UAUserDataDAO *userDataDAO;
@@ -27,7 +27,7 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
 
 @implementation UAUser
 
-- (instancetype)initWithChannel:(UAChannel *)channel
+- (instancetype)initWithChannel:(UAChannel<UAExtendableChannelRegistration> *)channel
                   dataStore:(UAPreferenceDataStore *)dataStore
                      client:(UAUserAPIClient *)client
          notificationCenter:(NSNotificationCenter *)notificationCenter
@@ -59,12 +59,18 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
                                     selector:@selector(enterForeground)
                                         name:UIApplicationWillEnterForegroundNotification
                                       object:nil];
+
+        UA_WEAKIFY(self)
+        [self.channel addChannelExtenderBlock:^(UAChannelRegistrationPayload *payload, UAChannelRegistrationExtenderCompletionHandler completionHandler) {
+            UA_STRONGIFY(self)
+            [self extendChannelRegistrationPayload:payload completionHandler:completionHandler];
+        }];
     }
 
     return self;
 }
 
-+ (instancetype)userWithChannel:(UAChannel *)channel config:(UARuntimeConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
++ (instancetype)userWithChannel:(UAChannel<UAExtendableChannelRegistration> *)channel config:(UARuntimeConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
     return [[UAUser alloc] initWithChannel:channel
                                  dataStore:dataStore
                                     client:[UAUserAPIClient clientWithConfig:config]
@@ -74,7 +80,7 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
                                userDataDAO:[UAUserDataDAO userDataDAOWithConfig:config]];
 }
 
-+ (instancetype)userWithChannel:(UAChannel *)channel
++ (instancetype)userWithChannel:(UAChannel<UAExtendableChannelRegistration> *)channel
                       dataStore:(UAPreferenceDataStore *)dataStore
                          client:(UAUserAPIClient *)client
              notificationCenter:(NSNotificationCenter *)notificationCenter
@@ -280,5 +286,14 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
                                       completionHandler(NO);
                                   }];
 }
+
+- (void)extendChannelRegistrationPayload:(UAChannelRegistrationPayload *)payload
+                       completionHandler:(UAChannelRegistrationExtenderCompletionHandler)completionHandler {
+    [self.userDataDAO getUserData:^(UAUserData *userData) {
+        payload.userID = userData.username;
+        completionHandler(payload);
+    }];
+}
+
 
 @end

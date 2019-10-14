@@ -7,23 +7,15 @@
 #import "UAAnalytics+Internal.h"
 
 #import "UAUtils+Internal.h"
-#import "UAActionRegistry+Internal.h"
-#import "UAActionRunner+Internal.h"
-#import "UAInteractiveNotificationEvent+Internal.h"
 #import "UANotificationCategories+Internal.h"
 #import "UANotificationCategory.h"
 #import "UAPreferenceDataStore+Internal.h"
 #import "UARuntimeConfig.h"
 #import "UANotificationCategory.h"
 #import "UATagUtils+Internal.h"
-#import "UAPushReceivedEvent+Internal.h"
 #import "UARegistrationDelegateWrapper+Internal.h"
 #import "UADispatcher+Internal.h"
 #import "UAAppStateTrackerFactory+Internal.h"
-
-#if !TARGET_OS_TV  // Inbox not supported on tvOS
-#import "UAInboxUtils.h"
-#endif
 
 NSString *const UAUserPushNotificationsEnabledKey = @"UAUserPushNotificationsEnabled";
 NSString *const UABackgroundPushNotificationsEnabledKey = @"UABackgroundPushNotificationsEnabled";
@@ -74,7 +66,7 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
 @property (nonatomic, readonly) BOOL isRegisteredForRemoteNotifications;
 @property (nonatomic, readonly) BOOL isBackgroundRefreshStatusAvailable;
 @property (nonatomic, strong) UARuntimeConfig *config;
-@property (nonatomic, strong) UAChannel *channel;
+@property (nonatomic, strong) UAChannel<UAExtendableChannelRegistration> *channel;
 @property (nonatomic, strong) id<UAAppStateTracker> appStateTracker;
 @end
 
@@ -82,7 +74,7 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
 
 - (instancetype)initWithConfig:(UARuntimeConfig *)config
                      dataStore:(UAPreferenceDataStore *)dataStore
-                        channel:(UAChannel *)channel
+                        channel:(UAChannel<UAExtendableChannelRegistration> *)channel
                appStateTracker:(id<UAAppStateTracker>)appStateTracker
             notificationCenter:(NSNotificationCenter *)notificationCenter
               pushRegistration:(id<UAAPNSRegistrationProtocol>)pushRegistration
@@ -126,6 +118,12 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
 
         [self updateAuthorizedNotificationTypes];
         self.defaultPresentationOptions = UNNotificationPresentationOptionNone;
+
+        UA_WEAKIFY(self)
+        [self.channel addChannelExtenderBlock:^(UAChannelRegistrationPayload *payload, UAChannelRegistrationExtenderCompletionHandler completionHandler) {
+            UA_STRONGIFY(self)
+            [self extendChannelRegistrationPayload:payload completionHandler:completionHandler];
+        }];
     }
 
     return self;
@@ -133,7 +131,7 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
 
 + (instancetype)pushWithConfig:(UARuntimeConfig *)config
                      dataStore:(UAPreferenceDataStore *)dataStore
-                       channel:(UAChannel *)channel {
+                       channel:(UAChannel<UAExtendableChannelRegistration> *)channel {
     return [[self alloc] initWithConfig:config
                               dataStore:dataStore
                                 channel:channel
@@ -146,7 +144,7 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
 
 + (instancetype)pushWithConfig:(UARuntimeConfig *)config
                      dataStore:(UAPreferenceDataStore *)dataStore
-                       channel:(UAChannel *)channel
+                       channel:(UAChannel<UAExtendableChannelRegistration> *)channel
                appStateTracker:(id<UAAppStateTracker>)appStateTracker
             notificationCenter:(NSNotificationCenter *)notificationCenter
               pushRegistration:(id<UAAPNSRegistrationProtocol>)pushRegistration
@@ -740,6 +738,28 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
 - (void)channelRegistrationFailed {
     [self.registrationDelegateWrapper registrationFailed];
 }
+
+- (void)extendChannelRegistrationPayload:(UAChannelRegistrationPayload *)payload
+                       completionHandler:(UAChannelRegistrationExtenderCompletionHandler)completionHandler {
+    if (self.pushTokenRegistrationEnabled) {
+        payload.pushAddress = self.deviceToken;
+    }
+
+    payload.optedIn = self.userPushNotificationsAllowed;
+    payload.backgroundEnabled = self.backgroundPushNotificationsAllowed;
+
+    if (self.autobadgeEnabled) {
+        payload.badge = @(self.badgeNumber);
+    }
+
+    if (self.timeZone.name && self.quietTime) {
+        payload.quietTime = self.quietTime;
+        payload.quietTimeTimeZone = self.timeZone.name;
+    }
+
+    completionHandler(payload);
+}
+
 
 #pragma mark -
 #pragma mark Push handling

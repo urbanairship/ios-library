@@ -7,7 +7,6 @@
 #import "UAirship.h"
 #import "UAPush+Internal.h"
 #import "UAChannel.h"
-#import "UAUser.h"
 #import "NSJSONSerialization+UAAdditions.h"
 #import "UAJSONSerialization+Internal.h"
 #import "UALocationProviderDelegate.h"

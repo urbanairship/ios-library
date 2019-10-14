@@ -4,7 +4,6 @@
 #import "UAEvent+Internal.h"
 #import "UAPush.h"
 #import "UAChannel.h"
-#import "UAUser.h"
 #import "UAirship.h"
 
 @implementation UADeviceRegistrationEvent

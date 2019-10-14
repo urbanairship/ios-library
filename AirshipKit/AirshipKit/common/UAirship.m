@@ -109,7 +109,8 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
                                                                                             dataStore:self.dataStore
                                                                                       mutationHistory:tagGroupsMutationHistory];
 
-        UAChannelRegistrar *channelRegistrar = [UAChannelRegistrar channelRegistrarWithConfig:self.config dataStore:self.dataStore];
+        UAChannelRegistrar *channelRegistrar = [UAChannelRegistrar channelRegistrarWithConfig:self.config
+                                                                                    dataStore:self.dataStore];
 
         self.sharedChannel = [UAChannel channelWithDataStore:self.dataStore
                                                       config:self.config
@@ -119,7 +120,9 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         [components addObject:self.sharedChannel];
 
 
-        self.sharedPush = [UAPush pushWithConfig:self.config dataStore:self.dataStore channel:self.sharedChannel];
+        self.sharedPush = [UAPush pushWithConfig:self.config
+                                       dataStore:self.dataStore
+                                         channel:self.sharedChannel];
         [components addObject:self.sharedPush];
 
         self.sharedNamedUser = [UANamedUser namedUserWithChannel:self.sharedChannel
@@ -129,13 +132,16 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         [components addObject:self.sharedNamedUser];
 
 
-        self.sharedAnalytics = [UAAnalytics analyticsWithConfig:self.config dataStore:self.dataStore];
+        self.sharedAnalytics = [UAAnalytics analyticsWithConfig:self.config
+                                                      dataStore:self.dataStore];
         [components addObject:self.sharedAnalytics];
 
-        self.sharedAutomation = [UAAutomation automationWithConfig:self.config dataStore:self.dataStore];
+        self.sharedAutomation = [UAAutomation automationWithConfig:self.config
+                                                         dataStore:self.dataStore];
         [components addObject:self.sharedAutomation];
 
-        self.sharedRemoteDataManager = [UARemoteDataManager remoteDataManagerWithConfig:self.config dataStore:self.dataStore];
+        self.sharedRemoteDataManager = [UARemoteDataManager remoteDataManagerWithConfig:self.config
+                                                                              dataStore:self.dataStore];
         [components addObject:self.sharedRemoteDataManager];
 
         self.sharedRemoteConfigManager = [UARemoteConfigManager remoteConfigManagerWithRemoteDataManager:self.sharedRemoteDataManager
@@ -157,7 +163,9 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         [components addObject:self.sharedLegacyInAppMessaging];
 
         // Message center not supported on tvOS
-        self.sharedInboxUser = [UAUser userWithChannel:self.sharedChannel config:self.config dataStore:self.dataStore];
+        self.sharedInboxUser = [UAUser userWithChannel:self.sharedChannel
+                                                config:self.config
+                                             dataStore:self.dataStore];
         [components addObject:self.sharedInboxUser];
 
         self.sharedInbox = [UAInbox inboxWithUser:self.sharedInboxUser config:self.config dataStore:self.dataStore];
@@ -180,12 +188,6 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         if (location) {
             [components addObject:location];
         }
-
-        self.sharedChannel.pushProviderDelegate = self.sharedPush;
-
-#if !TARGET_OS_TV
-        self.sharedChannel.userProviderDelegate = self.sharedInboxUser;
-#endif
 
         self.components = components;
     }

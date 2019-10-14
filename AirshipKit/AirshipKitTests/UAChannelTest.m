@@ -11,36 +11,26 @@
 @interface UAChannelTest : UABaseTest
 @property(nonatomic, strong) id mockTagGroupsRegistrar;
 @property(nonatomic, strong) id mockChannelRegistrar;
-@property(nonatomic, strong) id mockPushProviderDelegate;
-@property(nonatomic, strong) id mockUserProviderDelegate;
 @property(nonatomic, strong) id mockUtils;
 @property(nonatomic, strong) id mockAppStateTracker;
+@property(nonatomic, strong) id mockTimeZone;
 @property(nonatomic, strong) NSNotificationCenter *notificationCenter;
 @property(nonatomic, strong) UAChannel *channel;
 @property(nonatomic, strong) NSString *channelIDFromMockChannelRegistrar;
-@property(nonatomic, strong) NSString *deviceToken;
 @end
 
 @implementation UAChannelTest
 
 - (void)setUp {
+    [super setUp];
+
+    self.mockTimeZone = [self mockForClass:[NSTimeZone class]];
+    [[[self.mockTimeZone stub] andReturn:self.mockTimeZone] localTimeZone];
+
     self.mockTagGroupsRegistrar = [self mockForClass:[UATagGroupsRegistrar class]];
 
     self.notificationCenter = [[NSNotificationCenter alloc] init];
-
-    self.mockPushProviderDelegate = [self mockForProtocol:@protocol(UAPushProviderDelegate)];
-
-    self.mockUserProviderDelegate = [self mockForProtocol:@protocol(UAUserProviderDelegate)];
-
-    [[[self.mockUserProviderDelegate stub] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:2];
-        void (^completionHandler)(UAUserData * _Nullable) = (__bridge void (^)(UAUserData * _Nullable))arg;
-        completionHandler([UAUserData dataWithUsername:@"user" password:@"password"]);
-    }] getUserData:OCMOCK_ANY dispatcher:OCMOCK_ANY];
-
     self.mockUtils = [self mockForClass:[UAUtils class]];
-
     self.mockAppStateTracker = [self mockForProtocol:@protocol(UAAppStateTracker)];
 
     [[[self.mockUtils stub] andDo:^(NSInvocation *invocation) {
@@ -54,8 +44,6 @@
     self.mockChannelRegistrar = [self mockForClass:[UAChannelRegistrar class]];
     // Put setup code here. This method is called before the invocation of each test method in the class.
     self.channel = [self createChannel];
-
-    self.deviceToken = @"0123456789abcdef0123456789abcdef";
 
     // Simulate the channelID provided by the channel registrar
     OCMStub([self.mockChannelRegistrar channelID]).andDo(^(NSInvocation *invocation) {
@@ -73,10 +61,6 @@
                                         channelRegistrar:self.mockChannelRegistrar
                                       tagGroupsRegistrar:self.mockTagGroupsRegistrar
                                          appStateTracker:self.mockAppStateTracker];
-
-    channel.pushProviderDelegate = self.mockPushProviderDelegate;
-    channel.userProviderDelegate = self.mockUserProviderDelegate;
-
     return channel;
 }
 
@@ -314,122 +298,54 @@
 }
 
 /**
- * Test registration payload when pushTokenRegistrationEnabled is NO does not include device token
- */
-- (void)testRegistrationPayloadPushTokenRegistrationEnabledNo {
-    [[[self.mockPushProviderDelegate stub] andReturnValue:@(NO)] pushTokenRegistrationEnabled];
-
-    XCTestExpectation *createdPayload = [self expectationWithDescription:@"create payload"];
-
-    [self.channel createChannelPayload:^(UAChannelRegistrationPayload * _Nonnull payload) {
-        [createdPayload fulfill];
-        XCTAssertNil(payload.pushAddress);
-    } dispatcher:[UATestDispatcher testDispatcher]];
-
-    [self waitForTestExpectations];
-}
-
-/**
- * Test registration payload include timezone, locale language, and country
- */
-- (void)testRegistrationPayloadTimeZoneLocaleCountry {
-    self.channel.channelTagRegistrationEnabled = YES;
-    self.channel.tags = @[@"tag-one"];
-
-    NSTimeZone *tz = [NSTimeZone timeZoneWithName:@"Pacific/Auckland"];
-
-    [[[self.mockPushProviderDelegate stub] andReturnValue:@(YES)] isQuietTimeEnabled];
-    [[[self.mockPushProviderDelegate stub] andReturn:tz] timeZone];
-
-    XCTestExpectation *createdPayload = [self expectationWithDescription:@"create payload"];
-
-    [self.channel createChannelPayload:^(UAChannelRegistrationPayload * _Nonnull payload) {
-        [createdPayload fulfill];
-        XCTAssertEqualObjects(payload.timeZone, tz.name);
-        XCTAssertEqualObjects(payload.language, [[NSLocale autoupdatingCurrentLocale] objectForKey:NSLocaleLanguageCode]);
-        XCTAssertEqualObjects(payload.country, [[NSLocale autoupdatingCurrentLocale] objectForKey:NSLocaleCountryCode]);
-
-    } dispatcher:[UATestDispatcher testDispatcher]];
-
-    [self waitForTestExpectations];
-}
-
-/**
- * Test that UserPushNotificationAllowed is NO
+ * Test channel registration payload.
  */
 - (void)testRegistrationPayloadNoDeviceToken {
-    // Set up UAChannel and push provider delegate to give minimum payload
-    [[[self.mockPushProviderDelegate stub] andReturnValue:@(NO)] pushTokenRegistrationEnabled];
-    self.channel.channelTagRegistrationEnabled = NO;
-    [[[self.mockPushProviderDelegate stub] andReturnValue:@(NO)] isAutobadgeEnabled];
-    [[[self.mockPushProviderDelegate stub] andReturnValue:@(NO)] isQuietTimeEnabled];
-    [[[self.mockPushProviderDelegate stub] andReturn:[NSTimeZone timeZoneWithName:@"Pacific/Auckland"]] timeZone];
+    self.channel.channelTagRegistrationEnabled = YES;
+    self.channel.tags = @[@"cool", @"story"];
+    [[[self.mockTimeZone stub] andReturn:@"cool zone"] name];
 
-    [[[self.mockPushProviderDelegate stub] andReturnValue:@(NO)] userPushNotificationsAllowed];
-
-    // Verify opt in is false when device token is nil
     UAChannelRegistrationPayload *expectedPayload = [[UAChannelRegistrationPayload alloc] init];
-    expectedPayload.deviceID = @"device";
-    expectedPayload.userID = @"user";
-    expectedPayload.optedIn = false;
-    expectedPayload.setTags = NO;
-    expectedPayload.language =  [[NSLocale autoupdatingCurrentLocale] objectForKey:NSLocaleLanguageCode];
-    expectedPayload.country =  [[NSLocale autoupdatingCurrentLocale] objectForKey:NSLocaleCountryCode];
-    expectedPayload.timeZone = @"Pacific/Auckland";
+    expectedPayload.language = [[NSLocale autoupdatingCurrentLocale] objectForKey:NSLocaleLanguageCode];
+    expectedPayload.country = [[NSLocale autoupdatingCurrentLocale] objectForKey:NSLocaleCountryCode];
+    expectedPayload.timeZone = @"cool zone";
+    expectedPayload.tags = @[@"cool", @"story"];
+    expectedPayload.setTags = YES;
 
     XCTestExpectation *createdPayload = [self expectationWithDescription:@"create payload"];
 
     [self.channel createChannelPayload:^(UAChannelRegistrationPayload * _Nonnull payload) {
-        [createdPayload fulfill];
         XCTAssertEqualObjects(payload, expectedPayload);
+        [createdPayload fulfill];
     } dispatcher:[UATestDispatcher testDispatcher]];
 
     [self waitForTestExpectations];
 }
 
-- (void)testRegistrationPayloadDeviceTagsDisabled {
-    [[[self.mockPushProviderDelegate stub] andReturnValue:@(YES)] userPushNotificationsAllowed];
-    self.channel.channelTagRegistrationEnabled = NO;
-    self.channel.tags = @[@"tag-one"];
+/**
+ * Test extending CRA payloads.
+ */
+- (void)testExtendingPayload {
+
+    [self.channel addChannelExtenderBlock:^(UAChannelRegistrationPayload *payload, UAChannelRegistrationExtenderCompletionHandler completionHandler) {
+        payload.pushAddress = @"WHAT!";
+        completionHandler(payload);
+    }];
+
+    [self.channel addChannelExtenderBlock:^(UAChannelRegistrationPayload *payload, UAChannelRegistrationExtenderCompletionHandler completionHandler) {
+        payload.pushAddress = [NSString stringWithFormat:@"%@ %@", payload.pushAddress, @"OK!"];
+        completionHandler(payload);
+    }];
 
     XCTestExpectation *createdPayload = [self expectationWithDescription:@"create payload"];
-
     [self.channel createChannelPayload:^(UAChannelRegistrationPayload * _Nonnull payload) {
+        XCTAssertEqualObjects(@"WHAT! OK!", payload.pushAddress);
         [createdPayload fulfill];
-        XCTAssertNil(payload.tags);
     } dispatcher:[UATestDispatcher testDispatcher]];
 
     [self waitForTestExpectations];
 }
 
-- (void)testRegistrationPayloadAutoBadgeEnabled {
-    [[[self.mockPushProviderDelegate stub] andReturnValue:@(YES)] userPushNotificationsAllowed];
-    [[[self.mockPushProviderDelegate stub] andReturnValue:@(YES)] isAutobadgeEnabled];
-    [[[self.mockPushProviderDelegate stub] andReturnValue:@(30)] badgeNumber];
-
-    XCTestExpectation *createdPayload = [self expectationWithDescription:@"create payload"];
-
-    [self.channel createChannelPayload:^(UAChannelRegistrationPayload * _Nonnull payload) {
-        [createdPayload fulfill];
-        XCTAssertEqualObjects(payload.badge, @(30));
-    } dispatcher:[UATestDispatcher testDispatcher]];
-
-    [self waitForTestExpectations];
-}
-
-- (void)testRegistrationPayloadNoQuietTime {
-    [[[self.mockPushProviderDelegate stub] andReturnValue:@(YES)] userPushNotificationsAllowed];
-    [[[self.mockPushProviderDelegate stub] andReturnValue:@(NO)] isQuietTimeEnabled];
-
-    XCTestExpectation *createdPayload = [self expectationWithDescription:@"create payload"];
-
-    [self.channel createChannelPayload:^(UAChannelRegistrationPayload * _Nonnull payload) {
-        [createdPayload fulfill];
-        XCTAssertNil(payload.quietTime);
-    } dispatcher:[UATestDispatcher testDispatcher]];
-
-    [self waitForTestExpectations];
-}
 /**
  * Test applicationDidBecomeActive, when run after app was backgrounded, does register
  */
