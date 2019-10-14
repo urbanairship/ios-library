@@ -54,11 +54,6 @@ typedef NS_ENUM(NSUInteger, UASDKExtension) {
 @property (nonatomic, copy, readonly, nullable) NSString *conversionPushMetadata;
 
 /**
- * The conversion rich push ID.
- */
-@property (nonatomic, copy, readonly, nullable) NSString *conversionRichPushID;
-
-/**
  * The current session ID.
  */
 @property (nonatomic, copy, readonly) NSString *sessionID;

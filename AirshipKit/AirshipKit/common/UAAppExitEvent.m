@@ -9,18 +9,13 @@
 @implementation UAAppExitEvent
 
 + (instancetype)event {
-    UAAppExitEvent *event = [[self alloc] init];
     NSMutableDictionary *data = [NSMutableDictionary dictionary];
-
-    UAAnalytics *analytics = [UAirship analytics];
-
-    [data setValue:analytics.conversionSendID forKey:@"push_id"];
-    [data setValue:analytics.conversionPushMetadata forKey:@"metadata"];
-    [data setValue:analytics.conversionRichPushID forKey:@"rich_push_id"];
-
+    [data setValue:[UAirship analytics].conversionSendID forKey:@"push_id"];
+    [data setValue:[UAirship analytics].conversionPushMetadata forKey:@"metadata"];
     [data setValue:[UAUtils connectionType] forKey:@"connection_type"];
 
-    event.data = [data mutableCopy];
+    UAAppExitEvent *event = [[self alloc] init];
+    event.data = [data copy];
     return event;
 }
 

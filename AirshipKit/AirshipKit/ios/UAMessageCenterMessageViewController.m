@@ -7,7 +7,7 @@
 #import "UAMessageCenter.h"
 #import "UAInboxMessageList.h"
 #import "UAInboxMessage.h"
-#import "UAUtils+Internal.h"
+#import "UAInboxUtils.h"
 #import "UAViewUtils+Internal.h"
 #import "UAMessageCenterLocalization.h"
 #import "UABeveledLoadingIndicator.h"
@@ -343,7 +343,7 @@ static NSString *urlForBlankPage = @"about:blank";
     UA_WEAKIFY(self)
     [[UAirship inboxUser] getUserData:^(UAUserData *userData) {
         UA_STRONGIFY(self)
-        NSString *auth = [UAUtils userAuthHeaderString:userData];
+        NSString *auth = [UAInboxUtils userAuthHeaderString:userData];
         [requestObj setValue:auth forHTTPHeaderField:@"Authorization"];
         [self.webView loadRequest:requestObj];
     } dispatcher:[UADispatcher mainDispatcher]];

@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
 #import <Foundation/Foundation.h>
+#import "UAUserData.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -30,6 +31,14 @@ NS_ASSUME_NONNULL_BEGIN
  * @return a message ID if found, `nil` otherwise
  */
 + (nullable NSString *)inboxMessageIDFromValue:(id)values;
+
+/**
+ * Gets the user auth header string for the provided user data.
+ *
+ * @param userData The user data.
+ */
++ (NSString *)userAuthHeaderString:(UAUserData *)userData;
+
 
 @end
 

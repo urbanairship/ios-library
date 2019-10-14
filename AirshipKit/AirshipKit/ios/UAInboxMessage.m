@@ -2,7 +2,7 @@
 
 #import "UAInboxMessage+Internal.h"
 #import "UAInboxMessageList+Internal.h"
-#import "UAUtils+Internal.h"
+#import "UAInboxUtils.h"
 #import "UAUser+Internal.h"
 #import "UAirship.h"
 
@@ -115,7 +115,7 @@
      NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:self.messageBodyURL];
 
      UAUserData *userData = [[UAirship inboxUser] getUserDataSync];
-     NSString *auth = [UAUtils userAuthHeaderString:userData];
+     NSString *auth = [UAInboxUtils userAuthHeaderString:userData];
      [request setValue:auth forHTTPHeaderField:@"Authorization"];
 
      // Load the message body, spin the run loop and poll the webView with a 5 second timeout.

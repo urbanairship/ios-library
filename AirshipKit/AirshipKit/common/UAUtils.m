@@ -11,7 +11,6 @@
 #import "UA_Base64.h"
 
 // UALib
-#import "UAUser.h"
 #import "UAirship.h"
 #import "UARuntimeConfig.h"
 #import "UAKeychainUtils+Internal.h"
@@ -146,13 +145,6 @@
               [[response allHeaderFields] description],
               [response description]);
 }
-
-#if !TARGET_OS_TV   // Inbox not supported on tvOS
-+ (NSString *)userAuthHeaderString:(UAUserData *)userData {
-    return [UAUtils authHeaderStringWithName:userData.username
-                                    password:userData.password];
-}
-#endif
 
 + (NSString *)appAuthHeaderString {
     return [UAUtils authHeaderStringWithName:[UAirship shared].config.appKey

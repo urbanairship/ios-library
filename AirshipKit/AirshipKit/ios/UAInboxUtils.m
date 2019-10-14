@@ -1,6 +1,8 @@
 /* Copyright Airship and Contributors */
 
 #import "UAInboxUtils.h"
+#import "UAUtils.h"
+#import "UAUserData.h"
 
 #define kUARichPushMessageIDKey @"_uamid"
 
@@ -18,6 +20,11 @@
     }
 
     return [messageID isKindOfClass:[NSString class]] ? messageID : nil;
+}
+
++ (NSString *)userAuthHeaderString:(UAUserData *)userData {
+    return [UAUtils authHeaderStringWithName:userData.username
+                                    password:userData.password];
 }
 
 @end

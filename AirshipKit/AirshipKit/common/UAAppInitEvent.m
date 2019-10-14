@@ -22,7 +22,6 @@
 
     [data setValue:analytics.conversionSendID forKey:@"push_id"];
     [data setValue:analytics.conversionPushMetadata forKey:@"metadata"];
-    [data setValue:analytics.conversionRichPushID forKey:@"rich_push_id"];
 
 #if !TARGET_OS_TV   // Inbox not supported on tvOS
     [data setValue:[self carrierName] forKey:@"carrier"];

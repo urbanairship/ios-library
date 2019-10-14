@@ -31,25 +31,26 @@ NS_ASSUME_NONNULL_BEGIN
  */
 + (NSString *)deviceModelName;
 
-#if !TARGET_OS_TV   // Inbox not supported on tvOS
 
 /**
- * Gets the user auth header string for the provided user data.
- *
- * @param userData The user data.
- */
-+ (NSString *)userAuthHeaderString:(UAUserData *)userData;
-
-#endif
-
-/**
- * Returns a basic auth header string.
+ * Returns a basic auth header string for app auth.
  *
  * The return value takes the form of: `Basic [Base64 Encoded "username:password"]`
  *
  * @return An HTTP Basic Auth header string value for the app's credentials.
  */
 + (NSString *)appAuthHeaderString;
+
+
+/**
+ * Returns a basic auth header string.
+ *
+ * @param username The username.
+ * @param password The password.
+ * @return An HTTP Basic Auth header string value for the provided credentials in the form of: `Basic [Base64 Encoded "username:password"]`
+*/
++ (NSString *)authHeaderStringWithName:(NSString *)username password:(NSString *)password;
+
 
 ///---------------------------------------------------------------------------------------
 /// @name UI Formatting Helpers

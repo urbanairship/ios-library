@@ -61,16 +61,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 + (void)getDeviceID:(void (^)(NSString *))completionHandler dispatcher:(nullable UADispatcher *)dispatcher;
 
-#if !TARGET_OS_TV   // Inbox not supported on tvOS
-/**
- * Gets the user auth header string for the provided user data.
- *
- * @param userData The user data.
- */
-+ (NSString *)userAuthHeaderString:(UAUserData *)userData;
-
-#endif
-
 ///---------------------------------------------------------------------------------------
 /// @name SHA-256
 ///---------------------------------------------------------------------------------------

@@ -16,8 +16,6 @@
 #import "UAPushReceivedEvent+Internal.h"
 #import "UAUtils+Internal.h"
 
-
-
 @interface UAEventTest : UABaseTest
 
 // stubs
@@ -85,7 +83,6 @@
 - (void)testAppInitEvent {
     [[[self.analytics stub] andReturn:@"push ID"] conversionSendID];
     [[[self.analytics stub] andReturn:@"base64metadataString"] conversionPushMetadata];
-    [[[self.analytics stub] andReturn:@"rich push ID"] conversionRichPushID];
 
     [[[self.timeZone stub] andReturnValue:OCMOCK_VALUE((NSInteger)2000)] secondsFromGMT];
 
@@ -104,7 +101,6 @@
     NSDictionary *expectedData = @{@"connection_type": @"cell",
                                    @"push_id": @"push ID",
                                    @"metadata": @"base64metadataString",
-                                   @"rich_push_id": @"rich push ID",
                                    @"time_zone": @2000,
                                    @"daylight_savings": @"true",
                                    @"notification_types": @[],
@@ -128,7 +124,6 @@
 - (void)testAppForegroundEvent {
     [[[self.analytics stub] andReturn:@"push ID"] conversionSendID];
     [[[self.analytics stub] andReturn:@"base64metadataString"] conversionPushMetadata];
-    [[[self.analytics stub] andReturn:@"rich push ID"] conversionRichPushID];
 
     [[[self.timeZone stub] andReturnValue:OCMOCK_VALUE((NSInteger)2000)] secondsFromGMT];
     [[[self.timeZone stub] andReturnValue:OCMOCK_VALUE(YES)] isDaylightSavingTime];
@@ -145,7 +140,6 @@
     NSDictionary *expectedData = @{@"connection_type": @"cell",
                                    @"push_id": @"push ID",
                                    @"metadata": @"base64metadataString",
-                                   @"rich_push_id": @"rich push ID",
                                    @"time_zone": @2000,
                                    @"daylight_savings": @"true",
                                    @"notification_types": @[],
@@ -170,14 +164,12 @@
 
     [[[self.analytics stub] andReturn:@"push ID"] conversionSendID];
     [[[self.analytics stub] andReturn:@"base64metadataString"] conversionPushMetadata];
-    [[[self.analytics stub] andReturn:@"rich push ID"] conversionRichPushID];
 
     [[[self.utils stub] andReturnValue:OCMOCK_VALUE(kUAConnectionTypeCell)] connectionType];
     
     NSDictionary *expectedData = @{@"connection_type": @"cell",
                                    @"push_id": @"push ID",
-                                   @"metadata": @"base64metadataString",
-                                   @"rich_push_id": @"rich push ID"};
+                                   @"metadata": @"base64metadataString"};
 
     UAAppExitEvent *event = [UAAppExitEvent event];
     XCTAssertEqualObjects(event.data, expectedData, @"Event data is unexpected.");
@@ -241,8 +233,7 @@
                          @"com.urbanairship.metadata": @"base64metadataString"};
 
 
-    NSDictionary *expectedData = @{@"rich_push_id": @"rich push ID",
-                                   @"push_id": @"push ID",
+    NSDictionary *expectedData = @{@"push_id": @"push ID",
                                    @"metadata": @"base64metadataString"};
 
     UAPushReceivedEvent *event = [UAPushReceivedEvent eventWithNotification:notification];
@@ -258,8 +249,7 @@
     id notification = @{ @"_uamid": @"rich push ID" };
 
 
-    NSDictionary *expectedData = @{@"rich_push_id": @"rich push ID",
-                                   @"push_id": @"MISSING_SEND_ID"};
+    NSDictionary *expectedData = @{@"push_id": @"MISSING_SEND_ID"};
 
     UAPushReceivedEvent *event = [UAPushReceivedEvent eventWithNotification:notification];
     XCTAssertEqualObjects(event.data, expectedData, @"Event data is unexpected.");

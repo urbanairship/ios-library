@@ -16,10 +16,6 @@
 #import "UACustomEvent.h"
 #import "UAAppStateTrackerFactory+Internal.h"
 
-#if !TARGET_OS_TV   // Inbox not supported on tvOS
-#import "UAInboxUtils.h"
-#endif
-
 #define kUAAssociatedIdentifiers @"UAAssociatedIdentifiers"
 
 @interface UAAnalytics()
@@ -221,13 +217,6 @@ NSString *const UAEventKey = @"event";
 
     // If the server did not send the metadata, then set it to nil
     self.conversionPushMetadata = [notification objectForKey:kUAPushMetadata] ?: nil;
-
-#if !TARGET_OS_TV   // Inbox not supported on tvOS
-    NSString *richPushID = [UAInboxUtils inboxMessageIDFromNotification:notification];
-    if (richPushID) {
-        self.conversionRichPushID = richPushID;
-    }
-#endif
 }
 
 - (void)startSession {

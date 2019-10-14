@@ -13,7 +13,7 @@
 #import "UAInbox.h"
 #import "UAInboxMessage+Internal.h"
 #import "UAInboxMessageList.h"
-#import "UAUtils+Internal.h"
+#import "UAInboxUtils.h"
 #import "UAUser+Internal.h"
 #import "UANativeBridge.h"
 #import "UAMessageCenterNativeBridgeExtension.h"
@@ -176,7 +176,7 @@ NSString *const UAInAppNativeBridgeDismissCommand = @"dismiss";
         UA_WEAKIFY(self)
         [[UAirship inboxUser] getUserData:^(UAUserData *userData) {
             UA_STRONGIFY(self)
-            NSDictionary *auth = @{@"Authorization":[UAUtils userAuthHeaderString:userData]};
+            NSDictionary *auth = @{@"Authorization":[UAInboxUtils userAuthHeaderString:userData]};
 
             NSMutableDictionary *appended = [NSMutableDictionary dictionaryWithDictionary:self.headers];
             [appended addEntriesFromDictionary:auth];
