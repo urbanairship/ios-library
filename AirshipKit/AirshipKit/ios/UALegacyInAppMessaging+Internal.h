@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
 #import "UALegacyInAppMessaging.h"
+#import "UAPushableComponent.h"
 
 // OLD storage keys
 
@@ -26,7 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
 /*
  * SDK-private extensions to UALegacyInAppMessaging
  */
-@interface UALegacyInAppMessaging ()
+@interface UALegacyInAppMessaging () <UAPushableComponent>
 
 ///---------------------------------------------------------------------------------------
 /// @name In App Messaging Internal Properties
@@ -48,19 +49,6 @@ NS_ASSUME_NONNULL_BEGIN
                                   dataStore:(UAPreferenceDataStore *)dataStore
                         inAppMessageManager:(UAInAppMessageManager *)inAppMessageManager;
 
-/**
- * Called when a notification response is received.
- *
- * @param response The notification response.
- */
-- (void)handleNotificationResponse:(UANotificationResponse *)response;
-
-/**
- * Called when a remote notification is received.
- *
- * @param notification The notification content.
- */
-- (void)handleRemoteNotification:(UANotificationContent *)notification;
 
 @end
 

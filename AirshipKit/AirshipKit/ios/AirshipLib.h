@@ -57,6 +57,7 @@
 #import "UAProximityRegion.h"
 #import "UAPush.h"
 #import "UAPushProviderDelegate.h"
+#import "UAPushableComponent.h"
 #import "UARegionEvent.h"
 #import "UARemoveTagsAction.h"
 #import "UARetailEventTemplate.h"

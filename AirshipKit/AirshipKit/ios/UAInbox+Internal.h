@@ -2,6 +2,7 @@
 
 #import "UAInbox.h"
 #import "UAAppStateTrackerFactory+Internal.h"
+#import "UAPushableComponent.h"
 
 @class UAUser;
 @class UARuntimeConfig;
@@ -12,7 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 /*
  * SDK-private extensions to UAInbox
  */
-@interface UAInbox () <UAAppStateTrackerDelegate>
+@interface UAInbox () <UAAppStateTrackerDelegate, UAPushableComponent>
 
 ///---------------------------------------------------------------------------------------
 /// @name Inbox Internal Properties

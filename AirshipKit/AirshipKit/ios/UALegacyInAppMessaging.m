@@ -81,9 +81,10 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
     [self.dataStore setObject:pendingMessageID forKey:kUAPendingInAppMessageIDDataStoreKey];
 }
 
-- (void)handleNotificationResponse:(UANotificationResponse *)response {
+-(void)receivedNotificationResponse:(UANotificationResponse *)response completionHandler:(void (^)(void))completionHandler {
     NSDictionary *apnsPayload = response.notificationContent.notificationInfo;
     if (!apnsPayload[kUALegacyIncomingInAppMessageKey]) {
+        completionHandler();
         return;
     }
 
@@ -104,15 +105,19 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
             } else {
                 self.pendingMessageID = nil;
             }
+
+            completionHandler();
         }];
+    } else {
+        completionHandler();
     }
 }
 
-- (void)handleRemoteNotification:(UANotificationContent *)notification {
+-(void)receivedRemoteNotification:(UANotificationContent *)notification completionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
     // Set the send ID as the IAM unique identifier
     NSDictionary *apnsPayload = notification.notificationInfo;
-
     if (!apnsPayload[kUALegacyIncomingInAppMessageKey]) {
+        completionHandler(UIBackgroundFetchResultNoData);
         return;
     }
 
@@ -142,6 +147,7 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
 #endif
 
     [self scheduleMessage:message];
+    completionHandler(UIBackgroundFetchResultNoData);
 }
 
 - (void)scheduleMessage:(UALegacyInAppMessage *)message {

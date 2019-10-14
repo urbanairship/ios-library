@@ -10,12 +10,13 @@
 #import "UARemoteDataAPIClient+Internal.h"
 #import "UAAppStateTracker+Internal.h"
 #import "UAComponent.h"
+#import "UAPushableComponent.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 typedef void (^UARemoteDataPublishBlock)(NSArray<UARemoteDataPayload *> *remoteDataArray);
 
-@interface UARemoteDataManager : UAComponent <UAAppStateTrackerDelegate>
+@interface UARemoteDataManager : UAComponent <UAAppStateTrackerDelegate, UAPushableComponent>
 
 ///---------------------------------------------------------------------------------------
 /// @name Remote Data Manager Client API

@@ -4,6 +4,7 @@
 #import "UAirship+Internal.h"
 #import "UAAnalytics+Internal.h"
 #import "UAPush+Internal.h"
+#import "UAPushableComponent.h"
 
 #import "UADeviceRegistrationEvent+Internal.h"
 #import "UAPushReceivedEvent+Internal.h"
@@ -15,19 +16,14 @@
 #import "UARuntimeConfig.h"
 #import "UAActionRunner+Internal.h"
 #import "UAActionRegistry+Internal.h"
-#import "UARemoteDataManager+Internal.h"
 
 #if !TARGET_OS_TV   // Inbox and other features not supported on tvOS
 #import "UAInboxUtils.h"
 #import "UAOverlayInboxMessageAction.h"
 #import "UADisplayInboxAction.h"
-#import "UAInbox+Internal.h"
-#import "UAInboxMessageList+Internal.h"
-#import "UALegacyInAppMessaging+Internal.h"
 #endif
 
 #define kUANotificationActionKey @"com.urbanairship.interactive_actions"
-#define kUANotificationRefreshRemoteDataKey @"com.urbanairship.remote-data.update"
 
 @implementation UAAppIntegration
 
@@ -104,12 +100,8 @@
 #if !TARGET_OS_TV   // UNNotificationResponse not available on tvOS
 + (void)userNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void(^)(void))completionHandler {
     UA_LTRACE(@"Received notification response: %@", response);
-
     UANotificationResponse *airshipResponse = [UANotificationResponse notificationResponseWithUNNotificationResponse:response];
-
-    [self handleNotificationResponse:airshipResponse completionHandler:^(void) {
-        completionHandler();
-    }];
+    [self handleNotificationResponse:airshipResponse completionHandler:completionHandler];
 }
 #endif
 
@@ -128,47 +120,128 @@
                    }];
 }
 
-+ (void)handleNotificationResponse:(UANotificationResponse *)response
-                 completionHandler:(void (^)(void))completionHandler {
-
++ (void)handleNotificationResponse:(UANotificationResponse *)response completionHandler:(void (^)(void))completionHandler {
     UA_LINFO(@"Received notification response: %@", response);
 
-#if !TARGET_OS_TV   // Legacy IAM not supported on tvOS
-    // Clear any legacy in-app messages
-    [[UAirship legacyInAppMessaging] handleNotificationResponse:response];
-#endif
-    
-    UASituation situation;
-    NSDictionary *actionsPayload = [self actionsPayloadForNotificationContent:response.notificationContent actionIdentifier:response.actionIdentifier];
+    dispatch_group_t dispatchGroup = dispatch_group_create();
 
+    // Analytics
     if ([response.actionIdentifier isEqualToString:UANotificationDefaultActionIdentifier]) {
         [[UAirship analytics] launchedFromNotification:response.notificationContent.notificationInfo];
-        situation = UASituationLaunchedFromPush;
     } else {
         UANotificationAction *notificationAction = [self notificationActionForCategory:response.notificationContent.categoryIdentifier
                                                                       actionIdentifier:response.actionIdentifier];
+        if (notificationAction) {
+            if (notificationAction.options & UANotificationActionOptionForeground) {
+                [[UAirship analytics] launchedFromNotification:response.notificationContent.notificationInfo];
+            }
+            id event = [UAInteractiveNotificationEvent eventWithNotificationAction:notificationAction
+                                                                        categoryID:response.notificationContent.categoryIdentifier
+                                                                      notification:response.notificationContent.notificationInfo
+                                                                      responseText:response.responseText];
+            [[UAirship analytics] addEvent:event];
+        }
+    }
 
-
-        if (!notificationAction) {
-            [[UAirship push] handleNotificationResponse:response completionHandler:completionHandler];
-            return;
+    // Pushable components
+    for (UAComponent *component in [UAirship shared].components) {
+        if (![component conformsToProtocol:@protocol(UAPushableComponent)]) {
+            continue;
         }
 
+        UAComponent<UAPushableComponent> *pushable = (UAComponent<UAPushableComponent> *)component;
+        if ([pushable respondsToSelector:@selector(receivedNotificationResponse:completionHandler:)]) {
+            dispatch_group_enter(dispatchGroup);
+            [pushable receivedNotificationResponse:response completionHandler:^{
+                dispatch_group_leave(dispatchGroup);
+            }];
+        }
+    }
+
+    // Actions then push
+    dispatch_group_enter(dispatchGroup);
+    [self runActionsForResponse:response completionHandler:^{
+        // UAPush
+        [[UAirship push] handleNotificationResponse:response completionHandler:^{
+            dispatch_group_leave(dispatchGroup);
+        }];
+    }];
+
+    dispatch_group_notify(dispatchGroup, dispatch_get_main_queue(), completionHandler);
+}
+
++ (void)handleIncomingNotification:(UANotificationContent *)notificationContent
+            foregroundPresentation:(BOOL)foregroundPresentation
+                 completionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
+    UA_LINFO(@"Received notification: %@", notificationContent);
+
+    dispatch_group_t dispatchGroup = dispatch_group_create();
+    __block NSMutableArray *fetchResults = [NSMutableArray array];
+    BOOL foreground = [UIApplication sharedApplication].applicationState == UIApplicationStateActive;
+
+    // Pushable components
+    for (UAComponent *component in [UAirship shared].components) {
+         if (![component conformsToProtocol:@protocol(UAPushableComponent)]) {
+             continue;
+         }
+
+         UAComponent<UAPushableComponent> *pushable = (UAComponent<UAPushableComponent> *)component;
+         if ([pushable respondsToSelector:@selector(receivedRemoteNotification:completionHandler:)]) {
+             dispatch_group_enter(dispatchGroup);
+             [pushable receivedRemoteNotification:notificationContent completionHandler:^(UIBackgroundFetchResult fetchResult) {
+                 @synchronized (fetchResults) {
+                     [fetchResults addObject:@(fetchResult)];
+                 }
+                 dispatch_group_leave(dispatchGroup);
+             }];
+         }
+    }
+
+    // Actions then push
+    dispatch_group_enter(dispatchGroup);
+    [self runActionsForRemoteNotification:notificationContent foregroundPresentation:foregroundPresentation completionHandler:^(UIBackgroundFetchResult result) {
+        @synchronized (fetchResults) {
+            [fetchResults addObject:@(result)];
+        }
+
+        // UAPush
+        [[UAirship push] handleRemoteNotification:notificationContent foreground:foreground completionHandler:^(UIBackgroundFetchResult result) {
+            @synchronized (fetchResults) {
+                [fetchResults addObject:@(result)];
+            }
+            dispatch_group_leave(dispatchGroup);
+        }];
+    }];
+
+    dispatch_group_notify(dispatchGroup, dispatch_get_main_queue(), ^{
+        // all processing of incoming notification is complete
+        completionHandler([UAUtils mergeFetchResults:fetchResults]);
+    });
+}
+
+#pragma mark -
+#pragma mark Helpers
+
++ (void)runActionsForResponse:(UANotificationResponse *)response completionHandler:(void (^)(void))completionHandler {
+    // Payload
+    NSDictionary *actionsPayload = [self actionsPayloadForNotificationContent:response.notificationContent
+                                                             actionIdentifier:response.actionIdentifier];
+    // Determine situation
+    UASituation situation;
+    if ([response.actionIdentifier isEqualToString:UANotificationDefaultActionIdentifier]) {
+        situation = UASituationLaunchedFromPush;
+    } else {
+        UANotificationAction *notificationAction = [self notificationActionForCategory:response.notificationContent.categoryIdentifier
+                                                                               actionIdentifier:response.actionIdentifier];
+
         if (notificationAction.options & UANotificationActionOptionForeground) {
-            [[UAirship analytics] launchedFromNotification:response.notificationContent.notificationInfo];
             situation = UASituationForegroundInteractiveButton;
         } else {
             situation = UASituationBackgroundInteractiveButton;
         }
-
-        id event = [UAInteractiveNotificationEvent eventWithNotificationAction:notificationAction
-                                                                    categoryID:response.notificationContent.categoryIdentifier
-                                                                  notification:response.notificationContent.notificationInfo
-                                                                  responseText:response.responseText];
-
-        [[UAirship analytics] addEvent:event];
     }
 
+    // Metadata
     NSMutableDictionary *metadata = [NSMutableDictionary dictionary];
     [metadata setValue:response.actionIdentifier forKey:UAActionMetadataUserNotificationActionIDKey];
     [metadata setValue:response.notificationContent.notificationInfo forKey:UAActionMetadataPushPayloadKey];
@@ -179,95 +252,31 @@
                                      situation:situation
                                       metadata:metadata
                              completionHandler:^(UAActionResult *result) {
-                                 [[UAirship push] handleNotificationResponse:response completionHandler:completionHandler];
+                                completionHandler();
                              }];
 }
 
-+ (void)handleIncomingNotification:(UANotificationContent *)notificationContent
-            foregroundPresentation:(BOOL)foregroundPresentation
-                 completionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
-
-    UA_LINFO(@"Received notification: %@", notificationContent);
-
-#if !TARGET_OS_TV   // Legacy IAM not supported on tvOS
-    // Process any legacy in-app messages
-    [[UAirship legacyInAppMessaging] handleRemoteNotification:notificationContent];
-#endif
-    
-    dispatch_group_t dispatchGroup = dispatch_group_create();
-
-    // array to store results of various concurrent fetches, so a summary can be provided to the system.
-    // because the fetches run concurrently access to `fetchResults` is synchronized.
-    __block NSMutableArray *fetchResults = [NSMutableArray array];
-    
-    if (notificationContent.notificationInfo[kUANotificationRefreshRemoteDataKey]) {
-        dispatch_group_enter(dispatchGroup);
-        [UAirship.remoteDataManager refreshWithCompletionHandler:^(BOOL success) {
-            @synchronized (fetchResults) {
-                if (success) {
-                    [fetchResults addObject:[NSNumber numberWithInt:UIBackgroundFetchResultNewData]];
-                } else {
-                    [fetchResults addObject:[NSNumber numberWithInt:UIBackgroundFetchResultFailed]];
-                }
-            }
-            dispatch_group_leave(dispatchGroup);
-        }];
-    }
-
++ (void)runActionsForRemoteNotification:(UANotificationContent *)notificationContent
+                 foregroundPresentation:(BOOL)foregroundPresentation
+                      completionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
     UASituation situation = [UIApplication sharedApplication].applicationState == UIApplicationStateActive ? UASituationForegroundPush : UASituationBackgroundPush;
     NSDictionary *actionsPayload = [self actionsPayloadForNotificationContent:notificationContent actionIdentifier:nil];
 
     NSDictionary *metadata = @{ UAActionMetadataForegroundPresentationKey: @(foregroundPresentation),
                                 UAActionMetadataPushPayloadKey: notificationContent.notificationInfo };
 
-#if !TARGET_OS_TV   // Inbox not supported on tvOS
-    // Refresh the message center, call completion block when finished
-    if ([UAInboxUtils inboxMessageIDFromNotification:notificationContent.notificationInfo]) {
-        dispatch_group_enter(dispatchGroup);
-        [[UAirship inbox].messageList retrieveMessageListWithSuccessBlock:^{
-            @synchronized (fetchResults) {
-                [fetchResults addObject:[NSNumber numberWithInt:UIBackgroundFetchResultNewData]];
-            }
-            dispatch_group_leave(dispatchGroup);
-        } withFailureBlock:^{
-            @synchronized (fetchResults) {
-                [fetchResults addObject:[NSNumber numberWithInt:UIBackgroundFetchResultFailed]];
-            }
-            dispatch_group_leave(dispatchGroup);
-        }];
-    }
-#endif
-
     // Run the actions
-    dispatch_group_enter(dispatchGroup);
     [UAActionRunner runActionsWithActionValues:actionsPayload
                                      situation:situation
                                       metadata:metadata
                              completionHandler:^(UAActionResult *result) {
-                                 [fetchResults addObject:[NSNumber numberWithInteger:(UIBackgroundFetchResult)[result fetchResult]]];
-
-                                 [[UAirship push] handleRemoteNotification:notificationContent
-                                                                foreground:(situation == UASituationForegroundPush)
-                                                         completionHandler:^(UIBackgroundFetchResult fetchResult) {
-                                                             @synchronized (fetchResults) {
-                                                                 [fetchResults addObject:[NSNumber numberWithInteger:fetchResult]];
-                                                             }
-                                                             dispatch_group_leave(dispatchGroup);
-                                                         }];
+                                completionHandler((UIBackgroundFetchResult)[result fetchResult]);
                              }];
-    
-    dispatch_group_notify(dispatchGroup, dispatch_get_main_queue(),^{
-        // all processing of incoming notification is complete
-        if (completionHandler) {
-            completionHandler([UAUtils mergeFetchResults:fetchResults]);
-        }
-    });
+
 }
 
-#pragma mark -
-#pragma mark Helpers
-
-+ (NSDictionary *)actionsPayloadForNotificationContent:(UANotificationContent *)notificationContent actionIdentifier:(NSString *)actionIdentifier {
++ (NSDictionary *)actionsPayloadForNotificationContent:(UANotificationContent *)notificationContent
+                                      actionIdentifier:(NSString *)actionIdentifier {
     if (!actionIdentifier || [actionIdentifier isEqualToString:UANotificationDefaultActionIdentifier]) {
         NSMutableDictionary *mutableActionsPayload = [NSMutableDictionary dictionaryWithDictionary:notificationContent.notificationInfo];
 

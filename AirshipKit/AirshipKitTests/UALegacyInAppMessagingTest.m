@@ -123,8 +123,13 @@
     }] getSchedulesWithMessageID:[OCMArg any] completionHandler:[OCMArg any]];
 
     [[self.mockInAppMessageManager expect] cancelMessagesWithID:messageID];
-    [self.inAppMessaging handleNotificationResponse:response];
 
+    XCTestExpectation *testExpectation = [self expectationWithDescription:@"completion handler called"];
+    [self.inAppMessaging receivedNotificationResponse:response completionHandler:^{
+        [testExpectation fulfill];
+    }];
+
+    [self waitForTestExpectations];
     [self. mockAnalytics verify];
     XCTAssertNil(self.inAppMessaging.pendingMessageID);
 }
@@ -149,8 +154,21 @@
 
     [[self.mockAnalytics reject] addEvent:[OCMArg any]];
     [[self.mockInAppMessageManager reject] cancelMessagesWithID:[OCMArg any]];
-    [self.inAppMessaging handleNotificationResponse:response];
 
+    [[[self.mockInAppMessageManager stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void (^completionHandler)(NSArray<UASchedule *> *schedules) = (__bridge void(^)(NSArray<UASchedule *> *))arg;
+        UASchedule *dummySchedule = [UASchedule scheduleWithIdentifier:@"foo" info:[UAScheduleInfo new] metadata:@{}];
+        completionHandler(@[dummySchedule]);
+    }] getSchedulesWithMessageID:[OCMArg any] completionHandler:[OCMArg any]];
+
+    XCTestExpectation *testExpectation = [self expectationWithDescription:@"completion handler called"];
+    [self.inAppMessaging receivedNotificationResponse:response completionHandler:^{
+        [testExpectation fulfill];
+    }];
+
+    [self waitForTestExpectations];
     [self.mockAnalytics verify];
     XCTAssertNotNil(self.inAppMessaging.pendingMessageID);
 }
@@ -187,7 +205,12 @@
 
     [[self.mockAnalytics reject] addEvent:[OCMArg any]];
     [[self.mockInAppMessageManager reject] cancelMessagesWithID:[OCMArg any]];
-    [self.inAppMessaging handleNotificationResponse:response];
+
+    XCTestExpectation *testExpectation = [self expectationWithDescription:@"completion handler called"];
+    [self.inAppMessaging receivedNotificationResponse:response completionHandler:^{
+        [testExpectation fulfill];
+    }];
+    [self waitForTestExpectations];
 
     [self.mockAnalytics verify];
     XCTAssertNotNil(self.inAppMessaging.pendingMessageID);
@@ -206,14 +229,29 @@
                                    @"com.urbanairship.in_app": self.payload
                                    };
 
-    UANotificationResponse *response = [UANotificationResponse notificationResponseWithNotificationInfo:notification
-                                                                                       actionIdentifier:UANotificationDefaultActionIdentifier
-                                                                                           responseText:nil];
-    [[self.mockInAppMessageManager expect] scheduleMessageWithScheduleInfo:[OCMArg isKindOfClass:[UAInAppMessageScheduleInfo class]] metadata:@{} completionHandler:[OCMArg any]];
+    UANotificationContent *content = [UANotificationContent notificationWithNotificationInfo:notification];
 
-    [self.inAppMessaging handleRemoteNotification:response.notificationContent];
+    [[[self.mockInAppMessageManager expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:2];
+        UAInAppMessageScheduleInfo *info = (__bridge UAInAppMessageScheduleInfo *)arg;
+
+        void *completionHandlerArg;
+        [invocation getArgument:&completionHandlerArg atIndex:4];
+        void (^completionHandler)(UASchedule *schedule) = (__bridge void(^)(UASchedule *))completionHandlerArg;
+
+        UASchedule *result = [UASchedule scheduleWithIdentifier:@"foo" info:info metadata:@{}];
+        completionHandler(result);
+    }] scheduleMessageWithScheduleInfo:[OCMArg any] metadata:@{} completionHandler:[OCMArg any]];
+
+    XCTestExpectation *testExpectation = [self expectationWithDescription:@"completion handler called"];
+    [self.inAppMessaging receivedRemoteNotification:content completionHandler:^(UIBackgroundFetchResult fetchResult) {
+        XCTAssertEqual(UIBackgroundFetchResultNoData, fetchResult);
+        [testExpectation fulfill];
+    }];
+    [self waitForTestExpectations];
+
     XCTAssertNotNil(self.inAppMessaging.pendingMessageID);
-
     [self.mockInAppMessageManager verify];
 }
 
@@ -228,11 +266,15 @@
                                    @"aps": self.aps
                                    };
 
-    UANotificationResponse *response = [UANotificationResponse notificationResponseWithNotificationInfo:notification
-                                                                                       actionIdentifier:UANotificationDefaultActionIdentifier
-                                                                                           responseText:nil];
+    UANotificationContent *content = [UANotificationContent notificationWithNotificationInfo:notification];
 
-    [self.inAppMessaging handleRemoteNotification:response.notificationContent];
+    XCTestExpectation *testExpectation = [self expectationWithDescription:@"completion handler called"];
+    [self.inAppMessaging receivedRemoteNotification:content completionHandler:^(UIBackgroundFetchResult fetchResult) {
+        XCTAssertEqual(UIBackgroundFetchResultNoData, fetchResult);
+        [testExpectation fulfill];
+    }];
+    [self waitForTestExpectations];
+
     XCTAssertNil(self.inAppMessaging.pendingMessageID);
 }
 
@@ -248,19 +290,32 @@
                                    @"com.urbanairship.in_app": self.payload
                                    };
 
-    UANotificationResponse *response = [UANotificationResponse notificationResponseWithNotificationInfo:notification
-                                                                                       actionIdentifier:UANotificationDefaultActionIdentifier
-                                                                                           responseText:nil];
+    UANotificationContent *content = [UANotificationContent notificationWithNotificationInfo:notification];
+
     [[[self.mockInAppMessageManager expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:2];
         UAInAppMessageScheduleInfo *info = (__bridge UAInAppMessageScheduleInfo *)arg;
         UAInAppMessageBannerDisplayContent *displayContent = (UAInAppMessageBannerDisplayContent *)info.message.displayContent;
         BOOL containsOpenInboxAction = displayContent.actions[kUADisplayInboxActionDefaultRegistryName] || displayContent.actions[kUADisplayInboxActionDefaultRegistryAlias];
+
         XCTAssertTrue(containsOpenInboxAction);
+
+        void *completionHandlerArg;
+        [invocation getArgument:&completionHandlerArg atIndex:4];
+        void (^completionHandler)(UASchedule *schedule) = (__bridge void(^)(UASchedule *))completionHandlerArg;
+
+        UASchedule *result = [UASchedule scheduleWithIdentifier:@"foo" info:info metadata:@{}];
+        completionHandler(result);
     }] scheduleMessageWithScheduleInfo:[OCMArg isKindOfClass:[UAInAppMessageScheduleInfo class]] metadata:@{} completionHandler:[OCMArg any]];
 
-    [self.inAppMessaging handleRemoteNotification:response.notificationContent];
+    XCTestExpectation *testExpectation = [self expectationWithDescription:@"completion handler called"];
+    [self.inAppMessaging receivedRemoteNotification:content completionHandler:^(UIBackgroundFetchResult fetchResult) {
+        XCTAssertEqual(UIBackgroundFetchResultNoData, fetchResult);
+        [testExpectation fulfill];
+    }];
+    [self waitForTestExpectations];
+
     XCTAssertNotNil(self.inAppMessaging.pendingMessageID);
 
     [self.mockInAppMessageManager verify];
@@ -283,18 +338,33 @@
                                    @"com.urbanairship.in_app": payload
                                    };
 
-    UANotificationResponse *response = [UANotificationResponse notificationResponseWithNotificationInfo:notification
-                                                                                       actionIdentifier:UANotificationDefaultActionIdentifier
-                                                                                           responseText:nil];
+    UANotificationContent *content = [UANotificationContent notificationWithNotificationInfo:notification];
+
     [[[self.mockInAppMessageManager expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:2];
         UAInAppMessageScheduleInfo *info = (__bridge UAInAppMessageScheduleInfo *)arg;
         UAInAppMessageBannerDisplayContent *displayContent = (UAInAppMessageBannerDisplayContent *)info.message.displayContent;
         XCTAssertEqualObjects(displayContent.actions[@"^mc"], @"AUTO");
+
+        void *completionHandlerArg;
+        [invocation getArgument:&completionHandlerArg atIndex:4];
+        void (^completionHandler)(UASchedule *schedule) = (__bridge void(^)(UASchedule *))completionHandlerArg;
+
+        UASchedule *result = [UASchedule scheduleWithIdentifier:@"foo" info:info metadata:@{}];
+        completionHandler(result);
+
     }] scheduleMessageWithScheduleInfo:[OCMArg isKindOfClass:[UAInAppMessageScheduleInfo class]] metadata:@{} completionHandler:[OCMArg any]];
 
-    [self.inAppMessaging handleRemoteNotification:response.notificationContent];
+    XCTestExpectation *testExpectation = [self expectationWithDescription:@"completion handler called"];
+    [self.inAppMessaging receivedRemoteNotification:content completionHandler:^(UIBackgroundFetchResult fetchResult) {
+        XCTAssertEqual(UIBackgroundFetchResultNoData, fetchResult);
+        [testExpectation fulfill];
+    }];
+    [self waitForTestExpectations];
+
+    [self.mockInAppMessageManager verify];
+
 }
 
 /**
@@ -308,18 +378,29 @@
                                    @"com.urbanairship.in_app": self.payload
                                    };
 
-    UANotificationResponse *response = [UANotificationResponse notificationResponseWithNotificationInfo:notification
-                                                                                       actionIdentifier:UANotificationDefaultActionIdentifier
-                                                                                           responseText:nil];
+    UANotificationContent *content = [UANotificationContent notificationWithNotificationInfo:notification];
 
     [[[self.mockInAppMessageManager expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:2];
         UAInAppMessageScheduleInfo *info = (__bridge UAInAppMessageScheduleInfo *)arg;
         XCTAssertEqual(info.message.source, UAInAppMessageSourceLegacyPush);
+
+        void *completionHandlerArg;
+        [invocation getArgument:&completionHandlerArg atIndex:4];
+        void (^completionHandler)(UASchedule *schedule) = (__bridge void(^)(UASchedule *))completionHandlerArg;
+
+        UASchedule *result = [UASchedule scheduleWithIdentifier:@"foo" info:info metadata:@{}];
+        completionHandler(result);
     }] scheduleMessageWithScheduleInfo:[OCMArg isKindOfClass:[UAInAppMessageScheduleInfo class]] metadata:@{} completionHandler:[OCMArg any]];
 
-    [self.inAppMessaging handleRemoteNotification:response.notificationContent];
+    XCTestExpectation *testExpectation = [self expectationWithDescription:@"completion handler called"];
+    [self.inAppMessaging receivedRemoteNotification:content completionHandler:^(UIBackgroundFetchResult fetchResult) {
+        XCTAssertEqual(UIBackgroundFetchResultNoData, fetchResult);
+        [testExpectation fulfill];
+    }];
+    [self waitForTestExpectations];
+
     [self.mockInAppMessageManager verify];
 }
 

@@ -7,6 +7,7 @@
 #import "UAInboxAPIClient+Internal.h"
 #import "UAComponent+Internal.h"
 #import "UAAppStateTrackerFactory+Internal.h"
+#import "UAInboxUtils.h"
 
 @implementation UAInbox
 
@@ -86,5 +87,22 @@
         }
     }
 }
+
+#pragma mark -
+#pragma mark UAPushableComponent
+-(void)receivedRemoteNotification:(UANotificationContent *)notification completionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
+    if (![UAInboxUtils inboxMessageIDFromNotification:notification.notificationInfo]) {
+        completionHandler(UIBackgroundFetchResultNoData);
+        return;
+    }
+
+    [self.messageList retrieveMessageListWithSuccessBlock:^{
+        completionHandler(UIBackgroundFetchResultNewData);
+    } withFailureBlock:^{
+        completionHandler(UIBackgroundFetchResultFailed);
+    }];
+}
+
+#pragma mark -
 
 @end

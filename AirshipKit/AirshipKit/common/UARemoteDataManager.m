@@ -15,6 +15,7 @@ NSString * const UARemoteDataRefreshIntervalKey = @"remotedata.REFRESH_INTERVAL"
 NSString * const UARemoteDataLastRefreshTimeKey = @"remotedata.LAST_REFRESH_TIME";
 NSString * const UARemoteDataLastRefreshMetadataKey = @"remotedata.LAST_REFRESH_METADATA";
 NSString * const UARemoteDataLastRefreshAppVersionKey = @"remotedata.LAST_REFRESH_APP_VERSION";
+NSString * const UARemoteDataRefreshPayloadKey = @"com.urbanairship.remote-data.update";
 
 NSInteger const UARemoteDataRefreshIntervalDefault = 0;
 
@@ -411,7 +412,20 @@ completionHandler:(void(^)(BOOL success))completionHandler {
     }];
 }
 
+#pragma mark -
+#pragma mark UAPushableComponent
 
+-(void)receivedRemoteNotification:(UANotificationContent *)notification completionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
+    if (!notification.notificationInfo[UARemoteDataRefreshPayloadKey]) {
+        completionHandler(UIBackgroundFetchResultNoData);
+        return;
+    }
+
+    [self refreshWithCompletionHandler:^(BOOL success) {
+        completionHandler(success ? UIBackgroundFetchResultNewData : UIBackgroundFetchResultFailed);
+    }];
+}
+
+#pragma mark -
 
 @end
-
