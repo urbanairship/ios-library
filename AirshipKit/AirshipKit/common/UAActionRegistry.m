@@ -2,38 +2,12 @@
 
 #import "UAActionRegistry+Internal.h"
 #import "UAActionRegistryEntry+Internal.h"
-#import "UAOpenExternalURLAction.h"
-#import "UAAddTagsAction.h"
-#import "UARemoveTagsAction.h"
 #import "UAirship.h"
-#import "UAApplicationMetrics.h"
-#import "UAAddCustomEventAction.h"
-#import "UACancelSchedulesAction.h"
-#import "UAScheduleAction.h"
-#import "UAFetchDeviceInfoAction.h"
-#import "UAEnableFeatureAction.h"
-
-#if !TARGET_OS_TV   // Inbox and other features not supported on tvOS
-#import "UADisplayInboxAction.h"
-#import "UAPasteboardAction.h"
-#import "UAOverlayInboxMessageAction.h"
-#import "UAShareAction.h"
-#import "UALandingPageAction.h"
-#import "UAChannelCaptureAction.h"
-#import "UAWalletAction.h"
-#import "UADeepLinkAction.h"
-
-#import "UAShareActionPredicate+Internal.h"
-#import "UAOverlayInboxMessageActionPredicate+Internal.h"
-#import "UALandingPageActionPredicate+Internal.h"
-#endif
-
-#import "UAFetchDeviceInfoActionPredicate+Internal.h"
-#import "UAAddCustomEventActionPredicate+Internal.h"
-#import "UATagsActionPredicate+Internal.h"
+#import "UAActionPredicateProtocol+Internal.h"
 
 NSString *const defaultsClassKey = @"class";
 NSString *const defaultsNameKey = @"name";
+NSString *const defaultsNamesKey = @"names";
 NSString *const defaultsAltNameKey = @"altName";
 NSString *const defaultsPredicateClassKey = @"predicate";
 
@@ -348,20 +322,26 @@ NSString *const defaultsPredicateClassKey = @"predicate";
         NSMutableArray *names = [NSMutableArray array];
         Class predicateClass;
 
+        if (defaultsEntry[defaultsNameKey]) {
+            [names addObject:defaultsEntry[defaultsNameKey]];
+        }
+
+        if (defaultsEntry[defaultsAltNameKey]) {
+            [names addObject:defaultsEntry[defaultsAltNameKey]];
+        }
+
+        if (defaultsEntry[defaultsNamesKey]) {
+            [names addObjectsFromArray:defaultsEntry[defaultsNamesKey]];
+        }
+
         if (defaultsEntry[defaultsClassKey] == nil) {
             UA_LERR(@"UADefaultActions.plist must provide a default class string under the key %@", defaultsClassKey);
             break;
         }
 
-        if (defaultsEntry[defaultsNameKey] == nil) {
-            UA_LERR(@"UADefaultActions.plist must provide a default name string under the key %@", defaultsNameKey);
+        if (!names) {
+            UA_LERR(@"UADefaultActions.plist must provide a name for entry: %@", defaultsEntry[defaultsClassKey]);
             break;
-        }
-
-        [names addObject:defaultsEntry[defaultsNameKey]];
-
-        if (defaultsEntry[defaultsAltNameKey]) {
-            [names addObject:defaultsEntry[defaultsAltNameKey]];
         }
 
         Class actionClass = NSClassFromString(defaultsEntry[defaultsClassKey]);

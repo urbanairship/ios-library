@@ -325,7 +325,34 @@ NSString *anotherActionName = @"AnotherActionName";
     XCTAssertEqual(2, actionRunCount, @"Both actions should of ran");
 }
 
+/**
+ * Test running a set of actions from a dictionary dedupes entries.
+ */
+- (void)testRunActionPayloadDedupes {
+    __block int actionRunCount = 0;
 
+    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
+        actionRunCount++;
+        completionHandler([UAActionResult emptyResult]);
+    }];
+
+    // Verify the predicate is called
+    [self.registry registerAction:action names:@[actionName, anotherActionName]];
+
+    XCTestExpectation *expectation = [self expectationWithDescription:@"Completion handler ran"];
+    NSDictionary *actionPayload = @{actionName : @"value", anotherActionName: @"another value"};
+    [UAActionRunner runActionsWithActionValues:actionPayload situation:UASituationManualInvocation metadata:@{@"meta key": @"meta value"}
+                             completionHandler:^(UAActionResult *finalResult) {
+                                 // Should return an aggregate action result
+                                 XCTAssertTrue([finalResult isKindOfClass:[UAAggregateActionResult class]], @"Running actions should return a UAAggregateActionResult");
+                                 NSDictionary *resultDictionary = (NSDictionary  *)finalResult.value;
+                                 XCTAssertEqual((NSUInteger) 1, resultDictionary.count, @"Action should have 1 result");
+                                 [expectation fulfill];
+                             }];
+
+    [self waitForTestExpectations];
+    XCTAssertEqual(1, actionRunCount);
+}
 
 /**
  * Test running an action with a null completion handler

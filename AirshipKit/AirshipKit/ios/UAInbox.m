@@ -91,13 +91,29 @@
 #pragma mark -
 #pragma mark UAPushableComponent
 -(void)receivedRemoteNotification:(UANotificationContent *)notification completionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
-    if (![UAInboxUtils inboxMessageIDFromNotification:notification.notificationInfo]) {
+    NSString *messageID = [UAInboxUtils inboxMessageIDFromNotification:notification.notificationInfo];
+    BOOL isForegroundPush = self.appStateTracker.state == UAApplicationStateActive;
+
+    if (!messageID) {
         completionHandler(UIBackgroundFetchResultNoData);
         return;
     }
 
     [self.messageList retrieveMessageListWithSuccessBlock:^{
-        completionHandler(UIBackgroundFetchResultNewData);
+        if (isForegroundPush) {
+            UAInboxMessage *message = [self.messageList messageForID:messageID];
+            if (!message) {
+                [[UADispatcher mainDispatcher] dispatchAsync:^{
+                    id strongDelegate = self.delegate;
+                    if ([strongDelegate respondsToSelector:@selector(richPushMessageAvailable:)]) {
+                        [strongDelegate richPushMessageAvailable:message];
+                    }
+                    completionHandler(UIBackgroundFetchResultNewData);
+                }];
+            } else {
+                completionHandler(UIBackgroundFetchResultNewData);
+            }
+        }
     } withFailureBlock:^{
         completionHandler(UIBackgroundFetchResultFailed);
     }];

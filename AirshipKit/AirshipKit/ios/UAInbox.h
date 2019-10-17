@@ -24,11 +24,11 @@ NS_ASSUME_NONNULL_BEGIN
 ///---------------------------------------------------------------------------------------
 
 /**
- * Called when the UADisplayInboxAction was triggered from a foreground notification.
+ * Called when a new message is available from a foreground notification.
  *
- * @param richPushMessage The Rich Push message
+ * @param message The Inbox message
  */
-- (void)richPushMessageAvailable:(UAInboxMessage *)richPushMessage;
+- (void)richPushMessageAvailable:(UAInboxMessage *)message;
 
 /**
  * Called when the inbox is requested to be displayed by the UADisplayInboxAction.

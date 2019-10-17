@@ -72,14 +72,6 @@
 	</dict>
 	<dict>
 		<key>class</key>
-		<string>UADisplayInboxAction</string>
-		<key>name</key>
-		<string>open_mc_action</string>
-		<key>altName</key>
-		<string>^mc</string>
-	</dict>
-	<dict>
-		<key>class</key>
 		<string>UAPasteboardAction</string>
 		<key>name</key>
 		<string>clipboard_action</string>
@@ -88,13 +80,15 @@
 	</dict>
 	<dict>
 		<key>class</key>
-		<string>UAOverlayInboxMessageAction</string>
-		<key>predicate</key>
-		<string>UAOverlayInboxMessageActionPredicate</string>
-		<key>name</key>
-		<string>open_mc_overlay_action</string>
-		<key>altName</key>
-		<string>^mco</string>
+		<string>UAMessageCenterAction</string>
+		<key>names</key>
+		<array>
+			<string>_uamid</string>
+			<string>overlay_inbox_action</string>
+			<string>display_inbox_action</string>
+			<string>^mc</string>
+			<string>^mco</string>
+		</array>
 	</dict>
 	<dict>
 		<key>class</key>

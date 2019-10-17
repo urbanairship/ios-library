@@ -17,11 +17,6 @@
 #import "UAirship+Internal.h"
 #import "UAPushableComponent.h"
 
-#if !TARGET_OS_TV   // Inbox not supported on tvOS
-#import "UAInboxUtils.h"
-#import "UADisplayInboxAction.h"
-#endif
-
 @interface UAAppIntegrationTest : UABaseTest
 @property (nonatomic, strong) id mockedApplication;
 @property (nonatomic, strong) id mockedUserNotificationCenter;
@@ -676,86 +671,6 @@
     [self.mockedPush verify];
     [self waitForTestExpectations];
     XCTAssertTrue(completionHandlerCalled, @"Completion handler should be called.");
-}
-
-/**
- * Test running actions for a push notification automatically adds a display inbox
- * action if the notification contains a message ID (_uamid).
- */
-- (void)testPushActionsRunsInboxAction {
-    NSDictionary *richPushNotification = @{@"_uamid": @"message_id", @"add_tags_action": @"tag"};
-
-    // Expected actions payload
-    NSMutableDictionary *expectedActionPayload = [NSMutableDictionary dictionaryWithDictionary:richPushNotification];
-
-    // Should add the DisplayInboxAction
-    expectedActionPayload[kUADisplayInboxActionDefaultRegistryAlias] = @"message_id";
-
-    [self expectRunActionsWithActionValues:expectedActionPayload];
-
-    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateInactive)] applicationState];
-
-    // Expect UAPush to be called
-    [[self.mockedPush expect] handleRemoteNotification:[OCMArg checkWithBlock:^BOOL(id obj) {
-        UANotificationContent *content = obj;
-        return [content.notificationInfo isEqualToDictionary:richPushNotification];
-    }] foreground:NO completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
-        void (^handler)(UIBackgroundFetchResult) = obj;
-        handler(UIBackgroundFetchResultNewData);
-        return YES;
-    }]];
-
-    // Call the integration
-    XCTestExpectation *fetchCompletionHandlerExpectation = [self expectationWithDescription:@"fetchCompletionHandler handler for didReceiveRemoteNotification should be called"];
-    [UAAppIntegration application:self.mockedApplication
-     didReceiveRemoteNotification:richPushNotification
-           fetchCompletionHandler:^(UIBackgroundFetchResult result) {
-               [fetchCompletionHandlerExpectation fulfill];
-           }];
-
-    // Verify everything
-    [self waitForTestExpectations];
-    [self.mockedActionRunner verify];
-    [self.mockedPush verify];
-}
-
-/**
- * Test running actions for a push notification does not add a inbox action if one is
- * already available.
- */
-- (void)testPushActionsInboxActionAlreadyDefined {
-    // Notification with a message ID and a Overlay Inbox Message Action
-    NSDictionary *richPushNotification = @{@"_uamid": @"message_id", @"^mco": @"MESSAGE_ID",};
-
-    // Expected actions payload
-    NSMutableDictionary *expectedActionPayload = [NSMutableDictionary dictionaryWithDictionary:richPushNotification];
-    
-    [self expectRunActionsWithActionValues:expectedActionPayload];
-
-    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateInactive)] applicationState];
-
-    // Expect UAPush to be called
-    [[self.mockedPush expect] handleRemoteNotification:[OCMArg checkWithBlock:^BOOL(id obj) {
-        UANotificationContent *content = obj;
-        return [content.notificationInfo isEqualToDictionary:richPushNotification];
-    }] foreground:NO completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
-        void (^handler)(UIBackgroundFetchResult) = obj;
-        handler(UIBackgroundFetchResultNewData);
-        return YES;
-    }]];
-    
-    // Call the integration
-    XCTestExpectation *fetchCompletionHandlerExpectation = [self expectationWithDescription:@"fetchCompletionHandler handler for didReceiveRemoteNotification should be called"];
-    [UAAppIntegration application:self.mockedApplication
-     didReceiveRemoteNotification:richPushNotification
-           fetchCompletionHandler:^(UIBackgroundFetchResult result) {
-               [fetchCompletionHandlerExpectation fulfill];
-           }];
-    
-    // Verify everything
-    [self waitForTestExpectations];
-    [self.mockedActionRunner verify];
-    [self.mockedPush verify];
 }
 
 /**

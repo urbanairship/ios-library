@@ -9,14 +9,7 @@
 #import "UAInAppMessageResolution+Internal.h"
 #import "UAViewUtils+Internal.h"
 #import "NSJSONSerialization+UAAdditions.h"
-#import "UAMessageCenter.h"
-#import "UAInbox.h"
-#import "UAInboxMessage+Internal.h"
-#import "UAInboxMessageList.h"
-#import "UAInboxUtils.h"
-#import "UAUser+Internal.h"
 #import "UANativeBridge.h"
-#import "UAMessageCenterNativeBridgeExtension.h"
 #import <WebKit/WebKit.h>
 
 NS_ASSUME_NONNULL_BEGIN
@@ -49,11 +42,6 @@ NSString *const UAInAppNativeBridgeDismissCommand = @"dismiss";
  * The native bridge.
  */
 @property (nonatomic, strong) UANativeBridge *nativeBridge;
-
-/**
- * The Message Center native bridge extension.
- */
-@property (nonatomic, strong) UAMessageCenterNativeBridgeExtension *messageCenterNativeBridgeExtension;
 
 /*
  * Close button.
@@ -120,12 +108,6 @@ NSString *const UAInAppNativeBridgeDismissCommand = @"dismiss";
     self.nativeBridge.forwardNavigationDelegate = self;
     self.nativeBridge.javaScriptCommandDelegate = self;
     self.nativeBridge.nativeBridgeDelegate = self;
-
-    if (self.messageID) {
-        self.messageCenterNativeBridgeExtension = [[UAMessageCenterNativeBridgeExtension alloc] init];
-        self.nativeBridge.nativeBridgeExtensionDelegate = self.messageCenterNativeBridgeExtension;
-    }
-
     self.webView.navigationDelegate = self.nativeBridge;
 
     if (self.style.hideDismissIcon) {
@@ -154,57 +136,8 @@ NSString *const UAInAppNativeBridgeDismissCommand = @"dismiss";
     [self.loadingIndicator hide];
 }
 
-- (void)loadInboxMessage:(UAInboxMessage *)message {
-    [self showOverlay];
-
-    NSURL *url = message.messageBodyURL;
-
-    UA_WEAKIFY(self)
-    void (^loadRequest)(void) = ^{
-        UA_STRONGIFY(self)
-        NSMutableURLRequest *requestObj = [NSMutableURLRequest requestWithURL:url];
-
-        for (NSString *headerKey in self.headers) {
-            NSString *headerValue = [self.headers objectForKey:headerKey];
-            [requestObj addValue:headerValue forHTTPHeaderField:headerKey];
-        }
-
-        [self loadRequestWithDefaultTimeoutInterval:requestObj];
-    };
-
-    if (message) {
-        UA_WEAKIFY(self)
-        [[UAirship inboxUser] getUserData:^(UAUserData *userData) {
-            UA_STRONGIFY(self)
-            NSDictionary *auth = @{@"Authorization":[UAInboxUtils userAuthHeaderString:userData]};
-
-            NSMutableDictionary *appended = [NSMutableDictionary dictionaryWithDictionary:self.headers];
-            [appended addEntriesFromDictionary:auth];
-            self.headers = appended;
-
-            loadRequest();
-        } dispatcher:[UADispatcher mainDispatcher]];
-    } else {
-        loadRequest();
-    }
-}
-
 - (void)load {
-    NSString *inboxMessageID = [self inboxMessageID];
-    if (inboxMessageID) {
-        [self fetchMessage:inboxMessageID completionHandler:^(UAInboxMessage *message) {
-            if (!message) {
-                [self dismissWithoutResolution];
-                return;
-            }
-
-            [self loadInboxMessage:message];
-        }];
-        return;
-    }
-
     NSMutableURLRequest *requestObj = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:self.displayContent.url]];
-
     [self loadRequestWithDefaultTimeoutInterval:requestObj];
 }
 
@@ -260,64 +193,10 @@ NSString *const UAInAppNativeBridgeDismissCommand = @"dismiss";
     return YES;
 }
 
-/**
- * Fetches the specified message.
- *
- * @param messageID The message ID.
- * @param completionHandler Completion handler to call when the operation is complete.
- */
-- (void)fetchMessage:(NSString *)messageID
-   completionHandler:(void (^)(UAInboxMessage * __nullable))completionHandler {
-
-    if (messageID == nil) {
-        completionHandler(nil);
-        return;
-    }
-
-    UAInboxMessage *message = [[UAirship inbox].messageList messageForID:messageID];
-    if (message) {
-        completionHandler(message);
-        return;
-    }
-
-    // Refresh the list to see if the message is available
-    [[UAirship inbox].messageList retrieveMessageListWithSuccessBlock:^{
-        completionHandler([[UAirship inbox].messageList messageForID:messageID]);
-    } withFailureBlock:^{
-        completionHandler(nil);
-    }];
-}
-
-/**
- * Parses the inbox message ID from the URL.
- * @return The message ID if its an message URL, otherwise nil.
- */
-- (nullable NSString *)inboxMessageID {
-    NSString *urlString = self.displayContent.url;
-    NSURL *url = [NSURL URLWithString:self.displayContent.url];
-
-    // Check the scheme, if it's a message: scheme
-    if ([[url scheme] caseInsensitiveCompare:UAMessageDataScheme] == NSOrderedSame) {
-        NSString *fullSchemeString = [NSString stringWithFormat:@"%@:", url.scheme];
-        return [urlString stringByReplacingOccurrencesOfString:fullSchemeString withString:@""];
-    }
-
-    return nil;
-}
-
 #pragma mark WKNavigationDelegate
 
 - (void)webView:(WKWebView *)webView didFinishNavigation:(null_unspecified WKNavigation *)navigation {
     [self hideOverlay];
-
-    NSString *inboxMessageId = [self inboxMessageID];
-    // If inbox message ID is available, we should load the inbox message instead of the URL
-    if (inboxMessageId) {
-        UAInboxMessage  *message = [[UAirship inbox].messageList messageForID:inboxMessageId];
-        if (message.unread) {
-            [message markMessageReadWithCompletionHandler:nil];
-        }
-    }
 }
 
 - (void)webView:(WKWebView *)webView didFailNavigation:(null_unspecified WKNavigation *)navigation withError:(nonnull NSError *)error {

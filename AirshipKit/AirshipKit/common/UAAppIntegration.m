@@ -17,12 +17,6 @@
 #import "UAActionRunner+Internal.h"
 #import "UAActionRegistry+Internal.h"
 
-#if !TARGET_OS_TV   // Inbox and other features not supported on tvOS
-#import "UAInboxUtils.h"
-#import "UAOverlayInboxMessageAction.h"
-#import "UADisplayInboxAction.h"
-#endif
-
 #define kUANotificationActionKey @"com.urbanairship.interactive_actions"
 
 @implementation UAAppIntegration
@@ -278,25 +272,7 @@
 + (NSDictionary *)actionsPayloadForNotificationContent:(UANotificationContent *)notificationContent
                                       actionIdentifier:(NSString *)actionIdentifier {
     if (!actionIdentifier || [actionIdentifier isEqualToString:UANotificationDefaultActionIdentifier]) {
-        NSMutableDictionary *mutableActionsPayload = [NSMutableDictionary dictionaryWithDictionary:notificationContent.notificationInfo];
-
-#if !TARGET_OS_TV   // Inbox not supported on tvOS
-        NSString *messageID = [UAInboxUtils inboxMessageIDFromNotification:notificationContent.notificationInfo];
-        if (messageID) {
-            NSSet *inboxActionNames = [NSSet setWithArray:@[kUADisplayInboxActionDefaultRegistryAlias,
-                                                            kUADisplayInboxActionDefaultRegistryName,
-                                                            kUAOverlayInboxMessageActionDefaultRegistryAlias,
-                                                            kUAOverlayInboxMessageActionDefaultRegistryName]];
-
-            NSSet *actionNames = [NSSet setWithArray:[mutableActionsPayload allKeys]];
-
-            if (![actionNames intersectsSet:inboxActionNames]) {
-                mutableActionsPayload[kUADisplayInboxActionDefaultRegistryAlias] = messageID;
-            }
-        }
-#endif
-
-        return [mutableActionsPayload copy];
+        return notificationContent.notificationInfo;
     }
 
     return notificationContent.notificationInfo[kUANotificationActionKey][actionIdentifier];

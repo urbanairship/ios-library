@@ -8,7 +8,6 @@
 #import "UAInAppMessageScheduleInfo+Internal.h"
 #import "UAInAppMessageHTMLDisplayContent+Internal.h"
 #import "UAInAppMessageManager+Internal.h"
-#import "UAOverlayInboxMessageAction+Internal.h"
 
 @implementation UALandingPageAction
 
@@ -175,11 +174,6 @@ CGFloat const defaultBorderRadiusPoints = 2;
     if (![[UAirship shared].whitelist isWhitelisted:url scope:UAWhitelistScopeOpenURL]) {
         UA_LERR(@"URL %@ not whitelisted. Unable to display landing page.", url);
         return NO;
-    }
-
-    if ([arguments.value isKindOfClass:[NSString class]] && [[arguments.value lowercaseString] isEqualToString:UAOverlayInboxMessageActionMessageIDPlaceHolder]) {
-        return arguments.metadata[UAActionMetadataPushPayloadKey] ||
-        arguments.metadata[UAActionMetadataInboxMessageKey];
     }
 
     return YES;

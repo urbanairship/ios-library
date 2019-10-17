@@ -10,7 +10,6 @@
 #import "UAPush.h"
 #import "UAAnalytics.h"
 #import "UAActionRegistry.h"
-#import "UADisplayInboxAction.h"
 #import "UAInAppMessageBannerDisplayContent.h"
 #import "UAScheduleInfo+Internal.h"
 #import "UASchedule+Internal.h"
@@ -297,9 +296,7 @@
         [invocation getArgument:&arg atIndex:2];
         UAInAppMessageScheduleInfo *info = (__bridge UAInAppMessageScheduleInfo *)arg;
         UAInAppMessageBannerDisplayContent *displayContent = (UAInAppMessageBannerDisplayContent *)info.message.displayContent;
-        BOOL containsOpenInboxAction = displayContent.actions[kUADisplayInboxActionDefaultRegistryName] || displayContent.actions[kUADisplayInboxActionDefaultRegistryAlias];
-
-        XCTAssertTrue(containsOpenInboxAction);
+        XCTAssertTrue(displayContent.actions[@"_uamid"]);
 
         void *completionHandlerArg;
         [invocation getArgument:&completionHandlerArg atIndex:4];

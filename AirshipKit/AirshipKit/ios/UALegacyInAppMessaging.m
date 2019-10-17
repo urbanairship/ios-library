@@ -15,12 +15,6 @@
 #import "UAColorUtils+Internal.h"
 #import "UAGlobal.h"
 
-#if !TARGET_OS_TV   // Inbox not supported on tvOS
-#import "UAInboxUtils.h"
-#import "UADisplayInboxAction.h"
-#import "UAOverlayInboxMessageAction.h"
-#endif
-
 // Legacy key for the last displayed message ID
 NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID";
 
@@ -33,6 +27,8 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
 // APNS payload key
 #define kUALegacyIncomingInAppMessageKey @"com.urbanairship.in_app"
 
+// Message Center action name
+#define kUALegacyMessageCenterActionName @"_uamid"
 
 @interface UALegacyInAppMessaging ()
 @property(nonatomic, strong) UAPreferenceDataStore *dataStore;
@@ -128,23 +124,12 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
         message.identifier = apnsPayload[@"_"];
     }
 
-#if !TARGET_OS_TV   // Inbox not supported on tvOS
-    NSString *inboxMessageID = [UAInboxUtils inboxMessageIDFromNotification:apnsPayload];
-    if (inboxMessageID) {
-        NSSet *inboxActionNames = [NSSet setWithArray:@[kUADisplayInboxActionDefaultRegistryAlias,
-                                                        kUADisplayInboxActionDefaultRegistryName,
-                                                        kUAOverlayInboxMessageActionDefaultRegistryAlias,
-                                                        kUAOverlayInboxMessageActionDefaultRegistryName]];
-
-        NSSet *actionNames = [NSSet setWithArray:message.onClick.allKeys];
-
-        if (![actionNames intersectsSet:inboxActionNames]) {
-            NSMutableDictionary *actions = [NSMutableDictionary dictionaryWithDictionary:message.onClick];
-            actions[kUADisplayInboxActionDefaultRegistryAlias] = inboxMessageID;
-            message.onClick = actions;
-        }
+    // Copy the `_uamid` into the onClick actions if set on the payload to support launching the MC from an IAM
+    if (apnsPayload[kUALegacyMessageCenterActionName]) {
+        NSMutableDictionary *actions = [NSMutableDictionary dictionaryWithDictionary:message.onClick];
+        actions[kUALegacyMessageCenterActionName] = apnsPayload[kUALegacyMessageCenterActionName];
+        message.onClick = actions;
     }
-#endif
 
     [self scheduleMessage:message];
     completionHandler(UIBackgroundFetchResultNoData);

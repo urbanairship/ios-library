@@ -3,7 +3,7 @@
 #import <UIKit/UIKit.h>
 #import "UABaseTest.h"
 
-#import "UADisplayInboxAction.h"
+#import "UAMessageCenterAction.h"
 #import "UAActionArguments+Internal.h"
 #import "UAInbox+Internal.h"
 #import "UAInboxMessageList.h"
@@ -12,65 +12,56 @@
 #import "UAMessageCenter.h"
 #import "UAPreferenceDataStore+Internal.h"
 
-@interface UADisplayInboxActionTest : UABaseTest
+@interface UAMessageCenterActionTest : UABaseTest
 
-@property (nonatomic, strong) UADisplayInboxAction *action;
+@property (nonatomic, strong) UAMessageCenterAction *action;
 @property (nonatomic, strong) NSDictionary *notification;
 
-@property (nonatomic, strong) id mockMessage;
 @property (nonatomic, strong) id mockInbox;
 @property (nonatomic, strong) id mockInboxDelegate;
 
 @property (nonatomic, strong) id mockAirship;
-@property (nonatomic, strong) id mockMessageList;
 @property (nonatomic, strong) id mockMessageCenter;
-
-@property (nonatomic, strong) id mockUser;
-@property (nonatomic, strong) id mockConfig;
-
+@property (nonatomic, strong) id mockMessage;
 @end
 
-@implementation UADisplayInboxActionTest
+@implementation UAMessageCenterActionTest
 
 - (void)setUp {
     [super setUp];
 
-    self.action = [[UADisplayInboxAction alloc] init];
-    
+    self.action = [[UAMessageCenterAction alloc] init];
     self.mockInboxDelegate = [self mockForProtocol:@protocol(UAInboxDelegate)];
-
     self.notification = @{@"_uamid": @"UAMID"};
-
-    self.mockMessage = [self mockForClass:[UAInboxMessage class]];
-    OCMStub([self.mockMessage messageID]).andReturn(@"MCRAP");
-    self.mockMessageList = [self mockForClass:[UAInboxMessageList class]];
-    self.mockMessageCenter = [self mockForClass:[UAMessageCenter class]];
 
     self.mockAirship = [self mockForClass:[UAirship class]];
     [UAirship setSharedAirship:self.mockAirship];
-    [[[self.mockAirship stub] andReturn:self.mockMessageCenter] messageCenter];
+
+    self.mockMessageCenter = [self mockForClass:[UAMessageCenter class]];
+    [[[self.mockAirship stub] andReturn:self.mockMessageCenter] sharedMessageCenter];
 
     self.mockInbox = [self mockForClass:[UAInbox class]];
-    [[[self.mockInbox stub] andReturn:self.mockMessageList] messageList];
-    [[[self.mockAirship stub] andReturn:self.mockInbox] inbox];
+    [[[self.mockAirship stub] andReturn:self.mockInbox] sharedInbox];
 
+    self.mockMessage = [self mockForClass:[UAInboxMessage class]];
+    [[[self.mockMessage stub] andReturn:@"MCRAP"] messageID];
 }
 
 /**
  * Test the action accepts any foreground situation.
  */
 - (void)testAcceptsArguments {
-    UASituation validSituations[6] = {
+    UASituation validSituations[5] = {
         UASituationForegroundInteractiveButton,
         UASituationLaunchedFromPush,
         UASituationManualInvocation,
         UASituationWebViewInvocation,
-        UASituationForegroundPush,
         UASituationAutomation
     };
 
-    UASituation rejectedSituations[2] = {
+    UASituation rejectedSituations[3] = {
         UASituationBackgroundPush,
+        UASituationForegroundPush,
         UASituationBackgroundInteractiveButton,
     };
 
@@ -88,123 +79,39 @@
 }
 
 /**
- * Test perform calls showInboxMessageForID: on the inbox delegate
- * when the message is already available in the message list.
+ * Test perform calls showMessageForID when an ID is provided.
  */
-- (void)testPerformShowInboxMessageForIDMessageAvailable {
-    [[[self.mockInbox stub] andReturn:self.mockInboxDelegate] delegate];
-    
+- (void)testShowMessageForID {
     // Set up the action arguments
     UAActionArguments *args = [UAActionArguments argumentsWithValue:@"MCRAP"
                                                       withSituation:UASituationManualInvocation];
-    
-    // Return the message for the message ID
-    [[[self.mockMessageList stub] andReturn:self.mockMessage] messageForID:@"MCRAP"];
-    
-    // Should notify the delegate of the message
-    XCTestExpectation *expectation = [self expectationWithDescription:@"showMessageForID called"];
-    [[[self.mockInboxDelegate expect] andDo:^(NSInvocation *invocation) {
-        [expectation fulfill];
-    }] showMessageForID:@"MCRAP"];
-    
+
+    [[self.mockInboxDelegate expect] showMessageForID:@"MCRAP"];
+    [[[self.mockInbox stub] andReturn:self.mockInboxDelegate] delegate];
+
     // Perform the action
-    [self verifyActionPerformWithActionArguments:args expectedFetchResult:UAActionFetchResultNoData];
-    
-    // Wait for it to complete
-    [self waitForTestExpectations];
-    
+    [self verifyActionPerformWithActionArguments:args];
+
     // Verify delegate calls
     [self.mockInboxDelegate verify];
 }
 
 /**
- * Test perform calls showInboxMessageForID: on the inbox delegate
- * after the message list is refreshed.
+ * Test perform calls showInbox if no message ID is provided.
  */
-- (void)testPerformShowInboxMessageForIDAfterMessageListRefresh {
-    [[[self.mockInbox stub] andReturn:self.mockInboxDelegate] delegate];
-    
-    // Set up the action arguments
-    UAActionArguments *args = [UAActionArguments argumentsWithValue:@"MCRAP"
-                                                      withSituation:UASituationForegroundInteractiveButton];
-    
-    // Should notify the delegate of the notification
-    XCTestExpectation *expectation = [self expectationWithDescription:@"showMessageForID called"];
-    [[[self.mockInboxDelegate expect] andDo:^(NSInvocation *invocation) {
-        [expectation fulfill];
-    }] showMessageForID:@"MCRAP"];
-    
-    // Need to stub a message list result so the action is able to finish
-    [[[self.mockMessageList stub] andReturn:self.mockMessage] messageForID:@"MCRAP"];
-    
-    // Perform the action
-    [self verifyActionPerformWithActionArguments:args expectedFetchResult:UAActionFetchResultNoData];
-    
-    // Wait for it to complete
-    [self waitForTestExpectations];
-    
-    // Verify delegate calls
-    [self.mockInboxDelegate verify];
-}
-
-/**
- * Test perform calls showInbox on the inbox delegate if the message is unavailable
- * in the message list and the message list is able to be refreshed.
- */
-- (void)testPerformShowInboxAfterMessageListRefresh {
+- (void)testShowInbox {
     [[[self.mockInbox stub] andReturn:self.mockInboxDelegate] delegate];
 
     // Set up the action arguments
-    UAActionArguments *args = [UAActionArguments argumentsWithValue:@"MCRAP"
+    UAActionArguments *args = [UAActionArguments argumentsWithValue:[NSNull null]
                                                       withSituation:UASituationForegroundInteractiveButton];
 
-    // Should notify the delegate of the notification
-    XCTestExpectation *expectation = [self expectationWithDescription:@"showMessageForID called"];
-    [[[self.mockInboxDelegate expect] andDo:^(NSInvocation *invocation) {
-        [expectation fulfill];
-    }] showMessageForID:@"MCRAP"];
-
-    // Need to stub a message list result so the action is able to finish
-    [self stubMessageListRefreshWithSuccessBlock:^{
-        [[[self.mockMessageList stub] andReturn:self.mockMessage] messageForID:@"MCRAP"];
-    }];
-
-    // Perform the action
-    [self verifyActionPerformWithActionArguments:args expectedFetchResult:UAActionFetchResultNewData];
-
-    // Wait for it to complete
-    [self waitForTestExpectations];
-    
-    // Verify delegate calls
-    [self.mockInboxDelegate verify];
-}
-
-/**
- * Test perform calls showInbox on the inbox delegate if the message is unavailable
- * after the message list is refreshed.
- */
-- (void)testPerformShowInboxMessageListFailedToRefresh {
+    [[self.mockInboxDelegate expect] showInbox];
     [[[self.mockInbox stub] andReturn:self.mockInboxDelegate] delegate];
 
-    // Set up the action arguments
-    UAActionArguments *args = [UAActionArguments argumentsWithValue:@"MCRAP"
-                                                      withSituation:UASituationWebViewInvocation];
-
-    // Stub the message list to fail on refresh
-    [self stubMessageListRefreshWithFailureBlock:nil];
-
-    // Should notify the delegate of the message
-    XCTestExpectation *expectation = [self expectationWithDescription:@"showInbox called"];
-    [[[self.mockInboxDelegate expect] andDo:^(NSInvocation *invocation) {
-        [expectation fulfill];
-    }] showInbox];
-
     // Perform the action
-    [self verifyActionPerformWithActionArguments:args expectedFetchResult:UAActionFetchResultFailed];
-    
-    // Wait for it to complete
-    [self waitForTestExpectations];
-    
+    [self verifyActionPerformWithActionArguments:args];
+
     // Verify delegate calls
     [self.mockInboxDelegate verify];
 }
@@ -221,16 +128,10 @@
                                                            metadata:@{UAActionMetadataInboxMessageKey: self.mockMessage}];
 
     // Should notify the delegate of the message
-    XCTestExpectation *expectation = [self expectationWithDescription:@"showMessageForID called"];
-    [[[self.mockInboxDelegate expect] andDo:^(NSInvocation *invocation) {
-        [expectation fulfill];
-    }] showMessageForID:((UAInboxMessage *)self.mockMessage).messageID];
+    [[self.mockInboxDelegate expect] showMessageForID:((UAInboxMessage *)self.mockMessage).messageID];
 
     // Perform the action
-    [self verifyActionPerformWithActionArguments:args expectedFetchResult:UAActionFetchResultNoData];
-
-    // Wait for it to complete
-    [self waitForTestExpectations];
+    [self verifyActionPerformWithActionArguments:args];
     
     // Verify delegate calls
     [self.mockInboxDelegate verify];
@@ -247,21 +148,12 @@
                                                       withSituation:UASituationManualInvocation
                                                            metadata:@{UAActionMetadataPushPayloadKey: self.notification}];
 
-    // Have the message list return the message for the notification's _uamid
-    [[[self.mockMessageList stub] andReturn:self.mockMessage] messageForID:self.notification[@"_uamid"]];
-
     // Should notify the delegate of the message
-    XCTestExpectation *expectation = [self expectationWithDescription:@"showMessageForID called"];
-    [[[self.mockInboxDelegate expect] andDo:^(NSInvocation *invocation) {
-        [expectation fulfill];
-    }] showMessageForID:((UAInboxMessage *)self.mockMessage).messageID];
+    [[self.mockInboxDelegate expect] showMessageForID:self.notification[@"_uamid"]];
 
     // Perform the action
-    [self verifyActionPerformWithActionArguments:args expectedFetchResult:UAActionFetchResultNoData];
+    [self verifyActionPerformWithActionArguments:args];
 
-    // Wait for it to complete
-    [self waitForTestExpectations];
-    
     // Verify delegate calls
     [self.mockInboxDelegate verify];
 }
@@ -276,93 +168,48 @@
     UAActionArguments *args = [UAActionArguments argumentsWithValue:@"MCRAP"
                                                       withSituation:UASituationManualInvocation];
 
-    // Return the message for the message ID
-    [[[self.mockMessageList stub] andReturn:self.mockMessage] messageForID:@"MCRAP"];
-
     // Should display in the default message center
-    XCTestExpectation *expectation = [self expectationWithDescription:@"displayMessageForID called"];
-    [[[self.mockMessageCenter expect] andDo:^(NSInvocation *invocation) {
-        [expectation fulfill];
-    }] displayMessageForID:((UAInboxMessage *)self.mockMessage).messageID];
+    [[self.mockMessageCenter expect] displayMessageForID:@"MCRAP"];
 
     // Perform the action
-    [self verifyActionPerformWithActionArguments:args expectedFetchResult:UAActionFetchResultNoData];
-
-    // Wait for it to complete
-    [self waitForTestExpectations];
+    [self verifyActionPerformWithActionArguments:args];
     
     // Verify it was displayed
     [self.mockMessageCenter verify];
 }
 
 /**
- * Test the action performing without a message will fall back to displaying the
+ * Test the action performing with a message will fall back to displaying the
  * the default message center if no delegate is available.
  */
-- (void)testPerformWithoutMessageFallsBackDefaultMessageCenter {
+- (void)testPerformWFallsBackDefaultMessageCenter {
     // Set up the action arguments
-    UAActionArguments *args = [UAActionArguments argumentsWithValue:nil withSituation:UASituationManualInvocation];
+    UAActionArguments *args = [UAActionArguments argumentsWithValue:[NSNull null]
+                                                      withSituation:UASituationManualInvocation];
 
     // Should display in the default message center
-    XCTestExpectation *expectation = [self expectationWithDescription:@"display called"];
-    [[[self.mockMessageCenter expect] andDo:^(NSInvocation *invocation) {
-        [expectation fulfill];
-    }] display];
-    // Need to stub a message list result so the action is able to finish
-    [self stubMessageListRefreshWithSuccessBlock:nil];
-    
-    // Perform the action
-    [self verifyActionPerformWithActionArguments:args expectedFetchResult:UAActionFetchResultNoData];
+    [[self.mockMessageCenter expect] display];
 
-    // Wait for it to complete
-    [self waitForTestExpectations];
-    
+    // Perform the action
+    [self verifyActionPerformWithActionArguments:args];
+
     // Verify it was displayed
     [self.mockMessageCenter verify];
 }
 
-
 #pragma mark -
 #pragma mark Test helpers
 
-- (void)verifyActionPerformWithActionArguments:(UAActionArguments *)args expectedFetchResult:(UAActionFetchResult)fetchResult{
-    __block UAActionResult *actionResult = nil;
-
+- (void)verifyActionPerformWithActionArguments:(UAActionArguments *)args {
+    XCTestExpectation *actionRan = [self expectationWithDescription:@"action ran"];
     [self.action performWithArguments:args completionHandler:^(UAActionResult *result) {
-        actionResult = result;
-        
-        XCTAssertNotNil(actionResult, @"perform did not call the completion handler");
-        XCTAssertNil(actionResult.value, @"action result value should be empty");
-        XCTAssertEqual(fetchResult, actionResult.fetchResult, @"unexpected action fetch result");
+        XCTAssertNotNil(result, @"perform did not call the completion handler");
+        XCTAssertNil(result.value, @"action result value should be empty");
+        XCTAssertEqual(UAActionFetchResultNoData, result.fetchResult, @"unexpected action fetch result");
+        [actionRan fulfill];
     }];
-}
 
-- (void)stubMessageListRefreshWithSuccessBlock:(void (^)(void))block {
-    [[self.mockMessageList stub] retrieveMessageListWithSuccessBlock:[OCMArg checkWithBlock:^BOOL(id obj) {
-        if (block) {
-            block();
-        }
-        UAInboxMessageListCallbackBlock callback = obj;
-        if (callback) {
-            callback();
-        }
-        return YES;
-    }] withFailureBlock:OCMOCK_ANY];
-}
-
-- (void)stubMessageListRefreshWithFailureBlock:(void (^)(void))block {
-    [[self.mockMessageList stub] retrieveMessageListWithSuccessBlock:OCMOCK_ANY
-                                                      withFailureBlock:[OCMArg checkWithBlock:^BOOL(id obj) {
-
-        if (block) {
-            block();
-        }
-        UAInboxMessageListCallbackBlock callback = obj;
-        if (callback) {
-            callback();
-        }
-        return YES;
-    }]];
+    [self waitForTestExpectations];
 }
 
 @end

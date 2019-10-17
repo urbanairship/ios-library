@@ -40,36 +40,37 @@ NSString * const UAActionRunnerErrorDomain = @"com.urbanairship.actions.runner";
         completionHandler:(UAActionCompletionHandler)completionHandler {
 
     UAActionRegistryEntry *entry = [[UAirship shared].actionRegistry registryEntryWithName:actionName];
+    [self runActionWithEntry:entry value:value situation:situation metadata:metadata completionHandler:completionHandler];
+}
 
++ (void)runActionWithEntry:(UAActionRegistryEntry *)entry
+                     value:(id)value
+                 situation:(UASituation)situation
+                  metadata:(NSDictionary *)metadata
+         completionHandler:(UAActionCompletionHandler)completionHandler {
     if (entry) {
         // Add the action name to the metadata
         NSMutableDictionary *fullMetadata = metadata ? [NSMutableDictionary dictionaryWithDictionary:metadata] : [NSMutableDictionary dictionary];
-        fullMetadata[UAActionMetadataRegisteredName] = actionName;
+        fullMetadata[UAActionMetadataRegisteredName] = [entry.names firstObject];
 
         UAActionArguments *arguments = [UAActionArguments argumentsWithValue:value withSituation:situation metadata:fullMetadata];
         if (!entry.predicate || entry.predicate(arguments)) {
             UAAction *action = [entry actionForSituation:situation];
             [action runWithArguments:arguments completionHandler:completionHandler];
         } else {
-            UA_LDEBUG(@"Not running action %@ because of predicate.", actionName);
+            UA_LDEBUG(@"Not running action %@ because of predicate.", [entry.names firstObject]);
             if (completionHandler) {
                 completionHandler([UAActionResult rejectedArgumentsResult]);
             }
         }
     } else {
-        UA_LDEBUG(@"No action found with name %@, skipping action.", actionName);
-
-        //log a warning if the name begins with a carat prefix.
-        if ([actionName hasPrefix:@"^"]) {
-            UA_LWARN(@"Extra names beginning with the carat (^) character are reserved by Airship \
-                     and may be subject to future use.");
-        }
-
+        UA_LDEBUG(@"No action found with name %@, skipping action.", [entry.names firstObject]);
         if (completionHandler) {
             completionHandler([UAActionResult actionNotFoundResult]);
         }
     }
 }
+
 
 + (void)runAction:(UAAction *)action
             value:(id)value
@@ -120,28 +121,26 @@ completionHandler:(UAActionCompletionHandler)completionHandler {
     }
 
     dispatch_group_t dispatchGroup = dispatch_group_create();
-    
-    for (NSString *actionName in actionValues) {
-        __block BOOL completionHandlerCalled = NO;
 
+    NSMutableSet *actionEntries = [NSMutableSet set];
+    for (NSString *actionName in actionValues) {
+        UAActionRegistryEntry *entry = [[UAirship shared].actionRegistry registryEntryWithName:actionName];
+        if (entry) {
+            [actionEntries addObject:entry];
+        }
+    }
+
+    for (UAActionRegistryEntry *entry in actionEntries) {
         UAActionCompletionHandler handler = ^(UAActionResult *result) {
             @synchronized(self) {
-                if (completionHandlerCalled) {
-                    UA_LTRACE(@"Action %@ completion handler called multiple times.", actionName);
-                    dispatch_group_leave(dispatchGroup);
-                    return;
-                }
-                completionHandlerCalled = YES;
-                
-                [aggregateResult addResult:result forAction:actionName];
-                
+                [aggregateResult addResult:result forAction:[entry.names firstObject]];
                 dispatch_group_leave(dispatchGroup);
             }
         };
 
         dispatch_group_enter(dispatchGroup);
-        [self runActionWithName:actionName
-                          value:actionValues[actionName]
+        [self runActionWithEntry:entry
+                          value:actionValues[[entry.names firstObject]]
                       situation:situation
                        metadata:metadata
               completionHandler:handler];
@@ -151,6 +150,5 @@ completionHandler:(UAActionCompletionHandler)completionHandler {
         // all action(s) have run
         completionHandler(aggregateResult);
     });
-
 }
 @end
