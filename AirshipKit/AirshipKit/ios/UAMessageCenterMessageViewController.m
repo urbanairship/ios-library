@@ -136,8 +136,6 @@ typedef enum MessageState {
     
     self.isVisible = NO;
     
-    
-    [self performSelector:@selector(closeWindowAnimated:) withObject:nil afterDelay:10.0];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
