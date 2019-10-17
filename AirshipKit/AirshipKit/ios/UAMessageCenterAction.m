@@ -62,8 +62,8 @@
     NSString *messageID = [UAInboxUtils inboxMessageIDFromValue:arguments.value];
 
     if ([kUAMessageCenterActionMessageIDPlaceHolder caseInsensitiveCompare:messageID] == NSOrderedSame) {
-        if (arguments.metadata[UAActionMetadataInboxMessageKey]) {
-            messageID = [arguments.metadata[UAActionMetadataInboxMessageKey] messageID];
+        if (arguments.metadata[UAActionMetadataInboxMessageIDKey]) {
+            messageID = arguments.metadata[UAActionMetadataInboxMessageIDKey];
         } else {
             // Try getting the message ID from the push notification
             NSDictionary *notification = arguments.metadata[UAActionMetadataPushPayloadKey];

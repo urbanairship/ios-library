@@ -5,10 +5,6 @@
 #import "UAirship.h"
 #import "NSJSONSerialization+UAAdditions.h"
 
-#if !TARGET_OS_TV   // Inbox not supported on tvOS
-#import "UAInboxMessage.h"
-#endif
-
 @interface UACustomEvent()
 @property(nonatomic, strong) NSMutableDictionary *mutableProperties;
 @end
@@ -179,14 +175,10 @@ NSString *const UACustomEventTemplateTypeKey = @"template_type";
     return isValid;
 }
 
-#if !TARGET_OS_TV   // Inbox not supported on tvOS
-- (void)setInteractionFromMessage:(UAInboxMessage *)message {
-    if (message) {
-        self.interactionID = message.messageID;
-        self.interactionType = kUAInteractionMCRAP;
-    }
+- (void)setInteractionFromMessageCenterMessage:(NSString *)messageID {
+    self.interactionID = messageID;
+    self.interactionType = kUAInteractionMCRAP;
 }
-#endif
 
 -(NSDictionary *)properties {
     return [self.mutableProperties copy];

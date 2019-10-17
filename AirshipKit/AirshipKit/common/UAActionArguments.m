@@ -6,7 +6,7 @@
 
 NSString * const UAActionMetadataPushPayloadKey = @"com.urbanairship.payload";
 NSString * const UAActionMetadataForegroundPresentationKey = @"com.urbanairship.foreground_presentation";
-NSString * const UAActionMetadataInboxMessageKey = @"com.urbanairship.message";
+NSString * const UAActionMetadataInboxMessageIDKey = @"com.urbanairship.messageID";
 NSString * const UAActionMetadataRegisteredName = @"com.urbanairship.registered_name";
 
 NSString * const UAActionMetadataUserNotificationActionIDKey = @"com.urbanairship.user_notification_id";

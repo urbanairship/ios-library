@@ -163,7 +163,7 @@
 
     UAActionArguments *args = [UAActionArguments argumentsWithValue:eventPayload
                                                       withSituation:UASituationManualInvocation
-                                                           metadata:@{UAActionMetadataInboxMessageKey: message}];
+                                                           metadata:@{UAActionMetadataInboxMessageIDKey: @"message ID"}];
 
     UAActionResult *expectedResult = [UAActionResult emptyResult];
 
@@ -206,7 +206,7 @@
 
     UAActionArguments *args = [UAActionArguments argumentsWithValue:eventPayload
                                                       withSituation:UASituationManualInvocation
-                                                           metadata:@{UAActionMetadataInboxMessageKey: message}];
+                                                           metadata:@{UAActionMetadataInboxMessageIDKey: @"message ID"}];
 
     UAActionResult *expectedResult = [UAActionResult emptyResult];
 

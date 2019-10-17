@@ -72,10 +72,10 @@ extern NSString * const UAActionMetadataPushPayloadKey;
 extern NSString * const UAActionMetadataForegroundPresentationKey;
 
 /**
- * Metadata key for the inbox message. Available when an action is triggered from
- * a inbox message.
+ * Metadata key for the inbox message's identifier. Available when an action is
+ * triggered from an inbox message.
  */
-extern NSString * const UAActionMetadataInboxMessageKey;
+extern NSString * const UAActionMetadataInboxMessageIDKey;
 
 /**
  * Metadata key for the user notification action identifier. Available when an

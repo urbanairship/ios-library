@@ -26,9 +26,6 @@ extern NSString *const UACustomEventTransactionIDKey;
 extern NSString *const UACustomEventInteractionIDKey;
 extern NSString *const UACustomEventInteractionTypeKey;
 
-@class UAInboxMessage;
-
-
 /**
  * A UACustomEvent captures information regarding a custom event for
  * UAAnalytics.
@@ -110,14 +107,11 @@ extern NSString *const UACustomEventInteractionTypeKey;
 /// @name Custom Event Management
 ///---------------------------------------------------------------------------------------
 
-#if !TARGET_OS_TV   // Inbox not supported on tvOS
 /**
- * Sets the custom event's interaction type and ID from a UAInboxMessage.
- * @param message The UAInboxMessage to set the custom event's interaction type
- * and ID from.
+ * Sets the custom event's interaction type and identifier as coming from a Message Center message.
+ * @param messageID The message ID.
  */
-- (void)setInteractionFromMessage:(UAInboxMessage *)message;
-#endif
+- (void)setInteractionFromMessageCenterMessage:(NSString *)messageID;
 
 /**
  * Sets a custom BOOL property.

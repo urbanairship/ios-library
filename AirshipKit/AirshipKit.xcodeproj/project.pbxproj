@@ -501,7 +501,7 @@
 		6EFB377723450FAB005E4E44 /* UANativeBridgeExtensionDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EFB377523450FAB005E4E44 /* UANativeBridgeExtensionDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6EFB377923455731005E4E44 /* UANativeBridge+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EFB377823455731005E4E44 /* UANativeBridge+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6EFB377A23455731005E4E44 /* UANativeBridge+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EFB377823455731005E4E44 /* UANativeBridge+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		6EFB377D234595C9005E4E44 /* UAMessageCenterNattiveBridgeExtensionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EFB377C234595C9005E4E44 /* UAMessageCenterNattiveBridgeExtensionTest.m */; };
+		6EFB377D234595C9005E4E44 /* UAMessageCenterNativeBridgeExtensionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EFB377C234595C9005E4E44 /* UAMessageCenterNativeBridgeExtensionTest.m */; };
 		6EFB37802345B266005E4E44 /* UAWhitelist.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EFB377E2345B265005E4E44 /* UAWhitelist.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6EFB37812345B266005E4E44 /* UAWhitelist.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EFB377E2345B265005E4E44 /* UAWhitelist.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6EFB37822345B266005E4E44 /* UAWhitelist.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EFB377E2345B265005E4E44 /* UAWhitelist.h */; };
@@ -1977,7 +1977,7 @@
 		6EFB37582342A9E8005E4E44 /* UAJavaScriptEnvironment.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = UAJavaScriptEnvironment.m; path = ios/UAJavaScriptEnvironment.m; sourceTree = "<group>"; };
 		6EFB377523450FAB005E4E44 /* UANativeBridgeExtensionDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = UANativeBridgeExtensionDelegate.h; path = ios/UANativeBridgeExtensionDelegate.h; sourceTree = "<group>"; };
 		6EFB377823455731005E4E44 /* UANativeBridge+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "UANativeBridge+Internal.h"; path = "ios/UANativeBridge+Internal.h"; sourceTree = "<group>"; };
-		6EFB377C234595C9005E4E44 /* UAMessageCenterNattiveBridgeExtensionTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAMessageCenterNattiveBridgeExtensionTest.m; sourceTree = "<group>"; };
+		6EFB377C234595C9005E4E44 /* UAMessageCenterNativeBridgeExtensionTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAMessageCenterNativeBridgeExtensionTest.m; sourceTree = "<group>"; };
 		6EFB377E2345B265005E4E44 /* UAWhitelist.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAWhitelist.h; path = common/UAWhitelist.h; sourceTree = "<group>"; };
 		6EFB377F2345B265005E4E44 /* UAWhitelist.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAWhitelist.m; path = common/UAWhitelist.m; sourceTree = "<group>"; };
 		6EFB37862345B2FA005E4E44 /* UAMessageCenterNativeBridgeExtension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAMessageCenterNativeBridgeExtension.m; path = ios/UAMessageCenterNativeBridgeExtension.m; sourceTree = "<group>"; };
@@ -2937,7 +2937,7 @@
 		6EFB377B2345959C005E4E44 /* Native Bridge */ = {
 			isa = PBXGroup;
 			children = (
-				6EFB377C234595C9005E4E44 /* UAMessageCenterNattiveBridgeExtensionTest.m */,
+				6EFB377C234595C9005E4E44 /* UAMessageCenterNativeBridgeExtensionTest.m */,
 			);
 			name = "Native Bridge";
 			sourceTree = "<group>";
@@ -5916,7 +5916,7 @@
 				6E4116872135C4E4005CC871 /* UARetriablePipelineTest.m in Sources */,
 				3C77BF922016B22900AD37F3 /* UAInAppMessageHTMLDisplayContentTest.m in Sources */,
 				CC64F10B1D8B781C009CEF27 /* UAJSONValueMatcherTests.m in Sources */,
-				6EFB377D234595C9005E4E44 /* UAMessageCenterNattiveBridgeExtensionTest.m in Sources */,
+				6EFB377D234595C9005E4E44 /* UAMessageCenterNativeBridgeExtensionTest.m in Sources */,
 				CC64F12B1D8B781C009CEF27 /* UAJavaScriptCommandTest.m in Sources */,
 				CC944EE01DB6AF0C00C42269 /* UAURLRequestOperationTest.m in Sources */,
 				CC64F1281D8B781C009CEF27 /* UAUserAPIClientTest.m in Sources */,

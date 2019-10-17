@@ -14,7 +14,7 @@
 - (NSDictionary *)actionsMetadataForCommand:(UAJavaScriptCommand *)command webView:(WKWebView *)webView {
     NSMutableDictionary *metadata = [NSMutableDictionary dictionary];
     UAInboxMessage *message = [[UAirship inbox].messageList messageForBodyURL:webView.URL];
-    [metadata setValue:message forKey:UAActionMetadataInboxMessageKey];
+    [metadata setValue:message.messageID forKey:UAActionMetadataInboxMessageIDKey];
     return [metadata copy];
 }
 

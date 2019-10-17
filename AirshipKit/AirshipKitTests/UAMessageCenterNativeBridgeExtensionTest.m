@@ -92,16 +92,17 @@
     [[[self.mockWKWebView stub] andReturn:URL] URL];
 
     // Mock the message
-    id message = [self mockForClass:[UAInboxMessage class]];
+    UAInboxMessage *mockMessage = [self mockForClass:[UAInboxMessage class]];
+    OCMStub([mockMessage messageID]).andReturn(@"MCRAP");
 
     // Assciate the URL with the message
-    [[[self.mockMessageList stub] andReturn:message] messageForBodyURL:URL];
+    [[[self.mockMessageList stub] andReturn:mockMessage] messageForBodyURL:URL];
 
     // Extend the environment
     NSDictionary *metadata = [self.extension actionsMetadataForCommand:[UAJavaScriptCommand commandForURL:URL]
                                                                webView:self.mockWKWebView];
 
-    NSDictionary *expected = @{ UAActionMetadataInboxMessageKey : message };
+    NSDictionary *expected = @{ UAActionMetadataInboxMessageIDKey : mockMessage.messageID };
     XCTAssertEqualObjects(expected, metadata);
 }
 

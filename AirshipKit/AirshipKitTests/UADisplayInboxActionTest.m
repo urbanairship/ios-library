@@ -13,7 +13,6 @@
 #import "UAPreferenceDataStore+Internal.h"
 
 @interface UAMessageCenterActionTest : UABaseTest
-
 @property (nonatomic, strong) UAMessageCenterAction *action;
 @property (nonatomic, strong) NSDictionary *notification;
 
@@ -22,7 +21,6 @@
 
 @property (nonatomic, strong) id mockAirship;
 @property (nonatomic, strong) id mockMessageCenter;
-@property (nonatomic, strong) id mockMessage;
 @end
 
 @implementation UAMessageCenterActionTest
@@ -42,9 +40,6 @@
 
     self.mockInbox = [self mockForClass:[UAInbox class]];
     [[[self.mockAirship stub] andReturn:self.mockInbox] sharedInbox];
-
-    self.mockMessage = [self mockForClass:[UAInboxMessage class]];
-    [[[self.mockMessage stub] andReturn:@"MCRAP"] messageID];
 }
 
 /**
@@ -125,10 +120,10 @@
 
     UAActionArguments *args = [UAActionArguments argumentsWithValue:@"auto"
                                                       withSituation:UASituationManualInvocation
-                                                           metadata:@{UAActionMetadataInboxMessageKey: self.mockMessage}];
+                                                           metadata:@{UAActionMetadataInboxMessageIDKey: @"NEAT"}];
 
     // Should notify the delegate of the message
-    [[self.mockInboxDelegate expect] showMessageForID:((UAInboxMessage *)self.mockMessage).messageID];
+    [[self.mockInboxDelegate expect] showMessageForID:@"NEAT"];
 
     // Perform the action
     [self verifyActionPerformWithActionArguments:args];
