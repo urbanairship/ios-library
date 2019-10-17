@@ -6,7 +6,6 @@
 #import "UAChannelRegistrationPayload+Internal.h"
 #import "UATestDispatcher.h"
 #import "UAUtils+Internal.h"
-#import "UAUserData+Internal.h"
 
 @interface UAChannelTest : UABaseTest
 @property(nonatomic, strong) id mockTagGroupsRegistrar;

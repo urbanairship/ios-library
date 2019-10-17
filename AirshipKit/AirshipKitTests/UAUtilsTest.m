@@ -1,7 +1,6 @@
 /* Copyright Airship and Contributors */
 
 #import "UAUtils+Internal.h"
-#import "UAUser+Internal.h"
 #import "UAirship+Internal.h"
 #import "UABaseTest.h"
 

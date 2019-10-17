@@ -6,10 +6,8 @@
 #import "UAAddCustomEventAction.h"
 #import "UAAction+Internal.h"
 #import "UACustomEvent.h"
-#import "UAInboxMessage.h"
 
 @interface UAAddCustomEventActionTest : UABaseTest
-
 @property (nonatomic, strong) id analytics;
 @property (nonatomic, strong) id airship;
 @property (nonatomic, strong) UAAddCustomEventAction *action;
@@ -147,15 +145,6 @@
  * empty.
  */
 - (void)testInteractionEmptyMCRAP {
-    id message = [self strictMockForClass:[UAInboxMessage class]];
-    [[[message stub] andReturn:@"message ID"] messageID];
-    [[[message stub] andReturn:@"messageTitle"] title];
-    [[[message stub] andReturn:@"someContentType"] contentType];
-    [[[message stub] andReturn:@{@"someKey":@"someValue"}] extra];
-    [[[message stub] andReturn:@"http://someMessageBodyUrl"] messageBodyURL];
-    [[[message stub] andReturn:@"http://someMessageUrl"] messageURL];
-    [[[message stub] andReturn:@NO] unread];
-    [[[message stub] andReturn:[NSDate dateWithTimeIntervalSince1970:1376352982]] messageSent];
 
     NSDictionary *eventPayload = @{@"event_name": @"event name",
                            @"transaction_id": @"transaction ID",
@@ -187,16 +176,6 @@
  * from an mcrap.
  */
 - (void)testInteractionSetMCRAP {
-    id message = [self strictMockForClass:[UAInboxMessage class]];
-    [[[message stub] andReturn:@"message ID"] messageID];
-    [[[message stub] andReturn:@"messageTitle"] title];
-    [[[message stub] andReturn:@"someContentType"] contentType];
-    [[[message stub] andReturn:@{@"someKey":@"someValue"}] extra];
-    [[[message stub] andReturn:@"http://someMessageBodyUrl"] messageBodyURL];
-    [[[message stub] andReturn:@"http://someMessageUrl"] messageURL];
-    [[[message stub] andReturn:@NO] unread];
-    [[[message stub] andReturn:[NSDate dateWithTimeIntervalSince1970:1376352982]] messageSent];
-    
     NSDictionary *eventPayload = @{@"event_name": @"event name",
                                    @"transaction_id": @"transaction ID",
                                    @"event_value": @"123.45",

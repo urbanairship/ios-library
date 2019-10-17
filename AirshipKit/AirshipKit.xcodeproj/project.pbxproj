@@ -1270,7 +1270,7 @@
 		CC64F0F51D8B781C009CEF27 /* UACustomEventTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F08C1D8B781C009CEF27 /* UACustomEventTest.m */; };
 		CC64F0F61D8B781C009CEF27 /* UAMessageCenterStyleTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F08D1D8B781C009CEF27 /* UAMessageCenterStyleTest.m */; };
 		CC64F0F71D8B781C009CEF27 /* UADelayOperationTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F08F1D8B781C009CEF27 /* UADelayOperationTest.m */; };
-		CC64F0F81D8B781C009CEF27 /* UADisplayInboxActionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F0901D8B781C009CEF27 /* UADisplayInboxActionTest.m */; };
+		CC64F0F81D8B781C009CEF27 /* UAMessageCenterActionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F0901D8B781C009CEF27 /* UAMessageCenterActionTest.m */; };
 		CC64F0F91D8B781C009CEF27 /* UAEventTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F0911D8B781C009CEF27 /* UAEventTest.m */; };
 		CC64F0FF1D8B781C009CEF27 /* UALegacyInAppMessageTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F09A1D8B781C009CEF27 /* UALegacyInAppMessageTest.m */; };
 		CC64F1001D8B781C009CEF27 /* UALegacyInAppMessagingTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F09B1D8B781C009CEF27 /* UALegacyInAppMessagingTest.m */; };
@@ -2354,7 +2354,7 @@
 		CC64F08C1D8B781C009CEF27 /* UACustomEventTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UACustomEventTest.m; sourceTree = "<group>"; };
 		CC64F08D1D8B781C009CEF27 /* UAMessageCenterStyleTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAMessageCenterStyleTest.m; sourceTree = "<group>"; };
 		CC64F08F1D8B781C009CEF27 /* UADelayOperationTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UADelayOperationTest.m; sourceTree = "<group>"; };
-		CC64F0901D8B781C009CEF27 /* UADisplayInboxActionTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UADisplayInboxActionTest.m; sourceTree = "<group>"; };
+		CC64F0901D8B781C009CEF27 /* UAMessageCenterActionTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAMessageCenterActionTest.m; sourceTree = "<group>"; };
 		CC64F0911D8B781C009CEF27 /* UAEventTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAEventTest.m; sourceTree = "<group>"; };
 		CC64F09A1D8B781C009CEF27 /* UALegacyInAppMessageTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UALegacyInAppMessageTest.m; sourceTree = "<group>"; };
 		CC64F09B1D8B781C009CEF27 /* UALegacyInAppMessagingTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UALegacyInAppMessagingTest.m; sourceTree = "<group>"; };
@@ -3089,7 +3089,7 @@
 		CC04F2041DCAB46500B4842D /* Actions */ = {
 			isa = PBXGroup;
 			children = (
-				CC64F0901D8B781C009CEF27 /* UADisplayInboxActionTest.m */,
+				CC64F0901D8B781C009CEF27 /* UAMessageCenterActionTest.m */,
 			);
 			name = Actions;
 			sourceTree = "<group>";
@@ -5850,7 +5850,7 @@
 				9928146E1EF494BA00D0D388 /* UARateAppActionTest.m in Sources */,
 				CC64F1201D8B781C009CEF27 /* UAScheduleActionTests.m in Sources */,
 				DFB1EA2022275AF100CDBD7E /* UAInAppMessageAssetsTest.m in Sources */,
-				CC64F0F81D8B781C009CEF27 /* UADisplayInboxActionTest.m in Sources */,
+				CC64F0F81D8B781C009CEF27 /* UAMessageCenterActionTest.m in Sources */,
 				CC944EDC1DB6AEC600C42269 /* UARequestTest.m in Sources */,
 				CC64F0E61D8B781C009CEF27 /* UAApplicationMetricsTest.m in Sources */,
 				6E5F723620169A6600D684B7 /* UADeepLinkActionTest.m in Sources */,
