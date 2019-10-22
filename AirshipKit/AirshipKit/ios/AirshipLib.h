@@ -21,6 +21,7 @@
 #import "UAAppIntegration.h"
 #import "UAApplicationMetrics.h"
 #import "UAAssociatedIdentifiers.h"
+#import "UAAttributeMutations.h"
 #import "UAAutomation.h"
 #import "UABespokeCloseView.h"
 #import "UABeveledLoadingIndicator.h"

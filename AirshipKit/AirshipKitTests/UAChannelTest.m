@@ -6,9 +6,13 @@
 #import "UAChannelRegistrationPayload+Internal.h"
 #import "UATestDispatcher.h"
 #import "UAUtils+Internal.h"
+#import "UAUserData+Internal.h"
+#import "UATestDate.h"
+#import "UAAttributePendingMutations+Internal.h"
 
 @interface UAChannelTest : UABaseTest
 @property(nonatomic, strong) id mockTagGroupsRegistrar;
+@property(nonatomic, strong) id mockAttributeRegistrar;
 @property(nonatomic, strong) id mockChannelRegistrar;
 @property(nonatomic, strong) id mockUtils;
 @property(nonatomic, strong) id mockAppStateTracker;
@@ -16,12 +20,18 @@
 @property(nonatomic, strong) NSNotificationCenter *notificationCenter;
 @property(nonatomic, strong) UAChannel *channel;
 @property(nonatomic, strong) NSString *channelIDFromMockChannelRegistrar;
+@property(nonatomic, strong) NSString *deviceToken;
+@property(nonatomic, strong) UATestDate *testDate;
 @end
 
 @implementation UAChannelTest
 
 - (void)setUp {
     [super setUp];
+
+    self.mockTagGroupsRegistrar = [self mockForClass:[UATagGroupsRegistrar class]];
+    self.mockAttributeRegistrar = [self mockForClass:[UAAttributeRegistrar class]];
+    self.notificationCenter = [[NSNotificationCenter alloc] init];
 
     self.mockTimeZone = [self mockForClass:[NSTimeZone class]];
     [[[self.mockTimeZone stub] andReturn:self.mockTimeZone] localTimeZone];
@@ -41,6 +51,9 @@
 
     // Set up a mocked device api client
     self.mockChannelRegistrar = [self mockForClass:[UAChannelRegistrar class]];
+
+    self.testDate = [[UATestDate alloc] initWithAbsoluteTime:[NSDate now]];
+
     // Put setup code here. This method is called before the invocation of each test method in the class.
     self.channel = [self createChannel];
 
@@ -59,7 +72,10 @@
                                       notificationCenter:self.notificationCenter
                                         channelRegistrar:self.mockChannelRegistrar
                                       tagGroupsRegistrar:self.mockTagGroupsRegistrar
-                                         appStateTracker:self.mockAppStateTracker];
+                                      attributeRegistrar:self.mockAttributeRegistrar
+                                         appStateTracker:self.mockAppStateTracker
+                                                    date:self.testDate];
+
     return channel;
 }
 
@@ -443,5 +459,44 @@
 
     [self waitForTestExpectations];
 }
+
+/**
+ * Tests adding a channel attribute results in save and update called when a channel is present.
+ */
+- (void)testAddChannelAttribute {
+    UAAttributeMutations *addMutation = [UAAttributeMutations mutations];
+    [addMutation setString:@"string" forAttribute:@"attribute"];
+
+    UAAttributePendingMutations *expectedPendingMutations = [UAAttributePendingMutations pendingMutationsWithMutations:addMutation date:self.testDate];
+
+    self.channelIDFromMockChannelRegistrar = @"someChannel";
+
+    [[self.mockAttributeRegistrar expect] savePendingMutations:[OCMArg checkWithBlock:^BOOL(id obj) {
+        UAAttributePendingMutations *pendingMutations = (UAAttributePendingMutations *)obj;
+        return [pendingMutations.payload isEqualToDictionary:expectedPendingMutations.payload];
+    }]];
+
+    [[self.mockAttributeRegistrar expect] updateAttributesForChannel:@"someChannel"];
+
+    [self.channel applyAttributeMutations:addMutation];
+
+    [self.mockAttributeRegistrar verify];
+}
+
+/**
+ * Tests adding a channel attribute results in a save but does not result in a registration call to update with mutations when no channel is present.
+ */
+- (void)testAddChannelAttributeNoChannel {
+    UAAttributeMutations *addMutation = [UAAttributeMutations mutations];
+    [addMutation setString:@"string" forAttribute:@"attribute"];
+
+    [[self.mockAttributeRegistrar expect] savePendingMutations:OCMOCK_ANY];
+    [[self.mockAttributeRegistrar reject] updateAttributesForChannel:OCMOCK_ANY];
+
+    [self.channel applyAttributeMutations:addMutation];
+
+    [self.mockAttributeRegistrar verify];
+}
+
 
 @end

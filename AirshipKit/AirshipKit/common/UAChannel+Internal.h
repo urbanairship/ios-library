@@ -5,6 +5,7 @@
 #import "UATagGroupsRegistrar+Internal.h"
 #import "UAAppStateTracker+Internal.h"
 #import "UAExtendableChannelRegistration.h"
+#import "UAAttributeRegistrar+Internal.h"
 
 extern NSString *const UAChannelTagsSettingsKey;
 extern NSString *const UAChannelCreationOnForeground;
@@ -21,8 +22,6 @@ extern NSString *const UAChannelCreationOnForeground;
 
 + (instancetype)channelWithDataStore:(UAPreferenceDataStore *)dataStore
                               config:(UARuntimeConfig *)config
-                  notificationCenter:(NSNotificationCenter *)notificationCenter
-                    channelRegistrar:(UAChannelRegistrar *)channelRegistrar
                   tagGroupsRegistrar:(UATagGroupsRegistrar *)tagGroupsRegistrar;
 
 + (instancetype)channelWithDataStore:(UAPreferenceDataStore *)dataStore
@@ -30,7 +29,9 @@ extern NSString *const UAChannelCreationOnForeground;
                   notificationCenter:(NSNotificationCenter *)notificationCenter
                     channelRegistrar:(UAChannelRegistrar *)channelRegistrar
                   tagGroupsRegistrar:(UATagGroupsRegistrar *)tagGroupsRegistrar
-                     appStateTracker:(id<UAAppStateTracker>)appStateTracker;
+                  attributeRegistrar:(UAAttributeRegistrar *)attributeRegistrar
+                     appStateTracker:(id<UAAppStateTracker>)appStateTracker
+                                date:(UADate *)date;
 
 /**
  * Registers or updates the current registration with an API call. If push notifications are

@@ -2,6 +2,7 @@
 
 #import "UAComponent.h"
 #import "UAChannelNotificationCenterEvents.h"
+#import "UAAttributeMutations.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -114,6 +115,18 @@ NS_ASSUME_NONNULL_BEGIN
  * @param tagGroupID Tag group ID string.
  */
 - (void)setTags:(NSArray<NSString *> *)tags group:(NSString *)tagGroupID;
+
+
+///---------------------------------------------------------------------------------------
+/// @name Channel Attributes
+///---------------------------------------------------------------------------------------
+
+/**
+ * Applies mutations to attributes associated with this device.
+ *
+ * @param mutations Attribute mutations to apply to this device.
+ */
+- (void)applyAttributeMutations:(UAAttributeMutations *)mutations;
 
 ///---------------------------------------------------------------------------------------
 /// @name Channel Registration

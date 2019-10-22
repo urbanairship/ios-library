@@ -111,13 +111,8 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
                                                                                             dataStore:self.dataStore
                                                                                       mutationHistory:tagGroupsMutationHistory];
 
-        UAChannelRegistrar *channelRegistrar = [UAChannelRegistrar channelRegistrarWithConfig:self.config
-                                                                                    dataStore:self.dataStore];
-
         self.sharedChannel = [UAChannel channelWithDataStore:self.dataStore
                                                       config:self.config
-                                          notificationCenter:[NSNotificationCenter defaultCenter]
-                                            channelRegistrar:channelRegistrar
                                           tagGroupsRegistrar:tagGroupsRegistrar];
         [components addObject:self.sharedChannel];
 
