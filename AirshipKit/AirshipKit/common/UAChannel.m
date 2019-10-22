@@ -237,7 +237,8 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
 #pragma mark Channel Attributes
 
 - (void)applyAttributeMutations:(UAAttributeMutations *)mutations {
-    UAAttributePendingMutations *pendingMutations = [UAAttributePendingMutations pendingMutationsWithMutations:mutations date:self.date];
+    UAAttributePendingMutations *pendingMutations = [UAAttributePendingMutations pendingMutationsWithMutations:mutations
+                                                                                                          date:self.date];
 
     // Save pending mutations for upload
     [self.attributeRegistrar savePendingMutations:pendingMutations];

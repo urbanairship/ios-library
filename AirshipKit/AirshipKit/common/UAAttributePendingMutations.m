@@ -36,7 +36,8 @@ NSString *const UAAttributeRemoveActionKey = @"remove";
     self = [super init];
 
     if (self) {
-        self.mutationsPayload = [self mutationsPayload:mutations timestampedWithDate:date];
+        self.mutationsPayload = [UAAttributePendingMutations mutationsPayload:mutations
+                                                          timestampedWithDate:date];
     }
     return self;
 }
@@ -65,7 +66,7 @@ NSString *const UAAttributeRemoveActionKey = @"remove";
     [coder encodeObject:self.mutationsPayload forKey:UAAttributeMutationsCodableKey];
 }
 
-- (NSArray <NSDictionary *>*)mutationsPayload:(UAAttributeMutations *)mutations timestampedWithDate:(UADate *)date {
++ (NSArray <NSDictionary *>*)mutationsPayload:(UAAttributeMutations *)mutations timestampedWithDate:(UADate *)date {
     NSMutableArray *mutableArr = [NSMutableArray arrayWithArray:mutations.mutationsPayload];
 
     NSDateFormatter *isoDateFormatter = [UAUtils ISODateFormatterUTCWithDelimiter];
