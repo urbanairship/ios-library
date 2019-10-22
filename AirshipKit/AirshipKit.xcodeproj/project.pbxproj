@@ -20,6 +20,10 @@
 		3C3DAA0E22F26E0100202570 /* UAUserProviderDelegate+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C3DAA0D22F26E0100202570 /* UAUserProviderDelegate+Internal.h */; };
 		3C3DAA0F22F26E0100202570 /* UAUserProviderDelegate+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C3DAA0D22F26E0100202570 /* UAUserProviderDelegate+Internal.h */; };
 		3C3DAA1022F26F1100202570 /* UAUserProviderDelegate+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C3DAA0D22F26E0100202570 /* UAUserProviderDelegate+Internal.h */; };
+		3C4625A7235E9CF200E4CF54 /* UAAutoDisposable.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C4625A6235E9CF200E4CF54 /* UAAutoDisposable.m */; };
+		3C4625AC235E9F3F00E4CF54 /* UADisposable+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C4625A8235E9DB400E4CF54 /* UADisposable+Internal.h */; };
+		3C4625AD235E9F5300E4CF54 /* UADisposable+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C4625A8235E9DB400E4CF54 /* UADisposable+Internal.h */; };
+		3C4625AE235E9F6D00E4CF54 /* UADisposable+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C4625A8235E9DB400E4CF54 /* UADisposable+Internal.h */; };
 		3C4ACC422304DE1B00BCF1CC /* UAApplicationState+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C4ACC3C2304DE1A00BCF1CC /* UAApplicationState+Internal.h */; };
 		3C4ACC432304DE1B00BCF1CC /* UAApplicationState+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C4ACC3C2304DE1A00BCF1CC /* UAApplicationState+Internal.h */; };
 		3C4ACC442304DE1B00BCF1CC /* UAApplicationState+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C4ACC3C2304DE1A00BCF1CC /* UAApplicationState+Internal.h */; };
@@ -1752,6 +1756,9 @@
 		3C3BCBAA20E19FC500D86E60 /* UATimerScheduler.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = UATimerScheduler.m; path = common/UATimerScheduler.m; sourceTree = "<group>"; };
 		3C3DAA0B22EF9ABC00202570 /* UAChannelTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAChannelTest.m; sourceTree = "<group>"; };
 		3C3DAA0D22F26E0100202570 /* UAUserProviderDelegate+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "UAUserProviderDelegate+Internal.h"; path = "common/UAUserProviderDelegate+Internal.h"; sourceTree = "<group>"; };
+		3C4625A5235E9CF200E4CF54 /* UAAutoDisposable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UAAutoDisposable.h; sourceTree = "<group>"; };
+		3C4625A6235E9CF200E4CF54 /* UAAutoDisposable.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAAutoDisposable.m; sourceTree = "<group>"; };
+		3C4625A8235E9DB400E4CF54 /* UADisposable+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "UADisposable+Internal.h"; path = "common/UADisposable+Internal.h"; sourceTree = "<group>"; };
 		3C4ACC3C2304DE1A00BCF1CC /* UAApplicationState+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UAApplicationState+Internal.h"; path = "common/UAApplicationState+Internal.h"; sourceTree = "<group>"; };
 		3C4ACC3D2304DE1B00BCF1CC /* UAAppStateTracker+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UAAppStateTracker+Internal.h"; path = "common/UAAppStateTracker+Internal.h"; sourceTree = "<group>"; };
 		3C4ACC3E2304DE1B00BCF1CC /* UAAppStateTrackerFactory+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UAAppStateTrackerFactory+Internal.h"; path = "common/UAAppStateTrackerFactory+Internal.h"; sourceTree = "<group>"; };
@@ -3320,6 +3327,8 @@
 				3C89DD562122471E00864358 /* UATestDate.m */,
 				45FD23172187C7B70056F111 /* UATestSystemVersion.h */,
 				45FD23182187C7B70056F111 /* UATestSystemVersion.m */,
+				3C4625A5235E9CF200E4CF54 /* UAAutoDisposable.h */,
+				3C4625A6235E9CF200E4CF54 /* UAAutoDisposable.m */,
 			);
 			name = Utils;
 			sourceTree = "<group>";
@@ -3750,6 +3759,7 @@
 				457F47AA20ADDF7500DEEAD9 /* UAViewUtils.m */,
 				CC40DBA01D8C996900BABD4F /* UAKeychainUtils+Internal.h */,
 				CC40DBA11D8C996900BABD4F /* UAKeychainUtils.m */,
+				3C4625A8235E9DB400E4CF54 /* UADisposable+Internal.h */,
 				CC40DB5C1D8C996900BABD4F /* UADisposable.h */,
 				CC40DB5D1D8C996900BABD4F /* UADisposable.m */,
 				CC04F1971DBFF0CB00B4842D /* NSManagedObjectContext+UAAdditions+Internal.h */,
@@ -4567,6 +4577,7 @@
 				CC40DCBF1D8C996A00BABD4F /* UAirship+Internal.h in Headers */,
 				CC40DC481D8C996A00BABD4F /* UAAppIntegration+Internal.h in Headers */,
 				CC40DC521D8C996A00BABD4F /* UAAutoIntegration+Internal.h in Headers */,
+				3C4625AC235E9F3F00E4CF54 /* UADisposable+Internal.h in Headers */,
 				3C4ACC422304DE1B00BCF1CC /* UAApplicationState+Internal.h in Headers */,
 				3C4ACC452304DE1B00BCF1CC /* UAAppStateTracker+Internal.h in Headers */,
 				3C4ACC482304DE1B00BCF1CC /* UAAppStateTrackerFactory+Internal.h in Headers */,
@@ -4787,6 +4798,7 @@
 				99666D951EDF2BAE00BAE46B /* UAScheduleTriggerData+Internal.h in Headers */,
 				99666E4A1EDF2C8D00BAE46B /* UAScreenTrackingEvent+Internal.h in Headers */,
 				99666E2A1EDF2C7C00BAE46B /* UASQLite+Internal.h in Headers */,
+				3C4625AD235E9F5300E4CF54 /* UADisposable+Internal.h in Headers */,
 				3C4ACC432304DE1B00BCF1CC /* UAApplicationState+Internal.h in Headers */,
 				3C4ACC492304DE1B00BCF1CC /* UAAppStateTrackerFactory+Internal.h in Headers */,
 				3C4ACC462304DE1B00BCF1CC /* UAAppStateTracker+Internal.h in Headers */,
@@ -5088,6 +5100,7 @@
 				99666D751EDF266400BAE46B /* UAActionPredicateProtocol+Internal.h in Headers */,
 				6ED87F9C1FEB18DD003B652A /* UAInAppMessageMediaInfo+Internal.h in Headers */,
 				99EC01991FE1FED100B9C408 /* UAInAppMessageFullScreenAdapter.h in Headers */,
+				3C4625AE235E9F6D00E4CF54 /* UADisposable+Internal.h in Headers */,
 				997AC8181FE37C4200260440 /* UAInAppMessageDismissButton+Internal.h in Headers */,
 				DF7E22251ED62D9B00C79C46 /* UALegacyInAppMessaging+Internal.h in Headers */,
 				DF7E22261ED62D9B00C79C46 /* UAEventData+Internal.h in Headers */,
@@ -5817,6 +5830,7 @@
 				CC64F0D91D8B781C009CEF27 /* UAActionArgumentsTest.m in Sources */,
 				CC64F11A1D8B781C009CEF27 /* UAPasteboardActionTest.m in Sources */,
 				CC64F0FF1D8B781C009CEF27 /* UALegacyInAppMessageTest.m in Sources */,
+				3C4625A7235E9CF200E4CF54 /* UAAutoDisposable.m in Sources */,
 				9987672A1FBE6B4200197AF4 /* UAInAppMessageBannerDisplayContentTest.m in Sources */,
 				3C3DAA0C22EF9ABC00202570 /* UAChannelTest.m in Sources */,
 				991A94691FCF2CEF00B57D24 /* UAInAppMessageMediaInfoTest.m in Sources */,

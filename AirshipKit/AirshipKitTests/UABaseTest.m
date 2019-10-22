@@ -59,6 +59,10 @@ const NSTimeInterval UATestExpectationTimeOut = 5;
     [self waitForExpectations:expectations timeout:UATestExpectationTimeOut];
 }
 
+- (void)waitForTestExpectations:(NSArray<XCTestExpectation *> *)expectations enforceOrder:(BOOL)enforceOrder {
+    [self waitForExpectations:expectations timeout:UATestExpectationTimeOut enforceOrder:enforceOrder];
+}
+
 - (void)waitForTestExpectations {
     [self waitForExpectationsWithTimeout:UATestExpectationTimeOut handler:nil];
 }
