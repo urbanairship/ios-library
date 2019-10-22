@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-#import "UADisposable.h"
+#import "UADisposable+Internal.h"
 
 @interface UADisposable ()
 @property (nonatomic, copy) UADisposalBlock disposalBlock;

@@ -14,6 +14,7 @@
 #import "UATestDate.h"
 #import "UAInboxMessage.h"
 #import "UAUserData+Internal.h"
+#import "UAAutoDisposable.h"
 
 @protocol UAInboxMessageListMockNotificationObserver
 - (void)messageListWillUpdate;
@@ -64,9 +65,6 @@
 
     self.mockMessageListNotificationObserver = [self mockForProtocol:@protocol(UAInboxMessageListMockNotificationObserver)];
 
-    //order is important with these events, so we should be explicit about it
-    [self.mockMessageListNotificationObserver setExpectationOrderMatters:YES];
-
     self.notificationCenter = [[NSNotificationCenter alloc] init];
     self.messageList = [UAInboxMessageList messageListWithUser:self.mockUser
                                                         client:self.mockInboxAPIClient
@@ -103,59 +101,38 @@
     }];
 }
 
-#pragma mark block-based methods
-
-//if the user is not created, this method should do nothing.
-- (void)testRetrieveMessageListWithBlocksDefaultUserNotCreated {
-    //if there's no user, the block version of this method should do nothing and return a nil disposable
-    self.userCreated = NO;
-
-    __block BOOL fail = NO;
-
-    [self.messageList retrieveMessageListWithSuccessBlock:^{
-        fail = YES;
-    } withFailureBlock:^{
-        fail = YES;
-    }];
-
-    XCTAssertFalse(fail, @"callback blocks should not have been executed");
-}
-
 //if successful, the observer should get messageListWillLoad and messageListLoaded callbacks.
 //UAInboxMessageListWillUpdateNotification and UAInboxMessageListUpdatedNotification should be emitted.
 //the succcessBlock should be executed.
 //the UADisposable returned should be non-nil.
 - (void)testRetrieveMessageListWithBlocksSuccess {
 
-    XCTestExpectation *testExpectation = [self expectationWithDescription:@"request finished"];
+    XCTestExpectation *requestSucceeded = [self expectationWithDescription:@"request succeeded"];
+    XCTestExpectation *messageListWillUpdate = [self expectationWithDescription:@"messageListWillUpdate notification received"];
+    XCTestExpectation *messageListUpdated = [self expectationWithDescription:@"messageListUpdated notification received"];
 
-    [[[self.mockInboxAPIClient expect] andDo:^(NSInvocation *invocation) {
+    [[[self.mockInboxAPIClient stub] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:2];
         UAInboxClientMessageRetrievalSuccessBlock successBlock = (__bridge UAInboxClientMessageRetrievalSuccessBlock) arg;
         successBlock(304, @[]);
     }] retrieveMessageListOnSuccess:[OCMArg any] onFailure:[OCMArg any]];
 
+    [[[self.mockMessageListNotificationObserver stub] andDo:^(NSInvocation *invocation) {
+        [messageListWillUpdate fulfill];
+    }] messageListWillUpdate];
 
-    [[self.mockMessageListNotificationObserver expect] messageListWillUpdate];
-    [[self.mockMessageListNotificationObserver expect] messageListUpdated];
-
-    __block BOOL fail = YES;
+    [[[self.mockMessageListNotificationObserver stub] andDo:^(NSInvocation *invocation) {
+        [messageListUpdated fulfill];
+    }] messageListUpdated];
 
     UADisposable *disposable = [self.messageList retrieveMessageListWithSuccessBlock:^{
-        fail = NO;
-        [testExpectation fulfill];
-    } withFailureBlock:^{
-        fail = YES;
-        [testExpectation fulfill];
-    }];
+        [requestSucceeded fulfill];
+    } withFailureBlock:^{}];
 
-    [self waitForTestExpectations];
+    [self waitForTestExpectations:@[messageListWillUpdate, requestSucceeded, messageListUpdated] enforceOrder:YES];
 
     XCTAssertNotNil(disposable, @"disposable should be non-nil");
-    XCTAssertFalse(fail, @"success block should have been called");
-
-    [self.mockMessageListNotificationObserver verify];
 }
 
 //if unsuccessful, the observer should get messageListWillLoad and inboxLoadFailed callbacks.
@@ -163,34 +140,33 @@
 //the failureBlock should be executed.
 //the UADisposable returned should be non-nil.
 - (void)testRetrieveMessageListWithBlocksFailure {
-    XCTestExpectation *testExpectation = [self expectationWithDescription:@"request finished"];
+    XCTestExpectation *requestFailed = [self expectationWithDescription:@"request failed"];
+    XCTestExpectation *messageListWillUpdate = [self expectationWithDescription:@"messageListWillUpdate notification received"];
+    XCTestExpectation *messageListUpdated = [self expectationWithDescription:@"messageListUpdated notification received"];
 
-    [[[self.mockInboxAPIClient expect] andDo:^(NSInvocation *invocation) {
+    [[[self.mockInboxAPIClient stub] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:3];
         UAInboxClientFailureBlock failureBlock = (__bridge UAInboxClientFailureBlock) arg;
         failureBlock();
     }] retrieveMessageListOnSuccess:[OCMArg any] onFailure:[OCMArg any]];
 
-    [[self.mockMessageListNotificationObserver expect] messageListWillUpdate];
-    [[self.mockMessageListNotificationObserver expect] messageListUpdated];
+    [[[self.mockMessageListNotificationObserver stub] andDo:^(NSInvocation *invocation) {
+        [messageListWillUpdate fulfill];
+    }] messageListWillUpdate];
 
-    __block BOOL fail = NO;
+    [[[self.mockMessageListNotificationObserver stub] andDo:^(NSInvocation *invocation) {
+        [messageListUpdated fulfill];
+    }] messageListUpdated];
 
     UADisposable *disposable = [self.messageList retrieveMessageListWithSuccessBlock:^{
-        fail = NO;
-        [testExpectation fulfill];
     } withFailureBlock:^{
-        fail = YES;
-        [testExpectation fulfill];
+        [requestFailed fulfill];
     }];
 
-    [self waitForTestExpectations];
+    [self waitForTestExpectations:@[messageListWillUpdate, requestFailed, messageListUpdated] enforceOrder:YES];
 
     XCTAssertNotNil(disposable, @"disposable should be non-nil");
-    XCTAssertTrue(fail, @"failure block should have been called");
-
-    [self.mockMessageListNotificationObserver verify];
 }
 
 /**
@@ -245,116 +221,84 @@
     XCTAssertEqual(0, self.messageList.messages.count);
 }
 
+/**
+ * Helper method for substituting UAAutoDisposable for UADisposable in test.
+ */
+- (void)useAutoDisposable {
+    id mock = [self mockForClass:[UADisposable class]];
+
+     [[[mock stub] andDo:^(NSInvocation *invocation) {
+         void *arg;
+         [invocation getArgument:&arg atIndex:2];
+         UADisposalBlock disposalBlock = (__bridge UADisposalBlock) arg;
+         [invocation setReturnValue:(__bridge void * _Nonnull)([UAAutoDisposable disposableWithBlock:disposalBlock])];
+     }] disposableWithBlock:OCMOCK_ANY];
+}
+
 //if successful, the observer should get messageListWillLoad and messageListLoaded callbacks.
 //UAInboxMessageListWillUpdateNotification and UAInboxMessageListUpdatedNotification should be emitted.
 //if dispose is called on the disposable, the succcessBlock should not be executed.
 - (void)testRetrieveMessageListWithBlocksSuccessDisposal {
-    XCTestExpectation *testExpectation = [self expectationWithDescription:@"request finished"];
+    [self useAutoDisposable];
 
-    __block void (^trigger)(void) = ^{
-        XCTFail(@"trigger function should have been reset");
-    };
+    XCTestExpectation *messageListWillUpdate = [self expectationWithDescription:@"messageListWillUpdate notification received"];
+    XCTestExpectation *messageListUpdated = [self expectationWithDescription:@"messageListUpdated notification received"];
 
-    [[[self.mockInboxAPIClient expect] andDo:^(NSInvocation *invocation) {
+    [[[self.mockInboxAPIClient stub] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:2];
         UAInboxClientMessageRetrievalSuccessBlock successBlock = (__bridge UAInboxClientMessageRetrievalSuccessBlock) arg;
-        trigger = ^{
-            successBlock(304, nil);
-        };
+        successBlock(304, nil);
     }] retrieveMessageListOnSuccess:[OCMArg any] onFailure:[OCMArg any]];
 
-    XCTestExpectation *messageListWillUpdateExpectation = [self expectationWithDescription:@"messageListWillUpdate notification received"];
-    XCTestExpectation *messageListUpdatedExpectation = [self expectationWithDescription:@"messageListUpdated notification received"];
-    [[[self.mockMessageListNotificationObserver expect] andDo:^(NSInvocation *invocation) {
-        [messageListWillUpdateExpectation fulfill];
+    [[[self.mockMessageListNotificationObserver stub] andDo:^(NSInvocation *invocation) {
+        [messageListWillUpdate fulfill];
     }] messageListWillUpdate];
 
-    [[[self.mockMessageListNotificationObserver expect] andDo:^(NSInvocation *invocation) {
-        [messageListUpdatedExpectation fulfill];
+    [[[self.mockMessageListNotificationObserver stub] andDo:^(NSInvocation *invocation) {
+        [messageListUpdated fulfill];
     }] messageListUpdated];
 
-    __block BOOL fail = NO;
-
-    UADisposable *disposable = [self.messageList retrieveMessageListWithSuccessBlock:^{
-        fail = YES;
-        [testExpectation fulfill];
+    [self.messageList retrieveMessageListWithSuccessBlock:^{
+        XCTFail(@"Callback blocks should not be invoked");
     } withFailureBlock:^{
-        fail = YES;
-        [testExpectation fulfill];
+        XCTFail(@"Callback blocks should not be invoked");
     }];
 
-    [disposable dispose];
-
-    //disposal should prevent the successBlock from being executed in the trigger function
-    //otherwise we should see unexpected callbacks
-    trigger();
-
-    if (!fail) {
-        [testExpectation fulfill];
-    }
-
-    [self waitForTestExpectations];
-
-    XCTAssertFalse(fail, @"callback blocks should not have been executed");
-    
-    [self.mockMessageListNotificationObserver verify];
+    [self waitForTestExpectations:@[messageListWillUpdate, messageListUpdated] enforceOrder:YES];
 }
 
 //if unsuccessful, the observer should get messageListWillLoad and inboxLoadFailed callbacks.
 //UAInboxMessageListWillUpdateNotification and UAInboxMessageListUpdatedNotification should be emitted.
 //if dispose is called on the disposable, the failureBlock should not be executed.
 - (void)testRetrieveMessageListWithBlocksFailureDisposal {
+    [self useAutoDisposable];
 
-    XCTestExpectation *testExpectation = [self expectationWithDescription:@"request finished"];
+    XCTestExpectation *messageListWillUpdate = [self expectationWithDescription:@"messageListWillUpdate notification received"];
+    XCTestExpectation *messageListUpdated = [self expectationWithDescription:@"messageListUpdated notification received"];
 
-    __block void (^trigger)(void) = ^{
-        XCTFail(@"trigger function should have been reset");
-    };
-
-    [[[self.mockInboxAPIClient expect] andDo:^(NSInvocation *invocation) {
+    [[[self.mockInboxAPIClient stub] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:3];
         UAInboxClientFailureBlock failureBlock = (__bridge UAInboxClientFailureBlock) arg;
-        trigger = ^{
-            failureBlock();
-        };
+        failureBlock();
     }] retrieveMessageListOnSuccess:[OCMArg any] onFailure:[OCMArg any]];
 
-    XCTestExpectation *messageListWillUpdateExpectation = [self expectationWithDescription:@"messageListWillUpdate notification received"];
-    XCTestExpectation *messageListUpdatedExpectation = [self expectationWithDescription:@"messageListUpdated notification received"];
-    [[[self.mockMessageListNotificationObserver expect] andDo:^(NSInvocation *invocation) {
-        [messageListWillUpdateExpectation fulfill];
+    [[[self.mockMessageListNotificationObserver stub] andDo:^(NSInvocation *invocation) {
+        [messageListWillUpdate fulfill];
     }] messageListWillUpdate];
-    [[[self.mockMessageListNotificationObserver expect] andDo:^(NSInvocation *invocation) {
-        [messageListUpdatedExpectation fulfill];
+
+    [[[self.mockMessageListNotificationObserver stub] andDo:^(NSInvocation *invocation) {
+        [messageListUpdated fulfill];
     }] messageListUpdated];
 
-    __block BOOL fail = NO;
-
-    UADisposable *disposable = [self.messageList retrieveMessageListWithSuccessBlock:^{
-        fail = YES;
-        [testExpectation fulfill];
+    [self.messageList retrieveMessageListWithSuccessBlock:^{
+        XCTFail(@"Callback blocks should not be invoked");
     } withFailureBlock:^{
-        fail = YES;
-        [testExpectation fulfill];
+        XCTFail(@"Callback blocks should not be invoked");
     }];
 
-    [disposable dispose];
-
-    //disposal should prevent the failureBlock from being executed in the trigger function
-    //otherwise we should see unexpected callbacks
-    trigger();
-
-    if (!fail) {
-        [testExpectation fulfill];
-    }
-
-    [self waitForTestExpectations];
-
-    XCTAssertFalse(fail, @"callback blocks should not have been executed");
-
-    [self.mockMessageListNotificationObserver verify];
+    [self waitForTestExpectations:@[messageListWillUpdate, messageListUpdated] enforceOrder:YES];
 }
 
 - (NSDictionary *)createMessageDictionaryWithMessageID:(NSString *)messageID expiry:(NSDate *)expiry {
