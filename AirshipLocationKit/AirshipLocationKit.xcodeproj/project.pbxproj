@@ -19,6 +19,12 @@
 		3CD47D7B22603DB2005F1987 /* UALocation+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CC7DC772252CF9800670DC2 /* UALocation+Internal.h */; };
 		3CD47D8122603F95005F1987 /* AirshipLocationKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C7A565E2252883100E07225 /* AirshipLocationKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3CD47D852260528F005F1987 /* UALocation.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CC7DC762252CF9800670DC2 /* UALocation.m */; };
+		6E5EB9B8235A6BEC00F8AEA0 /* UALocationModuleLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E5EB9B6235A6BEC00F8AEA0 /* UALocationModuleLoader.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6E5EB9B9235A6BEC00F8AEA0 /* UALocationModuleLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E5EB9B6235A6BEC00F8AEA0 /* UALocationModuleLoader.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6E5EB9BA235A6BEC00F8AEA0 /* UALocationModuleLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E5EB9B6235A6BEC00F8AEA0 /* UALocationModuleLoader.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6E5EB9BB235A6BEC00F8AEA0 /* UALocationModuleLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E5EB9B7235A6BEC00F8AEA0 /* UALocationModuleLoader.m */; };
+		6E5EB9BC235A6BEC00F8AEA0 /* UALocationModuleLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E5EB9B7235A6BEC00F8AEA0 /* UALocationModuleLoader.m */; };
+		6E5EB9BD235A6BEC00F8AEA0 /* UALocationModuleLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E5EB9B7235A6BEC00F8AEA0 /* UALocationModuleLoader.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -123,6 +129,8 @@
 		3CD47D3B226017FC005F1987 /* AirshipConfig.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = AirshipConfig.xcconfig; path = ../AirshipKit/AirshipConfig.xcconfig; sourceTree = "<group>"; };
 		3CD47D4322602238005F1987 /* AirshipLocationLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = AirshipLocationLib.h; path = AirshipLocationKit/AirshipLocationLib.h; sourceTree = "<group>"; };
 		3CD47D5C22603B82005F1987 /* AirshipLocationKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AirshipLocationKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		6E5EB9B6235A6BEC00F8AEA0 /* UALocationModuleLoader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UALocationModuleLoader.h; sourceTree = "<group>"; };
+		6E5EB9B7235A6BEC00F8AEA0 /* UALocationModuleLoader.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UALocationModuleLoader.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -191,6 +199,8 @@
 				3CC7DC772252CF9800670DC2 /* UALocation+Internal.h */,
 				3C7A565E2252883100E07225 /* AirshipLocationKit.h */,
 				3C7A565F2252883100E07225 /* Info.plist */,
+				6E5EB9B6235A6BEC00F8AEA0 /* UALocationModuleLoader.h */,
+				6E5EB9B7235A6BEC00F8AEA0 /* UALocationModuleLoader.m */,
 			);
 			path = AirshipLocationKit;
 			sourceTree = "<group>";
@@ -240,6 +250,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6E5EB9B8235A6BEC00F8AEA0 /* UALocationModuleLoader.h in Headers */,
 				3C7A566C2252883100E07225 /* AirshipLocationKit.h in Headers */,
 				3CC7DC792252CF9800670DC2 /* UALocation.h in Headers */,
 				3CD47D4422602239005F1987 /* AirshipLocationLib.h in Headers */,
@@ -253,6 +264,7 @@
 			files = (
 				3CD47D7A22603DB2005F1987 /* UALocation.h in Headers */,
 				3CD47D8122603F95005F1987 /* AirshipLocationKit.h in Headers */,
+				6E5EB9BA235A6BEC00F8AEA0 /* UALocationModuleLoader.h in Headers */,
 				3CD47D7B22603DB2005F1987 /* UALocation+Internal.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -261,6 +273,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6E5EB9B9235A6BEC00F8AEA0 /* UALocationModuleLoader.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -527,6 +540,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3CC7DC7B2252CF9800670DC2 /* UALocation.m in Sources */,
+				6E5EB9BB235A6BEC00F8AEA0 /* UALocationModuleLoader.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -543,6 +557,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3CD47D852260528F005F1987 /* UALocation.m in Sources */,
+				6E5EB9BC235A6BEC00F8AEA0 /* UALocationModuleLoader.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -551,6 +566,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3CD47D7922603DA6005F1987 /* UALocation.m in Sources */,
+				6E5EB9BD235A6BEC00F8AEA0 /* UALocationModuleLoader.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

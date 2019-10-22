@@ -67,8 +67,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-extern NSString * const UALocationClassName;
-
 /**
  * The takeOff method must be called on the main thread. Not doing so results in 
  * this exception being thrown.

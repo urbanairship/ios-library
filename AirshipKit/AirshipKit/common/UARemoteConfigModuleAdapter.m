@@ -6,6 +6,8 @@
 #import "UARemoteDataPayload+Internal.h"
 #import "UARemoteConfigModuleNames+Internal.h"
 
+NSString * const UALocationClassName = @"UALocation";
+
 @implementation UARemoteConfigModuleAdapter
 
 - (NSArray *)componentsForModuleName:(NSString *)moduleName {

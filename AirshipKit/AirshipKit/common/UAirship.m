@@ -27,6 +27,8 @@
 #import "UAChannelRegistrar+Internal.h"
 #import "UAAppStateTrackerFactory+Internal.h"
 
+#import "UALocationModuleLoaderFactory.h"
+
 #if !TARGET_OS_TV   // Inbox and other features not supported on tvOS
 #import "UAInbox+Internal.h"
 #import "UAChannelCapture+Internal.h"
@@ -43,7 +45,7 @@ NSString * const UAResetKeychainKey = @"com.urbanairship.reset_keychain";
 NSString * const UALibraryVersion = @"com.urbanairship.library_version";
 
 // Optional components
-NSString * const UALocationClassName = @"UALocation";
+NSString * const UALocationModuleLoaderClassName = @"UALocationModuleLoader";
 
 static UAirship *sharedAirship_;
 
@@ -184,9 +186,21 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         }
 #endif
 
-        UAComponent *location = [UAirship loadExternalComponent:UALocationClassName dataStore:self.dataStore];
-        if (location) {
-            [components addObject:location];
+        NSMutableArray<id<UAModuleLoader>> *loaders = [NSMutableArray array];
+
+        id<UAModuleLoader> locationLoader = [UAirship locationLoaderWithDataStore:dataStore];
+        if (locationLoader) {
+            [loaders addObject:locationLoader];
+        }
+
+        for (id<UAModuleLoader> loader in loaders) {
+            if ([loader respondsToSelector:@selector(components)]) {
+                [components addObjectsFromArray:[loader components]];
+            }
+
+            if ([loader respondsToSelector:@selector(registerActions:)]) {
+                [loader registerActions:self.actionRegistry];
+            }
         }
 
         self.components = components;
@@ -527,15 +541,13 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
     return nil;
 }
 
-
-+ (UAComponent *)loadExternalComponent:(NSString *)className dataStore:(UAPreferenceDataStore *)dataStore {
-    Class cls = NSClassFromString(className);
-    if ([cls isSubclassOfClass:[UAComponent class]]) {
-        UAComponent *component = [(UAComponent *)[cls alloc] initWithDataStore:dataStore];
-        return component;
++ (id<UAModuleLoader>)locationLoaderWithDataStore:(UAPreferenceDataStore *)dataStore {
+    Class cls = NSClassFromString(UALocationModuleLoaderClassName);
+    if ([cls conformsToProtocol:@protocol(UALocationModuleLoaderFactory)]) {
+        return [cls locationModuleLoaderWithDataStore:dataStore];
     }
-
     return nil;
 }
+
 
 @end
