@@ -825,6 +825,7 @@
     }];
 
     [self verifyDelay:delay fulfillmentBlock:^{
+        [[[self.mockAppStateTracker expect] andReturnValue:@(UAApplicationStateActive)] state];
         [self simulateForegroundTransition];
     }];
 }
