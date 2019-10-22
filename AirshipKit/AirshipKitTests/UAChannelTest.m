@@ -34,7 +34,7 @@
     self.notificationCenter = [[NSNotificationCenter alloc] init];
 
     self.mockTimeZone = [self mockForClass:[NSTimeZone class]];
-    [[[self.mockTimeZone stub] andReturn:self.mockTimeZone] localTimeZone];
+    [[[self.mockTimeZone stub] andReturn:self.mockTimeZone] defaultTimeZone];
 
     self.mockTagGroupsRegistrar = [self mockForClass:[UATagGroupsRegistrar class]];
 
