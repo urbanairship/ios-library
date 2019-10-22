@@ -270,7 +270,7 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
     UAChannelRegistrationPayload *payload = [[UAChannelRegistrationPayload alloc] init];
     payload.language = [[NSLocale autoupdatingCurrentLocale] objectForKey:NSLocaleLanguageCode];
     payload.country = [[NSLocale autoupdatingCurrentLocale] objectForKey: NSLocaleCountryCode];
-    payload.timeZone = [NSTimeZone localTimeZone].name;
+    payload.timeZone = [NSTimeZone defaultTimeZone].name;
 
     if (self.channelTagRegistrationEnabled) {
         payload.tags = self.tags;
