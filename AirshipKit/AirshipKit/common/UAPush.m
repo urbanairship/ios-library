@@ -428,7 +428,7 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
 }
 
 - (NSTimeZone *)defaultTimeZoneForQuietTime {
-    return [NSTimeZone localTimeZone];
+    return [NSTimeZone defaultTimeZone];
 }
 
 - (void)setNotificationOptions:(UANotificationOptions)notificationOptions {
