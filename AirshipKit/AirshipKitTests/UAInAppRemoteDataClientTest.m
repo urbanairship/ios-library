@@ -459,10 +459,11 @@ NSString * const UAInAppMessagesScheduledMessagesKey = @"UAInAppRemoteDataClient
                                             ]
                                     };
     NSArray *inAppMessages = @[message1,message2];
-    UARemoteDataPayload *inAppRemoteDataPayload = [[UARemoteDataPayload alloc] initWithType:@"in_app_messages"
-                                                                                  timestamp:[NSDate date]
-                                                                                       data:@{@"in_app_messages":inAppMessages}
-                                                                                   metadata:@{@"cool" : @"story"}];
+
+    __block UARemoteDataPayload *inAppRemoteDataPayload = [[UARemoteDataPayload alloc] initWithType:@"in_app_messages"
+                                                                                          timestamp:[NSDate date]
+                                                                                               data:@{@"in_app_messages":inAppMessages}
+                                                                                           metadata:@{@"cool" : @"story"}];
     __block NSUInteger scheduledMessages = 0;
     __block NSUInteger cancelledMessages = 0;
     __block NSUInteger editedMessages = 0;
@@ -492,7 +493,7 @@ NSString * const UAInAppMessagesScheduledMessagesKey = @"UAInAppRemoteDataClient
         
         [invocation getArgument:&arg atIndex:3];
         UAInAppMessageScheduleEdits *edits = (__bridge UAInAppMessageScheduleEdits *)arg;
-        if ([edits.end isEqualToDate:[NSDate distantPast]]) {
+        if ([edits.end isEqualToDate:inAppRemoteDataPayload.timestamp]) {
             cancelledMessages += 1;
         } else {
             editedMessages += 1;
@@ -519,6 +520,7 @@ NSString * const UAInAppMessagesScheduledMessagesKey = @"UAInAppRemoteDataClient
     editedMessages = 0;
 
     inAppMessages = @[message2];
+
     inAppRemoteDataPayload = [[UARemoteDataPayload alloc] initWithType:@"in_app_messages"
                                                              timestamp:[NSDate date]
                                                                   data:@{@"in_app_messages":inAppMessages}
@@ -620,7 +622,7 @@ NSString * const UAInAppMessagesScheduledMessagesKey = @"UAInAppRemoteDataClient
         
         [invocation getArgument:&arg atIndex:3];
         UAInAppMessageScheduleEdits *edits = (__bridge UAInAppMessageScheduleEdits *)arg;
-        if ([edits.end isEqualToDate:[NSDate distantPast]]) {
+        if ([edits.end isEqualToDate:inAppRemoteDataPayload.timestamp]) {
             cancelledMessages += 1;
         } else if (edits.priority) {
             editedMessages += 1;
@@ -852,7 +854,8 @@ NSString * const UAInAppMessagesScheduledMessagesKey = @"UAInAppRemoteDataClient
                                        ]
                                };
     NSArray *inAppMessages = @[message1,message2];
-    UARemoteDataPayload *inAppRemoteDataPayload = [[UARemoteDataPayload alloc] initWithType:@"in_app_messages"
+
+    __block UARemoteDataPayload *inAppRemoteDataPayload = [[UARemoteDataPayload alloc] initWithType:@"in_app_messages"
                                                                                   timestamp:[NSDate date]
                                                                                        data:@{@"in_app_messages":inAppMessages}
                                                                                    metadata:@{@"cool" : @"story"}];
@@ -887,7 +890,7 @@ NSString * const UAInAppMessagesScheduledMessagesKey = @"UAInAppRemoteDataClient
         
         [invocation getArgument:&arg atIndex:3];
         UAInAppMessageScheduleEdits *edits = (__bridge UAInAppMessageScheduleEdits *)arg;
-        if ([edits.end isEqualToDate:[NSDate distantPast]]) {
+        if ([edits.end isEqualToDate:inAppRemoteDataPayload.timestamp]) {
             cancelledMessages += 1;
         } else {
             editedMessages += 1;
