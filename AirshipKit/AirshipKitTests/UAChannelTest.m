@@ -59,7 +59,7 @@
     // Set up a mocked device api client
     self.mockChannelRegistrar = [self mockForClass:[UAChannelRegistrar class]];
 
-    self.testDate = [[UATestDate alloc] initWithAbsoluteTime:[NSDate now]];
+    self.testDate = [[UATestDate alloc] initWithAbsoluteTime:[NSDate date]];
 
     // Put setup code here. This method is called before the invocation of each test method in the class.
     self.channel = [self createChannel];

@@ -14,7 +14,7 @@
 @implementation UAAttributePendingMutationsTest
 
 - (void)setUp {
-    self.testDate = [[UATestDate alloc] initWithAbsoluteTime:[NSDate now]];
+    self.testDate = [[UATestDate alloc] initWithAbsoluteTime:[NSDate date]];
 }
 
 /**
@@ -22,7 +22,7 @@
 */
 -(void)testPendingMutationsPayload {
     NSDateFormatter *isoDateFormatter = [UAUtils ISODateFormatterUTCWithDelimiter];
-    self.testDate = [[UATestDate alloc] initWithAbsoluteTime:[NSDate now]];
+    self.testDate = [[UATestDate alloc] initWithAbsoluteTime:[NSDate date]];
     NSString *timestamp = [isoDateFormatter stringFromDate:self.testDate.now];
 
     NSDictionary *expectedPayload = @{
@@ -63,7 +63,7 @@
 */
 -(void)testAddAddRemove {
     NSDateFormatter *isoDateFormatter = [UAUtils ISODateFormatterUTCWithDelimiter];
-    self.testDate = [[UATestDate alloc] initWithAbsoluteTime:[NSDate now]];
+    self.testDate = [[UATestDate alloc] initWithAbsoluteTime:[NSDate date]];
     NSString *timestamp = [isoDateFormatter stringFromDate:self.testDate.now];
 
     NSDictionary *expectedPayload = @{
@@ -95,7 +95,7 @@
 */
 -(void)testAddRemoveRemove {
     NSDateFormatter *isoDateFormatter = [UAUtils ISODateFormatterUTCWithDelimiter];
-    self.testDate = [[UATestDate alloc] initWithAbsoluteTime:[NSDate now]];
+    self.testDate = [[UATestDate alloc] initWithAbsoluteTime:[NSDate date]];
     NSString *timestamp = [isoDateFormatter stringFromDate:self.testDate.now];
 
     NSDictionary *expectedPayload = @{
@@ -127,7 +127,7 @@
 */
 -(void)testRemoveAdd {
     NSDateFormatter *isoDateFormatter = [UAUtils ISODateFormatterUTCWithDelimiter];
-    self.testDate = [[UATestDate alloc] initWithAbsoluteTime:[NSDate now]];
+    self.testDate = [[UATestDate alloc] initWithAbsoluteTime:[NSDate date]];
     NSString *timestamp = [isoDateFormatter stringFromDate:self.testDate.now];
 
     NSDictionary *expectedPayload = @{
