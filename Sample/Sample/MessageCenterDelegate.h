@@ -3,7 +3,7 @@
 @import Foundation;
 @import AirshipKit;
 
-@interface InboxDelegate : NSObject <UAInboxDelegate>
+@interface MessageCenterDelegate : NSObject <UAMessageCenterDisplayDelegate>
 
 - (instancetype)initWithRootViewController:(UIViewController *)rootViewController;
 

@@ -3,7 +3,6 @@
 #import "UAMessageCenterAction.h"
 #import "UAActionArguments.h"
 #import "UAirship.h"
-#import "UAInbox.h"
 #import "UAInboxMessage.h"
 #import "UAInboxMessageList.h"
 #import "UAInboxUtils.h"
@@ -37,26 +36,14 @@
     NSString *messageID = [UAMessageCenterAction parseMessageIDFromArgs:arguments];
 
     [[UADispatcher mainDispatcher] dispatchAsync:^{
-        id<UAInboxDelegate> inboxDelegate = [UAirship inbox].delegate;
-
         if (!messageID) {
-            if ([inboxDelegate respondsToSelector:@selector(showInbox)]) {
-                [inboxDelegate showInbox];
-            } else {
-                [[UAirship messageCenter] display];
-            }
+            [[UAirship messageCenter] display];
         } else {
-            if ([inboxDelegate respondsToSelector:@selector(showMessageForID:)]) {
-                [inboxDelegate showMessageForID:messageID];
-            } else {
-                [[UAirship messageCenter] displayMessageForID:messageID];
-            }
+            [[UAirship messageCenter] displayMessageForID:messageID];
         }
-
         completionHandler([UAActionResult emptyResult]);
     }];
 }
-
 
 + (NSString *)parseMessageIDFromArgs:(UAActionArguments *)arguments {
     NSString *messageID = [UAInboxUtils inboxMessageIDFromValue:arguments.value];

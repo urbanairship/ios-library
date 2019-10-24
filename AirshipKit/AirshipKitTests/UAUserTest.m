@@ -62,6 +62,8 @@
                             userDataDAO:self.userDataDAO];
 
     self.userData = [UAUserData dataWithUsername:@"userName" password:@"password"];
+
+    self.user.enabled = YES;
  }
 
 - (void)testDefaultUser {
@@ -102,10 +104,10 @@
  * Test user updates on component enablement if the channel changes.
  */
 -(void)testCreationOnComponentEnablement {
-    self.user.componentEnabled = NO;
+    self.user.enabled = NO;
 
     [self verifyUserCreationWithInitBlock:^{
-        self.user.componentEnabled = YES;
+        self.user.enabled = YES;
     }];
 }
 
@@ -133,8 +135,8 @@
  */
 -(void)testUserUpdateOnComponentEnablement {
     [self verifyUserUpdateWithInitBlock:^{
-        self.user.componentEnabled = NO;
-        self.user.componentEnabled = YES;
+        self.user.enabled = NO;
+        self.user.enabled = YES;
     }];
 }
 
@@ -184,7 +186,7 @@
 
     initBlock();
 
-    [self waitForExpectationsWithTimeout:3.0 handler:nil];
+    [self waitForTestExpectations];
     [self.mockUserClient verify];
     [self.mockApplication verify];
 }
@@ -212,7 +214,7 @@
 
     initBlock();
 
-    [self waitForExpectationsWithTimeout:3.0 handler:nil];
+    [self waitForTestExpectations];
     XCTAssertEqualObjects(self.userDataDAO.getUserDataSync, self.userData, @"Saved and response user data should match");
     [self.mockUserClient verify];
     [self.mockApplication verify];

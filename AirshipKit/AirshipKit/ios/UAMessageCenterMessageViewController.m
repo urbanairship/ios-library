@@ -2,7 +2,6 @@
 
 #import "UAMessageCenterMessageViewController.h"
 #import "UAMessageCenterNativeBridgeExtension.h"
-#import "UAInbox.h"
 #import "UAirship.h"
 #import "UAMessageCenter.h"
 #import "UAInboxMessageList.h"
@@ -15,7 +14,11 @@
 #import "UADispatcher+Internal.h"
 #import "UAUser+Internal.h"
 #import "UANativeBridge.h"
+#import "UAMessageCenter.h"
+#import "UADefaultMessageCenterUI.h"
+
 #import <WebKit/WebKit.h>
+
 
 #define kMessageUp 0
 #define kMessageDown 1
@@ -115,7 +118,7 @@ typedef enum MessageState {
     self.nativeBridge.forwardNavigationDelegate = self;
 
     self.webView.navigationDelegate = self.nativeBridge;
-    self.webView.allowsLinkPreview = ![UAirship messageCenter].disableMessageLinkPreviewAndCallouts;
+    self.webView.allowsLinkPreview = ![UAirship messageCenter].defaultUI.disableMessageLinkPreviewAndCallouts;
 
     // Allow the webView to detect data types (e.g. phone numbers, addresses) at will
     [self.webView.configuration setDataDetectorTypes:WKDataDetectorTypeAll];
@@ -192,7 +195,7 @@ typedef enum MessageState {
     }
     if (self.message) {
         self.messageState = NONE;
-        [[UAirship inbox].messageList markMessagesDeleted:@[self.message] completionHandler:nil];
+        [[UAirship messageCenter].messageList markMessagesDeleted:@[self.message] completionHandler:nil];
     }
 }
 
@@ -247,7 +250,7 @@ static NSString *urlForBlankPage = @"about:blank";
         return;
     }
     
-    UAInboxMessage *message = [[UAirship inbox].messageList messageForID:messageID];
+    UAInboxMessage *message = [[UAirship messageCenter].messageList messageForID:messageID];
 
     if (message) {
         [self loadMessage:message onlyIfChanged:onlyIfChanged];
@@ -262,11 +265,11 @@ static NSString *urlForBlankPage = @"about:blank";
 
     UA_WEAKIFY(self);
 
-    [[UAirship inbox].messageList retrieveMessageListWithSuccessBlock:^{
+    [[UAirship messageCenter].messageList retrieveMessageListWithSuccessBlock:^{
         [[UADispatcher mainDispatcher] dispatchAsync:^{
             UA_STRONGIFY(self)
 
-            UAInboxMessage *message = [[UAirship inbox].messageList messageForID:messageID];
+            UAInboxMessage *message = [[UAirship messageCenter].messageList messageForID:messageID];
             if (message && !message.isExpired) {
                 // display the message
                 [self loadMessage:message onlyIfChanged:onlyIfChanged];
@@ -341,7 +344,7 @@ static NSString *urlForBlankPage = @"about:blank";
     requestObj.timeoutInterval = 60;
 
     UA_WEAKIFY(self)
-    [[UAirship inboxUser] getUserData:^(UAUserData *userData) {
+    [[UAirship messageCenter].user getUserData:^(UAUserData *userData) {
         UA_STRONGIFY(self)
         NSString *auth = [UAInboxUtils userAuthHeaderString:userData];
         [requestObj setValue:auth forHTTPHeaderField:@"Authorization"];
@@ -445,8 +448,8 @@ static NSString *urlForBlankPage = @"about:blank";
     if (self.messageState != LOADING) {
         UA_LWARN(@"MessageState = %u. Should be \"LOADING\"",self.messageState);
     }
-    
-    if ([UAirship messageCenter].disableMessageLinkPreviewAndCallouts) {
+
+    if (![UAirship messageCenter].defaultUI.disableMessageLinkPreviewAndCallouts) {
         [self.webView evaluateJavaScript:@"document.body.style.webkitTouchCallout='none';" completionHandler:nil];
     }
     

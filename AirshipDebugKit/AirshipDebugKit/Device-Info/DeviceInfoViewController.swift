@@ -273,7 +273,7 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
             cell.title.text = "ua_device_info_channel_id".localized()
             cell.subtitle.text = UAirship.channel().identifier
         case username:
-            UAirship.inboxUser()?.getData({ (userData) in
+            UAirship.messageCenter().user.getData({ (userData) in
                 DispatchQueue.main.async {
                     cell.title.text = "ua_device_info_username".localized()
                     cell.subtitle.text = userData.username
@@ -361,7 +361,7 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
             let isEnabled = cell.cellSwitch.isOn
             isInAppAutomationEnabled = isEnabled
         case username:
-            UAirship.inboxUser()?.getData({ (userData) in
+            UAirship.messageCenter().user.getData({ (userData) in
                 UIPasteboard.general.string = userData.username
                 self.showCopiedAlert()
             })

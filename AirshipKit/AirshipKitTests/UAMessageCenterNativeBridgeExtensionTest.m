@@ -3,13 +3,13 @@
 #import "UABaseTest.h"
 #import "UAMessageCenterNativeBridgeExtension.h"
 #import "UAirship+Internal.h"
-#import "UAInbox.h"
 #import "UAInboxMessageList.h"
 #import "UAUser.h"
 #import "UAInboxMessage.h"
 #import "UAActionArguments.h"
 #import "UAUserData+Internal.h"
 #import "UAUtils+Internal.h"
+#import "UAMessageCenter.h"
 
 @interface UAMessageCenterNativeBridgeExtensionTest : UABaseTest
 @property (nonatomic, strong) UAMessageCenterNativeBridgeExtension *extension;
@@ -17,7 +17,7 @@
 @property (nonatomic, strong) id mockAirship;
 @property (nonatomic, strong) id mockMessageList;
 @property (nonatomic, strong) id mockUser;
-@property (nonatomic, strong) id mockInbox;
+@property (nonatomic, strong) id mockMessageCenter;
 @property (nonatomic, strong) id mockWKWebView;
 @end
 
@@ -33,15 +33,15 @@
     self.mockUser = [self mockForClass:[UAUser class]];
 
     // Mock the inbox and message list
-    self.mockInbox = [self mockForClass:[UAInbox class]];
+    self.mockMessageCenter = [self mockForClass:[UAMessageCenter class]];
     self.mockMessageList = [self mockForClass:[UAInboxMessageList class]];
-    [[[self.mockInbox stub] andReturn:self.mockMessageList] messageList];
+    [[[self.mockMessageCenter stub] andReturn:self.mockMessageList] messageList];
+    [[[self.mockMessageCenter stub] andReturn:self.mockUser] user];
 
     // Mock Airship
     self.mockAirship = [self mockForClass:[UAirship class]];
     [UAirship setSharedAirship:self.mockAirship];
-    [[[self.mockAirship stub] andReturn:self.mockUser] inboxUser];
-    [[[self.mockAirship stub] andReturn:self.mockInbox] inbox];
+    [[[self.mockAirship stub] andReturn:self.mockMessageCenter] messageCenter];
 }
 
 /**

@@ -44,6 +44,13 @@ extern const NSTimeInterval UATestExpectationTimeOut;
 - (id)mockForProtocol:(Protocol *)protocol;
 
 /**
+ * Creates a strict mock for a given protocol.
+ * @param protocol The protocol to mock.
+ * @return The mocked class instance.
+*/
+- (id)strictMockForProtocol:(Protocol *)protocol;
+
+/**
  * Creates a partial mock.
  * @param object The object to mock.
  * @return The partial mock instance.

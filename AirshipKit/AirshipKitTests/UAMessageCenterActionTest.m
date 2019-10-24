@@ -5,8 +5,6 @@
 
 #import "UAMessageCenterAction.h"
 #import "UAActionArguments+Internal.h"
-#import "UAInbox+Internal.h"
-#import "UAInboxMessageList.h"
 #import "UAirship+Internal.h"
 #import "UAInboxMessage.h"
 #import "UAMessageCenter.h"
@@ -15,10 +13,6 @@
 @interface UAMessageCenterActionTest : UABaseTest
 @property (nonatomic, strong) UAMessageCenterAction *action;
 @property (nonatomic, strong) NSDictionary *notification;
-
-@property (nonatomic, strong) id mockInbox;
-@property (nonatomic, strong) id mockInboxDelegate;
-
 @property (nonatomic, strong) id mockAirship;
 @property (nonatomic, strong) id mockMessageCenter;
 @end
@@ -29,7 +23,6 @@
     [super setUp];
 
     self.action = [[UAMessageCenterAction alloc] init];
-    self.mockInboxDelegate = [self mockForProtocol:@protocol(UAInboxDelegate)];
     self.notification = @{@"_uamid": @"UAMID"};
 
     self.mockAirship = [self mockForClass:[UAirship class]];
@@ -37,9 +30,6 @@
 
     self.mockMessageCenter = [self mockForClass:[UAMessageCenter class]];
     [[[self.mockAirship stub] andReturn:self.mockMessageCenter] sharedMessageCenter];
-
-    self.mockInbox = [self mockForClass:[UAInbox class]];
-    [[[self.mockAirship stub] andReturn:self.mockInbox] sharedInbox];
 }
 
 /**
@@ -81,34 +71,30 @@
     UAActionArguments *args = [UAActionArguments argumentsWithValue:@"MCRAP"
                                                       withSituation:UASituationManualInvocation];
 
-    [[self.mockInboxDelegate expect] showMessageForID:@"MCRAP"];
-    [[[self.mockInbox stub] andReturn:self.mockInboxDelegate] delegate];
+    [[self.mockMessageCenter expect] displayMessageForID:@"MCRAP"];
 
     // Perform the action
     [self verifyActionPerformWithActionArguments:args];
 
-    // Verify delegate calls
-    [self.mockInboxDelegate verify];
+    // Verify
+    [self.mockMessageCenter verify];
 }
 
 /**
- * Test perform calls showInbox if no message ID is provided.
+ * Test perform calls display  if no message ID is provided.
  */
-- (void)testShowInbox {
-    [[[self.mockInbox stub] andReturn:self.mockInboxDelegate] delegate];
-
+- (void)testDisplayMessageCenter {
     // Set up the action arguments
     UAActionArguments *args = [UAActionArguments argumentsWithValue:[NSNull null]
                                                       withSituation:UASituationForegroundInteractiveButton];
 
-    [[self.mockInboxDelegate expect] showInbox];
-    [[[self.mockInbox stub] andReturn:self.mockInboxDelegate] delegate];
+    [[self.mockMessageCenter expect] display];
 
     // Perform the action
     [self verifyActionPerformWithActionArguments:args];
 
-    // Verify delegate calls
-    [self.mockInboxDelegate verify];
+    // Verify
+    [self.mockMessageCenter verify];
 }
 
 /**
@@ -116,20 +102,17 @@
  * is set for the arguments value.
  */
 - (void)testPerformWithPlaceHolderInboxMessageMetadata {
-    [[[self.mockInbox stub] andReturn:self.mockInboxDelegate] delegate];
-
     UAActionArguments *args = [UAActionArguments argumentsWithValue:@"auto"
                                                       withSituation:UASituationManualInvocation
                                                            metadata:@{UAActionMetadataInboxMessageIDKey: @"NEAT"}];
 
-    // Should notify the delegate of the message
-    [[self.mockInboxDelegate expect] showMessageForID:@"NEAT"];
+    [[self.mockMessageCenter expect] displayMessageForID:@"NEAT"];
 
     // Perform the action
     [self verifyActionPerformWithActionArguments:args];
     
-    // Verify delegate calls
-    [self.mockInboxDelegate verify];
+    // Verify
+    [self.mockMessageCenter verify];
 }
 
 /**
@@ -137,58 +120,16 @@
  * is set for the arguments value.
  */
 - (void)testPerformWithPlaceHolderPushMessageMetadata {
-    [[[self.mockInbox stub] andReturn:self.mockInboxDelegate] delegate];
-
     UAActionArguments *args = [UAActionArguments argumentsWithValue:@"auto"
                                                       withSituation:UASituationManualInvocation
                                                            metadata:@{UAActionMetadataPushPayloadKey: self.notification}];
 
-    // Should notify the delegate of the message
-    [[self.mockInboxDelegate expect] showMessageForID:self.notification[@"_uamid"]];
+    [[self.mockMessageCenter expect] displayMessageForID:self.notification[@"_uamid"]];
 
     // Perform the action
     [self verifyActionPerformWithActionArguments:args];
 
-    // Verify delegate calls
-    [self.mockInboxDelegate verify];
-}
-
-
-/**
- * Test the action performing with a message will fall back to displaying the
- * message in the default message center if no delegate is available.
- */
-- (void)testPerformWithMessageFallsBackDefaultMessageCenter {
-    // Set up the action arguments
-    UAActionArguments *args = [UAActionArguments argumentsWithValue:@"MCRAP"
-                                                      withSituation:UASituationManualInvocation];
-
-    // Should display in the default message center
-    [[self.mockMessageCenter expect] displayMessageForID:@"MCRAP"];
-
-    // Perform the action
-    [self verifyActionPerformWithActionArguments:args];
-    
-    // Verify it was displayed
-    [self.mockMessageCenter verify];
-}
-
-/**
- * Test the action performing with a message will fall back to displaying the
- * the default message center if no delegate is available.
- */
-- (void)testPerformWFallsBackDefaultMessageCenter {
-    // Set up the action arguments
-    UAActionArguments *args = [UAActionArguments argumentsWithValue:[NSNull null]
-                                                      withSituation:UASituationManualInvocation];
-
-    // Should display in the default message center
-    [[self.mockMessageCenter expect] display];
-
-    // Perform the action
-    [self verifyActionPerformWithActionArguments:args];
-
-    // Verify it was displayed
+    // Verify
     [self.mockMessageCenter verify];
 }
 

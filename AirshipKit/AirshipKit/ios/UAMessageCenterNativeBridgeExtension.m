@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 #import "UAMessageCenterNativeBridgeExtension.h"
-#import "UAInbox.h"
+#import "UAMessageCenter.h"
 #import "UAInboxMessageList.h"
 #import "UAUser.h"
 #import "UAInboxMessage.h"
@@ -13,18 +13,18 @@
 
 - (NSDictionary *)actionsMetadataForCommand:(UAJavaScriptCommand *)command webView:(WKWebView *)webView {
     NSMutableDictionary *metadata = [NSMutableDictionary dictionary];
-    UAInboxMessage *message = [[UAirship inbox].messageList messageForBodyURL:webView.URL];
+    UAInboxMessage *message = [[UAirship messageCenter].messageList messageForBodyURL:webView.URL];
     [metadata setValue:message.messageID forKey:UAActionMetadataInboxMessageIDKey];
     return [metadata copy];
 }
 
 - (void)extendJavaScriptEnvironment:(UAJavaScriptEnvironment *)js webView:(WKWebView *)webView {
-    UAInboxMessage *message = [[UAirship inbox].messageList messageForBodyURL:webView.URL];
+    UAInboxMessage *message = [[UAirship messageCenter].messageList messageForBodyURL:webView.URL];
     if (!message) {
         return;
     }
 
-    UAUserData *userData = [[UAirship inboxUser] getUserDataSync];
+    UAUserData *userData = [[UAirship messageCenter].user getUserDataSync];
     NSNumber *messageSentDateMS = nil;
     NSString *messageSentDate = nil;
     if (message.messageSent) {

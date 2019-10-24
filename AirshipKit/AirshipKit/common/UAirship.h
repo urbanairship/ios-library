@@ -39,10 +39,6 @@
 @class UAChannel;
 @class UAComponent;
 
-#if !TARGET_OS_TV   // Inbox not supported on tvOS
-@class UAInbox;
-#endif
-
 //---------------------------------------------------------------------------------------
 // UADeepLinkDelegate Protocol
 //---------------------------------------------------------------------------------------
@@ -219,20 +215,8 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
  */
 + (null_unspecified UAPush *)push;
 
-#if !TARGET_OS_TV   // Inbox not supported on tvOS
-/**
- * Returns the `UAInbox` instance. Provides access to the inbox messages.
- *
- * @return The `UAInbox` instance.
- */
-+ (null_unspecified UAInbox *)inbox;
+#if !TARGET_OS_TV
 
-/**
- * Returns the `UAUser` instance.
- *
- * @return The `UAUser` instance.
- */
-+ (null_unspecified UAUser *)inboxUser;
 
 /**
  * Returns the `UAInAppMessageManager` instance. Used for customizing

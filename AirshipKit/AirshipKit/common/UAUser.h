@@ -2,7 +2,6 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
-#import "UAComponent.h"
 #import "UAUserData.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -12,7 +11,7 @@ extern NSString * const UAUserCreatedNotification;
 /**
  * Primary interface for working with the application's associated Airship user.
  */
-@interface UAUser : UAComponent
+@interface UAUser : NSObject
 
 ///---------------------------------------------------------------------------------------
 /// @name User Properties

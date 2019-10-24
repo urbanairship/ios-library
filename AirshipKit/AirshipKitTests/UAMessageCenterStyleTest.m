@@ -39,8 +39,6 @@
 
     UAMessageCenterStyle *invalidStyle = [UAMessageCenterStyle styleWithContentsOfFile:@"Invalid-UAMessageCenterDefaultStyle"];
 
-    [UAirship messageCenter].style = invalidStyle;
-
     // the invalid style plist has one valid property - cellSeparatorColor, ensure this sets despite invalids
     XCTAssertNotNil(invalidStyle.cellSeparatorColor, @"cellSeparatorColor should be valid");
 

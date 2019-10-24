@@ -5,6 +5,7 @@
 #import "UAInboxUtils.h"
 #import "UAUser+Internal.h"
 #import "UAirship.h"
+#import "UAMessageCenter.h"
 
 @interface UAInboxMessage()
 @property (nonatomic, copy) NSString *messageID;
@@ -114,7 +115,7 @@
      WKWebView *webView = [[WKWebView alloc] initWithFrame:[UIScreen mainScreen].bounds];
      NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:self.messageBodyURL];
 
-     UAUserData *userData = [[UAirship inboxUser] getUserDataSync];
+     UAUserData *userData = [[UAirship messageCenter].user getUserDataSync];
      NSString *auth = [UAInboxUtils userAuthHeaderString:userData];
      [request setValue:auth forHTTPHeaderField:@"Authorization"];
 

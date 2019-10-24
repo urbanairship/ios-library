@@ -3,8 +3,7 @@
 import Foundation
 import AirshipKit
 
-class InboxDelegate : NSObject, UAInboxDelegate {
-
+class MessageCenterDelegate : NSObject, UAMessageCenterDisplayDelegate {
     var tabBarController : UITabBarController;
     var messageCenterViewController : MessageCenterViewController;
 
@@ -14,19 +13,23 @@ class InboxDelegate : NSObject, UAInboxDelegate {
         self.messageCenterViewController = self.tabBarController.viewControllers![appDelegate.MessageCenterTab] as! MessageCenterViewController;
     }
 
-    func showInbox() {
-        DispatchQueue.main.async {
-            let appDelegate = UIApplication.shared.delegate as! AppDelegate
-            self.tabBarController.selectedIndex = appDelegate.MessageCenterTab
-            self.messageCenterViewController.showInbox()
-        }
-    }
-
-    func showMessage(forID messageID: String) {
-        self.showInbox()
+    func displayMessageCenter(forMessageID messageID: String!, animated: Bool) {
+        self.displayMessageCenter(animated: animated)
         DispatchQueue.main.async {
             self.messageCenterViewController.displayMessageForID(messageID)
         }
+    }
+
+    func displayMessageCenter(animated: Bool) {
+        DispatchQueue.main.async {
+            let appDelegate = UIApplication.shared.delegate as! AppDelegate
+            self.tabBarController.selectedIndex = appDelegate.MessageCenterTab
+            self.messageCenterViewController.display()
+        }
+    }
+
+    func dismissMessageCenter(animated: Bool) {
+        // no-op
     }
 }
 

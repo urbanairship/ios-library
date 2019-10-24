@@ -56,6 +56,11 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, strong) NSDictionary *messageURLMap;
 
+/**
+ * Flag indicating whether the mesage list is enabled. Clear to disable. Set to enable.
+ */
+@property (nonatomic, assign) BOOL enabled;
+
 ///---------------------------------------------------------------------------------------
 /// @name Message List Internal Methods
 ///---------------------------------------------------------------------------------------
@@ -69,13 +74,13 @@ NS_ASSUME_NONNULL_BEGIN
  * Factory method for creating an Inbox Message List
  *
  * @param user The user.
- * @param client The internal inbox API client.
  * @param config The config.
+ * @param dataStore The data store.
  * @return An allocated UAInboxMessageList instance.
  */
 + (instancetype)messageListWithUser:(UAUser *)user
-                             client:(UAInboxAPIClient *)client
-                             config:(UARuntimeConfig *)config;
+                             config:(UARuntimeConfig *)config
+                          dataStore:(UAPreferenceDataStore *)dataStore;
 
 /**
  * Factory method for creating an Inbox Message List. Used for testing.

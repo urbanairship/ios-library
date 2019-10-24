@@ -4,11 +4,10 @@
 #import "UAUserData.h"
 #import "UAUserAPIClient+Internal.h"
 #import "UAChannel.h"
-#import "UAUtils+Internal.h"
+#import "UAUtils.h"
 #import "UARuntimeConfig.h"
-#import "UAPreferenceDataStore+Internal.h"
+#import "UAPreferenceDataStore.h"
 #import "UAirship.h"
-#import "UAComponent+Internal.h"
 
 NSString * const UAUserRegisteredChannelIDKey= @"UAUserRegisteredChannelID";
 NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.user_created";
@@ -34,7 +33,7 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
                 application:(UIApplication *)application
        backgroundDispatcher:(UADispatcher *)backgroundDispatcher
                 userDataDAO:(UAUserDataDAO *)userDataDAO {
-    self = [super initWithDataStore:dataStore];
+    self = [super init];
 
     if (self) {
         self.channel = channel;
@@ -165,19 +164,21 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
     } dispatcher:self.backgroundDispatcher];
 }
 
-- (void)onComponentEnableChange {
-    if (self.componentEnabled) {
+- (void)setEnabled:(BOOL)enabled {
+    _enabled = enabled;
+    self.apiClient.enabled = enabled;
+    if (enabled) {
         [self ensureUserUpToDate];
     }
 }
 
 /**
  * Performs either a create or update on the user depending on if the user data is available in the DAO. Perform registration
- * will no-op if the component is disabled, channelID is unavailable, or if a background task fails to create.
+ * will no-op if the user is disabled, channelID is unavailable, or if a background task fails to create.
  */
 - (void)performUserRegistration {
-    if (!self.componentEnabled) {
-        UA_LDEBUG(@"Skipping user registration, component disabled.");
+    if (!self.enabled) {
+        UA_LDEBUG(@"Skipping user registration, user disabled.");
         return;
     }
 

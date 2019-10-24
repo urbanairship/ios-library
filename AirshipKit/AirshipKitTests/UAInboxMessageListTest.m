@@ -1,7 +1,6 @@
 /* Copyright Airship and Contributors */
 
 #import "UABaseTest.h"
-#import "UAInbox.h"
 #import "UAInboxMessageList+Internal.h"
 #import "UAInboxAPIClient+Internal.h"
 #import "UAActionArguments+Internal.h"

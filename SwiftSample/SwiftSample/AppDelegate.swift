@@ -21,7 +21,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UARegistrationDelegate, U
     let DebugTab = 2;
 
     var window: UIWindow?
-    var inboxDelegate: InboxDelegate?
+    var messageCenterDelegate: MessageCenterDelegate?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
         self.failIfSimulator()
@@ -65,8 +65,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UARegistrationDelegate, U
         // UAirship.push()?.userPushNotificationsEnabled = true
 
         // Set a custom delegate for handling message center events
-        self.inboxDelegate = InboxDelegate(tabBarController: window!.rootViewController as! UITabBarController)
-        UAirship.inbox().delegate = self.inboxDelegate
+        self.messageCenterDelegate = MessageCenterDelegate(tabBarController: window!.rootViewController as! UITabBarController)
+        UAirship.messageCenter().displayDelegate = self.messageCenterDelegate
         UAirship.push().pushNotificationDelegate = pushHandler
         UAirship.push().registrationDelegate = self
         UAirship.shared().deepLinkDelegate = self
@@ -128,8 +128,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UARegistrationDelegate, U
             if self.window?.rootViewController is UITabBarController {
                 let messageCenterTab: UITabBarItem = (self.window!.rootViewController! as! UITabBarController).tabBar.items![self.MessageCenterTab]
 
-                if (UAirship.inbox().messageList.unreadCount > 0) {
-                    messageCenterTab.badgeValue = String(UAirship.inbox().messageList.unreadCount)
+                if (UAirship.messageCenter().messageList.unreadCount > 0) {
+                    messageCenterTab.badgeValue = String(UAirship.messageCenter().messageList.unreadCount)
                 } else {
                     messageCenterTab.badgeValue = nil
                 }
@@ -199,15 +199,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UARegistrationDelegate, U
             pathComponents.remove(at: 0)
             
             if ((pathComponents.count == 0) || (pathComponents[0] != "message")) {
-                inboxDelegate?.showInbox()
+                UAirship.messageCenter().display()
             } else {
                 // remove "message" from front of url
                 pathComponents.remove(at: 0)
-                var messageId = ""
+                var messageID = ""
                 if (pathComponents.count > 0) {
-                    messageId = pathComponents[0]
+                    messageID = pathComponents[0]
                 }
-                inboxDelegate?.showMessage(forID: messageId)
+                UAirship.messageCenter().displayMessage(forID: messageID)
             }
         case DebugStoryboardID:
             // switch to debug tab

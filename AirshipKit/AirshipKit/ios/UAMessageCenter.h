@@ -2,59 +2,84 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+#import "UAChannel.h"
+#import "UAExtendableChannelRegistration.h"
 
-@class UAInboxMessage;
+@class UADefaultMessageCenterUI;
+@class UAInboxMessageList;
 @class UAMessageCenterStyle;
-@class UARuntimeConfig;
+@class UAUser;
+
+/**
+ * Delegate protocol for receiving callbacks related to message center.
+ */
+@protocol UAMessageCenterDisplayDelegate <NSObject>
+
+@required
+
+/**
+ * Called when a message is requested to be displayed.
+ *
+ * @param messageID The message ID.
+ * @param animated Whether the transition should be animated.
+ */
+- (void)displayMessageCenterForMessageID:(NSString *)messageID animated:(BOOL)animated;
+
+/**
+ * Called when the message center is requested to be displayed.
+ *
+ * @param animated Whether the transition should be animated.
+ */
+- (void)displayMessageCenterAnimated:(BOOL)animated;
+
+/**
+ * Called when the message center is requested to be dismissed.
+ *
+ * @param animated Whether the transition should be animated.
+ */
+- (void)dismissMessageCenterAnimated:(BOOL)animated;
+
+@end
 
 /**
  * The UAMessageCenter class provides a default implementation of a
  * message center, as well as a high-level interface for its configuration and display.
  */
-@interface UAMessageCenter : NSObject
+@interface UAMessageCenter : UAComponent
 
 /**
  * The message scheme
  */
 extern NSString *const UAMessageDataScheme;
 
-///---------------------------------------------------------------------------------------
-/// @name Default Message Center Properties
-///---------------------------------------------------------------------------------------
-
-/**
- * The title of the message center.
- */
-@property (nonatomic, strong) NSString *title;
-
-/**
- * The style to apply to the default message center.
- */
-@property (nonatomic, strong) UAMessageCenterStyle *style;
-
-/**
- * An optional predicate for filtering messages.
- */
-@property (nonatomic, strong) NSPredicate *filter;
-
-/**
- * Disables 3D touching and long pressing on links in messages.
- */
-@property (nonatomic) BOOL disableMessageLinkPreviewAndCallouts;
 
 ///---------------------------------------------------------------------------------------
-/// @name Default Message Center Factory
+/// @name Message Center Properties
 ///---------------------------------------------------------------------------------------
 
 /**
- * Factory method for creating message center with style specified in a config.
- *
- * @return A Message Center instance initialized with the style specified in the provided config.
+ * Display delegate that can be used to provide a custom message center implementation.
  */
-+ (instancetype)messageCenterWithConfig:(UARuntimeConfig *)config;
+@property (nonatomic, weak) id<UAMessageCenterDisplayDelegate> displayDelegate;
+
+/**
+ * The default display if a `displayDelegate` is not set.
+ */
+@property (nonatomic, readonly) UADefaultMessageCenterUI *defaultUI;
+
+/**
+ * The list of messages.
+ */
+@property (nonatomic, readonly) UAInboxMessageList *messageList;
+
+/**
+ * The user.
+ */
+@property (nonatomic, readonly) UAUser *user;
+
 
 ///---------------------------------------------------------------------------------------
-/// @name Default Message Center Display
+/// @name Message Center Methods
 ///---------------------------------------------------------------------------------------
 
 /**
@@ -78,7 +103,7 @@ extern NSString *const UAMessageDataScheme;
 - (void)displayMessageForID:(NSString *)messageID animated:(BOOL)animated;
 
 /**
- * Display the given message without animation.
+ * Display the given message with animation.
  *
  * @pararm messageID The messageID of the message.
  */

@@ -36,6 +36,12 @@ const NSTimeInterval UATestExpectationTimeOut = 5;
     return mock;
 }
 
+- (id)strictMockForProtocol:(Protocol *)protocol {
+    id mock = OCMStrictProtocolMock(protocol);
+    [self addMock:mock];
+    return mock;
+}
+
 - (id)strictMockForClass:(Class)aClass {
     id mock = OCMStrictClassMock(aClass);
     [self addMock:mock];

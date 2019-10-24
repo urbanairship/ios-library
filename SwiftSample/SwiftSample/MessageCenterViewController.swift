@@ -7,11 +7,11 @@ import AirshipKit
 class MessageCenterViewController : UAMessageCenterSplitViewController {
 
     override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated);
-        self.style = UAirship.messageCenter().style
+        super.viewWillAppear(animated)
+        self.style = UAMessageCenterStyle(contentsOfFile: "MessageCenterStyle")
     }
 
-    func showInbox() {
+    func display() {
         self.listViewController.navigationController?.popToRootViewController(animated: true)
     }
     

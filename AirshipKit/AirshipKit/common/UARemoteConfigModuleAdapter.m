@@ -25,7 +25,7 @@ NSString * const UALocationClassName = @"UALocation";
 
     #if !TARGET_OS_TV  // Inbox and IAM not available on tvOS
     if ([moduleName isEqualToString:kUARemoteConfigModuleMessageCenter]) {
-        return @[[UAirship inbox], [UAirship inboxUser]];
+        return @[[UAirship messageCenter]];
     }
 
     if ([moduleName isEqualToString:kUARemoteConfigModuleInAppMessaging]) {

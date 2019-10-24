@@ -56,7 +56,15 @@ typedef void (^UAInboxMessageFetchCompletionHandler)(NSArray *);
     return self;
 }
 
-+ (instancetype)messageListWithUser:(UAUser *)user client:(UAInboxAPIClient *)client config:(UARuntimeConfig *)config {
++ (instancetype)messageListWithUser:(UAUser *)user
+                             config:(UARuntimeConfig *)config
+                          dataStore:(UAPreferenceDataStore *)dataStore {
+
+    UAInboxAPIClient *client = [UAInboxAPIClient clientWithConfig:config
+                                                          session:[UARequestSession sessionWithConfig:config]
+                                                             user:user
+                                                        dataStore:dataStore];
+
     UAInboxStore *inboxStore = [UAInboxStore storeWithName:[NSString stringWithFormat:kUACoreDataStoreName, config.appKey]];
 
     return [UAInboxMessageList messageListWithUser:user
@@ -484,6 +492,15 @@ typedef void (^UAInboxMessageFetchCompletionHandler)(NSArray *);
         builder.contentType = data.contentType;
         builder.messageList = self;
     }];
+}
+
+- (void)dealloc {
+    [self.client.session cancelAllRequests];
+}
+
+- (void)setEnabled:(BOOL)enabled {
+    _enabled = enabled;
+    self.client.enabled = enabled;
 }
 
 @end

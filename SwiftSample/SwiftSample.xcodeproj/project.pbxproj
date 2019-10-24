@@ -11,12 +11,12 @@
 		3C20762A225C1AA100C19D08 /* AirshipLocationKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3C207626225C1A8800C19D08 /* AirshipLocationKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		456156E622B6F8FE00A68ADA /* UITestUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 456156E522B6F8FE00A68ADA /* UITestUtils.swift */; };
 		45AF558122B562FE006CAE7F /* CoreUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45AF558022B562FE006CAE7F /* CoreUITests.swift */; };
-		45BE0C9822837B7A008302F1 /* UAMessageCenterDefaultStyle.plist in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0C9222834F6B008302F1 /* UAMessageCenterDefaultStyle.plist */; };
+		45BE0C9822837B7A008302F1 /* MessageCenterStyle.plist in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0C9222834F6B008302F1 /* MessageCenterStyle.plist */; };
 		49251DEE1D6F9C1500EED4BD /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49251DED1D6F9C1500EED4BD /* NotificationService.swift */; };
 		49251DF21D6F9C1500EED4BD /* SampleServiceExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 49251DEB1D6F9C1500EED4BD /* SampleServiceExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		493F51111C5B2C8D00B050A1 /* UAPushUI.strings in Resources */ = {isa = PBXBuildFile; fileRef = 493F510F1C5B2C8D00B050A1 /* UAPushUI.strings */; };
 		493F51131C5B2C9E00B050A1 /* MessageCenterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 493F51121C5B2C9E00B050A1 /* MessageCenterViewController.swift */; };
-		493F51291C5B423700B050A1 /* InboxDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 493F51281C5B423700B050A1 /* InboxDelegate.swift */; };
+		493F51291C5B423700B050A1 /* MessageCenterDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 493F51281C5B423700B050A1 /* MessageCenterDelegate.swift */; };
 		619A0D411BE81D7B00D9E863 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 619A0D401BE81D7B00D9E863 /* Images.xcassets */; };
 		61A672E81CA9F4B000BAF58A /* PushHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61A672E71CA9F4B000BAF58A /* PushHandler.swift */; };
 		61E30D8A1DDE33CB00B7EE28 /* AirshipAppExtensions.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 49251DE41D6F987600EED4BD /* AirshipAppExtensions.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -220,14 +220,14 @@
 		45AF557E22B562FE006CAE7F /* SwiftSampleUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SwiftSampleUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		45AF558022B562FE006CAE7F /* CoreUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreUITests.swift; sourceTree = "<group>"; };
 		45AF558222B562FE006CAE7F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		45BE0C9222834F6B008302F1 /* UAMessageCenterDefaultStyle.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = UAMessageCenterDefaultStyle.plist; sourceTree = "<group>"; };
+		45BE0C9222834F6B008302F1 /* MessageCenterStyle.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = MessageCenterStyle.plist; sourceTree = "<group>"; };
 		49251DDE1D6F987600EED4BD /* AirshipAppExtensions.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = AirshipAppExtensions.xcodeproj; path = ../AirshipAppExtensions/AirshipAppExtensions.xcodeproj; sourceTree = "<group>"; };
 		49251DEB1D6F9C1500EED4BD /* SampleServiceExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = SampleServiceExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		49251DED1D6F9C1500EED4BD /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
 		49251DEF1D6F9C1500EED4BD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		493F51101C5B2C8D00B050A1 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/UAPushUI.strings; sourceTree = "<group>"; };
 		493F51121C5B2C9E00B050A1 /* MessageCenterViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageCenterViewController.swift; sourceTree = "<group>"; };
-		493F51281C5B423700B050A1 /* InboxDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InboxDelegate.swift; sourceTree = "<group>"; };
+		493F51281C5B423700B050A1 /* MessageCenterDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageCenterDelegate.swift; sourceTree = "<group>"; };
 		619A0D401BE81D7B00D9E863 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		61A672E71CA9F4B000BAF58A /* PushHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PushHandler.swift; sourceTree = "<group>"; };
 		CC0E3A061D2DAA4900DAF1E5 /* SwiftSample.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = SwiftSample.entitlements; sourceTree = "<group>"; };
@@ -322,7 +322,7 @@
 		613420361BD6C09B00236A18 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				45BE0C9222834F6B008302F1 /* UAMessageCenterDefaultStyle.plist */,
+				45BE0C9222834F6B008302F1 /* MessageCenterStyle.plist */,
 				493F510E1C5B2C8D00B050A1 /* Localization */,
 				619A0D401BE81D7B00D9E863 /* Images.xcassets */,
 			);
@@ -363,7 +363,7 @@
 				CCDA35A81B8D233A00950AD5 /* HomeViewController.swift */,
 				61A672E71CA9F4B000BAF58A /* PushHandler.swift */,
 				493F51121C5B2C9E00B050A1 /* MessageCenterViewController.swift */,
-				493F51281C5B423700B050A1 /* InboxDelegate.swift */,
+				493F51281C5B423700B050A1 /* MessageCenterDelegate.swift */,
 				613420361BD6C09B00236A18 /* Resources */,
 				CCDA35AC1B8D233A00950AD5 /* Main.storyboard */,
 				CCDA35B11B8D233A00950AD5 /* LaunchScreen.storyboard */,
@@ -660,7 +660,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				45BE0C9822837B7A008302F1 /* UAMessageCenterDefaultStyle.plist in Resources */,
+				45BE0C9822837B7A008302F1 /* MessageCenterStyle.plist in Resources */,
 				CCDA35B31B8D233A00950AD5 /* LaunchScreen.storyboard in Resources */,
 				493F51111C5B2C8D00B050A1 /* UAPushUI.strings in Resources */,
 				CCDA35AE1B8D233A00950AD5 /* Main.storyboard in Resources */,
@@ -695,7 +695,7 @@
 			files = (
 				493F51131C5B2C9E00B050A1 /* MessageCenterViewController.swift in Sources */,
 				CCDA35A71B8D233A00950AD5 /* AppDelegate.swift in Sources */,
-				493F51291C5B423700B050A1 /* InboxDelegate.swift in Sources */,
+				493F51291C5B423700B050A1 /* MessageCenterDelegate.swift in Sources */,
 				CCDA35A91B8D233A00950AD5 /* HomeViewController.swift in Sources */,
 				61A672E81CA9F4B000BAF58A /* PushHandler.swift in Sources */,
 			);

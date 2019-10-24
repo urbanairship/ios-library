@@ -30,12 +30,12 @@
 #import "UALocationModuleLoaderFactory.h"
 
 #if !TARGET_OS_TV   // Inbox and other features not supported on tvOS
-#import "UAInbox+Internal.h"
 #import "UAChannelCapture+Internal.h"
-#import "UAMessageCenter.h"
+#import "UAMessageCenter+Internal.h"
 #import "UAInboxAPIClient+Internal.h"
 #import "UALegacyInAppMessaging+Internal.h"
 #import "UAInAppMessageManager+Internal.h"
+#import "UAInboxMessageList+Internal.h"
 #endif
 
 // Exceptions
@@ -159,26 +159,15 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
                                                                           inAppMessageManager:self.sharedInAppMessageManager];
         [components addObject:self.sharedLegacyInAppMessaging];
 
-        // Message center not supported on tvOS
-        self.sharedInboxUser = [UAUser userWithChannel:self.sharedChannel
-                                                config:self.config
-                                             dataStore:self.dataStore];
-        [components addObject:self.sharedInboxUser];
-
-        self.sharedInbox = [UAInbox inboxWithUser:self.sharedInboxUser config:self.config dataStore:self.dataStore];
-        [components addObject:self.sharedInbox];
-
         // UIPasteboard is not available in tvOS
         self.channelCapture = [UAChannelCapture channelCaptureWithConfig:self.config
                                                                  channel:self.sharedChannel
                                                     pushProviderDelegate:self.sharedPush
                                                                dataStore:self.dataStore];
 
-        if ([UAirship resources]) {
-            self.sharedMessageCenter = [UAMessageCenter messageCenterWithConfig:self.config];
-        } else {
-            UA_LWARN(@"Unable to initialize default message center: AirshipResources is missing");
-        }
+        self.sharedMessageCenter = [UAMessageCenter messageCenterWithDataStore:self.dataStore
+                                                                        config:self.config
+                                                                       channel:self.sharedChannel];
 #endif
 
         NSMutableArray<id<UAModuleLoader>> *loaders = [NSMutableArray array];
@@ -287,7 +276,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
             [sharedAirship_.sharedChannel reset];
 #if !TARGET_OS_TV   // Inbox not supported on tvOS
             if (runtimeConfig.clearUserOnAppRestore) {
-                [sharedAirship_.sharedInboxUser resetUser];
+                [sharedAirship_.sharedMessageCenter.user resetUser];
             }
 #endif
         }
@@ -312,7 +301,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
             // Temp workaround for MB-1047 where model changes to the inbox
             // will drop the inbox and the last-modified-time will prevent
             // repopulating the messages.
-            [sharedAirship_.sharedInbox.client clearLastModifiedTime];
+            [sharedAirship_.sharedMessageCenter.messageList.client clearLastModifiedTime];
 #endif
 
             if (previousVersion) {
@@ -419,14 +408,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
     return sharedAirship_.sharedPush;
 }
 
-#if !TARGET_OS_TV   // Inbox not supported on tvOS
-+ (UAInbox *)inbox {
-    return sharedAirship_.sharedInbox;
-}
-
-+ (UAUser *)inboxUser {
-    return sharedAirship_.sharedInboxUser;
-}
+#if !TARGET_OS_TV   // Message Center not supported on tvOS
 
 + (UALegacyInAppMessaging *)legacyInAppMessaging {
     return sharedAirship_.sharedLegacyInAppMessaging;

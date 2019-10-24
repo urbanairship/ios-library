@@ -9,6 +9,7 @@
 #import "UAUserData+Internal.h"
 #import "UATestDate.h"
 #import "UAAttributePendingMutations+Internal.h"
+
 @interface UAChannelTest : UABaseTest
 @property(nonatomic, strong) id mockTagGroupsRegistrar;
 @property(nonatomic, strong) id mockAttributeRegistrar;

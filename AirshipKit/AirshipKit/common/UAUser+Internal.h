@@ -63,6 +63,11 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)resetUser;
 
+/**
+ * Flag indicating whether the user is enabled. Clear to disable. Set to enable.
+ */
+@property (nonatomic, assign) BOOL enabled;
+
 @end
 
 NS_ASSUME_NONNULL_END

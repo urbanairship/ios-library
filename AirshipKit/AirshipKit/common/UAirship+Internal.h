@@ -39,15 +39,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) UAPush *sharedPush;
 
 #if !TARGET_OS_TV   // Inbox not supported on tvOS
-/**
- * The inbox user.
- */
-@property (nonatomic, strong) UAUser *sharedInboxUser;
-
-/**
- * The inbox.
- */
-@property (nonatomic, strong) UAInbox *sharedInbox;
 
 /**
  * The legacy in-app messaging manager.
