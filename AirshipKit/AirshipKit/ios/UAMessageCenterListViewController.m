@@ -184,6 +184,9 @@
     
     // get initial list of messages in the inbox
     [self copyMessages];
+    
+    // create a messageViewController
+    [self createMessageViewController];
 
     // watch for changes to the message list
     [[NSNotificationCenter defaultCenter] addObserver:self
@@ -597,11 +600,6 @@
         return;
     }
     
-    // create a messageViewController if we don't already have one
-    if (!self.messageViewController) {
-        [self createMessageViewController];
-    }
-
     [self.messageViewController loadMessageForID:message.messageID onlyIfChanged:YES onError:errorCompletion];
 
     if (message) {
@@ -640,11 +638,6 @@
 
     // message is not available in the device's inbox
     self.selectedIndexPath = nil;
-
-    // create a messageViewController if we don't already have one
-    if (!self.messageViewController) {
-        [self createMessageViewController];
-    }
     
     [self.messageViewController loadMessageForID:messageID onlyIfChanged:NO onError:errorCompletion];
     
@@ -672,7 +665,10 @@
         }
     };
     
-    self.messageViewController = [[UAMessageCenterMessageViewController alloc] initWithNibName:@"UAMessageCenterMessageViewController" bundle:[UAirship resources]];
+    // create a messageViewController if we don't already have one
+    if (!self.messageViewController) {
+            self.messageViewController = [[UAMessageCenterMessageViewController alloc] initWithNibName:@"UAMessageCenterMessageViewController" bundle:[UAirship resources]];
+    }
     self.messageViewController.closeBlock = closeBlock;
 }
 

@@ -135,6 +135,7 @@ typedef enum MessageState {
     }
     
     self.isVisible = NO;
+    
 }
 
 - (void)viewWillAppear:(BOOL)animated {
