@@ -149,7 +149,7 @@ NS_ASSUME_NONNULL_BEGIN
  * Cancels an in-app message via its schedule identifier.
  *
  * @param scheduleID The schedule ID for the message to be canceled.
- * @param completionHandler A completion handler called with the schedule that was canceled.
+ * @param completionHandler A completion handler called with the schedule that was canceled, or nil if the schedule was not found.
  */
 - (void)cancelScheduleWithID:(NSString *)scheduleID completionHandler:(nullable void (^)(UASchedule * _Nullable))completionHandler;
 

@@ -216,7 +216,7 @@ typedef NS_ENUM(NSInteger, UAAutomationScheduleReadyResult) {
  * Cancels a schedule with the given identifier.
  *
  * @param identifier A schedule identifier.
- * @param completionHandler A completion handler called with the schedule that was canceled, or nil if it was not found.
+ * @param completionHandler A completion handler called with the schedule that was canceled, or nil if the schedule was not found.
 */
 - (void)cancelScheduleWithID:(NSString *)identifier completionHandler:(nullable void (^)(UASchedule * _Nullable))completionHandler;
 

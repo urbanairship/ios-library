@@ -230,7 +230,7 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
     } forDisplayType:UAInAppMessageDisplayTypeHTML];
 }
 
-- (void)getScheduleWithID:(NSString *)identifier completionHandler:(void (^)(UASchedule * __nullable))completionHandler {
+- (void)getScheduleWithID:(NSString *)identifier completionHandler:(void (^)(UASchedule * _Nullable))completionHandler {
     [self.automationEngine getScheduleWithID:identifier completionHandler:completionHandler];
 }
 
