@@ -197,8 +197,8 @@ NSString * const UAInAppMessagesScheduledNewUserCutoffTimeKey = @"UAInAppRemoteD
 
                 builder.metadata = [NSJSONSerialization stringWithObject:thisPayloadMetadata];
 
-                // Since we cancel a schedule by setting the end time to the distant past, we need to reset it back to distant future
-                // if the edits/schedule does not define an end time.
+                /* Since we cancel a schedule by setting the end time to the payload's last modified timestamp,
+                we need to reset it back to distant future if the edits do not define an end time. */
                 if (!builder.end) {
                     builder.end = [NSDate distantFuture];
                 }
@@ -227,13 +227,12 @@ NSString * const UAInAppMessagesScheduledNewUserCutoffTimeKey = @"UAInAppRemoteD
     [deletedMessageIDs removeObjectsInArray:messageIDs];
 
     if (deletedMessageIDs.count) {
-        // To cancel, we need to set the end time to distant past. To avoid validation error where
-        // start needs to be equal or before the end time, we also need to set the start.
-        // If the schedule comes back, the edits will reapply the start time from the schedule
-        // if it is set.
+        /* To cancel, set the end time to the payload's last modified timestamp. To avoid validation errors,
+         The start must be equal to or before the end time. If the schedule comes back, we will reset the start and end time
+         from the schedule edits. */
         UAInAppMessageScheduleEdits *edits = [UAInAppMessageScheduleEdits editsWithBuilderBlock:^(UAInAppMessageScheduleEditsBuilder *builder) {
-            builder.end = [NSDate distantPast];
-            builder.start = [NSDate distantPast];
+            builder.end = thisPayloadTimeStamp;
+            builder.start = thisPayloadTimeStamp;
         }];
 
         for (NSString *messageID in deletedMessageIDs) {
