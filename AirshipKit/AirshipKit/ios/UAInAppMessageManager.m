@@ -230,7 +230,7 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
     } forDisplayType:UAInAppMessageDisplayTypeHTML];
 }
 
-- (void)getScheduleWithID:(NSString *)identifier completionHandler:(void (^)(UASchedule *))completionHandler {
+- (void)getScheduleWithID:(NSString *)identifier completionHandler:(void (^)(UASchedule * __nullable))completionHandler {
     [self.automationEngine getScheduleWithID:identifier completionHandler:completionHandler];
 }
 
@@ -281,12 +281,20 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
     }
 }
 
+- (void)cancelMessagesWithID:(NSString *)identifier completionHandler:(nullable void (^)(NSArray <UASchedule *> *))completionHandler {
+    [self.automationEngine cancelSchedulesWithGroup:identifier completionHandler:completionHandler];
+}
+
 - (void)cancelMessagesWithID:(NSString *)identifier {
-    [self.automationEngine cancelSchedulesWithGroup:identifier];
+    [self cancelMessagesWithID:identifier completionHandler:nil];
+}
+
+- (void)cancelScheduleWithID:(NSString *)scheduleID completionHandler:(nullable void (^)(UASchedule * _Nullable))completionHandler {
+    [self.automationEngine cancelScheduleWithID:scheduleID completionHandler:completionHandler];
 }
 
 - (void)cancelScheduleWithID:(NSString *)scheduleID {
-    [self.automationEngine cancelScheduleWithID:scheduleID];
+    [self cancelScheduleWithID:scheduleID completionHandler:nil];
 }
 
 - (void)editScheduleWithID:(NSString *)identifier

@@ -139,18 +139,35 @@ NS_ASSUME_NONNULL_BEGIN
                        completionHandler:(void (^)(NSArray <UASchedule *> *))completionHandler;
 
 /**
- * Cancels an in-app message via its schedule info.
+ * Cancels an in-app message via its schedule identifier.
  *
  * @param scheduleID The schedule ID for the message to be canceled.
  */
 - (void)cancelScheduleWithID:(NSString *)scheduleID;
 
 /**
- * Cancels in-app messages with the spcified message ID.
+ * Cancels an in-app message via its schedule identifier.
+ *
+ * @param scheduleID The schedule ID for the message to be canceled.
+ * @param completionHandler A completion handler called with the schedule that was canceled.
+ */
+- (void)cancelScheduleWithID:(NSString *)scheduleID completionHandler:(nullable void (^)(UASchedule * _Nullable))completionHandler;
+
+/**
+ * Cancels in-app messages with the specified group identifier.
  *
  * @param identifier The message ID.
  */
 - (void)cancelMessagesWithID:(NSString *)identifier;
+
+/**
+ * Cancels in-app messages with the specified group identifier.
+ *
+ * @param identifier The message ID.
+ * @param completionHandler A completion handler called with an array of message schedules that were canceled.
+ * If no messages matching the provided identifier are found, this array will be empty.
+ */
+- (void)cancelMessagesWithID:(NSString *)identifier completionHandler:(nullable void (^)(NSArray <UASchedule *> *))completionHandler;
 
 /**
  * Gets schedules with the provided identifier.
@@ -158,7 +175,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param identifier The scheduler identifier corresponding to the in-app message to be fetched.
  * @param completionHandler The completion handler to be called when fetch operation completes.
  */
-- (void)getScheduleWithID:(NSString *)identifier completionHandler:(void (^)(UASchedule *))completionHandler;
+- (void)getScheduleWithID:(NSString *)identifier completionHandler:(void (^)(UASchedule * _Nullable))completionHandler;
 
 /**
  * Gets schedules whose group is the provided message ID.

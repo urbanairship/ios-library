@@ -89,19 +89,17 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
 
     if (newMessageID.length && [newMessageID isEqualToString:pendingMessageID]) {
         UA_WEAKIFY(self);
-        [self.inAppMessageManager getSchedulesWithMessageID:pendingMessageID completionHandler:^(NSArray<UASchedule *> *schedules) {
-            UA_STRONGIFY(self);
+        [self.inAppMessageManager cancelMessagesWithID:pendingMessageID completionHandler:^(NSArray<UASchedule *>* _Nullable schedules) {
+            UA_STRONGIFY(self)
             if (schedules.count) {
                 UA_LTRACE(@"The in-app message delivery push was directly launched for message: %@", pendingMessageID);
-                [self.inAppMessageManager cancelMessagesWithID:pendingMessageID];
                 self.pendingMessageID = nil;
 
                 UAInAppMessageResolutionEvent *event = [UAInAppMessageResolutionEvent legacyDirectOpenEventWithMessageID:pendingMessageID];
                 [self.analytics addEvent:event];
-            } else {
-                self.pendingMessageID = nil;
             }
 
+            self.pendingMessageID = nil;
             completionHandler();
         }];
     } else {

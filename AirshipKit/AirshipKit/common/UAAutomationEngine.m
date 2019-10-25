@@ -269,12 +269,26 @@
     }];
 }
 
-- (void)cancelScheduleWithID:(NSString *)identifier {
-    [self.automationStore getSchedule:identifier completionHandler:^(UAScheduleData * _Nonnull scheduleData) {
+- (void)cancelScheduleWithID:(NSString *)identifier completionHandler:(nullable void (^)(UASchedule * _Nullable))completionHandler {
+    __block UASchedule *schedule;
+
+    [self.automationStore getSchedule:identifier completionHandler:^(UAScheduleData * _Nullable scheduleData) {
         [self notifyDelegateOnScheduleCancelled:scheduleData];
+        schedule = [self scheduleFromData:scheduleData];
+
+        if (completionHandler) {
+            [self.dispatcher dispatchAsync:^{
+                completionHandler(schedule);
+            }];
+        }
     }];
+
     [self.automationStore deleteSchedule:identifier];
     [self cancelTimersWithIdentifiers:[NSSet setWithArray:@[identifier]]];
+}
+
+- (void)cancelScheduleWithID:(NSString *)identifier {
+    [self cancelScheduleWithID:identifier completionHandler:nil];
 }
 
 - (void)cancelAll {
@@ -283,18 +297,33 @@
             [self notifyDelegateOnScheduleCancelled:scheduleData];
         }
     }];
+
     [self.automationStore deleteAllSchedules];
     [self cancelTimers];
 }
 
-- (void)cancelSchedulesWithGroup:(NSString *)group {
+- (void)cancelSchedulesWithGroup:(NSString *)group completionHandler:(nullable void (^)(NSArray <UASchedule *> *))completionHandler {
+    __block NSMutableArray<UASchedule *> *schedules = [NSMutableArray array];
+
     [self.automationStore getSchedules:group completionHandler:^(NSArray<UAScheduleData *> * _Nonnull scheduleDatas) {
         for (UAScheduleData *scheduleData in scheduleDatas) {
             [self notifyDelegateOnScheduleCancelled:scheduleData];
+            [schedules addObject:[self scheduleFromData:scheduleData]];
+        }
+
+        if (completionHandler) {
+            [self.dispatcher dispatchAsync:^{
+                completionHandler(schedules);
+            }];
         }
     }];
+
     [self.automationStore deleteSchedules:group];
     [self cancelTimersWithGroup:group];
+}
+
+- (void)cancelSchedulesWithGroup:(NSString *)group {
+    [self cancelSchedulesWithGroup:group completionHandler:nil];
 }
 
 - (void)getScheduleWithID:(NSString *)identifier completionHandler:(void (^)(UASchedule *))completionHandler {

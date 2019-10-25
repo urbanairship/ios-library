@@ -113,15 +113,13 @@
 
     [[self.mockAnalytics expect] addEvent:[OCMArg any]];
 
-    [[[self.mockInAppMessageManager stub] andDo:^(NSInvocation *invocation) {
+    [[[self.mockInAppMessageManager expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:3];
-        void (^completionHandler)(NSArray<UASchedule *> *schedules) = (__bridge void(^)(NSArray<UASchedule *> *))arg;
+        void (^completionHandler)(NSArray<UASchedule *>* _Nullable) = (__bridge void(^)(NSArray<UASchedule *>* _Nullable))arg;
         UASchedule *dummySchedule = [UASchedule scheduleWithIdentifier:@"foo" info:[UAScheduleInfo new] metadata:@{}];
         completionHandler(@[dummySchedule]);
-    }] getSchedulesWithMessageID:[OCMArg any] completionHandler:[OCMArg any]];
-
-    [[self.mockInAppMessageManager expect] cancelMessagesWithID:messageID];
+    }] cancelMessagesWithID:messageID completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *testExpectation = [self expectationWithDescription:@"completion handler called"];
     [self.inAppMessaging receivedNotificationResponse:response completionHandler:^{
