@@ -1,7 +1,5 @@
 /* Copyright Airship and Contributors */
 #import "UAirship+Internal.h"
-
-#import "UAUser+Internal.h"
 #import "UAAnalytics+Internal.h"
 #import "UAUtils+Internal.h"
 #import "UAKeychainUtils+Internal.h"
@@ -23,18 +21,21 @@
 #import "UATagGroupsRegistrar+Internal.h"
 #import "UATagGroupsMutationHistory+Internal.h"
 #import "UAChannel+Internal.h"
-#import "UAChannelRegistrar+Internal.h"
 #import "UAAppStateTrackerFactory+Internal.h"
 
 #import "UALocationModuleLoaderFactory.h"
 #import "UAAutomationModuleLoaderFactory.h"
 
 #if !TARGET_OS_TV   // Inbox and other features not supported on tvOS
-#import "UAChannelCapture+Internal.h"
-#import "UAMessageCenter+Internal.h"
-#import "UAInboxAPIClient+Internal.h"
-#import "UAInboxMessageList+Internal.h"
+#import "UAMessageCenterModuleLoaderFactory.h"
 #endif
+
+#if !TARGET_OS_TV
+#import "UAChannelCapture+Internal.h"
+#endif
+
+// Notifications
+NSString * const UADeviceIDChangedNotification = @"com.urbanairship.device_id_changed";
 
 // Exceptions
 NSString * const UAirshipTakeOffBackgroundThreadException = @"UAirshipTakeOffBackgroundThreadException";
@@ -45,6 +46,7 @@ NSString * const UALibraryVersion = @"com.urbanairship.library_version";
 // Optional components
 NSString * const UALocationModuleLoaderClassName = @"UALocationModuleLoader";
 NSString * const UAAutomationModuleLoaderClassName = @"UAAutomationModuleLoader";
+NSString * const UAMessageCenterModuleLoaderClassName = @"UAMessageCenterModuleLoader";
 
 static UAirship *sharedAirship_;
 
@@ -141,16 +143,12 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         self.sharedRemoteConfigManager = [UARemoteConfigManager remoteConfigManagerWithRemoteDataManager:self.sharedRemoteDataManager
                                                                                       applicationMetrics:self.applicationMetrics];
 
-#if !TARGET_OS_TV   // IAM not supported on tvOS
+#if !TARGET_OS_TV
         // UIPasteboard is not available in tvOS
         self.channelCapture = [UAChannelCapture channelCaptureWithConfig:self.config
                                                                  channel:self.sharedChannel
                                                     pushProviderDelegate:self.sharedPush
                                                                dataStore:self.dataStore];
-
-        self.sharedMessageCenter = [UAMessageCenter messageCenterWithDataStore:self.dataStore
-                                                                        config:self.config
-                                                                       channel:self.sharedChannel];
 #endif
 
         NSMutableArray<id<UAModuleLoader>> *loaders = [NSMutableArray array];
@@ -168,6 +166,13 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
                                                                            tagGroupsHistory:tagGroupsMutationHistory];
         if (automationLoader) {
             [loaders addObject:automationLoader];
+        }
+
+        id<UAModuleLoader> messageCenterLoader = [UAirship messageCenterLoaderWithDataStore:self.dataStore
+                                                                                     config:self.config
+                                                                                    channel:self.sharedChannel];
+        if (messageCenterLoader) {
+            [loaders addObject:messageCenterLoader];
         }
 
         for (id<UAModuleLoader> loader in loaders) {
@@ -267,20 +272,13 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 
     [UAUtils getDeviceID:^(NSString *currentDeviceID) {
         NSString *previousDeviceID = [dataStore stringForKey:@"deviceId"];
-
         if (previousDeviceID && ![previousDeviceID isEqualToString:currentDeviceID]) {
             // Device ID changed since the last open. Most likely due to an app restore
             // on a different device.
             UA_LDEBUG(@"Device ID changed.");
-
-            [sharedAirship_.sharedChannel reset];
-#if !TARGET_OS_TV   // Inbox not supported on tvOS
-            if (runtimeConfig.clearUserOnAppRestore) {
-                [sharedAirship_.sharedMessageCenter.user resetUser];
-            }
-#endif
+            [[NSNotificationCenter defaultCenter] postNotificationName:UADeviceIDChangedNotification
+                                                                object:nil];
         }
-
         // Save the Device ID to the data store to detect when it changes
         [dataStore setObject:currentDeviceID forKey:@"deviceId"];
     } dispatcher:[UADispatcher mainDispatcher]];
@@ -296,14 +294,6 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         NSString *previousVersion = [sharedAirship_.dataStore stringForKey:UALibraryVersion];
         if (![[UAirshipVersion get] isEqualToString:previousVersion]) {
             [dataStore setObject:[UAirshipVersion get] forKey:UALibraryVersion];
-
-#if !TARGET_OS_TV   // Inbox not supported on tvOS
-            // Temp workaround for MB-1047 where model changes to the inbox
-            // will drop the inbox and the last-modified-time will prevent
-            // repopulating the messages.
-            [sharedAirship_.sharedMessageCenter.messageList.client clearLastModifiedTime];
-#endif
-
             if (previousVersion) {
                 UA_LINFO(@"Airship library version changed from %@ to %@.", previousVersion, [UAirshipVersion get]);
             }
@@ -408,14 +398,6 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
     return sharedAirship_.sharedPush;
 }
 
-#if !TARGET_OS_TV   // Message Center not supported on tvOS
-
-+ (UAMessageCenter *)messageCenter {
-    return sharedAirship_.sharedMessageCenter;
-}
-
-#endif
-
 + (UANamedUser *)namedUser {
     return sharedAirship_.sharedNamedUser;
 }
@@ -495,7 +477,22 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
     return self.componentClassMap[className];
 }
 
-+ (id<UAModuleLoader>)locationLoaderWithDataStore:(UAPreferenceDataStore *)dataStore {
+
++ (nullable id<UAModuleLoader>)messageCenterLoaderWithDataStore:(UAPreferenceDataStore *)dataStore
+                                                config:(UARuntimeConfig *)config
+                                               channel:(UAChannel<UAExtendableChannelRegistration> *)channel {
+#if !TARGET_OS_TV   // MC not supported on tvOS
+    Class cls = NSClassFromString(UAMessageCenterModuleLoaderClassName);
+    if ([cls conformsToProtocol:@protocol(UAMessageCenterModuleLoaderFactory)]) {
+        return [cls messageCenterModuleLoaderWithDataStore:dataStore config:config channel:channel];
+    }
+#endif
+
+    return nil;
+}
+
+
++ (nullable id<UAModuleLoader>)locationLoaderWithDataStore:(UAPreferenceDataStore *)dataStore {
     Class cls = NSClassFromString(UALocationModuleLoaderClassName);
     if ([cls conformsToProtocol:@protocol(UALocationModuleLoaderFactory)]) {
         return [cls locationModuleLoaderWithDataStore:dataStore];
@@ -503,7 +500,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
     return nil;
 }
 
-+ (id<UAModuleLoader>)automationModuleLoaderWithDataStore:(UAPreferenceDataStore *)dataStore
++ (nullable id<UAModuleLoader>)automationModuleLoaderWithDataStore:(UAPreferenceDataStore *)dataStore
                                                    config:(UARuntimeConfig *)config
                                                   channel:(UAChannel *)channel
                                                 analytics:(UAAnalytics *)analytics

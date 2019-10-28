@@ -6,10 +6,6 @@
 #import <UIKit/UIKit.h>
 #import <SystemConfiguration/SCNetworkReachability.h>
 
-#if !TARGET_OS_TV   // Inbox not supported on tvOS
-#import "UAUserData.h"
-#endif
-
 NS_ASSUME_NONNULL_BEGIN
 
 #define kUAConnectionTypeNone @"none"

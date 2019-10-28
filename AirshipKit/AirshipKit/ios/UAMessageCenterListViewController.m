@@ -364,7 +364,7 @@
             [CATransaction commit];
         };
 
-        [[UAirship messageCenter].messageList retrieveMessageListWithSuccessBlock:retrieveMessageCompletionBlock
+        [[UAMessageCenter shared].messageList retrieveMessageListWithSuccessBlock:retrieveMessageCompletionBlock
                                                                  withFailureBlock:retrieveMessageCompletionBlock];
     } else {
         self.refreshControlAnimating = NO;
@@ -624,14 +624,14 @@
         }
         
         // refresh message list
-        [[UAirship messageCenter].messageList retrieveMessageListWithSuccessBlock:nil
+        [[UAMessageCenter shared].messageList retrieveMessageListWithSuccessBlock:nil
                                                                  withFailureBlock:nil];
     }];
 }
 
 - (void)displayMessageForID:(NSString *)messageID onError:(void (^)(void))errorCompletion {
     // See if the message is available on the device
-    UAInboxMessage *message = [[UAirship messageCenter].messageList messageForID:messageID];
+    UAInboxMessage *message = [[UAMessageCenter shared].messageList messageForID:messageID];
     if (message) {
         [self displayMessage:message onError:errorCompletion];
         return;
@@ -722,7 +722,7 @@
 
     self.navigationItem.leftBarButtonItem.enabled = NO;
 
-    if ([UAirship messageCenter].messageList.isBatchUpdating) {
+    if ([UAMessageCenter shared].messageList.isBatchUpdating) {
         return;
     }
 
@@ -748,7 +748,7 @@
     
     for (NSString *messageID in self.selectedMessageIDs) {
         // Add message by ID
-        UAInboxMessage *selectedMessage = [[UAirship messageCenter].messageList messageForID:messageID];
+        UAInboxMessage *selectedMessage = [[UAMessageCenter shared].messageList messageForID:messageID];
         if (selectedMessage) {
             [selectedMessages addObject:selectedMessage];
         }
@@ -758,12 +758,12 @@
 
     UA_WEAKIFY(self);
     if (sender == self.markAsReadButtonItem) {
-        [[UAirship messageCenter].messageList markMessagesRead:selectedMessages completionHandler:^{
+        [[UAMessageCenter shared].messageList markMessagesRead:selectedMessages completionHandler:^{
             UA_STRONGIFY(self)
             [self refreshAfterBatchUpdate];
         }];
     } else {
-        [[UAirship messageCenter].messageList markMessagesDeleted:selectedMessages completionHandler:^{
+        [[UAMessageCenter shared].messageList markMessagesDeleted:selectedMessages completionHandler:^{
             UA_STRONGIFY(self)
             [self refreshAfterBatchUpdate];
         }];
@@ -789,7 +789,7 @@
             NSUInteger unreadCountInSelection = [self countOfUnreadMessagesInIndexPaths:strongMessageTable.indexPathsForSelectedRows];
             self.markAsReadButtonItem.title = [NSString stringWithFormat:@"%@ (%lu)", markReadStr, (unsigned long)unreadCountInSelection];
 
-            if ([UAirship messageCenter].messageList.isBatchUpdating) {
+            if ([UAMessageCenter shared].messageList.isBatchUpdating) {
                 self.deleteItem.enabled = NO;
                 self.markAsReadButtonItem.enabled = NO;
             } else {
@@ -815,9 +815,9 @@
 
 - (void)copyMessages {
     if (self.filter) {
-        self.messages = [NSArray arrayWithArray:[[UAirship messageCenter].messageList.messages filteredArrayUsingPredicate:self.filter]];
+        self.messages = [NSArray arrayWithArray:[[UAMessageCenter shared].messageList.messages filteredArrayUsingPredicate:self.filter]];
     } else {
-        self.messages = [NSArray arrayWithArray:[UAirship messageCenter].messageList.messages];
+        self.messages = [NSArray arrayWithArray:[UAMessageCenter shared].messageList.messages];
     }
 }
 
@@ -867,7 +867,7 @@
     
     if (message) {
         UA_WEAKIFY(self);
-       [[UAirship messageCenter].messageList markMessagesDeleted:@[message] completionHandler:^{
+       [[UAMessageCenter shared].messageList markMessagesDeleted:@[message] completionHandler:^{
            UA_STRONGIFY(self)
            [self refreshAfterBatchUpdate];
         }];
@@ -986,7 +986,7 @@
             self.selectedMessage = nil;
             self.selectedIndexPath = nil;
             [self.messageTable deselectRowAtIndexPath:indexPath animated:NO];
-            [[UAirship messageCenter].messageList retrieveMessageListWithSuccessBlock:nil withFailureBlock:nil];
+            [[UAMessageCenter shared].messageList retrieveMessageListWithSuccessBlock:nil withFailureBlock:nil];
         }];
     }
 }

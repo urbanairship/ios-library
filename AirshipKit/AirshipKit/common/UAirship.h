@@ -70,6 +70,11 @@ NS_ASSUME_NONNULL_BEGIN
 extern NSString * const UAirshipTakeOffBackgroundThreadException;
 
 /**
+ * Internal device ID changed notificaiton.
+ */
+extern NSString * const UADeviceIDChangedNotification;
+
+/**
  * UAirship manages the shared state for all Airship services. [UAirship takeOff:] should be
  * called from within your application delegate's `application:didFinishLaunchingWithOptions:` method
  * to initialize the shared instance.
@@ -214,16 +219,6 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
  * @return The `UAPush` instance.
  */
 + (null_unspecified UAPush *)push;
-
-#if !TARGET_OS_TV
-
-/**
- * Returns the default `UAMessageCenter` instance. Used for customizing
- * and displaying the default message center.
- */
-+ (null_unspecified UAMessageCenter *)messageCenter;
-
-#endif
 
 /**
  * Returns the `UANamedUser` instance.

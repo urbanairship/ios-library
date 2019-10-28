@@ -14,7 +14,6 @@
 @interface UAMessageCenterNativeBridgeExtensionTest : UABaseTest
 @property (nonatomic, strong) UAMessageCenterNativeBridgeExtension *extension;
 
-@property (nonatomic, strong) id mockAirship;
 @property (nonatomic, strong) id mockMessageList;
 @property (nonatomic, strong) id mockUser;
 @property (nonatomic, strong) id mockMessageCenter;
@@ -37,11 +36,7 @@
     self.mockMessageList = [self mockForClass:[UAInboxMessageList class]];
     [[[self.mockMessageCenter stub] andReturn:self.mockMessageList] messageList];
     [[[self.mockMessageCenter stub] andReturn:self.mockUser] user];
-
-    // Mock Airship
-    self.mockAirship = [self mockForClass:[UAirship class]];
-    [UAirship setSharedAirship:self.mockAirship];
-    [[[self.mockAirship stub] andReturn:self.mockMessageCenter] messageCenter];
+    [[[self.mockMessageCenter stub] andReturn:self.mockMessageCenter] shared];
 }
 
 /**

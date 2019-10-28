@@ -124,6 +124,11 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
                                 selector:@selector(applicationBackgroundRefreshStatusChanged)
                                     name:UIApplicationBackgroundRefreshStatusDidChangeNotification
                                   object:nil];
+
+    [self.notificationCenter addObserver:self
+                                selector:@selector(resetChannel)
+                                    name:UADeviceIDChangedNotification
+                                  object:nil];
 }
 
 - (void)reset {

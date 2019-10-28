@@ -14,6 +14,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+
 ///---------------------------------------------------------------------------------------
 /// @name Airship Internal Properties
 ///---------------------------------------------------------------------------------------
@@ -29,6 +30,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) NSArray<UAComponent *> *components;
 @property (nonatomic, copy) NSDictionary<NSString *, UAComponent *> *componentClassMap;
 
+
 /**
  * The channel
  */
@@ -38,15 +40,6 @@ NS_ASSUME_NONNULL_BEGIN
  * The push manager.
  */
 @property (nonatomic, strong) UAPush *sharedPush;
-
-#if !TARGET_OS_TV   // Inbox not supported on tvOS
-
-/**
- * The default message center.
- */
-@property (nonatomic, strong) UAMessageCenter *sharedMessageCenter;
-
-#endif
 
 /**
  * The named user.

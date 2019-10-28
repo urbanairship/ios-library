@@ -2,7 +2,6 @@
 
 #import "UAUtils.h"
 #import "UADispatcher+Internal.h"
-#import "UAUserData.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

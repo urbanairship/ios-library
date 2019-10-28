@@ -66,7 +66,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UARegistrationDelegate, U
 
         // Set a custom delegate for handling message center events
         self.messageCenterDelegate = MessageCenterDelegate(tabBarController: window!.rootViewController as! UITabBarController)
-        UAirship.messageCenter().displayDelegate = self.messageCenterDelegate
+        UAMessageCenter.shared().displayDelegate = self.messageCenterDelegate
         UAirship.push().pushNotificationDelegate = pushHandler
         UAirship.push().registrationDelegate = self
         UAirship.shared().deepLinkDelegate = self
@@ -128,8 +128,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UARegistrationDelegate, U
             if self.window?.rootViewController is UITabBarController {
                 let messageCenterTab: UITabBarItem = (self.window!.rootViewController! as! UITabBarController).tabBar.items![self.MessageCenterTab]
 
-                if (UAirship.messageCenter().messageList.unreadCount > 0) {
-                    messageCenterTab.badgeValue = String(UAirship.messageCenter().messageList.unreadCount)
+                if (UAMessageCenter.shared().messageList.unreadCount > 0) {
+                    messageCenterTab.badgeValue = String(UAMessageCenter.shared().messageList.unreadCount)
                 } else {
                     messageCenterTab.badgeValue = nil
                 }
@@ -199,7 +199,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UARegistrationDelegate, U
             pathComponents.remove(at: 0)
             
             if ((pathComponents.count == 0) || (pathComponents[0] != "message")) {
-                UAirship.messageCenter().display()
+                UAMessageCenter.shared().display()
             } else {
                 // remove "message" from front of url
                 pathComponents.remove(at: 0)
@@ -207,7 +207,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UARegistrationDelegate, U
                 if (pathComponents.count > 0) {
                     messageID = pathComponents[0]
                 }
-                UAirship.messageCenter().displayMessage(forID: messageID)
+                UAMessageCenter.shared().displayMessage(forID: messageID)
             }
         case DebugStoryboardID:
             // switch to debug tab

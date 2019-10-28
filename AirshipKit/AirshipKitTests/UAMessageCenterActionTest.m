@@ -13,7 +13,6 @@
 @interface UAMessageCenterActionTest : UABaseTest
 @property (nonatomic, strong) UAMessageCenterAction *action;
 @property (nonatomic, strong) NSDictionary *notification;
-@property (nonatomic, strong) id mockAirship;
 @property (nonatomic, strong) id mockMessageCenter;
 @end
 
@@ -24,12 +23,8 @@
 
     self.action = [[UAMessageCenterAction alloc] init];
     self.notification = @{@"_uamid": @"UAMID"};
-
-    self.mockAirship = [self mockForClass:[UAirship class]];
-    [UAirship setSharedAirship:self.mockAirship];
-
     self.mockMessageCenter = [self mockForClass:[UAMessageCenter class]];
-    [[[self.mockAirship stub] andReturn:self.mockMessageCenter] sharedMessageCenter];
+    [[[self.mockMessageCenter stub] andReturn:self.mockMessageCenter] shared];
 }
 
 /**

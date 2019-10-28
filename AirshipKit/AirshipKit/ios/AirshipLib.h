@@ -145,6 +145,8 @@
 #import "UAMessageCenterLocalization.h"
 #import "UAMessageCenterMessageViewController.h"
 #import "UAMessageCenterMessageViewProtocol.h"
+#import "UAMessageCenterModuleLoader.h"
+#import "UAMessageCenterModuleLoaderFactory.h"
 #import "UAMessageCenterNativeBridgeExtension.h"
 #import "UAMessageCenterSplitViewController.h"
 #import "UAMessageCenterStyle.h"

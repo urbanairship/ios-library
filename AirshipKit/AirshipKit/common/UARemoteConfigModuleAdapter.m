@@ -10,6 +10,7 @@ NSString * const UALocationClassName = @"UALocation";
 NSString * const UALegacyInAppMessagingClassName = @"UALegacyInAppMessaging";
 NSString * const UAInAppMessageManagerClassName = @"UAInAppMessageManager";
 NSString * const UAActionAutomationClassName = @"UAActionAutomation";
+NSString * const UAMessageCenterClassName = @"UAMessageCenter";
 
 @implementation UARemoteConfigModuleAdapter
 
@@ -26,9 +27,9 @@ NSString * const UAActionAutomationClassName = @"UAActionAutomation";
         return @[[UAirship analytics]];
     }
 
-    #if !TARGET_OS_TV  // Inbox and IAM not available on tvOS
     if ([moduleName isEqualToString:kUARemoteConfigModuleMessageCenter]) {
-        return @[[UAirship messageCenter]];
+        id messageCenter = [[UAirship shared] componentForClassName:UAMessageCenterClassName];
+        return messageCenter ? @[messageCenter] : @[];
     }
 
     if ([moduleName isEqualToString:kUARemoteConfigModuleInAppMessaging]) {
@@ -36,7 +37,6 @@ NSString * const UAActionAutomationClassName = @"UAActionAutomation";
         id legacyIAM = [[UAirship shared] componentForClassName:UALegacyInAppMessagingClassName];
         return IAM && legacyIAM ? @[IAM, legacyIAM] : @[];
     }
-    #endif
 
     if ([moduleName isEqualToString:kUARemoteConfigModuleAutomation]) {
         id automation = [[UAirship shared] componentForClassName:UAActionAutomationClassName];

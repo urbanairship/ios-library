@@ -59,6 +59,11 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
                                         name:UIApplicationWillEnterForegroundNotification
                                       object:nil];
 
+        [self.notificationCenter addObserver:self
+                                    selector:@selector(clearUser)
+                                        name:UADeviceIDChangedNotification
+                                      object:nil];
+
         UA_WEAKIFY(self)
         [self.channel addChannelExtenderBlock:^(UAChannelRegistrationPayload *payload, UAChannelRegistrationExtenderCompletionHandler completionHandler) {
             UA_STRONGIFY(self)

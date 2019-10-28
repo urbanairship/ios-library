@@ -75,7 +75,7 @@ NSUInteger const DebugTab = 2;
 
     // Set a custom delegate for handling message center events
     self.messageCenterDelegate = [[MessageCenterDelegate alloc] initWithRootViewController:self.window.rootViewController];
-    [UAirship messageCenter].displayDelegate = self.messageCenterDelegate;
+    [UAMessageCenter shared].displayDelegate = self.messageCenterDelegate;
 
     self.pushHandler = [[PushHandler alloc] init];
     [UAirship push].pushNotificationDelegate = self.pushHandler;
@@ -114,8 +114,8 @@ NSUInteger const DebugTab = 2;
     dispatch_async(dispatch_get_main_queue(), ^{
         UITabBarItem *messageCenterTab = [[[(UITabBarController *)self.window.rootViewController tabBar] items] objectAtIndex:MessageCenterTab];
 
-        if ([UAirship messageCenter].messageList.unreadCount > 0) {
-            [messageCenterTab setBadgeValue:[NSString stringWithFormat:@"%ld", (long)[UAirship messageCenter].messageList.unreadCount]];
+        if ([UAMessageCenter shared].messageList.unreadCount > 0) {
+            [messageCenterTab setBadgeValue:[NSString stringWithFormat:@"%ld", (long)[UAMessageCenter shared].messageList.unreadCount]];
         } else {
             [messageCenterTab setBadgeValue:nil];
         }
@@ -216,7 +216,7 @@ NSUInteger const DebugTab = 2;
         [pathComponents removeObjectAtIndex:0];
         
         if ((pathComponents.count == 0) || (![pathComponents[0] isEqualToString:@"message"])) {
-            [[UAirship messageCenter] display];
+            [[UAMessageCenter shared] display];
         } else {
             // remove "message" from front of url
             [pathComponents removeObjectAtIndex:0];
@@ -224,7 +224,7 @@ NSUInteger const DebugTab = 2;
             if (pathComponents.count > 0) {
                 messageId = pathComponents[0];
             }
-            [[UAirship messageCenter] displayMessageForID:messageId];
+            [[UAMessageCenter shared] displayMessageForID:messageId];
         }
     } else if ([[pathComponents[0] lowercaseString] isEqualToString:DebugStoryboardID]) {
         // switch to debug tab

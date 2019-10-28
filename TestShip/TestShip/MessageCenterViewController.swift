@@ -8,7 +8,7 @@ class MessageCenterViewController : UAMessageCenterSplitViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated);
-        self.style = UAirship.messageCenter().style
+        self.style = UAMessageCenter.shared().style
 
         // Match style of iOS Mail app
         self.style.cellTitleHighlightedColor = UIColor(red: 0, green: 0, blue: 0, alpha: 1)

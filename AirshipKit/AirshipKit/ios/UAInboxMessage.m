@@ -115,7 +115,7 @@
      WKWebView *webView = [[WKWebView alloc] initWithFrame:[UIScreen mainScreen].bounds];
      NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:self.messageBodyURL];
 
-     UAUserData *userData = [[UAirship messageCenter].user getUserDataSync];
+     UAUserData *userData = [[UAMessageCenter shared].user getUserDataSync];
      NSString *auth = [UAInboxUtils userAuthHeaderString:userData];
      [request setValue:auth forHTTPHeaderField:@"Authorization"];
 

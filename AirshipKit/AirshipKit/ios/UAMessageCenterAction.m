@@ -37,9 +37,9 @@
 
     [[UADispatcher mainDispatcher] dispatchAsync:^{
         if (!messageID) {
-            [[UAirship messageCenter] display];
+            [[UAMessageCenter shared] display];
         } else {
-            [[UAirship messageCenter] displayMessageForID:messageID];
+            [[UAMessageCenter shared] displayMessageForID:messageID];
         }
         completionHandler([UAActionResult emptyResult]);
     }];

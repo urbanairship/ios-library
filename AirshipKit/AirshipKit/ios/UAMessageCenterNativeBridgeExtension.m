@@ -5,7 +5,6 @@
 #import "UAInboxMessageList.h"
 #import "UAUser.h"
 #import "UAInboxMessage.h"
-#import "UAirship.h"
 #import "UAUtils.h"
 #import "UAActionArguments.h"
 
@@ -13,18 +12,18 @@
 
 - (NSDictionary *)actionsMetadataForCommand:(UAJavaScriptCommand *)command webView:(WKWebView *)webView {
     NSMutableDictionary *metadata = [NSMutableDictionary dictionary];
-    UAInboxMessage *message = [[UAirship messageCenter].messageList messageForBodyURL:webView.URL];
+    UAInboxMessage *message = [[UAMessageCenter shared].messageList messageForBodyURL:webView.URL];
     [metadata setValue:message.messageID forKey:UAActionMetadataInboxMessageIDKey];
     return [metadata copy];
 }
 
 - (void)extendJavaScriptEnvironment:(UAJavaScriptEnvironment *)js webView:(WKWebView *)webView {
-    UAInboxMessage *message = [[UAirship messageCenter].messageList messageForBodyURL:webView.URL];
+    UAInboxMessage *message = [[UAMessageCenter shared].messageList messageForBodyURL:webView.URL];
     if (!message) {
         return;
     }
 
-    UAUserData *userData = [[UAirship messageCenter].user getUserDataSync];
+    UAUserData *userData = [[UAMessageCenter shared].user getUserDataSync];
     NSNumber *messageSentDateMS = nil;
     NSString *messageSentDate = nil;
     if (message.messageSent) {
