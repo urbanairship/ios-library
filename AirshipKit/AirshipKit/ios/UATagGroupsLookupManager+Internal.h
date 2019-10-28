@@ -1,11 +1,12 @@
 /* Copyright Airship and Contributors */
 
 #import <Foundation/Foundation.h>
-#import "UAComponent+Internal.h"
+#import "UATagGroups.h"
 #import "UARuntimeConfig.h"
-#import "UATagGroupsLookupAPIClient+Internal.h"
+#import "UATagGroupsAPIClient+Internal.h"
 #import "UATagGroupsLookupResponseCache+Internal.h"
-#import "UATagGroupsMutationHistory+Internal.h"
+#import "UATagGroupsHistory.h"
+#import "UATagGroupsLookupAPIClient+Internal.h"
 #import "UADate+Internal.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -85,39 +86,42 @@ extern const NSTimeInterval UATagGroupsLookupManagerDefaultPreferLocalTagDataTim
 @property (nonatomic, weak) NSObject<UATagGroupsLookupManagerDelegate> *delegate;
 
 /**
+ * Performs a tag groups lookup.
+ *
+ * @param requestedTagGroups The requested tag groups.
+ * @param completionHandler A completion handler taking the resulting tag groups, or an error indicating a failed lookup.
+ */
+- (void)getTagGroups:(UATagGroups *)requestedTagGroups
+   completionHandler:(void(^)(UATagGroups * _Nullable tagGroups, NSError *error)) completionHandler;
+
+
+/**
  * UATagGroupsLookupManager class factory method.
  *
  * @param config An instance of UARuntimeConfig.
  * @param dataStore A data store.
- * @param mutationHistory The tag groups mutation history.
+ * @param tagGroupsHistory The tag groups history.
  */
 + (instancetype)lookupManagerWithConfig:(UARuntimeConfig *)config
                               dataStore:(UAPreferenceDataStore *)dataStore
-                        mutationHistory:(UATagGroupsMutationHistory *)mutationHistory;
+                       tagGroupsHistory:(id<UATagGroupsHistory>)tagGroupsHistory;
 /**
  * UATagGroupsLookupManager class factory method.
  *
  * @param client A tag groups lookup API client.
  * @param dataStore A data store.
  * @param cache A lookup response cache.
- * @param mutationHistory The tag groups mutation history.
+ * @param tagGroupsHistory The tag group history.
  * @param currentTime A UADate to be used for getting the current time.
  */
 + (instancetype)lookupManagerWithAPIClient:(UATagGroupsLookupAPIClient *)client
                                  dataStore:(UAPreferenceDataStore *)dataStore
                                      cache:(UATagGroupsLookupResponseCache *)cache
-                           mutationHistory:(UATagGroupsMutationHistory *)mutationHistory
+                          tagGroupsHistory:(id<UATagGroupsHistory>)tagGroupsHistory
                                currentTime:(UADate *)currentTime;
 
-
-/**
- * Performs a tag groups lookup.
- *
- * @param requestedTagGroups The requested tag groups.
- * @param completionHandler A completion handler taking the resulting tag groups, or an error indicating a failed lookup.
- */
-- (void)getTagGroups:(UATagGroups *)requestedTagGroups completionHandler:(void(^)(UATagGroups * _Nullable tagGroups, NSError *error)) completionHandler;
 
 @end
 
 NS_ASSUME_NONNULL_END
+

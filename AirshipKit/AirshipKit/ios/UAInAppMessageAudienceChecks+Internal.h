@@ -2,7 +2,7 @@
 
 #import <Foundation/Foundation.h>
 #import "UAInAppMessageAudience+Internal.h"
-#import "UATagGroups+Internal.h"
+#import "UATagGroups.h"
 
 
 /**

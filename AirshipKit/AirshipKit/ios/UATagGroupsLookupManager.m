@@ -5,11 +5,11 @@
 #import "UATagGroupsLookupResponse+Internal.h"
 #import "UAirship.h"
 #import "UAChannel.h"
+#import "UADate+Internal.h"
 
 #define kUATagGroupsLookupManagerEnabledKey @"com.urbanairship.tag_groups.FETCH_ENABLED"
 
 #define kUATagGroupsLookupManagerPreferLocalTagDataTimeKey @"com.urbanairship.tag_groups.PREFER_LOCAL_TAG_DATA_TIME"
-
 
 
 NSTimeInterval const UATagGroupsLookupManagerDefaultPreferLocalTagDataTimeSeconds = 60 * 10; // 10 minutes
@@ -19,7 +19,7 @@ NSString * const UATagGroupsLookupManagerErrorDomain = @"com.urbanairship.tag_gr
 @interface UATagGroupsLookupManager ()
 
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
-@property (nonatomic, strong) UATagGroupsMutationHistory *mutationHistory;
+@property (nonatomic, strong) id<UATagGroupsHistory> tagGroupsHistory;
 @property (nonatomic, strong) UATagGroupsLookupAPIClient *lookupAPIClient;
 @property (nonatomic, strong) UATagGroupsLookupResponseCache *cache;
 @property (nonatomic, readonly) NSTimeInterval maxSentMutationAge;
@@ -31,7 +31,7 @@ NSString * const UATagGroupsLookupManagerErrorDomain = @"com.urbanairship.tag_gr
 - (instancetype)initWithAPIClient:(UATagGroupsLookupAPIClient *)client
                         dataStore:(UAPreferenceDataStore *)dataStore
                             cache:(UATagGroupsLookupResponseCache *)cache
-                  mutationHistory:(UATagGroupsMutationHistory *)mutationHistory
+                 tagGroupsHistory:(id<UATagGroupsHistory>)tagGroupsHistory
                       currentTime:(UADate *)currentTime {
 
     self = [super init];
@@ -39,7 +39,7 @@ NSString * const UATagGroupsLookupManagerErrorDomain = @"com.urbanairship.tag_gr
     if (self) {
         self.dataStore = dataStore;
         self.cache = cache;
-        self.mutationHistory = mutationHistory;
+        self.tagGroupsHistory = tagGroupsHistory;
         self.lookupAPIClient = client;
         self.currentTime = currentTime;
 
@@ -52,22 +52,22 @@ NSString * const UATagGroupsLookupManagerErrorDomain = @"com.urbanairship.tag_gr
 
 + (instancetype)lookupManagerWithConfig:(UARuntimeConfig *)config
                               dataStore:(UAPreferenceDataStore *)dataStore
-                        mutationHistory:(UATagGroupsMutationHistory *)mutationHistory {
+                       tagGroupsHistory:(id<UATagGroupsHistory>)tagGroupsHistory {
 
     return [[self alloc] initWithAPIClient:[UATagGroupsLookupAPIClient clientWithConfig:config]
                                  dataStore:dataStore
                                      cache:[UATagGroupsLookupResponseCache cacheWithDataStore:dataStore]
-                           mutationHistory:mutationHistory
+                          tagGroupsHistory:tagGroupsHistory
                                currentTime:[[UADate alloc] init]];
 }
 
 + (instancetype)lookupManagerWithAPIClient:(UATagGroupsLookupAPIClient *)client
                                  dataStore:(UAPreferenceDataStore *)dataStore
                                      cache:(UATagGroupsLookupResponseCache *)cache
-                           mutationHistory:(UATagGroupsMutationHistory *)mutationHistory
+                          tagGroupsHistory:(id<UATagGroupsHistory>)tagGroupsHistory
                                currentTime:(UADate *)currentTime {
 
-    return [[self alloc] initWithAPIClient:client dataStore:dataStore cache:cache mutationHistory:mutationHistory currentTime:currentTime];
+    return [[self alloc] initWithAPIClient:client dataStore:dataStore cache:cache tagGroupsHistory:tagGroupsHistory currentTime:currentTime];
 }
 
 - (BOOL)enabled {
@@ -107,11 +107,11 @@ NSString * const UATagGroupsLookupManagerErrorDomain = @"com.urbanairship.tag_gr
 }
 
 - (void)updateMaxSentMutationAge {
-    self.mutationHistory.maxSentMutationAge = self.cache.staleReadTime + self.preferLocalTagDataTime;
+    self.tagGroupsHistory.maxSentMutationAge = self.cache.staleReadTime + self.preferLocalTagDataTime;
 }
 
 - (NSTimeInterval)maxSentMutationAge {
-    return self.mutationHistory.maxSentMutationAge;
+    return self.tagGroupsHistory.maxSentMutationAge;
     return self.cache.staleReadTime + self.preferLocalTagDataTime;
 }
 
@@ -135,7 +135,7 @@ NSString * const UATagGroupsLookupManagerErrorDomain = @"com.urbanairship.tag_gr
 
     // Apply local history
     NSTimeInterval maxAge = [[self.currentTime now] timeIntervalSinceDate:refreshDate] + self.preferLocalTagDataTime;
-    UATagGroups *locallyModifiedTagGroups = [self.mutationHistory applyHistory:cachedTagGroups maxAge:maxAge];
+    UATagGroups *locallyModifiedTagGroups = [self.tagGroupsHistory applyHistory:cachedTagGroups maxAge:maxAge];
 
     // Override the device tags if needed
     if ([UAirship channel].isChannelTagRegistrationEnabled) {
@@ -155,14 +155,14 @@ NSString * const UATagGroupsLookupManagerErrorDomain = @"com.urbanairship.tag_gr
                                         requestedTagGroups:tagGroups
                                             cachedResponse:self.cache.response
                                          completionHandler:^(UATagGroupsLookupResponse *response) {
-                                             if (response.status != 200) {
-                                                 UA_LTRACE(@"Failed to refresh the cache. Status: %lu", (unsigned long)response.status);
-                                             } else {
-                                                 self.cache.response = response;
-                                                 self.cache.requestedTagGroups = tagGroups;
-                                             }
-                                             completionHandler();
-                                         }];
+            if (response.status != 200) {
+                UA_LTRACE(@"Failed to refresh the cache. Status: %lu", (unsigned long)response.status);
+            } else {
+                self.cache.response = response;
+                self.cache.requestedTagGroups = tagGroups;
+            }
+            completionHandler();
+        }];
     }];
 }
 
@@ -218,3 +218,4 @@ NSString * const UATagGroupsLookupManagerErrorDomain = @"com.urbanairship.tag_gr
 }
 
 @end
+

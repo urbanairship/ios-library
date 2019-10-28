@@ -8,12 +8,14 @@ NSString * const UAComponentEnabledKey = @"enabled";
 BOOL const UAComponentEnabledDefault = YES;
 
 @interface UAComponent()
-
 @property (nonatomic, strong) UAPreferenceDataStore *componentDataStore;
-
 @end
 
 @implementation UAComponent
+
++ (null_unspecified instancetype)shared {
+    return [[UAirship shared] componentForClassName:NSStringFromClass([self class])];
+}
 
 - (instancetype)initWithDataStore:(UAPreferenceDataStore *)dataStore {
     self = [super init];

@@ -2,7 +2,7 @@
 
 #import <Foundation/Foundation.h>
 #import "UAAPIClient+Internal.h"
-#import "UATagGroups+Internal.h"
+#import "UATagGroups.h"
 #import "UATagGroupsLookupResponse+Internal.h"
 
 NS_ASSUME_NONNULL_BEGIN

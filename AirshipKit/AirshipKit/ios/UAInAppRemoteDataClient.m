@@ -4,7 +4,6 @@
 #import "UADisposable.h"
 #import "UAirship+Internal.h"
 #import "UARemoteDataPayload+Internal.h"
-#import "UARemoteDataManager+Internal.h"
 #import "UAPreferenceDataStore+Internal.h"
 #import "UAUtils+Internal.h"
 #import "UAGlobal.h"
@@ -27,7 +26,7 @@ NSString * const UAInAppMessagesUpdatedJSONKey = @"last_updated";
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 @property (nonatomic, strong) UADisposable *remoteDataSubscription;
 @property (nonatomic, strong) NSOperationQueue *operationQueue;
-@property (nonatomic, strong) UARemoteDataManager *remoteDataManager;
+@property (nonatomic, strong) id<UARemoteDataProvider> remoteDataProvider;
 
 @end
 
@@ -40,21 +39,21 @@ NSString * const UAInAppMessagesScheduledMessagesKey = @"UAInAppRemoteDataClient
 NSString * const UAInAppMessagesScheduledNewUserCutoffTimeKey = @"UAInAppRemoteDataClient.ScheduledNewUserCutoffTime";
 
 - (instancetype)initWithScheduler:(UAInAppMessageManager *)scheduler
-                remoteDataManager:(UARemoteDataManager *)remoteDataManager
+               remoteDataProvider:(id<UARemoteDataProvider>)remoteDataProvider
                         dataStore:(UAPreferenceDataStore *)dataStore
                           channel:(UAChannel *)channel {
-    
+
     self = [super init];
-    
+
     if (self) {
         self.operationQueue = [[NSOperationQueue alloc] init];
         self.operationQueue.maxConcurrentOperationCount = 1;
-        self.remoteDataManager = remoteDataManager;
+        self.remoteDataProvider = remoteDataProvider;
         self.inAppMessageManager = scheduler;
         self.dataStore = dataStore;
         UA_WEAKIFY(self);
-        self.remoteDataSubscription = [remoteDataManager subscribeWithTypes:@[UAInAppMessages]
-                                                                      block:^(NSArray<UARemoteDataPayload *> * _Nonnull messagePayloads) {
+        self.remoteDataSubscription = [remoteDataProvider subscribeWithTypes:@[UAInAppMessages]
+                                                                       block:^(NSArray<UARemoteDataPayload *> * _Nonnull messagePayloads) {
             UA_STRONGIFY(self);
             [self.operationQueue addOperationWithBlock:^{
                 UA_STRONGIFY(self);
@@ -70,11 +69,11 @@ NSString * const UAInAppMessagesScheduledNewUserCutoffTimeKey = @"UAInAppRemoteD
 }
 
 + (instancetype)clientWithScheduler:(UAInAppMessageManager *)scheduler
-                  remoteDataManager:(UARemoteDataManager *)remoteDataManager
+                 remoteDataProvider:(id<UARemoteDataProvider>)remoteDataProvider
                           dataStore:(UAPreferenceDataStore *)dataStore
                             channel:(UAChannel *)channel {
     return [[UAInAppRemoteDataClient alloc] initWithScheduler:scheduler
-                                            remoteDataManager:remoteDataManager
+                                           remoteDataProvider:remoteDataProvider
                                                     dataStore:dataStore
                                                       channel:channel];
 }
@@ -86,7 +85,7 @@ NSString * const UAInAppMessagesScheduledNewUserCutoffTimeKey = @"UAInAppRemoteD
 - (void)notifyOnMetadataUpdate:(void (^)(void))completionHandler {
     [self.operationQueue addOperationWithBlock:^{
         UA_LTRACE(@"Metadata is out of date, invalidating schedule until metadata update can occur.");
-        if ([self.remoteDataManager isMetadataCurrent:self.lastPayloadMetadata]) {
+        if ([self.remoteDataProvider isMetadataCurrent:self.lastPayloadMetadata]) {
             completionHandler();
         } else {
             // Otherwise wait until change to lastPayloadMetadata to invalidate
@@ -105,7 +104,7 @@ NSString * const UAInAppMessagesScheduledNewUserCutoffTimeKey = @"UAInAppRemoteD
     NSDate *lastUpdate = [self.dataStore objectForKey:UAInAppMessagesLastPayloadTimeStampKey] ?: [NSDate distantPast];
     NSDictionary *lastMetadata = self.lastPayloadMetadata ?: @{};
     BOOL isMetadataCurrent = [thisPayloadMetadata isEqualToDictionary:lastMetadata];
-    
+
     // generate messageId to scheduleId map for existing schedules
     NSMutableDictionary<NSString *, NSString *> *scheduleIDMap = [NSMutableDictionary dictionary];
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
@@ -115,12 +114,12 @@ NSString * const UAInAppMessagesScheduledNewUserCutoffTimeKey = @"UAInAppRemoteD
             if (message.source != UAInAppMessageSourceRemoteData) {
                 continue;
             }
-            
+
             NSString *messageID = message.identifier;
             if (!messageID.length) {
                 continue;
             }
-            
+
             scheduleIDMap[messageID] = schedule.identifier;
         }
         dispatch_semaphore_signal(semaphore);
@@ -145,7 +144,7 @@ NSString * const UAInAppMessagesScheduledNewUserCutoffTimeKey = @"UAInAppRemoteD
     } else {
         messages = messageData[UAInAppMessages];
     }
-    
+
     NSMutableArray<NSString *> *messageIDs = [NSMutableArray array];
     NSMutableArray<UAInAppMessageScheduleInfo *> *newSchedules = [NSMutableArray array];
 
@@ -166,7 +165,7 @@ NSString * const UAInAppMessagesScheduledNewUserCutoffTimeKey = @"UAInAppRemoteD
             UA_LERR("Missing in-app message ID: %@", message);
             continue;
         }
-        
+
         [messageIDs addObject:messageID];
 
         // Ignore any messages that have not updated since the last payload
@@ -213,11 +212,11 @@ NSString * const UAInAppMessagesScheduledNewUserCutoffTimeKey = @"UAInAppRemoteD
             [self.inAppMessageManager editScheduleWithID:scheduleIDMap[messageID]
                                                    edits:edits
                                        completionHandler:^(UASchedule *schedule) {
-                                           dispatch_group_leave(dispatchGroup);
-                                           if (schedule) {
-                                               UA_LTRACE("Updated in-app message: %@", messageID);
-                                           }
-                                       }];
+                dispatch_group_leave(dispatchGroup);
+                if (schedule) {
+                    UA_LTRACE("Updated in-app message: %@", messageID);
+                }
+            }];
         }
     }
 
@@ -239,13 +238,13 @@ NSString * const UAInAppMessagesScheduledNewUserCutoffTimeKey = @"UAInAppRemoteD
         for (NSString *messageID in deletedMessageIDs) {
             dispatch_group_enter(dispatchGroup);
             [self.inAppMessageManager editScheduleWithID:scheduleIDMap[messageID]
-                                                     edits:edits
-                                         completionHandler:^(UASchedule *schedule) {
-                                             dispatch_group_leave(dispatchGroup);
-                                             if (schedule) {
-                                                 UA_LTRACE("Ended in-app message: %@", messageID);
-                                             }
-                                         }];
+                                                   edits:edits
+                                       completionHandler:^(UASchedule *schedule) {
+                dispatch_group_leave(dispatchGroup);
+                if (schedule) {
+                    UA_LTRACE("Ended in-app message: %@", messageID);
+                }
+            }];
         }
     }
 
@@ -291,3 +290,4 @@ NSString * const UAInAppMessagesScheduledNewUserCutoffTimeKey = @"UAInAppRemoteD
 }
 
 @end
+

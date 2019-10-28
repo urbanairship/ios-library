@@ -18,7 +18,7 @@ NSString * const UAInAppMessagesScheduledMessagesKey = @"UAInAppRemoteDataClient
 @interface UAInAppRemoteDataClientTest : UABaseTest
 @property (nonatomic,strong) UAInAppRemoteDataClient *remoteDataClient;
 @property (nonatomic, strong) UARemoteDataPublishBlock publishBlock;
-@property (nonatomic, strong) id mockRemoteDataManager;
+@property (nonatomic, strong) id mockRemoteDataProvider;
 @property (nonatomic, strong) id mockScheduler;
 @property (nonatomic, strong) id mockChannel;
 
@@ -33,8 +33,8 @@ NSString * const UAInAppMessagesScheduledMessagesKey = @"UAInAppRemoteDataClient
     uaLogLevel = UALogLevelDebug;
     
     // mock remote data
-    self.mockRemoteDataManager = [self mockForClass:[UARemoteDataManager class]];
-    [[[self.mockRemoteDataManager expect] andDo:^(NSInvocation *invocation) {
+    self.mockRemoteDataProvider = [self mockForProtocol:@protocol(UARemoteDataProvider)];
+    [[[self.mockRemoteDataProvider expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         
         // verify payload types
@@ -61,14 +61,17 @@ NSString * const UAInAppMessagesScheduledMessagesKey = @"UAInAppRemoteDataClient
         completionHandler(self.allSchedules);
     }] getAllSchedules:OCMOCK_ANY];
     
-    self.remoteDataClient = [UAInAppRemoteDataClient clientWithScheduler:self.mockScheduler remoteDataManager:self.mockRemoteDataManager dataStore:self.dataStore channel:self.mockChannel];
+    self.remoteDataClient = [UAInAppRemoteDataClient clientWithScheduler:self.mockScheduler
+                                                      remoteDataProvider:self.mockRemoteDataProvider
+                                                               dataStore:self.dataStore
+                                                                 channel:self.mockChannel];
     XCTAssertNotNil(self.remoteDataClient);
     
     // verify setup
     XCTAssertNotNil(self.remoteDataClient);
     XCTAssertNotNil(self.publishBlock);
     [self.mockChannel verify];
-    [self.mockRemoteDataManager verify];
+    [self.mockRemoteDataProvider verify];
 }
 
 - (void)testMetadataChange {
@@ -780,7 +783,10 @@ NSString * const UAInAppMessagesScheduledMessagesKey = @"UAInAppRemoteDataClient
     self.remoteDataClient = nil;
     
     // test
-    self.remoteDataClient = [UAInAppRemoteDataClient clientWithScheduler:self.mockScheduler remoteDataManager:self.mockRemoteDataManager dataStore:self.dataStore channel:self.mockChannel];
+    self.remoteDataClient = [UAInAppRemoteDataClient clientWithScheduler:self.mockScheduler
+                                                      remoteDataProvider:self.mockRemoteDataProvider
+                                                               dataStore:self.dataStore
+                                                                 channel:self.mockChannel];
     XCTAssertNotNil(self.remoteDataClient);
 
     // verify
@@ -796,7 +802,10 @@ NSString * const UAInAppMessagesScheduledMessagesKey = @"UAInAppRemoteDataClient
     [[[self.mockChannel expect] andReturn:@"sample-channel-id"] identifier];
     
     // test
-    self.remoteDataClient = [UAInAppRemoteDataClient clientWithScheduler:self.mockScheduler remoteDataManager:self.mockRemoteDataManager dataStore:self.dataStore channel:self.mockChannel];
+    self.remoteDataClient = [UAInAppRemoteDataClient clientWithScheduler:self.mockScheduler
+                                                      remoteDataProvider:self.mockRemoteDataProvider
+                                                               dataStore:self.dataStore
+                                                                 channel:self.mockChannel];
     XCTAssertNotNil(self.remoteDataClient);
 
     // verify

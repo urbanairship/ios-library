@@ -14,7 +14,7 @@
 @property (nonatomic, strong) id mockChannel;
 @property (nonatomic, strong) id mockAPIClient;
 @property (nonatomic, strong) id mockCache;
-@property (nonatomic, strong) id mockMutationHistory;
+@property (nonatomic, strong) id mockTagGroupsHistory;
 @property (nonatomic, strong) UATagGroups *requestedTagGroups;
 @property (nonatomic, strong) UATestDate *testDate;
 @property (nonatomic, strong) id mockDelegate;
@@ -45,7 +45,7 @@
     self.mockAirship = [self mockForClass:[UAirship class]];
     self.mockChannel = [self mockForClass:[UAChannel class]];
     self.mockAPIClient = [self mockForClass:[UATagGroupsLookupAPIClient class]];
-    self.mockMutationHistory = [self mockForClass:[UATagGroupsMutationHistory class]];
+    self.mockTagGroupsHistory = [self mockForProtocol:@protocol(UATagGroupsHistory)];
     self.mockCache = [self mockForClass:[UATagGroupsLookupResponseCache class]];
 
     [[[self.mockAirship stub] andReturn:self.mockChannel] channel];
@@ -55,10 +55,10 @@
     [[[self.mockChannel stub] andReturnValue:@(enabled)] isChannelTagRegistrationEnabled];
 
     self.lookupManager = [UATagGroupsLookupManager lookupManagerWithAPIClient:self.mockAPIClient
-                                                                     dataStore:self.dataStore
-                                                                         cache:self.mockCache
-                                                               mutationHistory:self.mockMutationHistory
-                                                                   currentTime:self.testDate];
+                                                                    dataStore:self.dataStore
+                                                                        cache:self.mockCache
+                                                             tagGroupsHistory:self.mockTagGroupsHistory
+                                                                  currentTime:self.testDate];
 }
 
 - (void)testGetTagsComponentDisabled {
@@ -127,12 +127,12 @@
     [[[self.mockCache expect] andReturn:self.requestedTagGroups] requestedTagGroups];
     [[[self.mockCache expect] andReturn:cacheRefreshDate] refreshDate];
     [[[self.mockCache expect] andReturnValue:@(NO)] needsRefresh];
-    
+
 
     self.testDate.absoluteTime = [NSDate date];
     NSTimeInterval expectedMaxAge = [[self.testDate now] timeIntervalSinceDate:cacheRefreshDate] + self.lookupManager.preferLocalTagDataTime;
 
-    [[[self.mockMutationHistory expect] andReturn:tagGroupsWithLocalMutations] applyHistory:response.tagGroups maxAge:expectedMaxAge];
+    [[[self.mockTagGroupsHistory expect] andReturn:tagGroupsWithLocalMutations] applyHistory:response.tagGroups maxAge:expectedMaxAge];
 
     [[self.mockAPIClient reject] lookupTagGroupsWithChannelID:OCMOCK_ANY requestedTagGroups:OCMOCK_ANY cachedResponse:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
@@ -148,7 +148,7 @@
 
     [self waitForTestExpectations];
     [self.mockCache verify];
-    [self.mockMutationHistory verify];
+    [self.mockTagGroupsHistory verify];
     [self.mockAPIClient verify];
 }
 
@@ -185,7 +185,7 @@
 
     self.testDate.absoluteTime = [NSDate date];
     NSTimeInterval expectedMaxAge = [[self.testDate now] timeIntervalSinceDate:cacheRefreshDate] + self.lookupManager.preferLocalTagDataTime;
-    [[[self.mockMutationHistory expect] andReturn:tagGroupsWithLocalMutations] applyHistory:response.tagGroups maxAge:expectedMaxAge];
+    [[[self.mockTagGroupsHistory expect] andReturn:tagGroupsWithLocalMutations] applyHistory:response.tagGroups maxAge:expectedMaxAge];
 
     UATagGroups *expectedTagGroups = [UATagGroups tagGroupsWithTags:@{@"foo" : @[@"bar", @"baz"]}];
 
@@ -199,7 +199,7 @@
 
     [self waitForTestExpectations];
     [self.mockCache verify];
-    [self.mockMutationHistory verify];
+    [self.mockTagGroupsHistory verify];
     [self.mockAPIClient verify];
 }
 
@@ -237,7 +237,7 @@
     self.testDate.absoluteTime = [NSDate date];
     NSTimeInterval expectedMaxAge = [[self.testDate now] timeIntervalSinceDate:cacheRefreshDate] + self.lookupManager.preferLocalTagDataTime;
     UATagGroups *tagGroupsWithLocalMutations = [UATagGroups tagGroupsWithTags:@{@"foo": @[@"bar", @"baz"], @"bleep" : @[@"bloop"]}];
-    [[[self.mockMutationHistory expect] andReturn:tagGroupsWithLocalMutations] applyHistory:response.tagGroups maxAge:expectedMaxAge];
+    [[[self.mockTagGroupsHistory expect] andReturn:tagGroupsWithLocalMutations] applyHistory:response.tagGroups maxAge:expectedMaxAge];
 
     UATagGroups *expectedTagGroups = [UATagGroups tagGroupsWithTags:@{@"foo" : @[@"bar", @"baz"]}];
 
@@ -251,7 +251,7 @@
 
     [self waitForTestExpectations];
     [self.mockCache verify];
-    [self.mockMutationHistory verify];
+    [self.mockTagGroupsHistory verify];
     [self.mockAPIClient verify];
 }
 
@@ -381,3 +381,4 @@
 }
 
 @end
+

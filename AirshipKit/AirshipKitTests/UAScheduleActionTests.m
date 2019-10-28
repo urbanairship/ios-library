@@ -5,7 +5,7 @@
 
 #import "UAScheduleAction.h"
 #import "UAActionArguments+Internal.h"
-#import "UAAutomation.h"
+#import "UAActionAutomation.h"
 #import "UAirship+Internal.h"
 #import "UAUtils+Internal.h"
 #import "UASchedule+Internal.h"
@@ -23,11 +23,8 @@
 - (void)setUp {
     [super setUp];
 
-    self.mockAutomation = [self mockForClass:[UAAutomation class]];
-    self.mockAirship = [self mockForClass:[UAirship class]];
-    [UAirship setSharedAirship:self.mockAirship];
-    [[[self.mockAirship stub] andReturn:self.mockAutomation] automation];
-
+    self.mockAutomation = [self mockForClass:[UAActionAutomation class]];
+    [[[self.mockAutomation stub] andReturn:self.mockAutomation] shared];
     self.action = [[UAScheduleAction alloc] init];
 }
 

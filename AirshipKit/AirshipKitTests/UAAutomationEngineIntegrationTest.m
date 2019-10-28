@@ -12,7 +12,7 @@
 #import "UAScheduleData+Internal.h"
 #import "UAScheduleInfo+Internal.h"
 #import "UAActionScheduleInfo.h"
-#import "UAAutomation+Internal.h"
+#import "UAActionAutomation+Internal.h"
 #import "UAApplicationMetrics+Internal.h"
 #import "UATestDispatcher.h"
 #import "UATestDate.h"

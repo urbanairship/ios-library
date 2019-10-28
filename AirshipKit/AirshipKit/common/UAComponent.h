@@ -14,6 +14,13 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)init NS_UNAVAILABLE;
 
 /**
+ * Shared instance.
+ *
+ * @return The shared instance.
+ */
++ (null_unspecified instancetype)shared;
+
+/**
  * UAComponent initializer.
  *
  * @param dataStore The component's preference data store.

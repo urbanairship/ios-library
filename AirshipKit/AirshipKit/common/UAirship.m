@@ -17,7 +17,6 @@
 #import "UAAppExitEvent+Internal.h"
 #import "UAPreferenceDataStore+Internal.h"
 #import "UANamedUser+Internal.h"
-#import "UAAutomation+Internal.h"
 #import "UAAppIntegration.h"
 #import "UARemoteDataManager+Internal.h"
 #import "UARemoteConfigManager+Internal.h"
@@ -28,13 +27,12 @@
 #import "UAAppStateTrackerFactory+Internal.h"
 
 #import "UALocationModuleLoaderFactory.h"
+#import "UAAutomationModuleLoaderFactory.h"
 
 #if !TARGET_OS_TV   // Inbox and other features not supported on tvOS
 #import "UAChannelCapture+Internal.h"
 #import "UAMessageCenter+Internal.h"
 #import "UAInboxAPIClient+Internal.h"
-#import "UALegacyInAppMessaging+Internal.h"
-#import "UAInAppMessageManager+Internal.h"
 #import "UAInboxMessageList+Internal.h"
 #endif
 
@@ -46,6 +44,7 @@ NSString * const UALibraryVersion = @"com.urbanairship.library_version";
 
 // Optional components
 NSString * const UALocationModuleLoaderClassName = @"UALocationModuleLoader";
+NSString * const UAAutomationModuleLoaderClassName = @"UAAutomationModuleLoader";
 
 static UAirship *sharedAirship_;
 
@@ -106,7 +105,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         self.whitelist = [UAWhitelist whitelistWithConfig:config];
         self.applicationMetrics = [UAApplicationMetrics applicationMetricsWithDataStore:dataStore];
 
-        UATagGroupsMutationHistory *tagGroupsMutationHistory = [UATagGroupsMutationHistory historyWithDataStore:self.dataStore];
+        UATagGroupsMutationHistory<UATagGroupsHistory> *tagGroupsMutationHistory = [UATagGroupsMutationHistory historyWithDataStore:self.dataStore];
         UATagGroupsRegistrar *tagGroupsRegistrar = [UATagGroupsRegistrar tagGroupsRegistrarWithConfig:self.config
                                                                                             dataStore:self.dataStore
                                                                                       mutationHistory:tagGroupsMutationHistory];
@@ -133,9 +132,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
                                                       dataStore:self.dataStore];
         [components addObject:self.sharedAnalytics];
 
-        self.sharedAutomation = [UAAutomation automationWithConfig:self.config
-                                                         dataStore:self.dataStore];
-        [components addObject:self.sharedAutomation];
+
 
         self.sharedRemoteDataManager = [UARemoteDataManager remoteDataManagerWithConfig:self.config
                                                                               dataStore:self.dataStore];
@@ -145,20 +142,6 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
                                                                                       applicationMetrics:self.applicationMetrics];
 
 #if !TARGET_OS_TV   // IAM not supported on tvOS
-        self.sharedInAppMessageManager = [UAInAppMessageManager managerWithConfig:self.config
-                                                         tagGroupsMutationHistory:tagGroupsMutationHistory
-                                                                remoteDataManager:self.sharedRemoteDataManager
-                                                                        dataStore:self.dataStore
-                                                                          channel:self.sharedChannel
-                                                                        analytics:self.sharedAnalytics];
-        [components addObject:self.sharedInAppMessageManager];
-
-
-        self.sharedLegacyInAppMessaging = [UALegacyInAppMessaging inAppMessagingWithAnalytics:self.sharedAnalytics
-                                                                                    dataStore:self.dataStore
-                                                                          inAppMessageManager:self.sharedInAppMessageManager];
-        [components addObject:self.sharedLegacyInAppMessaging];
-
         // UIPasteboard is not available in tvOS
         self.channelCapture = [UAChannelCapture channelCaptureWithConfig:self.config
                                                                  channel:self.sharedChannel
@@ -172,9 +155,19 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 
         NSMutableArray<id<UAModuleLoader>> *loaders = [NSMutableArray array];
 
-        id<UAModuleLoader> locationLoader = [UAirship locationLoaderWithDataStore:dataStore];
+        id<UAModuleLoader> locationLoader = [UAirship locationLoaderWithDataStore:self.dataStore];
         if (locationLoader) {
             [loaders addObject:locationLoader];
+        }
+
+        id<UAModuleLoader> automationLoader = [UAirship automationModuleLoaderWithDataStore:self.dataStore
+                                                                                     config:self.config
+                                                                                    channel:self.sharedChannel
+                                                                                  analytics:self.sharedAnalytics
+                                                                          remoteDataManager:self.sharedRemoteDataManager
+                                                                           tagGroupsHistory:tagGroupsMutationHistory];
+        if (automationLoader) {
+            [loaders addObject:automationLoader];
         }
 
         for (id<UAModuleLoader> loader in loaders) {
@@ -188,6 +181,13 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         }
 
         self.components = components;
+
+        NSMutableDictionary *componentClassMap = [NSMutableDictionary dictionary];
+        for (UAComponent *component in self.components) {
+            componentClassMap[NSStringFromClass([component class])] = component;
+        }
+
+        self.componentClassMap = componentClassMap;
     }
 
     return self;
@@ -359,7 +359,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
     if (remoteNotification) {
         [sharedAirship_.sharedAnalytics launchedFromNotification:remoteNotification];
     }
- 
+
     // Init event
     [sharedAirship_.sharedAnalytics addEvent:[UAAppInitEvent event]];
 
@@ -410,14 +410,6 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 
 #if !TARGET_OS_TV   // Message Center not supported on tvOS
 
-+ (UALegacyInAppMessaging *)legacyInAppMessaging {
-    return sharedAirship_.sharedLegacyInAppMessaging;
-}
-
-+ (UAInAppMessageManager *)inAppMessageManager {
-    return sharedAirship_.sharedInAppMessageManager;
-}
-
 + (UAMessageCenter *)messageCenter {
     return sharedAirship_.sharedMessageCenter;
 }
@@ -426,10 +418,6 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 
 + (UANamedUser *)namedUser {
     return sharedAirship_.sharedNamedUser;
-}
-
-+ (UAAutomation *)automation {
-    return sharedAirship_.sharedAutomation;
 }
 
 + (UAAnalytics *)analytics {
@@ -492,7 +480,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
     } else {
 #if !TARGET_OS_TV   // remote-notification background mode not supported in tvOS
         UA_LIMPERR(@"Application is not configured for background notifications. "
-                 @"Please enable remote notifications in the application's background modes.");
+                   @"Please enable remote notifications in the application's background modes.");
 #endif
     }
 
@@ -504,18 +492,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 
 
 - (UAComponent *)componentForClassName:(NSString *)className {
-    Class cls = NSClassFromString(className);
-    if (!cls) {
-        return nil;
-    }
-
-    for (UAComponent *component in self.components) {
-        if ([component isKindOfClass:cls]) {
-            return component;
-        }
-    }
-
-    return nil;
+    return self.componentClassMap[className];
 }
 
 + (id<UAModuleLoader>)locationLoaderWithDataStore:(UAPreferenceDataStore *)dataStore {
@@ -526,5 +503,24 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
     return nil;
 }
 
++ (id<UAModuleLoader>)automationModuleLoaderWithDataStore:(UAPreferenceDataStore *)dataStore
+                                                   config:(UARuntimeConfig *)config
+                                                  channel:(UAChannel *)channel
+                                                analytics:(UAAnalytics *)analytics
+                                        remoteDataManager:(UARemoteDataManager *)remoteDataManager
+                                         tagGroupsHistory:(id<UATagGroupsHistory>)tagGroupsHistory {
+
+    Class cls = NSClassFromString(UAAutomationModuleLoaderClassName);
+    if ([cls conformsToProtocol:@protocol(UAAutomationModuleLoaderFactory)]) {
+        return [cls inAppModuleLoaderWithDataStore:dataStore
+                                            config:config
+                                           channel:channel
+                                         analytics:analytics
+                                remoteDataProvider:remoteDataManager
+                                  tagGroupsHistory:tagGroupsHistory];
+    }
+    return nil;
+}
 
 @end
+

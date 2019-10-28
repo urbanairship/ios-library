@@ -2,7 +2,7 @@
 
 #import <Foundation/Foundation.h>
 #import "UAInAppMessageTagSelector.h"
-#import "UATagGroups+Internal.h"
+#import "UATagGroups.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

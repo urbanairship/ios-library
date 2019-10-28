@@ -7,6 +7,9 @@
 #import "UARemoteConfigModuleNames+Internal.h"
 
 NSString * const UALocationClassName = @"UALocation";
+NSString * const UALegacyInAppMessagingClassName = @"UALegacyInAppMessaging";
+NSString * const UAInAppMessageManagerClassName = @"UAInAppMessageManager";
+NSString * const UAActionAutomationClassName = @"UAActionAutomation";
 
 @implementation UARemoteConfigModuleAdapter
 
@@ -29,16 +32,20 @@ NSString * const UALocationClassName = @"UALocation";
     }
 
     if ([moduleName isEqualToString:kUARemoteConfigModuleInAppMessaging]) {
-        return @[[UAirship inAppMessageManager], [UAirship legacyInAppMessaging]];
+        id IAM = [[UAirship shared] componentForClassName:UAInAppMessageManagerClassName];
+        id legacyIAM = [[UAirship shared] componentForClassName:UALegacyInAppMessagingClassName];
+        return IAM && legacyIAM ? @[IAM, legacyIAM] : @[];
     }
     #endif
 
     if ([moduleName isEqualToString:kUARemoteConfigModuleAutomation]) {
-        return @[[UAirship automation]];
+        id automation = [[UAirship shared] componentForClassName:UAActionAutomationClassName];
+        return automation ? @[automation] : @[];
     }
 
     if ([moduleName isEqualToString:kUARemoteConfigModuleLocation]) {
-        return @[[[UAirship shared] componentForClassName:UALocationClassName]];
+        id location = [[UAirship shared] componentForClassName:UALocationClassName];
+        return location ? @[location] : @[];
     }
 
     return @[];

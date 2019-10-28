@@ -44,7 +44,7 @@ class AutomationDetailViewController: UIViewController, UITableViewDelegate, UIT
     /* The UASchedule to be displayed */
     public var schedule : UASchedule?
 
-    private let inAppMessageManager = UAirship.inAppMessageManager()
+    private let inAppMessageManager = UAInAppMessageManager.shared()
 
 
     /* Section

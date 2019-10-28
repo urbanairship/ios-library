@@ -95,7 +95,7 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
 @property(nonatomic, strong) NSMutableDictionary *adapterFactories;
 @property(nonatomic, strong) UAAutomationEngine *automationEngine;
 @property(nonatomic, strong) NSMutableDictionary *adapters;
-@property(nonatomic, strong) UARemoteDataManager *remoteDataManager;
+@property(nonatomic, strong) id<UARemoteDataProvider> remoteDataProvider;
 @property(nonatomic, strong) UAPreferenceDataStore *dataStore;
 @property(nonatomic, strong) NSMutableDictionary *scheduleData;
 @property(nonatomic, strong) UATagGroupsLookupManager *tagGroupsLookupManager;
@@ -111,7 +111,7 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
 
 + (instancetype)managerWithAutomationEngine:(UAAutomationEngine *)automationEngine
                      tagGroupsLookupManager:(UATagGroupsLookupManager *)tagGroupsLookupManager
-                          remoteDataManager:(UARemoteDataManager *)remoteDataManager
+                         remoteDataProvider:(id<UARemoteDataProvider>)remoteDataProvider
                                   dataStore:(UAPreferenceDataStore *)dataStore
                                     channel:(UAChannel *)channel
                                  dispatcher:(UADispatcher *)dispatcher
@@ -121,7 +121,7 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
 
     return [[self alloc] initWithAutomationEngine:automationEngine
                            tagGroupsLookupManager:tagGroupsLookupManager
-                                remoteDataManager:remoteDataManager
+                               remoteDataProvider:remoteDataProvider
                                         dataStore:dataStore
                                           channel:channel
                                        dispatcher:dispatcher
@@ -131,8 +131,8 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
 }
 
 + (instancetype)managerWithConfig:(UARuntimeConfig *)config
-         tagGroupsMutationHistory:(UATagGroupsMutationHistory *)tagGroupsMutationHistory
-                remoteDataManager:(UARemoteDataManager *)remoteDataManager
+                 tagGroupsHistory:(id<UATagGroupsHistory>)tagGroupsHistory
+               remoteDataProvider:(id<UARemoteDataProvider>)remoteDataProvider
                         dataStore:(UAPreferenceDataStore *)dataStore
                           channel:(UAChannel *)channel
                         analytics:(UAAnalytics *)analytics {
@@ -142,24 +142,24 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
     UAAutomationStore *store = [UAAutomationStore automationStoreWithStoreName:storeName scheduleLimit:MaxSchedules];
     UAAutomationEngine *automationEngine = [UAAutomationEngine automationEngineWithAutomationStore:store];
 
-    UATagGroupsLookupManager *tagGroupsLookupManager = [UATagGroupsLookupManager lookupManagerWithConfig:config
-                                                                                               dataStore:dataStore
-                                                                                         mutationHistory:tagGroupsMutationHistory];
+    UATagGroupsLookupManager *lookupManager = [UATagGroupsLookupManager lookupManagerWithConfig:config
+                                                                                      dataStore:dataStore
+                                                                               tagGroupsHistory:tagGroupsHistory];
 
     return [[UAInAppMessageManager alloc] initWithAutomationEngine:automationEngine
-                                             tagGroupsLookupManager:tagGroupsLookupManager
-                                                  remoteDataManager:remoteDataManager
-                                                          dataStore:dataStore
+                                            tagGroupsLookupManager:lookupManager
+                                                remoteDataProvider:remoteDataProvider
+                                                         dataStore:dataStore
                                                            channel:channel
-                                                         dispatcher:[UADispatcher mainDispatcher]
-                                                 displayCoordinator:[[UAInAppMessageDefaultDisplayCoordinator alloc] init]
-                                                       assetManager:[UAInAppMessageAssetManager assetManager]
-                                                          analytics:analytics];
+                                                        dispatcher:[UADispatcher mainDispatcher]
+                                                displayCoordinator:[[UAInAppMessageDefaultDisplayCoordinator alloc] init]
+                                                      assetManager:[UAInAppMessageAssetManager assetManager]
+                                                         analytics:analytics];
 }
 
 - (instancetype)initWithAutomationEngine:(UAAutomationEngine *)automationEngine
                   tagGroupsLookupManager:(UATagGroupsLookupManager *)tagGroupsLookupManager
-                       remoteDataManager:(UARemoteDataManager *)remoteDataManager
+                      remoteDataProvider:(id<UARemoteDataProvider>)remoteDataProvider
                                dataStore:(UAPreferenceDataStore *)dataStore
                                  channel:(UAChannel *)channel
                               dispatcher:(UADispatcher *)dispatcher
@@ -178,8 +178,10 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
         self.automationEngine.delegate = self;
         self.tagGroupsLookupManager = tagGroupsLookupManager;
         self.tagGroupsLookupManager.delegate = self;
-        self.remoteDataManager = remoteDataManager;
-        self.remoteDataClient = [UAInAppRemoteDataClient clientWithScheduler:self remoteDataManager:remoteDataManager dataStore:dataStore channel:channel];
+        self.remoteDataProvider = remoteDataProvider;
+        self.remoteDataClient = [UAInAppRemoteDataClient clientWithScheduler:self
+                                                          remoteDataProvider:remoteDataProvider
+                                                                   dataStore:dataStore channel:channel];
         self.dispatcher = dispatcher;
         self.prepareSchedulePipeline = [UARetriablePipeline pipeline];
         self.defaultDisplayCoordinator = displayCoordinator;
@@ -256,7 +258,7 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
 
         // Schedule the assets
         if (schedule) {
-          [self scheduleAssets:@[schedule]];
+            [self scheduleAssets:@[schedule]];
         }
 
         completionHandler(schedule);
@@ -269,10 +271,10 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
     [self.automationEngine scheduleMultiple:scheduleInfos
                                    metadata:metadata
                           completionHandler:^(NSArray<UASchedule *> *schedules) {
-                              // Schedule the assets
-                              [self scheduleAssets:schedules];
-                              completionHandler(schedules);
-                          }];
+        // Schedule the assets
+        [self scheduleAssets:schedules];
+        completionHandler(schedules);
+    }];
 }
 
 - (void)scheduleAssets:(NSArray<UASchedule *> *)schedules {
@@ -346,9 +348,9 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
             completionHandler(NO, nil);
         }
     };
-    
+
     UATagGroups *requestedTagGroups = audience.tagSelector.tagGroups;
-    
+
     if (requestedTagGroups.tags.count) {
         [self.tagGroupsLookupManager getTagGroups:requestedTagGroups completionHandler:^(UATagGroups * _Nullable tagGroups, NSError * _Nonnull error) {
             if (error) {
@@ -463,7 +465,7 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
 - (void)prepareSchedule:(UASchedule *)schedule completionHandler:(void (^)(UAAutomationSchedulePrepareResult))completionHandler {
     UAInAppMessageScheduleInfo *info = (UAInAppMessageScheduleInfo *)schedule.info;
     UAInAppMessage *message = info.message;
-    
+
     // Allow the delegate to extend the message if desired.
     id<UAInAppMessagingDelegate> delegate = self.delegate;
     if ([delegate respondsToSelector:@selector(extendMessage:)]) {
@@ -511,7 +513,7 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
             completionHandler(prepareResult);
         }
     }];
-    
+
     // Prepare the assets
     UARetriable *prepareMessageAssets = [self prepareMessageAssetsWithSchedule:schedule resultHandler:^(UARetriableResult result) {
         UAAutomationSchedulePrepareResult prepareResult = UAAutomationSchedulePrepareResultInvalidate;
@@ -581,7 +583,7 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
         return NO;
     }
 
-    if (![self.remoteDataManager isMetadataCurrent:schedule.metadata]) {
+    if (![self.remoteDataProvider isMetadataCurrent:schedule.metadata]) {
         return YES;
     }
 
@@ -750,7 +752,11 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
 }
 
 - (void)applyRemoteConfig:(nullable id)config {
-    UAInAppMessagingRemoteConfig *inAppConfig = [UAInAppMessagingRemoteConfig configWithJSON:config] ?: [UAInAppMessagingRemoteConfig defaultConfig];
+    UAInAppMessagingRemoteConfig *inAppConfig = nil;
+    if (config) {
+        inAppConfig = [UAInAppMessagingRemoteConfig configWithJSON:config];
+    }
+    inAppConfig = inAppConfig ?: [UAInAppMessagingRemoteConfig defaultConfig];
 
     self.tagGroupsLookupManager.enabled = inAppConfig.tagGroupsConfig.enabled;
     self.tagGroupsLookupManager.cacheMaxAgeTime = inAppConfig.tagGroupsConfig.cacheMaxAgeTime;
@@ -812,4 +818,5 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
 @end
 
 NS_ASSUME_NONNULL_END
+
 

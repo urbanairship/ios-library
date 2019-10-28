@@ -217,19 +217,6 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
 
 #if !TARGET_OS_TV
 
-
-/**
- * Returns the `UAInAppMessageManager` instance. Used for customizing
- * in-app notifications.
- */
-+ (null_unspecified UAInAppMessageManager *)inAppMessageManager;
-
-/**
- * Returns the `UALegacyInAppMessaging` instance. Used for customizing
- * legacy in-app notifications.
- */
-+ (null_unspecified UALegacyInAppMessaging *)legacyInAppMessaging;
-
 /**
  * Returns the default `UAMessageCenter` instance. Used for customizing
  * and displaying the default message center.
@@ -248,11 +235,6 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
  * cannot be located at runtime.
  */
 + (nullable NSBundle *)resources;
-
-/**
- * Returns the `UAAutomation` instance.
- */
-+ (null_unspecified UAAutomation *)automation;
 
 /**
  * Returns the default `UAAnalytics` instance.

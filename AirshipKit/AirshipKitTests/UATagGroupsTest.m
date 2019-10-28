@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 #import "UABaseTest.h"
-#import "UATagGroups+Internal.h"
+#import "UATagGroups.h"
 #import "UAirship.h"
 #import "UAPush.h"
 

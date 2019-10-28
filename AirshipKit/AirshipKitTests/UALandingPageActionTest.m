@@ -46,7 +46,8 @@
 
     self.mockInAppMessageManager = [self mockForClass:[UAInAppMessageManager class]];
     [[[self.mockAirship stub] andReturn:self.mockConfig] config];
-    [[[self.mockAirship stub] andReturn:self.mockInAppMessageManager] sharedInAppMessageManager];
+
+    [[[self.mockInAppMessageManager stub] andReturn:self.mockInAppMessageManager] shared];
 }
 
 - (void)tearDown {

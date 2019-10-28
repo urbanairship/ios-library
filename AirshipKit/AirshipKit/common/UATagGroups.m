@@ -2,7 +2,7 @@
 
 #define kUATagGroupsTagsKey @"tags"
 
-#import "UATagGroups+Internal.h"
+#import "UATagGroups.h"
 #import "UAirship.h"
 #import "UAPush.h"
 

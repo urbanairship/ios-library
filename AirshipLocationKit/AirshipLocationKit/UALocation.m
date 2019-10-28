@@ -8,9 +8,6 @@ NSString *const UALocationBackgroundUpdatesAllowed = @"UALocationBackgroundUpdat
 
 @implementation UALocation
 
-+ (null_unspecified UALocation *)sharedLocation {
-    return (UALocation *)[[UAirship shared] componentForClassName:@"UALocation"];
-}
 
 - (instancetype)initWithDataStore:(UAPreferenceDataStore *)dataStore {
     self = [super initWithDataStore:dataStore];

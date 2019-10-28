@@ -8,14 +8,14 @@
 #import "UAInAppMessageAdapterProtocol.h"
 #import "UAComponent+Internal.h"
 #import "UADispatcher+Internal.h"
-#import "UARemoteDataManager+Internal.h"
+#import "UARemoteDataProvider.h"
 #import "UAChannel.h"
 #import "UATagGroupsLookupManager+Internal.h"
-#import "UATagGroupsMutationHistory+Internal.h"
 #import "UAInAppMessageDefaultDisplayCoordinator+Internal.h"
 #import "UAInAppMessageAssetManager+Internal.h"
 #import "UAInAppRemoteDataClient+Internal.h"
 #import "UAAppStateTracker+Internal.h"
+#import "UATagGroupsHistory.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -40,7 +40,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @param automationEngine The automation engine.
  * @param tagGroupsLookupManager The tag groups lookup manager.
- * @param remoteDataManager The remote data manager.
+ * @param remoteDataProvider The remote data provider.
  * @param dataStore The preference data store.
  * @param channel The channel.
  * @param dispatcher GCD dispatcher.
@@ -49,7 +49,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 + (instancetype)managerWithAutomationEngine:(UAAutomationEngine *)automationEngine
                      tagGroupsLookupManager:(UATagGroupsLookupManager *)tagGroupsLookupManager
-                          remoteDataManager:(UARemoteDataManager *)remoteDataManager
+                         remoteDataProvider:(id<UARemoteDataProvider>)remoteDataProvider
                                   dataStore:(UAPreferenceDataStore *)dataStore
                                     channel:(UAChannel *)channel
                                  dispatcher:(UADispatcher *)dispatcher
@@ -61,16 +61,16 @@ NS_ASSUME_NONNULL_BEGIN
  * Factory method.
  *
  * @param config The UARuntimeConfigInstance.
- * @param tagGroupsMutationHistory The tag groups mutation history.
- * @param remoteDataManager The remote data manager.
+ * @param tagGroupsHistory The tag groups history.
+ * @param remoteDataProvider The remote data provider.
  * @param dataStore The preference data store.
  * @param channel The channel.
  * @param analytics The system analytics instance.
  * @return A in-app message manager instance.
  */
 + (instancetype)managerWithConfig:(UARuntimeConfig *)config
-         tagGroupsMutationHistory:(UATagGroupsMutationHistory *)tagGroupsMutationHistory
-                remoteDataManager:(UARemoteDataManager *)remoteDataManager
+                 tagGroupsHistory:(id<UATagGroupsHistory>)tagGroupsHistory
+               remoteDataProvider:(id<UARemoteDataProvider>)remoteDataProvider
                         dataStore:(UAPreferenceDataStore *)dataStore
                           channel:(UAChannel *)channel
                         analytics:(UAAnalytics *)analytics;
@@ -90,4 +90,5 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 NS_ASSUME_NONNULL_END
+
 

@@ -11,26 +11,11 @@
 #import "UAAppStateTracker+Internal.h"
 #import "UAComponent.h"
 #import "UAPushableComponent.h"
+#import "UARemoteDataProvider.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-typedef void (^UARemoteDataPublishBlock)(NSArray<UARemoteDataPayload *> *remoteDataArray);
-
-@interface UARemoteDataManager : UAComponent <UAAppStateTrackerDelegate, UAPushableComponent>
-
-///---------------------------------------------------------------------------------------
-/// @name Remote Data Manager Client API
-///---------------------------------------------------------------------------------------
-
-/**
- * Subscribe to the remote data manager
- *
- * @param payloadTypes You will be notified when there is new remote data for these payload types
- * @param publishBlock The block on which you will be notified when new remote data arrives for your payload types. The payload order will be
- * sorted by in the order specified by `payloadTypes`. Note: this block will be called ASAP if there is cached remote data for your payload types.
- * @return UADisposable object - call "dispose" on the object to unsubscribe from the remote data manager
- */
-- (UADisposable *)subscribeWithTypes:(NSArray<NSString *> *)payloadTypes block:(UARemoteDataPublishBlock)publishBlock;
+@interface UARemoteDataManager : UAComponent <UARemoteDataProvider, UAAppStateTrackerDelegate, UAPushableComponent>
 
 ///---------------------------------------------------------------------------------------
 /// @name Internal Properties & Methods
@@ -109,13 +94,6 @@ typedef void (^UARemoteDataPublishBlock)(NSArray<UARemoteDataPayload *> *remoteD
  * @return The metadata dictionary.
  */
 -(NSDictionary *)createMetadata:(NSLocale *)locale;
-
-/**
- * Checks if provided metadata matches a metadata created with the current locale and app version.
- *
- * @return `YES` if the metadata is current, otherwise `NO`.
- */
--(BOOL)isMetadataCurrent:(NSDictionary *)metadata;
 
 @end
 

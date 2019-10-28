@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 #import "UAAutomationEngine+Internal.h"
-#import "UAAnalytics+Internal.h"
+#import "UAAnalytics.h"
 #import "UAAutomationStore+Internal.h"
 #import "UAScheduleTriggerData+Internal.h"
 #import "UAScheduleData+Internal.h"

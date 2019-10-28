@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-#import "UAAutomation+Internal.h"
+#import "UAActionAutomation+Internal.h"
 #import "UASchedule+Internal.h"
 #import "UAActionScheduleInfo.h"
 #import "UAScheduleInfo+Internal.h"
@@ -12,7 +12,7 @@
 NSUInteger const UAAutomationScheduleLimit = 100;
 NSString *const UAAutomationStoreFileFormat = @"Automation-%@.sqlite";
 
-@implementation UAAutomation
+@implementation UAActionAutomation
 
 - (instancetype)initWithConfig:(UARuntimeConfig *)config
                      dataStore:(UAPreferenceDataStore *)dataStore {
@@ -23,7 +23,7 @@ NSString *const UAAutomationStoreFileFormat = @"Automation-%@.sqlite";
         NSString *storeName = [NSString stringWithFormat:UAAutomationStoreFileFormat, config.appKey];
 
         UAAutomationStore *store = [UAAutomationStore automationStoreWithStoreName:storeName scheduleLimit:UAAutomationScheduleLimit];
-        
+
         self.automationEngine = [UAAutomationEngine automationEngineWithAutomationStore:store];
         self.automationEngine.delegate = self;
 
@@ -37,8 +37,10 @@ NSString *const UAAutomationStoreFileFormat = @"Automation-%@.sqlite";
 
 + (instancetype)automationWithConfig:(UARuntimeConfig *)config
                            dataStore:(UAPreferenceDataStore *)dataStore {
-    return [[UAAutomation alloc] initWithConfig:config dataStore:dataStore];
+    return [[UAActionAutomation alloc] initWithConfig:config dataStore:dataStore];
 }
+
+
 
 #pragma mark -
 #pragma mark Public API

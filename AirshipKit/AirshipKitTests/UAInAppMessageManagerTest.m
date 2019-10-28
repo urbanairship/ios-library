@@ -40,7 +40,7 @@
 @property (nonatomic, strong) id mockAssetManager;
 @property (nonatomic, strong) id mockAssetCache;
 @property (nonatomic, strong) id mockAssets;
-@property (nonatomic, strong) id mockRemoteDataManager;
+@property (nonatomic, strong) id mockRemoteDataProvider;
 @property (nonatomic, strong) id mockRemoteDataClient;
 @property (nonatomic, strong) id mockAnalytics;
 
@@ -69,9 +69,8 @@
     self.mockDelegatedDisplayCoordinator = [self mockForClass:[UAInAppMessageDefaultDisplayCoordinator class]];
 
     self.mockMetadata = @{@"cool":@"story"};
-    self.mockRemoteDataManager = [self mockForClass:[UARemoteDataManager class]];
-    [[[self.mockRemoteDataManager stub] andReturn:self.mockMetadata] lastMetadata];
-    [[[self.mockRemoteDataManager stub] andReturnValue:OCMOCK_VALUE(self.isMetadataValid)] isMetadataCurrent:OCMOCK_ANY];
+    self.mockRemoteDataProvider = [self mockForProtocol:@protocol(UARemoteDataProvider)];
+    [[[self.mockRemoteDataProvider stub] andReturnValue:OCMOCK_VALUE(self.isMetadataValid)] isMetadataCurrent:OCMOCK_ANY];
 
     self.mockAssetManager = [self mockForClass:[UAInAppMessageAssetManager class]];
     self.mockAssetCache = [self mockForClass:[UAInAppMessageAssetCache class]];
@@ -83,7 +82,7 @@
 
     self.manager = [UAInAppMessageManager managerWithAutomationEngine:self.mockAutomationEngine
                                                tagGroupsLookupManager:self.mockTagGroupsLookupManager
-                                                    remoteDataManager:self.mockRemoteDataManager
+                                                   remoteDataProvider:self.mockRemoteDataProvider
                                                             dataStore:self.dataStore
                                                               channel:self.mockChannel
                                                            dispatcher:self.testDispatcher
@@ -113,7 +112,7 @@
 - (void)tearDown {
     [self.mockDelegate stopMocking];
     [self.mockAdapter stopMocking];
-    [self.mockRemoteDataManager stopMocking];
+    [self.mockRemoteDataProvider stopMocking];
 
     [super tearDown];
 }

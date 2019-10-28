@@ -2,7 +2,7 @@
 
 #import "UACancelSchedulesAction.h"
 #import "UAirship.h"
-#import "UAAutomation.h"
+#import "UAActionAutomation.h"
 
 NSString *const UACancelSchedulesActionAll = @"all";
 NSString *const UACancelSchedulesActionIDs = @"ids";
@@ -40,7 +40,7 @@ NSString *const UACancelSchedulesActionGroups = @"groups";
 
     // All
     if ([UACancelSchedulesActionAll isEqualToString:arguments.value]) {
-        [[UAirship automation] cancelAll];
+        [[UAActionAutomation shared] cancelAll];
 
         completionHandler([UAActionResult emptyResult]);
         return;
@@ -52,13 +52,13 @@ NSString *const UACancelSchedulesActionGroups = @"groups";
 
         // Single group
         if ([groups isKindOfClass:[NSString class]]) {
-            [[UAirship automation] cancelSchedulesWithGroup:groups];
+            [[UAActionAutomation shared] cancelSchedulesWithGroup:groups];
         } else if ([groups isKindOfClass:[NSArray class]]) {
 
             // Array of groups
             for (id value in groups) {
                 if ([value isKindOfClass:[NSString class]]) {
-                    [[UAirship automation] cancelSchedulesWithGroup:value];
+                    [[UAActionAutomation shared] cancelSchedulesWithGroup:value];
                 }
             }
         }
@@ -70,13 +70,13 @@ NSString *const UACancelSchedulesActionGroups = @"groups";
 
         // Single ID
         if ([ids isKindOfClass:[NSString class]]) {
-            [[UAirship automation] cancelScheduleWithID:ids];
+            [[UAActionAutomation shared] cancelScheduleWithID:ids];
         } else if ([ids isKindOfClass:[NSArray class]]) {
 
             // Array of IDs
             for (id value in ids) {
                 if ([value isKindOfClass:[NSString class]]) {
-                    [[UAirship automation] cancelScheduleWithID:value];
+                    [[UAActionAutomation shared] cancelScheduleWithID:value];
                 }
             }
         }

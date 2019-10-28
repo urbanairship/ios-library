@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 
-#import "UAAutomation.h"
+#import "UAActionAutomation.h"
 #import "UAAnalytics+Internal.h"
 #import <UIKit/UIKit.h>
 #import "UAAutomationEngine+Internal.h"
@@ -10,9 +10,9 @@
 @class UAPreferenceDataStore;
 
 /*
- * SDK-private extensions to UAAutomation
+ * SDK-private extensions to UAActionAutomation
  */
-@interface UAAutomation() <UAAutomationEngineDelegate>
+@interface UAActionAutomation() <UAAutomationEngineDelegate>
 
 ///---------------------------------------------------------------------------------------
 /// @name Automation Internal Properties

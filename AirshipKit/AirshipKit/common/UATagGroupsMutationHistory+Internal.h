@@ -5,22 +5,15 @@
 #import "UATagGroupsMutation+Internal.h"
 #import "UAPreferenceDataStore+Internal.h"
 #import "UATagGroupsTransactionRecord+Internal.h"
-#import "UATagGroups+Internal.h"
+#import "UATagGroups.h"
+#import "UATagGroupsHistory.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Represents the local history of tag group mutations.
  */
-@interface UATagGroupsMutationHistory : NSObject
-
-/**
- * The maximum age for stored sent mutations. Mutations older than this time interval will
- * be periodically purged.
- *
- * If unset, defaults to one day. Subsequent changes are locally persisted.
- */
-@property (nonatomic, assign) NSTimeInterval maxSentMutationAge;
+@interface UATagGroupsMutationHistory : NSObject<UATagGroupsHistory>
 
 /**
  * UATagGroupsMutationHistory class factory method.
@@ -97,15 +90,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)clearAll;
 
-/**
- * Applies local history to the provided tag groups data, ignoring sent mutations
- * older than the provided maximum age in seconds.
- *
- * @param tagGroups A collection of tag groups.
- * @param maxAge The maximum age of locally stored sent mutations to consider. Older sent mutations
- * will not be applied.
- */
-- (UATagGroups *)applyHistory:(UATagGroups *)tagGroups maxAge:(NSTimeInterval)maxAge;
 
 @end
 

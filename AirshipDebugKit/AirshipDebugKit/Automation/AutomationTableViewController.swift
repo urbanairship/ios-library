@@ -34,7 +34,7 @@ class AutomationTableViewController: UITableViewController {
     var launchPathComponents : [String]?
     var launchCompletionHandler : (() -> Void)?
 
-    private let inAppMessageManager = UAirship.inAppMessageManager()
+    private let inAppMessageManager = UAInAppMessageManager.shared()
     private var schedules : Array<UASchedule>?
 
     func setTableViewTheme() {

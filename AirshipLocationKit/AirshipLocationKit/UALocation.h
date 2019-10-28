@@ -83,7 +83,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, readonly, nullable) CLLocation *lastLocation;
 
-+ (null_unspecified UALocation *)sharedLocation;
 
 ///---------------------------------------------------------------------------------------
 /// @name Location Methods

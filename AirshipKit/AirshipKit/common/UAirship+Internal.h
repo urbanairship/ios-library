@@ -27,6 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 @property (nonatomic, strong) UAChannelCapture *channelCapture;
 @property (nonatomic, copy) NSArray<UAComponent *> *components;
+@property (nonatomic, copy) NSDictionary<NSString *, UAComponent *> *componentClassMap;
 
 /**
  * The channel
@@ -41,31 +42,16 @@ NS_ASSUME_NONNULL_BEGIN
 #if !TARGET_OS_TV   // Inbox not supported on tvOS
 
 /**
- * The legacy in-app messaging manager.
- */
-@property (nonatomic, strong) UALegacyInAppMessaging *sharedLegacyInAppMessaging;
-
-/**
- * The in-app messaging manager.
- */
-@property (nonatomic, strong) UAInAppMessageManager *sharedInAppMessageManager;
-
-/**
  * The default message center.
  */
 @property (nonatomic, strong) UAMessageCenter *sharedMessageCenter;
+
 #endif
 
 /**
  * The named user.
  */
 @property (nonatomic, strong) UANamedUser *sharedNamedUser;
-
-
-/**
- * Shared automation manager.
- */
-@property (nonatomic, strong) UAAutomation *sharedAutomation;
 
 /**
  * The shared analytics manager.

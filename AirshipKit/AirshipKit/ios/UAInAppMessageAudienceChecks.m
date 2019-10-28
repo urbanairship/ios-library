@@ -11,7 +11,7 @@
 #import "UAJSONPredicate.h"
 #import <CommonCrypto/CommonDigest.h>
 #import "UA_Base64.h"
-#import "UATagGroups+Internal.h"
+#import "UATagGroups.h"
 #import "UAUtils+Internal.h"
 
 @implementation UAInAppMessageAudienceChecks

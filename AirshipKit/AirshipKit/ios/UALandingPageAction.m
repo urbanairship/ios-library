@@ -155,9 +155,8 @@ CGFloat const defaultBorderRadiusPoints = 2;
 
     UAInAppMessageScheduleInfo *scheduleInfo = [self createScheduleInfoWithActionArguments:arguments];
 
-    [UAirship.inAppMessageManager scheduleMessageWithScheduleInfo:scheduleInfo
-                                                completionHandler:^(UASchedule *schedule) {
-                                                    completionHandler([UAActionResult emptyResult]);
+    [[UAInAppMessageManager shared] scheduleMessageWithScheduleInfo:scheduleInfo completionHandler:^(UASchedule *schedule) {
+        completionHandler([UAActionResult emptyResult]);
     }];
 }
 

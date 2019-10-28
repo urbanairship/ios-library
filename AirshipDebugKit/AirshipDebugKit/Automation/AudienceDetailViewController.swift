@@ -44,7 +44,7 @@ class AudienceDetailViewController: UAStaticTableViewController {
     @IBOutlet private weak var checkAudienceTitle: UILabel!
     @IBOutlet private weak var checkAudienceCell: UITableViewCell!
     
-    private let inAppMessageManager = UAirship.inAppMessageManager()
+    private let inAppMessageManager = UAInAppMessageManager.shared()
     private var inAudience : Bool?
 
     override func viewWillAppear(_ animated: Bool) {

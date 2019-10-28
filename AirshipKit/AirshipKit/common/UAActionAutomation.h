@@ -16,7 +16,7 @@ extern NSUInteger const UAAutomationScheduleLimit;
 /**
  * Manager class for scheduling actions.
  */
-@interface UAAutomation : UAComponent
+@interface UAActionAutomation : UAComponent
 
 ///---------------------------------------------------------------------------------------
 /// @name Automation Schedule Management Methods
