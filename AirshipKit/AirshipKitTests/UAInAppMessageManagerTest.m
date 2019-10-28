@@ -937,21 +937,63 @@
     [self.mockAssetCache verify];
 }
 
-- (void)testCancelMessage {
-    [[self.mockAutomationEngine expect] cancelSchedulesWithGroup:self.scheduleInfo.message.identifier];
+- (void)testCancelMessagesWithID {
+    [[self.mockAutomationEngine expect] cancelSchedulesWithGroup:self.scheduleInfo.message.identifier completionHandler:nil];
 
     [self.manager cancelMessagesWithID:self.scheduleInfo.message.identifier];
 
     [self.mockAutomationEngine verify];
 }
 
+- (void)testCancelMessagesWithIDCompletionHandler {
+    XCTestExpectation *blockInvoked = [self expectationWithDescription:@"block invoked"];
+
+    UASchedule *dummySchedule = [UASchedule scheduleWithIdentifier:@"foo" info:[UAScheduleInfo new] metadata:@{}];
+
+    [[[self.mockAutomationEngine expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void (^completionHandler)(NSArray<UASchedule *>* _Nullable) = (__bridge void(^)(NSArray<UASchedule *>* _Nullable))arg;
+        completionHandler(@[dummySchedule]);
+    }] cancelSchedulesWithGroup:self.scheduleInfo.message.identifier completionHandler:OCMOCK_ANY];
+
+    [self.manager cancelMessagesWithID:self.scheduleInfo.message.identifier completionHandler:^(NSArray<UASchedule *> * _Nonnull schedules) {
+        XCTAssertEqualObjects(schedules, @[dummySchedule]);
+        [blockInvoked fulfill];
+    }];
+
+    [self waitForTestExpectations];
+    [self.mockAutomationEngine verify];
+}
+
 - (void)testCancelSchedule {
     UASchedule *testSchedule = [UASchedule scheduleWithIdentifier:@"expected_id" info:self.scheduleInfo metadata:@{}];
 
-    [[self.mockAutomationEngine expect] cancelScheduleWithID:testSchedule.identifier];
+    [[self.mockAutomationEngine expect] cancelScheduleWithID:testSchedule.identifier completionHandler:nil];
 
     [self.manager cancelScheduleWithID:testSchedule.identifier];
 
+    [self.mockAutomationEngine verify];
+}
+
+- (void)testCancelScheduleWithCompletionHandler {
+    XCTestExpectation *blockInvoked = [self expectationWithDescription:@"block invoked"];
+
+    UASchedule *dummySchedule = [UASchedule scheduleWithIdentifier:@"foo" info:[UAScheduleInfo new] metadata:@{}];
+
+    [[[self.mockAutomationEngine expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void (^completionHandler)(UASchedule * _Nullable) = (__bridge void(^)(UASchedule * _Nullable))arg;
+        completionHandler(dummySchedule);
+    }] cancelScheduleWithID:self.scheduleInfo.message.identifier completionHandler:OCMOCK_ANY];
+
+    [self.manager cancelScheduleWithID:self.scheduleInfo.message.identifier completionHandler:^(UASchedule * _Nonnull schedule) {
+        XCTAssertEqualObjects(schedule, dummySchedule);
+        [blockInvoked fulfill];
+    }];
+
+    [self waitForTestExpectations];
     [self.mockAutomationEngine verify];
 }
 

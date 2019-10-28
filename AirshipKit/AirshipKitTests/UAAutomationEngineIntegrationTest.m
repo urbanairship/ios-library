@@ -492,8 +492,46 @@
     [self waitForTestExpectations];
 }
 
-- (void)testCancelGroup {
+- (void)testCancelScheduleCompletionHandler {
+    __block NSString *scheduleIdentifier;
 
+    XCTestExpectation *scheduleExpectation = [self expectationWithDescription:@"scheduled actions"];
+
+    UAActionScheduleInfo *scheduleInfo = [UAActionScheduleInfo scheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder *builder) {
+        UAScheduleTrigger *foregroundTrigger = [UAScheduleTrigger foregroundTriggerWithCount:2];
+        builder.actions = @{@"oh": @"hi"};
+        builder.triggers = @[foregroundTrigger];
+    }];
+
+    [self.automationEngine schedule:scheduleInfo metadata:@{} completionHandler:^(UASchedule *schedule) {
+        XCTAssertEqualObjects(scheduleInfo, schedule.info);
+        XCTAssertNotNil(schedule.identifier);
+        scheduleIdentifier = schedule.identifier;
+
+        [scheduleExpectation fulfill];
+    }];
+
+    [self waitForTestExpectations];
+
+    XCTestExpectation *scheduleCanceled = [self expectationWithDescription:@"schedule canceled"];
+
+    [self.automationEngine cancelScheduleWithID:scheduleIdentifier completionHandler:^(UASchedule * _Nullable schedule) {
+        XCTAssertEqualObjects(schedule.info, scheduleInfo);
+        [scheduleCanceled fulfill];
+    }];
+
+    XCTestExpectation *testExpectation = [self expectationWithDescription:@"schedules fetched"];
+
+    // Verify schedule was canceled
+    [self.automationEngine getSchedules:^(NSArray<UASchedule *> *result) {
+        XCTAssertEqual(0, result.count);
+        [testExpectation fulfill];
+    }];
+
+    [self waitForTestExpectations];
+}
+
+- (void)testCancelGroup {
     // Schedule 10 under "foo"
     for (int i = 0; i < 10; i++) {
         UAActionScheduleInfo *scheduleInfo = [UAActionScheduleInfo scheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder *builder) {
@@ -530,6 +568,59 @@
     [self.automationEngine getSchedules:^(NSArray<UASchedule *> *result) {
         XCTAssertEqualObjects([NSSet setWithArray:barSchedules], [NSSet setWithArray:result]);
         [testExpectation fulfill];
+    }];
+
+    [self waitForTestExpectations];
+}
+
+- (void)testCancelGroupCompletionHandler {
+    NSMutableArray *fooSchedules = [NSMutableArray array];
+
+    // Schedule 10 under "foo"
+    for (int i = 0; i < 10; i++) {
+        UAActionScheduleInfo *scheduleInfo = [UAActionScheduleInfo scheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder *builder) {
+            UAScheduleTrigger *foregroundTrigger = [UAScheduleTrigger foregroundTriggerWithCount:2];
+            builder.actions = @{@"oh": @"hi"};
+            builder.triggers = @[foregroundTrigger];
+            builder.group = @"foo";
+        }];
+
+        [self.automationEngine schedule:scheduleInfo metadata:@{} completionHandler:^(UASchedule *schedule) {
+            [fooSchedules addObject:schedule];
+        }];
+    }
+
+    // Schedule 15 under "bar"
+    NSMutableArray *barSchedules = [NSMutableArray array];
+
+    for (int i = 0; i < 15; i++) {
+        UAActionScheduleInfo *scheduleInfo = [UAActionScheduleInfo scheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder *builder) {
+            UAScheduleTrigger *foregroundTrigger = [UAScheduleTrigger foregroundTriggerWithCount:2];
+            builder.actions = @{@"oh": @"hi"};
+            builder.triggers = @[foregroundTrigger];
+            builder.group = @"bar";
+        }];
+
+        [self.automationEngine schedule:scheduleInfo metadata:@{} completionHandler:^(UASchedule *schedule) {
+            [barSchedules addObject:schedule];
+        }];
+    }
+
+    XCTestExpectation *schedulesCanceled = [self expectationWithDescription:@"schedules canceled"];
+
+
+    // Cancel all the "foo" schedules
+    [self.automationEngine cancelSchedulesWithGroup:@"foo" completionHandler:^(NSArray<UASchedule *> * _Nonnull schedules) {
+        XCTAssertEqualObjects([NSSet setWithArray:schedules], [NSSet setWithArray:fooSchedules]);
+        [schedulesCanceled fulfill];
+    }];
+
+    XCTestExpectation *schedulesFeteched = [self expectationWithDescription:@"schedules fetched"];
+
+    // Verify the "bar" schedules are still active
+    [self.automationEngine getSchedules:^(NSArray<UASchedule *> *result) {
+        XCTAssertEqualObjects([NSSet setWithArray:barSchedules], [NSSet setWithArray:result]);
+        [schedulesFeteched fulfill];
     }];
 
     [self waitForTestExpectations];

@@ -202,7 +202,7 @@
     [self fetchSchedulesWithPredicate:predicate limit:self.scheduleLimit completionHandler:completionHandler];
 }
 
-- (void)getSchedule:(NSString *)scheduleID includingExpired:(BOOL)includingExpired completionHandler:(void (^)(UAScheduleData *))completionHandler {
+- (void)getSchedule:(NSString *)scheduleID includingExpired:(BOOL)includingExpired completionHandler:(void (^)(UAScheduleData * _Nullable))completionHandler {
     NSPredicate *predicate = includingExpired ?
         [NSPredicate predicateWithFormat:@"identifier == %@", scheduleID] :
         [NSPredicate predicateWithFormat:@"identifier == %@ && end >= %@", scheduleID, self.date.now];

@@ -89,19 +89,16 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
 
     if (newMessageID.length && [newMessageID isEqualToString:pendingMessageID]) {
         UA_WEAKIFY(self);
-        [self.inAppMessageManager getSchedulesWithMessageID:pendingMessageID completionHandler:^(NSArray<UASchedule *> *schedules) {
-            UA_STRONGIFY(self);
+        [self.inAppMessageManager cancelMessagesWithID:pendingMessageID completionHandler:^(NSArray<UASchedule *>* _Nullable schedules) {
+            UA_STRONGIFY(self)
             if (schedules.count) {
                 UA_LTRACE(@"The in-app message delivery push was directly launched for message: %@", pendingMessageID);
-                [self.inAppMessageManager cancelMessagesWithID:pendingMessageID];
-                self.pendingMessageID = nil;
 
                 UAInAppMessageResolutionEvent *event = [UAInAppMessageResolutionEvent legacyDirectOpenEventWithMessageID:pendingMessageID];
                 [self.analytics addEvent:event];
-            } else {
-                self.pendingMessageID = nil;
             }
 
+            self.pendingMessageID = nil;
             completionHandler();
         }];
     } else {
@@ -155,22 +152,19 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
         }];
     };
 
-    // If there is a pending message ID, check to see if it's still scheduled
+    // If there is a pending message ID, cancel it
     if (pendingMessageID) {
-        UA_WEAKIFY(self);
-        [self.inAppMessageManager getSchedulesWithMessageID:pendingMessageID completionHandler:^(NSArray<UASchedule *> *schedules) {
-            UA_STRONGIFY(self);
-            // If it's still scheduled, cancel it
+        UA_WEAKIFY(self)
+        [self.inAppMessageManager cancelMessagesWithID:pendingMessageID completionHandler:^(NSArray<UASchedule *> * _Nonnull schedules) {
+            UA_STRONGIFY(self)
             if (schedules.count) {
-                [self.inAppMessageManager cancelMessagesWithID:pendingMessageID];
-
                 UA_LDEBUG(@"LegacyInAppMessageManager - Pending in-app message replaced");
 
                 UAInAppMessageResolutionEvent *event = [UAInAppMessageResolutionEvent legacyReplacedEventWithMessageID:pendingMessageID replacementID:messageID];
                 [self.analytics addEvent:event];
-            } else {
-                self.pendingMessageID = nil;
             }
+
+            self.pendingMessageID = nil;
 
             scheduleBlock();
         }];

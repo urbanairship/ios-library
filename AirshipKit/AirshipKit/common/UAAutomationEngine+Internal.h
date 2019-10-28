@@ -216,8 +216,25 @@ typedef NS_ENUM(NSInteger, UAAutomationScheduleReadyResult) {
  * Cancels a schedule with the given identifier.
  *
  * @param identifier A schedule identifier.
+ * @param completionHandler A completion handler called with the schedule that was canceled, or nil if the schedule was not found.
+*/
+- (void)cancelScheduleWithID:(NSString *)identifier completionHandler:(nullable void (^)(UASchedule * _Nullable))completionHandler;
+
+/**
+ * Cancels a schedule with the given identifier.
+ *
+ * @param identifier A schedule identifier.
  */
 - (void)cancelScheduleWithID:(NSString *)identifier;
+
+
+/**
+ * Cancels all schedules of the given group.
+ *
+ * @param group A schedule group.
+ * @param completionHandler A completion handler called with an array of schedules that were canceled. If no schedules matching the group are found, this array will be empty.
+*/
+- (void)cancelSchedulesWithGroup:(NSString *)group completionHandler:(nullable void (^)(NSArray <UASchedule *> *))completionHandler;
 
 /**
  * Cancels all schedules of the given group.
@@ -238,7 +255,7 @@ typedef NS_ENUM(NSInteger, UAAutomationScheduleReadyResult) {
  * @param completionHandler The completion handler with the result.
  */
 - (void)getScheduleWithID:(NSString *)identifier
-        completionHandler:(void (^)(UASchedule * __nullable))completionHandler;
+        completionHandler:(void (^)(UASchedule * _Nullable))completionHandler;
 
 /**
  * Gets all unended schedules.
