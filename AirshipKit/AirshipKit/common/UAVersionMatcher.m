@@ -34,9 +34,6 @@ typedef NS_ENUM(NSInteger,UAVersionMatcherConstraintType) {
 }
 
 + (nullable instancetype)matcherWithVersionConstraint:(NSString *)versionConstraint {
-    if (![versionConstraint isKindOfClass:[NSString class]]) {
-        return nil;
-    }
     
     NSString *strippedVersionConstraint = [self removeWhitespace:versionConstraint];
     

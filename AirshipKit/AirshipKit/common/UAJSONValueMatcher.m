@@ -200,6 +200,10 @@ NSString * const UAJSONValueMatcherErrorDomain = @"com.urbanairship.json_value_m
 }
 
 + (nullable instancetype)matcherWithVersionConstraint:(NSString *)versionConstraint {
+    if (![versionConstraint isKindOfClass:[NSString class]]) {
+        return nil;
+    }
+    
     UAVersionMatcher *versionMatcher = [UAVersionMatcher matcherWithVersionConstraint:versionConstraint];
     
     if (!versionMatcher) {
