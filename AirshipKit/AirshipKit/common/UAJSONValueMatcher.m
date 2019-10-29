@@ -266,14 +266,18 @@ NSString * const UAJSONValueMatcherErrorDomain = @"com.urbanairship.json_value_m
         return matcher;
     }
 
-    UAJSONValueMatcher *matcher = [self matcherWithVersionConstraint:json[UAJSONValueMatcherVersionConstraint]];
-    if (matcher) {
-        return matcher;
+    if ([json[UAJSONValueMatcherVersionConstraint] isKindOfClass:[NSString class]]) {
+        UAJSONValueMatcher *matcher = [self matcherWithVersionConstraint:json[UAJSONValueMatcherVersionConstraint]];
+        if (matcher) {
+            return matcher;
+        }
     }
     
-    matcher = [self matcherWithVersionConstraint:json[UAJSONValueMatcherAlternateVersionConstraint]];
-    if (matcher) {
-        return matcher;
+    if ([json[UAJSONValueMatcherAlternateVersionConstraint] isKindOfClass:[NSString class]]) {
+        UAJSONValueMatcher *matcher = [self matcherWithVersionConstraint:json[UAJSONValueMatcherAlternateVersionConstraint]];
+        if (matcher) {
+            return matcher;
+        }
     }
     
     if (error) {
