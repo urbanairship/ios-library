@@ -30,4 +30,11 @@
 - (NSArray<UAComponent *> *)components {
     return @[self.messageCenter];
 }
+
+- (void)registerActions:(UAActionRegistry *)registry {
+    NSString *path = [[UAirship resources] pathForResource:@"UAMessageCenterActions" ofType:@"plist"];
+    if (path) {
+        [registry registerActionsFromFile:path];
+    }
+}
 @end

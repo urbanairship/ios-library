@@ -2,7 +2,7 @@
 
 #import <Foundation/Foundation.h>
 #import "UAAction.h"
-#import "UAActionPredicateProtocol+Internal.h"
+#import "UAActionPredicateProtocol.h"
 
 /**
  * Default predicate for the add custom event action.

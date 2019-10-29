@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<array>
+	<dict>
+		<key>names</key>
+		<array>
+			<string>landing_page_action</string>
+			<string>^p</string>
+		</array>
+		<key>action</key>
+		<string>UALandingPageAction</string>
+		<key>predicate</key>
+		<string>UALandingPageActionPredicate</string>
+	</dict>
+	<dict>
+  	<key>names</key>
+		<array>
+			<string>cancel_scheduled_actions</string>
+			<string>^csa</string>
+		</array>
+		<key>action</key>
+		<string>UACancelSchedulesAction</string>
+		<key>name</key>
+		<string>cancel_scheduled_actions</string>
+	</dict>
+	<dict>
+  	<key>names</key>
+		<array>
+			<string>schedule_actions</string>
+			<string>^sa</string>
+		</array>
+		<key>action</key>
+		<string>UAScheduleAction</string>
+	</dict>
+</array>
+</plist>

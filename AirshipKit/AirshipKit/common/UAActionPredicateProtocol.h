@@ -2,13 +2,15 @@
 
 #import <Foundation/Foundation.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
- * An internal protocol that defines the minimal functionality of a valid action predicate.
+ * An protocol that defines the minimal functionality of a valid action predicate when loading a actions from a plist.
  */
 @protocol UAActionPredicateProtocol <NSObject>
 
 ///---------------------------------------------------------------------------------------
-/// @name Action Predicate Protocol Core Methods
+/// @name Action Predicate Core Methods
 ///---------------------------------------------------------------------------------------
 
 @required
@@ -23,4 +25,12 @@
  */
 - (BOOL)applyActionArguments:(UAActionArguments *)args;
 
+/**
+ * Factory method when loading the predicate from a plist.
+ * @return The predicate.
+ */
++ (instancetype)predicate;
+
 @end
+
+NS_ASSUME_NONNULL_END

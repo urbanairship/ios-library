@@ -3,13 +3,11 @@
 #import "UAActionRegistry+Internal.h"
 #import "UAActionRegistryEntry+Internal.h"
 #import "UAirship.h"
-#import "UAActionPredicateProtocol+Internal.h"
+#import "UAActionPredicateProtocol.h"
 
-NSString *const defaultsClassKey = @"class";
-NSString *const defaultsNameKey = @"name";
-NSString *const defaultsNamesKey = @"names";
-NSString *const defaultsAltNameKey = @"altName";
-NSString *const defaultsPredicateClassKey = @"predicate";
+NSString *const UAActionRegistryActionKey = @"action";
+NSString *const UAActionRegistryNamesKey = @"names";
+NSString *const UAActionRegistryPredicateClassKey = @"predicate";
 
 @implementation UAActionRegistry
 @dynamic registeredEntries;
@@ -56,15 +54,6 @@ NSString *const defaultsPredicateClassKey = @"predicate";
     return [self registerAction:action names:@[name] predicate:predicate];
 }
 
-- (BOOL)checkParentClass:(Class)actionClass {
-
-    if ([actionClass isSubclassOfClass:[UAAction class]]) {
-        return YES;
-    }
-
-    return NO;
-}
-
 - (BOOL)registerActionClass:(Class)actionClass
                        name:(NSString *)name
                   predicate:(UAActionPredicate)predicate {
@@ -79,7 +68,7 @@ NSString *const defaultsPredicateClassKey = @"predicate";
                       names:(NSArray *)names
                   predicate:(UAActionPredicate)predicate {
 
-    if (![self checkParentClass:actionClass]) {
+    if (![actionClass isSubclassOfClass:[UAAction class]]) {
         UA_LERR(@"Unable to register an action class that isn't a subclass of UAAction.");
         return NO;
     }
@@ -305,83 +294,58 @@ NSString *const defaultsPredicateClassKey = @"predicate";
     return (entry != nil);
 }
 
-- (void)registerDefaultActions {
-    NSString *path = [[UAirship resources] pathForResource:@"UADefaultActions" ofType:@"plist"];
+- (void)registerActionsFromFile:(NSString *)path {
+    NSArray *actions = [NSArray arrayWithContentsOfFile:path];
 
-    if (!path) {
+    if (!actions) {
         return;
     }
 
-    NSArray *defaults = [NSArray arrayWithContentsOfFile:path];
-
-    if (!defaults) {
-        return;
-    }
-
-    for (NSDictionary *defaultsEntry in defaults) {
-        NSMutableArray *names = [NSMutableArray array];
-        Class predicateClass;
-
-        if (defaultsEntry[defaultsNameKey]) {
-            [names addObject:defaultsEntry[defaultsNameKey]];
-        }
-
-        if (defaultsEntry[defaultsAltNameKey]) {
-            [names addObject:defaultsEntry[defaultsAltNameKey]];
-        }
-
-        if (defaultsEntry[defaultsNamesKey]) {
-            [names addObjectsFromArray:defaultsEntry[defaultsNamesKey]];
-        }
-
-        if (defaultsEntry[defaultsClassKey] == nil) {
-            UA_LERR(@"UADefaultActions.plist must provide a default class string under the key %@", defaultsClassKey);
-            break;
-        }
-
-        if (!names) {
-            UA_LERR(@"UADefaultActions.plist must provide a name for entry: %@", defaultsEntry[defaultsClassKey]);
-            break;
-        }
-
-        Class actionClass = NSClassFromString(defaultsEntry[defaultsClassKey]);
-
-        if (![actionClass class]) {
-            UA_LERR(@"Missing action class: %@", defaultsEntry[defaultsClassKey]);
-            break;
-        }
-
-        id actionObj = [[actionClass alloc] init];
-
-        if (![actionObj isKindOfClass:[UAAction class]]) {
-            UA_LERR(@"The action class: %@ must be a subclass of UAAction.", defaultsEntry[defaultsClassKey]);
-            break;
-        }
-
-        if (defaultsEntry[defaultsPredicateClassKey]) {
-            predicateClass = NSClassFromString(defaultsEntry[defaultsPredicateClassKey]);
-
-            if (!predicateClass) {
-                UA_LERR(@"Missing predicate class: %@", defaultsEntry[defaultsPredicateClassKey]);
-            }
-        }
-
-        id<UAActionPredicateProtocol> predicate = [[predicateClass alloc] init];
+    for (NSDictionary *actionEntry in actions) {
+        NSArray *names = actionEntry[UAActionRegistryNamesKey];
+        NSString *actionClassName = actionEntry[UAActionRegistryActionKey];
+        NSString *predicateClassName = actionEntry[UAActionRegistryPredicateClassKey];
         BOOL (^predicateBlock)(UAActionArguments *) = nil;
 
-        if (predicate) {
-            predicateBlock = ^BOOL(UAActionArguments *args) {
-                if ([predicate respondsToSelector:@selector(applyActionArguments:)]) {
-                    return [predicate applyActionArguments:args];
-                }
+        if (!names.count) {
+            UA_LERR(@"Missing action names for entry %@", actionEntry);
+            continue;
+        }
 
-                return YES;
+        if (!actionClassName.length) {
+            UA_LERR(@"Missing action class name for entry %@", actionEntry);
+            continue;
+        }
+
+        Class actionClass = NSClassFromString(actionClassName);
+        if (![actionClass isSubclassOfClass:[UAAction class]]) {
+            UA_LERR(@"Unable to register an action class that isn't a subclass of UAAction. Invalid action class for entry: %@", actionEntry);
+            continue;
+        }
+
+        if (predicateClassName) {
+            Class predicateClass = NSClassFromString(predicateClassName);
+            if (![predicateClass conformsToProtocol:@protocol(UAActionPredicateProtocol)]) {
+                UA_LERR(@"Unable to register protocol class that does not conform to UAActionPredicateProtocol. Invalid predicate for entry: %@", actionEntry);
+                continue;
+            }
+
+            id<UAActionPredicateProtocol> predicate = [predicateClass predicate];
+            predicateBlock = ^BOOL(UAActionArguments *args) {
+                return [predicate applyActionArguments:args];
             };
         }
 
-        [self registerActionClass:[actionClass class]
-                            names:[NSArray arrayWithArray:names]
+        [self registerActionClass:actionClass
+                            names:names
                         predicate:predicateBlock];
+    }
+}
+
+- (void)registerDefaultActions {
+    NSString *path = [[UAirship resources] pathForResource:@"UADefaultActions" ofType:@"plist"];
+    if (path) {
+        [self registerActionsFromFile:path];
     }
 }
 

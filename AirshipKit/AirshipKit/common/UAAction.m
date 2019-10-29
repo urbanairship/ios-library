@@ -91,4 +91,8 @@
     return action;
 }
 
++ (instancetype)action {
+    return [[self alloc] init];
+}
+
 @end

@@ -3,88 +3,80 @@
 <plist version="1.0">
 <array>
 	<dict>
-		<key>class</key>
+		<key>names</key>
+		<array>
+			<string>open_external_url_action</string>
+			<string>^u</string>
+		</array>
+		<key>action</key>
 		<string>UAOpenExternalURLAction</string>
 		<key>predicate</key>
 		<string>UAURLActionPredicate</string>
-		<key>name</key>
-		<string>open_external_url_action</string>
-		<key>altName</key>
-		<string>^u</string>
 	</dict>
 	<dict>
-		<key>class</key>
+		<key>names</key>
+		<array>
+			<string>add_tags_action</string>
+			<string>^+t</string>
+		</array>
+		<key>action</key>
 		<string>UAAddTagsAction</string>
 		<key>predicate</key>
 		<string>UATagsActionPredicate</string>
-		<key>name</key>
-		<string>add_tags_action</string>
-		<key>altName</key>
-		<string>^+t</string>
 	</dict>
 	<dict>
-		<key>class</key>
+		<key>names</key>
+		<array>
+			<string>remove_tags_action</string>
+			<string>^-t</string>
+		</array>
+		<key>action</key>
 		<string>UARemoveTagsAction</string>
 		<key>predicate</key>
 		<string>UATagsActionPredicate</string>
-		<key>name</key>
-		<string>remove_tags_action</string>
-		<key>altName</key>
-		<string>^-t</string>
 	</dict>
 	<dict>
-		<key>class</key>
+		<key>names</key>
+		<array>
+			<string>deep_link_action</string>
+			<string>^d</string>
+		</array>
+		<key>action</key>
 		<string>UADeepLinkAction</string>
 		<key>predicate</key>
 		<string>UAURLActionPredicate</string>
-		<key>name</key>
-		<string>deep_link_action</string>
-		<key>altName</key>
-		<string>^d</string>
 	</dict>
 	<dict>
-		<key>class</key>
+		<key>names</key>
+		<array>
+			<string>add_custom_event_action</string>
+		</array>
+		<key>action</key>
 		<string>UAAddCustomEventAction</string>
 		<key>predicate</key>
 		<string>UAAddCustomEventActionPredicate</string>
-		<key>name</key>
-		<string>add_custom_event_action</string>
 	</dict>
 	<dict>
-		<key>class</key>
-		<string>UACancelSchedulesAction</string>
-		<key>name</key>
-		<string>cancel_scheduled_actions</string>
-		<key>altName</key>
-		<string>^csa</string>
-	</dict>
-	<dict>
-		<key>class</key>
-		<string>UAScheduleAction</string>
-		<key>name</key>
-		<string>schedule_actions</string>
-		<key>altName</key>
-		<string>^sa</string>
-	</dict>
-	<dict>
-		<key>class</key>
+		<key>names</key>
+		<array>
+			<string>fetch_device_info</string>
+			<string>^fdi</string>
+		</array>
+		<key>action</key>
 		<string>UAFetchDeviceInfoAction</string>
 		<key>predicate</key>
 		<string>UAFetchDeviceInfoActionPredicate</string>
-		<key>name</key>
-		<string>fetch_device_info</string>
-		<key>altName</key>
-		<string>^fdi</string>
 	</dict>
 	<dict>
-		<key>class</key>
+		<key>names</key>
+		<array>
+			<string>enable_feature</string>
+			<string>^ef</string>
+		</array>
+		<key>action</key>
 		<string>UAEnableFeatureAction</string>
 		<key>predicate</key>
 		<string>UAEnableFeatureActionPredicate</string>
-		<key>name</key>
-		<string>enable_feature</string>
-		<key>altName</key>
-		<string>^ef</string>
 	</dict>
 </array>
 </plist>

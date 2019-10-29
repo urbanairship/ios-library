@@ -25,10 +25,8 @@
 
 #import "UALocationModuleLoaderFactory.h"
 #import "UAAutomationModuleLoaderFactory.h"
-
-#if !TARGET_OS_TV   // Inbox and other features not supported on tvOS
+#import "UAExtendedActionsModuleLoaderFactory.h"
 #import "UAMessageCenterModuleLoaderFactory.h"
-#endif
 
 #if !TARGET_OS_TV
 #import "UAChannelCapture+Internal.h"
@@ -47,6 +45,7 @@ NSString * const UALibraryVersion = @"com.urbanairship.library_version";
 NSString * const UALocationModuleLoaderClassName = @"UALocationModuleLoader";
 NSString * const UAAutomationModuleLoaderClassName = @"UAAutomationModuleLoader";
 NSString * const UAMessageCenterModuleLoaderClassName = @"UAMessageCenterModuleLoader";
+NSString * const UAExtendedActionsModuleLoaderClassName = @"UAExtendedActionsModuleLoader";
 
 static UAirship *sharedAirship_;
 
@@ -173,6 +172,11 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
                                                                                     channel:self.sharedChannel];
         if (messageCenterLoader) {
             [loaders addObject:messageCenterLoader];
+        }
+
+        id<UAModuleLoader> extendedActionsLoader = [UAirship extendedActionsModuleLoader];
+        if (extendedActionsLoader) {
+            [loaders addObject:extendedActionsLoader];
         }
 
         for (id<UAModuleLoader> loader in loaders) {
@@ -481,16 +485,20 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 + (nullable id<UAModuleLoader>)messageCenterLoaderWithDataStore:(UAPreferenceDataStore *)dataStore
                                                 config:(UARuntimeConfig *)config
                                                channel:(UAChannel<UAExtendableChannelRegistration> *)channel {
-#if !TARGET_OS_TV   // MC not supported on tvOS
     Class cls = NSClassFromString(UAMessageCenterModuleLoaderClassName);
     if ([cls conformsToProtocol:@protocol(UAMessageCenterModuleLoaderFactory)]) {
         return [cls messageCenterModuleLoaderWithDataStore:dataStore config:config channel:channel];
     }
-#endif
-
     return nil;
 }
 
++ (nullable id<UAModuleLoader>)extendedActionsModuleLoader {
+    Class cls = NSClassFromString(UAExtendedActionsModuleLoaderClassName);
+    if ([cls conformsToProtocol:@protocol(UAExtendedActionsModuleLoaderFactory)]) {
+        return [cls extendedActionsModuleLoader];
+    }
+    return nil;
+}
 
 + (nullable id<UAModuleLoader>)locationLoaderWithDataStore:(UAPreferenceDataStore *)dataStore {
     Class cls = NSClassFromString(UALocationModuleLoaderClassName);

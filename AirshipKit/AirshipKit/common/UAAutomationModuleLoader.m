@@ -57,5 +57,12 @@
     return self.automationComponents;
 }
 
+- (void)registerActions:(UAActionRegistry *)registry {
+    NSString *path = [[UAirship resources] pathForResource:@"UAAutomationActions" ofType:@"plist"];
+    if (path) {
+        [registry registerActionsFromFile:path];
+    }
+}
+
 
 @end

@@ -85,6 +85,7 @@ typedef void (^UAActionBlock)(UAActionArguments *, UAActionCompletionHandler com
  * Factory method for creating anonymous actions
  *
  * @param actionBlock A UAActionBlock representing the primary work performed by the action.
+ * @return An action instance.
  */
 + (instancetype)actionWithBlock:(UAActionBlock)actionBlock;
 
@@ -93,9 +94,17 @@ typedef void (^UAActionBlock)(UAActionArguments *, UAActionCompletionHandler com
  *
  * @param actionBlock A UAActionBlock representing the primary work performed by the action.
  * @param predicateBlock A UAActionPredicate limiting the scope of the arguments.
+ * @return An action instance.
  */
 + (instancetype)actionWithBlock:(UAActionBlock)actionBlock
              acceptingArguments:(nullable UAActionPredicate)predicateBlock;
+
+/**
+ * Factory method for creating an action. Used when registering actions from a plist.
+ *
+ * @return An action instance.
+ */
++ (instancetype)action;
 
 @end
 

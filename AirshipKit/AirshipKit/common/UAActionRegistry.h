@@ -172,6 +172,11 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (nullable UAActionRegistryEntry *)registryEntryWithName:(NSString *)name;
 
+/**
+ * Registers actions from a plist.
+ */
+- (void)registerActionsFromFile:(NSString *)path;
+
 ///---------------------------------------------------------------------------------------
 /// @name Action Registry Management
 ///---------------------------------------------------------------------------------------

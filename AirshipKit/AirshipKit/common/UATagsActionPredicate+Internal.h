@@ -2,7 +2,7 @@
 
 #import <UIKit/UIKit.h>
 #import "UAAction.h"
-#import "UAActionPredicateProtocol+Internal.h"
+#import "UAActionPredicateProtocol.h"
 
 
 /**

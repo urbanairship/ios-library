@@ -303,24 +303,6 @@
 }
 
 /**
- * Test landing page default predicate
- */
-- (void)testLandingPageDefaultPredicate {
-    [self.registry registerDefaultActions];
-    UAActionRegistryEntry *entry = [self.registry registryEntryWithName:kUALandingPageActionDefaultRegistryName];
-
-    XCTAssertNotNil(entry, "Landing page should be registered by default");
-
-    XCTAssertNotNil(entry.predicate, "Landing page should have a default predicate class");
-
-    UAActionArguments *args = [UAActionArguments argumentsWithValue:@"some-value"
-                                                      withSituation:UASituationForegroundPush];
-
-    UAActionPredicate predicate = entry.predicate;
-    XCTAssertFalse(predicate(args), "Should not accept args with foreground push situation.");
-}
-
-/**
  * Test addName invalid values
  */
 - (void)testAddNameInvalid {
