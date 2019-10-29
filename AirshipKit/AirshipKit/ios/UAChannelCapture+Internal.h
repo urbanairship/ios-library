@@ -4,6 +4,7 @@
 #import "UAPushProviderDelegate.h"
 #import "UAChannel.h"
 #import "UAAppStateTracker+Internal.h"
+#import "UADispatcher+Internal.h"
 
 @class UAPreferenceDataStore;
 
@@ -43,13 +44,17 @@ extern NSString *const UAChannelCaptureEnabledKey;
  * @param pushProviderDelegate The push provider delegate.
  * @param dataStore The UAPreferenceDataStore instance.
  * @param appStateTracker The app state tracker.
+ * @param mainDispatcher The main dispatcher.
+ * @param backgroundDispatcher The background dispatcher.
  * @return A channel capture instance.
  */
 + (instancetype)channelCaptureWithConfig:(UARuntimeConfig *)config
                                  channel:(UAChannel *)channel
                     pushProviderDelegate:(id<UAPushProviderDelegate>)pushProviderDelegate
                                dataStore:(UAPreferenceDataStore *)dataStore
-                         appStateTracker:(id<UAAppStateTracker>)appStateTracker;
+                         appStateTracker:(id<UAAppStateTracker>)appStateTracker
+                          mainDispatcher:(UADispatcher *)mainDispatcher
+                    backgroundDispatcher:(UADispatcher *)backgroundDispatcher;
 
 @end
 
