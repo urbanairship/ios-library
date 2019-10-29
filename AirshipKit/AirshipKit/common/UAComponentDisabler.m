@@ -109,7 +109,7 @@ NSUInteger const UADisableRefreshIntervalDefault = 0; // default is no minimum r
         return NO;
     }
 
-    for (NSString *versionConstraint in info[UADisableSDKVersionsKey]) {
+    for (id versionConstraint in info[UADisableSDKVersionsKey]) {
         if (![versionConstraint isKindOfClass:[NSString class]]) {
             return nil;
         }
