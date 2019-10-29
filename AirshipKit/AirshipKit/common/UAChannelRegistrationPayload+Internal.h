@@ -137,7 +137,7 @@ extern NSString *const UABackgroundEnabledJSONKey;
 
 /**
  * Creates a new payload with the minimal amount required and optional data for an update.
- * @param The last payload.
+ * @param lastPayload The last payload.
  * @return The minimal update payload.
  */
 - (UAChannelRegistrationPayload *)minimalUpdatePayloadWithLastPayload:(UAChannelRegistrationPayload *)lastPayload;
