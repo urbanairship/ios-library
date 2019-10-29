@@ -321,6 +321,7 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
 
         payload.language = [[NSLocale autoupdatingCurrentLocale] objectForKey:NSLocaleLanguageCode];
         payload.country = [[NSLocale autoupdatingCurrentLocale] objectForKey: NSLocaleCountryCode];
+        payload.timeZone = [NSTimeZone defaultTimeZone].name;
 
         if (self.pushProviderDelegate.pushTokenRegistrationEnabled) {
             payload.pushAddress = self.pushProviderDelegate.deviceToken;
@@ -335,6 +336,7 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
 
         if (self.pushProviderDelegate.timeZone.name && self.pushProviderDelegate.quietTimeEnabled) {
             payload.quietTime = [self.pushProviderDelegate.quietTime copy];
+            payload.quietTimeTimeZone = self.pushProviderDelegate.timeZone.name;
         }
 
         payload.timeZone = self.pushProviderDelegate.timeZone.name;

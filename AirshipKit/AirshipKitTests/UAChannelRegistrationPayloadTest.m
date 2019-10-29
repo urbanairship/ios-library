@@ -41,6 +41,7 @@
     self.payload.badge = [NSNumber numberWithInteger:1];
     self.payload.quietTime =  quietTime;
     self.payload.timeZone = @"timezone";
+    self.payload.quietTimeTimeZone = @"quietTimeTimeZone";
     self.payload.language = @"language";
     self.payload.country = @"country";
     self.payload.tags = @[@"tagOne", @"tagTwo"];
@@ -86,7 +87,7 @@
     XCTAssertNotNil(ios, @"ios should be present");
     XCTAssertEqualObjects(self.payload.badge, [ios valueForKey:UAChannelBadgeJSONKey], @"badge should be present");
     XCTAssertEqualObjects(self.payload.quietTime, [ios valueForKey:UAChannelQuietTimeJSONKey], @"quiet time should be present");
-    XCTAssertEqualObjects(self.payload.timeZone, [ios valueForKey:UAChannelTimeZoneJSONKey], @"timezone should be present");
+    XCTAssertEqualObjects(self.payload.quietTimeTimeZone, [ios valueForKey:UAChannelTimeZoneJSONKey], @"timezone should be present");
 }
 
 /**
@@ -96,7 +97,7 @@
     NSData *payloadData = [self.payload asJSONData];
 
     UAChannelRegistrationPayload *withData = [UAChannelRegistrationPayload channelRegistrationPayloadWithData:payloadData];
-    XCTAssertTrue([withData isEqualToPayload:self.payload]);
+    XCTAssertEqualObjects(withData, self.payload);
 }
 
 /**
@@ -253,7 +254,7 @@
     XCTAssertNotNil(ios, @"ios should be present");
     XCTAssertEqualObjects(self.payload.badge, [ios valueForKey:UAChannelBadgeJSONKey], @"badge should be present");
     XCTAssertEqualObjects(self.payload.quietTime, [ios valueForKey:UAChannelQuietTimeJSONKey], @"quiet time should be present");
-    XCTAssertEqualObjects(self.payload.timeZone, [ios valueForKey:UAChannelTimeZoneJSONKey], @"timezone should be present");
+    XCTAssertEqualObjects(self.payload.quietTimeTimeZone, [ios valueForKey:UAChannelTimeZoneJSONKey], @"timezone should be present");
 }
 
 /**
@@ -306,6 +307,74 @@
 
     NSDictionary *dict = [[NSDictionary alloc] initWithDictionary:[self.payload payloadDictionary]];
     XCTAssertNil([dict valueForKey:UAChannelIdentityHintsKey], @"identity hints section should not be included in the payload");
+}
+
+- (void)testMinimalUpdatePayloadSameValues {
+    UAChannelRegistrationPayload *minPayload = [self.payload minimalUpdatePayloadWithLastPayload:self.payload];
+    XCTAssertNil(minPayload.country);
+    XCTAssertNil(minPayload.language);
+    XCTAssertNil(minPayload.timeZone);
+    XCTAssertNil(minPayload.tags);
+    XCTAssertNil(minPayload.userID);
+    XCTAssertNil(minPayload.deviceID);
+    XCTAssertFalse(minPayload.setTags);
+
+    XCTAssertEqual(self.payload.backgroundEnabled, minPayload.backgroundEnabled);
+    XCTAssertEqual(self.payload.optedIn, minPayload.optedIn);
+    XCTAssertEqualObjects(self.payload.pushAddress, minPayload.pushAddress);
+    XCTAssertEqualObjects(self.payload.quietTimeTimeZone, minPayload.quietTimeTimeZone);
+    XCTAssertEqualObjects(self.payload.quietTime, minPayload.quietTime);
+    XCTAssertEqualObjects(self.payload.badge, minPayload.badge);
+}
+
+- (void)testMinimalUpdatePayloadDifferentValues {
+    UAChannelRegistrationPayload *copy = [self.payload copy];
+    copy.country = @"CHANGED";
+    copy.timeZone = @"CHANGED";
+    copy.language = @"CHANGED";
+    copy.tags = @[@"CHANGED"];
+
+    UAChannelRegistrationPayload *minPayload = [self.payload minimalUpdatePayloadWithLastPayload:copy];
+    XCTAssertEqualObjects(self.payload.country, minPayload.country);
+    XCTAssertEqualObjects(self.payload.timeZone, minPayload.timeZone);
+    XCTAssertEqualObjects(self.payload.language, minPayload.language);
+    XCTAssertEqualObjects(self.payload.tags, minPayload.tags);
+
+    XCTAssertNil(minPayload.userID);
+    XCTAssertNil(minPayload.deviceID);
+    XCTAssertTrue(minPayload.setTags);
+
+    XCTAssertEqual(self.payload.backgroundEnabled, minPayload.backgroundEnabled);
+    XCTAssertEqual(self.payload.optedIn, minPayload.optedIn);
+    XCTAssertEqualObjects(self.payload.pushAddress, minPayload.pushAddress);
+    XCTAssertEqualObjects(self.payload.quietTimeTimeZone, minPayload.quietTimeTimeZone);
+    XCTAssertEqualObjects(self.payload.quietTime, minPayload.quietTime);
+    XCTAssertEqualObjects(self.payload.badge, minPayload.badge);
+}
+
+- (void)testMinimalUpdatePayloadNilValues {
+    UAChannelRegistrationPayload *copy = [self.payload copy];
+    copy.country = nil;
+    copy.timeZone = nil;
+    copy.language = nil;
+    copy.tags = nil;
+
+    UAChannelRegistrationPayload *minPayload = [self.payload minimalUpdatePayloadWithLastPayload:copy];
+    XCTAssertEqualObjects(self.payload.country, minPayload.country);
+    XCTAssertEqualObjects(self.payload.timeZone, minPayload.timeZone);
+    XCTAssertEqualObjects(self.payload.language, minPayload.language);
+    XCTAssertEqualObjects(self.payload.tags, minPayload.tags);
+
+    XCTAssertNil(minPayload.userID);
+    XCTAssertNil(minPayload.deviceID);
+    XCTAssertTrue(minPayload.setTags);
+
+    XCTAssertEqual(self.payload.backgroundEnabled, minPayload.backgroundEnabled);
+    XCTAssertEqual(self.payload.optedIn, minPayload.optedIn);
+    XCTAssertEqualObjects(self.payload.pushAddress, minPayload.pushAddress);
+    XCTAssertEqualObjects(self.payload.quietTimeTimeZone, minPayload.quietTimeTimeZone);
+    XCTAssertEqualObjects(self.payload.quietTime, minPayload.quietTime);
+    XCTAssertEqualObjects(self.payload.badge, minPayload.badge);
 }
 
 // Helpers

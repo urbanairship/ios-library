@@ -68,6 +68,11 @@ extern NSString *const UABackgroundEnabledJSONKey;
 @property (nonatomic, strong, nullable) NSArray<NSString *> *tags;
 
 /**
+ * Quiet time time zone.
+ */
+@property (nonatomic, copy, nullable) NSString *quietTimeTimeZone;
+
+/**
  * Quiet time settings for this device.
  */
 @property (nonatomic, strong, nullable) NSDictionary *quietTime;
@@ -129,6 +134,13 @@ extern NSString *const UABackgroundEnabledJSONKey;
  * @return The payload as an NSDictionary.
  */
 - (NSDictionary *)payloadDictionary;
+
+/**
+ * Creates a new payload with the minimal amount required and optional data for an update.
+ * @param The last payload.
+ * @return The minimal update payload.
+ */
+- (UAChannelRegistrationPayload *)minimalUpdatePayloadWithLastPayload:(UAChannelRegistrationPayload *)lastPayload;
 
 @end
 

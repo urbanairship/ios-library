@@ -227,6 +227,8 @@ UARuntimeConfig *config;
 - (void)updateChannelWithPayload:(UAChannelRegistrationPayload *)payload {
     UA_WEAKIFY(self);
 
+    UAChannelRegistrationPayload *minPayload = [payload minimalUpdatePayloadWithLastPayload:self.lastSuccessfulPayload];
+
     UAChannelAPIClientUpdateSuccessBlock updateChannelSuccessBlock = ^{
         UA_STRONGIFY(self);
         [self.dispatcher dispatchAsync:^{
@@ -249,7 +251,7 @@ UARuntimeConfig *config;
     };
 
     [self.channelAPIClient updateChannelWithID:self.channelID
-                                   withPayload:payload
+                                   withPayload:minPayload
                                      onSuccess:updateChannelSuccessBlock
                                      onFailure:updateChannelFailureBlock];
 }
