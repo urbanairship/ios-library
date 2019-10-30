@@ -44,6 +44,8 @@ NSString * const UAResetKeychainKey = @"com.urbanairship.reset_keychain";
 
 NSString * const UALibraryVersion = @"com.urbanairship.library_version";
 
+NSString * const UAAirshipReadyNotification = @"com.urbanairship.airship_ready";
+
 static UAirship *sharedAirship_;
 
 static NSBundle *resourcesBundle_;
@@ -193,6 +195,8 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
     dispatch_once(&takeOffPred_, ^{
         [UAirship executeUnsafeTakeOff:[config copy]];
     });
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:UAAirshipReadyNotification object:nil];
 }
 
 /*
