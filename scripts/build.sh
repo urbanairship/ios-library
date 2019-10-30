@@ -186,7 +186,7 @@ then
   -sdk iphonesimulator \
   SKIP_INSTALL=NO \
   BUILD_LIBRARIES_FOR_DISTRIBUTION=YES \
-  
+
   # tvOS
   xcrun xcodebuild archive -quiet \
   -project "${ROOT_PATH}/AirshipKit/AirshipKit.xcodeproj" \
@@ -230,16 +230,39 @@ then
   -sdk appletvsimulator \
   SKIP_INSTALL=NO \
   BUILD_LIBRARIES_FOR_DISTRIBUTION=YES \
- 
-#  # macOS
-#  xcrun xcodebuild archive \
-#  -scheme AirshipKit macOS \
-#  -destination="macOS" \
-#  -archivePath "${TEMP_DIR}/macos.xcarchive" \
-#  -derivedDataPath "${TEMP_DIR}/macos" \
-#  -sdk macosx \
-#  SKIP_INSTALL=NO \
-#  BUILD_LIBRARIES_FOR_DISTRIBUTION=YES \
+
+  # macOS
+  xcrun xcodebuild archive \
+  -project "${ROOT_PATH}/AirshipKit/AirshipKit.xcodeproj" \
+  -scheme "AirshipKit macOS" \
+  -destination="macOS" \
+  -archivePath "${TEMP_DIR}/macos.xcarchive" \
+  -derivedDataPath "${TEMP_DIR}/macos" \
+  -sdk macosx \
+  SKIP_INSTALL=NO \
+  BUILD_LIBRARIES_FOR_DISTRIBUTION=YES \
+
+  # macOS location
+  xcrun xcodebuild archive \
+  -project "${ROOT_PATH}/AirshipLocationKit/AirshipLocationKit.xcodeproj" \
+  -scheme "AirshipLocationKit macOS" \
+  -destination="macOS" \
+  -archivePath "${TEMP_DIR}/macoslocation.xcarchive" \
+  -derivedDataPath "${TEMP_DIR}/macos" \
+  -sdk macosx \
+  SKIP_INSTALL=NO \
+  BUILD_LIBRARIES_FOR_DISTRIBUTION=YES \
+
+  # macOS extensions
+  xcrun xcodebuild archive \
+  -project "${ROOT_PATH}/AirshipAppExtensions/AirshipAppExtensions.xcodeproj" \
+  -scheme "AirshipAppExtensions macOS" \
+  -destination="macOS" \
+  -archivePath "${TEMP_DIR}/macosextensions.xcarchive" \
+  -derivedDataPath "${TEMP_DIR}/macos" \
+  -sdk macosx \
+  SKIP_INSTALL=NO \
+  BUILD_LIBRARIES_FOR_DISTRIBUTION=YES \
 
 #  # watchOS
 #  xcrun xcodebuild archive \
@@ -269,10 +292,10 @@ echo -ne "\n\n *********** BUILDING XCFRAMEWORK *********** \n\n"
   -framework "${TEMP_DIR}/iossimulator.xcarchive/Products/Library/Frameworks/AirshipKit.framework" \
   -framework "${TEMP_DIR}/tvos.xcarchive/Products/Library/Frameworks/AirshipKit.framework" \
   -framework "${TEMP_DIR}/tvossimulator.xcarchive/Products/Library/Frameworks/AirshipKit.framework" \
+  -framework "${TEMP_DIR}/macos.xcarchive/Products/Library/Frameworks/AirshipKit.framework" \
   -output "${TEMP_DIR}/AirshipKit.xcframework" \
 
-  # To add when macOS and watchOS compatibility is added
-  #-framework "${TEMP_DIR}/macos.xcarchive/Products/Library/Frameworks/AirshipKit.framework" \
+  # To add watchOS compatibility is added
   #-framework "${TEMP_DIR}/watchos.xcarchive/Products/Library/Frameworks/AirshipKit.framework" \
   #-framework "${TEMP_DIR}/watchsimulator.xcarchive/Products/Library/Frameworks/AirshipKit.framework" \
 
@@ -282,12 +305,14 @@ echo -ne "\n\n *********** BUILDING XCFRAMEWORK *********** \n\n"
   -framework "${TEMP_DIR}/iossimulatorlocation.xcarchive/Products/Library/Frameworks/AirshipLocationKit.framework" \
   -framework "${TEMP_DIR}/appletvoslocation.xcarchive/Products/Library/Frameworks/AirshipLocationKit.framework" \
   -framework "${TEMP_DIR}/appletvsimulatorlocation.xcarchive/Products/Library/Frameworks/AirshipLocationKit.framework" \
+  -framework "${TEMP_DIR}/macoslocation.xcarchive/Products/Library/Frameworks/AirshipLocationKit.framework" \
   -output "${TEMP_DIR}/AirshipKitLocation.xcframework" \
-  
+
   # Wrap up Extensions XCFramework
   xcodebuild -create-xcframework \
   -framework "${TEMP_DIR}/iosextensions.xcarchive/Products/Library/Frameworks/AirshipAppExtensions.framework" \
   -framework "${TEMP_DIR}/iossimulatorextensions.xcarchive/Products/Library/Frameworks/AirshipAppExtensions.framework" \
+  -framework "${TEMP_DIR}/macosextensions.xcarchive/Products/Library/Frameworks/AirshipAppExtensions.framework" \
   -output "${TEMP_DIR}/AirshipAppExtensions.xcframework" \
 
 fi
@@ -452,7 +477,7 @@ then
   echo "Staging Location XCFramework"
   mkdir -p "${LOCATION_DESTINATION}/AirshipKitLocation.xcframework"
   cp -a "${TEMP_DIR}/AirshipKitLocation.xcframework/." "${LOCATION_DESTINATION}/AirshipKitLocation.xcframework/"
-  
+
   # Stage Extensions XCFramework
   echo "Staging Extensions XCFramework"
   mkdir -p "${EXTENSIONS_DESTINATION}/AirshipAppExtensions.xcframework"
