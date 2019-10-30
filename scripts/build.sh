@@ -231,15 +231,15 @@ then
   SKIP_INSTALL=NO \
   BUILD_LIBRARIES_FOR_DISTRIBUTION=YES \
  
-#  # macOS
-#  xcrun xcodebuild archive \
-#  -scheme AirshipKit macOS \
-#  -destination="macOS" \
-#  -archivePath "${TEMP_DIR}/macos.xcarchive" \
-#  -derivedDataPath "${TEMP_DIR}/macos" \
-#  -sdk macosx \
-#  SKIP_INSTALL=NO \
-#  BUILD_LIBRARIES_FOR_DISTRIBUTION=YES \
+  # macOS
+  xcrun xcodebuild archive \
+  -scheme AirshipKit macOS \
+  -destination="macOS" \
+  -archivePath "${TEMP_DIR}/macos.xcarchive" \
+  -derivedDataPath "${TEMP_DIR}/macos" \
+  -sdk macosx \
+  SKIP_INSTALL=NO \
+  BUILD_LIBRARIES_FOR_DISTRIBUTION=YES \
 
 #  # watchOS
 #  xcrun xcodebuild archive \
