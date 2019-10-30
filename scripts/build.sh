@@ -292,10 +292,10 @@ echo -ne "\n\n *********** BUILDING XCFRAMEWORK *********** \n\n"
   -framework "${TEMP_DIR}/iossimulator.xcarchive/Products/Library/Frameworks/AirshipKit.framework" \
   -framework "${TEMP_DIR}/tvos.xcarchive/Products/Library/Frameworks/AirshipKit.framework" \
   -framework "${TEMP_DIR}/tvossimulator.xcarchive/Products/Library/Frameworks/AirshipKit.framework" \
+  -framework "${TEMP_DIR}/macos.xcarchive/Products/Library/Frameworks/AirshipKit.framework" \
   -output "${TEMP_DIR}/AirshipKit.xcframework" \
 
-  # To add when macOS and watchOS compatibility is added
-  #-framework "${TEMP_DIR}/macos.xcarchive/Products/Library/Frameworks/AirshipKit.framework" \
+  # To add watchOS compatibility is added
   #-framework "${TEMP_DIR}/watchos.xcarchive/Products/Library/Frameworks/AirshipKit.framework" \
   #-framework "${TEMP_DIR}/watchsimulator.xcarchive/Products/Library/Frameworks/AirshipKit.framework" \
 
@@ -305,12 +305,14 @@ echo -ne "\n\n *********** BUILDING XCFRAMEWORK *********** \n\n"
   -framework "${TEMP_DIR}/iossimulatorlocation.xcarchive/Products/Library/Frameworks/AirshipLocationKit.framework" \
   -framework "${TEMP_DIR}/appletvoslocation.xcarchive/Products/Library/Frameworks/AirshipLocationKit.framework" \
   -framework "${TEMP_DIR}/appletvsimulatorlocation.xcarchive/Products/Library/Frameworks/AirshipLocationKit.framework" \
+  -framework "${TEMP_DIR}/macoslocation.xcarchive/Products/Library/Frameworks/AirshipLocationKit.framework" \
   -output "${TEMP_DIR}/AirshipKitLocation.xcframework" \
 
   # Wrap up Extensions XCFramework
   xcodebuild -create-xcframework \
   -framework "${TEMP_DIR}/iosextensions.xcarchive/Products/Library/Frameworks/AirshipAppExtensions.framework" \
   -framework "${TEMP_DIR}/iossimulatorextensions.xcarchive/Products/Library/Frameworks/AirshipAppExtensions.framework" \
+  -framework "${TEMP_DIR}/macosextensions.xcarchive/Products/Library/Frameworks/AirshipAppExtensions.framework" \
   -output "${TEMP_DIR}/AirshipAppExtensions.xcframework" \
 
 fi
