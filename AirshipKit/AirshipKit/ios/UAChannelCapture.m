@@ -21,6 +21,8 @@ NSString *const UAChannelCaptureEnabledKey = @"UAChannelCaptureEnabled";
 @property (nonatomic, strong) UARuntimeConfig *config;
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 @property (nonatomic, strong) id<UAAppStateTracker> appStateTracker;
+@property (nonatomic, strong) UADispatcher *backgroundDispatcher;
+@property (nonatomic, strong) UADispatcher *mainDispatcher;
 @property bool enableChannelCapture;
 @end
 
@@ -33,7 +35,9 @@ NSString *const UAChannelPlaceHolder = @"CHANNEL";
                        channel:(UAChannel *)channel
           pushProviderDelegate:(id<UAPushProviderDelegate>)pushProviderDelegate
                      dataStore:(UAPreferenceDataStore *)dataStore
-               appStateTracker:(id<UAAppStateTracker>)appStateTracker {
+               appStateTracker:(id<UAAppStateTracker>)appStateTracker
+                mainDispatcher:(UADispatcher *)mainDispatcher
+          backgroundDispatcher:(UADispatcher *)backgroundDispatcher {
     self = [super init];
     if (self) {
         self.config = config;
@@ -44,6 +48,8 @@ NSString *const UAChannelPlaceHolder = @"CHANNEL";
         if (config.channelCaptureEnabled) {
             self.appStateTracker = appStateTracker;
             self.appStateTracker.stateTrackerDelegate = self;
+            self.mainDispatcher = mainDispatcher;
+            self.backgroundDispatcher = backgroundDispatcher;
             self.enableChannelCapture = true;
         }
     }
@@ -59,19 +65,25 @@ NSString *const UAChannelPlaceHolder = @"CHANNEL";
                                             channel:channel
                                pushProviderDelegate:pushProviderDelegate
                                           dataStore:dataStore
-                                    appStateTracker:[UAAppStateTrackerFactory tracker]];
+                                    appStateTracker:[UAAppStateTrackerFactory tracker]
+                                     mainDispatcher:[UADispatcher mainDispatcher]
+                               backgroundDispatcher:[UADispatcher backgroundDispatcher]];
 }
 
 + (instancetype)channelCaptureWithConfig:(UARuntimeConfig *)config
                                  channel:(UAChannel *)channel
                     pushProviderDelegate:(id<UAPushProviderDelegate>)pushProviderDelegate
                                dataStore:(UAPreferenceDataStore *)dataStore
-                         appStateTracker:(id<UAAppStateTracker>)appStateTracker {
+                         appStateTracker:(id<UAAppStateTracker>)appStateTracker
+                          mainDispatcher:(UADispatcher *)mainDispatcher
+                    backgroundDispatcher:(UADispatcher *)backgroundDispatcher {
     return [[UAChannelCapture alloc] initWithConfig:config
                                             channel:channel
                                pushProviderDelegate:pushProviderDelegate
                                           dataStore:dataStore
-                                    appStateTracker:appStateTracker];
+                                    appStateTracker:appStateTracker
+                                     mainDispatcher:mainDispatcher
+                               backgroundDispatcher:backgroundDispatcher];
 }
 
 - (void)enable:(NSTimeInterval)duration {
@@ -114,7 +126,7 @@ NSString *const UAChannelPlaceHolder = @"CHANNEL";
     }
 
     // Do the heavy lifting off the main queue
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
+    [self.backgroundDispatcher dispatchAsync:^{
         NSData *base64Data = UA_dataFromBase64String(pasteBoardString);
         if (!base64Data) {
             return;
@@ -147,12 +159,11 @@ NSString *const UAChannelPlaceHolder = @"CHANNEL";
         }
 
         // Move back to the main queue to clear the clipboard and display the alert
-        [[UADispatcher mainDispatcher] dispatchAsync:^{
+        [self.mainDispatcher dispatchAsync:^{
             [UIPasteboard generalPasteboard].string = @"";
             [self showAlertWithUrl:url];
         }];
-    });
-
+    }];
 }
 
 - (void)showAlertWithUrl:(NSURL *)url {
@@ -179,7 +190,7 @@ NSString *const UAChannelPlaceHolder = @"CHANNEL";
 
 
     if (url) {
-        UIAlertAction *urlAction  = [UIAlertAction actionWithTitle:[@"ua_notification_button_copy" localizedStringWithTable:@"UrbanAirship" defaultValue:@"Copy"]
+        UIAlertAction *urlAction  = [UIAlertAction actionWithTitle:[@"ua_notification_button_save" localizedStringWithTable:@"UrbanAirship" defaultValue:@"Save"]
                                                              style:UIAlertActionStyleDefault
                                                            handler:^(UIAlertAction *action) {
                                                                [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:^(BOOL success) {

@@ -7,7 +7,7 @@
 #import "UAPush+Internal.h"
 #import "UA_Base64.h"
 #import "UAUtils.h"
-
+#import "UATestDispatcher.h"
 
 @interface UAChannelCaptureTest : UABaseTest
 @property(nonatomic, strong) UAChannelCapture *channelCapture;
@@ -47,7 +47,9 @@
                                                              channel:self.mockChannel
                                                 pushProviderDelegate:self.mockPushProviderDelegate
                                                            dataStore:self.dataStore
-                                                     appStateTracker:self.mockAppStateTracker];
+                                                     appStateTracker:self.mockAppStateTracker
+                                                      mainDispatcher:[UATestDispatcher testDispatcher]
+                                                backgroundDispatcher:[UATestDispatcher testDispatcher]];
 }
 
 /**

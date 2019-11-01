@@ -175,4 +175,35 @@ NSString *const UABackgroundEnabledJSONKey = @"background";
     return [[self payloadDictionary] description];
 }
 
+- (UAChannelRegistrationPayload *)minimalUpdatePayloadWithLastPayload:(UAChannelRegistrationPayload *)lastPayload {
+    UAChannelRegistrationPayload *minPayload = [self copy];
+
+    // Strip out tags if they have not changed
+    if (lastPayload.setTags && self.setTags) {
+        if ([lastPayload.tags isEqualToArray:self.tags]) {
+            minPayload.setTags = NO;
+            minPayload.tags = nil;
+        }
+    }
+
+    // Strip identity hints
+    minPayload.userID = nil;
+    minPayload.deviceID = nil;
+
+    // Optional attributes
+    if ([self.country isEqualToString:lastPayload.country]) {
+        minPayload.country = nil;
+    }
+
+    if ([self.language isEqualToString:lastPayload.language]) {
+        minPayload.language = nil;
+    }
+
+    if ([self.timeZone isEqualToString:lastPayload.timeZone]) {
+        minPayload.timeZone = nil;
+    }
+
+    return minPayload;
+}
+
 @end

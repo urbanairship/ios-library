@@ -37,9 +37,10 @@ NSString * const UADeviceIDChangedNotification = @"com.urbanairship.device_id_ch
 
 // Exceptions
 NSString * const UAirshipTakeOffBackgroundThreadException = @"UAirshipTakeOffBackgroundThreadException";
-NSString * const UAResetKeychainKey = @"com.urbanairship.reset_keychain";
 
+NSString * const UAResetKeychainKey = @"com.urbanairship.reset_keychain";
 NSString * const UALibraryVersion = @"com.urbanairship.library_version";
+NSString * const UAAirshipReadyNotification = @"com.urbanairship.airship_ready";
 
 // Optional components
 NSString * const UALocationModuleLoaderClassName = @"UALocationModuleLoader";
@@ -226,6 +227,8 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
     dispatch_once(&takeOffPred_, ^{
         [UAirship executeUnsafeTakeOff:[config copy]];
     });
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:UAAirshipReadyNotification object:nil];
 }
 
 /*
