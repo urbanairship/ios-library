@@ -395,7 +395,7 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
 /**
  * Helper method to extend the CRA payload sequentially with extender blocks.
  * @param payload The CRA payload.
- * @param extenders The remaining extender blocks.
+ * @param remainingExtenderBlocks The remaining extender blocks.
  * @param completionHandler The completion handler.
  */
 + (void)extendPayload:(UAChannelRegistrationPayload *)payload
