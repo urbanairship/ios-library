@@ -387,6 +387,12 @@
     expectedPayload.language =  [[NSLocale autoupdatingCurrentLocale] objectForKey:NSLocaleLanguageCode];
     expectedPayload.country =  [[NSLocale autoupdatingCurrentLocale] objectForKey:NSLocaleCountryCode];
     expectedPayload.timeZone = @"Pacific/Auckland";
+    expectedPayload.locationSettings = @NO;
+    expectedPayload.appVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
+    expectedPayload.SDKVersion = [UAirshipVersion get];
+    expectedPayload.deviceOS = [UIDevice currentDevice].systemVersion;
+    expectedPayload.deviceModel = [UAUtils deviceModelName];
+    expectedPayload.carrier = [UAUtils carrierName];
 
     XCTestExpectation *createdPayload = [self expectationWithDescription:@"create payload"];
 

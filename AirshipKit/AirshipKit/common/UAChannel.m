@@ -322,6 +322,12 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
         payload.language = [[NSLocale autoupdatingCurrentLocale] objectForKey:NSLocaleLanguageCode];
         payload.country = [[NSLocale autoupdatingCurrentLocale] objectForKey: NSLocaleCountryCode];
         payload.timeZone = [NSTimeZone defaultTimeZone].name;
+        payload.locationSettings = [UAirship shared].locationProviderDelegate.locationUpdatesEnabled ? @(YES) : @(NO);
+        payload.appVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
+        payload.SDKVersion = [UAirshipVersion get];
+        payload.deviceOS = [UIDevice currentDevice].systemVersion;
+        payload.deviceModel = [UAUtils deviceModelName];
+        payload.carrier = [UAUtils carrierName];
 
         if (self.pushProviderDelegate.pushTokenRegistrationEnabled) {
             payload.pushAddress = self.pushProviderDelegate.deviceToken;

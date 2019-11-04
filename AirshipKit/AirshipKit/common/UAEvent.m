@@ -5,21 +5,6 @@
 #import "UAirship.h"
 #import "UAJSONSerialization+Internal.h"
 
-#if !TARGET_OS_TV   // CoreTelephony not supported in tvOS
-/*
- * Fix for CTTelephonyNetworkInfo bug where instances might receive
- * notifications after being deallocated causes EXC_BAD_ACCESS exceptions. We
- * suspect that it is an iOS6 only issue.
- *
- * http://stackoverflow.com/questions/14238586/coretelephony-crash/15510580#15510580
- */
-#import <CoreTelephony/CTTelephonyNetworkInfo.h>
-#import <CoreTelephony/CTCarrier.h>
-
-static CTTelephonyNetworkInfo *netInfo_;
-static dispatch_once_t netInfoDispatchToken_;
-#endif
-
 @implementation UAEvent
 
 - (instancetype)init {
@@ -47,17 +32,6 @@ static dispatch_once_t netInfoDispatchToken_;
 - (NSString *)description {
     return [NSString stringWithFormat:@"UAEvent ID: %@ type: %@ time: %@ data: %@",
             self.eventID, self.eventType, self.time, self.data];
-}
-
-- (NSString *)carrierName {
-#if TARGET_OS_TV    // Core Telephony not supported on tvOS
-    return nil;
-#else
-    dispatch_once(&netInfoDispatchToken_, ^{
-        netInfo_ = [[CTTelephonyNetworkInfo alloc] init];
-    });
-    return netInfo_.subscriberCellularProvider.carrierName;
-#endif
 }
 
 - (NSArray *)notificationTypes {

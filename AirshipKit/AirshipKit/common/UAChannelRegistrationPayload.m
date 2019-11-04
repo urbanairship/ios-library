@@ -4,12 +4,13 @@
 #import "UAJSONSerialization+Internal.h"
 #import "UAGlobal.h"
 
+NSString *const UAChannelIOSPlatform= @"ios";
+
 NSString *const UAChannelIdentityHintsKey = @"identity_hints";
 NSString *const UAChannelUserIDKey = @"user_id";
 NSString *const UAChannelDeviceIDKey = @"device_id";
 
 NSString *const UAChannelKey = @"channel";
-NSString *const UAPlatformKey= @"ios";
 NSString *const UAChannelDeviceTypeKey = @"device_type";
 NSString *const UAChannelOptInKey = @"opt_in";
 NSString *const UAChannelPushAddressKey = @"push_address";
@@ -17,8 +18,14 @@ NSString *const UAChannelPushAddressKey = @"push_address";
 NSString *const UAChannelTopLevelTimeZoneJSONKey = @"timezone";
 NSString *const UAChannelTopLevelLanguageJSONKey = @"locale_language";
 NSString *const UAChannelTopLevelCountryJSONKey = @"locale_country";
+NSString *const UAChannelTopLevelLocationSettingsJSONKey = @"location_settings";
+NSString *const UAChannelTopLevelAppVersionJSONKey = @"app_version";
+NSString *const UAChannelTopLevelSDKVersionJSONKey = @"sdk_version";
+NSString *const UAChannelTopLevelDeviceModelJSONKey = @"device_model";
+NSString *const UAChannelTopLevelDeviceOSJSONKey = @"device_os";
+NSString *const UAChannelTopLevelCarrierJSONKey = @"carrier";
 
-NSString *const UAChanneliOSKey = @"ios";
+NSString *const UAChannelIOSKey = @"ios";
 NSString *const UAChannelBadgeJSONKey = @"badge";
 NSString *const UAChannelQuietTimeJSONKey = @"quiettime";
 NSString *const UAChannelTimeZoneJSONKey = @"tz";
@@ -50,7 +57,7 @@ NSString *const UABackgroundEnabledJSONKey = @"background";
         NSDictionary *identityHints = dataDictionary[UAChannelIdentityHintsKey];
 
         if (topLevel != nil) {
-            NSDictionary *platform = topLevel[UAPlatformKey];
+            NSDictionary *platform = topLevel[UAChannelIOSKey];
 
             if (platform != nil) {
                 self.badge = platform[UAChannelBadgeJSONKey];
@@ -68,6 +75,12 @@ NSString *const UABackgroundEnabledJSONKey = @"background";
             self.language = topLevel[UAChannelTopLevelLanguageJSONKey];
             self.country = topLevel[UAChannelTopLevelCountryJSONKey];
             self.timeZone = topLevel[UAChannelTopLevelTimeZoneJSONKey];
+            self.locationSettings = topLevel[UAChannelTopLevelLocationSettingsJSONKey];
+            self.appVersion = topLevel[UAChannelTopLevelAppVersionJSONKey];
+            self.SDKVersion = topLevel[UAChannelTopLevelSDKVersionJSONKey];
+            self.deviceModel = topLevel[UAChannelTopLevelDeviceModelJSONKey];
+            self.deviceOS = topLevel[UAChannelTopLevelDeviceOSJSONKey];
+            self.carrier = topLevel[UAChannelTopLevelCarrierJSONKey];
         }
 
         if (identityHints != nil) {
@@ -97,7 +110,7 @@ NSString *const UABackgroundEnabledJSONKey = @"background";
 
     // Channel is a top level object containing channel related fields.
     NSMutableDictionary *channel = [NSMutableDictionary dictionary];
-    [channel setValue:@"ios" forKey:UAChannelDeviceTypeKey];
+    [channel setValue:UAChannelIOSPlatform forKey:UAChannelDeviceTypeKey];
     [channel setValue:[NSNumber numberWithBool:self.optedIn] forKey:UAChannelOptInKey];
     [channel setValue:[NSNumber numberWithBool:self.backgroundEnabled] forKey:UABackgroundEnabledJSONKey];
     [channel setValue:self.pushAddress forKey:UAChannelPushAddressKey];
@@ -116,13 +129,18 @@ NSString *const UABackgroundEnabledJSONKey = @"background";
     }
 
     if (ios.count) {
-        [channel setValue:ios forKey:UAChanneliOSKey];
+        [channel setValue:ios forKey:UAChannelIOSKey];
     }
 
-    // Set top level timezone and language keys
     [channel setValue:self.timeZone forKey:UAChannelTopLevelTimeZoneJSONKey];
     [channel setValue:self.language forKey:UAChannelTopLevelLanguageJSONKey];
     [channel setValue:self.country forKey:UAChannelTopLevelCountryJSONKey];
+    [channel setValue:self.locationSettings forKey:UAChannelTopLevelLocationSettingsJSONKey];
+    [channel setValue:self.appVersion forKey:UAChannelTopLevelAppVersionJSONKey];
+    [channel setValue:self.SDKVersion forKey:UAChannelTopLevelSDKVersionJSONKey];
+    [channel setValue:self.deviceModel forKey:UAChannelTopLevelDeviceModelJSONKey];
+    [channel setValue:self.deviceOS forKey:UAChannelTopLevelDeviceOSJSONKey];
+    [channel setValue:self.carrier forKey:UAChannelTopLevelCarrierJSONKey];
 
     [payloadDictionary setValue:channel forKey:UAChannelKey];
 
@@ -146,6 +164,12 @@ NSString *const UABackgroundEnabledJSONKey = @"background";
         copy.language = self.language;
         copy.country = self.country;
         copy.badge = [self.badge copyWithZone:zone];
+        copy.locationSettings = [self.locationSettings copyWithZone:zone];
+        copy.appVersion = self.appVersion;
+        copy.SDKVersion = self.SDKVersion;
+        copy.deviceModel = self.deviceModel;
+        copy.deviceOS = self.deviceOS;
+        copy.carrier = self.carrier;
     }
 
     return copy;
@@ -178,6 +202,10 @@ NSString *const UABackgroundEnabledJSONKey = @"background";
 - (UAChannelRegistrationPayload *)minimalUpdatePayloadWithLastPayload:(UAChannelRegistrationPayload *)lastPayload {
     UAChannelRegistrationPayload *minPayload = [self copy];
 
+    if (!lastPayload) {
+        return minPayload;
+    }
+
     // Strip out tags if they have not changed
     if (lastPayload.setTags && self.setTags) {
         if ([lastPayload.tags isEqualToArray:self.tags]) {
@@ -191,16 +219,40 @@ NSString *const UABackgroundEnabledJSONKey = @"background";
     minPayload.deviceID = nil;
 
     // Optional attributes
-    if ([self.country isEqualToString:lastPayload.country]) {
+    if ([self.country isEqual:lastPayload.country]) {
         minPayload.country = nil;
     }
 
-    if ([self.language isEqualToString:lastPayload.language]) {
+    if ([self.language isEqual:lastPayload.language]) {
         minPayload.language = nil;
     }
 
-    if ([self.timeZone isEqualToString:lastPayload.timeZone]) {
+    if ([self.timeZone isEqual:lastPayload.timeZone]) {
         minPayload.timeZone = nil;
+    }
+
+    if ([self.locationSettings isEqual:lastPayload.locationSettings]) {
+        minPayload.locationSettings = nil;
+    }
+
+    if ([self.appVersion isEqual:lastPayload.appVersion]) {
+        minPayload.appVersion = nil;
+    }
+
+    if ([self.SDKVersion isEqual:lastPayload.SDKVersion]) {
+        minPayload.SDKVersion = nil;
+    }
+
+    if ([self.deviceModel isEqual:lastPayload.deviceModel]) {
+        minPayload.deviceModel = nil;
+    }
+
+    if ([self.deviceOS isEqual:lastPayload.deviceOS]) {
+        minPayload.deviceOS = nil;
+    }
+
+    if ([self.carrier isEqual:lastPayload.carrier]) {
+        minPayload.carrier = nil;
     }
 
     return minPayload;

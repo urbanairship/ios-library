@@ -24,6 +24,11 @@
 #include <sys/utsname.h>
 #include <netinet/in.h>
 
+#if !TARGET_OS_TV   // CoreTelephony not supported in tvOS
+#import <CoreTelephony/CTTelephonyNetworkInfo.h>
+#import <CoreTelephony/CTCarrier.h>
+#endif
+
 @implementation UAUtils
 
 + (NSString *)connectionType {
@@ -91,6 +96,19 @@
 
     return [NSString stringWithCString:systemInfo.machine
                               encoding:NSUTF8StringEncoding];
+}
+
++ (NSString *)carrierName {
+#if TARGET_OS_TV    // Core Telephony not supported on tvOS
+    return nil;
+#else
+    static CTTelephonyNetworkInfo *netInfo_;
+    static dispatch_once_t netInfoDispatchToken_;
+    dispatch_once(&netInfoDispatchToken_, ^{
+        netInfo_ = [[CTTelephonyNetworkInfo alloc] init];
+    });
+    return netInfo_.subscriberCellularProvider.carrierName;
+#endif
 }
 
 + (NSString *)pluralize:(int)count singularForm:(NSString*)singular

@@ -16,8 +16,14 @@ extern NSString *const UAChannelPushAddressKey;
 extern NSString *const UAChannelTopLevelTimeZoneJSONKey;
 extern NSString *const UAChannelTopLevelLanguageJSONKey;
 extern NSString *const UAChannelTopLevelCountryJSONKey;
+extern NSString *const UAChannelTopLevelLocationSettingsJSONKey;
+extern NSString *const UAChannelTopLevelAppVersionJSONKey;
+extern NSString *const UAChannelTopLevelSDKVersionJSONKey;
+extern NSString *const UAChannelTopLevelDeviceModelJSONKey;
+extern NSString *const UAChannelTopLevelDeviceOSJSONKey;
+extern NSString *const UAChannelTopLevelCarrierJSONKey;
 
-extern NSString *const UAChanneliOSKey;
+extern NSString *const UAChannelIOSKey;
 extern NSString *const UAChannelBadgeJSONKey;
 extern NSString *const UAChannelQuietTimeJSONKey;
 extern NSString *const UAChannelTimeZoneJSONKey;
@@ -97,6 +103,35 @@ extern NSString *const UABackgroundEnabledJSONKey;
  */
 @property (nonatomic, strong, nullable) NSNumber *badge;
 
+/**
+ * The location setting for the device.
+ */
+@property (nonatomic, strong, nullable) NSNumber *locationSettings;
+
+/**
+ * The app version.
+ */
+@property (nonatomic, copy, nullable) NSString *appVersion;
+
+/**
+ * The sdk version.
+ */
+@property (nonatomic, copy, nullable) NSString *SDKVersion;
+
+/**
+ * The device model.
+ */
+@property (nonatomic, copy, nullable) NSString *deviceModel;
+
+/**
+ * The device OS.
+ */
+@property (nonatomic, copy, nullable) NSString *deviceOS;
+
+/**
+ * The carrier.
+ */
+@property (nonatomic, copy, nullable) NSString *carrier;
 
 /**
  * This flag indicates that the user is able to receive background notifications.
@@ -140,7 +175,7 @@ extern NSString *const UABackgroundEnabledJSONKey;
  * @param lastPayload The last payload.
  * @return The minimal update payload.
  */
-- (UAChannelRegistrationPayload *)minimalUpdatePayloadWithLastPayload:(UAChannelRegistrationPayload *)lastPayload;
+- (UAChannelRegistrationPayload *)minimalUpdatePayloadWithLastPayload:(nullable UAChannelRegistrationPayload *)lastPayload;
 
 @end
 
