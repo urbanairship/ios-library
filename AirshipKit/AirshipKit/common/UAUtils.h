@@ -138,6 +138,13 @@ NS_ASSUME_NONNULL_BEGIN
 + (nullable UIViewController *)topController;
 
 /**
+ * Gets the current carrier name.
+ *
+ * @return The current carrier name.
+ */
++ (nullable NSString *)carrierName;
+
+/**
  * Gets the current connection type.
  * Possible values are "cell", "wifi", or "none".
  * @return The current connection type as a string.

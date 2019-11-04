@@ -62,12 +62,6 @@ typedef NS_ENUM(NSInteger, UAEventPriority) {
 ///---------------------------------------------------------------------------------------
 
 /**
- * Gets the carrier's name.
- * @returns The carrier's name.
- */
-- (NSString *)carrierName;
-
-/**
  * Gets the current enabled notification types as a string array.
  *
  * @return The current notification types as a string array.

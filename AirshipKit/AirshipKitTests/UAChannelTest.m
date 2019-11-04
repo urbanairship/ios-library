@@ -317,6 +317,12 @@
     expectedPayload.timeZone = @"cool zone";
     expectedPayload.tags = @[@"cool", @"story"];
     expectedPayload.setTags = YES;
+    expectedPayload.locationSettings = @NO;
+    expectedPayload.appVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
+    expectedPayload.SDKVersion = [UAirshipVersion get];
+    expectedPayload.deviceOS = [UIDevice currentDevice].systemVersion;
+    expectedPayload.deviceModel = [UAUtils deviceModelName];
+    expectedPayload.carrier = [UAUtils carrierName];
 
     XCTestExpectation *createdPayload = [self expectationWithDescription:@"create payload"];
 
@@ -332,7 +338,6 @@
  * Test extending CRA payloads.
  */
 - (void)testExtendingPayload {
-
     [self.channel addChannelExtenderBlock:^(UAChannelRegistrationPayload *payload, UAChannelRegistrationExtenderCompletionHandler completionHandler) {
         payload.pushAddress = @"WHAT!";
         completionHandler(payload);

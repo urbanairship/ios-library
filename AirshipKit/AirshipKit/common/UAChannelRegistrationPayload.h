@@ -74,6 +74,36 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong, nullable) NSNumber *badge;
 
 /**
+ * The location setting for the device.
+ */
+@property (nonatomic, strong, nullable) NSNumber *locationSettings;
+
+/**
+ * The app version.
+ */
+@property (nonatomic, copy, nullable) NSString *appVersion;
+
+/**
+ * The sdk version.
+ */
+@property (nonatomic, copy, nullable) NSString *SDKVersion;
+
+/**
+ * The device model.
+ */
+@property (nonatomic, copy, nullable) NSString *deviceModel;
+
+/**
+ * The device OS.
+ */
+@property (nonatomic, copy, nullable) NSString *deviceOS;
+
+/**
+ * The carrier.
+ */
+@property (nonatomic, copy, nullable) NSString *carrier;
+
+/**
  * This flag indicates that the user is able to receive background notifications.
  */
 @property (nonatomic, assign, getter=isBackgroundEnabled) BOOL backgroundEnabled;

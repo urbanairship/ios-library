@@ -46,6 +46,13 @@
     self.payload.country = @"country";
     self.payload.tags = @[@"tagOne", @"tagTwo"];
     self.payload.setTags = YES;
+    self.payload.locationSettings = @(YES);
+    self.payload.SDKVersion = @"SDKVersion";
+    self.payload.appVersion = @"appVersion";
+    self.payload.deviceModel = @"deviceModel";
+    self.payload.deviceOS = @"deviceOS";
+    self.payload.carrier = @"carrier";
+
 }
 
 - (void)tearDown {
@@ -81,9 +88,15 @@
     XCTAssertEqualObjects(@"timezone", [channel valueForKey:UAChannelTopLevelTimeZoneJSONKey], @"timezone key should be available in the channel dictionary");
     XCTAssertEqualObjects(@"language", [channel valueForKey:UAChannelTopLevelLanguageJSONKey], @"locale_language key should be available in the channel dictionary");
     XCTAssertEqualObjects(@"country", [channel valueForKey:UAChannelTopLevelCountryJSONKey], @"locale_country key should be available in the channel dictionary");
+    XCTAssertEqualObjects(@(YES), [channel valueForKey:UAChannelTopLevelLocationSettingsJSONKey]);
+    XCTAssertEqualObjects(@"SDKVersion", [channel valueForKey:UAChannelTopLevelSDKVersionJSONKey]);
+    XCTAssertEqualObjects(@"appVersion", [channel valueForKey:UAChannelTopLevelAppVersionJSONKey]);
+    XCTAssertEqualObjects(@"deviceModel", [channel valueForKey:UAChannelTopLevelDeviceModelJSONKey]);
+    XCTAssertEqualObjects(@"deviceOS", [channel valueForKey:UAChannelTopLevelDeviceOSJSONKey]);
+    XCTAssertEqualObjects(@"carrier", [channel valueForKey:UAChannelTopLevelCarrierJSONKey]);
 
     // iOS specific items
-    NSDictionary *ios = [channel valueForKey:UAChanneliOSKey];
+    NSDictionary *ios = [channel valueForKey:UAChannelIOSKey];
     XCTAssertNotNil(ios, @"ios should be present");
     XCTAssertEqualObjects(self.payload.badge, [ios valueForKey:UAChannelBadgeJSONKey], @"badge should be present");
     XCTAssertEqualObjects(self.payload.quietTime, [ios valueForKey:UAChannelQuietTimeJSONKey], @"quiet time should be present");
@@ -147,7 +160,7 @@
     NSString *jsonString = [[NSString alloc] initWithData:[self.payload asJSONData] encoding:NSUTF8StringEncoding];
     NSDictionary *dict = [NSJSONSerialization objectWithString:jsonString];
 
-    XCTAssertNil([dict valueForKey:UAChanneliOSKey], @"iOS section should not be included in the JSON");
+    XCTAssertNil([dict valueForKey:UAChannelIOSKey], @"iOS section should not be included in the JSON");
 }
 
 /**
@@ -250,7 +263,7 @@
     XCTAssertEqualObjects(self.payload.tags, [channel valueForKey:UAChannelTagsJSONKey], @"tags should be present");
 
     // iOS specific items
-    NSDictionary *ios = [channel valueForKey:UAChanneliOSKey];
+    NSDictionary *ios = [channel valueForKey:UAChannelIOSKey];
     XCTAssertNotNil(ios, @"ios should be present");
     XCTAssertEqualObjects(self.payload.badge, [ios valueForKey:UAChannelBadgeJSONKey], @"badge should be present");
     XCTAssertEqualObjects(self.payload.quietTime, [ios valueForKey:UAChannelQuietTimeJSONKey], @"quiet time should be present");
@@ -295,7 +308,7 @@
     self.payload.timeZone = nil;
 
     NSDictionary *dict = [[NSDictionary alloc] initWithDictionary:[self.payload payloadDictionary]];
-    XCTAssertNil([dict valueForKey:UAChanneliOSKey], @"iOS section should not be included in the payload");
+    XCTAssertNil([dict valueForKey:UAChannelIOSKey], @"iOS section should not be included in the payload");
 }
 
 /**
@@ -318,6 +331,12 @@
     XCTAssertNil(minPayload.userID);
     XCTAssertNil(minPayload.deviceID);
     XCTAssertFalse(minPayload.setTags);
+    XCTAssertNil(minPayload.locationSettings);
+    XCTAssertNil(minPayload.SDKVersion);
+    XCTAssertNil(minPayload.appVersion);
+    XCTAssertNil(minPayload.deviceModel);
+    XCTAssertNil(minPayload.deviceOS);
+    XCTAssertNil(minPayload.carrier);
 
     XCTAssertEqual(self.payload.backgroundEnabled, minPayload.backgroundEnabled);
     XCTAssertEqual(self.payload.optedIn, minPayload.optedIn);
@@ -329,16 +348,28 @@
 
 - (void)testMinimalUpdatePayloadDifferentValues {
     UAChannelRegistrationPayload *copy = [self.payload copy];
-    copy.country = @"CHANGED";
-    copy.timeZone = @"CHANGED";
-    copy.language = @"CHANGED";
-    copy.tags = @[@"CHANGED"];
+    copy.country = @"country CHANGED";
+    copy.timeZone = @"timeZone CHANGED";
+    copy.language = @"timeZone CHANGED";
+    copy.tags = @[@"tags CHANGED"];
+    copy.locationSettings = @(NO);
+    copy.SDKVersion = @"SDKVersion CHANGED";
+    copy.appVersion = @"appVersion CHANGED";
+    copy.deviceModel = @"deviceModel CHANGED";
+    copy.deviceOS = @"deviceOS CHANGED";
+    copy.carrier = @"carrier CHANGED";
 
     UAChannelRegistrationPayload *minPayload = [self.payload minimalUpdatePayloadWithLastPayload:copy];
     XCTAssertEqualObjects(self.payload.country, minPayload.country);
     XCTAssertEqualObjects(self.payload.timeZone, minPayload.timeZone);
     XCTAssertEqualObjects(self.payload.language, minPayload.language);
     XCTAssertEqualObjects(self.payload.tags, minPayload.tags);
+    XCTAssertEqualObjects(self.payload.locationSettings, minPayload.locationSettings);
+    XCTAssertEqualObjects(self.payload.SDKVersion, minPayload.SDKVersion);
+    XCTAssertEqualObjects(self.payload.appVersion, minPayload.appVersion);
+    XCTAssertEqualObjects(self.payload.deviceModel, minPayload.deviceModel);
+    XCTAssertEqualObjects(self.payload.deviceOS, minPayload.deviceOS);
+    XCTAssertEqualObjects(self.payload.carrier, minPayload.carrier);
 
     XCTAssertNil(minPayload.userID);
     XCTAssertNil(minPayload.deviceID);
@@ -358,12 +389,24 @@
     copy.timeZone = nil;
     copy.language = nil;
     copy.tags = nil;
+    copy.locationSettings = nil;
+    copy.SDKVersion = nil;
+    copy.appVersion = nil;
+    copy.deviceModel = nil;
+    copy.deviceOS = nil;
+    copy.carrier = nil;
 
     UAChannelRegistrationPayload *minPayload = [self.payload minimalUpdatePayloadWithLastPayload:copy];
     XCTAssertEqualObjects(self.payload.country, minPayload.country);
     XCTAssertEqualObjects(self.payload.timeZone, minPayload.timeZone);
     XCTAssertEqualObjects(self.payload.language, minPayload.language);
     XCTAssertEqualObjects(self.payload.tags, minPayload.tags);
+    XCTAssertEqualObjects(self.payload.locationSettings, minPayload.locationSettings);
+    XCTAssertEqualObjects(self.payload.SDKVersion, minPayload.SDKVersion);
+    XCTAssertEqualObjects(self.payload.appVersion, minPayload.appVersion);
+    XCTAssertEqualObjects(self.payload.deviceModel, minPayload.deviceModel);
+    XCTAssertEqualObjects(self.payload.deviceOS, minPayload.deviceOS);
+    XCTAssertEqualObjects(self.payload.carrier, minPayload.carrier);
 
     XCTAssertNil(minPayload.userID);
     XCTAssertNil(minPayload.deviceID);

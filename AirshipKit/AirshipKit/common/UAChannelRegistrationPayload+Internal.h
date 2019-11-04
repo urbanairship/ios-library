@@ -17,8 +17,14 @@ extern NSString *const UAChannelPushAddressKey;
 extern NSString *const UAChannelTopLevelTimeZoneJSONKey;
 extern NSString *const UAChannelTopLevelLanguageJSONKey;
 extern NSString *const UAChannelTopLevelCountryJSONKey;
+extern NSString *const UAChannelTopLevelLocationSettingsJSONKey;
+extern NSString *const UAChannelTopLevelAppVersionJSONKey;
+extern NSString *const UAChannelTopLevelSDKVersionJSONKey;
+extern NSString *const UAChannelTopLevelDeviceModelJSONKey;
+extern NSString *const UAChannelTopLevelDeviceOSJSONKey;
+extern NSString *const UAChannelTopLevelCarrierJSONKey;
 
-extern NSString *const UAChanneliOSKey;
+extern NSString *const UAChannelIOSKey;
 extern NSString *const UAChannelBadgeJSONKey;
 extern NSString *const UAChannelQuietTimeJSONKey;
 extern NSString *const UAChannelTimeZoneJSONKey;
@@ -28,7 +34,6 @@ extern NSString *const UAChannelSetTagsKey;
 extern NSString *const UAChannelTagsJSONKey;
 
 extern NSString *const UABackgroundEnabledJSONKey;
-
 
 @interface UAChannelRegistrationPayload()
 
@@ -68,7 +73,7 @@ extern NSString *const UABackgroundEnabledJSONKey;
  * @param lastPayload The last payload.
  * @return The minimal update payload.
  */
-- (UAChannelRegistrationPayload *)minimalUpdatePayloadWithLastPayload:(UAChannelRegistrationPayload *)lastPayload;
+- (UAChannelRegistrationPayload *)minimalUpdatePayloadWithLastPayload:(nullable UAChannelRegistrationPayload *)lastPayload;
 
 @end
 
