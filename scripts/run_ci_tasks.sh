@@ -42,10 +42,13 @@ done
 # Enable steps based on mode
 shopt -s nocasematch
 case $MODE in
-  all   ) FULL_SDK_BUILD=true;SAMPLES=true;TESTS=true;POD_LINT=true;;
-  merge ) FULL_SDK_BUILD=true;SAMPLES=true;POD_LINT=true;;
-  pr    ) TESTS=true;;
-  *   ) echo "invalid mode"; exit 1;;
+  all       ) FULL_SDK_BUILD=true;SAMPLES=true;TESTS=true;POD_LINT=true;;
+  merge     ) FULL_SDK_BUILD=true;SAMPLES=true;POD_LINT=true;;
+  pr        ) TESTS=true;;
+  tests     ) TESTS=true;;
+  pod_lint  ) POD_LINT=true;;
+  samples   ) SAMPLES=true;;
+  *         ) echo "invalid mode"; exit 1;;
 esac
 shopt -u nocasematch
 
