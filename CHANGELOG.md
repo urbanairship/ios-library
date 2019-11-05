@@ -3,6 +3,18 @@ iOS Changelog
 
 Migration Guides: Documentation/Migration
 
+Version 12.0.1 - October 30, 2019
+=================================
+Patch release with minor improvements to in-app automation 
+delivery reliabiliy.
+
+Changes
+-------
+- In-app automations with a grace period are not deleted
+  locally until the grace period has passed.
+
+Customers using in-app automation may wish to update. 
+
 Version 12.0.0 - September 12, 2019
 ===================================
 Major update for compatibility with iOS 13 and macOS Catalyst.
