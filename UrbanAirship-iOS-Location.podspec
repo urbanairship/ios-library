@@ -1,6 +1,7 @@
 AIRSHIP_VERSION="12.0.2"
 
 Pod::Spec.new do |s|
+   s.deprecated_in_favor_of  = "Airship/Location"
    s.version                 = AIRSHIP_VERSION
    s.name                    = "UrbanAirship-iOS-Location"
    s.summary                 = "Airship iOS Location"

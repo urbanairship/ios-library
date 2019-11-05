@@ -1,8 +1,8 @@
 AIRSHIP_VERSION="12.0.2"
 
 Pod::Spec.new do |s|
+    s.deprecated_in_favor_of  = "AirshipExtensions"
     s.version                 = AIRSHIP_VERSION
-
     s.name                    = "UrbanAirship-iOS-AppExtensions"
     s.summary                 = "Airship iOS App Extensions"
     s.documentation_url       = "https://docs.airship.com/platform/ios"
