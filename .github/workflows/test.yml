@@ -1,0 +1,45 @@
+name: CI
+
+on: [pull_request]
+
+jobs:
+  build-sdk:
+    runs-on: macOS-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Build SDK
+        run: |
+          sudo xcode-select --switch /Applications/Xcode_11.1.app
+          bash ./scripts/build.sh -lfx
+  build-samples:
+    runs-on: macOS-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Build samples
+        run: |
+          sudo xcode-select --switch /Applications/Xcode_11.1.app
+          bash ./scripts/run_ci_tasks.sh -m samples
+  build-docs:
+    runs-on: macOS-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Build docs
+        run: |
+          sudo xcode-select --switch /Applications/Xcode_11.1.app
+          bash ./scripts/build.sh -d
+  run-tests:
+    runs-on: macOS-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Run tests
+        run: |
+          sudo xcode-select --switch /Applications/Xcode_11.1.app
+          bash ./scripts/run_ci_tasks.sh -m tests
+  pod-lib-lint:
+    runs-on: macOS-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Pod lint
+        run: |
+          sudo xcode-select --switch /Applications/Xcode_11.1.app
+          bash ./scripts/run_ci_tasks.sh -m pod_lint
