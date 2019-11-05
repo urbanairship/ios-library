@@ -2,7 +2,7 @@
 
 #import "UAEvent+Internal.h"
 #import "UALocationEvent.h"
-#import "UAAppStateTrackerFactory+Internal.h"
+#import "UAAppStateTracker.h"
 
 @interface UALocationInfo ()
 @property (nonatomic, assign) double latitude;
@@ -100,7 +100,7 @@ NSString * const UAAnalyticsValueNone = @"NONE";
         [dict setValue:UAAnalyticsValueNone forKey:UALocationEventDistanceFilterKey];
     }
 
-    if ([UAAppStateTrackerFactory tracker].state == UAApplicationStateActive) {
+    if ([UAAppStateTracker shared].state == UAApplicationStateActive) {
         [dict setValue:@"true" forKey:UALocationEventForegroundKey];
     } else {
         [dict setValue:@"false" forKey:UALocationEventForegroundKey];

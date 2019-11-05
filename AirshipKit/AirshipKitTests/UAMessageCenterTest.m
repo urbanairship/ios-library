@@ -5,14 +5,12 @@
 #import "UAMessageCenter+Internal.h"
 #import "UAUser.h"
 #import "UAInboxMessageList.h"
-#import "UAAppStateTracker+Internal.h"
 #import "UAComponent+Internal.h"
 
 @interface UAMessageCenterTest : UABaseTest
 @property (nonatomic, strong) id mockDefaultUI;
 @property (nonatomic, strong) id mockMessageList;
 @property (nonatomic, strong) id mockUser;
-@property (nonatomic, strong) id mockAppStateTracker;
 @property (nonatomic, strong) id mockDisplayDelegate;
 @property (nonatomic, strong) NSNotificationCenter *notificationCenter;
 @property (nonatomic, strong) UAMessageCenter *messageCenter;
@@ -27,14 +25,12 @@
     self.mockDefaultUI = [self strictMockForClass:[UADefaultMessageCenterUI class]];
     self.mockUser = [self mockForClass:[UAUser class]];
     self.mockMessageList = [self mockForClass:[UAInboxMessageList class]];
-    self.mockAppStateTracker = [self mockForProtocol:@protocol(UAAppStateTracker)];
     self.mockDisplayDelegate = [self strictMockForProtocol:@protocol(UAMessageCenterDisplayDelegate)];
 
     self.messageCenter = [UAMessageCenter messageCenterWithDataStore:self.dataStore
                                                                 user:self.mockUser
                                                          messageList:self.mockMessageList
                                                            defaultUI:self.mockDefaultUI
-                                                     appStateTracker:self.mockAppStateTracker
                                                   notificationCenter:self.notificationCenter];
 }
 

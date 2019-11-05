@@ -8,7 +8,7 @@
 #import "UAScheduleInfo.h"
 #import "UATimerScheduler+Internal.h"
 #import "UADispatcher+Internal.h"
-#import "UAAppStateTracker+Internal.h"
+#import "UAAppStateTracker.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -125,7 +125,7 @@ typedef NS_ENUM(NSInteger, UAAutomationScheduleReadyResult) {
 /**
  * Automation engine.
  */
-@interface UAAutomationEngine : NSObject <UAAppStateTrackerDelegate>
+@interface UAAutomationEngine : NSObject
 
 /**
  * Automation engine delegate.
@@ -159,7 +159,7 @@ typedef NS_ENUM(NSInteger, UAAutomationScheduleReadyResult) {
  * @return Initialized Automation Engine instance
  */
 + (instancetype)automationEngineWithAutomationStore:(UAAutomationStore *)automationStore
-                                    appStateTracker:(id<UAAppStateTracker>)appStateTracker
+                                    appStateTracker:(UAAppStateTracker *)appStateTracker
                                      timerScheduler:(UATimerScheduler *)timerScheduler
                                  notificationCenter:(NSNotificationCenter *)notificationCenter
                                          dispatcher:(UADispatcher *)dispatcher

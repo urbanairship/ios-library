@@ -14,7 +14,6 @@
 #import "UAInAppMessageDefaultDisplayCoordinator+Internal.h"
 #import "UAInAppMessageAssetManager+Internal.h"
 #import "UAInAppRemoteDataClient+Internal.h"
-#import "UAAppStateTracker+Internal.h"
 #import "UATagGroupsHistory.h"
 
 NS_ASSUME_NONNULL_BEGIN

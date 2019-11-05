@@ -13,6 +13,7 @@
 #import "UAEventManager+Internal.h"
 #import "UATestDate.h"
 #import "UATestDispatcher.h"
+#import "UAAppStateTracker.h"
 
 @interface UAAnalyticsTest: UABaseTest
 @property (nonatomic, strong) UAAnalytics *analytics;
@@ -279,10 +280,8 @@
         return [event.screen isEqualToString:@"test_screen"];
     }] sessionID:OCMOCK_ANY];
 
-    [self.analytics applicationDidEnterBackground];
-
     // Background
-    [self.notificationCenter postNotificationName:UIApplicationDidEnterBackgroundNotification
+    [self.notificationCenter postNotificationName:UAApplicationDidEnterBackgroundNotification
                                            object:nil];
 
     [self waitForTestExpectations];
@@ -312,7 +311,7 @@
     }] sessionID:OCMOCK_ANY];
 
     // Terminate
-    [self.analytics applicationWillTerminate];
+    [self.notificationCenter postNotificationName:UAApplicationWillTerminateNotification object:nil];
 
     [self waitForTestExpectations];
 

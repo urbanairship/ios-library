@@ -1,21 +1,19 @@
 /* Copyright Airship and Contributors */
 
 #import <Foundation/Foundation.h>
-#import "UAApplicationState+Internal.h"
+#import "UAApplicationState.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 /**
- * Delegate protocol for app state tracker callbacks. These methods directly correspond to those
- * on UIApplicationDelegate, with a few additions for custom use cases.
+ * Delegate protocol for app state tracker callbacks.
  */
 @protocol UAAppStateTrackerDelegate <NSObject>
-@optional
 
 /**
  * The application finished launching.
  *
- * @param remoteNotification The remote notification that launched the app. If nil, the app was not launched by a remote notification.
+ * @param remoteNotification The remote notification that launched the app.
  */
 - (void)applicationDidFinishLaunching:(nullable NSDictionary *)remoteNotification;
 
@@ -35,16 +33,6 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)applicationDidEnterBackground;
 
 /**
- * The application fully transitioned from a background state into the active state.
- */
-- (void)applicationDidTransitionToForeground;
-
-/**
- * The application fully transitioned from a foreground state into the background state.
- */
-- (void)applicationDidTransitionToBackground;
-
-/**
  * The application is about to leave the active state.
  */
 - (void)applicationWillResignActive;
@@ -61,7 +49,7 @@ NS_ASSUME_NONNULL_BEGIN
  * current application state, and send callbacks to an optional delegate object implementing the UAAppStateTrackerDelegate
  * protocol.
  */
-@protocol UAAppStateTracker <NSObject>
+@protocol UAAppStateTrackerAdapter <NSObject>
 
 /**
  * The current application state.
@@ -72,6 +60,13 @@ NS_ASSUME_NONNULL_BEGIN
  * The state tracker delegate.
  */
 @property(nonatomic, weak) id<UAAppStateTrackerDelegate> stateTrackerDelegate;
+
+/**
+ * Creates an app state tracker.
+ *
+ * @return The tracker.
+ */
++ (id<UAAppStateTrackerAdapter>)adapter;
 
 @end
 

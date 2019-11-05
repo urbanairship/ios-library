@@ -539,12 +539,12 @@ CGFloat const BannerExcessiveSafeAreaPadding = 14;
 - (void)observeAppState {
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(applicationDidBecomeActive)
-                                                 name:UIApplicationDidBecomeActiveNotification
+                                                 name:UAApplicationDidBecomeActiveNotification
                                                object:[UIApplication sharedApplication]];
 
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(applicationWillResignActive)
-                                                 name:UIApplicationWillResignActiveNotification
+                                                 name:UAApplicationWillResignActiveNotification
                                                object:[UIApplication sharedApplication]];
 }
 

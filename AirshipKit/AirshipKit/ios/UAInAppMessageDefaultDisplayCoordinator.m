@@ -2,6 +2,7 @@
 
 #import "UAInAppMessageDefaultDisplayCoordinator+Internal.h"
 #import "UAGlobal.h"
+#import "UAAppStateTracker.h"
 
 @interface UAInAppMessageDefaultDisplayCoordinator ()
 @property (nonatomic, assign) BOOL isDisplayLocked;
@@ -18,8 +19,8 @@
         self.dispatcher = dispatcher;
         self.notificationCenter = notificationCenter;
 
-        [self.notificationCenter addObserver:self selector:@selector(applicationDidBecomeActive) name:UIApplicationDidBecomeActiveNotification object:nil];
-        [self.notificationCenter addObserver:self selector:@selector(applicationDidEnterBackground) name:UIApplicationDidEnterBackgroundNotification object:nil];
+        [self.notificationCenter addObserver:self selector:@selector(applicationDidBecomeActive) name:UAApplicationDidBecomeActiveNotification object:nil];
+        [self.notificationCenter addObserver:self selector:@selector(applicationDidEnterBackground) name:UAApplicationDidEnterBackgroundNotification object:nil];
     }
 
     return self;

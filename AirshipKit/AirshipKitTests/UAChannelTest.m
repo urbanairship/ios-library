@@ -9,12 +9,12 @@
 #import "UAUserData+Internal.h"
 #import "UATestDate.h"
 #import "UAAttributePendingMutations+Internal.h"
+#import "UAAppStateTracker.h"
 
 @interface UAChannelTest : UABaseTest
 @property(nonatomic, strong) id mockTagGroupsRegistrar;
 @property(nonatomic, strong) id mockAttributeRegistrar;
 @property(nonatomic, strong) id mockChannelRegistrar;
-@property(nonatomic, strong) id mockAppStateTracker;
 @property(nonatomic, strong) id mockTimeZone;
 @property(nonatomic, strong) NSNotificationCenter *notificationCenter;
 @property(nonatomic, strong) UAChannel *channel;
@@ -38,7 +38,6 @@
     self.mockTagGroupsRegistrar = [self mockForClass:[UATagGroupsRegistrar class]];
 
     self.notificationCenter = [[NSNotificationCenter alloc] init];
-    self.mockAppStateTracker = [self mockForProtocol:@protocol(UAAppStateTracker)];
 
     // Set up a mocked device api client
     self.mockChannelRegistrar = [self mockForClass:[UAChannelRegistrar class]];
@@ -64,7 +63,6 @@
                                         channelRegistrar:self.mockChannelRegistrar
                                       tagGroupsRegistrar:self.mockTagGroupsRegistrar
                                       attributeRegistrar:self.mockAttributeRegistrar
-                                         appStateTracker:self.mockAppStateTracker
                                                     date:self.testDate];
 
     return channel;
@@ -368,7 +366,7 @@
     [[self.mockChannelRegistrar expect] registerForcefully:NO];
 
     // TEST
-    [self.channel applicationDidTransitionToForeground];
+    [self.notificationCenter postNotificationName:UAApplicationDidTransitionToForeground object:nil];
 
     // VERIFY
     XCTAssertNoThrow([self.mockChannelRegistrar verify], @"should update channel registration");
@@ -379,7 +377,7 @@
  * the hasEnteredBackground flag
  */
 - (void)testApplicationDidEnterBackground {
-    [self.channel applicationDidEnterBackground];
+    [self.notificationCenter postNotificationName:UAApplicationDidEnterBackgroundNotification object:nil];
 
     XCTAssertTrue([self.dataStore boolForKey:UAChannelCreationOnForeground], @"applicationDidEnterBackground should set channelCreationOnForeground to true");
 }
@@ -392,7 +390,7 @@
     // Expect UAChannel to update channel registration
     [[self.mockChannelRegistrar expect] registerForcefully:NO];
 
-    [self.channel applicationDidEnterBackground];
+    [self.notificationCenter postNotificationName:UAApplicationDidEnterBackgroundNotification object:nil];
 
     XCTAssertNoThrow([self.mockChannelRegistrar verify], @"Channel registration should be called");
 }
@@ -495,7 +493,6 @@
     [UAAttributePendingMutations pendingMutationsWithMutations:addMutation
     date:self.testDate];
 
-    
     [[self.mockAttributeRegistrar expect] savePendingMutations:OCMOCK_ANY];
     [[self.mockAttributeRegistrar reject] updateAttributesForChannel:OCMOCK_ANY];
 

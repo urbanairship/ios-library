@@ -24,13 +24,13 @@ NSString *const UALocationBackgroundUpdatesAllowed = @"UALocationBackgroundUpdat
         // Update the location service on app background
         [notificationCenter addObserver:self
                                selector:@selector(updateLocationService)
-                                   name:UIApplicationDidEnterBackgroundNotification
+                                   name:UAApplicationDidEnterBackgroundNotification
                                  object:nil];
 
         // Update the location service on app becoming active
         [notificationCenter addObserver:self
                                selector:@selector(updateLocationService)
-                                   name:UIApplicationDidBecomeActiveNotification
+                                   name:UAApplicationDidBecomeActiveNotification
                                  object:nil];
 
         if (self.componentEnabled) {
@@ -81,7 +81,7 @@ NSString *const UALocationBackgroundUpdatesAllowed = @"UALocationBackgroundUpdat
 
     [self.dataStore setBool:backgroundLocationUpdatesAllowed forKey:UALocationBackgroundUpdatesAllowed];
 
-    if ([UIApplication sharedApplication].applicationState != UIApplicationStateActive) {
+    if ([UAAppStateTracker shared].state != UAApplicationStateActive) {
         [self updateLocationService];
     }
 }
@@ -111,7 +111,7 @@ NSString *const UALocationBackgroundUpdatesAllowed = @"UALocationBackgroundUpdat
 #endif
 
     // Check if location updates are allowed in the background if we are in the background
-    if ([[UIApplication sharedApplication] applicationState] != UIApplicationStateActive && !self.isBackgroundLocationUpdatesAllowed) {
+    if ([UAAppStateTracker shared].state != UAApplicationStateActive && !self.isBackgroundLocationUpdatesAllowed) {
         [self stopLocationUpdates];
         return;
     }

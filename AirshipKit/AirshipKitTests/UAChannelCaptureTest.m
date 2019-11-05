@@ -19,6 +19,8 @@
 @property(nonatomic, strong) id mockUtils;
 @property(nonatomic, strong) id mockWindow;
 @property(nonatomic, strong) id mockRootViewController;
+@property(nonatomic, strong) NSNotificationCenter *notificationCenter;
+
 @end
 
 @implementation UAChannelCaptureTest
@@ -41,13 +43,13 @@
     self.mockUtils = [self mockForClass:[UAUtils class]];
     [[[self.mockUtils stub] andReturn:self.mockWindow] mainWindow];
 
-    self.mockAppStateTracker = [self mockForProtocol:@protocol(UAAppStateTracker)];
+    self.notificationCenter = [[NSNotificationCenter alloc] init];
 
     self.channelCapture = [UAChannelCapture channelCaptureWithConfig:self.config
                                                              channel:self.mockChannel
                                                 pushProviderDelegate:self.mockPushProviderDelegate
                                                            dataStore:self.dataStore
-                                                     appStateTracker:self.mockAppStateTracker
+                                                  notificationCenter:self.notificationCenter
                                                       mainDispatcher:[UATestDispatcher testDispatcher]
                                                 backgroundDispatcher:[UATestDispatcher testDispatcher]];
 }
@@ -162,7 +164,7 @@
 
     }] animated:YES completion:nil];
 
-    [self.channelCapture applicationDidBecomeActive];
+    [self.notificationCenter postNotificationName:UAApplicationDidBecomeActiveNotification object:nil];
 
     // Wait for the test expectations
     [self waitForTestExpectations];

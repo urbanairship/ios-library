@@ -4,14 +4,13 @@
 #import "UAApplicationMetrics.h"
 #import "UADate+Internal.h"
 #import "UAPreferenceDataStore+Internal.h"
-#import "UAAppStateTracker+Internal.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 /*
  * SDK-private extensions to Application Metrics
  */
-@interface UAApplicationMetrics () <UAAppStateTrackerDelegate>
+@interface UAApplicationMetrics ()
 
 ///---------------------------------------------------------------------------------------
 /// @name Application Metrics Internal Properties

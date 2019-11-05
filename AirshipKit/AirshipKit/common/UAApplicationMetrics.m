@@ -2,12 +2,11 @@
 
 #import "UAApplicationMetrics+Internal.h"
 #import "UAUtils+Internal.h"
-#import "UAAppStateTrackerFactory+Internal.h"
+#import "UAAppStateTracker.h"
 
 @interface UAApplicationMetrics()
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 @property (nonatomic, strong) UADate *date;
-@property (nonatomic, strong) id<UAAppStateTracker> appStateTracker;
 @property (nonatomic, assign) BOOL isAppVersionUpdated;
 @end
 
@@ -22,8 +21,11 @@ NSString *const UAApplicationMetricsLastAppVersion = @"UAApplicationMetricsLastA
     if (self) {
         self.dataStore = dataStore;
         self.date = date;
-        self.appStateTracker = [UAAppStateTrackerFactory tracker];
-        self.appStateTracker.stateTrackerDelegate = self;
+
+        [notificationCenter addObserver:self
+                                    selector:@selector(applicationDidBecomeActive)
+                                        name:UAApplicationDidBecomeActiveNotification
+                                      object:nil];
 
         [self checkAppVersion];
     }

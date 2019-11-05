@@ -21,7 +21,7 @@
 #import "UATagGroupsRegistrar+Internal.h"
 #import "UATagGroupsMutationHistory+Internal.h"
 #import "UAChannel+Internal.h"
-#import "UAAppStateTrackerFactory+Internal.h"
+#import "UAAppStateTracker.h"
 
 #import "UALocationModuleLoaderFactory.h"
 #import "UAAutomationModuleLoaderFactory.h"
@@ -54,12 +54,10 @@ static NSBundle *resourcesBundle_;
 
 static dispatch_once_t takeOffPred_;
 
-static id<UAAppStateTracker> appStateTracker_;
-
 // Its possible that plugins that use load to call takeoff will trigger after
 // didFinishLaunching. We need to store the launch notification
 // and call didFinishLaunching in takeoff.
-static NSDictionary *launchNotification_;
+static NSNotification *launchNotification_;
 
 static BOOL handledLaunch_;
 
@@ -86,8 +84,9 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 }
 
 + (void)load {
-    appStateTracker_ = [UAAppStateTrackerFactory tracker];
-    appStateTracker_.stateTrackerDelegate = (id<UAAppStateTrackerDelegate>)self;
+    [[NSNotificationCenter defaultCenter] addObserver:[UAirship class] selector:@selector(applicationDidFinishLaunching:)
+                                                 name:UAApplicationDidFinishLaunchingNotification
+                                               object:nil];
 }
 
 #pragma mark -
@@ -332,13 +331,13 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
     }
 }
 
-+ (void)applicationDidFinishLaunching:(nullable NSDictionary *)remoteNotification {
++ (void)applicationDidFinishLaunching:(NSNotification *)notification {
     if (handledLaunch_) {
         return;
     }
 
     if (!sharedAirship_) {
-        launchNotification_ = remoteNotification;
+        launchNotification_ = notification;
 
         // Log takeoff errors on the next run loop to give time for apps that
         // use class loader to call takeoff.
@@ -353,6 +352,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
     }
 
     // Required before the app init event to track conversion push ID
+    NSDictionary *remoteNotification = notification.userInfo[UAApplicationLaunchOptionsRemoteNotificationKey];
     if (remoteNotification) {
         [sharedAirship_.sharedAnalytics launchedFromNotification:remoteNotification];
     }

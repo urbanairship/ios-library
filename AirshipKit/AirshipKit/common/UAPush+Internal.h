@@ -7,7 +7,7 @@
 #import "UAComponent+Internal.h"
 #import "UAChannel+Internal.h"
 #import "UADispatcher+Internal.h"
-#import "UAAppStateTracker+Internal.h"
+#import "UAAppStateTracker.h"
 #import "UAPushProviderDelegate.h"
 
 @class UAPreferenceDataStore;
@@ -86,7 +86,7 @@ extern NSString *const UAPushEnabledSettingsMigratedKey;
 extern NSString *const UAPushEnabledKey;
 
 
-@interface UAPush () <UAAPNSRegistrationDelegate, UAPushProviderDelegate, UAAppStateTrackerDelegate>
+@interface UAPush () <UAAPNSRegistrationDelegate, UAPushProviderDelegate>
 
 ///---------------------------------------------------------------------------------------
 /// @name Push Internal Properties
@@ -165,7 +165,7 @@ extern NSString *const UAPushEnabledKey;
 + (instancetype)pushWithConfig:(UARuntimeConfig *)config
                      dataStore:(UAPreferenceDataStore *)dataStore
                        channel:(UAChannel<UAExtendableChannelRegistration> *)channel
-               appStateTracker:(id<UAAppStateTracker>)appStateTracker
+               appStateTracker:(UAAppStateTracker *)appStateTracker
             notificationCenter:(NSNotificationCenter *)notificationCenter
               pushRegistration:(id<UAAPNSRegistrationProtocol>)pushRegistration
                    application:(UIApplication *)application

@@ -5,7 +5,6 @@
 #import "UAComponent+Internal.h"
 #import "UADate+Internal.h"
 #import "UADispatcher+Internal.h"
-#import "UAAppStateTracker+Internal.h"
 
 #define kUAAnalyticsEnabled @"UAAnalyticsEnabled"
 #define kUAMissingSendID @"MISSING_SEND_ID"
@@ -23,7 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
 /*
  * SDK-private extensions to Analytics
  */
-@interface UAAnalytics () <UAAppStateTrackerDelegate>
+@interface UAAnalytics ()
 
 extern NSString *const UACustomEventAdded;
 extern NSString *const UARegionEventAdded;

@@ -13,16 +13,16 @@
 #import "UAirship.h"
 #import "NSOperationQueue+UAAdditions.h"
 #import "UADispatcher+Internal.h"
-#import "UAAppStateTrackerFactory+Internal.h"
+#import "UAAppStateTracker.h"
 
-@interface UAEventManager() <UAAppStateTrackerDelegate>
+@interface UAEventManager()
 
 @property (nonatomic, strong, nonnull) UARuntimeConfig *config;
 @property (nonatomic, strong, nonnull) UAEventStore *eventStore;
 @property (nonatomic, strong, nonnull) UAPreferenceDataStore *dataStore;
 @property (nonatomic, strong, nonnull) UAEventAPIClient *client;
 @property (nonatomic, strong, nonnull) NSNotificationCenter *notificationCenter;
-@property (nonatomic, strong, nonnull) id<UAAppStateTracker> appStateTracker;
+@property (nonatomic, strong, nonnull) UAAppStateTracker *appStateTracker;
 
 @property (nonatomic, assign) NSUInteger maxTotalDBSize;
 @property (nonatomic, assign) NSUInteger maxBatchSize;
@@ -49,7 +49,7 @@ const NSTimeInterval BackgroundLowPriorityEventUploadInterval = 900;
                         client:(UAEventAPIClient *)client
                          queue:(NSOperationQueue *)queue
             notificationCenter:(NSNotificationCenter *)notificationCenter
-               appStateTracker:(id<UAAppStateTracker>)appStateTracker {
+               appStateTracker:(UAAppStateTracker *)appStateTracker {
 
     self = [super init];
 
@@ -61,7 +61,6 @@ const NSTimeInterval BackgroundLowPriorityEventUploadInterval = 900;
         self.queue = queue;
         self.notificationCenter = notificationCenter;
         self.appStateTracker = appStateTracker;
-        self.appStateTracker.stateTrackerDelegate = self;
 
         _uploadsEnabled = YES;
 
@@ -73,6 +72,16 @@ const NSTimeInterval BackgroundLowPriorityEventUploadInterval = 900;
         [self.notificationCenter addObserver:self
                                     selector:@selector(scheduleUpload)
                                         name:UAChannelCreatedEvent
+                                      object:nil];
+
+        [self.notificationCenter addObserver:self
+                                    selector:@selector(applicationWillEnterForeground)
+                                        name:UAApplicationWillEnterForegroundNotification
+                                      object:nil];
+
+        [self.notificationCenter addObserver:self
+                                    selector:@selector(applicationDidEnterBackground)
+                                        name:UAApplicationDidEnterBackgroundNotification
                                       object:nil];
     }
 
@@ -97,7 +106,7 @@ const NSTimeInterval BackgroundLowPriorityEventUploadInterval = 900;
                                  client:client
                                   queue:queue
                      notificationCenter:[NSNotificationCenter defaultCenter]
-                        appStateTracker:[UAAppStateTrackerFactory tracker]];
+                        appStateTracker:[UAAppStateTracker shared]];
 
 }
 
@@ -107,7 +116,7 @@ const NSTimeInterval BackgroundLowPriorityEventUploadInterval = 900;
                                 client:(UAEventAPIClient *)client
                                  queue:(NSOperationQueue *)queue
                     notificationCenter:(NSNotificationCenter *)notificationCenter
-                       appStateTracker:(id<UAAppStateTracker>)appStateTracker {
+                       appStateTracker:(UAAppStateTracker *)appStateTracker {
 
     return [[self alloc] initWithConfig:config
                               dataStore:dataStore

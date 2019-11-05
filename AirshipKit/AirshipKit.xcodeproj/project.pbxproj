@@ -21,24 +21,15 @@
 		3C4625AC235E9F3F00E4CF54 /* UADisposable+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C4625A8235E9DB400E4CF54 /* UADisposable+Internal.h */; };
 		3C4625AD235E9F5300E4CF54 /* UADisposable+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C4625A8235E9DB400E4CF54 /* UADisposable+Internal.h */; };
 		3C4625AE235E9F6D00E4CF54 /* UADisposable+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C4625A8235E9DB400E4CF54 /* UADisposable+Internal.h */; };
-		3C4ACC422304DE1B00BCF1CC /* UAApplicationState+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C4ACC3C2304DE1A00BCF1CC /* UAApplicationState+Internal.h */; };
-		3C4ACC432304DE1B00BCF1CC /* UAApplicationState+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C4ACC3C2304DE1A00BCF1CC /* UAApplicationState+Internal.h */; };
-		3C4ACC442304DE1B00BCF1CC /* UAApplicationState+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C4ACC3C2304DE1A00BCF1CC /* UAApplicationState+Internal.h */; };
-		3C4ACC452304DE1B00BCF1CC /* UAAppStateTracker+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C4ACC3D2304DE1B00BCF1CC /* UAAppStateTracker+Internal.h */; };
-		3C4ACC462304DE1B00BCF1CC /* UAAppStateTracker+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C4ACC3D2304DE1B00BCF1CC /* UAAppStateTracker+Internal.h */; };
-		3C4ACC472304DE1B00BCF1CC /* UAAppStateTracker+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C4ACC3D2304DE1B00BCF1CC /* UAAppStateTracker+Internal.h */; };
-		3C4ACC482304DE1B00BCF1CC /* UAAppStateTrackerFactory+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C4ACC3E2304DE1B00BCF1CC /* UAAppStateTrackerFactory+Internal.h */; };
-		3C4ACC492304DE1B00BCF1CC /* UAAppStateTrackerFactory+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C4ACC3E2304DE1B00BCF1CC /* UAAppStateTrackerFactory+Internal.h */; };
-		3C4ACC4A2304DE1B00BCF1CC /* UAAppStateTrackerFactory+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C4ACC3E2304DE1B00BCF1CC /* UAAppStateTrackerFactory+Internal.h */; };
-		3C4ACC4B2304DE1B00BCF1CC /* UAAppStateTrackerFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C4ACC3F2304DE1B00BCF1CC /* UAAppStateTrackerFactory.m */; };
-		3C4ACC4C2304DE1B00BCF1CC /* UAAppStateTrackerFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C4ACC3F2304DE1B00BCF1CC /* UAAppStateTrackerFactory.m */; };
-		3C4ACC4D2304DE1B00BCF1CC /* UAAppStateTrackerFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C4ACC3F2304DE1B00BCF1CC /* UAAppStateTrackerFactory.m */; };
-		3C4ACC4E2304DE1B00BCF1CC /* UAUIKitStateTracker.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C4ACC402304DE1B00BCF1CC /* UAUIKitStateTracker.m */; };
-		3C4ACC4F2304DE1B00BCF1CC /* UAUIKitStateTracker.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C4ACC402304DE1B00BCF1CC /* UAUIKitStateTracker.m */; };
-		3C4ACC502304DE1B00BCF1CC /* UAUIKitStateTracker.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C4ACC402304DE1B00BCF1CC /* UAUIKitStateTracker.m */; };
-		3C4ACC512304DE1B00BCF1CC /* UAUIKitStateTracker+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C4ACC412304DE1B00BCF1CC /* UAUIKitStateTracker+Internal.h */; };
-		3C4ACC522304DE1B00BCF1CC /* UAUIKitStateTracker+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C4ACC412304DE1B00BCF1CC /* UAUIKitStateTracker+Internal.h */; };
-		3C4ACC532304DE1B00BCF1CC /* UAUIKitStateTracker+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C4ACC412304DE1B00BCF1CC /* UAUIKitStateTracker+Internal.h */; };
+		3C4ACC482304DE1B00BCF1CC /* UAAppStateTrackerAdapter+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C4ACC3E2304DE1B00BCF1CC /* UAAppStateTrackerAdapter+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		3C4ACC492304DE1B00BCF1CC /* UAAppStateTrackerAdapter+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C4ACC3E2304DE1B00BCF1CC /* UAAppStateTrackerAdapter+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		3C4ACC4A2304DE1B00BCF1CC /* UAAppStateTrackerAdapter+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C4ACC3E2304DE1B00BCF1CC /* UAAppStateTrackerAdapter+Internal.h */; };
+		3C4ACC4E2304DE1B00BCF1CC /* UAUIKitStateTrackerAdapter.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C4ACC402304DE1B00BCF1CC /* UAUIKitStateTrackerAdapter.m */; };
+		3C4ACC4F2304DE1B00BCF1CC /* UAUIKitStateTrackerAdapter.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C4ACC402304DE1B00BCF1CC /* UAUIKitStateTrackerAdapter.m */; };
+		3C4ACC502304DE1B00BCF1CC /* UAUIKitStateTrackerAdapter.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C4ACC402304DE1B00BCF1CC /* UAUIKitStateTrackerAdapter.m */; };
+		3C4ACC512304DE1B00BCF1CC /* UAUIKitStateTrackerAdapter+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C4ACC412304DE1B00BCF1CC /* UAUIKitStateTrackerAdapter+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		3C4ACC522304DE1B00BCF1CC /* UAUIKitStateTrackerAdapter+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C4ACC412304DE1B00BCF1CC /* UAUIKitStateTrackerAdapter+Internal.h */; };
+		3C4ACC532304DE1B00BCF1CC /* UAUIKitStateTrackerAdapter+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C4ACC412304DE1B00BCF1CC /* UAUIKitStateTrackerAdapter+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3C4FDDFF225BBED400A54E32 /* UALocationEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C4FDDFD225BBED300A54E32 /* UALocationEvent.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3C4FDE00225BBED400A54E32 /* UALocationEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C4FDDFD225BBED300A54E32 /* UALocationEvent.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3C4FDE01225BBED400A54E32 /* UALocationEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C4FDDFE225BBED400A54E32 /* UALocationEvent.m */; };
@@ -356,6 +347,15 @@
 		6E446F9A2347B87400C43B57 /* UARemoteConfigModuleNames+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E446F962347B87400C43B57 /* UARemoteConfigModuleNames+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6E4627CC1E64E0C300A5BF3B /* UAScheduleDelayTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E4627CB1E64E0C300A5BF3B /* UAScheduleDelayTests.m */; };
 		6E4A00791F2A4A4A0069D8A0 /* UABaseTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E4A00781F2A4A4A0069D8A0 /* UABaseTest.m */; };
+		6E4F028D2370AC0B0068AF65 /* UAAppStateTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4F028B2370AC0B0068AF65 /* UAAppStateTracker.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6E4F028E2370AC0B0068AF65 /* UAAppStateTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4F028B2370AC0B0068AF65 /* UAAppStateTracker.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6E4F028F2370AC0B0068AF65 /* UAAppStateTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4F028B2370AC0B0068AF65 /* UAAppStateTracker.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6E4F02902370AC0B0068AF65 /* UAAppStateTracker.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E4F028C2370AC0B0068AF65 /* UAAppStateTracker.m */; };
+		6E4F02912370AC0B0068AF65 /* UAAppStateTracker.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E4F028C2370AC0B0068AF65 /* UAAppStateTracker.m */; };
+		6E4F02922370AC0B0068AF65 /* UAAppStateTracker.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E4F028C2370AC0B0068AF65 /* UAAppStateTracker.m */; };
+		6E4F02982370B7530068AF65 /* UAApplicationState.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4F02972370B7520068AF65 /* UAApplicationState.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6E4F02992370B7530068AF65 /* UAApplicationState.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4F02972370B7520068AF65 /* UAApplicationState.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6E4F029A2370B7530068AF65 /* UAApplicationState.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4F02972370B7520068AF65 /* UAApplicationState.h */; };
 		6E598D201FFC44F3005B234B /* UAScheduleEdits.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E598D1E1FFC44F3005B234B /* UAScheduleEdits.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E598D211FFC44F3005B234B /* UAScheduleEdits.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E598D1E1FFC44F3005B234B /* UAScheduleEdits.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E598D221FFC44F3005B234B /* UAScheduleEdits.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E598D1E1FFC44F3005B234B /* UAScheduleEdits.h */; };
@@ -1817,12 +1817,9 @@
 		3C4625A5235E9CF200E4CF54 /* UAAutoDisposable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UAAutoDisposable.h; sourceTree = "<group>"; };
 		3C4625A6235E9CF200E4CF54 /* UAAutoDisposable.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAAutoDisposable.m; sourceTree = "<group>"; };
 		3C4625A8235E9DB400E4CF54 /* UADisposable+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "UADisposable+Internal.h"; path = "common/UADisposable+Internal.h"; sourceTree = "<group>"; };
-		3C4ACC3C2304DE1A00BCF1CC /* UAApplicationState+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UAApplicationState+Internal.h"; path = "common/UAApplicationState+Internal.h"; sourceTree = "<group>"; };
-		3C4ACC3D2304DE1B00BCF1CC /* UAAppStateTracker+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UAAppStateTracker+Internal.h"; path = "common/UAAppStateTracker+Internal.h"; sourceTree = "<group>"; };
-		3C4ACC3E2304DE1B00BCF1CC /* UAAppStateTrackerFactory+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UAAppStateTrackerFactory+Internal.h"; path = "common/UAAppStateTrackerFactory+Internal.h"; sourceTree = "<group>"; };
-		3C4ACC3F2304DE1B00BCF1CC /* UAAppStateTrackerFactory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAAppStateTrackerFactory.m; path = common/UAAppStateTrackerFactory.m; sourceTree = "<group>"; };
-		3C4ACC402304DE1B00BCF1CC /* UAUIKitStateTracker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAUIKitStateTracker.m; path = common/UAUIKitStateTracker.m; sourceTree = "<group>"; };
-		3C4ACC412304DE1B00BCF1CC /* UAUIKitStateTracker+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UAUIKitStateTracker+Internal.h"; path = "common/UAUIKitStateTracker+Internal.h"; sourceTree = "<group>"; };
+		3C4ACC3E2304DE1B00BCF1CC /* UAAppStateTrackerAdapter+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UAAppStateTrackerAdapter+Internal.h"; path = "common/UAAppStateTrackerAdapter+Internal.h"; sourceTree = "<group>"; };
+		3C4ACC402304DE1B00BCF1CC /* UAUIKitStateTrackerAdapter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAUIKitStateTrackerAdapter.m; path = common/UAUIKitStateTrackerAdapter.m; sourceTree = "<group>"; };
+		3C4ACC412304DE1B00BCF1CC /* UAUIKitStateTrackerAdapter+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UAUIKitStateTrackerAdapter+Internal.h"; path = "common/UAUIKitStateTrackerAdapter+Internal.h"; sourceTree = "<group>"; };
 		3C4FDDFD225BBED300A54E32 /* UALocationEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UALocationEvent.h; path = common/UALocationEvent.h; sourceTree = "<group>"; };
 		3C4FDDFE225BBED400A54E32 /* UALocationEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UALocationEvent.m; path = common/UALocationEvent.m; sourceTree = "<group>"; };
 		3C5264AB20DAEE2A00FCA903 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
@@ -1980,6 +1977,9 @@
 		6E446F962347B87400C43B57 /* UARemoteConfigModuleNames+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "UARemoteConfigModuleNames+Internal.h"; path = "common/UARemoteConfigModuleNames+Internal.h"; sourceTree = "<group>"; };
 		6E4627CB1E64E0C300A5BF3B /* UAScheduleDelayTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAScheduleDelayTests.m; sourceTree = "<group>"; };
 		6E4A00781F2A4A4A0069D8A0 /* UABaseTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UABaseTest.m; sourceTree = "<group>"; };
+		6E4F028B2370AC0B0068AF65 /* UAAppStateTracker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = UAAppStateTracker.h; path = common/UAAppStateTracker.h; sourceTree = "<group>"; };
+		6E4F028C2370AC0B0068AF65 /* UAAppStateTracker.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = UAAppStateTracker.m; path = common/UAAppStateTracker.m; sourceTree = "<group>"; };
+		6E4F02972370B7520068AF65 /* UAApplicationState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAApplicationState.h; path = common/UAApplicationState.h; sourceTree = "<group>"; };
 		6E598D1E1FFC44F3005B234B /* UAScheduleEdits.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = UAScheduleEdits.h; path = common/UAScheduleEdits.h; sourceTree = "<group>"; };
 		6E598D1F1FFC44F3005B234B /* UAScheduleEdits.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = UAScheduleEdits.m; path = common/UAScheduleEdits.m; sourceTree = "<group>"; };
 		6E598D261FFC4506005B234B /* UAScheduleEdits+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "UAScheduleEdits+Internal.h"; path = "common/UAScheduleEdits+Internal.h"; sourceTree = "<group>"; };
@@ -2740,12 +2740,12 @@
 		3C4ACC3B2304DDF600BCF1CC /* App State */ = {
 			isa = PBXGroup;
 			children = (
-				3C4ACC3C2304DE1A00BCF1CC /* UAApplicationState+Internal.h */,
-				3C4ACC3D2304DE1B00BCF1CC /* UAAppStateTracker+Internal.h */,
-				3C4ACC3E2304DE1B00BCF1CC /* UAAppStateTrackerFactory+Internal.h */,
-				3C4ACC3F2304DE1B00BCF1CC /* UAAppStateTrackerFactory.m */,
-				3C4ACC402304DE1B00BCF1CC /* UAUIKitStateTracker.m */,
-				3C4ACC412304DE1B00BCF1CC /* UAUIKitStateTracker+Internal.h */,
+				6E4F02972370B7520068AF65 /* UAApplicationState.h */,
+				3C4ACC3E2304DE1B00BCF1CC /* UAAppStateTrackerAdapter+Internal.h */,
+				3C4ACC402304DE1B00BCF1CC /* UAUIKitStateTrackerAdapter.m */,
+				3C4ACC412304DE1B00BCF1CC /* UAUIKitStateTrackerAdapter+Internal.h */,
+				6E4F028B2370AC0B0068AF65 /* UAAppStateTracker.h */,
+				6E4F028C2370AC0B0068AF65 /* UAAppStateTracker.m */,
 			);
 			name = "App State";
 			sourceTree = "<group>";
@@ -2864,6 +2864,7 @@
 			children = (
 				6E8A550723675CC1004AE2A0 /* Extended Actions */,
 				6EB1D5A52360AC1F006E6EC8 /* Automation */,
+				3C4ACC3B2304DDF600BCF1CC /* App State */,
 				6E5EB9A8235A66D800F8AEA0 /* Modules */,
 				6EB9A118228E1ED200FF5A30 /* Config */,
 				3CBB6F18212CB7F500E094B0 /* Operations */,
@@ -2978,7 +2979,6 @@
 				6E5EB9B2235A680400F8AEA0 /* UALocationModuleLoaderFactory.h */,
 				6E8A54BB236243A3004AE2A0 /* UAAutomationModuleLoaderFactory.h */,
 				6E8A552723676AB4004AE2A0 /* UAExtendedActionsModuleLoaderFactory.h */,
-				3C4ACC3B2304DDF600BCF1CC /* App State */,
 			);
 			name = Modules;
 			sourceTree = "<group>";
@@ -4524,7 +4524,7 @@
 				3CD47D4822602A58005F1987 /* UARemoteConfigModuleAdapter+Internal.h in Headers */,
 				3C4FDDFF225BBED400A54E32 /* UALocationEvent.h in Headers */,
 				3CF5285922E2721000424EF5 /* UAChannel.h in Headers */,
-				3C4ACC512304DE1B00BCF1CC /* UAUIKitStateTracker+Internal.h in Headers */,
+				3C4ACC512304DE1B00BCF1CC /* UAUIKitStateTrackerAdapter+Internal.h in Headers */,
 				3CF0C2242257FC9200CE5463 /* UALocationProviderDelegate.h in Headers */,
 				CC40DCFA1D8C996A00BABD4F /* UAPreferenceDataStore.h in Headers */,
 				452FFFA22187C45D0086BD29 /* UASystemVersion.h in Headers */,
@@ -4586,6 +4586,7 @@
 				CC40DCB71D8C996A00BABD4F /* UAInboxUtils.h in Headers */,
 				45DCD82D2086AA7000BCF10F /* UAInAppMessageTextStyle.h in Headers */,
 				E29D35E91DB93A59003C292F /* UAFetchDeviceInfoAction.h in Headers */,
+				6E4F028D2370AC0B0068AF65 /* UAAppStateTracker.h in Headers */,
 				CC40DC0F1D8C996A00BABD4F /* NSString+UAURLEncoding.h in Headers */,
 				CC40DCC51D8C996A00BABD4F /* UAJSONPredicate.h in Headers */,
 				CC40DCE01D8C996A00BABD4F /* UANamedUser.h in Headers */,
@@ -4746,6 +4747,7 @@
 				996B95701FABAAF2009B49BC /* UAInAppMessage.h in Headers */,
 				CC40DCB21D8C996A00BABD4F /* UAInboxMessageData+Internal.h in Headers */,
 				CC40DCB41D8C996A00BABD4F /* UAInboxMessageList+Internal.h in Headers */,
+				6E4F02982370B7530068AF65 /* UAApplicationState.h in Headers */,
 				CC40DCC91D8C996A00BABD4F /* UAJSONValueTransformer+Internal.h in Headers */,
 				CC40DCDF1D8C996A00BABD4F /* UANamedUser+Internal.h in Headers */,
 				4582DB292217ABFB0018E02C /* UAAnalyticsEventConsumerProtocol.h in Headers */,
@@ -4826,9 +4828,7 @@
 				CC40DC481D8C996A00BABD4F /* UAAppIntegration+Internal.h in Headers */,
 				CC40DC521D8C996A00BABD4F /* UAAutoIntegration+Internal.h in Headers */,
 				3C4625AC235E9F3F00E4CF54 /* UADisposable+Internal.h in Headers */,
-				3C4ACC422304DE1B00BCF1CC /* UAApplicationState+Internal.h in Headers */,
-				3C4ACC452304DE1B00BCF1CC /* UAAppStateTracker+Internal.h in Headers */,
-				3C4ACC482304DE1B00BCF1CC /* UAAppStateTrackerFactory+Internal.h in Headers */,
+				3C4ACC482304DE1B00BCF1CC /* UAAppStateTrackerAdapter+Internal.h in Headers */,
 				6E8A552823676AB4004AE2A0 /* UAExtendedActionsModuleLoaderFactory.h in Headers */,
 				DF6AD3C91ED8AA78006EB1DA /* UAAPIClient+Internal.h in Headers */,
 				DF3E96F82075575D00C77E3B /* UATagGroupsRegistrar+Internal.h in Headers */,
@@ -4961,6 +4961,7 @@
 				3CC7DC5C225299F300670DC2 /* UAProximityRegion+Internal.h in Headers */,
 				99666DB81EDF2BDC00BAE46B /* UAChannelAPIClient+Internal.h in Headers */,
 				DF702D841FABA46B00E7A3DC /* UAVersionMatcher+Internal.h in Headers */,
+				6E4F028E2370AC0B0068AF65 /* UAAppStateTracker.h in Headers */,
 				99666DBA1EDF2BDC00BAE46B /* UAChannelRegistrar+Internal.h in Headers */,
 				6E8A548D2362353E004AE2A0 /* UARemoteDataPayload.h in Headers */,
 				99666DBD1EDF2BDC00BAE46B /* UAChannelRegistrationPayload+Internal.h in Headers */,
@@ -5005,6 +5006,7 @@
 				99666D8B1EDF2BA700BAE46B /* UAJSONMatcher.h in Headers */,
 				99666D8D1EDF2BA700BAE46B /* UAJSONPredicate.h in Headers */,
 				DF0A22E71FBCFFE00058F6D6 /* UAComponent+Internal.h in Headers */,
+				6E4F02992370B7530068AF65 /* UAApplicationState.h in Headers */,
 				99666D8F1EDF2BA700BAE46B /* UAJSONValueMatcher.h in Headers */,
 				991E21B31EE0B6070056E266 /* UAJSONValueTransformer+Internal.h in Headers */,
 				99666E661EDF2C9500BAE46B /* UAKeychainUtils+Internal.h in Headers */,
@@ -5025,7 +5027,7 @@
 				99666DC61EDF2BE600BAE46B /* UANotificationCategories.h in Headers */,
 				6EF0518C20F7FCA70004A62D /* UADelay+Internal.h in Headers */,
 				99666DC91EDF2BE600BAE46B /* UANotificationCategory.h in Headers */,
-				3C4ACC522304DE1B00BCF1CC /* UAUIKitStateTracker+Internal.h in Headers */,
+				3C4ACC522304DE1B00BCF1CC /* UAUIKitStateTrackerAdapter+Internal.h in Headers */,
 				6E8A54D2236379AA004AE2A0 /* UATagGroupsHistory.h in Headers */,
 				6EFB37942345B659005E4E44 /* AirshipKit.h in Headers */,
 				99666DD31EDF2BED00BAE46B /* UANotificationContent.h in Headers */,
@@ -5062,9 +5064,7 @@
 				6EBFF9CB234FDC6600472DCF /* UAChannelRegistrationPayload.h in Headers */,
 				99666E2A1EDF2C7C00BAE46B /* UASQLite+Internal.h in Headers */,
 				3C4625AD235E9F5300E4CF54 /* UADisposable+Internal.h in Headers */,
-				3C4ACC432304DE1B00BCF1CC /* UAApplicationState+Internal.h in Headers */,
-				3C4ACC492304DE1B00BCF1CC /* UAAppStateTrackerFactory+Internal.h in Headers */,
-				3C4ACC462304DE1B00BCF1CC /* UAAppStateTracker+Internal.h in Headers */,
+				3C4ACC492304DE1B00BCF1CC /* UAAppStateTrackerAdapter+Internal.h in Headers */,
 				9960B9011EDE4D86007D6D97 /* UASwizzler+Internal.h in Headers */,
 				6E163926231ED21C00E38A29 /* UAUserDataDAO+Internal.h in Headers */,
 				99666DCD1EDF2BED00BAE46B /* UATagGroupsAPIClient+Internal.h in Headers */,
@@ -5092,7 +5092,7 @@
 				3CD47D4A22602A58005F1987 /* UARemoteConfigModuleAdapter+Internal.h in Headers */,
 				3C4FDE0F225C17D700A54E32 /* UALocationEvent.h in Headers */,
 				3C4FDE10225C17D700A54E32 /* UALocationProviderDelegate.h in Headers */,
-				3C4ACC532304DE1B00BCF1CC /* UAUIKitStateTracker+Internal.h in Headers */,
+				3C4ACC532304DE1B00BCF1CC /* UAUIKitStateTrackerAdapter+Internal.h in Headers */,
 				DF7E22421ED62D9B00C79C46 /* UAPreferenceDataStore.h in Headers */,
 				3CADDEB521B89B0E00C482F4 /* UAInAppMessageDisplayCoordinator.h in Headers */,
 				3CADDEAE21B89AB000C482F4 /* UAInAppMessageDefaultDisplayCoordinator.h in Headers */,
@@ -5136,8 +5136,7 @@
 				45E5FA20226BA419007BD334 /* UAInAppMessageImmediateDisplayCoordinator.h in Headers */,
 				DF7E22481ED62E0900C79C46 /* UAMessageCenterAction.h in Headers */,
 				DF0A22E81FBCFFE00058F6D6 /* UAComponent+Internal.h in Headers */,
-				3C4ACC472304DE1B00BCF1CC /* UAAppStateTracker+Internal.h in Headers */,
-				3C4ACC4A2304DE1B00BCF1CC /* UAAppStateTrackerFactory+Internal.h in Headers */,
+				3C4ACC4A2304DE1B00BCF1CC /* UAAppStateTrackerAdapter+Internal.h in Headers */,
 				998767341FC4F1CF00197AF4 /* UAInAppMessageUtils+Internal.h in Headers */,
 				DF7E224A1ED62E0900C79C46 /* UAUser.h in Headers */,
 				6E8A54D3236379AA004AE2A0 /* UATagGroupsHistory.h in Headers */,
@@ -5154,6 +5153,7 @@
 				DF7E22501ED62E0900C79C46 /* UAModifyTagsAction.h in Headers */,
 				DF7E22511ED62E0900C79C46 /* UARemoveTagsAction.h in Headers */,
 				DF7E22521ED62E0900C79C46 /* UANamedUser.h in Headers */,
+				6E4F028F2370AC0B0068AF65 /* UAAppStateTracker.h in Headers */,
 				99E2DA2C1FB62D1600C9F2CC /* UAInAppMessage+Internal.h in Headers */,
 				3CBCED65211A6259003B7239 /* UAPersistentQueue+Internal.h in Headers */,
 				DF18CCE61FEC73B000652445 /* UAInAppMessageModalAdapter.h in Headers */,
@@ -5184,7 +5184,6 @@
 				99EC018D1FE0953100B9C408 /* UAInAppMessageFullScreenViewController+Internal.h in Headers */,
 				DF7E22641ED62E0900C79C46 /* UALandingPageAction.h in Headers */,
 				99E2DA301FB62E5C00C9F2CC /* UARemoteDataStorePayload+Internal.h in Headers */,
-				3C4ACC442304DE1B00BCF1CC /* UAApplicationState+Internal.h in Headers */,
 				DF7E22671ED62E0900C79C46 /* UAActivityViewController.h in Headers */,
 				DF7E22681ED62E0900C79C46 /* UAShareAction.h in Headers */,
 				DF7E22691ED62E0900C79C46 /* UAOpenExternalURLAction.h in Headers */,
@@ -5316,6 +5315,7 @@
 				4582DB2B2217ABFB0018E02C /* UAAnalyticsEventConsumerProtocol.h in Headers */,
 				DF7E21F91ED62D5E00C79C46 /* UAScheduleDelayData+Internal.h in Headers */,
 				6ED87FAE1FEB5044003B652A /* UAInAppMessageTagSelector+Internal.h in Headers */,
+				6E4F029A2370B7530068AF65 /* UAApplicationState.h in Headers */,
 				DF7E21FA1ED62D5E00C79C46 /* UASchedule+Internal.h in Headers */,
 				DF7E21FB1ED62D5E00C79C46 /* UAActionAutomation+Internal.h in Headers */,
 				DF7E21FC1ED62D5E00C79C46 /* UAScheduleTrigger+Internal.h in Headers */,
@@ -5887,10 +5887,9 @@
 				CC40DC7E1D8C996A00BABD4F /* UAMessageCenterSplitViewController.m in Sources */,
 				DF5ED8DC1F743E7E002DDA24 /* UARemoteDataPayload.m in Sources */,
 				CC40DC581D8C996A00BABD4F /* UAAutomationStore.m in Sources */,
-				3C4ACC4B2304DE1B00BCF1CC /* UAAppStateTrackerFactory.m in Sources */,
 				6E8A54DE23639364004AE2A0 /* UATagGroupsLookupResponse.m in Sources */,
 				6E8A54BC236243A4004AE2A0 /* UAAutomationModuleLoader.m in Sources */,
-				3C4ACC4E2304DE1B00BCF1CC /* UAUIKitStateTracker.m in Sources */,
+				3C4ACC4E2304DE1B00BCF1CC /* UAUIKitStateTrackerAdapter.m in Sources */,
 				45DCD8152086A68900BCF10F /* UAInAppMessageFullScreenStyle.m in Sources */,
 				CC40DCE91D8C996A00BABD4F /* UANotificationAction.m in Sources */,
 				45DCD82F2086AA7000BCF10F /* UAInAppMessageTextStyle.m in Sources */,
@@ -5963,6 +5962,7 @@
 				45E5FA1D226BA419007BD334 /* UAInAppMessageImmediateDisplayCoordinator.m in Sources */,
 				99E2DA5E1FBA2AE400C9F2CC /* UAInAppMessageTextView.m in Sources */,
 				DF5ED8E51F7455C5002DDA24 /* UARemoteDataStore.m in Sources */,
+				6E4F02902370AC0B0068AF65 /* UAAppStateTracker.m in Sources */,
 				6E8A54DD23639364004AE2A0 /* UATagGroupsLookupManager.m in Sources */,
 				CC40DC2D1D8C996A00BABD4F /* UAScheduleData.m in Sources */,
 				CC40DCF11D8C996A00BABD4F /* UANotificationContent.m in Sources */,
@@ -6309,9 +6309,8 @@
 				CC40DD481D8C9A1C00BABD4F /* UAAPNSRegistration.m in Sources */,
 				CC944ED91DB5804400C42269 /* UAAPIClient.m in Sources */,
 				CC40DD491D8C9A1C00BABD4F /* UAAppBackgroundEvent.m in Sources */,
-				3C4ACC4D2304DE1B00BCF1CC /* UAAppStateTrackerFactory.m in Sources */,
 				6E8A54BE236243A4004AE2A0 /* UAAutomationModuleLoader.m in Sources */,
-				3C4ACC502304DE1B00BCF1CC /* UAUIKitStateTracker.m in Sources */,
+				3C4ACC502304DE1B00BCF1CC /* UAUIKitStateTrackerAdapter.m in Sources */,
 				CC40DD4A1D8C9A1C00BABD4F /* UAAppExitEvent.m in Sources */,
 				CC04F1BE1DC16BB300B4842D /* UAAsyncOperation.m in Sources */,
 				45DCD8162086A68900BCF10F /* UAInAppMessageFullScreenStyle.m in Sources */,
@@ -6385,6 +6384,7 @@
 				CC944EC11DB0225000C42269 /* UARequest.m in Sources */,
 				99E2DA711FBB6B5D00C9F2CC /* UAInAppMessageBannerDisplayContent.m in Sources */,
 				45E5FA1E226BA419007BD334 /* UAInAppMessageImmediateDisplayCoordinator.m in Sources */,
+				6E4F02922370AC0B0068AF65 /* UAAppStateTracker.m in Sources */,
 				9928146D1EF490EF00D0D388 /* UARateAppAction.m in Sources */,
 				996B95571FAB932B009B49BC /* UAInAppMessageScheduleInfo.m in Sources */,
 				CC04F18C1DBED9FA00B4842D /* UAEventData.m in Sources */,
@@ -6501,7 +6501,7 @@
 				99666E061EDF2C1F00BAE46B /* UAActionResult.m in Sources */,
 				DF9666781FB521B200CC243C /* UARemoteConfigManager.m in Sources */,
 				99666E451EDF2C8D00BAE46B /* UAEvent.m in Sources */,
-				3C4ACC4F2304DE1B00BCF1CC /* UAUIKitStateTracker.m in Sources */,
+				3C4ACC4F2304DE1B00BCF1CC /* UAUIKitStateTrackerAdapter.m in Sources */,
 				99666DD91EDF2BED00BAE46B /* UAPush.m in Sources */,
 				99666E361EDF2C8D00BAE46B /* UAAccountEventTemplate.m in Sources */,
 				99666DBC1EDF2BDC00BAE46B /* UAChannelRegistrar.m in Sources */,
@@ -6548,6 +6548,7 @@
 				99666DDB1EDF2BED00BAE46B /* UATagUtils.m in Sources */,
 				6E90F0E8228F543200E1FCB0 /* UAConfig.m in Sources */,
 				DF17A1071F56330500DC39E0 /* UARemoteDataAPIClient.m in Sources */,
+				6E4F02912370AC0B0068AF65 /* UAAppStateTracker.m in Sources */,
 				DF17A1011F56327A00DC39E0 /* UARemoteDataManager.m in Sources */,
 				99666D961EDF2BAE00BAE46B /* UAScheduleTriggerData.m in Sources */,
 				99666E3E1EDF2C8D00BAE46B /* UAAppForegroundEvent.m in Sources */,
@@ -6602,7 +6603,6 @@
 				99666E081EDF2C1F00BAE46B /* UATagsActionPredicate.m in Sources */,
 				99666E631EDF2C9500BAE46B /* NSString+UAURLEncoding.m in Sources */,
 				6E598D832003EB76005B234B /* UAActiveTimer.m in Sources */,
-				3C4ACC4C2304DE1B00BCF1CC /* UAAppStateTrackerFactory.m in Sources */,
 				6EC74C222347E303003AF4C6 /* UARemoteConfigDisableInfo.m in Sources */,
 				99666DB01EDF2BC900BAE46B /* UAModifyTagsAction.m in Sources */,
 				99666E591EDF2C8D00BAE46B /* UAEventAPIClient.m in Sources */,

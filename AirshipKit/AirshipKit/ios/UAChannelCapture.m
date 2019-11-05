@@ -11,7 +11,7 @@
 #import "UAPreferenceDataStore+Internal.h"
 #import "UAUtils+Internal.h"
 #import "UADispatcher+Internal.h"
-#import "UAAppStateTrackerFactory+Internal.h"
+#import "UAAppStateTracker.h"
 
 NSString *const UAChannelCaptureEnabledKey = @"UAChannelCaptureEnabled";
 
@@ -20,7 +20,6 @@ NSString *const UAChannelCaptureEnabledKey = @"UAChannelCaptureEnabled";
 @property (nonatomic, strong) id<UAPushProviderDelegate> pushProviderDelegate;
 @property (nonatomic, strong) UARuntimeConfig *config;
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
-@property (nonatomic, strong) id<UAAppStateTracker> appStateTracker;
 @property (nonatomic, strong) UADispatcher *backgroundDispatcher;
 @property (nonatomic, strong) UADispatcher *mainDispatcher;
 @property bool enableChannelCapture;
@@ -35,7 +34,7 @@ NSString *const UAChannelPlaceHolder = @"CHANNEL";
                        channel:(UAChannel *)channel
           pushProviderDelegate:(id<UAPushProviderDelegate>)pushProviderDelegate
                      dataStore:(UAPreferenceDataStore *)dataStore
-               appStateTracker:(id<UAAppStateTracker>)appStateTracker
+            notificationCenter:(NSNotificationCenter *)notificationCenter
                 mainDispatcher:(UADispatcher *)mainDispatcher
           backgroundDispatcher:(UADispatcher *)backgroundDispatcher {
     self = [super init];
@@ -46,11 +45,13 @@ NSString *const UAChannelPlaceHolder = @"CHANNEL";
         self.dataStore = dataStore;
 
         if (config.channelCaptureEnabled) {
-            self.appStateTracker = appStateTracker;
-            self.appStateTracker.stateTrackerDelegate = self;
             self.mainDispatcher = mainDispatcher;
             self.backgroundDispatcher = backgroundDispatcher;
             self.enableChannelCapture = true;
+
+            [notificationCenter addObserver:self selector:@selector(applicationDidBecomeActive)
+                                       name:UAApplicationDidBecomeActiveNotification
+                                     object:nil];
         }
     }
 
@@ -65,7 +66,7 @@ NSString *const UAChannelPlaceHolder = @"CHANNEL";
                                             channel:channel
                                pushProviderDelegate:pushProviderDelegate
                                           dataStore:dataStore
-                                    appStateTracker:[UAAppStateTrackerFactory tracker]
+                                 notificationCenter:[NSNotificationCenter defaultCenter]
                                      mainDispatcher:[UADispatcher mainDispatcher]
                                backgroundDispatcher:[UADispatcher backgroundDispatcher]];
 }
@@ -74,14 +75,14 @@ NSString *const UAChannelPlaceHolder = @"CHANNEL";
                                  channel:(UAChannel *)channel
                     pushProviderDelegate:(id<UAPushProviderDelegate>)pushProviderDelegate
                                dataStore:(UAPreferenceDataStore *)dataStore
-                         appStateTracker:(id<UAAppStateTracker>)appStateTracker
+                      notificationCenter:(NSNotificationCenter *)notificationCenter
                           mainDispatcher:(UADispatcher *)mainDispatcher
                     backgroundDispatcher:(UADispatcher *)backgroundDispatcher {
     return [[UAChannelCapture alloc] initWithConfig:config
                                             channel:channel
                                pushProviderDelegate:pushProviderDelegate
                                           dataStore:dataStore
-                                    appStateTracker:appStateTracker
+                                    notificationCenter:notificationCenter
                                      mainDispatcher:mainDispatcher
                                backgroundDispatcher:backgroundDispatcher];
 }

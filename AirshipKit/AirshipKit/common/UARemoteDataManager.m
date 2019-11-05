@@ -8,7 +8,7 @@
 #import "UAPreferenceDataStore+Internal.h"
 #import "UAirshipVersion.h"
 #import "UAUtils+Internal.h"
-#import "UAAppStateTrackerFactory+Internal.h"
+#import "UAAppStateTracker.h"
 
 NSString * const kUACoreDataStoreName = @"RemoteData-%@.sqlite";
 NSString * const UARemoteDataRefreshIntervalKey = @"remotedata.REFRESH_INTERVAL";
@@ -80,7 +80,6 @@ NSInteger const UARemoteDataRefreshIntervalDefault = 0;
 @property (nonatomic, strong) UARemoteDataStore *remoteDataStore;
 @property (nonatomic, strong) UADispatcher *dispatcher;
 @property (nonatomic, strong) NSNotificationCenter *notificationCenter;
-@property (nonatomic, strong) id<UAAppStateTracker> appStateTracker;
 @end
 
 @implementation UARemoteDataManager
@@ -99,13 +98,16 @@ NSInteger const UARemoteDataRefreshIntervalDefault = 0;
         self.dispatcher = dispatcher;
         self.notificationCenter = notificationCenter;
         self.remoteDataAPIClient = remoteDataAPIClient;
-        self.appStateTracker = [UAAppStateTrackerFactory tracker];
-        self.appStateTracker.stateTrackerDelegate = self;
 
         // Register for locale change notification
         [self.notificationCenter addObserver:self
                                     selector:@selector(localeRefresh)
                                         name:NSCurrentLocaleDidChangeNotification
+                                      object:nil];
+
+        [self.notificationCenter addObserver:self
+                                    selector:@selector(applicationWillEnterForeground)
+                                        name:UAApplicationDidTransitionToForeground
                                       object:nil];
 
         // Force a refresh if app version or app locale identifier has changed or refresh interval has elapsed

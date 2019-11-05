@@ -18,7 +18,7 @@
 #import "UAirship.h"
 #import "UAApplicationMetrics.h"
 #import "UAScheduleEdits+Internal.h"
-#import "UAAppStateTrackerFactory+Internal.h"
+#import "UAAppStateTracker.h"
 
 @interface UAAutomationStateCondition : NSObject
 
@@ -45,7 +45,7 @@
 @end
 
 @interface UAAutomationEngine()
-@property (nonatomic, strong) id<UAAppStateTracker> appStateTracker;
+@property (nonatomic, strong) UAAppStateTracker *appStateTracker;
 @property (nonatomic, strong) UATimerScheduler *timerScheduler;
 @property (nonnull, strong) UADispatcher *dispatcher;
 @property (nonnull, strong) UIApplication *application;
@@ -72,7 +72,7 @@
 
 
 - (instancetype)initWithAutomationStore:(UAAutomationStore *)automationStore
-                        appStateTracker:(id<UAAppStateTracker>)appStateTracker
+                        appStateTracker:(UAAppStateTracker *)appStateTracker
                          timerScheduler:(UATimerScheduler *)timerScheduler
                      notificationCenter:(NSNotificationCenter *)notificationCenter
                              dispatcher:(UADispatcher *)dispatcher
@@ -98,7 +98,7 @@
 }
 
 + (instancetype)automationEngineWithAutomationStore:(UAAutomationStore *)automationStore
-                                    appStateTracker:(id<UAAppStateTracker>)appStateTracker
+                                    appStateTracker:(UAAppStateTracker *)appStateTracker
                                      timerScheduler:(UATimerScheduler *)timerScheduler
                                  notificationCenter:(NSNotificationCenter *)notificationCenter
                                          dispatcher:(UADispatcher *)dispatcher
@@ -116,7 +116,7 @@
 
 + (instancetype)automationEngineWithAutomationStore:(UAAutomationStore *)automationStore {
     return [[UAAutomationEngine alloc] initWithAutomationStore:automationStore
-                                               appStateTracker:[UAAppStateTrackerFactory tracker]
+                                               appStateTracker:[UAAppStateTracker shared]
                                                 timerScheduler:[[UATimerScheduler alloc] init]
                                             notificationCenter:[NSNotificationCenter defaultCenter]
                                                     dispatcher:[UADispatcher mainDispatcher]
@@ -132,9 +132,6 @@
         return;
     }
 
-    self.appStateTracker.stateTrackerDelegate = self;
-
-
     [self.notificationCenter addObserver:self
                                 selector:@selector(customEventAdded:)
                                     name:UACustomEventAdded
@@ -148,6 +145,16 @@
     [self.notificationCenter addObserver:self
                                 selector:@selector(regionEventAdded:)
                                     name:UARegionEventAdded
+                                  object:nil];
+
+    [self.notificationCenter addObserver:self
+                                selector:@selector(applicationDidTransitionToBackground)
+                                    name:UAApplicationDidTransitionToBackground
+                                  object:nil];
+
+    [self.notificationCenter addObserver:self
+                                selector:@selector(applicationDidTransitionToForeground)
+                                    name:UAApplicationDidTransitionToForeground
                                   object:nil];
 
     [self cleanSchedules];
@@ -167,7 +174,6 @@
     }
 
     [self cancelTimers];
-    self.appStateTracker.stateTrackerDelegate = nil;
     [self.notificationCenter removeObserver:self];
     [self.stateConditions removeAllObjects];
     self.isStarted = NO;
@@ -917,7 +923,7 @@
  */
 - (void)createStateConditions {
     UAAutomationStateCondition *activeSessionCondition = [[UAAutomationStateCondition alloc] initWithPredicate:^BOOL {
-        return self.application.applicationState == UIApplicationStateActive;
+        return self.appStateTracker.state == UAApplicationStateActive;
     } argumentGenerator:nil stateChangeDate:self.date.now];
 
     UAAutomationStateCondition *versionCondition = [[UAAutomationStateCondition alloc] initWithPredicate:^BOOL {

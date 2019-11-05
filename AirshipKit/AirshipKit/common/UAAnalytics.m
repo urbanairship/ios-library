@@ -14,7 +14,7 @@
 #import "UAAssociateIdentifiersEvent+Internal.h"
 #import "UAAssociatedIdentifiers.h"
 #import "UACustomEvent.h"
-#import "UAAppStateTrackerFactory+Internal.h"
+#import "UAAppStateTracker.h"
 
 #define kUAAssociatedIdentifiers @"UAAssociatedIdentifiers"
 
@@ -25,7 +25,6 @@
 @property (nonatomic, strong) NSNotificationCenter *notificationCenter;
 @property (nonatomic, strong) UADate *date;
 @property (nonatomic, strong) UADispatcher *dispatcher;
-@property (nonatomic, strong) id<UAAppStateTracker> appStateTracker;
 @property (nonatomic, strong) NSMutableDictionary<NSNumber*, NSString*> *mutableSDKExtensions;
 @property (nonatomic, assign) BOOL isEnteringForeground;
 
@@ -71,10 +70,27 @@ NSString *const UAEventKey = @"event";
 
         self.eventManager.uploadsEnabled = self.isEnabled && self.componentEnabled;
 
-        self.appStateTracker = [UAAppStateTrackerFactory tracker];
-        self.appStateTracker.stateTrackerDelegate = self;
-
         [self startSession];
+
+        [self.notificationCenter addObserver:self
+                                    selector:@selector(applicationWillEnterForeground)
+                                        name:UAApplicationWillEnterForegroundNotification
+                                      object:nil];
+
+        [self.notificationCenter addObserver:self
+                                    selector:@selector(applicationDidEnterBackground)
+                                        name:UAApplicationDidEnterBackgroundNotification
+                                      object:nil];
+
+        [self.notificationCenter addObserver:self
+                                    selector:@selector(applicationWillTerminate)
+                                        name:UAApplicationWillTerminateNotification
+                                      object:nil];
+
+        [self.notificationCenter addObserver:self
+                                    selector:@selector(applicationDidBecomeActive)
+                                        name:UAApplicationDidBecomeActiveNotification
+                                      object:nil];
 
         if (!self.isEnabled) {
             [self.eventManager deleteAllEvents];

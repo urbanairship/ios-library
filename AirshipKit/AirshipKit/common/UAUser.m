@@ -8,6 +8,7 @@
 #import "UARuntimeConfig.h"
 #import "UAPreferenceDataStore.h"
 #import "UAirship.h"
+#import "UAAppStateTracker.h"
 
 NSString * const UAUserRegisteredChannelIDKey= @"UAUserRegisteredChannelID";
 NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.user_created";
@@ -51,12 +52,12 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
 
         [self.notificationCenter addObserver:self
                                     selector:@selector(didBecomeActive)
-                                        name:UIApplicationDidBecomeActiveNotification
+                                        name:UAApplicationDidBecomeActiveNotification
                                       object:nil];
 
         [self.notificationCenter addObserver:self
                                     selector:@selector(enterForeground)
-                                        name:UIApplicationWillEnterForegroundNotification
+                                        name:UAApplicationWillEnterForegroundNotification
                                       object:nil];
 
         [self.notificationCenter addObserver:self
@@ -132,7 +133,7 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
 - (void)didBecomeActive {
     [self ensureUserUpToDate];
     [self.notificationCenter removeObserver:self
-                                       name:UIApplicationDidBecomeActiveNotification
+                                       name:UAApplicationDidBecomeActiveNotification
                                      object:nil];
 }
 

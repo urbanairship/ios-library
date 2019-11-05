@@ -12,7 +12,8 @@
 #import "UARegionEvent.h"
 #import "UAAsyncOperation+Internal.h"
 #import "UAirship+Internal.h"
-#import "UAchannel.h"
+#import "UAChannel.h"
+#import "UAAppStateTracker.h"
 
 /**
  * Test event data class to work around not being able to mock UAEventData
@@ -57,7 +58,7 @@
     [[[self.mockAirship stub] andReturn:self.mockChannel] channel];
 
     // Set up a mocked application
-    self.mockAppStateTracker = [self mockForProtocol:@protocol(UAAppStateTracker)];
+    self.mockAppStateTracker = [self mockForClass:[UAAppStateTracker class]];
 
     self.notificationCenter = [[NSNotificationCenter alloc] init];
     self.eventManager = [UAEventManager eventManagerWithConfig:self.config
@@ -252,7 +253,7 @@
 
     }] ignoringNonObjectArgs] addBackgroundOperation:OCMOCK_ANY delay:0];
 
-    [self.eventManager applicationDidEnterBackground];
+    [self.notificationCenter postNotificationName:UAApplicationDidEnterBackgroundNotification object:nil];
 
     [self waitForTestExpectations];
 
@@ -270,7 +271,7 @@
     // expectations
     [[[self.mockQueue reject] ignoringNonObjectArgs] addBackgroundOperation:OCMOCK_ANY delay:0];
 
-    [self.notificationCenter postNotificationName:UIApplicationDidEnterBackgroundNotification
+    [self.notificationCenter postNotificationName:UAApplicationDidEnterBackgroundNotification
                                            object:nil];
 
     [self.mockQueue verify];

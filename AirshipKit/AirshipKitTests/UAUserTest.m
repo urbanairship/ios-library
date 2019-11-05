@@ -11,6 +11,7 @@
 #import "UATestDispatcher.h"
 #import "UARuntimeConfig+Internal.h"
 #import "UAChannel+Internal.h"
+#import "UAAppStateTracker.h"
 
 @interface UATestUserDataDAO : UAUserDataDAO
 @property (nonatomic, strong) UAUserData *userData;
@@ -95,7 +96,7 @@
  */
 -(void)testUserCreationOnForeground {
     [self verifyUserCreationWithInitBlock:^{
-        [self.notificationCenter postNotificationName:UIApplicationWillEnterForegroundNotification
+        [self.notificationCenter postNotificationName:UAApplicationWillEnterForegroundNotification
                                                object:nil];
     }];
 }
@@ -125,7 +126,7 @@
  */
 -(void)testUserUpdateOnActive {
     [self verifyUserUpdateWithInitBlock:^{
-        [self.notificationCenter postNotificationName:UIApplicationWillEnterForegroundNotification
+        [self.notificationCenter postNotificationName:UAApplicationWillEnterForegroundNotification
                                                object:nil];
     }];
 }

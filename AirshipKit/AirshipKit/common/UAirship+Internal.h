@@ -1,7 +1,6 @@
 /* Copyright Airship and Contributors */
 
 #import "UAirship.h"
-#import "UAAppStateTracker+Internal.h"
 
 @class UABaseAppDelegateSurrogate;
 @class UAJavaScriptDelegate;
@@ -10,7 +9,7 @@
 @class UAInAppMessageManager;
 @class UARemoteConfigManager;
 
-@interface UAirship() <UAAppStateTrackerDelegate>
+@interface UAirship()
 
 NS_ASSUME_NONNULL_BEGIN
 

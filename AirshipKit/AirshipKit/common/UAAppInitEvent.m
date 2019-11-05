@@ -5,7 +5,7 @@
 #import "UAAnalytics.h"
 #import "UAirship.h"
 #import "UAUtils+Internal.h"
-#import "UAAppStateTrackerFactory+Internal.h"
+#import "UAAppStateTracker.h"
 
 @implementation UAAppInitEvent
 
@@ -40,7 +40,7 @@
     [data setValue:packageVersion forKey:@"package_version"];
 
     // Foreground
-    BOOL isInForeground = [UAAppStateTrackerFactory tracker].state != UAApplicationStateBackground;
+    BOOL isInForeground = [UAAppStateTracker shared].state != UAApplicationStateBackground;
     [data setValue:(isInForeground ? @"true" : @"false") forKey:@"foreground"];
 
     return data;

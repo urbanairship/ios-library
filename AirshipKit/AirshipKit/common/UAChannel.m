@@ -6,9 +6,9 @@
 #import "UATagUtils+Internal.h"
 #import "UAUtils+Internal.h"
 #import "UAChannelRegistrationPayload+Internal.h"
-#import "UAAppStateTrackerFactory+Internal.h"
 #import "UAAttributePendingMutations+Internal.h"
 #import "UADate+Internal.h"
+#import "UAAppStateTracker.h"
 
 NSString *const UAChannelTagsSettingsKey = @"com.urbanairship.channel.tags";
 
@@ -32,7 +32,6 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
 @property (nonatomic, strong) UATagGroupsRegistrar *tagGroupsRegistrar;
 @property (nonatomic, strong) UAAttributeRegistrar *attributeRegistrar;
 
-@property (nonatomic, strong) id<UAAppStateTracker> appStateTracker;
 @property (nonatomic, assign) BOOL shouldPerformChannelRegistrationOnForeground;
 @property (nonatomic, strong) NSMutableArray<UAChannelRegistrationExtenderBlock> *registrationExtenderBlocks;
 @property (nonatomic, strong) UADate *date;
@@ -46,7 +45,6 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
                  channelRegistrar:(UAChannelRegistrar *)channelRegistrar
                tagGroupsRegistrar:(UATagGroupsRegistrar *)tagGroupsRegistrar
                attributeRegistrar:(UAAttributeRegistrar *)attributeRegistrar
-                  appStateTracker:(id<UAAppStateTracker>)appStateTracker
                              date:(UADate *)date {
     self = [super initWithDataStore:dataStore];
 
@@ -57,8 +55,6 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
         self.channelRegistrar.delegate = self;
         self.tagGroupsRegistrar = tagGroupsRegistrar;
         self.attributeRegistrar = attributeRegistrar;
-        self.appStateTracker = appStateTracker;
-        self.appStateTracker.stateTrackerDelegate = self;
         self.date = date;
 
         self.channelTagRegistrationEnabled = YES;
@@ -97,7 +93,6 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
                         tagGroupsRegistrar:tagGroupsRegistrar
                         attributeRegistrar:[UAAttributeRegistrar registrarWithConfig:config
                                                                            dataStore:dataStore]
-                           appStateTracker:[UAAppStateTrackerFactory tracker]
                                       date:[[UADate alloc] init]];
 }
 
@@ -107,7 +102,6 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
                     channelRegistrar:(UAChannelRegistrar *)channelRegistrar
                   tagGroupsRegistrar:(UATagGroupsRegistrar *)tagGroupsRegistrar
                   attributeRegistrar:(UAAttributeRegistrar *)attributeRegistrar
-                     appStateTracker:(id<UAAppStateTracker>)appStateTracker
                                 date:(UADate *)date {
     return [[self alloc] initWithDataStore:dataStore
                                     config:config
@@ -115,19 +109,28 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
                           channelRegistrar:channelRegistrar
                         tagGroupsRegistrar:tagGroupsRegistrar
                         attributeRegistrar:attributeRegistrar
-                           appStateTracker:appStateTracker
                                       date:date];
 }
 
 - (void)observeNotificationCenterEvents {
+    [self.notificationCenter addObserver:self
+                                selector:@selector(resetChannel)
+                                    name:UADeviceIDChangedNotification
+                                  object:nil];
+
     [self.notificationCenter addObserver:self
                                 selector:@selector(applicationBackgroundRefreshStatusChanged)
                                     name:UIApplicationBackgroundRefreshStatusDidChangeNotification
                                   object:nil];
 
     [self.notificationCenter addObserver:self
-                                selector:@selector(resetChannel)
-                                    name:UADeviceIDChangedNotification
+                                selector:@selector(applicationDidTransitionToForeground)
+                                    name:UAApplicationDidTransitionToForeground
+                                  object:nil];
+
+    [self.notificationCenter addObserver:self
+                                selector:@selector(applicationDidEnterBackground)
+                                    name:UAApplicationDidEnterBackgroundNotification
                                   object:nil];
 }
 

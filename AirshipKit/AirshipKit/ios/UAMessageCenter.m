@@ -9,14 +9,13 @@
 #import "UAMessageCenterStyle.h"
 #import "UAInboxMessageList+Internal.h"
 #import "UAUser+Internal.h"
-#import "UAAppStateTracker+Internal.h"
+#import "UAAppStateTracker.h"
 #import "UAInboxUtils.h"
 
 @interface UAMessageCenter()
 @property (nonatomic, strong) UADefaultMessageCenterUI *defaultUI;
 @property (nonatomic, strong) UAInboxMessageList *messageList;
 @property (nonatomic, strong) UAUser *user;
-@property (nonatomic, strong) id<UAAppStateTracker> appStateTracker;
 @end
 
 @implementation UAMessageCenter
@@ -27,7 +26,6 @@ NSString *const UAMessageDataScheme = @"message";
                              user:(UAUser *)user
                       messageList:(UAInboxMessageList *)messageList
                         defaultUI:(UADefaultMessageCenterUI *)defaultUI
-                  appStateTracker:(id<UAAppStateTracker>)appStateTracker
                notificationCenter:(NSNotificationCenter *)notificationCenter {
 
     self = [super initWithDataStore:dataStore];
@@ -35,15 +33,18 @@ NSString *const UAMessageDataScheme = @"message";
         self.user = user;
         self.messageList = messageList;
         self.defaultUI = defaultUI;
-        self.appStateTracker = appStateTracker;
 
-        self.appStateTracker.stateTrackerDelegate = self;
         self.user.enabled = self.componentEnabled;
         self.messageList.enabled = self.componentEnabled;
 
         [notificationCenter addObserver:self
                                selector:@selector(userCreated)
                                    name:UAUserCreatedNotification
+                                 object:nil];
+
+        [notificationCenter addObserver:self
+                               selector:@selector(applicationDidTransitionToForeground)
+                                   name:UAApplicationDidTransitionToForeground
                                  object:nil];
 
         [self.messageList loadSavedMessages];
@@ -56,9 +57,7 @@ NSString *const UAMessageDataScheme = @"message";
                                     config:(UARuntimeConfig *)config
                                    channel:(UAChannel<UAExtendableChannelRegistration> *)channel {
 
-    id<UAAppStateTracker> appStateTracker = [UAAppStateTrackerFactory tracker];
     NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
-
     UADefaultMessageCenterUI *defaultUI = [[UADefaultMessageCenterUI alloc] init];
     defaultUI.style = [UAMessageCenterStyle styleWithContentsOfFile:config.messageCenterStyleConfig];
 
@@ -74,7 +73,6 @@ NSString *const UAMessageDataScheme = @"message";
                                       user:user
                                messageList:messageList
                                  defaultUI:defaultUI
-                           appStateTracker:appStateTracker
                         notificationCenter:notificationCenter];
 }
 
@@ -82,14 +80,12 @@ NSString *const UAMessageDataScheme = @"message";
                                       user:(UAUser *)user
                                messageList:(UAInboxMessageList *)messageList
                                  defaultUI:(UADefaultMessageCenterUI *)defaultUI
-                           appStateTracker:(id<UAAppStateTracker>)appStateTracker
                         notificationCenter:(NSNotificationCenter *)notificationCenter {
 
     return [[self alloc] initWithDataStore:dataStore
                                       user:user
                                messageList:messageList
                                  defaultUI:defaultUI
-                           appStateTracker:appStateTracker
                         notificationCenter:notificationCenter];
 }
 

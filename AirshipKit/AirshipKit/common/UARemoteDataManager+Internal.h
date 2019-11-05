@@ -8,14 +8,13 @@
 #import "UAPreferenceDataStore+Internal.h"
 #import "UARemoteDataStore+Internal.h"
 #import "UARemoteDataAPIClient+Internal.h"
-#import "UAAppStateTracker+Internal.h"
 #import "UAComponent.h"
 #import "UAPushableComponent.h"
 #import "UARemoteDataProvider.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface UARemoteDataManager : UAComponent <UARemoteDataProvider, UAAppStateTrackerDelegate, UAPushableComponent>
+@interface UARemoteDataManager : UAComponent <UARemoteDataProvider, UAPushableComponent>
 
 ///---------------------------------------------------------------------------------------
 /// @name Internal Properties & Methods

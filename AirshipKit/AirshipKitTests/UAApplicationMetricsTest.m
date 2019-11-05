@@ -4,6 +4,7 @@
 #import "UAApplicationMetrics+Internal.h"
 #import "UAPreferenceDataStore+Internal.h"
 #import "UATestDate.h"
+#import "UAAppStateTracker.h"
 
 @interface UAApplicationMetricsTest : UABaseTest
 @property (nonatomic, strong) UAApplicationMetrics *metrics;
@@ -29,7 +30,7 @@
 - (void)testApplicationActive {
     XCTAssertNil(self.metrics.lastApplicationOpenDate);
 
-    [self.metrics applicationDidBecomeActive];
+    [self.notificationCenter postNotificationName:UAApplicationDidBecomeActiveNotification object:nil];
 
     XCTAssertEqualObjects([self.testDate now], self.metrics.lastApplicationOpenDate);
 

@@ -3,14 +3,13 @@
 #import "UAChannel.h"
 #import "UAChannelRegistrar+Internal.h"
 #import "UATagGroupsRegistrar+Internal.h"
-#import "UAAppStateTracker+Internal.h"
 #import "UAExtendableChannelRegistration.h"
 #import "UAAttributeRegistrar+Internal.h"
 
 extern NSString *const UAChannelTagsSettingsKey;
 extern NSString *const UAChannelCreationOnForeground;
 
-@interface UAChannel () <UAChannelRegistrarDelegate, UAAppStateTrackerDelegate, UAExtendableChannelRegistration>
+@interface UAChannel () <UAChannelRegistrarDelegate, UAExtendableChannelRegistration>
 
 /**
  * Allows disabling channel registration before a channel is created.  Channel registration will resume
@@ -30,7 +29,6 @@ extern NSString *const UAChannelCreationOnForeground;
                     channelRegistrar:(UAChannelRegistrar *)channelRegistrar
                   tagGroupsRegistrar:(UATagGroupsRegistrar *)tagGroupsRegistrar
                   attributeRegistrar:(UAAttributeRegistrar *)attributeRegistrar
-                     appStateTracker:(id<UAAppStateTracker>)appStateTracker
                                 date:(UADate *)date;
 
 /**

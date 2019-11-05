@@ -1,14 +1,13 @@
 /* Copyright Airship and Contributors */
 
 #import "UAActiveTimer+Internal.h"
-#import "UAAppStateTrackerFactory+Internal.h"
+#import "UAAppStateTracker.h"
 
-@interface UAActiveTimer() <UAAppStateTrackerDelegate>
+@interface UAActiveTimer()
 @property (assign, getter=isStarted) BOOL started;
 @property (assign, getter=isActive) BOOL active;
 @property (assign) NSTimeInterval elapsedTime;
 @property (strong) NSDate *activeStartDate;
-@property (nonatomic, strong) id<UAAppStateTracker> appStateTracker;
 @end
 
 @implementation UAActiveTimer
@@ -16,10 +15,20 @@
 - (instancetype)init {
     self = [super init];
     if (self) {
-        self.appStateTracker = [UAAppStateTrackerFactory tracker];
-        self.appStateTracker.stateTrackerDelegate = self;
+        self.active = [UAAppStateTracker shared].state == UAApplicationStateActive;
 
-        self.active = (self.appStateTracker.state == UAApplicationStateActive);
+        NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
+
+        [notificationCenter addObserver:self
+                               selector:@selector(applicationDidBecomeActive)
+                                   name:UAApplicationDidBecomeActiveNotification
+                                 object:nil];
+
+        [notificationCenter addObserver:self
+                               selector:@selector(applicationWillResignActive)
+                                   name:UAApplicationWillResignActiveNotification
+                                 object:nil];
+
     }
 
     return self;

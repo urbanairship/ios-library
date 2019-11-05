@@ -15,7 +15,7 @@
 #import "UATagUtils+Internal.h"
 #import "UARegistrationDelegateWrapper+Internal.h"
 #import "UADispatcher+Internal.h"
-#import "UAAppStateTrackerFactory+Internal.h"
+#import "UAAppStateTracker.h"
 
 NSString *const UAUserPushNotificationsEnabledKey = @"UAUserPushNotificationsEnabled";
 NSString *const UABackgroundPushNotificationsEnabledKey = @"UABackgroundPushNotificationsEnabled";
@@ -67,7 +67,7 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
 @property (nonatomic, readonly) BOOL isBackgroundRefreshStatusAvailable;
 @property (nonatomic, strong) UARuntimeConfig *config;
 @property (nonatomic, strong) UAChannel<UAExtendableChannelRegistration> *channel;
-@property (nonatomic, strong) id<UAAppStateTracker> appStateTracker;
+@property (nonatomic, strong) UAAppStateTracker *appStateTracker;
 @end
 
 @implementation UAPush
@@ -75,7 +75,7 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
 - (instancetype)initWithConfig:(UARuntimeConfig *)config
                      dataStore:(UAPreferenceDataStore *)dataStore
                         channel:(UAChannel<UAExtendableChannelRegistration> *)channel
-               appStateTracker:(id<UAAppStateTracker>)appStateTracker
+               appStateTracker:(UAAppStateTracker *)appStateTracker
             notificationCenter:(NSNotificationCenter *)notificationCenter
               pushRegistration:(id<UAAPNSRegistrationProtocol>)pushRegistration
                    application:(UIApplication *)application
@@ -90,8 +90,6 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
         self.channel = channel;
 
         self.appStateTracker = appStateTracker;
-        self.appStateTracker.stateTrackerDelegate = self;
-
         self.notificationCenter = notificationCenter;
         self.registrationDelegateWrapper = [[UARegistrationDelegateWrapper alloc] init];
 
@@ -135,7 +133,7 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
     return [[self alloc] initWithConfig:config
                               dataStore:dataStore
                                 channel:channel
-                        appStateTracker:[UAAppStateTrackerFactory tracker]
+                        appStateTracker:[UAAppStateTracker shared]
                      notificationCenter:[NSNotificationCenter defaultCenter]
                        pushRegistration:[[UAAPNSRegistration alloc] init]
                             application:[UIApplication sharedApplication]
@@ -145,7 +143,7 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
 + (instancetype)pushWithConfig:(UARuntimeConfig *)config
                      dataStore:(UAPreferenceDataStore *)dataStore
                        channel:(UAChannel<UAExtendableChannelRegistration> *)channel
-               appStateTracker:(id<UAAppStateTracker>)appStateTracker
+               appStateTracker:(UAAppStateTracker *)appStateTracker
             notificationCenter:(NSNotificationCenter *)notificationCenter
               pushRegistration:(id<UAAPNSRegistrationProtocol>)pushRegistration
                    application:(UIApplication *)application
@@ -154,7 +152,7 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
     return [[self alloc] initWithConfig:config
                               dataStore:dataStore
                                 channel:channel
-                        appStateTracker:(id<UAAppStateTracker>)appStateTracker
+                        appStateTracker:appStateTracker
                      notificationCenter:notificationCenter
                        pushRegistration:pushRegistration
                             application:application
@@ -165,6 +163,16 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
     [self.notificationCenter addObserver:self
                                 selector:@selector(applicationBackgroundRefreshStatusChanged)
                                     name:UIApplicationBackgroundRefreshStatusDidChangeNotification
+                                  object:nil];
+
+    [self.notificationCenter addObserver:self
+                                selector:@selector(applicationDidTransitionToForeground)
+                                    name:UAApplicationDidTransitionToForeground
+                                  object:nil];
+
+    [self.notificationCenter addObserver:self
+                                selector:@selector(applicationDidEnterBackground)
+                                    name:UAApplicationDidEnterBackgroundNotification
                                   object:nil];
 
     [self.notificationCenter addObserver:self

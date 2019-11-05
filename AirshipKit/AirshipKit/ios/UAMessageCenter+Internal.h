@@ -1,7 +1,6 @@
 /* Copyright Airship and Contributors */
 
 #import "UAMessageCenter.h"
-#import "UAAppStateTrackerFactory+Internal.h"
 #import "UAPushableComponent.h"
 
 @class UAUser;
@@ -13,7 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 /*
  * SDK-private extensions to UAMessageCenter
  */
-@interface UAMessageCenter () <UAAppStateTrackerDelegate, UAPushableComponent>
+@interface UAMessageCenter () <UAPushableComponent>
 
 
 ///---------------------------------------------------------------------------------------
@@ -37,7 +36,6 @@ NS_ASSUME_NONNULL_BEGIN
  * @param user The user.
  * @param messageList The message list.
  * @param defaultUI The default UI.
- * @param appStateTracker The app state tracker.
  * @param notificationCenter The notification center.
  * @return A message center instance.
 */
@@ -45,7 +43,6 @@ NS_ASSUME_NONNULL_BEGIN
                                       user:(UAUser *)user
                                messageList:(UAInboxMessageList *)messageList
                                  defaultUI:(UADefaultMessageCenterUI *)defaultUI
-                           appStateTracker:(id<UAAppStateTracker>)appStateTracker
                         notificationCenter:(NSNotificationCenter *)notificationCenter;
 
 @end
