@@ -3,6 +3,14 @@ iOS Changelog
 
 Migration Guides: Documentation/Migration
 
+Version 12.0.2 - November 5, 2019
+=================================
+Patch release to fix stability issues with in-app automation. Applications using in-app automation should update.
+
+Changes
+-------
+- Fixed a crash in in-app automation.
+
 Version 12.0.1 - October 30, 2019
 =================================
 Patch release with minor improvements to in-app automation 

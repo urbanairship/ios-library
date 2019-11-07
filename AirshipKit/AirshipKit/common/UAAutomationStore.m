@@ -212,7 +212,7 @@
     }];
 }
 
-- (void)getSchedule:(NSString *)scheduleID completionHandler:(void (^)(UAScheduleData *))completionHandler {
+- (void)getSchedule:(NSString *)scheduleID completionHandler:(void (^)(UAScheduleData * _Nullable))completionHandler {
     [self getSchedule:scheduleID includingExpired:NO completionHandler:completionHandler];
 }
 

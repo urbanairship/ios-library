@@ -108,7 +108,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @param scheduleID A schedule identifier.
  * @param includingExpired Whether to include expired schedules
- * @param completionHandler Completion handler called back with the retrieved schedule data.
+ * @param completionHandler Completion handler called back with the retrieved schedule data, or nil if the schedule was not found.
  */
 - (void)getSchedule:(NSString *)scheduleID includingExpired:(BOOL)includingExpired completionHandler:(void (^)(UAScheduleData * _Nullable))completionHandler;
 
@@ -116,9 +116,9 @@ NS_ASSUME_NONNULL_BEGIN
  * Gets the schedule corresponding to the provided identifier.
  *
  * @param scheduleID A schedule identifier.
- * @param completionHandler Completion handler called back with the retrieved schedule data.
+ * @param completionHandler Completion handler called back with the retrieved schedule data, or nil if the schedule was not found.
  */
-- (void)getSchedule:(NSString *)scheduleID completionHandler:(void (^)(UAScheduleData *))completionHandler;
+- (void)getSchedule:(NSString *)scheduleID completionHandler:(void (^)(UAScheduleData * _Nullable))completionHandler;
 
 /**
  * Gets the schedules with the corresponding state.
