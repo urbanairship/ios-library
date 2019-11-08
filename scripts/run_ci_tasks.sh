@@ -148,9 +148,8 @@ then
 
   # Run pod lib lint
   cd $ROOT_PATH
-  pod lib lint UrbanAirship-iOS-SDK.podspec
-  pod lib lint UrbanAirship-iOS-AppExtensions.podspec
-  ./${SCRIPT_DIRECTORY}/pod_lib_lint_external_modules.sh
+  pod lib lint Airship.podspec
+  pod lib lint AirshipExtensions.podspec
   cd -
 fi
 
