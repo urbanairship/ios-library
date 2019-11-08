@@ -21,9 +21,8 @@ Pod::Spec.new do |s|
       core.tvos.resource_bundle       = { "AirshipResources tvOS" =>  ["AirshipKit/AirshipResources/common/*", "AirshipKit/AirshipResources/tvos/*"] }
       core.ios.exclude_files          = "AirshipKit/AirshipResources/ios/Info.plist"
       core.tvos.exclude_files         = "AirshipKit/AirshipResources/tvos/Info.plist"
-      core.source_files               = "AirshipKit/AirshipKit/common/*.{h,m,mm}"
-      core.ios.source_files           = "AirshipKit/AirshipKit/ios/*.{h,m,mm}"
-      core.tvos.source_files          = "AirshipKit/AirshipKit/tvos/*.{h,m,mm}"
+      core.ios.source_files           = "AirshipKit/AirshipKit/ios/*.{h,m,mm}", "AirshipKit/AirshipKit/common/*.{h,m,mm}"
+      core.tvos.source_files          = "AirshipKit/AirshipKit/tvos/*.{h,m,mm}", "AirshipKit/AirshipKit/common/*.{h,m,mm}"
       core.ios.private_header_files   = "AirshipKit/AirshipKit/common/*+Internal*.h","AirshipKit/AirshipKit/ios/*+Internal*.h"
       core.tvos.private_header_files  = "AirshipKit/AirshipKit/common/*+Internal*.h","AirshipKit/AirshipKit/tvos/*+Internal*.h"
       core.libraries                  = "z", "sqlite3"
@@ -38,11 +37,11 @@ Pod::Spec.new do |s|
       location.dependency               "Airship/Core"
    end
 
-   s.subspec "Debug" do |debug|
-      debug.platform                  = "ios"
-      debug.source_files              = [ "AirshipDebugKit/AirshipDebugKit/**/*.{h,m,swift}" ]
-      debug.resources                 = ["AirshipDebugKit/AirshipDebugKit/**/*storyboard", "AirshipDebugKit/AirshipDebugKit/Resources/**" ]
-      debug.frameworks                = "UIKit"
-      debug.dependency                  "Airship/Core"
-   end
+   # s.subspec "Debug" do |debug|
+   #    debug.platform                  = "ios"
+   #    debug.source_files              = [ "AirshipDebugKit/AirshipDebugKit/**/*.{h,m,swift}" ]
+   #    debug.resources                 = ["AirshipDebugKit/AirshipDebugKit/**/*storyboard", "AirshipDebugKit/AirshipDebugKit/Resources/**" ]
+   #    debug.frameworks                = "UIKit"
+   #    debug.dependency                  "Airship/Core"
+   # end
 end
