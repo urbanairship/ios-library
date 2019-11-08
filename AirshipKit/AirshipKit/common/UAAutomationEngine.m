@@ -409,17 +409,12 @@
          completionHandler:(void (^)(UASchedule *))completionHandler {
 
     UA_WEAKIFY(self)
-    [self.automationStore getSchedule:identifier includingExpired:YES completionHandler:^(UAScheduleData *scheduleData) {
+    [self.automationStore getSchedule:identifier includingExpired:YES completionHandler:^(UAScheduleData * _Nullable scheduleData) {
         UA_STRONGIFY(self)
 
         UASchedule *schedule = nil;
         if (scheduleData) {
             [UAAutomationEngine applyEdits:edits toData:scheduleData];
-
-            schedule = [self scheduleFromData:scheduleData];
-            if (!schedule) {
-                return completionHandler(nil);
-            }
 
             BOOL overLimit = [scheduleData isOverLimit];
             BOOL isExpired = [scheduleData isExpired];
@@ -429,6 +424,8 @@
                 NSDate *finishDate = scheduleData.executionStateChangeDate;
                 scheduleData.executionState = @(UAScheduleStateIdle);
 
+                schedule = [self scheduleFromData:scheduleData];
+
                 // Handle any state changes that might have been missed while the schedule was finished
                 UA_WEAKIFY(self);
                 [self.dispatcher dispatchAsync:^{
@@ -436,11 +433,13 @@
                     [self checkCompoundTriggerState:@[schedule] forStateNewerThanDate:finishDate];
                 }];
             } else if ([scheduleData.executionState unsignedIntegerValue] != UAScheduleStateFinished && (overLimit || isExpired)) {
+                schedule = [self scheduleFromData:scheduleData];
+
                 if (overLimit) {
-                    [self notifyDelegateOnScheduleLimitReached:[self scheduleFromData:scheduleData]];
+                    [self notifyDelegateOnScheduleLimitReached:schedule];
                 }
                 if (isExpired) {
-                    [self notifyDelegateOnScheduleExpired:[self scheduleFromData:scheduleData]];
+                    [self notifyDelegateOnScheduleExpired:schedule];
                 }
                 [self finishSchedule:scheduleData];
             }
