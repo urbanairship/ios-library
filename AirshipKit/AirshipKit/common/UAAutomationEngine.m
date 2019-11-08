@@ -427,11 +427,13 @@
                 schedule = [self scheduleFromData:scheduleData];
 
                 // Handle any state changes that might have been missed while the schedule was finished
-                UA_WEAKIFY(self);
-                [self.dispatcher dispatchAsync:^{
-                    UA_STRONGIFY(self);
-                    [self checkCompoundTriggerState:@[schedule] forStateNewerThanDate:finishDate];
-                }];
+                if (schedule) {
+                    UA_WEAKIFY(self);
+                    [self.dispatcher dispatchAsync:^{
+                        UA_STRONGIFY(self);
+                        [self checkCompoundTriggerState:@[schedule] forStateNewerThanDate:finishDate];
+                    }];
+                }
             } else if ([scheduleData.executionState unsignedIntegerValue] != UAScheduleStateFinished && (overLimit || isExpired)) {
                 schedule = [self scheduleFromData:scheduleData];
 
