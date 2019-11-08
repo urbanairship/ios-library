@@ -36,6 +36,17 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, assign, getter=isLocationUpdatesStarted) BOOL locationUpdatesStarted;
 
+/**
+ * Location factory method.
+ * @param dataStore The data store.
+ * @param channel The airship channel.
+ * @param analytics The analytics instance.
+ * @return A location instance.
+ */
++ (instancetype)locationWithDataStore:(UAPreferenceDataStore *)dataStore
+                              channel:(UAChannel<UAExtendableChannelRegistration> *)channel
+                            analytics:(UAAnalytics<UAExtendableAnalyticsHeaders> *)analytics;
+
 NS_ASSUME_NONNULL_END
 
 @end

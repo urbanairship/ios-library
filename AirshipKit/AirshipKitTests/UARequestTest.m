@@ -17,12 +17,14 @@
         builder.username = @"name";
         builder.password = @"password";
         [builder setValue:@"header_value" forHeader:@"header_key"];
+        [builder addHeaders:@{@"cool": @"story"}];
     }];
 
     XCTAssertEqualObjects(request.method, @"POST");
     XCTAssertEqualObjects(request.URL.absoluteString, @"www.urbanairship.com");
     XCTAssertEqualObjects(request.body, [@"body" dataUsingEncoding:NSUTF8StringEncoding]);
     XCTAssertEqualObjects(request.headers[@"header_key"], @"header_value");
+    XCTAssertEqualObjects(request.headers[@"cool"], @"story");
     XCTAssertEqualObjects(request.headers[@"Authorization"], @"Basic bmFtZTpwYXNzd29yZA==");
 }
 

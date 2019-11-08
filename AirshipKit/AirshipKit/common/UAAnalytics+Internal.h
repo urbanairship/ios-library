@@ -5,6 +5,8 @@
 #import "UAComponent+Internal.h"
 #import "UADate+Internal.h"
 #import "UADispatcher+Internal.h"
+#import "UAExtendableAnalyticsHeaders.h"
+#import "UAEventManager+Internal.h"
 
 #define kUAAnalyticsEnabled @"UAAnalyticsEnabled"
 #define kUAMissingSendID @"MISSING_SEND_ID"
@@ -14,7 +16,6 @@
 @class UARegionEvent;
 @class UAPreferenceDataStore;
 @class UARuntimeConfig;
-@class UAEventManager;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -22,7 +23,7 @@ NS_ASSUME_NONNULL_BEGIN
 /*
  * SDK-private extensions to Analytics
  */
-@interface UAAnalytics ()
+@interface UAAnalytics () <UAExtendableAnalyticsHeaders, UAEventManagerDelegate>
 
 extern NSString *const UACustomEventAdded;
 extern NSString *const UARegionEventAdded;
@@ -45,19 +46,10 @@ extern NSString *const UAScreenKey;
 @property (nonatomic, copy, nullable) NSString *conversionPushMetadata;
 
 /**
- * The conversion rich push ID.
- */
-@property (nonatomic, copy, nullable) NSString *conversionRichPushID;
-
-/**
  * The current session ID.
  */
 @property (nonatomic, copy, nullable) NSString *sessionID;
 
-/**
- * The registered SDK extensions.
- */
-@property (nonatomic, readonly) NSDictionary<NSNumber*, NSString*> *sdkExtensions;
 
 
 ///---------------------------------------------------------------------------------------
@@ -68,10 +60,12 @@ extern NSString *const UAScreenKey;
  * Factory method to create an analytics instance.
  * @param airshipConfig The 'AirshipConfig.plist' file
  * @param dataStore The shared preference data store.
+ * @param channel The channel instance.
  * @return A new analytics instance.
  */
 + (instancetype)analyticsWithConfig:(UARuntimeConfig *)airshipConfig
-                          dataStore:(UAPreferenceDataStore *)dataStore;
+                          dataStore:(UAPreferenceDataStore *)dataStore
+                            channel:(UAChannel *)channel;
 
 
 /**
@@ -79,6 +73,7 @@ extern NSString *const UAScreenKey;
  *
  * @param airshipConfig The 'AirshipConfig.plist' file
  * @param dataStore The shared preference data store.
+ * @param channel The channel instance.
  * @param eventManager An event manager instance.
  * @param notificationCenter The notification center.
  * @param date A UADate instance.
@@ -87,6 +82,7 @@ extern NSString *const UAScreenKey;
  */
 + (instancetype)analyticsWithConfig:(UARuntimeConfig *)airshipConfig
                           dataStore:(UAPreferenceDataStore *)dataStore
+                            channel:(UAChannel *)channel
                        eventManager:(UAEventManager *)eventManager
                  notificationCenter:(NSNotificationCenter *)notificationCenter
                                date:(UADate *)date
@@ -102,13 +98,6 @@ extern NSString *const UAScreenKey;
  * Cancels any scheduled event uploads.
  */
 - (void)cancelUpload;
-
-/**
- * Returns the name associated with an SDK extension.
- *
- * @param extension The SDK extension.
- */
-- (NSString *)nameForSDKExtension:(UASDKExtension)extension;
 
 @end
 

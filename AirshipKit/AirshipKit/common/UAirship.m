@@ -116,10 +116,16 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
                                           tagGroupsRegistrar:tagGroupsRegistrar];
         [components addObject:self.sharedChannel];
 
+        self.sharedAnalytics = [UAAnalytics analyticsWithConfig:self.config
+                                                      dataStore:self.dataStore
+                                                        channel:self.sharedChannel];
+        [components addObject:self.sharedAnalytics];
+
 
         self.sharedPush = [UAPush pushWithConfig:self.config
                                        dataStore:self.dataStore
-                                         channel:self.sharedChannel];
+                                         channel:self.sharedChannel
+                                       analytics:self.sharedAnalytics];
         [components addObject:self.sharedPush];
 
         self.sharedNamedUser = [UANamedUser namedUserWithChannel:self.sharedChannel
@@ -127,13 +133,6 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
                                                        dataStore:self.dataStore
                                               tagGroupsRegistrar:tagGroupsRegistrar];
         [components addObject:self.sharedNamedUser];
-
-
-        self.sharedAnalytics = [UAAnalytics analyticsWithConfig:self.config
-                                                      dataStore:self.dataStore];
-        [components addObject:self.sharedAnalytics];
-
-
 
         self.sharedRemoteDataManager = [UARemoteDataManager remoteDataManagerWithConfig:self.config
                                                                               dataStore:self.dataStore];
@@ -152,7 +151,9 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 
         NSMutableArray<id<UAModuleLoader>> *loaders = [NSMutableArray array];
 
-        id<UAModuleLoader> locationLoader = [UAirship locationLoaderWithDataStore:self.dataStore];
+        id<UAModuleLoader> locationLoader = [UAirship locationLoaderWithDataStore:self.dataStore
+                                                                          channel:self.sharedChannel
+                                                                        analytics:self.sharedAnalytics];
         if (locationLoader) {
             [loaders addObject:locationLoader];
         }
@@ -503,10 +504,12 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
     return nil;
 }
 
-+ (nullable id<UAModuleLoader>)locationLoaderWithDataStore:(UAPreferenceDataStore *)dataStore {
++ (nullable id<UAModuleLoader>)locationLoaderWithDataStore:(UAPreferenceDataStore *)dataStore
+                                                   channel:(UAChannel<UAExtendableChannelRegistration> *)channel
+                                                 analytics:(UAAnalytics<UAExtendableAnalyticsHeaders> *)analytics {
     Class cls = NSClassFromString(UALocationModuleLoaderClassName);
     if ([cls conformsToProtocol:@protocol(UALocationModuleLoaderFactory)]) {
-        return [cls locationModuleLoaderWithDataStore:dataStore];
+        return [cls locationModuleLoaderWithDataStore:dataStore channel:channel analytics:analytics];
     }
     return nil;
 }

@@ -6,18 +6,25 @@ NSString *const UALocationAutoRequestAuthorizationEnabled = @"UALocationAutoRequ
 NSString *const UALocationUpdatesEnabled = @"UALocationUpdatesEnabled";
 NSString *const UALocationBackgroundUpdatesAllowed = @"UALocationBackgroundUpdatesAllowed";
 
+@interface UALocation()
+@property (nonatomic, strong) UAAnalytics<UAExtendableAnalyticsHeaders> *analytics;
+@end
+
 @implementation UALocation
 
 
-- (instancetype)initWithDataStore:(UAPreferenceDataStore *)dataStore {
+- (instancetype)initWithDataStore:(UAPreferenceDataStore *)dataStore
+                          channel:(UAChannel<UAExtendableChannelRegistration> *)channel
+                        analytics:(UAAnalytics<UAExtendableAnalyticsHeaders> *)analytics {
+
     self = [super initWithDataStore:dataStore];
 
     if (self) {
         self.locationManager = [[CLLocationManager alloc] init];
-        self.locationManager.delegate = self;
         self.dataStore = dataStore;
-
+        self.analytics = analytics;
         self.systemVersion = [UASystemVersion systemVersion];
+        self.locationManager.delegate = self;
 
         NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
 
@@ -36,13 +43,66 @@ NSString *const UALocationBackgroundUpdatesAllowed = @"UALocationBackgroundUpdat
         if (self.componentEnabled) {
             [self updateLocationService];
         }
+
+        UA_WEAKIFY(self)
+        [self.analytics addAnalyticsHeadersBlock:^NSDictionary<NSString *,NSString *> *{
+            UA_STRONGIFY(self)
+            return [self analyticsHeaders];
+        }];
+
+        [channel addChannelExtenderBlock:^(UAChannelRegistrationPayload *payload, UAChannelRegistrationExtenderCompletionHandler completionHandler) {
+            UA_STRONGIFY(self)
+            [self extendChannelRegistrationPayload:payload completionHandler:completionHandler];
+        }];
     }
 
     return self;
 }
 
++ (instancetype)locationWithDataStore:(UAPreferenceDataStore *)dataStore
+                              channel:(UAChannel<UAExtendableChannelRegistration> *)channel
+                            analytics:(UAAnalytics<UAExtendableAnalyticsHeaders> *)analytics {
+    return [[self alloc] initWithDataStore:dataStore channel:channel analytics:analytics];
+}
+
+
 - (void)airshipReady:(UAirship *)airship {
     airship.locationProviderDelegate = self;
+}
+
+#pragma mark -
+#pragma mark Channel Registration
+
+- (void)extendChannelRegistrationPayload:(UAChannelRegistrationPayload *)payload
+                       completionHandler:(UAChannelRegistrationExtenderCompletionHandler)completionHandler {
+
+    payload.locationSettings = self.locationUpdatesEnabled ? @(YES) : @(NO);
+    completionHandler(payload);
+}
+
+#pragma mark -
+#pragma mark Analytics
+
+- (NSDictionary<NSString *, NSString *> *)analyticsHeaders {
+    return @{
+        @"X-UA-Location-Permission": [UALocation locationProviderPermissionStatusString:self.locationPermissionStatus],
+        @"X-UA-Location-Service-Enabled": self.locationUpdatesEnabled ? @"true" : @"false"
+    };
+}
+
++ (NSString *)locationProviderPermissionStatusString:(UALocationProviderPermissionStatus) status {
+    switch(status) {
+        case UALocationProviderPermissionStatusDisabled:
+            return @"SYSTEM_LOCATION_DISABLED";
+        case UALocationProviderPermissionStatusUnprompted:
+            return @"UNPROMPTED";
+        case UALocationProviderPermissionStatusNotAllowed:
+            return @"NOT_ALLOWED";
+        case UALocationProviderPermissionStatusForegroundAllowed:
+            return @"FOREGROUND_ALLOWED";
+        case UALocationProviderPermissionStatusAlwaysAllowed:
+            return @"ALWAYS_ALLOWED";
+    }
 }
 
 - (BOOL)isAutoRequestAuthorizationEnabled {
@@ -314,7 +374,7 @@ NSString *const UALocationBackgroundUpdatesAllowed = @"UALocationBackgroundUpdat
     UALocationEvent *event = [UALocationEvent significantChangeLocationEventWithInfo:info
                                                                         providerType:UALocationServiceProviderNetwork];
 
-    [[UAirship analytics] addEvent:event];
+    [self.analytics addEvent:event];
 }
 
 - (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error {

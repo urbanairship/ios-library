@@ -39,6 +39,7 @@
 @property (nonatomic, strong) id mockAppStateTracker;
 @property (nonatomic, strong) id mockAirship;
 @property (nonatomic, strong) id mockChannel;
+@property (nonatomic, strong) id mockDelegate;
 
 @end
 
@@ -63,11 +64,15 @@
     self.notificationCenter = [[NSNotificationCenter alloc] init];
     self.eventManager = [UAEventManager eventManagerWithConfig:self.config
                                                      dataStore:self.dataStore
+                                                       channel:self.mockChannel
                                                     eventStore:self.mockStore
                                                         client:self.mockClient
                                                          queue:self.mockQueue
                                             notificationCenter:self.notificationCenter
                                                appStateTracker:self.mockAppStateTracker];
+
+    self.mockDelegate = [self mockForProtocol:@protocol(UAEventManagerDelegate)];
+    self.eventManager.delegate = self.mockDelegate;
 }
 
 /*
@@ -359,12 +364,14 @@
         returnBlock(@[eventData]);
     }] ignoringNonObjectArgs] fetchEventsWithMaxBatchSize:0 completionHandler:OCMOCK_ANY];
 
+    NSDictionary *headers = @{@"header": @"headerValue"};
+    [[[self.mockDelegate stub] andReturn:headers] analyticsHeaders];
 
     XCTestExpectation *clientCalled = [self expectationWithDescription:@"client upload callled."];
     // Expect a call to the client, return a 200 response
     [[[self.mockClient expect] andDo:^(NSInvocation *invocation) {
         void *arg;
-        [invocation getArgument:&arg atIndex:3];
+        [invocation getArgument:&arg atIndex:4];
         void (^returnBlock)(NSHTTPURLResponse *response)= (__bridge void (^)(NSHTTPURLResponse *))arg;
 
         // Return a success response
@@ -395,7 +402,7 @@
         }
 
         return YES;
-    }] completionHandler:OCMOCK_ANY];
+    }] headers:headers completionHandler:OCMOCK_ANY];
 
     // Expect the store to delete the event
     [[self.mockStore expect] deleteEventsWithIDs:@[@"mock_event_id"]];
@@ -428,7 +435,7 @@
     [[[self.mockStore reject] ignoringNonObjectArgs] fetchEventsWithMaxBatchSize:0 completionHandler:OCMOCK_ANY];
 
     // Reject any calls to the client
-    [[self.mockClient reject] uploadEvents:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    [[self.mockClient reject] uploadEvents:OCMOCK_ANY headers:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     // test
     [self.eventManager scheduleUpload];
@@ -492,13 +499,13 @@
     // Expect a call to the client, return a 200 response
     [[[self.mockClient expect] andDo:^(NSInvocation *invocation) {
         void *arg;
-        [invocation getArgument:&arg atIndex:3];
+        [invocation getArgument:&arg atIndex:4];
         void (^returnBlock)(NSHTTPURLResponse *response)= (__bridge void (^)(NSHTTPURLResponse *))arg;
 
         // Return a 400 response
         NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:400 HTTPVersion:nil headerFields:nil];
         returnBlock(response);
-    }] uploadEvents:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    }] uploadEvents:OCMOCK_ANY headers:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     // Expect the store to delete the event
     [[self.mockStore reject] deleteEventsWithIDs:OCMOCK_ANY];
@@ -542,7 +549,7 @@
 
     // Reject store and client calls
     [[[self.mockStore reject] ignoringNonObjectArgs] fetchEventsWithMaxBatchSize:0 completionHandler:OCMOCK_ANY];
-    [[self.mockClient reject] uploadEvents:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    [[self.mockClient reject] uploadEvents:OCMOCK_ANY headers:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     // Start the upload
     [self.eventManager scheduleUpload];

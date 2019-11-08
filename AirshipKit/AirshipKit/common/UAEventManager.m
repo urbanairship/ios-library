@@ -23,6 +23,7 @@
 @property (nonatomic, strong, nonnull) UAEventAPIClient *client;
 @property (nonatomic, strong, nonnull) NSNotificationCenter *notificationCenter;
 @property (nonatomic, strong, nonnull) UAAppStateTracker *appStateTracker;
+@property (nonatomic, strong, nonnull) UAChannel *channel;
 
 @property (nonatomic, assign) NSUInteger maxTotalDBSize;
 @property (nonatomic, assign) NSUInteger maxBatchSize;
@@ -45,6 +46,7 @@ const NSTimeInterval BackgroundLowPriorityEventUploadInterval = 900;
 
 - (instancetype)initWithConfig:(UARuntimeConfig *)config
                      dataStore:(UAPreferenceDataStore *)dataStore
+                       channel:(UAChannel *)channel
                     eventStore:(UAEventStore *)eventStore
                         client:(UAEventAPIClient *)client
                          queue:(NSOperationQueue *)queue
@@ -57,6 +59,7 @@ const NSTimeInterval BackgroundLowPriorityEventUploadInterval = 900;
         self.config = config;
         self.eventStore = eventStore;
         self.dataStore = dataStore;
+        self.channel = channel;
         self.client = client;
         self.queue = queue;
         self.notificationCenter = notificationCenter;
@@ -93,7 +96,9 @@ const NSTimeInterval BackgroundLowPriorityEventUploadInterval = 900;
     [self cancelUpload];
 }
 
-+ (instancetype)eventManagerWithConfig:(UARuntimeConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
++ (instancetype)eventManagerWithConfig:(UARuntimeConfig *)config
+                             dataStore:(UAPreferenceDataStore *)dataStore
+                               channel:(UAChannel *)channel {
     UAEventStore *eventStore = [UAEventStore eventStoreWithConfig:config];
     UAEventAPIClient *client = [UAEventAPIClient clientWithConfig:config];
 
@@ -102,6 +107,7 @@ const NSTimeInterval BackgroundLowPriorityEventUploadInterval = 900;
 
     return [[self alloc] initWithConfig:config
                               dataStore:dataStore
+                                channel:channel
                              eventStore:eventStore
                                  client:client
                                   queue:queue
@@ -112,6 +118,7 @@ const NSTimeInterval BackgroundLowPriorityEventUploadInterval = 900;
 
 + (instancetype)eventManagerWithConfig:(UARuntimeConfig *)config
                              dataStore:(UAPreferenceDataStore *)dataStore
+                               channel:(UAChannel *)channel
                             eventStore:(UAEventStore *)eventStore
                                 client:(UAEventAPIClient *)client
                                  queue:(NSOperationQueue *)queue
@@ -120,6 +127,7 @@ const NSTimeInterval BackgroundLowPriorityEventUploadInterval = 900;
 
     return [[self alloc] initWithConfig:config
                               dataStore:dataStore
+                                channel:channel
                              eventStore:eventStore
                                  client:client
                                   queue:queue
@@ -334,7 +342,7 @@ const NSTimeInterval BackgroundLowPriorityEventUploadInterval = 900;
 
         UA_LTRACE("Preparing events for upload");
 
-        if (![UAirship channel].identifier) {
+        if (!self.channel.identifier) {
             UA_LTRACE("No Channel ID. Skipping analytic upload.");
             [operation finish];
             return;
@@ -388,15 +396,16 @@ const NSTimeInterval BackgroundLowPriorityEventUploadInterval = 900;
 
             // Make sure the event upload request is queueed and on the main thread as it needs to access application state
             [[UADispatcher mainDispatcher] dispatchAsync: ^{
-
                 // Make sure we are still not cancelled
                 if (operation.isCancelled) {
                     [operation finish];
                     return;
                 }
 
+                NSDictionary *headers = [self.delegate analyticsHeaders] ?: @{};
+
                 UA_STRONGIFY(self);
-                [self.client uploadEvents:preparedEvents completionHandler:^(NSHTTPURLResponse *response) {
+                [self.client uploadEvents:preparedEvents headers:headers completionHandler:^(NSHTTPURLResponse *response) {
 
                     UA_STRONGIFY(self);
                     self.lastSendTime = [NSDate date];
@@ -436,7 +445,3 @@ const NSTimeInterval BackgroundLowPriorityEventUploadInterval = 900;
 }
 
 @end
-
-
-
-

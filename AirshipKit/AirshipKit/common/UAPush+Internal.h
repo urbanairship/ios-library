@@ -9,6 +9,7 @@
 #import "UADispatcher+Internal.h"
 #import "UAAppStateTracker.h"
 #import "UAPushProviderDelegate.h"
+#import "UAAnalytics+Internal.h"
 
 @class UAPreferenceDataStore;
 @class UARuntimeConfig;
@@ -144,17 +145,21 @@ extern NSString *const UAPushEnabledKey;
  * @param config The Airship config
  * @param dataStore The preference data store.
  * @param channel The channel.
+ * @param analytics The analytics instance.
  * @return A new push instance.
  */
 + (instancetype)pushWithConfig:(UARuntimeConfig *)config
                      dataStore:(UAPreferenceDataStore *)dataStore
-                       channel:(UAChannel<UAExtendableChannelRegistration> *)channel;
+                       channel:(UAChannel<UAExtendableChannelRegistration> *)channel
+                     analytics:(UAAnalytics<UAExtendableAnalyticsHeaders> *)analytics;
+
 
 /**
  * Factory method to create a push instance. For testing
  * @param config The Airship config
  * @param dataStore The preference data store.
  * @param channel The channel.
+ * @param analytics The analytics instance.
  * @param appStateTracker The app state tracker
  * @param notificationCenter The notification center.
  * @param pushRegistration The push registration instance.
@@ -165,6 +170,7 @@ extern NSString *const UAPushEnabledKey;
 + (instancetype)pushWithConfig:(UARuntimeConfig *)config
                      dataStore:(UAPreferenceDataStore *)dataStore
                        channel:(UAChannel<UAExtendableChannelRegistration> *)channel
+                     analytics:(UAAnalytics<UAExtendableAnalyticsHeaders> *)analytics
                appStateTracker:(UAAppStateTracker *)appStateTracker
             notificationCenter:(NSNotificationCenter *)notificationCenter
               pushRegistration:(id<UAAPNSRegistrationProtocol>)pushRegistration

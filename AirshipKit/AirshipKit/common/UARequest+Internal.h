@@ -47,6 +47,12 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)setValue:(id)value forHeader:(NSString *)header;
 
+/**
+ * Adds headers from a dictionary.
+ * @param headers The headers.
+ */
+- (void)addHeaders:(NSDictionary *)headers;
+
 @end
 
 /**

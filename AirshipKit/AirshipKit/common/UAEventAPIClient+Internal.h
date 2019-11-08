@@ -37,9 +37,10 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Uploads analytic events.
  * @param events The events to upload.
+ * @param headers The event headers.
  * @param completionHandler A completion handler.
  */
--(void)uploadEvents:(NSArray *)events completionHandler:(void (^)(NSHTTPURLResponse * nullable))completionHandler;
+-(void)uploadEvents:(NSArray *)events headers:(NSDictionary<NSString *, NSString *> *)headers completionHandler:(void (^)(NSHTTPURLResponse * nullable))completionHandler;
 
 @end
 

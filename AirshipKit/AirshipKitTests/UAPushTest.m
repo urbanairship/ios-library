@@ -27,6 +27,7 @@
 @property (nonatomic, strong) id mockUNNotification;
 @property (nonatomic, strong) id mockPushRegistration;
 @property (nonatomic, strong) id mockUserInfo;
+@property (nonatomic, strong) id mockAnalytics;
 
 @property (nonatomic, strong) UAPush *push;
 @property (nonatomic, strong) NSNotificationCenter *notificationCenter;
@@ -34,7 +35,9 @@
 @property (nonatomic, strong) NSData *validAPNSDeviceToken;
 @property (nonatomic, assign) UAAuthorizationStatus authorizationStatus;
 @property (nonatomic, assign) UAAuthorizedNotificationSettings authorizedNotificationSettings;
-@property (nonatomic, copy) UAChannelRegistrationExtenderBlock extenderBlock;
+@property (nonatomic, copy) UAChannelRegistrationExtenderBlock channelRegistrationExtenderBlock;
+@property (nonatomic, copy) UAAnalyticsHeadersBlock analyticHeadersBlock;
+
 @end
 
 @implementation UAPushTest
@@ -109,19 +112,28 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     self.mockDefaultNotificationCategories = [self mockForClass:[UANotificationCategories class]];
 
     self.mockChannel = [self mockForClass:[UAChannel class]];
+    self.mockAnalytics = [self mockForClass:[UAAnalytics class]];
 
     // Capture the channel payload extender
     [[[self.mockChannel stub] andDo:^(NSInvocation *invocation) {
            void *arg;
            [invocation getArgument:&arg atIndex:2];
-           self.extenderBlock =  (__bridge UAChannelRegistrationExtenderBlock)arg;
+           self.channelRegistrationExtenderBlock =  (__bridge UAChannelRegistrationExtenderBlock)arg;
     }] addChannelExtenderBlock:OCMOCK_ANY];
+
+    // Capture the analytics header extender
+    [[[self.mockAnalytics stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:2];
+        self.analyticHeadersBlock =  (__bridge UAAnalyticsHeadersBlock)arg;
+    }] addAnalyticsHeadersBlock:OCMOCK_ANY];
 
     self.mockAppStateTracker = [self mockForClass:[UAAppStateTracker class]];
 
     self.push = [UAPush pushWithConfig:self.config
                              dataStore:self.dataStore
                                channel:self.mockChannel
+                             analytics:self.mockAnalytics
                        appStateTracker:self.mockAppStateTracker
                     notificationCenter:self.notificationCenter
                       pushRegistration:self.mockPushRegistration
@@ -1847,7 +1859,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 
     UAChannelRegistrationPayload *payload = [[UAChannelRegistrationPayload alloc] init];
     XCTestExpectation *extendedPayload = [self expectationWithDescription:@"extended payload"];
-    self.extenderBlock(payload, ^(UAChannelRegistrationPayload * _Nonnull payload) {
+    self.channelRegistrationExtenderBlock(payload, ^(UAChannelRegistrationPayload * _Nonnull payload) {
         XCTAssertEqualObjects(@"736f6d652d746f6b656e", payload.pushAddress);
         XCTAssertEqualObjects(self.push.quietTime, payload.quietTime);
         XCTAssertEqualObjects(@"Pacific/Auckland", payload.quietTimeTimeZone);
@@ -1868,7 +1880,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 
     UAChannelRegistrationPayload *payload = [[UAChannelRegistrationPayload alloc] init];
     XCTestExpectation *extendedPayload = [self expectationWithDescription:@"extended payload"];
-    self.extenderBlock(payload, ^(UAChannelRegistrationPayload * _Nonnull payload) {
+    self.channelRegistrationExtenderBlock(payload, ^(UAChannelRegistrationPayload * _Nonnull payload) {
         XCTAssertNil(payload.pushAddress);
         [extendedPayload fulfill];
     });
@@ -1885,12 +1897,40 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 
     UAChannelRegistrationPayload *payload = [[UAChannelRegistrationPayload alloc] init];
     XCTestExpectation *extendedPayload = [self expectationWithDescription:@"extended payload"];
-    self.extenderBlock(payload, ^(UAChannelRegistrationPayload * _Nonnull payload) {
+    self.channelRegistrationExtenderBlock(payload, ^(UAChannelRegistrationPayload * _Nonnull payload) {
         XCTAssertEqualObjects(payload.badge, @(30));
         [extendedPayload fulfill];
     });
 
     [self waitForTestExpectations];
+}
+
+- (void)testAnalyticsHeaders {
+    self.push.deviceToken = validDeviceToken;
+
+    NSDictionary *headers = self.analyticHeadersBlock();
+    id expected = @{
+        @"X-UA-Push-Address": validDeviceToken,
+        @"X-UA-Channel-Opted-In": @"false",
+        @"X-UA-Channel-Background-Enabled": @"false",
+        @"X-UA-Notification-Prompted":@"false"
+    };
+
+    XCTAssertEqualObjects(expected, headers);
+}
+
+- (void)testAnalyticsHeadersDeviceTokenRegistrationDisabled {
+    self.push.deviceToken = validDeviceToken;
+    self.push.pushTokenRegistrationEnabled = NO;
+
+    NSDictionary *headers = self.analyticHeadersBlock();
+    id expected = @{
+        @"X-UA-Channel-Opted-In": @"false",
+        @"X-UA-Channel-Background-Enabled": @"false",
+        @"X-UA-Notification-Prompted":@"false"
+    };
+
+    XCTAssertEqualObjects(expected, headers);
 }
 
 - (void)expectUpdatePushRegistrationWithOptions:(UANotificationOptions)expectedOptions categories:(NSSet<UANotificationCategory *> *)expectedCategories {

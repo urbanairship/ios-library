@@ -15,18 +15,25 @@
 #import "UAAssociatedIdentifiers.h"
 #import "UACustomEvent.h"
 #import "UAAppStateTracker.h"
+#import "UAUtils+Internal.h"
+#import "UAirship.h"
+#import "UAPush+Internal.h"
+#import "UAChannel.h"
+#import "UALocationProviderDelegate.h"
 
 #define kUAAssociatedIdentifiers @"UAAssociatedIdentifiers"
 
 @interface UAAnalytics()
 @property (nonatomic, strong) UARuntimeConfig *config;
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
+@property (nonatomic, strong) UAChannel *channel;
 @property (nonatomic, strong) UAEventManager *eventManager;
 @property (nonatomic, strong) NSNotificationCenter *notificationCenter;
 @property (nonatomic, strong) UADate *date;
 @property (nonatomic, strong) UADispatcher *dispatcher;
-@property (nonatomic, strong) NSMutableDictionary<NSNumber*, NSString*> *mutableSDKExtensions;
+@property (nonatomic, strong) NSMutableArray<NSString *> *SDKExtensions;
 @property (nonatomic, assign) BOOL isEnteringForeground;
+@property (nonatomic, strong) NSMutableArray<UAAnalyticsHeadersBlock> *headerBlocks;
 
 // Screen tracking state
 @property (nonatomic, strong) NSString *currentScreen;
@@ -46,6 +53,7 @@ NSString *const UAEventKey = @"event";
 
 - (instancetype)initWithConfig:(UARuntimeConfig *)airshipConfig
                      dataStore:(UAPreferenceDataStore *)dataStore
+                       channel:(UAChannel *)channel
                   eventManager:(UAEventManager *)eventManager
             notificationCenter:(NSNotificationCenter *)notificationCenter
                           date:(UADate *)date
@@ -57,11 +65,13 @@ NSString *const UAEventKey = @"event";
         // Set server to default if not specified in options
         self.config = airshipConfig;
         self.dataStore = dataStore;
+        self.channel = channel;
         self.eventManager = eventManager;
         self.notificationCenter = notificationCenter;
         self.date = date;
         self.dispatcher = dispatcher;
-        self.mutableSDKExtensions = [NSMutableDictionary dictionary];
+        self.SDKExtensions = [NSMutableArray array];
+        self.headerBlocks = [NSMutableArray array];
 
         // Default analytics value
         if (![self.dataStore objectForKey:kUAAnalyticsEnabled]) {
@@ -69,6 +79,7 @@ NSString *const UAEventKey = @"event";
         }
 
         self.eventManager.uploadsEnabled = self.isEnabled && self.componentEnabled;
+        self.eventManager.delegate = self;
 
         [self startSession];
 
@@ -100,28 +111,33 @@ NSString *const UAEventKey = @"event";
     return self;
 }
 
-+ (instancetype)analyticsWithConfig:(UARuntimeConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
-    return [[UAAnalytics alloc] initWithConfig:config
-                                     dataStore:dataStore
-                                  eventManager:[UAEventManager eventManagerWithConfig:config dataStore:dataStore]
-                            notificationCenter:[NSNotificationCenter defaultCenter]
-                                          date:[[UADate alloc] init]
-                                    dispatcher:[UADispatcher mainDispatcher]];
++ (instancetype)analyticsWithConfig:(UARuntimeConfig *)config
+                          dataStore:(UAPreferenceDataStore *)dataStore
+                            channel:(UAChannel *)channel {
+    return [[self alloc] initWithConfig:config
+                              dataStore:dataStore
+                                channel:channel
+                           eventManager:[UAEventManager eventManagerWithConfig:config dataStore:dataStore channel:channel]
+                     notificationCenter:[NSNotificationCenter defaultCenter]
+                                   date:[[UADate alloc] init]
+                             dispatcher:[UADispatcher mainDispatcher]];
 }
 
 + (instancetype)analyticsWithConfig:(UARuntimeConfig *)airshipConfig
-                     dataStore:(UAPreferenceDataStore *)dataStore
-                  eventManager:(UAEventManager *)eventManager
-            notificationCenter:(NSNotificationCenter *)notificationCenter
-                          date:(UADate *)date
+                          dataStore:(UAPreferenceDataStore *)dataStore
+                            channel:(UAChannel *)channel
+                       eventManager:(UAEventManager *)eventManager
+                 notificationCenter:(NSNotificationCenter *)notificationCenter
+                               date:(UADate *)date
                          dispatcher:(UADispatcher *)dispatcher {
 
-    return [[UAAnalytics alloc] initWithConfig:airshipConfig
-                                     dataStore:dataStore
-                                  eventManager:eventManager
-                            notificationCenter:notificationCenter
-                                          date:date
-                                    dispatcher:dispatcher];
+    return [[self alloc] initWithConfig:airshipConfig
+                              dataStore:dataStore
+                                channel:channel
+                           eventManager:eventManager
+                     notificationCenter:notificationCenter
+                                   date:date
+                             dispatcher:dispatcher];
 }
 
 #pragma mark -
@@ -149,7 +165,6 @@ NSString *const UAEventKey = @"event";
 
     [self startSession];
     self.conversionSendID = nil;
-    self.conversionRichPushID = nil;
     self.conversionPushMetadata = nil;
 }
 
@@ -324,14 +339,11 @@ NSString *const UAEventKey = @"event";
 
 - (void)registerSDKExtension:(UASDKExtension)extension version:(NSString *)version {
     NSString *sanitizedVersion = [version stringByReplacingOccurrencesOfString:@"," withString:@""];
-    [self.mutableSDKExtensions setObject:sanitizedVersion forKey:@(extension)];
+    NSString *name = [UAAnalytics nameForSDKExtension:extension];
+    [self.SDKExtensions addObject:[NSString stringWithFormat:@"%@:%@", name, sanitizedVersion]];
 }
 
-- (NSDictionary<NSNumber*, NSString*>*)sdkExtensions {
-    return [NSDictionary dictionaryWithDictionary:self.mutableSDKExtensions];
-}
-
-- (NSString *)nameForSDKExtension:(UASDKExtension)extension {
++ (NSString *)nameForSDKExtension:(UASDKExtension)extension {
     switch(extension) {
         case UASDKExtensionCordova:
             return @"cordova";
@@ -346,6 +358,49 @@ NSString *const UAEventKey = @"event";
     }
 }
 
+- (NSDictionary *)analyticsHeaders {
+    NSMutableDictionary *headers = [NSMutableDictionary dictionary];
+
+    // Device info
+    [headers setValue:[UIDevice currentDevice].systemName forKey:@"X-UA-Device-Family"];
+    [headers setValue:[UIDevice currentDevice].systemVersion forKey:@"X-UA-OS-Version"];
+    [headers setValue:[UAUtils deviceModelName] forKey:@"X-UA-Device-Model"];
+
+    // App info
+    [headers setValue:[[[NSBundle mainBundle] infoDictionary] objectForKey:(id)kCFBundleIdentifierKey] forKey:@"X-UA-Package-Name"];
+    [headers setValue:[[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"] ?: @"" forKey:@"X-UA-Package-Version"];
+
+    // Time zone
+    [headers setValue:[[NSTimeZone defaultTimeZone] name] forKey:@"X-UA-Timezone"];
+    [headers setValue:[[NSLocale autoupdatingCurrentLocale] objectForKey:NSLocaleLanguageCode] forKey:@"X-UA-Locale-Language"];
+    [headers setValue:[[NSLocale autoupdatingCurrentLocale] objectForKey:NSLocaleCountryCode] forKey:@"X-UA-Locale-Country"];
+    [headers setValue:[[NSLocale autoupdatingCurrentLocale] objectForKey:NSLocaleVariantCode] forKey:@"X-UA-Locale-Variant"];
+
+    // Airship identifiers
+    [headers setValue:self.channel.identifier forKey:@"X-UA-Channel-ID"];
+    [headers setValue:self.config.appKey forKey:@"X-UA-App-Key"];
+
+    // SDK Version
+    [headers setValue:[UAirshipVersion get] forKey:@"X-UA-Lib-Version"];
+
+    // SDK Extensions
+    if (self.SDKExtensions.count) {
+        [headers setValue:[self.SDKExtensions componentsJoinedByString:@", "] forKey:@"X-UA-Frameworks"];
+    }
+
+    // Header extenders
+    for (UAAnalyticsHeadersBlock block in self.headerBlocks) {
+        NSDictionary<NSString *, NSString *> *result = block();
+        if (result) {
+            [headers addEntriesFromDictionary:result];
+        }
+    }
+
+    return headers;
+}
+
+- (void)addAnalyticsHeadersBlock:(nonnull UAAnalyticsHeadersBlock)headersBlock {
+    [self.headerBlocks addObject:headersBlock];
+}
+
 @end
-
-

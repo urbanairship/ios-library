@@ -315,7 +315,6 @@
     expectedPayload.timeZone = @"cool zone";
     expectedPayload.tags = @[@"cool", @"story"];
     expectedPayload.setTags = YES;
-    expectedPayload.locationSettings = @NO;
     expectedPayload.appVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
     expectedPayload.SDKVersion = [UAirshipVersion get];
     expectedPayload.deviceOS = [UIDevice currentDevice].systemVersion;

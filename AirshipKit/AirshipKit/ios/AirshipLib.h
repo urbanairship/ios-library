@@ -42,6 +42,7 @@
 #import "UADisposable.h"
 #import "UAEnableFeatureAction.h"
 #import "UAEvent.h"
+#import "UAExtendableAnalyticsHeaders.h"
 #import "UAExtendableChannelRegistration.h"
 #import "UAExtendedActionsModuleLoaderFactory.h"
 #import "UAFetchDeviceInfoAction.h"

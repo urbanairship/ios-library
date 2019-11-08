@@ -2,12 +2,27 @@
 
 #import <Foundation/Foundation.h>
 #import "UAAppStateTracker.h"
+#import "UAChannel.h"
 
 @class UAEvent;
 @class UARuntimeConfig;
 @class UAPreferenceDataStore;
 @class UAEventAPIClient;
 @class UAEventStore;
+
+/**
+ * Delegate protocol for the event manager.
+ */
+@protocol UAEventManagerDelegate <NSObject>
+@required
+
+/**
+ * Get the current analytics headers.
+ */
+- (NSDictionary<NSString *, NSString *> *)analyticsHeaders;
+
+@end
+
 
 /**
  * Event manager handles storing and uploading events to Airship.
@@ -47,6 +62,12 @@
  */
 @property (nonatomic, assign) BOOL uploadsEnabled;
 
+/**
+ * Event manager delegate.
+ */
+@property (nonatomic, weak) id<UAEventManagerDelegate> delegate;
+
+
 ///---------------------------------------------------------------------------------------
 /// @name Event Manager Internal Methods
 ///---------------------------------------------------------------------------------------
@@ -56,15 +77,17 @@
  *
  * @param config The airship config.
  * @param dataStore The preference data store.
+ * @param channel The channel instance.
  * @return UAEventManager instance.
  */
-+ (instancetype)eventManagerWithConfig:(UARuntimeConfig *)config dataStore:(UAPreferenceDataStore *)dataStore;
++ (instancetype)eventManagerWithConfig:(UARuntimeConfig *)config dataStore:(UAPreferenceDataStore *)dataStore channel:(UAChannel *)channel;
 
 /**
  * Factory method used for testing.
  *
  * @param config The airship config.
  * @param dataStore The preference data store.
+ * @param channel The channel instance.
  * @param eventStore The event data store.
  * @param client The event api client.
  * @param queue The operation queue.
@@ -74,6 +97,7 @@
  */
 + (instancetype)eventManagerWithConfig:(UARuntimeConfig *)config
                              dataStore:(UAPreferenceDataStore *)dataStore
+                               channel:(UAChannel *)channel
                             eventStore:(UAEventStore *)eventStore
                                 client:(UAEventAPIClient *)client
                                  queue:(NSOperationQueue *)queue

@@ -75,6 +75,7 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
 - (instancetype)initWithConfig:(UARuntimeConfig *)config
                      dataStore:(UAPreferenceDataStore *)dataStore
                         channel:(UAChannel<UAExtendableChannelRegistration> *)channel
+                     analytics:(UAAnalytics<UAExtendableAnalyticsHeaders> *)analytics
                appStateTracker:(UAAppStateTracker *)appStateTracker
             notificationCenter:(NSNotificationCenter *)notificationCenter
               pushRegistration:(id<UAAPNSRegistrationProtocol>)pushRegistration
@@ -122,6 +123,11 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
             UA_STRONGIFY(self)
             [self extendChannelRegistrationPayload:payload completionHandler:completionHandler];
         }];
+
+        [analytics addAnalyticsHeadersBlock:^NSDictionary<NSString *,NSString *> *{
+            UA_STRONGIFY(self)
+            return [self analyticsHeaders];
+        }];
     }
 
     return self;
@@ -129,10 +135,12 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
 
 + (instancetype)pushWithConfig:(UARuntimeConfig *)config
                      dataStore:(UAPreferenceDataStore *)dataStore
-                       channel:(UAChannel<UAExtendableChannelRegistration> *)channel {
+                       channel:(UAChannel<UAExtendableChannelRegistration> *)channel
+                     analytics:(UAAnalytics<UAExtendableAnalyticsHeaders> *)analytics {
     return [[self alloc] initWithConfig:config
                               dataStore:dataStore
                                 channel:channel
+                              analytics:analytics
                         appStateTracker:[UAAppStateTracker shared]
                      notificationCenter:[NSNotificationCenter defaultCenter]
                        pushRegistration:[[UAAPNSRegistration alloc] init]
@@ -143,15 +151,16 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
 + (instancetype)pushWithConfig:(UARuntimeConfig *)config
                      dataStore:(UAPreferenceDataStore *)dataStore
                        channel:(UAChannel<UAExtendableChannelRegistration> *)channel
+                     analytics:(UAAnalytics<UAExtendableAnalyticsHeaders> *)analytics
                appStateTracker:(UAAppStateTracker *)appStateTracker
             notificationCenter:(NSNotificationCenter *)notificationCenter
               pushRegistration:(id<UAAPNSRegistrationProtocol>)pushRegistration
                    application:(UIApplication *)application
                     dispatcher:(UADispatcher *)dispatcher {
-
     return [[self alloc] initWithConfig:config
                               dataStore:dataStore
                                 channel:channel
+                              analytics:analytics
                         appStateTracker:appStateTracker
                      notificationCenter:notificationCenter
                        pushRegistration:pushRegistration
@@ -733,6 +742,22 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
                                                                                legacyOptions:[self legacyOptionsForAuthorizedSettings:authorizedSettings]
                                                                                   categories:self.combinedCategories
                                                                                       status:status];
+}
+
+#pragma mark -
+#pragma mark Analytics
+
+- (NSDictionary<NSString *, NSString *> *)analyticsHeaders {
+    NSMutableDictionary *headers = [NSMutableDictionary dictionary];
+    [headers setValue:self.userPushNotificationsAllowed ? @"true" : @"false" forKey:@"X-UA-Channel-Opted-In"];
+    [headers setValue:self.userPromptedForNotifications ? @"true" : @"false" forKey:@"X-UA-Notification-Prompted"];
+    [headers setValue:self.backgroundPushNotificationsAllowed ? @"true" : @"false" forKey:@"X-UA-Channel-Background-Enabled"];
+
+    // Only send up token if enabled
+    if (self.pushTokenRegistrationEnabled) {
+        [headers setValue:self.deviceToken forKey:@"X-UA-Push-Address"];
+    }
+    return headers;
 }
 
 #pragma mark -

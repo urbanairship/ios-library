@@ -575,6 +575,9 @@
 		6EF2DF0F1E5CBAE30062099A /* UAScheduleDelayData+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EF2DF0D1E5CBAE30062099A /* UAScheduleDelayData+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6EF2DF101E5CBAE30062099A /* UAScheduleDelayData.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EF2DF0E1E5CBAE30062099A /* UAScheduleDelayData.m */; };
 		6EF2DF111E5CBAED0062099A /* UAScheduleDelayData.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EF2DF0E1E5CBAE30062099A /* UAScheduleDelayData.m */; };
+		6EFB1F8923720738001F55FC /* UAExtendableAnalyticsHeaders.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EFB1F8823720738001F55FC /* UAExtendableAnalyticsHeaders.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6EFB1F8A23720738001F55FC /* UAExtendableAnalyticsHeaders.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EFB1F8823720738001F55FC /* UAExtendableAnalyticsHeaders.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6EFB1F8B23720738001F55FC /* UAExtendableAnalyticsHeaders.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EFB1F8823720738001F55FC /* UAExtendableAnalyticsHeaders.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6EFB37592342A9E8005E4E44 /* UAJavaScriptEnvironment.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EFB37572342A9E8005E4E44 /* UAJavaScriptEnvironment.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6EFB375A2342A9E8005E4E44 /* UAJavaScriptEnvironment.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EFB37572342A9E8005E4E44 /* UAJavaScriptEnvironment.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6EFB375B2342A9E8005E4E44 /* UAJavaScriptEnvironment.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EFB37582342A9E8005E4E44 /* UAJavaScriptEnvironment.m */; };
@@ -2082,6 +2085,7 @@
 		6EF2DF0C1E5CB6F50062099A /* UAAutomation 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "UAAutomation 2.xcdatamodel"; sourceTree = "<group>"; };
 		6EF2DF0D1E5CBAE30062099A /* UAScheduleDelayData+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UAScheduleDelayData+Internal.h"; path = "common/UAScheduleDelayData+Internal.h"; sourceTree = "<group>"; };
 		6EF2DF0E1E5CBAE30062099A /* UAScheduleDelayData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAScheduleDelayData.m; path = common/UAScheduleDelayData.m; sourceTree = "<group>"; };
+		6EFB1F8823720738001F55FC /* UAExtendableAnalyticsHeaders.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = UAExtendableAnalyticsHeaders.h; path = common/UAExtendableAnalyticsHeaders.h; sourceTree = "<group>"; };
 		6EFB37572342A9E8005E4E44 /* UAJavaScriptEnvironment.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = UAJavaScriptEnvironment.h; path = ios/UAJavaScriptEnvironment.h; sourceTree = "<group>"; };
 		6EFB37582342A9E8005E4E44 /* UAJavaScriptEnvironment.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = UAJavaScriptEnvironment.m; path = ios/UAJavaScriptEnvironment.m; sourceTree = "<group>"; };
 		6EFB377523450FAB005E4E44 /* UANativeBridgeExtensionDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = UANativeBridgeExtensionDelegate.h; path = ios/UANativeBridgeExtensionDelegate.h; sourceTree = "<group>"; };
@@ -4056,6 +4060,7 @@
 				CC04F1A91DC018F600B4842D /* UAEventManager.m */,
 				CC04F1BF1DC17D1500B4842D /* UAEventAPIClient+Internal.h */,
 				CC04F1C01DC17D1500B4842D /* UAEventAPIClient.m */,
+				6EFB1F8823720738001F55FC /* UAExtendableAnalyticsHeaders.h */,
 			);
 			name = Analytics;
 			sourceTree = "<group>";
@@ -4594,6 +4599,7 @@
 				3CBCED63211A6259003B7239 /* UAPersistentQueue+Internal.h in Headers */,
 				CC40DCDD1D8C996A00BABD4F /* UAModifyTagsAction.h in Headers */,
 				CC40DC1B1D8C996A00BABD4F /* UANativeBridgeActionHandler+Internal.h in Headers */,
+				6EFB1F8923720738001F55FC /* UAExtendableAnalyticsHeaders.h in Headers */,
 				DF0221F71FDB05B600EF8C9D /* UAInAppMessageAudienceChecks+Internal.h in Headers */,
 				CC40DCA41D8C996A00BABD4F /* UALegacyInAppMessaging.h in Headers */,
 				45BB647A2346C9DF0006CFC1 /* UAAttributeMutations+Internal.h in Headers */,
@@ -5033,6 +5039,7 @@
 				99666DD31EDF2BED00BAE46B /* UANotificationContent.h in Headers */,
 				6E0F6B732360FBA4001DE51B /* UARemoteDataProvider.h in Headers */,
 				99666DD51EDF2BED00BAE46B /* UANotificationResponse.h in Headers */,
+				6EFB1F8A23720738001F55FC /* UAExtendableAnalyticsHeaders.h in Headers */,
 				6E598D802003EB76005B234B /* UAActiveTimer+Internal.h in Headers */,
 				99666DEE1EDF2C0B00BAE46B /* UAOpenExternalURLAction.h in Headers */,
 				99666DD71EDF2BED00BAE46B /* UAPush+Internal.h in Headers */,
@@ -5162,6 +5169,7 @@
 				DF7E22561ED62E0900C79C46 /* UANotificationCategories.h in Headers */,
 				DF7E22571ED62E0900C79C46 /* UANotificationCategory.h in Headers */,
 				6EADE7111FA8FAF50007F924 /* AirshipLib.h in Headers */,
+				6EFB1F8B23720738001F55FC /* UAExtendableAnalyticsHeaders.h in Headers */,
 				6EBFF9C8234FDC1000472DCF /* UAExtendableChannelRegistration.h in Headers */,
 				6E5EB9B5235A680400F8AEA0 /* UALocationModuleLoaderFactory.h in Headers */,
 				6E598D5820003E99005B234B /* UAInAppMessageResolution.h in Headers */,

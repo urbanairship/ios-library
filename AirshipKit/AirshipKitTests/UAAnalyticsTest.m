@@ -14,12 +14,17 @@
 #import "UATestDate.h"
 #import "UATestDispatcher.h"
 #import "UAAppStateTracker.h"
+#import "UAUtils+Internal.h"
 
 @interface UAAnalyticsTest: UABaseTest
 @property (nonatomic, strong) UAAnalytics *analytics;
 @property (nonatomic, strong) id mockEventManager;
+@property (nonatomic, strong) id mockChannel;
+@property (nonatomic, strong) id mockLocaleClass;
+@property (nonatomic, strong) id mockTimeZoneClass;
 @property (nonatomic, strong) NSNotificationCenter *notificationCenter;
 @property (nonatomic, strong) UATestDate *testDate;
+@property (nonatomic, strong) id<UAEventManagerDelegate> eventManagerDelegate;
 @end
 
 @implementation UAAnalyticsTest
@@ -30,8 +35,28 @@
     self.notificationCenter = [[NSNotificationCenter alloc] init];
     self.testDate = [[UATestDate alloc] init];
     self.mockEventManager = [self mockForClass:[UAEventManager class]];
+    [[[self.mockEventManager stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:2];
+        self.eventManagerDelegate =  (__bridge id<UAEventManagerDelegate>)arg;
+    }] setDelegate:OCMOCK_ANY];
 
+    self.mockChannel = [self mockForClass:[UAChannel class]];
     self.analytics = [self createAnalytics];
+
+    // Channel ID
+    NSString *channelIDString = @"someChannelID";
+    [[[self.mockChannel stub] andReturn:channelIDString] identifier];
+
+    // Timezone
+    self.mockTimeZoneClass = [self strictMockForClass:[NSTimeZone class]];
+    NSTimeZone *timeZone = [[NSTimeZone alloc] initWithName:@"America/New_York"];
+    [[[self.mockTimeZoneClass stub] andReturn:timeZone] defaultTimeZone];
+
+    // Locale
+    self.mockLocaleClass = [self strictMockForClass:[NSLocale class]];
+    NSLocale *locale = [[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"];
+    [[[self.mockLocaleClass stub] andReturn:locale] currentLocale];
 }
 
 /**
@@ -418,19 +443,47 @@
     [self.mockEventManager verify];
 }
 
-- (void)testRegisterSDKExtension {
+- (void)testAnalyticsHeadersSDKExtensions {
     [self.analytics registerSDKExtension:UASDKExtensionCordova version:@"1.2.3"];
     [self.analytics registerSDKExtension:UASDKExtensionUnity version:@"5,.6,.7,,,"];
 
-    id expectedExtensions = @{@(UASDKExtensionCordova):@"1.2.3", @(UASDKExtensionUnity) : @"5.6.7"};
-
-    XCTAssertEqualObjects(self.analytics.sdkExtensions, expectedExtensions);
+    id headers = [self.eventManagerDelegate analyticsHeaders];
+    XCTAssertEqualObjects(@"cordova:1.2.3, unity:5.6.7", headers[@"X-UA-Frameworks"]);
 }
 
+- (void)testAnalyticsHeaders {
+    id headers = [self.eventManagerDelegate analyticsHeaders];
+    id expected = @{
+        @"X-UA-Channel-ID": @"someChannelID",
+        @"X-UA-Timezone": @"America/New_York",
+        @"X-UA-Locale-Language": @"en",
+        @"X-UA-Locale-Country": @"US",
+        @"X-UA-Locale-Variant": @"POSIX",
+        @"X-UA-Device-Family": [UIDevice currentDevice].systemName,
+        @"X-UA-OS-Version": [UIDevice currentDevice].systemVersion,
+        @"X-UA-Device-Model": [UAUtils deviceModelName],
+        @"X-UA-Lib-Version": [UAirshipVersion get],
+        @"X-UA-App-Key": self.config.appKey,
+        @"X-UA-Package-Name": [[[NSBundle mainBundle] infoDictionary] objectForKey:(id)kCFBundleIdentifierKey],
+        @"X-UA-Package-Version": [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"] ?: @""
+    };
+
+    XCTAssertEqualObjects(expected, headers);
+}
+
+- (void)testAnalyticsHeadersBlock {
+    [self.analytics addAnalyticsHeadersBlock:^NSDictionary<NSString *,NSString *> * _Nullable{
+        return @{@"cool" : @"story"};
+    }];
+
+    id headers = [self.eventManagerDelegate analyticsHeaders];
+    XCTAssertEqualObjects(@"story", headers[@"cool"]);
+}
 
 - (UAAnalytics *)createAnalytics {
     return [UAAnalytics analyticsWithConfig:self.config
                                   dataStore:self.dataStore
+                                    channel:self.mockChannel
                                eventManager:self.mockEventManager
                          notificationCenter:self.notificationCenter
                                        date:self.testDate

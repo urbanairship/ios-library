@@ -27,6 +27,10 @@
     [self.headers setValue:value forKey:header];
 }
 
+- (void)addHeaders:(NSDictionary *)headers {
+    [self.headers addEntriesFromDictionary:headers];
+}
+
 @end
 
 @interface UARequest()
