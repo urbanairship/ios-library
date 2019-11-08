@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		3C75AA98221CF5B40028AD9B /* LastPayloadTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C75AA92221CF5B40028AD9B /* LastPayloadTableViewController.swift */; };
+		452759C62373853A0063F1C9 /* AddChannelAttributeTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 452759C02373853A0063F1C9 /* AddChannelAttributeTableViewController.swift */; };
 		453B259B2257D0710000478C /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DF1C21D12245605100B33D01 /* Images.xcassets */; };
 		453B25CA225C0E2E0000478C /* DebugKit.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 453B25C9225C0E2E0000478C /* DebugKit.storyboard */; };
 		453B25D1225C13890000478C /* RootTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 453B25D0225C13890000478C /* RootTableViewController.swift */; };
@@ -107,6 +108,7 @@
 
 /* Begin PBXFileReference section */
 		3C75AA92221CF5B40028AD9B /* LastPayloadTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LastPayloadTableViewController.swift; sourceTree = "<group>"; };
+		452759C02373853A0063F1C9 /* AddChannelAttributeTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddChannelAttributeTableViewController.swift; sourceTree = "<group>"; };
 		453B25C9225C0E2E0000478C /* DebugKit.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = DebugKit.storyboard; sourceTree = "<group>"; };
 		453B25D0225C13890000478C /* RootTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootTableViewController.swift; sourceTree = "<group>"; };
 		4582DB2F2219EADF0018E02C /* DebugKitUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugKitUtils.swift; sourceTree = "<group>"; };
@@ -265,6 +267,7 @@
 			children = (
 				DFE70130212F202500A708D5 /* DeviceInfoViewController.swift */,
 				DFE7012E212F202400A708D5 /* AddAssociatedIdentifiersTableViewController.swift */,
+				452759C02373853A0063F1C9 /* AddChannelAttributeTableViewController.swift */,
 				DFE7012D212F202400A708D5 /* AddNamedUserTableViewController.swift */,
 				DFE7012A212F202400A708D5 /* AddTagsTableViewController.swift */,
 				DFE7012C212F202400A708D5 /* AssociatedIdentifiersTableViewController.swift */,
@@ -459,6 +462,7 @@
 				4582DB302219EADF0018E02C /* DebugKitUtils.swift in Sources */,
 				45960BF32254162B00ADB97B /* CustomPropertyStringsTableViewController.swift in Sources */,
 				DFC78789216C07C900198AF6 /* MediaInfoDetailViewController.swift in Sources */,
+				452759C62373853A0063F1C9 /* AddChannelAttributeTableViewController.swift in Sources */,
 				DFDE984E216EFFC4005846B6 /* TriggerTableViewController.swift in Sources */,
 				453B25D1225C13890000478C /* RootTableViewController.swift in Sources */,
 				DF4EDA6821E4261700804CB3 /* ButtonDetailViewController.swift in Sources */,

@@ -90,7 +90,8 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
     username = IndexPath(row: 1, section: 2),
     namedUser = IndexPath(row: 2, section: 2),
     tags = IndexPath(row: 3, section: 2),
-    associatedIdentifiers = IndexPath(row: 4, section: 2)
+    associatedIdentifiers = IndexPath(row: 4, section: 2),
+    channelAttributes = IndexPath(row: 5, section: 2)
 
     // Location settings
     private let locationEnabled = IndexPath(row: 0, section: 3),
@@ -213,7 +214,7 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
         case inAppAutomationSettings:
             return 2
         case deviceSettings:
-            return 5
+            return 6
         case analyticsSettings:
             return 1
         case locationSettings:
@@ -237,11 +238,14 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
         cell.cellSwitch.tintColor = ThemeManager.shared.currentTheme.WidgetTint
         cell.displayIntervalStepper.backgroundColor = ThemeManager.shared.currentTheme.Background;
 
-        // Cell switch and disclosure indicator are hidden by default
+        // Cell switch, stepper and disclosure indicator are hidden by default
         cell.cellSwitch.isHidden = true
+        cell.displayIntervalStepper.isHidden = true;
+
         // Cells will do the switching
         cell.cellSwitch.isUserInteractionEnabled = false
         cell.accessoryType = .none
+        cell.subtitle.text = nil
 
         switch indexPath {
         case pushEnabled:
@@ -300,6 +304,9 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
             } else {
                 cell.subtitle.text = localizedNone
             }
+            cell.accessoryType = .disclosureIndicator
+        case channelAttributes:
+            cell.title.text = "ua_device_info_channel_attributes".localized()
             cell.accessoryType = .disclosureIndicator
         case lastPayload:
             cell.title.text = "ua_device_info_last_push_payload".localized()
@@ -371,6 +378,8 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
             performSegue(withIdentifier: "tagsSegue", sender: self)
         case associatedIdentifiers:
             performSegue(withIdentifier: "associatedIdentifiersSegue", sender: self)
+        case channelAttributes:
+            performSegue(withIdentifier: "channelAttributesSegue", sender: self)
         case lastPayload:
             performSegue(withIdentifier: "lastPayloadSegue", sender: self)
         case sdkVersion:
