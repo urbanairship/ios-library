@@ -10,7 +10,7 @@ jobs:
       - name: Build SDK
         run: |
           sudo xcode-select --switch /Applications/Xcode_11.1.app
-          bash ./scripts/build.sh -lfx
+          bash ./scripts/build.sh -fx
   build-samples:
     runs-on: macOS-latest
     steps:
