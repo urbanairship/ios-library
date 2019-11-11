@@ -435,9 +435,9 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="Pm3-Q0-lpz">
-                                                    <rect key="frame" x="20" y="7" width="560" height="32"/>
+                                                    <rect key="frame" x="20" y="6.5" width="560" height="32"/>
                                                     <segments>
-                                                        <segment title="Add"/>
+                                                        <segment title="Set"/>
                                                         <segment title="Remove"/>
                                                     </segments>
                                                 </segmentedControl>

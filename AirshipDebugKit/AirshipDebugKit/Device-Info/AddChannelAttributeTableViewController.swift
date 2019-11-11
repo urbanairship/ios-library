@@ -21,6 +21,8 @@ class AddChannelAttributeTableViewController: UITableViewController, UITextField
         addAttributeKeyTextField.delegate = self
         addAttributeValueTextField.delegate = self
 
+        let applyButton:UIBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonItem.SystemItem.add, target: self, action: #selector(AddChannelAttributeTableViewController.addAttribute))
+        navigationItem.rightBarButtonItem = applyButton
         let addButton:UIBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonItem.SystemItem.add, target: self, action: #selector(AddChannelAttributeTableViewController.addAttribute))
         navigationItem.rightBarButtonItem = addButton
     }
@@ -51,7 +53,7 @@ class AddChannelAttributeTableViewController: UITableViewController, UITextField
         if attributeActionControl.attributeActionControlState() == .add {
             guard let keyText = self.addAttributeKeyTextField.text,
                   let valueText = self.addAttributeValueTextField.text else { return }
-            action = "ua_attributes_action_added".localized(comment: "Added")
+            action = "ua_attributes_action_set".localized(comment: "Set")
             message = "\("ua_attributes_key".localized(comment: "Key")): \(keyText) \n \("ua_attributes_value".localized(comment: "Value")): \(valueText)"
             mutations.setString(valueText, forAttribute: keyText)
         } else {
@@ -88,7 +90,7 @@ class AddChannelAttributeTableViewController: UITableViewController, UITextField
             return true
         }
 
-        if (valueText.isEmpty || keyText.count > 1024) {
+        if (valueText.isEmpty || valueText.count > 1024) {
               return false
         }
 
