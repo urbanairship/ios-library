@@ -24,6 +24,7 @@
 "ua_device_info_username" = "Inbox Username";
 "ua_device_info_named_user" = "Named User";
 "ua_device_info_associated_identifiers" = "Associated Identifiers";
+"ua_device_info_channel_attributes" = "Channel Attributes";
 "ua_device_info_tags" = "Tags";
 "ua_device_info_sdk_version" = "SDK Version";
 "ua_device_info_locale" = "Locale";
@@ -43,6 +44,15 @@
 "ua_device_info_app_info" = "Application Info";
 
 "ua_push_payload_empty" = "Payload is empty. Send a push notification!";
+
+"ua_attributes_key" = "Key";
+"ua_attributes_value" = "Value";
+"ua_attributes_action_set" = "Set";
+
+"ua_attributes_action_removed" = "Removed";
+
+"ua_attributes_invalid_title" = "Invalid Attribute";
+"ua_attributes_invalid_message" = "Please add valid fields for your selected action";
 
 /* Notification Types */
 "ua_notification_type_alerts" = "Alerts";
