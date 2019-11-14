@@ -1,0 +1,21 @@
+PODS:
+  - Airship (12.0.2):
+    - Airship/Core (= 12.0.2)
+  - Airship/Core (12.0.2)
+  - Airship/Location (12.0.2):
+    - Airship/Core
+
+DEPENDENCIES:
+  - Airship (from `../`)
+  - Airship/Location (from `../`)
+
+EXTERNAL SOURCES:
+  Airship:
+    :path: "../"
+
+SPEC CHECKSUMS:
+  Airship: fbcd7c342dc1e139233e5f82bbaf5b208df74aa8
+
+PODFILE CHECKSUM: 78d6c74a3dbf12b5f3ef77221c7050d80c4465f5
+
+COCOAPODS: 1.8.4

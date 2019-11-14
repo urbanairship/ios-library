@@ -12,10 +12,10 @@ Pod::Spec.new do |s|
     s.module_name             = "AirshipExtensions"
     s.requires_arc            = true
     s.ios.deployment_target   = "11.0"
-    s.default_subspecs        = ["MediaAttachment"]
+    s.default_subspecs        = ["NotificationService"]
 
-    s.subspec "MediaAttachment" do |mediaattachment|
-        mediaattachment.ios.source_files     = "AirshipAppExtensions/AirshipAppExtensions/UAMediaAttachment*.{h,m,mm}"
-        mediaattachment.ios.weak_frameworks  = "UserNotifications"
+    s.subspec "NotificationService" do |notificationService|
+        notificationService.ios.source_files     = "AirshipExtensions/AirshipNotificationServiceExtension/Source/**/*.{h,m,mm}"
+        notificationService.ios.weak_frameworks  = "UserNotifications"
     end
 end

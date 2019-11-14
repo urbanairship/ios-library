@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14865.1" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="49e-Tb-3d3">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="15505" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="49e-Tb-3d3">
     <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14819.2"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15509"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <customFonts key="customFonts">
@@ -25,7 +25,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="airshipMark" translatesAutoresizingMaskIntoConstraints="NO" id="He6-LA-1je">
-                                <rect key="frame" x="45" y="28" width="285" height="430"/>
+                                <rect key="frame" x="45" y="8" width="285" height="450"/>
                             </imageView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="iZm-tj-QRc">
                                 <rect key="frame" x="0.0" y="466" width="375" height="72"/>
@@ -102,7 +102,7 @@
                 <navigationController storyboardIdentifier="message_center" id="uCE-kh-Bmv" customClass="MessageCenterViewController" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" title="Message Center" image="Inbox" id="puz-9M-buY"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" translucent="NO" id="QwL-7h-v1G">
-                        <rect key="frame" x="0.0" y="20" width="375" height="44"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <color key="tintColor" red="0.039215686270000001" green="0.3411764706" blue="0.49019607840000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <color key="barTintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -123,7 +123,7 @@
                     <tabBarItem key="tabBarItem" title="Debug" image="outline_bug_report_black_36pt" id="1RL-FV-UGR"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" translucent="NO" id="pcT-LK-8R6">
-                        <rect key="frame" x="0.0" y="20" width="375" height="44"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <color key="barTintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     </navigationBar>
@@ -139,7 +139,7 @@
         <!--DebugKit-->
         <scene sceneID="yIy-1a-XdW">
             <objects>
-                <viewControllerPlaceholder storyboardName="DebugKit" bundleIdentifier="com.urbanairship.AirshipDebugKit" id="dcz-Cg-Yqa" sceneMemberID="viewController">
+                <viewControllerPlaceholder storyboardName="DebugKit" bundleIdentifier="org.cocoapods.Airship" id="dcz-Cg-Yqa" sceneMemberID="viewController">
                     <navigationItem key="navigationItem" id="VWV-wS-hUH"/>
                 </viewControllerPlaceholder>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="1Us-oe-Yxx" userLabel="First Responder" sceneMemberID="firstResponder"/>

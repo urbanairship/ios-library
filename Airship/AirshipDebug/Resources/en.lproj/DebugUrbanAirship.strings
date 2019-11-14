@@ -1,0 +1,271 @@
+/* Copyright Airship and Contributors */
+
+/**
+ * Swift Strings
+ */
+
+"ua_debug_kit_title" = "Airship Debug Kit";
+
+"ua_device_info_title" = "Device Info";
+"ua_device_info_subtitle" = "View info related to this device and its push channel.";
+
+"ua_events_title" = "Events";
+"ua_events_subtitle" = "View recent analytics events. Add custom events.";
+
+"ua_automation_title" = "In-App Automation";
+"ua_automation_subtitle" = "View info related to In-App Automation.";
+
+"ua_device_info_push_settings" = "Push Settings";
+"ua_device_info_enable_push" = "Enable Push";
+"ua_device_info_in_app_automation_settings" = "In-App Automation Settings";
+"ua_device_info_in_app_automation_display_interval" = "Display interval";
+
+"ua_device_info_channel_id" = "Channel ID";
+"ua_device_info_username" = "Inbox Username";
+"ua_device_info_named_user" = "Named User";
+"ua_device_info_associated_identifiers" = "Associated Identifiers";
+"ua_device_info_channel_attributes" = "Channel Attributes";
+"ua_device_info_tags" = "Tags";
+"ua_device_info_sdk_version" = "SDK Version";
+"ua_device_info_locale" = "Locale";
+"ua_device_info_app_version" = "Application Version";
+"ua_device_info_timezone" = "Time zone";
+
+"ua_device_info_last_push_payload" = "Last Push Payload";
+"ua_device_info_analytics_enabled" = "Analytics Enabled";
+"ua_device_info_enable_analytics_tracking" = "Enable analytics tracking";
+"ua_device_info_enable_location_enabled" = "Location Enabled";
+"ua_location_enabled_detail" = "Enable GPS and WIFI Based Location";
+
+"ua_device_info_device_settings" = "Device Settings";
+"ua_device_info_SDK_info" = "SDK Info";
+"ua_device_info_location_settings" = "Location Settings";
+"ua_device_info_analytics_settings" = "Analytics Settings";
+"ua_device_info_app_info" = "Application Info";
+
+"ua_push_payload_empty" = "Payload is empty. Send a push notification!";
+
+"ua_attributes_key" = "Key";
+"ua_attributes_value" = "Value";
+"ua_attributes_action_set" = "Set";
+"ua_attributes_action_removed" = "Removed";
+
+"ua_attributes_invalid_title" = "Invalid Attribute";
+"ua_attributes_invalid_message" = "Please add valid fields for your selected action";
+
+/* Notification Types */
+"ua_notification_type_alerts" = "Alerts";
+"ua_notification_type_badges" = "Badges";
+"ua_notification_type_sounds" = "Sounds";
+"ua_notification_type_car_play" = "CarPlay";
+"ua_notification_type_lock_screen" = "Lock Screen";
+"ua_notification_type_notification_center" = "Notification Center";
+"ua_notification_type_critical_alert" = "Critical Alert";
+"ua_notification_type_announcement" = "AirPod Announcement";
+"ua_push_settings_link_disabled_title" = "⚠ Push is Disabled with iOS";
+
+"ua_message_displaytype_banner" = "Banner";
+"ua_message_displaytype_fullscreen" = "Full Screen";
+"ua_message_displaytype_modal" = "Modal";
+"ua_message_displaytype_html" = "HTML";
+"ua_message_displaytype_custom" = "Custom";
+
+"ua_schedule_title" = "SCHEDULE";
+"ua_message_title" = "MESSAGE";
+"ua_displaycontent_title_banner" = "BANNER DISPLAY CONTENT";
+"ua_displaycontent_title_fullScreen" = "FULL SCREEN DISPLAY CONTENT";
+"ua_displaycontent_title_modal" = "MODAL DISPLAY CONTENT";
+"ua_displaycontent_title_HTML" = "HTML DISPLAY CONTENT";
+"ua_displaycontent_title_custom" = "CUSTOM DISPLAY CONTENT";
+"ua_displaycontent_title_unknown" = "UNKNOWN DISPLAY CONTENT";
+
+"ua_yesno_no" = "No";
+"ua_yesno_yes" = "Yes";
+"ua_true_false_false" = "false";
+"ua_true_false_true" = "true";
+
+"ua_color_default" = "DEFAULT";
+
+"ua_cancelSchedule_alert_message" = "Are you sure you want to cancel the schedule?";
+"ua_cancelSchedule_alert_button" = "Cancel Schedule";
+"ua_cancelSchedule_alert_cancel_button" = "Don't Cancel";
+
+"ua_displaycontent_placement_top" = "Top";
+"ua_displaycontent_placement_bottom" = "Bottom";
+
+"ua_displaycontent_contentLayout_mediaLeft" = "Media Left";
+"ua_displaycontent_contentLayout_mediaRight" = "Media Right";
+"ua_displaycontent_contentLayout_headerMediaBody" = "Header Media Body";
+"ua_displaycontent_contentLayout_mediaHeaderBody" = "Media Header Body";
+"ua_displaycontent_contentLayout_headerBodyMedia" = "Header Body Media";
+"ua_displaycontent_contentLayout_unknown" = "Unknown";
+
+"ua_displaycontent_duration_format" = "%f seconds";
+
+"ua_timeinterval_description_years" = "%f years";
+"ua_timeinterval_description_months" = "%f months";
+"ua_timeinterval_description_weeks" = "%f weeks";
+"ua_timeinterval_description_days" = "%f days";
+"ua_timeinterval_description_hours" = "%f hours";
+"ua_timeinterval_description_minutes" = "%f minutes";
+"ua_timeinterval_description_seconds" = "%f seconds";
+
+"ua_displaycontent_buttonLayout_stacked" = "Stacked";
+"ua_displaycontent_buttonLayout_separate" = "Separate";
+"ua_displaycontent_buttonLayout_joined" = "Joined";
+"ua_displaycontent_buttonLayout_unknown" = "Unknown";
+
+"ua_mediainfo_type_image" = "Image";
+"ua_mediainfo_type_video" = "Video";
+"ua_mediainfo_type_youTube" = "YouTube";
+"ua_mediainfo_type_unknown" = "Unknown";
+
+"ua_textinfo_title_heading" = "Heading Text Info";
+"ua_textinfo_title_body" = "Body Text Info";
+"ua_textinfo_title_button" = "Button Label Text Info";
+
+"ua_textinfo_alignment_none" = "None";
+"ua_textinfo_alignment_left" = "Left";
+"ua_textinfo_alignment_center" = "Center";
+"ua_textinfo_alignment_right" = "Right";
+"ua_textinfo_alignment_unknown" = "Unknown";
+
+"ua_textinfo_style_bold" = "Bold";
+"ua_textinfo_style_italic" = "Italic";
+"ua_textinfo_style_underline" = "Underline";
+"ua_textinfo_style_normal" = "Normal";
+
+"ua_audience_missBehavior_cancel" = "Cancel";
+"ua_audience_missBehavior_skip" = "Skip";
+"ua_audience_missBehavior_penalize" = "Penalize";
+"ua_audience_missBehavior_unknown" = "Unknown";
+
+"ua_button_behavior_dismiss" = "Dismiss behavior";
+"ua_button_behavior_cancel" = "Cancel behavior";
+"ua_button_behavior_unknown" = "Unknown behavior";
+
+"ua_trigger_type_activeSession" = "Active Session";
+"ua_trigger_type_appBackground" = "App Background";
+"ua_trigger_type_appForeground" = "App Foreground";
+"ua_trigger_type_appInit" = "App Init";
+"ua_trigger_type_customEventCount" = "Custom Event Count";
+"ua_trigger_type_customEventValue" = "Custom Event Value";
+"ua_trigger_type_regionEnter" = "Region Enter";
+"ua_trigger_type_regionExit" = "Region Exit";
+"ua_trigger_type_screen" = "Screen";
+"ua_trigger_type_version" = "Version";
+"ua_trigger_type_unknown" = "Unknown";
+
+"ua_trigger_type_labelformat" = "%@ Trigger";
+
+"ua_trigger_goal_labelformat" = "Goal = %@";
+
+"ua_type_boolean" = "Boolean";
+"ua_type_number" = "Number";
+"ua_type_string" = "String";
+"ua_type_strings" = "Strings";
+
+"ua_alert_title_notice" = "Notice";
+"ua_alert_ok" = "OK";
+"ua_ok" = "OK";
+
+"ua_required" = "Required";
+"ua_optional" = "Optional";
+
+/**
+ * Storyboard Strings
+ */
+
+"ua_automation_tableview_title" = "In-App Automation";
+"ua_automation_textinfo_detailview_title" = "Text Info Details";
+"ua_automation_mediainfo_detailview_title" = "Media Info Details";
+"ua_automation_triggers_tableview_title" = "Triggers";
+"ua_automation_audience_detailview_title" = "Audience Details";
+"ua_automation_buttons_tableview_title" = "Buttons";
+"ua_automation_button_detailview_title" = "Button Details";
+
+"ua_scheduleinfo_identifier" = "Identifier";
+"ua_scheduleinfo_start" = "Start";
+"ua_scheduleinfo_end" = "End";
+"ua_scheduleinfo_priority" = "Priority";
+"ua_scheduleinfo_limit" = "Limit";
+"ua_scheduleinfo_triggers" = "Triggers";
+"ua_scheduleinfo_delay" = "Delay";
+"ua_scheduleinfo_editgraceperiod" = "Edit Grace Period";
+"ua_scheduleinfo_interval" = "Interval";
+"ua_scheduleinfo_isvalid" = "Schedule Is Valid";
+
+"ua_cancel_schedule" = "Cancel Schedule";
+
+"ua_message_identifier" = "Identifier";
+"ua_message_name" = "Name";
+"ua_message_displaytype" = "Display Type";
+"ua_message_audience" = "Audience";
+
+"ua_displaycontent_placement" = "Placement";
+"ua_displaycontent_contentlayout" = "Content Layout";
+"ua_displaycontent_heading" = "Heading";
+"ua_displaycontent_body" = "Body";
+"ua_displaycontent_media" = "Media";
+"ua_displaycontent_buttons" = "Buttons";
+"ua_displaycontent_actions" = "Actions";
+"ua_displaycontent_duration" = "Duration";
+"ua_displaycontent_borderradius" = "Border Radius";
+"ua_displaycontent_backgroundcolor" = "Background Color";
+"ua_displaycontent_dismissbuttoncolor" = "Dismiss Button Color";
+"ua_displaycontent_allowfullscreendisplay" = "Allow Full Screen Display";
+"ua_displaycontent_footer" = "Footer";
+"ua_displaycontent_url" = "URL";
+"ua_displaycontent_unknown" = "Unknown";
+
+"ua_textinfo_text" = "Text";
+"ua_textinfo_alignment" = "Alignment";
+"ua_textinfo_style" = "Style";
+"ua_textinfo_fontFamilies" = "Font Families ";
+"ua_textinfo_size" = "Size";
+"ua_textinfo_color" = "Color";
+
+"ua_mediainfo_contentDescription" = "Content Description";
+"ua_mediainfo_url" = "URL";
+"ua_mediainfo_type" = "Type";
+
+"ua_audience_notificationsOptIn" = "Notifications Opt-In";
+"ua_audience_locationOptIn" = "Location Opt-In";
+"ua_audience_languageIDs" = "Language IDs ";
+"ua_audience_tagSelector" = "Tag Selector";
+"ua_audience_versionPredicate" = "Version Predicate";
+"ua_audience_missBehavior" = "Miss Behavior";
+"ua_audience_inAudience" = "Is User a Member of the Audience?";
+"ua_audience_checkAudience" = "Check Audience";
+
+"ua_button_buttonID" = "Identifier";
+"ua_button_buttonLabel" = "Label";
+"ua_button_behavior" = "Behavior";
+"ua_button_borderRadius" = "Border Radius";
+"ua_button_backgroundColor" = "Background Color";
+"ua_button_borderColor" = "Border Color";
+
+"ua_custom_event_create_custom_event" = "Create Custom Event";
+"ua_custom_event_event_name_title" = "Event Name";
+"ua_custom_event_add_custom_property_title" = "Add Custom Property";
+"ua_custom_event_event_value_title" = "Event Value";
+"ua_custom_event_interaction_id_title" = "Interaction ID";
+"ua_custom_event_interaction_type_title" = "Interaction Type";
+"ua_custom_event_transaction_id_title" = "Transaction ID";
+
+"ua_custom_property_identifier" = "Identifier";
+"ua_custom_property_title" = "Custom Property";
+"ua_custom_property_type" = "Type";
+"ua_custom_property_value_title" = "Value";
+
+"ua_custom_property_error" = "Custom property must have a value";
+
+"ua_custom_event_add_error" = "Custom Event must have a name and value set before it can be added";
+"ua_custom_event_set_custom_property_error" = "Custom event must have a name and a value before setting custom properties";
+"ua_custom_event_added" = "Custom Event added!";
+
+"ua_custom_strings_property" = "Add Custom Strings Property";
+
+"ua_copied_to_clipboard" = "Copied to clipboard!";
+
+"ua_none" = "None";

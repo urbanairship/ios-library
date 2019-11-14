@@ -2,28 +2,16 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:AirshipKit/AirshipKit.xcodeproj">
+      location = "group:Airship/Airship.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:AirshipLocationKit/AirshipLocationKit.xcodeproj">
-   </FileRef>
-   <FileRef
-      location = "group:AirshipAppExtensions/AirshipAppExtensions.xcodeproj">
-   </FileRef>
-   <FileRef
-      location = "group:AirshipDebugKit/AirshipDebugKit.xcodeproj">
+      location = "group:AirshipExtensions/AirshipExtensions.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:Sample/Sample.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:SwiftSample/SwiftSample.xcodeproj">
-   </FileRef>
-   <FileRef
-      location = "group:tvOSSample/tvOSSample.xcodeproj">
-   </FileRef>
-   <FileRef
-      location = "group:TestShip/TestShip.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:Pods/Pods.xcodeproj">

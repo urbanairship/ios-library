@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import UIKit
-import AirshipKit
+import Airship
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {

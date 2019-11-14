@@ -17,31 +17,33 @@ Pod::Spec.new do |s|
    s.default_subspecs        = ["Core"]
 
    s.subspec "Core" do |core|
-      core.ios.resource_bundle        = { "AirshipResources" =>  ["AirshipKit/AirshipResources/common/*", "AirshipKit/AirshipResources/ios/*"] }
-      core.tvos.resource_bundle       = { "AirshipResources tvOS" =>  ["AirshipKit/AirshipResources/common/*", "AirshipKit/AirshipResources/tvos/*"] }
-      core.ios.exclude_files          = "AirshipKit/AirshipResources/ios/Info.plist"
-      core.tvos.exclude_files         = "AirshipKit/AirshipResources/tvos/Info.plist"
-      core.ios.source_files           = "AirshipKit/AirshipKit/ios/*.{h,m,mm}", "AirshipKit/AirshipKit/common/*.{h,m,mm}"
-      core.tvos.source_files          = "AirshipKit/AirshipKit/tvos/*.{h,m,mm}", "AirshipKit/AirshipKit/common/*.{h,m,mm}"
-      core.ios.private_header_files   = "AirshipKit/AirshipKit/common/*+Internal*.h","AirshipKit/AirshipKit/ios/*+Internal*.h"
-      core.tvos.private_header_files  = "AirshipKit/AirshipKit/common/*+Internal*.h","AirshipKit/AirshipKit/tvos/*+Internal*.h"
+      core.ios.resources              = "Airship/AirshipCore/Resources/common/**/*", "Airship/AirshipCore/Resources/ios/**/*"
+      core.tvos.resources             = "Airship/AirshipCore/Resources/common/**/*", "Airship/AirshipCore/Resources/tvos/**/*"
+      core.ios.exclude_files          = "Airship/AirshipCore/Resources/ios/Info.plist"
+      core.tvos.exclude_files         = "Airship/AirshipCore/Resources/tvos/Info.plist"
+      core.ios.source_files           = "Airship/AirshipCore/Source/ios/**/*.{h,m,mm}", "Airship/AirshipCore/Source/common/**/*.{h,m,mm}"
+      core.tvos.source_files          = "Airship/AirshipCore/Source/tvos/**/*.{h,m,mm}", "Airship/AirshipCore/Source/common/**/*.{h,m,mm}"
+      core.ios.private_header_files   = "Airship/AirshipCore/Source/common/**/*+Internal*.h", "Airship/AirshipCore/Source/ios/**/*+Internal*.h"
+      core.tvos.private_header_files  = "Airship/AirshipCore/Source/common/**/*+Internal*.h", "Airship/AirshipCore/Source/tvos/**/*+Internal*.h"
       core.libraries                  = "z", "sqlite3"
       core.frameworks                 = "UserNotifications", "CFNetwork", "CoreGraphics", "Foundation", "MobileCoreServices", "Security", "SystemConfiguration", "UIKit", "CoreData", "StoreKit"
       core.ios.frameworks             = "WebKit", "CoreTelephony"
    end
 
    s.subspec "Location" do |location|
-      location.source_files           = "AirshipLocationKit/AirshipLocationKit/*.{h,m}"
-      location.private_header_files   = "AirshipLocationKit/AirshipLocationKit/*+Internal*.h"
-      location.frameworks             = "Foundation", "CoreLocation"
-      location.dependency               "Airship/Core"
+      location.ios.source_files           = "Airship/AirshipLocation/Source/*.{h,m}"
+      location.ios.private_header_files   = "Airship/AirshipLocation/Source/*+Internal*.h"
+      location.tvos.source_files           = "Airship/AirshipLocation/Source/*.{h,m}"
+      location.tvos.private_header_files   = "Airship/AirshipLocation/Source/*+Internal*.h"
+      location.frameworks                  = "Foundation", "CoreLocation"
+      location.dependency                  "Airship/Core"
    end
 
-   # s.subspec "Debug" do |debug|
-   #    debug.platform                  = "ios"
-   #    debug.source_files              = [ "AirshipDebugKit/AirshipDebugKit/**/*.{h,m,swift}" ]
-   #    debug.resources                 = ["AirshipDebugKit/AirshipDebugKit/**/*storyboard", "AirshipDebugKit/AirshipDebugKit/Resources/**" ]
-   #    debug.frameworks                = "UIKit"
-   #    debug.dependency                  "Airship/Core"
-   # end
+   s.subspec "Debug" do |debug|
+      debug.platform                  = "ios"
+      debug.source_files              = "Airship/AirshipDebug/Source/**/*.{h,m,swift}"
+      debug.resources                 = "Airship/AirshipDebug/Resources/**/*"
+      debug.frameworks                = "UIKit"
+      debug.dependency                  "Airship/Core"
+   end
 end

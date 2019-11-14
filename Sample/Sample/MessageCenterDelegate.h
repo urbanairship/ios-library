@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 @import Foundation;
-@import AirshipKit;
+@import Airship;
 
 @interface MessageCenterDelegate : NSObject <UAMessageCenterDisplayDelegate>
 
