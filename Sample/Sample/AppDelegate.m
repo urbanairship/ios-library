@@ -1,7 +1,6 @@
 /* Copyright Airship and Contributors */
 
-@import AirshipKit;
-@import AirshipDebugKit;
+@import Airship;
 
 #import "AppDelegate.h"
 #import "MessageCenterDelegate.h"

@@ -2,7 +2,7 @@
 
 import Foundation
 import UIKit
-import AirshipKit
+import Airship
 
 class MessageCenterViewController : UAMessageCenterSplitViewController {
 

@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
-@import AirshipKit;
+@import Airship;
+
 #import "HomeViewController.h"
 
 @interface HomeViewController ()
