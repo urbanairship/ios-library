@@ -10,7 +10,6 @@
 #import "UAViewUtils.h"
 #import "UAMessageCenterLocalization.h"
 #import "UABeveledLoadingIndicator.h"
-#import "UAInAppMessageUtils+Internal.h"
 #import "UADispatcher.h"
 #import "UAUser+Internal.h"
 #import "UANativeBridge.h"
