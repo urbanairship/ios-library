@@ -2,13 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>titleFont</key>
-	<dict>
-		<key>fontName</key>
-		<string>GT-America-Standard-Regular</string>
-		<key>fontSize</key>
-		<string>17</string>
-	</dict>
 	<key>titleColor</key>
 	<string>#FFFFFF</string>
 	<key>tintColor</key>
@@ -17,20 +10,6 @@
 	<string>#000000</string>
 	<key>iconsEnabled</key>
 	<false/>
-	<key>cellTitleFont</key>
-	<dict>
-		<key>fontName</key>
-		<string>GT-America-Standard-Regular</string>
-		<key>fontSize</key>
-		<string>13</string>
-	</dict>
-	<key>cellDateFont</key>
-	<dict>
-		<key>fontName</key>
-		<string>GT-America-Standard-Regular</string>
-		<key>fontSize</key>
-		<string>17</string>
-	</dict>
 	<key>navigationBarOpaque</key>
 	<true/>
 	<key>navigationBarStyle</key>
