@@ -9,6 +9,10 @@ Minor release adding support for channel attributes, which allow
 key value pairs to be associated with the application's Airship channel
 for segmentation purposes.
 
+Custom channel attributes are currently a beta feature. If you wish to 
+participate in the beta program, please contact our Product team at 
+product-managers@airship.com.
+
 Changes
 -------
 - Added a new `UAAttributeMutations` class
