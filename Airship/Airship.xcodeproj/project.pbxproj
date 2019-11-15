@@ -1566,7 +1566,7 @@
 		6EC74C26234BD10D003AF4C6 /* UAInAppMessagingTagGroupsConfig.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessagingTagGroupsConfig.m; sourceTree = "<group>"; };
 		6EC74C2B234BF223003AF4C6 /* UARemoteConfigDisableInfoTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UARemoteConfigDisableInfoTest.m; sourceTree = "<group>"; };
 		6ECEBF5421C452A300FAAB08 /* UAScheduleDataMigrator+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAScheduleDataMigrator+Internal.h"; sourceTree = "<group>"; };
-		6ECEBF5521C452A300FAAB08 /* UAScheduleDataMigrator.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = UAScheduleDataMigrator.m; path = ../../AirshipCore/Source/common/UAScheduleDataMigrator.m; sourceTree = "<group>"; };
+		6ECEBF5521C452A300FAAB08 /* UAScheduleDataMigrator.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAScheduleDataMigrator.m; sourceTree = "<group>"; };
 		6ECF2BF11F1E92A10061247E /* UAInbox.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = UAInbox.xcdatamodel; sourceTree = "<group>"; };
 		6ED3C03A200801C4002A746B /* UAInAppMessageCustomDisplayContent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UAInAppMessageCustomDisplayContent.h; sourceTree = "<group>"; };
 		6ED3C03B200801C4002A746B /* UAInAppMessageCustomDisplayContent.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageCustomDisplayContent.m; sourceTree = "<group>"; };
