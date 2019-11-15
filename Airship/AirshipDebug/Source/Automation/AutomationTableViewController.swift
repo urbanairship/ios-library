@@ -6,6 +6,10 @@ import UIKit
 import AirshipCore
 #endif
 
+#if canImport(AirshipAutomation)
+import AirshipAutomation
+#endif
+
 /**
  * The AutomationCell represents a single IAA schedule in the table.
  */

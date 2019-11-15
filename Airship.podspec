@@ -37,6 +37,7 @@ Pod::Spec.new do |s|
       location.tvos.private_header_files   = "Airship/AirshipLocation/Source/*+Internal*.h"
       location.frameworks                  = "Foundation", "CoreLocation"
       location.dependency                  "Airship/Core"
+
    end
 
    s.subspec "Automation" do |automation|
@@ -51,6 +52,8 @@ Pod::Spec.new do |s|
       debug.source_files              = "Airship/AirshipDebug/Source/**/*.{h,m,swift}"
       debug.resources                 = "Airship/AirshipDebug/Resources/**/*"
       debug.frameworks                = "UIKit"
-      debug.dependency                  "Airship/Core"
+      debug.dependencies              "Airship/Core"
+      debug.dependency                'Airship/Automation'
+
    end
 end

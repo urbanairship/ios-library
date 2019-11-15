@@ -6,6 +6,10 @@ import UIKit
 import AirshipCore
 #endif
 
+#if canImport(AirshipAutomation)
+import AirshipAutomation
+#endif
+
 /**
  * The TriggerCell represents a single trigger cell
  * in the table.
