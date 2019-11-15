@@ -1,26 +1,45 @@
 PODS:
-  - KIF (3.7.8):
-    - KIF/Core (= 3.7.8)
-  - KIF/Core (3.7.8)
+  - Airship (12.0.2):
+    - Airship/Automation (= 12.0.2)
+    - Airship/Core (= 12.0.2)
+  - Airship/Automation (12.0.2):
+    - Airship/Core
+  - Airship/Core (12.0.2)
+  - Airship/Debug (12.0.2):
+    - Airship/Core
+  - Airship/Location (12.0.2):
+    - Airship/Core
+  - AirshipExtensions (12.0.2):
+    - AirshipExtensions/NotificationService (= 12.0.2)
+  - AirshipExtensions/NotificationService (12.0.2)
   - OCMock (3.4.3)
-  - XcodeEdit (2.7.3)
+  - XcodeEdit (2.7.4)
 
 DEPENDENCIES:
-  - KIF
+  - Airship (from `./`)
+  - Airship/Debug (from `./`)
+  - Airship/Location (from `./`)
+  - AirshipExtensions (from `./`)
   - OCMock (~> 3.4.1)
   - XcodeEdit (~> 2.7)
 
 SPEC REPOS:
-  https://github.com/CocoaPods/Specs.git:
-    - KIF
+  trunk:
     - OCMock
     - XcodeEdit
 
-SPEC CHECKSUMS:
-  KIF: 52e1af1a78cf6fe4ec6777b14776f3dd2eccc32e
-  OCMock: 43565190abc78977ad44a61c0d20d7f0784d35ab
-  XcodeEdit: d78738886380d0b0b591af608979ddfdd4a6f415
+EXTERNAL SOURCES:
+  Airship:
+    :path: "./"
+  AirshipExtensions:
+    :path: "./"
 
-PODFILE CHECKSUM: ed5db62150506cfc6392579676f4e56b741b7d53
+SPEC CHECKSUMS:
+  Airship: 71c9de6b8254e69b3d8773ea94e26422d2843c58
+  AirshipExtensions: 2f8945aec5c2aebe292913eecfb26b492f0f46e5
+  OCMock: 43565190abc78977ad44a61c0d20d7f0784d35ab
+  XcodeEdit: ac6e69ec9275e958d437da1e76fafa6b8c76cf9a
+
+PODFILE CHECKSUM: 6bacd3df657918274ed1f793f77cdc7a9a9f42df
 
 COCOAPODS: 1.8.4

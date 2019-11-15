@@ -22,7 +22,7 @@ MODE="all"
 TESTS=false
 SAMPLES=false
 POD_LINT=false
-FULL_SDK_BUILD=false
+BUILD_SDK=false
 
 # Parse arguments
 OPTS=`getopt hm: $*`
@@ -42,9 +42,9 @@ done
 # Enable steps based on mode
 shopt -s nocasematch
 case $MODE in
-  all       ) FULL_SDK_BUILD=true;SAMPLES=true;TESTS=true;POD_LINT=true;;
-  merge     ) FULL_SDK_BUILD=true;SAMPLES=true;POD_LINT=true;;
-  pr        ) TESTS=true;;
+  all       ) BUILD_SDK=true;SAMPLES=true;TESTS=true;POD_LINT=true;;
+  merge     ) BUILD_SDK=true;SAMPLES=true;POD_LINT=true;;
+  pr        ) BUILD_SDK=true;TESTS=true;;
   tests     ) TESTS=true;;
   pod_lint  ) POD_LINT=true;;
   samples   ) SAMPLES=true;;
@@ -54,6 +54,8 @@ shopt -u nocasematch
 
 echo -ne "Running CI tasks in mode:${MODE} \n\n";
 
+pod update --project-directory=$ROOT_PATH
+pod install --project-directory=$ROOT_PATH
 
 ##################################################################################################
 # Tests
@@ -61,45 +63,31 @@ echo -ne "Running CI tasks in mode:${MODE} \n\n";
 
 if [ $TESTS = true ]
 then
-  set +e
-  pod install --project-directory=$ROOT_PATH
-  if [ $? != 0 ]; then
-    # Cocoapods failed. Try updating the repo and then installing again
-    set -e
-    pod repo update
-    pod install --project-directory=$ROOT_PATH
-  else
-    set -e
-  fi
+
   echo -ne "\n\n *********** RUNNING TESTS *********** \n\n"
 
-  # Run AirshipKitTest Tests
+  # Run AirshipCore Tests
   xcrun xcodebuild \
   -destination "${TEST_DESTINATION}" \
   -workspace "${ROOT_PATH}/Airship.xcworkspace" \
-  -scheme AirshipKitTests \
+  -scheme AirshipCoreTests \
   test
 
-    # Run AirshipLocationKitTest Tests
-  xcrun xcodebuild \
-  -destination "${TEST_DESTINATION}" \
-  -workspace "${ROOT_PATH}/Airship.xcworkspace" \
-  -scheme AirshipLocationKitTests \
-  test
+  #   # Run AirshipLocationKitTest Tests
+  # xcrun xcodebuild \
+  # -destination "${TEST_DESTINATION}" \
+  # -workspace "${ROOT_PATH}/Airship.xcworkspace" \
+  # -scheme AirshipLocationKitTests \
+  # test
 fi
 
 ##################################################################################################
 # Build SDK
 ##################################################################################################
-echo -ne "\n\n *********** BUILDING SDK *********** \n\n"
 
-if [ $FULL_SDK_BUILD = true ]
+if [ $BUILD_SDK = true ]
 then
-  # Build all
-  ./${SCRIPT_DIRECTORY}/build.sh -a
-else
-  # Only the framework
-  ./${SCRIPT_DIRECTORY}/build.sh -f
+  ./${SCRIPT_DIRECTORY}/build.sh
 fi
 
 ##################################################################################################
@@ -116,23 +104,33 @@ then
   cp -np ${ROOT_PATH}/tvOSSample/AirshipConfig.plist.sample ${ROOT_PATH}/tvOSSample/AirshipConfig.plist || true
 
   # Use Debug configurations and a simulator SDK so the build process doesn't attempt to sign the output
+
+  echo -ne "\n\n *********** BUILDING Sample *********** \n\n"
+
+
   xcrun xcodebuild \
   -configuration Debug \
-  -project "${ROOT_PATH}/Sample/Sample.xcodeproj" \
+  -workspace "${ROOT_PATH}/Airship.xcworkspace" \
   -scheme Sample \
   -sdk $TARGET_SDK \
   -destination "${TEST_DESTINATION}"
 
+  echo -ne "\n\n *********** BUILDING SwiftSample *********** \n\n"
+
   xcrun xcodebuild \
   -configuration Debug \
-  -project "${ROOT_PATH}/SwiftSample/SwiftSample.xcodeproj" \
+  -workspace "${ROOT_PATH}/Airship.xcworkspace" \
   -scheme SwiftSample \
   -sdk $TARGET_SDK  \
   -destination "${TEST_DESTINATION}"
 
+  echo -ne "\n\n *********** BUILDING tvOSSample *********** \n\n"
+
+  pod update --project-directory=$ROOT_PATH/tvOSSample
+  pod install --project-directory=$ROOT_PATH/tvOSSample
   xcrun xcodebuild \
   -configuration Debug \
-  -project "${ROOT_PATH}/tvOSSample/tvOSSample.xcodeproj" \
+  -workspace "${ROOT_PATH}/tvOSSample/tvOSSample.xcworkspace" \
   -scheme tvOSSample \
   -sdk $TARGET_SDK_TVOS  \
   -destination "${TEST_DESTINATION_TVOS}"
@@ -148,9 +146,8 @@ then
 
   # Run pod lib lint
   cd $ROOT_PATH
-  pod lib lint UrbanAirship-iOS-SDK.podspec
-  pod lib lint UrbanAirship-iOS-AppExtensions.podspec
-  ./${SCRIPT_DIRECTORY}/pod_lib_lint_external_modules.sh
+  pod lib lint Airship.podspec
+  pod lib lint AirshipExtensions.podspec
   cd -
 fi
 

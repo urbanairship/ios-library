@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<array>
+	<dict>
+		<key>names</key>
+		<array>
+			<string>_uamid</string>
+			<string>overlay_inbox_action</string>
+			<string>display_inbox_action</string>
+			<string>^mc</string>
+			<string>^mco</string>
+		</array>
+		<key>action</key>
+		<string>UAMessageCenterAction</string>
+	</dict>
+</array>
+</plist>

@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-import AirshipKit
+import Airship
 import UIKit
 
 class PushSettingsViewController: UITableViewController, UARegistrationDelegate {

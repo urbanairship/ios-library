@@ -7,17 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		3CF0C21A2256A37A00CE5463 /* AirshipLocationKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3CF0C2092256789300CE5463 /* AirshipLocationKit.framework */; };
-		3CF0C21B2256A37A00CE5463 /* AirshipLocationKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3CF0C2092256789300CE5463 /* AirshipLocationKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		493F50EA1C5B261100B050A1 /* MessageCenterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 493F50E91C5B261100B050A1 /* MessageCenterViewController.m */; };
 		493F510B1C5B275100B050A1 /* UAPushUI.strings in Resources */ = {isa = PBXBuildFile; fileRef = 493F51091C5B275100B050A1 /* UAPushUI.strings */; };
-		493F51211C5B3A5100B050A1 /* InboxDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 493F51201C5B3A5100B050A1 /* InboxDelegate.m */; };
+		493F51211C5B3A5100B050A1 /* MessageCenterDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 493F51201C5B3A5100B050A1 /* MessageCenterDelegate.m */; };
 		49D2C73F1D6F952D0049B0A0 /* NotificationService.m in Sources */ = {isa = PBXBuildFile; fileRef = 49D2C73E1D6F952D0049B0A0 /* NotificationService.m */; };
 		49D2C7431D6F952D0049B0A0 /* SampleServiceExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 49D2C73B1D6F952D0049B0A0 /* SampleServiceExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		61A672FC1CAB3E5A00BAF58A /* PushHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 61A672FB1CAB3E5A00BAF58A /* PushHandler.m */; };
-		61E30D821DDE324C00B7EE28 /* AirshipAppExtensions.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 49251DD51D6F95FC00EED4BD /* AirshipAppExtensions.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		61E30D931DDE3C4500B7EE28 /* AirshipAppExtensions.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49251DD51D6F95FC00EED4BD /* AirshipAppExtensions.framework */; };
-		61E392311CC81EA800D994E3 /* UAMessageCenterDefaultStyle.plist in Resources */ = {isa = PBXBuildFile; fileRef = 61E392301CC81EA800D994E3 /* UAMessageCenterDefaultStyle.plist */; };
+		61E392311CC81EA800D994E3 /* MessageCenterStyle.plist in Resources */ = {isa = PBXBuildFile; fileRef = 61E392301CC81EA800D994E3 /* MessageCenterStyle.plist */; };
+		64BD2566E131D1EFD3E86E86 /* Pods_SampleServiceExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 371BDA0B8DECC1A7BF72506D /* Pods_SampleServiceExtension.framework */; };
 		764693A71C237B630090FE40 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 764693A61C237B630090FE40 /* main.m */; };
 		764693AA1C237B630090FE40 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 764693A91C237B630090FE40 /* AppDelegate.m */; };
 		764693AD1C237B630090FE40 /* HomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 764693AC1C237B630090FE40 /* HomeViewController.m */; };
@@ -25,137 +22,16 @@
 		764693C01C237CAB0090FE40 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 764693BF1C237CAB0090FE40 /* Main.storyboard */; };
 		7646940D1C238E7C0090FE40 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 764693FC1C238E7C0090FE40 /* Images.xcassets */; };
 		76AE35651C2B6FD600D7F3B9 /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 76AE35641C2B6FD600D7F3B9 /* AirshipConfig.plist */; };
-		CC899CC41D8B6F3900A0CECC /* AirshipKit.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = CC899CB31D8B6AB400A0CECC /* AirshipKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		DF4E4921221CD86F00F306A5 /* AirshipDebugKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DF74B28921543DC00010CACB /* AirshipDebugKit.framework */; };
-		DF4E4995221F376600F306A5 /* AirshipDebugKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = DF74B28921543DC00010CACB /* AirshipDebugKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		93FC790F96B2EB8880BCC974 /* Pods_Sample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2C6A84CD51DFAE19BC081B43 /* Pods_Sample.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		3CD872D622D3EED000849E16 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3CF0C1FD2256789300CE5463 /* AirshipLocationKit.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 3CD47D2922601606005F1987;
-			remoteInfo = AirshipLocationLib;
-		};
-		3CF0C2082256789300CE5463 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3CF0C1FD2256789300CE5463 /* AirshipLocationKit.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 3C7A565B2252883100E07225;
-			remoteInfo = AirshipLocationKit;
-		};
-		3CF0C20A2256789300CE5463 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3CF0C1FD2256789300CE5463 /* AirshipLocationKit.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 3C7A56642252883100E07225;
-			remoteInfo = AirshipLocationKitTests;
-		};
-		3CF0C21C2256A37A00CE5463 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3CF0C1FD2256789300CE5463 /* AirshipLocationKit.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 3C7A565A2252883100E07225;
-			remoteInfo = AirshipLocationKit;
-		};
-		4560A1B022961C36000FF3B2 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3CF0C1FD2256789300CE5463 /* AirshipLocationKit.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 3CD47D5C22603B82005F1987;
-			remoteInfo = "AirshipLocationKit tvOS";
-		};
-		49251DD41D6F95FC00EED4BD /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 49251DCF1D6F95FC00EED4BD /* AirshipAppExtensions.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 49AA00FC1D65158C0081989A;
-			remoteInfo = AirshipAppExtensions;
-		};
-		49251DD61D6F95FC00EED4BD /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 49251DCF1D6F95FC00EED4BD /* AirshipAppExtensions.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 49AA01051D65158C0081989A;
-			remoteInfo = AirshipAppExtensionsTests;
-		};
 		49D2C7411D6F952D0049B0A0 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 7646939A1C237B630090FE40 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 49D2C73A1D6F952D0049B0A0;
 			remoteInfo = SampleServiceExtension;
-		};
-		61E30D731DDE2F9E00B7EE28 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 49251DCF1D6F95FC00EED4BD /* AirshipAppExtensions.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 49AA00FB1D65158C0081989A;
-			remoteInfo = AirshipAppExtensions;
-		};
-		767A3A261D9EEEA700422A96 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CC899CAD1D8B6AB400A0CECC /* AirshipKit.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 494DD9561B0EB677009C134E;
-			remoteInfo = AirshipKit;
-		};
-		CC53F7781D9B12D5004D366C /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CC899CAD1D8B6AB400A0CECC /* AirshipKit.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = CC899CD01D8B712D00A0CECC;
-			remoteInfo = AirshipLib;
-		};
-		CC53F77A1D9B12D5004D366C /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CC899CAD1D8B6AB400A0CECC /* AirshipKit.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = CC64F0541D8B77E3009CEF27;
-			remoteInfo = AirshipKitTests;
-		};
-		CC899CB21D8B6AB400A0CECC /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CC899CAD1D8B6AB400A0CECC /* AirshipKit.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 494DD9571B0EB677009C134E;
-			remoteInfo = AirshipKit;
-		};
-		CC899CB41D8B6AB400A0CECC /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CC899CAD1D8B6AB400A0CECC /* AirshipKit.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = CC8999771D8B625500A0CECC;
-			remoteInfo = AirshipResources;
-		};
-		DF0C33401F69B817002FEE40 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CC899CAD1D8B6AB400A0CECC /* AirshipKit.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = DF6DD6561E7A1EB8000C281A;
-			remoteInfo = "AirshipKit tvOS";
-		};
-		DF0C33421F69B817002FEE40 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CC899CAD1D8B6AB400A0CECC /* AirshipKit.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = DF7E739E1E7B3F0A0039F65D;
-			remoteInfo = "AirshipResources tvOS";
-		};
-		DF74B28821543DC00010CACB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = DF74B28321543DC00010CACB /* AirshipDebugKit.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = DFE7011F212F1FAA00A708D5;
-			remoteInfo = AirshipDebugKit;
-		};
-		DF74B28F21543DF20010CACB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = DF74B28321543DC00010CACB /* AirshipDebugKit.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = DFE7011E212F1FAA00A708D5;
-			remoteInfo = AirshipDebugKit;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -186,8 +62,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				DF4E4995221F376600F306A5 /* AirshipDebugKit.framework in Embed Frameworks */,
-				3CF0C21B2256A37A00CE5463 /* AirshipLocationKit.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -198,30 +72,31 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				61E30D821DDE324C00B7EE28 /* AirshipAppExtensions.framework in CopyFiles */,
-				CC899CC41D8B6F3900A0CECC /* AirshipKit.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		3CF0C1FD2256789300CE5463 /* AirshipLocationKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = AirshipLocationKit.xcodeproj; path = ../AirshipLocationKit/AirshipLocationKit.xcodeproj; sourceTree = "<group>"; };
+		0051AB2EC7A1C9109788E1E2 /* Pods-Sample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Sample.release.xcconfig"; path = "../../Pods/Target Support Files/Pods-Sample/Pods-Sample.release.xcconfig"; sourceTree = "<group>"; };
+		2C6A84CD51DFAE19BC081B43 /* Pods_Sample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Sample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		371BDA0B8DECC1A7BF72506D /* Pods_SampleServiceExtension.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SampleServiceExtension.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4578585222FDBB030020D161 /* SampleServiceExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SampleServiceExtension.entitlements; sourceTree = "<group>"; };
-		49251DCF1D6F95FC00EED4BD /* AirshipAppExtensions.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = AirshipAppExtensions.xcodeproj; path = ../AirshipAppExtensions/AirshipAppExtensions.xcodeproj; sourceTree = "<group>"; };
+		4610FB89B364D511377DA8D7 /* Pods-SampleServiceExtension.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SampleServiceExtension.release.xcconfig"; path = "../../Pods/Target Support Files/Pods-SampleServiceExtension/Pods-SampleServiceExtension.release.xcconfig"; sourceTree = "<group>"; };
 		4929EA2E1D5156F000D7B322 /* Sample.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Sample.entitlements; sourceTree = "<group>"; };
 		493F50E81C5B261100B050A1 /* MessageCenterViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageCenterViewController.h; sourceTree = "<group>"; };
 		493F50E91C5B261100B050A1 /* MessageCenterViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MessageCenterViewController.m; sourceTree = "<group>"; };
 		493F510A1C5B275100B050A1 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/UAPushUI.strings; sourceTree = "<group>"; };
-		493F511F1C5B3A5100B050A1 /* InboxDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InboxDelegate.h; sourceTree = "<group>"; };
-		493F51201C5B3A5100B050A1 /* InboxDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InboxDelegate.m; sourceTree = "<group>"; };
+		493F511F1C5B3A5100B050A1 /* MessageCenterDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageCenterDelegate.h; sourceTree = "<group>"; };
+		493F51201C5B3A5100B050A1 /* MessageCenterDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MessageCenterDelegate.m; sourceTree = "<group>"; };
 		49D2C73B1D6F952D0049B0A0 /* SampleServiceExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = SampleServiceExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		49D2C73D1D6F952D0049B0A0 /* NotificationService.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NotificationService.h; sourceTree = "<group>"; };
 		49D2C73E1D6F952D0049B0A0 /* NotificationService.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NotificationService.m; sourceTree = "<group>"; };
 		49D2C7401D6F952D0049B0A0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		61A672FA1CAB3E5A00BAF58A /* PushHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PushHandler.h; sourceTree = "<group>"; };
 		61A672FB1CAB3E5A00BAF58A /* PushHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PushHandler.m; sourceTree = "<group>"; };
-		61E392301CC81EA800D994E3 /* UAMessageCenterDefaultStyle.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = UAMessageCenterDefaultStyle.plist; sourceTree = "<group>"; };
+		61E392301CC81EA800D994E3 /* MessageCenterStyle.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = MessageCenterStyle.plist; sourceTree = "<group>"; };
+		67ECB288783909C9231BAE8F /* Pods-SampleServiceExtension.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SampleServiceExtension.debug.xcconfig"; path = "../../Pods/Target Support Files/Pods-SampleServiceExtension/Pods-SampleServiceExtension.debug.xcconfig"; sourceTree = "<group>"; };
 		764693A21C237B630090FE40 /* Sample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Sample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		764693A61C237B630090FE40 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		764693A81C237B630090FE40 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -233,8 +108,7 @@
 		764693BF1C237CAB0090FE40 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		764693FC1C238E7C0090FE40 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		76AE35641C2B6FD600D7F3B9 /* AirshipConfig.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = AirshipConfig.plist; sourceTree = "<group>"; };
-		CC899CAD1D8B6AB400A0CECC /* AirshipKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = AirshipKit.xcodeproj; path = ../AirshipKit/AirshipKit.xcodeproj; sourceTree = "<group>"; };
-		DF74B28321543DC00010CACB /* AirshipDebugKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = AirshipDebugKit.xcodeproj; path = ../AirshipDebugKit/AirshipDebugKit.xcodeproj; sourceTree = "<group>"; };
+		EED73940655863C5D58EBDC6 /* Pods-Sample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Sample.debug.xcconfig"; path = "../../Pods/Target Support Files/Pods-Sample/Pods-Sample.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -242,7 +116,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				61E30D931DDE3C4500B7EE28 /* AirshipAppExtensions.framework in Frameworks */,
+				64BD2566E131D1EFD3E86E86 /* Pods_SampleServiceExtension.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -250,34 +124,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DF4E4921221CD86F00F306A5 /* AirshipDebugKit.framework in Frameworks */,
-				3CF0C21A2256A37A00CE5463 /* AirshipLocationKit.framework in Frameworks */,
+				93FC790F96B2EB8880BCC974 /* Pods_Sample.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		3CF0C1FE2256789300CE5463 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				3CF0C2092256789300CE5463 /* AirshipLocationKit.framework */,
-				3CF0C20B2256789300CE5463 /* AirshipLocationKitTests.xctest */,
-				3CD872D722D3EED000849E16 /* libUALocation.a */,
-				4560A1B122961C36000FF3B2 /* AirshipLocationKit.framework */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		49251DD01D6F95FC00EED4BD /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				49251DD51D6F95FC00EED4BD /* AirshipAppExtensions.framework */,
-				49251DD71D6F95FC00EED4BD /* AirshipAppExtensionsTests.xctest */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		493F51081C5B275100B050A1 /* Localization */ = {
 			isa = PBXGroup;
 			children = (
@@ -297,18 +150,27 @@
 			path = SampleServiceExtension;
 			sourceTree = "<group>";
 		};
+		50E49B229E80ED2B02DB66EE /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				EED73940655863C5D58EBDC6 /* Pods-Sample.debug.xcconfig */,
+				0051AB2EC7A1C9109788E1E2 /* Pods-Sample.release.xcconfig */,
+				67ECB288783909C9231BAE8F /* Pods-SampleServiceExtension.debug.xcconfig */,
+				4610FB89B364D511377DA8D7 /* Pods-SampleServiceExtension.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
 		764693991C237B630090FE40 = {
 			isa = PBXGroup;
 			children = (
-				3CF0C1FD2256789300CE5463 /* AirshipLocationKit.xcodeproj */,
-				CC899CAD1D8B6AB400A0CECC /* AirshipKit.xcodeproj */,
-				49251DCF1D6F95FC00EED4BD /* AirshipAppExtensions.xcodeproj */,
-				DF74B28321543DC00010CACB /* AirshipDebugKit.xcodeproj */,
 				764693A41C237B630090FE40 /* Sample */,
 				49D2C73C1D6F952D0049B0A0 /* SampleServiceExtension */,
 				76AE35641C2B6FD600D7F3B9 /* AirshipConfig.plist */,
-				61E392301CC81EA800D994E3 /* UAMessageCenterDefaultStyle.plist */,
+				61E392301CC81EA800D994E3 /* MessageCenterStyle.plist */,
 				764693A31C237B630090FE40 /* Products */,
+				50E49B229E80ED2B02DB66EE /* Pods */,
+				A1B3DF99B91AC968C1AC9860 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -333,8 +195,8 @@
 				764693AC1C237B630090FE40 /* HomeViewController.m */,
 				493F50E81C5B261100B050A1 /* MessageCenterViewController.h */,
 				493F50E91C5B261100B050A1 /* MessageCenterViewController.m */,
-				493F511F1C5B3A5100B050A1 /* InboxDelegate.h */,
-				493F51201C5B3A5100B050A1 /* InboxDelegate.m */,
+				493F511F1C5B3A5100B050A1 /* MessageCenterDelegate.h */,
+				493F51201C5B3A5100B050A1 /* MessageCenterDelegate.m */,
 				764693BF1C237CAB0090FE40 /* Main.storyboard */,
 				764693B61C237B630090FE40 /* LaunchScreen.storyboard */,
 				764693B91C237B630090FE40 /* Info.plist */,
@@ -361,25 +223,13 @@
 			path = Resources;
 			sourceTree = "<group>";
 		};
-		CC899CAE1D8B6AB400A0CECC /* Products */ = {
+		A1B3DF99B91AC968C1AC9860 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				CC899CB31D8B6AB400A0CECC /* AirshipKit.framework */,
-				CC899CB51D8B6AB400A0CECC /* AirshipResources.bundle */,
-				DF0C33411F69B817002FEE40 /* AirshipKit.framework */,
-				DF0C33431F69B817002FEE40 /* AirshipResources tvOS.bundle */,
-				CC53F7791D9B12D5004D366C /* libUAirship.a */,
-				CC53F77B1D9B12D5004D366C /* AirshipKitTests.xctest */,
+				2C6A84CD51DFAE19BC081B43 /* Pods_Sample.framework */,
+				371BDA0B8DECC1A7BF72506D /* Pods_SampleServiceExtension.framework */,
 			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		DF74B28421543DC00010CACB /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				DF74B28921543DC00010CACB /* AirshipDebugKit.framework */,
-			);
-			name = Products;
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -389,6 +239,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 49D2C7461D6F952D0049B0A0 /* Build configuration list for PBXNativeTarget "SampleServiceExtension" */;
 			buildPhases = (
+				F350B5E3E2E59D3A92B73144 /* [CP] Check Pods Manifest.lock */,
 				49D2C7371D6F952D0049B0A0 /* Sources */,
 				49D2C7381D6F952D0049B0A0 /* Frameworks */,
 				49D2C7391D6F952D0049B0A0 /* Resources */,
@@ -407,21 +258,19 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 764693BC1C237B630090FE40 /* Build configuration list for PBXNativeTarget "Sample" */;
 			buildPhases = (
+				C09E1D7E396DDEB22CEF5A20 /* [CP] Check Pods Manifest.lock */,
 				7646939E1C237B630090FE40 /* Sources */,
 				7646939F1C237B630090FE40 /* Frameworks */,
 				764693A01C237B630090FE40 /* Resources */,
 				764694261C23933D0090FE40 /* Embed Frameworks */,
 				76AE34E91C2B6BF700D7F3B9 /* CopyFiles */,
 				49D2C7471D6F952D0049B0A0 /* Embed App Extensions */,
+				416090EEC0226D1FC726CF88 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				767A3A271D9EEEA700422A96 /* PBXTargetDependency */,
-				61E30D741DDE2F9E00B7EE28 /* PBXTargetDependency */,
-				DF74B29021543DF20010CACB /* PBXTargetDependency */,
 				49D2C7421D6F952D0049B0A0 /* PBXTargetDependency */,
-				3CF0C21D2256A37A00CE5463 /* PBXTargetDependency */,
 			);
 			name = Sample;
 			productName = Sample;
@@ -475,24 +324,6 @@
 			mainGroup = 764693991C237B630090FE40;
 			productRefGroup = 764693A31C237B630090FE40 /* Products */;
 			projectDirPath = "";
-			projectReferences = (
-				{
-					ProductGroup = 49251DD01D6F95FC00EED4BD /* Products */;
-					ProjectRef = 49251DCF1D6F95FC00EED4BD /* AirshipAppExtensions.xcodeproj */;
-				},
-				{
-					ProductGroup = DF74B28421543DC00010CACB /* Products */;
-					ProjectRef = DF74B28321543DC00010CACB /* AirshipDebugKit.xcodeproj */;
-				},
-				{
-					ProductGroup = CC899CAE1D8B6AB400A0CECC /* Products */;
-					ProjectRef = CC899CAD1D8B6AB400A0CECC /* AirshipKit.xcodeproj */;
-				},
-				{
-					ProductGroup = 3CF0C1FE2256789300CE5463 /* Products */;
-					ProjectRef = 3CF0C1FD2256789300CE5463 /* AirshipLocationKit.xcodeproj */;
-				},
-			);
 			projectRoot = "";
 			targets = (
 				764693A11C237B630090FE40 /* Sample */,
@@ -500,100 +331,6 @@
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXReferenceProxy section */
-		3CD872D722D3EED000849E16 /* libUALocation.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libUALocation.a;
-			remoteRef = 3CD872D622D3EED000849E16 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		3CF0C2092256789300CE5463 /* AirshipLocationKit.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = AirshipLocationKit.framework;
-			remoteRef = 3CF0C2082256789300CE5463 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		3CF0C20B2256789300CE5463 /* AirshipLocationKitTests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = AirshipLocationKitTests.xctest;
-			remoteRef = 3CF0C20A2256789300CE5463 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		4560A1B122961C36000FF3B2 /* AirshipLocationKit.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = AirshipLocationKit.framework;
-			remoteRef = 4560A1B022961C36000FF3B2 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		49251DD51D6F95FC00EED4BD /* AirshipAppExtensions.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = AirshipAppExtensions.framework;
-			remoteRef = 49251DD41D6F95FC00EED4BD /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		49251DD71D6F95FC00EED4BD /* AirshipAppExtensionsTests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = AirshipAppExtensionsTests.xctest;
-			remoteRef = 49251DD61D6F95FC00EED4BD /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		CC53F7791D9B12D5004D366C /* libUAirship.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libUAirship.a;
-			remoteRef = CC53F7781D9B12D5004D366C /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		CC53F77B1D9B12D5004D366C /* AirshipKitTests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = AirshipKitTests.xctest;
-			remoteRef = CC53F77A1D9B12D5004D366C /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		CC899CB31D8B6AB400A0CECC /* AirshipKit.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = AirshipKit.framework;
-			remoteRef = CC899CB21D8B6AB400A0CECC /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		CC899CB51D8B6AB400A0CECC /* AirshipResources.bundle */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = AirshipResources.bundle;
-			remoteRef = CC899CB41D8B6AB400A0CECC /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		DF0C33411F69B817002FEE40 /* AirshipKit.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = AirshipKit.framework;
-			remoteRef = DF0C33401F69B817002FEE40 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		DF0C33431F69B817002FEE40 /* AirshipResources tvOS.bundle */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = "AirshipResources tvOS.bundle";
-			remoteRef = DF0C33421F69B817002FEE40 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		DF74B28921543DC00010CACB /* AirshipDebugKit.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = AirshipDebugKit.framework;
-			remoteRef = DF74B28821543DC00010CACB /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		49D2C7391D6F952D0049B0A0 /* Resources */ = {
@@ -611,12 +348,79 @@
 				7646940D1C238E7C0090FE40 /* Images.xcassets in Resources */,
 				764693C01C237CAB0090FE40 /* Main.storyboard in Resources */,
 				76AE35651C2B6FD600D7F3B9 /* AirshipConfig.plist in Resources */,
-				61E392311CC81EA800D994E3 /* UAMessageCenterDefaultStyle.plist in Resources */,
+				61E392311CC81EA800D994E3 /* MessageCenterStyle.plist in Resources */,
 				493F510B1C5B275100B050A1 /* UAPushUI.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		416090EEC0226D1FC726CF88 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Sample/Pods-Sample-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/Airship/Airship.framework",
+				"${BUILT_PRODUCTS_DIR}/AirshipExtensions/AirshipExtensions.framework",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Airship.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AirshipExtensions.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Sample/Pods-Sample-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		C09E1D7E396DDEB22CEF5A20 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Sample-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		F350B5E3E2E59D3A92B73144 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-SampleServiceExtension-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		49D2C7371D6F952D0049B0A0 /* Sources */ = {
@@ -634,7 +438,7 @@
 				764693AA1C237B630090FE40 /* AppDelegate.m in Sources */,
 				61A672FC1CAB3E5A00BAF58A /* PushHandler.m in Sources */,
 				764693AD1C237B630090FE40 /* HomeViewController.m in Sources */,
-				493F51211C5B3A5100B050A1 /* InboxDelegate.m in Sources */,
+				493F51211C5B3A5100B050A1 /* MessageCenterDelegate.m in Sources */,
 				764693A71C237B630090FE40 /* main.m in Sources */,
 				493F50EA1C5B261100B050A1 /* MessageCenterViewController.m in Sources */,
 			);
@@ -643,30 +447,10 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		3CF0C21D2256A37A00CE5463 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = AirshipLocationKit;
-			targetProxy = 3CF0C21C2256A37A00CE5463 /* PBXContainerItemProxy */;
-		};
 		49D2C7421D6F952D0049B0A0 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 49D2C73A1D6F952D0049B0A0 /* SampleServiceExtension */;
 			targetProxy = 49D2C7411D6F952D0049B0A0 /* PBXContainerItemProxy */;
-		};
-		61E30D741DDE2F9E00B7EE28 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = AirshipAppExtensions;
-			targetProxy = 61E30D731DDE2F9E00B7EE28 /* PBXContainerItemProxy */;
-		};
-		767A3A271D9EEEA700422A96 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = AirshipKit;
-			targetProxy = 767A3A261D9EEEA700422A96 /* PBXContainerItemProxy */;
-		};
-		DF74B29021543DF20010CACB /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = AirshipDebugKit;
-			targetProxy = DF74B28F21543DF20010CACB /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -692,6 +476,7 @@
 /* Begin XCBuildConfiguration section */
 		49D2C7441D6F952D0049B0A0 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 67ECB288783909C9231BAE8F /* Pods-SampleServiceExtension.debug.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
@@ -712,6 +497,7 @@
 		};
 		49D2C7451D6F952D0049B0A0 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4610FB89B364D511377DA8D7 /* Pods-SampleServiceExtension.release.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
@@ -838,6 +624,7 @@
 		};
 		764693BD1C237B630090FE40 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = EED73940655863C5D58EBDC6 /* Pods-Sample.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -856,6 +643,7 @@
 		};
 		764693BE1C237B630090FE40 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0051AB2EC7A1C9109788E1E2 /* Pods-Sample.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;

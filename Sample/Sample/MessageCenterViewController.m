@@ -6,7 +6,7 @@
 
 -(void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    self.style = [UAirship messageCenter].style;
+    self.style = [UAMessageCenterStyle styleWithContentsOfFile:@"MessageCenterStyle"];
 }
 
 - (void)showInbox {

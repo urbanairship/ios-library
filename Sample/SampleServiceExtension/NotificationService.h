@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-#import <AirshipAppExtensions/AirshipAppExtensions.h>
+@import AirshipExtensions;
 
 @interface NotificationService : UAMediaAttachmentExtension
 

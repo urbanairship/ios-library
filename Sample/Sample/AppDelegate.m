@@ -1,10 +1,9 @@
 /* Copyright Airship and Contributors */
 
-@import AirshipKit;
-@import AirshipDebugKit;
+@import Airship;
 
 #import "AppDelegate.h"
-#import "InboxDelegate.h"
+#import "MessageCenterDelegate.h"
 #import "PushHandler.h"
 #import "HomeViewController.h"
 #import "MessageCenterViewController.h"
@@ -22,7 +21,7 @@ NSUInteger const MessageCenterTab = 1;
 NSUInteger const DebugTab = 2;
 
 @interface AppDelegate () <UARegistrationDelegate, UADeepLinkDelegate>
-@property(nonatomic, strong) InboxDelegate *inboxDelegate;
+@property(nonatomic, strong) MessageCenterDelegate *messageCenterDelegate;
 @property(nonatomic, strong) PushHandler *pushHandler;
 
 @end
@@ -74,8 +73,8 @@ NSUInteger const DebugTab = 2;
                                            UANotificationOptionSound);
 
     // Set a custom delegate for handling message center events
-    self.inboxDelegate = [[InboxDelegate alloc] initWithRootViewController:self.window.rootViewController];
-    [UAirship inbox].delegate = self.inboxDelegate;
+    self.messageCenterDelegate = [[MessageCenterDelegate alloc] initWithRootViewController:self.window.rootViewController];
+    [UAMessageCenter shared].displayDelegate = self.messageCenterDelegate;
 
     self.pushHandler = [[PushHandler alloc] init];
     [UAirship push].pushNotificationDelegate = self.pushHandler;
@@ -114,8 +113,8 @@ NSUInteger const DebugTab = 2;
     dispatch_async(dispatch_get_main_queue(), ^{
         UITabBarItem *messageCenterTab = [[[(UITabBarController *)self.window.rootViewController tabBar] items] objectAtIndex:MessageCenterTab];
 
-        if ([UAirship inbox].messageList.unreadCount > 0) {
-            [messageCenterTab setBadgeValue:[NSString stringWithFormat:@"%ld", (long)[UAirship inbox].messageList.unreadCount]];
+        if ([UAMessageCenter shared].messageList.unreadCount > 0) {
+            [messageCenterTab setBadgeValue:[NSString stringWithFormat:@"%ld", (long)[UAMessageCenter shared].messageList.unreadCount]];
         } else {
             [messageCenterTab setBadgeValue:nil];
         }
@@ -216,7 +215,7 @@ NSUInteger const DebugTab = 2;
         [pathComponents removeObjectAtIndex:0];
         
         if ((pathComponents.count == 0) || (![pathComponents[0] isEqualToString:@"message"])) {
-            [self.inboxDelegate showInbox];
+            [[UAMessageCenter shared] display];
         } else {
             // remove "message" from front of url
             [pathComponents removeObjectAtIndex:0];
@@ -224,7 +223,7 @@ NSUInteger const DebugTab = 2;
             if (pathComponents.count > 0) {
                 messageId = pathComponents[0];
             }
-            [self.inboxDelegate showMessageForID:messageId];
+            [[UAMessageCenter shared] displayMessageForID:messageId];
         }
     } else if ([[pathComponents[0] lowercaseString] isEqualToString:DebugStoryboardID]) {
         // switch to debug tab
