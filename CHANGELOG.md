@@ -3,7 +3,7 @@ iOS Changelog
 
 Migration Guides: Documentation/Migration
 
-Version 12.1.0 - November 14, 2019
+Version 12.1.0 - November 15, 2019
 ==================================
 Minor release adding support for channel attributes, which allow
 key value pairs to be associated with the application's Airship channel
