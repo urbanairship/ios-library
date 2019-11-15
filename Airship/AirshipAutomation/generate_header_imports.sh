@@ -28,7 +28,5 @@ if [ -a "${SOURCE_LIB_HEADER}" ]; then
     fi
 fi
 
-
 echo "Generated file: ${SOURCE_LIB_HEADER}"
-
 cp "${TMP_LIB_HEADER}" "${SOURCE_LIB_HEADER}"

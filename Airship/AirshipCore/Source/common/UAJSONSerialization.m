@@ -3,7 +3,6 @@
 #import "UAJSONSerialization.h"
 #import "NSJSONSerialization+UAAdditions.h"
 #import "UAGlobal.h"
-#import "UAJSONSerialization.h"
 
 @implementation UAJSONSerialization
 
