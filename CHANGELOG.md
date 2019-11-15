@@ -3,6 +3,25 @@ iOS Changelog
 
 Migration Guides: Documentation/Migration
 
+Version 12.1.0 - November 15, 2019
+==================================
+Minor release adding support for channel attributes, which allow
+key value pairs to be associated with the application's Airship channel
+for segmentation purposes.
+
+Custom channel attributes are currently a beta feature. If you wish to 
+participate in the beta program, please contact our Product team at 
+product-managers@airship.com.
+
+As of SDK 13 static libraries will be removed from the binary distribution.
+Apps currently using these should begin migrating to the new xcframeworks
+replacing them.
+
+Changes
+-------
+- Added a new `UAAttributeMutations` class
+- Added a new `applyAttributeMutations` method to `UAChannel` 
+
 Version 12.0.2 - November 5, 2019
 =================================
 Patch release to fix stability issues with in-app automation. Applications using in-app automation should update.
