@@ -5,7 +5,7 @@
 #import "UATagGroupsMutation+Internal.h"
 #import "UATagGroupsAPIClient+Internal.h"
 #import "UATagUtils+Internal.h"
-#import "UAAsyncOperation+Internal.h"
+#import "UAAsyncOperation.h"
 #import "UATagGroupsMutationHistory+Internal.h"
 
 // Typedef for generating tag group mutation factory blocks

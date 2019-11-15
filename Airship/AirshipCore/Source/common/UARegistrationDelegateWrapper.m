@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 #import "UARegistrationDelegateWrapper+Internal.h"
-#import "UADispatcher+Internal.h"
+#import "UADispatcher.h"
 
 @implementation UARegistrationDelegateWrapper
 

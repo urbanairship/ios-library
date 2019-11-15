@@ -2,7 +2,7 @@
 
 #import "NSJSONSerialization+UAAdditions.h"
 #import "UAJSONValueTransformer+Internal.h"
-#import "UAJSONSerialization+Internal.h"
+#import "UAJSONSerialization.h"
 
 @implementation UAJSONValueTransformer
 

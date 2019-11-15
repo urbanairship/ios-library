@@ -3,7 +3,7 @@
 #import <Foundation/Foundation.h>
 #import "UAJSONPredicate.h"
 #import "UARemoteConfigDisableInfo+Internal.h"
-#import "UAVersionMatcher+Internal.h"
+#import "UAVersionMatcher.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

@@ -4,7 +4,7 @@
 #import "UADisposable.h"
 #import "UARemoteDataPayload+Internal.h"
 #import "UARuntimeConfig.h"
-#import "UADispatcher+Internal.h"
+#import "UADispatcher.h"
 #import "UAPreferenceDataStore+Internal.h"
 #import "UARemoteDataStore+Internal.h"
 #import "UARemoteDataAPIClient+Internal.h"

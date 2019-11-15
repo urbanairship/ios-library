@@ -5,6 +5,11 @@ import UIKit
 #if canImport(AirshipCore)
 import AirshipCore
 #endif
+
+#if canImport(AirshipAutomation)
+import AirshipAutomation
+#endif
+
 /**
  * The TextInfoDetailViewController displays the details of an IAA
  * text info block. It is used to display the details of headings,

@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-#import "UAWebView+Internal.h"
+#import "UAWebView.h"
 #import "UAirship.h"
 #import "UARuntimeConfig.h"
 #import "UAUtils.h"

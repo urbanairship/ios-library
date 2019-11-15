@@ -34,6 +34,13 @@ typedef NS_ENUM(NSUInteger, UASDKExtension) {
      */
     UASDKExtensionReactNative
 };
+
+extern NSString *const UACustomEventAdded;
+extern NSString *const UARegionEventAdded;
+extern NSString *const UAScreenTracked;
+extern NSString *const UAEventKey;
+extern NSString *const UAScreenKey;
+
 /**
  * The UAAnalytics object provides an interface to the Airship Analytics API.
  */

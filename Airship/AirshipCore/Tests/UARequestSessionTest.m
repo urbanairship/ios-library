@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 #import "UABaseTest.h"
-#import "UARequestSession+Internal.h"
+#import "UARequestSession.h"
 #import "UAURLRequestOperation+Internal.h"
 #import "UADelayOperation+Internal.h"
 

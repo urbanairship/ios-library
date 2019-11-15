@@ -4,7 +4,7 @@
 
 #import "UAEventAPIClient+Internal.h"
 #import "NSJSONSerialization+UAAdditions.h"
-#import "UAJSONSerialization+Internal.h"
+#import "UAJSONSerialization.h"
 #import "UAAnalytics+Internal.h"
 
 @implementation UAEventAPIClient

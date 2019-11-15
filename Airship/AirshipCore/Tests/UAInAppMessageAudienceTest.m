@@ -2,7 +2,7 @@
 
 #import "UABaseTest.h"
 #import "UAInAppMessageAudience+Internal.h"
-#import "UAVersionMatcher+Internal.h"
+#import "UAVersionMatcher.h"
 #import "UAInAppMessageTagSelector+Internal.h"
 #import "UAJSONPredicate.h"
 

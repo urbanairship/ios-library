@@ -7,9 +7,9 @@
 #import "UAAnalytics+Internal.h"
 #import "NSJSONSerialization+UAAdditions.h"
 #import "NSURLResponse+UAAdditions.h"
-#import "UAJSONSerialization+Internal.h"
+#import "UAJSONSerialization.h"
 #import "UAAttributePendingMutations+Internal.h"
-#import "UAAPIClient+Internal.h"
+#import "UAAPIClient.h"
 
 NSString *const UAChannelsAPIPath = @"/api/channels/";
 NSString *const UAAttributePlatformSpecifier = @"/attributes?platform=";

@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 #import "UAUser.h"
-#import "UADispatcher+Internal.h"
+#import "UADispatcher.h"
 #import "UAUserDataDAO+Internal.h"
 #import "UAChannel.h"
 #import "UAUserAPIClient+Internal.h"

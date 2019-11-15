@@ -6,6 +6,10 @@ import UIKit
 import AirshipCore
 #endif
 
+#if canImport(AirshipAutomation)
+import AirshipAutomation
+#endif
+
 class AutomationDetailCell: UITableViewCell {
     @IBOutlet weak var title: UILabel!
     @IBOutlet weak var subtitle: UILabel!

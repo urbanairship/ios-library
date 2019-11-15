@@ -10,7 +10,7 @@
 #import "UAMessageCenterLocalization.h"
 #import "UAMessageCenterStyle.h"
 #import "UARuntimeConfig.h"
-#import "UADispatcher+Internal.h"
+#import "UADispatcher.h"
 
 /*
  * List-view image controls: default image path and cache values

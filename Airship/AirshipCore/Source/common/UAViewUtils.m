@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 #import "UAGlobal.h"
-#import "UAViewUtils+Internal.h"
+#import "UAViewUtils.h"
 
 
 @implementation UAViewUtils

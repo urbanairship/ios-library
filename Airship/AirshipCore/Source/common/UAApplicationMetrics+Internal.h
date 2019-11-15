@@ -2,7 +2,7 @@
 
 #import <Foundation/Foundation.h>
 #import "UAApplicationMetrics.h"
-#import "UADate+Internal.h"
+#import "UADate.h"
 #import "UAPreferenceDataStore+Internal.h"
 
 NS_ASSUME_NONNULL_BEGIN

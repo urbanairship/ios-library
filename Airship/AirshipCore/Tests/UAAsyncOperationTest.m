@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 #import "UABaseTest.h"
-#import "UAAsyncOperation+Internal.h"
+#import "UAAsyncOperation.h"
 
 @interface UAAsyncOperationTest : UABaseTest
 @property (nonatomic, strong) NSOperationQueue *queue;

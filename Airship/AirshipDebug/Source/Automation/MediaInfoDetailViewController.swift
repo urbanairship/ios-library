@@ -5,6 +5,11 @@ import UIKit
 #if canImport(AirshipCore)
 import AirshipCore
 #endif
+
+#if canImport(AirshipAutomation)
+import AirshipAutomation
+#endif
+
 /**
  * The MediaInfoDetailViewController displays the details of an IAA
  * media info block. It is used to display the details of headings,

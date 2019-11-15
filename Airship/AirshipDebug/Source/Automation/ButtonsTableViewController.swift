@@ -6,6 +6,10 @@ import UIKit
 import AirshipCore
 #endif
 
+#if canImport(AirshipAutomation)
+import AirshipAutomation
+#endif
+
 /**
  * The ButtonCell represents a single button cell
  * in the table.

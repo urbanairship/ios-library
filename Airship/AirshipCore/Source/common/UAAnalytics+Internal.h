@@ -3,8 +3,8 @@
 #import <Foundation/Foundation.h>
 #import "UAAnalytics.h"
 #import "UAComponent+Internal.h"
-#import "UADate+Internal.h"
-#import "UADispatcher+Internal.h"
+#import "UADate.h"
+#import "UADispatcher.h"
 #import "UAExtendableAnalyticsHeaders.h"
 #import "UAEventManager+Internal.h"
 
@@ -25,11 +25,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface UAAnalytics () <UAExtendableAnalyticsHeaders, UAEventManagerDelegate>
 
-extern NSString *const UACustomEventAdded;
-extern NSString *const UARegionEventAdded;
-extern NSString *const UAScreenTracked;
-extern NSString *const UAEventKey;
-extern NSString *const UAScreenKey;
 
 ///---------------------------------------------------------------------------------------
 /// @name Analytics Internal Properties

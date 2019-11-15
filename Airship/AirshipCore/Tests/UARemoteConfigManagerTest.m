@@ -9,7 +9,7 @@
 #import "UARemoteConfigModuleAdapter+Internal.h"
 #import "UARemoteConfigModuleNames+Internal.h"
 #import "UAApplicationMetrics.h"
-#import "UAVersionMatcher+Internal.h"
+#import "UAVersionMatcher.h"
 #import "UAJSONMatcher.h"
 #import "UAJSONPredicate.h"
 

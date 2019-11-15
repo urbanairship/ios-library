@@ -3,7 +3,7 @@
 #import "UAChannelCapture.h"
 #import "UAPushProviderDelegate.h"
 #import "UAChannel.h"
-#import "UADispatcher+Internal.h"
+#import "UADispatcher.h"
 
 @class UAPreferenceDataStore;
 

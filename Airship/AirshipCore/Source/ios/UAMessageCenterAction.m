@@ -7,7 +7,7 @@
 #import "UAInboxMessageList.h"
 #import "UAInboxUtils.h"
 #import "UAMessageCenter.h"
-#import "UADispatcher+Internal.h"
+#import "UADispatcher.h"
 
 #define kUAMessageCenterActionMessageIDPlaceHolder @"auto"
 

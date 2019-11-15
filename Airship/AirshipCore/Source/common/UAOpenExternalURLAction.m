@@ -3,7 +3,7 @@
 #import "UAOpenExternalURLAction.h"
 #import "UAirship.h"
 #import "UAWhitelist.h"
-#import "UADispatcher+Internal.h"
+#import "UADispatcher.h"
 
 NSString * const UAOpenExternalURLActionErrorDomain = @"com.urbanairship.actions.externalurlaction";
 

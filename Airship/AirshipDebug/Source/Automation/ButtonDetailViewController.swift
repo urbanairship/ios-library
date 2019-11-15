@@ -6,6 +6,10 @@ import UIKit
 import AirshipCore
 #endif
 
+#if canImport(AirshipAutomation)
+import AirshipAutomation
+#endif
+
 /**
  * The ButtonDetailViewController displays the details of an IAA
  * message buttons. It is used to display the details of buttons and

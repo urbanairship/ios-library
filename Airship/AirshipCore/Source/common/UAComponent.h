@@ -21,12 +21,23 @@ NS_ASSUME_NONNULL_BEGIN
 + (null_unspecified instancetype)shared;
 
 /**
- * UAComponent initializer.
+ * Init method.
  *
- * @param dataStore The component's preference data store.
+ * @param dataStore The preference data store in which to store the component's enable / disable state.
  */
-- (instancetype)initWithDataStore:(UAPreferenceDataStore *)dataStore;
+- (instancetype)initWithDataStore:(nullable UAPreferenceDataStore *)dataStore NS_DESIGNATED_INITIALIZER;
 
+/**
+ * Called when the component's componentEnabled flag has changed value.
+ */
+- (void)onComponentEnableChange;
+
+/**
+ * Called when remote config is loaded. If no config is available for the component, config will be nil.
+ *
+ * @config The config or nil if no config is available for the module.
+ */
+- (void)applyRemoteConfig:(nullable id)config;
 /**
  * Called when the shared UAirship instance is ready.
  * Subclasses can override this method to perform additional setup after initialization.

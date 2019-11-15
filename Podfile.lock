@@ -1,6 +1,9 @@
 PODS:
   - Airship (12.0.2):
+    - Airship/Automation (= 12.0.2)
     - Airship/Core (= 12.0.2)
+  - Airship/Automation (12.0.2):
+    - Airship/Core
   - Airship/Core (12.0.2)
   - Airship/Debug (12.0.2):
     - Airship/Core
@@ -32,7 +35,7 @@ EXTERNAL SOURCES:
     :path: "./"
 
 SPEC CHECKSUMS:
-  Airship: fbcd7c342dc1e139233e5f82bbaf5b208df74aa8
+  Airship: 71c9de6b8254e69b3d8773ea94e26422d2843c58
   AirshipExtensions: 2f8945aec5c2aebe292913eecfb26b492f0f46e5
   OCMock: 43565190abc78977ad44a61c0d20d7f0784d35ab
   XcodeEdit: ac6e69ec9275e958d437da1e76fafa6b8c76cf9a

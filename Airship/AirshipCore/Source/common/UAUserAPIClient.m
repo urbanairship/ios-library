@@ -6,7 +6,7 @@
 #import "NSJSONSerialization+UAAdditions.h"
 #import "UAUserData+Internal.h"
 #import "NSURLResponse+UAAdditions.h"
-#import "UAJSONSerialization+Internal.h"
+#import "UAJSONSerialization.h"
 
 @implementation UAUserAPIClient
 

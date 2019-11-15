@@ -10,7 +10,7 @@
 #import "UA_Base64.h"
 #import "UAPreferenceDataStore+Internal.h"
 #import "UAUtils+Internal.h"
-#import "UADispatcher+Internal.h"
+#import "UADispatcher.h"
 #import "UAAppStateTracker.h"
 
 NSString *const UAChannelCaptureEnabledKey = @"UAChannelCaptureEnabled";

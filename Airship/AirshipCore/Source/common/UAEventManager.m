@@ -5,14 +5,14 @@
 #import "UAPreferenceDataStore+Internal.h"
 #import "UAEventStore+Internal.h"
 #import "UAEventData+Internal.h"
-#import "UAAsyncOperation+Internal.h"
+#import "UAAsyncOperation.h"
 #import "UAEventAPIClient+Internal.h"
 #import "UAEvent+Internal.h"
 #import "UARuntimeConfig.h"
 #import "UAChannel.h"
 #import "UAirship.h"
 #import "NSOperationQueue+UAAdditions.h"
-#import "UADispatcher+Internal.h"
+#import "UADispatcher.h"
 #import "UAAppStateTracker.h"
 
 @interface UAEventManager()

@@ -3,7 +3,7 @@
 #import <XCTest/XCTest.h>
 #import "UAInAppMessageTextInfo+Internal.h"
 #import "UABaseTest.h"
-#import "UAColorUtils+Internal.h"
+#import "UAColorUtils.h"
 
 @interface UAInAppMessageTextInfoTest : UABaseTest
 

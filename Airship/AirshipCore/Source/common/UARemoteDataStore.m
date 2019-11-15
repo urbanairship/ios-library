@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 #import "UARemoteDataStore+Internal.h"
-#import "NSManagedObjectContext+UAAdditions+Internal.h"
+#import "NSManagedObjectContext+UAAdditions.h"
 #import "UARemoteDataPayload+Internal.h"
 #import "UARemoteDataStorePayload+Internal.h"
 #import "UAirship+Internal.h"

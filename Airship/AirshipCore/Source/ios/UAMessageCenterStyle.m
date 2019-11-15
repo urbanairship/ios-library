@@ -3,7 +3,7 @@
 #import "UAMessageCenterStyle.h"
 #import "UAirship.h"
 #import "UARuntimeConfig.h"
-#import "UAColorUtils+Internal.h"
+#import "UAColorUtils.h"
 #import "UAMessageCenterStyle.h"
 
 NSString * const UANavigationBarStyleDefaultKey = @"default";

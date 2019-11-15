@@ -10,7 +10,7 @@
 #import "UACustomEvent.h"
 #import "NSOperationQueue+UAAdditions.h"
 #import "UARegionEvent.h"
-#import "UAAsyncOperation+Internal.h"
+#import "UAAsyncOperation.h"
 #import "UAirship+Internal.h"
 #import "UAChannel.h"
 #import "UAAppStateTracker.h"

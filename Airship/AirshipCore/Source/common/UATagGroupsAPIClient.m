@@ -5,7 +5,7 @@
 #import "UARuntimeConfig.h"
 #import "NSJSONSerialization+UAAdditions.h"
 #import "NSURLResponse+UAAdditions.h"
-#import "UAJSONSerialization+Internal.h"
+#import "UAJSONSerialization.h"
 
 #define kUAChannelTagGroupsPath @"/api/channels/tags/"
 #define kUANamedUserTagsPath @"/api/named_users/tags/"

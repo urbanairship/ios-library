@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 #import <Foundation/Foundation.h>
-#import "UAAPIClient+Internal.h"
+#import "UAAPIClient.h"
 
 @class UAUser;
 @class UARuntimeConfig;

@@ -9,7 +9,7 @@
 #import "UAAnalytics+Internal.h"
 #import "UAInteractiveNotificationEvent+Internal.h"
 #import "UAPushReceivedEvent+Internal.h"
-#import "UAActionRunner+Internal.h"
+#import "UAActionRunner.h"
 #import "UAActionRegistry+Internal.h"
 #import "UADeviceRegistrationEvent+Internal.h"
 #import "UARuntimeConfig.h"

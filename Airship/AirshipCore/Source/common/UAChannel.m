@@ -7,7 +7,7 @@
 #import "UAUtils+Internal.h"
 #import "UAChannelRegistrationPayload+Internal.h"
 #import "UAAttributePendingMutations+Internal.h"
-#import "UADate+Internal.h"
+#import "UADate.h"
 #import "UAAppStateTracker.h"
 
 NSString *const UAChannelTagsSettingsKey = @"com.urbanairship.channel.tags";

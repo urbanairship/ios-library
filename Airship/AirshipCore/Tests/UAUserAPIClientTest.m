@@ -9,7 +9,7 @@
 #import "UAUserAPIClient+Internal.h"
 #import "UAUser+Internal.h"
 #import "UAUserData+Internal.h"
-#import "UAJSONSerialization+Internal.h"
+#import "UAJSONSerialization.h"
 
 @interface UAUserAPIClientTest : UABaseTest
 @property (nonatomic, strong) UAUserAPIClient *client;

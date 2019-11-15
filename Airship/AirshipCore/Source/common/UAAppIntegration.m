@@ -14,7 +14,7 @@
 #import "UAActionArguments.h"
 #import "UAUtils+Internal.h"
 #import "UARuntimeConfig.h"
-#import "UAActionRunner+Internal.h"
+#import "UAActionRunner.h"
 #import "UAActionRegistry+Internal.h"
 
 #define kUANotificationActionKey @"com.urbanairship.interactive_actions"

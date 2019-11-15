@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-#import "UAColorUtils+Internal.h"
+#import "UAColorUtils.h"
 #import "UAGlobal.h"
 
 @implementation UAColorUtils

@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-#import "UADate+Internal.h"
+#import "UADate.h"
 
 @implementation UADate
 

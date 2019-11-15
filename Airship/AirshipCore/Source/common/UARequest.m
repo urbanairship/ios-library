@@ -2,7 +2,7 @@
 
 #import <zlib.h>
 
-#import "UARequest+Internal.h"
+#import "UARequest.h"
 #import "UAirship.h"
 #import "UADisposable.h"
 #import "UARuntimeConfig.h"

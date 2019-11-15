@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 #import "UABaseTest.h"
-#import "UADate+Internal.h"
+#import "UADate.h"
 #import "UAUtils+Internal.h"
 #import "UAAttributePendingMutations+Internal.h"
 #import "UAAttributeMutations+Internal.h"

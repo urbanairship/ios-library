@@ -2,7 +2,7 @@
 
 #import "NSJSONSerialization+UAAdditions.h"
 #import "UAGlobal.h"
-#import "UAJSONSerialization+Internal.h"
+#import "UAJSONSerialization.h"
 
 @implementation NSJSONSerialization (UAAdditions)
 

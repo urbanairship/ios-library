@@ -5,7 +5,7 @@
 
 #import "UABaseTest.h"
 #import "UARuntimeConfig.h"
-#import "UARequestSession+Internal.h"
+#import "UARequestSession.h"
 #import "UARemoteDataAPIClient+Internal.h"
 #import "UAPreferenceDataStore+Internal.h"
 #import "UARemoteDataPayload+Internal.h"

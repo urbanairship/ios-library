@@ -8,7 +8,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-
 /**
  * The max character limit for Strings.
  */
@@ -70,6 +69,11 @@ extern NSString *const UACustomEventInteractionTypeKey;
  * The event's properties.
  */
 @property (nonatomic, copy, readonly) NSDictionary *properties;
+
+/**
+ * The event's JSON payload.
+ */
+@property (nonatomic, readonly) NSDictionary *payload;
 
 ///---------------------------------------------------------------------------------------
 /// @name Custom Event Factories

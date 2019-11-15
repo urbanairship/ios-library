@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 #import "UABaseTest.h"
-#import "UAAPIClient+Internal.h"
+#import "UAAPIClient.h"
 #import "UARuntimeConfig.h"
 
 @interface UAAPIClientTest : UABaseTest

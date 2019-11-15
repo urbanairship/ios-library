@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 #import <Foundation/Foundation.h>
-#import "UADispatcher+Internal.h"
+#import "UADispatcher.h"
 
 @interface UAScheduledBlockEntry : NSObject
 

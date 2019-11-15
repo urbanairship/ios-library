@@ -2,7 +2,7 @@
 
 #import "UABaseTest.h"
 #import "UAAction.h"
-#import "UAActionRunner+Internal.h"
+#import "UAActionRunner.h"
 #import "UAActionRegistry.h"
 #import "UAirship+Internal.h"
 

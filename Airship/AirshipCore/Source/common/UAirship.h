@@ -30,8 +30,6 @@
 @class UAUser;
 @class UANamedUser;
 @class UAActionRegistry;
-@class UAInAppMessageManager;
-@class UALegacyInAppMessaging;
 @class UAMessageCenter;
 @class UAAutomation;
 @class UAChannelCapture;
