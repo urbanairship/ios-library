@@ -4,13 +4,13 @@
 #import "NSJSONSerialization+UAAdditions.h"
 
 #import "UAEventStore+Internal.h"
-#import "NSManagedObjectContext+UAAdditions+Internal.h"
+#import "NSManagedObjectContext+UAAdditions.h"
 #import <CoreData/CoreData.h>
 #import "UARuntimeConfig.h"
 #import "UAEvent.h"
 #import "UAirship.h"
 #import "UASQLite+Internal.h"
-#import "UAJSONSerialization+Internal.h"
+#import "UAJSONSerialization.h"
 
 NSString *const UAEventStoreFileFormat = @"Events-%@.sqlite";
 NSString *const UAEventDataEntityName = @"UAEventData";

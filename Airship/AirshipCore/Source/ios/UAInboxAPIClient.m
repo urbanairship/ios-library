@@ -8,7 +8,7 @@
 #import "UAPreferenceDataStore+Internal.h"
 #import "UAirship.h"
 #import "UAChannel.h"
-#import "UAJSONSerialization+Internal.h"
+#import "UAJSONSerialization.h"
 
 @interface UAInboxAPIClient()
 

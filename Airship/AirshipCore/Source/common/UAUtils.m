@@ -2,7 +2,7 @@
 
 #import "UAUtils+Internal.h"
 #import "UAActionResult.h"
-#import "UADispatcher+Internal.h"
+#import "UADispatcher.h"
 
 // Frameworks
 #import <CommonCrypto/CommonDigest.h>
@@ -14,7 +14,7 @@
 #import "UAirship.h"
 #import "UARuntimeConfig.h"
 #import "UAKeychainUtils+Internal.h"
-#import "UARequest+Internal.h"
+#import "UARequest.h"
 
 // C includes
 #include <sys/types.h>

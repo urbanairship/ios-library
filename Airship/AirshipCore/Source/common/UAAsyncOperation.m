@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-#import "UAAsyncOperation+Internal.h"
+#import "UAAsyncOperation.h"
 
 @interface UAAsyncOperation()
 

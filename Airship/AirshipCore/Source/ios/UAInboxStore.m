@@ -4,7 +4,7 @@
 
 #import "UAInboxStore+Internal.h"
 #import "UAirship+Internal.h"
-#import "NSManagedObjectContext+UAAdditions+Internal.h"
+#import "NSManagedObjectContext+UAAdditions.h"
 #import "UARuntimeConfig.h"
 #import "UAUtils+Internal.h"
 

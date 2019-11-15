@@ -12,7 +12,7 @@
 #import "UAInAppMessageCustomDisplayContent+Internal.h"
 #import "UAChannel.h"
 #import "UAInAppMessageAudience.h"
-#import "UAActionRunner+Internal.h"
+#import "UAActionRunner.h"
 #import "UAInAppMessageAudienceChecks+Internal.h"
 #import "UATestDispatcher.h"
 #import "UAInAppMessageTagSelector+Internal.h"
@@ -22,6 +22,7 @@
 #import "UAInAppMessage+Internal.h"
 #import "UAInAppRemoteDataClient+Internal.h"
 #import "NSObject+AnonymousKVO+Internal.h"
+#import "UAComponent+Internal.h"
 
 
 @interface UAInAppMessageManagerTest : UABaseTest

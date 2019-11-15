@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 
-#import "UAVersionMatcher+Internal.h"
+#import "UAVersionMatcher.h"
 #import "UAGlobal.h"
 #import "UAUtils+Internal.h"
 

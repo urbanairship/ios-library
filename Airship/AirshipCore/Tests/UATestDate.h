@@ -1,5 +1,5 @@
 
-#import "UADate+Internal.h"
+#import "UADate.h"
 
 @interface UATestDate : UADate
 

@@ -3,7 +3,7 @@
 #import "UABaseTest.h"
 #import "UAInAppMessageAudienceChecks+Internal.h"
 #import "UAInAppMessageAudience+Internal.h"
-#import "UAVersionMatcher+Internal.h"
+#import "UAVersionMatcher.h"
 #import "UAirship+Internal.h"
 #import "UAPush+Internal.h"
 #import "UAInAppMessageTagSelector.h"

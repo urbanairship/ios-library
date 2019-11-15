@@ -2,7 +2,7 @@
 
 #import <Foundation/Foundation.h>
 #import "UAUserData.h"
-#import "UADispatcher+Internal.h"
+#import "UADispatcher.h"
 #import "UARuntimeConfig.h"
 
 NS_ASSUME_NONNULL_BEGIN

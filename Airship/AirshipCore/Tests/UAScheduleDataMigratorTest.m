@@ -3,10 +3,11 @@
 #import "UABaseTest.h"
 #import <CoreData/CoreData.h>
 #import "UAirship.h"
-#import "NSManagedObjectContext+UAAdditions+Internal.h"
+#import "NSManagedObjectContext+UAAdditions.h"
 #import "NSJSONSerialization+UAAdditions.h"
 #import "UAScheduleDataMigrator+Internal.h"
 #import "UAScheduleData+Internal.h"
+#import "UAAutomationStore+Internal.h"
 
 @interface UAScheduleDataMigratorTest : UABaseTest
 @property (nonatomic, strong) NSManagedObjectContext *managedContext;
@@ -17,7 +18,8 @@
 - (void)setUp {
     [super setUp];
 
-    NSURL *modelURL = [[UAirship resources] URLForResource:@"UAAutomation" withExtension:@"momd"];
+    NSBundle *bundle = [NSBundle bundleForClass:[UAAutomationStore class]];
+    NSURL *modelURL = [bundle URLForResource:@"UAAutomation" withExtension:@"momd"];
     self.managedContext = [NSManagedObjectContext managedObjectContextForModelURL:modelURL
                                                                   concurrencyType:NSPrivateQueueConcurrencyType];
 

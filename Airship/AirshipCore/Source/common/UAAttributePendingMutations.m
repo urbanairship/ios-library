@@ -5,7 +5,7 @@
 #import "UAChannel.h"
 #import "UAAttributePendingMutations+Internal.h"
 #import "UAAttributeMutations+Internal.h"
-#import "UADate+Internal.h"
+#import "UADate.h"
 
 NSString *const UAAttributeMutationsCodableKey = @"com.urbanairship.attributes";
 

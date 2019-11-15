@@ -22,10 +22,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, copy, nullable) NSString *templateType;
 
-/**
- * The event's JSON payload. Used for automation.
- */
-@property (nonatomic, readonly) NSDictionary *payload;
 
 @end
 

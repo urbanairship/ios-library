@@ -2,7 +2,7 @@
 
 #import "UAJSONValueMatcher+Internal.h"
 #import "NSJSONSerialization+UAAdditions.h"
-#import "UAVersionMatcher+Internal.h"
+#import "UAVersionMatcher.h"
 #import "UAJSONPredicate.h"
 
 @interface UAJSONValueMatcher ()

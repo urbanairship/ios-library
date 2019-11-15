@@ -3,8 +3,8 @@
 #import "UAInboxMessageList.h"
 #import "UAInboxAPIClient+Internal.h"
 #import "UAInboxStore+Internal.h"
-#import "UADispatcher+Internal.h"
-#import "UADate+Internal.h"
+#import "UADispatcher.h"
+#import "UADate.h"
 NS_ASSUME_NONNULL_BEGIN
 
 /*

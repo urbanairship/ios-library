@@ -2,7 +2,7 @@
 
 #import <UIKit/UIKit.h>
 #import "UABaseTest.h"
-#import "UAColorUtils+Internal.h"
+#import "UAColorUtils.h"
 
 @interface UAColorUtilsTest : UABaseTest
 @end

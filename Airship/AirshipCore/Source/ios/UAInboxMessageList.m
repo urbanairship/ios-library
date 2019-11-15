@@ -10,7 +10,7 @@
 #import "UAInboxStore+Internal.h"
 #import "UAUtils+Internal.h"
 #import "UAUser.h"
-#import "UADate+Internal.h"
+#import "UADate.h"
 
 NSString * const UAInboxMessageListWillUpdateNotification = @"com.urbanairship.notification.message_list_will_update";
 NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.notification.message_list_updated";

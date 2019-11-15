@@ -1,10 +1,10 @@
 /* Copyright Airship and Contributors */
 
 #import <Foundation/Foundation.h>
-#import "UAAPIClient+Internal.h"
+#import "UAAPIClient.h"
 #import "UAPreferenceDataStore+Internal.h"
 #import "UARemoteDataPayload+Internal.h"
-#import "UARequestSession+Internal.h"
+#import "UARequestSession.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

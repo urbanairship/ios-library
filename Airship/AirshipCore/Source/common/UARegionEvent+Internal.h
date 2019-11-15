@@ -2,31 +2,6 @@
 
 #import "UARegionEvent.h"
 
-#define kUARegionEventType @"region_event"
-
-#define kUARegionEventMaxLatitude 90
-#define kUARegionEventMinLatitude -90
-#define kUARegionEventMaxLongitude 180
-#define kUARegionEventMinLongitude -180
-#define kUARegionEventMaxCharacters 255
-#define kUARegionEventMinCharacters 1
-
-#define kUARegionSourceKey @"source"
-#define kUARegionIDKey @"region_id"
-#define kUARegionBoundaryEventKey @"action"
-#define kUARegionBoundaryEventEnterValue @"enter"
-#define kUARegionBoundaryEventExitValue @"exit"
-#define kUARegionLatitudeKey @"latitude"
-#define kUARegionLongitudeKey @"longitude"
-
-#define kUAProximityRegionKey @"proximity"
-#define kUAProximityRegionIDKey @"proximity_id"
-#define kUAProximityRegionMajorKey @"major"
-#define kUAProximityRegionMinorKey @"minor"
-#define kUAProximityRegionRSSIKey @"rssi"
-
-#define kUACircularRegionKey @"circular_region"
-#define kUACircularRegionRadiusKey @"radius"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -75,10 +50,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 + (BOOL)regionEventCharacterCountIsValid:(nullable NSString *)string;
 
-/**
- * The event's JSON payload. Used for automation.
- */
-@property (nonatomic, readonly) NSDictionary *payload;
 
 @end
 

@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 #import "UAChannelRegistrationPayload+Internal.h"
-#import "UAJSONSerialization+Internal.h"
+#import "UAJSONSerialization.h"
 #import "UAGlobal.h"
 
 NSString *const UAChannelIOSPlatform= @"ios";

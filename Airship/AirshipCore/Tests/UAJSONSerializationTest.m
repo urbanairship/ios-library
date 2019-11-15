@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 #import <XCTest/XCTest.h>
-#import "UAJSONSerialization+Internal.h"
+#import "UAJSONSerialization.h"
 #import "UAirship.h"
 
 @interface UAJSONSerializationTest : XCTestCase

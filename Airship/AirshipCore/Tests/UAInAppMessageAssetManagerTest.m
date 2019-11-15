@@ -10,7 +10,7 @@
 #import "UAInAppMessageAssetCache+Internal.h"
 #import "UARemoteDataManager+Internal.h"
 #import "UAUtils+Internal.h"
-#import "UAAsyncOperation+Internal.h"
+#import "UAAsyncOperation.h"
 
 @interface UAInAppMessageAssetManagerTest : UABaseTest
 @property (nonatomic, strong) UAInAppMessageAssetManager *assetManager;

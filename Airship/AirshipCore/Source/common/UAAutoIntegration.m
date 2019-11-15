@@ -4,7 +4,7 @@
 #import "UAirship+Internal.h"
 #import "UAAppIntegration+Internal.h"
 #import "UASwizzler+Internal.h"
-#import "UADispatcher+Internal.h"
+#import "UADispatcher.h"
 
 static UAAutoIntegration *instance_;
 

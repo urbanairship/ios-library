@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
-#import "UAAPIClient+Internal.h"
-#import "UARequestSession+Internal.h"
+#import "UAAPIClient.h"
+#import "UARequestSession.h"
 #import "UARuntimeConfig.h"
 #import "UAirship.h"
 

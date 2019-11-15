@@ -8,7 +8,7 @@
 #import "UAAnalytics+Internal.h"
 #import "UAAttributePendingMutations+Internal.h"
 #import "UAAttributeMutations+Internal.h"
-#import "UAJSONSerialization+Internal.h"
+#import "UAJSONSerialization.h"
 #import "UAirship+Internal.h"
 #import "UAChannel+Internal.h"
 

@@ -3,7 +3,7 @@
 #import "UAEvent+Internal.h"
 #import "UAPush.h"
 #import "UAirship.h"
-#import "UAJSONSerialization+Internal.h"
+#import "UAJSONSerialization.h"
 
 @implementation UAEvent
 

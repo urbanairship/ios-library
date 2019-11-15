@@ -2,7 +2,7 @@
 
 #import "UAInboxMessage.h"
 #import "UAInboxMessageData+Internal.h"
-#import "UADate+Internal.h"
+#import "UADate.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

@@ -14,7 +14,7 @@ Pod::Spec.new do |s|
    s.tvos.deployment_target  = "11.0"
    s.requires_arc            = true
    s.swift_version           = "5.0"
-   s.default_subspecs        = ["Core"]
+   s.default_subspecs        = ["Core", "Automation"]
 
    s.subspec "Core" do |core|
       core.ios.resources              = "Airship/AirshipCore/Resources/common/**/*", "Airship/AirshipCore/Resources/ios/**/*"
@@ -37,6 +37,13 @@ Pod::Spec.new do |s|
       location.tvos.private_header_files   = "Airship/AirshipLocation/Source/*+Internal*.h"
       location.frameworks                  = "Foundation", "CoreLocation"
       location.dependency                  "Airship/Core"
+   end
+
+   s.subspec "Automation" do |automation|
+      automation.ios.source_files              = "Airship/AirshipAutomation/Source/**/*.{h,m,swift}"
+      automation.ios.resources                 = "Airship/AirshipAutomation/Resources/**/*"
+      automation.ios.frameworks                = "UIKit"
+      automation.dependency                    "Airship/Core"
    end
 
    s.subspec "Debug" do |debug|

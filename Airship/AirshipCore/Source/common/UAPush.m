@@ -14,7 +14,7 @@
 #import "UANotificationCategory.h"
 #import "UATagUtils+Internal.h"
 #import "UARegistrationDelegateWrapper+Internal.h"
-#import "UADispatcher+Internal.h"
+#import "UADispatcher.h"
 #import "UAAppStateTracker.h"
 
 NSString *const UAUserPushNotificationsEnabledKey = @"UAUserPushNotificationsEnabled";

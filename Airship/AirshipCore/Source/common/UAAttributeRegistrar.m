@@ -5,9 +5,9 @@
 #import "UAAttributeAPIClient+Internal.h"
 #import "UAAttributeMutations+Internal.h"
 #import "UAAttributePendingMutations+Internal.h"
-#import "UAAsyncOperation+Internal.h"
+#import "UAAsyncOperation.h"
 #import "UAUtils.h"
-#import "UADate+Internal.h"
+#import "UADate.h"
 #import "UAComponent.h"
 
 NSString *const PersistentQueueKey = @"com.urbanairship.channel_attributes.registrar_persistent_queue_key";

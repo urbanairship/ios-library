@@ -1,8 +1,7 @@
 /* Copyright Airship and Contributors */
 
 #import "UAScheduleDataMigrator+Internal.h"
-#import "UAGlobal.h"
-#import "NSJSONSerialization+UAAdditions.h"
+#import "UAAirshipAutomationCoreImport.h"
 
 // These constants are re-defined here to keep them isolated from
 // any changes in the IAM payload definitions.

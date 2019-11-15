@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-#import "UADispatcher+Internal.h"
+#import "UADispatcher.h"
 
 /**
  * Custom key for associating GCD queues to dispatcher types

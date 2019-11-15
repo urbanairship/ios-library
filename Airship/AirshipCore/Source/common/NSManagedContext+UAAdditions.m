@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-#import "NSManagedObjectContext+UAAdditions+Internal.h"
+#import "NSManagedObjectContext+UAAdditions.h"
 #import "UAUtils+Internal.h"
 #import "UAGlobal.h"
 

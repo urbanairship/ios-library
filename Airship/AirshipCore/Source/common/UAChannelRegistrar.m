@@ -7,8 +7,8 @@
 #import "UAChannelRegistrationPayload+Internal.h"
 #import "UARuntimeConfig.h"
 #import "UAPreferenceDataStore+Internal.h"
-#import "UADate+Internal.h"
-#import "UADispatcher+Internal.h"
+#import "UADate.h"
+#import "UADispatcher.h"
 
 NSTimeInterval const k24HoursInSeconds = 24 * 60 * 60;
 

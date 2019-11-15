@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 #import "UABaseTest.h"
-#import "UARequest+Internal.h"
+#import "UARequest.h"
 
 @interface UARequestTest : UABaseTest
 @end

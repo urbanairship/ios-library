@@ -4,7 +4,7 @@
 #import "UAAction+Internal.h"
 #import "UAActionResult+Internal.h"
 #import "UAGlobal.h"
-#import "UADispatcher+Internal.h"
+#import "UADispatcher.h"
 
 @implementation UAAction
 

@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 #import <Foundation/Foundation.h>
-#import "UAAsyncOperation+Internal.h"
+#import "UAAsyncOperation.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

@@ -3,7 +3,7 @@
 #import "UARateAppPromptViewController+Internal.h"
 #import "UAUtils+Internal.h"
 #import "NSString+UALocalizationAdditions.h"
-#import "UADispatcher+Internal.h"
+#import "UADispatcher.h"
 
 @interface UARateAppPromptViewController ()
 
