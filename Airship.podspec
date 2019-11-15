@@ -52,8 +52,8 @@ Pod::Spec.new do |s|
       debug.source_files              = "Airship/AirshipDebug/Source/**/*.{h,m,swift}"
       debug.resources                 = "Airship/AirshipDebug/Resources/**/*"
       debug.frameworks                = "UIKit"
-      debug.dependencies              "Airship/Core"
-      debug.dependency                'Airship/Automation'
+      debug.dependency                "Airship/Core"
+      debug.dependency                "Airship/Automation"
 
    end
 end
