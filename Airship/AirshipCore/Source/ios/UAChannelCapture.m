@@ -12,6 +12,7 @@
 #import "UAUtils+Internal.h"
 #import "UADispatcher.h"
 #import "UAAppStateTracker.h"
+#import "UAirshipCoreResources.h"
 
 NSString *const UAChannelCaptureEnabledKey = @"UAChannelCaptureEnabled";
 
@@ -169,19 +170,20 @@ NSString *const UAChannelPlaceHolder = @"CHANNEL";
 
 - (void)showAlertWithUrl:(NSURL *)url {
 
+    NSBundle *bundle = [UAirshipCoreResources bundle];
 
-    UIAlertController *controller = [UIAlertController alertControllerWithTitle:[@"ua_channel_id" localizedStringWithTable:@"UrbanAirship" defaultValue:@"Channel ID"]
+    UIAlertController *controller = [UIAlertController alertControllerWithTitle:[@"ua_channel_id" localizedStringWithTable:@"UrbanAirship" moduleBundle:bundle defaultValue:@"Channel ID"]
                                                                         message:self.channel.identifier
                                                                  preferredStyle:UIAlertControllerStyleAlert];
 
-    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:[@"ua_cancel" localizedStringWithTable:@"UrbanAirship" defaultValue:@"Cancel"]
+    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:[@"ua_cancel" localizedStringWithTable:@"UrbanAirship" moduleBundle:bundle defaultValue:@"Cancel"]
                                                            style:UIAlertActionStyleCancel
                                                          handler:nil];
 
     [controller addAction:cancelAction];
 
     NSString *channelID = self.channel.identifier;
-    UIAlertAction *copyAction  = [UIAlertAction actionWithTitle:[@"ua_notification_button_copy" localizedStringWithTable:@"UrbanAirship" defaultValue:@"Copy"]
+    UIAlertAction *copyAction  = [UIAlertAction actionWithTitle:[@"ua_notification_button_copy" localizedStringWithTable:@"UrbanAirship" moduleBundle:bundle defaultValue:@"Copy"]
                                                           style:UIAlertActionStyleDefault
                                                         handler:^(UIAlertAction *action) {
                                                             [UIPasteboard generalPasteboard].string = channelID ?: @"";
@@ -191,7 +193,7 @@ NSString *const UAChannelPlaceHolder = @"CHANNEL";
 
 
     if (url) {
-        UIAlertAction *urlAction  = [UIAlertAction actionWithTitle:[@"ua_notification_button_save" localizedStringWithTable:@"UrbanAirship" defaultValue:@"Save"]
+        UIAlertAction *urlAction  = [UIAlertAction actionWithTitle:[@"ua_notification_button_save" localizedStringWithTable:@"UrbanAirship" moduleBundle:bundle defaultValue:@"Save"]
                                                              style:UIAlertActionStyleDefault
                                                            handler:^(UIAlertAction *action) {
                                                                [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:^(BOOL success) {

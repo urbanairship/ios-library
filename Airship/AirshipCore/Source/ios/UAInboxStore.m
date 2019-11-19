@@ -7,6 +7,7 @@
 #import "NSManagedObjectContext+UAAdditions.h"
 #import "UARuntimeConfig.h"
 #import "UAUtils+Internal.h"
+#import "UAMessageCenterResources.h"
 
 @interface UAInboxStore()
 @property (nonatomic, copy) NSString *storeName;
@@ -27,7 +28,7 @@
         self.inMemory = inMemory;
         self.finished = NO;
 
-        NSURL *modelURL = [[UAirship resources] URLForResource:@"UAInbox" withExtension:@"momd"];
+        NSURL *modelURL = [[UAMessageCenterResources bundle] URLForResource:@"UAInbox" withExtension:@"momd"];
         self.managedContext = [NSManagedObjectContext managedObjectContextForModelURL:modelURL
                                                                       concurrencyType:NSPrivateQueueConcurrencyType];
 

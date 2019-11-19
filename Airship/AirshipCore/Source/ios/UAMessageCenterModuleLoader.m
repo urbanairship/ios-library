@@ -2,6 +2,7 @@
 
 #import "UAMessageCenterModuleLoader.h"
 #import "UAMessageCenter+Internal.h"
+#import "UAMessageCenterResources.h"
 
 @interface UAMessageCenterModuleLoader()
 @property (nonatomic, strong) UAMessageCenter *messageCenter;
@@ -32,7 +33,7 @@
 }
 
 - (void)registerActions:(UAActionRegistry *)registry {
-    NSString *path = [[UAirship resources] pathForResource:@"UAMessageCenterActions" ofType:@"plist"];
+    NSString *path = [[UAMessageCenterResources bundle] pathForResource:@"UAMessageCenterActions" ofType:@"plist"];
     if (path) {
         [registry registerActionsFromFile:path];
     }

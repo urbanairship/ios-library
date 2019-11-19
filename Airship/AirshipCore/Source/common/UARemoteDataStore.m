@@ -5,6 +5,7 @@
 #import "UARemoteDataPayload+Internal.h"
 #import "UARemoteDataStorePayload+Internal.h"
 #import "UAirship+Internal.h"
+#import "UAirshipCoreResources.h"
 
 #define kUARemoteDataDBEntityName @"UARemoteDataStorePayload"
 
@@ -25,7 +26,7 @@
         self.inMemory = inMemory;
         self.finished = NO;
         
-        NSURL *modelURL = [[UAirship resources] URLForResource:@"UARemoteData" withExtension:@"momd"];
+        NSURL *modelURL = [[UAirshipCoreResources bundle] URLForResource:@"UARemoteData" withExtension:@"momd"];
         self.managedContext = [NSManagedObjectContext managedObjectContextForModelURL:modelURL
                                                                       concurrencyType:NSPrivateQueueConcurrencyType];
         

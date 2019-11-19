@@ -422,10 +422,6 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
     return sharedAirship_.sharedRemoteDataManager;
 }
 
-+ (NSBundle *)resources {
-    return [NSBundle bundleForClass:self];
-}
-
 - (void)validate {
     // Background notification validation
     if (self.remoteNotificationBackgroundModeEnabled) {

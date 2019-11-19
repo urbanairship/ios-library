@@ -4,6 +4,7 @@
 #import "UAUtils+Internal.h"
 #import "NSString+UALocalizationAdditions.h"
 #import "UADispatcher.h"
+#import "UAExtendedActionsResources.h"
 
 @interface UARateAppPromptViewController ()
 
@@ -138,23 +139,38 @@
     self.promptBackgroundView.layer.shadowRadius = kUARateAppPromptViewShadowRadius;
     self.promptBackgroundView.layer.shadowOpacity = kUARateAppPromptViewShadowOpacity;
 
-    NSString *genericDisplayName = [@"ua_rate_app_action_generic_display_name" localizedStringWithTable:@"UrbanAirship" defaultValue:@"This App"];
+    NSBundle *bundle = [UAExtendedActionsResources bundle];
+
+    NSString *genericDisplayName = [@"ua_rate_app_action_generic_display_name" localizedStringWithTable:@"UrbanAirship"
+                                                                                           moduleBundle:bundle
+                                                                                           defaultValue:@"This App"];
+
     NSString *displayName = NSBundle.mainBundle.infoDictionary[@"CFBundleDisplayName"] ?: genericDisplayName;
 
-    self.rateButton.titleLabel.text = [@"ua_rate_app_action_positive_button" localizedStringWithTable:@"UrbanAirship" defaultValue:@"Rate"];
-    self.dismissButton.titleLabel.text = [@"ua_rate_app_action_negative_button" localizedStringWithTable:@"UrbanAirship" defaultValue:@"No Thanks"];
+    self.rateButton.titleLabel.text = [@"ua_rate_app_action_positive_button" localizedStringWithTable:@"UrbanAirship"
+                                                                                         moduleBundle:bundle
+                                                                                         defaultValue:@"Rate"];
 
+    self.dismissButton.titleLabel.text = [@"ua_rate_app_action_negative_button" localizedStringWithTable:@"UrbanAirship"
+                                                                                            moduleBundle:bundle
+                                                                                            defaultValue:@"No Thanks"];
     if (self.promptHeader) {
         self.headerLabel.text = self.promptHeader;
     } else {
-        NSString *localizedHeader = [@"ua_rate_app_action_default_title" localizedStringWithTable:@"UrbanAirship" defaultValue:[NSString stringWithFormat:@"Enjoying %@?", displayName]];
+        NSString *localizedHeader = [@"ua_rate_app_action_default_title" localizedStringWithTable:@"UrbanAirship"
+                                                                                     moduleBundle:bundle
+                                                                                     defaultValue:[NSString stringWithFormat:@"Enjoying %@?", displayName]];
+
         self.headerLabel.text = [NSString stringWithFormat:localizedHeader, displayName];
     }
 
     if (self.promptDescription) {
         self.descriptionLabel.text = self.promptDescription;
     } else {
-        NSString *localizedBody = [@"ua_rate_app_action_default_body" localizedStringWithTable:@"UrbanAirship" defaultValue:[NSString stringWithFormat:@"Tap %@ to rate it on the app store.", self.rateButton.titleLabel.text]];
+        NSString *localizedBody = [@"ua_rate_app_action_default_body" localizedStringWithTable:@"UrbanAirship"
+                                                                                  moduleBundle:bundle
+                                                                                  defaultValue:[NSString stringWithFormat:@"Tap %@ to rate it on the app store.", self.rateButton.titleLabel.text]];
+
         self.descriptionLabel.text = [NSString stringWithFormat:localizedBody, self.rateButton.titleLabel.text];
     }
 }

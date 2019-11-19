@@ -4,6 +4,7 @@
 #import "UAActionRegistryEntry+Internal.h"
 #import "UAirship.h"
 #import "UAActionPredicateProtocol.h"
+#import "UAirshipCoreResources.h"
 
 NSString *const UAActionRegistryActionKey = @"action";
 NSString *const UAActionRegistryNamesKey = @"names";
@@ -343,7 +344,7 @@ NSString *const UAActionRegistryPredicateClassKey = @"predicate";
 }
 
 - (void)registerDefaultActions {
-    NSString *path = [[UAirship resources] pathForResource:@"UADefaultActions" ofType:@"plist"];
+    NSString *path = [[UAirshipCoreResources bundle] pathForResource:@"UADefaultActions" ofType:@"plist"];
     if (path) {
         [self registerActionsFromFile:path];
     }

@@ -11,6 +11,7 @@
 #import "UAirship.h"
 #import "UASQLite+Internal.h"
 #import "UAJSONSerialization.h"
+#import "UAirshipCoreResources.h"
 
 NSString *const UAEventStoreFileFormat = @"Events-%@.sqlite";
 NSString *const UAEventDataEntityName = @"UAEventData";
@@ -28,7 +29,7 @@ NSString *const UAEventDataEntityName = @"UAEventData";
 
     if (self) {
         self.storeName = [NSString stringWithFormat:UAEventStoreFileFormat, config.appKey];
-        NSURL *modelURL = [[UAirship resources] URLForResource:@"UAEvents" withExtension:@"momd"];
+        NSURL *modelURL = [[UAirshipCoreResources bundle] URLForResource:@"UAEvents" withExtension:@"momd"];
         self.managedContext = [NSManagedObjectContext managedObjectContextForModelURL:modelURL
                                                                       concurrencyType:NSPrivateQueueConcurrencyType];
 

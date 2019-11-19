@@ -7,6 +7,7 @@
 #import "UAChannel.h"
 #import "UANamedUser.h"
 #import "UARuntimeConfig.h"
+#import "UAirshipCoreResources.h"
 
 @interface UAJavaScriptEnvironment()
 @property (nonatomic) NSMutableSet *extensions;
@@ -54,7 +55,7 @@
         js = [js stringByAppendingString:extension];
     }
 
-    NSString *path = [[UAirship resources] pathForResource:@"UANativeBridge" ofType:@""];
+    NSString *path = [[UAirshipCoreResources bundle] pathForResource:@"UANativeBridge" ofType:@""];
     if (path) {
         NSString *bridge = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];
         if (bridge) {

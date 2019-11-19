@@ -11,6 +11,7 @@
 #import "UAMessageCenterStyle.h"
 #import "UARuntimeConfig.h"
 #import "UADispatcher.h"
+#import "UAMessageCenterResources.h"
 
 /*
  * List-view image controls: default image path and cache values
@@ -668,7 +669,7 @@
     
     // create a messageViewController if we don't already have one
     if (!self.messageViewController) {
-            self.messageViewController = [[UAMessageCenterMessageViewController alloc] initWithNibName:@"UAMessageCenterMessageViewController" bundle:[UAirship resources]];
+            self.messageViewController = [[UAMessageCenterMessageViewController alloc] initWithNibName:@"UAMessageCenterMessageViewController" bundle:[UAMessageCenterResources bundle]];
     }
     self.messageViewController.closeBlock = closeBlock;
 }
@@ -880,7 +881,7 @@
     }
 
     if (! _placeholderIcon) {
-        _placeholderIcon =[UIImage imageNamed:@"UAMessageCenterPlaceholderIcon.png" inBundle:[UAirship resources] compatibleWithTraitCollection:nil];
+        _placeholderIcon =[UIImage imageNamed:@"UAMessageCenterPlaceholderIcon.png" inBundle:[UAMessageCenterResources bundle] compatibleWithTraitCollection:nil];
     }
     return _placeholderIcon;
 }
@@ -891,7 +892,7 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
 
     NSString *nibName = kUAMessageCenterListCellNibName;
-    NSBundle *bundle = [UAirship resources];
+    NSBundle *bundle = [UAMessageCenterResources bundle];
 
     UAMessageCenterListCell *cell = (UAMessageCenterListCell *)[tableView dequeueReusableCellWithIdentifier:nibName];
 

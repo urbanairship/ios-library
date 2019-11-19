@@ -9,6 +9,7 @@
 #import "UAMessageCenterLocalization.h"
 #import "UARuntimeConfig.h"
 #import "UAInboxMessage.h"
+#import "UAMessageCenterResources.h"
 
 @interface UAMessageCenterSplitViewController ()
 
@@ -25,7 +26,7 @@
 - (void)configure {
 
     self.listViewController = [[UAMessageCenterListViewController alloc] initWithNibName:@"UAMessageCenterListViewController"
-                                                                                  bundle:[UAirship resources]
+                                                                                  bundle:[UAMessageCenterResources bundle]
                                                                      splitViewController:self];
     self.listNav = [[UINavigationController alloc] initWithRootViewController:self.listViewController];
     self.viewControllers = @[self.listNav];
@@ -63,7 +64,7 @@
         self.showMessageViewOnViewDidAppear = YES;
     } else {
         self.messageViewController = [[UAMessageCenterMessageViewController alloc] initWithNibName:@"UAMessageCenterMessageViewController"
-                                                                                            bundle:[UAirship resources]];
+                                                                                            bundle:[UAMessageCenterResources bundle]];
         self.listViewController.messageViewController = self.messageViewController;
         self.showMessageViewOnViewDidAppear = NO;
     }
