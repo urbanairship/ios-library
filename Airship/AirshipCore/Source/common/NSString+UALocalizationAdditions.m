@@ -2,10 +2,14 @@
 
 #import "NSString+UALocalizationAdditions.h"
 #import "UAirship.h"
+#import "UAirshipCoreResources.h"
 
 @implementation NSString (UALocalizationAdditions)
 
-- (NSString *)sanitizedLocalizedStringWithTable:(NSString *)table primaryBundle:(NSBundle *)primaryBundle fallbackBundle:(NSBundle *)fallbackBundle {
+- (nullable NSString *)sanitizedLocalizedStringWithTable:(NSString *)table
+                                           primaryBundle:(NSBundle *)primaryBundle
+                                         secondaryBundle:(NSBundle *)secondaryBundle
+                                          tertiaryBundle:(NSBundle *)tertiaryBundle {
 
     NSString *string;
 
@@ -13,14 +17,14 @@
     // by the NSBundle method
     NSString *missing = @" ";
 
-    if (primaryBundle) {
-        string = NSLocalizedStringWithDefaultValue(self, table, primaryBundle, missing, nil);
+    string = NSLocalizedStringWithDefaultValue(self, table, primaryBundle, missing, nil);
+
+    if (!string || [string isEqualToString:missing]) {
+        string = NSLocalizedStringWithDefaultValue(self, table, secondaryBundle, missing, nil);
     }
 
     if (!string || [string isEqualToString:missing]) {
-        if (fallbackBundle) {
-            string = NSLocalizedStringWithDefaultValue(self, table, fallbackBundle, missing, nil);
-        }
+        string = NSLocalizedStringWithDefaultValue(self, table, tertiaryBundle, missing, nil);
     }
 
     if (!string || [string isEqualToString:missing]) {
@@ -30,21 +34,27 @@
     return string;
 }
 
-- (NSString *)localizedStringWithTable:(NSString *)table defaultValue:(NSString *)defaultValue fallbackLocale:(NSString *)fallbackLocale {
+- (NSString *)localizedStringWithTable:(NSString *)table moduleBundle:(NSBundle *)moduleBundle defaultValue:(NSString *)defaultValue fallbackLocale:(NSString *)fallbackLocale {
 
-    NSBundle *primaryBundle = [NSBundle mainBundle];
+    NSBundle *mainBundle = [NSBundle mainBundle];
+    NSBundle *coreBundle = [UAirshipCoreResources bundle];
 
-    // If the string couldn't be found in the main bundle, search AirshipResources
-    NSBundle *fallbackBundle = [UAirship resources];
+    NSString *string = [self sanitizedLocalizedStringWithTable:table
+                                                 primaryBundle:mainBundle
+                                               secondaryBundle:coreBundle
+                                                tertiaryBundle:moduleBundle];
 
-    NSString *string = [self sanitizedLocalizedStringWithTable:table primaryBundle:primaryBundle fallbackBundle:fallbackBundle];
     if (!string) {
         if (fallbackLocale) {
             // If a fallback locale was provided, try searching in that locale explicitly
-            primaryBundle = [NSBundle bundleWithPath:[primaryBundle pathForResource:fallbackLocale ofType:@"lproj"]];
-            fallbackBundle = [NSBundle bundleWithPath:[fallbackBundle pathForResource:fallbackLocale ofType:@"lproj"]];
+            NSBundle *localizedMainBundle = [NSBundle bundleWithPath:[mainBundle pathForResource:fallbackLocale ofType:@"lproj"]];
+            NSBundle *localizedCoreBundle = [NSBundle bundleWithPath:[coreBundle pathForResource:fallbackLocale ofType:@"lproj"]];
+            NSBundle *localizedModuleBundle = [NSBundle bundleWithPath:[moduleBundle pathForResource:fallbackLocale ofType:@"lproj"]];
 
-            string = [self sanitizedLocalizedStringWithTable:table primaryBundle:primaryBundle fallbackBundle:fallbackBundle];
+            string = [self sanitizedLocalizedStringWithTable:table
+                                               primaryBundle:localizedMainBundle
+                                             secondaryBundle:localizedCoreBundle
+                                              tertiaryBundle:localizedModuleBundle];
         }
     }
 
@@ -53,24 +63,24 @@
     return string ?: defaultValue;
 }
 
-- (NSString *)localizedStringWithTable:(NSString *)table defaultValue:(NSString *)defaultValue {
-    return [self localizedStringWithTable:table defaultValue:defaultValue fallbackLocale:nil];
+- (NSString *)localizedStringWithTable:(NSString *)table moduleBundle:(NSBundle *)moduleBundle defaultValue:(NSString *)defaultValue {
+    return [self localizedStringWithTable:table moduleBundle:moduleBundle defaultValue:defaultValue fallbackLocale:nil];
 }
 
-- (NSString *)localizedStringWithTable:(NSString *)table {
-    return [self localizedStringWithTable:table defaultValue:self];
+- (NSString *)localizedStringWithTable:(NSString *)table moduleBundle:(NSBundle *)moduleBundle {
+    return [self localizedStringWithTable:table moduleBundle:moduleBundle defaultValue:self];
 }
 
-- (NSString *)localizedStringWithTable:(NSString *)table fallbackLocale:(NSString *)fallbackLocale {
-    return [self localizedStringWithTable:table defaultValue:self fallbackLocale:fallbackLocale];
+- (NSString *)localizedStringWithTable:(NSString *)table moduleBundle:(NSBundle *)moduleBundle fallbackLocale:(NSString *)fallbackLocale {
+    return [self localizedStringWithTable:table moduleBundle:moduleBundle defaultValue:self fallbackLocale:fallbackLocale];
 }
 
-- (BOOL)localizedStringExistsInTable:(NSString *)table {
-    return ([self localizedStringExistsInTable:table fallbackLocale:nil]);
+- (BOOL)localizedStringExistsInTable:(NSString *)table moduleBundle:(NSBundle *)moduleBundle {
+    return ([self localizedStringExistsInTable:table moduleBundle:moduleBundle fallbackLocale:nil]);
 }
 
-- (BOOL)localizedStringExistsInTable:(NSString *)table fallbackLocale:(NSString *)fallbackLocale {
-    return ([self localizedStringWithTable:table defaultValue:nil fallbackLocale:fallbackLocale] != nil);
+- (BOOL)localizedStringExistsInTable:(NSString *)table moduleBundle:(NSBundle *)moduleBundle fallbackLocale:(NSString *)fallbackLocale {
+    return ([self localizedStringWithTable:table moduleBundle:moduleBundle defaultValue:nil fallbackLocale:fallbackLocale] != nil);
 }
 
 @end

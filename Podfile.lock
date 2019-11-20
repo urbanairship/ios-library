@@ -2,6 +2,7 @@ PODS:
   - Airship (13.0.0):
     - Airship/Automation (= 13.0.0)
     - Airship/Core (= 13.0.0)
+    - Airship/MessageCenter (= 13.0.0)
   - Airship/Automation (13.0.0):
     - Airship/Core
   - Airship/Core (13.0.0)
@@ -9,6 +10,8 @@ PODS:
     - Airship/Automation
     - Airship/Core
   - Airship/Location (13.0.0):
+    - Airship/Core
+  - Airship/MessageCenter (13.0.0):
     - Airship/Core
   - AirshipExtensions (13.0.0):
     - AirshipExtensions/NotificationService (= 13.0.0)
@@ -36,11 +39,11 @@ EXTERNAL SOURCES:
     :path: "./"
 
 SPEC CHECKSUMS:
-  Airship: 26ff89a282f6945d4e52c653c7d80c3f578355a9
+  Airship: b5472d8d15e10fd2554ee55c24611831570d854d
   AirshipExtensions: fb136a1cfe5e92a46d8ce46b50c1e273caa3b55c
   OCMock: 43565190abc78977ad44a61c0d20d7f0784d35ab
   XcodeEdit: ac6e69ec9275e958d437da1e76fafa6b8c76cf9a
 
-PODFILE CHECKSUM: 6bacd3df657918274ed1f793f77cdc7a9a9f42df
+PODFILE CHECKSUM: dff37761edc83623ff21bfbf38aa0d90526953a3
 
 COCOAPODS: 1.8.4

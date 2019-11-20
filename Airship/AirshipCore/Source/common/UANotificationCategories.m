@@ -7,6 +7,7 @@
 #import "UANotificationCategory.h"
 #import "UANotificationAction.h"
 #import "UATextInputNotificationAction.h"
+#import "UAirshipCoreResources.h"
 
 @implementation UANotificationCategories
 
@@ -15,11 +16,11 @@
 }
 
 + (NSSet *)defaultCategoriesWithRequireAuth:(BOOL)requireAuth {
-    if (![UAirship resources]) {
+    if (![UAirshipCoreResources bundle]) {
         return [NSSet set];
     }
 
-    return [self createCategoriesFromFile:[[UAirship resources] pathForResource:@"UANotificationCategories" ofType:@"plist"]
+    return [self createCategoriesFromFile:[[UAirshipCoreResources bundle] pathForResource:@"UANotificationCategories" ofType:@"plist"]
                               requireAuth:requireAuth];
 }
 
@@ -102,6 +103,7 @@
         NSString *title;
         if (actionDefinition[@"title_resource"]) {
             title = [actionDefinition[@"title_resource"] localizedStringWithTable:@"UrbanAirship"
+                                                                     moduleBundle:[UAirshipCoreResources bundle]
                                                                      defaultValue:actionDefinition[@"title"]];
         } else if (actionDefinition[@"title"]) {
             title = actionDefinition[@"title"];

@@ -10,6 +10,10 @@ import AirshipCore
 import AirshipAutomation
 #endif
 
+#if canImport(AirshipMessageCenter)
+import AirshipMessageCenter
+#endif
+
 class DeviceInfoCell: UITableViewCell {
     @IBOutlet weak var title: UILabel!
     @IBOutlet weak var subtitle: UILabel!

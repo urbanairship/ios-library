@@ -3,6 +3,7 @@
 #import "UAActionScheduleInfo.h"
 #import "UAAirshipAutomationCoreImport.h"
 #import "UAAutomationModuleLoader.h"
+#import "UAAutomationResources.h"
 #import "UACancelSchedulesAction.h"
 #import "UAInAppMessage.h"
 #import "UAInAppMessageAdapterProtocol.h"

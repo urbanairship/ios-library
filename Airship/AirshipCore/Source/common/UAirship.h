@@ -224,12 +224,6 @@ extern NSString * const UADeviceIDChangedNotification;
 + (null_unspecified UANamedUser *)namedUser;
 
 /**
- * Returns the AirshipResources bundle, or nil if the the bundle
- * cannot be located at runtime.
- */
-+ (nullable NSBundle *)resources;
-
-/**
  * Returns the default `UAAnalytics` instance.
  */
 + (null_unspecified UAAnalytics *)analytics;

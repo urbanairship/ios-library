@@ -36,4 +36,3 @@ target 'SwiftSampleServiceExtension' do
   pod 'AirshipExtensions', :path => './'
 end
 
-

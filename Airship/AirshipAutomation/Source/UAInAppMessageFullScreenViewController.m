@@ -9,6 +9,7 @@
 #import "UAInAppMessageDismissButton+Internal.h"
 #import "UAInAppMessageFullScreenStyle.h"
 #import "UAAirshipAutomationCoreImport.h"
+#import "UAAutomationResources.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -165,7 +166,7 @@ NSString *const UAInAppMessageFullScreenViewNibName = @"UAInAppMessageFullScreen
                              displayContent:(UAInAppMessageFullScreenDisplayContent *)displayContent
                                   mediaView:(nullable UAInAppMessageMediaView *)mediaView
                                       style:(UAInAppMessageFullScreenStyle *)style {
-    self = [self initWithNibName:UAInAppMessageFullScreenViewNibName bundle:[UAirship resources]];
+    self = [self initWithNibName:UAInAppMessageFullScreenViewNibName bundle:[UAAutomationResources bundle]];
 
     if (self) {
         self.messageID = messageID;

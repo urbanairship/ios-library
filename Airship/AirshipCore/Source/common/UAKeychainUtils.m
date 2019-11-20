@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-#import "UAKeychainUtils+Internal.h"
+#import "UAKeychainUtils.h"
 #import "UAGlobal.h"
 #import "UAirship.h"
 #import "UAUtils+Internal.h"

@@ -8,6 +8,7 @@
 #import "UAPreferenceDataStore+Internal.h"
 #import "UARateAppPromptViewController+Internal.h"
 #import "UASystemVersion.h"
+#import "UAExtendedActionsResources.h"
 
 @interface UARateAppAction ()
 
@@ -208,7 +209,7 @@ NSString *const UARateAppLinkPromptTimestampsKey = @"RateAppActionLinkPromptCoun
         return;
     }
 
-    UARateAppPromptViewController *linkPrompt = [[UARateAppPromptViewController alloc] initWithNibName:UARateAppNibName bundle:[UAirship resources]];
+    UARateAppPromptViewController *linkPrompt = [[UARateAppPromptViewController alloc] initWithNibName:UARateAppNibName bundle:[UAExtendedActionsResources bundle]];
 
     [linkPrompt displayWithHeader:self.linkPromptTitle description:self.linkPromptBody completionHandler:^(BOOL dismissed) {
         if (!dismissed) {
