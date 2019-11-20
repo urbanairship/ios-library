@@ -68,6 +68,11 @@ NSString *const UAInAppMessageFullScreenViewNibName = @"UAInAppMessageFullScreen
 @property (strong, nonatomic, nullable) UIWindow *fullScreenWindow;
 
 /**
+ * The window before the full screen IAA window is displayed.
+ */
+@property (strong, nonatomic, nullable) UIWindow *previousKeyWindow;
+
+/**
  * The identifier of the full screen message.
  */
 @property (nonatomic, strong) NSString *messageID;
@@ -483,6 +488,12 @@ NSString *const UAInAppMessageFullScreenViewNibName = @"UAInAppMessageFullScreen
     [self createWindow];
     self.fullScreenWindow.windowScene = scene;
     [self observeSceneEvents];
+
+    #if TARGET_OS_MACCATALYST
+    // In macOS, store the previous window state to prevent it from being removed from the hierarchy
+    self.previousKeyWindow = [UAInAppMessageUtils keyWindowFromScene:scene];
+    #endif
+
     [self displayWindow:completionHandler];
 }
 
@@ -520,6 +531,17 @@ NSString *const UAInAppMessageFullScreenViewNibName = @"UAInAppMessageFullScreen
             [[NSNotificationCenter defaultCenter] removeObserver:self];
             self.isShowing = NO;
             [self.view removeFromSuperview];
+
+            // In macOS Catalina+, restore the previous window
+            #if TARGET_OS_MACCATALYST
+            // This is necessary else the deallocated/empty alert-level window will still absorb events despite not being the key window
+            self.fullScreenWindow.windowLevel = UIWindowLevelNormal;
+
+            if (self.previousKeyWindow) {
+                [self.previousKeyWindow makeKeyAndVisible];
+            }
+            #endif
+
             self.fullScreenWindow = nil;
 
             if (self.showCompletionHandler) {

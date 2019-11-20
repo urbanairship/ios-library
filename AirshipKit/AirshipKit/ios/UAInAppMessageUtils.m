@@ -234,6 +234,18 @@ CGFloat const CloseButtonHeight = 30;
     return isGifData;
 }
 
+#if TARGET_OS_MACCATALYST // Only used in macOS Catalyst
++ (nullable UIWindow *)keyWindowFromScene:(nonnull UIWindowScene *)scene {
+    for (UIWindow *window in scene.windows) {
+         if ([window isKeyWindow]) {
+             return window;
+         }
+     }
+
+    return nil;
+}
+#endif
+
 + (NSDictionary *)attributesWithTextInfo:(UAInAppMessageTextInfo *)textInfo textStyle:(UAInAppMessageTextStyle *)style {
     NSMutableDictionary *attributes = [NSMutableDictionary dictionary];
 
