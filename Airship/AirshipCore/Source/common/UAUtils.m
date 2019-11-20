@@ -13,7 +13,7 @@
 // UALib
 #import "UAirship.h"
 #import "UARuntimeConfig.h"
-#import "UAKeychainUtils+Internal.h"
+#import "UAKeychainUtils.h"
 #import "UARequest.h"
 
 // C includes

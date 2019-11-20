@@ -6,7 +6,7 @@
 #import "UARuntimeConfig.h"
 #import "UAirship+Internal.h"
 #import "UAPush+Internal.h"
-#import "UAKeychainUtils+Internal.h"
+#import "UAKeychainUtils.h"
 
 @interface UAEventAPIClientTest : UABaseTest
 @property (nonatomic, strong) id mockPush;

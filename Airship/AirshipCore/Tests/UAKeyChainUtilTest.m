@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 #import "UABaseTest.h"
-#import "UAKeychainUtils+Internal.h"
+#import "UAKeychainUtils.h"
 
 @interface UAKeyChainUtilTest : UABaseTest
 @property id mockBundle;

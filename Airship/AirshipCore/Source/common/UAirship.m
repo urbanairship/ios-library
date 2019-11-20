@@ -2,7 +2,7 @@
 #import "UAirship+Internal.h"
 #import "UAAnalytics+Internal.h"
 #import "UAUtils+Internal.h"
-#import "UAKeychainUtils+Internal.h"
+#import "UAKeychainUtils.h"
 #import "UAGlobal.h"
 #import "UAPush+Internal.h"
 #import "UAConfig.h"

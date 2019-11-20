@@ -12,6 +12,8 @@ NS_ASSUME_NONNULL_BEGIN
 #define kUAConnectionTypeCell @"cell"
 #define kUAConnectionTypeWifi @"wifi"
 
+@class UARequest;
+
 /**
  * The UAUtils object provides an interface for utility methods.
  */
@@ -234,6 +236,22 @@ NS_ASSUME_NONNULL_BEGIN
  * @return SHA256 digest as a hex string
  */
 + (NSString *)sha256HashWithString:(NSString*)input;
+
+///---------------------------------------------------------------------------------------
+/// @name UAHTTP Authenticated Request Helpers
+///---------------------------------------------------------------------------------------
+
+/**
+ * Logs a failed HTTP request.
+ * @param request The request.
+ * @param message The log message.
+ * @param error The NSError.
+ * @param response The HTTP response.
+ */
++ (void)logFailedRequest:(UARequest *)request
+             withMessage:(NSString *)message
+               withError:(nullable NSError *)error
+            withResponse:(nullable NSHTTPURLResponse *)response;
 
 
 @end
