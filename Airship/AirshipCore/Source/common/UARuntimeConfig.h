@@ -45,17 +45,23 @@ NS_ASSUME_NONNULL_BEGIN
 @property (readonly, getter=isAnalyticsEnabled) BOOL analyticsEnabled;
 
 /**
- * The Airship device API url. This option is reserved for internal debugging.
+ * The Airship device API url.
+ *
+ * @note This option is reserved for internal debugging. :nodoc:
  */
 @property (readonly) NSString *deviceAPIURL;
 
 /**
- * The Airship analytics API url. This option is reserved for internal debugging.
+ * The Airship analytics API url.
+ *
+ * @note This option is reserved for internal debugging. :nodoc:
  */
 @property (readonly) NSString *analyticsURL;
 
 /**
- * The Airship remote data url. This option is reserved for internal debugging.
+ * The Airship remote data url.
+ *
+ * @note This option is reserved for internal debugging. :nodoc:
  */
 @property (readonly) NSString *remoteDataAPIURL;
 
