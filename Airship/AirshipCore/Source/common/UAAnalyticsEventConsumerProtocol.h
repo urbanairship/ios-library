@@ -7,6 +7,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * An internal protocol that provides event add updates.
+ *
+ * @note For internal use only. :nodoc:
  */
 @protocol UAAnalyticsEventConsumerProtocol
 
@@ -18,6 +20,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Returns the last event to be added to analytics.
+ *
+ * @note For internal use only. :nodoc:
  *
  * @param event The UAEvent.
  */

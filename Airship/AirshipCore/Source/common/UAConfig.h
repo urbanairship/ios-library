@@ -204,18 +204,25 @@ typedef NS_ENUM(NSUInteger, UACloudSite) {
 ///---------------------------------------------------------------------------------------
 /// @name Internal Configuration Options
 ///---------------------------------------------------------------------------------------
+
 /**
- * The Airship device API url. This option is reserved for internal debugging.
+ * The Airship device API url.
+ *
+ * @note This option is reserved for internal debugging. :nodoc:
  */
 @property (nonatomic, copy) NSString *deviceAPIURL;
 
 /**
- * The Airship analytics API url. This option is reserved for internal debugging.
+ * The Airship analytics API url.
+ *
+ * @note This option is reserved for internal debugging. :nodoc:
  */
 @property (nonatomic, copy) NSString *analyticsURL;
 
 /**
- * The Airship remote data API url. This option is reserved for internal debugging.
+ * The Airship remote data API url.
+ *
+ * @note This option is reserved for internal debugging. :nodoc:
  */
 @property (nonatomic, copy) NSString *remoteDataAPIURL;
 
