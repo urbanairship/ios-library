@@ -14,7 +14,9 @@ PODS:
   - Airship/MessageCenter (13.0.0):
     - Airship/Core
   - AirshipExtensions (13.0.0):
+    - AirshipExtensions/NotificationContent (= 13.0.0)
     - AirshipExtensions/NotificationService (= 13.0.0)
+  - AirshipExtensions/NotificationContent (13.0.0)
   - AirshipExtensions/NotificationService (13.0.0)
   - OCMock (3.4.3)
   - XcodeEdit (2.7.4)
@@ -39,8 +41,8 @@ EXTERNAL SOURCES:
     :path: "./"
 
 SPEC CHECKSUMS:
-  Airship: b5472d8d15e10fd2554ee55c24611831570d854d
-  AirshipExtensions: fb136a1cfe5e92a46d8ce46b50c1e273caa3b55c
+  Airship: 26ff89a282f6945d4e52c653c7d80c3f578355a9
+  AirshipExtensions: fa0b9d0821b6dae95fdab04a0e901336ecd57c86
   OCMock: 43565190abc78977ad44a61c0d20d7f0784d35ab
   XcodeEdit: ac6e69ec9275e958d437da1e76fafa6b8c76cf9a
 

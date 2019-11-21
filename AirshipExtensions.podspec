@@ -12,10 +12,16 @@ Pod::Spec.new do |s|
     s.module_name             = "AirshipExtensions"
     s.requires_arc            = true
     s.ios.deployment_target   = "11.0"
-    s.default_subspecs        = ["NotificationService"]
+    s.default_subspecs        = ["NotificationService", "NotificationContent"]
 
     s.subspec "NotificationService" do |notificationService|
         notificationService.ios.source_files     = "AirshipExtensions/AirshipNotificationServiceExtension/Source/**/*.{h,m,mm}"
         notificationService.ios.weak_frameworks  = "UserNotifications"
     end
+    
+    s.subspec "NotificationContent" do |notificationContent|
+        notificationContent.ios.source_files     = ["AirshipExtensions/AirshipNotificationContentExtension/Source/**/*.{h,m,mm}", "AirshipExtensions/AirshipNotificationContentExtension/Source/Templates/Carousel/**/*.{h,m,mm}"]
+        notificationContent.ios.weak_frameworks  = "UserNotifications"
+    end
+    
 end
