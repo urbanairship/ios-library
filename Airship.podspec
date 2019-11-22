@@ -54,6 +54,12 @@ Pod::Spec.new do |s|
       messageCenter.dependency                  "Airship/Core"
    end
 
+   s.subspec "Accengage" do |accengage|
+      accengage.ios.source_files          = "Airship/AirshipAccengage/Source/**/*.{h,m,swift}"
+      accengage.ios.private_header_files  = "Airship/AirshipAccengage/Source/**/*+Internal*.h"
+      accengage.dependency                  "Airship/Core"
+   end
+
    s.subspec "Debug" do |debug|
       debug.platform                  = "ios"
       debug.source_files              = "Airship/AirshipDebug/Source/**/*.{h,m,swift}"

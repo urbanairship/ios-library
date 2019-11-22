@@ -27,6 +27,7 @@
 #import "UAAutomationModuleLoaderFactory.h"
 #import "UAExtendedActionsModuleLoaderFactory.h"
 #import "UAMessageCenterModuleLoaderFactory.h"
+#import "UAAccengageModuleLoaderFactory.h"
 
 #if !TARGET_OS_TV
 #import "UAChannelCapture+Internal.h"
@@ -47,6 +48,7 @@ NSString * const UALocationModuleLoaderClassName = @"UALocationModuleLoader";
 NSString * const UAAutomationModuleLoaderClassName = @"UAAutomationModuleLoader";
 NSString * const UAMessageCenterModuleLoaderClassName = @"UAMessageCenterModuleLoader";
 NSString * const UAExtendedActionsModuleLoaderClassName = @"UAExtendedActionsModuleLoader";
+NSString * const UAAccengageModuleLoaderClassName = @"UAAccengageModuleLoader";
 
 static UAirship *sharedAirship_;
 
@@ -173,6 +175,14 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
                                                                                     channel:self.sharedChannel];
         if (messageCenterLoader) {
             [loaders addObject:messageCenterLoader];
+        }
+
+        id<UAModuleLoader> accengageLoader = [UAirship accengageModuleLoaderWithDataStore:self.dataStore
+                                                                                  channel:self.sharedChannel
+                                                                                     push:self.sharedPush
+                                                                                analytics:self.sharedAnalytics];
+        if (accengageLoader) {
+            [loaders addObject:accengageLoader];
         }
 
         id<UAModuleLoader> extendedActionsLoader = [UAirship extendedActionsModuleLoader];
@@ -509,6 +519,21 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
                                          analytics:analytics
                                 remoteDataProvider:remoteDataManager
                                   tagGroupsHistory:tagGroupsHistory];
+    }
+    return nil;
+}
+
++ (nullable id<UAModuleLoader>)accengageModuleLoaderWithDataStore:(UAPreferenceDataStore *)dataStore
+                                                          channel:(UAChannel *)channel
+                                                             push:(UAPush *)push
+                                                        analytics:(UAAnalytics *)analytics {
+
+    Class cls = NSClassFromString(UAAccengageModuleLoaderClassName);
+    if ([cls conformsToProtocol:@protocol(UAAccengageModuleLoaderFactory)]) {
+        return [cls moduleLoaderWithDataStore:dataStore
+                                      channel:channel
+                                         push:push
+                                    analytics:analytics];
     }
     return nil;
 }
