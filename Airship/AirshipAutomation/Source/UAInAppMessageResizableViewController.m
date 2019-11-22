@@ -122,6 +122,11 @@ CGFloat const DefaultViewToScreenWidthRatio = 0.75;
  */
 @property (nonatomic, assign) BOOL overrideSize;
 
+/**
+ * The window before the IAA is displayed.
+ */
+@property (strong, nonatomic, nullable) UIWindow *previousKeyWindow;
+
 @end
 
 @implementation UAInAppMessageResizableViewController
@@ -339,6 +344,12 @@ double const DefaultResizableViewAnimationDuration = 0.2;
     [self createWindow];
     self.topWindow.windowScene = scene;
     [self observeSceneEvents];
+
+    #if TARGET_OS_MACCATALYST
+    // In macOS, store the previous window state to prevent it from being removed from the hierarchy
+    self.previousKeyWindow = [UAInAppMessageUtils keyWindowFromScene:scene];
+    #endif
+
     [self displayWindow:completionHandler];
 }
 
@@ -369,6 +380,16 @@ double const DefaultResizableViewAnimationDuration = 0.2;
     self.isShowing = NO;
     [self.view removeFromSuperview];
     self.topWindow = nil;
+
+    // In macOS Catalina+, restore the previous window
+    #if TARGET_OS_MACCATALYST
+    // This is necessary else the deallocated/empty alert-level window will still absorb events despite not being the key window
+    self.topWindow.windowLevel = UIWindowLevelNormal;
+
+    if (self.previousKeyWindow) {
+        [self.previousKeyWindow makeKeyAndVisible];
+    }
+    #endif
 }
 
 - (void)dismissWithoutResolution {

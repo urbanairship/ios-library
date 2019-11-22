@@ -108,4 +108,14 @@
 + (BOOL)isGifData:(NSData *)data;
 
 
+#if TARGET_OS_MACCATALYST // Only used in macOS Catalyst
+/**
+* Gets key window from the current scene.
+*
+* @param The scene.
+* @return key window if scene contains one, nil otherwise.
+*/
++ (nullable UIWindow *)keyWindowFromScene:(nonnull UIWindowScene *)scene;
+#endif
+
 @end
