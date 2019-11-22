@@ -677,7 +677,7 @@
 
 - (void)displayMessageViewController {
     // if message view is not already displaying, get it displayed
-    if (self.collapsed && (self.messageViewController != self.navigationController.visibleViewController)) {
+    if (self.messageViewController != self.navigationController.visibleViewController) {
         if (!self.messageViewNavigationController) {
             self.messageViewNavigationController = [[UINavigationController alloc] initWithRootViewController:self.messageViewController];
             
