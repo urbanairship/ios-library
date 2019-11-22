@@ -2,6 +2,6 @@
 
 import AirshipExtensions
 
-class NotificationService: UAMediaAttachmentExtension {
+class NotificationService: UANotificationServiceExtension {
 
 }
