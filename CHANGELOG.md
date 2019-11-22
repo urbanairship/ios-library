@@ -10,8 +10,7 @@ key value pairs to be associated with the application's Airship channel
 for segmentation purposes.
 
 Custom channel attributes are currently a beta feature. If you wish to 
-participate in the beta program, please contact our Product team at 
-product-managers@airship.com.
+participate in the beta program, please complete our [signup form](https://www.airship.com/lp/sign-up-now-to-participate-in-the-advanced-segmentation-beta-program/).
 
 As of SDK 13 static libraries will be removed from the binary distribution.
 Apps currently using these should begin migrating to the new xcframeworks
