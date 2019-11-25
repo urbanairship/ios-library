@@ -2,6 +2,6 @@
 
 @import AirshipExtensions;
 
-@interface NotificationService : UAMediaAttachmentExtension
+@interface NotificationService : UANotificationServiceExtension
 
 @end

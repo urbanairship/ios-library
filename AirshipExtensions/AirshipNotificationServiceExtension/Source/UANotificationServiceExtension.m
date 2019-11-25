@@ -3,12 +3,12 @@
 #import <Foundation/Foundation.h>
 #import <MobileCoreServices/MobileCoreServices.h>
 
-#import "UAMediaAttachmentExtension.h"
+#import "UANotificationServiceExtension.h"
 #import "UAMediaAttachmentPayload.h"
 
 #define kUANotificationAttachmentServiceMediaAttachmentKey @"com.urbanairship.media_attachment"
 
-@interface UAMediaAttachmentExtension ()
+@interface UANotificationServiceExtension ()
 
 @property (nonatomic, strong) void (^contentHandler)(UNNotificationContent *contentToDeliver);
 @property (nonatomic, strong) UNMutableNotificationContent *bestAttemptContent;
@@ -17,7 +17,7 @@
 
 @end
 
-@implementation UAMediaAttachmentExtension
+@implementation UANotificationServiceExtension
 
 - (NSURL *)processTempFile:(NSURL *)tempFileURL originalURL:originalURL {
 
