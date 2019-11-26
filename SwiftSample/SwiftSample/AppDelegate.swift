@@ -51,7 +51,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UARegistrationDelegate, U
         print("Config:\n \(config)")
 
         // Call takeOff (which initializes the Airship DebugKit)
-        AirshipDebugKit.takeOff()
+        AirshipDebug.takeOff()
         
         // Set the icon badge to zero on startup (optional)
         UAirship.push()?.resetBadge()
@@ -158,7 +158,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UARegistrationDelegate, U
         case PushSettingsStoryboardID:
             pathComponents = URL(string: "settings")!.pathComponents
         case InAppAutomationStoryboardID:
-            pathComponents = URL(string: "\(DebugStoryboardID)/\(AirshipDebugKit.automationViewName)")!.pathComponents
+            pathComponents = URL(string: "\(DebugStoryboardID)/\(AirshipDebug.automationViewName)")!.pathComponents
         default:
             break
         }
@@ -170,12 +170,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UARegistrationDelegate, U
         case "inbox":
             pathComponents[0] = MessageCenterStoryboardID
         case "settings":
-            var newPathComponents = URL(string: "\(DebugStoryboardID)/\(AirshipDebugKit.deviceInfoViewName)")!.pathComponents
+            var newPathComponents = URL(string: "\(DebugStoryboardID)/\(AirshipDebug.deviceInfoViewName)")!.pathComponents
             pathComponents.remove(at: 0)
             if (pathComponents.count > 0) {
                 switch (pathComponents[0]) {
                 case "tags":
-                    newPathComponents.append(AirshipDebugKit.tagsViewName)
+                    newPathComponents.append(AirshipDebug.tagsViewName)
                 default:
                     newPathComponents += pathComponents
                 }
@@ -214,7 +214,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UARegistrationDelegate, U
 
             // get rest of deep link
             pathComponents.remove(at: 0)
-            AirshipDebugKit.showView(URL(fileURLWithPath: (NSString.path(withComponents: pathComponents))))
+            AirshipDebug.showView(URL(fileURLWithPath: (NSString.path(withComponents: pathComponents))))
         default:
             break
         }

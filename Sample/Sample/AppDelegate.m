@@ -60,7 +60,7 @@ NSUInteger const DebugTab = 2;
     NSLog(@"Config:\n%@", [config description]);
 
     // Call takeOff (which initializes the Airship DebugKit)
-    [AirshipDebugKit takeOff];
+    [AirshipDebug takeOff];
     
     // Set the icon badge to zero on startup (optional)
     [[UAirship push] resetBadge];
@@ -182,7 +182,7 @@ NSUInteger const DebugTab = 2;
     if ([[pathComponents[0] lowercaseString] isEqualToString:PushSettingsStoryboardID]) {
         pathComponents = [[[NSURL URLWithString:@"settings"] pathComponents] mutableCopy];
     } else if ([[pathComponents[0] lowercaseString] isEqualToString:InAppAutomationStoryboardID]) {
-        pathComponents = [[[NSURL URLWithString:[NSString stringWithFormat:@"%@/%@",DebugStoryboardID,AirshipDebugKit.automationViewName]] pathComponents] mutableCopy];
+        pathComponents = [[[NSURL URLWithString:[NSString stringWithFormat:@"%@/%@",DebugStoryboardID,AirshipDebug.automationViewName]] pathComponents] mutableCopy];
     }
     
     // map deeplinks to storyboards paths
@@ -191,11 +191,11 @@ NSUInteger const DebugTab = 2;
     } else if ([[pathComponents[0] lowercaseString] isEqualToString:@"inbox"]) {
         pathComponents[0] = MessageCenterStoryboardID;
     } else if ([[pathComponents[0] lowercaseString] isEqualToString:@"settings"]) {
-        NSMutableArray<NSString *>*newPathComponents = [[[NSURL URLWithString:[NSString stringWithFormat:@"%@/%@",DebugStoryboardID,AirshipDebugKit.deviceInfoViewName]] pathComponents] mutableCopy];
+        NSMutableArray<NSString *>*newPathComponents = [[[NSURL URLWithString:[NSString stringWithFormat:@"%@/%@",DebugStoryboardID,AirshipDebug.deviceInfoViewName]] pathComponents] mutableCopy];
         [pathComponents removeObjectAtIndex:0];
         if (pathComponents.count > 0) {
             if ([[pathComponents[0] lowercaseString] isEqualToString:@"tags"]) {
-                [newPathComponents addObject:AirshipDebugKit.tagsViewName];
+                [newPathComponents addObject:AirshipDebug.tagsViewName];
             } else {
                 [newPathComponents addObjectsFromArray:pathComponents];
             }
@@ -231,7 +231,7 @@ NSUInteger const DebugTab = 2;
         
         // get rest of deep link
         [pathComponents removeObjectAtIndex:0];
-        [AirshipDebugKit showView:[NSURL fileURLWithPath:[NSString pathWithComponents:pathComponents]]];
+        [AirshipDebug showView:[NSURL fileURLWithPath:[NSString pathWithComponents:pathComponents]]];
     }
 
     completionHandler();

@@ -6,7 +6,7 @@ import UIKit
 import AirshipCore
 #endif
 
-public class AirshipDebugKit : NSObject {
+public class AirshipDebug : NSObject {
     @objc public static var deviceInfoViewName = "DeviceInfo"
     @objc public static let automationViewName = "Automation"
     @objc public static let eventsViewName = "Events"
@@ -57,10 +57,10 @@ public class AirshipDebugKit : NSObject {
     static let lastPushPayloadKey = "com.urbanairship.debug.last_push"
 
     /**
-     * Provides an initialization point for AirshipDebugKit components.
+     * Provides an initialization point for AirshipDebug components.
      */
     @objc public static func takeOff() {
-        // Set data manager as analytics event consumer on AirshipDebugKit start
+        // Set data manager as analytics event consumer on AirshipDebug start
         UAirship.shared().analytics.eventConsumer = EventDataManager.shared
         observePayloadEvents();
     }
@@ -202,7 +202,7 @@ public class AirshipDebugKit : NSObject {
  * Translate the string using the DebugKit strings file
  */
 internal extension String {
-    func localized(bundle: Bundle = Bundle(for: AirshipDebugKit.self), tableName: String = "DebugUrbanAirship", comment: String = "") -> String {
+    func localized(bundle: Bundle = Bundle(for: AirshipDebug.self), tableName: String = "AirshipDebug", comment: String = "") -> String {
         return NSLocalizedString(self, tableName: tableName, bundle: bundle, comment: comment)
     }
     

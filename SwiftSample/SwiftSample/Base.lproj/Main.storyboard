@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14868" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="49e-Tb-3d3">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="15505" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="49e-Tb-3d3">
     <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14824"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15509"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <customFonts key="customFonts">
@@ -135,15 +135,15 @@
             </objects>
             <point key="canvasLocation" x="1414" y="1178"/>
         </scene>
-        <!--DebugKit-->
+        <!--AirshipDebug-->
         <scene sceneID="nzC-Xk-r3b">
             <objects>
-                <viewControllerPlaceholder storyboardName="DebugKit" bundleIdentifier="org.cocoapods.Airship" id="CMJ-gn-hPv" sceneMemberID="viewController">
+                <viewControllerPlaceholder storyboardName="AirshipDebug" bundleIdentifier="org.cocoapods.Airship" id="CMJ-gn-hPv" sceneMemberID="viewController">
                     <navigationItem key="navigationItem" id="1iM-Wu-64s"/>
                 </viewControllerPlaceholder>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="nMj-BN-7lu" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2002" y="1178"/>
+            <point key="canvasLocation" x="2009" y="1178"/>
         </scene>
     </scenes>
     <resources>

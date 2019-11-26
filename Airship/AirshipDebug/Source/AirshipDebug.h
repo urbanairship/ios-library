@@ -2,10 +2,10 @@
 
 #import <UIKit/UIKit.h>
 
-//! Project version number for AirshipDebugKit.
-FOUNDATION_EXPORT double AirshipDebugKitVersionNumber;
+//! Project version number for AirshipDebug.
+FOUNDATION_EXPORT double AirshipDebugVersionNumber;
 
-//! Project version string for AirshipDebugKit.
-FOUNDATION_EXPORT const unsigned char AirshipDebugKitVersionString[];
+//! Project version string for AirshipDebug.
+FOUNDATION_EXPORT const unsigned char AirshipDebugVersionString[];
 
-// In this header, you should import all the public headers of your framework using statements like #import <AirshipDebugKit/PublicHeader.h>
+// In this header, you should import all the public headers of your framework using statements like #import <AirshipDebug/PublicHeader.h>

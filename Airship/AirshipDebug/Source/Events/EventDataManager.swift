@@ -15,7 +15,7 @@ class EventDataManager: NSObject, UAAnalyticsEventConsumerProtocol {
     private let eventsKey = "events"
     private let eventsNotificationName = "UAEventAdded"
 
-    private let storageDaysSettingKey = "AirshipDebugKit-EventStorageDays"
+    private let storageDaysSettingKey = "AirshipDebug-EventStorageDays"
 
     // The number of days events will be stored by default.
     private let defaultStorageDays = 2
@@ -37,7 +37,7 @@ class EventDataManager: NSObject, UAAnalyticsEventConsumerProtocol {
     static let shared = EventDataManager()
 
     private lazy var persistentContainer:NSPersistentContainer = {
-        let momdName = "DebugKitData"
+        let momdName = "AirshipEventData"
 
         guard let modelURL = Bundle(for: type(of: self)).url(forResource: momdName, withExtension:"momd") else {
             fatalError("Error loading model from bundle")
@@ -81,7 +81,7 @@ class EventDataManager: NSObject, UAAnalyticsEventConsumerProtocol {
             try context.save()
         } catch {
             if let error = error as NSError? {
-                print("ERROR: error saving Debug Kit Data Manager context - \(error), \(error.userInfo)")
+                print("ERROR: error saving Debug Data Manager context - \(error), \(error.userInfo)")
             }
         }
     }

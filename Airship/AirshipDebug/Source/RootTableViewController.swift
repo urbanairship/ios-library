@@ -26,7 +26,7 @@ class RootTableViewController: UITableViewController {
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         
-        AirshipDebugKit.rootViewController = self
+        AirshipDebug.rootViewController = self
     }
     
     func setTableViewTheme() {
@@ -36,7 +36,7 @@ class RootTableViewController: UITableViewController {
     }
 
     func localize() {
-        navigationController?.navigationBar.topItem?.title = "ua_debug_kit_title".localized()
+        navigationController?.navigationBar.topItem?.title = "ua_debug_title".localized()
 
         deviceInfoTitle.text = "ua_device_info_title".localized()
         deviceInfoSubtitle.text = "ua_device_info_subtitle".localized()
@@ -94,11 +94,11 @@ class RootTableViewController: UITableViewController {
         // map storyboard name to storyboard segue
         var segueIdentifier : String?
         switch (storyBoardName) {
-        case AirshipDebugKit.deviceInfoViewName.lowercased():
+        case AirshipDebug.deviceInfoViewName.lowercased():
             segueIdentifier = deviceInfoSegue
-        case AirshipDebugKit.eventsViewName.lowercased() :
+        case AirshipDebug.eventsViewName.lowercased() :
             segueIdentifier = eventsSegue
-        case AirshipDebugKit.automationViewName.lowercased():
+        case AirshipDebug.automationViewName.lowercased():
             segueIdentifier = automationSegue
         default:
             break
@@ -114,7 +114,7 @@ class RootTableViewController: UITableViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         // Localize back button
         let backItem = UIBarButtonItem()
-        backItem.title = "ua_debug_kit_title".localized()
+        backItem.title = "ua_debug_title".localized()
         navigationItem.backBarButtonItem = backItem
 
         // if this is a deep link, the components for the launch path
@@ -136,19 +136,19 @@ class RootTableViewController: UITableViewController {
     
     func viewControllerForStoryboard(_ storyBoardName : String) -> UIViewController? {
         switch (storyBoardName) {
-        case AirshipDebugKit.deviceInfoViewName.lowercased():
+        case AirshipDebug.deviceInfoViewName.lowercased():
             if (self.deviceInfoViewController == nil) {
-                self.deviceInfoViewController = AirshipDebugKit.instantiateViewControllerForStoryboard(storyBoardName) as? DeviceInfoViewController
+                self.deviceInfoViewController = AirshipDebug.instantiateViewControllerForStoryboard(storyBoardName) as? DeviceInfoViewController
             }
             return deviceInfoViewController
-        case AirshipDebugKit.eventsViewName.lowercased() :
+        case AirshipDebug.eventsViewName.lowercased() :
             if (self.eventsViewController == nil) {
-                self.eventsViewController = AirshipDebugKit.instantiateViewControllerForStoryboard(storyBoardName) as? EventsViewController
+                self.eventsViewController = AirshipDebug.instantiateViewControllerForStoryboard(storyBoardName) as? EventsViewController
             }
             return self.eventsViewController
-        case AirshipDebugKit.automationViewName.lowercased():
+        case AirshipDebug.automationViewName.lowercased():
             if (self.automationTableViewController == nil) {
-                self.automationTableViewController = AirshipDebugKit.instantiateViewControllerForStoryboard(storyBoardName) as? AutomationTableViewController
+                self.automationTableViewController = AirshipDebug.instantiateViewControllerForStoryboard(storyBoardName) as? AutomationTableViewController
             }
             return self.automationTableViewController
         default:

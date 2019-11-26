@@ -2,7 +2,7 @@
 
 import UIKit
 
-class DebugKitUtils: NSObject {
+class DebugUtils: NSObject {
 
 }
 
