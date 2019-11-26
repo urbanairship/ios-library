@@ -274,6 +274,7 @@
 		6E2E914B238C4D9E008488D3 /* UALocationEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C4FDDFE225BBED400A54E32 /* UALocationEvent.m */; };
 		6E2E914C238C4DAB008488D3 /* UALocationEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C4FDDFD225BBED300A54E32 /* UALocationEvent.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E2E914F238D99F0008488D3 /* AirshipLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E9375602376164600AA9C2A /* AirshipLocation.framework */; };
+		6E2E9152238DA39E008488D3 /* AirshipLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E9375602376164600AA9C2A /* AirshipLocation.framework */; };
 		6E3673DC1E8AE9F7005B5DFF /* UAEnableFeatureAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E3673DA1E8AE9F7005B5DFF /* UAEnableFeatureAction.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E3673DD1E8AE9F7005B5DFF /* UAEnableFeatureAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E3673DB1E8AE9F7005B5DFF /* UAEnableFeatureAction.m */; };
 		6E3673E01E8AF9D8005B5DFF /* UAEnableFeatureActionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E3673DF1E8AF9D8005B5DFF /* UAEnableFeatureActionTest.m */; };
@@ -1220,6 +1221,13 @@
 			remoteInfo = AirshipCore;
 		};
 		6E2E914D238D98BE008488D3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 494DD94E1B0EB677009C134E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 6E9373032376164600AA9C2A;
+			remoteInfo = AirshipLocation;
+		};
+		6E2E9150238DA39A008488D3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 494DD94E1B0EB677009C134E /* Project object */;
 			proxyType = 1;
@@ -2207,6 +2215,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6E2E9152238DA39E008488D3 /* AirshipLocation.framework in Frameworks */,
 				3CA0E2A0237CCE2600EE76CF /* AirshipCore.framework in Frameworks */,
 				3C39D3092384C8BE003C50D4 /* AirshipMessageCenter.framework in Frameworks */,
 				6E845492237E2D52007D3B1E /* AirshipAutomation.framework in Frameworks */,
@@ -4875,6 +4884,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				6E2E9151238DA39A008488D3 /* PBXTargetDependency */,
 				3CA0E2DA237CD59100EE76CF /* PBXTargetDependency */,
 				3C39D3082384C8B6003C50D4 /* PBXTargetDependency */,
 				6E845491237E2D49007D3B1E /* PBXTargetDependency */,
@@ -5942,6 +5952,11 @@
 			isa = PBXTargetDependency;
 			target = 6E9373032376164600AA9C2A /* AirshipLocation */;
 			targetProxy = 6E2E914D238D98BE008488D3 /* PBXContainerItemProxy */;
+		};
+		6E2E9151238DA39A008488D3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 6E9373032376164600AA9C2A /* AirshipLocation */;
+			targetProxy = 6E2E9150238DA39A008488D3 /* PBXContainerItemProxy */;
 		};
 		6E845452237E08EE007D3B1E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
