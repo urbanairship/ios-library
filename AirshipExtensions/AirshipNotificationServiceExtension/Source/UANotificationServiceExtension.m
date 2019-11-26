@@ -13,7 +13,7 @@
 @property (nonatomic, strong) void (^contentHandler)(UNNotificationContent *contentToDeliver);
 @property (nonatomic, strong) UNMutableNotificationContent *bestAttemptContent;
 @property (nonatomic, strong) UNMutableNotificationContent *modifiedContent;
-@property (nonatomic, strong) NSURLSessionDownloadTask *downloadTask;
+@property (nonatomic, copy) NSArray *downloadTasks;
 
 @end
 
@@ -195,57 +195,8 @@
     return attachment;
 }
 
-- (NSURLSessionDownloadTask *)downloadTaskWithPayload:(UAMediaAttachmentPayload *)payload {
-
-    // Pass an empty string for the identifier so that the attachment can generate its own unique ID
-    NSString *identifier = @"";
-
-    NSURL *url = [payload.urls firstObject];
-
-    return [[NSURLSession sharedSession]
-            downloadTaskWithURL:url
-            completionHandler:^(NSURL *temporaryFileLocation, NSURLResponse *response, NSError *error) {
-
-                if (error) {
-                    NSLog(@"Error downloading attachment: %@", error.localizedDescription);
-                    self.contentHandler(self.bestAttemptContent);
-                    return;
-                }
-
-                NSString *mimeType = nil;
-                if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
-                    NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
-                    mimeType = httpResponse.allHeaderFields[@"Content-Type"];
-                }
-
-                UNNotificationAttachment *attachment = [self attachmentWithTemporaryFileLocation:temporaryFileLocation
-                                                                                     originalURL:url
-                                                                                        mimeType:mimeType
-                                                                                         options:payload.options
-                                                                                      identifier:identifier];
-
-                // A nil attachment may indicate an unrecognized file type
-                if (!attachment) {
-                    self.contentHandler(self.bestAttemptContent);
-                    return;
-                }
-
-                self.modifiedContent.attachments = @[attachment];
-
-                if (payload.content.body) {
-                    self.modifiedContent.body = payload.content.body;
-                }
-
-                if (payload.content.title) {
-                    self.modifiedContent.title = payload.content.title;
-                }
-
-                if (payload.content.subtitle) {
-                    self.modifiedContent.subtitle = payload.content.subtitle;
-                }
-
-                self.contentHandler(self.modifiedContent);
-            }];
+- (NSURLSessionDownloadTask *)downloadTaskWithURL:(UAMediaAttachmentURL *)attachmentUrl completionHandler:(void (^)(NSURL *temporaryFileLocation, NSURLResponse *response, NSError *error))completionHandler {
+    return [[NSURLSession sharedSession] downloadTaskWithURL:attachmentUrl.url completionHandler:completionHandler];
 }
 
 - (void)didReceiveNotificationRequest:(UNNotificationRequest *)request withContentHandler:(void (^)(UNNotificationContent * _Nonnull))contentHandler {
@@ -260,8 +211,77 @@
     if (jsonPayload) {
         UAMediaAttachmentPayload *payload = [UAMediaAttachmentPayload payloadWithJSONObject:jsonPayload];
         if (payload) {
-            self.downloadTask = [self downloadTaskWithPayload:payload];
-            [self.downloadTask resume];
+            __block NSMutableArray *attachments = [NSMutableArray array];
+            dispatch_group_t downloadTaskGroup = dispatch_group_create();
+            
+            NSMutableArray *currentDownloadTasks = [NSMutableArray array];
+            [currentDownloadTasks addObjectsFromArray:self.downloadTasks];
+           
+            for (UAMediaAttachmentURL *url in payload.urls) {
+                
+                // If the payload url doesn't contain an ID, pass an empty string for the identifier so that the attachment can generate its own unique ID
+                NSString *identifier = url.urlID ?: @"";
+                
+                NSMutableDictionary *options = [NSMutableDictionary dictionaryWithDictionary:payload.options];
+                
+                // Only leave the thumbnail visible for the attachment with the thumbnail ID
+                if (payload.thumbnailID && ![payload.thumbnailID isEqualToString:identifier]) {
+                    [options setValue:@YES forKey:UNNotificationAttachmentOptionsThumbnailHiddenKey];
+                }
+                
+                void (^completionHandler)(NSURL *temporaryFileLocation, NSURLResponse *response, NSError *error) = ^(NSURL *temporaryFileLocation, NSURLResponse *response, NSError *error) {
+                    if (error) {
+                        NSLog(@"Error downloading attachment: %@", error.localizedDescription);
+                        self.contentHandler(self.bestAttemptContent);
+                        dispatch_group_leave(downloadTaskGroup);
+                        return;
+                    }
+
+                    NSString *mimeType = nil;
+                    if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
+                        NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
+                        mimeType = httpResponse.allHeaderFields[@"Content-Type"];
+                    }
+
+                    UNNotificationAttachment *attachment = [self attachmentWithTemporaryFileLocation:temporaryFileLocation originalURL:url.url mimeType:mimeType options:options.copy identifier:identifier];
+
+                    // A nil attachment may indicate an unrecognized file type
+                    if (!attachment) {
+                        self.contentHandler(self.bestAttemptContent);
+                        dispatch_group_leave(downloadTaskGroup);
+                        return;
+                    }
+                           
+                    [attachments addObject:attachment];
+                           
+                    self.modifiedContent.attachments = attachments.copy;
+                    self.bestAttemptContent.attachments = attachments.copy;
+                           
+                    dispatch_group_leave(downloadTaskGroup);
+                };
+                
+                dispatch_group_enter(downloadTaskGroup);
+                NSURLSessionDownloadTask *downloadTask = [self downloadTaskWithURL:url completionHandler:completionHandler];
+                [currentDownloadTasks addObject:downloadTask];
+                [downloadTask resume];
+            }
+         
+            self.downloadTasks = currentDownloadTasks.copy;
+            
+            dispatch_group_notify(downloadTaskGroup, dispatch_get_main_queue(),^{
+                if (payload.content.body) {
+                    self.modifiedContent.body = payload.content.body;
+                }
+
+                if (payload.content.title) {
+                    self.modifiedContent.title = payload.content.title;
+                }
+
+                if (payload.content.subtitle) {
+                    self.modifiedContent.subtitle = payload.content.subtitle;
+                }
+                self.contentHandler(self.modifiedContent);
+            });
         } else {
             NSLog(@"Unable to parse attachment: %@", payload);
             self.contentHandler(self.bestAttemptContent);
@@ -272,7 +292,11 @@
 }
 
 - (void)serviceExtensionTimeWillExpire {
-    [self.downloadTask cancel];
+    for (NSURLSessionDownloadTask *task in self.downloadTasks) {
+        if (task.state != NSURLSessionTaskStateCompleted) {
+            [task cancel];
+        }
+    }
     self.contentHandler(self.bestAttemptContent);
 }
 
