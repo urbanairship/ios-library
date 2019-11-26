@@ -9,6 +9,7 @@ PODS:
   - Airship/Debug (13.0.0):
     - Airship/Automation
     - Airship/Core
+    - Airship/Location
     - Airship/MessageCenter
   - Airship/Location (13.0.0):
     - Airship/Core
@@ -42,7 +43,7 @@ EXTERNAL SOURCES:
     :path: "./"
 
 SPEC CHECKSUMS:
-  Airship: 3bc72c8b85e8a8b58ff428bf89a7fd6b9877cc2d
+  Airship: d57f814d0a209f3f31c8aa44edcfba32db7c9268
   AirshipExtensions: fa0b9d0821b6dae95fdab04a0e901336ecd57c86
   OCMock: 43565190abc78977ad44a61c0d20d7f0784d35ab
   XcodeEdit: ac6e69ec9275e958d437da1e76fafa6b8c76cf9a

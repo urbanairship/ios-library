@@ -33,9 +33,7 @@ Pod::Spec.new do |s|
    s.subspec "Location" do |location|
       location.ios.source_files           = "Airship/AirshipLocation/Source/*.{h,m}"
       location.ios.private_header_files   = "Airship/AirshipLocation/Source/*+Internal*.h"
-      location.tvos.source_files          = "Airship/AirshipLocation/Source/*.{h,m}"
-      location.tvos.private_header_files  = "Airship/AirshipLocation/Source/*+Internal*.h"
-      location.frameworks                 = "CoreLocation"
+      location.ios.frameworks             = "CoreLocation"
       location.dependency                  "Airship/Core"
 
    end
