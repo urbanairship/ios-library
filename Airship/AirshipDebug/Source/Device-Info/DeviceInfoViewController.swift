@@ -14,6 +14,10 @@ import AirshipAutomation
 import AirshipMessageCenter
 #endif
 
+#if canImport(AirshipLocation)
+import AirshipLocation
+#endif
+
 class DeviceInfoCell: UITableViewCell {
     @IBOutlet weak var title: UILabel!
     @IBOutlet weak var subtitle: UILabel!
