@@ -61,5 +61,6 @@ Pod::Spec.new do |s|
       debug.dependency                "Airship/Core"
       debug.dependency                "Airship/Automation"
       debug.dependency                "Airship/MessageCenter"
+      debug.dependency                "Airship/Location"
    end
 end
