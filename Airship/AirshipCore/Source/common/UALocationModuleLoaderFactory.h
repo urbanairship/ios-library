@@ -6,6 +6,8 @@
 #import "UAExtendableChannelRegistration.h"
 #import "UAExtendableAnalyticsHeaders.h"
 #import "UAAnalytics.h"
+#import "UALocationProvider.h"
+
 NS_ASSUME_NONNULL_BEGIN
 
 /**
@@ -22,10 +24,9 @@ NS_ASSUME_NONNULL_BEGIN
  * @param analytics The analytics instance.
  * @return A location module loader.
  */
-+ (id<UAModuleLoader>)locationModuleLoaderWithDataStore:(UAPreferenceDataStore *)dataStore
-                                                channel:(UAChannel<UAExtendableChannelRegistration> *)channel
-                                              analytics:(UAAnalytics<UAExtendableAnalyticsHeaders> *)analytics;
-
++ (id<UAModuleLoader, UALocationProviderLoader>)locationModuleLoaderWithDataStore:(UAPreferenceDataStore *)dataStore
+                                                                          channel:(UAChannel<UAExtendableChannelRegistration> *)channel
+                                                                        analytics:(UAAnalytics<UAExtendableAnalyticsHeaders> *)analytics;
 
 @end
 

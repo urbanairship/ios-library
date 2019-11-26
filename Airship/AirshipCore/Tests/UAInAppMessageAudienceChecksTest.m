@@ -13,7 +13,7 @@
 @interface UAInAppMessageAudienceChecksTest : UABaseTest
 
 @property (nonatomic, strong) id mockAirship;
-@property (nonatomic, strong) id mockLocationProviderDelegate;
+@property (nonatomic, strong) id mockLocationProvider;
 @property (nonatomic, strong) id mockPush;
 @property (nonatomic, strong) id mockChannel;
 
@@ -33,8 +33,8 @@
 
     [UAirship setSharedAirship:self.mockAirship];
 
-    self.mockLocationProviderDelegate = [self mockForProtocol:@protocol(UALocationProviderDelegate)];
-    [[[self.mockAirship stub] andReturn:self.mockLocationProviderDelegate] locationProviderDelegate];
+    self.mockLocationProvider = [self mockForProtocol:@protocol(UALocationProvider)];
+    [[[self.mockAirship stub] andReturn:self.mockLocationProvider] locationProvider];
 }
 
 - (void)testEmptyAudience {
@@ -54,8 +54,8 @@
         builder.locationOptIn = @NO;
     }];
     
-    [[[self.mockLocationProviderDelegate stub] andReturnValue:@YES] isLocationOptedIn];
-    [[[self.mockLocationProviderDelegate stub] andReturnValue:@YES] isLocationUpdatesEnabled];
+    [[[self.mockLocationProvider stub] andReturnValue:@YES] isLocationOptedIn];
+    [[[self.mockLocationProvider stub] andReturnValue:@YES] isLocationUpdatesEnabled];
 
     // test
     XCTAssertTrue([UAInAppMessageAudienceChecks checkDisplayAudienceConditions:requiresOptedIn]);
@@ -72,8 +72,8 @@
         builder.locationOptIn = @NO;
     }];
     
-    [[[self.mockLocationProviderDelegate stub] andReturnValue:@NO] isLocationOptedIn];
-    [[[self.mockLocationProviderDelegate stub] andReturnValue:@YES] isLocationUpdatesEnabled];
+    [[[self.mockLocationProvider stub] andReturnValue:@NO] isLocationOptedIn];
+    [[[self.mockLocationProvider stub] andReturnValue:@YES] isLocationUpdatesEnabled];
 
     // test
     XCTAssertFalse([UAInAppMessageAudienceChecks checkDisplayAudienceConditions:requiresOptedIn]);

@@ -33,7 +33,6 @@
 #import "UAJSONMatcher.h"
 #import "UAJSONPredicate.h"
 #import "UAJSONValueMatcher.h"
-#import "UALocationEvent.h"
 #import "UAModuleLoader.h"
 #import "UANotificationAction.h"
 #import "UANotificationCategories.h"

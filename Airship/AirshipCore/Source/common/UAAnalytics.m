@@ -19,7 +19,6 @@
 #import "UAirship.h"
 #import "UAPush+Internal.h"
 #import "UAChannel.h"
-#import "UALocationProviderDelegate.h"
 
 #define kUAAssociatedIdentifiers @"UAAssociatedIdentifiers"
 

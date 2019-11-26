@@ -151,11 +151,12 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 
         NSMutableArray<id<UAModuleLoader>> *loaders = [NSMutableArray array];
 
-        id<UAModuleLoader> locationLoader = [UAirship locationLoaderWithDataStore:self.dataStore
-                                                                          channel:self.sharedChannel
-                                                                        analytics:self.sharedAnalytics];
+        id<UAModuleLoader, UALocationProviderLoader> locationLoader = [UAirship locationLoaderWithDataStore:self.dataStore
+                                                                                                    channel:self.sharedChannel
+                                                                                                  analytics:self.sharedAnalytics];
         if (locationLoader) {
             [loaders addObject:locationLoader];
+            self.locationProvider = locationLoader.locationProvider;
         }
 
         id<UAModuleLoader> automationLoader = [UAirship automationModuleLoaderWithDataStore:self.dataStore
@@ -484,9 +485,9 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
     return nil;
 }
 
-+ (nullable id<UAModuleLoader>)locationLoaderWithDataStore:(UAPreferenceDataStore *)dataStore
-                                                   channel:(UAChannel<UAExtendableChannelRegistration> *)channel
-                                                 analytics:(UAAnalytics<UAExtendableAnalyticsHeaders> *)analytics {
++ (nullable id<UAModuleLoader, UALocationProviderLoader>)locationLoaderWithDataStore:(UAPreferenceDataStore *)dataStore
+                                                                             channel:(UAChannel<UAExtendableChannelRegistration> *)channel
+                                                                           analytics:(UAAnalytics<UAExtendableAnalyticsHeaders> *)analytics {
     Class cls = NSClassFromString(UALocationModuleLoaderClassName);
     if ([cls conformsToProtocol:@protocol(UALocationModuleLoaderFactory)]) {
         return [cls locationModuleLoaderWithDataStore:dataStore channel:channel analytics:analytics];
