@@ -35,7 +35,6 @@
 
 #define UAAUTOMATIONENGINETESTS_SCHEDULE_LIMIT 100
 
-
 @implementation UAAutomationEngineIntegrationTest
 - (void)setUp {
     [super setUp];

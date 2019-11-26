@@ -34,10 +34,6 @@
 		3C4ACC4F2304DE1B00BCF1CC /* UAUIKitStateTrackerAdapter.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C4ACC402304DE1B00BCF1CC /* UAUIKitStateTrackerAdapter.m */; };
 		3C4ACC512304DE1B00BCF1CC /* UAUIKitStateTrackerAdapter+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C4ACC412304DE1B00BCF1CC /* UAUIKitStateTrackerAdapter+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3C4ACC522304DE1B00BCF1CC /* UAUIKitStateTrackerAdapter+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C4ACC412304DE1B00BCF1CC /* UAUIKitStateTrackerAdapter+Internal.h */; };
-		3C4FDDFF225BBED400A54E32 /* UALocationEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C4FDDFD225BBED300A54E32 /* UALocationEvent.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		3C4FDE00225BBED400A54E32 /* UALocationEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C4FDDFD225BBED300A54E32 /* UALocationEvent.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		3C4FDE01225BBED400A54E32 /* UALocationEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C4FDDFE225BBED400A54E32 /* UALocationEvent.m */; };
-		3C4FDE02225BBED400A54E32 /* UALocationEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C4FDDFE225BBED400A54E32 /* UALocationEvent.m */; };
 		3C5264AC20DAEE2B00FCA903 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C5264AB20DAEE2A00FCA903 /* CoreData.framework */; };
 		3C54A7D620B4C8D50026887C /* NSURLResponse+UAAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C54A7D420B4C8D50026887C /* NSURLResponse+UAAdditions.m */; };
 		3C54A7D720B4C8D50026887C /* NSURLResponse+UAAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C54A7D420B4C8D50026887C /* NSURLResponse+UAAdditions.m */; };
@@ -192,8 +188,8 @@
 		3CEE135222E6779300EDC000 /* UAChannelNotificationCenterEvents.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CEE135022E6779300EDC000 /* UAChannelNotificationCenterEvents.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3CEE135822E67CD900EDC000 /* UAPushProviderDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CEE135722E67CD900EDC000 /* UAPushProviderDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3CEE135922E67CD900EDC000 /* UAPushProviderDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CEE135722E67CD900EDC000 /* UAPushProviderDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		3CF0C2242257FC9200CE5463 /* UALocationProviderDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CF0C2232257FC9200CE5463 /* UALocationProviderDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		3CF0C2252257FC9200CE5463 /* UALocationProviderDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CF0C2232257FC9200CE5463 /* UALocationProviderDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		3CF0C2242257FC9200CE5463 /* UALocationProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CF0C2232257FC9200CE5463 /* UALocationProvider.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		3CF0C2252257FC9200CE5463 /* UALocationProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CF0C2232257FC9200CE5463 /* UALocationProvider.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3CF5285922E2721000424EF5 /* UAChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CF5285722E2721000424EF5 /* UAChannel.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3CF5285A22E2721000424EF5 /* UAChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CF5285722E2721000424EF5 /* UAChannel.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3CF5285C22E2721000424EF5 /* UAChannel.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CF5285822E2721000424EF5 /* UAChannel.m */; };
@@ -275,6 +271,9 @@
 		6E27A7D82367AC3200F46B69 /* UAExtendedActionsModuleLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E27A7D52367AC3200F46B69 /* UAExtendedActionsModuleLoader.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E2E6D741EB3A34B006056BF /* UASwizzler+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E2E6D721EB3A34B006056BF /* UASwizzler+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6E2E6D751EB3A34B006056BF /* UASwizzler.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E2E6D731EB3A34B006056BF /* UASwizzler.m */; };
+		6E2E914B238C4D9E008488D3 /* UALocationEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C4FDDFE225BBED400A54E32 /* UALocationEvent.m */; };
+		6E2E914C238C4DAB008488D3 /* UALocationEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C4FDDFD225BBED300A54E32 /* UALocationEvent.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6E2E914F238D99F0008488D3 /* AirshipLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E9375602376164600AA9C2A /* AirshipLocation.framework */; };
 		6E3673DC1E8AE9F7005B5DFF /* UAEnableFeatureAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E3673DA1E8AE9F7005B5DFF /* UAEnableFeatureAction.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E3673DD1E8AE9F7005B5DFF /* UAEnableFeatureAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E3673DB1E8AE9F7005B5DFF /* UAEnableFeatureAction.m */; };
 		6E3673E01E8AF9D8005B5DFF /* UAEnableFeatureActionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E3673DF1E8AF9D8005B5DFF /* UAEnableFeatureActionTest.m */; };
@@ -1220,6 +1219,13 @@
 			remoteGlobalIDString = 494DD9561B0EB677009C134E;
 			remoteInfo = AirshipCore;
 		};
+		6E2E914D238D98BE008488D3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 494DD94E1B0EB677009C134E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 6E9373032376164600AA9C2A;
+			remoteInfo = AirshipLocation;
+		};
 		6E845451237E08EE007D3B1E /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 494DD94E1B0EB677009C134E /* Project object */;
@@ -1280,8 +1286,8 @@
 		3C4ACC3E2304DE1B00BCF1CC /* UAAppStateTrackerAdapter+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UAAppStateTrackerAdapter+Internal.h"; path = "common/UAAppStateTrackerAdapter+Internal.h"; sourceTree = "<group>"; };
 		3C4ACC402304DE1B00BCF1CC /* UAUIKitStateTrackerAdapter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAUIKitStateTrackerAdapter.m; path = common/UAUIKitStateTrackerAdapter.m; sourceTree = "<group>"; };
 		3C4ACC412304DE1B00BCF1CC /* UAUIKitStateTrackerAdapter+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UAUIKitStateTrackerAdapter+Internal.h"; path = "common/UAUIKitStateTrackerAdapter+Internal.h"; sourceTree = "<group>"; };
-		3C4FDDFD225BBED300A54E32 /* UALocationEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UALocationEvent.h; path = common/UALocationEvent.h; sourceTree = "<group>"; };
-		3C4FDDFE225BBED400A54E32 /* UALocationEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UALocationEvent.m; path = common/UALocationEvent.m; sourceTree = "<group>"; };
+		3C4FDDFD225BBED300A54E32 /* UALocationEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UALocationEvent.h; sourceTree = "<group>"; };
+		3C4FDDFE225BBED400A54E32 /* UALocationEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UALocationEvent.m; sourceTree = "<group>"; };
 		3C5264AB20DAEE2A00FCA903 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		3C54A7D420B4C8D50026887C /* NSURLResponse+UAAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSURLResponse+UAAdditions.m"; path = "common/NSURLResponse+UAAdditions.m"; sourceTree = "<group>"; };
 		3C54A7D520B4C8D50026887C /* NSURLResponse+UAAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSURLResponse+UAAdditions.h"; path = "common/NSURLResponse+UAAdditions.h"; sourceTree = "<group>"; };
@@ -1437,7 +1443,7 @@
 		3CE58FD3207427CE00076854 /* UAUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAUtils.h; path = common/UAUtils.h; sourceTree = "<group>"; };
 		3CEE135022E6779300EDC000 /* UAChannelNotificationCenterEvents.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = UAChannelNotificationCenterEvents.h; path = common/UAChannelNotificationCenterEvents.h; sourceTree = "<group>"; };
 		3CEE135722E67CD900EDC000 /* UAPushProviderDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = UAPushProviderDelegate.h; path = common/UAPushProviderDelegate.h; sourceTree = "<group>"; };
-		3CF0C2232257FC9200CE5463 /* UALocationProviderDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = UALocationProviderDelegate.h; path = common/UALocationProviderDelegate.h; sourceTree = "<group>"; };
+		3CF0C2232257FC9200CE5463 /* UALocationProvider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = UALocationProvider.h; path = common/UALocationProvider.h; sourceTree = "<group>"; };
 		3CF5285722E2721000424EF5 /* UAChannel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = UAChannel.h; path = common/UAChannel.h; sourceTree = "<group>"; };
 		3CF5285822E2721000424EF5 /* UAChannel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = UAChannel.m; path = common/UAChannel.m; sourceTree = "<group>"; };
 		3CF5286022E2756700424EF5 /* UAChannel+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "UAChannel+Internal.h"; path = "common/UAChannel+Internal.h"; sourceTree = "<group>"; };
@@ -2243,6 +2249,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6E2E914F238D99F0008488D3 /* AirshipLocation.framework in Frameworks */,
 				3C38AE0A2384C1F700EDE9B7 /* AirshipMessageCenter.framework in Frameworks */,
 				3C5264AC20DAEE2B00FCA903 /* CoreData.framework in Frameworks */,
 				992F89871EFD7F8600E4C8FE /* StoreKit.framework in Frameworks */,
@@ -2271,6 +2278,7 @@
 		0A550D587E2599A4BD33CDF4 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
+				494DD9581B0EB677009C134E /* Products */,
 				3DE226EC24B13B38BA51B7B4 /* Pods-AirshipKitTests.debug.xcconfig */,
 				07A9F5B3D35A6078949E4EAA /* Pods-AirshipKitTests.release.xcconfig */,
 				0F55D47F540C142B0F469570 /* Pods-AirshipCoreTests.debug.xcconfig */,
@@ -2589,7 +2597,6 @@
 				6E84509C237DFE89007D3B1E /* AirshipAutomation */,
 				3CA0E302237E396100EE76CF /* AirshipMessageCenter */,
 				0A550D587E2599A4BD33CDF4 /* Pods */,
-				494DD9581B0EB677009C134E /* Products */,
 				E3E85E514DBE69D4C8BF51CE /* Frameworks */,
 			);
 			sourceTree = "<group>";
@@ -2656,6 +2663,7 @@
 		6E5EB9A8235A66D800F8AEA0 /* Modules */ = {
 			isa = PBXGroup;
 			children = (
+				3CF0C2232257FC9200CE5463 /* UALocationProvider.h */,
 				6E5EB9A9235A66FB00F8AEA0 /* UAModuleLoader.h */,
 				6E27A7BB2367751400F46B69 /* UAMessageCenterModuleLoaderFactory.h */,
 				6E5EB9B2235A680400F8AEA0 /* UALocationModuleLoaderFactory.h */,
@@ -3140,7 +3148,6 @@
 				DF6596CD1FBA3B4D0055E97B /* Components */,
 				CC944EBC1DB011D000C42269 /* HTTP */,
 				CC40DDDE1D91D58700BABD4F /* Channel */,
-				CC40DDE11D91D67800BABD4F /* Location */,
 				CC40DDE21D91D6C400BABD4F /* Actions Framework */,
 				CC40DDDC1D91D4FD00BABD4F /* Push */,
 				CC40DDE91D91DAA900BABD4F /* Analytics */,
@@ -3164,6 +3171,8 @@
 		6E9373022376162B00AA9C2A /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				3C4FDDFD225BBED300A54E32 /* UALocationEvent.h */,
+				3C4FDDFE225BBED400A54E32 /* UALocationEvent.m */,
 				6E217361237C811E0084933A /* UALocation.h */,
 				6E21735E237C811D0084933A /* UALocation.m */,
 				6E217360237C811E0084933A /* UALocation+Internal.h */,
@@ -3750,11 +3759,9 @@
 			name = "Named User";
 			sourceTree = "<group>";
 		};
-		CC40DDE11D91D67800BABD4F /* Location */ = {
+		CC40DDE11D91D67800BABD4F /* Regions */ = {
 			isa = PBXGroup;
 			children = (
-				3C4FDDFD225BBED300A54E32 /* UALocationEvent.h */,
-				3C4FDDFE225BBED400A54E32 /* UALocationEvent.m */,
 				3CC7DC51225299F200670DC2 /* UACircularRegion.h */,
 				3CC7DC4F225299F200670DC2 /* UACircularRegion.m */,
 				3CC7DC53225299F200670DC2 /* UACircularRegion+Internal.h */,
@@ -3764,9 +3771,8 @@
 				3CC7DC54225299F200670DC2 /* UARegionEvent.h */,
 				3CC7DC55225299F300670DC2 /* UARegionEvent.m */,
 				3CC7DC52225299F200670DC2 /* UARegionEvent+Internal.h */,
-				3CF0C2232257FC9200CE5463 /* UALocationProviderDelegate.h */,
 			);
-			name = Location;
+			name = Regions;
 			sourceTree = "<group>";
 		};
 		CC40DDE21D91D6C400BABD4F /* Actions Framework */ = {
@@ -3897,6 +3903,7 @@
 		CC40DDEB1D91DB9200BABD4F /* Events */ = {
 			isa = PBXGroup;
 			children = (
+				CC40DDE11D91D67800BABD4F /* Regions */,
 				CC40DDEA1D91DB6D00BABD4F /* Custom Events */,
 				CC40DB581D8C996900BABD4F /* UADeviceRegistrationEvent+Internal.h */,
 				CC40DB591D8C996900BABD4F /* UADeviceRegistrationEvent.m */,
@@ -4334,10 +4341,9 @@
 				3CEE135822E67CD900EDC000 /* UAPushProviderDelegate.h in Headers */,
 				3CEE135122E6779300EDC000 /* UAChannelNotificationCenterEvents.h in Headers */,
 				3CD47D4822602A58005F1987 /* UARemoteConfigModuleAdapter+Internal.h in Headers */,
-				3C4FDDFF225BBED400A54E32 /* UALocationEvent.h in Headers */,
 				3CF5285922E2721000424EF5 /* UAChannel.h in Headers */,
 				3C4ACC512304DE1B00BCF1CC /* UAUIKitStateTrackerAdapter+Internal.h in Headers */,
-				3CF0C2242257FC9200CE5463 /* UALocationProviderDelegate.h in Headers */,
+				3CF0C2242257FC9200CE5463 /* UALocationProvider.h in Headers */,
 				452FFFA22187C45D0086BD29 /* UASystemVersion.h in Headers */,
 				3CC7DC5E225299F300670DC2 /* UACircularRegion.h in Headers */,
 				3CC7DC67225299F300670DC2 /* UARegionEvent.h in Headers */,
@@ -4661,6 +4667,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6E2E914C238C4DAB008488D3 /* UALocationEvent.h in Headers */,
 				6E21735A237C805C0084933A /* AirshipLocation.h in Headers */,
 				6E217364237C811E0084933A /* UALocationModuleLoader.h in Headers */,
 				6E217365237C811E0084933A /* UALocation+Internal.h in Headers */,
@@ -4679,8 +4686,7 @@
 				3CEE135222E6779300EDC000 /* UAChannelNotificationCenterEvents.h in Headers */,
 				3CF5285A22E2721000424EF5 /* UAChannel.h in Headers */,
 				3CD47D4922602A58005F1987 /* UARemoteConfigModuleAdapter+Internal.h in Headers */,
-				3C4FDE00225BBED400A54E32 /* UALocationEvent.h in Headers */,
-				3CF0C2252257FC9200CE5463 /* UALocationProviderDelegate.h in Headers */,
+				3CF0C2252257FC9200CE5463 /* UALocationProvider.h in Headers */,
 				452FFFA32187C45D0086BD29 /* UASystemVersion.h in Headers */,
 				3CC7DC5F225299F300670DC2 /* UACircularRegion.h in Headers */,
 				3CC7DC71225299F300670DC2 /* UAProximityRegion.h in Headers */,
@@ -4969,6 +4975,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				6E2E914E238D98BE008488D3 /* PBXTargetDependency */,
 				3C38AE092384C1E700EDE9B7 /* PBXTargetDependency */,
 				6E84548E237E27D1007D3B1E /* PBXTargetDependency */,
 				CC64F05B1D8B77E3009CEF27 /* PBXTargetDependency */,
@@ -5494,7 +5501,6 @@
 				456A499F2344165900A46F1B /* UAAttributeMutations.m in Sources */,
 				DF5ED9021F7475FE002DDA24 /* UARemoteDataStorePayload.m in Sources */,
 				CC40DCF31D8C996A00BABD4F /* UANotificationResponse.m in Sources */,
-				3C4FDE01225BBED400A54E32 /* UALocationEvent.m in Sources */,
 				6E937713237625BF00AA9C2A /* UAAutoIntegration.m in Sources */,
 				99912E911ECE57E100295C67 /* UAShareActionPredicate.m in Sources */,
 				6E3673DD1E8AE9F7005B5DFF /* UAEnableFeatureAction.m in Sources */,
@@ -5611,6 +5617,7 @@
 			files = (
 				6E217363237C811E0084933A /* UALocation.m in Sources */,
 				6E217362237C811E0084933A /* UALocationModuleLoader.m in Sources */,
+				6E2E914B238C4D9E008488D3 /* UALocationEvent.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5888,7 +5895,6 @@
 				457F47AF20ADDF7500DEEAD9 /* UAViewUtils.m in Sources */,
 				DF702D7D1FAB96E000E7A3DC /* UAVersionMatcher.m in Sources */,
 				6E937712237625BF00AA9C2A /* UAirship.m in Sources */,
-				3C4FDE02225BBED400A54E32 /* UALocationEvent.m in Sources */,
 				99666E5D1EDF2C9500BAE46B /* UAUtils.m in Sources */,
 				99666E001EDF2C1F00BAE46B /* UAActionRegistry.m in Sources */,
 				3CF5285D22E2721000424EF5 /* UAChannel.m in Sources */,
@@ -5931,6 +5937,11 @@
 			isa = PBXTargetDependency;
 			target = 494DD9561B0EB677009C134E /* AirshipCore */;
 			targetProxy = 3CA0E348237E4A7B00EE76CF /* PBXContainerItemProxy */;
+		};
+		6E2E914E238D98BE008488D3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 6E9373032376164600AA9C2A /* AirshipLocation */;
+			targetProxy = 6E2E914D238D98BE008488D3 /* PBXContainerItemProxy */;
 		};
 		6E845452237E08EE007D3B1E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

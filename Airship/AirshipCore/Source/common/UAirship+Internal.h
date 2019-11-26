@@ -28,6 +28,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) UAChannelCapture *channelCapture;
 @property (nonatomic, copy) NSArray<UAComponent *> *components;
 @property (nonatomic, copy) NSDictionary<NSString *, UAComponent *> *componentClassMap;
+@property (nonatomic, strong) id<UALocationProvider> locationProvider;
 
 
 /**

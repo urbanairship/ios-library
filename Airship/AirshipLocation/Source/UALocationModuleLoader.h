@@ -7,6 +7,7 @@
 #else
 #import "UALocationModuleLoaderFactory.h"
 #import "UAModuleLoader.h"
+#import "UALocationProvider.h"
 #endif
 
 
@@ -15,7 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Location module loader.
  */
-@interface UALocationModuleLoader : NSObject<UAModuleLoader, UALocationModuleLoaderFactory>
+@interface UALocationModuleLoader : NSObject<UAModuleLoader, UALocationModuleLoaderFactory, UALocationProviderLoader>
 
 @end
 
