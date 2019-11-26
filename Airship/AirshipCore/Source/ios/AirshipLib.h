@@ -5,6 +5,7 @@
 #import "NSString+UAURLEncoding.h"
 #import "NSURLResponse+UAAdditions.h"
 #import "UAAPIClient.h"
+#import "UAAccengageModuleLoaderFactory.h"
 #import "UAAccountEventTemplate.h"
 #import "UAAction+Operators.h"
 #import "UAAction.h"

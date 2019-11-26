@@ -14,6 +14,7 @@ target 'Sample' do
     pod 'Airship', :path => './'
     pod 'Airship/Location', :path => './'
     pod 'Airship/Debug', :path => './'
+    pod 'Airship/Accengage', :path => './'
  end
 
 target 'SampleServiceExtension' do
@@ -28,6 +29,7 @@ target 'SwiftSample' do
   pod 'Airship', :path => './'
   pod 'Airship/Location', :path => './'
   pod 'Airship/Debug', :path => './'
+  pod 'Airship/Accengage', :path => './'
 end
 
 target 'SwiftSampleServiceExtension' do
