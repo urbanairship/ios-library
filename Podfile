@@ -22,6 +22,12 @@ target 'SampleServiceExtension' do
   pod 'AirshipExtensions', :path => './'
 end
 
+target 'SampleContentExtension' do
+  platform :ios, '11.0'
+  project 'Sample/Sample.xcodeproj'
+  pod 'AirshipExtensions', :path => './'
+end
+
 target 'SwiftSample' do
   platform :ios, '11.0'
   project 'SwiftSample/SwiftSample.xcodeproj'
@@ -31,6 +37,12 @@ target 'SwiftSample' do
 end
 
 target 'SwiftSampleServiceExtension' do
+  platform :ios, '11.0'
+  project 'SwiftSample/SwiftSample.xcodeproj'
+  pod 'AirshipExtensions', :path => './'
+end
+
+target 'SwiftSampleContentExtension' do
   platform :ios, '11.0'
   project 'SwiftSample/SwiftSample.xcodeproj'
   pod 'AirshipExtensions', :path => './'
