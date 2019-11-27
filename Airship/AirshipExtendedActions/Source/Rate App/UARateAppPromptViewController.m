@@ -1,10 +1,16 @@
 /* Copyright Airship and Contributors */
 
 #import "UARateAppPromptViewController+Internal.h"
-#import "UAUtils+Internal.h"
+#import "UAExtendedActionsResources.h"
+
+#if UA_USE_MODULE_AIRSHIP_IMPORTS
+@import AirshipCore;
+#else
+#import "UAAction.h"
+#import "UAUtils.h"
 #import "NSString+UALocalizationAdditions.h"
 #import "UADispatcher.h"
-#import "UAExtendedActionsResources.h"
+#endif
 
 @interface UARateAppPromptViewController ()
 

@@ -7,10 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		3C13BFAC2384ABD00071E80C /* UAExtendedActionsResources.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C13BFA82384ABD00071E80C /* UAExtendedActionsResources.m */; };
-		3C13BFAD2384ABD00071E80C /* UAExtendedActionsResources.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C13BFA82384ABD00071E80C /* UAExtendedActionsResources.m */; };
-		3C13BFAE2384ABD00071E80C /* UAExtendedActionsResources.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C13BFA92384ABD00071E80C /* UAExtendedActionsResources.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		3C13BFAF2384ABD00071E80C /* UAExtendedActionsResources.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C13BFA92384ABD00071E80C /* UAExtendedActionsResources.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3C13BFB02384ABD00071E80C /* UAirshipCoreResources.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C13BFAA2384ABD00071E80C /* UAirshipCoreResources.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3C13BFB12384ABD00071E80C /* UAirshipCoreResources.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C13BFAA2384ABD00071E80C /* UAirshipCoreResources.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3C13BFB22384ABD00071E80C /* UAirshipCoreResources.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C13BFAB2384ABD00071E80C /* UAirshipCoreResources.m */; };
@@ -245,9 +241,24 @@
 		45A8ADF023134B38004AD8CA /* testMCColorsCatalog.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 45A8ADD123133E51004AD8CA /* testMCColorsCatalog.xcassets */; };
 		45BB647123466E320006CFC1 /* UAAttributeMutationsTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 45BB647023466E320006CFC1 /* UAAttributeMutationsTest.m */; };
 		45BB647A2346C9DF0006CFC1 /* UAAttributeMutations+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 45BB64792346C9D70006CFC1 /* UAAttributeMutations+Internal.h */; };
+		45C6911F238DC79400A03C94 /* AirshipCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 494DD9571B0EB677009C134E /* AirshipCore.framework */; };
+		45C69131238DC82C00A03C94 /* UARateAppActionPredicate+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 992F89881EFD99B000E4C8FE /* UARateAppActionPredicate+Internal.h */; };
+		45C69132238DC82C00A03C94 /* UARateAppActionPredicate.m in Sources */ = {isa = PBXBuildFile; fileRef = 992F89891EFD99B000E4C8FE /* UARateAppActionPredicate.m */; };
+		45C69133238DC82C00A03C94 /* UARateAppAction+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 45FD232C21890EAA0056F111 /* UARateAppAction+Internal.h */; };
+		45C69134238DC82C00A03C94 /* UARateAppAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 996A03AB1EF08E1E003424E0 /* UARateAppAction.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		45C69135238DC82C00A03C94 /* UARateAppAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 996A03AC1EF08E1E003424E0 /* UARateAppAction.m */; };
+		45C69136238DC82C00A03C94 /* UARateAppPromptViewController+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 9928146F1EF4A14400D0D388 /* UARateAppPromptViewController+Internal.h */; };
+		45C69137238DC82C00A03C94 /* UARateAppPromptViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 992814701EF4A14400D0D388 /* UARateAppPromptViewController.m */; };
+		45C69139238DC86600A03C94 /* UAExtendedActionsModuleLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E27A7D42367AC3200F46B69 /* UAExtendedActionsModuleLoader.m */; };
+		45C6913A238DC88B00A03C94 /* UARateAppPromptView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6E9376EA2376236C00AA9C2A /* UARateAppPromptView.xib */; };
+		45C6913B238DC89F00A03C94 /* UAExtendedActions.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6E8A5513236768CC004AE2A0 /* UAExtendedActions.plist */; };
+		45C6913E238DC91900A03C94 /* AirshipExtendedActions.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 45C6912A238DC79400A03C94 /* AirshipExtendedActions.framework */; };
+		45C69141238DCC2700A03C94 /* AirshipExtendedActions.h in Headers */ = {isa = PBXBuildFile; fileRef = 45C6913F238DC93B00A03C94 /* AirshipExtendedActions.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		45C69142238DCC4600A03C94 /* UAExtendedActionsModuleLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E27A7D52367AC3200F46B69 /* UAExtendedActionsModuleLoader.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		45C69143238DCD6000A03C94 /* UAExtendedActionsResources.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C13BFA82384ABD00071E80C /* UAExtendedActionsResources.m */; };
+		45C69144238DCD6900A03C94 /* UAExtendedActionsResources.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C13BFA92384ABD00071E80C /* UAExtendedActionsResources.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		45DCD83E2087C57C00BCF10F /* UAInAppMessageFullScreenStyleTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 45DCD83D2087C57C00BCF10F /* UAInAppMessageFullScreenStyleTest.m */; };
 		45FD231F2187C7B70056F111 /* UATestSystemVersion.m in Sources */ = {isa = PBXBuildFile; fileRef = 45FD23182187C7B70056F111 /* UATestSystemVersion.m */; };
-		45FD232E21890EB40056F111 /* UARateAppAction+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 45FD232C21890EAA0056F111 /* UARateAppAction+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		53911BDD1E23EBA500EE7007 /* UAChannelCaptureActionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 53911BDC1E23EBA500EE7007 /* UAChannelCaptureActionTest.m */; };
 		53BC50201E202FAA00E24306 /* UAChannelCaptureAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BC501F1E202FAA00E24306 /* UAChannelCaptureAction.m */; };
 		54DE2901247B2AF059E46862 /* Pods_AirshipCoreTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EBF83042659DAF0D42AD7A9E /* Pods_AirshipCoreTests.framework */; };
@@ -267,8 +278,6 @@
 		6E218539237DB7960084933A /* AddChannelAttributeTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E218538237DB7960084933A /* AddChannelAttributeTableViewController.swift */; };
 		6E27A7BC2367751400F46B69 /* UAMessageCenterModuleLoaderFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E27A7BB2367751400F46B69 /* UAMessageCenterModuleLoaderFactory.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E27A7BD2367751400F46B69 /* UAMessageCenterModuleLoaderFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E27A7BB2367751400F46B69 /* UAMessageCenterModuleLoaderFactory.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6E27A7D62367AC3200F46B69 /* UAExtendedActionsModuleLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E27A7D42367AC3200F46B69 /* UAExtendedActionsModuleLoader.m */; };
-		6E27A7D82367AC3200F46B69 /* UAExtendedActionsModuleLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E27A7D52367AC3200F46B69 /* UAExtendedActionsModuleLoader.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E2E6D741EB3A34B006056BF /* UASwizzler+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E2E6D721EB3A34B006056BF /* UASwizzler+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6E2E6D751EB3A34B006056BF /* UASwizzler.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E2E6D731EB3A34B006056BF /* UASwizzler.m */; };
 		6E2E914B238C4D9E008488D3 /* UALocationEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C4FDDFE225BBED400A54E32 /* UALocationEvent.m */; };
@@ -601,9 +610,7 @@
 		6EDAF047237B811D00A64F14 /* UAEvents.xcdatamodeld in Resources */ = {isa = PBXBuildFile; fileRef = CC04F1841DBED84600B4842D /* UAEvents.xcdatamodeld */; };
 		6EDAF048237B811D00A64F14 /* UrbanAirship.strings in Resources */ = {isa = PBXBuildFile; fileRef = CC70E98E1DDB8AF8000E2528 /* UrbanAirship.strings */; };
 		6EDAF049237B811D00A64F14 /* UARemoteData.xcdatamodeld in Resources */ = {isa = PBXBuildFile; fileRef = DF5ED8E81F745682002DDA24 /* UARemoteData.xcdatamodeld */; };
-		6EDAF04A237B811D00A64F14 /* UARateAppPromptView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6E9376EA2376236C00AA9C2A /* UARateAppPromptView.xib */; };
 		6EDAF04B237B811D00A64F14 /* UADefaultActions.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6E8A5516236768ED004AE2A0 /* UADefaultActions.plist */; };
-		6EDAF04C237B811D00A64F14 /* UAExtendedActions.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6E8A5513236768CC004AE2A0 /* UAExtendedActions.plist */; };
 		6EDAF04E237B811D00A64F14 /* UANativeBridge in Resources */ = {isa = PBXBuildFile; fileRef = 6E7700A81F04790C00B5E465 /* UANativeBridge */; };
 		6EDAF04F237B811D00A64F14 /* UANotificationCategories.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6E7700A91F04790C00B5E465 /* UANotificationCategories.plist */; };
 		6EDAF05E237B812E00A64F14 /* UAEvents.xcdatamodeld in Resources */ = {isa = PBXBuildFile; fileRef = CC04F1841DBED84600B4842D /* UAEvents.xcdatamodeld */; };
@@ -634,14 +641,8 @@
 		991A94651FCF2C6B00B57D24 /* UAInAppMessageTextInfoTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 991A94641FCF2C6B00B57D24 /* UAInAppMessageTextInfoTest.m */; };
 		991A94671FCF2C7F00B57D24 /* UAInAppMessageButtonInfoTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 991A94661FCF2C7F00B57D24 /* UAInAppMessageButtonInfoTest.m */; };
 		991A94691FCF2CEF00B57D24 /* UAInAppMessageMediaInfoTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 991A94681FCF2CEF00B57D24 /* UAInAppMessageMediaInfoTest.m */; };
-		992814531EF48AC500D0D388 /* UARateAppAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 996A03AB1EF08E1E003424E0 /* UARateAppAction.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		9928146B1EF490DC00D0D388 /* UARateAppAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 996A03AC1EF08E1E003424E0 /* UARateAppAction.m */; };
 		9928146E1EF494BA00D0D388 /* UARateAppActionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 996A03B91EF08EBF003424E0 /* UARateAppActionTest.m */; };
-		992814711EF4A14400D0D388 /* UARateAppPromptViewController+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 9928146F1EF4A14400D0D388 /* UARateAppPromptViewController+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		992814721EF4A14400D0D388 /* UARateAppPromptViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 992814701EF4A14400D0D388 /* UARateAppPromptViewController.m */; };
 		992F89871EFD7F8600E4C8FE /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 992F89861EFD7F8600E4C8FE /* StoreKit.framework */; };
-		992F898A1EFD99B000E4C8FE /* UARateAppActionPredicate+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 992F89881EFD99B000E4C8FE /* UARateAppActionPredicate+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		992F898C1EFD99B000E4C8FE /* UARateAppActionPredicate.m in Sources */ = {isa = PBXBuildFile; fileRef = 992F89891EFD99B000E4C8FE /* UARateAppActionPredicate.m */; };
 		9960B9011EDE4D86007D6D97 /* UASwizzler+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E2E6D721EB3A34B006056BF /* UASwizzler+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9960B9021EDE4D86007D6D97 /* UASwizzler.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E2E6D731EB3A34B006056BF /* UASwizzler.m */; };
 		99666D7D1EDF2B4100BAE46B /* UADelayOperation+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DB561D8C996900BABD4F /* UADelayOperation+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1220,14 +1221,21 @@
 			remoteGlobalIDString = 494DD9561B0EB677009C134E;
 			remoteInfo = AirshipCore;
 		};
-		6E2E914D238D98BE008488D3 /* PBXContainerItemProxy */ = {
+		45C6911A238DC79400A03C94 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 494DD94E1B0EB677009C134E /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 6E9373032376164600AA9C2A;
-			remoteInfo = AirshipLocation;
+			remoteGlobalIDString = 494DD9561B0EB677009C134E;
+			remoteInfo = Core;
 		};
-		6E2E9150238DA39A008488D3 /* PBXContainerItemProxy */ = {
+		45C6913C238DC90900A03C94 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 494DD94E1B0EB677009C134E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 45C69118238DC79400A03C94;
+			remoteInfo = AirshipExtendedActions;
+		};
+		6E2E914D238D98BE008488D3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 494DD94E1B0EB677009C134E /* Project object */;
 			proxyType = 1;
@@ -1274,8 +1282,8 @@
 /* Begin PBXFileReference section */
 		07A9F5B3D35A6078949E4EAA /* Pods-AirshipKitTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AirshipKitTests.release.xcconfig"; path = "../Pods/Target Support Files/Pods-AirshipKitTests/Pods-AirshipKitTests.release.xcconfig"; sourceTree = "<group>"; };
 		0F55D47F540C142B0F469570 /* Pods-AirshipCoreTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AirshipCoreTests.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-AirshipCoreTests/Pods-AirshipCoreTests.debug.xcconfig"; sourceTree = "<group>"; };
-		3C13BFA82384ABD00071E80C /* UAExtendedActionsResources.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAExtendedActionsResources.m; path = common/UAExtendedActionsResources.m; sourceTree = "<group>"; };
-		3C13BFA92384ABD00071E80C /* UAExtendedActionsResources.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAExtendedActionsResources.h; path = common/UAExtendedActionsResources.h; sourceTree = "<group>"; };
+		3C13BFA82384ABD00071E80C /* UAExtendedActionsResources.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAExtendedActionsResources.m; sourceTree = "<group>"; };
+		3C13BFA92384ABD00071E80C /* UAExtendedActionsResources.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAExtendedActionsResources.h; sourceTree = "<group>"; };
 		3C13BFAA2384ABD00071E80C /* UAirshipCoreResources.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAirshipCoreResources.h; path = common/UAirshipCoreResources.h; sourceTree = "<group>"; };
 		3C13BFAB2384ABD00071E80C /* UAirshipCoreResources.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAirshipCoreResources.m; path = common/UAirshipCoreResources.m; sourceTree = "<group>"; };
 		3C13BFB42384AC0E0071E80C /* UAAutomationResources.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAAutomationResources.h; sourceTree = "<group>"; };
@@ -1494,6 +1502,9 @@
 		45A8AED12315A99A004AD8CA /* UALandingPageActionPredicate+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UALandingPageActionPredicate+Internal.h"; sourceTree = "<group>"; };
 		45BB647023466E320006CFC1 /* UAAttributeMutationsTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAAttributeMutationsTest.m; sourceTree = "<group>"; };
 		45BB64792346C9D70006CFC1 /* UAAttributeMutations+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "UAAttributeMutations+Internal.h"; path = "common/UAAttributeMutations+Internal.h"; sourceTree = "<group>"; };
+		45C6912A238DC79400A03C94 /* AirshipExtendedActions.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AirshipExtendedActions.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		45C6912F238DC7B300A03C94 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		45C6913F238DC93B00A03C94 /* AirshipExtendedActions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AirshipExtendedActions.h; sourceTree = "<group>"; };
 		45C6EC0B22653A11002AA7CC /* UALandingPageAction+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UALandingPageAction+Internal.h"; sourceTree = "<group>"; };
 		45DCD80B208670F400BCF10F /* UAInAppMessageStyleProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UAInAppMessageStyleProtocol.h; sourceTree = "<group>"; };
 		45DCD8112086A68900BCF10F /* UAInAppMessageFullScreenStyle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UAInAppMessageFullScreenStyle.h; sourceTree = "<group>"; };
@@ -1515,7 +1526,7 @@
 		45F0CD412124E58000EED496 /* UAInAppMessageHTMLViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageHTMLViewController.m; sourceTree = "<group>"; };
 		45FD23172187C7B70056F111 /* UATestSystemVersion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UATestSystemVersion.h; sourceTree = "<group>"; };
 		45FD23182187C7B70056F111 /* UATestSystemVersion.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UATestSystemVersion.m; sourceTree = "<group>"; };
-		45FD232C21890EAA0056F111 /* UARateAppAction+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UARateAppAction+Internal.h"; path = "ios/UARateAppAction+Internal.h"; sourceTree = "<group>"; };
+		45FD232C21890EAA0056F111 /* UARateAppAction+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UARateAppAction+Internal.h"; sourceTree = "<group>"; };
 		494DD9571B0EB677009C134E /* AirshipCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AirshipCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		494DD95B1B0EB677009C134E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		537F66421E256A2B001BC8F3 /* UAChannelCapture+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "UAChannelCapture+Internal.h"; path = "ios/UAChannelCapture+Internal.h"; sourceTree = "<group>"; };
@@ -1540,8 +1551,8 @@
 		6E21852A237D32B30084933A /* EventData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventData.swift; sourceTree = "<group>"; };
 		6E218538237DB7960084933A /* AddChannelAttributeTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddChannelAttributeTableViewController.swift; sourceTree = "<group>"; };
 		6E27A7BB2367751400F46B69 /* UAMessageCenterModuleLoaderFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAMessageCenterModuleLoaderFactory.h; path = common/UAMessageCenterModuleLoaderFactory.h; sourceTree = "<group>"; };
-		6E27A7D42367AC3200F46B69 /* UAExtendedActionsModuleLoader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAExtendedActionsModuleLoader.m; path = ios/UAExtendedActionsModuleLoader.m; sourceTree = "<group>"; };
-		6E27A7D52367AC3200F46B69 /* UAExtendedActionsModuleLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAExtendedActionsModuleLoader.h; path = ios/UAExtendedActionsModuleLoader.h; sourceTree = "<group>"; };
+		6E27A7D42367AC3200F46B69 /* UAExtendedActionsModuleLoader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAExtendedActionsModuleLoader.m; sourceTree = "<group>"; };
+		6E27A7D52367AC3200F46B69 /* UAExtendedActionsModuleLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAExtendedActionsModuleLoader.h; sourceTree = "<group>"; };
 		6E2E6D721EB3A34B006056BF /* UASwizzler+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UASwizzler+Internal.h"; path = "common/UASwizzler+Internal.h"; sourceTree = "<group>"; };
 		6E2E6D731EB3A34B006056BF /* UASwizzler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UASwizzler.m; path = common/UASwizzler.m; sourceTree = "<group>"; };
 		6E3673DA1E8AE9F7005B5DFF /* UAEnableFeatureAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAEnableFeatureAction.h; path = common/UAEnableFeatureAction.h; sourceTree = "<group>"; };
@@ -1621,7 +1632,6 @@
 		6E8A54DA23639363004AE2A0 /* UATagGroupsLookupManager+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UATagGroupsLookupManager+Internal.h"; sourceTree = "<group>"; };
 		6E8A54DB23639363004AE2A0 /* UATagGroupsLookupResponseCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UATagGroupsLookupResponseCache.m; sourceTree = "<group>"; };
 		6E8A54DC23639364004AE2A0 /* UATagGroupsLookupResponseCache+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UATagGroupsLookupResponseCache+Internal.h"; sourceTree = "<group>"; };
-		6E8A550B23676321004AE2A0 /* UAMessageCenterActions.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = UAMessageCenterActions.plist; sourceTree = "<group>"; };
 		6E8A5513236768CC004AE2A0 /* UAExtendedActions.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = UAExtendedActions.plist; sourceTree = "<group>"; };
 		6E8A5516236768ED004AE2A0 /* UADefaultActions.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = UADefaultActions.plist; sourceTree = "<group>"; };
 		6E8A551923676994004AE2A0 /* UAWalletAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAWalletAction.h; path = ios/UAWalletAction.h; sourceTree = "<group>"; };
@@ -1706,15 +1716,15 @@
 		991A94641FCF2C6B00B57D24 /* UAInAppMessageTextInfoTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageTextInfoTest.m; sourceTree = "<group>"; };
 		991A94661FCF2C7F00B57D24 /* UAInAppMessageButtonInfoTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageButtonInfoTest.m; sourceTree = "<group>"; };
 		991A94681FCF2CEF00B57D24 /* UAInAppMessageMediaInfoTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageMediaInfoTest.m; sourceTree = "<group>"; };
-		9928146F1EF4A14400D0D388 /* UARateAppPromptViewController+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UARateAppPromptViewController+Internal.h"; path = "ios/UARateAppPromptViewController+Internal.h"; sourceTree = "<group>"; };
-		992814701EF4A14400D0D388 /* UARateAppPromptViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UARateAppPromptViewController.m; path = ios/UARateAppPromptViewController.m; sourceTree = "<group>"; };
+		9928146F1EF4A14400D0D388 /* UARateAppPromptViewController+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UARateAppPromptViewController+Internal.h"; sourceTree = "<group>"; };
+		992814701EF4A14400D0D388 /* UARateAppPromptViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UARateAppPromptViewController.m; sourceTree = "<group>"; };
 		992F89861EFD7F8600E4C8FE /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
-		992F89881EFD99B000E4C8FE /* UARateAppActionPredicate+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UARateAppActionPredicate+Internal.h"; path = "ios/UARateAppActionPredicate+Internal.h"; sourceTree = "<group>"; };
-		992F89891EFD99B000E4C8FE /* UARateAppActionPredicate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UARateAppActionPredicate.m; path = ios/UARateAppActionPredicate.m; sourceTree = "<group>"; };
+		992F89881EFD99B000E4C8FE /* UARateAppActionPredicate+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UARateAppActionPredicate+Internal.h"; sourceTree = "<group>"; };
+		992F89891EFD99B000E4C8FE /* UARateAppActionPredicate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UARateAppActionPredicate.m; sourceTree = "<group>"; };
 		99666E8E1EDF2E5900BAE46B /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS10.2.sdk/usr/lib/libz.tbd; sourceTree = DEVELOPER_DIR; };
 		99666E901EDF2E6500BAE46B /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS10.2.sdk/usr/lib/libsqlite3.tbd; sourceTree = DEVELOPER_DIR; };
-		996A03AB1EF08E1E003424E0 /* UARateAppAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UARateAppAction.h; path = ios/UARateAppAction.h; sourceTree = "<group>"; };
-		996A03AC1EF08E1E003424E0 /* UARateAppAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UARateAppAction.m; path = ios/UARateAppAction.m; sourceTree = "<group>"; };
+		996A03AB1EF08E1E003424E0 /* UARateAppAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UARateAppAction.h; sourceTree = "<group>"; };
+		996A03AC1EF08E1E003424E0 /* UARateAppAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UARateAppAction.m; sourceTree = "<group>"; };
 		996A03B91EF08EBF003424E0 /* UARateAppActionTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UARateAppActionTest.m; sourceTree = "<group>"; };
 		996B95301FAB8E1E009B49BC /* UAInAppMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UAInAppMessage.h; sourceTree = "<group>"; };
 		996B95311FAB8E1E009B49BC /* UAInAppMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessage.m; sourceTree = "<group>"; };
@@ -2229,6 +2239,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		45C6911E238DC79400A03C94 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				45C6911F238DC79400A03C94 /* AirshipCore.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		494DD9531B0EB677009C134E /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -2259,6 +2277,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6E2E914F238D99F0008488D3 /* AirshipLocation.framework in Frameworks */,
+				45C6913E238DC91900A03C94 /* AirshipExtendedActions.framework in Frameworks */,
 				3C38AE0A2384C1F700EDE9B7 /* AirshipMessageCenter.framework in Frameworks */,
 				3C5264AC20DAEE2B00FCA903 /* CoreData.framework in Frameworks */,
 				992F89871EFD7F8600E4C8FE /* StoreKit.framework in Frameworks */,
@@ -2596,10 +2615,57 @@
 			name = Attributes;
 			sourceTree = "<group>";
 		};
+		45C6912C238DC7B300A03C94 /* AirshipExtendedActions */ = {
+			isa = PBXGroup;
+			children = (
+				45C6912D238DC7B300A03C94 /* Resources */,
+				45C6912E238DC7B300A03C94 /* Source */,
+				45C6912F238DC7B300A03C94 /* Info.plist */,
+			);
+			path = AirshipExtendedActions;
+			sourceTree = "<group>";
+		};
+		45C6912D238DC7B300A03C94 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				6E9376EA2376236C00AA9C2A /* UARateAppPromptView.xib */,
+				6E8A5513236768CC004AE2A0 /* UAExtendedActions.plist */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		45C6912E238DC7B300A03C94 /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				45C69130238DC81100A03C94 /* Rate App */,
+				6E27A7D52367AC3200F46B69 /* UAExtendedActionsModuleLoader.h */,
+				6E27A7D42367AC3200F46B69 /* UAExtendedActionsModuleLoader.m */,
+				3C13BFA92384ABD00071E80C /* UAExtendedActionsResources.h */,
+				3C13BFA82384ABD00071E80C /* UAExtendedActionsResources.m */,
+				45C6913F238DC93B00A03C94 /* AirshipExtendedActions.h */,
+			);
+			path = Source;
+			sourceTree = "<group>";
+		};
+		45C69130238DC81100A03C94 /* Rate App */ = {
+			isa = PBXGroup;
+			children = (
+				992F89881EFD99B000E4C8FE /* UARateAppActionPredicate+Internal.h */,
+				992F89891EFD99B000E4C8FE /* UARateAppActionPredicate.m */,
+				45FD232C21890EAA0056F111 /* UARateAppAction+Internal.h */,
+				996A03AB1EF08E1E003424E0 /* UARateAppAction.h */,
+				996A03AC1EF08E1E003424E0 /* UARateAppAction.m */,
+				9928146F1EF4A14400D0D388 /* UARateAppPromptViewController+Internal.h */,
+				992814701EF4A14400D0D388 /* UARateAppPromptViewController.m */,
+			);
+			path = "Rate App";
+			sourceTree = "<group>";
+		};
 		494DD94D1B0EB677009C134E = {
 			isa = PBXGroup;
 			children = (
 				CC40DDB31D8CAF7300BABD4F /* AirshipConfig.xcconfig */,
+				45C6912C238DC7B300A03C94 /* AirshipExtendedActions */,
 				6E93769E23761FFA00AA9C2A /* AirshipCore */,
 				6E9373012376160C00AA9C2A /* AirshipLocation */,
 				3CA0E21A237CCBA600EE76CF /* AirshipDebug */,
@@ -2620,6 +2686,7 @@
 				3CA0E2AC237CCE2600EE76CF /* AirshipDebug.framework */,
 				6E845377237E0271007D3B1E /* AirshipAutomation.framework */,
 				3CA0E423237E4A7B00EE76CF /* AirshipMessageCenter.framework */,
+				45C6912A238DC79400A03C94 /* AirshipExtendedActions.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -3070,31 +3137,6 @@
 			name = Legacy;
 			sourceTree = "<group>";
 		};
-		6E8A550723675CC1004AE2A0 /* Extended Actions */ = {
-			isa = PBXGroup;
-			children = (
-				6E8A550823675CFD004AE2A0 /* Rate App */,
-				CC40DDEC1D91DC6000BABD4F /* Share Action */,
-				6E27A7D52367AC3200F46B69 /* UAExtendedActionsModuleLoader.h */,
-				6E27A7D42367AC3200F46B69 /* UAExtendedActionsModuleLoader.m */,
-			);
-			name = "Extended Actions";
-			sourceTree = "<group>";
-		};
-		6E8A550823675CFD004AE2A0 /* Rate App */ = {
-			isa = PBXGroup;
-			children = (
-				992F89881EFD99B000E4C8FE /* UARateAppActionPredicate+Internal.h */,
-				992F89891EFD99B000E4C8FE /* UARateAppActionPredicate.m */,
-				45FD232C21890EAA0056F111 /* UARateAppAction+Internal.h */,
-				996A03AB1EF08E1E003424E0 /* UARateAppAction.h */,
-				996A03AC1EF08E1E003424E0 /* UARateAppAction.m */,
-				9928146F1EF4A14400D0D388 /* UARateAppPromptViewController+Internal.h */,
-				992814701EF4A14400D0D388 /* UARateAppPromptViewController.m */,
-			);
-			name = "Rate App";
-			sourceTree = "<group>";
-		};
 		6E8A550923675D2B004AE2A0 /* URL Actions */ = {
 			isa = PBXGroup;
 			children = (
@@ -3144,7 +3186,7 @@
 		6E937300237615B400AA9C2A /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				6E8A550723675CC1004AE2A0 /* Extended Actions */,
+				CC40DDD81D91D43200BABD4F /* JSON */,
 				6E9376EF237625A500AA9C2A /* Airship */,
 				6E218526237D2DCF0084933A /* Integration */,
 				6E218527237D2EDD0084933A /* Whitelist */,
@@ -3207,8 +3249,6 @@
 			isa = PBXGroup;
 			children = (
 				6E9376FC237625BE00AA9C2A /* AirshipCore.h */,
-				3C13BFA92384ABD00071E80C /* UAExtendedActionsResources.h */,
-				3C13BFA82384ABD00071E80C /* UAExtendedActionsResources.m */,
 				6E9376F3237625BD00AA9C2A /* UAGlobal.h */,
 				6E9376F9237625BE00AA9C2A /* UAirship.h */,
 				6E9376F7237625BE00AA9C2A /* UAirship.m */,
@@ -3944,7 +3984,6 @@
 		CC40DDEC1D91DC6000BABD4F /* Share Action */ = {
 			isa = PBXGroup;
 			children = (
-				CC40DDD81D91D43200BABD4F /* JSON */,
 				CC40DB051D8C996900BABD4F /* UAActivityViewController.h */,
 				CC40DB061D8C996900BABD4F /* UAActivityViewController.m */,
 				99912E8E1ECE57E100295C67 /* UAShareActionPredicate+Internal.h */,
@@ -3975,6 +4014,7 @@
 		CC40DDF11D91DE6F00BABD4F /* Actions */ = {
 			isa = PBXGroup;
 			children = (
+				CC40DDEC1D91DC6000BABD4F /* Share Action */,
 				6E8A550923675D2B004AE2A0 /* URL Actions */,
 				6E8A551F236769E6004AE2A0 /* Fetch Device Info Action */,
 				6E8A5520236769FB004AE2A0 /* Enable Feature Action */,
@@ -4200,10 +4240,7 @@
 		DF7E79F61EE1D39800D4EF02 /* ios */ = {
 			isa = PBXGroup;
 			children = (
-				6E9376EA2376236C00AA9C2A /* UARateAppPromptView.xib */,
 				6E8A5516236768ED004AE2A0 /* UADefaultActions.plist */,
-				6E8A5513236768CC004AE2A0 /* UAExtendedActions.plist */,
-				6E8A550B23676321004AE2A0 /* UAMessageCenterActions.plist */,
 				6E7700A81F04790C00B5E465 /* UANativeBridge */,
 				6E7700A91F04790C00B5E465 /* UANotificationCategories.plist */,
 				CC8999A21D8B642D00A0CECC /* UAMessageCenterListCell.xib */,
@@ -4340,13 +4377,26 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		45C69121238DC79400A03C94 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				45C69131238DC82C00A03C94 /* UARateAppActionPredicate+Internal.h in Headers */,
+				45C69141238DCC2700A03C94 /* AirshipExtendedActions.h in Headers */,
+				45C69142238DCC4600A03C94 /* UAExtendedActionsModuleLoader.h in Headers */,
+				45C69144238DCD6900A03C94 /* UAExtendedActionsResources.h in Headers */,
+				45C69136238DC82C00A03C94 /* UARateAppPromptViewController+Internal.h in Headers */,
+				45C69134238DC82C00A03C94 /* UARateAppAction.h in Headers */,
+				45C69133238DC82C00A03C94 /* UARateAppAction+Internal.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		494DD9541B0EB677009C134E /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				DF6AD3D41ED8AA78006EB1DA /* UAKeychainUtils.h in Headers */,
 				3C13BFB02384ABD00071E80C /* UAirshipCoreResources.h in Headers */,
-				3C13BFAE2384ABD00071E80C /* UAExtendedActionsResources.h in Headers */,
 				3CEE135822E67CD900EDC000 /* UAPushProviderDelegate.h in Headers */,
 				3CEE135122E6779300EDC000 /* UAChannelNotificationCenterEvents.h in Headers */,
 				3CD47D4822602A58005F1987 /* UARemoteConfigModuleAdapter+Internal.h in Headers */,
@@ -4362,7 +4412,6 @@
 				6EFB378D2345B3FD005E4E44 /* UANativeBridgeDelegate.h in Headers */,
 				3C54A7D920B4C8D50026887C /* NSURLResponse+UAAdditions.h in Headers */,
 				45736629213617C800C5993A /* UAJSONSerialization.h in Headers */,
-				992F898A1EFD99B000E4C8FE /* UARateAppActionPredicate+Internal.h in Headers */,
 				6E27A7BC2367751400F46B69 /* UAMessageCenterModuleLoaderFactory.h in Headers */,
 				DF7E21E71ED624A500C79C46 /* UAChannelCaptureAction.h in Headers */,
 				CC40DC8A1D8C996A00BABD4F /* UAEvent.h in Headers */,
@@ -4377,7 +4426,6 @@
 				456A499E2344165900A46F1B /* UAAttributeMutations.h in Headers */,
 				CC40DC5B1D8C996A00BABD4F /* UABeveledLoadingIndicator.h in Headers */,
 				CC40DC611D8C996A00BABD4F /* UAChannelCapture.h in Headers */,
-				992814711EF4A14400D0D388 /* UARateAppPromptViewController+Internal.h in Headers */,
 				CC40DCEB1D8C996A00BABD4F /* UANotificationCategories.h in Headers */,
 				CC40DC271D8C996A00BABD4F /* UAActionRunner.h in Headers */,
 				DF0A22E61FBCFFE00058F6D6 /* UAComponent+Internal.h in Headers */,
@@ -4433,7 +4481,6 @@
 				CC40DCF01D8C996A00BABD4F /* UANotificationContent.h in Headers */,
 				CC40DCC31D8C996A00BABD4F /* UAJSONMatcher.h in Headers */,
 				CC40DCD81D8C996A00BABD4F /* UAMediaEventTemplate.h in Headers */,
-				45FD232E21890EB40056F111 /* UARateAppAction+Internal.h in Headers */,
 				99E2DA2F1FB62E2800C9F2CC /* UARemoteDataAPIClient+Internal.h in Headers */,
 				6E90F0F0228F559B00E1FCB0 /* UAConfig+Internal.h in Headers */,
 				CC40DC321D8C996A00BABD4F /* UAAddCustomEventAction.h in Headers */,
@@ -4457,7 +4504,6 @@
 				CC40DC141D8C996A00BABD4F /* UAAction+Operators.h in Headers */,
 				6EFB377623450FAB005E4E44 /* UANativeBridgeExtensionDelegate.h in Headers */,
 				6E90F0EA228F543200E1FCB0 /* UAConfig.h in Headers */,
-				992814531EF48AC500D0D388 /* UARateAppAction.h in Headers */,
 				6E937727237625BF00AA9C2A /* UAPersistentQueue+Internal.h in Headers */,
 				CC40DC191D8C996A00BABD4F /* UAActionArguments.h in Headers */,
 				CC40DC811D8C996A00BABD4F /* UADelayOperation+Internal.h in Headers */,
@@ -4539,7 +4585,6 @@
 				3CBCED5321150742003B7239 /* UATagGroupsMutationHistory+Internal.h in Headers */,
 				DF6AD3D31ED8AA78006EB1DA /* UAColorUtils.h in Headers */,
 				6E0F6B722360FBA4001DE51B /* UARemoteDataProvider.h in Headers */,
-				6E27A7D82367AC3200F46B69 /* UAExtendedActionsModuleLoader.h in Headers */,
 				DF6AD3C81ED8AA29006EB1DA /* UAPushReceivedEvent+Internal.h in Headers */,
 				3CBCED5B2118DF91003B7239 /* UATagGroupsTransactionRecord+Internal.h in Headers */,
 				CC40DC0B1D8C996A00BABD4F /* NSJSONSerialization+UAAdditions.h in Headers */,
@@ -4690,7 +4735,6 @@
 			files = (
 				99666E661EDF2C9500BAE46B /* UAKeychainUtils.h in Headers */,
 				3C13BFB12384ABD00071E80C /* UAirshipCoreResources.h in Headers */,
-				3C13BFAF2384ABD00071E80C /* UAExtendedActionsResources.h in Headers */,
 				3CEE135922E67CD900EDC000 /* UAPushProviderDelegate.h in Headers */,
 				3CEE135222E6779300EDC000 /* UAChannelNotificationCenterEvents.h in Headers */,
 				3CF5285A22E2721000424EF5 /* UAChannel.h in Headers */,
@@ -4885,7 +4929,6 @@
 			);
 			dependencies = (
 				3CA0E2DA237CD59100EE76CF /* PBXTargetDependency */,
-				6E2E9151238DA39A008488D3 /* PBXTargetDependency */,
 				3C39D3082384C8B6003C50D4 /* PBXTargetDependency */,
 				6E845491237E2D49007D3B1E /* PBXTargetDependency */,
 			);
@@ -4912,6 +4955,25 @@
 			name = AirshipMessageCenter;
 			productName = AirshipCore;
 			productReference = 3CA0E423237E4A7B00EE76CF /* AirshipMessageCenter.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		45C69118238DC79400A03C94 /* AirshipExtendedActions */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 45C69127238DC79400A03C94 /* Build configuration list for PBXNativeTarget "AirshipExtendedActions" */;
+			buildPhases = (
+				45C6911B238DC79400A03C94 /* Sources */,
+				45C6911E238DC79400A03C94 /* Frameworks */,
+				45C69121238DC79400A03C94 /* Headers */,
+				45C69126238DC79400A03C94 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				45C69119238DC79400A03C94 /* PBXTargetDependency */,
+			);
+			name = AirshipExtendedActions;
+			productName = AirshipKit;
+			productReference = 45C6912A238DC79400A03C94 /* AirshipExtendedActions.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		494DD9561B0EB677009C134E /* AirshipCore */ = {
@@ -4986,6 +5048,7 @@
 			);
 			dependencies = (
 				6E2E914E238D98BE008488D3 /* PBXTargetDependency */,
+				45C6913D238DC90900A03C94 /* PBXTargetDependency */,
 				3C38AE092384C1E700EDE9B7 /* PBXTargetDependency */,
 				6E84548E237E27D1007D3B1E /* PBXTargetDependency */,
 				CC64F05B1D8B77E3009CEF27 /* PBXTargetDependency */,
@@ -5090,6 +5153,7 @@
 				3CA0E298237CCE2600EE76CF /* AirshipDebug */,
 				6E8450FD237E0271007D3B1E /* AirshipAutomation */,
 				3CA0E346237E4A7B00EE76CF /* AirshipMessageCenter */,
+				45C69118238DC79400A03C94 /* AirshipExtendedActions */,
 			);
 		};
 /* End PBXProject section */
@@ -5122,6 +5186,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		45C69126238DC79400A03C94 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				45C6913A238DC88B00A03C94 /* UARateAppPromptView.xib in Resources */,
+				45C6913B238DC89F00A03C94 /* UAExtendedActions.plist in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		494DD9551B0EB677009C134E /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -5129,9 +5202,7 @@
 				6EDAF047237B811D00A64F14 /* UAEvents.xcdatamodeld in Resources */,
 				6EDAF048237B811D00A64F14 /* UrbanAirship.strings in Resources */,
 				6EDAF049237B811D00A64F14 /* UARemoteData.xcdatamodeld in Resources */,
-				6EDAF04A237B811D00A64F14 /* UARateAppPromptView.xib in Resources */,
 				6EDAF04B237B811D00A64F14 /* UADefaultActions.plist in Resources */,
-				6EDAF04C237B811D00A64F14 /* UAExtendedActions.plist in Resources */,
 				6EDAF04E237B811D00A64F14 /* UANativeBridge in Resources */,
 				6EDAF04F237B811D00A64F14 /* UANotificationCategories.plist in Resources */,
 			);
@@ -5379,6 +5450,18 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		45C6911B238DC79400A03C94 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				45C69137238DC82C00A03C94 /* UARateAppPromptViewController.m in Sources */,
+				45C69139238DC86600A03C94 /* UAExtendedActionsModuleLoader.m in Sources */,
+				45C69135238DC82C00A03C94 /* UARateAppAction.m in Sources */,
+				45C69132238DC82C00A03C94 /* UARateAppActionPredicate.m in Sources */,
+				45C69143238DCD6000A03C94 /* UAExtendedActionsResources.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		494DD9521B0EB677009C134E /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -5391,10 +5474,8 @@
 				6E937723237625BF00AA9C2A /* UAPersistentQueue.m in Sources */,
 				CC40DCCC1D8C996A00BABD4F /* UAKeychainUtils.m in Sources */,
 				DFBBC7B11E36D80B00BA7315 /* UATextInputNotificationAction.m in Sources */,
-				9928146B1EF490DC00D0D388 /* UARateAppAction.m in Sources */,
 				6EDEE20F212CD31500918B05 /* UARegistrationDelegateWrapper.m in Sources */,
 				CC40DD081D8C996A00BABD4F /* UARemoveTagsAction.m in Sources */,
-				992814721EF4A14400D0D388 /* UARateAppPromptViewController.m in Sources */,
 				6E90F0E7228F543200E1FCB0 /* UAConfig.m in Sources */,
 				3CC7DC6D225299F300670DC2 /* UAProximityRegion.m in Sources */,
 				DF9666771FB521B200CC243C /* UARemoteConfigManager.m in Sources */,
@@ -5406,7 +5487,6 @@
 				CC944ED81DB5804400C42269 /* UAAPIClient.m in Sources */,
 				6EC74C212347E303003AF4C6 /* UARemoteConfigDisableInfo.m in Sources */,
 				6E2E6D751EB3A34B006056BF /* UASwizzler.m in Sources */,
-				6E27A7D62367AC3200F46B69 /* UAExtendedActionsModuleLoader.m in Sources */,
 				CCD28FE51DD14DD1008D663F /* UATagGroupsMutation.m in Sources */,
 				CC40DD0A1D8C996A00BABD4F /* UARetailEventTemplate.m in Sources */,
 				CC40DC411D8C996A00BABD4F /* UAAppBackgroundEvent.m in Sources */,
@@ -5417,7 +5497,6 @@
 				CC40DC311D8C996A00BABD4F /* UAActivityViewController.m in Sources */,
 				DF5ED8DC1F743E7E002DDA24 /* UARemoteDataPayload.m in Sources */,
 				3C4ACC4E2304DE1B00BCF1CC /* UAUIKitStateTrackerAdapter.m in Sources */,
-				3C13BFAC2384ABD00071E80C /* UAExtendedActionsResources.m in Sources */,
 				CC40DCE91D8C996A00BABD4F /* UANotificationAction.m in Sources */,
 				CC40DCF91D8C996A00BABD4F /* UAPasteboardAction.m in Sources */,
 				3C89DD4C2120BBA800864358 /* UATagGroups.m in Sources */,
@@ -5515,7 +5594,6 @@
 				99912E911ECE57E100295C67 /* UAShareActionPredicate.m in Sources */,
 				6E3673DD1E8AE9F7005B5DFF /* UAEnableFeatureAction.m in Sources */,
 				CC40DC881D8C996A00BABD4F /* UADisposable.m in Sources */,
-				992F898C1EFD99B000E4C8FE /* UARateAppActionPredicate.m in Sources */,
 				CC70E8EC1DDA985D000E2528 /* UA_Base64.m in Sources */,
 				CC40DD141D8C996A00BABD4F /* UAScreenTrackingEvent.m in Sources */,
 				DFECEA7B1E64DD15006AA8EA /* UAWebView.m in Sources */,
@@ -5871,7 +5949,6 @@
 				99666E6D1EDF2C9A00BAE46B /* UAAsyncOperation.m in Sources */,
 				99666E741EDF2CBE00BAE46B /* UA_Base64.m in Sources */,
 				6E937706237625BF00AA9C2A /* UAWhitelist.m in Sources */,
-				3C13BFAD2384ABD00071E80C /* UAExtendedActionsResources.m in Sources */,
 				6E84537C237E03E7007D3B1E /* UAPadding.m in Sources */,
 				6E93771A237625BF00AA9C2A /* UAAppIntegration.m in Sources */,
 				99666E531EDF2C8D00BAE46B /* UAApplicationMetrics.m in Sources */,
@@ -5948,15 +6025,20 @@
 			target = 494DD9561B0EB677009C134E /* AirshipCore */;
 			targetProxy = 3CA0E348237E4A7B00EE76CF /* PBXContainerItemProxy */;
 		};
+		45C69119238DC79400A03C94 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 494DD9561B0EB677009C134E /* AirshipCore */;
+			targetProxy = 45C6911A238DC79400A03C94 /* PBXContainerItemProxy */;
+		};
+		45C6913D238DC90900A03C94 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 45C69118238DC79400A03C94 /* AirshipExtendedActions */;
+			targetProxy = 45C6913C238DC90900A03C94 /* PBXContainerItemProxy */;
+		};
 		6E2E914E238D98BE008488D3 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 6E9373032376164600AA9C2A /* AirshipLocation */;
 			targetProxy = 6E2E914D238D98BE008488D3 /* PBXContainerItemProxy */;
-		};
-		6E2E9151238DA39A008488D3 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 6E9373032376164600AA9C2A /* AirshipLocation */;
-			targetProxy = 6E2E9150238DA39A008488D3 /* PBXContainerItemProxy */;
 		};
 		6E845452237E08EE007D3B1E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -6158,6 +6240,55 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = "";
+			};
+			name = Release;
+		};
+		45C69128238DC79400A03C94 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = CC40DDB31D8CAF7300BABD4F /* AirshipConfig.xcconfig */;
+			buildSettings = {
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_TESTABILITY = YES;
+				INFOPLIST_FILE = "$(SRCROOT)/AirshipExtendedActions/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"-weak_framework",
+					PassKit,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.urbanairship.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_NAME = AirshipExtendedActions;
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		45C69129238DC79400A03C94 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = CC40DDB31D8CAF7300BABD4F /* AirshipConfig.xcconfig */;
+			buildSettings = {
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = "$(SRCROOT)/AirshipExtendedActions/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"-weak_framework",
+					PassKit,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.urbanairship.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_NAME = AirshipExtendedActions;
+				SKIP_INSTALL = YES;
 			};
 			name = Release;
 		};
@@ -6579,6 +6710,15 @@
 			buildConfigurations = (
 				3CA0E421237E4A7B00EE76CF /* Debug */,
 				3CA0E422237E4A7B00EE76CF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		45C69127238DC79400A03C94 /* Build configuration list for PBXNativeTarget "AirshipExtendedActions" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				45C69128238DC79400A03C94 /* Debug */,
+				45C69129238DC79400A03C94 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

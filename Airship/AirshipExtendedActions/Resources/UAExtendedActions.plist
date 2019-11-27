@@ -5,17 +5,6 @@
 	<dict>
 		<key>names</key>
 		<array>
-			<string>share_action</string>
-			<string>^s</string>
-		</array>
-		<key>action</key>
-		<string>UAShareAction</string>
-		<key>predicate</key>
-		<string>UAShareActionPredicate</string>
-	</dict>
-	<dict>
-		<key>names</key>
-		<array>
 			<string>rate_app_action</string>
 			<string>^ra</string>
 		</array>

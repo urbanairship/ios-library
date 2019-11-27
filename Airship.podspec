@@ -14,7 +14,7 @@ Pod::Spec.new do |s|
    s.tvos.deployment_target  = "11.0"
    s.requires_arc            = true
    s.swift_version           = "5.0"
-   s.default_subspecs        = ["Core", "Automation", "MessageCenter"]
+   s.default_subspecs        = ["Core", "Automation", "MessageCenter", "ExtendedActions"]
 
    s.subspec "Core" do |core|
       core.ios.resources              = "Airship/AirshipCore/Resources/common/**/*", "Airship/AirshipCore/Resources/ios/**/*"
@@ -26,8 +26,16 @@ Pod::Spec.new do |s|
       core.ios.private_header_files   = "Airship/AirshipCore/Source/common/**/*+Internal*.h", "Airship/AirshipCore/Source/ios/**/*+Internal*.h"
       core.tvos.private_header_files  = "Airship/AirshipCore/Source/common/**/*+Internal*.h", "Airship/AirshipCore/Source/tvos/**/*+Internal*.h"
       core.libraries                  = "z", "sqlite3"
-      core.frameworks                 = "UserNotifications", "CFNetwork", "CoreGraphics", "Foundation", "MobileCoreServices", "Security", "SystemConfiguration", "UIKit", "CoreData", "StoreKit"
+      core.frameworks                 = "UserNotifications", "CFNetwork", "CoreGraphics", "Foundation", "MobileCoreServices", "Security", "SystemConfiguration", "UIKit", "CoreData"
       core.ios.frameworks             = "WebKit", "CoreTelephony"
+   end
+
+   s.subspec "ExtendedActions" do |actions|
+      actions.ios.source_files           = "Airship/AirshipExtendedActions/Source/**/*.{h,m}"
+      actions.ios.private_header_files   = "Airship/AirshipExtendedActions/Source/**/*+Internal*.h"
+      actions.ios.resources              = "Airship/AirshipExtendedActions/Resources/**/*"
+      actions.ios.frameworks             = "StoreKit"
+      actions.dependency                 "Airship/Core"
    end
 
    s.subspec "Location" do |location|
@@ -35,7 +43,6 @@ Pod::Spec.new do |s|
       location.ios.private_header_files   = "Airship/AirshipLocation/Source/*+Internal*.h"
       location.ios.frameworks             = "CoreLocation"
       location.dependency                  "Airship/Core"
-
    end
 
    s.subspec "Automation" do |automation|

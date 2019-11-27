@@ -1,6 +1,11 @@
 /* Copyright Airship and Contributors */
 
+
+#if UA_USE_MODULE_AIRSHIP_IMPORTS
+@import AirshipCore;
+#else
 #import "UAAction.h"
+#endif
 
 #define kUARateAppActionDefaultRegistryName @"rate_app_action"
 #define kUARateAppActionDefaultRegistryAlias @"^ra"

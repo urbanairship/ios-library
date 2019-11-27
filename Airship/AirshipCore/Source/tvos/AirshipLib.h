@@ -46,7 +46,6 @@
 #import "UAExtendableAnalyticsHeaders.h"
 #import "UAExtendableChannelRegistration.h"
 #import "UAExtendedActionsModuleLoaderFactory.h"
-#import "UAExtendedActionsResources.h"
 #import "UAFetchDeviceInfoAction.h"
 #import "UAGlobal.h"
 #import "UAInstallAttributionEvent.h"

@@ -2,12 +2,18 @@
 
 #import <StoreKit/StoreKit.h>
 
-#import "UARateAppAction+Internal.h"
+#if UA_USE_MODULE_AIRSHIP_IMPORTS
+@import AirshipCore;
+#else
+#import "UAAction.h"
 #import "UAirship.h"
-#import "UARuntimeConfig.h"
-#import "UAPreferenceDataStore+Internal.h"
-#import "UARateAppPromptViewController+Internal.h"
 #import "UASystemVersion.h"
+#import "UARuntimeConfig.h"
+#import "UAPreferenceDataStore.h"
+#endif
+
+#import "UARateAppAction+Internal.h"
+#import "UARateAppPromptViewController+Internal.h"
 #import "UAExtendedActionsResources.h"
 
 @interface UARateAppAction ()

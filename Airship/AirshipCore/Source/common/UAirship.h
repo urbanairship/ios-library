@@ -12,7 +12,6 @@
 #import <QuartzCore/QuartzCore.h>
 #import <Availability.h>
 #import <UserNotifications/UserNotifications.h>
-#import <StoreKit/StoreKit.h>
 
 #import "UAConfig.h"
 

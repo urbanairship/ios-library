@@ -2,7 +2,6 @@
 
 #import "UARateAppActionPredicate+Internal.h"
 #import "UARateAppAction.h"
-#import "UAirship.h"
 
 @implementation UARateAppActionPredicate
 
