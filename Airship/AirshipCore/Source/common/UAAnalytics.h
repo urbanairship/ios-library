@@ -74,8 +74,8 @@ extern NSString *const UAScreenKey;
 /**
  * Optional event consumer.
  *
- * @note AirshipDebugKit uses the event consumer to capture events. Setting the event
- * consumer for other purposes will result in an interruption to AirshipDebugKit's event stream.
+ * @note AirshipDebug uses the event consumer to capture events. Setting the event
+ * consumer for other purposes will result in an interruption to AirshipDebug's event stream.
  */
 @property (nonatomic, strong, nullable) id<UAAnalyticsEventConsumerProtocol> eventConsumer;
 

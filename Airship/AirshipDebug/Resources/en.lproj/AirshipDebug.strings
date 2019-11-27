@@ -4,7 +4,7 @@
  * Swift Strings
  */
 
-"ua_debug_kit_title" = "Airship Debug Kit";
+"ua_debug_title" = "Airship Debug";
 
 "ua_device_info_title" = "Device Info";
 "ua_device_info_subtitle" = "View info related to this device and its push channel.";

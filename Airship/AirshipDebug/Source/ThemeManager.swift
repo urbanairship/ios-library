@@ -16,7 +16,7 @@ class ThemeManager: NSObject {
     }
 
     func loadThemePlistFromBundle(bundle:Bundle) {
-        guard let path = bundle.path(forResource:"DebugKitTheme", ofType: "plist") else {
+        guard let path = bundle.path(forResource:"AirshipDebugTheme", ofType: "plist") else {
             // theme not found, use default theme
             return
         }

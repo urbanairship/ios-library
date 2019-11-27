@@ -59,7 +59,7 @@
 		3CA0E2B2237CD05F00EE76CF /* AddAssociatedIdentifiersTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E22F237CCBA600EE76CF /* AddAssociatedIdentifiersTableViewController.swift */; };
 		3CA0E2B3237CD05F00EE76CF /* TagsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E230237CCBA600EE76CF /* TagsTableViewController.swift */; };
 		3CA0E2B4237CD05F00EE76CF /* DeviceInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E231237CCBA600EE76CF /* DeviceInfoViewController.swift */; };
-		3CA0E2B5237CD05F00EE76CF /* UADebugKitAutomationUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E235237CCBA600EE76CF /* UADebugKitAutomationUtilities.swift */; };
+		3CA0E2B5237CD05F00EE76CF /* UADebugAutomationUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E235237CCBA600EE76CF /* UADebugAutomationUtilities.swift */; };
 		3CA0E2B6237CD05F00EE76CF /* ButtonDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E236237CCBA600EE76CF /* ButtonDetailViewController.swift */; };
 		3CA0E2B7237CD05F00EE76CF /* AudienceDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E237237CCBA600EE76CF /* AudienceDetailViewController.swift */; };
 		3CA0E2B8237CD05F00EE76CF /* TriggerTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E238237CCBA600EE76CF /* TriggerTableViewController.swift */; };
@@ -83,17 +83,17 @@
 		3CA0E2CA237CD05F00EE76CF /* EventDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E24D237CCBA600EE76CF /* EventDataManager.swift */; };
 		3CA0E2CB237CD05F00EE76CF /* RootTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E229237CCBA600EE76CF /* RootTableViewController.swift */; };
 		3CA0E2CC237CD05F00EE76CF /* ThemeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E232237CCBA600EE76CF /* ThemeManager.swift */; };
-		3CA0E2CD237CD05F00EE76CF /* AirshipDebugKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E233237CCBA600EE76CF /* AirshipDebugKit.swift */; };
+		3CA0E2CD237CD05F00EE76CF /* AirshipDebug.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E233237CCBA600EE76CF /* AirshipDebug.swift */; };
 		3CA0E2CE237CD05F00EE76CF /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E23F237CCBA600EE76CF /* Theme.swift */; };
-		3CA0E2CF237CD05F00EE76CF /* DebugKitUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E24E237CCBA600EE76CF /* DebugKitUtils.swift */; };
+		3CA0E2CF237CD05F00EE76CF /* DebugUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E24E237CCBA600EE76CF /* DebugUtils.swift */; };
 		3CA0E2D0237CD0BD00EE76CF /* AirshipDebug.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CA0E228237CCBA600EE76CF /* AirshipDebug.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		3CA0E2D1237CD57100EE76CF /* DebugUrbanAirship.strings in Resources */ = {isa = PBXBuildFile; fileRef = 3CA0E21C237CCBA600EE76CF /* DebugUrbanAirship.strings */; };
-		3CA0E2D2237CD57100EE76CF /* DebugUrbanAirship.stringsdict in Resources */ = {isa = PBXBuildFile; fileRef = 3CA0E21E237CCBA600EE76CF /* DebugUrbanAirship.stringsdict */; };
-		3CA0E2D3237CD57100EE76CF /* Events.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3CA0E220237CCBA600EE76CF /* Events.storyboard */; };
-		3CA0E2D4237CD57100EE76CF /* DeviceInfo.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3CA0E221237CCBA600EE76CF /* DeviceInfo.storyboard */; };
+		3CA0E2D1237CD57100EE76CF /* AirshipDebug.strings in Resources */ = {isa = PBXBuildFile; fileRef = 3CA0E21C237CCBA600EE76CF /* AirshipDebug.strings */; };
+		3CA0E2D2237CD57100EE76CF /* AirshipDebug.stringsdict in Resources */ = {isa = PBXBuildFile; fileRef = 3CA0E21E237CCBA600EE76CF /* AirshipDebug.stringsdict */; };
+		3CA0E2D3237CD57100EE76CF /* AirshipDebugEvents.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3CA0E220237CCBA600EE76CF /* AirshipDebugEvents.storyboard */; };
+		3CA0E2D4237CD57100EE76CF /* AirshipDebugDeviceInfo.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3CA0E221237CCBA600EE76CF /* AirshipDebugDeviceInfo.storyboard */; };
 		3CA0E2D6237CD57100EE76CF /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3CA0E224237CCBA600EE76CF /* Images.xcassets */; };
-		3CA0E2D7237CD57100EE76CF /* DebugKit.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3CA0E225237CCBA600EE76CF /* DebugKit.storyboard */; };
-		3CA0E2D8237CD57100EE76CF /* Automation.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3CA0E226237CCBA600EE76CF /* Automation.storyboard */; };
+		3CA0E2D7237CD57100EE76CF /* AirshipDebug.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3CA0E225237CCBA600EE76CF /* AirshipDebug.storyboard */; };
+		3CA0E2D8237CD57100EE76CF /* AirshipDebugAutomation.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3CA0E226237CCBA600EE76CF /* AirshipDebugAutomation.storyboard */; };
 		3CA0E426237E4BED00EE76CF /* UAMessageCenterAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E32E237E396100EE76CF /* UAMessageCenterAction.m */; };
 		3CA0E428237E4BED00EE76CF /* UADefaultMessageCenterUI.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E331237E396100EE76CF /* UADefaultMessageCenterUI.m */; };
 		3CA0E42A237E4BED00EE76CF /* UAMessageCenterDateUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E333237E396100EE76CF /* UAMessageCenterDateUtils.m */; };
@@ -262,7 +262,7 @@
 		6E217364237C811E0084933A /* UALocationModuleLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E21735F237C811D0084933A /* UALocationModuleLoader.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E217365237C811E0084933A /* UALocation+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E217360237C811E0084933A /* UALocation+Internal.h */; };
 		6E217366237C811E0084933A /* UALocation.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E217361237C811E0084933A /* UALocation.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6E218529237D31720084933A /* DebugKitData.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E222237CCBA600EE76CF /* DebugKitData.xcdatamodeld */; };
+		6E218529237D31720084933A /* AirshipEventData.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E222237CCBA600EE76CF /* AirshipEventData.xcdatamodeld */; };
 		6E21852B237D32B30084933A /* EventData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21852A237D32B30084933A /* EventData.swift */; };
 		6E218539237DB7960084933A /* AddChannelAttributeTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E218538237DB7960084933A /* AddChannelAttributeTableViewController.swift */; };
 		6E27A7BC2367751400F46B69 /* UAMessageCenterModuleLoaderFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E27A7BB2367751400F46B69 /* UAMessageCenterModuleLoaderFactory.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1319,14 +1319,14 @@
 		3C89DD552122471E00864358 /* UATestDate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UATestDate.h; sourceTree = "<group>"; };
 		3C89DD562122471E00864358 /* UATestDate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UATestDate.m; sourceTree = "<group>"; };
 		3C9E9D6721D42EEB0072F65B /* UAInAppMessageResolutionTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageResolutionTest.m; sourceTree = "<group>"; };
-		3CA0E21D237CCBA600EE76CF /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/DebugUrbanAirship.strings; sourceTree = "<group>"; };
-		3CA0E21F237CCBA600EE76CF /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = en; path = en.lproj/DebugUrbanAirship.stringsdict; sourceTree = "<group>"; };
-		3CA0E220237CCBA600EE76CF /* Events.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Events.storyboard; sourceTree = "<group>"; };
-		3CA0E221237CCBA600EE76CF /* DeviceInfo.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = DeviceInfo.storyboard; sourceTree = "<group>"; };
-		3CA0E223237CCBA600EE76CF /* DebugKitData.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = DebugKitData.xcdatamodel; sourceTree = "<group>"; };
+		3CA0E21D237CCBA600EE76CF /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/AirshipDebug.strings; sourceTree = "<group>"; };
+		3CA0E21F237CCBA600EE76CF /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = en; path = en.lproj/AirshipDebug.stringsdict; sourceTree = "<group>"; };
+		3CA0E220237CCBA600EE76CF /* AirshipDebugEvents.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = AirshipDebugEvents.storyboard; sourceTree = "<group>"; };
+		3CA0E221237CCBA600EE76CF /* AirshipDebugDeviceInfo.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = AirshipDebugDeviceInfo.storyboard; sourceTree = "<group>"; };
+		3CA0E223237CCBA600EE76CF /* AirshipEventData.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = AirshipEventData.xcdatamodel; sourceTree = "<group>"; };
 		3CA0E224237CCBA600EE76CF /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		3CA0E225237CCBA600EE76CF /* DebugKit.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = DebugKit.storyboard; sourceTree = "<group>"; };
-		3CA0E226237CCBA600EE76CF /* Automation.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Automation.storyboard; sourceTree = "<group>"; };
+		3CA0E225237CCBA600EE76CF /* AirshipDebug.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = AirshipDebug.storyboard; sourceTree = "<group>"; };
+		3CA0E226237CCBA600EE76CF /* AirshipDebugAutomation.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = AirshipDebugAutomation.storyboard; sourceTree = "<group>"; };
 		3CA0E228237CCBA600EE76CF /* AirshipDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AirshipDebug.h; sourceTree = "<group>"; };
 		3CA0E229237CCBA600EE76CF /* RootTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RootTableViewController.swift; sourceTree = "<group>"; };
 		3CA0E22B237CCBA600EE76CF /* AssociatedIdentifiersTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssociatedIdentifiersTableViewController.swift; sourceTree = "<group>"; };
@@ -1337,8 +1337,8 @@
 		3CA0E230237CCBA600EE76CF /* TagsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TagsTableViewController.swift; sourceTree = "<group>"; };
 		3CA0E231237CCBA600EE76CF /* DeviceInfoViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeviceInfoViewController.swift; sourceTree = "<group>"; };
 		3CA0E232237CCBA600EE76CF /* ThemeManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ThemeManager.swift; sourceTree = "<group>"; };
-		3CA0E233237CCBA600EE76CF /* AirshipDebugKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirshipDebugKit.swift; sourceTree = "<group>"; };
-		3CA0E235237CCBA600EE76CF /* UADebugKitAutomationUtilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UADebugKitAutomationUtilities.swift; sourceTree = "<group>"; };
+		3CA0E233237CCBA600EE76CF /* AirshipDebug.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirshipDebug.swift; sourceTree = "<group>"; };
+		3CA0E235237CCBA600EE76CF /* UADebugAutomationUtilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UADebugAutomationUtilities.swift; sourceTree = "<group>"; };
 		3CA0E236237CCBA600EE76CF /* ButtonDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ButtonDetailViewController.swift; sourceTree = "<group>"; };
 		3CA0E237237CCBA600EE76CF /* AudienceDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudienceDetailViewController.swift; sourceTree = "<group>"; };
 		3CA0E238237CCBA600EE76CF /* TriggerTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TriggerTableViewController.swift; sourceTree = "<group>"; };
@@ -1361,7 +1361,7 @@
 		3CA0E24B237CCBA600EE76CF /* CustomPropertyAdderTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomPropertyAdderTableViewCell.swift; sourceTree = "<group>"; };
 		3CA0E24C237CCBA600EE76CF /* EventsDetailTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventsDetailTableViewController.swift; sourceTree = "<group>"; };
 		3CA0E24D237CCBA600EE76CF /* EventDataManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventDataManager.swift; sourceTree = "<group>"; };
-		3CA0E24E237CCBA600EE76CF /* DebugKitUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DebugKitUtils.swift; sourceTree = "<group>"; };
+		3CA0E24E237CCBA600EE76CF /* DebugUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DebugUtils.swift; sourceTree = "<group>"; };
 		3CA0E24F237CCBA600EE76CF /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3CA0E2AC237CCE2600EE76CF /* AirshipDebug.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AirshipDebug.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3CA0E305237E396100EE76CF /* UAInbox.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = UAInbox.xcdatamodel; sourceTree = "<group>"; };
@@ -2322,14 +2322,14 @@
 		3CA0E21B237CCBA600EE76CF /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				3CA0E21C237CCBA600EE76CF /* DebugUrbanAirship.strings */,
-				3CA0E21E237CCBA600EE76CF /* DebugUrbanAirship.stringsdict */,
-				3CA0E220237CCBA600EE76CF /* Events.storyboard */,
-				3CA0E221237CCBA600EE76CF /* DeviceInfo.storyboard */,
-				3CA0E222237CCBA600EE76CF /* DebugKitData.xcdatamodeld */,
+				3CA0E21C237CCBA600EE76CF /* AirshipDebug.strings */,
+				3CA0E21E237CCBA600EE76CF /* AirshipDebug.stringsdict */,
+				3CA0E220237CCBA600EE76CF /* AirshipDebugEvents.storyboard */,
+				3CA0E221237CCBA600EE76CF /* AirshipDebugDeviceInfo.storyboard */,
+				3CA0E222237CCBA600EE76CF /* AirshipEventData.xcdatamodeld */,
 				3CA0E224237CCBA600EE76CF /* Images.xcassets */,
-				3CA0E225237CCBA600EE76CF /* DebugKit.storyboard */,
-				3CA0E226237CCBA600EE76CF /* Automation.storyboard */,
+				3CA0E225237CCBA600EE76CF /* AirshipDebug.storyboard */,
+				3CA0E226237CCBA600EE76CF /* AirshipDebugAutomation.storyboard */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -2343,9 +2343,9 @@
 				3CA0E228237CCBA600EE76CF /* AirshipDebug.h */,
 				3CA0E229237CCBA600EE76CF /* RootTableViewController.swift */,
 				3CA0E232237CCBA600EE76CF /* ThemeManager.swift */,
-				3CA0E233237CCBA600EE76CF /* AirshipDebugKit.swift */,
+				3CA0E233237CCBA600EE76CF /* AirshipDebug.swift */,
 				3CA0E23F237CCBA600EE76CF /* Theme.swift */,
-				3CA0E24E237CCBA600EE76CF /* DebugKitUtils.swift */,
+				3CA0E24E237CCBA600EE76CF /* DebugUtils.swift */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -2368,7 +2368,7 @@
 		3CA0E234237CCBA600EE76CF /* Automation */ = {
 			isa = PBXGroup;
 			children = (
-				3CA0E235237CCBA600EE76CF /* UADebugKitAutomationUtilities.swift */,
+				3CA0E235237CCBA600EE76CF /* UADebugAutomationUtilities.swift */,
 				3CA0E236237CCBA600EE76CF /* ButtonDetailViewController.swift */,
 				3CA0E237237CCBA600EE76CF /* AudienceDetailViewController.swift */,
 				3CA0E238237CCBA600EE76CF /* TriggerTableViewController.swift */,
@@ -5099,13 +5099,13 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3CA0E2D1237CD57100EE76CF /* DebugUrbanAirship.strings in Resources */,
-				3CA0E2D2237CD57100EE76CF /* DebugUrbanAirship.stringsdict in Resources */,
-				3CA0E2D3237CD57100EE76CF /* Events.storyboard in Resources */,
-				3CA0E2D4237CD57100EE76CF /* DeviceInfo.storyboard in Resources */,
+				3CA0E2D1237CD57100EE76CF /* AirshipDebug.strings in Resources */,
+				3CA0E2D2237CD57100EE76CF /* AirshipDebug.stringsdict in Resources */,
+				3CA0E2D3237CD57100EE76CF /* AirshipDebugEvents.storyboard in Resources */,
+				3CA0E2D4237CD57100EE76CF /* AirshipDebugDeviceInfo.storyboard in Resources */,
 				3CA0E2D6237CD57100EE76CF /* Images.xcassets in Resources */,
-				3CA0E2D7237CD57100EE76CF /* DebugKit.storyboard in Resources */,
-				3CA0E2D8237CD57100EE76CF /* Automation.storyboard in Resources */,
+				3CA0E2D7237CD57100EE76CF /* AirshipDebug.storyboard in Resources */,
+				3CA0E2D8237CD57100EE76CF /* AirshipDebugAutomation.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5317,7 +5317,7 @@
 				3CA0E2B2237CD05F00EE76CF /* AddAssociatedIdentifiersTableViewController.swift in Sources */,
 				3CA0E2B3237CD05F00EE76CF /* TagsTableViewController.swift in Sources */,
 				3CA0E2B4237CD05F00EE76CF /* DeviceInfoViewController.swift in Sources */,
-				3CA0E2B5237CD05F00EE76CF /* UADebugKitAutomationUtilities.swift in Sources */,
+				3CA0E2B5237CD05F00EE76CF /* UADebugAutomationUtilities.swift in Sources */,
 				3CA0E2B6237CD05F00EE76CF /* ButtonDetailViewController.swift in Sources */,
 				3CA0E2B7237CD05F00EE76CF /* AudienceDetailViewController.swift in Sources */,
 				6E218539237DB7960084933A /* AddChannelAttributeTableViewController.swift in Sources */,
@@ -5342,10 +5342,10 @@
 				3CA0E2CA237CD05F00EE76CF /* EventDataManager.swift in Sources */,
 				3CA0E2CB237CD05F00EE76CF /* RootTableViewController.swift in Sources */,
 				3CA0E2CC237CD05F00EE76CF /* ThemeManager.swift in Sources */,
-				3CA0E2CD237CD05F00EE76CF /* AirshipDebugKit.swift in Sources */,
-				6E218529237D31720084933A /* DebugKitData.xcdatamodeld in Sources */,
+				3CA0E2CD237CD05F00EE76CF /* AirshipDebug.swift in Sources */,
+				6E218529237D31720084933A /* AirshipEventData.xcdatamodeld in Sources */,
 				3CA0E2CE237CD05F00EE76CF /* Theme.swift in Sources */,
-				3CA0E2CF237CD05F00EE76CF /* DebugKitUtils.swift in Sources */,
+				3CA0E2CF237CD05F00EE76CF /* DebugUtils.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5986,20 +5986,20 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		3CA0E21C237CCBA600EE76CF /* DebugUrbanAirship.strings */ = {
+		3CA0E21C237CCBA600EE76CF /* AirshipDebug.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
 				3CA0E21D237CCBA600EE76CF /* en */,
 			);
-			name = DebugUrbanAirship.strings;
+			name = AirshipDebug.strings;
 			sourceTree = "<group>";
 		};
-		3CA0E21E237CCBA600EE76CF /* DebugUrbanAirship.stringsdict */ = {
+		3CA0E21E237CCBA600EE76CF /* AirshipDebug.stringsdict */ = {
 			isa = PBXVariantGroup;
 			children = (
 				3CA0E21F237CCBA600EE76CF /* en */,
 			);
-			name = DebugUrbanAirship.stringsdict;
+			name = AirshipDebug.stringsdict;
 			sourceTree = "<group>";
 		};
 		CC70E98E1DDB8AF8000E2528 /* UrbanAirship.strings */ = {
@@ -6640,13 +6640,13 @@
 /* End XCConfigurationList section */
 
 /* Begin XCVersionGroup section */
-		3CA0E222237CCBA600EE76CF /* DebugKitData.xcdatamodeld */ = {
+		3CA0E222237CCBA600EE76CF /* AirshipEventData.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
-				3CA0E223237CCBA600EE76CF /* DebugKitData.xcdatamodel */,
+				3CA0E223237CCBA600EE76CF /* AirshipEventData.xcdatamodel */,
 			);
-			currentVersion = 3CA0E223237CCBA600EE76CF /* DebugKitData.xcdatamodel */;
-			path = DebugKitData.xcdatamodeld;
+			currentVersion = 3CA0E223237CCBA600EE76CF /* AirshipEventData.xcdatamodel */;
+			path = AirshipEventData.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
 		};

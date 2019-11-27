@@ -129,7 +129,7 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let image = UIImage(named: "Settings", in:Bundle(identifier: "com.urbanairship.AirshipDebugKit"), compatibleWith: nil)
+        let image = UIImage(named: "Settings", in:Bundle(identifier: "com.urbanairship.AirshipDebug"), compatibleWith: nil)
 
         let pushSettings: UIBarButtonItem = UIBarButtonItem(image:image, style:.done, target: self, action: #selector(pushSettingsButtonTapped))
         self.navigationItem.rightBarButtonItem = pushSettings
