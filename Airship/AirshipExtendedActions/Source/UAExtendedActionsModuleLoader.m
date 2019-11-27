@@ -3,8 +3,8 @@
 #import "UAExtendedActionsModuleLoader.h"
 #import "UAExtendedActionsResources.h"
 
-#if UA_USE_MODULE_AIRSHIP_IMPORTS
-@import AirshipCore;
+#if __has_include(<AirshipCore/AirshipCore.h>)
+#import <AirshipCore/AirshipCore.h>
 #else
 #import "UAActionRegistry.h"
 #import "UAirship.h"

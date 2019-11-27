@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
 #import "UALocation+Internal.h"
+#import "UALocationEvent.h"
 
 NSString *const UALocationAutoRequestAuthorizationEnabled = @"UALocationAutoRequestAuthorizationEnabled";
 NSString *const UALocationUpdatesEnabled = @"UALocationUpdatesEnabled";

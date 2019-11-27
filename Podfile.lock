@@ -32,7 +32,7 @@ DEPENDENCIES:
   - Airship/Location (from `./`)
   - AirshipExtensions (from `./`)
   - OCMock (~> 3.4.1)
-  - XcodeEdit (~> 2.7)
+  - XcodeEdit (~> 2.7.4)
 
 SPEC REPOS:
   trunk:
@@ -46,11 +46,11 @@ EXTERNAL SOURCES:
     :path: "./"
 
 SPEC CHECKSUMS:
-  Airship: 93e4e70a7bff4670078d81cfeadb736f6e40a001
+  Airship: 2cfca8407c76e215f8659d244f1605ea2569e95b
   AirshipExtensions: fa0b9d0821b6dae95fdab04a0e901336ecd57c86
   OCMock: 43565190abc78977ad44a61c0d20d7f0784d35ab
   XcodeEdit: ac6e69ec9275e958d437da1e76fafa6b8c76cf9a
 
-PODFILE CHECKSUM: 7600c7668d9551748656afdde040298e210527d8
+PODFILE CHECKSUM: 75eaae4177579f9a37965ee561c7c4f1f19e53e0
 
 COCOAPODS: 1.8.4

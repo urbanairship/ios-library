@@ -5,7 +5,7 @@ target 'AirshipCoreTests' do
   platform :ios, '11.0'
   project 'Airship/Airship.xcodeproj'
   pod 'OCMock', '~> 3.4.1'
-  pod 'XcodeEdit', '~> 2.7'
+  pod 'XcodeEdit', '~> 2.7.4'
 end
 
 target 'Sample' do

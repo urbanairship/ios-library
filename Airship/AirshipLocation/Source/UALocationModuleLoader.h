@@ -2,7 +2,7 @@
 
 #import <Foundation/Foundation.h>
 
-#if UA_USE_MODULE_AIRSHIP_IMPORTS
+#if !(__has_include("AirshipLib.h"))
 @import AirshipCore;
 #else
 #import "UALocationModuleLoaderFactory.h"

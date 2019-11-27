@@ -3,8 +3,8 @@
 #import "UARateAppPromptViewController+Internal.h"
 #import "UAExtendedActionsResources.h"
 
-#if UA_USE_MODULE_AIRSHIP_IMPORTS
-@import AirshipCore;
+#if __has_include(<AirshipCore/AirshipCore.h>)
+#import <AirshipCore/AirshipCore.h>
 #else
 #import "UAAction.h"
 #import "UAUtils.h"
