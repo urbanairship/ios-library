@@ -203,6 +203,10 @@
 		3CC7DC6E225299F300670DC2 /* UAProximityRegion.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CC7DC56225299F300670DC2 /* UAProximityRegion.m */; };
 		3CC7DC70225299F300670DC2 /* UAProximityRegion.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CC7DC57225299F300670DC2 /* UAProximityRegion.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3CC7DC71225299F300670DC2 /* UAProximityRegion.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CC7DC57225299F300670DC2 /* UAProximityRegion.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		3CCFD5DB23A077BB001AF966 /* UAMessageCenterMessageViewDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CCFD5D923A077BA001AF966 /* UAMessageCenterMessageViewDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		3CCFD5DC23A077BB001AF966 /* UAMessageCenterListViewDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CCFD5DA23A077BA001AF966 /* UAMessageCenterListViewDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		3CCFD5DF23A082EF001AF966 /* UADefaultMessageCenterSplitViewDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CCFD5DD23A082EF001AF966 /* UADefaultMessageCenterSplitViewDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		3CCFD5E023A082EF001AF966 /* UADefaultMessageCenterSplitViewDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CCFD5DE23A082EF001AF966 /* UADefaultMessageCenterSplitViewDelegate.m */; };
 		3CD47D4822602A58005F1987 /* UARemoteConfigModuleAdapter+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CD47D4522602A58005F1987 /* UARemoteConfigModuleAdapter+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3CD47D4922602A58005F1987 /* UARemoteConfigModuleAdapter+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CD47D4522602A58005F1987 /* UARemoteConfigModuleAdapter+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3CD47D4B22602A58005F1987 /* UARemoteConfigModuleAdapter.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CD47D4622602A58005F1987 /* UARemoteConfigModuleAdapter.m */; };
@@ -2514,6 +2518,10 @@
 		3CC7DC55225299F300670DC2 /* UARegionEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UARegionEvent.m; path = common/UARegionEvent.m; sourceTree = "<group>"; };
 		3CC7DC56225299F300670DC2 /* UAProximityRegion.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAProximityRegion.m; path = common/UAProximityRegion.m; sourceTree = "<group>"; };
 		3CC7DC57225299F300670DC2 /* UAProximityRegion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAProximityRegion.h; path = common/UAProximityRegion.h; sourceTree = "<group>"; };
+		3CCFD5D923A077BA001AF966 /* UAMessageCenterMessageViewDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAMessageCenterMessageViewDelegate.h; sourceTree = "<group>"; };
+		3CCFD5DA23A077BA001AF966 /* UAMessageCenterListViewDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAMessageCenterListViewDelegate.h; sourceTree = "<group>"; };
+		3CCFD5DD23A082EF001AF966 /* UADefaultMessageCenterSplitViewDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UADefaultMessageCenterSplitViewDelegate.h; sourceTree = "<group>"; };
+		3CCFD5DE23A082EF001AF966 /* UADefaultMessageCenterSplitViewDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UADefaultMessageCenterSplitViewDelegate.m; sourceTree = "<group>"; };
 		3CD47D4522602A58005F1987 /* UARemoteConfigModuleAdapter+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UARemoteConfigModuleAdapter+Internal.h"; path = "common/UARemoteConfigModuleAdapter+Internal.h"; sourceTree = "<group>"; };
 		3CD47D4622602A58005F1987 /* UARemoteConfigModuleAdapter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UARemoteConfigModuleAdapter.m; path = common/UARemoteConfigModuleAdapter.m; sourceTree = "<group>"; };
 		3CD9C1D021D1A43600B129A6 /* UAInAppMessageResolution+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAInAppMessageResolution+Internal.h"; sourceTree = "<group>"; };
@@ -3731,14 +3739,18 @@
 				3CA0E31D237E396100EE76CF /* UAMessageCenterListCell.m */,
 				3CA0E329237E396100EE76CF /* UAMessageCenterListViewController.h */,
 				3CA0E315237E396100EE76CF /* UAMessageCenterListViewController.m */,
+				3CCFD5DA23A077BA001AF966 /* UAMessageCenterListViewDelegate.h */,
 				3CA0E316237E396100EE76CF /* UAMessageCenterLocalization.h */,
 				3CA0E311237E396100EE76CF /* UAMessageCenterMessageViewController.h */,
 				3CA0E32F237E396100EE76CF /* UAMessageCenterMessageViewController.m */,
+				3CCFD5D923A077BA001AF966 /* UAMessageCenterMessageViewDelegate.h */,
 				3CA0E314237E396100EE76CF /* UAMessageCenterMessageViewProtocol.h */,
 				3CA0E318237E396100EE76CF /* UAMessageCenterSplitViewController.h */,
 				3CA0E337237E396100EE76CF /* UAMessageCenterSplitViewController.m */,
 				3CA0E332237E396100EE76CF /* UAMessageCenterStyle.h */,
 				3CA0E31C237E396100EE76CF /* UAMessageCenterStyle.m */,
+				3CCFD5DD23A082EF001AF966 /* UADefaultMessageCenterSplitViewDelegate.h */,
+				3CCFD5DE23A082EF001AF966 /* UADefaultMessageCenterSplitViewDelegate.m */,
 			);
 			path = Display;
 			sourceTree = "<group>";
@@ -5618,6 +5630,9 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3CCFD5DB23A077BB001AF966 /* UAMessageCenterMessageViewDelegate.h in Headers */,
+				3CCFD5DC23A077BB001AF966 /* UAMessageCenterListViewDelegate.h in Headers */,
+				3CCFD5DF23A082EF001AF966 /* UADefaultMessageCenterSplitViewDelegate.h in Headers */,
 				3C13BFBA2384AD270071E80C /* UAMessageCenterResources.h in Headers */,
 				3C13BFBD2384AE050071E80C /* AirshipMessageCenter.h in Headers */,
 				3CA0E458237E4CA100EE76CF /* UAMessageCenterAction.h in Headers */,
@@ -7528,6 +7543,7 @@
 				3CA0E440237E4BED00EE76CF /* UAInboxMessage.m in Sources */,
 				3CA0E443237E4BED00EE76CF /* UAInboxMessageList.m in Sources */,
 				3CA0E446237E4BED00EE76CF /* UAInboxUtils.m in Sources */,
+				3CCFD5E023A082EF001AF966 /* UADefaultMessageCenterSplitViewDelegate.m in Sources */,
 				3CA0E448237E4BED00EE76CF /* UAMessageCenterNativeBridgeExtension.m in Sources */,
 				3CA0E44A237E4BED00EE76CF /* UAUser.m in Sources */,
 				3C13BFBB2384AD270071E80C /* UAMessageCenterResources.m in Sources */,

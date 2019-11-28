@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
 #import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -9,7 +10,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Protocol to be implemented by internal message center message view controllers.
+ * @deprecated Deprecated – to be removed in SDK version 14.0. Instead use the UAMessageCenterMessageViewController directly.
  */
+DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0. Instead use the UAMessageCenterMessageViewController directly.")
 @protocol UAMessageCenterMessageViewProtocol
 
 
@@ -47,3 +50,4 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 NS_ASSUME_NONNULL_END
+
