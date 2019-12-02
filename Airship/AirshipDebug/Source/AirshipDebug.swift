@@ -7,9 +7,9 @@ import AirshipCore
 #endif
 
 public class AirshipDebug : NSObject {
-    @objc public static var deviceInfoViewName = "DeviceInfo"
-    @objc public static let automationViewName = "Automation"
-    @objc public static let eventsViewName = "Events"
+    @objc public static var deviceInfoViewName = "AirshipDebugDeviceInfo"
+    @objc public static let automationViewName = "AirshipDebugAutomation"
+    @objc public static let eventsViewName = "AirshipDebugEvents"
     @objc public static var tagsViewName = DeviceInfoViewController.tagsViewName
 
     @objc public class var deviceInfoViewController : UIViewController? {
