@@ -103,6 +103,59 @@ NSString *anotherActionName = @"AnotherActionName";
 }
 
 /**
+ * Test running action any given action name for an action with three action names registered
+ */
+- (void)testRunActionThreeActionNames {
+    __block int actionRunCount = 0;
+    NSString *thirdActionName = @"A Third Action Name";
+
+    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
+        actionRunCount++;
+        completionHandler([UAActionResult emptyResult]);
+    }];
+
+    void (^completionBlock)(UAActionResult *, XCTestExpectation *) = ^void(UAActionResult *finalResult, XCTestExpectation *expectation) {
+        XCTAssertTrue([finalResult isKindOfClass:[UAAggregateActionResult class]], @"Running actions should return a UAAggregateActionResult");
+                                NSDictionary *resultDictionary = (NSDictionary  *)finalResult.value;
+                                XCTAssertEqual((NSUInteger) 1, resultDictionary.count, @"Action should have 1 result");
+        [expectation fulfill];
+    };
+
+    // Register both action names
+    [self.registry registerAction:action names:@[actionName, anotherActionName, thirdActionName]];
+
+    __block XCTestExpectation *expectation = [self expectationWithDescription:@"Completion handler ran"];
+    NSDictionary *actionNamePayload = @{actionName : @"firstvalue"};
+    [UAActionRunner runActionsWithActionValues:actionNamePayload situation:UASituationManualInvocation metadata:@{@"meta key": @"meta value"}
+                             completionHandler:^(UAActionResult *finalResult) {
+                                completionBlock(finalResult, expectation);
+                             }];
+
+    [self waitForTestExpectations];
+    XCTAssertEqual(1, actionRunCount);
+
+    __block XCTestExpectation *anotherExpectation = [self expectationWithDescription:@"Completion handler ran"];
+    NSDictionary *anotherActionNamePayload = @{anotherActionName : @"secondvalue"};
+    [UAActionRunner runActionsWithActionValues:anotherActionNamePayload situation:UASituationManualInvocation metadata:@{@"meta key": @"meta value"}
+                             completionHandler:^(UAActionResult *finalResult) {
+                                 completionBlock(finalResult, anotherExpectation);
+                             }];
+
+    [self waitForTestExpectations];
+    XCTAssertEqual(2, actionRunCount);
+
+    __block XCTestExpectation *aThirdExpectation = [self expectationWithDescription:@"Completion handler ran"];
+    NSDictionary *thirdActionNamePayload = @{thirdActionName : @"thirdvalue"};
+    [UAActionRunner runActionsWithActionValues:thirdActionNamePayload situation:UASituationManualInvocation metadata:@{@"meta key": @"meta value"}
+                             completionHandler:^(UAActionResult *finalResult) {
+                                completionBlock(finalResult, aThirdExpectation);
+                             }];
+
+    [self waitForTestExpectations];
+    XCTAssertEqual(3, actionRunCount);
+}
+
+/**
  * Test running an action from a name with a predicate that returns NO
  */
 - (void)testRunActionWithNameNoPredicate {
@@ -309,7 +362,8 @@ NSString *anotherActionName = @"AnotherActionName";
 
     XCTestExpectation *expectation = [self expectationWithDescription:@"Completion handler ran"];
     NSDictionary *actionPayload = @{actionName : @"value", anotherActionName: @"another value"};
-    [UAActionRunner runActionsWithActionValues:actionPayload situation:UASituationManualInvocation metadata:@{@"meta key": @"meta value"}
+    [UAActionRunner runActionsWithActionValues:actionPayload
+                                     situation:UASituationManualInvocation metadata:@{@"meta key": @"meta value"}
                              completionHandler:^(UAActionResult *finalResult) {
                                  // Should return an aggregate action result
                                  XCTAssertTrue([finalResult isKindOfClass:[UAAggregateActionResult class]], @"Running actions should return a UAAggregateActionResult");

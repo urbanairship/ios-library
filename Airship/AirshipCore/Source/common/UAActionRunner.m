@@ -140,17 +140,16 @@ completionHandler:(UAActionCompletionHandler)completionHandler {
 
         dispatch_group_enter(dispatchGroup);
 
-        NSMutableDictionary *values = [NSMutableDictionary dictionary];
-        for (NSString *actionName in actionValues) {
-            UAActionRegistryEntry *entry = [[UAirship shared].actionRegistry registryEntryWithName:actionName];
-            if (entry) {
-                [actionEntries addObject:entry];
-                values[entry.names.firstObject] = actionValues[actionName];
+        id value;
+        for (NSString *name in entry.names) {
+            id val = actionValues[name];
+            if (val) {
+                value = val;
             }
         }
 
         [self runActionWithEntry:entry
-                           value:values[entry.names.firstObject]
+                           value:value
                        situation:situation
                         metadata:metadata
                completionHandler:handler];
