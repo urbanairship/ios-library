@@ -89,16 +89,16 @@ then
   build_archive "Airship" "AirshipExtendedActions" "iOS"
   build_archive "AirshipExtensions" "AirshipNotificationServiceExtension" "iOS"
   build_archive "AirshipExtensions" "AirshipNotificationContentExtension" "iOS"
-  build_archive "Airship" "AirshipKit" "iOS"
-  build_archive "Airship" "AirshipKit tvOS" "tvOS"
+  build_archive "Airship" "Airship" "iOS"
+  build_archive "Airship" "Airship tvOS" "tvOS"
 
   # Package Airship
   xcodebuild -create-xcframework \
-  -framework "$TEMP_DIR/xcarchive/Airship/AirshipKit/iphoneos.xcarchive/Products/Library/Frameworks/AirshipKit.framework" \
-  -framework "$TEMP_DIR/xcarchive/Airship/AirshipKit/iphonesimulator.xcarchive/Products/Library/Frameworks/AirshipKit.framework" \
-  -framework "$TEMP_DIR/xcarchive/Airship/AirshipKit tvOS/appletvos.xcarchive/Products/Library/Frameworks/AirshipKit.framework" \
-  -framework "$TEMP_DIR/xcarchive/Airship/AirshipKit tvOS/appletvsimulator.xcarchive/Products/Library/Frameworks/AirshipKit.framework" \
-  -output "$STAGING/AirshipKit.xcframework"
+  -framework "$TEMP_DIR/xcarchive/Airship/Airship/iphoneos.xcarchive/Products/Library/Frameworks/Airship.framework" \
+  -framework "$TEMP_DIR/xcarchive/Airship/Airship/iphonesimulator.xcarchive/Products/Library/Frameworks/Airship.framework" \
+  -framework "$TEMP_DIR/xcarchive/Airship/Airship tvOS/appletvos.xcarchive/Products/Library/Frameworks/Airship.framework" \
+  -framework "$TEMP_DIR/xcarchive/Airship/Airship tvOS/appletvsimulator.xcarchive/Products/Library/Frameworks/Airship.framework" \
+  -output "$STAGING/Airship.xcframework"
 
   # Package AirshipCore
   xcodebuild -create-xcframework \

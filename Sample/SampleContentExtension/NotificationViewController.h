@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 #import <UIKit/UIKit.h>
-@import AirshipExtensions;
+@import AirshipNotificationContentExtension;
 
 @interface NotificationViewController : UAContentExtensionViewController
 

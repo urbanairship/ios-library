@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-@import AirshipExtensions;
+@import AirshipNotificationServiceExtension;
 
 @interface NotificationService : UANotificationServiceExtension
 

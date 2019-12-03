@@ -1,12 +1,7 @@
 /* Copyright Airship and Contributors */
 
 #import "UARateAppAction.h"
-
-#if __has_include(<AirshipCore/AirshipCore.h>)
-#import <AirshipCore/AirshipCore.h>
-#else
-#import "UASystemVersion.h"
-#endif
+#import "UAExtendedActionsCoreImport.h"
 
 @interface UARateAppAction()
 

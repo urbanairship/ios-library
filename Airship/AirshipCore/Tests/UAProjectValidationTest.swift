@@ -51,17 +51,25 @@ class UAProjectValidationTest: XCTestCase {
         validateTarget(target: "AirshipExtendedActions", sourcePaths:["AirshipExtendedActions/Source"])
     }
 
-    func testAirshipKit() {
-        validateTarget(target: "AirshipKit", sourcePaths: ["AirshipKit/Source",
-                                                           "AirshipCore/Source/ios",
-                                                           "AirshipCore/Source/common",
-                                                           "AirshipAutomation/Source",
-                                                           "AirshipMessageCenter/Source",
-                                                           "AirshipExtendedActions/Source"])
+    func testAirship() {
+        validateTarget(target: "Airship",
+                       sourcePaths: ["Airship/Source",
+                                     "AirshipCore/Source/ios",
+                                     "AirshipCore/Source/common",
+                                     "AirshipAutomation/Source",
+                                     "AirshipMessageCenter/Source",
+                                     "AirshipExtendedActions/Source"],
+                       excludeFiles: ["AirshipCore/Source/common/AirshipCore.h",
+                                      "AirshipAutomation/Source/AirshipAutomation.h",
+                                      "AirshipMessageCenter/Source/AirshipMessageCenter.h",
+                                      "AirshipExtendedActions/Source/AirshipExtendedActions.h"])
 
-        validateTarget(target: "AirshipKit tvOS", sourcePaths: ["AirshipKit/Source",
-                                                                "AirshipCore/Source/tvos",
-                                                                "AirshipCore/Source/common"])
+
+        validateTarget(target: "Airship tvOS",
+                       sourcePaths: ["Airship/Source",
+                                     "AirshipCore/Source/tvos",
+                                     "AirshipCore/Source/common"],
+                       excludeFiles: ["AirshipCore/Source/common/AirshipCore.h"])
 
     }
     
@@ -102,15 +110,20 @@ class UAProjectValidationTest: XCTestCase {
         .filter { souceExtensions.contains($0.pathExtension) }
     }
 
-    func validateTarget(target : String, sourcePaths : [String]) {
+    func validateTarget(target : String, sourcePaths : [String], excludeFiles: [String] = []) {
+        let excludeUrls = excludeFiles.compactMap { sourceRootURL!.appendingPathComponent($0) }
+        let directories = sourcePaths.compactMap {  sourceRootURL!.appendingPathComponent($0) }
+
         let filesFromTarget = Set(getSourceFiles(target: target))
         XCTAssertFalse(filesFromTarget.isEmpty)
 
-        let directories = sourcePaths.compactMap {  sourceRootURL?.appendingPathComponent($0) }
         let filesFromDirectories = Set(getSourceFiles(directories: directories))
         XCTAssertFalse(filesFromDirectories.isEmpty)
 
-        let missingFilesFromTarget = filesFromDirectories.subtracting(filesFromTarget)
+        let missingFilesFromTarget = filesFromDirectories
+            .subtracting(filesFromTarget)
+            .filter { !excludeUrls.contains($0) }
+
         let filesWrongDirectory = filesFromTarget.subtracting(filesFromDirectories)
 
         XCTAssertTrue(missingFilesFromTarget.isEmpty, "Missing: \(missingFilesFromTarget) from target")

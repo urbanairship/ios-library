@@ -1,19 +1,7 @@
 /* Copyright Airship and Contributors */
 
 #import "UALocation.h"
-
-
-#if __has_include(<AirshipCore/AirshipCore.h>)
-#import <AirshipCore/AirshipCore.h>
-#else
-#import "UAAnalytics.h"
-#import "UASystemVersion.h"
-#import "UAExtendableChannelRegistration.h"
-#import "UAExtendableAnalyticsHeaders.h"
-#import "UAAppStateTracker.h"
-#import "UALocationEvent.h"
-#import "UAChannel.h"
-#endif
+#import "UALocationCoreImport.h"
 
 /*
  * SDK-private extensions to UALocation

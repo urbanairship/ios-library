@@ -1,12 +1,8 @@
 /* Copyright Airship and Contributors */
 
 #import <Foundation/Foundation.h>
+#import "UALocationCoreImport.h"
 
-#if __has_include(<AirshipCore/AirshipCore.h>)
-#import <AirshipCore/AirshipCore.h>
-#else
-#import "UAEvent.h"
-#endif
 
 @protocol UALocationProviderProtocol;
 

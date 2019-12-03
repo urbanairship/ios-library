@@ -4,7 +4,10 @@ import UIKit
 
 #if canImport(AirshipCore)
 import AirshipCore
+#elseif !COCOAPODS && canImport(Airship)
+import Airship
 #endif
+
 
 class AddTagsTableViewController: UITableViewController, UITextFieldDelegate {
     @IBOutlet private weak var addCustomTagCell: UITableViewCell!

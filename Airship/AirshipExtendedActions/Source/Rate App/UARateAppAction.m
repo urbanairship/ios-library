@@ -2,15 +2,7 @@
 
 #import <StoreKit/StoreKit.h>
 
-#if __has_include(<AirshipCore/AirshipCore.h>)
-#import <AirshipCore/AirshipCore.h>
-#else
-#import "UAAction.h"
-#import "UAirship.h"
-#import "UASystemVersion.h"
-#import "UARuntimeConfig.h"
-#import "UAPreferenceDataStore.h"
-#endif
+#import "UAExtendedActionsCoreImport.h"
 
 #import "UARateAppAction+Internal.h"
 #import "UARateAppPromptViewController+Internal.h"

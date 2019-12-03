@@ -2,7 +2,10 @@
 
 import UIKit
 
-import Airship
+import AirshipCore
+import AirshipMessageCenter
+import AirshipAutomation
+import AirshipDebug
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, UARegistrationDelegate, UADeepLinkDelegate, UAInAppMessageCachePolicyDelegate {

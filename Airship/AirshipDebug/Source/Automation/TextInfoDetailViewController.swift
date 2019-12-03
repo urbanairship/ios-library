@@ -4,10 +4,9 @@ import UIKit
 
 #if canImport(AirshipCore)
 import AirshipCore
-#endif
-
-#if canImport(AirshipAutomation)
 import AirshipAutomation
+#elseif !COCOAPODS && canImport(Airship)
+import Airship
 #endif
 
 /**

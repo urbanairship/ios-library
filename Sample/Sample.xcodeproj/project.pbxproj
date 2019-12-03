@@ -19,7 +19,22 @@
 		49D2C7431D6F952D0049B0A0 /* SampleServiceExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 49D2C73B1D6F952D0049B0A0 /* SampleServiceExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		61A672FC1CAB3E5A00BAF58A /* PushHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 61A672FB1CAB3E5A00BAF58A /* PushHandler.m */; };
 		61E392311CC81EA800D994E3 /* MessageCenterStyle.plist in Resources */ = {isa = PBXBuildFile; fileRef = 61E392301CC81EA800D994E3 /* MessageCenterStyle.plist */; };
-		64BD2566E131D1EFD3E86E86 /* Pods_SampleServiceExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 371BDA0B8DECC1A7BF72506D /* Pods_SampleServiceExtension.framework */; };
+		6E65D4EE2395D4EA00AF2D1A /* AirshipLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E75B2592395D1B100425530 /* AirshipLocation.framework */; };
+		6E65D4EF2395D4EA00AF2D1A /* AirshipLocation.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E75B2592395D1B100425530 /* AirshipLocation.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		6E65D4F02395E6FA00AF2D1A /* AirshipDebug.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E75B25B2395D1B100425530 /* AirshipDebug.framework */; };
+		6E65D4F12395E6FA00AF2D1A /* AirshipDebug.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E75B25B2395D1B100425530 /* AirshipDebug.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		6E65D5242396304000AF2D1A /* AirshipAutomation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E75B25D2395D1B100425530 /* AirshipAutomation.framework */; };
+		6E65D5252396304000AF2D1A /* AirshipAutomation.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E75B25D2395D1B100425530 /* AirshipAutomation.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		6E65D5262396304000AF2D1A /* AirshipCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E75B2532395D1B100425530 /* AirshipCore.framework */; };
+		6E65D5272396304000AF2D1A /* AirshipCore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E75B2532395D1B100425530 /* AirshipCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		6E65D5282396304400AF2D1A /* AirshipExtendedActions.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E75B2612395D1B100425530 /* AirshipExtendedActions.framework */; };
+		6E65D5292396304400AF2D1A /* AirshipExtendedActions.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E75B2612395D1B100425530 /* AirshipExtendedActions.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		6E65D52A2396304A00AF2D1A /* AirshipMessageCenter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E75B25F2395D1B100425530 /* AirshipMessageCenter.framework */; };
+		6E65D52B2396304A00AF2D1A /* AirshipMessageCenter.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E75B25F2395D1B100425530 /* AirshipMessageCenter.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		6E75B26D2395D1CA00425530 /* AirshipNotificationServiceExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E75B2682395D1B300425530 /* AirshipNotificationServiceExtension.framework */; };
+		6E75B26E2395D1CA00425530 /* AirshipNotificationServiceExtension.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6E75B2682395D1B300425530 /* AirshipNotificationServiceExtension.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		6E75B26F2395D1CF00425530 /* AirshipNotificationContentExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E75B26A2395D1B300425530 /* AirshipNotificationContentExtension.framework */; };
+		6E75B2702395D1CF00425530 /* AirshipNotificationContentExtension.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E75B26A2395D1B300425530 /* AirshipNotificationContentExtension.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		764693A71C237B630090FE40 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 764693A61C237B630090FE40 /* main.m */; };
 		764693AA1C237B630090FE40 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 764693A91C237B630090FE40 /* AppDelegate.m */; };
 		764693AD1C237B630090FE40 /* HomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 764693AC1C237B630090FE40 /* HomeViewController.m */; };
@@ -27,8 +42,6 @@
 		764693C01C237CAB0090FE40 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 764693BF1C237CAB0090FE40 /* Main.storyboard */; };
 		7646940D1C238E7C0090FE40 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 764693FC1C238E7C0090FE40 /* Images.xcassets */; };
 		76AE35651C2B6FD600D7F3B9 /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 76AE35641C2B6FD600D7F3B9 /* AirshipConfig.plist */; };
-		93FC790F96B2EB8880BCC974 /* Pods_Sample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2C6A84CD51DFAE19BC081B43 /* Pods_Sample.framework */; };
-		9D531BE350AE0600B0A08522 /* Pods_SampleContentExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E79784B5099780878A826D9A /* Pods_SampleContentExtension.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -46,6 +59,132 @@
 			remoteGlobalIDString = 49D2C73A1D6F952D0049B0A0;
 			remoteInfo = SampleServiceExtension;
 		};
+		6E65D4F22395E72200AF2D1A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E75B2412395D1B100425530 /* Airship.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 3CA0E298237CCE2600EE76CF;
+			remoteInfo = AirshipDebug;
+		};
+		6E65D4F42395E72200AF2D1A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E75B2412395D1B100425530 /* Airship.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 6E9373032376164600AA9C2A;
+			remoteInfo = AirshipLocation;
+		};
+		6E65D52C2396305F00AF2D1A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E75B2412395D1B100425530 /* Airship.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 6E8450FD237E0271007D3B1E;
+			remoteInfo = AirshipAutomation;
+		};
+		6E65D52E2396305F00AF2D1A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E75B2412395D1B100425530 /* Airship.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 494DD9561B0EB677009C134E;
+			remoteInfo = AirshipCore;
+		};
+		6E65D5302396305F00AF2D1A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E75B2412395D1B100425530 /* Airship.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 45C69118238DC79400A03C94;
+			remoteInfo = AirshipExtendedActions;
+		};
+		6E65D5322396305F00AF2D1A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E75B2412395D1B100425530 /* Airship.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 3CA0E346237E4A7B00EE76CF;
+			remoteInfo = AirshipMessageCenter;
+		};
+		6E75B24E2395D1B100425530 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E75B2412395D1B100425530 /* Airship.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6EE7712C238F15D000E79944;
+			remoteInfo = AirshipKit;
+		};
+		6E75B2502395D1B100425530 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E75B2412395D1B100425530 /* Airship.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6EE7739B238F197600E79944;
+			remoteInfo = "AirshipKit tvOS";
+		};
+		6E75B2522395D1B100425530 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E75B2412395D1B100425530 /* Airship.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 494DD9571B0EB677009C134E;
+			remoteInfo = AirshipCore;
+		};
+		6E75B2542395D1B100425530 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E75B2412395D1B100425530 /* Airship.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = DF6DD6561E7A1EB8000C281A;
+			remoteInfo = "AirshipCore tvOS";
+		};
+		6E75B2562395D1B100425530 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E75B2412395D1B100425530 /* Airship.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = CC64F0541D8B77E3009CEF27;
+			remoteInfo = AirshipCoreTests;
+		};
+		6E75B2582395D1B100425530 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E75B2412395D1B100425530 /* Airship.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6E9375602376164600AA9C2A;
+			remoteInfo = AirshipLocation;
+		};
+		6E75B25A2395D1B100425530 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E75B2412395D1B100425530 /* Airship.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 3CA0E2AC237CCE2600EE76CF;
+			remoteInfo = AirshipDebug;
+		};
+		6E75B25C2395D1B100425530 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E75B2412395D1B100425530 /* Airship.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6E845377237E0271007D3B1E;
+			remoteInfo = AirshipAutomation;
+		};
+		6E75B25E2395D1B100425530 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E75B2412395D1B100425530 /* Airship.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 3CA0E423237E4A7B00EE76CF;
+			remoteInfo = AirshipMessageCenter;
+		};
+		6E75B2602395D1B100425530 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E75B2412395D1B100425530 /* Airship.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 45C6912A238DC79400A03C94;
+			remoteInfo = AirshipExtendedActions;
+		};
+		6E75B2672395D1B300425530 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E75B2622395D1B300425530 /* AirshipExtensions.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 49AA00FC1D65158C0081989A;
+			remoteInfo = AirshipNotificationServiceExtension;
+		};
+		6E75B2692395D1B300425530 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E75B2622395D1B300425530 /* AirshipExtensions.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 1BFF18AE23854F0C00013FB9;
+			remoteInfo = AirshipNotificationContentExtension;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -55,6 +194,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				6E75B26E2395D1CA00425530 /* AirshipNotificationServiceExtension.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -70,12 +210,29 @@
 			name = "Embed App Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		6E75B2712395D1CF00425530 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				6E75B2702395D1CF00425530 /* AirshipNotificationContentExtension.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		764694261C23933D0090FE40 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				6E65D5252396304000AF2D1A /* AirshipAutomation.framework in Embed Frameworks */,
+				6E65D4EF2395D4EA00AF2D1A /* AirshipLocation.framework in Embed Frameworks */,
+				6E65D52B2396304A00AF2D1A /* AirshipMessageCenter.framework in Embed Frameworks */,
+				6E65D5272396304000AF2D1A /* AirshipCore.framework in Embed Frameworks */,
+				6E65D5292396304400AF2D1A /* AirshipExtendedActions.framework in Embed Frameworks */,
+				6E65D4F12395E6FA00AF2D1A /* AirshipDebug.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -92,7 +249,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		0051AB2EC7A1C9109788E1E2 /* Pods-Sample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Sample.release.xcconfig"; path = "../../Pods/Target Support Files/Pods-Sample/Pods-Sample.release.xcconfig"; sourceTree = "<group>"; };
 		1BFB703E23882E4900BF7F07 /* SampleContentExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = SampleContentExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		1BFB703F23882E4900BF7F07 /* UserNotifications.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UserNotifications.framework; path = System/Library/Frameworks/UserNotifications.framework; sourceTree = SDKROOT; };
 		1BFB704123882E4900BF7F07 /* UserNotificationsUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UserNotificationsUI.framework; path = System/Library/Frameworks/UserNotificationsUI.framework; sourceTree = SDKROOT; };
@@ -100,10 +256,7 @@
 		1BFB704523882E4A00BF7F07 /* NotificationViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NotificationViewController.m; sourceTree = "<group>"; };
 		1BFB704823882E4A00BF7F07 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
 		1BFB704A23882E4A00BF7F07 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		2C6A84CD51DFAE19BC081B43 /* Pods_Sample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Sample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		371BDA0B8DECC1A7BF72506D /* Pods_SampleServiceExtension.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SampleServiceExtension.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4578585222FDBB030020D161 /* SampleServiceExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SampleServiceExtension.entitlements; sourceTree = "<group>"; };
-		4610FB89B364D511377DA8D7 /* Pods-SampleServiceExtension.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SampleServiceExtension.release.xcconfig"; path = "../../Pods/Target Support Files/Pods-SampleServiceExtension/Pods-SampleServiceExtension.release.xcconfig"; sourceTree = "<group>"; };
 		4929EA2E1D5156F000D7B322 /* Sample.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Sample.entitlements; sourceTree = "<group>"; };
 		493F50E81C5B261100B050A1 /* MessageCenterViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageCenterViewController.h; sourceTree = "<group>"; };
 		493F50E91C5B261100B050A1 /* MessageCenterViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MessageCenterViewController.m; sourceTree = "<group>"; };
@@ -117,7 +270,8 @@
 		61A672FA1CAB3E5A00BAF58A /* PushHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PushHandler.h; sourceTree = "<group>"; };
 		61A672FB1CAB3E5A00BAF58A /* PushHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PushHandler.m; sourceTree = "<group>"; };
 		61E392301CC81EA800D994E3 /* MessageCenterStyle.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = MessageCenterStyle.plist; sourceTree = "<group>"; };
-		67ECB288783909C9231BAE8F /* Pods-SampleServiceExtension.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SampleServiceExtension.debug.xcconfig"; path = "../../Pods/Target Support Files/Pods-SampleServiceExtension/Pods-SampleServiceExtension.debug.xcconfig"; sourceTree = "<group>"; };
+		6E75B2412395D1B100425530 /* Airship.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Airship.xcodeproj; path = ../Airship/Airship.xcodeproj; sourceTree = "<group>"; };
+		6E75B2622395D1B300425530 /* AirshipExtensions.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = AirshipExtensions.xcodeproj; path = ../AirshipExtensions/AirshipExtensions.xcodeproj; sourceTree = "<group>"; };
 		764693A21C237B630090FE40 /* Sample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Sample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		764693A61C237B630090FE40 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		764693A81C237B630090FE40 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -129,10 +283,6 @@
 		764693BF1C237CAB0090FE40 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		764693FC1C238E7C0090FE40 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		76AE35641C2B6FD600D7F3B9 /* AirshipConfig.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = AirshipConfig.plist; sourceTree = "<group>"; };
-		CD505326BBFE05CC5AABE08D /* Pods-SampleContentExtension.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SampleContentExtension.debug.xcconfig"; path = "../../Pods/Target Support Files/Pods-SampleContentExtension/Pods-SampleContentExtension.debug.xcconfig"; sourceTree = "<group>"; };
-		E036BBFB5B902A609B7D54FD /* Pods-SampleContentExtension.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SampleContentExtension.release.xcconfig"; path = "../../Pods/Target Support Files/Pods-SampleContentExtension/Pods-SampleContentExtension.release.xcconfig"; sourceTree = "<group>"; };
-		E79784B5099780878A826D9A /* Pods_SampleContentExtension.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SampleContentExtension.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		EED73940655863C5D58EBDC6 /* Pods-Sample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Sample.debug.xcconfig"; path = "../../Pods/Target Support Files/Pods-Sample/Pods-Sample.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -140,9 +290,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6E75B26F2395D1CF00425530 /* AirshipNotificationContentExtension.framework in Frameworks */,
 				1BFB704223882E4900BF7F07 /* UserNotificationsUI.framework in Frameworks */,
 				1BFB704023882E4900BF7F07 /* UserNotifications.framework in Frameworks */,
-				9D531BE350AE0600B0A08522 /* Pods_SampleContentExtension.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -150,7 +300,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				64BD2566E131D1EFD3E86E86 /* Pods_SampleServiceExtension.framework in Frameworks */,
+				6E75B26D2395D1CA00425530 /* AirshipNotificationServiceExtension.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -158,7 +308,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				93FC790F96B2EB8880BCC974 /* Pods_Sample.framework in Frameworks */,
+				6E65D5242396304000AF2D1A /* AirshipAutomation.framework in Frameworks */,
+				6E65D4EE2395D4EA00AF2D1A /* AirshipLocation.framework in Frameworks */,
+				6E65D52A2396304A00AF2D1A /* AirshipMessageCenter.framework in Frameworks */,
+				6E65D5262396304000AF2D1A /* AirshipCore.framework in Frameworks */,
+				6E65D5282396304400AF2D1A /* AirshipExtendedActions.framework in Frameworks */,
+				6E65D4F02395E6FA00AF2D1A /* AirshipDebug.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -198,19 +353,41 @@
 		50E49B229E80ED2B02DB66EE /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				EED73940655863C5D58EBDC6 /* Pods-Sample.debug.xcconfig */,
-				0051AB2EC7A1C9109788E1E2 /* Pods-Sample.release.xcconfig */,
-				67ECB288783909C9231BAE8F /* Pods-SampleServiceExtension.debug.xcconfig */,
-				4610FB89B364D511377DA8D7 /* Pods-SampleServiceExtension.release.xcconfig */,
-				CD505326BBFE05CC5AABE08D /* Pods-SampleContentExtension.debug.xcconfig */,
-				E036BBFB5B902A609B7D54FD /* Pods-SampleContentExtension.release.xcconfig */,
 			);
 			path = Pods;
+			sourceTree = "<group>";
+		};
+		6E75B2422395D1B100425530 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				6E75B24F2395D1B100425530 /* AirshipKit.framework */,
+				6E75B2512395D1B100425530 /* AirshipKit.framework */,
+				6E75B2532395D1B100425530 /* AirshipCore.framework */,
+				6E75B2552395D1B100425530 /* AirshipCore.framework */,
+				6E75B2572395D1B100425530 /* AirshipCoreTests.xctest */,
+				6E75B2592395D1B100425530 /* AirshipLocation.framework */,
+				6E75B25B2395D1B100425530 /* AirshipDebug.framework */,
+				6E75B25D2395D1B100425530 /* AirshipAutomation.framework */,
+				6E75B25F2395D1B100425530 /* AirshipMessageCenter.framework */,
+				6E75B2612395D1B100425530 /* AirshipExtendedActions.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		6E75B2632395D1B300425530 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				6E75B2682395D1B300425530 /* AirshipNotificationServiceExtension.framework */,
+				6E75B26A2395D1B300425530 /* AirshipNotificationContentExtension.framework */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 		764693991C237B630090FE40 = {
 			isa = PBXGroup;
 			children = (
+				6E75B2622395D1B300425530 /* AirshipExtensions.xcodeproj */,
+				6E75B2412395D1B100425530 /* Airship.xcodeproj */,
 				764693A41C237B630090FE40 /* Sample */,
 				49D2C73C1D6F952D0049B0A0 /* SampleServiceExtension */,
 				76AE35641C2B6FD600D7F3B9 /* AirshipConfig.plist */,
@@ -275,11 +452,8 @@
 		A1B3DF99B91AC968C1AC9860 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				2C6A84CD51DFAE19BC081B43 /* Pods_Sample.framework */,
-				371BDA0B8DECC1A7BF72506D /* Pods_SampleServiceExtension.framework */,
 				1BFB703F23882E4900BF7F07 /* UserNotifications.framework */,
 				1BFB704123882E4900BF7F07 /* UserNotificationsUI.framework */,
-				E79784B5099780878A826D9A /* Pods_SampleContentExtension.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -291,10 +465,10 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1BFB705023882E4A00BF7F07 /* Build configuration list for PBXNativeTarget "SampleContentExtension" */;
 			buildPhases = (
-				2980ACC2A6875CF8BE7219C4 /* [CP] Check Pods Manifest.lock */,
 				1BFB703A23882E4900BF7F07 /* Sources */,
 				1BFB703B23882E4900BF7F07 /* Frameworks */,
 				1BFB703C23882E4900BF7F07 /* Resources */,
+				6E75B2712395D1CF00425530 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -309,7 +483,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 49D2C7461D6F952D0049B0A0 /* Build configuration list for PBXNativeTarget "SampleServiceExtension" */;
 			buildPhases = (
-				F350B5E3E2E59D3A92B73144 /* [CP] Check Pods Manifest.lock */,
 				49D2C7371D6F952D0049B0A0 /* Sources */,
 				49D2C7381D6F952D0049B0A0 /* Frameworks */,
 				49D2C7391D6F952D0049B0A0 /* Resources */,
@@ -328,18 +501,22 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 764693BC1C237B630090FE40 /* Build configuration list for PBXNativeTarget "Sample" */;
 			buildPhases = (
-				C09E1D7E396DDEB22CEF5A20 /* [CP] Check Pods Manifest.lock */,
 				7646939E1C237B630090FE40 /* Sources */,
 				7646939F1C237B630090FE40 /* Frameworks */,
 				764693A01C237B630090FE40 /* Resources */,
 				764694261C23933D0090FE40 /* Embed Frameworks */,
 				76AE34E91C2B6BF700D7F3B9 /* CopyFiles */,
 				49D2C7471D6F952D0049B0A0 /* Embed App Extensions */,
-				416090EEC0226D1FC726CF88 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				6E65D52D2396305F00AF2D1A /* PBXTargetDependency */,
+				6E65D52F2396305F00AF2D1A /* PBXTargetDependency */,
+				6E65D5312396305F00AF2D1A /* PBXTargetDependency */,
+				6E65D4F52395E72200AF2D1A /* PBXTargetDependency */,
+				6E65D5332396305F00AF2D1A /* PBXTargetDependency */,
+				6E65D4F32395E72200AF2D1A /* PBXTargetDependency */,
 				49D2C7421D6F952D0049B0A0 /* PBXTargetDependency */,
 				1BFB704C23882E4A00BF7F07 /* PBXTargetDependency */,
 			);
@@ -400,6 +577,16 @@
 			mainGroup = 764693991C237B630090FE40;
 			productRefGroup = 764693A31C237B630090FE40 /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 6E75B2422395D1B100425530 /* Products */;
+					ProjectRef = 6E75B2412395D1B100425530 /* Airship.xcodeproj */;
+				},
+				{
+					ProductGroup = 6E75B2632395D1B300425530 /* Products */;
+					ProjectRef = 6E75B2622395D1B300425530 /* AirshipExtensions.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				764693A11C237B630090FE40 /* Sample */,
@@ -408,6 +595,93 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		6E75B24F2395D1B100425530 /* AirshipKit.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = AirshipKit.framework;
+			remoteRef = 6E75B24E2395D1B100425530 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		6E75B2512395D1B100425530 /* AirshipKit.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = AirshipKit.framework;
+			remoteRef = 6E75B2502395D1B100425530 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		6E75B2532395D1B100425530 /* AirshipCore.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = AirshipCore.framework;
+			remoteRef = 6E75B2522395D1B100425530 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		6E75B2552395D1B100425530 /* AirshipCore.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = AirshipCore.framework;
+			remoteRef = 6E75B2542395D1B100425530 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		6E75B2572395D1B100425530 /* AirshipCoreTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = AirshipCoreTests.xctest;
+			remoteRef = 6E75B2562395D1B100425530 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		6E75B2592395D1B100425530 /* AirshipLocation.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = AirshipLocation.framework;
+			remoteRef = 6E75B2582395D1B100425530 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		6E75B25B2395D1B100425530 /* AirshipDebug.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = AirshipDebug.framework;
+			remoteRef = 6E75B25A2395D1B100425530 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		6E75B25D2395D1B100425530 /* AirshipAutomation.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = AirshipAutomation.framework;
+			remoteRef = 6E75B25C2395D1B100425530 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		6E75B25F2395D1B100425530 /* AirshipMessageCenter.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = AirshipMessageCenter.framework;
+			remoteRef = 6E75B25E2395D1B100425530 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		6E75B2612395D1B100425530 /* AirshipExtendedActions.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = AirshipExtendedActions.framework;
+			remoteRef = 6E75B2602395D1B100425530 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		6E75B2682395D1B300425530 /* AirshipNotificationServiceExtension.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = AirshipNotificationServiceExtension.framework;
+			remoteRef = 6E75B2672395D1B300425530 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		6E75B26A2395D1B300425530 /* AirshipNotificationContentExtension.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = AirshipNotificationContentExtension.framework;
+			remoteRef = 6E75B2692395D1B300425530 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		1BFB703C23882E4900BF7F07 /* Resources */ = {
@@ -439,92 +713,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		2980ACC2A6875CF8BE7219C4 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-SampleContentExtension-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		416090EEC0226D1FC726CF88 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Sample/Pods-Sample-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Sample/Pods-Sample-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Sample/Pods-Sample-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		C09E1D7E396DDEB22CEF5A20 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-Sample-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		F350B5E3E2E59D3A92B73144 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-SampleServiceExtension-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		1BFB703A23882E4900BF7F07 /* Sources */ = {
@@ -570,6 +758,36 @@
 			target = 49D2C73A1D6F952D0049B0A0 /* SampleServiceExtension */;
 			targetProxy = 49D2C7411D6F952D0049B0A0 /* PBXContainerItemProxy */;
 		};
+		6E65D4F32395E72200AF2D1A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = AirshipDebug;
+			targetProxy = 6E65D4F22395E72200AF2D1A /* PBXContainerItemProxy */;
+		};
+		6E65D4F52395E72200AF2D1A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = AirshipLocation;
+			targetProxy = 6E65D4F42395E72200AF2D1A /* PBXContainerItemProxy */;
+		};
+		6E65D52D2396305F00AF2D1A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = AirshipAutomation;
+			targetProxy = 6E65D52C2396305F00AF2D1A /* PBXContainerItemProxy */;
+		};
+		6E65D52F2396305F00AF2D1A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = AirshipCore;
+			targetProxy = 6E65D52E2396305F00AF2D1A /* PBXContainerItemProxy */;
+		};
+		6E65D5312396305F00AF2D1A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = AirshipExtendedActions;
+			targetProxy = 6E65D5302396305F00AF2D1A /* PBXContainerItemProxy */;
+		};
+		6E65D5332396305F00AF2D1A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = AirshipMessageCenter;
+			targetProxy = 6E65D5322396305F00AF2D1A /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
@@ -602,7 +820,6 @@
 /* Begin XCBuildConfiguration section */
 		1BFB704E23882E4A00BF7F07 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = CD505326BBFE05CC5AABE08D /* Pods-SampleContentExtension.debug.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -632,7 +849,6 @@
 		};
 		1BFB704F23882E4A00BF7F07 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = E036BBFB5B902A609B7D54FD /* Pods-SampleContentExtension.release.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -661,7 +877,6 @@
 		};
 		49D2C7441D6F952D0049B0A0 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 67ECB288783909C9231BAE8F /* Pods-SampleServiceExtension.debug.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
@@ -686,7 +901,6 @@
 		};
 		49D2C7451D6F952D0049B0A0 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 4610FB89B364D511377DA8D7 /* Pods-SampleServiceExtension.release.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
@@ -817,7 +1031,6 @@
 		};
 		764693BD1C237B630090FE40 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = EED73940655863C5D58EBDC6 /* Pods-Sample.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -839,7 +1052,6 @@
 		};
 		764693BE1C237B630090FE40 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0051AB2EC7A1C9109788E1E2 /* Pods-Sample.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;

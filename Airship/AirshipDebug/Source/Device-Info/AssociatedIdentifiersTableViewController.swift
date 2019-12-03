@@ -5,7 +5,10 @@ import AdSupport.ASIdentifierManager
 
 #if canImport(AirshipCore)
 import AirshipCore
+#elseif !COCOAPODS && canImport(Airship)
+import Airship
 #endif
+
 
 let customIdentifiersKey = "ua_custom_identifiers"
 

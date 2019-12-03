@@ -1,36 +1,8 @@
 PODS:
-  - Airship (13.0.0):
-    - Airship/Automation (= 13.0.0)
-    - Airship/Core (= 13.0.0)
-    - Airship/ExtendedActions (= 13.0.0)
-    - Airship/MessageCenter (= 13.0.0)
-  - Airship/Automation (13.0.0):
-    - Airship/Core
-  - Airship/Core (13.0.0)
-  - Airship/Debug (13.0.0):
-    - Airship/Automation
-    - Airship/Core
-    - Airship/Location
-    - Airship/MessageCenter
-  - Airship/ExtendedActions (13.0.0):
-    - Airship/Core
-  - Airship/Location (13.0.0):
-    - Airship/Core
-  - Airship/MessageCenter (13.0.0):
-    - Airship/Core
-  - AirshipExtensions (13.0.0):
-    - AirshipExtensions/NotificationContent (= 13.0.0)
-    - AirshipExtensions/NotificationService (= 13.0.0)
-  - AirshipExtensions/NotificationContent (13.0.0)
-  - AirshipExtensions/NotificationService (13.0.0)
   - OCMock (3.4.3)
   - XcodeEdit (2.7.4)
 
 DEPENDENCIES:
-  - Airship (from `./`)
-  - Airship/Debug (from `./`)
-  - Airship/Location (from `./`)
-  - AirshipExtensions (from `./`)
   - OCMock (~> 3.4.1)
   - XcodeEdit (~> 2.7.4)
 
@@ -39,18 +11,10 @@ SPEC REPOS:
     - OCMock
     - XcodeEdit
 
-EXTERNAL SOURCES:
-  Airship:
-    :path: "./"
-  AirshipExtensions:
-    :path: "./"
-
 SPEC CHECKSUMS:
-  Airship: 2cfca8407c76e215f8659d244f1605ea2569e95b
-  AirshipExtensions: fa0b9d0821b6dae95fdab04a0e901336ecd57c86
   OCMock: 43565190abc78977ad44a61c0d20d7f0784d35ab
   XcodeEdit: ac6e69ec9275e958d437da1e76fafa6b8c76cf9a
 
-PODFILE CHECKSUM: 75eaae4177579f9a37965ee561c7c4f1f19e53e0
+PODFILE CHECKSUM: 7a7c4a783922a58292f465175242ca0d51e97253
 
 COCOAPODS: 1.8.4

@@ -4,7 +4,10 @@ import UIKit
 
 #if canImport(AirshipCore)
 import AirshipCore
+#elseif !COCOAPODS && canImport(Airship)
+import Airship
 #endif
+
 
 /**
  * A wrapper for representing an Airship event in the Debug UI

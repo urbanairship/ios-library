@@ -3,7 +3,7 @@
 import UIKit
 import UserNotifications
 import UserNotificationsUI
-import AirshipExtensions
+import AirshipNotificationContentExtension
 
 class NotificationViewController: UAContentExtensionViewController {
 

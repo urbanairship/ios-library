@@ -3,13 +3,7 @@
 #import <Foundation/Foundation.h>
 #import <CoreLocation/CoreLocation.h>
 
-#if __has_include(<AirshipCore/AirshipCore.h>)
-#import <AirshipCore/AirshipCore.h>
-#else
-#import "UALocationProvider.h"
-#import "UAComponent.h"
-#endif
-
+#import "UALocationCoreImport.h"
 
 /**
  * Location delegate protocol to receive callbacks for location updates.

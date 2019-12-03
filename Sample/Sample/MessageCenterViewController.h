@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 @import UIKit;
-@import Airship;
+@import AirshipMessageCenter;
 
 @interface MessageCenterViewController : UAMessageCenterSplitViewController
 

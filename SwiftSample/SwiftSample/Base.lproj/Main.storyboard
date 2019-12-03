@@ -138,7 +138,7 @@
         <!--AirshipDebug-->
         <scene sceneID="nzC-Xk-r3b">
             <objects>
-                <viewControllerPlaceholder storyboardName="AirshipDebug" bundleIdentifier="org.cocoapods.Airship" id="CMJ-gn-hPv" sceneMemberID="viewController">
+                <viewControllerPlaceholder storyboardName="AirshipDebug" bundleIdentifier="com.urbanairship.AirshipDebug" id="CMJ-gn-hPv" sceneMemberID="viewController">
                     <navigationItem key="navigationItem" id="1iM-Wu-64s"/>
                 </viewControllerPlaceholder>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="nMj-BN-7lu" userLabel="First Responder" sceneMemberID="firstResponder"/>

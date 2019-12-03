@@ -1,4 +1,4 @@
-#if __has_include(<AirshipCore/AirshipCore.h>)
+#if UA_USE_MODULE_IMPORT
 #import <AirshipCore/AirshipCore.h>
 #else
 #import "NSJSONSerialization+UAAdditions.h"

@@ -1,13 +1,8 @@
 /* Copyright Airship and Contributors */
 
-#if __has_include(<AirshipCore/AirshipCore.h>)
-#import <AirshipCore/AirshipCore.h>
-#else
-#import "UAAppStateTracker.h"
-#endif
 
 #import "UALocationEvent.h"
-
+#import "UALocationCoreImport.h"
 
 @interface UALocationInfo ()
 @property (nonatomic, assign) double latitude;

@@ -2,21 +2,17 @@
 
 import UIKit
 
+
 #if canImport(AirshipCore)
 import AirshipCore
-#endif
-
-#if canImport(AirshipAutomation)
 import AirshipAutomation
-#endif
-
-#if canImport(AirshipMessageCenter)
 import AirshipMessageCenter
-#endif
-
-#if canImport(AirshipLocation)
+import AirshipLocation
+#elseif !COCOAPODS && canImport(AirshipKit)
+import AirshipKit
 import AirshipLocation
 #endif
+
 
 class DeviceInfoCell: UITableViewCell {
     @IBOutlet weak var title: UILabel!

@@ -1,13 +1,7 @@
 /* Copyright Airship and Contributors */
 
 #import <Foundation/Foundation.h>
-
-#if __has_include(<AirshipCore/AirshipCore.h>)
-#import <AirshipCore/AirshipCore.h>
-#else
-#import "UAAction.h"
-#import "UAActionPredicateProtocol.h"
-#endif
+#import "UAExtendedActionsCoreImport.h"
 
 /**
  * Default predicate for rate app action.

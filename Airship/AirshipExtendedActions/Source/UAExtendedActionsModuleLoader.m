@@ -2,15 +2,7 @@
 
 #import "UAExtendedActionsModuleLoader.h"
 #import "UAExtendedActionsResources.h"
-
-#if __has_include(<AirshipCore/AirshipCore.h>)
-#import <AirshipCore/AirshipCore.h>
-#else
-#import "UAActionRegistry.h"
-#import "UAirship.h"
-#endif
-
-
+#import "UAExtendedActionsCoreImport.h"
 
 @implementation UAExtendedActionsModuleLoader
 

@@ -1,15 +1,7 @@
 /* Copyright Airship and Contributors */
 
 #import <Foundation/Foundation.h>
-
-#if !(__has_include("AirshipLib.h"))
-@import AirshipCore;
-#else
-#import "UALocationModuleLoaderFactory.h"
-#import "UAModuleLoader.h"
-#import "UALocationProvider.h"
-#endif
-
+#import "UALocationCoreImport.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

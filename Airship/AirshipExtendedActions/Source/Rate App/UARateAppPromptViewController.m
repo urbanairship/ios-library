@@ -2,15 +2,7 @@
 
 #import "UARateAppPromptViewController+Internal.h"
 #import "UAExtendedActionsResources.h"
-
-#if __has_include(<AirshipCore/AirshipCore.h>)
-#import <AirshipCore/AirshipCore.h>
-#else
-#import "UAAction.h"
-#import "UAUtils.h"
-#import "NSString+UALocalizationAdditions.h"
-#import "UADispatcher.h"
-#endif
+#import "UAExtendedActionsCoreImport.h"
 
 @interface UARateAppPromptViewController ()
 
