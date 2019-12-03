@@ -1,8 +1,13 @@
 /* Copyright Airship and Contributors */
 
-#import "UAEvent+Internal.h"
-#import "UALocationEvent.h"
+#if __has_include(<AirshipCore/AirshipCore.h>)
+#import <AirshipCore/AirshipCore.h>
+#else
 #import "UAAppStateTracker.h"
+#endif
+
+#import "UALocationEvent.h"
+
 
 @interface UALocationInfo ()
 @property (nonatomic, assign) double latitude;
@@ -41,6 +46,10 @@
                          verticalAccuracy:verticalAccuracy];
 }
 
+@end
+
+@interface UALocationEvent()
+@property (nonatomic, strong) NSDictionary *eventData;
 @end
 
 @implementation UALocationEvent
@@ -106,7 +115,7 @@ NSString * const UAAnalyticsValueNone = @"NONE";
         [dict setValue:@"false" forKey:UALocationEventForegroundKey];
     }
 
-    event.data = [dict mutableCopy];
+    event.eventData = [dict mutableCopy];
 
     return event;
 }
@@ -166,5 +175,8 @@ NSString * const UAAnalyticsValueNone = @"NONE";
     return UAEventPriorityLow;
 }
 
+- (NSDictionary *)data {
+    return self.eventData;
+}
 
 @end
