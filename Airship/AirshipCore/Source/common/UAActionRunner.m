@@ -139,11 +139,21 @@ completionHandler:(UAActionCompletionHandler)completionHandler {
         };
 
         dispatch_group_enter(dispatchGroup);
+
+        NSMutableDictionary *values = [NSMutableDictionary dictionary];
+        for (NSString *actionName in actionValues) {
+            UAActionRegistryEntry *entry = [[UAirship shared].actionRegistry registryEntryWithName:actionName];
+            if (entry) {
+                [actionEntries addObject:entry];
+                values[entry.names.firstObject] = actionValues[actionName];
+            }
+        }
+
         [self runActionWithEntry:entry
-                          value:actionValues[[entry.names firstObject]]
-                      situation:situation
-                       metadata:metadata
-              completionHandler:handler];
+                           value:values[entry.names.firstObject]
+                       situation:situation
+                        metadata:metadata
+               completionHandler:handler];
     }
     
     dispatch_group_notify(dispatchGroup, dispatch_get_main_queue(),^{
