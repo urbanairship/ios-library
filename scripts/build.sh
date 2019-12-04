@@ -80,6 +80,7 @@ then
   pod update --project-directory=$ROOT_PATH
   pod install --project-directory=$ROOT_PATH
 
+
   build_archive "Airship" "AirshipCore" "iOS"
   build_archive "Airship" "AirshipCore tvOS" "tvOS"
   build_archive "Airship" "AirshipLocation" "iOS"
@@ -125,6 +126,12 @@ then
   -framework "$TEMP_DIR/xcarchive/Airship/AirshipMessageCenter/iphoneos.xcarchive/Products/Library/Frameworks/AirshipMessageCenter.framework" \
   -framework "$TEMP_DIR/xcarchive/Airship/AirshipMessageCenter/iphonesimulator.xcarchive/Products/Library/Frameworks/AirshipMessageCenter.framework" \
   -output "$STAGING/AirshipMessageCenter.xcframework"
+
+  # Package AirshipDebug
+  xcodebuild -create-xcframework \
+  -framework "$TEMP_DIR/xcarchive/Airship/AirshipDebug/iphoneos.xcarchive/Products/Library/Frameworks/AirshipDebug.framework" \
+  -framework "$TEMP_DIR/xcarchive/Airship/AirshipDebug/iphonesimulator.xcarchive/Products/Library/Frameworks/AirshipDebug.framework" \
+  -output "$STAGING/AirshipDebug.xcframework"
 
   # Package AirshipExtendedActions
   xcodebuild -create-xcframework \

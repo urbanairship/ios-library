@@ -6,7 +6,7 @@
 FOUNDATION_EXPORT double AirshipVersionNumber;
 
 //! Project version string for Airship.
-FOUNDATION_EXPORT const unsigned char AirshipKitVersionString[];
+FOUNDATION_EXPORT const unsigned char AirshipVersionString[];
 
 #import "AirshipLib.h"
 

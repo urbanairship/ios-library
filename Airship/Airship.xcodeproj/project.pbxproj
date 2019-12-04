@@ -47,7 +47,7 @@
 		3C89DD4D2120BBA800864358 /* UATagGroups.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C89DD482120BBA800864358 /* UATagGroups.m */; };
 		3C89DD572122471E00864358 /* UATestDate.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C89DD562122471E00864358 /* UATestDate.m */; };
 		3C9E9D6821D42EEB0072F65B /* UAInAppMessageResolutionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C9E9D6721D42EEB0072F65B /* UAInAppMessageResolutionTest.m */; };
-		3CA0E2A0237CCE2600EE76CF /* AirshipCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 494DD9571B0EB677009C134E /* AirshipCore.framework */; };
+		3CA0E2A0237CCE2600EE76CF /* AirshipCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 494DD9571B0EB677009C134E /* AirshipCore.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		3CA0E2AE237CD05F00EE76CF /* AssociatedIdentifiersTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E22B237CCBA600EE76CF /* AssociatedIdentifiersTableViewController.swift */; };
 		3CA0E2AF237CD05F00EE76CF /* AddTagsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E22C237CCBA600EE76CF /* AddTagsTableViewController.swift */; };
 		3CA0E2B0237CD05F00EE76CF /* LastPayloadTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E22D237CCBA600EE76CF /* LastPayloadTableViewController.swift */; };
