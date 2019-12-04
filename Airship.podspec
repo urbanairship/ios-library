@@ -13,7 +13,6 @@ Pod::Spec.new do |s|
    s.ios.deployment_target   = "11.0"
    s.tvos.deployment_target  = "11.0"
    s.requires_arc            = true
-   s.swift_version           = "5.0"
    s.default_subspecs        = ["Core", "Automation", "MessageCenter", "ExtendedActions"]
 
    s.subspec "Core" do |core|
@@ -61,15 +60,5 @@ Pod::Spec.new do |s|
       messageCenter.ios.resources             = "Airship/AirshipMessageCenter/Resources/**/*"
       messageCenter.ios.exclude_files         = "Airship/AirshipMessageCenter/Resources/Info.plist", "Airship/AirshipMessageCenter/Source/AirshipMessageCenter.h"
       messageCenter.dependency                  "Airship/Core"
-   end
-
-   s.subspec "Debug" do |debug|
-      debug.platform                  = "ios"
-      debug.ios.source_files          = "Airship/AirshipDebug/Source/**/*.{h,m,swift}"
-      debug.ios.resources             = "Airship/AirshipDebug/Resources/**/*"
-      debug.dependency                "Airship/Core"
-      debug.dependency                "Airship/Automation"
-      debug.dependency                "Airship/MessageCenter"
-      debug.dependency                "Airship/Location"
    end
 end

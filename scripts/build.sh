@@ -127,12 +127,6 @@ then
   -framework "$TEMP_DIR/xcarchive/Airship/AirshipMessageCenter/iphonesimulator.xcarchive/Products/Library/Frameworks/AirshipMessageCenter.framework" \
   -output "$STAGING/AirshipMessageCenter.xcframework"
 
-  # Package AirshipDebug
-  xcodebuild -create-xcframework \
-  -framework "$TEMP_DIR/xcarchive/Airship/AirshipDebug/iphoneos.xcarchive/Products/Library/Frameworks/AirshipDebug.framework" \
-  -framework "$TEMP_DIR/xcarchive/Airship/AirshipDebug/iphonesimulator.xcarchive/Products/Library/Frameworks/AirshipDebug.framework" \
-  -output "$STAGING/AirshipDebug.xcframework"
-
   # Package AirshipExtendedActions
   xcodebuild -create-xcframework \
   -framework "$TEMP_DIR/xcarchive/Airship/AirshipExtendedActions/iphoneos.xcarchive/Products/Library/Frameworks/AirshipExtendedActions.framework" \

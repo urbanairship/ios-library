@@ -5,7 +5,7 @@ import UIKit
 #if canImport(AirshipCore)
 import AirshipCore
 import AirshipAutomation
-#elseif !COCOAPODS && canImport(Airship)
+#elseif canImport(Airship)
 import Airship
 #endif
 

@@ -5,7 +5,7 @@ import AdSupport.ASIdentifierManager
 
 #if canImport(AirshipCore)
 import AirshipCore
-#elseif !COCOAPODS && canImport(Airship)
+#elseif canImport(Airship)
 import Airship
 #endif
 
