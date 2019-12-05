@@ -5,9 +5,11 @@ services into your iOS applications.
 
 ## Resources
 
-- [AirshipKit Docs](http://docs.airship.com/reference/libraries/ios/latest/)
-- [AirshipLocationKit Docs](http://docs.airship.com/reference/libraries/ios-location/latest/)
-- [AirshipAppExtensions Docs](http://docs.airship.com/reference/libraries/ios-extensions/latest/)
+- [Airship Docs](http://docs.airship.com/reference/libraries/ios/latest/Airship)
+- [AirshipLocation Docs](http://docs.airship.com/reference/libraries/ios/latest/AirshipLocation)
+- [AirshipNotificationServiceExtensions Docs](http://docs.airship.com/reference/libraries/ios/latest/AirshipNotificationServiceExtension)
+- [AirshipNotificationContentExtensions Docs](http://docs.airship.com/reference/libraries/ios/latest/AirshipNotificationContentExtension)
+
 - [Getting started guide](http://docs.airship.com/platform/ios/)
 - [Migration Guides](Documentation/Migration/README.md)
 - [Sample Quickstart Guide](Sample/README.md)
@@ -25,18 +27,50 @@ Make sure you have the [CocoaPods](http://cocoapods.org) dependency manager inst
 $ gem install cocoapods
 ```
 
-Specify the UrbanAirship-iOS-SDK, and optionally, the UrbanAirship-iOS-Location pods in your `podfile`
-with the use_frameworks! option:
+The primary Airship pod includes the standard feature set and is advisable to use
+for most use cases. The standard feature set includes Push, Actions,
+In-App Automation, and Message Center
+
+Example podfile:
 
 ```txt
 use_frameworks!
 
 # Airship SDK
 target "<Your Target Name>" do
-  pod 'UrbanAirship-iOS-SDK'
-  # Optional: uncomment to install AirshipLocationKit
-  # pod 'UrbanAirship-iOS-Location'
+  pod 'Airship'
+
+  # Optional: uncomment to install the location subspec
+  # pod 'Airship/Location'
 end
+```
+
+The `Airship` pod also contains several subspecs that can be installed
+independently and in combination with one another when only a particular
+selection of functionality is desired:
+
+- `Airship/Core` : Push messaging features including channels, tags, named user and default actions
+- `Airship/MessageCenter` : Message center
+- `Airship/Automation` : Automation and in-app messaging
+- `Airship/Location` : Location including geofencing and beacons
+- `Airship/ExtendedActions` : Extended actions
+
+Example podfile:
+
+```txt
+use_frameworks!
+
+target "<Your Target Name>" do
+  pod 'Airship/Core'
+  pod 'Airship/MessageCenter'
+  pod 'Airship/Automation'
+
+  # Optional: uncomment to install the location subspec
+  # pod 'Airship/Location'
+end
+{{< /highlight >}}
+Specify Airship, and optionally, Airship/Location pods in your `podfile`
+with the use_frameworks! option:
 ```
 
 Install using the following command:
@@ -45,9 +79,9 @@ Install using the following command:
 $ pod install
 ```
 
-In order to take advantage of iOS 10 notification attachments, you will need to create a notification service extension
+In order to take advantage of notification attachments, you will need to create a notification service extension
 alongside your main application. Most of the work is already done for you, but since this involves creating a new target there
-are a few additional steps. First create a new "Notification Service Extension" target. Then add the UrbanAirship-iOS-AppExtensions
+are a few additional steps. First create a new "Notification Service Extension" target. Then add AirshipExtensions/ServiceExtension
 to the new target:
 
 ```txt
@@ -55,7 +89,7 @@ use_frameworks!
 
 # Airship SDK
 target "<Your Service Extension Target Name>" do
-  pod 'UrbanAirship-iOS-AppExtensions'
+  pod 'AirshipExtensions/ServiceExtension'
 end
 ```
 
@@ -65,12 +99,12 @@ Install using the following command:
 $ pod install
 ```
 
-Then delete all the dummy source code for the new extension and have it inherit from UAMediaAttachmentExtension:
+Then delete all the dummy source code for the new extension and have it inherit from UANotificationServiceEntension:
 
 ```
-import AirshipAppExtensions
+import AirshipExtensions
 
-class NotificationService: UAMediaAttachmentExtension {
+class NotificationService: UANotificationServiceEntension {
 
 }
 ```
@@ -100,11 +134,11 @@ alongside your main application. Most of the work is already done for you, but s
 are a few additional steps:
 
 * Create a new iOS target in Xcode and select the "Notification Service Extension" type
-* Drag the new AirshipAppExtensions.framework into your app project
-* Link against AirshipAppExtensions.framework in your extension's Build Phases
-* Add a Copy Files phase for AirshipAppExtensions.framework and select "Frameworks" as the destination
+* Drag the new AirshipNotificationServiceExtension.framework into your app project
+* Link against AirshipNotificationServiceExtension.framework in your extension's Build Phases
+* Add a Copy Files phase for AirshipExtensions.framework and select "Frameworks" as the destination
 * Delete all dummy source code for your new extension
-* Inherit from `UAMediaAttachmentExtension` in `NotificationService`
+* Inherit from `UANotificationServiceEntension` in `NotificationService`
 
 ### Other Installation Methods
 
@@ -116,14 +150,14 @@ For other installation methods, see the - [Getting started guide](http://docs.ai
 
 In Spring 2019, Apple began rejecting applications that use, or appear to use, Core Location services
 without supplying usage descriptions in their `Info.plist` files. In Airship SDK 11, all references to
-CoreLocation have been removed from the core library and placed in a separate location module. Developers with
-no need for location services can continue to use AirshipKit as before, but for those who have been using the
+CoreLocation have been removed from the core library and placed in a separate location framework. Developers with
+no need for location services can continue to use Airship as before, but for those who have been using the
 `UALocation` class, see the [Location](https://docs.airship.com/platform/ios/location/) sections for updated
 setup instructions.
 
 ## Warning
 
-As of SDK 10.2 and Apple's current App Store review policies, apps building against AirshipKit without location usage
+As of SDK 10.2 and Apple's current App Store review policies, apps building against Airship without location usage
 descriptions in  `Info.plist` are likely to be rejected. The easiest way to avoid this, if location services are not
 needed, is to use Airship SDK 11 or greater. If building against previous Airship SDKs, you will need to add add
 usage description strings to your `Info.plist` file under the `NSLocationAlwaysUsageDescription`,
