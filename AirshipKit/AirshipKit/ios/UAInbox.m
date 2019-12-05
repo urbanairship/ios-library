@@ -47,7 +47,7 @@
     return [[UAInbox alloc] initWithUser:user config:config dataStore:dataStore];
 }
 
-- (void)didEnterForeground {
+- (void)applicationWillEnterForeground {
     [self.messageList retrieveMessageListWithSuccessBlock:nil withFailureBlock:nil];
 }
 
