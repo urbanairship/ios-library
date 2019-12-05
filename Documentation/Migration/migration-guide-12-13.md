@@ -3,17 +3,17 @@
 # Airship SDK 12.x to 13.0
 
 Airship SDK 13 is a major update that splits the SDK into modules. In basic integration scenarios,
-apps can continue to use a single umbrella framework, but as of SDK 13 it is now possible to create
-custom integrations by selecting individual submodules. Most of the changes in this release reflect
+apps can continue to use a single Airship framework, but as of SDK 13 it is now possible to create
+custom integrations by selecting feature modules. Most of the changes in this release reflect
 the restructuring that makes this possible.
 
 ## Framework Changes
 
 ### Renamed SDK frameworks and new submodules
 
-`AirshipKit.framework` has been replaced with `Airship.framework`. This is an umbrella framework that
-contains all the SDK functionality, with the exception of location which remains an optional add-on.
-The submodule (and location module) frameworks are as follows:
+`AirshipKit.framework` has been replaced with `Airship.framework`. This framework contains all the SDK
+features, with the exception of location which remains an explicit opt-in. The core SDK and feature
+module frameworks are as follows:
 
 * `AirshipCore.framework`
 * `AirshipMessageCenter.framework`
@@ -22,7 +22,7 @@ The submodule (and location module) frameworks are as follows:
 * `AirshipExtendedActions.framework`
 
 The renaming of `AirshipKit.framework` means that imports for the basic use case have changed. To import
-the SDK in one step:
+the full SDK in one step:
 
 Objective-c:
 ```objective-c
@@ -36,10 +36,10 @@ import Airship
 
 ### Location must be used with explicit submodules
 
-AirshipLocation is an optional external module, so that with no need for location services do not need to
-include location description strings when submitting to Apple. Because of this, it is not compatible with
-the umbrella Airship framework, and must be imported alongside explicit submodules. If your app is using
-location, the imports should look like the following:
+AirshipLocation is an explicit opt-in, so that apps with no need for location services do not need to
+include location description strings when submitting to Apple. Because of this, AirshipLocation not
+compatible with `Airship.framework`, and must be imported alongside the core SDK and explicit feature
+modules. If your app is using location, the imports should look like the following:
 
 Objective-c:
 ```objective-c
@@ -67,7 +67,7 @@ import AirshipExtendedActions
 
 The `AirshpAppExtensions.framework` has been renamed to `AirshipExtensionsFramework`. Additionally, the
 class `UAMediaContentExtension` has been renamed to `UANotificationServiceExtension`. The functionality
-of the class remains the same, but app extensions subclassng thiswill need to be updated to use the new class
+of the class remains the same, but app extensions subclassing this will need to be updated to use the new class
 name.
 
 ## Shared Accessor Changes
