@@ -19,7 +19,6 @@ NSString *const UAApplicationLaunchOptionsRemoteNotificationKey = @"com.urbanair
 @property (nonatomic, strong) id<UAAppStateTrackerAdapter> adapter;
 @property (nonatomic, strong) NSNotificationCenter *notificationCenter;
 @property (nonatomic, assign) BOOL isForegrounded;
-@property (nonatomic, assign) BOOL isBackgrounded;
 @end
 
 @implementation UAAppStateTracker
@@ -41,9 +40,6 @@ static UAAppStateTracker *shared_;
         self.notificationCenter = [NSNotificationCenter defaultCenter];
         self.adapter = [UAUIKitStateTrackerAdapter adapter];
         self.adapter.stateTrackerDelegate = self;
-        
-        self.isForegrounded = self.adapter.state == UAApplicationStateActive;
-        self.isBackgrounded = self.adapter.state == UAApplicationStateBackground;
     }
 
     return self;
@@ -58,11 +54,10 @@ static UAAppStateTracker *shared_;
 
 - (void)applicationDidBecomeActive {
     [self.notificationCenter postNotificationName:UAApplicationDidBecomeActiveNotification object:nil];
-    self.isBackgrounded = NO;
 
     if (!self.isForegrounded) {
         self.isForegrounded = YES;
-        [self.notificationCenter postNotificationName:UAApplicationWillEnterForegroundNotification object:nil];
+        [self.notificationCenter postNotificationName:UAApplicationDidTransitionToForeground object:nil];
     }
 }
 
@@ -73,9 +68,8 @@ static UAAppStateTracker *shared_;
 - (void)applicationDidEnterBackground {
     [self.notificationCenter postNotificationName:UAApplicationDidEnterBackgroundNotification object:nil];
 
-    self.isForegrounded = NO;
-    if (!self.isBackgrounded) {
-        self.isBackgrounded = YES;
+    if (self.isForegrounded) {
+        self.isForegrounded = NO;
         [self.notificationCenter postNotificationName:UAApplicationDidTransitionToBackground object:nil];
     }
 }
