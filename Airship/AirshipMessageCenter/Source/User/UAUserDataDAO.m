@@ -2,7 +2,6 @@
 
 #import "UAUserDataDAO+Internal.h"
 #import "UAUserData+Internal.h"
-
 #import "UAAirshipMessageCenterCoreImport.h"
 
 @interface UAUserDataDAO()

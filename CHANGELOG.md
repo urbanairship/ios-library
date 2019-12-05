@@ -3,13 +3,24 @@ iOS Changelog
 
 Migration Guides: Documentation/Migration
 
+Version 12.1.1 - December 5, 2019
+=================================
+
+Stability release for 12.x.
+
+Changes
+-------
+- Fixed potential UAInboxAPIClient crash on startup due to a race condition with accessing UAUserData.
+- Fixed Message Center not refreshing inbox on subsequent foregrounds.
+
+
 Version 12.1.0 - November 15, 2019
 ==================================
 Minor release adding support for channel attributes, which allow
 key value pairs to be associated with the application's Airship channel
 for segmentation purposes.
 
-Custom channel attributes are currently a beta feature. If you wish to 
+Custom channel attributes are currently a beta feature. If you wish to
 participate in the beta program, please complete our [signup form](https://www.airship.com/lp/sign-up-now-to-participate-in-the-advanced-segmentation-beta-program/).
 
 As of SDK 13 static libraries will be removed from the binary distribution.
@@ -19,7 +30,7 @@ replacing them.
 Changes
 -------
 - Added a new `UAAttributeMutations` class
-- Added a new `applyAttributeMutations` method to `UAChannel` 
+- Added a new `applyAttributeMutations` method to `UAChannel`
 
 Version 12.0.2 - November 5, 2019
 =================================
@@ -31,7 +42,7 @@ Changes
 
 Version 12.0.1 - October 30, 2019
 =================================
-Patch release with minor improvements to in-app automation 
+Patch release with minor improvements to in-app automation
 delivery reliabiliy.
 
 Changes
@@ -39,7 +50,7 @@ Changes
 - In-app automations with a grace period are not deleted
   locally until the grace period has passed.
 
-Customers using in-app automation may wish to update. 
+Customers using in-app automation may wish to update.
 
 Version 12.0.0 - September 12, 2019
 ===================================
