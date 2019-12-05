@@ -8,7 +8,8 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Requests the inbox be displayed.
  *
- * The action will call the UAInboxDelegate `showInboxMessage:` or `showInbox` depending on if the message ID is available or not.
+ * The action will call the UAMessageCenterDisplayDelegate `displayMessageCenterForMessageID:animated:` or
+ * `displayMessageCenterAnimated:` depending on whether the message ID is available or not.
  *
  * This action is registered under the name `_uamid`.
  *
