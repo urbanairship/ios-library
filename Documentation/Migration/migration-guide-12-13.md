@@ -63,9 +63,39 @@ import AirshipAutomation
 import AirshipExtendedActions
 ```
 
+## Cocoapods
+
+The `UrbanAirship-iOS-SDK`, `UrbanAirship-iOS-AppExtensions` and `UrbanAirship-iOS-Location` podspecs are now
+deprecated as of SDK 13.0, though the can continue to be used for SDK 12.x and below. For SDK 13 and above,
+apps using Cocoapods should instead declare Airship dependencies on the `Airship` podspec, which uses
+subspecs for SDK feature modules. An example Podfile entry is shown below:
+
+```ruby
+  pod 'Airship', '~> 13.0'
+  # Uncomment to include location
+  # pod 'Airship/Location', '~> 13.0'
+```
+
+To declare feature module dependencies explicitly, simply use the subspecs:
+
+```ruby
+  pod 'Airship/Core', '~> 13.0'
+  pod 'Airship/MessageCenter', '~> 13.0'
+  pod 'Airship/Automation', '~> 13.0'
+  pod 'Airship/ExtendedActions', '~> 13.0'
+  # Uncomment to include location
+  # pod 'Airship/Location', '~> 13.0'
+```
+
+Similarly, app extensions should now depend on the `AirshipExtensions` podspec:
+
+```ruby
+  pod 'AirshipExtensions', '~> 13.0'
+```
+
 ### Extensions
 
-The `AirshpAppExtensions.framework` has been renamed to `AirshipExtensionsFramework`. Additionally, the
+The `AirshpAppExtensions.framework` has been renamed to `AirshipExtensions.framework`. Additionally, the
 class `UAMediaContentExtension` has been renamed to `UANotificationServiceExtension`. The functionality
 of the class remains the same, but app extensions subclassing this will need to be updated to use the new class
 name.
