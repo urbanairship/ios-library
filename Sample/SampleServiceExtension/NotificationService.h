@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
-@import AirshipExtensions;
+@import AirshipNotificationServiceExtension;
 
-@interface NotificationService : UAMediaAttachmentExtension
+@interface NotificationService : UANotificationServiceExtension
 
 @end

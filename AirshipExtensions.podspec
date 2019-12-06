@@ -18,10 +18,10 @@ Pod::Spec.new do |s|
         notificationService.ios.source_files     = "AirshipExtensions/AirshipNotificationServiceExtension/Source/**/*.{h,m,mm}"
         notificationService.ios.weak_frameworks  = "UserNotifications"
     end
-    
+
     s.subspec "NotificationContent" do |notificationContent|
         notificationContent.ios.source_files     = ["AirshipExtensions/AirshipNotificationContentExtension/Source/**/*.{h,m,mm}", "AirshipExtensions/AirshipNotificationContentExtension/Source/Templates/Carousel/**/*.{h,m,mm}"]
         notificationContent.ios.weak_frameworks  = "UserNotifications"
     end
-    
+
 end

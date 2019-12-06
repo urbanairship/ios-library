@@ -6,8 +6,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * The UADate class provides date utilities.
+ * @note For internal use only. :nodoc:
  */
-
 @interface UADate : NSObject
 
 /**

@@ -10,8 +10,8 @@ class UAProjectValidationTest: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        // Put setup code here. This method is called before the invocation of each test method in the class.
         let infoPlistDict = NSDictionary(contentsOfFile: Bundle(for: type(of: self)).path(forResource: "Info", ofType: "plist")!) as! [String: AnyObject]
+
         // The xcodeproj file to load
         let projectFilePath = infoPlistDict["PROJECT_FILE_PATH"] as! String
         let xcodeprojPath = URL(fileURLWithPath: projectFilePath)
@@ -28,28 +28,57 @@ class UAProjectValidationTest: XCTestCase {
         // path to the source root
         sourceRootURL = xcodeprojPath.deletingLastPathComponent()
         XCTAssert(sourceRootURL != nil)
-
-        // AirshipLib.h is created by the ios and tvos builds. In case one wasn't built, create AirshipLib.h here
-        let fileManager = FileManager.default
-        let airshipKitURL = sourceRootURL?.appendingPathComponent("AirshipKit")
-
-        let iosAirshipLibURL = airshipKitURL?.appendingPathComponent("ios/AirshipLib.h")
-        XCTAssert(iosAirshipLibURL != nil)
-        if (!fileManager.fileExists(atPath:(iosAirshipLibURL?.path)!)) {
-            try? "".write(to: iosAirshipLibURL!, atomically: false, encoding: String.Encoding.utf8)
-        }
-
-        let tvosAirshipLibURL = airshipKitURL?.appendingPathComponent("tvos/AirshipLib.h")
-        XCTAssert(tvosAirshipLibURL != nil)
-        if (!fileManager.fileExists(atPath:(tvosAirshipLibURL?.path)!)) {
-            try? "".write(to: tvosAirshipLibURL!, atomically: false, encoding: String.Encoding.utf8)
-        }
     }
 
-    override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-        super.tearDown()
+    func testAirshipCore() {
+        validateTarget(target: "AirshipCore", sourcePaths:["AirshipCore/Source/ios", "AirshipCore/Source/common"])
+        validateTarget(target: "AirshipCore tvOS", sourcePaths:["AirshipCore/Source/tvos", "AirshipCore/Source/common"])
     }
+
+    func testAirshipLocation() {
+        validateTarget(target: "AirshipLocation", sourcePaths:["AirshipLocation/Source"])
+    }
+
+    func testAirshipAutomation() {
+        validateTarget(target: "AirshipAutomation", sourcePaths:["AirshipAutomation/Source"])
+    }
+
+    func testAirshipMessageCenter() {
+        validateTarget(target: "AirshipMessageCenter", sourcePaths:["AirshipMessageCenter/Source"])
+    }
+
+    func testAirshipExtendedActions() {
+        validateTarget(target: "AirshipExtendedActions", sourcePaths:["AirshipExtendedActions/Source"])
+    }
+
+    func testAirshipAccengage() {
+        validateTarget(target: "AirshipAccengage", sourcePaths:["AirshipAccengage/Source"])
+    }
+
+
+    func testAirship() {
+        validateTarget(target: "Airship",
+                       sourcePaths: ["Airship/Source",
+                                     "AirshipCore/Source/ios",
+                                     "AirshipCore/Source/common",
+                                     "AirshipAutomation/Source",
+                                     "AirshipMessageCenter/Source",
+                                     "AirshipExtendedActions/Source"],
+                       excludeFiles: ["AirshipCore/Source/common/AirshipCore.h",
+                                      "AirshipAutomation/Source/AirshipAutomation.h",
+                                      "AirshipMessageCenter/Source/AirshipMessageCenter.h",
+                                      "AirshipExtendedActions/Source/AirshipExtendedActions.h"])
+
+
+        validateTarget(target: "Airship tvOS",
+                       sourcePaths: ["Airship/Source",
+                                     "AirshipCore/Source/tvos",
+                                     "AirshipCore/Source/common"],
+                       excludeFiles: ["AirshipCore/Source/common/AirshipCore.h"])
+
+    }
+    
+
 
     func convertSourceTreeFolderToURL(sourceTreeFolder: SourceTreeFolder) -> URL {
         if (sourceTreeFolder != .sourceRoot) {
@@ -58,171 +87,51 @@ class UAProjectValidationTest: XCTestCase {
         return sourceRootURL!
     }
 
-    func getFilesSet(buildTarget : String) -> Array<URL> {
-        if (xcodeProject == nil) {
-            return []
-        }
-        // get all of the files from the xcode project file for this target
-        var filesFromProjectWithOptionals : Array<URL?> = []
+    func getSourceFiles(target : String) -> [URL] {
+        let target : PBXTarget = xcodeProject!.project.targets.first { $0.value?.name == target }!.value!
 
-        for target in xcodeProject!.project.targets {
-            if (target.value?.name != buildTarget) {
-                continue
-            }
-            for buildPhaseReference : Reference<PBXBuildPhase> in (target.value?.buildPhases)! {
-                if let buildPhase : PBXBuildPhase = buildPhaseReference.value {
-                    if ((type(of:buildPhase) == XcodeEdit.PBXSourcesBuildPhase.self)
-                        || (type(of:buildPhase) == XcodeEdit.PBXHeadersBuildPhase.self)) {
-                        
-                        filesFromProjectWithOptionals += buildPhase.files.map {
-                            if let buildFile : PBXBuildFile = $0.value {
-                                return (buildFile.fileRef?.value as? PBXFileReference)?.fullPath?.url(with:convertSourceTreeFolderToURL)
-                            } else {
-                                return URL(string:"")
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        let sourceBuildPhases : [PBXBuildPhase] = target.buildPhases
+            .compactMap { $0.value }
+            .filter { type(of:($0)) == XcodeEdit.PBXHeadersBuildPhase.self || type(of:($0)) == XcodeEdit.PBXSourcesBuildPhase.self }
 
-        return filesFromProjectWithOptionals.compactMap{ $0 } as Array<URL>
+        let sourceFiles : [URL] = sourceBuildPhases
+            .flatMap { $0.files }
+            .compactMap { $0.value?.fileRef?.value as? PBXFileReference }
+            .compactMap { $0.fullPath?.url(with:convertSourceTreeFolderToURL) }
+
+        return sourceFiles
     }
 
-    func validateProjectForTarget(buildTarget : String, buildOS : String, targetSubFolder : String? = nil) {
-        let filesFromTarget : Array<URL> = getFilesSet(buildTarget: buildTarget)
-        if (filesFromTarget.count == 0) {
-            return
-        }
-        
-        // get all of the URLs files from the directories for this target
-        var filesFromDirectories : Array<URL> = []
+    func getSourceFiles(directories : [URL]) -> [URL] {
         let fileManager = FileManager.default
-        let targetSubFolder : String = (targetSubFolder == nil) ? buildTarget : targetSubFolder!
-        let targetRootURL = sourceRootURL?.appendingPathComponent(targetSubFolder)
-        let subDirectoriesToInclude = ["common", buildOS]
-        fileManager.enumerator(atPath:targetRootURL!.path)?.forEach({ (e) in
-            if let e = e as? String, let url = URL(string: e) {
-                // ignore .DS_Store
-                if (e.contains(".DS_Store")) {
-                    return
-                }
+        let souceExtensions = [ "swift", "m", "h" ]
 
-                // ignore .keepme
-                if (e.contains(".keepme")) {
-                    return
-                }
-
-                let thisSubDirectory = url.deletingLastPathComponent().lastPathComponent
-                if (subDirectoriesToInclude.contains(thisSubDirectory)) {
-                    filesFromDirectories.append(targetRootURL!.appendingPathComponent(e))
-                }
-
-            }
-        })
-
-        let filesFromTargetAsSet = Set(filesFromTarget.map { $0.absoluteURL } )
-        let filesFromFoldersesAsSet = Set(filesFromDirectories.map { $0.absoluteURL } )
-
-        if (filesFromTargetAsSet != filesFromFoldersesAsSet) {
-            let filesMissingFromFolders = filesFromTargetAsSet.subtracting(filesFromFoldersesAsSet)
-            if (filesMissingFromFolders.count > 0) {
-                print(filesMissingFromFolders.count, " files missing from the folders")
-                print(filesMissingFromFolders, " files missing from the folders")
-
-            }
-            for file in filesMissingFromFolders {
-                print(file.path + " is not in the folders")
-            }
-            let filesMissingFromTarget = filesFromFoldersesAsSet.subtracting(filesFromTargetAsSet)
-            if (filesMissingFromTarget.count > 0) {
-                print(filesMissingFromTarget.count, " files missing from the target:",buildTarget)
-            }
-            for file in filesMissingFromTarget {
-                print(file.path + " is not in target:", buildTarget)
-            }
-            XCTFail("Project and project folders do not match")
+        return directories.compactMap { (directory) -> [URL] in
+            fileManager.enumerator(atPath: directory.path)?.allObjects
+                .compactMap { $0 as? String }
+                .compactMap { directory.appendingPathComponent($0) } ?? []
         }
+        .flatMap { $0 }
+        .filter { souceExtensions.contains($0.pathExtension) }
     }
 
-    // Validates that each framework import corresponds to an import in UAirship.h
-    func validateUAirshipHeader(buildTarget : String) {
-        let filesFromProject : Array<URL> = getFilesSet(buildTarget: buildTarget)
-        if (filesFromProject.count == 0) {
-            return
-        }
+    func validateTarget(target : String, sourcePaths : [String], excludeFiles: [String] = []) {
+        let excludeUrls = excludeFiles.compactMap { sourceRootURL!.appendingPathComponent($0) }
+        let directories = sourcePaths.compactMap {  sourceRootURL!.appendingPathComponent($0) }
 
-        // Holds the string contents of UAirship.h
-        var airshipHeaderContents:String?
+        let filesFromTarget = Set(getSourceFiles(target: target))
+        XCTAssertFalse(filesFromTarget.isEmpty)
 
-        // Pattern matches framework imports only
-        guard let importRegex = try? NSRegularExpression(pattern: "#import <\\w+\\/\\w+\\.h>") else { return }
+        let filesFromDirectories = Set(getSourceFiles(directories: directories))
+        XCTAssertFalse(filesFromDirectories.isEmpty)
 
-        var importMatches : Array<String> = []
+        let missingFilesFromTarget = filesFromDirectories
+            .subtracting(filesFromTarget)
+            .filter { !excludeUrls.contains($0) }
 
-        // Regex matching helper
-        let matches = {(text: String) -> [String] in
-                let regex = importRegex
-                let nsText = text as NSString
-                let results = regex.matches(in: text, range: NSRange(location: 0, length:nsText.length))
-                return results.map { nsText.substring(with: $0.range)}
-        }
+        let filesWrongDirectory = filesFromTarget.subtracting(filesFromDirectories)
 
-        for file in filesFromProject {
-            guard let fileContents = try? String(contentsOf: file) else {
-                print("Unable to parse file contents into string.")
-                continue
-            }
-
-            if (file.lastPathComponent == "UAirship.h") {
-                airshipHeaderContents = fileContents
-                continue
-            }
-
-            importMatches = importMatches + matches(fileContents)
-        }
-
-        // Remove duplicates
-        let importSet = Set(importMatches)
-
-        if (airshipHeaderContents == nil) {
-            print("UAirship.h is missing from the project files set.")
-            XCTAssert(false)
-            return
-        }
-
-        for importString in importSet {
-            // Ignore these imports
-            switch importString {
-                case "#import <UIKit/UIKit.h>":
-                    continue
-                case "#import <CommonCrypto/CommonDigest.h>":
-                    continue
-                case "#import <objc/runtime.h>":
-                    continue
-                case "#import <Foundation/Foundation.h>":
-                    continue
-                case "#import <SystemConfiguration/SCNetworkReachability.h>":
-                    continue
-
-                default:
-                    XCTAssert(airshipHeaderContents!.contains(importString), "UAirship header does not contain \(importString).")
-            }
-        }
-    }
-
-    func testAirshipKit() {
-        validateProjectForTarget(buildTarget: "AirshipKit", buildOS: "ios")
-    }
-
-    func testAirshipKitTvOS() {
-        validateProjectForTarget(buildTarget: "AirshipKit tvOS", buildOS: "tvos", targetSubFolder: "AirshipKit")
-    }
-
-    func testAirshipLib() {
-        validateProjectForTarget(buildTarget: "AirshipLib", buildOS: "ios", targetSubFolder: "AirshipKit")
-
-        // Validate that each framework import is represented in the UAirship header
-        validateUAirshipHeader(buildTarget: "AirshipLib")
+        XCTAssertTrue(missingFilesFromTarget.isEmpty, "Missing: \(missingFilesFromTarget) from target")
+        XCTAssertTrue(filesWrongDirectory.isEmpty, "Files: \(filesWrongDirectory) not in source directories \(sourcePaths)")
     }
 }

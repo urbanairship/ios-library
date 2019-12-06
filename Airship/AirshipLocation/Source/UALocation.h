@@ -3,13 +3,7 @@
 #import <Foundation/Foundation.h>
 #import <CoreLocation/CoreLocation.h>
 
-#if UA_USE_MODULE_AIRSHIP_IMPORTS
-@import AirshipCore;
-#else
-#import "UALocationProviderDelegate.h"
-#import "UAComponent.h"
-#endif
-
+#import "UALocationCoreImport.h"
 
 /**
  * Location delegate protocol to receive callbacks for location updates.
@@ -49,7 +43,7 @@ NS_ASSUME_NONNULL_BEGIN
  * Main class for interacting with Airship location. Used to send location
  * updates for the user to Airship.
  */
-@interface UALocation : UAComponent <UALocationProviderDelegate>
+@interface UALocation : UAComponent <UALocationProvider>
 
 ///---------------------------------------------------------------------------------------
 /// @name Location Properties
@@ -100,12 +94,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (BOOL)isLocationDeniedOrRestricted;
 
-/**
- * Returns an enum representing the app's permission status for location services.
- *
- * @return The location permission status.
- */
-- (UALocationProviderPermissionStatus)locationPermissionStatus;
 
 NS_ASSUME_NONNULL_END
 

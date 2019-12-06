@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
 #import "UALocation+Internal.h"
+#import "UALocationEvent.h"
 
 NSString *const UALocationAutoRequestAuthorizationEnabled = @"UALocationAutoRequestAuthorizationEnabled";
 NSString *const UALocationUpdatesEnabled = @"UALocationUpdatesEnabled";
@@ -65,11 +66,6 @@ NSString *const UALocationBackgroundUpdatesAllowed = @"UALocationBackgroundUpdat
     return [[self alloc] initWithDataStore:dataStore channel:channel analytics:analytics];
 }
 
-
-- (void)airshipReady:(UAirship *)airship {
-    airship.locationProviderDelegate = self;
-}
-
 #pragma mark -
 #pragma mark Channel Registration
 
@@ -85,23 +81,26 @@ NSString *const UALocationBackgroundUpdatesAllowed = @"UALocationBackgroundUpdat
 
 - (NSDictionary<NSString *, NSString *> *)analyticsHeaders {
     return @{
-        @"X-UA-Location-Permission": [UALocation locationProviderPermissionStatusString:self.locationPermissionStatus],
+        @"X-UA-Location-Permission": [self locationProviderPermissionStatus],
         @"X-UA-Location-Service-Enabled": self.locationUpdatesEnabled ? @"true" : @"false"
     };
 }
 
-+ (NSString *)locationProviderPermissionStatusString:(UALocationProviderPermissionStatus) status {
-    switch(status) {
-        case UALocationProviderPermissionStatusDisabled:
-            return @"SYSTEM_LOCATION_DISABLED";
-        case UALocationProviderPermissionStatusUnprompted:
-            return @"UNPROMPTED";
-        case UALocationProviderPermissionStatusNotAllowed:
-            return @"NOT_ALLOWED";
-        case UALocationProviderPermissionStatusForegroundAllowed:
-            return @"FOREGROUND_ALLOWED";
-        case UALocationProviderPermissionStatusAlwaysAllowed:
-            return @"ALWAYS_ALLOWED";
+- (NSString *)locationProviderPermissionStatus {
+    if (![CLLocationManager locationServicesEnabled]) {
+        return @"SYSTEM_LOCATION_DISABLED";
+    } else {
+        switch ([CLLocationManager authorizationStatus]) {
+            case kCLAuthorizationStatusDenied:
+            case kCLAuthorizationStatusRestricted:
+                return @"NOT_ALLOWED";
+            case kCLAuthorizationStatusAuthorizedAlways:
+                return @"ALWAYS_ALLOWED";
+            case kCLAuthorizationStatusAuthorizedWhenInUse:
+                return @"FOREGROUND_ALLOWED";
+            case kCLAuthorizationStatusNotDetermined:
+                return @"UNPROMPTED";
+        }
     }
 }
 
@@ -314,25 +313,6 @@ NSString *const UALocationBackgroundUpdatesAllowed = @"UALocationBackgroundUpdat
         case kCLAuthorizationStatusAuthorizedAlways:
         case kCLAuthorizationStatusAuthorizedWhenInUse:
             return NO;
-    }
-}
-
-
-- (UALocationProviderPermissionStatus)locationPermissionStatus {
-    if (![CLLocationManager locationServicesEnabled]) {
-        return UALocationProviderPermissionStatusDisabled;
-    } else {
-        switch ([CLLocationManager authorizationStatus]) {
-            case kCLAuthorizationStatusDenied:
-            case kCLAuthorizationStatusRestricted:
-                return UALocationProviderPermissionStatusNotAllowed;
-            case kCLAuthorizationStatusAuthorizedAlways:
-                return UALocationProviderPermissionStatusAlwaysAllowed;
-            case kCLAuthorizationStatusAuthorizedWhenInUse:
-                return UALocationProviderPermissionStatusForegroundAllowed;
-            case kCLAuthorizationStatusNotDetermined:
-                return UALocationProviderPermissionStatusUnprompted;
-        }
     }
 }
 

@@ -7,6 +7,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Protocol used to provide tag group history to external modules.
+ * @note For internal use only. :nodoc:
  */
 @protocol UATagGroupsHistory <NSObject>
 

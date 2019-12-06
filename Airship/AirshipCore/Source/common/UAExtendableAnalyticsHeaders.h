@@ -8,6 +8,7 @@ typedef NSDictionary<NSString *, NSString *> * _Nullable (^UAAnalyticsHeadersBlo
 
 /**
  * Internal protocol to extend Channel registration.
+ * @note For internal use only. :nodoc:
  */
 @protocol UAExtendableAnalyticsHeaders<NSObject>
 

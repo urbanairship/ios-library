@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
-import AirshipExtensions
+import AirshipNotificationServiceExtension
 
-class NotificationService: UAMediaAttachmentExtension {
+class NotificationService: UANotificationServiceExtension {
 
 }

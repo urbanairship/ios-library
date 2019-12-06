@@ -136,10 +136,10 @@
             </objects>
             <point key="canvasLocation" x="713" y="1110"/>
         </scene>
-        <!--DebugKit-->
+        <!--AirshipDebug-->
         <scene sceneID="yIy-1a-XdW">
             <objects>
-                <viewControllerPlaceholder storyboardName="DebugKit" bundleIdentifier="org.cocoapods.Airship" id="dcz-Cg-Yqa" sceneMemberID="viewController">
+                <viewControllerPlaceholder storyboardName="AirshipDebug" bundleIdentifier="com.urbanairship.AirshipDebug" id="dcz-Cg-Yqa" sceneMemberID="viewController">
                     <navigationItem key="navigationItem" id="VWV-wS-hUH"/>
                 </viewControllerPlaceholder>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="1Us-oe-Yxx" userLabel="First Responder" sceneMemberID="firstResponder"/>

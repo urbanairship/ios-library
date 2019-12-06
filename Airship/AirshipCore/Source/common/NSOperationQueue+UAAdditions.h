@@ -2,7 +2,9 @@
 
 #import <Foundation/Foundation.h>
 
-
+/**
+ * @note For internal use only. :nodoc:
+ */
 @interface NSOperationQueue(UAAdditions)
 
 ///---------------------------------------------------------------------------------------

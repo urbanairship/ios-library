@@ -3,7 +3,6 @@
 #import "UAEnableFeatureAction.h"
 #import "UAirship.h"
 #import "UAPush+Internal.h"
-#import "UALocationProviderDelegate.h"
 
 
 NSString *const UAEnableUserNotificationsActionValue = @"user_notifications";
@@ -51,10 +50,10 @@ NSString *const UAEnableBackgroundLocationActionValue = @"background_location";
 }
 
 - (BOOL)isLocationDeniedOrRestricted {
-    id<UALocationProviderDelegate> locationProviderDelegate = UAirship.shared.locationProviderDelegate;
+    id<UALocationProvider> locationProvider = [UAirship shared].locationProvider;
 
-    if (locationProviderDelegate) {
-        return locationProviderDelegate.isLocationDeniedOrRestricted;
+    if (locationProvider) {
+        return locationProvider.isLocationDeniedOrRestricted;
     }
 
     return YES;
@@ -82,10 +81,10 @@ NSString *const UAEnableBackgroundLocationActionValue = @"background_location";
 }
 
 - (void)enableBackgroundLocation:(UAActionCompletionHandler)completionHandler {
-    id<UALocationProviderDelegate> locationProviderDelegate = UAirship.shared.locationProviderDelegate;
+    id<UALocationProvider> locationProvider = [UAirship shared].locationProvider;
 
-    locationProviderDelegate.locationUpdatesEnabled = YES;
-    locationProviderDelegate.backgroundLocationUpdatesAllowed = YES;
+    locationProvider.locationUpdatesEnabled = YES;
+    locationProvider.backgroundLocationUpdatesAllowed = YES;
 
     if ([self isLocationDeniedOrRestricted]) {
         [self navigateToSystemSettingsWithCompletionHandler:completionHandler];
@@ -97,9 +96,9 @@ NSString *const UAEnableBackgroundLocationActionValue = @"background_location";
 }
 
 - (void)enableLocation:(UAActionCompletionHandler)completionHandler {
-    id<UALocationProviderDelegate> locationProviderDelegate = UAirship.shared.locationProviderDelegate;
+    id<UALocationProvider> locationProvider = [UAirship shared].locationProvider;
 
-    locationProviderDelegate.locationUpdatesEnabled = YES;
+    locationProvider.locationUpdatesEnabled = YES;
 
     if ([self isLocationDeniedOrRestricted]) {
         [self navigateToSystemSettingsWithCompletionHandler:completionHandler];

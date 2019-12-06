@@ -139,11 +139,20 @@ completionHandler:(UAActionCompletionHandler)completionHandler {
         };
 
         dispatch_group_enter(dispatchGroup);
+
+        id value;
+        for (NSString *name in entry.names) {
+            id val = actionValues[name];
+            if (val) {
+                value = val;
+            }
+        }
+
         [self runActionWithEntry:entry
-                          value:actionValues[[entry.names firstObject]]
-                      situation:situation
-                       metadata:metadata
-              completionHandler:handler];
+                           value:value
+                       situation:situation
+                        metadata:metadata
+               completionHandler:handler];
     }
     
     dispatch_group_notify(dispatchGroup, dispatch_get_main_queue(),^{

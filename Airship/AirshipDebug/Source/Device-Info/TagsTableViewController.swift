@@ -4,6 +4,8 @@ import UIKit
 
 #if canImport(AirshipCore)
 import AirshipCore
+#elseif canImport(Airship)
+import Airship
 #endif
 
 class TagsTableViewController: UITableViewController {

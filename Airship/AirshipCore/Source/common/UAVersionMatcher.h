@@ -4,6 +4,9 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/**
+ * Version matcher.
+ */
 @interface UAVersionMatcher : NSObject
 
 /**

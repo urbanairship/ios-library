@@ -8,24 +8,24 @@
 
 /* Begin PBXBuildFile section */
 		1BFF18472382F9BD00013FB9 /* UAMediaAttachmentPayload.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BFF18422382F9BD00013FB9 /* UAMediaAttachmentPayload.m */; };
-		1BFF18482382F9BD00013FB9 /* UAMediaAttachmentExtension.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BFF18432382F9BD00013FB9 /* UAMediaAttachmentExtension.h */; };
-		1BFF18492382F9BD00013FB9 /* UAMediaAttachmentExtension.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BFF18442382F9BD00013FB9 /* UAMediaAttachmentExtension.m */; };
-		1BFF184A2382F9BD00013FB9 /* AirshipNotificationServiceExtension.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BFF18452382F9BD00013FB9 /* AirshipNotificationServiceExtension.h */; };
-		1BFF184B2382F9BD00013FB9 /* UAMediaAttachmentPayload.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BFF18462382F9BD00013FB9 /* UAMediaAttachmentPayload.h */; };
+		1BFF18482382F9BD00013FB9 /* UANotificationServiceExtension.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BFF18432382F9BD00013FB9 /* UANotificationServiceExtension.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1BFF18492382F9BD00013FB9 /* UANotificationServiceExtension.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BFF18442382F9BD00013FB9 /* UANotificationServiceExtension.m */; };
+		1BFF184A2382F9BD00013FB9 /* AirshipNotificationServiceExtension.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BFF18452382F9BD00013FB9 /* AirshipNotificationServiceExtension.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1BFF184B2382F9BD00013FB9 /* UAMediaAttachmentPayload.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BFF18462382F9BD00013FB9 /* UAMediaAttachmentPayload.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1BFF18BE23854F0C00013FB9 /* AirshipNotificationContentExtension.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BFF18B023854F0C00013FB9 /* AirshipNotificationContentExtension.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1BFF18CD238551FD00013FB9 /* UACarousel.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BFF18C9238551FD00013FB9 /* UACarousel.h */; };
 		1BFF18CE238551FD00013FB9 /* UACarouselViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BFF18CA238551FD00013FB9 /* UACarouselViewController.h */; };
 		1BFF18CF238551FD00013FB9 /* UACarouselViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BFF18CB238551FD00013FB9 /* UACarouselViewController.m */; };
 		1BFF18D0238551FD00013FB9 /* UACarousel.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BFF18CC238551FD00013FB9 /* UACarousel.m */; };
 		1BFF18D42385520500013FB9 /* UAContentExtensionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BFF18D12385520500013FB9 /* UAContentExtensionViewController.m */; };
-		1BFF18D52385520500013FB9 /* UAContentExtensionViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BFF18D22385520500013FB9 /* UAContentExtensionViewController.h */; };
+		1BFF18D52385520500013FB9 /* UAContentExtensionViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BFF18D22385520500013FB9 /* UAContentExtensionViewController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1BFF18DB238593E300013FB9 /* UAGlobal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BFF18D82385925300013FB9 /* UAGlobal.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		1BFF18422382F9BD00013FB9 /* UAMediaAttachmentPayload.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAMediaAttachmentPayload.m; sourceTree = "<group>"; };
-		1BFF18432382F9BD00013FB9 /* UAMediaAttachmentExtension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAMediaAttachmentExtension.h; sourceTree = "<group>"; };
-		1BFF18442382F9BD00013FB9 /* UAMediaAttachmentExtension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAMediaAttachmentExtension.m; sourceTree = "<group>"; };
+		1BFF18432382F9BD00013FB9 /* UANotificationServiceExtension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UANotificationServiceExtension.h; sourceTree = "<group>"; };
+		1BFF18442382F9BD00013FB9 /* UANotificationServiceExtension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UANotificationServiceExtension.m; sourceTree = "<group>"; };
 		1BFF18452382F9BD00013FB9 /* AirshipNotificationServiceExtension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AirshipNotificationServiceExtension.h; sourceTree = "<group>"; };
 		1BFF18462382F9BD00013FB9 /* UAMediaAttachmentPayload.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAMediaAttachmentPayload.h; sourceTree = "<group>"; };
 		1BFF1862238543FF00013FB9 /* UserNotifications.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UserNotifications.framework; path = System/Library/Frameworks/UserNotifications.framework; sourceTree = SDKROOT; };
@@ -42,7 +42,7 @@
 		1BFF18D12385520500013FB9 /* UAContentExtensionViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAContentExtensionViewController.m; sourceTree = "<group>"; };
 		1BFF18D22385520500013FB9 /* UAContentExtensionViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAContentExtensionViewController.h; sourceTree = "<group>"; };
 		1BFF18D82385925300013FB9 /* UAGlobal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAGlobal.h; sourceTree = "<group>"; };
-		49AA00FC1D65158C0081989A /* AirshipAppExtensions.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = AirshipAppExtensions.framework; path = AirshipNotificationServiceExtension.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		49AA00FC1D65158C0081989A /* AirshipNotificationServiceExtension.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AirshipNotificationServiceExtension.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		49AA01001D65158C0081989A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		49AA010A1D65158C0081989A /* AirshipAppExtensionsTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AirshipAppExtensionsTests.m; sourceTree = "<group>"; };
 		49AA010C1D65158C0081989A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -138,7 +138,7 @@
 		49AA00FD1D65158C0081989A /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				49AA00FC1D65158C0081989A /* AirshipAppExtensions.framework */,
+				49AA00FC1D65158C0081989A /* AirshipNotificationServiceExtension.framework */,
 				1BFF18AE23854F0C00013FB9 /* AirshipNotificationContentExtension.framework */,
 			);
 			name = Products;
@@ -167,8 +167,8 @@
 			isa = PBXGroup;
 			children = (
 				1BFF18452382F9BD00013FB9 /* AirshipNotificationServiceExtension.h */,
-				1BFF18432382F9BD00013FB9 /* UAMediaAttachmentExtension.h */,
-				1BFF18442382F9BD00013FB9 /* UAMediaAttachmentExtension.m */,
+				1BFF18432382F9BD00013FB9 /* UANotificationServiceExtension.h */,
+				1BFF18442382F9BD00013FB9 /* UANotificationServiceExtension.m */,
 				1BFF18462382F9BD00013FB9 /* UAMediaAttachmentPayload.h */,
 				1BFF18422382F9BD00013FB9 /* UAMediaAttachmentPayload.m */,
 			);
@@ -183,9 +183,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				1BFF18BE23854F0C00013FB9 /* AirshipNotificationContentExtension.h in Headers */,
+				1BFF18D52385520500013FB9 /* UAContentExtensionViewController.h in Headers */,
 				1BFF18DB238593E300013FB9 /* UAGlobal.h in Headers */,
 				1BFF18CE238551FD00013FB9 /* UACarouselViewController.h in Headers */,
-				1BFF18D52385520500013FB9 /* UAContentExtensionViewController.h in Headers */,
 				1BFF18CD238551FD00013FB9 /* UACarousel.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -196,7 +196,7 @@
 			files = (
 				1BFF184A2382F9BD00013FB9 /* AirshipNotificationServiceExtension.h in Headers */,
 				1BFF184B2382F9BD00013FB9 /* UAMediaAttachmentPayload.h in Headers */,
-				1BFF18482382F9BD00013FB9 /* UAMediaAttachmentExtension.h in Headers */,
+				1BFF18482382F9BD00013FB9 /* UANotificationServiceExtension.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -236,7 +236,7 @@
 			);
 			name = AirshipNotificationServiceExtension;
 			productName = AirshipAppExtensions;
-			productReference = 49AA00FC1D65158C0081989A /* AirshipAppExtensions.framework */;
+			productReference = 49AA00FC1D65158C0081989A /* AirshipNotificationServiceExtension.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 /* End PBXNativeTarget section */
@@ -312,7 +312,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1BFF18472382F9BD00013FB9 /* UAMediaAttachmentPayload.m in Sources */,
-				1BFF18492382F9BD00013FB9 /* UAMediaAttachmentExtension.m in Sources */,
+				1BFF18492382F9BD00013FB9 /* UANotificationServiceExtension.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -379,6 +379,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
@@ -440,6 +441,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";

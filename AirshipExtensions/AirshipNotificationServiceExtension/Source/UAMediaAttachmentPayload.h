@@ -26,6 +26,25 @@ __TVOS_PROHIBITED __WATCHOS_PROHIBITED
 @end
 
 /**
+ * Model object for the notification attachment url.
+ */
+__TVOS_PROHIBITED __WATCHOS_PROHIBITED
+@interface UAMediaAttachmentURL : NSObject
+
+/**
+ * The url id
+ */
+@property(nonatomic, readonly) NSString *urlID;
+
+/**
+ * The attachment URL
+ */
+@property(nonatomic, readonly) NSURL *url;
+
+@end
+
+
+/**
  * Model object for the media attachment device payload
  */
 __TVOS_PROHIBITED __WATCHOS_PROHIBITED
@@ -50,6 +69,11 @@ __TVOS_PROHIBITED __WATCHOS_PROHIBITED
  * Optional content override for the modified notification.
  */
 @property(nonatomic, readonly) UAMediaAttachmentContent *content;
+
+/**
+ * The identifier of the attachement that should be used as a thumbnail.
+ */
+@property(nonatomic, readonly) NSString *thumbnailID;
 
 @end
 

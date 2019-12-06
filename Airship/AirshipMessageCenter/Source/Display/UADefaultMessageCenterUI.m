@@ -48,6 +48,7 @@
         self.splitViewController.title = self.title;
 
         self.splitViewController.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+        self.splitViewController.modalPresentationStyle = UIModalPresentationFullScreen;
 
         [[UAUtils topController] presentViewController:self.splitViewController animated:animated completion:completionHandler];
     }
@@ -68,6 +69,10 @@
 - (void)dismissMessageCenterAnimated:(BOOL)animated {
     [self.splitViewController.presentingViewController dismissViewControllerAnimated:animated completion:nil];
     self.splitViewController = nil;
+}
+
+- (void)dismiss {
+    [self dismissMessageCenterAnimated:YES];
 }
 
 @end

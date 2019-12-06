@@ -29,4 +29,8 @@
     return @[self.location];
 }
 
+- (id<UALocationProvider>)locationProvider {
+    return self.location;
+}
+
 @end

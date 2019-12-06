@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
-#if UA_USE_MODULE_AIRSHIP_IMPORTS
-@import AirshipCore;
+#if UA_USE_MODULE_IMPORT
+#import <AirshipCore/AirshipCore.h>
 #else
 #import "UAirship.h"
 #import "UAViewUtils.h"
@@ -29,4 +29,5 @@
 #import "NSString+UALocalizationAdditions.h"
 #import "NSManagedObjectContext+UAAdditions.h"
 #import "NSJSONSerialization+UAAdditions.h"
+#import "UAAction.h"
 #endif

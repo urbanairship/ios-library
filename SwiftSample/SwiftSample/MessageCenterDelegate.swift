@@ -1,7 +1,8 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
-import Airship
+import AirshipCore
+import AirshipMessageCenter
 
 class MessageCenterDelegate : NSObject, UAMessageCenterDisplayDelegate {
     var tabBarController : UITabBarController;

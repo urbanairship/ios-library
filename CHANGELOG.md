@@ -1,7 +1,37 @@
 iOS Changelog
 =============
 
-Migration Guides: Documentation/Migration
+[Migration Guides](https://github.com/urbanairship/ios-library/tree/master/Documentation/Migration)
+
+Version 13.0.0 - December 5, 2019
+=================================
+Airship SDK 13 is a major update that splits the SDK into modules.
+Apps can continue to use a single Airship framework in basic integration scenarios,
+but as of SDK 13 it is now possible to create custom integrations by selecting
+feature modules. Most of the changes in this release reflect the restructuring that
+makes this possible.
+
+Changes
+-------
+- Modularized the SDK. For breaking API changes, see the [Migration Guide](https://github.com/urbanairship/ios-library/tree/master/Documentation/Migration).
+- Replaced `AirshipKit` with `Airship`.
+- Replaced `AirshipLocationKit` with `AirshipLocation`. `AirshipLocation` is not compatible with with `Airship` framework installation (xcframeworks or Carthage), and must be used with the core SDK and explicit feature modules
+- Added new `Airship` podspec that replaces both `UrbanAirship-iOS-SDK` and `UrbanAirship-iOS-Location`. `Airship` podspec now contains subspecs for `Core`, `Automation`, `MessageCenter`, `Location`, and `ExtendedActions` to make it possible to only specify which Airship features to use.
+- Added podspec `AirshipExtensions` that replaces `UrbanAirship-iOS-AppExtensions`. The new podspec contains subspecs for `NotificationContent` and `NotificationService`.
+- Added new `AirshipNotificationContentExtension` that allows displaying multiple notification attachments in a carousel view.
+- Dropped static libraries. Applications should either use Cocoapods, Carthage, or the provided xcframeworks.
+
+
+Version 12.1.1 - December 5, 2019
+=================================
+
+Stability release for 12.x.
+
+Changes
+-------
+- Fixed potential UAInboxAPIClient crash on startup due to a race condition with accessing UAUserData.
+- Fixed Message Center not refreshing inbox on subsequent foregrounds.
+
 
 Version 12.1.0 - November 15, 2019
 ==================================
@@ -9,7 +39,7 @@ Minor release adding support for channel attributes, which allow
 key value pairs to be associated with the application's Airship channel
 for segmentation purposes.
 
-Custom channel attributes are currently a beta feature. If you wish to 
+Custom channel attributes are currently a beta feature. If you wish to
 participate in the beta program, please complete our [signup form](https://www.airship.com/lp/sign-up-now-to-participate-in-the-advanced-segmentation-beta-program/).
 
 As of SDK 13 static libraries will be removed from the binary distribution.
@@ -19,7 +49,7 @@ replacing them.
 Changes
 -------
 - Added a new `UAAttributeMutations` class
-- Added a new `applyAttributeMutations` method to `UAChannel` 
+- Added a new `applyAttributeMutations` method to `UAChannel`
 
 Version 12.0.2 - November 5, 2019
 =================================
@@ -31,7 +61,7 @@ Changes
 
 Version 12.0.1 - October 30, 2019
 =================================
-Patch release with minor improvements to in-app automation 
+Patch release with minor improvements to in-app automation
 delivery reliabiliy.
 
 Changes
@@ -39,7 +69,7 @@ Changes
 - In-app automations with a grace period are not deleted
   locally until the grace period has passed.
 
-Customers using in-app automation may wish to update. 
+Customers using in-app automation may wish to update.
 
 Version 12.0.0 - September 12, 2019
 ===================================

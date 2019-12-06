@@ -6,6 +6,7 @@
 /**
  * Whether the response indicates that a retry is necessary or feasible.
  * @return `YES` if the operation should be retried, otherwise `NO`.
+ * @note For internal use only. :nodoc:
  */
 - (BOOL)hasRetriableStatus;
 

@@ -2,17 +2,16 @@
 
 import UIKit
 
+
 #if canImport(AirshipCore)
 import AirshipCore
-#endif
-
-#if canImport(AirshipAutomation)
 import AirshipAutomation
+import AirshipMessageCenter
+import AirshipLocation
+#elseif canImport(Airship)
+import Airship
 #endif
 
-#if canImport(AirshipMessageCenter)
-import AirshipMessageCenter
-#endif
 
 class DeviceInfoCell: UITableViewCell {
     @IBOutlet weak var title: UILabel!
@@ -125,7 +124,7 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let image = UIImage(named: "Settings", in:Bundle(identifier: "com.urbanairship.AirshipDebugKit"), compatibleWith: nil)
+        let image = UIImage(named: "Settings", in:Bundle(identifier: "com.urbanairship.AirshipDebug"), compatibleWith: nil)
 
         let pushSettings: UIBarButtonItem = UIBarButtonItem(image:image, style:.done, target: self, action: #selector(pushSettingsButtonTapped))
         self.navigationItem.rightBarButtonItem = pushSettings
@@ -328,16 +327,16 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
             cell.subtitle?.text = "ua_device_info_enable_analytics_tracking".localized()
 
             cell.cellSwitch.isHidden = false
-            cell.cellSwitch.isOn = UAirship.analytics()?.isEnabled ?? false
+            cell.cellSwitch.isOn = UAirship.analytics().isEnabled
         case locationEnabled:
             cell.title.text = "ua_device_info_enable_location_enabled".localized()
 
             cell.cellSwitch.isHidden = false
-            cell.cellSwitch.isOn = UAirship.shared()?.locationProviderDelegate?.isLocationUpdatesEnabled ?? false
+            cell.cellSwitch.isOn = UALocation.shared().isLocationUpdatesEnabled
 
-            let optedInToLocation = UAirship.shared()?.locationProviderDelegate?.isLocationOptedIn() ?? false
+            let optedInToLocation = UALocation.shared().isLocationOptedIn()
 
-            if (UAirship.shared().locationProviderDelegate?.isLocationUpdatesEnabled ?? false && !optedInToLocation) {
+            if (UALocation.shared().isLocationUpdatesEnabled && !optedInToLocation) {
                 cell.subtitle?.text = "ua_location_enabled_detail".localized(comment: "Enable GPS and WIFI Based Location detail label") + " - NOT OPTED IN"
             } else {
                 cell.subtitle?.text = localizedNone
@@ -401,7 +400,7 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
             UAirship.shared().analytics.isEnabled = cell.cellSwitch.isOn
         case locationEnabled:
             cell.cellSwitch.setOn(!cell.cellSwitch.isOn, animated: true)
-            UAirship.shared().locationProviderDelegate?.isLocationUpdatesEnabled = cell.cellSwitch.isOn
+            UALocation.shared().isLocationUpdatesEnabled = cell.cellSwitch.isOn
         default:
             break
         }

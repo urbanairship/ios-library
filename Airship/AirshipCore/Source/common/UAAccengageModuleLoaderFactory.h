@@ -13,7 +13,6 @@ NS_ASSUME_NONNULL_BEGIN
  * Accengage module loader factory.
  * @note For internal use only. :nodoc:
  */
-
 @protocol UAAccengageModuleLoaderFactory <NSObject>
 
 @required

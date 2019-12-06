@@ -2,13 +2,12 @@
 
 #import "UAUserDataDAO+Internal.h"
 #import "UAUserData+Internal.h"
-
 #import "UAAirshipMessageCenterCoreImport.h"
 
 @interface UAUserDataDAO()
 @property (nonatomic, strong) UARuntimeConfig *config;
-@property (nonatomic, strong) UAUserData *userData;
 @property (nonatomic, strong) UADispatcher *backgroundDispatcher;
+@property (strong) UAUserData *userData;
 @end
 
 @implementation UAUserDataDAO
@@ -34,16 +33,19 @@
     UA_WEAKIFY(self)
     [self.backgroundDispatcher doSync:^{
         UA_STRONGIFY(self)
-        if (self.userData) {
-            userData = self.userData;
-            return;
-        }
 
-        NSString *username = [UAKeychainUtils getUsername:self.config.appKey];
-        NSString *password = [UAKeychainUtils getPassword:self.config.appKey];
+        @synchronized (self) {
+            if (self.userData) {
+                userData = self.userData;
+                return;
+            }
 
-        if (username && password) {
-            self.userData = userData = [UAUserData dataWithUsername:username password:password];
+            NSString *username = [UAKeychainUtils getUsername:self.config.appKey];
+            NSString *password = [UAKeychainUtils getPassword:self.config.appKey];
+
+            if (username && password) {
+                self.userData = userData = [UAUserData dataWithUsername:username password:password];
+            }
         }
     }];
 
@@ -70,7 +72,6 @@
     UA_WEAKIFY(self)
     [self.backgroundDispatcher dispatchAsync:^{
         UA_STRONGIFY(self)
-
         completionHandler([self getUserDataSync]);
     }];
 }
@@ -102,12 +103,14 @@
             }
         }
 
-        self.userData = data;
+        @synchronized (self) {
+            self.userData = data;
 
-        // Update keychain with latest username and password
-        [UAKeychainUtils updateKeychainValueForUsername:data.username
-                                           withPassword:data.password
-                                          forIdentifier:self.config.appKey];
+            // Update keychain with latest username and password
+            [UAKeychainUtils updateKeychainValueForUsername:data.username
+                                               withPassword:data.password
+                                              forIdentifier:self.config.appKey];
+        }
 
         completionHandler(YES);
     }];
@@ -118,8 +121,10 @@
     [self.backgroundDispatcher doSync:^{
         UA_STRONGIFY(self)
         UA_LDEBUG(@"Deleting the keychain credentials");
-        [UAKeychainUtils deleteKeychainValue:self.config.appKey];
-        self.userData = nil;
+        @synchronized (self) {
+            [UAKeychainUtils deleteKeychainValue:self.config.appKey];
+            self.userData = nil;
+        }
     }];
 }
 

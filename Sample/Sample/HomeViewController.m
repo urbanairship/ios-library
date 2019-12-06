@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-@import Airship;
+@import AirshipCore;
 
 #import "HomeViewController.h"
 

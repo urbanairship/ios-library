@@ -4,11 +4,11 @@ import UIKit
 
 #if canImport(AirshipCore)
 import AirshipCore
+import AirshipAutomation
+#elseif canImport(Airship)
+import Airship
 #endif
 
-#if canImport(AirshipAutomation)
-import AirshipAutomation
-#endif
 
 /**
  * The MediaInfoDetailViewController displays the details of an IAA

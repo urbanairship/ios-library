@@ -1,8 +1,0 @@
-use_frameworks!
-
-target 'tvOSSample' do
-  platform :tvos, '11.0'
-  pod 'Airship', :path => '../'
-  pod 'Airship/Location', :path => '../'
-end
-

@@ -14,7 +14,7 @@
 @property (nonatomic, strong) UAActionArguments *arguments;
 
 @property(nonatomic, strong) id mockPush;
-@property(nonatomic, strong) id mockLocationProviderDelegate;
+@property(nonatomic, strong) id mockLocationProvider;
 @property(nonatomic, strong) id mockAirship;
 @property(nonatomic, strong) id mockPushRegistration;
 @property(nonatomic, strong) id mockApplication;
@@ -30,7 +30,7 @@
 
     self.mockPush = [self strictMockForClass:[UAPush class]];
 
-    self.mockLocationProviderDelegate = [self mockForProtocol:@protocol(UALocationProviderDelegate)];
+    self.mockLocationProvider = [self mockForProtocol:@protocol(UALocationProvider)];
 
     self.mockAirship = [self strictMockForClass:[UAirship class]];
     self.mockPushRegistration = [self mockForProtocol:@protocol(UAAPNSRegistrationProtocol)];
@@ -39,7 +39,7 @@
     [UAirship setSharedAirship:self.mockAirship];
     [[[self.mockAirship stub] andReturn:self.mockPush] sharedPush];
 
-    [[[self.mockAirship stub] andReturn:self.mockLocationProviderDelegate] locationProviderDelegate];
+    [[[self.mockAirship stub] andReturn:self.mockLocationProvider] locationProvider];
 
     [[[self.mockPush stub] andReturn:self.mockPushRegistration] pushRegistration];
     [[[self.mockApplication stub] andReturn:self.mockApplication] sharedApplication];
@@ -47,7 +47,7 @@
 
 - (void)tearDown {
     [self.mockPush stopMocking];
-    [self.mockLocationProviderDelegate stopMocking];
+    [self.mockLocationProvider stopMocking];
     [self.mockAirship stopMocking];
     [self.mockPushRegistration stopMocking];
     [self.mockApplication stopMocking];
@@ -155,12 +155,12 @@
 - (void)testEnableLocation {
     __block BOOL actionPerformed = NO;
 
-    [[[self.mockLocationProviderDelegate stub] andReturnValue:@(NO)] isLocationDeniedOrRestricted];
+    [[[self.mockLocationProvider stub] andReturnValue:@(NO)] isLocationDeniedOrRestricted];
 
     UAActionArguments *arguments = [[UAActionArguments alloc] init];
     arguments.value = UAEnableLocationActionValue;
 
-    [[self.mockLocationProviderDelegate expect] setLocationUpdatesEnabled:YES];
+    [[self.mockLocationProvider expect] setLocationUpdatesEnabled:YES];
     [[self.mockApplication reject] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]
                                    options:OCMOCK_ANY
                          completionHandler:OCMOCK_ANY];
@@ -169,19 +169,19 @@
         actionPerformed = YES;
     }];
 
-    [self.mockLocationProviderDelegate verify];
+    [self.mockLocationProvider verify];
     XCTAssertTrue(actionPerformed);
 }
 
 - (void)testEnableLocationOptedOut {
     __block BOOL actionPerformed = NO;
 
-    [[[self.mockLocationProviderDelegate stub] andReturnValue:@(YES)] isLocationDeniedOrRestricted];
+    [[[self.mockLocationProvider stub] andReturnValue:@(YES)] isLocationDeniedOrRestricted];
 
     UAActionArguments *arguments = [[UAActionArguments alloc] init];
     arguments.value = UAEnableLocationActionValue;
 
-    [[self.mockLocationProviderDelegate expect] setLocationUpdatesEnabled:YES];
+    [[self.mockLocationProvider expect] setLocationUpdatesEnabled:YES];
     [[[self.mockApplication stub] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:4];
@@ -194,20 +194,20 @@
         actionPerformed = YES;
     }];
 
-    [self.mockLocationProviderDelegate verify];
+    [self.mockLocationProvider verify];
     XCTAssertTrue(actionPerformed);
 }
 
 - (void)testEnableBackgroundLocation {
     __block BOOL actionPerformed = NO;
 
-    [[[self.mockLocationProviderDelegate stub] andReturnValue:@(NO)] isLocationDeniedOrRestricted];
+    [[[self.mockLocationProvider stub] andReturnValue:@(NO)] isLocationDeniedOrRestricted];
 
     UAActionArguments *arguments = [[UAActionArguments alloc] init];
     arguments.value = UAEnableBackgroundLocationActionValue;
 
-    [[self.mockLocationProviderDelegate expect] setLocationUpdatesEnabled:YES];
-    [[self.mockLocationProviderDelegate expect] setBackgroundLocationUpdatesAllowed:YES];
+    [[self.mockLocationProvider expect] setLocationUpdatesEnabled:YES];
+    [[self.mockLocationProvider expect] setBackgroundLocationUpdatesAllowed:YES];
     [[self.mockApplication reject] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]
                                    options:OCMOCK_ANY
                          completionHandler:OCMOCK_ANY];
@@ -216,20 +216,20 @@
         actionPerformed = YES;
     }];
 
-    [self.mockLocationProviderDelegate verify];
+    [self.mockLocationProvider verify];
     XCTAssertTrue(actionPerformed);
 }
 
 - (void)testEnableBackgroundLocationOptedOut {
     __block BOOL actionPerformed = NO;
 
-    [[[self.mockLocationProviderDelegate stub] andReturnValue:@(NO)] isLocationDeniedOrRestricted];
+    [[[self.mockLocationProvider stub] andReturnValue:@(NO)] isLocationDeniedOrRestricted];
 
     UAActionArguments *arguments = [[UAActionArguments alloc] init];
     arguments.value = UAEnableBackgroundLocationActionValue;
 
-    [[self.mockLocationProviderDelegate expect] setLocationUpdatesEnabled:YES];
-    [[self.mockLocationProviderDelegate expect] setBackgroundLocationUpdatesAllowed:YES];
+    [[self.mockLocationProvider expect] setLocationUpdatesEnabled:YES];
+    [[self.mockLocationProvider expect] setBackgroundLocationUpdatesAllowed:YES];
     [[[self.mockApplication stub] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:4];
@@ -242,7 +242,7 @@
         actionPerformed = YES;
     }];
 
-    [self.mockLocationProviderDelegate verify];
+    [self.mockLocationProvider verify];
     XCTAssertTrue(actionPerformed);
 }
 

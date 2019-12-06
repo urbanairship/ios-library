@@ -126,11 +126,9 @@ then
 
   echo -ne "\n\n *********** BUILDING tvOSSample *********** \n\n"
 
-  pod update --project-directory=$ROOT_PATH/tvOSSample
-  pod install --project-directory=$ROOT_PATH/tvOSSample
   xcrun xcodebuild \
   -configuration Debug \
-  -workspace "${ROOT_PATH}/tvOSSample/tvOSSample.xcworkspace" \
+  -workspace "${ROOT_PATH}/Airship.xcworkspace" \
   -scheme tvOSSample \
   -sdk $TARGET_SDK_TVOS  \
   -destination "${TEST_DESTINATION_TVOS}"

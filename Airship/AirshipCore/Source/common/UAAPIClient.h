@@ -7,10 +7,14 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/**
+ * @note For internal use only. :nodoc:
+ */
 @interface UAAPIClient : NSObject
 
 /**
  * Status code to indicate the API client is disabled or otherwise unavailable
+ * @note For internal use only. :nodoc:
  */
 extern NSUInteger const UAAPIClientStatusUnavailable;
 

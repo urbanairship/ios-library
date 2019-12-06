@@ -11,6 +11,7 @@ typedef BOOL (^UARequestRetryBlock)(NSData * _Nullable data, NSURLResponse * _Nu
 
 /**
  * Request session used for running UARequests.
+ * @note For internal use only. :nodoc:
  */
 @interface UARequestSession : NSObject
 

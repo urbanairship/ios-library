@@ -14,7 +14,7 @@ NSString *const UALandingPageWidthKey = @"width";
 NSString *const UALandingPageAspectLockKey = @"aspect_lock";
 NSString *const UALandingPageAspectLockLegacyKey = @"aspectLock";
 
-CGFloat const defaultBorderRadiusPoints = 2;
+CGFloat const UALandingPageDefaultBorderRadiusPoints = 2;
 
 - (NSURL *)parseURLFromValue:(id)value {
     NSURL *url;
@@ -114,7 +114,7 @@ CGFloat const defaultBorderRadiusPoints = 2;
         UAInAppMessageHTMLDisplayContent *displayContent = [UAInAppMessageHTMLDisplayContent displayContentWithBuilderBlock:^(UAInAppMessageHTMLDisplayContentBuilder * _Nonnull builder) {
             builder.url = landingPageURL.absoluteString;
             builder.allowFullScreenDisplay = NO;
-            builder.borderRadiusPoints = [self.borderRadiusPoints floatValue] ?: defaultBorderRadiusPoints;
+            builder.borderRadiusPoints = [self.borderRadiusPoints floatValue] ?: UALandingPageDefaultBorderRadiusPoints;
             builder.width = landingPageSize.width;
             builder.height = landingPageSize.height;
             builder.aspectLock = aspectLock;

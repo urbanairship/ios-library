@@ -1,6 +1,9 @@
 /* Copyright Airship and Contributors */
 
 #define kUANotificationAttachmentServiceURLKey @"url"
+#define kUANotificationAttachmentServiceURLIdKey @"url_id"
+#define kUANotificationAttachmentServiceURLSKey @"urls"
+#define kUANotificationAttachmentServiceThumbnailKey @"thumbnail_id"
 #define kUANotificationAttachmentServiceOptionsKey @"options"
 #define kUANotificationAttachmentServiceCropKey @"crop"
 #define kUANotificationAttachmentServiceTimeKey @"time"
@@ -23,11 +26,19 @@
 
 @end
 
+@interface UAMediaAttachmentURL ()
+
+@property(nonatomic, copy) NSURL *url;
+@property(nonatomic, copy) NSString *urlId;
+
+@end
+
 @interface UAMediaAttachmentPayload ()
 
 @property(nonatomic, strong) NSMutableArray *urls;
 @property(nonatomic, copy) NSDictionary *options;
 @property(nonatomic, strong) UAMediaAttachmentContent *content;
+@property(nonatomic, copy) NSString *thumbnailID;
 
 @end
 
@@ -51,6 +62,64 @@
 
 @end
 
+@implementation UAMediaAttachmentURL
+
+- (instancetype)initWithDictionary:(id)object {
+    self = [super init];
+
+    if (self) {
+        if ([self validateURLPayload:object]) {
+            NSDictionary *payload = object;
+            NSString *urlString = payload[kUANotificationAttachmentServiceURLKey];
+            self.url = [NSURL URLWithString:urlString];
+            self.urlId = payload[kUANotificationAttachmentServiceURLIdKey];
+        } else {
+            return nil;
+        }
+    }
+
+    return self;
+}
+
++ (instancetype)URLWithDictionary:(id)object {
+    return [[self alloc] initWithDictionary:object];
+}
+
+- (BOOL)validateURLPayload:(id)payload {
+    if (![payload isKindOfClass:[NSDictionary class]]) {
+        return NO;
+    }
+
+    id urlId = payload[kUANotificationAttachmentServiceURLIdKey];
+    id url = payload[kUANotificationAttachmentServiceURLKey];
+    
+    // URL is required
+    if (![self validateURL:url]) {
+        NSLog(@"Unable to parse url: %@", url);
+        return NO;
+    }
+    
+    // URL ID is optional
+    if (urlId) {
+        if (![self validateURLId:urlId]) {
+            NSLog(@"Unable to parse url id: %@", urlId);
+            return NO;
+        }
+    }
+    
+    return YES;
+}
+
+- (BOOL)validateURL:(id)url {
+    return [url isKindOfClass:[NSString class]];
+}
+
+- (BOOL)validateURLId:(id)urlID {
+    return [urlID isKindOfClass:[NSString class]];
+}
+
+@end
+
 @implementation UAMediaAttachmentPayload
 
 - (instancetype)initWithJSONObject:(id)object {
@@ -61,19 +130,31 @@
             NSDictionary *payload = object;
 
             self.urls = [NSMutableArray array];
-            id payloadURL = payload[kUANotificationAttachmentServiceURLKey];
-            if ([payloadURL isKindOfClass:[NSArray class]]) {
-                for (NSString *urlString in payload[kUANotificationAttachmentServiceURLKey]) {
-                    [self.urls addObject:[NSURL URLWithString:urlString]];
+            id payloadURLs = payload[kUANotificationAttachmentServiceURLSKey];
+            
+            if (payloadURLs) {
+                for (NSDictionary *urlDictionary in payloadURLs) {
+                    UAMediaAttachmentURL *url = [UAMediaAttachmentURL URLWithDictionary:urlDictionary];
+                    [self.urls addObject:url];
                 }
             } else {
-                if ([payloadURL isKindOfClass:[NSString class]]) {
-                    [self.urls addObject:[NSURL URLWithString:payloadURL]];
+                id payloadURL = payload[kUANotificationAttachmentServiceURLKey];
+                if ([payloadURL isKindOfClass:[NSArray class]]) {
+                    for (NSString *urlString in payload[kUANotificationAttachmentServiceURLKey]) {
+                        UAMediaAttachmentURL *url = [UAMediaAttachmentURL URLWithDictionary:@{kUANotificationAttachmentServiceURLKey:urlString}];
+                        [self.urls addObject:url];
+                    }
+                } else {
+                    if ([payloadURL isKindOfClass:[NSString class]]) {
+                        UAMediaAttachmentURL *url = [UAMediaAttachmentURL URLWithDictionary:@{kUANotificationAttachmentServiceURLKey:payloadURL}];
+                        [self.urls addObject:url];
+                    }
                 }
             }
 
             self.options = [self optionsWithPayload:payload];
             self.content = [self contentWithPayload:payload];
+            self.thumbnailID = payload[kUANotificationAttachmentServiceThumbnailKey];
         } else {
             return nil;
         }
@@ -126,6 +207,10 @@
     return [url isKindOfClass:[NSArray class]] || [url isKindOfClass:[NSString class]];
 }
 
+- (BOOL)validateURLS:(id)urls {
+    return [urls isKindOfClass:[NSArray class]];
+}
+
 - (BOOL)validateCrop:(id)crop {
     if (![crop isKindOfClass:[NSDictionary class]]) {
         return NO;
@@ -153,6 +238,10 @@
 
 - (BOOL)validateHidden:(id)hidden {
     return [hidden isKindOfClass:[NSNumber class]];
+}
+
+- (BOOL)validateThumbnailID:(id)thumbnailID {
+    return [thumbnailID isKindOfClass:[NSString class]];
 }
 
 - (BOOL)validateOptions:(id)options {
@@ -229,14 +318,24 @@
     id url = payload[kUANotificationAttachmentServiceURLKey];
     id options = payload[kUANotificationAttachmentServiceOptionsKey];
     id content = payload[kUANotificationAttachmentServiceContentKey];
+    id thumbnailID = payload[kUANotificationAttachmentServiceThumbnailKey];
+    id urls = payload [kUANotificationAttachmentServiceURLSKey];
 
-    // The URL is required
-    if (![self validateURL:url]) {
-        NSLog(@"Unable to parse url: %@", url);
-        return NO;
+    // The URL is required if no URLs specified
+    
+    if (urls) {
+        if (![self validateURL:urls]) {
+            NSLog(@"Unable to parse urls: %@", urls);
+            return NO;
+        }
+    } else {
+        if (![self validateURL:url]) {
+            NSLog(@"Unable to parse url: %@", url);
+            return NO;
+        }
     }
-
-    // Options and content are optional
+    
+    // Options, content and thumbnail id are optional
     if (options) {
         if (![self validateOptions:options]) {
             NSLog(@"Unable to parse options");
@@ -247,6 +346,13 @@
     if (content) {
         if (![self validateContent:content]) {
             NSLog(@"Unable to parse content");
+            return NO;
+        }
+    }
+    
+    if (thumbnailID) {
+        if (![self validateThumbnailID:thumbnailID]) {
+            NSLog(@"Unable to parse thumbnail id");
             return NO;
         }
     }

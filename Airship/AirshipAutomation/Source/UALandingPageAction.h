@@ -88,10 +88,10 @@ extern NSString *const UALandingPageFill;
 /**
  * The default border radius in points.
  */
-extern CGFloat const defaultBorderRadiusPoints;
+extern CGFloat const UALandingPageDefaultBorderRadiusPoints;
 
 /**
- * The border radius in points. Defaults to defaultBorderRadiusPoints if left unset.
+ * The border radius in points. Defaults to `UALandingPageDefaultBorderRadiusPoints` if left unset.
  */
 @property(nonatomic, assign, nullable) NSNumber *borderRadiusPoints;
 

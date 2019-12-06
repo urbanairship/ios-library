@@ -80,13 +80,27 @@ then
   pod update --project-directory=$ROOT_PATH
   pod install --project-directory=$ROOT_PATH
 
+
   build_archive "Airship" "AirshipCore" "iOS"
   build_archive "Airship" "AirshipCore tvOS" "tvOS"
   build_archive "Airship" "AirshipLocation" "iOS"
   build_archive "Airship" "AirshipDebug" "iOS"
   build_archive "Airship" "AirshipAutomation" "iOS"
   build_archive "Airship" "AirshipAccengage" "iOS"
+  build_archive "Airship" "AirshipMessageCenter" "iOS"
+  build_archive "Airship" "AirshipExtendedActions" "iOS"
   build_archive "AirshipExtensions" "AirshipNotificationServiceExtension" "iOS"
+  build_archive "AirshipExtensions" "AirshipNotificationContentExtension" "iOS"
+  build_archive "Airship" "Airship" "iOS"
+  build_archive "Airship" "Airship tvOS" "tvOS"
+
+  # Package Airship
+  xcodebuild -create-xcframework \
+  -framework "$TEMP_DIR/xcarchive/Airship/Airship/iphoneos.xcarchive/Products/Library/Frameworks/Airship.framework" \
+  -framework "$TEMP_DIR/xcarchive/Airship/Airship/iphonesimulator.xcarchive/Products/Library/Frameworks/Airship.framework" \
+  -framework "$TEMP_DIR/xcarchive/Airship/Airship tvOS/appletvos.xcarchive/Products/Library/Frameworks/Airship.framework" \
+  -framework "$TEMP_DIR/xcarchive/Airship/Airship tvOS/appletvsimulator.xcarchive/Products/Library/Frameworks/Airship.framework" \
+  -output "$STAGING/Airship.xcframework"
 
   # Package AirshipCore
   xcodebuild -create-xcframework \
@@ -102,11 +116,23 @@ then
   -framework "$TEMP_DIR/xcarchive/Airship/AirshipLocation/iphonesimulator.xcarchive/Products/Library/Frameworks/AirshipLocation.framework" \
   -output "$STAGING/AirshipLocation.xcframework"
 
-  # Package AirshipAutomation
+  # Package AirshipMessageCenter
   xcodebuild -create-xcframework \
-  -framework "$TEMP_DIR/xcarchive/Airship/AirshipAutomation/iphoneos.xcarchive/Products/Library/Frameworks/AirshipAutomation.framework" \
-  -framework "$TEMP_DIR/xcarchive/Airship/AirshipAutomation/iphonesimulator.xcarchive/Products/Library/Frameworks/AirshipAutomation.framework" \
-  -output "$STAGING/AirshipAutomation.xcframework"
+  -framework "$TEMP_DIR/xcarchive/Airship/AirshipMessageCenter/iphoneos.xcarchive/Products/Library/Frameworks/AirshipMessageCenter.framework" \
+  -framework "$TEMP_DIR/xcarchive/Airship/AirshipMessageCenter/iphonesimulator.xcarchive/Products/Library/Frameworks/AirshipMessageCenter.framework" \
+  -output "$STAGING/AirshipMessageCenter.xcframework"
+
+  # Package AirshipMessageCenter
+  xcodebuild -create-xcframework \
+  -framework "$TEMP_DIR/xcarchive/Airship/AirshipMessageCenter/iphoneos.xcarchive/Products/Library/Frameworks/AirshipMessageCenter.framework" \
+  -framework "$TEMP_DIR/xcarchive/Airship/AirshipMessageCenter/iphonesimulator.xcarchive/Products/Library/Frameworks/AirshipMessageCenter.framework" \
+  -output "$STAGING/AirshipMessageCenter.xcframework"
+
+  # Package AirshipExtendedActions
+  xcodebuild -create-xcframework \
+  -framework "$TEMP_DIR/xcarchive/Airship/AirshipExtendedActions/iphoneos.xcarchive/Products/Library/Frameworks/AirshipExtendedActions.framework" \
+  -framework "$TEMP_DIR/xcarchive/Airship/AirshipExtendedActions/iphonesimulator.xcarchive/Products/Library/Frameworks/AirshipExtendedActions.framework" \
+  -output "$STAGING/AirshipExtendedActions.xcframework"
 
   # Package AirshipAccengage
   xcodebuild -create-xcframework \
@@ -119,6 +145,12 @@ then
   -framework "$TEMP_DIR/xcarchive/AirshipExtensions/AirshipNotificationServiceExtension/iphoneos.xcarchive/Products/Library/Frameworks/AirshipNotificationServiceExtension.framework" \
   -framework "$TEMP_DIR/xcarchive/AirshipExtensions/AirshipNotificationServiceExtension/iphonesimulator.xcarchive/Products/Library/Frameworks/AirshipNotificationServiceExtension.framework" \
   -output "$STAGING/AirshipNotificationServiceExtension.xcframework"
+
+  # Package AirshipNotificationContentExtension
+  xcodebuild -create-xcframework \
+  -framework "$TEMP_DIR/xcarchive/AirshipExtensions/AirshipNotificationContentExtension/iphoneos.xcarchive/Products/Library/Frameworks/AirshipNotificationContentExtension.framework" \
+  -framework "$TEMP_DIR/xcarchive/AirshipExtensions/AirshipNotificationContentExtension/iphonesimulator.xcarchive/Products/Library/Frameworks/AirshipNotificationContentExtension.framework" \
+  -output "$STAGING/AirshipNotificationContentExtension.xcframework"
 
 fi
 
@@ -136,7 +168,7 @@ function build_docs {
   --clean \
   --module $2  \
   --module-version $VERSION \
-  --framework-root $ROOT_PATH/$1/$2 \
+  --framework-root $ROOT_PATH/$1 \
   --umbrella-header $ROOT_PATH/$1/$2/$3 \
   --output $STAGING/Documentation/$2 \
   --sdk iphonesimulator \
@@ -158,9 +190,15 @@ then
 
   ruby -S jazzy _${JAZZY_VERSION}_ -v
 
+  build_docs "Airship" "Airship" "Source/Airship.h"
   build_docs "Airship" "AirshipCore" "Source/common/AirshipCore.h"
   build_docs "Airship" "AirshipLocation"  "Source/AirshipLocation.h"
+  build_docs "Airship" "AirshipAutomation"  "Source/AirshipAutomation.h"
+  build_docs "Airship" "AirshipMessageCenter"  "Source/AirshipMessageCenter.h"
+  build_docs "Airship" "AirshipExtendedActions"  "Source/AirshipExtendedActions.h"
+  build_docs "Airship" "AirshipAccengage"  "Source/AirshipAccengage.h"
   build_docs "AirshipExtensions" "AirshipNotificationServiceExtension" "Source/AirshipNotificationServiceExtension.h"
+  build_docs "AirshipExtensions" "AirshipNotificationContentExtension" "Source/AirshipNotificationContentExtension.h"
 
   # Workaround the missing module version
   find $STAGING/Documentation -name '*.html' -print0 | xargs -0 sed -i "" "s/\$AIRSHIP_VERSION/${VERSION}/g"

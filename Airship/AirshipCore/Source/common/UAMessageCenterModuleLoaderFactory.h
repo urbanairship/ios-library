@@ -10,6 +10,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Internal message center module loader factory.
+ * @note For internal use only. :nodoc:
  */
 @protocol UAMessageCenterModuleLoaderFactory <NSObject>
 

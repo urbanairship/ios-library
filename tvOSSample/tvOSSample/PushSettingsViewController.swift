@@ -10,13 +10,11 @@ class PushSettingsViewController: UITableViewController, UARegistrationDelegate 
     @IBOutlet weak var namedUserCell: UITableViewCell!
     @IBOutlet weak var tagsCell: UITableViewCell!
     @IBOutlet weak var analyticsEnabledCell: UITableViewCell!
-    @IBOutlet weak var locationEnabledCell: UITableViewCell!
 
     var pushEnabled: Bool = false
     var namedUser: String = "Not Set"
     var tags: Array = ["Not Set"]
     var analytics: Bool = false
-    var locationEnabled: Bool = false
 
     var defaultDetailVC:UIViewController!
     var namedUserDetailVC:UIViewController!
@@ -40,13 +38,9 @@ class PushSettingsViewController: UITableViewController, UARegistrationDelegate 
             object: nil);
 
         pushEnabled = UAirship.push().userPushNotificationsEnabled
-        locationEnabled = UAirship.shared()?.locationProviderDelegate?.isLocationUpdatesEnabled ?? false
         analytics = UAirship.analytics().isEnabled
 
         refreshView()
-
-        locationEnabledCell.textLabel?.text = "Enable Location"
-        locationEnabledCell.detailTextLabel?.text = "Enable Location When In Use"
 
         defaultDetailVC = self.storyboard!.instantiateViewController(withIdentifier: "defaultDetailVC")
         namedUserDetailVC = self.storyboard!.instantiateViewController(withIdentifier: "namedUserDetailVC");
@@ -62,7 +56,6 @@ class PushSettingsViewController: UITableViewController, UARegistrationDelegate 
         channelIDCell?.detailTextLabel?.text = UAirship.channel().identifier ?? "Not Set"
 
         analyticsEnabledCell.accessoryType = analytics ? .checkmark : .none
-        locationEnabledCell.accessoryType = locationEnabled ? .checkmark : .none
 
         namedUserCell.detailTextLabel?.text = UAirship.namedUser().identifier ?? "Not Set"
         tagsCell.detailTextLabel?.text = (UAirship.channel().tags.count > 0) ?
@@ -98,7 +91,6 @@ class PushSettingsViewController: UITableViewController, UARegistrationDelegate 
 
         let pushEnabledIndexPath = tableView.indexPath(for: pushEnabledCell)
         let analyticsEnabledIndexPath = tableView.indexPath(for: analyticsEnabledCell)
-        let locationEnabledIndexPath = tableView.indexPath(for: locationEnabledCell)
 
         switch (indexPath.section, indexPath.row) {
         case (pushEnabledIndexPath!.section, pushEnabledIndexPath!.row) :
@@ -109,11 +101,6 @@ class PushSettingsViewController: UITableViewController, UARegistrationDelegate 
         case (analyticsEnabledIndexPath!.section, analyticsEnabledIndexPath!.row) :
             analytics = !analytics;
             UAirship.analytics().isEnabled = analytics
-            refreshView()
-            break
-        case (locationEnabledIndexPath!.section, locationEnabledIndexPath!.row) :
-            locationEnabled = !locationEnabled;
-            UAirship.shared()?.locationProviderDelegate?.isLocationUpdatesEnabled = locationEnabled
             refreshView()
             break
         default:

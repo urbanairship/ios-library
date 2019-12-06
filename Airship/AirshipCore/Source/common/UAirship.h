@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 #import "UAGlobal.h"
-#import "UALocationProviderDelegate.h"
+#import "UALocationProvider.h"
 #import "UAWhitelist.h"
 #import "UAirshipVersion.h"
 
@@ -12,7 +12,6 @@
 #import <QuartzCore/QuartzCore.h>
 #import <Availability.h>
 #import <UserNotifications/UserNotifications.h>
-#import <StoreKit/StoreKit.h>
 
 #import "UAConfig.h"
 
@@ -89,11 +88,18 @@ extern NSString * const UADeviceIDChangedNotification;
  */
 @property (nonatomic, strong, readonly) UAActionRegistry *actionRegistry;
 
-
 /**
  * Stores common application metrics such as last open.
  */
 @property (nonatomic, strong, readonly) UAApplicationMetrics *applicationMetrics;
+
+/**
+ * Returns the location provider. Requires the `AirshipLocation` module, otherwise nil.
+ * @note For internal use only. :nodoc:
+ *
+ * @return The `UALocationProvider` instance.
+ */
+@property (nullable, nonatomic, strong, readonly) id<UALocationProvider> locationProvider;
 
 /**
  * This flag is set to `YES` if the application is set up 
@@ -119,7 +125,6 @@ extern NSString * const UADeviceIDChangedNotification;
  */
 @property (nonatomic, weak, nullable) id<UADeepLinkDelegate> deepLinkDelegate;
 
-@property (nonatomic, weak, nullable) id<UALocationProviderDelegate> locationProviderDelegate;
 
 /**
  * The whitelist used for validating URLs for landing pages, wallet action, open external URL action,
@@ -207,6 +212,8 @@ extern NSString * const UADeviceIDChangedNotification;
 /**
  * Returns the UAChannel instance. Used for channel registration and
  * tag APIs.
+ *
+ * @return The `UAChannel` instance.
  */
 + (null_unspecified UAChannel *)channel;
 
@@ -220,16 +227,22 @@ extern NSString * const UADeviceIDChangedNotification;
 
 /**
  * Returns the `UANamedUser` instance.
+ *
+ * @return The `UANamedUser` instance.
  */
 + (null_unspecified UANamedUser *)namedUser;
 
 /**
  * Returns the default `UAAnalytics` instance.
+ *
+ * @return The `UAAnalytics` instance.
  */
 + (null_unspecified UAAnalytics *)analytics;
 
 /**
  * Returns an UAComponent for a given class name.
+ * @note For internal use only. :nodoc:
+ *
  * @param className The classname of the component.
  * @return The component, or nil if the component is not available.
  */

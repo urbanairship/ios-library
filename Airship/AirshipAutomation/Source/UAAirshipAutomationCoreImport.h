@@ -1,5 +1,5 @@
-#if UA_USE_MODULE_AIRSHIP_IMPORTS
-@import AirshipCore;
+#if UA_USE_MODULE_IMPORT
+#import <AirshipCore/AirshipCore.h>
 #else
 #import "NSJSONSerialization+UAAdditions.h"
 #import "NSOperationQueue+UAAdditions.h"
@@ -33,7 +33,6 @@
 #import "UAJSONMatcher.h"
 #import "UAJSONPredicate.h"
 #import "UAJSONValueMatcher.h"
-#import "UALocationEvent.h"
 #import "UAModuleLoader.h"
 #import "UANotificationAction.h"
 #import "UANotificationCategories.h"

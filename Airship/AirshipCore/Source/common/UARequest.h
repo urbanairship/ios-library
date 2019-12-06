@@ -7,6 +7,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * The request builder.
+ * @note For internal use only. :nodoc:
  */
 @interface UARequestBuilder : NSObject
 
@@ -57,6 +58,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Defines a network request.
+ * @note For internal use only. :nodoc:
  */
 @interface UARequest : NSObject
 

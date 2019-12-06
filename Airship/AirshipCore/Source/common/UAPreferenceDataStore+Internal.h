@@ -12,12 +12,6 @@ NS_ASSUME_NONNULL_BEGIN
 ///---------------------------------------------------------------------------------------
 
 /**
- * Factory method for creating a preference data store with a key prefix.
- * @param keyPrefix The prefix to automatically apply to all keys.
- */
-+ (instancetype)preferenceDataStoreWithKeyPrefix:(NSString *)keyPrefix;
-
-/**
  * Migrates any values in NSUserDefaults that are not prefixed.
  * @param keys The keys to migrate.
  */

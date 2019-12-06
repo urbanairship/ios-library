@@ -7,8 +7,15 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Wrapper around NSUserDefaults that automatically applies a key prefix
  * to all entries.
+ * @note For internal use only. :nodoc:
  */
 @interface UAPreferenceDataStore : NSObject
+
+/**
+ * Factory method for creating a preference data store with a key prefix.
+ * @param keyPrefix The prefix to automatically apply to all keys.
+ */
++ (instancetype)preferenceDataStoreWithKeyPrefix:(NSString *)keyPrefix;
 
 /**
  * Checks if the key exists in the preference data store

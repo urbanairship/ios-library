@@ -4,6 +4,9 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/**
+ * @note For internal use only. :nodoc:
+ */
 @interface UARemoteDataPayload : NSObject <NSCopying>
 
 ///---------------------------------------------------------------------------------------

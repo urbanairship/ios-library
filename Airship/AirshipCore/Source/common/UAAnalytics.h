@@ -11,6 +11,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Allowed SDK extension types. For internal use only.
+ * @note For internal use only. :nodoc:
  */
 typedef NS_ENUM(NSUInteger, UASDKExtension) {
     /**
@@ -74,8 +75,8 @@ extern NSString *const UAScreenKey;
 /**
  * Optional event consumer.
  *
- * @note AirshipDebugKit uses the event consumer to capture events. Setting the event
- * consumer for other purposes will result in an interruption to AirshipDebugKit's event stream.
+ * @note AirshipDebug uses the event consumer to capture events. Setting the event
+ * consumer for other purposes will result in an interruption to AirshipDebug's event stream.
  */
 @property (nonatomic, strong, nullable) id<UAAnalyticsEventConsumerProtocol> eventConsumer;
 
@@ -128,6 +129,7 @@ extern NSString *const UAScreenKey;
 
 /**
  * Registers an SDK extension with the analytics module. For internal use only.
+ * @note For internal use only. :nodoc:
  *
  *  @param extension The SDK extension.
  *  @param version The version.
