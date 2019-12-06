@@ -1,7 +1,26 @@
 iOS Changelog
 =============
 
-Migration Guides: Documentation/Migration
+[Migration Guides](https://github.com/urbanairship/ios-library/tree/master/Documentation/Migration)
+
+Version 13.0.0 - December 5, 2019
+=================================
+Airship SDK 13 is a major update that splits the SDK into modules.
+Apps can continue to use a single Airship framework in basic integration scenarios,
+but as of SDK 13 it is now possible to create custom integrations by selecting
+feature modules. Most of the changes in this release reflect the restructuring that
+makes this possible.
+
+Changes
+-------
+- Modularized the SDK. For breaking API changes, see the [Migration Guide](https://github.com/urbanairship/ios-library/tree/master/Documentation/Migration).
+- Replaced `AirshipKit` with `Airship`.
+- Replaced `AirshipLocationKit` with `AirshipLocation`. `AirshipLocation` is not compatible with with `Airship` framework installation (xcframeworks or Carthage), and must be used with the core SDK and explicit feature modules
+- Added new `Airship` podspec that replaces both `UrbanAirship-iOS-SDK` and `UrbanAirship-iOS-Location`. `Airship` podspec now contains subspecs for `Core`, `Automation`, `MessageCenter`, `Location`, and `ExtendedActions` to make it possible to only specify which Airship features to use.
+- Added podspec `AirshipExtensions` that replaces `UrbanAirship-iOS-AppExtensions`. The new podspec contains subspecs for `NotificationContent` and `NotificationService`.
+- Added new `AirshipNotificationContentExtension` that allows displaying multiple notification attachments in a carousel view.
+- Dropped static libraries. Applications should either use Cocoapods, Carthage, or the provided xcframeworks.
+
 
 Version 12.1.1 - December 5, 2019
 =================================
