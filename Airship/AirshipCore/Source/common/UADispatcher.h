@@ -6,6 +6,7 @@
 
 /**
  * Class that wraps commmon GCD calls.
+ * @note For internal use only. :nodoc:
  */
 @interface UADispatcher : NSObject
 

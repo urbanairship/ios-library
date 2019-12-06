@@ -6,6 +6,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Model object encapsulating the data relevant for Channel registration.
+ * @note For internal use only. :nodoc:
  */
 @interface UAChannelRegistrationPayload : NSObject<NSCopying>
 

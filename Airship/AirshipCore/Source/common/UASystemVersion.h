@@ -6,6 +6,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * The UASystemVersion class provides system version utilities.
+ * @note For internal use only. :nodoc:
  */
 @interface UASystemVersion : NSObject
 

@@ -7,6 +7,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Protocol for bridging location providers with the SDK.
+ * @note For internal use only. :nodoc:
  */
 @protocol UALocationProvider <NSObject>
 
@@ -38,6 +39,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Protocol for loading a location provider.
+ * @note For internal use only. :nodoc:
  */
 @protocol UALocationProviderLoader <NSObject>
 

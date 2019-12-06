@@ -2,6 +2,7 @@
 
 /**
  * Platform independent representation of application state.
+ * @note For internal use only. :nodoc:
  */
 typedef NS_ENUM(NSUInteger, UAApplicationState) {
     /**

@@ -8,6 +8,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Internal protocol to load optional modules.
+ * @note For internal use only. :nodoc:
  */
 @protocol UAModuleLoader <NSObject>
 

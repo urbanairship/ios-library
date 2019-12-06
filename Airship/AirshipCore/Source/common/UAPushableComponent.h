@@ -6,6 +6,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Internal protocol to fan out push handling to UAComponents.
+ * @note For internal use only. :nodoc:
  */
 @protocol UAPushableComponent
 

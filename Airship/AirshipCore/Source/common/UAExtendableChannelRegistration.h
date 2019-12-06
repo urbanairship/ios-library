@@ -12,6 +12,7 @@ typedef void (^UAChannelRegistrationExtenderBlock)(UAChannelRegistrationPayload 
 
 /**
  * Internal protocol to extend Channel registration.
+ * @note For internal use only. :nodoc:
  */
 @protocol UAExtendableChannelRegistration<NSObject>
 

@@ -161,7 +161,7 @@ function build_docs {
   --clean \
   --module $2  \
   --module-version $VERSION \
-  --framework-root $ROOT_PATH/$1/$2 \
+  --framework-root $ROOT_PATH/$1 \
   --umbrella-header $ROOT_PATH/$1/$2/$3 \
   --output $STAGING/Documentation/$2 \
   --sdk iphonesimulator \
@@ -183,6 +183,7 @@ then
 
   ruby -S jazzy _${JAZZY_VERSION}_ -v
 
+  build_docs "Airship" "Airship" "Source/Airship.h"
   build_docs "Airship" "AirshipCore" "Source/common/AirshipCore.h"
   build_docs "Airship" "AirshipLocation"  "Source/AirshipLocation.h"
   build_docs "Airship" "AirshipAutomation"  "Source/AirshipAutomation.h"

@@ -11,6 +11,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * The resource bundle.
+ * @return The resource bundle.
  */
 + (NSBundle *)bundle;
 

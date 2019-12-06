@@ -22,6 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Init method.
+ * @note For internal use only. :nodoc:
  *
  * @param dataStore The preference data store in which to store the component's enable / disable state.
  */
@@ -29,11 +30,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Called when the component's componentEnabled flag has changed value.
+ * @note For internal use only. :nodoc:
  */
 - (void)onComponentEnableChange;
 
 /**
  * Called when remote config is loaded. If no config is available for the component, config will be nil.
+ * @note For internal use only. :nodoc:
  *
  * @config The config or nil if no config is available for the module.
  */
@@ -42,6 +45,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Called when the shared UAirship instance is ready.
  * Subclasses can override this method to perform additional setup after initialization.
+ * @note For internal use only. :nodoc:
  *
  * @note This method should not be used externally.
  * @param airship The shared UAirship instance.
@@ -50,6 +54,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Determines whether the component is currently enabled.
+ * @note For internal use only. :nodoc:
  *
  * @return `YES` if the component is enabled, otherwise `NO`.
  */

@@ -7,6 +7,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Represents the possible priorities for an event.
+ * @note For internal use only. :nodoc:
  */
 typedef NS_ENUM(NSInteger, UAEventPriority) {
     /**
@@ -59,6 +60,7 @@ typedef NS_ENUM(NSInteger, UAEventPriority) {
 
 /**
  * The event's priority.
+ * @note For internal use only. :nodoc:
  */
 @property (nonatomic, readonly) UAEventPriority priority;
 

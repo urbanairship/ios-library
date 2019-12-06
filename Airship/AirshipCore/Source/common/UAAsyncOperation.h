@@ -6,6 +6,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * NSOperation that executes an asynchronous block.
+ * @note For internal use only. :nodoc:
  */
 @interface UAAsyncOperation : NSOperation
 

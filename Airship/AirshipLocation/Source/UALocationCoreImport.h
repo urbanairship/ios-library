@@ -1,3 +1,5 @@
+/* Copyright Airship and Contributors */
+
 #if UA_USE_AIRSHIP_IMPORT
 #import <Airship/Airship.h>
 #elif UA_USE_MODULE_IMPORT

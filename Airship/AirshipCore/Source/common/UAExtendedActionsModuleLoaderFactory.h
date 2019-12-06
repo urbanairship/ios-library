@@ -7,6 +7,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Internal extended action module loader factory.
+ * @note For internal use only. :nodoc:
  */
 @protocol UAExtendedActionsModuleLoaderFactory <NSObject>
 

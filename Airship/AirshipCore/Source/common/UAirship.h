@@ -95,6 +95,7 @@ extern NSString * const UADeviceIDChangedNotification;
 
 /**
  * Returns the location provider. Requires the `AirshipLocation` module, otherwise nil.
+ * @note For internal use only. :nodoc:
  *
  * @return The `UALocationProvider` instance.
  */
@@ -240,6 +241,7 @@ extern NSString * const UADeviceIDChangedNotification;
 
 /**
  * Returns an UAComponent for a given class name.
+ * @note For internal use only. :nodoc:
  *
  * @param className The classname of the component.
  * @return The component, or nil if the component is not available.

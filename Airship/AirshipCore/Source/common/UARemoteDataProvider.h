@@ -11,6 +11,7 @@ typedef void (^UARemoteDataPublishBlock)(NSArray<UARemoteDataPayload *> *remoteD
 
 /**
  * Protocol used to provide remote data to external modules.
+ * @note For internal use only. :nodoc:
  */
 @protocol UARemoteDataProvider <NSObject>
 

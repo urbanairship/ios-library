@@ -7,6 +7,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Wrapper around NSUserDefaults that automatically applies a key prefix
  * to all entries.
+ * @note For internal use only. :nodoc:
  */
 @interface UAPreferenceDataStore : NSObject
 

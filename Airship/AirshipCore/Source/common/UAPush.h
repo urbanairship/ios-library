@@ -103,9 +103,9 @@ static const UANotificationOptions UANotificationOptionNone =  0;
  * @param channelID The channel ID string.
  * @param deviceToken The device token string.
  *
- * @deprecated Deprecated – to be removed in SDK version 13.0. Please use the UAChannelUpdatedEvent NSNotification.
+ * @deprecated Deprecated – to be removed in SDK version 14.0. Please use the UAChannelUpdatedEvent NSNotification.
  */
-- (void)registrationSucceededForChannelID:(NSString *)channelID deviceToken:(NSString *)deviceToken DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 13.0. Please use the UAChannelUpdatedEvent NSNotification.");
+- (void)registrationSucceededForChannelID:(NSString *)channelID deviceToken:(NSString *)deviceToken DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0. Please use the UAChannelUpdatedEvent NSNotification.");
 
 /**
  * Called when the device channel failed to register with Airship.
@@ -113,9 +113,9 @@ static const UANotificationOptions UANotificationOptionNone =  0;
  * When registration finishes in the background, any async tasks that are triggered
  * from this call should request a background task.
  *
- * @deprecated Deprecated – to be removed in SDK version 13.0. Please use the UAChannelRegistrationFailedEvent NSNotification.
+ * @deprecated Deprecated – to be removed in SDK version 14.0. Please use the UAChannelRegistrationFailedEvent NSNotification.
  */
-- (void)registrationFailed DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 13.0. Please use the UAChannelRegistrationFailedEvent NSNotification.");
+- (void)registrationFailed DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0. Please use the UAChannelRegistrationFailedEvent NSNotification.");
 
 /**
  * Called when APNS registration completes.
@@ -209,9 +209,9 @@ static const UANotificationOptions UANotificationOptionNone =  0;
  * @param notification The notification.
  * @return a UNNotificationPresentationOptions enum value indicating the presentation options for the notification.
  *
- * @deprecated Deprecated - to be removed in SDK version 13.0. Please use extendPresentationOptions:notification:
+ * @deprecated Deprecated - to be removed in SDK version 14.0. Please use extendPresentationOptions:notification:
  */
-- (UNNotificationPresentationOptions)presentationOptionsForNotification:(UNNotification *)notification DEPRECATED_MSG_ATTRIBUTE("Deprecated - to be removed in SDK version 13.0. Please use extendPresentationOptions:notification:");
+- (UNNotificationPresentationOptions)presentationOptionsForNotification:(UNNotification *)notification DEPRECATED_MSG_ATTRIBUTE("Deprecated - to be removed in SDK version 14.0. Please use extendPresentationOptions:notification:");
 
 /**
  * Called when a notification has arrived in the foreground and is available for display.
@@ -280,9 +280,9 @@ static const UANotificationOptions UANotificationOptionNone =  0;
 /**
  * The channel ID for this device.
  *
- * @deprecated Deprecated – to be removed in SDK version 13.0. Please use the `identifier` property on UAChannel.
+ * @deprecated Deprecated – to be removed in SDK version 14.0. Please use the `identifier` property on UAChannel.
  */
-@property (nonatomic, copy, readonly, nullable) NSString *channelID DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 13.0. Please use the identifier property on UAChannel.");
+@property (nonatomic, copy, readonly, nullable) NSString *channelID DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0. Please use the identifier property on UAChannel.");
 
 /**
  * User Notification options this app will request from APNS. Changes to this value
@@ -395,9 +395,9 @@ static const UANotificationOptions UANotificationOptionNone =  0;
 
 /** Tags for this device.
  *
- * @deprecated Deprecated – to be removed in SDK version 13.0. Please use the equivalent property on UAChannel.
+ * @deprecated Deprecated – to be removed in SDK version 14.0. Please use the equivalent property on UAChannel.
  */
-@property (nonatomic, copy) NSArray<NSString *> *tags DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 13.0. Please use the equivalent property on UAChannel.");;
+@property (nonatomic, copy) NSArray<NSString *> *tags DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0. Please use the equivalent property on UAChannel.");;
 
 /**
  * Allows setting tags from the device. Tags can be set from either the server or the device, but
@@ -407,9 +407,9 @@ static const UANotificationOptions UANotificationOptionNone =  0;
  * Set this to `NO` to prevent the device from sending any tag information to the server when using
  * server-side tagging. Defaults to `YES`.
  *
- * @deprecated Deprecated – to be removed in SDK version 13.0. Please use the equivalent property on UAChannel.
+ * @deprecated Deprecated – to be removed in SDK version 14.0. Please use the equivalent property on UAChannel.
  */
-@property (nonatomic, assign, getter=isChannelTagRegistrationEnabled) BOOL channelTagRegistrationEnabled DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 13.0. Please use the equivalent property on UAChannel.");
+@property (nonatomic, assign, getter=isChannelTagRegistrationEnabled) BOOL channelTagRegistrationEnabled DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0. Please use the equivalent property on UAChannel.");
 
 /**
  * Enables user notifications on this device through Airship.
@@ -432,9 +432,9 @@ static const UANotificationOptions UANotificationOptionNone =  0;
  *
  * @param tag Tag to be added
  *
- * @deprecated Deprecated – to be removed in SDK version 13.0. Please use the equivalent method on UAChannel.
+ * @deprecated Deprecated – to be removed in SDK version 14.0. Please use the equivalent method on UAChannel.
  */
-- (void)addTag:(NSString *)tag DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 13.0. Please use the equivalent method on UAChannel.");
+- (void)addTag:(NSString *)tag DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0. Please use the equivalent method on UAChannel.");
 
 /**
  * Adds a group of tags to the current list of device tags. To update the server, make all of your
@@ -445,9 +445,9 @@ static const UANotificationOptions UANotificationOptionNone =  0;
  *
  * @param tags Array of new tags
  *
- * @deprecated Deprecated – to be removed in SDK version 13.0. Please use the equivalent method on UAChannel.
+ * @deprecated Deprecated – to be removed in SDK version 14.0. Please use the equivalent method on UAChannel.
  */
-- (void)addTags:(NSArray<NSString *> *)tags DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 13.0. Please use the equivalent method on UAChannel.");
+- (void)addTags:(NSArray<NSString *> *)tags DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0. Please use the equivalent method on UAChannel.");
 
 /**
  * Removes a tag from the current tag list. To update the server, make all of your changes, then call
@@ -458,9 +458,9 @@ static const UANotificationOptions UANotificationOptionNone =  0;
  *
  * @param tag Tag to be removed
  *
- * @deprecated Deprecated – to be removed in SDK version 13.0. Please use the equivalent method on UAChannel.
+ * @deprecated Deprecated – to be removed in SDK version 14.0. Please use the equivalent method on UAChannel.
  */
-- (void)removeTag:(NSString *)tag DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 13.0. Please use the equivalent method on UAChannel.");
+- (void)removeTag:(NSString *)tag DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0. Please use the equivalent method on UAChannel.");
 
 /**
  * Removes a group of tags from a device. To update the server, make all of your changes, then call
@@ -471,9 +471,9 @@ static const UANotificationOptions UANotificationOptionNone =  0;
  *
  * @param tags Array of tags to be removed
  *
- * @deprecated Deprecated – to be removed in SDK version 13.0. Please use the equivalent method on UAChannel.
+ * @deprecated Deprecated – to be removed in SDK version 14.0. Please use the equivalent method on UAChannel.
  */
-- (void)removeTags:(NSArray<NSString *> *)tags DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 13.0. Please use the equivalent method on UAChannel.");
+- (void)removeTags:(NSArray<NSString *> *)tags DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0. Please use the equivalent method on UAChannel.");
 
 
 ///---------------------------------------------------------------------------------------
@@ -487,9 +487,9 @@ static const UANotificationOptions UANotificationOptionNone =  0;
  * @param tags Array of tags to add.
  * @param tagGroupID Tag group ID string.
  *
- * @deprecated Deprecated – to be removed in SDK version 13.0. Please use the equivalent method on UAChannel.
+ * @deprecated Deprecated – to be removed in SDK version 14.0. Please use the equivalent method on UAChannel.
  */
-- (void)addTags:(NSArray<NSString *> *)tags group:(NSString *)tagGroupID DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 13.0. Please use the equivalent method on UAChannel.");
+- (void)addTags:(NSArray<NSString *> *)tags group:(NSString *)tagGroupID DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0. Please use the equivalent method on UAChannel.");
 
 /**
  * Removes tags from channel tag groups. To update the server,
@@ -498,9 +498,9 @@ static const UANotificationOptions UANotificationOptionNone =  0;
  * @param tags Array of tags to remove.
  * @param tagGroupID Tag group ID string.
  *
- * @deprecated Deprecated – to be removed in SDK version 13.0. Please use the equivalent method on UAChannel.
+ * @deprecated Deprecated – to be removed in SDK version 14.0. Please use the equivalent method on UAChannel.
  */
-- (void)removeTags:(NSArray<NSString *> *)tags group:(NSString *)tagGroupID DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 13.0. Please use the equivalent method on UAChannel.");
+- (void)removeTags:(NSArray<NSString *> *)tags group:(NSString *)tagGroupID DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0. Please use the equivalent method on UAChannel.");
 
 /**
  * Sets tags for channel tag groups. To update the server,
@@ -509,9 +509,9 @@ static const UANotificationOptions UANotificationOptionNone =  0;
  * @param tags Array of tags to set.
  * @param tagGroupID Tag group ID string.
  *
- * @deprecated Deprecated – to be removed in SDK version 13.0. Please use the equivalent method on UAChannel.
+ * @deprecated Deprecated – to be removed in SDK version 14.0. Please use the equivalent method on UAChannel.
  */
-- (void)setTags:(NSArray<NSString *> *)tags group:(NSString *)tagGroupID DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 13.0. Please use the equivalent method on UAChannel.");
+- (void)setTags:(NSArray<NSString *> *)tags group:(NSString *)tagGroupID DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0. Please use the equivalent method on UAChannel.");
 
 ///---------------------------------------------------------------------------------------
 /// @name Quiet Time
@@ -562,9 +562,9 @@ static const UANotificationOptions UANotificationOptionNone =  0;
 /**
  * Enables channel creation if channelCreationDelayEnabled was set to `YES` in the config.
  *
- * @deprecated Deprecated – to be removed in SDK version 13.0. Please use the equivalent method on UAChannel.
+ * @deprecated Deprecated – to be removed in SDK version 14.0. Please use the equivalent method on UAChannel.
  */
-- (void)enableChannelCreation DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 13.0. Please use the equivalent method on UAChannel.");
+- (void)enableChannelCreation DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0. Please use the equivalent method on UAChannel.");
 
 /**
  * Registers or updates the current registration with an API call. If push notifications are

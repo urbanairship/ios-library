@@ -11,6 +11,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Allowed SDK extension types. For internal use only.
+ * @note For internal use only. :nodoc:
  */
 typedef NS_ENUM(NSUInteger, UASDKExtension) {
     /**
@@ -128,6 +129,7 @@ extern NSString *const UAScreenKey;
 
 /**
  * Registers an SDK extension with the analytics module. For internal use only.
+ * @note For internal use only. :nodoc:
  *
  *  @param extension The SDK extension.
  *  @param version The version.

@@ -8,6 +8,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * The UAKeychainUtils object provides an interface for keychain related methods.
+ * @note For internal use only. :nodoc:
  */
 @interface UAKeychainUtils : NSObject
 

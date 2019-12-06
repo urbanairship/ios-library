@@ -12,6 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Internal location module loader factory.
+ * @note For internal use only. :nodoc:
  */
 @protocol UALocationModuleLoaderFactory <NSObject>
 
