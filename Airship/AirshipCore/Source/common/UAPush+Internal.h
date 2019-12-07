@@ -44,7 +44,7 @@ extern NSString *const UAPushAliasSettingsKey;
  * Note: This should only be used for migration purposes, as
  * tags are now handled directly by UAChannel.
  */
-extern NSString *const UAPushTagsSettingsKey;
+extern NSString *const UAPushLegacyTagsSettingsKey;
 
 /**
  * Badge data store key.
@@ -80,6 +80,11 @@ extern NSString *const UAPushQuietTimeEndKey;
  * If push enabled settings have been migrated data store key.
  */
 extern NSString *const UAPushEnabledSettingsMigratedKey;
+
+/**
+ * If push tags have been migrated to channel tags data store key.
+ */
+extern NSString *const UAPushTagsMigratedToChannelTagsKey;
 
 /**
  * Old push enabled key.
@@ -205,6 +210,11 @@ extern NSString *const UAPushEnabledKey;
  * setting.
  */
 - (void)migratePushSettings;
+
+/**
+ * Migrates push tags to channel tags.
+ */
+- (void)migratePushTagsToChannelTags;
 
 /**
  * Updates the registration with APNS. Call after modifying notification types

@@ -1240,6 +1240,58 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     XCTAssertNoThrow([self.mockRegistrationDelegate verify], @"Delegate should be called");
 }
 
+- (void)testmigratePushTagsToChannelTags {
+    [self.dataStore setObject:@[@"cool", @"rad"] forKey:UAPushLegacyTagsSettingsKey];
+
+    NSArray *channelTags = nil;
+
+    [[[self.mockChannel stub] andReturn:channelTags] tags];
+
+    // Force a migration
+    [self.dataStore removeObjectForKey:UAPushTagsMigratedToChannelTagsKey];
+
+    [[self.mockChannel expect] setTags:@[@"cool", @"rad"]];
+
+    [self.push migratePushTagsToChannelTags];
+
+    [self.mockChannel verify];
+
+    XCTAssertTrue([self.dataStore boolForKey:UAPushTagsMigratedToChannelTagsKey]);
+    XCTAssertNil([self.dataStore objectForKey:UAPushLegacyTagsSettingsKey]);
+}
+
+- (void)testMigratePushTagsToChannelTagsCombined {
+    [self.dataStore setObject:@[@"cool", @"rad"] forKey:UAPushLegacyTagsSettingsKey];
+
+    NSArray *channelTags = @[@"not cool", @"not rad"];
+
+    [[[self.mockChannel stub] andReturn:channelTags] tags];
+
+    // Force a migration
+    [self.dataStore removeObjectForKey:UAPushTagsMigratedToChannelTagsKey];
+
+    [[self.mockChannel expect] setTags:[OCMArg checkWithBlock:^BOOL(id obj) {
+        return [[NSSet setWithArray:@[@"cool", @"rad", @"not cool", @"not rad"]] isEqualToSet:[NSSet setWithArray:obj]];
+    }]];
+
+    [self.push migratePushTagsToChannelTags];
+
+    [self.mockChannel verify];
+
+    XCTAssertTrue([self.dataStore boolForKey:UAPushTagsMigratedToChannelTagsKey]);
+    XCTAssertNil([self.dataStore objectForKey:UAPushLegacyTagsSettingsKey]);
+}
+
+- (void)testMigratePushTagsToChannelTagsAlreadyMigrated {
+    [self.dataStore setBool:YES forKey:UAPushTagsMigratedToChannelTagsKey];
+
+    [[self.mockChannel reject] setTags:[OCMArg any]];
+
+    [self.push migratePushTagsToChannelTags];
+
+    [self.mockChannel verify];
+}
+
 /**
  * Test migrating the userNotificationEnabled key no ops when it's already set.
  */

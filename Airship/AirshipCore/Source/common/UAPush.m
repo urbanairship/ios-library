@@ -22,7 +22,7 @@ NSString *const UABackgroundPushNotificationsEnabledKey = @"UABackgroundPushNoti
 NSString *const UAPushTokenRegistrationEnabledKey = @"UAPushTokenRegistrationEnabled";
 
 NSString *const UAPushAliasSettingsKey = @"UAPushAlias";
-NSString *const UAPushTagsSettingsKey = @"UAPushTags";
+NSString *const UAPushLegacyTagsSettingsKey = @"UAPushTags";
 NSString *const UAPushBadgeSettingsKey = @"UAPushBadge";
 NSString *const UAPushDeviceTokenKey = @"UADeviceToken";
 
@@ -31,6 +31,7 @@ NSString *const UAPushQuietTimeEnabledSettingsKey = @"UAPushQuietTimeEnabled";
 NSString *const UAPushTimeZoneSettingsKey = @"UAPushTimeZone";
 
 NSString *const UAPushEnabledSettingsMigratedKey = @"UAPushEnabledSettingsMigrated";
+NSString *const UAPushTagsMigratedToChannelTagsKey = @"UAPushTagsMigrated";
 
 NSString *const UAPushTypesAuthorizedKey = @"UAPushTypesAuthorized";
 NSString *const UAPushAuthorizationStatusKey = @"UAPushAuthorizationStatus";
@@ -110,6 +111,9 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
         // Do not remove migratePushSettings call from init. It needs to be run
         // prior to allowing the application to set defaults.
         [self migratePushSettings];
+
+        // Migrate push tags to channel tags
+        [self migratePushTagsToChannelTags];
 
         // Register for remote notifications right away. This does not prompt for permissions to show notifications,
         // but starts the device token registration.
@@ -906,7 +910,7 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
 
 - (void)migratePushSettings {
     [self.dataStore migrateUnprefixedKeys:@[UAUserPushNotificationsEnabledKey, UABackgroundPushNotificationsEnabledKey,
-                                            UAPushAliasSettingsKey, UAPushTagsSettingsKey, UAPushBadgeSettingsKey,
+                                            UAPushAliasSettingsKey, UAPushLegacyTagsSettingsKey, UAPushBadgeSettingsKey,
                                             UAPushDeviceTokenKey, UAPushQuietTimeSettingsKey, UAPushQuietTimeEnabledSettingsKey,
                                             UAPushEnabledSettingsMigratedKey, UAPushEnabledKey, UAPushTimeZoneSettingsKey]];
 
@@ -935,14 +939,30 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
     }
 
     [self.dataStore setBool:YES forKey:UAPushEnabledSettingsMigratedKey];
+}
+
+- (void)migratePushTagsToChannelTags {
+    if ([self.dataStore boolForKey:UAPushTagsMigratedToChannelTagsKey]) {
+        // Already migrated tags
+        return;
+    }
 
     // Normalize tags for older SDK versions, and migrate to UAChannel as necessary
-    NSArray *existingTags = [self.dataStore objectForKey:UAPushTagsSettingsKey];
+    NSArray *existingPushTags = [self.dataStore objectForKey:UAPushLegacyTagsSettingsKey];
 
-    if (existingTags) {
-        self.channel.tags = [UATagUtils normalizeTags:existingTags];
-        [self.dataStore removeObjectForKey:UAPushTagsSettingsKey];
+    if (existingPushTags) {
+        NSArray *existingChannelTags = self.channel.tags;
+        if (existingChannelTags) {
+            NSSet *combinedTagsSet = [NSMutableSet setWithArray:existingPushTags];
+            combinedTagsSet = [combinedTagsSet setByAddingObjectsFromArray:existingChannelTags];
+            self.channel.tags = combinedTagsSet.allObjects;
+        } else {
+            self.channel.tags = [UATagUtils normalizeTags:existingPushTags];
+        }
     }
+
+    [self.dataStore setBool:YES forKey:UAPushTagsMigratedToChannelTagsKey];
+    [self.dataStore removeObjectForKey:UAPushLegacyTagsSettingsKey];
 }
 
 - (void)onComponentEnableChange {
