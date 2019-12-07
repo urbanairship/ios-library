@@ -243,14 +243,21 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
  * Test update will skip update when named user already updated.
  */
 - (void)testUpdateSkipUpdateSameNamedUser {
-    self.namedUser.changeToken = @"AbcToken";
-    self.namedUser.lastUpdatedToken = @"AbcToken";
-
     // Named user client should not associate
+    [[self.mockedNamedUserClient expect] associate:OCMOCK_ANY channelID:OCMOCK_ANY onSuccess:[OCMArg checkWithBlock:^BOOL(id obj) {
+        void(^completionBlock)(void) = obj;
+        completionBlock();
+        return YES;
+    }] onFailure:OCMOCK_ANY];
+
+    [self.namedUser update];
+
+    // Named user client should not disassociate
     [[self.mockedNamedUserClient reject] associate:OCMOCK_ANY
                                          channelID:OCMOCK_ANY
                                          onSuccess:OCMOCK_ANY
                                          onFailure:OCMOCK_ANY];
+
 
     // Named user client should not disassociate
     [[self.mockedNamedUserClient reject] disassociate:OCMOCK_ANY
@@ -288,6 +295,7 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
     XCTAssertNoThrow([self.mockedNamedUserClient verify],
                      @"Named user client should not associate or disassociate.");
 }
+
 
 /**
  * Test disassociateNamedUserIfNil when named user is nil.
@@ -347,6 +355,33 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
                           @"Tokens should match.");
     XCTAssertNoThrow([self.mockedNamedUserClient verify], @"Named user should be associated");
 }
+
+/**
+ * Test update will reassociate named user if the channel ID changes.
+ */
+- (void)testUpdateChannelIDChanged {
+    // Expect the named user client to associate and call the success block
+    [[[self.mockedNamedUserClient expect] andDo:namedUserSuccessDoBlock] associate:@"fakeNamedUser"
+                                                                         channelID:@"someChannel"
+                                                                         onSuccess:OCMOCK_ANY
+                                                                         onFailure:OCMOCK_ANY];
+
+    [self.namedUser forceUpdate];
+
+    // Change the channelID
+    self.pushChannelID = @"neat";
+
+    // Expect the named user client to associate and call the success block
+    [[[self.mockedNamedUserClient expect] andDo:namedUserSuccessDoBlock] associate:@"fakeNamedUser"
+                                                                         channelID:@"neat"
+                                                                         onSuccess:OCMOCK_ANY
+                                                                         onFailure:OCMOCK_ANY];
+
+    [self.namedUser update];
+
+    XCTAssertNoThrow([self.mockedNamedUserClient verify], @"Named user should be associated");
+}
+
 
 /**
  * Test that the tag groups registrar is called when UANamedUser is asked to update tags
