@@ -16,6 +16,18 @@ Changes
 - Fixed migrated UAPush tags
 - Fixed associating previously associated named user when a new channel is created.
 
+Version 12.1.2 - December 6, 2019
+=================================
+Patch release to fix a bug affecting tag migration for tags set through UAPush.
+This only affects devices that migrate to SDK 12.0.x-12.1.1. This patch release
+fixes the bug by combining previous tags with tags that have been set since the
+update to 12.x. Applications using 12.0.x-12.1.1 should update.
+
+Changes
+-------
+- Fixed migrated UAPush tags
+- Fixed associating previously associated named user when a new channel is created.
+
 Version 13.0.0 - December 5, 2019
 =================================
 Airship SDK 13 is a major update that splits the SDK into modules.
