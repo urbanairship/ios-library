@@ -12,6 +12,7 @@
 NSString *const UANamedUserIDKey = @"UANamedUserID";
 NSString *const UANamedUserChangeTokenKey = @"UANamedUserChangeToken";
 NSString *const UANamedUserLastUpdatedTokenKey = @"UANamedUserLastUpdatedToken";
+NSString *const UANamedUserLastChannelIDKey = @"UANamedUserLastChannelID";
 
 @interface UANamedUser()
 
@@ -19,6 +20,8 @@ NSString *const UANamedUserLastUpdatedTokenKey = @"UANamedUserLastUpdatedToken";
  * The UATagGroupsRegistrar that manages tag group registration with Airship.
  */
 @property (nonatomic, strong) UATagGroupsRegistrar *tagGroupsRegistrar;
+@property (nonatomic, copy) NSString *lastChannelID;
+
 
 @end
 
@@ -60,7 +63,7 @@ NSString *const UANamedUserLastUpdatedTokenKey = @"UANamedUserLastUpdatedToken";
         return;
     }
 
-    if ([self.changeToken isEqualToString:self.lastUpdatedToken]) {
+    if ([self.lastChannelID isEqualToString:self.channel.identifier] && [self.changeToken isEqualToString:self.lastUpdatedToken]) {
         // Skip since no change has occurred (token remains the same).
         UA_LDEBUG(@"Named user already updated. Skipping.");
         return;
@@ -128,28 +131,36 @@ NSString *const UANamedUserLastUpdatedTokenKey = @"UANamedUserLastUpdatedToken";
     return [self.dataStore objectForKey:UANamedUserLastUpdatedTokenKey];
 }
 
+- (void)setLastChannelID:(NSString *)lastChannelID {
+    [self.dataStore setValue:lastChannelID forKey:UANamedUserLastChannelIDKey];
+}
+
+- (NSString *)lastChannelID {
+    return [self.dataStore objectForKey:UANamedUserLastChannelIDKey];
+}
+
 - (void)associateNamedUser {
     NSString *token = self.changeToken;
-    [self.namedUserAPIClient associate:self.identifier channelID:self.channel.identifier
-                             onSuccess:^{
-                                 self.lastUpdatedToken = token;
-                                 UA_LDEBUG(@"Named user associated to channel successfully.");
-                             }
-                             onFailure:^(NSUInteger status) {
-                                 UA_LDEBUG(@"Failed to associate channel to named user.");
-                             }];
+    NSString *channelID = self.channel.identifier;
+    [self.namedUserAPIClient associate:self.identifier channelID:channelID onSuccess:^{
+        self.lastUpdatedToken = token;
+        self.lastChannelID = channelID;
+        UA_LDEBUG(@"Named user associated to channel successfully.");
+    } onFailure:^(NSUInteger status) {
+        UA_LDEBUG(@"Failed to associate channel to named user.");
+    }];
 }
 
 - (void)disassociateNamedUser {
     NSString *token = self.changeToken;
-    [self.namedUserAPIClient disassociate:self.channel.identifier
-                                onSuccess:^{
-                                    self.lastUpdatedToken = token;
-                                    UA_LDEBUG(@"Named user disassociated from channel successfully.");
-                                }
-                                onFailure:^(NSUInteger status) {
-                                    UA_LDEBUG(@"Failed to disassociate channel from named user.");
-                                }];
+    NSString *channelID = self.channel.identifier;
+    [self.namedUserAPIClient disassociate:channelID onSuccess:^{
+        self.lastUpdatedToken = token;
+        self.lastChannelID = channelID;
+        UA_LDEBUG(@"Named user disassociated from channel successfully.");
+    } onFailure:^(NSUInteger status) {
+        UA_LDEBUG(@"Failed to disassociate channel from named user.");
+    }];
 }
 
 - (void)disassociateNamedUserIfNil {
