@@ -73,6 +73,13 @@ then
   -scheme AirshipCoreTests \
   test
 
+  # Run AirshipAccengage Tests
+  xcrun xcodebuild \
+  -destination "${TEST_DESTINATION}" \
+  -workspace "${ROOT_PATH}/Airship.xcworkspace" \
+  -scheme AirshipAccengageTests \
+  test
+ 
   #   # Run AirshipLocationKitTest Tests
   # xcrun xcodebuild \
   # -destination "${TEST_DESTINATION}" \
