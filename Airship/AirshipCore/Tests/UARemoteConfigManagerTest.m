@@ -67,6 +67,16 @@
 }
 
 /**
+ * Test current modules list matches hardcoded expectation.
+ */
+- (void)testCurrentModules {
+    NSArray *expectedModules = @[kUARemoteConfigModulePush, kUARemoteConfigModuleChannel, kUARemoteConfigModuleAnalytics, kUARemoteConfigModuleMessageCenter, kUARemoteConfigModuleInAppMessaging, kUARemoteConfigModuleAutomation, kUARemoteConfigModuleNamedUser, kUARemoteConfigModuleLocation];
+
+    NSArray *currentModules = kUARemoteConfigModuleAllModules;
+    XCTAssertEqualObjects(currentModules, expectedModules);
+}
+
+/**
  * Test disabling components is overriden by the platform.
  */
 - (void)testPlatformDisableOverridesCommon {
