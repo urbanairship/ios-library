@@ -174,8 +174,17 @@
     BOOL foreground = [UIApplication sharedApplication].applicationState == UIApplicationStateActive;
 
     // Pushable components
-    for (UAComponent *component in [UAirship shared].components) {
-         if (![component conformsToProtocol:@protocol(UAPushableComponent)]) {
+    for (id component in [UAirship shared].components) {
+         
+        if ([component isKindOfClass:[UAChannel class]]) {
+            UAChannel *channel = (UAChannel *)component;
+            if (!channel.identifier) {
+                //Update registration if the channel identifier is not exist
+                [channel updateRegistrationForcefully:NO];
+            }
+        }
+        
+        if (![component conformsToProtocol:@protocol(UAPushableComponent)]) {
              continue;
          }
 
