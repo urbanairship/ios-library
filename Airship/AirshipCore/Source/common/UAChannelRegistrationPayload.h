@@ -25,6 +25,11 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy, nullable) NSString *deviceID;
 
 /**
+ * The Accengage device ID.
+ */
+@property (nonatomic, copy, nullable) NSString *accengageDeviceID;
+
+/**
  * This flag indicates that the user is able to receive push notifications.
  */
 @property (nonatomic, assign, getter=isOptedIn) BOOL optedIn;

@@ -14,24 +14,18 @@
 
 @end
 
+@interface UAAccengage()
+
+- (void)extendChannelRegistrationPayload:(UAChannelRegistrationPayload *)payload completionHandler:(UAChannelRegistrationExtenderCompletionHandler)completionHandler;
+- (instancetype)init;
+
+@end
+
 @implementation AirshipAccengageTests
-
-- (UAAccengage *)setUpAccengage {
-    UAPreferenceDataStore *dataStore = [[UAPreferenceDataStore alloc] init];
-    UARuntimeConfig *config = [[UARuntimeConfig alloc] init];
-    UATagGroupsMutationHistory *history = [[UATagGroupsMutationHistory alloc] init];
-    UATagGroupsRegistrar *tagGroupsRegistar = [UATagGroupsRegistrar tagGroupsRegistrarWithConfig:config dataStore:dataStore mutationHistory:history];
-    UAChannel *channel = [UAChannel channelWithDataStore:dataStore config:config tagGroupsRegistrar:tagGroupsRegistar];
-    UAAnalytics *analytics = [UAAnalytics analyticsWithConfig:config dataStore:dataStore channel:channel];
-    id push = OCMClassMock([UAPush class]);
-
-    UAAccengage<UAPushableComponent> *accengage = [UAAccengage accengageWithDataStore:dataStore channel:channel push:push analytics:analytics];
-    return accengage;
-}
 
 - (void)testReceivedNotificationResponse {
     
-    UAAccengage<UAPushableComponent> *accengage = [self setUpAccengage];
+    UAAccengage *accengage = [[UAAccengage alloc] init];
     
     UAActionRunner *runner = [[UAActionRunner alloc] init];
     id runnerMock = [OCMockObject partialMockForObject:runner];
@@ -93,6 +87,42 @@
     [[runnerMock expect] runActionWithName:@"open_external_url_action" value:@"someurl.com"     situation:UASituationLaunchedFromPush];
     [accengage receivedNotificationResponse:response completionHandler:^{}];
     [runnerMock verify];
+}
+
+- (void)testInitWithDataStore {
+    
+    UAPreferenceDataStore *dataStore = [[UAPreferenceDataStore alloc] init];
+    UARuntimeConfig *config = [[UARuntimeConfig alloc] init];
+    UATagGroupsMutationHistory *history = [[UATagGroupsMutationHistory alloc] init];
+    UATagGroupsRegistrar *tagGroupsRegistar = [UATagGroupsRegistrar tagGroupsRegistrarWithConfig:config dataStore:dataStore mutationHistory:history];
+    UAChannel *channel = [UAChannel channelWithDataStore:dataStore config:config tagGroupsRegistrar:tagGroupsRegistar];
+    id channelMock = OCMPartialMock(channel);
+    UAAnalytics *analytics = [UAAnalytics analyticsWithConfig:config dataStore:dataStore channel:channelMock];
+    id push = OCMClassMock([UAPush class]);
+    
+    [[channelMock expect] addChannelExtenderBlock:OCMOCK_ANY];
+    
+    UAAccengage *accengage = [UAAccengage accengageWithDataStore:dataStore channel:channelMock push:push analytics:analytics];
+    
+    [channelMock verify];
+  
+}
+
+- (void)testExtendChannel {
+    UAAccengage *accengage = [[UAAccengage alloc] init];
+    
+    UAChannelRegistrationPayload *payload = [[UAChannelRegistrationPayload alloc] init];
+    id payloadMock = OCMPartialMock(payload);
+
+    NSString *accengageDeviceID = UIDevice.currentDevice.identifierForVendor.UUIDString;
+    
+    [[payloadMock expect] setAccengageDeviceID:accengageDeviceID];
+    
+    UAChannelRegistrationExtenderCompletionHandler handler = ^(UAChannelRegistrationPayload *payload) {};
+       
+    [accengage extendChannelRegistrationPayload:payloadMock completionHandler:handler];
+    
+    [payloadMock verify];
 }
 
 @end
