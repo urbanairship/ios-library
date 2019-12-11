@@ -9,8 +9,12 @@
 #import "UAAnalytics+Internal.h"
 #import "UAActionRunner.h"
 #import "UAAccengagePayload.h"
+#import "UAAccengageUtils.h"
+#import "UARuntimeConfig+Internal.h"
 
 @interface AirshipAccengageTests : XCTestCase
+
+@property (nonatomic, strong) UAAnalytics *analytics;
 
 @end
 
@@ -18,13 +22,26 @@
 
 - (void)extendChannelRegistrationPayload:(UAChannelRegistrationPayload *)payload completionHandler:(UAChannelRegistrationExtenderCompletionHandler)completionHandler;
 - (instancetype)init;
+- (void)migrateSettingsToAnalytics:(UAAnalytics *)analytics;
 
 @end
 
 @implementation AirshipAccengageTests
 
+- (UAAccengage *)setUpAccengage {
+    UAPreferenceDataStore *dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:@"test"];
+    UARuntimeConfig *config = [[UARuntimeConfig alloc] initWithConfig:[UAConfig defaultConfig]];
+    UATagGroupsMutationHistory *history = [[UATagGroupsMutationHistory alloc] init];
+    UATagGroupsRegistrar *tagGroupsRegistar = [UATagGroupsRegistrar tagGroupsRegistrarWithConfig:config dataStore:dataStore mutationHistory:history];
+    UAChannel *channel = [UAChannel channelWithDataStore:dataStore config:config tagGroupsRegistrar:tagGroupsRegistar];
+    self.analytics = [UAAnalytics analyticsWithConfig:config dataStore:dataStore channel:channel];
+    id push = OCMClassMock([UAPush class]);
+
+    UAAccengage<UAPushableComponent> *accengage = [UAAccengage accengageWithDataStore:dataStore channel:channel push:push analytics:self.analytics];
+    return accengage;
+}
+
 - (void)testReceivedNotificationResponse {
-    
     UAAccengage *accengage = [[UAAccengage alloc] init];
     
     UAActionRunner *runner = [[UAActionRunner alloc] init];
@@ -90,7 +107,6 @@
 }
 
 - (void)testInitWithDataStore {
-    
     UAPreferenceDataStore *dataStore = [[UAPreferenceDataStore alloc] init];
     UARuntimeConfig *config = [[UARuntimeConfig alloc] init];
     UATagGroupsMutationHistory *history = [[UATagGroupsMutationHistory alloc] init];
@@ -123,6 +139,37 @@
     [accengage extendChannelRegistrationPayload:payloadMock completionHandler:handler];
     
     [payloadMock verify];
+}
+
+- (void)testMigrateSettings {
+    id mockArchiver = OCMClassMock([NSKeyedUnarchiver class]);
+    id mockUtils = OCMClassMock([UAAccengageUtils class]);
+    
+    NSDictionary *testDictionary = @{@"DoNotTrack":@NO};
+    
+    NSString *testString = @"test";
+    NSData *data = [testString dataUsingEncoding:NSUTF8StringEncoding];
+    
+    [[[mockArchiver stub] andReturn:data] unarchiveObjectWithFile:OCMOCK_ANY];
+    [[[mockArchiver stub] andReturn:testDictionary] unarchiveObjectWithData:OCMOCK_ANY];
+    [[[mockUtils stub] andReturn:data] decryptData:OCMOCK_ANY key:OCMOCK_ANY];
+    
+    UAAccengage *accengage = [self setUpAccengage];
+     
+    XCTAssertTrue(self.analytics.isEnabled);
+    
+    [mockArchiver stopMocking];
+    [mockUtils stopMocking];
+    
+    mockArchiver = OCMClassMock([NSKeyedUnarchiver class]);
+    mockUtils = OCMClassMock([UAAccengageUtils class]);
+    
+    testDictionary = @{@"DoNotTrack":@YES};
+    [[[mockArchiver stub] andReturn:data] unarchiveObjectWithFile:OCMOCK_ANY];
+    [[[mockArchiver stub] andReturn:testDictionary] unarchiveObjectWithData:OCMOCK_ANY];
+    [[[mockUtils stub] andReturn:data] decryptData:OCMOCK_ANY key:OCMOCK_ANY];[accengage migrateSettingsToAnalytics:self.analytics];
+        
+    XCTAssertFalse(self.analytics.isEnabled);
 }
 
 @end

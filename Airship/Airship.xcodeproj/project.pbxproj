@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1BA67C3C23A0FFA800A07324 /* UAAccengageUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BA67C3A23A0FFA800A07324 /* UAAccengageUtils.h */; };
+		1BA67C3D23A0FFA800A07324 /* UAAccengageUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BA67C3B23A0FFA800A07324 /* UAAccengageUtils.m */; };
 		1BB4C014239FB4CD0000559B /* UAExtendedActionsResources.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BB4C012239FB4CD0000559B /* UAExtendedActionsResources.m */; };
 		1BB4C015239FB4CD0000559B /* UAExtendedActionsResources.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BB4C013239FB4CD0000559B /* UAExtendedActionsResources.h */; };
 		1BB4C018239FB4EC0000559B /* UAAccengagePayload.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BB4C016239FB4EB0000559B /* UAAccengagePayload.h */; };
@@ -2267,7 +2269,11 @@
 		0F55D47F540C142B0F469570 /* Pods-AirshipCoreTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AirshipCoreTests.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-AirshipCoreTests/Pods-AirshipCoreTests.debug.xcconfig"; sourceTree = "<group>"; };
 		1B268AF1238EC66D005D7F99 /* UAAccengagePayload.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAAccengagePayload.h; sourceTree = "<group>"; };
 		1B268AF2238EC66D005D7F99 /* UAAccengagePayload.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAAccengagePayload.m; sourceTree = "<group>"; };
+		1B268AF523915CB1005D7F99 /* UAAccengageUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UAAccengageUtils.h; sourceTree = "<group>"; };
+		1B268AF623915CB1005D7F99 /* UAAccengageUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAAccengageUtils.m; sourceTree = "<group>"; };
 		1B7EB9442397FDAF006ADA46 /* AirshipAccengageTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AirshipAccengageTests.m; sourceTree = "<group>"; };
+		1BA67C3A23A0FFA800A07324 /* UAAccengageUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAAccengageUtils.h; sourceTree = "<group>"; };
+		1BA67C3B23A0FFA800A07324 /* UAAccengageUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAAccengageUtils.m; sourceTree = "<group>"; };
 		1BB4C00D239FB4700000559B /* Airship.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Airship.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1BB4C00E239FB4700000559B /* AirshipAccengage.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AirshipAccengage.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1BB4C012239FB4CD0000559B /* UAExtendedActionsResources.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAExtendedActionsResources.m; sourceTree = "<group>"; };
@@ -3371,6 +3377,8 @@
 				1B268AF2238EC66D005D7F99 /* UAAccengagePayload.m */,
 				1B268AF1238EC66D005D7F99 /* UAAccengagePayload.h */,
 				1B7EB9442397FDAF006ADA46 /* AirshipAccengageTests.m */,
+				1B268AF623915CB1005D7F99 /* UAAccengageUtils.m */,
+				1B268AF523915CB1005D7F99 /* UAAccengageUtils.h */,
 			);
 			name = "Recovered References";
 			sourceTree = "<group>";
@@ -3849,6 +3857,8 @@
 				6E6CC303239A2E8F003D583C /* UAAccengage+Internal.h */,
 				6E6CC304239A2E8F003D583C /* UAAccengageModuleLoader.h */,
 				6E6CC305239A2E8F003D583C /* AirshipAccengage.h */,
+				1BA67C3A23A0FFA800A07324 /* UAAccengageUtils.h */,
+				1BA67C3B23A0FFA800A07324 /* UAAccengageUtils.m */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -5726,6 +5736,7 @@
 				6E6CC330239A2F19003D583C /* AirshipAccengage.h in Headers */,
 				1BB4C018239FB4EC0000559B /* UAAccengagePayload.h in Headers */,
 				6E6CC32E239A2F18003D583C /* UAAccengage+Internal.h in Headers */,
+				1BA67C3C23A0FFA800A07324 /* UAAccengageUtils.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7517,6 +7528,7 @@
 			files = (
 				6E6CC331239A2F26003D583C /* UAAccengageModuleLoader.m in Sources */,
 				1BB4C019239FB4EC0000559B /* UAAccengagePayload.m in Sources */,
+				1BA67C3D23A0FFA800A07324 /* UAAccengageUtils.m in Sources */,
 				6E6CC332239A2F26003D583C /* UAAccengage.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

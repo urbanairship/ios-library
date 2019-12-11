@@ -6,6 +6,7 @@
 #import "UAChannelRegistrationPayload+Internal.h"
 #import "UAExtendableChannelRegistration.h"
 #import "UAJSONSerialization.h"
+#import "UAAccengageUtils.h"
 
 @implementation UAAccengage
 
@@ -20,6 +21,7 @@
             UA_STRONGIFY(self);
             [self extendChannelRegistrationPayload:payload completionHandler:completionHandler];
         }];
+        [self migrateSettingsToAnalytics:analytics];
     }
     return self;
 }
@@ -75,6 +77,35 @@
     }
     
     completionHandler();
+}
+    
+- (void)migrateSettingsToAnalytics:(UAAnalytics *)analytics {
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectory = [paths firstObject];
+    
+    if (!documentsDirectory) {
+        return;
+    }
+         
+    NSString *finalPath = [documentsDirectory stringByAppendingPathComponent:@"BMA4SUserDefault"];
+     
+    NSData *encodedData = [NSKeyedUnarchiver unarchiveObjectWithFile:finalPath];
+
+    if (encodedData) {
+        // use Accengage decryption key
+        NSData *concreteData = [UAAccengageUtils decryptData:encodedData key:@"osanuthasoeuh"];
+        if (concreteData) {
+            id data = [NSKeyedUnarchiver unarchiveObjectWithData:concreteData];
+            if ([data isKindOfClass:[NSDictionary class]]) {
+                NSDictionary *dataDictionary = data;
+                id accAnalytics = dataDictionary[@"DoNotTrack"];
+                if ([accAnalytics isKindOfClass:[NSNumber class]]) {
+                    NSNumber *analyticsDisabled = accAnalytics;
+                    analytics.enabled = ![analyticsDisabled boolValue];
+                }
+            }
+        }
+    }
 }
 
 #pragma mark -
