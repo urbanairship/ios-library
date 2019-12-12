@@ -416,9 +416,12 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
     UAChannelRegistrationExtenderBlock block = remainingExtenderBlocks.firstObject;
     [remainingExtenderBlocks removeObjectAtIndex:0];
 
-    block(payload, ^(UAChannelRegistrationPayload *payload) {
-        [self extendPayload:payload extenders:remainingExtenderBlocks completionHandler:completionHandler];
-    });
+    [[UADispatcher mainDispatcher] dispatchAsyncIfNecessary:^{
+        block(payload, ^(UAChannelRegistrationPayload *payload) {
+                [self extendPayload:payload extenders:remainingExtenderBlocks completionHandler:completionHandler];
+        });
+    }];
+
 }
 
 @end

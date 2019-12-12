@@ -131,29 +131,31 @@ UARuntimeConfig *config;
     }
 
     UA_WEAKIFY(self)
-    [self.delegate createChannelPayload:^(UAChannelRegistrationPayload *payload) {
-        if (self.isRegistrationInProgress) {
-            UA_LDEBUG(@"Ignoring registration request, one already in progress.");
-            return;
-        }
+    [self.dispatcher dispatchAsyncIfNecessary:^{
+        [self.delegate createChannelPayload:^(UAChannelRegistrationPayload *payload) {
+            if (self.isRegistrationInProgress) {
+                UA_LDEBUG(@"Ignoring registration request, one already in progress.");
+                return;
+            }
 
-        UA_STRONGIFY(self)
-        if (!forcefully && ![self shouldUpdateRegistration:payload]) {
-            UA_LDEBUG(@"Ignoring registration request, registration is up to date.");
-            return;
-        } else if (![self beginRegistrationBackgroundTask]) {
-            UA_LDEBUG(@"Unable to perform registration, background task not granted.");
-            return;
-        }
+            UA_STRONGIFY(self)
+            if (!forcefully && ![self shouldUpdateRegistration:payload]) {
+                UA_LDEBUG(@"Ignoring registration request, registration is up to date.");
+                return;
+            } else if (![self beginRegistrationBackgroundTask]) {
+                UA_LDEBUG(@"Unable to perform registration, background task not granted.");
+                return;
+            }
 
-        // Proceed with registration
-        self.isRegistrationInProgress = YES;
-        if (!self.channelID) {
-            [self createChannelWithPayload:payload];
-        } else {
-            [self updateChannelWithPayload:payload];
-        }
-    } dispatcher:self.dispatcher];
+            // Proceed with registration
+            self.isRegistrationInProgress = YES;
+            if (!self.channelID) {
+                [self createChannelWithPayload:payload];
+            } else {
+                [self updateChannelWithPayload:payload];
+            }
+        } dispatcher:self.dispatcher];
+    }];
 }
 
 - (void)cancelAllRequests {
