@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
 #import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 #import "UAApplicationState.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -67,6 +68,14 @@ NS_ASSUME_NONNULL_BEGIN
  * @return The tracker.
  */
 + (id<UAAppStateTrackerAdapter>)adapter;
+
+/**
+ * Creates an app state tracker. Used for testing.
+ *
+ * @return The tracker.
+ */
++ (id<UAAppStateTrackerAdapter>)adapterWithApplication:(UIApplication *)application
+                                    notificationCenter:(NSNotificationCenter *)notificationCenter;
 
 @end
 
