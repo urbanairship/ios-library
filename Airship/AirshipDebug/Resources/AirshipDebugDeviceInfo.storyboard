@@ -3,7 +3,7 @@
     <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15509"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15510"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -104,7 +104,6 @@
                         <segue destination="y2y-iH-58S" kind="show" identifier="namedUserSegue" id="iyU-JT-CBw"/>
                         <segue destination="Jz3-3n-poh" kind="show" identifier="tagsSegue" id="tvw-dQ-img"/>
                         <segue destination="ddW-EA-kMe" kind="show" identifier="associatedIdentifiersSegue" id="u0Y-Lw-wlQ"/>
-                        <segue destination="0uZ-eE-JSV" kind="show" identifier="lastPayloadSegue" id="sZ4-54-C1b"/>
                         <segue destination="VO4-W6-Hya" kind="show" identifier="channelAttributesSegue" id="n5V-Pk-cIW"/>
                     </connections>
                 </viewController>
@@ -362,59 +361,6 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="j7C-zV-QgA" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="2896" y="-275"/>
-        </scene>
-        <!--Last Payload Table View Controller-->
-        <scene sceneID="wrb-3Y-vVc">
-            <objects>
-                <tableViewController id="0uZ-eE-JSV" customClass="LastPayloadTableViewController" customModule="Airship" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="none" rowHeight="44" sectionHeaderHeight="18" sectionFooterHeight="18" id="p0j-ps-jgc">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="580"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" red="0.93725490199999995" green="0.93725490199999995" blue="0.95686274510000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                        <sections>
-                            <tableViewSection headerTitle="" id="kmK-2D-4Js">
-                                <cells>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" rowHeight="400" id="2eP-H7-B3X">
-                                        <rect key="frame" x="0.0" y="39.5" width="600" height="400"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="2eP-H7-B3X" id="zVh-KA-QIP">
-                                            <rect key="frame" x="0.0" y="0.0" width="600" height="400"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="NzD-ce-6at">
-                                                    <rect key="frame" x="20" y="7" width="560" height="393"/>
-                                                    <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                    <color key="textColor" red="0.039215686270000001" green="0.3411764706" blue="0.49019607840000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="12"/>
-                                                    <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
-                                                </textView>
-                                            </subviews>
-                                            <constraints>
-                                                <constraint firstItem="NzD-ce-6at" firstAttribute="leading" secondItem="zVh-KA-QIP" secondAttribute="leadingMargin" id="Nkd-m3-Zea"/>
-                                                <constraint firstItem="NzD-ce-6at" firstAttribute="top" secondItem="zVh-KA-QIP" secondAttribute="topMargin" constant="-4" id="PnJ-6b-vSS"/>
-                                                <constraint firstItem="NzD-ce-6at" firstAttribute="trailing" secondItem="zVh-KA-QIP" secondAttribute="trailingMargin" id="ThV-t9-uBF"/>
-                                                <constraint firstAttribute="bottom" secondItem="NzD-ce-6at" secondAttribute="bottom" id="w4B-kV-lLf"/>
-                                            </constraints>
-                                        </tableViewCellContentView>
-                                    </tableViewCell>
-                                </cells>
-                            </tableViewSection>
-                        </sections>
-                        <connections>
-                            <outlet property="dataSource" destination="0uZ-eE-JSV" id="ing-IM-gos"/>
-                            <outlet property="delegate" destination="0uZ-eE-JSV" id="e7a-y5-IPH"/>
-                        </connections>
-                    </tableView>
-                    <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
-                    <size key="freeformSize" width="600" height="600"/>
-                    <connections>
-                        <outlet property="lastPushPayloadTextView" destination="NzD-ce-6at" id="yir-hl-xl7"/>
-                        <outlet property="pushPayloadCell" destination="2eP-H7-B3X" id="IYH-uf-uSJ"/>
-                    </connections>
-                </tableViewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="xBz-fq-9SA" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="586" y="-275"/>
         </scene>
         <!--Add Channel Attribute Table View Controller-->
         <scene sceneID="qom-qV-tnT">

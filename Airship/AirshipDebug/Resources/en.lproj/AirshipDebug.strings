@@ -15,6 +15,10 @@
 "ua_automation_title" = "In-App Automation";
 "ua_automation_subtitle" = "View info related to In-App Automation.";
 
+"ua_received_pushes_title" = "Received Pushes";
+"ua_received_pushes_subtitle" = "List of received pushes messages.";
+"ua_received_pushes_details_title" = "Push details";
+
 "ua_device_info_push_settings" = "Push Settings";
 "ua_device_info_enable_push" = "Enable Push";
 "ua_device_info_in_app_automation_settings" = "In-App Automation Settings";
@@ -183,6 +187,8 @@
 "ua_automation_audience_detailview_title" = "Audience Details";
 "ua_automation_buttons_tableview_title" = "Buttons";
 "ua_automation_button_detailview_title" = "Button Details";
+
+"ua_received_pushes_tableview_title" = "Received Pushes";
 
 "ua_scheduleinfo_identifier" = "Identifier";
 "ua_scheduleinfo_start" = "Start";
