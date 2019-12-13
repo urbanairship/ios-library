@@ -429,6 +429,7 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
     if (!self.identifier) {
         // Update registration if the channel identifier does not exist
         [self updateRegistrationForcefully:NO];
+        completionHandler(UIBackgroundFetchResultNoData);
     }
 }
 
