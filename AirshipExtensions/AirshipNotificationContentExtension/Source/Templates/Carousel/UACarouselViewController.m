@@ -28,6 +28,8 @@ static const double UACarouselMaximumAllowedSpacing = 50.0;
 static const double UACarouselMaximumAllowedCornerRadius = 50.0;
 static NSString * const UACarouselContentModeFill = @"fill";
 
+static NSString * const UAAccengageNotificationIDKey = @"a4sid";
+static NSString * const UAAccengageCarouselNotificationTimerKey = @"acc-timer";
 static NSString * const UACarouselNotificationTimerKey = @"ua-timer";
 static NSString * const UACarouselNotificationRatioKey = @"ua-ratio";
 static NSString * const UACarouselNotificationContentBackgroundColorKey = @"ua-contentBgColor";
@@ -131,7 +133,7 @@ static NSString * const UACarouselNotificationContentModeKey = @"ua-contentMode"
     });
 }
 
-- (void)initCustomParamsFromUserInfo:(NSDictionary*)userInfo{
+- (void)initCustomParamsFromUserInfo:(NSDictionary*)userInfo {
     id ratio = userInfo[UACarouselNotificationRatioKey];
     self.carouselRatio = [self validateCarouselRatio:ratio] ? [ratio doubleValue] : UACarouselDefaultViewRatio;
     
@@ -150,7 +152,12 @@ static NSString * const UACarouselNotificationContentModeKey = @"ua-contentMode"
     id contentBackgroundColor = userInfo[UACarouselNotificationContentBackgroundColorKey];
     self.contentBackgroundColor = [self validateCarouselBackgroundColor:contentBackgroundColor] ? UIColorFromRGB([contentBackgroundColor intValue]) : UIColorFromRGB(UACarouselDefaultContentBackgroundColor);
     
-    id notificationTimer = userInfo[UACarouselNotificationTimerKey];
+    BOOL isAccengagePayload = NO;
+    if (userInfo[UAAccengageNotificationIDKey]) {
+        isAccengagePayload = YES;
+    }
+    
+    id notificationTimer = isAccengagePayload ? userInfo[UAAccengageCarouselNotificationTimerKey] : userInfo[UACarouselNotificationTimerKey];
     self.scrollInterval = [self validateCarouselNotificationTimer:notificationTimer] ? [notificationTimer doubleValue] : UACarouselDefaultScrollInterval;
     
     id spacing = userInfo[UACarouselNotificationSpacingKey];
