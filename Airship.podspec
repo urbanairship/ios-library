@@ -66,6 +66,7 @@ Pod::Spec.new do |s|
       accengage.ios.source_files          = "Airship/AirshipAccengage/Source/**/*.{h,m,swift}"
       accengage.ios.private_header_files  = "Airship/AirshipAccengage/Source/**/*+Internal*.h"
       accengage.ios.exclude_files         = "Airship/AirshipAccengage/Source/AirshipAccengage.h"
+      accengage.ios.resources             = "Airship/AirshipAccengage/Resources/**/*"
       accengage.dependency                  "Airship/Core"
    end
 end

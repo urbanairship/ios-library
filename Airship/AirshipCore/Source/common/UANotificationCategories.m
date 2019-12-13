@@ -102,9 +102,15 @@
     for (NSDictionary *actionDefinition in actionDefinitions) {
         NSString *title;
         if (actionDefinition[@"title_resource"]) {
+            NSString *defaultValue = actionDefinition[@"title"];
             title = [actionDefinition[@"title_resource"] localizedStringWithTable:@"UrbanAirship"
                                                                      moduleBundle:[UAirshipCoreResources bundle]
                                                                      defaultValue:actionDefinition[@"title"]];
+            if ([title isEqualToString:defaultValue]) {
+                title = [actionDefinition[@"title_resource"] localizedStringWithTable:@"AirshipAccengage"
+                moduleBundle:[UAirshipCoreResources bundle]
+                defaultValue:actionDefinition[@"title"]];
+            }
         } else if (actionDefinition[@"title"]) {
             title = actionDefinition[@"title"];
         }

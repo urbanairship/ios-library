@@ -420,6 +420,7 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
 - (NSSet<UANotificationCategory *> *)combinedCategories {
     NSMutableSet *categories = [NSMutableSet setWithSet:[UANotificationCategories defaultCategoriesWithRequireAuth:self.requireAuthorizationForDefaultCategories]];
     [categories unionSet:self.customCategories];
+    [categories unionSet:self.accengageCategories];
     return categories;
 }
 

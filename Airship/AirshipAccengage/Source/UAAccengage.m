@@ -7,6 +7,9 @@
 #import "UAExtendableChannelRegistration.h"
 #import "UAJSONSerialization.h"
 #import "UAAccengageUtils.h"
+#import "UAAccengageResources.h"
+#import "UANotificationCategories.h"
+#import "UAPush+Internal.h"
 
 @implementation UAAccengage
 
@@ -22,6 +25,8 @@
             [self extendChannelRegistrationPayload:payload completionHandler:completionHandler];
         }];
         [self migrateSettingsToAnalytics:analytics];
+        NSSet *accengageCategories = [UANotificationCategories createCategoriesFromFile:[[UAAccengageResources bundle] pathForResource:@"UAAccengageNotificationCategories" ofType:@"plist"]];
+        push.accengageCategories = accengageCategories;
     }
     return self;
 }

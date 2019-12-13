@@ -18,6 +18,10 @@
 		1BB4C02D239FE5E50000559B /* AirshipAccengageTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BB4C02C239FE5E50000559B /* AirshipAccengageTests.m */; };
 		1BB4C02F239FE5E50000559B /* AirshipAccengage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1BB4C00E239FB4700000559B /* AirshipAccengage.framework */; };
 		1BB4C03B239FE7A30000559B /* AirshipCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 494DD9571B0EB677009C134E /* AirshipCore.framework */; };
+		1BCDE30723A12C070006A319 /* UAAccengageNotificationCategories.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1BCDE30623A12C070006A319 /* UAAccengageNotificationCategories.plist */; };
+		1BCDE30A23A12C430006A319 /* UAAccengageResources.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BCDE30823A12C430006A319 /* UAAccengageResources.h */; };
+		1BCDE30B23A12C430006A319 /* UAAccengageResources.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BCDE30923A12C430006A319 /* UAAccengageResources.m */; };
+		1BCDE30E23A12CBA0006A319 /* AirshipAccengage.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1BCDE30C23A12CBA0006A319 /* AirshipAccengage.strings */; };
 		3C13BFB02384ABD00071E80C /* UAirshipCoreResources.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C13BFAA2384ABD00071E80C /* UAirshipCoreResources.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3C13BFB12384ABD00071E80C /* UAirshipCoreResources.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C13BFAA2384ABD00071E80C /* UAirshipCoreResources.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3C13BFB22384ABD00071E80C /* UAirshipCoreResources.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C13BFAB2384ABD00071E80C /* UAirshipCoreResources.m */; };
@@ -2267,11 +2271,6 @@
 /* Begin PBXFileReference section */
 		07A9F5B3D35A6078949E4EAA /* Pods-AirshipKitTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AirshipKitTests.release.xcconfig"; path = "../Pods/Target Support Files/Pods-AirshipKitTests/Pods-AirshipKitTests.release.xcconfig"; sourceTree = "<group>"; };
 		0F55D47F540C142B0F469570 /* Pods-AirshipCoreTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AirshipCoreTests.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-AirshipCoreTests/Pods-AirshipCoreTests.debug.xcconfig"; sourceTree = "<group>"; };
-		1B268AF1238EC66D005D7F99 /* UAAccengagePayload.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAAccengagePayload.h; sourceTree = "<group>"; };
-		1B268AF2238EC66D005D7F99 /* UAAccengagePayload.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAAccengagePayload.m; sourceTree = "<group>"; };
-		1B268AF523915CB1005D7F99 /* UAAccengageUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UAAccengageUtils.h; sourceTree = "<group>"; };
-		1B268AF623915CB1005D7F99 /* UAAccengageUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAAccengageUtils.m; sourceTree = "<group>"; };
-		1B7EB9442397FDAF006ADA46 /* AirshipAccengageTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AirshipAccengageTests.m; sourceTree = "<group>"; };
 		1BA67C3A23A0FFA800A07324 /* UAAccengageUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAAccengageUtils.h; sourceTree = "<group>"; };
 		1BA67C3B23A0FFA800A07324 /* UAAccengageUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAAccengageUtils.m; sourceTree = "<group>"; };
 		1BB4C00D239FB4700000559B /* Airship.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Airship.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2283,6 +2282,15 @@
 		1BB4C02A239FE5E50000559B /* AirshipAccengageTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AirshipAccengageTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		1BB4C02C239FE5E50000559B /* AirshipAccengageTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AirshipAccengageTests.m; sourceTree = "<group>"; };
 		1BB4C02E239FE5E50000559B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		1BCDE30623A12C070006A319 /* UAAccengageNotificationCategories.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; name = UAAccengageNotificationCategories.plist; path = AirshipAccengage/Resources/ios/UAAccengageNotificationCategories.plist; sourceTree = SOURCE_ROOT; };
+		1BCDE30823A12C430006A319 /* UAAccengageResources.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAAccengageResources.h; sourceTree = "<group>"; };
+		1BCDE30923A12C430006A319 /* UAAccengageResources.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAAccengageResources.m; sourceTree = "<group>"; };
+		1BCDE30D23A12CBA0006A319 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = Resources/common/en.lproj/AirshipAccengage.strings; sourceTree = "<group>"; };
+		1BCDE30F23A12CC80006A319 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = Resources/common/de.lproj/AirshipAccengage.strings; sourceTree = "<group>"; };
+		1BCDE31023A12CD30006A319 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = Resources/common/es.lproj/AirshipAccengage.strings; sourceTree = "<group>"; };
+		1BCDE31123A12CD30006A319 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = Resources/common/ru.lproj/AirshipAccengage.strings; sourceTree = "<group>"; };
+		1BCDE31223A12CD30006A319 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = Resources/common/it.lproj/AirshipAccengage.strings; sourceTree = "<group>"; };
+		1BCDE31323A12CD30006A319 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = Resources/common/fr.lproj/AirshipAccengage.strings; sourceTree = "<group>"; };
 		3C13BFAA2384ABD00071E80C /* UAirshipCoreResources.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAirshipCoreResources.h; path = common/UAirshipCoreResources.h; sourceTree = "<group>"; };
 		3C13BFAB2384ABD00071E80C /* UAirshipCoreResources.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAirshipCoreResources.m; path = common/UAirshipCoreResources.m; sourceTree = "<group>"; };
 		3C13BFB42384AC0E0071E80C /* UAAutomationResources.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAAutomationResources.h; sourceTree = "<group>"; };
@@ -3371,18 +3379,6 @@
 			name = Pods;
 			sourceTree = "<group>";
 		};
-		1BB4C00C239FB4700000559B /* Recovered References */ = {
-			isa = PBXGroup;
-			children = (
-				1B268AF2238EC66D005D7F99 /* UAAccengagePayload.m */,
-				1B268AF1238EC66D005D7F99 /* UAAccengagePayload.h */,
-				1B7EB9442397FDAF006ADA46 /* AirshipAccengageTests.m */,
-				1B268AF623915CB1005D7F99 /* UAAccengageUtils.m */,
-				1B268AF523915CB1005D7F99 /* UAAccengageUtils.h */,
-			);
-			name = "Recovered References";
-			sourceTree = "<group>";
-		};
 		1BB4C02B239FE5E50000559B /* Tests */ = {
 			isa = PBXGroup;
 			children = (
@@ -3390,6 +3386,31 @@
 				1BB4C02E239FE5E50000559B /* Info.plist */,
 			);
 			path = Tests;
+			sourceTree = "<group>";
+		};
+		1BCDE30323A12BDB0006A319 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				1BCDE30523A12BE80006A319 /* common */,
+				1BCDE30423A12BE30006A319 /* ios */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		1BCDE30423A12BE30006A319 /* ios */ = {
+			isa = PBXGroup;
+			children = (
+				1BCDE30623A12C070006A319 /* UAAccengageNotificationCategories.plist */,
+			);
+			path = ios;
+			sourceTree = "<group>";
+		};
+		1BCDE30523A12BE80006A319 /* common */ = {
+			isa = PBXGroup;
+			children = (
+				1BCDE30C23A12CBA0006A319 /* AirshipAccengage.strings */,
+			);
+			name = common;
 			sourceTree = "<group>";
 		};
 		3C4ACC3B2304DDF600BCF1CC /* App State */ = {
@@ -3755,7 +3776,6 @@
 				0A550D587E2599A4BD33CDF4 /* Pods */,
 				E3E85E514DBE69D4C8BF51CE /* Frameworks */,
 				6E6CC32D239A2EA9003D583C /* AirshipExtendedActions copy-Info.plist */,
-				1BB4C00C239FB4700000559B /* Recovered References */,
 			);
 			sourceTree = "<group>";
 		};
@@ -3840,6 +3860,7 @@
 		6E6CC2FE239A2E5F003D583C /* AirshipAccengage */ = {
 			isa = PBXGroup;
 			children = (
+				1BCDE30323A12BDB0006A319 /* Resources */,
 				6E6CC2FF239A2E8F003D583C /* info.plist */,
 				1BB4C02B239FE5E50000559B /* Tests */,
 				6E6CC300239A2E8F003D583C /* Source */,
@@ -3850,6 +3871,8 @@
 		6E6CC300239A2E8F003D583C /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				1BCDE30823A12C430006A319 /* UAAccengageResources.h */,
+				1BCDE30923A12C430006A319 /* UAAccengageResources.m */,
 				1BB4C016239FB4EB0000559B /* UAAccengagePayload.h */,
 				1BB4C017239FB4EB0000559B /* UAAccengagePayload.m */,
 				6E6CC301239A2E8F003D583C /* UAAccengageModuleLoader.m */,
@@ -5733,6 +5756,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6E6CC32F239A2F19003D583C /* UAAccengageModuleLoader.h in Headers */,
+				1BCDE30A23A12C430006A319 /* UAAccengageResources.h in Headers */,
 				6E6CC330239A2F19003D583C /* AirshipAccengage.h in Headers */,
 				1BB4C018239FB4EC0000559B /* UAAccengagePayload.h in Headers */,
 				6E6CC32E239A2F18003D583C /* UAAccengage+Internal.h in Headers */,
@@ -7001,6 +7025,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1BCDE30E23A12CBA0006A319 /* AirshipAccengage.strings in Resources */,
+				1BCDE30723A12C070006A319 /* UAAccengageNotificationCategories.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7526,6 +7552,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1BCDE30B23A12C430006A319 /* UAAccengageResources.m in Sources */,
 				6E6CC331239A2F26003D583C /* UAAccengageModuleLoader.m in Sources */,
 				1BB4C019239FB4EC0000559B /* UAAccengagePayload.m in Sources */,
 				1BA67C3D23A0FFA800A07324 /* UAAccengageUtils.m in Sources */,
@@ -8404,6 +8431,19 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
+		1BCDE30C23A12CBA0006A319 /* AirshipAccengage.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				1BCDE30D23A12CBA0006A319 /* en */,
+				1BCDE30F23A12CC80006A319 /* de */,
+				1BCDE31023A12CD30006A319 /* es */,
+				1BCDE31123A12CD30006A319 /* ru */,
+				1BCDE31223A12CD30006A319 /* it */,
+				1BCDE31323A12CD30006A319 /* fr */,
+			);
+			name = AirshipAccengage.strings;
+			sourceTree = "<group>";
+		};
 		3CA0E21C237CCBA600EE76CF /* AirshipDebug.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
