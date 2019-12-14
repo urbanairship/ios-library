@@ -1,8 +1,6 @@
 /* Copyright Airship and Contributors */
 
-#import "UAAppStateTracker.h"
-#import "UAAppStateTrackerAdapter+Internal.h"
-#import "UAUIKitStateTrackerAdapter+Internal.h"
+#import "UAAppStateTracker+Internal.h"
 
 NSNotificationName const UAApplicationDidFinishLaunchingNotification = @"com.urbanairship.applicaiton_did_finish_launching";
 NSNotificationName const UAApplicationDidBecomeActiveNotification = @"com.urbanairship.application_did_become_active";
@@ -33,16 +31,20 @@ static UAAppStateTracker *shared_;
     return shared_;
 }
 
-- (instancetype)init {
+- (instancetype)initWithNotificationCenter:(NSNotificationCenter *)notificationCenter adapter:(id<UAAppStateTrackerAdapter>)adapter {
     self = [super init];
 
     if (self) {
-        self.notificationCenter = [NSNotificationCenter defaultCenter];
-        self.adapter = [UAUIKitStateTrackerAdapter adapter];
+        self.notificationCenter = notificationCenter;
+        self.adapter = adapter;
         self.adapter.stateTrackerDelegate = self;
     }
 
     return self;
+}
+
+- (instancetype)init {
+    return [self initWithNotificationCenter:[NSNotificationCenter defaultCenter] adapter:[UAUIKitStateTrackerAdapter adapter]];
 }
 
 - (void)applicationDidFinishLaunching:(NSDictionary *)remoteNotification {
