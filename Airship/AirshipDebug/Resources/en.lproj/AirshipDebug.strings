@@ -35,7 +35,6 @@
 "ua_device_info_app_version" = "Application Version";
 "ua_device_info_timezone" = "Time zone";
 
-"ua_device_info_last_push_payload" = "Last Push Payload";
 "ua_device_info_analytics_enabled" = "Analytics Enabled";
 "ua_device_info_enable_analytics_tracking" = "Enable analytics tracking";
 "ua_device_info_enable_location_enabled" = "Location Enabled";
