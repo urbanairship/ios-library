@@ -42,8 +42,6 @@ struct PushNotification {
         self.data = String(data: try! JSONSerialization.data(withJSONObject:push.notificationInfo, options:.prettyPrinted), encoding:.utf8) ?? ""
         print(push)
         print(push.notificationInfo)
-//        print(push.self)
-//        self.data = push.alertBody!
         self.time = Date().timeIntervalSince1970
         let aps = push.notificationInfo[AnyHashable("aps")] as? [String:Any]
         self.alert = aps?["alert"] as? String ?? "No Alert"
