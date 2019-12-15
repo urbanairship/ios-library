@@ -43,11 +43,14 @@ class PushNotificationsDetailTableViewController: UITableViewController {
 
     func refresh() {
         if let event = push {
-
             if let dataLabel = dataLabel {
                 dataLabel.text = event.data
             }
         }
+    }
+    
+    override func viewWillLayoutSubviews() {
+        dataLabel.sizeToFit()
     }
 
     override func didReceiveMemoryWarning() {
@@ -60,8 +63,7 @@ class PushNotificationsDetailTableViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         if section == 0 {
-//            return lastPushPayloadTextView.text = (lastPushPayload as AnyObject).description
-            return push?.data
+            return push?.pushID
         }
 
         return nil
