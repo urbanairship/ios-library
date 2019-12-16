@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    if: github.repository == 'urbanairship/ios-library-dev'
+    if: github.repository == 'urbanairship/ios-library'
     runs-on: macOS-latest
     steps:
       - uses: actions/checkout@v1
@@ -108,7 +108,7 @@ jobs:
           path: ./build/Airship.zip
       - name: Publish bintray
         env:
-          BINTRAY_API_KEY: ${{ secrets.BINTRAY_API_KEY }}
+          BINTRAY_AUTH: ${{ secrets.BINTRAY_AUTH }}
         run: bash ./scripts/deploy_bintray.sh
       - name: Slack Notification
         uses: homoluctus/slatify@master
@@ -143,7 +143,7 @@ jobs:
         with:
           tag_name: ${{ steps.get_version.outputs.VERSION }}
           release_name: Release ${{ steps.get_version.outputs.VERSION }}
-          draft: true
+          draft: false
           prerelease: false
       - name: Upload zip distribution
         uses: actions/upload-release-asset@v1.0.1
