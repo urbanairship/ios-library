@@ -9,7 +9,7 @@
 @implementation UADefaultValueTransformerTest
 
 - (void)testUnsecureToSecureTransformer {
-    if (@available(iOS 12.0, *)) {
+    if (@available(iOS 12.0, tvOS 12.0, *)) {
         NSURL *neat = [NSURL URLWithString:@"neat"];
         NSDictionary *cool = @{@"neat" : neat};
 
@@ -24,7 +24,7 @@
 }
 
 - (void)testSecureUnsecureTransformer {
-    if (@available(iOS 12.0, *)) {
+    if (@available(iOS 12.0, tvOS 12.0, *)) {
         NSURL *neat = [NSURL URLWithString:@"neat"];
         NSDictionary *cool = @{@"neat" : neat};
 
@@ -39,7 +39,7 @@
 }
 
 - (void)testSecureAndUnsecureTransformerEqualBytes {
-    if (@available(iOS 12.0, *)) {
+    if (@available(iOS 12.0, tvOS 12.0, *)) {
         NSURL *neat = [NSURL URLWithString:@"neat"];
         NSDictionary *cool = @{@"neat" : neat};
 
@@ -57,7 +57,7 @@
     NSValueTransformer *transformer = [NSValueTransformer valueTransformerForName:@"UADefaultValueTransformerName"];
     XCTAssertNotNil(transformer);
 
-    if (@available(iOS 12.0, *)) {
+    if (@available(iOS 12.0, tvOS 12.0, *)) {
         XCTAssertEqualObjects(transformer, [NSValueTransformer valueTransformerForName:NSSecureUnarchiveFromDataTransformerName]);
     } else {
         XCTAssertEqualObjects(transformer, [NSValueTransformer valueTransformerForName:NSKeyedUnarchiveFromDataTransformerName]);
