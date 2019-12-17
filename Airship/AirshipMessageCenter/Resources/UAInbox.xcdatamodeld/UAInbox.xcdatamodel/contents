@@ -8,7 +8,7 @@
         <attribute name="messageID" optional="YES" attributeType="String"/>
         <attribute name="messageSent" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="messageURL" optional="YES" attributeType="Transformable" valueTransformerName="UADefaultValueTransformerName"/>
-        <attribute name="rawMessageObject" optional="YES" attributeType="Transformable" valueTransformerName="UAJSONValueTransformer"/>
+        <attribute name="rawMessageObject" optional="YES" attributeType="Transformable" valueTransformerName="UADefaultValueTransformerName"/>
         <attribute name="title" optional="YES" attributeType="String"/>
         <attribute name="unread" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="YES"/>
         <attribute name="unreadClient" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="YES"/>
