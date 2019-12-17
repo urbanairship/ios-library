@@ -426,7 +426,8 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
 
 -(void)receivedRemoteNotification:(UANotificationContent *)notification
                 completionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
-    if (!self.identifier) {
+    BOOL isInBackground = [UIApplication sharedApplication].applicationState == UIApplicationStateBackground;
+    if (isInBackground && !self.identifier) {
         // Update registration if the channel identifier does not exist
         [self updateRegistrationForcefully:NO];
         completionHandler(UIBackgroundFetchResultNoData);
