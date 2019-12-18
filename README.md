@@ -81,7 +81,7 @@ $ pod install
 
 In order to take advantage of notification attachments, you will need to create a notification service extension
 alongside your main application. Most of the work is already done for you, but since this involves creating a new target there
-are a few additional steps. First create a new "Notification Service Extension" target. Then add AirshipExtensions/ServiceExtension
+are a few additional steps. First create a new "Notification Service Extension" target. Then add AirshipExtensions/NotificationService
 to the new target:
 
 ```txt
@@ -89,7 +89,7 @@ use_frameworks!
 
 # Airship SDK
 target "<Your Service Extension Target Name>" do
-  pod 'AirshipExtensions/ServiceExtension'
+  pod 'AirshipExtensions/NotificationService'
 end
 ```
 
