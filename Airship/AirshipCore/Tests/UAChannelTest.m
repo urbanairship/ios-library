@@ -382,6 +382,12 @@
     XCTAssertTrue(isMainThread);
 }
 
+- (void)testDeviceIDChanged {
+    [[self.mockChannelRegistrar expect] resetChannel];
+    [self.notificationCenter postNotificationName:UADeviceIDChangedNotification object:nil];
+    [self.mockChannelRegistrar verify];
+}
+
 /**
  * Test applicationDidBecomeActive, when run after app was backgrounded, does register
  */

@@ -114,7 +114,7 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
 
 - (void)observeNotificationCenterEvents {
     [self.notificationCenter addObserver:self
-                                selector:@selector(resetChannel)
+                                selector:@selector(reset)
                                     name:UADeviceIDChangedNotification
                                   object:nil];
 

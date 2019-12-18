@@ -57,7 +57,7 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
                                       object:nil];
 
         [self.notificationCenter addObserver:self
-                                    selector:@selector(clearUser)
+                                    selector:@selector(resetUser)
                                         name:UADeviceIDChangedNotification
                                       object:nil];
 
