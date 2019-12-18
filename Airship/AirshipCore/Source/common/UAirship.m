@@ -48,6 +48,9 @@ NSString * const UAAutomationModuleLoaderClassName = @"UAAutomationModuleLoader"
 NSString * const UAMessageCenterModuleLoaderClassName = @"UAMessageCenterModuleLoader";
 NSString * const UAExtendedActionsModuleLoaderClassName = @"UAExtendedActionsModuleLoader";
 
+// Default value transformer name
+NSString * const UADefaultValueTransformerName = @"UADefaultValueTransformerName";
+
 static UAirship *sharedAirship_;
 
 static NSBundle *resourcesBundle_;
@@ -87,6 +90,17 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
     [[NSNotificationCenter defaultCenter] addObserver:[UAirship class] selector:@selector(applicationDidFinishLaunching:)
                                                  name:UAApplicationDidFinishLaunchingNotification
                                                object:nil];
+
+
+    // Register our custom default value transformer name.
+    // NSKeyedUnarchiveFromDataTransformer is normally the default, but deprecated as of iOS 12.
+    if (@available(iOS 12.0, tvOS 12.0, *)) {
+        [NSValueTransformer setValueTransformer:[NSValueTransformer valueTransformerForName:NSSecureUnarchiveFromDataTransformerName]
+                                        forName:UADefaultValueTransformerName];
+    } else {
+        [NSValueTransformer setValueTransformer:[NSValueTransformer valueTransformerForName:NSKeyedUnarchiveFromDataTransformerName]
+                                        forName:UADefaultValueTransformerName];
+    }
 }
 
 #pragma mark -

@@ -52,6 +52,7 @@
 		3C927F7E23A2FA5F003C5FC8 /* UAAppStateTracker+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C927F7B23A2FA5F003C5FC8 /* UAAppStateTracker+Internal.h */; };
 		3C927F7F23A2FA5F003C5FC8 /* UAAppStateTracker+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C927F7B23A2FA5F003C5FC8 /* UAAppStateTracker+Internal.h */; };
 		3C927F8123A425F0003C5FC8 /* UAUIKitStateTrackerAdapterTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C927F8023A425F0003C5FC8 /* UAUIKitStateTrackerAdapterTest.m */; };
+		3C927F8423A97CDA003C5FC8 /* UADefaultValueTransformerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C927F8323A97CD9003C5FC8 /* UADefaultValueTransformerTest.m */; };
 		3C9E9D6821D42EEB0072F65B /* UAInAppMessageResolutionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C9E9D6721D42EEB0072F65B /* UAInAppMessageResolutionTest.m */; };
 		3CA0E2A0237CCE2600EE76CF /* AirshipCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 494DD9571B0EB677009C134E /* AirshipCore.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		3CA0E2AE237CD05F00EE76CF /* AssociatedIdentifiersTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E22B237CCBA600EE76CF /* AssociatedIdentifiersTableViewController.swift */; };
@@ -2281,6 +2282,7 @@
 		3C927F7923A2F94C003C5FC8 /* UAAppStateTrackerTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAAppStateTrackerTest.m; sourceTree = "<group>"; };
 		3C927F7B23A2FA5F003C5FC8 /* UAAppStateTracker+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "UAAppStateTracker+Internal.h"; path = "common/UAAppStateTracker+Internal.h"; sourceTree = "<group>"; };
 		3C927F8023A425F0003C5FC8 /* UAUIKitStateTrackerAdapterTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAUIKitStateTrackerAdapterTest.m; sourceTree = "<group>"; };
+		3C927F8323A97CD9003C5FC8 /* UADefaultValueTransformerTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UADefaultValueTransformerTest.m; sourceTree = "<group>"; };
 		3C9E9D6721D42EEB0072F65B /* UAInAppMessageResolutionTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageResolutionTest.m; sourceTree = "<group>"; };
 		3CA0E21D237CCBA600EE76CF /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/AirshipDebug.strings; sourceTree = "<group>"; };
 		3CA0E21F237CCBA600EE76CF /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = en; path = en.lproj/AirshipDebug.stringsdict; sourceTree = "<group>"; };
@@ -2643,7 +2645,6 @@
 		6EC74C2B234BF223003AF4C6 /* UARemoteConfigDisableInfoTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UARemoteConfigDisableInfoTest.m; sourceTree = "<group>"; };
 		6ECEBF5421C452A300FAAB08 /* UAScheduleDataMigrator+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAScheduleDataMigrator+Internal.h"; sourceTree = "<group>"; };
 		6ECEBF5521C452A300FAAB08 /* UAScheduleDataMigrator.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAScheduleDataMigrator.m; sourceTree = "<group>"; };
-		6ECF2BF11F1E92A10061247E /* UAInbox.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = UAInbox.xcdatamodel; sourceTree = "<group>"; };
 		6ED3C03A200801C4002A746B /* UAInAppMessageCustomDisplayContent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UAInAppMessageCustomDisplayContent.h; sourceTree = "<group>"; };
 		6ED3C03B200801C4002A746B /* UAInAppMessageCustomDisplayContent.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageCustomDisplayContent.m; sourceTree = "<group>"; };
 		6ED3C0402008038B002A746B /* UAInAppMessageCustomDisplayContent+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAInAppMessageCustomDisplayContent+Internal.h"; sourceTree = "<group>"; };
@@ -3048,9 +3049,6 @@
 		CC70E9971DDB8B0D000E2528 /* fi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fi; path = fi.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
 		CC70E9981DDB8B10000E2528 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
 		CC70E9991DDB8B13000E2528 /* hi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = hi; path = hi.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
-		CC8999A21D8B642D00A0CECC /* UAMessageCenterListCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UAMessageCenterListCell.xib; sourceTree = "<group>"; };
-		CC8999A31D8B642D00A0CECC /* UAMessageCenterListViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UAMessageCenterListViewController.xib; sourceTree = "<group>"; };
-		CC8999A51D8B642D00A0CECC /* UAMessageCenterPlaceholderIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = UAMessageCenterPlaceholderIcon.png; sourceTree = "<group>"; };
 		CC944EBD1DB0225000C42269 /* UARequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UARequest.h; path = common/UARequest.h; sourceTree = "<group>"; };
 		CC944EBE1DB0225000C42269 /* UARequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UARequest.m; path = common/UARequest.m; sourceTree = "<group>"; };
 		CC944EC71DB161AE00C42269 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
@@ -3167,7 +3165,6 @@
 		DFD442A91FD77BA5002E4FA1 /* UAInAppMessageTagSelector.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UAInAppMessageTagSelector.h; sourceTree = "<group>"; };
 		DFD442AA1FD77BA5002E4FA1 /* UAInAppMessageTagSelector.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageTagSelector.m; sourceTree = "<group>"; };
 		DFD442B51FD892AE002E4FA1 /* UAInAppMessageTagSelectorTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageTagSelectorTest.m; sourceTree = "<group>"; };
-		DFECEA761E64DC83006AA8EA /* UAMessageCenterMessageViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UAMessageCenterMessageViewController.xib; sourceTree = "<group>"; };
 		DFECEA791E64DD15006AA8EA /* UAWebView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAWebView.m; path = ios/UAWebView.m; sourceTree = "<group>"; };
 		DFECEA7C1E64DE66006AA8EA /* UANativeBridge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UANativeBridge.m; path = ios/UANativeBridge.m; sourceTree = "<group>"; };
 		DFECEA7D1E64DE66006AA8EA /* UANativeBridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UANativeBridge.h; path = ios/UANativeBridge.h; sourceTree = "<group>"; };
@@ -5095,6 +5092,7 @@
 				CC64F0C91D8B781C009CEF27 /* UAWhitelistTest.m */,
 				DF7E22BB1ED63E9200C79C46 /* UAProjectValidationTest.swift */,
 				CC64F0A31D8B781C009CEF27 /* UAirshipTest.m */,
+				3C927F8323A97CD9003C5FC8 /* UADefaultValueTransformerTest.m */,
 				CC64F0581D8B77E3009CEF27 /* Info.plist */,
 			);
 			path = Tests;
@@ -5259,11 +5257,6 @@
 				6E8A5516236768ED004AE2A0 /* UADefaultActions.plist */,
 				6E7700A81F04790C00B5E465 /* UANativeBridge */,
 				6E7700A91F04790C00B5E465 /* UANotificationCategories.plist */,
-				CC8999A21D8B642D00A0CECC /* UAMessageCenterListCell.xib */,
-				CC8999A31D8B642D00A0CECC /* UAMessageCenterListViewController.xib */,
-				DFECEA761E64DC83006AA8EA /* UAMessageCenterMessageViewController.xib */,
-				CC8999A51D8B642D00A0CECC /* UAMessageCenterPlaceholderIcon.png */,
-				6ECF2BF01F1E92A10061247E /* UAInbox.xcdatamodeld */,
 			);
 			path = ios;
 			sourceTree = "<group>";
@@ -7812,6 +7805,7 @@
 				DF702D811FABA38400E7A3DC /* UAVersionMatcherTests.m in Sources */,
 				CC64F1181D8B781C009CEF27 /* UAOpenExternalURLActionTest.m in Sources */,
 				CC64F0E01D8B781C009CEF27 /* UAActionTest.m in Sources */,
+				3C927F8423A97CDA003C5FC8 /* UADefaultValueTransformerTest.m in Sources */,
 				CC64F0D21D8B781C009CEF27 /* NSJSONSerialization_UAAdditionsTests.m in Sources */,
 				DF17A1101F57617200DC39E0 /* UARemoteDataAPIClientTest.m in Sources */,
 				6E3673E01E8AF9D8005B5DFF /* UAEnableFeatureActionTest.m in Sources */,
@@ -8964,16 +8958,6 @@
 			currentVersion = 6E845481237E2320007D3B1E /* UAAutomation 5.xcdatamodel */;
 			name = UAAutomation.xcdatamodeld;
 			path = Resources/UAAutomation.xcdatamodeld;
-			sourceTree = "<group>";
-			versionGroupType = wrapper.xcdatamodel;
-		};
-		6ECF2BF01F1E92A10061247E /* UAInbox.xcdatamodeld */ = {
-			isa = XCVersionGroup;
-			children = (
-				6ECF2BF11F1E92A10061247E /* UAInbox.xcdatamodel */,
-			);
-			currentVersion = 6ECF2BF11F1E92A10061247E /* UAInbox.xcdatamodel */;
-			path = UAInbox.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
 		};
