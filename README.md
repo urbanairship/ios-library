@@ -99,12 +99,12 @@ Install using the following command:
 $ pod install
 ```
 
-Then delete all the dummy source code for the new extension and have it inherit from UANotificationServiceEntension:
+Then delete all the dummy source code for the new extension and have it inherit from UANotificationServiceExtension:
 
 ```
 import AirshipExtensions
 
-class NotificationService: UANotificationServiceEntension {
+class NotificationService: UANotificationServiceExtension {
 
 }
 ```
