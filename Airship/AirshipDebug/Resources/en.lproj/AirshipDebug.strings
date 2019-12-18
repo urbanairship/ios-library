@@ -16,7 +16,7 @@
 "ua_automation_subtitle" = "View info related to In-App Automation.";
 
 "ua_received_pushes_title" = "Received Pushes";
-"ua_received_pushes_subtitle" = "List of received pushes messages.";
+"ua_received_pushes_subtitle" = "List of received push messages.";
 "ua_received_pushes_details_title" = "Push details";
 
 "ua_device_info_push_settings" = "Push Settings";

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="14903" systemVersion="18G87" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="15508" systemVersion="18G87" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="PushData" representedClassName="PushData" syncable="YES" codeGenerationType="class">
         <attribute name="alert" optional="YES" attributeType="String"/>
         <attribute name="data" optional="YES" attributeType="String"/>
@@ -7,6 +7,6 @@
         <attribute name="time" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
     </entity>
     <elements>
-        <element name="PushData" positionX="-54" positionY="-9" width="128" height="103"/>
+        <element name="PushData" positionX="-63" positionY="-18" width="128" height="103"/>
     </elements>
 </model>

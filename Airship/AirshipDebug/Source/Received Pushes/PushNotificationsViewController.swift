@@ -14,14 +14,10 @@ class PushNotificationsCell: UITableViewCell {
     @IBOutlet weak var messageDate: UILabel!
 }
 
-class PushNotificationsController:UIViewController, UITableViewDataSource, UITableViewDelegate, PushDataManagerDelegate {
+class PushNotificationsViewController:UIViewController, UITableViewDataSource, UITableViewDelegate, PushDataManagerDelegate {
         @IBOutlet private weak var tableView:UITableView!
 
-        @IBOutlet var navAddButton: UIBarButtonItem!
-        @IBOutlet var storageOptionsButton: UIBarButtonItem!
-
         var launchPathComponents : [String]?
-        var launchCompletionHandler : (() -> Void)?
 
         let defaultPushNotificationCellHeight:CGFloat = 64
 

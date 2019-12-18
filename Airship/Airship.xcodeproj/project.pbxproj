@@ -331,11 +331,10 @@
 		6E65D53C2396DED400AF2D1A /* UARateAppActionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 996A03B91EF08EBF003424E0 /* UARateAppActionTest.m */; };
 		6E65D53F2396E0BE00AF2D1A /* UARateAppAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 996A03AB1EF08E1E003424E0 /* UARateAppAction.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E65D5422396E72400AF2D1A /* UAExtendedActionsCoreImport.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E65D53A2396DB3F00AF2D1A /* UAExtendedActionsCoreImport.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6E6CC37B23A3F98B003D583C /* AirshipDebugPushData.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6E6CC37923A3F98B003D583C /* AirshipDebugPushData.xcdatamodeld */; };
 		6E6CC38423A3F9B4003D583C /* PushNotificationsDetailTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6CC37E23A3F9B4003D583C /* PushNotificationsDetailTableViewController.swift */; };
 		6E6CC38623A3F9B4003D583C /* PushDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6CC38023A3F9B4003D583C /* PushDataManager.swift */; };
 		6E6CC38723A3F9B4003D583C /* PushPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6CC38123A3F9B4003D583C /* PushPayload.swift */; };
-		6E6CC38823A3F9B4003D583C /* PushNotificationsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6CC38223A3F9B4003D583C /* PushNotificationsController.swift */; };
+		6E6CC38823A3F9B4003D583C /* PushNotificationsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6CC38223A3F9B4003D583C /* PushNotificationsViewController.swift */; };
 		6E6CC38A23A3FA38003D583C /* AirshipDebugPushNotifications.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6E6CC38923A3FA38003D583C /* AirshipDebugPushNotifications.storyboard */; };
 		6E746507235FA9B6000BF09C /* UAMessageCenterTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E746506235FA9B6000BF09C /* UAMessageCenterTest.m */; };
 		6E84537B237E03E7007D3B1E /* UAPadding.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E845379237E03E7007D3B1E /* UAPadding.m */; };
@@ -1606,6 +1605,7 @@
 		6EFB378D2345B3FD005E4E44 /* UANativeBridgeDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EFB378C2345B3FD005E4E44 /* UANativeBridgeDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6EFB37902345B5A5005E4E44 /* UAJavaScriptCommandDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EFB378F2345B5A5005E4E44 /* UAJavaScriptCommandDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		76A5F5F01DCBDD5E00858BA4 /* UAAsyncOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = CC04F1BB1DC16BB300B4842D /* UAAsyncOperation.m */; };
+		83A674F823AA7AA4005C0C8F /* AirshipDebugPushData.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 83A674F623AA7AA4005C0C8F /* AirshipDebugPushData.xcdatamodeld */; };
 		991A94651FCF2C6B00B57D24 /* UAInAppMessageTextInfoTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 991A94641FCF2C6B00B57D24 /* UAInAppMessageTextInfoTest.m */; };
 		991A94671FCF2C7F00B57D24 /* UAInAppMessageButtonInfoTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 991A94661FCF2C7F00B57D24 /* UAInAppMessageButtonInfoTest.m */; };
 		991A94691FCF2CEF00B57D24 /* UAInAppMessageMediaInfoTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 991A94681FCF2CEF00B57D24 /* UAInAppMessageMediaInfoTest.m */; };
@@ -2577,11 +2577,10 @@
 		6E5F723520169A6600D684B7 /* UADeepLinkActionTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UADeepLinkActionTest.m; sourceTree = "<group>"; };
 		6E65D536239632EA00AF2D1A /* UALocationCoreImport.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UALocationCoreImport.h; sourceTree = "<group>"; };
 		6E65D53A2396DB3F00AF2D1A /* UAExtendedActionsCoreImport.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UAExtendedActionsCoreImport.h; sourceTree = "<group>"; };
-		6E6CC37A23A3F98B003D583C /* DebugPushData.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = DebugPushData.xcdatamodel; sourceTree = "<group>"; };
 		6E6CC37E23A3F9B4003D583C /* PushNotificationsDetailTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PushNotificationsDetailTableViewController.swift; sourceTree = "<group>"; };
 		6E6CC38023A3F9B4003D583C /* PushDataManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PushDataManager.swift; sourceTree = "<group>"; };
 		6E6CC38123A3F9B4003D583C /* PushPayload.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PushPayload.swift; sourceTree = "<group>"; };
-		6E6CC38223A3F9B4003D583C /* PushNotificationsController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PushNotificationsController.swift; sourceTree = "<group>"; };
+		6E6CC38223A3F9B4003D583C /* PushNotificationsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PushNotificationsViewController.swift; sourceTree = "<group>"; };
 		6E6CC38923A3FA38003D583C /* AirshipDebugPushNotifications.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = AirshipDebugPushNotifications.storyboard; sourceTree = "<group>"; };
 		6E746506235FA9B6000BF09C /* UAMessageCenterTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAMessageCenterTest.m; sourceTree = "<group>"; };
 		6E7700A81F04790C00B5E465 /* UANativeBridge */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = UANativeBridge; sourceTree = "<group>"; };
@@ -2705,6 +2704,7 @@
 		6EFB377C234595C9005E4E44 /* UAMessageCenterNativeBridgeExtensionTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAMessageCenterNativeBridgeExtensionTest.m; sourceTree = "<group>"; };
 		6EFB378C2345B3FD005E4E44 /* UANativeBridgeDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UANativeBridgeDelegate.h; path = ios/UANativeBridgeDelegate.h; sourceTree = "<group>"; };
 		6EFB378F2345B5A5005E4E44 /* UAJavaScriptCommandDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAJavaScriptCommandDelegate.h; path = ios/UAJavaScriptCommandDelegate.h; sourceTree = "<group>"; };
+		83A674F723AA7AA4005C0C8F /* AirshipDebugPushData.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = AirshipDebugPushData.xcdatamodel; sourceTree = "<group>"; };
 		8F98742CB99EDEDE99A230C2 /* Pods_AirshipKitTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AirshipKitTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		991A94641FCF2C6B00B57D24 /* UAInAppMessageTextInfoTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageTextInfoTest.m; sourceTree = "<group>"; };
 		991A94661FCF2C7F00B57D24 /* UAInAppMessageButtonInfoTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageButtonInfoTest.m; sourceTree = "<group>"; };
@@ -3361,7 +3361,6 @@
 			isa = PBXGroup;
 			children = (
 				6E6CC38923A3FA38003D583C /* AirshipDebugPushNotifications.storyboard */,
-				6E6CC37923A3F98B003D583C /* AirshipDebugPushData.xcdatamodeld */,
 				3CA0E21C237CCBA600EE76CF /* AirshipDebug.strings */,
 				3CA0E21E237CCBA600EE76CF /* AirshipDebug.stringsdict */,
 				3CA0E220237CCBA600EE76CF /* AirshipDebugEvents.storyboard */,
@@ -3370,6 +3369,7 @@
 				3CA0E224237CCBA600EE76CF /* Images.xcassets */,
 				3CA0E225237CCBA600EE76CF /* AirshipDebug.storyboard */,
 				3CA0E226237CCBA600EE76CF /* AirshipDebugAutomation.storyboard */,
+				83A674F623AA7AA4005C0C8F /* AirshipDebugPushData.xcdatamodeld */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -3781,7 +3781,7 @@
 				6E6CC37E23A3F9B4003D583C /* PushNotificationsDetailTableViewController.swift */,
 				6E6CC38023A3F9B4003D583C /* PushDataManager.swift */,
 				6E6CC38123A3F9B4003D583C /* PushPayload.swift */,
-				6E6CC38223A3F9B4003D583C /* PushNotificationsController.swift */,
+				6E6CC38223A3F9B4003D583C /* PushNotificationsViewController.swift */,
 			);
 			path = "Received Pushes";
 			sourceTree = "<group>";
@@ -7115,11 +7115,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6E6CC38823A3F9B4003D583C /* PushNotificationsController.swift in Sources */,
+				6E6CC38823A3F9B4003D583C /* PushNotificationsViewController.swift in Sources */,
 				3CA0E2AE237CD05F00EE76CF /* AssociatedIdentifiersTableViewController.swift in Sources */,
 				3CA0E2AF237CD05F00EE76CF /* AddTagsTableViewController.swift in Sources */,
 				6E21852B237D32B30084933A /* EventData.swift in Sources */,
-				6E6CC37B23A3F98B003D583C /* AirshipDebugPushData.xcdatamodeld in Sources */,
 				3CA0E2B1237CD05F00EE76CF /* AddNamedUserTableViewController.swift in Sources */,
 				6E6CC38423A3F9B4003D583C /* PushNotificationsDetailTableViewController.swift in Sources */,
 				3CA0E2B2237CD05F00EE76CF /* AddAssociatedIdentifiersTableViewController.swift in Sources */,
@@ -7149,6 +7148,7 @@
 				3CA0E2C8237CD05F00EE76CF /* CustomPropertyAdderTableViewCell.swift in Sources */,
 				3CA0E2C9237CD05F00EE76CF /* EventsDetailTableViewController.swift in Sources */,
 				3CA0E2CA237CD05F00EE76CF /* EventDataManager.swift in Sources */,
+				83A674F823AA7AA4005C0C8F /* AirshipDebugPushData.xcdatamodeld in Sources */,
 				3CA0E2CB237CD05F00EE76CF /* RootTableViewController.swift in Sources */,
 				3CA0E2CC237CD05F00EE76CF /* ThemeManager.swift in Sources */,
 				3CA0E2CD237CD05F00EE76CF /* AirshipDebug.swift in Sources */,
@@ -9022,16 +9022,6 @@
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
 		};
-		6E6CC37923A3F98B003D583C /* AirshipDebugPushData.xcdatamodeld */ = {
-			isa = XCVersionGroup;
-			children = (
-				6E6CC37A23A3F98B003D583C /* DebugPushData.xcdatamodel */,
-			);
-			currentVersion = 6E6CC37A23A3F98B003D583C /* DebugPushData.xcdatamodel */;
-			path = AirshipDebugPushData.xcdatamodeld;
-			sourceTree = "<group>";
-			versionGroupType = wrapper.xcdatamodel;
-		};
 		6E84547C237E2320007D3B1E /* UAAutomation.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
@@ -9044,6 +9034,16 @@
 			currentVersion = 6E845481237E2320007D3B1E /* UAAutomation 5.xcdatamodel */;
 			name = UAAutomation.xcdatamodeld;
 			path = Resources/UAAutomation.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+		83A674F623AA7AA4005C0C8F /* AirshipDebugPushData.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				83A674F723AA7AA4005C0C8F /* AirshipDebugPushData.xcdatamodel */,
+			);
+			currentVersion = 83A674F723AA7AA4005C0C8F /* AirshipDebugPushData.xcdatamodel */;
+			path = AirshipDebugPushData.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
 		};
