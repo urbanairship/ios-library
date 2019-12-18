@@ -11,7 +11,7 @@
         <!--Events View Controller-->
         <scene sceneID="Gfd-z4-cQm">
             <objects>
-                <viewController id="sbv-90-Fyh" customClass="EventsViewController" customModule="Airship" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="sbv-90-Fyh" customClass="EventsViewController" customModule="AirshipDebug" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="p60-Kt-8Qr">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -20,7 +20,7 @@
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <prototypes>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="gray" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="EventCell" rowHeight="88" id="J99-uV-a5J" customClass="EventCell" customModule="Airship" customModuleProvider="target">
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="gray" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="EventCell" rowHeight="88" id="J99-uV-a5J" customClass="EventCell" customModule="AirshipDebug" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="28" width="375" height="88"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="J99-uV-a5J" id="8Ug-su-ISN">
@@ -67,7 +67,7 @@
                                     </tableViewCell>
                                 </prototypes>
                             </tableView>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Mqs-KN-8rF" customClass="SearchFooter" customModule="Airship" customModuleProvider="target">
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Mqs-KN-8rF" customClass="SearchFooter" customModule="AirshipDebug" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="623" width="375" height="44"/>
                                 <color key="backgroundColor" red="0.11385948210000001" green="0.29008778930000001" blue="0.96083122489999995" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                 <constraints>
@@ -119,7 +119,7 @@
         <!--Events Detail Table View Controller-->
         <scene sceneID="8R2-Xg-Z0t">
             <objects>
-                <tableViewController id="GEM-8N-2RK" customClass="EventsDetailTableViewController" customModule="Airship" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController id="GEM-8N-2RK" customClass="EventsDetailTableViewController" customModule="AirshipDebug" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="myj-T9-VOA">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="647"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -226,13 +226,13 @@
         <!--Create Custom Event-->
         <scene sceneID="0na-zx-ASd">
             <objects>
-                <tableViewController title="New Custom Event" id="72i-o8-6O8" userLabel="Create Custom Event" customClass="CustomEventTableViewController" customModule="Airship" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController title="New Custom Event" id="72i-o8-6O8" userLabel="Create Custom Event" customClass="CustomEventTableViewController" customModule="AirshipDebug" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="none" allowsSelectionDuringEditing="YES" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="WRv-6D-HWP">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="591"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="customEventCell" id="TE6-PN-oLH" customClass="CustomEventTableViewCell" customModule="AirshipDebugKit">
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="customEventCell" id="TE6-PN-oLH" customClass="CustomEventTableViewCell" customModule="AirshipDebug" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="55.5" width="375" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" contentMode="center" tableViewCell="TE6-PN-oLH" id="4b1-cc-5H7">
@@ -272,7 +272,7 @@
                                     <outlet property="textInputField" destination="R6Z-Ld-GQf" id="Pgj-pT-4ld"/>
                                 </connections>
                             </tableViewCell>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="customPropertyAdderCell" rowHeight="49" id="ket-8d-2oN" customClass="CustomPropertyAdderTableViewCell" customModule="AirshipDebugKit">
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="customPropertyAdderCell" rowHeight="49" id="ket-8d-2oN" customClass="CustomPropertyAdderTableViewCell" customModule="AirshipDebug" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="99.5" width="375" height="49"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="ket-8d-2oN" id="E70-pv-can">
@@ -299,7 +299,7 @@
                                     <outlet property="label" destination="n5A-D5-mHA" id="HLY-EO-fMg"/>
                                 </connections>
                             </tableViewCell>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="customPropertyCell" id="qmg-vF-VRO" customClass="CustomPropertyTableViewCell" customModule="AirshipDebugKit">
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="customPropertyCell" id="qmg-vF-VRO" customClass="CustomPropertyTableViewCell" customModule="AirshipDebug" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="148.5" width="375" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" contentMode="center" tableViewCell="qmg-vF-VRO" id="gPz-Ga-LcZ">
@@ -374,7 +374,7 @@
         <!--Add Custom Property-->
         <scene sceneID="Hsd-kt-7PD">
             <objects>
-                <tableViewController id="QyJ-CJ-OYp" customClass="CustomPropertyTableViewController" customModule="Airship" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController id="QyJ-CJ-OYp" customClass="CustomPropertyTableViewController" customModule="AirshipDebug" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="none" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="nei-H4-oqY">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="591"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -656,7 +656,7 @@
         <!--Add Custom Strings Property-->
         <scene sceneID="G0Q-G4-lfc">
             <objects>
-                <tableViewController id="iRx-gK-3eI" customClass="CustomPropertyStringsTableViewController" customModule="Airship" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController id="iRx-gK-3eI" customClass="CustomPropertyStringsTableViewController" customModule="AirshipDebug" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="SFc-NY-ITH">
                         <rect key="frame" x="0.0" y="0.0" width="0.0" height="44"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -670,7 +670,7 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" ambiguous="YES" insetsLayoutMarginsFromSafeArea="NO" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="69e-1w-JPD">
-                                            <rect key="frame" x="-16" y="0.0" width="32" height="44"/>
+                                            <rect key="frame" x="-8" y="0.0" width="23" height="44"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <nil key="textColor"/>
@@ -703,7 +703,7 @@
         <!--Custom Property Add Strings Table View Controller-->
         <scene sceneID="Cdc-J7-L1r">
             <objects>
-                <tableViewController id="H3V-G7-DsD" customClass="CustomPropertyAddStringsTableViewController" customModule="Airship" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController id="H3V-G7-DsD" customClass="CustomPropertyAddStringsTableViewController" customModule="AirshipDebug" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="plain" separatorStyle="none" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="Stm-mk-qir">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="524"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

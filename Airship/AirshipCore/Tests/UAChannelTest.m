@@ -376,6 +376,34 @@
 }
 
 /**
+ * Test extending CRA payloads always calls blocks on the main queue.
+ */
+- (void)testExtendingPayloadBackgroundQueue {
+    [self.channel addChannelExtenderBlock:^(UAChannelRegistrationPayload *payload, UAChannelRegistrationExtenderCompletionHandler completionHandler) {
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+            payload.pushAddress = @"WHAT!";
+            completionHandler(payload);
+        });
+    }];
+
+    __block BOOL isMainThread;
+    [self.channel addChannelExtenderBlock:^(UAChannelRegistrationPayload *payload, UAChannelRegistrationExtenderCompletionHandler completionHandler) {
+        isMainThread = [NSThread currentThread].isMainThread;
+        payload.pushAddress = [NSString stringWithFormat:@"%@ %@", payload.pushAddress, @"OK!"];
+        completionHandler(payload);
+    }];
+
+    XCTestExpectation *createdPayload = [self expectationWithDescription:@"create payload"];
+    [self.channel createChannelPayload:^(UAChannelRegistrationPayload * _Nonnull payload) {
+        XCTAssertEqualObjects(@"WHAT! OK!", payload.pushAddress);
+        [createdPayload fulfill];
+    } dispatcher:[UATestDispatcher testDispatcher]];
+
+    [self waitForTestExpectations];
+    XCTAssertTrue(isMainThread);
+}
+
+/**
  * Test applicationDidBecomeActive, when run after app was backgrounded, does register
  */
 - (void)testApplicationDidBecomeActiveAfterBackgrounding {

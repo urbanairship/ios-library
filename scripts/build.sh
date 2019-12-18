@@ -225,9 +225,13 @@ then
 
   # Generate the ZIP
   cd $STAGING
-  zip -r -X Airship-$VERSION.zip .
+  zip -r -X Airship.zip .
   cd -
 
   # Move zip
-  mv $STAGING/Airship-$VERSION.zip $DESTINATION
+  mv $STAGING/Airship.zip $DESTINATION
+
+  cd $STAGING/Documentation
+  tar -czf ../../Documentation.tar.gz *
+  cd -
 fi
