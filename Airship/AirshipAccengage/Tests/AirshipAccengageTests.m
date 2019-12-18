@@ -172,4 +172,108 @@
     XCTAssertFalse(self.analytics.isEnabled);
 }
 
+- (void)testPresentationOptionsforNotification {
+    UAAccengage *accengage = [[UAAccengage alloc] init];
+    
+    id mockNotification = OCMClassMock([UNNotification class]);
+    id mockRequest = OCMClassMock([UNNotificationRequest class]);
+    id mockContent = OCMClassMock([UNNotificationContent class]);
+
+    NSDictionary *notificationInfo = @{
+        @"aps": @{
+                @"alert": @"test",
+                @"category": @"test_category"
+        },
+        @"a4sid": @"7675",
+        @"a4surl": @"someurl.com",
+        @"a4sb": @[@{
+                       @"action": @"webView",
+                       @"bid": @"1",
+                       @"url": @"someotherurl.com",
+        },
+                   @{
+                       @"action": @"browser",
+                       @"bid": @"2",
+                       @"url": @"someotherurl.com",
+        }]
+    };
+    
+    [[[mockNotification stub] andReturn:mockRequest] request];
+    [[[mockRequest stub] andReturn:mockContent] content];
+    [[[mockContent stub] andReturn:notificationInfo] userInfo];
+    
+    UNNotificationPresentationOptions defaultOptions = UNNotificationPresentationOptionAlert;
+    UNNotificationPresentationOptions options = [accengage presentationOptionsForNotification:mockNotification defaultPresentationOptions:defaultOptions];
+    
+    XCTAssertEqual(options, UNNotificationPresentationOptionNone, @"Incorrect notification presentation options");
+    
+    notificationInfo = @{
+        @"aps": @{
+                @"alert": @"test",
+                @"category": @"test_category"
+        },
+        @"a4sid": @"7675",
+        @"a4sd": @1,
+        @"a4surl": @"someurl.com",
+        @"a4sb": @[@{
+                       @"action": @"webView",
+                       @"bid": @"1",
+                       @"url": @"someotherurl.com",
+        },
+                   @{
+                       @"action": @"browser",
+                       @"bid": @"2",
+                       @"url": @"someotherurl.com",
+        }]
+    };
+    
+    [mockContent stopMocking];
+    [mockNotification stopMocking];
+    [mockRequest stopMocking];
+    
+    mockNotification = OCMClassMock([UNNotification class]);
+    mockRequest = OCMClassMock([UNNotificationRequest class]);
+    mockContent = OCMClassMock([UNNotificationContent class]);
+    [[[mockNotification stub] andReturn:mockRequest] request];
+    [[[mockRequest stub] andReturn:mockContent] content];
+    [[[mockContent stub] andReturn:notificationInfo] userInfo];
+    
+    options = [accengage presentationOptionsForNotification:mockNotification defaultPresentationOptions:defaultOptions];
+    
+    XCTAssertEqual(options, [UAPush shared].defaultPresentationOptions, @"Incorrect notification presentation options");
+    
+    notificationInfo = @{
+        @"aps": @{
+                @"alert": @"test",
+                @"category": @"test_category"
+        },
+        @"a4surl": @"someurl.com",
+        @"a4sb": @[@{
+                       @"action": @"webView",
+                       @"bid": @"1",
+                       @"url": @"someotherurl.com",
+        },
+                   @{
+                       @"action": @"browser",
+                       @"bid": @"2",
+                       @"url": @"someotherurl.com",
+        }]
+    };
+    
+    [mockContent stopMocking];
+    [mockNotification stopMocking];
+    [mockRequest stopMocking];
+          
+    mockNotification = OCMClassMock([UNNotification class]);
+    mockRequest = OCMClassMock([UNNotificationRequest class]);
+    mockContent = OCMClassMock([UNNotificationContent class]);
+    [[[mockNotification stub] andReturn:mockRequest] request];
+    [[[mockRequest stub] andReturn:mockContent] content];
+    [[[mockContent stub] andReturn:notificationInfo] userInfo];
+    
+    options = [accengage presentationOptionsForNotification:mockNotification defaultPresentationOptions:defaultOptions];
+    
+    XCTAssertEqual(options, defaultOptions, @"Incorrect notification presentation options");
+}
+
 @end

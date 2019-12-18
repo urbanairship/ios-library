@@ -26,6 +26,14 @@ NS_ASSUME_NONNULL_BEGIN
 */
 -(void)receivedNotificationResponse:(UANotificationResponse *)response completionHandler:(void (^)(void))completionHandler;
 
+/**
+ * Called when a notification is about to be presented.
+ * @return The presentation options.
+ * @param notification The notification to be presented.
+ * @param options Default presentation options.
+*/
+-(UNNotificationPresentationOptions)presentationOptionsForNotification:(UNNotification *)notification defaultPresentationOptions:(UNNotificationPresentationOptions)options;
+
 @end
 
 NS_ASSUME_NONNULL_END

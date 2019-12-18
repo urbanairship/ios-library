@@ -11,6 +11,9 @@
 #import "UANotificationCategories.h"
 #import "UAPush+Internal.h"
 
+static NSString * const UAAccengageIDKey = @"a4sid";
+static NSString * const UAAccengageForegroundKey = @"a4sd";
+
 @implementation UAAccengage
 
 - (instancetype)initWithDataStore:(UAPreferenceDataStore *)dataStore
@@ -39,7 +42,20 @@
     return [[self alloc] initWithDataStore:dataStore channel:channel push:push analytics:analytics];
 }
 
--(void)receivedNotificationResponse:(UANotificationResponse *)response
+- (UNNotificationPresentationOptions)presentationOptionsForNotification:(UNNotification *)notification defaultPresentationOptions:(UNNotificationPresentationOptions)options {
+    if (![self isAccengageNotification:notification]) {
+        // Not an accengage push
+        return options;
+    }
+    
+    if ([self isForegroundNotification:notification]) {
+        return [UAPush shared].defaultPresentationOptions;
+    } else {
+        return UNNotificationPresentationOptionNone;
+    }
+}
+
+- (void)receivedNotificationResponse:(UANotificationResponse *)response
                   completionHandler:(void (^)(void))completionHandler {
     // check for accengage push response, handle actions
     NSDictionary *notificationInfo = response.notificationContent.notificationInfo;
@@ -51,7 +67,7 @@
         completionHandler();
         return;
     }
-      
+    
     if (payload.url) {
         if (payload.hasExternalURLAction) {
             [UAActionRunner runActionWithName:@"open_external_url_action"
@@ -113,6 +129,20 @@
     }
 }
 
+- (BOOL)isAccengageNotification:(UNNotification *)notification {
+    id accengageNotificationID = notification.request.content.userInfo[UAAccengageIDKey];
+    return [accengageNotificationID isKindOfClass:[NSString class]];
+}
+
+- (BOOL)isForegroundNotification:(UNNotification *)notification {
+    id isForegroundNotification = notification.request.content.userInfo[UAAccengageForegroundKey];
+    if ([isForegroundNotification isKindOfClass:[NSNumber class]]) {
+        return [isForegroundNotification boolValue];
+    } else {
+        return NO;
+    }
+}
+            
 #pragma mark -
 #pragma mark Channel Registration Events
 
