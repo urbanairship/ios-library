@@ -105,7 +105,7 @@ jobs:
         uses: actions/download-artifact@v1
         with:
           name: airship
-          path: ./build/Airship.zip
+          path: ./build
       - name: Publish bintray
         env:
           BINTRAY_AUTH: ${{ secrets.BINTRAY_AUTH }}
