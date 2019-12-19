@@ -53,15 +53,5 @@
     }
 }
 
-- (void)testDefaultValueTransformer {
-    NSValueTransformer *transformer = [NSValueTransformer valueTransformerForName:@"UADefaultValueTransformerName"];
-    XCTAssertNotNil(transformer);
-
-    if (@available(iOS 12.0, tvOS 12.0, *)) {
-        XCTAssertEqualObjects(transformer, [NSValueTransformer valueTransformerForName:NSSecureUnarchiveFromDataTransformerName]);
-    } else {
-        XCTAssertEqualObjects(transformer, [NSValueTransformer valueTransformerForName:NSKeyedUnarchiveFromDataTransformerName]);
-    }
-}
 
 @end
