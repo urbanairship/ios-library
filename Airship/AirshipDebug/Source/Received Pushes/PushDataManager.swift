@@ -15,9 +15,6 @@ protocol PushDataManagerDelegate {
 }
 
 class PushDataManager: NSObject {
-    private let pushKey = "pushes"
-    private let pushNotificationName = "UAPushAdded"
-
     private let storageDaysSettingKey = "AirshipDebug.PushNotificationStorageDays"
 
     // The number of days events will be stored by default.
@@ -118,9 +115,6 @@ class PushDataManager: NSObject {
     }
     
     func somePushExists(id: String) -> Bool {
-        var pushDatas:[Any] = []
-        var pushes:[PushNotification] = []
-
         let context = persistentContainer.viewContext
         let fetchRequest:NSFetchRequest = PushData.fetchRequest()
 
