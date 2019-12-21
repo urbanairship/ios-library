@@ -1,4 +1,7 @@
 #import "UAMessageCenterAction.h"
+#import "UADefaultMessageCenterListViewController.h"
+#import "UADefaultMessageCenterMessageViewController.h"
+#import "UADefaultMessageCenterSplitViewController.h"
 #import "UADefaultMessageCenterSplitViewDelegate.h"
 #import "UADefaultMessageCenterUI.h"
 #import "UAMessageCenterDateUtils.h"

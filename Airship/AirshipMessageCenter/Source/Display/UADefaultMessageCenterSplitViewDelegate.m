@@ -3,12 +3,12 @@
 #import "UADefaultMessageCenterSplitViewDelegate.h"
 
 @interface UADefaultMessageCenterSplitViewDelegate ()
-@property (nonatomic, strong) UAMessageCenterListViewController *listViewController;
+@property (nonatomic, strong) UADefaultMessageCenterListViewController *listViewController;
 @end
 
 @implementation UADefaultMessageCenterSplitViewDelegate
 
-- (instancetype)initWithListViewController:(UAMessageCenterListViewController *)listViewController {
+- (instancetype)initWithListViewController:(UADefaultMessageCenterListViewController *)listViewController {
     self = [super init];
     if (self) {
         self.listViewController = listViewController;
@@ -19,7 +19,7 @@
 #pragma mark - UISplitViewControllerDelegate
 
 - (BOOL)splitViewController:(UISplitViewController *)splitViewController collapseSecondaryViewController:(UIViewController *)secondaryViewController ontoPrimaryViewController:(UIViewController *)primaryViewController {
-    UAMessageCenterListViewController *lvc = self.listViewController;
+    UADefaultMessageCenterListViewController *lvc = self.listViewController;
     // Only collapse onto the primary (list) controller if there's no currently selected message or we're in batch editing mode
     return lvc.editing || !(lvc.selectedIndexPath || lvc.selectedMessage);
 }

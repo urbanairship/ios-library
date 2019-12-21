@@ -3,7 +3,7 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
-#import "UAMessageCenterListViewController.h"
+#import "UADefaultMessageCenterListViewController.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -12,7 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface UADefaultMessageCenterSplitViewDelegate : NSObject <UISplitViewControllerDelegate>
 
-- (instancetype)initWithListViewController:(UAMessageCenterListViewController *)listViewController;
+- (instancetype)initWithListViewController:(UADefaultMessageCenterListViewController *)listViewController;
 
 @end
 

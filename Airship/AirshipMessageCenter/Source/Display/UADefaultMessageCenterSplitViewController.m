@@ -1,42 +1,44 @@
 /* Copyright Airship and Contributors */
 
-#import "UAMessageCenterSplitViewController.h"
-#import "UAMessageCenterListViewController.h"
-#import "UAMessageCenterMessageViewController.h"
+#import "UADefaultMessageCenterSplitViewController.h"
+#import "UADefaultMessageCenterListViewController.h"
+#import "UADefaultMessageCenterMessageViewController.h"
 #import "UAMessageCenter.h"
 #import "UAMessageCenterStyle.h"
 #import "UAMessageCenterLocalization.h"
 #import "UAInboxMessage.h"
 #import "UAMessageCenterResources.h"
+#import "UADefaultMessageCenterSplitViewDelegate.h"
 
 #import "UAAirshipMessageCenterCoreImport.h"
 
-@interface UAMessageCenterSplitViewController ()
+@interface UADefaultMessageCenterSplitViewController ()
 
-@property (nonatomic, strong) UAMessageCenterListViewController *listViewController;
-@property (nonatomic, strong) UIViewController<UAMessageCenterMessageViewProtocol> *messageViewController;
+@property (nonatomic, strong) UADefaultMessageCenterListViewController *listViewController;
+@property (nonatomic, strong) UADefaultMessageCenterMessageViewController *messageViewController;
 @property (nonatomic, strong) UINavigationController *listNav;
 @property (nonatomic, strong) UINavigationController *messageNav;
+@property (nonatomic, strong) UADefaultMessageCenterSplitViewDelegate *defaultSplitViewDelegate;
 @property (nonatomic, assign) BOOL showMessageViewOnViewDidAppear;
 
 @end
 
-#pragma GCC diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-implementations"
-@implementation UAMessageCenterSplitViewController
-#pragma GCC diagnostic pop
+@implementation UADefaultMessageCenterSplitViewController
 
 - (void)configure {
 
-    self.listViewController = [[UAMessageCenterListViewController alloc] initWithNibName:@"UAMessageCenterListViewController"
-                                                                                  bundle:[UAMessageCenterResources bundle]
-                                                                     splitViewController:self];
+    self.listViewController = [[UADefaultMessageCenterListViewController alloc] initWithNibName:@"UAMessageCenterListViewController"
+                                                                                  bundle:[UAMessageCenterResources bundle]];
+
     self.listNav = [[UINavigationController alloc] initWithRootViewController:self.listViewController];
     self.viewControllers = @[self.listNav];
-
+    
     self.title = UAMessageCenterLocalizedString(@"ua_message_center_title");
 
-    self.delegate = self.listViewController;
+    self.listViewController.delegate = self;
+
+    self.defaultSplitViewDelegate =  [[UADefaultMessageCenterSplitViewDelegate alloc] initWithListViewController:self.listViewController];
+    self.delegate = self.defaultSplitViewDelegate;
 }
 
 - (instancetype)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
@@ -61,23 +63,24 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-
+    
     if (self.listViewController.messageViewController) {
         self.messageViewController = self.listViewController.messageViewController;
         self.showMessageViewOnViewDidAppear = YES;
     } else {
-        self.messageViewController = [[UAMessageCenterMessageViewController alloc] initWithNibName:@"UAMessageCenterMessageViewController"
-                                                                                            bundle:[UAMessageCenterResources bundle]];
+        self.messageViewController = [[UADefaultMessageCenterMessageViewController alloc] initWithNibName:@"UAMessageCenterMessageViewController"
+                                                                                                   bundle:[UAMessageCenterResources bundle]];
         self.listViewController.messageViewController = self.messageViewController;
+        self.listViewController.messageViewController.delegate = self.listViewController;
         self.showMessageViewOnViewDidAppear = NO;
     }
 
     self.messageNav = [[UINavigationController alloc] initWithRootViewController:self.messageViewController];
     self.viewControllers = @[self.listNav,self.messageNav];
-
+    
     // display both view controllers in horizontally regular contexts
     self.preferredDisplayMode = UISplitViewControllerDisplayModeAllVisible;
-
+    
     if (self.style) {
         [self applyStyle];
     }
@@ -142,6 +145,12 @@
 - (void)setTitle:(NSString *)title {
     [super setTitle:title];
     self.listViewController.title = title;
+}
+
+#pragma mark UAMessageCenterListViewDelegate
+
+- (BOOL)shouldDeselectActiveCellWhenAppearing {
+    return self.collapsed;
 }
 
 @end

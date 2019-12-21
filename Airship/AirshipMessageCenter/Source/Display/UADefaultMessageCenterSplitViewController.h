@@ -3,13 +3,14 @@
 #import <UIKit/UIKit.h>
 
 @class UAMessageCenterStyle;
-@class UAMessageCenterListViewController;
+
+#import "UADefaultMessageCenterListViewController.h"
+#import "UAMessageCenterListViewDelegate.h"
 
 /**
  * Default implementation of an adaptive message center controller.
  */
-DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0. Instead use UADefaultMessageCenterSplitViewController.")
-@interface UAMessageCenterSplitViewController : UISplitViewController
+@interface UADefaultMessageCenterSplitViewController : UISplitViewController <UAMessageCenterListViewDelegate>
 
 ///---------------------------------------------------------------------------------------
 /// @name Default Message Center Split View Controller Properties
@@ -28,6 +29,11 @@ DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0. Inst
 /**
  * The embedded list view controller.
  */
-@property(nonatomic, readonly) UAMessageCenterListViewController *listViewController;
+@property(nonatomic, readonly) UADefaultMessageCenterListViewController *listViewController;
+
+/**
+ * The embedded message view controller
+ */
+@property (nonatomic, readonly) UADefaultMessageCenterMessageViewController *messageViewController;
 
 @end

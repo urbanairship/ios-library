@@ -3,15 +3,15 @@
 #import "UADefaultMessageCenterUI.h"
 #import "UAMessageCenter.h"
 #import "UAMessageCenterLocalization.h"
-#import "UAMessageCenterListViewController.h"
-#import "UAMessageCenterMessageViewController.h"
-#import "UAMessageCenterSplitViewController.h"
+#import "UADefaultMessageCenterListViewController.h"
+#import "UADefaultMessageCenterMessageViewController.h"
+#import "UADefaultMessageCenterSplitViewController.h"
 #import "UAMessageCenterStyle.h"
 
 #import "UAAirshipMessageCenterCoreImport.h"
 
 @interface UADefaultMessageCenterUI()
-@property(nonatomic, strong) UAMessageCenterSplitViewController *splitViewController;
+@property(nonatomic, strong) UADefaultMessageCenterSplitViewController *splitViewController;
 @end
 
 @implementation UADefaultMessageCenterUI
@@ -27,10 +27,10 @@
 - (void)displayMessageCenterAnimated:(BOOL)animated
                           completion:(void(^)(void))completionHandler {
     if (!self.splitViewController) {
-        self.splitViewController = [[UAMessageCenterSplitViewController alloc] initWithNibName:nil bundle:nil];
+        self.splitViewController = [[UADefaultMessageCenterSplitViewController alloc] initWithNibName:nil bundle:nil];
         self.splitViewController.filter = self.filter;
 
-        UAMessageCenterListViewController *lvc = self.splitViewController.listViewController;
+        UADefaultMessageCenterListViewController *lvc = self.splitViewController.listViewController;
 
         // if "Done" has been localized, use it, otherwise use iOS's UIBarButtonSystemItemDone
         if (UAMessageCenterLocalizedStringExists(@"ua_done")) {
