@@ -8,13 +8,12 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol UAMessageCenterListViewDelegate <NSObject>
 
 /**
- * Whether the list view should deselect active cells when appearing. Useful
- * In split view and other compound UI contexts where desired cell selection
- * behavior is dependent on the state of its outer UI context.
+ * Whether the list view should deselect active cells when appearing. If implemented, this
+ * callback will override the embedded tableView's default behavior.
  *
  * @return `YES` if the list view should deselect active cells when appearing, `NO` otherwise.
  */
-- (BOOL)shouldDeselectActiveCellWhenAppearing;
+- (BOOL)shouldClearSelectionOnViewWillAppear;
 
 @end
 

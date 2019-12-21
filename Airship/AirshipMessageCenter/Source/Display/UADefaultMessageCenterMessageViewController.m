@@ -11,7 +11,6 @@
 #import "UAMessageCenterLocalization.h"
 #import "UAUser+Internal.h"
 #import "UAMessageCenter.h"
-#import "UADefaultMessageCenterUI.h"
 
 #import "UAAirshipMessageCenterCoreImport.h"
 
@@ -82,7 +81,6 @@ typedef enum MessageState {
 @implementation UADefaultMessageCenterMessageViewController
 
 @synthesize message = _message;
-@synthesize closeBlock = _closeBlock;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
     if ((self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil])) {
@@ -96,6 +94,12 @@ typedef enum MessageState {
     self.webView.navigationDelegate = nil;
     self.webView.UIDelegate = nil;
     [self.webView stopLoading];
+}
+
+
+- (void)setDisableMessageLinkPreviewAndCallouts:(BOOL)disableMessageLinkPreviewAndCallouts {
+    _disableMessageLinkPreviewAndCallouts = disableMessageLinkPreviewAndCallouts;
+    self.webView.allowsLinkPreview = disableMessageLinkPreviewAndCallouts;
 }
 
 - (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {
@@ -115,7 +119,7 @@ typedef enum MessageState {
     self.nativeBridge.forwardNavigationDelegate = self;
 
     self.webView.navigationDelegate = self.nativeBridge;
-    self.webView.allowsLinkPreview = ![UAMessageCenter shared].defaultUI.disableMessageLinkPreviewAndCallouts;
+    self.webView.allowsLinkPreview = !self.disableMessageLinkPreviewAndCallouts;
 
     // Allow the webView to detect data types (e.g. phone numbers, addresses) at will
     [self.webView.configuration setDataDetectorTypes:WKDataDetectorTypeAll];
@@ -142,7 +146,6 @@ typedef enum MessageState {
     }
     
     self.isVisible = NO;
-    
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -241,10 +244,6 @@ typedef enum MessageState {
 }
 
 - (void)loadMessageForID:(nullable NSString *)messageID onlyIfChanged:(BOOL)onlyIfChanged {
-    [self loadMessageForID:messageID onlyIfChanged:onlyIfChanged onError:nil];
-}
-
-- (void)loadMessageForID:(nullable NSString *)messageID onlyIfChanged:(BOOL)onlyIfChanged onError:(void (^)(void))errorCompletion {
     if (!messageID) {
         [self showDefaultScreen];
         return;
@@ -284,12 +283,8 @@ typedef enum MessageState {
                                           userInfo:@{NSLocalizedDescriptionKey:msg}];
 
                 [self.delegate messageLoadFailed:messageID error:error];
-
-                // Call error completion for compatibility with deprecated message view protocol
-                if (errorCompletion) {
-                    errorCompletion();
-                };
             }
+
             return;
         }];
     } withFailureBlock:^{
@@ -304,13 +299,8 @@ typedef enum MessageState {
                                       userInfo:@{NSLocalizedDescriptionKey:msg}];
 
             [self.delegate messageLoadFailed:messageID error:error];
-
-            // Call error completion for compatibility with deprecated message view protocol
-            if (errorCompletion) {
-                errorCompletion();
-            }
-
         }];
+        
         return;
     }];
 }
@@ -401,7 +391,7 @@ typedef enum MessageState {
         UA_LWARN(@"MessageState = %u. Should be \"LOADING\"",self.messageState);
     }
 
-    if (![UAMessageCenter shared].defaultUI.disableMessageLinkPreviewAndCallouts) {
+    if (!self.disableMessageLinkPreviewAndCallouts) {
         [self.webView evaluateJavaScript:@"document.body.style.webkitTouchCallout='none';" completionHandler:nil];
     }
     
@@ -447,10 +437,6 @@ typedef enum MessageState {
 #pragma mark UANativeBridgeDelegate
 
 - (void)close {
-    if (self.closeBlock) {
-        self.closeBlock(YES);
-    }
-
     [self.delegate messageClosed:self.message.messageID];
 }
 

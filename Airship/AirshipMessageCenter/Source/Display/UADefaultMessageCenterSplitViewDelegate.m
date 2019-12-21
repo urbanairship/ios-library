@@ -20,8 +20,8 @@
 
 - (BOOL)splitViewController:(UISplitViewController *)splitViewController collapseSecondaryViewController:(UIViewController *)secondaryViewController ontoPrimaryViewController:(UIViewController *)primaryViewController {
     UADefaultMessageCenterListViewController *lvc = self.listViewController;
-    // Only collapse onto the primary (list) controller if there's no currently selected message or we're in batch editing mode
-    return lvc.editing || !(lvc.selectedIndexPath || lvc.selectedMessage);
+    // Only collapse onto the primary (list) controller if there's no currently selected index path or we're in batch editing mode
+    return lvc.editing || !(lvc.selectedIndexPath);
 }
 
 - (UIViewController *)primaryViewControllerForExpandingSplitViewController:(UISplitViewController *)splitViewController {

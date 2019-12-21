@@ -3,7 +3,7 @@
 @import Foundation;
 @import AirshipMessageCenter;
 
-@interface MessageCenterDelegate : NSObject <UAMessageCenterDisplayDelegate>
+@interface MessageCenterDelegate : NSObject <UAMessageCenterDisplayDelegate, UAMessageCenterMessagePresentationDelegate>
 
 - (instancetype)initWithRootViewController:(UIViewController *)rootViewController;
 

@@ -6,12 +6,14 @@
 #import "UADefaultMessageCenterListViewController.h"
 #import "UADefaultMessageCenterMessageViewController.h"
 #import "UADefaultMessageCenterSplitViewController.h"
+#import "UADefaultMessageCenterSplitViewDelegate.h"
 #import "UAMessageCenterStyle.h"
 
 #import "UAAirshipMessageCenterCoreImport.h"
 
 @interface UADefaultMessageCenterUI()
 @property(nonatomic, strong) UADefaultMessageCenterSplitViewController *splitViewController;
+@property(nonatomic, strong) UADefaultMessageCenterSplitViewDelegate *splitViewDelegate;
 @end
 
 @implementation UADefaultMessageCenterUI
@@ -24,11 +26,33 @@
     return self;
 }
 
+- (void)setFilter:(NSPredicate *)filter {
+    _filter = filter;
+    self.splitViewController.filter = filter;
+}
+
+- (void)setDisableMessageLinkPreviewAndCallouts:(BOOL)disableMessageLinkPreviewAndCallouts {
+    _disableMessageLinkPreviewAndCallouts = disableMessageLinkPreviewAndCallouts;
+    self.splitViewController.disableMessageLinkPreviewAndCallouts = disableMessageLinkPreviewAndCallouts;
+}
+
+- (void)setStyle:(UAMessageCenterStyle *)style {
+    _style = style;
+    self.splitViewController.style = style;
+}
+
+- (void)setTitle:(NSString *)title {
+    _title = title;
+    self.splitViewController.title = title;
+}
+
 - (void)displayMessageCenterAnimated:(BOOL)animated
                           completion:(void(^)(void))completionHandler {
     if (!self.splitViewController) {
         self.splitViewController = [[UADefaultMessageCenterSplitViewController alloc] initWithNibName:nil bundle:nil];
+        
         self.splitViewController.filter = self.filter;
+        self.splitViewController.disableMessageLinkPreviewAndCallouts = self.disableMessageLinkPreviewAndCallouts;
 
         UADefaultMessageCenterListViewController *lvc = self.splitViewController.listViewController;
 
@@ -64,7 +88,7 @@
     UA_WEAKIFY(self)
     [self displayMessageCenterAnimated:animated completion:^{
         UA_STRONGIFY(self)
-        [self.splitViewController.listViewController displayMessageForID:messageID];
+        [self.splitViewController displayMessageForID:messageID];
     }];
 }
 
@@ -75,6 +99,13 @@
 
 - (void)dismiss {
     [self dismissMessageCenterAnimated:YES];
+}
+
+#pragma mark -
+#pragma mark UAMessageCenterMessagePresentationDelegate
+
+- (void)presentMessage:(UAInboxMessage *)message {
+
 }
 
 @end

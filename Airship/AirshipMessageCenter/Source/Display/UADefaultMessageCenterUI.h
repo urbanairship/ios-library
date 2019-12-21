@@ -2,6 +2,7 @@
 
 #import <Foundation/Foundation.h>
 #import "UAMessageCenter.h"
+#import "UAMessageCenterMessagePresentationDelegate.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

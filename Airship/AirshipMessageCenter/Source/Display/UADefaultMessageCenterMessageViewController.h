@@ -41,10 +41,7 @@ extern NSString * const UAMessageCenterMessageLoadErrorHTTPStatusKey;
 /**
  * Default implementation of a view controller for reading Message Center messages.
  */
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-@interface UADefaultMessageCenterMessageViewController : UIViewController <UAMessageCenterMessageViewProtocol>
-#pragma GCC diagnostic pop
+@interface UADefaultMessageCenterMessageViewController : UIViewController
 
 /**
  * The message view delegate.
@@ -56,6 +53,11 @@ extern NSString * const UAMessageCenterMessageLoadErrorHTTPStatusKey;
  */
 @property (nonatomic, readonly, nullable) UAInboxMessage *message;
 
+/**
+ * Disables 3D touching and long pressing on links in messages.
+ */
+@property (nonatomic, assign) BOOL disableMessageLinkPreviewAndCallouts;
+
 - (instancetype)initWithCoder:(NSCoder *)aDecoder NS_UNAVAILABLE;
 
 /**
@@ -65,18 +67,6 @@ extern NSString * const UAMessageCenterMessageLoadErrorHTTPStatusKey;
  * @param onlyIfChanged Only load the message if the message has changed
  */
 - (void)loadMessageForID:(nullable NSString *)messageID onlyIfChanged:(BOOL)onlyIfChanged;
-
-/**
- * Load a UAInboxMessage by message ID.
- *
- * @param messageID The message ID of the message.
- * @param onlyIfChanged Only load the message if the message has changed
- * @param errorCompletion Called on loading error
- *
- * @deprecated Deprecated – to be removed in SDK version 14.0. Instead use loadMessageForID:onlyIfChanged
- * and the UAMessageCenterMessageViewDelegate protocol.
- */
-- (void)loadMessageForID:(nullable NSString *)messageID onlyIfChanged:(BOOL)onlyIfChanged onError:(nullable void (^)(void))errorCompletion;
 
 /**
  * Shows the default screen indicating no messages are available for display.

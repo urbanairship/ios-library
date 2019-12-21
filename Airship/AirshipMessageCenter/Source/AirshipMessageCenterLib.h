@@ -9,6 +9,7 @@
 #import "UAMessageCenterListViewController.h"
 #import "UAMessageCenterListViewDelegate.h"
 #import "UAMessageCenterLocalization.h"
+#import "UAMessageCenterMessagePresentationDelegate.h"
 #import "UAMessageCenterMessageViewController.h"
 #import "UAMessageCenterMessageViewDelegate.h"
 #import "UAMessageCenterMessageViewProtocol.h"

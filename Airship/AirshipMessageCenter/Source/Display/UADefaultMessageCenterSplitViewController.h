@@ -5,12 +5,14 @@
 @class UAMessageCenterStyle;
 
 #import "UADefaultMessageCenterListViewController.h"
+#import "UADefaultMessageCenterMessageViewController.h"
 #import "UAMessageCenterListViewDelegate.h"
+#import "UAMessageCenterMessageViewDelegate.h"
 
 /**
  * Default implementation of an adaptive message center controller.
  */
-@interface UADefaultMessageCenterSplitViewController : UISplitViewController <UAMessageCenterListViewDelegate>
+@interface UADefaultMessageCenterSplitViewController : UISplitViewController <UAMessageCenterListViewDelegate, UAMessageCenterMessageViewDelegate, UAMessageCenterMessagePresentationDelegate>
 
 ///---------------------------------------------------------------------------------------
 /// @name Default Message Center Split View Controller Properties
@@ -35,5 +37,22 @@
  * The embedded message view controller
  */
 @property (nonatomic, readonly) UADefaultMessageCenterMessageViewController *messageViewController;
+
+/**
+ * Disables 3D touching and long pressing on links in messages.
+ */
+@property (nonatomic, assign) BOOL disableMessageLinkPreviewAndCallouts;
+
+///---------------------------------------------------------------------------------------
+/// @name Default Message Center List View Controller Message Display
+///---------------------------------------------------------------------------------------
+
+/**
+ * Displays a new message, either by updating the currently displayed message or
+ * by navigating to a new one.
+ *
+ * @param messageID The messageID of the message to load.
+ */
+- (void)displayMessageForID:(NSString *)messageID;
 
 @end
