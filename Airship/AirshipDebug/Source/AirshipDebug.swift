@@ -12,6 +12,8 @@ public class AirshipDebug : NSObject {
     @objc public static var deviceInfoViewName = "AirshipDebugDeviceInfo"
     @objc public static let automationViewName = "AirshipDebugAutomation"
     @objc public static let eventsViewName = "AirshipDebugEvents"
+    @objc public static let receivedPushesViewName = "AirshipDebugPush"
+
     @objc public static var tagsViewName = DeviceInfoViewController.tagsViewName
 
     @objc public class var deviceInfoViewController : UIViewController? {
@@ -55,8 +57,6 @@ public class AirshipDebug : NSObject {
     static var _eventsViewController : UIViewController?
 
     static var rootViewController : RootTableViewController?
-
-    static let lastPushPayloadKey = "com.urbanairship.debug.last_push"
 
     /**
      * Provides an initialization point for AirshipDebug components.
@@ -178,23 +178,26 @@ public class AirshipDebug : NSObject {
                                                selector:#selector(receivedNotificationResponse(notification:)),
                                                name: NSNotification.Name(rawValue: UAReceivedNotificationResponseEvent),
                                                object: nil)
-
     }
 
     @objc static func receivedForegroundNotification(notification: NSNotification) {
-        saveLastPayload(lastPayload: notification.userInfo)
+        let notificationContent:UANotificationContent = UANotificationContent.notification(withNotificationInfo:notification.userInfo!)
+        savePush(notificationContent: notificationContent)
     }
 
     @objc static func receivedBackgroundNotification(notification: NSNotification) {
-        saveLastPayload(lastPayload: notification.userInfo)
+        let notificationContent:UANotificationContent = UANotificationContent.notification(withNotificationInfo:notification.userInfo!)
+        savePush(notificationContent: notificationContent)
     }
 
     @objc static func receivedNotificationResponse(notification: NSNotification) {
-        saveLastPayload(lastPayload: notification.userInfo)
+        let notificationContent:UANotificationContent = UANotificationContent.notification(withNotificationInfo:notification.userInfo!)
+        savePush(notificationContent: notificationContent)
     }
 
-    static func saveLastPayload(lastPayload : [AnyHashable : Any]?) {
-        UserDefaults.standard.setValue(lastPayload, forKey: lastPushPayloadKey)
+    static func savePush(notificationContent : UANotificationContent?) {
+        let pushPayload = PushNotification.init(push: notificationContent!)
+        PushDataManager.shared.savePushNotification(pushPayload)
     }
 }
 
@@ -207,7 +210,7 @@ internal extension String {
     func localized(bundle: Bundle = Bundle(for: AirshipDebug.self), tableName: String = "AirshipDebug", comment: String = "") -> String {
         return NSLocalizedString(self, tableName: tableName, bundle: bundle, comment: comment)
     }
-    
+
     func localizedWithFormat(count:Int) -> String {
         return String.localizedStringWithFormat(localized(), count)
     }
