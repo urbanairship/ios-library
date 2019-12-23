@@ -27,7 +27,7 @@ class RootTableViewController: UITableViewController {
     var deviceInfoViewController: DeviceInfoViewController?
     var eventsViewController: EventsViewController?
     var automationTableViewController: AutomationTableViewController?
-    var receivedPushesViewController: PushNotificationsViewController?
+    var receivedPushesViewController: PushNotificationsTableViewController?
 
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
@@ -145,7 +145,7 @@ class RootTableViewController: UITableViewController {
         } else if let automationTableViewController = segue.destination as? AutomationTableViewController {
             self.automationTableViewController = automationTableViewController
             automationTableViewController.launchPathComponents = launchPathComponents
-        } else if let receivedPushesViewController = segue.destination as? PushNotificationsViewController {
+        } else if let receivedPushesViewController = segue.destination as? PushNotificationsTableViewController {
             self.receivedPushesViewController = receivedPushesViewController
             receivedPushesViewController.launchPathComponents = launchPathComponents
         }
@@ -170,7 +170,7 @@ class RootTableViewController: UITableViewController {
             return self.automationTableViewController
         case AirshipDebug.receivedPushesViewName.lowercased():
             if (self.receivedPushesViewController == nil) {
-                self.receivedPushesViewController = AirshipDebug.instantiateViewControllerForStoryboard(storyBoardName) as? PushNotificationsViewController
+                self.receivedPushesViewController = AirshipDebug.instantiateViewControllerForStoryboard(storyBoardName) as? PushNotificationsTableViewController
             }
             return self.receivedPushesViewController
         default:

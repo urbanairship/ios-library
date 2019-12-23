@@ -334,7 +334,7 @@
 		6E6CC38423A3F9B4003D583C /* PushNotificationsDetailTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6CC37E23A3F9B4003D583C /* PushNotificationsDetailTableViewController.swift */; };
 		6E6CC38623A3F9B4003D583C /* PushDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6CC38023A3F9B4003D583C /* PushDataManager.swift */; };
 		6E6CC38723A3F9B4003D583C /* PushPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6CC38123A3F9B4003D583C /* PushPayload.swift */; };
-		6E6CC38823A3F9B4003D583C /* PushNotificationsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6CC38223A3F9B4003D583C /* PushNotificationsViewController.swift */; };
+		6E6CC38823A3F9B4003D583C /* PushNotificationsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6CC38223A3F9B4003D583C /* PushNotificationsTableViewController.swift */; };
 		6E6CC38A23A3FA38003D583C /* AirshipDebugPushNotifications.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6E6CC38923A3FA38003D583C /* AirshipDebugPushNotifications.storyboard */; };
 		6E746507235FA9B6000BF09C /* UAMessageCenterTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E746506235FA9B6000BF09C /* UAMessageCenterTest.m */; };
 		6E84537B237E03E7007D3B1E /* UAPadding.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E845379237E03E7007D3B1E /* UAPadding.m */; };
@@ -2580,7 +2580,7 @@
 		6E6CC37E23A3F9B4003D583C /* PushNotificationsDetailTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PushNotificationsDetailTableViewController.swift; sourceTree = "<group>"; };
 		6E6CC38023A3F9B4003D583C /* PushDataManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PushDataManager.swift; sourceTree = "<group>"; };
 		6E6CC38123A3F9B4003D583C /* PushPayload.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PushPayload.swift; sourceTree = "<group>"; };
-		6E6CC38223A3F9B4003D583C /* PushNotificationsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PushNotificationsViewController.swift; sourceTree = "<group>"; };
+		6E6CC38223A3F9B4003D583C /* PushNotificationsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PushNotificationsTableViewController.swift; sourceTree = "<group>"; };
 		6E6CC38923A3FA38003D583C /* AirshipDebugPushNotifications.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = AirshipDebugPushNotifications.storyboard; sourceTree = "<group>"; };
 		6E746506235FA9B6000BF09C /* UAMessageCenterTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAMessageCenterTest.m; sourceTree = "<group>"; };
 		6E7700A81F04790C00B5E465 /* UANativeBridge */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = UANativeBridge; sourceTree = "<group>"; };
@@ -3781,7 +3781,7 @@
 				6E6CC37E23A3F9B4003D583C /* PushNotificationsDetailTableViewController.swift */,
 				6E6CC38023A3F9B4003D583C /* PushDataManager.swift */,
 				6E6CC38123A3F9B4003D583C /* PushPayload.swift */,
-				6E6CC38223A3F9B4003D583C /* PushNotificationsViewController.swift */,
+				6E6CC38223A3F9B4003D583C /* PushNotificationsTableViewController.swift */,
 			);
 			path = "Received Pushes";
 			sourceTree = "<group>";
@@ -7115,7 +7115,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6E6CC38823A3F9B4003D583C /* PushNotificationsViewController.swift in Sources */,
+				6E6CC38823A3F9B4003D583C /* PushNotificationsTableViewController.swift in Sources */,
 				3CA0E2AE237CD05F00EE76CF /* AssociatedIdentifiersTableViewController.swift in Sources */,
 				3CA0E2AF237CD05F00EE76CF /* AddTagsTableViewController.swift in Sources */,
 				6E21852B237D32B30084933A /* EventData.swift in Sources */,

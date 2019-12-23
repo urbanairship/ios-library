@@ -14,7 +14,7 @@ class PushNotificationsCell: UITableViewCell {
     @IBOutlet weak var messageDate: UILabel!
 }
 
-class PushNotificationsViewController:UIViewController, UITableViewDataSource, UITableViewDelegate, PushDataManagerDelegate {
+class PushNotificationsTableViewController:UIViewController, UITableViewDataSource, UITableViewDelegate, PushDataManagerDelegate {
         @IBOutlet private weak var tableView:UITableView!
 
         var launchPathComponents : [String]?
@@ -86,9 +86,9 @@ class PushNotificationsViewController:UIViewController, UITableViewDataSource, U
             push = displayPushes[indexPath.row]
 
             cell.alertTitle.text = push.alert
-            cell.alertTitle.textColor = ThemeManager.shared.currentTheme.SecondaryText
+            cell.alertTitle.textColor = ThemeManager.shared.currentTheme.PrimaryText
             cell.messageDate.text = push.time.toPrettyDateString()
-            cell.messageDate.textColor = ThemeManager.shared.currentTheme.PrimaryText
+            cell.messageDate.textColor = ThemeManager.shared.currentTheme.SecondaryText
             cell.messageID.text = push.pushID
             cell.messageID.textColor = ThemeManager.shared.currentTheme.SecondaryText
             cell.backgroundColor = ThemeManager.shared.currentTheme.Background

@@ -17,10 +17,10 @@ protocol PushDataManagerDelegate {
 class PushDataManager: NSObject {
     private let storageDaysSettingKey = "AirshipDebug.PushNotificationStorageDays"
 
-    // The number of days events will be stored by default.
+    // The number of days push payloads will be stored by default.
     private let defaultStorageDays = 2
 
-    // Days of event backlog - must be greater than or equal to the default of 2 days.
+    // Days of push payload backlog - must be greater than or equal to the default of 2 days.
     var storageDays:Int {
         get {
             let persisted = UserDefaults.standard.integer(forKey:storageDaysSettingKey)
@@ -149,12 +149,12 @@ class PushDataManager: NSObject {
             pushDatas = try context.fetch(fetchRequest)
         } catch {
             if let error = error as NSError? {
-                print("ERROR: error fetching events list - \(error), \(error.userInfo)")
+                print("ERROR: error fetching push payload list - \(error), \(error.userInfo)")
             }
         }
 
         for pushData in pushDatas {
-            guard let data = pushData as? PushData else {
+            guard let data = pushData as? PushData, data.data != nil else {
                 continue
             }
 
