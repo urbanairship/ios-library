@@ -14,7 +14,11 @@
 
 @interface AirshipAccengageTests : XCTestCase
 
+@property (nonatomic, strong) UAPreferenceDataStore *dataStore;
+@property (nonatomic, strong) UARuntimeConfig *config;
+@property (nonatomic, strong) UAChannel *channel;
 @property (nonatomic, strong) UAAnalytics *analytics;
+@property (nonatomic, strong) id mockPush;
 
 @end
 
@@ -23,22 +27,26 @@
 - (void)extendChannelRegistrationPayload:(UAChannelRegistrationPayload *)payload completionHandler:(UAChannelRegistrationExtenderCompletionHandler)completionHandler;
 - (instancetype)init;
 - (void)migrateSettingsToAnalytics:(UAAnalytics *)analytics;
+- (void)migratePushSettings:(UAPush *)push completionHandler:(void (^)(void))completionHandler;
+- (instancetype)initWithDataStore:(UAPreferenceDataStore *)dataStore
+                          channel:(UAChannel<UAExtendableChannelRegistration> *)channel
+                             push:(UAPush *)push
+                        analytics:(UAAnalytics *)analytics;
 
 @end
 
 @implementation AirshipAccengageTests
 
-- (UAAccengage *)setUpAccengage {
-    UAPreferenceDataStore *dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:@"test"];
-    UARuntimeConfig *config = [[UARuntimeConfig alloc] initWithConfig:[UAConfig defaultConfig]];
+- (void)setUp {
+    self.dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:@"test"];
+    self.config = [[UARuntimeConfig alloc] initWithConfig:[UAConfig defaultConfig]];
     UATagGroupsMutationHistory *history = [[UATagGroupsMutationHistory alloc] init];
-    UATagGroupsRegistrar *tagGroupsRegistar = [UATagGroupsRegistrar tagGroupsRegistrarWithConfig:config dataStore:dataStore mutationHistory:history];
-    UAChannel *channel = [UAChannel channelWithDataStore:dataStore config:config tagGroupsRegistrar:tagGroupsRegistar];
-    self.analytics = [UAAnalytics analyticsWithConfig:config dataStore:dataStore channel:channel];
-    id push = OCMClassMock([UAPush class]);
-
-    UAAccengage<UAPushableComponent> *accengage = [UAAccengage accengageWithDataStore:dataStore channel:channel push:push analytics:self.analytics];
-    return accengage;
+    UATagGroupsRegistrar *tagGroupsRegistar = [UATagGroupsRegistrar tagGroupsRegistrarWithConfig:self.config dataStore:self.dataStore mutationHistory:history];
+    self.channel = [UAChannel channelWithDataStore:self.dataStore config:self.config tagGroupsRegistrar:tagGroupsRegistar];
+    self.analytics = [UAAnalytics analyticsWithConfig:self.config dataStore:self.dataStore channel:self.channel];
+    id registration = OCMClassMock([UAAPNSRegistration class]);
+    UAPush *push = [UAPush pushWithConfig:self.config dataStore:self.dataStore channel:self.channel analytics:self.analytics appStateTracker:[UAAppStateTracker shared] notificationCenter:[NSNotificationCenter defaultCenter] pushRegistration:registration application:[UIApplication sharedApplication] dispatcher:[UADispatcher mainDispatcher]];
+    self.mockPush = OCMPartialMock(push);
 }
 
 - (void)testReceivedNotificationResponse {
@@ -107,21 +115,19 @@
 }
 
 - (void)testInitWithDataStore {
-    UAPreferenceDataStore *dataStore = [[UAPreferenceDataStore alloc] init];
-    UARuntimeConfig *config = [[UARuntimeConfig alloc] init];
     UATagGroupsMutationHistory *history = [[UATagGroupsMutationHistory alloc] init];
-    UATagGroupsRegistrar *tagGroupsRegistar = [UATagGroupsRegistrar tagGroupsRegistrarWithConfig:config dataStore:dataStore mutationHistory:history];
-    UAChannel *channel = [UAChannel channelWithDataStore:dataStore config:config tagGroupsRegistrar:tagGroupsRegistar];
+    UATagGroupsRegistrar *tagGroupsRegistar = [UATagGroupsRegistrar tagGroupsRegistrarWithConfig:self.config dataStore:self.dataStore mutationHistory:history];
+    UAChannel *channel = [UAChannel channelWithDataStore:self.dataStore config:self.config tagGroupsRegistrar:tagGroupsRegistar];
     id channelMock = OCMPartialMock(channel);
-    UAAnalytics *analytics = [UAAnalytics analyticsWithConfig:config dataStore:dataStore channel:channelMock];
-    id push = OCMClassMock([UAPush class]);
-    
     [[channelMock expect] addChannelExtenderBlock:OCMOCK_ANY];
     
-    UAAccengage *accengage = [UAAccengage accengageWithDataStore:dataStore channel:channelMock push:push analytics:analytics];
+    id pushMock = OCMClassMock([UAPush class]);
+    id userNotificationCenterMock = OCMClassMock([UNUserNotificationCenter class]);
+    [[[userNotificationCenterMock stub] andReturn:userNotificationCenterMock] currentNotificationCenter];
+    
+    UAAccengage *accengage = [[UAAccengage alloc] initWithDataStore:self.dataStore channel:channelMock push:pushMock analytics:self.analytics];
     
     [channelMock verify];
-  
 }
 
 - (void)testExtendChannel {
@@ -142,32 +148,35 @@
 }
 
 - (void)testMigrateSettings {
-    id mockArchiver = OCMClassMock([NSKeyedUnarchiver class]);
-    id mockUtils = OCMClassMock([UAAccengageUtils class]);
+    id archiverMock = OCMClassMock([NSKeyedUnarchiver class]);
+    id utilsMock = OCMClassMock([UAAccengageUtils class]);
     
     NSDictionary *testDictionary = @{@"DoNotTrack":@NO};
     
     NSString *testString = @"test";
     NSData *data = [testString dataUsingEncoding:NSUTF8StringEncoding];
     
-    [[[mockArchiver stub] andReturn:data] unarchiveObjectWithFile:OCMOCK_ANY];
-    [[[mockArchiver stub] andReturn:testDictionary] unarchiveObjectWithData:OCMOCK_ANY];
-    [[[mockUtils stub] andReturn:data] decryptData:OCMOCK_ANY key:OCMOCK_ANY];
+    [[[archiverMock stub] andReturn:data] unarchiveObjectWithFile:OCMOCK_ANY];
+    [[[archiverMock stub] andReturn:testDictionary] unarchiveObjectWithData:OCMOCK_ANY];
+    [[[utilsMock stub] andReturn:data] decryptData:OCMOCK_ANY key:OCMOCK_ANY];
     
-    UAAccengage *accengage = [self setUpAccengage];
+    UAAccengage *accengage = [[UAAccengage alloc] init];
+    [accengage migrateSettingsToAnalytics:self.analytics];
      
     XCTAssertTrue(self.analytics.isEnabled);
     
-    [mockArchiver stopMocking];
-    [mockUtils stopMocking];
+    [archiverMock stopMocking];
+    [utilsMock stopMocking];
     
-    mockArchiver = OCMClassMock([NSKeyedUnarchiver class]);
-    mockUtils = OCMClassMock([UAAccengageUtils class]);
+    archiverMock = OCMClassMock([NSKeyedUnarchiver class]);
+    utilsMock = OCMClassMock([UAAccengageUtils class]);
     
     testDictionary = @{@"DoNotTrack":@YES};
-    [[[mockArchiver stub] andReturn:data] unarchiveObjectWithFile:OCMOCK_ANY];
-    [[[mockArchiver stub] andReturn:testDictionary] unarchiveObjectWithData:OCMOCK_ANY];
-    [[[mockUtils stub] andReturn:data] decryptData:OCMOCK_ANY key:OCMOCK_ANY];[accengage migrateSettingsToAnalytics:self.analytics];
+    [[[archiverMock stub] andReturn:data] unarchiveObjectWithFile:OCMOCK_ANY];
+    [[[archiverMock stub] andReturn:testDictionary] unarchiveObjectWithData:OCMOCK_ANY];
+    [[[utilsMock stub] andReturn:data] decryptData:OCMOCK_ANY key:OCMOCK_ANY];
+    
+    [accengage migrateSettingsToAnalytics:self.analytics];
         
     XCTAssertFalse(self.analytics.isEnabled);
 }
@@ -274,6 +283,52 @@
     options = [accengage presentationOptionsForNotification:mockNotification defaultPresentationOptions:defaultOptions];
     
     XCTAssertEqual(options, defaultOptions, @"Incorrect notification presentation options");
+}
+
+- (void)testMigratePushSettings {
+    id userNotificationCenterMock = OCMClassMock([UNUserNotificationCenter class]);
+    [[[userNotificationCenterMock stub] andReturn:userNotificationCenterMock] currentNotificationCenter];
+    id notificationSettingsMock = OCMClassMock([UNNotificationSettings class]);
+    [[[notificationSettingsMock stub] andReturnValue:OCMOCK_VALUE(UNAuthorizationStatusAuthorized)] authorizationStatus];
+    
+    typedef void (^NotificationSettingsReturnBlock)(UNNotificationSettings * _Nonnull settings);
+
+    [[[userNotificationCenterMock stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:2];
+        NotificationSettingsReturnBlock returnBlock = (__bridge NotificationSettingsReturnBlock)arg;
+        returnBlock(notificationSettingsMock);
+    }] getNotificationSettingsWithCompletionHandler:OCMOCK_ANY];
+        
+    UAAccengage *accengage = [[UAAccengage alloc] init];
+    [accengage migratePushSettings:self.mockPush completionHandler:^{}];
+    
+    BOOL notificationsEnabled = [self.mockPush userPushNotificationsEnabled];
+ 
+    XCTAssertTrue(notificationsEnabled, @"User notification setting doesn't match the authorization status");
+    [notificationSettingsMock verify];
+        
+    [userNotificationCenterMock stopMocking];
+    [notificationSettingsMock stopMocking];
+    
+    userNotificationCenterMock = OCMClassMock([UNUserNotificationCenter class]);
+    [[[userNotificationCenterMock stub] andReturn:userNotificationCenterMock] currentNotificationCenter];
+    notificationSettingsMock = OCMClassMock([UNNotificationSettings class]);
+    [[[notificationSettingsMock stub] andReturnValue:OCMOCK_VALUE(UNAuthorizationStatusDenied)] authorizationStatus];
+    
+    [[[userNotificationCenterMock stub] andDo:^(NSInvocation *invocation) {
+           void *arg;
+           [invocation getArgument:&arg atIndex:2];
+           NotificationSettingsReturnBlock returnBlock = (__bridge NotificationSettingsReturnBlock)arg;
+           returnBlock(notificationSettingsMock);
+       }] getNotificationSettingsWithCompletionHandler:OCMOCK_ANY];
+    
+    [accengage migratePushSettings:self.mockPush completionHandler:^{}];
+    
+    notificationsEnabled = [self.mockPush userPushNotificationsEnabled];
+    
+    XCTAssertFalse(notificationsEnabled, @"User notification setting doesn't match the authorization status");
+    [notificationSettingsMock verify];
 }
 
 @end

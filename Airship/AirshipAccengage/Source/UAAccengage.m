@@ -13,6 +13,7 @@
 
 static NSString * const UAAccengageIDKey = @"a4sid";
 static NSString * const UAAccengageForegroundKey = @"a4sd";
+NSString *const UAAccengageSettingsMigrated = @"UAAccengageSettingsMigrated";
 
 @implementation UAAccengage
 
@@ -27,9 +28,18 @@ static NSString * const UAAccengageForegroundKey = @"a4sd";
             UA_STRONGIFY(self);
             [self extendChannelRegistrationPayload:payload completionHandler:completionHandler];
         }];
-        [self migrateSettingsToAnalytics:analytics];
+    
         NSSet *accengageCategories = [UANotificationCategories createCategoriesFromFile:[[UAAccengageResources bundle] pathForResource:@"UAAccengageNotificationCategories" ofType:@"plist"]];
         push.accengageCategories = accengageCategories;
+        
+        BOOL settingsMigrated = [dataStore boolForKey:UAAccengageSettingsMigrated];
+        if (!settingsMigrated) {
+            [self migrateSettingsToAnalytics:analytics];
+            [self migratePushSettings:push completionHandler:^{
+                // Save the migration status
+                [dataStore setBool:YES forKey:UAAccengageSettingsMigrated];
+            }];
+        }
     }
     return self;
 }
@@ -128,6 +138,27 @@ static NSString * const UAAccengageForegroundKey = @"a4sd";
         }
     }
 }
+            
+- (void)migratePushSettings:(UAPush *)push completionHandler:(void (^)(void))completionHandler {
+    // get system push opt-in setting
+    [[UNUserNotificationCenter currentNotificationCenter] getNotificationSettingsWithCompletionHandler:^(UNNotificationSettings * _Nonnull notificationSettings) {
+        UNAuthorizationStatus status = notificationSettings.authorizationStatus;
+        if (status == UNAuthorizationStatusAuthorized) {
+            push.userPushNotificationsEnabled = YES;
+            completionHandler();
+        } else {
+            if (@available(iOS 12.0, *)) {
+                if (status == UNAuthorizationStatusProvisional) {
+                    push.userPushNotificationsEnabled = YES;
+                    completionHandler();
+                    return;
+                }
+            }
+            push.userPushNotificationsEnabled = NO;
+            completionHandler();
+        }
+    }];
+}
 
 - (BOOL)isAccengageNotification:(UNNotification *)notification {
     id accengageNotificationID = notification.request.content.userInfo[UAAccengageIDKey];
@@ -142,7 +173,7 @@ static NSString * const UAAccengageForegroundKey = @"a4sd";
         return NO;
     }
 }
-            
+
 #pragma mark -
 #pragma mark Channel Registration Events
 

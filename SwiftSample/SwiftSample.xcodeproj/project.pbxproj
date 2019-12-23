@@ -12,6 +12,7 @@
 		1B94297D23883234002051B3 /* NotificationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B94297C23883234002051B3 /* NotificationViewController.swift */; };
 		1B94298023883234002051B3 /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1B94297E23883234002051B3 /* MainInterface.storyboard */; };
 		1B94298423883234002051B3 /* SwiftSampleContentExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 1B94297823883234002051B3 /* SwiftSampleContentExtension.appex */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		1BF9B0E523A24E5D00E68DBE /* AirshipAccengage.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6E6CC347239A2FB9003D583C /* AirshipAccengage.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		456156E622B6F8FE00A68ADA /* UITestUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 456156E522B6F8FE00A68ADA /* UITestUtils.swift */; };
 		45AF558122B562FE006CAE7F /* CoreUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45AF558022B562FE006CAE7F /* CoreUITests.swift */; };
 		45BE0C9822837B7A008302F1 /* MessageCenterStyle.plist in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0C9222834F6B008302F1 /* MessageCenterStyle.plist */; };
@@ -53,6 +54,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 1B94297723883234002051B3;
 			remoteInfo = SwiftSampleContentExtension;
+		};
+		1BF9B0E323A24E5D00E68DBE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E65D56A2396E99D00AF2D1A /* Airship.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 1BB4C02A239FE5E50000559B;
+			remoteInfo = AirshipAccengageTests;
 		};
 		45AF558322B562FE006CAE7F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -264,6 +272,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				1BF9B0E523A24E5D00E68DBE /* AirshipAccengage.framework in CopyFiles */,
 				6E65D5BC2396ECC200AF2D1A /* AirshipAutomation.framework in CopyFiles */,
 				6E65D5BA2396EAA600AF2D1A /* AirshipLocation.framework in CopyFiles */,
 				6E65D5C32396ECC200AF2D1A /* AirshipMessageCenter.framework in CopyFiles */,
@@ -421,6 +430,7 @@
 				6E65D5882396E99D00AF2D1A /* AirshipMessageCenter.framework */,
 				6E65D58A2396E99D00AF2D1A /* AirshipExtendedActions.framework */,
 				6E6CC347239A2FB9003D583C /* AirshipAccengage.framework */,
+				1BF9B0E423A24E5D00E68DBE /* AirshipAccengageTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -656,6 +666,13 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		1BF9B0E423A24E5D00E68DBE /* AirshipAccengageTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = AirshipAccengageTests.xctest;
+			remoteRef = 1BF9B0E323A24E5D00E68DBE /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		6E65D5782396E99D00AF2D1A /* Airship.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
