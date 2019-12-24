@@ -35,6 +35,11 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)onComponentEnableChange;
 
 /**
+* Called when the data opt-in  flag has changed value.
+*/
+- (void)onDataOptInEnableChange;
+
+/**
  * Called when remote config is loaded. If no config is available for the component, config will be nil.
  * @note For internal use only. :nodoc:
  *

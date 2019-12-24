@@ -31,6 +31,8 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
 - (void)setUp {
     [super setUp];
 
+    [self.dataStore setBool:YES forKey:UAAirshipDataOptInKey];
+    
     self.mockChannel = [self mockForClass:[UAChannel class]];
     [[[self.mockChannel stub] andDo:^(NSInvocation *invocation) {
         [invocation setReturnValue:&self->_pushChannelID];

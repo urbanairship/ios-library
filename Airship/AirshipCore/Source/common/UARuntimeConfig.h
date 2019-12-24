@@ -121,6 +121,11 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (readonly) BOOL requestAuthorizationToUseNotifications;
 
+/**
+ *  Flag indicating whether the data opt-in is enabled.
+*/
+@property (readonly, getter=isDataOptInEnabled) BOOL dataOptInEnabled;
+
 ///---------------------------------------------------------------------------------------
 /// @name Resolved Options
 ///---------------------------------------------------------------------------------------

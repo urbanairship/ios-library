@@ -389,6 +389,11 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
 }
 
 - (void)setPushTokenRegistrationEnabled:(BOOL)enabled {
+    if (enabled && !self.isDataOptIn) {
+        UA_LWARN(@"Ignoring push token registration request, global data opt-in is disabled");
+        return;
+    }
+    
     BOOL previousValue = self.pushTokenRegistrationEnabled;
     [self.dataStore setBool:enabled forKey:UAPushTokenRegistrationEnabledKey];
 
@@ -964,6 +969,10 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
 
     [self.dataStore setBool:YES forKey:UAPushTagsMigratedToChannelTagsKey];
     [self.dataStore removeObjectForKey:UAPushLegacyTagsSettingsKey];
+}
+
+- (BOOL)isDataOptIn {
+    return [self.dataStore boolForKey:UAAirshipDataOptInKey];
 }
 
 - (void)onComponentEnableChange {

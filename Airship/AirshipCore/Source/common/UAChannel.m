@@ -394,6 +394,19 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
     }
 }
 
+- (BOOL)isDataOptIn {
+    return [self.dataStore boolForKey:UAAirshipDataOptInKey];
+}
+
+- (void)onDataOptInEnableChange {
+    if (self.isDataOptIn) {
+        self.attributeRegistrar.componentEnabled = YES;
+    } else {
+        [self.attributeRegistrar deletePendingMutations];
+        self.attributeRegistrar.componentEnabled = NO;
+    }
+}
+
 - (void)addChannelExtenderBlock:(UAChannelRegistrationExtenderBlock)extender {
     [self.registrationExtenderBlocks addObject:extender];
 }

@@ -77,9 +77,9 @@ NSString *const UAEventKey = @"event";
             [self.dataStore setBool:YES forKey:kUAAnalyticsEnabled];
         }
 
-        self.eventManager.uploadsEnabled = self.isEnabled && self.componentEnabled;
+        self.eventManager.uploadsEnabled = self.isEnabled && self.componentEnabled && self.isDataOptIn;
         self.eventManager.delegate = self;
-
+        
         [self startSession];
 
         [self.notificationCenter addObserver:self
@@ -199,7 +199,7 @@ NSString *const UAEventKey = @"event";
         return;
     }
 
-    if (!self.isEnabled) {
+    if (!self.isEnabled || !self.isDataOptIn) {
         UA_LTRACE(@"Analytics disabled, ignoring event: %@", event.eventType);
         return;
     }
@@ -265,7 +265,7 @@ NSString *const UAEventKey = @"event";
     }
 
     [self.dataStore setBool:enabled forKey:kUAAnalyticsEnabled];
-    self.eventManager.uploadsEnabled = self.isEnabled && self.componentEnabled;
+    self.eventManager.uploadsEnabled = self.isEnabled && self.componentEnabled && self.isDataOptIn;
 }
 
 - (void)associateDeviceIdentifiers:(UAAssociatedIdentifiers *)associatedIdentifiers {
@@ -326,7 +326,7 @@ NSString *const UAEventKey = @"event";
 }
 
 - (void)onComponentEnableChange {
-    self.eventManager.uploadsEnabled = self.isEnabled && self.componentEnabled;
+    self.eventManager.uploadsEnabled = self.isEnabled && self.componentEnabled && self.isDataOptIn;
     if (self.componentEnabled) {
         // if component was disabled and is now enabled, schedule an upload just in case
         [self scheduleUpload];
@@ -400,6 +400,10 @@ NSString *const UAEventKey = @"event";
 
 - (void)addAnalyticsHeadersBlock:(nonnull UAAnalyticsHeadersBlock)headersBlock {
     [self.headerBlocks addObject:headersBlock];
+}
+
+- (BOOL)isDataOptIn {
+    return [self.dataStore boolForKey:UAAirshipDataOptInKey];
 }
 
 @end

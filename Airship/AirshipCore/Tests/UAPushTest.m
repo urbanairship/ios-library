@@ -47,6 +47,8 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 - (void)setUp {
     [super setUp];
 
+    [self.dataStore setBool:YES forKey:UAAirshipDataOptInKey];
+    
     self.validAPNSDeviceToken = [validDeviceToken dataUsingEncoding:NSASCIIStringEncoding];
     assert([self.validAPNSDeviceToken length] <= 32);
 

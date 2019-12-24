@@ -142,7 +142,12 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 
         self.sharedRemoteConfigManager = [UARemoteConfigManager remoteConfigManagerWithRemoteDataManager:self.sharedRemoteDataManager
                                                                                       applicationMetrics:self.applicationMetrics];
-
+        
+        // Default data opt-in value
+        if (![self.dataStore objectForKey:UAAirshipDataOptInKey]) {
+            [self.dataStore setBool:!(config.isDataOptInEnabled) forKey:UAAirshipDataOptInKey];
+        }
+       
 #if !TARGET_OS_TV
         // UIPasteboard is not available in tvOS
         self.channelCapture = [UAChannelCapture channelCaptureWithConfig:self.config
@@ -537,6 +542,21 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
                                     analytics:analytics];
     }
     return nil;
+}
+
+- (void)setDataOptIn:(BOOL)enabled {
+    BOOL optInChanged = (self.isDataOptIn != enabled);
+    if (optInChanged) {
+        // save value to data store
+        [self.dataStore setBool:enabled forKey:UAAirshipDataOptInKey];
+        for (UAComponent *component in sharedAirship_.components) {
+            [component onDataOptInEnableChange];
+        }
+    }
+}
+
+- (BOOL)isDataOptIn {
+    return [self.dataStore boolForKey:UAAirshipDataOptInKey];
 }
 
 @end

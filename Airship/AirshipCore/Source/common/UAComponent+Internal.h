@@ -7,6 +7,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+extern NSString * const UAAirshipDataOptInKey;
+
 @interface UAComponent()
 
 /**
@@ -14,6 +16,10 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (assign) BOOL componentEnabled;
 
+/**
+ * Component data opt-in flag.
+ */
+@property (nonatomic, assign, getter=isDataOptIn) BOOL dataOptIn;
 
 @end
 

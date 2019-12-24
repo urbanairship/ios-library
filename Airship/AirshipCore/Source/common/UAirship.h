@@ -142,6 +142,13 @@ extern NSString * const UADeviceIDChangedNotification;
  */
 @property (nonatomic, strong, readonly) UAAnalytics *analytics;
 
+/**
+ * Global data opt-in flag. Enabled by default. Setting this flag to disabled disables analytics,
+ * attributes, named user association and device token registration. 
+ * @note To disable by default, set the dataOptInEnabled AirshipConfig flag  to `YES`
+*/
+@property (nonatomic, assign, getter=isDataOptIn) BOOL dataOptIn;
+
 ///---------------------------------------------------------------------------------------
 /// @name Logging
 ///---------------------------------------------------------------------------------------
