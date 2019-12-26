@@ -10,21 +10,12 @@
 #import "UATestDate.h"
 #import "UAAttributePendingMutations+Internal.h"
 #import "UAAppStateTracker.h"
-#import "UAActionResult.h"
-#import "UAirship+Internal.h"
-#import "UAActionRunner.h"
-#import "UAAppIntegration+Internal.h"
-#import "UAPush+Internal.h"
 
 @interface UAChannelTest : UABaseTest
-@property (nonatomic, strong) id mockedApplication;
-@property (nonatomic, strong) id mockedAirship;
 @property(nonatomic, strong) id mockTagGroupsRegistrar;
 @property(nonatomic, strong) id mockAttributeRegistrar;
 @property(nonatomic, strong) id mockChannelRegistrar;
 @property(nonatomic, strong) id mockTimeZone;
-@property (nonatomic, strong) id mockedPush;
-@property (nonatomic, strong) id mockedActionRunner;
 @property(nonatomic, strong) NSNotificationCenter *notificationCenter;
 @property(nonatomic, strong) UAChannel *channel;
 @property(nonatomic, strong) NSString *channelIDFromMockChannelRegistrar;
@@ -37,9 +28,6 @@
 - (void)setUp {
     [super setUp];
 
-    self.mockedApplication = [self mockForClass:[UIApplication class]];
-    [[[self.mockedApplication stub] andReturn:self.mockedApplication] sharedApplication];
-    
     self.mockTagGroupsRegistrar = [self mockForClass:[UATagGroupsRegistrar class]];
     self.mockAttributeRegistrar = [self mockForClass:[UAAttributeRegistrar class]];
     self.notificationCenter = [[NSNotificationCenter alloc] init];
@@ -58,15 +46,6 @@
 
     // Put setup code here. This method is called before the invocation of each test method in the class.
     self.channel = [self createChannel];
-    
-    self.mockedPush = [self mockForClass:[UAPush class]];
-    
-    self.mockedActionRunner = [self mockForClass:[UAActionRunner class]];
-    
-    self.mockedAirship = [self mockForClass:[UAirship class]];
-    [UAirship setSharedAirship:self.mockedAirship];
-    [[[self.mockedAirship stub] andReturn:@[self.channel]] components];
-    [[[self.mockedAirship stub] andReturn:self.mockedPush] push];
 
     // Simulate the channelID provided by the channel registrar
     OCMStub([self.mockChannelRegistrar channelID]).andDo(^(NSInvocation *invocation) {
@@ -553,77 +532,6 @@
     [self.channel applyAttributeMutations:addMutation];
 
     [self.mockAttributeRegistrar verify];
-}
-
-/**
- * Test application:didReceiveRemoteNotification:fetchCompletionHandler in the
- * background
- */
-- (void)testReceivedRemoteNotificationBackgroundWithSilentNotification {
-
-    // Notification
-    NSDictionary *notification = @{
-                                        @"aps": @{
-                                                @"content-available": @1,
-                                                }
-                                        };
-
-    XCTAssertNil(self.channel.identifier, @"Channel identifier should be null");
-    
-    XCTestExpectation *handlerExpectation = [self expectationWithDescription:@"Completion handler called"];
-
-    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateBackground)] applicationState];
-    
-    __block BOOL completionHandlerCalled = NO;
-    BOOL (^handlerCheck)(id obj) = ^(id obj) {
-        void (^handler)(UAActionResult *) = obj;
-        if (handler) {
-            UAActionResult *testResult = [UAActionResult resultWithValue:@"test" withFetchResult:UAActionFetchResultNewData];
-            handler(testResult);
-        }
-        return YES;
-    };
-
-    NSDictionary *expectedMetadata = @{ UAActionMetadataForegroundPresentationKey: @(NO),
-                                        UAActionMetadataPushPayloadKey:notification};
-
-    NSDictionary *actionsPayload = [UAAppIntegration actionsPayloadForNotificationContent:
-                                    [UANotificationContent notificationWithNotificationInfo:notification] actionIdentifier:nil];
-
-    // Expect actions to be run for the action identifier
-    [[self.mockedActionRunner expect] runActionsWithActionValues:actionsPayload
-                                                       situation:UASituationBackgroundPush
-                                                        metadata:expectedMetadata
-                                               completionHandler:[OCMArg checkWithBlock:handlerCheck]];
-
-    // Expect the UAPush to be called
-    [[self.mockedPush expect] handleRemoteNotification:[OCMArg checkWithBlock:^BOOL(id obj) {
-        UANotificationContent *content = obj;
-        return [content.notificationInfo isEqualToDictionary:notification];
-    }] foreground:NO completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
-        void (^handler)(UIBackgroundFetchResult) = obj;
-        handler(UIBackgroundFetchResultNewData);
-        return YES;
-    }]];
-    
-    [[self.mockChannelRegistrar expect] registerForcefully:NO];
-    
-    // Call the integration
-    [UAAppIntegration application:self.mockedApplication
-     didReceiveRemoteNotification:notification
-           fetchCompletionHandler:^(UIBackgroundFetchResult result) {
-               completionHandlerCalled = YES;
-               XCTAssertEqual(result, UIBackgroundFetchResultNewData);
-               [handlerExpectation fulfill];
-           }];
-    
-    // Verify everything
-    [self waitForTestExpectations];
-    [self.mockedActionRunner verify];
-    [self.mockedPush verify];
-    [self.mockChannelRegistrar verify];
-
-    XCTAssertTrue(completionHandlerCalled, @"Completion handler should be called.");
 }
 
 @end

@@ -175,8 +175,7 @@
 
     // Pushable components
     for (UAComponent *component in [UAirship shared].components) {
-        
-        if (![component conformsToProtocol:@protocol(UAPushableComponent)]) {
+         if (![component conformsToProtocol:@protocol(UAPushableComponent)]) {
              continue;
          }
 
