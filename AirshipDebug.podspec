@@ -16,7 +16,7 @@ Pod::Spec.new do |s|
    s.requires_arc            = true
    s.swift_version           = "5.0"
    s.source_files            = "Airship/AirshipDebug/Source/**/*.{h,m,swift}"
-   s.resources               = "Airship/AirshipDebug/Resources/**/*"
+   s.resources               = "Airship/AirshipDebug/Resources/*"
    s.frameworks              = 'UIKit'
    s.dependency                'Airship', AIRSHIP_VERSION
    s.dependency                "Airship/Location", AIRSHIP_VERSION
