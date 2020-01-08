@@ -32,27 +32,27 @@ typedef void (^UAActionPostExecutionBlock)(UAActionArguments *, UAActionResult *
 /**
  * A block that defines a means of merging two UAActionResult instances into one value.
  */
-typedef UAActionResult * __nonnull (^UAActionFoldResultsBlock)(UAActionResult *, UAActionResult *);
+typedef UAActionResult * _Nonnull (^UAActionFoldResultsBlock)(UAActionResult *, UAActionResult *);
 
 /**
  * A block that defines a means of tranforming one UAActionArguments to another
  */
-typedef UAActionArguments * __nonnull (^UAActionMapArgumentsBlock)(UAActionArguments *);
+typedef UAActionArguments * _Nonnull (^UAActionMapArgumentsBlock)(UAActionArguments *);
 
 /**
  * A block defining a monadic bind operation.
  */
-typedef UAAction * __nonnull (^UAActionBindBlock)(UAActionBlock, UAActionPredicate);
+typedef UAAction * _Nonnull (^UAActionBindBlock)(UAActionBlock, UAActionPredicate);
 
 /**
  * A block defining a monadic lift operation on the action block
  */
-typedef __nonnull UAActionBlock (^UAActionLiftBlock)(UAActionBlock);
+typedef _Nonnull UAActionBlock (^UAActionLiftBlock)(UAActionBlock);
 
 /**
  * A block defining a monadic lift operation on the predicate block
  */
-typedef __nonnull UAActionPredicate (^UAActionPredicateLiftBlock)(UAActionPredicate);
+typedef _Nonnull UAActionPredicate (^UAActionPredicateLiftBlock)(UAActionPredicate);
 
 
 @interface UAAction (Operators)

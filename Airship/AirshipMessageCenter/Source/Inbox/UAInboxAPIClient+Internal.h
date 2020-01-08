@@ -18,7 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param status The request status.
  * @param messages The retrieved messages.
  */
-typedef void (^UAInboxClientMessageRetrievalSuccessBlock)(NSUInteger status,  NSArray * __nullable messages);
+typedef void (^UAInboxClientMessageRetrievalSuccessBlock)(NSUInteger status,  NSArray * _Nullable messages);
 
 /**
  * A block called when the channel update succeeded.

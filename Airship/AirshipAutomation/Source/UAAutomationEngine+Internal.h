@@ -192,7 +192,7 @@ typedef NS_ENUM(NSInteger, UAAutomationScheduleReadyResult) {
  * @param completionHandler A completion handler.
  * If the schedule info is invalid, the schedule will be nil.
  */
-- (void)schedule:(UAScheduleInfo *)scheduleInfo metadata:(nullable NSDictionary *)metadata completionHandler:(nullable void (^)(UASchedule * __nullable))completionHandler;
+- (void)schedule:(UAScheduleInfo *)scheduleInfo metadata:(nullable NSDictionary *)metadata completionHandler:(nullable void (^)(UASchedule * _Nullable))completionHandler;
 
 /**
  * Schedules multiple schedules.
@@ -288,7 +288,7 @@ typedef NS_ENUM(NSInteger, UAAutomationScheduleReadyResult) {
  */
 - (void)editScheduleWithID:(NSString *)identifier
                      edits:(UAScheduleEdits *)edits
-         completionHandler:(void (^)(UASchedule * __nullable))completionHandler;
+         completionHandler:(void (^)(UASchedule * _Nullable))completionHandler;
 
 @end
 

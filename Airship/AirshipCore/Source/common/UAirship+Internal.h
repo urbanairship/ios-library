@@ -80,7 +80,7 @@ NS_ASSUME_NONNULL_BEGIN
  * Sets the shared airship.
  * @param airship The shared airship instance.
  */
-+ (void)setSharedAirship:(UAirship * __nullable)airship;
++ (void)setSharedAirship:(nullable UAirship *)airship;
 
 NS_ASSUME_NONNULL_END
 

@@ -18,6 +18,6 @@
  * If the header and description are left nil - the header and description defined in
  * the UARateAppPromptView.xib are used by default.
  */
--(void)displayWithHeader:(NSString * _Nullable)header description:(NSString * _Nullable)description completionHandler:(void (^_Nonnull)(BOOL dismissed))completionHandler;
+-(void)displayWithHeader:(nullable NSString *)header description:(nullable NSString *)description completionHandler:(void (^_Nonnull)(BOOL dismissed))completionHandler;
 
 @end

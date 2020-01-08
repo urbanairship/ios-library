@@ -201,7 +201,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)editScheduleWithID:(NSString *)identifier
                      edits:(UAInAppMessageScheduleEdits *)edits
-         completionHandler:(void (^)(UASchedule * __nullable))completionHandler;
+         completionHandler:(void (^)(UASchedule * _Nullable))completionHandler;
 
 /**
  * Check display audience conditions.

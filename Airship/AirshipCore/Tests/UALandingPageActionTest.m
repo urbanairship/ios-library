@@ -110,7 +110,7 @@
  * Test perform with a message ID thats available in the message list is displayed
  * in a landing page controller.
  */
-- (void)verifyPerformWithArgValue:(id)value expectedURLString:(NSString *)expectedURLString metadata:(NSDictionary * __nullable)metadata {
+- (void)verifyPerformWithArgValue:(id)value expectedURLString:(NSString *)expectedURLString metadata:(nullable NSDictionary *)metadata {
     __block BOOL actionPerformed;
 
     UASituation validSituations[6] = {

@@ -80,7 +80,7 @@ NSString *const UAAutomationStoreFileFormat = @"Automation-%@.sqlite";
 
 - (void)editScheduleWithID:(NSString *)identifier
                      edits:(UAActionScheduleEdits *)edits
-         completionHandler:(void (^)(UASchedule * __nullable))completionHandler {
+         completionHandler:(void (^)(UASchedule * _Nullable))completionHandler {
 
     [self.automationEngine editScheduleWithID:identifier edits:edits completionHandler:completionHandler];
 }
