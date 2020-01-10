@@ -9,7 +9,7 @@ NSString *const UAChannelIOSPlatform= @"ios";
 NSString *const UAChannelIdentityHintsKey = @"identity_hints";
 NSString *const UAChannelUserIDKey = @"user_id";
 NSString *const UAChannelDeviceIDKey = @"device_id";
-NSString *const UAChannelAccengageDeviceIDKey = @"accengage_id";
+NSString *const UAChannelAccengageDeviceIDKey = @"accengage_device_id";
 
 NSString *const UAChannelKey = @"channel";
 NSString *const UAChannelDeviceTypeKey = @"device_type";
