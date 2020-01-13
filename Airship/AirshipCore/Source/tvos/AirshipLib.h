@@ -60,6 +60,8 @@
 #import "UAMessageCenterModuleLoaderFactory.h"
 #import "UAModifyTagsAction.h"
 #import "UAModuleLoader.h"
+#import "UANSDictionaryValueTransformer.h"
+#import "UANSURLValueTransformer.h"
 #import "UANamedUser.h"
 #import "UANotificationAction.h"
 #import "UANotificationCategories.h"
