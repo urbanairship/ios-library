@@ -19,15 +19,22 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)mutations;
 
 /**
- Define strings to be set to attributes.
+ Define strings to be set for attributes.
  @param string The string to be set.
- @param attribute The attribute to which the string will be set.
+ @param attribute The attribute for which the string will be set.
  */
 - (void)setString:(NSString *)string forAttribute:(NSString *)attribute;
 
 /**
+ Define numbers to be set for attributes.
+ @param number The number to be set.
+ @param attribute The attribute for which the number will be set.
+ */
+- (void)setNumber:(NSNumber *)number forAttribute:(NSString *)attribute;
+
+/**
  Define attributes to be removed.
- @param attribute The attribute from which the string will be removed.
+ @param attribute The attribute to be removed.
  */
 - (void)removeAttribute:(NSString *)attribute;
 
