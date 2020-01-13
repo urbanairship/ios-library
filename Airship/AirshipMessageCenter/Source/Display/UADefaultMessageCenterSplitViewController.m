@@ -19,6 +19,8 @@
 @property (nonatomic, strong) UINavigationController *listNavigationController;
 @property (nonatomic, strong) UINavigationController *messageNavigationController;
 @property (nonatomic, strong) UADefaultMessageCenterSplitViewDelegate *defaultSplitViewDelegate;
+@property (nonatomic, assign) BOOL visible;
+@property (nonatomic, strong) UAInboxMessage *deferredMessage;
 
 /**
  * The previous navigation bar style. Used for resetting the bar style to the style set before message center display.
@@ -100,8 +102,20 @@
     [self restoreNavigationBarStyle];
 }
 
+- (void)viewDidDisappear:(BOOL)animated {
+    [super  viewDidDisappear:animated];
+    self.visible = NO;
+}
+
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
+
+    self.visible = YES;
+    
+    if (self.deferredMessage) {
+        [self presentMessage:self.deferredMessage];
+        self.deferredMessage = nil;
+    }
 }
 
 - (void)setStyle:(UAMessageCenterStyle *)style {
@@ -191,7 +205,12 @@
     UAInboxMessage *message = [[UAMessageCenter shared].messageList messageForID:messageID];
 
     if (message) {
-        [self presentMessage:message];
+        if (self.visible) {
+            [self presentMessage:message];
+        } else {
+            self.deferredMessage = message;
+        }
+
         return;
     }
 

@@ -18,7 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)presentMessage:(UAInboxMessage *)message;
 
 /**
- * DIsmiss the currently displayed message.
+ * Dismiss the currently displayed message.
  */
 - (void)dismissMessage;
 

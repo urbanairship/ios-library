@@ -3,7 +3,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /**
- * Protocol for delegating message list UI state handling.
+ * Protocol for delegating message list behavior.
  */
 @protocol UAMessageCenterListViewDelegate <NSObject>
 
