@@ -2,10 +2,9 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-
 /**
- Defines changes to perform on channel attributes.
-*/
+ * Defines changes to perform on channel attributes.
+ */
 @interface UAAttributeMutations : NSObject
 
 ///---------------------------------------------------------------------------------------
@@ -13,28 +12,28 @@ NS_ASSUME_NONNULL_BEGIN
 ///---------------------------------------------------------------------------------------
 
 /**
- Generates an empty mutation.
- @return An empty mutation.
-*/
+ * Generates an empty mutation.
+ * @return An empty mutation.
+ */
 + (instancetype)mutations;
 
 /**
- Define strings to be set for attributes.
- @param string The string to be set.
- @param attribute The attribute for which the string will be set.
+ * Sets a string attribute
+ * @param string The string.
+ * @param attribute The attribute key.
  */
 - (void)setString:(NSString *)string forAttribute:(NSString *)attribute;
 
 /**
- Define numbers to be set for attributes.
- @param number The number to be set.
- @param attribute The attribute for which the number will be set.
+ * Sets a number attribute
+ * @param number The number.
+ * @param attribute The attribute key.
  */
 - (void)setNumber:(NSNumber *)number forAttribute:(NSString *)attribute;
 
 /**
- Define attributes to be removed.
- @param attribute The attribute to be removed.
+ * Removes an attribute
+ * @param attribute The attribute key.
  */
 - (void)removeAttribute:(NSString *)attribute;
 
