@@ -7,29 +7,6 @@
 #define kUALandingPageActionDefaultRegistryName @"landing_page_action"
 #define kUALandingPageActionDefaultRegistryAlias @"^p"
 
-/**
- * Schedules a landing page to display ASAP.
- *
- * This action is registered under the names landing_page_action and ^p.
- *
- * Expected argument values:
- * ``url``: NSString or NSURL.
- * ``width``: Optional Int or String. Width should be specified in points or
- * as "fill" to fill current screen. Defaults to fill.
- * ``height``: Optional Int or String. Height should be specified in points or
- * ``fill`` to fill current screen. Defaults to fill.
- * ``aspect_lock``: Optional Boolean. Determines if aspect ratio is maintained during resizing
- * to fit screen size. Defaults to false.
- *
- * Valid situations: UASituationForegroundPush, UASituationLaunchedFromPush,
- * UASituationWebViewInvocation, UASituationManualInvocation,
- * UASituationForegroundInteractiveButton, and UASituationAutomation
- *
- * Result value: nil
- *
- * Fetch result: UAActionFetchResultNewData, or UAActionFetchResultFailed if the data could not be fetched.
- *
- */
 NS_ASSUME_NONNULL_BEGIN
 
 /**
@@ -58,6 +35,29 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+/**
+* Schedules a landing page to display ASAP.
+*
+* This action is registered under the names landing_page_action and ^p.
+*
+* Expected argument values:
+* ``url``: NSString or NSURL.
+* ``width``: Optional Int or String. Width should be specified in points or
+* as "fill" to fill current screen. Defaults to fill.
+* ``height``: Optional Int or String. Height should be specified in points or
+* ``fill`` to fill current screen. Defaults to fill.
+* ``aspect_lock``: Optional Boolean. Determines if aspect ratio is maintained during resizing
+* to fit screen size. Defaults to false.
+*
+* Valid situations: UASituationForegroundPush, UASituationLaunchedFromPush,
+* UASituationWebViewInvocation, UASituationManualInvocation,
+* UASituationForegroundInteractiveButton, and UASituationAutomation
+*
+* Result value: nil
+*
+* Fetch result: UAActionFetchResultNewData, or UAActionFetchResultFailed if the data could not be fetched.
+*
+*/
 @interface UALandingPageAction : UAAction
 
 /**

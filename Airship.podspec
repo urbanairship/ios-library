@@ -1,4 +1,4 @@
-AIRSHIP_VERSION="13.0.3"
+AIRSHIP_VERSION="13.0.4"
 
 Pod::Spec.new do |s|
    s.version                 = AIRSHIP_VERSION
@@ -16,8 +16,8 @@ Pod::Spec.new do |s|
    s.default_subspecs        = ["Core", "Automation", "MessageCenter", "ExtendedActions"]
 
    s.subspec "Core" do |core|
-      core.ios.resources              = "Airship/AirshipCore/Resources/common/**/*", "Airship/AirshipCore/Resources/ios/**/*"
-      core.tvos.resources             = "Airship/AirshipCore/Resources/common/**/*", "Airship/AirshipCore/Resources/tvos/**/*"
+      core.ios.resources              = "Airship/AirshipCore/Resources/common/*", "Airship/AirshipCore/Resources/ios/*"
+      core.tvos.resources             = "Airship/AirshipCore/Resources/common/*", "Airship/AirshipCore/Resources/tvos/*"
       core.ios.exclude_files          = "Airship/AirshipCore/Resources/ios/Info.plist", "Airship/AirshipCore/Source/common/AirshipCore.h"
       core.tvos.exclude_files         = "Airship/AirshipCore/Resources/tvos/Info.plist", "Airship/AirshipCore/Source/common/AirshipCore.h"
       core.ios.source_files           = "Airship/AirshipCore/Source/ios/**/*.{h,m,mm}", "Airship/AirshipCore/Source/common/**/*.{h,m,mm}"
@@ -32,7 +32,7 @@ Pod::Spec.new do |s|
    s.subspec "ExtendedActions" do |actions|
       actions.ios.source_files           = "Airship/AirshipExtendedActions/Source/**/*.{h,m}"
       actions.ios.private_header_files   = "Airship/AirshipExtendedActions/Source/**/*+Internal*.h"
-      actions.ios.resources              = "Airship/AirshipExtendedActions/Resources/**/*"
+      actions.ios.resources              = "Airship/AirshipExtendedActions/Resources/*"
       actions.ios.exclude_files          = "Airship/AirshipExtendedActions/Resources/Info.plist", "Airship/AirshipExtendedActions/Source/AirshipExtendedActions.h"
       actions.ios.frameworks             = "StoreKit"
       actions.dependency                 "Airship/Core"
@@ -41,14 +41,14 @@ Pod::Spec.new do |s|
    s.subspec "Location" do |location|
       location.ios.source_files           = "Airship/AirshipLocation/Source/*.{h,m}"
       location.ios.private_header_files   = "Airship/AirshipLocation/Source/*+Internal*.h"
-      location.ios.exclude_files           = "Airship/AirshipLocation/Source/AirshipLocation.h"
+      location.ios.exclude_files          = "Airship/AirshipLocation/Source/AirshipLocation.h"
       location.ios.frameworks             = "CoreLocation"
       location.dependency                  "Airship/Core"
    end
 
    s.subspec "Automation" do |automation|
       automation.ios.source_files              = "Airship/AirshipAutomation/Source/**/*.{h,m,swift}"
-      automation.ios.resources                 = "Airship/AirshipAutomation/Resources/**/*"
+      automation.ios.resources                 = "Airship/AirshipAutomation/Resources/*"
       automation.ios.exclude_files             = "Airship/AirshipAutomation/Resources/Info.plist", "Airship/AirshipAutomation/Source/AirshipAutomation.h"
       automation.ios.frameworks                = "UIKit"
       automation.dependency                    "Airship/Core"
@@ -57,7 +57,7 @@ Pod::Spec.new do |s|
    s.subspec "MessageCenter" do |messageCenter|
       messageCenter.ios.source_files          = "Airship/AirshipMessageCenter/Source/**/*.{h,m,swift}"
       messageCenter.ios.private_header_files  = "Airship/AirshipMessageCenter/Source/**/*+Internal*.h"
-      messageCenter.ios.resources             = "Airship/AirshipMessageCenter/Resources/**/*"
+      messageCenter.ios.resources             = "Airship/AirshipMessageCenter/Resources/*"
       messageCenter.ios.exclude_files         = "Airship/AirshipMessageCenter/Resources/Info.plist", "Airship/AirshipMessageCenter/Source/AirshipMessageCenter.h"
       messageCenter.dependency                  "Airship/Core"
    end

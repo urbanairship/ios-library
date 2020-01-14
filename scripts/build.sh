@@ -154,7 +154,7 @@ fi
 function build_docs {
   # $1 Project
   # $2 Module
-  # $3 Umbrealla header path
+  # $3 Umbrella header path
 
   ruby -S jazzy _${JAZZY_VERSION}_ \
   --objc \

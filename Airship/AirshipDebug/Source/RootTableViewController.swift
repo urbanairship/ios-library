@@ -6,6 +6,7 @@ class RootTableViewController: UITableViewController {
     let deviceInfoSegue = "deviceInfoSegue"
     let eventsSegue = "eventsSegue"
     let automationSegue = "automationSegue"
+    let receivedPushesSegue = "receivedPushesSegue"
     
     @IBOutlet var deviceInfoTitle: UILabel!
     @IBOutlet var deviceInfoSubtitle: UILabel!
@@ -19,9 +20,14 @@ class RootTableViewController: UITableViewController {
     @IBOutlet var automationSubtitle: UILabel!
     @IBOutlet var automationCell: UITableViewCell!
     
+    @IBOutlet var receivedPushesTitle: UILabel!
+    @IBOutlet var receivedPushesSubtitle: UILabel!
+    @IBOutlet var receivedPushesCell: UITableViewCell!
+    
     var deviceInfoViewController: DeviceInfoViewController?
     var eventsViewController: EventsViewController?
     var automationTableViewController: AutomationTableViewController?
+    var receivedPushesViewController: PushNotificationsTableViewController?
 
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
@@ -44,6 +50,8 @@ class RootTableViewController: UITableViewController {
         eventsSubtitle.text = "ua_events_subtitle".localized()
         automationTitle.text = "ua_automation_title".localized()
         automationSubtitle.text = "ua_automation_subtitle".localized()
+        receivedPushesTitle.text = "ua_received_pushes_title".localized()
+        receivedPushesSubtitle.text = "ua_received_pushes_subtitle".localized()
     }
 
     func setCellTheme() {
@@ -58,6 +66,10 @@ class RootTableViewController: UITableViewController {
         automationCell.backgroundColor = ThemeManager.shared.currentTheme.Background
         automationTitle.textColor = ThemeManager.shared.currentTheme.PrimaryText
         automationSubtitle.textColor = ThemeManager.shared.currentTheme.SecondaryText
+
+        receivedPushesCell.backgroundColor = ThemeManager.shared.currentTheme.Background
+        receivedPushesTitle.textColor = ThemeManager.shared.currentTheme.PrimaryText
+        receivedPushesSubtitle.textColor = ThemeManager.shared.currentTheme.SecondaryText
 
     }
 
@@ -100,6 +112,8 @@ class RootTableViewController: UITableViewController {
             segueIdentifier = eventsSegue
         case AirshipDebug.automationViewName.lowercased():
             segueIdentifier = automationSegue
+        case AirshipDebug.receivedPushesViewName.lowercased():
+            segueIdentifier = receivedPushesSegue
         default:
             break
         }
@@ -131,6 +145,9 @@ class RootTableViewController: UITableViewController {
         } else if let automationTableViewController = segue.destination as? AutomationTableViewController {
             self.automationTableViewController = automationTableViewController
             automationTableViewController.launchPathComponents = launchPathComponents
+        } else if let receivedPushesViewController = segue.destination as? PushNotificationsTableViewController {
+            self.receivedPushesViewController = receivedPushesViewController
+            receivedPushesViewController.launchPathComponents = launchPathComponents
         }
     }
     
@@ -151,6 +168,11 @@ class RootTableViewController: UITableViewController {
                 self.automationTableViewController = AirshipDebug.instantiateViewControllerForStoryboard(storyBoardName) as? AutomationTableViewController
             }
             return self.automationTableViewController
+        case AirshipDebug.receivedPushesViewName.lowercased():
+            if (self.receivedPushesViewController == nil) {
+                self.receivedPushesViewController = AirshipDebug.instantiateViewControllerForStoryboard(storyBoardName) as? PushNotificationsTableViewController
+            }
+            return self.receivedPushesViewController
         default:
             return nil
         }

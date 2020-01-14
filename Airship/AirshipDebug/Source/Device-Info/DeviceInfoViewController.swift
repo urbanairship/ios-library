@@ -88,8 +88,7 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
     appInfo = 6
 
     // Push settings
-    private let pushEnabled = IndexPath(row: 0, section: 0),
-    lastPayload = IndexPath(row: 1, section: 0)
+    private let pushEnabled = IndexPath(row: 0, section: 0)
 
     // In-App automation settings
     private let inAppAutomationEnabled = IndexPath(row: 0, section: 1),
@@ -220,7 +219,7 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
         case pushSettings:
-            return 2
+            return 1
         case inAppAutomationSettings:
             return 2
         case deviceSettings:
@@ -318,10 +317,6 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
         case channelAttributes:
             cell.title.text = "ua_device_info_channel_attributes".localized()
             cell.accessoryType = .disclosureIndicator
-        case lastPayload:
-            cell.title.text = "ua_device_info_last_push_payload".localized()
-            cell.subtitle.text = ""
-            cell.accessoryType = .disclosureIndicator
         case analyticsEnabled:
             cell.title.text = "ua_device_info_analytics_enabled".localized()
             cell.subtitle?.text = "ua_device_info_enable_analytics_tracking".localized()
@@ -390,8 +385,6 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
             performSegue(withIdentifier: "associatedIdentifiersSegue", sender: self)
         case channelAttributes:
             performSegue(withIdentifier: "channelAttributesSegue", sender: self)
-        case lastPayload:
-            performSegue(withIdentifier: "lastPayloadSegue", sender: self)
         case sdkVersion:
             UIPasteboard.general.string = cell.subtitle?.text
             showCopiedAlert()

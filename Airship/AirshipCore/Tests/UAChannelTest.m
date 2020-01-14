@@ -23,6 +23,15 @@
 @property(nonatomic, strong) UATestDate *testDate;
 @end
 
+@interface UAChannel()
+- (void)updateChannelAttributes;
+- (void)registrationSucceeded;
+- (void)registrationFailed;
+- (void)channelCreated:(NSString *)channelID
+              existing:(BOOL)existing;
+@property (nonatomic, strong) NSNotificationCenter *notificationCenter;
+@end
+
 @implementation UAChannelTest
 
 - (void)setUp {
@@ -532,6 +541,247 @@
     [self.channel applyAttributeMutations:addMutation];
 
     [self.mockAttributeRegistrar verify];
+}
+
+/**
+ * Tests channel reset
+ */
+- (void)testResetChannel {
+    [[self.mockChannelRegistrar expect] resetChannel];
+    
+    [self.channel reset];
+    
+    XCTAssertNoThrow([self.mockChannelRegistrar verify]);
+    
+    XCTAssertNil([self.dataStore objectForKey:UAChannelRegistrarChannelIDKey], @"Channel reset should remove channel id");
+}
+
+/**
+ * Test update registration is called following the background refresh status change notification
+ */
+- (void)testApplicationBackgroundRefreshStatusCreatesChannel {
+    // Expect UAChannel to update channel registration
+    [[self.mockChannelRegistrar expect] registerForcefully:NO];
+
+    [self.notificationCenter postNotificationName:UIApplicationBackgroundRefreshStatusDidChangeNotification object:nil];
+
+    XCTAssertNoThrow([self.mockChannelRegistrar verify], @"Channel registration should be called");
+}
+
+/**
+ * Test addTag method
+ */
+- (void)testAddTag {
+    NSString *tag = @"test_tag";
+    
+    [self.channel addTag:tag];
+
+    XCTAssertEqualObjects(tag, self.channel.tags[0], @"Tag should be set");
+}
+
+/**
+ * Test addTags method
+ */
+- (void)testAddTags {
+    XCTAssertEqual(self.channel.tags.count, 0);
+    
+    NSArray *tags = @[@"tag1", @"tag2"];
+    
+    [self.channel addTags:tags];
+
+    XCTAssertEqual(self.channel.tags.count, 2, @"Tags should be set");
+    XCTAssertTrue([[NSSet setWithArray:self.channel.tags] isEqualToSet:[NSSet setWithArray:tags]], @"Tags are not added correctly");
+}
+
+/**
+ * Test removeTag method
+ */
+- (void)testAddRemoveTag {
+    NSString *tag = @"tag1";
+    
+    [self.channel addTag:tag];
+
+    XCTAssertEqual(self.channel.tags.count, 1, @"Should have added a tag");
+    XCTAssertEqualObjects(self.channel.tags[0], @"tag1", @"Should have added tag 1");
+    
+    [self.channel removeTag:tag];
+    
+    XCTAssertEqual(self.channel.tags.count, 0, @"Tag should be removed");
+}
+
+/**
+ * Test removeTags method
+ */
+- (void)testAddRemoveTags {
+    NSArray *tags = @[@"tag1", @"tag2",@"tag3"];
+    
+    [self.channel addTags:tags];
+
+    XCTAssertEqual(self.channel.tags.count, 3, @"Should have added 3 tags");
+    XCTAssertTrue([[NSSet setWithArray:self.channel.tags] isEqualToSet:[NSSet setWithArray:tags]], @"Tags are not added correctly");
+    
+    NSArray *tagsToRemove = @[@"tag1", @"tag2"];
+    
+    [self.channel removeTags:tagsToRemove];
+    
+    XCTAssertEqual(self.channel.tags.count, 1, @"Tags should be removed");
+    XCTAssertEqualObjects(self.channel.tags[0], @"tag3", @"The remianing tag should be tag3");
+}
+
+/**
+ * Test removeTags:group: method
+ */
+- (void)testRemoveTagsFromGroup {
+    NSArray *tags = @[@"tag1", @"tag2",@"tag3"];
+    NSString *tagGroup = @"test_group";
+    
+    self.channel.channelTagRegistrationEnabled = NO;
+    [[self.mockTagGroupsRegistrar expect] removeTags:tags group:tagGroup type:UATagGroupsTypeChannel];
+    [self.channel removeTags:tags group:tagGroup];
+    [self.mockTagGroupsRegistrar verify];
+    
+    self.channel.channelTagRegistrationEnabled = YES;
+    [[self.mockTagGroupsRegistrar reject] removeTags:tags group:tagGroup type:UATagGroupsTypeChannel];
+    [self.channel removeTags:tags group:@"device"];
+    [self.mockTagGroupsRegistrar verify];
+}
+
+/**
+ * Test setTags:group: method
+ */
+- (void)testSetTagsForGroup {
+    NSArray *tags = @[@"tag1", @"tag2",@"tag3"];
+    NSString *tagGroup = @"test_group";
+    
+    self.channel.channelTagRegistrationEnabled = NO;
+    [[self.mockTagGroupsRegistrar expect] setTags:tags group:tagGroup type:UATagGroupsTypeChannel];
+    [self.channel setTags:tags group:tagGroup];
+    [self.mockTagGroupsRegistrar verify];
+    
+    self.channel.channelTagRegistrationEnabled = YES;
+    [[self.mockTagGroupsRegistrar reject] setTags:tags group:tagGroup type:UATagGroupsTypeChannel];
+    [self.channel setTags:tags group:@"device"];
+    [self.mockTagGroupsRegistrar verify];
+}
+
+/**
+ * Test updateChannelTagGroups method if the channel component is disabled
+ */
+- (void)testUpdateChannelTagGroupsIfComponentDisabled {
+    self.channel.componentEnabled = NO;
+    [[self.mockTagGroupsRegistrar reject] updateTagGroupsForID:OCMOCK_ANY type:UATagGroupsTypeChannel];
+    [self.channel updateChannelTagGroups];
+    [self.mockTagGroupsRegistrar verify];
+}
+
+/**
+ * Test updateChannelTagGroups method if the identifier is not set
+ */
+- (void)testUpdateChannelTagGroupsIfIdentifierNil {
+    self.channel.componentEnabled = YES;
+    [[self.mockTagGroupsRegistrar reject] updateTagGroupsForID:OCMOCK_ANY type:UATagGroupsTypeChannel];
+    [self.channel updateChannelTagGroups];
+    [self.mockTagGroupsRegistrar verify];
+}
+
+/**
+ * Test updateChannelTagGroups method if the identifier is set and component enabled
+ */
+- (void)testUpdateChannelTagGroups {
+    self.channelIDFromMockChannelRegistrar = @"123456";
+    self.channel.componentEnabled = YES;
+    [[self.mockTagGroupsRegistrar expect] updateTagGroupsForID:OCMOCK_ANY type:UATagGroupsTypeChannel];
+    [self.channel updateChannelTagGroups];
+    [self.mockTagGroupsRegistrar verify];
+}
+
+/**
+ * Test updateChannelAttributes method if the channel component is disabled
+ */
+- (void)testUpdateChannelAttributesIfComponentDisabled {
+    self.channel.componentEnabled = NO;
+    [[self.mockAttributeRegistrar reject] updateAttributesForChannel:OCMOCK_ANY];
+    [self.channel updateChannelAttributes];
+    [self.mockAttributeRegistrar verify];
+}
+
+/**
+ * Test updateChannelAttributes method if the identifier is not set
+ */
+- (void)testUpdateChannelAttributesIfIdentifierNil {
+   self.channel.componentEnabled = YES;
+    [[self.mockAttributeRegistrar reject] updateAttributesForChannel:OCMOCK_ANY];
+    [self.channel updateChannelAttributes];
+    [self.mockAttributeRegistrar verify];
+}
+
+/**
+ * Test updateChannelAttributes method if the identifier is set and component enabled
+ */
+- (void)testUpdateChannelAttributes {
+    self.channelIDFromMockChannelRegistrar = @"123456";
+    self.channel.componentEnabled = YES;
+    [[self.mockAttributeRegistrar expect] updateAttributesForChannel:OCMOCK_ANY];
+    [self.channel updateChannelAttributes];
+    [self.mockAttributeRegistrar verify];
+}
+
+/**
+ * Test registrationSucceded method if channelID is not set
+ */
+- (void)testRegistrationSucceededWithoutChannelID {
+    id mockNotificationCenter = [self mockForClass:[NSNotificationCenter class]];
+    self.channel.notificationCenter = mockNotificationCenter;
+   
+    [[mockNotificationCenter reject] postNotificationName:UAChannelUpdatedEvent object:OCMOCK_ANY userInfo:OCMOCK_ANY];
+    [self.channel registrationSucceeded];
+    [mockNotificationCenter verify];
+}
+
+/**
+ * Test registrationSucceded method
+ */
+- (void)testRegistrationSucceededWithChannelID {
+    id mockNotificationCenter = [self mockForClass:[NSNotificationCenter class]];
+    self.channel.notificationCenter = mockNotificationCenter;
+  
+    self.channelIDFromMockChannelRegistrar = @"123456";
+    [[mockNotificationCenter expect] postNotificationName:UAChannelUpdatedEvent object:OCMOCK_ANY userInfo:OCMOCK_ANY];
+    [self.channel registrationSucceeded];
+    [mockNotificationCenter verify];
+}
+
+/**
+ * Test registrationFailed method
+ */
+- (void)testRegistrationFailed {
+    id mockNotificationCenter = [self mockForClass:[NSNotificationCenter class]];
+    self.channel.notificationCenter = mockNotificationCenter;
+    [[mockNotificationCenter expect] postNotificationName:UAChannelRegistrationFailedEvent object:OCMOCK_ANY userInfo:OCMOCK_ANY];
+    [self.channel registrationFailed];
+    [mockNotificationCenter verify];
+}
+
+/**
+ * Test channelCreated method
+ */
+- (void)testChannelCreated {
+    id mockNotificationCenter = [self mockForClass:[NSNotificationCenter class]];
+    self.channel.notificationCenter = mockNotificationCenter;
+    [[mockNotificationCenter expect] postNotificationName:UAChannelCreatedEvent object:OCMOCK_ANY userInfo:OCMOCK_ANY];
+    [self.channel channelCreated:@"123456" existing:YES];
+    [mockNotificationCenter verify];
+}
+
+/**
+ * Test channelCreated method if channelID is not set
+ */
+- (void)testChannelCreatedWithoutChannelID {
+    id mockNotificationCenter = [self mockForClass:[NSNotificationCenter class]];
+    self.channel.notificationCenter = mockNotificationCenter;
+    [[mockNotificationCenter reject] postNotificationName:UAChannelCreatedEvent object:OCMOCK_ANY userInfo:OCMOCK_ANY];
+    [self.channel channelCreated:nil existing:YES];
+    [mockNotificationCenter verify];
 }
 
 @end
