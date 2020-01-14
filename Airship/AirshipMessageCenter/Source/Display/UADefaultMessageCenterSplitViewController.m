@@ -396,14 +396,14 @@
         return;
     }
 
-    [self.messageViewController loadMessageForID:message.messageID onlyIfChanged:YES];
-
     // only display the message if there is a message to display
     if (message) {
         if (![self.listNavigationController.visibleViewController isEqual:self.self.messageViewController]) {
             [self showDetailViewController:self.messageNavigationController sender:self];
         }
     }
+
+    [self.messageViewController loadMessageForID:message.messageID onlyIfChanged:YES];
 }
 
 - (void)dismissMessage {

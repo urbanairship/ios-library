@@ -73,7 +73,9 @@
 
         self.splitViewController.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
         self.splitViewController.modalPresentationStyle = UIModalPresentationFullScreen;
+    }
 
+    if (!self.splitViewController.presentingViewController) {
         [[UAUtils topController] presentViewController:self.splitViewController animated:animated completion:completionHandler];
     } else {
         completionHandler();
