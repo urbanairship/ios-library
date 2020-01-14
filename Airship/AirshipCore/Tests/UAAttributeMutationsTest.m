@@ -26,6 +26,16 @@
             @"value" : @"goose"
         },
         @{
+            @"action" : @"set",
+            @"key" : @"luggage",
+            @"value" : @(12345)
+        },
+        @{
+            @"action" : @"set",
+            @"key" : @"not_quite_pi",
+            @"value" : @(3.14)
+        },
+        @{
             @"action" : @"remove",
             @"key" : @"game",
         }
@@ -35,6 +45,8 @@
 
     [mutations setString:@"space" forAttribute:@"jam"];
     [mutations setString:@"goose" forAttribute:@"game"];
+    [mutations setNumber:@(12345) forAttribute:@"luggage"];
+    [mutations setNumber:@(3.14) forAttribute:@"not_quite_pi"];
     [mutations removeAttribute:@"game"];
 
     XCTAssertEqualObjects(mutations.mutationsPayload, expectedMutations);
