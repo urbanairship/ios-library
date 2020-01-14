@@ -774,7 +774,8 @@
 
     self.selectedMessage = messageToDisplay;
 
-    if (!messageToDisplay) {
+    // If there's no message to display and there's not a pending message ID, dismiss
+    if (!messageToDisplay && !self.pendingMessageID) {
         [self.messagePresentationDelegate dismissMessage];
     }
 

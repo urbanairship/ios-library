@@ -55,4 +55,9 @@
  */
 @property (nonatomic, strong) UAInboxMessage *selectedMessage;
 
+/**
+ * The pending message ID.
+ */
+@property (nonatomic, strong) NSString *pendingMessageID;
+
 @end

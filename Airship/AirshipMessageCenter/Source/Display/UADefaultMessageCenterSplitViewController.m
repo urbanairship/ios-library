@@ -214,6 +214,8 @@
         return;
     }
 
+    self.listViewController.pendingMessageID = messageID;
+
     [self.messageViewController loadMessageForID:messageID onlyIfChanged:NO];
 
     [self showDetailViewController:self.messageNavigationController sender:self];
@@ -283,7 +285,12 @@
 
 - (void)messageLoadSucceeded:(NSString *)messageID {
     UA_LTRACE(@"message load succeeded: %@", messageID);
+
     self.listViewController.selectedMessage = [[UAMessageCenter shared].messageList messageForID:messageID];
+
+    if ([messageID isEqualToString:self.listViewController.pendingMessageID]) {
+        self.listViewController.pendingMessageID = nil;
+    }
 }
 
 - (void)messageLoadFailed:(NSString *)messageID error:(NSError *)error {
