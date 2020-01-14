@@ -15,6 +15,12 @@ static NSString * const UAAccengageIDKey = @"a4sid";
 static NSString * const UAAccengageForegroundKey = @"a4sd";
 NSString *const UAAccengageSettingsMigrated = @"UAAccengageSettingsMigrated";
 
+@interface UAAccengage()
+
+@property (nonatomic, strong) NSDictionary *accengageSettings;
+
+@end
+
 @implementation UAAccengage
 
 - (instancetype)initWithDataStore:(UAPreferenceDataStore *)dataStore
@@ -51,6 +57,37 @@ NSString *const UAAccengageSettingsMigrated = @"UAAccengageSettingsMigrated";
 
     return [[self alloc] initWithDataStore:dataStore channel:channel push:push analytics:analytics];
 }
+
+- (NSDictionary *)accengageSettings {
+    if (!_accengageSettings) {
+        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);
+        NSString *documentsDirectory = [paths firstObject];
+        
+        _accengageSettings = @{};
+        
+        if (!documentsDirectory) {
+            return _accengageSettings;
+        }
+               
+        NSString *finalPath = [documentsDirectory stringByAppendingPathComponent:@"BMA4SUserDefault"];
+           
+        NSData *encodedData = [NSKeyedUnarchiver unarchiveObjectWithFile:finalPath];
+        
+        if (encodedData) {
+            // use Accengage decryption key
+            NSData *concreteData = [UAAccengageUtils decryptData:encodedData key:@"osanuthasoeuh"];
+            if (concreteData) {
+                id data = [NSKeyedUnarchiver unarchiveObjectWithData:concreteData];
+                if ([data isKindOfClass:[NSDictionary class]]) {
+                    _accengageSettings = data;
+                }
+            }
+        }
+    }
+    
+    return _accengageSettings;
+}
+
 
 - (UNNotificationPresentationOptions)presentationOptionsForNotification:(UNNotification *)notification defaultPresentationOptions:(UNNotificationPresentationOptions)options {
     if (![self isAccengageNotification:notification]) {
@@ -111,31 +148,11 @@ NSString *const UAAccengageSettingsMigrated = @"UAAccengageSettingsMigrated";
 }
     
 - (void)migrateSettingsToAnalytics:(UAAnalytics *)analytics {
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);
-    NSString *documentsDirectory = [paths firstObject];
-    
-    if (!documentsDirectory) {
-        return;
-    }
-         
-    NSString *finalPath = [documentsDirectory stringByAppendingPathComponent:@"BMA4SUserDefault"];
-     
-    NSData *encodedData = [NSKeyedUnarchiver unarchiveObjectWithFile:finalPath];
-
-    if (encodedData) {
-        // use Accengage decryption key
-        NSData *concreteData = [UAAccengageUtils decryptData:encodedData key:@"osanuthasoeuh"];
-        if (concreteData) {
-            id data = [NSKeyedUnarchiver unarchiveObjectWithData:concreteData];
-            if ([data isKindOfClass:[NSDictionary class]]) {
-                NSDictionary *dataDictionary = data;
-                id accAnalytics = dataDictionary[@"DoNotTrack"];
-                if ([accAnalytics isKindOfClass:[NSNumber class]]) {
-                    NSNumber *analyticsDisabled = accAnalytics;
-                    analytics.enabled = ![analyticsDisabled boolValue];
-                }
-            }
-        }
+    NSDictionary *dataDictionary = self.accengageSettings;
+    id accAnalytics = dataDictionary[@"DoNotTrack"];
+    if ([accAnalytics isKindOfClass:[NSNumber class]]) {
+        NSNumber *analyticsDisabled = accAnalytics;
+        analytics.enabled = ![analyticsDisabled boolValue];
     }
 }
             
@@ -181,7 +198,15 @@ NSString *const UAAccengageSettingsMigrated = @"UAAccengageSettingsMigrated";
                        completionHandler:(UAChannelRegistrationExtenderCompletionHandler)completionHandler {
     
     // get the Accengage ID and set it as an identity hint
-    NSString *accengageDeviceID = UIDevice.currentDevice.identifierForVendor.UUIDString;
+    NSDictionary *dataDictionary = self.accengageSettings;
+    id accengageDeviceIDObject = dataDictionary[@"BMA4SID"];
+  
+    NSString *accengageDeviceID = @"";
+    if ([accengageDeviceIDObject isKindOfClass:[NSString class]]) {
+        accengageDeviceID = accengageDeviceIDObject;
+    } else {
+        accengageDeviceID = UIDevice.currentDevice.identifierForVendor.UUIDString;
+    }
     
     payload.accengageDeviceID = accengageDeviceID;
     
