@@ -53,7 +53,7 @@
  * @param url The url for the deep link.
  * @param completionHandler The completion handler to execute when the deep link processing is complete.
  */
--(void)receivedDeepLink:(NSURL *_Nonnull)url completionHandler:(void (^_Nonnull)(void))completionHandler;
+-(void)receivedDeepLink:(nonnull NSURL *)url completionHandler:(nonnull void (^)(void))completionHandler;
 
 @end
 

@@ -114,7 +114,7 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
 
 - (void)observeNotificationCenterEvents {
     [self.notificationCenter addObserver:self
-                                selector:@selector(resetChannel)
+                                selector:@selector(reset)
                                     name:UADeviceIDChangedNotification
                                   object:nil];
 
@@ -429,22 +429,12 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
     UAChannelRegistrationExtenderBlock block = remainingExtenderBlocks.firstObject;
     [remainingExtenderBlocks removeObjectAtIndex:0];
 
-    block(payload, ^(UAChannelRegistrationPayload *payload) {
-        [self extendPayload:payload extenders:remainingExtenderBlocks completionHandler:completionHandler];
-    });
-}
+    [[UADispatcher mainDispatcher] dispatchAsyncIfNecessary:^{
+        block(payload, ^(UAChannelRegistrationPayload *payload) {
+                [self extendPayload:payload extenders:remainingExtenderBlocks completionHandler:completionHandler];
+        });
+    }];
 
-#pragma mark -
-#pragma mark UAPushableComponent
-
--(void)receivedRemoteNotification:(UANotificationContent *)notification
-                completionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
-    BOOL isInBackground = [UIApplication sharedApplication].applicationState == UIApplicationStateBackground;
-    if (isInBackground && !self.identifier) {
-        // Update registration if the channel identifier does not exist
-        [self updateRegistrationForcefully:NO];
-    }
-    completionHandler(UIBackgroundFetchResultNoData);
 }
 
 @end

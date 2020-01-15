@@ -5,8 +5,9 @@ services into your iOS applications.
 
 ## Resources
 
-- [AirshipKit Docs](https://docs.airship.com/reference/libraries/ios/latest/)
-- [AirshipLocationKit Docs](https://docs.airship.com/reference/libraries/ios-location/latest/)
-- [AirshipAppExtensions Docs](https://docs.airship.com/reference/libraries/ios-extensions/latest/)
-- [Getting started guide](https://docs.airship.com/platform/ios)
+- [Airship Docs](http://docs.airship.com/reference/libraries/ios/latest/Airship)
+- [AirshipLocation Docs](http://docs.airship.com/reference/libraries/ios/latest/AirshipLocation)
+- [AirshipNotificationServiceExtensions Docs](http://docs.airship.com/reference/libraries/ios/latest/AirshipNotificationServiceExtension)
+- [AirshipNotificationContentExtensions Docs](http://docs.airship.com/reference/libraries/ios/latest/AirshipNotificationContentExtension)
+- [Getting started guide](http://docs.airship.com/platform/ios/)
 - [Migration Guides](https://github.com/urbanairship/ios-library/tree/$AIRSHIP_VERSION/Documentation/Migration)

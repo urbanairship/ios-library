@@ -29,7 +29,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @return NSDictionary of the action payload.
  */
-+ (NSDictionary *)actionsPayloadForNotificationContent:(UANotificationContent *)notificationContent actionIdentifier:(NSString * _Nullable)actionIdentifier;
++ (NSDictionary *)actionsPayloadForNotificationContent:(UANotificationContent *)notificationContent actionIdentifier:(nullable NSString *)actionIdentifier;
 
 @end
 

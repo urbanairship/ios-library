@@ -19,7 +19,7 @@ NSString *const UAManagedContextStoreDirectory = @"com.urbanairship.no-backup";
 }
 
 - (void)addPersistentSqlStore:(NSString *)storeName
-            completionHandler:(void(^ __nonnull)(BOOL, NSError *))completionHandler {
+            completionHandler:(nonnull void(^)(BOOL, NSError *))completionHandler {
 
     [self performBlock:^{
 
@@ -73,7 +73,7 @@ NSString *const UAManagedContextStoreDirectory = @"com.urbanairship.no-backup";
 }
 
 - (void)addPersistentInMemoryStore:(NSString *)storeName
-                 completionHandler:(void(^ __nonnull)(BOOL, NSError *))completionHandler {
+                 completionHandler:(nonnull void(^)(BOOL, NSError *))completionHandler {
 
     NSDictionary *options = @{ NSMigratePersistentStoresAutomaticallyOption : @YES,
                                NSInferMappingModelAutomaticallyOption : @YES };

@@ -18,7 +18,7 @@ AirshipConfig.plist
 AirshipDevelopment.plist
 fabfile.py*
 *.build_output
-# Undo files for MacVim 
+# Undo files for MacVim
 *.un~
 # CoverStory tool script
 cover.py
@@ -28,3 +28,4 @@ Deploy/output
 test-output/
 Pods/
 Carthage/
+Airship.framework.zip

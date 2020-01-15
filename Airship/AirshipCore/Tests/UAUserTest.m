@@ -67,6 +67,14 @@
     self.user.enabled = YES;
  }
 
+
+- (void)testDeviceIDChanged {
+    [self.userDataDAO saveUserData:self.userData completionHandler:^(BOOL success) {}];
+    XCTAssertNotNil([self.userDataDAO getUserDataSync]);
+    [self.notificationCenter postNotificationName:UADeviceIDChangedNotification object:nil];
+    XCTAssertNil([self.userDataDAO getUserDataSync]);
+}
+
 - (void)testDefaultUser {
     //an uninitialized user will be non-nil but will have nil values
 

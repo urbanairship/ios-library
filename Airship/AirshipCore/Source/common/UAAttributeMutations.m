@@ -40,6 +40,23 @@ NSInteger const UAAttributeMaxStringLength = 1024;
     [self.mutationsPayload addObject:mutationBody];
 }
 
+- (void)setNumber:(NSNumber *)number forAttribute:(NSString *)attribute {
+    NSString *normalizedKey = [self normalizeAttributeString:attribute];
+
+    if (!normalizedKey) {
+        UA_LDEBUG(@"UAAttributeMutations - Unable to properly form attribute mutation.");
+        return;
+    }
+
+    NSDictionary *mutationBody = @{
+        UAAttributeActionKey : UAAttributeSetActionKey,
+        UAAttributeValueKey : number,
+        UAAttributeNameKey : normalizedKey
+    };
+
+    [self.mutationsPayload addObject:mutationBody];
+}
+
 - (void)removeAttribute:(NSString *)attribute {
     NSString *normalizedKey = [self normalizeAttributeString:attribute];
 

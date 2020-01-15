@@ -18,7 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)runActionsForCommand:(UAJavaScriptCommand *)command
                     metadata:(NSDictionary *)metadata
-           completionHandler:(void (^)(NSString * __nullable))completionHandler;
+           completionHandler:(void (^)(NSString * _Nullable))completionHandler;
 
 /**
  * Checks if a command defines an action.

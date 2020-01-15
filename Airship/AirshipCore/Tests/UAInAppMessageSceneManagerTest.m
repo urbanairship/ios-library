@@ -20,40 +20,53 @@
 - (void)setUp {
     [super setUp];
 
-    self.mockWindowScene = [self mockForClass:[UIWindowScene class]];
-    self.mockAlternateWindowScene = [self mockForClass:[UIWindowScene class]];
-    self.mockMessage = [self mockForClass:[UAInAppMessage class]];
+    // UIScene is only on iOS 13 and above
+    if (@available(iOS 13.0, *)) {
+        self.mockWindowScene = [self mockForClass:[UIWindowScene class]];
+        self.mockAlternateWindowScene = [self mockForClass:[UIWindowScene class]];
 
-    self.mockDelegate = [self mockForProtocol:@protocol(UAInAppMessageSceneDelegate)];
-    self.notificationCenter = [[NSNotificationCenter alloc] init];
+        self.mockMessage = [self mockForClass:[UAInAppMessage class]];
 
-    self.sceneManager = [UAInAppMessageSceneManager managerWithNotificationCenter:self.notificationCenter];
+        self.mockDelegate = [self mockForProtocol:@protocol(UAInAppMessageSceneDelegate)];
+        self.notificationCenter = [[NSNotificationCenter alloc] init];
+
+        self.sceneManager = [UAInAppMessageSceneManager managerWithNotificationCenter:self.notificationCenter];
+    }
 }
 
 - (void)testSceneForMessage {
-    [self.notificationCenter postNotificationName:UISceneWillConnectNotification object:self.mockWindowScene];
-    XCTAssertEqual(self.mockWindowScene, [self.sceneManager sceneForMessage:self.mockMessage]);
+    // UIScene is only on iOS 13 and above
+    if (@available(iOS 13.0, *)) {
+        [self.notificationCenter postNotificationName:UISceneWillConnectNotification object:self.mockWindowScene];
+        XCTAssertEqual(self.mockWindowScene, [self.sceneManager sceneForMessage:self.mockMessage]);
 
-    [self.notificationCenter postNotificationName:UISceneWillConnectNotification object:self.mockAlternateWindowScene];
-    XCTAssertEqual(self.mockAlternateWindowScene, [self.sceneManager sceneForMessage:self.mockMessage]);
+        [self.notificationCenter postNotificationName:UISceneWillConnectNotification object:self.mockAlternateWindowScene];
+        XCTAssertEqual(self.mockAlternateWindowScene, [self.sceneManager sceneForMessage:self.mockMessage]);
 
-    [self.notificationCenter postNotificationName:UISceneDidDisconnectNotification object:self.mockAlternateWindowScene];
-    XCTAssertEqual(self.mockWindowScene, [self.sceneManager sceneForMessage:self.mockMessage]);
+        [self.notificationCenter postNotificationName:UISceneDidDisconnectNotification object:self.mockAlternateWindowScene];
+        XCTAssertEqual(self.mockWindowScene, [self.sceneManager sceneForMessage:self.mockMessage]);
 
-    [self.notificationCenter postNotificationName:UISceneDidDisconnectNotification object:self.mockWindowScene];
-    XCTAssertNil([self.sceneManager sceneForMessage:self.mockMessage]);
+        [self.notificationCenter postNotificationName:UISceneDidDisconnectNotification object:self.mockWindowScene];
+        XCTAssertNil([self.sceneManager sceneForMessage:self.mockMessage]);
+    }
 }
 
 - (void)testSceneForMessageNoScenes {
-    XCTAssertNil([self.sceneManager sceneForMessage:self.mockMessage]);
+    // UIScene is only on iOS 13 and above
+    if (@available(iOS 13.0, *)) {
+        XCTAssertNil([self.sceneManager sceneForMessage:self.mockMessage]);
+    }
 }
 
 - (void)testSceneForMessageOverride {
-    [self.notificationCenter postNotificationName:UISceneWillConnectNotification object:self.mockWindowScene];
-    [[[self.mockDelegate stub] andReturn:self.mockAlternateWindowScene] sceneForMessage:self.mockMessage defaultScene:self.mockWindowScene];
-    self.sceneManager.delegate = self.mockDelegate;
+    // UIScene is only on iOS 13 and above
+    if (@available(iOS 13.0, *)) {
+        [self.notificationCenter postNotificationName:UISceneWillConnectNotification object:self.mockWindowScene];
+        [[[self.mockDelegate stub] andReturn:self.mockAlternateWindowScene] sceneForMessage:self.mockMessage defaultScene:self.mockWindowScene];
+        self.sceneManager.delegate = self.mockDelegate;
 
-    XCTAssertEqual(self.mockAlternateWindowScene, [self.sceneManager sceneForMessage:self.mockMessage]);
+        XCTAssertEqual(self.mockAlternateWindowScene, [self.sceneManager sceneForMessage:self.mockMessage]);
+    }
 }
 
 @end

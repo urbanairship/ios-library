@@ -24,14 +24,14 @@ NS_ASSUME_NONNULL_BEGIN
  * @param methodName The getter's name.
  * @param value The getter's value.
  */
-- (void)addStringGetter:(NSString *)methodName value:(NSString * __nullable)value;
+- (void)addStringGetter:(NSString *)methodName value:(nullable NSString *)value;
 
 /**
  * Adds a getter to the `UAirship` JavaScript instance.
  * @param methodName The getter's name.
  * @param value The getter's value.  A nil value will return `-1` in the JavaScript environment.
 */
-- (void)addNumberGetter:(NSString *)methodName value:(NSNumber * __nullable)value;
+- (void)addNumberGetter:(NSString *)methodName value:(nullable NSNumber *)value;
 
 /**
  * Builds the script that can be injected into a web view.

@@ -18,7 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param statusCode The request status code.
  * @param remoteData The refreshed remote data.
  */
-typedef void (^UARemoteDataRefreshSuccessBlock)(NSUInteger statusCode, NSArray<NSDictionary *> * __nullable remoteData);
+typedef void (^UARemoteDataRefreshSuccessBlock)(NSUInteger statusCode, NSArray<NSDictionary *> * _Nullable remoteData);
 
 /**
  * A block called when the refresh of the remote data failed.

@@ -173,7 +173,7 @@ NSUInteger const DebugTab = 2;
 //    - <scheme>://deeplink/settings
 //    - <scheme>://deeplink/settings/tags
 
-- (void)receivedDeepLink:(NSURL *_Nonnull)url completionHandler:(void (^_Nonnull)(void))completionHandler {
+- (void)receivedDeepLink:(nonnull NSURL *)url completionHandler:(nonnull void (^)(void))completionHandler {
     NSMutableArray<NSString *>*pathComponents = [url.pathComponents mutableCopy];
     if ([pathComponents[0] isEqualToString:@"/"]) {
         [pathComponents removeObjectAtIndex:0];

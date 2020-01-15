@@ -37,7 +37,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 + (instancetype)bannerMessageViewWithDisplayContent:(UAInAppMessageBannerDisplayContent *)displayContent
                                   bannerContentView:(UAInAppMessageBannerContentView *)contentView
-                                         buttonView:(UAInAppMessageButtonView * _Nullable)buttonView
+                                         buttonView:(nullable UAInAppMessageButtonView *)buttonView
                                               style:(UAInAppMessageBannerStyle *)style;
 
 @end

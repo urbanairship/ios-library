@@ -69,11 +69,17 @@
 		3C89DD4C2120BBA800864358 /* UATagGroups.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C89DD482120BBA800864358 /* UATagGroups.m */; };
 		3C89DD4D2120BBA800864358 /* UATagGroups.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C89DD482120BBA800864358 /* UATagGroups.m */; };
 		3C89DD572122471E00864358 /* UATestDate.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C89DD562122471E00864358 /* UATestDate.m */; };
+		3C927F7A23A2F94C003C5FC8 /* UAAppStateTrackerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C927F7923A2F94C003C5FC8 /* UAAppStateTrackerTest.m */; };
+		3C927F7C23A2FA5F003C5FC8 /* UAAppStateTracker+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C927F7B23A2FA5F003C5FC8 /* UAAppStateTracker+Internal.h */; };
+		3C927F7D23A2FA5F003C5FC8 /* UAAppStateTracker+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C927F7B23A2FA5F003C5FC8 /* UAAppStateTracker+Internal.h */; };
+		3C927F7E23A2FA5F003C5FC8 /* UAAppStateTracker+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C927F7B23A2FA5F003C5FC8 /* UAAppStateTracker+Internal.h */; };
+		3C927F7F23A2FA5F003C5FC8 /* UAAppStateTracker+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C927F7B23A2FA5F003C5FC8 /* UAAppStateTracker+Internal.h */; };
+		3C927F8123A425F0003C5FC8 /* UAUIKitStateTrackerAdapterTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C927F8023A425F0003C5FC8 /* UAUIKitStateTrackerAdapterTest.m */; };
+		3C927F8423A97CDA003C5FC8 /* UADefaultValueTransformerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C927F8323A97CD9003C5FC8 /* UADefaultValueTransformerTest.m */; };
 		3C9E9D6821D42EEB0072F65B /* UAInAppMessageResolutionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C9E9D6721D42EEB0072F65B /* UAInAppMessageResolutionTest.m */; };
 		3CA0E2A0237CCE2600EE76CF /* AirshipCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 494DD9571B0EB677009C134E /* AirshipCore.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		3CA0E2AE237CD05F00EE76CF /* AssociatedIdentifiersTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E22B237CCBA600EE76CF /* AssociatedIdentifiersTableViewController.swift */; };
 		3CA0E2AF237CD05F00EE76CF /* AddTagsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E22C237CCBA600EE76CF /* AddTagsTableViewController.swift */; };
-		3CA0E2B0237CD05F00EE76CF /* LastPayloadTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E22D237CCBA600EE76CF /* LastPayloadTableViewController.swift */; };
 		3CA0E2B1237CD05F00EE76CF /* AddNamedUserTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E22E237CCBA600EE76CF /* AddNamedUserTableViewController.swift */; };
 		3CA0E2B2237CD05F00EE76CF /* AddAssociatedIdentifiersTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E22F237CCBA600EE76CF /* AddAssociatedIdentifiersTableViewController.swift */; };
 		3CA0E2B3237CD05F00EE76CF /* TagsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E230237CCBA600EE76CF /* TagsTableViewController.swift */; };
@@ -320,6 +326,14 @@
 		6E4F02912370AC0B0068AF65 /* UAAppStateTracker.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E4F028C2370AC0B0068AF65 /* UAAppStateTracker.m */; };
 		6E4F02982370B7530068AF65 /* UAApplicationState.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4F02972370B7520068AF65 /* UAApplicationState.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E4F02992370B7530068AF65 /* UAApplicationState.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4F02972370B7520068AF65 /* UAApplicationState.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6E4F1AE923ABC7B400EC851D /* UANSURLValueTransformer.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4F1AE723ABC7B400EC851D /* UANSURLValueTransformer.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6E4F1AEA23ABC7B400EC851D /* UANSURLValueTransformer.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4F1AE723ABC7B400EC851D /* UANSURLValueTransformer.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6E4F1AEB23ABC7B400EC851D /* UANSURLValueTransformer.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4F1AE723ABC7B400EC851D /* UANSURLValueTransformer.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6E4F1AEC23ABC7B400EC851D /* UANSURLValueTransformer.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4F1AE723ABC7B400EC851D /* UANSURLValueTransformer.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6E4F1AED23ABC7B400EC851D /* UANSURLValueTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E4F1AE823ABC7B400EC851D /* UANSURLValueTransformer.m */; };
+		6E4F1AEE23ABC7B400EC851D /* UANSURLValueTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E4F1AE823ABC7B400EC851D /* UANSURLValueTransformer.m */; };
+		6E4F1AEF23ABC7B400EC851D /* UANSURLValueTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E4F1AE823ABC7B400EC851D /* UANSURLValueTransformer.m */; };
+		6E4F1AF023ABC7B400EC851D /* UANSURLValueTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E4F1AE823ABC7B400EC851D /* UANSURLValueTransformer.m */; };
 		6E598D541FFDA0CC005B234B /* UAInAppMessageScheduleEditsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E598D531FFDA0CC005B234B /* UAInAppMessageScheduleEditsTests.m */; };
 		6E598D862003F014005B234B /* UAInAppMessageResolutionEventTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E598D852003F014005B234B /* UAInAppMessageResolutionEventTest.m */; };
 		6E598D8820040E7F005B234B /* UAInAppMessageDisplayEventTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E598D8720040E7F005B234B /* UAInAppMessageDisplayEventTest.m */; };
@@ -348,6 +362,11 @@
 		6E6CC331239A2F26003D583C /* UAAccengageModuleLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E6CC301239A2E8F003D583C /* UAAccengageModuleLoader.m */; };
 		6E6CC332239A2F26003D583C /* UAAccengage.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E6CC302239A2E8F003D583C /* UAAccengage.m */; };
 		6E6CC349239A30A0003D583C /* UAAccengageModuleLoaderFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E6CC2F9239A2E35003D583C /* UAAccengageModuleLoaderFactory.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6E6CC38423A3F9B4003D583C /* PushNotificationsDetailTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6CC37E23A3F9B4003D583C /* PushNotificationsDetailTableViewController.swift */; };
+		6E6CC38623A3F9B4003D583C /* PushDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6CC38023A3F9B4003D583C /* PushDataManager.swift */; };
+		6E6CC38723A3F9B4003D583C /* PushPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6CC38123A3F9B4003D583C /* PushPayload.swift */; };
+		6E6CC38823A3F9B4003D583C /* PushNotificationsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6CC38223A3F9B4003D583C /* PushNotificationsTableViewController.swift */; };
+		6E6CC38A23A3FA38003D583C /* AirshipDebugPushNotifications.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6E6CC38923A3FA38003D583C /* AirshipDebugPushNotifications.storyboard */; };
 		6E746507235FA9B6000BF09C /* UAMessageCenterTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E746506235FA9B6000BF09C /* UAMessageCenterTest.m */; };
 		6E84537B237E03E7007D3B1E /* UAPadding.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E845379237E03E7007D3B1E /* UAPadding.m */; };
 		6E84537C237E03E7007D3B1E /* UAPadding.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E845379237E03E7007D3B1E /* UAPadding.m */; };
@@ -653,6 +672,14 @@
 		6EDAF05F237B812E00A64F14 /* UrbanAirship.strings in Resources */ = {isa = PBXBuildFile; fileRef = CC70E98E1DDB8AF8000E2528 /* UrbanAirship.strings */; };
 		6EDAF060237B812E00A64F14 /* UARemoteData.xcdatamodeld in Resources */ = {isa = PBXBuildFile; fileRef = DF5ED8E81F745682002DDA24 /* UARemoteData.xcdatamodeld */; };
 		6EDAF061237B812E00A64F14 /* UADefaultActions.plist in Resources */ = {isa = PBXBuildFile; fileRef = DF7E79FA1EE1D50100D4EF02 /* UADefaultActions.plist */; };
+		6EDD86EF23ABF30E0031CCEA /* UANSDictionaryValueTransformer.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EDD86ED23ABF30E0031CCEA /* UANSDictionaryValueTransformer.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6EDD86F023ABF30E0031CCEA /* UANSDictionaryValueTransformer.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EDD86ED23ABF30E0031CCEA /* UANSDictionaryValueTransformer.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6EDD86F123ABF30E0031CCEA /* UANSDictionaryValueTransformer.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EDD86ED23ABF30E0031CCEA /* UANSDictionaryValueTransformer.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6EDD86F223ABF30E0031CCEA /* UANSDictionaryValueTransformer.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EDD86ED23ABF30E0031CCEA /* UANSDictionaryValueTransformer.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6EDD86F323ABF30E0031CCEA /* UANSDictionaryValueTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EDD86EE23ABF30E0031CCEA /* UANSDictionaryValueTransformer.m */; };
+		6EDD86F423ABF30E0031CCEA /* UANSDictionaryValueTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EDD86EE23ABF30E0031CCEA /* UANSDictionaryValueTransformer.m */; };
+		6EDD86F523ABF30E0031CCEA /* UANSDictionaryValueTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EDD86EE23ABF30E0031CCEA /* UANSDictionaryValueTransformer.m */; };
+		6EDD86F623ABF30E0031CCEA /* UANSDictionaryValueTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EDD86EE23ABF30E0031CCEA /* UANSDictionaryValueTransformer.m */; };
 		6EDEE20C212CD31500918B05 /* UARegistrationDelegateWrapper+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EDEE20A212CD31400918B05 /* UARegistrationDelegateWrapper+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6EDEE20D212CD31500918B05 /* UARegistrationDelegateWrapper+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EDEE20A212CD31400918B05 /* UARegistrationDelegateWrapper+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6EDEE20F212CD31500918B05 /* UARegistrationDelegateWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EDEE20B212CD31400918B05 /* UARegistrationDelegateWrapper.m */; };
@@ -1607,6 +1634,7 @@
 		6EFB378D2345B3FD005E4E44 /* UANativeBridgeDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EFB378C2345B3FD005E4E44 /* UANativeBridgeDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6EFB37902345B5A5005E4E44 /* UAJavaScriptCommandDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EFB378F2345B5A5005E4E44 /* UAJavaScriptCommandDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		76A5F5F01DCBDD5E00858BA4 /* UAAsyncOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = CC04F1BB1DC16BB300B4842D /* UAAsyncOperation.m */; };
+		83A674F823AA7AA4005C0C8F /* AirshipDebugPushData.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 83A674F623AA7AA4005C0C8F /* AirshipDebugPushData.xcdatamodeld */; };
 		991A94651FCF2C6B00B57D24 /* UAInAppMessageTextInfoTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 991A94641FCF2C6B00B57D24 /* UAInAppMessageTextInfoTest.m */; };
 		991A94671FCF2C7F00B57D24 /* UAInAppMessageButtonInfoTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 991A94661FCF2C7F00B57D24 /* UAInAppMessageButtonInfoTest.m */; };
 		991A94691FCF2CEF00B57D24 /* UAInAppMessageMediaInfoTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 991A94681FCF2CEF00B57D24 /* UAInAppMessageMediaInfoTest.m */; };
@@ -2349,6 +2377,10 @@
 		3C89DD482120BBA800864358 /* UATagGroups.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UATagGroups.m; path = common/UATagGroups.m; sourceTree = "<group>"; };
 		3C89DD552122471E00864358 /* UATestDate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UATestDate.h; sourceTree = "<group>"; };
 		3C89DD562122471E00864358 /* UATestDate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UATestDate.m; sourceTree = "<group>"; };
+		3C927F7923A2F94C003C5FC8 /* UAAppStateTrackerTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAAppStateTrackerTest.m; sourceTree = "<group>"; };
+		3C927F7B23A2FA5F003C5FC8 /* UAAppStateTracker+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "UAAppStateTracker+Internal.h"; path = "common/UAAppStateTracker+Internal.h"; sourceTree = "<group>"; };
+		3C927F8023A425F0003C5FC8 /* UAUIKitStateTrackerAdapterTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAUIKitStateTrackerAdapterTest.m; sourceTree = "<group>"; };
+		3C927F8323A97CD9003C5FC8 /* UADefaultValueTransformerTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UADefaultValueTransformerTest.m; sourceTree = "<group>"; };
 		3C9E9D6721D42EEB0072F65B /* UAInAppMessageResolutionTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageResolutionTest.m; sourceTree = "<group>"; };
 		3CA0E21D237CCBA600EE76CF /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/AirshipDebug.strings; sourceTree = "<group>"; };
 		3CA0E21F237CCBA600EE76CF /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = en; path = en.lproj/AirshipDebug.stringsdict; sourceTree = "<group>"; };
@@ -2362,7 +2394,6 @@
 		3CA0E229237CCBA600EE76CF /* RootTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RootTableViewController.swift; sourceTree = "<group>"; };
 		3CA0E22B237CCBA600EE76CF /* AssociatedIdentifiersTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssociatedIdentifiersTableViewController.swift; sourceTree = "<group>"; };
 		3CA0E22C237CCBA600EE76CF /* AddTagsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddTagsTableViewController.swift; sourceTree = "<group>"; };
-		3CA0E22D237CCBA600EE76CF /* LastPayloadTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LastPayloadTableViewController.swift; sourceTree = "<group>"; };
 		3CA0E22E237CCBA600EE76CF /* AddNamedUserTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddNamedUserTableViewController.swift; sourceTree = "<group>"; };
 		3CA0E22F237CCBA600EE76CF /* AddAssociatedIdentifiersTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddAssociatedIdentifiersTableViewController.swift; sourceTree = "<group>"; };
 		3CA0E230237CCBA600EE76CF /* TagsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TagsTableViewController.swift; sourceTree = "<group>"; };
@@ -2591,6 +2622,8 @@
 		6E4F028B2370AC0B0068AF65 /* UAAppStateTracker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = UAAppStateTracker.h; path = common/UAAppStateTracker.h; sourceTree = "<group>"; };
 		6E4F028C2370AC0B0068AF65 /* UAAppStateTracker.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = UAAppStateTracker.m; path = common/UAAppStateTracker.m; sourceTree = "<group>"; };
 		6E4F02972370B7520068AF65 /* UAApplicationState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAApplicationState.h; path = common/UAApplicationState.h; sourceTree = "<group>"; };
+		6E4F1AE723ABC7B400EC851D /* UANSURLValueTransformer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = UANSURLValueTransformer.h; path = common/UANSURLValueTransformer.h; sourceTree = "<group>"; };
+		6E4F1AE823ABC7B400EC851D /* UANSURLValueTransformer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = UANSURLValueTransformer.m; path = common/UANSURLValueTransformer.m; sourceTree = "<group>"; };
 		6E598D1E1FFC44F3005B234B /* UAScheduleEdits.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UAScheduleEdits.h; sourceTree = "<group>"; };
 		6E598D1F1FFC44F3005B234B /* UAScheduleEdits.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAScheduleEdits.m; sourceTree = "<group>"; };
 		6E598D261FFC4506005B234B /* UAScheduleEdits+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAScheduleEdits+Internal.h"; sourceTree = "<group>"; };
@@ -2631,6 +2664,11 @@
 		6E6CC304239A2E8F003D583C /* UAAccengageModuleLoader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UAAccengageModuleLoader.h; sourceTree = "<group>"; };
 		6E6CC305239A2E8F003D583C /* AirshipAccengage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AirshipAccengage.h; sourceTree = "<group>"; };
 		6E6CC32D239A2EA9003D583C /* AirshipExtendedActions copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "AirshipExtendedActions copy-Info.plist"; path = "/Users/ryan.lepinski/git/ios-library-dev/Airship/AirshipExtendedActions copy-Info.plist"; sourceTree = "<absolute>"; };
+		6E6CC37E23A3F9B4003D583C /* PushNotificationsDetailTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PushNotificationsDetailTableViewController.swift; sourceTree = "<group>"; };
+		6E6CC38023A3F9B4003D583C /* PushDataManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PushDataManager.swift; sourceTree = "<group>"; };
+		6E6CC38123A3F9B4003D583C /* PushPayload.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PushPayload.swift; sourceTree = "<group>"; };
+		6E6CC38223A3F9B4003D583C /* PushNotificationsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PushNotificationsTableViewController.swift; sourceTree = "<group>"; };
+		6E6CC38923A3FA38003D583C /* AirshipDebugPushNotifications.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = AirshipDebugPushNotifications.storyboard; sourceTree = "<group>"; };
 		6E746506235FA9B6000BF09C /* UAMessageCenterTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAMessageCenterTest.m; sourceTree = "<group>"; };
 		6E7700A81F04790C00B5E465 /* UANativeBridge */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = UANativeBridge; sourceTree = "<group>"; };
 		6E7700A91F04790C00B5E465 /* UANotificationCategories.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = UANotificationCategories.plist; sourceTree = "<group>"; };
@@ -2721,7 +2759,6 @@
 		6EC74C2B234BF223003AF4C6 /* UARemoteConfigDisableInfoTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UARemoteConfigDisableInfoTest.m; sourceTree = "<group>"; };
 		6ECEBF5421C452A300FAAB08 /* UAScheduleDataMigrator+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAScheduleDataMigrator+Internal.h"; sourceTree = "<group>"; };
 		6ECEBF5521C452A300FAAB08 /* UAScheduleDataMigrator.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAScheduleDataMigrator.m; sourceTree = "<group>"; };
-		6ECF2BF11F1E92A10061247E /* UAInbox.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = UAInbox.xcdatamodel; sourceTree = "<group>"; };
 		6ED3C03A200801C4002A746B /* UAInAppMessageCustomDisplayContent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UAInAppMessageCustomDisplayContent.h; sourceTree = "<group>"; };
 		6ED3C03B200801C4002A746B /* UAInAppMessageCustomDisplayContent.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageCustomDisplayContent.m; sourceTree = "<group>"; };
 		6ED3C0402008038B002A746B /* UAInAppMessageCustomDisplayContent+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAInAppMessageCustomDisplayContent+Internal.h"; sourceTree = "<group>"; };
@@ -2730,6 +2767,8 @@
 		6ED87FA01FEB315B003B652A /* UAInAppMessageTextInfo+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAInAppMessageTextInfo+Internal.h"; sourceTree = "<group>"; };
 		6ED87FA91FEB3A47003B652A /* UAInAppMessageButtonInfo+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAInAppMessageButtonInfo+Internal.h"; sourceTree = "<group>"; };
 		6ED87FAC1FEB5044003B652A /* UAInAppMessageTagSelector+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAInAppMessageTagSelector+Internal.h"; sourceTree = "<group>"; };
+		6EDD86ED23ABF30E0031CCEA /* UANSDictionaryValueTransformer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = UANSDictionaryValueTransformer.h; path = common/UANSDictionaryValueTransformer.h; sourceTree = "<group>"; };
+		6EDD86EE23ABF30E0031CCEA /* UANSDictionaryValueTransformer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = UANSDictionaryValueTransformer.m; path = common/UANSDictionaryValueTransformer.m; sourceTree = "<group>"; };
 		6EDEE20A212CD31400918B05 /* UARegistrationDelegateWrapper+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UARegistrationDelegateWrapper+Internal.h"; path = "common/UARegistrationDelegateWrapper+Internal.h"; sourceTree = "<group>"; };
 		6EDEE20B212CD31400918B05 /* UARegistrationDelegateWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UARegistrationDelegateWrapper.m; path = common/UARegistrationDelegateWrapper.m; sourceTree = "<group>"; };
 		6EDEE213212DBC0C00918B05 /* UARegistrationDelegateWrapperTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UARegistrationDelegateWrapperTests.m; sourceTree = "<group>"; };
@@ -2751,6 +2790,7 @@
 		6EFB377C234595C9005E4E44 /* UAMessageCenterNativeBridgeExtensionTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAMessageCenterNativeBridgeExtensionTest.m; sourceTree = "<group>"; };
 		6EFB378C2345B3FD005E4E44 /* UANativeBridgeDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UANativeBridgeDelegate.h; path = ios/UANativeBridgeDelegate.h; sourceTree = "<group>"; };
 		6EFB378F2345B5A5005E4E44 /* UAJavaScriptCommandDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAJavaScriptCommandDelegate.h; path = ios/UAJavaScriptCommandDelegate.h; sourceTree = "<group>"; };
+		83A674F723AA7AA4005C0C8F /* AirshipDebugPushData.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = AirshipDebugPushData.xcdatamodel; sourceTree = "<group>"; };
 		8F98742CB99EDEDE99A230C2 /* Pods_AirshipKitTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AirshipKitTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		991A94641FCF2C6B00B57D24 /* UAInAppMessageTextInfoTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageTextInfoTest.m; sourceTree = "<group>"; };
 		991A94661FCF2C7F00B57D24 /* UAInAppMessageButtonInfoTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageButtonInfoTest.m; sourceTree = "<group>"; };
@@ -3126,9 +3166,6 @@
 		CC70E9971DDB8B0D000E2528 /* fi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fi; path = fi.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
 		CC70E9981DDB8B10000E2528 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
 		CC70E9991DDB8B13000E2528 /* hi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = hi; path = hi.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
-		CC8999A21D8B642D00A0CECC /* UAMessageCenterListCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UAMessageCenterListCell.xib; sourceTree = "<group>"; };
-		CC8999A31D8B642D00A0CECC /* UAMessageCenterListViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UAMessageCenterListViewController.xib; sourceTree = "<group>"; };
-		CC8999A51D8B642D00A0CECC /* UAMessageCenterPlaceholderIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = UAMessageCenterPlaceholderIcon.png; sourceTree = "<group>"; };
 		CC944EBD1DB0225000C42269 /* UARequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UARequest.h; path = common/UARequest.h; sourceTree = "<group>"; };
 		CC944EBE1DB0225000C42269 /* UARequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UARequest.m; path = common/UARequest.m; sourceTree = "<group>"; };
 		CC944EC71DB161AE00C42269 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
@@ -3245,7 +3282,6 @@
 		DFD442A91FD77BA5002E4FA1 /* UAInAppMessageTagSelector.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UAInAppMessageTagSelector.h; sourceTree = "<group>"; };
 		DFD442AA1FD77BA5002E4FA1 /* UAInAppMessageTagSelector.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageTagSelector.m; sourceTree = "<group>"; };
 		DFD442B51FD892AE002E4FA1 /* UAInAppMessageTagSelectorTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageTagSelectorTest.m; sourceTree = "<group>"; };
-		DFECEA761E64DC83006AA8EA /* UAMessageCenterMessageViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UAMessageCenterMessageViewController.xib; sourceTree = "<group>"; };
 		DFECEA791E64DD15006AA8EA /* UAWebView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAWebView.m; path = ios/UAWebView.m; sourceTree = "<group>"; };
 		DFECEA7C1E64DE66006AA8EA /* UANativeBridge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UANativeBridge.m; path = ios/UANativeBridge.m; sourceTree = "<group>"; };
 		DFECEA7D1E64DE66006AA8EA /* UANativeBridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UANativeBridge.h; path = ios/UANativeBridge.h; sourceTree = "<group>"; };
@@ -3452,7 +3488,17 @@
 				3C4ACC402304DE1B00BCF1CC /* UAUIKitStateTrackerAdapter.m */,
 				3C4ACC412304DE1B00BCF1CC /* UAUIKitStateTrackerAdapter+Internal.h */,
 				6E4F028B2370AC0B0068AF65 /* UAAppStateTracker.h */,
+				3C927F7B23A2FA5F003C5FC8 /* UAAppStateTracker+Internal.h */,
 				6E4F028C2370AC0B0068AF65 /* UAAppStateTracker.m */,
+			);
+			name = "App State";
+			sourceTree = "<group>";
+		};
+		3C927F8223A42609003C5FC8 /* App State */ = {
+			isa = PBXGroup;
+			children = (
+				3C927F7923A2F94C003C5FC8 /* UAAppStateTrackerTest.m */,
+				3C927F8023A425F0003C5FC8 /* UAUIKitStateTrackerAdapterTest.m */,
 			);
 			name = "App State";
 			sourceTree = "<group>";
@@ -3470,6 +3516,7 @@
 		3CA0E21B237CCBA600EE76CF /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				6E6CC38923A3FA38003D583C /* AirshipDebugPushNotifications.storyboard */,
 				3CA0E21C237CCBA600EE76CF /* AirshipDebug.strings */,
 				3CA0E21E237CCBA600EE76CF /* AirshipDebug.stringsdict */,
 				3CA0E220237CCBA600EE76CF /* AirshipDebugEvents.storyboard */,
@@ -3478,6 +3525,7 @@
 				3CA0E224237CCBA600EE76CF /* Images.xcassets */,
 				3CA0E225237CCBA600EE76CF /* AirshipDebug.storyboard */,
 				3CA0E226237CCBA600EE76CF /* AirshipDebugAutomation.storyboard */,
+				83A674F623AA7AA4005C0C8F /* AirshipDebugPushData.xcdatamodeld */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -3485,6 +3533,7 @@
 		3CA0E227237CCBA600EE76CF /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				6E6CC37C23A3F9B4003D583C /* Received Pushes */,
 				3CA0E22A237CCBA600EE76CF /* Device-Info */,
 				3CA0E234237CCBA600EE76CF /* Automation */,
 				3CA0E240237CCBA600EE76CF /* Events */,
@@ -3503,7 +3552,6 @@
 			children = (
 				3CA0E22B237CCBA600EE76CF /* AssociatedIdentifiersTableViewController.swift */,
 				3CA0E22C237CCBA600EE76CF /* AddTagsTableViewController.swift */,
-				3CA0E22D237CCBA600EE76CF /* LastPayloadTableViewController.swift */,
 				3CA0E22E237CCBA600EE76CF /* AddNamedUserTableViewController.swift */,
 				3CA0E22F237CCBA600EE76CF /* AddAssociatedIdentifiersTableViewController.swift */,
 				3CA0E230237CCBA600EE76CF /* TagsTableViewController.swift */,
@@ -3916,6 +3964,17 @@
 				1BA67C3B23A0FFA800A07324 /* UAAccengageUtils.m */,
 			);
 			path = Source;
+                        sourceTree = "<group>";
+                };
+		6E6CC37C23A3F9B4003D583C /* Received Pushes */ = {
+			isa = PBXGroup;
+			children = (
+				6E6CC37E23A3F9B4003D583C /* PushNotificationsDetailTableViewController.swift */,
+				6E6CC38023A3F9B4003D583C /* PushDataManager.swift */,
+				6E6CC38123A3F9B4003D583C /* PushPayload.swift */,
+				6E6CC38223A3F9B4003D583C /* PushNotificationsTableViewController.swift */,
+			);
+			path = "Received Pushes";
 			sourceTree = "<group>";
 		};
 		6E84509C237DFE89007D3B1E /* AirshipAutomation */ = {
@@ -4461,6 +4520,17 @@
 				6ED3C04420081013002A746B /* UAInAppMessageCustomDisplayContentTest.m */,
 			);
 			name = Custom;
+			sourceTree = "<group>";
+		};
+		6EDD86F723ABF31F0031CCEA /* Value Transformers */ = {
+			isa = PBXGroup;
+			children = (
+				6EDD86EE23ABF30E0031CCEA /* UANSDictionaryValueTransformer.m */,
+				6EDD86ED23ABF30E0031CCEA /* UANSDictionaryValueTransformer.h */,
+				6E4F1AE723ABC7B400EC851D /* UANSURLValueTransformer.h */,
+				6E4F1AE823ABC7B400EC851D /* UANSURLValueTransformer.m */,
+			);
+			name = "Value Transformers";
 			sourceTree = "<group>";
 		};
 		6EE76FCC238F157900E79944 /* Airship */ = {
@@ -5092,6 +5162,7 @@
 				6E5D60B9212DD07C00C32E3F /* UADispatcher.m */,
 				CC70E8E91DDA985D000E2528 /* UA_Base64.h */,
 				CC70E8EA1DDA985D000E2528 /* UA_Base64.m */,
+				6EDD86F723ABF31F0031CCEA /* Value Transformers */,
 			);
 			name = Utils;
 			sourceTree = "<group>";
@@ -5242,6 +5313,7 @@
 		CC64F0551D8B77E3009CEF27 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				3C927F8223A42609003C5FC8 /* App State */,
 				6E90F0ED228F550900E1FCB0 /* Config */,
 				6E4116852135C4D7005CC871 /* Operations */,
 				DFB5F12F1FC4EDB70085F784 /* RemoteConfig */,
@@ -5266,6 +5338,7 @@
 				CC64F0C91D8B781C009CEF27 /* UAWhitelistTest.m */,
 				DF7E22BB1ED63E9200C79C46 /* UAProjectValidationTest.swift */,
 				CC64F0A31D8B781C009CEF27 /* UAirshipTest.m */,
+				3C927F8323A97CD9003C5FC8 /* UADefaultValueTransformerTest.m */,
 				CC64F0581D8B77E3009CEF27 /* Info.plist */,
 			);
 			path = Tests;
@@ -5430,11 +5503,6 @@
 				6E8A5516236768ED004AE2A0 /* UADefaultActions.plist */,
 				6E7700A81F04790C00B5E465 /* UANativeBridge */,
 				6E7700A91F04790C00B5E465 /* UANotificationCategories.plist */,
-				CC8999A21D8B642D00A0CECC /* UAMessageCenterListCell.xib */,
-				CC8999A31D8B642D00A0CECC /* UAMessageCenterListViewController.xib */,
-				DFECEA761E64DC83006AA8EA /* UAMessageCenterMessageViewController.xib */,
-				CC8999A51D8B642D00A0CECC /* UAMessageCenterPlaceholderIcon.png */,
-				6ECF2BF01F1E92A10061247E /* UAInbox.xcdatamodeld */,
 			);
 			path = ios;
 			sourceTree = "<group>";
@@ -5685,11 +5753,13 @@
 				6E8A552C236771B2004AE2A0 /* UAActionPredicateProtocol.h in Headers */,
 				CC40DC391D8C996A00BABD4F /* UAAnalytics.h in Headers */,
 				CC40DD001D8C996A00BABD4F /* UAPush.h in Headers */,
+				6E4F1AEB23ABC7B400EC851D /* UANSURLValueTransformer.h in Headers */,
 				CC40DD091D8C996A00BABD4F /* UARetailEventTemplate.h in Headers */,
 				CC40DC731D8C996A00BABD4F /* UACustomEvent.h in Headers */,
 				CC40DC301D8C996A00BABD4F /* UAActivityViewController.h in Headers */,
 				CC40DD151D8C996A00BABD4F /* UAShareAction.h in Headers */,
 				CC40DCEE1D8C996A00BABD4F /* UANotificationCategory.h in Headers */,
+				6EDD86F123ABF30E0031CCEA /* UANSDictionaryValueTransformer.h in Headers */,
 				CC40DC0D1D8C996A00BABD4F /* NSString+UALocalizationAdditions.h in Headers */,
 				CC40DC141D8C996A00BABD4F /* UAAction+Operators.h in Headers */,
 				6EFB377623450FAB005E4E44 /* UANativeBridgeExtensionDelegate.h in Headers */,
@@ -5769,6 +5839,7 @@
 				3CF5286122E2756700424EF5 /* UAChannel+Internal.h in Headers */,
 				DF6AD3CD1ED8AA78006EB1DA /* UANotificationCategories+Internal.h in Headers */,
 				DF5ED9001F7475FE002DDA24 /* UARemoteDataStorePayload+Internal.h in Headers */,
+				3C927F7E23A2FA5F003C5FC8 /* UAAppStateTracker+Internal.h in Headers */,
 				3CBCED4E2113C15A003B7239 /* UATagGroupsType+Internal.h in Headers */,
 				6E90F0E2228F53EB00E1FCB0 /* UARuntimeConfig.h in Headers */,
 				DF6AD3D11ED8AA78006EB1DA /* UAEventData+Internal.h in Headers */,
@@ -6039,6 +6110,7 @@
 				6EE770C2238F15D000E79944 /* UAAnalytics.h in Headers */,
 				6EE770C3238F15D000E79944 /* UAPush.h in Headers */,
 				6EE770C4238F15D000E79944 /* UARetailEventTemplate.h in Headers */,
+				6EDD86EF23ABF30E0031CCEA /* UANSDictionaryValueTransformer.h in Headers */,
 				6EE770C5238F15D000E79944 /* UACustomEvent.h in Headers */,
 				6EE770C6238F15D000E79944 /* UAActivityViewController.h in Headers */,
 				6EE770C7238F15D000E79944 /* UAShareAction.h in Headers */,
@@ -6164,12 +6236,14 @@
 				6EE770F9238F15D000E79944 /* UAEnableFeatureActionPredicate+Internal.h in Headers */,
 				6EE770FA238F15D000E79944 /* UAAppExitEvent+Internal.h in Headers */,
 				6EE770FB238F15D000E79944 /* UAAppForegroundEvent+Internal.h in Headers */,
+				3C927F7C23A2FA5F003C5FC8 /* UAAppStateTracker+Internal.h in Headers */,
 				6EE770FC238F15D000E79944 /* UAAppInitEvent+Internal.h in Headers */,
 				6EE770FD238F15D000E79944 /* UAJSONMatcher+Internal.h in Headers */,
 				6EE770FE238F15D000E79944 /* UAAssociateIdentifiersEvent+Internal.h in Headers */,
 				6EE770FF238F15D000E79944 /* UAEvent+Internal.h in Headers */,
 				6EE77100238F15D000E79944 /* UAInteractiveNotificationEvent+Internal.h in Headers */,
 				6EE77101238F15D000E79944 /* UAScreenTrackingEvent+Internal.h in Headers */,
+				6E4F1AE923ABC7B400EC851D /* UANSURLValueTransformer.h in Headers */,
 				6EE77102238F15D000E79944 /* UAAnalytics+Internal.h in Headers */,
 				6EE77103238F15D000E79944 /* UAJavaScriptCommandDelegate.h in Headers */,
 				6EE77104238F15D000E79944 /* UAApplicationMetrics+Internal.h in Headers */,
@@ -6356,6 +6430,7 @@
 				6EE77314238F197600E79944 /* UAirship.h in Headers */,
 				6EE77315238F197600E79944 /* UAAppBackgroundEvent+Internal.h in Headers */,
 				6EE77316238F197600E79944 /* UAAppExitEvent+Internal.h in Headers */,
+				6EDD86F023ABF30E0031CCEA /* UANSDictionaryValueTransformer.h in Headers */,
 				6EE77317238F197600E79944 /* UALocationModuleLoaderFactory.h in Headers */,
 				6EE77318238F197600E79944 /* UAAppForegroundEvent+Internal.h in Headers */,
 				6EE77319238F197600E79944 /* UAAppInitEvent+Internal.h in Headers */,
@@ -6389,6 +6464,7 @@
 				6EE77335238F197600E79944 /* UACustomEvent+Internal.h in Headers */,
 				6EE77336238F197600E79944 /* UATagGroupsType+Internal.h in Headers */,
 				6EE77337238F197600E79944 /* UAPreferenceDataStore.h in Headers */,
+				6E4F1AEA23ABC7B400EC851D /* UANSURLValueTransformer.h in Headers */,
 				6EE77338238F197600E79944 /* UACustomEvent.h in Headers */,
 				6EE77339238F197600E79944 /* UADeepLinkAction.h in Headers */,
 				6EE7733A238F197600E79944 /* UAAutoIntegration+Internal.h in Headers */,
@@ -6420,6 +6496,7 @@
 				6EE77355238F197600E79944 /* UAApplicationState.h in Headers */,
 				6EE77356238F197600E79944 /* UAWhitelist.h in Headers */,
 				6EE77357238F197600E79944 /* UAJSONValueMatcher.h in Headers */,
+				3C927F7D23A2FA5F003C5FC8 /* UAAppStateTracker+Internal.h in Headers */,
 				6EE77358238F197600E79944 /* UARegistrationDelegateWrapper+Internal.h in Headers */,
 				6EE77359238F197600E79944 /* UAExtendedActionsModuleLoaderFactory.h in Headers */,
 				6EE7735A238F197600E79944 /* UAMediaEventTemplate.h in Headers */,
@@ -6541,6 +6618,7 @@
 				99666E391EDF2C8D00BAE46B /* UAAppBackgroundEvent+Internal.h in Headers */,
 				99666E3B1EDF2C8D00BAE46B /* UAAppExitEvent+Internal.h in Headers */,
 				6E5EB9B4235A680400F8AEA0 /* UALocationModuleLoaderFactory.h in Headers */,
+				6EDD86F223ABF30E0031CCEA /* UANSDictionaryValueTransformer.h in Headers */,
 				99666E3D1EDF2C8D00BAE46B /* UAAppForegroundEvent+Internal.h in Headers */,
 				99666E3F1EDF2C8D00BAE46B /* UAAppInitEvent+Internal.h in Headers */,
 				99666E511EDF2C8D00BAE46B /* UAApplicationMetrics+Internal.h in Headers */,
@@ -6574,6 +6652,7 @@
 				3CBCED4F2113C15A003B7239 /* UATagGroupsType+Internal.h in Headers */,
 				6E93771E237625BF00AA9C2A /* UAPreferenceDataStore.h in Headers */,
 				99666E2F1EDF2C8D00BAE46B /* UACustomEvent.h in Headers */,
+				6E4F1AEC23ABC7B400EC851D /* UANSURLValueTransformer.h in Headers */,
 				99666DF01EDF2C1400BAE46B /* UADeepLinkAction.h in Headers */,
 				6E937726237625BF00AA9C2A /* UAAutoIntegration+Internal.h in Headers */,
 				99666D7D1EDF2B4100BAE46B /* UADelayOperation+Internal.h in Headers */,
@@ -6605,6 +6684,7 @@
 				6E4F02992370B7530068AF65 /* UAApplicationState.h in Headers */,
 				6E937710237625BF00AA9C2A /* UAWhitelist.h in Headers */,
 				99666D8F1EDF2BA700BAE46B /* UAJSONValueMatcher.h in Headers */,
+				3C927F7F23A2FA5F003C5FC8 /* UAAppStateTracker+Internal.h in Headers */,
 				6EDEE20D212CD31500918B05 /* UARegistrationDelegateWrapper+Internal.h in Headers */,
 				6E8A552923676AB4004AE2A0 /* UAExtendedActionsModuleLoaderFactory.h in Headers */,
 				99666E311EDF2C8D00BAE46B /* UAMediaEventTemplate.h in Headers */,
@@ -7012,6 +7092,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6E6CC38A23A3FA38003D583C /* AirshipDebugPushNotifications.storyboard in Resources */,
 				3CA0E2D1237CD57100EE76CF /* AirshipDebug.strings in Resources */,
 				3CA0E2D2237CD57100EE76CF /* AirshipDebug.stringsdict in Resources */,
 				3CA0E2D3237CD57100EE76CF /* AirshipDebugEvents.storyboard in Resources */,
@@ -7358,11 +7439,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6E6CC38823A3F9B4003D583C /* PushNotificationsTableViewController.swift in Sources */,
 				3CA0E2AE237CD05F00EE76CF /* AssociatedIdentifiersTableViewController.swift in Sources */,
 				3CA0E2AF237CD05F00EE76CF /* AddTagsTableViewController.swift in Sources */,
 				6E21852B237D32B30084933A /* EventData.swift in Sources */,
-				3CA0E2B0237CD05F00EE76CF /* LastPayloadTableViewController.swift in Sources */,
 				3CA0E2B1237CD05F00EE76CF /* AddNamedUserTableViewController.swift in Sources */,
+				6E6CC38423A3F9B4003D583C /* PushNotificationsDetailTableViewController.swift in Sources */,
 				3CA0E2B2237CD05F00EE76CF /* AddAssociatedIdentifiersTableViewController.swift in Sources */,
 				3CA0E2B3237CD05F00EE76CF /* TagsTableViewController.swift in Sources */,
 				3CA0E2B4237CD05F00EE76CF /* DeviceInfoViewController.swift in Sources */,
@@ -7371,6 +7453,7 @@
 				3CA0E2B7237CD05F00EE76CF /* AudienceDetailViewController.swift in Sources */,
 				6E218539237DB7960084933A /* AddChannelAttributeTableViewController.swift in Sources */,
 				3CA0E2B8237CD05F00EE76CF /* TriggerTableViewController.swift in Sources */,
+				6E6CC38723A3F9B4003D583C /* PushPayload.swift in Sources */,
 				3CA0E2B9237CD05F00EE76CF /* AutomationTableViewController.swift in Sources */,
 				3CA0E2BA237CD05F00EE76CF /* AutomationDetailViewController.swift in Sources */,
 				3CA0E2BB237CD05F00EE76CF /* ButtonsTableViewController.swift in Sources */,
@@ -7389,10 +7472,12 @@
 				3CA0E2C8237CD05F00EE76CF /* CustomPropertyAdderTableViewCell.swift in Sources */,
 				3CA0E2C9237CD05F00EE76CF /* EventsDetailTableViewController.swift in Sources */,
 				3CA0E2CA237CD05F00EE76CF /* EventDataManager.swift in Sources */,
+				83A674F823AA7AA4005C0C8F /* AirshipDebugPushData.xcdatamodeld in Sources */,
 				3CA0E2CB237CD05F00EE76CF /* RootTableViewController.swift in Sources */,
 				3CA0E2CC237CD05F00EE76CF /* ThemeManager.swift in Sources */,
 				3CA0E2CD237CD05F00EE76CF /* AirshipDebug.swift in Sources */,
 				6E218529237D31720084933A /* AirshipEventData.xcdatamodeld in Sources */,
+				6E6CC38623A3F9B4003D583C /* PushDataManager.swift in Sources */,
 				3CA0E2CE237CD05F00EE76CF /* Theme.swift in Sources */,
 				3CA0E2CF237CD05F00EE76CF /* DebugUtils.swift in Sources */,
 			);
@@ -7467,6 +7552,7 @@
 				6E2E6D751EB3A34B006056BF /* UASwizzler.m in Sources */,
 				CCD28FE51DD14DD1008D663F /* UATagGroupsMutation.m in Sources */,
 				CC40DD0A1D8C996A00BABD4F /* UARetailEventTemplate.m in Sources */,
+				6EDD86F523ABF30E0031CCEA /* UANSDictionaryValueTransformer.m in Sources */,
 				CC40DC411D8C996A00BABD4F /* UAAppBackgroundEvent.m in Sources */,
 				CC40DC251D8C996A00BABD4F /* UAActionResult.m in Sources */,
 				CC04F19A1DBFF0CB00B4842D /* NSManagedContext+UAAdditions.m in Sources */,
@@ -7551,6 +7637,7 @@
 				CC40DC121D8C996A00BABD4F /* UAAccountEventTemplate.m in Sources */,
 				CC40DC8B1D8C996A00BABD4F /* UAEvent.m in Sources */,
 				CC40DC1F1D8C996A00BABD4F /* UAActionRegistry.m in Sources */,
+				6E4F1AEF23ABC7B400EC851D /* UANSURLValueTransformer.m in Sources */,
 				CC04F1AB1DC018F600B4842D /* UAEventManager.m in Sources */,
 				CC40DC101D8C996A00BABD4F /* NSString+UAURLEncoding.m in Sources */,
 				CC40DC0E1D8C996A00BABD4F /* NSString+UALocalizationAdditions.m in Sources */,
@@ -7772,6 +7859,7 @@
 				6EE7722C238F172900E79944 /* UAInAppMessageButtonInfo.m in Sources */,
 				6EE7722D238F172900E79944 /* UAInAppMessageMediaInfo.m in Sources */,
 				6EE7722E238F172900E79944 /* UAInAppMessageTextView.m in Sources */,
+				6EDD86F323ABF30E0031CCEA /* UANSDictionaryValueTransformer.m in Sources */,
 				6EE7722F238F172900E79944 /* UAInAppMessageDismissButton.m in Sources */,
 				6EE77230238F172900E79944 /* UAInAppMessageButtonView.m in Sources */,
 				6EE77231238F172900E79944 /* UAInAppMessageButton.m in Sources */,
@@ -7945,6 +8033,7 @@
 				6EE7704D238F15D000E79944 /* UARemoteDataStorePayload.m in Sources */,
 				6EE7704E238F15D000E79944 /* UANotificationResponse.m in Sources */,
 				6EE7704F238F15D000E79944 /* UAAutoIntegration.m in Sources */,
+				6E4F1AED23ABC7B400EC851D /* UANSURLValueTransformer.m in Sources */,
 				6EE77050238F15D000E79944 /* UAShareActionPredicate.m in Sources */,
 				6EE77051238F15D000E79944 /* UAEnableFeatureAction.m in Sources */,
 				6EE77052238F15D000E79944 /* UADisposable.m in Sources */,
@@ -8011,6 +8100,7 @@
 				6EE7728D238F197600E79944 /* UANotificationContent.m in Sources */,
 				6EE7728E238F197600E79944 /* UAActionArguments.m in Sources */,
 				6EE7728F238F197600E79944 /* UATagUtils.m in Sources */,
+				6E4F1AEE23ABC7B400EC851D /* UANSURLValueTransformer.m in Sources */,
 				6EE77290238F197600E79944 /* UAConfig.m in Sources */,
 				6EE77291238F197600E79944 /* UARemoteDataAPIClient.m in Sources */,
 				6EE77292238F197600E79944 /* UAAppStateTracker.m in Sources */,
@@ -8037,6 +8127,7 @@
 				6EE772A7238F197600E79944 /* UASwizzler.m in Sources */,
 				6EE772A8238F197600E79944 /* UAAppInitEvent.m in Sources */,
 				6EE772A9238F197600E79944 /* UAAsyncOperation.m in Sources */,
+				6EDD86F423ABF30E0031CCEA /* UANSDictionaryValueTransformer.m in Sources */,
 				6EE772AA238F197600E79944 /* UA_Base64.m in Sources */,
 				6EE772AB238F197600E79944 /* UAWhitelist.m in Sources */,
 				6EE772AC238F197600E79944 /* UAPadding.m in Sources */,
@@ -8128,6 +8219,7 @@
 				DF702D811FABA38400E7A3DC /* UAVersionMatcherTests.m in Sources */,
 				CC64F1181D8B781C009CEF27 /* UAOpenExternalURLActionTest.m in Sources */,
 				CC64F0E01D8B781C009CEF27 /* UAActionTest.m in Sources */,
+				3C927F8423A97CDA003C5FC8 /* UADefaultValueTransformerTest.m in Sources */,
 				CC64F0D21D8B781C009CEF27 /* NSJSONSerialization_UAAdditionsTests.m in Sources */,
 				DF17A1101F57617200DC39E0 /* UARemoteDataAPIClientTest.m in Sources */,
 				6E3673E01E8AF9D8005B5DFF /* UAEnableFeatureActionTest.m in Sources */,
@@ -8186,6 +8278,7 @@
 				CC64F0DD1D8B781C009CEF27 /* UAActionRegistryTest.m in Sources */,
 				6E4627CC1E64E0C300A5BF3B /* UAScheduleDelayTests.m in Sources */,
 				457EDBF0234D685500700FF8 /* UAAttributeRegistrarTest.m in Sources */,
+				3C927F8123A425F0003C5FC8 /* UAUIKitStateTrackerAdapterTest.m in Sources */,
 				CC64F0E31D8B781C009CEF27 /* UAAnalyticsTest.m in Sources */,
 				CC944EDE1DB6AED200C42269 /* UAAPIClientTest.m in Sources */,
 				CC64F12D1D8B781C009CEF27 /* UAWhitelistTest.m in Sources */,
@@ -8241,6 +8334,7 @@
 				45DCD83E2087C57C00BCF10F /* UAInAppMessageFullScreenStyleTest.m in Sources */,
 				CC64F11F1D8B781C009CEF27 /* UARetailEventTemplateTest.m in Sources */,
 				997140F61FB0F45000EF5445 /* UAInAppMessageTest.m in Sources */,
+				3C927F7A23A2F94C003C5FC8 /* UAAppStateTrackerTest.m in Sources */,
 				997140F11FB0F3E600EF5445 /* UAInAppMessageManagerTest.m in Sources */,
 				DF544B911E428DC800F4F008 /* UATextInputNotificationActionTest.m in Sources */,
 				DF3E96FF207557B000C77E3B /* UATagGroupsRegistrarTest.m in Sources */,
@@ -8304,6 +8398,7 @@
 				99666DD41EDF2BED00BAE46B /* UANotificationContent.m in Sources */,
 				99666DFD1EDF2C1F00BAE46B /* UAActionArguments.m in Sources */,
 				99666DDB1EDF2BED00BAE46B /* UATagUtils.m in Sources */,
+				6E4F1AF023ABC7B400EC851D /* UANSURLValueTransformer.m in Sources */,
 				6E90F0E8228F543200E1FCB0 /* UAConfig.m in Sources */,
 				DF17A1071F56330500DC39E0 /* UARemoteDataAPIClient.m in Sources */,
 				6E4F02912370AC0B0068AF65 /* UAAppStateTracker.m in Sources */,
@@ -8330,6 +8425,7 @@
 				9960B9021EDE4D86007D6D97 /* UASwizzler.m in Sources */,
 				99666E401EDF2C8D00BAE46B /* UAAppInitEvent.m in Sources */,
 				99666E6D1EDF2C9A00BAE46B /* UAAsyncOperation.m in Sources */,
+				6EDD86F623ABF30E0031CCEA /* UANSDictionaryValueTransformer.m in Sources */,
 				99666E741EDF2CBE00BAE46B /* UA_Base64.m in Sources */,
 				6E937706237625BF00AA9C2A /* UAWhitelist.m in Sources */,
 				6E84537C237E03E7007D3B1E /* UAPadding.m in Sources */,
@@ -9450,13 +9546,13 @@
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
 		};
-		6ECF2BF01F1E92A10061247E /* UAInbox.xcdatamodeld */ = {
+		83A674F623AA7AA4005C0C8F /* AirshipDebugPushData.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
-				6ECF2BF11F1E92A10061247E /* UAInbox.xcdatamodel */,
+				83A674F723AA7AA4005C0C8F /* AirshipDebugPushData.xcdatamodel */,
 			);
-			currentVersion = 6ECF2BF11F1E92A10061247E /* UAInbox.xcdatamodel */;
-			path = UAInbox.xcdatamodeld;
+			currentVersion = 83A674F723AA7AA4005C0C8F /* AirshipDebugPushData.xcdatamodel */;
+			path = AirshipDebugPushData.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
 		};

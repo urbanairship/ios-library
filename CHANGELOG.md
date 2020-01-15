@@ -3,6 +3,34 @@ iOS Changelog
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/master/Documentation/Migration)
 
+Version 13.0.4 - December 31, 2019
+==================================
+Patch release to restore Cocoapods static library support. Apps that
+wish to use static libraries installed via Cocoapods should update.
+
+Changes
+-------
+- Fixed static library support for Cocoapods.
+
+Version 13.0.3 - December 19, 2019
+==================================
+Patch release to fix a crash on takeoff in iOS 11. Apps on 13.0.0 through 13.0.2
+should update.
+
+Changes
+-------
+- Fixed crash on takeoff in iOS 11.
+
+Version 13.0.2 - December 18, 2019
+==================================
+Patch release to fix several regressions introduced in 13.0.0. Apps on 13.0.0
+or 13.0.1 should update.
+
+Changes
+-------
+- Fixed crash on app restore on a different device.
+- Fixed accessing badge on a background queue during channel registration.
+- Fixed NSValueTransformer warnings in console.
 
 Version 13.0.1 - December 6, 2019
 =================================

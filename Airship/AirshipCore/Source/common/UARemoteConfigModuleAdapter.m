@@ -6,6 +6,7 @@
 #import "UARemoteDataPayload+Internal.h"
 #import "UARemoteConfigModuleNames+Internal.h"
 
+NSString * const UAChannelClassName = @"UAChannel";
 NSString * const UALocationClassName = @"UALocation";
 NSString * const UALegacyInAppMessagingClassName = @"UALegacyInAppMessaging";
 NSString * const UAInAppMessageManagerClassName = @"UAInAppMessageManager";
@@ -19,9 +20,13 @@ NSString * const UAMessageCenterClassName = @"UAMessageCenter";
         return @[[UAirship push]];
     }
 
+    if ([moduleName isEqualToString:kUARemoteConfigModuleChannel]) {
+        return @[[UAirship channel]];
+    }
+
     if ([moduleName isEqualToString:kUARemoteConfigModuleNamedUser]) {
            return @[[UAirship namedUser]];
-       }
+    }
 
     if ([moduleName isEqualToString:kUARemoteConfigModuleAnalytics]) {
         return @[[UAirship analytics]];

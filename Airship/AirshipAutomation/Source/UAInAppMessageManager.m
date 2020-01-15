@@ -294,7 +294,7 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
 
 - (void)editScheduleWithID:(NSString *)identifier
                      edits:(UAInAppMessageScheduleEdits *)edits
-         completionHandler:(void (^)(UASchedule * __nullable))completionHandler {
+         completionHandler:(void (^)(UASchedule * _Nullable))completionHandler {
 
     [self.automationEngine editScheduleWithID:identifier edits:edits completionHandler:completionHandler];
 }

@@ -30,7 +30,7 @@ extern NSUInteger const UAAutomationScheduleLimit;
  * If the schedule info is invalid, the action schedule will be nil.
  */
 - (void)scheduleActions:(UAActionScheduleInfo *)scheduleInfo
-      completionHandler:(nullable void (^)(UASchedule * __nullable))completionHandler;
+      completionHandler:(nullable void (^)(UASchedule * _Nullable))completionHandler;
 
 /**
  * Schedules actions with metadata.
@@ -42,7 +42,7 @@ extern NSUInteger const UAAutomationScheduleLimit;
  */
 - (void)scheduleActions:(UAActionScheduleInfo *)scheduleInfo
                metadata:(NSDictionary *)metadata
-      completionHandler:(nullable void (^)(UASchedule * __nullable))completionHandler;
+      completionHandler:(nullable void (^)(UASchedule * _Nullable))completionHandler;
 
 /**
  * Cancels a schedule with the given identifier.
@@ -70,7 +70,7 @@ extern NSUInteger const UAAutomationScheduleLimit;
  * @param completionHandler The completion handler with the result.
  */
 - (void)getScheduleWithID:(NSString *)identifier
-        completionHandler:(void (^)(UASchedule * __nullable))completionHandler;
+        completionHandler:(void (^)(UASchedule * _Nullable))completionHandler;
 
 /**
  * Gets all schedules.
@@ -97,7 +97,7 @@ extern NSUInteger const UAAutomationScheduleLimit;
  */
 - (void)editScheduleWithID:(NSString *)identifier
                      edits:(UAActionScheduleEdits *)edits
-         completionHandler:(void (^)(UASchedule * __nullable))completionHandler;
+         completionHandler:(void (^)(UASchedule * _Nullable))completionHandler;
 
 @end
 
