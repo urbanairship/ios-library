@@ -96,7 +96,7 @@ NSString *const UAAccengageSettingsMigrated = @"UAAccengageSettingsMigrated";
     }
     
     if ([self isForegroundNotification:notification]) {
-        return [UAPush shared].defaultPresentationOptions;
+        return (UANotificationOptionAlert | UANotificationOptionBadge | UANotificationOptionSound);
     } else {
         return UNNotificationPresentationOptionNone;
     }
@@ -184,7 +184,7 @@ NSString *const UAAccengageSettingsMigrated = @"UAAccengageSettingsMigrated";
 
 - (BOOL)isForegroundNotification:(UNNotification *)notification {
     id isForegroundNotification = notification.request.content.userInfo[UAAccengageForegroundKey];
-    if ([isForegroundNotification isKindOfClass:[NSNumber class]]) {
+    if ([isForegroundNotification isKindOfClass:[NSString class]]) {
         return [isForegroundNotification boolValue];
     } else {
         return NO;

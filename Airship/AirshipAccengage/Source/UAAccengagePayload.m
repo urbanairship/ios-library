@@ -84,7 +84,7 @@ NSString * const UAAccengageButtonBrowserAction = @"browser";
 }
 
 - (BOOL)validateExternalURLAction:(id)action {
-    return [action isKindOfClass:[NSNumber class]];
+    return [action isKindOfClass:[NSString class]];
 }
 
 - (BOOL)validateButtonList:(id)list {

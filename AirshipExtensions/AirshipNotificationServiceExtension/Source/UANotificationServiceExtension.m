@@ -7,6 +7,7 @@
 #import "UAMediaAttachmentPayload.h"
 
 #define kUANotificationAttachmentServiceMediaAttachmentKey @"com.urbanairship.media_attachment"
+#define kUAAccengageNotificationIDKey @"a4sid"
 
 @interface UANotificationServiceExtension ()
 
@@ -207,6 +208,10 @@
     self.modifiedContent = [request.content mutableCopy];
 
     id jsonPayload = request.content.userInfo[kUANotificationAttachmentServiceMediaAttachmentKey];
+    
+    if (!jsonPayload && request.content.userInfo[kUAAccengageNotificationIDKey]) {
+        jsonPayload = request.content.userInfo;
+    }
 
     if (jsonPayload) {
         UAMediaAttachmentPayload *payload = [UAMediaAttachmentPayload payloadWithJSONObject:jsonPayload];

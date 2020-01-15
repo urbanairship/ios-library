@@ -107,7 +107,7 @@
         },
         @"a4sid": @"7675",
         @"a4surl": @"someurl.com",
-        @"openWithSafari": @true,
+        @"openWithSafari": @"yes",
     };
     response = [UANotificationResponse notificationResponseWithNotificationInfo:notificationInfo actionIdentifier:UANotificationDefaultActionIdentifier responseText:nil];
     [[runnerMock expect] runActionWithName:@"open_external_url_action" value:@"someurl.com"     situation:UASituationLaunchedFromPush];
