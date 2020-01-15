@@ -328,8 +328,8 @@
     if (selectedMessage) {
         self.selectedIndexPath = [self indexPathForMessage:selectedMessage];
 
-        [self.messageTable selectRowAtIndexPath:self.selectedIndexPath animated:YES scrollPosition:UITableViewScrollPositionNone];
         [self.messageTable scrollToNearestSelectedRowAtScrollPosition:UITableViewScrollPositionNone animated:YES];
+        [self.messageTable selectRowAtIndexPath:self.selectedIndexPath animated:YES scrollPosition:UITableViewScrollPositionNone];
     } else {
         [self.messageTable deselectRowAtIndexPath:self.selectedIndexPath animated:NO];
         self.selectedIndexPath = nil;
@@ -344,8 +344,8 @@
     // If a cell was previously selected and there are messages to display
     if ((self.selectedIndexPath) && (self.messages.count > 0)) {
         NSIndexPath *indexPath = [self indexPathForMessage:self.selectedMessage];
-        [self.messageTable selectRowAtIndexPath:indexPath animated:animated scrollPosition:UITableViewScrollPositionNone];
         [self.messageTable scrollToNearestSelectedRowAtScrollPosition:UITableViewScrollPositionNone animated:animated];
+        [self.messageTable selectRowAtIndexPath:indexPath animated:animated scrollPosition:UITableViewScrollPositionNone];
     }
 }
 

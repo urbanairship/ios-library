@@ -4,16 +4,13 @@
 #import "UAMessageCenter.h"
 #import "UAMessageCenterLocalization.h"
 #import "UADefaultMessageCenterListViewController.h"
-#import "UADefaultMessageCenterMessageViewController.h"
 #import "UADefaultMessageCenterSplitViewController.h"
-#import "UADefaultMessageCenterSplitViewDelegate.h"
 #import "UAMessageCenterStyle.h"
 
 #import "UAAirshipMessageCenterCoreImport.h"
 
 @interface UADefaultMessageCenterUI()
 @property(nonatomic, strong) UADefaultMessageCenterSplitViewController *splitViewController;
-@property(nonatomic, strong) UADefaultMessageCenterSplitViewDelegate *splitViewDelegate;
 @end
 
 @implementation UADefaultMessageCenterUI
@@ -101,13 +98,6 @@
 
 - (void)dismiss {
     [self dismissMessageCenterAnimated:YES];
-}
-
-#pragma mark -
-#pragma mark UAMessageCenterMessagePresentationDelegate
-
-- (void)presentMessage:(UAInboxMessage *)message {
-
 }
 
 @end

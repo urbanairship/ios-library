@@ -17,7 +17,7 @@ class MessageCenterDelegate : NSObject, UAMessageCenterDisplayDelegate {
     func displayMessageCenter(forMessageID messageID: String!, animated: Bool) {
         self.displayMessageCenter(animated: animated)
         DispatchQueue.main.async {
-            self.messageCenterViewController.displayMessageForID(messageID)
+            self.messageCenterViewController.displayMessage(forID: messageID)
         }
     }
 
@@ -25,7 +25,7 @@ class MessageCenterDelegate : NSObject, UAMessageCenterDisplayDelegate {
         DispatchQueue.main.async {
             let appDelegate = UIApplication.shared.delegate as! AppDelegate
             self.tabBarController.selectedIndex = appDelegate.MessageCenterTab
-            self.messageCenterViewController.display()
+            self.messageCenterViewController.showInbox()
         }
     }
 

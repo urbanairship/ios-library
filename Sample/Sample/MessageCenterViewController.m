@@ -2,10 +2,6 @@
 
 #import "MessageCenterViewController.h"
 
-@interface MessageCenterViewController ()
-@property (nonatomic, strong) UADefaultMessageCenterSplitViewDelegate *splitViewDelegate;
-@end
-
 @implementation MessageCenterViewController
 
 - (void)viewWillAppear:(BOOL)animated {
