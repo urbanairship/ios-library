@@ -201,14 +201,12 @@ typedef enum MessageState {
 }
 
 - (void)showDefaultScreen {
-    [self showText:UAMessageCenterLocalizedString(@"ua_message_not_selected")];
+    [self hideLoadingIndicator];
+    [self coverWithText:UAMessageCenterLocalizedString(@"ua_message_not_selected")];
 }
 
 - (void)showLoadingScreen {
-    self.title = nil;
-    self.coverLabel.text = nil;
-    self.coverView.hidden = NO;
-    self.navigationItem.rightBarButtonItem.enabled = NO;
+    [self coverWithText:nil];
     [self showLoadingIndicator];
 }
 
@@ -218,12 +216,11 @@ typedef enum MessageState {
     [self hideLoadingIndicator];
 }
 
-- (void)showText:(NSString *)text {
+- (void)coverWithText:(NSString *)text {
     self.title = nil;
     self.coverLabel.text = text;
     self.coverView.hidden = NO;
     self.navigationItem.rightBarButtonItem.enabled = NO;
-    [self hideLoadingIndicator];
 }
 
 - (void)setLoadingIndicatorView:(UIView *)loadingIndicatorView animations:(void (^)(void))animations {

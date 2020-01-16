@@ -46,9 +46,6 @@
 
     self.defaultSplitViewDelegate = [[UADefaultMessageCenterSplitViewDelegate alloc] initWithListViewController:self.listViewController];
     self.delegate = self.defaultSplitViewDelegate;
-
-    UADefaultMessageCenterListViewController *lvc = self.listViewController;
-    lvc.messagePresentationDelegate = self;
 }
 
 - (instancetype)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
@@ -122,9 +119,7 @@
     _style = style;
     self.listViewController.style = style;
 
-    if (self.listNavigationController && self.messageNavigationController) {
-        [self applyStyle];
-    }
+    [self applyStyle];
 }
 
 - (void)applyStyle {
@@ -178,7 +173,7 @@
 }
 
 - (void)restoreNavigationBarStyle {
-    // Restore the previous style to the containing navigation controller
+    // Restore the previous navigation bar style to the containing navigation controller
     if (self.style && self.style.navigationBarStyle && self.previousNavigationBarStyle) {
         self.navigationController.navigationBar.barStyle = (UIBarStyle)[self.previousNavigationBarStyle intValue];
     }
@@ -186,7 +181,7 @@
     self.previousNavigationBarStyle = nil;
 }
 
-// Note: This method should only be called once in viewWillAppear or it may not fuction as expected
+// Note: This method should only be called once in viewWillAppear or it may not function as expected
 - (void)setNavigationBarStyle {
     if (self.style && self.style.navigationBarStyle) {
         // Save the previous style of containing navigation controller, and set specified style
@@ -300,6 +295,7 @@
         UA_WEAKIFY(self);
         [self displayFailedToLoadAlertOnOK:^{
             [self resetUIState];
+            [self refreshMessageList];
         } onRetry:^{
             UA_STRONGIFY(self);
             [self displayMessageForID:messageID];
@@ -310,8 +306,8 @@
         UA_WEAKIFY(self);
         [self displayFailedToLoadAlertOnOK:^{
             UA_STRONGIFY(self);
-            [self.messageViewController showMessageScreen];
             [self resetUIState];
+            [self refreshMessageList];
         } onRetry:nil];
     };
 
@@ -319,8 +315,8 @@
         UA_WEAKIFY(self);
         [self displayNoLongerAvailableAlertOnOK:^{
             UA_STRONGIFY(self)
-            [self.messageViewController showMessageScreen];
             [self resetUIState];
+            [self refreshMessageList];
         }];
     };
 
@@ -343,7 +339,7 @@
             retry();
         }
     } else {
-        // Other/transport related errors
+        // Other errors
         retry();
     }
 }
@@ -353,10 +349,12 @@
     self.listViewController.selectedMessage = nil;
 
     // Hide message view if necessary
-    if (self.collapsed && [self.listNavigationController.visibleViewController isEqual:self.self.messageViewController]) {
+    if (self.collapsed && [self.listNavigationController.visibleViewController isEqual:self.messageViewController]) {
         [self.listNavigationController popViewControllerAnimated:YES];
     }
+}
 
+- (void)refreshMessageList {
     // refresh message list
     [[UAMessageCenter shared].messageList retrieveMessageListWithSuccessBlock:nil
                                                              withFailureBlock:nil];
@@ -373,18 +371,7 @@
 - (void)presentMessage:(UAInboxMessage *)message {
     if (message.isExpired) {
         UA_LDEBUG(@"Message expired");
-        UIAlertController* alert = [UIAlertController alertControllerWithTitle:UAMessageCenterLocalizedString(@"ua_content_error")
-                                                                       message:UAMessageCenterLocalizedString(@"ua_mc_no_longer_available")
-                                                                preferredStyle:UIAlertControllerStyleAlert];
-
-        UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:UAMessageCenterLocalizedString(@"ua_ok")
-                                                                style:UIAlertActionStyleDefault
-                                                              handler:^(UIAlertAction * action) {}];
-
-        [alert addAction:defaultAction];
-
-        [self presentViewController:alert animated:YES completion:nil];
-
+        [self displayNoLongerAvailableAlertOnOK:^{}];
         message = nil;
     }
 
@@ -398,7 +385,7 @@
 
     // only display the message if there is a message to display
     if (message) {
-        if (![self.listNavigationController.visibleViewController isEqual:self.self.messageViewController]) {
+        if (![self.listNavigationController.visibleViewController isEqual:self.messageViewController]) {
             [self showDetailViewController:self.messageNavigationController sender:self];
         }
     }
@@ -410,7 +397,7 @@
     [self.messageViewController showDefaultScreen];
 
     // Hide message view if necessary
-    if (self.collapsed && [self.listNavigationController.visibleViewController isEqual:self.self.messageViewController]) {
+    if (self.collapsed && [self.listNavigationController.visibleViewController isEqual:self.messageViewController]) {
         [self.listNavigationController popViewControllerAnimated:YES];
     }
 }

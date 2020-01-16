@@ -51,6 +51,12 @@
         self.splitViewController.filter = self.filter;
         self.splitViewController.disableMessageLinkPreviewAndCallouts = self.disableMessageLinkPreviewAndCallouts;
 
+        self.splitViewController.style = self.style;
+        self.splitViewController.title = self.title;
+
+        self.splitViewController.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+        self.splitViewController.modalPresentationStyle = UIModalPresentationFullScreen;
+
         UADefaultMessageCenterListViewController *lvc = self.splitViewController.listViewController;
 
         // if "Done" has been localized, use it, otherwise use iOS's UIBarButtonSystemItemDone
@@ -64,12 +70,6 @@
                                                                                                  target:self
                                                                                                  action:@selector(dismiss)];
         }
-
-        self.splitViewController.style = self.style;
-        self.splitViewController.title = self.title;
-
-        self.splitViewController.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
-        self.splitViewController.modalPresentationStyle = UIModalPresentationFullScreen;
     }
 
     if (!self.splitViewController.presentingViewController) {
