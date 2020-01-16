@@ -282,6 +282,7 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
             cell.subtitle?.numberOfLines = 1;
             cell.displayIntervalStepper.isHidden = false;
             cell.displayIntervalStepper.value = Double(inAppAutomationDisplayInterval)
+            cell.displayIntervalStepper.tintColor = ThemeManager.shared.currentTheme.WidgetTint;
         case channelID:
             cell.title.text = "ua_device_info_channel_id".localized()
             cell.subtitle.text = UAirship.channel().identifier

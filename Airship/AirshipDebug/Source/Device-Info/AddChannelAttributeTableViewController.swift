@@ -33,10 +33,18 @@ class AddChannelAttributeTableViewController: UITableViewController, UITextField
         addAttributeValueTextField.addTarget(self, action: #selector(textFieldDidChange(textField:)), for: .editingChanged)
 
         attributeActionControl.tintColor = ThemeManager.shared.currentTheme.WidgetTint
-        attributeTypeControl.tintColor = ThemeManager.shared.currentTheme.WidgetTint
+        attributeActionControl.tintColor = ThemeManager.shared.currentTheme.WidgetTint
+
+        let titleTextAttributes = [NSAttributedString.Key.foregroundColor: ThemeManager.shared.currentTheme.WidgetTint]
+        attributeTypeControl.setTitleTextAttributes(titleTextAttributes, for: .normal)
+        attributeTypeControl.setTitleTextAttributes(titleTextAttributes, for: .selected)
+        attributeActionControl.setTitleTextAttributes(titleTextAttributes, for: .normal)
+        attributeActionControl.setTitleTextAttributes(titleTextAttributes, for: .selected)
 
         attributeActionControl.backgroundColor = ThemeManager.shared.currentTheme.Background
         attributeTypeControl.backgroundColor = ThemeManager.shared.currentTheme.Background
+        addAttributeKeyCell.contentView.backgroundColor = ThemeManager.shared.currentTheme.Background
+        addAttributeValueCell.contentView.backgroundColor = ThemeManager.shared.currentTheme.Background
 
         let tapGesture = UITapGestureRecognizer(target:self, action: #selector(dismissKeyboard))
         view.addGestureRecognizer(tapGesture)
