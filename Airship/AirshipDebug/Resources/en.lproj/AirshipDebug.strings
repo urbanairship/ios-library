@@ -51,6 +51,7 @@
 "ua_attributes_key" = "Key";
 "ua_attributes_value" = "Value";
 "ua_attributes_action_set" = "Set";
+"ua_attributes_action_remove" = "Remove";
 "ua_attributes_action_removed" = "Removed";
 
 "ua_attributes_invalid_title" = "Invalid Attribute";

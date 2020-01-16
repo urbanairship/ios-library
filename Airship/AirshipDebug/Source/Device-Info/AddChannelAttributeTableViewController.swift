@@ -9,7 +9,6 @@ import Airship
 #endif
 
 class AddChannelAttributeTableViewController: UITableViewController, UITextFieldDelegate {
-
     @IBOutlet var addAttributeKeyCell: UITableViewCell!
     @IBOutlet private weak var addAttributeKeyTextField: UITextField!
 
@@ -17,6 +16,11 @@ class AddChannelAttributeTableViewController: UITableViewController, UITextField
     @IBOutlet private weak var addAttributeValueTextField: UITextField!
 
     @IBOutlet var attributeActionControl: UISegmentedControl!
+    @IBOutlet var attributeTypeControl: UISegmentedControl!
+
+    var isRemove:Bool = false
+
+    var applyButton:UIBarButtonItem = UIBarButtonItem(title: "ua_attributes_action_set".localized(comment: "Set"), style: .plain, target: self, action: #selector(AddChannelAttributeTableViewController.addAttributeMutation))
 
     let mutations = UAAttributeMutations()
 
@@ -24,12 +28,29 @@ class AddChannelAttributeTableViewController: UITableViewController, UITextField
         super.viewDidLoad()
 
         addAttributeKeyTextField.delegate = self
+        addAttributeKeyTextField.addTarget(self, action: #selector(textFieldDidChange(textField:)), for: .editingChanged)
         addAttributeValueTextField.delegate = self
+        addAttributeValueTextField.addTarget(self, action: #selector(textFieldDidChange(textField:)), for: .editingChanged)
 
-        let applyButton:UIBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonItem.SystemItem.add, target: self, action: #selector(AddChannelAttributeTableViewController.addAttribute))
+        attributeActionControl.tintColor = ThemeManager.shared.currentTheme.WidgetTint
+        attributeTypeControl.tintColor = ThemeManager.shared.currentTheme.WidgetTint
+
+        attributeActionControl.backgroundColor = ThemeManager.shared.currentTheme.Background
+        attributeTypeControl.backgroundColor = ThemeManager.shared.currentTheme.Background
+
+        let tapGesture = UITapGestureRecognizer(target:self, action: #selector(dismissKeyboard))
+        view.addGestureRecognizer(tapGesture)
+
+        let applyButton:UIBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonItem.SystemItem.add, target: self, action: #selector(AddChannelAttributeTableViewController.addAttributeMutation))
         navigationItem.rightBarButtonItem = applyButton
-        let addButton:UIBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonItem.SystemItem.add, target: self, action: #selector(AddChannelAttributeTableViewController.addAttribute))
-        navigationItem.rightBarButtonItem = addButton
+
+        navigationItem.rightBarButtonItem = self.applyButton
+        applyButton.isEnabled = false
+    }
+
+    @objc func dismissKeyboard(_ sender: UITapGestureRecognizer) {
+        addAttributeKeyTextField.resignFirstResponder()
+        addAttributeValueTextField.resignFirstResponder()
     }
 
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
@@ -38,37 +59,28 @@ class AddChannelAttributeTableViewController: UITableViewController, UITextField
 
     private func displayAlert(title:String, message:String, completion:(() -> Void)? = nil) {
         let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        alertController.popoverPresentationController?.sourceView = self.view
+        alertController.popoverPresentationController?.sourceView = view
         let okAction = UIAlertAction(title: "OK", style: UIAlertAction.Style.cancel) { (action) in
             completion?()
         }
         alertController.addAction(okAction)
-        self.present(alertController, animated: true)
+        present(alertController, animated: true)
     }
 
-    @objc func addAttribute() {
+    @objc func addAttributeMutation() {
         if (!validateFields()) {
             displayAlert(title: "ua_attributes_invalid_title".localized(comment: "Invalid Attribute"),
                          message: "ua_attributes_invalid_message".localized(comment: "Please add valid fields for your selected action"))
         }
 
-        var action:String
-        var message:String
+        var title:String = ""
+        var message:String = ""
 
         if attributeActionControl.attributeActionControlState() == .add {
-            guard let keyText = self.addAttributeKeyTextField.text,
-                let valueText = self.addAttributeValueTextField.text else { return }
-            action = "ua_attributes_action_set".localized(comment: "Set")
-            message = "\("ua_attributes_key".localized(comment: "Key")): \(keyText) \n \("ua_attributes_value".localized(comment: "Value")): \(valueText)"
-            mutations.setString(valueText, forAttribute: keyText)
+            updateTitleAndMessageForAdd(&title, &message)
         } else {
-            guard let keyText = self.addAttributeKeyTextField.text else { return }
-            action = "ua_attributes_action_removed".localized(comment: "Removed")
-            message = "\("ua_attributes_key".localized(comment: "Key")): \(keyText)"
-            mutations.removeAttribute(keyText)
+            updateTitleAndMessageForRemove(&title, &message)
         }
-
-        let title = "\(action) Attribute"
 
         displayAlert(title: title, message:message)
 
@@ -76,17 +88,43 @@ class AddChannelAttributeTableViewController: UITableViewController, UITextField
         clearFields()
     }
 
+    private func updateTitleAndMessageForAdd(_ title:inout String, _ message:inout String) {
+        guard let keyText = addAttributeKeyTextField.text,
+            let valueText = addAttributeValueTextField.text else { return }
+
+        let action = "ua_attributes_action_set".localized(comment: "Set")
+        message  = "\("ua_attributes_key".localized(comment: "Key")): \(keyText) \n \("ua_attributes_value".localized(comment: "Value")): \(valueText)"
+        switch (attributeTypeControl.attributeTypeControlState()) {
+        case .string:
+            mutations.setString(valueText, forAttribute: keyText)
+        case .number:
+            guard let number = NumberFormatter().number(from:valueText) else { return }
+            mutations.setNumber(number, forAttribute: keyText)
+        }
+
+        title = "\(action) Attribute"
+    }
+
+    private func updateTitleAndMessageForRemove(_ title:inout String, _ message:inout String) {
+        guard let keyText = addAttributeKeyTextField.text else { return }
+        let action = "ua_attributes_action_removed".localized(comment: "Removed")
+           message = "\("ua_attributes_key".localized(comment: "Key")): \(keyText)"
+           mutations.removeAttribute(keyText)
+        title = "\(action) Attribute"
+    }
+
     private func clearFields() {
+        applyButton.isEnabled = false
         addAttributeKeyTextField.text = ""
         addAttributeValueTextField.text = ""
     }
 
     private func validateFields() -> Bool {
-        guard let keyText = self.addAttributeKeyTextField.text, let valueText = self.addAttributeValueTextField.text else {
+        guard let keyText = addAttributeKeyTextField.text, let valueText = addAttributeValueTextField.text else {
             return false
         }
 
-        if (keyText.isEmpty || keyText.count > 1024) {
+        if !validateStringInput(keyText) {
             return false
         }
 
@@ -95,14 +133,58 @@ class AddChannelAttributeTableViewController: UITableViewController, UITextField
             return true
         }
 
-        if (valueText.isEmpty || valueText.count > 1024) {
+        if !validateFieldValues(valueText) {
+            return true
+        }
+
+        return true
+    }
+
+    private func validateFieldValues(_ valueText:String) -> Bool {
+        switch (attributeTypeControl.attributeTypeControlState()) {
+        case .string:
+            return validateStringInput(valueText)
+        case .number:
+            return validateNumberInput(valueText)
+        }
+    }
+
+    private func validateStringInput(_ stringInput:String) -> Bool {
+        if (stringInput.isEmpty || stringInput.count > 1024) {
+             return false
+        }
+
+        return true
+    }
+
+    private func validateNumberInput(_ numberInput:String) -> Bool {
+        guard NumberFormatter().number(from:numberInput) != nil else {
             return false
         }
 
         return true
     }
 
-    func setCellTheme() {
+    private func updateApplyButtonState() {
+        isRemove ? changeNavButtonTitle("ua_attributes_action_remove".localized(comment: "Remove")) : changeNavButtonTitle("ua_attributes_action_set".localized(comment: "Set"))
+
+        guard let keyText = addAttributeKeyTextField.text else {
+              applyButton.isEnabled = false
+              return
+        }
+
+        if isRemove {
+            applyButton.isEnabled = keyText.count > 0
+        } else {
+            guard let valueText = addAttributeValueTextField.text else {
+                applyButton.isEnabled = false
+                return
+            }
+            applyButton.isEnabled = keyText.count > 0 && valueText.count > 0
+        }
+    }
+
+    private func setCellTheme() {
         addAttributeKeyCell.backgroundColor = ThemeManager.shared.currentTheme.Background
         addAttributeKeyTextField.textColor = ThemeManager.shared.currentTheme.PrimaryText
 
@@ -113,14 +195,14 @@ class AddChannelAttributeTableViewController: UITableViewController, UITextField
         addAttributeValueTextField.attributedPlaceholder = NSAttributedString(string:"ua_attributes_value".localized(comment: "Value"), attributes: [NSAttributedString.Key.foregroundColor:ThemeManager.shared.currentTheme.SecondaryText])
     }
 
-    func setTableViewTheme() {
-        tableView.backgroundColor = ThemeManager.shared.currentTheme.Background;
+    private func setTableViewTheme() {
+        tableView.backgroundColor = ThemeManager.shared.currentTheme.Background
         navigationController?.navigationBar.titleTextAttributes = [.foregroundColor:ThemeManager.shared.currentTheme.NavigationBarText]
-        navigationController?.navigationBar.barTintColor = ThemeManager.shared.currentTheme.NavigationBarBackground;
+        navigationController?.navigationBar.barTintColor = ThemeManager.shared.currentTheme.NavigationBarBackground
     }
 
     override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated);
+        super.viewWillAppear(animated)
         setCellTheme()
         setTableViewTheme()
     }
@@ -131,9 +213,34 @@ class AddChannelAttributeTableViewController: UITableViewController, UITextField
         }
     }
 
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        if indexPath.section == 3 && isRemove {
+            return 0
+        }
+
+        return super.tableView(tableView, heightForRowAt: indexPath)
+    }
+
+    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        if section == 3 && isRemove {
+            return nil
+        }
+
+        return super.tableView(tableView, titleForHeaderInSection: section)
+    }
+
+    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        super.tableView(tableView, heightForHeaderInSection: section)
+        if section == 3 && isRemove {
+            return 0.01
+        }
+
+        return super.tableView(tableView, heightForHeaderInSection: section)
+    }
+
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        if (textField == self.addAttributeKeyTextField) {
-            if (self.addAttributeKeyTextField.text == nil) || (self.addAttributeKeyTextField.text!.count == 0) {
+        if (textField == addAttributeKeyTextField) {
+            if (addAttributeKeyTextField.text == nil) || (addAttributeKeyTextField.text!.count == 0) {
                 // hitting return in empty key field does nothing
                 return false
             } else {
@@ -141,28 +248,67 @@ class AddChannelAttributeTableViewController: UITableViewController, UITextField
                 textField.resignFirstResponder()
 
                 if attributeActionControl.attributeActionControlState() == .add {
-                    self.addAttributeValueTextField.becomeFirstResponder()
+                    addAttributeValueTextField.becomeFirstResponder()
                     return false
                 }
             }
         } else {
             // hitting return in text field with empty key field takes user to the key field
-            if (self.addAttributeKeyTextField.text == nil) || (self.addAttributeKeyTextField.text!.count == 0) {
+            if (addAttributeKeyTextField.text == nil) || (addAttributeKeyTextField.text!.count == 0) {
                 textField.resignFirstResponder()
 
                 if attributeActionControl.attributeActionControlState() == .add {
-                    self.addAttributeKeyTextField.becomeFirstResponder()
+                    addAttributeKeyTextField.becomeFirstResponder()
                     return false
                 }
             }
         }
 
         // only get here with non-empty key field
-        self.view.endEditing(true)
+        view.endEditing(true)
 
-        self.addAttribute()
+        addAttributeMutation()
 
         return navigationController?.popViewController(animated: true) != nil
+    }
+
+    @IBAction func actionControlDidChange(_ sender: Any) {
+
+        switch (attributeActionControl.attributeActionControlState()) {
+         case .add:
+            isRemove = false
+            tableView.reloadData()
+        case .remove:
+            isRemove = true
+            tableView.reloadData()
+         }
+
+        updateApplyButtonState()
+    }
+
+    func changeNavButtonTitle(_ title:String) {
+        let item = navigationItem.rightBarButtonItem!
+        item.title = title
+    }
+
+    @IBAction func typeControlDidChange(_ sender: Any) {
+        switch (attributeTypeControl.attributeTypeControlState()) {
+        case .string:
+            addAttributeValueTextField.keyboardType = UIKeyboardType.asciiCapable
+        case .number:
+            addAttributeValueTextField.keyboardType = UIKeyboardType.decimalPad
+        }
+
+        applyButton.isEnabled = false
+        addAttributeValueTextField.text = ""
+        addAttributeValueTextField.reloadInputViews()
+
+        updateApplyButtonState()
+    }
+
+    @objc func textFieldDidChange(textField: UITextField) {
+        updateApplyButtonState()
+        print("Text changed")
     }
 }
 
@@ -172,8 +318,21 @@ private extension UISegmentedControl {
         case remove
     }
 
+    enum AttributeTypeControlState {
+        case string
+        case number
+    }
+
+    func attributeTypeControlState() -> AttributeTypeControlState {
+        if selectedSegmentIndex == 0 {
+            return .string
+        } else {
+            return .number
+        }
+    }
+
     func attributeActionControlState() -> AttributeActionControlState {
-        if self.selectedSegmentIndex == 0 {
+        if selectedSegmentIndex == 0 {
             return .add
         } else {
             return .remove

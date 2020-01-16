@@ -579,7 +579,6 @@
 					};
 					49251DEA1D6F9C1500EED4BD = {
 						CreatedOnToolsVersion = 8.0;
-						DevelopmentTeam = PGJV57GD94;
 						LastSwiftMigration = 1100;
 						ProvisioningStyle = Automatic;
 					};
@@ -1021,6 +1020,7 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
 				CODE_SIGN_ENTITLEMENTS = SampleServiceExtension/SampleServiceExtension.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER = YES;
 				DEVELOPMENT_TEAM = PGJV57GD94;
 				INFOPLIST_FILE = SampleServiceExtension/Info.plist;
@@ -1029,7 +1029,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.richpush.SampleServiceExtension;
+				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.richpush.SwiftSampleServiceExtension;
 				PRODUCT_NAME = SwiftSampleServiceExtension;
 				SKIP_INSTALL = YES;
 				SUPPORTS_MACCATALYST = YES;
@@ -1047,6 +1047,7 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
 				CODE_SIGN_ENTITLEMENTS = SampleServiceExtension/SampleServiceExtension.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER = YES;
 				DEVELOPMENT_TEAM = PGJV57GD94;
 				INFOPLIST_FILE = SampleServiceExtension/Info.plist;
@@ -1055,7 +1056,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.richpush.SampleServiceExtension;
+				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.richpush.SwiftSampleServiceExtension;
 				PRODUCT_NAME = SwiftSampleServiceExtension;
 				SKIP_INSTALL = YES;
 				SUPPORTS_MACCATALYST = YES;

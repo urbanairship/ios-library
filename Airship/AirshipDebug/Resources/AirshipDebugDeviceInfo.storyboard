@@ -3,7 +3,7 @@
     <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15510"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15509"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -11,7 +11,7 @@
         <!--Device Info View Controller-->
         <scene sceneID="XaT-iP-LgU">
             <objects>
-                <viewController id="Sjp-WN-l67" customClass="DeviceInfoViewController" customModule="Airship" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="Sjp-WN-l67" customClass="DeviceInfoViewController" customModule="AirshipDebug" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="CQB-uI-fY9">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -23,7 +23,7 @@
                                 <color key="sectionIndexColor" red="0.039215686270000001" green="0.3411764706" blue="0.49019607840000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <color key="sectionIndexBackgroundColor" red="0.98823529409999999" green="0.69803921570000005" blue="0.1058823529" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="DeviceInfoCell" id="XUr-gs-epy" userLabel="DeviceInfoCell" customClass="DeviceInfoCell" customModule="Airship" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="DeviceInfoCell" id="XUr-gs-epy" userLabel="DeviceInfoCell" customClass="DeviceInfoCell" customModule="AirshipDebug" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="55.5" width="375" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="XUr-gs-epy" id="xu2-pW-ZrJ">
@@ -114,7 +114,7 @@
         <!--Add Named User Table View Controller-->
         <scene sceneID="9mn-GE-J8y">
             <objects>
-                <tableViewController id="y2y-iH-58S" customClass="AddNamedUserTableViewController" customModule="Airship" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController id="y2y-iH-58S" customClass="AddNamedUserTableViewController" customModule="AirshipDebug" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="plain" separatorStyle="none" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="SgR-vN-MJz">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="580"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -169,7 +169,7 @@
         <!--Tags Table View Controller-->
         <scene sceneID="I68-GO-QHe">
             <objects>
-                <tableViewController id="Jz3-3n-poh" customClass="TagsTableViewController" customModule="Airship" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController id="Jz3-3n-poh" customClass="TagsTableViewController" customModule="AirshipDebug" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="Lwi-Qo-qgp">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="580"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -207,7 +207,7 @@
         <!--Add Tags Table View Controller-->
         <scene sceneID="bEl-Kj-dzJ">
             <objects>
-                <tableViewController id="XoP-XQ-ODK" customClass="AddTagsTableViewController" customModule="Airship" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController id="XoP-XQ-ODK" customClass="AddTagsTableViewController" customModule="AirshipDebug" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="plain" separatorStyle="none" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="Fps-Ep-3Xf">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="580"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -262,7 +262,7 @@
         <!--Associated Identifiers Table View Controller-->
         <scene sceneID="w6h-az-ceU">
             <objects>
-                <tableViewController id="ddW-EA-kMe" customClass="AssociatedIdentifiersTableViewController" customModule="Airship" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController id="ddW-EA-kMe" customClass="AssociatedIdentifiersTableViewController" customModule="AirshipDebug" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="h2E-bE-jDD">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="580"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -295,7 +295,7 @@
         <!--Add Associated Identifiers Table View Controller-->
         <scene sceneID="VxU-HL-byh">
             <objects>
-                <tableViewController id="Kqz-7F-e7x" customClass="AddAssociatedIdentifiersTableViewController" customModule="Airship" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController id="Kqz-7F-e7x" customClass="AddAssociatedIdentifiersTableViewController" customModule="AirshipDebug" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="none" rowHeight="44" sectionHeaderHeight="18" sectionFooterHeight="18" id="3Ot-mZ-WRO">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="580"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -365,7 +365,7 @@
         <!--Add Channel Attribute Table View Controller-->
         <scene sceneID="qom-qV-tnT">
             <objects>
-                <tableViewController id="VO4-W6-Hya" customClass="AddChannelAttributeTableViewController" customModule="Airship" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController id="VO4-W6-Hya" customClass="AddChannelAttributeTableViewController" customModule="AirshipDebug" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="none" rowHeight="44" sectionHeaderHeight="18" sectionFooterHeight="18" id="eG0-gQ-Obr">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="580"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -386,6 +386,9 @@
                                                         <segment title="Set"/>
                                                         <segment title="Remove"/>
                                                     </segments>
+                                                    <connections>
+                                                        <action selector="actionControlDidChange:" destination="VO4-W6-Hya" eventType="valueChanged" id="EF3-TG-KGU"/>
+                                                    </connections>
                                                 </segmentedControl>
                                             </subviews>
                                             <constraints>
@@ -397,10 +400,39 @@
                                     </tableViewCell>
                                 </cells>
                             </tableViewSection>
+                            <tableViewSection headerTitle="Attribute Type" id="Gph-hm-Cb6" userLabel="Custom Value">
+                                <cells>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" id="FIx-E7-p1e">
+                                        <rect key="frame" x="0.0" y="155.5" width="600" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="FIx-E7-p1e" id="4Lu-hv-tBs">
+                                            <rect key="frame" x="0.0" y="0.0" width="600" height="44"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="hrS-PV-gmq">
+                                                    <rect key="frame" x="20" y="6.5" width="560" height="32"/>
+                                                    <segments>
+                                                        <segment title="String"/>
+                                                        <segment title="Number"/>
+                                                    </segments>
+                                                    <connections>
+                                                        <action selector="typeControlDidChange:" destination="VO4-W6-Hya" eventType="valueChanged" id="fRD-UU-Qg3"/>
+                                                    </connections>
+                                                </segmentedControl>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="hrS-PV-gmq" firstAttribute="centerX" secondItem="4Lu-hv-tBs" secondAttribute="centerX" id="4ve-yA-1cf"/>
+                                                <constraint firstItem="hrS-PV-gmq" firstAttribute="centerY" secondItem="4Lu-hv-tBs" secondAttribute="centerY" id="5Ho-aO-cCk"/>
+                                                <constraint firstItem="hrS-PV-gmq" firstAttribute="width" secondItem="4Lu-hv-tBs" secondAttribute="width" multiplier="0.933333" id="vBd-cJ-t2g"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </cells>
+                            </tableViewSection>
                             <tableViewSection headerTitle="Attribute KEY" id="bYT-QV-Zju" userLabel="Custom String Key">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" id="zUk-WK-vAC">
-                                        <rect key="frame" x="0.0" y="155.5" width="600" height="44"/>
+                                        <rect key="frame" x="0.0" y="255.5" width="600" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="zUk-WK-vAC" id="VTH-nh-7s0">
                                             <rect key="frame" x="0.0" y="0.0" width="600" height="44"/>
@@ -424,7 +456,7 @@
                             <tableViewSection headerTitle="Attribute VALUE" id="kND-aF-7hb" userLabel="Custom Value">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" id="gk8-ye-1oi">
-                                        <rect key="frame" x="0.0" y="255.5" width="600" height="44"/>
+                                        <rect key="frame" x="0.0" y="355.5" width="600" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="gk8-ye-1oi" id="APp-2U-V6W">
                                             <rect key="frame" x="0.0" y="0.0" width="600" height="44"/>
@@ -460,6 +492,7 @@
                         <outlet property="addAttributeValueCell" destination="gk8-ye-1oi" id="5aO-P7-1Xw"/>
                         <outlet property="addAttributeValueTextField" destination="unX-pY-eQ4" id="qC6-it-JWr"/>
                         <outlet property="attributeActionControl" destination="Pm3-Q0-lpz" id="om4-W4-TPQ"/>
+                        <outlet property="attributeTypeControl" destination="hrS-PV-gmq" id="0tR-8j-9Nj"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="LB9-Gf-Bc4" userLabel="First Responder" sceneMemberID="firstResponder"/>
