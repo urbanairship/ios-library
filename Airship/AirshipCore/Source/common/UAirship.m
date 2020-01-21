@@ -27,6 +27,7 @@
 #import "UAAutomationModuleLoaderFactory.h"
 #import "UAExtendedActionsModuleLoaderFactory.h"
 #import "UAMessageCenterModuleLoaderFactory.h"
+#import "UAAccengageModuleLoaderFactory.h"
 
 #if !TARGET_OS_TV
 #import "UAChannelCapture+Internal.h"
@@ -47,6 +48,7 @@ NSString * const UALocationModuleLoaderClassName = @"UALocationModuleLoader";
 NSString * const UAAutomationModuleLoaderClassName = @"UAAutomationModuleLoader";
 NSString * const UAMessageCenterModuleLoaderClassName = @"UAMessageCenterModuleLoader";
 NSString * const UAExtendedActionsModuleLoaderClassName = @"UAExtendedActionsModuleLoader";
+NSString * const UAAccengageModuleLoaderClassName = @"UAAccengageModuleLoader";
 
 static UAirship *sharedAirship_;
 
@@ -140,7 +142,12 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 
         self.sharedRemoteConfigManager = [UARemoteConfigManager remoteConfigManagerWithRemoteDataManager:self.sharedRemoteDataManager
                                                                                       applicationMetrics:self.applicationMetrics];
-
+        
+        // Default data opt-in value
+        if (![self.dataStore objectForKey:UAAirshipDataOptInKey]) {
+            [self.dataStore setBool:!(config.isDataOptInEnabled) forKey:UAAirshipDataOptInKey];
+        }
+       
 #if !TARGET_OS_TV
         // UIPasteboard is not available in tvOS
         self.channelCapture = [UAChannelCapture channelCaptureWithConfig:self.config
@@ -174,6 +181,14 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
                                                                                     channel:self.sharedChannel];
         if (messageCenterLoader) {
             [loaders addObject:messageCenterLoader];
+        }
+
+        id<UAModuleLoader> accengageLoader = [UAirship accengageModuleLoaderWithDataStore:self.dataStore
+                                                                                  channel:self.sharedChannel
+                                                                                     push:self.sharedPush
+                                                                                analytics:self.sharedAnalytics];
+        if (accengageLoader) {
+            [loaders addObject:accengageLoader];
         }
 
         id<UAModuleLoader> extendedActionsLoader = [UAirship extendedActionsModuleLoader];
@@ -512,6 +527,36 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
                                   tagGroupsHistory:tagGroupsHistory];
     }
     return nil;
+}
+
++ (nullable id<UAModuleLoader>)accengageModuleLoaderWithDataStore:(UAPreferenceDataStore *)dataStore
+                                                          channel:(UAChannel *)channel
+                                                             push:(UAPush *)push
+                                                        analytics:(UAAnalytics *)analytics {
+
+    Class cls = NSClassFromString(UAAccengageModuleLoaderClassName);
+    if ([cls conformsToProtocol:@protocol(UAAccengageModuleLoaderFactory)]) {
+        return [cls moduleLoaderWithDataStore:dataStore
+                                      channel:channel
+                                         push:push
+                                    analytics:analytics];
+    }
+    return nil;
+}
+
+- (void)setDataOptIn:(BOOL)enabled {
+    BOOL optInChanged = (self.isDataOptIn != enabled);
+    if (optInChanged) {
+        // save value to data store
+        [self.dataStore setBool:enabled forKey:UAAirshipDataOptInKey];
+        for (UAComponent *component in sharedAirship_.components) {
+            [component onDataOptInEnableChange];
+        }
+    }
+}
+
+- (BOOL)isDataOptIn {
+    return [self.dataStore boolForKey:UAAirshipDataOptInKey];
 }
 
 @end

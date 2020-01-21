@@ -75,6 +75,11 @@ typedef NS_ENUM(NSUInteger, UACloudSite) {
 @property (nonatomic, assign) UACloudSite site;
 
 /**
+ *  Flag indicating whether the data opt-in is enabled.
+*/
+@property (nonatomic, assign, getter=isDataOptInEnabled) BOOL dataOptInEnabled;
+
+/**
  * The default app key. Depending on the `inProduction` status,
  * `developmentAppKey` or `productionAppKey` will take priority.
  */

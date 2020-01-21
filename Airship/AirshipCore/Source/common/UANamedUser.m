@@ -88,6 +88,11 @@ NSString *const UANamedUserLastChannelIDKey = @"UANamedUserLastChannelID";
 }
 
 - (void)setIdentifier:(NSString *)identifier {
+    if (!self.isDataOptIn) {
+        UA_LWARN(@"Ignoring named user ID request, global data opt-in is disabled");
+        return;
+    }
+    
     NSString *trimmedID;
     if (identifier) {
         trimmedID = [identifier stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
@@ -212,6 +217,17 @@ NSString *const UANamedUserLastChannelIDKey = @"UANamedUserLastChannelID";
     // Disable/enable the API client and user to disable/enable the inbox
     self.namedUserAPIClient.enabled = self.componentEnabled;
     self.tagGroupsRegistrar.componentEnabled = self.componentEnabled;
+}
+
+- (BOOL)isDataOptIn {
+    return [self.dataStore boolForKey:UAAirshipDataOptInKey];
+}
+
+- (void)onDataOptInEnableChange {
+    if (!self.isDataOptIn) {
+        self.identifier = nil;
+        [self forceUpdate];
+    }
 }
 
 @end

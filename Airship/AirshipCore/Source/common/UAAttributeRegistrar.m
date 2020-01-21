@@ -78,6 +78,10 @@ NSString *const PersistentQueueKey = @"com.urbanairship.channel_attributes.regis
     [self.pendingAttributeMutationsQueue addObject:mutations];
 }
 
+- (void)deletePendingMutations {
+    [self.pendingAttributeMutationsQueue clear];
+}
+
 - (void)collapseQueuedPendingMutations {
     UAPersistentQueue *queue = self.pendingAttributeMutationsQueue;
     NSArray<UAAttributePendingMutations *> *mutationsToCollapse = [[queue objects] mutableCopy];
@@ -92,7 +96,7 @@ NSString *const PersistentQueueKey = @"com.urbanairship.channel_attributes.regis
 }
 
 - (void)updateAttributesForChannel:(NSString *)identifier {
-    if (!self.componentEnabled) {
+    if (!self.componentEnabled || !self.isDataOptIn) {
         return;
     }
 
@@ -161,5 +165,8 @@ NSString *const PersistentQueueKey = @"com.urbanairship.channel_attributes.regis
     self.client.enabled = self.componentEnabled;
 }
 
+- (BOOL)isDataOptIn {
+    return [self.dataStore boolForKey:UAAirshipDataOptInKey];
+}
 
 @end

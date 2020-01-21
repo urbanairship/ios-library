@@ -48,6 +48,11 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)savePendingMutations:(UAAttributePendingMutations *)mutations;
 
 /**
+ * Method to delete pending mutations.
+ */
+- (void)deletePendingMutations;
+
+/**
  Method to update remote attributes with new mutations.
  @param identifier The channel identifier.
 */

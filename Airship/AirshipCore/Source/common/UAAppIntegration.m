@@ -79,7 +79,19 @@
 + (void)userNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(UNNotificationPresentationOptions options))completionHandler {
     UA_LDEBUG(@"Notification center will present notification: %@", notification);
 
-    UNNotificationPresentationOptions options = [[UAirship push] presentationOptionsForNotification:notification];
+    __block UNNotificationPresentationOptions options = [[UAirship push] presentationOptionsForNotification:notification];
+    
+    // Pushable components
+    for (UAComponent *component in [UAirship shared].components) {
+        if (![component conformsToProtocol:@protocol(UAPushableComponent)]) {
+            continue;
+        }
+
+        UAComponent<UAPushableComponent> *pushable = (UAComponent<UAPushableComponent> *)component;
+        if ([pushable respondsToSelector:@selector(presentationOptionsForNotification:defaultPresentationOptions:)]) {
+            options = [pushable presentationOptionsForNotification:notification defaultPresentationOptions:options];
+        }
+    }
 
     if (![UAirship shared].config.automaticSetupEnabled) {
         [self handleForegroundNotification:notification mergedOptions:options withCompletionHandler:^{

@@ -1,5 +1,10 @@
 /* Copyright Airship and Contributors */
 
+#define kUAAccengageNotificationAttachmentServiceURLKey @"att-url"
+#define kUAAccengageNotificationAttachmentServiceURLIdKey @"att-id"
+#define kUAAccengageNotificationAttachmentServiceURLSKey @"acc-atts"
+#define kUAAccengageNotificationIDKey @"a4sid"
+
 #define kUANotificationAttachmentServiceURLKey @"url"
 #define kUANotificationAttachmentServiceURLIdKey @"url_id"
 #define kUANotificationAttachmentServiceURLSKey @"urls"
@@ -64,15 +69,15 @@
 
 @implementation UAMediaAttachmentURL
 
-- (instancetype)initWithDictionary:(id)object {
+- (instancetype)initWithDictionary:(id)object isAccengagePayload:(BOOL)isAccengagePayload {
     self = [super init];
 
     if (self) {
-        if ([self validateURLPayload:object]) {
+        if ([self validateURLPayload:object isAccengagePayload:isAccengagePayload]) {
             NSDictionary *payload = object;
-            NSString *urlString = payload[kUANotificationAttachmentServiceURLKey];
+            NSString *urlString = isAccengagePayload ? payload[kUAAccengageNotificationAttachmentServiceURLKey] : payload[kUANotificationAttachmentServiceURLKey];
             self.url = [NSURL URLWithString:urlString];
-            self.urlId = payload[kUANotificationAttachmentServiceURLIdKey];
+            self.urlId = isAccengagePayload ? payload[kUAAccengageNotificationAttachmentServiceURLIdKey] : payload[kUANotificationAttachmentServiceURLIdKey];
         } else {
             return nil;
         }
@@ -82,16 +87,20 @@
 }
 
 + (instancetype)URLWithDictionary:(id)object {
-    return [[self alloc] initWithDictionary:object];
+    return [[self alloc] initWithDictionary:object isAccengagePayload:NO];
+}
+             
++ (instancetype)URLWithDictionary:(id)object isAccengagePayload:(BOOL)isAccengagePayload {
+    return [[self alloc] initWithDictionary:object isAccengagePayload:isAccengagePayload];
 }
 
-- (BOOL)validateURLPayload:(id)payload {
+- (BOOL)validateURLPayload:(id)payload isAccengagePayload:(BOOL)isAccengagePayload {
     if (![payload isKindOfClass:[NSDictionary class]]) {
         return NO;
     }
 
-    id urlId = payload[kUANotificationAttachmentServiceURLIdKey];
-    id url = payload[kUANotificationAttachmentServiceURLKey];
+    id urlId = isAccengagePayload ? payload[kUAAccengageNotificationAttachmentServiceURLIdKey] : payload[kUANotificationAttachmentServiceURLIdKey];
+    id url = isAccengagePayload ? payload[kUAAccengageNotificationAttachmentServiceURLKey] : payload[kUANotificationAttachmentServiceURLKey];
     
     // URL is required
     if (![self validateURL:url]) {
@@ -126,15 +135,24 @@
     self = [super init];
 
     if (self) {
-        if ([self validatePayload:object]) {
-            NSDictionary *payload = object;
+        if (![object isKindOfClass:[NSDictionary class]]) {
+            return nil;
+        }
 
+        NSDictionary *payload = object;
+        
+        BOOL isAccengagePayload = NO;
+        if (payload[kUAAccengageNotificationIDKey]) {
+            isAccengagePayload = YES;
+        }
+        
+        if ([self validatePayload:object isAccengagePayload:isAccengagePayload]) {
             self.urls = [NSMutableArray array];
-            id payloadURLs = payload[kUANotificationAttachmentServiceURLSKey];
+            id payloadURLs = isAccengagePayload ? payload[kUAAccengageNotificationAttachmentServiceURLSKey] : payload[kUANotificationAttachmentServiceURLSKey];
             
             if (payloadURLs) {
                 for (NSDictionary *urlDictionary in payloadURLs) {
-                    UAMediaAttachmentURL *url = [UAMediaAttachmentURL URLWithDictionary:urlDictionary];
+                    UAMediaAttachmentURL *url = [UAMediaAttachmentURL URLWithDictionary:urlDictionary isAccengagePayload:isAccengagePayload];
                     [self.urls addObject:url];
                 }
             } else {
@@ -310,16 +328,12 @@
     return YES;
 }
 
-- (BOOL)validatePayload:(id)payload {
-    if (![payload isKindOfClass:[NSDictionary class]]) {
-        return NO;
-    }
-
+- (BOOL)validatePayload:(id)payload isAccengagePayload:(BOOL)isAccengagePayload {
     id url = payload[kUANotificationAttachmentServiceURLKey];
     id options = payload[kUANotificationAttachmentServiceOptionsKey];
     id content = payload[kUANotificationAttachmentServiceContentKey];
     id thumbnailID = payload[kUANotificationAttachmentServiceThumbnailKey];
-    id urls = payload [kUANotificationAttachmentServiceURLSKey];
+    id urls = isAccengagePayload ? payload[kUAAccengageNotificationAttachmentServiceURLSKey] : payload [kUANotificationAttachmentServiceURLSKey];
 
     // The URL is required if no URLs specified
     

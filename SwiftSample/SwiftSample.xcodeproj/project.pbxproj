@@ -12,6 +12,7 @@
 		1B94297D23883234002051B3 /* NotificationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B94297C23883234002051B3 /* NotificationViewController.swift */; };
 		1B94298023883234002051B3 /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1B94297E23883234002051B3 /* MainInterface.storyboard */; };
 		1B94298423883234002051B3 /* SwiftSampleContentExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 1B94297823883234002051B3 /* SwiftSampleContentExtension.appex */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		1BF9B0E523A24E5D00E68DBE /* AirshipAccengage.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6E6CC347239A2FB9003D583C /* AirshipAccengage.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		456156E622B6F8FE00A68ADA /* UITestUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 456156E522B6F8FE00A68ADA /* UITestUtils.swift */; };
 		45AF558122B562FE006CAE7F /* CoreUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45AF558022B562FE006CAE7F /* CoreUITests.swift */; };
 		45BE0C9822837B7A008302F1 /* MessageCenterStyle.plist in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0C9222834F6B008302F1 /* MessageCenterStyle.plist */; };
@@ -38,6 +39,7 @@
 		6E65D5C12396ECC200AF2D1A /* AirshipLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D5822396E99D00AF2D1A /* AirshipLocation.framework */; };
 		6E65D5C22396ECC200AF2D1A /* AirshipMessageCenter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D5882396E99D00AF2D1A /* AirshipMessageCenter.framework */; };
 		6E65D5C32396ECC200AF2D1A /* AirshipMessageCenter.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6E65D5882396E99D00AF2D1A /* AirshipMessageCenter.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		6E6CC348239A2FC0003D583C /* AirshipAccengage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E6CC347239A2FB9003D583C /* AirshipAccengage.framework */; };
 		CCDA35A71B8D233A00950AD5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCDA35A61B8D233A00950AD5 /* AppDelegate.swift */; };
 		CCDA35A91B8D233A00950AD5 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCDA35A81B8D233A00950AD5 /* HomeViewController.swift */; };
 		CCDA35AE1B8D233A00950AD5 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CCDA35AC1B8D233A00950AD5 /* Main.storyboard */; };
@@ -52,6 +54,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 1B94297723883234002051B3;
 			remoteInfo = SwiftSampleContentExtension;
+		};
+		1BF9B0E323A24E5D00E68DBE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E65D56A2396E99D00AF2D1A /* Airship.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 1BB4C02A239FE5E50000559B;
+			remoteInfo = AirshipAccengageTests;
 		};
 		45AF558322B562FE006CAE7F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -207,6 +216,20 @@
 			remoteGlobalIDString = 3CA0E346237E4A7B00EE76CF;
 			remoteInfo = AirshipMessageCenter;
 		};
+		6E6CC33F239A2FB9003D583C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E65D56A2396E99D00AF2D1A /* Airship.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 6E6CC310239A2EA9003D583C;
+			remoteInfo = AirshipAccengage;
+		};
+		6E6CC346239A2FB9003D583C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E65D56A2396E99D00AF2D1A /* Airship.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6E6CC32C239A2EA9003D583C;
+			remoteInfo = AirshipAccengage;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -249,6 +272,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				1BF9B0E523A24E5D00E68DBE /* AirshipAccengage.framework in CopyFiles */,
 				6E65D5BC2396ECC200AF2D1A /* AirshipAutomation.framework in CopyFiles */,
 				6E65D5BA2396EAA600AF2D1A /* AirshipLocation.framework in CopyFiles */,
 				6E65D5C32396ECC200AF2D1A /* AirshipMessageCenter.framework in CopyFiles */,
@@ -323,6 +347,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6E6CC348239A2FC0003D583C /* AirshipAccengage.framework in Frameworks */,
 				6E65D5C12396ECC200AF2D1A /* AirshipLocation.framework in Frameworks */,
 				6E65D5BB2396ECC200AF2D1A /* AirshipAutomation.framework in Frameworks */,
 				6E65D5BD2396ECC200AF2D1A /* AirshipCore.framework in Frameworks */,
@@ -404,6 +429,8 @@
 				6E65D5862396E99D00AF2D1A /* AirshipAutomation.framework */,
 				6E65D5882396E99D00AF2D1A /* AirshipMessageCenter.framework */,
 				6E65D58A2396E99D00AF2D1A /* AirshipExtendedActions.framework */,
+				6E6CC347239A2FB9003D583C /* AirshipAccengage.framework */,
+				1BF9B0E423A24E5D00E68DBE /* AirshipAccengageTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -542,6 +569,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				6E6CC340239A2FB9003D583C /* PBXTargetDependency */,
 				6E65D5C52396ECD600AF2D1A /* PBXTargetDependency */,
 				6E65D5C72396ECD600AF2D1A /* PBXTargetDependency */,
 				6E65D5C92396ECD600AF2D1A /* PBXTargetDependency */,
@@ -637,6 +665,13 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		1BF9B0E423A24E5D00E68DBE /* AirshipAccengageTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = AirshipAccengageTests.xctest;
+			remoteRef = 1BF9B0E323A24E5D00E68DBE /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		6E65D5782396E99D00AF2D1A /* Airship.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
@@ -719,6 +754,13 @@
 			fileType = wrapper.framework;
 			path = AirshipNotificationContentExtension.framework;
 			remoteRef = 6E65D5922396E9A300AF2D1A /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		6E6CC347239A2FB9003D583C /* AirshipAccengage.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = AirshipAccengage.framework;
+			remoteRef = 6E6CC346239A2FB9003D583C /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -857,6 +899,11 @@
 			isa = PBXTargetDependency;
 			name = AirshipMessageCenter;
 			targetProxy = 6E65D5CA2396ECD600AF2D1A /* PBXContainerItemProxy */;
+		};
+		6E6CC340239A2FB9003D583C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = AirshipAccengage;
+			targetProxy = 6E6CC33F239A2FB9003D583C /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 

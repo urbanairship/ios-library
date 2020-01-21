@@ -51,6 +51,11 @@ class UAProjectValidationTest: XCTestCase {
         validateTarget(target: "AirshipExtendedActions", sourcePaths:["AirshipExtendedActions/Source"])
     }
 
+    func testAirshipAccengage() {
+        validateTarget(target: "AirshipAccengage", sourcePaths:["AirshipAccengage/Source"])
+    }
+
+
     func testAirship() {
         validateTarget(target: "Airship",
                        sourcePaths: ["Airship/Source",

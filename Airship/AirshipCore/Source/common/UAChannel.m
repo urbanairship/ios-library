@@ -394,6 +394,19 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
     }
 }
 
+- (BOOL)isDataOptIn {
+    return [self.dataStore boolForKey:UAAirshipDataOptInKey];
+}
+
+- (void)onDataOptInEnableChange {
+    if (self.isDataOptIn) {
+        self.attributeRegistrar.componentEnabled = YES;
+    } else {
+        [self.attributeRegistrar deletePendingMutations];
+        self.attributeRegistrar.componentEnabled = NO;
+    }
+}
+
 - (void)addChannelExtenderBlock:(UAChannelRegistrationExtenderBlock)extender {
     [self.registrationExtenderBlocks addObject:extender];
 }
@@ -421,7 +434,19 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
                 [self extendPayload:payload extenders:remainingExtenderBlocks completionHandler:completionHandler];
         });
     }];
+}
 
+#pragma mark -
+#pragma mark UAPushableComponent
+
+-(void)receivedRemoteNotification:(UANotificationContent *)notification
+                completionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
+    BOOL isInBackground = [UIApplication sharedApplication].applicationState == UIApplicationStateBackground;
+    if (isInBackground && !self.identifier) {
+        // Update registration if the channel identifier does not exist
+        [self updateRegistrationForcefully:NO];
+    }
+    completionHandler(UIBackgroundFetchResultNoData);
 }
 
 @end

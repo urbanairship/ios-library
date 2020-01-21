@@ -9,6 +9,7 @@ NSString *const UAChannelIOSPlatform= @"ios";
 NSString *const UAChannelIdentityHintsKey = @"identity_hints";
 NSString *const UAChannelUserIDKey = @"user_id";
 NSString *const UAChannelDeviceIDKey = @"device_id";
+NSString *const UAChannelAccengageDeviceIDKey = @"accengage_device_id";
 
 NSString *const UAChannelKey = @"channel";
 NSString *const UAChannelDeviceTypeKey = @"device_type";
@@ -68,6 +69,7 @@ NSString *const UABackgroundEnabledJSONKey = @"background";
             self.deviceID = topLevel[UAChannelDeviceIDKey];
             self.pushAddress = topLevel[UAChannelPushAddressKey];
             self.userID = topLevel[UAChannelUserIDKey];
+            self.accengageDeviceID = topLevel[UAChannelAccengageDeviceIDKey];
             self.optedIn = [topLevel[UAChannelOptInKey] boolValue];
             self.backgroundEnabled = [topLevel[UABackgroundEnabledJSONKey] boolValue];
             self.setTags = [topLevel[UAChannelSetTagsKey] boolValue];
@@ -86,6 +88,7 @@ NSString *const UABackgroundEnabledJSONKey = @"background";
         if (identityHints != nil) {
             self.userID = self.userID ?: identityHints[UAChannelUserIDKey];
             self.deviceID = self.deviceID ?: identityHints[UAChannelDeviceIDKey];
+            self.accengageDeviceID = self.accengageDeviceID ?: identityHints[UAChannelAccengageDeviceIDKey];
         }
     }
 
@@ -101,10 +104,11 @@ NSString *const UABackgroundEnabledJSONKey = @"background";
 - (NSDictionary *)payloadDictionary {
     NSMutableDictionary *payloadDictionary = [NSMutableDictionary dictionary];
 
-    if (self.deviceID || self.userID) {
+    if (self.deviceID || self.userID || self.accengageDeviceID) {
         NSMutableDictionary *identityHints = [NSMutableDictionary dictionary];
         [identityHints setValue:self.userID forKey:UAChannelUserIDKey];
         [identityHints setValue:self.deviceID forKey:UAChannelDeviceIDKey];
+        [identityHints setValue:self.accengageDeviceID forKey:UAChannelAccengageDeviceIDKey];
         [payloadDictionary setValue:identityHints forKey:UAChannelIdentityHintsKey];
     }
 
@@ -153,6 +157,7 @@ NSString *const UABackgroundEnabledJSONKey = @"background";
     if (copy) {
         copy.userID = self.userID;
         copy.deviceID = self.deviceID;
+        copy.accengageDeviceID = self.accengageDeviceID;
         copy.optedIn = self.optedIn;
         copy.backgroundEnabled = self.backgroundEnabled;
         copy.pushAddress = self.pushAddress;
@@ -217,6 +222,7 @@ NSString *const UABackgroundEnabledJSONKey = @"background";
     // Strip identity hints
     minPayload.userID = nil;
     minPayload.deviceID = nil;
+    minPayload.accengageDeviceID = nil;
 
     // Optional attributes
     if ([self.country isEqual:lastPayload.country]) {

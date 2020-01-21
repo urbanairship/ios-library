@@ -86,6 +86,7 @@ then
   build_archive "Airship" "AirshipLocation" "iOS"
   build_archive "Airship" "AirshipDebug" "iOS"
   build_archive "Airship" "AirshipAutomation" "iOS"
+  build_archive "Airship" "AirshipAccengage" "iOS"
   build_archive "Airship" "AirshipMessageCenter" "iOS"
   build_archive "Airship" "AirshipExtendedActions" "iOS"
   build_archive "AirshipExtensions" "AirshipNotificationServiceExtension" "iOS"
@@ -132,6 +133,12 @@ then
   -framework "$TEMP_DIR/xcarchive/Airship/AirshipExtendedActions/iphoneos.xcarchive/Products/Library/Frameworks/AirshipExtendedActions.framework" \
   -framework "$TEMP_DIR/xcarchive/Airship/AirshipExtendedActions/iphonesimulator.xcarchive/Products/Library/Frameworks/AirshipExtendedActions.framework" \
   -output "$STAGING/AirshipExtendedActions.xcframework"
+
+  # Package AirshipAccengage
+  xcodebuild -create-xcframework \
+  -framework "$TEMP_DIR/xcarchive/Airship/AirshipAccengage/iphoneos.xcarchive/Products/Library/Frameworks/AirshipAccengage.framework" \
+  -framework "$TEMP_DIR/xcarchive/Airship/AirshipAccengage/iphonesimulator.xcarchive/Products/Library/Frameworks/AirshipAccengage.framework" \
+  -output "$STAGING/AirshipAccengage.xcframework"
 
   # Package AirshipNotificationServiceExtension
   xcodebuild -create-xcframework \
@@ -189,6 +196,7 @@ then
   build_docs "Airship" "AirshipAutomation"  "Source/AirshipAutomation.h"
   build_docs "Airship" "AirshipMessageCenter"  "Source/AirshipMessageCenter.h"
   build_docs "Airship" "AirshipExtendedActions"  "Source/AirshipExtendedActions.h"
+  build_docs "Airship" "AirshipAccengage"  "Source/AirshipAccengage.h"
   build_docs "AirshipExtensions" "AirshipNotificationServiceExtension" "Source/AirshipNotificationServiceExtension.h"
   build_docs "AirshipExtensions" "AirshipNotificationContentExtension" "Source/AirshipNotificationContentExtension.h"
 

@@ -141,6 +141,12 @@ extern NSString *const UAPushEnabledKey;
  */
 @property (nonatomic, strong) id<UAAPNSRegistrationProtocol> pushRegistration;
 
+/**
+ * The set of Accengage notification categories.
+ * @note For internal use only. :nodoc:
+ */
+@property (nonatomic, strong) NSSet<UANotificationCategory *> *accengageCategories;
+
 ///---------------------------------------------------------------------------------------
 /// @name Push Internal Methods
 ///---------------------------------------------------------------------------------------

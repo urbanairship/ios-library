@@ -44,6 +44,8 @@
     self.mockChannel = [self mockForClass:[UAChannel class]];
     self.analytics = [self createAnalytics];
 
+    [self.dataStore setBool:YES forKey:UAAirshipDataOptInKey];
+    
     // Channel ID
     NSString *channelIDString = @"someChannelID";
     [[[self.mockChannel stub] andReturn:channelIDString] identifier];

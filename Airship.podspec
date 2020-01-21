@@ -61,4 +61,12 @@ Pod::Spec.new do |s|
       messageCenter.ios.exclude_files         = "Airship/AirshipMessageCenter/Resources/Info.plist", "Airship/AirshipMessageCenter/Source/AirshipMessageCenter.h"
       messageCenter.dependency                  "Airship/Core"
    end
+
+   s.subspec "Accengage" do |accengage|
+      accengage.ios.source_files          = "Airship/AirshipAccengage/Source/**/*.{h,m,swift}"
+      accengage.ios.private_header_files  = "Airship/AirshipAccengage/Source/**/*+Internal*.h"
+      accengage.ios.exclude_files         = "Airship/AirshipAccengage/Source/AirshipAccengage.h"
+      accengage.ios.resources             = "Airship/AirshipAccengage/Resources/**/*"
+      accengage.dependency                  "Airship/Core"
+   end
 end
