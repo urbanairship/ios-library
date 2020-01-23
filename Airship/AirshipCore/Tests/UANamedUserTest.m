@@ -6,7 +6,7 @@
 #import "UANamedUser.h"
 #import "UANamedUser+Internal.h"
 #import "UANamedUserAPIClient+Internal.h"
-#import "UAChannel.h"
+#import "UAChannel+Internal.h"
 #import "UARuntimeConfig.h"
 #import "UATagGroupsRegistrar+Internal.h"
 
@@ -397,6 +397,171 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
     // TEST
     [self.namedUser updateTags];
     
+    // VERIFY
+    [self.mockTagGroupsRegistrar verify];
+}
+
+/**
+ * Test that the tag groups registrar is called when UANamedUser is asked to add tags
+ */
+- (void)testAddTags {
+    NSArray *tags = @[@"foo", @"bar"];
+    NSString *group = @"group";
+
+    // EXPECTATIONS
+    [[self.mockTagGroupsRegistrar expect] addTags:tags group:group type:UATagGroupsTypeNamedUser];
+
+    // TEST
+    [self.namedUser addTags:tags group:group];;
+
+    // VERIFY
+    [self.mockTagGroupsRegistrar verify];
+}
+
+/**
+ * Test that the tag groups registrar is not called when UANamedUser is asked to add device tags and data opt-in is disabled.
+ */
+- (void)testAddDeviceTagsDataOptInDisabled {
+    [self.dataStore setBool:NO forKey:UAAirshipDataOptInKey];
+
+    NSArray *tags = @[@"foo", @"bar"];
+    NSString *group = @"group";
+
+    // EXPECTATIONS
+    [[self.mockTagGroupsRegistrar reject] addTags:tags group:group type:UATagGroupsTypeNamedUser];
+
+    // TEST
+    [self.namedUser addTags:tags group:group];;
+
+    // VERIFY
+    [self.mockTagGroupsRegistrar verify];
+}
+
+/**
+ * Test that the tag groups registrar is called when UANamedUser is asked to add device tags and data opt-in is enabled.
+ */
+- (void)testAddDeviceTagsDataOptInEnabled {
+    [self.dataStore setBool:YES forKey:UAAirshipDataOptInKey];
+
+    NSArray *tags = @[@"foo", @"bar"];
+    NSString *group = @"group";
+
+    // EXPECTATIONS
+    [[self.mockTagGroupsRegistrar expect] addTags:tags group:group type:UATagGroupsTypeNamedUser];
+
+    // TEST
+    [self.namedUser addTags:tags group:group];;
+
+    // VERIFY
+    [self.mockTagGroupsRegistrar verify];
+}
+
+/**
+ * Test that the tag groups registrar is called when UANamedUser is asked to remove tags
+ */
+- (void)testRemoveTags {
+    NSArray *tags = @[@"foo", @"bar"];
+    NSString *group = @"group";
+
+    // EXPECTATIONS
+    [[self.mockTagGroupsRegistrar expect] removeTags:tags group:group type:UATagGroupsTypeNamedUser];
+
+    // TEST
+    [self.namedUser removeTags:tags group:group];;
+
+    // VERIFY
+    [self.mockTagGroupsRegistrar verify];
+}
+
+/**
+ * Test that the tag groups registrar is not called when UANamedUser is asked to remove device tags and data opt-in is disabled.
+ */
+- (void)testRemoveDeviceTagsDataOptInDisabled {
+    [self.dataStore setBool:NO forKey:UAAirshipDataOptInKey];
+
+    NSArray *tags = @[@"foo", @"bar"];
+    NSString *group = @"group";
+
+    // EXPECTATIONS
+    [[self.mockTagGroupsRegistrar reject] removeTags:tags group:group type:UATagGroupsTypeNamedUser];
+
+    // TEST
+    [self.namedUser removeTags:tags group:group];;
+
+    // VERIFY
+    [self.mockTagGroupsRegistrar verify];
+}
+
+/**
+ * Test that the tag groups registrar is called when UANamedUser is asked to remove device tags and data opt-in is enabled.
+ */
+- (void)testRemoveDeviceTagsDataOptInEnabled {
+    [self.dataStore setBool:YES forKey:UAAirshipDataOptInKey];
+
+    NSArray *tags = @[@"foo", @"bar"];
+    NSString *group = @"group";
+
+    // EXPECTATIONS
+    [[self.mockTagGroupsRegistrar expect] removeTags:tags group:group type:UATagGroupsTypeNamedUser];
+
+    // TEST
+    [self.namedUser removeTags:tags group:group];;
+
+    // VERIFY
+    [self.mockTagGroupsRegistrar verify];
+}
+
+/**
+ * Test that the tag groups registrar is called when UANamedUser is asked to set tags
+ */
+- (void)testSetTags {
+    NSArray *tags = @[@"foo", @"bar"];
+    NSString *group = @"group";
+
+    // EXPECTATIONS
+    [[self.mockTagGroupsRegistrar expect] setTags:tags group:group type:UATagGroupsTypeNamedUser];
+
+    // TEST
+    [self.namedUser setTags:tags group:group];;
+
+    // VERIFY
+    [self.mockTagGroupsRegistrar verify];
+}
+
+/**
+ * Test that the tag groups registrar is not called when UANamedUser is asked to set device tags and data opt-in is disabled.
+ */
+- (void)testSetDeviceTagsDataOptInDisabled {
+    [self.dataStore setBool:NO forKey:UAAirshipDataOptInKey];
+
+    NSArray *tags = @[@"foo", @"bar"];
+    NSString *group = @"group";
+
+    // EXPECTATIONS
+    [[self.mockTagGroupsRegistrar reject] setTags:tags group:group type:UATagGroupsTypeNamedUser];
+
+    // TEST
+    [self.namedUser setTags:tags group:group];;
+
+    // VERIFY
+    [self.mockTagGroupsRegistrar verify];
+}
+
+/**
+ * Test that the tag groups registrar is called when UANamedUser is asked to set device tags and data opt-in is enabled.
+ */
+- (void)testSetDeviceTagsDataOptInEnabled {
+    [self.dataStore setBool:YES forKey:UAAirshipDataOptInKey];
+
+    NSArray *tags = @[@"foo", @"bar"];
+    NSString *group = @"group";
+
+    // EXPECTATIONS
+    [[self.mockTagGroupsRegistrar expect] setTags:tags group:group type:UATagGroupsTypeNamedUser];
+
+    // TEST
+    [self.namedUser setTags:tags group:group];
+
     // VERIFY
     [self.mockTagGroupsRegistrar verify];
 }

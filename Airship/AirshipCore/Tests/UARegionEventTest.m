@@ -16,7 +16,6 @@
 
 @implementation UARegionEventTest
 
-
 /**
  * Test region event data directly.
  */

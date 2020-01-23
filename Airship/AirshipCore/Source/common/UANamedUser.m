@@ -181,14 +181,29 @@ NSString *const UANamedUserLastChannelIDKey = @"UANamedUserLastChannelID";
 
 
 - (void)addTags:(NSArray *)tags group:(NSString *)tagGroupID {
+    if (!self.isDataOptIn) {
+        UA_LERR(@"Unable to add tags %@ for group %@ when data opt-in is disabled.", [tags description], tagGroupID);
+        return;
+    }
+
     [self.tagGroupsRegistrar addTags:tags group:tagGroupID type:UATagGroupsTypeNamedUser];
 }
 
 - (void)removeTags:(NSArray *)tags group:(NSString *)tagGroupID {
+    if (!self.isDataOptIn) {
+        UA_LERR(@"Unable to remove tags %@ for group %@ when data opt-in is disabled.", [tags description], tagGroupID);
+        return;
+    }
+
     [self.tagGroupsRegistrar removeTags:tags group:tagGroupID type:UATagGroupsTypeNamedUser];
 }
 
 - (void)setTags:(NSArray *)tags group:(NSString *)tagGroupID {
+    if (!self.isDataOptIn) {
+        UA_LERR(@"Unable to set tags %@ for group %@ when data opt-in is disabled.", [tags description], tagGroupID);
+        return;
+    }
+
     [self.tagGroupsRegistrar setTags:tags group:tagGroupID type:UATagGroupsTypeNamedUser];
 }
 
@@ -217,10 +232,6 @@ NSString *const UANamedUserLastChannelIDKey = @"UANamedUserLastChannelID";
     // Disable/enable the API client and user to disable/enable the inbox
     self.namedUserAPIClient.enabled = self.componentEnabled;
     self.tagGroupsRegistrar.componentEnabled = self.componentEnabled;
-}
-
-- (BOOL)isDataOptIn {
-    return [self.dataStore boolForKey:UAAirshipDataOptInKey];
 }
 
 - (void)onDataOptInEnableChange {

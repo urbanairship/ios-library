@@ -11,6 +11,11 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface UAComponent : NSObject
 
+/**
+ * Whether the component is opted in to data collection.
+ */
+@property(nonatomic, readonly) BOOL isDataOptIn;
+
 - (instancetype)init NS_UNAVAILABLE;
 
 /**

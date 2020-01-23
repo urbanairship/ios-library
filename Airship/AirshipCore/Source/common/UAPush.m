@@ -971,10 +971,6 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
     [self.dataStore removeObjectForKey:UAPushLegacyTagsSettingsKey];
 }
 
-- (BOOL)isDataOptIn {
-    return [self.dataStore boolForKey:UAAirshipDataOptInKey];
-}
-
 - (void)onComponentEnableChange {
     if (self.componentEnabled) {
         // if component was disabled and is now enabled, register the channel

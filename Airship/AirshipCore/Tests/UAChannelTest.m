@@ -46,6 +46,8 @@
 - (void)setUp {
     [super setUp];
 
+    [self.dataStore setBool:YES forKey:UAAirshipDataOptInKey];
+
     self.mockedApplication = [self mockForClass:[UIApplication class]];
     [[[self.mockedApplication stub] andReturn:self.mockedApplication] sharedApplication];
 
@@ -76,7 +78,6 @@
     [UAirship setSharedAirship:self.mockedAirship];
     [[[self.mockedAirship stub] andReturn:@[self.channel]] components];
     [[[self.mockedAirship stub] andReturn:self.mockedPush] push];
-
 
     // Simulate the channelID provided by the channel registrar
     OCMStub([self.mockChannelRegistrar channelID]).andDo(^(NSInvocation *invocation) {
@@ -239,17 +240,43 @@
     [self.mockTagGroupsRegistrar verify];
 }
 
-- (void)testUpdateTags {
+- (void)testAddTagsToDeviceTagGroupWhenDataOptInDisabled {
     // SETUP
-    self.channelIDFromMockChannelRegistrar = @"someChannel";
+    [self.dataStore setBool:NO forKey:UAAirshipDataOptInKey];
 
     // EXPECTATIONS
-    [[self.mockTagGroupsRegistrar expect] updateTagGroupsForID:[OCMArg checkWithBlock:^BOOL(id obj) {
-        return (obj != nil);
-    }] type:UATagGroupsTypeChannel];
+    [[self.mockTagGroupsRegistrar reject] addTags:OCMOCK_ANY group:OCMOCK_ANY type:UATagGroupsTypeChannel];
 
     // TEST
-    [self.channel updateChannelTagGroups];
+    [self.channel addTags:@[@"tag1"] group:@"group"];
+
+    // VERIFY
+    [self.mockTagGroupsRegistrar verify];
+}
+
+- (void)testRemoveTagsFromDeviceTagGroupWhenDataOptInDisabled {
+    // SETUP
+    [self.dataStore setBool:NO forKey:UAAirshipDataOptInKey];
+
+    // EXPECTATIONS
+    [[self.mockTagGroupsRegistrar reject] removeTags:OCMOCK_ANY group:OCMOCK_ANY type:UATagGroupsTypeChannel];
+
+    // TEST
+    [self.channel removeTags:@[@"tag1"] group:@"group"];
+
+    // VERIFY
+    [self.mockTagGroupsRegistrar verify];
+}
+
+- (void)testSetTagsInDeviceTagGroupWhenDataOptInDisabled {
+    // SETUP
+    [self.dataStore setBool:NO forKey:UAAirshipDataOptInKey];
+
+    // EXPECTATIONS
+    [[self.mockTagGroupsRegistrar reject] setTags:OCMOCK_ANY group:OCMOCK_ANY type:UATagGroupsTypeChannel];
+
+    // TEST
+    [self.channel setTags:@[@"tag1"] group:@"group"];
 
     // VERIFY
     [self.mockTagGroupsRegistrar verify];
@@ -335,8 +362,10 @@
 /**
  * Test channel registration payload.
  */
-- (void)testRegistrationPayloadNoDeviceToken {
+- (void)testRegistrationPayload {
     self.channel.channelTagRegistrationEnabled = YES;
+    [self.dataStore setBool:YES forKey:UAAirshipDataOptInKey];
+
     self.channel.tags = @[@"cool", @"story"];
     [[[self.mockTimeZone stub] andReturn:@"cool zone"] name];
 
@@ -351,6 +380,66 @@
     expectedPayload.deviceOS = [UIDevice currentDevice].systemVersion;
     expectedPayload.deviceModel = [UAUtils deviceModelName];
     expectedPayload.carrier = [UAUtils carrierName];
+
+    XCTestExpectation *createdPayload = [self expectationWithDescription:@"create payload"];
+
+    [self.channel createChannelPayload:^(UAChannelRegistrationPayload * _Nonnull payload) {
+        XCTAssertEqualObjects(payload, expectedPayload);
+        [createdPayload fulfill];
+    } dispatcher:[UATestDispatcher testDispatcher]];
+
+    [self waitForTestExpectations];
+}
+
+/**
+ * Test channel registration payload when channel tag registration is disabled.
+ */
+- (void)testRegistrationPayloadChannelTagRegistrationDisabled {
+    self.channel.channelTagRegistrationEnabled = NO;
+    [self.dataStore setBool:YES forKey:UAAirshipDataOptInKey];
+
+    self.channel.tags = @[@"cool", @"story"];
+    [[[self.mockTimeZone stub] andReturn:@"cool zone"] name];
+
+    UAChannelRegistrationPayload *expectedPayload = [[UAChannelRegistrationPayload alloc] init];
+    expectedPayload.language = [[NSLocale autoupdatingCurrentLocale] objectForKey:NSLocaleLanguageCode];
+    expectedPayload.country = [[NSLocale autoupdatingCurrentLocale] objectForKey:NSLocaleCountryCode];
+    expectedPayload.timeZone = @"cool zone";
+    expectedPayload.setTags = NO;
+    expectedPayload.appVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
+    expectedPayload.SDKVersion = [UAirshipVersion get];
+    expectedPayload.deviceOS = [UIDevice currentDevice].systemVersion;
+    expectedPayload.deviceModel = [UAUtils deviceModelName];
+    expectedPayload.carrier = [UAUtils carrierName];
+
+    XCTestExpectation *createdPayload = [self expectationWithDescription:@"create payload"];
+
+    [self.channel createChannelPayload:^(UAChannelRegistrationPayload * _Nonnull payload) {
+        XCTAssertEqualObjects(payload, expectedPayload);
+        [createdPayload fulfill];
+    } dispatcher:[UATestDispatcher testDispatcher]];
+
+    [self waitForTestExpectations];
+}
+
+/**
+ * Test channel registration payload when channel tag registration is disabled.
+ */
+- (void)testRegistrationPayloadDataOptInDisabled {
+    self.channel.channelTagRegistrationEnabled = YES;
+    [self.dataStore setBool:NO forKey:UAAirshipDataOptInKey];
+
+    self.channel.tags = @[@"cool", @"story"];
+    [[[self.mockTimeZone stub] andReturn:@"cool zone"] name];
+
+    UAChannelRegistrationPayload *expectedPayload = [[UAChannelRegistrationPayload alloc] init];
+    expectedPayload.language = [[NSLocale autoupdatingCurrentLocale] objectForKey:NSLocaleLanguageCode];
+    expectedPayload.country = [[NSLocale autoupdatingCurrentLocale] objectForKey:NSLocaleCountryCode];
+    expectedPayload.timeZone = @"cool zone";
+    expectedPayload.setTags = NO;
+    expectedPayload.appVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
+    expectedPayload.SDKVersion = [UAirshipVersion get];
+    expectedPayload.deviceOS = [UIDevice currentDevice].systemVersion;
 
     XCTestExpectation *createdPayload = [self expectationWithDescription:@"create payload"];
 
@@ -710,12 +799,26 @@
  * Test updateChannelTagGroups method if the identifier is set and component enabled
  */
 - (void)testUpdateChannelTagGroups {
+    [self.dataStore setBool:YES forKey:UAAirshipDataOptInKey];
     self.channelIDFromMockChannelRegistrar = @"123456";
     self.channel.componentEnabled = YES;
     [[self.mockTagGroupsRegistrar expect] updateTagGroupsForID:OCMOCK_ANY type:UATagGroupsTypeChannel];
     [self.channel updateChannelTagGroups];
     [self.mockTagGroupsRegistrar verify];
 }
+
+/**
+ * Test updateChannelTagGroups method if data opt-in is disabled
+ */
+- (void)testUpdateChannelTagGroupsDataOptInDisabled {
+    [self.dataStore setBool:NO forKey:UAAirshipDataOptInKey];
+    self.channelIDFromMockChannelRegistrar = @"123456";
+    self.channel.componentEnabled = YES;
+    [[self.mockTagGroupsRegistrar reject] updateTagGroupsForID:OCMOCK_ANY type:UATagGroupsTypeChannel];
+    [self.channel updateChannelTagGroups];
+    [self.mockTagGroupsRegistrar verify];
+}
+
 
 /**
  * Test updateChannelAttributes method if the channel component is disabled

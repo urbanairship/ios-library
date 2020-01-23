@@ -215,8 +215,13 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
 #pragma mark Tag Groups
 
 - (void)addTags:(NSArray *)tags group:(NSString *)tagGroupID {
-    if (self.channelTagRegistrationEnabled && [UAChannelDefaultDeviceTagGroup isEqualToString:tagGroupID]) {
-        UA_LERR(@"Unable to add tags %@ to device tag group when channelTagRegistrationEnabled is true.", [tags description]);
+    if (!self.isDataOptIn) {
+        UA_LERR(@"Unable to add tags %@ for group %@ when data opt-in is disabled.", [tags description], tagGroupID);
+        return;
+    }
+
+    if ([UAChannelDefaultDeviceTagGroup isEqualToString:tagGroupID] && self.channelTagRegistrationEnabled) {
+        UA_LERR(@"Unable to add tags %@ for device tag group when channelTagRegistrationEnabled is true.", [tags description]);
         return;
     }
 
@@ -224,8 +229,13 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
 }
 
 - (void)removeTags:(NSArray *)tags group:(NSString *)tagGroupID {
-    if (self.channelTagRegistrationEnabled && [UAChannelDefaultDeviceTagGroup isEqualToString:tagGroupID]) {
-        UA_LERR(@"Unable to remove tags %@ from device tag group when channelTagRegistrationEnabled is true.", [tags description]);
+    if (!self.isDataOptIn) {
+        UA_LERR(@"Unable to remove tags %@ for group %@ when data opt-in is disabled.", [tags description], tagGroupID);
+        return;
+    }
+
+    if ([UAChannelDefaultDeviceTagGroup isEqualToString:tagGroupID] && self.channelTagRegistrationEnabled) {
+        UA_LERR(@"Unable to remove tags %@ for device tag group when channelTagRegistrationEnabled is true.", [tags description]);
         return;
     }
 
@@ -233,7 +243,12 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
 }
 
 - (void)setTags:(NSArray *)tags group:(NSString *)tagGroupID {
-    if (self.channelTagRegistrationEnabled && [UAChannelDefaultDeviceTagGroup isEqualToString:tagGroupID]) {
+    if (!self.isDataOptIn) {
+        UA_LERR(@"Unable to set tags %@ for group %@ when data opt-in is disabled.", [tags description], tagGroupID);
+        return;
+    }
+
+    if ([UAChannelDefaultDeviceTagGroup isEqualToString:tagGroupID] && self.channelTagRegistrationEnabled) {
         UA_LERR(@"Unable to set tags %@ for device tag group when channelTagRegistrationEnabled is true.", [tags description]);
         return;
     }
@@ -298,6 +313,10 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
         return;
     }
 
+    if (!self.isDataOptIn) {
+        return;
+    }
+
     [self.tagGroupsRegistrar updateTagGroupsForID:self.identifier type:UATagGroupsTypeChannel];
 }
 
@@ -329,14 +348,19 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
     payload.appVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
     payload.SDKVersion = [UAirshipVersion get];
     payload.deviceOS = [UIDevice currentDevice].systemVersion;
-    payload.deviceModel = [UAUtils deviceModelName];
-    payload.carrier = [UAUtils carrierName];
 
-    if (self.channelTagRegistrationEnabled) {
-        payload.tags = self.tags;
-        payload.setTags = YES;
-    } else {
-        payload.setTags = NO;
+    // Only set the device model, carrier name and channel tags if the app is opted in to data collection
+    if (self.isDataOptIn) {
+        payload.deviceModel = [UAUtils deviceModelName];
+        payload.carrier = [UAUtils carrierName];
+
+        // Only set channel tags if channel tag registration is also enabled
+        if (self.channelTagRegistrationEnabled) {
+            payload.tags = self.tags;
+            payload.setTags = YES;
+        } else {
+            payload.setTags = NO;
+        }
     }
 
     id extendersCopy = [self.registrationExtenderBlocks mutableCopy];
@@ -392,10 +416,6 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
         // If component was disabled and is now enabled, register the channel
         [self updateRegistration];
     }
-}
-
-- (BOOL)isDataOptIn {
-    return [self.dataStore boolForKey:UAAirshipDataOptInKey];
 }
 
 - (void)onDataOptInEnableChange {

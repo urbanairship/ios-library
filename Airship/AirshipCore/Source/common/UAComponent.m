@@ -55,6 +55,10 @@ NSString * const UAAirshipDataOptInKey = @"com.urbanairship.data_optin";
     return [NSString stringWithFormat:@"%@.%@.%@", UAComponentKey, [self componentIdentifier], UAComponentEnabledKey];
 }
 
+- (BOOL)isDataOptIn {
+    return [self.componentDataStore boolForKey:UAAirshipDataOptInKey];
+}
+
 - (void)onComponentEnableChange {
     // placeholder - sub-classes should override if they want notification when the components enable/disable state changes
 }

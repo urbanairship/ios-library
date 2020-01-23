@@ -402,8 +402,4 @@ NSString *const UAEventKey = @"event";
     [self.headerBlocks addObject:headersBlock];
 }
 
-- (BOOL)isDataOptIn {
-    return [self.dataStore boolForKey:UAAirshipDataOptInKey];
-}
-
 @end

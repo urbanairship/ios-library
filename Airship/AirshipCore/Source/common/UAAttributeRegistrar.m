@@ -165,8 +165,4 @@ NSString *const PersistentQueueKey = @"com.urbanairship.channel_attributes.regis
     self.client.enabled = self.componentEnabled;
 }
 
-- (BOOL)isDataOptIn {
-    return [self.dataStore boolForKey:UAAirshipDataOptInKey];
-}
-
 @end

@@ -72,7 +72,11 @@ NSString *const UALocationBackgroundUpdatesAllowed = @"UALocationBackgroundUpdat
 - (void)extendChannelRegistrationPayload:(UAChannelRegistrationPayload *)payload
                        completionHandler:(UAChannelRegistrationExtenderCompletionHandler)completionHandler {
 
-    payload.locationSettings = self.locationUpdatesEnabled ? @(YES) : @(NO);
+    // Only set location settings if the app is opted in to data collection
+    if (self.isDataOptIn) {
+        payload.locationSettings = self.locationUpdatesEnabled ? @(YES) : @(NO);
+    }
+
     completionHandler(payload);
 }
 

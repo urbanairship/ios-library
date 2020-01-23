@@ -26,7 +26,7 @@
 
     self.mockAnalytics = [self mockForClass:[UAAnalytics class]];
 
-    self.mockAirship =[self mockForClass:[UAirship class]];
+    self.mockAirship = [self mockForClass:[UAirship class]];
     [UAirship setSharedAirship:self.mockAirship];
     [[[self.mockAirship stub] andReturn:self.mockAnalytics] analytics];
 
