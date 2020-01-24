@@ -95,12 +95,13 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
     displayInterval = IndexPath(row: 1, section: 1)
     
     // Device settings
-    private let channelID = IndexPath(row: 0, section: 2),
-    username = IndexPath(row: 1, section: 2),
-    namedUser = IndexPath(row: 2, section: 2),
-    tags = IndexPath(row: 3, section: 2),
-    associatedIdentifiers = IndexPath(row: 4, section: 2),
-    channelAttributes = IndexPath(row: 5, section: 2)
+    private let dataOptIn = IndexPath(row: 0, section: 2),
+    channelID = IndexPath(row: 1, section: 2),
+    username = IndexPath(row: 2, section: 2),
+    namedUser = IndexPath(row: 3, section: 2),
+    tags = IndexPath(row: 4, section: 2),
+    associatedIdentifiers = IndexPath(row: 5, section: 2),
+    channelAttributes = IndexPath(row: 6, section: 2)
 
     // Location settings
     private let locationEnabled = IndexPath(row: 0, section: 3),
@@ -223,7 +224,7 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
         case inAppAutomationSettings:
             return 2
         case deviceSettings:
-            return 6
+            return 7
         case analyticsSettings:
             return 1
         case locationSettings:
@@ -236,6 +237,8 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
             return 0
         }
     }
+
+
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell:DeviceInfoCell = tableView.dequeueReusableCell(withIdentifier: "DeviceInfoCell", for: indexPath) as! DeviceInfoCell
@@ -255,6 +258,7 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
         cell.cellSwitch.isUserInteractionEnabled = false
         cell.accessoryType = .none
         cell.subtitle.text = nil
+
 
         switch indexPath {
         case pushEnabled:
@@ -283,6 +287,13 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
             cell.displayIntervalStepper.isHidden = false;
             cell.displayIntervalStepper.value = Double(inAppAutomationDisplayInterval)
             cell.displayIntervalStepper.tintColor = ThemeManager.shared.currentTheme.WidgetTint;
+        case dataOptIn:
+            cell.title.text = "ua_device_info_data_enabled".localized()
+            cell.cellSwitch.isHidden = false
+            cell.cellSwitch.isOn = UAirship.shared().isDataOptIn
+            cell.subtitle?.adjustsFontSizeToFitWidth = true
+            cell.subtitle?.minimumScaleFactor = 0.25
+            cell.subtitle?.numberOfLines = 2
         case channelID:
             cell.title.text = "ua_device_info_channel_id".localized()
             cell.subtitle.text = UAirship.channel().identifier
@@ -389,6 +400,9 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
         case sdkVersion:
             UIPasteboard.general.string = cell.subtitle?.text
             showCopiedAlert()
+        case dataOptIn:
+            cell.cellSwitch.setOn(!cell.cellSwitch.isOn, animated: true)
+            UAirship.shared().isDataOptIn = cell.cellSwitch.isOn
         case analyticsEnabled:
             cell.cellSwitch.setOn(!cell.cellSwitch.isOn, animated: true)
             UAirship.shared().analytics.isEnabled = cell.cellSwitch.isOn
