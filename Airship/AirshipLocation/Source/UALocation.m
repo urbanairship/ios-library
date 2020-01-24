@@ -293,6 +293,10 @@ NSString *const UALocationBackgroundUpdatesAllowed = @"UALocationBackgroundUpdat
 }
 
 - (BOOL)isLocationOptedIn {
+    if (!self.isDataOptIn) {
+        return NO;
+    }
+
     if (!self.locationUpdatesEnabled) {
         return NO;
     }

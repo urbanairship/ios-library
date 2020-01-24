@@ -182,7 +182,7 @@ NSString *const UANamedUserLastChannelIDKey = @"UANamedUserLastChannelID";
 
 - (void)addTags:(NSArray *)tags group:(NSString *)tagGroupID {
     if (!self.isDataOptIn) {
-        UA_LERR(@"Unable to add tags %@ for group %@ when data opt-in is disabled.", [tags description], tagGroupID);
+        UA_LWARN(@"Unable to add tags %@ for group %@ when data opt-in is disabled.", [tags description], tagGroupID);
         return;
     }
 
@@ -191,7 +191,7 @@ NSString *const UANamedUserLastChannelIDKey = @"UANamedUserLastChannelID";
 
 - (void)removeTags:(NSArray *)tags group:(NSString *)tagGroupID {
     if (!self.isDataOptIn) {
-        UA_LERR(@"Unable to remove tags %@ for group %@ when data opt-in is disabled.", [tags description], tagGroupID);
+        UA_LWARN(@"Unable to remove tags %@ for group %@ when data opt-in is disabled.", [tags description], tagGroupID);
         return;
     }
 
@@ -200,7 +200,7 @@ NSString *const UANamedUserLastChannelIDKey = @"UANamedUserLastChannelID";
 
 - (void)setTags:(NSArray *)tags group:(NSString *)tagGroupID {
     if (!self.isDataOptIn) {
-        UA_LERR(@"Unable to set tags %@ for group %@ when data opt-in is disabled.", [tags description], tagGroupID);
+        UA_LWARN(@"Unable to set tags %@ for group %@ when data opt-in is disabled.", [tags description], tagGroupID);
         return;
     }
 

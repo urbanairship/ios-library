@@ -188,6 +188,11 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
 }
 
 - (void)setTags:(NSArray *)tags {
+    if (!self.isDataOptIn) {
+        UA_LWARN(@"Unable to modify channel tags %@ when data opt-in is disabled.", [tags description]);
+        return;
+    }
+
     [self.dataStore setObject:[UATagUtils normalizeTags:tags] forKey:UAChannelTagsSettingsKey];
 }
 
@@ -206,6 +211,11 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
 }
 
 - (void)removeTags:(NSArray *)tags {
+    if (!self.isDataOptIn) {
+        UA_LWARN(@"Unable to modify channel tags %@ when data opt-in is disabled.", [tags description]);
+        return;
+    }
+
     NSMutableArray *mutableTags = [NSMutableArray arrayWithArray:self.tags];
     [mutableTags removeObjectsInArray:tags];
     [self.dataStore setObject:mutableTags forKey:UAChannelTagsSettingsKey];
@@ -216,7 +226,7 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
 
 - (void)addTags:(NSArray *)tags group:(NSString *)tagGroupID {
     if (!self.isDataOptIn) {
-        UA_LERR(@"Unable to add tags %@ for group %@ when data opt-in is disabled.", [tags description], tagGroupID);
+        UA_LWARN(@"Unable to add tags %@ for group %@ when data opt-in is disabled.", [tags description], tagGroupID);
         return;
     }
 
@@ -230,7 +240,7 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
 
 - (void)removeTags:(NSArray *)tags group:(NSString *)tagGroupID {
     if (!self.isDataOptIn) {
-        UA_LERR(@"Unable to remove tags %@ for group %@ when data opt-in is disabled.", [tags description], tagGroupID);
+        UA_LWARN(@"Unable to remove tags %@ for group %@ when data opt-in is disabled.", [tags description], tagGroupID);
         return;
     }
 
@@ -244,7 +254,7 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
 
 - (void)setTags:(NSArray *)tags group:(NSString *)tagGroupID {
     if (!self.isDataOptIn) {
-        UA_LERR(@"Unable to set tags %@ for group %@ when data opt-in is disabled.", [tags description], tagGroupID);
+        UA_LWARN(@"Unable to set tags %@ for group %@ when data opt-in is disabled.", [tags description], tagGroupID);
         return;
     }
 
@@ -422,6 +432,7 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
     if (self.isDataOptIn) {
         self.attributeRegistrar.componentEnabled = YES;
     } else {
+        [self.dataStore setObject:@[] forKey:UAChannelTagsSettingsKey];
         [self.attributeRegistrar deletePendingMutations];
         self.attributeRegistrar.componentEnabled = NO;
     }

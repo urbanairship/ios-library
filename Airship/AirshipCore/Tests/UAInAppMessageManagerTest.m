@@ -44,6 +44,7 @@
 @property (nonatomic, strong) id mockRemoteDataProvider;
 @property (nonatomic, strong) id mockRemoteDataClient;
 @property (nonatomic, strong) id mockAnalytics;
+@property (nonatomic, strong) id mockAirship;
 
 @property (nonatomic, strong) NSDictionary *mockMetadata;
 @property (nonatomic, assign) BOOL isMetadataValid;
@@ -54,6 +55,10 @@
 
 - (void)setUp {
     [super setUp];
+
+    self.mockAirship = [self mockForClass:[UAirship class]];
+    [[[self.mockAirship stub] andReturnValue:@(YES)] isDataOptIn];
+    [UAirship setSharedAirship:self.mockAirship];
 
     self.mockDelegate = [self mockForProtocol:@protocol(UAInAppMessagingDelegate)];
     self.mockAdapter = [self mockForProtocol:@protocol(UAInAppMessageAdapterProtocol)];

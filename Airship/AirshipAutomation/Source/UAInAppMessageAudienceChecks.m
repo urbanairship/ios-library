@@ -42,20 +42,41 @@
     if (!audience) {
         return YES;
     }
+
+    // Data opt-in
+    BOOL isDataOptIn = [UAirship shared].isDataOptIn;
     
     // Location opt-in
-    if (audience.locationOptIn && ([audience.locationOptIn boolValue] != [UAirship shared].locationProvider.isLocationOptedIn)) {
-        return NO;
+    if (audience.locationOptIn) {
+        if (!isDataOptIn) {
+            return NO;
+        }
+
+        if ([audience.locationOptIn boolValue] != [UAirship shared].locationProvider.isLocationOptedIn) {
+            return NO;
+        }
     }
 
     // Notification opt-in
-    if (audience.notificationsOptIn && ([audience.notificationsOptIn boolValue] != [self isNotificationsOptedIn])) {
-        return NO;
+    if (audience.notificationsOptIn) {
+        if (!isDataOptIn) {
+            return NO;
+        }
+
+        if ([audience.notificationsOptIn boolValue] != [self isNotificationsOptedIn]) {
+            return NO;
+        }
     }
 
     // Tag Selector
-    if (audience.tagSelector && ![audience.tagSelector apply:[UAirship channel].tags tagGroups:tagGroups]) {
-        return NO;
+    if (audience.tagSelector) {
+        if (!isDataOptIn) {
+            return NO;
+        }
+
+        if (![audience.tagSelector apply:[UAirship channel].tags tagGroups:tagGroups]) {
+            return NO;
+        }
     }
 
     // Locales

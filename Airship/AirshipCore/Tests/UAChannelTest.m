@@ -195,6 +195,68 @@
     XCTAssertNotEqualObjects(tags, self.channel.tags, @"tag with 128 characters should not set");
 }
 
+- (void)testSetTagsWhenDataOptInDisabled {
+    // SETUP
+    self.channel.tags = @[];
+    [self.dataStore setBool:NO forKey:UAAirshipDataOptInKey];
+
+    // TEST
+    self.channel.tags = @[@"haha", @"no"];
+
+    // VERIFY
+    XCTAssertEqualObjects(self.channel.tags, @[]);
+}
+
+- (void)testAddTagsWhenDataOptInDisabled {
+    // SETUP
+    self.channel.tags = @[];
+    [self.dataStore setBool:NO forKey:UAAirshipDataOptInKey];
+
+
+    // TEST
+    [self.channel addTags:@[@"haha", @"no"]];
+
+    // VERIFY
+    XCTAssertEqualObjects(self.channel.tags, @[]);
+}
+
+- (void)testAddTagWhenDataOptInDisabled {
+    // SETUP
+    self.channel.tags = @[];
+    [self.dataStore setBool:NO forKey:UAAirshipDataOptInKey];
+
+    // TEST
+    [self.channel addTag:@"nope"];
+
+    // VERIFY
+    XCTAssertEqualObjects(self.channel.tags, @[]);
+}
+
+- (void)testRemoveTagsWhenDataOptInDisabled {
+    // SETUP
+    NSArray *tags = @[@"this_shouldn't", @"happen"];
+    self.channel.tags = tags;
+    [self.dataStore setBool:NO forKey:UAAirshipDataOptInKey];
+
+    // TEST
+    [self.channel removeTags:tags];
+
+    // VERIFY
+    XCTAssertEqualObjects(self.channel.tags, tags);
+}
+
+- (void)testRemoveTagWhenDataOptInDisabled {
+    // SETUP
+    self.channel.tags = @[@"this_shouldn't_happen"];
+    [self.dataStore setBool:NO forKey:UAAirshipDataOptInKey];
+
+    // TEST
+    [self.channel removeTag:@"this_shouldn't_happen"];
+
+    // VERIFY
+    XCTAssertEqualObjects(self.channel.tags, @[@"this_shouldn't_happen"]);
+}
+
 - (void)testAddTagsToDeviceTagGroupWhenChannelTagRegistrationDisabled {
     // SETUP
     self.channel.channelTagRegistrationEnabled = YES;
@@ -240,7 +302,21 @@
     [self.mockTagGroupsRegistrar verify];
 }
 
-- (void)testAddTagsToDeviceTagGroupWhenDataOptInDisabled {
+- (void)testSetTagsWithGroupWhenDataOptInDisabled {
+    // SETUP
+    [self.dataStore setBool:NO forKey:UAAirshipDataOptInKey];
+
+    // EXPECTATIONS
+    [[self.mockTagGroupsRegistrar reject] setTags:OCMOCK_ANY group:OCMOCK_ANY type:UATagGroupsTypeChannel];
+
+    // TEST
+    [self.channel setTags:@[@"tag1"] group:@"group"];
+
+    // VERIFY
+    [self.mockTagGroupsRegistrar verify];
+}
+
+- (void)testAddTagsWithGroupWhenDataOptInDisabled {
     // SETUP
     [self.dataStore setBool:NO forKey:UAAirshipDataOptInKey];
 
@@ -254,7 +330,7 @@
     [self.mockTagGroupsRegistrar verify];
 }
 
-- (void)testRemoveTagsFromDeviceTagGroupWhenDataOptInDisabled {
+- (void)testRemoveTagsWithGroupWhenDataOptInDisabled {
     // SETUP
     [self.dataStore setBool:NO forKey:UAAirshipDataOptInKey];
 
@@ -268,18 +344,13 @@
     [self.mockTagGroupsRegistrar verify];
 }
 
-- (void)testSetTagsInDeviceTagGroupWhenDataOptInDisabled {
-    // SETUP
+- (void)testDataOptInDisableClearsTags {
+    self.channel.tags = @[@"cool", @"rad"];
+
     [self.dataStore setBool:NO forKey:UAAirshipDataOptInKey];
-
-    // EXPECTATIONS
-    [[self.mockTagGroupsRegistrar reject] setTags:OCMOCK_ANY group:OCMOCK_ANY type:UATagGroupsTypeChannel];
-
-    // TEST
-    [self.channel setTags:@[@"tag1"] group:@"group"];
-
-    // VERIFY
-    [self.mockTagGroupsRegistrar verify];
+    [self.channel onDataOptInEnableChange];
+    
+    XCTAssertEqualObjects(self.channel.tags, @[]);
 }
 
 /**
