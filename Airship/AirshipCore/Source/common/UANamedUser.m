@@ -88,7 +88,7 @@ NSString *const UANamedUserLastChannelIDKey = @"UANamedUserLastChannelID";
 }
 
 - (void)setIdentifier:(NSString *)identifier {
-    if (!self.isDataOptIn) {
+    if (identifier && !self.isDataOptIn) {
         UA_LWARN(@"Ignoring named user ID request, global data opt-in is disabled");
         return;
     }

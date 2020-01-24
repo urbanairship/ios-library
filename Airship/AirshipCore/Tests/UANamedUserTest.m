@@ -566,4 +566,28 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
     [self.mockTagGroupsRegistrar verify];
 }
 
+- (void)testSetIdentifierDataOptOut {
+    self.namedUser.identifier = nil;
+    [self.dataStore setBool:NO forKey:UAAirshipDataOptInKey];
+    self.namedUser.identifier = @"neat";
+    XCTAssertNil(self.namedUser.identifier);
+}
+
+- (void)testClearNamedUserOnDataOptOut {
+    self.namedUser.identifier = @"neat";
+    XCTAssertNotNil(self.namedUser.identifier);
+
+    // Expect the named user client to associate and call the success block
+    [[[self.mockedNamedUserClient expect] andDo:namedUserSuccessDoBlock] disassociate:@"someChannel"
+                                                                         onSuccess:OCMOCK_ANY
+                                                                         onFailure:OCMOCK_ANY];
+
+    [self.dataStore setBool:NO forKey:UAAirshipDataOptInKey];
+    [self.namedUser onDataOptInEnableChange];
+
+    XCTAssertNil(self.namedUser.identifier);
+
+    [self.mockedNamedUserClient verify];
+}
+
 @end
