@@ -5,7 +5,7 @@
 #import "UAirship+Internal.h"
 #import "UANativeBridgeActionHandler+Internal.h"
 
-@interface UAWKWebViewNativeBridgeTest : UABaseTest
+@interface UANativeBridgeTest : UABaseTest
 
 @property (nonatomic, strong) UANativeBridge *nativeBridge;
 @property (nonatomic, strong) id mockWKWebView;
@@ -19,7 +19,7 @@
 @property (nonatomic, strong) id mockJavaScriptEnvironment;
 @end
 
-@implementation UAWKWebViewNativeBridgeTest
+@implementation UANativeBridgeTest
 
 - (void)setUp {
     [super setUp];

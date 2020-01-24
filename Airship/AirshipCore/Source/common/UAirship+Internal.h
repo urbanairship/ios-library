@@ -2,11 +2,8 @@
 
 #import "UAirship.h"
 
-@class UABaseAppDelegateSurrogate;
-@class UAJavaScriptDelegate;
 @class UAPreferenceDataStore;
 @class UAChannelCapture;
-@class UAInAppMessageManager;
 @class UARemoteConfigManager;
 
 @interface UAirship()
@@ -29,7 +26,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) NSArray<UAComponent *> *components;
 @property (nonatomic, copy) NSDictionary<NSString *, UAComponent *> *componentClassMap;
 @property (nonatomic, strong) id<UALocationProvider> locationProvider;
-
 
 /**
  * The channel

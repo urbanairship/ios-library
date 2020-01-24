@@ -3539,8 +3539,8 @@
 		3CA0E227237CCBA600EE76CF /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				6E6CC37C23A3F9B4003D583C /* Received Pushes */,
-				3CA0E22A237CCBA600EE76CF /* Device-Info */,
+				6E6CC37C23A3F9B4003D583C /* ReceivedPushes */,
+				3CA0E22A237CCBA600EE76CF /* DeviceInfo */,
 				3CA0E234237CCBA600EE76CF /* Automation */,
 				3CA0E240237CCBA600EE76CF /* Events */,
 				3CA0E228237CCBA600EE76CF /* AirshipDebug.h */,
@@ -3553,7 +3553,7 @@
 			path = Source;
 			sourceTree = "<group>";
 		};
-		3CA0E22A237CCBA600EE76CF /* Device-Info */ = {
+		3CA0E22A237CCBA600EE76CF /* DeviceInfo */ = {
 			isa = PBXGroup;
 			children = (
 				3CA0E22B237CCBA600EE76CF /* AssociatedIdentifiersTableViewController.swift */,
@@ -3564,7 +3564,7 @@
 				3CA0E231237CCBA600EE76CF /* DeviceInfoViewController.swift */,
 				6E218538237DB7960084933A /* AddChannelAttributeTableViewController.swift */,
 			);
-			path = "Device-Info";
+			path = DeviceInfo;
 			sourceTree = "<group>";
 		};
 		3CA0E234237CCBA600EE76CF /* Automation */ = {
@@ -3591,14 +3591,14 @@
 				3CA0E241237CCBA600EE76CF /* Event.swift */,
 				3CA0E242237CCBA600EE76CF /* SearchFooter.swift */,
 				3CA0E243237CCBA600EE76CF /* EventsViewController.swift */,
-				3CA0E244237CCBA600EE76CF /* Custom-Events */,
+				3CA0E244237CCBA600EE76CF /* CustomEvents */,
 				3CA0E24C237CCBA600EE76CF /* EventsDetailTableViewController.swift */,
 				3CA0E24D237CCBA600EE76CF /* EventDataManager.swift */,
 			);
 			path = Events;
 			sourceTree = "<group>";
 		};
-		3CA0E244237CCBA600EE76CF /* Custom-Events */ = {
+		3CA0E244237CCBA600EE76CF /* CustomEvents */ = {
 			isa = PBXGroup;
 			children = (
 				3CA0E245237CCBA600EE76CF /* CustomEventTableViewCell.swift */,
@@ -3609,7 +3609,7 @@
 				3CA0E24A237CCBA600EE76CF /* CustomEventTableViewController.swift */,
 				3CA0E24B237CCBA600EE76CF /* CustomPropertyAdderTableViewCell.swift */,
 			);
-			path = "Custom-Events";
+			path = CustomEvents;
 			sourceTree = "<group>";
 		};
 		3CA0E302237E396100EE76CF /* AirshipMessageCenter */ = {
@@ -3641,7 +3641,7 @@
 				3CA0E344237E39CB00EE76CF /* Actions */,
 				3CA0E343237E39BC00EE76CF /* Display */,
 				3CA0E341237E399E00EE76CF /* Inbox */,
-				3CA0E345237E39D700EE76CF /* Native Bridge */,
+				3CA0E345237E39D700EE76CF /* NativeBridge */,
 				3C13BFBC2384AE050071E80C /* AirshipMessageCenter.h */,
 				3CA0E475237E4DB800EE76CF /* AirshipMessageCenterLib.h */,
 				3CA0E33D237E396100EE76CF /* UAMessageCenter.h */,
@@ -3737,13 +3737,13 @@
 			path = Actions;
 			sourceTree = "<group>";
 		};
-		3CA0E345237E39D700EE76CF /* Native Bridge */ = {
+		3CA0E345237E39D700EE76CF /* NativeBridge */ = {
 			isa = PBXGroup;
 			children = (
 				3CA0E31A237E396100EE76CF /* UAMessageCenterNativeBridgeExtension.h */,
 				3CA0E336237E396100EE76CF /* UAMessageCenterNativeBridgeExtension.m */,
 			);
-			path = "Native Bridge";
+			path = NativeBridge;
 			sourceTree = "<group>";
 		};
 		3CBB6F18212CB7F500E094B0 /* Operations */ = {
@@ -3773,7 +3773,7 @@
 			name = Attributes;
 			sourceTree = "<group>";
 		};
-		459D405B2092476100C40E2D /* In-app Messaging */ = {
+		459D405B2092476100C40E2D /* InAppMessaging */ = {
 			isa = PBXGroup;
 			children = (
 				459D40562092474A00C40E2D /* Valid-UAInAppMessageBannerStyle.plist */,
@@ -3784,7 +3784,7 @@
 				459D405A2092475C00C40E2D /* Invalid-UAInAppMessageModalStyle.plist */,
 				459D404B208FE6BA00C40E2D /* Invalid-UAInAppMessageFullScreenStyle.plist */,
 			);
-			path = "In-app Messaging";
+			path = InAppMessaging;
 			sourceTree = "<group>";
 		};
 		45BB646D23466D400006CFC1 /* Attributes */ = {
@@ -3823,7 +3823,7 @@
 				1BB4C013239FB4CD0000559B /* UAExtendedActionsResources.h */,
 				1BB4C012239FB4CD0000559B /* UAExtendedActionsResources.m */,
 				6EE773D9238F28FC00E79944 /* AirshipExtendedActionsLib.h */,
-				45C69130238DC81100A03C94 /* Rate App */,
+				45C69130238DC81100A03C94 /* RateApp */,
 				6E27A7D52367AC3200F46B69 /* UAExtendedActionsModuleLoader.h */,
 				6E27A7D42367AC3200F46B69 /* UAExtendedActionsModuleLoader.m */,
 				45C6913F238DC93B00A03C94 /* AirshipExtendedActions.h */,
@@ -3832,7 +3832,7 @@
 			path = Source;
 			sourceTree = "<group>";
 		};
-		45C69130238DC81100A03C94 /* Rate App */ = {
+		45C69130238DC81100A03C94 /* RateApp */ = {
 			isa = PBXGroup;
 			children = (
 				992F89881EFD99B000E4C8FE /* UARateAppActionPredicate+Internal.h */,
@@ -3843,7 +3843,7 @@
 				9928146F1EF4A14400D0D388 /* UARateAppPromptViewController+Internal.h */,
 				992814701EF4A14400D0D388 /* UARateAppPromptViewController.m */,
 			);
-			path = "Rate App";
+			path = RateApp;
 			sourceTree = "<group>";
 		};
 		494DD94D1B0EB677009C134E = {
@@ -3972,7 +3972,7 @@
 			path = Source;
 			sourceTree = "<group>";
 		};
-		6E6CC37C23A3F9B4003D583C /* Received Pushes */ = {
+		6E6CC37C23A3F9B4003D583C /* ReceivedPushes */ = {
 			isa = PBXGroup;
 			children = (
 				6E6CC37E23A3F9B4003D583C /* PushNotificationsDetailTableViewController.swift */,
@@ -3980,7 +3980,7 @@
 				6E6CC38123A3F9B4003D583C /* PushPayload.swift */,
 				6E6CC38223A3F9B4003D583C /* PushNotificationsTableViewController.swift */,
 			);
-			path = "Received Pushes";
+			path = ReceivedPushes;
 			sourceTree = "<group>";
 		};
 		6E84509C237DFE89007D3B1E /* AirshipAutomation */ = {
@@ -4020,10 +4020,10 @@
 		6E8450BB237DFFB5007D3B1E /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				6E8450C3237E00A4007D3B1E /* Action Automation */,
+				6E8450C3237E00A4007D3B1E /* ActionAutomation */,
 				6E8450BD237E0012007D3B1E /* Actions */,
-				6E8450C1237E0049007D3B1E /* Automation Engine */,
-				6E8450DB237E00D9007D3B1E /* In-app Messaging */,
+				6E8450C1237E0049007D3B1E /* AutomationEngine */,
+				6E8450DB237E00D9007D3B1E /* InAppMessaging */,
 				6E84544E237E05F3007D3B1E /* AirshipAutomation.h */,
 				6E845460237E0D31007D3B1E /* AirshipAutomationLib.h */,
 				3C5D1B2021C079D5007025C9 /* NSObject+AnonymousKVO.m */,
@@ -4063,7 +4063,7 @@
 		6E8450BD237E0012007D3B1E /* Actions */ = {
 			isa = PBXGroup;
 			children = (
-				6E8450BE237E0026007D3B1E /* Landing Page */,
+				6E8450BE237E0026007D3B1E /* LandingPage */,
 				CC40DB321D8C996900BABD4F /* UACancelSchedulesAction.h */,
 				CC40DB331D8C996900BABD4F /* UACancelSchedulesAction.m */,
 				CC40DBE11D8C996A00BABD4F /* UAScheduleAction.h */,
@@ -4072,7 +4072,7 @@
 			name = Actions;
 			sourceTree = "<group>";
 		};
-		6E8450BE237E0026007D3B1E /* Landing Page */ = {
+		6E8450BE237E0026007D3B1E /* LandingPage */ = {
 			isa = PBXGroup;
 			children = (
 				45A8AED02315A999004AD8CA /* UALandingPageActionPredicate.m */,
@@ -4081,10 +4081,10 @@
 				CC40DBA21D8C996900BABD4F /* UALandingPageAction.h */,
 				CC40DBA31D8C996900BABD4F /* UALandingPageAction.m */,
 			);
-			name = "Landing Page";
+			name = LandingPage;
 			sourceTree = "<group>";
 		};
-		6E8450C1237E0049007D3B1E /* Automation Engine */ = {
+		6E8450C1237E0049007D3B1E /* AutomationEngine */ = {
 			isa = PBXGroup;
 			children = (
 				6E8450C2237E0061007D3B1E /* Data */,
@@ -4105,7 +4105,7 @@
 				6E598D1F1FFC44F3005B234B /* UAScheduleEdits.m */,
 				6E598D261FFC4506005B234B /* UAScheduleEdits+Internal.h */,
 			);
-			name = "Automation Engine";
+			name = AutomationEngine;
 			sourceTree = "<group>";
 		};
 		6E8450C2237E0061007D3B1E /* Data */ = {
@@ -4125,7 +4125,7 @@
 			name = Data;
 			sourceTree = "<group>";
 		};
-		6E8450C3237E00A4007D3B1E /* Action Automation */ = {
+		6E8450C3237E00A4007D3B1E /* ActionAutomation */ = {
 			isa = PBXGroup;
 			children = (
 				6E598D341FFC4FB3005B234B /* UAActionScheduleEdits.h */,
@@ -4137,10 +4137,10 @@
 				CC40DB2A1D8C996900BABD4F /* UAActionAutomation.h */,
 				CC40DB2B1D8C996900BABD4F /* UAActionAutomation.m */,
 			);
-			name = "Action Automation";
+			name = ActionAutomation;
 			sourceTree = "<group>";
 		};
-		6E8450DB237E00D9007D3B1E /* In-app Messaging */ = {
+		6E8450DB237E00D9007D3B1E /* InAppMessaging */ = {
 			isa = PBXGroup;
 			children = (
 				6E8450FC237E0241007D3B1E /* Legacy */,
@@ -4215,7 +4215,7 @@
 				3CADDEAB21B89AB000C482F4 /* UAInAppMessageDefaultDisplayCoordinator.m */,
 				3CADDEB221B89B0E00C482F4 /* UAInAppMessageDisplayCoordinator.h */,
 			);
-			name = "In-app Messaging";
+			name = InAppMessaging;
 			sourceTree = "<group>";
 		};
 		6E8450DC237E0105007D3B1E /* Events */ = {
@@ -4371,7 +4371,7 @@
 			name = Legacy;
 			sourceTree = "<group>";
 		};
-		6E8A550923675D2B004AE2A0 /* URL Actions */ = {
+		6E8A550923675D2B004AE2A0 /* URLActions */ = {
 			isa = PBXGroup;
 			children = (
 				6E8A551923676994004AE2A0 /* UAWalletAction.h */,
@@ -4383,10 +4383,10 @@
 				99978EE61EBA7BE7000F4AF7 /* UADeepLinkAction.h */,
 				99978EE71EBA7BE7000F4AF7 /* UADeepLinkAction.m */,
 			);
-			name = "URL Actions";
+			name = URLActions;
 			sourceTree = "<group>";
 		};
-		6E8A551F236769E6004AE2A0 /* Fetch Device Info Action */ = {
+		6E8A551F236769E6004AE2A0 /* FetchDeviceInfoAction */ = {
 			isa = PBXGroup;
 			children = (
 				99912E821ECE575F00295C67 /* UAFetchDeviceInfoActionPredicate+Internal.h */,
@@ -4394,10 +4394,10 @@
 				E29D35E71DB93A59003C292F /* UAFetchDeviceInfoAction.h */,
 				E29D35E81DB93A59003C292F /* UAFetchDeviceInfoAction.m */,
 			);
-			name = "Fetch Device Info Action";
+			name = FetchDeviceInfoAction;
 			sourceTree = "<group>";
 		};
-		6E8A5520236769FB004AE2A0 /* Enable Feature Action */ = {
+		6E8A5520236769FB004AE2A0 /* EnableFeatureAction */ = {
 			isa = PBXGroup;
 			children = (
 				99B6EE651F3B9B5300C4E3F1 /* UAEnableFeatureActionPredicate+Internal.h */,
@@ -4405,7 +4405,7 @@
 				6E3673DA1E8AE9F7005B5DFF /* UAEnableFeatureAction.h */,
 				6E3673DB1E8AE9F7005B5DFF /* UAEnableFeatureAction.m */,
 			);
-			name = "Enable Feature Action";
+			name = EnableFeatureAction;
 			sourceTree = "<group>";
 		};
 		6E90F0ED228F550900E1FCB0 /* Config */ = {
@@ -4433,11 +4433,11 @@
 				DF6596CD1FBA3B4D0055E97B /* Components */,
 				CC944EBC1DB011D000C42269 /* HTTP */,
 				CC40DDDE1D91D58700BABD4F /* Channel */,
-				CC40DDE21D91D6C400BABD4F /* Actions Framework */,
+				CC40DDE21D91D6C400BABD4F /* ActionsFramework */,
 				CC40DDDC1D91D4FD00BABD4F /* Push */,
 				CC40DDE91D91DAA900BABD4F /* Analytics */,
 				CC40DDE71D91D8E600BABD4F /* Utils */,
-				CC40DDED1D91DD0200BABD4F /* Native Bridge */,
+				CC40DDED1D91DD0200BABD4F /* NativeBridge */,
 				DF7E7A2A1EE2220700D4EF02 /* os-specific */,
 			);
 			path = Source;
@@ -4566,12 +4566,12 @@
 			name = Delegates;
 			sourceTree = "<group>";
 		};
-		6EFB377B2345959C005E4E44 /* Native Bridge */ = {
+		6EFB377B2345959C005E4E44 /* NativeBridge */ = {
 			isa = PBXGroup;
 			children = (
 				6EFB377C234595C9005E4E44 /* UAMessageCenterNativeBridgeExtensionTest.m */,
 			);
-			name = "Native Bridge";
+			name = NativeBridge;
 			sourceTree = "<group>";
 		};
 		CC04F1871DBED9E200B4842D /* Data */ = {
@@ -4664,9 +4664,9 @@
 		CC04F2061DCAB4C000B4842D /* Push */ = {
 			isa = PBXGroup;
 			children = (
-				CC70E8CC1DD3DEE1000E2528 /* Tag groups */,
+				CC70E8CC1DD3DEE1000E2528 /* TagGroups */,
 				CC04F2071DCAB4DE00B4842D /* Actions */,
-				CC04F2081DCAB4EB00B4842D /* Named User */,
+				CC04F2081DCAB4EB00B4842D /* NamedUser */,
 				CC04F20A1DCAB50C00B4842D /* APNS */,
 				CC04F20B1DCAB52900B4842D /* Interactive */,
 				CC64F0B81D8B781C009CEF27 /* UAPushTest.m */,
@@ -4685,13 +4685,13 @@
 			name = Actions;
 			sourceTree = "<group>";
 		};
-		CC04F2081DCAB4EB00B4842D /* Named User */ = {
+		CC04F2081DCAB4EB00B4842D /* NamedUser */ = {
 			isa = PBXGroup;
 			children = (
 				CC64F0AD1D8B781C009CEF27 /* UANamedUserAPIClientTest.m */,
 				CC64F0AE1D8B781C009CEF27 /* UANamedUserTest.m */,
 			);
-			name = "Named User";
+			name = NamedUser;
 			sourceTree = "<group>";
 		};
 		CC04F2091DCAB4FD00B4842D /* Channel */ = {
@@ -4745,7 +4745,7 @@
 			name = Events;
 			sourceTree = "<group>";
 		};
-		CC04F20E1DCAB5C600B4842D /* Actions Framework */ = {
+		CC04F20E1DCAB5C600B4842D /* ActionsFramework */ = {
 			isa = PBXGroup;
 			children = (
 				CC04F20F1DCAB5D800B4842D /* Actions */,
@@ -4758,13 +4758,13 @@
 				CC64F0751D8B781C009CEF27 /* UAActionTest.m */,
 				CC64F0771D8B781C009CEF27 /* UAAggregateActionResultTest.m */,
 			);
-			name = "Actions Framework";
+			name = ActionsFramework;
 			sourceTree = "<group>";
 		};
 		CC04F20F1DCAB5D800B4842D /* Actions */ = {
 			isa = PBXGroup;
 			children = (
-				CC04F2101DCAB60D00B4842D /* Landing Page */,
+				CC04F2101DCAB60D00B4842D /* LandingPage */,
 				CC04F2111DCAB61700B4842D /* Share */,
 				CC64F0B31D8B781C009CEF27 /* UAOpenExternalURLActionTest.m */,
 				CC64F0B51D8B781C009CEF27 /* UAPasteboardActionTest.m */,
@@ -4777,12 +4777,12 @@
 			name = Actions;
 			sourceTree = "<group>";
 		};
-		CC04F2101DCAB60D00B4842D /* Landing Page */ = {
+		CC04F2101DCAB60D00B4842D /* LandingPage */ = {
 			isa = PBXGroup;
 			children = (
 				CC64F0A81D8B781C009CEF27 /* UALandingPageActionTest.m */,
 			);
-			name = "Landing Page";
+			name = LandingPage;
 			sourceTree = "<group>";
 		};
 		CC04F2111DCAB61700B4842D /* Share */ = {
@@ -4793,20 +4793,20 @@
 			name = Share;
 			sourceTree = "<group>";
 		};
-		CC04F2121DCAB65800B4842D /* Message Center */ = {
+		CC04F2121DCAB65800B4842D /* MessageCenter */ = {
 			isa = PBXGroup;
 			children = (
 				CC04F2041DCAB46500B4842D /* Actions */,
 				CC04F2051DCAB48000B4842D /* User */,
 				CC04F2031DCAB3DD00B4842D /* Inbox */,
-				6EFB377B2345959C005E4E44 /* Native Bridge */,
+				6EFB377B2345959C005E4E44 /* NativeBridge */,
 				CC64F08D1D8B781C009CEF27 /* UAMessageCenterStyleTest.m */,
 				6E746506235FA9B6000BF09C /* UAMessageCenterTest.m */,
 			);
-			name = "Message Center";
+			name = MessageCenter;
 			sourceTree = "<group>";
 		};
-		CC04F2131DCAB66900B4842D /* In-app Messaging */ = {
+		CC04F2131DCAB66900B4842D /* InAppMessaging */ = {
 			isa = PBXGroup;
 			children = (
 				6E18E6ED23207A61004E09DF /* Scene */,
@@ -4836,7 +4836,7 @@
 				6E0B841B20227F01008A1F96 /* UAInAppMessageScheduleInfoTest.m */,
 				6EE6529022A7E2DA00F7D54D /* UAInAppMessageHTMLStyleTest.m */,
 			);
-			name = "In-app Messaging";
+			name = InAppMessaging;
 			sourceTree = "<group>";
 		};
 		CC04F2141DCAB68300B4842D /* Events */ = {
@@ -4918,7 +4918,7 @@
 			name = Utils;
 			sourceTree = "<group>";
 		};
-		CC04F21B1DCAB82200B4842D /* Native Bridge */ = {
+		CC04F21B1DCAB82200B4842D /* NativeBridge */ = {
 			isa = PBXGroup;
 			children = (
 				DFECEA861E662E25006AA8EA /* UANativeBridgeTest.m */,
@@ -4926,10 +4926,10 @@
 				CC64F0701D8B781C009CEF27 /* UANativeBridgeActionHandlerTest.m */,
 				CC64F0AF1D8B781C009CEF27 /* UAJavaScriptEnvironmentTest.m */,
 			);
-			name = "Native Bridge";
+			name = NativeBridge;
 			sourceTree = "<group>";
 		};
-		CC4006111DD23E1200C6ACB9 /* Tag Groups */ = {
+		CC4006111DD23E1200C6ACB9 /* TagGroups */ = {
 			isa = PBXGroup;
 			children = (
 				3C89DD482120BBA800864358 /* UATagGroups.m */,
@@ -4947,7 +4947,7 @@
 				4515B6B22134B20800284CFF /* UATagGroupsTransactionRecord.m */,
 				6E8A54D0236379AA004AE2A0 /* UATagGroupsHistory.h */,
 			);
-			name = "Tag Groups";
+			name = TagGroups;
 			sourceTree = "<group>";
 		};
 		CC40D87A1D8C703E00BABD4F /* Frameworks */ = {
@@ -5027,9 +5027,9 @@
 			isa = PBXGroup;
 			children = (
 				CC40DDF31D91DE9F00BABD4F /* Actions */,
-				CC40DDE01D91D5DC00BABD4F /* Named User */,
+				CC40DDE01D91D5DC00BABD4F /* NamedUser */,
 				456A499B2344150F00A46F1B /* Attributes */,
-				CC4006111DD23E1200C6ACB9 /* Tag Groups */,
+				CC4006111DD23E1200C6ACB9 /* TagGroups */,
 				6EBFF9C5234FDC1000472DCF /* UAExtendableChannelRegistration.h */,
 				537F66421E256A2B001BC8F3 /* UAChannelCapture+Internal.h */,
 				CC40DB361D8C996900BABD4F /* UAChannelCapture.h */,
@@ -5059,7 +5059,7 @@
 			name = APNS;
 			sourceTree = "<group>";
 		};
-		CC40DDE01D91D5DC00BABD4F /* Named User */ = {
+		CC40DDE01D91D5DC00BABD4F /* NamedUser */ = {
 			isa = PBXGroup;
 			children = (
 				CC40DBB41D8C996A00BABD4F /* UANamedUser+Internal.h */,
@@ -5068,7 +5068,7 @@
 				CC40DBB71D8C996A00BABD4F /* UANamedUserAPIClient+Internal.h */,
 				CC40DBB81D8C996A00BABD4F /* UANamedUserAPIClient.m */,
 			);
-			name = "Named User";
+			name = NamedUser;
 			sourceTree = "<group>";
 		};
 		CC40DDE11D91D67800BABD4F /* Regions */ = {
@@ -5087,7 +5087,7 @@
 			name = Regions;
 			sourceTree = "<group>";
 		};
-		CC40DDE21D91D6C400BABD4F /* Actions Framework */ = {
+		CC40DDE21D91D6C400BABD4F /* ActionsFramework */ = {
 			isa = PBXGroup;
 			children = (
 				CC40DDF11D91DE6F00BABD4F /* Actions */,
@@ -5114,7 +5114,7 @@
 				CC40DB0B1D8C996900BABD4F /* UAAggregateActionResult.h */,
 				CC40DB0C1D8C996900BABD4F /* UAAggregateActionResult.m */,
 			);
-			name = "Actions Framework";
+			name = ActionsFramework;
 			sourceTree = "<group>";
 		};
 		CC40DDE71D91D8E600BABD4F /* Utils */ = {
@@ -5245,7 +5245,7 @@
 			name = Events;
 			sourceTree = "<group>";
 		};
-		CC40DDEC1D91DC6000BABD4F /* Share Action */ = {
+		CC40DDEC1D91DC6000BABD4F /* ShareAction */ = {
 			isa = PBXGroup;
 			children = (
 				CC40DB051D8C996900BABD4F /* UAActivityViewController.h */,
@@ -5255,10 +5255,10 @@
 				CC40DBEA1D8C996A00BABD4F /* UAShareAction.h */,
 				CC40DBEB1D8C996A00BABD4F /* UAShareAction.m */,
 			);
-			name = "Share Action";
+			name = ShareAction;
 			sourceTree = "<group>";
 		};
-		CC40DDED1D91DD0200BABD4F /* Native Bridge */ = {
+		CC40DDED1D91DD0200BABD4F /* NativeBridge */ = {
 			isa = PBXGroup;
 			children = (
 				6EFB376C2343B9C2005E4E44 /* Delegates */,
@@ -5272,16 +5272,16 @@
 				6EFB37572342A9E8005E4E44 /* UAJavaScriptEnvironment.h */,
 				6EFB37582342A9E8005E4E44 /* UAJavaScriptEnvironment.m */,
 			);
-			name = "Native Bridge";
+			name = NativeBridge;
 			sourceTree = "<group>";
 		};
 		CC40DDF11D91DE6F00BABD4F /* Actions */ = {
 			isa = PBXGroup;
 			children = (
-				CC40DDEC1D91DC6000BABD4F /* Share Action */,
-				6E8A550923675D2B004AE2A0 /* URL Actions */,
-				6E8A551F236769E6004AE2A0 /* Fetch Device Info Action */,
-				6E8A5520236769FB004AE2A0 /* Enable Feature Action */,
+				CC40DDEC1D91DC6000BABD4F /* ShareAction */,
+				6E8A550923675D2B004AE2A0 /* URLActions */,
+				6E8A551F236769E6004AE2A0 /* FetchDeviceInfoAction */,
+				6E8A5520236769FB004AE2A0 /* EnableFeatureAction */,
 				CC40DBCD1D8C996A00BABD4F /* UAPasteboardAction.h */,
 				CC40DBCE1D8C996A00BABD4F /* UAPasteboardAction.m */,
 				53BC501E1E202DED00E24306 /* UAChannelCaptureAction.h */,
@@ -5332,12 +5332,12 @@
 				CC04F2091DCAB4FD00B4842D /* Channel */,
 				CC04F2061DCAB4C000B4842D /* Push */,
 				CC04F20C1DCAB57200B4842D /* Location */,
-				CC04F20E1DCAB5C600B4842D /* Actions Framework */,
-				CC04F2121DCAB65800B4842D /* Message Center */,
-				CC04F2131DCAB66900B4842D /* In-app Messaging */,
+				CC04F20E1DCAB5C600B4842D /* ActionsFramework */,
+				CC04F2121DCAB65800B4842D /* MessageCenter */,
+				CC04F2131DCAB66900B4842D /* InAppMessaging */,
 				CC04F2151DCAB73000B4842D /* Analytics */,
 				CC04F2191DCAB7BE00B4842D /* Utils */,
-				CC04F21B1DCAB82200B4842D /* Native Bridge */,
+				CC04F21B1DCAB82200B4842D /* NativeBridge */,
 				CC64F07F1D8B781C009CEF27 /* UAAutoIntegrationTest.m */,
 				CC64F08F1D8B781C009CEF27 /* UADelayOperationTest.m */,
 				CC64F0B61D8B781C009CEF27 /* UAPreferenceDataStoreTest.m */,
@@ -5360,7 +5360,7 @@
 				CC64F0631D8B781C009CEF27 /* Invalid-UAMessageCenterDefaultStyle.plist */,
 				CC64F1431D8B7954009CEF27 /* AirshipConfig-DetectProvisioningMode.plist */,
 				CC64F1441D8B7954009CEF27 /* AirshipConfig-InProduction.plist */,
-				459D405B2092476100C40E2D /* In-app Messaging */,
+				459D405B2092476100C40E2D /* InAppMessaging */,
 				CC64F1451D8B7954009CEF27 /* AirshipConfig-Valid-Legacy-NeXTStep.plist */,
 				CC64F1461D8B7954009CEF27 /* AirshipConfig-Valid-NeXTStep.plist */,
 				CC64F1471D8B7954009CEF27 /* AirshipConfig-Valid.plist */,
@@ -5372,7 +5372,7 @@
 			path = Support;
 			sourceTree = "<group>";
 		};
-		CC70E8CC1DD3DEE1000E2528 /* Tag groups */ = {
+		CC70E8CC1DD3DEE1000E2528 /* TagGroups */ = {
 			isa = PBXGroup;
 			children = (
 				CC64F0C01D8B781C009CEF27 /* UATagGroupsAPIClientTest.m */,
@@ -5384,7 +5384,7 @@
 				3C89DD3B211E3B9000864358 /* UATagGroupsLookupAPIClientTest.m */,
 				3C89DD3D211E4D4900864358 /* UATagGroupsLookupManagerTest.m */,
 			);
-			name = "Tag groups";
+			name = TagGroups;
 			sourceTree = "<group>";
 		};
 		CC89997D1D8B642D00A0CECC /* Resources */ = {

@@ -29,8 +29,6 @@
 @class UAUser;
 @class UANamedUser;
 @class UAActionRegistry;
-@class UAMessageCenter;
-@class UAAutomation;
 @class UAChannelCapture;
 @class UARemoteDataManager;
 @class UAChannel;
