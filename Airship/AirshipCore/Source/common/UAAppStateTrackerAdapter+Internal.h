@@ -69,13 +69,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 + (id<UAAppStateTrackerAdapter>)adapter;
 
-/**
- * Creates an app state tracker. Used for testing.
- *
- * @return The tracker.
- */
-+ (id<UAAppStateTrackerAdapter>)adapterWithApplication:(UIApplication *)application
-                                    notificationCenter:(NSNotificationCenter *)notificationCenter;
 
 @end
 

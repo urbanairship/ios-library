@@ -84,4 +84,8 @@ static UAAppStateTracker *shared_;
     [self.notificationCenter postNotificationName:UAApplicationWillTerminateNotification object:nil];
 }
 
+- (UAApplicationState)state {
+    return self.adapter.state;
+}
+
 @end

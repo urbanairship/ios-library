@@ -237,16 +237,13 @@ NSString *const UAEventKey = @"event";
         return;
     }
 
-    // If the server did not send a push ID (likely because the payload did not have room)
-    // then send "MISSING_SEND_ID"
     if ([UAUtils isAlertingPush:notification]) {
         self.conversionSendID = [notification objectForKey:@"_"] ?: kUAMissingSendID;
+        self.conversionPushMetadata = [notification objectForKey:kUAPushMetadata];
     } else {
         self.conversionSendID = nil;
+        self.conversionPushMetadata = nil;
     }
-
-    // If the server did not send the metadata, then set it to nil
-    self.conversionPushMetadata = [notification objectForKey:kUAPushMetadata] ?: nil;
 }
 
 - (void)startSession {

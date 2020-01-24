@@ -3,7 +3,6 @@
 #import "UAUIKitStateTrackerAdapter+Internal.h"
 
 @interface UAUIKitStateTrackerAdapter ()
-@property (nonatomic, strong) UIApplication *application;
 @property (nonatomic, strong) NSNotificationCenter *notificationCenter;
 @end
 
@@ -11,12 +10,10 @@
 
 @synthesize stateTrackerDelegate;
 
-- (instancetype)initWithApplication:(UIApplication *)application
-                 notificationCenter:(NSNotificationCenter *)notificationCenter {
+- (instancetype)initWithNotificationCenter:(NSNotificationCenter *)notificationCenter {
     self = [super init];
 
     if (self) {
-        self.application = application;
         self.notificationCenter = notificationCenter;
         [self observeStateEvents];
     }
@@ -24,13 +21,12 @@
     return self;
 }
 
-+ (instancetype)adapterWithApplication:(UIApplication *)application
-                    notificationCenter:(NSNotificationCenter *)notificationCenter {
-    return [[self alloc] initWithApplication:application notificationCenter:notificationCenter];
++ (instancetype)adapterWithNotificationCenter:(NSNotificationCenter *)notificationCenter {
+    return [[self alloc] initWithNotificationCenter:notificationCenter];
 }
 
 + (instancetype)adapter {
-    return [[self alloc] initWithApplication:[UIApplication sharedApplication] notificationCenter:[NSNotificationCenter defaultCenter]];
+    return [[self alloc] initWithNotificationCenter:[NSNotificationCenter defaultCenter]];
 }
 
 - (void)observeStateEvents {
@@ -73,7 +69,7 @@
 }
 
 - (UAApplicationState)state {
-    switch (self.application.applicationState) {
+    switch ([UIApplication sharedApplication].applicationState) {
         case UIApplicationStateActive:
             return UAApplicationStateActive;
         case UIApplicationStateInactive:

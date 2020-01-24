@@ -22,7 +22,6 @@
 #import "UATagGroupsMutationHistory+Internal.h"
 #import "UAChannel+Internal.h"
 #import "UAAppStateTracker.h"
-
 #import "UALocationModuleLoaderFactory.h"
 #import "UAAutomationModuleLoaderFactory.h"
 #import "UAExtendedActionsModuleLoaderFactory.h"
@@ -367,11 +366,13 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 
         return;
     }
-
-    // Required before the app init event to track conversion push ID
-    NSDictionary *remoteNotification = notification.userInfo[UAApplicationLaunchOptionsRemoteNotificationKey];
-    if (remoteNotification) {
-        [sharedAirship_.sharedAnalytics launchedFromNotification:remoteNotification];
+    // If we are inactive the app is launching, otherwise it's a content-available push
+    if ([UAAppStateTracker shared].state != UAApplicationStateBackground) {
+        // Required before the app init event to track conversion push ID
+        NSDictionary *remoteNotification = notification.userInfo[UAApplicationLaunchOptionsRemoteNotificationKey];
+        if (remoteNotification) {
+            [sharedAirship_.sharedAnalytics launchedFromNotification:remoteNotification];
+        }
     }
 
     // Init event
@@ -560,4 +561,3 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 }
 
 @end
-

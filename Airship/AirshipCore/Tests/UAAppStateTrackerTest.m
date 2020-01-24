@@ -117,4 +117,10 @@
     [self.mockNotificationCenter verify];
 }
 
+- (void)testState {
+    XCTAssertEqual(UAApplicationStateActive, self.tracker.state);
+    [[[self.mockAdapter stub] andReturnValue:@(UAApplicationStateInactive)] state];
+    XCTAssertEqual(UAApplicationStateInactive, self.tracker.state);
+}
+
 @end

@@ -287,6 +287,19 @@
     XCTAssertNil(self.analytics.conversionPushMetadata, @"ConversionPushMetadata should be nil if missing.");
 }
 
+- (void)testLaunchedFromNotificationSilentPush {
+    NSDictionary *notification = @{
+        @"aps": @{
+        },
+        @"com.urbanairship.metadata": @"THE_BASE64_METADATA_STRING"
+    };
+
+    [self.analytics launchedFromNotification:notification];
+
+    XCTAssertNil(self.analytics.conversionSendID);
+    XCTAssertNil(self.analytics.conversionPushMetadata);
+}
+
 /**
  * Test that tracking event adds itself on background
  */

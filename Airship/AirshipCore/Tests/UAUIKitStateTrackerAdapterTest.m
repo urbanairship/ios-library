@@ -13,13 +13,15 @@
 
 - (void)setUp {
     self.mockApplication = [self mockForClass:[UIApplication class]];
+    [[[self.mockApplication stub] andReturn:self.mockApplication] sharedApplication];
     self.mockDelegate = [self mockForProtocol:@protocol(UAAppStateTrackerDelegate)];
 
     [self createAdapter];
 }
 
+
 - (void)createAdapter {
-    self.adapter = [UAUIKitStateTrackerAdapter adapterWithApplication:self.mockApplication notificationCenter:[NSNotificationCenter defaultCenter]];
+    self.adapter = [UAUIKitStateTrackerAdapter adapterWithNotificationCenter:[NSNotificationCenter defaultCenter]];
     self.adapter.stateTrackerDelegate = self.mockDelegate;
 }
 
