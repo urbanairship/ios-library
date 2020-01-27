@@ -251,7 +251,7 @@ NSString *const UAEventKey = @"event";
 }
 
 - (BOOL)isEnabled {
-    return [self.dataStore boolForKey:kUAAnalyticsEnabled] && self.config.analyticsEnabled;
+    return [self.dataStore boolForKey:kUAAnalyticsEnabled] && self.config.analyticsEnabled && self.isDataOptIn;
 }
 
 - (void)setEnabled:(BOOL)enabled {
@@ -261,11 +261,20 @@ NSString *const UAEventKey = @"event";
         [self.eventManager deleteAllEvents];
     }
 
+    if (enabled && !self.isDataOptIn) {
+        UA_LWARN(@"Analytics will remain disabled until data collection is opted in");
+    }
+
     [self.dataStore setBool:enabled forKey:kUAAnalyticsEnabled];
     self.eventManager.uploadsEnabled = self.isEnabled && self.componentEnabled && self.isDataOptIn;
 }
 
 - (void)associateDeviceIdentifiers:(UAAssociatedIdentifiers *)associatedIdentifiers {
+    if (!self.isDataOptIn) {
+        UA_LWARN(@"Unable to associate identifiers %@ when data opt-in is disabled", associatedIdentifiers.allIDs);
+        return;
+    }
+
     NSDictionary *previous = [self.dataStore objectForKey:kUAAssociatedIdentifiers];
 
     if ([previous isEqualToDictionary:associatedIdentifiers.allIDs]) {
@@ -278,7 +287,7 @@ NSString *const UAEventKey = @"event";
 }
 
 - (UAAssociatedIdentifiers *)currentAssociatedDeviceIdentifiers {
-    NSDictionary *storedIDs = [self.dataStore objectForKey:kUAAssociatedIdentifiers];
+    NSDictionary *storedIDs = [self.dataStore objectForKey:kUAAssociatedIdentifiers] ? : @{};
     return [UAAssociatedIdentifiers identifiersWithDictionary:storedIDs];
 }
 
@@ -397,6 +406,13 @@ NSString *const UAEventKey = @"event";
 
 - (void)addAnalyticsHeadersBlock:(nonnull UAAnalyticsHeadersBlock)headersBlock {
     [self.headerBlocks addObject:headersBlock];
+}
+
+- (void)onDataOptInEnableChange {
+    if (!self.isDataOptIn) {
+        [self.eventManager deleteAllEvents];
+        [self.dataStore setValue:nil forKey:kUAAssociatedIdentifiers];
+    }
 }
 
 @end

@@ -99,7 +99,7 @@
 }
 
 /**
- * Test isEnabled only returns NO when UARuntimeConfig disables analytics.
+ * Test isEnabled always returns NO when UARuntimeConfig disables analytics.
  */
 - (void)testIsEnabledConfigOverride {
     self.config.analyticsEnabled = NO;
@@ -111,6 +111,37 @@
 
     self.analytics.enabled = NO;
     XCTAssertFalse(self.analytics.enabled);
+}
+
+/**
+ * Test isEnabled always returns NO when data collection is opted out.
+ */
+- (void)testIsEnabledDataOptedOut {
+    [self.dataStore setBool:NO forKey:UAAirshipDataOptInKey];
+
+    self.analytics = [self createAnalytics];
+
+    self.analytics.enabled = YES;
+    XCTAssertFalse(self.analytics.enabled);
+
+    self.analytics.enabled = NO;
+    XCTAssertFalse(self.analytics.enabled);
+}
+
+/**
+ * Test isEnabled returns YES if enabled was previously set to YES and data becomes opted in.
+ */
+- (void)testIsEnabledDataOptedIn {
+    [self.dataStore setBool:NO forKey:UAAirshipDataOptInKey];
+
+    self.analytics = [self createAnalytics];
+
+    self.analytics.enabled = YES;
+    XCTAssertFalse(self.analytics.enabled);
+
+    [self.dataStore setBool:YES forKey:UAAirshipDataOptInKey];
+
+    XCTAssertTrue(self.analytics.enabled);
 }
 
 /**
@@ -204,6 +235,20 @@
 
     // Verify the event was added
     [self.mockEventManager verify];
+}
+
+/**
+ * Test associateIdentifiers does nothing if data is opted out
+ */
+- (void)testAssociateDeviceIdentifiersDataOptedOut {
+    [self.dataStore setBool:NO forKey:UAAirshipDataOptInKey];
+    
+    NSDictionary *identifiers = @{@"some identifier": @"some value"};
+
+    // Associate the identifiers
+    [self.analytics associateDeviceIdentifiers:[UAAssociatedIdentifiers identifiersWithDictionary:identifiers]];
+
+    XCTAssertEqualObjects(@{}, [self.analytics currentAssociatedDeviceIdentifiers].allIDs, @"Device identifiers should be empty");
 }
 
 /**
@@ -493,6 +538,24 @@
 
     id headers = [self.eventManagerDelegate analyticsHeaders];
     XCTAssertEqualObjects(@"story", headers[@"cool"]);
+}
+
+- (void)testOnDataOptOut {
+    NSDictionary *identifiers = @{@"some identifier": @"some value"};
+
+    // Associate the identifiers
+    [self.analytics associateDeviceIdentifiers:[UAAssociatedIdentifiers identifiersWithDictionary:identifiers]];
+
+    XCTAssertEqualObjects(self.analytics.currentAssociatedDeviceIdentifiers.allIDs, identifiers);
+
+    [[self.mockEventManager expect] deleteAllEvents];
+
+    [self.dataStore setBool:NO forKey:UAAirshipDataOptInKey];
+    [self.analytics onDataOptInEnableChange];
+
+    [self.mockEventManager verify];
+
+    XCTAssertEqualObjects(self.analytics.currentAssociatedDeviceIdentifiers.allIDs, @{});
 }
 
 - (UAAnalytics *)createAnalytics {

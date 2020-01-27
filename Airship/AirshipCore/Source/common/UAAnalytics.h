@@ -87,7 +87,7 @@ extern NSString *const UAScreenKey;
  * location segmentation, push to local time).
  *
  * Note: This property will always return `NO` if analytics is disabled in
- * UARuntimeConfig.
+ * UARuntimeConfig, or if data collecton is not opted in.
  */
 @property (nonatomic, assign, getter=isEnabled) BOOL enabled;
 
