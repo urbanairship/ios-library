@@ -389,13 +389,13 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
 }
 
 - (void)setPushTokenRegistrationEnabled:(BOOL)enabled {
-    if (enabled && !self.isDataOptIn) {
-        UA_LWARN(@"Ignoring push token registration request, global data opt-in is disabled");
-        return;
-    }
-    
     BOOL previousValue = self.pushTokenRegistrationEnabled;
     [self.dataStore setBool:enabled forKey:UAPushTokenRegistrationEnabledKey];
+
+    if (enabled && !self.isDataOptIn) {
+        UA_LWARN(@"Push token registration will continue to be disabled until data collection is enabled.");
+        return;
+    }
 
     if (enabled != previousValue) {
         [self.channel updateRegistration];
@@ -632,14 +632,16 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
     && self.userPushNotificationsEnabled
     && self.authorizedNotificationSettings
     && self.isRegisteredForRemoteNotifications
-    && self.pushTokenRegistrationEnabled;
+    && self.pushTokenRegistrationEnabled
+    && self.isDataOptIn;
 }
 
 - (BOOL)backgroundPushNotificationsAllowed {
     if (!self.deviceToken
         || !self.backgroundPushNotificationsEnabled
         || ![UAirship shared].remoteNotificationBackgroundModeEnabled
-        || !self.pushTokenRegistrationEnabled) {
+        || !self.pushTokenRegistrationEnabled
+        || !self.isDataOptIn) {
         return NO;
     }
 
@@ -784,7 +786,7 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
 
 - (void)extendChannelRegistrationPayload:(UAChannelRegistrationPayload *)payload
                        completionHandler:(UAChannelRegistrationExtenderCompletionHandler)completionHandler {
-    if (self.pushTokenRegistrationEnabled) {
+    if (self.pushTokenRegistrationEnabled && self.isDataOptIn) {
         payload.pushAddress = self.deviceToken;
     }
 

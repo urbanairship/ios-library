@@ -1056,6 +1056,34 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
                    @"UserPushNotificationsAllowed should be NO");
 }
 
+-(void)testUserPushNotificationsAllowedDataOptOut {
+    [self.dataStore setBool:YES forKey:UAAirshipDataOptInKey];
+    self.push.userPushNotificationsEnabled = YES;
+    self.push.pushTokenRegistrationEnabled = YES;
+    self.push.deviceToken = validDeviceToken;
+    self.push.authorizedNotificationSettings = 1;
+    [[[self.mockApplication stub] andReturnValue:OCMOCK_VALUE(YES)] isRegisteredForRemoteNotifications];
+
+    XCTAssertTrue(self.push.userPushNotificationsAllowed);
+
+    [self.dataStore setBool:NO forKey:UAAirshipDataOptInKey];
+    XCTAssertFalse(self.push.userPushNotificationsAllowed);
+}
+
+- (void)testBackgroundPushNotificationsAllowedDataOptOut {
+    self.push.deviceToken = validDeviceToken;
+    self.push.backgroundPushNotificationsEnabled = YES;
+    self.push.pushTokenRegistrationEnabled = YES;
+    [[[self.mockAirship stub] andReturnValue:OCMOCK_VALUE(YES)] remoteNotificationBackgroundModeEnabled];
+    [[[self.mockApplication stub] andReturnValue:@(UIBackgroundRefreshStatusAvailable)] backgroundRefreshStatus];
+    [[[self.mockApplication stub] andReturnValue:OCMOCK_VALUE(YES)] isRegisteredForRemoteNotifications];
+
+    XCTAssertTrue(self.push.backgroundPushNotificationsAllowed);
+
+    [self.dataStore setBool:NO forKey:UAAirshipDataOptInKey];
+    XCTAssertFalse(self.push.userPushNotificationsAllowed);
+}
+
 /**
  * Test applicationDidTransitionToForeground, when run at launch, doesn't register channel
  */
