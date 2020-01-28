@@ -9,4 +9,6 @@ FOUNDATION_EXPORT double AirshipAccengageVersionNumber;
 FOUNDATION_EXPORT const unsigned char AirshipAccengageVersionString[];
 
 #import "UAAccengageModuleLoader.h"
-
+#import "ACCDeviceInformationSet.h"
+#import "ACCUserProfile.h"
+#import "Accengage.h"

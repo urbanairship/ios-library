@@ -10,6 +10,7 @@
 #import "UAPush.h"
 #import "UAAnalytics.h"
 #import "UAPushableComponent.h"
+#import "UAAttributeMutations.h"
 #endif
 
 NS_ASSUME_NONNULL_BEGIN
