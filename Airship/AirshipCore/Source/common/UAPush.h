@@ -260,7 +260,7 @@ static const UANotificationOptions UANotificationOptionNone =  0;
 
 /**
  * Enables/disables sending the device token during channel registration.
- * Defaults to `YES`. If set to `NO`, the app will not be able to receive push
+ * Defaults to `UAirship.isDataOptIn`. If set to `NO`, the app will not be able to receive push
  * notifications.
  */
 @property (nonatomic, assign) BOOL pushTokenRegistrationEnabled;

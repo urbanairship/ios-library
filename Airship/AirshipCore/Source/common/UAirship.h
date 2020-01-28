@@ -141,8 +141,14 @@ extern NSString * const UADeviceIDChangedNotification;
 @property (nonatomic, strong, readonly) UAAnalytics *analytics;
 
 /**
- * Global data opt-in flag. Enabled by default. Setting this flag to disabled disables analytics,
- * attributes, named user association and device token registration. 
+ * Global data opt-in flag. Enabled by default.
+ *
+ * When disabled, the device will stop collecting and sending data for named user, events,
+ * tags, attributes, associated identifiers, and location from the device.
+ *
+ * Push notifications will continue to work only if `UAPush.pushTokenRegistrationEnabled`
+ * has been explicitly set to `YES`, otherwise it will default to the current state  of `isDataOptIn`.
+ *
  * @note To disable by default, set the dataOptInEnabled AirshipConfig flag  to `YES`
 */
 @property (nonatomic, assign, getter=isDataOptIn) BOOL dataOptIn;
@@ -257,4 +263,3 @@ NS_ASSUME_NONNULL_END
 
 
 @end
-

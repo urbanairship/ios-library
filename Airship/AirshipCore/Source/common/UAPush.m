@@ -382,7 +382,7 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
 
 - (BOOL)pushTokenRegistrationEnabled {
     if (![self.dataStore objectForKey:UAPushTokenRegistrationEnabledKey]) {
-        return YES;
+        return self.isDataOptIn;
     }
 
     return [self.dataStore boolForKey:UAPushTokenRegistrationEnabledKey];
@@ -632,16 +632,14 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
     && self.userPushNotificationsEnabled
     && self.authorizedNotificationSettings
     && self.isRegisteredForRemoteNotifications
-    && self.pushTokenRegistrationEnabled
-    && self.isDataOptIn;
+    && self.pushTokenRegistrationEnabled;
 }
 
 - (BOOL)backgroundPushNotificationsAllowed {
     if (!self.deviceToken
         || !self.backgroundPushNotificationsEnabled
         || ![UAirship shared].remoteNotificationBackgroundModeEnabled
-        || !self.pushTokenRegistrationEnabled
-        || !self.isDataOptIn) {
+        || !self.pushTokenRegistrationEnabled) {
         return NO;
     }
 

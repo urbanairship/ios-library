@@ -1056,18 +1056,21 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
                    @"UserPushNotificationsAllowed should be NO");
 }
 
--(void)testUserPushNotificationsAllowedDataOptOut {
+/**
+ * Test that pushTokenRegistrationEnabled defaults to the current value of dataOptIn.
+ */
+-(void)testPushTokenRegistrationEnabledDataOptIn {
     [self.dataStore setBool:YES forKey:UAAirshipDataOptInKey];
-    self.push.userPushNotificationsEnabled = YES;
-    self.push.pushTokenRegistrationEnabled = YES;
-    self.push.deviceToken = validDeviceToken;
-    self.push.authorizedNotificationSettings = 1;
-    [[[self.mockApplication stub] andReturnValue:OCMOCK_VALUE(YES)] isRegisteredForRemoteNotifications];
-
-    XCTAssertTrue(self.push.userPushNotificationsAllowed);
+    XCTAssertTrue(self.push.pushTokenRegistrationEnabled);
 
     [self.dataStore setBool:NO forKey:UAAirshipDataOptInKey];
-    XCTAssertFalse(self.push.userPushNotificationsAllowed);
+    XCTAssertFalse(self.push.pushTokenRegistrationEnabled);
+
+    self.push.pushTokenRegistrationEnabled = YES;
+    XCTAssertTrue(self.push.pushTokenRegistrationEnabled);
+
+    XCTAssertTrue(self.push.pushTokenRegistrationEnabled);
+    XCTAssertTrue(self.push.pushTokenRegistrationEnabled);
 }
 
 - (void)testBackgroundPushNotificationsAllowedDataOptOut {
