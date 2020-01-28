@@ -83,7 +83,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Check if the user has opted in to location updates.
  *
- * @return `YES` if UALocation location updates are enabled and the user has authorized the app to use location services.
+ * @return `YES` if UALocation location updates are enabled, the user has authorized the app to use location services, and data collection is enabled.
  */
 - (BOOL)isLocationOptedIn;
 

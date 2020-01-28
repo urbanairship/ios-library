@@ -155,6 +155,12 @@ NSString *const UALocationBackgroundUpdatesAllowed = @"UALocationBackgroundUpdat
 
 - (void)updateLocationService {
     if (!self.componentEnabled) {
+        [self stopLocationUpdates];
+        return;
+    }
+
+    if (!self.isDataOptIn) {
+        [self stopLocationUpdates];
         return;
     }
     
@@ -219,7 +225,7 @@ NSString *const UALocationBackgroundUpdatesAllowed = @"UALocationBackgroundUpdat
 }
 
 - (void)startLocationUpdates {
-    if (!self.componentEnabled) {
+    if (!self.componentEnabled || !self.isDataOptIn) {
         return;
     }
     
@@ -372,13 +378,11 @@ NSString *const UALocationBackgroundUpdatesAllowed = @"UALocationBackgroundUpdat
 }
 
 - (void)onComponentEnableChange {
-    if (self.componentEnabled) {
-        // if component was disabled and is now enabled, start updating the location
-        [self updateLocationService];
-    } else {
-        // if component was enabled and is now disabled, stop updating the location
-        [self stopLocationUpdates];
-    }
+    [self updateLocationService];
+}
+
+- (void)onDataOptInEnableChange {
+    [self updateLocationService];
 }
 
 @end
