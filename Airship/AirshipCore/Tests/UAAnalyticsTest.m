@@ -44,7 +44,7 @@
     self.mockChannel = [self mockForClass:[UAChannel class]];
     self.analytics = [self createAnalytics];
 
-    [self.dataStore setBool:YES forKey:UAAirshipDataOptInKey];
+    [self.dataStore setBool:YES forKey:UAirshipDataCollectionEnabledKey];
     
     // Channel ID
     NSString *channelIDString = @"someChannelID";
@@ -114,10 +114,10 @@
 }
 
 /**
- * Test isEnabled always returns NO when data collection is opted out.
+ * Test isEnabled always returns NO when data collection is disabled.
  */
-- (void)testIsEnabledDataOptedOut {
-    [self.dataStore setBool:NO forKey:UAAirshipDataOptInKey];
+- (void)testIsEnabledDataCollectionDisabled {
+    [self.dataStore setBool:NO forKey:UAirshipDataCollectionEnabledKey];
 
     self.analytics = [self createAnalytics];
 
@@ -129,17 +129,17 @@
 }
 
 /**
- * Test isEnabled returns YES if enabled was previously set to YES and data becomes opted in.
+ * Test isEnabled returns YES if enabled was previously set to YES when data collection becomes enabled.
  */
-- (void)testIsEnabledDataOptedIn {
-    [self.dataStore setBool:NO forKey:UAAirshipDataOptInKey];
+- (void)testIsEnabledDataCollectionEnabled {
+    [self.dataStore setBool:NO forKey:UAirshipDataCollectionEnabledKey];
 
     self.analytics = [self createAnalytics];
 
     self.analytics.enabled = YES;
     XCTAssertFalse(self.analytics.enabled);
 
-    [self.dataStore setBool:YES forKey:UAAirshipDataOptInKey];
+    [self.dataStore setBool:YES forKey:UAirshipDataCollectionEnabledKey];
 
     XCTAssertTrue(self.analytics.enabled);
 }
@@ -238,10 +238,10 @@
 }
 
 /**
- * Test associateIdentifiers does nothing if data is opted out
+ * Test associateIdentifiers does nothing if data collection is disabled.
  */
-- (void)testAssociateDeviceIdentifiersDataOptedOut {
-    [self.dataStore setBool:NO forKey:UAAirshipDataOptInKey];
+- (void)testAssociateDeviceIdentifiersDataCollectionDisabled {
+    [self.dataStore setBool:NO forKey:UAirshipDataCollectionEnabledKey];
     
     NSDictionary *identifiers = @{@"some identifier": @"some value"};
 
@@ -540,7 +540,7 @@
     XCTAssertEqualObjects(@"story", headers[@"cool"]);
 }
 
-- (void)testOnDataOptOut {
+- (void)testOnDataCollectionDisabled {
     NSDictionary *identifiers = @{@"some identifier": @"some value"};
 
     // Associate the identifiers
@@ -550,8 +550,8 @@
 
     [[self.mockEventManager expect] deleteAllEvents];
 
-    [self.dataStore setBool:NO forKey:UAAirshipDataOptInKey];
-    [self.analytics onDataOptInEnableChange];
+    [self.dataStore setBool:NO forKey:UAirshipDataCollectionEnabledKey];
+    [self.analytics onDataCollectionEnabledChanged];
 
     [self.mockEventManager verify];
 

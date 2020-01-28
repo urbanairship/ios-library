@@ -96,7 +96,7 @@ NSString *const PersistentQueueKey = @"com.urbanairship.channel_attributes.regis
 }
 
 - (void)updateAttributesForChannel:(NSString *)identifier {
-    if (!self.componentEnabled || !self.isDataOptIn) {
+    if (!self.componentEnabled || !self.isDataCollectionEnabled) {
         return;
     }
 

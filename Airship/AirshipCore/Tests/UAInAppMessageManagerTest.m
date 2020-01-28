@@ -57,7 +57,7 @@
     [super setUp];
 
     self.mockAirship = [self mockForClass:[UAirship class]];
-    [[[self.mockAirship stub] andReturnValue:@(YES)] isDataOptIn];
+    [[[self.mockAirship stub] andReturnValue:@(YES)] isDataCollectionEnabled];
     [UAirship setSharedAirship:self.mockAirship];
 
     self.mockDelegate = [self mockForProtocol:@protocol(UAInAppMessagingDelegate)];

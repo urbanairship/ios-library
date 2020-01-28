@@ -382,7 +382,7 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
 
 - (BOOL)pushTokenRegistrationEnabled {
     if (![self.dataStore objectForKey:UAPushTokenRegistrationEnabledKey]) {
-        return self.isDataOptIn;
+        return self.isDataCollectionEnabled;
     }
 
     return [self.dataStore boolForKey:UAPushTokenRegistrationEnabledKey];
@@ -392,7 +392,7 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
     BOOL previousValue = self.pushTokenRegistrationEnabled;
     [self.dataStore setBool:enabled forKey:UAPushTokenRegistrationEnabledKey];
 
-    if (enabled && !self.isDataOptIn) {
+    if (enabled && !self.isDataCollectionEnabled) {
         UA_LWARN(@"Push token registration will continue to be disabled until data collection is enabled.");
         return;
     }
@@ -784,7 +784,7 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
 
 - (void)extendChannelRegistrationPayload:(UAChannelRegistrationPayload *)payload
                        completionHandler:(UAChannelRegistrationExtenderCompletionHandler)completionHandler {
-    if (self.pushTokenRegistrationEnabled && self.isDataOptIn) {
+    if (self.pushTokenRegistrationEnabled && self.isDataCollectionEnabled) {
         payload.pushAddress = self.deviceToken;
     }
 

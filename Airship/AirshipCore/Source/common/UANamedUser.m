@@ -88,8 +88,8 @@ NSString *const UANamedUserLastChannelIDKey = @"UANamedUserLastChannelID";
 }
 
 - (void)setIdentifier:(NSString *)identifier {
-    if (identifier && !self.isDataOptIn) {
-        UA_LWARN(@"Ignoring named user ID request, global data opt-in is disabled");
+    if (identifier && !self.isDataCollectionEnabled) {
+        UA_LWARN(@"Ignoring named user ID request, global data collection is disabled");
         return;
     }
     
@@ -181,8 +181,8 @@ NSString *const UANamedUserLastChannelIDKey = @"UANamedUserLastChannelID";
 
 
 - (void)addTags:(NSArray *)tags group:(NSString *)tagGroupID {
-    if (!self.isDataOptIn) {
-        UA_LWARN(@"Unable to add tags %@ for group %@ when data opt-in is disabled.", [tags description], tagGroupID);
+    if (!self.isDataCollectionEnabled) {
+        UA_LWARN(@"Unable to add tags %@ for group %@ when data collection is disabled.", [tags description], tagGroupID);
         return;
     }
 
@@ -190,8 +190,8 @@ NSString *const UANamedUserLastChannelIDKey = @"UANamedUserLastChannelID";
 }
 
 - (void)removeTags:(NSArray *)tags group:(NSString *)tagGroupID {
-    if (!self.isDataOptIn) {
-        UA_LWARN(@"Unable to remove tags %@ for group %@ when data opt-in is disabled.", [tags description], tagGroupID);
+    if (!self.isDataCollectionEnabled) {
+        UA_LWARN(@"Unable to remove tags %@ for group %@ when data collection is disabled.", [tags description], tagGroupID);
         return;
     }
 
@@ -199,8 +199,8 @@ NSString *const UANamedUserLastChannelIDKey = @"UANamedUserLastChannelID";
 }
 
 - (void)setTags:(NSArray *)tags group:(NSString *)tagGroupID {
-    if (!self.isDataOptIn) {
-        UA_LWARN(@"Unable to set tags %@ for group %@ when data opt-in is disabled.", [tags description], tagGroupID);
+    if (!self.isDataCollectionEnabled) {
+        UA_LWARN(@"Unable to set tags %@ for group %@ when data collection is disabled.", [tags description], tagGroupID);
         return;
     }
 
@@ -234,8 +234,8 @@ NSString *const UANamedUserLastChannelIDKey = @"UANamedUserLastChannelID";
     self.tagGroupsRegistrar.componentEnabled = self.componentEnabled;
 }
 
-- (void)onDataOptInEnableChange {
-    if (!self.isDataOptIn) {
+- (void)onDataCollectionEnabledChanged {
+    if (!self.isDataCollectionEnabled) {
         self.identifier = nil;
         [self forceUpdate];
     }

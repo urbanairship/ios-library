@@ -13,8 +13,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Whether the component is opted in to data collection.
+ * @note For internal use only. :nodoc:
  */
-@property(nonatomic, readonly) BOOL isDataOptIn;
+@property(nonatomic, readonly) BOOL isDataCollectionEnabled;
 
 - (instancetype)init NS_UNAVAILABLE;
 
@@ -40,9 +41,10 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)onComponentEnableChange;
 
 /**
-* Called when the data opt-in  flag has changed value.
-*/
-- (void)onDataOptInEnableChange;
+ * Called when the data collection enabled  flag has changed value.
+ * @note For internal use only. :nodoc:
+ */
+- (void)onDataCollectionEnabledChanged;
 
 /**
  * Called when remote config is loaded. If no config is available for the component, config will be nil.

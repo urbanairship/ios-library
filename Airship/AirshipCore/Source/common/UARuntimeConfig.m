@@ -21,7 +21,7 @@
 @property (nonatomic, assign, getter=isChannelCreationDelayEnabled) BOOL channelCreationDelayEnabled;
 @property (nonatomic, copy) NSDictionary *customConfig;
 @property (nonatomic, assign) BOOL requestAuthorizationToUseNotifications;
-@property (nonatomic, assign, getter=isDataOptInEnabled) BOOL dataOptInEnabled;
+@property (nonatomic, assign, getter=isDataCollectionOptInEnabled) BOOL dataCollectionOptInEnabled;
 
 @property (nonatomic, copy) NSString *deviceAPIURL;
 @property (nonatomic, copy) NSString *analyticsURL;
@@ -77,7 +77,7 @@ NSString *const UARuntimeConfigEURemoteDataAPIURL = @"https://remote-data.asnapi
         self.channelCreationDelayEnabled = config.channelCreationDelayEnabled;
         self.messageCenterStyleConfig = config.messageCenterStyleConfig;
         self.itunesID = config.itunesID;
-        self.dataOptInEnabled = config.dataOptInEnabled;
+        self.dataCollectionOptInEnabled = config.dataCollectionOptInEnabled;
     }
 
     return self;

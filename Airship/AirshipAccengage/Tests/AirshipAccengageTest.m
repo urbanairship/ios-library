@@ -178,7 +178,7 @@
 }
 
 - (void)testMigrateSettings {
-    [self.dataStore setBool:YES forKey:UAAirshipDataOptInKey];
+    [self.dataStore setBool:YES forKey:UAirshipDataCollectionEnabledKey];
 
     id archiverMock = OCMClassMock([NSKeyedUnarchiver class]);
     id utilsMock = OCMClassMock([UAAccengageUtils class]);

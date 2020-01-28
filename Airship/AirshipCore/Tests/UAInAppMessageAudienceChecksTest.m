@@ -16,7 +16,7 @@
 @property (nonatomic, strong) id mockLocationProvider;
 @property (nonatomic, strong) id mockPush;
 @property (nonatomic, strong) id mockChannel;
-@property (nonatomic, assign) BOOL isDataOptIn;
+@property (nonatomic, assign) BOOL isDataCollectionEnabled;
 
 @end
 
@@ -25,7 +25,7 @@
 - (void)setUp {
     [super setUp];
 
-    self.isDataOptIn = YES;
+    self.isDataCollectionEnabled = YES;
 
     self.mockAirship = [self mockForClass:[UAirship class]];
     self.mockPush = [self mockForClass:[UAPush class]];
@@ -37,9 +37,9 @@
     UA_WEAKIFY(self)
     [[[self.mockAirship stub] andDo:^(NSInvocation *invocation) {
         UA_STRONGIFY(self)
-        BOOL optIn = self.isDataOptIn;
-        [invocation setReturnValue:(void *)&optIn];
-    }] isDataOptIn];
+        BOOL enabled = self.isDataCollectionEnabled;
+        [invocation setReturnValue:(void *)&enabled];
+    }] isDataCollectionEnabled];
 
     [UAirship setSharedAirship:self.mockAirship];
 
@@ -72,8 +72,8 @@
     XCTAssertFalse([UAInAppMessageAudienceChecks checkDisplayAudienceConditions:requiresOptedOut]);
 }
 
-- (void)testLocationOptInWhenDataOptInDisabled {
-    self.isDataOptIn = NO;
+- (void)testLocationOptInWhenDataCollectionDisabled {
+    self.isDataCollectionEnabled = NO;
 
     // setup
     UAInAppMessageAudience *requiresOptedIn = [UAInAppMessageAudience audienceWithBuilderBlock:^(UAInAppMessageAudienceBuilder * _Nonnull builder) {
@@ -110,8 +110,8 @@
     XCTAssertTrue([UAInAppMessageAudienceChecks checkDisplayAudienceConditions:requiresOptedOut]);
 }
 
-- (void)testLocationOptOutWhenDataOptInDisabled {
-    self.isDataOptIn = NO;
+- (void)testLocationOptOutWhenDataCollectionDisabled {
+    self.isDataCollectionEnabled = NO;
 
     // setup
     UAInAppMessageAudience *requiresOptedIn = [UAInAppMessageAudience audienceWithBuilderBlock:^(UAInAppMessageAudienceBuilder * _Nonnull builder) {
@@ -148,8 +148,8 @@
     XCTAssertFalse([UAInAppMessageAudienceChecks checkDisplayAudienceConditions:requiresOptedOut]);
 }
 
-- (void)testNotificationOptInWhenDataOptInDisabled {
-    self.isDataOptIn = NO;
+- (void)testNotificationOptInWhenDataCollectionDisabled {
+    self.isDataCollectionEnabled = NO;
 
     // setup
     UAInAppMessageAudience *requiresOptedIn = [UAInAppMessageAudience audienceWithBuilderBlock:^(UAInAppMessageAudienceBuilder * _Nonnull builder) {
@@ -185,8 +185,8 @@
     XCTAssertTrue([UAInAppMessageAudienceChecks checkDisplayAudienceConditions:requiresOptedOut]);
 }
 
-- (void)testNotificationOptOutWhenDataOptInDisabled {
-    self.isDataOptIn = NO;
+- (void)testNotificationOptOutWhenDataCollectionDisabled {
+    self.isDataCollectionEnabled = NO;
 
     // setup
     UAInAppMessageAudience *requiresOptedIn = [UAInAppMessageAudience audienceWithBuilderBlock:^(UAInAppMessageAudienceBuilder * _Nonnull builder) {
@@ -240,8 +240,8 @@
     XCTAssertTrue([UAInAppMessageAudienceChecks checkDisplayAudienceConditions:audience]);
 }
 
-- (void)testTagSelectorWhenDataOptInDisabled {
-    self.isDataOptIn = NO;
+- (void)testTagSelectorWhenDataCollectionDisabled {
+    self.isDataCollectionEnabled = NO;
 
     // setup
     NSMutableArray<NSString *> *tags = [NSMutableArray array];
@@ -257,7 +257,7 @@
     // test
     XCTAssertFalse([UAInAppMessageAudienceChecks checkDisplayAudienceConditions:audience]);
 
-    // Note: This is unlikely to occur in practice since tags are supposed to be cleared when dataOptIn changes to NO.
+    // Note: This is unlikely to occur in practice since tags are supposed to be cleared when dataCollectionEnabled changes to NO.
     // But it's an explicit code path in UAInAppMessageAudienceChecks, so we should test it anyway
     [tags addObject:@"expected tag"];
     XCTAssertFalse([UAInAppMessageAudienceChecks checkDisplayAudienceConditions:audience]);

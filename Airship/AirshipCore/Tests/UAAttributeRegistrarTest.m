@@ -33,7 +33,7 @@
                                                       application:self.mockApplication
                                                              date:self.testDate];
 
-    [self.dataStore setBool:YES forKey:UAAirshipDataOptInKey];
+    [self.dataStore setBool:YES forKey:UAirshipDataCollectionEnabledKey];
     
     self.channelID = @"avalidchannel";
 }

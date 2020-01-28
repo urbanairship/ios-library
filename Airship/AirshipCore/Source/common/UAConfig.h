@@ -75,9 +75,12 @@ typedef NS_ENUM(NSUInteger, UACloudSite) {
 @property (nonatomic, assign) UACloudSite site;
 
 /**
- *  Flag indicating whether the data opt-in is enabled.
+ * Flag indicating whether data collection needs to be opted in with
+ * `UAirship.dataCollectionEnabled`. This flag will only take affect on first run.
+ * If previously not enabled, the device will still have data collection enabled until disabled with
+ * `UAirship.dataCollectionEnabled`.
 */
-@property (nonatomic, assign, getter=isDataOptInEnabled) BOOL dataOptInEnabled;
+@property (nonatomic, assign, getter=isDataCollectionOptInEnabled) BOOL dataCollectionOptInEnabled;
 
 /**
  * The default app key. Depending on the `inProduction` status,

@@ -47,7 +47,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 - (void)setUp {
     [super setUp];
 
-    [self.dataStore setBool:YES forKey:UAAirshipDataOptInKey];
+    [self.dataStore setBool:YES forKey:UAirshipDataCollectionEnabledKey];
     
     self.validAPNSDeviceToken = [validDeviceToken dataUsingEncoding:NSASCIIStringEncoding];
     assert([self.validAPNSDeviceToken length] <= 32);
@@ -1057,23 +1057,23 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 }
 
 /**
- * Test that pushTokenRegistrationEnabled defaults to the current value of dataOptIn.
+ * Test that pushTokenRegistrationEnabled defaults to the current value of dataCollectionEnabled.
  */
--(void)testPushTokenRegistrationEnabledDataOptIn {
-    [self.dataStore setBool:YES forKey:UAAirshipDataOptInKey];
+-(void)testPushTokenRegistrationEnabledDataCollection {
+    [self.dataStore setBool:YES forKey:UAirshipDataCollectionEnabledKey];
     XCTAssertTrue(self.push.pushTokenRegistrationEnabled);
 
-    [self.dataStore setBool:NO forKey:UAAirshipDataOptInKey];
+    [self.dataStore setBool:NO forKey:UAirshipDataCollectionEnabledKey];
     XCTAssertFalse(self.push.pushTokenRegistrationEnabled);
 
     self.push.pushTokenRegistrationEnabled = YES;
     XCTAssertTrue(self.push.pushTokenRegistrationEnabled);
 
-    XCTAssertTrue(self.push.pushTokenRegistrationEnabled);
+    [self.dataStore setBool:NO forKey:UAirshipDataCollectionEnabledKey];
     XCTAssertTrue(self.push.pushTokenRegistrationEnabled);
 }
 
-- (void)testBackgroundPushNotificationsAllowedDataOptOut {
+- (void)testBackgroundPushNotificationsAllowedDataCollectionDisabled {
     self.push.deviceToken = validDeviceToken;
     self.push.backgroundPushNotificationsEnabled = YES;
     self.push.pushTokenRegistrationEnabled = YES;
@@ -1083,7 +1083,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 
     XCTAssertTrue(self.push.backgroundPushNotificationsAllowed);
 
-    [self.dataStore setBool:NO forKey:UAAirshipDataOptInKey];
+    [self.dataStore setBool:NO forKey:UAirshipDataCollectionEnabledKey];
     XCTAssertFalse(self.push.userPushNotificationsAllowed);
 }
 

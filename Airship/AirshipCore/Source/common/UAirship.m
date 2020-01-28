@@ -142,9 +142,9 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         self.sharedRemoteConfigManager = [UARemoteConfigManager remoteConfigManagerWithRemoteDataManager:self.sharedRemoteDataManager
                                                                                       applicationMetrics:self.applicationMetrics];
         
-        // Default data opt-in value
-        if (![self.dataStore objectForKey:UAAirshipDataOptInKey]) {
-            [self.dataStore setBool:!(config.isDataOptInEnabled) forKey:UAAirshipDataOptInKey];
+        // Default data collection enabled value
+        if (![self.dataStore objectForKey:UAirshipDataCollectionEnabledKey]) {
+            [self.dataStore setBool:!(config.isDataCollectionOptInEnabled) forKey:UAirshipDataCollectionEnabledKey];
         }
        
 #if !TARGET_OS_TV
@@ -545,19 +545,18 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
     return nil;
 }
 
-- (void)setDataOptIn:(BOOL)enabled {
-    BOOL optInChanged = (self.isDataOptIn != enabled);
-    if (optInChanged) {
+- (void)setDataCollectionEnabled:(BOOL)enabled {
+    if (self.isDataCollectionEnabled != enabled) {
         // save value to data store
-        [self.dataStore setBool:enabled forKey:UAAirshipDataOptInKey];
+        [self.dataStore setBool:enabled forKey:UAirshipDataCollectionEnabledKey];
         for (UAComponent *component in sharedAirship_.components) {
-            [component onDataOptInEnableChange];
+            [component onDataCollectionEnabledChanged];
         }
     }
 }
 
-- (BOOL)isDataOptIn {
-    return [self.dataStore boolForKey:UAAirshipDataOptInKey];
+- (BOOL)isDataCollectionEnabled {
+    return [self.dataStore boolForKey:UAirshipDataCollectionEnabledKey];
 }
 
 @end

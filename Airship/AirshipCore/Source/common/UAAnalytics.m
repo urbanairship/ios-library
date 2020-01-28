@@ -77,7 +77,7 @@ NSString *const UAEventKey = @"event";
             [self.dataStore setBool:YES forKey:kUAAnalyticsEnabled];
         }
 
-        self.eventManager.uploadsEnabled = self.isEnabled && self.componentEnabled && self.isDataOptIn;
+        self.eventManager.uploadsEnabled = self.isEnabled && self.componentEnabled && self.isDataCollectionEnabled;
         self.eventManager.delegate = self;
         
         [self startSession];
@@ -199,7 +199,7 @@ NSString *const UAEventKey = @"event";
         return;
     }
 
-    if (!self.isEnabled || !self.isDataOptIn) {
+    if (!self.isEnabled || !self.isDataCollectionEnabled) {
         UA_LTRACE(@"Analytics disabled, ignoring event: %@", event.eventType);
         return;
     }
@@ -251,7 +251,7 @@ NSString *const UAEventKey = @"event";
 }
 
 - (BOOL)isEnabled {
-    return [self.dataStore boolForKey:kUAAnalyticsEnabled] && self.config.analyticsEnabled && self.isDataOptIn;
+    return [self.dataStore boolForKey:kUAAnalyticsEnabled] && self.config.analyticsEnabled && self.isDataCollectionEnabled;
 }
 
 - (void)setEnabled:(BOOL)enabled {
@@ -261,17 +261,17 @@ NSString *const UAEventKey = @"event";
         [self.eventManager deleteAllEvents];
     }
 
-    if (enabled && !self.isDataOptIn) {
+    if (enabled && !self.isDataCollectionEnabled) {
         UA_LWARN(@"Analytics will remain disabled until data collection is opted in");
     }
 
     [self.dataStore setBool:enabled forKey:kUAAnalyticsEnabled];
-    self.eventManager.uploadsEnabled = self.isEnabled && self.componentEnabled && self.isDataOptIn;
+    self.eventManager.uploadsEnabled = self.isEnabled && self.componentEnabled && self.isDataCollectionEnabled;
 }
 
 - (void)associateDeviceIdentifiers:(UAAssociatedIdentifiers *)associatedIdentifiers {
-    if (!self.isDataOptIn) {
-        UA_LWARN(@"Unable to associate identifiers %@ when data opt-in is disabled", associatedIdentifiers.allIDs);
+    if (!self.isDataCollectionEnabled) {
+        UA_LWARN(@"Unable to associate identifiers %@ when data collection is disabled", associatedIdentifiers.allIDs);
         return;
     }
 
@@ -332,7 +332,7 @@ NSString *const UAEventKey = @"event";
 }
 
 - (void)onComponentEnableChange {
-    self.eventManager.uploadsEnabled = self.isEnabled && self.componentEnabled && self.isDataOptIn;
+    self.eventManager.uploadsEnabled = self.isEnabled && self.componentEnabled && self.isDataCollectionEnabled;
     if (self.componentEnabled) {
         // if component was disabled and is now enabled, schedule an upload just in case
         [self scheduleUpload];
@@ -408,8 +408,8 @@ NSString *const UAEventKey = @"event";
     [self.headerBlocks addObject:headersBlock];
 }
 
-- (void)onDataOptInEnableChange {
-    if (!self.isDataOptIn) {
+- (void)onDataCollectionEnabledChanged {
+    if (!self.isDataCollectionEnabled) {
         [self.eventManager deleteAllEvents];
         [self.dataStore setValue:nil forKey:kUAAssociatedIdentifiers];
     }

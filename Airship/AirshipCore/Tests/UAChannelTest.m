@@ -46,7 +46,7 @@
 - (void)setUp {
     [super setUp];
 
-    [self.dataStore setBool:YES forKey:UAAirshipDataOptInKey];
+    [self.dataStore setBool:YES forKey:UAirshipDataCollectionEnabledKey];
 
     self.mockedApplication = [self mockForClass:[UIApplication class]];
     [[[self.mockedApplication stub] andReturn:self.mockedApplication] sharedApplication];
@@ -195,10 +195,10 @@
     XCTAssertNotEqualObjects(tags, self.channel.tags, @"tag with 128 characters should not set");
 }
 
-- (void)testSetTagsWhenDataOptInDisabled {
+- (void)testSetTagsWhenDataCollectionDisabled {
     // SETUP
     self.channel.tags = @[];
-    [self.dataStore setBool:NO forKey:UAAirshipDataOptInKey];
+    [self.dataStore setBool:NO forKey:UAirshipDataCollectionEnabledKey];
 
     // TEST
     self.channel.tags = @[@"haha", @"no"];
@@ -207,10 +207,10 @@
     XCTAssertEqualObjects(self.channel.tags, @[]);
 }
 
-- (void)testAddTagsWhenDataOptInDisabled {
+- (void)testAddTagsWhenDataCollectionDisabled {
     // SETUP
     self.channel.tags = @[];
-    [self.dataStore setBool:NO forKey:UAAirshipDataOptInKey];
+    [self.dataStore setBool:NO forKey:UAirshipDataCollectionEnabledKey];
 
 
     // TEST
@@ -220,10 +220,10 @@
     XCTAssertEqualObjects(self.channel.tags, @[]);
 }
 
-- (void)testAddTagWhenDataOptInDisabled {
+- (void)testAddTagWhenDataCollectionDisabled {
     // SETUP
     self.channel.tags = @[];
-    [self.dataStore setBool:NO forKey:UAAirshipDataOptInKey];
+    [self.dataStore setBool:NO forKey:UAirshipDataCollectionEnabledKey];
 
     // TEST
     [self.channel addTag:@"nope"];
@@ -232,11 +232,11 @@
     XCTAssertEqualObjects(self.channel.tags, @[]);
 }
 
-- (void)testRemoveTagsWhenDataOptInDisabled {
+- (void)testRemoveTagsWhenDataCollectionDisabled {
     // SETUP
     NSArray *tags = @[@"this_shouldn't", @"happen"];
     self.channel.tags = tags;
-    [self.dataStore setBool:NO forKey:UAAirshipDataOptInKey];
+    [self.dataStore setBool:NO forKey:UAirshipDataCollectionEnabledKey];
 
     // TEST
     [self.channel removeTags:tags];
@@ -245,10 +245,10 @@
     XCTAssertEqualObjects(self.channel.tags, tags);
 }
 
-- (void)testRemoveTagWhenDataOptInDisabled {
+- (void)testRemoveTagWhenDataCollectionDisabled {
     // SETUP
     self.channel.tags = @[@"this_shouldn't_happen"];
-    [self.dataStore setBool:NO forKey:UAAirshipDataOptInKey];
+    [self.dataStore setBool:NO forKey:UAirshipDataCollectionEnabledKey];
 
     // TEST
     [self.channel removeTag:@"this_shouldn't_happen"];
@@ -302,9 +302,9 @@
     [self.mockTagGroupsRegistrar verify];
 }
 
-- (void)testSetTagsWithGroupWhenDataOptInDisabled {
+- (void)testSetTagsWithGroupWhenDataCollectionDisabled {
     // SETUP
-    [self.dataStore setBool:NO forKey:UAAirshipDataOptInKey];
+    [self.dataStore setBool:NO forKey:UAirshipDataCollectionEnabledKey];
 
     // EXPECTATIONS
     [[self.mockTagGroupsRegistrar reject] setTags:OCMOCK_ANY group:OCMOCK_ANY type:UATagGroupsTypeChannel];
@@ -316,9 +316,9 @@
     [self.mockTagGroupsRegistrar verify];
 }
 
-- (void)testAddTagsWithGroupWhenDataOptInDisabled {
+- (void)testAddTagsWithGroupWhenDataCollectionDisabled {
     // SETUP
-    [self.dataStore setBool:NO forKey:UAAirshipDataOptInKey];
+    [self.dataStore setBool:NO forKey:UAirshipDataCollectionEnabledKey];
 
     // EXPECTATIONS
     [[self.mockTagGroupsRegistrar reject] addTags:OCMOCK_ANY group:OCMOCK_ANY type:UATagGroupsTypeChannel];
@@ -330,9 +330,9 @@
     [self.mockTagGroupsRegistrar verify];
 }
 
-- (void)testRemoveTagsWithGroupWhenDataOptInDisabled {
+- (void)testRemoveTagsWithGroupWhenDataCollectionDisabled {
     // SETUP
-    [self.dataStore setBool:NO forKey:UAAirshipDataOptInKey];
+    [self.dataStore setBool:NO forKey:UAirshipDataCollectionEnabledKey];
 
     // EXPECTATIONS
     [[self.mockTagGroupsRegistrar reject] removeTags:OCMOCK_ANY group:OCMOCK_ANY type:UATagGroupsTypeChannel];
@@ -344,11 +344,11 @@
     [self.mockTagGroupsRegistrar verify];
 }
 
-- (void)testDataOptInDisableClearsTags {
+- (void)testDataCollectionDisabledClearsTags {
     self.channel.tags = @[@"cool", @"rad"];
 
-    [self.dataStore setBool:NO forKey:UAAirshipDataOptInKey];
-    [self.channel onDataOptInEnableChange];
+    [self.dataStore setBool:NO forKey:UAirshipDataCollectionEnabledKey];
+    [self.channel onDataCollectionEnabledChanged];
     
     XCTAssertEqualObjects(self.channel.tags, @[]);
 }
@@ -435,7 +435,7 @@
  */
 - (void)testRegistrationPayload {
     self.channel.channelTagRegistrationEnabled = YES;
-    [self.dataStore setBool:YES forKey:UAAirshipDataOptInKey];
+    [self.dataStore setBool:YES forKey:UAirshipDataCollectionEnabledKey];
 
     self.channel.tags = @[@"cool", @"story"];
     [[[self.mockTimeZone stub] andReturn:@"cool zone"] name];
@@ -467,7 +467,7 @@
  */
 - (void)testRegistrationPayloadChannelTagRegistrationDisabled {
     self.channel.channelTagRegistrationEnabled = NO;
-    [self.dataStore setBool:YES forKey:UAAirshipDataOptInKey];
+    [self.dataStore setBool:YES forKey:UAirshipDataCollectionEnabledKey];
 
     self.channel.tags = @[@"cool", @"story"];
     [[[self.mockTimeZone stub] andReturn:@"cool zone"] name];
@@ -496,9 +496,9 @@
 /**
  * Test channel registration payload when channel tag registration is disabled.
  */
-- (void)testRegistrationPayloadDataOptInDisabled {
+- (void)testRegistrationPayloadDataCollectionDisabled {
     self.channel.channelTagRegistrationEnabled = YES;
-    [self.dataStore setBool:NO forKey:UAAirshipDataOptInKey];
+    [self.dataStore setBool:NO forKey:UAirshipDataCollectionEnabledKey];
 
     self.channel.tags = @[@"cool", @"story"];
     [[[self.mockTimeZone stub] andReturn:@"cool zone"] name];
@@ -870,7 +870,7 @@
  * Test updateChannelTagGroups method if the identifier is set and component enabled
  */
 - (void)testUpdateChannelTagGroups {
-    [self.dataStore setBool:YES forKey:UAAirshipDataOptInKey];
+    [self.dataStore setBool:YES forKey:UAirshipDataCollectionEnabledKey];
     self.channelIDFromMockChannelRegistrar = @"123456";
     self.channel.componentEnabled = YES;
     [[self.mockTagGroupsRegistrar expect] updateTagGroupsForID:OCMOCK_ANY type:UATagGroupsTypeChannel];
@@ -879,10 +879,10 @@
 }
 
 /**
- * Test updateChannelTagGroups method if data opt-in is disabled
+ * Test updateChannelTagGroups method if data collection is disabled
  */
-- (void)testUpdateChannelTagGroupsDataOptInDisabled {
-    [self.dataStore setBool:NO forKey:UAAirshipDataOptInKey];
+- (void)testUpdateChannelTagGroupsDataCollectionDisabled {
+    [self.dataStore setBool:NO forKey:UAirshipDataCollectionEnabledKey];
     self.channelIDFromMockChannelRegistrar = @"123456";
     self.channel.componentEnabled = YES;
     [[self.mockTagGroupsRegistrar reject] updateTagGroupsForID:OCMOCK_ANY type:UATagGroupsTypeChannel];

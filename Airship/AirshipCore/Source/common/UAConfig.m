@@ -38,7 +38,7 @@ NSString *const UALogLevelTraceName = @"TRACE";
     self = [super init];
     if (self) {
         self.site = UACloudSiteUS;
-        self.dataOptInEnabled = NO;
+        self.dataCollectionOptInEnabled = NO;
         self.developmentLogLevel = UALogLevelDebug;
         self.productionLogLevel = UALogLevelError;
         self.inProduction = NO;
@@ -76,7 +76,7 @@ NSString *const UALogLevelTraceName = @"TRACE";
         _analyticsURL = config.analyticsURL;
         _developmentLogLevel = config.developmentLogLevel;
         _productionLogLevel = config.productionLogLevel;
-        _dataOptInEnabled = config.dataOptInEnabled;
+        _dataCollectionOptInEnabled = config.dataCollectionOptInEnabled;
 
         _inProduction = config.inProduction;
         _detectProvisioningMode = config.detectProvisioningMode;
@@ -131,7 +131,7 @@ NSString *const UALogLevelTraceName = @"TRACE";
             "Default Message Center Style Config File: %@\n"
             "Use iTunes ID: %@\n"
             "Site:  %ld\n"
-            "DataOptInEnabled:  %d\n",
+            "DataCollectionOptInEnabled:  %d\n",
             self.inProduction,
             _inProduction,
             self.appKey,
@@ -162,7 +162,7 @@ NSString *const UALogLevelTraceName = @"TRACE";
             self.messageCenterStyleConfig,
             self.itunesID,
             (long) self.site,
-            self.dataOptInEnabled];
+            self.dataCollectionOptInEnabled];
 }
 
 #pragma mark -

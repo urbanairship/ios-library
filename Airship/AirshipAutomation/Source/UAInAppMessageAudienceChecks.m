@@ -43,12 +43,12 @@
         return YES;
     }
 
-    // Data opt-in
-    BOOL isDataOptIn = [UAirship shared].isDataOptIn;
+    // Data collection enabled
+    BOOL isDataCollectionEnabled = [UAirship shared].isDataCollectionEnabled;
     
     // Location opt-in
     if (audience.locationOptIn) {
-        if (!isDataOptIn) {
+        if (!isDataCollectionEnabled) {
             return NO;
         }
 
@@ -59,7 +59,7 @@
 
     // Notification opt-in
     if (audience.notificationsOptIn) {
-        if (!isDataOptIn) {
+        if (!isDataCollectionEnabled) {
             return NO;
         }
 
@@ -70,7 +70,7 @@
 
     // Tag Selector
     if (audience.tagSelector) {
-        if (!isDataOptIn) {
+        if (!isDataCollectionEnabled) {
             return NO;
         }
 

@@ -73,7 +73,7 @@ NSString *const UALocationBackgroundUpdatesAllowed = @"UALocationBackgroundUpdat
                        completionHandler:(UAChannelRegistrationExtenderCompletionHandler)completionHandler {
 
     // Only set location settings if the app is opted in to data collection
-    if (self.isDataOptIn) {
+    if (self.isDataCollectionEnabled) {
         payload.locationSettings = self.locationUpdatesEnabled ? @(YES) : @(NO);
     }
 
@@ -159,7 +159,7 @@ NSString *const UALocationBackgroundUpdatesAllowed = @"UALocationBackgroundUpdat
         return;
     }
 
-    if (!self.isDataOptIn) {
+    if (!self.isDataCollectionEnabled) {
         [self stopLocationUpdates];
         return;
     }
@@ -225,7 +225,7 @@ NSString *const UALocationBackgroundUpdatesAllowed = @"UALocationBackgroundUpdat
 }
 
 - (void)startLocationUpdates {
-    if (!self.componentEnabled || !self.isDataOptIn) {
+    if (!self.componentEnabled || !self.isDataCollectionEnabled) {
         return;
     }
     
@@ -299,7 +299,7 @@ NSString *const UALocationBackgroundUpdatesAllowed = @"UALocationBackgroundUpdat
 }
 
 - (BOOL)isLocationOptedIn {
-    if (!self.isDataOptIn) {
+    if (!self.isDataCollectionEnabled) {
         return NO;
     }
 
@@ -381,7 +381,7 @@ NSString *const UALocationBackgroundUpdatesAllowed = @"UALocationBackgroundUpdat
     [self updateLocationService];
 }
 
-- (void)onDataOptInEnableChange {
+- (void)onDataCollectionEnabledChanged {
     [self updateLocationService];
 }
 

@@ -6,7 +6,7 @@
 NSString * const UAComponentKey = @"UAComponent";
 NSString * const UAComponentEnabledKey = @"enabled";
 BOOL const UAComponentEnabledDefault = YES;
-NSString * const UAAirshipDataOptInKey = @"com.urbanairship.data_optin";
+NSString * const UAirshipDataCollectionEnabledKey = @"com.urbanairship.data_collection_enabled";
 
 @interface UAComponent()
 @property (nonatomic, strong) UAPreferenceDataStore *componentDataStore;
@@ -55,16 +55,16 @@ NSString * const UAAirshipDataOptInKey = @"com.urbanairship.data_optin";
     return [NSString stringWithFormat:@"%@.%@.%@", UAComponentKey, [self componentIdentifier], UAComponentEnabledKey];
 }
 
-- (BOOL)isDataOptIn {
-    return [self.componentDataStore boolForKey:UAAirshipDataOptInKey];
+- (BOOL)isDataCollectionEnabled {
+    return [self.componentDataStore boolForKey:UAirshipDataCollectionEnabledKey];
 }
 
 - (void)onComponentEnableChange {
     // placeholder - sub-classes should override if they want notification when the components enable/disable state changes
 }
 
-- (void)onDataOptInEnableChange {
-    // placeholder - sub-classes should override if they want notification when the data opt-in enable/disable state changes
+- (void)onDataCollectionEnabledChanged {
+    // placeholder - sub-classes should override if they want notification when the data collection enable/disable state changes
 }
 
 - (void)applyRemoteConfig:(nullable id)config  {

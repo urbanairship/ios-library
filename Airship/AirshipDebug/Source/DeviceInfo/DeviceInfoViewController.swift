@@ -95,7 +95,7 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
     displayInterval = IndexPath(row: 1, section: 1)
     
     // Device settings
-    private let dataOptIn = IndexPath(row: 0, section: 2),
+    private let dataCollectionEnabled = IndexPath(row: 0, section: 2),
     channelID = IndexPath(row: 1, section: 2),
     username = IndexPath(row: 2, section: 2),
     namedUser = IndexPath(row: 3, section: 2),
@@ -287,10 +287,10 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
             cell.displayIntervalStepper.isHidden = false;
             cell.displayIntervalStepper.value = Double(inAppAutomationDisplayInterval)
             cell.displayIntervalStepper.tintColor = ThemeManager.shared.currentTheme.WidgetTint;
-        case dataOptIn:
+        case dataCollectionEnabled:
             cell.title.text = "ua_device_info_data_enabled".localized()
             cell.cellSwitch.isHidden = false
-            cell.cellSwitch.isOn = UAirship.shared().isDataOptIn
+            cell.cellSwitch.isOn = UAirship.shared().isDataCollectionEnabled
             cell.subtitle?.adjustsFontSizeToFitWidth = true
             cell.subtitle?.minimumScaleFactor = 0.25
             cell.subtitle?.numberOfLines = 2
@@ -400,9 +400,9 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
         case sdkVersion:
             UIPasteboard.general.string = cell.subtitle?.text
             showCopiedAlert()
-        case dataOptIn:
+        case dataCollectionEnabled:
             cell.cellSwitch.setOn(!cell.cellSwitch.isOn, animated: true)
-            UAirship.shared().isDataOptIn = cell.cellSwitch.isOn
+            UAirship.shared().isDataCollectionEnabled = cell.cellSwitch.isOn
         case analyticsEnabled:
             cell.cellSwitch.setOn(!cell.cellSwitch.isOn, animated: true)
             UAirship.shared().analytics.isEnabled = cell.cellSwitch.isOn

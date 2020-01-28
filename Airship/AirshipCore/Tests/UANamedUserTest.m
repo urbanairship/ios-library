@@ -31,7 +31,7 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
 - (void)setUp {
     [super setUp];
 
-    [self.dataStore setBool:YES forKey:UAAirshipDataOptInKey];
+    [self.dataStore setBool:YES forKey:UAirshipDataCollectionEnabledKey];
     
     self.mockChannel = [self mockForClass:[UAChannel class]];
     [[[self.mockChannel stub] andDo:^(NSInvocation *invocation) {
@@ -419,10 +419,10 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
 }
 
 /**
- * Test that the tag groups registrar is not called when UANamedUser is asked to add device tags and data opt-in is disabled.
+ * Test that the tag groups registrar is not called when UANamedUser is asked to add device tags and data collection is disabled.
  */
-- (void)testAddDeviceTagsDataOptInDisabled {
-    [self.dataStore setBool:NO forKey:UAAirshipDataOptInKey];
+- (void)testAddDeviceTagsDataCollectionDisabled {
+    [self.dataStore setBool:NO forKey:UAirshipDataCollectionEnabledKey];
 
     NSArray *tags = @[@"foo", @"bar"];
     NSString *group = @"group";
@@ -438,10 +438,10 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
 }
 
 /**
- * Test that the tag groups registrar is called when UANamedUser is asked to add device tags and data opt-in is enabled.
+ * Test that the tag groups registrar is called when UANamedUser is asked to add device tags when data collection is enabled.
  */
-- (void)testAddDeviceTagsDataOptInEnabled {
-    [self.dataStore setBool:YES forKey:UAAirshipDataOptInKey];
+- (void)testAddDeviceTagsDataCollectionEnabled {
+    [self.dataStore setBool:YES forKey:UAirshipDataCollectionEnabledKey];
 
     NSArray *tags = @[@"foo", @"bar"];
     NSString *group = @"group";
@@ -474,10 +474,10 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
 }
 
 /**
- * Test that the tag groups registrar is not called when UANamedUser is asked to remove device tags and data opt-in is disabled.
+ * Test that the tag groups registrar is not called when UANamedUser is asked to remove device tags and data collection is disabled.
  */
-- (void)testRemoveDeviceTagsDataOptInDisabled {
-    [self.dataStore setBool:NO forKey:UAAirshipDataOptInKey];
+- (void)testRemoveDeviceTagsDataCollectionDisabled {
+    [self.dataStore setBool:NO forKey:UAirshipDataCollectionEnabledKey];
 
     NSArray *tags = @[@"foo", @"bar"];
     NSString *group = @"group";
@@ -493,10 +493,10 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
 }
 
 /**
- * Test that the tag groups registrar is called when UANamedUser is asked to remove device tags and data opt-in is enabled.
+ * Test that the tag groups registrar is called when UANamedUser is asked to remove device tags when data collection is enabled.
  */
-- (void)testRemoveDeviceTagsDataOptInEnabled {
-    [self.dataStore setBool:YES forKey:UAAirshipDataOptInKey];
+- (void)testRemoveDeviceTagsDataCollectionEnabled {
+    [self.dataStore setBool:YES forKey:UAirshipDataCollectionEnabledKey];
 
     NSArray *tags = @[@"foo", @"bar"];
     NSString *group = @"group";
@@ -529,10 +529,10 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
 }
 
 /**
- * Test that the tag groups registrar is not called when UANamedUser is asked to set device tags and data opt-in is disabled.
+ * Test that the tag groups registrar is not called when UANamedUser is asked to set device tags and data collection is disabled.
  */
-- (void)testSetDeviceTagsDataOptInDisabled {
-    [self.dataStore setBool:NO forKey:UAAirshipDataOptInKey];
+- (void)testSetDeviceTagsDataCollectionDisabled {
+    [self.dataStore setBool:NO forKey:UAirshipDataCollectionEnabledKey];
 
     NSArray *tags = @[@"foo", @"bar"];
     NSString *group = @"group";
@@ -548,10 +548,10 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
 }
 
 /**
- * Test that the tag groups registrar is called when UANamedUser is asked to set device tags and data opt-in is enabled.
+ * Test that the tag groups registrar is called when UANamedUser is asked to set device tags when data collection is enabled.
  */
-- (void)testSetDeviceTagsDataOptInEnabled {
-    [self.dataStore setBool:YES forKey:UAAirshipDataOptInKey];
+- (void)testSetDeviceTagsDataCollectionEnabled {
+    [self.dataStore setBool:YES forKey:UAirshipDataCollectionEnabledKey];
 
     NSArray *tags = @[@"foo", @"bar"];
     NSString *group = @"group";
@@ -566,14 +566,14 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
     [self.mockTagGroupsRegistrar verify];
 }
 
-- (void)testSetIdentifierDataOptOut {
+- (void)testSetIdentifierDataCollectionDisabled {
     self.namedUser.identifier = nil;
-    [self.dataStore setBool:NO forKey:UAAirshipDataOptInKey];
+    [self.dataStore setBool:NO forKey:UAirshipDataCollectionEnabledKey];
     self.namedUser.identifier = @"neat";
     XCTAssertNil(self.namedUser.identifier);
 }
 
-- (void)testClearNamedUserOnDataOptOut {
+- (void)testClearNamedUserOnDataCollectionDisabled {
     self.namedUser.identifier = @"neat";
     XCTAssertNotNil(self.namedUser.identifier);
 
@@ -582,8 +582,8 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
                                                                          onSuccess:OCMOCK_ANY
                                                                          onFailure:OCMOCK_ANY];
 
-    [self.dataStore setBool:NO forKey:UAAirshipDataOptInKey];
-    [self.namedUser onDataOptInEnableChange];
+    [self.dataStore setBool:NO forKey:UAirshipDataCollectionEnabledKey];
+    [self.namedUser onDataCollectionEnabledChanged];
 
     XCTAssertNil(self.namedUser.identifier);
 

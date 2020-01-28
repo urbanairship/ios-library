@@ -122,9 +122,12 @@ NS_ASSUME_NONNULL_BEGIN
 @property (readonly) BOOL requestAuthorizationToUseNotifications;
 
 /**
- *  Flag indicating whether the data opt-in is enabled.
-*/
-@property (readonly, getter=isDataOptInEnabled) BOOL dataOptInEnabled;
+ * Flag indicating whether data collection needs to be opted in with
+ * `UAirship.dataCollectionEnabled`. This flag will only take affect on first run.
+ * If previously not enabled, the device will still have data collection enabled until disabled with
+ * `UAirship.dataCollectionEnabled`.
+ */
+@property (readonly, getter=isDataCollectionOptInEnabled) BOOL dataCollectionOptInEnabled;
 
 ///---------------------------------------------------------------------------------------
 /// @name Resolved Options
