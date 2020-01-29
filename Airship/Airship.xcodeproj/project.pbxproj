@@ -40,10 +40,30 @@
 		3C13BFBB2384AD270071E80C /* UAMessageCenterResources.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C13BFB92384AD270071E80C /* UAMessageCenterResources.m */; };
 		3C13BFBD2384AE050071E80C /* AirshipMessageCenter.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C13BFBC2384AE050071E80C /* AirshipMessageCenter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3C13BFBF2384B0BB0071E80C /* UAAirshipMessageCenterCoreImport.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C13BFBE2384B0BB0071E80C /* UAAirshipMessageCenterCoreImport.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		3C16DA7623E11FB3001499A4 /* UADefaultMessageCenterListViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3C16DA7223E11FB3001499A4 /* UADefaultMessageCenterListViewController.xib */; };
+		3C16DA7723E11FB3001499A4 /* UADefaultMessageCenterListViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3C16DA7223E11FB3001499A4 /* UADefaultMessageCenterListViewController.xib */; };
+		3C16DA7823E11FB3001499A4 /* UADefaultMessageCenterMessageViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3C16DA7323E11FB3001499A4 /* UADefaultMessageCenterMessageViewController.xib */; };
+		3C16DA7923E11FB3001499A4 /* UADefaultMessageCenterMessageViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3C16DA7323E11FB3001499A4 /* UADefaultMessageCenterMessageViewController.xib */; };
 		3C38AE0A2384C1F700EDE9B7 /* AirshipMessageCenter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3CA0E423237E4A7B00EE76CF /* AirshipMessageCenter.framework */; };
 		3C39D3092384C8BE003C50D4 /* AirshipMessageCenter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3CA0E423237E4A7B00EE76CF /* AirshipMessageCenter.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		3C3BCBA820E16C8300D86E60 /* UAAutomationEngineIntegrationTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C3BCBA720E16C8300D86E60 /* UAAutomationEngineIntegrationTest.m */; };
 		3C3DAA0C22EF9ABC00202570 /* UAChannelTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C3DAA0B22EF9ABC00202570 /* UAChannelTest.m */; };
+		3C45B05F23E11D8B004B9590 /* UADefaultMessageCenterListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C45B05923E11D8A004B9590 /* UADefaultMessageCenterListViewController.m */; };
+		3C45B06023E11D8B004B9590 /* UADefaultMessageCenterMessageViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C45B05A23E11D8A004B9590 /* UADefaultMessageCenterMessageViewController.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		3C45B06123E11D8B004B9590 /* UADefaultMessageCenterListViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C45B05B23E11D8A004B9590 /* UADefaultMessageCenterListViewController.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		3C45B06223E11D8B004B9590 /* UADefaultMessageCenterSplitViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C45B05C23E11D8A004B9590 /* UADefaultMessageCenterSplitViewController.m */; };
+		3C45B06323E11D8B004B9590 /* UADefaultMessageCenterMessageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C45B05D23E11D8A004B9590 /* UADefaultMessageCenterMessageViewController.m */; };
+		3C45B06423E11D8B004B9590 /* UADefaultMessageCenterSplitViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C45B05E23E11D8A004B9590 /* UADefaultMessageCenterSplitViewController.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		3C45B06523E11DED004B9590 /* UADefaultMessageCenterListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C45B05923E11D8A004B9590 /* UADefaultMessageCenterListViewController.m */; };
+		3C45B06623E11DED004B9590 /* UADefaultMessageCenterMessageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C45B05D23E11D8A004B9590 /* UADefaultMessageCenterMessageViewController.m */; };
+		3C45B06723E11DED004B9590 /* UADefaultMessageCenterSplitViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C45B05C23E11D8A004B9590 /* UADefaultMessageCenterSplitViewController.m */; };
+		3C45B06823E11E0D004B9590 /* UADefaultMessageCenterSplitViewDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CCFD5DE23A082EF001AF966 /* UADefaultMessageCenterSplitViewDelegate.m */; };
+		3C45B06923E11E37004B9590 /* UADefaultMessageCenterListViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C45B05B23E11D8A004B9590 /* UADefaultMessageCenterListViewController.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		3C45B06A23E11E37004B9590 /* UADefaultMessageCenterMessageViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C45B05A23E11D8A004B9590 /* UADefaultMessageCenterMessageViewController.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		3C45B06B23E11E37004B9590 /* UADefaultMessageCenterSplitViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C45B05E23E11D8A004B9590 /* UADefaultMessageCenterSplitViewController.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		3C45B06C23E11E37004B9590 /* UADefaultMessageCenterSplitViewDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CCFD5DD23A082EF001AF966 /* UADefaultMessageCenterSplitViewDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		3C45B06D23E11EAD004B9590 /* UAMessageCenterListViewDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CCFD5DA23A077BA001AF966 /* UAMessageCenterListViewDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		3C45B06E23E11EAD004B9590 /* UAMessageCenterMessageViewDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CCFD5D923A077BA001AF966 /* UAMessageCenterMessageViewDelegate.h */; };
 		3C4625A7235E9CF200E4CF54 /* UAAutoDisposable.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C4625A6235E9CF200E4CF54 /* UAAutoDisposable.m */; };
 		3C4625AC235E9F3F00E4CF54 /* UADisposable+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C4625A8235E9DB400E4CF54 /* UADisposable+Internal.h */; };
 		3C4625AD235E9F5300E4CF54 /* UADisposable+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C4625A8235E9DB400E4CF54 /* UADisposable+Internal.h */; };
@@ -2354,10 +2374,18 @@
 		3C13BFB92384AD270071E80C /* UAMessageCenterResources.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAMessageCenterResources.m; sourceTree = "<group>"; };
 		3C13BFBC2384AE050071E80C /* AirshipMessageCenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AirshipMessageCenter.h; sourceTree = "<group>"; };
 		3C13BFBE2384B0BB0071E80C /* UAAirshipMessageCenterCoreImport.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UAAirshipMessageCenterCoreImport.h; sourceTree = "<group>"; };
+		3C16DA7223E11FB3001499A4 /* UADefaultMessageCenterListViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UADefaultMessageCenterListViewController.xib; sourceTree = "<group>"; };
+		3C16DA7323E11FB3001499A4 /* UADefaultMessageCenterMessageViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UADefaultMessageCenterMessageViewController.xib; sourceTree = "<group>"; };
 		3C3BCBA720E16C8300D86E60 /* UAAutomationEngineIntegrationTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAAutomationEngineIntegrationTest.m; sourceTree = "<group>"; };
 		3C3BCBA920E19FC500D86E60 /* UATimerScheduler+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UATimerScheduler+Internal.h"; sourceTree = "<group>"; };
 		3C3BCBAA20E19FC500D86E60 /* UATimerScheduler.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UATimerScheduler.m; sourceTree = "<group>"; };
 		3C3DAA0B22EF9ABC00202570 /* UAChannelTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAChannelTest.m; sourceTree = "<group>"; };
+		3C45B05923E11D8A004B9590 /* UADefaultMessageCenterListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UADefaultMessageCenterListViewController.m; sourceTree = "<group>"; };
+		3C45B05A23E11D8A004B9590 /* UADefaultMessageCenterMessageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UADefaultMessageCenterMessageViewController.h; sourceTree = "<group>"; };
+		3C45B05B23E11D8A004B9590 /* UADefaultMessageCenterListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UADefaultMessageCenterListViewController.h; sourceTree = "<group>"; };
+		3C45B05C23E11D8A004B9590 /* UADefaultMessageCenterSplitViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UADefaultMessageCenterSplitViewController.m; sourceTree = "<group>"; };
+		3C45B05D23E11D8A004B9590 /* UADefaultMessageCenterMessageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UADefaultMessageCenterMessageViewController.m; sourceTree = "<group>"; };
+		3C45B05E23E11D8A004B9590 /* UADefaultMessageCenterSplitViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UADefaultMessageCenterSplitViewController.h; sourceTree = "<group>"; };
 		3C4625A5235E9CF200E4CF54 /* UAAutoDisposable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UAAutoDisposable.h; sourceTree = "<group>"; };
 		3C4625A6235E9CF200E4CF54 /* UAAutoDisposable.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAAutoDisposable.m; sourceTree = "<group>"; };
 		3C4625A8235E9DB400E4CF54 /* UADisposable+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "UADisposable+Internal.h"; path = "common/UADisposable+Internal.h"; sourceTree = "<group>"; };
@@ -3649,6 +3677,8 @@
 			isa = PBXGroup;
 			children = (
 				3CA0E304237E396100EE76CF /* UAInbox.xcdatamodeld */,
+				3C16DA7223E11FB3001499A4 /* UADefaultMessageCenterListViewController.xib */,
+				3C16DA7323E11FB3001499A4 /* UADefaultMessageCenterMessageViewController.xib */,
 				3CA0E306237E396100EE76CF /* UAMessageCenterListViewController.xib */,
 				3CA0E307237E396100EE76CF /* UAMessageCenterActions.plist */,
 				3CA0E308237E396100EE76CF /* UAMessageCenterListCell.xib */,
@@ -3731,6 +3761,12 @@
 		3CA0E343237E39BC00EE76CF /* Display */ = {
 			isa = PBXGroup;
 			children = (
+				3C45B05B23E11D8A004B9590 /* UADefaultMessageCenterListViewController.h */,
+				3C45B05923E11D8A004B9590 /* UADefaultMessageCenterListViewController.m */,
+				3C45B05A23E11D8A004B9590 /* UADefaultMessageCenterMessageViewController.h */,
+				3C45B05D23E11D8A004B9590 /* UADefaultMessageCenterMessageViewController.m */,
+				3C45B05E23E11D8A004B9590 /* UADefaultMessageCenterSplitViewController.h */,
+				3C45B05C23E11D8A004B9590 /* UADefaultMessageCenterSplitViewController.m */,
 				3CA0E310237E396100EE76CF /* UADefaultMessageCenterUI.h */,
 				3CA0E331237E396100EE76CF /* UADefaultMessageCenterUI.m */,
 				3CA0E31B237E396100EE76CF /* UAMessageCenterDateUtils.h */,
@@ -5632,6 +5668,9 @@
 			files = (
 				3CCFD5DB23A077BB001AF966 /* UAMessageCenterMessageViewDelegate.h in Headers */,
 				3CCFD5DC23A077BB001AF966 /* UAMessageCenterListViewDelegate.h in Headers */,
+				3C45B06423E11D8B004B9590 /* UADefaultMessageCenterSplitViewController.h in Headers */,
+				3C45B06023E11D8B004B9590 /* UADefaultMessageCenterMessageViewController.h in Headers */,
+				3C45B06123E11D8B004B9590 /* UADefaultMessageCenterListViewController.h in Headers */,
 				3CCFD5DF23A082EF001AF966 /* UADefaultMessageCenterSplitViewDelegate.h in Headers */,
 				3C13BFBA2384AD270071E80C /* UAMessageCenterResources.h in Headers */,
 				3C13BFBD2384AE050071E80C /* AirshipMessageCenter.h in Headers */,
@@ -6052,7 +6091,12 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3C45B06D23E11EAD004B9590 /* UAMessageCenterListViewDelegate.h in Headers */,
 				6EE77060238F15D000E79944 /* UAKeychainUtils.h in Headers */,
+				3C45B06923E11E37004B9590 /* UADefaultMessageCenterListViewController.h in Headers */,
+				3C45B06A23E11E37004B9590 /* UADefaultMessageCenterMessageViewController.h in Headers */,
+				3C45B06B23E11E37004B9590 /* UADefaultMessageCenterSplitViewController.h in Headers */,
+				3C45B06C23E11E37004B9590 /* UADefaultMessageCenterSplitViewDelegate.h in Headers */,
 				6EE77061238F15D000E79944 /* UAirshipCoreResources.h in Headers */,
 				6EE77062238F15D000E79944 /* UAPushProviderDelegate.h in Headers */,
 				6EE77063238F15D000E79944 /* UAChannelNotificationCenterEvents.h in Headers */,
@@ -6402,6 +6446,7 @@
 				6EE7711A238F15D000E79944 /* UADeviceRegistrationEvent+Internal.h in Headers */,
 				6EE7711B238F15D000E79944 /* UATagGroupsMutationHistory+Internal.h in Headers */,
 				6EE7711C238F15D000E79944 /* UAColorUtils.h in Headers */,
+				3C45B06E23E11EAD004B9590 /* UAMessageCenterMessageViewDelegate.h in Headers */,
 				6EE7711D238F15D000E79944 /* UARemoteDataProvider.h in Headers */,
 				6EE7711E238F15D000E79944 /* UAPushReceivedEvent+Internal.h in Headers */,
 				6EE7711F238F15D000E79944 /* UATagGroupsTransactionRecord+Internal.h in Headers */,
@@ -7151,6 +7196,8 @@
 				3CA0E47B237E4E3000EE76CF /* UAMessageCenterActions.plist in Resources */,
 				3CA0E47C237E4E3000EE76CF /* UAMessageCenterListCell.xib in Resources */,
 				3CA0E47D237E4E3000EE76CF /* UAMessageCenterPlaceholderIcon.png in Resources */,
+				3C16DA7923E11FB3001499A4 /* UADefaultMessageCenterMessageViewController.xib in Resources */,
+				3C16DA7723E11FB3001499A4 /* UADefaultMessageCenterListViewController.xib in Resources */,
 				3CA0E47E237E4E3000EE76CF /* UAMessageCenterMessageViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -7221,6 +7268,7 @@
 				6EE77138238F163300E79944 /* UAAutomation.xcdatamodeld in Resources */,
 				6EE77139238F163300E79944 /* UAAutomationActions.plist in Resources */,
 				6EE7713A238F163300E79944 /* UAInAppMessageBannerContentView.xib in Resources */,
+				3C16DA7623E11FB3001499A4 /* UADefaultMessageCenterListViewController.xib in Resources */,
 				6EE7713B238F163300E79944 /* UAInAppMessageBannerView.xib in Resources */,
 				6EE7713C238F163300E79944 /* UAInAppMessageButtonView.xib in Resources */,
 				6EE7713D238F163300E79944 /* UAInAppMessageFullScreenViewController.xib in Resources */,
@@ -7230,6 +7278,7 @@
 				6EE77136238F161400E79944 /* UARateAppPromptView.xib in Resources */,
 				6EE77137238F161400E79944 /* UAExtendedActions.plist in Resources */,
 				6EE77123238F15D000E79944 /* UAEvents.xcdatamodeld in Resources */,
+				3C16DA7823E11FB3001499A4 /* UADefaultMessageCenterMessageViewController.xib in Resources */,
 				6EE77124238F15D000E79944 /* UrbanAirship.strings in Resources */,
 				6EE77125238F15D000E79944 /* UARemoteData.xcdatamodeld in Resources */,
 				6EE77126238F15D000E79944 /* UADefaultActions.plist in Resources */,
@@ -7530,6 +7579,7 @@
 			files = (
 				3CA0E426237E4BED00EE76CF /* UAMessageCenterAction.m in Sources */,
 				3CA0E428237E4BED00EE76CF /* UADefaultMessageCenterUI.m in Sources */,
+				3C45B05F23E11D8B004B9590 /* UADefaultMessageCenterListViewController.m in Sources */,
 				3CA0E42A237E4BED00EE76CF /* UAMessageCenterDateUtils.m in Sources */,
 				3CA0E42C237E4BED00EE76CF /* UAMessageCenterListCell.m in Sources */,
 				3CA0E42E237E4BED00EE76CF /* UAMessageCenterListViewController.m in Sources */,
@@ -7545,12 +7595,14 @@
 				3CA0E446237E4BED00EE76CF /* UAInboxUtils.m in Sources */,
 				3CCFD5E023A082EF001AF966 /* UADefaultMessageCenterSplitViewDelegate.m in Sources */,
 				3CA0E448237E4BED00EE76CF /* UAMessageCenterNativeBridgeExtension.m in Sources */,
+				3C45B06223E11D8B004B9590 /* UADefaultMessageCenterSplitViewController.m in Sources */,
 				3CA0E44A237E4BED00EE76CF /* UAUser.m in Sources */,
 				3C13BFBB2384AD270071E80C /* UAMessageCenterResources.m in Sources */,
 				3CA0E44C237E4BED00EE76CF /* UAUserAPIClient.m in Sources */,
 				3CA0E44F237E4BED00EE76CF /* UAUserData.m in Sources */,
 				3CA0E451237E4BED00EE76CF /* UAUserDataDAO.m in Sources */,
 				3CA0E454237E4BED00EE76CF /* UAMessageCenter.m in Sources */,
+				3C45B06323E11D8B004B9590 /* UADefaultMessageCenterMessageViewController.m in Sources */,
 				3CA0E457237E4BED00EE76CF /* UAMessageCenterModuleLoader.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -7838,6 +7890,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3C45B06823E11E0D004B9590 /* UADefaultMessageCenterSplitViewDelegate.m in Sources */,
+				3C45B06523E11DED004B9590 /* UADefaultMessageCenterListViewController.m in Sources */,
+				3C45B06623E11DED004B9590 /* UADefaultMessageCenterMessageViewController.m in Sources */,
+				3C45B06723E11DED004B9590 /* UADefaultMessageCenterSplitViewController.m in Sources */,
 				1BB4C01C239FD8510000559B /* UAExtendedActionsResources.m in Sources */,
 				6EE771EF238F172900E79944 /* UAActionScheduleEdits.m in Sources */,
 				6EE771F0238F172900E79944 /* UAActionScheduleInfo.m in Sources */,

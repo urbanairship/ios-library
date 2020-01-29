@@ -44,39 +44,36 @@
 }
 
 - (void)createSplitViewController {
-    if (!self.splitViewController) {
-        self.splitViewController = [[UADefaultMessageCenterSplitViewController alloc] initWithNibName:nil bundle:nil];
+    self.splitViewController = [[UADefaultMessageCenterSplitViewController alloc] initWithNibName:nil bundle:nil];
 
-        self.splitViewController.filter = self.filter;
-        self.splitViewController.disableMessageLinkPreviewAndCallouts = self.disableMessageLinkPreviewAndCallouts;
+    self.splitViewController.filter = self.filter;
+    self.splitViewController.disableMessageLinkPreviewAndCallouts = self.disableMessageLinkPreviewAndCallouts;
 
-        self.splitViewController.style = self.style;
-        self.splitViewController.title = self.title;
+    self.splitViewController.style = self.style;
+    self.splitViewController.title = self.title;
 
-        self.splitViewController.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
-        self.splitViewController.modalPresentationStyle = UIModalPresentationFullScreen;
+    self.splitViewController.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+    self.splitViewController.modalPresentationStyle = UIModalPresentationFullScreen;
 
-        UADefaultMessageCenterListViewController *lvc = self.splitViewController.listViewController;
+    UADefaultMessageCenterListViewController *lvc = self.splitViewController.listViewController;
 
-        // if "Done" has been localized, use it, otherwise use iOS's UIBarButtonSystemItemDone
-        if (UAMessageCenterLocalizedStringExists(@"ua_done")) {
-            lvc.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:UAMessageCenterLocalizedString(@"ua_done")
-                                                                                    style:UIBarButtonItemStyleDone
-                                                                                   target:self
-                                                                                   action:@selector(dismiss)];
-        } else {
-            lvc.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
-                                                                                                 target:self
-                                                                                                 action:@selector(dismiss)];
-        }
+    // if "Done" has been localized, use it, otherwise use iOS's UIBarButtonSystemItemDone
+    if (UAMessageCenterLocalizedStringExists(@"ua_done")) {
+        lvc.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:UAMessageCenterLocalizedString(@"ua_done")
+                                                                                style:UIBarButtonItemStyleDone
+                                                                               target:self
+                                                                               action:@selector(dismiss)];
+    } else {
+        lvc.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
+                                                                                             target:self
+                                                                                             action:@selector(dismiss)];
     }
 }
 
 - (void)displayMessageCenterAnimated:(BOOL)animated
                           completion:(void(^)(void))completionHandler {
-    [self createSplitViewController];
-
-    if (!self.splitViewController.presentingViewController) {
+    if (!self.splitViewController) {
+        [self createSplitViewController];
         [[UAUtils topController] presentViewController:self.splitViewController animated:animated completion:completionHandler];
     } else {
         if (completionHandler) {
