@@ -2,10 +2,11 @@
 
 #import <UIKit/UIKit.h>
 #import "UAMessageCenterListViewDelegate.h"
-#import "UAMessageCenterMessagePresentationDelegate.h"
 
 @class UAInboxMessage;
 @class UAMessageCenterStyle;
+
+NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Default implementation of a list-style Message Center UI.
@@ -33,23 +34,15 @@
 @property (nonatomic, weak) id<UAMessageCenterListViewDelegate> delegate;
 
 /**
- * The presentation delegate.
- */
-@property (nonatomic, weak) id<UAMessageCenterMessagePresentationDelegate> messagePresentationDelegate;
-
-/**
  * The currently selected index path.
  */
-@property (nonatomic, strong) NSIndexPath *selectedIndexPath;
+@property (nonatomic, strong, nullable) NSIndexPath *selectedIndexPath;
 
 /**
  * The currently selected message.
  */
-@property (nonatomic, strong) UAInboxMessage *selectedMessage;
-
-/**
- * The pending message ID.
- */
-@property (nonatomic, strong) NSString *pendingMessageID;
+@property (nonatomic, copy, nullable) NSString *selectedMessageID;
 
 @end
+
+NS_ASSUME_NONNULL_END

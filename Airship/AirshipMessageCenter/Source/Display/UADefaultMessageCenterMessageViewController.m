@@ -19,6 +19,8 @@ static NSString *UAMessageCenterMessageViewControllerAboutBlank = @"about:blank"
 NSString * const UAMessageCenterMessageLoadErrorDomain = @"com.urbanairship.message_center.message_load";
 NSString * const UAMessageCenterMessageLoadErrorHTTPStatusKey = @"status";
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface UADefaultMessageCenterMessageViewController () <UANativeBridgeDelegate, WKNavigationDelegate>
 
 /**
@@ -59,7 +61,7 @@ NSString * const UAMessageCenterMessageLoadErrorHTTPStatusKey = @"status";
 /**
  * The UAInboxMessage being displayed.
  */
-@property (nonatomic, strong) UAInboxMessage *message;
+@property (nonatomic, strong, nullable) UAInboxMessage *message;
 
 /**
  * State of message waiting to load, loading, loaded or currently displayed.
@@ -82,7 +84,7 @@ typedef enum MessageState {
 
 @synthesize message = _message;
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
+- (id)initWithNibName:(nullable NSString *)nibNameOrNil bundle:(nullable NSBundle *)nibBundleOrNil {
     if ((self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil])) {
         self.messageState = NONE;
     }
@@ -190,7 +192,7 @@ typedef enum MessageState {
 #pragma mark -
 #pragma mark UI
 
-- (void)delete:(id)sender {
+- (void)delete:(nullable id)sender {
     if (self.messageState != LOADED) {
         UA_LWARN(@"MessageState = %u. Should be \"LOADED\"",self.messageState);
     }
@@ -216,7 +218,7 @@ typedef enum MessageState {
     [self hideLoadingIndicator];
 }
 
-- (void)coverWithText:(NSString *)text {
+- (void)coverWithText:(nullable NSString *)text {
     self.title = nil;
     self.coverLabel.text = text;
     self.coverView.hidden = NO;
@@ -383,7 +385,7 @@ typedef enum MessageState {
 
 }
 
-- (void)webView:(WKWebView *)wv didFinishNavigation:(WKNavigation *)navigation {
+- (void)webView:(WKWebView *)wv didFinishNavigation:(null_unspecified WKNavigation *)navigation {
     if (self.messageState != LOADING) {
         UA_LWARN(@"MessageState = %u. Should be \"LOADING\"",self.messageState);
     }
@@ -409,7 +411,7 @@ typedef enum MessageState {
     [self showMessageScreen];
 }
 
-- (void)webView:(WKWebView *)wv didFailNavigation:(WKNavigation *)navigation withError:(NSError *)error {
+- (void)webView:(WKWebView *)wv didFailNavigation:(null_unspecified WKNavigation *)navigation withError:(NSError *)error {
     if (self.messageState != LOADING) {
         UA_LWARN(@"MessageState = %u. Should be \"LOADING\"",self.messageState);
     }
@@ -427,7 +429,7 @@ typedef enum MessageState {
     self.message = nil;
 }
 
-- (void)webView:(WKWebView *)webView didFailProvisionalNavigation:(WKNavigation *)navigation withError:(NSError *)error {
+- (void)webView:(WKWebView *)webView didFailProvisionalNavigation:(null_unspecified WKNavigation *)navigation withError:(NSError *)error {
     [self webView:webView didFailNavigation:navigation withError:error];
 }
 
@@ -438,3 +440,5 @@ typedef enum MessageState {
 }
 
 @end
+
+NS_ASSUME_NONNULL_END

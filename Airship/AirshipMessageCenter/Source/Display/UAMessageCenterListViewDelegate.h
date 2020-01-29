@@ -15,6 +15,13 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (BOOL)shouldClearSelectionOnViewWillAppear;
 
+/**
+ * Informs the delegate that a message was selected in the list view controller.
+
+ * @param messageID The selected message ID, or nil if a message is no longer selected.
+ */
+- (void)didSelectMessageWithID:(nullable NSString *)messageID;
+
 @end
 
 NS_ASSUME_NONNULL_END

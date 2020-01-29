@@ -19,6 +19,8 @@
 #define kUAIconImageCacheMaxByteCost (2 * 1024 * 1024) /* 2MB */
 #define kUAMessageCenterListCellNibName @"UAMessageCenterListCell"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface UADefaultMessageCenterListViewController()
 
 /**
@@ -53,7 +55,7 @@
 /**
  * The an array of currently selected message IDs during editing.
  */
-@property (nonatomic, strong) NSMutableArray<NSString *> *selectedMessageIDs;
+@property (nonatomic, strong, nullable) NSMutableArray<NSString *> *selectedMessageIDs;
 
 /**
  * A dictionary of sets of (NSIndexPath *) with absolute URLs (NSString *) for keys.
@@ -90,7 +92,7 @@
 @implementation UADefaultMessageCenterListViewController
 
 
-- (instancetype)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
+- (instancetype)initWithNibName:(nullable NSString *)nibNameOrNil bundle:(nullable NSBundle *)nibBundleOrNil {
     if (self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil]) {
         self.iconCache = [[NSCache alloc] init];
         self.iconCache.countLimit = kUAIconImageCacheMaxCount;
@@ -158,16 +160,19 @@
     
     self.navigationItem.backBarButtonItem = nil;
 
-    [self reload];
+    // Delay reloading by a beat to help selection/scrolling work more reliably
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self reload];
 
-    if (self.editing) {
-        return;
-    }
+        if (self.editing) {
+            return;
+        }
 
-    if ([self.delegate shouldClearSelectionOnViewWillAppear]) {
-        [self.messageTable deselectRowAtIndexPath:self.selectedIndexPath animated:YES];
-        self.selectedIndexPath = nil;
-    }
+        if ([self.delegate shouldClearSelectionOnViewWillAppear]) {
+            [self.messageTable deselectRowAtIndexPath:self.selectedIndexPath animated:YES];
+            self.selectedIndexPath = nil;
+        }
+    });
 }
 
 -(void)dealloc {
@@ -308,48 +313,50 @@
             self.selectedMessageIDs = reSelectedMessageIDs;
         }
     } else {
-        [self handlePreviouslySelectedIndexPathsAnimated:NO];
+        [self handlePreviouslySelectedIndexPathsAnimated:YES];
     }
     
-    // Hide message view if necessary
+    // If there are no messages, select nothing
     if (self.messages.count == 0) {
-        [self.messagePresentationDelegate dismissMessage];
+        [self.delegate didSelectMessageWithID:nil];
     }
 }
 
-- (void)setSelectedMessage:(UAInboxMessage *)selectedMessage {
-    if ([selectedMessage.messageID isEqual:_selectedMessage.messageID]) {
-        _selectedMessage = selectedMessage;
+- (void)setSelectedMessageID:(nullable NSString *)selectedMessageID {
+    if ([selectedMessageID isEqual:_selectedMessageID]) {
         return;
     }
 
-    _selectedMessage = selectedMessage;
+    _selectedMessageID = selectedMessageID;
 
-    if (selectedMessage) {
+    if (selectedMessageID) {
+        UAInboxMessage *selectedMessage = [[UAMessageCenter shared].messageList messageForID:selectedMessageID];
+
         self.selectedIndexPath = [self indexPathForMessage:selectedMessage];
 
-        [self.messageTable scrollToNearestSelectedRowAtScrollPosition:UITableViewScrollPositionNone animated:YES];
         [self.messageTable selectRowAtIndexPath:self.selectedIndexPath animated:YES scrollPosition:UITableViewScrollPositionNone];
+        [self.messageTable scrollToNearestSelectedRowAtScrollPosition:UITableViewScrollPositionNone animated:YES];
     } else {
         [self.messageTable deselectRowAtIndexPath:self.selectedIndexPath animated:NO];
         self.selectedIndexPath = nil;
     }
 }
 
-- (void)setSelectedIndexPath:(NSIndexPath *)selectedIndexPath {
+- (void)setSelectedIndexPath:(nullable NSIndexPath *)selectedIndexPath {
     _selectedIndexPath = selectedIndexPath;
 }
 
 - (void)handlePreviouslySelectedIndexPathsAnimated:(BOOL)animated {
     // If a cell was previously selected and there are messages to display
     if ((self.selectedIndexPath) && (self.messages.count > 0)) {
-        NSIndexPath *indexPath = [self indexPathForMessage:self.selectedMessage];
-        [self.messageTable scrollToNearestSelectedRowAtScrollPosition:UITableViewScrollPositionNone animated:animated];
+        UAInboxMessage *selectedMessage = [[UAMessageCenter shared].messageList messageForID:self.selectedMessageID];
+        NSIndexPath *indexPath = [self indexPathForMessage:selectedMessage];
         [self.messageTable selectRowAtIndexPath:indexPath animated:animated scrollPosition:UITableViewScrollPositionNone];
+        [self.messageTable scrollToNearestSelectedRowAtScrollPosition:UITableViewScrollPositionNone animated:animated];
     }
 }
 
-- (NSIndexPath *)validateIndexPath:(NSIndexPath *)indexPath {
+- (nullable NSIndexPath *)validateIndexPath:(NSIndexPath *)indexPath {
     if (!indexPath) {
         return nil;
     }
@@ -365,7 +372,7 @@
     return indexPath;
 }
 
-- (NSIndexPath *)indexPathForMessage:(UAInboxMessage *)message {
+- (nullable NSIndexPath *)indexPathForMessage:(UAInboxMessage *)message {
     if (!message) {
         return nil;
     }
@@ -422,7 +429,7 @@
 - (void)refreshAfterBatchUpdate {
     // end editing
     self.cancelItem.enabled = YES;
-    [self cancelButtonPressed:nil];
+    [self cancelButtonPressed:self];
 
     // force button update
     [self refreshBatchUpdateButtons];
@@ -573,7 +580,7 @@
     }
 }
 
-- (UAInboxMessage *)messageAtIndex:(NSUInteger)index {
+- (nullable UAInboxMessage *)messageAtIndex:(NSUInteger)index {
     if (index < self.messages.count) {
         return [self.messages objectAtIndex:index];
     } else {
@@ -596,7 +603,7 @@
     return NSNotFound;
 }
 
-- (UAInboxMessage *)messageForID:(NSString *)messageIDToFind {
+- (nullable UAInboxMessage *)messageForID:(NSString *)messageIDToFind {
     if (!messageIDToFind) {
         return nil;
     } else {
@@ -709,7 +716,7 @@
     }
 }
 
-- (void)tableView:(UITableView *)tableView didEndEditingRowAtIndexPath:(NSIndexPath *)indexPath {
+- (void)tableView:(UITableView *)tableView didEndEditingRowAtIndexPath:(nullable NSIndexPath *)indexPath {
     if (self.selectedIndexPath) {
         [self.messageTable selectRowAtIndexPath:self.selectedIndexPath animated:NO scrollPosition:UITableViewScrollPositionNone];
     }
@@ -727,11 +734,11 @@
         [self.selectedMessageIDs addObject:message.messageID];
         [self refreshBatchUpdateButtons];
     } else {
-        self.selectedMessage = message;
+        self.selectedMessageID = message.messageID;
         self.selectedIndexPath = indexPath;
 
         if (message) {
-            [self.messagePresentationDelegate presentMessage:message];
+            [self.delegate didSelectMessageWithID:message.messageID];
         } else {
             UA_LWARN(@"No message found at index path: %@", indexPath);
         }
@@ -761,22 +768,22 @@
 - (void)chooseMessageDisplayAndReload {
     UAInboxMessage *messageToDisplay;
 
-    // try to show the message that was previously selected
-    if (self.selectedMessage) {
-        messageToDisplay = [self messageForID:self.selectedMessage.messageID];
+    // try to select the message that at the previously selected index
+    if (self.selectedMessageID) {
+        messageToDisplay = [self messageForID:self.selectedMessageID];
     }
 
-    // if that message no longer exists, try to show the message now at the previously selected index
+    // if that message no longer exists, try to select the message now at the previously selected index
     if (!messageToDisplay && self.selectedIndexPath) {
         messageToDisplay = [self messageForID:[self messageAtIndex:[self validateIndexPath:self.selectedIndexPath].row].messageID];
-        [self.messagePresentationDelegate presentMessage:messageToDisplay];
+        [self.delegate didSelectMessageWithID:messageToDisplay.messageID];
     }
 
-    self.selectedMessage = messageToDisplay;
+    self.selectedMessageID = messageToDisplay.messageID;
 
-    // If there's no message to display and there's not a pending message ID, dismiss
-    if (!messageToDisplay && !self.pendingMessageID) {
-        [self.messagePresentationDelegate dismissMessage];
+    // If there's no message to display, select nothing
+    if (!messageToDisplay) {
+        [self.delegate didSelectMessageWithID:nil];
     }
 
     [self reload];
@@ -909,3 +916,5 @@
 }
 
 @end
+
+NS_ASSUME_NONNULL_END

@@ -12,6 +12,8 @@
 #import "UAInboxMessageList.h"
 #import "UAAirshipMessageCenterCoreImport.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface UADefaultMessageCenterSplitViewController ()
 
 @property (nonatomic, strong) UADefaultMessageCenterListViewController *listViewController;
@@ -20,7 +22,8 @@
 @property (nonatomic, strong) UINavigationController *messageNavigationController;
 @property (nonatomic, strong) UADefaultMessageCenterSplitViewDelegate *defaultSplitViewDelegate;
 @property (nonatomic, assign) BOOL visible;
-@property (nonatomic, strong) UAInboxMessage *deferredMessage;
+@property (nonatomic, copy, nullable) NSString *deferredMessageID;
+@property (nonatomic, copy, nullable) NSString *pendingMessageID;
 
 /**
  * The previous navigation bar style. Used for resetting the bar style to the style set before message center display.
@@ -42,13 +45,12 @@
     self.title = UAMessageCenterLocalizedString(@"ua_message_center_title");
 
     self.listViewController.delegate = self;
-    self.listViewController.messagePresentationDelegate = self;
 
     self.defaultSplitViewDelegate = [[UADefaultMessageCenterSplitViewDelegate alloc] initWithListViewController:self.listViewController];
     self.delegate = self.defaultSplitViewDelegate;
 }
 
-- (instancetype)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
+- (instancetype)initWithNibName:(nullable NSString *)nibNameOrNil bundle:(nullable NSBundle *)nibBundleOrNil {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
 
     if (self) {
@@ -58,7 +60,7 @@
     return self;
 }
 
-- (instancetype)initWithCoder:(NSCoder *)aDecoder {
+- (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {
     self = [super initWithCoder:aDecoder];
 
     if (self) {
@@ -109,9 +111,9 @@
 
     self.visible = YES;
     
-    if (self.deferredMessage) {
-        [self presentMessage:self.deferredMessage];
-        self.deferredMessage = nil;
+    if (self.deferredMessageID) {
+        [self presentMessage:self.deferredMessageID];
+        self.deferredMessageID = nil;
     }
 }
 
@@ -162,7 +164,7 @@
     self.listViewController.filter = filter;
 }
 
-- (void)setTitle:(NSString *)title {
+- (void)setTitle:(nullable NSString *)title {
     [super setTitle:title];
     self.listViewController.title = title;
 }
@@ -196,30 +198,54 @@
 }
 
 - (void)displayMessageForID:(NSString *)messageID {
-    // See if the message is available on the device
-    UAInboxMessage *message = [[UAMessageCenter shared].messageList messageForID:messageID];
-
-    if (message) {
-        if (self.visible) {
-            [self presentMessage:message];
-        } else {
-            self.deferredMessage = message;
-        }
-
-        return;
+    // If this message ID is not already in the message list, set it as pending
+    if (![[UAMessageCenter shared].messageList messageForID:messageID]) {
+        self.pendingMessageID = messageID;
     }
 
-    self.listViewController.pendingMessageID = messageID;
+    // If already visible, go ahead and present it
+    if (self.visible) {
+        [self presentMessage:messageID];
+    } else {
+        // otherwise defer presentation until
+        self.deferredMessageID = messageID;
+    }
+}
 
-    [self.messageViewController loadMessageForID:messageID onlyIfChanged:NO];
+- (void)presentMessage:(NSString *)messageID {
+    // If the message view controller is not already visible, make it visible
+    if (![self.listNavigationController.visibleViewController isEqual:self.messageViewController]) {
+        [self showDetailViewController:self.messageNavigationController sender:self];
+    }
 
-    [self showDetailViewController:self.messageNavigationController sender:self];
+    if (!self.pendingMessageID) {
+        self.listViewController.selectedMessageID = messageID;
+    }
+
+    [self.messageViewController loadMessageForID:messageID onlyIfChanged:YES];
+}
+
+- (void)dismissMessage {
+    [self.messageViewController showDefaultScreen];
+
+    // Hide message view if necessary
+    if (self.collapsed && [self.listNavigationController.visibleViewController isEqual:self.messageViewController]) {
+        [self.listNavigationController popViewControllerAnimated:YES];
+    }
 }
 
 #pragma mark UAMessageCenterListViewDelegate
 
 - (BOOL)shouldClearSelectionOnViewWillAppear {
     return self.collapsed;
+}
+
+- (void)didSelectMessageWithID:(nullable NSString *)messageID {
+    if (messageID) {
+        [self presentMessage:messageID];
+    } else if (!self.pendingMessageID) {
+        [self dismissMessage];
+    }
 }
 
 #pragma mark UAMessageCenterMessageViewDelegate
@@ -243,7 +269,7 @@
 
 }
 
-- (void)displayFailedToLoadAlertOnOK:(void (^)(void))okCompletion onRetry:(void (^)(void))retryCompletion {
+- (void)displayFailedToLoadAlertOnOK:(void (^)(void))okCompletion onRetry:(nullable void (^)(void))retryCompletion {
     UIAlertController* alert = [UIAlertController alertControllerWithTitle:UAMessageCenterLocalizedString(@"ua_connection_error")
                                                                    message:UAMessageCenterLocalizedString(@"ua_mc_failed_to_load")
                                                             preferredStyle:UIAlertControllerStyleAlert];
@@ -281,10 +307,10 @@
 - (void)messageLoadSucceeded:(NSString *)messageID {
     UA_LTRACE(@"message load succeeded: %@", messageID);
 
-    self.listViewController.selectedMessage = [[UAMessageCenter shared].messageList messageForID:messageID];
+    self.listViewController.selectedMessageID = messageID;
 
-    if ([messageID isEqualToString:self.listViewController.pendingMessageID]) {
-        self.listViewController.pendingMessageID = nil;
+    if ([messageID isEqualToString:self.pendingMessageID]) {
+        self.pendingMessageID = nil;
     }
 }
 
@@ -346,7 +372,7 @@
 
 - (void)resetUIState {
     // Deselect message
-    self.listViewController.selectedMessage = nil;
+    self.listViewController.selectedMessageID = nil;
 
     // Hide message view if necessary
     if (self.collapsed && [self.listNavigationController.visibleViewController isEqual:self.messageViewController]) {
@@ -365,41 +391,6 @@
     [self dismissMessage];
 }
 
-#pragma mark -
-#pragma mark UAMessageCenterMessagePresentationDelegate
-
-- (void)presentMessage:(UAInboxMessage *)message {
-    if (message.isExpired) {
-        UA_LDEBUG(@"Message expired");
-        [self displayNoLongerAvailableAlertOnOK:^{}];
-        message = nil;
-    }
-
-    self.listViewController.selectedMessage = message;
-
-    if (!message && !self.messageViewController) {
-        // if we have no message, only continue on if we already have a messageViewController so it can
-        // be updated. No reason to create a new one for a nil message.
-        return;
-    }
-
-    // only display the message if there is a message to display
-    if (message) {
-        if (![self.listNavigationController.visibleViewController isEqual:self.messageViewController]) {
-            [self showDetailViewController:self.messageNavigationController sender:self];
-        }
-    }
-
-    [self.messageViewController loadMessageForID:message.messageID onlyIfChanged:YES];
-}
-
-- (void)dismissMessage {
-    [self.messageViewController showDefaultScreen];
-
-    // Hide message view if necessary
-    if (self.collapsed && [self.listNavigationController.visibleViewController isEqual:self.messageViewController]) {
-        [self.listNavigationController popViewControllerAnimated:YES];
-    }
-}
-
 @end
+
+NS_ASSUME_NONNULL_END

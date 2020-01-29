@@ -43,11 +43,10 @@
     self.splitViewController.title = title;
 }
 
-- (void)displayMessageCenterAnimated:(BOOL)animated
-                          completion:(void(^)(void))completionHandler {
+- (void)createSplitViewController {
     if (!self.splitViewController) {
         self.splitViewController = [[UADefaultMessageCenterSplitViewController alloc] initWithNibName:nil bundle:nil];
-        
+
         self.splitViewController.filter = self.filter;
         self.splitViewController.disableMessageLinkPreviewAndCallouts = self.disableMessageLinkPreviewAndCallouts;
 
@@ -71,11 +70,18 @@
                                                                                                  action:@selector(dismiss)];
         }
     }
+}
+
+- (void)displayMessageCenterAnimated:(BOOL)animated
+                          completion:(void(^)(void))completionHandler {
+    [self createSplitViewController];
 
     if (!self.splitViewController.presentingViewController) {
         [[UAUtils topController] presentViewController:self.splitViewController animated:animated completion:completionHandler];
     } else {
-        completionHandler();
+        if (completionHandler) {
+            completionHandler();
+        }
     }
 }
 

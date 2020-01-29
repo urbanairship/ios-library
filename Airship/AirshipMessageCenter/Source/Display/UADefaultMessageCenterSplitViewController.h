@@ -9,10 +9,12 @@
 #import "UAMessageCenterListViewDelegate.h"
 #import "UAMessageCenterMessageViewDelegate.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  * Default implementation of an adaptive message center controller.
  */
-@interface UADefaultMessageCenterSplitViewController : UISplitViewController <UAMessageCenterListViewDelegate, UAMessageCenterMessageViewDelegate, UAMessageCenterMessagePresentationDelegate>
+@interface UADefaultMessageCenterSplitViewController : UISplitViewController <UAMessageCenterListViewDelegate, UAMessageCenterMessageViewDelegate>
 
 ///---------------------------------------------------------------------------------------
 /// @name Default Message Center Split View Controller Properties
@@ -56,3 +58,5 @@
 - (void)displayMessageForID:(NSString *)messageID;
 
 @end
+
+NS_ASSUME_NONNULL_END
