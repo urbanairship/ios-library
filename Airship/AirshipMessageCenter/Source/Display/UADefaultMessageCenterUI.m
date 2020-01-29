@@ -51,6 +51,8 @@
         self.splitViewController.modalPresentationStyle = UIModalPresentationFullScreen;
 
         [[UAUtils topController] presentViewController:self.splitViewController animated:animated completion:completionHandler];
+    } else {
+        completionHandler();
     }
 }
 
