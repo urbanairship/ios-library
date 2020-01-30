@@ -3,6 +3,17 @@ iOS Changelog
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/master/Documentation/Migration)
 
+Version 13.1.0 - January 30, 2020
+==================================
+Minor release adds support for number attributes, data privacy controls and the Accengage
+transition module to facilitate Accengage customers upgrading to Airship.
+
+Changes
+-------
+- Added AirshipAccengage module. This module migrates a device's attributes and ID to Airship, and allows devices to receive push notifications from Accengage during the upgrade.
+- Added support for number attributes.
+- Added `UAConfig#dataCollectionOptInEnabled` and `UAirship#dataCollectionEnabled` to make it easier to control Airship data collection.
+
 Version 13.0.4 - December 31, 2019
 ==================================
 Patch release to restore Cocoapods static library support. Apps that
