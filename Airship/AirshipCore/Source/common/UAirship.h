@@ -150,7 +150,7 @@ extern NSString * const UADeviceIDChangedNotification;
  * Push notifications will continue to work only if `UAPush.pushTokenRegistrationEnabled`
  * has been explicitly set to `YES`, otherwise it will default to the current state  of `isDataCollectionEnabled`.
  *
- * @note To disable by default, set the dataOptInEnabled AirshipConfig flag  to `YES`
+ * @note To disable by default, set the `AirshipConfig.dataCollectionOptInEnabled` flag to `YES`
  */
 @property (nonatomic, assign, getter=isDataCollectionEnabled) BOOL dataCollectionEnabled;
 
