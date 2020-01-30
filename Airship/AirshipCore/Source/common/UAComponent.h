@@ -17,6 +17,10 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property(nonatomic, readonly) BOOL isDataCollectionEnabled;
 
+/**
+* `init` is not available. Use the `initWithDataStore:` initializer method.
+* :nodoc:
+*/
 - (instancetype)init NS_UNAVAILABLE;
 
 /**

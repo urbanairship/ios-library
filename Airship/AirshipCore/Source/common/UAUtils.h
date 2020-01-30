@@ -247,6 +247,8 @@ NS_ASSUME_NONNULL_BEGIN
  * @param message The log message.
  * @param error The NSError.
  * @param response The HTTP response.
+ *
+ * @note For internal use only. :nodoc:
  */
 + (void)logFailedRequest:(UARequest *)request
              withMessage:(NSString *)message

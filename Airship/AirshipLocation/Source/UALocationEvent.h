@@ -4,8 +4,6 @@
 #import "UALocationCoreImport.h"
 
 
-@protocol UALocationProviderProtocol;
-
 NS_ASSUME_NONNULL_BEGIN
 
 /** Keys and values for location analytics */

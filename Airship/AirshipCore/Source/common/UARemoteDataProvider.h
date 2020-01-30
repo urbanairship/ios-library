@@ -7,6 +7,10 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/**
+* Block called with remote data..
+* @note For internal use only. :nodoc:
+*/
 typedef void (^UARemoteDataPublishBlock)(NSArray<UARemoteDataPayload *> *remoteDataArray);
 
 /**

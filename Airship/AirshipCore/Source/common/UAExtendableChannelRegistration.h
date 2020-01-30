@@ -7,7 +7,14 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/**.
+* @note For internal use only. :nodoc:
+*/
 typedef void (^UAChannelRegistrationExtenderCompletionHandler)(UAChannelRegistrationPayload *);
+
+/**
+* @note For internal use only. :nodoc:
+*/
 typedef void (^UAChannelRegistrationExtenderBlock)(UAChannelRegistrationPayload *, UAChannelRegistrationExtenderCompletionHandler completionHandler);
 
 /**

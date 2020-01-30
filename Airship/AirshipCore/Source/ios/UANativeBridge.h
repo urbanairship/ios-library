@@ -51,6 +51,10 @@ extern NSString *const UANativeBridgeUAirshipScheme;
 /// @name Native Bridge Methods
 ///---------------------------------------------------------------------------------------
 
+/**
+ * `init` is not available. Use the `nativeBridge` factory method.
+ * :nodoc:
+ */
 - (instancetype)init NS_UNAVAILABLE;
 
 /**

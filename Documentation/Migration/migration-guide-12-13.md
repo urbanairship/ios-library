@@ -173,7 +173,7 @@ The Message Center codebase has been refactored in order to better support modul
 of some legacy classes, such as `UAInbox`, and a new protocol for Message Center UI, `UAMessageCenterDisplayDelegate`,
 that makes it easier to build custom interfaces that work more seamlessly with the Message Center module. In place of
 `UAInbox`, `UAMessageCenter` provides access to objects such as the message list. Much of the out-of-the-box UI
-functionality previously cointained in `UAMessageCenter` is now part of a new class, `UADefaultMessageCenterUI`.
+functionality previously contained in `UAMessageCenter` is now part of a new class, `UADefaultMessageCenterUI`.
 
 ### Removed
 

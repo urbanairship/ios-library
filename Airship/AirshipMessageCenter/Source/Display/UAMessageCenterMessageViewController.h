@@ -11,6 +11,10 @@
  */
 @interface UAMessageCenterMessageViewController : UIViewController <UAMessageCenterMessageViewProtocol>
 
+/**
+* `initWithCoder:` is not available. Use the `initWithNibName:bundle:` initializer method.
+* :nodoc:
+*/
 - (instancetype)initWithCoder:(NSCoder *)aDecoder NS_UNAVAILABLE;
 
 @end
