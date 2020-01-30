@@ -141,7 +141,7 @@ extern NSString * const UADeviceIDChangedNotification;
 @property (nonatomic, strong, readonly) UAAnalytics *analytics;
 
 /**
- * Global data collection flag. Enabled by default, unless the `AirshipConfig.dataCollectionOptInEnabled`
+ * Global data collection flag. Enabled by default, unless `UAConfig.dataCollectionOptInEnabled`
  * is set to `YES` on the first run.
  *
  * When disabled, the device will stop collecting and sending data for named user, events,
@@ -150,7 +150,7 @@ extern NSString * const UADeviceIDChangedNotification;
  * Push notifications will continue to work only if `UAPush.pushTokenRegistrationEnabled`
  * has been explicitly set to `YES`, otherwise it will default to the current state  of `isDataCollectionEnabled`.
  *
- * @note To disable by default, set the `AirshipConfig.dataCollectionOptInEnabled` flag to `YES`
+ * @note To disable by default, set the `UAConfig.dataCollectionOptInEnabled` flag to `YES` on the first run.
  */
 @property (nonatomic, assign, getter=isDataCollectionEnabled) BOOL dataCollectionEnabled;
 
