@@ -321,7 +321,6 @@ NS_ASSUME_NONNULL_BEGIN
         UA_WEAKIFY(self);
         [self displayFailedToLoadAlertOnOK:^{
             [self resetUIState];
-            [self refreshMessageList];
         } onRetry:^{
             UA_STRONGIFY(self);
             [self displayMessageForID:messageID];
@@ -333,7 +332,6 @@ NS_ASSUME_NONNULL_BEGIN
         [self displayFailedToLoadAlertOnOK:^{
             UA_STRONGIFY(self);
             [self resetUIState];
-            [self refreshMessageList];
         } onRetry:nil];
     };
 
@@ -342,7 +340,6 @@ NS_ASSUME_NONNULL_BEGIN
         [self displayNoLongerAvailableAlertOnOK:^{
             UA_STRONGIFY(self)
             [self resetUIState];
-            [self refreshMessageList];
         }];
     };
 
