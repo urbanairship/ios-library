@@ -64,24 +64,13 @@ extern NSString * const UAMessageCenterMessageLoadErrorHTTPStatusKey;
  * Load a UAInboxMessage by message ID.
  *
  * @param messageID The message ID of the message.
- * @param onlyIfChanged Only load the message if the message has changed
  */
-- (void)loadMessageForID:(nullable NSString *)messageID onlyIfChanged:(BOOL)onlyIfChanged;
+- (void)loadMessageForID:(nullable NSString *)messageID;
 
 /**
- * Shows the default screen indicating no messages are available for display.
+ * Clears the message view and shows the default label indicating no message is selected.
  */
-- (void)showDefaultScreen;
-
-/**
- * Shows the loading overlay screen and indicator
- */
-- (void)showLoadingScreen;
-
-/**
- * Shows the message screen.
- */
-- (void)showMessageScreen;
+- (void)clearMessage;
 
 @end
 

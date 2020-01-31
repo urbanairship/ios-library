@@ -134,13 +134,13 @@ typedef enum MessageState {
     // load message or cover view if no message waiting to load
     switch (self.messageState) {
         case NONE:
-            [self showDefaultScreen];
+            [self clearMessage];
             break;
         case FETCHING:
-            [self showLoadingScreen];
+            [self hideMessageWithLoadingIndicator];
             break;
         case TO_LOAD:
-            [self loadMessage:self.message onlyIfChanged:NO];
+            [self loadMessage:self.message];
             break;
         default:
             UA_LWARN(@"MessageState = %u. Should be \"NONE\", \"FETCHING\", or \"TO_LOAD\"",self.messageState);
@@ -170,7 +170,7 @@ typedef enum MessageState {
     }
     
     if (self.messageState == NONE) {
-        [self showDefaultScreen];
+        [self clearMessage];
     }
 }
 
@@ -178,7 +178,7 @@ typedef enum MessageState {
     self.isVisible = YES;
 
     if (self.messageState == LOADED) {
-        [self showMessageScreen];
+        [self showMessage];
     }
 
     [super viewDidAppear:animated];
@@ -202,17 +202,17 @@ typedef enum MessageState {
     }
 }
 
-- (void)showDefaultScreen {
+- (void)clearMessage {
     [self hideLoadingIndicator];
     [self coverWithText:UAMessageCenterLocalizedString(@"ua_message_not_selected")];
 }
 
-- (void)showLoadingScreen {
+- (void)hideMessageWithLoadingIndicator {
     [self coverWithText:nil];
     [self showLoadingIndicator];
 }
 
-- (void)showMessageScreen {
+- (void)showMessage {
     self.coverView.hidden = YES;
     self.navigationItem.rightBarButtonItem.enabled = YES;
     [self hideLoadingIndicator];
@@ -242,21 +242,21 @@ typedef enum MessageState {
     [self.loadingIndicatorContainerView setHidden:YES];
 }
 
-- (void)loadMessageForID:(nullable NSString *)messageID onlyIfChanged:(BOOL)onlyIfChanged {
+- (void)loadMessageForID:(nullable NSString *)messageID {
     if (!messageID) {
-        [self showDefaultScreen];
+        [self clearMessage];
         return;
     }
     
     UAInboxMessage *message = [[UAMessageCenter shared].messageList messageForID:messageID];
 
     if (message) {
-        [self loadMessage:message onlyIfChanged:onlyIfChanged];
+        [self loadMessage:message];
         return;
     }
 
     // start by covering the view and showing the loading indicator
-    [self showLoadingScreen];
+    [self hideMessageWithLoadingIndicator];
 
     // Refresh the list to see if the message is available in the cloud
     self.messageState = FETCHING;
@@ -270,7 +270,7 @@ typedef enum MessageState {
             UAInboxMessage *message = [[UAMessageCenter shared].messageList messageForID:messageID];
             if (message && !message.isExpired) {
                 // display the message
-                [self loadMessage:message onlyIfChanged:onlyIfChanged];
+                [self loadMessage:message];
             } else {
                 // if the message no longer exists, clean up and show an error dialog
                 [self hideLoadingIndicator];
@@ -304,7 +304,7 @@ typedef enum MessageState {
     }];
 }
 
-- (void)loadMessage:(UAInboxMessage *)message onlyIfChanged:(BOOL)onlyIfChanged {
+- (void)loadMessage:(nullable UAInboxMessage *)message {
     if (!message) {
         if (self.messageState == LOADING) {
             [self.webView stopLoading];
@@ -313,33 +313,27 @@ typedef enum MessageState {
         self.messageState = NONE;
         self.message = message;
 
-        [self showDefaultScreen];
+        [self clearMessage];
 
         return;
     }
 
-    if (!onlyIfChanged || (self.messageState == NONE) || !(self.message && [message.messageID isEqualToString:self.message.messageID])) {
-        self.message = message;
-        
-        if (!self.webView) {
-            self.messageState = TO_LOAD;
-        } else {
-            if (self.messageState == LOADING) {
-                [self.webView stopLoading];
-            }
-            self.messageState = LOADING;
-            
-            // start by covering the view and showing the loading indicator
-            [self showLoadingScreen];
-            
-            // now load a blank page, so when the view is uncovered, it isn't still showing the previous web page
-            // note: when the blank page has finished loading, it will load the message
-            [self.webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:UAMessageCenterMessageViewControllerAboutBlank]]];
-        }
+    self.message = message;
+
+    if (!self.webView) {
+        self.messageState = TO_LOAD;
     } else {
-        if (self.isVisible && (self.messageState == LOADED)) {
-            [self showMessageScreen];
+        if (self.messageState == LOADING) {
+            [self.webView stopLoading];
         }
+        self.messageState = LOADING;
+
+        // start by covering the view and showing the loading indicator
+        [self hideMessageWithLoadingIndicator];
+
+        // now load a blank page, so when the view is uncovered, it isn't still showing the previous web page
+        // note: when the blank page has finished loading, it will load the message
+        [self.webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:UAMessageCenterMessageViewControllerAboutBlank]]];
     }
 }
 
@@ -408,7 +402,7 @@ typedef enum MessageState {
 
     [self.delegate messageLoadSucceeded:self.message.messageID];
     
-    [self showMessageScreen];
+    [self showMessage];
 }
 
 - (void)webView:(WKWebView *)wv didFailNavigation:(null_unspecified WKNavigation *)navigation withError:(NSError *)error {

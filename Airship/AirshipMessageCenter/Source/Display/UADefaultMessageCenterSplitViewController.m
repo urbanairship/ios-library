@@ -222,11 +222,11 @@ NS_ASSUME_NONNULL_BEGIN
         self.listViewController.selectedMessageID = messageID;
     }
 
-    [self.messageViewController loadMessageForID:messageID onlyIfChanged:YES];
+    [self.messageViewController loadMessageForID:messageID];
 }
 
 - (void)dismissMessage {
-    [self.messageViewController showDefaultScreen];
+    [self.messageViewController clearMessage];
 
     // Hide message view if necessary
     if (self.collapsed && [self.listNavigationController.visibleViewController isEqual:self.messageViewController]) {
