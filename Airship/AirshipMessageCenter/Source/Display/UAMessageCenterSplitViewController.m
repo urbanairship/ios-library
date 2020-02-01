@@ -21,7 +21,10 @@
 
 @end
 
+#pragma GCC diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-implementations"
 @implementation UAMessageCenterSplitViewController
+#pragma GCC diagnostic pop
 
 - (void)configure {
 
@@ -30,7 +33,7 @@
                                                                      splitViewController:self];
     self.listNav = [[UINavigationController alloc] initWithRootViewController:self.listViewController];
     self.viewControllers = @[self.listNav];
-    
+
     self.title = UAMessageCenterLocalizedString(@"ua_message_center_title");
 
     self.delegate = self.listViewController;
@@ -58,7 +61,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
+
     if (self.listViewController.messageViewController) {
         self.messageViewController = self.listViewController.messageViewController;
         self.showMessageViewOnViewDidAppear = YES;
@@ -71,10 +74,10 @@
 
     self.messageNav = [[UINavigationController alloc] initWithRootViewController:self.messageViewController];
     self.viewControllers = @[self.listNav,self.messageNav];
-    
+
     // display both view controllers in horizontally regular contexts
     self.preferredDisplayMode = UISplitViewControllerDisplayModeAllVisible;
-    
+
     if (self.style) {
         [self applyStyle];
     }

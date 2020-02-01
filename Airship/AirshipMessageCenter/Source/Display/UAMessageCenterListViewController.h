@@ -9,6 +9,7 @@
 /**
  * Default implementation of a list-style Message Center UI.
  */
+DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0. Instead use UADefaultMessageCenterListViewController.")
 @interface UAMessageCenterListViewController : UIViewController <UITableViewDelegate, UITableViewDataSource,
     UIScrollViewDelegate, UISplitViewControllerDelegate>
 

@@ -9,6 +9,7 @@
 /**
  * Default implementation of a view controller for reading Message Center messages.
  */
+DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0. Instead use UADefaultMessageCenterMessageViewController.")
 @interface UAMessageCenterMessageViewController : UIViewController <UAMessageCenterMessageViewProtocol>
 
 /**

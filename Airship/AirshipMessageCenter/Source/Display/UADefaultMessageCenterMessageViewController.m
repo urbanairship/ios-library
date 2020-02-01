@@ -1,6 +1,8 @@
 /* Copyright Airship and Contributors */
 
-#import "UAMessageCenterMessageViewController.h"
+#import <WebKit/WebKit.h>
+
+#import "UADefaultMessageCenterMessageViewController.h"
 #import "UAMessageCenterNativeBridgeExtension.h"
 #import "UAMessageCenter.h"
 #import "UAInboxMessageList.h"
@@ -9,17 +11,17 @@
 #import "UAMessageCenterLocalization.h"
 #import "UAUser+Internal.h"
 #import "UAMessageCenter.h"
-#import "UADefaultMessageCenterUI.h"
 
 #import "UAAirshipMessageCenterCoreImport.h"
 
-#import <WebKit/WebKit.h>
+static NSString *UAMessageCenterMessageViewControllerAboutBlank = @"about:blank";
 
+NSString * const UAMessageCenterMessageLoadErrorDomain = @"com.urbanairship.message_center.message_load";
+NSString * const UAMessageCenterMessageLoadErrorHTTPStatusKey = @"status";
 
-#define kMessageUp 0
-#define kMessageDown 1
+NS_ASSUME_NONNULL_BEGIN
 
-@interface UAMessageCenterMessageViewController () <UAMessageCenterMessageViewProtocol, UANativeBridgeDelegate, WKNavigationDelegate>
+@interface UADefaultMessageCenterMessageViewController () <UANativeBridgeDelegate, WKNavigationDelegate>
 
 /**
  * The WebView used to display the message content.
@@ -59,7 +61,7 @@
 /**
  * The UAInboxMessage being displayed.
  */
-@property (nonatomic, strong) UAInboxMessage *message;
+@property (nonatomic, strong, nullable) UAInboxMessage *message;
 
 /**
  * State of message waiting to load, loading, loaded or currently displayed.
@@ -78,15 +80,11 @@ typedef enum MessageState {
 
 @end
 
-#pragma GCC diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-implementations"
-@implementation UAMessageCenterMessageViewController
-#pragma GCC diagnostic pop
+@implementation UADefaultMessageCenterMessageViewController
 
 @synthesize message = _message;
-@synthesize closeBlock = _closeBlock;
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
+- (id)initWithNibName:(nullable NSString *)nibNameOrNil bundle:(nullable NSBundle *)nibBundleOrNil {
     if ((self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil])) {
         self.messageState = NONE;
     }
@@ -98,6 +96,12 @@ typedef enum MessageState {
     self.webView.navigationDelegate = nil;
     self.webView.UIDelegate = nil;
     [self.webView stopLoading];
+}
+
+
+- (void)setDisableMessageLinkPreviewAndCallouts:(BOOL)disableMessageLinkPreviewAndCallouts {
+    _disableMessageLinkPreviewAndCallouts = disableMessageLinkPreviewAndCallouts;
+    self.webView.allowsLinkPreview = disableMessageLinkPreviewAndCallouts;
 }
 
 - (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {
@@ -117,7 +121,7 @@ typedef enum MessageState {
     self.nativeBridge.forwardNavigationDelegate = self;
 
     self.webView.navigationDelegate = self.nativeBridge;
-    self.webView.allowsLinkPreview = ![UAMessageCenter shared].defaultUI.disableMessageLinkPreviewAndCallouts;
+    self.webView.allowsLinkPreview = !self.disableMessageLinkPreviewAndCallouts;
 
     // Allow the webView to detect data types (e.g. phone numbers, addresses) at will
     [self.webView.configuration setDataDetectorTypes:WKDataDetectorTypeAll];
@@ -130,21 +134,20 @@ typedef enum MessageState {
     // load message or cover view if no message waiting to load
     switch (self.messageState) {
         case NONE:
-            [self coverWithMessageAndHideLoadingIndicator:UAMessageCenterLocalizedString(@"ua_message_not_selected")];
+            [self clearMessage];
             break;
         case FETCHING:
-            [self coverWithBlankViewAndShowLoadingIndicator];
+            [self hideMessageWithLoadingIndicator];
             break;
         case TO_LOAD:
-            [self loadMessage:self.message onlyIfChanged:NO];
+            [self loadMessage:self.message];
             break;
         default:
             UA_LWARN(@"MessageState = %u. Should be \"NONE\", \"FETCHING\", or \"TO_LOAD\"",self.messageState);
             break;
     }
-
+    
     self.isVisible = NO;
-
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -165,9 +168,9 @@ typedef enum MessageState {
         [self.loadingIndicatorContainerView addSubview:self.loadingIndicatorView];
         [UAViewUtils applyContainerConstraintsToContainer:self.loadingIndicatorContainerView containedView:self.loadingIndicatorView];
     }
-
+    
     if (self.messageState == NONE) {
-        [self coverWithMessageAndHideLoadingIndicator:UAMessageCenterLocalizedString(@"ua_message_not_selected")];
+        [self clearMessage];
     }
 }
 
@@ -175,7 +178,7 @@ typedef enum MessageState {
     self.isVisible = YES;
 
     if (self.messageState == LOADED) {
-        [self uncoverAndHideLoadingIndicator];
+        [self showMessage];
     }
 
     [super viewDidAppear:animated];
@@ -189,7 +192,7 @@ typedef enum MessageState {
 #pragma mark -
 #pragma mark UI
 
-- (void)delete:(id)sender {
+- (void)delete:(nullable id)sender {
     if (self.messageState != LOADED) {
         UA_LWARN(@"MessageState = %u. Should be \"LOADED\"",self.messageState);
     }
@@ -199,26 +202,27 @@ typedef enum MessageState {
     }
 }
 
-- (void)coverWithMessageAndHideLoadingIndicator:(NSString *)message {
-    self.title = nil;
-    self.coverLabel.text = message;
-    self.coverView.hidden = NO;
-    self.navigationItem.rightBarButtonItem.enabled = NO;
+- (void)clearMessage {
     [self hideLoadingIndicator];
+    [self coverWithText:UAMessageCenterLocalizedString(@"ua_message_not_selected")];
 }
 
-- (void)coverWithBlankViewAndShowLoadingIndicator {
-    self.title = nil;
-    self.coverLabel.text = nil;
-    self.coverView.hidden = NO;
-    self.navigationItem.rightBarButtonItem.enabled = NO;
+- (void)hideMessageWithLoadingIndicator {
+    [self coverWithText:nil];
     [self showLoadingIndicator];
 }
 
-- (void)uncoverAndHideLoadingIndicator {
+- (void)showMessage {
     self.coverView.hidden = YES;
     self.navigationItem.rightBarButtonItem.enabled = YES;
     [self hideLoadingIndicator];
+}
+
+- (void)coverWithText:(nullable NSString *)text {
+    self.title = nil;
+    self.coverLabel.text = text;
+    self.coverView.hidden = NO;
+    self.navigationItem.rightBarButtonItem.enabled = NO;
 }
 
 - (void)setLoadingIndicatorView:(UIView *)loadingIndicatorView animations:(void (^)(void))animations {
@@ -238,27 +242,21 @@ typedef enum MessageState {
     [self.loadingIndicatorContainerView setHidden:YES];
 }
 
-static NSString *urlForBlankPage = @"about:blank";
-
-- (void)loadMessageForID:(NSString *)messageID {
-    [self loadMessageForID:messageID onlyIfChanged:NO onError:nil];
-}
-
-- (void)loadMessageForID:(nullable NSString *)messageID onlyIfChanged:(BOOL)onlyIfChanged onError:(void (^)(void))errorCompletion {
+- (void)loadMessageForID:(nullable NSString *)messageID {
     if (!messageID) {
-        [self coverWithMessageAndHideLoadingIndicator:UAMessageCenterLocalizedString(@"ua_message_not_selected")];
+        [self clearMessage];
         return;
     }
-
+    
     UAInboxMessage *message = [[UAMessageCenter shared].messageList messageForID:messageID];
 
     if (message) {
-        [self loadMessage:message onlyIfChanged:onlyIfChanged];
+        [self loadMessage:message];
         return;
     }
 
     // start by covering the view and showing the loading indicator
-    [self coverWithBlankViewAndShowLoadingIndicator];
+    [self hideMessageWithLoadingIndicator];
 
     // Refresh the list to see if the message is available in the cloud
     self.messageState = FETCHING;
@@ -272,74 +270,76 @@ static NSString *urlForBlankPage = @"about:blank";
             UAInboxMessage *message = [[UAMessageCenter shared].messageList messageForID:messageID];
             if (message && !message.isExpired) {
                 // display the message
-                [self loadMessage:message onlyIfChanged:onlyIfChanged];
+                [self loadMessage:message];
             } else {
                 // if the message no longer exists, clean up and show an error dialog
                 [self hideLoadingIndicator];
+                self.messageState = NONE;
 
-                [self displayNoLongerAvailableAlertOnOK:^{
-                    UA_STRONGIFY(self);
-                    self.messageState = NONE;
-                    self.message = nil;
-                    if (errorCompletion) {
-                        errorCompletion();
-                    };
-                }];
+                NSString *msg = [NSString stringWithFormat:@"Message is expired: %@", message];
+                NSError *error =  [NSError errorWithDomain:UAMessageCenterMessageLoadErrorDomain
+                                              code:UAMessageCenterMessageLoadErrorCodeMessageExpired
+                                          userInfo:@{NSLocalizedDescriptionKey:msg}];
+
+                [self.delegate messageLoadFailed:messageID error:error];
             }
+
             return;
         }];
     } withFailureBlock:^{
         [[UADispatcher mainDispatcher] dispatchAsync:^{
             UA_STRONGIFY(self);
-
+            
             [self hideLoadingIndicator];
 
-            if (errorCompletion) {
-                errorCompletion();
-            }
+            NSString *msg = [NSString stringWithFormat:@"Remote message list unavailable"];
+            NSError *error =  [NSError errorWithDomain:UAMessageCenterMessageLoadErrorDomain
+                                          code:UAMessageCenterMessageLoadErrorCodeMessageExpired
+                                      userInfo:@{NSLocalizedDescriptionKey:msg}];
+
+            [self.delegate messageLoadFailed:messageID error:error];
         }];
+        
         return;
     }];
 }
-- (void)loadMessage:(UAInboxMessage *)message onlyIfChanged:(BOOL)onlyIfChanged {
+
+- (void)loadMessage:(nullable UAInboxMessage *)message {
     if (!message) {
         if (self.messageState == LOADING) {
             [self.webView stopLoading];
         }
+
         self.messageState = NONE;
         self.message = message;
-        [self coverWithMessageAndHideLoadingIndicator:UAMessageCenterLocalizedString(@"ua_message_not_selected")];
+
+        [self clearMessage];
+
         return;
     }
 
-    if (!onlyIfChanged || (self.messageState == NONE) || !(self.message && [message.messageID isEqualToString:self.message.messageID])) {
-        self.message = message;
+    self.message = message;
 
-        if (!self.webView) {
-            self.messageState = TO_LOAD;
-        } else {
-            if (self.messageState == LOADING) {
-                [self.webView stopLoading];
-            }
-            self.messageState = LOADING;
-
-            // start by covering the view and showing the loading indicator
-            [self coverWithBlankViewAndShowLoadingIndicator];
-
-            // now load a blank page, so when the view is uncovered, it isn't still showing the previous web page
-            // note: when the blank page has finished loading, it will load the message
-            [self.webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:urlForBlankPage]]];
-        }
+    if (!self.webView) {
+        self.messageState = TO_LOAD;
     } else {
-        if (self.isVisible && (self.messageState == LOADED)) {
-            [self uncoverAndHideLoadingIndicator];
+        if (self.messageState == LOADING) {
+            [self.webView stopLoading];
         }
+        self.messageState = LOADING;
+
+        // start by covering the view and showing the loading indicator
+        [self hideMessageWithLoadingIndicator];
+
+        // now load a blank page, so when the view is uncovered, it isn't still showing the previous web page
+        // note: when the blank page has finished loading, it will load the message
+        [self.webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:UAMessageCenterMessageViewControllerAboutBlank]]];
     }
 }
 
 - (void)loadMessageIntoWebView {
     self.title = self.message.title;
-
+    
     NSMutableURLRequest *requestObj = [NSMutableURLRequest requestWithURL:self.message.messageBodyURL];
     requestObj.timeoutInterval = 60;
 
@@ -350,55 +350,6 @@ static NSString *urlForBlankPage = @"about:blank";
         [requestObj setValue:auth forHTTPHeaderField:@"Authorization"];
         [self.webView loadRequest:requestObj];
     } dispatcher:[UADispatcher mainDispatcher]];
-}
-
-- (void)displayNoLongerAvailableAlertOnOK:(void (^)(void))okCompletion {
-    UIAlertController* alert = [UIAlertController alertControllerWithTitle:UAMessageCenterLocalizedString(@"ua_content_error")
-                                                                   message:UAMessageCenterLocalizedString(@"ua_mc_no_longer_available")
-                                                            preferredStyle:UIAlertControllerStyleAlert];
-
-    UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:UAMessageCenterLocalizedString(@"ua_ok")
-                                                            style:UIAlertActionStyleDefault
-                                                          handler:^(UIAlertAction * action) {
-                                                              if (okCompletion) {
-                                                                  okCompletion();
-                                                              }
-                                                          }];
-
-    [alert addAction:defaultAction];
-
-    [self presentViewController:alert animated:YES completion:nil];
-
-}
-
-- (void)displayFailedToLoadAlertOnOK:(void (^)(void))okCompletion onRetry:(void (^)(void))retryCompletion {
-    UIAlertController* alert = [UIAlertController alertControllerWithTitle:UAMessageCenterLocalizedString(@"ua_connection_error")
-                                                                   message:UAMessageCenterLocalizedString(@"ua_mc_failed_to_load")
-                                                            preferredStyle:UIAlertControllerStyleAlert];
-
-    UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:UAMessageCenterLocalizedString(@"ua_ok")
-                                                            style:UIAlertActionStyleDefault
-                                                          handler:^(UIAlertAction * action) {
-                                                              if (okCompletion) {
-                                                                  okCompletion();
-                                                              }
-                                                          }];
-
-    [alert addAction:defaultAction];
-
-    if (retryCompletion) {
-        UIAlertAction *retryAction = [UIAlertAction actionWithTitle:UAMessageCenterLocalizedString(@"ua_retry_button")
-                                                              style:UIAlertActionStyleDefault
-                                                            handler:^(UIAlertAction * _Nonnull action) {
-                                                                if (retryCompletion) {
-                                                                    retryCompletion();
-                                                                }
-                                                            }];
-
-        [alert addAction:retryAction];
-    }
-
-    [self presentViewController:alert animated:YES completion:nil];
 }
 
 #pragma mark WKNavigationDelegate
@@ -412,63 +363,49 @@ static NSString *urlForBlankPage = @"about:blank";
         NSInteger status = httpResponse.statusCode;
         if (status >= 400 && status <= 599) {
             decisionHandler(WKNavigationResponsePolicyCancel);
-            [self coverWithBlankViewAndShowLoadingIndicator];
-            if (status >= 500) {
-                // Display a retry alert
-                UA_WEAKIFY(self);
-                [self displayFailedToLoadAlertOnOK:nil onRetry:^{
-                    UA_STRONGIFY(self);
-                    [self loadMessage:self.message onlyIfChanged:NO];
-                }];
-            } else if (status == 410) {
-                // Gone: message has been permanently deleted from the backend.
-                // Alert the user that message is no longer available.
-                UA_WEAKIFY(self)
-                [self displayNoLongerAvailableAlertOnOK:^{
-                    UA_STRONGIFY(self)
-                    [self uncoverAndHideLoadingIndicator];
-                }];
-            } else {
-                // Display a generic alert
-                UA_WEAKIFY(self);
-                [self displayFailedToLoadAlertOnOK:^{
-                    UA_STRONGIFY(self);
-                    [self uncoverAndHideLoadingIndicator];
-                } onRetry:nil];
-            }
+
+            NSString *msg = [NSString stringWithFormat:@"Message load resulted in failure status: %lu", status];
+            NSError *error =  [NSError errorWithDomain:UAMessageCenterMessageLoadErrorDomain
+                                          code:UAMessageCenterMessageLoadErrorCodeFailureStatus
+                                              userInfo:@{NSLocalizedDescriptionKey:msg,
+                                                         UAMessageCenterMessageLoadErrorHTTPStatusKey:@(status)}];
+
+            [self.delegate messageLoadFailed:self.message.messageID error:error];
             return;
         }
     }
-
+    
     decisionHandler(WKNavigationResponsePolicyAllow);
 
 }
 
-- (void)webView:(WKWebView *)wv didFinishNavigation:(WKNavigation *)navigation {
+- (void)webView:(WKWebView *)wv didFinishNavigation:(null_unspecified WKNavigation *)navigation {
     if (self.messageState != LOADING) {
         UA_LWARN(@"MessageState = %u. Should be \"LOADING\"",self.messageState);
     }
 
-    if (![UAMessageCenter shared].defaultUI.disableMessageLinkPreviewAndCallouts) {
+    if (!self.disableMessageLinkPreviewAndCallouts) {
         [self.webView evaluateJavaScript:@"document.body.style.webkitTouchCallout='none';" completionHandler:nil];
     }
-
-    if ([wv.URL.absoluteString isEqualToString:urlForBlankPage]) {
+    
+    if ([wv.URL.absoluteString isEqualToString:UAMessageCenterMessageViewControllerAboutBlank]) {
         [self loadMessageIntoWebView];
         return;
     }
-
+    
     self.messageState = LOADED;
-
+ 
     // Mark message as read after it has finished loading
     if (self.message.unread) {
         [self.message markMessageReadWithCompletionHandler:nil];
     }
 
-    [self uncoverAndHideLoadingIndicator];
+    [self.delegate messageLoadSucceeded:self.message.messageID];
+    
+    [self showMessage];
 }
 
-- (void)webView:(WKWebView *)wv didFailNavigation:(WKNavigation *)navigation withError:(NSError *)error {
+- (void)webView:(WKWebView *)wv didFailNavigation:(null_unspecified WKNavigation *)navigation withError:(NSError *)error {
     if (self.messageState != LOADING) {
         UA_LWARN(@"MessageState = %u. Should be \"LOADING\"",self.messageState);
     }
@@ -477,33 +414,25 @@ static NSString *urlForBlankPage = @"about:blank";
     }
 
     UA_LDEBUG(@"Failed to load message: %@", error);
-
+    
     self.messageState = NONE;
 
     [self hideLoadingIndicator];
 
-    // Display a retry alert
-    UA_WEAKIFY(self);
-    [self displayFailedToLoadAlertOnOK:^{
-        self.message = nil;
-        [self.navigationController.navigationController popToRootViewControllerAnimated:YES];
-    } onRetry:^{
-        UA_STRONGIFY(self);
-        [self loadMessage:self.message onlyIfChanged:NO];
-    }];
+    [self.delegate messageLoadFailed:self.message.messageID error:error];
+    self.message = nil;
 }
 
-- (void)webView:(WKWebView *)webView didFailProvisionalNavigation:(WKNavigation *)navigation withError:(NSError *)error {
+- (void)webView:(WKWebView *)webView didFailProvisionalNavigation:(null_unspecified WKNavigation *)navigation withError:(NSError *)error {
     [self webView:webView didFailNavigation:navigation withError:error];
 }
 
 #pragma mark UANativeBridgeDelegate
 
 - (void)close {
-    if (self.closeBlock) {
-        self.closeBlock(YES);
-    }
-    self.message = nil;
+    [self.delegate messageClosed:self.message.messageID];
 }
 
 @end
+
+NS_ASSUME_NONNULL_END

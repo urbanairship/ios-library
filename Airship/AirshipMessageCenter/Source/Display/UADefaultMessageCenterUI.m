@@ -3,15 +3,14 @@
 #import "UADefaultMessageCenterUI.h"
 #import "UAMessageCenter.h"
 #import "UAMessageCenterLocalization.h"
-#import "UAMessageCenterListViewController.h"
-#import "UAMessageCenterMessageViewController.h"
-#import "UAMessageCenterSplitViewController.h"
+#import "UADefaultMessageCenterListViewController.h"
+#import "UADefaultMessageCenterSplitViewController.h"
 #import "UAMessageCenterStyle.h"
 
 #import "UAAirshipMessageCenterCoreImport.h"
 
 @interface UADefaultMessageCenterUI()
-@property(nonatomic, strong) UAMessageCenterSplitViewController *splitViewController;
+@property(nonatomic, strong) UADefaultMessageCenterSplitViewController *splitViewController;
 @end
 
 @implementation UADefaultMessageCenterUI
@@ -24,35 +23,62 @@
     return self;
 }
 
+- (void)setFilter:(NSPredicate *)filter {
+    _filter = filter;
+    self.splitViewController.filter = filter;
+}
+
+- (void)setDisableMessageLinkPreviewAndCallouts:(BOOL)disableMessageLinkPreviewAndCallouts {
+    _disableMessageLinkPreviewAndCallouts = disableMessageLinkPreviewAndCallouts;
+    self.splitViewController.disableMessageLinkPreviewAndCallouts = disableMessageLinkPreviewAndCallouts;
+}
+
+- (void)setStyle:(UAMessageCenterStyle *)style {
+    _style = style;
+    self.splitViewController.style = style;
+}
+
+- (void)setTitle:(NSString *)title {
+    _title = title;
+    self.splitViewController.title = title;
+}
+
+- (void)createSplitViewController {
+    self.splitViewController = [[UADefaultMessageCenterSplitViewController alloc] initWithNibName:nil bundle:nil];
+
+    self.splitViewController.filter = self.filter;
+    self.splitViewController.disableMessageLinkPreviewAndCallouts = self.disableMessageLinkPreviewAndCallouts;
+
+    self.splitViewController.style = self.style;
+    self.splitViewController.title = self.title;
+
+    self.splitViewController.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+    self.splitViewController.modalPresentationStyle = UIModalPresentationFullScreen;
+
+    UADefaultMessageCenterListViewController *lvc = self.splitViewController.listViewController;
+
+    // if "Done" has been localized, use it, otherwise use iOS's UIBarButtonSystemItemDone
+    if (UAMessageCenterLocalizedStringExists(@"ua_done")) {
+        lvc.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:UAMessageCenterLocalizedString(@"ua_done")
+                                                                                style:UIBarButtonItemStyleDone
+                                                                               target:self
+                                                                               action:@selector(dismiss)];
+    } else {
+        lvc.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
+                                                                                             target:self
+                                                                                             action:@selector(dismiss)];
+    }
+}
+
 - (void)displayMessageCenterAnimated:(BOOL)animated
                           completion:(void(^)(void))completionHandler {
     if (!self.splitViewController) {
-        self.splitViewController = [[UAMessageCenterSplitViewController alloc] initWithNibName:nil bundle:nil];
-        self.splitViewController.filter = self.filter;
-
-        UAMessageCenterListViewController *lvc = self.splitViewController.listViewController;
-
-        // if "Done" has been localized, use it, otherwise use iOS's UIBarButtonSystemItemDone
-        if (UAMessageCenterLocalizedStringExists(@"ua_done")) {
-            lvc.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:UAMessageCenterLocalizedString(@"ua_done")
-                                                                                    style:UIBarButtonItemStyleDone
-                                                                                   target:self
-                                                                                   action:@selector(dismiss)];
-        } else {
-            lvc.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
-                                                                                                 target:self
-                                                                                                 action:@selector(dismiss)];
-        }
-
-        self.splitViewController.style = self.style;
-        self.splitViewController.title = self.title;
-
-        self.splitViewController.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
-        self.splitViewController.modalPresentationStyle = UIModalPresentationFullScreen;
-
+        [self createSplitViewController];
         [[UAUtils topController] presentViewController:self.splitViewController animated:animated completion:completionHandler];
     } else {
-        completionHandler();
+        if (completionHandler) {
+            completionHandler();
+        }
     }
 }
 
@@ -64,7 +90,7 @@
     UA_WEAKIFY(self)
     [self displayMessageCenterAnimated:animated completion:^{
         UA_STRONGIFY(self)
-        [self.splitViewController.listViewController displayMessageForID:messageID];
+        [self.splitViewController displayMessageForID:messageID];
     }];
 }
 

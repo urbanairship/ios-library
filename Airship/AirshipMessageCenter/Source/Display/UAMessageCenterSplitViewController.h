@@ -8,6 +8,7 @@
 /**
  * Default implementation of an adaptive message center controller.
  */
+DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0. Instead use UADefaultMessageCenterSplitViewController.")
 @interface UAMessageCenterSplitViewController : UISplitViewController
 
 ///---------------------------------------------------------------------------------------

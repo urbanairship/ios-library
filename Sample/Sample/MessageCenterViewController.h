@@ -3,9 +3,8 @@
 @import UIKit;
 @import AirshipMessageCenter;
 
-@interface MessageCenterViewController : UAMessageCenterSplitViewController
+@interface MessageCenterViewController : UADefaultMessageCenterSplitViewController
 
 - (void)showInbox;
-- (void)displayMessageForID:(NSString *)messageID;
 
 @end

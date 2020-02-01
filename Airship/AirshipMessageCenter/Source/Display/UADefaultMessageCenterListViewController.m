@@ -1,8 +1,7 @@
 /* Copyright Airship and Contributors */
 
-#import "UAMessageCenterListViewController.h"
+#import "UADefaultMessageCenterListViewController.h"
 #import "UAMessageCenterListCell.h"
-#import "UAMessageCenterMessageViewController.h"
 #import "UAInboxMessage.h"
 #import "UAMessageCenter.h"
 #import "UAInboxMessageList.h"
@@ -12,8 +11,6 @@
 
 #import "UAAirshipMessageCenterCoreImport.h"
 
-
-
 /*
  * List-view image controls: default image path and cache values
  */
@@ -22,7 +19,9 @@
 #define kUAIconImageCacheMaxByteCost (2 * 1024 * 1024) /* 2MB */
 #define kUAMessageCenterListCellNibName @"UAMessageCenterListCell"
 
-@interface UAMessageCenterListViewController()
+NS_ASSUME_NONNULL_BEGIN
+
+@interface UADefaultMessageCenterListViewController()
 
 /**
  * The placeholder image to display in lieu of the icon
@@ -53,26 +52,10 @@
 @property (nonatomic, strong) UIBarButtonItem *editItem;
 @property (nonatomic, strong) UIBarButtonItem *cancelItem;
 
-
-/**
- * The currently selected index path.
- */
-@property (nonatomic, strong) NSIndexPath *selectedIndexPath;
-
-/**
- * The currently selected message.
- */
-@property (nonatomic, strong) UAInboxMessage *selectedMessage;
-
 /**
  * The an array of currently selected message IDs during editing.
  */
-@property (nonatomic, strong) NSMutableArray<NSString *> *selectedMessageIDs;
-
-/**
- * Whether the interface is currently collapsed
- */
-@property (nonatomic, assign) BOOL collapsed;
+@property (nonatomic, strong, nullable) NSMutableArray<NSString *> *selectedMessageIDs;
 
 /**
  * A dictionary of sets of (NSIndexPath *) with absolute URLs (NSString *) for keys.
@@ -104,37 +87,13 @@
  */
 @property (nonatomic, strong) dispatch_queue_t iconFetchQueue;
 
-/**
- * Split view controller managing the inbox and message views
- */
-@property (nonatomic, weak) UISplitViewController *splitViewController;
-
-/**
- * The message view's navigation controller to use for applying styles.
- */
-@property (nonatomic, strong) UINavigationController *messageViewNavigationController;
-
-/**
- * The previous navigation bar style. Used for resetting the bar style to the style set before message center display.
- * Note: 0 for default Bar style, 1 for black bar style.
- */
-@property (nonatomic, strong, nullable) NSNumber *previousNavigationBarStyle;
-
 @end
 
-#pragma GCC diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-implementations"
-@implementation UAMessageCenterListViewController
-#pragma GCC diagnostic pop
+@implementation UADefaultMessageCenterListViewController
 
-- (instancetype)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
-    return [self initWithNibName:nibNameOrNil bundle:nibBundleOrNil splitViewController:nil];
-}
 
-- (instancetype)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil splitViewController:(UISplitViewController *)splitViewController {
+- (instancetype)initWithNibName:(nullable NSString *)nibNameOrNil bundle:(nullable NSBundle *)nibBundleOrNil {
     if (self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil]) {
-        self.splitViewController = splitViewController;
-
         self.iconCache = [[NSCache alloc] init];
         self.iconCache.countLimit = kUAIconImageCacheMaxCount;
         self.iconCache.totalCostLimit = kUAIconImageCacheMaxByteCost;
@@ -151,7 +110,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-
+    
     // if "Edit" has been localized, use it, otherwise use iOS's UIBarButtonSystemItemEdit
     if (UAMessageCenterLocalizedStringExists(@"ua_edit")) {
         self.editItem = [[UIBarButtonItem alloc] initWithTitle:UAMessageCenterLocalizedString(@"ua_edit")
@@ -163,7 +122,7 @@
                                                                       target:self
                                                                       action:@selector(editButtonPressed:)];
     }
-
+    
     self.cancelItem = [[UIBarButtonItem alloc]
                        initWithTitle:UAMessageCenterLocalizedString(@"ua_cancel")
                        style:UIBarButtonItemStyleDone
@@ -186,12 +145,9 @@
     // This allows us to use the UITableViewController for managing the refresh control, while keeping the
     // outer chrome of the list view controller intact
     [self addChildViewController:tableController];
-
+    
     // get initial list of messages in the inbox
     [self copyMessages];
-
-    // create a messageViewController
-    [self createMessageViewController];
 
     // watch for changes to the message list
     [[NSNotificationCenter defaultCenter] addObserver:self
@@ -199,33 +155,24 @@
                                                  name:UAInboxMessageListUpdatedNotification object:nil];
 }
 
-- (void)viewWillDisappear:(BOOL)animated {
-    [super viewWillDisappear:animated];
-
-    [self restoreNavigationBarStyle];
-}
-
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-
+    
     self.navigationItem.backBarButtonItem = nil;
 
-    [self setNavigationBarStyle];
+    // Delay reloading by a beat to help selection/scrolling work more reliably
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self reload];
 
-    [self reload];
-}
+        if (self.editing) {
+            return;
+        }
 
-- (void)viewDidAppear:(BOOL)animated {
-    [super viewDidAppear:animated];
-
-    if (self.editing) {
-        return;
-    }
-    if (self.collapsed) {
-        self.selectedMessage = nil;
-        self.selectedIndexPath = nil;
-    }
-    [self handlePreviouslySelectedIndexPathsAnimated:YES];
+        if ([self.delegate shouldClearSelectionOnViewWillAppear]) {
+            [self.messageTable deselectRowAtIndexPath:self.selectedIndexPath animated:YES];
+            self.selectedIndexPath = nil;
+        }
+    });
 }
 
 -(void)dealloc {
@@ -243,7 +190,7 @@
 
 - (void)setStyle:(UAMessageCenterStyle *)style {
     _style = style;
-
+    
     [self applyStyle];
 }
 
@@ -251,11 +198,11 @@
     if (self.style.editButtonTitleColor) {
         self.editItem.tintColor = self.style.editButtonTitleColor;
     }
-
+    
     if (self.style.cancelButtonTitleColor) {
         self.cancelItem.tintColor = self.style.cancelButtonTitleColor;
     }
-
+    
     if (self.style.listColor) {
         self.messageTable.backgroundColor = self.style.listColor;
         self.refreshControl.backgroundColor = self.style.listColor;
@@ -263,20 +210,18 @@
         self.messageTable.backgroundColor = [UIColor systemBackgroundColor];
         self.refreshControl.backgroundColor = [UIColor systemBackgroundColor];
     }
-
+    
     if (self.style.cellSeparatorColor) {
         self.messageTable.separatorColor = self.style.cellSeparatorColor;
     } else if (@available(iOS 13.0, *)) {
         self.messageTable.separatorColor = [UIColor separatorColor];
     }
-
+    
     if (self.style.refreshTintColor) {
         self.refreshControl.tintColor = self.style.refreshTintColor;
     }
-
+    
     [self applyToolbarItemStyles];
-
-    [self applyMessageViewNavBarStyles];
 
     // apply styles to table cells
     [self.messageTable reloadData];
@@ -297,59 +242,6 @@
     self.deleteItem.tintColor = (self.style.deleteButtonTitleColor) ? self.style.deleteButtonTitleColor : red;
 
     self.markAsReadButtonItem.tintColor = (self.style.markAsReadButtonTitleColor) ? self.style.markAsReadButtonTitleColor : self.defaultTintColor;
-}
-
-- (void)restoreNavigationBarStyle {
-    // Restore the previous style to the containing navigation controller
-    if (self.style && self.style.navigationBarStyle && self.previousNavigationBarStyle) {
-        self.navigationController.navigationBar.barStyle = (UIBarStyle)[self.previousNavigationBarStyle intValue];
-    }
-
-    self.previousNavigationBarStyle = nil;
-}
-
-// Note: This method should only be called once in viewWillAppear or it may not fuction as expected
-- (void)setNavigationBarStyle {
-    if (self.style && self.style.navigationBarStyle) {
-        // Save the previous style of containing navigation controller, and set specified style
-        if (!self.previousNavigationBarStyle) {
-            // Only set once to prevent overwriting from multiple calls
-            self.previousNavigationBarStyle = @(self.navigationController.navigationBar.barStyle);
-        }
-
-        self.navigationController.navigationBar.barStyle = (UIBarStyle)self.style.navigationBarStyle;
-        self.messageViewNavigationController.navigationBar.barStyle = (UIBarStyle)self.style.navigationBarStyle;
-    }
-}
-
-- (void)applyMessageViewNavBarStyles {
-    // apply styles to the message view's navigation bar
-    if (self.style.navigationBarColor) {
-        self.messageViewNavigationController.navigationBar.barTintColor = self.style.navigationBarColor;
-    }
-
-    if (self.style.tintColor) {
-        self.messageViewNavigationController.navigationBar.tintColor = self.style.tintColor;
-    }
-
-    // Only apply opaque property if a style is set
-    if (self.style) {
-        self.messageViewNavigationController.navigationBar.translucent = !self.style.navigationBarOpaque;
-    }
-
-    NSMutableDictionary *titleAttributes = [NSMutableDictionary dictionary];
-
-    if (self.style.titleColor) {
-        titleAttributes[NSForegroundColorAttributeName] = self.style.titleColor;
-    }
-
-    if (self.style.titleFont) {
-        titleAttributes[NSFontAttributeName] = self.style.titleFont;
-    }
-
-    if (titleAttributes.count) {
-        self.messageViewNavigationController.navigationBar.titleTextAttributes = titleAttributes;
-    }
 }
 
 - (void)refreshStateChanged:(UIRefreshControl *)sender {
@@ -397,13 +289,13 @@
                                                                 target:self action:@selector(batchUpdateButtonPressed:)];
 
     [self applyToolbarItemStyles];
-
+    
     self.toolbarItems = @[self.selectAllButtonItem, flexibleSpace, self.deleteItem, flexibleSpace, self.markAsReadButtonItem];
 }
 
 - (void)reload {
     [self.messageTable reloadData];
-
+    
     if (self.editing) {
         if (self.selectedMessageIDs.count > 0) {
             // re-select previously selected cells
@@ -421,65 +313,50 @@
             self.selectedMessageIDs = reSelectedMessageIDs;
         }
     } else {
-        [self handlePreviouslySelectedIndexPathsAnimated:NO];
+        [self handlePreviouslySelectedIndexPathsAnimated:YES];
     }
-
-    // Hide message view if necessary
-    if (self.collapsed && (self.messages.count == 0) && (self.messageViewController == self.navigationController.visibleViewController)) {
-        [self.navigationController popViewControllerAnimated:YES];
+    
+    // If there are no messages, select nothing
+    if (self.messages.count == 0) {
+        [self.delegate didSelectMessageWithID:nil];
     }
 }
 
-- (void)handlePreviouslySelectedIndexPathsAnimated:(BOOL)animated {
-    // If a cell was previously selected and there are messages to display
-    if ((self.selectedMessage || self.selectedIndexPath) && (self.messages.count > 0)) {
-        // find the index path for the message that is currently displayed
-        NSIndexPath *indexPathOfCurrentlyDisplayedMessage = [self indexPathForMessage:self.messageViewController.message];
-        if (indexPathOfCurrentlyDisplayedMessage) {
-            // if the currently displayed message is still in the inbox list, select it
-            self.selectedIndexPath = indexPathOfCurrentlyDisplayedMessage;
-            self.selectedMessage = self.messageViewController.message;
-        } else {
-            // find the index path for the message that was selected
-            NSIndexPath *indexPathofSelectedMessage = [self indexPathForMessage:self.selectedMessage];
-            if (indexPathofSelectedMessage) {
-                // if the selected message is still in the inbox list, select it
-                self.selectedIndexPath = indexPathofSelectedMessage;
-            } else {
-                self.selectedIndexPath = [self validateIndexPath:self.selectedIndexPath];
-                if (self.selectedIndexPath) {
-                    self.selectedMessage = [self messageAtIndex:self.selectedIndexPath.row];
-                } else {
-                    self.selectedMessage = nil;
-                }
-            }
-        }
-        if (self.selectedIndexPath) {
-            // make sure the row we want selected is selected
-            self.selectedIndexPath = [self validateIndexPath:self.selectedIndexPath];
-            if (!self.editing && !self.collapsed) {
-                [self.messageTable selectRowAtIndexPath:self.selectedIndexPath animated:animated scrollPosition:UITableViewScrollPositionNone];
-                [self.messageTable scrollToNearestSelectedRowAtScrollPosition:UITableViewScrollPositionNone animated:YES];
-            }
-        } else {
-            // if we want no row selected, de-select row if there is one already selected
-            [self deselectCurrentlySelectedIndexPathAnimated:animated];
-        }
+- (void)setSelectedMessageID:(nullable NSString *)selectedMessageID {
+    if ([selectedMessageID isEqual:_selectedMessageID]) {
+        return;
+    }
+
+    _selectedMessageID = selectedMessageID;
+
+    if (selectedMessageID) {
+        UAInboxMessage *selectedMessage = [[UAMessageCenter shared].messageList messageForID:selectedMessageID];
+
+        self.selectedIndexPath = [self indexPathForMessage:selectedMessage];
+
+        [self.messageTable selectRowAtIndexPath:self.selectedIndexPath animated:YES scrollPosition:UITableViewScrollPositionNone];
+        [self.messageTable scrollToNearestSelectedRowAtScrollPosition:UITableViewScrollPositionNone animated:YES];
     } else {
-        [self deselectCurrentlySelectedIndexPathAnimated:animated];
-        self.selectedMessage = nil;
+        [self.messageTable deselectRowAtIndexPath:self.selectedIndexPath animated:NO];
         self.selectedIndexPath = nil;
     }
 }
 
-- (void)deselectCurrentlySelectedIndexPathAnimated:(BOOL)animated {
-    NSIndexPath *selectedIndexPath = [self.messageTable indexPathForSelectedRow];
-    if (selectedIndexPath) {
-        [self.messageTable deselectRowAtIndexPath:selectedIndexPath animated:animated];
+- (void)setSelectedIndexPath:(nullable NSIndexPath *)selectedIndexPath {
+    _selectedIndexPath = selectedIndexPath;
+}
+
+- (void)handlePreviouslySelectedIndexPathsAnimated:(BOOL)animated {
+    // If a cell was previously selected and there are messages to display
+    if ((self.selectedIndexPath) && (self.messages.count > 0)) {
+        UAInboxMessage *selectedMessage = [[UAMessageCenter shared].messageList messageForID:self.selectedMessageID];
+        NSIndexPath *indexPath = [self indexPathForMessage:selectedMessage];
+        [self.messageTable selectRowAtIndexPath:indexPath animated:animated scrollPosition:UITableViewScrollPositionNone];
+        [self.messageTable scrollToNearestSelectedRowAtScrollPosition:UITableViewScrollPositionNone animated:animated];
     }
 }
 
-- (NSIndexPath *)validateIndexPath:(NSIndexPath *)indexPath {
+- (nullable NSIndexPath *)validateIndexPath:(NSIndexPath *)indexPath {
     if (!indexPath) {
         return nil;
     }
@@ -495,7 +372,7 @@
     return indexPath;
 }
 
-- (NSIndexPath *)indexPathForMessage:(UAInboxMessage *)message {
+- (nullable NSIndexPath *)indexPathForMessage:(UAInboxMessage *)message {
     if (!message) {
         return nil;
     }
@@ -552,7 +429,7 @@
 - (void)refreshAfterBatchUpdate {
     // end editing
     self.cancelItem.enabled = YES;
-    [self cancelButtonPressed:nil];
+    [self cancelButtonPressed:self];
 
     // force button update
     [self refreshBatchUpdateButtons];
@@ -570,129 +447,6 @@
     }
     return count;
 }
-
-- (void)displayMessage:(UAInboxMessage *)message {
-    [self displayMessage:message onError:nil];
-}
-
-- (void)displayMessage:(UAInboxMessage *)message onError:(void (^)(void))errorCompletion {
-    if (message.isExpired) {
-        UA_LDEBUG(@"Message expired");
-        UIAlertController* alert = [UIAlertController alertControllerWithTitle:UAMessageCenterLocalizedString(@"ua_content_error")
-                                                                       message:UAMessageCenterLocalizedString(@"ua_mc_no_longer_available")
-                                                                preferredStyle:UIAlertControllerStyleAlert];
-
-        UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:UAMessageCenterLocalizedString(@"ua_ok")
-                                                                style:UIAlertActionStyleDefault
-                                                              handler:^(UIAlertAction * action) {
-                                                                  if (errorCompletion) {
-                                                                      errorCompletion();
-                                                                  }
-                                                              }];
-
-        [alert addAction:defaultAction];
-
-        [self presentViewController:alert animated:YES completion:nil];
-
-        message = nil;
-    }
-
-    self.selectedMessage = message;
-
-    if (!message && !self.messageViewController) {
-        // if we have no message, only continue on if we already have a messageViewController so it can
-        // be updated. No reason to create a new one for a nil message.
-        return;
-    }
-
-    [self.messageViewController loadMessageForID:message.messageID onlyIfChanged:YES onError:errorCompletion];
-
-    if (message) {
-        // only display the message if there is a message to display
-        [self displayMessageViewController];
-    }
-}
-
-- (void)displayMessageForID:(NSString *)messageID {
-
-    UA_WEAKIFY(self);
-    [self displayMessageForID:messageID onError:^{
-        UA_STRONGIFY(self);
-
-        [self.messageTable deselectRowAtIndexPath:self.selectedIndexPath animated:NO];
-        self.selectedMessage = nil;
-        self.selectedIndexPath = nil;
-
-        // Hide message view if necessary
-        if (self.collapsed && (self.messageViewController == self.navigationController.visibleViewController)) {
-            [self.navigationController popViewControllerAnimated:YES];
-        }
-
-        // refresh message list
-        [[UAMessageCenter shared].messageList retrieveMessageListWithSuccessBlock:nil
-                                                                 withFailureBlock:nil];
-    }];
-}
-
-- (void)displayMessageForID:(NSString *)messageID onError:(void (^)(void))errorCompletion {
-    // See if the message is available on the device
-    UAInboxMessage *message = [[UAMessageCenter shared].messageList messageForID:messageID];
-    if (message) {
-        [self displayMessage:message onError:errorCompletion];
-        return;
-    }
-
-    // message is not available in the device's inbox
-    self.selectedIndexPath = nil;
-
-    [self.messageViewController loadMessageForID:messageID onlyIfChanged:NO onError:errorCompletion];
-
-    self.selectedMessage = self.messageViewController.message;
-
-    [self displayMessageViewController];
-}
-
-- (void)createMessageViewController {
-    // create a messageViewController
-    UA_WEAKIFY(self);
-    void (^closeBlock)(BOOL) = ^(BOOL animated){
-        UA_STRONGIFY(self)
-
-        if (!self) {
-            return;
-        }
-
-        // Call the close block if present
-        if (self.closeBlock) {
-            self.closeBlock(animated);
-        } else {
-            // Fallback to displaying the inbox
-            [self.navigationController popViewControllerAnimated:animated];
-        }
-    };
-
-    // create a messageViewController if we don't already have one
-    if (!self.messageViewController) {
-            self.messageViewController = [[UAMessageCenterMessageViewController alloc] initWithNibName:@"UAMessageCenterMessageViewController" bundle:[UAMessageCenterResources bundle]];
-    }
-    self.messageViewController.closeBlock = closeBlock;
-}
-
-- (void)displayMessageViewController {
-    // if message view is not already displaying, get it displayed
-    if (self.messageViewController != self.navigationController.visibleViewController) {
-        if (!self.messageViewNavigationController) {
-            self.messageViewNavigationController = [[UINavigationController alloc] initWithRootViewController:self.messageViewController];
-
-            [self applyMessageViewNavBarStyles];
-
-            // note: not sure why this is necessary but the navigation controller isn't sized properly otherwise
-            [self.messageViewNavigationController.view layoutSubviews];
-        }
-        [self showDetailViewController:self.messageViewNavigationController sender:self];
-    }
-}
-
 
 #pragma mark -
 #pragma mark Button Action Methods
@@ -750,7 +504,7 @@
 
 - (void)batchUpdateButtonPressed:(id)sender {
     NSMutableArray *selectedMessages = [NSMutableArray array];
-
+    
     for (NSString *messageID in self.selectedMessageIDs) {
         // Add message by ID
         UAInboxMessage *selectedMessage = [[UAMessageCenter shared].messageList messageForID:messageID];
@@ -826,7 +580,7 @@
     }
 }
 
-- (UAInboxMessage *)messageAtIndex:(NSUInteger)index {
+- (nullable UAInboxMessage *)messageAtIndex:(NSUInteger)index {
     if (index < self.messages.count) {
         return [self.messages objectAtIndex:index];
     } else {
@@ -838,18 +592,18 @@
     if (!messageToFind) {
         return NSNotFound;
     }
-
+    
     for (NSUInteger index = 0;index<self.messages.count;index++) {
         UAInboxMessage *message = [self messageAtIndex:index];
         if ([messageToFind.messageID isEqualToString:message.messageID]) {
             return index;
         }
     }
-
+    
     return NSNotFound;
 }
 
-- (UAInboxMessage *)messageForID:(NSString *)messageIDToFind {
+- (nullable UAInboxMessage *)messageForID:(NSString *)messageIDToFind {
     if (!messageIDToFind) {
         return nil;
     } else {
@@ -869,7 +623,7 @@
     }
 
     UAInboxMessage *message = [self messageAtIndex:indexPath.row];
-
+    
     if (message) {
         UA_WEAKIFY(self);
        [[UAMessageCenter shared].messageList markMessagesDeleted:@[message] completionHandler:^{
@@ -962,7 +716,7 @@
     }
 }
 
-- (void)tableView:(UITableView *)tableView didEndEditingRowAtIndexPath:(NSIndexPath *)indexPath {
+- (void)tableView:(UITableView *)tableView didEndEditingRowAtIndexPath:(nullable NSIndexPath *)indexPath {
     if (self.selectedIndexPath) {
         [self.messageTable selectRowAtIndexPath:self.selectedIndexPath animated:NO scrollPosition:UITableViewScrollPositionNone];
     }
@@ -980,19 +734,14 @@
         [self.selectedMessageIDs addObject:message.messageID];
         [self refreshBatchUpdateButtons];
     } else {
-        self.selectedMessage = message;
+        self.selectedMessageID = message.messageID;
         self.selectedIndexPath = indexPath;
 
-        UA_WEAKIFY(self)
-
-        [self displayMessage:message onError:^{
-            UA_STRONGIFY(self)
-
-            self.selectedMessage = nil;
-            self.selectedIndexPath = nil;
-            [self.messageTable deselectRowAtIndexPath:indexPath animated:NO];
-            [[UAMessageCenter shared].messageList retrieveMessageListWithSuccessBlock:nil withFailureBlock:nil];
-        }];
+        if (message) {
+            [self.delegate didSelectMessageWithID:message.messageID];
+        } else {
+            UA_LWARN(@"No message found at index path: %@", indexPath);
+        }
     }
 }
 
@@ -1017,31 +766,24 @@
 }
 
 - (void)chooseMessageDisplayAndReload {
-    if (self.messageViewController.message) {
-        // Default is to show the message that was already displayed
-        UAInboxMessage *messageToDisplay = [self messageForID:self.messageViewController.message.messageID];
+    UAInboxMessage *messageToDisplay;
 
-        // if the previously displayed message no longer exists, try to show the message that was previously selected
-        if (!messageToDisplay && self.selectedMessage) {
-            messageToDisplay = [self messageForID:self.selectedMessage.messageID];
-        }
+    // try to select the message that at the previously selected index
+    if (self.selectedMessageID) {
+        messageToDisplay = [self messageForID:self.selectedMessageID];
+    }
 
-        // if that message no longer exists, try to show the message now at the previously selected index
-        if (!messageToDisplay && self.selectedIndexPath) {
-            messageToDisplay = [self messageForID:[self messageAtIndex:[self validateIndexPath:self.selectedIndexPath].row].messageID];
-        }
+    // if that message no longer exists, try to select the message now at the previously selected index
+    if (!messageToDisplay && self.selectedIndexPath) {
+        messageToDisplay = [self messageForID:[self messageAtIndex:[self validateIndexPath:self.selectedIndexPath].row].messageID];
+        [self.delegate didSelectMessageWithID:messageToDisplay.messageID];
+    }
 
-        [self.messageViewController loadMessageForID:messageToDisplay.messageID onlyIfChanged:YES onError:^{
-            UA_LERR(@"Message load via chooseMessageDisplayAndReload resulted in error");
-        }];
+    self.selectedMessageID = messageToDisplay.messageID;
 
-        self.selectedMessage = messageToDisplay;
-
-        if (!messageToDisplay) {
-            if (self.collapsed && (self.messageViewController == self.navigationController.visibleViewController)) {
-                [self.navigationController popViewControllerAnimated:YES];
-            }
-        }
+    // If there's no message to display, select nothing
+    if (!messageToDisplay) {
+        [self.delegate didSelectMessageWithID:nil];
     }
 
     [self reload];
@@ -1054,30 +796,6 @@
 // A tap on the status bar will force a scroll to the top
 - (BOOL)scrollViewShouldScrollToTop:(UIScrollView *)scrollView {
     return YES;
-}
-
-#pragma mark - UISplitViewControllerDelegate
-
-- (BOOL)splitViewController:(UISplitViewController *)splitViewController collapseSecondaryViewController:(UIViewController *)secondaryViewController ontoPrimaryViewController:(UIViewController *)primaryViewController {
-    // Only collapse onto the primary (list) controller if there's no currently selected message or we're in batch editing mode
-    return !(self.selectedIndexPath || self.selectedMessage) || self.editing;
-}
-
-- (UIViewController *)primaryViewControllerForExpandingSplitViewController:(UISplitViewController *)splitViewController {
-    // Delay selection by a beat, to allow rotation to finish
-
-    UA_WEAKIFY(self)
-   [[UADispatcher mainDispatcher] dispatchAsync:^{
-        UA_STRONGIFY(self)
-        [self handlePreviouslySelectedIndexPathsAnimated:YES];
-   }];
-    // Returning nil causes the split view controller to default to the the existing primary view controller
-    return nil;
-}
-
-- (UIViewController *)primaryViewControllerForCollapsingSplitViewController:(UISplitViewController *)splitViewController {
-    // Returning nil causes the split view controller to default to the the existing secondary view controller
-    return nil;
 }
 
 #pragma mark - List Icon Load + Fetch
@@ -1181,7 +899,7 @@
                         cell.listIconView.image = iconImage;
                     }
                 }
-
+                
                 // Clear the request marker
                 [self.currentIconURLRequests removeObjectForKey:iconListURLString];
            }];
@@ -1197,12 +915,6 @@
     return [icons objectForKey:@"list_icon"];
 }
 
-- (BOOL)collapsed {
-    UISplitViewController *splitViewController = self.splitViewController;
-    if (splitViewController) {
-        return splitViewController.collapsed;
-    }
-    return YES;
-}
-
 @end
+
+NS_ASSUME_NONNULL_END
