@@ -138,7 +138,6 @@
             [self.defaults removeObjectForKey:key];
         }
     }
-    [self.defaults synchronize];
 }
 
 @end

@@ -76,7 +76,6 @@
 
     // Inject time stamps of zero one and two to indicate three timestamps long ago
     [[NSUserDefaults standardUserDefaults] setObject:@[@0, @1, @2] forKey:[@"mockAppKey" stringByAppendingString:@"RateAppActionPromptCount"]];
-    [[NSUserDefaults standardUserDefaults] synchronize];
 
     // Make sure there are stored timestamps
     NSArray *timestamps = [dataStore arrayForKey:@"RateAppActionPromptCount"];
