@@ -70,6 +70,11 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
 extern NSString * const UADeviceIDChangedNotification;
 
 /**
+ * NSNotification posted when Airship is ready.
+ */
+extern NSString * const UAAirshipReadyNotification;
+
+/**
  * UAirship manages the shared state for all Airship services. [UAirship takeOff:] should be
  * called from within your application delegate's `application:didFinishLaunchingWithOptions:` method
  * to initialize the shared instance.
