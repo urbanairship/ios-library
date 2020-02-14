@@ -15,11 +15,6 @@ NS_ASSUME_NONNULL_BEGIN
 extern NSString *const UAFullScreenDismissIconResourceKey;
 
 /**
- * The key representing the additionalPadding in a style plist.
- */
-extern NSString *const UAFullScreenAdditonalPaddingKey;
-
-/**
  * The key representing the top-level text style in a style plist.
  */
 extern NSString *const UAFullScreenTextStyleKey;

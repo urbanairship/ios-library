@@ -15,11 +15,6 @@ extern NSString *const UATextAdditonalPaddingKey;
 /**
  * The key representing the padding in a style plist.
  */
-extern NSString *const UATextSpacingKey;
-
-/**
- * The key representing the padding in a style plist.
- */
 extern NSString *const UALineSpacingKey;
 
 /**

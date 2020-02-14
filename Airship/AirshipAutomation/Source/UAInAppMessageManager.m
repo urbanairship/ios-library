@@ -34,6 +34,7 @@ NSString *const UAInAppAutomationStoreFileFormat = @"In-app-automation-%@.sqlite
 NSString *const UAInAppMessageManagerEnabledKey = @"UAInAppMessageManagerEnabled";
 NSString *const UAInAppMessageManagerDisplayIntervalKey = @"UAInAppMessageManagerDisplayInterval";
 NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
+NSString *const UAInAppMessageDisplayCoordinatorIsReadyKey = @"isReady";
 
 @interface UAInAppMessageScheduleData : NSObject
 

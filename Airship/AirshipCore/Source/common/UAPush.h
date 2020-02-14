@@ -33,6 +33,7 @@ extern NSString *const UAReceivedBackgroundNotificationEvent;
  * Notification options
  */
 typedef NS_OPTIONS(NSUInteger, UANotificationOptions) {
+    UANotificationOptionNone = 0,
     UANotificationOptionBadge   = (1 << 0),
     UANotificationOptionSound   = (1 << 1),
     UANotificationOptionAlert   = (1 << 2),
@@ -67,12 +68,6 @@ typedef NS_ENUM(NSInteger, UAAuthorizationStatus) {
     UAAuthorizationStatusAuthorized,
     UAAuthorizationStatusProvisional,
 };
-
-/**
- * Notification option for notification type `none`.
- * Not included in UANotificationOptions enum to maintain parity with UNAuthorizationOptions.
- */
-static const UANotificationOptions UANotificationOptionNone =  0;
 
 //---------------------------------------------------------------------------------------
 // UARegistrationDelegate

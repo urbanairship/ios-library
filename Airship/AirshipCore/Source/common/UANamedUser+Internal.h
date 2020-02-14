@@ -34,16 +34,6 @@ extern NSString *const UANamedUserChangeTokenKey;
 extern NSString *const UANamedUserLastUpdatedTokenKey;
 
 /**
- * Add named user tags data store key.
- */
-extern NSString *const UANamedUserAddTagGroupsSettingsKey;
-
-/**
- * Remove named user tags data store key.
- */
-extern NSString *const UANamedUserRemoveTagGroupsSettingsKey;
-
-/**
  * The change token tracks the start of setting the named user ID.
  */
 @property (nonatomic, copy, nullable) NSString *changeToken;

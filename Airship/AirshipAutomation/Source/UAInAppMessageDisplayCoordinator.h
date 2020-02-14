@@ -6,7 +6,7 @@
 /**
  * Key name for the isReady property. Use this for emitting change notifications.
  */
-static NSString *const UAInAppMessageDisplayCoordinatorIsReadyKey = @"isReady";
+extern NSString *const UAInAppMessageDisplayCoordinatorIsReadyKey;
 
 /**
  * Protocol for coordinating the display of in-app messages with the in-app message manager. Useful for

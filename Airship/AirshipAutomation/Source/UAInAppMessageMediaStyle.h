@@ -9,11 +9,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 /**
- * The key representing the media additionalPadding in a style plist.
- */
-extern NSString *const UAMediaAdditionalPaddingKey;
-
-/**
  * Model object representing a custom style to be applied
  * to an in-app message media component. Nil parameters are given
  * default styling.

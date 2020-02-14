@@ -14,11 +14,6 @@ NS_ASSUME_NONNULL_BEGIN
 extern NSString *const UAButtonAdditionalPaddingKey;
 
 /**
- * The key representing the button style in a style plist.
- */
-extern NSString *const UAButtonStyleKey;
-
-/**
  * The key representing the stacked button spacing in a style plist.
  */
 extern NSString *const UAStackedButtonSpacingKey;

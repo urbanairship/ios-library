@@ -81,11 +81,6 @@ extern NSString *const UALandingPageWidthKey;
 extern NSString *const UALandingPageAspectLockKey;
 
 /**
- * The fill constant.
- */
-extern NSString *const UALandingPageFill;
-
-/**
  * The default border radius in points.
  */
 extern CGFloat const UALandingPageDefaultBorderRadiusPoints;
