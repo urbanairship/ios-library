@@ -34,6 +34,13 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)setNumber:(NSNumber *)number forAttribute:(NSString *)attribute;
 
 /**
+ * Sets a date attribute
+ * @param date The date.
+ * @param attribute The attribute key.
+ */
+- (void)setDate:(NSDate *)date forAttribute:(NSString *)attribute;
+
+/**
  * Removes an attribute
  * @param attribute The attribute key.
  */

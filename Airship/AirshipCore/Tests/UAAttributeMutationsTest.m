@@ -36,6 +36,16 @@
             @"value" : @(3.14)
         },
         @{
+            @"action" : @"set",
+            @"key" : @"millenium",
+            @"value" : @"2000-01-01T00:00:00"
+        },
+        @{
+            @"action" : @"set",
+            @"key" : @"before-millenium",
+            @"value" : @"1999-12-31T23:59:59"
+        },
+        @{
             @"action" : @"remove",
             @"key" : @"game",
         }
@@ -47,6 +57,16 @@
     [mutations setString:@"goose" forAttribute:@"game"];
     [mutations setNumber:@(12345) forAttribute:@"luggage"];
     [mutations setNumber:@(3.14) forAttribute:@"not_quite_pi"];
+    
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    dateFormatter.dateFormat = @"yyyy-MM-dd";
+    dateFormatter.timeZone = [NSTimeZone timeZoneForSecondsFromGMT:0];
+    NSDate *millenium = [dateFormatter dateFromString:@"2000-01-01"];
+    [mutations setDate:millenium forAttribute:@"millenium"];
+    
+    NSDate *beforeMillenium = [NSDate dateWithTimeInterval:-1 sinceDate:millenium];
+    [mutations setDate:beforeMillenium forAttribute:@"before-millenium"];
+    
     [mutations removeAttribute:@"game"];
 
     XCTAssertEqualObjects(mutations.mutationsPayload, expectedMutations);

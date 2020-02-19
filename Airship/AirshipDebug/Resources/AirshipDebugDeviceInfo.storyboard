@@ -371,7 +371,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" red="0.93725490199999995" green="0.93725490199999995" blue="0.95686274510000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <sections>
-                            <tableViewSection headerTitle="Attribute Action" id="Tfy-pT-udD" userLabel="Custom Value">
+                            <tableViewSection headerTitle="Attribute Action" id="Tfy-pT-udD">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" id="k52-RZ-YvT">
                                         <rect key="frame" x="0.0" y="55.5" width="600" height="44"/>
@@ -400,7 +400,7 @@
                                     </tableViewCell>
                                 </cells>
                             </tableViewSection>
-                            <tableViewSection headerTitle="Attribute Type" id="Gph-hm-Cb6" userLabel="Custom Value">
+                            <tableViewSection headerTitle="Attribute Type" id="Gph-hm-Cb6">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" id="FIx-E7-p1e">
                                         <rect key="frame" x="0.0" y="155.5" width="600" height="44"/>
@@ -414,6 +414,7 @@
                                                     <segments>
                                                         <segment title="String"/>
                                                         <segment title="Number"/>
+                                                        <segment title="Date"/>
                                                     </segments>
                                                     <connections>
                                                         <action selector="typeControlDidChange:" destination="VO4-W6-Hya" eventType="valueChanged" id="fRD-UU-Qg3"/>
@@ -429,7 +430,7 @@
                                     </tableViewCell>
                                 </cells>
                             </tableViewSection>
-                            <tableViewSection headerTitle="Attribute KEY" id="bYT-QV-Zju" userLabel="Custom String Key">
+                            <tableViewSection headerTitle="Attribute KEY" id="bYT-QV-Zju" userLabel="Attribute Key">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" id="zUk-WK-vAC">
                                         <rect key="frame" x="0.0" y="255.5" width="600" height="44"/>
@@ -453,7 +454,7 @@
                                     </tableViewCell>
                                 </cells>
                             </tableViewSection>
-                            <tableViewSection headerTitle="Attribute VALUE" id="kND-aF-7hb" userLabel="Custom Value">
+                            <tableViewSection headerTitle="Attribute VALUE" id="kND-aF-7hb" userLabel="Attribute Value">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" id="gk8-ye-1oi">
                                         <rect key="frame" x="0.0" y="355.5" width="600" height="44"/>
@@ -475,6 +476,20 @@
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="243" id="F3H-1t-pHQ" userLabel="Add Date Attribute Value Cell">
+                                        <rect key="frame" x="0.0" y="399.5" width="600" height="243"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="F3H-1t-pHQ" id="vmz-ef-1or">
+                                            <rect key="frame" x="0.0" y="0.0" width="600" height="243"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <datePicker contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="dateAndTime" minuteInterval="1" id="3E6-M3-fRh" userLabel="Add Custom Value Date Field">
+                                                    <rect key="frame" x="19" y="13" width="562" height="216"/>
+                                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                                                </datePicker>
+                                            </subviews>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
                                 </cells>
                             </tableViewSection>
                         </sections>
@@ -490,6 +505,7 @@
                         <outlet property="addAttributeKeyCell" destination="zUk-WK-vAC" id="J11-B4-Zt3"/>
                         <outlet property="addAttributeKeyTextField" destination="ekY-F3-weD" id="5tL-HZ-XhY"/>
                         <outlet property="addAttributeValueCell" destination="gk8-ye-1oi" id="5aO-P7-1Xw"/>
+                        <outlet property="addAttributeValueDatePicker" destination="3E6-M3-fRh" id="KfP-bF-hwx"/>
                         <outlet property="addAttributeValueTextField" destination="unX-pY-eQ4" id="qC6-it-JWr"/>
                         <outlet property="attributeActionControl" destination="Pm3-Q0-lpz" id="om4-W4-TPQ"/>
                         <outlet property="attributeTypeControl" destination="hrS-PV-gmq" id="0tR-8j-9Nj"/>

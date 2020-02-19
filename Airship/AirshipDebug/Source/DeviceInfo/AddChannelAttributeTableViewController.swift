@@ -14,7 +14,8 @@ class AddChannelAttributeTableViewController: UITableViewController, UITextField
 
     @IBOutlet var addAttributeValueCell: UITableViewCell!
     @IBOutlet private weak var addAttributeValueTextField: UITextField!
-
+    @IBOutlet var addAttributeValueDatePicker: UIDatePicker!
+    
     @IBOutlet var attributeActionControl: UISegmentedControl!
     @IBOutlet var attributeTypeControl: UISegmentedControl!
 
@@ -49,11 +50,8 @@ class AddChannelAttributeTableViewController: UITableViewController, UITextField
         let tapGesture = UITapGestureRecognizer(target:self, action: #selector(dismissKeyboard))
         view.addGestureRecognizer(tapGesture)
 
-        let applyButton:UIBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonItem.SystemItem.add, target: self, action: #selector(AddChannelAttributeTableViewController.addAttributeMutation))
-        navigationItem.rightBarButtonItem = applyButton
-
-        navigationItem.rightBarButtonItem = self.applyButton
         applyButton.isEnabled = false
+        navigationItem.rightBarButtonItem = applyButton
     }
 
     @objc func dismissKeyboard(_ sender: UITapGestureRecognizer) {
@@ -79,6 +77,7 @@ class AddChannelAttributeTableViewController: UITableViewController, UITextField
         if (!validateFields()) {
             displayAlert(title: "ua_attributes_invalid_title".localized(comment: "Invalid Attribute"),
                          message: "ua_attributes_invalid_message".localized(comment: "Please add valid fields for your selected action"))
+            return
         }
 
         var title:String = ""
@@ -108,6 +107,10 @@ class AddChannelAttributeTableViewController: UITableViewController, UITextField
         case .number:
             guard let number = NumberFormatter().number(from:valueText) else { return }
             mutations.setNumber(number, forAttribute: keyText)
+        case .date:
+            mutations.setDate(addAttributeValueDatePicker.date, forAttribute: keyText)
+            let isoDateFormatter = UAUtils.isoDateFormatterUTCWithDelimiter()
+            message = message + isoDateFormatter.string(from: addAttributeValueDatePicker.date)
         }
 
         title = "\(action) Attribute"
@@ -142,7 +145,7 @@ class AddChannelAttributeTableViewController: UITableViewController, UITextField
         }
 
         if !validateFieldValues(valueText) {
-            return true
+            return false
         }
 
         return true
@@ -154,6 +157,8 @@ class AddChannelAttributeTableViewController: UITableViewController, UITextField
             return validateStringInput(valueText)
         case .number:
             return validateNumberInput(valueText)
+        case .date:
+            return true
         }
     }
 
@@ -181,14 +186,25 @@ class AddChannelAttributeTableViewController: UITableViewController, UITextField
               return
         }
 
+        if keyText.count == 0 {
+            applyButton.isEnabled = false
+            return
+        }
+        
         if isRemove {
-            applyButton.isEnabled = keyText.count > 0
-        } else {
+            applyButton.isEnabled = true
+            return
+        }
+        
+        switch (attributeTypeControl.attributeTypeControlState()) {
+        case .string, .number:
             guard let valueText = addAttributeValueTextField.text else {
                 applyButton.isEnabled = false
                 return
             }
             applyButton.isEnabled = keyText.count > 0 && valueText.count > 0
+        case .date:
+            applyButton.isEnabled = true
         }
     }
 
@@ -222,8 +238,18 @@ class AddChannelAttributeTableViewController: UITableViewController, UITextField
     }
 
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        if indexPath.section == 3 && isRemove {
-            return 0
+        if indexPath.section == 3 {
+            if isRemove {
+                return 0
+            }
+            if indexPath.row == 0
+                && attributeTypeControl.attributeTypeControlState() != .number
+                && attributeTypeControl.attributeTypeControlState() != .string {
+                return 0
+            } else if indexPath.row == 1
+                && attributeTypeControl.attributeTypeControlState() != .date {
+                return 0
+            }
         }
 
         return super.tableView(tableView, heightForRowAt: indexPath)
@@ -303,8 +329,12 @@ class AddChannelAttributeTableViewController: UITableViewController, UITextField
         switch (attributeTypeControl.attributeTypeControlState()) {
         case .string:
             addAttributeValueTextField.keyboardType = UIKeyboardType.asciiCapable
+            tableView.reloadData()
         case .number:
             addAttributeValueTextField.keyboardType = UIKeyboardType.decimalPad
+            tableView.reloadData()
+        case .date:
+            tableView.reloadData()
         }
 
         applyButton.isEnabled = false
@@ -329,13 +359,16 @@ private extension UISegmentedControl {
     enum AttributeTypeControlState {
         case string
         case number
+        case date
     }
 
     func attributeTypeControlState() -> AttributeTypeControlState {
         if selectedSegmentIndex == 0 {
             return .string
-        } else {
+        } else if selectedSegmentIndex == 1 {
             return .number
+        } else {
+            return .date
         }
     }
 

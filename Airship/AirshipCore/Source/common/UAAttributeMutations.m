@@ -4,6 +4,7 @@
 #import "UAAttributeMutations+Internal.h"
 #import "UAAttributePendingMutations+Internal.h"
 #import "UAGlobal.h"
+#import "UAUtils.h"
 
 NSInteger const UAAttributeMaxStringLength = 1024;
 
@@ -51,6 +52,25 @@ NSInteger const UAAttributeMaxStringLength = 1024;
     NSDictionary *mutationBody = @{
         UAAttributeActionKey : UAAttributeSetActionKey,
         UAAttributeValueKey : number,
+        UAAttributeNameKey : normalizedKey
+    };
+
+    [self.mutationsPayload addObject:mutationBody];
+}
+
+- (void)setDate:(NSDate *)date forAttribute:(NSString *)attribute; {
+    NSString *normalizedKey = [self normalizeAttributeString:attribute];
+
+    if (!normalizedKey) {
+        UA_LDEBUG(@"UAAttributeMutations - Unable to properly form attribute mutation.");
+        return;
+    }
+    
+    NSDateFormatter *isoDateFormatter = [UAUtils ISODateFormatterUTCWithDelimiter];
+    NSString *dateAsISOString = [isoDateFormatter stringFromDate:date];
+    NSDictionary *mutationBody = @{
+        UAAttributeActionKey : UAAttributeSetActionKey,
+        UAAttributeValueKey : dateAsISOString,
         UAAttributeNameKey : normalizedKey
     };
 
