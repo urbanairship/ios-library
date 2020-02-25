@@ -1,5 +1,7 @@
 /* Copyright Airship and Contributors */
 
+#import <Foundation/Foundation.h>
+
 /**
  * NSNotification event when a channel is created. The event
  * will contain the channel ID under `UAChannelCreatedEventChannelKey`
