@@ -19,9 +19,7 @@ jobs:
           bash ./scripts/check_version.sh ${{ steps.get_version.outputs.VERSION }}
       - name: CI
         run: |
-          bash ./scripts/run_ci_tasks.sh -m tests
-          bash ./scripts/run_ci_tasks.sh -m pod_lint
-          bash ./scripts/run_ci_tasks.sh -m samples
+          bash ./scripts/run_ci_tasks.sh all
       - name: Build
         run: |
           bash ./scripts/build.sh

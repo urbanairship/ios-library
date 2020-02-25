@@ -1,61 +1,52 @@
 #!/bin/bash
+#
+# run_ci_tasks.sh [MODE] [XCODE_PATH]
+#  - MODE: Which tests to run. Must be one of - all, tests, or pod_lint. Defaults to all.
+#  - XCODE_PATH: Used to override the Xcode version. Defaults to the version in config.sh.
+
 
 set -o pipefail
 set -e
 set -x
 
-SCRIPT_DIRECTORY=`dirname "$0"`
-ROOT_PATH=`dirname "${0}"`/../
-LATEST='13.0'
+ROOT_PATH=`dirname "${0}"`/..
+AIRSHIP_VERSION=$(sh "$ROOT_PATH/scripts/airship_version.sh")
+
+source "$ROOT_PATH/scripts/config.sh"
+
+DEVELOPER_DIR=$(sh "$ROOT_PATH/scripts/get_xcode_path.sh" $2)
 
 # Target iOS SDK when building the projects
 TARGET_SDK='iphonesimulator'
 TARGET_SDK_TVOS='appletvsimulator'
 
-TEST_DESTINATION='platform=iOS Simulator,OS=latest,name=iPhone 11'
-TEST_DESTINATION_TVOS='platform=tvOS Simulator,OS=latest,name=Apple TV'
-
 start_time=`date +%s`
-
-MODE="all"
 
 TESTS=false
 SAMPLES=false
 POD_LINT=false
-BUILD_SDK=false
 
-# Parse arguments
-OPTS=`getopt hm: $*`
-if [ $? != 0 ] ; then echo "Failed parsing options." >&2 ; exit 1 ; fi
-eval set -- "$OPTS"
-
-while true; do
-  case "$1" in
-    -h  ) echo -ne "-m to set the mode. \n  Available modes: all, merge, pr. Defaults to all. \n"; exit 0;;
-    -m  ) MODE=$2; shift;;
-    --  ) ;;
-    *   ) break ;;
-  esac
-  shift
-done
+if [ -z $1 ]; then
+  MODE="all"
+else
+  MODE=$1
+fi
 
 # Enable steps based on mode
 shopt -s nocasematch
 case $MODE in
-  all       ) BUILD_SDK=true;SAMPLES=true;TESTS=true;POD_LINT=true;;
-  merge     ) BUILD_SDK=true;SAMPLES=true;POD_LINT=true;;
-  pr        ) BUILD_SDK=true;TESTS=true;;
+  all       ) SAMPLES=true;TESTS=true;POD_LINT=true;;
   tests     ) TESTS=true;;
   pod_lint  ) POD_LINT=true;;
   samples   ) SAMPLES=true;;
-  *         ) echo "invalid mode"; exit 1;;
+  *         ) echo "invalid mode $MODE"; exit 1;;
 esac
 shopt -u nocasematch
 
 echo -ne "Running CI tasks in mode:${MODE} \n\n";
 
-pod update --project-directory=$ROOT_PATH
-pod install --project-directory=$ROOT_PATH
+pod update --project-directory="$ROOT_PATH"
+pod install --project-directory="$ROOT_PATH"
 
 ##################################################################################################
 # Tests
@@ -79,22 +70,13 @@ then
   -workspace "${ROOT_PATH}/Airship.xcworkspace" \
   -scheme AirshipAccengageTests \
   test
- 
+
   #   # Run AirshipLocationKitTest Tests
   # xcrun xcodebuild \
   # -destination "${TEST_DESTINATION}" \
   # -workspace "${ROOT_PATH}/Airship.xcworkspace" \
   # -scheme AirshipLocationKitTests \
   # test
-fi
-
-##################################################################################################
-# Build SDK
-##################################################################################################
-
-if [ $BUILD_SDK = true ]
-then
-  ./${SCRIPT_DIRECTORY}/build.sh
 fi
 
 ##################################################################################################
@@ -106,9 +88,9 @@ then
   echo -ne "\n\n *********** BUILDING SAMPLES *********** \n\n"
 
   # Make sure AirshipConfig.plist exists
-  cp -np ${ROOT_PATH}/Sample/AirshipConfig.plist.sample ${ROOT_PATH}/Sample/AirshipConfig.plist || true
-  cp -np ${ROOT_PATH}/SwiftSample/AirshipConfig.plist.sample ${ROOT_PATH}/SwiftSample/AirshipConfig.plist || true
-  cp -np ${ROOT_PATH}/tvOSSample/AirshipConfig.plist.sample ${ROOT_PATH}/tvOSSample/AirshipConfig.plist || true
+  cp -np "${ROOT_PATH}/Sample/AirshipConfig.plist.sample" "${ROOT_PATH}/Sample/AirshipConfig.plist" || true
+  cp -np "${ROOT_PATH}/SwiftSample/AirshipConfig.plist.sample" "${ROOT_PATH}/SwiftSample/AirshipConfig.plist" || true
+  cp -np "${ROOT_PATH}/tvOSSample/AirshipConfig.plist.sample" "${ROOT_PATH}/tvOSSample/AirshipConfig.plist" || true
 
   # Use Debug configurations and a simulator SDK so the build process doesn't attempt to sign the output
 
@@ -150,7 +132,7 @@ then
   echo -ne "\n\n *********** RUNNING POD LINT *********** \n\n"
 
   # Run pod lib lint
-  cd $ROOT_PATH
+  cd "$ROOT_PATH"
   pod lib lint Airship.podspec
   pod lib lint AirshipExtensions.podspec
   cd -

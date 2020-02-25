@@ -3,10 +3,9 @@ set -e
 set -x
 
 ROOT_PATH=`dirname "${0}"`/..
+AIRSHIP_VERSION=$(sh "$ROOT_PATH/scripts/airship_version.sh")
 
-VERSION=$(awk <$ROOT_PATH/Airship/AirshipConfig.xcconfig "\$1 == \"CURRENT_PROJECT_VERSION\" { print \$3 }")
-
-if [ $1 = $VERSION ]; then
+if [ $1 = $AIRSHIP_VERSION ]; then
  exit 0
 else
  exit 1
