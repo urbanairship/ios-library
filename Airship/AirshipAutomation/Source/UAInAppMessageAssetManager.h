@@ -9,6 +9,9 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/**
+ * Protocol for customizing in-app message asset cache policy.
+ */
 @protocol UAInAppMessageCachePolicyDelegate <NSObject>
 
 /**
@@ -34,6 +37,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+/**
+ * Protocol for extending in-app message asset fetching.
+ */
 @protocol UAInAppMessagePrepareAssetsDelegate <NSObject>
 
 /**
@@ -66,6 +72,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+/**
+ * Manages the preparation and caching of in-app message assets.
+ */
 @interface UAInAppMessageAssetManager : NSObject
 
 /**
