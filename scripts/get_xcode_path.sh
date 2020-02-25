@@ -27,6 +27,7 @@ if [ ! -z "$1" ]; then
       exit 1
   fi
   echo $1
+  exit 0
 fi
 
 for APP in $XCODE_APPS; do
