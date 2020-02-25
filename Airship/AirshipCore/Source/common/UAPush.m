@@ -392,11 +392,6 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
     BOOL previousValue = self.pushTokenRegistrationEnabled;
     [self.dataStore setBool:enabled forKey:UAPushTokenRegistrationEnabledKey];
 
-    if (enabled && !self.isDataCollectionEnabled) {
-        UA_LWARN(@"Push token registration will continue to be disabled until data collection is enabled.");
-        return;
-    }
-
     if (enabled != previousValue) {
         [self.channel updateRegistration];
     }
