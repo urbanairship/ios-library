@@ -1,27 +1,31 @@
 #!/bin/bash
+#
+# build.sh [XCODE_PATH]
+#  - XCODE_PATH: Used to override the Xcode version. Defaults to the version in config.sh.
 
 set -o pipefail
 set -e
 set -x
 
-JAZZY_VERSION=0.10.0
-
 ROOT_PATH=`dirname "${0}"`/..
-TEMP_DIR=$(mktemp -d /tmp/build-XXXXX)
-DESTINATION=$ROOT_PATH/build
-STAGING=$DESTINATION/staging
+AIRSHIP_VERSION=$(sh "$ROOT_PATH/scripts/airship_version.sh")
 
-VERSION=$(awk <$ROOT_PATH/Airship/AirshipConfig.xcconfig "\$1 == \"CURRENT_PROJECT_VERSION\" { print \$3 }")
+source "$ROOT_PATH/scripts/config.sh"
+DEVELOPER_DIR=$(sh "$ROOT_PATH/scripts/get_xcode_path.sh" $2)
+
+TEMP_DIR=$(mktemp -d /tmp/build-XXXXX)
+DESTINATION="$ROOT_PATH/build"
+STAGING="$DESTINATION/staging"
 
 # Flags for debugging
 DOCS=true
-PACKAGE=true
-FRAMEWORK=true
+PACKAGE=false
+FRAMEWORK=false
 
 # Clean up output directory
-rm -rf $DESTINATION
-mkdir -p $DESTINATION
-mkdir -p $STAGING
+rm -rf "$DESTINATION"
+mkdir -p "$DESTINATION"
+mkdir -p "$STAGING"
 
 ##################
 # Build Frameworks
@@ -77,9 +81,7 @@ if $FRAMEWORK
 then
   echo -ne "\n\n *********** BUILDING XCFRAMEWORKS *********** \n\n"
 
-  pod update --project-directory=$ROOT_PATH
-  pod install --project-directory=$ROOT_PATH
-
+  sh $ROOT_PATH/scripts/install_pods.sh
 
   build_archive "Airship" "AirshipCore" "iOS"
   build_archive "Airship" "AirshipCore tvOS" "tvOS"
@@ -163,14 +165,14 @@ function build_docs {
   # $2 Module
   # $3 Umbrella header path
 
-  ruby -S jazzy _${JAZZY_VERSION}_ \
+   bundle exec jazzy \
   --objc \
   --clean \
   --module $2  \
-  --module-version $VERSION \
-  --framework-root $ROOT_PATH/$1 \
-  --umbrella-header $ROOT_PATH/$1/$2/$3 \
-  --output $STAGING/Documentation/$2 \
+  --module-version $AIRSHIP_VERSION \
+  --framework-root "$ROOT_PATH/$1" \
+  --umbrella-header "$ROOT_PATH/$1/$2/$3" \
+  --output "$STAGING/Documentation/$2" \
   --sdk iphonesimulator \
   --skip-undocumented \
   --hide-documentation-coverage \
@@ -180,16 +182,6 @@ function build_docs {
 if $DOCS
 then
   echo -ne "\n\n *********** BUILDING DOCS *********** \n\n"
-
-  # Make sure Jazzy is installed
-  if [ `gem list -i jazzy --version ${JAZZY_VERSION}` == 'false' ]
-  then
-    echo "Installing jazzy"
-    gem install jazzy -v $JAZZY_VERSION
-  fi
-
-  ruby -S jazzy _${JAZZY_VERSION}_ -v
-
   build_docs "Airship" "Airship" "Source/Airship.h"
   build_docs "Airship" "AirshipCore" "Source/common/AirshipCore.h"
   build_docs "Airship" "AirshipLocation"  "Source/AirshipLocation.h"
@@ -199,9 +191,6 @@ then
   build_docs "Airship" "AirshipAccengage"  "Source/AirshipAccengage.h"
   build_docs "AirshipExtensions" "AirshipNotificationServiceExtension" "Source/AirshipNotificationServiceExtension.h"
   build_docs "AirshipExtensions" "AirshipNotificationContentExtension" "Source/AirshipNotificationContentExtension.h"
-
-  # Workaround the missing module version
-  find $STAGING/Documentation -name '*.html' -print0 | xargs -0 sed -i "" "s/\$AIRSHIP_VERSION/${VERSION}/g"
 fi
 
 ######################
@@ -220,15 +209,15 @@ then
 
   # Build info
   BUILD_INFO=$STAGING/BUILD_INFO
-  echo "Airship SDK v${VERSION}" >> $BUILD_INFO
+  echo "Airship SDK v${AIRSHIP_VERSION}" >> $BUILD_INFO
   echo "Build time: `date`" >> $BUILD_INFO
   echo "SDK commit: `git log -n 1 --format='%h'`" >> $BUILD_INFO
   echo "Xcode version: $(xcrun xcodebuild -version | tr '\r\n' ' ')" >> $BUILD_INFO
 
   # Additional build info
-  if test -f $ROOT_PATH/BUILD_INFO;
+  if test -f "$ROOT_PATH/BUILD_INFO";
   then
-    cat $ROOT_PATH/BUILD_INFO >> $BUILD_INFO
+    cat "$ROOT_PATH/BUILD_INFO" >> $BUILD_INFO
   fi
 
   # Generate the ZIP
@@ -237,9 +226,9 @@ then
   cd -
 
   # Move zip
-  mv $STAGING/Airship.zip $DESTINATION
+  mv "$STAGING/Airship.zip" "$DESTINATION"
 
-  cd $STAGING/Documentation
+  cd "$STAGING/Documentation"
   tar -czf ../../Documentation.tar.gz *
   cd -
 fi

@@ -1,7 +1,4 @@
 #!/bin/bash -ex
-SCRIPT_DIRECTORY=`dirname "$0"`
-ROOT_PATH=`dirname "${0}"`/../
-
 VERSION=$1
 
 if [ -z "$1" ]
