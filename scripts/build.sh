@@ -7,8 +7,6 @@ set -o pipefail
 set -e
 set -x
 
-JAZZY_VERSION=0.10.0
-
 ROOT_PATH=`dirname "${0}"`/..
 AIRSHIP_VERSION=$(sh "$ROOT_PATH/scripts/airship_version.sh")
 
@@ -21,8 +19,8 @@ STAGING="$DESTINATION/staging"
 
 # Flags for debugging
 DOCS=true
-PACKAGE=true
-FRAMEWORK=true
+PACKAGE=false
+FRAMEWORK=false
 
 # Clean up output directory
 rm -rf "$DESTINATION"
@@ -83,9 +81,7 @@ if $FRAMEWORK
 then
   echo -ne "\n\n *********** BUILDING XCFRAMEWORKS *********** \n\n"
 
-  pod update --project-directory="$ROOT_PATH"
-  pod install --project-directory="$ROOT_PATH"
-
+  sh $ROOT_PATH/scripts/install_pods.sh
 
   build_archive "Airship" "AirshipCore" "iOS"
   build_archive "Airship" "AirshipCore tvOS" "tvOS"
@@ -169,7 +165,7 @@ function build_docs {
   # $2 Module
   # $3 Umbrella header path
 
-  ruby -S jazzy _${JAZZY_VERSION}_ \
+   bundle exec jazzy \
   --objc \
   --clean \
   --module $2  \
@@ -186,16 +182,6 @@ function build_docs {
 if $DOCS
 then
   echo -ne "\n\n *********** BUILDING DOCS *********** \n\n"
-
-  # Make sure Jazzy is installed
-  if [ `gem list -i jazzy --version ${JAZZY_VERSION}` == 'false' ]
-  then
-    echo "Installing jazzy"
-    gem install jazzy -v $JAZZY_VERSION
-  fi
-
-  ruby -S jazzy _${JAZZY_VERSION}_ -v
-
   build_docs "Airship" "Airship" "Source/Airship.h"
   build_docs "Airship" "AirshipCore" "Source/common/AirshipCore.h"
   build_docs "Airship" "AirshipLocation"  "Source/AirshipLocation.h"
@@ -205,9 +191,6 @@ then
   build_docs "Airship" "AirshipAccengage"  "Source/AirshipAccengage.h"
   build_docs "AirshipExtensions" "AirshipNotificationServiceExtension" "Source/AirshipNotificationServiceExtension.h"
   build_docs "AirshipExtensions" "AirshipNotificationContentExtension" "Source/AirshipNotificationContentExtension.h"
-
-  # Workaround the missing module version
-  find "$STAGING/Documentation" -name '*.html' -print0 | xargs -0 sed -i "" "s/\$AIRSHIP_VERSION/${AIRSHIP_VERSION}/g"
 fi
 
 ######################

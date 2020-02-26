@@ -45,8 +45,7 @@ shopt -u nocasematch
 
 echo -ne "Running CI tasks in mode:${MODE} \n\n";
 
-pod update --project-directory="$ROOT_PATH"
-pod install --project-directory="$ROOT_PATH"
+sh $ROOT_PATH/scripts/install_pods.sh
 
 ##################################################################################################
 # Tests
@@ -133,8 +132,8 @@ then
 
   # Run pod lib lint
   cd "$ROOT_PATH"
-  pod lib lint Airship.podspec
-  pod lib lint AirshipExtensions.podspec
+  bundle exec pod lib lint Airship.podspec
+  bundle exec pod lib lint AirshipExtensions.podspec
   cd -
 fi
 
