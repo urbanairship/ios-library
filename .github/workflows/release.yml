@@ -17,6 +17,12 @@ jobs:
       - name: Check Version
         run: |
           bash ./scripts/check_version.sh ${{ steps.get_version.outputs.VERSION }}
+      - name: Slack Notification
+        uses: homoluctus/slatify@master
+        with:
+          type: ${{ job.status }}
+          job_name: "iOS SDK Release Started :apple_og:"
+          url: ${{ secrets.SLACK_WEBHOOK }}
       - uses: actions/cache@v1
         with:
           path: vendor/bundle
