@@ -27,7 +27,7 @@ NSInteger const UARemoteDataRefreshIntervalDefault = 0;
 
 @property (nonatomic, copy) NSArray<NSString *> *payloadTypes;
 @property (nonatomic, copy) UARemoteDataPublishBlock publishBlock;
-@property (nonatomic, strong) NSArray<UARemoteDataPayload *> *previousPayloads;
+@property (nonatomic, copy) NSArray<UARemoteDataPayload *> *previousPayloads;
 
 @end
 

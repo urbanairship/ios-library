@@ -13,7 +13,7 @@
 @property (nonatomic, strong) UAInAppMessage *messageWithMedia;
 @property (nonatomic, strong) UAInAppMessage *messageWithoutMedia;
 @property (nonatomic, strong) UAInAppMessage *messageWithBogusMediaURL;
-@property (nonatomic, strong) NSString *assetCachePath;
+@property (nonatomic, copy) NSString *assetCachePath;
 @property (nonatomic, strong) NSURL *cachedAssetURL;
 
 @property (nonatomic, strong) UAInAppMessageDefaultPrepareAssetsDelegate *delegate;

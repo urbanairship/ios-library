@@ -70,7 +70,7 @@ NSUInteger const UAInAppMessageNameLimit = 100;
 @end
 
 @interface UAInAppMessage()
-@property(nonatomic, strong) NSString *identifier;
+@property(nonatomic, copy) NSString *identifier;
 @property(nonatomic, copy) NSString *name;
 @property(nonatomic, strong) UAInAppMessageDisplayContent *displayContent;
 @property(nonatomic, strong, nullable) NSDictionary *extras;

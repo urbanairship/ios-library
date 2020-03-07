@@ -9,7 +9,7 @@
 
 @interface UALegacyInAppMessageTest : UABaseTest
 @property(nonatomic, strong) id mockAirship;
-@property(nonatomic, strong) NSDictionary *payload;
+@property(nonatomic, copy) NSDictionary *payload;
 @end
 
 @implementation UALegacyInAppMessageTest

@@ -51,7 +51,7 @@ typedef NS_ENUM(NSInteger, UAEventPriority) {
 /**
  * The event's data.
  */
-@property (nonatomic, readonly, strong) NSDictionary *data;
+@property (nonatomic, readonly, copy) NSDictionary *data;
 
 /**
  * The event's type.

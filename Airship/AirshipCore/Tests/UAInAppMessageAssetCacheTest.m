@@ -6,8 +6,8 @@
 
 @interface UAInAppMessageAssetCacheTest : UABaseTest
 
-@property (nonatomic, strong) NSString *scheduleId1;
-@property (nonatomic, strong) NSString *scheduleId2;
+@property (nonatomic, copy) NSString *scheduleId1;
+@property (nonatomic, copy) NSString *scheduleId2;
 @property (nonatomic, strong) UAInAppMessageAssetCache *assetCache;
 
 @property (nonatomic, strong) id mockAssetsClass;

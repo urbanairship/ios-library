@@ -43,9 +43,9 @@
 @property (nonatomic, strong) UARemoteDataManager *remoteDataManager;
 @property (nonatomic, strong) UATestRemoteDataStore *testStore;
 
-@property (nonatomic, strong) NSDictionary *expectedMetadata;
+@property (nonatomic, copy) NSDictionary *expectedMetadata;
 
-@property (nonatomic, strong) NSArray<NSDictionary *> *remoteDataFromCloud;
+@property (nonatomic, copy) NSArray<NSDictionary *> *remoteDataFromCloud;
 @property (nonatomic, assign) BOOL expectAPIClientFetch;
 
 

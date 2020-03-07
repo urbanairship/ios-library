@@ -26,7 +26,7 @@
 @property (nonatomic, strong) id mockApplication;
 @property (nonatomic, strong) UAUserData *userData;
 @property (nonatomic, strong) UAUserDataDAO *userDataDAO;
-@property (nonatomic, strong) NSString *channelID;
+@property (nonatomic, copy) NSString *channelID;
 @property (nonatomic, copy) UAChannelRegistrationExtenderBlock extenderBlock;
 @end
 

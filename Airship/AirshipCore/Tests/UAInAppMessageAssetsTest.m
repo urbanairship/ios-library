@@ -5,7 +5,7 @@
 
 @interface UAInAppMessageAssetsTest : UABaseTest
 
-@property (nonatomic, strong) NSString *assetCachePath;
+@property (nonatomic, copy) NSString *assetCachePath;
 @property (nonatomic, strong) NSURL *rootURL;
 @property (nonatomic, strong) UAInAppMessageAssets *assets;
 

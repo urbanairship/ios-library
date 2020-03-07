@@ -14,9 +14,9 @@ typedef NS_ENUM(NSInteger,UAVersionMatcherConstraintType) {
 
 @interface UAVersionMatcher ()
 
-@property(nonatomic, strong) NSString *versionConstraint;
+@property(nonatomic, copy) NSString *versionConstraint;
 @property(nonatomic, assign) UAVersionMatcherConstraintType constraintType;
-@property(nonatomic, strong) NSDictionary *parsedConstraint;
+@property(nonatomic, copy) NSDictionary *parsedConstraint;
 
 @end
 

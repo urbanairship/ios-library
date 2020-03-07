@@ -24,8 +24,8 @@ NSString * const UAInAppMessageTagSelectorErrorDomain = @"com.urbanairship.in_ap
 @interface UAInAppMessageTagSelector()
 
 @property (nonatomic, assign) UAInAppMessageTagSelectorType type;
-@property (nonatomic, strong) NSString *tag;
-@property (nonatomic, strong) NSArray<UAInAppMessageTagSelector *> *selectors;
+@property (nonatomic, copy) NSString *tag;
+@property (nonatomic, copy) NSArray<UAInAppMessageTagSelector *> *selectors;
 @property (nonatomic, copy) NSString *group;
 
 @end

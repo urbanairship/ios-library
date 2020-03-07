@@ -31,8 +31,8 @@
 
 @property (nonatomic, strong) UAPush *push;
 @property (nonatomic, strong) NSNotificationCenter *notificationCenter;
-@property (nonatomic, strong) NSDictionary *notification;
-@property (nonatomic, strong) NSData *validAPNSDeviceToken;
+@property (nonatomic, copy) NSDictionary *notification;
+@property (nonatomic, copy) NSData *validAPNSDeviceToken;
 @property (nonatomic, assign) UAAuthorizationStatus authorizationStatus;
 @property (nonatomic, assign) UAAuthorizedNotificationSettings authorizedNotificationSettings;
 @property (nonatomic, copy) UAChannelRegistrationExtenderBlock channelRegistrationExtenderBlock;

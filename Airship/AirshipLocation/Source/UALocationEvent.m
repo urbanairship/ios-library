@@ -44,7 +44,7 @@
 @end
 
 @interface UALocationEvent()
-@property (nonatomic, strong) NSDictionary *eventData;
+@property (nonatomic, copy) NSDictionary *eventData;
 @end
 
 @implementation UALocationEvent

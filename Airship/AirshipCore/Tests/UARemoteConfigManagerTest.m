@@ -25,7 +25,7 @@
 @property(nonatomic, strong) UATestRemoteConfigModuleAdapter *testModuleAdapter;
 @property(nonatomic, strong) UARemoteDataPublishBlock publishBlock;
 @property(nonatomic, strong) UARemoteConfigManager *remoteConfigManager;
-@property(nonatomic, strong) NSString *appVersion;
+@property(nonatomic, copy) NSString *appVersion;
 
 @end
 

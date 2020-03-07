@@ -19,7 +19,7 @@
 
     [data setValue:[UAirship channel].identifier forKey:@"channel_id"];
 
-    event.data = [data mutableCopy];
+    event.data = data;
     return event;
 }
 

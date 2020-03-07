@@ -24,8 +24,8 @@ NSString *const UAInAppMessageTextInfoStyleItalicValue = @"italic";
 NSString *const UAInAppMessageTextInfoStyleUnderlineValue = @"underline";
 
 @interface UAInAppMessageTextInfo ()
-@property(nonatomic, strong) NSString *text;
-@property(nonatomic, strong) NSArray<NSString *> *fontFamilies;
+@property(nonatomic, copy) NSString *text;
+@property(nonatomic, copy) NSArray<NSString *> *fontFamilies;
 @property(nonatomic, strong) UIColor *color;
 @property(nonatomic, assign) CGFloat sizePoints;
 @property(nonatomic, assign) UAInAppMessageTextInfoAlignmentType alignment;

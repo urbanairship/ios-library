@@ -12,7 +12,7 @@
     [data setValue:[notification objectForKey:@"_"] ?: kUAMissingSendID forKey:@"push_id"];
 
     UAPushReceivedEvent *event = [[self alloc] init];
-    event.data = [data copy];
+    event.data = data;
     return event;
 }
 

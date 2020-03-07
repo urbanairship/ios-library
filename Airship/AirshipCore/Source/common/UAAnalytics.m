@@ -35,8 +35,8 @@
 @property (nonatomic, strong) NSMutableArray<UAAnalyticsHeadersBlock> *headerBlocks;
 
 // Screen tracking state
-@property (nonatomic, strong) NSString *currentScreen;
-@property (nonatomic, strong) NSString *previousScreen;
+@property (nonatomic, copy) NSString *currentScreen;
+@property (nonatomic, copy) NSString *previousScreen;
 @property (nonatomic, assign) NSTimeInterval startTime;
 @end
 

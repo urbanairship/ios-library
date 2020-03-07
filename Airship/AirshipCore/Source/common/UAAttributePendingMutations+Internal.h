@@ -40,7 +40,7 @@ extern NSString *const UAAttributeRemoveActionKey;
 /**
  The collection of all current mutations comprising a mutations object.
 */
-@property(nonatomic, strong, readonly) NSArray<NSDictionary *> *mutationsPayload;
+@property(nonatomic, copy, readonly) NSArray<NSDictionary *> *mutationsPayload;
 
 /**
  Generates an immutable mutations instance from the combined payload of other immutable mutations instances.

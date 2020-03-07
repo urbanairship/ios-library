@@ -10,7 +10,7 @@
 @property (nonatomic, strong) id mockedUserNotificationCenter;
 
 @property (nonatomic, strong) UAAPNSRegistration *pushRegistration;
-@property (nonatomic, strong) NSSet<UANotificationCategory *> *testCategories;
+@property (nonatomic, copy) NSSet<UANotificationCategory *> *testCategories;
 
 @end
 

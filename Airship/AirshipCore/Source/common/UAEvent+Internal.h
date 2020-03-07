@@ -24,7 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * The event's data.
  */
-@property (nonatomic, strong) NSDictionary *data;
+@property (nonatomic, copy) NSDictionary *data;
 
 /**
  * The JSON event size in bytes.

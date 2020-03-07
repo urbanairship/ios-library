@@ -1,5 +1,6 @@
 /* Copyright Airship and Contributors */
 
+#import "UAEvent+Internal.h"
 #import "UAInAppMessageDisplayEvent+Internal.h"
 #import "UAInAppMessageEventUtils+Internal.h"
 #import "UAAirshipAutomationCoreImport.h"
@@ -9,7 +10,7 @@ NSString *const UAInAppMessageDisplayEventLocaleKey = @"locale";
 
 
 @interface UAInAppMessageDisplayEvent()
-@property (nonatomic, strong) NSDictionary *eventData;
+@property (nonatomic, strong) NSMutableDictionary *eventData;
 @end
 
 
@@ -19,7 +20,7 @@ NSString *const UAInAppMessageDisplayEventLocaleKey = @"locale";
     self = [super init];
     if (self) {
         self.eventData = [UAInAppMessageEventUtils createDataForMessage:message];
-        [self.data setValue:message.renderedLocale forKey:UAInAppMessageDisplayEventLocaleKey];
+        [self.eventData setValue:message.renderedLocale forKey:UAInAppMessageDisplayEventLocaleKey];
 
         return self;
     }

@@ -22,8 +22,8 @@
 @property(nonatomic, strong) UALegacyInAppMessage *bannerMessage;
 @property(nonatomic, strong) UALegacyInAppMessage *nonBannerMessage;
 @property(nonatomic, strong) UALegacyInAppMessaging *inAppMessaging;
-@property(nonatomic, strong) NSDictionary *payload;
-@property(nonatomic, strong) NSDictionary *aps;
+@property(nonatomic, copy) NSDictionary *payload;
+@property(nonatomic, copy) NSDictionary *aps;
 
 @end
 
