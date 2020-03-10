@@ -4,19 +4,68 @@
 #import "UAEvent+Internal.h"
 #import "UAGlobal.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
+@interface UAScreenTrackingEvent ()
+
+///---------------------------------------------------------------------------------------
+/// @name Screen Tracking Event Internal Properties
+///---------------------------------------------------------------------------------------
+
+/**
+ * The tracking event start time
+ */
+@property (nonatomic, assign) NSTimeInterval startTime;
+
+/**
+ * The tracking event stop time
+ */
+@property (nonatomic, assign) NSTimeInterval stopTime;
+
+/**
+ * The tracking event duration
+ */
+@property (nonatomic, assign) NSTimeInterval duration;
+
+/**
+ * The name of the screen to be tracked
+ */
+@property (nonatomic, copy) NSString *screen;
+
+/**
+ * The name of the previous tracked screen
+ */
+@property (nonatomic, copy, nullable) NSString *previousScreen;
+
+@end
+
 @implementation UAScreenTrackingEvent
 
-+ (instancetype)eventWithScreen:(NSString *)screen startTime:(NSTimeInterval)startTime {
++ (instancetype)eventWithScreen:(NSString *)screen
+                 previousScreen:(nullable NSString *)previousScreen
+                      startTime:(NSTimeInterval)startTime
+                       stopTime:(NSTimeInterval)stopTime {
 
-    UAScreenTrackingEvent *screenTrackingEvent = [[UAScreenTrackingEvent alloc] init];
-    screenTrackingEvent.screen = screen;
-    screenTrackingEvent.startTime = startTime;
+    UAScreenTrackingEvent *event = [[UAScreenTrackingEvent alloc] init];
+    event.screen = screen;
+    event.previousScreen = previousScreen;
+    event.startTime = startTime;
+    event.stopTime = stopTime;
 
-    return screenTrackingEvent;
+    NSMutableDictionary *mutableEventData = [NSMutableDictionary dictionary];
+
+    [mutableEventData setValue:event.screen forKey:kUAScreenTrackingEventScreenKey];
+    [mutableEventData setValue:event.previousScreen forKey:kUAScreenTrackingEventPreviousScreenKey];
+    [mutableEventData setValue:[NSString stringWithFormat:@"%0.3f", event.startTime] forKey:kUAScreenTrackingEventEnteredTimeKey];
+    [mutableEventData setValue:[NSString stringWithFormat:@"%0.3f", event.stopTime] forKey:kUAScreenTrackingEventExitedTimeKey];
+    [mutableEventData setValue:[NSString stringWithFormat:@"%0.3f", event.duration] forKey:kUAScreenTrackingEventDurationKey];
+
+    event.eventData = mutableEventData;
+    
+    return event;
 }
 
 - (BOOL)isValid {
-
     if (![UAScreenTrackingEvent screenTrackingEventCharacterCountIsValid:self.screen]) {
         UA_LERR(@"Screen name must not be greater than %d characters or less than %d characters in length.", kUAScreenTrackingEventMaxCharacters, kUAScreenTrackingEventMinCharacters);
         return NO;
@@ -36,7 +85,6 @@
 }
 
 - (NSTimeInterval)duration {
-
     if (!self.stopTime) {
         UA_LERR(@"Duration is not available without a stop time.");
         return 0;
@@ -53,16 +101,6 @@
     return YES;
 }
 
-- (NSDictionary *)data {
-    NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
-
-    [dictionary setValue:self.screen forKey:kUAScreenTrackingEventScreenKey];
-    [dictionary setValue:self.previousScreen forKey:kUAScreenTrackingEventPreviousScreenKey];
-    [dictionary setValue:[NSString stringWithFormat:@"%0.3f", self.startTime] forKey:kUAScreenTrackingEventEnteredTimeKey];
-    [dictionary setValue:[NSString stringWithFormat:@"%0.3f", self.stopTime] forKey:kUAScreenTrackingEventExitedTimeKey];
-    [dictionary setValue:[NSString stringWithFormat:@"%0.3f", self.duration] forKey:kUAScreenTrackingEventDurationKey];
-
-    return dictionary;
-}
-
 @end
+
+NS_ASSUME_NONNULL_END

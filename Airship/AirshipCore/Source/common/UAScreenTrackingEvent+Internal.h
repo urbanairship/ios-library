@@ -13,37 +13,34 @@
 #define kUAScreenTrackingEventExitedTimeKey @"exited_time"
 #define kUAScreenTrackingEventDurationKey @"duration"
 
+NS_ASSUME_NONNULL_BEGIN
 
 @interface UAScreenTrackingEvent : UAEvent
-
-///---------------------------------------------------------------------------------------
-/// @name Screen Tracking Event Internal Properties
-///---------------------------------------------------------------------------------------
 
 /**
  * The tracking event start time
  */
-@property (nonatomic, assign) NSTimeInterval startTime;
+@property (nonatomic, readonly) NSTimeInterval startTime;
 
 /**
  * The tracking event stop time
  */
-@property (nonatomic, assign) NSTimeInterval stopTime;
+@property (nonatomic, readonly) NSTimeInterval stopTime;
 
 /**
  * The tracking event duration
  */
-@property (nonatomic, assign) NSTimeInterval duration;
+@property (nonatomic, readonly) NSTimeInterval duration;
 
 /**
  * The name of the screen to be tracked
  */
-@property (nonatomic, copy, nonnull) NSString *screen;
+@property (nonatomic, readonly) NSString *screen;
 
 /**
  * The name of the previous tracked screen
  */
-@property (nonatomic, copy, nullable) NSString *previousScreen;
+@property (nonatomic, nullable, readonly) NSString *previousScreen;
 
 ///---------------------------------------------------------------------------------------
 /// @name Screen Tracking Event Internal Factory
@@ -52,6 +49,11 @@
 /**
  * Factory method to create a UAScreenTrackingEvent with screen name and startTime
  */
-+ (nullable instancetype)eventWithScreen:(nonnull NSString *)screen startTime:(NSTimeInterval)startTime;
++ (instancetype)eventWithScreen:(NSString *)screen
+                 previousScreen:(nullable NSString *)screen
+                      startTime:(NSTimeInterval)startTime
+                       stopTime:(NSTimeInterval)stopTime;
 
 @end
+
+NS_ASSUME_NONNULL_END

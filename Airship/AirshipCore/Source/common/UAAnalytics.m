@@ -304,9 +304,10 @@ NSString *const UAEventKey = @"event";
 
         // If there's a screen currently being tracked set it's stop time and add it to analytics
         if (self.currentScreen) {
-            UAScreenTrackingEvent *ste = [UAScreenTrackingEvent eventWithScreen:self.currentScreen startTime:self.startTime];
-            ste.stopTime = self.date.now.timeIntervalSince1970;
-            ste.previousScreen = self.previousScreen;
+            UAScreenTrackingEvent *ste = [UAScreenTrackingEvent eventWithScreen:self.currentScreen
+                                                                 previousScreen:self.previousScreen
+                                                                      startTime:self.startTime
+                                                                       stopTime:self.date.now.timeIntervalSince1970];
 
             // Set previous screen to last tracked screen
             self.previousScreen = self.currentScreen;
