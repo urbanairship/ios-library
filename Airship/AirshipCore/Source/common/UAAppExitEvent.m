@@ -15,7 +15,7 @@
     [data setValue:[UAUtils connectionType] forKey:@"connection_type"];
 
     UAAppExitEvent *event = [[self alloc] init];
-    event.data = data;
+    event.eventData = data;
     return event;
 }
 

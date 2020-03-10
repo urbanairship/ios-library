@@ -19,7 +19,7 @@
 
     [data setValue:[UAirship channel].identifier forKey:@"channel_id"];
 
-    event.data = data;
+    event.eventData = data;
     return event;
 }
 

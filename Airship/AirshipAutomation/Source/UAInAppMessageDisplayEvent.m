@@ -9,18 +9,14 @@ NSString *const UAInAppMessageDisplayEventType = @"in_app_display";
 NSString *const UAInAppMessageDisplayEventLocaleKey = @"locale";
 
 
-@interface UAInAppMessageDisplayEvent()
-@property (nonatomic, strong) NSMutableDictionary *eventData;
-@end
-
-
 @implementation UAInAppMessageDisplayEvent
 
 - (instancetype)initWithMessage:(UAInAppMessage *)message {
     self = [super init];
     if (self) {
-        self.eventData = [UAInAppMessageEventUtils createDataForMessage:message];
-        [self.eventData setValue:message.renderedLocale forKey:UAInAppMessageDisplayEventLocaleKey];
+        NSMutableDictionary *mutableEventData = [UAInAppMessageEventUtils createDataForMessage:message];
+        [mutableEventData setValue:message.renderedLocale forKey:UAInAppMessageDisplayEventLocaleKey];
+        self.eventData = mutableEventData;
 
         return self;
     }
