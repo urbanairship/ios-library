@@ -4,6 +4,17 @@
 #import "UAEvent+Internal.h"
 #import "UAGlobal.h"
 
+#define kUAScreenTrackingEventType @"screen_tracking"
+
+#define kUAScreenTrackingEventMaxCharacters 255
+#define kUAScreenTrackingEventMinCharacters 1
+
+#define kUAScreenTrackingEventScreenKey @"screen"
+#define kUAScreenTrackingEventPreviousScreenKey @"previous_screen"
+#define kUAScreenTrackingEventEnteredTimeKey @"entered_time"
+#define kUAScreenTrackingEventExitedTimeKey @"exited_time"
+#define kUAScreenTrackingEventDurationKey @"duration"
+
 NS_ASSUME_NONNULL_BEGIN
 
 @interface UAScreenTrackingEvent ()
