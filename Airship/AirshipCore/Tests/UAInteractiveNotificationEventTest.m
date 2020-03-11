@@ -6,7 +6,7 @@
 #import "UAInteractiveNotificationEvent+Internal.h"
 
 @interface UAInteractiveNotificationEventTest : UABaseTest
-@property (nonatomic, strong) NSDictionary *notification;
+@property (nonatomic, copy) NSDictionary *notification;
 @property (nonatomic, strong) UANotificationAction *action;
 @end
 

@@ -45,7 +45,7 @@ extern NSString * const UAInboxMessageListUpdatedNotification;
 /**
  * The list of messages stored locally as an NSArray.
  */
-@property (nonatomic, readonly, strong) NSArray<UAInboxMessage *> *messages;
+@property (nonatomic, readonly, copy) NSArray<UAInboxMessage *> *messages;
 
 /**
  * The number of messages that are currently unread or -1

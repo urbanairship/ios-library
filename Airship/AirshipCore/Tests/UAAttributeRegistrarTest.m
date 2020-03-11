@@ -15,7 +15,7 @@
 @property (nonatomic, strong) id mockApplication;
 @property (nonatomic, strong) id mockApiClient;
 @property (nonatomic, strong) UATestDate *testDate;
-@property(nonatomic, strong) NSString *channelID;
+@property(nonatomic, copy) NSString *channelID;
 @end
 
 @implementation UAAttributeRegistrarTest

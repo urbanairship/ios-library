@@ -49,7 +49,7 @@ const NSUInteger UAInteractiveNotificationEventCharacterLimit = 255;
         [data setValue:userInputString forKey:@"user_input"];
     }
 
-    event.data = [NSDictionary dictionaryWithDictionary:data];
+    event.eventData = [NSDictionary dictionaryWithDictionary:data];
 
     return event;
 }

@@ -23,7 +23,7 @@ NSString *const UAAttributeSetActionKey = @"set";
 NSString *const UAAttributeRemoveActionKey = @"remove";
 
 @interface UAAttributePendingMutations ()
-@property(nonatomic, strong) NSArray<NSDictionary *> *mutationsPayload;
+@property(nonatomic, copy) NSArray<NSDictionary *> *mutationsPayload;
 @end
 
 @implementation UAAttributePendingMutations

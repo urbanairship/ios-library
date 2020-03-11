@@ -103,6 +103,10 @@
     return [jsonData length];
 }
 
+- (NSDictionary *)data {
+    return self.eventData;
+}
+
 - (id)debugQuickLookObject {
     return self.data.description;
 }

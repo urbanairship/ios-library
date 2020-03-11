@@ -14,8 +14,8 @@
 
 @interface UAInAppMessageAssetManagerTest : UABaseTest
 @property (nonatomic, strong) UAInAppMessageAssetManager *assetManager;
-@property (nonatomic, strong) NSString *mediaURL;
-@property (nonatomic, strong) NSString *bogusMediaURL;
+@property (nonatomic, copy) NSString *mediaURL;
+@property (nonatomic, copy) NSString *bogusMediaURL;
 @property (nonatomic, strong) UASchedule *scheduleWithMedia;
 @property (nonatomic, strong) UASchedule *scheduleWithoutMedia;
 @property (nonatomic, strong) UASchedule *scheduleWithInvalidID;

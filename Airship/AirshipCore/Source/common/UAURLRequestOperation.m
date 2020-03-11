@@ -7,7 +7,7 @@
 
 @property (nonatomic, copy) NSURLSessionTask *task;
 @property (nonatomic, strong) NSURLSession *session;
-@property (nonatomic, strong) NSURLRequest *request;
+@property (nonatomic, copy) NSURLRequest *request;
 @property (nonatomic, copy) void (^completionHandler)(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error);
 @end
 

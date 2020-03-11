@@ -145,7 +145,7 @@ extern NSString *const UAPushEnabledKey;
  * The set of Accengage notification categories.
  * @note For internal use only. :nodoc:
  */
-@property (nonatomic, strong) NSSet<UANotificationCategory *> *accengageCategories;
+@property (nonatomic, copy) NSSet<UANotificationCategory *> *accengageCategories;
 
 ///---------------------------------------------------------------------------------------
 /// @name Push Internal Methods

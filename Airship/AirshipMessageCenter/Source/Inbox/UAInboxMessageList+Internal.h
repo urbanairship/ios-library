@@ -45,17 +45,17 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * An array of messages in the inbox.
  */
-@property (nonatomic, strong) NSArray<UAInboxMessage *> *messages;
+@property (nonatomic, copy) NSArray<UAInboxMessage *> *messages;
 
 /**
  * A dictionary of messages mapped to their IDs
  */
-@property (nonatomic, strong) NSDictionary *messageIDMap;
+@property (nonatomic, copy) NSDictionary *messageIDMap;
 
 /**
  * A dictionary of messages mapped to their URLs
  */
-@property (nonatomic, strong) NSDictionary *messageURLMap;
+@property (nonatomic, copy) NSDictionary *messageURLMap;
 
 /**
  * Flag indicating whether the mesage list is enabled. Clear to disable. Set to enable.

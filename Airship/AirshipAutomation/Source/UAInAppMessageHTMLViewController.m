@@ -47,12 +47,12 @@ NSString *const UAInAppNativeBridgeDismissCommand = @"dismiss";
 /**
  * The identifier of the HTML message.
  */
-@property (nonatomic, strong) NSString *messageID;
+@property (nonatomic, copy) NSString *messageID;
 
 /**
  * The request headers. These are populated and used when displaying an inbox message.
  */
-@property (nonatomic, strong) NSDictionary *headers;
+@property (nonatomic, copy) NSDictionary *headers;
 
 @end
 

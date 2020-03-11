@@ -7,10 +7,10 @@
 @interface UANotificationContentTest : UABaseTest
 
 @property (nonatomic, strong) id mockedUNNotification;
-@property (nonatomic, strong) NSDictionary *notification;
-@property (nonatomic, strong) NSDictionary *notificationWithBody;
-@property (nonatomic, strong) NSString *testKey;
-@property (nonatomic, strong) NSString *testValue;
+@property (nonatomic, copy) NSDictionary *notification;
+@property (nonatomic, copy) NSDictionary *notificationWithBody;
+@property (nonatomic, copy) NSString *testKey;
+@property (nonatomic, copy) NSString *testValue;
 
 @end
 

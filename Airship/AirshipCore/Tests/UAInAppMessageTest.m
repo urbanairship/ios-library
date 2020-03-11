@@ -10,8 +10,8 @@
 #import "UAInAppMessageCustomDisplayContent.h"
 
 @interface UAInAppMessageTest : UABaseTest
-@property(nonatomic, strong) NSDictionary *json;
-@property(nonatomic, strong) NSDictionary<NSString*, NSString*> *renderedLocale;
+@property(nonatomic, copy) NSDictionary *json;
+@property(nonatomic, copy) NSDictionary<NSString*, NSString*> *renderedLocale;
 @end
 
 @implementation UAInAppMessageTest

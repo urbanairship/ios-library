@@ -17,8 +17,7 @@
     data[@"app_store_purchase_date"] = [NSString stringWithFormat:@"%f", [appPurchaseDate timeIntervalSince1970]];
     data[@"app_store_ad_impression_date"] = [NSString stringWithFormat:@"%f", [iAdImpressionDate timeIntervalSince1970]];
 
-    // Set an immutable copy of the data
-    event.data = [data copy];
+    event.eventData = data;
 
     return event;
 }

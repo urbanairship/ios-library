@@ -12,7 +12,7 @@
 
 @interface UAMessageCenterActionTest : UABaseTest
 @property (nonatomic, strong) UAMessageCenterAction *action;
-@property (nonatomic, strong) NSDictionary *notification;
+@property (nonatomic, copy) NSDictionary *notification;
 @property (nonatomic, strong) id mockMessageCenter;
 @end
 

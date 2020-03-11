@@ -7,9 +7,9 @@
 #define kUATagGroupsRemoveKey @"remove"
 
 @interface UATagGroupsMutation()
-@property(nonatomic, strong) NSDictionary *addTagGroups;
-@property(nonatomic, strong) NSDictionary *removeTagGroups;
-@property(nonatomic, strong) NSDictionary *setTagGroups;
+@property(nonatomic, copy) NSDictionary *addTagGroups;
+@property(nonatomic, copy) NSDictionary *removeTagGroups;
+@property(nonatomic, copy) NSDictionary *setTagGroups;
 @end
 
 @implementation UATagGroupsMutation

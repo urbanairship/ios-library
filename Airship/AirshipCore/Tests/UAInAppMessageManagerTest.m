@@ -46,7 +46,7 @@
 @property (nonatomic, strong) id mockAnalytics;
 @property (nonatomic, strong) id mockAirship;
 
-@property (nonatomic, strong) NSDictionary *mockMetadata;
+@property (nonatomic, copy) NSDictionary *mockMetadata;
 @property (nonatomic, assign) BOOL isMetadataValid;
 
 @end

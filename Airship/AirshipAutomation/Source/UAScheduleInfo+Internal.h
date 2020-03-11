@@ -82,7 +82,7 @@ extern NSString *const UAScheduleInfoEditGracePeriodKey;
 /**
  * Schedule's triggers.
  */
-@property(nonatomic, strong) NSArray *triggers;
+@property(nonatomic, copy) NSArray *triggers;
 
 /**
  * Schedule's limit.

@@ -32,7 +32,7 @@
                           channel:(UAChannel<UAExtendableChannelRegistration> *)channel
                              push:(UAPush *)push
                         analytics:(UAAnalytics *)analytics;
-@property (nonatomic, strong) NSDictionary *accengageSettings;
+@property (nonatomic, copy) NSDictionary *accengageSettings;
 
 @end
 

@@ -300,7 +300,7 @@ static const UANotificationOptions UANotificationOptionNone =  0;
  * Changes to this value will not take effect until the next time the app registers
  * with updateRegistration.
  */
-@property (nonatomic, strong) NSSet<UANotificationCategory *> *customCategories;
+@property (nonatomic, copy) NSSet<UANotificationCategory *> *customCategories;
 
 /**
  * The combined set of notification categories from `customCategories` set by the app

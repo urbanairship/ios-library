@@ -7,7 +7,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface UATestSystemVersion : UASystemVersion
 
-@property(nonatomic, strong) NSString *currentSystemVersion;
+@property(nonatomic, copy) NSString *currentSystemVersion;
 
 @end
 

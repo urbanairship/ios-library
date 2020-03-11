@@ -23,7 +23,7 @@ NSString *const UAInAppMessageButtonInfoBehaviorDismissValue = @"dismiss";
 
 @interface UAInAppMessageButtonInfo ()
 @property(nonatomic, strong) UAInAppMessageTextInfo *label;
-@property(nonatomic, strong) NSString *identifier;
+@property(nonatomic, copy) NSString *identifier;
 @property(nonatomic, assign) UAInAppMessageButtonInfoBehaviorType behavior;
 @property(nonatomic, strong) UIColor *backgroundColor;
 @property(nonatomic, strong) UIColor *borderColor;

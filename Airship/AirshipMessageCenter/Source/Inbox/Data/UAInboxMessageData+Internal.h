@@ -63,14 +63,14 @@ NS_ASSUME_NONNULL_BEGIN
  * The message's extra dictionary. This dictionary can be populated
  * with arbitrary key-value data at the time the message is composed.
  */
-@property (nonatomic, strong) NSDictionary *extra;
+@property (nonatomic, copy) NSDictionary *extra;
 
 /** 
  * The raw message dictionary. This is the dictionary that
  * originally created the message.  It can contain more values
  * then the message.
  */
-@property (nonatomic, strong) NSDictionary *rawMessageObject;
+@property (nonatomic, copy) NSDictionary *rawMessageObject;
 
 /**
  * Indicates whether the message has been deleted from the backing store.

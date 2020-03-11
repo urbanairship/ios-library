@@ -8,7 +8,7 @@
 @interface UAWhitelistTest : UABaseTest
 
 @property(nonatomic, strong) UAWhitelist *whitelist;
-@property(nonnull, strong) NSArray *scopes;
+@property(nonnull, copy) NSArray *scopes;
 
 @property(nonatomic, strong) id mockWhitelistDelegate;
 
