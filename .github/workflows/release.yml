@@ -153,8 +153,11 @@ jobs:
         id: get_release_notes
         run: |
           VERSION=${{ steps.get_version.outputs.VERSION }}
-          NOTES=$(awk "/## Version $VERSION/{flag=1;next}/## Version/{flag=0}flag" CHANGELOG.md)
-          echo ::set-output name=NOTES::$NOTES
+          NOTES="$(awk "/## Version $VERSION/{flag=1;next}/## Version/{flag=0}flag" CHANGELOG.md)"
+          NOTES="${NOTES//'%'/'%25'}"
+          NOTES="${NOTES//$'\n'/'%0A'}"
+          NOTES="${NOTES//$'\r'/'%0D'}"
+          echo ::set-output name=NOTES::"$NOTES"
       - name: Download zip distribution
         uses: actions/download-artifact@v1
         with:
@@ -167,12 +170,12 @@ jobs:
           path: ./
       - name: Github Release
         id: create_release
-        uses: actions/create-release@v1.0.0
+        uses: actions/create-release@v1.0.1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ steps.get_version.outputs.VERSION }}
-          release_name: Release ${{ steps.get_version.outputs.VERSION }}
+          release_name: ${{ steps.get_version.outputs.VERSION }}
           body: ${{ steps.get_release_notes.outputs.NOTES }}
           draft: false
           prerelease: false
