@@ -31,7 +31,7 @@
 @property (nonatomic, strong) id mockedUNNotificationRequest;
 @property (nonatomic, strong) id mockedUNNotificationContent;
 
-@property (nonatomic, strong) NSDictionary *notification;
+@property (nonatomic, copy) NSDictionary *notification;
 
 @end
 

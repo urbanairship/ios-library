@@ -73,7 +73,7 @@ NSString *const UAInAppMessageFullScreenViewNibName = @"UAInAppMessageFullScreen
 /**
  * The identifier of the full screen message.
  */
-@property (nonatomic, strong) NSString *messageID;
+@property (nonatomic, copy) NSString *messageID;
 
 /**
  * The flag indicating the state of the full screen message.

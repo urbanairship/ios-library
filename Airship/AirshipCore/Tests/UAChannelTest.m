@@ -23,8 +23,8 @@
 @property(nonatomic, strong) id mockTimeZone;
 @property(nonatomic, strong) NSNotificationCenter *notificationCenter;
 @property(nonatomic, strong) UAChannel *channel;
-@property(nonatomic, strong) NSString *channelIDFromMockChannelRegistrar;
-@property(nonatomic, strong) NSString *deviceToken;
+@property(nonatomic, copy) NSString *channelIDFromMockChannelRegistrar;
+@property(nonatomic, copy) NSString *deviceToken;
 @property(nonatomic, strong) UATestDate *testDate;
 @property (nonatomic, strong) id mockedApplication;
 @property (nonatomic, strong) id mockedAirship;

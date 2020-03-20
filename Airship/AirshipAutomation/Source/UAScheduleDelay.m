@@ -19,10 +19,10 @@ NSString * const UAScheduleDelayErrorDomain = @"com.urbanairship.schedule_delay"
 
 @interface UAScheduleDelay()
 @property(nonatomic, assign) NSTimeInterval seconds;
-@property(nonatomic, strong) NSArray *screens;
-@property(nonatomic, strong) NSString *regionID;
+@property(nonatomic, copy) NSArray *screens;
+@property(nonatomic, copy) NSString *regionID;
 @property(nonatomic, assign) UAScheduleDelayAppState appState;
-@property(nonatomic, strong) NSArray<UAScheduleTrigger *> *cancellationTriggers;
+@property(nonatomic, copy) NSArray<UAScheduleTrigger *> *cancellationTriggers;
 @end
 
 @implementation UAScheduleDelayBuilder

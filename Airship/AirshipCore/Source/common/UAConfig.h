@@ -118,7 +118,7 @@ typedef NS_ENUM(NSUInteger, UACloudSite) {
  *
  * @note See UAWhitelist for pattern entry syntax.
  */
-@property (nonatomic, strong) NSArray<NSString *> *whitelist;
+@property (nonatomic, copy) NSArray<NSString *> *whitelist;
 
 /**
  * The iTunes ID used for Rate App Actions.

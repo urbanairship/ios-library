@@ -55,7 +55,7 @@ NSString *const UAInAppMessageURLKey = @"url";
 
 @interface UAInAppMessageHTMLDisplayContent ()
 
-@property(nonatomic, strong) NSString *url;
+@property(nonatomic, copy) NSString *url;
 @property(nonatomic, strong) UIColor *backgroundColor;
 @property(nonatomic, strong) UIColor *dismissButtonColor;
 @property(nonatomic, assign) CGFloat borderRadiusPoints;

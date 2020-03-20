@@ -17,7 +17,7 @@ NSString *const UAAccengageSettingsMigrated = @"UAAccengageSettingsMigrated";
 
 @interface UAAccengage()
 
-@property (nonatomic, strong) NSDictionary *accengageSettings;
+@property (nonatomic, copy) NSDictionary *accengageSettings;
 
 @end
 

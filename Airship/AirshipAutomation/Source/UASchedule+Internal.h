@@ -28,7 +28,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @note metadata includes the locale which can change at any time.
  */
-@property(nonatomic, strong) NSDictionary *metadata;
+@property(nonatomic, copy) NSDictionary *metadata;
 
 ///---------------------------------------------------------------------------------------
 /// @name Schedule Internal Methods

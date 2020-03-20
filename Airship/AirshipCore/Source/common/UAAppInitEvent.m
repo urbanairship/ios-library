@@ -11,7 +11,7 @@
 
 + (instancetype)event {
     UAAppInitEvent *event = [[self alloc] init];
-    event.data = [[event gatherData] mutableCopy];
+    event.eventData = [event gatherData];
     return event;
 }
 

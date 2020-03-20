@@ -4,7 +4,7 @@
 #import "UAURLRequestOperation+Internal.h"
 
 @interface UAURLRequestOperationTest : UABaseTest
-@property (nonatomic, strong) id mockRequest;
+@property (nonatomic, strong) NSURLRequest *request;
 @property (nonatomic, strong) id mockSession;
 @end
 
@@ -12,13 +12,13 @@
 
 - (void)setUp {
     [super setUp];
-    self.mockRequest = [self mockForClass:[NSURLRequest class]];
+    self.request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"https://testing.one.two.three"]];
     self.mockSession = [self mockForClass:[NSURLSession class]];
 }
 
 
 - (void)testDefaults {
-    UAURLRequestOperation *operation = [UAURLRequestOperation operationWithRequest:self.mockRequest
+    UAURLRequestOperation *operation = [UAURLRequestOperation operationWithRequest:self.request
                                                                            session:self.mockSession
                                                                  completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {}];
 
@@ -35,7 +35,7 @@
 
     __block BOOL operationFinished = NO;
 
-    UAURLRequestOperation *operation = [UAURLRequestOperation operationWithRequest:self.mockRequest
+    UAURLRequestOperation *operation = [UAURLRequestOperation operationWithRequest:self.request
                                                                            session:self.mockSession
                                                                  completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
                                                                      XCTAssertEqual(testData, data);
@@ -54,7 +54,7 @@
         [invocation getArgument:&arg atIndex:3];
         completionHandler = (__bridge void (^)(NSData *, NSURLResponse *, NSError *))arg;
         [operationPerformedRequest fulfill];
-    }] dataTaskWithRequest:self.mockRequest completionHandler:OCMOCK_ANY];
+    }] dataTaskWithRequest:self.request completionHandler:OCMOCK_ANY];
 
     // Start the operation
     [operation start];
@@ -66,7 +66,6 @@
 
     // Wait for the operation to call the request
     [self waitForTestExpectations];
-    [self.mockRequest verify];
 
     // Call the completion handler
     completionHandler(testData, testResponse, testError);
@@ -78,7 +77,7 @@
 }
 
 - (void)testPreemptiveCancel {
-    UAURLRequestOperation *operation = [UAURLRequestOperation operationWithRequest:self.mockRequest
+    UAURLRequestOperation *operation = [UAURLRequestOperation operationWithRequest:self.request
                                                                            session:self.mockSession
                                                                  completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {}];
 

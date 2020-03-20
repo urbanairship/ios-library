@@ -12,7 +12,7 @@
 @property (nonatomic, strong) id analytics;
 @property (nonatomic, strong) id airship;
 @property (nonatomic, strong) UAInAppMessageFullScreenDisplayContent *displayContent;
-@property (nonatomic, strong) NSDictionary *renderedLocale;
+@property (nonatomic, copy) NSDictionary *renderedLocale;
 @end
 
 @implementation UAInAppMessageResolutionEventTest

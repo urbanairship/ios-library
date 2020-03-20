@@ -50,7 +50,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * The metadata used to fetch the most recent payload.
  */
-@property (nullable, nonatomic, strong) NSDictionary *lastMetadata;
+@property (nullable, nonatomic, copy) NSDictionary *lastMetadata;
 
 /**
  * The last modified date.

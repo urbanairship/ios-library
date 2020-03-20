@@ -35,8 +35,8 @@
 @property (nonatomic, strong) NSMutableArray<UAAnalyticsHeadersBlock> *headerBlocks;
 
 // Screen tracking state
-@property (nonatomic, strong) NSString *currentScreen;
-@property (nonatomic, strong) NSString *previousScreen;
+@property (nonatomic, copy) NSString *currentScreen;
+@property (nonatomic, copy) NSString *previousScreen;
 @property (nonatomic, assign) NSTimeInterval startTime;
 @end
 
@@ -292,31 +292,33 @@ NSString *const UAEventKey = @"event";
 }
 
 - (void)trackScreen:(nullable NSString *)screen {
+    [self.dispatcher dispatchAsyncIfNecessary:^{
+        // Prevent duplicate calls to track same screen
+        if ([screen isEqualToString:self.currentScreen]) {
+            return;
+        }
 
-    // Prevent duplicate calls to track same screen
-    if ([screen isEqualToString:self.currentScreen]) {
-        return;
-    }
+        [self.notificationCenter postNotificationName:UAScreenTracked
+                                               object:self
+                                             userInfo:screen == nil ? @{} : @{UAScreenKey: screen}];
 
-    [self.notificationCenter postNotificationName:UAScreenTracked
-                                           object:self
-                                         userInfo:screen == nil ? @{} : @{UAScreenKey: screen}];
+        // If there's a screen currently being tracked set it's stop time and add it to analytics
+        if (self.currentScreen) {
+            UAScreenTrackingEvent *ste = [UAScreenTrackingEvent eventWithScreen:self.currentScreen
+                                                                 previousScreen:self.previousScreen
+                                                                      startTime:self.startTime
+                                                                       stopTime:self.date.now.timeIntervalSince1970];
 
-    // If there's a screen currently being tracked set it's stop time and add it to analytics
-    if (self.currentScreen) {
-        UAScreenTrackingEvent *ste = [UAScreenTrackingEvent eventWithScreen:self.currentScreen startTime:self.startTime];
-        ste.stopTime = self.date.now.timeIntervalSince1970;
-        ste.previousScreen = self.previousScreen;
+            // Set previous screen to last tracked screen
+            self.previousScreen = self.currentScreen;
 
-        // Set previous screen to last tracked screen
-        self.previousScreen = self.currentScreen;
+            // Add screen tracking event to next analytics batch
+            [self addEvent:ste];
+        }
 
-        // Add screen tracking event to next analytics batch
-        [self addEvent:ste];
-    }
-
-    self.currentScreen = screen;
-    self.startTime = self.date.now.timeIntervalSince1970;
+        self.currentScreen = screen;
+        self.startTime = self.date.now.timeIntervalSince1970;
+    }];
 }
 
 - (void)stopTrackingScreen {

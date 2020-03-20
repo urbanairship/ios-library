@@ -15,7 +15,7 @@
 @interface UAAttributeAPIClientTest : UABaseTest
 @property(nonatomic, strong) id mockSession;
 @property(nonatomic, strong) UAAttributeAPIClient *client;
-@property(nonatomic, strong) NSString *channelID;
+@property(nonatomic, copy) NSString *channelID;
 @end
 
 @implementation UAAttributeAPIClientTest

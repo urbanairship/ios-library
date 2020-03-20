@@ -8,10 +8,9 @@
 
 + (instancetype)eventWithIDs:(UAAssociatedIdentifiers *)identifiers {
     UAAssociateIdentifiersEvent *event = [[self alloc] init];
-    event.data = [NSDictionary dictionaryWithDictionary:identifiers.allIDs];
+    event.eventData = [NSDictionary dictionaryWithDictionary:identifiers.allIDs];
     return event;
 }
-
 
 - (BOOL)isValid {
     BOOL isValid = YES;

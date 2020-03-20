@@ -19,11 +19,11 @@
  * Test event data class to work around not being able to mock UAEventData
  */
 @interface UAEventTestData : NSObject
-@property (nullable, nonatomic, strong) NSString *sessionID;
-@property (nullable, nonatomic, strong) NSData *data;
-@property (nullable, nonatomic, strong) NSString *time;
-@property (nullable, nonatomic, strong) NSString *type;
-@property (nullable, nonatomic, strong) NSString *identifier;
+@property (nullable, nonatomic, copy) NSString *sessionID;
+@property (nullable, nonatomic, copy) NSData *data;
+@property (nullable, nonatomic, copy) NSString *time;
+@property (nullable, nonatomic, copy) NSString *type;
+@property (nullable, nonatomic, copy) NSString *identifier;
 @end
 
 @implementation UAEventTestData

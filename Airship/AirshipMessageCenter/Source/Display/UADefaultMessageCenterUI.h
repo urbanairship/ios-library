@@ -17,7 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * The title of the message center.
  */
-@property (nonatomic, strong) NSString *title;
+@property (nonatomic, copy) NSString *title;
 
 /**
  * The style to apply to the default message center.

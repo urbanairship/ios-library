@@ -98,7 +98,7 @@ double const DefaultModalAnimationDuration = 0.2;
 /**
  * The identifier of the modal message.
  */
-@property (nonatomic, strong) NSString *messageID;
+@property (nonatomic, copy) NSString *messageID;
 
 /**
  * The modal message's media view.

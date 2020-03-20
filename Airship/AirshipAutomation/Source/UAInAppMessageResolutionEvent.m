@@ -28,7 +28,7 @@ NSString *const UAInAppMessageResolutionEventTimedOut = @"timed_out";
 NSString *const UAInAppMessageResolutionEventExpired = @"expired";
 
 @interface UAInAppMessageResolutionEvent()
-@property (nonatomic, strong) NSDictionary *eventData;
+@property (nonatomic, copy) NSDictionary *eventData;
 @end
 
 @implementation UAInAppMessageResolutionEvent

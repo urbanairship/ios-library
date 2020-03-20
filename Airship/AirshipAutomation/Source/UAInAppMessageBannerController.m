@@ -38,7 +38,7 @@ CGFloat const BannerExcessiveSafeAreaPadding = 14;
 /**
  * The idenfier of the banner message.
  */
-@property (nonatomic, strong) NSString *messageID;
+@property (nonatomic, copy) NSString *messageID;
 
 /**
  * The banner display content consisting of the text and image.
