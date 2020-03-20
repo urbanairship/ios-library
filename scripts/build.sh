@@ -19,8 +19,8 @@ STAGING="$DESTINATION/staging"
 
 # Flags for debugging
 DOCS=true
-PACKAGE=false
-FRAMEWORK=false
+PACKAGE=true
+FRAMEWORK=true
 
 # Clean up output directory
 rm -rf "$DESTINATION"
