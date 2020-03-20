@@ -3,6 +3,11 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/master/Documentation/Migration)
 
+## Version 13.1.1 - March 20, 2020
+Patch addressing a regression in 13.1.0 causing channel tag loss 
+when upgrading from SDK versions prior to 13.0.1. Apps not already on
+13.0.1 or higher should avoid version 13.1.0. 
+
 ## Version 13.1.0 - January 30, 2020
 Minor release adds support for number attributes, data privacy controls and the Accengage
 transition module to facilitate Accengage customers upgrading to Airship.

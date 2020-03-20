@@ -1,5 +1,6 @@
 #!/bin/bash -ex
 VERSION=$1
+ROOT_PATH=`dirname "${0}"`/../
 
 if [ -z "$1" ]
   then
