@@ -104,6 +104,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         self.config = config;
 
         // Default data collection enabled value
+        // Note: UAComponent depends on this value, so it should be initialized first
         if (![self.dataStore objectForKey:UAirshipDataCollectionEnabledKey]) {
             [self.dataStore setBool:!(config.isDataCollectionOptInEnabled) forKey:UAirshipDataCollectionEnabledKey];
         }
