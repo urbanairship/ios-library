@@ -103,6 +103,11 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         self.dataStore = dataStore;
         self.config = config;
 
+        // Default data collection enabled value
+        if (![self.dataStore objectForKey:UAirshipDataCollectionEnabledKey]) {
+            [self.dataStore setBool:!(config.isDataCollectionOptInEnabled) forKey:UAirshipDataCollectionEnabledKey];
+        }
+
         self.actionRegistry = [UAActionRegistry defaultRegistry];
         self.whitelist = [UAWhitelist whitelistWithConfig:config];
         self.applicationMetrics = [UAApplicationMetrics applicationMetricsWithDataStore:dataStore];
@@ -115,6 +120,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         self.sharedChannel = [UAChannel channelWithDataStore:self.dataStore
                                                       config:self.config
                                           tagGroupsRegistrar:tagGroupsRegistrar];
+
         [components addObject:self.sharedChannel];
 
         self.sharedAnalytics = [UAAnalytics analyticsWithConfig:self.config
@@ -141,11 +147,6 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 
         self.sharedRemoteConfigManager = [UARemoteConfigManager remoteConfigManagerWithRemoteDataManager:self.sharedRemoteDataManager
                                                                                       applicationMetrics:self.applicationMetrics];
-        
-        // Default data collection enabled value
-        if (![self.dataStore objectForKey:UAirshipDataCollectionEnabledKey]) {
-            [self.dataStore setBool:!(config.isDataCollectionOptInEnabled) forKey:UAirshipDataCollectionEnabledKey];
-        }
        
 #if !TARGET_OS_TV
         // UIPasteboard is not available in tvOS
