@@ -4,7 +4,7 @@ set -e
 set -x
 
 ROOT_PATH=`dirname "${0}"`/..
-AIRSHIP_VERSION=$(sh "$ROOT_PATH/scripts/airship_version.sh")
+AIRSHIP_VERSION=$(bash "$ROOT_PATH/scripts/airship_version.sh")
 
 upload() {
   echo -e "Uploading $1 into ${AIRSHIP_VERSION}"
