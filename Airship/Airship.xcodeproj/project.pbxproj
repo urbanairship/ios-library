@@ -7142,6 +7142,7 @@
 				"zh-Hant",
 				he,
 				nb,
+				Base,
 			);
 			mainGroup = 494DD94D1B0EB677009C134E;
 			productRefGroup = 494DD9581B0EB677009C134E /* Products */;

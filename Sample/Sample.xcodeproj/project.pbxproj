@@ -44,6 +44,10 @@
 		764693C01C237CAB0090FE40 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 764693BF1C237CAB0090FE40 /* Main.storyboard */; };
 		7646940D1C238E7C0090FE40 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 764693FC1C238E7C0090FE40 /* Images.xcassets */; };
 		76AE35651C2B6FD600D7F3B9 /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 76AE35641C2B6FD600D7F3B9 /* AirshipConfig.plist */; };
+		83B4C02423D9FD5800299543 /* SettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 83B4C02323D9FD5800299543 /* SettingsViewController.m */; };
+		DEDB898224192F9D000D5241 /* AddNamedUserTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DEDB897D24192F9D000D5241 /* AddNamedUserTableViewController.m */; };
+		DEDB898324192F9D000D5241 /* AddTagsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DEDB897F24192F9D000D5241 /* AddTagsTableViewController.m */; };
+		DEDB898424192F9D000D5241 /* TagsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DEDB898024192F9D000D5241 /* TagsTableViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -307,6 +311,14 @@
 		764693BF1C237CAB0090FE40 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		764693FC1C238E7C0090FE40 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		76AE35641C2B6FD600D7F3B9 /* AirshipConfig.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = AirshipConfig.plist; sourceTree = "<group>"; };
+		83B4C01C23D9FD4500299543 /* SettingsViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SettingsViewController.h; sourceTree = "<group>"; };
+		83B4C02323D9FD5800299543 /* SettingsViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SettingsViewController.m; sourceTree = "<group>"; };
+		DEDB897524192F9D000D5241 /* AddNamedUserTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddNamedUserTableViewController.h; sourceTree = "<group>"; };
+		DEDB897D24192F9D000D5241 /* AddNamedUserTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddNamedUserTableViewController.m; sourceTree = "<group>"; };
+		DEDB897E24192F9D000D5241 /* AddTagsTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddTagsTableViewController.h; sourceTree = "<group>"; };
+		DEDB897F24192F9D000D5241 /* AddTagsTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddTagsTableViewController.m; sourceTree = "<group>"; };
+		DEDB898024192F9D000D5241 /* TagsTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TagsTableViewController.m; sourceTree = "<group>"; };
+		DEDB898124192F9D000D5241 /* TagsTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TagsTableViewController.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -453,6 +465,7 @@
 				764693BF1C237CAB0090FE40 /* Main.storyboard */,
 				764693B61C237B630090FE40 /* LaunchScreen.storyboard */,
 				764693B91C237B630090FE40 /* Info.plist */,
+				DE1B54CC242D178A0044054D /* Settings View */,
 				764693FB1C238E7C0090FE40 /* Resources */,
 				764693A51C237B630090FE40 /* Supporting Files */,
 			);
@@ -483,6 +496,21 @@
 				1BFB704123882E4900BF7F07 /* UserNotificationsUI.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		DE1B54CC242D178A0044054D /* Settings View */ = {
+			isa = PBXGroup;
+			children = (
+				DEDB897524192F9D000D5241 /* AddNamedUserTableViewController.h */,
+				DEDB897D24192F9D000D5241 /* AddNamedUserTableViewController.m */,
+				DEDB897E24192F9D000D5241 /* AddTagsTableViewController.h */,
+				DEDB897F24192F9D000D5241 /* AddTagsTableViewController.m */,
+				DEDB898124192F9D000D5241 /* TagsTableViewController.h */,
+				DEDB898024192F9D000D5241 /* TagsTableViewController.m */,
+				83B4C01C23D9FD4500299543 /* SettingsViewController.h */,
+				83B4C02323D9FD5800299543 /* SettingsViewController.m */,
+			);
+			path = "Settings View";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -564,17 +592,13 @@
 				TargetAttributes = {
 					1BFB703D23882E4900BF7F07 = {
 						CreatedOnToolsVersion = 11.2.1;
-						DevelopmentTeam = PGJV57GD94;
 						ProvisioningStyle = Automatic;
 					};
 					49D2C73A1D6F952D0049B0A0 = {
 						CreatedOnToolsVersion = 8.0;
-						DevelopmentTeam = PGJV57GD94;
-						ProvisioningStyle = Automatic;
 					};
 					764693A11C237B630090FE40 = {
 						CreatedOnToolsVersion = 7.2;
-						DevelopmentTeam = PGJV57GD94;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
 								enabled = 1;
@@ -777,12 +801,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DEDB898224192F9D000D5241 /* AddNamedUserTableViewController.m in Sources */,
+				DEDB898324192F9D000D5241 /* AddTagsTableViewController.m in Sources */,
+				DEDB898424192F9D000D5241 /* TagsTableViewController.m in Sources */,
 				764693AA1C237B630090FE40 /* AppDelegate.m in Sources */,
 				61A672FC1CAB3E5A00BAF58A /* PushHandler.m in Sources */,
 				764693AD1C237B630090FE40 /* HomeViewController.m in Sources */,
 				493F51211C5B3A5100B050A1 /* MessageCenterDelegate.m in Sources */,
 				764693A71C237B630090FE40 /* main.m in Sources */,
 				493F50EA1C5B261100B050A1 /* MessageCenterViewController.m in Sources */,
+				83B4C02423D9FD5800299543 /* SettingsViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -930,7 +958,9 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
 				CODE_SIGN_ENTITLEMENTS = SampleServiceExtension/SampleServiceExtension.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER = YES;
 				DEVELOPMENT_TEAM = PGJV57GD94;
 				INFOPLIST_FILE = SampleServiceExtension/Info.plist;
@@ -941,6 +971,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.richpush.SampleServiceExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				SKIP_INSTALL = YES;
 				SUPPORTS_MACCATALYST = YES;
 			};
@@ -954,7 +986,9 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
 				CODE_SIGN_ENTITLEMENTS = SampleServiceExtension/SampleServiceExtension.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER = YES;
 				DEVELOPMENT_TEAM = PGJV57GD94;
 				INFOPLIST_FILE = SampleServiceExtension/Info.plist;
@@ -965,6 +999,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.richpush.SampleServiceExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				SKIP_INSTALL = YES;
 				SUPPORTS_MACCATALYST = YES;
 			};

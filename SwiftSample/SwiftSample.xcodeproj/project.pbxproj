@@ -39,7 +39,10 @@
 		6E65D5C12396ECC200AF2D1A /* AirshipLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D5822396E99D00AF2D1A /* AirshipLocation.framework */; };
 		6E65D5C22396ECC200AF2D1A /* AirshipMessageCenter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D5882396E99D00AF2D1A /* AirshipMessageCenter.framework */; };
 		6E65D5C32396ECC200AF2D1A /* AirshipMessageCenter.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6E65D5882396E99D00AF2D1A /* AirshipMessageCenter.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		6E6CC348239A2FC0003D583C /* AirshipAccengage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E6CC347239A2FB9003D583C /* AirshipAccengage.framework */; };
+		8325FBBC23F5947A005F423A /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8325FBBB23F5947A005F423A /* SettingsViewController.swift */; };
+		8381A3422406D0DD001E2922 /* AddTagsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8381A3412406D0DD001E2922 /* AddTagsTableViewController.swift */; };
+		8381A3482406D2C9001E2922 /* AddNamedUserTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8381A3472406D2C9001E2922 /* AddNamedUserTableViewController.swift */; };
+		8381A34A2406D362001E2922 /* TagsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8381A3492406D362001E2922 /* TagsTableViewController.swift */; };
 		CCDA35A71B8D233A00950AD5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCDA35A61B8D233A00950AD5 /* AppDelegate.swift */; };
 		CCDA35A91B8D233A00950AD5 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCDA35A81B8D233A00950AD5 /* HomeViewController.swift */; };
 		CCDA35AE1B8D233A00950AD5 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CCDA35AC1B8D233A00950AD5 /* Main.storyboard */; };
@@ -307,6 +310,10 @@
 		61A672E71CA9F4B000BAF58A /* PushHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PushHandler.swift; sourceTree = "<group>"; };
 		6E65D56A2396E99D00AF2D1A /* Airship.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Airship.xcodeproj; path = ../Airship/Airship.xcodeproj; sourceTree = "<group>"; };
 		6E65D58B2396E9A300AF2D1A /* AirshipExtensions.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = AirshipExtensions.xcodeproj; path = ../AirshipExtensions/AirshipExtensions.xcodeproj; sourceTree = "<group>"; };
+		8325FBBB23F5947A005F423A /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
+		8381A3412406D0DD001E2922 /* AddTagsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTagsTableViewController.swift; sourceTree = "<group>"; };
+		8381A3472406D2C9001E2922 /* AddNamedUserTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddNamedUserTableViewController.swift; sourceTree = "<group>"; };
+		8381A3492406D362001E2922 /* TagsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagsTableViewController.swift; sourceTree = "<group>"; };
 		CC0E3A061D2DAA4900DAF1E5 /* SwiftSample.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = SwiftSample.entitlements; sourceTree = "<group>"; };
 		CCDA35A31B8D233A00950AD5 /* SwiftSample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SwiftSample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CCDA35A61B8D233A00950AD5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -347,7 +354,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6E6CC348239A2FC0003D583C /* AirshipAccengage.framework in Frameworks */,
 				6E65D5C12396ECC200AF2D1A /* AirshipLocation.framework in Frameworks */,
 				6E65D5BB2396ECC200AF2D1A /* AirshipAutomation.framework in Frameworks */,
 				6E65D5BD2396ECC200AF2D1A /* AirshipCore.framework in Frameworks */,
@@ -480,12 +486,24 @@
 				61A672E71CA9F4B000BAF58A /* PushHandler.swift */,
 				493F51121C5B2C9E00B050A1 /* MessageCenterViewController.swift */,
 				493F51281C5B423700B050A1 /* MessageCenterDelegate.swift */,
+				DE1B54D4242D17A20044054D /* Settings View */,
 				613420361BD6C09B00236A18 /* Resources */,
 				CCDA35AC1B8D233A00950AD5 /* Main.storyboard */,
 				CCDA35B11B8D233A00950AD5 /* LaunchScreen.storyboard */,
 				CCDA35B41B8D233A00950AD5 /* Info.plist */,
 			);
 			path = SwiftSample;
+			sourceTree = "<group>";
+		};
+		DE1B54D4242D17A20044054D /* Settings View */ = {
+			isa = PBXGroup;
+			children = (
+				8325FBBB23F5947A005F423A /* SettingsViewController.swift */,
+				8381A3412406D0DD001E2922 /* AddTagsTableViewController.swift */,
+				8381A3472406D2C9001E2922 /* AddNamedUserTableViewController.swift */,
+				8381A3492406D362001E2922 /* TagsTableViewController.swift */,
+			);
+			name = "Settings View";
 			sourceTree = "<group>";
 		};
 		DF4E494E221D96CB00F306A5 /* Frameworks */ = {
@@ -837,7 +855,11 @@
 				CCDA35A71B8D233A00950AD5 /* AppDelegate.swift in Sources */,
 				493F51291C5B423700B050A1 /* MessageCenterDelegate.swift in Sources */,
 				CCDA35A91B8D233A00950AD5 /* HomeViewController.swift in Sources */,
+				8381A34A2406D362001E2922 /* TagsTableViewController.swift in Sources */,
+				8381A3482406D2C9001E2922 /* AddNamedUserTableViewController.swift in Sources */,
 				61A672E81CA9F4B000BAF58A /* PushHandler.swift in Sources */,
+				8325FBBC23F5947A005F423A /* SettingsViewController.swift in Sources */,
+				8381A3422406D0DD001E2922 /* AddTagsTableViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
