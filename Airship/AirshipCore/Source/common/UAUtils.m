@@ -98,7 +98,7 @@
 }
 
 + (NSString *)carrierName {
-#if TARGET_OS_TV || TARGET_OS_MACCATALYST // Core Telephony not supported on tvOS and mac catalyst
+#if TARGET_OS_TV // Core Telephony not supported on tvOS
     return nil;
 #else
     static CTTelephonyNetworkInfo *netInfo_;
