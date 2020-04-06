@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1B0B43BB243389D20051CCF0 /* UALocationTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B0B43BA243389D20051CCF0 /* UALocationTest.m */; };
 		1B8F1B6923CCBFA200BEE715 /* ACCInternalRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B8F1B6723CCBFA200BEE715 /* ACCInternalRequest.h */; };
 		1B8F1B6A23CCBFA200BEE715 /* ACCInternalRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B8F1B6823CCBFA200BEE715 /* ACCInternalRequest.m */; };
 		1B8F1B6D23CCBFC500BEE715 /* ACCRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B8F1B6B23CCBFC500BEE715 /* ACCRequest.h */; };
@@ -2314,6 +2315,7 @@
 /* Begin PBXFileReference section */
 		07A9F5B3D35A6078949E4EAA /* Pods-AirshipKitTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AirshipKitTests.release.xcconfig"; path = "../Pods/Target Support Files/Pods-AirshipKitTests/Pods-AirshipKitTests.release.xcconfig"; sourceTree = "<group>"; };
 		0F55D47F540C142B0F469570 /* Pods-AirshipCoreTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AirshipCoreTests.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-AirshipCoreTests/Pods-AirshipCoreTests.debug.xcconfig"; sourceTree = "<group>"; };
+		1B0B43BA243389D20051CCF0 /* UALocationTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UALocationTest.m; sourceTree = "<group>"; };
 		1B8F1B6723CCBFA200BEE715 /* ACCInternalRequest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ACCInternalRequest.h; sourceTree = "<group>"; };
 		1B8F1B6823CCBFA200BEE715 /* ACCInternalRequest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ACCInternalRequest.m; sourceTree = "<group>"; };
 		1B8F1B6B23CCBFC500BEE715 /* ACCRequest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ACCRequest.h; sourceTree = "<group>"; };
@@ -3129,7 +3131,6 @@
 		CC64F0A71D8B781C009CEF27 /* UAKeyChainUtilTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAKeyChainUtilTest.m; sourceTree = "<group>"; };
 		CC64F0A81D8B781C009CEF27 /* UALandingPageActionTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UALandingPageActionTest.m; sourceTree = "<group>"; };
 		CC64F0AA1D8B781C009CEF27 /* UALocationEventTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UALocationEventTest.m; sourceTree = "<group>"; };
-		CC64F0AB1D8B781C009CEF27 /* UALocationTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UALocationTest.m; sourceTree = "<group>"; };
 		CC64F0AC1D8B781C009CEF27 /* UAMediaEventTemplateTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAMediaEventTemplateTest.m; sourceTree = "<group>"; };
 		CC64F0AD1D8B781C009CEF27 /* UANamedUserAPIClientTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UANamedUserAPIClientTest.m; sourceTree = "<group>"; };
 		CC64F0AE1D8B781C009CEF27 /* UANamedUserTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UANamedUserTest.m; sourceTree = "<group>"; };
@@ -4743,8 +4744,8 @@
 		CC04F20C1DCAB57200B4842D /* Location */ = {
 			isa = PBXGroup;
 			children = (
+				1B0B43BA243389D20051CCF0 /* UALocationTest.m */,
 				CC04F20D1DCAB58B00B4842D /* Events */,
-				CC64F0AB1D8B781C009CEF27 /* UALocationTest.m */,
 			);
 			name = Location;
 			sourceTree = "<group>";
@@ -8223,6 +8224,7 @@
 				3C89DD3E211E4D4900864358 /* UATagGroupsLookupManagerTest.m in Sources */,
 				CC64F1141D8B781C009CEF27 /* UAJavaScriptEnvironmentTest.m in Sources */,
 				459D40532092460D00C40E2D /* UAInAppMessageModalStyleTest.m in Sources */,
+				1B0B43BB243389D20051CCF0 /* UALocationTest.m in Sources */,
 				CC64F1251D8B781C009CEF27 /* UATagGroupsAPIClientTest.m in Sources */,
 				CC944EF91DB80E0C00C42269 /* UARequestSessionTest.m in Sources */,
 				6EC74C2C234BF223003AF4C6 /* UARemoteConfigDisableInfoTest.m in Sources */,
