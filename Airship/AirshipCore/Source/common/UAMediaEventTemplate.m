@@ -96,50 +96,53 @@
 - (UACustomEvent *)createEvent {
     UACustomEvent *event = [UACustomEvent eventWithName:self.eventName];
 
+    NSMutableDictionary *propertyDictionary = [NSMutableDictionary dictionary];
+    
     if (self.eventValue) {
         [event setEventValue:self.eventValue];
-        [event setBoolProperty:YES forKey:kUAMediaEventTemplateLifetimeValue];
+        [propertyDictionary setValue:@YES forKey:kUAMediaEventTemplateLifetimeValue];
     } else {
-        [event setBoolProperty:NO forKey:kUAMediaEventTemplateLifetimeValue];
+        [propertyDictionary setValue:@NO forKey:kUAMediaEventTemplateLifetimeValue];
     }
 
     if (self.identifier) {
-        [event setStringProperty:self.identifier forKey:kUAMediaEventTemplateIdentifier];
+        [propertyDictionary setValue:self.identifier forKey:kUAMediaEventTemplateIdentifier];
     }
 
     if (self.category) {
-        [event setStringProperty:self.category forKey:kUAMediaEventTemplateCategory];
+        [propertyDictionary setValue:self.category forKey:kUAMediaEventTemplateCategory];
     }
 
     if (self.eventDescription) {
-        [event setStringProperty:self.eventDescription forKey:kUAMediaEventTemplateDescription];
+        [propertyDictionary setValue:self.eventDescription forKey:kUAMediaEventTemplateDescription];
     }
 
     if (self.type) {
-        [event setStringProperty:self.type forKey:kUAMediaEventTemplateType];
+        [propertyDictionary setValue:self.type forKey:kUAMediaEventTemplateType];
     }
 
     if (self.featureSet) {
-        [event setBoolProperty:self.isFeature forKey:kUAMediaEventTemplateFeature];
+        [propertyDictionary setValue:@(self.isFeature) forKey:kUAMediaEventTemplateFeature];
     }
 
     if (self.author) {
-        [event setStringProperty:self.author forKey:kUAMediaEventTemplateAuthor];
+        [propertyDictionary setValue:self.author forKey:kUAMediaEventTemplateAuthor];
     }
 
     if (self.publishedDate) {
-        [event setStringProperty:self.publishedDate forKey:kUAMediaEventTemplatePublishedDate];
+        [propertyDictionary setValue:self.publishedDate forKey:kUAMediaEventTemplatePublishedDate];
     }
 
     if (self.source) {
-        [event setStringProperty:self.source forKey:kUAMediaEventTemplateSource];
+        [propertyDictionary setValue:self.source forKey:kUAMediaEventTemplateSource];
     }
 
     if (self.medium) {
-        [event setStringProperty:self.medium forKey:kUAMediaEventTemplateMedium];
+        [propertyDictionary setValue:self.medium forKey:kUAMediaEventTemplateMedium];
     }
 
     event.templateType = kUAMediaEventTemplate;
+    event.properties = propertyDictionary;
     return event;
 }
 

@@ -38,7 +38,7 @@
     [customEvent track];
 
     XCTAssertEqualObjects(@"browsed", [customEvent.data objectForKey:@"event_name"], @"Unexpected event name.");
-    XCTAssertEqualObjects(@"false", customEvent.data[@"properties"][@"ltv"], @"Unexpected ltv property.");
+    XCTAssertEqualObjects(@NO, customEvent.data[@"properties"][@"ltv"], @"Unexpected ltv property.");
     XCTAssertEqualObjects(@"retail", [customEvent.data objectForKey:@"template_type"], @"Unexpected event template type.");
 }
 
@@ -52,7 +52,7 @@
 
     XCTAssertEqualObjects(@"browsed", [customEvent.data objectForKey:@"event_name"], @"Unexpected event name.");
     XCTAssertEqualObjects(@(INT32_MIN * 1000000.0), [customEvent.data objectForKey:@"event_value"], @"Unexpected event value.");
-    XCTAssertEqualObjects(@"false", customEvent.data[@"properties"][@"ltv"], @"Unexpected ltv property.");
+    XCTAssertEqualObjects(@NO, customEvent.data[@"properties"][@"ltv"], @"Unexpected ltv property.");
     XCTAssertEqualObjects(@"retail", [customEvent.data objectForKey:@"template_type"], @"Unexpected event template type.");
 }
 
@@ -72,13 +72,13 @@
 
     XCTAssertEqualObjects(@"browsed", [customEvent.data objectForKey:@"event_name"], @"Unexpected event name.");
     XCTAssertEqualObjects(@(100.00), customEvent.eventValue, @"Event value should be set from a valid numeric string.");
-    XCTAssertEqualObjects(@"false", customEvent.data[@"properties"][@"ltv"], @"Unexpected ltv property.");
+    XCTAssertEqualObjects(@NO, customEvent.data[@"properties"][@"ltv"], @"Unexpected ltv property.");
     XCTAssertEqualObjects(@"1122334455", customEvent.transactionID, @"Unexpected transaction ID.");
-    XCTAssertEqualObjects(@"\"retail-category\"", customEvent.data[@"properties"][@"category"], @"Unexpected category.");
-    XCTAssertEqualObjects(@"\"12345\"", customEvent.data[@"properties"][@"id"], @"Unexpected ID.");
-    XCTAssertEqualObjects(@"\"Browsed retail event.\"", customEvent.data[@"properties"][@"description"], @"Unexpected description.");
-    XCTAssertEqualObjects(@"\"Airship\"", customEvent.data[@"properties"][@"brand"], @"Unexpected category.");
-    XCTAssertEqualObjects(@"true", customEvent.data[@"properties"][@"new_item"], @"Unexpected new item value.");
+    XCTAssertEqualObjects(@"retail-category", customEvent.data[@"properties"][@"category"], @"Unexpected category.");
+    XCTAssertEqualObjects(@"12345", customEvent.data[@"properties"][@"id"], @"Unexpected ID.");
+    XCTAssertEqualObjects(@"Browsed retail event.", customEvent.data[@"properties"][@"description"], @"Unexpected description.");
+    XCTAssertEqualObjects(@"Airship", customEvent.data[@"properties"][@"brand"], @"Unexpected category.");
+    XCTAssertEqualObjects(@YES, customEvent.data[@"properties"][@"new_item"], @"Unexpected new item value.");
     XCTAssertEqualObjects(@"retail", [customEvent.data objectForKey:@"template_type"], @"Unexpected event template type.");
 }
 
@@ -91,7 +91,7 @@
     [customEvent track];
 
     XCTAssertEqualObjects(@"added_to_cart", [customEvent.data objectForKey:@"event_name"], @"Unexpected event name.");
-    XCTAssertEqualObjects(@"false", customEvent.data[@"properties"][@"ltv"], @"Unexpected ltv property.");
+    XCTAssertEqualObjects(@NO, customEvent.data[@"properties"][@"ltv"], @"Unexpected ltv property.");
     XCTAssertEqualObjects(@"retail", [customEvent.data objectForKey:@"template_type"], @"Unexpected event template type.");
 }
 
@@ -105,7 +105,7 @@
 
     XCTAssertEqualObjects(@"added_to_cart", [customEvent.data objectForKey:@"event_name"], @"Unexpected event name.");
     XCTAssertEqualObjects(@(INT32_MIN * 1000000.0), [customEvent.data objectForKey:@"event_value"], @"Unexpected event value.");
-    XCTAssertEqualObjects(@"false", customEvent.data[@"properties"][@"ltv"], @"Unexpected ltv property.");
+    XCTAssertEqualObjects(@NO, customEvent.data[@"properties"][@"ltv"], @"Unexpected ltv property.");
     XCTAssertEqualObjects(@"retail", [customEvent.data objectForKey:@"template_type"], @"Unexpected event template type.");
 }
 
@@ -125,13 +125,13 @@
 
     XCTAssertEqualObjects(@"added_to_cart", [customEvent.data objectForKey:@"event_name"], @"Unexpected event name.");
     XCTAssertEqualObjects(@(100.00), customEvent.eventValue, @"Event value should be set from a valid numeric string.");
-    XCTAssertEqualObjects(@"false", customEvent.data[@"properties"][@"ltv"], @"Unexpected ltv property.");
+    XCTAssertEqualObjects(@NO, customEvent.data[@"properties"][@"ltv"], @"Unexpected ltv property.");
     XCTAssertEqualObjects(@"1122334455", customEvent.transactionID, @"Unexpected transaction ID.");
-    XCTAssertEqualObjects(@"\"retail-category\"", customEvent.data[@"properties"][@"category"], @"Unexpected category.");
-    XCTAssertEqualObjects(@"\"12345\"", customEvent.data[@"properties"][@"id"], @"Unexpected ID.");
-    XCTAssertEqualObjects(@"\"Added to cart retail event.\"", customEvent.data[@"properties"][@"description"], @"Unexpected description.");
-    XCTAssertEqualObjects(@"\"Airship\"", customEvent.data[@"properties"][@"brand"], @"Unexpected category.");
-    XCTAssertEqualObjects(@"true", customEvent.data[@"properties"][@"new_item"], @"Unexpected new item value.");
+    XCTAssertEqualObjects(@"retail-category", customEvent.data[@"properties"][@"category"], @"Unexpected category.");
+    XCTAssertEqualObjects(@"12345", customEvent.data[@"properties"][@"id"], @"Unexpected ID.");
+    XCTAssertEqualObjects(@"Added to cart retail event.", customEvent.data[@"properties"][@"description"], @"Unexpected description.");
+    XCTAssertEqualObjects(@"Airship", customEvent.data[@"properties"][@"brand"], @"Unexpected category.");
+    XCTAssertEqualObjects(@YES, customEvent.data[@"properties"][@"new_item"], @"Unexpected new item value.");
     XCTAssertEqualObjects(@"retail", [customEvent.data objectForKey:@"template_type"], @"Unexpected event template type.");
 }
 
@@ -144,7 +144,7 @@
     [customEvent track];
 
     XCTAssertEqualObjects(@"starred_product", [customEvent.data objectForKey:@"event_name"], @"Unexpected event name.");
-    XCTAssertEqualObjects(@"false", customEvent.data[@"properties"][@"ltv"], @"Unexpected ltv property.");
+    XCTAssertEqualObjects(@NO, customEvent.data[@"properties"][@"ltv"], @"Unexpected ltv property.");
     XCTAssertEqualObjects(@"retail", [customEvent.data objectForKey:@"template_type"], @"Unexpected event template type.");
 }
 
@@ -158,7 +158,7 @@
 
     XCTAssertEqualObjects(@"starred_product", [customEvent.data objectForKey:@"event_name"], @"Unexpected event name.");
     XCTAssertEqualObjects(@(INT32_MIN * 1000000.0), [customEvent.data objectForKey:@"event_value"], @"Unexpected event value.");
-    XCTAssertEqualObjects(@"false", customEvent.data[@"properties"][@"ltv"], @"Unexpected ltv property.");
+    XCTAssertEqualObjects(@NO, customEvent.data[@"properties"][@"ltv"], @"Unexpected ltv property.");
     XCTAssertEqualObjects(@"retail", [customEvent.data objectForKey:@"template_type"], @"Unexpected event template type.");
 }
 
@@ -178,13 +178,13 @@
 
     XCTAssertEqualObjects(@"starred_product", [customEvent.data objectForKey:@"event_name"], @"Unexpected event name.");
     XCTAssertEqualObjects(@(100.00), customEvent.eventValue, @"Event value should be set from a valid numeric string.");
-    XCTAssertEqualObjects(@"false", customEvent.data[@"properties"][@"ltv"], @"Unexpected ltv property.");
+    XCTAssertEqualObjects(@NO, customEvent.data[@"properties"][@"ltv"], @"Unexpected ltv property.");
     XCTAssertEqualObjects(@"1122334455", customEvent.transactionID, @"Unexpected transaction ID.");
-    XCTAssertEqualObjects(@"\"retail-category\"", customEvent.data[@"properties"][@"category"], @"Unexpected category.");
-    XCTAssertEqualObjects(@"\"12345\"", customEvent.data[@"properties"][@"id"], @"Unexpected ID.");
-    XCTAssertEqualObjects(@"\"Starred product retail event.\"", customEvent.data[@"properties"][@"description"], @"Unexpected description.");
-    XCTAssertEqualObjects(@"\"Airship\"", customEvent.data[@"properties"][@"brand"], @"Unexpected category.");
-    XCTAssertEqualObjects(@"true", customEvent.data[@"properties"][@"new_item"], @"Unexpected new item value.");
+    XCTAssertEqualObjects(@"retail-category", customEvent.data[@"properties"][@"category"], @"Unexpected category.");
+    XCTAssertEqualObjects(@"12345", customEvent.data[@"properties"][@"id"], @"Unexpected ID.");
+    XCTAssertEqualObjects(@"Starred product retail event.", customEvent.data[@"properties"][@"description"], @"Unexpected description.");
+    XCTAssertEqualObjects(@"Airship", customEvent.data[@"properties"][@"brand"], @"Unexpected category.");
+    XCTAssertEqualObjects(@YES, customEvent.data[@"properties"][@"new_item"], @"Unexpected new item value.");
     XCTAssertEqualObjects(@"retail", [customEvent.data objectForKey:@"template_type"], @"Unexpected event template type.");
 }
 
@@ -197,7 +197,7 @@
     [customEvent track];
 
     XCTAssertEqualObjects(@"purchased", [customEvent.data objectForKey:@"event_name"], @"Unexpected event name.");
-    XCTAssertEqualObjects(@"false", customEvent.data[@"properties"][@"ltv"], @"Unexpected ltv property.");
+    XCTAssertEqualObjects(@NO, customEvent.data[@"properties"][@"ltv"], @"Unexpected ltv property.");
     XCTAssertEqualObjects(@"retail", [customEvent.data objectForKey:@"template_type"], @"Unexpected event template type.");
 }
 
@@ -211,7 +211,7 @@
 
     XCTAssertEqualObjects(@"purchased", [customEvent.data objectForKey:@"event_name"], @"Unexpected event name.");
     XCTAssertEqualObjects(@(INT32_MIN * 1000000.0), [customEvent.data objectForKey:@"event_value"], @"Unexpected event value.");
-    XCTAssertEqualObjects(@"true", customEvent.data[@"properties"][@"ltv"], @"Unexpected ltv property.");
+    XCTAssertEqualObjects(@YES, customEvent.data[@"properties"][@"ltv"], @"Unexpected ltv property.");
     XCTAssertEqualObjects(@"retail", [customEvent.data objectForKey:@"template_type"], @"Unexpected event template type.");
 }
 
@@ -231,13 +231,13 @@
 
     XCTAssertEqualObjects(@"purchased", [customEvent.data objectForKey:@"event_name"], @"Unexpected event name.");
     XCTAssertEqualObjects(@(100.00), customEvent.eventValue, @"Event value should be set from a valid numeric string.");
-    XCTAssertEqualObjects(@"true", customEvent.data[@"properties"][@"ltv"], @"Unexpected ltv property.");
+    XCTAssertEqualObjects(@YES, customEvent.data[@"properties"][@"ltv"], @"Unexpected ltv property.");
     XCTAssertEqualObjects(@"1122334455", customEvent.transactionID, @"Unexpected transaction ID.");
-    XCTAssertEqualObjects(@"\"retail-category\"", customEvent.data[@"properties"][@"category"], @"Unexpected category.");
-    XCTAssertEqualObjects(@"\"12345\"", customEvent.data[@"properties"][@"id"], @"Unexpected ID.");
-    XCTAssertEqualObjects(@"\"Purchased retail event.\"", customEvent.data[@"properties"][@"description"], @"Unexpected description.");
-    XCTAssertEqualObjects(@"\"Airship\"", customEvent.data[@"properties"][@"brand"], @"Unexpected category.");
-    XCTAssertEqualObjects(@"true", customEvent.data[@"properties"][@"new_item"], @"Unexpected new item value.");
+    XCTAssertEqualObjects(@"retail-category", customEvent.data[@"properties"][@"category"], @"Unexpected category.");
+    XCTAssertEqualObjects(@"12345", customEvent.data[@"properties"][@"id"], @"Unexpected ID.");
+    XCTAssertEqualObjects(@"Purchased retail event.", customEvent.data[@"properties"][@"description"], @"Unexpected description.");
+    XCTAssertEqualObjects(@"Airship", customEvent.data[@"properties"][@"brand"], @"Unexpected category.");
+    XCTAssertEqualObjects(@YES, customEvent.data[@"properties"][@"new_item"], @"Unexpected new item value.");
     XCTAssertEqualObjects(@"retail", [customEvent.data objectForKey:@"template_type"], @"Unexpected event template type.");
 }
 
@@ -250,7 +250,7 @@
     [customEvent track];
 
     XCTAssertEqualObjects(@"shared_product", [customEvent.data objectForKey:@"event_name"], @"Unexpected event name.");
-    XCTAssertEqualObjects(@"false", customEvent.data[@"properties"][@"ltv"], @"Unexpected ltv property.");
+    XCTAssertEqualObjects(@NO, customEvent.data[@"properties"][@"ltv"], @"Unexpected ltv property.");
     XCTAssertEqualObjects(@"retail", [customEvent.data objectForKey:@"template_type"], @"Unexpected event template type.");
 }
 
@@ -264,7 +264,7 @@
 
     XCTAssertEqualObjects(@"shared_product", [customEvent.data objectForKey:@"event_name"], @"Unexpected event name.");
     XCTAssertEqualObjects(@(INT32_MIN * 1000000.0), [customEvent.data objectForKey:@"event_value"], @"Unexpected event value.");
-    XCTAssertEqualObjects(@"false", customEvent.data[@"properties"][@"ltv"], @"Unexpected ltv property.");
+    XCTAssertEqualObjects(@NO, customEvent.data[@"properties"][@"ltv"], @"Unexpected ltv property.");
     XCTAssertEqualObjects(@"retail", [customEvent.data objectForKey:@"template_type"], @"Unexpected event template type.");
 }
 
@@ -284,13 +284,13 @@
 
     XCTAssertEqualObjects(@"shared_product", [customEvent.data objectForKey:@"event_name"], @"Unexpected event name.");
     XCTAssertEqualObjects(@(100.00), customEvent.eventValue, @"Event value should be set from a valid numeric string.");
-    XCTAssertEqualObjects(@"false", customEvent.data[@"properties"][@"ltv"], @"Unexpected ltv property.");
+    XCTAssertEqualObjects(@NO, customEvent.data[@"properties"][@"ltv"], @"Unexpected ltv property.");
     XCTAssertEqualObjects(@"1122334455", customEvent.transactionID, @"Unexpected transaction ID.");
-    XCTAssertEqualObjects(@"\"retail-category\"", customEvent.data[@"properties"][@"category"], @"Unexpected category.");
-    XCTAssertEqualObjects(@"\"12345\"", customEvent.data[@"properties"][@"id"], @"Unexpected ID.");
-    XCTAssertEqualObjects(@"\"Shared product retail event.\"", customEvent.data[@"properties"][@"description"], @"Unexpected description.");
-    XCTAssertEqualObjects(@"\"Airship\"", customEvent.data[@"properties"][@"brand"], @"Unexpected category.");
-    XCTAssertEqualObjects(@"true", customEvent.data[@"properties"][@"new_item"], @"Unexpected new item value.");
+    XCTAssertEqualObjects(@"retail-category", customEvent.data[@"properties"][@"category"], @"Unexpected category.");
+    XCTAssertEqualObjects(@"12345", customEvent.data[@"properties"][@"id"], @"Unexpected ID.");
+    XCTAssertEqualObjects(@"Shared product retail event.", customEvent.data[@"properties"][@"description"], @"Unexpected description.");
+    XCTAssertEqualObjects(@"Airship", customEvent.data[@"properties"][@"brand"], @"Unexpected category.");
+    XCTAssertEqualObjects(@YES, customEvent.data[@"properties"][@"new_item"], @"Unexpected new item value.");
     XCTAssertEqualObjects(@"retail", [customEvent.data objectForKey:@"template_type"], @"Unexpected event template type.");
 }
 
@@ -303,9 +303,9 @@
     [customEvent track];
 
     XCTAssertEqualObjects(@"shared_product", [customEvent.data objectForKey:@"event_name"], @"Unexpected event name.");
-    XCTAssertEqualObjects(@"false", customEvent.data[@"properties"][@"ltv"], @"Unexpected ltv property.");
-    XCTAssertEqualObjects(@"\"facebook\"", customEvent.data[@"properties"][@"source"], @"Unexpected source.");
-    XCTAssertEqualObjects(@"\"social\"", customEvent.data[@"properties"][@"medium"], @"Unexpected medium.");
+    XCTAssertEqualObjects(@NO, customEvent.data[@"properties"][@"ltv"], @"Unexpected ltv property.");
+    XCTAssertEqualObjects(@"facebook", customEvent.data[@"properties"][@"source"], @"Unexpected source.");
+    XCTAssertEqualObjects(@"social", customEvent.data[@"properties"][@"medium"], @"Unexpected medium.");
     XCTAssertEqualObjects(@"retail", [customEvent.data objectForKey:@"template_type"], @"Unexpected event template type.");
 }
 
@@ -319,9 +319,9 @@
 
     XCTAssertEqualObjects(@"shared_product", [customEvent.data objectForKey:@"event_name"], @"Unexpected event name.");
     XCTAssertEqualObjects(@(INT32_MIN * 1000000.0), [customEvent.data objectForKey:@"event_value"], @"Unexpected event value.");
-    XCTAssertEqualObjects(@"false", customEvent.data[@"properties"][@"ltv"], @"Unexpected ltv property.");
-    XCTAssertEqualObjects(@"\"facebook\"", customEvent.data[@"properties"][@"source"], @"Unexpected source.");
-    XCTAssertEqualObjects(@"\"social\"", customEvent.data[@"properties"][@"medium"], @"Unexpected medium.");
+    XCTAssertEqualObjects(@NO, customEvent.data[@"properties"][@"ltv"], @"Unexpected ltv property.");
+    XCTAssertEqualObjects(@"facebook", customEvent.data[@"properties"][@"source"], @"Unexpected source.");
+    XCTAssertEqualObjects(@"social", customEvent.data[@"properties"][@"medium"], @"Unexpected medium.");
     XCTAssertEqualObjects(@"retail", [customEvent.data objectForKey:@"template_type"], @"Unexpected event template type.");
 }
 
@@ -341,15 +341,15 @@
 
     XCTAssertEqualObjects(@"shared_product", [customEvent.data objectForKey:@"event_name"], @"Unexpected event name.");
     XCTAssertEqualObjects(@(100.00), customEvent.eventValue, @"Event value should be set from a valid numeric string.");
-    XCTAssertEqualObjects(@"false", customEvent.data[@"properties"][@"ltv"], @"Unexpected ltv property.");
+    XCTAssertEqualObjects(@NO, customEvent.data[@"properties"][@"ltv"], @"Unexpected ltv property.");
     XCTAssertEqualObjects(@"1122334455", customEvent.transactionID, @"Unexpected transaction ID.");
-    XCTAssertEqualObjects(@"\"facebook\"", customEvent.data[@"properties"][@"source"], @"Unexpected source.");
-    XCTAssertEqualObjects(@"\"social\"", customEvent.data[@"properties"][@"medium"], @"Unexpected medium.");
-    XCTAssertEqualObjects(@"\"retail-category\"", customEvent.data[@"properties"][@"category"], @"Unexpected category.");
-    XCTAssertEqualObjects(@"\"12345\"", customEvent.data[@"properties"][@"id"], @"Unexpected ID.");
-    XCTAssertEqualObjects(@"\"Shared product retail event.\"", customEvent.data[@"properties"][@"description"], @"Unexpected description.");
-    XCTAssertEqualObjects(@"\"Airship\"", customEvent.data[@"properties"][@"brand"], @"Unexpected category.");
-    XCTAssertEqualObjects(@"true", customEvent.data[@"properties"][@"new_item"], @"Unexpected new item value.");
+    XCTAssertEqualObjects(@"facebook", customEvent.data[@"properties"][@"source"], @"Unexpected source.");
+    XCTAssertEqualObjects(@"social", customEvent.data[@"properties"][@"medium"], @"Unexpected medium.");
+    XCTAssertEqualObjects(@"retail-category", customEvent.data[@"properties"][@"category"], @"Unexpected category.");
+    XCTAssertEqualObjects(@"12345", customEvent.data[@"properties"][@"id"], @"Unexpected ID.");
+    XCTAssertEqualObjects(@"Shared product retail event.", customEvent.data[@"properties"][@"description"], @"Unexpected description.");
+    XCTAssertEqualObjects(@"Airship", customEvent.data[@"properties"][@"brand"], @"Unexpected category.");
+    XCTAssertEqualObjects(@YES, customEvent.data[@"properties"][@"new_item"], @"Unexpected new item value.");
     XCTAssertEqualObjects(@"retail", [customEvent.data objectForKey:@"template_type"], @"Unexpected event template type.");
 }
 

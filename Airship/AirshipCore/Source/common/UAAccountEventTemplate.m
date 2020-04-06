@@ -54,11 +54,13 @@
 - (UACustomEvent *)createEvent {
     UACustomEvent *event = [UACustomEvent eventWithName:self.eventName];
 
+    NSMutableDictionary *propertyDictionary = [NSMutableDictionary dictionary];
+    
     if (self.eventValue) {
         [event setEventValue:self.eventValue];
-        [event setBoolProperty:YES forKey:kUAAccountEventTemplateLifetimeValue];
+        [propertyDictionary setValue:@YES forKey:kUAAccountEventTemplateLifetimeValue];
     } else {
-        [event setBoolProperty:NO forKey:kUAAccountEventTemplateLifetimeValue];
+        [propertyDictionary setValue:@NO forKey:kUAAccountEventTemplateLifetimeValue];
     }
 
     if (self.transactionID) {
@@ -66,10 +68,12 @@
     }
 
     if (self.category) {
-        [event setStringProperty:self.category forKey:kUAAccountEventTemplateCategory];
+        [propertyDictionary setValue:self.category forKey:kUAAccountEventTemplateCategory];
     }
 
     event.templateType = kUAAccountEventTemplate;
+    
+    event.properties = propertyDictionary;
 
     return event;
 }

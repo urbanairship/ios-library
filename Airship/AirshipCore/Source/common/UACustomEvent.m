@@ -5,16 +5,12 @@
 #import "UAirship.h"
 #import "NSJSONSerialization+UAAdditions.h"
 
-@interface UACustomEvent()
-@property(nonatomic, strong) NSMutableDictionary *mutableProperties;
-@end
-
-
 @implementation UACustomEvent
 
 const NSUInteger UACustomEventCharacterLimit = 255;
 const NSUInteger UACustomEventMaxPropertiesCount = 100;
 const NSUInteger UACustomEventMaxPropertyCollectionSize = 20;
+const NSUInteger UACustomEventMaxPropertiesSize = 65536;
 
 // Public data keys
 NSString *const UACustomEventNameKey = @"event_name";
@@ -30,7 +26,7 @@ NSString *const UACustomEventConversionSendIDKey = @"conversion_send_id";
 NSString *const UACustomEventTemplateTypeKey = @"template_type";
 
 - (NSString *)eventType {
-    return @"custom_event";
+    return @"enhanced_custom_event";
 }
 
 - (instancetype)initWithName:(NSString *)eventName withValue:(NSDecimalNumber *)eventValue {
@@ -38,7 +34,7 @@ NSString *const UACustomEventTemplateTypeKey = @"template_type";
     if (self) {
         self.eventName = eventName;
         self.eventValue = eventValue;
-        self.mutableProperties = [NSMutableDictionary dictionary];
+        self.properties = [NSDictionary dictionary];
     }
 
     return self;
@@ -58,19 +54,27 @@ NSString *const UACustomEventTemplateTypeKey = @"template_type";
 }
 
 - (void)setBoolProperty:(BOOL)value forKey:(NSString *)key {
-    [self.mutableProperties setValue:@(value) forKey:key];
+    NSMutableDictionary *mutableProperties = self.properties.mutableCopy;
+    [mutableProperties setValue:@(value) forKey:key];
+    self.properties = mutableProperties.copy;
 }
 
 - (void)setStringProperty:(NSString *)value forKey:(NSString *)key {
-    [self.mutableProperties setValue:[value copy] forKey:key];
+    NSMutableDictionary *mutableProperties = self.properties.mutableCopy;
+    [mutableProperties setValue:[value copy] forKey:key];
+    self.properties = mutableProperties.copy;
 }
 
 - (void)setNumberProperty:(NSNumber *)value forKey:(NSString *)key {
-    [self.mutableProperties setValue:[value copy] forKey:key];
+    NSMutableDictionary *mutableProperties = self.properties.mutableCopy;
+    [mutableProperties setValue:[value copy] forKey:key];
+    self.properties = mutableProperties.copy;
 }
 
 - (void)setStringArrayProperty:(NSArray *)value forKey:(NSString *)key {
-    [self.mutableProperties setValue:[value copy] forKey:key];
+    NSMutableDictionary *mutableProperties = self.properties.mutableCopy;
+    [mutableProperties setValue:[value copy] forKey:key];
+    self.properties = mutableProperties.copy;
 }
 
 - (void)setEventValue:(NSDecimalNumber *)eventValue {
@@ -126,50 +130,16 @@ NSString *const UACustomEventTemplateTypeKey = @"template_type";
             isValid = NO;
         }
     }
-
-    if (self.mutableProperties.count > UACustomEventMaxPropertiesCount) {
-        UA_LERR(@"Event contains more than %lu properties.", (unsigned long)UACustomEventMaxPropertiesCount);
+    
+    NSError *error;
+    NSData *propertyData = [NSJSONSerialization dataWithJSONObject:self.properties options:0 error:&error];
+  
+    if (error) {
+        UA_LERR(@"Event properties serialization error %@", error);
         isValid = NO;
-    }
-
-    for (id key in self.mutableProperties) {
-        id value = [self.mutableProperties valueForKey:key];
-        if ([value isKindOfClass:[NSArray class]]) {
-            NSArray *array = (NSArray *)value;
-            if (array.count > UACustomEventMaxPropertyCollectionSize) {
-                UA_LERR(@"Array property %@ exceeds more than %lu entries.", key, (unsigned long)UACustomEventMaxPropertyCollectionSize);
-                isValid = NO;
-            }
-
-            // Arrays can only contains Strings
-            for (id arrayProperty in array) {
-                if (![arrayProperty isKindOfClass:[NSString class]]) {
-                    isValid = NO;
-                    UA_LERR(@"Array property %@ contains an invalid object: %@", key, arrayProperty);
-                    continue;
-                }
-
-                if (((NSString *)arrayProperty).length > UACustomEventCharacterLimit) {
-                    UA_LERR(@"Array property %@ contains a String that is larger than %lu characters.", key, (unsigned long)UACustomEventCharacterLimit);
-                    isValid = NO;
-                }
-            }
-        } else if ([value isKindOfClass:[NSString class]]) {
-            NSString *stringProperty = (NSString *)value;
-            if (stringProperty.length > UACustomEventCharacterLimit) {
-                UA_LERR(@"Property %@ is larger than %lu characters.", key, (unsigned long)UACustomEventCharacterLimit);
-                isValid = NO;
-            }
-        } else if ([value isKindOfClass:[NSNumber class]]) {
-            NSNumber *numberProperty = (NSNumber *)value;
-            if ([numberProperty isEqualToNumber:[NSDecimalNumber notANumber]]) {
-                UA_LERR(@"Property %@ contains an invalid number.", key);
-                isValid = NO;
-            }
-        } else {
-            UA_LERR(@"Property %@ contains an invalid object: %@", key, value);
-            isValid = NO;
-        }
+    } else if (propertyData.length > UACustomEventMaxPropertiesSize) {
+        UA_LERR(@"Event properties (%lu bytes) are larger than the maximum size of %lu bytes.", (unsigned long) propertyData.length, (unsigned long)UACustomEventMaxPropertiesSize);
+        isValid = NO;
     }
 
     return isValid;
@@ -178,10 +148,6 @@ NSString *const UACustomEventTemplateTypeKey = @"template_type";
 - (void)setInteractionFromMessageCenterMessage:(NSString *)messageID {
     self.interactionID = messageID;
     self.interactionType = kUAInteractionMCRAP;
-}
-
--(NSDictionary *)properties {
-    return [self.mutableProperties copy];
 }
 
 - (NSDictionary *)data {
@@ -224,24 +190,11 @@ NSString *const UACustomEventTemplateTypeKey = @"template_type";
         [dictionary setValue:@([number longLongValue]) forKey:UACustomEventValueKey];
     }
 
-    NSMutableDictionary *stringifiedProperties = [NSMutableDictionary dictionary];
-
-    for (id key in self.mutableProperties) {
-        id value = [self.mutableProperties valueForKey:key];
-
-        if ([value isKindOfClass:[NSArray class]]) {
-            [stringifiedProperties setValue:value forKey:key];
-        } else {
-            NSString *stringifiedValue = [NSJSONSerialization stringWithObject:value acceptingFragments:YES error:nil];
-            [stringifiedProperties setValue:stringifiedValue forKey:key];
-        }
-    }
-
-    if (stringifiedProperties.count) {
-        [dictionary setValue:stringifiedProperties forKey:UACustomEventPropertiesKey];
-    }
+    // Properties
     
-    return [dictionary mutableCopy];
+    [dictionary setValue:self.properties forKey:UACustomEventPropertiesKey];
+
+    return dictionary.copy;
 }
 
 - (NSDictionary *)payload {

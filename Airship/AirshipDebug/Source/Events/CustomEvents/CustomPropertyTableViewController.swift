@@ -301,25 +301,27 @@ class CustomPropertyTableViewController: UITableViewController, UITextFieldDeleg
         }
 
         let customEventTVC = self.navigationController?.viewControllers[0] as! CustomEventTableViewController
-
+        var propertyDictionary = Dictionary <String, Any>()
+        
         switch (selectedType) {
         case "ua_type_boolean":
             guard booleanProperty != nil else { break }
-            customEventTVC.customEvent!.setBoolProperty(booleanProperty!, forKey: propertyKey!)
+            propertyDictionary[propertyKey!] = booleanProperty!
         case "ua_type_number":
             guard numberProperty != nil else { break }
-            customEventTVC.customEvent!.setNumberProperty(numberProperty!, forKey: propertyKey!)
+            propertyDictionary[propertyKey!] = numberProperty!
         case "ua_type_string":
             guard stringProperty != nil else { break }
-            customEventTVC.customEvent!.setStringProperty(stringProperty!, forKey: propertyKey!)
+            propertyDictionary[propertyKey!] = stringProperty!
         case "ua_type_strings":
             guard stringProperties != nil else { break }
-            customEventTVC.customEvent!.setStringArrayProperty(stringProperties!, forKey: propertyKey!)
+            propertyDictionary[propertyKey!] = stringProperties!
         default:
             displayMessage("ua_custom_property_error".localized())
             return
         }
 
+        customEventTVC.customEvent!.properties = propertyDictionary
         clearView()
         
         self.navigationController?.popViewController(animated: true)

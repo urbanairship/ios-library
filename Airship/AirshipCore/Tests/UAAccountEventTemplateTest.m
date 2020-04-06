@@ -36,7 +36,7 @@
     UACustomEvent *customEvent = [event createEvent];
 
     XCTAssertEqualObjects(@"registered_account", [customEvent.data objectForKey:@"event_name"], @"Unexpected event name.");
-    XCTAssertEqualObjects(@"false", customEvent.data[@"properties"][@"ltv"], @"Property ltv should be NO.");
+    XCTAssertEqualObjects(@NO, customEvent.data[@"properties"][@"ltv"], @"Property ltv should be NO.");
     XCTAssertEqualObjects(@"account", [customEvent.data objectForKey:@"template_type"], @"Unexpected event template type.");
 }
 
@@ -49,7 +49,7 @@
 
     XCTAssertEqualObjects(@"registered_account", [customEvent.data objectForKey:@"event_name"], @"Unexpected event name.");
     XCTAssertEqualObjects(@(100.00), customEvent.eventValue, @"Event value should be set from a valid numeric string.");
-    XCTAssertEqualObjects(@"true", customEvent.data[@"properties"][@"ltv"], @"Unexpected ltv property.");
+    XCTAssertEqualObjects(@YES, customEvent.data[@"properties"][@"ltv"], @"Unexpected ltv property.");
     XCTAssertEqualObjects(@"account", [customEvent.data objectForKey:@"template_type"], @"Unexpected event template type.");
 }
 
@@ -62,7 +62,7 @@
 
     XCTAssertEqualObjects(@"registered_account", [customEvent.data objectForKey:@"event_name"], @"Unexpected event name.");
     XCTAssertEqualObjects(@(INT32_MIN * 1000000.0), [customEvent.data objectForKey:@"event_value"], @"Unexpected event value.");
-    XCTAssertEqualObjects(@"true", customEvent.data[@"properties"][@"ltv"], @"Unexpected ltv property.");
+    XCTAssertEqualObjects(@YES, customEvent.data[@"properties"][@"ltv"], @"Unexpected ltv property.");
     XCTAssertEqualObjects(@"account", [customEvent.data objectForKey:@"template_type"], @"Unexpected event template type.");
 }
 
@@ -80,9 +80,9 @@
 
     XCTAssertEqualObjects(@"registered_account", [customEvent.data objectForKey:@"event_name"], @"Unexpected event name.");
     XCTAssertEqualObjects(@(12345), customEvent.eventValue, @"Unexpected event value.");
-    XCTAssertEqualObjects(@"true", customEvent.data[@"properties"][@"ltv"], @"Unexpected ltv property.");
+    XCTAssertEqualObjects(@YES, customEvent.data[@"properties"][@"ltv"], @"Unexpected ltv property.");
     XCTAssertEqualObjects(@"1212", customEvent.transactionID, @"Unexpected transaction ID.");
-    XCTAssertEqualObjects(@"\"Premium\"", customEvent.data[@"properties"][@"category"], @"Unexpected category.");
+    XCTAssertEqualObjects(@"Premium", customEvent.data[@"properties"][@"category"], @"Unexpected category.");
     XCTAssertEqualObjects(@"account", [customEvent.data objectForKey:@"template_type"], @"Unexpected event template type.");
 }
 

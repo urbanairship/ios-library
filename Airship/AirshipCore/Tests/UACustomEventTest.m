@@ -61,9 +61,6 @@
     UACustomEvent *event = [UACustomEvent eventWithName:@"event name"];
     XCTAssertTrue(event.isValid);
 
-    event.eventName =  [@"" stringByPaddingToLength:256 withString:@"EVENT_NAME" startingAtIndex:0];
-    XCTAssertFalse(event.isValid);
-
     NSString *eventName = [@"" stringByPaddingToLength:255 withString:@"EVENT_NAME" startingAtIndex:0];
     event.eventName =  eventName;
     XCTAssertTrue(event.isValid);
@@ -83,9 +80,6 @@
 
     event.interactionID = nil;
     XCTAssertTrue(event.isValid);
-
-    event.interactionID = [@"" stringByPaddingToLength:256 withString:@"INTERACTION_ID" startingAtIndex:0];
-    XCTAssertFalse(event.isValid);
 }
 
 /**
@@ -102,9 +96,6 @@
 
     event.interactionType = nil;
     XCTAssertTrue(event.isValid);
-
-    event.interactionType = [@"" stringByPaddingToLength:256 withString:@"INTERACTION_TYPE" startingAtIndex:0];
-    XCTAssertFalse(event.isValid);
 }
 
 /**
@@ -121,9 +112,6 @@
 
     event.transactionID = nil;
     XCTAssertTrue(event.isValid);
-
-    event.transactionID = [@"" stringByPaddingToLength:256 withString:@"TRANSACTION_ID" startingAtIndex:0];
-    XCTAssertFalse(event.isValid);
 }
 
 /**
@@ -140,9 +128,6 @@
 
     event.templateType = nil;
     XCTAssertTrue(event.isValid);
-
-    event.templateType = [@"" stringByPaddingToLength:256 withString:@"TEMPLATE_TYPE" startingAtIndex:0];
-    XCTAssertFalse(event.isValid);
 }
 
 /**
@@ -315,7 +300,7 @@
     [event setStringProperty:@"some string" forKey:@"string"];
 
     id eventValue = event.data[@"properties"][@"string"];
-    XCTAssertEqualObjects(@"\"some string\"", eventValue);
+    XCTAssertEqualObjects(@"some string", eventValue);
     XCTAssertTrue(event.isValid);
 }
 
@@ -331,16 +316,16 @@
     [event setBoolProperty:NO forKey:@"NO"];
 
     id eventValue = event.data[@"properties"][@"true"];
-    XCTAssertEqualObjects(@"true", eventValue);
+    XCTAssertEqualObjects(@YES, eventValue);
 
     eventValue = event.data[@"properties"][@"false"];
-    XCTAssertEqualObjects(@"false", eventValue);
+    XCTAssertEqualObjects(@NO, eventValue);
 
     eventValue = event.data[@"properties"][@"YES"];
-    XCTAssertEqualObjects(@"true", eventValue);
+    XCTAssertEqualObjects(@YES, eventValue);
 
     eventValue = event.data[@"properties"][@"NO"];
-    XCTAssertEqualObjects(@"false", eventValue);
+    XCTAssertEqualObjects(@NO, eventValue);
 
     XCTAssertTrue(event.isValid);
 }
@@ -369,91 +354,79 @@
 
     // Number booleans are treated as booleans
     id eventValue = event.data[@"properties"][@"bool"];
-    XCTAssertEqualObjects(@"true", eventValue);
+    XCTAssertEqualObjects(@YES, eventValue);
 
     eventValue = event.data[@"properties"][@"char"];
-    XCTAssertEqualObjects(@"99", eventValue);
+    XCTAssertEqualObjects(@99, eventValue);
 
     eventValue = event.data[@"properties"][@"double"];
-    XCTAssertEqualObjects(@"123.456789", eventValue);
+    XCTAssertEqualObjects(@123.456789, eventValue);
 
     eventValue = event.data[@"properties"][@"float"];
     XCTAssertEqual(@"123.4".floatValue, [eventValue floatValue]);
 
     eventValue = event.data[@"properties"][@"int"];
-    XCTAssertEqualObjects(@"123", eventValue);
+    XCTAssertEqualObjects(@123, eventValue);
 
     eventValue = event.data[@"properties"][@"integer"];
-    XCTAssertEqualObjects(@"1234", eventValue);
+    XCTAssertEqualObjects(@1234, eventValue);
 
     eventValue = event.data[@"properties"][@"long"];
-    XCTAssertEqualObjects(@"123", eventValue);
+    XCTAssertEqualObjects(@123, eventValue);
 
     eventValue = event.data[@"properties"][@"long long"];
-    XCTAssertEqualObjects(@"123", eventValue);
+    XCTAssertEqualObjects(@123, eventValue);
 
     eventValue = event.data[@"properties"][@"short"];
-    XCTAssertEqualObjects(@"1", eventValue);
+    XCTAssertEqualObjects(@1, eventValue);
 
     eventValue = event.data[@"properties"][@"unsigned char"];
-    XCTAssertEqualObjects(@"99", eventValue);
+    XCTAssertEqualObjects(@99, eventValue);
 
     eventValue = event.data[@"properties"][@"unsigned int"];
-    XCTAssertEqualObjects(@"123", eventValue);
+    XCTAssertEqualObjects(@123, eventValue);
 
     eventValue = event.data[@"properties"][@"unsigned long"];
-    XCTAssertEqualObjects(@"123", eventValue);
+    XCTAssertEqualObjects(@123, eventValue);
 
     eventValue = event.data[@"properties"][@"unsigned long long"];
-    XCTAssertEqualObjects(@"123", eventValue);
+    XCTAssertEqualObjects(@123, eventValue);
 
     eventValue = event.data[@"properties"][@"unsigned short"];
-    XCTAssertEqualObjects(@"1", eventValue);
+    XCTAssertEqualObjects(@1, eventValue);
 
     XCTAssertTrue(event.isValid);
 }
 
 /**
- * Test max number of properties is 100.
+ * Test max total property size is 65536 bytes.
  */
-- (void)testMaxProperites {
+- (void)testMaxTotalPropertySize {
     UACustomEvent *event = [UACustomEvent eventWithName:@"name"];
 
-    for (int i = 0; i < 100; i++) {
-        [event setStringProperty:@"value" forKey:[@(i) description]];
+    NSMutableDictionary *properties = [NSMutableDictionary dictionary];
+    
+    for (int i = 0; i < 5000; i++) {
+        [properties setValue:@324 forKey:[NSString stringWithFormat:@"%d", i]];
     }
+    
+    event.properties = properties;
+    
     XCTAssertTrue(event.isValid);
+    
+    // Add more properties
+    for (int i = 5000; i < 7000; i++) {
+        [properties setValue:@324 forKey:[NSString stringWithFormat:@"%d", i]];
+    }
 
-    // Add another
-    [event setStringProperty:@"value" forKey:@"101"];
-
+    event.properties = properties;
+    
     // Should be invalid
-    XCTAssertFalse(event.isValid);
+    XCTAssertFalse(event.isValid);     
 }
 
 /**
- * Test max length of string arrays is 20.
- */
-- (void)testMaxStringArrayProperties {
-    UACustomEvent *event = [UACustomEvent eventWithName:@"name"];
-
-    NSMutableArray *array = [NSMutableArray array];
-    for (int i = 0; i < 20; i++) {
-        [array addObject:@"value"];
-    }
-    [event setStringArrayProperty:array forKey:@"array"];
-    XCTAssertTrue(event.isValid);
-
-    // Add another
-    [array addObject:@"value"];
-    [event setStringArrayProperty:array forKey:@"array"];
-
-    // Should be invalid
-    XCTAssertFalse(event.isValid);
-}
-
-/**
- * Test max length of a string property in a string array
+ * Test event.isValid is false when property size exceeds max total property size.
  */
 - (void)testStringArrayPropertiesMaxStringLength {
     UACustomEvent *event = [UACustomEvent eventWithName:@"name"];
@@ -465,13 +438,6 @@
     [event setStringArrayProperty:array forKey:@"at_max"];
 
     XCTAssertTrue(event.isValid);
-
-    // Add another above max characters
-    [array addObject:[@"" stringByPaddingToLength:256 withString:@"MAX_LENGTH" startingAtIndex:0]];
-    [event setStringArrayProperty:array forKey:@"above_max"];
-
-    // Should be invalid
-    XCTAssertFalse(event.isValid);
 }
 
 @end

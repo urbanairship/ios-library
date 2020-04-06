@@ -264,10 +264,10 @@
     [[self.analytics expect] addEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
         UACustomEvent *event = obj;
         return [event.eventName isEqualToString:@"event name"] &&
-        [event.data[@"properties"][@"bool"] isEqualToString:@"true"] &&
-        [event.data[@"properties"][@"number"] isEqualToString:@"123"] &&
+        [event.data[@"properties"][@"bool"] isEqual: @YES] &&
+        [event.data[@"properties"][@"number"] isEqual:@123] &&
         [event.data[@"properties"][@"array"] isEqualToArray:dict[@"properties"][@"array"]] &&
-        [event.data[@"properties"][@"string"] isEqualToString:@"\"string value\""];
+        [event.data[@"properties"][@"string"] isEqualToString:@"string value"];
     }]];
 
     [self verifyPerformWithArgs:args withExpectedResult:expectedResult];

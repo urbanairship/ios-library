@@ -56,6 +56,8 @@ NSString * const UAAddCustomEventActionErrorDomain = @"UAAddCustomEventActionErr
     // Set the conversion send Metadata if the action was triggered from a push
     event.conversionPushMetadata = arguments.metadata[UAActionMetadataPushPayloadKey][kUAPushMetadata];
 
+    NSMutableDictionary *propertyDictionary = [NSMutableDictionary dictionary];
+    
     if (properties && [properties isKindOfClass:[NSDictionary class]]) {
         for (id key in properties) {
 
@@ -65,27 +67,19 @@ NSString * const UAAddCustomEventActionErrorDomain = @"UAAddCustomEventActionErr
             }
 
             id value = properties[key];
-
-            if ([value isKindOfClass:[NSString class]]) {
-                [event setStringProperty:value forKey:key];
-            } else if ([value isKindOfClass:[NSArray class]]) {
-                [event setStringArrayProperty:value forKey:key];
-            } else if ([value isKindOfClass:[NSNumber class]]) {
-                // BOOLs come in as NSNumbers
-                [event setNumberProperty:value forKey:key];
-            } else {
-                UA_LWARN(@"Property %@ contains an invalid object: %@", key, value);
-            }
+            [propertyDictionary setValue:value forKey:key];
         }
     }
 
+    event.properties = propertyDictionary;
+    
     if ([event isValid]) {
         [event track];
         completionHandler([UAActionResult emptyResult]);
     } else {
         NSError *error = [NSError errorWithDomain:UAAddCustomEventActionErrorDomain
                                              code:UAAddCustomEventActionErrorCodeInvalidEventName
-                                         userInfo:@{NSLocalizedDescriptionKey:@"Invalid custom event. Verify the event name is specified, event value must be a number, and all values must not exceed 255 characters."}];
+                                         userInfo:@{NSLocalizedDescriptionKey:@"Invalid custom event. Verify the event name is specified, event value must be a number."}];
 
         completionHandler([UAActionResult resultWithError:error]);
     }

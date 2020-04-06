@@ -38,7 +38,7 @@
     [customEvent track];
 
     XCTAssertEqualObjects(@"browsed_content", [customEvent.data objectForKey:@"event_name"], @"Unexpected event name.");
-    XCTAssertEqualObjects(@"false", customEvent.data[@"properties"][@"ltv"], @"Property ltv should be NO.");
+    XCTAssertEqualObjects(@NO, customEvent.data[@"properties"][@"ltv"], @"Property ltv should be NO.");
     XCTAssertEqualObjects(@"media", [customEvent.data objectForKey:@"template_type"], @"Unexpected event template type.");
 }
 
@@ -59,14 +59,14 @@
     [customEvent track];
 
     XCTAssertEqualObjects(@"browsed_content", [customEvent.data objectForKey:@"event_name"], @"Unexpected event name.");
-    XCTAssertEqualObjects(@"false", customEvent.data[@"properties"][@"ltv"], @"Property ltv should be NO.");
-    XCTAssertEqualObjects(@"\"media-category\"", customEvent.data[@"properties"][@"category"], @"Unexpected category.");
-    XCTAssertEqualObjects(@"\"1234\"", customEvent.data[@"properties"][@"id"], @"Unexpected ID.");
-    XCTAssertEqualObjects(@"\"Browsed content media event.\"", customEvent.data[@"properties"][@"description"], @"Unexpected description.");
-    XCTAssertEqualObjects(@"\"audio type\"", customEvent.data[@"properties"][@"type"], @"Unexpected type.");
-    XCTAssertEqualObjects(@"\"The Cool UA\"", customEvent.data[@"properties"][@"author"], @"Unexpected author.");
-    XCTAssertEqualObjects(@"true", customEvent.data[@"properties"][@"feature"], @"Unexpected feature.");
-    XCTAssertEqualObjects(@"\"November 13, 2015\"", customEvent.data[@"properties"][@"published_date"], @"Unexpected published date.");
+    XCTAssertEqualObjects(@NO, customEvent.data[@"properties"][@"ltv"], @"Property ltv should be NO.");
+    XCTAssertEqualObjects(@"media-category", customEvent.data[@"properties"][@"category"], @"Unexpected category.");
+    XCTAssertEqualObjects(@"1234", customEvent.data[@"properties"][@"id"], @"Unexpected ID.");
+    XCTAssertEqualObjects(@"Browsed content media event.", customEvent.data[@"properties"][@"description"], @"Unexpected description.");
+    XCTAssertEqualObjects(@"audio type", customEvent.data[@"properties"][@"type"], @"Unexpected type.");
+    XCTAssertEqualObjects(@"The Cool UA", customEvent.data[@"properties"][@"author"], @"Unexpected author.");
+    XCTAssertEqualObjects(@YES, customEvent.data[@"properties"][@"feature"], @"Unexpected feature.");
+    XCTAssertEqualObjects(@"November 13, 2015", customEvent.data[@"properties"][@"published_date"], @"Unexpected published date.");
     XCTAssertEqualObjects(@"media", [customEvent.data objectForKey:@"template_type"], @"Unexpected event template type.");
 }
 
@@ -79,7 +79,7 @@
     [customEvent track];
 
     XCTAssertEqualObjects(@"starred_content", [customEvent.data objectForKey:@"event_name"], @"Unexpected event name.");
-    XCTAssertEqualObjects(@"false", customEvent.data[@"properties"][@"ltv"], @"Property ltv should be NO.");
+    XCTAssertEqualObjects(@NO, customEvent.data[@"properties"][@"ltv"], @"Property ltv should be NO.");
     XCTAssertEqualObjects(@"media", [customEvent.data objectForKey:@"template_type"], @"Unexpected event template type.");
 }
 
@@ -100,14 +100,14 @@
     [customEvent track];
 
     XCTAssertEqualObjects(@"starred_content", [customEvent.data objectForKey:@"event_name"], @"Unexpected event name.");
-    XCTAssertEqualObjects(@"false", customEvent.data[@"properties"][@"ltv"], @"Property ltv should be NO.");
-    XCTAssertEqualObjects(@"\"media-category\"", customEvent.data[@"properties"][@"category"], @"Unexpected category.");
-    XCTAssertEqualObjects(@"\"1234\"", customEvent.data[@"properties"][@"id"], @"Unexpected ID.");
-    XCTAssertEqualObjects(@"\"Starred content media event.\"", customEvent.data[@"properties"][@"description"], @"Unexpected description.");
-    XCTAssertEqualObjects(@"\"audio type\"", customEvent.data[@"properties"][@"type"], @"Unexpected type.");
-    XCTAssertEqualObjects(@"\"The Cool UA\"", customEvent.data[@"properties"][@"author"], @"Unexpected author.");
-    XCTAssertEqualObjects(@"true", customEvent.data[@"properties"][@"feature"], @"Unexpected feature.");
-    XCTAssertEqualObjects(@"\"November 13, 2015\"", customEvent.data[@"properties"][@"published_date"], @"Unexpected published date.");
+    XCTAssertEqualObjects(@NO, customEvent.data[@"properties"][@"ltv"], @"Property ltv should be NO.");
+    XCTAssertEqualObjects(@"media-category", customEvent.data[@"properties"][@"category"], @"Unexpected category.");
+    XCTAssertEqualObjects(@"1234", customEvent.data[@"properties"][@"id"], @"Unexpected ID.");
+    XCTAssertEqualObjects(@"Starred content media event.", customEvent.data[@"properties"][@"description"], @"Unexpected description.");
+    XCTAssertEqualObjects(@"audio type", customEvent.data[@"properties"][@"type"], @"Unexpected type.");
+    XCTAssertEqualObjects(@"The Cool UA", customEvent.data[@"properties"][@"author"], @"Unexpected author.");
+    XCTAssertEqualObjects(@YES, customEvent.data[@"properties"][@"feature"], @"Unexpected feature.");
+    XCTAssertEqualObjects(@"November 13, 2015", customEvent.data[@"properties"][@"published_date"], @"Unexpected published date.");
     XCTAssertEqualObjects(@"media", [customEvent.data objectForKey:@"template_type"], @"Unexpected event template type.");
 }
 
@@ -120,7 +120,7 @@
     [customEvent track];
 
     XCTAssertEqualObjects(@"shared_content", [customEvent.data objectForKey:@"event_name"], @"Unexpected event name.");
-    XCTAssertEqualObjects(@"false", customEvent.data[@"properties"][@"ltv"], @"Property ltv should be NO.");
+    XCTAssertEqualObjects(@NO, customEvent.data[@"properties"][@"ltv"], @"Property ltv should be NO.");
     XCTAssertEqualObjects(@"media", [customEvent.data objectForKey:@"template_type"], @"Unexpected event template type.");
 }
 
@@ -140,16 +140,16 @@
     [customEvent track];
 
     XCTAssertEqualObjects(@"shared_content", [customEvent.data objectForKey:@"event_name"], @"Unexpected event name.");
-    XCTAssertEqualObjects(@"false", customEvent.data[@"properties"][@"ltv"], @"Property ltv should be NO.");
-    XCTAssertEqualObjects(@"\"facebook\"", customEvent.data[@"properties"][@"source"], @"Unexpected source.");
-    XCTAssertEqualObjects(@"\"social\"", customEvent.data[@"properties"][@"medium"], @"Unexpected medium.");
-    XCTAssertEqualObjects(@"\"media-category\"", customEvent.data[@"properties"][@"category"], @"Unexpected category.");
-    XCTAssertEqualObjects(@"\"12345\"", customEvent.data[@"properties"][@"id"], @"Unexpected ID.");
-    XCTAssertEqualObjects(@"\"Shared content media event.\"", customEvent.data[@"properties"][@"description"], @"Unexpected description.");
-    XCTAssertEqualObjects(@"\"video type\"", customEvent.data[@"properties"][@"type"], @"Unexpected type.");
-    XCTAssertEqualObjects(@"\"The Fun UA\"", customEvent.data[@"properties"][@"author"], @"Unexpected author.");
-    XCTAssertEqualObjects(@"true", customEvent.data[@"properties"][@"feature"], @"Unexpected feature.");
-    XCTAssertEqualObjects(@"\"November 13, 2015\"", customEvent.data[@"properties"][@"published_date"], @"Unexpected published date.");
+    XCTAssertEqualObjects(@NO, customEvent.data[@"properties"][@"ltv"], @"Property ltv should be NO.");
+    XCTAssertEqualObjects(@"facebook", customEvent.data[@"properties"][@"source"], @"Unexpected source.");
+    XCTAssertEqualObjects(@"social", customEvent.data[@"properties"][@"medium"], @"Unexpected medium.");
+    XCTAssertEqualObjects(@"media-category", customEvent.data[@"properties"][@"category"], @"Unexpected category.");
+    XCTAssertEqualObjects(@"12345", customEvent.data[@"properties"][@"id"], @"Unexpected ID.");
+    XCTAssertEqualObjects(@"Shared content media event.", customEvent.data[@"properties"][@"description"], @"Unexpected description.");
+    XCTAssertEqualObjects(@"video type", customEvent.data[@"properties"][@"type"], @"Unexpected type.");
+    XCTAssertEqualObjects(@"The Fun UA", customEvent.data[@"properties"][@"author"], @"Unexpected author.");
+    XCTAssertEqualObjects(@YES, customEvent.data[@"properties"][@"feature"], @"Unexpected feature.");
+    XCTAssertEqualObjects(@"November 13, 2015", customEvent.data[@"properties"][@"published_date"], @"Unexpected published date.");
     XCTAssertEqualObjects(@"media", [customEvent.data objectForKey:@"template_type"], @"Unexpected event template type.");
 }
 
@@ -162,7 +162,7 @@
     [customEvent track];
 
     XCTAssertEqualObjects(@"consumed_content", [customEvent.data objectForKey:@"event_name"], @"Unexpected event name.");
-    XCTAssertEqualObjects(@"false", customEvent.data[@"properties"][@"ltv"], @"Property ltv should be NO.");
+    XCTAssertEqualObjects(@NO, customEvent.data[@"properties"][@"ltv"], @"Property ltv should be NO.");
     XCTAssertEqualObjects(@"media", [customEvent.data objectForKey:@"template_type"], @"Unexpected event template type.");
 }
 
@@ -176,7 +176,7 @@
 
     XCTAssertEqualObjects(@"consumed_content", [customEvent.data objectForKey:@"event_name"], @"Unexpected event name.");
     XCTAssertEqualObjects(@(100.00), customEvent.eventValue, @"Event value should be set from a valid numeric string.");
-    XCTAssertEqualObjects(@"true", customEvent.data[@"properties"][@"ltv"], @"Unexpected ltv property.");
+    XCTAssertEqualObjects(@YES, customEvent.data[@"properties"][@"ltv"], @"Unexpected ltv property.");
     XCTAssertEqualObjects(@"media", [customEvent.data objectForKey:@"template_type"], @"Unexpected event template type.");
 }
 
@@ -197,14 +197,14 @@
 
     XCTAssertEqualObjects(@"consumed_content", [customEvent.data objectForKey:@"event_name"], @"Unexpected event name.");
     XCTAssertEqualObjects(@(INT32_MIN * 1000000.0), [customEvent.data objectForKey:@"event_value"], @"Unexpected event value.");
-    XCTAssertEqualObjects(@"true", customEvent.data[@"properties"][@"ltv"], @"Unexpected ltv property.");
-    XCTAssertEqualObjects(@"\"media-category\"", customEvent.data[@"properties"][@"category"], @"Unexpected category.");
-    XCTAssertEqualObjects(@"\"12322\"", customEvent.data[@"properties"][@"id"], @"Unexpected ID.");
-    XCTAssertEqualObjects(@"\"Consumed content media event.\"", customEvent.data[@"properties"][@"description"], @"Unexpected description.");
-    XCTAssertEqualObjects(@"\"audio type\"", customEvent.data[@"properties"][@"type"], @"Unexpected type.");
-    XCTAssertEqualObjects(@"\"The Smart UA\"", customEvent.data[@"properties"][@"author"], @"Unexpected author.");
-    XCTAssertEqualObjects(@"true", customEvent.data[@"properties"][@"feature"], @"Unexpected feature.");
-    XCTAssertEqualObjects(@"\"November 13, 2015\"", customEvent.data[@"properties"][@"published_date"], @"Unexpected properties.");
+    XCTAssertEqualObjects(@YES, customEvent.data[@"properties"][@"ltv"], @"Unexpected ltv property.");
+    XCTAssertEqualObjects(@"media-category", customEvent.data[@"properties"][@"category"], @"Unexpected category.");
+    XCTAssertEqualObjects(@"12322", customEvent.data[@"properties"][@"id"], @"Unexpected ID.");
+    XCTAssertEqualObjects(@"Consumed content media event.", customEvent.data[@"properties"][@"description"], @"Unexpected description.");
+    XCTAssertEqualObjects(@"audio type", customEvent.data[@"properties"][@"type"], @"Unexpected type.");
+    XCTAssertEqualObjects(@"The Smart UA", customEvent.data[@"properties"][@"author"], @"Unexpected author.");
+    XCTAssertEqualObjects(@YES, customEvent.data[@"properties"][@"feature"], @"Unexpected feature.");
+    XCTAssertEqualObjects(@"November 13, 2015", customEvent.data[@"properties"][@"published_date"], @"Unexpected properties.");
     XCTAssertEqualObjects(@"media", [customEvent.data objectForKey:@"template_type"], @"Unexpected event template type.");
 }
 

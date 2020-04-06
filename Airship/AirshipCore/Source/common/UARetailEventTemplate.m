@@ -171,14 +171,16 @@
 - (UACustomEvent *)createEvent {
     UACustomEvent *event = [UACustomEvent eventWithName:self.eventName];
 
+    NSMutableDictionary *propertyDictionary = [NSMutableDictionary dictionary];
+    
     if (self.eventValue) {
         [event setEventValue:self.eventValue];
     }
 
     if (self.eventValue && [self.eventName isEqualToString:kUAPurchasedEvent]) {
-        [event setBoolProperty:YES forKey:kUARetailEventTemplateLifetimeValue];
+        [propertyDictionary setValue:@YES forKey:kUARetailEventTemplateLifetimeValue];
     } else {
-        [event setBoolProperty:NO forKey:kUARetailEventTemplateLifetimeValue];
+       [propertyDictionary setValue:@NO forKey:kUARetailEventTemplateLifetimeValue];
     }
 
     if (self.transactionID) {
@@ -186,34 +188,35 @@
     }
 
     if (self.identifier) {
-        [event setStringProperty:self.identifier forKey:kUARetailEventTemplateIdentifier];
+        [propertyDictionary setValue:self.identifier forKey:kUARetailEventTemplateIdentifier];
     }
 
     if (self.category) {
-        [event setStringProperty:self.category forKey:kUARetailEventTemplateCategory];
+        [propertyDictionary setValue:self.category forKey:kUARetailEventTemplateCategory];
     }
 
     if (self.eventDescription) {
-        [event setStringProperty:self.eventDescription forKey:kUARetailEventTemplateDescription];
+        [propertyDictionary setValue:self.eventDescription forKey:kUARetailEventTemplateDescription];
     }
 
     if (self.brand) {
-        [event setStringProperty:self.brand forKey:kUARetailEventTemplateBrand];
+        [propertyDictionary setValue:self.brand forKey:kUARetailEventTemplateBrand];
     }
 
     if (self.newItemSet) {
-        [event setBoolProperty:self.isNewItem forKey:kUARetailEventTemplateNewItem];
+        [propertyDictionary setValue:@(self.isNewItem) forKey:kUARetailEventTemplateNewItem];
     }
     if (self.source) {
-        [event setStringProperty:self.source forKey:kUARetailEventTemplateSource];
+        [propertyDictionary setValue:self.source forKey:kUARetailEventTemplateSource];
     }
 
     if (self.medium) {
-        [event setStringProperty:self.medium forKey:kUARetailEventTemplateMedium];
+        [propertyDictionary setValue:self.medium forKey:kUARetailEventTemplateMedium];
     }
 
     event.templateType = kUARetailEventTemplate;
-
+    event.properties = propertyDictionary;
+    
     return event;
 }
 

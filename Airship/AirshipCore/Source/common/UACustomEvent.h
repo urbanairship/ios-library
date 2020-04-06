@@ -68,7 +68,7 @@ extern NSString *const UACustomEventInteractionTypeKey;
 /**
  * The event's properties.
  */
-@property (nonatomic, copy, readonly) NSDictionary *properties;
+@property (nonatomic, copy) NSDictionary *properties;
 
 /**
  * The event's JSON payload.
@@ -122,25 +122,28 @@ extern NSString *const UACustomEventInteractionTypeKey;
  *
  * @param value The property value.
  * @param key The property key.
+ * @deprecated Deprecated – to be removed in SDK version 14.0. Instead use the properties property of UACustomEvent.
  */
-- (void)setBoolProperty:(BOOL)value forKey:(NSString *)key;
+
+- (void)setBoolProperty:(BOOL)value forKey:(NSString *)key DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0. Instead use the properties property of UACustomEvent.");
 
 /**
- * Sets a custom String property. The value's length must not exceed 255 characters
- * or it will invalidate the event.
+ * Sets a custom String property.
  *
  * @param value The property value.
  * @param key The property key.
+ * @deprecated Deprecated – to be removed in SDK version 14.0. Instead use  Instead use the properties property of UACustomEvent.
  */
-- (void)setStringProperty:(NSString *)value forKey:(NSString *)key;
+- (void)setStringProperty:(NSString *)value forKey:(NSString *)key DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0. Instead use the properties property of UACustomEvent.");
 
 /**
  * Sets a custom Number property.
  *
  * @param value The property value.
  * @param key The property key.
+ * @deprecated Deprecated – to be removed in SDK version 14.0. Instead use  Instead use the properties property of UACustomEvent.
  */
-- (void)setNumberProperty:(NSNumber *)value forKey:(NSString *)key;
+- (void)setNumberProperty:(NSNumber *)value forKey:(NSString *)key DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0. Instead use the properties property of UACustomEvent.");
 
 /**
  * Adds the event to analytics.
@@ -148,13 +151,13 @@ extern NSString *const UACustomEventInteractionTypeKey;
 - (void)track;
 
 /**
- * Sets a custom String array property. The array must not exceed 20 entries and
- * each entry's length must not exceed 255 characters or it will invalidate the event.
+ * Sets a custom String array property. 
  *
  * @param value The property value.
  * @param key The property key.
+ * @deprecated Deprecated – to be removed in SDK version 14.0. Instead use  Instead use the properties property of UACustomEvent.
  */
-- (void)setStringArrayProperty:(NSArray<NSString *> *)value forKey:(NSString *)key;
+- (void)setStringArrayProperty:(NSArray<NSString *> *)value forKey:(NSString *)key DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0. Instead use the properties property of UACustomEvent.");
 
 @end
 
