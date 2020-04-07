@@ -8688,7 +8688,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.AirshipAccengageTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";
-				VALID_ARCHS = "arm64 arm64e armv7 armv7s x86_64";
+				VALID_ARCHS = "$(inherited) x86_64";
 			};
 			name = Debug;
 		};
@@ -8713,7 +8713,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.AirshipAccengageTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";
-				VALID_ARCHS = "arm64 arm64e armv7 armv7s x86_64";
+				VALID_ARCHS = "$(inherited) x86_64";
 			};
 			name = Release;
 		};
@@ -8744,7 +8744,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
-				VALID_ARCHS = "arm64 arm64e armv7 armv7s x86_64";
+				VALID_ARCHS = "$(inherited) x86_64";
 			};
 			name = Debug;
 		};
@@ -8774,7 +8774,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
-				VALID_ARCHS = "arm64 arm64e armv7 armv7s x86_64";
+				VALID_ARCHS = "$(inherited) x86_64";
 			};
 			name = Release;
 		};
@@ -8805,7 +8805,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = "";
-				VALID_ARCHS = "arm64 arm64e armv7 armv7s x86_64";
+				VALID_ARCHS = "$(inherited) x86_64";
 			};
 			name = Debug;
 		};
@@ -8835,7 +8835,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = "";
-				VALID_ARCHS = "arm64 arm64e armv7 armv7s x86_64";
+				VALID_ARCHS = "$(inherited) x86_64";
 			};
 			name = Release;
 		};
@@ -8857,7 +8857,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.urbanairship.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = AirshipExtendedActions;
 				SKIP_INSTALL = YES;
-				VALID_ARCHS = "arm64 arm64e armv7 armv7s x86_64";
+				VALID_ARCHS = "$(inherited) x86_64";
 			};
 			name = Debug;
 		};
@@ -8878,7 +8878,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.urbanairship.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = AirshipExtendedActions;
 				SKIP_INSTALL = YES;
-				VALID_ARCHS = "arm64 arm64e armv7 armv7s x86_64";
+				VALID_ARCHS = "$(inherited) x86_64";
 			};
 			name = Release;
 		};
@@ -9039,7 +9039,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = "";
-				VALID_ARCHS = "arm64 arm64e armv7 armv7s x86_64";
+				VALID_ARCHS = "$(inherited) x86_64";
 			};
 			name = Debug;
 		};
@@ -9069,7 +9069,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = "";
-				VALID_ARCHS = "arm64 arm64e armv7 armv7s x86_64";
+				VALID_ARCHS = "$(inherited) x86_64";
 			};
 			name = Release;
 		};
@@ -9091,7 +9091,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.urbanairship.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				VALID_ARCHS = "arm64 arm64e armv7 armv7s x86_64";
+				VALID_ARCHS = "$(inherited) x86_64";
 			};
 			name = Debug;
 		};
@@ -9112,7 +9112,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.urbanairship.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				VALID_ARCHS = "arm64 arm64e armv7 armv7s x86_64";
+				VALID_ARCHS = "$(inherited) x86_64";
 			};
 			name = Release;
 		};
@@ -9143,7 +9143,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = "";
-				VALID_ARCHS = "arm64 arm64e armv7 armv7s x86_64";
+				VALID_ARCHS = "$(inherited) x86_64";
 			};
 			name = Debug;
 		};
@@ -9173,7 +9173,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = "";
-				VALID_ARCHS = "arm64 arm64e armv7 armv7s x86_64";
+				VALID_ARCHS = "$(inherited) x86_64";
 			};
 			name = Release;
 		};
@@ -9195,7 +9195,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.urbanairship.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				VALID_ARCHS = "arm64 arm64e armv7 armv7s x86_64";
+				VALID_ARCHS = "$(inherited) x86_64";
 			};
 			name = Debug;
 		};
@@ -9216,7 +9216,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.urbanairship.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				VALID_ARCHS = "arm64 arm64e armv7 armv7s x86_64";
+				VALID_ARCHS = "$(inherited) x86_64";
 			};
 			name = Release;
 		};
@@ -9243,6 +9243,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = "";
+				VALID_ARCHS = "$(inherited) x86_64";
 			};
 			name = Debug;
 		};
@@ -9268,6 +9269,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = "";
+				VALID_ARCHS = "$(inherited) x86_64";
 			};
 			name = Release;
 		};
@@ -9350,7 +9352,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
-				VALID_ARCHS = "arm64 arm64e armv7 armv7s x86_64";
+				VALID_ARCHS = "$(inherited) x86_64";
 			};
 			name = Debug;
 		};
@@ -9375,7 +9377,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.AirshipCoreTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
-				VALID_ARCHS = "arm64 arm64e armv7 armv7s x86_64";
+				VALID_ARCHS = "$(inherited) x86_64";
 			};
 			name = Release;
 		};
