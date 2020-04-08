@@ -49,6 +49,9 @@ function build_archive {
     simulatorSdk="iphonesimulator"
     destination="iOS"
     simulatorDestination="iOS Simulator"
+  elif [ $3 == "maccatalyst" ]
+  then
+    destination="platform=macOS, arch=x86_64, variant=Mac Catalyst"
   else
     sdk="appletvos"
     simulatorSdk="appletvsimulator"
@@ -56,25 +59,37 @@ function build_archive {
     simulatorDestination="tvOS Simulator"
   fi
 
-  xcrun xcodebuild archive -quiet \
-  -project "$ROOT_PATH/$project/$project.xcodeproj" \
-  -scheme "$scheme" \
-  -sdk "$sdk" \
-  -destination="$destination" \
-  -archivePath "$TEMP_DIR/xcarchive/$project/$scheme/$sdk.xcarchive" \
-  -derivedDataPath "$TEMP_DIR/derivedData/$project" \
-  SKIP_INSTALL=NO \
-  BUILD_LIBRARIES_FOR_DISTRIBUTION=YES
+  if [ $3 == "maccatalyst" ]
+  then
+    xcrun xcodebuild archive -quiet \
+    -project "$ROOT_PATH/$project/$project.xcodeproj" \
+    -scheme "$scheme" \
+    -destination="$destination" \
+    -archivePath "$TEMP_DIR/xcarchive/$project/$scheme/mac.xcarchive" \
+    -derivedDataPath "$TEMP_DIR/derivedData/$project" \
+    SKIP_INSTALL=NO \
+    BUILD_LIBRARIES_FOR_DISTRIBUTION=YES
+  else
+    xcrun xcodebuild archive -quiet \
+    -project "$ROOT_PATH/$project/$project.xcodeproj" \
+    -scheme "$scheme" \
+    -sdk "$sdk" \
+    -destination="$destination" \
+    -archivePath "$TEMP_DIR/xcarchive/$project/$scheme/$sdk.xcarchive" \
+    -derivedDataPath "$TEMP_DIR/derivedData/$project" \
+    SKIP_INSTALL=NO \
+    BUILD_LIBRARIES_FOR_DISTRIBUTION=YES
 
-  xcrun xcodebuild archive -quiet \
-  -project "$ROOT_PATH/$project/$project.xcodeproj" \
-  -scheme "$scheme" \
-  -sdk "$simulatorSdk" \
-  -destination="$simulatorDestination" \
-  -archivePath "$TEMP_DIR/xcarchive/$project/$scheme/$simulatorSdk.xcarchive" \
-  -derivedDataPath "$TEMP_DIR/derivedData/$project" \
-  SKIP_INSTALL=NO \
-  BUILD_LIBRARIES_FOR_DISTRIBUTION=YES
+    xcrun xcodebuild archive -quiet \
+    -project "$ROOT_PATH/$project/$project.xcodeproj" \
+    -scheme "$scheme" \
+    -sdk "$simulatorSdk" \
+    -destination="$simulatorDestination" \
+    -archivePath "$TEMP_DIR/xcarchive/$project/$scheme/$simulatorSdk.xcarchive" \
+    -derivedDataPath "$TEMP_DIR/derivedData/$project" \
+    SKIP_INSTALL=NO \
+    BUILD_LIBRARIES_FOR_DISTRIBUTION=YES
+  fi
 }
 
 if $FRAMEWORK
@@ -84,22 +99,33 @@ then
   bash $ROOT_PATH/scripts/install_pods.sh
 
   build_archive "Airship" "AirshipCore" "iOS"
+  build_archive "Airship" "AirshipCore" "maccatalyst"
   build_archive "Airship" "AirshipCore tvOS" "tvOS"
   build_archive "Airship" "AirshipLocation" "iOS"
+  build_archive "Airship" "AirshipLocation" "maccatalyst"
   build_archive "Airship" "AirshipDebug" "iOS"
+  build_archive "Airship" "AirshipDebug" "maccatalyst"
   build_archive "Airship" "AirshipAutomation" "iOS"
+  build_archive "Airship" "AirshipAutomation" "maccatalyst"
   build_archive "Airship" "AirshipAccengage" "iOS"
+  build_archive "Airship" "AirshipAccengage" "maccatalyst"
   build_archive "Airship" "AirshipMessageCenter" "iOS"
+  build_archive "Airship" "AirshipMessageCenter" "maccatalyst"
   build_archive "Airship" "AirshipExtendedActions" "iOS"
+  build_archive "Airship" "AirshipExtendedActions" "maccatalyst"
   build_archive "AirshipExtensions" "AirshipNotificationServiceExtension" "iOS"
+  build_archive "AirshipExtensions" "AirshipNotificationServiceExtension" "maccatalyst"
   build_archive "AirshipExtensions" "AirshipNotificationContentExtension" "iOS"
+  build_archive "AirshipExtensions" "AirshipNotificationContentExtension" "maccatalyst"
   build_archive "Airship" "Airship" "iOS"
+  build_archive "Airship" "Airship" "maccatalyst"
   build_archive "Airship" "Airship tvOS" "tvOS"
 
   # Package Airship
   xcodebuild -create-xcframework \
   -framework "$TEMP_DIR/xcarchive/Airship/Airship/iphoneos.xcarchive/Products/Library/Frameworks/Airship.framework" \
   -framework "$TEMP_DIR/xcarchive/Airship/Airship/iphonesimulator.xcarchive/Products/Library/Frameworks/Airship.framework" \
+  -framework "$TEMP_DIR/xcarchive/Airship/Airship/mac.xcarchive/Products/Library/Frameworks/Airship.framework" \
   -framework "$TEMP_DIR/xcarchive/Airship/Airship tvOS/appletvos.xcarchive/Products/Library/Frameworks/Airship.framework" \
   -framework "$TEMP_DIR/xcarchive/Airship/Airship tvOS/appletvsimulator.xcarchive/Products/Library/Frameworks/Airship.framework" \
   -output "$STAGING/Airship.xcframework"
@@ -108,6 +134,7 @@ then
   xcodebuild -create-xcframework \
   -framework "$TEMP_DIR/xcarchive/Airship/AirshipCore/iphoneos.xcarchive/Products/Library/Frameworks/AirshipCore.framework" \
   -framework "$TEMP_DIR/xcarchive/Airship/AirshipCore/iphonesimulator.xcarchive/Products/Library/Frameworks/AirshipCore.framework" \
+  -framework "$TEMP_DIR/xcarchive/Airship/AirshipCore/mac.xcarchive/Products/Library/Frameworks/AirshipCore.framework" \
   -framework "$TEMP_DIR/xcarchive/Airship/AirshipCore tvOS/appletvos.xcarchive/Products/Library/Frameworks/AirshipCore.framework" \
   -framework "$TEMP_DIR/xcarchive/Airship/AirshipCore tvOS/appletvsimulator.xcarchive/Products/Library/Frameworks/AirshipCore.framework" \
   -output "$STAGING/AirshipCore.xcframework"
@@ -116,35 +143,34 @@ then
   xcodebuild -create-xcframework \
   -framework "$TEMP_DIR/xcarchive/Airship/AirshipLocation/iphoneos.xcarchive/Products/Library/Frameworks/AirshipLocation.framework" \
   -framework "$TEMP_DIR/xcarchive/Airship/AirshipLocation/iphonesimulator.xcarchive/Products/Library/Frameworks/AirshipLocation.framework" \
+  -framework "$TEMP_DIR/xcarchive/Airship/AirshipLocation/mac.xcarchive/Products/Library/Frameworks/AirshipLocation.framework" \
   -output "$STAGING/AirshipLocation.xcframework"
 
   # Package AirshipMessageCenter
   xcodebuild -create-xcframework \
   -framework "$TEMP_DIR/xcarchive/Airship/AirshipMessageCenter/iphoneos.xcarchive/Products/Library/Frameworks/AirshipMessageCenter.framework" \
   -framework "$TEMP_DIR/xcarchive/Airship/AirshipMessageCenter/iphonesimulator.xcarchive/Products/Library/Frameworks/AirshipMessageCenter.framework" \
-  -output "$STAGING/AirshipMessageCenter.xcframework"
-
-  # Package AirshipMessageCenter
-  xcodebuild -create-xcframework \
-  -framework "$TEMP_DIR/xcarchive/Airship/AirshipMessageCenter/iphoneos.xcarchive/Products/Library/Frameworks/AirshipMessageCenter.framework" \
-  -framework "$TEMP_DIR/xcarchive/Airship/AirshipMessageCenter/iphonesimulator.xcarchive/Products/Library/Frameworks/AirshipMessageCenter.framework" \
+  -framework "$TEMP_DIR/xcarchive/Airship/AirshipMessageCenter/mac.xcarchive/Products/Library/Frameworks/AirshipMessageCenter.framework" \
   -output "$STAGING/AirshipMessageCenter.xcframework"
 
   # Package AirshipExtendedActions
   xcodebuild -create-xcframework \
   -framework "$TEMP_DIR/xcarchive/Airship/AirshipExtendedActions/iphoneos.xcarchive/Products/Library/Frameworks/AirshipExtendedActions.framework" \
   -framework "$TEMP_DIR/xcarchive/Airship/AirshipExtendedActions/iphonesimulator.xcarchive/Products/Library/Frameworks/AirshipExtendedActions.framework" \
+  -framework "$TEMP_DIR/xcarchive/Airship/AirshipExtendedActions/mac.xcarchive/Products/Library/Frameworks/AirshipExtendedActions.framework" \
   -output "$STAGING/AirshipExtendedActions.xcframework"
 
   # Package AirshipAccengage
   xcodebuild -create-xcframework \
   -framework "$TEMP_DIR/xcarchive/Airship/AirshipAccengage/iphoneos.xcarchive/Products/Library/Frameworks/AirshipAccengage.framework" \
   -framework "$TEMP_DIR/xcarchive/Airship/AirshipAccengage/iphonesimulator.xcarchive/Products/Library/Frameworks/AirshipAccengage.framework" \
+  -framework "$TEMP_DIR/xcarchive/Airship/AirshipAccengage/mac.xcarchive/Products/Library/Frameworks/AirshipAccengage.framework" \
   -output "$STAGING/AirshipAccengage.xcframework"
 
   # Package AirshipNotificationServiceExtension
   xcodebuild -create-xcframework \
   -framework "$TEMP_DIR/xcarchive/AirshipExtensions/AirshipNotificationServiceExtension/iphoneos.xcarchive/Products/Library/Frameworks/AirshipNotificationServiceExtension.framework" \
+  -framework "$TEMP_DIR/xcarchive/AirshipExtensions/AirshipNotificationServiceExtension/mac.xcarchive/Products/Library/Frameworks/AirshipNotificationServiceExtension.framework" \
   -framework "$TEMP_DIR/xcarchive/AirshipExtensions/AirshipNotificationServiceExtension/iphonesimulator.xcarchive/Products/Library/Frameworks/AirshipNotificationServiceExtension.framework" \
   -output "$STAGING/AirshipNotificationServiceExtension.xcframework"
 
@@ -152,6 +178,7 @@ then
   xcodebuild -create-xcframework \
   -framework "$TEMP_DIR/xcarchive/AirshipExtensions/AirshipNotificationContentExtension/iphoneos.xcarchive/Products/Library/Frameworks/AirshipNotificationContentExtension.framework" \
   -framework "$TEMP_DIR/xcarchive/AirshipExtensions/AirshipNotificationContentExtension/iphonesimulator.xcarchive/Products/Library/Frameworks/AirshipNotificationContentExtension.framework" \
+  -framework "$TEMP_DIR/xcarchive/AirshipExtensions/AirshipNotificationContentExtension/mac.xcarchive/Products/Library/Frameworks/AirshipNotificationContentExtension.framework" \
   -output "$STAGING/AirshipNotificationContentExtension.xcframework"
 
 fi
