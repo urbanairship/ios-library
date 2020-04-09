@@ -17,23 +17,23 @@ typedef NS_ENUM(NSUInteger, UASDKExtension) {
     /**
      * The Cordova SDK extension.
      */
-    UASDKExtensionCordova,
+    UASDKExtensionCordova = 0,
     /**
      * The Xamarin SDK extension.
      */
-    UASDKExtensionXamarin,
+    UASDKExtensionXamarin = 1,
     /**
      * The Unity SDK extension.
      */
-    UASDKExtensionUnity,
+    UASDKExtensionUnity = 2,
     /**
      * The Flutter SDK extension.
      */
-    UASDKExtensionFlutter,
+    UASDKExtensionFlutter = 3,
     /**
      * The React Native SDK extension.
      */
-    UASDKExtensionReactNative
+    UASDKExtensionReactNative = 4
 };
 
 extern NSString *const UACustomEventAdded;
