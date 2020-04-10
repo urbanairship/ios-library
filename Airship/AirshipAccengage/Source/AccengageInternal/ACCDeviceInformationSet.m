@@ -22,6 +22,10 @@
     [self.attributeMutations setNumber:number forAttribute:key];
 }
 
+- (void)setDate:(NSDate *)date forKey:(NSString *)key {
+    [self.attributeMutations setDate:date forAttribute:key];
+}
+
 - (void)encodeWithCoder:(nonnull NSCoder *)coder {
     
 }

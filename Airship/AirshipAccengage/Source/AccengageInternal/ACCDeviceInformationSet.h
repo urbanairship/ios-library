@@ -24,6 +24,15 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)setNumber:(NSNumber *)number forKey:(NSString *)key;
 
+/*!
+ *  @brief Set a date parameter to the data
+ *
+ *  @param date The date parameter
+ *  @param key The key of your date parameter
+ */
+
+- (void)setDate:(NSDate *)date forKey:(NSString *)key;
+
 @end
 
 NS_ASSUME_NONNULL_END
