@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="15705" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="49e-Tb-3d3">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16096" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="49e-Tb-3d3">
     <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15706"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16086"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -75,12 +75,12 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="W5J-7L-Pyd" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="713" y="-362"/>
+            <point key="canvasLocation" x="713" y="505"/>
         </scene>
         <!--Tab Bar Controller-->
         <scene sceneID="yl2-sM-qoP">
             <objects>
-                <tabBarController id="49e-Tb-3d3" sceneMemberID="viewController">
+                <tabBarController id="49e-Tb-3d3" customClass="TabBarController" sceneMemberID="viewController">
                     <nil key="simulatedBottomBarMetrics"/>
                     <tabBar key="tabBar" contentMode="scaleToFill" id="W28-zg-YXA">
                         <rect key="frame" x="0.0" y="975" width="768" height="49"/>
@@ -91,12 +91,11 @@
                         <segue destination="9pv-A4-QxB" kind="relationship" relationship="viewControllers" id="u7Y-xg-7CH"/>
                         <segue destination="uCE-kh-Bmv" kind="relationship" relationship="viewControllers" id="HV1-RJ-HBH"/>
                         <segue destination="TO3-g0-zDg" kind="relationship" relationship="viewControllers" id="SL6-Yb-opq"/>
-                        <segue destination="scW-RM-B09" kind="relationship" relationship="viewControllers" id="Dkv-mR-7wC"/>
                     </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="HuB-VB-40B" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-159" y="341"/>
+            <point key="canvasLocation" x="-298" y="1310"/>
         </scene>
         <!--Message Center-->
         <scene sceneID="jra-5K-cKn">
@@ -116,7 +115,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="l9m-dy-eg9" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="713" y="342"/>
+            <point key="canvasLocation" x="713" y="1310"/>
         </scene>
         <!--Settings View Controller-->
         <scene sceneID="J4o-5F-gYq">
@@ -195,11 +194,7 @@
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="4n4-wW-u5E"/>
                     </view>
-                    <navigationItem key="navigationItem" id="cw7-DY-ptM">
-                        <userDefinedRuntimeAttributes>
-                            <userDefinedRuntimeAttribute type="string" keyPath="keyForLocalization" value="ua_device_info_title"/>
-                        </userDefinedRuntimeAttributes>
-                    </navigationItem>
+                    <navigationItem key="navigationItem" title="Settings" id="cw7-DY-ptM"/>
                     <connections>
                         <outlet property="tableView" destination="Gup-ff-ura" id="qZ0-gL-oMr"/>
                         <segue destination="G0U-qm-fWF" kind="show" identifier="namedUserSegue" id="pCO-Sh-xC6"/>
@@ -266,7 +261,7 @@
             </objects>
             <point key="canvasLocation" x="2796.8000000000002" y="1752.3238380809596"/>
         </scene>
-        <!--Tags Table View Controller-->
+        <!--Tags-->
         <scene sceneID="cqj-Aq-aU0">
             <objects>
                 <tableViewController id="uSr-xf-rQK" customClass="TagsTableViewController" sceneMemberID="viewController">
@@ -289,11 +284,7 @@
                             <outlet property="delegate" destination="uSr-xf-rQK" id="cyB-PT-5oN"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" id="YjQ-Bg-HaH">
-                        <userDefinedRuntimeAttributes>
-                            <userDefinedRuntimeAttribute type="string" keyPath="keyForLocalization" value="ua_device_info_tags"/>
-                        </userDefinedRuntimeAttributes>
-                    </navigationItem>
+                    <navigationItem key="navigationItem" title="Tags" id="YjQ-Bg-HaH"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <size key="freeformSize" width="600" height="600"/>
                     <connections>
@@ -385,43 +376,12 @@
             </objects>
             <point key="canvasLocation" x="3216" y="2824"/>
         </scene>
-        <!--Debug Kit-->
-        <scene sceneID="CpI-Hg-2fR">
-            <objects>
-                <navigationController title="Debug Kit" automaticallyAdjustsScrollViewInsets="NO" id="scW-RM-B09" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Debug" image="outline_bug_report_black_36pt" id="TGe-42-Y52"/>
-                    <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" translucent="NO" id="RJ2-Zh-mse">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                        <color key="barTintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                    </navigationBar>
-                    <nil name="viewControllers"/>
-                    <connections>
-                        <segue destination="N5b-Vw-K22" kind="relationship" relationship="rootViewController" id="GCX-Vn-3zX"/>
-                    </connections>
-                </navigationController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="Tp6-OH-kv3" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="713" y="1045"/>
-        </scene>
-        <!--AirshipDebug-->
-        <scene sceneID="vEt-fV-c2F">
-            <objects>
-                <viewControllerPlaceholder storyboardName="AirshipDebug" bundleIdentifier="com.urbanairship.AirshipDebug" id="N5b-Vw-K22" sceneMemberID="viewController">
-                    <navigationItem key="navigationItem" id="nWi-4v-8W9"/>
-                </viewControllerPlaceholder>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="d1Q-V1-Uns" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="1239" y="1109"/>
-        </scene>
     </scenes>
+    <color key="tintColor" red="0.11385948210000001" green="0.29008778930000001" blue="0.96083122489999995" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
     <resources>
         <image name="Homescreen" width="24" height="24"/>
         <image name="Inbox" width="24" height="24"/>
         <image name="airshipMark" width="512.5" height="348.5"/>
-        <image name="outline_bug_report_black_36pt" width="36" height="36"/>
         <image name="outline_settings_black_24pt" width="24" height="24"/>
     </resources>
-    <color key="tintColor" red="0.11385948210000001" green="0.29008778930000001" blue="0.96083122489999995" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
 </document>

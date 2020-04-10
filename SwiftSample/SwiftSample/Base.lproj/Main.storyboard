@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="15705" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="49e-Tb-3d3">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16096" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="49e-Tb-3d3">
     <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15706"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16086"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -81,12 +81,12 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="W5J-7L-Pyd" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1414" y="-367"/>
+            <point key="canvasLocation" x="1414" y="203"/>
         </scene>
         <!--Tab Bar Controller-->
         <scene sceneID="yl2-sM-qoP">
             <objects>
-                <tabBarController id="49e-Tb-3d3" sceneMemberID="viewController">
+                <tabBarController id="49e-Tb-3d3" customClass="TabBarController" customModule="SwiftSample" customModuleProvider="target" sceneMemberID="viewController">
                     <nil key="simulatedBottomBarMetrics"/>
                     <tabBar key="tabBar" contentMode="scaleToFill" id="W28-zg-YXA">
                         <rect key="frame" x="0.0" y="975" width="768" height="49"/>
@@ -97,12 +97,11 @@
                         <segue destination="9pv-A4-QxB" kind="relationship" relationship="viewControllers" id="u7Y-xg-7CH"/>
                         <segue destination="gZ5-Hw-Q4m" kind="relationship" relationship="viewControllers" id="fKM-5c-GxI"/>
                         <segue destination="3Sv-5h-w7R" kind="relationship" relationship="viewControllers" id="W0q-wn-YtP"/>
-                        <segue destination="AVp-gC-s01" kind="relationship" relationship="viewControllers" id="I2u-ge-rmZ"/>
                     </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="HuB-VB-40B" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="175" y="342"/>
+            <point key="canvasLocation" x="207" y="1035"/>
         </scene>
         <!--Message Center-->
         <scene sceneID="NvI-WN-tRz">
@@ -115,9 +114,9 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="m6B-S2-ZqU" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1413" y="342"/>
+            <point key="canvasLocation" x="1413" y="1034"/>
         </scene>
-        <!--Settings View Controller-->
+        <!--Settings-->
         <scene sceneID="gNW-Qg-DLo">
             <objects>
                 <viewController id="1Q5-GA-EZR" customClass="SettingsViewController" customModule="SwiftSample" customModuleProvider="target" sceneMemberID="viewController">
@@ -194,11 +193,7 @@
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="KRv-bw-OUX"/>
                     </view>
-                    <navigationItem key="navigationItem" id="Ff3-nM-jPe">
-                        <userDefinedRuntimeAttributes>
-                            <userDefinedRuntimeAttribute type="string" keyPath="keyForLocalization" value="ua_device_info_title"/>
-                        </userDefinedRuntimeAttributes>
-                    </navigationItem>
+                    <navigationItem key="navigationItem" title="Settings" id="Ff3-nM-jPe"/>
                     <connections>
                         <outlet property="tableView" destination="u5z-6H-ny0" id="cJL-37-X0Y"/>
                         <segue destination="XeT-dl-jwN" kind="show" identifier="tagsSegue" id="1cD-i1-W3l"/>
@@ -289,7 +284,7 @@
             </objects>
             <point key="canvasLocation" x="3354" y="1746"/>
         </scene>
-        <!--Tags Table View Controller-->
+        <!--Tags-->
         <scene sceneID="RGe-ET-nEA">
             <objects>
                 <tableViewController id="XeT-dl-jwN" customClass="TagsTableViewController" customModule="SwiftSample" customModuleProvider="target" sceneMemberID="viewController">
@@ -312,11 +307,7 @@
                             <outlet property="delegate" destination="XeT-dl-jwN" id="NQw-2p-V06"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" id="KWs-dJ-HCw">
-                        <userDefinedRuntimeAttributes>
-                            <userDefinedRuntimeAttribute type="string" keyPath="keyForLocalization" value="ua_device_info_tags"/>
-                        </userDefinedRuntimeAttributes>
-                    </navigationItem>
+                    <navigationItem key="navigationItem" title="Tags" id="KWs-dJ-HCw"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <size key="freeformSize" width="600" height="600"/>
                     <connections>
@@ -383,42 +374,11 @@
             </objects>
             <point key="canvasLocation" x="3515" y="2674"/>
         </scene>
-        <!--Debug-->
-        <scene sceneID="JTi-Pr-00d">
-            <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="AVp-gC-s01" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Debug" image="outline_bug_report_black_36pt" id="1TX-Ai-vXM"/>
-                    <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" translucent="NO" id="i4y-W8-iBP">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                        <color key="barTintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                    </navigationBar>
-                    <nil name="viewControllers"/>
-                    <connections>
-                        <segue destination="uUA-b1-S7p" kind="relationship" relationship="rootViewController" id="DYw-tC-5lE"/>
-                    </connections>
-                </navigationController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="03m-Bj-F1y" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="1641" y="1050"/>
-        </scene>
-        <!--AirshipDebug-->
-        <scene sceneID="wsN-k3-2ez">
-            <objects>
-                <viewControllerPlaceholder storyboardName="AirshipDebug" bundleIdentifier="com.urbanairship.AirshipDebug" id="uUA-b1-S7p" sceneMemberID="viewController">
-                    <navigationItem key="navigationItem" id="AZr-Ya-ckd"/>
-                </viewControllerPlaceholder>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="fcQ-t7-Bl6" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="2446" y="1144"/>
-        </scene>
     </scenes>
     <resources>
         <image name="Homescreen" width="24" height="24"/>
         <image name="Inbox" width="24" height="24"/>
         <image name="airshipMark" width="512.5" height="348.5"/>
-        <image name="outline_bug_report_black_36pt" width="36" height="36"/>
         <image name="outline_settings_black_24pt" width="24" height="24"/>
     </resources>
 </document>

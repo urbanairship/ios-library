@@ -42,7 +42,15 @@ class SettingsViewController: UIViewController, UITableViewDelegate, UITableView
     @objc public static var tagsViewName = "tags"
     let tagsSegue = "tagsSegue"
 
-    var launchPathComponents : [String]?
+    var launchPathComponents : [String]? {
+        didSet {
+            if (self.viewIfLoaded?.window != nil && self === self.navigationController?.visibleViewController) {
+                segueToDeepLink();
+            } else if (!(self  === self.navigationController?.visibleViewController))  {
+                self.navigationController?.popToRootViewController(animated: false);
+            }
+        }
+    }
     var launchCompletionHandler : (() -> Void)?
 
     private let localizedNone =  "ua_none".localized(comment: "None")
@@ -110,18 +118,21 @@ class SettingsViewController: UIViewController, UITableViewDelegate, UITableView
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated);
-
+        segueToDeepLink()
+    }
+    
+    func segueToDeepLink() {
         if let launchPathComponents = launchPathComponents {
+            self.launchPathComponents = nil
             if (launchPathComponents.count > 0) {
                 switch (launchPathComponents[0]) {
-                case SettingsViewController.tagsViewName:
+                case "tags":
                     performSegue(withIdentifier: tagsSegue, sender: self)
                 default:
                     break
                 }
             }
         }
-        launchPathComponents = nil
         if let launchCompletionHandler = launchCompletionHandler {
             launchCompletionHandler()
         }

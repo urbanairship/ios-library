@@ -88,6 +88,25 @@ typedef NS_ENUM(NSUInteger, UASettingsViewControllerSection) {
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
+    [self segueToDeepLink];
+}
+- (void)setLaunchPathComponents:(NSArray<NSString *> *)launchPathComponents {
+    _launchPathComponents = launchPathComponents;
+    if (self.viewIfLoaded.window && [self isEqual:self.navigationController.visibleViewController]) {
+        [self segueToDeepLink];
+    } else if (![self isEqual:self.navigationController.visibleViewController])  {
+        [self.navigationController popToRootViewControllerAnimated:NO];
+    }
+}
+
+- (void)segueToDeepLink {
+    if (_launchPathComponents && _launchPathComponents.count > 0) {
+        NSArray<NSString *>*pathComponents = [_launchPathComponents copy];
+        _launchPathComponents = nil;
+        if ([[pathComponents[0] lowercaseString] isEqualToString:@"tags"]) {
+            [self performSegueWithIdentifier:@"tagsSegue" sender:self];
+        }
+    }
 }
 
 - (void)didBecomeActive {
@@ -241,7 +260,6 @@ typedef NS_ENUM(NSUInteger, UASettingsViewControllerSection) {
         }
         if (indexPath.row == self.tags.row) {
             [self performSegueWithIdentifier:@"tagsSegue" sender:self];
-
         }
     }
     if (indexPath.section == 2) {

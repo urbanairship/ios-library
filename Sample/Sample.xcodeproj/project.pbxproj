@@ -22,8 +22,6 @@
 		61E392311CC81EA800D994E3 /* MessageCenterStyle.plist in Resources */ = {isa = PBXBuildFile; fileRef = 61E392301CC81EA800D994E3 /* MessageCenterStyle.plist */; };
 		6E65D4EE2395D4EA00AF2D1A /* AirshipLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E75B2592395D1B100425530 /* AirshipLocation.framework */; };
 		6E65D4EF2395D4EA00AF2D1A /* AirshipLocation.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E75B2592395D1B100425530 /* AirshipLocation.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		6E65D4F02395E6FA00AF2D1A /* AirshipDebug.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E75B25B2395D1B100425530 /* AirshipDebug.framework */; };
-		6E65D4F12395E6FA00AF2D1A /* AirshipDebug.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E75B25B2395D1B100425530 /* AirshipDebug.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		6E65D5242396304000AF2D1A /* AirshipAutomation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E75B25D2395D1B100425530 /* AirshipAutomation.framework */; };
 		6E65D5252396304000AF2D1A /* AirshipAutomation.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E75B25D2395D1B100425530 /* AirshipAutomation.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		6E65D5262396304000AF2D1A /* AirshipCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E75B2532395D1B100425530 /* AirshipCore.framework */; };
@@ -48,6 +46,7 @@
 		DEDB898224192F9D000D5241 /* AddNamedUserTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DEDB897D24192F9D000D5241 /* AddNamedUserTableViewController.m */; };
 		DEDB898324192F9D000D5241 /* AddTagsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DEDB897F24192F9D000D5241 /* AddTagsTableViewController.m */; };
 		DEDB898424192F9D000D5241 /* TagsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DEDB898024192F9D000D5241 /* TagsTableViewController.m */; };
+		DF0127E3243813CC0011F7C7 /* TabBarController.m in Sources */ = {isa = PBXBuildFile; fileRef = DF0127E2243813CC0011F7C7 /* TabBarController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -212,6 +211,13 @@
 			remoteGlobalIDString = 1BFF18AE23854F0C00013FB9;
 			remoteInfo = AirshipNotificationContentExtension;
 		};
+		DFC3839F243EA31300EA78FE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E75B2622395D1B300425530 /* AirshipExtensions.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 49AA00FB1D65158C0081989A;
+			remoteInfo = AirshipNotificationServiceExtension;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -260,7 +266,6 @@
 				6E65D52B2396304A00AF2D1A /* AirshipMessageCenter.framework in Embed Frameworks */,
 				6E65D5272396304000AF2D1A /* AirshipCore.framework in Embed Frameworks */,
 				6E65D5292396304400AF2D1A /* AirshipExtendedActions.framework in Embed Frameworks */,
-				6E65D4F12395E6FA00AF2D1A /* AirshipDebug.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -319,6 +324,8 @@
 		DEDB897F24192F9D000D5241 /* AddTagsTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddTagsTableViewController.m; sourceTree = "<group>"; };
 		DEDB898024192F9D000D5241 /* TagsTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TagsTableViewController.m; sourceTree = "<group>"; };
 		DEDB898124192F9D000D5241 /* TagsTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TagsTableViewController.h; sourceTree = "<group>"; };
+		DF0127E1243813CC0011F7C7 /* TabBarController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TabBarController.h; sourceTree = "<group>"; };
+		DF0127E2243813CC0011F7C7 /* TabBarController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TabBarController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -350,7 +357,6 @@
 				6E65D52A2396304A00AF2D1A /* AirshipMessageCenter.framework in Frameworks */,
 				6E65D5262396304000AF2D1A /* AirshipCore.framework in Frameworks */,
 				6E65D5282396304400AF2D1A /* AirshipExtendedActions.framework in Frameworks */,
-				6E65D4F02395E6FA00AF2D1A /* AirshipDebug.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -462,6 +468,8 @@
 				493F50E91C5B261100B050A1 /* MessageCenterViewController.m */,
 				493F511F1C5B3A5100B050A1 /* MessageCenterDelegate.h */,
 				493F51201C5B3A5100B050A1 /* MessageCenterDelegate.m */,
+				DF0127E1243813CC0011F7C7 /* TabBarController.h */,
+				DF0127E2243813CC0011F7C7 /* TabBarController.m */,
 				764693BF1C237CAB0090FE40 /* Main.storyboard */,
 				764693B61C237B630090FE40 /* LaunchScreen.storyboard */,
 				764693B91C237B630090FE40 /* Info.plist */,
@@ -546,6 +554,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				DFC383A0243EA31300EA78FE /* PBXTargetDependency */,
 			);
 			name = SampleServiceExtension;
 			productName = SampleServiceExtension;
@@ -560,6 +569,7 @@
 				7646939F1C237B630090FE40 /* Frameworks */,
 				764693A01C237B630090FE40 /* Resources */,
 				764694261C23933D0090FE40 /* Embed Frameworks */,
+				DF7A7E29243BC26400D23488 /* Conditionally Embed Debug Frameworks */,
 				76AE34E91C2B6BF700D7F3B9 /* CopyFiles */,
 				49D2C7471D6F952D0049B0A0 /* Embed App Extensions */,
 			);
@@ -780,6 +790,29 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		DF7A7E29243BC26400D23488 /* Conditionally Embed Debug Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${BUILT_PRODUCTS_DIR}/AirshipDebug.framework",
+			);
+			name = "Conditionally Embed Debug Frameworks";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AirshipDebug.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "#!/bin/sh\nset -e\nset -u\nset -o pipefail\n\ninstall_framework()\n{\n  echo \"Installing framework $1\"\n  local source=\"${BUILT_PRODUCTS_DIR}/$(basename \"$1\")\"\n  local destination=\"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}\"\n\n  mkdir -p \"$destination\"\n\n  # copy the framework\n  cp -r \"${source}\" \"${destination}\"\n\n  if [ -n \"${EXPANDED_CODE_SIGN_IDENTITY:-}\" -a \"${CODE_SIGNING_REQUIRED:-}\" != \"NO\" -a \"${CODE_SIGNING_ALLOWED}\" != \"NO\" ]; then\n    # Use the current code_sign_identity\n    local binary=\"${destination}/$(basename \"$1\")\"\n    echo \"Code Signing ${binary} with Identity ${EXPANDED_CODE_SIGN_IDENTITY_NAME}\"\n    /usr/bin/codesign --force --sign ${EXPANDED_CODE_SIGN_IDENTITY} ${OTHER_CODE_SIGN_FLAGS:-} --preserve-metadata=identifier,entitlements \"${binary}\"\n  fi\n}\n\necho \"CONFIGURATION = ${CONFIGURATION}\"\nif [[ \"$CONFIGURATION\" == \"Debug\" ]]; then\n  index=0\n  while [ $index -lt ${SCRIPT_INPUT_FILE_COUNT} ]; do\n    scriptInputVar=\"SCRIPT_INPUT_FILE_$index\"\n    framework=${!scriptInputVar}\n    if [[ -d $framework && ${framework: -10} == \".framework\" ]]; then\n      install_framework $framework\n    fi\n    let index=index+1\n  done\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		1BFB703A23882E4900BF7F07 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -806,6 +839,7 @@
 				DEDB898424192F9D000D5241 /* TagsTableViewController.m in Sources */,
 				764693AA1C237B630090FE40 /* AppDelegate.m in Sources */,
 				61A672FC1CAB3E5A00BAF58A /* PushHandler.m in Sources */,
+				DF0127E3243813CC0011F7C7 /* TabBarController.m in Sources */,
 				764693AD1C237B630090FE40 /* HomeViewController.m in Sources */,
 				493F51211C5B3A5100B050A1 /* MessageCenterDelegate.m in Sources */,
 				764693A71C237B630090FE40 /* main.m in Sources */,
@@ -862,6 +896,11 @@
 			isa = PBXTargetDependency;
 			name = AirshipAccengage;
 			targetProxy = 6E6CC333239A2F93003D583C /* PBXContainerItemProxy */;
+		};
+		DFC383A0243EA31300EA78FE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = AirshipNotificationServiceExtension;
+			targetProxy = DFC3839F243EA31300EA78FE /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 

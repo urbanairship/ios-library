@@ -18,7 +18,6 @@
 "ua_device_info_enable_analytics_tracking" = "Enable analytics tracking";
 "ua_device_info_location_settings" = "Location Settings";
 "ua_location_enabled_detail" = "Enable GPS and WIFI Based Location";
-"ua_device_info_title" = "Device Info";
 
 /* Notification Types */
 "ua_notification_type_alerts" = "Alerts";
@@ -30,8 +29,6 @@
 "ua_notification_type_critical_alert" = "Critical Alert";
 "ua_notification_type_announcement" = "AirPod Announcement";
 "ua_push_settings_link_disabled_title" = "⚠ Push is Disabled with iOS";
-
-"ua_copied_to_clipboard" = "Copied to clipboard!";
 
 "ua_none" = "None";
 

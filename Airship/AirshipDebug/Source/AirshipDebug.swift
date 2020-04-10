@@ -67,15 +67,18 @@ public class AirshipDebug : NSObject {
         observePayloadEvents();
     }
 
-    @objc public class func showView(_ viewPath: URL) {
+    @objc public class func showView(_ launchPathComponents : [String]?) {
         if let rootViewController = rootViewController {
-            rootViewController.showView(viewPath)
+            rootViewController.showView(launchPathComponents)
             return
         }
         
         // no rootViewController in use, so get the view controller
         // from the appropriate storyboard and display it
-        var pathComponents = viewPath.pathComponents
+        guard var pathComponents = launchPathComponents else {
+            _ = popToRootViewOfDestination()
+            return
+        }
 
         if (pathComponents.isEmpty) {
             _ = popToRootViewOfDestination()

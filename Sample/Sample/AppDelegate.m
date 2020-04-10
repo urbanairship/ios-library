@@ -2,26 +2,29 @@
 
 @import AirshipCore;
 @import AirshipMessageCenter;
+#if DEBUG
 @import AirshipDebug;
-
+#endif
 
 #import "AppDelegate.h"
 #import "MessageCenterDelegate.h"
 #import "PushHandler.h"
 #import "HomeViewController.h"
 #import "MessageCenterViewController.h"
+#import "SettingsViewController.h"
 
 #define kSimulatorWarningDisabledKey @"ua-simulator-warning-disabled"
 
 NSString *const HomeStoryboardID = @"home";
-NSString *const PushSettingsStoryboardID = @"push_settings";
 NSString *const MessageCenterStoryboardID = @"message_center";
+NSString *const SettingsStoryboardID = @"push_settings";
 NSString *const DebugStoryboardID = @"debug";
 NSString *const InAppAutomationStoryboardID = @"in_app_automation";
 
 NSUInteger const HomeTab = 0;
 NSUInteger const MessageCenterTab = 1;
-NSUInteger const DebugTab = 2;
+NSUInteger const SettingsTab = 2;
+NSUInteger const DebugTab = 3;
 
 @interface AppDelegate () <UARegistrationDelegate, UADeepLinkDelegate>
 @property(nonatomic, strong) MessageCenterDelegate *messageCenterDelegate;
@@ -62,8 +65,10 @@ NSUInteger const DebugTab = 2;
     // Print out the application configuration for debugging (optional)
     NSLog(@"Config:\n%@", [config description]);
 
+#if DEBUG
     // Call takeOff (which initializes the Airship DebugKit)
     [AirshipDebug takeOff];
+#endif
     
     // Set the icon badge to zero on startup (optional)
     [[UAirship push] resetBadge];
@@ -184,28 +189,19 @@ NSUInteger const DebugTab = 2;
     UITabBarController *tabController = (UITabBarController *)self.window.rootViewController;
 
     // map existing deep links to new paths
-    if ([[pathComponents[0] lowercaseString] isEqualToString:PushSettingsStoryboardID]) {
-        pathComponents = [[[NSURL URLWithString:@"settings"] pathComponents] mutableCopy];
-    } else if ([[pathComponents[0] lowercaseString] isEqualToString:InAppAutomationStoryboardID]) {
-        pathComponents = [[[NSURL URLWithString:[NSString stringWithFormat:@"%@/%@",DebugStoryboardID,AirshipDebug.automationViewName]] pathComponents] mutableCopy];
+#if DEBUG
+    if ([[pathComponents[0] lowercaseString] isEqualToString:InAppAutomationStoryboardID]) {
+        pathComponents = [ @[ DebugStoryboardID, AirshipDebug.automationViewName ] mutableCopy];
     }
-    
+#endif
+
     // map deeplinks to storyboards paths
     if ([[pathComponents[0] lowercaseString] isEqualToString:@"home"]) {
         pathComponents[0] = HomeStoryboardID;
     } else if ([[pathComponents[0] lowercaseString] isEqualToString:@"inbox"]) {
         pathComponents[0] = MessageCenterStoryboardID;
     } else if ([[pathComponents[0] lowercaseString] isEqualToString:@"settings"]) {
-        NSMutableArray<NSString *>*newPathComponents = [[[NSURL URLWithString:[NSString stringWithFormat:@"%@/%@",DebugStoryboardID,AirshipDebug.deviceInfoViewName]] pathComponents] mutableCopy];
-        [pathComponents removeObjectAtIndex:0];
-        if (pathComponents.count > 0) {
-            if ([[pathComponents[0] lowercaseString] isEqualToString:@"tags"]) {
-                [newPathComponents addObject:AirshipDebug.tagsViewName];
-            } else {
-                [newPathComponents addObjectsFromArray:pathComponents];
-            }
-        }
-        pathComponents = newPathComponents;
+        pathComponents[0] = SettingsStoryboardID;
     }
 
     // execute deep link
@@ -230,13 +226,30 @@ NSUInteger const DebugTab = 2;
             }
             [[UAMessageCenter shared] displayMessageForID:messageId];
         }
+    } else if ([[pathComponents[0] lowercaseString] isEqualToString:SettingsStoryboardID]) {
+        // get rest of deep link
+        [pathComponents removeObjectAtIndex:0];
+
+        UINavigationController *settingsNavController = tabController.viewControllers[SettingsTab];
+        SettingsViewController *settingsViewController = settingsNavController.viewControllers[0];
+
+        settingsViewController.launchPathComponents = pathComponents;
+        
+        // switch to settings tab if necessary
+        if (tabController.selectedIndex != SettingsTab) {
+            tabController.selectedIndex = SettingsTab;
+        }
+        
+#if DEBUG
     } else if ([[pathComponents[0] lowercaseString] isEqualToString:DebugStoryboardID]) {
         // switch to debug tab
         tabController.selectedIndex = DebugTab;
         
         // get rest of deep link
         [pathComponents removeObjectAtIndex:0];
-        [AirshipDebug showView:[NSURL fileURLWithPath:[NSString pathWithComponents:pathComponents]]];
+        
+        [AirshipDebug showView:pathComponents];
+#endif
     }
 
     completionHandler();

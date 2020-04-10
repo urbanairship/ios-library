@@ -5,7 +5,9 @@ import UIKit
 import AirshipCore
 import AirshipMessageCenter
 import AirshipAutomation
+#if DEBUG
 import AirshipDebug
+#endif
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, UARegistrationDelegate, UADeepLinkDelegate, UAInAppMessageCachePolicyDelegate {
@@ -13,14 +15,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UARegistrationDelegate, U
     let pushHandler = PushHandler()
 
     let HomeStoryboardID = "home"
-    let PushSettingsStoryboardID = "push_settings"
     let MessageCenterStoryboardID = "message_center"
+    let SettingsStoryboardID = "push_settings"
     let DebugStoryboardID = "debug"
     let InAppAutomationStoryboardID = "in_app_automation"
 
     let HomeTab = 0;
     let MessageCenterTab = 1;
-    let DebugTab = 2;
+    let SettingsTab = 2;
+    let DebugTab = 3;
 
     var window: UIWindow?
     var messageCenterDelegate: MessageCenterDelegate?
@@ -53,8 +56,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UARegistrationDelegate, U
         // Print out the application configuration for debugging (optional)
         print("Config:\n \(config)")
 
+        #if DEBUG
         // Call takeOff (which initializes the Airship DebugKit)
         AirshipDebug.takeOff()
+        #endif
         
         // Set the icon badge to zero on startup (optional)
         UAirship.push()?.resetBadge()
@@ -158,10 +163,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UARegistrationDelegate, U
 
         // map existing deep links to new paths
         switch (pathComponents[0].lowercased()) {
-        case PushSettingsStoryboardID:
-            pathComponents = URL(string: "settings")!.pathComponents
+            #if DEBUG
         case InAppAutomationStoryboardID:
-            pathComponents = URL(string: "\(DebugStoryboardID)/\(AirshipDebug.automationViewName)")!.pathComponents
+            pathComponents = [ DebugStoryboardID, AirshipDebug.automationViewName ]
+            #endif
         default:
             break
         }
@@ -173,17 +178,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UARegistrationDelegate, U
         case "inbox":
             pathComponents[0] = MessageCenterStoryboardID
         case "settings":
-            var newPathComponents = URL(string: "\(DebugStoryboardID)/\(AirshipDebug.deviceInfoViewName)")!.pathComponents
-            pathComponents.remove(at: 0)
-            if (pathComponents.count > 0) {
-                switch (pathComponents[0]) {
-                case "tags":
-                    newPathComponents.append(AirshipDebug.tagsViewName)
-                default:
-                    newPathComponents += pathComponents
-                }
-            }
-            pathComponents = newPathComponents
+            pathComponents[0] = SettingsStoryboardID
         default:
             break
         }
@@ -211,13 +206,28 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UARegistrationDelegate, U
                 }
                 UAMessageCenter.shared().displayMessage(forID: messageID)
             }
+        case SettingsStoryboardID:
+            // get rest of deep link
+            pathComponents.remove(at: 0)
+
+            guard let settingsNavController = tabController.viewControllers?[SettingsTab] as? UINavigationController else { break }
+            guard let settingsViewController = settingsNavController.viewControllers[0] as? SettingsViewController else { break }
+            settingsViewController.launchPathComponents = pathComponents
+            
+            // switch to settings tab if necessary
+            if (tabController.selectedIndex != SettingsTab) {
+                tabController.selectedIndex = SettingsTab;
+            }
         case DebugStoryboardID:
+            #if DEBUG
             // switch to debug tab
             tabController.selectedIndex = DebugTab
 
             // get rest of deep link
             pathComponents.remove(at: 0)
-            AirshipDebug.showView(URL(fileURLWithPath: (NSString.path(withComponents: pathComponents))))
+            AirshipDebug.showView(pathComponents)
+            #endif
+            break
         default:
             break
         }

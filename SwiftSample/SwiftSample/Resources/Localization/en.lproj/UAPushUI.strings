@@ -17,7 +17,6 @@
 "ua_device_info_enable_analytics_tracking" = "Enable analytics tracking";
 "ua_device_info_location_settings" = "Location Settings";
 "ua_location_enabled_detail" = "Enable GPS and WIFI Based Location";
-"ua_device_info_title" = "Device Info";
 
 /* Notification Types */
 "ua_notification_type_alerts" = "Alerts";

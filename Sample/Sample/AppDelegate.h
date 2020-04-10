@@ -9,6 +9,7 @@
  */
 extern NSUInteger const HomeTab;
 extern NSUInteger const MessageCenterTab;
+extern NSUInteger const SettingsTab;
 extern NSUInteger const DebugTab;
 
 // window needs to be strong to match the property inherited from UIApplicationDelegate

@@ -81,8 +81,11 @@ class RootTableViewController: UITableViewController {
         setCellTheme()
     }
     
-    func showView(_ viewPath: URL) {
-        var pathComponents = viewPath.pathComponents
+    func showView(_ launchPathComponents : [String]?) {
+        guard var pathComponents = launchPathComponents else {
+            self.navigationController?.popToRootViewController(animated: false)
+            return
+        }
         
         if (pathComponents.isEmpty) {
             self.navigationController?.popToRootViewController(animated: false)

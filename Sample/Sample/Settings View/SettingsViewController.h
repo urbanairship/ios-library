@@ -14,5 +14,6 @@
 @interface SettingsViewController : UIViewController<UITableViewDelegate, UITableViewDataSource>
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
+@property (copy, nonatomic) NSArray<NSString *> *launchPathComponents;
 
 @end

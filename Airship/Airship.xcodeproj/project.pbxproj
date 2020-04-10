@@ -7373,6 +7373,7 @@
 			);
 			inputPaths = (
 			);
+			name = "Generate AirshipMessageCenterLib.h";
 			outputFileListPaths = (
 			);
 			outputPaths = (
@@ -7404,6 +7405,7 @@
 			);
 			inputPaths = (
 			);
+			name = "Generate AirshipAutomationLib.h";
 			outputFileListPaths = (
 			);
 			outputPaths = (
@@ -7435,6 +7437,7 @@
 			);
 			inputPaths = (
 			);
+			name = "Generate AirshipExtendedActionsLib.h";
 			outputFileListPaths = (
 			);
 			outputPaths = (

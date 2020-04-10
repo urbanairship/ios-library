@@ -23,12 +23,8 @@
 		493F51291C5B423700B050A1 /* MessageCenterDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 493F51281C5B423700B050A1 /* MessageCenterDelegate.swift */; };
 		619A0D411BE81D7B00D9E863 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 619A0D401BE81D7B00D9E863 /* Images.xcassets */; };
 		61A672E81CA9F4B000BAF58A /* PushHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61A672E71CA9F4B000BAF58A /* PushHandler.swift */; };
-		6E65D5A82396EA6D00AF2D1A /* AirshipDebug.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D5842396E99D00AF2D1A /* AirshipDebug.framework */; };
-		6E65D5A92396EA6D00AF2D1A /* AirshipDebug.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6E65D5842396E99D00AF2D1A /* AirshipDebug.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		6E65D5AA2396EA7A00AF2D1A /* AirshipNotificationServiceExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D5912396E9A300AF2D1A /* AirshipNotificationServiceExtension.framework */; };
 		6E65D5AB2396EA7A00AF2D1A /* AirshipNotificationServiceExtension.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6E65D5912396E9A300AF2D1A /* AirshipNotificationServiceExtension.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		6E65D5AC2396EA7E00AF2D1A /* AirshipNotificationServiceExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D5912396E9A300AF2D1A /* AirshipNotificationServiceExtension.framework */; };
-		6E65D5AD2396EA7E00AF2D1A /* AirshipNotificationServiceExtension.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D5912396E9A300AF2D1A /* AirshipNotificationServiceExtension.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		6E65D5BA2396EAA600AF2D1A /* AirshipLocation.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6E65D5822396E99D00AF2D1A /* AirshipLocation.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		6E65D5BB2396ECC200AF2D1A /* AirshipAutomation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D5862396E99D00AF2D1A /* AirshipAutomation.framework */; };
 		6E65D5BC2396ECC200AF2D1A /* AirshipAutomation.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6E65D5862396E99D00AF2D1A /* AirshipAutomation.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -48,6 +44,10 @@
 		CCDA35AE1B8D233A00950AD5 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CCDA35AC1B8D233A00950AD5 /* Main.storyboard */; };
 		CCDA35B31B8D233A00950AD5 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CCDA35B11B8D233A00950AD5 /* LaunchScreen.storyboard */; };
 		CCDA35C41B8D237300950AD5 /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = CCDA35C31B8D237300950AD5 /* AirshipConfig.plist */; };
+		DF0127DB2437E8640011F7C7 /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF0127DA2437E8640011F7C7 /* TabBarController.swift */; };
+		DFC3839E243E9F6200EA78FE /* AirshipAccengage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E6CC347239A2FB9003D583C /* AirshipAccengage.framework */; };
+		DFC383A1243EA37B00EA78FE /* AirshipNotificationContentExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D5932396E9A300AF2D1A /* AirshipNotificationContentExtension.framework */; };
+		DFC383A2243EA37B00EA78FE /* AirshipNotificationContentExtension.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D5932396E9A300AF2D1A /* AirshipNotificationContentExtension.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -258,17 +258,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		6E65D5AE2396EA7E00AF2D1A /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				6E65D5AD2396EA7E00AF2D1A /* AirshipNotificationServiceExtension.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		CCDA35D21B8D276C00950AD5 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -281,8 +270,18 @@
 				6E65D5C32396ECC200AF2D1A /* AirshipMessageCenter.framework in CopyFiles */,
 				6E65D5BE2396ECC200AF2D1A /* AirshipCore.framework in CopyFiles */,
 				6E65D5C02396ECC200AF2D1A /* AirshipExtendedActions.framework in CopyFiles */,
-				6E65D5A92396EA6D00AF2D1A /* AirshipDebug.framework in CopyFiles */,
 			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DFC383A3243EA37B00EA78FE /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				DFC383A2243EA37B00EA78FE /* AirshipNotificationContentExtension.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -322,6 +321,7 @@
 		CCDA35B21B8D233A00950AD5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		CCDA35B41B8D233A00950AD5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CCDA35C31B8D237300950AD5 /* AirshipConfig.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = AirshipConfig.plist; sourceTree = "<group>"; };
+		DF0127DA2437E8640011F7C7 /* TabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -329,9 +329,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DFC383A1243EA37B00EA78FE /* AirshipNotificationContentExtension.framework in Frameworks */,
 				1B94297A23883234002051B3 /* UserNotificationsUI.framework in Frameworks */,
 				1B94297923883234002051B3 /* UserNotifications.framework in Frameworks */,
-				6E65D5AC2396EA7E00AF2D1A /* AirshipNotificationServiceExtension.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -354,12 +354,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DFC3839E243E9F6200EA78FE /* AirshipAccengage.framework in Frameworks */,
 				6E65D5C12396ECC200AF2D1A /* AirshipLocation.framework in Frameworks */,
 				6E65D5BB2396ECC200AF2D1A /* AirshipAutomation.framework in Frameworks */,
 				6E65D5BD2396ECC200AF2D1A /* AirshipCore.framework in Frameworks */,
 				6E65D5BF2396ECC200AF2D1A /* AirshipExtendedActions.framework in Frameworks */,
 				6E65D5C22396ECC200AF2D1A /* AirshipMessageCenter.framework in Frameworks */,
-				6E65D5A82396EA6D00AF2D1A /* AirshipDebug.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -486,6 +486,7 @@
 				61A672E71CA9F4B000BAF58A /* PushHandler.swift */,
 				493F51121C5B2C9E00B050A1 /* MessageCenterViewController.swift */,
 				493F51281C5B423700B050A1 /* MessageCenterDelegate.swift */,
+				DF0127DA2437E8640011F7C7 /* TabBarController.swift */,
 				DE1B54D4242D17A20044054D /* Settings View */,
 				613420361BD6C09B00236A18 /* Resources */,
 				CCDA35AC1B8D233A00950AD5 /* Main.storyboard */,
@@ -525,7 +526,7 @@
 				1B94297423883234002051B3 /* Sources */,
 				1B94297523883234002051B3 /* Frameworks */,
 				1B94297623883234002051B3 /* Resources */,
-				6E65D5AE2396EA7E00AF2D1A /* Embed Frameworks */,
+				DFC383A3243EA37B00EA78FE /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -581,6 +582,7 @@
 				CCDA359F1B8D233A00950AD5 /* Sources */,
 				CCDA35A01B8D233A00950AD5 /* Frameworks */,
 				CCDA35A11B8D233A00950AD5 /* Resources */,
+				DFC38388243D250F00EA78FE /* Conditionally Embed Debug Frameworks */,
 				CCDA35D21B8D276C00950AD5 /* CopyFiles */,
 				49251DF61D6F9C1500EED4BD /* Embed App Extensions */,
 			);
@@ -821,6 +823,29 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		DFC38388243D250F00EA78FE /* Conditionally Embed Debug Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${BUILT_PRODUCTS_DIR}/AirshipDebug.framework",
+			);
+			name = "Conditionally Embed Debug Frameworks";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AirshipDebug.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "#!/bin/sh\nset -e\nset -u\nset -o pipefail\n\ninstall_framework()\n{\n  echo \"Installing framework $1\"\n  local source=\"${BUILT_PRODUCTS_DIR}/$(basename \"$1\")\"\n  local destination=\"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}\"\n\n  mkdir -p \"$destination\"\n\n  # copy the framework\n  cp -r \"${source}\" \"${destination}\"\n\n  if [ -n \"${EXPANDED_CODE_SIGN_IDENTITY:-}\" -a \"${CODE_SIGNING_REQUIRED:-}\" != \"NO\" -a \"${CODE_SIGNING_ALLOWED}\" != \"NO\" ]; then\n    # Use the current code_sign_identity\n    local binary=\"${destination}/$(basename \"$1\")\"\n    echo \"Code Signing ${binary} with Identity ${EXPANDED_CODE_SIGN_IDENTITY_NAME}\"\n    /usr/bin/codesign --force --sign ${EXPANDED_CODE_SIGN_IDENTITY} ${OTHER_CODE_SIGN_FLAGS:-} --preserve-metadata=identifier,entitlements \"${binary}\"\n  fi\n}\n\necho \"CONFIGURATION = ${CONFIGURATION}\"\nif [[ \"$CONFIGURATION\" == \"Debug\" ]]; then\n  index=0\n  while [ $index -lt ${SCRIPT_INPUT_FILE_COUNT} ]; do\n    scriptInputVar=\"SCRIPT_INPUT_FILE_$index\"\n    framework=${!scriptInputVar}\n    if [[ -d $framework && ${framework: -10} == \".framework\" ]]; then\n      install_framework $framework\n    fi\n    let index=index+1\n  done\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		1B94297423883234002051B3 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -854,6 +879,7 @@
 				493F51131C5B2C9E00B050A1 /* MessageCenterViewController.swift in Sources */,
 				CCDA35A71B8D233A00950AD5 /* AppDelegate.swift in Sources */,
 				493F51291C5B423700B050A1 /* MessageCenterDelegate.swift in Sources */,
+				DF0127DB2437E8640011F7C7 /* TabBarController.swift in Sources */,
 				CCDA35A91B8D233A00950AD5 /* HomeViewController.swift in Sources */,
 				8381A34A2406D362001E2922 /* TagsTableViewController.swift in Sources */,
 				8381A3482406D2C9001E2922 /* AddNamedUserTableViewController.swift in Sources */,
@@ -1260,6 +1286,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.richpush;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTS_MACCATALYST = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				SWIFT_VERSION = 5.0;
