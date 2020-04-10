@@ -99,9 +99,10 @@ NSUInteger const DebugTab = 2;
 }
 
 - (void)showInvalidConfigAlert {
-    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Invalid AirshipConfig.plist" message:@"The AirshipConfig.plist must be a part of the app bundle and include a valid appkey and secret for the selected production level." preferredStyle:UIAlertControllerStyleActionSheet];
+    
+    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:NSLocalizedStringFromTable(@"ua_invalid_airshipcconfig_plist_title", @"UAPushUI", @"Invalid AirshipConfig.plist") message:NSLocalizedStringFromTable(@"ua_invalid_airshipcconfig_plist_message", @"UAPushUI", @"The AirshipConfig.plist must be a part of the app bundle and include a valid appkey and secret for the selected production level.") preferredStyle:UIAlertControllerStyleActionSheet];
 
-    [alertController addAction:[UIAlertAction actionWithTitle:@"Exit Application" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+    [alertController addAction:[UIAlertAction actionWithTitle:NSLocalizedStringFromTable(@"ua_exit_application", @"UAPushUI", @"Exit Application") style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         exit(1);
     }]];
 
@@ -136,18 +137,19 @@ NSUInteger const DebugTab = 2;
         return;
     }
 
-    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Notice"
-                                                                             message:@"You will not be able to receive push notifications in the simulator."
+    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:NSLocalizedStringFromTable(@"ua_alert_title_notice", @"UAPushUI", @"Notice")
+                                                                             message:NSLocalizedStringFromTable(@"ua_no_push_in_simulator_message", @"UAPushUI", @"You will not be able to receive push notifications in the simulator.")
                                                                       preferredStyle:UIAlertControllerStyleAlert];
 
-    UIAlertAction *disableAction = [UIAlertAction actionWithTitle:@"Disable Warning" style:UIAlertActionStyleDefault
+    UIAlertAction *disableAction = [UIAlertAction actionWithTitle:NSLocalizedStringFromTable(@"ua_disable_warning", @"UAPushUI", @"Disable Warning") style:UIAlertActionStyleDefault
                                                           handler:^(UIAlertAction * action) {
                                                               [[NSUserDefaults standardUserDefaults] setBool:YES forKey:kSimulatorWarningDisabledKey];
                                                           }];
 
     [alertController addAction:disableAction];
 
-    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil];
+    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:NSLocalizedStringFromTable(@"ua_cancel", @"UAPushUI", @"Cancel")
+                                                           style:UIAlertActionStyleCancel handler:nil];
     [alertController addAction:cancelAction];
 
     // Let the UI finish launching first so it doesn't complain about the lack of a root view controller

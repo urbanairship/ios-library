@@ -32,7 +32,7 @@
     self.addCustomTagCell.backgroundColor = [UIColor whiteColor];
     self.addTagTitle.textColor = [UIColor blackColor];
     self.addCustomTagTextField.textColor = [UIColor blackColor];
-    self.addCustomTagTextField.attributedPlaceholder = [[NSAttributedString alloc] initWithString:@"Tag" attributes:@{NSForegroundColorAttributeName: [UIColor grayColor]}];
+    self.addCustomTagTextField.attributedPlaceholder = [[NSAttributedString alloc] initWithString:NSLocalizedStringFromTable(@"ua_device_info_tag", @"UAPushUI", @"Tag") attributes:@{NSForegroundColorAttributeName: [UIColor grayColor]}];
 }
 
 - (void)setTableViewTheme {

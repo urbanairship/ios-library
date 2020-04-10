@@ -30,7 +30,7 @@
     return [[self alloc] initWithTagGroupsConfig:[UAInAppMessagingTagGroupsConfig defaultConfig]];
 }
 
-+ (instancetype)configWithJSON:(id)JSON {
++ (nullable instancetype)configWithJSON:(id)JSON {
     if (![JSON isKindOfClass:[NSDictionary class]]) {
         UA_LERR(@"Invalid in-app config: %@", JSON);
         return nil;

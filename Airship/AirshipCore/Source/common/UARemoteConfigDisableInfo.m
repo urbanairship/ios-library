@@ -39,8 +39,8 @@ NSUInteger const UARemoteConfigDisableRefreshIntervalDefault = 0; // default is 
 
 + (instancetype)disableInfoWithModuleNames:(NSArray<NSString *> *)disableModuleNames
                      sdkVersionConstraints:(NSArray<UAVersionMatcher *> *)sdkVersionConstraints
-                      appVersionConstraint:(UAJSONPredicate *)appVersionConstraint
-                 remoteDataRefreshInterval:(NSNumber *)remoteDataRefreshInterval {
+                      appVersionConstraint:(nullable UAJSONPredicate *)appVersionConstraint
+                 remoteDataRefreshInterval:(nullable NSNumber *)remoteDataRefreshInterval {
 
     return [[self alloc] initWithModuleNames:disableModuleNames
                        sdkVersionConstraints:sdkVersionConstraints

@@ -56,7 +56,7 @@
                                          enabled:YES];
 }
 
-+ (instancetype)configWithJSON:(id)JSON {
++ (nullable instancetype)configWithJSON:(id)JSON {
     if (![JSON isKindOfClass:[NSDictionary class]]) {
         UA_LERR(@"Invalid in-app config: %@", JSON);
         return nil;

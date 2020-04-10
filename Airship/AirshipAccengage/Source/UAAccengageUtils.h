@@ -14,7 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param data The data.
  * @param key The encryption key
  */
-+ (NSData *)decryptData:(NSData *)data key:(NSString *)key;
++ (nullable NSData *)decryptData:(NSData *)data key:(NSString *)key;
 
 @end
 

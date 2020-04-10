@@ -47,8 +47,8 @@ extern NSUInteger const UARemoteConfigDisableRefreshIntervalDefault;
  */
 + (instancetype)disableInfoWithModuleNames:(NSArray<NSString *> *)disableModuleNames
                      sdkVersionConstraints:(NSArray<UAVersionMatcher *> *)sdkVersionConstraints
-                      appVersionConstraint:(UAJSONPredicate *)appVersionConstraint
-                 remoteDataRefreshInterval:(NSNumber *)remoteDataRefreshInterval;
+                      appVersionConstraint:(nullable UAJSONPredicate *)appVersionConstraint
+                 remoteDataRefreshInterval:(nullable NSNumber *)remoteDataRefreshInterval;
 
 /**
  * Parses a disable info from a JSON object.

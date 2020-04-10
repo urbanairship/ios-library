@@ -5,7 +5,7 @@
 
 @implementation UAAccengageUtils
 
-+ (NSData *)decryptData:(NSData *)data key:(NSString *)key {
++ (nullable NSData *)decryptData:(NSData *)data key:(NSString *)key {
     if (!data || ![data isKindOfClass:[NSData class]]) {
         return nil;
     }

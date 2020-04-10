@@ -54,7 +54,7 @@ NS_ASSUME_NONNULL_BEGIN
  * Parses a config from JSON.
  * @return The UAInAppMessagingTagGroupsConfig instance, or nil if the JSON is invalid.
  */
-+ (instancetype)configWithJSON:(id)JSON;
++ (nullable instancetype)configWithJSON:(id)JSON;
 @end
 
 NS_ASSUME_NONNULL_END
