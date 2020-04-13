@@ -7,6 +7,11 @@
 
 @implementation UAChannelCaptureAction
 
+NSString * const UAChannelCaptureActionDefaultRegistryName = @"channel_capture_action";
+NSString * const UAChannelCaptureActionDefaultRegistryAlias = @"^cc";
+NSString * const kUAChannelCaptureActionDefaultRegistryName = UAChannelCaptureActionDefaultRegistryName; // Deprecated – to be removed in SDK version 14.0. Please use UAChannelCaptureActionDefaultRegistryName.
+NSString * const kUAChannelCaptureActionDefaultRegistryAlias = UAChannelCaptureActionDefaultRegistryAlias; // Deprecated – to be removed in SDK version 14.0. Please use UAChannelCaptureActionDefaultRegistryAlias.
+
 - (BOOL)acceptsArguments:(UAActionArguments *)arguments {
     switch (arguments.situation) {
         case UASituationManualInvocation:

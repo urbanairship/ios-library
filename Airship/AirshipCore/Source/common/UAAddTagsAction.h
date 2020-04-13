@@ -2,9 +2,6 @@
 
 #import "UAModifyTagsAction.h"
 
-#define kUAAddTagsActionDefaultRegistryName @"add_tags_action"
-#define kUAAddTagsActionDefaultRegistryAlias @"^+t"
-
 /**
  * Adds tags. This Action is registered under the
  * names ^+t and "add_tags_action".
@@ -38,5 +35,30 @@
  * Fetch result: UAActionFetchResultNoData
  */
 @interface UAAddTagsAction : UAModifyTagsAction
+
+/**
+ * Default registry name for add tags action.
+ */
+extern NSString * const UAAddTagsActionDefaultRegistryName;
+
+/**
+ * Default registry alias for add tags action.
+ */
+extern NSString * const UAAddTagsActionDefaultRegistryAlias;
+
+/**
+ * Default registry name for add tags action.
+ *
+ * @deprecated Deprecated – to be removed in SDK version 14.0. Please use UAAddTagsActionDefaultRegistryName.
+*/
+extern NSString * const kUAAddTagsActionDefaultRegistryName DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0. Please use UAAddTagsActionDefaultRegistryName.");
+
+/**
+ * Default registry alias for add tags action.
+ *
+ * @deprecated Deprecated – to be removed in SDK version 14.0. Please use UAAddTagsActionDefaultRegistryAlias.
+*/
+extern NSString * const kUAAddTagsActionDefaultRegistryAlias DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0. Please use UAAddTagsActionDefaultRegistryAlias.");
+
 
 @end

@@ -383,7 +383,7 @@ CGFloat const CloseButtonHeight = 30;
 }
 
 + (BOOL)isReadyToDisplayWithMedia:(UAInAppMessageMediaInfo *)media {
-    BOOL noConnection = ([[UAUtils connectionType] isEqual:kUAConnectionTypeNone]);
+    BOOL noConnection = ([[UAUtils connectionType] isEqual:UAConnectionTypeNone]);
     if (noConnection && (media.type == UAInAppMessageMediaInfoTypeVideo || media.type == UAInAppMessageMediaInfoTypeYouTube)) {
         return NO;
     }

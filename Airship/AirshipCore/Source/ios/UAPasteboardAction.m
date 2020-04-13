@@ -5,6 +5,11 @@
 
 @implementation UAPasteboardAction
 
+NSString * const UAPasteboardActionDefaultRegistryName = @"clipboard_action";
+NSString * const UAPasteboardActionDefaultRegistryAlias = @"^c";
+NSString * const kUAPasteboardActionDefaultRegistryName = UAPasteboardActionDefaultRegistryName; // Deprecated – to be removed in SDK version 14.0. Please use UAPasteboardActionDefaultRegistryName.
+NSString * const kUAPasteboardActionDefaultRegistryAlias = UAPasteboardActionDefaultRegistryAlias; // Deprecated – to be removed in SDK version 14.0. Please use UAPasteboardActionDefaultRegistryAlias.
+
 - (BOOL)acceptsArguments:(UAActionArguments *)arguments {
     switch (arguments.situation) {
         case UASituationManualInvocation:

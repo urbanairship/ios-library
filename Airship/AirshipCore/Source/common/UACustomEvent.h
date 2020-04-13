@@ -3,10 +3,19 @@
 #import <Foundation/Foundation.h>
 #import "UAEvent.h"
 
-#define kUAInteractionMCRAP @"ua_mcrap"
-#define kUACustomEventCharacterLimit 255
-
 NS_ASSUME_NONNULL_BEGIN
+
+/**
+ * Message Center interaction type
+ */
+extern NSString * const UAInteractionMCRAP;
+
+/**
+ * Message Center interaction type
+ *
+ * @deprecated Deprecated – to be removed in SDK version 14.0. Please use UAInteractionMCRAP.
+*/
+extern NSString * const kUAInteractionMCRAP DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0. Please use UAInteractionMCRAP.");
 
 /**
  * The max character limit for Strings.

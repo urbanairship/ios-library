@@ -286,7 +286,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         [UAKeychainUtils deleteKeychainValue:runtimeConfig.appKey];
 
         UA_LDEBUG(@"Deleting the Airship device ID");
-        [UAKeychainUtils deleteKeychainValue:kUAKeychainDeviceIDKey];
+        [UAKeychainUtils deleteKeychainValue:UAKeychainDeviceIDKey];
 
         // Delete the Device ID in the data store so we don't clear the channel
         [dataStore removeObjectForKey:@"deviceId"];

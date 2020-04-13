@@ -38,7 +38,7 @@ NSString *const UAHTMLStyleFileName = @"UAInAppMessageHTMLStyle";
 }
 
 - (BOOL)isNetworkConnected {
-    return ![[UAUtils connectionType] isEqualToString:kUAConnectionTypeNone];
+    return ![[UAUtils connectionType] isEqualToString:UAConnectionTypeNone];
 }
 
 - (void)prepareWithAssets:(nonnull UAInAppMessageAssets *)assets completionHandler:(nonnull void (^)(UAInAppMessagePrepareResult))completionHandler {

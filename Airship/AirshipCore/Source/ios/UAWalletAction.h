@@ -2,9 +2,6 @@
 
 #import "UAOpenExternalURLAction.h"
 
-#define kUAWalletActionDefaultRegistryName @"wallet_action"
-#define kUAWalletActionDefaultRegistryAlias @"^w"
-
 /**
  * Opens a wallet URL, either in safari or using custom URL schemes. This action is
  * registered under the names ^w and wallet_action.
@@ -23,5 +20,28 @@
  */
 @interface UAWalletAction : UAOpenExternalURLAction
 
+/**
+ * Default registry name for wallet action.
+ */
+extern NSString * const UAWalletActionDefaultRegistryName;
+
+/**
+ * Default registry alias for wallet action.
+ */
+extern NSString * const UAWalletActionDefaultRegistryAlias;
+
+/**
+ * Default registry name for wallet action.
+ *
+ * @deprecated Deprecated – to be removed in SDK version 14.0. Please use UAWalletActionDefaultRegistryName.
+*/
+extern NSString * const kUAWalletActionDefaultRegistryName DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0. Please use UAWalletActionDefaultRegistryName.");
+
+/**
+ * Default registry alias for wallet action.
+ *
+ * @deprecated Deprecated – to be removed in SDK version 14.0. Please use UAWalletActionDefaultRegistryAlias.
+*/
+extern NSString * const kUAWalletActionDefaultRegistryAlias DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0. Please use UAWalletActionDefaultRegistryAlias.");
 
 @end

@@ -2,15 +2,37 @@
 
 #import "UAProximityRegion.h"
 
-#define kUAProximityRegionMaxRSSI 100 // 100 dBm
-#define kUAProximityRegionMinRSSI -100 // -100 dBm
-
 NS_ASSUME_NONNULL_BEGIN
 
 /*
  * SDK-private extensions to UAProximityRegion
  */
 @interface UAProximityRegion ()
+
+/**
+ * Maximum RSSI of the proximity region.
+ */
+extern double const UAProximityRegionMaxRSSI;
+
+/**
+ * Minimum RSSI of the proximity region.
+ */
+extern double const UAProximityRegionMinRSSI;
+
+/**
+ * Maximum RSSI of the proximity region.
+ *
+ * @deprecated Deprecated – to be removed in SDK version 14.0. Please use UAProximityRegionMaxRSSI.
+*/
+extern double const kUAProximityRegionMaxRSSI DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0. Please use UAProximityRegionMaxRSSI.");
+
+/**
+ * Minimum RSSI of the proximity region.
+ *
+ * @deprecated Deprecated – to be removed in SDK version 14.0. Please use UAProximityRegionMinRSSI.
+*/
+extern double const kUAProximityRegionMinRSSI DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0. Please use UAProximityRegionMinRSSI.");
+
 
 ///---------------------------------------------------------------------------------------
 /// @name Proximity Region Internal Properties

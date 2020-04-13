@@ -2,9 +2,6 @@
 
 #import "UAAirshipAutomationCoreImport.h"
 
-#define kUACancelSchedulesActionDefaultRegistryName @"cancel_scheduled_actions"
-#define kUACancelSchedulesActionDefaultRegistryAlias @"^csa"
-
 /**
  * Action to cancel automation schedules.
  *
@@ -22,6 +19,30 @@
 @interface UACancelSchedulesAction : UAAction
 
 /**
+ * Default registry name for cancel schedules action.
+ */
+extern NSString * const UACancelSchedulesActionDefaultRegistryName;
+
+/**
+ * Default registry alias for cancel schedules action.
+ */
+extern NSString * const UACancelSchedulesActionDefaultRegistryAlias;
+
+/**
+ * Default registry name for cancel schedules action.
+ *
+ * @deprecated Deprecated – to be removed in SDK version 14.0. Please use UACancelSchedulesActionDefaultRegistryName.
+*/
+extern NSString * const kUACancelSchedulesActionDefaultRegistryName DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0. Please use UACancelSchedulesActionDefaultRegistryName.");
+
+/**
+ * Default registry alias for cancel schedules action.
+ *
+ * @deprecated Deprecated – to be removed in SDK version 14.0. Please use UACancelSchedulesActionDefaultRegistryAlias.
+*/
+extern NSString * const kUACancelSchedulesActionDefaultRegistryAlias DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0. Please use UACancelSchedulesActionDefaultRegistryAlias.");
+
+/**
  * Argument value to cancel all schedules.
  */
 extern NSString *const UACancelSchedulesActionAll;
@@ -35,6 +56,5 @@ extern NSString *const UACancelSchedulesActionIDs;
  * Key in the argument value map to list the schedule groups to cancel.
  */
 extern NSString *const UACancelSchedulesActionGroups;
-
 
 @end

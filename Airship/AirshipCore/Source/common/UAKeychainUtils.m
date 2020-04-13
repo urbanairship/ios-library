@@ -7,6 +7,9 @@
 
 #import <Security/Security.h>
 
+NSString * const UAKeychainDeviceIDKey = @"com.urbanairship.deviceID";
+NSString * const kUAKeychainDeviceIDKey = UAKeychainDeviceIDKey; // Deprecated – to be removed in SDK version 14.0. Please use UAKeychainDeviceIDKey.
+
 static NSString *cachedDeviceID_ = nil;
 
 @interface UAKeychainUtils()
@@ -115,7 +118,7 @@ static NSString *cachedDeviceID_ = nil;
             [updateQuery setObject:(__bridge id)kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly forKey:(__bridge id)kSecAttrAccessible];
 
             // Perform the update
-            OSStatus status = SecItemUpdate((__bridge CFDictionaryRef)[UAKeychainUtils searchDictionaryWithIdentifier:kUAKeychainDeviceIDKey], (__bridge CFDictionaryRef)updateQuery);
+            OSStatus status = SecItemUpdate((__bridge CFDictionaryRef)[UAKeychainUtils searchDictionaryWithIdentifier:UAKeychainDeviceIDKey], (__bridge CFDictionaryRef)updateQuery);
             if (status != errSecSuccess) {
                 UA_LTRACE(@"Failed to update user credentials accessibility attribute.");
             } else {
@@ -163,7 +166,7 @@ static NSString *cachedDeviceID_ = nil;
 + (NSString *)createDeviceID {
     NSString *deviceID = [NSUUID UUID].UUIDString;
 
-    NSMutableDictionary *keychainValues = [UAKeychainUtils searchDictionaryWithIdentifier:kUAKeychainDeviceIDKey];
+    NSMutableDictionary *keychainValues = [UAKeychainUtils searchDictionaryWithIdentifier:UAKeychainDeviceIDKey];
 
     // Set access permission - we use the keychain for its stickiness, not security,
     // the current security attribute is used primarily to prevent flagging during security scans
@@ -193,7 +196,7 @@ static NSString *cachedDeviceID_ = nil;
     }
 
     //Get password next
-    NSMutableDictionary *deviceIDQuery = [UAKeychainUtils searchDictionaryWithIdentifier:kUAKeychainDeviceIDKey];
+    NSMutableDictionary *deviceIDQuery = [UAKeychainUtils searchDictionaryWithIdentifier:UAKeychainDeviceIDKey];
 
     // Add search attributes
     [deviceIDQuery setObject:(__bridge id)kSecMatchLimitOne forKey:(__bridge id)kSecMatchLimit];
@@ -226,7 +229,7 @@ static NSString *cachedDeviceID_ = nil;
                 [updateQuery setObject:(__bridge id)kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly forKey:(__bridge id)kSecAttrAccessible];
 
                 // Perform the update
-                OSStatus status = SecItemUpdate((__bridge CFDictionaryRef)[UAKeychainUtils searchDictionaryWithIdentifier:kUAKeychainDeviceIDKey], (__bridge CFDictionaryRef)updateQuery);
+                OSStatus status = SecItemUpdate((__bridge CFDictionaryRef)[UAKeychainUtils searchDictionaryWithIdentifier:UAKeychainDeviceIDKey], (__bridge CFDictionaryRef)updateQuery);
                 if (status != errSecSuccess) {
                     UA_LTRACE(@"Failed to update Device ID accessibility attribute.");
                 } else {
@@ -244,7 +247,7 @@ static NSString *cachedDeviceID_ = nil;
     }
 
     if (!deviceID) {
-        [UAKeychainUtils deleteKeychainValue:kUAKeychainDeviceIDKey];
+        [UAKeychainUtils deleteKeychainValue:UAKeychainDeviceIDKey];
         deviceID = [UAKeychainUtils createDeviceID];
         UA_LDEBUG(@"Generated new Device ID: %@", deviceID);
     }

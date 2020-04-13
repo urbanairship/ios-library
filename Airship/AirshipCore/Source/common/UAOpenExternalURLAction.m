@@ -5,10 +5,11 @@
 #import "UAWhitelist.h"
 #import "UADispatcher.h"
 
+NSString * const UAOpenExternalURLActionDefaultRegistryName = @"open_external_url_action";
+NSString * const UAOpenExternalURLActionDefaultRegistryAlias = @"^u";
+NSString * const kUAOpenExternalURLActionDefaultRegistryName = UAOpenExternalURLActionDefaultRegistryName; // Deprecated – to be removed in SDK version 14.0. Please use UAOpenExternalURLActionDefaultRegistryName.
+NSString * const kUAOpenExternalURLActionDefaultRegistryAlias = UAOpenExternalURLActionDefaultRegistryAlias; // Deprecated – to be removed in SDK version 14.0. Please use UAOpenExternalURLActionDefaultRegistryAlias.
 NSString * const UAOpenExternalURLActionErrorDomain = @"com.urbanairship.actions.externalurlaction";
-
-#define kUAOpenExternalURLActionDefaultRegistryName @"open_external_url_action"
-#define kUAOpenExternalURLActionDefaultRegistryAlias @"^u"
 
 @implementation UAOpenExternalURLAction
 

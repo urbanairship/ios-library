@@ -2,9 +2,6 @@
 
 #import "UAModifyTagsAction.h"
 
-#define kUARemoveTagsActionDefaultRegistryName @"remove_tags_action"
-#define kUARemoveTagsActionDefaultRegistryAlias @"^-t"
-
 /**
  * Removes tags. This Action is registered under the
  * names ^-t and "remove_tags_action".
@@ -38,6 +35,30 @@
  * Fetch result: UAActionFetchResultNoData
  */
 @interface UARemoveTagsAction : UAModifyTagsAction
+
+/**
+ * Default registry name for remove tags action.
+ */
+extern NSString * const UARemoveTagsActionDefaultRegistryName;
+
+/**
+ * Default registry alias for remove tags action.
+ */
+extern NSString * const UARemoveTagsActionDefaultRegistryAlias;
+
+/**
+ * Default registry name for remove tags action.
+ *
+ * @deprecated Deprecated – to be removed in SDK version 14.0. Please use UARemoveTagsActionDefaultRegistryName.
+*/
+extern NSString * const kUARemoveTagsActionDefaultRegistryName DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0. Please use UARemoveTagsActionDefaultRegistryName.");
+
+/**
+ * Default registry alias for remove tags action.
+ *
+ * @deprecated Deprecated – to be removed in SDK version 14.0. Please use UARemoveTagsActionDefaultRegistryAlias.
+*/
+extern NSString * const kUARemoveTagsActionDefaultRegistryAlias DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0. Please use UARemoveTagsActionDefaultRegistryAlias.");
 
 @end
 

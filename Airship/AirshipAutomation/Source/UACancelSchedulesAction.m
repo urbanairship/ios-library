@@ -10,6 +10,11 @@ NSString *const UACancelSchedulesActionGroups = @"groups";
 
 @implementation UACancelSchedulesAction
 
+NSString * const UACancelSchedulesActionDefaultRegistryName = @"cancel_scheduled_actions";
+NSString * const UACancelSchedulesActionDefaultRegistryAlias = @"^csa";
+NSString * const kUACancelSchedulesActionDefaultRegistryName = UACancelSchedulesActionDefaultRegistryName; // Deprecated – to be removed in SDK version 14.0. Please use UACancelSchedulesActionDefaultRegistryName.
+NSString * const kUACancelSchedulesActionDefaultRegistryAlias = UACancelSchedulesActionDefaultRegistryAlias; // Deprecated – to be removed in SDK version 14.0. Please use UACancelSchedulesActionDefaultRegistryAlias.
+
 - (BOOL)acceptsArguments:(UAActionArguments *)arguments {
     switch (arguments.situation) {
         case UASituationManualInvocation:

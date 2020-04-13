@@ -6,6 +6,11 @@
 #import "UAInAppMessageManager+Internal.h"
 #import "UAAirshipAutomationCoreImport.h"
 
+NSString * const UALandingPageActionDefaultRegistryName = @"landing_page_action";
+NSString * const UALandingPageActionDefaultRegistryAlias = @"^p";
+NSString * const kUALandingPageActionDefaultRegistryName = UALandingPageActionDefaultRegistryName; // Deprecated – to be removed in SDK version 14.0. Please use UALandingPageActionDefaultRegistryName.
+NSString * const kUALandingPageActionDefaultRegistryAlias = UALandingPageActionDefaultRegistryAlias; // Deprecated – to be removed in SDK version 14.0. Please use UALandingPageActionDefaultRegistryAlias.
+
 @implementation UALandingPageAction
 
 NSString *const UALandingPageURLKey = @"url";
