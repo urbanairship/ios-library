@@ -6,8 +6,11 @@
 
 NSString * const UAEnableFeatureActionDefaultRegistryName = @"enable_feature";
 NSString * const UAEnableFeatureActionDefaultRegistryAlias = @"^ef";
-NSString * const kUAEnableFeatureActionDefaultRegistryName = UAEnableFeatureActionDefaultRegistryName; // Deprecated – to be removed in SDK version 14.0. Please use UAEnableFeatureActionDefaultRegistryName.
-NSString * const kUAEnableFeatureActionDefaultRegistryAlias = UAEnableFeatureActionDefaultRegistryAlias; // Deprecated – to be removed in SDK version 14.0. Please use UAEnableFeatureActionDefaultRegistryAlias.
+
+// Deprecated - to be removed in SDK version 14.0.
+NSString * const kUAEnableFeatureActionDefaultRegistryName = UAEnableFeatureActionDefaultRegistryName;
+NSString * const kUAEnableFeatureActionDefaultRegistryAlias = UAEnableFeatureActionDefaultRegistryAlias;
+
 NSString *const UAEnableUserNotificationsActionValue = @"user_notifications";
 NSString *const UAEnableLocationActionValue = @"location";
 NSString *const UAEnableBackgroundLocationActionValue = @"background_location";

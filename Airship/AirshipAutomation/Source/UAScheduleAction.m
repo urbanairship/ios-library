@@ -10,8 +10,10 @@
 
 NSString * const UAScheduleActionDefaultRegistryName = @"schedule_actions";
 NSString * const UAScheduleActionDefaultRegistryAlias = @"^sa";
-NSString * const kUAScheduleActionDefaultRegistryName = UAScheduleActionDefaultRegistryName; // Deprecated – to be removed in SDK version 14.0. Please use UAScheduleActionDefaultRegistryName.
-NSString * const kUAScheduleActionDefaultRegistryAlias = UAScheduleActionDefaultRegistryAlias; // Deprecated – to be removed in SDK version 14.0. Please use UAScheduleActionDefaultRegistryAlias.
+
+// Deprecated - to be removed in SDK version 14.0.
+NSString * const kUAScheduleActionDefaultRegistryName = UAScheduleActionDefaultRegistryName;
+NSString * const kUAScheduleActionDefaultRegistryAlias = UAScheduleActionDefaultRegistryAlias;
 
 - (BOOL)acceptsArguments:(UAActionArguments *)arguments {
     switch (arguments.situation) {

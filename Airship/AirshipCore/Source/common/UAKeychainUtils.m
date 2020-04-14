@@ -8,7 +8,9 @@
 #import <Security/Security.h>
 
 NSString * const UAKeychainDeviceIDKey = @"com.urbanairship.deviceID";
-NSString * const kUAKeychainDeviceIDKey = UAKeychainDeviceIDKey; // Deprecated – to be removed in SDK version 14.0. Please use UAKeychainDeviceIDKey.
+
+// Deprecated - to be removed in SDK version 14.0.
+NSString * const kUAKeychainDeviceIDKey = UAKeychainDeviceIDKey;
 
 static NSString *cachedDeviceID_ = nil;
 

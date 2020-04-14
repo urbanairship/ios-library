@@ -8,8 +8,10 @@
 
 double const UACircularRegionMaxRadius = 100000; // 100 kilometers
 double const UACircularRegionMinRadius = 0.1; // 100 millimeters
-double const kUACircularRegionMaxRadius = UACircularRegionMaxRadius; // Deprecated – to be removed in SDK version 14.0. Please use UACircularRegionMaxRadius.
-double const kUACircularRegionMinRadius = UACircularRegionMinRadius; // Deprecated – to be removed in SDK version 14.0. Please use UACircularRegionMinRadius.
+
+// Deprecated - to be removed in SDK version 14.0.
+double const kUACircularRegionMaxRadius = UACircularRegionMaxRadius;
+double const kUACircularRegionMinRadius = UACircularRegionMinRadius;
 
 + (nullable instancetype)circularRegionWithRadius:(NSNumber *)radius latitude:(NSNumber *)latitude longitude:(NSNumber *)longitude {
 

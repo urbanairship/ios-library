@@ -34,9 +34,10 @@ NSString * const UAConnectionTypeNone = @"none";
 NSString * const UAConnectionTypeCell = @"cell";
 NSString * const UAConnectionTypeWifi = @"wifi";
 
-NSString * const kUAConnectionTypeNone = UAConnectionTypeNone; // Deprecated – to be removed in SDK version 14.0. Please use UAConnectionTypeNone
-NSString * const kUAConnectionTypeCell  = UAConnectionTypeCell; // Deprecated – to be removed in SDK version 14.0. Please use UAConnectionTypeCell.
-NSString * const kUAConnectionTypeWifi  = UAConnectionTypeWifi; // Deprecated – to be removed in SDK version 14.0. Please use UAConnectionTypeWifi.
+// Deprecated - to be removed in SDK version 14.0.
+NSString * const kUAConnectionTypeNone = UAConnectionTypeNone;
+NSString * const kUAConnectionTypeCell  = UAConnectionTypeCell;
+NSString * const kUAConnectionTypeWifi  = UAConnectionTypeWifi;
 
 + (NSString *)connectionType {
     SCNetworkReachabilityFlags flags;

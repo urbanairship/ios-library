@@ -13,8 +13,10 @@
 
 NSString * const UAShareActionDefaultRegistryName = @"share_action";
 NSString * const UAShareActionDefaultRegistryAlias = @"^s";
-NSString * const kUAShareActionDefaultRegistryName = UAShareActionDefaultRegistryName; // Deprecated – to be removed in SDK version 14.0. Please use UAShareActionDefaultRegistryName.
-NSString * const kUAShareActionDefaultRegistryAlias = UAShareActionDefaultRegistryAlias; // Deprecated – to be removed in SDK version 14.0. Please use UAShareActionDefaultRegistryAlias.
+
+// Deprecated - to be removed in SDK version 14.0.
+NSString * const kUAShareActionDefaultRegistryName = UAShareActionDefaultRegistryName;
+NSString * const kUAShareActionDefaultRegistryAlias = UAShareActionDefaultRegistryAlias;
 
 - (BOOL)acceptsArguments:(UAActionArguments *)arguments {
 

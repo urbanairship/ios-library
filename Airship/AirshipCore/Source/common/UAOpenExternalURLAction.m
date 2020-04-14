@@ -7,8 +7,11 @@
 
 NSString * const UAOpenExternalURLActionDefaultRegistryName = @"open_external_url_action";
 NSString * const UAOpenExternalURLActionDefaultRegistryAlias = @"^u";
-NSString * const kUAOpenExternalURLActionDefaultRegistryName = UAOpenExternalURLActionDefaultRegistryName; // Deprecated – to be removed in SDK version 14.0. Please use UAOpenExternalURLActionDefaultRegistryName.
-NSString * const kUAOpenExternalURLActionDefaultRegistryAlias = UAOpenExternalURLActionDefaultRegistryAlias; // Deprecated – to be removed in SDK version 14.0. Please use UAOpenExternalURLActionDefaultRegistryAlias.
+
+// Deprecated - to be removed in SDK version 14.0.
+NSString * const kUAOpenExternalURLActionDefaultRegistryName = UAOpenExternalURLActionDefaultRegistryName;
+NSString * const kUAOpenExternalURLActionDefaultRegistryAlias = UAOpenExternalURLActionDefaultRegistryAlias;
+
 NSString * const UAOpenExternalURLActionErrorDomain = @"com.urbanairship.actions.externalurlaction";
 
 @implementation UAOpenExternalURLAction

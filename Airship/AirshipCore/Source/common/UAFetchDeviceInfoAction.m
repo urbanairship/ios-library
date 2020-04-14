@@ -11,8 +11,11 @@
 
 NSString * const UAFetchDeviceInfoActionDefaultRegistryName = @"fetch_device_info";
 NSString * const UAFetchDeviceInfoActionDefaultRegistryAlias = @"^fdi";
-NSString * const kUAFetchDeviceInfoActionDefaultRegistryName = UAFetchDeviceInfoActionDefaultRegistryName; // Deprecated – to be removed in SDK version 14.0. Please use UAFetchDeviceInfoActionDefaultRegistryName.
-NSString * const kUAFetchDeviceInfoActionDefaultRegistryAlias = UAFetchDeviceInfoActionDefaultRegistryAlias; // Deprecated – to be removed in SDK version 14.0. Please use UAFetchDeviceInfoActionDefaultRegistryAlias.
+
+// Deprecated - to be removed in SDK version 14.0.
+NSString * const kUAFetchDeviceInfoActionDefaultRegistryName = UAFetchDeviceInfoActionDefaultRegistryName;
+NSString * const kUAFetchDeviceInfoActionDefaultRegistryAlias = UAFetchDeviceInfoActionDefaultRegistryAlias;
+
 NSString *const UAChannelIDKey = @"channel_id";
 NSString *const UANamedUserKey = @"named_user";
 NSString *const UATagsKey = @"tags";

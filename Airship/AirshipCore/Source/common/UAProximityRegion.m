@@ -8,8 +8,10 @@
 
 double const UAProximityRegionMaxRSSI = 100; // 100 dBm
 double const UAProximityRegionMinRSSI = -100; // -100 dBm
-double const kUAProximityRegionMaxRSSI = UAProximityRegionMaxRSSI; // Deprecated – to be removed in SDK version 14.0. Please use UAProximityRegionMaxRSSI.
-double const kUAProximityRegionMinRSSI = UAProximityRegionMinRSSI; // Deprecated – to be removed in SDK version 14.0. Please use UAProximityRegionMinRSSI.
+
+// Deprecated - to be removed in SDK version 14.0.
+double const kUAProximityRegionMaxRSSI = UAProximityRegionMaxRSSI;
+double const kUAProximityRegionMinRSSI = UAProximityRegionMinRSSI;
 
 + (instancetype)proximityRegionWithID:(NSString *)proximityID major:(NSNumber *)major minor:(NSNumber *)minor {
 

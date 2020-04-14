@@ -22,8 +22,10 @@
 
 NSString * const UARateAppActionDefaultRegistryName = @"rate_app_action";
 NSString * const UARateAppActionDefaultRegistryAlias = @"^ra";
-NSString * const kUARateAppActionDefaultRegistryName = UARateAppActionDefaultRegistryName; // Deprecated – to be removed in SDK version 14.0. Please use UARateAppActionDefaultRegistryName.
-NSString * const kUARateAppActionDefaultRegistryAlias = UARateAppActionDefaultRegistryAlias; // Deprecated – to be removed in SDK version 14.0. Please use UARateAppActionDefaultRegistryAlias.
+
+// Deprecated - to be removed in SDK version 14.0.
+NSString * const kUARateAppActionDefaultRegistryName = UARateAppActionDefaultRegistryName;
+NSString * const kUARateAppActionDefaultRegistryAlias = UARateAppActionDefaultRegistryAlias;
 
 int const kMaxTitleChars = 24;
 int const kMaxBodyChars = 50;

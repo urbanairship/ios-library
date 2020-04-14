@@ -29,27 +29,29 @@ NSString * const UAProximityRegionMinorKey = @"minor";
 NSString * const UAProximityRegionRSSIKey = @"rssi";
 NSString * const UACircularRegionKey = @"circular_region";
 NSString * const UACircularRegionRadiusKey = @"radius";
-NSString * const kUARegionEventType = UARegionEventType; // Deprecated – to be removed in SDK version 14.0. Please use UARegionEventType.
-double const kUARegionEventMaxLatitude = UARegionEventMaxLatitude; // Deprecated – to be removed in SDK version 14.0. Please use UARegionEventMaxLatitude.
-double const kUARegionEventMinLatitude = UARegionEventMinLatitude; // Deprecated – to be removed in SDK version 14.0. Please use UARegionEventMinLatitude.
-double const kUARegionEventMaxLongitude = UARegionEventMaxLongitude; // Deprecated – to be removed in SDK version 14.0. Please use UARegionEventMaxLongitude.
-double const kUARegionEventMinLongitude = UARegionEventMinLongitude; // Deprecated – to be removed in SDK version 14.0. Please use UARegionEventMinLongitude.
-NSUInteger const kUARegionEventMaxCharacters = UARegionEventMaxCharacters; // Deprecated – to be removed in SDK version 14.0. Please use UARegionEventMaxCharacters.
-NSUInteger const kUARegionEventMinCharacters = UARegionEventMinCharacters; // Deprecated – to be removed in SDK version 14.0. Please use UARegionEventMinCharacters.
-NSString * const kUARegionSourceKey = UARegionSourceKey; // Deprecated – to be removed in SDK version 14.0. Please use UARegionSourceKey.
-NSString * const kUARegionIDKey = UARegionIDKey; // Deprecated – to be removed in SDK version 14.0. Please use UARegionIDKey.
-NSString * const kUARegionBoundaryEventKey = UARegionBoundaryEventKey; // Deprecated – to be removed in SDK version 14.0. Please use UARegionBoundaryEventKey.
-NSString * const kUARegionBoundaryEventEnterValue = UARegionBoundaryEventEnterValue; // Deprecated – to be removed in SDK version 14.0. Please use UARegionBoundaryEventEnterValue.
-NSString * const kUARegionBoundaryEventExitValue = UARegionBoundaryEventExitValue; // Deprecated – to be removed in SDK version 14.0. Please use UARegionBoundaryEventExitValue.
-NSString * const kUARegionLatitudeKey = UARegionLatitudeKey; // Deprecated – to be removed in SDK version 14.0. Please use UARegionLatitudeKey.
-NSString * const kUARegionLongitudeKey = UARegionLongitudeKey; // Deprecated – to be removed in SDK version 14.0. Please use UARegionLongitudeKey.
-NSString * const kUAProximityRegionKey = UAProximityRegionKey; // Deprecated – to be removed in SDK version 14.0. Please use UAProximityRegionKey.
-NSString * const kUAProximityRegionIDKey = UAProximityRegionIDKey; // Deprecated – to be removed in SDK version 14.0. Please use UAProximityRegionIDKey.
-NSString * const kUAProximityRegionMajorKey = UAProximityRegionMajorKey; // Deprecated – to be removed in SDK version 14.0. Please use UAProximityRegionMajorKey.
-NSString * const kUAProximityRegionMinorKey = UAProximityRegionMinorKey; // Deprecated – to be removed in SDK version 14.0. Please use UAProximityRegionMinorKey.
-NSString * const kUAProximityRegionRSSIKey = UAProximityRegionRSSIKey; // Deprecated – to be removed in SDK version 14.0. Please use UAProximityRegionRSSIKey.
-NSString * const kUACircularRegionKey = UACircularRegionKey; // Deprecated – to be removed in SDK version 14.0. Please use UACircularRegionKey.
-NSString * const kUACircularRegionRadiusKey = UACircularRegionRadiusKey; // Deprecated – to be removed in SDK version 14.0. Please use UACircularRegionRadiusKey.
+
+// Deprecated - to be removed in SDK version 14.0.
+NSString * const kUARegionEventType = UARegionEventType;
+double const kUARegionEventMaxLatitude = UARegionEventMaxLatitude;
+double const kUARegionEventMinLatitude = UARegionEventMinLatitude;
+double const kUARegionEventMaxLongitude = UARegionEventMaxLongitude;
+double const kUARegionEventMinLongitude = UARegionEventMinLongitude;
+NSUInteger const kUARegionEventMaxCharacters = UARegionEventMaxCharacters;
+NSUInteger const kUARegionEventMinCharacters = UARegionEventMinCharacters;
+NSString * const kUARegionSourceKey = UARegionSourceKey;
+NSString * const kUARegionIDKey = UARegionIDKey;
+NSString * const kUARegionBoundaryEventKey = UARegionBoundaryEventKey;
+NSString * const kUARegionBoundaryEventEnterValue = UARegionBoundaryEventEnterValue;
+NSString * const kUARegionBoundaryEventExitValue = UARegionBoundaryEventExitValue;
+NSString * const kUARegionLatitudeKey = UARegionLatitudeKey;
+NSString * const kUARegionLongitudeKey = UARegionLongitudeKey;
+NSString * const kUAProximityRegionKey = UAProximityRegionKey;
+NSString * const kUAProximityRegionIDKey = UAProximityRegionIDKey;
+NSString * const kUAProximityRegionMajorKey = UAProximityRegionMajorKey;
+NSString * const kUAProximityRegionMinorKey = UAProximityRegionMinorKey;
+NSString * const kUAProximityRegionRSSIKey = UAProximityRegionRSSIKey;
+NSString * const kUACircularRegionKey = UACircularRegionKey;
+NSString * const kUACircularRegionRadiusKey = UACircularRegionRadiusKey;
 
 - (NSString *)eventType {
     return UARegionEventType;

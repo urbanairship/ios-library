@@ -8,8 +8,10 @@
 
 NSString * const UALandingPageActionDefaultRegistryName = @"landing_page_action";
 NSString * const UALandingPageActionDefaultRegistryAlias = @"^p";
-NSString * const kUALandingPageActionDefaultRegistryName = UALandingPageActionDefaultRegistryName; // Deprecated – to be removed in SDK version 14.0. Please use UALandingPageActionDefaultRegistryName.
-NSString * const kUALandingPageActionDefaultRegistryAlias = UALandingPageActionDefaultRegistryAlias; // Deprecated – to be removed in SDK version 14.0. Please use UALandingPageActionDefaultRegistryAlias.
+
+// Deprecated - to be removed in SDK version 14.0.
+NSString * const kUALandingPageActionDefaultRegistryName = UALandingPageActionDefaultRegistryName;
+NSString * const kUALandingPageActionDefaultRegistryAlias = UALandingPageActionDefaultRegistryAlias;
 
 @implementation UALandingPageAction
 
