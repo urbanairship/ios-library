@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="15505" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="LDr-Ef-g2S">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16096" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="LDr-Ef-g2S">
     <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15509"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16086"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -11,7 +11,7 @@
         <!--In-App Automation-->
         <scene sceneID="EqN-tZ-W2P">
             <objects>
-                <tableViewController title="In-App Automation" id="LDr-Ef-g2S" customClass="AutomationTableViewController" customModule="Airship" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController title="In-App Automation" id="LDr-Ef-g2S" customClass="AutomationTableViewController" customModule="AirshipDebug" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" delaysContentTouches="NO" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="44" estimatedRowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="eM8-Vl-VhJ">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="700"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -20,7 +20,7 @@
                         <color key="sectionIndexColor" red="0.039215686270000001" green="0.3411764706" blue="0.49019607840000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <color key="sectionIndexBackgroundColor" red="0.98823529409999999" green="0.69803921570000005" blue="0.1058823529" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="AutomationCell" rowHeight="44" id="nLv-OJ-oce" customClass="AutomationCell" customModule="Airship" customModuleProvider="target">
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="AutomationCell" rowHeight="44" id="nLv-OJ-oce" customClass="AutomationCell" customModule="AirshipDebug" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="28" width="600" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="nLv-OJ-oce" id="hfe-ao-9To">
@@ -92,7 +92,7 @@
         <!--Automation Detail View Controller-->
         <scene sceneID="CqA-mq-TcB">
             <objects>
-                <viewController id="xjZ-v8-uk7" customClass="AutomationDetailViewController" customModule="Airship" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="xjZ-v8-uk7" customClass="AutomationDetailViewController" customModule="AirshipDebug" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="MBG-Bx-194">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="647"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -101,7 +101,7 @@
                                 <rect key="frame" x="0.0" y="-10" width="375" height="667"/>
                                 <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="AutomationDetailCell" id="QT9-X2-ObJ" userLabel="DeviceInfoCell" customClass="AutomationDetailCell" customModule="Airship" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="AutomationDetailCell" id="QT9-X2-ObJ" userLabel="DeviceInfoCell" customClass="AutomationDetailCell" customModule="AirshipDebug" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="55.5" width="375" height="42.5"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="QT9-X2-ObJ" id="0qn-X9-RrZ">
@@ -139,7 +139,7 @@
                                             <outlet property="titleTopConstraint" destination="OYa-Ex-jig" id="V8X-oZ-zcy"/>
                                         </connections>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="AutomationDetailButtonCell" id="CvJ-3I-BI2" customClass="AutomationDetailButtonCell" customModule="Airship" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="AutomationDetailButtonCell" id="CvJ-3I-BI2" customClass="AutomationDetailButtonCell" customModule="AirshipDebug" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="98" width="375" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="CvJ-3I-BI2" id="AB1-Ux-yyd">
@@ -184,6 +184,7 @@
                         <segue destination="5Au-cP-MzP" kind="show" identifier="TextInfoSegue" id="8pW-vj-KTH"/>
                         <segue destination="YNs-jU-Dx2" kind="show" identifier="MediaSegue" id="J9h-EQ-5EU"/>
                         <segue destination="pbn-TJ-zyp" kind="show" identifier="ButtonsSegue" id="0x7-of-QMw"/>
+                        <segue destination="9Af-1z-XDC" kind="show" identifier="ExtrasSegue" id="5Rn-g8-66t"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="TfA-OK-tEa" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -193,7 +194,7 @@
         <!--Text Info Details-->
         <scene sceneID="u8t-xU-Haf">
             <objects>
-                <tableViewController id="5Au-cP-MzP" userLabel="Text Info Details" customClass="TextInfoDetailViewController" customModule="Airship" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController id="5Au-cP-MzP" userLabel="Text Info Details" customClass="TextInfoDetailViewController" customModule="AirshipDebug" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" delaysContentTouches="NO" dataMode="static" style="plain" separatorStyle="none" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="JyE-Ea-Asb">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="680"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -446,7 +447,7 @@
         <!--Media Info Details-->
         <scene sceneID="47J-Hb-9Dh">
             <objects>
-                <tableViewController id="YNs-jU-Dx2" customClass="MediaInfoDetailViewController" customModule="Airship" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController id="YNs-jU-Dx2" customClass="MediaInfoDetailViewController" customModule="AirshipDebug" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" delaysContentTouches="NO" dataMode="static" style="plain" separatorStyle="none" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="jpS-nX-G4H">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="680"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -615,7 +616,7 @@
         <!--Triggers-->
         <scene sceneID="RYp-7m-g2P">
             <objects>
-                <tableViewController title="Triggers" id="tF1-of-4MH" userLabel="Triggers" customClass="TriggerTableViewController" customModule="Airship" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController title="Triggers" id="tF1-of-4MH" userLabel="Triggers" customClass="TriggerTableViewController" customModule="AirshipDebug" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" delaysContentTouches="NO" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="44" estimatedRowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="l56-5D-2Ff">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="680"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -624,7 +625,7 @@
                         <color key="sectionIndexColor" red="0.039215686270000001" green="0.3411764706" blue="0.49019607840000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <color key="sectionIndexBackgroundColor" red="0.98823529409999999" green="0.69803921570000005" blue="0.1058823529" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="TriggerCell" rowHeight="44" id="5eK-qi-wN4" userLabel="TriggerCell" customClass="TriggerCell" customModule="Airship" customModuleProvider="target">
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="TriggerCell" rowHeight="44" id="5eK-qi-wN4" userLabel="TriggerCell" customClass="TriggerCell" customModule="AirshipDebug" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="28" width="600" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="5eK-qi-wN4" id="vEG-V7-6Ok">
@@ -682,7 +683,7 @@
         <!--Audience Details-->
         <scene sceneID="2PF-4C-YFM">
             <objects>
-                <tableViewController id="uOU-t3-Ak6" userLabel="Audience Details" customClass="AudienceDetailViewController" customModule="Airship" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController id="uOU-t3-Ak6" userLabel="Audience Details" customClass="AudienceDetailViewController" customModule="AirshipDebug" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" delaysContentTouches="NO" dataMode="static" style="plain" separatorStyle="none" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="7QS-mo-rJj">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="680"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -997,7 +998,7 @@
         <!--Buttons-->
         <scene sceneID="uir-iV-Ry2">
             <objects>
-                <tableViewController title="Buttons" id="pbn-TJ-zyp" customClass="ButtonsTableViewController" customModule="Airship" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController title="Buttons" id="pbn-TJ-zyp" customClass="ButtonsTableViewController" customModule="AirshipDebug" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" delaysContentTouches="NO" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="44" estimatedRowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="jbn-O9-wdP">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="680"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1006,7 +1007,7 @@
                         <color key="sectionIndexColor" red="0.039215686270000001" green="0.3411764706" blue="0.49019607840000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <color key="sectionIndexBackgroundColor" red="0.98823529409999999" green="0.69803921570000005" blue="0.1058823529" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="ButtonCell" rowHeight="44" id="EQh-7P-kot" customClass="ButtonCell" customModule="Airship" customModuleProvider="target">
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="ButtonCell" rowHeight="44" id="EQh-7P-kot" customClass="ButtonCell" customModule="AirshipDebug" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="28" width="600" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="EQh-7P-kot" id="MV8-g7-pks">
@@ -1065,7 +1066,7 @@
         <!--Button Details-->
         <scene sceneID="Fwg-MU-yzU">
             <objects>
-                <tableViewController id="nTg-Oo-Ei8" userLabel="Button Details" customClass="ButtonDetailViewController" customModule="Airship" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController id="nTg-Oo-Ei8" userLabel="Button Details" customClass="ButtonDetailViewController" customModule="AirshipDebug" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" delaysContentTouches="NO" dataMode="static" style="plain" separatorStyle="none" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="HZT-hN-Z3f">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="680"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1326,8 +1327,61 @@
             </objects>
             <point key="canvasLocation" x="4296" y="1229"/>
         </scene>
+        <!--Extras Detail View Controller-->
+        <scene sceneID="Xch-AT-m03">
+            <objects>
+                <tableViewController id="9Af-1z-XDC" customClass="ExtrasDetailViewController" customModule="AirshipDebug" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="pHx-O6-B4i">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="680"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <prototypes>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="ExtrasCell" id="lia-qa-49B" customClass="ExtrasCell" customModule="AirshipDebug" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="28" width="600" height="44"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="lia-qa-49B" id="e10-cJ-QgY">
+                                    <rect key="frame" x="0.0" y="0.0" width="600" height="44"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Extras Label" textAlignment="natural" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="M4j-7E-xAr" userLabel="Trigger Type">
+                                            <rect key="frame" x="0.0" y="0.0" width="600" height="44"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                                            <nil key="textColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                    </subviews>
+                                    <constraints>
+                                        <constraint firstAttribute="bottom" secondItem="M4j-7E-xAr" secondAttribute="bottom" id="5Cb-Pv-vuC"/>
+                                        <constraint firstItem="M4j-7E-xAr" firstAttribute="leading" secondItem="e10-cJ-QgY" secondAttribute="leading" id="AZK-Yh-lzE"/>
+                                        <constraint firstAttribute="trailing" secondItem="M4j-7E-xAr" secondAttribute="trailing" id="uid-UN-fn1"/>
+                                        <constraint firstItem="M4j-7E-xAr" firstAttribute="top" secondItem="e10-cJ-QgY" secondAttribute="top" id="uqO-xa-4Oi"/>
+                                    </constraints>
+                                </tableViewCellContentView>
+                                <connections>
+                                    <outlet property="extrasLabel" destination="M4j-7E-xAr" id="wV1-cl-344"/>
+                                </connections>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="9Af-1z-XDC" id="ra6-j6-M0S"/>
+                            <outlet property="delegate" destination="9Af-1z-XDC" id="J1n-GC-bvI"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" id="DdZ-Of-xnL">
+                        <userDefinedRuntimeAttributes>
+                            <userDefinedRuntimeAttribute type="string" keyPath="keyForLocalization" value="ua_automation_extras_detailview_title"/>
+                        </userDefinedRuntimeAttributes>
+                    </navigationItem>
+                    <value key="contentSizeForViewInPopover" type="size" width="600" height="600"/>
+                    <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+                    <size key="freeformSize" width="600" height="700"/>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="0mq-J0-Urk" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1984" y="-2129"/>
+        </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="15v-Sd-ysC"/>
+        <segue reference="8pW-vj-KTH"/>
     </inferredMetricsTieBreakers>
 </document>

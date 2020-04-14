@@ -189,6 +189,7 @@
 "ua_automation_audience_detailview_title" = "Audience Details";
 "ua_automation_buttons_tableview_title" = "Buttons";
 "ua_automation_button_detailview_title" = "Button Details";
+"ua_automation_extras_detailview_title" = "Extras Details";
 
 "ua_received_pushes_tableview_title" = "Received Pushes";
 
@@ -209,6 +210,7 @@
 "ua_message_name" = "Name";
 "ua_message_displaytype" = "Display Type";
 "ua_message_audience" = "Audience";
+"ua_message_extras" = "Extras";
 
 "ua_displaycontent_placement" = "Placement";
 "ua_displaycontent_contentlayout" = "Content Layout";

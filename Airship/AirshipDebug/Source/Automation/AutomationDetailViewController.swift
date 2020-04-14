@@ -79,7 +79,8 @@ class AutomationDetailViewController: UIViewController, UITableViewDelegate, UIT
     private let messageIdentifierIdx = IndexPath(row: 0, section: 1),
     nameIdx = IndexPath(row: 1, section: 1),
     displayTypeIdx = IndexPath(row: 2, section: 1),
-    audienceIdx = IndexPath(row: 3, section: 1)
+    audienceIdx = IndexPath(row: 3, section: 1),
+    extrasIdx = IndexPath(row: 4, section: 1)
 
     // Indexes section 2
     private let placementIdx = IndexPath(row: 0, section: 2),
@@ -117,7 +118,7 @@ class AutomationDetailViewController: UIViewController, UITableViewDelegate, UIT
         case scheduleSection:
             return 11
         case messageSection:
-            return 4
+            return 5
         case contentSection:
             return 14
         default:
@@ -197,6 +198,8 @@ class AutomationDetailViewController: UIViewController, UITableViewDelegate, UIT
             }
         case audienceIdx:
             performSegue(withIdentifier: AudienceDetailViewController.segueID, sender: indexPath)
+        case extrasIdx:
+            performSegue(withIdentifier: ExtrasDetailViewController.segueID, sender: indexPath)
         case headingIdx:
             performSegue(withIdentifier: TextInfoDetailViewController.segueID, sender: indexPath)
         case bodyIdx:
@@ -668,6 +671,10 @@ class AutomationDetailViewController: UIViewController, UITableViewDelegate, UIT
             if scheduleInfo.message.audience == nil {
                 collapsedCellPaths.addObjectIfNew(audienceIdx)
             }
+        case extrasIdx:
+            cell.title.text = "ua_message_extras".localized()
+            cell.subtitle.text = ""
+            cell.accessoryType = .disclosureIndicator
         default:
             break
         }
@@ -892,6 +899,17 @@ class AutomationDetailViewController: UIViewController, UITableViewDelegate, UIT
             default:
                 print("ERROR: unexpected audience info cell selected")
             }
+        case ExtrasDetailViewController.segueID:
+        guard let extrasDetailViewController = segue.destination as? ExtrasDetailViewController else {
+            fatalError("Unexpected destination: \(segue.destination)")
+        }
+
+        switch (selectedIdx) {
+        case extrasIdx:
+            extrasDetailViewController.message = message
+        default:
+            print("ERROR: unexpected extras info cell selected")
+        }
         default:
             print("ERROR: Unexpected Segue Identifier; \(segue.identifier ?? "unknown identifier")")
         }
