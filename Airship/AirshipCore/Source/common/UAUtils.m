@@ -30,6 +30,15 @@
 
 @implementation UAUtils
 
+NSString * const UAConnectionTypeNone = @"none";
+NSString * const UAConnectionTypeCell = @"cell";
+NSString * const UAConnectionTypeWifi = @"wifi";
+
+// Deprecated - to be removed in SDK version 14.0.
+NSString * const kUAConnectionTypeNone = UAConnectionTypeNone;
+NSString * const kUAConnectionTypeCell  = UAConnectionTypeCell;
+NSString * const kUAConnectionTypeWifi  = UAConnectionTypeWifi;
+
 + (NSString *)connectionType {
     SCNetworkReachabilityFlags flags;
     SCNetworkReachabilityRef reachabilityRef;
@@ -51,24 +60,24 @@
 
     // Return early if flags don't return, a connection is required, or the network is unreachable
     if (!success || (flags & kSCNetworkReachabilityFlagsReachable) == 0) {
-        return kUAConnectionTypeNone;
+        return UAConnectionTypeNone;
     }
 
-    NSString *connectionType = kUAConnectionTypeNone;
+    NSString *connectionType = UAConnectionTypeNone;
 
     if ((flags & kSCNetworkReachabilityFlagsConnectionRequired) == 0) {
-        connectionType = kUAConnectionTypeWifi;
+        connectionType = UAConnectionTypeWifi;
     }
 
     if ((((flags & kSCNetworkReachabilityFlagsConnectionOnDemand ) != 0) ||
          (flags & kSCNetworkReachabilityFlagsConnectionOnTraffic) != 0)) {
         if ((flags & kSCNetworkReachabilityFlagsInterventionRequired) == 0) {
-            connectionType = kUAConnectionTypeWifi;
+            connectionType = UAConnectionTypeWifi;
         }
     }
 
     if ((flags & kSCNetworkReachabilityFlagsIsWWAN) == kSCNetworkReachabilityFlagsIsWWAN) {
-        connectionType = kUAConnectionTypeCell;
+        connectionType = UAConnectionTypeCell;
     }
 
     return connectionType;

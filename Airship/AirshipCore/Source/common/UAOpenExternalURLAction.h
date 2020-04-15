@@ -2,9 +2,6 @@
 
 #import "UAAction.h"
 
-#define kUAOpenExternalURLActionDefaultRegistryName @"open_external_url_action"
-#define kUAOpenExternalURLActionDefaultRegistryAlias @"^u"
-
 /**
  * Represents the possible error conditions
  * when running a `UAOpenExternalURLAction`.
@@ -17,6 +14,30 @@ typedef NS_ENUM(NSInteger, UAOpenExternalURLActionErrorCode) {
 };
 
 NS_ASSUME_NONNULL_BEGIN
+
+/**
+ * Default registry name for open external URL action
+ */
+extern NSString * const UAOpenExternalURLActionDefaultRegistryName;
+
+/**
+ * Default registry alias for open external URL action
+ */
+extern NSString * const UAOpenExternalURLActionDefaultRegistryAlias;
+
+/**
+ * Default registry name for open external URL action
+ *
+ * @deprecated Deprecated – to be removed in SDK version 14.0. Please use UAOpenExternalURLActionDefaultRegistryName.
+*/
+extern NSString * const kUAOpenExternalURLActionDefaultRegistryName DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0. Please use UAOpenExternalURLActionDefaultRegistryName.");
+
+/**
+ * Default registry alias for open external URL action
+ *
+ * @deprecated Deprecated – to be removed in SDK version 14.0. Please use UAOpenExternalURLActionDefaultRegistryAlias.
+*/
+extern NSString * const kUAOpenExternalURLActionDefaultRegistryAlias DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0. Please use UAOpenExternalURLActionDefaultRegistryAlias.");
 
 /**
  * The domain for errors encountered when running a `UAOpenExternalURLAction`.

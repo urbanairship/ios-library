@@ -7,6 +7,7 @@
 
 @implementation UACustomEvent
 
+static NSString * const UAInteractionMCRAP = @"ua_mcrap";
 const NSUInteger UACustomEventCharacterLimit = 255;
 const NSUInteger UACustomEventMaxPropertiesCount = 100;
 const NSUInteger UACustomEventMaxPropertyCollectionSize = 20;
@@ -147,7 +148,7 @@ NSString *const UACustomEventTemplateTypeKey = @"template_type";
 
 - (void)setInteractionFromMessageCenterMessage:(NSString *)messageID {
     self.interactionID = messageID;
-    self.interactionType = kUAInteractionMCRAP;
+    self.interactionType = UAInteractionMCRAP;
 }
 
 - (NSDictionary *)data {

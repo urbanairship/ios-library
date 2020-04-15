@@ -102,7 +102,7 @@
 
     XCTAssertEqualObjects(regionID, [event.data objectForKey:@"region_id"], @"Unexpected region id.");
     XCTAssertEqualObjects(source, [event.data objectForKey:@"source"], @"Unexpected region source.");
-    XCTAssertEqualObjects(kUARegionBoundaryEventEnterValue, [event.data objectForKey:@"action"], @"Unexpected boundary event.");
+    XCTAssertEqualObjects(UARegionBoundaryEventEnterValue, [event.data objectForKey:@"action"], @"Unexpected boundary event.");
 }
 
 /**
@@ -124,7 +124,7 @@
 
     XCTAssertEqualObjects(regionID, [event.data objectForKey:@"region_id"], @"Unexpected region id.");
     XCTAssertEqualObjects(source, [event.data objectForKey:@"source"], @"Unexpected region source.");
-    XCTAssertEqualObjects(kUARegionBoundaryEventExitValue, [event.data objectForKey:@"action"], @"Unexpected boundary event.");
+    XCTAssertEqualObjects(UARegionBoundaryEventExitValue, [event.data objectForKey:@"action"], @"Unexpected boundary event.");
 
     XCTAssertEqualObjects(@"11.0", [[event.data objectForKey:@"circular_region"] objectForKey:@"radius"], @"Unexpected radius.");
     XCTAssertEqualObjects(@"45.5200000", [[event.data objectForKey:@"circular_region"] objectForKey:@"latitude"], @"Unexpected latitude.");

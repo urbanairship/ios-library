@@ -2,8 +2,6 @@
 
 #import <Foundation/Foundation.h>
 
-#define kUAKeychainDeviceIDKey @"com.urbanairship.deviceID"
-
 NS_ASSUME_NONNULL_BEGIN
 
 /**

@@ -8,6 +8,13 @@
 
 @implementation UAScheduleAction
 
+NSString * const UAScheduleActionDefaultRegistryName = @"schedule_actions";
+NSString * const UAScheduleActionDefaultRegistryAlias = @"^sa";
+
+// Deprecated - to be removed in SDK version 14.0.
+NSString * const kUAScheduleActionDefaultRegistryName = UAScheduleActionDefaultRegistryName;
+NSString * const kUAScheduleActionDefaultRegistryAlias = UAScheduleActionDefaultRegistryAlias;
+
 - (BOOL)acceptsArguments:(UAActionArguments *)arguments {
     switch (arguments.situation) {
         case UASituationManualInvocation:
@@ -22,7 +29,6 @@
             return NO;
     }
 }
-
 
 - (void)performWithArguments:(UAActionArguments *)arguments
            completionHandler:(UAActionCompletionHandler)completionHandler {

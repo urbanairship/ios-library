@@ -7,6 +7,10 @@
 #import "UAAnalytics+Internal.h"
 
 NSString * const UAAddCustomEventActionErrorDomain = @"UAAddCustomEventActionError";
+NSString * const UAAddCustomEventActionDefaultRegistryName = @"add_custom_event_action";
+
+// Deprecated - to be removed in SDK version 14.0.
+NSString * const kUAAddCustomEventActionDefaultRegistryName = UAAddCustomEventActionDefaultRegistryName;
 
 @implementation UAAddCustomEventAction
 

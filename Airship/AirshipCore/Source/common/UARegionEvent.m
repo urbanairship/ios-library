@@ -8,8 +8,53 @@
 
 @implementation UARegionEvent
 
+static NSString * const UARegionEventType = @"region_event";
+double const UARegionEventMaxLatitude = 90;
+double const UARegionEventMinLatitude = -90;
+double const UARegionEventMaxLongitude = 180;
+double const UARegionEventMinLongitude = -180;
+NSUInteger const UARegionEventMaxCharacters = 255;
+NSUInteger const UARegionEventMinCharacters = 1;
+NSString * const UARegionSourceKey = @"source";
+NSString * const UARegionIDKey = @"region_id";
+NSString * const UARegionBoundaryEventKey = @"action";
+NSString * const UARegionBoundaryEventEnterValue = @"enter";
+NSString * const UARegionBoundaryEventExitValue = @"exit";
+NSString * const UARegionLatitudeKey = @"latitude";
+NSString * const UARegionLongitudeKey = @"longitude";
+NSString * const UAProximityRegionKey = @"proximity";
+NSString * const UAProximityRegionIDKey = @"proximity_id";
+NSString * const UAProximityRegionMajorKey = @"major";
+NSString * const UAProximityRegionMinorKey = @"minor";
+NSString * const UAProximityRegionRSSIKey = @"rssi";
+NSString * const UACircularRegionKey = @"circular_region";
+NSString * const UACircularRegionRadiusKey = @"radius";
+
+// Deprecated - to be removed in SDK version 14.0.
+NSString * const kUARegionEventType = UARegionEventType;
+double const kUARegionEventMaxLatitude = UARegionEventMaxLatitude;
+double const kUARegionEventMinLatitude = UARegionEventMinLatitude;
+double const kUARegionEventMaxLongitude = UARegionEventMaxLongitude;
+double const kUARegionEventMinLongitude = UARegionEventMinLongitude;
+NSUInteger const kUARegionEventMaxCharacters = UARegionEventMaxCharacters;
+NSUInteger const kUARegionEventMinCharacters = UARegionEventMinCharacters;
+NSString * const kUARegionSourceKey = UARegionSourceKey;
+NSString * const kUARegionIDKey = UARegionIDKey;
+NSString * const kUARegionBoundaryEventKey = UARegionBoundaryEventKey;
+NSString * const kUARegionBoundaryEventEnterValue = UARegionBoundaryEventEnterValue;
+NSString * const kUARegionBoundaryEventExitValue = UARegionBoundaryEventExitValue;
+NSString * const kUARegionLatitudeKey = UARegionLatitudeKey;
+NSString * const kUARegionLongitudeKey = UARegionLongitudeKey;
+NSString * const kUAProximityRegionKey = UAProximityRegionKey;
+NSString * const kUAProximityRegionIDKey = UAProximityRegionIDKey;
+NSString * const kUAProximityRegionMajorKey = UAProximityRegionMajorKey;
+NSString * const kUAProximityRegionMinorKey = UAProximityRegionMinorKey;
+NSString * const kUAProximityRegionRSSIKey = UAProximityRegionRSSIKey;
+NSString * const kUACircularRegionKey = UACircularRegionKey;
+NSString * const kUACircularRegionRadiusKey = UACircularRegionRadiusKey;
+
 - (NSString *)eventType {
-    return kUARegionEventType;
+    return UARegionEventType;
 }
 
 - (UAEventPriority)priority {
@@ -18,12 +63,12 @@
 
 - (BOOL)isValid {
     if (![UARegionEvent regionEventCharacterCountIsValid:self.regionID]) {
-        UA_LERR(@"Region ID must not be greater than %d characters or less than %d character in length.", kUARegionEventMaxCharacters, kUARegionEventMinCharacters);
+        UA_LERR(@"Region ID must not be greater than %ld characters or less than %ld character in length.", (unsigned long) UARegionEventMaxCharacters, (unsigned long) UARegionEventMinCharacters);
         return NO;
     }
 
     if (![UARegionEvent regionEventCharacterCountIsValid:self.source]) {
-        UA_LERR(@"Region source must not be greater than %d characters or less than %d character in length.", kUARegionEventMaxCharacters, kUARegionEventMinCharacters);
+        UA_LERR(@"Region source must not be greater than %ld characters or less than %ld character in length.", (unsigned long) UARegionEventMaxCharacters, (unsigned long) UARegionEventMinCharacters);
         return NO;
     }
 
@@ -54,44 +99,44 @@
     NSMutableDictionary *proximityDictionary;
     NSMutableDictionary *circularRegionDictionary;;
 
-    [dictionary setValue:self.source forKey:kUARegionSourceKey];
-    [dictionary setValue:self.regionID forKey:kUARegionIDKey];
+    [dictionary setValue:self.source forKey:UARegionSourceKey];
+    [dictionary setValue:self.regionID forKey:UARegionIDKey];
 
     if (self.boundaryEvent == UABoundaryEventEnter) {
-        [dictionary setValue:kUARegionBoundaryEventEnterValue forKey:kUARegionBoundaryEventKey];
+        [dictionary setValue:UARegionBoundaryEventEnterValue forKey:UARegionBoundaryEventKey];
     }
     
     if (self.boundaryEvent == UABoundaryEventExit) {
-        [dictionary setValue:kUARegionBoundaryEventExitValue forKey:kUARegionBoundaryEventKey];
+        [dictionary setValue:UARegionBoundaryEventExitValue forKey:UARegionBoundaryEventKey];
     }
 
     if (self.proximityRegion.isValid) {
         proximityDictionary = [NSMutableDictionary dictionary];
 
-        [proximityDictionary setValue:self.proximityRegion.proximityID forKey:kUAProximityRegionIDKey];
-        [proximityDictionary setValue:self.proximityRegion.major forKey:kUAProximityRegionMajorKey];
-        [proximityDictionary setValue:self.proximityRegion.minor forKey:kUAProximityRegionMinorKey];
+        [proximityDictionary setValue:self.proximityRegion.proximityID forKey:UAProximityRegionIDKey];
+        [proximityDictionary setValue:self.proximityRegion.major forKey:UAProximityRegionMajorKey];
+        [proximityDictionary setValue:self.proximityRegion.minor forKey:UAProximityRegionMinorKey];
 
         if (self.proximityRegion.RSSI) {
-            [proximityDictionary setValue:self.proximityRegion.RSSI forKey:kUAProximityRegionRSSIKey];
+            [proximityDictionary setValue:self.proximityRegion.RSSI forKey:UAProximityRegionRSSIKey];
         }
 
         if (self.proximityRegion.latitude && self.proximityRegion.longitude) {
-            [proximityDictionary setValue:[NSString stringWithFormat:@"%.7f", self.proximityRegion.latitude.doubleValue] forKey:kUARegionLatitudeKey];
-            [proximityDictionary setValue:[NSString stringWithFormat:@"%.7f", self.proximityRegion.longitude.doubleValue] forKey:kUARegionLongitudeKey];
+            [proximityDictionary setValue:[NSString stringWithFormat:@"%.7f", self.proximityRegion.latitude.doubleValue] forKey:UARegionLatitudeKey];
+            [proximityDictionary setValue:[NSString stringWithFormat:@"%.7f", self.proximityRegion.longitude.doubleValue] forKey:UARegionLongitudeKey];
         }
 
-        [dictionary setValue:proximityDictionary forKey:kUAProximityRegionKey];
+        [dictionary setValue:proximityDictionary forKey:UAProximityRegionKey];
     }
 
     if (self.circularRegion.isValid) {
         circularRegionDictionary = [NSMutableDictionary dictionary];
 
-        [circularRegionDictionary setValue:[NSString stringWithFormat:@"%.1f", self.circularRegion.radius.doubleValue] forKey:kUACircularRegionRadiusKey];
-        [circularRegionDictionary setValue:[NSString stringWithFormat:@"%.7f", self.circularRegion.latitude.doubleValue] forKey:kUARegionLatitudeKey];
-        [circularRegionDictionary setValue:[NSString stringWithFormat:@"%.7f", self.circularRegion.longitude.doubleValue] forKey:kUARegionLongitudeKey];
+        [circularRegionDictionary setValue:[NSString stringWithFormat:@"%.1f", self.circularRegion.radius.doubleValue] forKey:UACircularRegionRadiusKey];
+        [circularRegionDictionary setValue:[NSString stringWithFormat:@"%.7f", self.circularRegion.latitude.doubleValue] forKey:UARegionLatitudeKey];
+        [circularRegionDictionary setValue:[NSString stringWithFormat:@"%.7f", self.circularRegion.longitude.doubleValue] forKey:UARegionLongitudeKey];
 
-        [dictionary setValue:circularRegionDictionary forKey:kUACircularRegionKey];
+        [dictionary setValue:circularRegionDictionary forKey:UACircularRegionKey];
     }
 
     return dictionary;
@@ -110,49 +155,49 @@
     NSMutableDictionary *proximityDictionary;
     NSMutableDictionary *circularRegionDictionary;;
 
-    [dictionary setValue:self.source forKey:kUARegionSourceKey];
-    [dictionary setValue:self.regionID forKey:kUARegionIDKey];
+    [dictionary setValue:self.source forKey:UARegionSourceKey];
+    [dictionary setValue:self.regionID forKey:UARegionIDKey];
 
     if (self.boundaryEvent == UABoundaryEventEnter) {
-        [dictionary setValue:kUARegionBoundaryEventEnterValue forKey:kUARegionBoundaryEventKey];
+        [dictionary setValue:UARegionBoundaryEventEnterValue forKey:UARegionBoundaryEventKey];
     }
 
     if (self.boundaryEvent == UABoundaryEventExit) {
-        [dictionary setValue:kUARegionBoundaryEventExitValue forKey:kUARegionBoundaryEventKey];
+        [dictionary setValue:UARegionBoundaryEventExitValue forKey:UARegionBoundaryEventKey];
     }
 
     if (self.proximityRegion) {
         proximityDictionary = [NSMutableDictionary dictionary];
 
-        [proximityDictionary setValue:self.proximityRegion.proximityID forKey:kUAProximityRegionIDKey];
-        [proximityDictionary setValue:self.proximityRegion.major forKey:kUAProximityRegionMajorKey];
-        [proximityDictionary setValue:self.proximityRegion.minor forKey:kUAProximityRegionMinorKey];
+        [proximityDictionary setValue:self.proximityRegion.proximityID forKey:UAProximityRegionIDKey];
+        [proximityDictionary setValue:self.proximityRegion.major forKey:UAProximityRegionMajorKey];
+        [proximityDictionary setValue:self.proximityRegion.minor forKey:UAProximityRegionMinorKey];
 
         if (self.proximityRegion.RSSI) {
-            [proximityDictionary setValue:self.proximityRegion.RSSI forKey:kUAProximityRegionRSSIKey];
+            [proximityDictionary setValue:self.proximityRegion.RSSI forKey:UAProximityRegionRSSIKey];
         }
 
         if (self.proximityRegion.latitude && self.proximityRegion.longitude) {
-            [proximityDictionary setValue:self.proximityRegion.latitude forKey:kUARegionLatitudeKey];
-            [proximityDictionary setValue:self.proximityRegion.longitude forKey:kUARegionLongitudeKey];
+            [proximityDictionary setValue:self.proximityRegion.latitude forKey:UARegionLatitudeKey];
+            [proximityDictionary setValue:self.proximityRegion.longitude forKey:UARegionLongitudeKey];
         }
 
-        [dictionary setValue:proximityDictionary forKey:kUAProximityRegionKey];
+        [dictionary setValue:proximityDictionary forKey:UAProximityRegionKey];
     }
 
     if (self.circularRegion) {
         circularRegionDictionary = [NSMutableDictionary dictionary];
-        [circularRegionDictionary setValue:self.circularRegion.radius forKey:kUACircularRegionRadiusKey];
-        [circularRegionDictionary setValue:self.circularRegion.latitude forKey:kUARegionLatitudeKey];
-        [circularRegionDictionary setValue:self.circularRegion.longitude forKey:kUARegionLongitudeKey];
-        [dictionary setValue:circularRegionDictionary forKey:kUACircularRegionKey];
+        [circularRegionDictionary setValue:self.circularRegion.radius forKey:UACircularRegionRadiusKey];
+        [circularRegionDictionary setValue:self.circularRegion.latitude forKey:UARegionLatitudeKey];
+        [circularRegionDictionary setValue:self.circularRegion.longitude forKey:UARegionLongitudeKey];
+        [dictionary setValue:circularRegionDictionary forKey:UACircularRegionKey];
     }
     
     return dictionary;
 }
 
 + (BOOL)regionEventRSSIIsValid:(NSNumber *)RSSI {
-    if (!RSSI || RSSI.doubleValue > kUAProximityRegionMaxRSSI || RSSI.doubleValue < kUAProximityRegionMinRSSI) {
+    if (!RSSI || RSSI.doubleValue > UAProximityRegionMaxRSSI || RSSI.doubleValue < UAProximityRegionMinRSSI) {
         return NO;
     }
 
@@ -160,7 +205,7 @@
 }
 
 + (BOOL)regionEventRadiusIsValid:(NSNumber *)radius {
-    if (!radius || radius.doubleValue > kUACircularRegionMaxRadius || radius.doubleValue < kUACircularRegionMinRadius) {
+    if (!radius || radius.doubleValue > UACircularRegionMaxRadius || radius.doubleValue < UACircularRegionMinRadius) {
         return NO;
     }
 
@@ -168,7 +213,7 @@
 }
 
 + (BOOL)regionEventLatitudeIsValid:(NSNumber *)latitude {
-    if (!latitude || latitude.doubleValue > kUARegionEventMaxLatitude || latitude.doubleValue < kUARegionEventMinLatitude) {
+    if (!latitude || latitude.doubleValue > UARegionEventMaxLatitude || latitude.doubleValue < UARegionEventMinLatitude) {
         return NO;
     }
 
@@ -176,7 +221,7 @@
 }
 
 + (BOOL)regionEventLongitudeIsValid:(NSNumber *)longitude {
-    if (!longitude || longitude.doubleValue > kUARegionEventMaxLongitude || longitude.doubleValue < kUARegionEventMinLongitude) {
+    if (!longitude || longitude.doubleValue > UARegionEventMaxLongitude || longitude.doubleValue < UARegionEventMinLongitude) {
         return NO;
     }
 
@@ -184,7 +229,7 @@
 }
 
 + (BOOL)regionEventCharacterCountIsValid:(NSString *)string {
-    if (!string || string.length > kUARegionEventMaxCharacters || string.length < kUARegionEventMinCharacters) {
+    if (!string || string.length > UARegionEventMaxCharacters || string.length < UARegionEventMinCharacters) {
         return NO;
     }
     

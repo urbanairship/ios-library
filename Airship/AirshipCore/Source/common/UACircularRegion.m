@@ -6,6 +6,13 @@
 
 @implementation UACircularRegion
 
+double const UACircularRegionMaxRadius = 100000; // 100 kilometers
+double const UACircularRegionMinRadius = 0.1; // 100 millimeters
+
+// Deprecated - to be removed in SDK version 14.0.
+double const kUACircularRegionMaxRadius = UACircularRegionMaxRadius;
+double const kUACircularRegionMinRadius = UACircularRegionMinRadius;
+
 + (nullable instancetype)circularRegionWithRadius:(NSNumber *)radius latitude:(NSNumber *)latitude longitude:(NSNumber *)longitude {
 
     UACircularRegion *circularRegion = [[self alloc] init];
@@ -23,17 +30,17 @@
 
 - (BOOL)isValid {
     if (![UARegionEvent regionEventRadiusIsValid:self.radius]) {
-        UA_LERR(@"Circular region radius must not be greater than %d meters or less than %f meters.", kUACircularRegionMaxRadius, kUACircularRegionMinRadius);
+        UA_LERR(@"Circular region radius must not be greater than %f meters or less than %f meters.", UACircularRegionMaxRadius, UACircularRegionMinRadius);
         return NO;
     }
 
     if (![UARegionEvent regionEventLatitudeIsValid:self.latitude]) {
-        UA_LERR(@"Circular region latitude must not be greater than %d or less than %d degrees.", kUARegionEventMaxLatitude, kUARegionEventMinLatitude);
+        UA_LERR(@"Circular region latitude must not be greater than %f or less than %f degrees.", UARegionEventMaxLatitude, UARegionEventMinLatitude);
         return NO;
     }
 
     if (![UARegionEvent regionEventLongitudeIsValid:self.longitude]) {
-        UA_LERR(@"Circular region longitude must not be greater than %d or less than %d degrees.", kUARegionEventMaxLongitude, kUARegionEventMinLongitude);
+        UA_LERR(@"Circular region longitude must not be greater than %f or less than %f degrees.",  UARegionEventMaxLongitude, UARegionEventMinLongitude);
         return NO;
     }
 

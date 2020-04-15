@@ -23,7 +23,7 @@
 }
 
 - (WKNavigation *)loadRequest:(NSURLRequest *)request {
-    if ([[UAUtils connectionType] isEqualToString:kUAConnectionTypeNone]) {
+    if ([[UAUtils connectionType] isEqualToString:UAConnectionTypeNone]) {
         // If we have no connection, modify the request object to prefer the most agressive cache policy
         NSMutableURLRequest *modifiedRequest = [request mutableCopy];
         modifiedRequest.cachePolicy = NSURLRequestReturnCacheDataElseLoad;

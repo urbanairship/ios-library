@@ -6,6 +6,13 @@
 
 @implementation UAProximityRegion
 
+double const UAProximityRegionMaxRSSI = 100; // 100 dBm
+double const UAProximityRegionMinRSSI = -100; // -100 dBm
+
+// Deprecated - to be removed in SDK version 14.0.
+double const kUAProximityRegionMaxRSSI = UAProximityRegionMaxRSSI;
+double const kUAProximityRegionMinRSSI = UAProximityRegionMinRSSI;
+
 + (instancetype)proximityRegionWithID:(NSString *)proximityID major:(NSNumber *)major minor:(NSNumber *)minor {
 
     UAProximityRegion *proximityRegion = [[self alloc] init];
@@ -25,7 +32,7 @@
     if (latitude != _latitude) {
 
         if (latitude && ![UARegionEvent regionEventLatitudeIsValid:latitude]) {
-            UA_LERR(@"Proximity region latitude must not be greater than %d or less than %d degrees.", kUARegionEventMaxLatitude, kUARegionEventMinLatitude);
+            UA_LERR(@"Proximity region latitude must not be greater than %f or less than %f degrees.", UARegionEventMaxLatitude, UARegionEventMinLatitude);
             return;
         }
 
@@ -37,7 +44,7 @@
     if (longitude != _longitude) {
 
         if (longitude && ![UARegionEvent regionEventLongitudeIsValid:longitude]) {
-            UA_LERR(@"Proximity region longitude must not be greater than %d or less than %d degrees.", kUARegionEventMaxLongitude, kUARegionEventMinLongitude);
+            UA_LERR(@"Proximity region longitude must not be greater than %f or less than %f degrees.", UARegionEventMaxLongitude, UARegionEventMinLongitude);
             return;
         }
 
@@ -49,7 +56,7 @@
     if (RSSI != _RSSI) {
 
         if (RSSI && ![UARegionEvent regionEventRSSIIsValid:RSSI]) {
-            UA_LERR(@"Proximity region RSSI must not be greater than %d or less than %d dBm.", kUAProximityRegionMaxRSSI, kUAProximityRegionMinRSSI);
+            UA_LERR(@"Proximity region RSSI must not be greater than %f or less than %f dBm.", UAProximityRegionMaxRSSI, UAProximityRegionMinRSSI);
             return;
         }
 
@@ -74,7 +81,7 @@
     }
 
     if (![UARegionEvent regionEventCharacterCountIsValid:self.proximityID]) {
-        UA_LERR(@"Proximity region ID must not be greater than %d or less than %d characters in length.", kUARegionEventMaxCharacters, kUARegionEventMinCharacters);
+        UA_LERR(@"Proximity region ID must not be greater than %ld or less than %ld characters in length.", (unsigned long) UARegionEventMaxCharacters, (unsigned long) UARegionEventMinCharacters);
         return NO;
     }
 

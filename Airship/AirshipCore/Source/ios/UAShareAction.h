@@ -3,8 +3,6 @@
 #import "UAAction.h"
 #import <UIKit/UIKit.h>
 
-#define kUAShareActionDefaultRegistryName @"share_action"
-#define kUAShareActionDefaultRegistryAlias @"^s"
 
 /**
  * Shares text using UAActivityViewController.
@@ -23,5 +21,29 @@
  *
  */
 @interface UAShareAction : UAAction
+
+/**
+ * Default registry name for share action.
+ */
+extern NSString * const UAShareActionDefaultRegistryName;
+
+/**
+ * Default registry alias for share action.
+ */
+extern NSString * const UAShareActionDefaultRegistryAlias;
+
+/**
+ * Default registry name for share action.
+ *
+ * @deprecated Deprecated – to be removed in SDK version 14.0. Please use UAShareActionDefaultRegistryName.
+*/
+extern NSString * const kUAShareActionDefaultRegistryName DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0. Please use UAShareActionDefaultRegistryName.");
+
+/**
+ * Default registry alias for share action.
+ *
+ * @deprecated Deprecated – to be removed in SDK version 14.0. Please use UAShareActionDefaultRegistryAlias.
+*/
+extern NSString * const kUAShareActionDefaultRegistryAlias DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0. Please use UAShareActionDefaultRegistryAlias.");
 
 @end

@@ -11,6 +11,13 @@
 
 @implementation UAShareAction
 
+NSString * const UAShareActionDefaultRegistryName = @"share_action";
+NSString * const UAShareActionDefaultRegistryAlias = @"^s";
+
+// Deprecated - to be removed in SDK version 14.0.
+NSString * const kUAShareActionDefaultRegistryName = UAShareActionDefaultRegistryName;
+NSString * const kUAShareActionDefaultRegistryAlias = UAShareActionDefaultRegistryAlias;
+
 - (BOOL)acceptsArguments:(UAActionArguments *)arguments {
 
     if (arguments.situation == UASituationBackgroundPush || arguments.situation == UASituationBackgroundInteractiveButton) {

@@ -2,6 +2,7 @@
 
 #import "UAScheduleTrigger+Internal.h"
 #import "UAAirshipAutomationCoreImport.h"
+#import "UARegionEvent+Internal.h"
 
 // JSON Keys
 NSString *const UAScheduleTriggerTypeKey = @"type";
@@ -57,7 +58,7 @@ NSString * const UAScheduleTriggerErrorDomain = @"com.urbanairship.schedule_trig
 
 + (instancetype)regionEnterTriggerForRegionID:(NSString *)regionID count:(NSUInteger)count {
     UAJSONValueMatcher *valueMatcher = [UAJSONValueMatcher matcherWhereStringEquals:regionID];
-    UAJSONMatcher *jsonMatcher = [UAJSONMatcher matcherWithValueMatcher:valueMatcher scope:@[kUARegionIDKey]];
+    UAJSONMatcher *jsonMatcher = [UAJSONMatcher matcherWithValueMatcher:valueMatcher scope:@[UARegionIDKey]];
     UAJSONPredicate *predicate = [UAJSONPredicate predicateWithJSONMatcher:jsonMatcher];
 
     return [UAScheduleTrigger triggerWithType:UAScheduleTriggerRegionEnter
@@ -67,7 +68,7 @@ NSString * const UAScheduleTriggerErrorDomain = @"com.urbanairship.schedule_trig
 
 + (instancetype)regionExitTriggerForRegionID:(NSString *)regionID count:(NSUInteger)count {
     UAJSONValueMatcher *valueMatcher = [UAJSONValueMatcher matcherWhereStringEquals:regionID];
-    UAJSONMatcher *jsonMatcher = [UAJSONMatcher matcherWithValueMatcher:valueMatcher scope:@[kUARegionIDKey]];
+    UAJSONMatcher *jsonMatcher = [UAJSONMatcher matcherWithValueMatcher:valueMatcher scope:@[UARegionIDKey]];
     UAJSONPredicate *predicate = [UAJSONPredicate predicateWithJSONMatcher:jsonMatcher];
 
     return [UAScheduleTrigger triggerWithType:UAScheduleTriggerRegionExit

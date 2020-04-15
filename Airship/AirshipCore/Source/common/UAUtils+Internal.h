@@ -5,10 +5,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-#define kUAConnectionTypeNone @"none"
-#define kUAConnectionTypeCell @"cell"
-#define kUAConnectionTypeWifi @"wifi"
-
 /**
  * The UAUtils object provides an interface for utility methods.
  */

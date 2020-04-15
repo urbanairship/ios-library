@@ -94,7 +94,7 @@
 
     [[[self.application stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateActive)] applicationState];
 
-    [[[self.utils stub] andReturnValue:OCMOCK_VALUE(kUAConnectionTypeCell)] connectionType];
+    [[[self.utils stub] andReturnValue:OCMOCK_VALUE(UAConnectionTypeCell)] connectionType];
 
     [[[self.push stub] andReturnValue:OCMOCK_VALUE(UAAuthorizationStatusNotDetermined)] authorizationStatus];
 
@@ -128,7 +128,7 @@
     [[[self.timeZone stub] andReturnValue:OCMOCK_VALUE((NSInteger)2000)] secondsFromGMT];
     [[[self.timeZone stub] andReturnValue:OCMOCK_VALUE(YES)] isDaylightSavingTime];
 
-    [[[self.utils stub] andReturnValue:OCMOCK_VALUE(kUAConnectionTypeCell)] connectionType];
+    [[[self.utils stub] andReturnValue:OCMOCK_VALUE(UAConnectionTypeCell)] connectionType];
 
     [(UIDevice *)[[self.currentDevice stub] andReturn:@"os version"]systemVersion];
 
@@ -165,7 +165,7 @@
     [[[self.analytics stub] andReturn:@"push ID"] conversionSendID];
     [[[self.analytics stub] andReturn:@"base64metadataString"] conversionPushMetadata];
 
-    [[[self.utils stub] andReturnValue:OCMOCK_VALUE(kUAConnectionTypeCell)] connectionType];
+    [[[self.utils stub] andReturnValue:OCMOCK_VALUE(UAConnectionTypeCell)] connectionType];
     
     NSDictionary *expectedData = @{@"connection_type": @"cell",
                                    @"push_id": @"push ID",

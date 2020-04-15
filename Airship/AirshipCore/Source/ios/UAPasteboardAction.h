@@ -2,9 +2,6 @@
 
 #import "UAAction.h"
 
-#define kUAPasteboardActionDefaultRegistryName @"clipboard_action"
-#define kUAPasteboardActionDefaultRegistryAlias @"^c"
-
 /**
  * Sets the pasteboard's string.
  *
@@ -22,5 +19,29 @@
  *
  */
 @interface UAPasteboardAction : UAAction
+
+/**
+ * Default registry name for pasteboard action.
+ */
+extern NSString * const UAPasteboardActionDefaultRegistryName;
+
+/**
+ * Default registry alias for pasteboard action.
+ */
+extern NSString * const UAPasteboardActionDefaultRegistryAlias;
+
+/**
+ * Default registry name for pasteboard action.
+ *
+ * @deprecated Deprecated – to be removed in SDK version 14.0. Please use UAPasteboardActionDefaultRegistryName.
+*/
+extern NSString * const kUAPasteboardActionDefaultRegistryName DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0. Please use UAPasteboardActionDefaultRegistryName.");
+
+/**
+ * Default registry alias for pasteboard action.
+ *
+ * @deprecated Deprecated – to be removed in SDK version 14.0. Please use UAPasteboardActionDefaultRegistryAlias.
+*/
+extern NSString * const kUAPasteboardActionDefaultRegistryAlias DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0. Please use UAPasteboardActionDefaultRegistryAlias.");
 
 @end

@@ -4,6 +4,12 @@
 #import "UAirship.h"
 #import "UAPush+Internal.h"
 
+NSString * const UAEnableFeatureActionDefaultRegistryName = @"enable_feature";
+NSString * const UAEnableFeatureActionDefaultRegistryAlias = @"^ef";
+
+// Deprecated - to be removed in SDK version 14.0.
+NSString * const kUAEnableFeatureActionDefaultRegistryName = UAEnableFeatureActionDefaultRegistryName;
+NSString * const kUAEnableFeatureActionDefaultRegistryAlias = UAEnableFeatureActionDefaultRegistryAlias;
 
 NSString *const UAEnableUserNotificationsActionValue = @"user_notifications";
 NSString *const UAEnableLocationActionValue = @"location";
