@@ -29,13 +29,13 @@ class ExtrasCell: UITableViewCell {
 }
 
 /**
- * The ExtrasTableViewController displays a a JSON of extras
+ * The ExtrasTableViewController displays a a JSON representation of extras
  * for debugging use.
  */
 class ExtrasDetailViewController: UITableViewController {
     public static let segueID = "ExtrasSegue"
     
-    /* The UAInAppMessageExtras to be displayed. */
+    /* The message containing the extras to be displayed. */
     public var message : UAInAppMessage?
 
     func setTableViewTheme() {
@@ -72,10 +72,7 @@ class ExtrasDetailViewController: UITableViewController {
             let extras: String? = String(data: data! as Data, encoding: String.Encoding.utf8)
             
             cell.extrasLabel.text = extras
-        } else {
-            cell.extrasLabel.text = "Extras is empty"
         }
-
-            return cell
-        }
+        return cell
+    }
 }

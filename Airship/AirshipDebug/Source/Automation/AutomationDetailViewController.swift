@@ -675,6 +675,9 @@ class AutomationDetailViewController: UIViewController, UITableViewDelegate, UIT
             cell.title.text = "ua_message_extras".localized()
             cell.subtitle.text = ""
             cell.accessoryType = .disclosureIndicator
+            if scheduleInfo.message.extras == nil {
+                collapsedCellPaths.addObjectIfNew(extrasIdx)
+            }
         default:
             break
         }
