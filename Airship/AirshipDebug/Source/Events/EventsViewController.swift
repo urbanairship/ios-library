@@ -144,6 +144,10 @@ class EventsViewController:UIViewController, UITableViewDataSource, UITableViewD
         return displayEvents.count
     }
 
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        performSegue(withIdentifier: "eventDetailSegue", sender: self)
+    }
+
     func tableView(_ tableView:UITableView, cellForRowAt indexPath:IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier:"EventCell", for:indexPath) as! EventCell
         let event:Event

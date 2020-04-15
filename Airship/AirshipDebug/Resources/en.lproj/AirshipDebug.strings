@@ -169,7 +169,7 @@
 "ua_type_boolean" = "Boolean";
 "ua_type_number" = "Number";
 "ua_type_string" = "String";
-"ua_type_strings" = "Strings";
+"ua_type_json" = "JSON";
 
 "ua_alert_title_notice" = "Notice";
 "ua_alert_ok" = "OK";
@@ -268,11 +268,18 @@
 
 "ua_custom_property_error" = "Custom property must have a value";
 
-"ua_custom_event_add_error" = "Custom Event must have a name and value set before it can be added";
+"ua_custom_event_add_error" = "Custom Event must have a valid name and value set before it can be added";
 "ua_custom_event_set_custom_property_error" = "Custom event must have a name and a value before setting custom properties";
 "ua_custom_event_added" = "Custom Event added!";
 
-"ua_custom_strings_property" = "Add Custom Strings Property";
+"ua_custom_event_added_properties_title" = "Added Properties";
+"ua_custom_event_add_properties_title" = "Add Properties";
+"ua_custom_event_properties_title" = "Event Properties";
+
+"ua_custom_event_name_non_empty" = "Event name must be non-empty";
+"ua_custom_event_value_numeric" = "Custom event value must be a non-empty numeric";
+
+"ua_custom_json_property" = "Add Custom JSON Property";
 
 "ua_copied_to_clipboard" = "Copied to clipboard!";
 

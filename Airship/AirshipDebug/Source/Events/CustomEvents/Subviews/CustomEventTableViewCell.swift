@@ -15,7 +15,7 @@ class CustomEventTableViewCell: UITableViewCell {
         textInputField.textColor = ThemeManager.shared.currentTheme.PrimaryText
         backgroundColor = ThemeManager.shared.currentTheme.Background
     }
-    
+
     override func layoutSubviews() {
         super.layoutSubviews()
         self.setCellTheme()

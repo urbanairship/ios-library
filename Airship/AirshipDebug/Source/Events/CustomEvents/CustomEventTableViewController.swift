@@ -8,11 +8,24 @@ import AirshipCore
 import Airship
 #endif
 
+enum PropertyType:Int {
+    case boolean = 0
+    case number = 1
+    case string = 2
+    case json = 3
+}
+
+struct PendingProperty {
+    var identifier:String?
+    var value:Any?
+    var type:PropertyType?
+}
+
 class CustomEventTableViewController: UITableViewController, UITextFieldDelegate {
 
     @IBOutlet var cancelButton: UIBarButtonItem!
     @IBOutlet var doneButton: UIBarButtonItem!
-    
+
     var customEvent:UACustomEvent?
 
     var eventName:String?
@@ -21,7 +34,9 @@ class CustomEventTableViewController: UITableViewController, UITextFieldDelegate
     var interactionType:String?
     var transactionID:String?
 
-    private var orderedProperties:[(identifier:String, value:String)]?
+    var pendingProperties:[PendingProperty] = []
+
+    private var selectedIndexPath:IndexPath?
 
     private var isCleared:Bool = true
 
@@ -30,7 +45,7 @@ class CustomEventTableViewController: UITableViewController, UITextFieldDelegate
         case AddCustomEventProperties = 1
         case CustomEventProperties = 2
     }
-    
+
     fileprivate enum StandardEventRows : Int, CaseIterable {
         case EventName = 0
         case EventValue = 1
@@ -44,7 +59,8 @@ class CustomEventTableViewController: UITableViewController, UITextFieldDelegate
     }
 
     func setTableViewTheme() {
-        self.tableView.backgroundColor = ThemeManager.shared.currentTheme.Background
+        self.tableView.backgroundColor = ThemeManager.shared.currentTheme.SecondaryBackground
+
         self.navigationController?.navigationBar.titleTextAttributes = [.foregroundColor:ThemeManager.shared.currentTheme.NavigationBarText]
         self.navigationController?.navigationBar.barTintColor = ThemeManager.shared.currentTheme.NavigationBarBackground
     }
@@ -53,12 +69,12 @@ class CustomEventTableViewController: UITableViewController, UITextFieldDelegate
         super.viewWillAppear(animated)
         setTableViewTheme()
 
+        tableView.reloadData()
+
         self.cancelButton.tintColor = ThemeManager.shared.currentTheme.WidgetTint
         self.doneButton.tintColor = ThemeManager.shared.currentTheme.WidgetTint
-        
-        self.doneButton.isEnabled = (customEvent != nil)
 
-        generateOrderedProperties()
+        self.doneButton.isEnabled = (customEvent != nil)
     }
 
     override func viewDidLoad() {
@@ -73,31 +89,28 @@ class CustomEventTableViewController: UITableViewController, UITextFieldDelegate
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated);
-
         tableView.reloadData()
     }
 
-    func generateOrderedProperties() {
-        var orderedTuples:[(identifier:String, value:String)] = []
-
-        guard let unorderedProperties = self.customEvent?.properties else { return }
-
-        for (identifier, value) in unorderedProperties {
-            guard let stringID = identifier as? String else { continue }
-
-            orderedTuples.append((stringID, valueToString(value)))
-        }
-
-        orderedProperties = orderedTuples
-    }
-
     @IBAction func addEvent(_ sender: Any) {
-        if (customEvent == nil) {
+        guard let customEvent = customEvent else {
             displayMessage("ua_custom_event_add_error".localized())
             return
         }
 
-        UAirship.shared().analytics.add(customEvent!)
+        var properties:[String : Any] = customEvent.properties as! [String : Any]
+        for pp in pendingProperties {
+            if let ppId = pp.identifier {
+                properties[ppId] = pp.value
+            }
+        }
+
+        customEvent.properties = properties
+        customEvent.interactionID = interactionID
+        customEvent.interactionType = interactionType
+        customEvent.transactionID = transactionID
+
+        UAirship.shared().analytics.add(customEvent)
 
         displayMessage("ua_custom_event_added".localized())
 
@@ -107,7 +120,7 @@ class CustomEventTableViewController: UITableViewController, UITextFieldDelegate
     @IBAction func cancel(_ sender: Any) {
         self.dismiss(animated:true)
     }
-    
+
     func lazyLoadCustomEvent() {
         if (customEvent == nil) {
             customEvent = UACustomEvent(name: eventName!, value: NSDecimalNumber(string: eventValue!))
@@ -129,8 +142,8 @@ class CustomEventTableViewController: UITableViewController, UITextFieldDelegate
     }
 
     func displayMessage (_ messageString: String) {
-        let alertController = UIAlertController(title: "Notice", message: messageString, preferredStyle: .alert)
-        
+        let alertController = UIAlertController(title: "ua_alert_title_notice".localized(), message: messageString, preferredStyle: .alert)
+
         let completeAction = UIAlertAction(title: "ua_alert_ok".localized(), style: .cancel, handler:nil)
         alertController.addAction(completeAction)
 
@@ -144,7 +157,7 @@ class CustomEventTableViewController: UITableViewController, UITextFieldDelegate
             if textField.text != "" {
                 eventName = textField.text
             } else {
-                displayMessage("Event name must be non-empty")
+                displayMessage("ua_custom_event_name_non_empty".localized())
                 textField.text = nil
             }
             break
@@ -152,7 +165,7 @@ class CustomEventTableViewController: UITableViewController, UITextFieldDelegate
             if textField.text != "" && isNumeric(textField.text) {
                 eventValue = textField.text
             } else {
-                displayMessage("Custom event value must be a non-empty numeric")
+                displayMessage("ua_custom_event_value_numeric".localized())
                 textField.text = nil
             }
             break
@@ -197,7 +210,7 @@ class CustomEventTableViewController: UITableViewController, UITextFieldDelegate
     }
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        if customEvent != nil && customEvent!.properties.count > 0 {
+        if customEvent != nil && pendingProperties.count > 0 {
             return Sections.allCases.count
         }
 
@@ -211,11 +224,7 @@ class CustomEventTableViewController: UITableViewController, UITextFieldDelegate
         case Sections.AddCustomEventProperties.rawValue:
             return AddCustomEventRows.allCases.count
         case Sections.CustomEventProperties.rawValue:
-            if let customEvent = customEvent {
-                return customEvent.properties.count
-            } else {
-                return 0
-            }
+            return pendingProperties.count
         default:
             return 0
         }
@@ -252,12 +261,16 @@ class CustomEventTableViewController: UITableViewController, UITextFieldDelegate
         case (Sections.CustomEventProperties.rawValue):
             let cell = tableView.dequeueReusableCell(withIdentifier: "customPropertyCell", for: indexPath) as! CustomPropertyTableViewCell
             guard self.customEvent != nil else { return cell }
-            guard let orderedProperties = self.orderedProperties else { return cell }
 
-            let propertyTuple = orderedProperties[indexPath.row]
+            let pp = pendingProperties[indexPath.row]
 
-            cell.propertyIdentifierLabel?.text = propertyTuple.identifier
-            cell.propertyLabel?.text = propertyTuple.value
+            cell.propertyIdentifierLabel?.text = pp.identifier
+            cell.propertyLabel?.text = pp.type != .json ?
+                anyToString(pp.value!) : "ua_type_json".localized()
+
+
+            cell.isUserInteractionEnabled = true
+            cell.accessoryType = .disclosureIndicator
 
             return cell
         default:
@@ -269,29 +282,30 @@ class CustomEventTableViewController: UITableViewController, UITextFieldDelegate
 
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         super.tableView(tableView, titleForHeaderInSection: section)
-        
-        if section == 0 {
-            return "Event Properties"
-        }
 
-        return "Add Properties"
+        if section == 0 {
+            return "ua_custom_event_properties_title".localized()
+        } else if section == 1 {
+            return "ua_custom_event_add_properties_title".localized()
+        }
+        return "ua_custom_event_added_properties_title".localized()
     }
-    
+
     func customEventCell(indexPath: IndexPath, label: String, placeholder: String, text: String?) -> CustomEventTableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "customEventCell", for: indexPath) as! CustomEventTableViewCell
-        
+
         cell.eventPropertyLabel.text = label
         cell.textInputField.delegate = self
         cell.textInputField.placeholder = placeholder
         cell.textInputField.text = text
         cell.textInputField.tag = indexPath.row
         cell.textInputField.textColor = ThemeManager.shared.currentTheme.Background
-        
+
         return cell
     }
 
     // Helper to convert property to printable form
-    func valueToString(_ value:Any) -> String {
+    func anyToString(_ value:Any) -> String {
         if let numVal = value as? NSNumber, CFGetTypeID(numVal) != CFBooleanGetTypeID() {
             return String(describing:numVal)
         }
@@ -317,8 +331,23 @@ class CustomEventTableViewController: UITableViewController, UITextFieldDelegate
         }
     }
 
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            pendingProperties.remove(at: indexPath.row)
+
+            tableView.beginUpdates()
+            tableView.deleteRows(at: [indexPath], with: .fade)
+            if pendingProperties.count == 0 {
+                tableView.deleteSections([indexPath.section], with: .left)
+            }
+            tableView.endUpdates()
+        }
+    }
+
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if (indexPath.section == Sections.AddCustomEventProperties.rawValue && indexPath.row == AddCustomEventRows.AddCustomProperty.rawValue) {
+        selectedIndexPath = indexPath
+
+        if (indexPath.section == Sections.AddCustomEventProperties.rawValue || indexPath.section == Sections.CustomEventProperties.rawValue) {
             // Ensure a custom event is ready to add properties
             if (customEvent != nil) {
                 performSegue(withIdentifier: "addCustomPropertySegue", sender: self)
@@ -328,5 +357,19 @@ class CustomEventTableViewController: UITableViewController, UITextFieldDelegate
         }
 
         tableView.deselectRow(at: indexPath, animated: true)
+    }
+
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if (segue.identifier == "addCustomPropertySegue") {
+            let vc = segue.destination as! CustomPropertyAdderTableViewController
+
+            guard let selectedIndex = selectedIndexPath, selectedIndex.section != Sections.AddCustomEventProperties.rawValue, selectedIndex.row < pendingProperties.count else {
+                // Assume a new property
+                vc.pendingProperty = PendingProperty()
+                return
+            }
+
+            vc.pendingProperty = pendingProperties[selectedIndex.row]
+        }
     }
 }

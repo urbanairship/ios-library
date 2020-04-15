@@ -19,6 +19,7 @@ struct Event {
         "region_event" : "Region",
         "screen_tracking" : "Screen Tracking",
         "custom_event" : "Custom",
+        "enhanced_custom_event" : "Enhanced Custom",
         "in_app_resolution" : "In-app Resolution",
         "in_app_display" : "In-app Display",
         "app_background" : "Backgound",

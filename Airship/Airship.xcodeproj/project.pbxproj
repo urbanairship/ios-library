@@ -118,12 +118,8 @@
 		3CA0E2C0237CD05F00EE76CF /* SearchFooter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E242237CCBA600EE76CF /* SearchFooter.swift */; };
 		3CA0E2C1237CD05F00EE76CF /* EventsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E243237CCBA600EE76CF /* EventsViewController.swift */; };
 		3CA0E2C2237CD05F00EE76CF /* CustomEventTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E245237CCBA600EE76CF /* CustomEventTableViewCell.swift */; };
-		3CA0E2C3237CD05F00EE76CF /* CustomPropertyAddStringsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E246237CCBA600EE76CF /* CustomPropertyAddStringsTableViewController.swift */; };
-		3CA0E2C4237CD05F00EE76CF /* CustomPropertyStringsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E247237CCBA600EE76CF /* CustomPropertyStringsTableViewController.swift */; };
 		3CA0E2C5237CD05F00EE76CF /* CustomPropertyTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E248237CCBA600EE76CF /* CustomPropertyTableViewCell.swift */; };
-		3CA0E2C6237CD05F00EE76CF /* CustomPropertyTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E249237CCBA600EE76CF /* CustomPropertyTableViewController.swift */; };
 		3CA0E2C7237CD05F00EE76CF /* CustomEventTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E24A237CCBA600EE76CF /* CustomEventTableViewController.swift */; };
-		3CA0E2C8237CD05F00EE76CF /* CustomPropertyAdderTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E24B237CCBA600EE76CF /* CustomPropertyAdderTableViewCell.swift */; };
 		3CA0E2C9237CD05F00EE76CF /* EventsDetailTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E24C237CCBA600EE76CF /* EventsDetailTableViewController.swift */; };
 		3CA0E2CA237CD05F00EE76CF /* EventDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E24D237CCBA600EE76CF /* EventDataManager.swift */; };
 		3CA0E2CB237CD05F00EE76CF /* RootTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E229237CCBA600EE76CF /* RootTableViewController.swift */; };
@@ -257,6 +253,9 @@
 		454F9FAB235111A400296B16 /* UAAttributePendingMutations.m in Sources */ = {isa = PBXBuildFile; fileRef = 454F9FA7235111A400296B16 /* UAAttributePendingMutations.m */; };
 		454F9FAC235111A400296B16 /* UAAttributePendingMutations.m in Sources */ = {isa = PBXBuildFile; fileRef = 454F9FA7235111A400296B16 /* UAAttributePendingMutations.m */; };
 		454F9FB12351660700296B16 /* UAAttributePendingMutationsTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 454F9FB02351660700296B16 /* UAAttributePendingMutationsTest.m */; };
+		4568A6902446E0C100021E02 /* MultilineTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4568A68F2446E0C100021E02 /* MultilineTextField.swift */; };
+		4568A6932446E11500021E02 /* CustomPropertyAdderTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4568A6922446E11500021E02 /* CustomPropertyAdderTableViewCell.swift */; };
+		4569E2ED2444E11100F2FB5C /* CustomPropertyAdderTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4569E2EC2444E11000F2FB5C /* CustomPropertyAdderTableViewController.swift */; };
 		456A499E2344165900A46F1B /* UAAttributeMutations.h in Headers */ = {isa = PBXBuildFile; fileRef = 456A499C2344165900A46F1B /* UAAttributeMutations.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		456A499F2344165900A46F1B /* UAAttributeMutations.m in Sources */ = {isa = PBXBuildFile; fileRef = 456A499D2344165900A46F1B /* UAAttributeMutations.m */; };
 		45736629213617C800C5993A /* UAJSONSerialization.h in Headers */ = {isa = PBXBuildFile; fileRef = 45736627213617C800C5993A /* UAJSONSerialization.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -308,6 +307,7 @@
 		45C6913E238DC91900A03C94 /* AirshipExtendedActions.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 45C6912A238DC79400A03C94 /* AirshipExtendedActions.framework */; };
 		45C69141238DCC2700A03C94 /* AirshipExtendedActions.h in Headers */ = {isa = PBXBuildFile; fileRef = 45C6913F238DC93B00A03C94 /* AirshipExtendedActions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		45C69142238DCC4600A03C94 /* UAExtendedActionsModuleLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E27A7D52367AC3200F46B69 /* UAExtendedActionsModuleLoader.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		45CCE9BB2445412F00D264D4 /* PropertyCells.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45CCE9BA2445412F00D264D4 /* PropertyCells.swift */; };
 		45DCD83E2087C57C00BCF10F /* UAInAppMessageFullScreenStyleTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 45DCD83D2087C57C00BCF10F /* UAInAppMessageFullScreenStyleTest.m */; };
 		45FD231F2187C7B70056F111 /* UATestSystemVersion.m in Sources */ = {isa = PBXBuildFile; fileRef = 45FD23182187C7B70056F111 /* UATestSystemVersion.m */; };
 		53911BDD1E23EBA500EE7007 /* UAChannelCaptureActionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 53911BDC1E23EBA500EE7007 /* UAChannelCaptureActionTest.m */; };
@@ -2454,12 +2454,8 @@
 		3CA0E242237CCBA600EE76CF /* SearchFooter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchFooter.swift; sourceTree = "<group>"; };
 		3CA0E243237CCBA600EE76CF /* EventsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventsViewController.swift; sourceTree = "<group>"; };
 		3CA0E245237CCBA600EE76CF /* CustomEventTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomEventTableViewCell.swift; sourceTree = "<group>"; };
-		3CA0E246237CCBA600EE76CF /* CustomPropertyAddStringsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomPropertyAddStringsTableViewController.swift; sourceTree = "<group>"; };
-		3CA0E247237CCBA600EE76CF /* CustomPropertyStringsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomPropertyStringsTableViewController.swift; sourceTree = "<group>"; };
 		3CA0E248237CCBA600EE76CF /* CustomPropertyTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomPropertyTableViewCell.swift; sourceTree = "<group>"; };
-		3CA0E249237CCBA600EE76CF /* CustomPropertyTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomPropertyTableViewController.swift; sourceTree = "<group>"; };
 		3CA0E24A237CCBA600EE76CF /* CustomEventTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomEventTableViewController.swift; sourceTree = "<group>"; };
-		3CA0E24B237CCBA600EE76CF /* CustomPropertyAdderTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomPropertyAdderTableViewCell.swift; sourceTree = "<group>"; };
 		3CA0E24C237CCBA600EE76CF /* EventsDetailTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventsDetailTableViewController.swift; sourceTree = "<group>"; };
 		3CA0E24D237CCBA600EE76CF /* EventDataManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventDataManager.swift; sourceTree = "<group>"; };
 		3CA0E24E237CCBA600EE76CF /* DebugUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DebugUtils.swift; sourceTree = "<group>"; };
@@ -2571,6 +2567,9 @@
 		454F9FA6235111A400296B16 /* UAAttributePendingMutations+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "UAAttributePendingMutations+Internal.h"; path = "common/UAAttributePendingMutations+Internal.h"; sourceTree = "<group>"; };
 		454F9FA7235111A400296B16 /* UAAttributePendingMutations.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = UAAttributePendingMutations.m; path = common/UAAttributePendingMutations.m; sourceTree = "<group>"; };
 		454F9FB02351660700296B16 /* UAAttributePendingMutationsTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAAttributePendingMutationsTest.m; sourceTree = "<group>"; };
+		4568A68F2446E0C100021E02 /* MultilineTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultilineTextField.swift; sourceTree = "<group>"; };
+		4568A6922446E11500021E02 /* CustomPropertyAdderTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomPropertyAdderTableViewCell.swift; sourceTree = "<group>"; };
+		4569E2EC2444E11000F2FB5C /* CustomPropertyAdderTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomPropertyAdderTableViewController.swift; sourceTree = "<group>"; };
 		456A499C2344165900A46F1B /* UAAttributeMutations.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = UAAttributeMutations.h; path = common/UAAttributeMutations.h; sourceTree = "<group>"; };
 		456A499D2344165900A46F1B /* UAAttributeMutations.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = UAAttributeMutations.m; path = common/UAAttributeMutations.m; sourceTree = "<group>"; };
 		45736627213617C800C5993A /* UAJSONSerialization.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = UAJSONSerialization.h; path = common/UAJSONSerialization.h; sourceTree = "<group>"; };
@@ -2603,6 +2602,7 @@
 		45C6912F238DC7B300A03C94 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		45C6913F238DC93B00A03C94 /* AirshipExtendedActions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AirshipExtendedActions.h; sourceTree = "<group>"; };
 		45C6EC0B22653A11002AA7CC /* UALandingPageAction+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UALandingPageAction+Internal.h"; sourceTree = "<group>"; };
+		45CCE9BA2445412F00D264D4 /* PropertyCells.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PropertyCells.swift; sourceTree = "<group>"; };
 		45DCD80B208670F400BCF10F /* UAInAppMessageStyleProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UAInAppMessageStyleProtocol.h; sourceTree = "<group>"; };
 		45DCD8112086A68900BCF10F /* UAInAppMessageFullScreenStyle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UAInAppMessageFullScreenStyle.h; sourceTree = "<group>"; };
 		45DCD8122086A68900BCF10F /* UAInAppMessageFullScreenStyle.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageFullScreenStyle.m; sourceTree = "<group>"; };
@@ -3652,13 +3652,9 @@
 		3CA0E244237CCBA600EE76CF /* CustomEvents */ = {
 			isa = PBXGroup;
 			children = (
-				3CA0E245237CCBA600EE76CF /* CustomEventTableViewCell.swift */,
-				3CA0E246237CCBA600EE76CF /* CustomPropertyAddStringsTableViewController.swift */,
-				3CA0E247237CCBA600EE76CF /* CustomPropertyStringsTableViewController.swift */,
-				3CA0E248237CCBA600EE76CF /* CustomPropertyTableViewCell.swift */,
-				3CA0E249237CCBA600EE76CF /* CustomPropertyTableViewController.swift */,
 				3CA0E24A237CCBA600EE76CF /* CustomEventTableViewController.swift */,
-				3CA0E24B237CCBA600EE76CF /* CustomPropertyAdderTableViewCell.swift */,
+				4569E2EC2444E11000F2FB5C /* CustomPropertyAdderTableViewController.swift */,
+				4568A6912446E0C600021E02 /* Subviews */,
 			);
 			path = CustomEvents;
 			sourceTree = "<group>";
@@ -3818,6 +3814,18 @@
 				CC04F1EF1DC949D500B4842D /* NSOperationQueue+UAAdditions.m */,
 			);
 			name = Operations;
+			sourceTree = "<group>";
+		};
+		4568A6912446E0C600021E02 /* Subviews */ = {
+			isa = PBXGroup;
+			children = (
+				3CA0E245237CCBA600EE76CF /* CustomEventTableViewCell.swift */,
+				3CA0E248237CCBA600EE76CF /* CustomPropertyTableViewCell.swift */,
+				4568A68F2446E0C100021E02 /* MultilineTextField.swift */,
+				45CCE9BA2445412F00D264D4 /* PropertyCells.swift */,
+				4568A6922446E11500021E02 /* CustomPropertyAdderTableViewCell.swift */,
+			);
+			path = Subviews;
 			sourceTree = "<group>";
 		};
 		456A499B2344150F00A46F1B /* Attributes */ = {
@@ -6881,7 +6889,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 3CA0E420237E4A7B00EE76CF /* Build configuration list for PBXNativeTarget "AirshipMessageCenter" */;
 			buildPhases = (
-				3CA0E349237E4A7B00EE76CF /* ShellScript */,
+				3CA0E349237E4A7B00EE76CF /* Generate AirshipMessageCenterLib.h */,
 				3CA0E3A0237E4A7B00EE76CF /* Frameworks */,
 				3CA0E34A237E4A7B00EE76CF /* Sources */,
 				3CA0E3A1237E4A7B00EE76CF /* Headers */,
@@ -6901,7 +6909,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 45C69127238DC79400A03C94 /* Build configuration list for PBXNativeTarget "AirshipExtendedActions" */;
 			buildPhases = (
-				6EE773D8238F28D400E79944 /* ShellScript */,
+				6EE773D8238F28D400E79944 /* Generate AirshipExtendedActionsLib.h */,
 				45C6911B238DC79400A03C94 /* Sources */,
 				45C6911E238DC79400A03C94 /* Frameworks */,
 				45C69121238DC79400A03C94 /* Headers */,
@@ -6959,7 +6967,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 6E845374237E0271007D3B1E /* Build configuration list for PBXNativeTarget "AirshipAutomation" */;
 			buildPhases = (
-				6E845450237E072F007D3B1E /* ShellScript */,
+				6E845450237E072F007D3B1E /* Generate AirshipAutomationLib.h */,
 				6E8450FF237E0271007D3B1E /* Sources */,
 				6E8451F8237E0271007D3B1E /* Frameworks */,
 				6E8451FB237E0271007D3B1E /* Headers */,
@@ -7364,7 +7372,7 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		3CA0E349237E4A7B00EE76CF /* ShellScript */ = {
+		3CA0E349237E4A7B00EE76CF /* Generate AirshipMessageCenterLib.h */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -7396,7 +7404,7 @@
 			shellPath = /bin/sh;
 			shellScript = "\"$SRCROOT\"/AirshipCore/generate_header_imports.sh common ios\n";
 		};
-		6E845450237E072F007D3B1E /* ShellScript */ = {
+		6E845450237E072F007D3B1E /* Generate AirshipAutomationLib.h */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -7428,7 +7436,7 @@
 			shellPath = /bin/sh;
 			shellScript = "\"$SRCROOT\"/AirshipCore/generate_header_imports.sh common tvos\n";
 		};
-		6EE773D8238F28D400E79944 /* ShellScript */ = {
+		6EE773D8238F28D400E79944 /* Generate AirshipExtendedActionsLib.h */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -7538,6 +7546,7 @@
 				3CA0E2AF237CD05F00EE76CF /* AddTagsTableViewController.swift in Sources */,
 				6E21852B237D32B30084933A /* EventData.swift in Sources */,
 				3CA0E2B1237CD05F00EE76CF /* AddNamedUserTableViewController.swift in Sources */,
+				4568A6902446E0C100021E02 /* MultilineTextField.swift in Sources */,
 				6E6CC38423A3F9B4003D583C /* PushNotificationsDetailTableViewController.swift in Sources */,
 				3CA0E2B2237CD05F00EE76CF /* AddAssociatedIdentifiersTableViewController.swift in Sources */,
 				3CA0E2B3237CD05F00EE76CF /* TagsTableViewController.swift in Sources */,
@@ -7558,21 +7567,20 @@
 				3CA0E2C0237CD05F00EE76CF /* SearchFooter.swift in Sources */,
 				3CA0E2C1237CD05F00EE76CF /* EventsViewController.swift in Sources */,
 				3CA0E2C2237CD05F00EE76CF /* CustomEventTableViewCell.swift in Sources */,
-				3CA0E2C3237CD05F00EE76CF /* CustomPropertyAddStringsTableViewController.swift in Sources */,
-				3CA0E2C4237CD05F00EE76CF /* CustomPropertyStringsTableViewController.swift in Sources */,
 				3CA0E2C5237CD05F00EE76CF /* CustomPropertyTableViewCell.swift in Sources */,
-				3CA0E2C6237CD05F00EE76CF /* CustomPropertyTableViewController.swift in Sources */,
 				3CA0E2C7237CD05F00EE76CF /* CustomEventTableViewController.swift in Sources */,
-				3CA0E2C8237CD05F00EE76CF /* CustomPropertyAdderTableViewCell.swift in Sources */,
 				3CA0E2C9237CD05F00EE76CF /* EventsDetailTableViewController.swift in Sources */,
 				3CA0E2CA237CD05F00EE76CF /* EventDataManager.swift in Sources */,
 				83A674F823AA7AA4005C0C8F /* AirshipDebugPushData.xcdatamodeld in Sources */,
+				45CCE9BB2445412F00D264D4 /* PropertyCells.swift in Sources */,
 				3CA0E2CB237CD05F00EE76CF /* RootTableViewController.swift in Sources */,
 				3CA0E2CC237CD05F00EE76CF /* ThemeManager.swift in Sources */,
 				3CA0E2CD237CD05F00EE76CF /* AirshipDebug.swift in Sources */,
 				6E218529237D31720084933A /* AirshipEventData.xcdatamodeld in Sources */,
 				6E6CC38623A3F9B4003D583C /* PushDataManager.swift in Sources */,
 				3CA0E2CE237CD05F00EE76CF /* Theme.swift in Sources */,
+				4569E2ED2444E11100F2FB5C /* CustomPropertyAdderTableViewController.swift in Sources */,
+				4568A6932446E11500021E02 /* CustomPropertyAdderTableViewCell.swift in Sources */,
 				3CA0E2CF237CD05F00EE76CF /* DebugUtils.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

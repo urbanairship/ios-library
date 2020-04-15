@@ -14,3 +14,59 @@ internal extension Double {
         return dateFormatter.string(from: Date(timeIntervalSince1970:self))
     }
 }
+
+// MARK: Custom Event View Utils
+
+extension UITextField {
+    func applyCupertinoBorder(_ color:UIColor) {
+        self.layer.borderWidth = 1.0
+        self.layer.cornerRadius = 5
+        self.layer.borderColor = color.cgColor
+    }
+}
+
+extension UITextView {
+    func applyCupertinoBorder(_ color:UIColor) {
+        self.layer.borderWidth = 1.0
+        self.layer.cornerRadius = 5
+        self.layer.borderColor = color.cgColor
+    }
+}
+
+extension Int {
+    func segmentIndexToType() -> PropertyType {
+        switch self {
+        case 0:
+            return .boolean
+        case 1:
+            return .number
+        case 2:
+            return .string
+        case 3:
+            return .json
+        default:
+            return .boolean
+        }
+    }
+}
+
+extension String {
+    func prettyJSONFormat() -> String? {
+        guard let strData = self.data(using: .utf8) else { return nil }
+        guard let obj = try? JSONSerialization.jsonObject(with: strData, options : .allowFragments) else { return nil }
+
+        if (JSONSerialization.isValidJSONObject(obj)) {
+            guard let data = try? JSONSerialization.data(withJSONObject:obj, options:.prettyPrinted) else { return nil }
+            return String(data: data, encoding: .utf8)
+        }
+        return nil
+    }
+
+    func isNumeric() -> Bool {
+        let scanner = Scanner(string: self)
+
+        scanner.locale = NSLocale.current
+
+        return scanner.scanDecimal(nil) && scanner.isAtEnd
+    }
+}

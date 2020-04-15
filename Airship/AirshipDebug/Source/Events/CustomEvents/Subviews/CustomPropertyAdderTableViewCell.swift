@@ -4,7 +4,7 @@ import UIKit
 
 class CustomPropertyAdderTableViewCell: UITableViewCell {
     @IBOutlet weak var label: UILabel!
-    
+
     override func awakeFromNib() {
         super.awakeFromNib()
         self.isUserInteractionEnabled = true

@@ -5,7 +5,7 @@ import UIKit
 class CustomPropertyTableViewCell: UITableViewCell {
     @IBOutlet weak var propertyIdentifierLabel: UILabel!
     @IBOutlet weak var propertyLabel: UILabel!
-    
+
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
     }
