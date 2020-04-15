@@ -48,6 +48,30 @@
     [self.extensions addObject:extension];
 }
 
+- (void)addDictionaryGetter:(NSString *)methodName value:(NSDictionary *)value {
+    NSString *extension;
+    
+    if (!value || ![NSJSONSerialization isValidJSONObject:value]) {
+        extension = [NSString stringWithFormat:@"_UAirship.%@ = function() {return null;};", methodName];
+        [self.extensions addObject:extension];
+        return;
+    }
+    
+    NSError *error;
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:value options:NSJSONWritingPrettyPrinted error:&error];
+  
+    if (error) {
+        extension = [NSString stringWithFormat:@"_UAirship.%@ = function() {return null;};", methodName];
+        [self.extensions addObject:extension];
+        return;
+    }
+    
+    NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+    extension = [NSString stringWithFormat:@"_UAirship.%@ = function() {return %@;};", methodName, jsonString];
+    
+    [self.extensions addObject:extension];
+}
+
 - (NSString *)build {
     NSString *js = @"var _UAirship = {};";
 

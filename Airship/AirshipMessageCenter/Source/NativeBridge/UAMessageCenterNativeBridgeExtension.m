@@ -36,6 +36,7 @@
     [js addStringGetter:@"getMessageTitle" value:message.title];
     [js addNumberGetter:@"getMessageSentDateMS" value:messageSentDateMS];
     [js addStringGetter:@"getMessageSentDate" value:messageSentDate];
+    [js addDictionaryGetter:@"getMessageExtras" value:message.extra];
     [js addStringGetter:@"getUserId" value:userData.username];
 }
 

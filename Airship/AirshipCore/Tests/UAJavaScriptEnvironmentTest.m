@@ -99,6 +99,21 @@
 }
 
 /**
+ * Test adding custom dictionary getters.
+ */
+- (void)testAddingDictionaryGetters {
+    UAJavaScriptEnvironment *environment = [[UAJavaScriptEnvironment alloc] init];
+    [environment addDictionaryGetter:@"nilDictionary" value:nil];
+    [environment addDictionaryGetter:@"dictionary" value:@{@"hey":@"there"}];
+
+    // Inject the JavaScript environment
+    [self.jsc evaluateScript:[environment build]];
+
+    XCTAssertEqualObjects(@"null", [self.jsc evaluateScript:@"UAirship.nilDictionary()"].toString);
+    XCTAssertEqualObjects(@{@"hey":@"there"}, [self.jsc evaluateScript:@"UAirship.dictionary()"].toDictionary);
+}
+
+/**
  * Tes running an action.
  */
 - (void)testRunAction {
