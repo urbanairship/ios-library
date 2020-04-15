@@ -9,11 +9,6 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /**
- * Type of the region event.
- */
-extern NSString * const UARegionEventType;
-
-/**
  * Maximum latitude for a region event.
  */
 extern double const UARegionEventMaxLatitude;
@@ -48,7 +43,7 @@ extern NSUInteger const UARegionEventMinCharacters;
  *
  * @deprecated Deprecated – to be removed in SDK version 14.0. Please use UARegionEventType.
 */
-extern NSString * const kUARegionEventType DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0. Please use UARegionEventType.");
+extern NSString * const kUARegionEventType DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0.");
 
 /**
  * Maximum latitude for a region event.
@@ -97,7 +92,7 @@ extern NSUInteger const kUARegionEventMinCharacters DEPRECATED_MSG_ATTRIBUTE("De
  *
  * @deprecated Deprecated – to be removed in SDK version 14.0. Please use UARegionSourceKey.
 */
-extern NSString * const kUARegionSourceKey DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0. Please use UARegionSourceKey.");
+extern NSString * const kUARegionSourceKey DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0.");
 
 /**
  *
@@ -105,84 +100,91 @@ extern NSString * const kUARegionSourceKey DEPRECATED_MSG_ATTRIBUTE("Deprecated 
  *
  * @deprecated Deprecated – to be removed in SDK version 14.0. Please use UARegionIDKey.
 */
-extern NSString * const kUARegionIDKey DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0. Please use UARegionIDKey.");
+extern NSString * const kUARegionIDKey DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0.");
 
 /**
  * Key for the type of a boundary event.
  *
  * @deprecated Deprecated – to be removed in SDK version 14.0. Please use UARegionBoundaryEventKey.
 */
-extern NSString * const kUARegionBoundaryEventKey DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0. Please use UARegionBoundaryEventKey.");
+extern NSString * const kUARegionBoundaryEventKey DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0.");
 
 /**
  * Value when entering a boundary.
  *
  * @deprecated Deprecated – to be removed in SDK version 14.0. Please use UARegionBoundaryEventEnterValue.
 */
-extern NSString * const kUARegionBoundaryEventEnterValue DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0. Please use UARegionBoundaryEventEnterValue.");
+extern NSString * const kUARegionBoundaryEventEnterValue DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0.");
 
 /**
  * Value when exiting a boundary.
  *
  * @deprecated Deprecated – to be removed in SDK version 14.0. Please use UARegionBoundaryEventExitValue.
 */
-extern NSString * const kUARegionBoundaryEventExitValue DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0. Please use UARegionBoundaryEventExitValue.");
+extern NSString * const kUARegionBoundaryEventExitValue DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0.");
 
 /**
  * Key for the latitude of the region event.
  *
  * @deprecated Deprecated – to be removed in SDK version 14.0. Please use UARegionLatitudeKey.
 */
-extern NSString * const kUARegionLatitudeKey DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0. Please use UARegionLatitudeKey.");
+extern NSString * const kUARegionLatitudeKey DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0.");
 
 /**
  * Key for the longitude of the region event.
  *
  * @deprecated Deprecated – to be removed in SDK version 14.0. Please use UARegionLongitudeKey.
 */
-extern NSString * const kUARegionLongitudeKey DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0. Please use UARegionLongitudeKey.");
+extern NSString * const kUARegionLongitudeKey DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0.");
 
 /**
  * Key for the proximity dictionary of the region event.
  *
  * @deprecated Deprecated – to be removed in SDK version 14.0. Please use UAProximityRegionKey.
 */
-extern NSString * const kUAProximityRegionKey DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0. Please use UAProximityRegionKey.");
+extern NSString * const kUAProximityRegionKey DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0.");
 
 /**
  * Key for the proximity region id of the region event.
  *
  * @deprecated Deprecated – to be removed in SDK version 14.0. Please use UAProximityRegionIDKey.
 */
-extern NSString * const kUAProximityRegionIDKey DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0. Please use UAProximityRegionIDKey.");
+extern NSString * const kUAProximityRegionIDKey DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0.");
 
 /**
  * Key for the proximity major of th region event.
  *
  * @deprecated Deprecated – to be removed in SDK version 14.0. Please use UAProximityRegionMajorKey.
 */
-extern NSString * const kUAProximityRegionMajorKey DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0. Please use UAProximityRegionMajorKey.");
+extern NSString * const kUAProximityRegionMajorKey DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0.");
 
 /**
  * Key for the proximity minor of th region event.
  *
  * @deprecated Deprecated – to be removed in SDK version 14.0. Please use UAProximityRegionMinorKey.
 */
-extern NSString * const kUAProximityRegionMinorKey DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0. Please use UAProximityRegionMinorKey.");
+extern NSString * const kUAProximityRegionMinorKey DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0.");
 
 /**
  * Key for the proximity RSSI of the region event.
  *
  * @deprecated Deprecated – to be removed in SDK version 14.0. Please use UAProximityRegionRSSIKey.
 */
-extern NSString * const kUAProximityRegionRSSIKey DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0. Please use UAProximityRegionRSSIKey.");
+extern NSString * const kUAProximityRegionRSSIKey DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0.");
 
 /**
  * Key for the circular region dictionary of the region event.
  *
  * @deprecated Deprecated – to be removed in SDK version 14.0. Please use UACircularRegionKey.
 */
-extern NSString * const kUACircularRegionKey DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0. Please use UACircularRegionKey.");
+extern NSString * const kUACircularRegionKey DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0.");
+
+/**
+ * Key for the radius of the circular region of the region event.
+ *
+ * @deprecated Deprecated – to be removed in SDK version 14.0. Please use UACircularRegionRadiusKey.
+*/
+extern NSString * const kUACircularRegionRadiusKey DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0.");
 
 /**
  * Represents the boundary crossing event type.
@@ -238,14 +240,6 @@ typedef NS_ENUM(NSInteger, UABoundaryEvent) {
  * The event's JSON payload.
  */
 @property (nonatomic, readonly) NSDictionary *payload;
-
-/**
- * Key for the radius of the circular region of the region event.
- *
- * @deprecated Deprecated – to be removed in SDK version 14.0. Please use UACircularRegionRadiusKey.
-*/
-extern NSString * const kUACircularRegionRadiusKey DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0. Please use UACircularRegionRadiusKey.");
-
 
 ///---------------------------------------------------------------------------------------
 /// @name Region Event Factory

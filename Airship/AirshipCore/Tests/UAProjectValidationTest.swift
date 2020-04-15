@@ -131,7 +131,7 @@ class UAProjectValidationTest: XCTestCase {
 
         let filesWrongDirectory = filesFromTarget.subtracting(filesFromDirectories)
 
-        XCTAssertTrue(missingFilesFromTarget.isEmpty, "Missing: \(missingFilesFromTarget) from target")
+        XCTAssertTrue(missingFilesFromTarget.isEmpty, "Missing: \(missingFilesFromTarget) from target \(target)")
         XCTAssertTrue(filesWrongDirectory.isEmpty, "Files: \(filesWrongDirectory) not in source directories \(sourcePaths)")
     }
 }

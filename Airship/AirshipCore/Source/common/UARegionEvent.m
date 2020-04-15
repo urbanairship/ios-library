@@ -8,7 +8,7 @@
 
 @implementation UARegionEvent
 
-NSString * const UARegionEventType = @"region_event";
+static NSString * const UARegionEventType = @"region_event";
 double const UARegionEventMaxLatitude = 90;
 double const UARegionEventMinLatitude = -90;
 double const UARegionEventMaxLongitude = 180;

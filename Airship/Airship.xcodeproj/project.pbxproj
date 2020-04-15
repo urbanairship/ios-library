@@ -2205,6 +2205,10 @@
 		DF9FED0A1F75D64900C79417 /* UARemoteDataStoreTest.m in Sources */ = {isa = PBXBuildFile; fileRef = DF9FED091F75D64900C79417 /* UARemoteDataStoreTest.m */; };
 		DFB1EA1E22274F2700CDBD7E /* UAInAppMessageDefaultPrepareAssetsDelegateTest.m in Sources */ = {isa = PBXBuildFile; fileRef = DFB1EA1D22274F2700CDBD7E /* UAInAppMessageDefaultPrepareAssetsDelegateTest.m */; };
 		DFB1EA2022275AF100CDBD7E /* UAInAppMessageAssetsTest.m in Sources */ = {isa = PBXBuildFile; fileRef = DFB1EA1F22275AF100CDBD7E /* UAInAppMessageAssetsTest.m */; };
+		DFB9827A2447AE4900986802 /* UAKeychainUtils+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = DFB982752447AA9F00986802 /* UAKeychainUtils+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		DFB9827B2447AE4A00986802 /* UAKeychainUtils+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = DFB982752447AA9F00986802 /* UAKeychainUtils+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		DFB9827C2447AE7C00986802 /* UAKeychainUtils+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = DFB982752447AA9F00986802 /* UAKeychainUtils+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		DFB9827D2447AE7D00986802 /* UAKeychainUtils+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = DFB982752447AA9F00986802 /* UAKeychainUtils+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DFBBC7B11E36D80B00BA7315 /* UATextInputNotificationAction.m in Sources */ = {isa = PBXBuildFile; fileRef = DFBBC7AE1E36D80B00BA7315 /* UATextInputNotificationAction.m */; };
 		DFBBC7B21E36D80B00BA7315 /* UATextInputNotificationAction.h in Headers */ = {isa = PBXBuildFile; fileRef = DFBBC7AF1E36D80B00BA7315 /* UATextInputNotificationAction.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DFD442B61FD892AE002E4FA1 /* UAInAppMessageTagSelectorTest.m in Sources */ = {isa = PBXBuildFile; fileRef = DFD442B51FD892AE002E4FA1 /* UAInAppMessageTagSelectorTest.m */; };
@@ -3325,6 +3329,7 @@
 		DFB1EA1C2227377400CDBD7E /* UAInAppMessageAssets+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAInAppMessageAssets+Internal.h"; sourceTree = "<group>"; };
 		DFB1EA1D22274F2700CDBD7E /* UAInAppMessageDefaultPrepareAssetsDelegateTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageDefaultPrepareAssetsDelegateTest.m; sourceTree = "<group>"; };
 		DFB1EA1F22275AF100CDBD7E /* UAInAppMessageAssetsTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageAssetsTest.m; sourceTree = "<group>"; };
+		DFB982752447AA9F00986802 /* UAKeychainUtils+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "UAKeychainUtils+Internal.h"; path = "common/UAKeychainUtils+Internal.h"; sourceTree = "<group>"; };
 		DFBBC7AE1E36D80B00BA7315 /* UATextInputNotificationAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UATextInputNotificationAction.m; path = common/UATextInputNotificationAction.m; sourceTree = "<group>"; };
 		DFBBC7AF1E36D80B00BA7315 /* UATextInputNotificationAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UATextInputNotificationAction.h; path = common/UATextInputNotificationAction.h; sourceTree = "<group>"; };
 		DFD442A11FD77248002E4FA1 /* UAInAppMessageAudience.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageAudience.m; sourceTree = "<group>"; };
@@ -5211,6 +5216,7 @@
 				457F47A920ADDF7500DEEAD9 /* UAViewUtils.h */,
 				457F47AA20ADDF7500DEEAD9 /* UAViewUtils.m */,
 				CC40DBA01D8C996900BABD4F /* UAKeychainUtils.h */,
+				DFB982752447AA9F00986802 /* UAKeychainUtils+Internal.h */,
 				CC40DBA11D8C996900BABD4F /* UAKeychainUtils.m */,
 				3C4625A8235E9DB400E4CF54 /* UADisposable+Internal.h */,
 				CC40DB5C1D8C996900BABD4F /* UADisposable.h */,
@@ -5875,6 +5881,7 @@
 				DF9666741FB521B200CC243C /* UARemoteConfigManager+Internal.h in Headers */,
 				CC40DC1D1D8C996A00BABD4F /* UAActionRegistry+Internal.h in Headers */,
 				CC40DC201D8C996A00BABD4F /* UAActionRegistryEntry+Internal.h in Headers */,
+				DFB9827B2447AE4A00986802 /* UAKeychainUtils+Internal.h in Headers */,
 				DF5ED8D91F743E7E002DDA24 /* UARemoteDataPayload+Internal.h in Headers */,
 				CC40DC231D8C996A00BABD4F /* UAActionResult+Internal.h in Headers */,
 				6E93770B237625BF00AA9C2A /* UAirshipVersion.h in Headers */,
@@ -6162,6 +6169,7 @@
 				6EE770A2238F15D000E79944 /* UARemoteDataStore+Internal.h in Headers */,
 				6EE770A3238F15D000E79944 /* UAPushableComponent.h in Headers */,
 				6EE770A4238F15D000E79944 /* UAJavaScriptEnvironment.h in Headers */,
+				DFB9827D2447AE7D00986802 /* UAKeychainUtils+Internal.h in Headers */,
 				6EE770A5238F15D000E79944 /* UAActionResult.h in Headers */,
 				6EE770A6238F15D000E79944 /* UAJSONValueMatcher.h in Headers */,
 				6EE770A7238F15D000E79944 /* UAPadding.h in Headers */,
@@ -6512,6 +6520,7 @@
 				6EE77312238F197600E79944 /* UATagGroupsRegistrar+Internal.h in Headers */,
 				6EE77313238F197600E79944 /* UAAPNSRegistrationProtocol+Internal.h in Headers */,
 				6EE77314238F197600E79944 /* UAirship.h in Headers */,
+				DFB9827C2447AE7C00986802 /* UAKeychainUtils+Internal.h in Headers */,
 				6EE77315238F197600E79944 /* UAAppBackgroundEvent+Internal.h in Headers */,
 				6EE77316238F197600E79944 /* UAAppExitEvent+Internal.h in Headers */,
 				6EDD86F023ABF30E0031CCEA /* UANSDictionaryValueTransformer.h in Headers */,
@@ -6700,6 +6709,7 @@
 				99666DC11EDF2BE000BAE46B /* UAAPNSRegistrationProtocol+Internal.h in Headers */,
 				6E937716237625BF00AA9C2A /* UAirship.h in Headers */,
 				99666E391EDF2C8D00BAE46B /* UAAppBackgroundEvent+Internal.h in Headers */,
+				DFB9827A2447AE4900986802 /* UAKeychainUtils+Internal.h in Headers */,
 				99666E3B1EDF2C8D00BAE46B /* UAAppExitEvent+Internal.h in Headers */,
 				6E5EB9B4235A680400F8AEA0 /* UALocationModuleLoaderFactory.h in Headers */,
 				6EDD86F223ABF30E0031CCEA /* UANSDictionaryValueTransformer.h in Headers */,
@@ -6881,7 +6891,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 3CA0E420237E4A7B00EE76CF /* Build configuration list for PBXNativeTarget "AirshipMessageCenter" */;
 			buildPhases = (
-				3CA0E349237E4A7B00EE76CF /* ShellScript */,
+				3CA0E349237E4A7B00EE76CF /* Generate AirshipMessageCenterLib.h */,
 				3CA0E3A0237E4A7B00EE76CF /* Frameworks */,
 				3CA0E34A237E4A7B00EE76CF /* Sources */,
 				3CA0E3A1237E4A7B00EE76CF /* Headers */,
@@ -6901,7 +6911,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 45C69127238DC79400A03C94 /* Build configuration list for PBXNativeTarget "AirshipExtendedActions" */;
 			buildPhases = (
-				6EE773D8238F28D400E79944 /* ShellScript */,
+				6EE773D8238F28D400E79944 /* Generate AirshipExtendedActionsLib.h */,
 				45C6911B238DC79400A03C94 /* Sources */,
 				45C6911E238DC79400A03C94 /* Frameworks */,
 				45C69121238DC79400A03C94 /* Headers */,
@@ -6959,7 +6969,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 6E845374237E0271007D3B1E /* Build configuration list for PBXNativeTarget "AirshipAutomation" */;
 			buildPhases = (
-				6E845450237E072F007D3B1E /* ShellScript */,
+				6E845450237E072F007D3B1E /* Generate AirshipAutomationLib.h */,
 				6E8450FF237E0271007D3B1E /* Sources */,
 				6E8451F8237E0271007D3B1E /* Frameworks */,
 				6E8451FB237E0271007D3B1E /* Headers */,
@@ -7364,7 +7374,7 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		3CA0E349237E4A7B00EE76CF /* ShellScript */ = {
+		3CA0E349237E4A7B00EE76CF /* Generate AirshipMessageCenterLib.h */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -7396,7 +7406,7 @@
 			shellPath = /bin/sh;
 			shellScript = "\"$SRCROOT\"/AirshipCore/generate_header_imports.sh common ios\n";
 		};
-		6E845450237E072F007D3B1E /* ShellScript */ = {
+		6E845450237E072F007D3B1E /* Generate AirshipAutomationLib.h */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -7428,7 +7438,7 @@
 			shellPath = /bin/sh;
 			shellScript = "\"$SRCROOT\"/AirshipCore/generate_header_imports.sh common tvos\n";
 		};
-		6EE773D8238F28D400E79944 /* ShellScript */ = {
+		6EE773D8238F28D400E79944 /* Generate AirshipExtendedActionsLib.h */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (

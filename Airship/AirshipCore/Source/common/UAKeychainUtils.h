@@ -12,15 +12,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Keychain key for device ID.
- */
-extern NSString * const UAKeychainDeviceIDKey;
-
-/**
- * Keychain key for device ID.
  *
  * @deprecated Deprecated – to be removed in SDK version 14.0. Please use UAKeychainDeviceIDKey.
 */
-extern NSString * const kUAKeychainDeviceIDKey DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0. Please use UAKeychainDeviceIDKey.");
+extern NSString * const kUAKeychainDeviceIDKey DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0.");
 
 ///---------------------------------------------------------------------------------------
 /// @name Keychain Utils Internal Methods

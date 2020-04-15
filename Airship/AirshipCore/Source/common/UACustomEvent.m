@@ -7,7 +7,7 @@
 
 @implementation UACustomEvent
 
-NSString * const UAInteractionMCRAP = @"ua_mcrap";
+static NSString * const UAInteractionMCRAP = @"ua_mcrap";
 const NSUInteger UACustomEventCharacterLimit = 255;
 const NSUInteger UACustomEventMaxPropertiesCount = 100;
 const NSUInteger UACustomEventMaxPropertyCollectionSize = 20;
