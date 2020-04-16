@@ -100,9 +100,13 @@ class CustomEventTableViewController: UITableViewController, UITextFieldDelegate
 
         var properties:[String : Any] = customEvent.properties as! [String : Any]
         for pp in pendingProperties {
-            if let ppId = pp.identifier {
-                properties[ppId] = pp.value
+            guard let ppId = pp.identifier else { continue }
+            if (pp.type == .json) {
+                properties[ppId] = String(describing: pp.value!).JSONFormat()
+                continue
             }
+
+            properties[ppId] = pp.value
         }
 
         customEvent.properties = properties
@@ -299,7 +303,8 @@ class CustomEventTableViewController: UITableViewController, UITextFieldDelegate
         cell.textInputField.placeholder = placeholder
         cell.textInputField.text = text
         cell.textInputField.tag = indexPath.row
-        cell.textInputField.textColor = ThemeManager.shared.currentTheme.Background
+        cell.textInputField.textColor = ThemeManager.shared.currentTheme.PrimaryText
+        cell.textInputField.backgroundColor = ThemeManager.shared.currentTheme.Background
 
         return cell
     }

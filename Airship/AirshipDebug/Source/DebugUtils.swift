@@ -62,6 +62,14 @@ extension String {
         return nil
     }
 
+    func JSONFormat() -> Any? {
+        guard let strData = self.data(using: .utf8, allowLossyConversion: false) else { return nil }
+
+        guard let obj = try? JSONSerialization.jsonObject(with: strData, options : .fragmentsAllowed) else { return nil }
+
+        return obj
+    }
+
     func isNumeric() -> Bool {
         let scanner = Scanner(string: self)
 

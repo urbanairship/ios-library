@@ -128,6 +128,8 @@ class CustomPropertyAdderTableViewController: UITableViewController, UITextViewD
         }
 
         cell.textField.delegate = self
+        cell.textField.textColor = ThemeManager.shared.currentTheme.PrimaryText
+        cell.textField.backgroundColor = ThemeManager.shared.currentTheme.Background
 
         return cell
     }
@@ -154,6 +156,8 @@ class CustomPropertyAdderTableViewController: UITableViewController, UITextViewD
         }
 
         cell.numberField.delegate = self
+        cell.numberField.textColor = ThemeManager.shared.currentTheme.PrimaryText
+        cell.numberField.backgroundColor = ThemeManager.shared.currentTheme.Background
 
         return cell
     }
@@ -167,6 +171,8 @@ class CustomPropertyAdderTableViewController: UITableViewController, UITextViewD
         }
 
         cell.stringField.delegate = self
+        cell.stringField.textColor = ThemeManager.shared.currentTheme.PrimaryText
+        cell.stringField.backgroundColor = ThemeManager.shared.currentTheme.Background
 
         return cell
     }
@@ -180,6 +186,8 @@ class CustomPropertyAdderTableViewController: UITableViewController, UITextViewD
         }
 
         cell.multilineTextView.delegate = self
+        cell.multilineTextView.textColor = ThemeManager.shared.currentTheme.PrimaryText
+        cell.multilineTextView.backgroundColor = ThemeManager.shared.currentTheme.Background
 
         return cell
     }
