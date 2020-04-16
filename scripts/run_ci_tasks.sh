@@ -10,11 +10,11 @@ set -e
 set -x
 
 ROOT_PATH=`dirname "${0}"`/..
-AIRSHIP_VERSION=$(sh "$ROOT_PATH/scripts/airship_version.sh")
+AIRSHIP_VERSION=$(bash "$ROOT_PATH/scripts/airship_version.sh")
 
 source "$ROOT_PATH/scripts/config.sh"
 
-DEVELOPER_DIR=$(sh "$ROOT_PATH/scripts/get_xcode_path.sh" $2)
+DEVELOPER_DIR=$(bash "$ROOT_PATH/scripts/get_xcode_path.sh" $2)
 
 # Target iOS SDK when building the projects
 TARGET_SDK='iphonesimulator'
@@ -45,7 +45,7 @@ shopt -u nocasematch
 
 echo -ne "Running CI tasks in mode:${MODE} \n\n";
 
-sh $ROOT_PATH/scripts/install_pods.sh
+bash $ROOT_PATH/scripts/install_pods.sh
 
 ##################################################################################################
 # Tests

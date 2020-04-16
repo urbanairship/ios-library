@@ -60,6 +60,11 @@
 
         // Landing Page
         XCTAssertTrue([whitelist isWhitelisted:[NSURL URLWithString:@"https://dl.urbanairship.com/aaa/message_id"] scope:scope]);
+
+        // EU
+        XCTAssertTrue([whitelist isWhitelisted:[NSURL URLWithString:@"https://device-api.asnapieu.com/api/user/"] scope:scope]);
+        XCTAssertTrue([whitelist isWhitelisted:[NSURL URLWithString:@"https://sbux-dl.asnapieu.com/binary/token/"] scope:scope]);
+        XCTAssertTrue([whitelist isWhitelisted:[NSURL URLWithString:@"https://dl.asnapieu.com/aaa/message_id"] scope:scope]);
     }
 
     // YouTube
@@ -138,11 +143,8 @@
     [self.whitelist addEntry:@"https://www.urbanairship.com"];
     [self.whitelist addEntry:@"file:///asset.html"];
 
-
     // Reject
     XCTAssertFalse([self.whitelist isWhitelisted:[NSURL URLWithString:@"http://www.urbanairship.com"]]);
-
-
 
     // Accept
     XCTAssertTrue([self.whitelist isWhitelisted:[NSURL URLWithString:@"https://www.urbanairship.com"]]);
@@ -165,7 +167,6 @@
  * Test host matching actually works.
  */
 - (void)testHost {
-
     XCTAssertTrue([self.whitelist addEntry:@"http://www.urbanairship.com"]);
     XCTAssertTrue([self.whitelist addEntry:@"http://oh.hi.marc"]);
 
@@ -173,7 +174,6 @@
     XCTAssertFalse([self.whitelist isWhitelisted:[NSURL URLWithString:@"http://oh.bye.marc"]]);
     XCTAssertFalse([self.whitelist isWhitelisted:[NSURL URLWithString:@"http://www.urbanairship.com.hackers.io"]]);
     XCTAssertFalse([self.whitelist isWhitelisted:[NSURL URLWithString:@"http://omg.www.urbanairship.com.hackers.io"]]);
-
 
     // Accept
     XCTAssertTrue([self.whitelist isWhitelisted:[NSURL URLWithString:@"http://www.urbanairship.com"]]);
@@ -272,7 +272,6 @@
 
 
     // Reject
-
     XCTAssertFalse([self.whitelist isWhitelisted:[NSURL URLWithString:@"https://what.urbanairship.com/reject.html"]]);
     XCTAssertFalse([self.whitelist isWhitelisted:[NSURL URLWithString:@"https://what.urbanairship.com/anythingHTML/image.png"]]);
     XCTAssertFalse([self.whitelist isWhitelisted:[NSURL URLWithString:@"https://what.urbanairship.com/anythingHTML/image.png"]]);
@@ -281,7 +280,6 @@
 
 
     // Accept
-
     XCTAssertTrue([self.whitelist isWhitelisted:[NSURL URLWithString:@"https://what.urbanairship.com/anythingHTML/index.html"]]);
     XCTAssertTrue([self.whitelist isWhitelisted:[NSURL URLWithString:@"https://what.urbanairship.com/anythingHTML/test.html"]]);
     XCTAssertTrue([self.whitelist isWhitelisted:[NSURL URLWithString:@"https://what.urbanairship.com/anythingHTML/foo/bar/index.html"]]);
@@ -381,7 +379,7 @@
     // set up a simple whitelist
     [self.whitelist addEntry:@"https://*.urbanairship.com"];
     [self.whitelist addEntry:@"https://*.youtube.com" scope:UAWhitelistScopeOpenURL];
-    
+
     // Matching URL to be checked
     NSURL *matchingURLToReject = [NSURL URLWithString:@"https://www.youtube.com/watch?v=sYd_-pAfbBw"];
     NSURL *matchingURLToAccept = [NSURL URLWithString:@"https://device-api.urbanairship.com/api/user"];
@@ -425,7 +423,6 @@
     XCTAssertTrue([self.whitelist isWhitelisted:matchingURLToReject scope:scope]);
     XCTAssertTrue([self.whitelist isWhitelisted:matchingURLToAccept scope:scope]);
     XCTAssertFalse([self.whitelist isWhitelisted:nonMatchingURL scope:scope]);
-
 }
 
 @end

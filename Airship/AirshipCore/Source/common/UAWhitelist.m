@@ -66,6 +66,8 @@ typedef BOOL (^UAWhitelistMatcher)(NSURL *);
 
     [whitelist addEntry:@"https://*.urbanairship.com"];
 
+    [whitelist addEntry:@"https://*.asnapieu.com"];
+
     // Add YouTube only for the open URL scope
     [whitelist addEntry:@"https://*.youtube.com" scope:UAWhitelistScopeOpenURL];
 
