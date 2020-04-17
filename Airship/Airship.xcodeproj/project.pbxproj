@@ -7476,13 +7476,12 @@
 			buildActionMask = 2147483647;
 			files = (
 			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-AirshipAccengageTests/Pods-AirshipAccengageTests-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/OCMock/OCMock.framework",
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-AirshipAccengageTests/Pods-AirshipAccengageTests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/OCMock.framework",
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-AirshipAccengageTests/Pods-AirshipAccengageTests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -7494,15 +7493,12 @@
 			buildActionMask = 2147483647;
 			files = (
 			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-AirshipCoreTests/Pods-AirshipCoreTests-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/OCMock/OCMock.framework",
-				"${BUILT_PRODUCTS_DIR}/XcodeEdit/XcodeEdit.framework",
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-AirshipCoreTests/Pods-AirshipCoreTests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/OCMock.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/XcodeEdit.framework",
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-AirshipCoreTests/Pods-AirshipCoreTests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
