@@ -436,6 +436,9 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
         [self.attributeRegistrar deletePendingMutations];
         self.attributeRegistrar.componentEnabled = NO;
     }
+
+    [self updateRegistration];
+
 }
 
 - (void)addChannelExtenderBlock:(UAChannelRegistrationExtenderBlock)extender {

@@ -890,7 +890,6 @@
     [self.mockTagGroupsRegistrar verify];
 }
 
-
 /**
  * Test updateChannelAttributes method if the channel component is disabled
  */
@@ -1049,6 +1048,15 @@
     [self.mockChannelRegistrar verify];
 
     XCTAssertTrue(completionHandlerCalled, @"Completion handler should be called.");
+}
+
+/**
+ * Test CRA is updated when data collection changes.
+ */
+- (void)testUpdateRegistrationOnDataCollectionChanged {
+    [[self.mockChannelRegistrar expect] registerForcefully:NO];
+    [self.channel onDataCollectionEnabledChanged];
+    [self.mockChannelRegistrar verify];
 }
 
 @end

@@ -1973,6 +1973,23 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     [self waitForTestExpectations];
 }
 
+- (void)testRegistrationPayloadEnabledTokenRegistrationDatOptOut {
+    [self.dataStore setBool:NO forKey:UAirshipDataCollectionEnabledKey];
+    NSData *token = [@"some-token" dataUsingEncoding:NSASCIIStringEncoding];
+    [self.push application:self.mockApplication didRegisterForRemoteNotificationsWithDeviceToken:token];
+
+    self.push.pushTokenRegistrationEnabled = YES;
+
+    UAChannelRegistrationPayload *payload = [[UAChannelRegistrationPayload alloc] init];
+    XCTestExpectation *extendedPayload = [self expectationWithDescription:@"extended payload"];
+    self.channelRegistrationExtenderBlock(payload, ^(UAChannelRegistrationPayload * _Nonnull payload) {
+        XCTAssertEqualObjects(@"736f6d652d746f6b656e", payload.pushAddress);
+        [extendedPayload fulfill];
+    });
+
+    [self waitForTestExpectations];
+}
+
 /**
  * Test auto badge is added to the CRA payload.
  */

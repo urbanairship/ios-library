@@ -779,7 +779,7 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
 
 - (void)extendChannelRegistrationPayload:(UAChannelRegistrationPayload *)payload
                        completionHandler:(UAChannelRegistrationExtenderCompletionHandler)completionHandler {
-    if (self.pushTokenRegistrationEnabled && self.isDataCollectionEnabled) {
+    if (self.pushTokenRegistrationEnabled) {
         payload.pushAddress = self.deviceToken;
     }
 
