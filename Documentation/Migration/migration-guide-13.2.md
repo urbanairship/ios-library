@@ -6,17 +6,18 @@ Airship SDK 13.2 is a minor update that makes a few non-breaking changes to the 
 
 ## Message Center Changes
 
-The default Message Center view controllers have been overhauled, to improve code quality and readability. Because
-this involves some changes to the public APIs, rather than replacing them outright, the following classes are
-marked deprecated as of SDK 13.2:
+The default Message Center view controllers have been overhauled to improve code quality and readability. Because
+this involves some changes to the public APIs, rather than replacing them outright, the following classes and
+protocols are marked deprecated as of SDK 13.2:
 
 ### Deprecated
 
 * `UAMessageCenterSplitViewController`
 * `UAMessageCenterListViewController`
 * `UAMessageCenterMessageViewController`
+* `UAMessageCenterMessageViewProtocol`
 
-Instead of the deprecated classes, migrated integrations should use the following:
+Instead of the deprecated controller classes, migrated integrations should use the following:
 
 ### Added
 
@@ -24,7 +25,7 @@ Instead of the deprecated classes, migrated integrations should use the followin
 * `UADefaultMessageCenterListViewController`
 * `UADefaultMessageCenterMessageViewController`
 
-SDK 13.2 also adds new protocols to make it easier to create custom interfaces with these controllers. Classes can sign up
+SDK 13.2 also adds new protocols to make it easier to create custom interfaces with these controllers. Objects can sign up
 as delegates for the default list view and message view controllers, in order to receive callbacks related to user message selections and
 message loading operations.
 
@@ -38,7 +39,7 @@ message loading operations.
 The type-specific property setters in the Custom Event API have been deprecated in favor of a single property on `UACustomEvent`, named `properties`.
 This property takes an `NSDictionary` mapping key strings to boolean, string, number, or string array values.
 
-### Deprecatd
+### Deprecated
 
 * `setBoolProperty:forKey:`
 * `setStringProperty:forKey:`
