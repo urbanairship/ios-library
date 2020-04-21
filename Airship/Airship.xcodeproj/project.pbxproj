@@ -315,7 +315,7 @@
 		45FD231F2187C7B70056F111 /* UATestSystemVersion.m in Sources */ = {isa = PBXBuildFile; fileRef = 45FD23182187C7B70056F111 /* UATestSystemVersion.m */; };
 		53911BDD1E23EBA500EE7007 /* UAChannelCaptureActionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 53911BDC1E23EBA500EE7007 /* UAChannelCaptureActionTest.m */; };
 		53BC50201E202FAA00E24306 /* UAChannelCaptureAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BC501F1E202FAA00E24306 /* UAChannelCaptureAction.m */; };
-		54DE2901247B2AF059E46862 /* Pods_AirshipCoreTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EBF83042659DAF0D42AD7A9E /* Pods_AirshipCoreTests.framework */; };
+		54DE2901247B2AF059E46862 /* Pods_AirshipTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EBF83042659DAF0D42AD7A9E /* Pods_AirshipTests.framework */; };
 		6E0B841C20227F01008A1F96 /* UAInAppMessageScheduleInfoTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E0B841B20227F01008A1F96 /* UAInAppMessageScheduleInfoTest.m */; };
 		6E0F6B722360FBA4001DE51B /* UARemoteDataProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E0F6B712360FBA4001DE51B /* UARemoteDataProvider.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E0F6B732360FBA4001DE51B /* UARemoteDataProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E0F6B712360FBA4001DE51B /* UARemoteDataProvider.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -2344,7 +2344,7 @@
 
 /* Begin PBXFileReference section */
 		07A9F5B3D35A6078949E4EAA /* Pods-AirshipKitTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AirshipKitTests.release.xcconfig"; path = "../Pods/Target Support Files/Pods-AirshipKitTests/Pods-AirshipKitTests.release.xcconfig"; sourceTree = "<group>"; };
-		0F55D47F540C142B0F469570 /* Pods-AirshipCoreTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AirshipCoreTests.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-AirshipCoreTests/Pods-AirshipCoreTests.debug.xcconfig"; sourceTree = "<group>"; };
+		0F55D47F540C142B0F469570 /* Pods-AirshipTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AirshipTests.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-AirshipTests/Pods-AirshipTests.debug.xcconfig"; sourceTree = "<group>"; };
 		1B0B43BA243389D20051CCF0 /* UALocationTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UALocationTest.m; sourceTree = "<group>"; };
 		1B8F1B6723CCBFA200BEE715 /* ACCInternalRequest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ACCInternalRequest.h; sourceTree = "<group>"; };
 		1B8F1B6823CCBFA200BEE715 /* ACCInternalRequest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ACCInternalRequest.m; sourceTree = "<group>"; };
@@ -2640,7 +2640,7 @@
 		53911BDC1E23EBA500EE7007 /* UAChannelCaptureActionTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAChannelCaptureActionTest.m; sourceTree = "<group>"; };
 		53BC501E1E202DED00E24306 /* UAChannelCaptureAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAChannelCaptureAction.h; path = ios/UAChannelCaptureAction.h; sourceTree = "<group>"; };
 		53BC501F1E202FAA00E24306 /* UAChannelCaptureAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAChannelCaptureAction.m; path = ios/UAChannelCaptureAction.m; sourceTree = "<group>"; };
-		62C67C80125440E0C4F9982D /* Pods-AirshipCoreTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AirshipCoreTests.release.xcconfig"; path = "../Pods/Target Support Files/Pods-AirshipCoreTests/Pods-AirshipCoreTests.release.xcconfig"; sourceTree = "<group>"; };
+		62C67C80125440E0C4F9982D /* Pods-AirshipTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AirshipTests.release.xcconfig"; path = "../Pods/Target Support Files/Pods-AirshipTests/Pods-AirshipTests.release.xcconfig"; sourceTree = "<group>"; };
 		6D0D4500368AC9710E0F37B7 /* Pods-AirshipAccengageTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AirshipAccengageTests.release.xcconfig"; path = "../Pods/Target Support Files/Pods-AirshipAccengageTests/Pods-AirshipAccengageTests.release.xcconfig"; sourceTree = "<group>"; };
 		6E0B841B20227F01008A1F96 /* UAInAppMessageScheduleInfoTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageScheduleInfoTest.m; sourceTree = "<group>"; };
 		6E0F6B712360FBA4001DE51B /* UARemoteDataProvider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = UARemoteDataProvider.h; path = common/UARemoteDataProvider.h; sourceTree = "<group>"; };
@@ -3119,7 +3119,7 @@
 		CC40DBFD1D8C996A00BABD4F /* UAJavaScriptCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAJavaScriptCommand.h; path = ios/UAJavaScriptCommand.h; sourceTree = "<group>"; };
 		CC40DBFE1D8C996A00BABD4F /* UAJavaScriptCommand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAJavaScriptCommand.m; path = ios/UAJavaScriptCommand.m; sourceTree = "<group>"; };
 		CC40DDB31D8CAF7300BABD4F /* AirshipConfig.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = AirshipConfig.xcconfig; sourceTree = "<group>"; };
-		CC64F0541D8B77E3009CEF27 /* AirshipCoreTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AirshipCoreTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		CC64F0541D8B77E3009CEF27 /* AirshipTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AirshipTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		CC64F0581D8B77E3009CEF27 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CC64F0611D8B781C009CEF27 /* CustomNotificationCategories.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = CustomNotificationCategories.plist; path = ../CustomNotificationCategories.plist; sourceTree = "<group>"; };
 		CC64F0621D8B781C009CEF27 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = ../Info.plist; sourceTree = "<group>"; };
@@ -3352,7 +3352,7 @@
 		E29D35E71DB93A59003C292F /* UAFetchDeviceInfoAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAFetchDeviceInfoAction.h; path = common/UAFetchDeviceInfoAction.h; sourceTree = "<group>"; };
 		E29D35E81DB93A59003C292F /* UAFetchDeviceInfoAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAFetchDeviceInfoAction.m; path = common/UAFetchDeviceInfoAction.m; sourceTree = "<group>"; };
 		E29D35EE1DB9751F003C292F /* UAFetchDeviceInfoActionTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAFetchDeviceInfoActionTest.m; sourceTree = "<group>"; };
-		EBF83042659DAF0D42AD7A9E /* Pods_AirshipCoreTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AirshipCoreTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EBF83042659DAF0D42AD7A9E /* Pods_AirshipTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AirshipTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -3462,7 +3462,7 @@
 				DF6AD3C61ED8A970006EB1DA /* JavaScriptCore.framework in Frameworks */,
 				DF6AD3C41ED8A969006EB1DA /* UserNotifications.framework in Frameworks */,
 				DF6AD3C21ED8A961006EB1DA /* WebKit.framework in Frameworks */,
-				54DE2901247B2AF059E46862 /* Pods_AirshipCoreTests.framework in Frameworks */,
+				54DE2901247B2AF059E46862 /* Pods_AirshipTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3484,8 +3484,8 @@
 				494DD9581B0EB677009C134E /* Products */,
 				3DE226EC24B13B38BA51B7B4 /* Pods-AirshipKitTests.debug.xcconfig */,
 				07A9F5B3D35A6078949E4EAA /* Pods-AirshipKitTests.release.xcconfig */,
-				0F55D47F540C142B0F469570 /* Pods-AirshipCoreTests.debug.xcconfig */,
-				62C67C80125440E0C4F9982D /* Pods-AirshipCoreTests.release.xcconfig */,
+				0F55D47F540C142B0F469570 /* Pods-AirshipTests.debug.xcconfig */,
+				62C67C80125440E0C4F9982D /* Pods-AirshipTests.release.xcconfig */,
 				C3AEC8D23AA7835AC1E74C9A /* Pods-AirshipAccengageTests.debug.xcconfig */,
 				6D0D4500368AC9710E0F37B7 /* Pods-AirshipAccengageTests.release.xcconfig */,
 			);
@@ -3950,7 +3950,7 @@
 			isa = PBXGroup;
 			children = (
 				494DD9571B0EB677009C134E /* AirshipCore.framework */,
-				CC64F0541D8B77E3009CEF27 /* AirshipCoreTests.xctest */,
+				CC64F0541D8B77E3009CEF27 /* AirshipTests.xctest */,
 				DF6DD6561E7A1EB8000C281A /* AirshipCore.framework */,
 				6E9375602376164600AA9C2A /* AirshipLocation.framework */,
 				3CA0E2AC237CCE2600EE76CF /* AirshipDebug.framework */,
@@ -5666,7 +5666,7 @@
 			isa = PBXGroup;
 			children = (
 				3261A7F4243CD73100ADBF6B /* CoreTelephony.framework */,
-				EBF83042659DAF0D42AD7A9E /* Pods_AirshipCoreTests.framework */,
+				EBF83042659DAF0D42AD7A9E /* Pods_AirshipTests.framework */,
 				45F651ACE8833830E1D2333D /* Pods_AirshipAccengageTests.framework */,
 			);
 			name = Frameworks;
@@ -7056,9 +7056,9 @@
 			productReference = 1BB4C00D239FB4700000559B /* Airship.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		CC64F0531D8B77E3009CEF27 /* AirshipCoreTests */ = {
+		CC64F0531D8B77E3009CEF27 /* AirshipTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = CC64F05E1D8B77E3009CEF27 /* Build configuration list for PBXNativeTarget "AirshipCoreTests" */;
+			buildConfigurationList = CC64F05E1D8B77E3009CEF27 /* Build configuration list for PBXNativeTarget "AirshipTests" */;
 			buildPhases = (
 				F177E7D1D04156E5342D8FCC /* [CP] Check Pods Manifest.lock */,
 				CC64F0501D8B77E3009CEF27 /* Sources */,
@@ -7075,9 +7075,9 @@
 				CC64F05B1D8B77E3009CEF27 /* PBXTargetDependency */,
 				6E65D5412396E12A00AF2D1A /* PBXTargetDependency */,
 			);
-			name = AirshipCoreTests;
-			productName = AirshipCoreTests;
-			productReference = CC64F0541D8B77E3009CEF27 /* AirshipCoreTests.xctest */;
+			name = AirshipTests;
+			productName = AirshipTests;
+			productReference = CC64F0541D8B77E3009CEF27 /* AirshipTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 		DF6DD4FE1E7A1EB8000C281A /* AirshipCore tvOS */ = {
@@ -7178,7 +7178,7 @@
 				6EE7725E238F197600E79944 /* Airship tvOS */,
 				494DD9561B0EB677009C134E /* AirshipCore */,
 				DF6DD4FE1E7A1EB8000C281A /* AirshipCore tvOS */,
-				CC64F0531D8B77E3009CEF27 /* AirshipCoreTests */,
+				CC64F0531D8B77E3009CEF27 /* AirshipTests */,
 				6E9373032376164600AA9C2A /* AirshipLocation */,
 				3CA0E298237CCE2600EE76CF /* AirshipDebug */,
 				6E8450FD237E0271007D3B1E /* AirshipAutomation */,
@@ -7494,15 +7494,15 @@
 			files = (
 			);
 			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-AirshipCoreTests/Pods-AirshipCoreTests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-AirshipTests/Pods-AirshipTests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-AirshipCoreTests/Pods-AirshipCoreTests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-AirshipTests/Pods-AirshipTests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-AirshipCoreTests/Pods-AirshipCoreTests-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-AirshipTests/Pods-AirshipTests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		DF6DD5011E7A1EB8000C281A /* Generate AirshipLib.h */ = {
@@ -7530,7 +7530,7 @@
 			);
 			name = "[CP] Check Pods Manifest.lock";
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-AirshipCoreTests-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-AirshipTests-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -9510,7 +9510,7 @@
 		};
 		CC64F05C1D8B77E3009CEF27 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0F55D47F540C142B0F469570 /* Pods-AirshipCoreTests.debug.xcconfig */;
+			baseConfigurationReference = 0F55D47F540C142B0F469570 /* Pods-AirshipTests.debug.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ENABLE_MODULES = YES;
@@ -9532,7 +9532,7 @@
 					"$(inherited)",
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D COCOAPODS";
-				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.AirshipCoreTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.AirshipTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -9542,7 +9542,7 @@
 		};
 		CC64F05D1D8B77E3009CEF27 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 62C67C80125440E0C4F9982D /* Pods-AirshipCoreTests.release.xcconfig */;
+			baseConfigurationReference = 62C67C80125440E0C4F9982D /* Pods-AirshipTests.release.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ENABLE_MODULES = YES;
@@ -9562,7 +9562,7 @@
 					"$(inherited)",
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D COCOAPODS";
-				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.AirshipCoreTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.AirshipTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				VALID_ARCHS = "$(inherited) x86_64";
@@ -9734,7 +9734,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		CC64F05E1D8B77E3009CEF27 /* Build configuration list for PBXNativeTarget "AirshipCoreTests" */ = {
+		CC64F05E1D8B77E3009CEF27 /* Build configuration list for PBXNativeTarget "AirshipTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				CC64F05C1D8B77E3009CEF27 /* Debug */,

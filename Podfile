@@ -1,7 +1,7 @@
 workspace 'Airship'
 use_frameworks!
 
-target 'AirshipCoreTests' do
+target 'AirshipTests' do
   platform :ios, '11.0'
   project 'Airship/Airship.xcodeproj'
   pod 'OCMock', '~> 3.4.1'

@@ -17,8 +17,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "CC64F0531D8B77E3009CEF27"
-               BuildableName = "AirshipCoreTests.xctest"
-               BlueprintName = "AirshipCoreTests"
+               BuildableName = "AirshipTests.xctest"
+               BlueprintName = "AirshipTests"
                ReferencedContainer = "container:Airship.xcodeproj">
             </BuildableReference>
          </TestableReference>
