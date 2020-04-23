@@ -65,13 +65,10 @@ class ExtrasDetailViewController: UITableViewController {
 
         cell.extrasLabel.text = nil
     
-        if message?.extras != nil {
-            
-            let data: NSData? = try? JSONSerialization.data(withJSONObject: message?.extras as Any, options: JSONSerialization.WritingOptions.prettyPrinted) as NSData?
-            
-            let extras: String? = String(data: data! as Data, encoding: String.Encoding.utf8)
-            
-            cell.extrasLabel.text = extras
+        if let extras = message?.extras {
+            if let data = try? JSONSerialization.data(withJSONObject: extras as Any, options: JSONSerialization.WritingOptions.prettyPrinted) {
+                cell.extrasLabel.text = String(data: data as Data, encoding: String.Encoding.utf8)
+            }
         }
         return cell
     }
