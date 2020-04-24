@@ -112,7 +112,7 @@
 			containerPortal = 6E65D56A2396E99D00AF2D1A /* Airship.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = CC64F0541D8B77E3009CEF27;
-			remoteInfo = AirshipCoreTests;
+			remoteInfo = AirshipTests;
 		};
 		6E65D5812396E99D00AF2D1A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -429,7 +429,7 @@
 				6E65D57A2396E99D00AF2D1A /* Airship.framework */,
 				6E65D57C2396E99D00AF2D1A /* AirshipCore.framework */,
 				6E65D57E2396E99D00AF2D1A /* AirshipCore.framework */,
-				6E65D5802396E99D00AF2D1A /* AirshipCoreTests.xctest */,
+				6E65D5802396E99D00AF2D1A /* AirshipTests.xctest */,
 				6E65D5822396E99D00AF2D1A /* AirshipLocation.framework */,
 				6E65D5842396E99D00AF2D1A /* AirshipDebug.framework */,
 				6E65D5862396E99D00AF2D1A /* AirshipAutomation.framework */,
@@ -720,10 +720,10 @@
 			remoteRef = 6E65D57D2396E99D00AF2D1A /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		6E65D5802396E99D00AF2D1A /* AirshipCoreTests.xctest */ = {
+		6E65D5802396E99D00AF2D1A /* AirshipTests.xctest */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
-			path = AirshipCoreTests.xctest;
+			path = AirshipTests.xctest;
 			remoteRef = 6E65D57F2396E99D00AF2D1A /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};

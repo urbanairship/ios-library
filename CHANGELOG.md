@@ -3,6 +3,12 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/master/Documentation/Migration)
 
+## Version 13.2.1 - April 24, 2020
+Patch release to restore public visibility to several header files. Apps whose builds
+are failing due to one of the following two files not being found should update.
+- UAExtendedActionsResources.h
+- UAMessageCenterMessageViewDelegate.h
+
 ## Version 13.2.0 - April 20, 2020
 Minor release that adds support for enhanced custom events and Mac Catalyst xcframeworks, expands the functionality
 of the native bridge and fixes bugs related to whitelisting and token registration after disabling data collection.
@@ -15,9 +21,9 @@ of the native bridge and fixes bugs related to whitelisting and token registrati
 - Fixed push token registration when data collection is disabled.
 
 ## Version 13.1.1 - March 20, 2020
-Patch addressing a regression in 13.1.0 causing channel tag loss 
+Patch addressing a regression in 13.1.0 causing channel tag loss
 when upgrading from SDK versions prior to 13.0.1. Apps not already on
-13.0.1 or higher should avoid version 13.1.0. 
+13.0.1 or higher should avoid version 13.1.0.
 
 ## Version 13.1.0 - January 30, 2020
 Minor release adds support for number attributes, data privacy controls and the Accengage
