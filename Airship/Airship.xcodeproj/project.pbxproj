@@ -19,7 +19,7 @@
 		1BA67C3C23A0FFA800A07324 /* UAAccengageUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BA67C3A23A0FFA800A07324 /* UAAccengageUtils.h */; };
 		1BA67C3D23A0FFA800A07324 /* UAAccengageUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BA67C3B23A0FFA800A07324 /* UAAccengageUtils.m */; };
 		1BB4C014239FB4CD0000559B /* UAExtendedActionsResources.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BB4C012239FB4CD0000559B /* UAExtendedActionsResources.m */; };
-		1BB4C015239FB4CD0000559B /* UAExtendedActionsResources.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BB4C013239FB4CD0000559B /* UAExtendedActionsResources.h */; };
+		1BB4C015239FB4CD0000559B /* UAExtendedActionsResources.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BB4C013239FB4CD0000559B /* UAExtendedActionsResources.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1BB4C018239FB4EC0000559B /* UAAccengagePayload.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BB4C016239FB4EB0000559B /* UAAccengagePayload.h */; };
 		1BB4C019239FB4EC0000559B /* UAAccengagePayload.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BB4C017239FB4EB0000559B /* UAAccengagePayload.m */; };
 		1BB4C01C239FD8510000559B /* UAExtendedActionsResources.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BB4C012239FB4CD0000559B /* UAExtendedActionsResources.m */; };
@@ -66,7 +66,7 @@
 		3C45B06B23E11E37004B9590 /* UADefaultMessageCenterSplitViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C45B05E23E11D8A004B9590 /* UADefaultMessageCenterSplitViewController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3C45B06C23E11E37004B9590 /* UADefaultMessageCenterSplitViewDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CCFD5DD23A082EF001AF966 /* UADefaultMessageCenterSplitViewDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3C45B06D23E11EAD004B9590 /* UAMessageCenterListViewDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CCFD5DA23A077BA001AF966 /* UAMessageCenterListViewDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		3C45B06E23E11EAD004B9590 /* UAMessageCenterMessageViewDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CCFD5D923A077BA001AF966 /* UAMessageCenterMessageViewDelegate.h */; };
+		3C45B06E23E11EAD004B9590 /* UAMessageCenterMessageViewDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CCFD5D923A077BA001AF966 /* UAMessageCenterMessageViewDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3C4625A7235E9CF200E4CF54 /* UAAutoDisposable.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C4625A6235E9CF200E4CF54 /* UAAutoDisposable.m */; };
 		3C4625AC235E9F3F00E4CF54 /* UADisposable+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C4625A8235E9DB400E4CF54 /* UADisposable+Internal.h */; };
 		3C4625AD235E9F5300E4CF54 /* UADisposable+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C4625A8235E9DB400E4CF54 /* UADisposable+Internal.h */; };
