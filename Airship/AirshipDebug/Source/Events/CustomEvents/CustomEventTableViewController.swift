@@ -71,8 +71,8 @@ class CustomEventTableViewController: UITableViewController, UITextFieldDelegate
 
         tableView.reloadData()
 
-        self.cancelButton.tintColor = ThemeManager.shared.currentTheme.WidgetTint
-        self.doneButton.tintColor = ThemeManager.shared.currentTheme.WidgetTint
+        self.cancelButton.tintColor = ThemeManager.shared.currentTheme.PrimaryText
+        self.doneButton.tintColor = ThemeManager.shared.currentTheme.PrimaryText
 
         self.doneButton.isEnabled = (customEvent != nil)
     }
@@ -305,6 +305,7 @@ class CustomEventTableViewController: UITableViewController, UITextFieldDelegate
         cell.textInputField.tag = indexPath.row
         cell.textInputField.textColor = ThemeManager.shared.currentTheme.PrimaryText
         cell.textInputField.backgroundColor = ThemeManager.shared.currentTheme.Background
+        cell.textInputField.attributedPlaceholder = NSAttributedString(string: "ua_required".localized(), attributes: [NSAttributedString.Key.foregroundColor: ThemeManager.shared.currentTheme.SecondaryText])
 
         return cell
     }

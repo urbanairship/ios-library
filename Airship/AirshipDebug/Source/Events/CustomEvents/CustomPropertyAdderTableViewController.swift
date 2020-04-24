@@ -130,6 +130,7 @@ class CustomPropertyAdderTableViewController: UITableViewController, UITextViewD
         cell.textField.delegate = self
         cell.textField.textColor = ThemeManager.shared.currentTheme.PrimaryText
         cell.textField.backgroundColor = ThemeManager.shared.currentTheme.Background
+        cell.textField.attributedPlaceholder = NSAttributedString(string: "ua_required".localized(), attributes: [NSAttributedString.Key.foregroundColor: ThemeManager.shared.currentTheme.SecondaryText])
 
         return cell
     }
@@ -158,6 +159,7 @@ class CustomPropertyAdderTableViewController: UITableViewController, UITextViewD
         cell.numberField.delegate = self
         cell.numberField.textColor = ThemeManager.shared.currentTheme.PrimaryText
         cell.numberField.backgroundColor = ThemeManager.shared.currentTheme.Background
+        cell.numberField.attributedPlaceholder = NSAttributedString(string: "ua_required".localized(), attributes: [NSAttributedString.Key.foregroundColor: ThemeManager.shared.currentTheme.SecondaryText])
 
         return cell
     }
@@ -173,6 +175,8 @@ class CustomPropertyAdderTableViewController: UITableViewController, UITextViewD
         cell.stringField.delegate = self
         cell.stringField.textColor = ThemeManager.shared.currentTheme.PrimaryText
         cell.stringField.backgroundColor = ThemeManager.shared.currentTheme.Background
+
+        cell.stringField.attributedPlaceholder = NSAttributedString(string: "ua_required".localized(), attributes: [NSAttributedString.Key.foregroundColor: ThemeManager.shared.currentTheme.SecondaryText])
 
         return cell
     }
