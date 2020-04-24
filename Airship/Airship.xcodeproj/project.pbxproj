@@ -2130,6 +2130,7 @@
 		CCB902271DCBBCDA009A66D7 /* UAEventManagerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CCB902241DCBBCDA009A66D7 /* UAEventManagerTest.m */; };
 		CCD28FE41DD14DD1008D663F /* UATagGroupsMutation+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CCD28FE21DD14DD1008D663F /* UATagGroupsMutation+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CCD28FE51DD14DD1008D663F /* UATagGroupsMutation.m in Sources */ = {isa = PBXBuildFile; fileRef = CCD28FE31DD14DD1008D663F /* UATagGroupsMutation.m */; };
+		DEE54BA62445B57000F75970 /* ExtrasDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEE54BA52445B57000F75970 /* ExtrasDetailViewController.swift */; };
 		DF0221F21FD9F6EF00EF8C9D /* UAInAppMessageAudienceTest.m in Sources */ = {isa = PBXBuildFile; fileRef = DF0221F11FD9F6EF00EF8C9D /* UAInAppMessageAudienceTest.m */; };
 		DF0221F41FDB03B100EF8C9D /* UAInAppMessageAudienceChecksTest.m in Sources */ = {isa = PBXBuildFile; fileRef = DF0221F31FDB03B100EF8C9D /* UAInAppMessageAudienceChecksTest.m */; };
 		DF0A22E61FBCFFE00058F6D6 /* UAComponent+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = DF0A22E51FBCFFE00058F6D6 /* UAComponent+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3263,6 +3264,7 @@
 		CCE236311DDB8BA100577747 /* sk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = sk; path = sk.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
 		CCE236321DDB8BB400577747 /* iw */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = iw; path = iw.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
 		CCE236331DDB8BCE00577747 /* no */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = no; path = no.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
+		DEE54BA52445B57000F75970 /* ExtrasDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtrasDetailViewController.swift; sourceTree = "<group>"; };
 		DF0221F11FD9F6EF00EF8C9D /* UAInAppMessageAudienceTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageAudienceTest.m; sourceTree = "<group>"; };
 		DF0221F31FDB03B100EF8C9D /* UAInAppMessageAudienceChecksTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageAudienceChecksTest.m; sourceTree = "<group>"; };
 		DF0221F51FDB05B600EF8C9D /* UAInAppMessageAudienceChecks+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAInAppMessageAudienceChecks+Internal.h"; sourceTree = "<group>"; };
@@ -3642,6 +3644,7 @@
 				3CA0E23C237CCBA600EE76CF /* MediaInfoDetailViewController.swift */,
 				3CA0E23D237CCBA600EE76CF /* UAStaticTableViewController.swift */,
 				3CA0E23E237CCBA600EE76CF /* TextInfoDetailViewController.swift */,
+				DEE54BA52445B57000F75970 /* ExtrasDetailViewController.swift */,
 			);
 			path = Automation;
 			sourceTree = "<group>";
@@ -7571,6 +7574,7 @@
 				3CA0E2B8237CD05F00EE76CF /* TriggerTableViewController.swift in Sources */,
 				6E6CC38723A3F9B4003D583C /* PushPayload.swift in Sources */,
 				3CA0E2B9237CD05F00EE76CF /* AutomationTableViewController.swift in Sources */,
+				DEE54BA62445B57000F75970 /* ExtrasDetailViewController.swift in Sources */,
 				3CA0E2BA237CD05F00EE76CF /* AutomationDetailViewController.swift in Sources */,
 				3CA0E2BB237CD05F00EE76CF /* ButtonsTableViewController.swift in Sources */,
 				3CA0E2BC237CD05F00EE76CF /* MediaInfoDetailViewController.swift in Sources */,
