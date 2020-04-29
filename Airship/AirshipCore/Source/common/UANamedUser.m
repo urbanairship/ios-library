@@ -74,7 +74,8 @@ NSString *const UANamedUserLastChannelIDKey = @"UANamedUserLastChannelID";
         return;
     }
 
-    if (self.identifier) {
+    // Treat a nil or empty string as a command to disassociate the named user
+    if (self.identifier && [self.identifier length] != 0) {
         // When identifier is non-nil, associate the current named user ID.
         [self associateNamedUser];
     } else {
@@ -94,16 +95,23 @@ NSString *const UANamedUserLastChannelIDKey = @"UANamedUserLastChannelID";
     }
     
     NSString *trimmedID;
-    if (identifier) {
+
+    // Treat a nil or empty string as a command to disassociate the named user
+    if (identifier && [identifier length] != 0) {
         trimmedID = [identifier stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+
+        // Treat post-trim empty string and string exceeding max chars as invalid
         if ([trimmedID length] <= 0 || [trimmedID length] > kUAMaxNamedUserIDLength) {
-            UA_LERR(@"Failed to set named user ID. The named user ID must be greater than 0 and less than 129 characters.");
+            UA_LERR(@"Failed to set named user ID. The named user ID must be composed of non-whitespace characters and be less than 129 characters in length.");
             return;
         }
     }
 
-    // if the IDs don't match or ID is set to nil and current token is nil (re-install case), then update.
-    if (!(self.identifier == trimmedID || [self.identifier isEqualToString:trimmedID]) || (!self.identifier && !self.changeToken)) {
+    BOOL identifierHasChanged = self.identifier != trimmedID && ![self.identifier isEqualToString:trimmedID];
+
+    BOOL reinstallCase = (!self.identifier && !self.changeToken);
+
+    if (identifierHasChanged || reinstallCase) {
         [self.dataStore setValue:trimmedID forKey:UANamedUserIDKey];
 
         // Update the change token.

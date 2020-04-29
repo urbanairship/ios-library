@@ -71,7 +71,7 @@ NSString *const UANativeBridgeCloseCommand = @"close";
         [strongDelegate webView:webView decidePolicyForNavigationAction:navigationAction decisionHandler:^(WKNavigationActionPolicy policyForThisURL) {
             // Override any special link actions
             if ((policyForThisURL == WKNavigationActionPolicyAllow) && (navigationType == WKNavigationTypeLinkActivated)) {
-              policyForThisURL = ([self handleLinkClick:request.URL]) ? WKNavigationActionPolicyCancel : WKNavigationActionPolicyAllow;
+                policyForThisURL = ([self handleLinkClick:request.URL]) ? WKNavigationActionPolicyCancel : WKNavigationActionPolicyAllow;
             }
             decisionHandler(policyForThisURL);
         }];
@@ -79,7 +79,12 @@ NSString *const UANativeBridgeCloseCommand = @"close";
     }
 
     // Default behavior
-    WKNavigationActionPolicy policyForThisURL = ([self handleLinkClick:request.URL]) ? WKNavigationActionPolicyCancel : WKNavigationActionPolicyAllow;
+    WKNavigationActionPolicy policyForThisURL = WKNavigationActionPolicyAllow;
+
+    // Override any special link actions
+    if (navigationType == WKNavigationTypeLinkActivated) {
+        policyForThisURL = ([self handleLinkClick:request.URL]) ? WKNavigationActionPolicyCancel : WKNavigationActionPolicyAllow;
+    }
     decisionHandler(policyForThisURL);
 }
 

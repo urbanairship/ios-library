@@ -126,6 +126,25 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
 }
 
 /**
+ * Test set empty ID (disassociate).
+ */
+- (void)testSetIDEmpty {
+    NSString *changeToken = self.namedUser.changeToken;
+    // Expect the named user client to disassociate and call the success block
+    [[self.mockedNamedUserClient expect] disassociate:@"someChannel"
+                                            onSuccess:OCMOCK_ANY
+                                            onFailure:OCMOCK_ANY];
+    self.namedUser.identifier = @"";
+
+    XCTAssertNil(self.namedUser.identifier, @"Named user ID should be nil.");
+    XCTAssertNil([self.dataStore stringForKey:UANamedUserIDKey],
+                 @"Named user ID should be able to be cleared in standardUserDefaults.");
+    XCTAssertNotEqualObjects(changeToken, self.namedUser.changeToken,
+                             @"Change tokens should have changed.");
+    XCTAssertNoThrow([self.mockedNamedUserClient verify], @"Named user should be disassociated");
+}
+
+/**
  * Test set nil ID (disassociate).
  */
 - (void)testSetIDNil {
