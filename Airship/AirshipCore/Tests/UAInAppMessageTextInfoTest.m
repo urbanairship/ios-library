@@ -1,6 +1,5 @@
 /* Copyright Airship and Contributors */
 
-#import <XCTest/XCTest.h>
 #import "UAInAppMessageTextInfo+Internal.h"
 #import "UABaseTest.h"
 #import "UAColorUtils.h"

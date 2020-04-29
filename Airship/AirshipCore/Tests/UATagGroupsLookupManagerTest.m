@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-#import "UABaseTest.h"
+#import "UAAirshipBaseTest.h"
 #import "UATagGroupsLookupManager+Internal.h"
 #import "UAirship.h"
 #import "UAChannel.h"
@@ -8,7 +8,7 @@
 #import "UATagGroupsMutationHistory+Internal.h"
 #import "UATestDate.h"
 
-@interface UATagGroupsLookupManagerTest : UABaseTest
+@interface UATagGroupsLookupManagerTest : UAAirshipBaseTest
 @property (nonatomic, strong) UATagGroupsLookupManager *lookupManager;
 @property (nonatomic, strong) id mockAirship;
 @property (nonatomic, strong) id mockChannel;

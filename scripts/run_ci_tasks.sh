@@ -60,22 +60,29 @@ then
   xcrun xcodebuild \
   -destination "${TEST_DESTINATION}" \
   -workspace "${ROOT_PATH}/Airship.xcworkspace" \
-  -scheme AirshipTests \
+  -scheme AirshipCore \
   test
 
   # Run AirshipAccengage Tests
   xcrun xcodebuild \
   -destination "${TEST_DESTINATION}" \
   -workspace "${ROOT_PATH}/Airship.xcworkspace" \
-  -scheme AirshipAccengageTests \
+  -scheme AirshipAccengage \
   test
 
-  #   # Run AirshipLocationKitTest Tests
-  # xcrun xcodebuild \
-  # -destination "${TEST_DESTINATION}" \
-  # -workspace "${ROOT_PATH}/Airship.xcworkspace" \
-  # -scheme AirshipLocationKitTests \
-  # test
+  # Run AirshipServiceExtension Tests
+  xcrun xcodebuild \
+  -destination "${TEST_DESTINATION}" \
+  -workspace "${ROOT_PATH}/Airship.xcworkspace" \
+  -scheme AirshipNotificationServiceExtension \
+  test
+
+  # Run AirshipServiceExtension Tests
+  xcrun xcodebuild \
+  -destination "${TEST_DESTINATION}" \
+  -workspace "${ROOT_PATH}/Airship.xcworkspace" \
+  -scheme AirshipNotificationContentExtension \
+  test
 fi
 
 ##################################################################################################

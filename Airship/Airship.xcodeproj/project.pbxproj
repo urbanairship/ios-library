@@ -2135,6 +2135,7 @@
 		DF0221F41FDB03B100EF8C9D /* UAInAppMessageAudienceChecksTest.m in Sources */ = {isa = PBXBuildFile; fileRef = DF0221F31FDB03B100EF8C9D /* UAInAppMessageAudienceChecksTest.m */; };
 		DF0A22E61FBCFFE00058F6D6 /* UAComponent+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = DF0A22E51FBCFFE00058F6D6 /* UAComponent+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DF0A22E71FBCFFE00058F6D6 /* UAComponent+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = DF0A22E51FBCFFE00058F6D6 /* UAComponent+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		DF0C1B29244E562B0011ACCA /* UAAirshipBaseTest.m in Sources */ = {isa = PBXBuildFile; fileRef = DF0C1B28244E562B0011ACCA /* UAAirshipBaseTest.m */; };
 		DF147BE321B89A9A00506D3D /* UAScheduleDataMigratorTest.m in Sources */ = {isa = PBXBuildFile; fileRef = DF147BE221B89A9A00506D3D /* UAScheduleDataMigratorTest.m */; };
 		DF17A0FE1F56327A00DC39E0 /* UARemoteDataManager+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = DF17A0FC1F56327A00DC39E0 /* UARemoteDataManager+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DF17A0FF1F56327A00DC39E0 /* UARemoteDataManager+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = DF17A0FC1F56327A00DC39E0 /* UARemoteDataManager+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3270,6 +3271,8 @@
 		DF0221F51FDB05B600EF8C9D /* UAInAppMessageAudienceChecks+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAInAppMessageAudienceChecks+Internal.h"; sourceTree = "<group>"; };
 		DF0221F61FDB05B600EF8C9D /* UAInAppMessageAudienceChecks.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageAudienceChecks.m; sourceTree = "<group>"; };
 		DF0A22E51FBCFFE00058F6D6 /* UAComponent+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "UAComponent+Internal.h"; path = "common/UAComponent+Internal.h"; sourceTree = "<group>"; };
+		DF0C1B27244E562B0011ACCA /* UAAirshipBaseTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UAAirshipBaseTest.h; sourceTree = "<group>"; };
+		DF0C1B28244E562B0011ACCA /* UAAirshipBaseTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAAirshipBaseTest.m; sourceTree = "<group>"; };
 		DF147BE221B89A9A00506D3D /* UAScheduleDataMigratorTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAScheduleDataMigratorTest.m; sourceTree = "<group>"; };
 		DF17A0FC1F56327A00DC39E0 /* UARemoteDataManager+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UARemoteDataManager+Internal.h"; path = "common/UARemoteDataManager+Internal.h"; sourceTree = "<group>"; };
 		DF17A0FD1F56327A00DC39E0 /* UARemoteDataManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UARemoteDataManager.m; path = common/UARemoteDataManager.m; sourceTree = "<group>"; };
@@ -4689,6 +4692,8 @@
 		CC04F2001DCAB28300B4842D /* TestUtils */ = {
 			isa = PBXGroup;
 			children = (
+				DF0C1B27244E562B0011ACCA /* UAAirshipBaseTest.h */,
+				DF0C1B28244E562B0011ACCA /* UAAirshipBaseTest.m */,
 				CC64F08A1D8B781C009CEF27 /* UABaseTest.h */,
 				6E4A00781F2A4A4A0069D8A0 /* UABaseTest.m */,
 				6E5D60CB212DE3CC00C32E3F /* UATestDispatcher.h */,
@@ -8373,6 +8378,7 @@
 				53911BDD1E23EBA500EE7007 /* UAChannelCaptureActionTest.m in Sources */,
 				CC64F1081D8B781C009CEF27 /* UAirshipTest.m in Sources */,
 				459D4051209245E500C40E2D /* UAInAppMessageBannerStyleTest.m in Sources */,
+				DF0C1B29244E562B0011ACCA /* UAAirshipBaseTest.m in Sources */,
 				6E598D862003F014005B234B /* UAInAppMessageResolutionEventTest.m in Sources */,
 				6E0B841C20227F01008A1F96 /* UAInAppMessageScheduleInfoTest.m in Sources */,
 				6EE6529122A7E2DA00F7D54D /* UAInAppMessageHTMLStyleTest.m in Sources */,

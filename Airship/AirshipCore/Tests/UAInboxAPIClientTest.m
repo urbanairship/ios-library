@@ -1,7 +1,6 @@
 /* Copyright Airship and Contributors */
 
-#import "UABaseTest.h"
-
+#import "UAAirshipBaseTest.h"
 #import "UARuntimeConfig.h"
 #import "UAirship+Internal.h"
 #import "UAChannel.h"
@@ -10,7 +9,7 @@
 #import "UAInboxAPIClient+Internal.h"
 #import "UAUserData+Internal.h"
 
-@interface UAInboxAPIClientTest : UABaseTest
+@interface UAInboxAPIClientTest : UAAirshipBaseTest
 
 @property (nonatomic, strong) UAInboxAPIClient *inboxAPIClient;
 @property (nonatomic, strong) id mockUser;

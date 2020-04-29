@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-#import "UABaseTest.h"
+#import "UAAirshipBaseTest.h"
 #import "UAirship+Internal.h"
 #import "UAPreferenceDataStore+Internal.h"
 #import "UANamedUser.h"
@@ -10,7 +10,7 @@
 #import "UARuntimeConfig.h"
 #import "UATagGroupsRegistrar+Internal.h"
 
-@interface UANamedUserTest : UABaseTest
+@interface UANamedUserTest : UAAirshipBaseTest
 
 @property (nonatomic, strong) id mockedAirship;
 @property (nonatomic, strong) UANamedUser *namedUser;

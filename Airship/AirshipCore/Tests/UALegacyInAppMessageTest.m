@@ -1,13 +1,12 @@
 /* Copyright Airship and Contributors */
 
-#import <UIKit/UIKit.h>
-#import "UABaseTest.h"
+#import "UAAirshipBaseTest.h"
 
 #import "UALegacyInAppMessage.h"
 #import "UAirship+Internal.h"
 #import "UAPreferenceDataStore+Internal.h"
 
-@interface UALegacyInAppMessageTest : UABaseTest
+@interface UALegacyInAppMessageTest : UAAirshipBaseTest
 @property(nonatomic, strong) id mockAirship;
 @property(nonatomic, copy) NSDictionary *payload;
 @end

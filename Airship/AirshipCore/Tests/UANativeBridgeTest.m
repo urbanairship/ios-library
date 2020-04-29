@@ -1,11 +1,11 @@
 /* Copyright Airship and Contributors */
 
-#import "UABaseTest.h"
+#import "UAAirshipBaseTest.h"
 #import "UANativeBridge+Internal.h"
 #import "UAirship+Internal.h"
 #import "UANativeBridgeActionHandler+Internal.h"
 
-@interface UANativeBridgeTest : UABaseTest
+@interface UANativeBridgeTest : UAAirshipBaseTest
 
 @property (nonatomic, strong) UANativeBridge *nativeBridge;
 @property (nonatomic, strong) id mockWKWebView;

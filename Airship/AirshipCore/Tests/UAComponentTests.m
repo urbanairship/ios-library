@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-#import "UABaseTest.h"
+#import "UAAirshipBaseTest.h"
 #import "UAComponent+Internal.h"
 #import "UAirship+Internal.h"
 #import "UAPreferenceDataStore+Internal.h"
@@ -18,7 +18,7 @@
 
 @end
 
-@interface UAComponentTests : UABaseTest
+@interface UAComponentTests : UAAirshipBaseTest
 @property (nonatomic, strong) UATestComponent *component;
 @end
 

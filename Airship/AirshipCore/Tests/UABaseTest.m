@@ -1,8 +1,7 @@
 /* Copyright Airship and Contributors */
 
 #import "UABaseTest.h"
-#import "UAirship+Internal.h"
-#import "UARuntimeConfig+Internal.h"
+
 @interface UABaseTest()
 @property (nonatomic, strong) NSPointerArray *mocks;
 @end
@@ -16,11 +15,6 @@ const NSTimeInterval UATestExpectationTimeOut = 5;
         [mock stopMocking];
     }
     self.mocks = nil;
-    [UAirship land];
-
-    if (_dataStore) {
-        [_dataStore removeAll];
-    }
     [super tearDown];
 }
 
@@ -71,39 +65,6 @@ const NSTimeInterval UATestExpectationTimeOut = 5;
 
 - (void)waitForTestExpectations {
     [self waitForExpectationsWithTimeout:UATestExpectationTimeOut handler:nil];
-}
-
-- (UAPreferenceDataStore *)dataStore {
-    if (_dataStore) {
-        return _dataStore;
-    }
-    
-    // self.name is "-[TEST_CLASS TEST_NAME]". For key prefix, re-format to "TEST_CLASS.TEST_NAME", e.g. UAAnalyticsTest.testAddEvent
-    NSString *prefStorePrefix = [self.name stringByReplacingOccurrencesOfString:@"\\s"
-                                                                     withString:@"."
-                                                                        options:NSRegularExpressionSearch
-                                                                          range:NSMakeRange(0, [self.name length])];
-    prefStorePrefix = [prefStorePrefix stringByReplacingOccurrencesOfString:@"-|\\[|\\]"
-                                                                 withString:@""
-                                                                    options:NSRegularExpressionSearch
-                                                                      range:NSMakeRange(0, [prefStorePrefix length])];
-    
-    _dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:prefStorePrefix];
-    
-    [_dataStore removeAll];
-
-    return _dataStore;
-}
-
-- (UATestRuntimeConfig *)config {
-    if (_config) {
-        return _config;
-    }
-
-    _config = [UATestRuntimeConfig testConfig];
-    _config.appKey = [NSString stringWithFormat:@"dev-appKey-%@", self.name];
-    _config.appSecret = [NSString stringWithFormat:@"dev-appSecret-%@", self.name];
-    return _config;
 }
 
 @end

@@ -1,14 +1,13 @@
 /* Copyright Airship and Contributors */
 
-#import "UABaseTest.h"
-
+#import "UAAirshipBaseTest.h"
 #import "UAEventAPIClient+Internal.h"
 #import "UARuntimeConfig.h"
 #import "UAirship+Internal.h"
 #import "UAPush+Internal.h"
 #import "UAKeychainUtils.h"
 
-@interface UAEventAPIClientTest : UABaseTest
+@interface UAEventAPIClientTest : UAAirshipBaseTest
 @property (nonatomic, strong) id mockPush;
 @property (nonatomic, strong) id mockChannel;
 @property (nonatomic, strong) id mockAirship;

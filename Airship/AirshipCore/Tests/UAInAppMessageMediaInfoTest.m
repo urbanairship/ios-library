@@ -1,9 +1,9 @@
 /* Copyright Airship and Contributors */
 
-#import <XCTest/XCTest.h>
+#import "UABaseTest.h"
 #import "UAInAppMessageMediaInfo+Internal.h"
 
-@interface UAInAppMessageMediaInfoTest : XCTestCase
+@interface UAInAppMessageMediaInfoTest : UABaseTest
 
 @end
 

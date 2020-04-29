@@ -1,7 +1,6 @@
 /* Copyright Airship and Contributors */
 
-#import <XCTest/XCTest.h>
-#import "UABaseTest.h"
+#import "UAAirshipBaseTest.h"
 #import "UAAttributeRegistrar+Internal.h"
 #import "UAAttributeAPIClient+Internal.h"
 #import "UAUtils+Internal.h"
@@ -9,7 +8,7 @@
 #import "UATestDate.h"
 #import "UAAttributePendingMutations+Internal.h"
 
-@interface UAAttributeRegistrarTest : UABaseTest
+@interface UAAttributeRegistrarTest : UAAirshipBaseTest
 @property (nonatomic, strong) UAAttributeRegistrar *registrar;
 @property (nonatomic, strong) NSOperationQueue *operationQueue;
 @property (nonatomic, strong) id mockApplication;

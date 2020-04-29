@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-#import "UABaseTest.h"
+#import "UAAirshipBaseTest.h"
 #import <Foundation/Foundation.h>
 #import "UAAttributeAPIClient+Internal.h"
 #import "UAirship.h"
@@ -12,7 +12,7 @@
 #import "UAirship+Internal.h"
 #import "UAChannel+Internal.h"
 
-@interface UAAttributeAPIClientTest : UABaseTest
+@interface UAAttributeAPIClientTest : UAAirshipBaseTest
 @property(nonatomic, strong) id mockSession;
 @property(nonatomic, strong) UAAttributeAPIClient *client;
 @property(nonatomic, copy) NSString *channelID;

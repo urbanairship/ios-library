@@ -1,10 +1,10 @@
 /* Copyright Airship and Contributors */
 
-#import "UABaseTest.h"
+#import "UAAirshipBaseTest.h"
 #import "UATagGroupsRegistrar+Internal.h"
 #import "UATagGroupsMutation+Internal.h"
 
-@interface UATagGroupsRegistrarTest : UABaseTest
+@interface UATagGroupsRegistrarTest : UAAirshipBaseTest
 @property (nonatomic, strong) UATagGroupsMutationHistory *mutationHistory;
 @property (nonatomic, strong) UATagGroupsRegistrar *registrar;
 @property (nonatomic, strong) NSOperationQueue *operationQueue;

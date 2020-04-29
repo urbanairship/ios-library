@@ -1,8 +1,5 @@
 /* Copyright Airship and Contributors */
 
-#import <XCTest/XCTest.h>
-#import <OCMock/OCMock.h>
-
 #import "UARemoteDataAPIClient+Internal.h"
 #import "UARemoteDataManager+Internal.h"
 
@@ -13,7 +10,7 @@
 #import "UARuntimeConfig.h"
 #import "UAUtils+Internal.h"
 
-#import "UABaseTest.h"
+#import "UAAirshipBaseTest.h"
 #import "UATestDispatcher.h"
 
 /**
@@ -35,7 +32,7 @@
 
 @end
 
-@interface UARemoteDataManagerTest : UABaseTest
+@interface UARemoteDataManagerTest : UAAirshipBaseTest
 
 @property (nonatomic, strong) id mockAPIClient;
 @property (nonatomic, strong) id mockAPIClientClass;

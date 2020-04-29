@@ -14,3 +14,14 @@ target 'AirshipAccengageTests' do
   pod 'OCMock', '~> 3.4.1'
 end
 
+target 'AirshipNotificationServiceExtensionTests' do
+  platform :ios, '11.0'
+  project 'AirshipExtensions/AirshipExtensions.xcodeproj'
+  pod 'OCMock', '~> 3.4.1'
+end
+
+target 'AirshipNotificationContentExtensionTests' do
+  platform :ios, '11.0'
+  project 'AirshipExtensions/AirshipExtensions.xcodeproj'
+  pod 'OCMock', '~> 3.4.1'
+end

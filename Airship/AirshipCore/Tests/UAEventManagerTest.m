@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-#import "UABaseTest.h"
+#import "UAAirshipBaseTest.h"
 
 #import "UAEventManager+Internal.h"
 #import "UAEventStore+Internal.h"
@@ -29,7 +29,7 @@
 @implementation UAEventTestData
 @end
 
-@interface UAEventManagerTest : UABaseTest
+@interface UAEventManagerTest : UAAirshipBaseTest
 @property (nonatomic, strong) UAEventManager *eventManager;
 @property (nonatomic, strong) NSNotificationCenter *notificationCenter;
 

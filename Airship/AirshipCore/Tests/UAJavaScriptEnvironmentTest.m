@@ -1,14 +1,14 @@
 /* Copyright Airship and Contributors */
 
 #import <JavaScriptCore/JavaScriptCore.h>
-#import "UABaseTest.h"
+#import "UAAirshipBaseTest.h"
 #import "UAJavaScriptEnvironment.h"
 #import "UAirship+Internal.h"
 #import "UAChannel.h"
 #import "UANamedUser.h"
 #import "UARuntimeConfig.h"
 
-@interface UAJavaScriptEnvironmentTest : UABaseTest
+@interface UAJavaScriptEnvironmentTest : UAAirshipBaseTest
 @property (nonatomic, strong) JSContext *jsc;
 @property (nonatomic, strong) id mockUIDevice;
 @property (nonatomic, strong) id mockAirship;

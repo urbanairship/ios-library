@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-#import "UABaseTest.h"
+#import "UAAirshipBaseTest.h"
 #import <Foundation/Foundation.h>
 #import "UAChannelRegistrationPayload+Internal.h"
 #import "UAChannelAPIClient+Internal.h"
@@ -8,7 +8,7 @@
 #import "UARuntimeConfig.h"
 #import "UAAnalytics+Internal.h"
 
-@interface UAChannelAPIClientTest : UABaseTest
+@interface UAChannelAPIClientTest : UAAirshipBaseTest
 @property (nonatomic, strong) id mockSession;
 @property (nonatomic, strong) UAChannelAPIClient *client;
 @end

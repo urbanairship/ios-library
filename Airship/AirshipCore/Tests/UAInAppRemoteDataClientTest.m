@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-#import "UABaseTest.h"
+#import "UAAirshipBaseTest.h"
 #import "UAInAppRemoteDataClient+Internal.h"
 #import "UARemoteDataManager+Internal.h"
 #import "UAirship+Internal.h"
@@ -15,7 +15,7 @@
 
 NSString * const UAInAppMessagesScheduledMessagesKey = @"UAInAppRemoteDataClient.ScheduledMessages";
 
-@interface UAInAppRemoteDataClientTest : UABaseTest
+@interface UAInAppRemoteDataClientTest : UAAirshipBaseTest
 @property (nonatomic,strong) UAInAppRemoteDataClient *remoteDataClient;
 @property (nonatomic, strong) UARemoteDataPublishBlock publishBlock;
 @property (nonatomic, strong) id mockRemoteDataProvider;

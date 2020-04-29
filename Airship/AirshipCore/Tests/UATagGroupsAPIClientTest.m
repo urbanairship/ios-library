@@ -1,14 +1,14 @@
 /* Copyright Airship and Contributors */
 
 
-#import "UABaseTest.h"
+#import "UAAirshipBaseTest.h"
 #import <UIKit/UIKit.h>
 
 #import "UARuntimeConfig.h"
 #import "UATagGroupsAPIClient+Internal.h"
 #import "UATagGroupsMutation+Internal.h"
 
-@interface UATagGroupsAPIClientTest : UABaseTest
+@interface UATagGroupsAPIClientTest : UAAirshipBaseTest
 @property (nonatomic, strong) id mockSession;
 @property (nonatomic, strong) UATagGroupsAPIClient *client;
 

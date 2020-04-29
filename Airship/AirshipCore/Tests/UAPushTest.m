@@ -1,7 +1,7 @@
 
 /* Copyright Airship and Contributors */
 
-#import "UABaseTest.h"
+#import "UAAirshipBaseTest.h"
 #import "UAPush+Internal.h"
 #import "UAChannel+Internal.h"
 #import "UAirship+Internal.h"
@@ -15,7 +15,7 @@
 #import "UARuntimeConfig.h"
 #import "UATestDispatcher.h"
 
-@interface UAPushTest : UABaseTest
+@interface UAPushTest : UAAirshipBaseTest
 @property (nonatomic, strong) id mockApplication;
 @property (nonatomic, strong) id mockChannel;
 @property (nonatomic, strong) id mockAppStateTracker;

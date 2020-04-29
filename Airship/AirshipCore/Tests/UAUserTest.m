@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-#import "UABaseTest.h"
+#import "UAAirshipBaseTest.h"
 #import "UAUser+Internal.h"
 #import "UAUserAPIClient+Internal.h"
 #import "UAUserData+Internal.h"
@@ -17,7 +17,7 @@
 @property (nonatomic, strong) UAUserData *userData;
 @end
 
-@interface UAUserTest : UABaseTest
+@interface UAUserTest : UAAirshipBaseTest
 @property (nonatomic, strong) UAUser *user;
 @property (nonatomic, strong) NSNotificationCenter *notificationCenter;
 @property (nonatomic, strong) UATestDispatcher *testDispatcher;

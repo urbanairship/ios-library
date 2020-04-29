@@ -1,13 +1,13 @@
 /* Copyright Airship and Contributors */
 
-#import "UABaseTest.h"
+#import "UAAirshipBaseTest.h"
 #import "UADefaultMessageCenterUI.h"
 #import "UAMessageCenter+Internal.h"
 #import "UAUser.h"
 #import "UAInboxMessageList.h"
 #import "UAComponent+Internal.h"
 
-@interface UAMessageCenterTest : UABaseTest
+@interface UAMessageCenterTest : UAAirshipBaseTest
 @property (nonatomic, strong) id mockDefaultUI;
 @property (nonatomic, strong) id mockMessageList;
 @property (nonatomic, strong) id mockUser;

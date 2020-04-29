@@ -1,12 +1,12 @@
 /* Copyright Airship and Contributors */
 
-#import "UABaseTest.h"
+#import "UAAirshipBaseTest.h"
 #import "UAApplicationMetrics+Internal.h"
 #import "UAPreferenceDataStore+Internal.h"
 #import "UATestDate.h"
 #import "UAAppStateTracker.h"
 
-@interface UAApplicationMetricsTest : UABaseTest
+@interface UAApplicationMetricsTest : UAAirshipBaseTest
 @property (nonatomic, strong) UAApplicationMetrics *metrics;
 @property (nonatomic, strong) NSNotificationCenter *notificationCenter;
 @property (nonatomic, strong) UATestDate *testDate;

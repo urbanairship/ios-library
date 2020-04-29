@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-#import "UABaseTest.h"
+#import "UAAirshipBaseTest.h"
 
 #import "UAAnalytics+Internal.h"
 #import "UARuntimeConfig.h"
@@ -16,7 +16,7 @@
 #import "UAAppStateTracker.h"
 #import "UAUtils+Internal.h"
 
-@interface UAAnalyticsTest: UABaseTest
+@interface UAAnalyticsTest: UAAirshipBaseTest
 @property (nonatomic, strong) UAAnalytics *analytics;
 @property (nonatomic, strong) id mockEventManager;
 @property (nonatomic, strong) id mockChannel;
