@@ -18,6 +18,7 @@ of the native bridge and fixes bugs related to whitelisting and token registrati
 - Added support for Mac Catalyst xcframeworks.
 - Added whitelisting for EU sites.
 - Added message extras getter for Message Center native bridge.
+- Added date attribute support.
 - Fixed push token registration when data collection is disabled.
 
 ## Version 13.1.1 - March 20, 2020
