@@ -17,6 +17,7 @@
 @property (nonatomic, strong) id mockAirship;
 @property (nonatomic, strong) id mockActionHandler;
 @property (nonatomic, strong) id mockJavaScriptEnvironment;
+@property (nonatomic, strong) id mockApplication;
 @end
 
 @implementation UANativeBridgeTest
@@ -61,6 +62,10 @@
     // NativeBridge delegate
     self.mockNativeBridgeDelegate = [self mockForProtocol:@protocol(UANativeBridgeDelegate)];
     self.nativeBridge.nativeBridgeDelegate = self.mockNativeBridgeDelegate;
+
+    // Mock application
+    self.mockApplication = [self mockForClass:[UIApplication class]];
+    [[[self.mockApplication stub] andReturn:self.mockApplication] sharedApplication];
 }
 
 /**
@@ -106,6 +111,126 @@
     [self.mockNavigationDelegate verify];
 }
 
+/**
+ * Test webView:decidePolicyForNavigationAction:decisionHandler: doesn't handles click when navigation is embedded. No delegate.
+ */
+- (void)testDecidePolicyForNavigationActionDecisionHandlerDoesntHandleClickOnEmbeddedContentNoDelegate {
+    // Action request
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"http://www.youtube.com"]];
+    NSURL *originatingURL = [NSURL URLWithString:@"https://foo.urbanairship.com/whatever.html"];;
+
+    id mockWKNavigationAction = [self mockForClass:[WKNavigationAction class]];
+    [[[mockWKNavigationAction stub] andReturn:request] request];
+    [[[mockWKNavigationAction stub] andReturnValue:OCMOCK_VALUE(WKNavigationTypeOther)] navigationType];
+    [[[self.mockWKWebView stub] andReturn:originatingURL] URL];
+
+    self.nativeBridge.forwardNavigationDelegate = nil;
+    
+    [[self.mockApplication reject] openURL:OCMOCK_ANY];
+    [self.nativeBridge webView:self.mockWKWebView decidePolicyForNavigationAction:mockWKNavigationAction decisionHandler:^(WKNavigationActionPolicy delegatePolicy) {
+        XCTAssertEqual(delegatePolicy, WKNavigationActionPolicyAllow);
+    }];
+
+    [self.mockNavigationDelegate verify];
+    [self.mockApplication verify];
+}
+
+/**
+ * Test webView:decidePolicyForNavigationAction:decisionHandler: doesn't handles click when navigation is embedded. Delegate
+ */
+- (void)testDecidePolicyForNavigationActionDecisionHandlerDoesntHandleClickOnEmbeddedContentDelegate {
+    // Action request
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"http://www.youtube.com"]];
+    NSURL *originatingURL = [NSURL URLWithString:@"https://foo.urbanairship.com/whatever.html"];;
+
+    id mockWKNavigationAction = [self mockForClass:[WKNavigationAction class]];
+    [[[mockWKNavigationAction stub] andReturn:request] request];
+    [[[mockWKNavigationAction stub] andReturnValue:OCMOCK_VALUE(WKNavigationTypeOther)] navigationType];
+    [[[self.mockWKWebView stub] andReturn:originatingURL] URL];
+
+    [self.nativeBridge webView:self.mockWKWebView decidePolicyForNavigationAction:mockWKNavigationAction decisionHandler:^(WKNavigationActionPolicy delegatePolicy) {
+        XCTAssertEqual(delegatePolicy, WKNavigationActionPolicyAllow);
+    }];
+
+    [[self.mockApplication reject] openURL:OCMOCK_ANY];
+
+    [self.mockNavigationDelegate verify];
+    
+    // Stub the navigation delegate to return the response
+    [[[self.mockNavigationDelegate expect] andDo:^(NSInvocation *invocation) {
+        void (^decisionHandler)(WKNavigationActionPolicy policy) = nil;
+        [invocation getArgument:&decisionHandler atIndex:4];
+        decisionHandler(WKNavigationActionPolicyAllow);
+    }] webView:OCMOCK_ANY decidePolicyForNavigationAction:OCMOCK_ANY decisionHandler:OCMOCK_ANY];
+
+    [self.nativeBridge webView:self.mockWKWebView decidePolicyForNavigationAction:mockWKNavigationAction decisionHandler:^(WKNavigationActionPolicy delegatePolicy) {
+        XCTAssertEqual(delegatePolicy, WKNavigationActionPolicyAllow);
+    }];
+
+    [self.mockNavigationDelegate verify];
+    [self.mockApplication verify];
+}
+
+/**
+ * Test webView:decidePolicyForNavigationAction:decisionHandler: doesn't handles click when navigation is embedded. No delegate.
+ */
+- (void)testDecidePolicyForNavigationActionDecisionHandlerHandlesClickOnWKNavigationTypeLinkActivatedNoDelegate {
+    // Action request
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"http://www.youtube.com"]];
+    NSURL *originatingURL = [NSURL URLWithString:@"https://foo.urbanairship.com/whatever.html"];;
+
+    id mockWKNavigationAction = [self mockForClass:[WKNavigationAction class]];
+    [[[mockWKNavigationAction stub] andReturn:request] request];
+    [[[mockWKNavigationAction stub] andReturnValue:OCMOCK_VALUE(WKNavigationTypeLinkActivated)] navigationType];
+    [[[self.mockWKWebView stub] andReturn:originatingURL] URL];
+
+    self.nativeBridge.forwardNavigationDelegate = nil;
+    
+    [[self.mockApplication expect] openURL:OCMOCK_ANY];
+    [self.nativeBridge webView:self.mockWKWebView decidePolicyForNavigationAction:mockWKNavigationAction decisionHandler:^(WKNavigationActionPolicy delegatePolicy) {
+        XCTAssertEqual(delegatePolicy, WKNavigationActionPolicyAllow);
+    }];
+
+    [self.mockNavigationDelegate verify];
+    [self.mockApplication verify];
+}
+
+/**
+ * Test webView:decidePolicyForNavigationAction:decisionHandler: doesn't handles click when navigation is embedded. Delegate
+ */
+- (void)testDecidePolicyForNavigationActionDecisionHandlerHandlesClickOnWKNavigationTypeLinkActivatedDelegate {
+    // Action request
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"http://www.youtube.com"]];
+    NSURL *originatingURL = [NSURL URLWithString:@"https://foo.urbanairship.com/whatever.html"];;
+
+    id mockWKNavigationAction = [self mockForClass:[WKNavigationAction class]];
+    [[[mockWKNavigationAction stub] andReturn:request] request];
+    [[[mockWKNavigationAction stub] andReturnValue:OCMOCK_VALUE(WKNavigationTypeLinkActivated)] navigationType];
+    [[[self.mockWKWebView stub] andReturn:originatingURL] URL];
+
+    [self.nativeBridge webView:self.mockWKWebView decidePolicyForNavigationAction:mockWKNavigationAction decisionHandler:^(WKNavigationActionPolicy delegatePolicy) {
+        XCTAssertEqual(delegatePolicy, WKNavigationActionPolicyAllow);
+    }];
+
+    [[self.mockApplication expect] openURL:OCMOCK_ANY];
+
+    [self.mockNavigationDelegate verify];
+    
+    // Stub the navigation delegate to return the response
+    [[[self.mockNavigationDelegate expect] andDo:^(NSInvocation *invocation) {
+        void (^decisionHandler)(WKNavigationActionPolicy policy) = nil;
+        [invocation getArgument:&decisionHandler atIndex:4];
+        decisionHandler(WKNavigationActionPolicyAllow);
+    }] webView:OCMOCK_ANY decidePolicyForNavigationAction:OCMOCK_ANY decisionHandler:OCMOCK_ANY];
+
+    [self.nativeBridge webView:self.mockWKWebView decidePolicyForNavigationAction:mockWKNavigationAction decisionHandler:^(WKNavigationActionPolicy delegatePolicy) {
+        XCTAssertEqual(delegatePolicy, WKNavigationActionPolicyAllow);
+    }];
+
+    [self.mockNavigationDelegate verify];
+    [self.mockApplication verify];
+    
+}
 /**
  * Test webView:didFinishNavigation: forwards its message to the forwardDelegate.
  */
@@ -184,7 +309,7 @@
     [[self.mockActionHandler reject] runActionsForCommand:OCMOCK_ANY metadata:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     [self.nativeBridge webView:self.mockWKWebView decidePolicyForNavigationAction:mockWKNavigationAction decisionHandler:^(WKNavigationActionPolicy delegatePolicy) {
-        XCTAssertEqual(delegatePolicy, WKNavigationActionPolicyCancel);
+        XCTAssertEqual(delegatePolicy, WKNavigationActionPolicyAllow);
     }];
 
     [self.mockActionHandler verify];
