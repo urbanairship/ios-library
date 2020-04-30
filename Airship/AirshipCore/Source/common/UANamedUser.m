@@ -6,6 +6,9 @@
 #import "UATagGroupsRegistrar+Internal.h"
 #import "UATagUtils+Internal.h"
 #import "UARuntimeConfig.h"
+#import "UAAttributePendingMutations+Internal.h"
+#import "UAAttributeRegistrar+Internal.h"
+#import "UADate.h"
 
 #define kUAMaxNamedUserIDLength 128
 
@@ -21,12 +24,19 @@ NSString *const UANamedUserLastChannelIDKey = @"UANamedUserLastChannelID";
  */
 @property (nonatomic, strong) UATagGroupsRegistrar *tagGroupsRegistrar;
 @property (nonatomic, copy) NSString *lastChannelID;
+@property (nonatomic, strong) UADate *date;
+@property (nonatomic, strong) UAAttributeRegistrar *attributeRegistrar;
 
 @end
 
 @implementation UANamedUser
 
-- (instancetype)initWithChannel:(UAChannel<UAExtendableChannelRegistration> *)channel config:(UARuntimeConfig *)config dataStore:(UAPreferenceDataStore *)dataStore tagGroupsRegistrar:(UATagGroupsRegistrar *)tagGroupsRegistrar {
+- (instancetype)initWithChannel:(UAChannel<UAExtendableChannelRegistration> *)channel
+                         config:(UARuntimeConfig *)config
+                      dataStore:(UAPreferenceDataStore *)dataStore
+             tagGroupsRegistrar:(UATagGroupsRegistrar *)tagGroupsRegistrar
+             attributeRegistrar:(UAAttributeRegistrar *)attributeRegistrar
+                           date:(UADate *)date {
     self = [super initWithDataStore:dataStore];
     if (self) {
         self.config = config;
@@ -35,6 +45,8 @@ NSString *const UANamedUserLastChannelIDKey = @"UANamedUserLastChannelID";
         self.namedUserAPIClient = [UANamedUserAPIClient clientWithConfig:config];
         self.namedUserAPIClient.enabled = self.componentEnabled;
         self.tagGroupsRegistrar = tagGroupsRegistrar;
+        self.attributeRegistrar = attributeRegistrar;
+        self.date = date;
 
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(channelCreated:)
@@ -55,10 +67,30 @@ NSString *const UANamedUserLastChannelIDKey = @"UANamedUserLastChannelID";
 }
 
 + (instancetype) namedUserWithChannel:(UAChannel<UAExtendableChannelRegistration> *)channel
-                            config:(UARuntimeConfig *)config
-                         dataStore:(UAPreferenceDataStore *)dataStore
-                tagGroupsRegistrar:(nonnull UATagGroupsRegistrar *)tagGroupsRegistrar  {
-    return [[UANamedUser alloc] initWithChannel:channel config:config dataStore:dataStore tagGroupsRegistrar:tagGroupsRegistrar];
+                               config:(UARuntimeConfig *)config
+                            dataStore:(UAPreferenceDataStore *)dataStore
+                   tagGroupsRegistrar:(nonnull UATagGroupsRegistrar *)tagGroupsRegistrar {
+    return [[UANamedUser alloc] initWithChannel:channel
+                                         config:config
+                                      dataStore:dataStore
+                             tagGroupsRegistrar:tagGroupsRegistrar
+                             attributeRegistrar:[UAAttributeRegistrar registrarWithConfig:config
+                                                                                dataStore:dataStore]
+                                           date:[[UADate alloc] init]];
+}
+
++ (instancetype) namedUserWithChannel:(UAChannel<UAExtendableChannelRegistration> *)channel
+                               config:(UARuntimeConfig *)config
+                            dataStore:(UAPreferenceDataStore *)dataStore
+                   tagGroupsRegistrar:(nonnull UATagGroupsRegistrar *)tagGroupsRegistrar
+                   attributeRegistrar:(UAAttributeRegistrar *)attributeRegistrar
+                                 date:(UADate *)date {
+    return [[UANamedUser alloc] initWithChannel:channel
+                                         config:config
+                                      dataStore:dataStore
+                             tagGroupsRegistrar:tagGroupsRegistrar
+                             attributeRegistrar:attributeRegistrar
+                                           date:date];
 }
 
 - (void)update {
@@ -126,13 +158,15 @@ NSString *const UANamedUserLastChannelIDKey = @"UANamedUserLastChannelID";
         // Update named user.
         [self update];
         
+        // Clear pending tag group and named user attribute mutations
+        [self.tagGroupsRegistrar clearAllPendingTagUpdates:UATagGroupsTypeNamedUser];
+        [self.attributeRegistrar deletePendingMutations];
+        
         // Identifier is non-null. Update CRA.
         if (self.identifier) {
             [self.channel updateRegistration];
         }
 
-        // Clear pending tag group mutations
-        [self.tagGroupsRegistrar clearAllPendingTagUpdates:UATagGroupsTypeNamedUser];
     } else {
         UA_LDEBUG(@"NamedUser - Skipping update. Named user ID trimmed already matches existing named user: %@", self.identifier);
     }
@@ -257,13 +291,41 @@ NSString *const UANamedUserLastChannelIDKey = @"UANamedUserLastChannelID";
     // Disable/enable the API client and user to disable/enable the inbox
     self.namedUserAPIClient.enabled = self.componentEnabled;
     self.tagGroupsRegistrar.componentEnabled = self.componentEnabled;
+    self.attributeRegistrar.componentEnabled = self.componentEnabled;
 }
 
 - (void)onDataCollectionEnabledChanged {
-    if (!self.isDataCollectionEnabled) {
+    if (self.isDataCollectionEnabled) {
+        self.attributeRegistrar.componentEnabled = YES;
+    } else {
         self.identifier = nil;
-        [self forceUpdate];
+        [self.attributeRegistrar deletePendingMutations];
+        self.attributeRegistrar.componentEnabled = NO;
     }
+
+    [self forceUpdate];
+}
+
+#pragma mark -
+#pragma mark Named User Attributes
+
+- (void)applyAttributeMutations:(UAAttributeMutations *)mutations {
+    if (!self.componentEnabled) {
+        return;
+    }
+
+    UAAttributePendingMutations *pendingMutations = [UAAttributePendingMutations pendingMutationsWithMutations:mutations
+                                                                                                          date:self.date];
+
+    // Save pending mutations for upload
+    [self.attributeRegistrar savePendingMutations:pendingMutations];
+
+    if (!self.identifier) {
+          UA_LTRACE(@"Attribute mutations require a named user, mutations have been saved for future update.");
+          return;
+    }
+
+    [self.attributeRegistrar updateAttributesForNamedUser:self.identifier];
 }
 
 @end

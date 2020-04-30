@@ -329,7 +329,7 @@
 		6E217366237C811E0084933A /* UALocation.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E217361237C811E0084933A /* UALocation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E218529237D31720084933A /* AirshipEventData.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E222237CCBA600EE76CF /* AirshipEventData.xcdatamodeld */; };
 		6E21852B237D32B30084933A /* EventData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21852A237D32B30084933A /* EventData.swift */; };
-		6E218539237DB7960084933A /* AddChannelAttributeTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E218538237DB7960084933A /* AddChannelAttributeTableViewController.swift */; };
+		6E218539237DB7960084933A /* AddAttributeTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E218538237DB7960084933A /* AddAttributeTableViewController.swift */; };
 		6E27A7BC2367751400F46B69 /* UAMessageCenterModuleLoaderFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E27A7BB2367751400F46B69 /* UAMessageCenterModuleLoaderFactory.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E27A7BD2367751400F46B69 /* UAMessageCenterModuleLoaderFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E27A7BB2367751400F46B69 /* UAMessageCenterModuleLoaderFactory.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E2E6D741EB3A34B006056BF /* UASwizzler+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E2E6D721EB3A34B006056BF /* UASwizzler+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2145,6 +2145,8 @@
 		DF17A1061F56330500DC39E0 /* UARemoteDataAPIClient.m in Sources */ = {isa = PBXBuildFile; fileRef = DF17A1031F56330500DC39E0 /* UARemoteDataAPIClient.m */; };
 		DF17A1071F56330500DC39E0 /* UARemoteDataAPIClient.m in Sources */ = {isa = PBXBuildFile; fileRef = DF17A1031F56330500DC39E0 /* UARemoteDataAPIClient.m */; };
 		DF17A1101F57617200DC39E0 /* UARemoteDataAPIClientTest.m in Sources */ = {isa = PBXBuildFile; fileRef = DF17A10F1F57617200DC39E0 /* UARemoteDataAPIClientTest.m */; };
+		DF2519BF2458E3D800B3587A /* AddChannelAttributeTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF2519BE2458E3D800B3587A /* AddChannelAttributeTableViewController.swift */; };
+		DF2519C12458E6CF00B3587A /* AddNamedUserAttributeTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF2519C02458E6CF00B3587A /* AddNamedUserAttributeTableViewController.swift */; };
 		DF3C3F1C20F54F4F006D6B72 /* UADate.h in Headers */ = {isa = PBXBuildFile; fileRef = DF3C3F1A20F54F4F006D6B72 /* UADate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DF3C3F1D20F54F4F006D6B72 /* UADate.h in Headers */ = {isa = PBXBuildFile; fileRef = DF3C3F1A20F54F4F006D6B72 /* UADate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DF3C3F1F20F54F4F006D6B72 /* UADate.m in Sources */ = {isa = PBXBuildFile; fileRef = DF3C3F1B20F54F4F006D6B72 /* UADate.m */; };
@@ -2659,7 +2661,7 @@
 		6E217360237C811E0084933A /* UALocation+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UALocation+Internal.h"; sourceTree = "<group>"; };
 		6E217361237C811E0084933A /* UALocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UALocation.h; sourceTree = "<group>"; };
 		6E21852A237D32B30084933A /* EventData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventData.swift; sourceTree = "<group>"; };
-		6E218538237DB7960084933A /* AddChannelAttributeTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddChannelAttributeTableViewController.swift; sourceTree = "<group>"; };
+		6E218538237DB7960084933A /* AddAttributeTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddAttributeTableViewController.swift; sourceTree = "<group>"; };
 		6E27A7BB2367751400F46B69 /* UAMessageCenterModuleLoaderFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAMessageCenterModuleLoaderFactory.h; path = common/UAMessageCenterModuleLoaderFactory.h; sourceTree = "<group>"; };
 		6E27A7D42367AC3200F46B69 /* UAExtendedActionsModuleLoader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAExtendedActionsModuleLoader.m; sourceTree = "<group>"; };
 		6E27A7D52367AC3200F46B69 /* UAExtendedActionsModuleLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAExtendedActionsModuleLoader.h; sourceTree = "<group>"; };
@@ -3283,6 +3285,8 @@
 		DF18CCE41FEC73B000652445 /* UAInAppMessageModalAdapter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageModalAdapter.m; sourceTree = "<group>"; };
 		DF18CCE91FEC74D200652445 /* UAInAppMessageModalViewController+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAInAppMessageModalViewController+Internal.h"; sourceTree = "<group>"; };
 		DF18CCEA1FEC74D200652445 /* UAInAppMessageModalViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageModalViewController.m; sourceTree = "<group>"; };
+		DF2519BE2458E3D800B3587A /* AddChannelAttributeTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddChannelAttributeTableViewController.swift; sourceTree = "<group>"; };
+		DF2519C02458E6CF00B3587A /* AddNamedUserAttributeTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddNamedUserAttributeTableViewController.swift; sourceTree = "<group>"; };
 		DF3C3F1A20F54F4F006D6B72 /* UADate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = UADate.h; path = common/UADate.h; sourceTree = "<group>"; };
 		DF3C3F1B20F54F4F006D6B72 /* UADate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = UADate.m; path = common/UADate.m; sourceTree = "<group>"; };
 		DF3E96F62075575D00C77E3B /* UATagGroupsRegistrar+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "UATagGroupsRegistrar+Internal.h"; path = "common/UATagGroupsRegistrar+Internal.h"; sourceTree = "<group>"; };
@@ -3623,13 +3627,15 @@
 		3CA0E22A237CCBA600EE76CF /* DeviceInfo */ = {
 			isa = PBXGroup;
 			children = (
+				3CA0E231237CCBA600EE76CF /* DeviceInfoViewController.swift */,
 				3CA0E22B237CCBA600EE76CF /* AssociatedIdentifiersTableViewController.swift */,
 				3CA0E22C237CCBA600EE76CF /* AddTagsTableViewController.swift */,
 				3CA0E22E237CCBA600EE76CF /* AddNamedUserTableViewController.swift */,
 				3CA0E22F237CCBA600EE76CF /* AddAssociatedIdentifiersTableViewController.swift */,
 				3CA0E230237CCBA600EE76CF /* TagsTableViewController.swift */,
-				3CA0E231237CCBA600EE76CF /* DeviceInfoViewController.swift */,
-				6E218538237DB7960084933A /* AddChannelAttributeTableViewController.swift */,
+				6E218538237DB7960084933A /* AddAttributeTableViewController.swift */,
+				DF2519BE2458E3D800B3587A /* AddChannelAttributeTableViewController.swift */,
+				DF2519C02458E6CF00B3587A /* AddNamedUserAttributeTableViewController.swift */,
 			);
 			path = DeviceInfo;
 			sourceTree = "<group>";
@@ -7564,6 +7570,7 @@
 			files = (
 				6E6CC38823A3F9B4003D583C /* PushNotificationsTableViewController.swift in Sources */,
 				3CA0E2AE237CD05F00EE76CF /* AssociatedIdentifiersTableViewController.swift in Sources */,
+				DF2519BF2458E3D800B3587A /* AddChannelAttributeTableViewController.swift in Sources */,
 				3CA0E2AF237CD05F00EE76CF /* AddTagsTableViewController.swift in Sources */,
 				6E21852B237D32B30084933A /* EventData.swift in Sources */,
 				3CA0E2B1237CD05F00EE76CF /* AddNamedUserTableViewController.swift in Sources */,
@@ -7575,7 +7582,7 @@
 				3CA0E2B5237CD05F00EE76CF /* UADebugAutomationUtilities.swift in Sources */,
 				3CA0E2B6237CD05F00EE76CF /* ButtonDetailViewController.swift in Sources */,
 				3CA0E2B7237CD05F00EE76CF /* AudienceDetailViewController.swift in Sources */,
-				6E218539237DB7960084933A /* AddChannelAttributeTableViewController.swift in Sources */,
+				6E218539237DB7960084933A /* AddAttributeTableViewController.swift in Sources */,
 				3CA0E2B8237CD05F00EE76CF /* TriggerTableViewController.swift in Sources */,
 				6E6CC38723A3F9B4003D583C /* PushPayload.swift in Sources */,
 				3CA0E2B9237CD05F00EE76CF /* AutomationTableViewController.swift in Sources */,
@@ -7598,6 +7605,7 @@
 				3CA0E2CB237CD05F00EE76CF /* RootTableViewController.swift in Sources */,
 				3CA0E2CC237CD05F00EE76CF /* ThemeManager.swift in Sources */,
 				3CA0E2CD237CD05F00EE76CF /* AirshipDebug.swift in Sources */,
+				DF2519C12458E6CF00B3587A /* AddNamedUserAttributeTableViewController.swift in Sources */,
 				6E218529237D31720084933A /* AirshipEventData.xcdatamodeld in Sources */,
 				6E6CC38623A3F9B4003D583C /* PushDataManager.swift in Sources */,
 				3CA0E2CE237CD05F00EE76CF /* Theme.swift in Sources */,

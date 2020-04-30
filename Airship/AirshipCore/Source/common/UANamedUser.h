@@ -2,6 +2,7 @@
 
 #import <Foundation/Foundation.h>
 #import "UAComponent.h"
+#import "UAAttributeMutations.h"
 
 @class UAPreferenceDataStore;
 
@@ -50,7 +51,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)removeTags:(NSArray<NSString *> *)tags group:(NSString *)tagGroupID;
 
-
 /**
  * Set tags for named user tags. To update the server,
  * make all of your changes, then call `updateTags`.
@@ -64,6 +64,17 @@ NS_ASSUME_NONNULL_BEGIN
  * Update named user tags.
  */
 - (void)updateTags;
+
+///---------------------------------------------------------------------------------------
+/// @name Named User Attributes
+///---------------------------------------------------------------------------------------
+
+/**
+ * Applies mutations to attributes associated with this named user.
+ *
+ * @param mutations Attribute mutations to apply to this named user.
+ */
+- (void)applyAttributeMutations:(UAAttributeMutations *)mutations;
 
 @end
 

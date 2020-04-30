@@ -31,6 +31,7 @@
 "ua_device_info_named_user" = "Named User";
 "ua_device_info_associated_identifiers" = "Associated Identifiers";
 "ua_device_info_channel_attributes" = "Channel Attributes";
+"ua_device_info_named_user_attributes" = "Named User Attributes";
 "ua_device_info_tags" = "Tags";
 "ua_device_info_sdk_version" = "SDK Version";
 "ua_device_info_locale" = "Locale";

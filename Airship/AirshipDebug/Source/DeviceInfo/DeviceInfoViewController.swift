@@ -101,7 +101,8 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
     namedUser = IndexPath(row: 3, section: 2),
     tags = IndexPath(row: 4, section: 2),
     associatedIdentifiers = IndexPath(row: 5, section: 2),
-    channelAttributes = IndexPath(row: 6, section: 2)
+    channelAttributes = IndexPath(row: 6, section: 2),
+    namedUserAttributes = IndexPath(row: 7, section: 2)
 
     // Location settings
     private let locationEnabled = IndexPath(row: 0, section: 3),
@@ -224,7 +225,7 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
         case inAppAutomationSettings:
             return 2
         case deviceSettings:
-            return 7
+            return 8
         case analyticsSettings:
             return 1
         case locationSettings:
@@ -329,6 +330,9 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
         case channelAttributes:
             cell.title.text = "ua_device_info_channel_attributes".localized()
             cell.accessoryType = .disclosureIndicator
+        case namedUserAttributes:
+            cell.title.text = "ua_device_info_named_user_attributes".localized()
+            cell.accessoryType = .disclosureIndicator
         case analyticsEnabled:
             cell.title.text = "ua_device_info_analytics_enabled".localized()
             cell.subtitle?.text = "ua_device_info_enable_analytics_tracking".localized()
@@ -397,6 +401,8 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
             performSegue(withIdentifier: "associatedIdentifiersSegue", sender: self)
         case channelAttributes:
             performSegue(withIdentifier: "channelAttributesSegue", sender: self)
+        case namedUserAttributes:
+            performSegue(withIdentifier: "namedUserAttributesSegue", sender: self)
         case sdkVersion:
             UIPasteboard.general.string = cell.subtitle?.text
             showCopiedAlert()
