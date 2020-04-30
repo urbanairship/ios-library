@@ -13,20 +13,22 @@
 @interface UANamedUserTest : UAAirshipBaseTest
 
 @property (nonatomic, strong) id mockedAirship;
-@property (nonatomic, strong) UANamedUser *namedUser;
 @property (nonatomic, strong) id mockedNamedUserClient;
 @property (nonatomic, strong) id mockChannel;
-@property (nonatomic, copy) NSString *pushChannelID;
 @property (nonatomic, strong) id mockTagGroupsRegistrar;
+
+@property (nonatomic, strong) UANamedUser *namedUser;
+@property (nonatomic, copy) NSString *pushChannelID;
 @property (nonatomic, strong) NSMutableDictionary *addTagGroups;
 @property (nonatomic, strong) NSMutableDictionary *removeTagGroups;
+@property (nonatomic, copy) UAChannelRegistrationExtenderBlock channelRegistrationExtenderBlock;
+
 @end
 
 @implementation UANamedUserTest
 
 void (^namedUserSuccessDoBlock)(NSInvocation *);
 void (^namedUserFailureDoBlock)(NSInvocation *);
-
 
 - (void)setUp {
     [super setUp];
@@ -38,7 +40,6 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
         [invocation setReturnValue:&self->_pushChannelID];
     }] identifier];
 
-
     self.mockedAirship = [self mockForClass:[UAirship class]];
     [[[self.mockedAirship stub] andReturn:self.mockChannel] channel];
     [UAirship setSharedAirship:self.mockedAirship];
@@ -46,6 +47,13 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
     self.pushChannelID = @"someChannel";
 
     self.mockTagGroupsRegistrar = [self mockForClass:[UATagGroupsRegistrar class]];
+
+    // Capture the channel payload extender
+    [[[self.mockChannel stub] andDo:^(NSInvocation *invocation) {
+           void *arg;
+           [invocation getArgument:&arg atIndex:2];
+           self.channelRegistrationExtenderBlock =  (__bridge UAChannelRegistrationExtenderBlock)arg;
+    }] addChannelExtenderBlock:OCMOCK_ANY];
 
     self.namedUser = [UANamedUser namedUserWithChannel:self.mockChannel
                                                 config:self.config
@@ -279,7 +287,6 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
                                          onSuccess:OCMOCK_ANY
                                          onFailure:OCMOCK_ANY];
 
-
     // Named user client should not disassociate
     [[self.mockedNamedUserClient reject] disassociate:OCMOCK_ANY
                                             onSuccess:OCMOCK_ANY
@@ -317,7 +324,6 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
                      @"Named user client should not associate or disassociate.");
 }
 
-
 /**
  * Test disassociateNamedUserIfNil when named user is nil.
  */
@@ -328,7 +334,6 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
     [[self.mockedNamedUserClient expect] disassociate:@"someChannel"
                                             onSuccess:OCMOCK_ANY
                                             onFailure:OCMOCK_ANY];
-
 
     self.namedUser.changeToken = nil;
     [self.namedUser disassociateNamedUserIfNil];
@@ -402,7 +407,6 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
 
     XCTAssertNoThrow([self.mockedNamedUserClient verify], @"Named user should be associated");
 }
-
 
 /**
  * Test that the tag groups registrar is called when UANamedUser is asked to update tags
@@ -607,6 +611,32 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
     XCTAssertNil(self.namedUser.identifier);
 
     [self.mockedNamedUserClient verify];
+}
+
+/**
+ * Test registration payload extender.
+ */
+- (void)testRegistrationPayloadExtender {
+    UAChannelRegistrationPayload *payload = [[UAChannelRegistrationPayload alloc] init];
+    XCTestExpectation *extendedPayload = [self expectationWithDescription:@"extended payload"];
+    self.channelRegistrationExtenderBlock(payload, ^(UAChannelRegistrationPayload * _Nonnull payload) {
+        XCTAssertEqualObjects(self.namedUser.identifier, payload.namedUserId);
+        [extendedPayload fulfill];
+    });
+
+    [self waitForTestExpectations];
+}
+
+/**
+ * Test changing named user id updates channel registration .
+ */
+- (void)testChangingIdUpdatesChannelRegistration {
+    
+    [[self.mockChannel expect] updateRegistration];
+    
+    self.namedUser.identifier = @"a_different_named_user";
+    
+    [self.mockChannel verify];
 }
 
 @end

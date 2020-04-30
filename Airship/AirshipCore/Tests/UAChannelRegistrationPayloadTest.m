@@ -38,6 +38,8 @@
     self.payload.pushAddress = @"FAKEADDRESS";
     self.payload.userID = @"fakeUser";
     self.payload.deviceID = @"fakeDeviceID";
+    self.payload.accengageDeviceID = @"fakeAccengageDeviceID";
+    self.payload.namedUserId = @"fakeNamedUserID";
     self.payload.badge = [NSNumber numberWithInteger:1];
     self.payload.quietTime =  quietTime;
     self.payload.timeZone = @"timezone";
@@ -169,6 +171,7 @@
 - (void)testAsJsonEmptyIdentityHints {
     self.payload.deviceID = nil;
     self.payload.userID = nil;
+    self.payload.accengageDeviceID = nil;
 
     NSString *jsonString = [[NSString alloc] initWithData:[self.payload asJSONData] encoding:NSUTF8StringEncoding];
     NSDictionary *dict = [NSJSONSerialization objectWithString:jsonString];
@@ -317,6 +320,7 @@
 - (void)testPayloadDictionaryEmptyIdentityHints {
     self.payload.deviceID = nil;
     self.payload.userID = nil;
+    self.payload.accengageDeviceID = nil;
 
     NSDictionary *dict = [[NSDictionary alloc] initWithDictionary:[self.payload payloadDictionary]];
     XCTAssertNil([dict valueForKey:UAChannelIdentityHintsKey], @"identity hints section should not be included in the payload");
@@ -383,6 +387,64 @@
     XCTAssertEqualObjects(self.payload.badge, minPayload.badge);
 }
 
+- (void)testMinimalUpdatePayloadDifferentNamedUserId {
+    UAChannelRegistrationPayload *thisPayload = [self.payload copy];
+    thisPayload.namedUserId = @"differentFakeNamedUserID";
+
+    UAChannelRegistrationPayload *minPayload = [thisPayload minimalUpdatePayloadWithLastPayload:self.payload];
+    XCTAssertEqualObjects(thisPayload.country, minPayload.country);
+    XCTAssertEqualObjects(thisPayload.timeZone, minPayload.timeZone);
+    XCTAssertEqualObjects(thisPayload.language, minPayload.language);
+    XCTAssertNil(minPayload.tags);
+    XCTAssertEqualObjects(thisPayload.locationSettings, minPayload.locationSettings);
+    XCTAssertEqualObjects(thisPayload.SDKVersion, minPayload.SDKVersion);
+    XCTAssertEqualObjects(thisPayload.appVersion, minPayload.appVersion);
+    XCTAssertEqualObjects(thisPayload.deviceModel, minPayload.deviceModel);
+    XCTAssertEqualObjects(thisPayload.deviceOS, minPayload.deviceOS);
+    XCTAssertEqualObjects(thisPayload.carrier, minPayload.carrier);
+
+    XCTAssertNil(minPayload.userID);
+    XCTAssertNil(minPayload.deviceID);
+    XCTAssertNil(minPayload.accengageDeviceID);
+    XCTAssertFalse(minPayload.setTags);
+
+    XCTAssertEqual(thisPayload.backgroundEnabled, minPayload.backgroundEnabled);
+    XCTAssertEqual(thisPayload.optedIn, minPayload.optedIn);
+    XCTAssertEqualObjects(thisPayload.pushAddress, minPayload.pushAddress);
+    XCTAssertEqualObjects(thisPayload.quietTimeTimeZone, minPayload.quietTimeTimeZone);
+    XCTAssertEqualObjects(thisPayload.quietTime, minPayload.quietTime);
+    XCTAssertEqualObjects(thisPayload.badge, minPayload.badge);
+}
+
+- (void)testMinimalUpdatePayloadChangeToNilNamedUserId {
+    UAChannelRegistrationPayload *thisPayload = [self.payload copy];
+    thisPayload.namedUserId = nil;
+
+    UAChannelRegistrationPayload *minPayload = [thisPayload minimalUpdatePayloadWithLastPayload:self.payload];
+    XCTAssertNil(minPayload.country);
+    XCTAssertNil(minPayload.timeZone);
+    XCTAssertNil(minPayload.language);
+    XCTAssertNil(minPayload.tags);
+    XCTAssertNil(minPayload.locationSettings);
+    XCTAssertNil(minPayload.SDKVersion);
+    XCTAssertNil(minPayload.appVersion);
+    XCTAssertNil(minPayload.deviceModel);
+    XCTAssertNil(minPayload.deviceOS);
+    XCTAssertNil(minPayload.carrier);
+
+    XCTAssertNil(minPayload.userID);
+    XCTAssertNil(minPayload.deviceID);
+    XCTAssertNil(minPayload.accengageDeviceID);
+    XCTAssertFalse(minPayload.setTags);
+
+    XCTAssertEqual(thisPayload.backgroundEnabled, minPayload.backgroundEnabled);
+    XCTAssertEqual(thisPayload.optedIn, minPayload.optedIn);
+    XCTAssertEqualObjects(thisPayload.pushAddress, minPayload.pushAddress);
+    XCTAssertEqualObjects(thisPayload.quietTimeTimeZone, minPayload.quietTimeTimeZone);
+    XCTAssertEqualObjects(thisPayload.quietTime, minPayload.quietTime);
+    XCTAssertEqualObjects(thisPayload.badge, minPayload.badge);
+}
+
 - (void)testMinimalUpdatePayloadNilValues {
     UAChannelRegistrationPayload *copy = [self.payload copy];
     copy.country = nil;
@@ -420,7 +482,9 @@
     XCTAssertEqualObjects(self.payload.badge, minPayload.badge);
 }
 
-// Helpers
+#pragma mark -
+#pragma mark Helpers
+
 - (NSMutableDictionary *)buildQuietTimeWithStartDate:(NSDate *)startDate withEndDate:(NSDate *)endDate {
 
     NSCalendar *cal = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
@@ -437,6 +501,5 @@
             toStr, UAPushQuietTimeEndKey, nil];
     
 }
-
 
 @end

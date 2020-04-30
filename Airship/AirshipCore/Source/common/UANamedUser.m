@@ -26,7 +26,7 @@ NSString *const UANamedUserLastChannelIDKey = @"UANamedUserLastChannelID";
 
 @implementation UANamedUser
 
-- (instancetype)initWithChannel:(UAChannel *)channel config:(UARuntimeConfig *)config dataStore:(UAPreferenceDataStore *)dataStore tagGroupsRegistrar:(UATagGroupsRegistrar *)tagGroupsRegistrar {
+- (instancetype)initWithChannel:(UAChannel<UAExtendableChannelRegistration> *)channel config:(UARuntimeConfig *)config dataStore:(UAPreferenceDataStore *)dataStore tagGroupsRegistrar:(UATagGroupsRegistrar *)tagGroupsRegistrar {
     self = [super initWithDataStore:dataStore];
     if (self) {
         self.config = config;
@@ -41,6 +41,12 @@ NSString *const UANamedUserLastChannelIDKey = @"UANamedUserLastChannelID";
                                                      name:UAChannelCreatedEvent
                                                    object:nil];
 
+        UA_WEAKIFY(self)
+        [self.channel addChannelExtenderBlock:^(UAChannelRegistrationPayload *payload, UAChannelRegistrationExtenderCompletionHandler completionHandler) {
+            UA_STRONGIFY(self)
+            [self extendChannelRegistrationPayload:payload completionHandler:completionHandler];
+        }];
+
         // Update the named user if necessary.
         [self update];
     }
@@ -48,7 +54,7 @@ NSString *const UANamedUserLastChannelIDKey = @"UANamedUserLastChannelID";
     return self;
 }
 
-+ (instancetype) namedUserWithChannel:(UAChannel *)channel
++ (instancetype) namedUserWithChannel:(UAChannel<UAExtendableChannelRegistration> *)channel
                             config:(UARuntimeConfig *)config
                          dataStore:(UAPreferenceDataStore *)dataStore
                 tagGroupsRegistrar:(nonnull UATagGroupsRegistrar *)tagGroupsRegistrar  {
@@ -119,6 +125,11 @@ NSString *const UANamedUserLastChannelIDKey = @"UANamedUserLastChannelID";
 
         // Update named user.
         [self update];
+        
+        // Identifier is non-null. Update CRA.
+        if (self.identifier) {
+            [self.channel updateRegistration];
+        }
 
         // Clear pending tag group mutations
         [self.tagGroupsRegistrar clearAllPendingTagUpdates:UATagGroupsTypeNamedUser];
@@ -187,7 +198,6 @@ NSString *const UANamedUserLastChannelIDKey = @"UANamedUserLastChannelID";
     [self update];
 }
 
-
 - (void)addTags:(NSArray *)tags group:(NSString *)tagGroupID {
     if (!self.isDataCollectionEnabled) {
         UA_LWARN(@"Unable to add tags %@ for group %@ when data collection is disabled.", [tags description], tagGroupID);
@@ -222,6 +232,13 @@ NSString *const UANamedUserLastChannelIDKey = @"UANamedUserLastChannelID";
     }
     
     [self.tagGroupsRegistrar updateTagGroupsForID:self.identifier type:UATagGroupsTypeNamedUser];
+}
+
+- (void)extendChannelRegistrationPayload:(UAChannelRegistrationPayload *)payload
+                       completionHandler:(UAChannelRegistrationExtenderCompletionHandler)completionHandler {
+    payload.namedUserId = self.identifier;
+
+    completionHandler(payload);
 }
 
 - (void)channelCreated:(NSNotification *)notification {

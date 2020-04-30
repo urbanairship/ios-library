@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
 #import "UANamedUser.h"
+#import "UAExtendableChannelRegistration.h"
 
 @class UANamedUserAPIClient;
 @class UARuntimeConfig;
@@ -56,7 +57,7 @@ extern NSString *const UANamedUserLastUpdatedTokenKey;
 /**
  * The push instance.
  */
-@property (nonatomic, strong) UAChannel *channel;
+@property (nonatomic, strong) UAChannel<UAExtendableChannelRegistration> *channel;
 
 /**
  * The airship config.

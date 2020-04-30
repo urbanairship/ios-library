@@ -40,6 +40,11 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) NSString *pushAddress;
 
 /**
+ * The named user identifier.
+ */
+@property (nonatomic, copy, nullable) NSString *namedUserId;
+
+/**
  * The flag indicates tags in this request should be handled.
  */
 @property (nonatomic, assign) BOOL setTags;
