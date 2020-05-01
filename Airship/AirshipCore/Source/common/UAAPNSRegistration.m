@@ -5,8 +5,6 @@
 
 @implementation UAAPNSRegistration
 
-@synthesize registrationDelegate;
-
 -(void)getAuthorizedSettingsWithCompletionHandler:(void (^)(UAAuthorizedNotificationSettings, UAAuthorizationStatus))completionHandler {
     [[UNUserNotificationCenter currentNotificationCenter] getNotificationSettingsWithCompletionHandler:^(UNNotificationSettings * _Nonnull notificationSettings) {
 
@@ -37,13 +35,13 @@
         if (notificationSettings.notificationCenterSetting == UNNotificationSettingEnabled) {
             authorizedSettings |= UAAuthorizedNotificationSettingsNotificationCenter;
         }
-        
+
         if (@available(iOS 12.0, *)) {
             if (notificationSettings.criticalAlertSetting == UNNotificationSettingEnabled) {
                 authorizedSettings |= UAAuthorizedNotificationSettingsCriticalAlert;
             }
         }
-        
+
         if (@available(iOS 13.0, *)) {
             if (notificationSettings.announcementSetting == UNNotificationSettingEnabled) {
                 authorizedSettings |= UAAuthorizedNotificationSettingsAnnouncement;
@@ -116,13 +114,15 @@
         }
     }
 #endif
-    
+
     return unOptions;
 }
 
 -(void)updateRegistrationWithOptions:(UANotificationOptions)options
                           categories:(NSSet<UANotificationCategory *> *)categories
-                   completionHandler:(nullable void(^)(BOOL success))completionHandler {
+                   completionHandler:(nullable void(^)(BOOL success,
+                                                       UAAuthorizedNotificationSettings authorizedSettings,
+                                                       UAAuthorizationStatus status))completionHandler {
 
 #if !TARGET_OS_TV   // UNNotificationCategory not supported on tvOS
     NSMutableSet *normalizedCategories;
@@ -145,19 +145,16 @@
 
     [center requestAuthorizationWithOptions:normalizedOptions
                           completionHandler:^(BOOL granted, NSError * _Nullable error) {
-                              if (error) {
-                                  UA_LERR(@"requestAuthorizationWithOptions failed with error: %@", error);
-                              }
+        if (error) {
+            UA_LERR(@"requestAuthorizationWithOptions failed with error: %@", error);
+        }
 
-                              if (completionHandler) {
-                                  completionHandler(granted);
-                              }
-
-                              [self getAuthorizedSettingsWithCompletionHandler:^(UAAuthorizedNotificationSettings authorizedSettings, UAAuthorizationStatus status) {
-                                  [self.registrationDelegate notificationRegistrationFinishedWithAuthorizedSettings:authorizedSettings status:status];
-                              }];
-                          }];
+        [self getAuthorizedSettingsWithCompletionHandler:^(UAAuthorizedNotificationSettings authorizedSettings, UAAuthorizationStatus status) {
+            if (completionHandler) {
+                completionHandler(granted, authorizedSettings, status);
+            }
+        }];
+    }];
 }
 
 @end
-

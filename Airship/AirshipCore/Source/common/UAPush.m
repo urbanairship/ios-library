@@ -75,7 +75,7 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
 
 - (instancetype)initWithConfig:(UARuntimeConfig *)config
                      dataStore:(UAPreferenceDataStore *)dataStore
-                        channel:(UAChannel<UAExtendableChannelRegistration> *)channel
+                       channel:(UAChannel<UAExtendableChannelRegistration> *)channel
                      analytics:(UAAnalytics<UAExtendableAnalyticsHeaders> *)analytics
                appStateTracker:(UAAppStateTracker *)appStateTracker
             notificationCenter:(NSNotificationCenter *)notificationCenter
@@ -96,8 +96,6 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
         self.registrationDelegateWrapper = [[UARegistrationDelegateWrapper alloc] init];
 
         self.pushRegistration = pushRegistration;
-        self.pushRegistration.registrationDelegate = self;
-
         self.requireAuthorizationForDefaultCategories = YES;
         self.backgroundPushNotificationsEnabledByDefault = YES;
 
@@ -213,7 +211,6 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
             // registration in case notification authorization has changed
             [self.channel updateRegistration];
         }
-
     }];
 }
 
@@ -337,7 +334,6 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
 
 - (void)setUserPushNotificationsEnabled:(BOOL)enabled {
     BOOL previousValue = self.userPushNotificationsEnabled;
-
     [self.dataStore setBool:enabled forKey:UAUserPushNotificationsEnabledKey];
 
     if (enabled != previousValue) {
@@ -348,7 +344,12 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
 
 - (void)enableUserPushNotifications:(void(^)(BOOL success))completionHandler {
     [self.dataStore setBool:YES forKey:UAUserPushNotificationsEnabledKey];
-    [self updateAPNSRegistration:completionHandler];
+    [self updateAPNSRegistration:^(BOOL result){
+        [self.channel updateRegistration];
+        if (completionHandler) {
+            completionHandler(result);
+        }
+    }];
 }
 
 - (BOOL)userPromptedForNotifications {
@@ -413,7 +414,6 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
 
 - (void)setRequireAuthorizationForDefaultCategories:(BOOL)requireAuthorizationForDefaultCategories {
     _requireAuthorizationForDefaultCategories = requireAuthorizationForDefaultCategories;
-
     self.shouldUpdateAPNSRegistration = YES;
 }
 
@@ -533,7 +533,6 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
 }
 
 - (void)setBadgeNumber:(NSInteger)badgeNumber {
-
     if ([self.application applicationIconBadgeNumber] == badgeNumber) {
         return;
     }
@@ -648,24 +647,26 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
 }
 
 - (void)updateRegistration {
-    // APNS registration will cause a channel registration
     if (self.shouldUpdateAPNSRegistration) {
         UA_LDEBUG(@"APNS registration is out of date, updating.");
-        [self updateAPNSRegistration];
-    } else if (self.userPushNotificationsEnabled && !self.channel.identifier) {
-        UA_LDEBUG(@"Push is enabled but we have not yet generated a channel ID. "
-                  "Airship registration will automatically run when the device token is registered, "
-                  "the next time the app is backgrounded, or the next time the app is foregrounded.");
+        UA_WEAKIFY(self)
+        [self updateAPNSRegistration:^(BOOL result){
+            UA_STRONGIFY(self)
+            [self.channel updateRegistration];
+        }];
     } else {
         [self.channel updateRegistration];
     }
 }
 
-- (void)updateAPNSRegistration {
-    [self updateAPNSRegistration:nil];
+- (void)onComponentEnableChange {
+    if (self.componentEnabled) {
+        // If component was disabled and is now enabled, register push
+        [self updateRegistration];
+    }
 }
 
-- (void)updateAPNSRegistration:(nullable void(^)(BOOL success))completionHandler {
+- (void)updateAPNSRegistration:(nonnull void(^)(BOOL success))completionHandler {
     self.shouldUpdateAPNSRegistration = NO;
 
     UANotificationOptions options = UANotificationOptionNone;
@@ -676,24 +677,26 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
         categories = self.combinedCategories;
     }
 
-    [self.pushRegistration getAuthorizedSettingsWithCompletionHandler:^(UAAuthorizedNotificationSettings authorizedSettings, UAAuthorizationStatus status) {
+    [self.pushRegistration getAuthorizedSettingsWithCompletionHandler:^(UAAuthorizedNotificationSettings authorizedSettings,
+                                                                        UAAuthorizationStatus status) {
+
         if (!self.config.requestAuthorizationToUseNotifications) {
             // The app is handling notification authorization
-            if (completionHandler) {
-                completionHandler(YES);
-            }
             [self notificationRegistrationFinishedWithAuthorizedSettings:authorizedSettings status:status];
-            return;
-        }
-        if (authorizedSettings == UAAuthorizedNotificationSettingsNone && options == UANotificationOptionNone) {
-            if (completionHandler) {
-                completionHandler(NO);
-            }
-            // Skip updating registration to avoid prompting the user
-            return;
-        }
+            completionHandler(YES);
+        } else if (authorizedSettings == UAAuthorizedNotificationSettingsNone && options == UANotificationOptionNone) {
+            completionHandler(NO);
+        } else {
+            [self.pushRegistration updateRegistrationWithOptions:options
+                                                      categories:categories
+                                               completionHandler:^(BOOL result,
+                                                                   UAAuthorizedNotificationSettings authorizedSettings,
+                                                                   UAAuthorizationStatus status) {
 
-        [self.pushRegistration updateRegistrationWithOptions:options categories:categories completionHandler:completionHandler];
+                [self notificationRegistrationFinishedWithAuthorizedSettings:authorizedSettings status:status];
+                completionHandler(result);
+            }];
+        }
     }];
 }
 
@@ -720,7 +723,7 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
     if (authorizedSettings & UAAuthorizedNotificationSettingsCarPlay) {
         options |= UANotificationOptionCarPlay;
     }
-    
+
     if (authorizedSettings & UAAuthorizedNotificationSettingsAnnouncement) {
         options |= UANotificationOptionAnnouncement;
     }
@@ -803,9 +806,9 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
 #pragma mark Push handling
 
 - (UNNotificationPresentationOptions)presentationOptionsForNotification:(UNNotification *)notification {
-    
+
     UNNotificationPresentationOptions options = UNNotificationPresentationOptionNone;
-    
+
     //Get foreground presentation options defined from the push API/dashboard
     NSArray *payloadPresentationOptions = [self foregroundPresentationOptionsForNotification:notification];
     if (payloadPresentationOptions.count) {
@@ -822,19 +825,19 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
     } else {
         options = self.defaultPresentationOptions;
     }
-    
+
     id pushDelegate = self.pushNotificationDelegate;
     if ([pushDelegate respondsToSelector:@selector(extendPresentationOptions:notification:)]) {
         options = [pushDelegate extendPresentationOptions:options notification:notification];
     } else if ([pushDelegate respondsToSelector:@selector(presentationOptionsForNotification:)]) {
         options = [pushDelegate presentationOptionsForNotification:notification];
     }
-    
+
     return options;
 }
 
 - (NSArray *)foregroundPresentationOptionsForNotification:(UNNotification *)notification {
-    
+
     NSArray *presentationOptions = nil;
 #if !TARGET_OS_TV   // UNNotificationContent.userInfo not available on tvOS
     // get the presentation options from the the notification
@@ -965,12 +968,6 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
     [self.dataStore setBool:YES forKey:UAPushTagsMigratedToChannelTagsKey];
     [self.dataStore removeObjectForKey:UAPushLegacyTagsSettingsKey];
 }
-
-- (void)onComponentEnableChange {
-    if (self.componentEnabled) {
-        // if component was disabled and is now enabled, register the channel
-        [self updateRegistration];
-    }
-}
-
 @end
+
+
