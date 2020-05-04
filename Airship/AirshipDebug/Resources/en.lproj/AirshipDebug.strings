@@ -31,6 +31,7 @@
 "ua_device_info_named_user" = "Named User";
 "ua_device_info_associated_identifiers" = "Associated Identifiers";
 "ua_device_info_channel_attributes" = "Channel Attributes";
+"ua_device_info_named_user_attributes" = "Named User Attributes";
 "ua_device_info_tags" = "Tags";
 "ua_device_info_sdk_version" = "SDK Version";
 "ua_device_info_locale" = "Locale";
@@ -189,6 +190,7 @@
 "ua_automation_audience_detailview_title" = "Audience Details";
 "ua_automation_buttons_tableview_title" = "Buttons";
 "ua_automation_button_detailview_title" = "Button Details";
+"ua_automation_extras_detailview_title" = "Extras Details";
 
 "ua_received_pushes_tableview_title" = "Received Pushes";
 
@@ -209,6 +211,7 @@
 "ua_message_name" = "Name";
 "ua_message_displaytype" = "Display Type";
 "ua_message_audience" = "Audience";
+"ua_message_extras" = "Extras";
 
 "ua_displaycontent_placement" = "Placement";
 "ua_displaycontent_contentlayout" = "Content Layout";

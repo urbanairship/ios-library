@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-#import "UABaseTest.h"
+#import "UAAirshipBaseTest.h"
 
 #import "UAirship+Internal.h"
 #import "UAInAppMessageAdapterProtocol.h"
@@ -25,7 +25,7 @@
 #import "UAComponent+Internal.h"
 
 
-@interface UAInAppMessageManagerTest : UABaseTest
+@interface UAInAppMessageManagerTest : UAAirshipBaseTest
 @property(nonatomic, strong) UAInAppMessageManager *manager;
 @property(nonatomic, strong) id mockDelegate;
 @property(nonatomic, strong) id mockAdapter;

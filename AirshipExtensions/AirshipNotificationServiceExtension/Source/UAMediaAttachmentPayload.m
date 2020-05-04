@@ -34,7 +34,7 @@
 @interface UAMediaAttachmentURL ()
 
 @property(nonatomic, copy) NSURL *url;
-@property(nonatomic, copy) NSString *urlId;
+@property(nonatomic, copy) NSString *urlID;
 
 @end
 
@@ -77,7 +77,7 @@
             NSDictionary *payload = object;
             NSString *urlString = isAccengagePayload ? payload[kUAAccengageNotificationAttachmentServiceURLKey] : payload[kUANotificationAttachmentServiceURLKey];
             self.url = [NSURL URLWithString:urlString];
-            self.urlId = isAccengagePayload ? payload[kUAAccengageNotificationAttachmentServiceURLIdKey] : payload[kUANotificationAttachmentServiceURLIdKey];
+            self.urlID = isAccengagePayload ? payload[kUAAccengageNotificationAttachmentServiceURLIdKey] : payload[kUANotificationAttachmentServiceURLIdKey];
         } else {
             return nil;
         }
@@ -153,19 +153,26 @@
             if (payloadURLs) {
                 for (NSDictionary *urlDictionary in payloadURLs) {
                     UAMediaAttachmentURL *url = [UAMediaAttachmentURL URLWithDictionary:urlDictionary isAccengagePayload:isAccengagePayload];
-                    [self.urls addObject:url];
+                    if (url) {
+                        [self.urls addObject:url];
+                    }
                 }
             } else {
+                // Only Airship media attachment payloads have the kUANotificationAttachmentServiceURLKey at the root level
                 id payloadURL = payload[kUANotificationAttachmentServiceURLKey];
                 if ([payloadURL isKindOfClass:[NSArray class]]) {
-                    for (NSString *urlString in payload[kUANotificationAttachmentServiceURLKey]) {
+                    for (NSString *urlString in payloadURL) {
                         UAMediaAttachmentURL *url = [UAMediaAttachmentURL URLWithDictionary:@{kUANotificationAttachmentServiceURLKey:urlString}];
-                        [self.urls addObject:url];
+                        if (url) {
+                            [self.urls addObject:url];
+                        }
                     }
                 } else {
                     if ([payloadURL isKindOfClass:[NSString class]]) {
                         UAMediaAttachmentURL *url = [UAMediaAttachmentURL URLWithDictionary:@{kUANotificationAttachmentServiceURLKey:payloadURL}];
-                        [self.urls addObject:url];
+                        if (url) {
+                            [self.urls addObject:url];
+                        }
                     }
                 }
             }

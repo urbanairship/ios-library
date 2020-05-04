@@ -105,14 +105,14 @@ NSString *const PersistentQueueKey = @"com.urbanairship.channel_attributes.regis
         __block UIBackgroundTaskIdentifier backgroundTaskIdentifier = [self.application beginBackgroundTaskWithExpirationHandler:^{
             UA_STRONGIFY(self);
 
-            UA_LTRACE(@"UAAttributeRegistrar - Attribute mutation background task expired.");
+            UA_LTRACE(@"UAAttributeRegistrar - Channel attribute mutation background task expired.");
             [self.client cancelAllRequests];
             [self endBackgroundTask:backgroundTaskIdentifier];
             [operation finish];
         }];
 
         if (backgroundTaskIdentifier == UIBackgroundTaskInvalid) {
-            UA_LTRACE("UAAttributeRegistrar - Background task unavailable, skipping attribute mutation update.");
+            UA_LTRACE("UAAttributeRegistrar - Background task unavailable, skipping channel attribute mutation update.");
             [operation finish];
             return;
         }
@@ -140,7 +140,67 @@ NSString *const PersistentQueueKey = @"com.urbanairship.channel_attributes.regis
             [self endBackgroundTask:backgroundTaskIdentifier];
             [operation finish];
         } onFailure:^(NSUInteger statusCode) {
-            UA_LDEBUG("UAAttributeRegistrar - update attribute request failed with status code:%lu", (unsigned long)statusCode);
+            UA_LDEBUG("UAAttributeRegistrar - update channel attribute request failed with status code:%lu", (unsigned long)statusCode);
+
+            if (statusCode == 400 || statusCode == 403) {
+                // Unrecoverable failure - pop mutation and end the background task
+                [self.pendingAttributeMutationsQueue popObject];
+                [self endBackgroundTask:backgroundTaskIdentifier];
+            }
+
+            [operation finish];
+        }];
+    }];
+
+    [self.operationQueue addOperation:operation];
+}
+
+- (void)updateAttributesForNamedUser:(NSString *)identifier {
+    if (!self.componentEnabled || !self.isDataCollectionEnabled) {
+        return;
+    }
+
+    UAAsyncOperation *operation = [UAAsyncOperation operationWithBlock:^(UAAsyncOperation *operation) {
+        UA_WEAKIFY(self);
+        __block UIBackgroundTaskIdentifier backgroundTaskIdentifier = [self.application beginBackgroundTaskWithExpirationHandler:^{
+            UA_STRONGIFY(self);
+
+            UA_LTRACE(@"UAAttributeRegistrar - Named user attribute mutation background task expired.");
+            [self.client cancelAllRequests];
+            [self endBackgroundTask:backgroundTaskIdentifier];
+            [operation finish];
+        }];
+
+        if (backgroundTaskIdentifier == UIBackgroundTaskInvalid) {
+            UA_LTRACE("UAAttributeRegistrar - Background task unavailable, skipping named user attribute mutation update.");
+            [operation finish];
+            return;
+        }
+
+        // Collapse queued pending mutations
+        [self collapseQueuedPendingMutations];
+
+        if (self.pendingAttributeMutationsQueue.objects.count == 0) {
+            [self endBackgroundTask:backgroundTaskIdentifier];
+            [operation finish];
+            return;
+        }
+
+        UAAttributePendingMutations *nextPendingMutation = (UAAttributePendingMutations *)[self.pendingAttributeMutationsQueue peekObject];
+
+        [self.client updateNamedUser:identifier withAttributePayload:nextPendingMutation.payload onSuccess:^{
+            // Success - pop uploaded mutation
+            [self.pendingAttributeMutationsQueue popObject];
+
+            // Continue updating attributes for named user if operation has not been canceled and there are remaining mutations to upload
+            if (!operation.isCancelled && self.pendingAttributeMutationsQueue.objects.count > 0) {
+                [self updateAttributesForNamedUser:identifier];
+            }
+
+            [self endBackgroundTask:backgroundTaskIdentifier];
+            [operation finish];
+        } onFailure:^(NSUInteger statusCode) {
+            UA_LDEBUG("UAAttributeRegistrar - update named user attribute request failed with status code: %lu", (unsigned long)statusCode);
 
             if (statusCode == 400 || statusCode == 403) {
                 // Unrecoverable failure - pop mutation and end the background task

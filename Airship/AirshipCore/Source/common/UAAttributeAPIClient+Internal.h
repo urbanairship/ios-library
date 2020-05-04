@@ -58,6 +58,20 @@ typedef void (^UAAttributeAPIClientFailureBlock)(NSUInteger statusCode);
                                                         onSuccess:(UAAttributeAPIClientSuccessBlock)successBlock
                                                         onFailure:(UAAttributeAPIClientFailureBlock)failureBlock;
 
+/**
+ Update the specified named user attributes with the provided attribute payload.
+ @param identifier The named user to update.
+ @param payload An dictionary representing an attribute payload.
+ @param successBlock A UAAttributeAPIClientSuccessBlock that will be called
+         if the attribute was updated successfully.
+ @param failureBlock A UAAttributeAPIClientFailureBlock that will be called if
+         the attribute update was unsuccessful.
+ */
+- (void)updateNamedUser:(NSString *)identifier withAttributePayload:(NSDictionary *)payload
+              onSuccess:(UAAttributeAPIClientSuccessBlock)successBlock
+              onFailure:(UAAttributeAPIClientFailureBlock)failureBlock;
+
+
 @end
 
 NS_ASSUME_NONNULL_END

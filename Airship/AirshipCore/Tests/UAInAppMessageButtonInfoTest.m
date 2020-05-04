@@ -1,6 +1,5 @@
 /* Copyright Airship and Contributors */
 
-#import <XCTest/XCTest.h>
 #import "UABaseTest.h"
 #import "UAInAppMessageButtonInfo+Internal.h"
 

@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-#import "UABaseTest.h"
+#import "UAAirshipBaseTest.h"
 #import "UAChannel+Internal.h"
 #import "UAChannelRegistrar+Internal.h"
 #import "UAChannelRegistrationPayload+Internal.h"
@@ -16,7 +16,7 @@
 #import "UAAppIntegration+Internal.h"
 #import "UAPush+Internal.h"
 
-@interface UAChannelTest : UABaseTest
+@interface UAChannelTest : UAAirshipBaseTest
 @property(nonatomic, strong) id mockTagGroupsRegistrar;
 @property(nonatomic, strong) id mockAttributeRegistrar;
 @property(nonatomic, strong) id mockChannelRegistrar;

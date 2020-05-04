@@ -1,10 +1,10 @@
 /* Copyright Airship and Contributors */
 
-#import "UABaseTest.h"
+#import "UAAirshipBaseTest.h"
 #import "UAAPIClient.h"
 #import "UARuntimeConfig.h"
 
-@interface UAAPIClientTest : UABaseTest
+@interface UAAPIClientTest : UAAirshipBaseTest
 @property(nonatomic, strong) UAAPIClient *client;
 @property(nonatomic, strong) id mockSession;
 @end

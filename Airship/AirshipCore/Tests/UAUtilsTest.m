@@ -2,9 +2,9 @@
 
 #import "UAUtils+Internal.h"
 #import "UAirship+Internal.h"
-#import "UABaseTest.h"
+#import "UAAirshipBaseTest.h"
 
-@interface UAUtilsTest : UABaseTest
+@interface UAUtilsTest : UAAirshipBaseTest
 @property(nonatomic, strong) NSCalendar *gregorianUTC;
 @property(nonatomic, strong) id mockAirship;
 @end

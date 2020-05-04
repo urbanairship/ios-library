@@ -15,6 +15,9 @@ NSString *const UAChannelsAPIPath = @"/api/channels/";
 NSString *const UAAttributePlatformSpecifier = @"/attributes?platform=";
 NSString *const UAAttributePlatform = @"ios";
 
+NSString *const UANamedUserAPIPath = @"/api/named_users/";
+NSString *const UAAttributeSpecifier = @"/attributes";
+
 @implementation UAAttributeAPIClient
 
 + (instancetype)clientWithConfig:(UARuntimeConfig *)config {
@@ -28,15 +31,32 @@ NSString *const UAAttributePlatform = @"ios";
 - (void)updateChannel:(NSString *)identifier withAttributePayload:(NSDictionary *)payload
                                                         onSuccess:(UAAttributeAPIClientSuccessBlock)successBlock
                                                         onFailure:(UAAttributeAPIClientFailureBlock)failureBlock {
-    UA_LTRACE(@"Updating channel:%@ with attribute payload:%@.", identifier, payload);
+    UA_LTRACE(@"Updating channel: %@ with attribute payload: %@.", identifier, payload);
 
+    // /api/channels/<channel id>/attributes?platform=<platform>
+    NSString *attributeEndpoint = [NSString stringWithFormat:@"%@%@%@%@%@", self.config.deviceAPIURL, UAChannelsAPIPath, identifier, UAAttributePlatformSpecifier, UAAttributePlatform];
+
+    [self updateEndpoint:attributeEndpoint WithAttributePayload:payload onSuccess:successBlock onFailure:failureBlock];
+}
+
+- (void)updateNamedUser:(NSString *)identifier withAttributePayload:(NSDictionary *)payload
+              onSuccess:(UAAttributeAPIClientSuccessBlock)successBlock
+              onFailure:(UAAttributeAPIClientFailureBlock)failureBlock {
+    UA_LTRACE(@"Updating nameduser: %@ with attribute payload: %@.", identifier, payload);
+
+    // /api/named_users/<named_user_id>/attributes
+    NSString *attributeEndpoint =  [NSString stringWithFormat:@"%@%@%@%@", self.config.deviceAPIURL, UANamedUserAPIPath, identifier, UAAttributeSpecifier];
+
+    [self updateEndpoint:attributeEndpoint WithAttributePayload:payload onSuccess:successBlock onFailure:failureBlock];
+}
+
+- (void)updateEndpoint:(NSString *)attributeEndpoint WithAttributePayload:(NSDictionary *)payload
+                         onSuccess:(UAAttributeAPIClientSuccessBlock)successBlock
+                         onFailure:(UAAttributeAPIClientFailureBlock)failureBlock {
     if (!self.enabled) {
         UA_LDEBUG(@"Disabled");
         return;
     }
-
-    // /api/channels/<channel id>/attributes?platform=<platform>
-    NSString *attributeEndpoint = [NSString stringWithFormat:@"%@%@%@%@%@", self.config.deviceAPIURL, UAChannelsAPIPath, identifier, UAAttributePlatformSpecifier, UAAttributePlatform];
 
     NSData *payloadData = [UAJSONSerialization dataWithJSONObject:payload
                                                           options:0
@@ -62,13 +82,13 @@ NSString *const UAAttributePlatform = @"ios";
 
         // Failure
         if (httpResponse.statusCode != 200 && httpResponse.statusCode != 201) {
-            UA_LTRACE(@"Channel update failed with status: %ld error: %@", (unsigned long)httpResponse.statusCode, error);
+            UA_LTRACE(@"Update of %@ failed with status: %ld error: %@", httpResponse.URL, (unsigned long)httpResponse.statusCode, error);
             failureBlock(httpResponse.statusCode);
             return;
         }
 
         // Success
-        UA_LTRACE(@"Channel update succeeded with status: %ld", (unsigned long)httpResponse.statusCode);
+        UA_LTRACE(@"Update of %@ succeeded with status: %ld", httpResponse.URL, (unsigned long)httpResponse.statusCode);
         successBlock();
     }];
 }

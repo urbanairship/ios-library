@@ -28,6 +28,16 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "DFE03D022450E73400622F11"
+               BuildableName = "AirshipNotificationContentExtensionTests.xctest"
+               BlueprintName = "AirshipNotificationContentExtensionTests"
+               ReferencedContainer = "container:AirshipExtensions.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction

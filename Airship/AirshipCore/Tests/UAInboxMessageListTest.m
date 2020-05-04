@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-#import "UABaseTest.h"
+#import "UAAirshipBaseTest.h"
 #import "UAInboxMessageList+Internal.h"
 #import "UAInboxAPIClient+Internal.h"
 #import "UAActionArguments+Internal.h"
@@ -20,7 +20,7 @@
 - (void)messageListUpdated;
 @end
 
-@interface UAInboxMessageListTest : UABaseTest
+@interface UAInboxMessageListTest : UAAirshipBaseTest
 @property (nonatomic, strong) id mockUser;
 @property (nonatomic, assign) BOOL userCreated;
 

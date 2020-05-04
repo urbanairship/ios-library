@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-#import "UABaseTest.h"
+#import "UAAirshipBaseTest.h"
 #import "UARuntimeConfig.h"
 #import "UAChannelCapture+Internal.h"
 #import "UAPreferenceDataStore+Internal.h"
@@ -9,7 +9,7 @@
 #import "UAUtils.h"
 #import "UATestDispatcher.h"
 
-@interface UAChannelCaptureTest : UABaseTest
+@interface UAChannelCaptureTest : UAAirshipBaseTest
 @property(nonatomic, strong) UAChannelCapture *channelCapture;
 
 @property(nonatomic, strong) id mockChannel;

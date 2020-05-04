@@ -10,7 +10,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /**
- The registrar responsible for routing requests to the channel attributes API.
+ The registrar responsible for routing requests to the attributes APIs.
  */
 @interface UAAttributeRegistrar : UAComponent
 
@@ -53,10 +53,16 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)deletePendingMutations;
 
 /**
- Method to update remote attributes with new mutations.
+ Method to update channel attributes with new mutations.
  @param identifier The channel identifier.
 */
 - (void)updateAttributesForChannel:(NSString *)identifier;
+
+/**
+ Method to update named user attributes with new mutations.
+ @param identifier The named user identifier.
+*/
+- (void)updateAttributesForNamedUser:(NSString *)identifier;
 
 @end
 

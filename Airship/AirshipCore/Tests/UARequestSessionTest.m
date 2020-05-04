@@ -1,11 +1,11 @@
 /* Copyright Airship and Contributors */
 
-#import "UABaseTest.h"
+#import "UAAirshipBaseTest.h"
 #import "UARequestSession.h"
 #import "UAURLRequestOperation+Internal.h"
 #import "UADelayOperation+Internal.h"
 
-@interface UARequestSessionTest : UABaseTest
+@interface UARequestSessionTest : UAAirshipBaseTest
 @property (nonatomic, strong) id mockNSURLSession;
 @property (nonatomic, strong) id mockQueue;
 @property (nonatomic, strong) UARequestSession *session;

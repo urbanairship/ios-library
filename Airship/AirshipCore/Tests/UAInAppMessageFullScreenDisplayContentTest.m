@@ -1,6 +1,5 @@
 /* Copyright Airship and Contributors */
 
-#import <XCTest/XCTest.h>
 #import "UAInAppMessageFullScreenDisplayContent+Internal.h"
 #import "UAInAppMessage.h"
 #import "UABaseTest.h"

@@ -1,7 +1,6 @@
 /* Copyright Airship and Contributors */
 
-#import <UIKit/UIKit.h>
-#import "UABaseTest.h"
+#import "UAAirshipBaseTest.h"
 #import "UALegacyInAppMessaging+Internal.h"
 #import "UALegacyInAppMessage.h"
 #import "UAInAppMessageManager.h"
@@ -15,7 +14,7 @@
 #import "UASchedule+Internal.h"
 #import "UAInAppMessage+Internal.h"
 
-@interface UALegacyInAppMessagingTest : UABaseTest
+@interface UALegacyInAppMessagingTest : UAAirshipBaseTest
 @property(nonatomic, strong) id mockAnalytics;
 @property(nonatomic, strong) id mockInAppMessageManager;
 

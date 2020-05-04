@@ -1,32 +1,38 @@
 /* Copyright Airship and Contributors */
 
-#import "UABaseTest.h"
+#import "UAAirshipBaseTest.h"
 #import "UAirship+Internal.h"
 #import "UAPreferenceDataStore+Internal.h"
-#import "UANamedUser.h"
 #import "UANamedUser+Internal.h"
 #import "UANamedUserAPIClient+Internal.h"
 #import "UAChannel+Internal.h"
 #import "UARuntimeConfig.h"
 #import "UATagGroupsRegistrar+Internal.h"
+#import "UATestDate.h"
+#import "UAAttributePendingMutations+Internal.h"
 
-@interface UANamedUserTest : UABaseTest
+@interface UANamedUserTest : UAAirshipBaseTest
 
 @property (nonatomic, strong) id mockedAirship;
-@property (nonatomic, strong) UANamedUser *namedUser;
 @property (nonatomic, strong) id mockedNamedUserClient;
 @property (nonatomic, strong) id mockChannel;
-@property (nonatomic, copy) NSString *pushChannelID;
 @property (nonatomic, strong) id mockTagGroupsRegistrar;
+@property (nonatomic, strong) id mockAttributeRegistrar;
+@property (nonatomic, strong) id mockTimeZone;
+@property (nonatomic, strong) UATestDate *testDate;
+
+@property (nonatomic, strong) UANamedUser *namedUser;
+@property (nonatomic, copy) NSString *pushChannelID;
 @property (nonatomic, strong) NSMutableDictionary *addTagGroups;
 @property (nonatomic, strong) NSMutableDictionary *removeTagGroups;
+@property (nonatomic, copy) UAChannelRegistrationExtenderBlock channelRegistrationExtenderBlock;
+
 @end
 
 @implementation UANamedUserTest
 
 void (^namedUserSuccessDoBlock)(NSInvocation *);
 void (^namedUserFailureDoBlock)(NSInvocation *);
-
 
 - (void)setUp {
     [super setUp];
@@ -38,7 +44,6 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
         [invocation setReturnValue:&self->_pushChannelID];
     }] identifier];
 
-
     self.mockedAirship = [self mockForClass:[UAirship class]];
     [[[self.mockedAirship stub] andReturn:self.mockChannel] channel];
     [UAirship setSharedAirship:self.mockedAirship];
@@ -46,11 +51,26 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
     self.pushChannelID = @"someChannel";
 
     self.mockTagGroupsRegistrar = [self mockForClass:[UATagGroupsRegistrar class]];
+    self.mockAttributeRegistrar = [self mockForClass:[UAAttributeRegistrar class]];
+
+    self.mockTimeZone = [self mockForClass:[NSTimeZone class]];
+    [[[self.mockTimeZone stub] andReturn:self.mockTimeZone] defaultTimeZone];
+    
+    self.testDate = [[UATestDate alloc] initWithAbsoluteTime:[NSDate date]];
+
+    // Capture the channel payload extender
+    [[[self.mockChannel stub] andDo:^(NSInvocation *invocation) {
+           void *arg;
+           [invocation getArgument:&arg atIndex:2];
+           self.channelRegistrationExtenderBlock =  (__bridge UAChannelRegistrationExtenderBlock)arg;
+    }] addChannelExtenderBlock:OCMOCK_ANY];
 
     self.namedUser = [UANamedUser namedUserWithChannel:self.mockChannel
                                                 config:self.config
                                              dataStore:self.dataStore
-                                    tagGroupsRegistrar:self.mockTagGroupsRegistrar];
+                                    tagGroupsRegistrar:self.mockTagGroupsRegistrar
+                                    attributeRegistrar:self.mockAttributeRegistrar
+                                                  date:self.testDate];
 
     self.mockedNamedUserClient = [self mockForClass:[UANamedUserAPIClient class]];
     self.namedUser.namedUserAPIClient = self.mockedNamedUserClient;
@@ -279,7 +299,6 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
                                          onSuccess:OCMOCK_ANY
                                          onFailure:OCMOCK_ANY];
 
-
     // Named user client should not disassociate
     [[self.mockedNamedUserClient reject] disassociate:OCMOCK_ANY
                                             onSuccess:OCMOCK_ANY
@@ -317,7 +336,6 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
                      @"Named user client should not associate or disassociate.");
 }
 
-
 /**
  * Test disassociateNamedUserIfNil when named user is nil.
  */
@@ -328,7 +346,6 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
     [[self.mockedNamedUserClient expect] disassociate:@"someChannel"
                                             onSuccess:OCMOCK_ANY
                                             onFailure:OCMOCK_ANY];
-
 
     self.namedUser.changeToken = nil;
     [self.namedUser disassociateNamedUserIfNil];
@@ -402,7 +419,6 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
 
     XCTAssertNoThrow([self.mockedNamedUserClient verify], @"Named user should be associated");
 }
-
 
 /**
  * Test that the tag groups registrar is called when UANamedUser is asked to update tags
@@ -596,7 +612,7 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
     self.namedUser.identifier = @"neat";
     XCTAssertNotNil(self.namedUser.identifier);
 
-    // Expect the named user client to associate and call the success block
+    // Expect the named user client to disassociate and call the success block
     [[[self.mockedNamedUserClient expect] andDo:namedUserSuccessDoBlock] disassociate:@"someChannel"
                                                                          onSuccess:OCMOCK_ANY
                                                                          onFailure:OCMOCK_ANY];
@@ -607,6 +623,144 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
     XCTAssertNil(self.namedUser.identifier);
 
     [self.mockedNamedUserClient verify];
+}
+
+/**
+ * Test registration payload extender.
+ */
+- (void)testRegistrationPayloadExtender {
+    UAChannelRegistrationPayload *payload = [[UAChannelRegistrationPayload alloc] init];
+    XCTestExpectation *extendedPayload = [self expectationWithDescription:@"extended payload"];
+    self.channelRegistrationExtenderBlock(payload, ^(UAChannelRegistrationPayload * _Nonnull payload) {
+        XCTAssertEqualObjects(self.namedUser.identifier, payload.namedUserId);
+        [extendedPayload fulfill];
+    });
+
+    [self waitForTestExpectations];
+}
+
+/**
+ * Test changing named user id updates channel registration .
+ */
+- (void)testChangingIdUpdatesChannelRegistration {
+    
+    [[self.mockChannel expect] updateRegistration];
+    
+    self.namedUser.identifier = @"a_different_named_user";
+    
+    [self.mockChannel verify];
+}
+
+- (void)testClearNamedUserAttributesOnDataCollectionDisabled {
+    // Expect the named user client to disassociate and call the success block
+    [[[self.mockedNamedUserClient expect] andDo:namedUserSuccessDoBlock] disassociate:@"someChannel"
+                                                                         onSuccess:OCMOCK_ANY
+                                                                         onFailure:OCMOCK_ANY];
+
+    // expect pending mutations to be deleted
+    [[self.mockAttributeRegistrar expect] deletePendingMutations];
+    
+    [self.dataStore setBool:NO forKey:UAirshipDataCollectionEnabledKey];
+    [self.namedUser onDataCollectionEnabledChanged];
+
+    [self.mockedNamedUserClient verify];
+    [self.mockAttributeRegistrar verify];
+}
+
+/**
+ * Tests adding a named user attribute results in save and update called when a named user is present.
+ */
+- (void)testAddNamedUserAttribute {
+    [self.mockTimeZone stopMocking];
+
+    UAAttributeMutations *addMutation = [UAAttributeMutations mutations];
+    [addMutation setString:@"string" forAttribute:@"attribute"];
+
+    UAAttributePendingMutations *expectedPendingMutations = [UAAttributePendingMutations pendingMutationsWithMutations:addMutation date:self.testDate];
+
+    [[self.mockAttributeRegistrar expect] savePendingMutations:[OCMArg checkWithBlock:^BOOL(id obj) {
+        UAAttributePendingMutations *pendingMutations = (UAAttributePendingMutations *)obj;
+        return [pendingMutations.payload isEqualToDictionary:expectedPendingMutations.payload];
+    }]];
+
+    [[self.mockAttributeRegistrar expect] updateAttributesForNamedUser:self.namedUser.identifier];
+
+    [self.namedUser applyAttributeMutations:addMutation];
+
+    [self.mockAttributeRegistrar verify];
+}
+
+/**
+ * Tests adding a named user attribute results in a save but does not result in a registration call to update with mutations when no named user is present.
+ */
+- (void)testAddNamedUserAttributeNoNamedUser {
+    [self.mockTimeZone stopMocking];
+
+    UAAttributeMutations *addMutation = [UAAttributeMutations mutations];
+
+    [addMutation setString:@"string" forAttribute:@"attribute"];
+    self.testDate = [[UATestDate alloc] initWithAbsoluteTime:[NSDate date]];
+
+    UAAttributePendingMutations *expectedPendingMutations = [UAAttributePendingMutations pendingMutationsWithMutations:addMutation date:self.testDate];
+
+    [[self.mockAttributeRegistrar expect] savePendingMutations:[OCMArg checkWithBlock:^BOOL(id obj) {
+        UAAttributePendingMutations *pendingMutations = (UAAttributePendingMutations *)obj;
+        return [pendingMutations.payload isEqualToDictionary:expectedPendingMutations.payload];
+    }]];
+
+    [[self.mockAttributeRegistrar reject] updateAttributesForNamedUser:OCMOCK_ANY];
+
+    self.namedUser.identifier = nil;
+    
+    [self.namedUser applyAttributeMutations:addMutation];
+
+    [self.mockAttributeRegistrar verify];
+}
+
+/**
+ * Test updateNamedUserAttributes method if the named user component is disabled
+ */
+- (void)testUpdateNamedUserAttributesIfComponentDisabled {
+    self.namedUser.componentEnabled = NO;
+
+    [[self.mockAttributeRegistrar reject] updateAttributesForNamedUser:OCMOCK_ANY];
+
+    UAAttributeMutations *addMutation = [UAAttributeMutations mutations];
+    [addMutation setString:@"string" forAttribute:@"attribute"];
+    
+    [self.namedUser applyAttributeMutations:addMutation];
+    [self.mockAttributeRegistrar verify];
+}
+
+/**
+ * Test updateNamedUserAttributes method if the identifier is not set and the named user component enabled
+ */
+- (void)testUpdateNamedUserAttributesIfIdentifierNil {
+    self.namedUser.componentEnabled = YES;
+    self.namedUser.identifier = nil;
+    
+    [[self.mockAttributeRegistrar reject] updateAttributesForNamedUser:OCMOCK_ANY];
+    
+    UAAttributeMutations *addMutation = [UAAttributeMutations mutations];
+    [addMutation setString:@"string" forAttribute:@"attribute"];
+    
+    [self.namedUser applyAttributeMutations:addMutation];
+    [self.mockAttributeRegistrar verify];
+}
+
+/**
+ * Test updateNamedUserAttributes method if the identifier is set and the named user component enabled
+ */
+- (void)testUpdateNamedUserAttributes {
+    self.namedUser.componentEnabled = YES;
+    
+    [[self.mockAttributeRegistrar expect] updateAttributesForNamedUser:OCMOCK_ANY];
+    
+    UAAttributeMutations *addMutation = [UAAttributeMutations mutations];
+    [addMutation setString:@"string" forAttribute:@"attribute"];
+    
+    [self.namedUser applyAttributeMutations:addMutation];
+    [self.mockAttributeRegistrar verify];
 }
 
 @end

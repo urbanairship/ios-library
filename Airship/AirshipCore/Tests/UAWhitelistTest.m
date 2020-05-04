@@ -1,11 +1,11 @@
 /* Copyright Airship and Contributors */
 
 #import <UIKit/UIKit.h>
-#import "UABaseTest.h"
+#import "UAAirshipBaseTest.h"
 #import "UAWhitelist.h"
 #import "UAConfig.h"
 
-@interface UAWhitelistTest : UABaseTest
+@interface UAWhitelistTest : UAAirshipBaseTest
 
 @property(nonatomic, strong) UAWhitelist *whitelist;
 @property(nonnull, copy) NSArray *scopes;

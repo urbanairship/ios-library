@@ -1,10 +1,10 @@
 /* Copyright Airship and Contributors */
 
-#import "UABaseTest.h"
+#import "UAAirshipBaseTest.h"
 #import "UAPreferenceDataStore+Internal.h"
 #import "UATagGroupsMutationHistory+Internal.h"
 
-@interface UATagGroupsMutationHistoryTest : UABaseTest
+@interface UATagGroupsMutationHistoryTest : UAAirshipBaseTest
 
 @property(nonatomic, strong) UATagGroupsMutationHistory *mutationHistory;
 

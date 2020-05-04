@@ -1,6 +1,6 @@
 /* Copyright 2018 Urban Airship and Contributors */
 
-#import "UABaseTest.h"
+#import "UAAirshipBaseTest.h"
 #import "UALocation+Internal.h"
 #import "UALocation.h"
 #import "UALocationEvent.h"
@@ -8,7 +8,7 @@
 #import "UAAnalytics.h"
 #import "UAComponent+Internal.h"
 
-@interface UALocationTest : UABaseTest
+@interface UALocationTest : UAAirshipBaseTest
 
 @property (nonatomic, strong) UALocation *location;
 @property (nonatomic, strong) NSNotificationCenter *notificationCenter;

@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-#import <XCTest/XCTest.h>
+
 #import "UAInAppMessageScheduleInfo+Internal.h"
 #import "UABaseTest.h"
 

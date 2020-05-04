@@ -92,7 +92,7 @@ extern NSString *const UAPushTagsMigratedToChannelTagsKey;
 extern NSString *const UAPushEnabledKey;
 
 
-@interface UAPush () <UAAPNSRegistrationDelegate, UAPushProviderDelegate>
+@interface UAPush () <UAPushProviderDelegate>
 
 ///---------------------------------------------------------------------------------------
 /// @name Push Internal Properties
@@ -226,7 +226,7 @@ extern NSString *const UAPushEnabledKey;
  * Updates the registration with APNS. Call after modifying notification types
  * and user notification categories.
  */
-- (void)updateAPNSRegistration;
+- (void)updateAPNSRegistration:(nonnull void(^)(BOOL success))completionHandler;
 
 /**
  * Updates the authorized notification types.

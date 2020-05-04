@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-#import "UABaseTest.h"
+#import "UAAirshipBaseTest.h"
 #import "UAChannelAPIClient+Internal.h"
 #import "UAChannelRegistrar+Internal.h"
 #import "UAChannelRegistrationPayload+Internal.h"
@@ -12,7 +12,7 @@
 #import "UATestDate.h"
 #import "UATestDispatcher.h"
 
-@interface UAChannelRegistrarTest : UABaseTest
+@interface UAChannelRegistrarTest : UAAirshipBaseTest
 
 @property (nonatomic, strong) id mockedChannelClient;
 @property (nonatomic, strong) id mockedRegistrarDelegate;

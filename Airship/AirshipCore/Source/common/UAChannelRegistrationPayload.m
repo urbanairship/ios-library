@@ -15,6 +15,7 @@ NSString *const UAChannelKey = @"channel";
 NSString *const UAChannelDeviceTypeKey = @"device_type";
 NSString *const UAChannelOptInKey = @"opt_in";
 NSString *const UAChannelPushAddressKey = @"push_address";
+NSString *const UAChannelNamedUserIdKey = @"named_user_id";
 
 NSString *const UAChannelTopLevelTimeZoneJSONKey = @"timezone";
 NSString *const UAChannelTopLevelLanguageJSONKey = @"locale_language";
@@ -68,6 +69,7 @@ NSString *const UABackgroundEnabledJSONKey = @"background";
 
             self.deviceID = topLevel[UAChannelDeviceIDKey];
             self.pushAddress = topLevel[UAChannelPushAddressKey];
+            self.namedUserId = topLevel[UAChannelNamedUserIdKey];
             self.userID = topLevel[UAChannelUserIDKey];
             self.accengageDeviceID = topLevel[UAChannelAccengageDeviceIDKey];
             self.optedIn = [topLevel[UAChannelOptInKey] boolValue];
@@ -119,6 +121,8 @@ NSString *const UABackgroundEnabledJSONKey = @"background";
     [channel setValue:[NSNumber numberWithBool:self.backgroundEnabled] forKey:UABackgroundEnabledJSONKey];
     [channel setValue:self.pushAddress forKey:UAChannelPushAddressKey];
 
+    [channel setValue:self.namedUserId forKey:UAChannelNamedUserIdKey];
+
     [channel setValue:[NSNumber numberWithBool:self.setTags] forKey:UAChannelSetTagsKey];
     if (self.setTags) {
         [channel setValue:self.tags forKey:UAChannelTagsJSONKey];
@@ -161,6 +165,7 @@ NSString *const UABackgroundEnabledJSONKey = @"background";
         copy.optedIn = self.optedIn;
         copy.backgroundEnabled = self.backgroundEnabled;
         copy.pushAddress = self.pushAddress;
+        copy.namedUserId = self.namedUserId;
         copy.setTags = self.setTags;
         copy.tags = [self.tags copyWithZone:zone];
         copy.quietTime = [self.quietTime copyWithZone:zone];
@@ -224,41 +229,44 @@ NSString *const UABackgroundEnabledJSONKey = @"background";
     minPayload.deviceID = nil;
     minPayload.accengageDeviceID = nil;
 
-    // Optional attributes
-    if ([self.country isEqual:lastPayload.country]) {
-        minPayload.country = nil;
-    }
+    // Only remove attributes if named user Id is null or is the same as the last payload
+    if (!self.namedUserId || ([lastPayload.namedUserId isEqual:self.namedUserId])) {
+        // Optional attributes
+        if ([self.country isEqual:lastPayload.country]) {
+            minPayload.country = nil;
+        }
+        
+        if ([self.language isEqual:lastPayload.language]) {
+            minPayload.language = nil;
+        }
+        
+        if ([self.timeZone isEqual:lastPayload.timeZone]) {
+            minPayload.timeZone = nil;
+        }
 
-    if ([self.language isEqual:lastPayload.language]) {
-        minPayload.language = nil;
-    }
+        if ([self.locationSettings isEqual:lastPayload.locationSettings]) {
+            minPayload.locationSettings = nil;
+        }
+        
+        if ([self.appVersion isEqual:lastPayload.appVersion]) {
+            minPayload.appVersion = nil;
+        }
+        
+        if ([self.SDKVersion isEqual:lastPayload.SDKVersion]) {
+            minPayload.SDKVersion = nil;
+        }
+        
+        if ([self.deviceModel isEqual:lastPayload.deviceModel]) {
+            minPayload.deviceModel = nil;
+        }
 
-    if ([self.timeZone isEqual:lastPayload.timeZone]) {
-        minPayload.timeZone = nil;
-    }
-
-    if ([self.locationSettings isEqual:lastPayload.locationSettings]) {
-        minPayload.locationSettings = nil;
-    }
-
-    if ([self.appVersion isEqual:lastPayload.appVersion]) {
-        minPayload.appVersion = nil;
-    }
-
-    if ([self.SDKVersion isEqual:lastPayload.SDKVersion]) {
-        minPayload.SDKVersion = nil;
-    }
-
-    if ([self.deviceModel isEqual:lastPayload.deviceModel]) {
-        minPayload.deviceModel = nil;
-    }
-
-    if ([self.deviceOS isEqual:lastPayload.deviceOS]) {
-        minPayload.deviceOS = nil;
-    }
-
-    if ([self.carrier isEqual:lastPayload.carrier]) {
-        minPayload.carrier = nil;
+        if ([self.deviceOS isEqual:lastPayload.deviceOS]) {
+            minPayload.deviceOS = nil;
+        }
+        
+        if ([self.carrier isEqual:lastPayload.carrier]) {
+            minPayload.carrier = nil;
+        }
     }
 
     return minPayload;

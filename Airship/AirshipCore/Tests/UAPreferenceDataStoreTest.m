@@ -1,9 +1,9 @@
 /* Copyright Airship and Contributors */
 
-#import "UABaseTest.h"
+#import "UAAirshipBaseTest.h"
 #import "UAPreferenceDataStore+Internal.h"
 
-@interface UAPreferenceDataStoreTest : UABaseTest
+@interface UAPreferenceDataStoreTest : UAAirshipBaseTest
 
 @end
 

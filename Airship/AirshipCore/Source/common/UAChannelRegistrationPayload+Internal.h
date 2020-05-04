@@ -13,6 +13,7 @@ extern NSString *const UAChannelKey;
 extern NSString *const UAChannelDeviceTypeKey;
 extern NSString *const UAChannelOptInKey;
 extern NSString *const UAChannelPushAddressKey;
+extern NSString *const UAChannelNamedUserIdKey;
 
 extern NSString *const UAChannelTopLevelTimeZoneJSONKey;
 extern NSString *const UAChannelTopLevelLanguageJSONKey;

@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-#import "UABaseTest.h"
+#import "UAAirshipBaseTest.h"
 
 #import "UAActionArguments+Internal.h"
 #import "UAChannelCaptureAction.h"
@@ -8,7 +8,7 @@
 #import "UAirship+Internal.h"
 #import "UAPreferenceDataStore+Internal.h"
 
-@interface UAChannelCaptureActionTest : UABaseTest
+@interface UAChannelCaptureActionTest : UAAirshipBaseTest
 
 @property (nonatomic, strong) UAChannelCaptureAction *action;
 @property (nonatomic, strong) UAActionArguments *arguments;

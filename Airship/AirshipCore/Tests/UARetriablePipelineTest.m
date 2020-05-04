@@ -1,6 +1,5 @@
 /* Copyright Airship and Contributors */
 
-#import <XCTest/XCTest.h>
 #import "UABaseTest.h"
 #import "UARetriablePipeline+Internal.h"
 #import "UATestDispatcher.h"

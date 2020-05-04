@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-#import "UABaseTest.h"
+#import "UAAirshipBaseTest.h"
 #import "UAUserAPIClient+Internal.h"
 #import "NSJSONSerialization+UAAdditions.h"
 #import "UAUtils+Internal.h"
@@ -11,7 +11,7 @@
 #import "UAUserData+Internal.h"
 #import "UAJSONSerialization.h"
 
-@interface UAUserAPIClientTest : UABaseTest
+@interface UAUserAPIClientTest : UAAirshipBaseTest
 @property (nonatomic, strong) UAUserAPIClient *client;
 @property (nonatomic, strong) id mockRequest;
 @property (nonatomic, strong) id mockSession;

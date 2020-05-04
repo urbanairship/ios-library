@@ -5,18 +5,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-//---------------------------------------------------------------------------------------
-// UAAPNSRegistrationProtocol Protocol
-//---------------------------------------------------------------------------------------
-
-@protocol UAAPNSRegistrationDelegate <NSObject>
-
-@required
-
-- (void)notificationRegistrationFinishedWithAuthorizedSettings:(UAAuthorizedNotificationSettings)authorizedSettings
-                                                        status:(UAAuthorizationStatus)status;
-@end
-
 /**
  * Protocol to be implemented by internal APNS registration instances. All methods are optional.
  */
@@ -27,8 +15,6 @@ NS_ASSUME_NONNULL_BEGIN
 ///---------------------------------------------------------------------------------------
 
 @required
-
-@property (nonatomic, weak, nullable) id<UAAPNSRegistrationDelegate> registrationDelegate;
 
 /**
  * Get authorized notification settings from iOS.
@@ -43,11 +29,13 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @param options The notification options to register.
  * @param categories The categories to register
- * @param completionHandler The completion handler. Success parameter is `YES` if permissions granted, `NO` otherwise.
+ * @param completionHandler The completion handler with registration result.
  */
 -(void)updateRegistrationWithOptions:(UANotificationOptions)options
                           categories:(NSSet<UANotificationCategory *> *)categories
-                   completionHandler:(nullable void(^)(BOOL success))completionHandler;
+                   completionHandler:(nullable void(^)(BOOL success,
+                                                       UAAuthorizedNotificationSettings authorizedSettings,
+                                                       UAAuthorizationStatus status))completionHandler;
 
 @end
 

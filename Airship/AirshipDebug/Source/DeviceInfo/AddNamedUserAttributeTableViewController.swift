@@ -6,10 +6,9 @@ import AirshipCore
 import Airship
 #endif
 
-class AddChannelAttributeTableViewController: AddAttributeTableViewController {
+class AddNamedUserAttributeTableViewController: AddAttributeTableViewController {
 
     override internal func applyMutations(_ mutations : UAAttributeMutations) {
-        UAirship.channel()?.apply(mutations)
+        UAirship.namedUser().apply(mutations)
     }
-
 }

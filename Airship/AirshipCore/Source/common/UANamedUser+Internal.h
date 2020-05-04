@@ -1,11 +1,14 @@
 /* Copyright Airship and Contributors */
 
 #import "UANamedUser.h"
+#import "UAExtendableChannelRegistration.h"
 
 @class UANamedUserAPIClient;
 @class UARuntimeConfig;
 @class UATagGroupsRegistrar;
+@class UAAttributeRegistrar;
 @class UAChannel;
+@class UADate;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -56,7 +59,7 @@ extern NSString *const UANamedUserLastUpdatedTokenKey;
 /**
  * The push instance.
  */
-@property (nonatomic, strong) UAChannel *channel;
+@property (nonatomic, strong) UAChannel<UAExtendableChannelRegistration> *channel;
 
 /**
  * The airship config.
@@ -76,9 +79,26 @@ extern NSString *const UANamedUserLastUpdatedTokenKey;
  * @return A named user instance.
  */
 + (instancetype)namedUserWithChannel:(UAChannel *)channel
-                           config:(UARuntimeConfig *)config
-                        dataStore:(UAPreferenceDataStore *)dataStore
-               tagGroupsRegistrar:(UATagGroupsRegistrar *)tagGroupsRegistrar;
+                              config:(UARuntimeConfig *)config
+                           dataStore:(UAPreferenceDataStore *)dataStore
+                  tagGroupsRegistrar:(UATagGroupsRegistrar *)tagGroupsRegistrar;
+
+/**
+ * Factory method to create a named user. For testing.
+ * @parm channel The UAChannel instance.
+ * @param config The Airship config.
+ * @param dataStore The shared preference data store.
+ * @param tagGroupsRegistrar The tag groups registrar.
+ * @param attributeRegistrar The attribute registrar
+ * @param date The date for setting the timestamp.
+ * @return A named user instance.
+ */
++ (instancetype)namedUserWithChannel:(UAChannel *)channel
+                              config:(UARuntimeConfig *)config
+                           dataStore:(UAPreferenceDataStore *)dataStore
+                  tagGroupsRegistrar:(UATagGroupsRegistrar *)tagGroupsRegistrar
+                  attributeRegistrar:(UAAttributeRegistrar *)attributeRegistrar
+                                date:(UADate *)date;
 
 /**
  * Updates the association or disassociation of the current named user ID.

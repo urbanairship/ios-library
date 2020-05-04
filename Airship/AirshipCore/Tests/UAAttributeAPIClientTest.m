@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-#import "UABaseTest.h"
+#import "UAAirshipBaseTest.h"
 #import <Foundation/Foundation.h>
 #import "UAAttributeAPIClient+Internal.h"
 #import "UAirship.h"
@@ -12,7 +12,7 @@
 #import "UAirship+Internal.h"
 #import "UAChannel+Internal.h"
 
-@interface UAAttributeAPIClientTest : UABaseTest
+@interface UAAttributeAPIClientTest : UAAirshipBaseTest
 @property(nonatomic, strong) id mockSession;
 @property(nonatomic, strong) UAAttributeAPIClient *client;
 @property(nonatomic, copy) NSString *channelID;
@@ -29,7 +29,37 @@
 /**
  Test mutation request retries on 5xx and 429 status codes.
  */
-- (void)testMutationRetry {
+- (void)testChannelMutationRetry {
+    BOOL (^retryBlockCheck)(id obj) = [self retryBlockCheck];
+
+    [[self.mockSession expect] dataTaskWithRequest:OCMOCK_ANY
+                                        retryWhere:[OCMArg checkWithBlock:retryBlockCheck]
+                                 completionHandler:OCMOCK_ANY];
+
+    [self.client updateChannel:self.channelID
+          withAttributePayload:@{}
+                     onSuccess:^{}
+                     onFailure:^(NSUInteger statusCode) {}];
+
+    [self.mockSession verify];
+}
+
+- (void)testNamedUserMutationRetry {
+    BOOL (^retryBlockCheck)(id obj) = [self retryBlockCheck];
+
+    [[self.mockSession expect] dataTaskWithRequest:OCMOCK_ANY
+                                        retryWhere:[OCMArg checkWithBlock:retryBlockCheck]
+                                 completionHandler:OCMOCK_ANY];
+
+    [self.client updateNamedUser:self.channelID
+            withAttributePayload:@{}
+                       onSuccess:^{}
+                       onFailure:^(NSUInteger statusCode) {}];
+
+    [self.mockSession verify];
+}
+
+- (BOOL (^)(id obj))retryBlockCheck {
     BOOL (^retryBlockCheck)(id obj) = ^(id obj) {
         UARequestRetryBlock retryBlock = obj;
 
@@ -67,22 +97,13 @@
 
         return YES;
     };
-
-    [[self.mockSession expect] dataTaskWithRequest:OCMOCK_ANY
-                                        retryWhere:[OCMArg checkWithBlock:retryBlockCheck]
-                                 completionHandler:OCMOCK_ANY];
-
-    [self.client updateChannel:self.channelID withAttributePayload:@{}
-                                                         onSuccess:^{}
-                                                         onFailure:^(NSUInteger statusCode) {}];
-
-    [self.mockSession verify];
+    return retryBlockCheck;
 }
 
 /**
  Test mutation request failure returns correct status code.
 */
-- (void)testMutationFailure{
+- (void)testChannelMutationFailure {
     // Create a failure response
     NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:400 HTTPVersion:nil headerFields:nil];
 
@@ -107,10 +128,75 @@
     XCTAssertEqual(failureCode, 400);
 }
 
+- (void)testNamedUserMutationFailure {
+    // Create a failure response
+    NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:400 HTTPVersion:nil headerFields:nil];
+
+    // Stub the session to return a the response
+    [[[self.mockSession stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:4];
+        UARequestCompletionHandler completionHandler = (__bridge UARequestCompletionHandler)arg;
+        completionHandler(nil, response, nil);
+    }] dataTaskWithRequest:OCMOCK_ANY retryWhere:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
+    __block NSUInteger failureCode = 0;
+
+    [self.client updateNamedUser:self.channelID withAttributePayload:@{}
+                                                           onSuccess:^{
+                                                              XCTFail(@"Should not be called");
+                                                           }
+                                                           onFailure:^(NSUInteger statusCode) {
+                                                              failureCode = statusCode;
+                                                           }];
+
+    XCTAssertEqual(failureCode, 400);
+}
+
 /**
  Test the attribute mutation request is properly formed when given a valid payload
  */
-- (void)testMutationRequest {
+- (void)testChannelMutationRequest {
+    NSDictionary *expectedPayload = [self expectedPayload];
+
+    NSData *expectedPayloadData = [UAJSONSerialization dataWithJSONObject:expectedPayload
+                                                                  options:0
+                                                                    error:nil];
+    NSString *expectedUrl = [NSString stringWithFormat:@"https://device-api.urbanairship.com/api/channels/%@/attributes?platform=ios", self.channelID];
+
+    BOOL (^checkRequestBlock)(id obj) = [self checkRequestBlockWithURL:expectedUrl andPayloadData:expectedPayloadData];
+
+    [[self.mockSession expect] dataTaskWithRequest:[OCMArg checkWithBlock:checkRequestBlock]
+                                        retryWhere:OCMOCK_ANY
+                                 completionHandler:OCMOCK_ANY];
+
+    [self.client updateChannel:self.channelID withAttributePayload:expectedPayload
+                                                         onSuccess:^{}
+                                                         onFailure:^(NSUInteger statusCode) {}];
+    [self.mockSession verify];
+}
+
+- (void)testNamedUserMutationRequest {
+    NSDictionary *expectedPayload = [self expectedPayload];
+
+    NSData *expectedPayloadData = [UAJSONSerialization dataWithJSONObject:expectedPayload
+                                                                  options:0
+                                                                    error:nil];
+    NSString *expectedUrl = [NSString stringWithFormat:@"https://device-api.urbanairship.com/api/named_users/%@/attributes", self.channelID];
+
+    BOOL (^checkRequestBlock)(id obj) = [self checkRequestBlockWithURL:expectedUrl andPayloadData:expectedPayloadData];
+
+    [[self.mockSession expect] dataTaskWithRequest:[OCMArg checkWithBlock:checkRequestBlock]
+                                        retryWhere:OCMOCK_ANY
+                                 completionHandler:OCMOCK_ANY];
+
+    [self.client updateNamedUser:self.channelID withAttributePayload:expectedPayload
+                                                           onSuccess:^{}
+                                                           onFailure:^(NSUInteger statusCode) {}];
+    [self.mockSession verify];
+}
+
+- (NSDictionary *)expectedPayload {
     NSArray *expectedMutationsPayload = @[
         @{
             @"action" : @"set",
@@ -128,12 +214,11 @@
     NSDictionary *expectedPayload = @{
         UAAttributePayloadKey : expectedMutationsPayload
     };
+    
+    return expectedPayload;
+}
 
-    NSData *expectedPayloadData = [UAJSONSerialization dataWithJSONObject:expectedPayload
-                                                                  options:0
-                                                                    error:nil];
-    NSString *expectedUrl = [NSString stringWithFormat:@"https://device-api.urbanairship.com/api/channels/%@/attributes?platform=ios", self.channelID];
-
+- (BOOL (^)(id obj))checkRequestBlockWithURL:(NSString *)expectedUrl andPayloadData:(NSData *)expectedPayloadData {
     BOOL (^checkRequestBlock)(id obj) = ^(id obj) {
         UARequest *request = obj;
 
@@ -165,14 +250,7 @@
         return YES;
     };
 
-    [[self.mockSession expect] dataTaskWithRequest:[OCMArg checkWithBlock:checkRequestBlock]
-                                        retryWhere:OCMOCK_ANY
-                                 completionHandler:OCMOCK_ANY];
-
-    [self.client updateChannel:self.channelID withAttributePayload:expectedPayload
-                                                         onSuccess:^{}
-                                                        onFailure:^(NSUInteger statusCode) {}];
-    [self.mockSession verify];
+    return checkRequestBlock;
 }
 
 @end
