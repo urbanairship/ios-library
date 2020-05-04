@@ -3,6 +3,14 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/master/Documentation/Migration)
 
+## Version 13.3.0 - May 4, 2020
+Minor release that adds support for named user attributes and fixes issues with YouTube video support and channel registration.
+
+### Changes
+- Added support for named user attributes.
+- Fixed YouTube video support in Message Center and HTML In-app messages.
+- Fixed channel registration to occur every APNs registration change.
+
 ## Version 13.2.1 - April 24, 2020
 Patch release to restore public visibility to several header files. Apps whose builds
 are failing due to one of the following two files not being found should update.
