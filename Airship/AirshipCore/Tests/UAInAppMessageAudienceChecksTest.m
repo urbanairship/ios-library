@@ -263,7 +263,6 @@
     XCTAssertFalse([UAInAppMessageAudienceChecks checkDisplayAudienceConditions:audience]);
 }
 
-
 - (void)testTestDevices {
     [[[self.mockChannel stub] andReturn:@"test channel"] identifier];
 
@@ -282,6 +281,33 @@
     }];
 
     XCTAssertFalse([UAInAppMessageAudienceChecks checkScheduleAudienceConditions:audience isNewUser:YES]);
+}
+
+- (void)testLanguageAndVersion {
+    // setup
+    __block NSString *mockVersion;
+    id mockApplicationMetrics = [self mockForClass:[UAApplicationMetrics class]];
+    [[[mockApplicationMetrics stub] andDo:^(NSInvocation *invocation) {
+        [invocation setReturnValue:(void *)&mockVersion];
+    }] currentAppVersion];
+    [[[self.mockAirship stub] andReturn:mockApplicationMetrics] applicationMetrics];
+
+    UAInAppMessageAudience *requiresLangAndVersion = [UAInAppMessageAudience audienceWithBuilderBlock:^(UAInAppMessageAudienceBuilder * _Nonnull builder) {
+        builder.languageTags = @[@"en-US"];
+        UAJSONMatcher *matcher = [UAJSONMatcher matcherWithValueMatcher:[UAJSONValueMatcher matcherWithVersionConstraint:@"1.0"] scope:@[@"ios",@"version"]];
+        builder.versionPredicate = [UAJSONPredicate predicateWithJSONMatcher:matcher];
+    }];
+
+    // Unset mocked version
+    XCTAssertFalse([UAInAppMessageAudienceChecks checkDisplayAudienceConditions:requiresLangAndVersion]);
+
+    // Set mocked correct version
+    mockVersion = @"1.0";
+    XCTAssertTrue([UAInAppMessageAudienceChecks checkDisplayAudienceConditions:requiresLangAndVersion]);
+
+    // Set mocked incorrect version
+    mockVersion = @"2.0";
+    XCTAssertFalse([UAInAppMessageAudienceChecks checkDisplayAudienceConditions:requiresLangAndVersion]);
 }
 
 - (void)testLanguageIDs {
