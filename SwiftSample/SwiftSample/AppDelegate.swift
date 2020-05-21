@@ -56,11 +56,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UARegistrationDelegate, U
         // Print out the application configuration for debugging (optional)
         print("Config:\n \(config)")
 
-        #if DEBUG
-        // Call takeOff (which initializes the Airship DebugKit)
-        AirshipDebug.takeOff()
-        #endif
-        
         // Set the icon badge to zero on startup (optional)
         UAirship.push()?.resetBadge()
 

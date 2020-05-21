@@ -65,11 +65,6 @@ NSUInteger const DebugTab = 3;
     // Print out the application configuration for debugging (optional)
     NSLog(@"Config:\n%@", [config description]);
 
-#if DEBUG
-    // Call takeOff (which initializes the Airship DebugKit)
-    [AirshipDebug takeOff];
-#endif
-    
     // Set the icon badge to zero on startup (optional)
     [[UAirship push] resetBadge];
 

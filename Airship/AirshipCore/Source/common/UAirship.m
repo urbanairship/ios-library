@@ -27,6 +27,7 @@
 #import "UAExtendedActionsModuleLoaderFactory.h"
 #import "UAMessageCenterModuleLoaderFactory.h"
 #import "UAAccengageModuleLoaderFactory.h"
+#import "UADebugLibraryModuleLoaderFactory.h"
 
 #if !TARGET_OS_TV
 #import "UAChannelCapture+Internal.h"
@@ -48,6 +49,7 @@ NSString * const UAAutomationModuleLoaderClassName = @"UAAutomationModuleLoader"
 NSString * const UAMessageCenterModuleLoaderClassName = @"UAMessageCenterModuleLoader";
 NSString * const UAExtendedActionsModuleLoaderClassName = @"UAExtendedActionsModuleLoader";
 NSString * const UAAccengageModuleLoaderClassName = @"UAAccengageModuleLoader";
+NSString * const UADebugLibraryModuleLoaderClassName = @"AirshipDebug.UADebugLibraryModuleLoader";
 
 static UAirship *sharedAirship_;
 
@@ -195,6 +197,11 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         id<UAModuleLoader> extendedActionsLoader = [UAirship extendedActionsModuleLoader];
         if (extendedActionsLoader) {
             [loaders addObject:extendedActionsLoader];
+        }
+
+        id<UAModuleLoader> debugLibraryLoader = [UAirship debugLibraryModuleLoaderWithAnalytics:self.sharedAnalytics];
+        if (debugLibraryLoader) {
+            [loaders addObject:debugLibraryLoader];
         }
 
         for (id<UAModuleLoader> loader in loaders) {
@@ -543,6 +550,14 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
                                       channel:channel
                                          push:push
                                     analytics:analytics];
+    }
+    return nil;
+}
+
++ (nullable id<UAModuleLoader>)debugLibraryModuleLoaderWithAnalytics:(UAAnalytics *)analytics {
+    Class cls = NSClassFromString(UADebugLibraryModuleLoaderClassName);
+    if ([cls conformsToProtocol:@protocol(UADebugLibraryModuleLoaderFactory)]) {
+        return [cls debugLibraryModuleLoaderWithAnalytics:analytics];
     }
     return nil;
 }

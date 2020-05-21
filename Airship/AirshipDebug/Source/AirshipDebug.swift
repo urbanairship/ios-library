@@ -61,9 +61,9 @@ public class AirshipDebug : NSObject {
     /**
      * Provides an initialization point for AirshipDebug components.
      */
-    @objc public static func takeOff() {
+    internal static func takeOff(_ analytics: UAAnalytics) {
         // Set data manager as analytics event consumer on AirshipDebug start
-        UAirship.shared().analytics.eventConsumer = EventDataManager.shared
+        analytics.eventConsumer = EventDataManager.shared
         observePayloadEvents();
     }
 

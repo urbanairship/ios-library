@@ -2218,6 +2218,11 @@
 		DFB9827D2447AE7D00986802 /* UAKeychainUtils+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = DFB982752447AA9F00986802 /* UAKeychainUtils+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DFBBC7B11E36D80B00BA7315 /* UATextInputNotificationAction.m in Sources */ = {isa = PBXBuildFile; fileRef = DFBBC7AE1E36D80B00BA7315 /* UATextInputNotificationAction.m */; };
 		DFBBC7B21E36D80B00BA7315 /* UATextInputNotificationAction.h in Headers */ = {isa = PBXBuildFile; fileRef = DFBBC7AF1E36D80B00BA7315 /* UATextInputNotificationAction.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		DFD2463F24733598000FD565 /* UADebugLibraryModuleLoaderFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = DFD2463E24733598000FD565 /* UADebugLibraryModuleLoaderFactory.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		DFD246402473360B000FD565 /* UADebugLibraryModuleLoaderFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = DFD2463E24733598000FD565 /* UADebugLibraryModuleLoaderFactory.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		DFD246412473360B000FD565 /* UADebugLibraryModuleLoaderFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = DFD2463E24733598000FD565 /* UADebugLibraryModuleLoaderFactory.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		DFD246422473360C000FD565 /* UADebugLibraryModuleLoaderFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = DFD2463E24733598000FD565 /* UADebugLibraryModuleLoaderFactory.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		DFD2464E2473404C000FD565 /* UADebugLibraryModuleLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFD2464D2473404C000FD565 /* UADebugLibraryModuleLoader.swift */; };
 		DFD442B61FD892AE002E4FA1 /* UAInAppMessageTagSelectorTest.m in Sources */ = {isa = PBXBuildFile; fileRef = DFD442B51FD892AE002E4FA1 /* UAInAppMessageTagSelectorTest.m */; };
 		DFECEA7B1E64DD15006AA8EA /* UAWebView.m in Sources */ = {isa = PBXBuildFile; fileRef = DFECEA791E64DD15006AA8EA /* UAWebView.m */; };
 		DFECEA7E1E64DE66006AA8EA /* UANativeBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = DFECEA7C1E64DE66006AA8EA /* UANativeBridge.m */; };
@@ -3345,6 +3350,8 @@
 		DFB982752447AA9F00986802 /* UAKeychainUtils+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "UAKeychainUtils+Internal.h"; path = "common/UAKeychainUtils+Internal.h"; sourceTree = "<group>"; };
 		DFBBC7AE1E36D80B00BA7315 /* UATextInputNotificationAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UATextInputNotificationAction.m; path = common/UATextInputNotificationAction.m; sourceTree = "<group>"; };
 		DFBBC7AF1E36D80B00BA7315 /* UATextInputNotificationAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UATextInputNotificationAction.h; path = common/UATextInputNotificationAction.h; sourceTree = "<group>"; };
+		DFD2463E24733598000FD565 /* UADebugLibraryModuleLoaderFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UADebugLibraryModuleLoaderFactory.h; path = common/UADebugLibraryModuleLoaderFactory.h; sourceTree = "<group>"; };
+		DFD2464D2473404C000FD565 /* UADebugLibraryModuleLoader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UADebugLibraryModuleLoader.swift; sourceTree = "<group>"; };
 		DFD442A11FD77248002E4FA1 /* UAInAppMessageAudience.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageAudience.m; sourceTree = "<group>"; };
 		DFD442A61FD77308002E4FA1 /* UAInAppMessageAudience+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAInAppMessageAudience+Internal.h"; sourceTree = "<group>"; };
 		DFD442A91FD77BA5002E4FA1 /* UAInAppMessageTagSelector.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UAInAppMessageTagSelector.h; sourceTree = "<group>"; };
@@ -3620,6 +3627,7 @@
 				3CA0E233237CCBA600EE76CF /* AirshipDebug.swift */,
 				3CA0E23F237CCBA600EE76CF /* Theme.swift */,
 				3CA0E24E237CCBA600EE76CF /* DebugUtils.swift */,
+				DFD2464D2473404C000FD565 /* UADebugLibraryModuleLoader.swift */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -4032,6 +4040,7 @@
 				6E5EB9B2235A680400F8AEA0 /* UALocationModuleLoaderFactory.h */,
 				6E8A54BB236243A3004AE2A0 /* UAAutomationModuleLoaderFactory.h */,
 				6E8A552723676AB4004AE2A0 /* UAExtendedActionsModuleLoaderFactory.h */,
+				DFD2463E24733598000FD565 /* UADebugLibraryModuleLoaderFactory.h */,
 			);
 			name = Modules;
 			sourceTree = "<group>";
@@ -5851,6 +5860,7 @@
 				CC40DCD81D8C996A00BABD4F /* UAMediaEventTemplate.h in Headers */,
 				99E2DA2F1FB62E2800C9F2CC /* UARemoteDataAPIClient+Internal.h in Headers */,
 				6E90F0F0228F559B00E1FCB0 /* UAConfig+Internal.h in Headers */,
+				DFD2463F24733598000FD565 /* UADebugLibraryModuleLoaderFactory.h in Headers */,
 				CC40DC321D8C996A00BABD4F /* UAAddCustomEventAction.h in Headers */,
 				6E93771F237625BF00AA9C2A /* UAAppIntegration+Internal.h in Headers */,
 				3CC7DC64225299F300670DC2 /* UACircularRegion+Internal.h in Headers */,
@@ -6401,6 +6411,7 @@
 				6EE7715E238F16A600E79944 /* UAAutomationStore+Internal.h in Headers */,
 				6EE7715F238F16A600E79944 /* UAScheduleTriggerData+Internal.h in Headers */,
 				6EE77160238F16A600E79944 /* UAScheduleDelayData+Internal.h in Headers */,
+				DFD246402473360B000FD565 /* UADebugLibraryModuleLoaderFactory.h in Headers */,
 				6EE77161238F16A600E79944 /* UAScheduleDataMigrator+Internal.h in Headers */,
 				6EE77162238F16A600E79944 /* UASchedule+Internal.h in Headers */,
 				6EE77164238F16A600E79944 /* UAScheduleTrigger+Internal.h in Headers */,
@@ -6578,6 +6589,7 @@
 				6EE7732D238F197600E79944 /* UAAppStateTracker.h in Headers */,
 				6EE7732E238F197600E79944 /* UAChannelRegistrar+Internal.h in Headers */,
 				6EE7732F238F197600E79944 /* UARemoteDataPayload.h in Headers */,
+				DFD246412473360B000FD565 /* UADebugLibraryModuleLoaderFactory.h in Headers */,
 				6EE77330238F197600E79944 /* UAChannelRegistrationPayload+Internal.h in Headers */,
 				6EE77331238F197600E79944 /* UARemoteDataStore+Internal.h in Headers */,
 				6EE77332238F197600E79944 /* UARemoteDataManager+Internal.h in Headers */,
@@ -6767,6 +6779,7 @@
 				99666DBA1EDF2BDC00BAE46B /* UAChannelRegistrar+Internal.h in Headers */,
 				6E8A548D2362353E004AE2A0 /* UARemoteDataPayload.h in Headers */,
 				99666DBD1EDF2BDC00BAE46B /* UAChannelRegistrationPayload+Internal.h in Headers */,
+				DFD246422473360C000FD565 /* UADebugLibraryModuleLoaderFactory.h in Headers */,
 				DF5ED8E31F7455C5002DDA24 /* UARemoteDataStore+Internal.h in Headers */,
 				DF17A0FF1F56327A00DC39E0 /* UARemoteDataManager+Internal.h in Headers */,
 				99666E641EDF2C9500BAE46B /* UAColorUtils.h in Headers */,
@@ -7126,6 +7139,9 @@
 						CreatedOnToolsVersion = 11.2.1;
 						DevelopmentTeam = PGJV57GD94;
 						ProvisioningStyle = Automatic;
+					};
+					3CA0E298237CCE2600EE76CF = {
+						LastSwiftMigration = 1140;
 					};
 					494DD9561B0EB677009C134E = {
 						CreatedOnToolsVersion = 6.3.1;
@@ -7570,6 +7586,7 @@
 			files = (
 				6E6CC38823A3F9B4003D583C /* PushNotificationsTableViewController.swift in Sources */,
 				3CA0E2AE237CD05F00EE76CF /* AssociatedIdentifiersTableViewController.swift in Sources */,
+				DFD2464E2473404C000FD565 /* UADebugLibraryModuleLoader.swift in Sources */,
 				DF2519BF2458E3D800B3587A /* AddChannelAttributeTableViewController.swift in Sources */,
 				3CA0E2AF237CD05F00EE76CF /* AddTagsTableViewController.swift in Sources */,
 				6E21852B237D32B30084933A /* EventData.swift in Sources */,
@@ -8845,6 +8862,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = CC40DDB31D8CAF7300BABD4F /* AirshipConfig.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				DEFINES_MODULE = YES;
@@ -8871,6 +8889,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.urbanairship.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VALID_ARCHS = "$(inherited) x86_64";
 			};
@@ -8880,6 +8899,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = CC40DDB31D8CAF7300BABD4F /* AirshipConfig.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				DEFINES_MODULE = YES;

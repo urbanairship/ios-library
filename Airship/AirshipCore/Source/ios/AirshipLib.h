@@ -39,6 +39,7 @@
 #import "UAConfig.h"
 #import "UACustomEvent.h"
 #import "UADate.h"
+#import "UADebugLibraryModuleLoaderFactory.h"
 #import "UADeepLinkAction.h"
 #import "UADispatcher.h"
 #import "UADisposable.h"
