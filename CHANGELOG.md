@@ -3,6 +3,14 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/master/Documentation/Migration)
 
+## Version 13.3.2 - May 27, 2020
+Patch release to fix an issue with in-app automation banner messages and a namespacing issue. Apps that support in-app automation banner messages are encouraged to update.
+
+### Changes
+- Fixed an issue with in-app automation banner messages displaying incorrectly at the top of the display.
+- Make versionString const static to address link namespacing error.
+- Fixed "MobileCoreServices" build warning.
+
 ## Version 13.3.1 - May 8, 2020
 Patch release to fix an issue with in-app automation audience condition checking. Apps that use version and locale-based audience conditions for targeting in-app messaging are encouraged to update.
 

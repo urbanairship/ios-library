@@ -26,13 +26,6 @@ static double const DefaultAnimationDuration = 0.2;
 static double const MinimumLongPressDuration = 0.2;
 static double const MinimumSwipeVelocity = 100.0;
 
-/*
- * Hand tuned value that removes excess vertical safe area to properly offset the
- * top padding from the nub on the iPhone X
- */
-static CGFloat const BannerExcessiveSafeAreaPadding = 14;
-
-
 @interface UAInAppMessageBannerController ()
 
 /**
