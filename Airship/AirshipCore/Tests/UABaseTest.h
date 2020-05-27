@@ -3,7 +3,7 @@
 #import <XCTest/XCTest.h>
 #import <OCMock/OCMock.h>
 
-extern const NSTimeInterval UATestExpectationTimeOut;
+extern NSTimeInterval const UATestExpectationTimeOut;
 
 @interface UABaseTest : XCTestCase
 

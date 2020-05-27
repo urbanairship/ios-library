@@ -11,7 +11,7 @@ alpha:1.0]
 
 #define kUAScreenHeight CGRectGetHeight([[UIScreen mainScreen]bounds])
 
-static const NSTimeInterval UACarouselDefaultScrollInterval = 3.0;
+static NSTimeInterval const UACarouselDefaultScrollInterval = 3.0;
 static const double UACarouselScrollDuration = 0.5;
 static const double UACarouselDefaultImageCornerRadius = 5.0;
 static const double UACarouselDefaultViewRatio = 0.75;

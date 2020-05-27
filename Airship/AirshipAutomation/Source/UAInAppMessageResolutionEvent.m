@@ -4,7 +4,7 @@
 #import "UAInAppMessageEventUtils+Internal.h"
 #import "UAAirshipAutomationCoreImport.h"
 
-NSUInteger const MaxButtonDescriptionLength = 30;
+static NSUInteger const MaxButtonDescriptionLength = 30;
 
 NSString *const UAInAppMessageResolutionEventType = @"in_app_resolution";
 

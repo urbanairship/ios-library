@@ -8,8 +8,8 @@
 NSString *const UADefaultSerifFont = @"Times New Roman";
 NSString *const UAInAppMessageAdapterCacheName = @"UAInAppMessageAdapterCache";
 
-CGFloat const CloseButtonWidth = 30;
-CGFloat const CloseButtonHeight = 30;
+static CGFloat const CloseButtonWidth = 30;
+static CGFloat const CloseButtonHeight = 30;
 
 @implementation UAInAppMessageUtils
 

@@ -6,7 +6,7 @@
 @property (nonatomic, strong) NSPointerArray *mocks;
 @end
 
-const NSTimeInterval UATestExpectationTimeOut = 5;
+NSTimeInterval const UATestExpectationTimeOut = 5;
 
 @implementation UABaseTest
 

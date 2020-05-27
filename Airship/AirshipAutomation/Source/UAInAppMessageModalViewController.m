@@ -21,35 +21,24 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Default modal padding.
  */
-CGFloat const ModalDefaultPadding = 24.0;
+static CGFloat const ModalDefaultPadding = 24.0;
 
 /**
  * Reduced header to body interstitial padding.
  */
-CGFloat const ModalTextViewInterstitialPadding = -8;
-
-/*
- * Hand tuned value that removes excess vertical safe area to make the
- * top padding look more consistent with the iPhone X nub
- */
-CGFloat const ModalExcessiveSafeAreaPadding = -8;
+static CGFloat const ModalTextViewInterstitialPadding = -8;
 
 /*
  * Instead of padding body text on the right to avoid the close button
  * it is given extra top padding when it's on top.
  */
-CGFloat const ModalAdditionalBodyPadding = 16.0;
+static CGFloat const ModalAdditionalBodyPadding = 16.0;
 
 /**
  * Width of the close button is used to properly pad heading text when
  * it is at the top of a IAM view stack
  */
-CGFloat const ModalCloseButtonViewWidth = 46.0;
-
-/**
- * Default animation duration for the modal view controller
- */
-double const DefaultModalAnimationDuration = 0.2;
+static CGFloat const ModalCloseButtonViewWidth = 46.0;
 
 /**
  * Custom UIView class to handle rounding the border of the modal view.

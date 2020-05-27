@@ -7,8 +7,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-CGFloat const DefaultVideoHeightPadding = 60;
-CGFloat const DefaultVideoAspectRatio = 16.0/9.0;
+static CGFloat const DefaultVideoHeightPadding = 60;
 
 @interface UAInAppMessageMediaView()
 @property (nonatomic, strong, nullable) UIImageView *imageView;

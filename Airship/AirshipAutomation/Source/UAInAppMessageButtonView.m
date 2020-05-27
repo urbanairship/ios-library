@@ -9,8 +9,8 @@
 // UAInAppMessageButtonView nib name
 NSString *const UAInAppMessageButtonViewNibName = @"UAInAppMessageButtonView";
 
-CGFloat const DefaultStackedButtonSpacing = 24;
-CGFloat const DefaultSeparatedButtonSpacing = 16;
+static CGFloat const DefaultStackedButtonSpacing = 24;
+static CGFloat const DefaultSeparatedButtonSpacing = 16;
 
 @implementation UAInAppMessageButtonView
 

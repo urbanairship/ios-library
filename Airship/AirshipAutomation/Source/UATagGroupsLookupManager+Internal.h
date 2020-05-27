@@ -35,7 +35,7 @@ extern NSString * const UATagGroupsLookupManagerErrorDomain;
 /**
  * The default time interval to prefer local tag data over API responses.
  */
-extern const NSTimeInterval UATagGroupsLookupManagerDefaultPreferLocalTagDataTimeSeconds;
+extern NSTimeInterval const UATagGroupsLookupManagerDefaultPreferLocalTagDataTimeSeconds;
 
 /**
  * Tag Group Lookup Manager delegate.

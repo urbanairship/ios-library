@@ -27,8 +27,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-NSTimeInterval const MaxSchedules = 200;
-NSTimeInterval const MessagePrepareRetryDelay = 30;
+static NSTimeInterval const MaxSchedules = 200;
 
 NSString *const UAInAppAutomationStoreFileFormat = @"In-app-automation-%@.sqlite";
 NSString *const UAInAppMessageManagerEnabledKey = @"UAInAppMessageManagerEnabled";

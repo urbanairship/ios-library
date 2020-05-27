@@ -10,7 +10,7 @@
 #import "UADate.h"
 #import "UAComponent.h"
 
-NSString *const PersistentQueueKey = @"com.urbanairship.channel_attributes.registrar_persistent_queue_key";
+static NSString *const PersistentQueueKey = @"com.urbanairship.channel_attributes.registrar_persistent_queue_key";
 
 @interface UAAttributeRegistrar()
 @property(nonatomic, strong) UAPersistentQueue *pendingAttributeMutationsQueue;

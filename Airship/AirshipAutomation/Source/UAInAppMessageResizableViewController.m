@@ -12,13 +12,13 @@
  * Hand tuned value that removes excess vertical safe area to make the
  * top padding look more consistent with the iPhone X nub
  */
-CGFloat const ResizingViewExcessiveSafeAreaPadding = -8;
+static CGFloat const ResizingViewExcessiveSafeAreaPadding = -8;
 
-NSString *const ResizingViewControllerNibName = @"UAInAppMessageResizableViewController";
-CGFloat const ResizingViewControllerDefaultInnerViewPadding = 15;
+static NSString *const ResizingViewControllerNibName = @"UAInAppMessageResizableViewController";
+static CGFloat const ResizingViewControllerDefaultInnerViewPadding = 15;
 
-CGFloat const DefaultViewToScreenHeightRatio = 0.50;
-CGFloat const DefaultViewToScreenWidthRatio = 0.75;
+static CGFloat const DefaultViewToScreenHeightRatio = 0.50;
+static CGFloat const DefaultViewToScreenWidthRatio = 0.75;
 
 /**
  * The in-app message resizing view interface necessary for rounded corners.
@@ -131,7 +131,7 @@ CGFloat const DefaultViewToScreenWidthRatio = 0.75;
 
 @implementation UAInAppMessageResizableViewController
 
-double const DefaultResizableViewAnimationDuration = 0.2;
+static double const DefaultResizableViewAnimationDuration = 0.2;
 
 
 + (instancetype)resizableViewControllerWithChild:(UIViewController *)vc {
@@ -209,7 +209,7 @@ double const DefaultResizableViewAnimationDuration = 0.2;
 }
 
 -(instancetype)initFromNib {
-    return [self initWithNibName:@"UAInAppMessageResizableViewController" bundle:[NSBundle bundleForClass:[self class]]];
+    return [self initWithNibName:ResizingViewControllerNibName bundle:[NSBundle bundleForClass:[self class]]];
 }
 
 - (void)viewDidLoad {

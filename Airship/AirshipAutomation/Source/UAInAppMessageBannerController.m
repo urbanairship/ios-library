@@ -18,19 +18,19 @@ NS_ASSUME_NONNULL_BEGIN
 @class UAInAppMessageMediaView;
 @class UAInAppMessageBannerDisplayContent;
 
-double const DefaultMaxWidth = 420;
+static double const DefaultMaxWidth = 420;
 
-double const DefaultBannerControllerPadding = 24;
+static double const DefaultBannerControllerPadding = 24;
 
-double const DefaultAnimationDuration = 0.2;
-double const MinimumLongPressDuration = 0.2;
-double const MinimumSwipeVelocity = 100.0;
+static double const DefaultAnimationDuration = 0.2;
+static double const MinimumLongPressDuration = 0.2;
+static double const MinimumSwipeVelocity = 100.0;
 
 /*
  * Hand tuned value that removes excess vertical safe area to properly offset the
  * top padding from the nub on the iPhone X
  */
-CGFloat const BannerExcessiveSafeAreaPadding = 14;
+static CGFloat const BannerExcessiveSafeAreaPadding = 14;
 
 
 @interface UAInAppMessageBannerController ()

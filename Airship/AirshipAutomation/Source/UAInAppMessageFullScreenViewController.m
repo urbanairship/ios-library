@@ -21,35 +21,35 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Default animation duration.
  */
-double const DefaultFullScreenAnimationDuration = 0.2;
+static double const DefaultFullScreenAnimationDuration = 0.2;
 
 /**
  * Default view padding in points.
  */
-CGFloat const FullScreenDefaultPadding = 24.0;
+static CGFloat const FullScreenDefaultPadding = 24.0;
 
 /**
  * Reduced header to body interstitial padding in points.
  */
-CGFloat const FullScreenTextViewInterstitialPadding = -8;
+static CGFloat const FullScreenTextViewInterstitialPadding = -8;
 
 /**
  * Instead of padding body text on the right to avoid the close button
  * it is given extra top padding when it's on top, units are points.
  */
-CGFloat const FullScreenAdditionalBodyPadding = 16.0;
+static CGFloat const FullScreenAdditionalBodyPadding = 16.0;
 
 /**
  * Width of the close button is used to properly pad heading text when
  * it is at the top of a IAM view stack, units are points.
  */
-CGFloat const FullScreenCloseButtonViewWidth = 46.0;
+static CGFloat const FullScreenCloseButtonViewWidth = 46.0;
 
 /**
  * Hand tuned value that removes excess vertical safe area to make the
  * top padding look more consistent with the iPhone X nub, units are points.
  */
-CGFloat const FullScreenExcessiveSafeAreaPadding = -8;
+static CGFloat const FullScreenExcessiveSafeAreaPadding = -8;
 
 /**
  * The full screen view nib name.

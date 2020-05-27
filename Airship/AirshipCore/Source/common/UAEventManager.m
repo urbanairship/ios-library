@@ -36,11 +36,11 @@
 
 @end
 
-const NSTimeInterval FailedUploadRetryDelay = 60;
-const NSTimeInterval InitialForegroundUploadDelay = 15;
-const NSTimeInterval HighPriorityUploadDelay = 1;
-const NSTimeInterval BackgroundUploadDelay = 5;
-const NSTimeInterval BackgroundLowPriorityEventUploadInterval = 900;
+static NSTimeInterval const FailedUploadRetryDelay = 60;
+static NSTimeInterval const InitialForegroundUploadDelay = 15;
+static NSTimeInterval const HighPriorityUploadDelay = 1;
+static NSTimeInterval const BackgroundUploadDelay = 5;
+static NSTimeInterval const BackgroundLowPriorityEventUploadInterval = 900;
 
 @implementation UAEventManager
 

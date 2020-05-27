@@ -4,10 +4,10 @@
 #import "UAInAppMessageUtils+Internal.h"
 #import "UAAirshipAutomationCoreImport.h"
 
-CGFloat const ButtonIsBeingTappedAlpha = 0.7;
-CGFloat const DefaultButtonMargin = 15;
-CGFloat const DefaultFooterMargin = 0;
-CGFloat const DefaultButtonBorderWidth = 2;
+static CGFloat const ButtonIsBeingTappedAlpha = 0.7;
+static CGFloat const DefaultButtonMargin = 15;
+static CGFloat const DefaultFooterMargin = 0;
+static CGFloat const DefaultButtonBorderWidth = 2;
 
 
 @interface UAInAppMessageButton ()

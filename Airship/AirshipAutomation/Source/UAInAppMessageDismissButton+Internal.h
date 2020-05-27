@@ -6,9 +6,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-extern CGFloat const CloseButtonIconHeight;
-extern CGFloat const CloseButtonIconWidth;
-
 /**
  * The color of the close X if no close icon is provided.
  */

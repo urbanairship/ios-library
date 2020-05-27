@@ -10,20 +10,14 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-/*
- * Default view padding
- */
-CGFloat const BannerDefaultPadding = 16.0;
-
 // UAInAppMessageBannerContentView nib name
 NSString *const UAInAppMessageBannerViewNibName = @"UAInAppMessageBannerView";
-CGFloat const VerticalPaddingToSafeArea = 20;
-CGFloat const BannerIsBeingTappedAlpha = 0.7;
-CGFloat const DefaultBannerHeightPadding = 60;
+static CGFloat const BannerIsBeingTappedAlpha = 0.7;
+static CGFloat const DefaultBannerHeightPadding = 60;
 
-CGFloat const ShadowOffset = 2.0;
-CGFloat const ShadowRadius = 4.0;
-CGFloat const ShadowOpacity = 0.5;
+static CGFloat const ShadowOffset = 2.0;
+static CGFloat const ShadowRadius = 4.0;
+static CGFloat const ShadowOpacity = 0.5;
 
 @interface UAInAppMessageBannerView ()
 

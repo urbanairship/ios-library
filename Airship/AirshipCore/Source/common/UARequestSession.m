@@ -13,8 +13,8 @@
 @property(nonatomic, strong) NSMutableDictionary *headers;
 @end
 
-const NSTimeInterval InitialDelay = 30;
-const NSTimeInterval MaxBackOff = 3000;
+static NSTimeInterval const InitialDelay = 30;
+static NSTimeInterval const MaxBackOff = 3000;
 
 @implementation UARequestSession
 

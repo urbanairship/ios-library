@@ -4,14 +4,14 @@
 #import "UAInAppMessageUtils+Internal.h"
 
 // Close button defaults to X if icon image is unspecified
-CGFloat const CloseButtonIconHeight = 30;
-CGFloat const CloseButtonIconWidth = 30;
+static CGFloat const CloseButtonIconHeight = 30;
+static CGFloat const CloseButtonIconWidth = 30;
 
-CGFloat const XPaddingFromContainerTop = 16;
-CGFloat const XInset = 10;
-CGFloat const XThickness = 2;
+static CGFloat const XPaddingFromContainerTop = 16;
+static CGFloat const XInset = 10;
+static CGFloat const XThickness = 2;
 
-CGFloat const CircleTransparency = 0.25;
+static CGFloat const CircleTransparency = 0.25;
 
 @interface UAInAppMessageDismissButton()
 @property(nonatomic, strong) UIImageView *iconView;
