@@ -118,11 +118,6 @@ static CGFloat const BannerExcessiveSafeAreaPadding = 14;
         self.displayContent = displayContent;
         self.mediaView = mediaView;
         self.style = style;
-
-        [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(orientationChanged:)
-                                                     name:UIDeviceOrientationDidChangeNotification
-                                                   object:nil];
     }
 
     return self;
@@ -340,9 +335,6 @@ static CGFloat const BannerExcessiveSafeAreaPadding = 14;
 - (void)bannerView:(UAInAppMessageBannerView *)bannerView animateInWithParentView:(UIView *)parentView completionHandler:(void (^)(void))completionHandler {
     self.verticalConstraint.constant = 0;
 
-    // Force orientation check on display
-    [self refreshViewForCurrentOrientation];
-
     [UIView animateWithDuration:DefaultAnimationDuration delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
         [parentView layoutIfNeeded];
         [bannerView layoutIfNeeded];
@@ -478,51 +470,8 @@ static CGFloat const BannerExcessiveSafeAreaPadding = 14;
     }
 }
 
-- (void)refreshViewForCurrentOrientation {
-    BOOL statusBarShowing = !([UIApplication sharedApplication].isStatusBarHidden);
-    CGFloat styledDefaultBannerTopPadding = [self.style.additionalPadding.top floatValue] + DefaultBannerControllerPadding;
-    
-    UIWindow *window = [UIApplication sharedApplication].keyWindow;
-    
-    // If the orientation has a bar without inset
-    if (window.safeAreaInsets.top == 0 && statusBarShowing) {
-        [UAInAppMessageUtils applyPaddingForAttribute:NSLayoutAttributeTop
-                                               onView:self.bannerView.containerView
-                                              padding:styledDefaultBannerTopPadding
-                                              replace:YES];
-        [self.bannerView layoutIfNeeded];
-        return;
-    }
-    
-    // If the orientation has a bar with inset
-    if (window.safeAreaInsets.top > 0 && statusBarShowing) {
-        CGFloat adjustedDefaultPadding = window.safeAreaInsets.top - BannerExcessiveSafeAreaPadding;
-        CGFloat adjustedCustomPadding = adjustedDefaultPadding + [self.style.additionalPadding.top floatValue];
-        
-        CGFloat topPadding = self.style.additionalPadding.top ?  adjustedCustomPadding : adjustedDefaultPadding;
-        
-        [UAInAppMessageUtils applyPaddingForAttribute:NSLayoutAttributeTop
-                                               onView:self.bannerView.containerView
-                                              padding:topPadding
-                                              replace:YES];
-        [self.bannerView layoutIfNeeded];
-        return;
-    }
-
-    // Otherwise remove top padding
-    [UAInAppMessageUtils applyPaddingForAttribute:NSLayoutAttributeTop
-                                           onView:self.bannerView.containerView
-                                          padding:[self.style.additionalPadding.top floatValue]
-                                          replace:YES];
-    [self.bannerView layoutIfNeeded];
-}
-
 #pragma mark -
 #pragma mark App State
-
-- (void)orientationChanged:(NSNotification *)notification {
-    [self refreshViewForCurrentOrientation];
-}
 
 - (void)applicationDidBecomeActive {
     [self scheduleDismissalTimer];

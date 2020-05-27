@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14845" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="16097" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14799.2"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -23,7 +23,7 @@
                                 <constraint firstAttribute="height" priority="250" id="BBN-PT-Ibf"/>
                             </constraints>
                         </view>
-                        <stackView opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="755" axis="vertical" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="39z-R3-T6G" userLabel="Text Stack">
+                        <stackView opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="1000" axis="vertical" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="39z-R3-T6G" userLabel="Text Stack">
                             <rect key="frame" x="152" y="0.0" width="207" height="120"/>
                         </stackView>
                         <view opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="1" translatesAutoresizingMaskIntoConstraints="NO" id="zj3-AL-NA1" userLabel="Text Expandable Padding View">
@@ -58,14 +58,14 @@
                 </view>
             </subviews>
             <constraints>
-                <constraint firstItem="CwK-FL-VAk" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" id="3qj-a8-oQs"/>
+                <constraint firstItem="CwK-FL-VAk" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="3qj-a8-oQs"/>
                 <constraint firstItem="CwK-FL-VAk" firstAttribute="height" secondItem="iN0-l3-epB" secondAttribute="height" id="4Jv-9y-Mbg"/>
-                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="CwK-FL-VAk" secondAttribute="trailing" id="FZT-B6-WDd"/>
-                <constraint firstItem="CwK-FL-VAk" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="OkF-TG-76N"/>
-                <constraint firstItem="6QX-8T-8Be" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" id="V2i-dD-nzR"/>
+                <constraint firstAttribute="trailing" secondItem="CwK-FL-VAk" secondAttribute="trailing" id="FZT-B6-WDd"/>
+                <constraint firstItem="CwK-FL-VAk" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="OkF-TG-76N"/>
+                <constraint firstItem="6QX-8T-8Be" firstAttribute="top" secondItem="CwK-FL-VAk" secondAttribute="top" id="V2i-dD-nzR"/>
                 <constraint firstItem="6QX-8T-8Be" firstAttribute="width" relation="lessThanOrEqual" secondItem="iN0-l3-epB" secondAttribute="width" multiplier="0.5" id="VxK-qZ-OYl"/>
                 <constraint firstItem="CwK-FL-VAk" firstAttribute="width" secondItem="iN0-l3-epB" secondAttribute="width" id="Z20-Xk-qcg"/>
-                <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="CwK-FL-VAk" secondAttribute="bottom" id="q9Y-WV-PDr"/>
+                <constraint firstAttribute="bottom" secondItem="CwK-FL-VAk" secondAttribute="bottom" id="q9Y-WV-PDr"/>
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
             <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
@@ -89,7 +89,7 @@
                                 <constraint firstAttribute="height" priority="250" id="603-Aq-rqh"/>
                             </constraints>
                         </view>
-                        <stackView opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="755" axis="vertical" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="RRt-au-p4p" userLabel="Text Stack">
+                        <stackView opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="1000" axis="vertical" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="RRt-au-p4p" userLabel="Text Stack">
                             <rect key="frame" x="16" y="0.0" width="207" height="120"/>
                         </stackView>
                         <view opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="1" translatesAutoresizingMaskIntoConstraints="NO" id="D2c-1J-1hn" userLabel="Text Expandable Padding View">
@@ -125,12 +125,12 @@
                 </view>
             </subviews>
             <constraints>
-                <constraint firstItem="zbg-Ov-XQL" firstAttribute="trailing" secondItem="AGo-BI-V0D" secondAttribute="trailing" id="52Y-rL-5ur"/>
+                <constraint firstAttribute="trailing" secondItem="AGo-BI-V0D" secondAttribute="trailing" id="52Y-rL-5ur"/>
                 <constraint firstItem="AGo-BI-V0D" firstAttribute="height" secondItem="aln-TZ-PVT" secondAttribute="height" id="5tI-eZ-XRT"/>
                 <constraint firstItem="AGo-BI-V0D" firstAttribute="width" secondItem="aln-TZ-PVT" secondAttribute="width" id="Jor-6e-YpQ"/>
                 <constraint firstItem="VNH-yL-Bh8" firstAttribute="width" relation="lessThanOrEqual" secondItem="aln-TZ-PVT" secondAttribute="width" multiplier="0.5" id="OA9-cA-Bvk"/>
-                <constraint firstItem="AGo-BI-V0D" firstAttribute="leading" secondItem="zbg-Ov-XQL" secondAttribute="leading" id="VUH-wm-VuH"/>
-                <constraint firstItem="zbg-Ov-XQL" firstAttribute="bottom" secondItem="AGo-BI-V0D" secondAttribute="bottom" id="e3U-l1-xoQ"/>
+                <constraint firstItem="AGo-BI-V0D" firstAttribute="leading" secondItem="aln-TZ-PVT" secondAttribute="leading" id="VUH-wm-VuH"/>
+                <constraint firstAttribute="bottom" secondItem="AGo-BI-V0D" secondAttribute="bottom" id="e3U-l1-xoQ"/>
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
             <viewLayoutGuide key="safeArea" id="zbg-Ov-XQL"/>
