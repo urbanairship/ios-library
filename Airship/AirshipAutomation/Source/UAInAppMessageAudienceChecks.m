@@ -80,32 +80,12 @@
     }
 
     // Locales
-    if ((audience.languageIDs) && [audience.languageIDs isKindOfClass:[NSArray class]]) {
-        NSLocale *currentLocale = [NSLocale currentLocale];
-        for (NSString *audienceLanguageID in audience.languageIDs) {
-            NSLocale *audienceLocale = [NSLocale localeWithLocaleIdentifier:audienceLanguageID];
-
-            // check language code
-            NSString *currentLanguageCode = currentLocale.languageCode;
-            NSString *audienceLanguageCode = audienceLocale.languageCode;
-
-            if (![currentLanguageCode isEqualToString:audienceLanguageCode]) {
-                continue;
-            }
-
-            NSString *currentCountryCode = currentLocale.countryCode;
-            NSString *audienceCountryCode = audienceLocale.countryCode;
-
-            if (audienceCountryCode && ![currentCountryCode isEqualToString:audienceCountryCode]) {
-                continue;
-            }
-
-            return YES;
-        }
+    if (![self areLocationConditionsMet:audience]) {
         return NO;
     }
-    
-    // version
+
+
+    // Version
     if (audience.versionPredicate) {
         NSString *currentVersion = [UAirship shared].applicationMetrics.currentAppVersion;
         id versionObject = currentVersion ? @{@"ios" : @{@"version": currentVersion}} : nil;
@@ -113,8 +93,34 @@
             return NO;
         }
     }
-    
+
     return YES;
+}
+
++ (BOOL)areLocationConditionsMet:(UAInAppMessageAudience *)audience {
+    if (!audience.languageIDs.count) {
+        return YES;
+    }
+
+    NSLocale *currentLocale = [NSLocale currentLocale];
+
+    for (NSString *audienceLanguageID in audience.languageIDs) {
+        NSLocale *audienceLocale = [NSLocale localeWithLocaleIdentifier:audienceLanguageID];
+
+        // Language
+        if (![currentLocale.languageCode isEqualToString:audienceLocale.languageCode]) {
+            continue;
+        }
+
+        // Country
+        if (audienceLocale.countryCode && ![audienceLocale.countryCode isEqualToString:currentLocale.countryCode]) {
+            continue;
+        }
+
+        return YES;
+    }
+
+    return NO;
 }
 
 + (BOOL)checkDisplayAudienceConditions:(UAInAppMessageAudience *)audience {

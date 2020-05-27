@@ -3,6 +3,12 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/master/Documentation/Migration)
 
+## Version 13.3.1 - May 8, 2020
+Patch release to fix an issue with in-app automation audience condition checking. Apps that use version and locale-based audience conditions for targeting in-app messaging are encouraged to update.
+
+### Changes
+- Fixed issue with in-app automation audience condition checking.
+
 ## Version 13.3.0 - May 4, 2020
 Minor release that adds support for named user attributes and fixes issues with YouTube video support and channel registration.
 
