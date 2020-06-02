@@ -122,11 +122,15 @@
     id mockWKNavigationAction = [self mockForClass:[WKNavigationAction class]];
     [[[mockWKNavigationAction stub] andReturn:request] request];
     [[[mockWKNavigationAction stub] andReturnValue:OCMOCK_VALUE(WKNavigationTypeOther)] navigationType];
+    id mockWKFrameInfo = [self mockForClass:[WKFrameInfo class]];
+    [[[mockWKNavigationAction stub] andReturn:mockWKFrameInfo] targetFrame];
     [[[self.mockWKWebView stub] andReturn:originatingURL] URL];
 
     self.nativeBridge.forwardNavigationDelegate = nil;
     
     [[self.mockApplication reject] openURL:OCMOCK_ANY];
+    [[self.mockApplication reject] openURL:OCMOCK_ANY options:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
     [self.nativeBridge webView:self.mockWKWebView decidePolicyForNavigationAction:mockWKNavigationAction decisionHandler:^(WKNavigationActionPolicy delegatePolicy) {
         XCTAssertEqual(delegatePolicy, WKNavigationActionPolicyAllow);
     }];
@@ -146,6 +150,8 @@
     id mockWKNavigationAction = [self mockForClass:[WKNavigationAction class]];
     [[[mockWKNavigationAction stub] andReturn:request] request];
     [[[mockWKNavigationAction stub] andReturnValue:OCMOCK_VALUE(WKNavigationTypeOther)] navigationType];
+    id mockWKFrameInfo = [self mockForClass:[WKFrameInfo class]];
+    [[[mockWKNavigationAction stub] andReturn:mockWKFrameInfo] targetFrame];
     [[[self.mockWKWebView stub] andReturn:originatingURL] URL];
 
     [self.nativeBridge webView:self.mockWKWebView decidePolicyForNavigationAction:mockWKNavigationAction decisionHandler:^(WKNavigationActionPolicy delegatePolicy) {
@@ -153,6 +159,7 @@
     }];
 
     [[self.mockApplication reject] openURL:OCMOCK_ANY];
+    [[self.mockApplication reject] openURL:OCMOCK_ANY options:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     [self.mockNavigationDelegate verify];
     
@@ -172,7 +179,7 @@
 }
 
 /**
- * Test webView:decidePolicyForNavigationAction:decisionHandler: doesn't handles click when navigation is embedded. No delegate.
+ * Test webView:decidePolicyForNavigationAction:decisionHandler: handles click when navigation is embedded. No delegate.
  */
 - (void)testDecidePolicyForNavigationActionDecisionHandlerHandlesClickOnWKNavigationTypeLinkActivatedNoDelegate {
     // Action request
@@ -182,13 +189,15 @@
     id mockWKNavigationAction = [self mockForClass:[WKNavigationAction class]];
     [[[mockWKNavigationAction stub] andReturn:request] request];
     [[[mockWKNavigationAction stub] andReturnValue:OCMOCK_VALUE(WKNavigationTypeLinkActivated)] navigationType];
+    id mockWKFrameInfo = [self mockForClass:[WKFrameInfo class]];
+    [[[mockWKNavigationAction stub] andReturn:mockWKFrameInfo] targetFrame];
     [[[self.mockWKWebView stub] andReturn:originatingURL] URL];
 
     self.nativeBridge.forwardNavigationDelegate = nil;
     
-    [[self.mockApplication expect] openURL:OCMOCK_ANY];
+    [[[self.mockApplication expect] andReturnValue:OCMOCK_VALUE(YES)] openURL:OCMOCK_ANY];
     [self.nativeBridge webView:self.mockWKWebView decidePolicyForNavigationAction:mockWKNavigationAction decisionHandler:^(WKNavigationActionPolicy delegatePolicy) {
-        XCTAssertEqual(delegatePolicy, WKNavigationActionPolicyAllow);
+        XCTAssertEqual(delegatePolicy, WKNavigationActionPolicyCancel);
     }];
 
     [self.mockNavigationDelegate verify];
@@ -196,7 +205,7 @@
 }
 
 /**
- * Test webView:decidePolicyForNavigationAction:decisionHandler: doesn't handles click when navigation is embedded. Delegate
+ * Test webView:decidePolicyForNavigationAction:decisionHandler: handles click when navigation is embedded. Delegate
  */
 - (void)testDecidePolicyForNavigationActionDecisionHandlerHandlesClickOnWKNavigationTypeLinkActivatedDelegate {
     // Action request
@@ -206,13 +215,90 @@
     id mockWKNavigationAction = [self mockForClass:[WKNavigationAction class]];
     [[[mockWKNavigationAction stub] andReturn:request] request];
     [[[mockWKNavigationAction stub] andReturnValue:OCMOCK_VALUE(WKNavigationTypeLinkActivated)] navigationType];
+    id mockWKFrameInfo = [self mockForClass:[WKFrameInfo class]];
+    [[[mockWKNavigationAction stub] andReturn:mockWKFrameInfo] targetFrame];
     [[[self.mockWKWebView stub] andReturn:originatingURL] URL];
 
     [self.nativeBridge webView:self.mockWKWebView decidePolicyForNavigationAction:mockWKNavigationAction decisionHandler:^(WKNavigationActionPolicy delegatePolicy) {
         XCTAssertEqual(delegatePolicy, WKNavigationActionPolicyAllow);
     }];
 
-    [[self.mockApplication expect] openURL:OCMOCK_ANY];
+    [[[self.mockApplication expect] andReturnValue:OCMOCK_VALUE(YES)] openURL:OCMOCK_ANY];
+    
+    [self.mockNavigationDelegate verify];
+    
+    // Stub the navigation delegate to return the response
+    [[[self.mockNavigationDelegate expect] andDo:^(NSInvocation *invocation) {
+        void (^decisionHandler)(WKNavigationActionPolicy policy) = nil;
+        [invocation getArgument:&decisionHandler atIndex:4];
+        decisionHandler(WKNavigationActionPolicyAllow);
+    }] webView:OCMOCK_ANY decidePolicyForNavigationAction:OCMOCK_ANY decisionHandler:OCMOCK_ANY];
+
+    [self.nativeBridge webView:self.mockWKWebView decidePolicyForNavigationAction:mockWKNavigationAction decisionHandler:^(WKNavigationActionPolicy delegatePolicy) {
+        XCTAssertEqual(delegatePolicy, WKNavigationActionPolicyCancel);
+    }];
+
+    [self.mockNavigationDelegate verify];
+    [self.mockApplication verify];
+    
+}
+
+/**
+ * Test webView:decidePolicyForNavigationAction:decisionHandler: handles click to new target window when navigation is embedded. No delegate.
+ */
+- (void)testDecidePolicyForNavigationActionDecisionHandlerHandlesClickOnWKNavigationTypeLinkActivatedNewTargetNoDelegate {
+    // Action request
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"http://www.blah.blah"]];
+    NSURL *originatingURL = [NSURL URLWithString:@"https://foo.urbanairship.com/whatever.html"];;
+
+    id mockWKNavigationAction = [self mockForClass:[WKNavigationAction class]];
+    [[[mockWKNavigationAction stub] andReturn:request] request];
+    [[[mockWKNavigationAction stub] andReturnValue:OCMOCK_VALUE(WKNavigationTypeLinkActivated)] navigationType];
+    [[[mockWKNavigationAction stub] andReturn:nil] targetFrame];
+    [[[self.mockWKWebView stub] andReturn:originatingURL] URL];
+
+    self.nativeBridge.forwardNavigationDelegate = nil;
+    
+    XCTestExpectation *testExpectation = [self expectationWithDescription:@"decision handler called"];
+    
+    [[[self.mockApplication expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:4];
+        void (^completionHandler)(BOOL) = (__bridge void(^)(BOOL))arg;
+        completionHandler(YES);
+    }] openURL:OCMOCK_ANY options:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
+    [self.nativeBridge webView:self.mockWKWebView decidePolicyForNavigationAction:mockWKNavigationAction decisionHandler:^(WKNavigationActionPolicy delegatePolicy) {
+        XCTAssertEqual(delegatePolicy, WKNavigationActionPolicyCancel);
+        [testExpectation fulfill];
+    }];
+
+    [self waitForTestExpectations];
+    
+    [self.mockNavigationDelegate verify];
+    [self.mockApplication verify];
+}
+
+/**
+ * Test webView:decidePolicyForNavigationAction:decisionHandler: doesn't handle click to new target window when navigation is embedded. Delegate
+ */
+- (void)testDecidePolicyForNavigationActionDecisionHandlerDoesntHandleClickOnWKNavigationTypeLinkActivatedNewTargetDelegate {
+    // Action request
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"http://www.blah.blah"]];
+    NSURL *originatingURL = [NSURL URLWithString:@"https://foo.urbanairship.com/whatever.html"];;
+
+    id mockWKNavigationAction = [self mockForClass:[WKNavigationAction class]];
+    [[[mockWKNavigationAction stub] andReturn:request] request];
+    [[[mockWKNavigationAction stub] andReturnValue:OCMOCK_VALUE(WKNavigationTypeLinkActivated)] navigationType];
+    [[[mockWKNavigationAction stub] andReturn:nil] targetFrame];
+    [[[self.mockWKWebView stub] andReturn:originatingURL] URL];
+
+    [self.nativeBridge webView:self.mockWKWebView decidePolicyForNavigationAction:mockWKNavigationAction decisionHandler:^(WKNavigationActionPolicy delegatePolicy) {
+        XCTAssertEqual(delegatePolicy, WKNavigationActionPolicyAllow);
+    }];
+
+    [[self.mockApplication reject] openURL:OCMOCK_ANY];
+    [[self.mockApplication reject] openURL:OCMOCK_ANY options:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     [self.mockNavigationDelegate verify];
     
@@ -231,6 +317,7 @@
     [self.mockApplication verify];
     
 }
+
 /**
  * Test webView:didFinishNavigation: forwards its message to the forwardDelegate.
  */
@@ -251,6 +338,8 @@
 
     id mockWKNavigationAction = [self mockForClass:[WKNavigationAction class]];
     [[[mockWKNavigationAction stub] andReturn:request] request];
+    id mockWKFrameInfo = [self mockForClass:[WKFrameInfo class]];
+    [[[mockWKNavigationAction stub] andReturn:mockWKFrameInfo] targetFrame];
     [[[self.mockWKWebView stub] andReturn:originatingURL] URL];
 
     // Expect the js delegate to be called with the correct command
@@ -275,6 +364,8 @@
 
     id mockWKNavigationAction = [self mockForClass:[WKNavigationAction class]];
     [[[mockWKNavigationAction stub] andReturn:request] request];
+    id mockWKFrameInfo = [self mockForClass:[WKFrameInfo class]];
+    [[[mockWKNavigationAction stub] andReturn:mockWKFrameInfo] targetFrame];
     [[[self.mockWKWebView stub] andReturn:originatingURL] URL];
 
     NSDictionary *customMetadata = @{ @"cool": @"story" };
@@ -303,6 +394,8 @@
 
     id mockWKNavigationAction = [self mockForClass:[WKNavigationAction class]];
     [[[mockWKNavigationAction stub] andReturn:request] request];
+    id mockWKFrameInfo = [self mockForClass:[WKFrameInfo class]];
+    [[[mockWKNavigationAction stub] andReturn:mockWKFrameInfo] targetFrame];
     [[[self.mockWKWebView stub] andReturn:originatingURL] URL];
 
     // Reject any calls to the JS Delegate
@@ -325,6 +418,8 @@
 
     id mockWKNavigationAction = [self mockForClass:[WKNavigationAction class]];
     [[[mockWKNavigationAction stub] andReturn:request] request];
+    id mockWKFrameInfo = [self mockForClass:[WKFrameInfo class]];
+    [[[mockWKNavigationAction stub] andReturn:mockWKFrameInfo] targetFrame];
     [[[self.mockWKWebView stub] andReturn:originatingURL] URL];
 
     [[[self.mockJavaScriptCommandDelegate expect] andReturnValue:@(YES)] performCommand:[OCMArg checkWithBlock:^BOOL(id obj) {
@@ -348,6 +443,8 @@
 
     id mockWKNavigationAction = [self mockForClass:[WKNavigationAction class]];
     [[[mockWKNavigationAction stub] andReturn:request] request];
+    id mockWKFrameInfo = [self mockForClass:[WKFrameInfo class]];
+    [[[mockWKNavigationAction stub] andReturn:mockWKFrameInfo] targetFrame];
     [[[self.mockWKWebView stub] andReturn:originatingURL] URL];
 
     [[[self.mockJavaScriptCommandDelegate expect] andReturnValue:@(NO)] performCommand:[OCMArg checkWithBlock:^BOOL(id obj) {
@@ -377,6 +474,8 @@
 
     id mockWKNavigationAction = [self mockForClass:[WKNavigationAction class]];
     [[[mockWKNavigationAction stub] andReturn:request] request];
+    id mockWKFrameInfo = [self mockForClass:[WKFrameInfo class]];
+    [[[mockWKNavigationAction stub] andReturn:mockWKFrameInfo] targetFrame];
     [[[self.mockWKWebView stub] andReturn:originatingURL] URL];
 
     [[self.mockNativeBridgeDelegate expect] close];
