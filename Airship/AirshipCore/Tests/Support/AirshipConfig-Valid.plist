@@ -25,6 +25,8 @@
 	<true/>
 	<key>channelCreationDelayEnabled</key>
 	<true/>
+	<key>extendedBroadcastsEnabled</key>
+	<true/>
 	<key>messageCenterStyleConfig</key>
 	<string>ValidUAMessageCenterDefaultStyle</string>
 	<key>site</key>

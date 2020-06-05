@@ -19,6 +19,7 @@
 @property (nonatomic, assign, getter=isChannelCaptureEnabled) BOOL channelCaptureEnabled;
 @property (nonatomic, assign, getter=isOpenURLWhitelistingEnabled) BOOL openURLWhitelistingEnabled;
 @property (nonatomic, assign, getter=isChannelCreationDelayEnabled) BOOL channelCreationDelayEnabled;
+@property (nonatomic, assign, getter=isExtendedBroadcastsEnabled) BOOL extendedBroadcastsEnabled;
 @property (nonatomic, copy) NSDictionary *customConfig;
 @property (nonatomic, assign) BOOL requestAuthorizationToUseNotifications;
 @property (nonatomic, assign, getter=isDataCollectionOptInEnabled) BOOL dataCollectionOptInEnabled;
@@ -75,6 +76,7 @@ NSString *const UARuntimeConfigEURemoteDataAPIURL = @"https://remote-data.asnapi
         self.openURLWhitelistingEnabled = config.openURLWhitelistingEnabled;
         self.customConfig = config.customConfig;
         self.channelCreationDelayEnabled = config.channelCreationDelayEnabled;
+        self.extendedBroadcastsEnabled = config.extendedBroadcastsEnabled;
         self.messageCenterStyleConfig = config.messageCenterStyleConfig;
         self.itunesID = config.itunesID;
         self.dataCollectionOptInEnabled = config.dataCollectionOptInEnabled;

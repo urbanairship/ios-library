@@ -33,7 +33,11 @@ typedef NS_ENUM(NSUInteger, UASDKExtension) {
     /**
      * The React Native SDK extension.
      */
-    UASDKExtensionReactNative = 4
+    UASDKExtensionReactNative = 4,
+    /**
+     * The Titanium SDK extension.
+     */
+    UASDKExtensionTitanium = 5
 };
 
 extern NSString *const UACustomEventAdded;

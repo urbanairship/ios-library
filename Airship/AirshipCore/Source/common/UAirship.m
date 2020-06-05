@@ -51,6 +51,11 @@ NSString * const UAExtendedActionsModuleLoaderClassName = @"UAExtendedActionsMod
 NSString * const UAAccengageModuleLoaderClassName = @"UAAccengageModuleLoader";
 NSString * const UADebugLibraryModuleLoaderClassName = @"AirshipDebug.UADebugLibraryModuleLoader";
 
+// AirshipReady payload
+NSString * const UAAirshipReadyChannelIdentifier = @"channel_id";
+NSString * const UAAirshipReadyAppKey = @"appKey";
+NSString * const UAAirshipReadyPayloadVersion = @"payload_version";
+
 static UAirship *sharedAirship_;
 
 static NSBundle *resourcesBundle_;
@@ -252,7 +257,20 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         [UAirship executeUnsafeTakeOff:[config copy]];
     });
     
-    [[NSNotificationCenter defaultCenter] postNotificationName:UAAirshipReadyNotification object:nil];
+    if ([UAirship shared].config.isExtendedBroadcastsEnabled) {
+        NSMutableDictionary *airshipReadyPayload = [NSMutableDictionary dictionary];
+        
+        NSString *channelIdentifier = [UAirship channel].identifier;
+        NSString *appKey = [UAirship shared].config.appKey;
+       
+        [airshipReadyPayload setValue:channelIdentifier forKey:UAAirshipReadyChannelIdentifier];
+        [airshipReadyPayload setValue:appKey forKey:UAAirshipReadyAppKey];
+        [airshipReadyPayload setValue:@1 forKey:UAAirshipReadyPayloadVersion];
+    
+        [[NSNotificationCenter defaultCenter] postNotificationName:UAAirshipReadyNotification object:airshipReadyPayload];
+    } else {
+        [[NSNotificationCenter defaultCenter] postNotificationName:UAAirshipReadyNotification object:nil];
+    }
 }
 
 /*

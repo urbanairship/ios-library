@@ -54,6 +54,7 @@ NSString *const UALogLevelTraceName = @"TRACE";
         self.openURLWhitelistingEnabled = NO;
         self.customConfig = @{};
         self.channelCreationDelayEnabled = NO;
+        self.extendedBroadcastsEnabled = NO;
         self.defaultDetectProvisioningMode = YES;
     }
 
@@ -92,6 +93,7 @@ NSString *const UALogLevelTraceName = @"TRACE";
         _openURLWhitelistingEnabled = config.openURLWhitelistingEnabled;
         _customConfig = config.customConfig;
         _channelCreationDelayEnabled = config.channelCreationDelayEnabled;
+        _extendedBroadcastsEnabled = config.extendedBroadcastsEnabled;
         _defaultDetectProvisioningMode = config.defaultDetectProvisioningMode;
         _messageCenterStyleConfig = config.messageCenterStyleConfig;
         _itunesID = config.itunesID;
@@ -128,6 +130,7 @@ NSString *const UALogLevelTraceName = @"TRACE";
             "URL Whitelisting Enabled: %d\n"
             "Custom Config: %@\n"
             "Delay Channel Creation: %d\n"
+            "Extended broadcasts: %d\n"
             "Default Message Center Style Config File: %@\n"
             "Use iTunes ID: %@\n"
             "Site:  %ld\n"
@@ -159,6 +162,7 @@ NSString *const UALogLevelTraceName = @"TRACE";
             self.openURLWhitelistingEnabled,
             self.customConfig,
             self.channelCreationDelayEnabled,
+            self.extendedBroadcastsEnabled,
             self.messageCenterStyleConfig,
             self.itunesID,
             (long) self.site,
