@@ -37,7 +37,7 @@
 - (void)testTextInfo {
     UAInAppMessageTextInfo *textInfo = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
         builder.text = @"text";
-        builder.alignment = NSTextAlignmentCenter;
+        builder.alignment = UAInAppMessageTextInfoAlignmentCenter;
         builder.color = [UIColor redColor];
         builder.style = UAInAppMessageTextInfoStyleBold | UAInAppMessageTextInfoStyleItalic | UAInAppMessageTextInfoStyleUnderline;
         builder.sizePoints = 11;
@@ -52,7 +52,7 @@
 
 - (void)testMissingText {
     UAInAppMessageTextInfo *textInfo = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
-        builder.alignment = NSTextAlignmentCenter;
+        builder.alignment = UAInAppMessageTextInfoAlignmentCenter;
         builder.color = [UIColor redColor];
         builder.style = UAInAppMessageTextInfoStyleBold | UAInAppMessageTextInfoStyleItalic | UAInAppMessageTextInfoStyleUnderline;
         builder.sizePoints = 11;
@@ -64,7 +64,7 @@
 - (void)testExtend {
     UAInAppMessageTextInfo *textInfo = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
         builder.text = @"text";
-        builder.alignment = NSTextAlignmentCenter;
+        builder.alignment = UAInAppMessageTextInfoAlignmentCenter;
         builder.color = [UIColor redColor];
         builder.fontFamilies = @[@"sans-serif"];
         builder.style = UAInAppMessageTextInfoStyleBold | UAInAppMessageTextInfoStyleItalic | UAInAppMessageTextInfoStyleUnderline;

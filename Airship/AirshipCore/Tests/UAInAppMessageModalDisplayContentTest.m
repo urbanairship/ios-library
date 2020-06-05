@@ -107,7 +107,7 @@
             builder.text = @"headline content";
             builder.color = [UIColor redColor];
             builder.sizePoints = 11;
-            builder.alignment = NSTextAlignmentLeft;
+            builder.alignment = UAInAppMessageTextInfoAlignmentLeft;
             builder.style = UAInAppMessageTextInfoStyleBold | UAInAppMessageTextInfoStyleItalic | UAInAppMessageTextInfoStyleUnderline;
         }];;
         
@@ -115,7 +115,7 @@
             builder.text = @"body content";
             builder.color = [UIColor greenColor];
             builder.sizePoints = 11;
-            builder.alignment = NSTextAlignmentLeft;
+            builder.alignment = UAInAppMessageTextInfoAlignmentLeft;
             builder.style = UAInAppMessageTextInfoStyleBold | UAInAppMessageTextInfoStyleItalic | UAInAppMessageTextInfoStyleUnderline;
         }];
         
@@ -124,7 +124,7 @@
                 builder.text = @"Dismiss";
                 builder.color = [UIColor blueColor];
                 builder.sizePoints = 11;
-                builder.alignment = NSTextAlignmentLeft;
+                builder.alignment = UAInAppMessageTextInfoAlignmentLeft;
                 builder.style = UAInAppMessageTextInfoStyleBold | UAInAppMessageTextInfoStyleItalic | UAInAppMessageTextInfoStyleUnderline;
             }];
             builder.backgroundColor = [UIColor redColor];
@@ -136,7 +136,7 @@
                 builder.text = @"Cancel";
                 builder.color = [UIColor redColor];
                 builder.sizePoints = 9;
-                builder.alignment = NSTextAlignmentRight;
+                builder.alignment = UAInAppMessageTextInfoAlignmentRight;
                 builder.style = UAInAppMessageTextInfoStyleBold | UAInAppMessageTextInfoStyleItalic | UAInAppMessageTextInfoStyleUnderline;
             }];
             builder.backgroundColor = [UIColor blueColor];
@@ -150,7 +150,7 @@
                 builder.text = @"footer link";
                 builder.color = [UIColor redColor];
                 builder.sizePoints = 9;
-                builder.alignment = NSTextAlignmentCenter;
+                builder.alignment = UAInAppMessageTextInfoAlignmentCenter;
                 builder.style = UAInAppMessageTextInfoStyleUnderline;
             }];
             builder.backgroundColor = [UIColor clearColor];
@@ -185,7 +185,7 @@
             builder.text = @"headline content";
             builder.color = [UIColor redColor];
             builder.sizePoints = 11;
-            builder.alignment = NSTextAlignmentLeft;
+            builder.alignment = UAInAppMessageTextInfoAlignmentLeft;
             builder.style = UAInAppMessageTextInfoStyleBold | UAInAppMessageTextInfoStyleItalic | UAInAppMessageTextInfoStyleUnderline;
         }];;
 
@@ -193,7 +193,7 @@
             builder.text = @"body content";
             builder.color = [UIColor greenColor];
             builder.sizePoints = 11;
-            builder.alignment = NSTextAlignmentLeft;
+            builder.alignment = UAInAppMessageTextInfoAlignmentLeft;
             builder.style = UAInAppMessageTextInfoStyleBold | UAInAppMessageTextInfoStyleItalic | UAInAppMessageTextInfoStyleUnderline;
         }];
 
@@ -202,7 +202,7 @@
                 builder.text = @"Dismiss";
                 builder.color = [UIColor blueColor];
                 builder.sizePoints = 11;
-                builder.alignment = NSTextAlignmentLeft;
+                builder.alignment = UAInAppMessageTextInfoAlignmentLeft;
                 builder.style = UAInAppMessageTextInfoStyleBold | UAInAppMessageTextInfoStyleItalic | UAInAppMessageTextInfoStyleUnderline;
             }];
             builder.backgroundColor = [UIColor redColor];
@@ -214,7 +214,7 @@
                 builder.text = @"Cancel";
                 builder.color = [UIColor redColor];
                 builder.sizePoints = 9;
-                builder.alignment = NSTextAlignmentRight;
+                builder.alignment = UAInAppMessageTextInfoAlignmentRight;
                 builder.style = UAInAppMessageTextInfoStyleBold | UAInAppMessageTextInfoStyleItalic | UAInAppMessageTextInfoStyleUnderline;
             }];
             builder.backgroundColor = [UIColor blueColor];
@@ -228,7 +228,7 @@
                 builder.text = @"footer link";
                 builder.color = [UIColor redColor];
                 builder.sizePoints = 9;
-                builder.alignment = NSTextAlignmentCenter;
+                builder.alignment = UAInAppMessageTextInfoAlignmentCenter;
                 builder.style = UAInAppMessageTextInfoStyleUnderline;
             }];
             builder.backgroundColor = [UIColor clearColor];

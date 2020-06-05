@@ -2724,7 +2724,6 @@
 		6E6CC303239A2E8F003D583C /* UAAccengage+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAAccengage+Internal.h"; sourceTree = "<group>"; };
 		6E6CC304239A2E8F003D583C /* UAAccengageModuleLoader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UAAccengageModuleLoader.h; sourceTree = "<group>"; };
 		6E6CC305239A2E8F003D583C /* AirshipAccengage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AirshipAccengage.h; sourceTree = "<group>"; };
-		6E6CC32D239A2EA9003D583C /* AirshipExtendedActions copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "AirshipExtendedActions copy-Info.plist"; path = "/Users/ryan.lepinski/git/ios-library-dev/Airship/AirshipExtendedActions copy-Info.plist"; sourceTree = "<absolute>"; };
 		6E6CC37E23A3F9B4003D583C /* PushNotificationsDetailTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PushNotificationsDetailTableViewController.swift; sourceTree = "<group>"; };
 		6E6CC38023A3F9B4003D583C /* PushDataManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PushDataManager.swift; sourceTree = "<group>"; };
 		6E6CC38123A3F9B4003D583C /* PushPayload.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PushPayload.swift; sourceTree = "<group>"; };
@@ -3962,7 +3961,6 @@
 				3CA0E302237E396100EE76CF /* AirshipMessageCenter */,
 				0A550D587E2599A4BD33CDF4 /* Pods */,
 				E3E85E514DBE69D4C8BF51CE /* Frameworks */,
-				6E6CC32D239A2EA9003D583C /* AirshipExtendedActions copy-Info.plist */,
 			);
 			sourceTree = "<group>";
 		};
