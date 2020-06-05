@@ -113,6 +113,14 @@ NS_ASSUME_NONNULL_BEGIN
 @property (readonly, getter=isChannelCreationDelayEnabled) BOOL channelCreationDelayEnabled;
 
 /**
+ * Flag indicating whether extended broadcasts are enabled. If set to `YES` the AirshipReady NSNotification
+ * will contain additional data: the channel identifier and the app key.
+ *
+ * Defaults to `NO`.
+ */
+@property (readonly, getter=isExtendedBroadcastsEnabled) BOOL extendedBroadcastsEnabled;
+
+/**
  * If set to 'YES', the Airship SDK will request authorization to use
  * notifications from the user. Apps that set this flag to `NO` are
  * required to request authorization themselves.

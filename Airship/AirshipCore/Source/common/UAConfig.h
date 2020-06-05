@@ -196,6 +196,14 @@ typedef NS_ENUM(NSUInteger, UACloudSite) {
 @property (nonatomic, assign, getter=isChannelCreationDelayEnabled) BOOL channelCreationDelayEnabled;
 
 /**
+ * Flag indicating whether extended broadcasts are enabled. If set to `YES` the AirshipReady NSNotification
+ * will contain additional data: the channel identifier and the app key.
+ *
+ * Defaults to `NO`.
+ */
+@property (nonatomic, assign, getter=isExtendedBroadcastsEnabled) BOOL extendedBroadcastsEnabled;
+
+/**
  * Dictionary of custom config values.
  */
 @property (nonatomic, copy) NSDictionary *customConfig;

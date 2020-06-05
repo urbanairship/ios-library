@@ -194,6 +194,7 @@
     XCTAssertEqual(config.productionLogLevel, 5, @"Production log level was improperly loaded.");
     XCTAssertTrue(config.detectProvisioningMode, @"detectProvisioningMode was improperly loaded.");
     XCTAssertTrue(config.channelCreationDelayEnabled, @"channelCreationDelayEnabled was improperly loaded.");
+    XCTAssertTrue(config.extendedBroadcastsEnabled, @"extendedBroadcastsEnabled was improperly loaded.");
 
     //special case this one since we have to disable detectProvisioningMode
     config.detectProvisioningMode = NO;
@@ -315,6 +316,7 @@
     XCTAssertTrue(copy.channelCaptureEnabled == config.channelCaptureEnabled);
     XCTAssertTrue(copy.customConfig == config.customConfig);
     XCTAssertTrue(copy.channelCreationDelayEnabled == config.channelCreationDelayEnabled);
+    XCTAssertTrue(copy.extendedBroadcastsEnabled == config.extendedBroadcastsEnabled);
     XCTAssertTrue(copy.defaultDetectProvisioningMode == config.defaultDetectProvisioningMode);
     XCTAssertTrue(copy.messageCenterStyleConfig == config.messageCenterStyleConfig);
     XCTAssertTrue(copy.itunesID == config.itunesID);
@@ -340,6 +342,7 @@
     XCTAssertTrue(config.channelCaptureEnabled);
     XCTAssertEqual(config.customConfig.count, 0);
     XCTAssertFalse(config.channelCreationDelayEnabled);
+    XCTAssertFalse(config.extendedBroadcastsEnabled);
     XCTAssertTrue(config.defaultDetectProvisioningMode);
     XCTAssertTrue(config.requestAuthorizationToUseNotifications);
 }
