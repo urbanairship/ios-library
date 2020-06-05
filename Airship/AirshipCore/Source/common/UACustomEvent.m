@@ -8,10 +8,14 @@
 @implementation UACustomEvent
 
 static NSString * const UAInteractionMCRAP = @"ua_mcrap";
+
 const NSUInteger UACustomEventCharacterLimit = 255;
 const NSUInteger UACustomEventMaxPropertiesCount = 100;
 const NSUInteger UACustomEventMaxPropertyCollectionSize = 20;
 const NSUInteger UACustomEventMaxPropertiesSize = 65536;
+
+// Deprecated constants
+NSString *const kUAInteractionMCRAP = UAInteractionMCRAP;
 
 // Public data keys
 NSString *const UACustomEventNameKey = @"event_name";
