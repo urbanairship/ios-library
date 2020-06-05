@@ -362,6 +362,8 @@ NSString *const UAEventKey = @"event";
             return @"flutter";
         case UASDKExtensionReactNative:
             return @"react-native";
+        case UASDKExtensionTitanium:
+            return @"titanium";
     }
 }
 
