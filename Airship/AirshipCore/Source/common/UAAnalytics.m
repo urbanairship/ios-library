@@ -77,7 +77,7 @@ NSString *const UAEventKey = @"event";
             [self.dataStore setBool:YES forKey:kUAAnalyticsEnabled];
         }
 
-        self.eventManager.uploadsEnabled = self.isEnabled && self.componentEnabled && self.isDataCollectionEnabled;
+        [self updateEventManagerUploadsEnabled];
         self.eventManager.delegate = self;
         
         [self startSession];
@@ -266,7 +266,7 @@ NSString *const UAEventKey = @"event";
     }
 
     [self.dataStore setBool:enabled forKey:kUAAnalyticsEnabled];
-    self.eventManager.uploadsEnabled = self.isEnabled && self.componentEnabled && self.isDataCollectionEnabled;
+    [self updateEventManagerUploadsEnabled];
 }
 
 - (void)associateDeviceIdentifiers:(UAAssociatedIdentifiers *)associatedIdentifiers {
@@ -334,7 +334,7 @@ NSString *const UAEventKey = @"event";
 }
 
 - (void)onComponentEnableChange {
-    self.eventManager.uploadsEnabled = self.isEnabled && self.componentEnabled && self.isDataCollectionEnabled;
+    [self updateEventManagerUploadsEnabled];
     if (self.componentEnabled) {
         // if component was disabled and is now enabled, schedule an upload just in case
         [self scheduleUpload];
@@ -413,10 +413,14 @@ NSString *const UAEventKey = @"event";
 }
 
 - (void)onDataCollectionEnabledChanged {
+    [self updateEventManagerUploadsEnabled];
     if (!self.isDataCollectionEnabled) {
         [self.eventManager deleteAllEvents];
         [self.dataStore setValue:nil forKey:kUAAssociatedIdentifiers];
     }
 }
 
+- (void)updateEventManagerUploadsEnabled {
+    self.eventManager.uploadsEnabled = self.isEnabled && self.componentEnabled && self.isDataCollectionEnabled;
+}
 @end

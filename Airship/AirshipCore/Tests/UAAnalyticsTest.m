@@ -65,6 +65,7 @@
  * Test disabling analytics will result in deleting the database.
  */
 - (void)testDisablingAnalytics {
+    [[self.mockEventManager expect] setUploadsEnabled:NO];
     [[self.mockEventManager expect] deleteAllEvents];
     self.analytics.enabled = NO;
 
@@ -548,6 +549,7 @@
 
     XCTAssertEqualObjects(self.analytics.currentAssociatedDeviceIdentifiers.allIDs, identifiers);
 
+    [[self.mockEventManager expect] setUploadsEnabled:NO];
     [[self.mockEventManager expect] deleteAllEvents];
 
     [self.dataStore setBool:NO forKey:UAirshipDataCollectionEnabledKey];
@@ -556,6 +558,15 @@
     [self.mockEventManager verify];
 
     XCTAssertEqualObjects(self.analytics.currentAssociatedDeviceIdentifiers.allIDs, @{});
+}
+
+- (void)testOnDataCollectionEnabled {
+    [[self.mockEventManager expect] setUploadsEnabled:YES];
+
+    [self.dataStore setBool:YES forKey:UAirshipDataCollectionEnabledKey];
+    [self.analytics onDataCollectionEnabledChanged];
+
+    [self.mockEventManager verify];
 }
 
 - (UAAnalytics *)createAnalytics {
