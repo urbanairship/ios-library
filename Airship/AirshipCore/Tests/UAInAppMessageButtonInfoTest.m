@@ -21,7 +21,7 @@
     UAInAppMessageButtonInfo *buttonInfo = [UAInAppMessageButtonInfo buttonInfoWithBuilderBlock:^(UAInAppMessageButtonInfoBuilder * _Nonnull builder) {
         builder.label = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
             builder.text = @"text";
-            builder.alignment = NSTextAlignmentCenter;
+            builder.alignment = UAInAppMessageTextInfoAlignmentCenter;
             builder.color = [UIColor redColor];
             builder.style = UAInAppMessageTextInfoStyleBold | UAInAppMessageTextInfoStyleItalic | UAInAppMessageTextInfoStyleUnderline;
             builder.sizePoints = 11;
@@ -58,7 +58,7 @@
     UAInAppMessageButtonInfo *buttonInfo = [UAInAppMessageButtonInfo buttonInfoWithBuilderBlock:^(UAInAppMessageButtonInfoBuilder * _Nonnull builder) {
         builder.label = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
             builder.text = @"text";
-            builder.alignment = NSTextAlignmentCenter;
+            builder.alignment = UAInAppMessageTextInfoAlignmentCenter;
             builder.color = [UIColor redColor];
             builder.style = UAInAppMessageTextInfoStyleBold | UAInAppMessageTextInfoStyleItalic | UAInAppMessageTextInfoStyleUnderline;
             builder.sizePoints = 11;
@@ -78,7 +78,7 @@
     UAInAppMessageButtonInfo *buttonInfo = [UAInAppMessageButtonInfo buttonInfoWithBuilderBlock:^(UAInAppMessageButtonInfoBuilder * _Nonnull builder) {
         builder.label = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
             builder.text = @"text";
-            builder.alignment = NSTextAlignmentCenter;
+            builder.alignment = UAInAppMessageTextInfoAlignmentCenter;
             builder.color = [UIColor redColor];
             builder.style = UAInAppMessageTextInfoStyleBold | UAInAppMessageTextInfoStyleItalic | UAInAppMessageTextInfoStyleUnderline;
             builder.sizePoints = 11;
@@ -100,7 +100,7 @@
     UAInAppMessageButtonInfo *buttonInfo = [UAInAppMessageButtonInfo buttonInfoWithBuilderBlock:^(UAInAppMessageButtonInfoBuilder * _Nonnull builder) {
         builder.label = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
             builder.text = @"text";
-            builder.alignment = NSTextAlignmentCenter;
+            builder.alignment = UAInAppMessageTextInfoAlignmentCenter;
             builder.color = [UIColor redColor];
             builder.style = UAInAppMessageTextInfoStyleBold | UAInAppMessageTextInfoStyleItalic | UAInAppMessageTextInfoStyleUnderline;
             builder.sizePoints = 11;
@@ -121,7 +121,7 @@
     UAInAppMessageButtonInfo *buttonInfo = [UAInAppMessageButtonInfo buttonInfoWithBuilderBlock:^(UAInAppMessageButtonInfoBuilder * _Nonnull builder) {
         builder.label = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
             builder.text = @"text";
-            builder.alignment = NSTextAlignmentCenter;
+            builder.alignment = UAInAppMessageTextInfoAlignmentCenter;
             builder.color = [UIColor redColor];
             builder.style = UAInAppMessageTextInfoStyleBold | UAInAppMessageTextInfoStyleItalic | UAInAppMessageTextInfoStyleUnderline;
             builder.sizePoints = 11;

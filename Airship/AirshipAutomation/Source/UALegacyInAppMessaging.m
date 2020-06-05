@@ -197,7 +197,7 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
             }
             UANotificationAction *notificationAction = [message.notificationActions objectAtIndex:i];
             UAInAppMessageTextInfo *labelInfo = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
-                builder.alignment = NSTextAlignmentCenter;
+                builder.alignment = UAInAppMessageTextInfoAlignmentCenter;
                 builder.color = primaryColor;
                 builder.text = notificationAction.title;
             }];
