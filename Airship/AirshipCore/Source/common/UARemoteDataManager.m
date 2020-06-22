@@ -79,6 +79,7 @@ NSInteger const UARemoteDataRefreshIntervalDefault = 0;
 @property (nonatomic, strong) NSMutableArray<UARemoteDataSubscription *> *subscriptions;
 @property (nonatomic, strong) UARemoteDataStore *remoteDataStore;
 @property (nonatomic, strong) UADispatcher *dispatcher;
+@property (nonatomic, strong) UADate *date;
 @property (nonatomic, strong) NSNotificationCenter *notificationCenter;
 @end
 
@@ -89,13 +90,15 @@ NSInteger const UARemoteDataRefreshIntervalDefault = 0;
                         remoteDataStore:(UARemoteDataStore *)remoteDataStore
                     remoteDataAPIClient:(UARemoteDataAPIClient *)remoteDataAPIClient
                      notificationCenter:(NSNotificationCenter *)notificationCenter
-                             dispatcher:(UADispatcher *)dispatcher {
+                             dispatcher:(UADispatcher *)dispatcher
+                                   date:(UADate *)date {
     self = [super initWithDataStore:dataStore];
     if (self) {
         self.dataStore = dataStore;
         self.subscriptions = [NSMutableArray array];
         self.remoteDataStore = remoteDataStore;
         self.dispatcher = dispatcher;
+        self.date = date;
         self.notificationCenter = notificationCenter;
         self.remoteDataAPIClient = remoteDataAPIClient;
 
@@ -126,23 +129,25 @@ NSInteger const UARemoteDataRefreshIntervalDefault = 0;
                              remoteDataStore:remoteDataStore
                          remoteDataAPIClient:[UARemoteDataAPIClient clientWithConfig:config dataStore:dataStore]
                           notificationCenter:[NSNotificationCenter defaultCenter]
-                                  dispatcher:[UADispatcher mainDispatcher]];
+                                  dispatcher:[UADispatcher mainDispatcher]
+                                        date:[[UADate alloc] init]];
 }
-
 
 + (instancetype)remoteDataManagerWithConfig:(UARuntimeConfig *)config
                                   dataStore:(UAPreferenceDataStore *)dataStore
                             remoteDataStore:(UARemoteDataStore *)remoteDataStore
                         remoteDataAPIClient:(UARemoteDataAPIClient *)remoteDataAPIClient
                          notificationCenter:(NSNotificationCenter *)notificationCenter
-                                 dispatcher:(UADispatcher *)dispatcher {
+                                 dispatcher:(UADispatcher *)dispatcher
+                                       date:(UADate *)date {
 
     return [[self alloc] initWithConfig:config
                               dataStore:dataStore
                         remoteDataStore:remoteDataStore
                     remoteDataAPIClient:remoteDataAPIClient
                      notificationCenter:notificationCenter
-                             dispatcher:dispatcher];
+                             dispatcher:dispatcher
+                                   date:date];
 }
 
 - (NSUInteger)remoteDataRefreshInterval {
@@ -238,7 +243,7 @@ NSInteger const UARemoteDataRefreshIntervalDefault = 0;
 
 -(BOOL)shouldRefresh {
     NSDate *lastRefreshTime = [self.dataStore objectForKey:UARemoteDataLastRefreshTimeKey] ?: [NSDate distantPast];
-    NSTimeInterval timeSinceLastRefresh = -([lastRefreshTime timeIntervalSinceNow]);
+    NSTimeInterval timeSinceLastRefresh = -([lastRefreshTime timeIntervalSinceDate:self.date.now]);
 
     if (self.remoteDataRefreshInterval <= timeSinceLastRefresh) {
         return true;

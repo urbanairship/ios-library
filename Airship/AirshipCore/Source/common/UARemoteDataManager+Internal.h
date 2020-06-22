@@ -11,6 +11,7 @@
 #import "UAComponent.h"
 #import "UAPushableComponent.h"
 #import "UARemoteDataProvider.h"
+#import "UADate.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -84,7 +85,8 @@ NS_ASSUME_NONNULL_BEGIN
                             remoteDataStore:(UARemoteDataStore *)remoteDataStore
                         remoteDataAPIClient:(UARemoteDataAPIClient *)remoteDataAPIClient
                          notificationCenter:(NSNotificationCenter *)notificationCenter
-                                 dispatcher:(UADispatcher *)dispatcher;
+                                 dispatcher:(UADispatcher *)dispatcher
+                                       date:(UADate *)date;
 
 /**
  * Creates the client metadata used to fetch the request.
