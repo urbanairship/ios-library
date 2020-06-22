@@ -13,6 +13,8 @@
 #import "UAAirshipBaseTest.h"
 #import "UATestDispatcher.h"
 
+#import "UATestAppStateTracker+Internal.h"
+
 /**
  * Used to test what UARemoteDataManager does when the cache fails underneath it.
  */
@@ -39,6 +41,7 @@
 
 @property (nonatomic, strong) UARemoteDataManager *remoteDataManager;
 @property (nonatomic, strong) UATestRemoteDataStore *testStore;
+@property (nonatomic, strong) UATestAppStateTracker *testAppStateTracker;
 
 @property (nonatomic, copy) NSDictionary *expectedMetadata;
 
@@ -62,6 +65,8 @@
     self.remoteDataManager = [self createManager];
     self.expectAPIClientFetch = YES;
     self.expectedMetadata = [self.remoteDataManager createMetadata:[NSLocale autoupdatingCurrentLocale]];
+
+    self.testAppStateTracker = [UATestAppStateTracker shared];
 }
 
 - (void)tearDown {
@@ -654,6 +659,7 @@
 - (void)testRefreshInterval {
     // set up test data
     NSMutableArray<UARemoteDataPayload *> *testPayloads = [[self createNPayloadsAndSetupTest:1 metadata:self.expectedMetadata] mutableCopy];
+    self.testAppStateTracker.currentState = UAApplicationStateActive;
 
     __block XCTestExpectation *receivedDataExpectation;
 
@@ -711,6 +717,7 @@
 // Tests app locale change when a locale change happens while the app is terminated
 - (void)testAppLocaleChange {
     __block XCTestExpectation *receivedDataExpectation;
+    self.testAppStateTracker.currentState = UAApplicationStateActive;
 
     NSMutableArray<UARemoteDataPayload *> *testPayloads = [[self createNPayloadsAndSetupTest:1 metadata:self.expectedMetadata] mutableCopy];
 
@@ -767,6 +774,7 @@
 
 - (void)testAppVersionChange {
     __block XCTestExpectation *receivedDataExpectation;
+    self.testAppStateTracker.currentState = UAApplicationStateActive;
 
     NSMutableArray<UARemoteDataPayload *> *testPayloads = [[self createNPayloadsAndSetupTest:1 metadata:self.expectedMetadata] mutableCopy];
 
@@ -966,14 +974,15 @@
     }];
 }
 
-
 - (UARemoteDataManager *)createManager {
     return [UARemoteDataManager remoteDataManagerWithConfig:self.config
                                                   dataStore:self.dataStore
                                             remoteDataStore:self.testStore
                                         remoteDataAPIClient:self.mockAPIClient
                                          notificationCenter:[[NSNotificationCenter alloc] init]
+                                            appStateTracker:self.testAppStateTracker
                                                  dispatcher:[UATestDispatcher testDispatcher]];
+
 }
 
 @end

@@ -80,6 +80,8 @@ NSInteger const UARemoteDataRefreshIntervalDefault = 0;
 @property (nonatomic, strong) UARemoteDataStore *remoteDataStore;
 @property (nonatomic, strong) UADispatcher *dispatcher;
 @property (nonatomic, strong) NSNotificationCenter *notificationCenter;
+@property (nonatomic, strong) UAAppStateTracker *appStateTracker;
+
 @end
 
 @implementation UARemoteDataManager
@@ -89,6 +91,7 @@ NSInteger const UARemoteDataRefreshIntervalDefault = 0;
                         remoteDataStore:(UARemoteDataStore *)remoteDataStore
                     remoteDataAPIClient:(UARemoteDataAPIClient *)remoteDataAPIClient
                      notificationCenter:(NSNotificationCenter *)notificationCenter
+                        appStateTracker:(UAAppStateTracker *)appStateTracker
                              dispatcher:(UADispatcher *)dispatcher {
     self = [super initWithDataStore:dataStore];
     if (self) {
@@ -98,6 +101,7 @@ NSInteger const UARemoteDataRefreshIntervalDefault = 0;
         self.dispatcher = dispatcher;
         self.notificationCenter = notificationCenter;
         self.remoteDataAPIClient = remoteDataAPIClient;
+        self.appStateTracker = appStateTracker;
 
         // Register for locale change notification
         [self.notificationCenter addObserver:self
@@ -110,11 +114,11 @@ NSInteger const UARemoteDataRefreshIntervalDefault = 0;
                                         name:UAApplicationDidTransitionToForeground
                                       object:nil];
 
-        // Force a refresh if app version or app locale identifier has changed or refresh interval has elapsed
         if ([self shouldRefresh]) {
             [self refresh];
         }
     }
+
     return self;
 }
 
@@ -126,6 +130,7 @@ NSInteger const UARemoteDataRefreshIntervalDefault = 0;
                              remoteDataStore:remoteDataStore
                          remoteDataAPIClient:[UARemoteDataAPIClient clientWithConfig:config dataStore:dataStore]
                           notificationCenter:[NSNotificationCenter defaultCenter]
+                             appStateTracker:[UAAppStateTracker shared]
                                   dispatcher:[UADispatcher mainDispatcher]];
 }
 
@@ -135,6 +140,7 @@ NSInteger const UARemoteDataRefreshIntervalDefault = 0;
                             remoteDataStore:(UARemoteDataStore *)remoteDataStore
                         remoteDataAPIClient:(UARemoteDataAPIClient *)remoteDataAPIClient
                          notificationCenter:(NSNotificationCenter *)notificationCenter
+                            appStateTracker:(UAAppStateTracker *)appStateTracker
                                  dispatcher:(UADispatcher *)dispatcher {
 
     return [[self alloc] initWithConfig:config
@@ -142,6 +148,7 @@ NSInteger const UARemoteDataRefreshIntervalDefault = 0;
                         remoteDataStore:remoteDataStore
                     remoteDataAPIClient:remoteDataAPIClient
                      notificationCenter:notificationCenter
+                        appStateTracker:appStateTracker
                              dispatcher:dispatcher];
 }
 
@@ -239,6 +246,10 @@ NSInteger const UARemoteDataRefreshIntervalDefault = 0;
 -(BOOL)shouldRefresh {
     NSDate *lastRefreshTime = [self.dataStore objectForKey:UARemoteDataLastRefreshTimeKey] ?: [NSDate distantPast];
     NSTimeInterval timeSinceLastRefresh = -([lastRefreshTime timeIntervalSinceNow]);
+
+    if (self.appStateTracker.state != UAApplicationStateActive) {
+        return false;
+    }
 
     if (self.remoteDataRefreshInterval <= timeSinceLastRefresh) {
         return true;

@@ -11,6 +11,7 @@
 #import "UAComponent.h"
 #import "UAPushableComponent.h"
 #import "UARemoteDataProvider.h"
+#import "UAAppStateTracker.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -77,6 +78,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param remoteDataAPIClient The remote data API client.
  * @param notificationCenter The notification center.
  * @param dispatcher The dispatcher.
+ * @param appStateTracker The application state tracker.
  * @return The remote data manager instance.
  */
 + (instancetype)remoteDataManagerWithConfig:(UARuntimeConfig *)config
@@ -84,6 +86,7 @@ NS_ASSUME_NONNULL_BEGIN
                             remoteDataStore:(UARemoteDataStore *)remoteDataStore
                         remoteDataAPIClient:(UARemoteDataAPIClient *)remoteDataAPIClient
                          notificationCenter:(NSNotificationCenter *)notificationCenter
+                            appStateTracker:(UAAppStateTracker *)appStateTracker
                                  dispatcher:(UADispatcher *)dispatcher;
 
 /**
