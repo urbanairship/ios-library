@@ -12,6 +12,7 @@
 
 #import "UAAirshipBaseTest.h"
 #import "UATestDispatcher.h"
+#import "UATestDate.h"
 
 #import "UATestAppStateTracker+Internal.h"
 
@@ -47,7 +48,7 @@
 
 @property (nonatomic, copy) NSArray<NSDictionary *> *remoteDataFromCloud;
 @property (nonatomic, assign) BOOL expectAPIClientFetch;
-
+@property (nonatomic, strong) UATestDate *testDate;
 
 @end
 
@@ -62,6 +63,8 @@
     OCMStub([self.mockAPIClientClass clientWithConfig:[OCMArg any] dataStore:[OCMArg any]]).andReturn(self.mockAPIClient);
     
     self.testStore = [UATestRemoteDataStore storeWithName:@"UARemoteDataManagerTest." inMemory:YES];
+    self.testDate = [[UATestDate alloc] initWithAbsoluteTime:[NSDate now]];
+
     self.remoteDataManager = [self createManager];
     self.expectAPIClientFetch = YES;
     self.expectedMetadata = [self.remoteDataManager createMetadata:[NSLocale autoupdatingCurrentLocale]];
@@ -686,6 +689,9 @@
     [self setupTestWithPayloads:testPayloads];
     self.remoteDataManager.remoteDataRefreshInterval = 9999;
 
+    // time travel before refresh interval
+    self.testDate.timeOffset = 9998;
+
     // expect not to get data
     receivedDataExpectation = nil;
     self.expectAPIClientFetch = NO;
@@ -698,7 +704,9 @@
 
     // setup
     [self setupTestWithPayloads:testPayloads];
-    self.remoteDataManager.remoteDataRefreshInterval = 0;
+    
+    // time travel past refresh interval
+    self.testDate.timeOffset = 10000;
 
     // expect to get data from previous refresh
     receivedDataExpectation = [self expectationWithDescription:[NSString stringWithFormat:@"Received remote data of type: %@",testPayloads[0].type]];
@@ -981,8 +989,8 @@
                                         remoteDataAPIClient:self.mockAPIClient
                                          notificationCenter:[[NSNotificationCenter alloc] init]
                                             appStateTracker:self.testAppStateTracker
-                                                 dispatcher:[UATestDispatcher testDispatcher]];
-
+                                                 dispatcher:[UATestDispatcher testDispatcher]
+                                                       date:self.testDate];
 }
 
 @end

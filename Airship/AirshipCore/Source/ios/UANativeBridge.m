@@ -78,14 +78,24 @@ NSString *const UANativeBridgeCloseCommand = @"close";
         return;
     }
 
-    // Default behavior
-    WKNavigationActionPolicy policyForThisURL = WKNavigationActionPolicyAllow;
-
     // Override any special link actions
     if (navigationType == WKNavigationTypeLinkActivated) {
-        policyForThisURL = ([self handleLinkClick:request.URL]) ? WKNavigationActionPolicyCancel : WKNavigationActionPolicyAllow;
+        if ([self handleLinkClick:request.URL]) {
+            decisionHandler(WKNavigationActionPolicyCancel);
+            return;
+        }
     }
-    decisionHandler(policyForThisURL);
+    
+    // If target frame is a new window navigation, have OS handle it
+    if (!navigationAction.targetFrame) {
+        [[UIApplication sharedApplication] openURL:navigationAction.request.URL options:@{} completionHandler:^(BOOL success) {
+            decisionHandler(success ? WKNavigationActionPolicyCancel : WKNavigationActionPolicyAllow);
+        }];
+        return;
+    }
+    
+    // Default behavior
+    decisionHandler(WKNavigationActionPolicyAllow);
 }
 
 /**

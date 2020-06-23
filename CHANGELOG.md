@@ -3,6 +3,14 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/master/Documentation/Migration)
 
+## Version 13.4.0 - June 23, 2020
+Minor release to add support for blank urls in messages, enhance airship-ready broadcasts and fix issues with in-app messages. Apps that support in-app automation, or require any of the support changes listed below are encouraged to update.
+
+- Fixed issue that caused analytics events to fail to upload after enabling data collection in the same app session.
+- Fixed In-App Message modal resizing and button text alignment.
+- Added support to In-App Automation and Message Center Messages for opening target=_blank urls in an external browser.
+- Added support for broadcasting a system notification containing the channel and app key when the channel is created.
+
 ## Version 13.3.2 - May 27, 2020
 Patch release to fix an issue with in-app automation banner messages and a namespacing issue. Apps that support in-app automation banner messages are encouraged to update.
 
