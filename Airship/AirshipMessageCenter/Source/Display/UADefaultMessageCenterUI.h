@@ -22,7 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * The style to apply to the default message center.
  */
-@property (nonatomic, strong) UAMessageCenterStyle *style;
+@property (nonatomic, strong) UAMessageCenterStyle *messageCenterStyle;
 
 /**
  * An optional predicate for filtering messages.

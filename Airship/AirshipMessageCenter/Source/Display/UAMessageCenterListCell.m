@@ -13,8 +13,8 @@
     self.unreadIndicator.hidden = !message.unread;
 }
 
-- (void)setStyle:(UAMessageCenterStyle *)style {
-    _style = style;
+- (void)setMessageCenterStyle:(UAMessageCenterStyle *)style {
+    _messageCenterStyle = style;
 
     BOOL hidden = !style.iconsEnabled;
     self.listIconView.hidden = hidden;
@@ -82,9 +82,9 @@
     if (style.unreadIndicatorColor) {
         self.unreadIndicator.backgroundColor = style.unreadIndicatorColor;
     } else if (style.cellTintColor) {
-        self.unreadIndicator.backgroundColor = self.style.cellTintColor;
+        self.unreadIndicator.backgroundColor = self.messageCenterStyle.cellTintColor;
     } else if (style.tintColor) {
-        self.unreadIndicator.backgroundColor = self.style.tintColor;
+        self.unreadIndicator.backgroundColor = self.messageCenterStyle.tintColor;
     }
     
     // needed for retina displays because the unreadIndicator is configured to rasterize in
