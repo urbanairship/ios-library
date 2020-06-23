@@ -648,7 +648,7 @@
     // Make location unathorized
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunguarded-availability"
-    [OCMStub(ClassMethod(([(CLLocationManager *)self.mockLocationManager authorizationStatus]))) andReturnValue:OCMOCK_VALUE(kCLAuthorizationStatusDenied)];
+    [OCMStub(ClassMethod(([(CLLocationManager *)self.mockLocationManager authorizationStatus]))) andReturnValue:OCMOCK_VALUE(kCLAuthorizationStatusRestricted)];
 #pragma clang diagnostic pop
 
     // Make significant location available
