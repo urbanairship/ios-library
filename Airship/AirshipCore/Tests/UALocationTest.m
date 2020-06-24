@@ -75,6 +75,17 @@
     [super tearDown];
 }
 
+- (void)stubLocationAuthorizationStatus:(CLAuthorizationStatus)status {
+#if (XCODE_VERSION_MAJOR >= 1200)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunguarded-availability"
+    [OCMStub(ClassMethod(([(CLLocationManager *)self.mockLocationManager authorizationStatus]))) andReturnValue:OCMOCK_VALUE(status)];
+#pragma clang diagnostic pop
+#else
+    [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(status)] authorizationStatus];
+#endif
+}
+
 /**
  * Test enabling location updates starts location updates when the application is active.
  */
@@ -83,10 +94,7 @@
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateActive)] applicationState];
 
     // Authorize location
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunguarded-availability"
-    [OCMStub(ClassMethod(([(CLLocationManager *)self.mockLocationManager authorizationStatus]))) andReturnValue:OCMOCK_VALUE(kCLAuthorizationStatusAuthorizedAlways)];
-#pragma clang diagnostic pop
+    [self stubLocationAuthorizationStatus:kCLAuthorizationStatusAuthorizedAlways];
 
     // Make significant location available
     [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(YES)] significantLocationChangeMonitoringAvailable];
@@ -112,10 +120,7 @@
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateInactive)] applicationState];
 
     // Authorize location
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunguarded-availability"
-    [OCMStub(ClassMethod(([(CLLocationManager *)self.mockLocationManager authorizationStatus]))) andReturnValue:OCMOCK_VALUE(kCLAuthorizationStatusAuthorizedAlways)];
-#pragma clang diagnostic pop
+    [self stubLocationAuthorizationStatus:kCLAuthorizationStatusAuthorizedAlways];
 
     // Make significant location available
     [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(YES)] significantLocationChangeMonitoringAvailable];
@@ -142,10 +147,7 @@
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateInactive)] applicationState];
 
     // Authorize location
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunguarded-availability"
-    [OCMStub(ClassMethod(([(CLLocationManager *)self.mockLocationManager authorizationStatus]))) andReturnValue:OCMOCK_VALUE(kCLAuthorizationStatusAuthorizedAlways)];
-#pragma clang diagnostic pop
+    [self stubLocationAuthorizationStatus:kCLAuthorizationStatusAuthorizedAlways];
 
     // Make significant location available
     [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(YES)] significantLocationChangeMonitoringAvailable];
@@ -169,11 +171,9 @@
     // Make the app inactive
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateInactive)] applicationState];
 
+
     // Authorize location
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunguarded-availability"
-    [OCMStub(ClassMethod(([(CLLocationManager *)self.mockLocationManager authorizationStatus]))) andReturnValue:OCMOCK_VALUE(kCLAuthorizationStatusAuthorizedAlways)];
-#pragma clang diagnostic pop
+    [self stubLocationAuthorizationStatus:kCLAuthorizationStatusAuthorizedAlways];
 
     // Make significant location available
     [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(YES)] significantLocationChangeMonitoringAvailable];
@@ -200,10 +200,7 @@
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateBackground)] applicationState];
 
     // Authorize location
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunguarded-availability"
-    [OCMStub(ClassMethod(([(CLLocationManager *)self.mockLocationManager authorizationStatus]))) andReturnValue:OCMOCK_VALUE(kCLAuthorizationStatusAuthorizedAlways)];
-#pragma clang diagnostic pop
+    [self stubLocationAuthorizationStatus:kCLAuthorizationStatusAuthorizedAlways];
 
     // Make significant location available
     [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(YES)] significantLocationChangeMonitoringAvailable];
@@ -227,10 +224,7 @@
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateBackground)] applicationState];
 
     // Authorize location
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunguarded-availability"
-    [OCMStub(ClassMethod(([(CLLocationManager *)self.mockLocationManager authorizationStatus]))) andReturnValue:OCMOCK_VALUE(kCLAuthorizationStatusAuthorizedAlways)];
-#pragma clang diagnostic pop
+    [self stubLocationAuthorizationStatus:kCLAuthorizationStatusAuthorizedAlways];
 
     // Make significant location available
     [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(YES)] significantLocationChangeMonitoringAvailable];
@@ -256,10 +250,7 @@
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateActive)] applicationState];
 
     // Authorize location
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunguarded-availability"
-    [OCMStub(ClassMethod(([(CLLocationManager *)self.mockLocationManager authorizationStatus]))) andReturnValue:OCMOCK_VALUE(kCLAuthorizationStatusAuthorizedAlways)];
-#pragma clang diagnostic pop
+    [self stubLocationAuthorizationStatus:kCLAuthorizationStatusAuthorizedAlways];
 
     // Make significant location available
     [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(YES)] significantLocationChangeMonitoringAvailable];
@@ -288,10 +279,7 @@
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateActive)] applicationState];
 
     // Authorize location
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunguarded-availability"
-    [OCMStub(ClassMethod(([(CLLocationManager *)self.mockLocationManager authorizationStatus]))) andReturnValue:OCMOCK_VALUE(kCLAuthorizationStatusAuthorizedAlways)];
-#pragma clang diagnostic pop
+    [self stubLocationAuthorizationStatus:kCLAuthorizationStatusAuthorizedAlways];
 
     // Make significant location available
     [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(YES)] significantLocationChangeMonitoringAvailable];
@@ -317,10 +305,7 @@
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateActive)] applicationState];
 
     // Authorize location
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunguarded-availability"
-    [OCMStub(ClassMethod(([(CLLocationManager *)self.mockLocationManager authorizationStatus]))) andReturnValue:OCMOCK_VALUE(kCLAuthorizationStatusAuthorizedAlways)];
-#pragma clang diagnostic pop
+    [self stubLocationAuthorizationStatus:kCLAuthorizationStatusAuthorizedAlways];
 
     // Make significant location available
     [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(YES)] significantLocationChangeMonitoringAvailable];
@@ -347,10 +332,7 @@
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateBackground)] applicationState];
 
     // Authorize location
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunguarded-availability"
-    [OCMStub(ClassMethod(([(CLLocationManager *)self.mockLocationManager authorizationStatus]))) andReturnValue:OCMOCK_VALUE(kCLAuthorizationStatusAuthorizedAlways)];
-#pragma clang diagnostic pop
+    [self stubLocationAuthorizationStatus:kCLAuthorizationStatusAuthorizedAlways];
 
     // Make significant location available
     [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(YES)] significantLocationChangeMonitoringAvailable];
@@ -380,10 +362,7 @@
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateBackground)] applicationState];
 
     // Authorize location
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunguarded-availability"
-    [OCMStub(ClassMethod(([(CLLocationManager *)self.mockLocationManager authorizationStatus]))) andReturnValue:OCMOCK_VALUE(kCLAuthorizationStatusAuthorizedAlways)];
-#pragma clang diagnostic pop
+    [self stubLocationAuthorizationStatus:kCLAuthorizationStatusAuthorizedAlways];
 
     // Make significant location available
     [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(YES)] significantLocationChangeMonitoringAvailable];
@@ -409,10 +388,7 @@
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateBackground)] applicationState];
 
     // Authorize location
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunguarded-availability"
-    [OCMStub(ClassMethod(([(CLLocationManager *)self.mockLocationManager authorizationStatus]))) andReturnValue:OCMOCK_VALUE(kCLAuthorizationStatusAuthorizedAlways)];
-#pragma clang diagnostic pop
+    [self stubLocationAuthorizationStatus:kCLAuthorizationStatusAuthorizedAlways];
 
     // Make significant location available
     [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(YES)] significantLocationChangeMonitoringAvailable];
@@ -440,10 +416,7 @@
     self.location.locationUpdatesEnabled = YES;
     
     // Authorize location
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunguarded-availability"
-    [OCMStub(ClassMethod(([(CLLocationManager *)self.mockLocationManager authorizationStatus]))) andReturnValue:OCMOCK_VALUE(kCLAuthorizationStatusAuthorizedAlways)];
-#pragma clang diagnostic pop
+    [self stubLocationAuthorizationStatus:kCLAuthorizationStatusAuthorizedAlways];
 
     // Make significant location available
     [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(YES)] significantLocationChangeMonitoringAvailable];
@@ -472,10 +445,7 @@
     self.location.locationUpdatesStarted = YES;
     
     // Authorize location
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunguarded-availability"
-    [OCMStub(ClassMethod(([(CLLocationManager *)self.mockLocationManager authorizationStatus]))) andReturnValue:OCMOCK_VALUE(kCLAuthorizationStatusAuthorizedAlways)];
-#pragma clang diagnostic pop
+    [self stubLocationAuthorizationStatus:kCLAuthorizationStatusAuthorizedAlways];
 
     // Make significant location available
     [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(YES)] significantLocationChangeMonitoringAvailable];
@@ -593,10 +563,7 @@
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateActive)] applicationState];
 
     // Authorize location
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunguarded-availability"
-    [OCMStub(ClassMethod(([(CLLocationManager *)self.mockLocationManager authorizationStatus]))) andReturnValue:OCMOCK_VALUE(kCLAuthorizationStatusAuthorizedAlways)];
-#pragma clang diagnostic pop
+    [self stubLocationAuthorizationStatus:kCLAuthorizationStatusAuthorizedAlways];
 
     // Make significant location unavailable
     [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(NO)] significantLocationChangeMonitoringAvailable];
@@ -620,10 +587,7 @@
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateActive)] applicationState];
 
     // Make location unathorized
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunguarded-availability"
-    [OCMStub(ClassMethod(([(CLLocationManager *)self.mockLocationManager authorizationStatus]))) andReturnValue:OCMOCK_VALUE(kCLAuthorizationStatusDenied)];
-#pragma clang diagnostic pop
+    [self stubLocationAuthorizationStatus:kCLAuthorizationStatusDenied];
 
     // Make significant location available
     [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(YES)] significantLocationChangeMonitoringAvailable];
@@ -646,10 +610,7 @@
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateActive)] applicationState];
 
     // Make location unathorized
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunguarded-availability"
-    [OCMStub(ClassMethod(([(CLLocationManager *)self.mockLocationManager authorizationStatus]))) andReturnValue:OCMOCK_VALUE(kCLAuthorizationStatusRestricted)];
-#pragma clang diagnostic pop
+    [self stubLocationAuthorizationStatus:kCLAuthorizationStatusRestricted];
 
     // Make significant location available
     [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(YES)] significantLocationChangeMonitoringAvailable];
@@ -670,10 +631,7 @@
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateActive)] applicationState];
 
     // Set the location authorization to be not determined
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunguarded-availability"
-    [OCMStub(ClassMethod(([(CLLocationManager *)self.mockLocationManager authorizationStatus]))) andReturnValue:OCMOCK_VALUE(kCLAuthorizationStatusNotDetermined)];
-#pragma clang diagnostic pop
+    [self stubLocationAuthorizationStatus:kCLAuthorizationStatusNotDetermined];
 
     // Make significant location available
     [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(YES)] significantLocationChangeMonitoringAvailable];
@@ -697,10 +655,7 @@
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateActive)] applicationState];
 
     // Set the location authorization to be not determined
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunguarded-availability"
-    [OCMStub(ClassMethod(([(CLLocationManager *)self.mockLocationManager authorizationStatus]))) andReturnValue:OCMOCK_VALUE(kCLAuthorizationStatusNotDetermined)];
-#pragma clang diagnostic pop
+    [self stubLocationAuthorizationStatus:kCLAuthorizationStatusNotDetermined];
 
     // Make significant location available
     [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(YES)] significantLocationChangeMonitoringAvailable];
@@ -727,10 +682,7 @@
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateInactive)] applicationState];
 
     // Set the location authorization to be not determined
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunguarded-availability"
-    [OCMStub(ClassMethod(([(CLLocationManager *)self.mockLocationManager authorizationStatus]))) andReturnValue:OCMOCK_VALUE(kCLAuthorizationStatusNotDetermined)];
-#pragma clang diagnostic pop
+    [self stubLocationAuthorizationStatus:kCLAuthorizationStatusNotDetermined];
 
     // Make significant location available
     [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(YES)] significantLocationChangeMonitoringAvailable];
@@ -766,10 +718,8 @@
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateActive)] applicationState];
 
     // Set the location authorization to be not determined
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunguarded-availability"
-    [OCMStub(ClassMethod(([(CLLocationManager *)self.mockLocationManager authorizationStatus]))) andReturnValue:OCMOCK_VALUE(kCLAuthorizationStatusNotDetermined)];
-#pragma clang diagnostic pop
+    [self stubLocationAuthorizationStatus:kCLAuthorizationStatusNotDetermined];
+
     // Make significant location available
     [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(YES)] significantLocationChangeMonitoringAvailable];
 
@@ -798,10 +748,8 @@
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateActive)] applicationState];
 
     // Set the location authorization to be not determined
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunguarded-availability"
-    [OCMStub(ClassMethod(([(CLLocationManager *)self.mockLocationManager authorizationStatus]))) andReturnValue:OCMOCK_VALUE(kCLAuthorizationStatusNotDetermined)];
-#pragma clang diagnostic pop
+    [self stubLocationAuthorizationStatus:kCLAuthorizationStatusNotDetermined];
+
     // Make significant location available
     [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(YES)] significantLocationChangeMonitoringAvailable];
 
@@ -827,10 +775,8 @@
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateActive)] applicationState];
 
     // Set the location authorization to be not determined
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunguarded-availability"
-    [OCMStub(ClassMethod(([(CLLocationManager *)self.mockLocationManager authorizationStatus]))) andReturnValue:OCMOCK_VALUE(kCLAuthorizationStatusNotDetermined)];
-#pragma clang diagnostic pop
+    [self stubLocationAuthorizationStatus:kCLAuthorizationStatusNotDetermined];
+
     // Make significant location available
     [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(YES)] significantLocationChangeMonitoringAvailable];
 
