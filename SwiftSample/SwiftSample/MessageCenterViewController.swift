@@ -9,7 +9,7 @@ class MessageCenterViewController : UADefaultMessageCenterSplitViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.style = UAMessageCenterStyle(contentsOfFile: "MessageCenterStyle")
+        self.messageCenterStyle = UAMessageCenterStyle(contentsOfFile: "MessageCenterStyle")
     }
     
     func showInbox() {
