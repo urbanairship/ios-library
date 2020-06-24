@@ -127,9 +127,6 @@
     [[[self.mockWKWebView stub] andReturn:originatingURL] URL];
 
     self.nativeBridge.forwardNavigationDelegate = nil;
-    
-    [[self.mockApplication reject] openURL:OCMOCK_ANY];
-    [[self.mockApplication reject] openURL:OCMOCK_ANY options:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     [self.nativeBridge webView:self.mockWKWebView decidePolicyForNavigationAction:mockWKNavigationAction decisionHandler:^(WKNavigationActionPolicy delegatePolicy) {
         XCTAssertEqual(delegatePolicy, WKNavigationActionPolicyAllow);
@@ -158,7 +155,6 @@
         XCTAssertEqual(delegatePolicy, WKNavigationActionPolicyAllow);
     }];
 
-    [[self.mockApplication reject] openURL:OCMOCK_ANY];
     [[self.mockApplication reject] openURL:OCMOCK_ANY options:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     [self.mockNavigationDelegate verify];
@@ -195,7 +191,13 @@
 
     self.nativeBridge.forwardNavigationDelegate = nil;
     
-    [[[self.mockApplication expect] andReturnValue:OCMOCK_VALUE(YES)] openURL:OCMOCK_ANY];
+    [[[self.mockApplication expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:4];
+        void (^completionHandler)(BOOL) = (__bridge void(^)(BOOL))arg;
+        completionHandler(YES);
+    }] openURL:OCMOCK_ANY options:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    
     [self.nativeBridge webView:self.mockWKWebView decidePolicyForNavigationAction:mockWKNavigationAction decisionHandler:^(WKNavigationActionPolicy delegatePolicy) {
         XCTAssertEqual(delegatePolicy, WKNavigationActionPolicyCancel);
     }];
@@ -223,7 +225,13 @@
         XCTAssertEqual(delegatePolicy, WKNavigationActionPolicyAllow);
     }];
 
-    [[[self.mockApplication expect] andReturnValue:OCMOCK_VALUE(YES)] openURL:OCMOCK_ANY];
+    [[[self.mockApplication expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:4];
+        void (^completionHandler)(BOOL) = (__bridge void(^)(BOOL))arg;
+        completionHandler(YES);
+    }] openURL:OCMOCK_ANY options:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    
     
     [self.mockNavigationDelegate verify];
     
@@ -297,7 +305,6 @@
         XCTAssertEqual(delegatePolicy, WKNavigationActionPolicyAllow);
     }];
 
-    [[self.mockApplication reject] openURL:OCMOCK_ANY];
     [[self.mockApplication reject] openURL:OCMOCK_ANY options:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     [self.mockNavigationDelegate verify];
