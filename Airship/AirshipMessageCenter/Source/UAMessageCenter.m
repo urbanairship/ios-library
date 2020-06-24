@@ -58,7 +58,7 @@ NSString *const UAMessageDataScheme = @"message";
 
     NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
     UADefaultMessageCenterUI *defaultUI = [[UADefaultMessageCenterUI alloc] init];
-    defaultUI.style = [UAMessageCenterStyle styleWithContentsOfFile:config.messageCenterStyleConfig];
+    defaultUI.messageCenterStyle = [UAMessageCenterStyle styleWithContentsOfFile:config.messageCenterStyleConfig];
 
     UAUser *user = [UAUser userWithChannel:channel
                                     config:config

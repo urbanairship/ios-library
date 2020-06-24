@@ -23,7 +23,7 @@ DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0. Inst
 /**
  * The style to apply to the message center
  */
-@property(nonatomic, strong) UAMessageCenterStyle *style;
+@property(nonatomic, strong) UAMessageCenterStyle *messageCenterStyle;
 
 /**
  * The embedded list view controller.

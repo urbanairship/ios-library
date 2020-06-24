@@ -84,7 +84,7 @@ NS_ASSUME_NONNULL_BEGIN
     // display both view controllers in horizontally regular contexts
     self.preferredDisplayMode = UISplitViewControllerDisplayModeAllVisible;
     
-    if (self.style) {
+    if (self.messageCenterStyle) {
         [self applyStyle];
     }
 }
@@ -117,33 +117,33 @@ NS_ASSUME_NONNULL_BEGIN
     }
 }
 
-- (void)setStyle:(UAMessageCenterStyle *)style {
-    _style = style;
-    self.listViewController.style = style;
+- (void)setMessageCenterStyle:(UAMessageCenterStyle *)style {
+    _messageCenterStyle = style;
+    self.listViewController.messageCenterStyle = style;
 
     [self applyStyle];
 }
 
 - (void)applyStyle {
-    if (self.style.navigationBarColor) {
-        self.listNavigationController.navigationBar.barTintColor = self.style.navigationBarColor;
-        self.messageNavigationController.navigationBar.barTintColor = self.style.navigationBarColor;
+    if (self.messageCenterStyle.navigationBarColor) {
+        self.listNavigationController.navigationBar.barTintColor = self.messageCenterStyle.navigationBarColor;
+        self.messageNavigationController.navigationBar.barTintColor = self.messageCenterStyle.navigationBarColor;
     }
 
     // Only apply opaque property if a style is set
-    if (self.style) {
-        self.listNavigationController.navigationBar.translucent = !self.style.navigationBarOpaque;
-        self.messageNavigationController.navigationBar.translucent = !self.style.navigationBarOpaque;
+    if (self.messageCenterStyle) {
+        self.listNavigationController.navigationBar.translucent = !self.messageCenterStyle.navigationBarOpaque;
+        self.messageNavigationController.navigationBar.translucent = !self.messageCenterStyle.navigationBarOpaque;
     }
 
     NSMutableDictionary *titleAttributes = [NSMutableDictionary dictionary];
 
-    if (self.style.titleColor) {
-        titleAttributes[NSForegroundColorAttributeName] = self.style.titleColor;
+    if (self.messageCenterStyle.titleColor) {
+        titleAttributes[NSForegroundColorAttributeName] = self.messageCenterStyle.titleColor;
     }
 
-    if (self.style.titleFont) {
-        titleAttributes[NSFontAttributeName] = self.style.titleFont;
+    if (self.messageCenterStyle.titleFont) {
+        titleAttributes[NSFontAttributeName] = self.messageCenterStyle.titleFont;
     }
 
     if (titleAttributes.count) {
@@ -151,9 +151,9 @@ NS_ASSUME_NONNULL_BEGIN
         self.messageNavigationController.navigationBar.titleTextAttributes = titleAttributes;
     }
 
-    if (self.style.tintColor) {
-        self.view.tintColor = self.style.tintColor;
-        self.messageNavigationController.navigationBar.tintColor = self.style.tintColor;
+    if (self.messageCenterStyle.tintColor) {
+        self.view.tintColor = self.messageCenterStyle.tintColor;
+        self.messageNavigationController.navigationBar.tintColor = self.messageCenterStyle.tintColor;
     }
 
     [self setNavigationBarStyle];
@@ -176,7 +176,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)restoreNavigationBarStyle {
     // Restore the previous navigation bar style to the containing navigation controller
-    if (self.style && self.style.navigationBarStyle && self.previousNavigationBarStyle) {
+    if (self.messageCenterStyle && self.messageCenterStyle.navigationBarStyle && self.previousNavigationBarStyle) {
         self.navigationController.navigationBar.barStyle = (UIBarStyle)[self.previousNavigationBarStyle intValue];
     }
 
@@ -185,15 +185,15 @@ NS_ASSUME_NONNULL_BEGIN
 
 // Note: This method should only be called once in viewWillAppear or it may not function as expected
 - (void)setNavigationBarStyle {
-    if (self.style && self.style.navigationBarStyle) {
+    if (self.messageCenterStyle && self.messageCenterStyle.navigationBarStyle) {
         // Save the previous style of containing navigation controller, and set specified style
         if (!self.previousNavigationBarStyle) {
             // Only set once to prevent overwriting from multiple calls
             self.previousNavigationBarStyle = @(self.navigationController.navigationBar.barStyle);
         }
 
-        self.listNavigationController.navigationBar.barStyle = (UIBarStyle)self.style.navigationBarStyle;
-        self.messageNavigationController.navigationBar.barStyle = (UIBarStyle)self.style.navigationBarStyle;
+        self.listNavigationController.navigationBar.barStyle = (UIBarStyle)self.messageCenterStyle.navigationBarStyle;
+        self.messageNavigationController.navigationBar.barStyle = (UIBarStyle)self.messageCenterStyle.navigationBarStyle;
     }
 }
 
