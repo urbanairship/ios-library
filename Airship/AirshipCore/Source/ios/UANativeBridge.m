@@ -80,17 +80,28 @@ NSString *const UANativeBridgeCloseCommand = @"close";
         }];
         return;
     }
-
-    [self handleLinkClick:request.URL completionHandler:^(BOOL success) {
-        
-        // Override any special link actions
-        if (navigationType == WKNavigationTypeLinkActivated) {
+    
+    // Override any special link actions
+    if (navigationType == WKNavigationTypeLinkActivated) {
+        [self handleLinkClick:request.URL completionHandler:^(BOOL success) {
             if (success) {
                 decisionHandler(WKNavigationActionPolicyCancel);
                 return;
             }
-        }
-        
+            
+            // If target frame is a new window navigation, have OS handle it
+            if (!navigationAction.targetFrame) {
+                [[UIApplication sharedApplication] openURL:navigationAction.request.URL options:@{} completionHandler:^(BOOL success) {
+                    decisionHandler(success ? WKNavigationActionPolicyCancel : WKNavigationActionPolicyAllow);
+                }];
+                return;
+            }
+            
+            // Default behavior
+            decisionHandler(WKNavigationActionPolicyAllow);
+            
+        }];
+    } else {
         // If target frame is a new window navigation, have OS handle it
         if (!navigationAction.targetFrame) {
             [[UIApplication sharedApplication] openURL:navigationAction.request.URL options:@{} completionHandler:^(BOOL success) {
@@ -101,7 +112,7 @@ NSString *const UANativeBridgeCloseCommand = @"close";
         
         // Default behavior
         decisionHandler(WKNavigationActionPolicyAllow);
-    }];
+    }
 }
 
 /**

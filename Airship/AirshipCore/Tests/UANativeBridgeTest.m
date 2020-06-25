@@ -127,6 +127,8 @@
     [[[self.mockWKWebView stub] andReturn:originatingURL] URL];
 
     self.nativeBridge.forwardNavigationDelegate = nil;
+    
+    [[self.mockApplication reject] openURL:OCMOCK_ANY options:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     [self.nativeBridge webView:self.mockWKWebView decidePolicyForNavigationAction:mockWKNavigationAction decisionHandler:^(WKNavigationActionPolicy delegatePolicy) {
         XCTAssertEqual(delegatePolicy, WKNavigationActionPolicyAllow);
