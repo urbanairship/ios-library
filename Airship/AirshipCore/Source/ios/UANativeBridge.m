@@ -295,8 +295,6 @@ NSString *const UANativeBridgeCloseCommand = @"close";
  * @param url The link's URL.
  * @returns YES if the link was handled, otherwise NO.
  */
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 - (void)handleLinkClick:(NSURL *)url completionHandler:(void (^ __nullable)(BOOL success))completion {
     // Send iTunes/Phobos urls to AppStore.app
     if ([[url host] isEqualToString:@"phobos.apple.com"] || [[url host] isEqualToString:@"itunes.apple.com"]) {
@@ -352,7 +350,6 @@ NSString *const UANativeBridgeCloseCommand = @"close";
     
     completion(NO);
 }
-#pragma GCC diagnostic pop
 
 - (BOOL)isAirshipRequest:(NSURLRequest *)request {
     return [[request.URL scheme] isEqualToString:UANativeBridgeUAirshipScheme];
