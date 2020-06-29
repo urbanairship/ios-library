@@ -295,7 +295,7 @@ NSString *const UANativeBridgeCloseCommand = @"close";
  * @param url The link's URL.
  * @returns YES if the link was handled, otherwise NO.
  */
-- (void)handleLinkClick:(NSURL *)url completionHandler:(void (^ __nullable)(BOOL success))completion {
+- (void)handleLinkClick:(NSURL *)url completionHandler:(void (^)(BOOL success))completion {
     // Send iTunes/Phobos urls to AppStore.app
     if ([[url host] isEqualToString:@"phobos.apple.com"] || [[url host] isEqualToString:@"itunes.apple.com"]) {
         // Set the url scheme to http, as it could be itms which will cause the store to launch twice (undesireable)
