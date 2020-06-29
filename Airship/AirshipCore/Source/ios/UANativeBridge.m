@@ -287,7 +287,7 @@ NSString *const UANativeBridgeCloseCommand = @"close";
  * Handles a link click.
  *
  * @param url The link's URL.
- * @param completionHandler  The completion handler to execute when openURL processing is complete.
+ * @param completion  The completion handler to execute when openURL processing is complete.
  */
 - (void)handleLinkClick:(NSURL *)url completionHandler:(void (^)(BOOL success))completion {
     // Send iTunes/Phobos urls to AppStore.app
