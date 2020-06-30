@@ -176,7 +176,20 @@ NSUInteger const DebugTab = 3;
 //    - <scheme>://deeplink/settings/tags
 
 - (void)receivedDeepLink:(nonnull NSURL *)url completionHandler:(nonnull void (^)(void))completionHandler {
+    // if the deep link is an http or https URL, open it in the browser
+    if ([url.scheme isEqualToString:@"http"] || [url.scheme isEqualToString:@"https"]) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:nil];
+        });
+
+        return;
+    }
+    
     NSMutableArray<NSString *>*pathComponents = [url.pathComponents mutableCopy];
+    if (pathComponents.count == 0) {
+        return;
+    }
+    
     if ([pathComponents[0] isEqualToString:@"/"]) {
         [pathComponents removeObjectAtIndex:0];
     }
