@@ -71,31 +71,42 @@ NSString *const UANativeBridgeCloseCommand = @"close";
         [strongDelegate webView:webView decidePolicyForNavigationAction:navigationAction decisionHandler:^(WKNavigationActionPolicy policyForThisURL) {
             // Override any special link actions
             if ((policyForThisURL == WKNavigationActionPolicyAllow) && (navigationType == WKNavigationTypeLinkActivated)) {
-                policyForThisURL = ([self handleLinkClick:request.URL]) ? WKNavigationActionPolicyCancel : WKNavigationActionPolicyAllow;
+                [self handleLinkClick:request.URL completionHandler:^(BOOL success) {
+                    decisionHandler(success ? WKNavigationActionPolicyCancel : WKNavigationActionPolicyAllow);
+                }];
+                return;
             }
             decisionHandler(policyForThisURL);
         }];
         return;
     }
-
-    // Override any special link actions
-    if (navigationType == WKNavigationTypeLinkActivated) {
-        if ([self handleLinkClick:request.URL]) {
-            decisionHandler(WKNavigationActionPolicyCancel);
+    
+    
+    void (^handleLink)(void) = ^{
+        // If target frame is a new window navigation, have OS handle it
+        if (!navigationAction.targetFrame) {
+            [[UIApplication sharedApplication] openURL:navigationAction.request.URL options:@{} completionHandler:^(BOOL success) {
+                decisionHandler(success ? WKNavigationActionPolicyCancel : WKNavigationActionPolicyAllow);
+            }];
             return;
         }
-    }
+        
+        // Default behavior
+        decisionHandler(WKNavigationActionPolicyAllow);
+    };
     
-    // If target frame is a new window navigation, have OS handle it
-    if (!navigationAction.targetFrame) {
-        [[UIApplication sharedApplication] openURL:navigationAction.request.URL options:@{} completionHandler:^(BOOL success) {
-            decisionHandler(success ? WKNavigationActionPolicyCancel : WKNavigationActionPolicyAllow);
+    // Override any special link actions
+    if (navigationType == WKNavigationTypeLinkActivated) {
+        [self handleLinkClick:request.URL completionHandler:^(BOOL success) {
+            if (success) {
+                decisionHandler(WKNavigationActionPolicyCancel);
+                return;
+            }
+            handleLink();
         }];
-        return;
+    } else {
+        handleLink();
     }
-    
-    // Default behavior
-    decisionHandler(WKNavigationActionPolicyAllow);
 }
 
 /**
@@ -276,48 +287,63 @@ NSString *const UANativeBridgeCloseCommand = @"close";
  * Handles a link click.
  *
  * @param url The link's URL.
- * @returns YES if the link was handled, otherwise NO.
+ * @param completion  The completion handler to execute when openURL processing is complete.
  */
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-- (BOOL)handleLinkClick:(NSURL *)url {
+- (void)handleLinkClick:(NSURL *)url completionHandler:(void (^)(BOOL success))completion {
     // Send iTunes/Phobos urls to AppStore.app
     if ([[url host] isEqualToString:@"phobos.apple.com"] || [[url host] isEqualToString:@"itunes.apple.com"]) {
         // Set the url scheme to http, as it could be itms which will cause the store to launch twice (undesireable)
         NSString *stringURL = [NSString stringWithFormat:@"http://%@%@", url.host, url.path];
-        return [[UIApplication sharedApplication] openURL:[NSURL URLWithString:stringURL]];
+        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:stringURL] options:@{} completionHandler:^(BOOL success) {
+            completion(success);
+        }];
+        return;
     }
-
+    
     // Send maps.google.com url or maps: to GoogleMaps.app
     if ([[url host] isEqualToString:@"maps.google.com"] || [[url scheme] isEqualToString:@"maps"]) {
-        return [[UIApplication sharedApplication] openURL:url];
+        [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:^(BOOL success) {
+            completion(success);
+        }];
+        return;
     }
-
+    
     // Send www.youtube.com url to YouTube.app
     if ([[url host] isEqualToString:@"www.youtube.com"]) {
-         return [[UIApplication sharedApplication] openURL:url];
+        [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:^(BOOL success) {
+            completion(success);
+        }];
+        return;
     }
 
     // Send mailto: to Mail.app
     if ([[url scheme] isEqualToString:@"mailto"]) {
-        return [[UIApplication sharedApplication] openURL:url];
+        [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:^(BOOL success) {
+            completion(success);
+        }];
+        return;
     }
 
     // Send tel: to Phone.app
     if ([[url scheme] isEqualToString:@"tel"]) {
         NSURL *validPhoneUrl = [self createValidPhoneNumberUrlFromUrl:url];
-        return [[UIApplication sharedApplication] openURL:validPhoneUrl];
+        [[UIApplication sharedApplication] openURL:validPhoneUrl options:@{} completionHandler:^(BOOL success) {
+            completion(success);
+        }];
+        return;
     }
 
     // Send sms: to Messages.app
     if ([[url scheme] isEqualToString:@"sms"]) {
         NSURL *validPhoneUrl = [self createValidPhoneNumberUrlFromUrl:url];
-        return [[UIApplication sharedApplication] openURL:validPhoneUrl];
+        [[UIApplication sharedApplication] openURL:validPhoneUrl options:@{} completionHandler:^(BOOL success) {
+            completion(success);
+        }];
+        return;
     }
-
-    return NO;
+    
+    completion(NO);
 }
-#pragma GCC diagnostic pop
 
 - (BOOL)isAirshipRequest:(NSURLRequest *)request {
     return [[request.URL scheme] isEqualToString:UANativeBridgeUAirshipScheme];
