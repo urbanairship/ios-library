@@ -7,6 +7,19 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1B05132824AE103D00F5051F /* UALocaleManagerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B05132724AE103D00F5051F /* UALocaleManagerTest.m */; };
+		1B09924824A62E05008459F6 /* UALocaleManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B09924524A62E04008459F6 /* UALocaleManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1B09924924A62E07008459F6 /* UALocaleManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B09924524A62E04008459F6 /* UALocaleManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1B09924A24A62E08008459F6 /* UALocaleManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B09924524A62E04008459F6 /* UALocaleManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1B09924B24A62E09008459F6 /* UALocaleManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B09924524A62E04008459F6 /* UALocaleManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1B09924C24A62FAA008459F6 /* UALocaleManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B09924324A62E04008459F6 /* UALocaleManager.m */; };
+		1B09924D24A62FB9008459F6 /* UALocaleManager+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B09924424A62E04008459F6 /* UALocaleManager+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1B09924E24A6305E008459F6 /* UALocaleManager+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B09924424A62E04008459F6 /* UALocaleManager+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1B09924F24A6305F008459F6 /* UALocaleManager+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B09924424A62E04008459F6 /* UALocaleManager+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1B09925024A63060008459F6 /* UALocaleManager+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B09924424A62E04008459F6 /* UALocaleManager+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1B09925124A63081008459F6 /* UALocaleManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B09924324A62E04008459F6 /* UALocaleManager.m */; };
+		1B09925224A63085008459F6 /* UALocaleManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B09924324A62E04008459F6 /* UALocaleManager.m */; };
+		1B09925324A63085008459F6 /* UALocaleManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B09924324A62E04008459F6 /* UALocaleManager.m */; };
 		1B0B43BB243389D20051CCF0 /* UALocationTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B0B43BA243389D20051CCF0 /* UALocationTest.m */; };
 		1B8F1B6923CCBFA200BEE715 /* ACCInternalRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B8F1B6723CCBFA200BEE715 /* ACCInternalRequest.h */; };
 		1B8F1B6A23CCBFA200BEE715 /* ACCInternalRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B8F1B6823CCBFA200BEE715 /* ACCInternalRequest.m */; };
@@ -2355,6 +2368,10 @@
 /* Begin PBXFileReference section */
 		07A9F5B3D35A6078949E4EAA /* Pods-AirshipKitTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AirshipKitTests.release.xcconfig"; path = "../Pods/Target Support Files/Pods-AirshipKitTests/Pods-AirshipKitTests.release.xcconfig"; sourceTree = "<group>"; };
 		0F55D47F540C142B0F469570 /* Pods-AirshipTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AirshipTests.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-AirshipTests/Pods-AirshipTests.debug.xcconfig"; sourceTree = "<group>"; };
+		1B05132724AE103D00F5051F /* UALocaleManagerTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UALocaleManagerTest.m; sourceTree = "<group>"; };
+		1B09924324A62E04008459F6 /* UALocaleManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UALocaleManager.m; path = common/UALocaleManager.m; sourceTree = "<group>"; };
+		1B09924424A62E04008459F6 /* UALocaleManager+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UALocaleManager+Internal.h"; path = "common/UALocaleManager+Internal.h"; sourceTree = "<group>"; };
+		1B09924524A62E04008459F6 /* UALocaleManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UALocaleManager.h; path = common/UALocaleManager.h; sourceTree = "<group>"; };
 		1B0B43BA243389D20051CCF0 /* UALocationTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UALocationTest.m; sourceTree = "<group>"; };
 		1B8F1B6723CCBFA200BEE715 /* ACCInternalRequest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ACCInternalRequest.h; sourceTree = "<group>"; };
 		1B8F1B6823CCBFA200BEE715 /* ACCInternalRequest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ACCInternalRequest.m; sourceTree = "<group>"; };
@@ -3510,6 +3527,24 @@
 			name = Pods;
 			sourceTree = "<group>";
 		};
+		1B05132624AE100C00F5051F /* Locale */ = {
+			isa = PBXGroup;
+			children = (
+				1B05132724AE103D00F5051F /* UALocaleManagerTest.m */,
+			);
+			name = Locale;
+			sourceTree = "<group>";
+		};
+		1B18C46924A6287B001764B5 /* Locale */ = {
+			isa = PBXGroup;
+			children = (
+				1B09924524A62E04008459F6 /* UALocaleManager.h */,
+				1B09924324A62E04008459F6 /* UALocaleManager.m */,
+				1B09924424A62E04008459F6 /* UALocaleManager+Internal.h */,
+			);
+			name = Locale;
+			sourceTree = "<group>";
+		};
 		1B8F1B6623CCBF7C00BEE715 /* AccengageInternal */ = {
 			isa = PBXGroup;
 			children = (
@@ -4516,6 +4551,7 @@
 		6E937300237615B400AA9C2A /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				1B18C46924A6287B001764B5 /* Locale */,
 				CC40DDD81D91D43200BABD4F /* JSON */,
 				6E9376EF237625A500AA9C2A /* Airship */,
 				6E218526237D2DCF0084933A /* Integration */,
@@ -5420,6 +5456,7 @@
 		CC64F0551D8B77E3009CEF27 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				1B05132624AE100C00F5051F /* Locale */,
 				3C927F8223A42609003C5FC8 /* App State */,
 				6E90F0ED228F550900E1FCB0 /* Config */,
 				6E4116852135C4D7005CC871 /* Operations */,
@@ -5805,6 +5842,7 @@
 				6E8A548C2362353E004AE2A0 /* UARemoteDataPayload.h in Headers */,
 				CC40DC161D8C996A00BABD4F /* UAAction.h in Headers */,
 				CC40DCF81D8C996A00BABD4F /* UAPasteboardAction.h in Headers */,
+				1B09924824A62E05008459F6 /* UALocaleManager.h in Headers */,
 				CC40DCF41D8C996A00BABD4F /* UAOpenExternalURLAction.h in Headers */,
 				6E8A54C2236243A4004AE2A0 /* UAAutomationModuleLoaderFactory.h in Headers */,
 				E29D35E91DB93A59003C292F /* UAFetchDeviceInfoAction.h in Headers */,
@@ -5952,6 +5990,7 @@
 				DF6AD3C91ED8AA78006EB1DA /* UAAPIClient.h in Headers */,
 				DF3E96F82075575D00C77E3B /* UATagGroupsRegistrar+Internal.h in Headers */,
 				6E5D60BA212DD07C00C32E3F /* UADispatcher.h in Headers */,
+				1B09924D24A62FB9008459F6 /* UALocaleManager+Internal.h in Headers */,
 				3CF5286122E2756700424EF5 /* UAChannel+Internal.h in Headers */,
 				DF6AD3CD1ED8AA78006EB1DA /* UANotificationCategories+Internal.h in Headers */,
 				DF5ED9001F7475FE002DDA24 /* UARemoteDataStorePayload+Internal.h in Headers */,
@@ -6196,6 +6235,7 @@
 				6EE7709B238F15D000E79944 /* UAActionRegistry.h in Headers */,
 				6EE7709C238F15D000E79944 /* UAWhitelist.h in Headers */,
 				6EE7709D238F15D000E79944 /* UAAddTagsAction.h in Headers */,
+				1B09924924A62E07008459F6 /* UALocaleManager.h in Headers */,
 				6EE7709E238F15D000E79944 /* UAPreferenceDataStore.h in Headers */,
 				6EE7709F238F15D000E79944 /* UANotificationAction.h in Headers */,
 				6EE770A0238F15D000E79944 /* UANativeBridge.h in Headers */,
@@ -6454,6 +6494,7 @@
 				6EE771AE238F16A600E79944 /* UAInAppMessageScheduleInfo+Internal.h in Headers */,
 				6EE771B0238F16A600E79944 /* UAInAppMessageManager+Internal.h in Headers */,
 				6EE771B2238F16A600E79944 /* UAInAppMessageUtils+Internal.h in Headers */,
+				1B09924E24A6305E008459F6 /* UALocaleManager+Internal.h in Headers */,
 				6EE771B3238F16A600E79944 /* UAInAppRemoteDataClient+Internal.h in Headers */,
 				6EE771B4238F16A600E79944 /* UAInAppMessageAudience+Internal.h in Headers */,
 				6EE771B6238F16A600E79944 /* UAInAppMessageTagSelector+Internal.h in Headers */,
@@ -6582,6 +6623,7 @@
 				6EE7732B238F197600E79944 /* UAChannelAPIClient+Internal.h in Headers */,
 				6EE7732C238F197600E79944 /* UAVersionMatcher.h in Headers */,
 				6EE7732D238F197600E79944 /* UAAppStateTracker.h in Headers */,
+				1B09924A24A62E08008459F6 /* UALocaleManager.h in Headers */,
 				6EE7732E238F197600E79944 /* UAChannelRegistrar+Internal.h in Headers */,
 				6EE7732F238F197600E79944 /* UARemoteDataPayload.h in Headers */,
 				DFD246412473360B000FD565 /* UADebugLibraryModuleLoaderFactory.h in Headers */,
@@ -6634,6 +6676,7 @@
 				6EE7735D238F197600E79944 /* UANamedUser.h in Headers */,
 				6EE7735E238F197600E79944 /* UAJSONValueMatcher+Internal.h in Headers */,
 				6EE7735F238F197600E79944 /* UANamedUserAPIClient+Internal.h in Headers */,
+				1B09924F24A6305F008459F6 /* UALocaleManager+Internal.h in Headers */,
 				6EE77360238F197600E79944 /* UARemoteDataPayload+Internal.h in Headers */,
 				6EE77361238F197600E79944 /* UADate.h in Headers */,
 				6EE77362238F197600E79944 /* UANotificationAction.h in Headers */,
@@ -6772,6 +6815,7 @@
 				DF702D841FABA46B00E7A3DC /* UAVersionMatcher.h in Headers */,
 				6E4F028E2370AC0B0068AF65 /* UAAppStateTracker.h in Headers */,
 				99666DBA1EDF2BDC00BAE46B /* UAChannelRegistrar+Internal.h in Headers */,
+				1B09924B24A62E09008459F6 /* UALocaleManager.h in Headers */,
 				6E8A548D2362353E004AE2A0 /* UARemoteDataPayload.h in Headers */,
 				99666DBD1EDF2BDC00BAE46B /* UAChannelRegistrationPayload+Internal.h in Headers */,
 				DFD246422473360C000FD565 /* UADebugLibraryModuleLoaderFactory.h in Headers */,
@@ -6824,6 +6868,7 @@
 				99666DB41EDF2BD200BAE46B /* UANamedUser.h in Headers */,
 				DF6557E32089071C000330FA /* UAJSONValueMatcher+Internal.h in Headers */,
 				99666DB61EDF2BD200BAE46B /* UANamedUserAPIClient+Internal.h in Headers */,
+				1B09925024A63060008459F6 /* UALocaleManager+Internal.h in Headers */,
 				DF5ED8DA1F743E7E002DDA24 /* UARemoteDataPayload+Internal.h in Headers */,
 				DF3C3F1D20F54F4F006D6B72 /* UADate.h in Headers */,
 				99666DC31EDF2BE600BAE46B /* UANotificationAction.h in Headers */,
@@ -7678,6 +7723,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1B09924C24A62FAA008459F6 /* UALocaleManager.m in Sources */,
 				76A5F5F01DCBDD5E00858BA4 /* UAAsyncOperation.m in Sources */,
 				6E5D60BD212DD07C00C32E3F /* UADispatcher.m in Sources */,
 				CC40DD011D8C996A00BABD4F /* UAPush.m in Sources */,
@@ -8146,6 +8192,7 @@
 				6EE77023238F15D000E79944 /* UAirshipVersion.m in Sources */,
 				6EE77024238F15D000E79944 /* UANamedUser.m in Sources */,
 				6EE77025238F15D000E79944 /* UAirship.m in Sources */,
+				1B09925224A63085008459F6 /* UALocaleManager.m in Sources */,
 				6EE77026238F15D000E79944 /* UAModifyTagsAction.m in Sources */,
 				6EE77027238F15D000E79944 /* UARegionEvent.m in Sources */,
 				6EE77028238F15D000E79944 /* UAAppForegroundEvent.m in Sources */,
@@ -8285,6 +8332,7 @@
 				6EDD86F423ABF30E0031CCEA /* UANSDictionaryValueTransformer.m in Sources */,
 				6EE772AA238F197600E79944 /* UA_Base64.m in Sources */,
 				6EE772AB238F197600E79944 /* UAWhitelist.m in Sources */,
+				1B09925324A63085008459F6 /* UALocaleManager.m in Sources */,
 				6EE772AC238F197600E79944 /* UAPadding.m in Sources */,
 				6EE772AD238F197600E79944 /* UAAppIntegration.m in Sources */,
 				6EE772AE238F197600E79944 /* UAApplicationMetrics.m in Sources */,
@@ -8413,6 +8461,7 @@
 				CC64F0E61D8B781C009CEF27 /* UAApplicationMetricsTest.m in Sources */,
 				6E5F723620169A6600D684B7 /* UADeepLinkActionTest.m in Sources */,
 				CC64F0DA1D8B781C009CEF27 /* UAActionInfoTests.m in Sources */,
+				1B05132824AE103D00F5051F /* UALocaleManagerTest.m in Sources */,
 				CC64F0E91D8B781C009CEF27 /* UAAutoIntegrationTest.m in Sources */,
 				DF147BE321B89A9A00506D3D /* UAScheduleDataMigratorTest.m in Sources */,
 				DF96667D1FB526A000CC243C /* UARemoteConfigManagerTest.m in Sources */,
@@ -8586,6 +8635,7 @@
 				6EDD86F623ABF30E0031CCEA /* UANSDictionaryValueTransformer.m in Sources */,
 				99666E741EDF2CBE00BAE46B /* UA_Base64.m in Sources */,
 				6E937706237625BF00AA9C2A /* UAWhitelist.m in Sources */,
+				1B09925124A63081008459F6 /* UALocaleManager.m in Sources */,
 				6E84537C237E03E7007D3B1E /* UAPadding.m in Sources */,
 				6E93771A237625BF00AA9C2A /* UAAppIntegration.m in Sources */,
 				99666E531EDF2C8D00BAE46B /* UAApplicationMetrics.m in Sources */,

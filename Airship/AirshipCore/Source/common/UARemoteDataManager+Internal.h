@@ -34,10 +34,12 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @param config The Airship config.
  * @param dataStore A UAPreferenceDataStore to store persistent preferences
+ * @param localeManager A UALocaleManager.
  * @return The remote data manager instance.
  */
 + (instancetype)remoteDataManagerWithConfig:(UARuntimeConfig *)config
-                                  dataStore:(UAPreferenceDataStore *)dataStore;
+                                  dataStore:(UAPreferenceDataStore *)dataStore
+                              localeManager:(UALocaleManager *)localeManager;
 
 ///---------------------------------------------------------------------------------------
 /// @name Test Properties & Internal Methods
@@ -81,6 +83,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param appStateTracker The application state tracker.
  * @param dispatcher The dispatcher.
  * @param date The date.
+ * @param localeManager A UALocaleManager.
  * @return The remote data manager instance.
  */
 + (instancetype)remoteDataManagerWithConfig:(UARuntimeConfig *)config
@@ -90,7 +93,8 @@ NS_ASSUME_NONNULL_BEGIN
                          notificationCenter:(NSNotificationCenter *)notificationCenter
                             appStateTracker:(UAAppStateTracker *)appStateTracker
                                  dispatcher:(UADispatcher *)dispatcher
-                                       date:(UADate *)date;
+                                       date:(UADate *)date
+                              localeManager:(UALocaleManager *)localeManager;
 
 /**
  * Creates the client metadata used to fetch the request.
