@@ -1,12 +1,12 @@
 /* Copyright Airship and Contributors */
 
 #import <Foundation/Foundation.h>
-#import "UATagGroupsType+Internal.h"
 #import "UATagGroupsMutation+Internal.h"
 #import "UAPreferenceDataStore+Internal.h"
 #import "UATagGroupsTransactionRecord+Internal.h"
 #import "UATagGroups.h"
 #import "UATagGroupsHistory.h"
+#import "UATagGroupsAPIClient+Internal.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -15,12 +15,15 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface UATagGroupsMutationHistory : NSObject<UATagGroupsHistory>
 
+@property (nonatomic, copy) NSString *storeKey;
+
 /**
  * UATagGroupsMutationHistory class factory method.
  *
  * @param dataStore A preference data store to use for persistence.
+ * @param keyStore The store key to use for persistence.
  */
-+ (instancetype)historyWithDataStore:(UAPreferenceDataStore *)dataStore;
++ (instancetype)historyWithDataStore:(UAPreferenceDataStore *)dataStore keyStore:(NSString *)keyStore;
 
 /**
  * Returns all pending mutations, collapsing both channel and
@@ -42,9 +45,8 @@ NS_ASSUME_NONNULL_BEGIN
  * Adds a pending mutation.
  *
  * @param mutation The tag group mutation.
- * @param type The tag groups type.
  */
-- (void)addPendingMutation:(UATagGroupsMutation *)mutation type:(UATagGroupsType)type;
+- (void)addPendingMutation:(UATagGroupsMutation *)mutation;
 
 /**
  * Adds a sent mutation.
@@ -58,27 +60,25 @@ NS_ASSUME_NONNULL_BEGIN
  * Peeks the top-most pending mutation from the queue corresponding to
  * the tag group type under consideration.
  *
- * @param type The tag groups type.
  */
-- (UATagGroupsMutation *)peekPendingMutation:(UATagGroupsType)type;
+- (UATagGroupsMutation *)peekPendingMutation;
 
 /**
  * Pops the top-most pending mutation from the queue corresponding to
  * the provided tag groups type.
  *
- * @param type The tag groups type.
  */
-- (UATagGroupsMutation *)popPendingMutation:(UATagGroupsType)type;
+- (UATagGroupsMutation *)popPendingMutation;
 
 /**
  * Collapses pending mutations for the provided tag groups type.
  */
-- (void)collapsePendingMutations:(UATagGroupsType)type;
+- (void)collapsePendingMutations;
 
 /**
  * Clears pending mutations for the provided tag groups type.
  */
-- (void)clearPendingMutations:(UATagGroupsType)type;
+- (void)clearPendingMutations;
 
 /**
  * Clears sent mutations.

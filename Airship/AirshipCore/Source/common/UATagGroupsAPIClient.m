@@ -10,49 +10,52 @@
 #define kUAChannelTagGroupsPath @"/api/channels/tags/"
 #define kUANamedUserTagsPath @"/api/named_users/tags/"
 #define kUATagGroupsAudienceKey @"audience"
-#define kUATagGroupsIosChannelKey @"ios_channel"
-#define kUATagGroupsNamedUserIdKey @"named_user_id"
 #define kUATagGroupsResponseObjectWarningsKey @"warnings"
 #define kUATagGroupsResponseObjectErrorKey @"error"
 
+NSString * const UATagGroupsChannelStoreKey = @"ios_channel";
+NSString * const UATagGroupsNamedUserStoreKey = @"named_user_id";
+
+@interface UATagGroupsAPIClient()
+
+@property(nonatomic) NSString *keyStore;
+
+@end
+
 @implementation UATagGroupsAPIClient
 
-+ (instancetype)clientWithConfig:(UARuntimeConfig *)config {
-    UATagGroupsAPIClient *client = [self clientWithConfig:config session:[UARequestSession sessionWithConfig:config]];
-    return client;
-}
-
-+ (instancetype)clientWithConfig:(UARuntimeConfig *)config session:(UARequestSession *)session {
-    UATagGroupsAPIClient *client = [[self alloc] initWithConfig:config session:session];
-    return client;
-}
-
-- (NSString *)keyForType:(UATagGroupsType)type {
-    switch (type) {
-        case UATagGroupsTypeChannel:
-            return kUATagGroupsIosChannelKey;
-        case UATagGroupsTypeNamedUser:
-            return kUATagGroupsNamedUserIdKey;
+- (instancetype)initWithConfig:(UARuntimeConfig *)config session:(UARequestSession *)session keyStore:(NSString *)keyStore {
+    self = [super initWithConfig:config session:session];
+    if (self) {
+        self.keyStore = keyStore;
     }
+    return self;
 }
 
-- (NSString *)pathForType:(UATagGroupsType)type {
-    switch (type) {
-        case UATagGroupsTypeChannel:
-            return kUAChannelTagGroupsPath;
-        case UATagGroupsTypeNamedUser:
-            return kUANamedUserTagsPath;
++ (instancetype)clientWithConfig:(UARuntimeConfig *)config keyStore:(NSString *)keyStore {
+    UATagGroupsAPIClient *client = [self clientWithConfig:config session:[UARequestSession sessionWithConfig:config] keyStore:keyStore];
+    return client;
+}
+
++ (instancetype)clientWithConfig:(UARuntimeConfig *)config session:(UARequestSession *)session keyStore:(NSString *)keyStore {
+    return [[self alloc] initWithConfig:config session:session keyStore:keyStore];
+}
+
+- (NSString *)path {
+    if ([self.keyStore isEqualToString:UATagGroupsNamedUserStoreKey]) {
+        return kUANamedUserTagsPath;
+    } else {
+        return kUAChannelTagGroupsPath;
     }
 }
 
 - (void)updateTagGroupsForId:(NSString *)identifier
            tagGroupsMutation:(UATagGroupsMutation *)mutation
-                        type:(UATagGroupsType)type
            completionHandler:(void (^)(NSUInteger status))completionHandler {
 
     [self performTagGroupsMutation:mutation
-                              path:[self pathForType:type]
-                          audience:@{[self keyForType:type] : identifier}
+                              path:[self path]
+                          audience:@{self.keyStore : identifier}
                  completionHandler:completionHandler];
 }
 

@@ -21,23 +21,28 @@
 
 @interface UATagGroupsMutationHistory ()
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
-@property (nonatomic, strong) UAPersistentQueue *pendingChannelTagGroupsMutations;
-@property (nonatomic, strong) UAPersistentQueue *pendingNamedUserTagGroupsMutations;
+@property (nonatomic, strong) UAPersistentQueue *pendingTagGroupsMutations;
 @property (nonatomic, strong) UAPersistentQueue *tagGroupsTransactionRecords;
 @end
 
 @implementation UATagGroupsMutationHistory
 
-- (instancetype)initWithDataStore:(UAPreferenceDataStore *)dataStore {
+- (instancetype)initWithDataStore:(UAPreferenceDataStore *)dataStore keyStore:(NSString *)keyStore {
     self = [super init];
 
     if (self) {
         self.dataStore = dataStore;
+        
+        self.storeKey = keyStore;
 
-        self.pendingChannelTagGroupsMutations = [UAPersistentQueue persistentQueueWithDataStore:dataStore
-                                                                                            key:kUAPendingChannelTagGroupsMutationsKey];
-        self.pendingNamedUserTagGroupsMutations = [UAPersistentQueue persistentQueueWithDataStore:dataStore
-                                                                                              key:kUAPendingNamedUserTagGroupsMutationsKey];
+        if ([self.storeKey isEqualToString:UATagGroupsNamedUserStoreKey]) {
+            self.pendingTagGroupsMutations = [UAPersistentQueue persistentQueueWithDataStore:dataStore
+            key:kUAPendingNamedUserTagGroupsMutationsKey];
+        } else {
+            self.pendingTagGroupsMutations = [UAPersistentQueue persistentQueueWithDataStore:dataStore
+            key:kUAPendingChannelTagGroupsMutationsKey];
+        }
+
         self.tagGroupsTransactionRecords = [UAPersistentQueue persistentQueueWithDataStore:dataStore
                                                                                        key:kUATagGroupsTransactionRecordsKey];
         
@@ -47,61 +52,55 @@
     return self;
 }
 
-+ (instancetype)historyWithDataStore:(UAPreferenceDataStore *)dataStore {
-    return [[self alloc] initWithDataStore:dataStore];
++ (instancetype)historyWithDataStore:(UAPreferenceDataStore *)dataStore keyStore:(NSString *)keyStore {
+    return [[self alloc] initWithDataStore:dataStore keyStore:keyStore];
 }
 
-- (NSString *)legacyKeyPrefixForType:(UATagGroupsType)type {
-    switch(type) {
-        case UATagGroupsTypeChannel:
-            return kUAPushTagGroupsLegacyKeyPrefix;
-        case UATagGroupsTypeNamedUser:
-            return kUANamedUserTagGroupsLegacyKeyPrefix;
+- (NSString *)legacyKeyPrefix {
+    if ([self.storeKey isEqualToString:UATagGroupsNamedUserStoreKey]) {
+        return kUANamedUserTagGroupsLegacyKeyPrefix;
+    } else {
+        return kUAPushTagGroupsLegacyKeyPrefix;
     }
 }
 
-- (NSString *)legacyFormattedKey:(NSString *)actionName type:(UATagGroupsType)type {
-    return [NSString stringWithFormat:@"%@%@", [self legacyKeyPrefixForType:type], actionName];
+- (NSString *)legacyFormattedKey:(NSString *)actionName {
+    return [NSString stringWithFormat:@"%@%@", [self legacyKeyPrefix], actionName];
 }
 
-- (NSString *)legacyAddTagsKey:(UATagGroupsType)type {
-    return [self legacyFormattedKey:@"AddTagGroups" type:type];
+- (NSString *)legacyAddTagsKey {
+    return [self legacyFormattedKey:@"AddTagGroups"];
 }
 
-- (NSString *)legacyRemoveTagsKey:(UATagGroupsType)type {
-    return [self legacyFormattedKey:@"RemoveTagGroups" type:type];
+- (NSString *)legacyRemoveTagsKey {
+    return [self legacyFormattedKey:@"RemoveTagGroups"];
 }
 
-- (NSString *)legacyMutationsKey:(UATagGroupsType)type {
-    return [self legacyFormattedKey:@"TagGroupsMutations" type:type];
+- (NSString *)legacyMutationsKey {
+    return [self legacyFormattedKey:@"TagGroupsMutations"];
 }
 
 - (void)migrateLegacyDataStoreKeys {
-    for (NSNumber *typeNumber in @[@(UATagGroupsTypeNamedUser), @(UATagGroupsTypeChannel)]) {
-        UATagGroupsType type = typeNumber.unsignedIntegerValue;
-
-        NSString *addTagsKey = [self legacyAddTagsKey:type];
-        NSString *removeTagsKey = [self legacyRemoveTagsKey:type];
-        NSString *mutationsKey = [self legacyMutationsKey:type];
-
-        NSDictionary *addTags = [self.dataStore objectForKey:addTagsKey];
-        NSDictionary *removeTags = [self.dataStore objectForKey:removeTagsKey];
-
-        id encodedMutations = [self.dataStore objectForKey:mutationsKey];
-        NSArray *mutations = encodedMutations == nil ? nil : [NSKeyedUnarchiver unarchiveObjectWithData:encodedMutations];
-
-        if (addTags || removeTags) {
-            UATagGroupsMutation *mutation = [UATagGroupsMutation mutationWithAddTags:addTags removeTags:removeTags];
-            [self addPendingMutation:mutation type:type];
-            [self.dataStore removeObjectForKey:addTagsKey];
-            [self.dataStore removeObjectForKey:removeTagsKey];
-        }
-
-        if (mutations.count) {
-            UAPersistentQueue *queue = [self pendingMutationsQueue:type];
-            [queue addObjects:mutations];
-            [self.dataStore removeObjectForKey:mutationsKey];
-        }
+    NSString *addTagsKey = [self legacyAddTagsKey];
+    NSString *removeTagsKey = [self legacyRemoveTagsKey];
+    NSString *mutationsKey = [self legacyMutationsKey];
+    
+    NSDictionary *addTags = [self.dataStore objectForKey:addTagsKey];
+    NSDictionary *removeTags = [self.dataStore objectForKey:removeTagsKey];
+    
+    id encodedMutations = [self.dataStore objectForKey:mutationsKey];
+    NSArray *mutations = encodedMutations == nil ? nil : [NSKeyedUnarchiver unarchiveObjectWithData:encodedMutations];
+    
+    if (addTags || removeTags) {
+        UATagGroupsMutation *mutation = [UATagGroupsMutation mutationWithAddTags:addTags removeTags:removeTags];
+        [self addPendingMutation:mutation];
+        [self.dataStore removeObjectForKey:addTagsKey];
+        [self.dataStore removeObjectForKey:removeTagsKey];
+    }
+    
+    if (mutations.count) {
+        [self.pendingTagGroupsMutations addObjects:mutations];
+        [self.dataStore removeObjectForKey:mutationsKey];
     }
 }
 
@@ -113,18 +112,10 @@
     [self.dataStore setDouble:maxAge forKey:kUATagGroupsSentMutationsMaxAgeKey];
 }
 
-- (UAPersistentQueue *)pendingMutationsQueue:(UATagGroupsType)type {
-    switch(type) {
-        case UATagGroupsTypeChannel:
-            return self.pendingChannelTagGroupsMutations;
-        case UATagGroupsTypeNamedUser:
-            return self.pendingNamedUserTagGroupsMutations;
-    }
-}
 
 - (NSArray<UATagGroupsMutation *> *)pendingMutations {
-    NSArray<UATagGroupsMutation *> *pendingChannelTagGroupMutations = (NSArray<UATagGroupsMutation *>*) [self.pendingChannelTagGroupsMutations objects];
-    NSArray<UATagGroupsMutation *> *pendingNamedUserTagGroupMutations = (NSArray<UATagGroupsMutation *>*) [self.pendingNamedUserTagGroupsMutations objects];
+    NSArray<UATagGroupsMutation *> *pendingChannelTagGroupMutations = (NSArray<UATagGroupsMutation *>*) [self.pendingTagGroupsMutations objects];
+    NSArray<UATagGroupsMutation *> *pendingNamedUserTagGroupMutations = (NSArray<UATagGroupsMutation *>*) [self.pendingTagGroupsMutations objects];
 
     return [pendingNamedUserTagGroupMutations arrayByAddingObjectsFromArray:pendingChannelTagGroupMutations];
 }
@@ -152,8 +143,8 @@
     return mutations;
 }
 
-- (void)addPendingMutation:(UATagGroupsMutation *)mutation type:(UATagGroupsType)type {
-    [[self pendingMutationsQueue:type] addObject:mutation];
+- (void)addPendingMutation:(UATagGroupsMutation *)mutation {
+    [self.pendingTagGroupsMutations addObject:mutation];
 }
 
 - (void)cleanTransactionRecords {
@@ -169,25 +160,24 @@
     [self cleanTransactionRecords];
 }
 
-- (UATagGroupsMutation *)peekPendingMutation:(UATagGroupsType)type {
-    return (UATagGroupsMutation *)[[self pendingMutationsQueue:type] peekObject];
+- (UATagGroupsMutation *)peekPendingMutation {
+    return (UATagGroupsMutation *)[self.pendingTagGroupsMutations peekObject];
 }
 
-- (UATagGroupsMutation *)popPendingMutation:(UATagGroupsType)type {
-    return (UATagGroupsMutation *)[[self pendingMutationsQueue:type] popObject];
+- (UATagGroupsMutation *)popPendingMutation {
+    return (UATagGroupsMutation *)[self.pendingTagGroupsMutations popObject];
 }
 
-- (void)collapsePendingMutations:(UATagGroupsType)type {
-    UAPersistentQueue *queue = [self pendingMutationsQueue:type];
+- (void)collapsePendingMutations {
 
-    NSArray<UATagGroupsMutation *> *mutations = [[queue objects] mutableCopy];
+    NSArray<UATagGroupsMutation *> *mutations = [[self.pendingTagGroupsMutations objects] mutableCopy];
     mutations = [UATagGroupsMutation collapseMutations:mutations];
 
-    [queue setObjects:mutations];
+    [self.pendingTagGroupsMutations setObjects:mutations];
 }
 
-- (void)clearPendingMutations:(UATagGroupsType)type {
-    [[self pendingMutationsQueue:type] clear];
+- (void)clearPendingMutations {
+    [self.pendingTagGroupsMutations clear];
 }
 
 - (void)clearSentMutations {
@@ -195,8 +185,7 @@
 }
 
 - (void)clearAll {
-    [self clearPendingMutations:UATagGroupsTypeChannel];
-    [self clearPendingMutations:UATagGroupsTypeNamedUser];
+    [self clearPendingMutations];
     [self clearSentMutations];
 }
 

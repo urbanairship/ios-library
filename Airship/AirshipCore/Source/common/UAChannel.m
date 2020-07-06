@@ -235,7 +235,7 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
         return;
     }
 
-    [self.tagGroupsRegistrar addTags:tags group:tagGroupID type:UATagGroupsTypeChannel];
+    [self.tagGroupsRegistrar addTags:tags group:tagGroupID];
 }
 
 - (void)removeTags:(NSArray *)tags group:(NSString *)tagGroupID {
@@ -249,7 +249,7 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
         return;
     }
 
-    [self.tagGroupsRegistrar removeTags:tags group:tagGroupID type:UATagGroupsTypeChannel];
+    [self.tagGroupsRegistrar removeTags:tags group:tagGroupID];
 }
 
 - (void)setTags:(NSArray *)tags group:(NSString *)tagGroupID {
@@ -263,7 +263,7 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
         return;
     }
 
-    [self.tagGroupsRegistrar setTags:tags group:tagGroupID type:UATagGroupsTypeChannel];
+    [self.tagGroupsRegistrar setTags:tags group:tagGroupID];
 }
 
 #pragma mark -
@@ -327,7 +327,7 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
         return;
     }
 
-    [self.tagGroupsRegistrar updateTagGroupsForID:self.identifier type:UATagGroupsTypeChannel];
+    [self.tagGroupsRegistrar updateTagGroupsForID:self.identifier];
 }
 
 - (void)updateChannelAttributes {

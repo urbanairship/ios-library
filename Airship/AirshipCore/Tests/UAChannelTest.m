@@ -262,7 +262,7 @@
     self.channel.channelTagRegistrationEnabled = YES;
 
     // EXPECTATIONS
-    [[self.mockTagGroupsRegistrar reject] addTags:OCMOCK_ANY group:OCMOCK_ANY type:UATagGroupsTypeChannel];
+    [[self.mockTagGroupsRegistrar reject] addTags:OCMOCK_ANY group:OCMOCK_ANY];
 
     // TEST
     [self.channel addTags:@[@"tag1"] group:@"device"];
@@ -279,7 +279,7 @@
     self.channel.channelTagRegistrationEnabled = YES;
 
     // EXPECTATIONS
-    [[self.mockTagGroupsRegistrar reject] removeTags:OCMOCK_ANY group:OCMOCK_ANY type:UATagGroupsTypeChannel];
+    [[self.mockTagGroupsRegistrar reject] removeTags:OCMOCK_ANY group:OCMOCK_ANY];
 
     // TEST
     [self.channel removeTags:@[@"tag1"] group:@"device"];
@@ -293,7 +293,7 @@
     self.channel.channelTagRegistrationEnabled = YES;
 
     // EXPECTATIONS
-    [[self.mockTagGroupsRegistrar reject] setTags:OCMOCK_ANY group:OCMOCK_ANY type:UATagGroupsTypeChannel];
+    [[self.mockTagGroupsRegistrar reject] setTags:OCMOCK_ANY group:OCMOCK_ANY];
 
     // TEST
     [self.channel setTags:@[@"tag1"] group:@"device"];
@@ -307,7 +307,7 @@
     [self.dataStore setBool:NO forKey:UAirshipDataCollectionEnabledKey];
 
     // EXPECTATIONS
-    [[self.mockTagGroupsRegistrar reject] setTags:OCMOCK_ANY group:OCMOCK_ANY type:UATagGroupsTypeChannel];
+    [[self.mockTagGroupsRegistrar reject] setTags:OCMOCK_ANY group:OCMOCK_ANY];
 
     // TEST
     [self.channel setTags:@[@"tag1"] group:@"group"];
@@ -321,7 +321,7 @@
     [self.dataStore setBool:NO forKey:UAirshipDataCollectionEnabledKey];
 
     // EXPECTATIONS
-    [[self.mockTagGroupsRegistrar reject] addTags:OCMOCK_ANY group:OCMOCK_ANY type:UATagGroupsTypeChannel];
+    [[self.mockTagGroupsRegistrar reject] addTags:OCMOCK_ANY group:OCMOCK_ANY];
 
     // TEST
     [self.channel addTags:@[@"tag1"] group:@"group"];
@@ -335,7 +335,7 @@
     [self.dataStore setBool:NO forKey:UAirshipDataCollectionEnabledKey];
 
     // EXPECTATIONS
-    [[self.mockTagGroupsRegistrar reject] removeTags:OCMOCK_ANY group:OCMOCK_ANY type:UATagGroupsTypeChannel];
+    [[self.mockTagGroupsRegistrar reject] removeTags:OCMOCK_ANY group:OCMOCK_ANY];
 
     // TEST
     [self.channel removeTags:@[@"tag1"] group:@"group"];
@@ -818,12 +818,12 @@
     NSString *tagGroup = @"test_group";
     
     self.channel.channelTagRegistrationEnabled = NO;
-    [[self.mockTagGroupsRegistrar expect] removeTags:tags group:tagGroup type:UATagGroupsTypeChannel];
+    [[self.mockTagGroupsRegistrar expect] removeTags:tags group:tagGroup];
     [self.channel removeTags:tags group:tagGroup];
     [self.mockTagGroupsRegistrar verify];
     
     self.channel.channelTagRegistrationEnabled = YES;
-    [[self.mockTagGroupsRegistrar reject] removeTags:tags group:tagGroup type:UATagGroupsTypeChannel];
+    [[self.mockTagGroupsRegistrar reject] removeTags:tags group:tagGroup];
     [self.channel removeTags:tags group:@"device"];
     [self.mockTagGroupsRegistrar verify];
 }
@@ -836,12 +836,12 @@
     NSString *tagGroup = @"test_group";
     
     self.channel.channelTagRegistrationEnabled = NO;
-    [[self.mockTagGroupsRegistrar expect] setTags:tags group:tagGroup type:UATagGroupsTypeChannel];
+    [[self.mockTagGroupsRegistrar expect] setTags:tags group:tagGroup];
     [self.channel setTags:tags group:tagGroup];
     [self.mockTagGroupsRegistrar verify];
     
     self.channel.channelTagRegistrationEnabled = YES;
-    [[self.mockTagGroupsRegistrar reject] setTags:tags group:tagGroup type:UATagGroupsTypeChannel];
+    [[self.mockTagGroupsRegistrar reject] setTags:tags group:tagGroup];
     [self.channel setTags:tags group:@"device"];
     [self.mockTagGroupsRegistrar verify];
 }
@@ -851,7 +851,7 @@
  */
 - (void)testUpdateChannelTagGroupsIfComponentDisabled {
     self.channel.componentEnabled = NO;
-    [[self.mockTagGroupsRegistrar reject] updateTagGroupsForID:OCMOCK_ANY type:UATagGroupsTypeChannel];
+    [[self.mockTagGroupsRegistrar reject] updateTagGroupsForID:OCMOCK_ANY];
     [self.channel updateChannelTagGroups];
     [self.mockTagGroupsRegistrar verify];
 }
@@ -861,7 +861,7 @@
  */
 - (void)testUpdateChannelTagGroupsIfIdentifierNil {
     self.channel.componentEnabled = YES;
-    [[self.mockTagGroupsRegistrar reject] updateTagGroupsForID:OCMOCK_ANY type:UATagGroupsTypeChannel];
+    [[self.mockTagGroupsRegistrar reject] updateTagGroupsForID:OCMOCK_ANY];
     [self.channel updateChannelTagGroups];
     [self.mockTagGroupsRegistrar verify];
 }
@@ -873,7 +873,7 @@
     [self.dataStore setBool:YES forKey:UAirshipDataCollectionEnabledKey];
     self.channelIDFromMockChannelRegistrar = @"123456";
     self.channel.componentEnabled = YES;
-    [[self.mockTagGroupsRegistrar expect] updateTagGroupsForID:OCMOCK_ANY type:UATagGroupsTypeChannel];
+    [[self.mockTagGroupsRegistrar expect] updateTagGroupsForID:OCMOCK_ANY];
     [self.channel updateChannelTagGroups];
     [self.mockTagGroupsRegistrar verify];
 }
@@ -885,7 +885,7 @@
     [self.dataStore setBool:NO forKey:UAirshipDataCollectionEnabledKey];
     self.channelIDFromMockChannelRegistrar = @"123456";
     self.channel.componentEnabled = YES;
-    [[self.mockTagGroupsRegistrar reject] updateTagGroupsForID:OCMOCK_ANY type:UATagGroupsTypeChannel];
+    [[self.mockTagGroupsRegistrar reject] updateTagGroupsForID:OCMOCK_ANY];
     [self.channel updateChannelTagGroups];
     [self.mockTagGroupsRegistrar verify];
 }

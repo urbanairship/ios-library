@@ -120,14 +120,14 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         self.whitelist = [UAWhitelist whitelistWithConfig:config];
         self.applicationMetrics = [UAApplicationMetrics applicationMetricsWithDataStore:dataStore];
 
-        UATagGroupsMutationHistory<UATagGroupsHistory> *tagGroupsMutationHistory = [UATagGroupsMutationHistory historyWithDataStore:self.dataStore];
-        UATagGroupsRegistrar *tagGroupsRegistrar = [UATagGroupsRegistrar tagGroupsRegistrarWithConfig:self.config
+        UATagGroupsMutationHistory<UATagGroupsHistory> *tagGroupsChannelMutationHistory = [UATagGroupsMutationHistory historyWithDataStore:self.dataStore keyStore:UATagGroupsChannelStoreKey];
+        UATagGroupsRegistrar *tagGroupsChannelRegistrar = [UATagGroupsRegistrar tagGroupsRegistrarWithConfig:self.config
                                                                                             dataStore:self.dataStore
-                                                                                      mutationHistory:tagGroupsMutationHistory];
+                                                                                      mutationHistory:tagGroupsChannelMutationHistory];
 
         self.sharedChannel = [UAChannel channelWithDataStore:self.dataStore
                                                       config:self.config
-                                          tagGroupsRegistrar:tagGroupsRegistrar];
+                                          tagGroupsRegistrar:tagGroupsChannelRegistrar];
 
         [components addObject:self.sharedChannel];
 
@@ -143,10 +143,15 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
                                        analytics:self.sharedAnalytics];
         [components addObject:self.sharedPush];
 
+        
+        UATagGroupsMutationHistory<UATagGroupsHistory> *tagGroupsNamedUseMutationHistory = [UATagGroupsMutationHistory historyWithDataStore:self.dataStore keyStore:UATagGroupsNamedUserStoreKey];
+        UATagGroupsRegistrar *tagGroupsNamedUserRegistrar = [UATagGroupsRegistrar tagGroupsRegistrarWithConfig:self.config
+                                                                                            dataStore:self.dataStore
+                                                                                      mutationHistory:tagGroupsNamedUseMutationHistory];
         self.sharedNamedUser = [UANamedUser namedUserWithChannel:self.sharedChannel
                                                           config:self.config
                                                        dataStore:self.dataStore
-                                              tagGroupsRegistrar:tagGroupsRegistrar];
+                                              tagGroupsRegistrar:tagGroupsNamedUserRegistrar];
         [components addObject:self.sharedNamedUser];
 
         self.sharedRemoteDataManager = [UARemoteDataManager remoteDataManagerWithConfig:self.config
@@ -174,16 +179,26 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
             self.locationProvider = locationLoader.locationProvider;
         }
 
-        id<UAModuleLoader> automationLoader = [UAirship automationModuleLoaderWithDataStore:self.dataStore
+        id<UAModuleLoader> automationChannelLoader = [UAirship automationModuleLoaderWithDataStore:self.dataStore
                                                                                      config:self.config
                                                                                     channel:self.sharedChannel
                                                                                   analytics:self.sharedAnalytics
                                                                           remoteDataManager:self.sharedRemoteDataManager
-                                                                           tagGroupsHistory:tagGroupsMutationHistory];
-        if (automationLoader) {
-            [loaders addObject:automationLoader];
+                                                                           tagGroupsHistory:tagGroupsChannelMutationHistory];
+        if (automationChannelLoader) {
+            [loaders addObject:automationChannelLoader];
         }
 
+        id<UAModuleLoader> automationNamedUserLoader = [UAirship automationModuleLoaderWithDataStore:self.dataStore
+                   config:self.config
+                  channel:self.sharedChannel
+                analytics:self.sharedAnalytics
+        remoteDataManager:self.sharedRemoteDataManager
+         tagGroupsHistory:tagGroupsNamedUseMutationHistory];
+        if (automationNamedUserLoader) {
+            [loaders addObject:automationNamedUserLoader];
+        }
+        
         id<UAModuleLoader> messageCenterLoader = [UAirship messageCenterLoaderWithDataStore:self.dataStore
                                                                                      config:self.config
                                                                                     channel:self.sharedChannel];

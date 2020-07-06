@@ -159,7 +159,7 @@ NSString *const UANamedUserLastChannelIDKey = @"UANamedUserLastChannelID";
         [self update];
         
         // Clear pending tag group and named user attribute mutations
-        [self.tagGroupsRegistrar clearAllPendingTagUpdates:UATagGroupsTypeNamedUser];
+        [self.tagGroupsRegistrar clearAllPendingTagUpdates];
         [self.attributeRegistrar deletePendingMutations];
         
         // Identifier is non-null. Update CRA.
@@ -238,7 +238,7 @@ NSString *const UANamedUserLastChannelIDKey = @"UANamedUserLastChannelID";
         return;
     }
 
-    [self.tagGroupsRegistrar addTags:tags group:tagGroupID type:UATagGroupsTypeNamedUser];
+    [self.tagGroupsRegistrar addTags:tags group:tagGroupID];
 }
 
 - (void)removeTags:(NSArray *)tags group:(NSString *)tagGroupID {
@@ -247,7 +247,7 @@ NSString *const UANamedUserLastChannelIDKey = @"UANamedUserLastChannelID";
         return;
     }
 
-    [self.tagGroupsRegistrar removeTags:tags group:tagGroupID type:UATagGroupsTypeNamedUser];
+    [self.tagGroupsRegistrar removeTags:tags group:tagGroupID];
 }
 
 - (void)setTags:(NSArray *)tags group:(NSString *)tagGroupID {
@@ -256,7 +256,7 @@ NSString *const UANamedUserLastChannelIDKey = @"UANamedUserLastChannelID";
         return;
     }
 
-    [self.tagGroupsRegistrar setTags:tags group:tagGroupID type:UATagGroupsTypeNamedUser];
+    [self.tagGroupsRegistrar setTags:tags group:tagGroupID];
 }
 
 - (void)updateTags {
@@ -265,7 +265,7 @@ NSString *const UANamedUserLastChannelIDKey = @"UANamedUserLastChannelID";
         return;
     }
     
-    [self.tagGroupsRegistrar updateTagGroupsForID:self.identifier type:UATagGroupsTypeNamedUser];
+    [self.tagGroupsRegistrar updateTagGroupsForID:self.identifier];
 }
 
 - (void)extendChannelRegistrationPayload:(UAChannelRegistrationPayload *)payload

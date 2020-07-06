@@ -427,7 +427,7 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
     // EXPECTATIONS
     [[self.mockTagGroupsRegistrar expect] updateTagGroupsForID:[OCMArg checkWithBlock:^BOOL(id obj) {
         return (obj != nil);
-    }] type:UATagGroupsTypeNamedUser];
+    }]];
     
     // TEST
     [self.namedUser updateTags];
@@ -444,7 +444,7 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
     NSString *group = @"group";
 
     // EXPECTATIONS
-    [[self.mockTagGroupsRegistrar expect] addTags:tags group:group type:UATagGroupsTypeNamedUser];
+    [[self.mockTagGroupsRegistrar expect] addTags:tags group:group];
 
     // TEST
     [self.namedUser addTags:tags group:group];;
@@ -463,7 +463,7 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
     NSString *group = @"group";
 
     // EXPECTATIONS
-    [[self.mockTagGroupsRegistrar reject] addTags:tags group:group type:UATagGroupsTypeNamedUser];
+    [[self.mockTagGroupsRegistrar reject] addTags:tags group:group];
 
     // TEST
     [self.namedUser addTags:tags group:group];;
@@ -482,7 +482,7 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
     NSString *group = @"group";
 
     // EXPECTATIONS
-    [[self.mockTagGroupsRegistrar expect] addTags:tags group:group type:UATagGroupsTypeNamedUser];
+    [[self.mockTagGroupsRegistrar expect] addTags:tags group:group];
 
     // TEST
     [self.namedUser addTags:tags group:group];;
@@ -499,7 +499,7 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
     NSString *group = @"group";
 
     // EXPECTATIONS
-    [[self.mockTagGroupsRegistrar expect] removeTags:tags group:group type:UATagGroupsTypeNamedUser];
+    [[self.mockTagGroupsRegistrar expect] removeTags:tags group:group];
 
     // TEST
     [self.namedUser removeTags:tags group:group];;
@@ -518,7 +518,7 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
     NSString *group = @"group";
 
     // EXPECTATIONS
-    [[self.mockTagGroupsRegistrar reject] removeTags:tags group:group type:UATagGroupsTypeNamedUser];
+    [[self.mockTagGroupsRegistrar reject] removeTags:tags group:group];
 
     // TEST
     [self.namedUser removeTags:tags group:group];;
@@ -537,7 +537,7 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
     NSString *group = @"group";
 
     // EXPECTATIONS
-    [[self.mockTagGroupsRegistrar expect] removeTags:tags group:group type:UATagGroupsTypeNamedUser];
+    [[self.mockTagGroupsRegistrar expect] removeTags:tags group:group];
 
     // TEST
     [self.namedUser removeTags:tags group:group];;
@@ -554,7 +554,7 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
     NSString *group = @"group";
 
     // EXPECTATIONS
-    [[self.mockTagGroupsRegistrar expect] setTags:tags group:group type:UATagGroupsTypeNamedUser];
+    [[self.mockTagGroupsRegistrar expect] setTags:tags group:group];
 
     // TEST
     [self.namedUser setTags:tags group:group];;
@@ -573,7 +573,7 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
     NSString *group = @"group";
 
     // EXPECTATIONS
-    [[self.mockTagGroupsRegistrar reject] setTags:tags group:group type:UATagGroupsTypeNamedUser];
+    [[self.mockTagGroupsRegistrar reject] setTags:tags group:group];
 
     // TEST
     [self.namedUser setTags:tags group:group];;
@@ -592,7 +592,7 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
     NSString *group = @"group";
 
     // EXPECTATIONS
-    [[self.mockTagGroupsRegistrar expect] setTags:tags group:group type:UATagGroupsTypeNamedUser];
+    [[self.mockTagGroupsRegistrar expect] setTags:tags group:group];
 
     // TEST
     [self.namedUser setTags:tags group:group];

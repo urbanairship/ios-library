@@ -7,7 +7,6 @@
 #import "UATagGroupsMutationHistory+Internal.h"
 #import "UATagGroupsAPIClient+Internal.h"
 #import "UAComponent+Internal.h"
-#import "UATagGroupsType+Internal.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -46,9 +45,8 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Update the tag groups for the given identifier.
  * @param channelID The channel identifier.
- * @param type The tag groups type.
  */
-- (void)updateTagGroupsForID:(NSString *)channelID type:(UATagGroupsType)type;
+- (void)updateTagGroupsForID:(NSString *)channelID;
 
 /**
  * Add tags to a tag group. To update the server, make all of your changes,
@@ -56,9 +54,8 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @param tags Array of tags to add.
  * @param tagGroupID Tag group ID string.
- * @param type The tag groups type.
  */
-- (void)addTags:(NSArray *)tags group:(NSString *)tagGroupID type:(UATagGroupsType)type;
+- (void)addTags:(NSArray *)tags group:(NSString *)tagGroupID;
 
 /**
  * Remove tags from a tag group. To update the server, make all of your changes,
@@ -66,9 +63,8 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @param tags Array of tags to remove.
  * @param tagGroupID Tag group ID string.
- * @param type The tag groups type.
  */
-- (void)removeTags:(NSArray *)tags group:(NSString *)tagGroupID type:(UATagGroupsType)type;
+- (void)removeTags:(NSArray *)tags group:(NSString *)tagGroupID;
 
 /**
  * Set tags for a tag group. To update the server, make all of your changes,
@@ -76,16 +72,14 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @param tags Array of tags to set.
  * @param tagGroupID Tag group ID string.
- * @param type The tag groups type.
  */
-- (void)setTags:(NSArray *)tags group:(NSString *)tagGroupID type:(UATagGroupsType)type;
+- (void)setTags:(NSArray *)tags group:(NSString *)tagGroupID;
 
 /**
  * Clears all pending tag updates.
  *
- * @param type The tag groups type.
  */
-- (void)clearAllPendingTagUpdates:(UATagGroupsType)type;
+- (void)clearAllPendingTagUpdates;
 
 @end
 

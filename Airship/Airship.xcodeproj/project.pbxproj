@@ -196,8 +196,6 @@
 		3CA0E47C237E4E3000EE76CF /* UAMessageCenterListCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3CA0E308237E396100EE76CF /* UAMessageCenterListCell.xib */; };
 		3CA0E47D237E4E3000EE76CF /* UAMessageCenterPlaceholderIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 3CA0E309237E396100EE76CF /* UAMessageCenterPlaceholderIcon.png */; };
 		3CA0E47E237E4E3000EE76CF /* UAMessageCenterMessageViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3CA0E30A237E396100EE76CF /* UAMessageCenterMessageViewController.xib */; };
-		3CBCED4E2113C15A003B7239 /* UATagGroupsType+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CBCED4D2113C15A003B7239 /* UATagGroupsType+Internal.h */; };
-		3CBCED4F2113C15A003B7239 /* UATagGroupsType+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CBCED4D2113C15A003B7239 /* UATagGroupsType+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3CBCED5321150742003B7239 /* UATagGroupsMutationHistory+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CBCED5121150742003B7239 /* UATagGroupsMutationHistory+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3CBCED5421150742003B7239 /* UATagGroupsMutationHistory+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CBCED5121150742003B7239 /* UATagGroupsMutationHistory+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3CBCED5621150742003B7239 /* UATagGroupsMutationHistory.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CBCED5221150742003B7239 /* UATagGroupsMutationHistory.m */; };
@@ -1035,7 +1033,6 @@
 		6EE77114238F15D000E79944 /* UAChannel+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CF5286022E2756700424EF5 /* UAChannel+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6EE77115238F15D000E79944 /* UANotificationCategories+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DBBF1D8C996A00BABD4F /* UANotificationCategories+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6EE77116238F15D000E79944 /* UARemoteDataStorePayload+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = DF5ED8FE1F7475FE002DDA24 /* UARemoteDataStorePayload+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		6EE77117238F15D000E79944 /* UATagGroupsType+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CBCED4D2113C15A003B7239 /* UATagGroupsType+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6EE77118238F15D000E79944 /* UARuntimeConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E90F0D5228F53EB00E1FCB0 /* UARuntimeConfig.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6EE77119238F15D000E79944 /* UAEventData+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC04F1881DBED9FA00B4842D /* UAEventData+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6EE7711A238F15D000E79944 /* UADeviceRegistrationEvent+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DB581D8C996900BABD4F /* UADeviceRegistrationEvent+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1548,7 +1545,6 @@
 		6EE77333238F197600E79944 /* UAColorUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DB421D8C996900BABD4F /* UAColorUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6EE77334238F197600E79944 /* NSManagedObjectContext+UAAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = CC04F1971DBFF0CB00B4842D /* NSManagedObjectContext+UAAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6EE77335238F197600E79944 /* UACustomEvent+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DB471D8C996900BABD4F /* UACustomEvent+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		6EE77336238F197600E79944 /* UATagGroupsType+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CBCED4D2113C15A003B7239 /* UATagGroupsType+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6EE77337238F197600E79944 /* UAPreferenceDataStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E9376FD237625BE00AA9C2A /* UAPreferenceDataStore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6EE77338238F197600E79944 /* UACustomEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DB481D8C996900BABD4F /* UACustomEvent.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6EE77339238F197600E79944 /* UADeepLinkAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 99978EE61EBA7BE7000F4AF7 /* UADeepLinkAction.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -2547,7 +2543,6 @@
 		3CBB6F1A212CBD0300E094B0 /* UARetriablePipeline.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UARetriablePipeline.m; sourceTree = "<group>"; };
 		3CBB6F27212CDE1300E094B0 /* UARetriable+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UARetriable+Internal.h"; sourceTree = "<group>"; };
 		3CBB6F2F212CE32C00E094B0 /* UARetriable.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UARetriable.m; sourceTree = "<group>"; };
-		3CBCED4D2113C15A003B7239 /* UATagGroupsType+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "UATagGroupsType+Internal.h"; path = "common/UATagGroupsType+Internal.h"; sourceTree = "<group>"; };
 		3CBCED5121150742003B7239 /* UATagGroupsMutationHistory+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "UATagGroupsMutationHistory+Internal.h"; path = "common/UATagGroupsMutationHistory+Internal.h"; sourceTree = "<group>"; };
 		3CBCED5221150742003B7239 /* UATagGroupsMutationHistory.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = UATagGroupsMutationHistory.m; path = common/UATagGroupsMutationHistory.m; sourceTree = "<group>"; };
 		3CBCED592118DF91003B7239 /* UATagGroupsTransactionRecord+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "UATagGroupsTransactionRecord+Internal.h"; path = "common/UATagGroupsTransactionRecord+Internal.h"; sourceTree = "<group>"; };
@@ -5043,7 +5038,6 @@
 				CCD28FE31DD14DD1008D663F /* UATagGroupsMutation.m */,
 				DF3E96F62075575D00C77E3B /* UATagGroupsRegistrar+Internal.h */,
 				DF3E96F72075575D00C77E3B /* UATagGroupsRegistrar.m */,
-				3CBCED4D2113C15A003B7239 /* UATagGroupsType+Internal.h */,
 				3CBCED5121150742003B7239 /* UATagGroupsMutationHistory+Internal.h */,
 				3CBCED5221150742003B7239 /* UATagGroupsMutationHistory.m */,
 				3CBCED592118DF91003B7239 /* UATagGroupsTransactionRecord+Internal.h */,
@@ -5959,7 +5953,6 @@
 				DF6AD3CD1ED8AA78006EB1DA /* UANotificationCategories+Internal.h in Headers */,
 				DF5ED9001F7475FE002DDA24 /* UARemoteDataStorePayload+Internal.h in Headers */,
 				3C927F7E23A2FA5F003C5FC8 /* UAAppStateTracker+Internal.h in Headers */,
-				3CBCED4E2113C15A003B7239 /* UATagGroupsType+Internal.h in Headers */,
 				6E90F0E2228F53EB00E1FCB0 /* UARuntimeConfig.h in Headers */,
 				DF6AD3D11ED8AA78006EB1DA /* UAEventData+Internal.h in Headers */,
 				DF6AD3D21ED8AA78006EB1DA /* UADeviceRegistrationEvent+Internal.h in Headers */,
@@ -6484,7 +6477,6 @@
 				6EE77148238F167300E79944 /* UARateAppAction+Internal.h in Headers */,
 				6EE7714A238F167300E79944 /* UARateAppPromptViewController+Internal.h in Headers */,
 				6EE77114238F15D000E79944 /* UAChannel+Internal.h in Headers */,
-				6EE77117238F15D000E79944 /* UATagGroupsType+Internal.h in Headers */,
 				6EE77115238F15D000E79944 /* UANotificationCategories+Internal.h in Headers */,
 				6EE77116238F15D000E79944 /* UARemoteDataStorePayload+Internal.h in Headers */,
 				6EE77118238F15D000E79944 /* UARuntimeConfig.h in Headers */,
@@ -6594,7 +6586,6 @@
 				6EE77333238F197600E79944 /* UAColorUtils.h in Headers */,
 				6EE77334238F197600E79944 /* NSManagedObjectContext+UAAdditions.h in Headers */,
 				6EE77335238F197600E79944 /* UACustomEvent+Internal.h in Headers */,
-				6EE77336238F197600E79944 /* UATagGroupsType+Internal.h in Headers */,
 				6EE77337238F197600E79944 /* UAPreferenceDataStore.h in Headers */,
 				6E4F1AEA23ABC7B400EC851D /* UANSURLValueTransformer.h in Headers */,
 				6EE77338238F197600E79944 /* UACustomEvent.h in Headers */,
@@ -6783,7 +6774,6 @@
 				99666E641EDF2C9500BAE46B /* UAColorUtils.h in Headers */,
 				99666E6A1EDF2C9A00BAE46B /* NSManagedObjectContext+UAAdditions.h in Headers */,
 				99666E2E1EDF2C8D00BAE46B /* UACustomEvent+Internal.h in Headers */,
-				3CBCED4F2113C15A003B7239 /* UATagGroupsType+Internal.h in Headers */,
 				6E93771E237625BF00AA9C2A /* UAPreferenceDataStore.h in Headers */,
 				99666E2F1EDF2C8D00BAE46B /* UACustomEvent.h in Headers */,
 				6E4F1AEC23ABC7B400EC851D /* UANSURLValueTransformer.h in Headers */,

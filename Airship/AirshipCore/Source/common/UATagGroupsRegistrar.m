@@ -73,7 +73,7 @@ typedef void (^UATagGroupsMutator)(NSArray *, NSString *);
 
     return [[self alloc] initWithDataStore:dataStore
                            mutationHistory:(UATagGroupsMutationHistory *)mutationHistory
-                                 apiClient:[UATagGroupsAPIClient clientWithConfig:config]
+                                 apiClient:[UATagGroupsAPIClient clientWithConfig:config keyStore:mutationHistory.storeKey]
                             operationQueue:[[NSOperationQueue alloc] init]
                                application:[UIApplication sharedApplication]];
 }
@@ -95,7 +95,7 @@ typedef void (^UATagGroupsMutator)(NSArray *, NSString *);
     [self.operationQueue cancelAllOperations];
 }
 
-- (void)updateTagGroupsForID:(NSString *)identifier type:(UATagGroupsType)type {
+- (void)updateTagGroupsForID:(NSString *)identifier {
     if (!self.componentEnabled) {
         return;
     }
@@ -116,13 +116,12 @@ typedef void (^UATagGroupsMutator)(NSArray *, NSString *);
         return;
     }
     
-    [self uploadNextTagGroupMutationForID:identifier backgroundTaskIdentifier:backgroundTaskIdentifier type:type];
+    [self uploadNextTagGroupMutationForID:identifier backgroundTaskIdentifier:backgroundTaskIdentifier];
 }
 
 // this method runs asynchronously on the operation queue
 - (void)uploadNextTagGroupMutationForID:(NSString *)identifier
-               backgroundTaskIdentifier:(UIBackgroundTaskIdentifier)backgroundTaskIdentifier
-                                   type:(UATagGroupsType)type {
+               backgroundTaskIdentifier:(UIBackgroundTaskIdentifier)backgroundTaskIdentifier {
 
     UAAsyncOperation *operation = [UAAsyncOperation operationWithBlock:^(UAAsyncOperation *operation) {
         // return early if the operation has been cancelled
@@ -139,10 +138,10 @@ typedef void (^UATagGroupsMutator)(NSArray *, NSString *);
         }
 
         // collapse mutations
-        [self.mutationHistory collapsePendingMutations:type];
+        [self.mutationHistory collapsePendingMutations];
         
         // peek at top mutation
-        UATagGroupsMutation *mutation = [self.mutationHistory peekPendingMutation:type];
+        UATagGroupsMutation *mutation = [self.mutationHistory peekPendingMutation];
         
         if (!mutation) {
             // no upload work to do - end background task, if necessary, and finish operation
@@ -156,7 +155,7 @@ typedef void (^UATagGroupsMutator)(NSArray *, NSString *);
             UA_STRONGIFY(self);
             if (status >= 200 && status <= 299) {
                 // Success - pop uploaded mutation and store the transaction record
-                UATagGroupsMutation *mutation = [self.mutationHistory popPendingMutation:type];
+                UATagGroupsMutation *mutation = [self.mutationHistory popPendingMutation];
 
                 [self.mutationHistory addSentMutation:mutation date:[NSDate date]];
 
@@ -164,11 +163,11 @@ typedef void (^UATagGroupsMutator)(NSArray *, NSString *);
                 if (operation.isCancelled) {
                     [self endBackgroundTask:backgroundTaskIdentifier];
                 } else {
-                    [self uploadNextTagGroupMutationForID:identifier backgroundTaskIdentifier:backgroundTaskIdentifier type:type];
+                    [self uploadNextTagGroupMutationForID:identifier backgroundTaskIdentifier:backgroundTaskIdentifier];
                 }
             } else if (status == 400 || status == 403) {
                 // Unrecoverable failure - pop mutation and end the task
-                [self.mutationHistory popPendingMutation:type];
+                [self.mutationHistory popPendingMutation];
                 [self endBackgroundTask:backgroundTaskIdentifier];
             }
 
@@ -177,7 +176,6 @@ typedef void (^UATagGroupsMutator)(NSArray *, NSString *);
         
         [self.tagGroupsAPIClient updateTagGroupsForId:identifier
                                     tagGroupsMutation:mutation
-                                                 type:type
                                     completionHandler:apiCompletionBlock];
         
     }];
@@ -192,8 +190,7 @@ typedef void (^UATagGroupsMutator)(NSArray *, NSString *);
 }
 
 - (UATagGroupsMutator)tagGroupsMutator:(UATagGroupsMutationFactory)factory
-                           requireTags:(BOOL)requireTags
-                                  type:(UATagGroupsType)type {
+                           requireTags:(BOOL)requireTags {
     return ^(NSArray *tags, NSString *tagGroupID) {
         NSArray *normalizedTags = [UATagUtils normalizeTags:tags];
         NSString *normalizedTagGroupID = [UATagUtils normalizeTagGroupID:tagGroupID];
@@ -210,51 +207,51 @@ typedef void (^UATagGroupsMutator)(NSArray *, NSString *);
 
         // rest runs on the operation queue
         [self.operationQueue addOperation:[NSBlockOperation blockOperationWithBlock:^{
-            [self.mutationHistory addPendingMutation:mutation type:type];
+            [self.mutationHistory addPendingMutation:mutation];
         }]];
     };
 }
 
-- (UATagGroupsMutator) addTagsMutator:(UATagGroupsType)type {
+- (UATagGroupsMutator) addTagsMutator {
     return [self tagGroupsMutator:^(NSArray *normalizedTags, NSString *normalizedTagGroupID) {
         return [UATagGroupsMutation mutationToAddTags:normalizedTags
                                                 group:normalizedTagGroupID];
-    } requireTags:YES type:type];
+    } requireTags:YES];
 }
 
-- (UATagGroupsMutator) removeTagsMutator:(UATagGroupsType)type {
+- (UATagGroupsMutator) removeTagsMutator {
     return [self tagGroupsMutator:^(NSArray *normalizedTags, NSString *normalizedTagGroupID){
         return [UATagGroupsMutation mutationToRemoveTags:normalizedTags
                                                    group:normalizedTagGroupID];
-    } requireTags:YES type:type];
+    } requireTags:YES];
 }
 
-- (UATagGroupsMutator) setTagsMutator:(UATagGroupsType)type {
+- (UATagGroupsMutator) setTagsMutator {
     return [self tagGroupsMutator:^(NSArray *normalizedTags, NSString *normalizedTagGroupID){
         return [UATagGroupsMutation mutationToSetTags:normalizedTags
                                                 group:normalizedTagGroupID];
-    } requireTags:NO type:type];
+    } requireTags:NO];
 }
 
 // This method may finish asynchronously on the operation queue
-- (void)addTags:(NSArray *)tags group:(NSString *)tagGroupID type:(UATagGroupsType)type {
-    [self addTagsMutator:type](tags, tagGroupID);
+- (void)addTags:(NSArray *)tags group:(NSString *)tagGroupID {
+    [self addTagsMutator](tags, tagGroupID);
 }
 
 // This method may finish asynchronously on the operation queue
-- (void)removeTags:(NSArray *)tags group:(NSString *)tagGroupID type:(UATagGroupsType)type {
-    [self removeTagsMutator:type](tags, tagGroupID);
+- (void)removeTags:(NSArray *)tags group:(NSString *)tagGroupID {
+    [self removeTagsMutator](tags, tagGroupID);
 }
 
 // This method may finish asynchronously on the operation queue
-- (void)setTags:(NSArray *)tags group:(NSString *)tagGroupID type:(UATagGroupsType)type {
-    [self setTagsMutator:type](tags, tagGroupID);
+- (void)setTags:(NSArray *)tags group:(NSString *)tagGroupID {
+    [self setTagsMutator](tags, tagGroupID);
 }
 
-- (void)clearAllPendingTagUpdates:(UATagGroupsType) type {
+- (void)clearAllPendingTagUpdates {
     [self.operationQueue cancelAllOperations];
     [self.operationQueue addOperation:[NSBlockOperation blockOperationWithBlock:^{
-        [self.mutationHistory clearPendingMutations:type];
+        [self.mutationHistory clearPendingMutations];
     }]];
 }
 

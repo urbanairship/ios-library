@@ -2,12 +2,21 @@
 
 #import <Foundation/Foundation.h>
 #import "UAAPIClient.h"
-#import "UATagGroupsType+Internal.h"
 
 @class UARuntimeConfig;
 @class UATagGroupsMutation;
 
 NS_ASSUME_NONNULL_BEGIN
+
+/**
+* The tag goups channel store key.
+*/
+extern NSString * const UATagGroupsChannelStoreKey;
+
+/**
+* The tag goups named user store key.
+*/
+extern NSString * const UATagGroupsNamedUserStoreKey;
 
 /**
  * A high level abstraction for performing tag group operations.
@@ -22,30 +31,30 @@ NS_ASSUME_NONNULL_BEGIN
  * Factory method to create a UATagGroupsAPIClient.
  *
  * @param config The Airship config.
+ * @param keyStore the tag groups key store.
  * @return UATagGroupsAPIClient instance.
  */
-+ (instancetype)clientWithConfig:(UARuntimeConfig *)config;
++ (instancetype)clientWithConfig:(UARuntimeConfig *)config keyStore:(NSString *)keyStore ;
 
 /**
  * Factory method to create a UATagGroupsAPIClient.
  *
  * @param config The Airship config.
  * @param session The request session.
+ * @param keyStore the tag groups key store.
  * @return UATagGroupsAPIClient instance.
  */
-+ (instancetype)clientWithConfig:(UARuntimeConfig *)config session:(UARequestSession *)session;
++ (instancetype)clientWithConfig:(UARuntimeConfig *)config session:(UARequestSession *)session keyStore:(NSString *)keyStore;
 
 /**
  * Update the tag group for the identifier.
  *
  * @param identifier The ID string.
  * @param mutation The tag groups changes.
- * @param type The tag groups type.
  * @param completionHandler The completion handler with the status code.
  */
 - (void)updateTagGroupsForId:(NSString *)identifier
            tagGroupsMutation:(UATagGroupsMutation *)mutation
-                        type:(UATagGroupsType)type
            completionHandler:(void (^)(NSUInteger status))completionHandler;
 
 @end

@@ -10,7 +10,8 @@
 
 @interface UATagGroupsAPIClientTest : UAAirshipBaseTest
 @property (nonatomic, strong) id mockSession;
-@property (nonatomic, strong) UATagGroupsAPIClient *client;
+@property (nonatomic, strong) UATagGroupsAPIClient *channelClient;
+@property (nonatomic, strong) UATagGroupsAPIClient *namedUserClient;
 
 @end
 
@@ -19,7 +20,8 @@
 - (void)setUp {
     [super setUp];
     self.mockSession = [self mockForClass:[UARequestSession class]];
-    self.client = [UATagGroupsAPIClient clientWithConfig:self.config session:self.mockSession];
+    self.channelClient = [UATagGroupsAPIClient clientWithConfig:self.config session:self.mockSession keyStore:UATagGroupsChannelStoreKey];
+    self.namedUserClient = [UATagGroupsAPIClient clientWithConfig:self.config session:self.mockSession keyStore:UATagGroupsNamedUserStoreKey];
 }
 
 /**
@@ -57,9 +59,8 @@
                                         retryWhere:[OCMArg checkWithBlock:retryBlockCheck]
                                  completionHandler:OCMOCK_ANY];
 
-    [self.client updateTagGroupsForId:@"AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE"
+    [self.channelClient updateTagGroupsForId:@"AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE"
                     tagGroupsMutation:mutation
-                                 type:UATagGroupsTypeChannel
                     completionHandler:^(NSUInteger statusCode){}];
 
     [self.mockSession verify];
@@ -86,9 +87,8 @@
     // Verify channel tags
     __block NSUInteger channelTagResponseCode = 0;
 
-    [self.client updateTagGroupsForId:@"AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE"
+    [self.channelClient updateTagGroupsForId:@"AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE"
                     tagGroupsMutation:mutation
-                                 type:UATagGroupsTypeChannel
                     completionHandler:^(NSUInteger status) {
                         channelTagResponseCode = status;
                     }];
@@ -99,9 +99,8 @@
     // Verify named user
     __block NSUInteger namedUserTagResponseCode = 0;
 
-    [self.client updateTagGroupsForId:@"named_user"
+    [self.namedUserClient updateTagGroupsForId:@"named_user"
                     tagGroupsMutation:mutation
-                                 type:UATagGroupsTypeNamedUser
                     completionHandler:^(NSUInteger status) {
                         namedUserTagResponseCode = status;
                     }];
@@ -166,9 +165,8 @@
     XCTestExpectation *completionHandlerCalledExpectation = [self expectationWithDescription:@"Completion handler called"];
 
     // test
-    [self.client updateTagGroupsForId:@"AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE"
+    [self.channelClient updateTagGroupsForId:@"AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE"
                     tagGroupsMutation:mutation
-                                 type:UATagGroupsTypeChannel
                     completionHandler:^(NSUInteger statusCode){
                         [completionHandlerCalledExpectation fulfill];
                     }];
@@ -237,9 +235,8 @@
     XCTestExpectation *completionHandlerCalledExpectation = [self expectationWithDescription:@"Completion handler called"];
     
     // test
-    [self.client updateTagGroupsForId:@"cool"
+    [self.namedUserClient updateTagGroupsForId:@"cool"
                     tagGroupsMutation:mutation
-                                 type:UATagGroupsTypeNamedUser
                     completionHandler:^(NSUInteger statusCode){
                         [completionHandlerCalledExpectation fulfill];
                     }];
@@ -255,7 +252,7 @@
  */
 - (void)testChannelRequestWhenDisabled {
     //setup
-    self.client.enabled = NO;
+    self.channelClient.enabled = NO;
     
     [[[self.mockSession stub] andDo:^(NSInvocation *invocation) {
         void *arg;
@@ -272,9 +269,8 @@
                                                                      group:@"tag group"];
     
     // test
-    [self.client updateTagGroupsForId:@"AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE"
+    [self.channelClient updateTagGroupsForId:@"AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE"
                     tagGroupsMutation:mutation
-                                 type:UATagGroupsTypeChannel
                     completionHandler:^(NSUInteger statusCode){
                         XCTFail(@"Completion Handler should not be called");
                     }];
@@ -288,7 +284,7 @@
  */
 - (void)testNamedUserRequestWhenDisabled {
     //setup
-    self.client.enabled = NO;
+    self.namedUserClient.enabled = NO;
    
     [[[self.mockSession stub] andDo:^(NSInvocation *invocation) {
         void *arg;
@@ -306,9 +302,8 @@
                                                                      group:@"tag group"];
     
     // test
-    [self.client updateTagGroupsForId:@"cool"
+    [self.namedUserClient updateTagGroupsForId:@"cool"
                     tagGroupsMutation:mutation
-                                 type:UATagGroupsTypeNamedUser
                     completionHandler:^(NSUInteger statusCode){
                         XCTFail(@"Completion Handler should not be called");
                     }];
