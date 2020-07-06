@@ -409,6 +409,38 @@ NSString *anotherActionName = @"AnotherActionName";
 }
 
 /**
+ * Test running that actions that call their completion handlers more than once does not crash the action runner
+ */
+- (void)testRunActionPayloadOverCompletionDoesNotCrash {
+    __block int actionRunCount = 0;
+
+    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
+        actionRunCount++;
+        completionHandler([UAActionResult emptyResult]);
+        completionHandler([UAActionResult emptyResult]);
+    }];
+
+    [self.registry registerAction:action name:actionName];
+
+    XCTestExpectation *expectation = [self expectationWithDescription:@"Completion handler ran"];
+    NSDictionary *actionPayload = @{actionName : @"value"};
+
+    [UAActionRunner runActionsWithActionValues:actionPayload
+                                     situation:UASituationManualInvocation
+                                      metadata:@{@"meta key": @"meta value"}
+                             completionHandler:^(UAActionResult *finalResult) {
+                                 // Should return an aggregate action result
+                                 XCTAssertTrue([finalResult isKindOfClass:[UAAggregateActionResult class]], @"Running actions should return a UAAggregateActionResult");
+                                 NSDictionary *resultDictionary = (NSDictionary  *)finalResult.value;
+                                 XCTAssertEqual((NSUInteger) 1, resultDictionary.count, @"Action should have 1 result");
+                                 [expectation fulfill];
+                             }];
+
+    [self waitForTestExpectations];
+    XCTAssertEqual(1, actionRunCount);
+}
+
+/**
  * Test running an action with a null completion handler
  */
 - (void)testRunActionNullCompletionHandler {
