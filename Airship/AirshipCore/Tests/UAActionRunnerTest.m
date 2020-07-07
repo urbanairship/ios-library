@@ -409,7 +409,7 @@ NSString *anotherActionName = @"AnotherActionName";
 }
 
 /**
- * Test running that actions that call their completion handlers more than once does not crash the action runner
+ * Test that running actions that call their completion handlers more than once does not crash the action runner
  */
 - (void)testRunActionPayloadOverCompletionDoesNotCrash {
     __block int actionRunCount = 0;
