@@ -68,6 +68,9 @@ static CGFloat const CloseButtonHeight = 30;
     NSAttributedString *attributedText = [[NSAttributedString alloc] initWithString:textInfo.text attributes:attributes];
 
     [label setAttributedText:attributedText];
+    
+    label.adjustsFontForContentSizeCategory = true;
+    
     [label sizeToFit];
     [label.superview layoutIfNeeded];
 }
@@ -247,8 +250,9 @@ static CGFloat const CloseButtonHeight = 30;
 
     // Font and font style
     UIFont *font = [UAInAppMessageUtils fontWithTextInfo:textInfo];
-    [attributes setObject:font forKey:NSFontAttributeName];
-
+    UIFont *scaledFont = [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleBody] scaledFontForFont:font];
+    [attributes setObject:scaledFont forKey:NSFontAttributeName];
+    
     // Underline
     if ((textInfo.style & UAInAppMessageTextInfoStyleUnderline) == UAInAppMessageTextInfoStyleUnderline) {
         [attributes setObject:[NSNumber numberWithInt:NSUnderlineStyleSingle] forKey:NSUnderlineStyleAttributeName];
