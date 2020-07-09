@@ -3,13 +3,20 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/master/Documentation/Migration)
 
+## Version 14.0.0-beta1 - July 9, 2020
+Early 14.0.0 beta that allows building SDK on Xcode 12.
+
+### Changes
+- Fixed build issue on Xcode 12 due to `style` name collision.
+
+
 ## Version 13.5.0 - July 8, 2020
 Minor release adding support for application-defined locale overrides, and
 fixing issues in In-App Automation and the Actions Framework.
 
 - Added UALocaleManager
 - Fixed issue preventing display of inline videos in HTML In-App Automations
-- Fixed issue causing crashes when running actions enabling location services  	
+- Fixed issue causing crashes when running actions enabling location services
 
 ## Version 13.4.0 - June 23, 2020
 Minor release to add support for blank urls in messages, enhance airship-ready broadcasts and fix issues with in-app messages. Apps that support in-app automation, or require any of the support changes listed below are encouraged to update.
