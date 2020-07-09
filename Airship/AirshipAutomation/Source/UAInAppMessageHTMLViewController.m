@@ -93,7 +93,7 @@ NSString *const UAInAppNativeBridgeDismissCommand = @"dismiss";
     return closeButton;
 }
 
--(void)viewWillAppear:(BOOL)animated{
+-(void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     [self load];
 }
@@ -116,6 +116,41 @@ NSString *const UAInAppNativeBridgeDismissCommand = @"dismiss";
 
     [UAViewUtils applyContainerConstraintsToContainer:self.closeButtonContainerView containedView:self.closeButton];
     [self.webView.configuration setDataDetectorTypes:WKDataDetectorTypeNone];
+
+
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(windowDidBecomeVisibleNotification:)
+                                                 name:UIWindowDidBecomeVisibleNotification
+                                               object:nil];
+
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(windowDidBecomeHiddenNotification:)
+                                                 name:UIWindowDidBecomeHiddenNotification
+                                               object:nil];
+
+}
+
+- (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIWindowDidBecomeVisibleNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIWindowDidBecomeHiddenNotification object:nil];
+}
+
+- (void)windowDidBecomeVisibleNotification:(NSNotification *)notification {
+    UIWindow *window = (UIWindow *)notification.object;
+    if (window != self.containerView.window) {
+        // Another window such as full screen video appeared
+        // Set window level to normal to prevent blocking
+        [self.containerView.window setWindowLevel:UIWindowLevelNormal];
+    }
+}
+
+- (void)windowDidBecomeHiddenNotification:(NSNotification *)notification {
+    UIWindow *window = notification.object;
+
+    if (window != self.containerView.window) {
+        // Set window level of HTML view back to its default alert level
+        [self.containerView.window setWindowLevel:UIWindowLevelAlert];
+    }
 }
 
 - (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {
