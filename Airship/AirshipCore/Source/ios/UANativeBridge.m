@@ -80,7 +80,8 @@ NSString *const UANativeBridgeCloseCommand = @"close";
         }];
         return;
     }
-
+    
+    
     void (^handleLink)(void) = ^{
         // If target frame is a new window navigation, have OS handle it
         if (!navigationAction.targetFrame) {
@@ -89,11 +90,11 @@ NSString *const UANativeBridgeCloseCommand = @"close";
             }];
             return;
         }
-
+        
         // Default behavior
         decisionHandler(WKNavigationActionPolicyAllow);
     };
-
+    
     // Override any special link actions
     if (navigationType == WKNavigationTypeLinkActivated) {
         [self handleLinkClick:request.URL completionHandler:^(BOOL success) {
@@ -298,7 +299,7 @@ NSString *const UANativeBridgeCloseCommand = @"close";
         }];
         return;
     }
-
+    
     // Send maps.google.com url or maps: to GoogleMaps.app
     if ([[url host] isEqualToString:@"maps.google.com"] || [[url scheme] isEqualToString:@"maps"]) {
         [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:^(BOOL success) {
@@ -306,7 +307,7 @@ NSString *const UANativeBridgeCloseCommand = @"close";
         }];
         return;
     }
-
+    
     // Send www.youtube.com url to YouTube.app
     if ([[url host] isEqualToString:@"www.youtube.com"]) {
         [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:^(BOOL success) {
@@ -340,7 +341,7 @@ NSString *const UANativeBridgeCloseCommand = @"close";
         }];
         return;
     }
-
+    
     completion(NO);
 }
 

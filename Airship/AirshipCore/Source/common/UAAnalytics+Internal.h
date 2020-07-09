@@ -56,13 +56,11 @@ NS_ASSUME_NONNULL_BEGIN
  * @param airshipConfig The 'AirshipConfig.plist' file
  * @param dataStore The shared preference data store.
  * @param channel The channel instance.
- * @param localeManager A UALocaleManager.
  * @return A new analytics instance.
  */
 + (instancetype)analyticsWithConfig:(UARuntimeConfig *)airshipConfig
                           dataStore:(UAPreferenceDataStore *)dataStore
-                            channel:(UAChannel *)channel
-                      localeManager:(UALocaleManager *)localeManager;
+                            channel:(UAChannel *)channel;
 
 
 /**
@@ -75,7 +73,6 @@ NS_ASSUME_NONNULL_BEGIN
  * @param notificationCenter The notification center.
  * @param date A UADate instance.
  * @param dispatcher The dispatcher.
- * @param localeManager A UALocaleManager.
  * @return A new analytics instance.
  */
 + (instancetype)analyticsWithConfig:(UARuntimeConfig *)airshipConfig
@@ -84,8 +81,7 @@ NS_ASSUME_NONNULL_BEGIN
                        eventManager:(UAEventManager *)eventManager
                  notificationCenter:(NSNotificationCenter *)notificationCenter
                                date:(UADate *)date
-                         dispatcher:(UADispatcher *)dispatcher
-                      localeManager:(UALocaleManager *)localeManager;
+                         dispatcher:(UADispatcher *)dispatcher;
 
 /**
  * Called to notify analytics the app was launched from a push notification.

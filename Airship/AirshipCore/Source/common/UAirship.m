@@ -28,7 +28,6 @@
 #import "UAMessageCenterModuleLoaderFactory.h"
 #import "UAAccengageModuleLoaderFactory.h"
 #import "UADebugLibraryModuleLoaderFactory.h"
-#import "UALocaleManager+Internal.h"
 
 #if !TARGET_OS_TV
 #import "UAChannelCapture+Internal.h"
@@ -119,8 +118,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 
         self.actionRegistry = [UAActionRegistry defaultRegistry];
         self.whitelist = [UAWhitelist whitelistWithConfig:config];
-        self.applicationMetrics = [UAApplicationMetrics applicationMetricsWithDataStore:self.dataStore];
-        self.sharedLocaleManager = [UALocaleManager localeManagerWithDataStore:self.dataStore];
+        self.applicationMetrics = [UAApplicationMetrics applicationMetricsWithDataStore:dataStore];
 
         UATagGroupsMutationHistory<UATagGroupsHistory> *tagGroupsMutationHistory = [UATagGroupsMutationHistory historyWithDataStore:self.dataStore];
         UATagGroupsRegistrar *tagGroupsRegistrar = [UATagGroupsRegistrar tagGroupsRegistrarWithConfig:self.config
@@ -129,15 +127,13 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 
         self.sharedChannel = [UAChannel channelWithDataStore:self.dataStore
                                                       config:self.config
-                                          tagGroupsRegistrar:tagGroupsRegistrar
-                                               localeManager:self.sharedLocaleManager];
+                                          tagGroupsRegistrar:tagGroupsRegistrar];
 
         [components addObject:self.sharedChannel];
 
         self.sharedAnalytics = [UAAnalytics analyticsWithConfig:self.config
                                                       dataStore:self.dataStore
-                                                        channel:self.sharedChannel
-                                                  localeManager:self.sharedLocaleManager];
+                                                        channel:self.sharedChannel];
         [components addObject:self.sharedAnalytics];
 
 
@@ -154,13 +150,12 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         [components addObject:self.sharedNamedUser];
 
         self.sharedRemoteDataManager = [UARemoteDataManager remoteDataManagerWithConfig:self.config
-                                                                              dataStore:self.dataStore
-                                                                          localeManager:self.sharedLocaleManager];
+                                                                              dataStore:self.dataStore];
         [components addObject:self.sharedRemoteDataManager];
 
         self.sharedRemoteConfigManager = [UARemoteConfigManager remoteConfigManagerWithRemoteDataManager:self.sharedRemoteDataManager
                                                                                       applicationMetrics:self.applicationMetrics];
-        
+       
 #if !TARGET_OS_TV
         // UIPasteboard is not available in tvOS
         self.channelCapture = [UAChannelCapture channelCaptureWithConfig:self.config
@@ -463,16 +458,8 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
     return sharedAirship_.sharedAnalytics;
 }
 
-+ (UALocaleManager *)locale {
-    return sharedAirship_.sharedLocaleManager;
-}
-
 - (UAAnalytics *)analytics {
     return self.sharedAnalytics;
-}
-
-- (UALocaleManager *)locale {
-    return self.sharedLocaleManager;
 }
 
 + (UARemoteDataManager *)remoteDataManager {

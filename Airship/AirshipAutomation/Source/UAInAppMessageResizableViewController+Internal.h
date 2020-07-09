@@ -29,11 +29,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (strong, nonatomic, nullable) UIWindow *topWindow;
 
 /**
- * The resizable container
- */
-@property (strong, nonatomic) IBOutlet UAInAppMessageResizableView *resizableContainer;
-
-/**
  * The background color to be applied to the shade view when the app is in full screen display.
  */
 @property (strong, nonatomic) UIColor *backgroundColor;

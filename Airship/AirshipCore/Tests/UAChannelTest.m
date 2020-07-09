@@ -15,13 +15,11 @@
 #import "UAActionRunner.h"
 #import "UAAppIntegration+Internal.h"
 #import "UAPush+Internal.h"
-#import "UALocaleManager.h"
 
 @interface UAChannelTest : UAAirshipBaseTest
 @property(nonatomic, strong) id mockTagGroupsRegistrar;
 @property(nonatomic, strong) id mockAttributeRegistrar;
 @property(nonatomic, strong) id mockChannelRegistrar;
-@property(nonatomic, strong) id mockLocaleManager;
 @property(nonatomic, strong) id mockTimeZone;
 @property(nonatomic, strong) NSNotificationCenter *notificationCenter;
 @property(nonatomic, strong) UAChannel *channel;
@@ -67,9 +65,6 @@
     // Set up a mocked device api client
     self.mockChannelRegistrar = [self mockForClass:[UAChannelRegistrar class]];
 
-    self.mockLocaleManager = [self mockForClass:[UALocaleManager class]];
-    [[[self.mockLocaleManager stub] andReturn:[NSLocale autoupdatingCurrentLocale]] currentLocale];
-    
     self.testDate = [[UATestDate alloc] initWithAbsoluteTime:[NSDate date]];
 
     // Put setup code here. This method is called before the invocation of each test method in the class.
@@ -100,7 +95,6 @@
                                         channelRegistrar:self.mockChannelRegistrar
                                       tagGroupsRegistrar:self.mockTagGroupsRegistrar
                                       attributeRegistrar:self.mockAttributeRegistrar
-                                           localeManager:self.mockLocaleManager
                                                     date:self.testDate];
 
     return channel;

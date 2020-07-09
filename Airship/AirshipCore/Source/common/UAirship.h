@@ -33,7 +33,6 @@
 @class UARemoteDataManager;
 @class UAChannel;
 @class UAComponent;
-@class UALocaleManager;
 
 //---------------------------------------------------------------------------------------
 // UADeepLinkDelegate Protocol
@@ -145,11 +144,6 @@ extern NSString * const UAAirshipReadyNotification;
  * Analytics instance.
  */
 @property (nonatomic, strong, readonly) UAAnalytics *analytics;
-
-/**
- * Locale instance.
- */
-@property (nonatomic, strong, readonly) UALocaleManager *locale;
 
 /**
  * Global data collection flag. Enabled by default, unless `UAConfig.dataCollectionOptInEnabled`

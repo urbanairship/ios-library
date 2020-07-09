@@ -5,7 +5,6 @@
 #import "UAPreferenceDataStore+Internal.h"
 #import "UARemoteDataPayload+Internal.h"
 #import "UARequestSession.h"
-#import "UALocaleManager.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -37,10 +36,9 @@ typedef void (^UARemoteDataRefreshFailureBlock)(void);
  *
  * @param config The Airship config.
  * @param dataStore A UAPreferenceDataStore to store persistent preferences
- * @param localeManager A UALocaleManager.
  * @return The remote data API client instance.
  */
-+ (UARemoteDataAPIClient *)clientWithConfig:(UARuntimeConfig *)config dataStore:(UAPreferenceDataStore *)dataStore localeManager:(UALocaleManager *)localeManager;
++ (UARemoteDataAPIClient *)clientWithConfig:(UARuntimeConfig *)config dataStore:(UAPreferenceDataStore *)dataStore;
 
 
 /**
@@ -49,13 +47,11 @@ typedef void (^UARemoteDataRefreshFailureBlock)(void);
  * @param config The Airship config.
  * @param dataStore A UAPreferenceDataStore to store persistent preferences
  * @param session The UARequestSession session.
- * @param localeManager A UALocaleManager.
  * @return The remote data API client instance.
  */
 + (UARemoteDataAPIClient *)clientWithConfig:(UARuntimeConfig *)config
                                   dataStore:(UAPreferenceDataStore *)dataStore
-                                    session:(UARequestSession *)session
-                              localeManager:(UALocaleManager *)localeManager;
+                                    session:(UARequestSession *)session;
 
 /**
  * Refresh the remote data by calling the remote data cloud API.

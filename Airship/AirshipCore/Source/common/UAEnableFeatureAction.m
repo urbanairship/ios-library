@@ -97,6 +97,8 @@ NSString *const UAEnableBackgroundLocationActionValue = @"background_location";
     } else {
         completionHandler([UAActionResult emptyResult]);
     }
+
+    completionHandler([UAActionResult emptyResult]);
 }
 
 - (void)enableLocation:(UAActionCompletionHandler)completionHandler {
@@ -109,6 +111,8 @@ NSString *const UAEnableBackgroundLocationActionValue = @"background_location";
     } else {
         completionHandler([UAActionResult emptyResult]);
     }
+
+    completionHandler([UAActionResult emptyResult]);
 }
 
 @end

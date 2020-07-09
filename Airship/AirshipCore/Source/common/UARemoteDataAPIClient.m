@@ -6,11 +6,9 @@
 #import "UARuntimeConfig.h"
 #import "NSURLResponse+UAAdditions.h"
 #import "UAirshipVersion.h"
-#import "UAirship.h"
 
 @interface UARemoteDataAPIClient()
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
-@property (nonatomic, strong) UALocaleManager *localeManager;
 @end
 
 @implementation UARemoteDataAPIClient
@@ -21,33 +19,28 @@ NSString * const kUALastRemoteDataModifiedTime = @"UALastRemoteDataModifiedTime"
 
 - (UARemoteDataAPIClient *)initWithConfig:(UARuntimeConfig *)config
                                 dataStore:(UAPreferenceDataStore *)dataStore
-                                  session:(UARequestSession *)session
-                            localeManager:(UALocaleManager *)localeManager {
+                                  session:(UARequestSession *)session {
     self = [super initWithConfig:config session:session];
     
     if (self) {
         self.dataStore = dataStore;
-        self.localeManager = localeManager;
     }
     
     return self;
 }
 
-+ (UARemoteDataAPIClient *)clientWithConfig:(UARuntimeConfig *)config dataStore:(UAPreferenceDataStore *)dataStore localeManager:(UALocaleManager *)localeManager {
++ (UARemoteDataAPIClient *)clientWithConfig:(UARuntimeConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
     return [[self alloc] initWithConfig:config
                               dataStore:dataStore
-                                session:[UARequestSession sessionWithConfig:config]
-                          localeManager:localeManager];
+                                session:[UARequestSession sessionWithConfig:config]];
 }
 
 + (UARemoteDataAPIClient *)clientWithConfig:(UARuntimeConfig *)config
                                   dataStore:(UAPreferenceDataStore *)dataStore
-                                    session:(UARequestSession *)session
-                              localeManager:(UALocaleManager *)localeManager {
+                                    session:(UARequestSession *)session {
     return [[self alloc] initWithConfig:config
                               dataStore:dataStore
-                                session:session
-                          localeManager:localeManager];
+                                session:session];
 }
 
 - (UADisposable *)fetchRemoteData:(UARemoteDataRefreshSuccessBlock)successBlock
@@ -142,7 +135,7 @@ NSString * const kUALastRemoteDataModifiedTime = @"UALastRemoteDataModifiedTime"
     UARequest *request = [UARequest requestWithBuilderBlock:^(UARequestBuilder * _Nonnull builder) {
         UA_STRONGIFY(self)
 
-        builder.URL = [self createRemoteDataURL:[self.localeManager currentLocale]];
+        builder.URL = [self createRemoteDataURL:[NSLocale autoupdatingCurrentLocale]];
         builder.method = @"GET";
         
         NSString *lastModified = [self.dataStore stringForKey:kUALastRemoteDataModifiedTime];

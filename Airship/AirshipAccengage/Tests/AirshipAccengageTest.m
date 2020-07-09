@@ -11,7 +11,6 @@
 #import "UAAccengagePayload.h"
 #import "UAAccengageUtils.h"
 #import "UARuntimeConfig+Internal.h"
-#import "UALocaleManager+Internal.h"
 
 @interface AirshipAccengageTests : XCTestCase
 
@@ -19,7 +18,6 @@
 @property (nonatomic, strong) UARuntimeConfig *config;
 @property (nonatomic, strong) UAChannel *channel;
 @property (nonatomic, strong) UAAnalytics *analytics;
-@property (nonatomic, strong) UALocaleManager *localeManager;
 @property (nonatomic, strong) id mockPush;
 
 @end
@@ -45,9 +43,8 @@
     self.config = [[UARuntimeConfig alloc] initWithConfig:[UAConfig defaultConfig]];
     UATagGroupsMutationHistory *history = [[UATagGroupsMutationHistory alloc] init];
     UATagGroupsRegistrar *tagGroupsRegistar = [UATagGroupsRegistrar tagGroupsRegistrarWithConfig:self.config dataStore:self.dataStore mutationHistory:history];
-    self.localeManager = [UALocaleManager localeManagerWithDataStore:self.dataStore];
-    self.channel = [UAChannel channelWithDataStore:self.dataStore config:self.config tagGroupsRegistrar:tagGroupsRegistar localeManager:self.localeManager];
-    self.analytics = [UAAnalytics analyticsWithConfig:self.config dataStore:self.dataStore channel:self.channel localeManager:self.localeManager];
+    self.channel = [UAChannel channelWithDataStore:self.dataStore config:self.config tagGroupsRegistrar:tagGroupsRegistar];
+    self.analytics = [UAAnalytics analyticsWithConfig:self.config dataStore:self.dataStore channel:self.channel];
     id registration = OCMClassMock([UAAPNSRegistration class]);
     UAPush *push = [UAPush pushWithConfig:self.config dataStore:self.dataStore channel:self.channel analytics:self.analytics appStateTracker:[UAAppStateTracker shared] notificationCenter:[NSNotificationCenter defaultCenter] pushRegistration:registration application:[UIApplication sharedApplication] dispatcher:[UADispatcher mainDispatcher]];
     self.mockPush = OCMPartialMock(push);
@@ -121,7 +118,7 @@
 - (void)testInitWithDataStore {
     UATagGroupsMutationHistory *history = [[UATagGroupsMutationHistory alloc] init];
     UATagGroupsRegistrar *tagGroupsRegistar = [UATagGroupsRegistrar tagGroupsRegistrarWithConfig:self.config dataStore:self.dataStore mutationHistory:history];
-    UAChannel *channel = [UAChannel channelWithDataStore:self.dataStore config:self.config tagGroupsRegistrar:tagGroupsRegistar localeManager:self.localeManager];
+    UAChannel *channel = [UAChannel channelWithDataStore:self.dataStore config:self.config tagGroupsRegistrar:tagGroupsRegistar];
     id channelMock = OCMPartialMock(channel);
     [[channelMock expect] addChannelExtenderBlock:OCMOCK_ANY];
     

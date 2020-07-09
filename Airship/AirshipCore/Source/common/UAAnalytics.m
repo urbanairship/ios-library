@@ -19,7 +19,6 @@
 #import "UAirship.h"
 #import "UAPush+Internal.h"
 #import "UAChannel.h"
-#import "UALocaleManager.h"
 
 #define kUAAssociatedIdentifiers @"UAAssociatedIdentifiers"
 
@@ -34,7 +33,6 @@
 @property (nonatomic, strong) NSMutableArray<NSString *> *SDKExtensions;
 @property (nonatomic, assign) BOOL isEnteringForeground;
 @property (nonatomic, strong) NSMutableArray<UAAnalyticsHeadersBlock> *headerBlocks;
-@property (nonatomic, strong) UALocaleManager *localeManager;
 
 // Screen tracking state
 @property (nonatomic, copy) NSString *currentScreen;
@@ -58,8 +56,7 @@ NSString *const UAEventKey = @"event";
                   eventManager:(UAEventManager *)eventManager
             notificationCenter:(NSNotificationCenter *)notificationCenter
                           date:(UADate *)date
-                    dispatcher:(UADispatcher *)dispatcher
-                 localeManager:(UALocaleManager *)localeManager {
+                    dispatcher:(UADispatcher *)dispatcher {
 
     self = [super initWithDataStore:dataStore];
 
@@ -72,7 +69,6 @@ NSString *const UAEventKey = @"event";
         self.notificationCenter = notificationCenter;
         self.date = date;
         self.dispatcher = dispatcher;
-        self.localeManager = localeManager;
         self.SDKExtensions = [NSMutableArray array];
         self.headerBlocks = [NSMutableArray array];
 
@@ -116,16 +112,14 @@ NSString *const UAEventKey = @"event";
 
 + (instancetype)analyticsWithConfig:(UARuntimeConfig *)config
                           dataStore:(UAPreferenceDataStore *)dataStore
-                            channel:(UAChannel *)channel
-                      localeManager:(UALocaleManager *)localeManager {
+                            channel:(UAChannel *)channel {
     return [[self alloc] initWithConfig:config
                               dataStore:dataStore
                                 channel:channel
                            eventManager:[UAEventManager eventManagerWithConfig:config dataStore:dataStore channel:channel]
                      notificationCenter:[NSNotificationCenter defaultCenter]
                                    date:[[UADate alloc] init]
-                             dispatcher:[UADispatcher mainDispatcher]
-                          localeManager:localeManager];
+                             dispatcher:[UADispatcher mainDispatcher]];
 }
 
 + (instancetype)analyticsWithConfig:(UARuntimeConfig *)airshipConfig
@@ -134,8 +128,7 @@ NSString *const UAEventKey = @"event";
                        eventManager:(UAEventManager *)eventManager
                  notificationCenter:(NSNotificationCenter *)notificationCenter
                                date:(UADate *)date
-                         dispatcher:(UADispatcher *)dispatcher
-                      localeManager:(UALocaleManager *)localeManager {
+                         dispatcher:(UADispatcher *)dispatcher {
 
     return [[self alloc] initWithConfig:airshipConfig
                               dataStore:dataStore
@@ -143,8 +136,7 @@ NSString *const UAEventKey = @"event";
                            eventManager:eventManager
                      notificationCenter:notificationCenter
                                    date:date
-                             dispatcher:dispatcher
-                          localeManager:localeManager];
+                             dispatcher:dispatcher];
 }
 
 #pragma mark -
@@ -388,12 +380,10 @@ NSString *const UAEventKey = @"event";
     [headers setValue:[[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"] ?: @"" forKey:@"X-UA-Package-Version"];
 
     // Time zone
-    
-    NSLocale *currentLocale = [self.localeManager currentLocale];
     [headers setValue:[[NSTimeZone defaultTimeZone] name] forKey:@"X-UA-Timezone"];
-    [headers setValue:[currentLocale objectForKey:NSLocaleLanguageCode] forKey:@"X-UA-Locale-Language"];
-    [headers setValue:[currentLocale objectForKey:NSLocaleCountryCode] forKey:@"X-UA-Locale-Country"];
-    [headers setValue:[currentLocale objectForKey:NSLocaleVariantCode] forKey:@"X-UA-Locale-Variant"];
+    [headers setValue:[[NSLocale autoupdatingCurrentLocale] objectForKey:NSLocaleLanguageCode] forKey:@"X-UA-Locale-Language"];
+    [headers setValue:[[NSLocale autoupdatingCurrentLocale] objectForKey:NSLocaleCountryCode] forKey:@"X-UA-Locale-Country"];
+    [headers setValue:[[NSLocale autoupdatingCurrentLocale] objectForKey:NSLocaleVariantCode] forKey:@"X-UA-Locale-Variant"];
 
     // Airship identifiers
     [headers setValue:self.channel.identifier forKey:@"X-UA-Channel-ID"];

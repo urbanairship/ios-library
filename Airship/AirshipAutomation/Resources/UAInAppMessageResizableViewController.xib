@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="16097" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14845" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina5_9" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14799.2"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -15,7 +15,6 @@
                 <outlet property="containerAspect" destination="t8p-lZ-HZn" id="Iat-Wa-JY2"/>
                 <outlet property="heightConstraint" destination="ijq-fT-ON3" id="0Re-yb-Lld"/>
                 <outlet property="maxWidthConstraint" destination="Ucg-Xu-csp" id="d94-Wo-zVf"/>
-                <outlet property="resizableContainer" destination="Gmc-md-UHv" id="ZXw-l6-teC"/>
                 <outlet property="resizingContainerView" destination="Gmc-md-UHv" id="mIp-z0-EaP"/>
                 <outlet property="shadeView" destination="KZc-00-wWo" id="TCb-wx-Kyj"/>
                 <outlet property="view" destination="iN0-l3-epB" id="UMN-dI-yol"/>

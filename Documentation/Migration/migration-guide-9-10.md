@@ -3,10 +3,8 @@
 # Airship Library 9.x to 10.0
 
 This is a compatibility release for iOS 12 support, mostly adding new optional features. However some breaking changes have been made
-in order to support them.
-
-Items previously marked "Deprecated - to be removed in SDK version 10.0" have been removed. Some iOS 8 specific workarounds that
-have been obsolete since SDK 9.0 have also been removed. This release also drops support for iOS 9.
+in order to support them. Since iOS 8 is no longer supported, some iOS 8 specific workarounds have been removed, as well as items previously
+marked deprecated to be removed in SDK 10.
 
 ## Notification Authorization
 

@@ -15,7 +15,6 @@
 #import "UATestDispatcher.h"
 #import "UAAppStateTracker.h"
 #import "UAUtils+Internal.h"
-#import "UALocaleManager.h"
 
 @interface UAAnalyticsTest: UAAirshipBaseTest
 @property (nonatomic, strong) UAAnalytics *analytics;
@@ -42,11 +41,6 @@
         self.eventManagerDelegate =  (__bridge id<UAEventManagerDelegate>)arg;
     }] setDelegate:OCMOCK_ANY];
 
-    // Locale
-    self.mockLocaleClass = [self mockForClass:[UALocaleManager class]];
-    NSLocale *locale = [[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"];
-    [[[self.mockLocaleClass stub] andReturn:locale] currentLocale];
-    
     self.mockChannel = [self mockForClass:[UAChannel class]];
     self.analytics = [self createAnalytics];
 
@@ -60,6 +54,11 @@
     self.mockTimeZoneClass = [self strictMockForClass:[NSTimeZone class]];
     NSTimeZone *timeZone = [[NSTimeZone alloc] initWithName:@"America/New_York"];
     [[[self.mockTimeZoneClass stub] andReturn:timeZone] defaultTimeZone];
+
+    // Locale
+    self.mockLocaleClass = [self strictMockForClass:[NSLocale class]];
+    NSLocale *locale = [[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"];
+    [[[self.mockLocaleClass stub] andReturn:locale] currentLocale];
 }
 
 /**
@@ -577,8 +576,7 @@
                                eventManager:self.mockEventManager
                          notificationCenter:self.notificationCenter
                                        date:self.testDate
-                                 dispatcher:[UATestDispatcher testDispatcher]
-                              localeManager:self.mockLocaleClass];
+                                 dispatcher:[UATestDispatcher testDispatcher]];
 }
 
 @end

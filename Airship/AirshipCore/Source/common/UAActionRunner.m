@@ -111,8 +111,6 @@ completionHandler:(UAActionCompletionHandler)completionHandler {
                  completionHandler:(UAActionCompletionHandler)completionHandler {
 
     __block UAAggregateActionResult *aggregateResult = [[UAAggregateActionResult alloc] init];
-    __block NSUInteger dispatchGroupEnterCount = 0;
-    __block NSUInteger dispatchGroupLeaveCount = 0;
 
     if (!actionValues.count) {
         UA_LTRACE("No actions to perform.");
@@ -133,26 +131,14 @@ completionHandler:(UAActionCompletionHandler)completionHandler {
     }
 
     for (UAActionRegistryEntry *entry in actionEntries) {
-        __block NSUInteger completions = 0;
         UAActionCompletionHandler handler = ^(UAActionResult *result) {
             @synchronized(self) {
-                completions++;
-                if (completions > 1) {
-                    UA_LWARN(@"Multiple completion handler calls detected for action: %@. ", entry.names.firstObject);
-                } else {
-                    [aggregateResult addResult:result forAction:entry.names.firstObject];
-                }
-
-                if (dispatchGroupLeaveCount < dispatchGroupEnterCount) {
-                    dispatch_group_leave(dispatchGroup);
-                }
-
-                dispatchGroupLeaveCount++;
+                [aggregateResult addResult:result forAction:[entry.names firstObject]];
+                dispatch_group_leave(dispatchGroup);
             }
         };
 
         dispatch_group_enter(dispatchGroup);
-        dispatchGroupEnterCount++;
 
         id value;
         for (NSString *name in entry.names) {

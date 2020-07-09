@@ -22,8 +22,7 @@ extern NSString *const UAChannelCreationOnForeground;
 
 + (instancetype)channelWithDataStore:(UAPreferenceDataStore *)dataStore
                               config:(UARuntimeConfig *)config
-                  tagGroupsRegistrar:(UATagGroupsRegistrar *)tagGroupsRegistrar
-                       localeManager:(UALocaleManager *)localeManager;
+                  tagGroupsRegistrar:(UATagGroupsRegistrar *)tagGroupsRegistrar;
 
 + (instancetype)channelWithDataStore:(UAPreferenceDataStore *)dataStore
                               config:(UARuntimeConfig *)config
@@ -31,7 +30,6 @@ extern NSString *const UAChannelCreationOnForeground;
                     channelRegistrar:(UAChannelRegistrar *)channelRegistrar
                   tagGroupsRegistrar:(UATagGroupsRegistrar *)tagGroupsRegistrar
                   attributeRegistrar:(UAAttributeRegistrar *)attributeRegistrar
-                       localeManager:(UALocaleManager *)localeManager
                                 date:(UADate *)date;
 
 /**

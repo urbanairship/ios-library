@@ -9,7 +9,6 @@
 #import "UAAttributePendingMutations+Internal.h"
 #import "UADate.h"
 #import "UAAppStateTracker.h"
-#import "UALocaleManager+Internal.h"
 
 NSString *const UAChannelTagsSettingsKey = @"com.urbanairship.channel.tags";
 
@@ -32,7 +31,6 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
 @property (nonatomic, strong) UAChannelRegistrar *channelRegistrar;
 @property (nonatomic, strong) UATagGroupsRegistrar *tagGroupsRegistrar;
 @property (nonatomic, strong) UAAttributeRegistrar *attributeRegistrar;
-@property (nonatomic, strong) UALocaleManager *localeManager;
 
 @property (nonatomic, assign) BOOL shouldPerformChannelRegistrationOnForeground;
 @property (nonatomic, strong) NSMutableArray<UAChannelRegistrationExtenderBlock> *registrationExtenderBlocks;
@@ -47,7 +45,6 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
                  channelRegistrar:(UAChannelRegistrar *)channelRegistrar
                tagGroupsRegistrar:(UATagGroupsRegistrar *)tagGroupsRegistrar
                attributeRegistrar:(UAAttributeRegistrar *)attributeRegistrar
-                    localeManager:(UALocaleManager *)localeManager
                              date:(UADate *)date {
     self = [super initWithDataStore:dataStore];
 
@@ -58,7 +55,6 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
         self.channelRegistrar.delegate = self;
         self.tagGroupsRegistrar = tagGroupsRegistrar;
         self.attributeRegistrar = attributeRegistrar;
-        self.localeManager = localeManager;
         self.date = date;
 
         self.channelTagRegistrationEnabled = YES;
@@ -88,8 +84,7 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
 
 + (instancetype)channelWithDataStore:(UAPreferenceDataStore *)dataStore
                               config:(UARuntimeConfig *)config
-                  tagGroupsRegistrar:(UATagGroupsRegistrar *)tagGroupsRegistrar
-                       localeManager:(UALocaleManager *)localeManager {
+                  tagGroupsRegistrar:(UATagGroupsRegistrar *)tagGroupsRegistrar {
     return [[self alloc] initWithDataStore:dataStore
                                     config:config
                         notificationCenter:[NSNotificationCenter defaultCenter]
@@ -98,7 +93,6 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
                         tagGroupsRegistrar:tagGroupsRegistrar
                         attributeRegistrar:[UAAttributeRegistrar registrarWithConfig:config
                                                                            dataStore:dataStore]
-                             localeManager:localeManager
                                       date:[[UADate alloc] init]];
 }
 
@@ -108,7 +102,6 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
                     channelRegistrar:(UAChannelRegistrar *)channelRegistrar
                   tagGroupsRegistrar:(UATagGroupsRegistrar *)tagGroupsRegistrar
                   attributeRegistrar:(UAAttributeRegistrar *)attributeRegistrar
-                       localeManager:(UALocaleManager *)localeManager
                                 date:(UADate *)date {
     return [[self alloc] initWithDataStore:dataStore
                                     config:config
@@ -116,7 +109,6 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
                           channelRegistrar:channelRegistrar
                         tagGroupsRegistrar:tagGroupsRegistrar
                         attributeRegistrar:attributeRegistrar
-                             localeManager:localeManager
                                       date:date];
 }
 
@@ -139,11 +131,6 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
     [self.notificationCenter addObserver:self
                                 selector:@selector(applicationDidEnterBackground)
                                     name:UAApplicationDidEnterBackgroundNotification
-                                  object:nil];
-    
-    [self.notificationCenter addObserver:self
-                                selector:@selector(localeUpdated)
-                                    name:UALocaleUpdatedEvent
                                   object:nil];
 }
 
@@ -365,11 +352,8 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
                   dispatcher:(nullable UADispatcher *)dispatcher {
 
     UAChannelRegistrationPayload *payload = [[UAChannelRegistrationPayload alloc] init];
-    
-    NSLocale *currentLocale = [self.localeManager currentLocale];
-    
-    payload.language = [currentLocale objectForKey:NSLocaleLanguageCode];
-    payload.country = [currentLocale objectForKey: NSLocaleCountryCode];
+    payload.language = [[NSLocale autoupdatingCurrentLocale] objectForKey:NSLocaleLanguageCode];
+    payload.country = [[NSLocale autoupdatingCurrentLocale] objectForKey: NSLocaleCountryCode];
     payload.timeZone = [NSTimeZone defaultTimeZone].name;
     payload.appVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
     payload.SDKVersion = [UAirshipVersion get];
@@ -497,13 +481,6 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
         [self updateRegistrationForcefully:NO];
     }
     completionHandler(UIBackgroundFetchResultNoData);
-}
-
-#pragma mark -
-#pragma mark Locale update
-
-- (void)localeUpdated {
-    [self updateRegistrationForcefully:NO];
 }
 
 @end

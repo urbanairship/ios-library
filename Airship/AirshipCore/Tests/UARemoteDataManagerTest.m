@@ -13,7 +13,6 @@
 #import "UAAirshipBaseTest.h"
 #import "UATestDispatcher.h"
 #import "UATestDate.h"
-#import "UATestAppStateTracker+Internal.h"
 
 /**
  * Used to test what UARemoteDataManager does when the cache fails underneath it.
@@ -38,11 +37,9 @@
 
 @property (nonatomic, strong) id mockAPIClient;
 @property (nonatomic, strong) id mockAPIClientClass;
-@property (nonatomic, strong) id mockLocaleManagerClass;
 
 @property (nonatomic, strong) UARemoteDataManager *remoteDataManager;
 @property (nonatomic, strong) UATestRemoteDataStore *testStore;
-@property (nonatomic, strong) UATestAppStateTracker *testAppStateTracker;
 
 @property (nonatomic, copy) NSDictionary *expectedMetadata;
 
@@ -60,19 +57,14 @@
     self.mockAPIClient = [self mockForClass:[UARemoteDataAPIClient class]];
 
     self.mockAPIClientClass = OCMClassMock([UARemoteDataAPIClient class]);
-    OCMStub([self.mockAPIClientClass clientWithConfig:[OCMArg any] dataStore:[OCMArg any] localeManager:[OCMArg any]]).andReturn(self.mockAPIClient);
-
+    OCMStub([self.mockAPIClientClass clientWithConfig:[OCMArg any] dataStore:[OCMArg any]]).andReturn(self.mockAPIClient);
+    
     self.testStore = [UATestRemoteDataStore storeWithName:@"UARemoteDataManagerTest." inMemory:YES];
     self.testDate = [[UATestDate alloc] initWithAbsoluteTime:[NSDate now]];
-
-    self.mockLocaleManagerClass = [self mockForClass:[UALocaleManager class]];
-    [[[self.mockLocaleManagerClass stub] andReturn:[NSLocale autoupdatingCurrentLocale]] currentLocale];
 
     self.remoteDataManager = [self createManager];
     self.expectAPIClientFetch = YES;
     self.expectedMetadata = [self.remoteDataManager createMetadata:[NSLocale autoupdatingCurrentLocale]];
-
-    self.testAppStateTracker = [UATestAppStateTracker shared];
 }
 
 - (void)tearDown {
@@ -357,8 +349,8 @@
     // setup with changed mocked payload
     NSString *expectedChangedLocaleString = @"changed-locale";
     NSLocale *locale = [[NSLocale alloc] initWithLocaleIdentifier:expectedChangedLocaleString];
-    id mockLocaleClass = [self mockForClass:[UALocaleManager class]];
-    [[[mockLocaleClass stub] andReturn:locale] currentLocale];
+    id mockLocaleClass = [self strictMockForClass:[NSLocale class]];
+    [[[mockLocaleClass stub] andReturn:locale] autoupdatingCurrentLocale];
 
     // Update with mocked metadata locale
     testPayloads[0] = [self updatePayloadMetadata:testPayloads[0]];
@@ -665,7 +657,6 @@
 - (void)testRefreshInterval {
     // set up test data
     NSMutableArray<UARemoteDataPayload *> *testPayloads = [[self createNPayloadsAndSetupTest:1 metadata:self.expectedMetadata] mutableCopy];
-    self.testAppStateTracker.currentState = UAApplicationStateActive;
 
     __block XCTestExpectation *receivedDataExpectation;
 
@@ -707,7 +698,7 @@
 
     // setup
     [self setupTestWithPayloads:testPayloads];
-
+    
     // time travel past refresh interval
     self.testDate.timeOffset = 10000;
 
@@ -728,14 +719,13 @@
 // Tests app locale change when a locale change happens while the app is terminated
 - (void)testAppLocaleChange {
     __block XCTestExpectation *receivedDataExpectation;
-    self.testAppStateTracker.currentState = UAApplicationStateActive;
 
     NSMutableArray<UARemoteDataPayload *> *testPayloads = [[self createNPayloadsAndSetupTest:1 metadata:self.expectedMetadata] mutableCopy];
 
     // change the locale identifier to en_01
-    id mockedLocale = [self mockForClass:[UALocaleManager class]];
-    NSLocale *locale = [NSLocale localeWithLocaleIdentifier:@"en_01"];
-    [[[mockedLocale stub] andReturn:locale] currentLocale];
+    id mockedLocale = [self mockForClass:[NSLocale class]];
+    [[[mockedLocale stub] andReturn:mockedLocale] currentLocale];
+    [[[mockedLocale stub] andReturn:@"en_01"] localeIdentifier];
 
     // create a new remote data manager, which should cause a refresh due to the changed app locale
     self.remoteDataManager = [self createManager];
@@ -785,7 +775,6 @@
 
 - (void)testAppVersionChange {
     __block XCTestExpectation *receivedDataExpectation;
-    self.testAppStateTracker.currentState = UAApplicationStateActive;
 
     NSMutableArray<UARemoteDataPayload *> *testPayloads = [[self createNPayloadsAndSetupTest:1 metadata:self.expectedMetadata] mutableCopy];
 
@@ -985,16 +974,15 @@
     }];
 }
 
+
 - (UARemoteDataManager *)createManager {
     return [UARemoteDataManager remoteDataManagerWithConfig:self.config
                                                   dataStore:self.dataStore
                                             remoteDataStore:self.testStore
                                         remoteDataAPIClient:self.mockAPIClient
                                          notificationCenter:[[NSNotificationCenter alloc] init]
-                                            appStateTracker:self.testAppStateTracker
                                                  dispatcher:[UATestDispatcher testDispatcher]
-                                                       date:self.testDate
-                                              localeManager:self.mockLocaleManagerClass];
+                                                       date:self.testDate];
 }
 
 @end

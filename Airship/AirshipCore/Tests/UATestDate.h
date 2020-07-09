@@ -1,4 +1,3 @@
-/* Copyright Airship and Contributors */
 
 #import "UADate.h"
 
