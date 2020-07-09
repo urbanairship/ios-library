@@ -58,6 +58,11 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) UARemoteConfigManager *sharedRemoteConfigManager;
 
 /**
+ * Shared localeManager.
+ */
+@property (nonatomic, strong) UALocaleManager *sharedLocaleManager;
+
+/**
  * Returns the `UARemoteDataManager` instance.
  */
 + (null_unspecified UARemoteDataManager *)remoteDataManager;

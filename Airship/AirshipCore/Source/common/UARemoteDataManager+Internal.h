@@ -11,6 +11,7 @@
 #import "UAComponent.h"
 #import "UAPushableComponent.h"
 #import "UARemoteDataProvider.h"
+#import "UAAppStateTracker.h"
 #import "UADate.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -33,10 +34,12 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @param config The Airship config.
  * @param dataStore A UAPreferenceDataStore to store persistent preferences
+ * @param localeManager A UALocaleManager.
  * @return The remote data manager instance.
  */
 + (instancetype)remoteDataManagerWithConfig:(UARuntimeConfig *)config
-                                  dataStore:(UAPreferenceDataStore *)dataStore;
+                                  dataStore:(UAPreferenceDataStore *)dataStore
+                              localeManager:(UALocaleManager *)localeManager;
 
 ///---------------------------------------------------------------------------------------
 /// @name Test Properties & Internal Methods
@@ -77,7 +80,10 @@ NS_ASSUME_NONNULL_BEGIN
  * @param remoteDataStore The remote data store.
  * @param remoteDataAPIClient The remote data API client.
  * @param notificationCenter The notification center.
+ * @param appStateTracker The application state tracker.
  * @param dispatcher The dispatcher.
+ * @param date The date.
+ * @param localeManager A UALocaleManager.
  * @return The remote data manager instance.
  */
 + (instancetype)remoteDataManagerWithConfig:(UARuntimeConfig *)config
@@ -85,8 +91,10 @@ NS_ASSUME_NONNULL_BEGIN
                             remoteDataStore:(UARemoteDataStore *)remoteDataStore
                         remoteDataAPIClient:(UARemoteDataAPIClient *)remoteDataAPIClient
                          notificationCenter:(NSNotificationCenter *)notificationCenter
+                            appStateTracker:(UAAppStateTracker *)appStateTracker
                                  dispatcher:(UADispatcher *)dispatcher
-                                       date:(UADate *)date;
+                                       date:(UADate *)date
+                              localeManager:(UALocaleManager *)localeManager;
 
 /**
  * Creates the client metadata used to fetch the request.
