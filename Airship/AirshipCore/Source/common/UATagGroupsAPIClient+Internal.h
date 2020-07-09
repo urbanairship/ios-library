@@ -14,7 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 extern NSString * const UATagGroupsChannelStoreKey;
 
 /**
-* The tag goups named user store key.
+* The tag groups named user store key.
 */
 extern NSString * const UATagGroupsNamedUserStoreKey;
 
