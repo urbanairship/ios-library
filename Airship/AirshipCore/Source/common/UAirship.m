@@ -144,10 +144,10 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         [components addObject:self.sharedPush];
 
         
-        UATagGroupsMutationHistory<UATagGroupsHistory> *tagGroupsNamedUseMutationHistory = [UATagGroupsMutationHistory historyWithDataStore:self.dataStore storeKey:UATagGroupsNamedUserStoreKey];
+        UATagGroupsMutationHistory<UATagGroupsHistory> *tagGroupsNamedUserMutationHistory = [UATagGroupsMutationHistory historyWithDataStore:self.dataStore storeKey:UATagGroupsNamedUserStoreKey];
         UATagGroupsRegistrar *tagGroupsNamedUserRegistrar = [UATagGroupsRegistrar tagGroupsRegistrarWithConfig:self.config
                                                                                             dataStore:self.dataStore
-                                                                                      mutationHistory:tagGroupsNamedUseMutationHistory];
+                                                                                      mutationHistory:tagGroupsNamedUserMutationHistory];
         self.sharedNamedUser = [UANamedUser namedUserWithChannel:self.sharedChannel
                                                           config:self.config
                                                        dataStore:self.dataStore
@@ -194,7 +194,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
                   channel:self.sharedChannel
                 analytics:self.sharedAnalytics
         remoteDataManager:self.sharedRemoteDataManager
-         tagGroupsHistory:tagGroupsNamedUseMutationHistory];
+         tagGroupsHistory:tagGroupsNamedUserMutationHistory];
         if (automationNamedUserLoader) {
             [loaders addObject:automationNamedUserLoader];
         }
