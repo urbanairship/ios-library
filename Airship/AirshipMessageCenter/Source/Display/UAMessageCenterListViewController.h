@@ -23,6 +23,15 @@ DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0. Inst
 @property (nonatomic, strong) UAMessageCenterStyle *messageCenterStyle;
 
 /**
+ * The style to apply to the list.
+ *
+ * Note: This property is unavailble in iOS 14. Instead use `messageCenterStyle`.
+ */
+#if !defined(__IPHONE_14_0)
+@property(nonatomic, strong) UAMessageCenterStyle *style;
+#endif
+
+/**
  * An optional predicate for filtering messages.
  */
 @property (nonatomic, strong) NSPredicate *filter;

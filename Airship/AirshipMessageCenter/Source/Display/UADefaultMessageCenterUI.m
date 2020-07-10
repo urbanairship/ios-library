@@ -38,6 +38,15 @@
     self.splitViewController.messageCenterStyle = style;
 }
 
+#if !defined(__IPHONE_14_0)
+- (void)setStyle:(UAMessageCenterStyle *)style {
+    [self setMessageCenterStyle:style];
+}
+- (UAMessageCenterStyle *)style {
+    return self.messageCenterStyle;
+}
+#endif
+
 - (void)setTitle:(NSString *)title {
     _title = title;
     self.splitViewController.title = title;
