@@ -3,6 +3,16 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/master/Documentation/Migration)
 
+## Version 13.5.1 - July 10, 2020
+Patch release for compatibility with Xcode 12, adding new messageCenterStyle
+properties to the default message center UI classes to avoid conflicting with
+UIKit changes in iOS 14. The original style properties will continue to be
+available when compiling with Xcode 11, but are not available in Xcode 12.
+Apps that wish to remain on 13.x while developing on iOS 14 are encouraged
+to upgrade.
+
+- Added new messageCenterStyle properties to the default message center UI
+
 ## Version 13.5.0 - July 8, 2020
 Minor release adding support for application-defined locale overrides, and
 fixing issues in In-App Automation and the Actions Framework.

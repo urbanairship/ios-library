@@ -241,37 +241,46 @@
     _filter = filter;
 }
 
-- (void)setStyle:(UAMessageCenterStyle *)style {
-    _style = style;
+- (void)setMessageCenterStyle:(UAMessageCenterStyle *)style {
+    _messageCenterStyle = style;
 
     [self applyStyle];
 }
 
+#if !defined(__IPHONE_14_0)
+- (void)setStyle:(UAMessageCenterStyle *)style {
+    [self setMessageCenterStyle:style];
+}
+- (UAMessageCenterStyle *)style {
+    return self.messageCenterStyle;
+}
+#endif
+
 - (void)applyStyle {
-    if (self.style.editButtonTitleColor) {
-        self.editItem.tintColor = self.style.editButtonTitleColor;
+    if (self.messageCenterStyle.editButtonTitleColor) {
+        self.editItem.tintColor = self.messageCenterStyle.editButtonTitleColor;
     }
 
-    if (self.style.cancelButtonTitleColor) {
-        self.cancelItem.tintColor = self.style.cancelButtonTitleColor;
+    if (self.messageCenterStyle.cancelButtonTitleColor) {
+        self.cancelItem.tintColor = self.messageCenterStyle.cancelButtonTitleColor;
     }
 
-    if (self.style.listColor) {
-        self.messageTable.backgroundColor = self.style.listColor;
-        self.refreshControl.backgroundColor = self.style.listColor;
+    if (self.messageCenterStyle.listColor) {
+        self.messageTable.backgroundColor = self.messageCenterStyle.listColor;
+        self.refreshControl.backgroundColor = self.messageCenterStyle.listColor;
     } else if (@available(iOS 13.0, *)) {
         self.messageTable.backgroundColor = [UIColor systemBackgroundColor];
         self.refreshControl.backgroundColor = [UIColor systemBackgroundColor];
     }
 
-    if (self.style.cellSeparatorColor) {
-        self.messageTable.separatorColor = self.style.cellSeparatorColor;
+    if (self.messageCenterStyle.cellSeparatorColor) {
+        self.messageTable.separatorColor = self.messageCenterStyle.cellSeparatorColor;
     } else if (@available(iOS 13.0, *)) {
         self.messageTable.separatorColor = [UIColor separatorColor];
     }
 
-    if (self.style.refreshTintColor) {
-        self.refreshControl.tintColor = self.style.refreshTintColor;
+    if (self.messageCenterStyle.refreshTintColor) {
+        self.refreshControl.tintColor = self.messageCenterStyle.refreshTintColor;
     }
 
     [self applyToolbarItemStyles];
@@ -285,7 +294,7 @@
 - (void)applyToolbarItemStyles {
 
     // Override any inherited tint color, to avoid potential clashes
-    self.selectAllButtonItem.tintColor = (self.style.selectAllButtonTitleColor) ? self.style.selectAllButtonTitleColor : self.defaultTintColor;
+    self.selectAllButtonItem.tintColor = (self.messageCenterStyle.selectAllButtonTitleColor) ? self.messageCenterStyle.selectAllButtonTitleColor : self.defaultTintColor;
 
     UIColor *red;
     if (@available(iOS 13.0, *)) {
@@ -294,14 +303,14 @@
         red = [UIColor redColor];
     }
 
-    self.deleteItem.tintColor = (self.style.deleteButtonTitleColor) ? self.style.deleteButtonTitleColor : red;
+    self.deleteItem.tintColor = (self.messageCenterStyle.deleteButtonTitleColor) ? self.messageCenterStyle.deleteButtonTitleColor : red;
 
-    self.markAsReadButtonItem.tintColor = (self.style.markAsReadButtonTitleColor) ? self.style.markAsReadButtonTitleColor : self.defaultTintColor;
+    self.markAsReadButtonItem.tintColor = (self.messageCenterStyle.markAsReadButtonTitleColor) ? self.messageCenterStyle.markAsReadButtonTitleColor : self.defaultTintColor;
 }
 
 - (void)restoreNavigationBarStyle {
     // Restore the previous style to the containing navigation controller
-    if (self.style && self.style.navigationBarStyle && self.previousNavigationBarStyle) {
+    if (self.messageCenterStyle && self.messageCenterStyle.navigationBarStyle && self.previousNavigationBarStyle) {
         self.navigationController.navigationBar.barStyle = (UIBarStyle)[self.previousNavigationBarStyle intValue];
     }
 
@@ -310,41 +319,41 @@
 
 // Note: This method should only be called once in viewWillAppear or it may not fuction as expected
 - (void)setNavigationBarStyle {
-    if (self.style && self.style.navigationBarStyle) {
+    if (self.messageCenterStyle && self.messageCenterStyle.navigationBarStyle) {
         // Save the previous style of containing navigation controller, and set specified style
         if (!self.previousNavigationBarStyle) {
             // Only set once to prevent overwriting from multiple calls
             self.previousNavigationBarStyle = @(self.navigationController.navigationBar.barStyle);
         }
 
-        self.navigationController.navigationBar.barStyle = (UIBarStyle)self.style.navigationBarStyle;
-        self.messageViewNavigationController.navigationBar.barStyle = (UIBarStyle)self.style.navigationBarStyle;
+        self.navigationController.navigationBar.barStyle = (UIBarStyle)self.messageCenterStyle.navigationBarStyle;
+        self.messageViewNavigationController.navigationBar.barStyle = (UIBarStyle)self.messageCenterStyle.navigationBarStyle;
     }
 }
 
 - (void)applyMessageViewNavBarStyles {
     // apply styles to the message view's navigation bar
-    if (self.style.navigationBarColor) {
-        self.messageViewNavigationController.navigationBar.barTintColor = self.style.navigationBarColor;
+    if (self.messageCenterStyle.navigationBarColor) {
+        self.messageViewNavigationController.navigationBar.barTintColor = self.messageCenterStyle.navigationBarColor;
     }
 
-    if (self.style.tintColor) {
-        self.messageViewNavigationController.navigationBar.tintColor = self.style.tintColor;
+    if (self.messageCenterStyle.tintColor) {
+        self.messageViewNavigationController.navigationBar.tintColor = self.messageCenterStyle.tintColor;
     }
 
     // Only apply opaque property if a style is set
-    if (self.style) {
-        self.messageViewNavigationController.navigationBar.translucent = !self.style.navigationBarOpaque;
+    if (self.messageCenterStyle) {
+        self.messageViewNavigationController.navigationBar.translucent = !self.messageCenterStyle.navigationBarOpaque;
     }
 
     NSMutableDictionary *titleAttributes = [NSMutableDictionary dictionary];
 
-    if (self.style.titleColor) {
-        titleAttributes[NSForegroundColorAttributeName] = self.style.titleColor;
+    if (self.messageCenterStyle.titleColor) {
+        titleAttributes[NSForegroundColorAttributeName] = self.messageCenterStyle.titleColor;
     }
 
-    if (self.style.titleFont) {
-        titleAttributes[NSFontAttributeName] = self.style.titleFont;
+    if (self.messageCenterStyle.titleFont) {
+        titleAttributes[NSFontAttributeName] = self.messageCenterStyle.titleFont;
     }
 
     if (titleAttributes.count) {
@@ -880,8 +889,8 @@
 }
 
 - (UIImage *)placeholderIcon {
-    if (self.style.placeholderIcon) {
-        return self.style.placeholderIcon;
+    if (self.messageCenterStyle.placeholderIcon) {
+        return self.messageCenterStyle.placeholderIcon;
     }
 
     if (! _placeholderIcon) {
@@ -904,7 +913,7 @@
         cell = [[bundle loadNibNamed:nibName owner:nil options:nil] firstObject];
     }
 
-    cell.style = self.style;
+    cell.messageCenterStyle = self.messageCenterStyle;
     UAInboxMessage *message = [self messageAtIndex:indexPath.row];
     [cell setData:message];
 

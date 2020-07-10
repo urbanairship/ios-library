@@ -78,7 +78,7 @@
     // display both view controllers in horizontally regular contexts
     self.preferredDisplayMode = UISplitViewControllerDisplayModeAllVisible;
 
-    if (self.style) {
+    if (self.messageCenterStyle) {
         [self applyStyle];
     }
 }
@@ -93,35 +93,44 @@
     }
 }
 
-- (void)setStyle:(UAMessageCenterStyle *)style {
-    _style = style;
-    self.listViewController.style = style;
+- (void)setMessageCenterStyle:(UAMessageCenterStyle *)style {
+    _messageCenterStyle = style;
+    self.listViewController.messageCenterStyle = style;
 
     if (self.listNav && self.messageNav) {
         [self applyStyle];
     }
 }
 
+#if !defined(__IPHONE_14_0)
+- (void)setStyle:(UAMessageCenterStyle *)style {
+    [self setMessageCenterStyle:style];
+}
+- (UAMessageCenterStyle *)style {
+    return self.messageCenterStyle;
+}
+#endif
+
 - (void)applyStyle {
-    if (self.style.navigationBarColor) {
-        self.listNav.navigationBar.barTintColor = self.style.navigationBarColor;
-        self.messageNav.navigationBar.barTintColor = self.style.navigationBarColor;
+    if (self.messageCenterStyle.navigationBarColor) {
+        self.listNav.navigationBar.barTintColor = self.messageCenterStyle.navigationBarColor;
+        self.messageNav.navigationBar.barTintColor = self.messageCenterStyle.navigationBarColor;
     }
 
     // Only apply opaque property if a style is set
-    if (self.style) {
-        self.listNav.navigationBar.translucent = !self.style.navigationBarOpaque;
-        self.messageNav.navigationBar.translucent = !self.style.navigationBarOpaque;
+    if (self.messageCenterStyle) {
+        self.listNav.navigationBar.translucent = !self.messageCenterStyle.navigationBarOpaque;
+        self.messageNav.navigationBar.translucent = !self.messageCenterStyle.navigationBarOpaque;
     }
 
     NSMutableDictionary *titleAttributes = [NSMutableDictionary dictionary];
 
-    if (self.style.titleColor) {
-        titleAttributes[NSForegroundColorAttributeName] = self.style.titleColor;
+    if (self.messageCenterStyle.titleColor) {
+        titleAttributes[NSForegroundColorAttributeName] = self.messageCenterStyle.titleColor;
     }
 
-    if (self.style.titleFont) {
-        titleAttributes[NSFontAttributeName] = self.style.titleFont;
+    if (self.messageCenterStyle.titleFont) {
+        titleAttributes[NSFontAttributeName] = self.messageCenterStyle.titleFont;
     }
 
     if (titleAttributes.count) {
@@ -129,8 +138,8 @@
         self.messageNav.navigationBar.titleTextAttributes = titleAttributes;
     }
 
-    if (self.style.tintColor) {
-        self.view.tintColor = self.style.tintColor;
+    if (self.messageCenterStyle.tintColor) {
+        self.view.tintColor = self.messageCenterStyle.tintColor;
     }
 }
 

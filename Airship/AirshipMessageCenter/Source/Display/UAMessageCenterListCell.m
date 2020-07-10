@@ -13,8 +13,8 @@
     self.unreadIndicator.hidden = !message.unread;
 }
 
-- (void)setStyle:(UAMessageCenterStyle *)style {
-    _style = style;
+- (void)setMessageCenterStyle:(UAMessageCenterStyle *)style {
+    _messageCenterStyle = style;
 
     BOOL hidden = !style.iconsEnabled;
     self.listIconView.hidden = hidden;
@@ -82,15 +82,24 @@
     if (style.unreadIndicatorColor) {
         self.unreadIndicator.backgroundColor = style.unreadIndicatorColor;
     } else if (style.cellTintColor) {
-        self.unreadIndicator.backgroundColor = self.style.cellTintColor;
+        self.unreadIndicator.backgroundColor = self.messageCenterStyle.cellTintColor;
     } else if (style.tintColor) {
-        self.unreadIndicator.backgroundColor = self.style.tintColor;
+        self.unreadIndicator.backgroundColor = self.messageCenterStyle.tintColor;
     }
     
     // needed for retina displays because the unreadIndicator is configured to rasterize in
     // UAMessageCenterListCell.xib via user-defined runtime attributes (layer.shouldRasterize)
     self.unreadIndicator.layer.rasterizationScale = [[UIScreen mainScreen] scale];
 }
+
+#if !defined(__IPHONE_14_0)
+- (void)setStyle:(UAMessageCenterStyle *)style {
+    [self setMessageCenterStyle:style];
+}
+- (UAMessageCenterStyle *)style {
+    return self.messageCenterStyle;
+}
+#endif
 
 // Override to prevent the default implementation from covering up the unread indicator
  - (void)setSelected:(BOOL)selected animated:(BOOL)animated {

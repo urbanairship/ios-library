@@ -22,7 +22,16 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * The style to apply to the default message center.
  */
-@property (nonatomic, strong) UAMessageCenterStyle *style;
+@property (nonatomic, strong) UAMessageCenterStyle *messageCenterStyle;
+
+/**
+ * The style to apply to the default message center.
+ *
+ * Note: This property is unavailble in iOS 14. Instead use `messageCenterStyle`.
+ */
+#if !defined(__IPHONE_14_0)
+@property(nonatomic, strong) UAMessageCenterStyle *style;
+#endif
 
 /**
  * An optional predicate for filtering messages.
