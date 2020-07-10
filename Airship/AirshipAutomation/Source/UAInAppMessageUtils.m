@@ -23,6 +23,10 @@ static CGFloat const CloseButtonHeight = 30;
 
     NSAttributedString *attributedTitle = [[NSAttributedString alloc] initWithString:buttonInfo.label.text attributes:attributes];
 
+    [button setAttributedTitle:attributedTitle forState:UIControlStateNormal];
+    
+    button.titleLabel.adjustsFontForContentSizeCategory = true;
+    
     switch (buttonInfo.label.alignment) {
         case UAInAppMessageTextInfoAlignmentLeft:
             button.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
@@ -37,9 +41,7 @@ static CGFloat const CloseButtonHeight = 30;
             button.contentHorizontalAlignment = UIControlContentHorizontalAlignmentCenter;
             break;
     }
-
-    [button setAttributedTitle:attributedTitle forState:UIControlStateNormal];
-
+    
     CGFloat defaultButtonHeight = button.titleLabel.intrinsicContentSize.height + 2 * buttonMargin;
 
     // Style the button height
