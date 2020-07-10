@@ -120,7 +120,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         self.whitelist = [UAWhitelist whitelistWithConfig:config];
         self.applicationMetrics = [UAApplicationMetrics applicationMetricsWithDataStore:dataStore];
 
-        UATagGroupsMutationHistory<UATagGroupsHistory> *tagGroupsChannelMutationHistory = [UATagGroupsMutationHistory historyWithDataStore:self.dataStore keyStore:UATagGroupsChannelStoreKey];
+        UATagGroupsMutationHistory<UATagGroupsHistory> *tagGroupsChannelMutationHistory = [UATagGroupsMutationHistory historyWithDataStore:self.dataStore storeKey:UATagGroupsChannelStoreKey];
         UATagGroupsRegistrar *tagGroupsChannelRegistrar = [UATagGroupsRegistrar tagGroupsRegistrarWithConfig:self.config
                                                                                             dataStore:self.dataStore
                                                                                       mutationHistory:tagGroupsChannelMutationHistory];
@@ -144,7 +144,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         [components addObject:self.sharedPush];
 
         
-        UATagGroupsMutationHistory<UATagGroupsHistory> *tagGroupsNamedUseMutationHistory = [UATagGroupsMutationHistory historyWithDataStore:self.dataStore keyStore:UATagGroupsNamedUserStoreKey];
+        UATagGroupsMutationHistory<UATagGroupsHistory> *tagGroupsNamedUseMutationHistory = [UATagGroupsMutationHistory historyWithDataStore:self.dataStore storeKey:UATagGroupsNamedUserStoreKey];
         UATagGroupsRegistrar *tagGroupsNamedUserRegistrar = [UATagGroupsRegistrar tagGroupsRegistrarWithConfig:self.config
                                                                                             dataStore:self.dataStore
                                                                                       mutationHistory:tagGroupsNamedUseMutationHistory];

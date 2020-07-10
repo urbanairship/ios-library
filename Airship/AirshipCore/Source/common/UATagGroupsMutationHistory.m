@@ -27,13 +27,13 @@
 
 @implementation UATagGroupsMutationHistory
 
-- (instancetype)initWithDataStore:(UAPreferenceDataStore *)dataStore keyStore:(NSString *)keyStore {
+- (instancetype)initWithDataStore:(UAPreferenceDataStore *)dataStore storeKey:(NSString *)storeKey {
     self = [super init];
 
     if (self) {
         self.dataStore = dataStore;
         
-        self.storeKey = keyStore;
+        self.storeKey = storeKey;
 
         if ([self.storeKey isEqualToString:UATagGroupsNamedUserStoreKey]) {
             self.pendingTagGroupsMutations = [UAPersistentQueue persistentQueueWithDataStore:dataStore
@@ -52,8 +52,8 @@
     return self;
 }
 
-+ (instancetype)historyWithDataStore:(UAPreferenceDataStore *)dataStore keyStore:(NSString *)keyStore {
-    return [[self alloc] initWithDataStore:dataStore keyStore:keyStore];
++ (instancetype)historyWithDataStore:(UAPreferenceDataStore *)dataStore storeKey:(NSString *)storeKey {
+    return [[self alloc] initWithDataStore:dataStore storeKey:storeKey];
 }
 
 - (NSString *)legacyKeyPrefix {

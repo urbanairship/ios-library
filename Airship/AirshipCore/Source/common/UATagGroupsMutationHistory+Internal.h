@@ -21,9 +21,9 @@ NS_ASSUME_NONNULL_BEGIN
  * UATagGroupsMutationHistory class factory method.
  *
  * @param dataStore A preference data store to use for persistence.
- * @param keyStore The store key to use for persistence.
+ * @param storeKey The store key to use for persistence.
  */
-+ (instancetype)historyWithDataStore:(UAPreferenceDataStore *)dataStore keyStore:(NSString *)keyStore;
++ (instancetype)historyWithDataStore:(UAPreferenceDataStore *)dataStore storeKey:(NSString *)storeKey;
 
 /**
  * Returns all pending mutations, collapsing both channel and

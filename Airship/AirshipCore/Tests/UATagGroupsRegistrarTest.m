@@ -28,9 +28,9 @@
     
     self.namedUserOperationQueue = [[NSOperationQueue alloc] init];
 
-    self.channelMutationHistory = [UATagGroupsMutationHistory historyWithDataStore:self.dataStore keyStore:UATagGroupsChannelStoreKey];
+    self.channelMutationHistory = [UATagGroupsMutationHistory historyWithDataStore:self.dataStore storeKey:UATagGroupsChannelStoreKey];
     
-    self.namedUserMutationHistory = [UATagGroupsMutationHistory historyWithDataStore:self.dataStore keyStore:UATagGroupsNamedUserStoreKey];
+    self.namedUserMutationHistory = [UATagGroupsMutationHistory historyWithDataStore:self.dataStore storeKey:UATagGroupsNamedUserStoreKey];
 
     self.channelRegistrar = [UATagGroupsRegistrar tagGroupsRegistrarWithDataStore:self.dataStore
                                                            mutationHistory:self.channelMutationHistory

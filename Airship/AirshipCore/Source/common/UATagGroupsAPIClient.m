@@ -18,31 +18,31 @@ NSString * const UATagGroupsNamedUserStoreKey = @"named_user_id";
 
 @interface UATagGroupsAPIClient()
 
-@property(nonatomic) NSString *keyStore;
+@property(nonatomic) NSString *storeKey;
 
 @end
 
 @implementation UATagGroupsAPIClient
 
-- (instancetype)initWithConfig:(UARuntimeConfig *)config session:(UARequestSession *)session keyStore:(NSString *)keyStore {
+- (instancetype)initWithConfig:(UARuntimeConfig *)config session:(UARequestSession *)session storeKey:(NSString *)storeKey {
     self = [super initWithConfig:config session:session];
     if (self) {
-        self.keyStore = keyStore;
+        self.storeKey = storeKey;
     }
     return self;
 }
 
-+ (instancetype)clientWithConfig:(UARuntimeConfig *)config keyStore:(NSString *)keyStore {
-    UATagGroupsAPIClient *client = [self clientWithConfig:config session:[UARequestSession sessionWithConfig:config] keyStore:keyStore];
++ (instancetype)clientWithConfig:(UARuntimeConfig *)config storeKey:(NSString *)storeKey {
+    UATagGroupsAPIClient *client = [self clientWithConfig:config session:[UARequestSession sessionWithConfig:config] storeKey:storeKey];
     return client;
 }
 
-+ (instancetype)clientWithConfig:(UARuntimeConfig *)config session:(UARequestSession *)session keyStore:(NSString *)keyStore {
-    return [[self alloc] initWithConfig:config session:session keyStore:keyStore];
++ (instancetype)clientWithConfig:(UARuntimeConfig *)config session:(UARequestSession *)session storeKey:(NSString *)storeKey {
+    return [[self alloc] initWithConfig:config session:session storeKey:storeKey];
 }
 
 - (NSString *)path {
-    if ([self.keyStore isEqualToString:UATagGroupsNamedUserStoreKey]) {
+    if ([self.storeKey isEqualToString:UATagGroupsNamedUserStoreKey]) {
         return kUANamedUserTagsPath;
     } else {
         return kUAChannelTagGroupsPath;
@@ -55,7 +55,7 @@ NSString * const UATagGroupsNamedUserStoreKey = @"named_user_id";
 
     [self performTagGroupsMutation:mutation
                               path:[self path]
-                          audience:@{self.keyStore : identifier}
+                          audience:@{self.storeKey : identifier}
                  completionHandler:completionHandler];
 }
 

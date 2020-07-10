@@ -15,8 +15,8 @@
 
 - (void)setUp {
     [super setUp];
-    self.channelMutationHistory = [UATagGroupsMutationHistory historyWithDataStore:self.dataStore keyStore:UATagGroupsChannelStoreKey];
-    self.namedUserMutationHistory = [UATagGroupsMutationHistory historyWithDataStore:self.dataStore keyStore:UATagGroupsNamedUserStoreKey];
+    self.channelMutationHistory = [UATagGroupsMutationHistory historyWithDataStore:self.dataStore storeKey:UATagGroupsChannelStoreKey];
+    self.namedUserMutationHistory = [UATagGroupsMutationHistory historyWithDataStore:self.dataStore storeKey:UATagGroupsNamedUserStoreKey];
 }
 
 - (void)tearDown {
@@ -100,7 +100,7 @@
     NSData *encodedMutations = [NSKeyedArchiver archivedDataWithRootObject:@[oldMutation]];
     [self.dataStore setObject:encodedMutations forKey:@"UAPushTagGroupsMutations"];
 
-    UATagGroupsMutationHistory *channelTagGroupsMutationHistory = [UATagGroupsMutationHistory historyWithDataStore:self.dataStore keyStore:UATagGroupsChannelStoreKey];
+    UATagGroupsMutationHistory *channelTagGroupsMutationHistory = [UATagGroupsMutationHistory historyWithDataStore:self.dataStore storeKey:UATagGroupsChannelStoreKey];
 
     UATagGroupsMutation *oldAddRemoveFromHistory = [channelTagGroupsMutationHistory popPendingMutation];
     NSDictionary *expected = @{ @"add": @{ @"group1": @[@"tag1"] }, @"remove": @{ @"group2": @[@"tag2"] } };

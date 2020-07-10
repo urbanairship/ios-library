@@ -31,20 +31,20 @@ extern NSString * const UATagGroupsNamedUserStoreKey;
  * Factory method to create a UATagGroupsAPIClient.
  *
  * @param config The Airship config.
- * @param keyStore the tag groups key store.
+ * @param storeKey the tag groups key store.
  * @return UATagGroupsAPIClient instance.
  */
-+ (instancetype)clientWithConfig:(UARuntimeConfig *)config keyStore:(NSString *)keyStore ;
++ (instancetype)clientWithConfig:(UARuntimeConfig *)config storeKey:(NSString *)storeKey ;
 
 /**
  * Factory method to create a UATagGroupsAPIClient.
  *
  * @param config The Airship config.
  * @param session The request session.
- * @param keyStore the tag groups key store.
+ * @param storeKey the tag groups key store.
  * @return UATagGroupsAPIClient instance.
  */
-+ (instancetype)clientWithConfig:(UARuntimeConfig *)config session:(UARequestSession *)session keyStore:(NSString *)keyStore;
++ (instancetype)clientWithConfig:(UARuntimeConfig *)config session:(UARequestSession *)session storeKey:(NSString *)storeKey;
 
 /**
  * Update the tag group for the identifier.
