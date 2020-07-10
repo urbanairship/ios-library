@@ -9,12 +9,12 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /**
-* The tag goups channel store key.
+* The tag groups channel store key.
 */
 extern NSString * const UATagGroupsChannelStoreKey;
 
 /**
-* The tag goups named user store key.
+* The tag groups named user store key.
 */
 extern NSString * const UATagGroupsNamedUserStoreKey;
 
