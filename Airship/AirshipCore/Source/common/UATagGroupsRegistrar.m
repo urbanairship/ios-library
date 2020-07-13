@@ -71,9 +71,14 @@ typedef void (^UATagGroupsMutator)(NSArray *, NSString *);
                                    dataStore:(UAPreferenceDataStore *)dataStore
                              mutationHistory:(UATagGroupsMutationHistory *)mutationHistory {
 
+    UATagGroupsAPIClient *client =  [UATagGroupsAPIClient channelClientWithConfig:config];
+    if ([mutationHistory.storeKey isEqualToString:UATagGroupsNamedUserStoreKey]) {
+        client = [UATagGroupsAPIClient namedUserClientWithConfig:config];
+    }
+    
     return [[self alloc] initWithDataStore:dataStore
                            mutationHistory:(UATagGroupsMutationHistory *)mutationHistory
-                                 apiClient:[UATagGroupsAPIClient clientWithConfig:config storeKey:mutationHistory.storeKey]
+                                 apiClient:client
                             operationQueue:[[NSOperationQueue alloc] init]
                                application:[UIApplication sharedApplication]];
 }

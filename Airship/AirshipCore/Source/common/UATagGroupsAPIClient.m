@@ -19,6 +19,7 @@ NSString * const UATagGroupsNamedUserStoreKey = @"named_user_id";
 @interface UATagGroupsAPIClient()
 
 @property(nonatomic) NSString *storeKey;
+@property(nonatomic) NSString *path;
 
 @end
 
@@ -28,25 +29,31 @@ NSString * const UATagGroupsNamedUserStoreKey = @"named_user_id";
     self = [super initWithConfig:config session:session];
     if (self) {
         self.storeKey = storeKey;
+        if ([self.storeKey isEqualToString:UATagGroupsNamedUserStoreKey]) {
+            self.path = kUANamedUserTagsPath;
+        } else {
+            self.path = kUAChannelTagGroupsPath;
+        }
     }
     return self;
 }
 
-+ (instancetype)clientWithConfig:(UARuntimeConfig *)config storeKey:(NSString *)storeKey {
-    UATagGroupsAPIClient *client = [self clientWithConfig:config session:[UARequestSession sessionWithConfig:config] storeKey:storeKey];
++ (instancetype)channelClientWithConfig:(UARuntimeConfig *)config {
+    UATagGroupsAPIClient *client = [self channelClientWithConfig:config session:[UARequestSession sessionWithConfig:config]];
     return client;
 }
 
-+ (instancetype)clientWithConfig:(UARuntimeConfig *)config session:(UARequestSession *)session storeKey:(NSString *)storeKey {
-    return [[self alloc] initWithConfig:config session:session storeKey:storeKey];
++ (instancetype)channelClientWithConfig:(UARuntimeConfig *)config session:(UARequestSession *)session {
+    return [[self alloc] initWithConfig:config session:session storeKey:UATagGroupsChannelStoreKey];
 }
 
-- (NSString *)path {
-    if ([self.storeKey isEqualToString:UATagGroupsNamedUserStoreKey]) {
-        return kUANamedUserTagsPath;
-    } else {
-        return kUAChannelTagGroupsPath;
-    }
++ (instancetype)namedUserClientWithConfig:(UARuntimeConfig *)config {
+    UATagGroupsAPIClient *client = [self namedUserClientWithConfig:config session:[UARequestSession sessionWithConfig:config]];
+    return client;
+}
+
++ (instancetype)namedUserClientWithConfig:(UARuntimeConfig *)config session:(UARequestSession *)session {
+    return [[self alloc] initWithConfig:config session:session storeKey:UATagGroupsNamedUserStoreKey];
 }
 
 - (void)updateTagGroupsForId:(NSString *)identifier
@@ -54,7 +61,7 @@ NSString * const UATagGroupsNamedUserStoreKey = @"named_user_id";
            completionHandler:(void (^)(NSUInteger status))completionHandler {
 
     [self performTagGroupsMutation:mutation
-                              path:[self path]
+                              path:self.path
                           audience:@{self.storeKey : identifier}
                  completionHandler:completionHandler];
 }

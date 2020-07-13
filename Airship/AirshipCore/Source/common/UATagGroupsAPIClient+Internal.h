@@ -28,23 +28,42 @@ extern NSString * const UATagGroupsNamedUserStoreKey;
 ///---------------------------------------------------------------------------------------
 
 /**
- * Factory method to create a UATagGroupsAPIClient.
+ * Factory method to create a UATagGroupsAPIClient with channel tag groups type.
  *
  * @param config The Airship config.
  * @param storeKey the tag groups key store.
  * @return UATagGroupsAPIClient instance.
  */
-+ (instancetype)clientWithConfig:(UARuntimeConfig *)config storeKey:(NSString *)storeKey ;
++ (instancetype)channelClientWithConfig:(UARuntimeConfig *)config;
 
 /**
- * Factory method to create a UATagGroupsAPIClient.
+ * Factory method to create a UATagGroupsAPIClient  with channel tag groups type.
  *
  * @param config The Airship config.
  * @param session The request session.
  * @param storeKey the tag groups key store.
  * @return UATagGroupsAPIClient instance.
  */
-+ (instancetype)clientWithConfig:(UARuntimeConfig *)config session:(UARequestSession *)session storeKey:(NSString *)storeKey;
++ (instancetype)channelClientWithConfig:(UARuntimeConfig *)config session:(UARequestSession *)session;
+
+/**
+ * Factory method to create a UATagGroupsAPIClient with named user tag groups type.
+ *
+ * @param config The Airship config.
+ * @param storeKey the tag groups key store.
+ * @return UATagGroupsAPIClient instance.
+ */
++ (instancetype)namedUserClientWithConfig:(UARuntimeConfig *)config;
+
+/**
+ * Factory method to create a UATagGroupsAPIClient with named user tag groups type.
+ *
+ * @param config The Airship config.
+ * @param session The request session.
+ * @param storeKey the tag groups key store.
+ * @return UATagGroupsAPIClient instance.
+ */
++ (instancetype)namedUserClientWithConfig:(UARuntimeConfig *)config session:(UARequestSession *)session;
 
 /**
  * Update the tag group for the identifier.
