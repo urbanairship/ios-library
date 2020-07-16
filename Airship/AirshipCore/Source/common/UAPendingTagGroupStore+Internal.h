@@ -13,12 +13,12 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Represents the local history of tag group mutations.
  */
-@interface UATagGroupsMutationHistory : NSObject<UATagGroupsHistory>
+@interface UAPendingTagGroupStore : NSObject<UATagGroupsHistory>
 
 @property (nonatomic, copy) NSString *storeKey;
 
 /**
- * UATagGroupsMutationHistory class factory method.
+ * UAPendingTagGroupStore class factory method.
  *
  * @param dataStore A preference data store to use for persistence.
  * @param storeKey The store key to use for persistence.

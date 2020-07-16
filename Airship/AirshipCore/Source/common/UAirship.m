@@ -19,7 +19,7 @@
 #import "UARemoteDataManager+Internal.h"
 #import "UARemoteConfigManager+Internal.h"
 #import "UATagGroupsRegistrar+Internal.h"
-#import "UATagGroupsMutationHistory+Internal.h"
+#import "UAPendingTagGroupStore+Internal.h"
 #import "UAChannel+Internal.h"
 #import "UAAppStateTracker.h"
 #import "UALocationModuleLoaderFactory.h"
@@ -120,10 +120,10 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         self.whitelist = [UAWhitelist whitelistWithConfig:config];
         self.applicationMetrics = [UAApplicationMetrics applicationMetricsWithDataStore:dataStore];
 
-        UATagGroupsMutationHistory<UATagGroupsHistory> *tagGroupsChannelMutationHistory = [UATagGroupsMutationHistory historyWithDataStore:self.dataStore storeKey:UATagGroupsChannelStoreKey];
+        UAPendingTagGroupStore<UATagGroupsHistory> *pendingTagGroupChannelStore = [UAPendingTagGroupStore historyWithDataStore:self.dataStore storeKey:UATagGroupsChannelStoreKey];
         UATagGroupsRegistrar *tagGroupsChannelRegistrar = [UATagGroupsRegistrar tagGroupsRegistrarWithConfig:self.config
                                                                                             dataStore:self.dataStore
-                                                                                      mutationHistory:tagGroupsChannelMutationHistory];
+                                                                                      pendingTagGroupStore:pendingTagGroupChannelStore];
 
         self.sharedChannel = [UAChannel channelWithDataStore:self.dataStore
                                                       config:self.config
@@ -144,10 +144,10 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         [components addObject:self.sharedPush];
 
         
-        UATagGroupsMutationHistory<UATagGroupsHistory> *tagGroupsNamedUserMutationHistory = [UATagGroupsMutationHistory historyWithDataStore:self.dataStore storeKey:UATagGroupsNamedUserStoreKey];
+        UAPendingTagGroupStore<UATagGroupsHistory> *pendingTagGroupNamedUserStore = [UAPendingTagGroupStore historyWithDataStore:self.dataStore storeKey:UATagGroupsNamedUserStoreKey];
         UATagGroupsRegistrar *tagGroupsNamedUserRegistrar = [UATagGroupsRegistrar tagGroupsRegistrarWithConfig:self.config
                                                                                             dataStore:self.dataStore
-                                                                                      mutationHistory:tagGroupsNamedUserMutationHistory];
+                                                                                      pendingTagGroupStore:pendingTagGroupNamedUserStore];
         self.sharedNamedUser = [UANamedUser namedUserWithChannel:self.sharedChannel
                                                           config:self.config
                                                        dataStore:self.dataStore
@@ -184,7 +184,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
                                                                                     channel:self.sharedChannel
                                                                                   analytics:self.sharedAnalytics
                                                                           remoteDataManager:self.sharedRemoteDataManager
-                                                                           tagGroupsHistory:tagGroupsChannelMutationHistory];
+                                                                           tagGroupsHistory:pendingTagGroupChannelStore];
         if (automationChannelLoader) {
             [loaders addObject:automationChannelLoader];
         }
@@ -194,7 +194,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
                   channel:self.sharedChannel
                 analytics:self.sharedAnalytics
         remoteDataManager:self.sharedRemoteDataManager
-         tagGroupsHistory:tagGroupsNamedUserMutationHistory];
+         tagGroupsHistory:pendingTagGroupNamedUserStore];
         if (automationNamedUserLoader) {
             [loaders addObject:automationNamedUserLoader];
         }

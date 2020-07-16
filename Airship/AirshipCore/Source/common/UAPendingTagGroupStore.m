@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-#import "UATagGroupsMutationHistory+Internal.h"
+#import "UAPendingTagGroupStore+Internal.h"
 #import "UAPersistentQueue+Internal.h"
 
 #define kUATagGroupsSentMutationsDefaultMaxAge 60 * 60 * 24 // 1 Day
@@ -19,13 +19,13 @@
 // Max record age
 #define kUATagGroupsSentMutationsMaxAgeKey @"com;urbanairship.tag_groups.transaction_records.max_age"
 
-@interface UATagGroupsMutationHistory ()
+@interface UAPendingTagGroupStore ()
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 @property (nonatomic, strong) UAPersistentQueue *pendingTagGroupsMutations;
 @property (nonatomic, strong) UAPersistentQueue *tagGroupsTransactionRecords;
 @end
 
-@implementation UATagGroupsMutationHistory
+@implementation UAPendingTagGroupStore
 
 - (instancetype)initWithDataStore:(UAPreferenceDataStore *)dataStore storeKey:(NSString *)storeKey {
     self = [super init];

@@ -6,7 +6,7 @@
 #import "UATagGroupsAPIClient+Internal.h"
 #import "UATagUtils+Internal.h"
 #import "UAAsyncOperation.h"
-#import "UATagGroupsMutationHistory+Internal.h"
+#import "UAPendingTagGroupStore+Internal.h"
 
 // Typedef for generating tag group mutation factory blocks
 typedef UATagGroupsMutation * (^UATagGroupsMutationFactory)(NSArray *, NSString *);
@@ -32,9 +32,9 @@ typedef void (^UATagGroupsMutator)(NSArray *, NSString *);
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 
 /**
- * The mutation history.
+ * The pending mutation store.
  */
-@property (nonatomic, strong) UATagGroupsMutationHistory *mutationHistory;
+@property (nonatomic, strong) UAPendingTagGroupStore *pendingTagGroupStore;
 
 /**
  * The application.
@@ -46,7 +46,7 @@ typedef void (^UATagGroupsMutator)(NSArray *, NSString *);
 @implementation UATagGroupsRegistrar
 
 - (instancetype)initWithDataStore:(UAPreferenceDataStore *)dataStore
-                  mutationHistory:(UATagGroupsMutationHistory *)mutationHistory
+                  pendingTagGroupStore:(UAPendingTagGroupStore *)pendingTagGroupStore
                               apiClient:(UATagGroupsAPIClient *)apiClient
                          operationQueue:(NSOperationQueue *)operationQueue
                       application:application {
@@ -56,7 +56,7 @@ typedef void (^UATagGroupsMutator)(NSArray *, NSString *);
     if (self) {
         self.dataStore = dataStore;
         self.application = application;
-        self.mutationHistory = mutationHistory;
+        self.pendingTagGroupStore = pendingTagGroupStore;
         self.tagGroupsAPIClient = apiClient;
         self.tagGroupsAPIClient.enabled = self.componentEnabled;
         
@@ -69,28 +69,28 @@ typedef void (^UATagGroupsMutator)(NSArray *, NSString *);
 
 + (instancetype)tagGroupsRegistrarWithConfig:(UARuntimeConfig *)config
                                    dataStore:(UAPreferenceDataStore *)dataStore
-                             mutationHistory:(UATagGroupsMutationHistory *)mutationHistory {
+                             pendingTagGroupStore:(UAPendingTagGroupStore *)pendingTagGroupStore {
 
     UATagGroupsAPIClient *client =  [UATagGroupsAPIClient channelClientWithConfig:config];
-    if ([mutationHistory.storeKey isEqualToString:UATagGroupsNamedUserStoreKey]) {
+    if ([pendingTagGroupStore.storeKey isEqualToString:UATagGroupsNamedUserStoreKey]) {
         client = [UATagGroupsAPIClient namedUserClientWithConfig:config];
     }
     
     return [[self alloc] initWithDataStore:dataStore
-                           mutationHistory:(UATagGroupsMutationHistory *)mutationHistory
+                           pendingTagGroupStore:(UAPendingTagGroupStore *)pendingTagGroupStore
                                  apiClient:client
                             operationQueue:[[NSOperationQueue alloc] init]
                                application:[UIApplication sharedApplication]];
 }
 
 + (instancetype)tagGroupsRegistrarWithDataStore:(UAPreferenceDataStore *)dataStore
-                                mutationHistory:(UATagGroupsMutationHistory *)mutationHistory
+                                pendingTagGroupStore:(UAPendingTagGroupStore *)pendingTagGroupStore
                                       apiClient:(UATagGroupsAPIClient *)apiClient
                                  operationQueue:(NSOperationQueue *)operationQueue
                                     application:(UIApplication *)application {
 
     return [[self alloc] initWithDataStore:dataStore
-                           mutationHistory:(UATagGroupsMutationHistory *)mutationHistory
+                           pendingTagGroupStore:(UAPendingTagGroupStore *)pendingTagGroupStore
                                  apiClient:apiClient
                             operationQueue:operationQueue
                                application:application];
@@ -143,10 +143,10 @@ typedef void (^UATagGroupsMutator)(NSArray *, NSString *);
         }
 
         // collapse mutations
-        [self.mutationHistory collapsePendingMutations];
+        [self.pendingTagGroupStore collapsePendingMutations];
         
         // peek at top mutation
-        UATagGroupsMutation *mutation = [self.mutationHistory peekPendingMutation];
+        UATagGroupsMutation *mutation = [self.pendingTagGroupStore peekPendingMutation];
         
         if (!mutation) {
             // no upload work to do - end background task, if necessary, and finish operation
@@ -160,9 +160,9 @@ typedef void (^UATagGroupsMutator)(NSArray *, NSString *);
             UA_STRONGIFY(self);
             if (status >= 200 && status <= 299) {
                 // Success - pop uploaded mutation and store the transaction record
-                UATagGroupsMutation *mutation = [self.mutationHistory popPendingMutation];
+                UATagGroupsMutation *mutation = [self.pendingTagGroupStore popPendingMutation];
 
-                [self.mutationHistory addSentMutation:mutation date:[NSDate date]];
+                [self.pendingTagGroupStore addSentMutation:mutation date:[NSDate date]];
 
                 // Try to upload more mutations as long as the operation hasn't been canceled
                 if (operation.isCancelled) {
@@ -172,7 +172,7 @@ typedef void (^UATagGroupsMutator)(NSArray *, NSString *);
                 }
             } else if (status == 400 || status == 403) {
                 // Unrecoverable failure - pop mutation and end the task
-                [self.mutationHistory popPendingMutation];
+                [self.pendingTagGroupStore popPendingMutation];
                 [self endBackgroundTask:backgroundTaskIdentifier];
             }
 
@@ -212,7 +212,7 @@ typedef void (^UATagGroupsMutator)(NSArray *, NSString *);
 
         // rest runs on the operation queue
         [self.operationQueue addOperation:[NSBlockOperation blockOperationWithBlock:^{
-            [self.mutationHistory addPendingMutation:mutation];
+            [self.pendingTagGroupStore addPendingMutation:mutation];
         }]];
     };
 }
@@ -256,7 +256,7 @@ typedef void (^UATagGroupsMutator)(NSArray *, NSString *);
 - (void)clearAllPendingTagUpdates {
     [self.operationQueue cancelAllOperations];
     [self.operationQueue addOperation:[NSBlockOperation blockOperationWithBlock:^{
-        [self.mutationHistory clearPendingMutations];
+        [self.pendingTagGroupStore clearPendingMutations];
     }]];
 }
 
