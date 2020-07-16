@@ -5,7 +5,7 @@
 #import "UAirship.h"
 #import "UAChannel.h"
 #import "UATagGroupsLookupAPIClient+Internal.h"
-#import "UATagGroupsMutationHistory+Internal.h"
+#import "UAPendingTagGroupStore+Internal.h"
 #import "UATestDate.h"
 
 @interface UATagGroupsLookupManagerTest : UAAirshipBaseTest

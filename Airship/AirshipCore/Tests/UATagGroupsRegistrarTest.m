@@ -5,8 +5,8 @@
 #import "UATagGroupsMutation+Internal.h"
 
 @interface UATagGroupsRegistrarTest : UAAirshipBaseTest
-@property (nonatomic, strong) UATagGroupsMutationHistory *channelMutationHistory;
-@property (nonatomic, strong) UATagGroupsMutationHistory *namedUserMutationHistory;
+@property (nonatomic, strong) UAPendingTagGroupStore *channelPendingTagGroupStore;
+@property (nonatomic, strong) UAPendingTagGroupStore *namedPendingTagGroupStore;
 @property (nonatomic, strong) UATagGroupsRegistrar *channelRegistrar;
 @property (nonatomic, strong) UATagGroupsRegistrar *namedUserRegistrar;
 @property (nonatomic, strong) NSOperationQueue *channelOperationQueue;
@@ -28,19 +28,19 @@
     
     self.namedUserOperationQueue = [[NSOperationQueue alloc] init];
 
-    self.channelMutationHistory = [UATagGroupsMutationHistory historyWithDataStore:self.dataStore storeKey:UATagGroupsChannelStoreKey];
+    self.channelPendingTagGroupStore = [UAPendingTagGroupStore historyWithDataStore:self.dataStore storeKey:UATagGroupsChannelStoreKey];
     
-    self.namedUserMutationHistory = [UATagGroupsMutationHistory historyWithDataStore:self.dataStore storeKey:UATagGroupsNamedUserStoreKey];
+    self.namedPendingTagGroupStore = [UAPendingTagGroupStore historyWithDataStore:self.dataStore storeKey:UATagGroupsNamedUserStoreKey];
 
     self.channelRegistrar = [UATagGroupsRegistrar tagGroupsRegistrarWithDataStore:self.dataStore
-                                                           mutationHistory:self.channelMutationHistory
+                                                           pendingTagGroupStore:self.channelPendingTagGroupStore
                                                                  apiClient:self.mockApiClient
                                                             operationQueue:self.channelOperationQueue
                                                                application:self.mockApplication];
     
     
     self.namedUserRegistrar = [UATagGroupsRegistrar tagGroupsRegistrarWithDataStore:self.dataStore
-                                                           mutationHistory:self.namedUserMutationHistory
+                                                           pendingTagGroupStore:self.namedPendingTagGroupStore
                                                                  apiClient:self.mockApiClient
                                                             operationQueue:self.namedUserOperationQueue
                                                                application:self.mockApplication];
@@ -136,14 +136,14 @@
     [self.channelOperationQueue waitUntilAllOperationsAreFinished];
 
     NSDictionary *expected = @{ @"set": @{ @"group": @[@"tag2", @"tag1"] } };
-    XCTAssertEqualObjects(expected, [self.channelMutationHistory peekPendingMutation].payload);
+    XCTAssertEqualObjects(expected, [self.channelPendingTagGroupStore peekPendingMutation].payload);
 }
 
 - (void)testSetWithEmptyGroupDoesntSetTags {
     [self.channelRegistrar setTags:@[@"tag1"] group:@""];
     [self.channelOperationQueue waitUntilAllOperationsAreFinished];
 
-    XCTAssertNil([self.channelMutationHistory peekPendingMutation]);
+    XCTAssertNil([self.channelPendingTagGroupStore peekPendingMutation]);
 }
 
 - (void)testAddEmptyTagListOrEmptyGroupDoesntAddTags {
@@ -151,7 +151,7 @@
     [self.channelRegistrar addTags:@[@"tag1"] group:@""];
     [self.channelOperationQueue waitUntilAllOperationsAreFinished];
 
-    XCTAssertNil([self.channelMutationHistory peekPendingMutation]);
+    XCTAssertNil([self.channelPendingTagGroupStore peekPendingMutation]);
 }
 
 - (void)testRemoveEmptyTagListOrEmptyGroupDoesntRemoveTags {
@@ -163,7 +163,7 @@
 
     // Should still only be the set mutation
     NSDictionary *expected = @{ @"set": @{ @"group": @[@"tag2", @"tag1"] } };
-    XCTAssertEqualObjects(expected, [self.channelMutationHistory peekPendingMutation].payload);
+    XCTAssertEqualObjects(expected, [self.channelPendingTagGroupStore peekPendingMutation].payload);
 }
 
 - (void)testChannelAndNamedUserTagsAreIndependent {
@@ -174,10 +174,10 @@
     [self.namedUserOperationQueue waitUntilAllOperationsAreFinished];
 
     NSDictionary *channelExpectedPayload = @{ @"set": @{ @"cool": @[@"tag1"] } };
-    XCTAssertEqualObjects(channelExpectedPayload, [self.channelMutationHistory peekPendingMutation].payload);
+    XCTAssertEqualObjects(channelExpectedPayload, [self.channelPendingTagGroupStore peekPendingMutation].payload);
 
     NSDictionary *namedUserExpectedPayload = @{ @"set": @{ @"cool": @[@"tag2"] } };
-    XCTAssertEqualObjects(namedUserExpectedPayload, [self.namedUserMutationHistory peekPendingMutation].payload);
+    XCTAssertEqualObjects(namedUserExpectedPayload, [self.namedPendingTagGroupStore peekPendingMutation].payload);
 }
 
 - (void)testClearAllPendingUpdatesCancelsAndClearsMutations {
@@ -185,12 +185,12 @@
     [self.namedUserOperationQueue waitUntilAllOperationsAreFinished];
 
     NSDictionary *namedUserExpectedPayload = @{ @"set": @{ @"cool": @[@"tag2"] } };
-    XCTAssertEqualObjects(namedUserExpectedPayload, [self.namedUserMutationHistory peekPendingMutation].payload);
+    XCTAssertEqualObjects(namedUserExpectedPayload, [self.namedPendingTagGroupStore peekPendingMutation].payload);
 
     [self.namedUserRegistrar clearAllPendingTagUpdates];
     [self.namedUserOperationQueue waitUntilAllOperationsAreFinished];
 
-    XCTAssertNil([self.namedUserMutationHistory peekPendingMutation]);
+    XCTAssertNil([self.namedPendingTagGroupStore peekPendingMutation]);
 }
 
 @end

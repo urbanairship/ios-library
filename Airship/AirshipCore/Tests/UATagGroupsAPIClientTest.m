@@ -20,8 +20,8 @@
 - (void)setUp {
     [super setUp];
     self.mockSession = [self mockForClass:[UARequestSession class]];
-    self.channelClient = [UATagGroupsAPIClient clientWithConfig:self.config session:self.mockSession storeKey:UATagGroupsChannelStoreKey];
-    self.namedUserClient = [UATagGroupsAPIClient clientWithConfig:self.config session:self.mockSession storeKey:UATagGroupsNamedUserStoreKey];
+    self.channelClient = [UATagGroupsAPIClient channelClientWithConfig:self.config session:self.mockSession];
+    self.namedUserClient = [UATagGroupsAPIClient namedUserClientWithConfig:self.config session:self.mockSession];
 }
 
 /**

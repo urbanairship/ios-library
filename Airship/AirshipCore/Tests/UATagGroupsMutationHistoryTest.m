@@ -2,34 +2,34 @@
 
 #import "UAAirshipBaseTest.h"
 #import "UAPreferenceDataStore+Internal.h"
-#import "UATagGroupsMutationHistory+Internal.h"
+#import "UAPendingTagGroupStore+Internal.h"
 
-@interface UATagGroupsMutationHistoryTest : UAAirshipBaseTest
+@interface UAPendingTagGroupStoreTest : UAAirshipBaseTest
 
-@property(nonatomic, strong) UATagGroupsMutationHistory *channelMutationHistory;
-@property(nonatomic, strong) UATagGroupsMutationHistory *namedUserMutationHistory;
+@property(nonatomic, strong) UAPendingTagGroupStore *channelPendingTagGroupStore;
+@property(nonatomic, strong) UAPendingTagGroupStore *namedPendingTagGroupStore;
 
 @end
 
-@implementation UATagGroupsMutationHistoryTest
+@implementation UAPendingTagGroupStoreTest
 
 - (void)setUp {
     [super setUp];
-    self.channelMutationHistory = [UATagGroupsMutationHistory historyWithDataStore:self.dataStore storeKey:UATagGroupsChannelStoreKey];
-    self.namedUserMutationHistory = [UATagGroupsMutationHistory historyWithDataStore:self.dataStore storeKey:UATagGroupsNamedUserStoreKey];
+    self.channelPendingTagGroupStore = [UAPendingTagGroupStore historyWithDataStore:self.dataStore storeKey:UATagGroupsChannelStoreKey];
+    self.namedPendingTagGroupStore = [UAPendingTagGroupStore historyWithDataStore:self.dataStore storeKey:UATagGroupsNamedUserStoreKey];
 }
 
 - (void)tearDown {
-    [self.channelMutationHistory clearAll];
-    [self.namedUserMutationHistory clearAll];
+    [self.channelPendingTagGroupStore clearAll];
+    [self.namedPendingTagGroupStore clearAll];
     [super tearDown];
 }
 
 - (void)testAddPendingMutation {
     UATagGroupsMutation *mutation = [UATagGroupsMutation mutationToAddTags:@[@"tag2"] group:@"group"];
-    [self.channelMutationHistory addPendingMutation:mutation];
+    [self.channelPendingTagGroupStore addPendingMutation:mutation];
 
-    UATagGroupsMutation *fromHistory = [self.channelMutationHistory popPendingMutation];
+    UATagGroupsMutation *fromHistory = [self.channelPendingTagGroupStore popPendingMutation];
     XCTAssertEqualObjects(mutation.payload, fromHistory.payload);
 }
 
@@ -37,15 +37,15 @@
     UATagGroupsMutation *add = [UATagGroupsMutation mutationToAddTags:@[@"tag1"] group:@"group"];
     UATagGroupsMutation *remove = [UATagGroupsMutation mutationToRemoveTags:@[@"tag2", @"tag1"] group:@"group"];
 
-    [self.channelMutationHistory addPendingMutation:remove];
-    [self.channelMutationHistory addPendingMutation:add];
+    [self.channelPendingTagGroupStore addPendingMutation:remove];
+    [self.channelPendingTagGroupStore addPendingMutation:add];
 
-    UATagGroupsMutation *fromHistory = [self.channelMutationHistory popPendingMutation];
+    UATagGroupsMutation *fromHistory = [self.channelPendingTagGroupStore popPendingMutation];
 
     NSDictionary *expected = @{ @"remove": @{ @"group": @[@"tag2", @"tag1"] }};
     XCTAssertEqualObjects(expected, fromHistory.payload);
 
-    fromHistory = [self.channelMutationHistory popPendingMutation];
+    fromHistory = [self.channelPendingTagGroupStore popPendingMutation];
     
     expected = @{ @"add": @{ @"group": @[@"tag1"] }};
     XCTAssertEqualObjects(expected, fromHistory.payload);
@@ -55,38 +55,38 @@
     UATagGroupsMutation *add = [UATagGroupsMutation mutationToAddTags:@[@"tag1"] group:@"group"];
     UATagGroupsMutation *remove = [UATagGroupsMutation mutationToRemoveTags:@[@"tag2", @"tag1"] group:@"group"];
 
-    [self.channelMutationHistory addPendingMutation:remove];
-    [self.channelMutationHistory addPendingMutation:add];
-    [self.channelMutationHistory collapsePendingMutations];
+    [self.channelPendingTagGroupStore addPendingMutation:remove];
+    [self.channelPendingTagGroupStore addPendingMutation:add];
+    [self.channelPendingTagGroupStore collapsePendingMutations];
     
-    UATagGroupsMutation *fromHistory = [self.channelMutationHistory popPendingMutation];
+    UATagGroupsMutation *fromHistory = [self.channelPendingTagGroupStore popPendingMutation];
     
     NSDictionary *expected = @{ @"remove": @{ @"group": @[@"tag2"] }, @"add": @{ @"group": @[@"tag1"] } };
     XCTAssertEqualObjects(expected, fromHistory.payload);
 }
 
 - (void)testPeekPendingMutation {
-    XCTAssertNil([self.channelMutationHistory peekPendingMutation]);
+    XCTAssertNil([self.channelPendingTagGroupStore peekPendingMutation]);
     
     UATagGroupsMutation *add = [UATagGroupsMutation mutationToAddTags:@[@"tag1"] group:@"group"];
-    [self.channelMutationHistory addPendingMutation:add];
+    [self.channelPendingTagGroupStore addPendingMutation:add];
     
-    UATagGroupsMutation *peekedMutation = [self.channelMutationHistory peekPendingMutation];
+    UATagGroupsMutation *peekedMutation = [self.channelPendingTagGroupStore peekPendingMutation];
     XCTAssertNotNil(peekedMutation);
-    UATagGroupsMutation *poppedMutation = [self.channelMutationHistory popPendingMutation];
+    UATagGroupsMutation *poppedMutation = [self.channelPendingTagGroupStore popPendingMutation];
     XCTAssertNotNil(poppedMutation);
     XCTAssertEqualObjects(peekedMutation.payload, poppedMutation.payload);
-    XCTAssertNil([self.channelMutationHistory popPendingMutation]);
+    XCTAssertNil([self.channelPendingTagGroupStore popPendingMutation]);
 }
 
 - (void)testPopPendingMutation {
-    XCTAssertNil([self.channelMutationHistory popPendingMutation]);
+    XCTAssertNil([self.channelPendingTagGroupStore popPendingMutation]);
 
     UATagGroupsMutation *add = [UATagGroupsMutation mutationToAddTags:@[@"tag1"] group:@"group"];
-    [self.channelMutationHistory addPendingMutation:add];
+    [self.channelPendingTagGroupStore addPendingMutation:add];
 
-    XCTAssertNotNil([self.channelMutationHistory popPendingMutation]);
-    XCTAssertNil([self.channelMutationHistory popPendingMutation]);
+    XCTAssertNotNil([self.channelPendingTagGroupStore popPendingMutation]);
+    XCTAssertNil([self.channelPendingTagGroupStore popPendingMutation]);
 }
 
 - (void)testMigration {
@@ -100,7 +100,7 @@
     NSData *encodedMutations = [NSKeyedArchiver archivedDataWithRootObject:@[oldMutation]];
     [self.dataStore setObject:encodedMutations forKey:@"UAPushTagGroupsMutations"];
 
-    UATagGroupsMutationHistory *channelTagGroupsMutationHistory = [UATagGroupsMutationHistory historyWithDataStore:self.dataStore storeKey:UATagGroupsChannelStoreKey];
+    UAPendingTagGroupStore *channelTagGroupsMutationHistory = [UAPendingTagGroupStore historyWithDataStore:self.dataStore storeKey:UATagGroupsChannelStoreKey];
 
     UATagGroupsMutation *oldAddRemoveFromHistory = [channelTagGroupsMutationHistory popPendingMutation];
     NSDictionary *expected = @{ @"add": @{ @"group1": @[@"tag1"] }, @"remove": @{ @"group2": @[@"tag2"] } };
@@ -116,8 +116,8 @@
     UATagGroupsMutation *mutation1 = [UATagGroupsMutation mutationToAddTags:@[@"foo", @"bar"] group:@"group1"];
     UATagGroupsMutation *mutation2 = [UATagGroupsMutation mutationToRemoveTags:@[@"tag3"] group:@"group2"];
 
-    [self.channelMutationHistory addPendingMutation:mutation1];
-    [self.channelMutationHistory addPendingMutation:mutation2];
+    [self.channelPendingTagGroupStore addPendingMutation:mutation1];
+    [self.channelPendingTagGroupStore addPendingMutation:mutation2];
 
     NSTimeInterval maxAge = 60 * 60;
 
@@ -127,10 +127,10 @@
     NSDate *recent = [NSDate dateWithTimeIntervalSinceNow:-(maxAge/2)];
     NSDate *old = [NSDate distantPast];
 
-    [self.channelMutationHistory addSentMutation:mutation3 date:recent];
-    [self.channelMutationHistory addSentMutation:mutation4 date:old];
+    [self.channelPendingTagGroupStore addSentMutation:mutation3 date:recent];
+    [self.channelPendingTagGroupStore addSentMutation:mutation4 date:old];
 
-    UATagGroups *newTagGroups = [self.channelMutationHistory applyHistory:tagGroups maxAge:maxAge];
+    UATagGroups *newTagGroups = [self.channelPendingTagGroupStore applyHistory:tagGroups maxAge:maxAge];
 
     UATagGroups *expectedTagGroups = [UATagGroups tagGroupsWithTags:@{ @"group1" : @[@"tag1", @"tag2", @"foo", @"bar"],
                                                                        @"group2" : @[@"tag4"],
@@ -148,10 +148,10 @@
     NSDate *recent = [NSDate dateWithTimeIntervalSinceNow:-(maxAge/2)];
     NSDate *old = [NSDate distantPast];
 
-    [self.channelMutationHistory addSentMutation:mutation1 date:recent];
-    [self.channelMutationHistory addSentMutation:mutation2 date:old];
+    [self.channelPendingTagGroupStore addSentMutation:mutation1 date:recent];
+    [self.channelPendingTagGroupStore addSentMutation:mutation2 date:old];
 
-    NSArray<UATagGroupsMutation *> *sent = [self.channelMutationHistory sentMutationsWithMaxAge:maxAge];
+    NSArray<UATagGroupsMutation *> *sent = [self.channelPendingTagGroupStore sentMutationsWithMaxAge:maxAge];
 
     XCTAssertEqual(sent.count, 1);
     XCTAssertEqualObjects(sent[0].payload, mutation1.payload);
