@@ -690,6 +690,13 @@
 		6E937726237625BF00AA9C2A /* UAAutoIntegration+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E937701237625BF00AA9C2A /* UAAutoIntegration+Internal.h */; };
 		6E937727237625BF00AA9C2A /* UAPersistentQueue+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E937702237625BF00AA9C2A /* UAPersistentQueue+Internal.h */; };
 		6E937728237625BF00AA9C2A /* UAPersistentQueue+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E937702237625BF00AA9C2A /* UAPersistentQueue+Internal.h */; };
+		6EA734B124B7AA600012B737 /* UAInAppAutomation+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EA734AE24B7AA600012B737 /* UAInAppAutomation+Internal.h */; };
+		6EA734B224B7AA600012B737 /* UAInAppAutomation+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EA734AE24B7AA600012B737 /* UAInAppAutomation+Internal.h */; };
+		6EA734B324B7AA600012B737 /* UAInAppAutomation.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EA734AF24B7AA600012B737 /* UAInAppAutomation.m */; };
+		6EA734B424B7AA600012B737 /* UAInAppAutomation.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EA734AF24B7AA600012B737 /* UAInAppAutomation.m */; };
+		6EA734B524B7AA600012B737 /* UAInAppAutomation.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EA734B024B7AA600012B737 /* UAInAppAutomation.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6EA734B624B7AA600012B737 /* UAInAppAutomation.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EA734B024B7AA600012B737 /* UAInAppAutomation.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6EA734B924BE5E920012B737 /* UAInAppAutomationTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EA734B824BE5E920012B737 /* UAInAppAutomationTest.m */; };
 		6EADE70F1FA8FAC60007F924 /* AirshipLib.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EADE70E1FA8FAC50007F924 /* AirshipLib.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6EBFF9A4234F84E300472DCF /* UAPushableComponent.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EBFF9A3234F84E300472DCF /* UAPushableComponent.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6EBFF9A5234F84E300472DCF /* UAPushableComponent.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EBFF9A3234F84E300472DCF /* UAPushableComponent.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -2823,6 +2830,10 @@
 		6E937700237625BF00AA9C2A /* UAPersistentQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAPersistentQueue.m; path = common/UAPersistentQueue.m; sourceTree = "<group>"; };
 		6E937701237625BF00AA9C2A /* UAAutoIntegration+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UAAutoIntegration+Internal.h"; path = "common/UAAutoIntegration+Internal.h"; sourceTree = "<group>"; };
 		6E937702237625BF00AA9C2A /* UAPersistentQueue+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UAPersistentQueue+Internal.h"; path = "common/UAPersistentQueue+Internal.h"; sourceTree = "<group>"; };
+		6EA734AE24B7AA600012B737 /* UAInAppAutomation+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAInAppAutomation+Internal.h"; sourceTree = "<group>"; };
+		6EA734AF24B7AA600012B737 /* UAInAppAutomation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInAppAutomation.m; sourceTree = "<group>"; };
+		6EA734B024B7AA600012B737 /* UAInAppAutomation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInAppAutomation.h; sourceTree = "<group>"; };
+		6EA734B824BE5E920012B737 /* UAInAppAutomationTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppAutomationTest.m; sourceTree = "<group>"; };
 		6EADE6FA1FA8F9FA0007F924 /* UAScheduleInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAScheduleInfo.m; sourceTree = "<group>"; };
 		6EADE6FB1FA8F9FB0007F924 /* UAScheduleInfo+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAScheduleInfo+Internal.h"; sourceTree = "<group>"; };
 		6EADE6FC1FA8F9FB0007F924 /* UAScheduleInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAScheduleInfo.h; sourceTree = "<group>"; };
@@ -4151,6 +4162,7 @@
 		6E8450BB237DFFB5007D3B1E /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				6EA734AD24B7A9DC0012B737 /* InAppAutomation */,
 				6E8450C3237E00A4007D3B1E /* ActionAutomation */,
 				6E8450BD237E0012007D3B1E /* Actions */,
 				6E8450C1237E0049007D3B1E /* AutomationEngine */,
@@ -4326,8 +4338,6 @@
 				996B95671FAB95F8009B49BC /* UAInAppMessageManager.m */,
 				998767311FC4F1CF00197AF4 /* UAInAppMessageUtils+Internal.h */,
 				998767321FC4F1CF00197AF4 /* UAInAppMessageUtils.m */,
-				DFFCF5B91FD1E65F0014DE2E /* UAInAppRemoteDataClient+Internal.h */,
-				DFFCF5AB1FCF513D0014DE2E /* UAInAppRemoteDataClient.m */,
 				DFD442A61FD77308002E4FA1 /* UAInAppMessageAudience+Internal.h */,
 				DF87DB0C1FDF26AE00DCAF9B /* UAInAppMessageAudience.h */,
 				DFD442A11FD77248002E4FA1 /* UAInAppMessageAudience.m */,
@@ -4629,6 +4639,26 @@
 				6E9376F0237625BD00AA9C2A /* UAPreferenceDataStore+Internal.h */,
 			);
 			name = Airship;
+			sourceTree = "<group>";
+		};
+		6EA734AD24B7A9DC0012B737 /* InAppAutomation */ = {
+			isa = PBXGroup;
+			children = (
+				6EA734B024B7AA600012B737 /* UAInAppAutomation.h */,
+				6EA734AF24B7AA600012B737 /* UAInAppAutomation.m */,
+				6EA734AE24B7AA600012B737 /* UAInAppAutomation+Internal.h */,
+				DFFCF5B91FD1E65F0014DE2E /* UAInAppRemoteDataClient+Internal.h */,
+				DFFCF5AB1FCF513D0014DE2E /* UAInAppRemoteDataClient.m */,
+			);
+			name = InAppAutomation;
+			sourceTree = "<group>";
+		};
+		6EA734B724BE5E680012B737 /* InAppAutomation */ = {
+			isa = PBXGroup;
+			children = (
+				6EA734B824BE5E920012B737 /* UAInAppAutomationTest.m */,
+			);
+			name = InAppAutomation;
 			sourceTree = "<group>";
 		};
 		6EB9A118228E1ED200FF5A30 /* Config */ = {
@@ -5456,6 +5486,7 @@
 		CC64F0551D8B77E3009CEF27 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				6EA734B724BE5E680012B737 /* InAppAutomation */,
 				1B05132624AE100C00F5051F /* Locale */,
 				3C927F8223A42609003C5FC8 /* App State */,
 				6E90F0ED228F550900E1FCB0 /* Config */,
@@ -6048,6 +6079,7 @@
 				6E8453CE237E0540007D3B1E /* UAInAppMessageFullScreenAdapter.h in Headers */,
 				6E8453CF237E0540007D3B1E /* UAInAppMessageFullScreenStyle.h in Headers */,
 				6E8453D0237E0540007D3B1E /* UAInAppMessageFullScreenDisplayContent.h in Headers */,
+				6EA734B224B7AA600012B737 /* UAInAppAutomation+Internal.h in Headers */,
 				6E8453D1237E0540007D3B1E /* UALegacyInAppMessage.h in Headers */,
 				6E84546C237E1EB4007D3B1E /* UATimerScheduler+Internal.h in Headers */,
 				6E8453D2237E0540007D3B1E /* UALegacyInAppMessaging.h in Headers */,
@@ -6120,6 +6152,7 @@
 				6E8453A5237E0524007D3B1E /* UAInAppMessageTextInfo+Internal.h in Headers */,
 				6E8453A6237E0524007D3B1E /* UAInAppMessageButtonInfo+Internal.h in Headers */,
 				6E8453A7237E0524007D3B1E /* UAInAppMessageMediaInfo+Internal.h in Headers */,
+				6EA734B624B7AA600012B737 /* UAInAppAutomation.h in Headers */,
 				6E8453A8237E0524007D3B1E /* UAInAppMessageTextView+Internal.h in Headers */,
 				6E8453A9237E0524007D3B1E /* UAInAppMessageDismissButton+Internal.h in Headers */,
 				6E8453AA237E0524007D3B1E /* UAInAppMessageButtonView+Internal.h in Headers */,
@@ -6373,6 +6406,7 @@
 				6EE770DD238F15D000E79944 /* UAAnalyticsEventConsumerProtocol.h in Headers */,
 				6EE770DE238F15D000E79944 /* UANamedUserAPIClient+Internal.h in Headers */,
 				6EE770DF238F15D000E79944 /* UAChannelCapture+Internal.h in Headers */,
+				6EA734B524B7AA600012B737 /* UAInAppAutomation.h in Headers */,
 				6EE7725D238F189700E79944 /* Airship.h in Headers */,
 				6EE770E0238F15D000E79944 /* UAChannelAPIClient+Internal.h in Headers */,
 				6EE770E1238F15D000E79944 /* UAChannelRegistrar+Internal.h in Headers */,
@@ -6456,6 +6490,7 @@
 				6EE7716D238F16A600E79944 /* UALegacyInAppMessaging+Internal.h in Headers */,
 				6EE77170238F16A600E79944 /* UAInAppMessageFullScreenDisplayContent+Internal.h in Headers */,
 				6EE77173238F16A600E79944 /* UAInAppMessageFullScreenViewController+Internal.h in Headers */,
+				6EA734B124B7AA600012B737 /* UAInAppAutomation+Internal.h in Headers */,
 				6EE77177238F16A600E79944 /* UAInAppMessageModalDisplayContent+Internal.h in Headers */,
 				6EE77178238F16A600E79944 /* UAInAppMessageModalViewController+Internal.h in Headers */,
 				6EE7717A238F16A600E79944 /* UAInAppMessageBannerDisplayContent+Internal.h in Headers */,
@@ -7949,6 +7984,7 @@
 				6E84542B237E0575007D3B1E /* UAInAppRemoteDataClient.m in Sources */,
 				6E84542C237E0575007D3B1E /* UAInAppMessageAudience.m in Sources */,
 				6E84542D237E0575007D3B1E /* UAInAppMessageTagSelector.m in Sources */,
+				6EA734B424B7AA600012B737 /* UAInAppAutomation.m in Sources */,
 				6E845467237E1C62007D3B1E /* UARetriablePipeline.m in Sources */,
 				6E84542E237E0575007D3B1E /* UAInAppMessageAudienceChecks.m in Sources */,
 				6E84542F237E0575007D3B1E /* UAInAppMessageScheduleEdits.m in Sources */,
@@ -8070,6 +8106,7 @@
 				6EE77235238F172900E79944 /* UAInAppMessageUtils.m in Sources */,
 				6EE77236238F172900E79944 /* UAInAppRemoteDataClient.m in Sources */,
 				6EE77237238F172900E79944 /* UAInAppMessageAudience.m in Sources */,
+				6EA734B324B7AA600012B737 /* UAInAppAutomation.m in Sources */,
 				6EE77238238F172900E79944 /* UAInAppMessageTagSelector.m in Sources */,
 				6EE77239238F172900E79944 /* UAInAppMessageAudienceChecks.m in Sources */,
 				6EE7723A238F172900E79944 /* UAInAppMessageScheduleEdits.m in Sources */,
@@ -8469,6 +8506,7 @@
 				CC64F1261D8B781C009CEF27 /* UATagUtilsTest.m in Sources */,
 				457EDBEB234C28A600700FF8 /* UAAttributeAPIClientTest.m in Sources */,
 				CC64F0F51D8B781C009CEF27 /* UACustomEventTest.m in Sources */,
+				6EA734B924BE5E920012B737 /* UAInAppAutomationTest.m in Sources */,
 				CC64F1221D8B781C009CEF27 /* UAScreenTrackingEventTest.m in Sources */,
 				3C3BCBA820E16C8300D86E60 /* UAAutomationEngineIntegrationTest.m in Sources */,
 				CC64F11C1D8B781C009CEF27 /* UAProximityRegionTest.m in Sources */,

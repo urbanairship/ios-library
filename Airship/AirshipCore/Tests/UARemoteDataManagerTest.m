@@ -63,7 +63,7 @@
     OCMStub([self.mockAPIClientClass clientWithConfig:[OCMArg any] dataStore:[OCMArg any] localeManager:[OCMArg any]]).andReturn(self.mockAPIClient);
 
     self.testStore = [UATestRemoteDataStore storeWithName:@"UARemoteDataManagerTest." inMemory:YES];
-    self.testDate = [[UATestDate alloc] initWithAbsoluteTime:[NSDate now]];
+    self.testDate = [[UATestDate alloc] initWithAbsoluteTime:[NSDate date]];
 
     self.mockLocaleManagerClass = [self mockForClass:[UALocaleManager class]];
     [[[self.mockLocaleManagerClass stub] andReturn:[NSLocale autoupdatingCurrentLocale]] currentLocale];

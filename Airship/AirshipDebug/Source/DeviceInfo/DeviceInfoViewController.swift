@@ -47,19 +47,19 @@ class DeviceInfoCell: UITableViewCell {
 
 var isInAppAutomationEnabled: Bool {
     get {
-        return UAInAppMessageManager.shared().isEnabled
+        return UAInAppAutomation.shared().isEnabled
     }
     set (value) {
-        UAInAppMessageManager.shared().isEnabled = value
+        UAInAppAutomation.shared().isEnabled = value
     }
 }
 
 var inAppAutomationDisplayInterval: Int {
     get {
-        return Int(UAInAppMessageManager.shared()!.displayInterval)
+        return Int(UAInAppAutomation.shared()!.inAppMessageManager.displayInterval)
     }
     set (value) {
-        UAInAppMessageManager.shared().displayInterval = TimeInterval(value)
+        UAInAppAutomation.shared().inAppMessageManager.displayInterval = TimeInterval(value)
     }
 }
 

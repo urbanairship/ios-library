@@ -54,7 +54,9 @@ NS_ASSUME_NONNULL_BEGIN
  * @param assets Assets instance for caching assets
  * @param completionHandler The completion handler to call when asset fetching is complete.
  */
-- (void)onSchedule:(UAInAppMessage *)message assets:(UAInAppMessageAssets *)assets completionHandler:(void (^)(UAInAppMessagePrepareResult))completionHandler;
+- (void)onSchedule:(UAInAppMessage *)message
+            assets:(UAInAppMessageAssets *)assets
+ completionHandler:(void (^)(UAInAppMessagePrepareResult))completionHandler;
 
 /**
  * Extend assets for this message when the message is prepared
@@ -68,7 +70,9 @@ NS_ASSUME_NONNULL_BEGIN
  * @param assets Assets instance for caching assets
  * @param completionHandler The completion handler to call when asset fetching is complete.
  */
-- (void)onPrepare:(UAInAppMessage *)message assets:(UAInAppMessageAssets *)assets completionHandler:(void (^)(UAInAppMessagePrepareResult))completionHandler;
+- (void)onPrepare:(UAInAppMessage *)message
+           assets:(UAInAppMessageAssets *)assets
+completionHandler:(void (^)(UAInAppMessagePrepareResult))completionHandler;
 
 @end
 

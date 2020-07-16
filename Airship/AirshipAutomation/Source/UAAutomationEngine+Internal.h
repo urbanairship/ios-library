@@ -104,18 +104,27 @@ typedef NS_ENUM(NSInteger, UAAutomationScheduleReadyResult) {
 
 /**
  * Called when a schedule is expired.
+ * @param schedule The schedule.
  */
 - (void)onScheduleExpired:(nonnull UASchedule *)schedule;
 
 /**
  * Called when a schedule is cancelled.
+ * @param schedule The schedule.
  */
 - (void)onScheduleCancelled:(nonnull UASchedule *)schedule;
 
 /**
  * Called when a schedule's limit is reached.
+ * @param schedule The schedule.
  */
 - (void)onScheduleLimitReached:(nonnull UASchedule *)schedule;
+
+/**
+ * Called when a new automation is scheduled.
+ * @param schedule The schedule.
+ */
+- (void)onNewSchedule:(nonnull UASchedule *)schedule;
 
 @end
 
@@ -215,7 +224,7 @@ typedef NS_ENUM(NSInteger, UAAutomationScheduleReadyResult) {
  *
  * @param identifier A schedule identifier.
  * @param completionHandler A completion handler called with the schedule that was canceled, or nil if the schedule was not found.
-*/
+ */
 - (void)cancelScheduleWithID:(NSString *)identifier completionHandler:(nullable void (^)(UASchedule * _Nullable))completionHandler;
 
 /**
@@ -231,7 +240,7 @@ typedef NS_ENUM(NSInteger, UAAutomationScheduleReadyResult) {
  *
  * @param group A schedule group.
  * @param completionHandler A completion handler called with an array of schedules that were canceled. If no schedules matching the group are found, this array will be empty.
-*/
+ */
 - (void)cancelSchedulesWithGroup:(NSString *)group completionHandler:(nullable void (^)(NSArray <UASchedule *> *))completionHandler;
 
 /**
@@ -293,4 +302,5 @@ typedef NS_ENUM(NSInteger, UAAutomationScheduleReadyResult) {
 @end
 
 NS_ASSUME_NONNULL_END
+
 

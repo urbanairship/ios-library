@@ -13,10 +13,11 @@
 #import "UAScheduleInfo+Internal.h"
 #import "UASchedule+Internal.h"
 #import "UAInAppMessage+Internal.h"
+#import "UAInAppAutomation.h"
 
 @interface UALegacyInAppMessagingTest : UAAirshipBaseTest
 @property(nonatomic, strong) id mockAnalytics;
-@property(nonatomic, strong) id mockInAppMessageManager;
+@property(nonatomic, strong) id mockInAppAutomation;
 
 @property(nonatomic, strong) UALegacyInAppMessage *bannerMessage;
 @property(nonatomic, strong) UALegacyInAppMessage *nonBannerMessage;
@@ -32,9 +33,11 @@
     [super setUp];
 
     self.mockAnalytics = [self mockForClass:[UAAnalytics class]];
-    self.mockInAppMessageManager = [self mockForClass:[UAInAppMessageManager class]];
+    self.mockInAppAutomation = [self mockForClass:[UAInAppAutomation class]];
 
-    self.inAppMessaging = [UALegacyInAppMessaging inAppMessagingWithAnalytics:self.mockAnalytics dataStore:self.dataStore inAppMessageManager:self.mockInAppMessageManager];
+    self.inAppMessaging = [UALegacyInAppMessaging inAppMessagingWithAnalytics:self.mockAnalytics
+                                                                    dataStore:self.dataStore
+                                                              inAppAutomation:self.mockInAppAutomation];
 
     self.bannerMessage = [UALegacyInAppMessage message];
     self.bannerMessage.identifier = @"identifier";
@@ -66,12 +69,6 @@
                  };
 }
 
-- (void)tearDown {
-    [self.mockAnalytics stopMocking];
-    [self.mockInAppMessageManager stopMocking];
-
-    [super tearDown];
-}
 
 /**
  * Test that banner messages are stored.
@@ -112,7 +109,7 @@
 
     [[self.mockAnalytics expect] addEvent:[OCMArg any]];
 
-    [[[self.mockInAppMessageManager expect] andDo:^(NSInvocation *invocation) {
+    [[[self.mockInAppAutomation expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:3];
         void (^completionHandler)(NSArray<UASchedule *>* _Nullable) = (__bridge void(^)(NSArray<UASchedule *>* _Nullable))arg;
@@ -149,9 +146,9 @@
                                                                                            responseText:nil];
 
     [[self.mockAnalytics reject] addEvent:[OCMArg any]];
-    [[self.mockInAppMessageManager reject] cancelMessagesWithID:[OCMArg any]];
+    [[self.mockInAppAutomation reject] cancelMessagesWithID:[OCMArg any]];
 
-    [[[self.mockInAppMessageManager stub] andDo:^(NSInvocation *invocation) {
+    [[[self.mockInAppAutomation stub] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:3];
         void (^completionHandler)(NSArray<UASchedule *> *schedules) = (__bridge void(^)(NSArray<UASchedule *> *))arg;
@@ -200,7 +197,7 @@
                                                                                            responseText:nil];
 
     [[self.mockAnalytics reject] addEvent:[OCMArg any]];
-    [[self.mockInAppMessageManager reject] cancelMessagesWithID:[OCMArg any]];
+    [[self.mockInAppAutomation reject] cancelMessagesWithID:[OCMArg any]];
 
     XCTestExpectation *testExpectation = [self expectationWithDescription:@"completion handler called"];
     [self.inAppMessaging receivedNotificationResponse:response completionHandler:^{
@@ -227,7 +224,7 @@
 
     UANotificationContent *content = [UANotificationContent notificationWithNotificationInfo:notification];
 
-    [[[self.mockInAppMessageManager expect] andDo:^(NSInvocation *invocation) {
+    [[[self.mockInAppAutomation expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:2];
         UAInAppMessageScheduleInfo *info = (__bridge UAInAppMessageScheduleInfo *)arg;
@@ -248,7 +245,7 @@
     [self waitForTestExpectations];
 
     XCTAssertNotNil(self.inAppMessaging.pendingMessageID);
-    [self.mockInAppMessageManager verify];
+    [self.mockInAppAutomation verify];
 }
 
 /**
@@ -288,7 +285,7 @@
 
     UANotificationContent *content = [UANotificationContent notificationWithNotificationInfo:notification];
 
-    [[[self.mockInAppMessageManager expect] andDo:^(NSInvocation *invocation) {
+    [[[self.mockInAppAutomation expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:2];
         UAInAppMessageScheduleInfo *info = (__bridge UAInAppMessageScheduleInfo *)arg;
@@ -312,7 +309,7 @@
 
     XCTAssertNotNil(self.inAppMessaging.pendingMessageID);
 
-    [self.mockInAppMessageManager verify];
+    [self.mockInAppAutomation verify];
 }
 
 /**
@@ -334,7 +331,7 @@
 
     UANotificationContent *content = [UANotificationContent notificationWithNotificationInfo:notification];
 
-    [[[self.mockInAppMessageManager expect] andDo:^(NSInvocation *invocation) {
+    [[[self.mockInAppAutomation expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:2];
         UAInAppMessageScheduleInfo *info = (__bridge UAInAppMessageScheduleInfo *)arg;
@@ -357,7 +354,7 @@
     }];
     [self waitForTestExpectations];
 
-    [self.mockInAppMessageManager verify];
+    [self.mockInAppAutomation verify];
 
 }
 
@@ -374,7 +371,7 @@
 
     UANotificationContent *content = [UANotificationContent notificationWithNotificationInfo:notification];
 
-    [[[self.mockInAppMessageManager expect] andDo:^(NSInvocation *invocation) {
+    [[[self.mockInAppAutomation expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:2];
         UAInAppMessageScheduleInfo *info = (__bridge UAInAppMessageScheduleInfo *)arg;
@@ -395,7 +392,7 @@
     }];
     [self waitForTestExpectations];
 
-    [self.mockInAppMessageManager verify];
+    [self.mockInAppAutomation verify];
 }
 
 @end

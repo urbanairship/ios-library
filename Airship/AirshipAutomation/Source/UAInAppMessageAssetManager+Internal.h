@@ -28,9 +28,10 @@ NS_ASSUME_NONNULL_BEGIN
  * If delegate's cache policy supports caching on schedule, fetch and
  * cache all assets for the schedule.
  *
- * @param schedule The schedule being scheduled
+ * @param message The message.
+ * @param scheduleID The schedule ID.
  */
-- (void)onSchedule:(UASchedule *)schedule;
+- (void)onMessageScheduled:(UAInAppMessage *)message scheduleID:(NSString *)scheduleID;
 
 /**
  * Called when message is being prepared.
@@ -39,10 +40,13 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @note All assets must be on-device after this call returns, so the adapter can display the message.
  *
- * @param schedule The schedule being prepared
+ * @param message The message.
+ * @param scheduleID The schedule ID.
  * @param completionHandler The completion handler to call when caching is complete.
  */
-- (void)onPrepare:(UASchedule *)schedule completionHandler:(void (^)(UAInAppMessagePrepareResult))completionHandler;
+- (void)onPrepareMessage:(UAInAppMessage *)message
+              scheduleID:(NSString *)scheduleID
+       completionHandler:(void (^)(UAInAppMessagePrepareResult))completionHandler;
 
 /**
  * Called when the adapter has finished displaying the message.
@@ -50,9 +54,11 @@ NS_ASSUME_NONNULL_BEGIN
  * Unlock the schedule's cache. If delegate's cache policy does not
  * support persisting the cache after display, clear the schedule's cache.
  *
- * @param schedule The schedule being finished
+ * @param message The message.
+ * @param scheduleID The schedule ID.
  */
-- (void)onDisplayFinished:(UASchedule *)schedule;
+- (void)onDisplayFinished:(UAInAppMessage *)message
+               scheduleID:(NSString *)scheduleID;
 
 /**
  * Called when the schedule has finished.
@@ -61,17 +67,18 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @note This indicates the message will not be displayed again.
  *
- * @param schedule The schedule being finished
+ * @param scheduleID The schedule being finished
  */
-- (void)onScheduleFinished:(UASchedule *)schedule;
+- (void)onScheduleFinished:(NSString *)scheduleID;
 
 /**
  * Get the assets for this schedule
  *
- * @param schedule The schedule being finished
+ * @param scheduleID The schedule ID.
  * @param completionHandler The completion handler to call with the UAInAppMessageAssets instance for this schedule
  */
-- (void)assetsForSchedule:(UASchedule *)schedule completionHandler:(void (^)(UAInAppMessageAssets *))completionHandler;
+- (void)assetsForScheduleID:(NSString *)scheduleID
+          completionHandler:(void (^)(UAInAppMessageAssets *))completionHandler;
 
 @end
 NS_ASSUME_NONNULL_END
