@@ -13,7 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Represents the local history of tag group mutations.
  */
-@interface UAPendingTagGroupStore : NSObject<UATagGroupsHistory>
+@interface UAPendingTagGroupStore : NSObject
 
 @property (nonatomic, copy) NSString *storeKey;
 
@@ -34,27 +34,11 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSArray<UATagGroupsMutation *> *)pendingMutations;
 
 /**
- * Returns all sent mutations, for both channel and named user
- * tag groups, which are newer than the provided maximum age in seconds.
- *
- * @return An array of tag group mutations.
- */
-- (NSArray<UATagGroupsMutation *> *)sentMutationsWithMaxAge:(NSTimeInterval)maxAge;
-
-/**
  * Adds a pending mutation.
  *
  * @param mutation The tag group mutation.
  */
 - (void)addPendingMutation:(UATagGroupsMutation *)mutation;
-
-/**
- * Adds a sent mutation.
- *
- * @param mutation The tag group mutation.
- * @param date The date the send was completed.
- */
-- (void)addSentMutation:(UATagGroupsMutation *)mutation date:(NSDate *)date;
 
 /**
  * Peeks the top-most pending mutation from the queue corresponding to
@@ -79,17 +63,6 @@ NS_ASSUME_NONNULL_BEGIN
  * Clears pending mutations for the provided tag groups type.
  */
 - (void)clearPendingMutations;
-
-/**
- * Clears sent mutations.
- */
-- (void)clearSentMutations;
-
-/**
- * Clears all history.
- */
-- (void)clearAll;
-
 
 @end
 

@@ -14,7 +14,6 @@
 // Keys for pending mutations and transaction records
 #define kUAPendingChannelTagGroupsMutationsKey @"com.urbanairship.tag_groups.pending_channel_tag_groups_mutations"
 #define kUAPendingNamedUserTagGroupsMutationsKey @"com.urbanairship.tag_groups.pending_named_user_tag_groups_mutations"
-#define kUATagGroupsTransactionRecordsKey @"com.urbanairship.tag_groups.transaction_records"
 
 // Max record age
 #define kUATagGroupsSentMutationsMaxAgeKey @"com;urbanairship.tag_groups.transaction_records.max_age"
@@ -22,7 +21,6 @@
 @interface UAPendingTagGroupStore ()
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 @property (nonatomic, strong) UAPersistentQueue *pendingTagGroupsMutations;
-@property (nonatomic, strong) UAPersistentQueue *tagGroupsTransactionRecords;
 @end
 
 @implementation UAPendingTagGroupStore
@@ -42,9 +40,6 @@
             self.pendingTagGroupsMutations = [UAPersistentQueue persistentQueueWithDataStore:dataStore
             key:kUAPendingChannelTagGroupsMutationsKey];
         }
-
-        self.tagGroupsTransactionRecords = [UAPersistentQueue persistentQueueWithDataStore:dataStore
-                                                                                       key:kUATagGroupsTransactionRecordsKey];
         
         [self migrateLegacyDataStoreKeys];
     }
@@ -120,44 +115,8 @@
     return [pendingNamedUserTagGroupMutations arrayByAddingObjectsFromArray:pendingChannelTagGroupMutations];
 }
 
-- (NSArray<UATagGroupsTransactionRecord *> *)transactionRecordsWithMaxAge:(NSTimeInterval)maxAge {
-    NSArray<UATagGroupsTransactionRecord *> * records = (NSArray<UATagGroupsTransactionRecord *> *)[self.tagGroupsTransactionRecords objects];
-
-    records = [records filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(UATagGroupsTransactionRecord *record, id bindings) {
-        NSDate *now = [NSDate date];
-        NSTimeInterval elapsed = [now timeIntervalSinceDate:record.date];
-        return elapsed < maxAge;
-    }]];
-
-    return records;
-}
-
-- (NSArray<UATagGroupsMutation *> *)sentMutationsWithMaxAge:(NSTimeInterval)maxAge {
-    NSArray<UATagGroupsTransactionRecord *> *records = [self transactionRecordsWithMaxAge:maxAge];
-
-    NSMutableArray<UATagGroupsMutation *> *mutations = [NSMutableArray array];
-    for (UATagGroupsTransactionRecord *record in records) {
-        [mutations addObject:record.mutation];
-    }
-
-    return mutations;
-}
-
 - (void)addPendingMutation:(UATagGroupsMutation *)mutation {
     [self.pendingTagGroupsMutations addObject:mutation];
-}
-
-- (void)cleanTransactionRecords {
-    NSArray<UATagGroupsTransactionRecord *> *recentTransactions = [self transactionRecordsWithMaxAge:self.maxSentMutationAge];
-    [self.tagGroupsTransactionRecords setObjects:recentTransactions];
-
-}
-
-- (void)addSentMutation:(UATagGroupsMutation *)mutation date:(NSDate *)date {
-    UATagGroupsTransactionRecord *record = [UATagGroupsTransactionRecord transactionRecordWithMutation:mutation date:date];
-    [self.tagGroupsTransactionRecords addObject:record];
-
-    [self cleanTransactionRecords];
 }
 
 - (UATagGroupsMutation *)peekPendingMutation {
@@ -180,29 +139,12 @@
     [self.pendingTagGroupsMutations clear];
 }
 
-- (void)clearSentMutations {
-    [self.tagGroupsTransactionRecords clear];
-}
-
-- (void)clearAll {
-    [self clearPendingMutations];
-    [self clearSentMutations];
-}
-
 - (NSDictionary *)applyMutations:(NSArray<UATagGroupsMutation *> *)mutations tags:(NSDictionary *)tags {
     for (UATagGroupsMutation *mutation in mutations) {
         tags = [mutation applyToTagGroups:tags];
     }
 
     return tags;
-}
-
-- (UATagGroups *)applyHistory:(UATagGroups *)tagGroups maxAge:(NSTimeInterval)maxAge {
-    NSDictionary *tags = tagGroups.tags;
-    tags = [self applyMutations:[self sentMutationsWithMaxAge:maxAge] tags:tags];
-    tags = [self applyMutations:[self pendingMutations] tags:tags];
-
-    return [UATagGroups tagGroupsWithTags:tags];
 }
 
 @end
