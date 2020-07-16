@@ -8,6 +8,9 @@
 #import "UAAsyncOperation.h"
 #import "UAPendingTagGroupStore+Internal.h"
 
+// Notifications
+NSString * const UAAirshipTagGroupSentNotification = @"com.urbanairship.airship_tagGroupSent";
+
 // Typedef for generating tag group mutation factory blocks
 typedef UATagGroupsMutation * (^UATagGroupsMutationFactory)(NSArray *, NSString *);
 
@@ -157,7 +160,7 @@ typedef void (^UATagGroupsMutator)(NSArray *, NSString *);
                 // Success - pop uploaded mutation and store the transaction record
                 UATagGroupsMutation *mutation = [self.pendingTagGroupStore popPendingMutation];
 
-                [self.pendingTagGroupStore addSentMutation:mutation date:[NSDate date]];
+                [[NSNotificationCenter defaultCenter] postNotificationName:UAAirshipTagGroupSentNotification object:mutation];
 
                 // Try to upload more mutations as long as the operation hasn't been canceled
                 if (operation.isCancelled) {
