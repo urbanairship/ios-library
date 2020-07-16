@@ -53,6 +53,13 @@ extern NSString *const UAChannelCreationOnForeground;
  */
 - (void)reset;
 
+/**
+ * Returns all channel pending tag groups
+ *
+ * @return An array of tag group mutations.
+ */
+- (NSArray<UATagGroupsMutation *> *)pendingTagGroups;
+
 @end
 
 

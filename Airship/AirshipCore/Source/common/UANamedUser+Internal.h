@@ -2,6 +2,7 @@
 
 #import "UANamedUser.h"
 #import "UAExtendableChannelRegistration.h"
+#import "UATagGroupsMutation+Internal.h"
 
 @class UANamedUserAPIClient;
 @class UARuntimeConfig;
@@ -109,6 +110,13 @@ extern NSString *const UANamedUserLastUpdatedTokenKey;
  * Disassociate the named user only if the named user ID is really nil.
  */
 - (void)disassociateNamedUserIfNil;
+
+/**
+ * Returns all named user pending tag groups
+ *
+ * @return An array of tag group mutations.
+ */
+- (NSArray<UATagGroupsMutation *> *)pendingTagGroups;
 
 @end
 

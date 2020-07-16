@@ -306,6 +306,10 @@ NSString *const UANamedUserLastChannelIDKey = @"UANamedUserLastChannelID";
     [self forceUpdate];
 }
 
+- (NSArray<UATagGroupsMutation *> *)pendingTagGroups {
+    return [self.tagGroupsRegistrar.pendingTagGroupStore pendingMutations];
+}
+
 #pragma mark -
 #pragma mark Named User Attributes
 

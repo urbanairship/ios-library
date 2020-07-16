@@ -17,6 +17,11 @@ NS_ASSUME_NONNULL_BEGIN
 ///---------------------------------------------------------------------------------------
 
 /**
+ * The pending tag group store.
+ */
+@property (nonatomic, strong) UAPendingTagGroupStore *pendingTagGroupStore;
+
+/**
  * Factory method to create a tag groups registrar.
  * @param config The Airship config.
  * @param dataStore The shared data store.

@@ -342,6 +342,10 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
     [self.attributeRegistrar updateAttributesForChannel:self.identifier];
 }
 
+- (NSArray<UATagGroupsMutation *> *)pendingTagGroups {
+    return [self.tagGroupsRegistrar.pendingTagGroupStore pendingMutations];
+}
+
 #pragma mark -
 #pragma mark Channel Registrar Delegate
 

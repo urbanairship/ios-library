@@ -32,11 +32,6 @@ typedef void (^UATagGroupsMutator)(NSArray *, NSString *);
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 
 /**
- * The pending mutation store.
- */
-@property (nonatomic, strong) UAPendingTagGroupStore *pendingTagGroupStore;
-
-/**
  * The application.
  */
 @property (nonatomic, strong) UIApplication *application;
