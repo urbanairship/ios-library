@@ -2,8 +2,50 @@
 
 #import <Foundation/Foundation.h>
 #import "UAAirshipAutomationCoreImport.h"
+#import "UASchedule.h"
+#import "UAInAppMessageScheduleInfo.h"
+#import "UAInAppMessageScheduleEdits.h"
 
-@class UAInAppMessageManager;
+NS_ASSUME_NONNULL_BEGIN
+
+/**
+ * Client delegate.
+ */
+@protocol UAInAppRemoteDataClientDelegate  <NSObject>
+
+/**
+ * Gets all schedules, including schedules that have ended.
+ *
+ * @param completionHandler The completion handler to be called when fetch operation completes.
+ */
+- (void)getAllSchedules:(void (^)(NSArray<UASchedule *> *))completionHandler;
+
+
+/**
+ * Schedules multiple in-app messages.
+ *
+ * @param scheduleInfos The schedule info for the messages.
+ * @param metadata The schedules' optional metadata.
+ * @param completionHandler The completion handler to be called when scheduling completes.
+ */
+- (void)scheduleMessagesWithScheduleInfo:(NSArray<UAInAppMessageScheduleInfo *> *)scheduleInfos
+                                metadata:(nullable NSDictionary *)metadata
+                       completionHandler:(void (^)(NSArray <UASchedule *> *))completionHandler;
+
+
+/**
+ * Edits a schedule.
+ *
+ * @param identifier A schedule identifier.
+ * @param edits The edits to apply.
+ * @param completionHandler The completion handler with the result.
+ */
+- (void)editScheduleWithID:(NSString *)identifier
+                     edits:(UAInAppMessageScheduleEdits *)edits
+         completionHandler:(void (^)(UASchedule * _Nullable))completionHandler;
+
+
+@end
 
 /**
  * Client class to connect the Remote Data and the In App Messaging services.
@@ -13,42 +55,59 @@
 @interface UAInAppRemoteDataClient : NSObject
 
 /**
- * New user cut off time. Any schedules that have
- * a new user condition will be dropped if the schedule create time is after the
- * cut off time.
+ * Client delegate.
  */
-@property (nonatomic, strong) NSDate *scheduleNewUserCutOffTime;
+@property (nonatomic, weak) id<UAInAppRemoteDataClientDelegate> delegate;
 
 /**
- * Operation queue. Exposed for testing.
+ * New user cut off time.
  */
-@property (nonatomic, readonly) NSOperationQueue *operationQueue;
+@property (nonatomic, readonly) NSDate *scheduleNewUserCutOffTime;
 
-/**
- * The last payload's metadata. Mutable for testing purposes.
- */
-@property (nonatomic) NSDictionary *lastPayloadMetadata;
 
 /**
  * Create a remote data client for in-app messaging.
  *
- * @param delegate The delegate to be used to schedule in-app messages.
  * @param remoteDataProvider The remote data provider.
  * @param dataStore A UAPreferenceDataStore to store persistent preferences
  * @param channel The channel.
  */
-+ (instancetype)clientWithScheduler:(UAInAppMessageManager *)delegate
-                 remoteDataProvider:(id<UARemoteDataProvider>)remoteDataProvider
-                          dataStore:(UAPreferenceDataStore *)dataStore
-                            channel:(UAChannel *)channel;
++ (instancetype)clientWithRemoteDataProvider:(id<UARemoteDataProvider>)remoteDataProvider
+                                   dataStore:(UAPreferenceDataStore *)dataStore
+                                     channel:(UAChannel *)channel;
+
++ (instancetype)clientWithRemoteDataProvider:(id<UARemoteDataProvider>)remoteDataProvider
+                                   dataStore:(UAPreferenceDataStore *)dataStore
+                                     channel:(UAChannel *)channel
+                              operationQueue:(NSOperationQueue *)operationQueue;
 
 /**
- * Facilitates KVO observation on the lastPayloadMetadata on the remote data client's operation queue
- * if the last stored metadata doesn't match the last payload metadata. Runs the completion
- * handler when check completes.
+ * Notifies when the schedules have been updated.
  *
  * @param completionHandler The completion handler to run when check completes.
  */
-- (void)notifyOnMetadataUpdate:(void (^)(void))completionHandler;
+- (void)notifyOnUpdate:(void (^)(void))completionHandler;
+
+/**
+ * Subscribes to updates.
+ */
+- (void)subscribe;
+
+/**
+ * Checks if a schedule is remote.
+ * @param schedule The schedule.
+ * @returns `YES` is remote, otherwise `NO`.
+ */
+- (BOOL)isRemoteSchedule:(UASchedule *)schedule;
+
+/**
+ * Checks if a schedule is remote and up to date.
+ * @param schedule The schedule
+ * @returns `YES` is remote and up to date, otherwise `NO`.
+ */
+- (BOOL)isScheduleUpToDate:(UASchedule *)schedule;
+
 
 @end
+
+NS_ASSUME_NONNULL_END

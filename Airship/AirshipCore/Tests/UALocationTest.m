@@ -75,6 +75,17 @@
     [super tearDown];
 }
 
+- (void)stubLocationAuthorizationStatus:(CLAuthorizationStatus)status {
+#if (XCODE_VERSION_MAJOR >= 1200)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunguarded-availability"
+    [OCMStub(ClassMethod(([(CLLocationManager *)self.mockLocationManager authorizationStatus]))) andReturnValue:OCMOCK_VALUE(status)];
+#pragma clang diagnostic pop
+#else
+    [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(status)] authorizationStatus];
+#endif
+}
+
 /**
  * Test enabling location updates starts location updates when the application is active.
  */
@@ -82,8 +93,8 @@
     // Make the app active
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateActive)] applicationState];
 
-    // Authroize location
-    [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(kCLAuthorizationStatusAuthorizedAlways)] authorizationStatus];
+    // Authorize location
+    [self stubLocationAuthorizationStatus:kCLAuthorizationStatusAuthorizedAlways];
 
     // Make significant location available
     [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(YES)] significantLocationChangeMonitoringAvailable];
@@ -109,7 +120,7 @@
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateInactive)] applicationState];
 
     // Authorize location
-    [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(kCLAuthorizationStatusAuthorizedAlways)] authorizationStatus];
+    [self stubLocationAuthorizationStatus:kCLAuthorizationStatusAuthorizedAlways];
 
     // Make significant location available
     [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(YES)] significantLocationChangeMonitoringAvailable];
@@ -135,8 +146,8 @@
     // Make the app inactive
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateInactive)] applicationState];
 
-    // Authroize location
-    [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(kCLAuthorizationStatusAuthorizedAlways)] authorizationStatus];
+    // Authorize location
+    [self stubLocationAuthorizationStatus:kCLAuthorizationStatusAuthorizedAlways];
 
     // Make significant location available
     [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(YES)] significantLocationChangeMonitoringAvailable];
@@ -160,8 +171,9 @@
     // Make the app inactive
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateInactive)] applicationState];
 
-    // Authroize location
-    [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(kCLAuthorizationStatusAuthorizedAlways)] authorizationStatus];
+
+    // Authorize location
+    [self stubLocationAuthorizationStatus:kCLAuthorizationStatusAuthorizedAlways];
 
     // Make significant location available
     [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(YES)] significantLocationChangeMonitoringAvailable];
@@ -187,8 +199,8 @@
     // Background the app
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateBackground)] applicationState];
 
-    // Authroize location
-    [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(kCLAuthorizationStatusAuthorizedAlways)] authorizationStatus];
+    // Authorize location
+    [self stubLocationAuthorizationStatus:kCLAuthorizationStatusAuthorizedAlways];
 
     // Make significant location available
     [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(YES)] significantLocationChangeMonitoringAvailable];
@@ -211,8 +223,8 @@
     // Background the app
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateBackground)] applicationState];
 
-    // Authroize location
-    [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(kCLAuthorizationStatusAuthorizedAlways)] authorizationStatus];
+    // Authorize location
+    [self stubLocationAuthorizationStatus:kCLAuthorizationStatusAuthorizedAlways];
 
     // Make significant location available
     [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(YES)] significantLocationChangeMonitoringAvailable];
@@ -237,8 +249,8 @@
     // Make the app active
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateActive)] applicationState];
 
-    // Authroize location
-    [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(kCLAuthorizationStatusAuthorizedAlways)] authorizationStatus];
+    // Authorize location
+    [self stubLocationAuthorizationStatus:kCLAuthorizationStatusAuthorizedAlways];
 
     // Make significant location available
     [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(YES)] significantLocationChangeMonitoringAvailable];
@@ -266,8 +278,8 @@
     // Make the app active
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateActive)] applicationState];
 
-    // Authroize location
-    [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(kCLAuthorizationStatusAuthorizedAlways)] authorizationStatus];
+    // Authorize location
+    [self stubLocationAuthorizationStatus:kCLAuthorizationStatusAuthorizedAlways];
 
     // Make significant location available
     [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(YES)] significantLocationChangeMonitoringAvailable];
@@ -292,8 +304,8 @@
     // Make the app active
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateActive)] applicationState];
 
-    // Authroize location
-    [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(kCLAuthorizationStatusAuthorizedAlways)] authorizationStatus];
+    // Authorize location
+    [self stubLocationAuthorizationStatus:kCLAuthorizationStatusAuthorizedAlways];
 
     // Make significant location available
     [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(YES)] significantLocationChangeMonitoringAvailable];
@@ -319,8 +331,8 @@
     // Background the app
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateBackground)] applicationState];
 
-    // Authroize location
-    [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(kCLAuthorizationStatusAuthorizedAlways)] authorizationStatus];
+    // Authorize location
+    [self stubLocationAuthorizationStatus:kCLAuthorizationStatusAuthorizedAlways];
 
     // Make significant location available
     [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(YES)] significantLocationChangeMonitoringAvailable];
@@ -349,8 +361,8 @@
     // Background the app
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateBackground)] applicationState];
 
-    // Authroize location
-    [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(kCLAuthorizationStatusAuthorizedAlways)] authorizationStatus];
+    // Authorize location
+    [self stubLocationAuthorizationStatus:kCLAuthorizationStatusAuthorizedAlways];
 
     // Make significant location available
     [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(YES)] significantLocationChangeMonitoringAvailable];
@@ -375,8 +387,8 @@
     // Background the app
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateBackground)] applicationState];
 
-    // Authroize location
-    [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(kCLAuthorizationStatusAuthorizedAlways)] authorizationStatus];
+    // Authorize location
+    [self stubLocationAuthorizationStatus:kCLAuthorizationStatusAuthorizedAlways];
 
     // Make significant location available
     [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(YES)] significantLocationChangeMonitoringAvailable];
@@ -403,8 +415,8 @@
     // Enable location updates
     self.location.locationUpdatesEnabled = YES;
     
-    // Authroize location
-    [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(kCLAuthorizationStatusAuthorizedAlways)] authorizationStatus];
+    // Authorize location
+    [self stubLocationAuthorizationStatus:kCLAuthorizationStatusAuthorizedAlways];
 
     // Make significant location available
     [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(YES)] significantLocationChangeMonitoringAvailable];
@@ -432,8 +444,8 @@
     self.location.locationUpdatesEnabled = YES;
     self.location.locationUpdatesStarted = YES;
     
-    // Authroize location
-    [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(kCLAuthorizationStatusAuthorizedAlways)] authorizationStatus];
+    // Authorize location
+    [self stubLocationAuthorizationStatus:kCLAuthorizationStatusAuthorizedAlways];
 
     // Make significant location available
     [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(YES)] significantLocationChangeMonitoringAvailable];
@@ -550,8 +562,8 @@
     // Make the app active
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateActive)] applicationState];
 
-    // Authroize location
-    [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(kCLAuthorizationStatusAuthorizedAlways)] authorizationStatus];
+    // Authorize location
+    [self stubLocationAuthorizationStatus:kCLAuthorizationStatusAuthorizedAlways];
 
     // Make significant location unavailable
     [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(NO)] significantLocationChangeMonitoringAvailable];
@@ -575,7 +587,7 @@
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateActive)] applicationState];
 
     // Make location unathorized
-    [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(kCLAuthorizationStatusDenied)] authorizationStatus];
+    [self stubLocationAuthorizationStatus:kCLAuthorizationStatusDenied];
 
     // Make significant location available
     [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(YES)] significantLocationChangeMonitoringAvailable];
@@ -598,7 +610,7 @@
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateActive)] applicationState];
 
     // Make location unathorized
-    [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(kCLAuthorizationStatusRestricted)] authorizationStatus];
+    [self stubLocationAuthorizationStatus:kCLAuthorizationStatusRestricted];
 
     // Make significant location available
     [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(YES)] significantLocationChangeMonitoringAvailable];
@@ -619,7 +631,7 @@
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateActive)] applicationState];
 
     // Set the location authorization to be not determined
-    [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(kCLAuthorizationStatusNotDetermined)] authorizationStatus];
+    [self stubLocationAuthorizationStatus:kCLAuthorizationStatusNotDetermined];
 
     // Make significant location available
     [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(YES)] significantLocationChangeMonitoringAvailable];
@@ -643,7 +655,7 @@
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateActive)] applicationState];
 
     // Set the location authorization to be not determined
-    [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(kCLAuthorizationStatusNotDetermined)] authorizationStatus];
+    [self stubLocationAuthorizationStatus:kCLAuthorizationStatusNotDetermined];
 
     // Make significant location available
     [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(YES)] significantLocationChangeMonitoringAvailable];
@@ -670,7 +682,7 @@
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateInactive)] applicationState];
 
     // Set the location authorization to be not determined
-    [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(kCLAuthorizationStatusNotDetermined)] authorizationStatus];
+    [self stubLocationAuthorizationStatus:kCLAuthorizationStatusNotDetermined];
 
     // Make significant location available
     [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(YES)] significantLocationChangeMonitoringAvailable];
@@ -706,7 +718,7 @@
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateActive)] applicationState];
 
     // Set the location authorization to be not determined
-    [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(kCLAuthorizationStatusNotDetermined)] authorizationStatus];
+    [self stubLocationAuthorizationStatus:kCLAuthorizationStatusNotDetermined];
 
     // Make significant location available
     [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(YES)] significantLocationChangeMonitoringAvailable];
@@ -736,7 +748,7 @@
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateActive)] applicationState];
 
     // Set the location authorization to be not determined
-    [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(kCLAuthorizationStatusNotDetermined)] authorizationStatus];
+    [self stubLocationAuthorizationStatus:kCLAuthorizationStatusNotDetermined];
 
     // Make significant location available
     [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(YES)] significantLocationChangeMonitoringAvailable];
@@ -763,7 +775,7 @@
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateActive)] applicationState];
 
     // Set the location authorization to be not determined
-    [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(kCLAuthorizationStatusNotDetermined)] authorizationStatus];
+    [self stubLocationAuthorizationStatus:kCLAuthorizationStatusNotDetermined];
 
     // Make significant location available
     [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(YES)] significantLocationChangeMonitoringAvailable];

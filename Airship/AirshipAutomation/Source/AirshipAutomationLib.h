@@ -5,6 +5,7 @@
 #import "UAAutomationModuleLoader.h"
 #import "UAAutomationResources.h"
 #import "UACancelSchedulesAction.h"
+#import "UAInAppAutomation.h"
 #import "UAInAppMessage.h"
 #import "UAInAppMessageAdapterProtocol.h"
 #import "UAInAppMessageAssetManager.h"

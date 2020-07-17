@@ -94,6 +94,11 @@ static CGFloat const ModalCloseButtonViewWidth = 46.0;
  */
 @property (nonatomic, strong) UAInAppMessageMediaView *mediaView;
 
+/**
+ * The minimum modal width constraint
+ */
+@property (nonatomic, strong) NSLayoutConstraint *minimumWidth;
+
 @end
 
 @implementation UAInAppMessageModalViewController
@@ -328,6 +333,29 @@ static CGFloat const ModalCloseButtonViewWidth = 46.0;
     } else {
         [self.footerContainerView removeFromSuperview];
     }
+}
+
+-(void)viewWillLayoutSubviews {
+    [super viewWillLayoutSubviews];
+
+    [self applyMinimumSizeConstraints];
+}
+
+// Applies reasonable minimum size constraints to the view's resizable parent
+- (void)applyMinimumSizeConstraints {
+    CGFloat minConstantWidth = MIN(self.resizableParent.view.frame.size.width - (2 * ModalDefaultPadding), 414 - (2 * ModalDefaultPadding));
+
+    self.minimumWidth.active = false;
+
+    self.minimumWidth = [NSLayoutConstraint constraintWithItem:self.resizableParent.resizableContainer
+                                                attribute:NSLayoutAttributeWidth
+                                                relatedBy:NSLayoutRelationGreaterThanOrEqual
+                                                   toItem:nil
+                                                attribute:NSLayoutAttributeNotAnAttribute
+                                               multiplier:1
+                                                 constant:minConstantWidth];
+
+    self.minimumWidth.active = true;
 }
 
 - (nullable UAInAppMessageButton *)createFooterButtonWithButtonInfo:(UAInAppMessageButtonInfo *)buttonInfo {

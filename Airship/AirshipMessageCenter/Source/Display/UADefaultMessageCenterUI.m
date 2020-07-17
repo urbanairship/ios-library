@@ -33,9 +33,9 @@
     self.splitViewController.disableMessageLinkPreviewAndCallouts = disableMessageLinkPreviewAndCallouts;
 }
 
-- (void)setStyle:(UAMessageCenterStyle *)style {
-    _style = style;
-    self.splitViewController.style = style;
+- (void)setMessageCenterStyle:(UAMessageCenterStyle *)style {
+    _messageCenterStyle = style;
+    self.splitViewController.messageCenterStyle = style;
 }
 
 - (void)setTitle:(NSString *)title {
@@ -49,7 +49,7 @@
     self.splitViewController.filter = self.filter;
     self.splitViewController.disableMessageLinkPreviewAndCallouts = self.disableMessageLinkPreviewAndCallouts;
 
-    self.splitViewController.style = self.style;
+    self.splitViewController.messageCenterStyle = self.messageCenterStyle;
     self.splitViewController.title = self.title;
 
     self.splitViewController.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
