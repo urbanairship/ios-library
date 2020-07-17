@@ -127,7 +127,9 @@ NSString * const UAInAppMessagesScheduledMessagesKey = @"UAInAppRemoteDataClient
         void (^completionHandler)(NSArray<UASchedule *> *) = (__bridge void (^)(NSArray<UASchedule *> *))arg;
 
         for (UAInAppMessageScheduleInfo *info in scheduleInfos) {
-            [self.allSchedules addObject:[UASchedule scheduleWithIdentifier:info.message.identifier info:info metadata:metadataA]];
+            [self.allSchedules addObject:[UASchedule scheduleWithIdentifier:info.message.identifier
+                                                                       info:info
+                                                                   metadata:expectedSceduleMetadataA]];
         }
 
         completionHandler(self.allSchedules);
