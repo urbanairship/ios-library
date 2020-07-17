@@ -10,6 +10,8 @@
 #import "UAScheduleTrigger+Internal.h"
 #import "UAScheduleDataMigrator+Internal.h"
 #import "UAAirshipAutomationCoreImport.h"
+#import "UAScheduleTriggerContext+Internal.h"
+#import "UAScheduleTriggerContextData+Internal.h"
 
 @interface UAAutomationStore ()
 @property (nonatomic, strong) NSManagedObjectContext *managedContext;
@@ -346,8 +348,6 @@
     if (schedule.info.delay) {
         scheduleData.delay = [self createDelayDataFromDelay:schedule.info.delay scheduleStart:schedule.info.start schedule:scheduleData];
     }
-
-    return;
 }
 
 - (UAScheduleDelayData *)createDelayDataFromDelay:(UAScheduleDelay *)delay scheduleStart:(NSDate *)scheduleStart schedule:(UAScheduleData *)schedule {
@@ -374,23 +374,30 @@
     NSMutableSet *data = [NSMutableSet set];
 
     for (UAScheduleTrigger *trigger in triggers) {
-        UAScheduleTriggerData *triggerData = [NSEntityDescription insertNewObjectForEntityForName:@"UAScheduleTriggerData"
-                                                                           inManagedObjectContext:self.managedContext];
-        triggerData.type = @(trigger.type);
-        triggerData.goal = trigger.goal;
-        triggerData.start = scheduleStart;
-
-        if (trigger.predicate) {
-            triggerData.predicateData = [UAJSONSerialization dataWithJSONObject:trigger.predicate.payload options:0 error:nil];
-        }
-
-        triggerData.schedule = schedule;
-        triggerData.delay = schedule.delay;
-
+        UAScheduleTriggerData *triggerData = [self createTriggerDataFromTrigger:trigger scheduleStart:scheduleStart schedule:schedule];
         [data addObject:triggerData];
     }
 
     return data;
+}
+
+- (UAScheduleTriggerData *)createTriggerDataFromTrigger:(UAScheduleTrigger *)trigger
+                                          scheduleStart:(NSDate *)scheduleStart
+                                               schedule:(UAScheduleData *)schedule {
+
+    UAScheduleTriggerData *triggerData = [NSEntityDescription insertNewObjectForEntityForName:@"UAScheduleTriggerData" inManagedObjectContext:self.managedContext];
+    triggerData.type = @(trigger.type);
+    triggerData.goal = trigger.goal;
+    triggerData.start = scheduleStart;
+
+    if (trigger.predicate) {
+        triggerData.predicateData = [UAJSONSerialization dataWithJSONObject:trigger.predicate.payload options:0 error:nil];
+    }
+
+    triggerData.schedule = schedule;
+    triggerData.delay = schedule.delay;
+
+    return triggerData;
 }
 
 - (void)waitForIdle {

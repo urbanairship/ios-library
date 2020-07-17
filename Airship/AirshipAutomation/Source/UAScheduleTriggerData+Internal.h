@@ -5,6 +5,7 @@
 
 @class UAScheduleData;
 @class UAScheduleDelayData;
+@class UAScheduleTriggerContextData;
 
 NS_ASSUME_NONNULL_BEGIN
 

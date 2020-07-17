@@ -4,6 +4,7 @@
 #import "UAInAppMessageManager+Internal.h"
 #import "UAInAppMessageScheduleInfo.h"
 #import "UAScheduleInfo+Internal.h"
+#import "UAScheduleTriggerContext+Internal.h"
 #import "UAInAppMessage+Internal.h"
 #import "UAInAppMessagingRemoteConfig+Internal.h"
 #import "UATagGroupsLookupManager+Internal.h"
@@ -100,12 +101,15 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
         self.remoteDataClient.delegate = self;
         self.inAppMessageManager.executionDelegate = self;
 
-        [self.automationEngine start];
-        [self updateEnginePauseState];
         [self.remoteDataClient subscribe];
     }
 
     return self;
+}
+
+-(void)airshipReady:(UAirship *)airship {
+    [self.automationEngine start];
+    [self updateEnginePauseState];
 }
 
 - (void)getScheduleWithID:(NSString *)identifier completionHandler:(void (^)(UASchedule * _Nullable))completionHandler {
@@ -169,8 +173,10 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
 }
 
 - (void)prepareSchedule:(UASchedule *)schedule
+         triggerContext:(nullable UAScheduleTriggerContext *)triggerContext
       completionHandler:(void (^)(UAAutomationSchedulePrepareResult))completionHandler {
 
+    UA_LDEBUG(@"Trigger Context trigger: %@ event: %@", triggerContext.trigger, triggerContext.event);
     UA_LDEBUG(@"Preparing schedule: %@", schedule.identifier);
 
     if ([self isScheduleInvalid:schedule]) {

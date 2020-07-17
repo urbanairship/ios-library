@@ -10,6 +10,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class UAScheduleTriggerContext;
+
 /**
  * Prepare results
  */
@@ -78,9 +80,11 @@ typedef NS_ENUM(NSInteger, UAAutomationScheduleReadyResult) {
  * Prepares the schedule.
  *
  * @param schedule The schedule.
+ * @param triggerContext The trigger context.
  * @param completionHandler Completion handler when the schedule is finished preparing.
  */
 - (void)prepareSchedule:(UASchedule *)schedule
+         triggerContext:(nullable UAScheduleTriggerContext *)triggerContext
       completionHandler:(void (^)(UAAutomationSchedulePrepareResult))completionHandler;
 
 /**

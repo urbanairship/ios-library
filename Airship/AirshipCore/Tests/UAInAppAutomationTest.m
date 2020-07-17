@@ -167,7 +167,7 @@
         return YES;
     }]];
 
-    [self.engineDelegate prepareSchedule:testSchedule completionHandler:^(UAAutomationSchedulePrepareResult result) {
+    [self.engineDelegate prepareSchedule:testSchedule triggerContext:nil completionHandler:^(UAAutomationSchedulePrepareResult result) {
         XCTAssertEqual(UAAutomationSchedulePrepareResultContinue, result);
         [prepareFinished fulfill];
     }];
@@ -199,7 +199,7 @@
     }] notifyOnUpdate:OCMOCK_ANY];
 
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare finished"];
-    [self.engineDelegate prepareSchedule:testSchedule completionHandler:^(UAAutomationSchedulePrepareResult result) {
+    [self.engineDelegate prepareSchedule:testSchedule triggerContext:nil completionHandler:^(UAAutomationSchedulePrepareResult result) {
         XCTAssertEqual(UAAutomationSchedulePrepareResultInvalidate, result);
         [prepareFinished fulfill];
     }];
@@ -233,7 +233,7 @@
 
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare finished"];
 
-    [self.engineDelegate prepareSchedule:testSchedule completionHandler:^(UAAutomationSchedulePrepareResult result) {
+    [self.engineDelegate prepareSchedule:testSchedule triggerContext:nil completionHandler:^(UAAutomationSchedulePrepareResult result) {
         XCTAssertEqual(UAAutomationSchedulePrepareResultPenalize, result);
         [prepareFinished fulfill];
     }];
@@ -268,7 +268,7 @@
 
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare finished"];
 
-    [self.engineDelegate prepareSchedule:testSchedule completionHandler:^(UAAutomationSchedulePrepareResult result) {
+    [self.engineDelegate prepareSchedule:testSchedule triggerContext:nil completionHandler:^(UAAutomationSchedulePrepareResult result) {
         XCTAssertEqual(UAAutomationSchedulePrepareResultCancel, result);
         [prepareFinished fulfill];
     }];
@@ -303,7 +303,7 @@
 
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare finished"];
 
-    [self.engineDelegate prepareSchedule:testSchedule completionHandler:^(UAAutomationSchedulePrepareResult result) {
+    [self.engineDelegate prepareSchedule:testSchedule triggerContext:nil completionHandler:^(UAAutomationSchedulePrepareResult result) {
         XCTAssertEqual(UAAutomationSchedulePrepareResultSkip, result);
         [prepareFinished fulfill];
     }];
@@ -338,7 +338,7 @@
 
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare finished"];
 
-    [self.engineDelegate prepareSchedule:testSchedule completionHandler:^(UAAutomationSchedulePrepareResult result) {
+    [self.engineDelegate prepareSchedule:testSchedule triggerContext:nil completionHandler:^(UAAutomationSchedulePrepareResult result) {
         XCTAssertEqual(UAAutomationSchedulePrepareResultPenalize, result);
         [prepareFinished fulfill];
     }];

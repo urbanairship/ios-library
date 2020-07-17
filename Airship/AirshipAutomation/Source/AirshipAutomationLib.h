@@ -51,3 +51,4 @@
 #import "UAScheduleEdits.h"
 #import "UAScheduleInfo.h"
 #import "UAScheduleTrigger.h"
+#import "UAScheduleTriggerContext.h"

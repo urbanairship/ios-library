@@ -972,7 +972,7 @@ NSString * const UAInAppMessagesScheduledMessagesKey = @"UAInAppRemoteDataClient
         @"com.urbanairship.iaa.REMOTE_DATA_METADATA": remoteDataMetadata
     }];
 
-    UASchedule *notRemote = [UASchedule scheduleWithIdentifier:@"cool" info:[[UAScheduleInfo alloc] init] metadata:@{}];\
+    UASchedule *notRemote = [UASchedule scheduleWithIdentifier:@"cool" info:[[UAScheduleInfo alloc] init] metadata:@{}];
 
     id info = [UAInAppMessageScheduleInfo scheduleInfoWithBuilderBlock:^(UAInAppMessageScheduleInfoBuilder * _Nonnull builder) {
         builder.message = [UAInAppMessage messageWithBuilderBlock:^(UAInAppMessageBuilder * _Nonnull builder) {

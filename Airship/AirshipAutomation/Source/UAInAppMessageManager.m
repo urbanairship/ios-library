@@ -17,6 +17,7 @@
 #import "UARetriable+Internal.h"
 #import "UARetriablePipeline+Internal.h"
 #import "UAAirshipAutomationCoreImport.h"
+#import "UAScheduleTriggerContext+Internal.h"
 
 
 NS_ASSUME_NONNULL_BEGIN
@@ -259,7 +260,6 @@ NSString *const UAInAppMessageDisplayCoordinatorIsReadyKey = @"isReady";
 - (void)prepareMessage:(UAInAppMessage *)message
             scheduleID:(NSString *)scheduleID
      completionHandler:(void (^)(UAAutomationSchedulePrepareResult))completionHandler {
-
     // Allow the delegate to extend the message if desired.
     id<UAInAppMessagingDelegate> delegate = self.delegate;
     if ([delegate respondsToSelector:@selector(extendMessage:)]) {
@@ -419,14 +419,13 @@ NSString *const UAInAppMessageDisplayCoordinatorIsReadyKey = @"isReady";
 
     // After display has finished, notify the coordinator as well
     completionHandler = ^{
-        if ([displayCoordinator respondsToSelector:@selector(didFinishDisplayingMessage:)]) {
-            [displayCoordinator didFinishDisplayingMessage:message];
-        }
+
         completionHandler();
     };
 
     UA_WEAKIFY(self);
     void (^displayCompletionHandler)(UAInAppMessageResolution *) = ^(UAInAppMessageResolution *resolution) {
+
         UA_STRONGIFY(self);
         UA_LDEBUG(@"Schedule %@ finished displaying", scheduleID);
 
@@ -462,6 +461,10 @@ NSString *const UAInAppMessageDisplayCoordinatorIsReadyKey = @"isReady";
 
         // notify the asset manager
         [self.assetManager onDisplayFinished:message scheduleID:scheduleID];
+
+        if ([displayCoordinator respondsToSelector:@selector(didFinishDisplayingMessage:)]) {
+            [displayCoordinator didFinishDisplayingMessage:message];
+        }
 
         completionHandler();
     };
