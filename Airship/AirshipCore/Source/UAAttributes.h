@@ -8,99 +8,99 @@
 /**
 * Title attribute.
 */
-extern NSString * const title;
+extern NSString * const UAAttributeTitle;
 
 /**
 * First name attribute.
 */
-extern NSString * const first_name;
+extern NSString * const UAAttributeFirstName;
 
 /**
 * Last name attribute.
 */
-extern NSString * const last_name;
+extern NSString * const UAAttributeLastName;
 
 /**
 * Full name attribute.
 */
-extern NSString * const full_name;
+extern NSString * const UAAttributeFullName;
 
 /**
 * Gender attribute.
 */
-extern NSString * const gender;
+extern NSString * const UAAttributeGender;
 
 /**
 * Zip code attribute.
 */
-extern NSNumber * const zipcode;
+extern NSNumber * const UAAttributeZipCode;
 
 /**
 * City attribute.
 */
-extern NSString * const city;
+extern NSString * const UAAttributeCity;
 
 /**
 * Region attribute.
 */
-extern NSString * const region;
+extern NSString * const UAAttributeRegion;
 
 /**
 * Country attribute.
 */
-extern NSString * const country;
+extern NSString * const UAAttributeCountry;
 
 /**
 * Birthdate attribute.
 */
-extern NSDate * const birthdate;
+extern NSDate * const UAAttributeBirthdate;
 
 /**
 * Age attribute.
 */
-extern NSNumber * const age;
+extern NSNumber * const UAAttributeAge;
 
 /**
 * Mobile phone attribute.
 */
-extern NSNumber * const mobile_phone;
+extern NSNumber * const UAAttributeMobilePhone;
 
 /**
 * Home phone attribute.
 */
-extern NSNumber * const home_phone;
+extern NSNumber * const UAAttributeHomePhone;
 
 /**
 * Work phone attribute.
 */
-extern NSNumber * const work_phone;
+extern NSNumber * const UAAttributeWorkPhone;
 
 /**
 * Loyalty tier attribute.
 */
-extern NSString * const loyalty_tier;
+extern NSString * const UAAttributeLoyaltyTier;
 
 /**
 * Company attribute.
 */
-extern NSString * const company;
+extern NSString * const UAAttributeCompany;
 
 /**
 * Username attribute.
 */
-extern NSString * const username;
+extern NSString * const UAAttributeUsername;
 
 /**
 * Account creation attribute.
 */
-extern NSDate * const account_creation;
+extern NSDate * const UAAttributeAccountCreation;
 
 /**
 * Email attribute.
 */
-extern NSString * const email;
+extern NSString * const UAAttributeEmail;
 
 /**
 * Advertising id attribute.
 */
-extern NSString * const advertising_id;
+extern NSString * const UAAttributeAdvertisingId;

@@ -27,3 +27,5 @@ NSString * const UAAttributeUsername = @"username";
 NSDate * const UAAttributeAccountCreation = nil;
 NSString * const UAAttributeEmail = @"email";
 NSString * const UAAttributeAdvertisingId = @"advertising_id";
+@end
+
