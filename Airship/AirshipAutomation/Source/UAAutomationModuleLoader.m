@@ -24,14 +24,14 @@
                                              channel:(UAChannel *)channel
                                            analytics:(UAAnalytics *)analytics
                                   remoteDataProvider:(id<UARemoteDataProvider>)remoteDataProvider
-                                    tagGroupsHistory:(id<UATagGroupsHistory>)tagGroupsHistory {
+                                    tagGroupHistorian:(UATagGroupHistorian *)tagGroupHistorian {
 
     NSMutableArray *components = [NSMutableArray array];
     UAActionAutomation *automation = [UAActionAutomation automationWithConfig:config dataStore:dataStore];
     [components addObject:automation];
 
     UAInAppMessageManager *IAM = [UAInAppMessageManager managerWithConfig:config
-                                                         tagGroupsHistory:tagGroupsHistory
+                                                         tagGroupHistorian:tagGroupHistorian
                                                        remoteDataProvider:remoteDataProvider
                                                                 dataStore:dataStore
                                                                   channel:channel

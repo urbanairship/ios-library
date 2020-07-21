@@ -12,7 +12,7 @@
 /**
  * UATagGroupsTransactionRecord class factory method.
  */
-+ (instancetype)transactionRecordWithMutation:(UATagGroupsMutation *)mutation date:(NSDate *)date;
++ (instancetype)transactionRecordWithMutation:(UATagGroupsMutation *)mutation date:(NSDate *)date identifer:(NSString *)identifier;
 
 /**
  * The mutation.
@@ -23,5 +23,10 @@
  * The date.
  */
 @property(nonatomic, readonly) NSDate *date;
+
+/**
+ * The Tag group identifier.
+ */
+@property(nonatomic, readonly) NSString *identifier;
 
 @end

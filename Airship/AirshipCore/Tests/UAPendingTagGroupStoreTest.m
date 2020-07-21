@@ -3,11 +3,22 @@
 #import "UAAirshipBaseTest.h"
 #import "UAPreferenceDataStore+Internal.h"
 #import "UAPendingTagGroupStore+Internal.h"
+#import "UATagGroupsRegistrar+Internal.h"
+#import "UATagGroupHistorian.h"
+#import "UAChannel+Internal.h"
+#import "UANamedUser+Internal.h"
+
+@interface UATagGroupHistorian()
+
+- (NSArray<UATagGroupsMutation *> *)sentMutationsWithMaxAge:(NSTimeInterval)maxAge;
+
+@end
 
 @interface UAPendingTagGroupStoreTest : UAAirshipBaseTest
 
 @property(nonatomic, strong) UAPendingTagGroupStore *channelPendingTagGroupStore;
-@property(nonatomic, strong) UAPendingTagGroupStore *namedPendingTagGroupStore;
+@property(nonatomic, strong) UAPendingTagGroupStore *namedUserPendingTagGroupStore;
+@property(nonatomic, strong) UATagGroupHistorian *tagGroupHistorian;
 
 @end
 
@@ -16,12 +27,31 @@
 - (void)setUp {
     [super setUp];
     self.channelPendingTagGroupStore = [UAPendingTagGroupStore historyWithDataStore:self.dataStore storeKey:UATagGroupsChannelStoreKey];
-    self.namedPendingTagGroupStore = [UAPendingTagGroupStore historyWithDataStore:self.dataStore storeKey:UATagGroupsNamedUserStoreKey];
+    self.namedUserPendingTagGroupStore = [UAPendingTagGroupStore historyWithDataStore:self.dataStore storeKey:UATagGroupsNamedUserStoreKey];
+    
+    UATagGroupsRegistrar *tagGroupsChannelRegistrar = [UATagGroupsRegistrar tagGroupsRegistrarWithConfig:self.config
+                                                                                               dataStore:self.dataStore
+                                                                                    pendingTagGroupStore:self.channelPendingTagGroupStore];
+    UAChannel *channel = [UAChannel channelWithDataStore:self.dataStore
+                                                  config:self.config
+                                      tagGroupsRegistrar:tagGroupsChannelRegistrar];
+    
+    
+    UATagGroupsRegistrar *tagGroupsNamedUserRegistrar = [UATagGroupsRegistrar tagGroupsRegistrarWithConfig:self.config
+                                                                                                 dataStore:self.dataStore
+                                                                                      pendingTagGroupStore:self.namedUserPendingTagGroupStore];
+    UANamedUser *namedUser = [UANamedUser namedUserWithChannel:channel
+                                                        config:self.config
+                                                     dataStore:self.dataStore
+                                            tagGroupsRegistrar:tagGroupsNamedUserRegistrar];
+    
+    self.tagGroupHistorian = [[UATagGroupHistorian alloc] initTagGroupHistorianWithChannel:channel namedUser:namedUser];
+    
 }
 
 - (void)tearDown {
-    [self.channelPendingTagGroupStore clearAll];
-    [self.namedPendingTagGroupStore clearAll];
+    [self.channelPendingTagGroupStore clearPendingMutations];
+    [self.namedUserPendingTagGroupStore clearPendingMutations];
     [super tearDown];
 }
 
@@ -127,10 +157,10 @@
     NSDate *recent = [NSDate dateWithTimeIntervalSinceNow:-(maxAge/2)];
     NSDate *old = [NSDate distantPast];
 
-    [self.channelPendingTagGroupStore addSentMutation:mutation3 date:recent];
-    [self.channelPendingTagGroupStore addSentMutation:mutation4 date:old];
+    [[NSNotificationCenter defaultCenter] postNotificationName:UAAirshipTagGroupSentNotification object:nil userInfo:@{@"tagGroupsMutation":mutation3, @"date":recent}];
+    [[NSNotificationCenter defaultCenter] postNotificationName:UAAirshipTagGroupSentNotification object:nil userInfo:@{@"tagGroupsMutation":mutation4, @"date":old}];
 
-    UATagGroups *newTagGroups = [self.channelPendingTagGroupStore applyHistory:tagGroups maxAge:maxAge];
+    UATagGroups *newTagGroups = [self.tagGroupHistorian applyHistory:tagGroups maxAge:maxAge];
 
     UATagGroups *expectedTagGroups = [UATagGroups tagGroupsWithTags:@{ @"group1" : @[@"tag1", @"tag2", @"foo", @"bar"],
                                                                        @"group2" : @[@"tag4"],
@@ -148,10 +178,10 @@
     NSDate *recent = [NSDate dateWithTimeIntervalSinceNow:-(maxAge/2)];
     NSDate *old = [NSDate distantPast];
 
-    [self.channelPendingTagGroupStore addSentMutation:mutation1 date:recent];
-    [self.channelPendingTagGroupStore addSentMutation:mutation2 date:old];
+    [[NSNotificationCenter defaultCenter] postNotificationName:UAAirshipTagGroupSentNotification object:nil userInfo:@{@"tagGroupsMutation":mutation1, @"date":recent}];
+    [[NSNotificationCenter defaultCenter] postNotificationName:UAAirshipTagGroupSentNotification object:nil userInfo:@{@"tagGroupsMutation":mutation2, @"date":old}];
 
-    NSArray<UATagGroupsMutation *> *sent = [self.channelPendingTagGroupStore sentMutationsWithMaxAge:maxAge];
+    NSArray<UATagGroupsMutation *> *sent = [self.tagGroupHistorian sentMutationsWithMaxAge:maxAge];
 
     XCTAssertEqual(sent.count, 1);
     XCTAssertEqualObjects(sent[0].payload, mutation1.payload);

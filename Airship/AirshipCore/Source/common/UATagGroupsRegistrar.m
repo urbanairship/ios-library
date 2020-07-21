@@ -160,8 +160,9 @@ typedef void (^UATagGroupsMutator)(NSArray *, NSString *);
                 // Success - pop uploaded mutation and store the transaction record
                 UATagGroupsMutation *mutation = [self.pendingTagGroupStore popPendingMutation];
 
-                [[NSNotificationCenter defaultCenter] postNotificationName:UAAirshipTagGroupSentNotification object:mutation];
+                [[NSNotificationCenter defaultCenter] postNotificationName:UAAirshipTagGroupSentNotification object:nil userInfo:@{@"tagGroupsMutation":mutation, @"date":[NSDate date]}];
 
+                
                 // Try to upload more mutations as long as the operation hasn't been canceled
                 if (operation.isCancelled) {
                     [self endBackgroundTask:backgroundTaskIdentifier];

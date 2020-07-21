@@ -17,7 +17,7 @@ NSString * const UATagGroupsLookupManagerErrorDomain = @"com.urbanairship.tag_gr
 @interface UATagGroupsLookupManager ()
 
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
-@property (nonatomic, strong) id<UATagGroupsHistory> tagGroupsHistory;
+@property (nonatomic, strong) UATagGroupHistorian *tagGroupHistorian;
 @property (nonatomic, strong) UATagGroupsLookupAPIClient *lookupAPIClient;
 @property (nonatomic, strong) UATagGroupsLookupResponseCache *cache;
 @property (nonatomic, readonly) NSTimeInterval maxSentMutationAge;
@@ -29,7 +29,7 @@ NSString * const UATagGroupsLookupManagerErrorDomain = @"com.urbanairship.tag_gr
 - (instancetype)initWithAPIClient:(UATagGroupsLookupAPIClient *)client
                         dataStore:(UAPreferenceDataStore *)dataStore
                             cache:(UATagGroupsLookupResponseCache *)cache
-                 tagGroupsHistory:(id<UATagGroupsHistory>)tagGroupsHistory
+                 tagGroupHistorian:(UATagGroupHistorian *)tagGroupHistorian
                       currentTime:(UADate *)currentTime {
 
     self = [super init];
@@ -37,7 +37,7 @@ NSString * const UATagGroupsLookupManagerErrorDomain = @"com.urbanairship.tag_gr
     if (self) {
         self.dataStore = dataStore;
         self.cache = cache;
-        self.tagGroupsHistory = tagGroupsHistory;
+        self.tagGroupHistorian = tagGroupHistorian;
         self.lookupAPIClient = client;
         self.currentTime = currentTime;
 
@@ -50,22 +50,22 @@ NSString * const UATagGroupsLookupManagerErrorDomain = @"com.urbanairship.tag_gr
 
 + (instancetype)lookupManagerWithConfig:(UARuntimeConfig *)config
                               dataStore:(UAPreferenceDataStore *)dataStore
-                       tagGroupsHistory:(id<UATagGroupsHistory>)tagGroupsHistory {
+                       tagGroupHistorian:(UATagGroupHistorian *)tagGroupHistorian {
 
     return [[self alloc] initWithAPIClient:[UATagGroupsLookupAPIClient clientWithConfig:config]
                                  dataStore:dataStore
                                      cache:[UATagGroupsLookupResponseCache cacheWithDataStore:dataStore]
-                          tagGroupsHistory:tagGroupsHistory
+                          tagGroupHistorian:tagGroupHistorian
                                currentTime:[[UADate alloc] init]];
 }
 
 + (instancetype)lookupManagerWithAPIClient:(UATagGroupsLookupAPIClient *)client
                                  dataStore:(UAPreferenceDataStore *)dataStore
                                      cache:(UATagGroupsLookupResponseCache *)cache
-                          tagGroupsHistory:(id<UATagGroupsHistory>)tagGroupsHistory
+                          tagGroupHistorian:(UATagGroupHistorian *)tagGroupHistorian
                                currentTime:(UADate *)currentTime {
 
-    return [[self alloc] initWithAPIClient:client dataStore:dataStore cache:cache tagGroupsHistory:tagGroupsHistory currentTime:currentTime];
+    return [[self alloc] initWithAPIClient:client dataStore:dataStore cache:cache tagGroupHistorian:tagGroupHistorian currentTime:currentTime];
 }
 
 - (BOOL)enabled {
@@ -105,11 +105,11 @@ NSString * const UATagGroupsLookupManagerErrorDomain = @"com.urbanairship.tag_gr
 }
 
 - (void)updateMaxSentMutationAge {
-    self.tagGroupsHistory.maxSentMutationAge = self.cache.staleReadTime + self.preferLocalTagDataTime;
+    self.tagGroupHistorian.maxSentMutationAge = self.cache.staleReadTime + self.preferLocalTagDataTime;
 }
 
 - (NSTimeInterval)maxSentMutationAge {
-    return self.tagGroupsHistory.maxSentMutationAge;
+    return self.tagGroupHistorian.maxSentMutationAge;
     return self.cache.staleReadTime + self.preferLocalTagDataTime;
 }
 
@@ -133,7 +133,7 @@ NSString * const UATagGroupsLookupManagerErrorDomain = @"com.urbanairship.tag_gr
 
     // Apply local history
     NSTimeInterval maxAge = [[self.currentTime now] timeIntervalSinceDate:refreshDate] + self.preferLocalTagDataTime;
-    UATagGroups *locallyModifiedTagGroups = [self.tagGroupsHistory applyHistory:cachedTagGroups maxAge:maxAge];
+    UATagGroups *locallyModifiedTagGroups = [self.tagGroupHistorian applyHistory:cachedTagGroups maxAge:maxAge];
 
     // Override the device tags if needed
     if ([UAirship channel].isChannelTagRegistrationEnabled) {

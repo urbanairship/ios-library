@@ -6,7 +6,7 @@
 #import "UARemoteDataProvider.h"
 #import "UAChannel.h"
 #import "UARemoteDataProvider.h"
-#import "UATagGroupsHistory.h"
+#import "UATagGroupHistorian.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -25,7 +25,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param channel The channel.
  * @param analytics Analytics instance.
  * @param remoteDataProvider Remote data provider.
- * @param tagGroupsHistory Tag groups history.
+ * @param tagGroupHistorian Tag groups history.
  * @return The module loader.
  */
 + (id<UAModuleLoader>)inAppModuleLoaderWithDataStore:(UAPreferenceDataStore *)dataStore
@@ -33,7 +33,7 @@ NS_ASSUME_NONNULL_BEGIN
                                              channel:(UAChannel *)channel
                                            analytics:(UAAnalytics *)analytics
                                   remoteDataProvider:(id<UARemoteDataProvider>)remoteDataProvider
-                                    tagGroupsHistory:(id<UATagGroupsHistory>)tagGroupsHistory;
+                                    tagGroupHistorian:(UATagGroupHistorian *)tagGroupHistorian;
 @end
 
 NS_ASSUME_NONNULL_END

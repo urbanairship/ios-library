@@ -120,10 +120,10 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         self.whitelist = [UAWhitelist whitelistWithConfig:config];
         self.applicationMetrics = [UAApplicationMetrics applicationMetricsWithDataStore:dataStore];
 
-        UAPendingTagGroupStore<UATagGroupsHistory> *pendingTagGroupChannelStore = [UAPendingTagGroupStore historyWithDataStore:self.dataStore storeKey:UATagGroupsChannelStoreKey];
+        UAPendingTagGroupStore *pendingTagGroupChannelStore = [UAPendingTagGroupStore historyWithDataStore:self.dataStore storeKey:UATagGroupsChannelStoreKey];
         UATagGroupsRegistrar *tagGroupsChannelRegistrar = [UATagGroupsRegistrar tagGroupsRegistrarWithConfig:self.config
-                                                                                            dataStore:self.dataStore
-                                                                                      pendingTagGroupStore:pendingTagGroupChannelStore];
+                                                                                                   dataStore:self.dataStore
+                                                                                        pendingTagGroupStore:pendingTagGroupChannelStore];
 
         self.sharedChannel = [UAChannel channelWithDataStore:self.dataStore
                                                       config:self.config
@@ -144,10 +144,10 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         [components addObject:self.sharedPush];
 
         
-        UAPendingTagGroupStore<UATagGroupsHistory> *pendingTagGroupNamedUserStore = [UAPendingTagGroupStore historyWithDataStore:self.dataStore storeKey:UATagGroupsNamedUserStoreKey];
+        UAPendingTagGroupStore *pendingTagGroupNamedUserStore = [UAPendingTagGroupStore historyWithDataStore:self.dataStore storeKey:UATagGroupsNamedUserStoreKey];
         UATagGroupsRegistrar *tagGroupsNamedUserRegistrar = [UATagGroupsRegistrar tagGroupsRegistrarWithConfig:self.config
-                                                                                            dataStore:self.dataStore
-                                                                                      pendingTagGroupStore:pendingTagGroupNamedUserStore];
+                                                                                                     dataStore:self.dataStore
+                                                                                          pendingTagGroupStore:pendingTagGroupNamedUserStore];
         self.sharedNamedUser = [UANamedUser namedUserWithChannel:self.sharedChannel
                                                           config:self.config
                                                        dataStore:self.dataStore
@@ -179,22 +179,23 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
             self.locationProvider = locationLoader.locationProvider;
         }
 
+        UATagGroupHistorian *tagGroupHistorian = [[UATagGroupHistorian alloc] initTagGroupHistorianWithChannel:self.sharedChannel namedUser:self.sharedNamedUser];
         id<UAModuleLoader> automationChannelLoader = [UAirship automationModuleLoaderWithDataStore:self.dataStore
-                                                                                     config:self.config
-                                                                                    channel:self.sharedChannel
-                                                                                  analytics:self.sharedAnalytics
-                                                                          remoteDataManager:self.sharedRemoteDataManager
-                                                                           tagGroupsHistory:pendingTagGroupChannelStore];
+                                                                                            config:self.config
+                                                                                           channel:self.sharedChannel
+                                                                                         analytics:self.sharedAnalytics
+                                                                                 remoteDataManager:self.sharedRemoteDataManager
+                                                                                 tagGroupHistorian:tagGroupHistorian];
         if (automationChannelLoader) {
             [loaders addObject:automationChannelLoader];
         }
 
         id<UAModuleLoader> automationNamedUserLoader = [UAirship automationModuleLoaderWithDataStore:self.dataStore
-                   config:self.config
-                  channel:self.sharedChannel
-                analytics:self.sharedAnalytics
-        remoteDataManager:self.sharedRemoteDataManager
-         tagGroupsHistory:pendingTagGroupNamedUserStore];
+                                                                                              config:self.config
+                                                                                             channel:self.sharedChannel
+                                                                                           analytics:self.sharedAnalytics
+                                                                                   remoteDataManager:self.sharedRemoteDataManager
+                                                                                   tagGroupHistorian:tagGroupHistorian];
         if (automationNamedUserLoader) {
             [loaders addObject:automationNamedUserLoader];
         }
@@ -558,7 +559,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
                                                   channel:(UAChannel *)channel
                                                 analytics:(UAAnalytics *)analytics
                                         remoteDataManager:(UARemoteDataManager *)remoteDataManager
-                                         tagGroupsHistory:(id<UATagGroupsHistory>)tagGroupsHistory {
+                                         tagGroupHistorian:(UATagGroupHistorian *)tagGroupHistorian {
 
     Class cls = NSClassFromString(UAAutomationModuleLoaderClassName);
     if ([cls conformsToProtocol:@protocol(UAAutomationModuleLoaderFactory)]) {
@@ -567,7 +568,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
                                            channel:channel
                                          analytics:analytics
                                 remoteDataProvider:remoteDataManager
-                                  tagGroupsHistory:tagGroupsHistory];
+                                  tagGroupHistorian:tagGroupHistorian];
     }
     return nil;
 }

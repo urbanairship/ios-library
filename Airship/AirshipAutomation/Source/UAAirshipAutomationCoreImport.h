@@ -50,7 +50,6 @@
 #import "UARuntimeConfig.h"
 #import "UASystemVersion.h"
 #import "UATagGroups.h"
-#import "UATagGroupsHistory.h"
 #import "UAUtils.h"
 #import "UAViewUtils.h"
 #import "UA_Base64.h"

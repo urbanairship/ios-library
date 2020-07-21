@@ -87,7 +87,6 @@
 #import "UARuntimeConfig.h"
 #import "UASystemVersion.h"
 #import "UATagGroups.h"
-#import "UATagGroupsHistory.h"
 #import "UATextInputNotificationAction.h"
 #import "UAUtils.h"
 #import "UAVersionMatcher.h"

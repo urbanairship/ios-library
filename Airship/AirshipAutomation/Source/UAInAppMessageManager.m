@@ -124,7 +124,7 @@ NSString *const UAInAppMessageDisplayCoordinatorIsReadyKey = @"isReady";
 }
 
 + (instancetype)managerWithConfig:(UARuntimeConfig *)config
-                 tagGroupsHistory:(id<UATagGroupsHistory>)tagGroupsHistory
+                 tagGroupHistorian:(UATagGroupHistorian *)tagGroupHistorian
                remoteDataProvider:(id<UARemoteDataProvider>)remoteDataProvider
                         dataStore:(UAPreferenceDataStore *)dataStore
                           channel:(UAChannel *)channel
@@ -137,7 +137,7 @@ NSString *const UAInAppMessageDisplayCoordinatorIsReadyKey = @"isReady";
 
     UATagGroupsLookupManager *lookupManager = [UATagGroupsLookupManager lookupManagerWithConfig:config
                                                                                       dataStore:dataStore
-                                                                               tagGroupsHistory:tagGroupsHistory];
+                                                                               tagGroupHistorian:tagGroupHistorian];
 
     return [[UAInAppMessageManager alloc] initWithAutomationEngine:automationEngine
                                             tagGroupsLookupManager:lookupManager

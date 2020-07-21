@@ -5,7 +5,6 @@
 #import "UAPreferenceDataStore+Internal.h"
 #import "UATagGroupsTransactionRecord+Internal.h"
 #import "UATagGroups.h"
-#import "UATagGroupsHistory.h"
 #import "UATagGroupsAPIClient+Internal.h"
 
 NS_ASSUME_NONNULL_BEGIN

@@ -96,24 +96,24 @@ extern NSTimeInterval const UATagGroupsLookupManagerDefaultPreferLocalTagDataTim
  *
  * @param config An instance of UARuntimeConfig.
  * @param dataStore A data store.
- * @param tagGroupsHistory The tag groups history.
+ * @param tagGroupHistorian The tag groups history.
  */
 + (instancetype)lookupManagerWithConfig:(UARuntimeConfig *)config
                               dataStore:(UAPreferenceDataStore *)dataStore
-                       tagGroupsHistory:(id<UATagGroupsHistory>)tagGroupsHistory;
+                       tagGroupHistorian:(UATagGroupHistorian *)tagGroupHistorian;
 /**
  * UATagGroupsLookupManager class factory method.
  *
  * @param client A tag groups lookup API client.
  * @param dataStore A data store.
  * @param cache A lookup response cache.
- * @param tagGroupsHistory The tag group history.
+ * @param tagGroupHistorian The tag group history.
  * @param currentTime A UADate to be used for getting the current time.
  */
 + (instancetype)lookupManagerWithAPIClient:(UATagGroupsLookupAPIClient *)client
                                  dataStore:(UAPreferenceDataStore *)dataStore
                                      cache:(UATagGroupsLookupResponseCache *)cache
-                          tagGroupsHistory:(id<UATagGroupsHistory>)tagGroupsHistory
+                          tagGroupHistorian:(UATagGroupHistorian *)tagGroupHistorian
                                currentTime:(UADate *)currentTime;
 
 
