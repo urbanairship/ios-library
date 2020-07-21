@@ -30,12 +30,12 @@
     UAActionAutomation *automation = [UAActionAutomation automationWithConfig:config dataStore:dataStore];
     [components addObject:automation];
 
-    UAInAppMessageManager *inAppAutomation = [UAInAppMessageManager managerWithConfig:config
-                                                         tagGroupHistorian:tagGroupHistorian
-                                                       remoteDataProvider:remoteDataProvider
-                                                                dataStore:dataStore
-                                                                  channel:channel
-                                                                analytics:analytics];
+    UAInAppAutomation *inAppAutomation = [UAInAppAutomation automationWithConfig:config
+                                                                tagGroupHistorian:tagGroupHistorian
+                                                              remoteDataProvider:remoteDataProvider
+                                                                       dataStore:dataStore
+                                                                         channel:channel
+                                                                       analytics:analytics];
     [components addObject:inAppAutomation];
 
 

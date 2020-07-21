@@ -51,7 +51,7 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
 }
 
 + (instancetype)automationWithConfig:(UARuntimeConfig *)config
-                    tagGroupsHistory:(id<UATagGroupsHistory>)tagGroupsHistory
+                    tagGroupHistorian:(UATagGroupHistorian *)tagGroupHistorian
                   remoteDataProvider:(id<UARemoteDataProvider>)remoteDataProvider
                            dataStore:(UAPreferenceDataStore *)dataStore
                              channel:(UAChannel *)channel
@@ -64,7 +64,7 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
 
     UATagGroupsLookupManager *lookupManager = [UATagGroupsLookupManager lookupManagerWithConfig:config
                                                                                       dataStore:dataStore
-                                                                               tagGroupsHistory:tagGroupsHistory];
+                                                                               tagGroupHistorian:tagGroupHistorian];
 
     UAInAppRemoteDataClient *dataClient = [UAInAppRemoteDataClient clientWithRemoteDataProvider:remoteDataProvider
                                                                                       dataStore:dataStore

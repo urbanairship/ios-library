@@ -41,7 +41,7 @@ NS_ASSUME_NONNULL_BEGIN
  * Factory method.
  *
  * @param config The UARuntimeConfigInstance.
- * @param tagGroupsHistory The tag groups history.
+ * @param tagGroupHistorian The tag groups history.
  * @param remoteDataProvider The remote data provider.
  * @param dataStore The preference data store.
  * @param channel The channel.
@@ -49,7 +49,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @return A in-app automation manager instance.
  */
 + (instancetype)automationWithConfig:(UARuntimeConfig *)config
-                    tagGroupsHistory:(id<UATagGroupsHistory>)tagGroupsHistory
+                    tagGroupHistorian:(UATagGroupHistorian *)tagGroupHistorian
                   remoteDataProvider:(id<UARemoteDataProvider>)remoteDataProvider
                            dataStore:(UAPreferenceDataStore *)dataStore
                              channel:(UAChannel *)channel

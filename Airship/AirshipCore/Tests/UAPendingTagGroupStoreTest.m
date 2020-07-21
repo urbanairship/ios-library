@@ -7,6 +7,7 @@
 #import "UATagGroupHistorian.h"
 #import "UAChannel+Internal.h"
 #import "UANamedUser+Internal.h"
+#import "UALocaleManager+Internal.h"
 
 @interface UATagGroupHistorian()
 
@@ -32,9 +33,9 @@
     UATagGroupsRegistrar *tagGroupsChannelRegistrar = [UATagGroupsRegistrar tagGroupsRegistrarWithConfig:self.config
                                                                                                dataStore:self.dataStore
                                                                                     pendingTagGroupStore:self.channelPendingTagGroupStore];
-    UAChannel *channel = [UAChannel channelWithDataStore:self.dataStore
-                                                  config:self.config
-                                      tagGroupsRegistrar:tagGroupsChannelRegistrar];
+    
+    UALocaleManager *sharedLocaleManager = [UALocaleManager localeManagerWithDataStore:self.dataStore];
+    UAChannel *channel = [UAChannel channelWithDataStore:self.dataStore config:self.config tagGroupsRegistrar:tagGroupsChannelRegistrar localeManager:sharedLocaleManager];
     
     
     UATagGroupsRegistrar *tagGroupsNamedUserRegistrar = [UATagGroupsRegistrar tagGroupsRegistrarWithConfig:self.config
