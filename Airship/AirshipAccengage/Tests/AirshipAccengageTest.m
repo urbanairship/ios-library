@@ -43,8 +43,8 @@
 - (void)setUp {
     self.dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:@"test"];
     self.config = [[UARuntimeConfig alloc] initWithConfig:[UAConfig defaultConfig]];
-    UATagGroupsMutationHistory *history = [[UATagGroupsMutationHistory alloc] init];
-    UATagGroupsRegistrar *tagGroupsRegistar = [UATagGroupsRegistrar tagGroupsRegistrarWithConfig:self.config dataStore:self.dataStore mutationHistory:history];
+    UAPendingTagGroupStore *pendingTagGroupStore = [[UAPendingTagGroupStore alloc] init];
+    UATagGroupsRegistrar *tagGroupsRegistar = [UATagGroupsRegistrar tagGroupsRegistrarWithConfig:self.config dataStore:self.dataStore pendingTagGroupStore:pendingTagGroupStore];
     self.localeManager = [UALocaleManager localeManagerWithDataStore:self.dataStore];
     self.channel = [UAChannel channelWithDataStore:self.dataStore config:self.config tagGroupsRegistrar:tagGroupsRegistar localeManager:self.localeManager];
     self.analytics = [UAAnalytics analyticsWithConfig:self.config dataStore:self.dataStore channel:self.channel localeManager:self.localeManager];
@@ -119,8 +119,8 @@
 }
 
 - (void)testInitWithDataStore {
-    UATagGroupsMutationHistory *history = [[UATagGroupsMutationHistory alloc] init];
-    UATagGroupsRegistrar *tagGroupsRegistar = [UATagGroupsRegistrar tagGroupsRegistrarWithConfig:self.config dataStore:self.dataStore mutationHistory:history];
+    UAPendingTagGroupStore *pendingTagGroupStore = [[UAPendingTagGroupStore alloc] init];
+    UATagGroupsRegistrar *tagGroupsRegistar = [UATagGroupsRegistrar tagGroupsRegistrarWithConfig:self.config dataStore:self.dataStore pendingTagGroupStore:pendingTagGroupStore];
     UAChannel *channel = [UAChannel channelWithDataStore:self.dataStore config:self.config tagGroupsRegistrar:tagGroupsRegistar localeManager:self.localeManager];
     id channelMock = OCMPartialMock(channel);
     [[channelMock expect] addChannelExtenderBlock:OCMOCK_ANY];
