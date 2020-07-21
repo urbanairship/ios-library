@@ -72,7 +72,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UARegistrationDelegate, U
         UAirship.push().pushNotificationDelegate = pushHandler
         UAirship.push().registrationDelegate = self
         UAirship.shared().deepLinkDelegate = self
-        UAInAppMessageManager.shared().assetManager.cachePolicyDelegate = self;
+        UAInAppAutomation.shared().inAppMessageManager.assetManager.cachePolicyDelegate = self;
 
         NotificationCenter.default.addObserver(self, selector:#selector(AppDelegate.refreshMessageCenterBadge), name: NSNotification.Name.UAInboxMessageListUpdated, object: nil)
 
@@ -149,7 +149,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UARegistrationDelegate, U
     //    - <scheme>://deeplink/settings/tags
 
     func receivedDeepLink(_ url: URL, completionHandler: @escaping () -> ()) {
+        // if the deep link is an http or https URL, open it in the browser
+        if (url.scheme == "http" || url.scheme == "https") {
+            DispatchQueue.main.async {
+                UIApplication.shared.open(url, options: [:], completionHandler: nil);
+            };
+
+            return;
+        }
+        
         var pathComponents = url.pathComponents
+        if (pathComponents.count == 0) {
+            return;
+        }
+
         if (pathComponents[0] == "/") {
             pathComponents.remove(at: 0)
         }

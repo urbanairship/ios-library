@@ -50,7 +50,7 @@ class AudienceDetailViewController: UAStaticTableViewController {
     @IBOutlet private weak var checkAudienceTitle: UILabel!
     @IBOutlet private weak var checkAudienceCell: UITableViewCell!
     
-    private let inAppMessageManager = UAInAppMessageManager.shared()
+    private let inAppAutomation = UAInAppAutomation.shared()
     private var inAudience : Bool?
 
     override func viewWillAppear(_ animated: Bool) {
@@ -183,7 +183,7 @@ class AudienceDetailViewController: UAStaticTableViewController {
                 tableView.deselectRow(at: indexPath, animated: true)
                 return
             }
-            self.inAppMessageManager?.check(audience, completionHandler: { (inAudience, error) in
+            self.inAppAutomation?.check(audience, completionHandler: { (inAudience, error) in
                 DispatchQueue.main.async {
                     self.inAudience = inAudience && (error == nil)
                     tableView.deselectRow(at: indexPath, animated: true)

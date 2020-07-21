@@ -56,6 +56,7 @@
 #import "UAJSONSerialization.h"
 #import "UAJSONValueMatcher.h"
 #import "UAKeychainUtils.h"
+#import "UALocaleManager.h"
 #import "UALocationModuleLoaderFactory.h"
 #import "UALocationProvider.h"
 #import "UAMediaEventTemplate.h"

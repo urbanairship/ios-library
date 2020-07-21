@@ -21,12 +21,11 @@
 - (void)setUp {
     [super setUp];
     self.mockSession = [self mockForClass:[UARequestSession class]];
+    self.mockLocaleClass = [self mockForClass:[UALocaleManager class]];
     self.remoteDataAPIClient = [UARemoteDataAPIClient clientWithConfig:self.config
                                                              dataStore:self.dataStore
-                                                               session:self.mockSession];
-
-
-    self.mockLocaleClass = [self strictMockForClass:[NSLocale class]];
+                                                               session:self.mockSession
+                                                         localeManager:self.mockLocaleClass];
 
 }
 
@@ -36,6 +35,8 @@
 - (void)testRefreshRemoteData {
     self.config.appKey = @"appKey";
 
+    [[[self.mockLocaleClass stub] andReturn:[NSLocale autoupdatingCurrentLocale]] currentLocale];
+    
     // Create a successful response
     NSDictionary *remoteDataDict = @{ @"type": @"test_data_type",
                                       @"timestamp":@"2017-01-01T12:00:00",

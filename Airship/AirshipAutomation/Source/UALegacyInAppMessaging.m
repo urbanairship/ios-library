@@ -5,7 +5,7 @@
 #import "UAInAppMessageResolutionEvent+Internal.h"
 #import "UAInAppMessage+Internal.h"
 #import "UAInAppMessageScheduleInfo.h"
-#import "UAInAppMessageManager.h"
+#import "UAInAppAutomation.h"
 #import "UAInAppMessageBannerDisplayContent.h"
 #import "UAAirshipAutomationCoreImport.h"
 
@@ -27,14 +27,14 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
 @interface UALegacyInAppMessaging ()
 @property(nonatomic, strong) UAPreferenceDataStore *dataStore;
 @property(nonatomic, strong) UAAnalytics *analytics;
-@property(nonatomic, weak) UAInAppMessageManager *inAppMessageManager;
+@property(nonatomic, weak) UAInAppAutomation *inAppAutomation;
 @end
 
 @implementation UALegacyInAppMessaging
 
 - (instancetype)initWithAnalytics:(UAAnalytics *)analytics
                         dataStore:(UAPreferenceDataStore *)dataStore
-              inAppMessageManager:(UAInAppMessageManager *)inAppMessageManager {
+                  inAppAutomation:(UAInAppAutomation *)inAppAutomation {
 
     self = [super initWithDataStore:dataStore];
     if (self) {
@@ -45,7 +45,7 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
 
         self.dataStore = dataStore;
         self.analytics = analytics;
-        self.inAppMessageManager = inAppMessageManager;
+        self.inAppAutomation = inAppAutomation;
 
         self.factoryDelegate = self;
         self.displayASAPEnabled = YES;
@@ -56,11 +56,11 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
 
 + (instancetype)inAppMessagingWithAnalytics:(UAAnalytics *)analytics
                                   dataStore:(UAPreferenceDataStore *)dataStore
-                        inAppMessageManager:(UAInAppMessageManager *)inAppMessageManager {
+                            inAppAutomation:(UAInAppAutomation *)inAppAutomation {
 
     return [[UALegacyInAppMessaging alloc] initWithAnalytics:analytics
                                                    dataStore:dataStore
-                                         inAppMessageManager:inAppMessageManager];
+                                             inAppAutomation:inAppAutomation];
 }
 
 - (NSString *)pendingMessageID {
@@ -83,7 +83,7 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
 
     if (newMessageID.length && [newMessageID isEqualToString:pendingMessageID]) {
         UA_WEAKIFY(self);
-        [self.inAppMessageManager cancelMessagesWithID:pendingMessageID completionHandler:^(NSArray<UASchedule *>* _Nullable schedules) {
+        [self.inAppAutomation cancelMessagesWithID:pendingMessageID completionHandler:^(NSArray<UASchedule *>* _Nullable schedules) {
             UA_STRONGIFY(self)
             if (schedules.count) {
                 UA_LTRACE(@"The in-app message delivery push was directly launched for message: %@", pendingMessageID);
@@ -141,7 +141,7 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
         // Schedule the new one
         self.pendingMessageID = messageID;
 
-        [self.inAppMessageManager scheduleMessageWithScheduleInfo:info metadata:@{} completionHandler:^(UASchedule * schedule){
+        [self.inAppAutomation scheduleMessageWithScheduleInfo:info metadata:@{} completionHandler:^(UASchedule * schedule){
             UA_LDEBUG(@"LegacyInAppMessageManager - saved schedule: %@", schedule);
         }];
     };
@@ -149,7 +149,7 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
     // If there is a pending message ID, cancel it
     if (pendingMessageID) {
         UA_WEAKIFY(self)
-        [self.inAppMessageManager cancelMessagesWithID:pendingMessageID completionHandler:^(NSArray<UASchedule *> * _Nonnull schedules) {
+        [self.inAppAutomation cancelMessagesWithID:pendingMessageID completionHandler:^(NSArray<UASchedule *> * _Nonnull schedules) {
             UA_STRONGIFY(self)
             if (schedules.count) {
                 UA_LDEBUG(@"LegacyInAppMessageManager - Pending in-app message replaced");

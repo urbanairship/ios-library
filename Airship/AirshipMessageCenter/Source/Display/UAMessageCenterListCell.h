@@ -17,7 +17,7 @@
 /**
  * The style to apply to the cell.
  */
-@property (nonatomic, strong) UAMessageCenterStyle *style;
+@property (nonatomic, strong) UAMessageCenterStyle *messageCenterStyle;
 
 /**
  * Displays the message date.

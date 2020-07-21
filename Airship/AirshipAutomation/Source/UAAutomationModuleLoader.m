@@ -3,7 +3,7 @@
 #import "UAAutomationModuleLoader.h"
 #import "UAActionAutomation+Internal.h"
 #import "UALegacyInAppMessaging+Internal.h"
-#import "UAInAppMessageManager+Internal.h"
+#import "UAInAppAutomation+Internal.h"
 
 @interface UAAutomationModuleLoader()
 @property (nonatomic, copy) NSArray<UAComponent *> *automationComponents;
@@ -30,18 +30,18 @@
     UAActionAutomation *automation = [UAActionAutomation automationWithConfig:config dataStore:dataStore];
     [components addObject:automation];
 
-    UAInAppMessageManager *IAM = [UAInAppMessageManager managerWithConfig:config
+    UAInAppMessageManager *inAppAutomation = [UAInAppMessageManager managerWithConfig:config
                                                          tagGroupHistorian:tagGroupHistorian
                                                        remoteDataProvider:remoteDataProvider
                                                                 dataStore:dataStore
                                                                   channel:channel
                                                                 analytics:analytics];
-    [components addObject:IAM];
+    [components addObject:inAppAutomation];
 
 
     UALegacyInAppMessaging *legacyIAM = [UALegacyInAppMessaging inAppMessagingWithAnalytics:analytics
                                                                                   dataStore:dataStore
-                                                                        inAppMessageManager:IAM];
+                                                                            inAppAutomation:inAppAutomation];
     [components addObject:legacyIAM];
 
     return [[self alloc] initWithComponents:components];
@@ -61,3 +61,4 @@
 
 
 @end
+

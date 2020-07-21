@@ -21,7 +21,7 @@
 @class UAPush;
 @class UANotificationResponse;
 @class UANotificationContent;
-@class UAInAppMessageManager;
+@class UAInAppAutomation;
 
 NS_ASSUME_NONNULL_BEGIN
 /*
@@ -30,24 +30,25 @@ NS_ASSUME_NONNULL_BEGIN
 @interface UALegacyInAppMessaging () <UAPushableComponent>
 
 ///---------------------------------------------------------------------------------------
-/// @name In App Messaging Internal Properties
+/// @name Legacy In App Messaging Internal Properties
 ///---------------------------------------------------------------------------------------
 
 @property(nonatomic, copy, nullable) NSString *pendingMessageID;
 
 ///---------------------------------------------------------------------------------------
-/// @name In App Messaging Internal Methods
+/// @name Legacy In App Messaging Internal Methods
 ///---------------------------------------------------------------------------------------
 
 /**
  * Factory method to create an UALegacyInAppMessaging instance.
  * @param analytics The UAAnalytics instance.
  * @param dataStore The preference data store.
+ * @param inAppAutomation The in-app automation instance.
  * @return An instance of UALegacyInAppMessaging.
  */
 + (instancetype)inAppMessagingWithAnalytics:(UAAnalytics *)analytics
                                   dataStore:(UAPreferenceDataStore *)dataStore
-                        inAppMessageManager:(UAInAppMessageManager *)inAppMessageManager;
+                            inAppAutomation:(UAInAppAutomation *)inAppAutomation;
 
 
 @end

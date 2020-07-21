@@ -3,7 +3,7 @@
 #import "UALandingPageAction.h"
 #import "UAInAppMessageScheduleInfo+Internal.h"
 #import "UAInAppMessageHTMLDisplayContent+Internal.h"
-#import "UAInAppMessageManager+Internal.h"
+#import "UAInAppAutomation+Internal.h"
 #import "UAAirshipAutomationCoreImport.h"
 
 NSString * const UALandingPageActionDefaultRegistryName = @"landing_page_action";
@@ -159,7 +159,7 @@ CGFloat const UALandingPageDefaultBorderRadiusPoints = 2;
 
     UAInAppMessageScheduleInfo *scheduleInfo = [self createScheduleInfoWithActionArguments:arguments];
 
-    [[UAInAppMessageManager shared] scheduleMessageWithScheduleInfo:scheduleInfo completionHandler:^(UASchedule *schedule) {
+    [[UAInAppAutomation shared] scheduleMessageWithScheduleInfo:scheduleInfo completionHandler:^(UASchedule *schedule) {
         completionHandler([UAActionResult emptyResult]);
     }];
 }

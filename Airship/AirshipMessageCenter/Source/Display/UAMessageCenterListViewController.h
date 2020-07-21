@@ -20,7 +20,7 @@ DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0. Inst
 /**
  * The style to apply to the list.
  */
-@property (nonatomic, strong) UAMessageCenterStyle *style;
+@property (nonatomic, strong) UAMessageCenterStyle *messageCenterStyle;
 
 /**
  * An optional predicate for filtering messages.

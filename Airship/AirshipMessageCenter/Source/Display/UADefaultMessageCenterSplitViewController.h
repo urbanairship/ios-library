@@ -28,7 +28,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * The style to apply to the message center
  */
-@property(nonatomic, strong) UAMessageCenterStyle *style;
+@property(nonatomic, strong) UAMessageCenterStyle *messageCenterStyle;
 
 /**
  * The embedded list view controller.

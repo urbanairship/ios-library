@@ -7,6 +7,8 @@
 #import "UAScheduleDelayData+Internal.h"
 #import "UASchedule+Internal.h"
 #import "UAScheduleTrigger+Internal.h"
+#import "UAScheduleTriggerContext+Internal.h"
+#import "UAScheduleTriggerContextData+Internal.h"
 #import "UAScheduleInfo+Internal.h"
 #import "UAScheduleEdits+Internal.h"
 #import "UAAirshipAutomationCoreImport.h"
@@ -599,7 +601,7 @@
                     continue;
                 }
             }
-
+            
             trigger.goalProgress = @([trigger.goalProgress doubleValue] + amount);
             if ([trigger.goalProgress compare:trigger.goal] != NSOrderedAscending) {
                 trigger.goalProgress = 0;
@@ -609,6 +611,9 @@
                     [schedulesToCancel addObject:trigger.delay.schedule];
                     continue;
                 }
+
+                // Store trigger context
+                [trigger.schedule updateTriggerContext:trigger event:argument];
 
                 // Normal execution trigger. Only reexecute schedules that are not currently pending
                 if (trigger.schedule) {
@@ -1092,8 +1097,13 @@
             continue;
         }
 
+        UAScheduleTriggerContext *triggerContext;
+        if (scheduleData.triggerContext) {
+            triggerContext = [UAAutomationEngine triggerContextFromData:scheduleData.triggerContext];
+        }
+
         UA_WEAKIFY(self)
-        [self.delegate prepareSchedule:schedule completionHandler:^(UAAutomationSchedulePrepareResult prepareResult) {
+        [self.delegate prepareSchedule:schedule triggerContext:triggerContext completionHandler:^(UAAutomationSchedulePrepareResult prepareResult) {
             UA_STRONGIFY(self)
 
             // Get the updated schedule
@@ -1391,6 +1401,39 @@
         builder.cancellationTriggers = [UAAutomationEngine triggersFromData:data.cancellationTriggers];
         builder.appState = [data.appState integerValue];
     }];
+}
+
++ (UAScheduleTrigger *)triggerFromData:(UAScheduleTriggerData *)data {
+    if (!data) {
+        return nil;
+    }
+    
+    UAScheduleTrigger *trigger = [UAScheduleTrigger triggerWithType:(UAScheduleTriggerType)[data.type integerValue]
+                                                               goal:data.goal
+                                                          predicate:[UAAutomationEngine predicateFromData:data.predicateData]];
+
+    return trigger;
+}
+
++ (UAScheduleTriggerContext *)triggerContextFromData:(UAScheduleTriggerContextData *)data {
+    if (!data) {
+        return nil;
+    }
+
+    UAJSONPredicate *predicate = [UAAutomationEngine predicateFromData:data.predicateData];
+    UAScheduleTrigger *trigger = [UAScheduleTrigger triggerWithType:[data.type integerValue]
+                                                               goal:data.goal
+                                                          predicate:predicate];
+
+    NSData *eventData = [data.event dataUsingEncoding:NSUTF8StringEncoding];
+    NSDictionary *event;
+    if (eventData) {
+        event = [NSJSONSerialization JSONObjectWithData:eventData options:0 error:nil];
+    }
+  
+    UAScheduleTriggerContext *triggerContext = [UAScheduleTriggerContext triggerContextWithTrigger:trigger event:event];
+    
+    return triggerContext;
 }
 
 + (UAJSONPredicate *)predicateFromData:(NSData *)data {

@@ -225,10 +225,10 @@
 
         [[[self.mockDelegate expect] andDo:^(NSInvocation *invocation) {
             void *arg;
-            [invocation getArgument:&arg atIndex:3];
+            [invocation getArgument:&arg atIndex:4];
             void (^handler)(UAAutomationSchedulePrepareResult) = (__bridge void (^)(UAAutomationSchedulePrepareResult))arg;
             handler(UAAutomationSchedulePrepareResultContinue);
-        }] prepareSchedule:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+        }] prepareSchedule:OCMOCK_ANY triggerContext:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
         [[[self.mockDelegate expect] andDo:^(NSInvocation *invocation) {
             [executedPriorityLevel addObject:testPriorityLevels[i]];
@@ -1032,13 +1032,13 @@
     // When prepareSchedule:completionHandler is called on the mockDelegate call the callback
     [[[self.mockDelegate expect] andDo:^(NSInvocation *invocation) {
         void *arg;
-        [invocation getArgument:&arg atIndex:3];
+        [invocation getArgument:&arg atIndex:4];
         void (^handler)(UAAutomationSchedulePrepareResult) = (__bridge void (^)(UAAutomationSchedulePrepareResult))arg;
         handler(UAAutomationSchedulePrepareResultContinue);
     }] prepareSchedule:[OCMArg checkWithBlock:^BOOL(id obj) {
         UASchedule *schedule = obj;
         return  [schedule.identifier isEqualToString:identifier];
-    }] completionHandler:OCMOCK_ANY];
+    }] triggerContext:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     // When isScheduleReadyToExecute is called on the mockDelegate do this
     [[[self.mockDelegate expect] andReturnValue:OCMOCK_VALUE(YES)] isScheduleReadyToExecute:[OCMArg checkWithBlock:^BOOL(id obj) {
@@ -1100,13 +1100,13 @@
     // When prepareSchedule:completionHandler is called on the mockDelegate call the callback
     [[[self.mockDelegate expect] andDo:^(NSInvocation *invocation) {
         void *arg;
-        [invocation getArgument:&arg atIndex:3];
+        [invocation getArgument:&arg atIndex:4];
         void (^handler)(UAAutomationSchedulePrepareResult) = (__bridge void (^)(UAAutomationSchedulePrepareResult))arg;
         handler(UAAutomationSchedulePrepareResultContinue);
     }] prepareSchedule:[OCMArg checkWithBlock:^BOOL(id obj) {
         UASchedule *schedule = obj;
         return  [schedule.identifier isEqualToString:identifier];
-    }] completionHandler:OCMOCK_ANY];
+    }] triggerContext:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     // When isScheduleReadyToExecute is called on the mockDelegate do this
     [[[self.mockDelegate expect] andReturnValue:OCMOCK_VALUE(YES)] isScheduleReadyToExecute:[OCMArg checkWithBlock:^BOOL(id obj) {
@@ -1220,14 +1220,14 @@
     XCTestExpectation *prepared = [self expectationWithDescription:@"schedule is prepared"];
     [[[self.mockDelegate expect] andDo:^(NSInvocation *invocation) {
         void *arg;
-        [invocation getArgument:&arg atIndex:3];
+        [invocation getArgument:&arg atIndex:4];
         void (^handler)(UAAutomationSchedulePrepareResult) = (__bridge void (^)(UAAutomationSchedulePrepareResult))arg;
         handler(prepareResult);
         [prepared fulfill];
     }] prepareSchedule:[OCMArg checkWithBlock:^BOOL(id obj) {
         UASchedule *schedule = obj;
         return  [schedule.identifier isEqualToString:scheduleId];
-    }] completionHandler:OCMOCK_ANY];
+    }] triggerContext:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     // Trigger the scheduled actions
     UACustomEvent *purchase = [UACustomEvent eventWithName:@"purchase"];
@@ -1281,13 +1281,13 @@
     // When prepareSchedule is called on the mockDelegate do this
     [[[self.mockDelegate expect] andDo:^(NSInvocation *invocation) {
         void *arg;
-        [invocation getArgument:&arg atIndex:3];
+        [invocation getArgument:&arg atIndex:4];
         void (^handler)(UAAutomationSchedulePrepareResult) = (__bridge void (^)(UAAutomationSchedulePrepareResult))arg;
         handler(UAAutomationSchedulePrepareResultContinue);
     }] prepareSchedule:[OCMArg checkWithBlock:^BOOL(id obj) {
         UASchedule *schedule = obj;
         return  [schedule.identifier isEqualToString:scheduleId];
-    }] completionHandler:OCMOCK_ANY];
+    }] triggerContext:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     // When isScheduleReadyToExecute is called on the mockDelegate do this
     [[[self.mockDelegate expect] andReturnValue:OCMOCK_VALUE(YES)] isScheduleReadyToExecute:[OCMArg checkWithBlock:^BOOL(id obj) {
@@ -1379,13 +1379,13 @@
     // When prepareSchedule:completionHandler is called on the mockDelegate call the callback
     [[[self.mockDelegate expect] andDo:^(NSInvocation *invocation) {
         void *arg;
-        [invocation getArgument:&arg atIndex:3];
+        [invocation getArgument:&arg atIndex:4];
         void (^handler)(UAAutomationSchedulePrepareResult) = (__bridge void (^)(UAAutomationSchedulePrepareResult))arg;
         handler(UAAutomationSchedulePrepareResultContinue);
     }] prepareSchedule:[OCMArg checkWithBlock:^BOOL(id obj) {
         UASchedule *schedule = obj;
         return  [schedule.identifier isEqualToString:scheduleId];
-    }] completionHandler:OCMOCK_ANY];
+    }] triggerContext:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *executeSchedule = [self expectationWithDescription:@"schedule is executing"];
     __block bool scheduleExecuted = NO;
@@ -1441,14 +1441,14 @@
     // When prepareSchedule:completionHandler is called on the mockDelegate call the callback
     [[[self.mockDelegate expect] andDo:^(NSInvocation *invocation) {
         void *arg;
-        [invocation getArgument:&arg atIndex:3];
+        [invocation getArgument:&arg atIndex:4];
         void (^handler)(UAAutomationSchedulePrepareResult) = (__bridge void (^)(UAAutomationSchedulePrepareResult))arg;
         handler(UAAutomationSchedulePrepareResultContinue);
         [prepared fulfill];
     }] prepareSchedule:[OCMArg checkWithBlock:^BOOL(id obj) {
         UASchedule *schedule = obj;
         return  [schedule.info.group isEqualToString:uuid];
-    }] completionHandler:OCMOCK_ANY];
+    }] triggerContext:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     // When isScheduleReadyToExecute is called on the mockDelegate do this
     [[[self.mockDelegate expect] andReturnValue:OCMOCK_VALUE(YES)] isScheduleReadyToExecute:[OCMArg checkWithBlock:^BOOL(id obj) {
@@ -1488,6 +1488,7 @@
  * @param trigger The trigger to test
  * @param triggerFireBlock Block that generates enough events to fire the trigger.
  */
+
 - (void)verifyTrigger:(UAScheduleTrigger *)trigger triggerFireBlock:(void (^)(void))triggerFireBlock {
     // test pause and resume by pausing now and resuming as late as possible
     [self.automationEngine pause];
@@ -1514,13 +1515,13 @@
     // When prepareSchedule:completionHandler is called on the mockDelegate call the callback
     [[[self.mockDelegate expect] andDo:^(NSInvocation *invocation) {
         void *arg;
-        [invocation getArgument:&arg atIndex:3];
+        [invocation getArgument:&arg atIndex:4];
         void (^handler)(UAAutomationSchedulePrepareResult) = (__bridge void (^)(UAAutomationSchedulePrepareResult))arg;
         handler(UAAutomationSchedulePrepareResultContinue);
     }] prepareSchedule:[OCMArg checkWithBlock:^BOOL(id obj) {
         UASchedule *schedule = obj;
         return  [schedule.identifier isEqualToString:scheduleId];
-    }] completionHandler:OCMOCK_ANY];
+    }] triggerContext:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     // When isScheduleReadyToExecute is called on the mockDelegate do this
     [[[self.mockDelegate expect] andReturnValue:OCMOCK_VALUE(YES)] isScheduleReadyToExecute:[OCMArg checkWithBlock:^BOOL(id obj) {

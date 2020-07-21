@@ -9,6 +9,7 @@
 #import "UAirshipVersion.h"
 #import "UAUtils+Internal.h"
 #import "UAAppStateTracker.h"
+#import "UALocaleManager+Internal.h"
 
 NSString * const kUACoreDataStoreName = @"RemoteData-%@.sqlite";
 NSString * const UARemoteDataRefreshIntervalKey = @"remotedata.REFRESH_INTERVAL";
@@ -79,7 +80,11 @@ NSInteger const UARemoteDataRefreshIntervalDefault = 0;
 @property (nonatomic, strong) NSMutableArray<UARemoteDataSubscription *> *subscriptions;
 @property (nonatomic, strong) UARemoteDataStore *remoteDataStore;
 @property (nonatomic, strong) UADispatcher *dispatcher;
+@property (nonatomic, strong) UADate *date;
 @property (nonatomic, strong) NSNotificationCenter *notificationCenter;
+@property (nonatomic, strong) UAAppStateTracker *appStateTracker;
+@property (nonatomic, strong) UALocaleManager *localeManager;
+
 @end
 
 @implementation UARemoteDataManager
@@ -89,20 +94,27 @@ NSInteger const UARemoteDataRefreshIntervalDefault = 0;
                         remoteDataStore:(UARemoteDataStore *)remoteDataStore
                     remoteDataAPIClient:(UARemoteDataAPIClient *)remoteDataAPIClient
                      notificationCenter:(NSNotificationCenter *)notificationCenter
-                             dispatcher:(UADispatcher *)dispatcher {
+                        appStateTracker:(UAAppStateTracker *)appStateTracker
+                             dispatcher:(UADispatcher *)dispatcher
+                                   date:(UADate *)date
+                                 locale:(UALocaleManager *)localeManager {
+
     self = [super initWithDataStore:dataStore];
     if (self) {
         self.dataStore = dataStore;
         self.subscriptions = [NSMutableArray array];
         self.remoteDataStore = remoteDataStore;
         self.dispatcher = dispatcher;
+        self.date = date;
         self.notificationCenter = notificationCenter;
         self.remoteDataAPIClient = remoteDataAPIClient;
+        self.appStateTracker = appStateTracker;
+        self.localeManager = localeManager;
 
         // Register for locale change notification
         [self.notificationCenter addObserver:self
                                     selector:@selector(localeRefresh)
-                                        name:NSCurrentLocaleDidChangeNotification
+                                        name:UALocaleUpdatedEvent
                                       object:nil];
 
         [self.notificationCenter addObserver:self
@@ -110,39 +122,48 @@ NSInteger const UARemoteDataRefreshIntervalDefault = 0;
                                         name:UAApplicationDidTransitionToForeground
                                       object:nil];
 
-        // Force a refresh if app version or app locale identifier has changed or refresh interval has elapsed
         if ([self shouldRefresh]) {
             [self refresh];
         }
     }
+
     return self;
 }
 
 + (UARemoteDataManager *)remoteDataManagerWithConfig:(UARuntimeConfig *)config
-                                           dataStore:(UAPreferenceDataStore *)dataStore {
+                                           dataStore:(UAPreferenceDataStore *)dataStore
+                                       localeManager:(UALocaleManager *)localeManager {
     UARemoteDataStore *remoteDataStore = [UARemoteDataStore storeWithName:[NSString stringWithFormat:kUACoreDataStoreName, config.appKey]];
     return [self remoteDataManagerWithConfig:config
                                    dataStore:dataStore
                              remoteDataStore:remoteDataStore
-                         remoteDataAPIClient:[UARemoteDataAPIClient clientWithConfig:config dataStore:dataStore]
+                         remoteDataAPIClient:[UARemoteDataAPIClient clientWithConfig:config dataStore:dataStore localeManager:localeManager]
                           notificationCenter:[NSNotificationCenter defaultCenter]
-                                  dispatcher:[UADispatcher mainDispatcher]];
+                             appStateTracker:[UAAppStateTracker shared]
+                                  dispatcher:[UADispatcher mainDispatcher]
+                                        date:[[UADate alloc] init]
+                               localeManager:localeManager];
 }
-
 
 + (instancetype)remoteDataManagerWithConfig:(UARuntimeConfig *)config
                                   dataStore:(UAPreferenceDataStore *)dataStore
                             remoteDataStore:(UARemoteDataStore *)remoteDataStore
                         remoteDataAPIClient:(UARemoteDataAPIClient *)remoteDataAPIClient
                          notificationCenter:(NSNotificationCenter *)notificationCenter
-                                 dispatcher:(UADispatcher *)dispatcher {
+                            appStateTracker:(UAAppStateTracker *)appStateTracker
+                                 dispatcher:(UADispatcher *)dispatcher
+                                       date:(UADate *)date
+                              localeManager:(UALocaleManager *)localeManager {
 
     return [[self alloc] initWithConfig:config
                               dataStore:dataStore
                         remoteDataStore:remoteDataStore
                     remoteDataAPIClient:remoteDataAPIClient
                      notificationCenter:notificationCenter
-                             dispatcher:dispatcher];
+                        appStateTracker:appStateTracker
+                             dispatcher:dispatcher
+                                   date:date
+                                 locale:localeManager];
 }
 
 - (NSUInteger)remoteDataRefreshInterval {
@@ -238,12 +259,16 @@ NSInteger const UARemoteDataRefreshIntervalDefault = 0;
 
 -(BOOL)shouldRefresh {
     NSDate *lastRefreshTime = [self.dataStore objectForKey:UARemoteDataLastRefreshTimeKey] ?: [NSDate distantPast];
-    NSTimeInterval timeSinceLastRefresh = -([lastRefreshTime timeIntervalSinceNow]);
+    NSTimeInterval timeSinceLastRefresh = -([lastRefreshTime timeIntervalSinceDate:self.date.now]);
+
+    if (self.appStateTracker.state != UAApplicationStateActive) {
+        return false;
+    }
 
     if (self.remoteDataRefreshInterval <= timeSinceLastRefresh) {
         return true;
     }
- 
+
     if (![self isLastAppVersionCurrent]) {
         return true;
     }
@@ -298,7 +323,7 @@ completionHandler:(void(^)(BOOL success))completionHandler {
             NSString *currentAppVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
             [self.dataStore setObject:currentAppVersion forKey:UARemoteDataLastRefreshAppVersionKey];
 
-            NSDictionary *metadata = [self createMetadata:[NSLocale autoupdatingCurrentLocale]];
+            NSDictionary *metadata = [self createMetadata:[self.localeManager currentLocale]];
 
             [self onNewData:allRemoteDataFromCloud metadata:metadata lastModified:[NSDate date] completionHandler:completionHandler];
         } else {
@@ -326,14 +351,14 @@ completionHandler:(void(^)(BOOL success))completionHandler {
 
 
 -(BOOL)isMetadataCurrent:(NSDictionary *)metadata {
-    NSDictionary *currentMetadata = [self createMetadata:[NSLocale autoupdatingCurrentLocale]];
+    NSDictionary *currentMetadata = [self createMetadata:[self.localeManager currentLocale]];
 
     return [currentMetadata isEqualToDictionary:metadata];
 }
 
 -(BOOL)isLastMetadataCurrent {
     NSDictionary *metadataAtTimeOfLastRefresh = self.lastMetadata;
-    NSDictionary *currentMetadata = [self createMetadata:[NSLocale autoupdatingCurrentLocale]];
+    NSDictionary *currentMetadata = [self createMetadata:[self.localeManager currentLocale]];
 
     return [metadataAtTimeOfLastRefresh isEqualToDictionary:currentMetadata];
 }

@@ -36,11 +36,11 @@
     return self;
 }
 
-- (void)onSchedule:(UASchedule *)schedule {
+- (void)onMessageScheduled:(UAInAppMessage *)message
+                scheduleID:(NSString *)scheduleID {
+
     UAAsyncOperation *operation = [UAAsyncOperation operationWithBlock:^(UAAsyncOperation *operation) {
-        // Get the message for this schedule
-        UAInAppMessage *message = ((UAInAppMessageScheduleInfo *)schedule.info).message;
-        
+
         // ask delegate if we should cache the assets onSchedule
         BOOL shouldCacheOnSchedule = NO;
         id<UAInAppMessageCachePolicyDelegate> cachePolicyDelegate = self.cachePolicyDelegate;
@@ -60,19 +60,22 @@
         }
         
         // Get the assets instance for this schedule
-        UAInAppMessageAssets *assets = [self.assetCache assetsForScheduleId:schedule.identifier];
+        UAInAppMessageAssets *assets = [self.assetCache assetsForScheduleId:scheduleID];
         
         // Prepare the assets for this schedule
         [self.prepareAssetsDelegate onSchedule:message assets:assets completionHandler:^(UAInAppMessagePrepareResult result) {
             // Release the assets instance for this schedule but keep the assets
-            [self.assetCache releaseAssets:schedule.identifier wipeFromDisk:NO];
+            [self.assetCache releaseAssets:scheduleID wipeFromDisk:NO];
             [operation finish];
         }];
     }];
     [self.queue addOperation:operation];
 }
 
-- (void)onPrepare:(UASchedule *)schedule completionHandler:(void (^)(UAInAppMessagePrepareResult))completionHandler {
+- (void)onPrepareMessage:(UAInAppMessage *)message
+              scheduleID:(NSString *)scheduleID
+       completionHandler:(void (^)(UAInAppMessagePrepareResult))completionHandler {
+
     UAAsyncOperation *operation = [UAAsyncOperation operationWithBlock:^(UAAsyncOperation *operation) {
         // Do nothing if delegate doesn't implement onPrepare method
         if (!self.prepareAssetsDelegate || ![self.prepareAssetsDelegate respondsToSelector:@selector(onPrepare:assets:completionHandler:)]) {
@@ -84,9 +87,8 @@
         
         // Get the assets instance for this schedule
         // Get the message and assets instance for this schedule
-        UAInAppMessageAssets *assets = [self.assetCache assetsForScheduleId:schedule.identifier];
-        UAInAppMessage *message = ((UAInAppMessageScheduleInfo *)schedule.info).message;
-        
+        UAInAppMessageAssets *assets = [self.assetCache assetsForScheduleId:scheduleID];
+
         // Prepare the assets for this schedule
         [self.prepareAssetsDelegate onPrepare:message assets:assets completionHandler:^(UAInAppMessagePrepareResult result) {
             completionHandler(result);
@@ -96,38 +98,37 @@
     [self.queue addOperation:operation];
 }
 
-- (void)onDisplayFinished:(UASchedule *)schedule {
+- (void)onDisplayFinished:(UAInAppMessage *)message
+               scheduleID:(NSString *)scheduleID {
     UAAsyncOperation *operation = [UAAsyncOperation operationWithBlock:^(UAAsyncOperation *operation) {
-        UAInAppMessage *message;
-        
+
         // should we cache the assets onSchedule?
         BOOL shouldPersistCacheAfterDisplay = NO;
         id<UAInAppMessageCachePolicyDelegate> cachePolicyDelegate = self.cachePolicyDelegate;
         if (cachePolicyDelegate && [cachePolicyDelegate respondsToSelector:@selector(shouldPersistCacheAfterDisplay:)]) {
-            message = ((UAInAppMessageScheduleInfo *)schedule.info).message;
             shouldPersistCacheAfterDisplay = [cachePolicyDelegate shouldPersistCacheAfterDisplay:message];
         }
         
         // Release the assets instance for this schedule
-        [self.assetCache releaseAssets:schedule.identifier wipeFromDisk:!shouldPersistCacheAfterDisplay];
+        [self.assetCache releaseAssets:scheduleID wipeFromDisk:!shouldPersistCacheAfterDisplay];
         [operation finish];
     }];
     [self.queue addOperation:operation];
 }
 
-- (void)onScheduleFinished:(UASchedule *)schedule {
+- (void)onScheduleFinished:(NSString *)scheduleID {
     UAAsyncOperation *operation = [UAAsyncOperation operationWithBlock:^(UAAsyncOperation *operation) {
         // Release the assets instance for this schedule
-        [self.assetCache releaseAssets:schedule.identifier wipeFromDisk:YES];
+        [self.assetCache releaseAssets:scheduleID wipeFromDisk:YES];
         [operation finish];
     }];
     [self.queue addOperation:operation];
 }
 
-- (void)assetsForSchedule:(UASchedule *)schedule completionHandler:(void (^)(UAInAppMessageAssets *))completionHandler {
+- (void)assetsForScheduleID:(NSString *)scheduleID completionHandler:(void (^)(UAInAppMessageAssets *))completionHandler {
     UAAsyncOperation *operation = [UAAsyncOperation operationWithBlock:^(UAAsyncOperation *operation) {
         // Get and return the assets instance for this schedule
-        completionHandler([self.assetCache assetsForScheduleId:schedule.identifier]);
+        completionHandler([self.assetCache assetsForScheduleId:scheduleID]);
         [operation finish];
     }];
     [self.queue addOperation:operation];

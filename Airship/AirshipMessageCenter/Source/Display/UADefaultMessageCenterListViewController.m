@@ -188,37 +188,37 @@ NS_ASSUME_NONNULL_BEGIN
     _filter = filter;
 }
 
-- (void)setStyle:(UAMessageCenterStyle *)style {
-    _style = style;
+- (void)setMessageCenterStyle:(UAMessageCenterStyle *)style {
+    _messageCenterStyle = style;
     
     [self applyStyle];
 }
 
 - (void)applyStyle {
-    if (self.style.editButtonTitleColor) {
-        self.editItem.tintColor = self.style.editButtonTitleColor;
+    if (self.messageCenterStyle.editButtonTitleColor) {
+        self.editItem.tintColor = self.messageCenterStyle.editButtonTitleColor;
     }
     
-    if (self.style.cancelButtonTitleColor) {
-        self.cancelItem.tintColor = self.style.cancelButtonTitleColor;
+    if (self.messageCenterStyle.cancelButtonTitleColor) {
+        self.cancelItem.tintColor = self.messageCenterStyle.cancelButtonTitleColor;
     }
     
-    if (self.style.listColor) {
-        self.messageTable.backgroundColor = self.style.listColor;
-        self.refreshControl.backgroundColor = self.style.listColor;
+    if (self.messageCenterStyle.listColor) {
+        self.messageTable.backgroundColor = self.messageCenterStyle.listColor;
+        self.refreshControl.backgroundColor = self.messageCenterStyle.listColor;
     } else if (@available(iOS 13.0, *)) {
         self.messageTable.backgroundColor = [UIColor systemBackgroundColor];
         self.refreshControl.backgroundColor = [UIColor systemBackgroundColor];
     }
     
-    if (self.style.cellSeparatorColor) {
-        self.messageTable.separatorColor = self.style.cellSeparatorColor;
+    if (self.messageCenterStyle.cellSeparatorColor) {
+        self.messageTable.separatorColor = self.messageCenterStyle.cellSeparatorColor;
     } else if (@available(iOS 13.0, *)) {
         self.messageTable.separatorColor = [UIColor separatorColor];
     }
     
-    if (self.style.refreshTintColor) {
-        self.refreshControl.tintColor = self.style.refreshTintColor;
+    if (self.messageCenterStyle.refreshTintColor) {
+        self.refreshControl.tintColor = self.messageCenterStyle.refreshTintColor;
     }
     
     [self applyToolbarItemStyles];
@@ -230,7 +230,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)applyToolbarItemStyles {
 
     // Override any inherited tint color, to avoid potential clashes
-    self.selectAllButtonItem.tintColor = (self.style.selectAllButtonTitleColor) ? self.style.selectAllButtonTitleColor : self.defaultTintColor;
+    self.selectAllButtonItem.tintColor = (self.messageCenterStyle.selectAllButtonTitleColor) ? self.messageCenterStyle.selectAllButtonTitleColor : self.defaultTintColor;
 
     UIColor *red;
     if (@available(iOS 13.0, *)) {
@@ -239,9 +239,9 @@ NS_ASSUME_NONNULL_BEGIN
         red = [UIColor redColor];
     }
 
-    self.deleteItem.tintColor = (self.style.deleteButtonTitleColor) ? self.style.deleteButtonTitleColor : red;
+    self.deleteItem.tintColor = (self.messageCenterStyle.deleteButtonTitleColor) ? self.messageCenterStyle.deleteButtonTitleColor : red;
 
-    self.markAsReadButtonItem.tintColor = (self.style.markAsReadButtonTitleColor) ? self.style.markAsReadButtonTitleColor : self.defaultTintColor;
+    self.markAsReadButtonItem.tintColor = (self.messageCenterStyle.markAsReadButtonTitleColor) ? self.messageCenterStyle.markAsReadButtonTitleColor : self.defaultTintColor;
 }
 
 - (void)refreshStateChanged:(UIRefreshControl *)sender {
@@ -634,8 +634,8 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (UIImage *)placeholderIcon {
-    if (self.style.placeholderIcon) {
-        return self.style.placeholderIcon;
+    if (self.messageCenterStyle.placeholderIcon) {
+        return self.messageCenterStyle.placeholderIcon;
     }
 
     if (! _placeholderIcon) {
@@ -658,7 +658,7 @@ NS_ASSUME_NONNULL_BEGIN
         cell = [[bundle loadNibNamed:nibName owner:nil options:nil] firstObject];
     }
 
-    cell.style = self.style;
+    cell.messageCenterStyle = self.messageCenterStyle;
     UAInboxMessage *message = [self messageAtIndex:indexPath.row];
     [cell setData:message];
 

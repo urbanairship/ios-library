@@ -7,7 +7,7 @@
 #import "UARuntimeConfig.h"
 #import "UAUtils+Internal.h"
 #import "NSString+UAURLEncoding.h"
-#import "UAInAppMessageManager+Internal.h"
+#import "UAInAppAutomation.h"
 #import "UAInAppMessageScheduleInfo+Internal.h"
 #import "UAInAppMessageHTMLDisplayContent+Internal.h"
 #import "UAMessageCenter.h"
@@ -18,7 +18,7 @@
 @property (nonatomic, strong) id mockConfig;
 @property (nonatomic, strong) UALandingPageAction *action;
 @property (nonatomic, assign) id mockWhitelist;
-@property (nonatomic, strong) id mockInAppMessageManager;
+@property (nonatomic, strong) id mockInAppAutomation;
 
 
 @end
@@ -44,10 +44,10 @@
     UAWhitelist *whitelist = [UAWhitelist whitelistWithConfig:self.mockConfig];
     [[[self.mockAirship stub] andReturn:whitelist] whitelist];
 
-    self.mockInAppMessageManager = [self mockForClass:[UAInAppMessageManager class]];
+    self.mockInAppAutomation = [self mockForClass:[UAInAppAutomation class]];
     [[[self.mockAirship stub] andReturn:self.mockConfig] config];
 
-    [[[self.mockInAppMessageManager stub] andReturn:self.mockInAppMessageManager] shared];
+    [[[self.mockInAppAutomation stub] andReturn:self.mockInAppAutomation] shared];
 }
 
 - (void)tearDown {
@@ -131,7 +131,7 @@
             arguments = [UAActionArguments argumentsWithValue:value withSituation:validSituations[i]];
         }
 
-        [[[self.mockInAppMessageManager expect] andDo:^(NSInvocation *invocation) {
+        [[[self.mockInAppAutomation expect] andDo:^(NSInvocation *invocation) {
             void *scheduleInfoArg;
             [invocation getArgument:&scheduleInfoArg atIndex:2];
             UAInAppMessageScheduleInfo *scheduleInfo = (__bridge UAInAppMessageScheduleInfo *)scheduleInfoArg;
@@ -160,7 +160,7 @@
         }];
 
         XCTAssertTrue(actionPerformed);
-        [self.mockInAppMessageManager verify];
+        [self.mockInAppAutomation verify];
     }
 }
 

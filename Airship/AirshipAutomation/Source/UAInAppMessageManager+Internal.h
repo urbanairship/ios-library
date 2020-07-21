@@ -15,72 +15,123 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /**
+ * Execution delegate.
+ */
+@protocol UAInAppMessagingExecutionDelegate  <NSObject>
+
+/**
+ * Called when execution readiness changed.
+ */
+- (void)executionReadinessChanged;
+
+/**
+ * Called to cancel schedules.
+ * @param scheduleID The schedule ID.
+ */
+- (void)cancelScheduleWithID:(NSString *)scheduleID;
+@end
+
+
+/**
  * In-app message manager provides a control interface for creating,
  * canceling and executing in-app message schedules.
  */
-@interface UAInAppMessageManager ()  <UAAutomationEngineDelegate, UATagGroupsLookupManagerDelegate>
+@interface UAInAppMessageManager ()
 
-/**
- * In-app messaging asset manager.
- */
-@property(nonatomic, strong) UAInAppMessageAssetManager *assetManager;
-
-/**
- * In-app remote data client. Exposed for testing purposes.
- */
-@property(nonatomic, strong) UAInAppRemoteDataClient *remoteDataClient;
+@property (nonatomic, weak) id<UAInAppMessagingExecutionDelegate> executionDelegate;
 
 /**
  * Factory method. Use for testing.
  *
- * @param automationEngine The automation engine.
- * @param tagGroupsLookupManager The tag groups lookup manager.
- * @param remoteDataProvider The remote data provider.
- * @param dataStore The preference data store.
- * @param channel The channel.
- * @param dispatcher GCD dispatcher.
+ * @param dataStore The preference data store
  * @param analytics The system analytics instance.
+ * @param dispatcher GCD dispatcher.
+ * @param displayCoordinator Default display coordinator.
+ * @param assetManager Asset manager.
  * @return A in-app message manager instance.
  */
-+ (instancetype)managerWithAutomationEngine:(UAAutomationEngine *)automationEngine
-                     tagGroupsLookupManager:(UATagGroupsLookupManager *)tagGroupsLookupManager
-                         remoteDataProvider:(id<UARemoteDataProvider>)remoteDataProvider
-                                  dataStore:(UAPreferenceDataStore *)dataStore
-                                    channel:(UAChannel *)channel
-                                 dispatcher:(UADispatcher *)dispatcher
-                         displayCoordinator:(UAInAppMessageDefaultDisplayCoordinator *)displayCoordinator
-                               assetManager:(UAInAppMessageAssetManager *)assetManager
-                                  analytics:(UAAnalytics *)analytics;
++ (instancetype)managerWithDataStore:(UAPreferenceDataStore *)dataStore
+                           analytics:(UAAnalytics *)analytics
+                          dispatcher:(UADispatcher *)dispatcher
+                  displayCoordinator:(UAInAppMessageDefaultDisplayCoordinator *)displayCoordinator
+                        assetManager:(UAInAppMessageAssetManager *)assetManager;
 
 /**
  * Factory method.
  *
- * @param config The UARuntimeConfigInstance.
- * @param tagGroupHistorian The tag groups history.
- * @param remoteDataProvider The remote data provider.
  * @param dataStore The preference data store.
- * @param channel The channel.
  * @param analytics The system analytics instance.
  * @return A in-app message manager instance.
  */
-+ (instancetype)managerWithConfig:(UARuntimeConfig *)config
-                 tagGroupHistorian:(UATagGroupHistorian *)tagGroupHistorian
-               remoteDataProvider:(id<UARemoteDataProvider>)remoteDataProvider
-                        dataStore:(UAPreferenceDataStore *)dataStore
-                          channel:(UAChannel *)channel
-                        analytics:(UAAnalytics *)analytics;
++ (instancetype)managerWithDataStore:(UAPreferenceDataStore *)dataStore
+                           analytics:(UAAnalytics *)analytics;
 
-
-// UAAutomationEngineDelegate methods for testing
 
 /**
- * Creates a schedule info from a builder.
- *
- * @param builder The schedule info builder.
- * @returns Schedule info.
+ * Called to prepare a message for display.
+ * @param message The message.
+ * @param scheduleID The schedule ID.
+ * @param completionHandler The completion handler with the prepare result.
  */
-- (UAScheduleInfo *)createScheduleInfoWithBuilder:(UAScheduleInfoBuilder *)builder;
+- (void)prepareMessage:(UAInAppMessage *)message
+            scheduleID:(NSString *)scheduleID
+     completionHandler:(void (^)(UAAutomationSchedulePrepareResult))completionHandler;
 
+
+/**
+ * Called to check if the message is ready to display.
+ * @param scheduleID The schedule ID.
+ * @returns The ready result.
+ */
+- (UAAutomationScheduleReadyResult)isReadyToDisplay:(NSString *)scheduleID;
+
+/**
+ * Called when a prepared message is display is aborted.
+ * @param scheduleID The schedule ID.
+ */
+- (void)scheduleExecutionAborted:(NSString *)scheduleID;
+
+/**
+ * Called when a message should be displayed. The message should must be prepared before it can be displayed.
+ * @param scheduleID The schedule ID.
+ * @param completionHandler The completion handler.
+ */
+- (void)displayMessageWithScheduleID:(NSString *)scheduleID
+                   completionHandler:(void (^)(void))completionHandler;
+
+/**
+ * Called when a message is expired.
+ * @param message The message.
+ * @param scheduleID The schedule ID.
+ * @param expirationDate The expiration date.
+ */
+- (void)messageExpired:(UAInAppMessage *)message
+            scheduleID:(NSString *)scheduleID
+        expirationDate:(NSDate *)expirationDate;
+
+/**
+ * Called when a message is cancelled.
+ * @param message The message.
+ * @param scheduleID The schedule ID.
+ */
+- (void)messageCancelled:(UAInAppMessage *)message
+              scheduleID:(NSString *)scheduleID;
+
+/**
+ * Called when a message reaches its limit.
+ * @param message The message.
+ * @param scheduleID The schedule ID.
+ */
+- (void)messageLimitReached:(UAInAppMessage *)message
+                 scheduleID:(NSString *)scheduleID;
+
+/**
+ * Called when a message is scheduled.
+ * @param message The message.
+ * @param scheduleID The schedule ID.
+ */
+- (void)messageScheduled:(UAInAppMessage *)message
+              scheduleID:(NSString *)scheduleID;
 
 @end
 
