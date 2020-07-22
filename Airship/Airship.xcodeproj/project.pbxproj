@@ -2144,6 +2144,14 @@
 		CCB902271DCBBCDA009A66D7 /* UAEventManagerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CCB902241DCBBCDA009A66D7 /* UAEventManagerTest.m */; };
 		CCD28FE41DD14DD1008D663F /* UATagGroupsMutation+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CCD28FE21DD14DD1008D663F /* UATagGroupsMutation+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CCD28FE51DD14DD1008D663F /* UATagGroupsMutation.m in Sources */ = {isa = PBXBuildFile; fileRef = CCD28FE31DD14DD1008D663F /* UATagGroupsMutation.m */; };
+		DE8B8B6324BF4B76000DA799 /* UAAttributes.m in Sources */ = {isa = PBXBuildFile; fileRef = DE8B8B6224BF4B76000DA799 /* UAAttributes.m */; };
+		DE8B8B6424BF4B76000DA799 /* UAAttributes.m in Sources */ = {isa = PBXBuildFile; fileRef = DE8B8B6224BF4B76000DA799 /* UAAttributes.m */; };
+		DE8B8B6524BF4B76000DA799 /* UAAttributes.m in Sources */ = {isa = PBXBuildFile; fileRef = DE8B8B6224BF4B76000DA799 /* UAAttributes.m */; };
+		DE8B8B6624BF4B76000DA799 /* UAAttributes.m in Sources */ = {isa = PBXBuildFile; fileRef = DE8B8B6224BF4B76000DA799 /* UAAttributes.m */; };
+		DE8B8B6824BF4B8F000DA799 /* UAAttributes.h in Headers */ = {isa = PBXBuildFile; fileRef = DE8B8B6724BF4B8F000DA799 /* UAAttributes.h */; };
+		DE8B8B6924BF4B8F000DA799 /* UAAttributes.h in Headers */ = {isa = PBXBuildFile; fileRef = DE8B8B6724BF4B8F000DA799 /* UAAttributes.h */; };
+		DE8B8B6A24BF4B8F000DA799 /* UAAttributes.h in Headers */ = {isa = PBXBuildFile; fileRef = DE8B8B6724BF4B8F000DA799 /* UAAttributes.h */; };
+		DE8B8B6B24BF4B8F000DA799 /* UAAttributes.h in Headers */ = {isa = PBXBuildFile; fileRef = DE8B8B6724BF4B8F000DA799 /* UAAttributes.h */; };
 		DEE54BA62445B57000F75970 /* ExtrasDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEE54BA52445B57000F75970 /* ExtrasDetailViewController.swift */; };
 		DF0221F21FD9F6EF00EF8C9D /* UAInAppMessageAudienceTest.m in Sources */ = {isa = PBXBuildFile; fileRef = DF0221F11FD9F6EF00EF8C9D /* UAInAppMessageAudienceTest.m */; };
 		DF0221F41FDB03B100EF8C9D /* UAInAppMessageAudienceChecksTest.m in Sources */ = {isa = PBXBuildFile; fileRef = DF0221F31FDB03B100EF8C9D /* UAInAppMessageAudienceChecksTest.m */; };
@@ -3291,6 +3299,8 @@
 		CCE236311DDB8BA100577747 /* sk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = sk; path = sk.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
 		CCE236321DDB8BB400577747 /* iw */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = iw; path = iw.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
 		CCE236331DDB8BCE00577747 /* no */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = no; path = no.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
+		DE8B8B6224BF4B76000DA799 /* UAAttributes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAAttributes.m; sourceTree = "<group>"; };
+		DE8B8B6724BF4B8F000DA799 /* UAAttributes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAAttributes.h; sourceTree = "<group>"; };
 		DEE54BA52445B57000F75970 /* ExtrasDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtrasDetailViewController.swift; sourceTree = "<group>"; };
 		DF0221F11FD9F6EF00EF8C9D /* UAInAppMessageAudienceTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageAudienceTest.m; sourceTree = "<group>"; };
 		DF0221F31FDB03B100EF8C9D /* UAInAppMessageAudienceChecksTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageAudienceChecksTest.m; sourceTree = "<group>"; };
@@ -5256,6 +5266,8 @@
 		CC40DDE71D91D8E600BABD4F /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				DE8B8B6724BF4B8F000DA799 /* UAAttributes.h */,
+				DE8B8B6224BF4B76000DA799 /* UAAttributes.m */,
 				6E84537A237E03E7007D3B1E /* UAPadding.h */,
 				6E845379237E03E7007D3B1E /* UAPadding.m */,
 				6E937700237625BF00AA9C2A /* UAPersistentQueue.m */,
@@ -5875,6 +5887,7 @@
 				6EBFF9A4234F84E300472DCF /* UAPushableComponent.h in Headers */,
 				6EFB37592342A9E8005E4E44 /* UAJavaScriptEnvironment.h in Headers */,
 				CC40DC241D8C996A00BABD4F /* UAActionResult.h in Headers */,
+				DE8B8B6A24BF4B8F000DA799 /* UAAttributes.h in Headers */,
 				CC40DCC71D8C996A00BABD4F /* UAJSONValueMatcher.h in Headers */,
 				6E84537D237E03E7007D3B1E /* UAPadding.h in Headers */,
 				6EC74C1E2347E303003AF4C6 /* UARemoteConfigDisableInfo+Internal.h in Headers */,
@@ -6478,6 +6491,7 @@
 				6EE77194238F16A600E79944 /* UATagGroupsLookupResponse+Internal.h in Headers */,
 				6EE77195238F16A600E79944 /* UATagGroupsLookupResponseCache+Internal.h in Headers */,
 				6EE77196238F16A600E79944 /* UAInAppMessageEventUtils+Internal.h in Headers */,
+				DE8B8B6824BF4B8F000DA799 /* UAAttributes.h in Headers */,
 				6EE77197238F16A600E79944 /* UAInAppMessageDisplayEvent+Internal.h in Headers */,
 				6EE77198238F16A600E79944 /* UAInAppMessageResolution+Internal.h in Headers */,
 				6EE7719A238F16A600E79944 /* UAInAppMessageResolutionEvent+Internal.h in Headers */,
@@ -6586,6 +6600,7 @@
 				6EE77308238F197600E79944 /* UAAddCustomEventAction.h in Headers */,
 				6EE77309238F197600E79944 /* UAAddCustomEventActionPredicate+Internal.h in Headers */,
 				6EE7730A238F197600E79944 /* UAAddTagsAction.h in Headers */,
+				DE8B8B6924BF4B8F000DA799 /* UAAttributes.h in Headers */,
 				6EE7730B238F197600E79944 /* UAAggregateActionResult.h in Headers */,
 				6EE7730C238F197600E79944 /* UAAnalytics+Internal.h in Headers */,
 				6EE7730D238F197600E79944 /* UAAnalytics.h in Headers */,
@@ -6778,6 +6793,7 @@
 				99666E0C1EDF2C2600BAE46B /* UAAddCustomEventActionPredicate+Internal.h in Headers */,
 				99666DAD1EDF2BC900BAE46B /* UAAddTagsAction.h in Headers */,
 				99666E111EDF2C2600BAE46B /* UAAggregateActionResult.h in Headers */,
+				DE8B8B6B24BF4B8F000DA799 /* UAAttributes.h in Headers */,
 				99666E4E1EDF2C8D00BAE46B /* UAAnalytics+Internal.h in Headers */,
 				99666E4F1EDF2C8D00BAE46B /* UAAnalytics.h in Headers */,
 				6E27A7BD2367751400F46B69 /* UAMessageCenterModuleLoaderFactory.h in Headers */,
@@ -7837,6 +7853,7 @@
 				CC40DC101D8C996A00BABD4F /* NSString+UAURLEncoding.m in Sources */,
 				CC40DC0E1D8C996A00BABD4F /* NSString+UALocalizationAdditions.m in Sources */,
 				CC40DCE31D8C996A00BABD4F /* UANamedUserAPIClient.m in Sources */,
+				DE8B8B6524BF4B76000DA799 /* UAAttributes.m in Sources */,
 				DF17A1061F56330500DC39E0 /* UARemoteDataAPIClient.m in Sources */,
 				CC40DD1C1D8C996A00BABD4F /* UATagUtils.m in Sources */,
 				CC40DC4F1D8C996A00BABD4F /* UAAssociatedIdentifiers.m in Sources */,
@@ -8205,6 +8222,7 @@
 				6EE7702F238F15D000E79944 /* UATagGroupsMutationHistory.m in Sources */,
 				6EE77030238F15D000E79944 /* UAJSONValueMatcher.m in Sources */,
 				6EE77031238F15D000E79944 /* UAirshipCoreResources.m in Sources */,
+				DE8B8B6324BF4B76000DA799 /* UAAttributes.m in Sources */,
 				6EE77032238F15D000E79944 /* UARemoteDataManager.m in Sources */,
 				6EE77033238F15D000E79944 /* UATagGroupsRegistrar.m in Sources */,
 				6EE77034238F15D000E79944 /* UAJSONPredicate.m in Sources */,
@@ -8354,6 +8372,7 @@
 				6EE772BE238F197600E79944 /* UATagsActionPredicate.m in Sources */,
 				6EE772BF238F197600E79944 /* NSString+UAURLEncoding.m in Sources */,
 				6EE772C0238F197600E79944 /* UARemoteConfigDisableInfo.m in Sources */,
+				DE8B8B6424BF4B76000DA799 /* UAAttributes.m in Sources */,
 				6EE772C1238F197600E79944 /* UAModifyTagsAction.m in Sources */,
 				6EE772C2238F197600E79944 /* UAEventAPIClient.m in Sources */,
 				6EE772C3238F197600E79944 /* UAPreferenceDataStore.m in Sources */,
@@ -8657,6 +8676,7 @@
 				99666E081EDF2C1F00BAE46B /* UATagsActionPredicate.m in Sources */,
 				99666E631EDF2C9500BAE46B /* NSString+UAURLEncoding.m in Sources */,
 				6EC74C222347E303003AF4C6 /* UARemoteConfigDisableInfo.m in Sources */,
+				DE8B8B6624BF4B76000DA799 /* UAAttributes.m in Sources */,
 				99666DB01EDF2BC900BAE46B /* UAModifyTagsAction.m in Sources */,
 				99666E591EDF2C8D00BAE46B /* UAEventAPIClient.m in Sources */,
 				6E937722237625BF00AA9C2A /* UAPreferenceDataStore.m in Sources */,
