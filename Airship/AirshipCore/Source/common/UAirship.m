@@ -185,24 +185,14 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         }
 
         UATagGroupHistorian *tagGroupHistorian = [[UATagGroupHistorian alloc] initTagGroupHistorianWithChannel:self.sharedChannel namedUser:self.sharedNamedUser];
-        id<UAModuleLoader> automationChannelLoader = [UAirship automationModuleLoaderWithDataStore:self.dataStore
+        id<UAModuleLoader> automationLoader = [UAirship automationModuleLoaderWithDataStore:self.dataStore
                                                                                             config:self.config
                                                                                            channel:self.sharedChannel
                                                                                          analytics:self.sharedAnalytics
                                                                                  remoteDataManager:self.sharedRemoteDataManager
                                                                                  tagGroupHistorian:tagGroupHistorian];
-        if (automationChannelLoader) {
-            [loaders addObject:automationChannelLoader];
-        }
-
-        id<UAModuleLoader> automationNamedUserLoader = [UAirship automationModuleLoaderWithDataStore:self.dataStore
-                                                                                              config:self.config
-                                                                                             channel:self.sharedChannel
-                                                                                           analytics:self.sharedAnalytics
-                                                                                   remoteDataManager:self.sharedRemoteDataManager
-                                                                                   tagGroupHistorian:tagGroupHistorian];
-        if (automationNamedUserLoader) {
-            [loaders addObject:automationNamedUserLoader];
+        if (automationLoader) {
+            [loaders addObject:automationLoader];
         }
         
         id<UAModuleLoader> messageCenterLoader = [UAirship messageCenterLoaderWithDataStore:self.dataStore
