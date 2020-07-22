@@ -116,6 +116,9 @@ NSString *const UAInAppNativeBridgeDismissCommand = @"dismiss";
 
     [UAViewUtils applyContainerConstraintsToContainer:self.closeButtonContainerView containedView:self.closeButton];
     [self.webView.configuration setDataDetectorTypes:WKDataDetectorTypeNone];
+    
+    //Add an observer when the user changes the preferred content size setting.
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(contentSizeDidChange) name:UIContentSizeCategoryDidChangeNotification object:nil];
 
 
     [[NSNotificationCenter defaultCenter] addObserver:self
@@ -195,6 +198,11 @@ NSString *const UAInAppNativeBridgeDismissCommand = @"dismiss";
 
 - (void)dismissWithResolution:(UAInAppMessageResolution *)resolution  {
     [self.resizableParent dismissWithResolution:resolution];
+}
+
+- (void) contentSizeDidChange {
+    // Reload the web view when the user changes the preferred content size setting.
+    [self.webView reload];
 }
 
 #pragma mark UAJavaScriptCommandDelegate

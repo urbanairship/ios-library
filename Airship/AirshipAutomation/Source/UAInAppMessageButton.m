@@ -75,6 +75,9 @@ static CGFloat const DefaultButtonBorderWidth = 2;
 
         // Apply rounding on layout subviews
         [self layoutSubviews];
+        
+        //Add an observer when the user changes the preferred content size setting.
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateButtonDynamicContentSize) name:UIContentSizeCategoryDidChangeNotification object:nil];
     }
 
     return self;
@@ -144,6 +147,14 @@ static CGFloat const DefaultButtonBorderWidth = 2;
     }
 
     [self.layer addSublayer:borderLayer];
+}
+
+- (void)updateButtonDynamicContentSize {
+    // Update the buttons when the user changes the preferred content size setting.
+    [UAInAppMessageUtils applyButtonInfo:self.buttonInfo
+                                   style:self.style
+                                  button:self
+                            buttonMargin:DefaultButtonMargin];
 }
 
 @end

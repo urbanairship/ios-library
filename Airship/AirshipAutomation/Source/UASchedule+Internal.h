@@ -4,6 +4,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class UAScheduleTriggerContext;
+
 /*
  * SDK-private extensions to UASchedule
  */
@@ -29,6 +31,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @note metadata includes the locale which can change at any time.
  */
 @property(nonatomic, copy) NSDictionary *metadata;
+
 
 ///---------------------------------------------------------------------------------------
 /// @name Schedule Internal Methods

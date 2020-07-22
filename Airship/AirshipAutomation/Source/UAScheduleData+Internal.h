@@ -2,11 +2,13 @@
 
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
+#import "UAScheduleTriggerContextData+Internal.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @class UAScheduleDelayData;
 @class UAScheduleTriggerData;
+@class UAScheduleTriggerContextData;
 
 /**
  * Schedule execution states.
@@ -155,6 +157,18 @@ extern NSUInteger const UAScheduleDataVersion;
 @property(nullable, nonatomic, retain) NSNumber *interval;
 
 /**
+ * The trigger context.
+ */
+@property (nullable, nonatomic, retain) UAScheduleTriggerContextData *triggerContext;
+
+/**
+ * Updates the trigger contex witth the trigger data and event.
+ * @param trigger The trigger.
+ * @param event The event.
+ */
+- (void)updateTriggerContext:(UAScheduleTriggerData *)trigger event:(nullable NSDictionary *)event;
+
+/**
  * Whether the scheudle has exceeded its limit.
  */
 - (BOOL)isOverLimit;
@@ -163,7 +177,6 @@ extern NSUInteger const UAScheduleDataVersion;
  * Whether the scheudle has expired.
  */
 - (BOOL)isExpired;
-
 
 @end
 

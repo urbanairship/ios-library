@@ -72,7 +72,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UARegistrationDelegate, U
         UAirship.push().pushNotificationDelegate = pushHandler
         UAirship.push().registrationDelegate = self
         UAirship.shared().deepLinkDelegate = self
-        UAInAppMessageManager.shared().assetManager.cachePolicyDelegate = self;
+        UAInAppAutomation.shared().inAppMessageManager.assetManager.cachePolicyDelegate = self;
 
         NotificationCenter.default.addObserver(self, selector:#selector(AppDelegate.refreshMessageCenterBadge), name: NSNotification.Name.UAInboxMessageListUpdated, object: nil)
 
