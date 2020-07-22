@@ -1,9 +1,6 @@
 /* Copyright Airship and Contributors */
 
-#import <Foundation/Foundation.h>
-#import <UIKit/UIKit.h>
-#import <Foundation/Foundation.h>
-#import <UIKit/UIKit.h>
+#import "UAAttributes.h"
 
 /**
 * Title attribute.
@@ -33,7 +30,7 @@ extern NSString * const UAAttributeGender;
 /**
 * Zip code attribute.
 */
-extern NSNumber * const UAAttributeZipCode;
+extern NSString * const UAAttributeZipCode;
 
 /**
 * City attribute.
@@ -53,27 +50,27 @@ extern NSString * const UAAttributeCountry;
 /**
 * Birthdate attribute.
 */
-extern NSDate * const UAAttributeBirthdate;
+extern NSString * const UAAttributeBirthdate;
 
 /**
 * Age attribute.
 */
-extern NSNumber * const UAAttributeAge;
+extern NSString * const UAAttributeAge;
 
 /**
 * Mobile phone attribute.
 */
-extern NSNumber * const UAAttributeMobilePhone;
+extern NSString * const UAAttributeMobilePhone;
 
 /**
 * Home phone attribute.
 */
-extern NSNumber * const UAAttributeHomePhone;
+extern NSString * const UAAttributeHomePhone;
 
 /**
 * Work phone attribute.
 */
-extern NSNumber * const UAAttributeWorkPhone;
+extern NSString * const UAAttributeWorkPhone;
 
 /**
 * Loyalty tier attribute.
@@ -93,7 +90,7 @@ extern NSString * const UAAttributeUsername;
 /**
 * Account creation attribute.
 */
-extern NSDate * const UAAttributeAccountCreation;
+extern NSString * const UAAttributeAccountCreation;
 
 /**
 * Email attribute.
