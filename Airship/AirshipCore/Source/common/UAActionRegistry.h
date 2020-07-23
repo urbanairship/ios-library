@@ -44,8 +44,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param predicate A predicate that is evaluated to determine if the
  * action should be performed
  * @return `YES` if the action was registered, `NO` if the action was unable to
- * be registered because the name conflicts with a reserved action, the name is
- * nil, or the action is `nil`.
+ * be registered because the name is nil, or the action is `nil`.
  */
 - (BOOL)registerAction:(UAAction *)action
                   name:(NSString *)name
@@ -63,8 +62,7 @@ NS_ASSUME_NONNULL_BEGIN
  * action should be performed
  *
  * @return `YES` if the action was registered, `NO` if the action was unable to
- * be registered because one of the names conflicts with a reserved action,
- * no names were specified, or the action is `nil`.
+ * be registered because no names were specified, or the action is `nil`.
  */
 - (BOOL)registerActionClass:(Class)actionClass
                        name:(NSString *)name
@@ -81,8 +79,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param predicate A predicate that is evaluated to determine if the
  * action should be performed
  * @return `YES` if the action was registered, `NO` if the action was unable to
- * be registered because one of the names conflicts with a reserved action,
- * no names were specified, or the action is `nil`.
+ * be registered because no names were specified, or the action is `nil`.
  */
 - (BOOL)registerAction:(UAAction *)action
                  names:(NSArray *)names
@@ -100,8 +97,7 @@ NS_ASSUME_NONNULL_BEGIN
  * action should be performed
  *
  * @return `YES` if the action was registered, `NO` if the action was unable to
- * be registered because one of the names conflicts with a reserved action,
- * no names were specified, or the action is `nil`.
+ * be registered because no names were specified, or the action is `nil`.
  */
 - (BOOL)registerActionClass:(Class)actionClass
                       names:(NSArray *)names
@@ -116,8 +112,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param action Action to be performed
  * @param name Name of the action
  * @return `YES` if the action was registered, `NO` if the action was unable to
- * be registered because the name conflicts with a reserved action, the name is
- * nil, or the action is nil.
+ * be registered because the name is nil, or the action is nil.
  */
 - (BOOL)registerAction:(UAAction *)action name:(NSString *)name;
 
@@ -130,8 +125,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param action Action to be performed
  * @param names An array of names for the registry
  * @return `YES` if the action was registered, `NO` if the action was unable to
- * be registered because one of the names conflicts with a reserved action,
- * no names were specified, or the action is `nil`.
+ * be registered because no names were specified, or the action is `nil`.
  */
 - (BOOL)registerAction:(UAAction *)action names:(NSArray *)names;
 
@@ -144,8 +138,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param actionClass Action class for the action to be performed
  * @param name Name of the action
  * @return `YES` if the action was registered, `NO` if the action was unable to
- * be registered because one of the names conflicts with a reserved action,
- * no names were specified, or the action is `nil`.
+ * be registered because no names were specified, or the action is `nil`.
  */
 - (BOOL)registerActionClass:(Class)actionClass name:(NSString *)name;
 
@@ -158,8 +151,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param actionClass Action class for the action to be performed
  * @param names An array of names for the registry
  * @return `YES` if the action was registered, `NO` if the action was unable to
- * be registered because one of the names conflicts with a reserved action,
- * no names were specified, or the action is `nil`.
+ * be registered because no names were specified, or the action is `nil`.
  */
 - (BOOL)registerActionClass:(Class)actionClass names:(NSArray *)names;
 
@@ -190,8 +182,8 @@ NS_ASSUME_NONNULL_BEGIN
  * @param name Name of the registered entry
  * @param action Action to be performed
  * @return `YES` if the action was added to the entry for the situation override.
- * `NO` if the entry is unable to be found with the given name, if the situation
- * is nil, or if the registered entry is reserved.
+ * `NO` if the entry is unable to be found with the given name or if the situation
+ * is nil.
  */
 - (BOOL)addSituationOverride:(UASituation)situation
             forEntryWithName:(NSString *)name
@@ -203,8 +195,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param predicate Predicate to update or `nil` to clear the current predicate
  * @param name Name of the registered entry
  * @return `YES` if the predicate was updated for the entry. `NO` if the entry
- * is unable to be found with the given name or if the registered entry
- * is reserved.
+ * is unable to be found with the given name.
  *
  */
 - (BOOL)updatePredicate:(nullable UAActionPredicate)predicate
@@ -216,8 +207,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param action Action to update for the entry
  * @param name Name of the registered entry
  * @return `YES` if the action was updated for the entry. `NO` if the entry
- * is unable to be found with the given name or if the registered entry is
- * reserved.
+ * is unable to be found with the given name.
  *
  */
 - (BOOL)updateAction:(UAAction *)action forEntryWithName:(NSString *)name;
@@ -228,8 +218,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param actionClass Class of action to update for the entry
  * @param name Name of the registered entry
  * @return `YES` if the action was updated for the entry. `NO` if the entry
- * is unable to be found with the given name or if the registered entry is
- * reserved.
+ * is unable to be found with the given name.
  *
  */
 - (BOOL)updateActionClass:(Class)actionClass forEntryWithName:(NSString *)name;
@@ -238,8 +227,7 @@ NS_ASSUME_NONNULL_BEGIN
  * Removes a name for a registered entry.
  *
  * @param name The name to remove
- * @return `YES` if the name was removed from a registered entry. `NO` if the
- * name is a reserved action name and is unable to be removed.
+ * @return `YES` if the name was removed from a registered entry.
  */
 - (BOOL)removeName:(NSString *)name;
 
@@ -247,8 +235,7 @@ NS_ASSUME_NONNULL_BEGIN
  * Removes an entry and all of its registered names.
  *
  * @param name The name of the entry to remove.
- * @return `YES` if the entry was removed from a registry. `NO` if the
- * entry is a reserved action and is unable to be removed.
+ * @return `YES` if the entry was removed from a registry.
  */
 - (BOOL)removeEntryWithName:(NSString *)name;
 
@@ -258,8 +245,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param name The name to add to the registered entry.
  * @param entryName The name of registered entry.
  * @return `YES` if the name was added to the entry.  `NO` if
- * no entry was found for 'entryName', the entry is reserved, or the name
- * is already used for a reserved entry.
+ * no entry was found for 'entryName'.
  */
 - (BOOL)addName:(NSString *)name forEntryWithName:(NSString *)entryName;
 
