@@ -288,6 +288,16 @@ extern NSString * const UAConnectionTypeWifi;
             withResponse:(nullable NSHTTPURLResponse *)response;
 
 
+/**
+ * Returns bundle version.
+ *
+ * The return value takes the form infoDictionnary: `CFBundleShortVersionString`
+ *
+ * @return An short bundle version string value.
+ */
++ (NSString *)bundleShortVersion;
+
+
 @end
 
 NS_ASSUME_NONNULL_END

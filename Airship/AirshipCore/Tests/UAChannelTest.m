@@ -452,7 +452,7 @@
     expectedPayload.timeZone = @"cool zone";
     expectedPayload.tags = @[@"cool", @"story"];
     expectedPayload.setTags = YES;
-    expectedPayload.appVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
+    expectedPayload.appVersion = [UAUtils bundleShortVersion];
     expectedPayload.SDKVersion = [UAirshipVersion get];
     expectedPayload.deviceOS = [UIDevice currentDevice].systemVersion;
     expectedPayload.deviceModel = [UAUtils deviceModelName];
@@ -483,7 +483,7 @@
     expectedPayload.country = [[NSLocale autoupdatingCurrentLocale] objectForKey:NSLocaleCountryCode];
     expectedPayload.timeZone = @"cool zone";
     expectedPayload.setTags = NO;
-    expectedPayload.appVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
+    expectedPayload.appVersion = [UAUtils bundleShortVersion];
     expectedPayload.SDKVersion = [UAirshipVersion get];
     expectedPayload.deviceOS = [UIDevice currentDevice].systemVersion;
     expectedPayload.deviceModel = [UAUtils deviceModelName];
@@ -514,7 +514,7 @@
     expectedPayload.country = [[NSLocale autoupdatingCurrentLocale] objectForKey:NSLocaleCountryCode];
     expectedPayload.timeZone = @"cool zone";
     expectedPayload.setTags = NO;
-    expectedPayload.appVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
+    expectedPayload.appVersion = [UAUtils bundleShortVersion];
     expectedPayload.SDKVersion = [UAirshipVersion get];
     expectedPayload.deviceOS = [UIDevice currentDevice].systemVersion;
 
