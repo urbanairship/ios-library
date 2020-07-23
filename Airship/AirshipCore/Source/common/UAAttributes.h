@@ -2,7 +2,7 @@
 
 #import <Foundation/Foundation.h>
 
-@interface UAAttributes : NSString
+@interface UAAttributes : NSObject
 
 /**
 * Title attribute.

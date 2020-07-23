@@ -7,7 +7,7 @@
 * Predefined attributes.
 */
 
-@implementation UAAttributes : NSString
+@implementation UAAttributes : NSObject
 
 NSString * const UAAttributeTitle = @"title";
 NSString * const UAAttributeFirstName = @"first_name";
