@@ -1,8 +1,8 @@
 /* Copyright Airship and Contributors */
 
-#import "UAAttributes.h"
+#import <Foundation/Foundation.h>
 
-@interface UAAttributes : NSObject
+@interface UAAttributes : NSString
 
 /**
 * Title attribute.

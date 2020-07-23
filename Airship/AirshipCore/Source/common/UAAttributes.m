@@ -1,11 +1,13 @@
-// UALib
+/* Copyright Airship and Contributors */
+
+#import "UAAttributes.h"
 #import "UAirship.h"
 
 /**
 * Predefined attributes.
 */
 
-@implementation UAAttributes : NSObject
+@implementation UAAttributes : NSString
 
 NSString * const UAAttributeTitle = @"title";
 NSString * const UAAttributeFirstName = @"first_name";

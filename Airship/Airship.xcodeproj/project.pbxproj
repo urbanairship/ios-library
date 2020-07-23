@@ -3325,8 +3325,8 @@
 		CCE236311DDB8BA100577747 /* sk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = sk; path = sk.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
 		CCE236321DDB8BB400577747 /* iw */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = iw; path = iw.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
 		CCE236331DDB8BCE00577747 /* no */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = no; path = no.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
-		DE5888CA24C9BB170053BB95 /* UAAttributes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = UAAttributes.h; path = common/UAAttributes.h; sourceTree = "<group>"; };
-		DE5888CF24C9BB440053BB95 /* UAAttributes.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = UAAttributes.m; path = common/UAAttributes.m; sourceTree = "<group>"; };
+		DE5888CA24C9BB170053BB95 /* UAAttributes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAAttributes.h; path = common/UAAttributes.h; sourceTree = "<group>"; };
+		DE5888CF24C9BB440053BB95 /* UAAttributes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAAttributes.m; path = common/UAAttributes.m; sourceTree = "<group>"; };
 		DEE54BA52445B57000F75970 /* ExtrasDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtrasDetailViewController.swift; sourceTree = "<group>"; };
 		DF0221F11FD9F6EF00EF8C9D /* UAInAppMessageAudienceTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageAudienceTest.m; sourceTree = "<group>"; };
 		DF0221F31FDB03B100EF8C9D /* UAInAppMessageAudienceChecksTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageAudienceChecksTest.m; sourceTree = "<group>"; };
