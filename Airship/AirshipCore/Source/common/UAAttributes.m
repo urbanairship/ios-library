@@ -1,7 +1,6 @@
 /* Copyright Airship and Contributors */
 
 #import "UAAttributes.h"
-#import "UAirship.h"
 
 /**
 * Predefined attributes.
