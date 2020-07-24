@@ -113,10 +113,7 @@
 
 
 - (NSArray<UATagGroupsMutation *> *)pendingMutations {
-    NSArray<UATagGroupsMutation *> *pendingChannelTagGroupMutations = (NSArray<UATagGroupsMutation *>*) [self.pendingTagGroupsMutations objects];
-    NSArray<UATagGroupsMutation *> *pendingNamedUserTagGroupMutations = (NSArray<UATagGroupsMutation *>*) [self.pendingTagGroupsMutations objects];
-
-    return [pendingNamedUserTagGroupMutations arrayByAddingObjectsFromArray:pendingChannelTagGroupMutations];
+    return (NSArray<UATagGroupsMutation *>*)[self.pendingTagGroupsMutations objects];
 }
 
 - (void)addPendingMutation:(UATagGroupsMutation *)mutation {
@@ -132,7 +129,6 @@
 }
 
 - (void)collapsePendingMutations {
-
     NSArray<UATagGroupsMutation *> *mutations = [[self.pendingTagGroupsMutations objects] mutableCopy];
     mutations = [UATagGroupsMutation collapseMutations:mutations];
 
