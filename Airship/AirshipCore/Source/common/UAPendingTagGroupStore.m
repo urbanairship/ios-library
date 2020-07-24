@@ -35,10 +35,10 @@
 
         if ([self.storeKey isEqualToString:UATagGroupsNamedUserStoreKey]) {
             self.pendingTagGroupsMutations = [UAPersistentQueue persistentQueueWithDataStore:dataStore
-            key:kUAPendingNamedUserTagGroupsMutationsKey];
+                                                                                         key:kUAPendingNamedUserTagGroupsMutationsKey];
         } else {
             self.pendingTagGroupsMutations = [UAPersistentQueue persistentQueueWithDataStore:dataStore
-            key:kUAPendingChannelTagGroupsMutationsKey];
+                                                                                         key:kUAPendingChannelTagGroupsMutationsKey];
         }
         
         [self migrateLegacyDataStoreKeys];
