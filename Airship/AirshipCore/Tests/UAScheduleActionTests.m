@@ -5,12 +5,10 @@
 
 #import "UAScheduleAction.h"
 #import "UAActionArguments+Internal.h"
-#import "UAActionAutomation.h"
+#import "UAInAppAutomation.h"
 #import "UAirship+Internal.h"
 #import "UAUtils+Internal.h"
 #import "UASchedule+Internal.h"
-#import "UAScheduleInfo+Internal.h"
-#import "UAActionScheduleInfo+Internal.h"
 
 @interface UAScheduleActionTests : UABaseTest
 @property(nonatomic, strong) UAScheduleAction *action;
@@ -23,7 +21,7 @@
 - (void)setUp {
     [super setUp];
 
-    self.mockAutomation = [self mockForClass:[UAActionAutomation class]];
+    self.mockAutomation = [self mockForClass:[UAInAppAutomation class]];
     [[[self.mockAutomation stub] andReturn:self.mockAutomation] shared];
     self.action = [[UAScheduleAction alloc] init];
 }
@@ -48,8 +46,8 @@
 
     UAActionArguments *arguments = [[UAActionArguments alloc] init];
     arguments.situation = UASituationBackgroundInteractiveButton;
-    arguments.value = @{ UAActionScheduleInfoActionsKey: @{ @"action_name": @"action_value" },
-                         UAScheduleInfoTriggersKey: @[ @{ UAScheduleTriggerTypeKey: UAScheduleTriggerAppForegroundName, UAScheduleTriggerGoalKey: @(1) }] };
+    arguments.value = @{ @"actions": @{ @"action_name": @"action_value" },
+                         @"triggers": @[ @{ @"type": @"foreground", @"goal": @(1) }] };
 
     for (int i = 0; i < 5; i++) {
         arguments.situation = validSituations[i];
@@ -61,16 +59,13 @@
  * Test scheduling actions.
  */
 - (void)testSchedule {
-    NSDictionary *scheduleJSON = @{ UAScheduleInfoGroupKey: @"test group",
-                                    UAScheduleInfoLimitKey: @(1),
-                                    UAActionScheduleInfoActionsKey: @{ @"action_name": @"action_value" },
-                                    UAScheduleInfoEndKey:[[UAUtils ISODateFormatterUTC] stringFromDate:[NSDate dateWithTimeIntervalSinceNow:1000]],
-                                    UAScheduleInfoStartKey:[[UAUtils ISODateFormatterUTC] stringFromDate: [NSDate date]],
-                                    UAScheduleInfoTriggersKey: @[ @{ UAScheduleTriggerTypeKey: UAScheduleTriggerAppForegroundName, UAScheduleTriggerGoalKey: @(1) }] };
 
-    NSError *error;
-    UAActionScheduleInfo *expectedInfo = [UAActionScheduleInfo scheduleInfoWithJSON:scheduleJSON error:&error];
-    XCTAssertNil(error);
+    NSDictionary *scheduleJSON = @{ @"group": @"test group",
+                                    @"limit": @(1),
+                                    @"actions": @{ @"action_name": @"action_value" },
+                                    @"end":[[UAUtils ISODateFormatterUTC] stringFromDate:[NSDate dateWithTimeIntervalSince1970:1000]],
+                                    @"start":[[UAUtils ISODateFormatterUTC] stringFromDate: [NSDate dateWithTimeIntervalSince1970:1]],
+                                    @"triggers": @[ @{ @"type": @"foreground", @"goal": @(1) }] };
 
 
     __block BOOL actionPerformed = NO;
@@ -79,16 +74,26 @@
     arguments.situation = UASituationManualInvocation;
     arguments.value = scheduleJSON;
 
-    [[self.mockAutomation expect] scheduleActions:expectedInfo completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
-        void(^completionBlock)(UASchedule *) = obj;
-        UASchedule *schedule = [UASchedule scheduleWithIdentifier:@"test" info:expectedInfo metadata:@{}];
-        completionBlock(schedule);
+    __block UASchedule *schedule;
+    [[self.mockAutomation expect] schedule:[OCMArg checkWithBlock:^BOOL(id obj) {
+        schedule = (UASchedule *)obj;
+        XCTAssertEqualObjects(@"test group", schedule.group);
+        XCTAssertEqual(1, schedule.limit);
+        XCTAssertEqualObjects([NSDate dateWithTimeIntervalSince1970:1000], schedule.end);
+        XCTAssertEqualObjects([NSDate dateWithTimeIntervalSince1970:1], schedule.start);
+        XCTAssertEqual(1, schedule.triggers.count);
+        XCTAssertEqual(1, [schedule.triggers.firstObject.goal intValue]);
+        XCTAssertEqual(UAScheduleTriggerAppForeground, schedule.triggers.firstObject.type);
+        return YES;
+    }] completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
+        void(^completionBlock)(BOOL) = obj;
+        completionBlock(YES);
         return YES;
     }]];
 
     [self.action performWithArguments:arguments completionHandler:^(UAActionResult *result) {
         actionPerformed = YES;
-        XCTAssertEqualObjects(@"test", result.value);
+        XCTAssertEqualObjects(schedule.identifier, result.value);
     }];
 
     XCTAssertTrue(actionPerformed);

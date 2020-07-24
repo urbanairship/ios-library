@@ -2,10 +2,7 @@
 
 #import <Foundation/Foundation.h>
 #import "UAInAppMessage.h"
-#import "UAInAppMessageScheduleInfo.h"
-#import "UASchedule.h"
 #import "UAInAppMessageAdapterProtocol.h"
-#import "UAInAppMessageScheduleEdits.h"
 #import "UAInAppMessageDisplayCoordinator.h"
 #import "UAInAppMessageAssetManager.h"
 #import "UAAirshipAutomationCoreImport.h"

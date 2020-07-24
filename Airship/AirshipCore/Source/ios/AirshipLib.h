@@ -1,3 +1,4 @@
+#import "NSDictionary+UAAdditions.h"
 #import "NSJSONSerialization+UAAdditions.h"
 #import "NSManagedObjectContext+UAAdditions.h"
 #import "NSOperationQueue+UAAdditions.h"

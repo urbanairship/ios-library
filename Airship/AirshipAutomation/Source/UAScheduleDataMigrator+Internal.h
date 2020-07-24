@@ -12,12 +12,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Migrates the schedule data.
- * @param oldVersion The old schedule data version.
- * @param newVersion The new schedule data version.
+ * @param scheduleData The schedule data.
  */
-+ (void)migrateScheduleData:(UAScheduleData *)scheduleData
-                 oldVersion:(NSUInteger)oldVersion
-                 newVersion:(NSUInteger)newVersion;
++ (void)migrateScheduleData:(UAScheduleData *)scheduleData;
 
 @end
 

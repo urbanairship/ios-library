@@ -3,10 +3,10 @@
 #import <Foundation/Foundation.h>
 #import "UAScheduleTrigger+Internal.h"
 #import "UAAirshipAutomationCoreImport.h"
+#import "UASchedule.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class UASchedule;
 @class UAScheduleData;
 @class UAScheduleTriggerData;
 @class UARuntimeConfig;
@@ -24,24 +24,28 @@ NS_ASSUME_NONNULL_BEGIN
 /**
 * Factory method for automation store.
 *
-* @param storeName The store name.
+* @param config The config.
 * @param scheduleLimit The maximum number of schedules available for storage
 * @param inMemory Whether to use an in-memory database. If `NO` the store will default to SQLite.
 * @param date The UADate instance.
 *
 * @return Automation store.
 */
-+ (instancetype)automationStoreWithStoreName:(NSString *)storeName scheduleLimit:(NSUInteger)scheduleLimit inMemory:(BOOL)inMemory date:(UADate *)date;
++ (instancetype)automationStoreWithConfig:(UARuntimeConfig *)config
+                            scheduleLimit:(NSUInteger)scheduleLimit
+                                 inMemory:(BOOL)inMemory
+                                     date:(UADate *)date;
 
 /**
  * Factory method for automation store.
  *
- * @param storeName The store name.
+ * @param config The config.
  * @param scheduleLimit The maximum number of schedules available for storage
 
  * @return Automation store.
  */
-+ (instancetype)automationStoreWithStoreName:(NSString *)storeName scheduleLimit:(NSUInteger)scheduleLimit;
++ (instancetype)automationStoreWithConfig:(UARuntimeConfig *)config
+                            scheduleLimit:(NSUInteger)scheduleLimit;
 
 /**
  * Saves the UAActionSchedule to the data store.
@@ -127,7 +131,16 @@ NS_ASSUME_NONNULL_BEGIN
  * @param state An array of schedule state.
  * @param completionHandler Completion handler called back with the retrieved schedule data.
  */
-- (void)getSchedulesWithStates:(NSArray *)state completionHandler:(void (^)(NSArray<UAScheduleData *> *))completionHandler;
+- (void)getSchedulesWithStates:(NSArray *)state
+             completionHandler:(void (^)(NSArray<UAScheduleData *> *))completionHandler;
+
+/**
+ * Gets the schedules with the corresponding type.
+ *
+ * @param type The type.
+ * @param completionHandler Completion handler called back with the retrieved schedule data.
+ */
+- (void)getSchedulesWithType:(UAScheduleType)type completionHandler:(void (^)(NSArray<UAScheduleData *> *))completionHandler;
 
 /**
  * Gets all expired schedules that have not exceeded their grace period.

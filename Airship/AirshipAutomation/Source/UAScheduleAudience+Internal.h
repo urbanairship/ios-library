@@ -1,20 +1,20 @@
 /* Copyright Airship and Contributors */
 
-#import "UAInAppMessageAudience.h"
+#import "UAScheduleAudience.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Represents the possible error conditions when deserializing audience from JSON.
  */
-typedef NS_ENUM(NSInteger, UAInAppMessageAudienceErrorCode) {
+typedef NS_ENUM(NSInteger, UAScheduleAudienceErrorCode) {
     /**
      * Indicates an error with the tag selector JSON definition.
      */
-    UAInAppMessageAudienceErrorCodeInvalidJSON,
+    UAScheduleAudienceErrorCodeInvalidJSON,
 };
 
-@interface UAInAppMessageAudienceBuilder()
+@interface UAScheduleAudienceBuilder()
 
 /**
  * The new user flag.
@@ -32,7 +32,7 @@ typedef NS_ENUM(NSInteger, UAInAppMessageAudienceErrorCode) {
 
 @end
 
-@interface UAInAppMessageAudience()
+@interface UAScheduleAudience()
 
 /**
  * The new user flag.

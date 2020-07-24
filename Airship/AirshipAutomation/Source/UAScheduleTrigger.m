@@ -4,7 +4,7 @@
 #import "UAAirshipAutomationCoreImport.h"
 #import "UARegionEvent+Internal.h"
 
-// JSON Keys
+// JSON/NSCoding Keys
 NSString *const UAScheduleTriggerTypeKey = @"type";
 NSString *const UAScheduleTriggerPredicateKey = @"predicate";
 NSString *const UAScheduleTriggerGoalKey = @"goal";
@@ -232,5 +232,29 @@ NSString * const UAScheduleTriggerErrorDomain = @"com.urbanairship.schedule_trig
     result = 31 * result + [self.predicate hash];
     return result;
 }
+
+- (void)encodeWithCoder:(NSCoder *)coder {
+    [coder encodeObject:@(self.type) forKey:UAScheduleTriggerTypeKey];
+    [coder encodeObject:self.goal forKey:UAScheduleTriggerGoalKey];
+    [coder encodeObject:self.predicate.payload forKey:UAScheduleTriggerPredicateKey];
+}
+
+- (id)initWithCoder:(NSCoder *)coder {
+    self = [super init];
+
+    if (self) {
+        self.type = [[coder decodeObjectForKey:UAScheduleTriggerTypeKey] integerValue];
+        self.goal = [coder decodeObjectForKey:UAScheduleTriggerGoalKey];
+
+        id predicatePayload = [coder decodeObjectForKey:UAScheduleTriggerPredicateKey];
+        if (predicatePayload) {
+            self.predicate = [UAJSONPredicate predicateWithJSON:predicatePayload
+                                                          error:nil];
+        }
+    }
+
+    return self;
+}
+
 
 @end

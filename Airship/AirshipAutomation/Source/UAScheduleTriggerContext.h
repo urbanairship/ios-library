@@ -6,7 +6,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class UAScheduleTrigger;
 
-@interface UAScheduleTriggerContext : NSObject
+@interface UAScheduleTriggerContext : NSObject <NSCoding>
 
 //---------------------------------------------------------------------------------------
 /// @name Schedule Trigger Context Properties
@@ -33,7 +33,8 @@ NS_ASSUME_NONNULL_BEGIN
  * @param event The event that triggered the schedule.
  * @return A schedule trigger context.
  */
-+ (instancetype)triggerContextWithTrigger:(UAScheduleTrigger *)trigger event:(NSDictionary *)event;
++ (instancetype)triggerContextWithTrigger:(UAScheduleTrigger *)trigger
+                                    event:(NSDictionary *)event;
 
 @end
 

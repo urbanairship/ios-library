@@ -5,19 +5,16 @@
 #import "UAInAppMessageManager.h"
 #import "UAAutomationEngine+Internal.h"
 #import "UAInAppMessage.h"
-#import "UAInAppMessageScheduleInfo.h"
-#import "UAInAppMessageAdapterProtocol.h"
+#import "UASchedule.h"
 #import "UATagGroupsLookupManager+Internal.h"
-#import "UAInAppMessageDefaultDisplayCoordinator+Internal.h"
-#import "UAInAppMessageAssetManager+Internal.h"
 #import "UAInAppRemoteDataClient+Internal.h"
 #import "UAAirshipAutomationCoreImport.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 /**
- * In-app message manager provides a control interface for creating,
- * canceling and executing in-app message schedules.
+ * In-app automation manager provides a control interface for creating,
+ * canceling and executing in-app automations.
  */
 @interface UAInAppAutomation() 
 
@@ -55,17 +52,8 @@ NS_ASSUME_NONNULL_BEGIN
                              channel:(UAChannel *)channel
                            analytics:(UAAnalytics *)analytics;
 
-
-// UAAutomationEngineDelegate methods for testing
-
-/**
- * Creates a schedule info from a builder.
- *
- * @param builder The schedule info builder.
- * @returns Schedule info.
- */
-- (UAScheduleInfo *)createScheduleInfoWithBuilder:(UAScheduleInfoBuilder *)builder;
-
+- (void)cancelSchedulesWithType:(UAScheduleType)scheduleType
+              completionHandler:(nullable void (^)(NSArray<UASchedule *> *))completionHandler;
 
 @end
 

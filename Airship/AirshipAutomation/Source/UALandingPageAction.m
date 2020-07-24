@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 #import "UALandingPageAction.h"
-#import "UAInAppMessageScheduleInfo+Internal.h"
+#import "UASchedule.h"
 #import "UAInAppMessageHTMLDisplayContent+Internal.h"
 #import "UAInAppAutomation+Internal.h"
 #import "UAAirshipAutomationCoreImport.h"
@@ -98,7 +98,7 @@ CGFloat const UALandingPageDefaultBorderRadiusPoints = 2;
     return landingPageURL;
 }
 
-- (UAInAppMessageScheduleInfo *)createScheduleInfoWithActionArguments:(UAActionArguments *)arguments {
+- (UASchedule *)createScheduleWithActionArguments:(UAActionArguments *)arguments {
     NSURL *landingPageURL = [self parseURLFromArguments:arguments];
     CGSize landingPageSize = [self parseSizeFromValue:arguments.value];
 
@@ -139,27 +139,24 @@ CGFloat const UALandingPageDefaultBorderRadiusPoints = 2;
         }
     }];
 
-    UAInAppMessageScheduleInfo *scheduleInfo = [UAInAppMessageScheduleInfo scheduleInfoWithBuilderBlock:^(UAInAppMessageScheduleInfoBuilder * _Nonnull builder) {
-        builder.message = message;
+    return [UASchedule scheduleWithMessage:message builderBlock:^(UAScheduleBuilder * _Nonnull builder) {
         builder.priority = 0;
         builder.limit = 1;
         builder.triggers = @[[UAScheduleTrigger triggerWithType:UAScheduleTriggerActiveSession goal:@(1) predicate:nil]];
 
-        // Allow the app to customize the schedule info builder if necessary
-        if (extender && [extender respondsToSelector:@selector(extendScheduleInfoBuilder:)]) {
-            [extender extendScheduleInfoBuilder:builder];
+        // Allow the app to customize the schedule builder if necessary
+        if (extender && [extender respondsToSelector:@selector(extendScheduleBuilder:)]) {
+            [extender extendScheduleBuilder:builder];
         }
     }];
-
-    return scheduleInfo;
 }
 
 - (void)performWithArguments:(UAActionArguments *)arguments
            completionHandler:(UAActionCompletionHandler)completionHandler {
 
-    UAInAppMessageScheduleInfo *scheduleInfo = [self createScheduleInfoWithActionArguments:arguments];
+    UASchedule *schedule = [self createScheduleWithActionArguments:arguments];
 
-    [[UAInAppAutomation shared] scheduleMessageWithScheduleInfo:scheduleInfo completionHandler:^(UASchedule *schedule) {
+    [[UAInAppAutomation shared] schedule:schedule completionHandler:^(BOOL result) {
         completionHandler([UAActionResult emptyResult]);
     }];
 }

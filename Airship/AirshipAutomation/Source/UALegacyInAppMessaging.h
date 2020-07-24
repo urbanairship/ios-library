@@ -5,8 +5,8 @@
 #import "UAAirshipAutomationCoreImport.h"
 
 @class UALegacyInAppMessage;
-@class UAInAppMessageScheduleInfo;
-@class UAInAppMessageScheduleInfoBuilder;
+@class UASchedule;
+@class UAScheduleBuilder;
 @class UAInAppMessageBuilder;
 
 NS_ASSUME_NONNULL_BEGIN
@@ -19,13 +19,13 @@ NS_ASSUME_NONNULL_BEGIN
 @required
 
 /**
- * Converts a legacy in-app message model object into an in-app message schedule info.
+ * Converts a legacy in-app message model object into an in-app automation.
  * Use this method to override the conversion process in its entirety.
  *
  * @param message The legacy in-app message model object.
- * @return An instance of UAInAppMessageScheduleInfo.
+ * @return An instance of UASchedule..
  */
-- (UAInAppMessageScheduleInfo *)scheduleInfoForMessage:(UALegacyInAppMessage *)message;
+- (UASchedule *)scheduleForMessage:(UALegacyInAppMessage *)message;
 
 @end
 
@@ -37,13 +37,13 @@ NS_ASSUME_NONNULL_BEGIN
 @optional
 
 /**
- * Extends the in-app message schedule info builder converted from a legacy in-app message model object.
+ * Extends the in-app automation schedule builder converted from a legacy in-app message model object.
  * Use this method to make use of the default conversion with minor overrides as needed.
  *
- * @param builder The automatically converted in-app message schedule info builder.
+ * @param builder The automatically converted in-app schedule builder.
  * @param message The legacy in-app message model object.
  */
-- (void)extendScheduleInfoBuilder:(UAInAppMessageScheduleInfoBuilder *)builder message:(UALegacyInAppMessage *)message;
+- (void)extendScheduleBuilder:(UAScheduleBuilder *)builder message:(UALegacyInAppMessage *)message;
 
 /**
  * Extends the in-app message builder converted from a legacy in-app message model object.

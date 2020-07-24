@@ -45,9 +45,9 @@ NSString *const UAEventDataEntityName = @"UAEventData";
 
 - (void)addPersistentStore {
     UA_WEAKIFY(self);
-    [self.managedContext addPersistentSqlStore:self.storeName completionHandler:^(BOOL success, NSError *error) {
+    [self.managedContext addPersistentSqlStore:self.storeName completionHandler:^(NSPersistentStore *store, NSError *error) {
         UA_STRONGIFY(self)
-        if (!success) {
+        if (!store) {
             UA_LERR(@"Failed to create analytics persistent store: %@", error);
             return;
         }

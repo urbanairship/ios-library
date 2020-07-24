@@ -1,145 +1,69 @@
 /* Copyright Airship and Contributors */
 
 #import "UAScheduleEdits+Internal.h"
-#import "UAScheduleInfo+Internal.h"
 #import "UAAirshipAutomationCoreImport.h"
-
-NSString * const UAScheduleEditsErrorDomain = @"com.urbanairship.schedule_edits";
+#import "UAInAppMessage.h"
+#import "UAScheduleAudience.h"
+#import "UASchedule.h"
 
 @implementation UAScheduleEditsBuilder
 
-- (BOOL)applyFromJson:(id)json error:(NSError * _Nullable *)error {
-    if (![json isKindOfClass:[NSDictionary class]]) {
-        if (error) {
-            NSString *msg = [NSString stringWithFormat:@"Attempted to deserialize invalid object: %@", json];
-            *error =  [NSError errorWithDomain:UAScheduleEditsErrorDomain
-                                          code:UAScheduleEditsErrorCodeInvalidJSON
-                                      userInfo:@{NSLocalizedDescriptionKey:msg}];
-        }
+@end
 
-        return NO;
-    }
-
-    // Priority
-    id priority = json[UAScheduleInfoPriorityKey];
-    if (priority && ![priority isKindOfClass:[NSNumber class]]) {
-        if (error) {
-            NSString *msg = [NSString stringWithFormat:@"Priority must be defined and be a number. Invalid value: %@", priority];
-            *error =  [NSError errorWithDomain:UAScheduleEditsErrorDomain
-                                          code:UAScheduleEditsErrorCodeInvalidJSON
-                                      userInfo:@{NSLocalizedDescriptionKey:msg}];
-        }
-
-        return NO;
-    }
-
-    // Limit
-    id limit = json[UAScheduleInfoLimitKey];
-    if (limit && ![limit isKindOfClass:[NSNumber class]]) {
-        if (error) {
-            NSString *msg = [NSString stringWithFormat:@"Limit must be defined and be a number. Invalid value: %@", limit];
-            *error =  [NSError errorWithDomain:UAScheduleEditsErrorDomain
-                                          code:UAScheduleEditsErrorCodeInvalidJSON
-                                      userInfo:@{NSLocalizedDescriptionKey:msg}];
-        }
-
-        return NO;
-    }
-
-    // Start
-    NSDate *start;
-    if (json[UAScheduleInfoStartKey]) {
-        if (![json[UAScheduleInfoStartKey] isKindOfClass:[NSString class]]) {
-            if (error) {
-                NSString *msg = [NSString stringWithFormat:@"Start must be ISO 8601 timestamp. Invalid value: %@", start];
-                *error =  [NSError errorWithDomain:UAScheduleEditsErrorDomain
-                                              code:UAScheduleEditsErrorCodeInvalidJSON
-                                          userInfo:@{NSLocalizedDescriptionKey:msg}];
-            }
-
-            return NO;
-        }
-
-        start = [UAUtils parseISO8601DateFromString:json[UAScheduleInfoStartKey]];
-    }
-
-    // End
-    NSDate *end;
-    if (json[UAScheduleInfoEndKey]) {
-        if (![json[UAScheduleInfoEndKey] isKindOfClass:[NSString class]]) {
-            if (error) {
-                NSString *msg = [NSString stringWithFormat:@"End must be ISO 8601 timestamp. Invalid value: %@", end];
-                *error =  [NSError errorWithDomain:UAScheduleEditsErrorDomain
-                                              code:UAScheduleEditsErrorCodeInvalidJSON
-                                          userInfo:@{NSLocalizedDescriptionKey:msg}];
-            }
-
-            return NO;
-        }
-
-        end = [UAUtils parseISO8601DateFromString:json[UAScheduleInfoEndKey]];
-    }
-
-    // Group
-    id group = json[UAScheduleInfoGroupKey];
-    if (group && ![group isKindOfClass:[NSString class]]) {
-        if (error) {
-            NSString *msg = [NSString stringWithFormat:@"Group must be a string. Invalid value: %@", group];
-            *error =  [NSError errorWithDomain:UAScheduleEditsErrorDomain
-                                          code:UAScheduleEditsErrorCodeInvalidJSON
-                                      userInfo:@{NSLocalizedDescriptionKey:msg}];
-        }
-
-        return NO;
-    }
-
-    // Interval
-    id interval = json[UAScheduleInfoIntervalKey];
-    if (interval && ![interval isKindOfClass:[NSNumber class]]) {
-        if (error) {
-            NSString *msg = [NSString stringWithFormat:@"Interval must be a number. Invalid value: %@", json[UAScheduleInfoIntervalKey]];
-            *error =  [NSError errorWithDomain:UAScheduleEditsErrorDomain
-                                          code:UAScheduleEditsErrorCodeInvalidJSON
-                                      userInfo:@{NSLocalizedDescriptionKey:msg}];
-        }
-
-        return NO;
-    }
-
-    // Edit Grace Period
-    NSNumber *editGracePeriod;
-    if (json[UAScheduleInfoEditGracePeriodKey]) {
-        if (![json[UAScheduleInfoEditGracePeriodKey] isKindOfClass:[NSNumber class]]) {
-            if (error) {
-                NSString *msg = [NSString stringWithFormat:@"Edit grace period must be a number. Invalid value: %@", json[UAScheduleInfoEditGracePeriodKey]];
-                *error =  [NSError errorWithDomain:UAScheduleEditsErrorDomain
-                                              code:UAScheduleEditsErrorCodeInvalidJSON
-                                          userInfo:@{NSLocalizedDescriptionKey:msg}];
-            }
-            return NO;
-        }
-
-        editGracePeriod = @([json[UAScheduleInfoEditGracePeriodKey] doubleValue] * 24 * 60 * 60);
-    }
-
-    self.limit = limit;
-    self.start = start;
-    self.end = end;
-    self.interval = interval;
-    self.priority = priority;
-    self.editGracePeriod = editGracePeriod;
-
-    return YES;
-}
+@interface UAScheduleEdits ()
+@property(nonatomic, strong, nullable) NSNumber *priority;
+@property(nonatomic, strong, nullable) NSNumber *limit;
+@property(nonatomic, strong, nullable) NSDate *start;
+@property(nonatomic, strong, nullable) NSDate *end;
+@property(nonatomic, strong, nullable) NSNumber *editGracePeriod;
+@property(nonatomic, strong, nullable) NSNumber *interval;
+@property(nonatomic, strong, nullable) id data;
+@property(nonatomic, strong, nullable) NSNumber *type;
+@property(nonatomic, copy, nullable) NSDictionary *metadata;
+@property(nonatomic, strong, nullable) UAScheduleAudience *audience;
 
 @end
 
 @implementation UAScheduleEdits
 
-- (instancetype)initWithBuilder:(UAScheduleEditsBuilder *)builder {
+
++ (instancetype)editsWithMessage:(UAInAppMessage *)message
+                    builderBlock:(void(^)(UAScheduleEditsBuilder *builder))builderBlock {
+    UAScheduleEditsBuilder *builder = [[UAScheduleEditsBuilder alloc] init];
+    if (builderBlock) {
+        builderBlock(builder);
+    }
+
+    return [[self alloc] initWithData:message type:@(UAScheduleTypeInAppMessage) builder:builder];
+}
+
++ (instancetype)editsWithActions:(NSDictionary *)actions
+                    builderBlock:(void(^)(UAScheduleEditsBuilder *builder))builderBlock {
+    UAScheduleEditsBuilder *builder = [[UAScheduleEditsBuilder alloc] init];
+    if (builderBlock) {
+        builderBlock(builder);
+    }
+
+    return [[self alloc] initWithData:actions type:@(UAScheduleTypeActions) builder:builder];
+}
+
++ (instancetype)editsWithBuilderBlock:(void(^)(UAScheduleEditsBuilder *builder))builderBlock {
+    UAScheduleEditsBuilder *builder = [[UAScheduleEditsBuilder alloc] init];
+    if (builderBlock) {
+        builderBlock(builder);
+    }
+
+    return [[self alloc] initWithData:nil type:nil builder:builder];
+}
+
+
+- (instancetype)initWithData:(id)data
+                        type:(NSNumber *)type
+                     builder:(UAScheduleEditsBuilder *)builder {
     self = [super init];
     if (self) {
-        self.data = builder.data;
+        self.data = data;
+        self.type = type;
         self.priority = builder.priority;
         self.limit = builder.limit;
         self.start = builder.start;
@@ -147,6 +71,7 @@ NSString * const UAScheduleEditsErrorDomain = @"com.urbanairship.schedule_edits"
         self.editGracePeriod = builder.editGracePeriod;
         self.interval = builder.interval;
         self.metadata = builder.metadata;
+        self.audience = builder.audience;
     }
 
     return self;
@@ -154,21 +79,25 @@ NSString * const UAScheduleEditsErrorDomain = @"com.urbanairship.schedule_edits"
 
 - (NSString *)description {
     return [NSString stringWithFormat:@"Data: %@\n"
+            "Type: %@\n"
             "Priority: %@\n"
             "Limit: %@\n"
             "Start: %@\n"
             "End: %@\n"
             "Edit Grace Period: %@\n"
             "Interval: %@\n"
-            "Metadata: %@",
+            "Metadata: %@\n"
+            "Audience: %@",
             self.data,
+            self.type,
             self.priority,
             self.limit,
             self.start,
             self.end,
             self.editGracePeriod,
             self.interval,
-            self.metadata];
+            self.metadata,
+            self.audience];
 }
 
 @end

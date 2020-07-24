@@ -1,25 +1,25 @@
 /* Copyright Airship and Contributors */
 
 #import "UABaseTest.h"
-#import "UAInAppMessageTagSelector+Internal.h"
+#import "UATagSelector+Internal.h"
 
-@interface UAInAppMessageTagSelectorTest : UABaseTest
+@interface UATagSelectorTest : UABaseTest
 
-@property (nonatomic, strong) UAInAppMessageTagSelector *selector;
-@property (nonatomic, strong) UAInAppMessageTagSelector *selectorWithTagGroups;
+@property (nonatomic, strong) UATagSelector *selector;
+@property (nonatomic, strong) UATagSelector *selectorWithTagGroups;
 @end
 
-@implementation UAInAppMessageTagSelectorTest
+@implementation UATagSelectorTest
 
 - (void)setUp {
     [super setUp];
-    self.selector = [UAInAppMessageTagSelector or:@[[UAInAppMessageTagSelector and:@[[UAInAppMessageTagSelector tag:@"some-tag"],
-                                                                                     [UAInAppMessageTagSelector not:[UAInAppMessageTagSelector tag:@"not-tag"]]]],
-                                                    [UAInAppMessageTagSelector tag:@"some-other-tag"]]];
+    self.selector = [UATagSelector or:@[[UATagSelector and:@[[UATagSelector tag:@"some-tag"],
+                                                                                     [UATagSelector not:[UATagSelector tag:@"not-tag"]]]],
+                                                    [UATagSelector tag:@"some-other-tag"]]];
 
-    self.selectorWithTagGroups = [UAInAppMessageTagSelector and:@[[UAInAppMessageTagSelector tag:@"some-tag" group:@"some-group"],
-                                                                  [UAInAppMessageTagSelector tag:@"some-tag"],
-                                                                  [UAInAppMessageTagSelector not:[UAInAppMessageTagSelector tag:@"not-tag"]]]];
+    self.selectorWithTagGroups = [UATagSelector and:@[[UATagSelector tag:@"some-tag" group:@"some-group"],
+                                                                  [UATagSelector tag:@"some-tag"],
+                                                                  [UATagSelector not:[UATagSelector tag:@"not-tag"]]]];
 }
 
 - (void)tearDown {
@@ -28,7 +28,7 @@
 
 - (void)testJSON {
     NSError *error;
-    UAInAppMessageTagSelector *toAndFromJson = [UAInAppMessageTagSelector selectorWithJSON:[self.selector toJSON] error:&error];
+    UATagSelector *toAndFromJson = [UATagSelector selectorWithJSON:[self.selector toJSON] error:&error];
     XCTAssertNil(error);
     XCTAssertEqualObjects(self.selector, toAndFromJson);
 }

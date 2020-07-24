@@ -1,16 +1,16 @@
 /* Copyright Airship and Contributors */
 
 #import "UABaseTest.h"
-#import "UAInAppMessageAudienceChecks+Internal.h"
-#import "UAInAppMessageAudience+Internal.h"
+#import "UAScheduleAudienceChecks+Internal.h"
+#import "UAScheduleAudience+Internal.h"
 #import "UAVersionMatcher.h"
 #import "UAirship+Internal.h"
 #import "UAPush+Internal.h"
-#import "UAInAppMessageTagSelector.h"
+#import "UATagSelector.h"
 #import "UAApplicationMetrics.h"
 #import "UAJSONPredicate.h"
 
-@interface UAInAppMessageAudienceChecksTest : UABaseTest
+@interface UAScheduleAudienceChecksTest : UABaseTest
 
 @property (nonatomic, strong) id mockAirship;
 @property (nonatomic, strong) id mockLocationProvider;
@@ -20,7 +20,7 @@
 
 @end
 
-@implementation UAInAppMessageAudienceChecksTest
+@implementation UAScheduleAudienceChecksTest
 
 - (void)setUp {
     [super setUp];
@@ -48,19 +48,19 @@
 }
 
 - (void)testEmptyAudience {
-    UAInAppMessageAudience *audience = [UAInAppMessageAudience audienceWithBuilderBlock:^(UAInAppMessageAudienceBuilder * _Nonnull builder) {
+    UAScheduleAudience *audience = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder * _Nonnull builder) {
     }];
     
-    XCTAssertTrue([UAInAppMessageAudienceChecks checkDisplayAudienceConditions:audience]);
+    XCTAssertTrue([UAScheduleAudienceChecks checkDisplayAudienceConditions:audience]);
 }
 
 - (void)testLocationOptIn {
     // setup
-    UAInAppMessageAudience *requiresOptedIn = [UAInAppMessageAudience audienceWithBuilderBlock:^(UAInAppMessageAudienceBuilder * _Nonnull builder) {
+    UAScheduleAudience *requiresOptedIn = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder * _Nonnull builder) {
         builder.locationOptIn = @YES;
     }];
     
-    UAInAppMessageAudience *requiresOptedOut = [UAInAppMessageAudience audienceWithBuilderBlock:^(UAInAppMessageAudienceBuilder * _Nonnull builder) {
+    UAScheduleAudience *requiresOptedOut = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder * _Nonnull builder) {
         builder.locationOptIn = @NO;
     }];
     
@@ -68,19 +68,19 @@
     [[[self.mockLocationProvider stub] andReturnValue:@YES] isLocationUpdatesEnabled];
 
     // test
-    XCTAssertTrue([UAInAppMessageAudienceChecks checkDisplayAudienceConditions:requiresOptedIn]);
-    XCTAssertFalse([UAInAppMessageAudienceChecks checkDisplayAudienceConditions:requiresOptedOut]);
+    XCTAssertTrue([UAScheduleAudienceChecks checkDisplayAudienceConditions:requiresOptedIn]);
+    XCTAssertFalse([UAScheduleAudienceChecks checkDisplayAudienceConditions:requiresOptedOut]);
 }
 
 - (void)testLocationOptInWhenDataCollectionDisabled {
     self.isDataCollectionEnabled = NO;
 
     // setup
-    UAInAppMessageAudience *requiresOptedIn = [UAInAppMessageAudience audienceWithBuilderBlock:^(UAInAppMessageAudienceBuilder * _Nonnull builder) {
+    UAScheduleAudience *requiresOptedIn = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder * _Nonnull builder) {
         builder.locationOptIn = @YES;
     }];
 
-    UAInAppMessageAudience *requiresOptedOut = [UAInAppMessageAudience audienceWithBuilderBlock:^(UAInAppMessageAudienceBuilder * _Nonnull builder) {
+    UAScheduleAudience *requiresOptedOut = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder * _Nonnull builder) {
         builder.locationOptIn = @NO;
     }];
 
@@ -88,17 +88,17 @@
     [[[self.mockLocationProvider stub] andReturnValue:@YES] isLocationUpdatesEnabled];
 
     // test
-    XCTAssertFalse([UAInAppMessageAudienceChecks checkDisplayAudienceConditions:requiresOptedIn]);
-    XCTAssertFalse([UAInAppMessageAudienceChecks checkDisplayAudienceConditions:requiresOptedOut]);
+    XCTAssertFalse([UAScheduleAudienceChecks checkDisplayAudienceConditions:requiresOptedIn]);
+    XCTAssertFalse([UAScheduleAudienceChecks checkDisplayAudienceConditions:requiresOptedOut]);
 }
 
 - (void)testLocationOptOut {
     // setup
-    UAInAppMessageAudience *requiresOptedIn = [UAInAppMessageAudience audienceWithBuilderBlock:^(UAInAppMessageAudienceBuilder * _Nonnull builder) {
+    UAScheduleAudience *requiresOptedIn = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder * _Nonnull builder) {
         builder.locationOptIn = @YES;
     }];
     
-    UAInAppMessageAudience *requiresOptedOut = [UAInAppMessageAudience audienceWithBuilderBlock:^(UAInAppMessageAudienceBuilder * _Nonnull builder) {
+    UAScheduleAudience *requiresOptedOut = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder * _Nonnull builder) {
         builder.locationOptIn = @NO;
     }];
     
@@ -106,19 +106,19 @@
     [[[self.mockLocationProvider stub] andReturnValue:@YES] isLocationUpdatesEnabled];
 
     // test
-    XCTAssertFalse([UAInAppMessageAudienceChecks checkDisplayAudienceConditions:requiresOptedIn]);
-    XCTAssertTrue([UAInAppMessageAudienceChecks checkDisplayAudienceConditions:requiresOptedOut]);
+    XCTAssertFalse([UAScheduleAudienceChecks checkDisplayAudienceConditions:requiresOptedIn]);
+    XCTAssertTrue([UAScheduleAudienceChecks checkDisplayAudienceConditions:requiresOptedOut]);
 }
 
 - (void)testLocationOptOutWhenDataCollectionDisabled {
     self.isDataCollectionEnabled = NO;
 
     // setup
-    UAInAppMessageAudience *requiresOptedIn = [UAInAppMessageAudience audienceWithBuilderBlock:^(UAInAppMessageAudienceBuilder * _Nonnull builder) {
+    UAScheduleAudience *requiresOptedIn = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder * _Nonnull builder) {
         builder.locationOptIn = @YES;
     }];
 
-    UAInAppMessageAudience *requiresOptedOut = [UAInAppMessageAudience audienceWithBuilderBlock:^(UAInAppMessageAudienceBuilder * _Nonnull builder) {
+    UAScheduleAudience *requiresOptedOut = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder * _Nonnull builder) {
         builder.locationOptIn = @NO;
     }];
 
@@ -126,17 +126,17 @@
     [[[self.mockLocationProvider stub] andReturnValue:@YES] isLocationUpdatesEnabled];
 
     // test
-    XCTAssertFalse([UAInAppMessageAudienceChecks checkDisplayAudienceConditions:requiresOptedIn]);
-    XCTAssertFalse([UAInAppMessageAudienceChecks checkDisplayAudienceConditions:requiresOptedOut]);
+    XCTAssertFalse([UAScheduleAudienceChecks checkDisplayAudienceConditions:requiresOptedIn]);
+    XCTAssertFalse([UAScheduleAudienceChecks checkDisplayAudienceConditions:requiresOptedOut]);
 }
 
 - (void)testNotificationOptIn {
     // setup
-    UAInAppMessageAudience *requiresOptedIn = [UAInAppMessageAudience audienceWithBuilderBlock:^(UAInAppMessageAudienceBuilder * _Nonnull builder) {
+    UAScheduleAudience *requiresOptedIn = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder * _Nonnull builder) {
         builder.notificationsOptIn = @YES;
     }];
     
-    UAInAppMessageAudience *requiresOptedOut = [UAInAppMessageAudience audienceWithBuilderBlock:^(UAInAppMessageAudienceBuilder * _Nonnull builder) {
+    UAScheduleAudience *requiresOptedOut = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder * _Nonnull builder) {
         builder.notificationsOptIn = @NO;
     }];
     
@@ -144,19 +144,19 @@
     [[[self.mockPush stub] andReturnValue:@(UAAuthorizedNotificationSettingsAlert)] authorizedNotificationSettings];
 
     // test
-    XCTAssertTrue([UAInAppMessageAudienceChecks checkDisplayAudienceConditions:requiresOptedIn]);
-    XCTAssertFalse([UAInAppMessageAudienceChecks checkDisplayAudienceConditions:requiresOptedOut]);
+    XCTAssertTrue([UAScheduleAudienceChecks checkDisplayAudienceConditions:requiresOptedIn]);
+    XCTAssertFalse([UAScheduleAudienceChecks checkDisplayAudienceConditions:requiresOptedOut]);
 }
 
 - (void)testNotificationOptInWhenDataCollectionDisabled {
     self.isDataCollectionEnabled = NO;
 
     // setup
-    UAInAppMessageAudience *requiresOptedIn = [UAInAppMessageAudience audienceWithBuilderBlock:^(UAInAppMessageAudienceBuilder * _Nonnull builder) {
+    UAScheduleAudience *requiresOptedIn = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder * _Nonnull builder) {
         builder.notificationsOptIn = @YES;
     }];
 
-    UAInAppMessageAudience *requiresOptedOut = [UAInAppMessageAudience audienceWithBuilderBlock:^(UAInAppMessageAudienceBuilder * _Nonnull builder) {
+    UAScheduleAudience *requiresOptedOut = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder * _Nonnull builder) {
         builder.notificationsOptIn = @NO;
     }];
 
@@ -164,61 +164,61 @@
     [[[self.mockPush stub] andReturnValue:@(UAAuthorizedNotificationSettingsAlert)] authorizedNotificationSettings];
 
     // test
-    XCTAssertFalse([UAInAppMessageAudienceChecks checkDisplayAudienceConditions:requiresOptedIn]);
-    XCTAssertFalse([UAInAppMessageAudienceChecks checkDisplayAudienceConditions:requiresOptedOut]);
+    XCTAssertFalse([UAScheduleAudienceChecks checkDisplayAudienceConditions:requiresOptedIn]);
+    XCTAssertFalse([UAScheduleAudienceChecks checkDisplayAudienceConditions:requiresOptedOut]);
 }
 
 - (void)testNotificationOptOut {
     // setup
-    UAInAppMessageAudience *requiresOptedIn = [UAInAppMessageAudience audienceWithBuilderBlock:^(UAInAppMessageAudienceBuilder * _Nonnull builder) {
+    UAScheduleAudience *requiresOptedIn = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder * _Nonnull builder) {
         builder.notificationsOptIn = @YES;
     }];
     
-    UAInAppMessageAudience *requiresOptedOut = [UAInAppMessageAudience audienceWithBuilderBlock:^(UAInAppMessageAudienceBuilder * _Nonnull builder) {
+    UAScheduleAudience *requiresOptedOut = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder * _Nonnull builder) {
         builder.notificationsOptIn = @NO;
     }];
     
     [[[self.mockPush stub] andReturnValue:@NO] userPushNotificationsEnabled];
 
     // test
-    XCTAssertFalse([UAInAppMessageAudienceChecks checkDisplayAudienceConditions:requiresOptedIn]);
-    XCTAssertTrue([UAInAppMessageAudienceChecks checkDisplayAudienceConditions:requiresOptedOut]);
+    XCTAssertFalse([UAScheduleAudienceChecks checkDisplayAudienceConditions:requiresOptedIn]);
+    XCTAssertTrue([UAScheduleAudienceChecks checkDisplayAudienceConditions:requiresOptedOut]);
 }
 
 - (void)testNotificationOptOutWhenDataCollectionDisabled {
     self.isDataCollectionEnabled = NO;
 
     // setup
-    UAInAppMessageAudience *requiresOptedIn = [UAInAppMessageAudience audienceWithBuilderBlock:^(UAInAppMessageAudienceBuilder * _Nonnull builder) {
+    UAScheduleAudience *requiresOptedIn = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder * _Nonnull builder) {
         builder.notificationsOptIn = @YES;
     }];
 
-    UAInAppMessageAudience *requiresOptedOut = [UAInAppMessageAudience audienceWithBuilderBlock:^(UAInAppMessageAudienceBuilder * _Nonnull builder) {
+    UAScheduleAudience *requiresOptedOut = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder * _Nonnull builder) {
         builder.notificationsOptIn = @NO;
     }];
 
     [[[self.mockPush stub] andReturnValue:@NO] userPushNotificationsEnabled];
 
     // test
-    XCTAssertFalse([UAInAppMessageAudienceChecks checkDisplayAudienceConditions:requiresOptedIn]);
-    XCTAssertFalse([UAInAppMessageAudienceChecks checkDisplayAudienceConditions:requiresOptedOut]);
+    XCTAssertFalse([UAScheduleAudienceChecks checkDisplayAudienceConditions:requiresOptedIn]);
+    XCTAssertFalse([UAScheduleAudienceChecks checkDisplayAudienceConditions:requiresOptedOut]);
 }
 
 - (void)testNewUser {
     // setup
-    UAInAppMessageAudience *requiresNewUser = [UAInAppMessageAudience audienceWithBuilderBlock:^(UAInAppMessageAudienceBuilder * _Nonnull builder) {
+    UAScheduleAudience *requiresNewUser = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder * _Nonnull builder) {
         builder.isNewUser = @YES;
     }];
 
-    UAInAppMessageAudience *requiresExistingUser = [UAInAppMessageAudience audienceWithBuilderBlock:^(UAInAppMessageAudienceBuilder * _Nonnull builder) {
+    UAScheduleAudience *requiresExistingUser = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder * _Nonnull builder) {
         builder.isNewUser = @NO;
     }];
 
     // test
-    XCTAssertFalse([UAInAppMessageAudienceChecks checkScheduleAudienceConditions:requiresNewUser isNewUser:NO]);
-    XCTAssertTrue([UAInAppMessageAudienceChecks checkScheduleAudienceConditions:requiresExistingUser isNewUser:NO]);
-    XCTAssertTrue([UAInAppMessageAudienceChecks checkScheduleAudienceConditions:requiresNewUser isNewUser:YES]);
-    XCTAssertFalse([UAInAppMessageAudienceChecks checkScheduleAudienceConditions:requiresExistingUser isNewUser:YES]);
+    XCTAssertFalse([UAScheduleAudienceChecks checkScheduleAudienceConditions:requiresNewUser isNewUser:NO]);
+    XCTAssertTrue([UAScheduleAudienceChecks checkScheduleAudienceConditions:requiresExistingUser isNewUser:NO]);
+    XCTAssertTrue([UAScheduleAudienceChecks checkScheduleAudienceConditions:requiresNewUser isNewUser:YES]);
+    XCTAssertFalse([UAScheduleAudienceChecks checkScheduleAudienceConditions:requiresExistingUser isNewUser:YES]);
 }
 
 - (void)testTagSelector {
@@ -229,15 +229,15 @@
         [invocation setReturnValue:(void *)&tags];
     }] tags];
 
-    UAInAppMessageAudience *audience = [UAInAppMessageAudience audienceWithBuilderBlock:^(UAInAppMessageAudienceBuilder * _Nonnull builder) {
-        builder.tagSelector = [UAInAppMessageTagSelector tag:@"expected tag"];
+    UAScheduleAudience *audience = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder * _Nonnull builder) {
+        builder.tagSelector = [UATagSelector tag:@"expected tag"];
     }];
     
     // test
-    XCTAssertFalse([UAInAppMessageAudienceChecks checkDisplayAudienceConditions:audience]);
+    XCTAssertFalse([UAScheduleAudienceChecks checkDisplayAudienceConditions:audience]);
 
     [tags addObject:@"expected tag"];
-    XCTAssertTrue([UAInAppMessageAudienceChecks checkDisplayAudienceConditions:audience]);
+    XCTAssertTrue([UAScheduleAudienceChecks checkDisplayAudienceConditions:audience]);
 }
 
 - (void)testTagSelectorWhenDataCollectionDisabled {
@@ -250,37 +250,37 @@
         [invocation setReturnValue:(void *)&tags];
     }] tags];
 
-    UAInAppMessageAudience *audience = [UAInAppMessageAudience audienceWithBuilderBlock:^(UAInAppMessageAudienceBuilder * _Nonnull builder) {
-        builder.tagSelector = [UAInAppMessageTagSelector tag:@"expected tag"];
+    UAScheduleAudience *audience = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder * _Nonnull builder) {
+        builder.tagSelector = [UATagSelector tag:@"expected tag"];
     }];
 
     // test
-    XCTAssertFalse([UAInAppMessageAudienceChecks checkDisplayAudienceConditions:audience]);
+    XCTAssertFalse([UAScheduleAudienceChecks checkDisplayAudienceConditions:audience]);
 
     // Note: This is unlikely to occur in practice since tags are supposed to be cleared when dataCollectionEnabled changes to NO.
-    // But it's an explicit code path in UAInAppMessageAudienceChecks, so we should test it anyway
+    // But it's an explicit code path in UAScheduleAudienceChecks, so we should test it anyway
     [tags addObject:@"expected tag"];
-    XCTAssertFalse([UAInAppMessageAudienceChecks checkDisplayAudienceConditions:audience]);
+    XCTAssertFalse([UAScheduleAudienceChecks checkDisplayAudienceConditions:audience]);
 }
 
 - (void)testTestDevices {
     [[[self.mockChannel stub] andReturn:@"test channel"] identifier];
 
-    UAInAppMessageAudience *audience = [UAInAppMessageAudience audienceWithBuilderBlock:^(UAInAppMessageAudienceBuilder * _Nonnull builder) {
+    UAScheduleAudience *audience = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder * _Nonnull builder) {
         builder.testDevices = @[@"obIvSbh47TjjqfCrPatbXQ==\n"]; // test channel
     }];
 
-    XCTAssertTrue([UAInAppMessageAudienceChecks checkScheduleAudienceConditions:audience isNewUser:YES]);
+    XCTAssertTrue([UAScheduleAudienceChecks checkScheduleAudienceConditions:audience isNewUser:YES]);
 }
 
 - (void)testNotTestDevice {
     [[[self.mockChannel stub] andReturn:@"some other channel"] identifier];
 
-    UAInAppMessageAudience *audience = [UAInAppMessageAudience audienceWithBuilderBlock:^(UAInAppMessageAudienceBuilder * _Nonnull builder) {
+    UAScheduleAudience *audience = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder * _Nonnull builder) {
         builder.testDevices = @[@"obIvSbh47TjjqfCrPatbXQ==\n"]; // test channel
     }];
 
-    XCTAssertFalse([UAInAppMessageAudienceChecks checkScheduleAudienceConditions:audience isNewUser:YES]);
+    XCTAssertFalse([UAScheduleAudienceChecks checkScheduleAudienceConditions:audience isNewUser:YES]);
 }
 
 - (void)testLanguageAndVersion {
@@ -292,40 +292,40 @@
     }] currentAppVersion];
     [[[self.mockAirship stub] andReturn:mockApplicationMetrics] applicationMetrics];
 
-    UAInAppMessageAudience *requiresLangAndVersion = [UAInAppMessageAudience audienceWithBuilderBlock:^(UAInAppMessageAudienceBuilder * _Nonnull builder) {
+    UAScheduleAudience *requiresLangAndVersion = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder * _Nonnull builder) {
         builder.languageTags = @[@"en-US"];
         UAJSONMatcher *matcher = [UAJSONMatcher matcherWithValueMatcher:[UAJSONValueMatcher matcherWithVersionConstraint:@"1.0"] scope:@[@"ios",@"version"]];
         builder.versionPredicate = [UAJSONPredicate predicateWithJSONMatcher:matcher];
     }];
 
     // Unset mocked version
-    XCTAssertFalse([UAInAppMessageAudienceChecks checkDisplayAudienceConditions:requiresLangAndVersion]);
+    XCTAssertFalse([UAScheduleAudienceChecks checkDisplayAudienceConditions:requiresLangAndVersion]);
 
     // Set mocked correct version
     mockVersion = @"1.0";
-    XCTAssertTrue([UAInAppMessageAudienceChecks checkDisplayAudienceConditions:requiresLangAndVersion]);
+    XCTAssertTrue([UAScheduleAudienceChecks checkDisplayAudienceConditions:requiresLangAndVersion]);
 
     // Set mocked incorrect version
     mockVersion = @"2.0";
-    XCTAssertFalse([UAInAppMessageAudienceChecks checkDisplayAudienceConditions:requiresLangAndVersion]);
+    XCTAssertFalse([UAScheduleAudienceChecks checkDisplayAudienceConditions:requiresLangAndVersion]);
 }
 
 - (void)testLanguageIDs {
     // tests
-    UAInAppMessageAudience *audience = [UAInAppMessageAudience audienceWithBuilderBlock:^(UAInAppMessageAudienceBuilder * _Nonnull builder) {
+    UAScheduleAudience *audience = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder * _Nonnull builder) {
         builder.languageTags = @[@"en-US"];
     }];
-    XCTAssertTrue([UAInAppMessageAudienceChecks checkDisplayAudienceConditions:audience]);
+    XCTAssertTrue([UAScheduleAudienceChecks checkDisplayAudienceConditions:audience]);
 
-    audience = [UAInAppMessageAudience audienceWithBuilderBlock:^(UAInAppMessageAudienceBuilder * _Nonnull builder) {
+    audience = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder * _Nonnull builder) {
         builder.languageTags = @[@"fr_CA",@"en"];
     }];
-    XCTAssertTrue([UAInAppMessageAudienceChecks checkDisplayAudienceConditions:audience]);
+    XCTAssertTrue([UAScheduleAudienceChecks checkDisplayAudienceConditions:audience]);
     
-    audience = [UAInAppMessageAudience audienceWithBuilderBlock:^(UAInAppMessageAudienceBuilder * _Nonnull builder) {
+    audience = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder * _Nonnull builder) {
         builder.languageTags = @[@"fr",@"de-CH"];
     }];
-    XCTAssertFalse([UAInAppMessageAudienceChecks checkDisplayAudienceConditions:audience]);
+    XCTAssertFalse([UAScheduleAudienceChecks checkDisplayAudienceConditions:audience]);
 }
 
 - (void)testAppVersion {
@@ -337,20 +337,20 @@
     }] currentAppVersion];
     [[[self.mockAirship stub] andReturn:mockApplicationMetrics] applicationMetrics];
     
-    UAInAppMessageAudience *audience = [UAInAppMessageAudience audienceWithBuilderBlock:^(UAInAppMessageAudienceBuilder * _Nonnull builder) {
+    UAScheduleAudience *audience = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder * _Nonnull builder) {
         UAJSONMatcher *matcher = [UAJSONMatcher matcherWithValueMatcher:[UAJSONValueMatcher matcherWithVersionConstraint:@"[1.0, 2.0]"] scope:@[@"ios",@"version"]];
         builder.versionPredicate = [UAJSONPredicate predicateWithJSONMatcher:matcher];
     }];
     
     // test
     mockVersion = @"1.0";
-    XCTAssertTrue([UAInAppMessageAudienceChecks checkDisplayAudienceConditions:audience]);
+    XCTAssertTrue([UAScheduleAudienceChecks checkDisplayAudienceConditions:audience]);
     
     mockVersion = @"2";
-    XCTAssertTrue([UAInAppMessageAudienceChecks checkDisplayAudienceConditions:audience]);
+    XCTAssertTrue([UAScheduleAudienceChecks checkDisplayAudienceConditions:audience]);
     
     mockVersion = @"3";
-    XCTAssertFalse([UAInAppMessageAudienceChecks checkDisplayAudienceConditions:audience]);
+    XCTAssertFalse([UAScheduleAudienceChecks checkDisplayAudienceConditions:audience]);
 }
 
 

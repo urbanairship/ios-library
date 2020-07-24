@@ -4,7 +4,7 @@
 #import "UALegacyInAppMessage.h"
 #import "UAInAppMessageResolutionEvent+Internal.h"
 #import "UAInAppMessage+Internal.h"
-#import "UAInAppMessageScheduleInfo.h"
+#import "UASchedule.h"
 #import "UAInAppAutomation.h"
 #import "UAInAppMessageBannerDisplayContent.h"
 #import "UAAirshipAutomationCoreImport.h"
@@ -83,9 +83,9 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
 
     if (newMessageID.length && [newMessageID isEqualToString:pendingMessageID]) {
         UA_WEAKIFY(self);
-        [self.inAppAutomation cancelMessagesWithID:pendingMessageID completionHandler:^(NSArray<UASchedule *>* _Nullable schedules) {
+        [self.inAppAutomation cancelScheduleWithID:pendingMessageID completionHandler:^(UASchedule* _Nullable schedule) {
             UA_STRONGIFY(self)
-            if (schedules.count) {
+            if (schedule) {
                 UA_LTRACE(@"The in-app message delivery push was directly launched for message: %@", pendingMessageID);
 
                 UAInAppMessageResolutionEvent *event = [UAInAppMessageResolutionEvent legacyDirectOpenEventWithMessageID:pendingMessageID];
@@ -127,47 +127,34 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
 }
 
 - (void)scheduleMessage:(UALegacyInAppMessage *)message {
-    UAInAppMessageScheduleInfo *info =  [self.factoryDelegate scheduleInfoForMessage:message];
-    if (!info) {
-        UA_LERR(@"Failed to convert legacy in-app message: %@", message);
+    UASchedule *schedule =  [self.factoryDelegate scheduleForMessage:message];
+    if (!schedule) {
+        UA_LERR(@"Failed to convert legacy in-app automation: %@", message);
         return;
     }
 
-    NSString *messageID = info.message.identifier;
-
-    NSString *pendingMessageID = self.pendingMessageID;
-
-    void (^scheduleBlock)(void) = ^{
-        // Schedule the new one
-        self.pendingMessageID = messageID;
-
-        [self.inAppAutomation scheduleMessageWithScheduleInfo:info metadata:@{} completionHandler:^(UASchedule * schedule){
-            UA_LDEBUG(@"LegacyInAppMessageManager - saved schedule: %@", schedule);
-        }];
-    };
+    NSString *previousMessageID = self.pendingMessageID;
 
     // If there is a pending message ID, cancel it
-    if (pendingMessageID) {
+    if (previousMessageID) {
         UA_WEAKIFY(self)
-        [self.inAppAutomation cancelMessagesWithID:pendingMessageID completionHandler:^(NSArray<UASchedule *> * _Nonnull schedules) {
+        [self.inAppAutomation cancelScheduleWithID:previousMessageID completionHandler:^(UASchedule *schedule) {
             UA_STRONGIFY(self)
-            if (schedules.count) {
+            if (schedule) {
                 UA_LDEBUG(@"LegacyInAppMessageManager - Pending in-app message replaced");
-
-                UAInAppMessageResolutionEvent *event = [UAInAppMessageResolutionEvent legacyReplacedEventWithMessageID:pendingMessageID replacementID:messageID];
+                UAInAppMessageResolutionEvent *event = [UAInAppMessageResolutionEvent legacyReplacedEventWithMessageID:previousMessageID replacementID:schedule.identifier];
                 [self.analytics addEvent:event];
             }
-
-            self.pendingMessageID = nil;
-
-            scheduleBlock();
         }];
-    } else {
-        scheduleBlock();
     }
+
+    self.pendingMessageID = schedule.identifier;
+    [self.inAppAutomation schedule:schedule completionHandler:^(BOOL result) {
+        UA_LDEBUG(@"LegacyInAppMessageManager - saved schedule: %@ result: %d", schedule, result);
+    }];
 }
 
-- (UAInAppMessageScheduleInfo *)scheduleInfoForMessage:(UALegacyInAppMessage *)message {
+- (UASchedule *)scheduleForMessage:(UALegacyInAppMessage *)message {
     UIColor *primaryColor = message.primaryColor ? message.primaryColor : kUALegacyInAppMessageDefaultPrimaryColor;
     UIColor *secondaryColor = message.secondaryColor ? message.secondaryColor : kUALegacyInAppMessageDefaultSecondaryColor;
     CGFloat borderRadius = 2;
@@ -220,7 +207,21 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
 
     id<UALegacyInAppMessageBuilderExtender> extender = self.builderExtender;
 
-    UAInAppMessageScheduleInfo *scheduleInfo = [UAInAppMessageScheduleInfo scheduleInfoWithBuilderBlock:^(UAInAppMessageScheduleInfoBuilder * _Nonnull builder) {
+    UAInAppMessage *inAppMessage = [UAInAppMessage messageWithBuilderBlock:^(UAInAppMessageBuilder * _Nonnull builder) {
+        builder.displayContent = displayContent;
+        builder.extras = message.extra;
+
+        // Allow the app to customize the message builder if necessary
+        if (extender && [extender respondsToSelector:@selector(extendMessageBuilder:message:)]) {
+            [extender extendMessageBuilder:builder message:message];
+        }
+
+        builder.identifier = message.identifier;
+        builder.source = UAInAppMessageSourceLegacyPush;
+    }];
+
+    return [UASchedule scheduleWithMessage:inAppMessage
+                              builderBlock:^(UAScheduleBuilder * _Nonnull builder) {
 
         UAScheduleTrigger *trigger;
 
@@ -233,32 +234,14 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
         }
 
         builder.triggers = @[trigger];
-
-
         builder.end = message.expiry;
-
-        UAInAppMessage *newMessage = [UAInAppMessage messageWithBuilderBlock:^(UAInAppMessageBuilder * _Nonnull builder) {
-            builder.displayContent = displayContent;
-            builder.extras = message.extra;
-
-            // Allow the app to customize the message builder if necessary
-            if (extender && [extender respondsToSelector:@selector(extendMessageBuilder:message:)]) {
-                [extender extendMessageBuilder:builder message:message];
-            }
-
-            builder.identifier = message.identifier;
-            builder.source = UAInAppMessageSourceLegacyPush;
-        }];
-
-        builder.message = newMessage;
+        builder.identifier = message.identifier;
 
         // Allow the app to customize the schedule info builder if necessary
-        if (extender && [extender respondsToSelector:@selector(extendScheduleInfoBuilder:message:)]) {
-            [extender extendScheduleInfoBuilder:builder message:message];
+        if (extender && [extender respondsToSelector:@selector(extendScheduleBuilder:message:)]) {
+            [extender extendScheduleBuilder:builder message:message];
         }
     }];
-
-    return scheduleInfo;
 }
 
 @end

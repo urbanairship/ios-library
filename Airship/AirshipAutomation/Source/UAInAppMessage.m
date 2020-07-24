@@ -6,7 +6,6 @@
 #import "UAInAppMessageModalDisplayContent+Internal.h"
 #import "UAInAppMessageCustomDisplayContent+Internal.h"
 #import "UAInAppMessageHTMLDisplayContent+Internal.h"
-#import "UAInAppMessageAudience+Internal.h"
 #import "UAAirshipAutomationCoreImport.h"
 
 NSUInteger const UAInAppMessageIDLimit = 100;
@@ -33,7 +32,6 @@ NSUInteger const UAInAppMessageNameLimit = 100;
         self.displayContent = message.displayContent;
         self.extras = message.extras;
         self.actions = message.actions;
-        self.audience = message.audience;
         self.source = message.source;
         self.campaigns = message.campaigns;
         self.displayBehavior = message.displayBehavior;
@@ -74,7 +72,6 @@ NSUInteger const UAInAppMessageNameLimit = 100;
 @property(nonatomic, copy) NSString *name;
 @property(nonatomic, strong) UAInAppMessageDisplayContent *displayContent;
 @property(nonatomic, strong, nullable) NSDictionary *extras;
-@property(nonatomic, strong, nullable) UAInAppMessageAudience *audience;
 @property(nonatomic, strong, nullable) NSDictionary *actions;
 @property(nonatomic, copy) NSString *displayBehavior;
 @property(nonatomic, assign) BOOL isReportingEnabled;
@@ -92,7 +89,6 @@ NSString *const UAInAppMessageIDKey = @"message_id";
 NSString *const UAInAppMessageDisplayTypeKey = @"display_type";
 NSString *const UAInAppMessageDisplayContentKey = @"display";
 NSString *const UAInAppMessageExtraKey = @"extra";
-NSString *const UAInAppMessageAudienceKey = @"audience";
 NSString *const UAInAppMessageActionsKey = @"actions";
 NSString *const UAInAppMessageCampaignsKey = @"campaigns";
 NSString *const UAInAppMessageSourceKey = @"source";
@@ -256,21 +252,6 @@ NSString *const UAInAppMessageSourceLegacyPushValue = @"legacy-push";
         builder.campaigns = campaigns;
     }
     
-    id audienceDict = json[UAInAppMessageAudienceKey];
-    if (audienceDict) {
-        if (![audienceDict isKindOfClass:[NSDictionary class]]) {
-            if (error) {
-                NSString *msg = [NSString stringWithFormat:@"Display content must be a dictionary. Invalid value: %@", json[UAInAppMessageAudienceKey]];
-                *error =  [NSError errorWithDomain:UAInAppMessageErrorDomain
-                                              code:UAInAppMessageErrorCodeInvalidJSON
-                                          userInfo:@{NSLocalizedDescriptionKey:msg}];
-            }
-            return nil;
-        }
-        
-        builder.audience = [UAInAppMessageAudience audienceWithJSON:audienceDict error:error];
-    }
-
     id sourceStr = json[UAInAppMessageSourceKey];
     if (sourceStr && [sourceStr isKindOfClass:[NSString class]]) {
         sourceStr = [sourceStr lowercaseString];
@@ -416,7 +397,6 @@ NSString *const UAInAppMessageSourceLegacyPushValue = @"legacy-push";
         self.name = builder.name;
         self.displayContent = builder.displayContent;
         self.extras = builder.extras;
-        self.audience = builder.audience;
         self.actions = builder.actions;
         self.displayBehavior = builder.displayBehavior;
         self.isReportingEnabled = builder.isReportingEnabled;
@@ -499,7 +479,6 @@ NSString *const UAInAppMessageSourceLegacyPushValue = @"legacy-push";
 
     [data setValue:@(self.isReportingEnabled) forKey:UAInAppMessageReportingEnabledKey];
     [data setValue:[self.displayContent toJSON] forKey:UAInAppMessageDisplayContentKey];
-    [data setValue:[self.audience toJSON] forKey:UAInAppMessageAudienceKey];
     [data setValue:self.extras forKey:UAInAppMessageExtraKey];
     [data setValue:self.actions forKey:UAInAppMessageActionsKey];
     [data setValue:self.campaigns forKey:UAInAppMessageCampaignsKey];
@@ -523,10 +502,6 @@ NSString *const UAInAppMessageSourceLegacyPushValue = @"legacy-push";
     }
 
     if (self.extras != message.extras && ![self.extras isEqualToDictionary:message.extras]) {
-        return NO;
-    }
-
-    if (self.audience != message.audience && ![self.audience isEqual:message.audience]) {
         return NO;
     }
 
@@ -572,7 +547,6 @@ NSString *const UAInAppMessageSourceLegacyPushValue = @"legacy-push";
     result = 31 * result + [self.name hash];
     result = 31 * result + [self.displayContent hash];
     result = 31 * result + [self.extras hash];
-    result = 31 * result + [self.audience hash];
     result = 31 * result + [self.actions hash];
     result = 31 * result + [self.campaigns hash];
     result = 31 * result + self.source;

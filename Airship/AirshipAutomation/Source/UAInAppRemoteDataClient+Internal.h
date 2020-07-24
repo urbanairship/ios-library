@@ -3,8 +3,7 @@
 #import <Foundation/Foundation.h>
 #import "UAAirshipAutomationCoreImport.h"
 #import "UASchedule.h"
-#import "UAInAppMessageScheduleInfo.h"
-#import "UAInAppMessageScheduleEdits.h"
+#import "UAScheduleEdits.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -24,13 +23,10 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Schedules multiple in-app messages.
  *
- * @param scheduleInfos The schedule info for the messages.
- * @param metadata The schedules' optional metadata.
+ * @param schedules The schedule info for the messages.
  * @param completionHandler The completion handler to be called when scheduling completes.
  */
-- (void)scheduleMessagesWithScheduleInfo:(NSArray<UAInAppMessageScheduleInfo *> *)scheduleInfos
-                                metadata:(nullable NSDictionary *)metadata
-                       completionHandler:(void (^)(NSArray <UASchedule *> *))completionHandler;
+- (void)scheduleMultiple:(NSArray<UASchedule *> *)schedules completionHandler:(void (^)(BOOL))completionHandler;
 
 
 /**
@@ -41,7 +37,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param completionHandler The completion handler with the result.
  */
 - (void)editScheduleWithID:(NSString *)identifier
-                     edits:(UAInAppMessageScheduleEdits *)edits
+                     edits:(UAScheduleEdits *)edits
          completionHandler:(void (^)(UASchedule * _Nullable))completionHandler;
 
 

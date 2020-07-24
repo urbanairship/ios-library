@@ -2,13 +2,11 @@
 
 #import "UAScheduleTriggerContext+Internal.h"
 #import "UAScheduleTrigger+Internal.h"
-#import "UACustomEvent.h"
 
-// JSON Keys
-NSString *const UAScheduleTriggerContextTriggerKey = @"trigger";
-NSString *const UAScheduleTriggerContextEventKey = @"event";
 
-NSString * const UAScheduleTriggerContextErrorDomain = @"com.urbanairship.schedule_trigger_context";
+static NSString *const UAScheduleTriggerContextTriggerKey = @"trigger";
+static NSString *const UAScheduleTriggerContextEventKey = @"event";
+
 
 @implementation UAScheduleTriggerContext
 
@@ -61,6 +59,22 @@ NSString * const UAScheduleTriggerContextErrorDomain = @"com.urbanairship.schedu
     result = 31 * result + [self.trigger hash];
     result = 31 * result + [self.event hash];
     return result;
+}
+
+- (void)encodeWithCoder:(NSCoder *)coder {
+    [coder encodeObject:self.event forKey:UAScheduleTriggerContextEventKey];
+    [coder encodeObject:self.trigger forKey:UAScheduleTriggerContextTriggerKey];
+}
+
+- (id)initWithCoder:(NSCoder *)coder {
+    self = [super init];
+
+    if (self) {
+        self.event = [coder decodeObjectForKey:UAScheduleTriggerContextEventKey];
+        self.trigger = [coder decodeObjectForKey:UAScheduleTriggerContextTriggerKey];
+    }
+
+    return self;
 }
 
 @end

@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 #import <Foundation/Foundation.h>
-#import "UAInAppMessageTagSelector.h"
+#import "UATagSelector.h"
 #import "UAAirshipAutomationCoreImport.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -9,17 +9,17 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Represents the possible error conditions when deserializing tag selector from JSON.
  */
-typedef NS_ENUM(NSInteger, UAInAppMessageTagSelectorErrorCode) {
+typedef NS_ENUM(NSInteger, UATagSelectorErrorCode) {
     /**
      * Indicates an error with the tag selector JSON definition.
      */
-    UAInAppMessageTagSelectorErrorCodeInvalidJSON,
+    UATagSelectorErrorCodeInvalidJSON,
 };
 
 /**
- * Model object for an in-app message audience constraint's tag selector.
+ * Model object for an  audience constraint's tag selector.
  */
-@interface UAInAppMessageTagSelector()
+@interface UATagSelector()
 
 @property (nonatomic, readonly) UATagGroups *tagGroups;
 
@@ -33,17 +33,19 @@ typedef NS_ENUM(NSInteger, UAInAppMessageTagSelectorErrorCode) {
 + (nullable instancetype)selectorWithJSON:(NSDictionary *)json error:(NSError **)error;
 
 /**
- * UAInAppMessageTagSelector class factory
+ * Factory method.
  *
  * @param tag The tag.
+ * @return A tag selector instance.
  */
 + (instancetype)tag:(NSString *)tag;
 
 /**
- * UAInAppMessageTagSelector class factory
+ * Class factory
  *
  * @param tag The tag.
  * @param group The tag group.
+ * @return A tag selector instance.
  */
 + (instancetype)tag:(NSString *)tag group:(NSString *)group;
 

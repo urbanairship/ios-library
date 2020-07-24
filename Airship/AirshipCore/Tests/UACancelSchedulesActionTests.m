@@ -3,8 +3,8 @@
 #import "UABaseTest.h"
 #import "UACancelSchedulesAction.h"
 #import "UAActionArguments+Internal.h"
-#import "UAActionAutomation.h"
 #import "UAirship+Internal.h"
+#import "UAInAppAutomation+Internal.h"
 
 @interface UACancelSchedulesActionTests : UABaseTest
 @property(nonatomic, strong) UACancelSchedulesAction *action;
@@ -16,7 +16,7 @@
 - (void)setUp {
     [super setUp];
 
-    self.mockAutomation = [self mockForClass:[UAActionAutomation class]];
+    self.mockAutomation = [self mockForClass:[UAInAppAutomation class]];
     [[[self.mockAutomation stub] andReturn:self.mockAutomation] shared];
     self.action = [[UACancelSchedulesAction alloc] init];
 }
@@ -77,7 +77,7 @@
     arguments.situation = UASituationManualInvocation;
     arguments.value = UACancelSchedulesActionAll;
 
-    [[self.mockAutomation expect] cancelAll];
+    [[self.mockAutomation expect] cancelSchedulesWithType:UAScheduleTypeActions completionHandler:OCMOCK_ANY];
 
     [self.action performWithArguments:arguments completionHandler:^(UAActionResult *result) {
         actionPerformed = YES;
@@ -97,8 +97,8 @@
     arguments.situation = UASituationManualInvocation;
     arguments.value = @{UACancelSchedulesActionGroups: @[@"group 1", @"group 2"] };
 
-    [[self.mockAutomation expect] cancelSchedulesWithGroup:@"group 1"];
-    [[self.mockAutomation expect] cancelSchedulesWithGroup:@"group 2"];
+    [[self.mockAutomation expect] cancelSchedulesWithGroup:@"group 1" completionHandler:OCMOCK_ANY];
+    [[self.mockAutomation expect] cancelSchedulesWithGroup:@"group 2" completionHandler:OCMOCK_ANY];
 
     [self.action performWithArguments:arguments completionHandler:^(UAActionResult *result) {
         actionPerformed = YES;
@@ -118,8 +118,8 @@
     arguments.situation = UASituationManualInvocation;
     arguments.value = @{UACancelSchedulesActionIDs: @[@"ID 1", @"ID 2"] };
 
-    [[self.mockAutomation expect] cancelScheduleWithID:@"ID 1"];
-    [[self.mockAutomation expect] cancelScheduleWithID:@"ID 2"];
+    [[self.mockAutomation expect] cancelScheduleWithID:@"ID 1" completionHandler:OCMOCK_ANY];
+    [[self.mockAutomation expect] cancelScheduleWithID:@"ID 2" completionHandler:OCMOCK_ANY];
 
     [self.action performWithArguments:arguments completionHandler:^(UAActionResult *result) {
         actionPerformed = YES;

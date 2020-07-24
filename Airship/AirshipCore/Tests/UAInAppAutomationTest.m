@@ -6,9 +6,9 @@
 #import "UAInAppMessageManager+Internal.h"
 #import "UASchedule+Internal.h"
 #import "UAPreferenceDataStore+Internal.h"
-#import "UAInAppMessageAudience.h"
-#import "UAInAppMessageAudienceChecks+Internal.h"
-#import "UAInAppMessageTagSelector+Internal.h"
+#import "UAScheduleAudience.h"
+#import "UAScheduleAudienceChecks+Internal.h"
+#import "UATagSelector+Internal.h"
 #import "UAInAppMessage+Internal.h"
 #import "UAInAppRemoteDataClient+Internal.h"
 #import "UAComponent+Internal.h"
@@ -55,7 +55,7 @@
 }
 
 - (void)testCheckEmptyAudience {
-    UAInAppMessageAudience *emptyAudience = [UAInAppMessageAudience audienceWithBuilderBlock:^(UAInAppMessageAudienceBuilder *builder) {
+    UAScheduleAudience *emptyAudience = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder *builder) {
     }];
 
     XCTestExpectation *checkFinished = [self expectationWithDescription:@"check audience finished"];
@@ -69,8 +69,8 @@
 }
 
 - (void)testCheckTagGroupAudience {
-    UAInAppMessageAudience *audience = [UAInAppMessageAudience audienceWithBuilderBlock:^(UAInAppMessageAudienceBuilder *builder) {
-        builder.tagSelector = [UAInAppMessageTagSelector tag:@"neat" group:@"group"];
+    UAScheduleAudience *audience = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder *builder) {
+        builder.tagSelector = [UATagSelector tag:@"neat" group:@"group"];
     }];
 
     UATagGroups *tagResponse = [UATagGroups tagGroupsWithTags:@{@"group" : @[@"neat"]}];
@@ -94,8 +94,8 @@
 }
 
 - (void)testCheckTagGroupAudienceError {
-    UAInAppMessageAudience *audience = [UAInAppMessageAudience audienceWithBuilderBlock:^(UAInAppMessageAudienceBuilder *builder) {
-        builder.tagSelector = [UAInAppMessageTagSelector tag:@"neat" group:@"group"];
+    UAScheduleAudience *audience = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder *builder) {
+        builder.tagSelector = [UATagSelector tag:@"neat" group:@"group"];
     }];
 
     NSError *error = [NSError errorWithDomain:@"com.urbanairship.test" code:1 userInfo:nil];
@@ -118,8 +118,8 @@
 }
 
 - (void)testCheckTagGroupAudienceNotInAudience {
-    UAInAppMessageAudience *audience = [UAInAppMessageAudience audienceWithBuilderBlock:^(UAInAppMessageAudienceBuilder *builder) {
-        builder.tagSelector = [UAInAppMessageTagSelector tag:@"neat" group:@"group"];
+    UAScheduleAudience *audience = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder *builder) {
+        builder.tagSelector = [UATagSelector tag:@"neat" group:@"group"];
     }];
 
     UATagGroups *tagResponse = [UATagGroups tagGroupsWithTags:@{@"group" : @[]}];
@@ -141,25 +141,23 @@
     [self waitForTestExpectations];
 }
 
-- (void)testPrepare {
-    UAInAppMessageScheduleInfo *scheduleInfo = [UAInAppMessageScheduleInfo scheduleInfoWithBuilderBlock:^(UAInAppMessageScheduleInfoBuilder *builder) {
-        builder.message = [UAInAppMessage messageWithBuilderBlock:^(UAInAppMessageBuilder *builder) {
-            builder.displayContent = [UAInAppMessageCustomDisplayContent displayContentWithValue:@{}];
-            builder.identifier = @"message ID";
-        }];
-        builder.triggers = @[[UAScheduleTrigger foregroundTriggerWithCount:1]];
+- (void)testPrepareMessage {
+    UAInAppMessage *message = [UAInAppMessage messageWithBuilderBlock:^(UAInAppMessageBuilder *builder) {
+        builder.displayContent = [UAInAppMessageCustomDisplayContent displayContentWithValue:@{}];
+        builder.identifier = @"message ID";
     }];
 
-    UASchedule *testSchedule = [UASchedule scheduleWithIdentifier:@"schedule ID"
-                                                             info:scheduleInfo
-                                                         metadata:@{@"cool": @"story"}];
+    UASchedule *schedule = [UASchedule scheduleWithMessage:message builderBlock:^(UAScheduleBuilder *builder) {
+        builder.triggers = @[[UAScheduleTrigger foregroundTriggerWithCount:1]];
+        builder.identifier = @"schedule ID";
+    }];
 
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:testSchedule];
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:testSchedule];
+    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
+    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:schedule];
 
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare finished"];
 
-    [[self.mockInAppMessageManager expect] prepareMessage:scheduleInfo.message
+    [[self.mockInAppMessageManager expect] prepareMessage:message
                                                scheduleID:@"schedule ID"
                                         completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
         void(^completionBlock)(UAInAppMessagePrepareResult) = obj;
@@ -167,7 +165,7 @@
         return YES;
     }]];
 
-    [self.engineDelegate prepareSchedule:testSchedule triggerContext:nil completionHandler:^(UAAutomationSchedulePrepareResult result) {
+    [self.engineDelegate prepareSchedule:schedule triggerContext:nil completionHandler:^(UAAutomationSchedulePrepareResult result) {
         XCTAssertEqual(UAAutomationSchedulePrepareResultContinue, result);
         [prepareFinished fulfill];
     }];
@@ -176,21 +174,30 @@
     [self.mockInAppMessageManager verify];
 }
 
-- (void)testPrepareScheduleInvalid {
-    UAInAppMessageScheduleInfo *scheduleInfo = [UAInAppMessageScheduleInfo scheduleInfoWithBuilderBlock:^(UAInAppMessageScheduleInfoBuilder *builder) {
-        builder.message = [UAInAppMessage messageWithBuilderBlock:^(UAInAppMessageBuilder *builder) {
-            builder.displayContent = [UAInAppMessageCustomDisplayContent displayContentWithValue:@{}];
-            builder.identifier = @"message ID";
-        }];
+- (void)testPrepareActions {
+    UASchedule *schedule = [UASchedule scheduleWithActions:@{} builderBlock:^(UAScheduleBuilder *builder) {
         builder.triggers = @[[UAScheduleTrigger foregroundTriggerWithCount:1]];
+        builder.identifier = @"schedule ID";
     }];
 
-    UASchedule *testSchedule = [UASchedule scheduleWithIdentifier:@"schedule ID"
-                                                             info:scheduleInfo
-                                                         metadata:@{@"cool": @"story"}];
+    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
+    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:schedule];
 
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:testSchedule];
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(NO)] isScheduleUpToDate:testSchedule];
+    XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare finished"];
+
+    [self.engineDelegate prepareSchedule:schedule triggerContext:nil completionHandler:^(UAAutomationSchedulePrepareResult result) {
+        XCTAssertEqual(UAAutomationSchedulePrepareResultContinue, result);
+        [prepareFinished fulfill];
+    }];
+
+    [self waitForTestExpectations];
+}
+
+- (void)testPrepareScheduleInvalid {
+    UASchedule *schedule = [[UASchedule alloc] init];
+
+    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
+    [[[self.mockRemoteDataClient stub] andReturnValue:@(NO)] isScheduleUpToDate:schedule];
 
     [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
         void (^block)(void);
@@ -199,7 +206,7 @@
     }] notifyOnUpdate:OCMOCK_ANY];
 
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare finished"];
-    [self.engineDelegate prepareSchedule:testSchedule triggerContext:nil completionHandler:^(UAAutomationSchedulePrepareResult result) {
+    [self.engineDelegate prepareSchedule:schedule triggerContext:nil completionHandler:^(UAAutomationSchedulePrepareResult result) {
         XCTAssertEqual(UAAutomationSchedulePrepareResultInvalidate, result);
         [prepareFinished fulfill];
     }];
@@ -209,31 +216,22 @@
 
 
 - (void)testPrepareAudienceCheckFailureDefaultMissBehavior {
-    UAInAppMessageScheduleInfo *scheduleInfo = [UAInAppMessageScheduleInfo scheduleInfoWithBuilderBlock:^(UAInAppMessageScheduleInfoBuilder *builder) {
-        builder.message = [UAInAppMessage messageWithBuilderBlock:^(UAInAppMessageBuilder *builder) {
-            builder.displayContent = [UAInAppMessageCustomDisplayContent displayContentWithValue:@{}];
-            builder.identifier = @"message ID";
-            builder.audience = [UAInAppMessageAudience audienceWithBuilderBlock:^(UAInAppMessageAudienceBuilder *builder) {
-                builder.notificationsOptIn = @(YES);
-            }];
+    UASchedule *schedule = [UASchedule scheduleWithActions:@{} builderBlock:^(UAScheduleBuilder *builder) {
+        builder.audience = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder *builder) {
+            builder.notificationsOptIn = @(YES);
         }];
-        builder.triggers = @[[UAScheduleTrigger foregroundTriggerWithCount:1]];
     }];
 
-    UASchedule *testSchedule = [UASchedule scheduleWithIdentifier:@"schedule ID"
-                                                             info:scheduleInfo
-                                                         metadata:@{@"cool": @"story"}];
-
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:testSchedule];
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:testSchedule];
+    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
+    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:schedule];
 
     // Mock the checks to reject the audience
-    id checks = [self mockForClass:[UAInAppMessageAudienceChecks class]];
-    [[[checks expect] andReturnValue:@(NO)] checkDisplayAudienceConditions:scheduleInfo.message.audience tagGroups:nil];
+    id checks = [self mockForClass:[UAScheduleAudienceChecks class]];
+    [[[checks expect] andReturnValue:@(NO)] checkDisplayAudienceConditions:schedule.audience tagGroups:nil];
 
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare finished"];
 
-    [self.engineDelegate prepareSchedule:testSchedule triggerContext:nil completionHandler:^(UAAutomationSchedulePrepareResult result) {
+    [self.engineDelegate prepareSchedule:schedule triggerContext:nil completionHandler:^(UAAutomationSchedulePrepareResult result) {
         XCTAssertEqual(UAAutomationSchedulePrepareResultPenalize, result);
         [prepareFinished fulfill];
     }];
@@ -243,32 +241,23 @@
 }
 
 - (void)testPrepareAudienceCheckFailureMissBehaviorCancel {
-    UAInAppMessageScheduleInfo *scheduleInfo = [UAInAppMessageScheduleInfo scheduleInfoWithBuilderBlock:^(UAInAppMessageScheduleInfoBuilder *builder) {
-        builder.message = [UAInAppMessage messageWithBuilderBlock:^(UAInAppMessageBuilder *builder) {
-            builder.displayContent = [UAInAppMessageCustomDisplayContent displayContentWithValue:@{}];
-            builder.identifier = @"message ID";
-            builder.audience = [UAInAppMessageAudience audienceWithBuilderBlock:^(UAInAppMessageAudienceBuilder *builder) {
-                builder.notificationsOptIn = @(YES);
-                builder.missBehavior = UAInAppMessageAudienceMissBehaviorCancel;
-            }];
+    UASchedule *schedule = [UASchedule scheduleWithActions:@{} builderBlock:^(UAScheduleBuilder *builder) {
+        builder.audience = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder *builder) {
+            builder.notificationsOptIn = @(YES);
+            builder.missBehavior = UAScheduleAudienceMissBehaviorCancel;
         }];
-        builder.triggers = @[[UAScheduleTrigger foregroundTriggerWithCount:1]];
     }];
 
-    UASchedule *testSchedule = [UASchedule scheduleWithIdentifier:@"schedule ID"
-                                                             info:scheduleInfo
-                                                         metadata:@{@"cool": @"story"}];
-
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:testSchedule];
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:testSchedule];
+    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
+    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:schedule];
 
     // Mock the checks to reject the audience
-    id checks = [self mockForClass:[UAInAppMessageAudienceChecks class]];
-    [[[checks expect] andReturnValue:@(NO)] checkDisplayAudienceConditions:scheduleInfo.message.audience tagGroups:nil];
+    id checks = [self mockForClass:[UAScheduleAudienceChecks class]];
+    [[[checks expect] andReturnValue:@(NO)] checkDisplayAudienceConditions:schedule.audience tagGroups:nil];
 
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare finished"];
 
-    [self.engineDelegate prepareSchedule:testSchedule triggerContext:nil completionHandler:^(UAAutomationSchedulePrepareResult result) {
+    [self.engineDelegate prepareSchedule:schedule triggerContext:nil completionHandler:^(UAAutomationSchedulePrepareResult result) {
         XCTAssertEqual(UAAutomationSchedulePrepareResultCancel, result);
         [prepareFinished fulfill];
     }];
@@ -278,32 +267,23 @@
 }
 
 - (void)testPrepareAudienceCheckFailureMissBehaviorSkip {
-    UAInAppMessageScheduleInfo *scheduleInfo = [UAInAppMessageScheduleInfo scheduleInfoWithBuilderBlock:^(UAInAppMessageScheduleInfoBuilder *builder) {
-        builder.message = [UAInAppMessage messageWithBuilderBlock:^(UAInAppMessageBuilder *builder) {
-            builder.displayContent = [UAInAppMessageCustomDisplayContent displayContentWithValue:@{}];
-            builder.identifier = @"message ID";
-            builder.audience = [UAInAppMessageAudience audienceWithBuilderBlock:^(UAInAppMessageAudienceBuilder *builder) {
-                builder.notificationsOptIn = @(YES);
-                builder.missBehavior = UAInAppMessageAudienceMissBehaviorSkip;
-            }];
+    UASchedule *schedule = [UASchedule scheduleWithActions:@{} builderBlock:^(UAScheduleBuilder *builder) {
+        builder.audience = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder *builder) {
+            builder.notificationsOptIn = @(YES);
+            builder.missBehavior = UAScheduleAudienceMissBehaviorSkip;
         }];
-        builder.triggers = @[[UAScheduleTrigger foregroundTriggerWithCount:1]];
     }];
 
-    UASchedule *testSchedule = [UASchedule scheduleWithIdentifier:@"schedule ID"
-                                                             info:scheduleInfo
-                                                         metadata:@{@"cool": @"story"}];
-
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:testSchedule];
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:testSchedule];
+    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
+    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:schedule];
 
     // Mock the checks to reject the audience
-    id checks = [self mockForClass:[UAInAppMessageAudienceChecks class]];
-    [[[checks expect] andReturnValue:@(NO)] checkDisplayAudienceConditions:scheduleInfo.message.audience tagGroups:nil];
+    id checks = [self mockForClass:[UAScheduleAudienceChecks class]];
+    [[[checks expect] andReturnValue:@(NO)] checkDisplayAudienceConditions:schedule.audience tagGroups:nil];
 
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare finished"];
 
-    [self.engineDelegate prepareSchedule:testSchedule triggerContext:nil completionHandler:^(UAAutomationSchedulePrepareResult result) {
+    [self.engineDelegate prepareSchedule:schedule triggerContext:nil completionHandler:^(UAAutomationSchedulePrepareResult result) {
         XCTAssertEqual(UAAutomationSchedulePrepareResultSkip, result);
         [prepareFinished fulfill];
     }];
@@ -313,32 +293,23 @@
 }
 
 - (void)testPrepareAudienceCheckFailureMissBehaviorPenalize {
-    UAInAppMessageScheduleInfo *scheduleInfo = [UAInAppMessageScheduleInfo scheduleInfoWithBuilderBlock:^(UAInAppMessageScheduleInfoBuilder *builder) {
-        builder.message = [UAInAppMessage messageWithBuilderBlock:^(UAInAppMessageBuilder *builder) {
-            builder.displayContent = [UAInAppMessageCustomDisplayContent displayContentWithValue:@{}];
-            builder.identifier = @"message ID";
-            builder.audience = [UAInAppMessageAudience audienceWithBuilderBlock:^(UAInAppMessageAudienceBuilder *builder) {
-                builder.notificationsOptIn = @(YES);
-                builder.missBehavior = UAInAppMessageAudienceMissBehaviorPenalize;
-            }];
+    UASchedule *schedule = [UASchedule scheduleWithActions:@{} builderBlock:^(UAScheduleBuilder *builder) {
+        builder.audience = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder *builder) {
+            builder.notificationsOptIn = @(YES);
+            builder.missBehavior = UAScheduleAudienceMissBehaviorPenalize;
         }];
-        builder.triggers = @[[UAScheduleTrigger foregroundTriggerWithCount:1]];
     }];
 
-    UASchedule *testSchedule = [UASchedule scheduleWithIdentifier:@"schedule ID"
-                                                             info:scheduleInfo
-                                                         metadata:@{@"cool": @"story"}];
-
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:testSchedule];
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:testSchedule];
+    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
+    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:schedule];
 
     // Mock the checks to reject the audience
-    id checks = [self mockForClass:[UAInAppMessageAudienceChecks class]];
-    [[[checks expect] andReturnValue:@(NO)] checkDisplayAudienceConditions:scheduleInfo.message.audience tagGroups:nil];
+    id checks = [self mockForClass:[UAScheduleAudienceChecks class]];
+    [[[checks expect] andReturnValue:@(NO)] checkDisplayAudienceConditions:schedule.audience tagGroups:nil];
 
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare finished"];
 
-    [self.engineDelegate prepareSchedule:testSchedule triggerContext:nil completionHandler:^(UAAutomationSchedulePrepareResult result) {
+    [self.engineDelegate prepareSchedule:schedule triggerContext:nil completionHandler:^(UAAutomationSchedulePrepareResult result) {
         XCTAssertEqual(UAAutomationSchedulePrepareResultPenalize, result);
         [prepareFinished fulfill];
     }];
@@ -347,70 +318,76 @@
     [checks verify];
 }
 
-- (void)testIsReady {
-    UAInAppMessageScheduleInfo *scheduleInfo = [UAInAppMessageScheduleInfo scheduleInfoWithBuilderBlock:^(UAInAppMessageScheduleInfoBuilder *builder) {
-        builder.message = [UAInAppMessage messageWithBuilderBlock:^(UAInAppMessageBuilder *builder) {
-            builder.displayContent = [UAInAppMessageCustomDisplayContent displayContentWithValue:@{}];
-            builder.identifier = @"message ID";
-        }];
+- (void)testIsActionsReady {
+    UASchedule *schedule = [UASchedule scheduleWithActions:@{} builderBlock:^(UAScheduleBuilder *builder) {
         builder.triggers = @[[UAScheduleTrigger foregroundTriggerWithCount:1]];
+        builder.identifier = @"schedule ID";
     }];
 
-    UASchedule *testSchedule = [UASchedule scheduleWithIdentifier:@"schedule ID"
-                                                             info:scheduleInfo
-                                                         metadata:@{@"cool": @"story"}];
+    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
+    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:schedule];
 
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:testSchedule];
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:testSchedule];
-
-    [[[self.mockInAppMessageManager expect] andReturnValue:@(UAAutomationScheduleReadyResultContinue)] isReadyToDisplay:@"schedule ID"];
-
-    UAAutomationScheduleReadyResult result = [self.engineDelegate isScheduleReadyToExecute:testSchedule];
+    UAAutomationScheduleReadyResult result = [self.engineDelegate isScheduleReadyToExecute:schedule];
 
     XCTAssertEqual(UAAutomationScheduleReadyResultContinue, result);
 }
 
-- (void)testIsNotReady {
-    UAInAppMessageScheduleInfo *scheduleInfo = [UAInAppMessageScheduleInfo scheduleInfoWithBuilderBlock:^(UAInAppMessageScheduleInfoBuilder *builder) {
-        builder.message = [UAInAppMessage messageWithBuilderBlock:^(UAInAppMessageBuilder *builder) {
-            builder.displayContent = [UAInAppMessageCustomDisplayContent displayContentWithValue:@{}];
-            builder.identifier = @"message ID";
-        }];
-        builder.triggers = @[[UAScheduleTrigger foregroundTriggerWithCount:1]];
+- (void)testIsMessageReady {
+    UAInAppMessage *message = [UAInAppMessage messageWithBuilderBlock:^(UAInAppMessageBuilder *builder) {
+        builder.displayContent = [UAInAppMessageCustomDisplayContent displayContentWithValue:@{}];
+        builder.identifier = @"message ID";
     }];
 
-    UASchedule *testSchedule = [UASchedule scheduleWithIdentifier:@"schedule ID"
-                                                             info:scheduleInfo
-                                                         metadata:@{@"cool": @"story"}];
+    UASchedule *schedule = [UASchedule scheduleWithMessage:message builderBlock:^(UAScheduleBuilder *builder) {
+        builder.triggers = @[[UAScheduleTrigger foregroundTriggerWithCount:1]];
+        builder.identifier = @"schedule ID";
+    }];
 
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:testSchedule];
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:testSchedule];
+    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
+    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:schedule];
+
+    [[[self.mockInAppMessageManager expect] andReturnValue:@(UAAutomationScheduleReadyResultContinue)] isReadyToDisplay:@"schedule ID"];
+
+    UAAutomationScheduleReadyResult result = [self.engineDelegate isScheduleReadyToExecute:schedule];
+
+    XCTAssertEqual(UAAutomationScheduleReadyResultContinue, result);
+}
+
+- (void)testIsMessageNotReady {
+    UAInAppMessage *message = [UAInAppMessage messageWithBuilderBlock:^(UAInAppMessageBuilder *builder) {
+        builder.displayContent = [UAInAppMessageCustomDisplayContent displayContentWithValue:@{}];
+        builder.identifier = @"message ID";
+    }];
+
+    UASchedule *schedule = [UASchedule scheduleWithMessage:message builderBlock:^(UAScheduleBuilder *builder) {
+        builder.triggers = @[[UAScheduleTrigger foregroundTriggerWithCount:1]];
+        builder.identifier = @"schedule ID";
+    }];
+
+    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
+    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:schedule];
 
     [[[self.mockInAppMessageManager expect] andReturnValue:@(UAAutomationScheduleReadyResultNotReady)] isReadyToDisplay:@"schedule ID"];
 
-    UAAutomationScheduleReadyResult result = [self.engineDelegate isScheduleReadyToExecute:testSchedule];
+    UAAutomationScheduleReadyResult result = [self.engineDelegate isScheduleReadyToExecute:schedule];
 
     XCTAssertEqual(UAAutomationScheduleReadyResultNotReady, result);
 }
 
-- (void)testIsReadyInvalid {
-    UAInAppMessageScheduleInfo *scheduleInfo = [UAInAppMessageScheduleInfo scheduleInfoWithBuilderBlock:^(UAInAppMessageScheduleInfoBuilder *builder) {
-        builder.message = [UAInAppMessage messageWithBuilderBlock:^(UAInAppMessageBuilder *builder) {
-            builder.displayContent = [UAInAppMessageCustomDisplayContent displayContentWithValue:@{}];
-            builder.identifier = @"message ID";
-        }];
-        builder.triggers = @[[UAScheduleTrigger foregroundTriggerWithCount:1]];
+- (void)testIsMessageReadyInvalid {
+    UAInAppMessage *message = [UAInAppMessage messageWithBuilderBlock:^(UAInAppMessageBuilder *builder) {
+        builder.displayContent = [UAInAppMessageCustomDisplayContent displayContentWithValue:@{}];
+        builder.identifier = @"message ID";
     }];
 
-    UASchedule *testSchedule = [UASchedule scheduleWithIdentifier:@"schedule ID"
-                                                             info:scheduleInfo
-                                                         metadata:@{@"cool": @"story"}];
+    UASchedule *schedule = [UASchedule scheduleWithMessage:message builderBlock:^(UAScheduleBuilder * _Nonnull builder) {
+    }];
 
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:testSchedule];
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(NO)] isScheduleUpToDate:testSchedule];
-    [[self.mockInAppMessageManager expect] scheduleExecutionAborted:@"schedule ID"];
+    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
+    [[[self.mockRemoteDataClient stub] andReturnValue:@(NO)] isScheduleUpToDate:schedule];
+    [[self.mockInAppMessageManager expect] scheduleExecutionAborted:schedule.identifier];
 
-    UAAutomationScheduleReadyResult result = [self.engineDelegate isScheduleReadyToExecute:testSchedule];
+    UAAutomationScheduleReadyResult result = [self.engineDelegate isScheduleReadyToExecute:schedule];
     XCTAssertEqual(UAAutomationScheduleReadyResultInvalidate, result);
     [self.mockInAppMessageManager verify];
 }
@@ -418,40 +395,28 @@
 - (void)testIsReadyPaused {
     self.inAppAutomation.paused = YES;
 
-    UAInAppMessageScheduleInfo *scheduleInfo = [UAInAppMessageScheduleInfo scheduleInfoWithBuilderBlock:^(UAInAppMessageScheduleInfoBuilder *builder) {
-        builder.message = [UAInAppMessage messageWithBuilderBlock:^(UAInAppMessageBuilder *builder) {
-            builder.displayContent = [UAInAppMessageCustomDisplayContent displayContentWithValue:@{}];
-            builder.identifier = @"message ID";
-        }];
-        builder.triggers = @[[UAScheduleTrigger foregroundTriggerWithCount:1]];
-    }];
+    UASchedule *schedule = [[UASchedule alloc] init];
 
-    UASchedule *testSchedule = [UASchedule scheduleWithIdentifier:@"schedule ID"
-                                                             info:scheduleInfo
-                                                         metadata:@{@"cool": @"story"}];
+    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
+    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:schedule];
 
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:testSchedule];
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:testSchedule];
-
-    UAAutomationScheduleReadyResult result = [self.engineDelegate isScheduleReadyToExecute:testSchedule];
+    UAAutomationScheduleReadyResult result = [self.engineDelegate isScheduleReadyToExecute:schedule];
     XCTAssertEqual(UAAutomationScheduleReadyResultNotReady, result);
 }
 
-- (void)testExecute {
-    UAInAppMessageScheduleInfo *scheduleInfo = [UAInAppMessageScheduleInfo scheduleInfoWithBuilderBlock:^(UAInAppMessageScheduleInfoBuilder *builder) {
-        builder.message = [UAInAppMessage messageWithBuilderBlock:^(UAInAppMessageBuilder *builder) {
-            builder.displayContent = [UAInAppMessageCustomDisplayContent displayContentWithValue:@{}];
-            builder.identifier = @"message ID";
-        }];
-        builder.triggers = @[[UAScheduleTrigger foregroundTriggerWithCount:1]];
+- (void)testExecuteMessage {
+    UAInAppMessage *message = [UAInAppMessage messageWithBuilderBlock:^(UAInAppMessageBuilder *builder) {
+        builder.displayContent = [UAInAppMessageCustomDisplayContent displayContentWithValue:@{}];
+        builder.identifier = @"message ID";
     }];
 
-    UASchedule *testSchedule = [UASchedule scheduleWithIdentifier:@"schedule ID"
-                                                             info:scheduleInfo
-                                                         metadata:@{@"cool": @"story"}];
+    UASchedule *schedule = [UASchedule scheduleWithMessage:message builderBlock:^(UAScheduleBuilder *builder) {
+        builder.triggers = @[[UAScheduleTrigger foregroundTriggerWithCount:1]];
+        builder.identifier = @"schedule ID";
+    }];
 
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:testSchedule];
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:testSchedule];
+    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
+    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:schedule];
 
     [[self.mockInAppMessageManager expect] displayMessageWithScheduleID:@"schedule ID" completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
         void(^completionBlock)(void) = obj;
@@ -460,7 +425,7 @@
     }]];
 
     XCTestExpectation *executeFinished = [self expectationWithDescription:@"execute finished"];
-    [self.engineDelegate executeSchedule:testSchedule completionHandler:^{
+    [self.engineDelegate executeSchedule:schedule completionHandler:^{
         [executeFinished fulfill];
     }];
 
@@ -468,53 +433,44 @@
     [self.mockInAppMessageManager verify];
 }
 
+- (void)testExecuteActions {
+    UASchedule *schedule = [UASchedule scheduleWithActions:@{@"foo": @"bar"} builderBlock:^(UAScheduleBuilder *builder) {
+        builder.triggers = @[[UAScheduleTrigger foregroundTriggerWithCount:1]];
+        builder.identifier = @"schedule ID";
+    }];
 
-- (void)testCancelMessagesWithID {
-    [[self.mockAutomationEngine expect] cancelSchedulesWithGroup:@"some ID" completionHandler:nil];
+    id mockActionRunner = [self mockForClass:[UAActionRunner class]];
+    [[mockActionRunner expect] runActionsWithActionValues:schedule.data
+                                                situation:UASituationAutomation
+                                                 metadata:nil
+                                        completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
+        void (^handler)(UAActionResult *) = obj;
+        handler([UAActionResult emptyResult]);
+        return YES;
+    }]];
 
-    [self.inAppAutomation cancelMessagesWithID:@"some ID"];
-    [self.mockAutomationEngine verify];
-}
 
-- (void)testCancelMessagesWithIDCompletionHandler {
-    UASchedule *schedule = [UASchedule scheduleWithIdentifier:@"foo" info:[UAScheduleInfo new] metadata:@{}];
-    [[[self.mockAutomationEngine expect] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:3];
-        void (^completionHandler)(NSArray *) = (__bridge void (^)(NSArray *))arg;
-        completionHandler(@[schedule]);
-    }] cancelSchedulesWithGroup:@"some ID" completionHandler:OCMOCK_ANY];
-
-    XCTestExpectation *blockInvoked = [self expectationWithDescription:@"block invoked"];
-    [self.inAppAutomation cancelMessagesWithID:@"some ID" completionHandler:^(NSArray<UASchedule *> * _Nonnull schedules) {
-        XCTAssertEqualObjects(schedules, @[schedule]);
-        [blockInvoked fulfill];
+    XCTestExpectation *executeFinished = [self expectationWithDescription:@"execute finished"];
+    [self.engineDelegate executeSchedule:schedule completionHandler:^{
+        [executeFinished fulfill];
     }];
 
     [self waitForTestExpectations];
-    [self.mockAutomationEngine verify];
+    [mockActionRunner verify];
 }
 
-- (void)testCancelSchedule {
-    [[self.mockAutomationEngine expect] cancelScheduleWithID:@"some ID" completionHandler:nil];
-
-    [self.inAppAutomation cancelScheduleWithID:@"some ID"];
-    [self.mockAutomationEngine verify];
-}
-
-- (void)testCancelScheduleWithCompletionHandler {
-    UASchedule *schedule = [UASchedule scheduleWithIdentifier:@"some ID" info:[UAScheduleInfo new] metadata:@{}];
-
+- (void)testCancelScheduleWithID {
+    UASchedule *schedule = [[UASchedule alloc] init];
     [[[self.mockAutomationEngine expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:3];
-        void (^completionHandler)(UASchedule * _Nullable) = (__bridge void(^)(UASchedule * _Nullable))arg;
+        void (^completionHandler)(UASchedule *) = (__bridge void (^)(UASchedule *))arg;
         completionHandler(schedule);
     }] cancelScheduleWithID:@"some ID" completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *blockInvoked = [self expectationWithDescription:@"block invoked"];
     [self.inAppAutomation cancelScheduleWithID:@"some ID" completionHandler:^(UASchedule *cancelled) {
-        XCTAssertEqualObjects(cancelled, schedule);
+        XCTAssertEqualObjects(schedule, cancelled);
         [blockInvoked fulfill];
     }];
 
@@ -522,42 +478,73 @@
     [self.mockAutomationEngine verify];
 }
 
-- (void)testScheduleMessagesWithScheduleInfo {
-    // setup
-    UAInAppMessageScheduleInfo *scheduleInfo = [UAInAppMessageScheduleInfo scheduleInfoWithBuilderBlock:^(UAInAppMessageScheduleInfoBuilder * _Nonnull builder) {
-        UAInAppMessage *message = [UAInAppMessage messageWithBuilderBlock:^(UAInAppMessageBuilder * _Nonnull builder) {
-            builder.identifier = @"some identifier";
-        }];
 
-        builder.message = message;
+- (void)testCancelScheduleWithGroup {
+    UASchedule *schedule = [[UASchedule alloc] init];
+    [[[self.mockAutomationEngine expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void (^completionHandler)(NSArray *) = (__bridge void (^)(NSArray *))arg;
+        completionHandler(@[schedule]);
+    }] cancelSchedulesWithGroup:@"some group" completionHandler:OCMOCK_ANY];
+
+    XCTestExpectation *blockInvoked = [self expectationWithDescription:@"block invoked"];
+    [self.inAppAutomation cancelSchedulesWithGroup:@"some group" completionHandler:^(NSArray<UASchedule *> *cancelled) {
+        XCTAssertEqualObjects(@[schedule], cancelled);
+        [blockInvoked fulfill];
     }];
 
-    UAInAppMessageScheduleInfo *anotherScheduleInfo = [UAInAppMessageScheduleInfo scheduleInfoWithBuilderBlock:^(UAInAppMessageScheduleInfoBuilder * _Nonnull builder) {
-        UAInAppMessage *message = [UAInAppMessage messageWithBuilderBlock:^(UAInAppMessageBuilder * _Nonnull builder) {
-            builder.identifier = @"some other identifier";
-        }];
+    [self waitForTestExpectations];
+    [self.mockAutomationEngine verify];
+}
 
-        builder.message = message;
-    }];
-
-    NSArray<UAInAppMessageScheduleInfo *> *submittedScheduleInfos = @[scheduleInfo, anotherScheduleInfo];
+- (void)testSchedule {
+    UASchedule *schedule = [[UASchedule alloc] init];
 
     // expectations
     [[[self.mockAutomationEngine expect] andDo:^(NSInvocation *invocation) {
         void *arg;
-        [invocation getArgument:&arg atIndex:4];
-        void (^completionHandler)(NSArray *) = (__bridge void (^)(NSArray *))arg;
+        [invocation getArgument:&arg atIndex:3];
+        void (^completionHandler)(BOOL) = (__bridge void (^)(BOOL))arg;
 
         if (completionHandler) {
-            completionHandler(@[]);
+            completionHandler(YES);
         }
-    }] scheduleMultiple:[OCMArg checkWithBlock:^BOOL(NSArray<UAInAppMessageScheduleInfo *> *scheduleInfos) {
-        return [scheduleInfos isEqualToArray:submittedScheduleInfos];
-    }] metadata:@{} completionHandler:OCMOCK_ANY];
+    }] schedule:schedule completionHandler:OCMOCK_ANY];
 
     // test
     XCTestExpectation *blockInvoked = [self expectationWithDescription:@"block invoked"];
-    [self.inAppAutomation scheduleMessagesWithScheduleInfo:submittedScheduleInfos metadata:@{} completionHandler:^(NSArray<UASchedule *> *schedules) {
+    [self.inAppAutomation schedule:schedule completionHandler:^(BOOL result) {
+        XCTAssertTrue(result);
+        [blockInvoked fulfill];
+    }];
+
+    // verify
+    [self waitForTestExpectations];
+    [self.mockAutomationEngine verify];
+}
+
+
+- (void)testScheduleMultiple {
+    UASchedule *scheduleOne = [[UASchedule alloc] init];
+    UASchedule *scheduleTwo = [[UASchedule alloc] init];
+
+
+    // expectations
+    [[[self.mockAutomationEngine expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void (^completionHandler)(BOOL) = (__bridge void (^)(BOOL))arg;
+
+        if (completionHandler) {
+            completionHandler(YES);
+        }
+    }] scheduleMultiple:@[scheduleOne, scheduleTwo] completionHandler:OCMOCK_ANY];
+
+    // test
+    XCTestExpectation *blockInvoked = [self expectationWithDescription:@"block invoked"];
+    [self.inAppAutomation scheduleMultiple:@[scheduleOne, scheduleTwo] completionHandler:^(BOOL result) {
+        XCTAssertTrue(result);
         [blockInvoked fulfill];
     }];
 
@@ -607,4 +594,5 @@
 }
 
 @end
+
 

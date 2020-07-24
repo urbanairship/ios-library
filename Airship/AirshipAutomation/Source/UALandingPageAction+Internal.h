@@ -1,7 +1,6 @@
 /* Copyright Airship and Contributors */
 
 #import "UAInAppMessage.h"
-#import "UAInAppMessageScheduleInfo.h"
 #import "UALandingPageAction.h"
 #import "UAAirshipAutomationCoreImport.h"
 

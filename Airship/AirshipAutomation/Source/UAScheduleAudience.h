@@ -2,7 +2,7 @@
 
 #import <Foundation/Foundation.h>
 
-@class UAInAppMessageTagSelector;
+@class UATagSelector;
 @class UAVersionMatcher;
 @class UAJSONPredicate;
 
@@ -11,27 +11,27 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Audience check miss behaviors
  */
-typedef NS_ENUM(NSInteger, UAInAppMessageAudienceMissBehaviorType) {
+typedef NS_ENUM(NSInteger, UAScheduleAudienceMissBehaviorType) {
     /**
      * Cancel the message's schedule when the audience check fails.
      */
-    UAInAppMessageAudienceMissBehaviorCancel,
+    UAScheduleAudienceMissBehaviorCancel,
     
     /**
      * Skip the message's schedule when the audience check fails.
      */
-    UAInAppMessageAudienceMissBehaviorSkip,
+    UAScheduleAudienceMissBehaviorSkip,
 
     /**
      * Skip and penalize the message's schedule when the audience check fails.
      */
-    UAInAppMessageAudienceMissBehaviorPenalize,
+    UAScheduleAudienceMissBehaviorPenalize,
 };
 
 /**
- * Builder class for UAInAppMessageAudience.
+ * Builder class for UAScheduleAudience.
  */
-@interface UAInAppMessageAudienceBuilder : NSObject
+@interface UAScheduleAudienceBuilder : NSObject
 
 /**
  * The notifications opt in flag.
@@ -59,7 +59,7 @@ typedef NS_ENUM(NSInteger, UAInAppMessageAudienceMissBehaviorType) {
  *
  * Optional.
  */
-@property(nonatomic, strong, nullable) UAInAppMessageTagSelector *tagSelector;
+@property(nonatomic, strong, nullable) UATagSelector *tagSelector;
 
 /**
  * The app version predicate.
@@ -71,9 +71,9 @@ typedef NS_ENUM(NSInteger, UAInAppMessageAudienceMissBehaviorType) {
 /**
  * The audience check miss behavior.
  *
- * Optional. Defaults to UAInAppMessageAudienceMissBehaviorPenalize.
+ * Optional. Defaults to UAScheduleAudienceMissBehaviorPenalize.
  */
-@property(nonatomic, assign) UAInAppMessageAudienceMissBehaviorType missBehavior;
+@property(nonatomic, assign) UAScheduleAudienceMissBehaviorType missBehavior;
 
 /**
  * Checks if the builder is valid and will produce a audience.
@@ -86,9 +86,9 @@ typedef NS_ENUM(NSInteger, UAInAppMessageAudienceMissBehaviorType) {
 /**
  * Model object for an in-app message audience constraint.
  *
- * @note This object is built using `UAInAppMessageAudienceBuilder`.
+ * @note This object is built using `UAScheduleAudienceBuilder`.
  */
-@interface UAInAppMessageAudience : NSObject
+@interface UAScheduleAudience : NSObject
 
 /**
  * The notifications opt in flag.
@@ -108,7 +108,7 @@ typedef NS_ENUM(NSInteger, UAInAppMessageAudienceMissBehaviorType) {
 /**
  * The tag selector
  */
-@property(nonatomic, readonly, nullable) UAInAppMessageTagSelector *tagSelector;
+@property(nonatomic, readonly, nullable) UATagSelector *tagSelector;
 
 /**
  * The app version predicate.
@@ -118,7 +118,7 @@ typedef NS_ENUM(NSInteger, UAInAppMessageAudienceMissBehaviorType) {
 /**
  * The audience check miss behavior.
  */
-@property(nonatomic, readonly) UAInAppMessageAudienceMissBehaviorType missBehavior;
+@property(nonatomic, readonly) UAScheduleAudienceMissBehaviorType missBehavior;
 
 /**
  * Factory method for building audience model from a builder block.
@@ -126,7 +126,7 @@ typedef NS_ENUM(NSInteger, UAInAppMessageAudienceMissBehaviorType) {
  * @param builderBlock The builder block.
  * @returns `YES` if the builderBlock was able to be applied, otherwise `NO`.
  */
-+ (nullable instancetype)audienceWithBuilderBlock:(void(^)(UAInAppMessageAudienceBuilder *builder))builderBlock;
++ (nullable instancetype)audienceWithBuilderBlock:(void(^)(UAScheduleAudienceBuilder *builder))builderBlock;
 
 @end
 

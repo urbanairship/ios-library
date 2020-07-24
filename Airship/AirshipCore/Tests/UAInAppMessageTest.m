@@ -6,7 +6,6 @@
 #import "UAPreferenceDataStore+Internal.h"
 #import "UAInAppMessage+Internal.h"
 #import "UAInAppMessageBannerDisplayContent+Internal.h"
-#import "UAInAppMessageAudience+Internal.h"
 #import "UAInAppMessageCustomDisplayContent.h"
 
 @interface UAInAppMessageTest : UABaseTest
@@ -30,7 +29,6 @@
                                 },
                   @"display_type": UAInAppMessageDisplayTypeBannerValue,
                   @"extra": @{@"foo":@"baz", @"baz":@"foo"},
-                  @"audience": @{@"new_user" : @YES},
                   @"actions": @{@"cool":@"story"},
                   @"source": @"remote-data",
                   @"campaigns": @{ @"some": @"campaign info"},
@@ -38,13 +36,13 @@
                   @"display_behavior":@"default",
                   @"rendered_locale" : self.renderedLocale
                   };
-    
+
     // test
     NSError *error;
     UAInAppMessage *messageFromOriginalJSON = [UAInAppMessage messageWithJSON:originalJSON error:&error];
     XCTAssertNotNil(messageFromOriginalJSON);
     XCTAssertNil(error);
-    
+
     XCTAssertEqualObjects(@"blah", messageFromOriginalJSON.identifier);
     XCTAssertEqualObjects(@"my name", messageFromOriginalJSON.name);
     XCTAssertEqualObjects(@"the body", ((UAInAppMessageBannerDisplayContent *)(messageFromOriginalJSON.displayContent)).body.text);
@@ -52,7 +50,6 @@
     XCTAssertEqualObjects(@"baz", messageFromOriginalJSON.extras[@"foo"]);
     XCTAssertEqualObjects(@"foo", messageFromOriginalJSON.extras[@"baz"]);
     XCTAssertEqualObjects(@"story", messageFromOriginalJSON.actions[@"cool"]);
-    XCTAssertEqualObjects(@YES, messageFromOriginalJSON.audience.isNewUser);
     XCTAssertEqualObjects(@{ @"some": @"campaign info"}, messageFromOriginalJSON.campaigns);
     XCTAssertEqualObjects(UAInAppMessageDisplayBehaviorDefault, messageFromOriginalJSON.displayBehavior);
     XCTAssertEqualObjects(self.renderedLocale, messageFromOriginalJSON.renderedLocale);
@@ -78,13 +75,13 @@
                                                  },
                                    @"display_type": UAInAppMessageDisplayTypeBannerValue,
                                    };
-    
+
     // test
     NSError *error;
     UAInAppMessage *messageFromOriginalJSON = [UAInAppMessage messageWithJSON:originalJSON error:&error];
     XCTAssertNotNil(messageFromOriginalJSON);
     XCTAssertNil(error);
-    
+
     XCTAssertEqualObjects(@"blah",messageFromOriginalJSON.identifier);
     XCTAssertEqualObjects(nil,messageFromOriginalJSON.name);
     XCTAssertEqualObjects(@"the body",((UAInAppMessageBannerDisplayContent *)(messageFromOriginalJSON.displayContent)).body.text);
@@ -92,16 +89,15 @@
     XCTAssertEqualObjects(nil,messageFromOriginalJSON.extras[@"foo"]);
     XCTAssertEqualObjects(nil,messageFromOriginalJSON.extras[@"baz"]);
     XCTAssertEqualObjects(nil,messageFromOriginalJSON.actions[@"cool"]);
-    XCTAssertEqualObjects(nil, messageFromOriginalJSON.audience.isNewUser);
     XCTAssertEqualObjects(nil, messageFromOriginalJSON.campaigns);
     XCTAssertEqual(UAInAppMessageSourceAppDefined, messageFromOriginalJSON.source);
-    
+
     NSDictionary *toJSON = [messageFromOriginalJSON toJSON];
     XCTAssertNotNil(toJSON);
     UAInAppMessage *messageFromToJSON = [UAInAppMessage messageWithJSON:toJSON error:&error];
     XCTAssertNotNil(messageFromToJSON);
     XCTAssertNil(error);
-    
+
     XCTAssertEqualObjects(messageFromOriginalJSON, messageFromToJSON);
 }
 
@@ -207,7 +203,6 @@
     XCTAssertEqual(newMessage.displayType, message.displayType);
     XCTAssertEqualObjects(newMessage.extras, message.extras);
     XCTAssertEqualObjects(newMessage.actions, message.actions);
-    XCTAssertEqualObjects(newMessage.audience, message.audience);
     XCTAssertEqual(newMessage.source, message.source);
     XCTAssertEqualObjects(newMessage.campaigns, message.campaigns);
     XCTAssertEqualObjects(((UAInAppMessageCustomDisplayContent *)newMessage.displayContent).value, @{@"neat" :@"rad"});
