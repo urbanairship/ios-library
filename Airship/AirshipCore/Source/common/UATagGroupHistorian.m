@@ -32,7 +32,7 @@
 
 }
 
-- (void) onTagGroupsMutationUploaded:(NSNotification *)notification {
+- (void)onTagGroupsMutationUploaded:(NSNotification *)notification {
 
     UATagGroupsMutation *tagGroupsMutation = [notification.userInfo objectForKey:@"tagGroupsMutation"];
     NSDate *date = [notification.userInfo objectForKey:@"date"];
