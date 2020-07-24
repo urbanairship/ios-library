@@ -326,6 +326,10 @@
 		45C69142238DCC4600A03C94 /* UAExtendedActionsModuleLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E27A7D52367AC3200F46B69 /* UAExtendedActionsModuleLoader.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		45CCE9BB2445412F00D264D4 /* PropertyCells.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45CCE9BA2445412F00D264D4 /* PropertyCells.swift */; };
 		45DCD83E2087C57C00BCF10F /* UAInAppMessageFullScreenStyleTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 45DCD83D2087C57C00BCF10F /* UAInAppMessageFullScreenStyleTest.m */; };
+		45E08F4624CA045E00041803 /* UIImage+UAAdditions+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 45E08F4424CA045E00041803 /* UIImage+UAAdditions+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		45E08F4724CA045E00041803 /* UIImage+UAAdditions+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 45E08F4424CA045E00041803 /* UIImage+UAAdditions+Internal.h */; };
+		45E08F4824CA045E00041803 /* UIImage+UAAdditions+Internal.m in Sources */ = {isa = PBXBuildFile; fileRef = 45E08F4524CA045E00041803 /* UIImage+UAAdditions+Internal.m */; };
+		45E08F4924CA045E00041803 /* UIImage+UAAdditions+Internal.m in Sources */ = {isa = PBXBuildFile; fileRef = 45E08F4524CA045E00041803 /* UIImage+UAAdditions+Internal.m */; };
 		45FD231F2187C7B70056F111 /* UATestSystemVersion.m in Sources */ = {isa = PBXBuildFile; fileRef = 45FD23182187C7B70056F111 /* UATestSystemVersion.m */; };
 		53911BDD1E23EBA500EE7007 /* UAChannelCaptureActionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 53911BDC1E23EBA500EE7007 /* UAChannelCaptureActionTest.m */; };
 		53BC50201E202FAA00E24306 /* UAChannelCaptureAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BC501F1E202FAA00E24306 /* UAChannelCaptureAction.m */; };
@@ -2655,6 +2659,8 @@
 		45DCD8372086AB0D00BCF10F /* UAInAppMessageMediaStyle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UAInAppMessageMediaStyle.h; sourceTree = "<group>"; };
 		45DCD8382086AB0D00BCF10F /* UAInAppMessageMediaStyle.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageMediaStyle.m; sourceTree = "<group>"; };
 		45DCD83D2087C57C00BCF10F /* UAInAppMessageFullScreenStyleTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageFullScreenStyleTest.m; sourceTree = "<group>"; };
+		45E08F4424CA045E00041803 /* UIImage+UAAdditions+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+UAAdditions+Internal.h"; sourceTree = "<group>"; };
+		45E08F4524CA045E00041803 /* UIImage+UAAdditions+Internal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+UAAdditions+Internal.m"; sourceTree = "<group>"; };
 		45E5FA1B226BA417007BD334 /* UAInAppMessageImmediateDisplayCoordinator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageImmediateDisplayCoordinator.m; sourceTree = "<group>"; };
 		45E5FA1C226BA418007BD334 /* UAInAppMessageImmediateDisplayCoordinator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInAppMessageImmediateDisplayCoordinator.h; sourceTree = "<group>"; };
 		45F0CD402124E58000EED496 /* UAInAppMessageHTMLViewController+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAInAppMessageHTMLViewController+Internal.h"; sourceTree = "<group>"; };
@@ -4159,6 +4165,8 @@
 				6E845460237E0D31007D3B1E /* AirshipAutomationLib.h */,
 				3C5D1B2021C079D5007025C9 /* NSObject+AnonymousKVO.m */,
 				3C5D1B1F21C079D4007025C9 /* NSObject+AnonymousKVO+Internal.h */,
+				45E08F4424CA045E00041803 /* UIImage+UAAdditions+Internal.h */,
+				45E08F4524CA045E00041803 /* UIImage+UAAdditions+Internal.m */,
 				6E598D7E2003EB76005B234B /* UAActiveTimer.m */,
 				6E598D7D2003EB76005B234B /* UAActiveTimer+Internal.h */,
 				6E845462237E0DC4007D3B1E /* UAAirshipAutomationCoreImport.h */,
@@ -6099,6 +6107,7 @@
 				6E845392237E0523007D3B1E /* UAInAppMessageModalViewController+Internal.h in Headers */,
 				6E845393237E0523007D3B1E /* UAInAppMessageFullScreenDisplayContent+Internal.h in Headers */,
 				6E845394237E0523007D3B1E /* UAInAppMessageFullScreenViewController+Internal.h in Headers */,
+				45E08F4724CA045E00041803 /* UIImage+UAAdditions+Internal.h in Headers */,
 				6E845395237E0523007D3B1E /* UALegacyInAppMessaging+Internal.h in Headers */,
 				6E845396237E0523007D3B1E /* UAInAppMessageAssetManager+Internal.h in Headers */,
 				6E845397237E0523007D3B1E /* UAInAppMessageAssetCache+Internal.h in Headers */,
@@ -6397,6 +6406,7 @@
 				6EE770F5238F15D000E79944 /* UASQLite+Internal.h in Headers */,
 				6EE770F6238F15D000E79944 /* UACustomEvent+Internal.h in Headers */,
 				6EE770F7238F15D000E79944 /* UAAppBackgroundEvent+Internal.h in Headers */,
+				45E08F4624CA045E00041803 /* UIImage+UAAdditions+Internal.h in Headers */,
 				6EE770F8238F15D000E79944 /* UAGlobal.h in Headers */,
 				6EE770F9238F15D000E79944 /* UAEnableFeatureActionPredicate+Internal.h in Headers */,
 				6EE770FA238F15D000E79944 /* UAAppExitEvent+Internal.h in Headers */,
@@ -7928,6 +7938,7 @@
 				6E84541A237E0575007D3B1E /* UAInAppMessageResolutionEvent.m in Sources */,
 				6E84548A237E2320007D3B1E /* UAAutomation.xcdatamodeld in Sources */,
 				6E84541B237E0575007D3B1E /* UAInAppMessage.m in Sources */,
+				45E08F4924CA045E00041803 /* UIImage+UAAdditions+Internal.m in Sources */,
 				6E84541C237E0575007D3B1E /* UAInAppMessageDisplayContent.m in Sources */,
 				6E84541D237E0575007D3B1E /* UAInAppMessageTextInfo.m in Sources */,
 				6E84546B237E1C84007D3B1E /* NSObject+AnonymousKVO.m in Sources */,
@@ -8094,6 +8105,7 @@
 				6EE7724D238F172A00E79944 /* UAInboxStore.m in Sources */,
 				6EE7724E238F172A00E79944 /* UAJSONValueTransformer.m in Sources */,
 				6EE7724F238F172A00E79944 /* UAInboxAPIClient.m in Sources */,
+				45E08F4824CA045E00041803 /* UIImage+UAAdditions+Internal.m in Sources */,
 				6EE77250238F172A00E79944 /* UAInboxMessage.m in Sources */,
 				6EE77251238F172A00E79944 /* UAInboxMessageList.m in Sources */,
 				6EE77252238F172A00E79944 /* UAInboxUtils.m in Sources */,
