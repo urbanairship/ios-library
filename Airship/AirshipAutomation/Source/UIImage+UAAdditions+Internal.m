@@ -6,19 +6,19 @@
 @implementation UIImage (UAAdditions)
 
 + (NSTimeInterval)durationFromProperties:(CFDictionaryRef)properties {
-    NSNumber *duration;
+    NSTimeInterval duration = 0;
 
     if (properties) {
         NSDictionary *frameProperties = (__bridge NSDictionary *)properties;
         NSDictionary *gifProperties = frameProperties[(NSString *)kCGImagePropertyGIFDictionary];
 
-        duration = (NSNumber *) gifProperties[(NSString *)kCGImagePropertyGIFUnclampedDelayTime];
-        if (![duration doubleValue]) {
-            duration = (NSNumber *) gifProperties[(NSString*)kCGImagePropertyGIFDelayTime];
+        duration = [gifProperties[(NSString *)kCGImagePropertyGIFUnclampedDelayTime] doubleValue];
+        if (!duration) {
+            duration = [gifProperties[(NSString*)kCGImagePropertyGIFDelayTime] doubleValue];
         }
     }
 
-    return [duration doubleValue];
+    return duration;
 }
 
 + (UIImage *)animatedImageWithImageSource:(CGImageSourceRef)source {
@@ -44,7 +44,8 @@
             fullDuration += duration;
 
             // Fill in frames for every centisecond
-            for (int i = 0; i < (int)(duration * 100); i++) {
+            int centiseconds = (int)(duration * 100);
+            for (int i = 0; i < centiseconds; i++) {
                 [images addObject:image];
             }
         }
