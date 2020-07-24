@@ -27,24 +27,14 @@
 
 - (void)setUp {
     [super setUp];
-    self.channelPendingTagGroupStore = [UAPendingTagGroupStore historyWithDataStore:self.dataStore storeKey:UATagGroupsChannelStoreKey];
-    self.namedUserPendingTagGroupStore = [UAPendingTagGroupStore historyWithDataStore:self.dataStore storeKey:UATagGroupsNamedUserStoreKey];
-    
-    UATagGroupsRegistrar *tagGroupsChannelRegistrar = [UATagGroupsRegistrar tagGroupsRegistrarWithConfig:self.config
-                                                                                               dataStore:self.dataStore
-                                                                                    pendingTagGroupStore:self.channelPendingTagGroupStore];
+    self.channelPendingTagGroupStore = [UAPendingTagGroupStore channelHistoryWithDataStore:self.dataStore];
+    self.namedUserPendingTagGroupStore = [UAPendingTagGroupStore namedUserHistoryWithDataStore:self.dataStore];
     
     UALocaleManager *sharedLocaleManager = [UALocaleManager localeManagerWithDataStore:self.dataStore];
-    UAChannel *channel = [UAChannel channelWithDataStore:self.dataStore config:self.config tagGroupsRegistrar:tagGroupsChannelRegistrar localeManager:sharedLocaleManager];
-    
-    
-    UATagGroupsRegistrar *tagGroupsNamedUserRegistrar = [UATagGroupsRegistrar tagGroupsRegistrarWithConfig:self.config
-                                                                                                 dataStore:self.dataStore
-                                                                                      pendingTagGroupStore:self.namedUserPendingTagGroupStore];
+    UAChannel *channel = [UAChannel channelWithDataStore:self.dataStore config:self.config localeManager:sharedLocaleManager];
     UANamedUser *namedUser = [UANamedUser namedUserWithChannel:channel
                                                         config:self.config
-                                                     dataStore:self.dataStore
-                                            tagGroupsRegistrar:tagGroupsNamedUserRegistrar];
+                                                     dataStore:self.dataStore];
     
     self.tagGroupHistorian = [[UATagGroupHistorian alloc] initTagGroupHistorianWithChannel:channel namedUser:namedUser];
     
@@ -131,7 +121,7 @@
     NSData *encodedMutations = [NSKeyedArchiver archivedDataWithRootObject:@[oldMutation]];
     [self.dataStore setObject:encodedMutations forKey:@"UAPushTagGroupsMutations"];
 
-    UAPendingTagGroupStore *channelTagGroupsMutationHistory = [UAPendingTagGroupStore historyWithDataStore:self.dataStore storeKey:UATagGroupsChannelStoreKey];
+    UAPendingTagGroupStore *channelTagGroupsMutationHistory = [UAPendingTagGroupStore channelHistoryWithDataStore:self.dataStore];
 
     UATagGroupsMutation *oldAddRemoveFromHistory = [channelTagGroupsMutationHistory popPendingMutation];
     NSDictionary *expected = @{ @"add": @{ @"group1": @[@"tag1"] }, @"remove": @{ @"group2": @[@"tag2"] } };

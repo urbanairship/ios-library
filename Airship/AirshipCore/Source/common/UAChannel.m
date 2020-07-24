@@ -88,8 +88,10 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
 
 + (instancetype)channelWithDataStore:(UAPreferenceDataStore *)dataStore
                               config:(UARuntimeConfig *)config
-                  tagGroupsRegistrar:(UATagGroupsRegistrar *)tagGroupsRegistrar
                        localeManager:(UALocaleManager *)localeManager {
+    
+    UATagGroupsRegistrar *tagGroupsRegistrar = [UATagGroupsRegistrar channelTagGroupsRegistrarWithConfig:config
+                                                                                               dataStore:dataStore];
     return [[self alloc] initWithDataStore:dataStore
                                     config:config
                         notificationCenter:[NSNotificationCenter defaultCenter]

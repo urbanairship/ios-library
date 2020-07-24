@@ -22,7 +22,6 @@ extern NSString *const UAChannelCreationOnForeground;
 
 + (instancetype)channelWithDataStore:(UAPreferenceDataStore *)dataStore
                               config:(UARuntimeConfig *)config
-                  tagGroupsRegistrar:(UATagGroupsRegistrar *)tagGroupsRegistrar
                        localeManager:(UALocaleManager *)localeManager;
 
 + (instancetype)channelWithDataStore:(UAPreferenceDataStore *)dataStore

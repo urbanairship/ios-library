@@ -65,17 +65,26 @@ typedef void (^UATagGroupsMutator)(NSArray *, NSString *);
     return self;
 }
 
-+ (instancetype)tagGroupsRegistrarWithConfig:(UARuntimeConfig *)config
-                                   dataStore:(UAPreferenceDataStore *)dataStore
-                             pendingTagGroupStore:(UAPendingTagGroupStore *)pendingTagGroupStore {
-
++ (instancetype)channelTagGroupsRegistrarWithConfig:(UARuntimeConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
+    
+    UAPendingTagGroupStore *pendingTagGroupStore = [UAPendingTagGroupStore channelHistoryWithDataStore:dataStore];
     UATagGroupsAPIClient *client =  [UATagGroupsAPIClient channelClientWithConfig:config];
-    if ([pendingTagGroupStore.storeKey isEqualToString:UATagGroupsNamedUserStoreKey]) {
-        client = [UATagGroupsAPIClient namedUserClientWithConfig:config];
-    }
     
     return [[self alloc] initWithDataStore:dataStore
-                           pendingTagGroupStore:(UAPendingTagGroupStore *)pendingTagGroupStore
+                      pendingTagGroupStore:(UAPendingTagGroupStore *)pendingTagGroupStore
+                                 apiClient:client
+                            operationQueue:[[NSOperationQueue alloc] init]
+                               application:[UIApplication sharedApplication]];
+    
+}
+
++ (instancetype)namedUserTagGroupsRegistrarWithConfig:(UARuntimeConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
+    
+    UAPendingTagGroupStore *pendingTagGroupStore = [UAPendingTagGroupStore namedUserHistoryWithDataStore:dataStore];
+    UATagGroupsAPIClient *client =  [UATagGroupsAPIClient namedUserClientWithConfig:config];
+    
+    return [[self alloc] initWithDataStore:dataStore
+                      pendingTagGroupStore:(UAPendingTagGroupStore *)pendingTagGroupStore
                                  apiClient:client
                             operationQueue:[[NSOperationQueue alloc] init]
                                application:[UIApplication sharedApplication]];

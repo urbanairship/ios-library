@@ -24,15 +24,20 @@ extern NSString * const UAAirshipTagGroupSentNotification;
 @property (nonatomic, strong) UAPendingTagGroupStore *pendingTagGroupStore;
 
 /**
- * Factory method to create a tag groups registrar.
+ * Factory method to create a channel tag groups registrar.
  * @param config The Airship config.
  * @param dataStore The shared data store.
- * @param pendingTagGroupStore The pending tag group store.
  * @return A new tag groups registrar instance.
  */
-+ (instancetype)tagGroupsRegistrarWithConfig:(UARuntimeConfig *)config
-                                   dataStore:(UAPreferenceDataStore *)dataStore
-                             pendingTagGroupStore:(UAPendingTagGroupStore *)pendingTagGroupStore;
++ (instancetype)channelTagGroupsRegistrarWithConfig:(UARuntimeConfig *)config dataStore:(UAPreferenceDataStore *)dataStore;
+
+/**
+ * Factory method to create a user named tag groups registrar.
+ * @param config The Airship config.
+ * @param dataStore The shared data store.
+ * @return A new tag groups registrar instance.
+ */
++ (instancetype)namedUserTagGroupsRegistrarWithConfig:(UARuntimeConfig *)config dataStore:(UAPreferenceDataStore *)dataStore;
 
 /**
  * Factory method to create a tag groups registrar. Used for testing.

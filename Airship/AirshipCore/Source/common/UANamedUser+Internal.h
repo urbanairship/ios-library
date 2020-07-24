@@ -76,13 +76,11 @@ extern NSString *const UANamedUserLastUpdatedTokenKey;
  * @parm channel The UAChannel instance.
  * @param config The Airship config.
  * @param dataStore The shared preference data store.
- * @param tagGroupsRegistrar The tag groups registrar.
  * @return A named user instance.
  */
 + (instancetype)namedUserWithChannel:(UAChannel *)channel
                               config:(UARuntimeConfig *)config
-                           dataStore:(UAPreferenceDataStore *)dataStore
-                  tagGroupsRegistrar:(UATagGroupsRegistrar *)tagGroupsRegistrar;
+                           dataStore:(UAPreferenceDataStore *)dataStore;
 
 /**
  * Factory method to create a named user. For testing.

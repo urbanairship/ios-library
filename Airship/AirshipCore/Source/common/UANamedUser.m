@@ -68,8 +68,11 @@ NSString *const UANamedUserLastChannelIDKey = @"UANamedUserLastChannelID";
 
 + (instancetype) namedUserWithChannel:(UAChannel<UAExtendableChannelRegistration> *)channel
                                config:(UARuntimeConfig *)config
-                            dataStore:(UAPreferenceDataStore *)dataStore
-                   tagGroupsRegistrar:(nonnull UATagGroupsRegistrar *)tagGroupsRegistrar {
+                            dataStore:(UAPreferenceDataStore *)dataStore {
+    
+    UATagGroupsRegistrar *tagGroupsRegistrar = [UATagGroupsRegistrar namedUserTagGroupsRegistrarWithConfig:config
+                                                                                                 dataStore:dataStore];
+    
     return [[UANamedUser alloc] initWithChannel:channel
                                          config:config
                                       dataStore:dataStore

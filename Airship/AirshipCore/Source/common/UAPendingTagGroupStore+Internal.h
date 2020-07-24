@@ -20,9 +20,15 @@ NS_ASSUME_NONNULL_BEGIN
  * UAPendingTagGroupStore class factory method.
  *
  * @param dataStore A preference data store to use for persistence.
- * @param storeKey The store key to use for persistence.
  */
-+ (instancetype)historyWithDataStore:(UAPreferenceDataStore *)dataStore storeKey:(NSString *)storeKey;
++ (instancetype)channelHistoryWithDataStore:(UAPreferenceDataStore *)dataStore;
+
+/**
+ * UAPendingTagGroupStore class factory method.
+ *
+ * @param dataStore A preference data store to use for persistence.
+ */
++ (instancetype)namedUserHistoryWithDataStore:(UAPreferenceDataStore *)dataStore;
 
 /**
  * Returns all pending mutations, collapsing both channel and

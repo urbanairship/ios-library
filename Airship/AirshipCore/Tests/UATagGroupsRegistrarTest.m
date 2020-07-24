@@ -28,9 +28,9 @@
     
     self.namedUserOperationQueue = [[NSOperationQueue alloc] init];
 
-    self.channelPendingTagGroupStore = [UAPendingTagGroupStore historyWithDataStore:self.dataStore storeKey:UATagGroupsChannelStoreKey];
+    self.channelPendingTagGroupStore = [UAPendingTagGroupStore channelHistoryWithDataStore:self.dataStore];
     
-    self.namedPendingTagGroupStore = [UAPendingTagGroupStore historyWithDataStore:self.dataStore storeKey:UATagGroupsNamedUserStoreKey];
+    self.namedPendingTagGroupStore = [UAPendingTagGroupStore namedUserHistoryWithDataStore:self.dataStore];
 
     self.channelRegistrar = [UATagGroupsRegistrar tagGroupsRegistrarWithDataStore:self.dataStore
                                                            pendingTagGroupStore:self.channelPendingTagGroupStore

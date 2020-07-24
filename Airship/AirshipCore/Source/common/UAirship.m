@@ -122,14 +122,8 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         self.applicationMetrics = [UAApplicationMetrics applicationMetricsWithDataStore:self.dataStore];
         self.sharedLocaleManager = [UALocaleManager localeManagerWithDataStore:self.dataStore];
 
-        UAPendingTagGroupStore *pendingTagGroupChannelStore = [UAPendingTagGroupStore historyWithDataStore:self.dataStore storeKey:UATagGroupsChannelStoreKey];
-        UATagGroupsRegistrar *tagGroupsChannelRegistrar = [UATagGroupsRegistrar tagGroupsRegistrarWithConfig:self.config
-                                                                                                   dataStore:self.dataStore
-                                                                                        pendingTagGroupStore:pendingTagGroupChannelStore];
-
         self.sharedChannel = [UAChannel channelWithDataStore:self.dataStore
                                                       config:self.config
-                                          tagGroupsRegistrar:tagGroupsChannelRegistrar
                                                localeManager:self.sharedLocaleManager];
 
         [components addObject:self.sharedChannel];
@@ -148,14 +142,9 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         [components addObject:self.sharedPush];
 
         
-        UAPendingTagGroupStore *pendingTagGroupNamedUserStore = [UAPendingTagGroupStore historyWithDataStore:self.dataStore storeKey:UATagGroupsNamedUserStoreKey];
-        UATagGroupsRegistrar *tagGroupsNamedUserRegistrar = [UATagGroupsRegistrar tagGroupsRegistrarWithConfig:self.config
-                                                                                                     dataStore:self.dataStore
-                                                                                          pendingTagGroupStore:pendingTagGroupNamedUserStore];
         self.sharedNamedUser = [UANamedUser namedUserWithChannel:self.sharedChannel
                                                           config:self.config
-                                                       dataStore:self.dataStore
-                                              tagGroupsRegistrar:tagGroupsNamedUserRegistrar];
+                                                       dataStore:self.dataStore];
         [components addObject:self.sharedNamedUser];
 
         self.sharedRemoteDataManager = [UARemoteDataManager remoteDataManagerWithConfig:self.config

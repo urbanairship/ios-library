@@ -47,8 +47,12 @@
     return self;
 }
 
-+ (instancetype)historyWithDataStore:(UAPreferenceDataStore *)dataStore storeKey:(NSString *)storeKey {
-    return [[self alloc] initWithDataStore:dataStore storeKey:storeKey];
++ (instancetype)channelHistoryWithDataStore:(UAPreferenceDataStore *)dataStore {
+    return [[self alloc] initWithDataStore:dataStore storeKey:UATagGroupsChannelStoreKey];
+}
+
++ (instancetype)namedUserHistoryWithDataStore:(UAPreferenceDataStore *)dataStore {
+    return [[self alloc] initWithDataStore:dataStore storeKey:UATagGroupsNamedUserStoreKey];
 }
 
 - (NSString *)legacyKeyPrefix {
