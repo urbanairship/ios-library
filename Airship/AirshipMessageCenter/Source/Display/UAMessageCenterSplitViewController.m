@@ -102,6 +102,15 @@
     }
 }
 
+#if !defined(__IPHONE_14_0)
+- (void)setStyle:(UAMessageCenterStyle *)style {
+    [self setMessageCenterStyle:style];
+}
+- (UAMessageCenterStyle *)style {
+    return self.messageCenterStyle;
+}
+#endif
+
 - (void)applyStyle {
     if (self.messageCenterStyle.navigationBarColor) {
         self.listNav.navigationBar.barTintColor = self.messageCenterStyle.navigationBarColor;

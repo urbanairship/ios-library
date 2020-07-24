@@ -1,7 +1,17 @@
 
 # iOS Changelog
 
-[Migration Guides](https://github.com/urbanairship/ios-library/tree/master/Documentation/Migration)
+[Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
+
+## Version 13.5.1 - July 10, 2020
+Patch release for compatibility with Xcode 12, adding new messageCenterStyle
+properties to the default message center UI classes to avoid conflicting with
+UIKit changes in iOS 14. The original style properties will continue to be
+available when compiling with Xcode 11, but are not available in Xcode 12.
+Apps that wish to remain on 13.x while developing on iOS 14 are encouraged
+to upgrade.
+
+- Added new messageCenterStyle properties to the default message center UI
 
 ## Version 14.0.0-beta1 - July 9, 2020
 Early 14.0.0 beta that allows building SDK on Xcode 12.
@@ -131,7 +141,7 @@ feature modules. Most of the changes in this release reflect the restructuring t
 makes this possible.
 
 ### Changes
-- Modularized the SDK. For breaking API changes, see the [Migration Guide](https://github.com/urbanairship/ios-library/tree/master/Documentation/Migration).
+- Modularized the SDK. For breaking API changes, see the [Migration Guide](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration).
 - Replaced `AirshipKit` with `Airship`.
 - Replaced `AirshipLocationKit` with `AirshipLocation`. `AirshipLocation` is not compatible with with `Airship` framework installation (xcframeworks or Carthage), and must be used with the core SDK and explicit feature modules
 - Added new `Airship` podspec that replaces both `UrbanAirship-iOS-SDK` and `UrbanAirship-iOS-Location`. `Airship` podspec now contains subspecs for `Core`, `Automation`, `MessageCenter`, `Location`, and `ExtendedActions` to make it possible to only specify which Airship features to use.
