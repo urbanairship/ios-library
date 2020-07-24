@@ -385,7 +385,7 @@ NSString *const UAEventKey = @"event";
 
     // App info
     [headers setValue:[[[NSBundle mainBundle] infoDictionary] objectForKey:(id)kCFBundleIdentifierKey] forKey:@"X-UA-Package-Name"];
-    [headers setValue:[UAUtils bundleShortVersion] ?: @"" forKey:@"X-UA-Package-Version"];
+    [headers setValue:[UAUtils bundleVersionString] ?: @"" forKey:@"X-UA-Package-Version"];
 
     // Time zone
     

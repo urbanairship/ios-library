@@ -438,7 +438,7 @@ NSString * const kUAConnectionTypeWifi  = UAConnectionTypeWifi;
     return hash;
 }
 
-+ (NSString *)bundleShortVersion {
++ (NSString *)bundleVersionString {
     return [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
 }
 

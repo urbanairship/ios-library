@@ -289,13 +289,11 @@ extern NSString * const UAConnectionTypeWifi;
 
 
 /**
- * Returns bundle version.
+ * Returns the short bundle version string.
  *
- * The return value takes the form infoDictionnary: `CFBundleShortVersionString`
- *
- * @return An short bundle version string value.
+ * @return A short bundle version string value.
  */
-+ (NSString *)bundleShortVersion;
++ (NSString *)bundleVersionString;
 
 
 @end

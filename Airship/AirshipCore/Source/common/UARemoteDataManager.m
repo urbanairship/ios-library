@@ -320,7 +320,7 @@ completionHandler:(void(^)(BOOL success))completionHandler {
     [self.remoteDataAPIClient fetchRemoteData:^(NSUInteger statusCode, NSArray<UARemoteDataPayload *> *allRemoteDataFromCloud) {
         UA_STRONGIFY(self);
         if (statusCode == 200) {
-            NSString *currentAppVersion = [UAUtils bundleShortVersion];
+            NSString *currentAppVersion = [UAUtils bundleVersionString];
             [self.dataStore setObject:currentAppVersion forKey:UARemoteDataLastRefreshAppVersionKey];
 
             NSDictionary *metadata = [self createMetadata:[self.localeManager currentLocale]];
@@ -341,7 +341,7 @@ completionHandler:(void(^)(BOOL success))completionHandler {
 
 -(BOOL)isLastAppVersionCurrent {
     NSString *appVersionAtTimeOfLastRefresh = ([self.dataStore objectForKey:UARemoteDataLastRefreshAppVersionKey]);
-    NSString *currentAppVersion = [UAUtils bundleShortVersion];
+    NSString *currentAppVersion = [UAUtils bundleVersionString];
     if (currentAppVersion && ![appVersionAtTimeOfLastRefresh isEqualToString:currentAppVersion]) {
         return false;
     }
