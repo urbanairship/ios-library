@@ -8,6 +8,12 @@
 #import "UATagGroupsAPIClient+Internal.h"
 #import "UATagGroupsMutation+Internal.h"
 
+@interface UATagGroupsAPIClient()
+
+@property(nonatomic) NSString *path;
+
+@end
+
 @interface UATagGroupsAPIClientTest : UAAirshipBaseTest
 @property (nonatomic, strong) id mockSession;
 @property (nonatomic, strong) UATagGroupsAPIClient *channelClient;
@@ -24,6 +30,10 @@
     self.namedUserClient = [UATagGroupsAPIClient namedUserClientWithConfig:self.config session:self.mockSession];
 }
 
+- (void)testTagGroupApiClientPath {
+    XCTAssertEqualObjects(self.channelClient.path, @"/api/channels/tags/");
+    XCTAssertEqualObjects(self.namedUserClient.path, @"/api/named_users/tags/");
+}
 /**
  * Test tag groups retry for 5xx response codes.
  */

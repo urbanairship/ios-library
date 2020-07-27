@@ -29,31 +29,28 @@ NSString * const UATagGroupsNamedUserStoreKey = @"named_user_id";
     self = [super initWithConfig:config session:session];
     if (self) {
         self.storeKey = storeKey;
-        if ([self.storeKey isEqualToString:UATagGroupsNamedUserStoreKey]) {
-            self.path = kUANamedUserTagsPath;
-        } else {
-            self.path = kUAChannelTagGroupsPath;
-        }
     }
     return self;
 }
 
 + (instancetype)channelClientWithConfig:(UARuntimeConfig *)config {
-    UATagGroupsAPIClient *client = [self channelClientWithConfig:config session:[UARequestSession sessionWithConfig:config]];
-    return client;
+    return [self channelClientWithConfig:config session:[UARequestSession sessionWithConfig:config]];
 }
 
 + (instancetype)channelClientWithConfig:(UARuntimeConfig *)config session:(UARequestSession *)session {
-    return [[self alloc] initWithConfig:config session:session storeKey:UATagGroupsChannelStoreKey];
-}
-
-+ (instancetype)namedUserClientWithConfig:(UARuntimeConfig *)config {
-    UATagGroupsAPIClient *client = [self namedUserClientWithConfig:config session:[UARequestSession sessionWithConfig:config]];
+    UATagGroupsAPIClient *client = [[self alloc] initWithConfig:config session:session storeKey:UATagGroupsChannelStoreKey];
+    client.path = kUAChannelTagGroupsPath;
     return client;
 }
 
++ (instancetype)namedUserClientWithConfig:(UARuntimeConfig *)config {
+    return [self namedUserClientWithConfig:config session:[UARequestSession sessionWithConfig:config]];
+}
+
 + (instancetype)namedUserClientWithConfig:(UARuntimeConfig *)config session:(UARequestSession *)session {
-    return [[self alloc] initWithConfig:config session:session storeKey:UATagGroupsNamedUserStoreKey];
+    UATagGroupsAPIClient *client = [[self alloc] initWithConfig:config session:session storeKey:UATagGroupsNamedUserStoreKey];
+    client.path = kUANamedUserTagsPath;
+    return client;
 }
 
 - (void)updateTagGroupsForId:(NSString *)identifier
