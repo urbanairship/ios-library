@@ -67,6 +67,7 @@ typedef NS_ENUM(NSInteger, UAAuthorizationStatus) {
     UAAuthorizationStatusDenied,
     UAAuthorizationStatusAuthorized,
     UAAuthorizationStatusProvisional,
+    UAAuthorizationStatusEphemeral,
 };
 
 //---------------------------------------------------------------------------------------

@@ -193,6 +193,10 @@ NSString * const kUAConnectionTypeWifi  = UAConnectionTypeWifi;
     return authString;
 }
 
++ (NSString *)bundleShortVersionString {
+    return [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"] ?: @"";
+}
+
 + (NSDateFormatter *)ISODateFormatterUTC {
     NSDateFormatter* dateFormatter = [[NSDateFormatter alloc] init];
     NSLocale *enUSPOSIXLocale = [[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"];
@@ -436,10 +440,6 @@ NSString * const kUAConnectionTypeWifi  = UAConnectionTypeWifi;
     }
 
     return hash;
-}
-
-+ (NSString *)bundleVersionString {
-    return [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
 }
 
 @end
