@@ -3,7 +3,7 @@
 #import <Foundation/Foundation.h>
 #import "UAInAppMessageDisplayContent.h"
 
-@class UAInAppMessageAudience;
+@class UAScheduleAudience;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -70,13 +70,6 @@ extern NSString *const UAInAppMessageDisplayBehaviorImmediate;
 @property(nonatomic, copy, nullable) NSDictionary *actions;
 
 /**
- * The audience conditions for the message.
- *
- * Optional.
- */
-@property(nonatomic, strong, nullable) UAInAppMessageAudience *audience;
-
-/**
  * Display behavior. Defaults to UAInAppMessageDisplayBehaviorDefault.
  */
 @property(nonatomic, copy, nullable) NSString *displayBehavior;
@@ -134,11 +127,6 @@ extern NSString *const UAInAppMessageDisplayBehaviorImmediate;
  * Display actions.
  */
 @property(nonatomic, nullable, readonly) NSDictionary *actions;
-
-/**
- * The audience conditions for the message.
- */
-@property(nonatomic, nullable, readonly) UAInAppMessageAudience *audience;
 
 /**
  * Display behavior. Defaults to UAInAppMessageDisplayBehaviorDefault.

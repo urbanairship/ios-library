@@ -92,6 +92,15 @@
     self.unreadIndicator.layer.rasterizationScale = [[UIScreen mainScreen] scale];
 }
 
+#if !defined(__IPHONE_14_0)
+- (void)setStyle:(UAMessageCenterStyle *)style {
+    [self setMessageCenterStyle:style];
+}
+- (UAMessageCenterStyle *)style {
+    return self.messageCenterStyle;
+}
+#endif
+
 // Override to prevent the default implementation from covering up the unread indicator
  - (void)setSelected:(BOOL)selected animated:(BOOL)animated {
      if (selected) {

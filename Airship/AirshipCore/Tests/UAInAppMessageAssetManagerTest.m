@@ -2,10 +2,6 @@
 
 #import "UABaseTest.h"
 #import "UAInAppMessageAssetManager+Internal.h"
-#import "UASchedule+Internal.h"
-#import "UAScheduleInfo+Internal.h"
-#import "UAInAppMessageScheduleInfo+Internal.h"
-#import "UAInAppMessageAudience+Internal.h"
 #import "UAInAppMessageBannerDisplayContent.h"
 #import "UAInAppMessageAssetCache+Internal.h"
 #import "UARemoteDataManager+Internal.h"

@@ -1,26 +1,26 @@
 /* Copyright Airship and Contributors */
 
 #import "UABaseTest.h"
-#import "UAInAppMessageAudience+Internal.h"
+#import "UAScheduleAudience+Internal.h"
 #import "UAVersionMatcher.h"
-#import "UAInAppMessageTagSelector+Internal.h"
+#import "UATagSelector+Internal.h"
 #import "UAJSONPredicate.h"
 
-@interface UAInAppMessageAudienceTest : UABaseTest
+@interface UAScheduleAudienceTest : UABaseTest
 
 @end
 
-@implementation UAInAppMessageAudienceTest
+@implementation UAScheduleAudienceTest
 
 - (void)testBuilderBlock {
     //setup
     __block NSError *error;
-    UAInAppMessageAudience *originalAudience = [UAInAppMessageAudience audienceWithBuilderBlock:^(UAInAppMessageAudienceBuilder *builder) {
+    UAScheduleAudience *originalAudience = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder *builder) {
         builder.isNewUser = @YES;
         builder.notificationsOptIn = @YES;
         builder.locationOptIn = @NO;
         builder.languageTags = @[@"en-us"];
-        builder.tagSelector = [UAInAppMessageTagSelector selectorWithJSON:@{
+        builder.tagSelector = [UATagSelector selectorWithJSON:@{
                                 @"not" : @{
                                         @"tag":@"not-tag"
                                         }
@@ -29,11 +29,11 @@
         UAJSONMatcher *matcher = [UAJSONMatcher matcherWithValueMatcher:[UAJSONValueMatcher matcherWithVersionConstraint:@"[1.0, 2.0]"] scope:@[@"ios",@"version"]];
         builder.versionPredicate = [UAJSONPredicate predicateWithJSONMatcher:matcher];
         builder.testDevices = @[@"test-device"];
-        builder.missBehavior = UAInAppMessageAudienceMissBehaviorSkip;
+        builder.missBehavior = UAScheduleAudienceMissBehaviorSkip;
     }];
     
     // test
-    UAInAppMessageAudience *fromJSON = [UAInAppMessageAudience audienceWithJSON:[originalAudience toJSON] error:&error];
+    UAScheduleAudience *fromJSON = [UAScheduleAudience audienceWithJSON:[originalAudience toJSON] error:&error];
     
     // verify
     XCTAssertEqualObjects(originalAudience, fromJSON);
@@ -44,12 +44,12 @@
 - (void)testNotValidMissBehavior {
     //setup
     __block NSError *error;
-    UAInAppMessageAudience *originalAudience = [UAInAppMessageAudience audienceWithBuilderBlock:^(UAInAppMessageAudienceBuilder *builder) {
+    UAScheduleAudience *originalAudience = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder *builder) {
         builder.isNewUser = @YES;
         builder.notificationsOptIn = @YES;
         builder.locationOptIn = @NO;
         builder.languageTags = @[@"en-us"];
-        builder.tagSelector = [UAInAppMessageTagSelector selectorWithJSON:@{
+        builder.tagSelector = [UATagSelector selectorWithJSON:@{
                                                                             @"not" : @{
                                                                                     @"tag":@"not-tag"
                                                                                     }
@@ -58,11 +58,11 @@
         UAJSONMatcher *matcher = [UAJSONMatcher matcherWithValueMatcher:[UAJSONValueMatcher matcherWithVersionConstraint:@"[1.0, 2.0]"] scope:@[@"ios",@"version"]];
         builder.versionPredicate = [UAJSONPredicate predicateWithJSONMatcher:matcher];
         builder.testDevices = @[@"test-device"];
-        builder.missBehavior = UAInAppMessageAudienceMissBehaviorSkip;
+        builder.missBehavior = UAScheduleAudienceMissBehaviorSkip;
     }];
     
     // test
-    UAInAppMessageAudience *fromJSON = [UAInAppMessageAudience audienceWithJSON:[originalAudience toJSON] error:&error];
+    UAScheduleAudience *fromJSON = [UAScheduleAudience audienceWithJSON:[originalAudience toJSON] error:&error];
 
     // verify
     XCTAssertEqualObjects(originalAudience, fromJSON);
@@ -72,7 +72,7 @@
     // use not valid miss behavior
     NSMutableDictionary *audienceAsJSON = [[originalAudience toJSON] mutableCopy];
     audienceAsJSON[@"miss_behavior"] = @"bad behavior";
-    UAInAppMessageAudience *badBehaviorAudience = [UAInAppMessageAudience audienceWithJSON:audienceAsJSON error:&error];
+    UAScheduleAudience *badBehaviorAudience = [UAScheduleAudience audienceWithJSON:audienceAsJSON error:&error];
     
     // verify
     XCTAssertNil(badBehaviorAudience);
@@ -82,32 +82,32 @@
 - (void)testAudienceMissBehaviorJSONParsing {
     // setup
     __block NSError *error;
-    UAInAppMessageAudience *originalAudience = [UAInAppMessageAudience audienceWithBuilderBlock:^(UAInAppMessageAudienceBuilder *builder) {}];
+    UAScheduleAudience *originalAudience = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder *builder) {}];
     
     NSMutableDictionary *audienceAsJSON = [[originalAudience toJSON] mutableCopy];
     
     // test
     // default
-    UAInAppMessageAudience *defaultBehaviorAudience = [UAInAppMessageAudience audienceWithJSON:audienceAsJSON error:&error];
-    XCTAssertEqual(defaultBehaviorAudience.missBehavior, UAInAppMessageAudienceMissBehaviorPenalize);
+    UAScheduleAudience *defaultBehaviorAudience = [UAScheduleAudience audienceWithJSON:audienceAsJSON error:&error];
+    XCTAssertEqual(defaultBehaviorAudience.missBehavior, UAScheduleAudienceMissBehaviorPenalize);
     XCTAssertNil(error);
     
     // cancel
     audienceAsJSON[@"miss_behavior"] = @"cancel";
-    UAInAppMessageAudience *cancelBehaviorAudience = [UAInAppMessageAudience audienceWithJSON:audienceAsJSON error:&error];
-    XCTAssertEqual(cancelBehaviorAudience.missBehavior, UAInAppMessageAudienceMissBehaviorCancel);
+    UAScheduleAudience *cancelBehaviorAudience = [UAScheduleAudience audienceWithJSON:audienceAsJSON error:&error];
+    XCTAssertEqual(cancelBehaviorAudience.missBehavior, UAScheduleAudienceMissBehaviorCancel);
     XCTAssertNil(error);
 
     // cancel
     audienceAsJSON[@"miss_behavior"] = @"skip";
-    UAInAppMessageAudience *skipBehaviorAudience = [UAInAppMessageAudience audienceWithJSON:audienceAsJSON error:&error];
-    XCTAssertEqual(skipBehaviorAudience.missBehavior, UAInAppMessageAudienceMissBehaviorSkip);
+    UAScheduleAudience *skipBehaviorAudience = [UAScheduleAudience audienceWithJSON:audienceAsJSON error:&error];
+    XCTAssertEqual(skipBehaviorAudience.missBehavior, UAScheduleAudienceMissBehaviorSkip);
     XCTAssertNil(error);
 
     // cancel
     audienceAsJSON[@"miss_behavior"] = @"penalize";
-    UAInAppMessageAudience *penalizeBehaviorAudience = [UAInAppMessageAudience audienceWithJSON:audienceAsJSON error:&error];
-    XCTAssertEqual(penalizeBehaviorAudience.missBehavior, UAInAppMessageAudienceMissBehaviorPenalize);
+    UAScheduleAudience *penalizeBehaviorAudience = [UAScheduleAudience audienceWithJSON:audienceAsJSON error:&error];
+    XCTAssertEqual(penalizeBehaviorAudience.missBehavior, UAScheduleAudienceMissBehaviorPenalize);
     XCTAssertNil(error);
 }
 
@@ -128,7 +128,7 @@
 
 
 
-    UAInAppMessageAudience *audience = [UAInAppMessageAudience
+    UAScheduleAudience *audience = [UAScheduleAudience
                                         audienceWithJSON:json
                                         error:&error];
 

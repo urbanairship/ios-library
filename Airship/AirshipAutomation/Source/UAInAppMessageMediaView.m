@@ -4,7 +4,7 @@
 #import "AVFoundation/AVFoundation.h"
 #import "UAInAppMessageUtils+Internal.h"
 #import "UAAirshipAutomationCoreImport.h"
-
+#import "UIImage+UAAdditions+Internal.h"
 NS_ASSUME_NONNULL_BEGIN
 
 static CGFloat const DefaultVideoHeightPadding = 60;
@@ -36,13 +36,7 @@ static CGFloat const DefaultVideoHeightPadding = 60;
     self = [super init];
 
     if (self) {
-        if ([UAInAppMessageUtils isGifData:imageData]) {
-            [self setUpWebBasedMediaView:mediaInfo];
-            self.webView.contentMode = UIViewContentModeScaleAspectFit;
-            [self.webView setBackgroundColor:[UIColor clearColor]];
-            [self.webView.scrollView setBackgroundColor:[UIColor clearColor]];
-            [self.webView loadData:imageData MIMEType:@"image/gif" characterEncodingName:@"UTF-8" baseURL:[NSURL URLWithString:self.mediaInfo.url]];
-        } else if (imageData) {
+        if (imageData) {
             self.translatesAutoresizingMaskIntoConstraints = NO;
             self.webView = nil;
             self.mediaContainer = [[UIView alloc] init];
@@ -53,7 +47,8 @@ static CGFloat const DefaultVideoHeightPadding = 60;
 
             self.imageView = [[UIImageView alloc] initWithFrame:self.frame];
             [self.mediaContainer addSubview:self.imageView];
-            UIImage *image = [UIImage imageWithData:imageData];
+
+            UIImage *image = [UIImage fancyImageWithData:imageData];
             [self.imageView setImage:image];
             [UAViewUtils applyContainerConstraintsToContainer:self.mediaContainer containedView:self.imageView];
 

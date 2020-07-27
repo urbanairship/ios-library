@@ -4,7 +4,6 @@
 #import "UAAutomationStore+Internal.h"
 #import "UAScheduleEdits.h"
 #import "UASchedule.h"
-#import "UAScheduleInfo.h"
 #import "UATimerScheduler+Internal.h"
 #import "UAAirshipAutomationCoreImport.h"
 
@@ -67,14 +66,6 @@ typedef NS_ENUM(NSInteger, UAAutomationScheduleReadyResult) {
  * Automation engine delegate
  */
 @protocol UAAutomationEngineDelegate <NSObject>
-
-/**
- * Creates a schedule info from a builder.
- *
- * @param builder The schedule info builder.
- * @returns Schedule info.
- */
-- (UAScheduleInfo *)createScheduleInfoWithBuilder:(UAScheduleInfoBuilder *)builder;
 
 /**
  * Prepares the schedule.
@@ -198,25 +189,20 @@ typedef NS_ENUM(NSInteger, UAAutomationScheduleReadyResult) {
 - (void)resume;
 
 /**
- * Schedules a single schedule.
+ * Schedules an in-app automation.
  *
- * @param scheduleInfo The schedule information.
- * @param metadata The schedule metadata.
+ * @param schedule The schedule.
  * @param completionHandler A completion handler.
- * If the schedule info is invalid, the schedule will be nil.
  */
-- (void)schedule:(UAScheduleInfo *)scheduleInfo metadata:(nullable NSDictionary *)metadata completionHandler:(nullable void (^)(UASchedule * _Nullable))completionHandler;
+- (void)schedule:(UASchedule *)schedule completionHandler:(nullable void (^)(BOOL))completionHandler;
 
 /**
- * Schedules multiple schedules.
+ * Schedules multiple in-app automations.
  *
- * @param scheduleInfos The schedule information.
- * @param metadata Metadata corresponding to the provided schedule infos.
+ * @param schedules The schedules.
  * @param completionHandler A completion handler.
- * Note: If any schedule info is invalid, that schedule won't be scheduled and it will be [NSNull null] in the schedules
- *       returned in the completionHandler.
  */
-- (void)scheduleMultiple:(NSArray<UAScheduleInfo *> *)scheduleInfos metadata:(nullable NSDictionary *)metadata completionHandler:(void (^)(NSArray <UASchedule *> *))completionHandler;
+- (void)scheduleMultiple:(NSArray<UASchedule *> *)schedules completionHandler:(nullable void (^)(BOOL))completionHandler;
 
 /**
  * Called when one of the schedule conditions changes.
@@ -254,6 +240,8 @@ typedef NS_ENUM(NSInteger, UAAutomationScheduleReadyResult) {
  */
 - (void)cancelSchedulesWithGroup:(NSString *)group;
 
+- (void)cancelSchedulesWithType:(UAScheduleType)scheduleType
+              completionHandler:(nullable void (^)(NSArray<UASchedule *> *))completionHandler;
 /**
  * Cancels all schedules.
  */

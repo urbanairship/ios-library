@@ -2,6 +2,11 @@
 
 #import <Foundation/Foundation.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
+@class UAInAppMessage;
+@class UAScheduleAudience;
+
 /**
  * Builder class for UAScheduleEdits.
  */
@@ -33,15 +38,29 @@
 @property(nonatomic, strong, nullable) NSDate *end;
 
 /**
- * The schedule's edit grace period. The amount of time the schedule will still be editable after it has been expired
- * or finished executing.
- */
-@property(nonatomic, strong, nullable) NSNumber *editGracePeriod;
-
-/**
  * The schedule's interval. The amount of time to pause the schedule after executing.
  */
 @property(nonatomic, strong, nullable) NSNumber *interval;
+
+/**
+ * The schedule's metadata.
+ */
+@property(nonatomic, copy, nullable) NSDictionary *metadata;
+
+
+/**
+ * The schedule's edit grace period. The amount of time the schedule will still be editable after it has expired
+ * or finished executing.
+ */
+@property(nonatomic, strong) NSNumber *editGracePeriod;
+
+/**
+ * The audience conditions for the message.
+ *
+ * Optional.
+ */
+@property(nonatomic, strong, nullable) UAScheduleAudience *audience;
+
 
 @end
 
@@ -77,15 +96,66 @@
 @property(nonatomic, readonly, nullable) NSDate *end;
 
 /**
- * The schedule's edit grace period. The amount of time the schedule will still be editable after it has expired
- * or finished executing.
+ * The schedule's metadata.
  */
-@property(nonatomic, readonly, nullable) NSNumber *editGracePeriod;
+@property(nonatomic, readonly, nullable) NSDictionary *metadata;
 
 /**
  * The schedule's interval. The amount of time to pause the schedule after executing.
  */
 @property(nonatomic, readonly, nullable) NSNumber *interval;
 
+/**
+ * Schedule's data.
+ */
+@property(nonatomic, readonly, nullable) id data;
+
+/**
+ * Schedule data type.
+ */
+@property(nonatomic, readonly, nullable) NSNumber *type;
+
+/**
+ * The schedule's edit grace period. The amount of time the schedule will still be editable after it has expired
+ * or finished executing.
+ */
+@property(nonatomic, readonly, nullable) NSNumber *editGracePeriod;
+
+/**
+ * The audience conditions for the message.
+*/
+@property(nonatomic, readonly, nullable) UAScheduleAudience *audience;
+
+///---------------------------------------------------------------------------------------
+/// @name Schedule Edit Methods
+///---------------------------------------------------------------------------------------
+
+/**
+ * Creates edits that also updates the schedule's data as an in-app message.
+ * @param message The message.
+ * @param builderBlock The builder block.
+ * @return The schedule edits.
+ */
++ (instancetype)editsWithMessage:(UAInAppMessage *)message
+                    builderBlock:(void(^)(UAScheduleEditsBuilder *builder))builderBlock;
+
+/**
+ * Creates edits that also updates the schedule's data as actions.
+ * @param actions The actions.
+ * @param builderBlock The builder block.
+ * @return The schedule edits.
+ */
++ (instancetype)editsWithActions:(NSDictionary *)actions
+                    builderBlock:(void(^)(UAScheduleEditsBuilder *builder))builderBlock;
+
+/**
+ * Creates schedule edits.
+ * @param builderBlock The builder block.
+ * @return The schedule edits.
+ */
++ (instancetype)editsWithBuilderBlock:(void(^)(UAScheduleEditsBuilder *builder))builderBlock;
+
 
 @end
+
+NS_ASSUME_NONNULL_END

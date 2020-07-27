@@ -3,7 +3,6 @@
 #import "UABaseTest.h"
 #import "UAInAppMessageDefaultPrepareAssetsDelegate.h"
 #import "UAInAppMessage+Internal.h"
-#import "UAInAppMessageAudience+Internal.h"
 #import "UAInAppMessageBannerDisplayContent.h"
 
 @interface UAInAppMessageDefaultPrepareAssetsDelegateTest : UABaseTest
@@ -47,7 +46,7 @@
     self.messageWithBogusMediaURL = [self sampleMessageWithMediaURL:self.bogusMediaURL];
 
     self.mockAssets = [self mockForClass:[UAInAppMessageAssets class]];
-    
+
     self.delegate = [[UAInAppMessageDefaultPrepareAssetsDelegate alloc] init];
 }
 
@@ -67,7 +66,7 @@
         }
         return YES;
     }]];
-    
+
     // TEST
     XCTestExpectation *onScheduleComplete = [self expectationWithDescription:@"onSchedule completionHandler called"];
     [self.delegate onSchedule:self.messageWithMedia assets:self.mockAssets completionHandler:^(UAInAppMessagePrepareResult result) {
@@ -76,10 +75,10 @@
     }];
 
     [self waitForTestExpectations];
-    
+
     // VERIFY
     [self.mockAssets verify];
-    
+
     // verify asset was cached
     XCTAssertTrue([[NSFileManager defaultManager] fileExistsAtPath:[self.cachedAssetURL path]]);
     XCTAssertTrue([[NSFileManager defaultManager] contentsEqualAtPath:[self.cachedAssetURL path] andPath:[self.mediaURL path]]);
@@ -91,7 +90,7 @@
 - (void)testOnScheduleNoAssetsToFetch {
     // EXPECTATIONS
     [[self.mockAssets reject] getCacheURL:OCMOCK_ANY];
-    
+
     // TEST
     XCTestExpectation *onScheduleComplete = [self expectationWithDescription:@"onSchedule completionHandler called"];
     [self.delegate onSchedule:self.messageWithoutMedia assets:self.mockAssets completionHandler:^(UAInAppMessagePrepareResult result) {
@@ -100,10 +99,10 @@
     }];
 
     [self waitForTestExpectations];
-    
+
     // VERIFY
     [self.mockAssets verify];
-    
+
     // verify nothing was cached
     NSArray *listOfFiles = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:self.assetCachePath error:nil];
     XCTAssertEqual([listOfFiles count],0);
@@ -122,19 +121,19 @@
         }
         return YES;
     }]];
-    
+
     // TEST
     XCTestExpectation *onPrepareComplete = [self expectationWithDescription:@"onPrepare completionHandler called"];
     [self.delegate onPrepare:self.messageWithMedia assets:self.mockAssets completionHandler:^(UAInAppMessagePrepareResult result) {
         XCTAssertEqual(result, UAInAppMessagePrepareResultSuccess);
         [onPrepareComplete fulfill];
     }];
-    
+
     [self waitForTestExpectations];
-    
+
     // VERIFY
     [self.mockAssets verify];
-    
+
     // verify asset was cached
     XCTAssertTrue([[NSFileManager defaultManager] fileExistsAtPath:[self.cachedAssetURL path]]);
     XCTAssertTrue([[NSFileManager defaultManager] contentsEqualAtPath:[self.cachedAssetURL path] andPath:[self.mediaURL path]]);
@@ -146,14 +145,14 @@
 - (void)testOnPrepareNoAssetsToFetch {
     // EXPECTATIONS
     [[self.mockAssets reject] getCacheURL:OCMOCK_ANY];
-    
+
     // TEST
     XCTestExpectation *onPrepareComplete = [self expectationWithDescription:@"onPrepare completionHandler called"];
     [self.delegate onPrepare:self.messageWithoutMedia assets:self.mockAssets completionHandler:^(UAInAppMessagePrepareResult result) {
         XCTAssertEqual(result, UAInAppMessagePrepareResultSuccess);
         [onPrepareComplete fulfill];
     }];
-    
+
     [self waitForTestExpectations];
 
     // VERIFY
@@ -177,19 +176,19 @@
         }
         return YES;
     }]];
-    
+
     // TEST
     XCTestExpectation *onPrepareComplete = [self expectationWithDescription:@"onPrepare completionHandler called"];
     [self.delegate onPrepare:self.messageWithBogusMediaURL assets:self.mockAssets completionHandler:^(UAInAppMessagePrepareResult result) {
         XCTAssertEqual(result, UAInAppMessagePrepareResultCancel);
         [onPrepareComplete fulfill];
     }];
-    
+
     [self waitForTestExpectations];
 
     // VERIFY
     [self.mockAssets verify];
-    
+
     // verify nothing was cached
     NSArray *listOfFiles = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:self.assetCachePath error:nil];
     XCTAssertEqual([listOfFiles count],0);
@@ -212,7 +211,7 @@
     [[[mockDownloadTask stub] andDo:^(NSInvocation *invocation) {
         completionHandler([NSURL URLWithString:@"does-not-matter"], mockURLResponse, nil);
     }] resume];
-    
+
     // EXPECTATIONS
     [[[self.mockAssets expect] andReturn:self.cachedAssetURL] getCacheURL:[OCMArg checkWithBlock:^BOOL(id obj) {
         NSURL *assetURL = obj;
@@ -222,19 +221,19 @@
         }
         return YES;
     }]];
-    
+
     // TEST
     XCTestExpectation *onPrepareComplete = [self expectationWithDescription:@"onPrepare completionHandler called"];
     [self.delegate onPrepare:self.messageWithMedia assets:self.mockAssets completionHandler:^(UAInAppMessagePrepareResult result) {
         XCTAssertEqual(result, UAInAppMessagePrepareResultRetry);
         [onPrepareComplete fulfill];
     }];
-    
+
     [self waitForTestExpectations];
 
     // VERIFY
     [self.mockAssets verify];
-    
+
     // verify nothing was cached
     NSArray *listOfFiles = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:self.assetCachePath error:nil];
     XCTAssertEqual([listOfFiles count],0);
@@ -257,7 +256,7 @@
     [[[mockDownloadTask stub] andDo:^(NSInvocation *invocation) {
         completionHandler([NSURL URLWithString:@"does-not-matter"], mockURLResponse, nil);
     }] resume];
-    
+
     // EXPECTATIONS
     [[[self.mockAssets expect] andReturn:self.cachedAssetURL] getCacheURL:[OCMArg checkWithBlock:^BOOL(id obj) {
         NSURL *assetURL = obj;
@@ -267,19 +266,19 @@
         }
         return YES;
     }]];
-    
+
     // TEST
     XCTestExpectation *onPrepareComplete = [self expectationWithDescription:@"onPrepare completionHandler called"];
     [self.delegate onPrepare:self.messageWithMedia assets:self.mockAssets completionHandler:^(UAInAppMessagePrepareResult result) {
         XCTAssertEqual(result, UAInAppMessagePrepareResultCancel);
         [onPrepareComplete fulfill];
     }];
-    
+
     [self waitForTestExpectations];
 
     // VERIFY
     [self.mockAssets verify];
-    
+
     // verify nothing was cached
     NSArray *listOfFiles = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:self.assetCachePath error:nil];
     XCTAssertEqual([listOfFiles count],0);
@@ -309,7 +308,7 @@
     [[[mockFileManager stub] andReturnValue:OCMOCK_VALUE(YES)] fileExistsAtPath:OCMOCK_ANY];
     [[[mockFileManager stub] andCall:@selector(failToRemoveItemAtPath:error:)
                             onObject:self] removeItemAtPath:OCMOCK_ANY error:((NSError *__autoreleasing *)[OCMArg anyPointer])];
-    
+
     // EXPECTATIONS
     [[[self.mockAssets expect] andReturn:self.cachedAssetURL] getCacheURL:[OCMArg checkWithBlock:^BOOL(id obj) {
         NSURL *assetURL = obj;
@@ -319,19 +318,19 @@
         }
         return YES;
     }]];
-    
+
     // TEST
     XCTestExpectation *onPrepareComplete = [self expectationWithDescription:@"onPrepare completionHandler called"];
     [self.delegate onPrepare:self.messageWithMedia assets:self.mockAssets completionHandler:^(UAInAppMessagePrepareResult result) {
         XCTAssertEqual(result, UAInAppMessagePrepareResultCancel);
         [onPrepareComplete fulfill];
     }];
-    
+
     [self waitForTestExpectations];
 
     // VERIFY
     [self.mockAssets verify];
-    
+
     // verify nothing was cached
     [mockFileManager stopMocking];
     NSArray *listOfFiles = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:self.assetCachePath error:nil];
@@ -356,13 +355,13 @@
     [[[mockDownloadTask stub] andDo:^(NSInvocation *invocation) {
         completionHandler([NSURL URLWithString:@"does-not-matter"], mockURLResponse, nil);
     }] resume];
-    
+
     id mockFileManager = [self mockForClass:[NSFileManager class]];
     [[[mockFileManager stub] andReturn:mockFileManager] defaultManager];
     [[[mockFileManager stub] andReturnValue:OCMOCK_VALUE(NO)] fileExistsAtPath:OCMOCK_ANY];
     [[[mockFileManager stub] andCall:@selector(failToMoveItemAtPath:toPath:error:)
                             onObject:self] moveItemAtPath:OCMOCK_ANY toPath:OCMOCK_ANY error:((NSError *__autoreleasing *)[OCMArg anyPointer])];
-    
+
     // EXPECTATIONS
     [[[self.mockAssets expect] andReturn:self.cachedAssetURL] getCacheURL:[OCMArg checkWithBlock:^BOOL(id obj) {
         NSURL *assetURL = obj;
@@ -372,19 +371,19 @@
         }
         return YES;
     }]];
-    
+
     // TEST
     XCTestExpectation *onPrepareComplete = [self expectationWithDescription:@"onPrepare completionHandler called"];
     [self.delegate onPrepare:self.messageWithMedia assets:self.mockAssets completionHandler:^(UAInAppMessagePrepareResult result) {
         XCTAssertEqual(result, UAInAppMessagePrepareResultCancel);
         [onPrepareComplete fulfill];
     }];
-    
+
     [self waitForTestExpectations];
 
     // VERIFY
     [self.mockAssets verify];
-    
+
     // verify nothing was cached
     [mockFileManager stopMocking];
     NSArray *listOfFiles = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:self.assetCachePath error:nil];
@@ -399,7 +398,7 @@
     id mockURLSession = [self mockForClass:[NSURLSession class]];
     [[mockURLSession reject] sharedSession];
     [[mockURLSession reject] downloadTaskWithURL:OCMOCK_ANY completionHandler:OCMOCK_ANY];
-    
+
     // EXPECTATIONS
     [[[self.mockAssets expect] andReturn:nil] getCacheURL:[OCMArg checkWithBlock:^BOOL(id obj) {
         NSURL *assetURL = obj;
@@ -409,19 +408,19 @@
         }
         return YES;
     }]];
-    
+
     // TEST
     XCTestExpectation *onPrepareComplete = [self expectationWithDescription:@"onPrepare completionHandler called"];
     [self.delegate onPrepare:self.messageWithMedia assets:self.mockAssets completionHandler:^(UAInAppMessagePrepareResult result) {
         XCTAssertEqual(result, UAInAppMessagePrepareResultCancel);
         [onPrepareComplete fulfill];
     }];
-    
+
     [self waitForTestExpectations];
-    
+
     // VERIFY
     [self.mockAssets verify];
-    
+
     // verify nothing was cached
     NSArray *listOfFiles = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:self.assetCachePath error:nil];
     XCTAssertEqual([listOfFiles count],0);
@@ -435,38 +434,34 @@
     UAInAppMessage *message = [UAInAppMessage messageWithBuilderBlock:^(UAInAppMessageBuilder * _Nonnull builder) {
         builder.identifier = @"test identifier";
         builder.actions = @{@"cool": @"story"};
-        
+
         builder.displayContent = [UAInAppMessageBannerDisplayContent displayContentWithBuilderBlock:^(UAInAppMessageBannerDisplayContentBuilder *builder) {
             builder.placement = UAInAppMessageBannerPlacementTop;
             builder.buttonLayout = UAInAppMessageButtonLayoutTypeJoined;
-            
+
             UAInAppMessageTextInfo *heading = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
                 builder.text = @"Here is a headline!";
             }];
             builder.heading = heading;
-            
+
             if (mediaURL) {
                 UAInAppMessageMediaInfo *media = [UAInAppMessageMediaInfo mediaInfoWithURL:[mediaURL absoluteString] contentDescription:@"Fake image" type:UAInAppMessageMediaInfoTypeImage];
                 builder.media = media;
             }
-            
+
             UAInAppMessageTextInfo *buttonText = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
                 builder.text = @"Dismiss";
             }];
-            
+
             UAInAppMessageButtonInfo *button = [UAInAppMessageButtonInfo buttonInfoWithBuilderBlock:^(UAInAppMessageButtonInfoBuilder * _Nonnull builder) {
                 builder.label = buttonText;
                 builder.identifier = @"button";
             }];
-            
+
             builder.buttons = @[button];
         }];
-        
-        builder.audience = [UAInAppMessageAudience audienceWithBuilderBlock:^(UAInAppMessageAudienceBuilder * _Nonnull builder) {
-            builder.locationOptIn = @NO;
-        }];
     }];
-    
+
     return message;
 }
 

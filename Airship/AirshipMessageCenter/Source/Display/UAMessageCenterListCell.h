@@ -20,6 +20,15 @@
 @property (nonatomic, strong) UAMessageCenterStyle *messageCenterStyle;
 
 /**
+ * The style to apply to the cell.
+ *
+ * Note: This property is unavailable in iOS 14. Instead use `messageCenterStyle`.
+ */
+#if !defined(__IPHONE_14_0)
+@property(nonatomic, strong) UAMessageCenterStyle *style;
+#endif
+
+/**
  * Displays the message date.
  */
 @property (nonatomic, weak) IBOutlet UILabel *date;

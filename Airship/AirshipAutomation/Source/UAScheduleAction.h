@@ -40,4 +40,15 @@ extern NSString * const kUAScheduleActionDefaultRegistryName DEPRECATED_MSG_ATTR
 */
 extern NSString * const kUAScheduleActionDefaultRegistryAlias DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0. Please use UAScheduleActionDefaultRegistryAlias.");
 
+
+/**
+ * Represents the possible error conditions when deserializing schedules from JSON.
+ */
+typedef NS_ENUM(NSInteger, UAScheduleActionErrorCode) {
+    /**
+     * Indicates an error with the schedule JSON definition.
+     */
+    UAScheduleActionErrorCodeInvalidJSON,
+};
+
 @end

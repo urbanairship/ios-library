@@ -2,6 +2,7 @@
 
 #import "UAScheduleDataMigrator+Internal.h"
 #import "UAAirshipAutomationCoreImport.h"
+#import "UASchedule.h"
 
 // These constants are re-defined here to keep them isolated from
 // any changes in the IAM payload definitions.
@@ -16,31 +17,26 @@ NSString *const UAInAppMessageV2SourceRemoteDataValue = @"remote-data";
 
 @implementation UAScheduleDataMigrator
 
-+ (void)migrateScheduleData:(UAScheduleData *)scheduleData
-                 oldVersion:(NSUInteger)oldVersion
-                 newVersion:(NSUInteger)newVersion {
++ (void)migrateScheduleData:(UAScheduleData *)scheduleData {
 
-    for (NSUInteger version = oldVersion; version < newVersion; version++) {
-        switch (version) {
-            case 0:
-                [self perform0To1MigrationForScheduleData:scheduleData];
-                break;
-            case 1:
-                [self perform1To2MigrationForScheduleData:scheduleData];
-                break;
-            default:
-                UA_LERR(@"No migration available for version %lu to version %lu", (unsigned long)version, (unsigned long)(version + 1));
-                break;
-        }
+    int oldVersion = [scheduleData.dataVersion intValue];
+
+    switch (oldVersion) {
+        case 0:
+            [self perform0To1MigrationForScheduleData:scheduleData];
+        case 1:
+            [self perform1To2MigrationForScheduleData:scheduleData];
+        case 2:
+            [self perform2To3MigrationForScheduleData:scheduleData];
+            break;
     }
 
-    UA_LTRACE(@"Migrated schedule data from %ld to %ld", (unsigned long)oldVersion, (unsigned long)newVersion);
+    UA_LTRACE(@"Migrated schedule data from %ld to %ld", (unsigned long)oldVersion, (unsigned long)UAScheduleDataVersion);
+    scheduleData.dataVersion = @(UAScheduleDataVersion);
 }
 
 // migrate duration from milliseconds to seconds
 + (void)perform0To1MigrationForScheduleData:(UAScheduleData *)scheduleData {
-    scheduleData.dataVersion = @(1);
-
     // convert schedule data to a JSON dictionary
     NSMutableDictionary *json = [[NSJSONSerialization objectWithString:scheduleData.data] mutableCopy];
     NSString *displayType = json[UAInAppMessageV2DisplayTypeKey];
@@ -66,8 +62,6 @@ NSString *const UAInAppMessageV2SourceRemoteDataValue = @"remote-data";
 // some remote-data schedules had their source field set incorrectly to app-defined by faulty edit code
 // this code migrates all app-defined sources to remote-data
 + (void)perform1To2MigrationForScheduleData:(UAScheduleData *)scheduleData {
-    scheduleData.dataVersion = @(2);
-
     // convert schedule data to a JSON dictionary
     NSMutableDictionary *json = [[NSJSONSerialization objectWithString:scheduleData.data] mutableCopy];
     
@@ -83,6 +77,34 @@ NSString *const UAInAppMessageV2SourceRemoteDataValue = @"remote-data";
 
     // serialize the migrated data
     scheduleData.data = [NSJSONSerialization stringWithObject:json];
+}
+
+// move scheduleData.message.audience to scheduleData.audience
+// use group as schedule ID if not app-defined
+// set the schedule type
++ (void)perform2To3MigrationForScheduleData:(UAScheduleData *)scheduleData {
+    NSMutableDictionary *json = [[NSJSONSerialization objectWithString:scheduleData.data] mutableCopy];
+
+    if (json[@"display_type"] && json[@"display"]) {
+        scheduleData.type = @(UAScheduleTypeInAppMessage);
+
+        // Move audience to schedule
+        id audience = json[@"audience"];
+        if (audience) {
+            scheduleData.audience = [NSJSONSerialization stringWithObject:audience];
+            [json removeObjectForKey:@"audience"];
+        }
+
+        // If source is not app defined, set the group as the ID
+        NSString *source = json[@"source"];
+        if (source && ![source isEqualToString:@"app-defined"] && scheduleData.group) {
+            scheduleData.identifier = scheduleData.group;
+        }
+
+        scheduleData.data = [NSJSONSerialization stringWithObject:json];
+    } else {
+        scheduleData.type = @(UAScheduleTypeActions);
+    }
 }
 
 @end

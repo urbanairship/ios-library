@@ -1,23 +1,40 @@
 /* Copyright Airship and Contributors */
 
 #import "UAInAppRemoteDataClient+Internal.h"
-#import "UAInAppMessageScheduleInfo+Internal.h"
+#import "UASchedule+Internal.h"
 #import "UAInAppMessageManager.h"
-#import "UAInAppMessageAudienceChecks+Internal.h"
+#import "UAScheduleAudienceChecks+Internal.h"
 #import "UAInAppMessage+Internal.h"
-#import "UAInAppMessageScheduleEdits+Internal.h"
 #import "UAScheduleEdits+Internal.h"
 #import "NSObject+AnonymousKVO+Internal.h"
 #import "UAAirshipAutomationCoreImport.h"
+#import "NSDictionary+UAAdditions.h"
+
+static NSString * const UAInAppMessagesLastPayloadTimeStampKey = @"UAInAppRemoteDataClient.LastPayloadTimeStamp";
+static NSString * const UAInAppMessagesLastPayloadMetadataKey = @"UAInAppRemoteDataClient.LastPayloadMetadata";
+
+static NSString * const UAInAppMessagesScheduledNewUserCutoffTimeKey = @"UAInAppRemoteDataClient.ScheduledNewUserCutoffTime";
+static NSString * const UAInAppRemoteDataClientMetadataKey = @"com.urbanairship.iaa.REMOTE_DATA_METADATA";
+
+//static NSString * const UAInAppMessagesScheduledMessagesKey = @"UAInAppRemoteDataClient.ScheduledMessages";
+
+
 
 static NSString * const UAInAppMessages = @"in_app_messages";
 static NSString * const UAInAppMessagesCreatedJSONKey = @"created";
 static NSString * const UAInAppMessagesUpdatedJSONKey = @"last_updated";
-static NSString * const UAInAppMessagesLastPayloadTimeStampKey = @"UAInAppRemoteDataClient.LastPayloadTimeStamp";
-static NSString * const UAInAppMessagesLastPayloadMetadataKey = @"UAInAppRemoteDataClient.LastPayloadMetadata";
-static NSString * const UAInAppMessagesScheduledMessagesKey = @"UAInAppRemoteDataClient.ScheduledMessages";
-static NSString * const UAInAppMessagesScheduledNewUserCutoffTimeKey = @"UAInAppRemoteDataClient.ScheduledNewUserCutoffTime";
-static NSString * const UAInAppRemoteDataClientMetadataKey = @"com.urbanairship.iaa.REMOTE_DATA_METADATA";
+
+static NSString *const UAScheduleInfoPriorityKey = @"priority";
+static NSString *const UAScheduleInfoLimitKey = @"limit";
+static NSString *const UAScheduleInfoGroupKey = @"group";
+static NSString *const UAScheduleInfoEndKey = @"end";
+static NSString *const UAScheduleInfoStartKey = @"start";
+static NSString *const UAScheduleInfoTriggersKey = @"triggers";
+static NSString *const UAScheduleInfoDelayKey = @"delay";
+static NSString *const UAScheduleInfoIntervalKey = @"interval";
+static NSString *const UAScheduleInfoEditGracePeriodKey = @"edit_grace_period";
+static NSString *const UAScheduleInfoInAppMessageKey = @"message";
+static NSString *const UAScheduleInfoAudienceKey = @"audience";
 
 @interface UAInAppRemoteDataClient()
 @property(nonatomic, strong) UAInAppMessageManager *inAppMessageManager;
@@ -111,34 +128,9 @@ static NSString * const UAInAppRemoteDataClientMetadataKey = @"com.urbanairship.
     NSDate *lastPayloadTimestamp = [self.dataStore objectForKey:UAInAppMessagesLastPayloadTimeStampKey] ?: [NSDate distantPast];
     NSDictionary *lastPayloadMetadata = self.lastPayloadMetadata;
 
+    NSDictionary *scheduleMetadata = @{ UAInAppRemoteDataClientMetadataKey: payloadMetadata };
+
     BOOL isMetadataCurrent = [lastPayloadMetadata isEqualToDictionary:payloadMetadata];
-
-    // generate messageId to scheduleId map for existing schedules
-    NSMutableDictionary<NSString *, NSString *> *scheduleIDMap = [NSMutableDictionary dictionary];
-    dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
-
-    [self.delegate getAllSchedules:^(NSArray<UASchedule *> *schedules) {
-        for (UASchedule *schedule in schedules) {
-            UAInAppMessage *message = (UAInAppMessage *)((UAInAppMessageScheduleInfo *)schedule.info).message;
-            if (message.source != UAInAppMessageSourceRemoteData) {
-                continue;
-            }
-
-            NSString *messageID = message.identifier;
-            if (!messageID.length) {
-                continue;
-            }
-
-            scheduleIDMap[messageID] = schedule.identifier;
-        }
-        dispatch_semaphore_signal(semaphore);
-    }];
-    dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
-
-    // cached messageId to scheduleId map is no longer used
-    if ([self.dataStore dictionaryForKey:UAInAppMessagesScheduledMessagesKey]) {
-        [self.dataStore removeObjectForKey:UAInAppMessagesScheduledMessagesKey];
-    }
 
     // Skip if the payload timestamp is same as the last updated timestamp and metadata is current
     if ([payloadTimestamp isEqualToDate:lastPayloadTimestamp] && isMetadataCurrent) {
@@ -147,15 +139,15 @@ static NSString * const UAInAppRemoteDataClientMetadataKey = @"com.urbanairship.
 
     // Get the in-app message data, if it exists
     NSArray *messages;
-    NSDictionary *messageData = messagePayload.data;
-    if (!messageData || !messageData[UAInAppMessages] || ![messageData[UAInAppMessages] isKindOfClass:[NSArray class]]) {
+    if (!messagePayload.data || !messagePayload.data[UAInAppMessages] || ![messagePayload.data[UAInAppMessages] isKindOfClass:[NSArray class]]) {
         messages = @[];
     } else {
-        messages = messageData[UAInAppMessages];
+        messages = messagePayload.data[UAInAppMessages];
     }
 
-    NSMutableArray<NSString *> *messageIDs = [NSMutableArray array];
-    NSMutableArray<UAInAppMessageScheduleInfo *> *newSchedules = [NSMutableArray array];
+    NSArray<NSString *> *currentScheduleIDs = [self getCurrentRemoteScheduleIDs];
+    NSMutableArray<NSString *> *scheduleIDs = [NSMutableArray array];
+    NSMutableArray<UASchedule *> *newSchedules = [NSMutableArray array];
 
     // Dispatch group
     dispatch_group_t dispatchGroup = dispatch_group_create();
@@ -164,18 +156,19 @@ static NSString * const UAInAppRemoteDataClientMetadataKey = @"com.urbanairship.
     for (NSDictionary *message in messages) {
         NSDate *createdTimeStamp = [UAUtils parseISO8601DateFromString:message[UAInAppMessagesCreatedJSONKey]];
         NSDate *lastUpdatedTimeStamp = [UAUtils parseISO8601DateFromString:message[UAInAppMessagesUpdatedJSONKey]];
+
         if (!createdTimeStamp || !lastUpdatedTimeStamp) {
             UA_LERR(@"Failed to parse in-app message timestamps: %@", message);
             continue;
         }
 
-        NSString *messageID = [UAInAppMessageScheduleInfo parseMessageID:message];
-        if (!messageID.length) {
-            UA_LERR("Missing in-app message ID: %@", message);
+        NSString *scheduleID = [UAInAppRemoteDataClient parseScheduleID:message];
+        if (!scheduleID.length) {
+            UA_LERR("Missing ID: %@", message);
             continue;
         }
 
-        [messageIDs addObject:messageID];
+        [scheduleIDs addObject:scheduleID];
 
         // Ignore any messages that have not updated since the last payload
         if (isMetadataCurrent && [lastPayloadTimestamp compare:lastUpdatedTimeStamp] != NSOrderedAscending) {
@@ -184,77 +177,59 @@ static NSString * const UAInAppRemoteDataClientMetadataKey = @"com.urbanairship.
 
         if ([createdTimeStamp compare:lastPayloadTimestamp] == NSOrderedDescending) {
             // New in-app message
-            NSError *error;
-            UAInAppMessageScheduleInfo *scheduleInfo = [UAInAppMessageScheduleInfo scheduleInfoWithJSON:message
-                                                                                                 source:UAInAppMessageSourceRemoteData
-                                                                                                  error:&error];
-            if (!scheduleInfo || error) {
-                UA_LERR(@"Failed to parse in-app message: %@ - %@", message, error);
+            UASchedule *schedule = [UAInAppRemoteDataClient parseScheduleWithJSON:message
+                                                                         metadata:scheduleMetadata];
+            if (!schedule) {
+                UA_LERR(@"Failed to parse in-app automation: %@", message);
                 continue;
             }
 
-            if ([self checkSchedule:scheduleInfo createdTimeStamp:createdTimeStamp]) {
-                [newSchedules addObject:scheduleInfo];
+            if ([self checkSchedule:schedule createdTimeStamp:createdTimeStamp]) {
+                [newSchedules addObject:schedule];
             }
-        } else if (scheduleIDMap[messageID]) {
-            // Edit with new info and/or metadata
-            __block NSError *error;
 
-            UAInAppMessageScheduleEdits *edits = [UAInAppMessageScheduleEdits editsWithBuilderBlock:^(UAInAppMessageScheduleEditsBuilder *builder) {
-                [builder applyFromJson:message source:UAInAppMessageSourceRemoteData error:&error];
+        } else if ([currentScheduleIDs containsObject:scheduleID]) {
+            UAScheduleEdits *edits = [UAInAppRemoteDataClient parseScheduleEditsWithJSON:message
+                                                                                metadata:scheduleMetadata];
 
-                builder.metadata = [NSJSONSerialization stringWithObject:@{ UAInAppRemoteDataClientMetadataKey : payloadMetadata }];
-
-                /* Since we cancel a schedule by setting the end time and start time to the payload's last modified timestamp,
-                we need to reset them back if the edits do not update them*/
-                if (!builder.end) {
-                    builder.end = [NSDate distantFuture];
-                }
-
-                if (!builder.start) {
-                    builder.start = [NSDate distantPast];
-                }
-            }];
-
-            if (!edits || error) {
-                UA_LERR(@"Failed to parse in-app message edits: %@ - %@", message, error);
+            if (!edits) {
+                UA_LERR(@"Failed to parse in-app automation edits: %@", message);
                 continue;
             }
 
             dispatch_group_enter(dispatchGroup);
-            [self.delegate editScheduleWithID:scheduleIDMap[messageID]
-                                                   edits:edits
+            [self.delegate editScheduleWithID:scheduleID
+                                        edits:edits
                                        completionHandler:^(UASchedule *schedule) {
                 dispatch_group_leave(dispatchGroup);
                 if (schedule) {
-                    UA_LTRACE("Updated in-app message: %@", messageID);
+                    UA_LTRACE("Updated in-app automation: %@", scheduleID);
                 }
             }];
         }
     }
 
-
     // End any messages that are no longer in the listing
-    NSMutableArray<NSString *> *deletedMessageIDs = [NSMutableArray arrayWithArray:scheduleIDMap.allKeys];
-    [deletedMessageIDs removeObjectsInArray:messageIDs];
+    NSMutableArray<NSString *> *deletedScheduleIDS = [NSMutableArray arrayWithArray:currentScheduleIDs];
+    [deletedScheduleIDS removeObjectsInArray:scheduleIDs];
 
-    if (deletedMessageIDs.count) {
+    if (deletedScheduleIDS.count) {
         /* To cancel, set the end time to the payload's last modified timestamp. To avoid validation errors,
          The start must be equal to or before the end time. If the schedule comes back, we will reset the start and end time
          from the schedule edits. */
-        UAInAppMessageScheduleEdits *edits = [UAInAppMessageScheduleEdits editsWithBuilderBlock:^(UAInAppMessageScheduleEditsBuilder *builder) {
+        UAScheduleEdits *edits = [UAScheduleEdits editsWithBuilderBlock:^(UAScheduleEditsBuilder * _Nonnull builder) {
             builder.end = payloadTimestamp;
             builder.start = payloadTimestamp;
         }];
 
-        for (NSString *messageID in deletedMessageIDs) {
+        for (NSString *scheduleID in deletedScheduleIDS) {
             dispatch_group_enter(dispatchGroup);
-            [self.delegate editScheduleWithID:scheduleIDMap[messageID]
-                                                   edits:edits
-                                       completionHandler:^(UASchedule *schedule) {
+            [self.delegate editScheduleWithID:scheduleID
+                                        edits:edits
+                            completionHandler:^(UASchedule *schedule) {
                 dispatch_group_leave(dispatchGroup);
                 if (schedule) {
-                    UA_LTRACE("Ended in-app message: %@", messageID);
+                    UA_LTRACE("Ended in-app automation: %@", scheduleID);
                 }
             }];
         }
@@ -263,10 +238,7 @@ static NSString * const UAInAppRemoteDataClientMetadataKey = @"com.urbanairship.
     // New messages
     if (newSchedules.count) {
         dispatch_group_enter(dispatchGroup);
-
-        [self.delegate scheduleMessagesWithScheduleInfo:newSchedules
-                                               metadata:@{ UAInAppRemoteDataClientMetadataKey : payloadMetadata }
-                                      completionHandler:^(NSArray<UASchedule *> *schedules) {
+        [self.delegate scheduleMultiple:newSchedules completionHandler:^(BOOL result) {
             dispatch_group_leave(dispatchGroup);
         }];
     }
@@ -289,10 +261,10 @@ static NSString * const UAInAppRemoteDataClientMetadataKey = @"com.urbanairship.
     [self didChangeValueForKey:@"lastPayloadMetadata"];
 }
 
-- (BOOL)checkSchedule:(UAInAppMessageScheduleInfo *)scheduleInfo createdTimeStamp:(NSDate *)createdTimeStamp {
-    UAInAppMessageAudience *audience = scheduleInfo.message.audience;
+- (BOOL)checkSchedule:(UASchedule *)schedule createdTimeStamp:(NSDate *)createdTimeStamp {
+    UAScheduleAudience *audience = schedule.audience;
     BOOL isNewUser = ([createdTimeStamp compare:self.scheduleNewUserCutOffTime] == NSOrderedAscending);
-    return [UAInAppMessageAudienceChecks checkScheduleAudienceConditions:audience isNewUser:isNewUser];
+    return [UAScheduleAudienceChecks checkScheduleAudienceConditions:audience isNewUser:isNewUser];
 }
 
 - (NSDate *)scheduleNewUserCutOffTime {
@@ -303,17 +275,36 @@ static NSString * const UAInAppRemoteDataClientMetadataKey = @"com.urbanairship.
     [self.dataStore setObject:time forKey:UAInAppMessagesScheduledNewUserCutoffTimeKey];
 }
 
+- (NSArray<NSString *> *)getCurrentRemoteScheduleIDs {
+    NSMutableArray *currentScheduleIDs = [NSMutableArray array];
+
+    dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
+    UA_WEAKIFY(self)
+    [self.delegate getAllSchedules:^(NSArray<UASchedule *> *schedules) {
+        UA_STRONGIFY(self)
+        for (UASchedule *schedule in schedules) {
+            if ([self isRemoteSchedule:schedule]) {
+                [currentScheduleIDs addObject:schedule.identifier];
+            }
+        }
+        dispatch_semaphore_signal(semaphore);
+    }];
+
+    dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
+
+    return currentScheduleIDs;
+}
+
+
 - (BOOL)isRemoteSchedule:(UASchedule *)schedule {
     if (schedule.metadata[UAInAppRemoteDataClientMetadataKey]) {
         return YES;
     }
 
     // Legacy way of determining a remote-data schedule
-    if ([schedule.info isKindOfClass:[UAInAppMessageScheduleInfo class]]) {
-        UAInAppMessageScheduleInfo *info = (UAInAppMessageScheduleInfo *)schedule.info;
-        if (info.message.source == UAInAppMessageSourceRemoteData) {
-            return YES;
-        }
+    if (schedule.type == UAScheduleTypeInAppMessage) {
+        UAInAppMessage *message = (UAInAppMessage *)schedule.data;
+        return message.source == UAInAppMessageSourceRemoteData;
     }
 
     return NO;
@@ -325,6 +316,148 @@ static NSString * const UAInAppRemoteDataClientMetadataKey = @"com.urbanairship.
     }
 
     return [self.remoteDataProvider isMetadataCurrent:schedule.metadata[UAInAppRemoteDataClientMetadataKey]];
+}
+
++ (UASchedule *)parseScheduleWithJSON:(id)json
+                             metadata:(NSDictionary *)metadata {
+    NSDictionary *data = [json dictionaryForKey:UAScheduleInfoInAppMessageKey defaultValue:nil];
+    if (!data) {
+        UA_LERR(@"Invalid message: %@", json);
+        return nil;
+    }
+
+    NSError *messageError;
+    UAInAppMessage *message = [UAInAppMessage messageWithJSON:data
+                                                defaultSource:UAInAppMessageSourceRemoteData
+                                                        error:&messageError];
+
+    if (!message || messageError) {
+        UA_LERR(@"Invalid message: %@ - %@", json, messageError);
+        return nil;
+    }
+
+    // Triggers
+    NSMutableArray *triggers = [NSMutableArray array];
+    for (id triggerJSON in [json arrayForKey:UAScheduleInfoTriggersKey defaultValue:nil]) {
+        NSError *triggerError;
+        UAScheduleTrigger *trigger = [UAScheduleTrigger triggerWithJSON:triggerJSON error:&triggerError];
+        if (triggerError || !trigger) {
+            UA_LERR(@"Invalid schedule: %@ - %@", json, triggerError);
+            return nil;
+        }
+        [triggers addObject:trigger];
+    }
+
+    // Delay
+    UAScheduleDelay *delay = nil;
+    if (json[UAScheduleInfoDelayKey]) {
+        NSError *delayError;
+        UAScheduleDelay *delay = [UAScheduleDelay delayWithJSON:json[UAScheduleInfoDelayKey] error:&delayError];
+        if (delayError || !delay) {
+            UA_LERR(@"Invalid schedule: %@ - %@", json, delayError);
+            return nil;
+        }
+    }
+
+    UAScheduleAudience *audience;
+    id audienceDict = [data dictionaryForKey:UAScheduleInfoAudienceKey defaultValue:nil];
+    if (audienceDict) {
+        NSError *audienceError;
+        audience = [UAScheduleAudience audienceWithJSON:audienceDict error:&audienceError];
+
+        if (audienceError) {
+            UA_LERR(@"Invalid audience: %@ - %@", json, audienceError);
+            return nil;
+        }
+    }
+
+    return [UASchedule scheduleWithMessage:message
+                              builderBlock:^(UAScheduleBuilder *builder) {
+
+        builder.identifier = [UAInAppRemoteDataClient parseScheduleID:json];
+        builder.metadata = metadata;
+        builder.triggers = triggers;
+        builder.delay = delay;
+        builder.group = [json stringForKey:UAScheduleInfoGroupKey defaultValue:nil];
+        builder.limit = [[json numberForKey:UAScheduleInfoLimitKey defaultValue:@(1)] unsignedIntegerValue];
+        builder.priority = [[json numberForKey:UAScheduleInfoPriorityKey defaultValue:nil] integerValue];
+        builder.editGracePeriod = [[json numberForKey:UAScheduleInfoEditGracePeriodKey defaultValue:nil] doubleValue];
+        builder.interval = [[json numberForKey:UAScheduleInfoIntervalKey defaultValue:nil] doubleValue];
+        builder.audience = audience;
+
+        if (json[UAScheduleInfoStartKey]) {
+            builder.start = [UAUtils parseISO8601DateFromString:[json stringForKey:UAScheduleInfoStartKey defaultValue:@""]];
+        }
+
+        if (json[UAScheduleInfoEndKey]) {
+            builder.end = [UAUtils parseISO8601DateFromString:[json stringForKey:UAScheduleInfoEndKey defaultValue:@""]];
+        }
+    }];
+}
+
++ (NSString *)parseScheduleID:(id)json {
+    id messagePayload = json[UAScheduleInfoInAppMessageKey];
+    if (!messagePayload) {
+        return nil;
+    }
+
+    return messagePayload[UAInAppMessageIDKey];
+}
+
++ (UAScheduleEdits *)parseScheduleEditsWithJSON:(id)json metadata:(NSDictionary *)metadata {
+    NSDictionary *data = [json dictionaryForKey:UAScheduleInfoInAppMessageKey defaultValue:nil];
+    if (!data) {
+        UA_LERR(@"Invalid message: %@", json);
+        return nil;
+    }
+
+    NSError *messageError;
+    UAInAppMessage *message = [UAInAppMessage messageWithJSON:data
+                                                defaultSource:UAInAppMessageSourceRemoteData
+                                                        error:&messageError];
+    
+    if (!message || messageError) {
+        UA_LERR(@"Invalid message: %@ - %@", json, messageError);
+        return nil;
+    }
+
+    UAScheduleAudience *audience;
+    id audienceDict = [data dictionaryForKey:UAScheduleInfoAudienceKey defaultValue:nil];
+    if (audienceDict) {
+        NSError *audienceError;
+        audience = [UAScheduleAudience audienceWithJSON:audienceDict error:&audienceError];
+
+        if (audienceError) {
+            UA_LERR(@"Invalid audience: %@ - %@", json, audienceError);
+            return nil;
+        }
+    }
+
+    return [UAScheduleEdits editsWithMessage:message builderBlock:^(UAScheduleEditsBuilder * _Nonnull builder) {
+        builder.metadata = metadata;
+        builder.limit = [json numberForKey:UAScheduleInfoLimitKey defaultValue:nil];
+        builder.priority = [json numberForKey:UAScheduleInfoPriorityKey defaultValue:nil];
+        builder.editGracePeriod = [json numberForKey:UAScheduleInfoEditGracePeriodKey defaultValue:nil];
+        builder.interval = [json numberForKey:UAScheduleInfoIntervalKey defaultValue:nil];
+        builder.audience = audience;
+
+        /*
+         * Since we cancel a schedule by setting the end time and start time to the payload's last modified timestamp,
+         * we need to reset them back if the edits do not update them.
+         */
+
+        if (json[UAScheduleInfoStartKey]) {
+            builder.start = [UAUtils parseISO8601DateFromString:[json stringForKey:UAScheduleInfoStartKey defaultValue:@""]];
+        } else {
+            builder.start = [NSDate distantPast];
+        }
+
+        if (json[UAScheduleInfoEndKey]) {
+            builder.end = [UAUtils parseISO8601DateFromString:[json stringForKey:UAScheduleInfoEndKey defaultValue:@""]];
+        } else {
+            builder.end = [NSDate distantFuture];
+        }
+    }];
 }
 
 @end
