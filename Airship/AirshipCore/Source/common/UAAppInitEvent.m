@@ -36,7 +36,7 @@
     [data setValue:[[UIDevice currentDevice] systemVersion] forKey:@"os_version"];
     [data setValue:[UAirshipVersion get] forKey:@"lib_version"];
 
-    NSString *packageVersion = [UAUtils bundleShortVersionString] ?: @"";
+    NSString *packageVersion = [UAUtils bundleVersionString] ?: @"";
     [data setValue:packageVersion forKey:@"package_version"];
 
     // Foreground

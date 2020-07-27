@@ -60,7 +60,7 @@ NSString *const UAApplicationMetricsLastAppVersion = @"UAApplicationMetricsLastA
 }
 
 - (NSString *)currentAppVersion {
-    return [UAUtils bundleShortVersionString];
+    return [UAUtils bundleVersionString];
 }
 
 - (NSString *)lastAppVersion {
