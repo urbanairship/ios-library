@@ -43,10 +43,8 @@
 - (void)setUp {
     self.dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:@"test"];
     self.config = [[UARuntimeConfig alloc] initWithConfig:[UAConfig defaultConfig]];
-    UAPendingTagGroupStore *pendingTagGroupStore = [[UAPendingTagGroupStore alloc] init];
-    UATagGroupsRegistrar *tagGroupsRegistar = [UATagGroupsRegistrar tagGroupsRegistrarWithConfig:self.config dataStore:self.dataStore pendingTagGroupStore:pendingTagGroupStore];
     self.localeManager = [UALocaleManager localeManagerWithDataStore:self.dataStore];
-    self.channel = [UAChannel channelWithDataStore:self.dataStore config:self.config tagGroupsRegistrar:tagGroupsRegistar localeManager:self.localeManager];
+    self.channel = [UAChannel channelWithDataStore:self.dataStore config:self.config localeManager:self.localeManager];
     self.analytics = [UAAnalytics analyticsWithConfig:self.config dataStore:self.dataStore channel:self.channel localeManager:self.localeManager];
     id registration = OCMClassMock([UAAPNSRegistration class]);
     UAPush *push = [UAPush pushWithConfig:self.config dataStore:self.dataStore channel:self.channel analytics:self.analytics appStateTracker:[UAAppStateTracker shared] notificationCenter:[NSNotificationCenter defaultCenter] pushRegistration:registration application:[UIApplication sharedApplication] dispatcher:[UADispatcher mainDispatcher]];
@@ -119,9 +117,7 @@
 }
 
 - (void)testInitWithDataStore {
-    UAPendingTagGroupStore *pendingTagGroupStore = [[UAPendingTagGroupStore alloc] init];
-    UATagGroupsRegistrar *tagGroupsRegistar = [UATagGroupsRegistrar tagGroupsRegistrarWithConfig:self.config dataStore:self.dataStore pendingTagGroupStore:pendingTagGroupStore];
-    UAChannel *channel = [UAChannel channelWithDataStore:self.dataStore config:self.config tagGroupsRegistrar:tagGroupsRegistar localeManager:self.localeManager];
+    UAChannel *channel = [UAChannel channelWithDataStore:self.dataStore config:self.config localeManager:self.localeManager];
     id channelMock = OCMPartialMock(channel);
     [[channelMock expect] addChannelExtenderBlock:OCMOCK_ANY];
     
