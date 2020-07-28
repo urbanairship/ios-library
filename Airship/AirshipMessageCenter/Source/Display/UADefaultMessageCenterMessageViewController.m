@@ -148,6 +148,9 @@ typedef enum MessageState {
     }
     
     self.isVisible = NO;
+    
+    //Add an observer when the user changes the preferred content size setting.
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(contentSizeDidChange) name:UIContentSizeCategoryDidChangeNotification object:nil];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -350,6 +353,11 @@ typedef enum MessageState {
         [requestObj setValue:auth forHTTPHeaderField:@"Authorization"];
         [self.webView loadRequest:requestObj];
     } dispatcher:[UADispatcher mainDispatcher]];
+}
+
+- (void) contentSizeDidChange {
+    // Reload the web view when the user changes the preferred content size setting.
+    [self.webView reload];
 }
 
 #pragma mark WKNavigationDelegate
