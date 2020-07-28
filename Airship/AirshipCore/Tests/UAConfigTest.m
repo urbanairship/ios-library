@@ -339,7 +339,7 @@
     XCTAssertFalse(config.clearUserOnAppRestore);
     XCTAssertEqual(config.whitelist.count, 0);
     XCTAssertFalse(config.clearNamedUserOnAppRestore);
-    XCTAssertTrue(config.channelCaptureEnabled);
+    XCTAssertFalse(config.channelCaptureEnabled);
     XCTAssertEqual(config.customConfig.count, 0);
     XCTAssertFalse(config.channelCreationDelayEnabled);
     XCTAssertFalse(config.extendedBroadcastsEnabled);
