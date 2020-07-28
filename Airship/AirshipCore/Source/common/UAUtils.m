@@ -194,7 +194,7 @@ NSString * const kUAConnectionTypeWifi  = UAConnectionTypeWifi;
 }
 
 + (NSString *)bundleShortVersionString {
-    return [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"] ?: @"";
+    return [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
 }
 
 + (NSDateFormatter *)ISODateFormatterUTC {

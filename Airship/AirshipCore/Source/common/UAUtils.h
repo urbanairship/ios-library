@@ -110,7 +110,7 @@ extern NSString * const UAConnectionTypeWifi;
  *
  * @return A short bundle version string value.
  */
-+ (NSString *)bundleShortVersionString;
++ (nullable NSString *)bundleShortVersionString;
 
 
 ///---------------------------------------------------------------------------------------
