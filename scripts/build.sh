@@ -146,6 +146,13 @@ then
   -framework "$TEMP_DIR/xcarchive/Airship/AirshipLocation/mac.xcarchive/Products/Library/Frameworks/AirshipLocation.framework" \
   -output "$STAGING/AirshipLocation.xcframework"
 
+  # Package AirshipAutomation
+  xcodebuild -create-xcframework \
+  -framework "$TEMP_DIR/xcarchive/Airship/AirshipAutomation/iphoneos.xcarchive/Products/Library/Frameworks/AirshipAutomation.framework" \
+  -framework "$TEMP_DIR/xcarchive/Airship/AirshipAutomation/iphonesimulator.xcarchive/Products/Library/Frameworks/AirshipAutomation.framework" \
+  -framework "$TEMP_DIR/xcarchive/Airship/AirshipAutomation/mac.xcarchive/Products/Library/Frameworks/AirshipAutomation.framework" \
+  -output "$STAGING/AirshipAutomation.xcframework"
+
   # Package AirshipMessageCenter
   xcodebuild -create-xcframework \
   -framework "$TEMP_DIR/xcarchive/Airship/AirshipMessageCenter/iphoneos.xcarchive/Products/Library/Frameworks/AirshipMessageCenter.framework" \

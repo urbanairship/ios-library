@@ -16,8 +16,8 @@ import Airship
 class AudienceDetailViewController: UAStaticTableViewController {
     public static let segueID = "AudienceSegue"
 
-    /* The UAInAppMessageAudience to be displayed. */
-    public var audience : UAInAppMessageAudience?
+    /* The UAScheduleAudience to be displayed. */
+    public var audience : UAScheduleAudience?
 
     @IBOutlet private weak var notificationsOptInCell: UITableViewCell!
     @IBOutlet private weak var notificationsOptInTitle: UILabel!

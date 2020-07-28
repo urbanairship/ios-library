@@ -17,8 +17,7 @@
 #import "UARetriable+Internal.h"
 #import "UARetriablePipeline+Internal.h"
 #import "UAAirshipAutomationCoreImport.h"
-#import "UAScheduleTriggerContext+Internal.h"
-
+#import "UAAutomationEngine+Internal.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -503,7 +502,3 @@ NSString *const UAInAppMessageDisplayCoordinatorIsReadyKey = @"isReady";
 @end
 
 NS_ASSUME_NONNULL_END
-
-
-
-

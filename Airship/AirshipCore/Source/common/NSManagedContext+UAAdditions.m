@@ -19,7 +19,7 @@ NSString *const UAManagedContextStoreDirectory = @"com.urbanairship.no-backup";
 }
 
 - (void)addPersistentSqlStore:(NSString *)storeName
-            completionHandler:(nonnull void(^)(BOOL, NSError *))completionHandler {
+            completionHandler:(nonnull void(^)(NSPersistentStore *, NSError *))completionHandler {
 
     [self performBlock:^{
 
@@ -46,14 +46,14 @@ NSString *const UAManagedContextStoreDirectory = @"com.urbanairship.no-backup";
                 storeURL = [cachesStoreDirectoryURL URLByAppendingPathComponent:storeName];
                 [UAUtils addSkipBackupAttributeToItemAtURL:cachesStoreDirectoryURL];
             } else {
-                completionHandler(NO, error);
+                completionHandler(nil, error);
                 return;
             }
         }
 
         for (NSPersistentStore *store in self.persistentStoreCoordinator.persistentStores) {
             if ([store.URL isEqual:storeURL] && [store.type isEqualToString:NSSQLiteStoreType]) {
-                completionHandler(YES, nil);
+                completionHandler(store, nil);
                 return;
             }
         }
@@ -68,12 +68,12 @@ NSString *const UAManagedContextStoreDirectory = @"com.urbanairship.no-backup";
                                                                                         options:options
                                                                                           error:&error];
 
-        completionHandler(result != nil, error);
+        completionHandler(result, error);
     }];
 }
 
 - (void)addPersistentInMemoryStore:(NSString *)storeName
-                 completionHandler:(nonnull void(^)(BOOL, NSError *))completionHandler {
+                 completionHandler:(nonnull void(^)(NSPersistentStore *, NSError *))completionHandler {
 
     NSDictionary *options = @{ NSMigratePersistentStoresAutomaticallyOption : @YES,
                                NSInferMappingModelAutomaticallyOption : @YES };
@@ -84,7 +84,7 @@ NSString *const UAManagedContextStoreDirectory = @"com.urbanairship.no-backup";
                                                                                     options:options
                                                                                       error:&error];
 
-    completionHandler(result != nil, error);
+    completionHandler(result, error);
 }
 
 - (void)safePerformBlock:(void (^)(BOOL))block {

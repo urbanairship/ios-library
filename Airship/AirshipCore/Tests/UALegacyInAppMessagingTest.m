@@ -2,18 +2,15 @@
 
 #import "UAAirshipBaseTest.h"
 #import "UALegacyInAppMessaging+Internal.h"
-#import "UALegacyInAppMessage.h"
-#import "UAInAppMessageManager.h"
 #import "UAirship+Internal.h"
 #import "UAPreferenceDataStore+Internal.h"
-#import "UAPush.h"
 #import "UAAnalytics.h"
 #import "UAActionRegistry.h"
 #import "UAInAppMessageBannerDisplayContent.h"
-#import "UAScheduleInfo+Internal.h"
 #import "UASchedule+Internal.h"
 #import "UAInAppMessage+Internal.h"
 #import "UAInAppAutomation.h"
+#import "UALegacyInAppMessage.h"
 
 @interface UALegacyInAppMessagingTest : UAAirshipBaseTest
 @property(nonatomic, strong) id mockAnalytics;
@@ -109,13 +106,14 @@
 
     [[self.mockAnalytics expect] addEvent:[OCMArg any]];
 
+
+
     [[[self.mockInAppAutomation expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:3];
-        void (^completionHandler)(NSArray<UASchedule *>* _Nullable) = (__bridge void(^)(NSArray<UASchedule *>* _Nullable))arg;
-        UASchedule *dummySchedule = [UASchedule scheduleWithIdentifier:@"foo" info:[UAScheduleInfo new] metadata:@{}];
-        completionHandler(@[dummySchedule]);
-    }] cancelMessagesWithID:messageID completionHandler:OCMOCK_ANY];
+        void (^completionHandler)(UASchedule *) = (__bridge void(^)(UASchedule *))arg;
+        completionHandler([[UASchedule alloc] init]);
+    }] cancelScheduleWithID:messageID completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *testExpectation = [self expectationWithDescription:@"completion handler called"];
     [self.inAppMessaging receivedNotificationResponse:response completionHandler:^{
@@ -146,15 +144,14 @@
                                                                                            responseText:nil];
 
     [[self.mockAnalytics reject] addEvent:[OCMArg any]];
-    [[self.mockInAppAutomation reject] cancelMessagesWithID:[OCMArg any]];
+    [[self.mockInAppAutomation reject] cancelScheduleWithID:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     [[[self.mockInAppAutomation stub] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:3];
         void (^completionHandler)(NSArray<UASchedule *> *schedules) = (__bridge void(^)(NSArray<UASchedule *> *))arg;
-        UASchedule *dummySchedule = [UASchedule scheduleWithIdentifier:@"foo" info:[UAScheduleInfo new] metadata:@{}];
-        completionHandler(@[dummySchedule]);
-    }] getSchedulesWithMessageID:[OCMArg any] completionHandler:[OCMArg any]];
+        completionHandler(nil);
+    }] getScheduleWithID:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *testExpectation = [self expectationWithDescription:@"completion handler called"];
     [self.inAppMessaging receivedNotificationResponse:response completionHandler:^{
@@ -197,7 +194,7 @@
                                                                                            responseText:nil];
 
     [[self.mockAnalytics reject] addEvent:[OCMArg any]];
-    [[self.mockInAppAutomation reject] cancelMessagesWithID:[OCMArg any]];
+    [[self.mockInAppAutomation reject] cancelScheduleWithID:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *testExpectation = [self expectationWithDescription:@"completion handler called"];
     [self.inAppMessaging receivedNotificationResponse:response completionHandler:^{
@@ -225,17 +222,11 @@
     UANotificationContent *content = [UANotificationContent notificationWithNotificationInfo:notification];
 
     [[[self.mockInAppAutomation expect] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:2];
-        UAInAppMessageScheduleInfo *info = (__bridge UAInAppMessageScheduleInfo *)arg;
-
         void *completionHandlerArg;
-        [invocation getArgument:&completionHandlerArg atIndex:4];
-        void (^completionHandler)(UASchedule *schedule) = (__bridge void(^)(UASchedule *))completionHandlerArg;
-
-        UASchedule *result = [UASchedule scheduleWithIdentifier:@"foo" info:info metadata:@{}];
-        completionHandler(result);
-    }] scheduleMessageWithScheduleInfo:[OCMArg any] metadata:@{} completionHandler:[OCMArg any]];
+        [invocation getArgument:&completionHandlerArg atIndex:3];
+        void (^completionHandler)(BOOL) = (__bridge void(^)(BOOL))completionHandlerArg;
+        completionHandler(YES);
+    }] schedule:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *testExpectation = [self expectationWithDescription:@"completion handler called"];
     [self.inAppMessaging receivedRemoteNotification:content completionHandler:^(UIBackgroundFetchResult fetchResult) {
@@ -288,17 +279,17 @@
     [[[self.mockInAppAutomation expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:2];
-        UAInAppMessageScheduleInfo *info = (__bridge UAInAppMessageScheduleInfo *)arg;
-        UAInAppMessageBannerDisplayContent *displayContent = (UAInAppMessageBannerDisplayContent *)info.message.displayContent;
+        UASchedule *schedule = (__bridge UASchedule *)arg;
+        UAInAppMessage *message = (UAInAppMessage *)schedule.data;
+
+        UAInAppMessageBannerDisplayContent *displayContent = (UAInAppMessageBannerDisplayContent *)message.displayContent;
         XCTAssertTrue(displayContent.actions[@"_uamid"]);
 
         void *completionHandlerArg;
-        [invocation getArgument:&completionHandlerArg atIndex:4];
-        void (^completionHandler)(UASchedule *schedule) = (__bridge void(^)(UASchedule *))completionHandlerArg;
-
-        UASchedule *result = [UASchedule scheduleWithIdentifier:@"foo" info:info metadata:@{}];
-        completionHandler(result);
-    }] scheduleMessageWithScheduleInfo:[OCMArg isKindOfClass:[UAInAppMessageScheduleInfo class]] metadata:@{} completionHandler:[OCMArg any]];
+        [invocation getArgument:&completionHandlerArg atIndex:3];
+        void (^completionHandler)(BOOL) = (__bridge void(^)(BOOL))completionHandlerArg;
+        completionHandler(YES);
+    }] schedule:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *testExpectation = [self expectationWithDescription:@"completion handler called"];
     [self.inAppMessaging receivedRemoteNotification:content completionHandler:^(UIBackgroundFetchResult fetchResult) {
@@ -334,18 +325,16 @@
     [[[self.mockInAppAutomation expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:2];
-        UAInAppMessageScheduleInfo *info = (__bridge UAInAppMessageScheduleInfo *)arg;
-        UAInAppMessageBannerDisplayContent *displayContent = (UAInAppMessageBannerDisplayContent *)info.message.displayContent;
+        UASchedule *schedule = (__bridge UASchedule *)arg;
+        UAInAppMessage *message = (UAInAppMessage *)schedule.data;
+        UAInAppMessageBannerDisplayContent *displayContent = (UAInAppMessageBannerDisplayContent *)message.displayContent;
         XCTAssertEqualObjects(displayContent.actions[@"^mc"], @"AUTO");
 
         void *completionHandlerArg;
-        [invocation getArgument:&completionHandlerArg atIndex:4];
-        void (^completionHandler)(UASchedule *schedule) = (__bridge void(^)(UASchedule *))completionHandlerArg;
-
-        UASchedule *result = [UASchedule scheduleWithIdentifier:@"foo" info:info metadata:@{}];
-        completionHandler(result);
-
-    }] scheduleMessageWithScheduleInfo:[OCMArg isKindOfClass:[UAInAppMessageScheduleInfo class]] metadata:@{} completionHandler:[OCMArg any]];
+        [invocation getArgument:&completionHandlerArg atIndex:3];
+        void (^completionHandler)(BOOL) = (__bridge void(^)(BOOL))completionHandlerArg;
+        completionHandler(YES);
+    }] schedule:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *testExpectation = [self expectationWithDescription:@"completion handler called"];
     [self.inAppMessaging receivedRemoteNotification:content completionHandler:^(UIBackgroundFetchResult fetchResult) {
@@ -374,16 +363,15 @@
     [[[self.mockInAppAutomation expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:2];
-        UAInAppMessageScheduleInfo *info = (__bridge UAInAppMessageScheduleInfo *)arg;
-        XCTAssertEqual(info.message.source, UAInAppMessageSourceLegacyPush);
+        UASchedule *schedule = (__bridge UASchedule *)arg;
+        UAInAppMessage *message = (UAInAppMessage *)schedule.data;
+        XCTAssertEqual(message.source, UAInAppMessageSourceLegacyPush);
 
         void *completionHandlerArg;
-        [invocation getArgument:&completionHandlerArg atIndex:4];
-        void (^completionHandler)(UASchedule *schedule) = (__bridge void(^)(UASchedule *))completionHandlerArg;
-
-        UASchedule *result = [UASchedule scheduleWithIdentifier:@"foo" info:info metadata:@{}];
-        completionHandler(result);
-    }] scheduleMessageWithScheduleInfo:[OCMArg isKindOfClass:[UAInAppMessageScheduleInfo class]] metadata:@{} completionHandler:[OCMArg any]];
+        [invocation getArgument:&completionHandlerArg atIndex:3];
+        void (^completionHandler)(BOOL) = (__bridge void(^)(BOOL))completionHandlerArg;
+        completionHandler(YES);
+    }] schedule:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *testExpectation = [self expectationWithDescription:@"completion handler called"];
     [self.inAppMessaging receivedRemoteNotification:content completionHandler:^(UIBackgroundFetchResult fetchResult) {

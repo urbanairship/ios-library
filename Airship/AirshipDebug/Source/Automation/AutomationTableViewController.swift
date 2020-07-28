@@ -17,7 +17,7 @@ class AutomationCell: UITableViewCell {
     @IBOutlet weak var messageType: UILabel!
     @IBOutlet weak var messageName: UILabel!
     @IBOutlet weak var messageID: UILabel!
-    
+
     var schedule : UASchedule?
 
     func setCellTheme() {
@@ -37,7 +37,7 @@ class AutomationCell: UITableViewCell {
  * The AutomationTableViewController displays a list of IAA schedules
  * for debugging use.
  */
-class AutomationTableViewController: UITableViewController {    
+class AutomationTableViewController: UITableViewController {
     var launchPathComponents : [String]?
     var launchCompletionHandler : (() -> Void)?
 
@@ -57,7 +57,7 @@ class AutomationTableViewController: UITableViewController {
         refreshControl.addTarget(self, action: #selector(refreshInAppAutomation), for: UIControl.Event.valueChanged)
         self.refreshControl = refreshControl
     }
-    
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         view.backgroundColor = ThemeManager.shared.currentTheme.Background;
@@ -65,10 +65,12 @@ class AutomationTableViewController: UITableViewController {
         setTableViewTheme()
         refreshInAppAutomation()
     }
-    
+
     @objc private func refreshInAppAutomation() {
         self.inAppAutomation?.getAllSchedules({ (schedulesFromAutomation) in
-            self.schedules = schedulesFromAutomation
+            self.schedules = schedulesFromAutomation.filter({ (schedule : UASchedule) -> Bool in
+                return schedule.type == UAScheduleType.inAppMessage
+            })
             self.tableView.reloadData()
             self.refreshControl?.endRefreshing()
         })
@@ -102,8 +104,7 @@ class AutomationTableViewController: UITableViewController {
 
         if let schedule = self.schedules?[indexPath.row] {
             cell.schedule = schedule
-            let info = schedule.info as! UAInAppMessageScheduleInfo
-            let message = info.message
+            let message = schedule.data as! UAInAppMessage
             switch (message.displayContent.displayType) {
             case .banner:
                 cell.messageType.text = "B"
@@ -120,7 +121,7 @@ class AutomationTableViewController: UITableViewController {
             }
             cell.messageName.text = message.name
             cell.messageID.text = message.identifier
-            if (info.isValid) {
+            if (schedule.isValid) {
                 cell.backgroundColor = nil
             } else {
                 cell.backgroundColor = UIColor.red
@@ -139,11 +140,11 @@ class AutomationTableViewController: UITableViewController {
             guard let automationDetailViewController = segue.destination as? AutomationDetailViewController else {
                 fatalError("Unexpected destination: \(segue.destination)")
             }
-            
+
             guard let selectedAutomationCell = sender as? AutomationCell else {
                 fatalError("Unexpected sender: \(sender ?? "unknown sender")")
             }
-            
+
             automationDetailViewController.schedule = selectedAutomationCell.schedule
         default:
             print("ERROR: Unexpected Segue Identifier; \(segue.identifier ?? "unknown identifier")")
@@ -151,3 +152,4 @@ class AutomationTableViewController: UITableViewController {
     }
 
 }
+

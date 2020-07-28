@@ -17,7 +17,6 @@ NSString *const UAActionRegistryPredicateClassKey = @"predicate";
     self = [super init];
     if (self) {
         self.registeredActionEntries = [[NSMutableDictionary alloc] init];
-        self.reservedEntryNames = [NSMutableArray array];
     }
     return self;
 }
@@ -109,13 +108,6 @@ NSString *const UAActionRegistryPredicateClassKey = @"predicate";
     }
 
     for (NSString *name in names) {
-        if ([self.reservedEntryNames containsObject:name]) {
-            UA_LERR(@"Unable to register entry. %@ is a reserved action.", name);
-            return NO;
-        }
-    }
-
-    for (NSString *name in names) {
         [self removeName:name];
         [entry.mutableNames addObject:name];
         [self.registeredActionEntries setValue:entry forKey:name];
@@ -124,34 +116,9 @@ NSString *const UAActionRegistryPredicateClassKey = @"predicate";
     return YES;
 }
 
-- (BOOL)registerReservedAction:(UAAction *)action
-                          name:(NSString *)name
-                     predicate:(UAActionPredicate)predicate {
-    if ([self registerAction:action name:name predicate:predicate]) {
-        [self.reservedEntryNames addObject:name];
-        return YES;
-    }
-    return NO;
-}
-
-- (BOOL)registerReservedActionClass:(Class)class
-                               name:(NSString *)name
-                          predicate:(UAActionPredicate)predicate {
-    if ([self registerActionClass:class name:name predicate:predicate]) {
-        [self.reservedEntryNames addObject:name];
-        return YES;
-    }
-    return NO;
-}
-
 - (BOOL)removeName:(NSString *)name {
     if (!name) {
         return YES;
-    }
-
-    if ([self.reservedEntryNames containsObject:name]) {
-        UA_LERR(@"Unable to remove name for action. %@ is a reserved action name.", name);
-        return NO;
     }
 
     UAActionRegistryEntry *entry = [self registryEntryWithName:name];
@@ -168,19 +135,7 @@ NSString *const UAActionRegistryPredicateClassKey = @"predicate";
         return YES;
     }
 
-    if ([self.reservedEntryNames containsObject:name]) {
-        UA_LERR(@"Unable to remove entry. %@ is a reserved action name.", name);
-        return NO;
-    }
-
     UAActionRegistryEntry *entry = [self registryEntryWithName:name];
-
-    for (NSString *entryName in entry.mutableNames) {
-        if ([self.reservedEntryNames containsObject:entryName]) {
-            UA_LERR(@"Unable to remove entry. %@ is a reserved action.", name);
-            return NO;
-        }
-    }
 
     for (NSString *entryName in entry.mutableNames) {
         [self.registeredActionEntries removeObjectForKey:entryName];
@@ -192,16 +147,6 @@ NSString *const UAActionRegistryPredicateClassKey = @"predicate";
 - (BOOL)addName:(NSString *)name forEntryWithName:(NSString *)entryName {
     if (!name) {
         UA_LERR(@"Unable to add a nil name for entry.");
-        return NO;
-    }
-
-    if ([self.reservedEntryNames containsObject:entryName]) {
-        UA_LERR(@"Unable to add name to a reserved entry. %@ is a reserved action name.", entryName);
-        return NO;
-    }
-
-    if ([self.reservedEntryNames containsObject:name]) {
-        UA_LERR(@"Unable to add name for entry. %@ is a reserved action name.", name);
         return NO;
     }
 
@@ -227,7 +172,6 @@ NSString *const UAActionRegistryPredicateClassKey = @"predicate";
 
 - (NSSet *)registeredEntries {
     NSMutableDictionary *entries = [NSMutableDictionary dictionaryWithDictionary:self.registeredActionEntries];
-    [entries removeObjectsForKeys:self.reservedEntryNames];
     return [NSSet setWithArray:[entries allValues]];
 }
 
@@ -235,12 +179,6 @@ NSString *const UAActionRegistryPredicateClassKey = @"predicate";
             forEntryWithName:(NSString *)name
                       action:(UAAction *)action {
     if (!name) {
-        return NO;
-    }
-
-    // Don't allow situation overrides on reserved actions
-    if ([self.reservedEntryNames containsObject:name]) {
-        UA_LERR(@"Unable to override situations. %@ is a reserved action name.", name);
         return NO;
     }
 
@@ -255,11 +193,6 @@ NSString *const UAActionRegistryPredicateClassKey = @"predicate";
         return NO;
     }
 
-    if ([self.reservedEntryNames containsObject:name]) {
-        UA_LERR(@"Unable to update predicate. %@ is a reserved action name.", name);
-        return NO;
-    }
-
     UAActionRegistryEntry *entry = [self registryEntryWithName:name];
     entry.predicate = predicate;
     return (entry != nil);
@@ -270,11 +203,6 @@ NSString *const UAActionRegistryPredicateClassKey = @"predicate";
         return NO;
     }
 
-    if ([self.reservedEntryNames containsObject:name]) {
-        UA_LERR(@"Unable to update action. %@ is a reserved action name.", name);
-        return NO;
-    }
-
     UAActionRegistryEntry *entry = [self registryEntryWithName:name];
     entry.action = action;
     return (entry != nil);
@@ -282,11 +210,6 @@ NSString *const UAActionRegistryPredicateClassKey = @"predicate";
 
 - (BOOL)updateActionClass:(Class)actionClass forEntryWithName:(NSString *)name {
     if (!name || !actionClass) {
-        return NO;
-    }
-
-    if ([self.reservedEntryNames containsObject:name]) {
-        UA_LERR(@"Unable to update action. %@ is a reserved action name.", name);
         return NO;
     }
 

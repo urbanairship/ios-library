@@ -2,25 +2,22 @@
 
 #import "UAInAppAutomation+Internal.h"
 #import "UAInAppMessageManager+Internal.h"
-#import "UAInAppMessageScheduleInfo.h"
-#import "UAScheduleInfo+Internal.h"
+#import "UASchedule+Internal.h"
 #import "UAScheduleTriggerContext+Internal.h"
 #import "UAInAppMessage+Internal.h"
 #import "UAInAppMessagingRemoteConfig+Internal.h"
 #import "UATagGroupsLookupManager+Internal.h"
-#import "UAInAppMessageTagSelector+Internal.h"
-#import "UAActiveTimer+Internal.h"
+#import "UATagSelector+Internal.h"
 #import "UARetriable+Internal.h"
 #import "UARetriablePipeline+Internal.h"
 #import "UAAirshipAutomationCoreImport.h"
-#import "UAInAppMessageAudience.h"
-#import "UAInAppMessageAudienceChecks+Internal.h"
+#import "UAScheduleAudience.h"
+#import "UAScheduleAudienceChecks+Internal.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 static NSTimeInterval const MaxSchedules = 200;
 
-NSString *const UAInAppAutomationStoreFileFormat = @"In-app-automation-%@.sqlite";
 NSString *const UAInAppMessageManagerEnabledKey = @"UAInAppMessageManagerEnabled";
 NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
 
@@ -57,9 +54,9 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
                              channel:(UAChannel *)channel
                            analytics:(UAAnalytics *)analytics {
 
-    NSString *storeName = [NSString stringWithFormat:UAInAppAutomationStoreFileFormat, config.appKey];
 
-    UAAutomationStore *store = [UAAutomationStore automationStoreWithStoreName:storeName scheduleLimit:MaxSchedules];
+    UAAutomationStore *store = [UAAutomationStore automationStoreWithConfig:config
+                                                              scheduleLimit:MaxSchedules];
     UAAutomationEngine *automationEngine = [UAAutomationEngine automationEngineWithAutomationStore:store];
 
     UATagGroupsLookupManager *lookupManager = [UATagGroupsLookupManager lookupManagerWithConfig:config
@@ -124,52 +121,41 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
     [self.automationEngine getAllSchedules:completionHandler];
 }
 
-- (void)scheduleMessageWithScheduleInfo:(UAInAppMessageScheduleInfo *)scheduleInfo
-                      completionHandler:(void (^)(UASchedule *))completionHandler {
-    [self scheduleMessageWithScheduleInfo:scheduleInfo metadata:nil completionHandler:completionHandler];
+- (void)schedule:(UASchedule *)schedule completionHandler:(void (^)(BOOL))completionHandler {
+    [self.automationEngine schedule:schedule completionHandler:completionHandler];
 }
 
-- (void)scheduleMessageWithScheduleInfo:(UAInAppMessageScheduleInfo *)scheduleInfo
-                               metadata:(nullable NSDictionary *)metadata
-                      completionHandler:(void (^)(UASchedule *))completionHandler {
-    [self.automationEngine schedule:scheduleInfo
-                           metadata:metadata
-                  completionHandler:completionHandler];
+- (void)scheduleMultiple:(NSArray<UASchedule *> *)schedules completionHandler:(void (^)(BOOL))completionHandler {
+    [self.automationEngine scheduleMultiple:schedules completionHandler:completionHandler];
 }
 
-- (void)scheduleMessagesWithScheduleInfo:(NSArray<UAInAppMessageScheduleInfo *> *)scheduleInfos
-                                metadata:(nullable NSDictionary *)metadata
-                       completionHandler:(void (^)(NSArray <UASchedule *> *))completionHandler {
-    [self.automationEngine scheduleMultiple:scheduleInfos
-                                   metadata:metadata
-                          completionHandler:completionHandler];
+
+- (void)cancelSchedulesWithGroup:(NSString *)group
+               completionHandler:(nullable void (^)(NSArray<UASchedule *> * _Nonnull))completionHandler {
+    [self.automationEngine cancelSchedulesWithGroup:group completionHandler:completionHandler];
 }
 
-- (void)cancelMessagesWithID:(NSString *)identifier completionHandler:(nullable void (^)(NSArray <UASchedule *> *))completionHandler {
-    [self.automationEngine cancelSchedulesWithGroup:identifier completionHandler:completionHandler];
-}
-
-- (void)cancelMessagesWithID:(NSString *)identifier {
-    [self cancelMessagesWithID:identifier completionHandler:nil];
-}
-
-- (void)cancelScheduleWithID:(NSString *)scheduleID completionHandler:(nullable void (^)(UASchedule * _Nullable))completionHandler {
+- (void)cancelScheduleWithID:(NSString *)scheduleID
+           completionHandler:(nullable void (^)(UASchedule * _Nullable))completionHandler {
     [self.automationEngine cancelScheduleWithID:scheduleID completionHandler:completionHandler];
 }
 
-- (void)cancelScheduleWithID:(NSString *)scheduleID {
-    [self cancelScheduleWithID:scheduleID completionHandler:nil];
+- (void)cancelSchedulesWithType:(UAScheduleType)scheduleType
+              completionHandler:(nullable void (^)(NSArray<UASchedule *> *))completionHandler {
+    [self.automationEngine cancelSchedulesWithType:scheduleType completionHandler:completionHandler];
 }
 
-- (void)editScheduleWithID:(NSString *)identifier
-                     edits:(UAInAppMessageScheduleEdits *)edits
+
+- (void)getSchedulesWithGroup:(NSString *)group
+            completionHandler:(void (^)(NSArray<UASchedule *> *))completionHandler {
+    [self.automationEngine getSchedulesWithGroup:group completionHandler:completionHandler];
+}
+
+- (void)editScheduleWithID:(NSString *)scheduleID
+                     edits:(UAScheduleEdits *)edits
          completionHandler:(void (^)(UASchedule * _Nullable))completionHandler {
 
-    [self.automationEngine editScheduleWithID:identifier edits:edits completionHandler:completionHandler];
-}
-
-- (UAScheduleInfo *)createScheduleInfoWithBuilder:(UAScheduleInfoBuilder *)builder {
-    return [[UAInAppMessageScheduleInfo alloc] initWithBuilder:builder];
+    [self.automationEngine editScheduleWithID:scheduleID edits:edits completionHandler:completionHandler];
 }
 
 - (void)prepareSchedule:(UASchedule *)schedule
@@ -186,26 +172,26 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
         return;
     }
 
-    UAInAppMessage *message = ((UAInAppMessageScheduleInfo *)schedule.info).message;
     NSString *scheduleID = schedule.identifier;
 
     // Check audience conditions
     UARetriable *checkAudience = [UARetriable retriableWithRunBlock:^(UARetriableCompletionHandler _Nonnull retriableHandler) {
-        [self checkAudience:message.audience completionHandler:^(BOOL success, NSError *error) {
+        UAScheduleAudience *audience = schedule.audience;
+        [self checkAudience:audience completionHandler:^(BOOL success, NSError *error) {
             if (error) {
                 retriableHandler(UARetriableResultRetry);
             } else if (success) {
                 retriableHandler(UARetriableResultSuccess);
             } else {
-                UA_LDEBUG(@"Message audience conditions not met, skipping display for schedule: %@, missBehavior: %ld", scheduleID, (long)message.audience.missBehavior);
-                switch(message.audience.missBehavior) {
-                    case UAInAppMessageAudienceMissBehaviorCancel:
+                UA_LDEBUG(@"Message audience conditions not met, skipping display for schedule: %@, missBehavior: %ld", scheduleID, (long)audience.missBehavior);
+                switch(audience.missBehavior) {
+                    case UAScheduleAudienceMissBehaviorCancel:
                         completionHandler(UAAutomationSchedulePrepareResultCancel);
                         break;
-                    case UAInAppMessageAudienceMissBehaviorSkip:
+                    case UAScheduleAudienceMissBehaviorSkip:
                         completionHandler(UAAutomationSchedulePrepareResultSkip);
                         break;
-                    case UAInAppMessageAudienceMissBehaviorPenalize:
+                    case UAScheduleAudienceMissBehaviorPenalize:
                         completionHandler(UAAutomationSchedulePrepareResultPenalize);
                         break;
                 }
@@ -218,9 +204,19 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
     UA_WEAKIFY(self)
     UARetriable *prepare = [UARetriable retriableWithRunBlock:^(UARetriableCompletionHandler _Nonnull retriableHandler) {
         UA_STRONGIFY(self)
-        [self.inAppMessageManager prepareMessage:((UAInAppMessageScheduleInfo *)schedule.info).message
-                                      scheduleID:schedule.identifier
-                               completionHandler:completionHandler];
+
+        switch (schedule.type) {
+            case UAScheduleTypeActions:
+                completionHandler(UAAutomationSchedulePrepareResultContinue);
+                break;
+
+            case UAScheduleTypeInAppMessage:
+                [self.inAppMessageManager prepareMessage:(UAInAppMessage *) schedule.data
+                                              scheduleID:schedule.identifier
+                                       completionHandler:completionHandler];
+                break;
+        }
+
         retriableHandler(UARetriableResultSuccess);
     }];
 
@@ -230,23 +226,54 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
 - (UAAutomationScheduleReadyResult)isScheduleReadyToExecute:(UASchedule *)schedule {
     UA_LTRACE(@"Checking if schedule %@ is ready to execute.", schedule.identifier);
 
-    if ([self isScheduleInvalid:schedule]) {
-        UA_LTRACE(@"Metadata is out of date, invalidating schedule with id: %@ until refresh can occur.", schedule.identifier);
-        [self.inAppMessageManager scheduleExecutionAborted:schedule.identifier];
-        return UAAutomationScheduleReadyResultInvalidate;
-    }
-
     if (self.isPaused) {
         UA_LTRACE(@"InAppAutoamtion currently paused. Schedule: %@ not ready.", schedule.identifier);
         return UAAutomationScheduleReadyResultNotReady;
     }
 
-    return [self.inAppMessageManager isReadyToDisplay:schedule.identifier];
+
+    switch (schedule.type) {
+        case UAScheduleTypeActions:
+            if ([self isScheduleInvalid:schedule]) {
+                return UAAutomationScheduleReadyResultInvalidate;
+            }
+            return UAAutomationScheduleReadyResultContinue;
+
+        case UAScheduleTypeInAppMessage:
+            if ([self isScheduleInvalid:schedule]) {
+                [self.inAppMessageManager scheduleExecutionAborted:schedule.identifier];
+                return UAAutomationScheduleReadyResultInvalidate;
+            }
+
+            return [self.inAppMessageManager isReadyToDisplay:schedule.identifier];
+    }
+
+    return UAAutomationScheduleReadyResultNotReady;
 }
 
 - (void)executeSchedule:(nonnull UASchedule *)schedule completionHandler:(void (^)(void))completionHandler {
     UA_LTRACE(@"Executing schedule: %@", schedule.identifier);
-    [self.inAppMessageManager displayMessageWithScheduleID:schedule.identifier completionHandler:completionHandler];
+
+    switch (schedule.type) {
+        case UAScheduleTypeActions: {
+            // Run the actions
+            [UAActionRunner runActionsWithActionValues:schedule.data
+                                             situation:UASituationAutomation
+                                              metadata:nil
+                                     completionHandler:^(UAActionResult *result) {
+                completionHandler();
+            }];
+            break;
+        }
+
+        case UAScheduleTypeInAppMessage: {
+             [self.inAppMessageManager displayMessageWithScheduleID:schedule.identifier completionHandler:completionHandler];
+            break;
+        }
+    }
+
+
+
 }
 
 /**
@@ -262,25 +289,32 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
 
 
 - (void)onScheduleExpired:(UASchedule *)schedule {
-    [self.inAppMessageManager messageExpired:((UAInAppMessageScheduleInfo *)schedule.info).message
-                                  scheduleID:schedule.identifier
-                              expirationDate:schedule.info.end];
-
+    if (schedule.type == UAScheduleTypeInAppMessage) {
+        [self.inAppMessageManager messageExpired:(UAInAppMessage *)schedule.data
+                                      scheduleID:schedule.identifier
+                                  expirationDate:schedule.end];
+    }
 }
 
 - (void)onScheduleCancelled:(UASchedule *)schedule {
-    [self.inAppMessageManager messageCancelled:((UAInAppMessageScheduleInfo *)schedule.info).message
-                                    scheduleID:schedule.identifier];
+    if (schedule.type == UAScheduleTypeInAppMessage) {
+        [self.inAppMessageManager messageCancelled:(UAInAppMessage *)schedule.data
+                                        scheduleID:schedule.identifier];
+    }
 }
 
 - (void)onScheduleLimitReached:(UASchedule *)schedule {
-    [self.inAppMessageManager messageLimitReached:((UAInAppMessageScheduleInfo *)schedule.info).message
-                                       scheduleID:schedule.identifier];
+    if (schedule.type == UAScheduleTypeInAppMessage) {
+        [self.inAppMessageManager messageLimitReached:(UAInAppMessage *)schedule.data
+                                           scheduleID:schedule.identifier];
+    }
 }
 
 - (void)onNewSchedule:(nonnull UASchedule *)schedule {
-    [self.inAppMessageManager messageScheduled:((UAInAppMessageScheduleInfo *)schedule.info).message
-                                    scheduleID:schedule.identifier];
+    if (schedule.type == UAScheduleTypeInAppMessage) {
+        [self.inAppMessageManager messageScheduled:(UAInAppMessage *)schedule.data
+                                        scheduleID:schedule.identifier];
+    }
 }
 
 - (void)onComponentEnableChange {
@@ -340,9 +374,8 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
 
     [self.automationEngine getSchedules:^(NSArray<UASchedule *> *schedules) {
         for (UASchedule *schedule in schedules) {
-            UAInAppMessageScheduleInfo *info = (UAInAppMessageScheduleInfo *)schedule.info;
-            if ([info.message.audience.tagSelector containsTagGroups]) {
-                tagGroups = [tagGroups merge:info.message.audience.tagSelector.tagGroups];
+            if ([schedule.audience.tagSelector containsTagGroups]) {
+                tagGroups = [tagGroups merge:schedule.audience.tagSelector.tagGroups];
             }
         }
 
@@ -350,9 +383,9 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
     }];
 }
 
-- (void)checkAudience:(UAInAppMessageAudience *)audience completionHandler:(void (^)(BOOL, NSError * _Nullable))completionHandler {
+- (void)checkAudience:(UAScheduleAudience *)audience completionHandler:(void (^)(BOOL, NSError * _Nullable))completionHandler {
     void (^performAudienceCheck)(UATagGroups *) = ^(UATagGroups *tagGroups) {
-        if ([UAInAppMessageAudienceChecks checkDisplayAudienceConditions:audience tagGroups:tagGroups]) {
+        if ([UAScheduleAudienceChecks checkDisplayAudienceConditions:audience tagGroups:tagGroups]) {
             completionHandler(YES, nil);
         } else {
             completionHandler(NO, nil);
@@ -377,6 +410,11 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
 - (void)executionReadinessChanged {
     [self.automationEngine scheduleConditionsChanged];
 }
+
+- (void)cancelScheduleWithID:(nonnull NSString *)scheduleID {
+    [self.automationEngine cancelScheduleWithID:scheduleID completionHandler:nil];
+}
+
 
 @end
 

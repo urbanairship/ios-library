@@ -1,7 +1,6 @@
 /* Copyright Airship and Contributors */
 
 #import "UAAutomationModuleLoader.h"
-#import "UAActionAutomation+Internal.h"
 #import "UALegacyInAppMessaging+Internal.h"
 #import "UAInAppAutomation+Internal.h"
 
@@ -27,9 +26,6 @@
                                     tagGroupHistorian:(UATagGroupHistorian *)tagGroupHistorian {
 
     NSMutableArray *components = [NSMutableArray array];
-    UAActionAutomation *automation = [UAActionAutomation automationWithConfig:config dataStore:dataStore];
-    [components addObject:automation];
-
     UAInAppAutomation *inAppAutomation = [UAInAppAutomation automationWithConfig:config
                                                                 tagGroupHistorian:tagGroupHistorian
                                                               remoteDataProvider:remoteDataProvider

@@ -1,8 +1,8 @@
 /* Copyright Airship and Contributors */
 
 #import "UACancelSchedulesAction.h"
-#import "UAActionAutomation.h"
 #import "UAAirshipAutomationCoreImport.h"
+#import "UAInAppAutomation+Internal.h"
 
 NSString *const UACancelSchedulesActionAll = @"all";
 NSString *const UACancelSchedulesActionIDs = @"ids";
@@ -44,11 +44,9 @@ NSString * const kUACancelSchedulesActionDefaultRegistryAlias = UACancelSchedule
 - (void)performWithArguments:(UAActionArguments *)arguments
            completionHandler:(UAActionCompletionHandler)completionHandler {
 
-
     // All
     if ([UACancelSchedulesActionAll isEqualToString:arguments.value]) {
-        [[UAActionAutomation shared] cancelAll];
-
+        [[UAInAppAutomation shared] cancelSchedulesWithType:UAScheduleTypeActions completionHandler:nil];
         completionHandler([UAActionResult emptyResult]);
         return;
     }
@@ -59,13 +57,13 @@ NSString * const kUACancelSchedulesActionDefaultRegistryAlias = UACancelSchedule
 
         // Single group
         if ([groups isKindOfClass:[NSString class]]) {
-            [[UAActionAutomation shared] cancelSchedulesWithGroup:groups];
+            [[UAInAppAutomation shared] cancelSchedulesWithGroup:groups completionHandler:nil];
         } else if ([groups isKindOfClass:[NSArray class]]) {
 
             // Array of groups
             for (id value in groups) {
                 if ([value isKindOfClass:[NSString class]]) {
-                    [[UAActionAutomation shared] cancelSchedulesWithGroup:value];
+                    [[UAInAppAutomation shared] cancelSchedulesWithGroup:value completionHandler:nil];
                 }
             }
         }
@@ -77,13 +75,13 @@ NSString * const kUACancelSchedulesActionDefaultRegistryAlias = UACancelSchedule
 
         // Single ID
         if ([ids isKindOfClass:[NSString class]]) {
-            [[UAActionAutomation shared] cancelScheduleWithID:ids];
+            [[UAInAppAutomation shared] cancelScheduleWithID:ids completionHandler:nil];
         } else if ([ids isKindOfClass:[NSArray class]]) {
 
             // Array of IDs
             for (id value in ids) {
                 if ([value isKindOfClass:[NSString class]]) {
-                    [[UAActionAutomation shared] cancelScheduleWithID:value];
+                    [[UAInAppAutomation shared] cancelScheduleWithID:value completionHandler:nil];
                 }
             }
         }

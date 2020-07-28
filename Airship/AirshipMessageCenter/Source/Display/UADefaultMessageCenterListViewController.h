@@ -24,6 +24,15 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) UAMessageCenterStyle *messageCenterStyle;
 
 /**
+ * The style to apply to the list.
+ *
+ * Note: This property is unavailable in iOS 14. Instead use `messageCenterStyle`.
+ */
+#if !defined(__IPHONE_14_0)
+@property(nonatomic, strong) UAMessageCenterStyle *style;
+#endif
+
+/**
  * An optional predicate for filtering messages.
  */
 @property (nonatomic, strong) NSPredicate *filter;

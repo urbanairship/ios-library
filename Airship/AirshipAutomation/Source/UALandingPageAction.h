@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 #import "UAInAppMessage.h"
-#import "UAInAppMessageScheduleInfo.h"
+#import "UASchedule.h"
 #import "UAAirshipAutomationCoreImport.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -14,12 +14,12 @@ NS_ASSUME_NONNULL_BEGIN
 @optional
 
 /**
- * Extends the in-app message schedule info builder converted from a legacy landing page.
+ * Extends the in-app  schedule  builder converted from a legacy landing page.
  * Use this method to make use of the default conversion with minor overrides as needed.
  *
- * @param builder The automatically converted in-app message schedule info builder.
+ * @param builder The automatically converted in-app  schedule builder.
  */
-- (void)extendScheduleInfoBuilder:(UAInAppMessageScheduleInfoBuilder *)builder;
+- (void)extendScheduleBuilder:(UAScheduleBuilder *)builder;
 
 /**
  * Extends the in-app message builder converted from a legacy landing page action.

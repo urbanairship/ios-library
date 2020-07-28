@@ -60,7 +60,7 @@ NSString *const UAApplicationMetricsLastAppVersion = @"UAApplicationMetricsLastA
 }
 
 - (NSString *)currentAppVersion {
-    return [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
+    return [UAUtils bundleShortVersionString];
 }
 
 - (NSString *)lastAppVersion {

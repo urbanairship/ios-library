@@ -30,8 +30,8 @@
         self.managedContext = [NSManagedObjectContext managedObjectContextForModelURL:modelURL
                                                                       concurrencyType:NSPrivateQueueConcurrencyType];
         
-        [self.managedContext addPersistentSqlStore:self.storeName completionHandler:^(BOOL success, NSError *error) {
-            if (!success) {
+        [self.managedContext addPersistentSqlStore:self.storeName completionHandler:^(NSPersistentStore *store, NSError *error) {
+            if (!store) {
                 UA_LERR(@"Failed to create remote data persistent store: %@", error);
                 return;
             }
@@ -55,8 +55,8 @@
 
 - (void)protectedDataAvailable {
     if (!self.managedContext.persistentStoreCoordinator.persistentStores.count) {
-        [self.managedContext addPersistentSqlStore:self.storeName completionHandler:^(BOOL success, NSError *error) {
-            if (!success) {
+        [self.managedContext addPersistentSqlStore:self.storeName completionHandler:^(NSPersistentStore *store, NSError *error) {
+            if (!store) {
                 UA_LERR(@"Failed to create remote data persistent store: %@", error);
                 return;
             }

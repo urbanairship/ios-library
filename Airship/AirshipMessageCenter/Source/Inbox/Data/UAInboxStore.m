@@ -37,17 +37,7 @@
             [self moveDatabase];
         }];
 
-        void (^completion)(BOOL, NSError*) = ^void(BOOL success, NSError *error) {
-            if (!success) {
-                UA_LERR(@"Failed to create inbox message persistent store: %@", error);
-            }
-        };
-
-        if (inMemory) {
-            [self.managedContext addPersistentInMemoryStore:self.storeName completionHandler:completion];
-        } else {
-            [self.managedContext addPersistentSqlStore:self.storeName completionHandler:completion];
-        }
+        [self addStores];
 
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(protectedDataAvailable)
@@ -66,14 +56,23 @@
     return [UAInboxStore storeWithName:storeName inMemory:NO];
 }
 
+- (void) addStores {
+    void (^completion)(NSPersistentStore *, NSError*) = ^void(NSPersistentStore *store, NSError *error) {
+        if (!store) {
+            UA_LERR(@"Failed to create inbox message persistent store: %@", error);
+        }
+    };
+
+    if (self.inMemory) {
+        [self.managedContext addPersistentInMemoryStore:self.storeName completionHandler:completion];
+    } else {
+        [self.managedContext addPersistentSqlStore:self.storeName completionHandler:completion];
+    }
+}
+
 - (void)protectedDataAvailable {
     if (!self.managedContext.persistentStoreCoordinator.persistentStores.count) {
-        [self.managedContext addPersistentSqlStore:self.storeName completionHandler:^(BOOL success, NSError *error) {
-            if (!success) {
-                UA_LERR(@"Failed to create inbox persistent store: %@", error);
-                return;
-            }
-        }];
+        [self addStores];
     }
 }
 

@@ -377,7 +377,7 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
     payload.language = [currentLocale objectForKey:NSLocaleLanguageCode];
     payload.country = [currentLocale objectForKey: NSLocaleCountryCode];
     payload.timeZone = [NSTimeZone defaultTimeZone].name;
-    payload.appVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
+    payload.appVersion = [UAUtils bundleShortVersionString];
     payload.SDKVersion = [UAirshipVersion get];
     payload.deviceOS = [UIDevice currentDevice].systemVersion;
 

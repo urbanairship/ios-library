@@ -2,14 +2,14 @@
 
 #import <CommonCrypto/CommonDigest.h>
 
-#import "UAInAppMessageAudienceChecks+Internal.h"
-#import "UAInAppMessageAudience+Internal.h"
-#import "UAInAppMessageTagSelector+Internal.h"
+#import "UAScheduleAudienceChecks+Internal.h"
+#import "UAScheduleAudience+Internal.h"
+#import "UATagSelector+Internal.h"
 #import "UAAirshipAutomationCoreImport.h"
 
-@implementation UAInAppMessageAudienceChecks
+@implementation UAScheduleAudienceChecks
 
-+ (BOOL)checkScheduleAudienceConditions:(UAInAppMessageAudience *)audience isNewUser:(BOOL)isNewUser {
++ (BOOL)checkScheduleAudienceConditions:(UAScheduleAudience *)audience isNewUser:(BOOL)isNewUser {
     if (!audience) {
         return YES;
     }
@@ -38,7 +38,7 @@
     return YES;
 }
 
-+ (BOOL)checkDisplayAudienceConditions:(UAInAppMessageAudience *)audience tagGroups:(UATagGroups *)tagGroups {
++ (BOOL)checkDisplayAudienceConditions:(UAScheduleAudience *)audience tagGroups:(UATagGroups *)tagGroups {
     if (!audience) {
         return YES;
     }
@@ -97,7 +97,7 @@
     return YES;
 }
 
-+ (BOOL)areLocationConditionsMet:(UAInAppMessageAudience *)audience {
++ (BOOL)areLocationConditionsMet:(UAScheduleAudience *)audience {
     if (!audience.languageIDs.count) {
         return YES;
     }
@@ -123,7 +123,7 @@
     return NO;
 }
 
-+ (BOOL)checkDisplayAudienceConditions:(UAInAppMessageAudience *)audience {
++ (BOOL)checkDisplayAudienceConditions:(UAScheduleAudience *)audience {
     return [self checkDisplayAudienceConditions:audience tagGroups:[UATagGroups tagGroupsWithTags:@{}]];
 }
 

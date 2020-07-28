@@ -1,3 +1,4 @@
+#import "NSDictionary+UAAdditions.h"
 #import "NSJSONSerialization+UAAdditions.h"
 #import "NSManagedObjectContext+UAAdditions.h"
 #import "NSOperationQueue+UAAdditions.h"
@@ -27,6 +28,7 @@
 #import "UAAssociatedIdentifiers.h"
 #import "UAAsyncOperation.h"
 #import "UAAttributeMutations.h"
+#import "UAAttributes.h"
 #import "UAAutomationModuleLoaderFactory.h"
 #import "UABespokeCloseView.h"
 #import "UABeveledLoadingIndicator.h"

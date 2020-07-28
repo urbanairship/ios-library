@@ -8,9 +8,7 @@
 #import "UAUtils+Internal.h"
 #import "NSString+UAURLEncoding.h"
 #import "UAInAppAutomation.h"
-#import "UAInAppMessageScheduleInfo+Internal.h"
 #import "UAInAppMessageHTMLDisplayContent+Internal.h"
-#import "UAMessageCenter.h"
 
 @interface UALandingPageActionTest : UABaseTest
 
@@ -19,7 +17,6 @@
 @property (nonatomic, strong) UALandingPageAction *action;
 @property (nonatomic, assign) id mockWhitelist;
 @property (nonatomic, strong) id mockInAppAutomation;
-
 
 @end
 
@@ -132,11 +129,10 @@
         }
 
         [[[self.mockInAppAutomation expect] andDo:^(NSInvocation *invocation) {
-            void *scheduleInfoArg;
-            [invocation getArgument:&scheduleInfoArg atIndex:2];
-            UAInAppMessageScheduleInfo *scheduleInfo = (__bridge UAInAppMessageScheduleInfo *)scheduleInfoArg;
-
-            UAInAppMessage *message = scheduleInfo.message;
+            void *scheduleArg;
+            [invocation getArgument:&scheduleArg atIndex:2];
+            UASchedule *schedule = (__bridge UASchedule *)scheduleArg;
+            UAInAppMessage *message = schedule.data;
 
             XCTAssertEqual(message.displayType, UAInAppMessageDisplayTypeHTML);
             XCTAssertEqualObjects(message.displayBehavior, UAInAppMessageDisplayBehaviorImmediate);
@@ -151,7 +147,7 @@
             void (^handler)(UASchedule *) = (__bridge void (^)(UASchedule *))handlerArg;
             handler(nil);
 
-        }] scheduleMessageWithScheduleInfo:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+        }] schedule:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
         [self.action performWithArguments:arguments completionHandler:^(UAActionResult *result) {
             actionPerformed = YES;

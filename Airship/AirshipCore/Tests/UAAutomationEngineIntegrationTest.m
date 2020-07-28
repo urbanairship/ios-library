@@ -10,13 +10,11 @@
 #import "UARuntimeConfig.h"
 #import "UAScheduleDelay.h"
 #import "UAScheduleData+Internal.h"
-#import "UAScheduleInfo+Internal.h"
-#import "UAActionScheduleInfo.h"
-#import "UAActionAutomation+Internal.h"
 #import "UAApplicationMetrics+Internal.h"
 #import "UATestDispatcher.h"
 #import "UATestDate.h"
 #import "UAAppStateTracker.h"
+#import "UATestRuntimeConfig.h"
 
 @interface UAAutomationEngineIntegrationTest : UABaseTest
 @property (nonatomic, strong) UAAutomationEngine *automationEngine;
@@ -40,23 +38,20 @@
     [super setUp];
 
     self.testDate = [[UATestDate alloc] initWithAbsoluteTime:[NSDate date]];
-
     self.dispatcher = [UATestDispatcher testDispatcher];
-
     self.mockedApplication = [self mockForClass:[UIApplication class]];
     self.mockAppStateTracker = [self mockForClass:[UAAppStateTracker class]];
 
     self.mockDelegate = [self mockForProtocol:@protocol(UAAutomationEngineDelegate)];
-    [[[self.mockDelegate stub] andCall:@selector(createScheduleInfoWithBuilder:) onObject:self] createScheduleInfoWithBuilder:OCMOCK_ANY];
 
-    self.testStore = [UAAutomationStore automationStoreWithStoreName:@"UAAutomationEngine.test"
+    UARuntimeConfig *config = [UATestRuntimeConfig testConfig];
+    self.testStore = [UAAutomationStore automationStoreWithConfig:config
                                                        scheduleLimit:UAAUTOMATIONENGINETESTS_SCHEDULE_LIMIT
                                                             inMemory:YES
                                                                 date:self.testDate];
 
     self.mockAirship = [self mockForClass:[UAirship class]];
     [UAirship setSharedAirship:self.mockAirship];
-
 
     self.timerScheduler = [UATimerScheduler timerSchedulerWithSchedulerBlock:^(NSTimer *timer) {
         if (self.timerSchedulerBlock) {
@@ -100,20 +95,14 @@
 
 - (void)testSchedule {
     XCTestExpectation *testExpectation = [self expectationWithDescription:@"scheduled action"];
-
-    NSDictionary *expectedMetadata = @{@"cool":@"story"};
-
-    UAActionScheduleInfo *scheduleInfo = [UAActionScheduleInfo scheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder *builder) {
+    UASchedule *schedule = [UASchedule scheduleWithActions:@{@"cool": @"story"}
+                                              builderBlock:^(UAScheduleBuilder * _Nonnull builder) {
         UAScheduleTrigger *foregroundTrigger = [UAScheduleTrigger foregroundTriggerWithCount:2];
-        builder.actions = @{@"oh": @"hi"};
         builder.triggers = @[foregroundTrigger];
     }];
 
-    [self.automationEngine schedule:scheduleInfo metadata:expectedMetadata completionHandler:^(UASchedule *schedule) {
-        XCTAssertEqualObjects(scheduleInfo, schedule.info);
-        XCTAssertNotNil(schedule.identifier);
-        XCTAssertEqualObjects(expectedMetadata, schedule.metadata);
-
+    [self.automationEngine schedule:schedule completionHandler:^(BOOL result) {
+        XCTAssertTrue(result);
         [testExpectation fulfill];
     }];
 
@@ -121,35 +110,26 @@
 }
 
 - (void)testScheduleMultiple {
-
-    NSDictionary *expectedMetadata = @{@"cool":@"story"};
-
-    // setup
-    UAActionScheduleInfo *scheduleInfo1 = [UAActionScheduleInfo scheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder *builder) {
+    UASchedule *scheduleOne = [UASchedule scheduleWithActions:@{@"cool": @"story"}
+                                              builderBlock:^(UAScheduleBuilder * _Nonnull builder) {
         UAScheduleTrigger *foregroundTrigger = [UAScheduleTrigger foregroundTriggerWithCount:2];
-        builder.actions = @{@"oh": @"hi"};
-        builder.triggers = @[foregroundTrigger];
-    }];
-    UAActionScheduleInfo *scheduleInfo2 = [UAActionScheduleInfo scheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder *builder) {
-        UAScheduleTrigger *foregroundTrigger = [UAScheduleTrigger foregroundTriggerWithCount:3];
-        builder.actions = @{@"hey": @"there"};
         builder.triggers = @[foregroundTrigger];
     }];
 
-    NSArray<UAActionScheduleInfo *> *submittedSchedules = @[scheduleInfo1, scheduleInfo2];
+    UASchedule *scheduleTwo = [UASchedule scheduleWithActions:@{@"cool": @"story"}
+                                                 builderBlock:^(UAScheduleBuilder * _Nonnull builder) {
+        UAScheduleTrigger *foregroundTrigger = [UAScheduleTrigger foregroundTriggerWithCount:2];
+        builder.triggers = @[foregroundTrigger];
+    }];
 
-    XCTestExpectation *scheduledExpectation = [self expectationWithDescription:@"scheduled actions"];
+
+    XCTestExpectation *testExpectation = [self expectationWithDescription:@"scheduled actions"];
 
     // test
-    [self.automationEngine scheduleMultiple:submittedSchedules metadata:expectedMetadata completionHandler:^(NSArray<UASchedule *> *schedules) {
-        XCTAssertEqual(schedules.count, submittedSchedules.count);
-        NSArray *infos = @[schedules[0].info, schedules[1].info];
-        XCTAssertEqualObjects(infos, submittedSchedules);
-
-        XCTAssertEqualObjects(schedules[0].metadata, expectedMetadata);
-        XCTAssertEqualObjects(schedules[1].metadata, expectedMetadata);
-
-        [scheduledExpectation fulfill];
+    [self.automationEngine scheduleMultiple:@[scheduleOne, scheduleTwo]
+                          completionHandler:^(BOOL result) {
+        XCTAssertTrue(result);
+        [testExpectation fulfill];
     }];
 
     // verify
@@ -159,14 +139,13 @@
 - (void)testScheduleInvalidActionInfo {
     XCTestExpectation *testExpectation = [self expectationWithDescription:@"scheduled action"];
 
-    // Missing action
-    UAActionScheduleInfo *scheduleInfo = [UAActionScheduleInfo scheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder *builder) {
-        UAScheduleTrigger *foregroundTrigger = [UAScheduleTrigger foregroundTriggerWithCount:2];
-        builder.triggers = @[foregroundTrigger];
+    // Missing triggers
+    UASchedule *schedule = [UASchedule scheduleWithActions:@{@"cool": @"story"}
+                                                 builderBlock:^(UAScheduleBuilder * _Nonnull builder) {
     }];
 
-    [self.automationEngine schedule:scheduleInfo metadata:@{} completionHandler:^(UASchedule *schedule) {
-        XCTAssertNil(schedule);
+    [self.automationEngine schedule:schedule completionHandler:^(BOOL result) {
+        XCTAssertFalse(result);
         [testExpectation fulfill];
     }];
 
@@ -174,28 +153,32 @@
 }
 
 - (void)testScheduleOverLimit {
-    UAActionScheduleInfo *scheduleInfo = [UAActionScheduleInfo scheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder *builder) {
-        UAScheduleTrigger *foregroundTrigger = [UAScheduleTrigger screenTriggerForScreenName:@"NEVERTRIGGERTHISNAME" count:10];
-        builder.actions = @{@"oh": @"hi"};
-        builder.triggers = @[foregroundTrigger];
-    }];
-
     // Schedule to the limit
-    for (int i = 0; i < UAAutomationScheduleLimit; i++) {
-        XCTestExpectation *testExpectation = [self expectationWithDescription:[NSString stringWithFormat:@"scheduled action: %d", i]];
+    for (int i = 0; i < UAAUTOMATIONENGINETESTS_SCHEDULE_LIMIT; i++) {
+        UASchedule *schedule = [UASchedule scheduleWithActions:@{}
+                                                  builderBlock:^(UAScheduleBuilder * _Nonnull builder) {
+            UAScheduleTrigger *foregroundTrigger = [UAScheduleTrigger foregroundTriggerWithCount:2];
+            builder.triggers = @[foregroundTrigger];
+        }];
 
-        [self.automationEngine schedule:scheduleInfo metadata:@{} completionHandler:^(UASchedule *schedule) {
-            XCTAssertEqualObjects(scheduleInfo, schedule.info);
-            XCTAssertNotNil(schedule.identifier);
+        XCTestExpectation *testExpectation = [self expectationWithDescription:[NSString stringWithFormat:@"scheduled: %d", i]];
+
+        [self.automationEngine schedule:schedule completionHandler:^(BOOL result) {
+            XCTAssertTrue(result);
             [testExpectation fulfill];
         }];
     }
 
-    XCTestExpectation *testExpectation = [self expectationWithDescription:@"scheduled what"];
+    XCTestExpectation *testExpectation = [self expectationWithDescription:@"scheduled failed"];
 
-    // Try to schedule 1 more, verify it fails
-    [self.automationEngine schedule:scheduleInfo metadata:@{} completionHandler:^(UASchedule *schedule) {
-        XCTAssertNil(schedule);
+    UASchedule *schedule = [UASchedule scheduleWithActions:@{}
+                                              builderBlock:^(UAScheduleBuilder * _Nonnull builder) {
+        UAScheduleTrigger *foregroundTrigger = [UAScheduleTrigger foregroundTriggerWithCount:2];
+        builder.triggers = @[foregroundTrigger];
+    }];
+
+    [self.automationEngine schedule:schedule completionHandler:^(BOOL result) {
+        XCTAssertFalse(result);
         [testExpectation fulfill];
     }];
 
@@ -220,7 +203,7 @@
 
         [[[self.mockDelegate expect] andReturnValue:OCMOCK_VALUE(YES)] isScheduleReadyToExecute:[OCMArg checkWithBlock:^BOOL(id obj) {
             UASchedule *schedule = obj;
-            return schedule.info.priority == [testPriorityLevels[i] intValue];
+            return schedule.priority == [testPriorityLevels[i] intValue];
         }]];
 
         [[[self.mockDelegate expect] andDo:^(NSInvocation *invocation) {
@@ -236,19 +219,20 @@
 
         }] executeSchedule:[OCMArg checkWithBlock:^BOOL(id obj) {
             UASchedule *schedule = obj;
-            return schedule.info.priority == [testPriorityLevels[i] intValue];
+            return schedule.priority == [testPriorityLevels[i] intValue];
         }] completionHandler:OCMOCK_ANY];
 
         // Give all the schedules the same trigger
         UAScheduleTrigger *trigger = [UAScheduleTrigger foregroundTriggerWithCount:1];
 
-        UAActionScheduleInfo *info = [UAActionScheduleInfo scheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder * _Nonnull builder) {
-            builder.actions = @{@"cool": @"story"};
+        UASchedule *schedule = [UASchedule scheduleWithActions:@{}
+                                                  builderBlock:^(UAScheduleBuilder * _Nonnull builder) {
             builder.priority = [testPriorityLevels[i] integerValue];
             builder.triggers = @[trigger];
         }];
 
-        [self.automationEngine schedule:info metadata:@{} completionHandler:nil];
+
+        [self.automationEngine schedule:schedule completionHandler:nil];
     }
 
     // Trigger the schedules with a foreground notification
@@ -260,50 +244,34 @@
 }
 
 - (void)testGetGroups {
-
-    NSMutableArray *expectedFooSchedules = [NSMutableArray arrayWithCapacity:10];
+    NSMutableArray *expectedFooSchedules = [NSMutableArray array];
 
     // Schedule 10 under the group "foo"
     for (int i = 0; i < 10; i++) {
-        XCTestExpectation *testExpectation = [self expectationWithDescription:[NSString stringWithFormat:@"scheduled foo action: %d", i]];
-
-        UAActionScheduleInfo *scheduleInfo = [UAActionScheduleInfo scheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder *builder) {
+        UASchedule *schedule = [UASchedule scheduleWithActions:@{}
+                                                  builderBlock:^(UAScheduleBuilder * _Nonnull builder) {
             UAScheduleTrigger *foregroundTrigger = [UAScheduleTrigger foregroundTriggerWithCount:2];
-            builder.actions = @{@"oh": @"hi"};
             builder.triggers = @[foregroundTrigger];
             builder.group = @"foo";
         }];
 
-        [self.automationEngine schedule:scheduleInfo metadata:@{} completionHandler:^(UASchedule *schedule) {
-            XCTAssertEqualObjects(scheduleInfo, schedule.info);
-            XCTAssertNotNil(schedule.identifier);
-
-            [expectedFooSchedules addObject:schedule];
-            [testExpectation fulfill];
-        }];
-
+        [expectedFooSchedules addObject:schedule];
+        [self.automationEngine schedule:schedule completionHandler:nil];
     }
 
-    NSMutableArray *expectedBarSchedules = [NSMutableArray arrayWithCapacity:15];
+    NSMutableArray *expectedBarSchedules = [NSMutableArray array];
 
     // Schedule 15 under "bar"
     for (int i = 0; i < 15; i++) {
-        XCTestExpectation *testExpectation = [self expectationWithDescription:[NSString stringWithFormat:@"scheduled bar action: %d", i]];
-
-        UAActionScheduleInfo *scheduleInfo = [UAActionScheduleInfo scheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder *builder) {
+        UASchedule *schedule = [UASchedule scheduleWithActions:@{}
+                                                  builderBlock:^(UAScheduleBuilder * _Nonnull builder) {
             UAScheduleTrigger *foregroundTrigger = [UAScheduleTrigger foregroundTriggerWithCount:2];
-            builder.actions = @{@"oh": @"hi"};
             builder.triggers = @[foregroundTrigger];
             builder.group = @"bar";
         }];
 
-        [self.automationEngine schedule:scheduleInfo metadata:@{} completionHandler:^(UASchedule *schedule) {
-            XCTAssertEqualObjects(scheduleInfo, schedule.info);
-            XCTAssertNotNil(schedule.identifier);
-
-            [expectedBarSchedules addObject:schedule];
-            [testExpectation fulfill];
-        }];
+        [expectedBarSchedules addObject:schedule];
+        [self.automationEngine schedule:schedule completionHandler:nil];
     }
 
     XCTestExpectation *fooGroupExpectation = [self expectationWithDescription:@"schedules foo fetched properly"];
@@ -326,21 +294,15 @@
 }
 
 - (void)testGetSchedule {
-    __block NSString *scheduleIdentifier;
-
     XCTestExpectation *scheduleExpectation = [self expectationWithDescription:@"scheduled actions"];
 
-    UAActionScheduleInfo *scheduleInfo = [UAActionScheduleInfo scheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder *builder) {
+    UASchedule *schedule = [UASchedule scheduleWithActions:@{} builderBlock:^(UAScheduleBuilder *builder) {
         UAScheduleTrigger *foregroundTrigger = [UAScheduleTrigger foregroundTriggerWithCount:2];
-        builder.actions = @{@"oh": @"hi"};
         builder.triggers = @[foregroundTrigger];
     }];
 
-    [self.automationEngine schedule:scheduleInfo metadata:@{} completionHandler:^(UASchedule *schedule) {
-        XCTAssertEqualObjects(scheduleInfo, schedule.info);
-        XCTAssertNotNil(schedule.identifier);
-        scheduleIdentifier = schedule.identifier;
-
+    [self.automationEngine schedule:schedule completionHandler:^(BOOL result) {
+        XCTAssertTrue(result);
         [scheduleExpectation fulfill];
     }];
 
@@ -348,9 +310,8 @@
 
     XCTestExpectation *fetchExpectation = [self expectationWithDescription:@"schedules fetched properly"];
 
-    [self.automationEngine getScheduleWithID:scheduleIdentifier completionHandler:^(UASchedule *schedule) {
-        XCTAssertEqualObjects(scheduleInfo, schedule.info);
-        XCTAssertEqualObjects(scheduleIdentifier, schedule.identifier);
+     [self.automationEngine getScheduleWithID:schedule.identifier completionHandler:^(UASchedule *schedule) {
+        XCTAssertEqualObjects(schedule, schedule);;
         [fetchExpectation fulfill];
     }];
 
@@ -358,47 +319,26 @@
 }
 
 - (void)testGetAllUnended {
-    NSMutableArray *expectedSchedules = [NSMutableArray arrayWithCapacity:15];
+    NSMutableArray *expectedSchedules = [NSMutableArray array];
 
     // Schedule some actions
     for (int i = 0; i < 10; i++) {
-        XCTestExpectation *testExpectation = [self expectationWithDescription:@"scheduled actions"];
-
-        UAActionScheduleInfo *scheduleInfo = [UAActionScheduleInfo scheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder *builder) {
+        UASchedule *schedule = [UASchedule scheduleWithActions:@{} builderBlock:^(UAScheduleBuilder *builder) {
             UAScheduleTrigger *foregroundTrigger = [UAScheduleTrigger foregroundTriggerWithCount:2];
-            builder.actions = @{@"oh": @"hi"};
             builder.triggers = @[foregroundTrigger];
         }];
-
-        [self.automationEngine schedule:scheduleInfo metadata:@{} completionHandler:^(UASchedule *schedule) {
-            XCTAssertEqual(scheduleInfo, schedule.info);
-            XCTAssertNotNil(schedule.identifier);
-
-            [expectedSchedules addObject:schedule];
-            [testExpectation fulfill];
-        }];
+        [expectedSchedules addObject:schedule];
+        [self.automationEngine schedule:schedule completionHandler:nil];
     }
-
-    // schedule action with end date in the past - should not be returned later
-    XCTestExpectation *testExpectation = [self expectationWithDescription:@"scheduled actions"];
-
-    UAActionScheduleInfo *scheduleInfo = [UAActionScheduleInfo scheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder *builder) {
+    UASchedule *schedule = [UASchedule scheduleWithActions:@{} builderBlock:^(UAScheduleBuilder *builder) {
         UAScheduleTrigger *foregroundTrigger = [UAScheduleTrigger foregroundTriggerWithCount:2];
-        builder.actions = @{@"oh": @"hi"};
         builder.triggers = @[foregroundTrigger];
         builder.end = [NSDate dateWithTimeIntervalSince1970:0];
     }];
 
-    [self.automationEngine schedule:scheduleInfo metadata:@{} completionHandler:^(UASchedule *schedule) {
-        XCTAssertEqual(scheduleInfo, schedule.info);
-        XCTAssertNotNil(schedule.identifier);
-        
-        [testExpectation fulfill];
-    }];
+    [self.automationEngine schedule:schedule completionHandler:nil];
 
-    testExpectation = [self expectationWithDescription:@"schedules fetched properly"];
-
-    // Verify we are able to get the schedules
+    XCTestExpectation *testExpectation = [self expectationWithDescription:@"schedules fetched properly"];
     [self.automationEngine getSchedules:^(NSArray<UASchedule *> *result) {
         XCTAssertEqualObjects([NSSet setWithArray:expectedSchedules], [NSSet setWithArray:result]);
         [testExpectation fulfill];
@@ -408,208 +348,83 @@
 }
 
 - (void)testGetAll {
-    NSMutableArray *expectedSchedules = [NSMutableArray arrayWithCapacity:15];
-    
     // Schedule some actions
     for (int i = 0; i < 10; i++) {
-        XCTestExpectation *testExpectation = [self expectationWithDescription:@"scheduled actions"];
-        
-        UAActionScheduleInfo *scheduleInfo = [UAActionScheduleInfo scheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder *builder) {
+        UASchedule *schedule = [UASchedule scheduleWithActions:@{} builderBlock:^(UAScheduleBuilder *builder) {
             UAScheduleTrigger *foregroundTrigger = [UAScheduleTrigger foregroundTriggerWithCount:2];
-            builder.actions = @{@"oh": @"hi"};
             builder.triggers = @[foregroundTrigger];
         }];
-
-        [self.automationEngine schedule:scheduleInfo metadata:@{} completionHandler:^(UASchedule *schedule) {
-            XCTAssertEqual(scheduleInfo, schedule.info);
-            XCTAssertNotNil(schedule.identifier);
-            
-            [expectedSchedules addObject:schedule];
-            [testExpectation fulfill];
-        }];
+        [self.automationEngine schedule:schedule completionHandler:nil];
     }
-    
-    // schedule action with end date in the past - should be returned later
-    XCTestExpectation *testExpectation = [self expectationWithDescription:@"scheduled actions"];
-    
-    UAActionScheduleInfo *scheduleInfo = [UAActionScheduleInfo scheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder *builder) {
+
+    UASchedule *expired = [UASchedule scheduleWithActions:@{} builderBlock:^(UAScheduleBuilder *builder) {
         UAScheduleTrigger *foregroundTrigger = [UAScheduleTrigger foregroundTriggerWithCount:2];
-        builder.actions = @{@"oh": @"hi"};
         builder.triggers = @[foregroundTrigger];
         builder.end = [NSDate dateWithTimeIntervalSince1970:0];
     }];
 
-    [self.automationEngine schedule:scheduleInfo metadata:@{} completionHandler:^(UASchedule *schedule) {
-        XCTAssertEqual(scheduleInfo, schedule.info);
-        XCTAssertNotNil(schedule.identifier);
-        
-        [expectedSchedules addObject:schedule];
-        [testExpectation fulfill];
-    }];
-    
-    testExpectation = [self expectationWithDescription:@"schedules fetched properly"];
-    
+    [self.automationEngine schedule:expired completionHandler:nil];
+
+    XCTestExpectation *testExpectation = [self expectationWithDescription:@"schedules fetched properly"];
+
     // Verify we are able to get the schedules
     [self.automationEngine getAllSchedules:^(NSArray<UASchedule *> *result) {
-        XCTAssertEqualObjects([NSSet setWithArray:expectedSchedules], [NSSet setWithArray:result]);
+        XCTAssertTrue([result containsObject:expired]);
+        XCTAssertEqual(11, result.count);
         [testExpectation fulfill];
     }];
-    
+
     [self waitForTestExpectations];
 }
 
 - (void)testCancelSchedule {
-    __block NSString *scheduleIdentifier;
-
-    XCTestExpectation *scheduleExpectation = [self expectationWithDescription:@"scheduled actions"];
-
-    UAActionScheduleInfo *scheduleInfo = [UAActionScheduleInfo scheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder *builder) {
+    UASchedule *schedule = [UASchedule scheduleWithActions:@{} builderBlock:^(UAScheduleBuilder *builder) {
         UAScheduleTrigger *foregroundTrigger = [UAScheduleTrigger foregroundTriggerWithCount:2];
-        builder.actions = @{@"oh": @"hi"};
         builder.triggers = @[foregroundTrigger];
     }];
 
-    [self.automationEngine schedule:scheduleInfo metadata:@{} completionHandler:^(UASchedule *schedule) {
-        XCTAssertEqualObjects(scheduleInfo, schedule.info);
-        XCTAssertNotNil(schedule.identifier);
-        scheduleIdentifier = schedule.identifier;
+    [self.automationEngine schedule:schedule completionHandler:nil];
 
-        [scheduleExpectation fulfill];
-    }];
+    XCTestExpectation *cancelledExpectation = [self expectationWithDescription:@"schedule cancelled"];
 
-    [self waitForTestExpectations];
-
-    [self.automationEngine cancelScheduleWithID:scheduleIdentifier];
-
-    XCTestExpectation *testExpectation = [self expectationWithDescription:@"schedules fetched"];
-
-    // Verify schedule was canceled
-    [self.automationEngine getSchedules:^(NSArray<UASchedule *> *result) {
-        XCTAssertEqual(0, result.count);
-        [testExpectation fulfill];
-    }];
-
-    [self waitForTestExpectations];
-}
-
-- (void)testCancelScheduleCompletionHandler {
-    __block NSString *scheduleIdentifier;
-
-    XCTestExpectation *scheduleExpectation = [self expectationWithDescription:@"scheduled actions"];
-
-    UAActionScheduleInfo *scheduleInfo = [UAActionScheduleInfo scheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder *builder) {
-        UAScheduleTrigger *foregroundTrigger = [UAScheduleTrigger foregroundTriggerWithCount:2];
-        builder.actions = @{@"oh": @"hi"};
-        builder.triggers = @[foregroundTrigger];
-    }];
-
-    [self.automationEngine schedule:scheduleInfo metadata:@{} completionHandler:^(UASchedule *schedule) {
-        XCTAssertEqualObjects(scheduleInfo, schedule.info);
-        XCTAssertNotNil(schedule.identifier);
-        scheduleIdentifier = schedule.identifier;
-
-        [scheduleExpectation fulfill];
-    }];
-
-    [self waitForTestExpectations];
-
-    XCTestExpectation *scheduleCanceled = [self expectationWithDescription:@"schedule canceled"];
-
-    [self.automationEngine cancelScheduleWithID:scheduleIdentifier completionHandler:^(UASchedule * _Nullable schedule) {
-        XCTAssertEqualObjects(schedule.info, scheduleInfo);
-        [scheduleCanceled fulfill];
-    }];
-
-    XCTestExpectation *testExpectation = [self expectationWithDescription:@"schedules fetched"];
-
-    // Verify schedule was canceled
-    [self.automationEngine getSchedules:^(NSArray<UASchedule *> *result) {
-        XCTAssertEqual(0, result.count);
-        [testExpectation fulfill];
+    [self.automationEngine cancelScheduleWithID:schedule.identifier completionHandler:^(UASchedule *cancelled) {
+        XCTAssertEqualObjects(schedule, cancelled);
+        [cancelledExpectation fulfill];
     }];
 
     [self waitForTestExpectations];
 }
 
 - (void)testCancelGroup {
-    // Schedule 10 under "foo"
-    for (int i = 0; i < 10; i++) {
-        UAActionScheduleInfo *scheduleInfo = [UAActionScheduleInfo scheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder *builder) {
-            UAScheduleTrigger *foregroundTrigger = [UAScheduleTrigger foregroundTriggerWithCount:2];
-            builder.actions = @{@"oh": @"hi"};
-            builder.triggers = @[foregroundTrigger];
-            builder.group = @"foo";
-        }];
-
-        [self.automationEngine schedule:scheduleInfo metadata:@{} completionHandler:nil];
-    }
-
-    // Schedule 15 under "bar"
-    NSMutableArray *barSchedules = [NSMutableArray arrayWithCapacity:15];
-    for (int i = 0; i < 15; i++) {
-        UAActionScheduleInfo *scheduleInfo = [UAActionScheduleInfo scheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder *builder) {
-            UAScheduleTrigger *foregroundTrigger = [UAScheduleTrigger foregroundTriggerWithCount:2];
-            builder.actions = @{@"oh": @"hi"};
-            builder.triggers = @[foregroundTrigger];
-            builder.group = @"bar";
-        }];
-
-        [self.automationEngine schedule:scheduleInfo metadata:@{} completionHandler:^(UASchedule *schedule) {
-            [barSchedules addObject:schedule];
-        }];
-    }
-
-    // Cancel all the "foo" schedules
-    [self.automationEngine cancelSchedulesWithGroup:@"foo"];
-
-    XCTestExpectation *testExpectation = [self expectationWithDescription:@"schedules fetched"];
-
-    // Verify the "bar" schedules are still active
-    [self.automationEngine getSchedules:^(NSArray<UASchedule *> *result) {
-        XCTAssertEqualObjects([NSSet setWithArray:barSchedules], [NSSet setWithArray:result]);
-        [testExpectation fulfill];
-    }];
-
-    [self waitForTestExpectations];
-}
-
-- (void)testCancelGroupCompletionHandler {
     NSMutableArray *fooSchedules = [NSMutableArray array];
 
     // Schedule 10 under "foo"
     for (int i = 0; i < 10; i++) {
-        UAActionScheduleInfo *scheduleInfo = [UAActionScheduleInfo scheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder *builder) {
+        UASchedule *schedule = [UASchedule scheduleWithActions:@{} builderBlock:^(UAScheduleBuilder *builder) {
             UAScheduleTrigger *foregroundTrigger = [UAScheduleTrigger foregroundTriggerWithCount:2];
-            builder.actions = @{@"oh": @"hi"};
             builder.triggers = @[foregroundTrigger];
             builder.group = @"foo";
         }];
 
-        [self.automationEngine schedule:scheduleInfo metadata:@{} completionHandler:^(UASchedule *schedule) {
-            [fooSchedules addObject:schedule];
-        }];
+        [self.automationEngine schedule:schedule completionHandler:nil];
+        [fooSchedules addObject:schedule];
     }
 
     // Schedule 15 under "bar"
     NSMutableArray *barSchedules = [NSMutableArray array];
 
     for (int i = 0; i < 15; i++) {
-        UAActionScheduleInfo *scheduleInfo = [UAActionScheduleInfo scheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder *builder) {
+        UASchedule *schedule = [UASchedule scheduleWithActions:@{} builderBlock:^(UAScheduleBuilder *builder) {
             UAScheduleTrigger *foregroundTrigger = [UAScheduleTrigger foregroundTriggerWithCount:2];
-            builder.actions = @{@"oh": @"hi"};
             builder.triggers = @[foregroundTrigger];
             builder.group = @"bar";
         }];
 
-        [self.automationEngine schedule:scheduleInfo metadata:@{} completionHandler:^(UASchedule *schedule) {
-            [barSchedules addObject:schedule];
-        }];
+        [self.automationEngine schedule:schedule completionHandler:nil];
+        [barSchedules addObject:schedule];
     }
 
     XCTestExpectation *schedulesCanceled = [self expectationWithDescription:@"schedules canceled"];
-
-
-    // Cancel all the "foo" schedules
     [self.automationEngine cancelSchedulesWithGroup:@"foo" completionHandler:^(NSArray<UASchedule *> * _Nonnull schedules) {
         XCTAssertEqualObjects([NSSet setWithArray:schedules], [NSSet setWithArray:fooSchedules]);
         [schedulesCanceled fulfill];
@@ -627,15 +442,12 @@
 }
 
 - (void)testCancelAll {
-
-    UAActionScheduleInfo *scheduleInfo = [UAActionScheduleInfo scheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder *builder) {
+    UASchedule *schdule = [UASchedule scheduleWithActions:@{} builderBlock:^(UAScheduleBuilder *builder) {
         UAScheduleTrigger *foregroundTrigger = [UAScheduleTrigger foregroundTriggerWithCount:2];
-        builder.actions = @{@"oh": @"hi"};
         builder.triggers = @[foregroundTrigger];
     }];
 
-    [self.automationEngine schedule:scheduleInfo metadata:@{} completionHandler:nil];
-
+    [self.automationEngine schedule:schdule completionHandler:nil];
     [self.automationEngine cancelAll];
 
     XCTestExpectation *testExpectation = [self expectationWithDescription:@"schedules fetched"];
@@ -650,13 +462,10 @@
 }
 
 - (void)testGetExpiredSchedules {
-    __block NSString *scheduleIdentifier;
-
     NSDate *futureDate = [NSDate dateWithTimeInterval:100 sinceDate:self.testDate.now];
 
-    UAActionScheduleInfo *scheduleInfo = [UAActionScheduleInfo scheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder *builder) {
+    UASchedule *schedule = [UASchedule scheduleWithActions:@{} builderBlock:^(UAScheduleBuilder *builder) {
         UAScheduleTrigger *foregroundTrigger = [UAScheduleTrigger foregroundTriggerWithCount:2];
-        builder.actions = @{@"oh": @"hi"};
         builder.triggers = @[foregroundTrigger];
         builder.group = @"foo";
         builder.end = futureDate;
@@ -664,20 +473,14 @@
 
     XCTestExpectation *scheduleExpectation = [self expectationWithDescription:@"scheduled action"];
 
-    [self.automationEngine schedule:scheduleInfo metadata:@{} completionHandler:^(UASchedule *schedule) {
-        XCTAssertEqual(scheduleInfo, schedule.info);
-        XCTAssertNotNil(schedule.identifier);
-
-        scheduleIdentifier = schedule.identifier;
+    [self.automationEngine schedule:schedule completionHandler:^(BOOL result) {
+        XCTAssertTrue(result);
         [scheduleExpectation fulfill];
     }];
 
-    // Make sure the actions are scheduled to grab the ID
     [self waitForTestExpectations];
 
     XCTestExpectation *availableExpectation = [self expectationWithDescription:@"fetched schedule"];
-
-    // Verify schedule is available
     [self.automationEngine getSchedules:^(NSArray<UASchedule *> *result) {
         XCTAssertEqual(1, result.count);
         [availableExpectation fulfill];
@@ -691,7 +494,7 @@
 
     // Verify getScheduleWithIdentifier:completionHandler: does not return the expired schedule
     XCTestExpectation *identifierExpectation = [self expectationWithDescription:@"fetched schedule"];
-    [self.automationEngine getScheduleWithID:scheduleIdentifier completionHandler:^(UASchedule *schedule) {
+    [self.automationEngine getScheduleWithID:schedule.identifier completionHandler:^(UASchedule *schedule) {
         XCTAssertNil(schedule);
         [identifierExpectation fulfill];
     }];
@@ -715,18 +518,16 @@
 - (void)testScheduleDeletesExpiredSchedules {
     NSDate *futureDate = [NSDate dateWithTimeInterval:100 sinceDate:self.testDate.now];
 
-    UAActionScheduleInfo *scheduleInfo = [UAActionScheduleInfo scheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder *builder) {
+    UASchedule *expiry = [UASchedule scheduleWithActions:@{} builderBlock:^(UAScheduleBuilder *builder) {
         UAScheduleTrigger *foregroundTrigger = [UAScheduleTrigger foregroundTriggerWithCount:2];
-        builder.actions = @{@"oh": @"hi"};
         builder.triggers = @[foregroundTrigger];
         builder.end = futureDate;
     }];
 
     XCTestExpectation *scheduleExpectation = [self expectationWithDescription:@"scheduled action"];
 
-    [self.automationEngine schedule:scheduleInfo metadata:@{} completionHandler:^(UASchedule *schedule) {
-        XCTAssertEqual(scheduleInfo, schedule.info);
-        XCTAssertNotNil(schedule.identifier);
+    [self.automationEngine schedule:expiry completionHandler:^(BOOL result) {
+        XCTAssertTrue(result);
         [scheduleExpectation fulfill];
     }];
 
@@ -737,18 +538,20 @@
     self.testDate.timeOffset = [futureDate timeIntervalSinceDate:self.testDate.now] + 1;
 
     // Schedule more actions
-    scheduleInfo = [UAActionScheduleInfo scheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder *builder) {
+    UASchedule *schedule = [UASchedule scheduleWithActions:@{} builderBlock:^(UAScheduleBuilder *builder) {
         UAScheduleTrigger *foregroundTrigger = [UAScheduleTrigger foregroundTriggerWithCount:2];
-        builder.actions = @{@"oh": @"hi"};
         builder.triggers = @[foregroundTrigger];
     }];
 
-    [self.automationEngine schedule:scheduleInfo metadata:@{} completionHandler:nil];
+    [self.automationEngine schedule:schedule completionHandler:^(BOOL result) {
+        XCTAssertTrue(result);
+    }];
 
     // Verify we have the new schedule
     XCTestExpectation *allExpectation = [self expectationWithDescription:@"fetched schedule"];
     [self.automationEngine getSchedules:^(NSArray<UASchedule *> *result) {
         XCTAssertEqual(1, result.count);
+        XCTAssertTrue([result containsObject:schedule]);
         [allExpectation fulfill];
     }];
 
@@ -761,7 +564,6 @@
     }];
 
     [self waitForTestExpectations];
-
 }
 
 - (void)testForeground {
@@ -925,7 +727,7 @@
     // Start with a foreground state
     [self.notificationCenter postNotificationName:UAApplicationDidTransitionToForeground object:nil];
 
-    
+
     UAScheduleDelay *delay = [UAScheduleDelay delayWithBuilderBlock:^(UAScheduleDelayBuilder * builder) {
         builder.appState = UAScheduleDelayAppStateBackground;
     }];
@@ -952,9 +754,7 @@
 
 - (void)testCancellationTriggers {
     // Schedule the action
-    UAActionScheduleInfo *scheduleInfo = [UAActionScheduleInfo scheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder *builder) {
-        builder.actions = @{@"test action": @"test value"};
-
+    UASchedule *schedule = [UASchedule scheduleWithActions:@{} builderBlock:^(UAScheduleBuilder *builder) {
         UAJSONValueMatcher *valueMatcher = [UAJSONValueMatcher matcherWhereStringEquals:@"purchase"];
         UAJSONMatcher *jsonMatcher = [UAJSONMatcher matcherWithValueMatcher:valueMatcher scope:@[UACustomEventNameKey]];
         UAJSONPredicate *predicate = [UAJSONPredicate predicateWithJSONMatcher:jsonMatcher];
@@ -967,15 +767,7 @@
         }];
     }];
 
-    XCTestExpectation *actionsScheduled = [self expectationWithDescription:@"actions scheduled"];
-
-    __block NSString *identifier;
-    [self.automationEngine schedule:scheduleInfo metadata:@{} completionHandler:^(UASchedule *schedule) {
-        identifier = schedule.identifier;
-        [actionsScheduled fulfill];
-    }];
-
-    [self waitForTestExpectations];
+    [self.automationEngine schedule:schedule completionHandler:nil];
 
     // Trigger the scheduled actions
     UACustomEvent *purchase = [UACustomEvent eventWithName:@"purchase"];
@@ -984,7 +776,7 @@
     // Verify the schedule data is pending execution
     XCTestExpectation *schedulePendingExecution = [self expectationWithDescription:@"pending execution"];
 
-    [self.automationEngine.automationStore getSchedule:identifier completionHandler:^(UAScheduleData *scheduleData) {
+    [self.automationEngine.automationStore getSchedule:schedule.identifier completionHandler:^(UAScheduleData *scheduleData) {
         XCTAssertNotNil(scheduleData);
         XCTAssertEqual(UAScheduleStatePreparingSchedule, [scheduleData.executionState intValue]);
 
@@ -1000,7 +792,7 @@
 
     // Verify the schedule is no longer pending execution
     XCTestExpectation *scheduleNotPendingExecution = [self expectationWithDescription:@"not pending execution"];
-    [self.automationEngine.automationStore getSchedule:identifier completionHandler:^(UAScheduleData *scheduleData) {
+    [self.automationEngine.automationStore getSchedule:schedule.identifier completionHandler:^(UAScheduleData *scheduleData) {
         XCTAssertNotNil(scheduleData);
         XCTAssertEqual(UAScheduleStateIdle, [scheduleData.executionState intValue]);
         [scheduleNotPendingExecution fulfill];
@@ -1011,23 +803,16 @@
 
 - (void)testEditsNoGracePeriod {
     // Schedule the action
-    UAActionScheduleInfo *scheduleInfo = [UAActionScheduleInfo scheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder *builder) {
-        builder.actions = @{@"test action": @"test value"};
-
+    UASchedule *schedule = [UASchedule scheduleWithActions:@{} builderBlock:^(UAScheduleBuilder *builder) {
         UAJSONValueMatcher *valueMatcher = [UAJSONValueMatcher matcherWhereStringEquals:@"purchase"];
         UAJSONMatcher *jsonMatcher = [UAJSONMatcher matcherWithValueMatcher:valueMatcher scope:@[UACustomEventNameKey]];
         UAJSONPredicate *predicate = [UAJSONPredicate predicateWithJSONMatcher:jsonMatcher];
         builder.triggers = @[[UAScheduleTrigger customEventTriggerWithPredicate:predicate count:1]];
     }];
 
-    XCTestExpectation *actionsScheduled = [self expectationWithDescription:@"actions scheduled"];
-    __block NSString *identifier;
-    [self.automationEngine schedule:scheduleInfo metadata:@{} completionHandler:^(UASchedule *schedule) {
-        identifier = schedule.identifier;
-        [actionsScheduled fulfill];
-    }];
 
-    [self waitForTestExpectations];
+    [self.automationEngine schedule:schedule completionHandler:nil];
+
 
     // When prepareSchedule:completionHandler is called on the mockDelegate call the callback
     [[[self.mockDelegate expect] andDo:^(NSInvocation *invocation) {
@@ -1037,13 +822,13 @@
         handler(UAAutomationSchedulePrepareResultContinue);
     }] prepareSchedule:[OCMArg checkWithBlock:^BOOL(id obj) {
         UASchedule *schedule = obj;
-        return  [schedule.identifier isEqualToString:identifier];
+        return  [schedule.identifier isEqualToString:schedule.identifier];
     }] triggerContext:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     // When isScheduleReadyToExecute is called on the mockDelegate do this
     [[[self.mockDelegate expect] andReturnValue:OCMOCK_VALUE(YES)] isScheduleReadyToExecute:[OCMArg checkWithBlock:^BOOL(id obj) {
         UASchedule *schedule = obj;
-        return  [schedule.identifier isEqualToString:identifier];
+        return  [schedule.identifier isEqualToString:schedule.identifier];
     }]];
 
     // When executeSchedule is called on the mockDelegate call the callback
@@ -1056,7 +841,7 @@
         [executeSchedule fulfill];
     }] executeSchedule:[OCMArg checkWithBlock:^BOOL(id obj) {
         UASchedule *schedule = obj;
-        return  [schedule.identifier isEqualToString:identifier];
+        return  [schedule.identifier isEqualToString:schedule.identifier];
     }] completionHandler:OCMOCK_ANY];
 
     // Trigger the scheduled actions
@@ -1068,7 +853,7 @@
     XCTestExpectation *checkFinishedState = [self expectationWithDescription:@"not pending execution"];
 
     // Once a schedule without grace period is executed, it should be deleted
-    [self.automationEngine.automationStore getSchedule:identifier completionHandler:^(UAScheduleData *scheduleData) {
+    [self.automationEngine.automationStore getSchedule:schedule.identifier completionHandler:^(UAScheduleData *scheduleData) {
         XCTAssertNil(scheduleData);
         [checkFinishedState fulfill];
     }];
@@ -1078,8 +863,7 @@
 
 - (void)testEdits {
     // Schedule the action
-    UAActionScheduleInfo *scheduleInfo = [UAActionScheduleInfo scheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder *builder) {
-        builder.actions = @{@"test action": @"test value"};
+    UASchedule *schedule = [UASchedule scheduleWithActions:@{} builderBlock:^(UAScheduleBuilder *builder) {
         builder.editGracePeriod = 1000;
 
         UAJSONValueMatcher *valueMatcher = [UAJSONValueMatcher matcherWhereStringEquals:@"purchase"];
@@ -1088,14 +872,8 @@
         builder.triggers = @[[UAScheduleTrigger customEventTriggerWithPredicate:predicate count:1]];
     }];
 
-    XCTestExpectation *actionsScheduled = [self expectationWithDescription:@"actions scheduled"];
-    __block NSString *identifier;
-    [self.automationEngine schedule:scheduleInfo metadata:@{} completionHandler:^(UASchedule *schedule) {
-        identifier = schedule.identifier;
-        [actionsScheduled fulfill];
-    }];
 
-    [self waitForTestExpectations];
+    [self.automationEngine schedule:schedule completionHandler:nil];
 
     // When prepareSchedule:completionHandler is called on the mockDelegate call the callback
     [[[self.mockDelegate expect] andDo:^(NSInvocation *invocation) {
@@ -1105,13 +883,13 @@
         handler(UAAutomationSchedulePrepareResultContinue);
     }] prepareSchedule:[OCMArg checkWithBlock:^BOOL(id obj) {
         UASchedule *schedule = obj;
-        return  [schedule.identifier isEqualToString:identifier];
+        return  [schedule.identifier isEqualToString:schedule.identifier];
     }] triggerContext:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     // When isScheduleReadyToExecute is called on the mockDelegate do this
     [[[self.mockDelegate expect] andReturnValue:OCMOCK_VALUE(YES)] isScheduleReadyToExecute:[OCMArg checkWithBlock:^BOOL(id obj) {
         UASchedule *schedule = obj;
-        return  [schedule.identifier isEqualToString:identifier];
+        return  [schedule.identifier isEqualToString:schedule.identifier];
     }]];
 
     // When executeSchedule is called on the mockDelegate call the callback
@@ -1124,7 +902,7 @@
         [executeSchedule fulfill];
     }] executeSchedule:[OCMArg checkWithBlock:^BOOL(id obj) {
         UASchedule *schedule = obj;
-        return  [schedule.identifier isEqualToString:identifier];
+        return  [schedule.identifier isEqualToString:schedule.identifier];
     }] completionHandler:OCMOCK_ANY];
 
     // Trigger the scheduled actions
@@ -1135,7 +913,7 @@
 
     XCTestExpectation *checkFinishedState = [self expectationWithDescription:@"not pending execution"];
 
-    [self.automationEngine.automationStore getSchedule:identifier completionHandler:^(UAScheduleData *scheduleData) {
+    [self.automationEngine.automationStore getSchedule:schedule.identifier completionHandler:^(UAScheduleData *scheduleData) {
         XCTAssertNotNil(scheduleData);
         XCTAssertEqual(UAScheduleStateFinished, [scheduleData.executionState intValue]);
         [checkFinishedState fulfill];
@@ -1143,20 +921,19 @@
 
     [self waitForTestExpectations];
 
-    UAActionScheduleEdits *edits = [UAActionScheduleEdits editsWithBuilderBlock:^(UAActionScheduleEditsBuilder *  builder) {
+    UAScheduleEdits *edits = [UAScheduleEdits editsWithBuilderBlock:^(UAScheduleEditsBuilder *builder) {
         builder.limit = @(2);
     }];
 
-
     XCTestExpectation *updated = [self expectationWithDescription:@"schedule updated"];
-    [self.automationEngine editScheduleWithID:identifier edits:edits completionHandler:^(UASchedule *schedule) {
+    [self.automationEngine editScheduleWithID:schedule.identifier edits:edits completionHandler:^(UASchedule *schedule) {
         XCTAssertNotNil(schedule);
         [updated fulfill];
     }];
 
     XCTestExpectation *checkIdleState = [self expectationWithDescription:@"not pending execution"];
 
-    [self.automationEngine.automationStore getSchedule:identifier completionHandler:^(UAScheduleData *scheduleData) {
+    [self.automationEngine.automationStore getSchedule:schedule.identifier completionHandler:^(UAScheduleData *scheduleData) {
         XCTAssertNotNil(scheduleData);
         XCTAssertEqual(UAScheduleStateIdle, [scheduleData.executionState intValue]);
         [checkIdleState fulfill];
@@ -1195,8 +972,7 @@
 
 - (void)verifyPrepareResult:(UAAutomationSchedulePrepareResult)prepareResult verifyWithCompletionHandler:(void (^)(UAScheduleData *))completionHandler {
     // Schedule the action
-    UAActionScheduleInfo *scheduleInfo = [UAActionScheduleInfo scheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder *builder) {
-        builder.actions = @{@"test action": @"test value"};
+    UASchedule *schedule = [UASchedule scheduleWithActions:@{} builderBlock:^(UAScheduleBuilder *builder) {
         builder.interval = 100000;
         builder.limit = 2;
         UAJSONValueMatcher *valueMatcher = [UAJSONValueMatcher matcherWhereStringEquals:@"purchase"];
@@ -1205,16 +981,7 @@
         builder.triggers = @[[UAScheduleTrigger customEventTriggerWithPredicate:predicate count:1]];
     }];
 
-    [self.automationEngine schedule:scheduleInfo metadata:@{} completionHandler:^(UASchedule *schedule) {}];
-
-    XCTestExpectation *infoScheduled = [self expectationWithDescription:@"info scheduled"];
-    __block NSString *scheduleId;
-    [self.automationEngine schedule:scheduleInfo metadata:@{} completionHandler:^(UASchedule *schedule) {
-        scheduleId = schedule.identifier;
-        [infoScheduled fulfill];
-    }];
-
-    [self waitForTestExpectations];
+    [self.automationEngine schedule:schedule completionHandler:nil];
 
     // When prepareSchedule:completionHandler is called on the mockDelegate call the callback
     XCTestExpectation *prepared = [self expectationWithDescription:@"schedule is prepared"];
@@ -1226,7 +993,7 @@
         [prepared fulfill];
     }] prepareSchedule:[OCMArg checkWithBlock:^BOOL(id obj) {
         UASchedule *schedule = obj;
-        return  [schedule.identifier isEqualToString:scheduleId];
+        return  [schedule.identifier isEqualToString:schedule.identifier];
     }] triggerContext:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     // Trigger the scheduled actions
@@ -1237,7 +1004,7 @@
 
     XCTestExpectation *checkFinishedState = [self expectationWithDescription:@"Checked schedule state"];
 
-    [self.automationEngine.automationStore getSchedule:scheduleId completionHandler:^(UAScheduleData *scheduleData) {
+    [self.automationEngine.automationStore getSchedule:schedule.identifier completionHandler:^(UAScheduleData *scheduleData) {
         completionHandler(scheduleData);
         [checkFinishedState fulfill];
     }];
@@ -1248,8 +1015,7 @@
 
 - (void)testInterval {
     // Schedule the action
-    UAActionScheduleInfo *scheduleInfo = [UAActionScheduleInfo scheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder *builder) {
-        builder.actions = @{@"test action": @"test value"};
+    UASchedule *schedule = [UASchedule scheduleWithActions:@{} builderBlock:^(UAScheduleBuilder *builder) {
         UAJSONValueMatcher *valueMatcher = [UAJSONValueMatcher matcherWhereStringEquals:@"purchase"];
         UAJSONMatcher *jsonMatcher = [UAJSONMatcher matcherWithValueMatcher:valueMatcher scope:@[UACustomEventNameKey]];
         UAJSONPredicate *predicate = [UAJSONPredicate predicateWithJSONMatcher:jsonMatcher];
@@ -1258,14 +1024,7 @@
         builder.limit = 2;
     }];
 
-    XCTestExpectation *infoScheduled = [self expectationWithDescription:@"info scheduled"];
-    __block NSString *scheduleId;
-    [self.automationEngine schedule:scheduleInfo metadata:@{} completionHandler:^(UASchedule *schedule) {
-        scheduleId = schedule.identifier;
-        [infoScheduled fulfill];
-    }];
-
-    [self waitForTestExpectations];
+    [self.automationEngine schedule:schedule completionHandler:nil];
 
     // When executeSchedule is called on the mockDelegate do this
     [[[self.mockDelegate expect] andDo:^(NSInvocation *invocation) {
@@ -1275,7 +1034,7 @@
         handler();
     }] executeSchedule:[OCMArg checkWithBlock:^BOOL(id obj) {
         UASchedule *schedule = obj;
-        return  [schedule.identifier isEqualToString:scheduleId];
+        return [schedule.identifier isEqualToString:schedule.identifier];
     }] completionHandler:OCMOCK_ANY];
 
     // When prepareSchedule is called on the mockDelegate do this
@@ -1286,13 +1045,13 @@
         handler(UAAutomationSchedulePrepareResultContinue);
     }] prepareSchedule:[OCMArg checkWithBlock:^BOOL(id obj) {
         UASchedule *schedule = obj;
-        return  [schedule.identifier isEqualToString:scheduleId];
+        return  [schedule.identifier isEqualToString:schedule.identifier];
     }] triggerContext:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     // When isScheduleReadyToExecute is called on the mockDelegate do this
     [[[self.mockDelegate expect] andReturnValue:OCMOCK_VALUE(YES)] isScheduleReadyToExecute:[OCMArg checkWithBlock:^BOOL(id obj) {
         UASchedule *schedule = obj;
-        return  [schedule.identifier isEqualToString:scheduleId];
+        return  [schedule.identifier isEqualToString:schedule.identifier];
     }]];
 
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)30)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
@@ -1313,7 +1072,7 @@
 
     // Verify the schedule is paused
     XCTestExpectation *checkPauseState = [self expectationWithDescription:@"pause state"];
-    [self.automationEngine.automationStore getSchedule:scheduleId completionHandler:^(UAScheduleData *scheduleData) {
+    [self.automationEngine.automationStore getSchedule:schedule.identifier completionHandler:^(UAScheduleData *scheduleData) {
         XCTAssertNotNil(scheduleData);
         XCTAssertEqual(UAScheduleStatePaused, [scheduleData.executionState intValue]);
         [checkPauseState fulfill];
@@ -1326,7 +1085,7 @@
 
     // Verify we are back to idle
     XCTestExpectation *checkIdleState = [self expectationWithDescription:@"idle state"];
-    [self.automationEngine.automationStore getSchedule:scheduleId completionHandler:^(UAScheduleData *scheduleData) {
+    [self.automationEngine.automationStore getSchedule:schedule.identifier completionHandler:^(UAScheduleData *scheduleData) {
         XCTAssertNotNil(scheduleData);
         XCTAssertEqual(UAScheduleStateIdle, [scheduleData.executionState intValue]);
         [checkIdleState fulfill];
@@ -1334,7 +1093,6 @@
 
     [self waitForTestExpectations];
 }
-
 
 /**
  * Helper method for simulating a full transition from the background to the active state.
@@ -1349,9 +1107,7 @@
 
 - (void)verifyDelay:(UAScheduleDelay *)delay fulfillmentBlock:(void (^)(void))fulfillmentBlock {
     // Schedule the action
-    UAActionScheduleInfo *scheduleInfo = [UAActionScheduleInfo scheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder *builder) {
-        builder.actions = @{@"test action": @"test value"};
-
+    UASchedule *schedule = [UASchedule scheduleWithActions:@{} builderBlock:^(UAScheduleBuilder *builder) {
         UAJSONValueMatcher *valueMatcher = [UAJSONValueMatcher matcherWhereStringEquals:@"purchase"];
         UAJSONMatcher *jsonMatcher = [UAJSONMatcher matcherWithValueMatcher:valueMatcher scope:@[UACustomEventNameKey]];
         UAJSONPredicate *predicate = [UAJSONPredicate predicateWithJSONMatcher:jsonMatcher];
@@ -1360,20 +1116,12 @@
         builder.delay = delay;
     }];
 
-    XCTestExpectation *infoScheduled = [self expectationWithDescription:@"info scheduled"];
-
-    __block NSString *scheduleId;
-    [self.automationEngine schedule:scheduleInfo metadata:@{} completionHandler:^(UASchedule *schedule) {
-        scheduleId = schedule.identifier;
-        [infoScheduled fulfill];
-    }];
-
-    [self waitForTestExpectations];
+    [self.automationEngine schedule:schedule completionHandler:nil];
 
     // When isScheduleReadyToExecute is called on the mockDelegate do this
     [[[self.mockDelegate expect] andReturnValue:OCMOCK_VALUE(YES)] isScheduleReadyToExecute:[OCMArg checkWithBlock:^BOOL(id obj) {
         UASchedule *schedule = obj;
-        return  [schedule.identifier isEqualToString:scheduleId];
+        return  [schedule.identifier isEqualToString:schedule.identifier];
     }]];
 
     // When prepareSchedule:completionHandler is called on the mockDelegate call the callback
@@ -1384,7 +1132,7 @@
         handler(UAAutomationSchedulePrepareResultContinue);
     }] prepareSchedule:[OCMArg checkWithBlock:^BOOL(id obj) {
         UASchedule *schedule = obj;
-        return  [schedule.identifier isEqualToString:scheduleId];
+        return  [schedule.identifier isEqualToString:schedule.identifier];
     }] triggerContext:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *executeSchedule = [self expectationWithDescription:@"schedule is executing"];
@@ -1400,7 +1148,7 @@
         [executeSchedule fulfill];
     }] executeSchedule:[OCMArg checkWithBlock:^BOOL(id obj) {
         UASchedule *schedule = obj;
-        return  [schedule.identifier isEqualToString:scheduleId];
+        return  [schedule.identifier isEqualToString:schedule.identifier];
     }] completionHandler:OCMOCK_ANY];
 
     // Trigger the scheduled actions
@@ -1418,7 +1166,7 @@
 
     // Verify the schedule is deleted
     XCTestExpectation *fetchExpectation = [self expectationWithDescription:@"schedule fetched"];
-    [self.automationEngine getScheduleWithID:scheduleId completionHandler:^(UASchedule *schedule) {
+    [self.automationEngine getScheduleWithID:schedule.identifier completionHandler:^(UASchedule *schedule) {
         XCTAssertNil(schedule);
         [fetchExpectation fulfill];
     }];
@@ -1428,8 +1176,7 @@
 
 - (void)verifyStateTrigger:(UAScheduleTrigger *)trigger {
     NSString *uuid = [NSUUID UUID].UUIDString;
-    UAActionScheduleInfo *info = [UAActionScheduleInfo scheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder * _Nonnull builder) {
-        builder.actions = @{@"cool": @"story"};
+    UASchedule *schedule = [UASchedule scheduleWithActions:@{} builderBlock:^(UAScheduleBuilder * _Nonnull builder) {
         builder.triggers = @[trigger];
         builder.group = uuid;
     }];
@@ -1447,13 +1194,13 @@
         [prepared fulfill];
     }] prepareSchedule:[OCMArg checkWithBlock:^BOOL(id obj) {
         UASchedule *schedule = obj;
-        return  [schedule.info.group isEqualToString:uuid];
+        return  [schedule.group isEqualToString:uuid];
     }] triggerContext:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     // When isScheduleReadyToExecute is called on the mockDelegate do this
     [[[self.mockDelegate expect] andReturnValue:OCMOCK_VALUE(YES)] isScheduleReadyToExecute:[OCMArg checkWithBlock:^BOOL(id obj) {
         UASchedule *schedule = obj;
-        return  [schedule.info.group isEqualToString:uuid];
+        return  [schedule.group isEqualToString:uuid];
     }]];
 
     // When executeSchedule is called on the mockDelegate do this
@@ -1465,11 +1212,11 @@
         [executed fulfill];
     }] executeSchedule:[OCMArg checkWithBlock:^BOOL(id obj) {
         UASchedule *schedule = obj;
-        return  [schedule.info.group isEqualToString:uuid];
+        return  [schedule.group isEqualToString:uuid];
     }] completionHandler:OCMOCK_ANY];
 
     // Schedule
-    [self.automationEngine schedule:info metadata:@{} completionHandler:^(UASchedule *schedule) {
+    [self.automationEngine schedule:schedule completionHandler:^(BOOL result) {
         [scheduled fulfill];
     }];
 
@@ -1496,21 +1243,17 @@
     // Create a start date in the future
     NSDate *startDate = [NSDate dateWithTimeInterval:100 sinceDate:self.testDate.now];
 
-    UAActionScheduleInfo *info = [UAActionScheduleInfo scheduleInfoWithBuilderBlock:^(UAActionScheduleInfoBuilder * _Nonnull builder) {
-        builder.actions = @{@"cool": @"story"};
+    UASchedule *schedule = [UASchedule scheduleWithActions:@{} builderBlock:^(UAScheduleBuilder * _Nonnull builder) {
         builder.triggers = @[trigger];
         builder.start = startDate;
     }];
 
-    __block NSString *scheduleId;
     XCTestExpectation *scheduled = [self expectationWithDescription:@"scheduled"];
-    [self.automationEngine schedule:info metadata:@{} completionHandler:^(UASchedule *schedule) {
-        scheduleId = schedule.identifier;
+    [self.automationEngine schedule:schedule completionHandler:^(BOOL result) {
         [scheduled fulfill];
     }];
 
     [self waitForTestExpectations];
-    XCTAssertNotNil(scheduleId);
 
     // When prepareSchedule:completionHandler is called on the mockDelegate call the callback
     [[[self.mockDelegate expect] andDo:^(NSInvocation *invocation) {
@@ -1520,13 +1263,13 @@
         handler(UAAutomationSchedulePrepareResultContinue);
     }] prepareSchedule:[OCMArg checkWithBlock:^BOOL(id obj) {
         UASchedule *schedule = obj;
-        return  [schedule.identifier isEqualToString:scheduleId];
+        return  [schedule.identifier isEqualToString:schedule.identifier];
     }] triggerContext:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     // When isScheduleReadyToExecute is called on the mockDelegate do this
     [[[self.mockDelegate expect] andReturnValue:OCMOCK_VALUE(YES)] isScheduleReadyToExecute:[OCMArg checkWithBlock:^BOOL(id obj) {
         UASchedule *schedule = obj;
-        return  [schedule.identifier isEqualToString:scheduleId];
+        return  [schedule.identifier isEqualToString:schedule.identifier];
     }]];
 
     // When executeSchedule is called on the mockDelegate do this
@@ -1539,7 +1282,7 @@
         [executeSchedule fulfill];
     }] executeSchedule:[OCMArg checkWithBlock:^BOOL(id obj) {
         UASchedule *schedule = obj;
-        return  [schedule.identifier isEqualToString:scheduleId];
+        return  [schedule.identifier isEqualToString:schedule.identifier];
     }] completionHandler:OCMOCK_ANY];
 
     // Trigger the action, should not trigger any actions
@@ -1557,7 +1300,7 @@
 
     // Verify the schedule is deleted
     XCTestExpectation *fetchExpectation = [self expectationWithDescription:@"schedule fetched"];
-    [self.automationEngine getScheduleWithID:scheduleId completionHandler:^(UASchedule *schedule) {
+    [self.automationEngine getScheduleWithID:schedule.identifier completionHandler:^(UASchedule *schedule) {
         [fetchExpectation fulfill];
     }];
     [self waitForTestExpectations];
@@ -1583,9 +1326,6 @@
                                          userInfo:screen == nil ? @{} : @{UAScreenKey: screen}];
 }
 
-- (UAScheduleInfo *)createScheduleInfoWithBuilder:(UAScheduleInfoBuilder *)builder {
-    return [[UAActionScheduleInfo alloc] initWithBuilder:builder];
-}
 
 @end
 

@@ -27,6 +27,7 @@
 #import "UAAssociatedIdentifiers.h"
 #import "UAAsyncOperation.h"
 #import "UAAttributeMutations.h"
+#import "UAAttributes.h"
 #import "UAAutomationModuleLoaderFactory.h"
 #import "UABespokeCloseView.h"
 #import "UABeveledLoadingIndicator.h"

@@ -23,7 +23,7 @@
     self.managedContext = [NSManagedObjectContext managedObjectContextForModelURL:modelURL
                                                                   concurrencyType:NSPrivateQueueConcurrencyType];
 
-    [self.managedContext addPersistentInMemoryStore:@"Test" completionHandler:^(BOOL result, NSError *error) {}];
+    [self.managedContext addPersistentInMemoryStore:@"Test" completionHandler:^(NSPersistentStore *result, NSError *error) {}];
 }
 
 - (void)tearDown {
@@ -33,133 +33,183 @@
     [super tearDown];
 }
 
-- (void)testMigration0To1 {
-    [self executeTestFromVersion:0 toVersion:1 originalData:@[[self originalDataFor0To1]] expectedData:@[[self expectedDataFor0To1]]];
+/**
+ * Migrates duration from milliseconds to seconds
+ */
+- (void)testMigrationFromVersion0 {
+    id old =  @{
+        @"display_type":@"banner",
+        @"display":@{
+                @"duration":@30001
+        }
+    };
+
+    id expectedData = @{
+        @"display_type":@"banner",
+        @"display":@{
+                @"duration":@30.001
+        }
+    };
+
+    UAScheduleData *scheduleData = [NSEntityDescription insertNewObjectForEntityForName:@"UAScheduleData"
+                                                                 inManagedObjectContext:self.managedContext];
+    scheduleData.data = [NSJSONSerialization stringWithObject:old];
+    scheduleData.dataVersion = @(0);
+    [UAScheduleDataMigrator migrateScheduleData:scheduleData];
+
+    NSDictionary *migratedData = [NSJSONSerialization objectWithString:scheduleData.data];
+    XCTAssertEqualObjects(expectedData, migratedData);
+    XCTAssertEqual(UAScheduleDataVersion, [scheduleData.dataVersion intValue]);
 }
 
-- (NSDictionary *)originalDataFor0To1 {
-    return @{
-             @"display_type":@"banner",
-             @"display":@{
-                     @"duration":@30001
-                     }
-             };
+/**
+ * Migrates source to remote-data if set to app-defined
+ */
+- (void)testMigrationFromVersion1 {
+    id old =  @{
+        @"display_type":@"banner",
+        @"display":@{},
+        @"source":@"app-defined"
+    };
+
+    id expectedData = @{
+        @"display_type":@"banner",
+        @"display":@{},
+        @"source": @"remote-data"
+    };
+
+    UAScheduleData *scheduleData = [NSEntityDescription insertNewObjectForEntityForName:@"UAScheduleData"
+                                                                 inManagedObjectContext:self.managedContext];
+    scheduleData.data = [NSJSONSerialization stringWithObject:old];
+    scheduleData.dataVersion = @(0);
+    [UAScheduleDataMigrator migrateScheduleData:scheduleData];
+
+    NSDictionary *migratedData = [NSJSONSerialization objectWithString:scheduleData.data];
+    XCTAssertEqualObjects(expectedData, migratedData);
+    XCTAssertEqual(UAScheduleDataVersion, [scheduleData.dataVersion intValue]);
 }
 
-- (NSDictionary *)expectedDataFor0To1 {
-    return @{
-             @"display_type":@"banner",
-             @"display":@{
-                     @"duration":@30.001
-                     }
-             };
+/**
+ * Migrates type to actions if the payload data does not define an in-app message.
+ */
+- (void)testMigrationFromVersion2TypeActions {
+    id actions = @{
+        @"foo":@"bar",
+    };
+
+    UAScheduleData *scheduleData = [NSEntityDescription insertNewObjectForEntityForName:@"UAScheduleData"
+                                                                 inManagedObjectContext:self.managedContext];
+    scheduleData.data = [NSJSONSerialization stringWithObject:actions];
+    scheduleData.dataVersion = @(0);
+    [UAScheduleDataMigrator migrateScheduleData:scheduleData];
+
+    XCTAssertEqualObjects(actions, [NSJSONSerialization objectWithString:scheduleData.data]);
+    XCTAssertNotNil(scheduleData.type);
+    XCTAssertEqual(UAScheduleTypeActions, [scheduleData.type intValue]);
+    XCTAssertEqual(UAScheduleDataVersion, [scheduleData.dataVersion intValue]);
 }
 
-- (void)testMigration1To2 {
-    [self executeTestFromVersion:1 toVersion:2 originalData:[self originalDataFor1To2] expectedData:[self expectedDataFor1To2]];
+/**
+ * Migrates type to message if the payload defines display and display_type
+ */
+- (void)testMigrationFromVersion2TypeMessage{
+    id message = @{
+        @"display_type":@"banner",
+        @"display":@{},
+    };
+
+    UAScheduleData *scheduleData = [NSEntityDescription insertNewObjectForEntityForName:@"UAScheduleData"
+                                                                 inManagedObjectContext:self.managedContext];
+    scheduleData.data = [NSJSONSerialization stringWithObject:message];
+    scheduleData.dataVersion = @(0);
+    [UAScheduleDataMigrator migrateScheduleData:scheduleData];
+
+    XCTAssertEqualObjects(message, [NSJSONSerialization objectWithString:scheduleData.data]);
+    XCTAssertEqual(UAScheduleTypeInAppMessage, [scheduleData.type intValue]);
+    XCTAssertEqual(UAScheduleDataVersion, [scheduleData.dataVersion intValue]);
 }
 
-- (NSArray<NSDictionary *> *)originalDataFor1To2 {
-    // test all three different source types
-    return @[
-             @{
-                 @"source":@"app-defined",
-                 @"display_type":@"banner",
-                 @"message_id":@"a0740f54-7686-46e7-b6d2-ef69a41f5b96"
-                 },
-             @{
-                 @"source":@"legacy-push",
-                 @"display_type":@"banner",
-                 @"message_id":@"aaaaaaaa-d425-44ad-8ff8-fcabf7ece227"
-                 },
-             @{
-                 @"source":@"remote-data",
-                 @"display_type":@"modal",
-                 @"message_id":@"abcdefef-d425-44ad-8ff8-fcabf7ece227"
-                 }
-             ];
+
+/**
+ * Migrates audience if the in-app message contains the audience.
+ */
+- (void)testMigrationFromVersion2Audience {
+    id old =  @{
+        @"display_type":@"banner",
+        @"display":@{},
+        @"audience": @{ @"whatever": @"cool" }
+    };
+
+    id expected =  @{
+        @"display_type":@"banner",
+        @"display":@{},
+    };
+
+    // Add the old version of the data
+    UAScheduleData *scheduleData = [NSEntityDescription insertNewObjectForEntityForName:@"UAScheduleData"
+                                                                 inManagedObjectContext:self.managedContext];
+    scheduleData.data = [NSJSONSerialization stringWithObject:old];
+    scheduleData.dataVersion = @(0);
+    [UAScheduleDataMigrator migrateScheduleData:scheduleData];
+
+    XCTAssertEqualObjects(expected, [NSJSONSerialization objectWithString:scheduleData.data]);
+    XCTAssertEqualObjects(old[@"audience"], [NSJSONSerialization objectWithString:scheduleData.audience]);
+    XCTAssertEqual(UAScheduleTypeInAppMessage, [scheduleData.type intValue]);
+    XCTAssertEqual(UAScheduleDataVersion, [scheduleData.dataVersion intValue]);
 }
 
-- (NSArray<NSDictionary *> *)expectedDataFor1To2 {
-    // test all three different source types
-    return @[
-             @{
-                 @"source":@"remote-data",
-                 @"display_type":@"banner",
-                 @"message_id":@"a0740f54-7686-46e7-b6d2-ef69a41f5b96"
-                 },
-             @{
-                 @"source":@"legacy-push",
-                 @"display_type":@"banner",
-                 @"message_id":@"aaaaaaaa-d425-44ad-8ff8-fcabf7ece227"
-                 },
-             @{
-                 @"source":@"remote-data",
-                 @"display_type":@"modal",
-                 @"message_id":@"abcdefef-d425-44ad-8ff8-fcabf7ece227"
-                 }
-             ];
+/**
+ * Migrates the group as the ID if the source is legacy-push.
+ */
+- (void)testMigrationFromVersion2IDSourceLegacy {
+    id message =  @{
+        @"display_type":@"banner",
+        @"display":@{},
+        @"source": @"legacy-push",
+    };
+
+    // Add the old version of the data
+    UAScheduleData *scheduleData = [NSEntityDescription insertNewObjectForEntityForName:@"UAScheduleData"
+                                                                 inManagedObjectContext:self.managedContext];
+    scheduleData.data = [NSJSONSerialization stringWithObject:message];
+    scheduleData.dataVersion = @(0);
+    scheduleData.identifier = @"some ID";
+    scheduleData.group = @"some Group";
+
+    [UAScheduleDataMigrator migrateScheduleData:scheduleData];
+
+    XCTAssertEqualObjects(message, [NSJSONSerialization objectWithString:scheduleData.data]);
+    XCTAssertEqual(@"some Group", scheduleData.group);
+    XCTAssertEqual(@"some Group", scheduleData.identifier);
+    XCTAssertEqual(UAScheduleTypeInAppMessage, [scheduleData.type intValue]);
+    XCTAssertEqual(UAScheduleDataVersion, [scheduleData.dataVersion intValue]);
 }
 
-- (void)testMigration0To2 {
-    [self executeTestFromVersion:0 toVersion:2 originalData:[self originalDataFor0To2] expectedData:[self expectedDataFor0To2]];
-}
+/**
+ * Migrates the group as the ID if the source is remote-data.
+ */
+- (void)testMigrationFromVersion2IDSourceRemoteData {
+    id message =  @{
+        @"display_type":@"banner",
+        @"display":@{},
+        @"source": @"remote-data",
+    };
 
-- (NSArray<NSDictionary *> *)originalDataFor0To2 {
-    NSMutableArray *data = [NSMutableArray array];
-    
-    [data addObject:[self originalDataFor0To1]];
-    [data addObjectsFromArray:[self originalDataFor1To2]];
-    [data addObject:@{
-                      @"source":@"app-defined",
-                      @"display_type":@"banner",
-                      @"message_id":@"message-id",
-                      @"display":@{
-                              @"duration":@29999
-                              }
-                      }
-     ];
+    // Add the old version of the data
+    UAScheduleData *scheduleData = [NSEntityDescription insertNewObjectForEntityForName:@"UAScheduleData"
+                                                                 inManagedObjectContext:self.managedContext];
+    scheduleData.data = [NSJSONSerialization stringWithObject:message];
+    scheduleData.dataVersion = @(0);
+    scheduleData.identifier = @"some ID";
+    scheduleData.group = @"some Group";
 
-    return data;
-}
+    [UAScheduleDataMigrator migrateScheduleData:scheduleData];
 
-- (NSArray<NSDictionary *> *)expectedDataFor0To2 {
-    NSMutableArray *data = [NSMutableArray array];
-    
-    [data addObject:[self expectedDataFor0To1]];
-    [data addObjectsFromArray:[self expectedDataFor1To2]];
-    [data addObject:@{
-                      @"source":@"remote-data",
-                      @"display_type":@"banner",
-                      @"message_id":@"message-id",
-                      @"display":@{
-                              @"duration":@(29.999)
-                              }
-                      }
-     ];
-
-    return data;
-}
-
-- (void)executeTestFromVersion:(NSUInteger)fromVersion toVersion:(NSUInteger)toVersion originalData:(NSArray<NSDictionary *> *)originalData expectedData:(NSArray<NSDictionary *> *)expectedData {
-    XCTAssertEqual(originalData.count, expectedData.count);
-    for (NSUInteger index = 0; index < originalData.count; index++) {
-        // Add the old version of the data
-        UAScheduleData *scheduleData = [NSEntityDescription insertNewObjectForEntityForName:@"UAScheduleData"
-                                                                     inManagedObjectContext:self.managedContext];
-        scheduleData.data = [NSJSONSerialization stringWithObject:originalData[index]];
-        scheduleData.dataVersion = @(fromVersion);
-        
-        // Migrate
-        [UAScheduleDataMigrator migrateScheduleData:scheduleData
-                                         oldVersion:fromVersion
-                                         newVersion:toVersion];
-        
-        // Verify the duration was migrated
-        XCTAssertEqual(toVersion, [scheduleData.dataVersion unsignedIntegerValue]);
-        NSDictionary *migratedData = [NSJSONSerialization objectWithString:scheduleData.data];
-        XCTAssertEqualObjects(expectedData[index], migratedData);
-    }
+    XCTAssertEqualObjects(message, [NSJSONSerialization objectWithString:scheduleData.data]);
+    XCTAssertEqual(@"some Group", scheduleData.group);
+    XCTAssertEqual(@"some Group", scheduleData.identifier);
+    XCTAssertEqual(UAScheduleTypeInAppMessage, [scheduleData.type intValue]);
+    XCTAssertEqual(UAScheduleDataVersion, [scheduleData.dataVersion intValue]);
 }
 
 @end

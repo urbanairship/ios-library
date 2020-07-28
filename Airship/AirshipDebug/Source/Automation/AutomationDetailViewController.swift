@@ -233,9 +233,7 @@ class AutomationDetailViewController: UIViewController, UITableViewDelegate, UIT
 
     func createContentCell(_ indexPath:IndexPath) -> UITableViewCell {
         guard let schedule = schedule else { return UITableViewCell() }
-
-        let scheduleInfo = schedule.info as! UAInAppMessageScheduleInfo
-        let message = scheduleInfo.message
+        let message = schedule.data as! UAInAppMessage
 
         switch (message.displayType) {
         case .banner:
@@ -575,8 +573,6 @@ class AutomationDetailViewController: UIViewController, UITableViewDelegate, UIT
 
         guard let schedule = schedule else { return UITableViewCell() }
 
-        let scheduleInfo = schedule.info as! UAInAppMessageScheduleInfo
-
         let cell = defaultAutomationDetailCell(indexPath)
 
         let dateFormatter = ISO8601DateFormatter()
@@ -588,41 +584,41 @@ class AutomationDetailViewController: UIViewController, UITableViewDelegate, UIT
             cell.subtitle.text = schedule.identifier
         case startIdx:
             cell.title.text = "ua_scheduleinfo_start".localized()
-            if let start = scheduleInfo.start {
+            if let start = schedule.start {
                 cell.subtitle.text = dateFormatter.string(from: start)
             }
         case endIdx:
             cell.title.text = "ua_scheduleinfo_end".localized()
-            if let end = scheduleInfo.end {
+            if let end = schedule.end {
                 cell.subtitle.text = dateFormatter.string(from: end)
             }
         case priorityIdx:
             cell.title.text = "ua_scheduleinfo_priority".localized()
-            cell.subtitle.text = String(scheduleInfo.priority)
+            cell.subtitle.text = String(schedule.priority)
         case limitIdx:
             cell.title.text = "ua_scheduleinfo_limit".localized()
-            cell.subtitle.text = String(scheduleInfo.limit)
+            cell.subtitle.text = String(schedule.limit)
         case triggersIdx:
             cell.title.text = "ua_scheduleinfo_triggers".localized()
             cell.accessoryType = .disclosureIndicator
-            cell.subtitle.text = String(scheduleInfo.triggers.count)
+            cell.subtitle.text = String(schedule.triggers.count)
         case delayIdx:
             cell.title.text = "ua_scheduleinfo_delay".localized()
             cell.accessoryType = .disclosureIndicator
-            if let delay = scheduleInfo.delay {
+            if let delay = schedule.delay {
                 cell.subtitle.text = String(delay.seconds)
             } else {
                 collapsedCellPaths.addObjectIfNew(delayIdx)
             }
         case editGracePeriodIdx:
             cell.title.text = "ua_scheduleinfo_editgraceperiod".localized()
-            cell.subtitle.text = "\(scheduleInfo.editGracePeriod.descriptionWithUnits)"
+            cell.subtitle.text = "\(schedule.editGracePeriod.descriptionWithUnits)"
         case intervalIdx:
             cell.title.text = "ua_scheduleinfo_interval".localized()
-            cell.subtitle.text = "\(scheduleInfo.interval.descriptionWithUnits)"
+            cell.subtitle.text = "\(schedule.interval.descriptionWithUnits)"
         case isValidIdx:
             cell.title.text = "ua_scheduleinfo_isvalid".localized()
-            cell.subtitle.text = (scheduleInfo.isValid) ? "ua_yesno_yes".localized() : "ua_yesno_no".localized()
+            cell.subtitle.text = (schedule.isValid) ? "ua_yesno_yes".localized() : "ua_yesno_no".localized()
         default:
             break
         }
@@ -643,7 +639,7 @@ class AutomationDetailViewController: UIViewController, UITableViewDelegate, UIT
             return UITableViewCell()
         }
 
-        let scheduleInfo = schedule.info as! UAInAppMessageScheduleInfo
+        let message = schedule.data as! UAInAppMessage
 
         let cell = defaultAutomationDetailCell(indexPath)
 
@@ -653,29 +649,29 @@ class AutomationDetailViewController: UIViewController, UITableViewDelegate, UIT
         switch indexPath {
         case messageIdentifierIdx:
             cell.title.text = "ua_message_identifier".localized()
-            cell.subtitle.text = scheduleInfo.message.identifier
+            cell.subtitle.text = message.identifier
         case nameIdx:
             cell.title.text = "ua_message_name".localized()
-            if let name = scheduleInfo.message.name {
+            if let name = message.name {
                 cell.subtitle.text = name
             } else {
                 collapsedCellPaths.addObjectIfNew(nameIdx)
             }
         case displayTypeIdx:
             cell.title.text = "ua_message_displaytype".localized()
-            cell.subtitle.text = generateDisplayTypeSubtitle(scheduleInfo.message.displayType)
+            cell.subtitle.text = generateDisplayTypeSubtitle(message.displayType)
         case audienceIdx:
             cell.title.text = "ua_message_audience".localized()
             cell.subtitle.text = ""
             cell.accessoryType = .disclosureIndicator
-            if scheduleInfo.message.audience == nil {
+            if schedule.audience == nil {
                 collapsedCellPaths.addObjectIfNew(audienceIdx)
             }
         case extrasIdx:
             cell.title.text = "ua_message_extras".localized()
             cell.subtitle.text = ""
             cell.accessoryType = .disclosureIndicator
-            if scheduleInfo.message.extras == nil {
+            if message.extras == nil {
                 collapsedCellPaths.addObjectIfNew(extrasIdx)
             }
         default:
@@ -732,8 +728,8 @@ class AutomationDetailViewController: UIViewController, UITableViewDelegate, UIT
         case messageSection:
             return "ua_message_title".localized()
         case contentSection:
-            if let scheduleInfo = self.schedule?.info as? UAInAppMessageScheduleInfo {
-                switch (scheduleInfo.message.displayType) {
+            if schedule?.type == UAScheduleType.inAppMessage {
+                switch ((schedule?.data as! UAInAppMessage).displayType) {
                 case .banner:
                     return "ua_displaycontent_title_banner".localized()
                 case .fullScreen:
@@ -802,8 +798,7 @@ class AutomationDetailViewController: UIViewController, UITableViewDelegate, UIT
             fatalError("Unexpected sender: \(sender ?? "unknown sender")")
         }
 
-        let scheduleInfo = schedule?.info as! UAInAppMessageScheduleInfo
-        let message = scheduleInfo.message
+        let message = schedule?.data as! UAInAppMessage;
 
         var heading : UAInAppMessageTextInfo?
         var body : UAInAppMessageTextInfo?
@@ -887,7 +882,7 @@ class AutomationDetailViewController: UIViewController, UITableViewDelegate, UIT
 
             switch (selectedIdx) {
             case triggersIdx:
-                triggersTableViewController.triggers = scheduleInfo.triggers
+                triggersTableViewController.triggers = schedule?.triggers
             default:
                 print("ERROR: unexpected triggers cell selected")
             }
@@ -898,7 +893,7 @@ class AutomationDetailViewController: UIViewController, UITableViewDelegate, UIT
 
             switch (selectedIdx) {
             case audienceIdx:
-                audienceDetailViewController.audience = message.audience
+                audienceDetailViewController.audience = schedule?.audience
             default:
                 print("ERROR: unexpected audience info cell selected")
             }

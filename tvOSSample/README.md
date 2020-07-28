@@ -7,5 +7,5 @@
 
 ### Please Note:
 * Push notifications will not function in the simulator.
-* Setup instructions for Cocoapods and Carthage are available in the [ios-library README](https://github.com/urbanairship/ios-library/blob/master/README.md).
+* Setup instructions for Cocoapods and Carthage are available in the [ios-library README](https://github.com/urbanairship/ios-library/blob/main/README.md).
 * Bundle identifiers added to the sample must correspond to a provisioned application in the [Apple developer portal](https://developer.apple.com/) and have a valid [Universal push certificate](https://developer.apple.com/library/content/documentation/IDEs/Conceptual/AppDistributionGuide/AddingCapabilities/AddingCapabilities.html).

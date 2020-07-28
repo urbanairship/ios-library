@@ -105,6 +105,14 @@ extern NSString * const UAConnectionTypeWifi;
 + (NSString *)authHeaderStringWithName:(NSString *)username password:(NSString *)password;
 
 
+/**
+ * Returns the short bundle version string.
+ *
+ * @return A short bundle version string value.
+ */
++ (NSString *)bundleShortVersionString;
+
+
 ///---------------------------------------------------------------------------------------
 /// @name UI Formatting Helpers
 ///---------------------------------------------------------------------------------------
