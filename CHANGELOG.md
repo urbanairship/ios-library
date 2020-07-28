@@ -3,6 +3,16 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 13.5.2 - July 28, 2020
+Patch release to improve iOS 14 support, add a missing XCFramework, and fix In-App Automation issues. Apps that support in-app automation, or are experiencing any of these issues are encouraged to update.
+
+### Changes
+- Disable Channel Capture by default to prevent new iOS 14 notifications.
+- Add missing AirshipAutomation.xcframework to GitHub releases.
+- Handle GIFs in a different way so modal messages have the correct height.
+- Fix IAA version trigger to only fire on app updates instead of new installs.
+- Enable font size accessibility in IAA and Message Center messages.
+
 ## Version 13.5.1 - July 10, 2020
 Patch release for compatibility with Xcode 12, adding new messageCenterStyle
 properties to the default message center UI classes to avoid conflicting with
@@ -11,6 +21,7 @@ available when compiling with Xcode 11, but are not available in Xcode 12.
 Apps that wish to remain on 13.x while developing on iOS 14 are encouraged
 to upgrade.
 
+### Changes
 - Added new messageCenterStyle properties to the default message center UI
 
 ## Version 14.0.0-beta1 - July 9, 2020
@@ -24,6 +35,7 @@ Early 14.0.0 beta that allows building SDK on Xcode 12.
 Minor release adding support for application-defined locale overrides, and
 fixing issues in In-App Automation and the Actions Framework.
 
+### Changes
 - Added UALocaleManager
 - Fixed issue preventing display of inline videos in HTML In-App Automations
 - Fixed issue causing crashes when running actions enabling location services
@@ -31,6 +43,7 @@ fixing issues in In-App Automation and the Actions Framework.
 ## Version 13.4.0 - June 23, 2020
 Minor release to add support for blank urls in messages, enhance airship-ready broadcasts and fix issues with in-app messages. Apps that support in-app automation, or require any of the support changes listed below are encouraged to update.
 
+### Changes
 - Fixed issue that caused analytics events to fail to upload after enabling data collection in the same app session.
 - Fixed In-App Message modal resizing and button text alignment.
 - Added support to In-App Automation and Message Center Messages for opening target=_blank urls in an external browser.
