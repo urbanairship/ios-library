@@ -18,6 +18,10 @@
 // Max record age
 #define kUATagGroupsSentMutationsMaxAgeKey @"com;urbanairship.tag_groups.transaction_records.max_age"
 
+// store keys
+NSString * const UATagGroupsChannelStoreKey = @"channel";
+NSString * const UATagGroupsNamedUserStoreKey = @"named_user";
+
 @interface UAPendingTagGroupStore ()
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 @property (nonatomic, strong) UAPersistentQueue *pendingTagGroupsMutations;

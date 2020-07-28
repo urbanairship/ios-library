@@ -9,16 +9,6 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /**
-* The tag groups channel store key.
-*/
-extern NSString * const UATagGroupsChannelStoreKey;
-
-/**
-* The tag groups named user store key.
-*/
-extern NSString * const UATagGroupsNamedUserStoreKey;
-
-/**
  * A high level abstraction for performing tag group operations.
  */
 @interface UATagGroupsAPIClient : UAAPIClient

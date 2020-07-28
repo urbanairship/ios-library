@@ -7,28 +7,29 @@
 #import "NSURLResponse+UAAdditions.h"
 #import "UAJSONSerialization.h"
 
-#define kUAChannelTagGroupsPath @"/api/channels/tags/"
-#define kUANamedUserTagsPath @"/api/named_users/tags/"
 #define kUATagGroupsAudienceKey @"audience"
 #define kUATagGroupsResponseObjectWarningsKey @"warnings"
 #define kUATagGroupsResponseObjectErrorKey @"error"
 
-NSString * const UATagGroupsChannelStoreKey = @"ios_channel";
-NSString * const UATagGroupsNamedUserStoreKey = @"named_user_id";
+NSString * const UAChannelTagGroupsPath = @"/api/channels/tags/";
+NSString * const UANamedUserTagsPath = @"/api/named_users/tags/";
+NSString * const UATagGroupsChannelTypeKey = @"ios_channel";
+NSString * const UATagGroupsNamedUserTypeKey = @"named_user_id";
 
 @interface UATagGroupsAPIClient()
 
-@property(nonatomic) NSString *storeKey;
+@property(nonatomic) NSString *typeKey;
 @property(nonatomic) NSString *path;
 
 @end
 
 @implementation UATagGroupsAPIClient
 
-- (instancetype)initWithConfig:(UARuntimeConfig *)config session:(UARequestSession *)session storeKey:(NSString *)storeKey {
+- (instancetype)initWithConfig:(UARuntimeConfig *)config session:(UARequestSession *)session typeKey:(NSString *)typeKey path:(NSString *)path {
     self = [super initWithConfig:config session:session];
     if (self) {
-        self.storeKey = storeKey;
+        self.typeKey = typeKey;
+        self.path = path;
     }
     return self;
 }
@@ -38,8 +39,7 @@ NSString * const UATagGroupsNamedUserStoreKey = @"named_user_id";
 }
 
 + (instancetype)channelClientWithConfig:(UARuntimeConfig *)config session:(UARequestSession *)session {
-    UATagGroupsAPIClient *client = [[self alloc] initWithConfig:config session:session storeKey:UATagGroupsChannelStoreKey];
-    client.path = kUAChannelTagGroupsPath;
+    UATagGroupsAPIClient *client = [[self alloc] initWithConfig:config session:session typeKey:UATagGroupsChannelTypeKey path:UAChannelTagGroupsPath];
     return client;
 }
 
@@ -48,8 +48,7 @@ NSString * const UATagGroupsNamedUserStoreKey = @"named_user_id";
 }
 
 + (instancetype)namedUserClientWithConfig:(UARuntimeConfig *)config session:(UARequestSession *)session {
-    UATagGroupsAPIClient *client = [[self alloc] initWithConfig:config session:session storeKey:UATagGroupsNamedUserStoreKey];
-    client.path = kUANamedUserTagsPath;
+    UATagGroupsAPIClient *client = [[self alloc] initWithConfig:config session:session typeKey:UATagGroupsNamedUserTypeKey path:UANamedUserTagsPath];
     return client;
 }
 
@@ -59,7 +58,7 @@ NSString * const UATagGroupsNamedUserStoreKey = @"named_user_id";
 
     [self performTagGroupsMutation:mutation
                               path:self.path
-                          audience:@{self.storeKey : identifier}
+                          audience:@{self.typeKey : identifier}
                  completionHandler:completionHandler];
 }
 
