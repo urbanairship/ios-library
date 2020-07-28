@@ -71,10 +71,11 @@ NSString *const UAApplicationMetricsLastAppVersion = @"UAApplicationMetricsLastA
     NSString *lastVersion = [self lastAppVersion];
     NSString *currentVersion = [self currentAppVersion];
 
-    if (!lastVersion || [UAUtils compareVersion:lastVersion toVersion:currentVersion] == NSOrderedAscending) {
-        [self.dataStore setObject:currentVersion forKey:UAApplicationMetricsLastAppVersion];
+    if (lastVersion && [UAUtils compareVersion:lastVersion toVersion:currentVersion] == NSOrderedAscending) {
         self.isAppVersionUpdated = YES;
     }
+
+    [self.dataStore setObject:currentVersion forKey:UAApplicationMetricsLastAppVersion];
 }
 
 @end

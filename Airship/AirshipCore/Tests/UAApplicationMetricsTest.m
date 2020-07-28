@@ -10,6 +10,8 @@
 @property (nonatomic, strong) UAApplicationMetrics *metrics;
 @property (nonatomic, strong) NSNotificationCenter *notificationCenter;
 @property (nonatomic, strong) UATestDate *testDate;
+@property (nonatomic, strong) id mockBundle;
+
 @end
 
 @implementation UAApplicationMetricsTest
@@ -21,7 +23,8 @@
     self.testDate.absoluteTime = [NSDate date];
 
     self.notificationCenter = [[NSNotificationCenter alloc] init];
-    
+    self.mockBundle = [self mockForClass:[NSBundle class]];
+    [[[self.mockBundle stub] andReturn:self.mockBundle] mainBundle];
     self.metrics = [UAApplicationMetrics applicationMetricsWithDataStore:self.dataStore
                                                       notificationCenter:self.notificationCenter
                                                                     date:self.testDate];
@@ -34,6 +37,33 @@
 
     XCTAssertEqualObjects([self.testDate now], self.metrics.lastApplicationOpenDate);
 
+}
+
+- (void)testAppVersionUpdated {
+    // Fresh install
+    [[[self.mockBundle expect] andReturn:@{@"CFBundleShortVersionString": @"1.0.0"}] infoDictionary];
+    self.metrics = [UAApplicationMetrics applicationMetricsWithDataStore:self.dataStore
+                                                      notificationCenter:self.notificationCenter
+                                                                    date:self.testDate];
+
+
+    XCTAssertFalse(self.metrics.isAppVersionUpdated);
+
+
+    // Nothing changed
+    [[[self.mockBundle expect] andReturn:@{@"CFBundleShortVersionString": @"1.0.0"}] infoDictionary];
+    self.metrics = [UAApplicationMetrics applicationMetricsWithDataStore:self.dataStore
+                                                      notificationCenter:self.notificationCenter
+                                                                    date:self.testDate];
+    XCTAssertFalse(self.metrics.isAppVersionUpdated);
+
+
+    // Upgrade
+    [[[self.mockBundle expect] andReturn:@{@"CFBundleShortVersionString": @"2.0.0"}] infoDictionary];
+    self.metrics = [UAApplicationMetrics applicationMetricsWithDataStore:self.dataStore
+                                                      notificationCenter:self.notificationCenter
+                                                                    date:self.testDate];
+    XCTAssertTrue(self.metrics.isAppVersionUpdated);
 }
 
 @end
