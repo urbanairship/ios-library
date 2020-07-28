@@ -2,7 +2,7 @@
 
 #import "UAScheduleEdits+Internal.h"
 #import "UAAirshipAutomationCoreImport.h"
-#import "UAInAppMessage.h"
+#import "UAInAppMessage+Internal.h"
 #import "UAScheduleAudience.h"
 #import "UASchedule.h"
 
@@ -17,15 +17,14 @@
 @property(nonatomic, strong, nullable) NSDate *end;
 @property(nonatomic, strong, nullable) NSNumber *editGracePeriod;
 @property(nonatomic, strong, nullable) NSNumber *interval;
-@property(nonatomic, strong, nullable) id data;
-@property(nonatomic, strong, nullable) NSNumber *type;
 @property(nonatomic, copy, nullable) NSDictionary *metadata;
 @property(nonatomic, strong, nullable) UAScheduleAudience *audience;
-
 @end
 
 @implementation UAScheduleEdits
 
+@synthesize data = _data;
+@synthesize type = _type;
 
 + (instancetype)editsWithMessage:(UAInAppMessage *)message
                     builderBlock:(void(^)(UAScheduleEditsBuilder *builder))builderBlock {
@@ -34,7 +33,9 @@
         builderBlock(builder);
     }
 
-    return [[self alloc] initWithData:message type:@(UAScheduleTypeInAppMessage) builder:builder];
+    return [[self alloc] initWithData:[NSJSONSerialization stringWithObject:[message toJSON]]
+                                 type:@(UAScheduleTypeInAppMessage)
+                              builder:builder];
 }
 
 + (instancetype)editsWithActions:(NSDictionary *)actions
@@ -44,7 +45,9 @@
         builderBlock(builder);
     }
 
-    return [[self alloc] initWithData:actions type:@(UAScheduleTypeActions) builder:builder];
+    return [[self alloc] initWithData:[NSJSONSerialization stringWithObject:actions]
+                                 type:@(UAScheduleTypeActions)
+                              builder:builder];
 }
 
 + (instancetype)editsWithBuilderBlock:(void(^)(UAScheduleEditsBuilder *builder))builderBlock {
@@ -62,8 +65,8 @@
                      builder:(UAScheduleEditsBuilder *)builder {
     self = [super init];
     if (self) {
-        self.data = data;
-        self.type = type;
+        _data = data;
+        _type = type;
         self.priority = builder.priority;
         self.limit = builder.limit;
         self.start = builder.start;

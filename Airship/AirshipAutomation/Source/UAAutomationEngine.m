@@ -1378,7 +1378,9 @@
         }
     }
 
-    void(^builderBlock)(UAScheduleBuilder *) = ^(UAScheduleBuilder * _Nonnull builder) {
+    UASchedule *schedule = [UASchedule scheduleWithType:[scheduleData.type unsignedIntegerValue]
+                                               dataJSON:dataJSON
+                                           builderBlock:^(UAScheduleBuilder * _Nonnull builder) {
         builder.triggers = [UAAutomationEngine triggersFromData:scheduleData.triggers];
         builder.delay = [UAAutomationEngine delayFromData:scheduleData.delay];
         builder.group = scheduleData.group;
@@ -1391,27 +1393,7 @@
         builder.metadata = [NSJSONSerialization objectWithString:scheduleData.metadata];
         builder.identifier = scheduleData.identifier;
         builder.audience = audience;
-    };
-
-    UASchedule *schedule;
-    switch ([scheduleData.type integerValue]) {
-        case UAScheduleTypeInAppMessage: {
-            NSError *error;
-            UAInAppMessage *message = [UAInAppMessage messageWithJSON:dataJSON error:&error];
-
-            if (!error && message) {
-                UA_LERR(@"Invalid schedule. Deleting %@ - %@", scheduleData.identifier, error);
-                schedule = [UASchedule scheduleWithMessage:message builderBlock:builderBlock];
-            }
-            break;
-        }
-
-        case UAScheduleTypeActions:
-            schedule = [UASchedule scheduleWithActions:dataJSON builderBlock:builderBlock];
-            break;
-        default:
-            break;
-    }
+    }];
 
     if (![schedule isValid]) {
         UA_LERR(@"Invalid schedule. Deleting %@", scheduleData.identifier);
@@ -1478,21 +1460,8 @@
 
 + (void)applyEdits:(UAScheduleEdits *)edits toData:(UAScheduleData *)scheduleData {
     if (edits.data && edits.type) {
-        switch ([edits.type intValue]) {
-            case UAScheduleTypeActions: {
-                scheduleData.data = [NSJSONSerialization stringWithObject:edits.data];
-                scheduleData.type = @(UAScheduleTypeActions);
-                break;
-            }
-            case UAScheduleTypeInAppMessage: {
-                UAInAppMessage *message = (UAInAppMessage *)edits.data;
-                scheduleData.data = [NSJSONSerialization stringWithObject:[message toJSON]];
-                scheduleData.type = @(UAScheduleTypeInAppMessage);
-                break;
-            }
-            default:
-                break;
-        }
+        scheduleData.data = edits.data;
+        scheduleData.type = edits.type;
     }
 
     if (edits.start) {

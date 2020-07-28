@@ -105,15 +105,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property(nonatomic, readonly, nullable) NSNumber *interval;
 
-/**
- * Schedule's data.
- */
-@property(nonatomic, readonly, nullable) id data;
-
-/**
- * Schedule data type.
- */
-@property(nonatomic, readonly, nullable) NSNumber *type;
 
 /**
  * The schedule's edit grace period. The amount of time the schedule will still be editable after it has expired

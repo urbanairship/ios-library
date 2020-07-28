@@ -54,6 +54,21 @@ NSUInteger const UAScheduleMaxTriggers = 10;
     return [[self alloc] initWithData:message type:UAScheduleTypeInAppMessage builder:builder];
 }
 
++ (instancetype)scheduleWithType:(UAScheduleType)scheduleType
+                        dataJSON:(id)JSON
+                    builderBlock:(void(^)(UAScheduleBuilder *builder))builderBlock {
+
+    id data = [self parseDataForType:scheduleType JSON:JSON];
+
+    if (!data) {
+        return nil;
+    }
+
+    UAScheduleBuilder *builder = [[UAScheduleBuilder alloc] init];
+    builderBlock(builder);
+    return [[self alloc] initWithData:data type:scheduleType builder:builder];
+}
+
 - (BOOL)isValid {
     if (!self.triggers.count || self.triggers.count > UAScheduleMaxTriggers) {
         return NO;
@@ -201,6 +216,28 @@ NSUInteger const UAScheduleMaxTriggers = 10;
             return [NSJSONSerialization stringWithObject:[message toJSON]];
         }
     }
+}
+
++ (nullable id)parseDataForType:(UAScheduleType)scheduleType JSON:(id)JSON {
+    switch (scheduleType) {
+        case UAScheduleTypeInAppMessage: {
+            NSError *error;
+            UAInAppMessage *message = [UAInAppMessage messageWithJSON:JSON error:&error];
+            if (!error && message) {
+                return message;
+            } else {
+                UA_LERR(@"Invalid schedule data: %@ error: %@", JSON, error);
+                return nil;
+            }
+        }
+
+        case UAScheduleTypeActions: {
+            return JSON;
+        }
+    }
+
+    UA_LERR(@"Unexpected type %lu", scheduleType);
+    return nil;
 }
 
 @end

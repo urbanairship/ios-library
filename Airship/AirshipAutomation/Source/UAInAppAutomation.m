@@ -215,6 +215,10 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
                                               scheduleID:schedule.identifier
                                        completionHandler:completionHandler];
                 break;
+
+            default:
+                UA_LERR(@"Unexpected schedule type: %ld", schedule.type);
+                return completionHandler(UAAutomationSchedulePrepareResultContinue);
         }
 
         retriableHandler(UARetriableResultSuccess);
@@ -231,24 +235,24 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
         return UAAutomationScheduleReadyResultNotReady;
     }
 
+    if ([self isScheduleInvalid:schedule]) {
+        if (schedule.type == UAScheduleTypeInAppMessage) {
+            [self.inAppMessageManager scheduleExecutionAborted:schedule.identifier];
+        }
+        return UAAutomationScheduleReadyResultInvalidate;
+    }
 
     switch (schedule.type) {
         case UAScheduleTypeActions:
-            if ([self isScheduleInvalid:schedule]) {
-                return UAAutomationScheduleReadyResultInvalidate;
-            }
             return UAAutomationScheduleReadyResultContinue;
 
         case UAScheduleTypeInAppMessage:
-            if ([self isScheduleInvalid:schedule]) {
-                [self.inAppMessageManager scheduleExecutionAborted:schedule.identifier];
-                return UAAutomationScheduleReadyResultInvalidate;
-            }
-
             return [self.inAppMessageManager isReadyToDisplay:schedule.identifier];
-    }
 
-    return UAAutomationScheduleReadyResultNotReady;
+        default:
+            UA_LERR(@"Unexpected schedule type: %ld", schedule.type);
+            return UAAutomationScheduleReadyResultContinue;
+    }
 }
 
 - (void)executeSchedule:(nonnull UASchedule *)schedule completionHandler:(void (^)(void))completionHandler {
@@ -269,6 +273,11 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
         case UAScheduleTypeInAppMessage: {
              [self.inAppMessageManager displayMessageWithScheduleID:schedule.identifier completionHandler:completionHandler];
             break;
+        }
+
+        default: {
+            UA_LERR(@"Unexpected schedule type: %ld", schedule.type);
+            return completionHandler();
         }
     }
 
@@ -414,7 +423,6 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
 - (void)cancelScheduleWithID:(nonnull NSString *)scheduleID {
     [self.automationEngine cancelScheduleWithID:scheduleID completionHandler:nil];
 }
-
 
 @end
 
