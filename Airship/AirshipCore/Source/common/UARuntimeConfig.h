@@ -92,7 +92,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Flag indicating whether channel capture feature is enabled or not.
  *
- * Defaults to `YES`.
+ * Defaults to `NO`.
  */
 @property (readonly, getter=isChannelCaptureEnabled) BOOL channelCaptureEnabled;
 

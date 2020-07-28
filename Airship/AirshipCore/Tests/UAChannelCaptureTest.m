@@ -45,6 +45,8 @@
 
     self.notificationCenter = [[NSNotificationCenter alloc] init];
 
+    self.config.channelCaptureEnabled = YES;
+
     self.channelCapture = [UAChannelCapture channelCaptureWithConfig:self.config
                                                              channel:self.mockChannel
                                                 pushProviderDelegate:self.mockPushProviderDelegate

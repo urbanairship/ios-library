@@ -175,7 +175,7 @@ typedef NS_ENUM(NSUInteger, UACloudSite) {
 /**
  * Flag indicating whether channel capture feature is enabled or not.
  *
- * Defaults to `YES`.
+ * Defaults to `NO`.
  */
 @property (nonatomic, assign, getter=isChannelCaptureEnabled) BOOL channelCaptureEnabled;
 
