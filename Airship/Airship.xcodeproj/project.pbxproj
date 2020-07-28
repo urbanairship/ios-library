@@ -10,12 +10,9 @@
 		1B05132824AE103D00F5051F /* UALocaleManagerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B05132724AE103D00F5051F /* UALocaleManagerTest.m */; };
 		1B05133524AF600000F5051F /* UAScheduleTriggerContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B05133324AF600000F5051F /* UAScheduleTriggerContext.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1B05133624AF600000F5051F /* UAScheduleTriggerContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B05133424AF600000F5051F /* UAScheduleTriggerContext.m */; };
-		1B05133924AF602300F5051F /* UAScheduleTriggerContextData+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B05133724AF602300F5051F /* UAScheduleTriggerContextData+Internal.h */; };
-		1B05133A24AF602300F5051F /* UAScheduleTriggerContextData.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B05133824AF602300F5051F /* UAScheduleTriggerContextData.m */; };
 		1B05133D24AF657C00F5051F /* UAScheduleTriggerContext+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B05133B24AF657C00F5051F /* UAScheduleTriggerContext+Internal.h */; };
 		1B05134324B373DF00F5051F /* UAScheduleTriggerContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B05133324AF600000F5051F /* UAScheduleTriggerContext.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1B05134424B373EE00F5051F /* UAScheduleTriggerContext+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B05133B24AF657C00F5051F /* UAScheduleTriggerContext+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		1B05134B24B5F9E700F5051F /* UAScheduleTriggerContextData+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B05133724AF602300F5051F /* UAScheduleTriggerContextData+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1B09924824A62E05008459F6 /* UALocaleManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B09924524A62E04008459F6 /* UALocaleManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1B09924924A62E07008459F6 /* UALocaleManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B09924524A62E04008459F6 /* UALocaleManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1B09924A24A62E08008459F6 /* UALocaleManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B09924524A62E04008459F6 /* UALocaleManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
