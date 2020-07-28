@@ -527,7 +527,7 @@
         @"X-UA-Lib-Version": [UAirshipVersion get],
         @"X-UA-App-Key": self.config.appKey,
         @"X-UA-Package-Name": [[[NSBundle mainBundle] infoDictionary] objectForKey:(id)kCFBundleIdentifierKey],
-        @"X-UA-Package-Version": [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"] ?: @""
+        @"X-UA-Package-Version": [UAUtils bundleShortVersionString] ?: @""
     };
 
     XCTAssertEqualObjects(expected, headers);
