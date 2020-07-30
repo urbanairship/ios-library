@@ -280,6 +280,9 @@
     status = UAAuthorizationStatusProvisional;
     XCTAssertEqualObjects(event.notificationAuthorization, @"provisional");
     
+    status = UAAuthorizationStatusEphemeral;
+    XCTAssertEqualObjects(event.notificationAuthorization, @"ephemeral");
+    
     // this tests that the next enum value returns "unknown". If an enum value is added
     // without updating [UAEvent notificationAuthorization] and this test, the test will fail.
     NSArray<NSNumber *> *allStatus = [NSArray arrayWithObjects:
@@ -287,6 +290,7 @@
                                                  [NSNumber numberWithInteger:UAAuthorizationStatusDenied],
                                                  [NSNumber numberWithInteger:UAAuthorizationStatusAuthorized],
                                                  [NSNumber numberWithInteger:UAAuthorizationStatusProvisional],
+                                                 [NSNumber numberWithInteger:UAAuthorizationStatusEphemeral],
                                                  nil];
     status = (UAAuthorizationStatus)([[allStatus valueForKeyPath:@"@max.self"] integerValue] + 1);
     XCTAssertEqualObjects(event.notificationAuthorization, @"not_determined");

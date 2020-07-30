@@ -84,6 +84,8 @@
             return @"authorized";
         case UAAuthorizationStatusProvisional:
             return @"provisional";
+        case UAAuthorizationStatusEphemeral:
+            return @"ephemeral";
     }
     
     return @"not_determined";
