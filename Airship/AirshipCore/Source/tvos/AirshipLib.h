@@ -93,7 +93,7 @@
 #import "UAUtils.h"
 #import "UAVersionMatcher.h"
 #import "UAViewUtils.h"
-#import "UAWhitelist.h"
+#import "UAURLAllowList.h"
 #import "UA_Base64.h"
 #import "UAirship.h"
 #import "UAirshipCoreResources.h"

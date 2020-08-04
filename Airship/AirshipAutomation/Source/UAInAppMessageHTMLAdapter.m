@@ -44,9 +44,8 @@ NSString *const UAHTMLStyleFileName = @"UAInAppMessageHTMLStyle";
 - (void)prepareWithAssets:(nonnull UAInAppMessageAssets *)assets completionHandler:(nonnull void (^)(UAInAppMessagePrepareResult))completionHandler {
     UAInAppMessageHTMLDisplayContent *content = (UAInAppMessageHTMLDisplayContent *)self.message.displayContent;
 
-    BOOL whitelisted = [[UAirship shared].whitelist isWhitelisted:[NSURL URLWithString:content.url] scope:UAWhitelistScopeOpenURL];
-    if (!whitelisted) {
-        UA_LERR(@"HTML in-app message URL is not whitelisted. Unable to display message.");
+    if (![[UAirship shared].URLAllowList isAllowed:[NSURL URLWithString:content.url] scope:UAURLAllowListScopeOpenURL]) {
+        UA_LERR(@"HTML in-app message URL is not allowed. Unable to display message.");
         return completionHandler(UAInAppMessagePrepareResultCancel);
     }
 

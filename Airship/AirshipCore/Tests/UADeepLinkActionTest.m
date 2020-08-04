@@ -49,9 +49,9 @@
 }
 
 /**
- * Test that URLs that are not whitelisted will generate an error if the delegate is not set.
+ * Test that URLs that are not allowed will generate an error if the delegate is not set.
  */
-- (void)testWhiteListNoDelegate {
+- (void)testURLAllowListNoDelegate {
     id arg = [UAActionArguments argumentsWithValue: @"http://some-deep-link" withSituation:UASituationManualInvocation];
 
     XCTestExpectation *actionFinished = [self expectationWithDescription:@"action finished"];

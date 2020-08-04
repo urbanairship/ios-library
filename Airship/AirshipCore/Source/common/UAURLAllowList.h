@@ -7,52 +7,52 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /**
- * Scope option for whitelist matching.
+ * Scope option for URL allow list matching.
  */
-typedef NS_OPTIONS(NSUInteger, UAWhitelistScope) {
+typedef NS_OPTIONS(NSUInteger, UAURLAllowListScope) {
     /**
      * Applies to the JavaScript Native Bridge interface. This is the de-facto scope
      * prior to SDK 9.
      */
-    UAWhitelistScopeJavaScriptInterface = 1 << 0,
+    UAURLAllowListScopeJavaScriptInterface = 1 << 0,
 
     /**
      * Applies to loading or opening of URLs.
      */
-    UAWhitelistScopeOpenURL = 1 << 1,
+    UAURLAllowListScopeOpenURL = 1 << 1,
 
     /**
      * Applies to both the JavaScript interface and loading URLs. This is the default scope unless
      * otherwise specified.
      */
-    UAWhitelistScopeAll = UAWhitelistScopeJavaScriptInterface | UAWhitelistScopeOpenURL
+    UAURLAllowListScopeAll = UAURLAllowListScopeJavaScriptInterface | UAURLAllowListScopeOpenURL
 };
 
 /**
- * Delegate protocol for accepting and rejecting white-listed URLs.
+ * Delegate protocol for accepting and rejecting URLs.
  */
-@protocol UAWhitelistDelegate <NSObject>
+@protocol UAURLAllowListDelegate <NSObject>
 
 ///---------------------------------------------------------------------------------------
-/// @name Whitelist Delegate Optional Methods
+/// @name URL allow list Delegate Optional Methods
 ///---------------------------------------------------------------------------------------
 @optional
 
 /**
- * Called when a URL has been whitelisted by the SDK, but before the URL is fetched.
+ * Called when a URL has been allowed by the SDK, but before the URL is fetched.
  *
- * @param url The URL whitelisted by the SDK.
+ * @param URL The URL allowed by the SDK.
  * @param scope The scope of the desired match.
- * @return YES to accept whitelisting of this URL, NO to reject whitelisting of this URL.
+ * @return YES to accept this URL, NO to reject this URL.
  */
-- (BOOL)acceptWhitelisting:(NSURL *)url scope:(UAWhitelistScope)scope;
+- (BOOL)allowURL:(NSURL *)URL scope:(UAURLAllowListScope)scope;
 
 @end
 
 /**
- * Class for whitelisting and verifying webview URLs.
+ * Class for accepting and verifying webview URLs.
  *
- * Whitelist entries are written as URL patterns with optional wildcard matching:
+ * URL allow list entries are written as URL patterns with optional wildcard matching:
  *
  *     \<scheme\> := \<any char combination, '\*' are treated as wildcards\>
  *
@@ -68,72 +68,66 @@ typedef NS_OPTIONS(NSUInteger, UAWhitelistScope) {
  * Wildcards in the path pattern will match any characters, including subdirectories.
  *
  * Note that NSURL does not support internationalized domains containing non-ASCII characters.
- * All whitelist entries for internationalized domains must be in ASCII IDNA format as
+ * All URL allow list entries for internationalized domains must be in ASCII IDNA format as
  * specified in https://tools.ietf.org/html/rfc3490
  */
-@interface UAWhitelist : NSObject
+@interface UAURLAllowList : NSObject
 
 ///---------------------------------------------------------------------------------------
-/// @name Whitelist Properties
+/// @name URL Allow list Properties
 ///---------------------------------------------------------------------------------------
 
 /**
- * Enables or disables whitelist checks at the scope `UAWhitelistScopeOpenURL`. If disabled,
- * all whitelist checks for this scope will be allowed.
- */
-@property(nonatomic, assign, getter=isOpenURLWhitelistingEnabled) BOOL openURLWhitelistingEnabled;
-
-/**
- * The whitelist delegate.
+ * The URL allow list delegate.
  * NOTE: The delegate is not retained.
  */
-@property (nonatomic, weak, nullable) id <UAWhitelistDelegate> delegate;
+@property (nonatomic, weak, nullable) id <UAURLAllowListDelegate> delegate;
 
 ///---------------------------------------------------------------------------------------
-/// @name Whitelist Creation
+/// @name URL Allow list Creation
 ///---------------------------------------------------------------------------------------
 
 /**
- * Create a default whitelist with entries specified in a config object.
+ * Create a default URL allow list with entries specified in a config object.
  * @note The entry "*.urbanairship.com" is added by default.
  * @param config An instance of UARuntimeConfig.
- * @return An instance of UAWhitelist
+ * @return An instance of UAURLAllowList
  */
-+ (instancetype)whitelistWithConfig:(UARuntimeConfig *)config;
++ (instancetype)allowListWithConfig:(UARuntimeConfig *)config;
 
 ///---------------------------------------------------------------------------------------
-/// @name Whitelist Core Methods
+/// @name URL allow list Core Methods
 ///---------------------------------------------------------------------------------------
 
 /**
- * Add an entry to the whitelist, with the implicit scope `UAWhitelistScopeAll`.
- * @param patternString A whitelist pattern string.
- * @return `YES` if the whitelist pattern was validated and added, `NO` otherwise.
+ * Add an entry to the URL allow list, with the implicit scope `UAURLAllowListScopeAll`.
+ * @param patternString A URL allow list pattern string.
+ * @return `YES` if the URL allow list pattern was validated and added, `NO` otherwise.
  */
 - (BOOL)addEntry:(NSString *)patternString;
 
 /**
- * Add an entry to the whitelist.
- * @param patternString A whitelist pattern string.
+ * Add an entry to the URL allow list.
+ * @param patternString A URL allow list pattern string.
  * @param scope The scope of the pattern.
- * @return `YES` if the whitelist pattern was validated and added, `NO` otherwise.
+ * @return `YES` if the URL allow list pattern was validated and added, `NO` otherwise.
  */
-- (BOOL)addEntry:(NSString *)patternString scope:(UAWhitelistScope)scope;
+- (BOOL)addEntry:(NSString *)patternString scope:(UAURLAllowListScope)scope;
 
 /**
- * Determines whether a given URL is whitelisted, with the implicit scope `UAWhitelistScopeAll`.
- * @param url The URL under consideration.
- * @return `YES` if the the URL is whitelisted, `NO` otherwise.
+ * Determines whether a given URL is allowed, with the implicit scope `UAURLAllowListScopeAll`.
+ * @param URL The URL under consideration.
+ * @return `YES` if the the URL is allowed, `NO` otherwise.
  */
-- (BOOL)isWhitelisted:(NSURL *)url;
+- (BOOL)isAllowed:(NSURL *)URL;
 
 /**
- * Determines whether a given URL is whitelisted.
- * @param url The URL under consideration.
+ * Determines whether a given URL is allowed.
+ * @param URL The URL under consideration.
  * @param scope The scope of the desired match.
- * @return `YES` if the the URL is whitelisted, `NO` otherwise.
+ * @return `YES` if the the URL is allowed, `NO` otherwise.
  */
-- (BOOL)isWhitelisted:(NSURL *)url scope:(UAWhitelistScope)scope;
+- (BOOL)isAllowed:(NSURL *)URL scope:(UAURLAllowListScope)scope;
 
 @end
 

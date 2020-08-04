@@ -171,8 +171,8 @@ CGFloat const UALandingPageDefaultBorderRadiusPoints = 2;
         return NO;
     }
 
-    if (![[UAirship shared].whitelist isWhitelisted:url scope:UAWhitelistScopeOpenURL]) {
-        UA_LERR(@"URL %@ not whitelisted. Unable to display landing page.", url);
+    if (![[UAirship shared].URLAllowList isAllowed:url scope:UAURLAllowListScopeOpenURL]) {
+        UA_LERR(@"URL %@ not allowed. Unable to display landing page.", url);
         return NO;
     }
 

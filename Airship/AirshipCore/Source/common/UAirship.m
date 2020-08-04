@@ -118,7 +118,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         }
 
         self.actionRegistry = [UAActionRegistry defaultRegistry];
-        self.whitelist = [UAWhitelist whitelistWithConfig:config];
+        self.URLAllowList = [UAURLAllowList allowListWithConfig:config];
         self.applicationMetrics = [UAApplicationMetrics applicationMetricsWithDataStore:self.dataStore];
         self.sharedLocaleManager = [UALocaleManager localeManagerWithDataStore:self.dataStore];
 

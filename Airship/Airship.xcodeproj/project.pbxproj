@@ -650,8 +650,8 @@
 		6E937643237618AF00AA9C2A /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E937642237618AF00AA9C2A /* CoreLocation.framework */; };
 		6E937703237625BF00AA9C2A /* UAPreferenceDataStore+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E9376F0237625BD00AA9C2A /* UAPreferenceDataStore+Internal.h */; };
 		6E937704237625BF00AA9C2A /* UAPreferenceDataStore+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E9376F0237625BD00AA9C2A /* UAPreferenceDataStore+Internal.h */; };
-		6E937705237625BF00AA9C2A /* UAWhitelist.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E9376F1237625BD00AA9C2A /* UAWhitelist.m */; };
-		6E937706237625BF00AA9C2A /* UAWhitelist.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E9376F1237625BD00AA9C2A /* UAWhitelist.m */; };
+		6E937705237625BF00AA9C2A /* UAURLAllowList.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E9376F1237625BD00AA9C2A /* UAURLAllowList.m */; };
+		6E937706237625BF00AA9C2A /* UAURLAllowList.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E9376F1237625BD00AA9C2A /* UAURLAllowList.m */; };
 		6E937707237625BF00AA9C2A /* UAirship+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E9376F2237625BD00AA9C2A /* UAirship+Internal.h */; };
 		6E937708237625BF00AA9C2A /* UAirship+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E9376F2237625BD00AA9C2A /* UAirship+Internal.h */; };
 		6E937709237625BF00AA9C2A /* UAGlobal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E9376F3237625BD00AA9C2A /* UAGlobal.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -660,8 +660,8 @@
 		6E93770C237625BF00AA9C2A /* UAirshipVersion.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E9376F4237625BD00AA9C2A /* UAirshipVersion.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E93770D237625BF00AA9C2A /* UAAppIntegration.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E9376F5237625BD00AA9C2A /* UAAppIntegration.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E93770E237625BF00AA9C2A /* UAAppIntegration.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E9376F5237625BD00AA9C2A /* UAAppIntegration.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6E93770F237625BF00AA9C2A /* UAWhitelist.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E9376F6237625BE00AA9C2A /* UAWhitelist.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6E937710237625BF00AA9C2A /* UAWhitelist.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E9376F6237625BE00AA9C2A /* UAWhitelist.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6E93770F237625BF00AA9C2A /* UAURLAllowList.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E9376F6237625BE00AA9C2A /* UAURLAllowList.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6E937710237625BF00AA9C2A /* UAURLAllowList.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E9376F6237625BE00AA9C2A /* UAURLAllowList.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E937711237625BF00AA9C2A /* UAirship.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E9376F7237625BE00AA9C2A /* UAirship.m */; };
 		6E937712237625BF00AA9C2A /* UAirship.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E9376F7237625BE00AA9C2A /* UAirship.m */; };
 		6E937713237625BF00AA9C2A /* UAAutoIntegration.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E9376F8237625BE00AA9C2A /* UAAutoIntegration.m */; };
@@ -871,7 +871,7 @@
 		6EE77054238F15D000E79944 /* UAScreenTrackingEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DBE91D8C996A00BABD4F /* UAScreenTrackingEvent.m */; };
 		6EE77055238F15D000E79944 /* UAWebView.m in Sources */ = {isa = PBXBuildFile; fileRef = DFECEA791E64DD15006AA8EA /* UAWebView.m */; };
 		6EE77056238F15D000E79944 /* UAInstallAttributionEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DB911D8C996900BABD4F /* UAInstallAttributionEvent.m */; };
-		6EE77057238F15D000E79944 /* UAWhitelist.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E9376F1237625BD00AA9C2A /* UAWhitelist.m */; };
+		6EE77057238F15D000E79944 /* UAURLAllowList.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E9376F1237625BD00AA9C2A /* UAURLAllowList.m */; };
 		6EE77058238F15D000E79944 /* UAInteractiveNotificationEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DB931D8C996900BABD4F /* UAInteractiveNotificationEvent.m */; };
 		6EE77059238F15D000E79944 /* UAPreferenceDataStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E9376FF237625BE00AA9C2A /* UAPreferenceDataStore.m */; };
 		6EE7705A238F15D000E79944 /* UANotificationCategories.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DBC11D8C996A00BABD4F /* UANotificationCategories.m */; };
@@ -937,7 +937,7 @@
 		6EE77099238F15D000E79944 /* UAChannelRegistrationPayload.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EBFF9C9234FDC6600472DCF /* UAChannelRegistrationPayload.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6EE7709A238F15D000E79944 /* UABespokeCloseView.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DB2E1D8C996900BABD4F /* UABespokeCloseView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6EE7709B238F15D000E79944 /* UAActionRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DAF31D8C996900BABD4F /* UAActionRegistry.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6EE7709C238F15D000E79944 /* UAWhitelist.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E9376F6237625BE00AA9C2A /* UAWhitelist.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6EE7709C238F15D000E79944 /* UAURLAllowList.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E9376F6237625BE00AA9C2A /* UAURLAllowList.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6EE7709D238F15D000E79944 /* UAAddTagsAction.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DB091D8C996900BABD4F /* UAAddTagsAction.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6EE7709E238F15D000E79944 /* UAPreferenceDataStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E9376FD237625BE00AA9C2A /* UAPreferenceDataStore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6EE7709F238F15D000E79944 /* UANotificationAction.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DBBD1D8C996A00BABD4F /* UANotificationAction.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1416,7 +1416,7 @@
 		6EE772A8238F197600E79944 /* UAAppInitEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DB1C1D8C996900BABD4F /* UAAppInitEvent.m */; };
 		6EE772A9238F197600E79944 /* UAAsyncOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = CC04F1BB1DC16BB300B4842D /* UAAsyncOperation.m */; };
 		6EE772AA238F197600E79944 /* UA_Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = CC70E8EA1DDA985D000E2528 /* UA_Base64.m */; };
-		6EE772AB238F197600E79944 /* UAWhitelist.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E9376F1237625BD00AA9C2A /* UAWhitelist.m */; };
+		6EE772AB238F197600E79944 /* UAURLAllowList.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E9376F1237625BD00AA9C2A /* UAURLAllowList.m */; };
 		6EE772AC238F197600E79944 /* UAPadding.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E845379237E03E7007D3B1E /* UAPadding.m */; };
 		6EE772AD238F197600E79944 /* UAAppIntegration.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E9376FB237625BE00AA9C2A /* UAAppIntegration.m */; };
 		6EE772AE238F197600E79944 /* UAApplicationMetrics.m in Sources */ = {isa = PBXBuildFile; fileRef = CC40DB221D8C996900BABD4F /* UAApplicationMetrics.m */; };
@@ -1583,7 +1583,7 @@
 		6EE77353238F197600E79944 /* UAJSONPredicate.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DB9A1D8C996900BABD4F /* UAJSONPredicate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6EE77354238F197600E79944 /* UAComponent+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = DF0A22E51FBCFFE00058F6D6 /* UAComponent+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6EE77355238F197600E79944 /* UAApplicationState.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4F02972370B7520068AF65 /* UAApplicationState.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6EE77356238F197600E79944 /* UAWhitelist.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E9376F6237625BE00AA9C2A /* UAWhitelist.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6EE77356238F197600E79944 /* UAURLAllowList.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E9376F6237625BE00AA9C2A /* UAURLAllowList.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6EE77357238F197600E79944 /* UAJSONValueMatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = CC40DB9C1D8C996900BABD4F /* UAJSONValueMatcher.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6EE77358238F197600E79944 /* UARegistrationDelegateWrapper+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EDEE20A212CD31400918B05 /* UARegistrationDelegateWrapper+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6EE77359238F197600E79944 /* UAExtendedActionsModuleLoaderFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E8A552723676AB4004AE2A0 /* UAExtendedActionsModuleLoaderFactory.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -2105,7 +2105,7 @@
 		CC64F1291D8B781C009CEF27 /* UAUserTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F0C41D8B781C009CEF27 /* UAUserTest.m */; };
 		CC64F12A1D8B781C009CEF27 /* UAUtilsTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F0C61D8B781C009CEF27 /* UAUtilsTest.m */; };
 		CC64F12B1D8B781C009CEF27 /* UAJavaScriptCommandTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F0C71D8B781C009CEF27 /* UAJavaScriptCommandTest.m */; };
-		CC64F12D1D8B781C009CEF27 /* UAWhitelistTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F0C91D8B781C009CEF27 /* UAWhitelistTest.m */; };
+		CC64F12D1D8B781C009CEF27 /* UAURLAllowListTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F0C91D8B781C009CEF27 /* UAURLAllowListTest.m */; };
 		CC64F12F1D8B781C009CEF27 /* Valid-UAMessageCenterDefaultStyle.plist in Resources */ = {isa = PBXBuildFile; fileRef = CC64F0CB1D8B781C009CEF27 /* Valid-UAMessageCenterDefaultStyle.plist */; };
 		CC64F1301D8B781C009CEF27 /* ValidUAMessageCenterDefaultStyle.plist in Resources */ = {isa = PBXBuildFile; fileRef = CC64F0CC1D8B781C009CEF27 /* ValidUAMessageCenterDefaultStyle.plist */; };
 		CC64F14B1D8B7954009CEF27 /* AirshipConfig-DetectProvisioningMode.plist in Resources */ = {isa = PBXBuildFile; fileRef = CC64F1431D8B7954009CEF27 /* AirshipConfig-DetectProvisioningMode.plist */; };
@@ -2803,12 +2803,12 @@
 		6E937642237618AF00AA9C2A /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk/System/Library/Frameworks/CoreLocation.framework; sourceTree = DEVELOPER_DIR; };
 		6E9376EA2376236C00AA9C2A /* UARateAppPromptView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UARateAppPromptView.xib; sourceTree = "<group>"; };
 		6E9376F0237625BD00AA9C2A /* UAPreferenceDataStore+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UAPreferenceDataStore+Internal.h"; path = "common/UAPreferenceDataStore+Internal.h"; sourceTree = "<group>"; };
-		6E9376F1237625BD00AA9C2A /* UAWhitelist.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAWhitelist.m; path = common/UAWhitelist.m; sourceTree = "<group>"; };
+		6E9376F1237625BD00AA9C2A /* UAURLAllowList.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAURLAllowList.m; path = common/UAURLAllowList.m; sourceTree = "<group>"; };
 		6E9376F2237625BD00AA9C2A /* UAirship+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UAirship+Internal.h"; path = "common/UAirship+Internal.h"; sourceTree = "<group>"; };
 		6E9376F3237625BD00AA9C2A /* UAGlobal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAGlobal.h; path = common/UAGlobal.h; sourceTree = "<group>"; };
 		6E9376F4237625BD00AA9C2A /* UAirshipVersion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAirshipVersion.h; path = common/UAirshipVersion.h; sourceTree = "<group>"; };
 		6E9376F5237625BD00AA9C2A /* UAAppIntegration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAAppIntegration.h; path = common/UAAppIntegration.h; sourceTree = "<group>"; };
-		6E9376F6237625BE00AA9C2A /* UAWhitelist.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAWhitelist.h; path = common/UAWhitelist.h; sourceTree = "<group>"; };
+		6E9376F6237625BE00AA9C2A /* UAURLAllowList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAURLAllowList.h; path = common/UAURLAllowList.h; sourceTree = "<group>"; };
 		6E9376F7237625BE00AA9C2A /* UAirship.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAirship.m; path = common/UAirship.m; sourceTree = "<group>"; };
 		6E9376F8237625BE00AA9C2A /* UAAutoIntegration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAAutoIntegration.m; path = common/UAAutoIntegration.m; sourceTree = "<group>"; };
 		6E9376F9237625BE00AA9C2A /* UAirship.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAirship.h; path = common/UAirship.h; sourceTree = "<group>"; };
@@ -3222,7 +3222,7 @@
 		CC64F0C41D8B781C009CEF27 /* UAUserTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAUserTest.m; sourceTree = "<group>"; };
 		CC64F0C61D8B781C009CEF27 /* UAUtilsTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAUtilsTest.m; sourceTree = "<group>"; };
 		CC64F0C71D8B781C009CEF27 /* UAJavaScriptCommandTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAJavaScriptCommandTest.m; sourceTree = "<group>"; };
-		CC64F0C91D8B781C009CEF27 /* UAWhitelistTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAWhitelistTest.m; sourceTree = "<group>"; };
+		CC64F0C91D8B781C009CEF27 /* UAURLAllowListTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAURLAllowListTest.m; sourceTree = "<group>"; };
 		CC64F0CB1D8B781C009CEF27 /* Valid-UAMessageCenterDefaultStyle.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "Valid-UAMessageCenterDefaultStyle.plist"; path = "../Valid-UAMessageCenterDefaultStyle.plist"; sourceTree = "<group>"; };
 		CC64F0CC1D8B781C009CEF27 /* ValidUAMessageCenterDefaultStyle.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = ValidUAMessageCenterDefaultStyle.plist; path = ../ValidUAMessageCenterDefaultStyle.plist; sourceTree = "<group>"; };
 		CC64F1431D8B7954009CEF27 /* AirshipConfig-DetectProvisioningMode.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "AirshipConfig-DetectProvisioningMode.plist"; sourceTree = "<group>"; };
@@ -4038,13 +4038,13 @@
 			name = Integration;
 			sourceTree = "<group>";
 		};
-		6E218527237D2EDD0084933A /* Whitelist */ = {
+		6E218527237D2EDD0084933A /* URLAllowList */ = {
 			isa = PBXGroup;
 			children = (
-				6E9376F6237625BE00AA9C2A /* UAWhitelist.h */,
-				6E9376F1237625BD00AA9C2A /* UAWhitelist.m */,
+				6E9376F6237625BE00AA9C2A /* UAURLAllowList.h */,
+				6E9376F1237625BD00AA9C2A /* UAURLAllowList.m */,
 			);
-			name = Whitelist;
+			name = URLAllowList;
 			sourceTree = "<group>";
 		};
 		6E3942261F33DA31003D1C50 /* Data */ = {
@@ -4532,7 +4532,7 @@
 				CC40DDD81D91D43200BABD4F /* JSON */,
 				6E9376EF237625A500AA9C2A /* Airship */,
 				6E218526237D2DCF0084933A /* Integration */,
-				6E218527237D2EDD0084933A /* Whitelist */,
+				6E218527237D2EDD0084933A /* URLAllowList */,
 				3C4ACC3B2304DDF600BCF1CC /* App State */,
 				6E5EB9A8235A66D800F8AEA0 /* Modules */,
 				6EB9A118228E1ED200FF5A30 /* Config */,
@@ -5479,7 +5479,7 @@
 				CC64F07F1D8B781C009CEF27 /* UAAutoIntegrationTest.m */,
 				CC64F08F1D8B781C009CEF27 /* UADelayOperationTest.m */,
 				CC64F0B61D8B781C009CEF27 /* UAPreferenceDataStoreTest.m */,
-				CC64F0C91D8B781C009CEF27 /* UAWhitelistTest.m */,
+				CC64F0C91D8B781C009CEF27 /* UAURLAllowListTest.m */,
 				DF7E22BB1ED63E9200C79C46 /* UAProjectValidationTest.swift */,
 				CC64F0A31D8B781C009CEF27 /* UAirshipTest.m */,
 				3C927F8323A97CD9003C5FC8 /* UADefaultValueTransformerTest.m */,
@@ -5865,7 +5865,7 @@
 				6EBFF9CA234FDC6600472DCF /* UAChannelRegistrationPayload.h in Headers */,
 				CC40DC591D8C996A00BABD4F /* UABespokeCloseView.h in Headers */,
 				CC40DC1E1D8C996A00BABD4F /* UAActionRegistry.h in Headers */,
-				6E93770F237625BF00AA9C2A /* UAWhitelist.h in Headers */,
+				6E93770F237625BF00AA9C2A /* UAURLAllowList.h in Headers */,
 				CC40DC341D8C996A00BABD4F /* UAAddTagsAction.h in Headers */,
 				6E93771D237625BF00AA9C2A /* UAPreferenceDataStore.h in Headers */,
 				CC40DCE81D8C996A00BABD4F /* UANotificationAction.h in Headers */,
@@ -6231,7 +6231,7 @@
 				6EE77099238F15D000E79944 /* UAChannelRegistrationPayload.h in Headers */,
 				6EE7709A238F15D000E79944 /* UABespokeCloseView.h in Headers */,
 				6EE7709B238F15D000E79944 /* UAActionRegistry.h in Headers */,
-				6EE7709C238F15D000E79944 /* UAWhitelist.h in Headers */,
+				6EE7709C238F15D000E79944 /* UAURLAllowList.h in Headers */,
 				6EE7709D238F15D000E79944 /* UAAddTagsAction.h in Headers */,
 				1B09924924A62E07008459F6 /* UALocaleManager.h in Headers */,
 				6EE7709E238F15D000E79944 /* UAPreferenceDataStore.h in Headers */,
@@ -6660,7 +6660,7 @@
 				6EE77353238F197600E79944 /* UAJSONPredicate.h in Headers */,
 				6EE77354238F197600E79944 /* UAComponent+Internal.h in Headers */,
 				6EE77355238F197600E79944 /* UAApplicationState.h in Headers */,
-				6EE77356238F197600E79944 /* UAWhitelist.h in Headers */,
+				6EE77356238F197600E79944 /* UAURLAllowList.h in Headers */,
 				6EE77357238F197600E79944 /* UAJSONValueMatcher.h in Headers */,
 				3C927F7D23A2FA5F003C5FC8 /* UAAppStateTracker+Internal.h in Headers */,
 				6EE77358238F197600E79944 /* UARegistrationDelegateWrapper+Internal.h in Headers */,
@@ -6853,7 +6853,7 @@
 				99666D8D1EDF2BA700BAE46B /* UAJSONPredicate.h in Headers */,
 				DF0A22E71FBCFFE00058F6D6 /* UAComponent+Internal.h in Headers */,
 				6E4F02992370B7530068AF65 /* UAApplicationState.h in Headers */,
-				6E937710237625BF00AA9C2A /* UAWhitelist.h in Headers */,
+				6E937710237625BF00AA9C2A /* UAURLAllowList.h in Headers */,
 				99666D8F1EDF2BA700BAE46B /* UAJSONValueMatcher.h in Headers */,
 				3C927F7F23A2FA5F003C5FC8 /* UAAppStateTracker+Internal.h in Headers */,
 				6EDEE20D212CD31500918B05 /* UARegistrationDelegateWrapper+Internal.h in Headers */,
@@ -7855,7 +7855,7 @@
 				CC40DD141D8C996A00BABD4F /* UAScreenTrackingEvent.m in Sources */,
 				DFECEA7B1E64DD15006AA8EA /* UAWebView.m in Sources */,
 				CC40DCBC1D8C996A00BABD4F /* UAInstallAttributionEvent.m in Sources */,
-				6E937705237625BF00AA9C2A /* UAWhitelist.m in Sources */,
+				6E937705237625BF00AA9C2A /* UAURLAllowList.m in Sources */,
 				CC40DCBE1D8C996A00BABD4F /* UAInteractiveNotificationEvent.m in Sources */,
 				6E937721237625BF00AA9C2A /* UAPreferenceDataStore.m in Sources */,
 				CC40DCEC1D8C996A00BABD4F /* UANotificationCategories.m in Sources */,
@@ -8239,7 +8239,7 @@
 				6EE77054238F15D000E79944 /* UAScreenTrackingEvent.m in Sources */,
 				6EE77055238F15D000E79944 /* UAWebView.m in Sources */,
 				6EE77056238F15D000E79944 /* UAInstallAttributionEvent.m in Sources */,
-				6EE77057238F15D000E79944 /* UAWhitelist.m in Sources */,
+				6EE77057238F15D000E79944 /* UAURLAllowList.m in Sources */,
 				6EE77058238F15D000E79944 /* UAInteractiveNotificationEvent.m in Sources */,
 				6EE77059238F15D000E79944 /* UAPreferenceDataStore.m in Sources */,
 				6EE7705A238F15D000E79944 /* UANotificationCategories.m in Sources */,
@@ -8329,7 +8329,7 @@
 				6EE772A9238F197600E79944 /* UAAsyncOperation.m in Sources */,
 				6EDD86F423ABF30E0031CCEA /* UANSDictionaryValueTransformer.m in Sources */,
 				6EE772AA238F197600E79944 /* UA_Base64.m in Sources */,
-				6EE772AB238F197600E79944 /* UAWhitelist.m in Sources */,
+				6EE772AB238F197600E79944 /* UAURLAllowList.m in Sources */,
 				1B09925324A63085008459F6 /* UALocaleManager.m in Sources */,
 				6EE772AC238F197600E79944 /* UAPadding.m in Sources */,
 				6EE772AD238F197600E79944 /* UAAppIntegration.m in Sources */,
@@ -8487,7 +8487,7 @@
 				3C927F8123A425F0003C5FC8 /* UAUIKitStateTrackerAdapterTest.m in Sources */,
 				CC64F0E31D8B781C009CEF27 /* UAAnalyticsTest.m in Sources */,
 				CC944EDE1DB6AED200C42269 /* UAAPIClientTest.m in Sources */,
-				CC64F12D1D8B781C009CEF27 /* UAWhitelistTest.m in Sources */,
+				CC64F12D1D8B781C009CEF27 /* UAURLAllowListTest.m in Sources */,
 				6E18E6EF23207B57004E09DF /* UAInAppMessageSceneManagerTest.m in Sources */,
 				CC64F10D1D8B781C009CEF27 /* UALandingPageActionTest.m in Sources */,
 				CC64F1151D8B781C009CEF27 /* UANotificationCategoriesTest.m in Sources */,
@@ -8634,7 +8634,7 @@
 				99666E6D1EDF2C9A00BAE46B /* UAAsyncOperation.m in Sources */,
 				6EDD86F623ABF30E0031CCEA /* UANSDictionaryValueTransformer.m in Sources */,
 				99666E741EDF2CBE00BAE46B /* UA_Base64.m in Sources */,
-				6E937706237625BF00AA9C2A /* UAWhitelist.m in Sources */,
+				6E937706237625BF00AA9C2A /* UAURLAllowList.m in Sources */,
 				1B09925124A63081008459F6 /* UALocaleManager.m in Sources */,
 				6E84537C237E03E7007D3B1E /* UAPadding.m in Sources */,
 				6E93771A237625BF00AA9C2A /* UAAppIntegration.m in Sources */,

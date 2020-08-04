@@ -34,11 +34,11 @@ NSString * const kUADeepLinkActionDefaultRegistryAlias = UADeepLinkActionDefault
             completionHandler([UAActionResult resultWithValue:url.absoluteString]);
         }];
     } else{
-        if (![[UAirship shared].whitelist isWhitelisted:url scope:UAWhitelistScopeOpenURL]) {
-            UA_LERR(@"URL %@ not whitelisted. Unable to open url.", url);
+        if (![[UAirship shared].URLAllowList isAllowed:url scope:UAURLAllowListScopeOpenURL]) {
+            UA_LERR(@"URL %@ not allowed. Unable to open url.", url);
             NSError *error =  [NSError errorWithDomain:UAOpenExternalURLActionErrorDomain
                                                   code:UAOpenExternalURLActionErrorCodeURLFailedToOpen
-                                              userInfo:@{NSLocalizedDescriptionKey : @"URL not whitelisted."}];
+                                              userInfo:@{NSLocalizedDescriptionKey : @"URL not allowed."}];
             completionHandler([UAActionResult resultWithError:error]);
         } else {
             [super performWithArguments:arguments completionHandler:completionHandler];

@@ -9,7 +9,9 @@
 @property (nonatomic, assign) UALogLevel logLevel;
 @property (nonatomic, assign, getter=isInProduction) BOOL inProduction;
 @property (nonatomic, assign, getter=isAutomaticSetupEnabled) BOOL automaticSetupEnabled;
-@property (nonatomic, copy) NSArray<NSString *> *whitelist;
+@property (nonatomic, copy) NSArray<NSString *> *URLAllowList;
+@property (nonatomic, copy) NSArray<NSString *> *URLAllowListScopeJavaScriptInterface;
+@property (nonatomic, copy) NSArray<NSString *> *URLAllowListScopeOpenURL;
 @property (nonatomic, copy) NSString *itunesID;
 @property (nonatomic, assign, getter=isAnalyticsEnabled) BOOL analyticsEnabled;
 @property (nonatomic, assign) BOOL detectProvisioningMode;
@@ -17,7 +19,6 @@
 @property (nonatomic, assign) BOOL clearUserOnAppRestore;
 @property (nonatomic, assign) BOOL clearNamedUserOnAppRestore;
 @property (nonatomic, assign, getter=isChannelCaptureEnabled) BOOL channelCaptureEnabled;
-@property (nonatomic, assign, getter=isOpenURLWhitelistingEnabled) BOOL openURLWhitelistingEnabled;
 @property (nonatomic, assign, getter=isChannelCreationDelayEnabled) BOOL channelCreationDelayEnabled;
 @property (nonatomic, assign, getter=isExtendedBroadcastsEnabled) BOOL extendedBroadcastsEnabled;
 @property (nonatomic, copy) NSDictionary *customConfig;
@@ -70,10 +71,11 @@ NSString *const UARuntimeConfigEURemoteDataAPIURL = @"https://remote-data.asnapi
         self.automaticSetupEnabled = config.automaticSetupEnabled;
         self.analyticsEnabled = config.analyticsEnabled;
         self.clearUserOnAppRestore = config.clearUserOnAppRestore;
-        self.whitelist = config.whitelist;
+        self.URLAllowList = config.URLAllowList;
+        self.URLAllowListScopeJavaScriptInterface = config.URLAllowListScopeJavaScriptInterface;
+        self.URLAllowListScopeOpenURL = config.URLAllowListScopeOpenURL;
         self.clearNamedUserOnAppRestore = config.clearNamedUserOnAppRestore;
         self.channelCaptureEnabled = config.channelCaptureEnabled;
-        self.openURLWhitelistingEnabled = config.openURLWhitelistingEnabled;
         self.customConfig = config.customConfig;
         self.channelCreationDelayEnabled = config.channelCreationDelayEnabled;
         self.extendedBroadcastsEnabled = config.extendedBroadcastsEnabled;

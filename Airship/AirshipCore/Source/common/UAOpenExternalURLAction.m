@@ -2,7 +2,7 @@
 
 #import "UAOpenExternalURLAction.h"
 #import "UAirship.h"
-#import "UAWhitelist.h"
+#import "UAURLAllowList.h"
 #import "UADispatcher.h"
 
 NSString * const UAOpenExternalURLActionDefaultRegistryName = @"open_external_url_action";
@@ -26,8 +26,8 @@ NSString * const UAOpenExternalURLActionErrorDomain = @"com.urbanairship.actions
         return NO;
     }
 
-    if (![[UAirship shared].whitelist isWhitelisted:url scope:UAWhitelistScopeOpenURL]) {
-        UA_LERR(@"URL %@ not whitelisted. Unable to open URL.", url);
+    if (![[UAirship shared].URLAllowList isAllowed:url scope:UAURLAllowListScopeOpenURL]) {
+        UA_LERR(@"URL %@ not allowed. Unable to open URL.", url);
         return NO;
     }
 

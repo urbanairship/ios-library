@@ -2,7 +2,7 @@
 
 #import "UAGlobal.h"
 #import "UALocationProvider.h"
-#import "UAWhitelist.h"
+#import "UAURLAllowList.h"
 #import "UAirshipVersion.h"
 
 // Frameworks
@@ -131,10 +131,10 @@ extern NSString * const UAAirshipReadyNotification;
 
 
 /**
- * The whitelist used for validating URLs for landing pages, wallet action, open external URL action,
+ * The URL allow list used for validating URLs for landing pages, wallet action, open external URL action,
  * deep link action (if delegate is not set), and HTML in-app messages.
  */
-@property (nonatomic, strong, readonly) UAWhitelist *whitelist;
+@property (nonatomic, strong, readonly) UAURLAllowList *URLAllowList;
 
 /**
  * The channel capture utility.

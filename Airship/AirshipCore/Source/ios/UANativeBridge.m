@@ -3,7 +3,7 @@
 #import "UANativeBridge+Internal.h"
 #import "UAGlobal.h"
 #import "UAirship.h"
-#import "UAWhitelist.h"
+#import "UAURLAllowList.h"
 #import "UAJavaScriptCommand.h"
 #import "NSString+UAURLEncoding.h"
 #import "UANativeBridgeActionHandler+Internal.h"
@@ -56,7 +56,7 @@ NSString *const UANativeBridgeCloseCommand = @"close";
     NSURL *originatingURL = webView.URL;
 
     // Always handle uairship urls
-    if ([self isWhiteListedAirshipRequest:request originatingURL:originatingURL]) {
+    if ([self isAllowedAirshipRequest:request originatingURL:originatingURL]) {
         if ((navigationType == WKNavigationTypeLinkActivated) || (navigationType == WKNavigationTypeOther)) {
             UAJavaScriptCommand *command = [UAJavaScriptCommand commandForURL:request.URL];
             [self handleAirshipCommand:command webView:webView];
@@ -124,7 +124,7 @@ NSString *const UANativeBridgeCloseCommand = @"close";
  * Called when the navigation is complete.
  */
 - (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation {
-    [self populateJavascriptEnvironmentIfWhitelisted:webView];
+    [self populateJavascriptEnvironmentIfAllowed:webView];
     id strongDelegate = self.forwardNavigationDelegate;
     if ([strongDelegate respondsToSelector:@selector(webView:didFinishNavigation:)]) {
         [strongDelegate webView:webView didFinishNavigation:navigation];
@@ -210,12 +210,12 @@ NSString *const UANativeBridgeCloseCommand = @"close";
     }
 }
 
-- (void)populateJavascriptEnvironmentIfWhitelisted:(WKWebView *)webView  {
+- (void)populateJavascriptEnvironmentIfAllowed:(WKWebView *)webView  {
     NSURL *url = webView.URL;
-    if (![[UAirship shared].whitelist isWhitelisted:url scope:UAWhitelistScopeJavaScriptInterface]) {
+    if (![[UAirship shared].URLAllowList isAllowed:url scope:UAURLAllowListScopeJavaScriptInterface]) {
         // Don't log in the special case of about:blank URLs
         if (![url.absoluteString isEqualToString:@"about:blank"]) {
-            UA_LDEBUG(@"URL %@ is not whitelisted, not populating JS interface", url);
+            UA_LDEBUG(@"URL %@ is not allowed, not populating JS interface", url);
         }
         return;
     }
@@ -348,13 +348,13 @@ NSString *const UANativeBridgeCloseCommand = @"close";
     return [[request.URL scheme] isEqualToString:UANativeBridgeUAirshipScheme];
 }
 
-- (BOOL)isWhitelisted:(NSURL *)url {
-    return [[UAirship shared].whitelist isWhitelisted:url scope:UAWhitelistScopeJavaScriptInterface];
+- (BOOL)isAllowed:(NSURL *)url {
+    return [[UAirship shared].URLAllowList isAllowed:url scope:UAURLAllowListScopeJavaScriptInterface];
 }
 
-- (BOOL)isWhiteListedAirshipRequest:(NSURLRequest *)request originatingURL:(NSURL *)originatingURL {
+- (BOOL)isAllowedAirshipRequest:(NSURLRequest *)request originatingURL:(NSURL *)originatingURL {
     // uairship://command/[<arguments>][?<options>]
-    return [self isAirshipRequest:request] && [self isWhitelisted:originatingURL];
+    return [self isAirshipRequest:request] && [self isAllowed:originatingURL];
 }
 
 @end
