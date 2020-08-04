@@ -50,6 +50,18 @@
                               builder:builder];
 }
 
++ (instancetype)editsWithDeferredData:(UAScheduleDeferredData *)deferred
+                         builderBlock:(void(^)(UAScheduleEditsBuilder *builder))builderBlock {
+    UAScheduleEditsBuilder *builder = [[UAScheduleEditsBuilder alloc] init];
+    if (builderBlock) {
+        builderBlock(builder);
+    }
+
+    return [[self alloc] initWithData:[NSJSONSerialization stringWithObject:[deferred toJSON]]
+                                 type:@(UAScheduleTypeDeferred)
+                              builder:builder];
+}
+
 + (instancetype)editsWithBuilderBlock:(void(^)(UAScheduleEditsBuilder *builder))builderBlock {
     UAScheduleEditsBuilder *builder = [[UAScheduleEditsBuilder alloc] init];
     if (builderBlock) {

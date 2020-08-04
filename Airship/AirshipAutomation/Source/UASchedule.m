@@ -3,6 +3,7 @@
 #import "UASchedule+Internal.h"
 #import "UAAirshipAutomationCoreImport.h"
 #import "UAInAppMessage+Internal.h"
+#import "UAScheduleDeferredData+Internal.h"
 
 NSUInteger const UAScheduleMaxTriggers = 10;
 
@@ -52,6 +53,13 @@ NSUInteger const UAScheduleMaxTriggers = 10;
     UAScheduleBuilder *builder = [[UAScheduleBuilder alloc] init];
     builderBlock(builder);
     return [[self alloc] initWithData:message type:UAScheduleTypeInAppMessage builder:builder];
+}
+
++ (instancetype)scheduleWithDeferredData:(UAScheduleDeferredData *)deferredData
+                            builderBlock:(void(^)(UAScheduleBuilder *builder))builderBlock {
+    UAScheduleBuilder *builder = [[UAScheduleBuilder alloc] init];
+    builderBlock(builder);
+    return [[self alloc] initWithData:deferredData type:UAScheduleTypeDeferred builder:builder];
 }
 
 + (instancetype)scheduleWithType:(UAScheduleType)scheduleType
@@ -215,6 +223,10 @@ NSUInteger const UAScheduleMaxTriggers = 10;
             UAInAppMessage *message = (UAInAppMessage *)self.data;
             return [NSJSONSerialization stringWithObject:[message toJSON]];
         }
+        case UAScheduleTypeDeferred: {
+            UAScheduleDeferredData *deferred = (UAScheduleDeferredData *)self.data;
+            return [NSJSONSerialization stringWithObject:[deferred toJSON]];
+        }
     }
 }
 
@@ -233,6 +245,17 @@ NSUInteger const UAScheduleMaxTriggers = 10;
 
         case UAScheduleTypeActions: {
             return JSON;
+        }
+
+        case UAScheduleTypeDeferred: {
+            NSError *error;
+            UAScheduleDeferredData *deferred = [UAScheduleDeferredData deferredDataWithJSON:JSON error:&error];
+            if (!error && deferred) {
+                return deferred;
+            } else {
+                UA_LERR(@"Invalid schedule data: %@ error: %@", JSON, error);
+                return nil;
+            }
         }
     }
 
