@@ -64,6 +64,7 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
         self.channelTagRegistrationEnabled = YES;
         self.registrationExtenderBlocks = [NSMutableArray array];
 
+        self.tagGroupsRegistrar.enabled = self.componentEnabled;
 
         // Check config to see if user wants to delay channel creation
         // If channel ID exists or channel creation delay is disabled then channelCreationEnabled
@@ -358,7 +359,7 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
 }
 
 - (NSArray<UATagGroupsMutation *> *)pendingTagGroups {
-    return [self.tagGroupsRegistrar.pendingTagGroupStore pendingMutations];
+    return self.tagGroupsRegistrar.pendingMutations;
 }
 
 #pragma mark -
@@ -443,24 +444,31 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
     }
 }
 
+- (void)updateRegistrarEnablement {
+    BOOL enabled = self.componentEnabled && self.dataCollectionEnabled;
+    self.attributeRegistrar.componentEnabled = enabled;
+    self.tagGroupsRegistrar.enabled = enabled;
+}
+
 - (void)onComponentEnableChange {
+    [self updateRegistrarEnablement];
+
     if (self.componentEnabled) {
-        // If component was disabled and is now enabled, register the channel
         [self updateRegistration];
     }
 }
 
 - (void)onDataCollectionEnabledChanged {
-    if (self.isDataCollectionEnabled) {
-        self.attributeRegistrar.componentEnabled = YES;
-    } else {
+    [self updateRegistrarEnablement];
+
+    if (!self.isDataCollectionEnabled) {
+        // Clear channel tags and pending mutations
         [self.dataStore setObject:@[] forKey:UAChannelTagsSettingsKey];
         [self.attributeRegistrar deletePendingMutations];
-        self.attributeRegistrar.componentEnabled = NO;
+        [self.tagGroupsRegistrar clearAllPendingTagUpdates];
     }
 
     [self updateRegistration];
-
 }
 
 - (void)addChannelExtenderBlock:(UAChannelRegistrationExtenderBlock)extender {

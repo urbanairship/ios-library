@@ -12,47 +12,43 @@ NS_ASSUME_NONNULL_BEGIN
 
 extern NSString * const UAAirshipTagGroupSentNotification;
 
-@interface UATagGroupsRegistrar : UAComponent
+@interface UATagGroupsRegistrar : NSObject
+
+@property (nonatomic, assign) BOOL enabled;
+@property (nonatomic, readonly) NSArray<UATagGroupsMutation *> *pendingMutations;
 
 ///---------------------------------------------------------------------------------------
 /// @name Tag Groups Registrar Methods
 ///---------------------------------------------------------------------------------------
 
 /**
- * The pending tag group store.
+ * Factory method to create a tag groups registrar. Used for testing.
+ * @param pendingTagGroupStore The pending tag group store.
+ * @param apiClient The internal tag groups API client.
+ * @param operationQueue The operation queue.
+ * @param application The application.
+ * @return A new tag groups registrar instance.
  */
-@property (nonatomic, strong) UAPendingTagGroupStore *pendingTagGroupStore;
++ (instancetype)tagGroupsRegistrarWithPendingTagGroupStore:(UAPendingTagGroupStore *)pendingTagGroupStore
+                                                 apiClient:(UATagGroupsAPIClient *)apiClient
+                                            operationQueue:(NSOperationQueue *)operationQueue
+                                               application:(UIApplication *)application;
 
 /**
  * Factory method to create a channel tag groups registrar.
- * @param config The Airship config.
- * @param dataStore The shared data store.
+ * @param config The runtime config.
+ * @param dataStore The preference data store.
  * @return A new tag groups registrar instance.
  */
 + (instancetype)channelTagGroupsRegistrarWithConfig:(UARuntimeConfig *)config dataStore:(UAPreferenceDataStore *)dataStore;
 
 /**
- * Factory method to create a user named tag groups registrar.
- * @param config The Airship config.
- * @param dataStore The shared data store.
+ * Factory method to create a named user tag groups registrar.
+ * @param config The runtime config.
+ * @param dataStore The preference data store.
  * @return A new tag groups registrar instance.
  */
 + (instancetype)namedUserTagGroupsRegistrarWithConfig:(UARuntimeConfig *)config dataStore:(UAPreferenceDataStore *)dataStore;
-
-/**
- * Factory method to create a tag groups registrar. Used for testing.
- * @param dataStore The shared data store.
- * @param pendingTagGroupStore The pending tag group store.
- * @param apiClient The internal tag groups API client.
- * @param operationQueue An NSOperation queue used to synchronize changes to tag groups.
- * @param application The application.
- * @return A new tag groups registrar instance.
- */
-+ (instancetype)tagGroupsRegistrarWithDataStore:(UAPreferenceDataStore *)dataStore
-                                pendingTagGroupStore:(UAPendingTagGroupStore *)pendingTagGroupStore
-                                      apiClient:(UATagGroupsAPIClient *)apiClient
-                                 operationQueue:(NSOperationQueue *)operationQueue
-                                    application:(UIApplication *)application;
 
 /**
  * Update the tag groups for the given identifier.

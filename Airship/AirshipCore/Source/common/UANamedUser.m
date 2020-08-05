@@ -43,9 +43,12 @@ NSString *const UANamedUserLastChannelIDKey = @"UANamedUserLastChannelID";
         self.channel = channel;
         self.dataStore = dataStore;
         self.namedUserAPIClient = [UANamedUserAPIClient clientWithConfig:config];
-        self.namedUserAPIClient.enabled = self.componentEnabled;
         self.tagGroupsRegistrar = tagGroupsRegistrar;
         self.attributeRegistrar = attributeRegistrar;
+
+        self.namedUserAPIClient.enabled = self.componentEnabled;
+        self.tagGroupsRegistrar.enabled = self.componentEnabled;
+
         self.date = date;
 
         [[NSNotificationCenter defaultCenter] addObserver:self
@@ -290,27 +293,33 @@ NSString *const UANamedUserLastChannelIDKey = @"UANamedUserLastChannelID";
     }
 }
 
+- (void)updateRegistrarEnablement {
+    BOOL enabled = self.componentEnabled && self.dataCollectionEnabled;
+
+    self.namedUserAPIClient.enabled = enabled;
+    self.tagGroupsRegistrar.enabled = enabled;
+    self.attributeRegistrar.componentEnabled = enabled;
+}
+
 - (void)onComponentEnableChange {
-    // Disable/enable the API client and user to disable/enable the inbox
-    self.namedUserAPIClient.enabled = self.componentEnabled;
-    self.tagGroupsRegistrar.componentEnabled = self.componentEnabled;
-    self.attributeRegistrar.componentEnabled = self.componentEnabled;
+    [self updateRegistrarEnablement];
 }
 
 - (void)onDataCollectionEnabledChanged {
-    if (self.isDataCollectionEnabled) {
-        self.attributeRegistrar.componentEnabled = YES;
-    } else {
+    [self updateRegistrarEnablement];
+
+    if (!self.isDataCollectionEnabled) {
+        // Clear the identifier and all pending mutations
         self.identifier = nil;
         [self.attributeRegistrar deletePendingMutations];
-        self.attributeRegistrar.componentEnabled = NO;
+        [self.tagGroupsRegistrar clearAllPendingTagUpdates];
     }
 
     [self forceUpdate];
 }
 
 - (NSArray<UATagGroupsMutation *> *)pendingTagGroups {
-    return [self.tagGroupsRegistrar.pendingTagGroupStore pendingMutations];
+    return self.tagGroupsRegistrar.pendingMutations;
 }
 
 #pragma mark -

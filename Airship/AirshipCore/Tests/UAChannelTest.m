@@ -1065,4 +1065,80 @@
     [self.mockChannelRegistrar verify];
 }
 
+- (void)testEnablingComponentEnablesRegistrars {
+    self.channel.componentEnabled = NO;
+
+    [[self.mockAttributeRegistrar expect] setComponentEnabled:YES];
+    [[self.mockTagGroupsRegistrar expect] setEnabled:YES];
+
+    self.channel.componentEnabled = YES;
+
+    [self.mockTagGroupsRegistrar verify];
+    [self.mockAttributeRegistrar verify];
+}
+
+- (void)testEnablingComponentWithDataDisabledDoesNotEnableRegistrars {
+    [self.dataStore setBool:NO forKey:UAirshipDataCollectionEnabledKey];
+
+    self.channel.componentEnabled = NO;
+
+    [[self.mockAttributeRegistrar reject] setComponentEnabled:YES];
+    [[self.mockTagGroupsRegistrar reject] setEnabled:YES];
+
+    self.channel.componentEnabled = YES;
+
+    [self.mockTagGroupsRegistrar verify];
+    [self.mockAttributeRegistrar verify];
+}
+
+- (void)testDisablingComponentDisablesRegistrars {
+    [[self.mockAttributeRegistrar expect] setComponentEnabled:NO];
+    [[self.mockTagGroupsRegistrar expect] setEnabled:NO];
+
+    self.channel.componentEnabled = NO;
+
+    [self.mockTagGroupsRegistrar verify];
+    [self.mockAttributeRegistrar verify];
+}
+
+- (void)testEnablingDataEnablesRegistrars {
+    [self.dataStore setBool:NO forKey:UAirshipDataCollectionEnabledKey];
+
+    [[self.mockAttributeRegistrar expect] setComponentEnabled:YES];
+    [[self.mockTagGroupsRegistrar expect] setEnabled:YES];
+
+    [self.dataStore setBool:YES forKey:UAirshipDataCollectionEnabledKey];
+    [self.channel onDataCollectionEnabledChanged];
+
+    [self.mockTagGroupsRegistrar verify];
+    [self.mockAttributeRegistrar verify];
+}
+
+- (void)testEnablingDataWhenComponentDisabledDoesNotEnableRegistrars {
+    self.channel.componentEnabled = NO;
+    [self.dataStore setBool:NO forKey:UAirshipDataCollectionEnabledKey];
+
+    [[self.mockAttributeRegistrar reject] setComponentEnabled:YES];
+    [[self.mockTagGroupsRegistrar reject] setEnabled:YES];
+
+    [self.dataStore setBool:YES forKey:UAirshipDataCollectionEnabledKey];
+    [self.channel onDataCollectionEnabledChanged];
+
+    [self.mockTagGroupsRegistrar verify];
+    [self.mockAttributeRegistrar verify];
+}
+
+- (void)testDisablingDataDisablesRegistrars {
+    [self.dataStore setBool:NO forKey:UAirshipDataCollectionEnabledKey];
+
+    [[self.mockAttributeRegistrar expect] setComponentEnabled:YES];
+    [[self.mockTagGroupsRegistrar expect] setEnabled:YES];
+
+    [self.dataStore setBool:YES forKey:UAirshipDataCollectionEnabledKey];
+    [self.channel onDataCollectionEnabledChanged];
+
+    [self.mockTagGroupsRegistrar verify];
+    [self.mockAttributeRegistrar verify];
+}   
+
 @end
