@@ -3,6 +3,9 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 13.5.3 - August 6, 2020
+Patch release to fix a crash with Accengage data migration. Accengage migration customers should update.
+
 ## Version 13.5.2 - July 28, 2020
 Patch release to improve iOS 14 support, add a missing XCFramework, and fix In-App Automation issues. Apps that support in-app automation, or are experiencing any of these issues are encouraged to update.
 
