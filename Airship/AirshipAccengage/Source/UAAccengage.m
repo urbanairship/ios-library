@@ -10,15 +10,14 @@
 #import "UAAccengageResources.h"
 #import "UANotificationCategories.h"
 #import "UAPush+Internal.h"
+#import "ACCStubData+Internal.h"
 
 static NSString * const UAAccengageIDKey = @"a4sid";
 static NSString * const UAAccengageForegroundKey = @"a4sd";
 NSString *const UAAccengageSettingsMigrated = @"UAAccengageSettingsMigrated";
 
-@interface UAAccengage()
-
-@property (nonatomic, copy) NSDictionary *accengageSettings;
-
+@interface UAAccengage() <NSKeyedUnarchiverDelegate>
+@property (nonatomic, strong) NSDictionary *accengageSettings;
 @end
 
 @implementation UAAccengage
@@ -34,7 +33,7 @@ NSString *const UAAccengageSettingsMigrated = @"UAAccengageSettingsMigrated";
             UA_STRONGIFY(self);
             [self extendChannelRegistrationPayload:payload completionHandler:completionHandler];
         }];
-    
+
         NSSet *accengageCategories = [UANotificationCategories createCategoriesFromFile:[[UAAccengageResources bundle] pathForResource:@"UAAccengageNotificationCategories" ofType:@"plist"]];
         push.accengageCategories = accengageCategories;
         
@@ -62,22 +61,25 @@ NSString *const UAAccengageSettingsMigrated = @"UAAccengageSettingsMigrated";
     if (!_accengageSettings) {
         NSArray *paths = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);
         NSString *documentsDirectory = [paths firstObject];
-        
+
         _accengageSettings = @{};
-        
+
         if (!documentsDirectory) {
             return _accengageSettings;
         }
-               
+
         NSString *finalPath = [documentsDirectory stringByAppendingPathComponent:@"BMA4SUserDefault"];
-           
+
         NSData *encodedData = [NSKeyedUnarchiver unarchiveObjectWithFile:finalPath];
-        
+
         if (encodedData) {
             // use Accengage decryption key
             NSData *concreteData = [UAAccengageUtils decryptData:encodedData key:@"osanuthasoeuh"];
             if (concreteData) {
-                id data = [NSKeyedUnarchiver unarchiveObjectWithData:concreteData];
+                NSKeyedUnarchiver *unarchiver = [[NSKeyedUnarchiver alloc] initForReadingFromData:concreteData error:nil];
+                unarchiver.requiresSecureCoding = NO;
+                unarchiver.delegate = self;
+                id data = [unarchiver decodeObjectForKey:NSKeyedArchiveRootObjectKey];
                 if ([data isKindOfClass:[NSDictionary class]]) {
                     _accengageSettings = data;
                 }
@@ -94,7 +96,7 @@ NSString *const UAAccengageSettingsMigrated = @"UAAccengageSettingsMigrated";
         // Not an accengage push
         return options;
     }
-    
+
     if ([self isForegroundNotification:notification]) {
         return (UANotificationOptionAlert | UANotificationOptionBadge | UANotificationOptionSound);
     } else {
@@ -103,18 +105,18 @@ NSString *const UAAccengageSettingsMigrated = @"UAAccengageSettingsMigrated";
 }
 
 - (void)receivedNotificationResponse:(UANotificationResponse *)response
-                  completionHandler:(void (^)(void))completionHandler {
+                   completionHandler:(void (^)(void))completionHandler {
     // check for accengage push response, handle actions
     NSDictionary *notificationInfo = response.notificationContent.notificationInfo;
-    
+
     UAAccengagePayload *payload = [UAAccengagePayload payloadWithDictionary:notificationInfo];
-    
+
     if (!payload.identifier) {
         // not an Accengage push
         completionHandler();
         return;
     }
-    
+
     if (payload.url) {
         if (payload.hasExternalURLAction) {
             [UAActionRunner runActionWithName:@"open_external_url_action"
@@ -126,27 +128,27 @@ NSString *const UAAccengageSettingsMigrated = @"UAAccengageSettingsMigrated";
                                     situation:UASituationLaunchedFromPush];
         }
     }
-        
+
     if (![response.actionIdentifier isEqualToString:UANotificationDismissActionIdentifier] && ![response.actionIdentifier isEqualToString:UANotificationDefaultActionIdentifier] &&
         payload.buttons) {
         for (UAAccengageButton *button in payload.buttons) {
             if ([button.identifier isEqualToString:response.actionIdentifier]) {
                 if ([button.actionType isEqualToString:UAAccengageButtonBrowserAction]) {
-                        [UAActionRunner runActionWithName:@"open_external_url_action"
-                                                    value:button.url
-                                                situation:UASituationForegroundInteractiveButton];
+                    [UAActionRunner runActionWithName:@"open_external_url_action"
+                                                value:button.url
+                                            situation:UASituationForegroundInteractiveButton];
                 } else if ([button.actionType isEqualToString:UAAccengageButtonWebviewAction]) {
-                        [UAActionRunner runActionWithName:@"landing_page_action"
-                                                    value:button.url
-                                                situation:UASituationForegroundInteractiveButton];
+                    [UAActionRunner runActionWithName:@"landing_page_action"
+                                                value:button.url
+                                            situation:UASituationForegroundInteractiveButton];
                 }
             }
         }
     }
-    
+
     completionHandler();
 }
-    
+
 - (void)migrateSettingsToAnalytics:(UAAnalytics *)analytics {
     NSDictionary *dataDictionary = self.accengageSettings;
     id accAnalytics = dataDictionary[@"DoNotTrack"];
@@ -155,7 +157,7 @@ NSString *const UAAccengageSettingsMigrated = @"UAAccengageSettingsMigrated";
         analytics.enabled = ![analyticsDisabled boolValue];
     }
 }
-            
+
 - (void)migratePushSettings:(UAPush *)push completionHandler:(void (^)(void))completionHandler {
     // get system push opt-in setting
     [[UNUserNotificationCenter currentNotificationCenter] getNotificationSettingsWithCompletionHandler:^(UNNotificationSettings * _Nonnull notificationSettings) {
@@ -196,21 +198,25 @@ NSString *const UAAccengageSettingsMigrated = @"UAAccengageSettingsMigrated";
 
 - (void)extendChannelRegistrationPayload:(UAChannelRegistrationPayload *)payload
                        completionHandler:(UAChannelRegistrationExtenderCompletionHandler)completionHandler {
-    
+
     // get the Accengage ID and set it as an identity hint
     NSDictionary *dataDictionary = self.accengageSettings;
     id accengageDeviceIDObject = dataDictionary[@"BMA4SID"];
-  
+
     NSString *accengageDeviceID = @"";
     if ([accengageDeviceIDObject isKindOfClass:[NSString class]]) {
         accengageDeviceID = accengageDeviceIDObject;
     } else {
         accengageDeviceID = UIDevice.currentDevice.identifierForVendor.UUIDString;
     }
-    
+
     payload.accengageDeviceID = accengageDeviceID;
-    
+
     completionHandler(payload);
+}
+
+- (nullable Class)unarchiver:(NSKeyedUnarchiver *)unarchiver cannotDecodeObjectOfClassName:(NSString *)name originalClasses:(NSArray<NSString *> *)classNames {
+    return [ACCStubData class];
 }
 
 @end

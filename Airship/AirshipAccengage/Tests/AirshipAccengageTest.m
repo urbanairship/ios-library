@@ -136,18 +136,9 @@
 
 - (void)testExtendChannel {
     UAAccengage *accengage = [[UAAccengage alloc] init];
-    
-    id archiverMock = OCMClassMock([NSKeyedUnarchiver class]);
-    id utilsMock = OCMClassMock([UAAccengageUtils class]);
-    
+
     NSString *testDeviceID = @"123456";
-    NSDictionary *testDictionary = @{@"BMA4SID":testDeviceID};
-    
-    NSData *data = [testDeviceID dataUsingEncoding:NSUTF8StringEncoding];
-    
-    [[[archiverMock stub] andReturn:data] unarchiveObjectWithFile:OCMOCK_ANY];
-    [[[archiverMock stub] andReturn:testDictionary] unarchiveObjectWithData:OCMOCK_ANY];
-    [[[utilsMock stub] andReturn:data] decryptData:OCMOCK_ANY key:OCMOCK_ANY];
+    accengage.accengageSettings = @{@"BMA4SID":testDeviceID};
 
     UAChannelRegistrationPayload *payload = [[UAChannelRegistrationPayload alloc] init];
     id payloadMock = OCMPartialMock(payload);
@@ -161,18 +152,9 @@
     [accengage extendChannelRegistrationPayload:payloadMock completionHandler:handler];
     
     [payloadMock verify];
-    
-    [archiverMock stopMocking];
-    [utilsMock stopMocking];
-    accengage.accengageSettings = nil;
-    
-    archiverMock = OCMClassMock([NSKeyedUnarchiver class]);
-    utilsMock = OCMClassMock([UAAccengageUtils class]);
-       
-    [[[archiverMock stub] andReturn:data] unarchiveObjectWithFile:OCMOCK_ANY];
-    [[[archiverMock stub] andReturn:@{}] unarchiveObjectWithData:OCMOCK_ANY];
-    [[[utilsMock stub] andReturn:data] decryptData:OCMOCK_ANY key:OCMOCK_ANY];
-    
+
+    accengage.accengageSettings = @{};
+
     [[payloadMock expect] setAccengageDeviceID:accengageDeviceID];
     
     [accengage extendChannelRegistrationPayload:payloadMock completionHandler:handler];
@@ -183,37 +165,14 @@
 - (void)testMigrateSettings {
     [self.dataStore setBool:YES forKey:UAirshipDataCollectionEnabledKey];
 
-    id archiverMock = OCMClassMock([NSKeyedUnarchiver class]);
-    id utilsMock = OCMClassMock([UAAccengageUtils class]);
-    
-    NSDictionary *testDictionary = @{@"DoNotTrack":@NO};
-    
-    NSString *testString = @"test";
-    NSData *data = [testString dataUsingEncoding:NSUTF8StringEncoding];
-    
-    [[[archiverMock stub] andReturn:data] unarchiveObjectWithFile:OCMOCK_ANY];
-    [[[archiverMock stub] andReturn:testDictionary] unarchiveObjectWithData:OCMOCK_ANY];
-    [[[utilsMock stub] andReturn:data] decryptData:OCMOCK_ANY key:OCMOCK_ANY];
-    
     UAAccengage *accengage = [[UAAccengage alloc] init];
+
+    accengage.accengageSettings = @{@"DoNotTrack":@NO};
     [accengage migrateSettingsToAnalytics:self.analytics];
-     
     XCTAssertTrue(self.analytics.isEnabled);
-    
-    [archiverMock stopMocking];
-    [utilsMock stopMocking];
-    accengage.accengageSettings = nil;
-    
-    archiverMock = OCMClassMock([NSKeyedUnarchiver class]);
-    utilsMock = OCMClassMock([UAAccengageUtils class]);
-    
-    testDictionary = @{@"DoNotTrack":@YES};
-    [[[archiverMock stub] andReturn:data] unarchiveObjectWithFile:OCMOCK_ANY];
-    [[[archiverMock stub] andReturn:testDictionary] unarchiveObjectWithData:OCMOCK_ANY];
-    [[[utilsMock stub] andReturn:data] decryptData:OCMOCK_ANY key:OCMOCK_ANY];
-    
+
+    accengage.accengageSettings =  @{@"DoNotTrack":@YES};;
     [accengage migrateSettingsToAnalytics:self.analytics];
-        
     XCTAssertFalse(self.analytics.isEnabled);
 }
 
