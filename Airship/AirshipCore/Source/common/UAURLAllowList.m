@@ -1,30 +1,30 @@
 /* Copyright Airship and Contributors */
 
-#import "UAWhitelist.h"
+#import "UAURLAllowList.h"
 #import "UAGlobal.h"
 #import "UARuntimeConfig.h"
 
 /**
- * Block mapping URLs to whitelist status
+ * Block mapping URLs to allow list status
  */
-typedef BOOL (^UAWhitelistMatcher)(NSURL *);
+typedef BOOL (^UAURLAllowListMatcher)(NSURL *);
 
-@interface UAWhitelistEntry : NSObject
+@interface UAURLAllowListEntry : NSObject
 
-@property(nonatomic, assign) UAWhitelistScope scope;
-@property(nonatomic, copy) UAWhitelistMatcher matcher;
+@property(nonatomic, assign) UAURLAllowListScope scope;
+@property(nonatomic, copy) UAURLAllowListMatcher matcher;
 
-+ (instancetype)entryWithMatcher:(UAWhitelistMatcher)matcher scope:(UAWhitelistScope)scope;
++ (instancetype)entryWithMatcher:(UAURLAllowListMatcher)matcher scope:(UAURLAllowListScope)scope;
 
 @end
 
-@implementation UAWhitelistEntry
+@implementation UAURLAllowListEntry
 
-+ (instancetype)entryWithMatcher:(UAWhitelistMatcher)matcher scope:(UAWhitelistScope)scope {
++ (instancetype)entryWithMatcher:(UAURLAllowListMatcher)matcher scope:(UAURLAllowListScope)scope {
     return [[self alloc] initWithMatcher:matcher scope:scope];
 }
 
-- (instancetype)initWithMatcher:(UAWhitelistMatcher)matcher scope:(UAWhitelistScope)scope {
+- (instancetype)initWithMatcher:(UAURLAllowListMatcher)matcher scope:(UAURLAllowListScope)scope {
     self = [super init];
 
     if (self) {
@@ -37,51 +37,56 @@ typedef BOOL (^UAWhitelistMatcher)(NSURL *);
 
 @end
 
-@interface UAWhitelist ()
+@interface UAURLAllowList ()
 
 /**
- * Set of UAWhitelistEntry objects.
+ * Set of UAURLAllowListEntry objects.
  */
 @property(nonatomic, strong) NSMutableSet *entries;
 /**
- * Regex that matches valid whitelist pattern entries
+ * Regex that matches valid URL allow list pattern entries
  */
 @property(nonatomic, strong) NSRegularExpression *validPatternExpression;
 
 @end
 
-@implementation UAWhitelist
+@implementation UAURLAllowList
 
 - (instancetype)init {
     self = [super init];
     if (self) {
         self.entries = [NSMutableSet set];
-        self.openURLWhitelistingEnabled = YES;
     }
     return self;
 }
 
-+ (instancetype)whitelistWithConfig:(UARuntimeConfig *)config {
-    UAWhitelist *whitelist = [[self alloc] init];
++ (instancetype)allowListWithConfig:(UARuntimeConfig *)config {
+    UAURLAllowList *URLAllowList = [[self alloc] init];
 
-    [whitelist addEntry:@"https://*.urbanairship.com"];
+    [URLAllowList addEntry:@"https://*.urbanairship.com"];
 
-    [whitelist addEntry:@"https://*.asnapieu.com"];
+    [URLAllowList addEntry:@"https://*.asnapieu.com"];
 
     // Add YouTube only for the open URL scope
-    [whitelist addEntry:@"https://*.youtube.com" scope:UAWhitelistScopeOpenURL];
+    [URLAllowList addEntry:@"https://*.youtube.com" scope:UAURLAllowListScopeOpenURL];
 
-    for (NSString *pattern in config.whitelist) {
-        [whitelist addEntry:pattern];
+    for (NSString *pattern in config.URLAllowList) {
+        [URLAllowList addEntry:pattern];
+    }
+    
+    for (NSString *pattern in config.URLAllowListScopeJavaScriptInterface) {
+        [URLAllowList addEntry:pattern scope:UAURLAllowListScopeJavaScriptInterface];
+    }
+    
+    for (NSString *pattern in config.URLAllowListScopeOpenURL) {
+        [URLAllowList addEntry:pattern scope:UAURLAllowListScopeOpenURL];
     }
 
-    whitelist.openURLWhitelistingEnabled = config.isOpenURLWhitelistingEnabled;
-
-    return whitelist;
+    return URLAllowList;
 }
 
 /**
- * Escapes whitelist pattern strings so that they don't contain unanticipated regex characters
+ * Escapes URL allow list pattern strings so that they don't contain unanticipated regex characters
  */
 - (NSString *)escapeRegexString:(NSString *)input escapingWildcards:(BOOL)escapingWildcards {
 
@@ -107,18 +112,18 @@ typedef BOOL (^UAWhitelistMatcher)(NSURL *);
  * Convenience method for getting a URL path using CoreFoundation, which
  * preserves trailing slashes.
  */
-- (NSString *)cfPathForURL:(NSURL *)url {
-    if (!url) {
+- (NSString *)cfPathForURL:(NSURL *)URL {
+    if (!URL) {
         return nil;
     }
 
-    return (__bridge_transfer NSString*)CFURLCopyPath((CFURLRef)url);
+    return (__bridge_transfer NSString*)CFURLCopyPath((CFURLRef)URL);
 }
 
 /**
  * Generates matcher that compares a URL component (scheme/host/path) with a supplied regex
  */
-- (UAWhitelistMatcher)matcherForURLComponent:(NSString *)componentKey withRegexString:(nonnull NSString *)regexString {
+- (UAURLAllowListMatcher)matcherForURLComponent:(NSString *)componentKey withRegexString:(nonnull NSString *)regexString {
 
     if (![regexString hasPrefix:@"^"]) {
         regexString = [@"^" stringByAppendingString:regexString];
@@ -127,7 +132,7 @@ typedef BOOL (^UAWhitelistMatcher)(NSURL *);
         regexString = [regexString stringByAppendingString:@"$"];
     }
 
-    return ^BOOL(NSURL *url){
+    return ^BOOL(NSURL *URL){
         NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:regexString
                                                                                options:0
                                                                                  error:nil];
@@ -136,9 +141,9 @@ typedef BOOL (^UAWhitelistMatcher)(NSURL *);
 
         // The NSURL path property silently strips trailing slashes
         if ([componentKey isEqualToString:@"path"]) {
-            component = [self cfPathForURL:url];
+            component = [self cfPathForURL:URL];
         } else {
-            component = [url valueForKey:componentKey];
+            component = [URL valueForKey:componentKey];
         }
 
         component = component ?: @"";
@@ -148,16 +153,16 @@ typedef BOOL (^UAWhitelistMatcher)(NSURL *);
     };
 }
 
-- (UAWhitelistMatcher)schemeMatcherForPattern:(NSString *)pattern {
+- (UAURLAllowListMatcher)schemeMatcherForPattern:(NSString *)pattern {
 
-    NSURL *url = [NSURL URLWithString:pattern];
+    NSURL *URL = [NSURL URLWithString:pattern];
 
-    if (!url) {
+    if (!URL) {
         UA_LERR(@"unable to parse URL for pattern: %@", pattern);
         return nil;
     }
 
-    NSString *scheme = url.scheme;
+    NSString *scheme = URL.scheme;
 
     // NSURL won't parse strings with an actual asterisk for the scheme
     scheme = [scheme stringByReplacingOccurrencesOfString:@"WILDCARD" withString:@"*"];
@@ -173,15 +178,15 @@ typedef BOOL (^UAWhitelistMatcher)(NSURL *);
     return [self matcherForURLComponent:@"scheme" withRegexString:schemeRegexString];
 }
 
-- (UAWhitelistMatcher)hostMatcherForPattern:(NSString *)pattern {
-    NSURL *url = [NSURL URLWithString:pattern];
+- (UAURLAllowListMatcher)hostMatcherForPattern:(NSString *)pattern {
+    NSURL *URL = [NSURL URLWithString:pattern];
 
-    if (!url){
+    if (!URL){
         UA_LERR(@"unable to parse URL for pattern: %@", pattern);
         return nil;
     }
 
-    NSString *host = url.host;
+    NSString *host = URL.host;
 
     NSString *hostRegexString;
 
@@ -197,16 +202,16 @@ typedef BOOL (^UAWhitelistMatcher)(NSURL *);
     return [self matcherForURLComponent:@"host" withRegexString:hostRegexString];
 }
 
-- (UAWhitelistMatcher)pathMatcherForPattern:(NSString *)pattern {
-    NSURL *url = [NSURL URLWithString:pattern];
+- (UAURLAllowListMatcher)pathMatcherForPattern:(NSString *)pattern {
+    NSURL *URL = [NSURL URLWithString:pattern];
 
-    if (!url) {
+    if (!URL) {
         UA_LERR(@"unable to parse URL for pattern: %@", pattern);
         return nil;
     }
 
     // The NSURL path property silently strips trailing slashes
-    NSString *path = [self cfPathForURL:url];
+    NSString *path = [self cfPathForURL:URL];
 
     NSString *pathRegexString;
 
@@ -219,8 +224,8 @@ typedef BOOL (^UAWhitelistMatcher)(NSURL *);
     return [self matcherForURLComponent:@"path" withRegexString:pathRegexString];
 }
 
-- (UAWhitelistMatcher)wildcardMatcher {
-    return ^BOOL(NSURL *url) {
+- (UAURLAllowListMatcher)wildcardMatcher {
+    return ^BOOL(NSURL *URL) {
         return YES;
     };
 }
@@ -286,10 +291,10 @@ typedef BOOL (^UAWhitelistMatcher)(NSURL *);
     return patternString;
 }
 
-- (BOOL)addEntry:(NSString *)patternString scope:(UAWhitelistScope)scope {
+- (BOOL)addEntry:(NSString *)patternString scope:(UAURLAllowListScope)scope {
 
     if (!patternString || ![self validatePattern:patternString]) {
-        UA_LERR(@"Invalid whitelist pattern: %@", patternString);
+        UA_LERR(@"Invalid URL allow list pattern: %@", patternString);
         return NO;
     }
 
@@ -298,69 +303,66 @@ typedef BOOL (^UAWhitelistMatcher)(NSURL *);
 
     // If we have just a wildcard, match anything
     if ([patternString isEqualToString:@"*"]) {
-        [self.entries addObject:[UAWhitelistEntry entryWithMatcher:[self wildcardMatcher] scope:scope]];
+        [self.entries addObject:[UAURLAllowListEntry entryWithMatcher:[self wildcardMatcher] scope:scope]];
         return YES;
     }
 
     // Build matchers for each relevant component (scheme/host/path) of the URL based on the pattern string
-    UAWhitelistMatcher schemeMatcher = [self schemeMatcherForPattern:patternString];
-    UAWhitelistMatcher hostMatcher = [self hostMatcherForPattern:patternString];
-    UAWhitelistMatcher pathMatcher = [self pathMatcherForPattern:patternString];
+    UAURLAllowListMatcher schemeMatcher = [self schemeMatcherForPattern:patternString];
+    UAURLAllowListMatcher hostMatcher = [self hostMatcherForPattern:patternString];
+    UAURLAllowListMatcher pathMatcher = [self pathMatcherForPattern:patternString];
 
     // If any of these are nil, something went wrong
     if (!schemeMatcher || !hostMatcher || !pathMatcher) {
-        UA_LERR(@"Unable to build pattern matchers for whitelist entry: %@", patternString);
+        UA_LERR(@"Unable to build pattern matchers for URL allow list entry: %@", patternString);
         return NO;
     }
 
-    // The matcher that is stored in the whitelist encompasses matching each component.
+    // The matcher that is stored in the URL allow list encompasses matching each component.
     // A URL matches if an only if all components match.
-    UAWhitelistMatcher patternMatcher = ^BOOL(NSURL *url) {
-        BOOL matchedScheme = schemeMatcher(url);
-        BOOL matchedHost = hostMatcher(url);
-        BOOL matchedPath = pathMatcher(url);
+    UAURLAllowListMatcher patternMatcher = ^BOOL(NSURL *URL) {
+        BOOL matchedScheme = schemeMatcher(URL);
+        BOOL matchedHost = hostMatcher(URL);
+        BOOL matchedPath = pathMatcher(URL);
         return matchedScheme && matchedHost && matchedPath;
     };
 
-    [self.entries addObject:[UAWhitelistEntry entryWithMatcher:[patternMatcher copy] scope:scope]];
+    [self.entries addObject:[UAURLAllowListEntry entryWithMatcher:[patternMatcher copy] scope:scope]];
 
     return YES;
 }
 
 - (BOOL)addEntry:(NSString *)patternString {
-    return [self addEntry:patternString scope:UAWhitelistScopeAll];
+    return [self addEntry:patternString scope:UAURLAllowListScopeAll];
 }
 
-- (BOOL)isWhitelisted:(NSURL *)url scope:(UAWhitelistScope)scope {
+- (BOOL)isAllowed:(NSURL *)URL scope:(UAURLAllowListScope)scope {
     BOOL match = NO;
     
-    if (scope == UAWhitelistScopeOpenURL && !self.isOpenURLWhitelistingEnabled) {
-        match = YES;
-    } else {
-        NSUInteger matchedScope = 0;
-        
-        for (UAWhitelistEntry *entry in self.entries) {
-            if (entry.matcher(url)) {
-                matchedScope |= entry.scope;
-            }
+    
+    NSUInteger matchedScope = 0;
+    
+    for (UAURLAllowListEntry *entry in self.entries) {
+        if (entry.matcher(URL)) {
+            matchedScope |= entry.scope;
         }
-        
-        match = (((UAWhitelistScope)matchedScope & scope) == scope);
     }
     
-    // if the url is whitelisted, allow the delegate to reject the whitelisting
+    match = (((UAURLAllowListScope)matchedScope & scope) == scope);
+    
+    // if the URL is allowed, allow the delegate to reject the URL
     if (match) {
-        id<UAWhitelistDelegate> delegate = self.delegate;
-        if ([delegate respondsToSelector:@selector(acceptWhitelisting:scope:)]) {
-            match = [delegate acceptWhitelisting:url scope:scope];
+        id<UAURLAllowListDelegate> delegate = self.delegate;
+        if ([delegate respondsToSelector:@selector(allowURL:scope:)]) {
+            match = [delegate allowURL:URL scope:scope];
         }
     }
     
     return match;
 }
 
-- (BOOL)isWhitelisted:(NSURL *)url {
-    return [self isWhitelisted:url scope:UAWhitelistScopeAll];
+- (BOOL)isAllowed:(NSURL *)URL {
+    return [self isAllowed:URL scope:UAURLAllowListScopeAll];
 }
 
 @end

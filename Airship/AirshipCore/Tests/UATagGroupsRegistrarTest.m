@@ -32,18 +32,16 @@
     
     self.namedPendingTagGroupStore = [UAPendingTagGroupStore namedUserHistoryWithDataStore:self.dataStore];
 
-    self.channelRegistrar = [UATagGroupsRegistrar tagGroupsRegistrarWithDataStore:self.dataStore
-                                                           pendingTagGroupStore:self.channelPendingTagGroupStore
-                                                                 apiClient:self.mockApiClient
-                                                            operationQueue:self.channelOperationQueue
-                                                               application:self.mockApplication];
+    self.channelRegistrar = [UATagGroupsRegistrar tagGroupsRegistrarWithPendingTagGroupStore:self.channelPendingTagGroupStore
+                                                                                   apiClient:self.mockApiClient
+                                                                              operationQueue:self.channelOperationQueue
+                                                                                 application:self.mockApplication];
     
     
-    self.namedUserRegistrar = [UATagGroupsRegistrar tagGroupsRegistrarWithDataStore:self.dataStore
-                                                           pendingTagGroupStore:self.namedPendingTagGroupStore
-                                                                 apiClient:self.mockApiClient
-                                                            operationQueue:self.namedUserOperationQueue
-                                                               application:self.mockApplication];
+    self.namedUserRegistrar = [UATagGroupsRegistrar tagGroupsRegistrarWithPendingTagGroupStore:self.namedPendingTagGroupStore
+                                                                                     apiClient:self.mockApiClient
+                                                                                operationQueue:self.namedUserOperationQueue
+                                                                                   application:self.mockApplication];
 }
 
 - (void)tearDown {
@@ -191,6 +189,17 @@
     [self.namedUserOperationQueue waitUntilAllOperationsAreFinished];
 
     XCTAssertNil([self.namedPendingTagGroupStore peekPendingMutation]);
+}
+
+- (void)testEnabledByDefault {
+    XCTAssertTrue(self.channelRegistrar.enabled);
+}
+
+- (void)testSetEnabled {
+    [[self.mockApiClient expect] setEnabled:NO];
+    self.channelRegistrar.enabled = NO;
+    XCTAssertFalse(self.channelRegistrar.enabled);
+    [self.mockApiClient verify];
 }
 
 @end

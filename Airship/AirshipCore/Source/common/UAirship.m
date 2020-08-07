@@ -118,7 +118,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         }
 
         self.actionRegistry = [UAActionRegistry defaultRegistry];
-        self.whitelist = [UAWhitelist whitelistWithConfig:config];
+        self.URLAllowList = [UAURLAllowList allowListWithConfig:config];
         self.applicationMetrics = [UAApplicationMetrics applicationMetricsWithDataStore:self.dataStore];
         self.sharedLocaleManager = [UALocaleManager localeManagerWithDataStore:self.dataStore];
 
@@ -159,7 +159,6 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         // UIPasteboard is not available in tvOS
         self.channelCapture = [UAChannelCapture channelCaptureWithConfig:self.config
                                                                  channel:self.sharedChannel
-                                                    pushProviderDelegate:self.sharedPush
                                                                dataStore:self.dataStore];
 #endif
 

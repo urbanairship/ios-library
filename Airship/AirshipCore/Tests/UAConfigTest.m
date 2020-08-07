@@ -311,7 +311,9 @@
     XCTAssertTrue(copy.analyticsEnabled == config.analyticsEnabled);
     XCTAssertTrue(copy.profilePath == config.profilePath);
     XCTAssertTrue(copy.clearUserOnAppRestore == config.clearUserOnAppRestore);
-    XCTAssertTrue(copy.whitelist == config.whitelist);
+    XCTAssertTrue(copy.URLAllowList == config.URLAllowList);
+    XCTAssertTrue(copy.URLAllowListScopeJavaScriptInterface == config.URLAllowListScopeJavaScriptInterface);
+    XCTAssertTrue(copy.URLAllowListScopeOpenURL == config.URLAllowListScopeOpenURL);
     XCTAssertTrue(copy.clearNamedUserOnAppRestore == config.clearNamedUserOnAppRestore);
     XCTAssertTrue(copy.channelCaptureEnabled == config.channelCaptureEnabled);
     XCTAssertTrue(copy.customConfig == config.customConfig);
@@ -337,7 +339,9 @@
     XCTAssertTrue(config.automaticSetupEnabled);
     XCTAssertTrue(config.analyticsEnabled);
     XCTAssertFalse(config.clearUserOnAppRestore);
-    XCTAssertEqual(config.whitelist.count, 0);
+    XCTAssertEqual(config.URLAllowList.count, 0);
+    XCTAssertEqual(config.URLAllowListScopeJavaScriptInterface.count, 0);
+    XCTAssertEqual(config.URLAllowListScopeOpenURL.count, 0);
     XCTAssertFalse(config.clearNamedUserOnAppRestore);
     XCTAssertFalse(config.channelCaptureEnabled);
     XCTAssertEqual(config.customConfig.count, 0);

@@ -20,7 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) UAActionRegistry *actionRegistry;
 @property (nonatomic, assign) BOOL remoteNotificationBackgroundModeEnabled;
 @property (nonatomic, strong) UAApplicationMetrics *applicationMetrics;
-@property (nonatomic, strong) UAWhitelist *whitelist;
+@property (nonatomic, strong) UAURLAllowList *URLAllowList;
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 @property (nonatomic, strong) UAChannelCapture *channelCapture;
 @property (nonatomic, copy) NSArray<UAComponent *> *components;

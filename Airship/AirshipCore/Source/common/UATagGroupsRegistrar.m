@@ -20,6 +20,11 @@ typedef void (^UATagGroupsMutator)(NSArray *, NSString *);
 @interface UATagGroupsRegistrar()
 
 /**
+ * The pending tag group store.
+ */
+@property (nonatomic, strong) UAPendingTagGroupStore *pendingTagGroupStore;
+
+/**
  * The tag groups API client.
  */
 @property (nonatomic, strong) UATagGroupsAPIClient *tagGroupsAPIClient;
@@ -27,12 +32,7 @@ typedef void (^UATagGroupsMutator)(NSArray *, NSString *);
 /**
  * The queue on which to serialize tag groups operations.
  */
-@property (nonatomic,strong) NSOperationQueue *operationQueue;
-
-/**
- * The preference data store.
- */
-@property (nonatomic, strong) UAPreferenceDataStore *dataStore;
+@property (nonatomic, strong) NSOperationQueue *operationQueue;
 
 /**
  * The application.
@@ -43,21 +43,19 @@ typedef void (^UATagGroupsMutator)(NSArray *, NSString *);
 
 @implementation UATagGroupsRegistrar
 
-- (instancetype)initWithDataStore:(UAPreferenceDataStore *)dataStore
-                  pendingTagGroupStore:(UAPendingTagGroupStore *)pendingTagGroupStore
-                              apiClient:(UATagGroupsAPIClient *)apiClient
-                         operationQueue:(NSOperationQueue *)operationQueue
-                      application:application {
+- (instancetype)initWithPendingTagGroupStore:(UAPendingTagGroupStore *)pendingTagGroupStore
+                                   apiClient:(UATagGroupsAPIClient *)apiClient
+                              operationQueue:(NSOperationQueue *)operationQueue
+                                 application:application {
     
-    self = [super initWithDataStore:dataStore];
+    self = [super init];
 
     if (self) {
-        self.dataStore = dataStore;
+        self.enabled = YES;
         self.application = application;
         self.pendingTagGroupStore = pendingTagGroupStore;
         self.tagGroupsAPIClient = apiClient;
-        self.tagGroupsAPIClient.enabled = self.componentEnabled;
-        
+
         self.operationQueue = operationQueue;
         self.operationQueue.maxConcurrentOperationCount = 1;
     }
@@ -65,42 +63,37 @@ typedef void (^UATagGroupsMutator)(NSArray *, NSString *);
     return self;
 }
 
++ (instancetype)tagGroupsRegistrarWithPendingTagGroupStore:(UAPendingTagGroupStore *)pendingTagGroupStore
+                                                 apiClient:(UATagGroupsAPIClient *)client
+                                            operationQueue:(NSOperationQueue *)operationQueue
+                                               application:(UIApplication *)application {
+
+    return [[self alloc] initWithPendingTagGroupStore:(UAPendingTagGroupStore *)pendingTagGroupStore
+                                            apiClient:client
+                                       operationQueue:operationQueue
+                                          application:application];
+}
+
 + (instancetype)channelTagGroupsRegistrarWithConfig:(UARuntimeConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
-    
+
     UAPendingTagGroupStore *pendingTagGroupStore = [UAPendingTagGroupStore channelHistoryWithDataStore:dataStore];
     UATagGroupsAPIClient *client =  [UATagGroupsAPIClient channelClientWithConfig:config];
-    
-    return [[self alloc] initWithDataStore:dataStore
-                      pendingTagGroupStore:(UAPendingTagGroupStore *)pendingTagGroupStore
-                                 apiClient:client
-                            operationQueue:[[NSOperationQueue alloc] init]
-                               application:[UIApplication sharedApplication]];
-    
+
+    return [[self alloc] initWithPendingTagGroupStore:(UAPendingTagGroupStore *)pendingTagGroupStore
+                                            apiClient:client
+                                       operationQueue:[[NSOperationQueue alloc] init]
+                                          application:[UIApplication sharedApplication]];
 }
 
 + (instancetype)namedUserTagGroupsRegistrarWithConfig:(UARuntimeConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
-    
-    UAPendingTagGroupStore *pendingTagGroupStore = [UAPendingTagGroupStore namedUserHistoryWithDataStore:dataStore];
-    UATagGroupsAPIClient *client =  [UATagGroupsAPIClient namedUserClientWithConfig:config];
-    
-    return [[self alloc] initWithDataStore:dataStore
-                      pendingTagGroupStore:(UAPendingTagGroupStore *)pendingTagGroupStore
-                                 apiClient:client
-                            operationQueue:[[NSOperationQueue alloc] init]
-                               application:[UIApplication sharedApplication]];
-}
 
-+ (instancetype)tagGroupsRegistrarWithDataStore:(UAPreferenceDataStore *)dataStore
-                                pendingTagGroupStore:(UAPendingTagGroupStore *)pendingTagGroupStore
-                                      apiClient:(UATagGroupsAPIClient *)apiClient
-                                 operationQueue:(NSOperationQueue *)operationQueue
-                                    application:(UIApplication *)application {
+    UAPendingTagGroupStore *pendingTagGroupStore = [UAPendingTagGroupStore channelHistoryWithDataStore:dataStore];
+    UATagGroupsAPIClient *client =  [UATagGroupsAPIClient channelClientWithConfig:config];
 
-    return [[self alloc] initWithDataStore:dataStore
-                           pendingTagGroupStore:(UAPendingTagGroupStore *)pendingTagGroupStore
-                                 apiClient:apiClient
-                            operationQueue:operationQueue
-                               application:application];
+    return [[self alloc] initWithPendingTagGroupStore:(UAPendingTagGroupStore *)pendingTagGroupStore
+                                            apiClient:client
+                                       operationQueue:[[NSOperationQueue alloc] init]
+                                          application:[UIApplication sharedApplication]];
 }
 
 - (void)dealloc {
@@ -108,7 +101,7 @@ typedef void (^UATagGroupsMutator)(NSArray *, NSString *);
 }
 
 - (void)updateTagGroupsForID:(NSString *)identifier {
-    if (!self.componentEnabled) {
+    if (!self.enabled) {
         return;
     }
     
@@ -268,8 +261,13 @@ typedef void (^UATagGroupsMutator)(NSArray *, NSString *);
     }]];
 }
 
-- (void)onComponentEnableChange {
-    self.tagGroupsAPIClient.enabled = self.componentEnabled;
+- (NSArray<UATagGroupsMutation *> *)pendingMutations {
+    return self.pendingTagGroupStore.pendingMutations;
+}
+
+- (void)setEnabled:(BOOL)enabled {
+    _enabled = enabled;
+    self.tagGroupsAPIClient.enabled = enabled;
 }
 
 @end

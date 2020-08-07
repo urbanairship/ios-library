@@ -9,7 +9,9 @@
 @synthesize logLevel;
 @synthesize inProduction;
 @synthesize automaticSetupEnabled;
-@synthesize whitelist;
+@synthesize URLAllowList;
+@synthesize URLAllowListScopeJavaScriptInterface;
+@synthesize URLAllowListScopeOpenURL;
 @synthesize itunesID;
 @synthesize analyticsEnabled;
 @synthesize detectProvisioningMode;
@@ -17,7 +19,6 @@
 @synthesize clearUserOnAppRestore;
 @synthesize clearNamedUserOnAppRestore;
 @synthesize channelCaptureEnabled;
-@synthesize openURLWhitelistingEnabled;
 @synthesize channelCreationDelayEnabled;
 @synthesize customConfig;
 @synthesize requestAuthorizationToUseNotifications;

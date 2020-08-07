@@ -48,10 +48,11 @@ NSString *const UALogLevelTraceName = @"TRACE";
         self.analyticsEnabled = YES;
         self.profilePath = [[NSBundle mainBundle] pathForResource:@"embedded" ofType:@"mobileprovision"];
         self.clearUserOnAppRestore = NO;
-        self.whitelist = @[];
+        self.URLAllowList = @[];
+        self.URLAllowListScopeJavaScriptInterface = @[];
+        self.URLAllowListScopeOpenURL = @[];
         self.clearNamedUserOnAppRestore = NO;
         self.channelCaptureEnabled = NO;
-        self.openURLWhitelistingEnabled = NO;
         self.customConfig = @{};
         self.channelCreationDelayEnabled = NO;
         self.extendedBroadcastsEnabled = NO;
@@ -87,10 +88,11 @@ NSString *const UALogLevelTraceName = @"TRACE";
         _analyticsEnabled = config.analyticsEnabled;
         _profilePath = config.profilePath;
         _clearUserOnAppRestore = config.clearUserOnAppRestore;
-        _whitelist = config.whitelist;
+        _URLAllowList = config.URLAllowList;
+        _URLAllowListScopeJavaScriptInterface = config.URLAllowListScopeJavaScriptInterface;
+        _URLAllowListScopeOpenURL = config.URLAllowListScopeOpenURL;
         _clearNamedUserOnAppRestore = config.clearNamedUserOnAppRestore;
         _channelCaptureEnabled = config.channelCaptureEnabled;
-        _openURLWhitelistingEnabled = config.openURLWhitelistingEnabled;
         _customConfig = config.customConfig;
         _channelCreationDelayEnabled = config.channelCreationDelayEnabled;
         _extendedBroadcastsEnabled = config.extendedBroadcastsEnabled;
@@ -124,10 +126,11 @@ NSString *const UALogLevelTraceName = @"TRACE";
             "Remote Data API URL: %@\n"
             "Automatic Setup Enabled: %d\n"
             "Clear user on Application Restore: %d\n"
-            "Whitelist: %@\n"
+            "URL Accepts List: %@\n"
+            "URL Accepts List Scope JavaScript Bridge : %@\n"
+            "URL Accepts List Scope Open : %@\n"
             "Clear named user on App Restore: %d\n"
             "Channel Capture Enabled: %d\n"
-            "URL Whitelisting Enabled: %d\n"
             "Custom Config: %@\n"
             "Delay Channel Creation: %d\n"
             "Extended broadcasts: %d\n"
@@ -156,10 +159,11 @@ NSString *const UALogLevelTraceName = @"TRACE";
             self.remoteDataAPIURL,
             self.automaticSetupEnabled,
             self.clearUserOnAppRestore,
-            self.whitelist,
+            self.URLAllowList,
+            self.URLAllowListScopeJavaScriptInterface,
+            self.URLAllowListScopeOpenURL,
             self.clearNamedUserOnAppRestore,
             self.channelCaptureEnabled,
-            self.openURLWhitelistingEnabled,
             self.customConfig,
             self.channelCreationDelayEnabled,
             self.extendedBroadcastsEnabled,
@@ -295,13 +299,19 @@ NSString *const UALogLevelTraceName = @"TRACE";
                                 @"DEVELOPMENT_APP_SECRET" : @"developmentAppSecret",
                                 @"APP_STORE_OR_AD_HOC_BUILD" : @"inProduction",
                                 @"AIRSHIP_SERVER" : @"deviceAPIURL",
-                                @"ANALYTICS_SERVER" : @"analyticsURL"};
+                                @"ANALYTICS_SERVER" : @"analyticsURL",
+                                @"whitelist" : @"URLAllowList"};
 
     NSMutableDictionary *newKeyedValues = [NSMutableDictionary dictionary];
 
     for (NSString *key in keyedValues) {
         if (oldKeyMap[key]) {
             UA_LWARN(@"%@ is a legacy config key, use %@ instead", key, oldKeyMap[key]);
+        }
+        
+        if ([key isEqualToString:@"openURLWhitelistingEnabled"]) {
+            UA_LWARN(@"The config key %@ has been removed. Use %@ and %@ instead", key, @"URLAllowListScopeJavaScriptInterface", @"URLAllowListScopeOpenURL");
+            continue;
         }
 
         if ([key isEqualToString:UACloudSiteKeyName]) {
@@ -380,7 +390,6 @@ NSString *const UALogLevelTraceName = @"TRACE";
 
         [newKeyedValues setValue:value forKey:realKey];
     }
-
 
     return newKeyedValues;
 }

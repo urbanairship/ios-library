@@ -15,7 +15,7 @@
 @property (nonatomic, strong) id mockAirship;
 @property (nonatomic, strong) id mockConfig;
 @property (nonatomic, strong) UALandingPageAction *action;
-@property (nonatomic, assign) id mockWhitelist;
+@property (nonatomic, assign) id mockURLAllowList;
 @property (nonatomic, strong) id mockInAppAutomation;
 
 @end
@@ -28,18 +28,18 @@
 
     self.mockConfig = [self mockForClass:[UARuntimeConfig class]];
     self.mockAirship = [self mockForClass:[UAirship class]];
-    self.mockWhitelist =  [self mockForClass:[UAWhitelist class]];
+    self.mockURLAllowList =  [self mockForClass:[UAURLAllowList class]];
 
     [[[self.mockAirship stub] andReturn:self.mockConfig] config];
-    [[[self.mockAirship stub] andReturn:self.mockWhitelist] whitelist];
+    [[[self.mockAirship stub] andReturn:self.mockURLAllowList] URLAllowList];
     [UAirship setSharedAirship:self.mockAirship];
 
     [[[self.mockConfig stub] andReturn:@"app-key"] appKey];
     [[[self.mockConfig stub] andReturn:@"app-secret"] appSecret];
 
-    // Set an actual whitelist
-    UAWhitelist *whitelist = [UAWhitelist whitelistWithConfig:self.mockConfig];
-    [[[self.mockAirship stub] andReturn:whitelist] whitelist];
+    // Set an actual URL allow list
+    UAURLAllowList *URLAllowList = [UAURLAllowList allowListWithConfig:self.mockConfig];
+    [[[self.mockAirship stub] andReturn:URLAllowList] URLAllowList];
 
     self.mockInAppAutomation = [self mockForClass:[UAInAppAutomation class]];
     [[[self.mockAirship stub] andReturn:self.mockConfig] config];
@@ -49,7 +49,7 @@
 
 - (void)tearDown {
     [self.mockAirship stopMocking];
-    [self.mockWhitelist stopMocking];
+    [self.mockURLAllowList stopMocking];
     [self.mockConfig stopMocking];
 }
 
@@ -57,7 +57,7 @@
  * Test accepts arguments
  */
 - (void)testAcceptsArguments {
-    [[[[self.mockWhitelist stub] andReturnValue:OCMOCK_VALUE(YES)] ignoringNonObjectArgs] isWhitelisted:OCMOCK_ANY scope:UAWhitelistScopeOpenURL];
+    [[[[self.mockURLAllowList stub] andReturnValue:OCMOCK_VALUE(YES)] ignoringNonObjectArgs] isAllowed:OCMOCK_ANY scope:UAURLAllowListScopeOpenURL];
 
     [self verifyAcceptsArgumentsWithValue:@"foo.urbanairship.com" shouldAccept:YES];
     [self verifyAcceptsArgumentsWithValue:@"https://foo.urbanairship.com" shouldAccept:YES];
@@ -71,7 +71,7 @@
  * as a URL
  */
 - (void)testAcceptsArgumentsNo {
-    [[[[self.mockWhitelist stub] andReturnValue:OCMOCK_VALUE(YES)] ignoringNonObjectArgs] isWhitelisted:OCMOCK_ANY scope:UAWhitelistScopeOpenURL];
+    [[[[self.mockURLAllowList stub] andReturnValue:OCMOCK_VALUE(YES)] ignoringNonObjectArgs] isAllowed:OCMOCK_ANY scope:UAURLAllowListScopeOpenURL];
 
     [self verifyAcceptsArgumentsWithValue:nil shouldAccept:NO];
     [self verifyAcceptsArgumentsWithValue:[[NSObject alloc] init] shouldAccept:NO];
@@ -79,10 +79,10 @@
 }
 
 /**
- * Test rejects arguments with URLs that are not whitelisted.
+ * Test rejects arguments with URLs that are not allowed.
  */
-- (void)testWhiteList {
-    [[[[self.mockWhitelist stub] andReturnValue:OCMOCK_VALUE(NO)] ignoringNonObjectArgs] isWhitelisted:OCMOCK_ANY scope:UAWhitelistScopeOpenURL];
+- (void)testURLAllowList {
+    [[[[self.mockURLAllowList stub] andReturnValue:OCMOCK_VALUE(NO)] ignoringNonObjectArgs] isAllowed:OCMOCK_ANY scope:UAURLAllowListScopeOpenURL];
 
     [self verifyAcceptsArgumentsWithValue:@"foo.urbanairship.com" shouldAccept:NO];
     [self verifyAcceptsArgumentsWithValue:@"https://foo.urbanairship.com" shouldAccept:NO];
@@ -95,7 +95,7 @@
  * Test perform in foreground situations
  */
 - (void)testPerformInForeground {
-    [[[[self.mockWhitelist stub] andReturnValue:OCMOCK_VALUE(YES)] ignoringNonObjectArgs] isWhitelisted:OCMOCK_ANY scope:UAWhitelistScopeOpenURL];
+    [[[[self.mockURLAllowList stub] andReturnValue:OCMOCK_VALUE(YES)] ignoringNonObjectArgs] isAllowed:OCMOCK_ANY scope:UAURLAllowListScopeOpenURL];
 
     NSString *urlString = @"www.airship.com";
     // Expected URL String should be message ID with prepended message scheme.

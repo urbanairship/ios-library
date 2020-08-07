@@ -2,6 +2,9 @@
 
 Notes for the Airship Mobile team.
 
+## Pod install
+To install CocoaPods, run `bundle exec pod install`. If the install fails because pods are missing, run `bundle install` and then re-run `bundle exec pod install`.
+
 ## Deploying
 
 The release deploy will trigger automatically when pushing a version (#.#.#) tag to ios-library.

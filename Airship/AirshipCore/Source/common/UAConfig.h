@@ -112,13 +112,33 @@ typedef NS_ENUM(NSUInteger, UACloudSite) {
 @property (nonatomic, assign, getter=isAutomaticSetupEnabled) BOOL automaticSetupEnabled;
 
 /**
- * An array of UAWhitelist entry strings. The whitelist used for validating URLs for landing pages,
- * wallet action, open external URL action, deep link action (if delegate is not set), and
- * HTML in-app messages.
+ * An array of UAURLAllowList entry strings.
+ * This url allow list is used for validating which URLs can be opened or load the JavaScript native bridge.
+ * It affects landing pages, the open external URL and wallet actions,
+ * deep link actions (if a delegate is not set), and HTML in-app messages.
  *
- * @note See UAWhitelist for pattern entry syntax.
+ * @note See UAURLAllowList for pattern entry syntax.
  */
-@property (nonatomic, copy) NSArray<NSString *> *whitelist;
+@property (nonatomic, copy) NSArray<NSString *> *URLAllowList;
+
+/**
+ * An array of UAURLAllowList entry strings.
+ * This url allow list is used for validating which URLs can load the JavaScript native bridge,
+ * It affects Landing Pages, Message Center and HTML In-App Messages.
+ *
+ * @note See UAURLAllowList for pattern entry syntax.
+ */
+@property (nonatomic, copy) NSArray<NSString *> *URLAllowListScopeJavaScriptInterface;
+
+/**
+ * An array of UAURLAllowList entry strings.
+ * This url allow list is used for validating which URLs can be opened.
+ * It affects landing pages, the open external URL and wallet actions,
+ * deep link actions (if a delegate is not set), and HTML in-app messages.
+ *
+ * @note See UAURLAllowList for pattern entry syntax.
+ */
+@property (nonatomic, copy) NSArray<NSString *> *URLAllowListScopeOpenURL;
 
 /**
  * The iTunes ID used for Rate App Actions.
@@ -178,14 +198,6 @@ typedef NS_ENUM(NSUInteger, UACloudSite) {
  * Defaults to `NO`.
  */
 @property (nonatomic, assign, getter=isChannelCaptureEnabled) BOOL channelCaptureEnabled;
-
-/**
- * Enables or disables whitelist checks at the scope `UAWhitelistScopeOpenURL`. If disabled,
- * all whitelist checks for this scope will be allowed.
- *
- * Defaults to `NO`.
- */
-@property (nonatomic, assign, getter=isOpenURLWhitelistingEnabled) BOOL openURLWhitelistingEnabled;
 
 /**
  * Flag indicating whether delayed channel creation is enabled. If set to `YES` channel 

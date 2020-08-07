@@ -32,9 +32,9 @@
     self.mockAirship = [self mockForClass:[UAirship class]];
     [UAirship setSharedAirship:self.mockAirship];
 
-    // Setup a whitelist
-    UAWhitelist *whitelist = [UAWhitelist whitelistWithConfig:self.config];
-    [[[self.mockAirship stub] andReturn:whitelist] whitelist];
+    // Setup a URL allow list
+    UAURLAllowList *URLAllowList = [UAURLAllowList allowListWithConfig:self.config];
+    [[[self.mockAirship stub] andReturn:URLAllowList] URLAllowList];
 
     // Airship JavaScript command delegate
     self.mockAirshipJavaScriptCommandDelegate = [self mockForProtocol:@protocol(UAJavaScriptCommandDelegate)];
@@ -394,12 +394,12 @@
 }
 
 /**
- * Test webView:shouldStartLoadWithRequest:navigationType: does not forward action commands if the URL is not whitelisted.
+ * Test webView:shouldStartLoadWithRequest:navigationType: does not forward action commands if the URL is not allowed.
  */
-- (void)testShouldStartLoadRejectsActionRunsNotWhitelisted {
+- (void)testShouldStartLoadRejectsActionRunsNotAllowed {
     // Action request
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"uairship://run-basic-actions?test_action=hi"]];
-    NSURL *originatingURL = [NSURL URLWithString:@"https://foo.notwhitelisted.com/whatever.html"];;
+    NSURL *originatingURL = [NSURL URLWithString:@"https://foo.notAllowed.com/whatever.html"];;
 
     id mockWKNavigationAction = [self mockForClass:[WKNavigationAction class]];
     [[[mockWKNavigationAction stub] andReturn:request] request];
@@ -532,10 +532,10 @@
 }
 
 /**
- * Test webView:didFinishNavigation: does not inject the Airship JavaScript environment when the URL is not whitelisted.
+ * Test webView:didFinishNavigation: does not inject the Airship JavaScript environment when the URL is not allowed.
  */
-- (void)testDidFinishNotWhitelisted {
-    NSURL *url = [NSURL URLWithString:@"https://foo.notwhitelisted.com/whatever.html"];
+- (void)testDidFinishNotAllowed {
+    NSURL *url = [NSURL URLWithString:@"https://foo.notAllowed.com/whatever.html"];
     [[[self.mockWKWebView stub] andReturn:url] URL];
     id mockWKNavigation = [self mockForClass:[WKNavigation class]];
 

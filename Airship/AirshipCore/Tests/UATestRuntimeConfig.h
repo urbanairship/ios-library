@@ -14,7 +14,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) UALogLevel logLevel;
 @property (nonatomic, assign, getter=isInProduction) BOOL inProduction;
 @property (nonatomic, assign, getter=isAutomaticSetupEnabled) BOOL automaticSetupEnabled;
-@property (nonatomic, copy) NSArray<NSString *> *whitelist;
+@property (nonatomic, copy) NSArray<NSString *> *URLAllowList;
+@property (nonatomic, copy) NSArray<NSString *> *URLAllowListScopeJavaScriptInterface;
+@property (nonatomic, copy) NSArray<NSString *> *URLAllowListScopeOpenURL;
 @property (nonatomic, copy) NSString *itunesID;
 @property (nonatomic, assign, getter=isAnalyticsEnabled) BOOL analyticsEnabled;
 @property (nonatomic, assign) BOOL detectProvisioningMode;
@@ -22,7 +24,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) BOOL clearUserOnAppRestore;
 @property (nonatomic, assign) BOOL clearNamedUserOnAppRestore;
 @property (nonatomic, assign, getter=isChannelCaptureEnabled) BOOL channelCaptureEnabled;
-@property (nonatomic, assign, getter=isOpenURLWhitelistingEnabled) BOOL openURLWhitelistingEnabled;
 @property (nonatomic, assign, getter=isChannelCreationDelayEnabled) BOOL channelCreationDelayEnabled;
 @property (nonatomic, copy) NSDictionary *customConfig;
 @property (nonatomic, assign) BOOL requestAuthorizationToUseNotifications;

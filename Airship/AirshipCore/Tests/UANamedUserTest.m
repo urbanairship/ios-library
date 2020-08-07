@@ -763,4 +763,134 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
     [self.mockAttributeRegistrar verify];
 }
 
+- (void)testSetComponentEnabledYES {
+    self.namedUser.componentEnabled = NO;
+
+    [[self.mockAttributeRegistrar expect] setComponentEnabled:YES];
+    [[self.mockTagGroupsRegistrar expect] setEnabled:YES];
+    [[self.mockedNamedUserClient expect] setEnabled:YES];
+
+    self.namedUser.componentEnabled = YES;
+
+    [self.mockTagGroupsRegistrar verify];
+    [self.mockAttributeRegistrar verify];
+    [self.mockedNamedUserClient verify];
+}
+
+- (void)testSetComponentEnabledYESDataCollectionDisabled {
+    [self.dataStore setBool:NO forKey:UAirshipDataCollectionEnabledKey];
+
+    self.namedUser.componentEnabled = NO;
+
+    [[self.mockAttributeRegistrar reject] setComponentEnabled:YES];
+    [[self.mockTagGroupsRegistrar reject] setEnabled:YES];
+    [[self.mockedNamedUserClient reject] setEnabled:YES];
+
+    self.namedUser.componentEnabled = YES;
+
+    [self.mockTagGroupsRegistrar verify];
+    [self.mockAttributeRegistrar verify];
+    [self.mockedNamedUserClient verify];
+}
+
+- (void)testSetComponentEnabledNO {
+    [[self.mockAttributeRegistrar expect] setComponentEnabled:NO];
+    [[self.mockTagGroupsRegistrar expect] setEnabled:NO];
+    [[self.mockedNamedUserClient expect] setEnabled:NO];
+
+    self.namedUser.componentEnabled = NO;
+
+    [self.mockTagGroupsRegistrar verify];
+    [self.mockAttributeRegistrar verify];
+    [self.mockedNamedUserClient verify];
+}
+
+- (void)testSetDataCollectionEnabledYES {
+    NSString *changeToken = self.namedUser.changeToken;
+
+    [self.dataStore setBool:NO forKey:UAirshipDataCollectionEnabledKey];
+
+    [[self.mockAttributeRegistrar expect] setComponentEnabled:YES];
+    [[self.mockTagGroupsRegistrar expect] setEnabled:YES];
+    [[self.mockedNamedUserClient expect] setEnabled:YES];
+
+    // Expect the named user client to associate and call the success block
+    [[[self.mockedNamedUserClient expect] andDo:namedUserSuccessDoBlock] associate:@"fakeNamedUser"
+                                                                         channelID:@"someChannel"
+                                                                         onSuccess:OCMOCK_ANY
+                                                                         onFailure:OCMOCK_ANY];
+
+    [self.dataStore setBool:YES forKey:UAirshipDataCollectionEnabledKey];
+    [self.namedUser onDataCollectionEnabledChanged];
+
+    XCTAssertNotEqualObjects(changeToken, self.namedUser.changeToken,
+                             @"Change token should have changed.");
+    XCTAssertEqualObjects(self.namedUser.changeToken, self.namedUser.lastUpdatedToken,
+                          @"Tokens should match.");
+
+    [self.mockTagGroupsRegistrar verify];
+    [self.mockAttributeRegistrar verify];
+    [self.mockedNamedUserClient verify];
+}
+
+- (void)testSetDataCollectionEnabledYESComponentDisabled {
+    NSString *changeToken = self.namedUser.changeToken;
+
+    self.namedUser.componentEnabled = NO;
+    [self.dataStore setBool:NO forKey:UAirshipDataCollectionEnabledKey];
+
+    [[self.mockAttributeRegistrar reject] setComponentEnabled:YES];
+    [[self.mockTagGroupsRegistrar reject] setEnabled:YES];
+    [[self.mockedNamedUserClient reject] setEnabled:YES];
+
+    // Expect the named user client to associate and call the success block
+    [[[self.mockedNamedUserClient expect] andDo:namedUserSuccessDoBlock] associate:@"fakeNamedUser"
+                                                                         channelID:@"someChannel"
+                                                                         onSuccess:OCMOCK_ANY
+                                                                         onFailure:OCMOCK_ANY];
+
+    [self.dataStore setBool:YES forKey:UAirshipDataCollectionEnabledKey];
+    [self.namedUser onDataCollectionEnabledChanged];
+
+    XCTAssertNotEqualObjects(changeToken, self.namedUser.changeToken,
+                             @"Change token should have changed.");
+    XCTAssertEqualObjects(self.namedUser.changeToken, self.namedUser.lastUpdatedToken,
+                          @"Tokens should match.");
+
+    [self.mockTagGroupsRegistrar verify];
+    [self.mockAttributeRegistrar verify];
+    [self.mockedNamedUserClient verify];
+}
+
+- (void)testSetDataCollectionEnabledNO {
+    NSString *changeToken = self.namedUser.changeToken;
+
+    [self.dataStore setBool:YES forKey:UAirshipDataCollectionEnabledKey];
+
+    [[self.mockAttributeRegistrar expect] setComponentEnabled:NO];
+    [[self.mockAttributeRegistrar expect] deletePendingMutations];
+
+    [[self.mockTagGroupsRegistrar expect] setEnabled:NO];
+    [[self.mockTagGroupsRegistrar expect] clearAllPendingTagUpdates];
+
+    [[self.mockedNamedUserClient expect] setEnabled:NO];
+    // Expect the named user client to associate and call the success block
+    [[[self.mockedNamedUserClient expect] andDo:namedUserSuccessDoBlock] disassociate:@"someChannel"
+                                                                            onSuccess:OCMOCK_ANY
+                                                                            onFailure:OCMOCK_ANY];
+
+    [self.dataStore setBool:NO forKey:UAirshipDataCollectionEnabledKey];
+    [self.namedUser onDataCollectionEnabledChanged];
+
+    XCTAssertNotEqualObjects(changeToken, self.namedUser.changeToken,
+                             @"Change token should have changed.");
+    XCTAssertNotEqualObjects(self.namedUser.changeToken, self.namedUser.lastUpdatedToken,
+                          @"Tokens should not match.");
+    XCTAssertNil(self.namedUser.identifier);
+
+    [self.mockTagGroupsRegistrar verify];
+    [self.mockAttributeRegistrar verify];
+    [self.mockedNamedUserClient verify];
+}
+
 @end

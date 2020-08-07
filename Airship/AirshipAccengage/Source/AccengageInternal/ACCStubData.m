@@ -1,8 +1,8 @@
-//* Copyright Airship and Contributors */
+/* Copyright Airship and Contributors */
 
-#import "ACCRequest.h"
+#import "ACCStubData+Internal.h"
 
-@implementation ACCRequest
+@implementation ACCStubData
 
 - (nullable instancetype)initWithCoder:(nonnull NSCoder *)coder {
     self = [super init];
