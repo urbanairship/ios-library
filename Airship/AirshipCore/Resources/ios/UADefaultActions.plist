@@ -88,15 +88,6 @@
 	<dict>
 		<key>names</key>
 		<array>
-			<string>channel_capture_action</string>
-			<string>^cc</string>
-		</array>
-		<key>action</key>
-		<string>UAChannelCaptureAction</string>
-	</dict>
-	<dict>
-		<key>names</key>
-		<array>
 			<string>enable_feature</string>
 			<string>^ef</string>
 		</array>
@@ -105,16 +96,16 @@
 		<key>predicate</key>
 		<string>UAEnableFeatureActionPredicate</string>
 	</dict>
-    <dict>
-        <key>names</key>
-        <array>
-            <string>share_action</string>
-            <string>^s</string>
-        </array>
-        <key>action</key>
-        <string>UAShareAction</string>
-        <key>predicate</key>
-        <string>UAShareActionPredicate</string>
-    </dict>
+	<dict>
+		<key>names</key>
+		<array>
+			<string>share_action</string>
+			<string>^s</string>
+		</array>
+		<key>action</key>
+		<string>UAShareAction</string>
+		<key>predicate</key>
+		<string>UAShareActionPredicate</string>
+	</dict>
 </array>
 </plist>

@@ -1,3 +1,4 @@
+#import "NSDictionary+UAAdditions.h"
 #import "NSJSONSerialization+UAAdditions.h"
 #import "NSManagedObjectContext+UAAdditions.h"
 #import "NSOperationQueue+UAAdditions.h"
@@ -88,6 +89,7 @@
 #import "UARetailEventTemplate.h"
 #import "UARuntimeConfig.h"
 #import "UASystemVersion.h"
+#import "UATagGroupHistorian.h"
 #import "UATagGroups.h"
 #import "UATextInputNotificationAction.h"
 #import "UAUtils.h"

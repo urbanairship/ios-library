@@ -102,7 +102,6 @@
 #import "UAirshipVersion.h"
 #import "UAActivityViewController.h"
 #import "UAChannelCapture.h"
-#import "UAChannelCaptureAction.h"
 #import "UAJavaScriptCommand.h"
 #import "UAJavaScriptCommandDelegate.h"
 #import "UAJavaScriptEnvironment.h"

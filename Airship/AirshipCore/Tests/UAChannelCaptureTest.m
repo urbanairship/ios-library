@@ -1,25 +1,22 @@
 /* Copyright Airship and Contributors */
 
 #import "UAAirshipBaseTest.h"
-#import "UARuntimeConfig.h"
 #import "UAChannelCapture+Internal.h"
 #import "UAPreferenceDataStore+Internal.h"
-#import "UAPush+Internal.h"
-#import "UA_Base64.h"
-#import "UAUtils.h"
-#import "UATestDispatcher.h"
+#import "UAChannel.h"
+#import "UARuntimeConfig.h"
+#import "UAAppStateTracker.h"
+#import "UATestDate.h"
 
 @interface UAChannelCaptureTest : UAAirshipBaseTest
 @property(nonatomic, strong) UAChannelCapture *channelCapture;
+@property(nonatomic, strong) NSString *testChannelID;
 
 @property(nonatomic, strong) id mockChannel;
-@property(nonatomic, strong) id mockPushProviderDelegate;
 @property(nonatomic, strong) id mockPasteboard;
-@property(nonatomic, strong) id mockAppStateTracker;
-@property(nonatomic, strong) id mockUtils;
-@property(nonatomic, strong) id mockWindow;
-@property(nonatomic, strong) id mockRootViewController;
+@property(nonatomic, strong) NSArray<NSDictionary<NSString *,id> *> *mockItems;
 @property(nonatomic, strong) NSNotificationCenter *notificationCenter;
+@property(nonatomic, strong) UATestDate *testDate;
 
 @end
 
@@ -28,151 +25,272 @@
 - (void)setUp {
     [super setUp];
 
+    self.testChannelID = @"pushChannelID";
+    
     self.mockChannel = [self mockForClass:[UAChannel class]];
-    [[[self.mockChannel stub] andReturn:@"pushChannelID"] identifier];
-
-    self.mockPushProviderDelegate = [self mockForProtocol:@protocol(UAPushProviderDelegate)];
-
-    self.mockPasteboard = [self mockForClass:[UIPasteboard class]];
-    [[[self.mockPasteboard stub] andReturn:self.mockPasteboard] generalPasteboard];
-
-    self.mockRootViewController = [self mockForClass:[UIViewController class]];
-    self.mockWindow = [self mockForClass:[UIWindow class]];
-    [[[self.mockWindow stub] andReturn:self.mockRootViewController] rootViewController];
-
-    self.mockUtils = [self mockForClass:[UAUtils class]];
-    [[[self.mockUtils stub] andReturn:self.mockWindow] mainWindow];
+    [[[self.mockChannel stub] andDo:^(NSInvocation *invocation) {
+        [invocation setReturnValue:&self->_testChannelID];
+    }] identifier];
 
     self.notificationCenter = [[NSNotificationCenter alloc] init];
 
+    self.testDate = [[UATestDate alloc] initWithAbsoluteTime:[NSDate date]];
+
     self.config.channelCaptureEnabled = YES;
+    
+    self.mockItems = [NSMutableArray array];
 
-    self.channelCapture = [UAChannelCapture channelCaptureWithConfig:self.config
-                                                             channel:self.mockChannel
-                                                pushProviderDelegate:self.mockPushProviderDelegate
-                                                           dataStore:self.dataStore
-                                                  notificationCenter:self.notificationCenter
-                                                      mainDispatcher:[UATestDispatcher testDispatcher]
-                                                backgroundDispatcher:[UATestDispatcher testDispatcher]];
+    [self createChannelCapture];
+}
+
+- (void)expectMockPasteboardToBeSet:(BOOL)expectSet {
+    self.mockPasteboard = [self mockForClass:[UIPasteboard class]];
+    
+    [[[self.mockPasteboard stub] andDo:^(NSInvocation *invocation) {
+        [invocation setReturnValue:&self->_mockItems];
+    }] items];
+    
+    if (expectSet) {
+        [[self.mockPasteboard expect] setItems:[OCMArg checkWithBlock:^BOOL(id obj) {
+            if (![obj isKindOfClass:[NSArray class]]) {
+                return NO;
+            }
+            
+            NSArray *items = (NSArray *)obj;
+            if (items.count != 1) {
+                return NO;
+            }
+            if (![items[0] isKindOfClass:[NSDictionary class]]) {
+                return NO;
+            }
+            
+            NSDictionary *item = (NSDictionary *)items[0];
+            if (item.allKeys.count != 1) {
+                return NO;
+            }
+            if (item.allKeys[0] != UIPasteboardTypeAutomatic) {
+                return NO;
+            }
+            if (![item.allValues[0] isKindOfClass:[NSString class]]) {
+                return NO;
+            }
+            
+            NSString *pasteboard = (NSString *)item.allValues[0];
+            self.mockItems = [items copy];
+            
+            NSString *expectedPasteboard = (self.testChannelID) ? [NSString stringWithFormat:@"ua:%@", self.testChannelID] : @"ua:";
+            return [pasteboard isEqualToString:expectedPasteboard];
+        }] options:[OCMArg checkWithBlock:^BOOL(id obj) {
+            if (![obj isKindOfClass:[NSDictionary class]]) {
+                return NO;
+            }
+            
+            NSDictionary *option = (NSDictionary *)obj;
+            if (option.allKeys.count != 1) {
+                return NO;
+            }
+            if (option.allKeys[0] != UIPasteboardOptionExpirationDate) {
+                return NO;
+            }
+            if (![option.allValues[0] isKindOfClass:[NSDate class]]) {
+                return NO;
+            }
+            
+            NSDate *expirationDate = (NSDate *)option.allValues[0];
+            if ([expirationDate timeIntervalSinceDate:[self.testDate now]] != 60) {
+                return NO;
+            }
+            
+            return YES;
+        }]];
+    } else {
+        [[self.mockPasteboard reject] setString:OCMOCK_ANY];
+        [[self.mockPasteboard reject] setItems:OCMOCK_ANY options:OCMOCK_ANY];
+    }
+    
+    [[self.mockPasteboard stub] setItems:[OCMArg checkWithBlock:^BOOL(id obj) {
+        if (!obj) {
+            return NO;
+        }
+        
+        if (![obj isKindOfClass:[NSArray class]]) {
+            return NO;
+        }
+        
+        self.mockItems = [(NSArray *)obj copy];
+
+        return YES;
+    }]];
+     
+    [[[self.mockPasteboard stub] andReturn:self.mockPasteboard] generalPasteboard];
+}
+
+- (void)createChannelCapture {
+    self.channelCapture =  [UAChannelCapture channelCaptureWithConfig:self.config
+                                                              channel:self.mockChannel
+                                                            dataStore:self.dataStore
+                                                   notificationCenter:self.notificationCenter
+                                                                 date:self.testDate];
 }
 
 /**
- * Test channel capture tool with a token and URL.
+ * Test channel captured when enabled in the config.
  */
-- (void)testChannelCapture {
-    [self.channelCapture enable:1000];
-    [[[self.mockPushProviderDelegate stub] andReturnValue:@(YES)] backgroundPushNotificationsAllowed];
-    [self verifyChannelCaptureDisplayedWithUrl:@"oh/hi?channel=CHANNEL"];
+- (void)testChannelCapturedWhenEnabledViaConfig {
+    [self verifyChannelIsCapturedAfterKnocks];
 }
 
 /**
- * Test channel capture tool always works when backgorundPushNotificationsAllowed is NO.
+ * Test channel is not captured when disabled in the config.
  */
-- (void)testChannelCaptureToolBackgroundRefreshDisabled {
-    [[[self.mockPushProviderDelegate stub] andReturnValue:@(NO)] backgroundPushNotificationsAllowed];
-    [self verifyChannelCaptureDisplayedWithUrl:@"oh/hi?channel=CHANNEL"];
-}
+- (void)testChannelNotCapturedWhenDisabledViaConfig {
+    self.config.channelCaptureEnabled = NO;
+    [self createChannelCapture];
 
-/**
- * Test channel capture tool without a URL.
- */
-- (void)testChannelCaptureNoTokenURL {
-    [self.channelCapture enable:1000];
-    [[[self.mockPushProviderDelegate stub] andReturnValue:@(NO)] backgroundPushNotificationsAllowed];
-    [self verifyChannelCaptureDisplayedWithUrl:nil];
+    [self verifyChannelIsNotCapturedAfterKnocks];
 }
 
 /**
  * Test disabling channel capture.
  */
 - (void)testDisable {
-    [self.channelCapture enable:1000];
-    [self.channelCapture disable];
-    XCTAssertEqual([self.dataStore objectForKey:UAChannelCaptureEnabledKey], nil);
+    self.channelCapture.enabled = NO;
+    [self verifyChannelIsNotCapturedAfterKnocks];
 }
 
 /**
- * Test enabling channel capture for set amount of time.
+ * Test enabling channel capture.
  */
 - (void)testEnable {
-    [self.channelCapture enable:1000];
-    // Stored date should be in future.
-    XCTAssertTrue([[self.dataStore objectForKey:UAChannelCaptureEnabledKey] compare:[NSDate date]] != NSOrderedAscending);
-    [self.channelCapture disable];
+    self.channelCapture.enabled = YES;
+    [self verifyChannelIsCapturedAfterKnocks];
 }
 
 /**
- * Helper method to generate the expected channel capture token.
- *
- * @param url Optional URL string.
- * @return The expected channel capture token.
+ * Test disabling channel capture twice.
  */
-- (NSString *)generateTokenWithURLString:(NSString *)url {
-    const char *keyCStr = [self.config.appKey cStringUsingEncoding:NSASCIIStringEncoding];
-    size_t keyCstrLen = strlen(keyCStr);
+- (void)testDisableTwice {
+    self.channelCapture.enabled = NO;
+    [self verifyChannelIsNotCapturedAfterKnocks];
 
-    const char *secretCStr = [self.config.appSecret cStringUsingEncoding:NSASCIIStringEncoding];
-    size_t secretCstrLen = strlen(secretCStr);
-
-    NSMutableString *token = [NSMutableString string];
-    for (size_t i = 0; i < keyCstrLen; i++) {
-        [token appendFormat:@"%02x", (int)(keyCStr[i] ^ secretCStr[i % secretCstrLen])];
-    }
-
-    if (url) {
-        [token appendString:url];
-    }
-
-    return UA_base64EncodedStringFromData([token dataUsingEncoding:NSUTF8StringEncoding]);
+    self.channelCapture.enabled = NO;
+    [self verifyChannelIsNotCapturedAfterKnocks];
 }
 
 /**
- * Helper method to verify channel capture dialog
+ * Test enabling channel capture after disabling.
  */
-- (void)verifyChannelCaptureDisplayedWithUrl:(NSString *)url {
-    __block XCTestExpectation *alertDisplayed = [self expectationWithDescription:@"Alert displayed"];
-    __block UIAlertController *alertController;
-
-    // Generate a token with a URL
-    [[[self.mockPasteboard stub] andReturn:[self generateTokenWithURLString:url]] string];
-    [[[self.mockPasteboard stub] andReturnValue:@(YES)] hasStrings];
-
-    // We get a warning when we mock the init method
-    [[[self.mockRootViewController expect] andDo:^(NSInvocation *invocation) {
-        [alertDisplayed fulfill];
-    }] presentViewController:[OCMArg checkWithBlock:^BOOL(id obj) {
-        if (![obj isKindOfClass:[UIAlertController class]]) {
-            return NO;
-        }
-
-        alertController = (UIAlertController *)obj;
-        if (![alertController.title isEqualToString:@"Channel ID"]) {
-            return NO;
-        }
-
-        if (![alertController.message isEqualToString:@"pushChannelID"]) {
-            return NO;
-        }
-
-        if (url) {
-            if (alertController.actions.count != 3) {
-                return NO;
-            }
-        } else if (alertController.actions.count != 2) {
-            return NO;
-        }
-
-        return YES;
-
-    }] animated:YES completion:nil];
-
-    [self.notificationCenter postNotificationName:UAApplicationDidBecomeActiveNotification object:nil];
-
-    // Wait for the test expectations
-    [self waitForTestExpectations];
-    [self.mockRootViewController verify];
+- (void)testEnableAfterDisable {
+    [self.channelCapture setEnabled:NO];
+    [self verifyChannelIsNotCapturedAfterKnocks];
+    
+    [self.channelCapture setEnabled:YES];
+    [self verifyChannelIsCapturedAfterKnocks];
 }
 
+/**
+ * Test enabling channel capture with config disabled.
+ */
+- (void)testEnableWhenDisabledInConfig {
+    self.config.channelCaptureEnabled = NO;
+    [self createChannelCapture];
+
+    [self verifyChannelIsNotCapturedAfterKnocks];
+    
+    [self.channelCapture setEnabled:YES];
+    [self verifyChannelIsCapturedAfterKnocks];
+}
+
+
+/**
+ * Test channel captured when there have been non-knock foregrounds
+ */
+- (void)testChannelCapturedByKnocksAfterNonKnockForegrounds {
+    // Add a couple of old foregrounds to simulate app-has-been-running state
+    [self knock:2];
+    [self.testDate setTimeOffset:self.testDate.timeOffset + 30];
+    
+    [self verifyChannelIsCapturedAfterKnocks];
+}
+
+/**
+ * Test channel capture tool does not write to pasteboard if knocks take too long
+ */
+- (void)testChanneNotCapturedWhenKnocksTakeTooLong {
+    [self verifyChannelIsCapturedAfterKnocks];
+    [self verifyChannelIsNotCapturedWhenKnocksTakeTooLong];
+}
+
+/**
+  * Test no channel id
+ */
+- (void)testNoChannelId {
+    self.testChannelID = nil;
+    
+    [self verifyChannelIsCapturedAfterKnocks];
+}
+
+/**
+ * Helper method to verify channel capture is captured
+ */
+- (void)verifyChannelIsCapturedAfterKnocks {
+    // The pasteboard should not be set during the first 5 knocks
+    [self expectMockPasteboardToBeSet:NO];
+
+    [self knock:5];
+
+    [self.mockPasteboard verify];
+    
+    // The pasteboard should be set during the sixth knock
+    [self expectMockPasteboardToBeSet:YES];
+
+    [self knock];
+
+    [self.mockPasteboard verify];
+}
+
+/**
+ * Helper method to verify channel is not captured
+ */
+- (void)verifyChannelIsNotCapturedAfterKnocks {
+    [self expectMockPasteboardToBeSet:NO];
+
+    [self knock:6];
+    
+    [self.mockPasteboard verify];
+}
+
+/**
+ * Helper method to verify channel is not captured when knocks take too long
+ */
+- (void)verifyChannelIsNotCapturedWhenKnocksTakeTooLong {
+    [self expectMockPasteboardToBeSet:NO];
+
+    [self knock];
+    
+    [self.testDate setTimeOffset:self.testDate.timeOffset + 30];
+    
+    [self knock:5];
+    
+    [self.mockPasteboard verify];
+}
+
+/**
+* Helper method to simulate a knock
+*/
+- (void)knock {
+    [self.testDate setTimeOffset:self.testDate.timeOffset + 1];
+    [self.notificationCenter postNotificationName:UAApplicationDidTransitionToForeground object:nil];
+}
+
+/**
+* Helper method to simulate multiple knocks
+*/
+- (void)knock:(NSUInteger)repeat {
+    for (NSUInteger i = 0; i < repeat; i++) {
+        [self knock];
+    }
+}
 
 @end
 

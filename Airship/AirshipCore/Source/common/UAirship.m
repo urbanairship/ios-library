@@ -159,7 +159,6 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         // UIPasteboard is not available in tvOS
         self.channelCapture = [UAChannelCapture channelCaptureWithConfig:self.config
                                                                  channel:self.sharedChannel
-                                                    pushProviderDelegate:self.sharedPush
                                                                dataStore:self.dataStore];
 #endif
 

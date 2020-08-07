@@ -1,16 +1,13 @@
 /* Copyright Airship and Contributors */
 
-#import <UIKit/UIKit.h>
-
-@class UARuntimeConfig;
-@class UAPush;
+#import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
 /**
- * ChannelCapture checks the device clipboard for an expected token on app
- * foreground and displays an alert that allows the user to copy the Channel
- * or optionally open a url with the channel as an argument.
+ * Channel Capture copies the channelId to the device clipboard after a specific number of
+ * knocks (app foregrounds) within a specific timeframe. Channel Capture can be enabled
+ * or disabled in Airship Config.
  */
 @interface UAChannelCapture : NSObject
 
@@ -19,16 +16,10 @@ NS_ASSUME_NONNULL_BEGIN
 ///---------------------------------------------------------------------------------------
 
 /**
- * Enable channel capture for a specified duration.
- *
- * @param duration The length of time to enable channel capture for, in seconds.
+ * Flag indicating whether channel capture is enabled. Clear to disable. Set to enable.
+ * Note: Does not persist through app launches.
  */
-- (void)enable:(NSTimeInterval)duration;
-
-/**
- * Disable channel capture.
- */
-- (void)disable;
+@property (nonatomic, assign) BOOL enabled;
 
 @end
 

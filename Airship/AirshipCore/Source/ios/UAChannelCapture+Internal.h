@@ -1,18 +1,14 @@
 /* Copyright Airship and Contributors */
 
 #import "UAChannelCapture.h"
-#import "UAPushProviderDelegate.h"
-#import "UAChannel.h"
-#import "UADispatcher.h"
 
 @class UAPreferenceDataStore;
+@class UARuntimeConfig;
+@class UAChannel;
+@class UAAppStateTracker;
+@class UADate;
 
 NS_ASSUME_NONNULL_BEGIN
-
-/**
- * User channel capture enabled data store key.
- */
-extern NSString *const UAChannelCaptureEnabledKey;
 
 @interface UAChannelCapture ()
 
@@ -21,39 +17,33 @@ extern NSString *const UAChannelCaptureEnabledKey;
 ///---------------------------------------------------------------------------------------
 
 /**
- * Factory method to create the UAChannelCapture.
+ * Factory method to create the UAChannelCapture object.
  *
  * @param config The Airship config.
  * @param channel The channel.
- * @param pushProviderDelegate The push provider delegate.
  * @param dataStore The UAPreferenceDataStore instance.
  *
  * @return A channel capture instance.
  */
 + (instancetype)channelCaptureWithConfig:(UARuntimeConfig *)config
                                  channel:(UAChannel *)channel
-                    pushProviderDelegate:(id<UAPushProviderDelegate>)pushProviderDelegate
                                dataStore:(UAPreferenceDataStore *)dataStore;
 
 /**
- * Factory method to create the UAChannelCapture. Used for testing.
+ * Factory method to create the UAChannelCapture object. Used for testing.
  *
  * @param config The Airship config.
  * @param channel The channel.
- * @param pushProviderDelegate The push provider delegate.
  * @param dataStore The UAPreferenceDataStore instance.
  * @param notificationCenter The notification center.
- * @param mainDispatcher The main dispatcher.
- * @param backgroundDispatcher The background dispatcher.
+ * @param date The date.
  * @return A channel capture instance.
  */
 + (instancetype)channelCaptureWithConfig:(UARuntimeConfig *)config
                                  channel:(UAChannel *)channel
-                    pushProviderDelegate:(id<UAPushProviderDelegate>)pushProviderDelegate
                                dataStore:(UAPreferenceDataStore *)dataStore
                       notificationCenter:(NSNotificationCenter *)notificationCenter
-                          mainDispatcher:(UADispatcher *)mainDispatcher
-                    backgroundDispatcher:(UADispatcher *)backgroundDispatcher;
+                                    date:(UADate *)date;
 
 @end
 
