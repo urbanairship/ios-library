@@ -4,7 +4,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface BMA4SInterruptionServiceManager : NSObject <NSCoding>
+@interface ACCStubData : NSObject <NSCoding>
 
 @end
 
