@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
 #import "UASchedule.h"
+#import "UAScheduleDeferredData+Internal.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -10,6 +11,15 @@ NS_ASSUME_NONNULL_BEGIN
 @interface UASchedule ()
 
 @property (nullable, nonatomic, retain) NSString *dataJSONString;
+
+/**
+ * Creates a schedule with a builder block.
+ * @param deferredData The deferred data.
+ * @param builderBlock The builder block.
+ * @return A schedule.
+ */
++ (instancetype)scheduleWithDeferredData:(UAScheduleDeferredData *)deferredData
+                       builderBlock:(void(^)(UAScheduleBuilder *builder))builderBlock;
 
 
 /**

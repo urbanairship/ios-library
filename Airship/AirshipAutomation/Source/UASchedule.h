@@ -18,7 +18,12 @@ typedef NS_ENUM(NSUInteger, UAScheduleType) {
     /**
      * Actions type.
      */
-    UAScheduleTypeActions
+    UAScheduleTypeActions,
+
+    /**
+     * Deferred type.
+     */
+    UAScheduleTypeDeferred
 };
 
 /**
