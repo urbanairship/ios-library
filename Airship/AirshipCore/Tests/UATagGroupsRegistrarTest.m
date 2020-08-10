@@ -9,8 +9,6 @@
 @property (nonatomic, strong) UAPendingTagGroupStore *namedPendingTagGroupStore;
 @property (nonatomic, strong) UATagGroupsRegistrar *channelRegistrar;
 @property (nonatomic, strong) UATagGroupsRegistrar *namedUserRegistrar;
-@property (nonatomic, strong) NSOperationQueue *channelOperationQueue;
-@property (nonatomic, strong) NSOperationQueue *namedUserOperationQueue;
 @property (nonatomic, strong) id mockApplication;
 @property (nonatomic, strong) id mockApiClient;
 @end
@@ -24,31 +22,23 @@
 
     self.mockApiClient = [self mockForClass:[UATagGroupsAPIClient class]];
 
-    self.channelOperationQueue = [[NSOperationQueue alloc] init];
-    
-    self.namedUserOperationQueue = [[NSOperationQueue alloc] init];
-
     self.channelPendingTagGroupStore = [UAPendingTagGroupStore channelHistoryWithDataStore:self.dataStore];
     
     self.namedPendingTagGroupStore = [UAPendingTagGroupStore namedUserHistoryWithDataStore:self.dataStore];
 
     self.channelRegistrar = [UATagGroupsRegistrar tagGroupsRegistrarWithPendingTagGroupStore:self.channelPendingTagGroupStore
                                                                                    apiClient:self.mockApiClient
-                                                                              operationQueue:self.channelOperationQueue
                                                                                  application:self.mockApplication];
-    
     
     self.namedUserRegistrar = [UATagGroupsRegistrar tagGroupsRegistrarWithPendingTagGroupStore:self.namedPendingTagGroupStore
                                                                                      apiClient:self.mockApiClient
-                                                                                operationQueue:self.namedUserOperationQueue
                                                                                    application:self.mockApplication];
+
+    [self.channelRegistrar setIdentifier:@"someID" clearPendingOnChange:NO];
+    [self.namedUserRegistrar setIdentifier:@"someID" clearPendingOnChange:NO];
 }
 
 - (void)tearDown {
-    [self.channelOperationQueue cancelAllOperations];
-    [self.channelOperationQueue waitUntilAllOperationsAreFinished];
-    [self.namedUserOperationQueue cancelAllOperations];
-    [self.namedUserOperationQueue waitUntilAllOperationsAreFinished];
     [super tearDown];
 }
 
@@ -92,18 +82,14 @@
         NSDictionary *expectedPayload = @{@"add": @{ @"group1": @[@"tag1"] }, @"remove": @{ @"group1": @[@"tag2"] } };
         return [expectedPayload isEqualToDictionary:[mutation payload]];
     }] completionHandler:OCMOCK_ANY];
+
+    [[self.mockApplication expect] endBackgroundTask:30];
     
     [self.channelRegistrar addTags:@[@"tag1"] group:@"group1"];
     [self.channelRegistrar removeTags:@[@"tag2"] group:@"group1"];
     [self.channelRegistrar setTags:@[@"tag1"] group:@"group2"];
     
     [self.channelRegistrar updateTagGroupsForID:testID];
-    
-    // wait until the queue clears
-    XCTestExpectation *endBackgroundTaskExpecation = [self expectationWithDescription:@"End of background task"];
-    [[[[self.mockApplication expect] ignoringNonObjectArgs] andDo:^(NSInvocation *invocation) {
-        [endBackgroundTaskExpecation fulfill];
-    }] endBackgroundTask:0];
 
     [self waitForTestExpectations];
     
@@ -131,7 +117,6 @@
 
 - (void)testSetEmptyTagListClearsTags {
     [self.channelRegistrar setTags:@[@"tag2", @"tag1"] group: @"group"];
-    [self.channelOperationQueue waitUntilAllOperationsAreFinished];
 
     NSDictionary *expected = @{ @"set": @{ @"group": @[@"tag2", @"tag1"] } };
     XCTAssertEqualObjects(expected, [self.channelPendingTagGroupStore peekPendingMutation].payload);
@@ -139,7 +124,6 @@
 
 - (void)testSetWithEmptyGroupDoesntSetTags {
     [self.channelRegistrar setTags:@[@"tag1"] group:@""];
-    [self.channelOperationQueue waitUntilAllOperationsAreFinished];
 
     XCTAssertNil([self.channelPendingTagGroupStore peekPendingMutation]);
 }
@@ -147,7 +131,6 @@
 - (void)testAddEmptyTagListOrEmptyGroupDoesntAddTags {
     [self.channelRegistrar addTags:@[] group:@"group1"];
     [self.channelRegistrar addTags:@[@"tag1"] group:@""];
-    [self.channelOperationQueue waitUntilAllOperationsAreFinished];
 
     XCTAssertNil([self.channelPendingTagGroupStore peekPendingMutation]);
 }
@@ -156,8 +139,6 @@
     [self.channelRegistrar setTags:@[@"tag2", @"tag1"] group:@"group"];
     [self.channelRegistrar removeTags:@[] group:@"group"];
     [self.channelRegistrar removeTags:@[@"tag1"] group:@""];
-
-    [self.channelOperationQueue waitUntilAllOperationsAreFinished];
 
     // Should still only be the set mutation
     NSDictionary *expected = @{ @"set": @{ @"group": @[@"tag2", @"tag1"] } };
@@ -168,9 +149,6 @@
     [self.channelRegistrar setTags:@[@"tag1"] group:@"cool"];
     [self.namedUserRegistrar setTags:@[@"tag2"] group:@"cool"];
 
-    [self.channelOperationQueue waitUntilAllOperationsAreFinished];
-    [self.namedUserOperationQueue waitUntilAllOperationsAreFinished];
-
     NSDictionary *channelExpectedPayload = @{ @"set": @{ @"cool": @[@"tag1"] } };
     XCTAssertEqualObjects(channelExpectedPayload, [self.channelPendingTagGroupStore peekPendingMutation].payload);
 
@@ -180,13 +158,11 @@
 
 - (void)testClearAllPendingUpdatesCancelsAndClearsMutations {
     [self.namedUserRegistrar setTags:@[@"tag2"] group:@"cool"];
-    [self.namedUserOperationQueue waitUntilAllOperationsAreFinished];
 
     NSDictionary *namedUserExpectedPayload = @{ @"set": @{ @"cool": @[@"tag2"] } };
     XCTAssertEqualObjects(namedUserExpectedPayload, [self.namedPendingTagGroupStore peekPendingMutation].payload);
 
-    [self.namedUserRegistrar clearAllPendingTagUpdates];
-    [self.namedUserOperationQueue waitUntilAllOperationsAreFinished];
+    [self.namedUserRegistrar clearPendingMutations];
 
     XCTAssertNil([self.namedPendingTagGroupStore peekPendingMutation]);
 }
@@ -200,6 +176,21 @@
     self.channelRegistrar.enabled = NO;
     XCTAssertFalse(self.channelRegistrar.enabled);
     [self.mockApiClient verify];
+}
+
+- (void)testSetIdentifier {
+    [self.channelRegistrar setTags:@[@"tag2", @"tag1"] group: @"group"];
+    NSDictionary *expected = @{ @"set": @{ @"group": @[@"tag2", @"tag1"] } };
+    [self.channelRegistrar setIdentifier:@"cool" clearPendingOnChange:NO];
+    XCTAssertEqual(self.channelRegistrar.pendingMutations.count, 1);
+    XCTAssertEqualObjects(self.channelRegistrar.pendingMutations.firstObject.payload, expected);
+
+}
+
+- (void)testSetIdentifierClearPending {
+    [self.channelRegistrar setTags:@[@"tag2", @"tag1"] group: @"group"];
+    [self.channelRegistrar setIdentifier:@"cool" clearPendingOnChange:YES];
+    XCTAssertEqual(self.channelRegistrar.pendingMutations.count, 0);
 }
 
 @end

@@ -8,7 +8,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * A queue which serializes to a preference data store objects that conform to the
  * NSCoding protocol. Useful for sequentially feeding data to API clients, or other
- * queue-like operations that also require persistence.
+ * queue-like operations that also require persistence. This class is thread-safe.
  */
 @interface UAPersistentQueue : NSObject
 
@@ -66,6 +66,14 @@ NS_ASSUME_NONNULL_BEGIN
  * Clears the queue.
  */
 - (void)clear;
+
+/**
+ * Collapses the queue according to the provided block.
+ * Note: The objects passed into the block invocation are copied.
+ *
+ * @param block The collapse block.
+ */
+- (void)collapse:(NSArray<id<NSCoding>> * (^)(NSArray<id<NSCoding>> *))block;
 
 @end
 

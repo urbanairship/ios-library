@@ -668,6 +668,22 @@
     XCTAssertEqualObjects(expectedUserInfo, notification.userInfo);
 }
 
+- (void)testInitialIdentifierPassedToRegistrar {
+    [[self.mockTagGroupsRegistrar expect] setIdentifier:self.channelIDFromMockChannelRegistrar clearPendingOnChange:NO];
+
+    self.channel = [self createChannel];
+
+    [self.mockTagGroupsRegistrar verify];
+}
+
+- (void)testCreatedIdentifierPassedToRegistrar {
+    [[self.mockTagGroupsRegistrar expect] setIdentifier:@"foo" clearPendingOnChange:NO];
+
+    [self.channel channelCreated:@"foo" existing:NO];
+
+    [self.mockTagGroupsRegistrar verify];
+}
+
 /**
  * Test channel updated posts an NSNotification of type UAChannelUpdatedEvent
  */

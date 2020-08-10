@@ -14,8 +14,20 @@ extern NSString * const UAAirshipTagGroupSentNotification;
 
 @interface UATagGroupsRegistrar : NSObject
 
+/**
+ * Whether the registrar is enabled. Defaults to `YES`.
+ */
 @property (nonatomic, assign) BOOL enabled;
+
+/**
+ * Pending tag groups mutations.
+ */
 @property (nonatomic, readonly) NSArray<UATagGroupsMutation *> *pendingMutations;
+
+/**
+ * The current identifier associated with this registrar.
+ */
+@property (nonatomic, readonly) NSString *identifier;
 
 ///---------------------------------------------------------------------------------------
 /// @name Tag Groups Registrar Methods
@@ -25,13 +37,11 @@ extern NSString * const UAAirshipTagGroupSentNotification;
  * Factory method to create a tag groups registrar. Used for testing.
  * @param pendingTagGroupStore The pending tag group store.
  * @param apiClient The internal tag groups API client.
- * @param operationQueue The operation queue.
  * @param application The application.
  * @return A new tag groups registrar instance.
  */
 + (instancetype)tagGroupsRegistrarWithPendingTagGroupStore:(UAPendingTagGroupStore *)pendingTagGroupStore
                                                  apiClient:(UATagGroupsAPIClient *)apiClient
-                                            operationQueue:(NSOperationQueue *)operationQueue
                                                application:(UIApplication *)application;
 
 /**
@@ -84,10 +94,17 @@ extern NSString * const UAAirshipTagGroupSentNotification;
 - (void)setTags:(NSArray *)tags group:(NSString *)tagGroupID;
 
 /**
- * Clears all pending tag updates.
- *
+ * Clears pending mutations.
  */
-- (void)clearAllPendingTagUpdates;
+- (void)clearPendingMutations;
+
+/**
+ * Sets the currently associated identifier.
+ *
+ * @param identifier The identifier.
+ * @param clearPendingOnChange Whether pending mutations should be cleared if the identifier has changed.
+ */
+- (void)setIdentifier:(NSString *)identifier clearPendingOnChange:(BOOL)clearPendingOnChange;
 
 @end
 

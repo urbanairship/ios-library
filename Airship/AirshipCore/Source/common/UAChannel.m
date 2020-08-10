@@ -81,6 +81,8 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
             NSLog(@"Channel ID: %@", self.identifier);
         }
 
+        [self.tagGroupsRegistrar setIdentifier:self.identifier clearPendingOnChange:NO];
+
         [self observeNotificationCenterEvents];
     }
 
@@ -435,6 +437,8 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
             NSLog(@"Created channel with ID: %@", channelID);
         }
 
+        [self.tagGroupsRegistrar setIdentifier:channelID clearPendingOnChange:NO];
+
         [self.notificationCenter postNotificationName:UAChannelCreatedEvent
                                                object:self
                                              userInfo:@{UAChannelCreatedEventChannelKey: channelID,
@@ -465,7 +469,7 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
         // Clear channel tags and pending mutations
         [self.dataStore setObject:@[] forKey:UAChannelTagsSettingsKey];
         [self.attributeRegistrar deletePendingMutations];
-        [self.tagGroupsRegistrar clearAllPendingTagUpdates];
+        [self.tagGroupsRegistrar clearPendingMutations];
     }
 
     [self updateRegistration];

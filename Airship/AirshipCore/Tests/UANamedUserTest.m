@@ -234,6 +234,35 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
     XCTAssertNoThrow([self.mockedNamedUserClient verify], @"Named user should not be associated");
 }
 
+- (void)testSetIdentifierDataCollectionDisabled {
+    self.namedUser.identifier = nil;
+    [self.dataStore setBool:NO forKey:UAirshipDataCollectionEnabledKey];
+    self.namedUser.identifier = @"neat";
+    XCTAssertNil(self.namedUser.identifier);
+}
+
+- (void)testInitialIdentifierPassedToRegistrar {
+    [self.dataStore setValue:@"foo" forKey:UANamedUserIDKey];
+    [[self.mockTagGroupsRegistrar expect] setIdentifier:@"foo" clearPendingOnChange:NO];
+
+    self.namedUser = [UANamedUser namedUserWithChannel:self.mockChannel
+                                                config:self.config
+                                             dataStore:self.dataStore
+                                    tagGroupsRegistrar:self.mockTagGroupsRegistrar
+                                    attributeRegistrar:self.mockAttributeRegistrar
+                                                  date:self.testDate];
+
+    [self.mockTagGroupsRegistrar verify];
+}
+
+- (void)testSetIdentifierPassedToRegistrar {
+    [[self.mockTagGroupsRegistrar expect] setIdentifier:@"bar" clearPendingOnChange:YES];
+
+    self.namedUser.identifier = @"bar";
+
+    [self.mockTagGroupsRegistrar verify];
+}
+
 /**
  * Test set change token.
  */
@@ -601,13 +630,6 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
     [self.mockTagGroupsRegistrar verify];
 }
 
-- (void)testSetIdentifierDataCollectionDisabled {
-    self.namedUser.identifier = nil;
-    [self.dataStore setBool:NO forKey:UAirshipDataCollectionEnabledKey];
-    self.namedUser.identifier = @"neat";
-    XCTAssertNil(self.namedUser.identifier);
-}
-
 - (void)testClearNamedUserOnDataCollectionDisabled {
     self.namedUser.identifier = @"neat";
     XCTAssertNotNil(self.namedUser.identifier);
@@ -871,7 +893,7 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
     [[self.mockAttributeRegistrar expect] deletePendingMutations];
 
     [[self.mockTagGroupsRegistrar expect] setEnabled:NO];
-    [[self.mockTagGroupsRegistrar expect] clearAllPendingTagUpdates];
+    [[self.mockTagGroupsRegistrar expect] clearPendingMutations];
 
     [[self.mockedNamedUserClient expect] setEnabled:NO];
     // Expect the named user client to associate and call the success block

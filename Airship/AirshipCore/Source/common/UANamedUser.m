@@ -49,6 +49,8 @@ NSString *const UANamedUserLastChannelIDKey = @"UANamedUserLastChannelID";
         self.namedUserAPIClient.enabled = self.componentEnabled;
         self.tagGroupsRegistrar.enabled = self.componentEnabled;
 
+        [self.tagGroupsRegistrar setIdentifier:self.identifier clearPendingOnChange:NO];
+
         self.date = date;
 
         [[NSNotificationCenter defaultCenter] addObserver:self
@@ -163,9 +165,8 @@ NSString *const UANamedUserLastChannelIDKey = @"UANamedUserLastChannelID";
 
         // Update named user.
         [self update];
-        
-        // Clear pending tag group and named user attribute mutations
-        [self.tagGroupsRegistrar clearAllPendingTagUpdates];
+
+        [self.tagGroupsRegistrar setIdentifier:identifier clearPendingOnChange:YES];
         [self.attributeRegistrar deletePendingMutations];
         
         // Identifier is non-null. Update CRA.
@@ -312,7 +313,7 @@ NSString *const UANamedUserLastChannelIDKey = @"UANamedUserLastChannelID";
         // Clear the identifier and all pending mutations
         self.identifier = nil;
         [self.attributeRegistrar deletePendingMutations];
-        [self.tagGroupsRegistrar clearAllPendingTagUpdates];
+        [self.tagGroupsRegistrar clearPendingMutations];
     }
 
     [self forceUpdate];
