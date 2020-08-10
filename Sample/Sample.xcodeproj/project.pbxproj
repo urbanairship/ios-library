@@ -7,6 +7,21 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1BEF600724CB3D8A0039091F /* SampleAppClip.app in Embed App Clips */ = {isa = PBXBuildFile; fileRef = 1BEF5FED24CB3D870039091F /* SampleAppClip.app */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		1BEF605524CF0CC90039091F /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 764693A91C237B630090FE40 /* AppDelegate.m */; };
+		1BEF605624CF0CC90039091F /* PushHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 61A672FB1CAB3E5A00BAF58A /* PushHandler.m */; };
+		1BEF605724CF0CC90039091F /* HomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 764693AC1C237B630090FE40 /* HomeViewController.m */; };
+		1BEF605824CF0CC90039091F /* MessageCenterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 493F50E91C5B261100B050A1 /* MessageCenterViewController.m */; };
+		1BEF605924CF0CC90039091F /* MessageCenterDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 493F51201C5B3A5100B050A1 /* MessageCenterDelegate.m */; };
+		1BEF605A24CF0CC90039091F /* TabBarController.m in Sources */ = {isa = PBXBuildFile; fileRef = DF0127E2243813CC0011F7C7 /* TabBarController.m */; };
+		1BEF605B24CF0CC90039091F /* AddNamedUserTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DEDB897D24192F9D000D5241 /* AddNamedUserTableViewController.m */; };
+		1BEF605C24CF0CC90039091F /* AddTagsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DEDB897F24192F9D000D5241 /* AddTagsTableViewController.m */; };
+		1BEF605D24CF0CC90039091F /* TagsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DEDB898024192F9D000D5241 /* TagsTableViewController.m */; };
+		1BEF605E24CF0CC90039091F /* SettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 83B4C02323D9FD5800299543 /* SettingsViewController.m */; };
+		1BEF605F24CF0CDE0039091F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 764693A61C237B630090FE40 /* main.m */; };
+		1BEF606024CF0CEB0039091F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 764693BF1C237CAB0090FE40 /* Main.storyboard */; };
+		1BEF606124CF0CEB0039091F /* UAPushUI.strings in Resources */ = {isa = PBXBuildFile; fileRef = 493F51091C5B275100B050A1 /* UAPushUI.strings */; };
+		1BEF606224CF0CEB0039091F /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 76AE35641C2B6FD600D7F3B9 /* AirshipConfig.plist */; };
 		1BF9B0DB23A24E2400E68DBE /* AirshipAccengage.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E6CC33B239A2F93003D583C /* AirshipAccengage.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		1BFB704023882E4900BF7F07 /* UserNotifications.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1BFB703F23882E4900BF7F07 /* UserNotifications.framework */; };
 		1BFB704223882E4900BF7F07 /* UserNotificationsUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1BFB704123882E4900BF7F07 /* UserNotificationsUI.framework */; };
@@ -50,6 +65,34 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		1BEF600424CB3D8A0039091F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7646939A1C237B630090FE40 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1BEF5FEC24CB3D870039091F;
+			remoteInfo = SampleAppClip;
+		};
+		1BEF601224CB3D8A0039091F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E75B2622395D1B300425530 /* AirshipExtensions.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = DF0C1B14244E483C0011ACCA;
+			remoteInfo = AirshipNotificationServiceExtensionTests;
+		};
+		1BEF601424CB3D8A0039091F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E75B2622395D1B300425530 /* AirshipExtensions.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = DFE03D032450E73400622F11;
+			remoteInfo = AirshipNotificationContentExtensionTests;
+		};
+		1BEF604B24CECBC20039091F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E75B2412395D1B100425530 /* Airship.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 3CA0E298237CCE2600EE76CF;
+			remoteInfo = AirshipDebug;
+		};
 		1BF9B0D723A24E2400E68DBE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 6E75B2412395D1B100425530 /* Airship.xcodeproj */;
@@ -221,6 +264,17 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		1BEF600624CB3D8A0039091F /* Embed App Clips */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/AppClips";
+			dstSubfolderSpec = 16;
+			files = (
+				1BEF600724CB3D8A0039091F /* SampleAppClip.app in Embed App Clips */,
+			);
+			name = "Embed App Clips";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		49251DDB1D6F962200EED4BD /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -282,6 +336,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		1BEF5FED24CB3D870039091F /* SampleAppClip.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SampleAppClip.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		1BEF600024CB3D8A0039091F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		1BEF600324CB3D8A0039091F /* SampleAppClip.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SampleAppClip.entitlements; sourceTree = "<group>"; };
 		1BFB703E23882E4900BF7F07 /* SampleContentExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = SampleContentExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		1BFB703F23882E4900BF7F07 /* UserNotifications.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UserNotifications.framework; path = System/Library/Frameworks/UserNotifications.framework; sourceTree = SDKROOT; };
 		1BFB704123882E4900BF7F07 /* UserNotificationsUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UserNotificationsUI.framework; path = System/Library/Frameworks/UserNotificationsUI.framework; sourceTree = SDKROOT; };
@@ -329,6 +386,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		1BEF5FEA24CB3D870039091F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		1BFB703B23882E4900BF7F07 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -363,6 +427,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1BEF5FEE24CB3D870039091F /* SampleAppClip */ = {
+			isa = PBXGroup;
+			children = (
+				1BEF600024CB3D8A0039091F /* Info.plist */,
+				1BEF600324CB3D8A0039091F /* SampleAppClip.entitlements */,
+			);
+			path = SampleAppClip;
+			sourceTree = "<group>";
+		};
 		1BFB704323882E4900BF7F07 /* SampleContentExtension */ = {
 			isa = PBXGroup;
 			children = (
@@ -424,6 +497,8 @@
 			children = (
 				6E75B2682395D1B300425530 /* AirshipNotificationServiceExtension.framework */,
 				6E75B26A2395D1B300425530 /* AirshipNotificationContentExtension.framework */,
+				1BEF601324CB3D8A0039091F /* AirshipNotificationServiceExtensionTests.xctest */,
+				1BEF601524CB3D8A0039091F /* AirshipNotificationContentExtensionTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -438,6 +513,7 @@
 				76AE35641C2B6FD600D7F3B9 /* AirshipConfig.plist */,
 				61E392301CC81EA800D994E3 /* MessageCenterStyle.plist */,
 				1BFB704323882E4900BF7F07 /* SampleContentExtension */,
+				1BEF5FEE24CB3D870039091F /* SampleAppClip */,
 				764693A31C237B630090FE40 /* Products */,
 				50E49B229E80ED2B02DB66EE /* Pods */,
 				A1B3DF99B91AC968C1AC9860 /* Frameworks */,
@@ -450,6 +526,7 @@
 				764693A21C237B630090FE40 /* Sample.app */,
 				49D2C73B1D6F952D0049B0A0 /* SampleServiceExtension.appex */,
 				1BFB703E23882E4900BF7F07 /* SampleContentExtension.appex */,
+				1BEF5FED24CB3D870039091F /* SampleAppClip.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -524,6 +601,24 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		1BEF5FEC24CB3D870039091F /* SampleAppClip */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1BEF601624CB3D8A0039091F /* Build configuration list for PBXNativeTarget "SampleAppClip" */;
+			buildPhases = (
+				1BEF5FE924CB3D870039091F /* Sources */,
+				1BEF5FEA24CB3D870039091F /* Frameworks */,
+				1BEF5FEB24CB3D870039091F /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				1BEF604C24CECBC20039091F /* PBXTargetDependency */,
+			);
+			name = SampleAppClip;
+			productName = SampleAppClip;
+			productReference = 1BEF5FED24CB3D870039091F /* SampleAppClip.app */;
+			productType = "com.apple.product-type.application.on-demand-install-capable";
+		};
 		1BFB703D23882E4900BF7F07 /* SampleContentExtension */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1BFB705023882E4A00BF7F07 /* Build configuration list for PBXNativeTarget "SampleContentExtension" */;
@@ -572,6 +667,7 @@
 				DF7A7E29243BC26400D23488 /* Conditionally Embed Debug Frameworks */,
 				76AE34E91C2B6BF700D7F3B9 /* CopyFiles */,
 				49D2C7471D6F952D0049B0A0 /* Embed App Extensions */,
+				1BEF600624CB3D8A0039091F /* Embed App Clips */,
 			);
 			buildRules = (
 			);
@@ -585,6 +681,7 @@
 				6E65D4F32395E72200AF2D1A /* PBXTargetDependency */,
 				49D2C7421D6F952D0049B0A0 /* PBXTargetDependency */,
 				1BFB704C23882E4A00BF7F07 /* PBXTargetDependency */,
+				1BEF600524CB3D8A0039091F /* PBXTargetDependency */,
 			);
 			name = Sample;
 			productName = Sample;
@@ -600,6 +697,9 @@
 				LastUpgradeCheck = 0930;
 				ORGANIZATIONNAME = "Urban Airship";
 				TargetAttributes = {
+					1BEF5FEC24CB3D870039091F = {
+						CreatedOnToolsVersion = 12.0;
+					};
 					1BFB703D23882E4900BF7F07 = {
 						CreatedOnToolsVersion = 11.2.1;
 						ProvisioningStyle = Automatic;
@@ -654,11 +754,26 @@
 				764693A11C237B630090FE40 /* Sample */,
 				49D2C73A1D6F952D0049B0A0 /* SampleServiceExtension */,
 				1BFB703D23882E4900BF7F07 /* SampleContentExtension */,
+				1BEF5FEC24CB3D870039091F /* SampleAppClip */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		1BEF601324CB3D8A0039091F /* AirshipNotificationServiceExtensionTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = AirshipNotificationServiceExtensionTests.xctest;
+			remoteRef = 1BEF601224CB3D8A0039091F /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		1BEF601524CB3D8A0039091F /* AirshipNotificationContentExtensionTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = AirshipNotificationContentExtensionTests.xctest;
+			remoteRef = 1BEF601424CB3D8A0039091F /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		1BF9B0D823A24E2400E68DBE /* Airship.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
@@ -760,6 +875,16 @@
 /* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
+		1BEF5FEB24CB3D870039091F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1BEF606024CF0CEB0039091F /* Main.storyboard in Resources */,
+				1BEF606124CF0CEB0039091F /* UAPushUI.strings in Resources */,
+				1BEF606224CF0CEB0039091F /* AirshipConfig.plist in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		1BFB703C23882E4900BF7F07 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -814,6 +939,24 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		1BEF5FE924CB3D870039091F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1BEF605F24CF0CDE0039091F /* main.m in Sources */,
+				1BEF605524CF0CC90039091F /* AppDelegate.m in Sources */,
+				1BEF605624CF0CC90039091F /* PushHandler.m in Sources */,
+				1BEF605724CF0CC90039091F /* HomeViewController.m in Sources */,
+				1BEF605824CF0CC90039091F /* MessageCenterViewController.m in Sources */,
+				1BEF605924CF0CC90039091F /* MessageCenterDelegate.m in Sources */,
+				1BEF605A24CF0CC90039091F /* TabBarController.m in Sources */,
+				1BEF605B24CF0CC90039091F /* AddNamedUserTableViewController.m in Sources */,
+				1BEF605C24CF0CC90039091F /* AddTagsTableViewController.m in Sources */,
+				1BEF605D24CF0CC90039091F /* TagsTableViewController.m in Sources */,
+				1BEF605E24CF0CC90039091F /* SettingsViewController.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		1BFB703A23882E4900BF7F07 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -851,6 +994,16 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		1BEF600524CB3D8A0039091F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1BEF5FEC24CB3D870039091F /* SampleAppClip */;
+			targetProxy = 1BEF600424CB3D8A0039091F /* PBXContainerItemProxy */;
+		};
+		1BEF604C24CECBC20039091F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = AirshipDebug;
+			targetProxy = 1BEF604B24CECBC20039091F /* PBXContainerItemProxy */;
+		};
 		1BFB704C23882E4A00BF7F07 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			platformFilter = ios;
@@ -932,6 +1085,69 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		1BEF600824CB3D8A0039091F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = SampleAppClip/SampleAppClip.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = PGJV57GD94;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				INFOPLIST_FILE = SampleAppClip/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.richpush.Clip;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		1BEF600924CB3D8A0039091F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = SampleAppClip/SampleAppClip.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = PGJV57GD94;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				INFOPLIST_FILE = SampleAppClip/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.richpush.Clip;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		1BFB704E23882E4A00BF7F07 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1196,6 +1412,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		1BEF601624CB3D8A0039091F /* Build configuration list for PBXNativeTarget "SampleAppClip" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1BEF600824CB3D8A0039091F /* Debug */,
+				1BEF600924CB3D8A0039091F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		1BFB705023882E4A00BF7F07 /* Build configuration list for PBXNativeTarget "SampleContentExtension" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

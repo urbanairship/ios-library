@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1130"
+   LastUpgradeVersion = "1200"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -14,10 +14,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "CCDA35A21B8D233A00950AD5"
-               BuildableName = "SwiftSample.app"
-               BlueprintName = "SwiftSample"
-               ReferencedContainer = "container:SwiftSample.xcodeproj">
+               BlueprintIdentifier = "1BEF5FEC24CB3D870039091F"
+               BuildableName = "SampleAppClip.app"
+               BlueprintName = "SampleAppClip"
+               ReferencedContainer = "container:Sample.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -28,16 +28,6 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "45AF557D22B562FE006CAE7F"
-               BuildableName = "SwiftSampleUITests.xctest"
-               BlueprintName = "SwiftSampleUITests"
-               ReferencedContainer = "container:SwiftSample.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction
@@ -54,18 +44,19 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "CCDA35A21B8D233A00950AD5"
-            BuildableName = "SwiftSample.app"
-            BlueprintName = "SwiftSample"
-            ReferencedContainer = "container:SwiftSample.xcodeproj">
+            BlueprintIdentifier = "1BEF5FEC24CB3D870039091F"
+            BuildableName = "SampleAppClip.app"
+            BlueprintName = "SampleAppClip"
+            ReferencedContainer = "container:Sample.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
-      <CommandLineArguments>
-         <CommandLineArgument
-            argument = "-com.apple.CoreData.ConcurrencyDebug 1"
+      <EnvironmentVariables>
+         <EnvironmentVariable
+            key = "_XCAppClipURL"
+            value = "https://airship.sample?2"
             isEnabled = "YES">
-         </CommandLineArgument>
-      </CommandLineArguments>
+         </EnvironmentVariable>
+      </EnvironmentVariables>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"
@@ -77,10 +68,10 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "CCDA35A21B8D233A00950AD5"
-            BuildableName = "SwiftSample.app"
-            BlueprintName = "SwiftSample"
-            ReferencedContainer = "container:SwiftSample.xcodeproj">
+            BlueprintIdentifier = "1BEF5FEC24CB3D870039091F"
+            BuildableName = "SampleAppClip.app"
+            BlueprintName = "SampleAppClip"
+            ReferencedContainer = "container:Sample.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
