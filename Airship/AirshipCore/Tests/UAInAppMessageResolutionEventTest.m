@@ -104,23 +104,6 @@
     XCTAssertEqualObjects(event.data, expectedData);
 }
 
-
-/**
- * Test in-app expired resolution event.
- */
-- (void)testExpiredResolutionEvent {
-    NSDate *expired = [NSDate date];
-    NSDictionary *expectedResolutionData =  @{ @"type": @"expired",
-                                               @"expiry": [[UAUtils ISODateFormatterUTCWithDelimiter] stringFromDate:expired]
-                                               };
-
-    [self verifyEventWithEventBlock:^UAInAppMessageResolutionEvent *(UAInAppMessage *message) {
-        return [UAInAppMessageResolutionEvent eventWithExpiredMessage:message expiredDate:expired];
-    } expectedResolutionData:expectedResolutionData];
-}
-
-
-
 /**
  * Test in-app button clicked resolution event.
  */

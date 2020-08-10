@@ -475,16 +475,10 @@ NSString *const UAInAppMessageDisplayCoordinatorIsReadyKey = @"isReady";
               scheduleID:(NSString *)scheduleID {
     [self.assetManager onMessageScheduled:message scheduleID:scheduleID];
 }
+
 - (void)messageExpired:(UAInAppMessage *)message
             scheduleID:(NSString *)scheduleID
         expirationDate:(NSDate *)date {
-
-    UAEvent *event = [UAInAppMessageResolutionEvent eventWithExpiredMessage:message expiredDate:date];
-
-    if (message.isReportingEnabled) {
-        [self.analytics addEvent:event];
-    }
-
     [self.assetManager onScheduleFinished:scheduleID];
 }
 

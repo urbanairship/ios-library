@@ -41,16 +41,6 @@ NS_ASSUME_NONNULL_BEGIN
                       resolution:(UAInAppMessageResolution *)resolution
                      displayTime:(NSTimeInterval)displayTime;
 
-/**
- * Creates a resolution event for an expired message.
- *
- * @param message The in-app message.
- * @param expiredDate The expiry date.
- * @return The resolution event.
- */
-+ (instancetype)eventWithExpiredMessage:(UAInAppMessage *)message
-                            expiredDate:(NSDate *)expiredDate;
-
 @end
 
 NS_ASSUME_NONNULL_END

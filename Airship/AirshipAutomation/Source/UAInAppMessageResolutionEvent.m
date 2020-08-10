@@ -15,7 +15,6 @@ NSString *const UAInAppMessageResolutionEventDisplayTimeKey = @"display_time";
 NSString *const UAInAppMessageResolutionEventButtonIDKey = @"button_id";
 NSString *const UAInAppMessageResolutionEventButtonDescriptionKey = @"button_description";
 NSString *const UAInAppMessageResolutionEventReplacementIDKey = @"replacement_id";
-NSString *const UAInAppMessageResolutionEventExpiryKey = @"expiry";
 NSString *const UAInAppMessageResolutionEventLocaleKey = @"locale";
 
 // Resolution types
@@ -25,7 +24,6 @@ NSString *const UAInAppMessageResolutionEventMessageClick = @"message_click";
 NSString *const UAInAppMessageResolutionEventButtonClick = @"button_click";
 NSString *const UAInAppMessageResolutionEventUserDismissed = @"user_dismissed";
 NSString *const UAInAppMessageResolutionEventTimedOut = @"timed_out";
-NSString *const UAInAppMessageResolutionEventExpired = @"expired";
 
 @interface UAInAppMessageResolutionEvent()
 @property (nonatomic, copy) NSDictionary *eventData;
@@ -68,23 +66,6 @@ NSString *const UAInAppMessageResolutionEventExpired = @"expired";
 
     NSDictionary *resolutionData = [UAInAppMessageResolutionEvent createResolutionDataWithResolution:resolution
                                                                                          displayTime:displayTime];
-    NSMutableDictionary *data = [UAInAppMessageEventUtils createDataForMessage:message];
-
-    [data setValue:resolutionData forKey:UAInAppMessageResolutionEventResolutionKey];
-    [data setValue:message.renderedLocale forKey:UAInAppMessageResolutionEventLocaleKey];
-
-    return [[self alloc] initWithData:data];
-}
-
-+ (instancetype)eventWithExpiredMessage:(UAInAppMessage *)message
-                            expiredDate:(NSDate *)expiredDate {
-
-    NSMutableDictionary *resolutionData = [NSMutableDictionary dictionary];
-    [resolutionData setValue:UAInAppMessageResolutionEventExpired forKey:UAInAppMessageResolutionEventTypeKey];
-
-    NSDateFormatter *formatter = [UAUtils ISODateFormatterUTCWithDelimiter];
-    [resolutionData setValue:[formatter stringFromDate:expiredDate] forKey:UAInAppMessageResolutionEventExpiryKey];
-
     NSMutableDictionary *data = [UAInAppMessageEventUtils createDataForMessage:message];
 
     [data setValue:resolutionData forKey:UAInAppMessageResolutionEventResolutionKey];
