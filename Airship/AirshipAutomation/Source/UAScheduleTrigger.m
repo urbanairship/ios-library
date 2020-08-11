@@ -256,5 +256,48 @@ NSString * const UAScheduleTriggerErrorDomain = @"com.urbanairship.schedule_trig
     return self;
 }
 
+- (NSString *)description {
+    return [NSString stringWithFormat:@"UAScheduleTrigger{type=%@, goal=%@, predicate=%@}",
+            self.typeName, self.goal, self.predicate];
+}
+
+- (NSString *)typeName {
+    switch (self.type) {
+        case UAScheduleTriggerAppForeground:
+            return UAScheduleTriggerAppForegroundName;
+
+        case UAScheduleTriggerAppBackground:
+            return UAScheduleTriggerAppBackgroundName;
+
+        case UAScheduleTriggerRegionEnter:
+            return UAScheduleTriggerRegionEnterName;
+
+        case UAScheduleTriggerRegionExit:
+            return UAScheduleTriggerRegionExitName;
+
+        case UAScheduleTriggerCustomEventCount:
+            return UAScheduleTriggerCustomEventCountName;
+
+        case UAScheduleTriggerCustomEventValue:
+            return UAScheduleTriggerCustomEventValueName;
+
+        case UAScheduleTriggerScreen:
+            return UAScheduleTriggerScreenName;
+
+        case UAScheduleTriggerAppInit:
+            return UAScheduleTriggerAppInitName;
+
+        case UAScheduleTriggerActiveSession:
+            return UAScheduleTriggerActiveSessionName;
+
+        case UAScheduleTriggerVersion:
+            return UAScheduleTriggerVersionName;
+
+        default:
+            return @"";
+    }
+}
+
+
 
 @end

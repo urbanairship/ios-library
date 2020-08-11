@@ -20,7 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * The trigger context event.
  */
-@property(nonatomic, readonly) NSDictionary *event;
+@property(nonatomic, readonly) id event;
 
 ///---------------------------------------------------------------------------------------
 /// @name Schedule Trigger Factory
