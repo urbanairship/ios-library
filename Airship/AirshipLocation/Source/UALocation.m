@@ -330,12 +330,40 @@ NSString *const UALocationBackgroundUpdatesAllowed = @"UALocationBackgroundUpdat
     }
 }
 
+- (BOOL)isLocationAccuracyReduced {
+    if (!self.isDataCollectionEnabled) {
+        return NO;
+    }
+
+    if (!self.locationUpdatesEnabled) {
+        return NO;
+    }
+    
+    if (@available(iOS 14.0, *)) {
+        switch (self.locationManager.accuracyAuthorization) {
+            case CLAccuracyAuthorizationFullAccuracy:
+                return NO;
+            case CLAccuracyAuthorizationReducedAccuracy:
+                return YES;
+        }
+    }
+
+    return NO;
+}
+
 #pragma mark -
 #pragma mark CLLocationManager Delegate
 
 - (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     UA_LTRACE(@"Location authorization changed: %d", status);
 
+    [self updateLocationService];
+}
+- (void)locationManagerDidChangeAuthorization:(CLLocationManager *)manager {
+    if (@available(iOS 14.0, *)) {
+        UA_LTRACE(@"Location authorization changed: %d", manager.authorizationStatus);
+    }
+    
     [self updateLocationService];
 }
 
@@ -386,5 +414,4 @@ NSString *const UALocationBackgroundUpdatesAllowed = @"UALocationBackgroundUpdat
 }
 
 @end
-
 
