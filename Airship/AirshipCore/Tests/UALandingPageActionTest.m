@@ -9,6 +9,7 @@
 #import "NSString+UAURLEncoding.h"
 #import "UAInAppAutomation.h"
 #import "UAInAppMessageHTMLDisplayContent+Internal.h"
+#import "UASchedule+Internal.h"
 
 @interface UALandingPageActionTest : UABaseTest
 

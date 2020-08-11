@@ -53,7 +53,15 @@ NS_ASSUME_NONNULL_BEGIN
                            analytics:(UAAnalytics *)analytics;
 
 - (void)cancelSchedulesWithType:(UAScheduleType)scheduleType
-              completionHandler:(nullable void (^)(NSArray<UASchedule *> *))completionHandler;
+              completionHandler:(nullable void (^)(BOOL))completionHandler;
+
+/**
+ * Get all the in-app automations.
+ *
+ * @param completionHandler The completion handler to be called when fetch operation completes.
+ */
+- (void)getSchedules:(void (^)(NSArray<UASchedule *> *))completionHandler;
+
 
 @end
 

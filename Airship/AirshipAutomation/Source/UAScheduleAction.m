@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 #import "UAScheduleAction.h"
-#import "UASchedule.h"
+#import "UAActionSchedule.h"
 #import "UAAirshipAutomationCoreImport.h"
 #import "UAInAppAutomation+Internal.h"
 #import "NSDictionary+UAAdditions.h"
@@ -112,7 +112,8 @@ static NSString * const UAScheduleActionErrorDomain = @"com.urbanairship.schedul
         }
     }
 
-    return [UASchedule scheduleWithActions:actions builderBlock:^(UAScheduleBuilder *builder) {
+    return [UAActionSchedule scheduleWithActions:actions
+                                    builderBlock:^(UAScheduleBuilder *builder) {
         builder.triggers = triggers;
         builder.delay = delay;
         builder.group = [json stringForKey:UAScheduleInfoGroupKey defaultValue:nil];
@@ -131,3 +132,4 @@ static NSString * const UAScheduleActionErrorDomain = @"com.urbanairship.schedul
 }
 
 @end
+

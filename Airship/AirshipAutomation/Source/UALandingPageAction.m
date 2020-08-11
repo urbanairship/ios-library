@@ -1,10 +1,10 @@
 /* Copyright Airship and Contributors */
 
 #import "UALandingPageAction.h"
-#import "UASchedule.h"
 #import "UAInAppMessageHTMLDisplayContent+Internal.h"
 #import "UAInAppAutomation+Internal.h"
 #import "UAAirshipAutomationCoreImport.h"
+#import "UAInAppMessageSchedule.h"
 
 NSString * const UALandingPageActionDefaultRegistryName = @"landing_page_action";
 NSString * const UALandingPageActionDefaultRegistryAlias = @"^p";
@@ -139,7 +139,7 @@ CGFloat const UALandingPageDefaultBorderRadiusPoints = 2;
         }
     }];
 
-    return [UASchedule scheduleWithMessage:message builderBlock:^(UAScheduleBuilder * _Nonnull builder) {
+    return [UAInAppMessageSchedule scheduleWithMessage:message builderBlock:^(UAScheduleBuilder * _Nonnull builder) {
         builder.priority = 0;
         builder.limit = 1;
         builder.triggers = @[[UAScheduleTrigger triggerWithType:UAScheduleTriggerActiveSession goal:@(1) predicate:nil]];

@@ -2,7 +2,7 @@
 
 #import "UAScheduleDataMigrator+Internal.h"
 #import "UAAirshipAutomationCoreImport.h"
-#import "UASchedule.h"
+#import "UASchedule+Internal.h"
 
 // These constants are re-defined here to keep them isolated from
 // any changes in the IAM payload definitions.

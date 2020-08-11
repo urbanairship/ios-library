@@ -13,6 +13,7 @@
 #import "UAAirshipAutomationCoreImport.h"
 #import "UAScheduleAudience.h"
 #import "UAScheduleAudienceChecks+Internal.h"
+#import "UAInAppMessageSchedule.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -109,16 +110,50 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
     [self updateEnginePauseState];
 }
 
-- (void)getScheduleWithID:(NSString *)identifier completionHandler:(void (^)(UASchedule * _Nullable))completionHandler {
-    [self.automationEngine getScheduleWithID:identifier completionHandler:completionHandler];
+- (void)getMessageScheduleWithID:(NSString *)identifier
+               completionHandler:(void (^)(UAInAppMessageSchedule *))completionHandler {
+    [self.automationEngine getScheduleWithID:identifier
+                                        type:UAScheduleTypeInAppMessage
+                           completionHandler:^(UASchedule *schedule) {
+        completionHandler((UAInAppMessageSchedule *)schedule);
+    }];
 }
 
-- (void)getSchedulesWithMessageID:(NSString *)messageID completionHandler:(void (^)(NSArray<UASchedule *> *))completionHandler {
-    [self.automationEngine getSchedulesWithGroup:messageID completionHandler:completionHandler];
+- (void)getMessageSchedulesWithGroup:(NSString *)group
+                   completionHandler:(void (^)(NSArray<UAInAppMessageSchedule *> *))completionHandler {
+    [self.automationEngine getSchedulesWithGroup:group
+                                            type:UAScheduleTypeInAppMessage
+                               completionHandler:completionHandler];
 }
 
-- (void)getAllSchedules:(void (^)(NSArray<UASchedule *> *))completionHandler {
-    [self.automationEngine getAllSchedules:completionHandler];
+- (void)getMessageSchedules:(void (^)(NSArray<UAInAppMessageSchedule *> *))completionHandler {
+    [self.automationEngine getSchedulesWithType:UAScheduleTypeInAppMessage completionHandler:completionHandler];
+}
+
+- (void)getActionScheduleWithID:(NSString *)identifier
+              completionHandler:(void (^)(UAActionSchedule *))completionHandler {
+    [self.automationEngine getScheduleWithID:identifier
+                                        type:UAScheduleTypeActions
+                           completionHandler:^(UASchedule *schedule) {
+        if (completionHandler) {
+            completionHandler((UAActionSchedule *)schedule);
+        }
+    }];
+}
+
+- (void)getActionSchedulesWithGroup:(NSString *)group
+                  completionHandler:(void (^)(NSArray<UAActionSchedule *> *))completionHandler {
+    [self.automationEngine getSchedulesWithGroup:group
+                                            type:UAScheduleTypeActions
+                               completionHandler:completionHandler];
+}
+
+- (void)getActionSchedules:(void (^)(NSArray<UAActionSchedule *> *))completionHandler {
+    [self.automationEngine getSchedulesWithType:UAScheduleTypeActions completionHandler:completionHandler];
+}
+
+- (void)getSchedules:(void (^)(NSArray<UASchedule *> *))completionHandler {
+    [self.automationEngine getSchedules:completionHandler];
 }
 
 - (void)schedule:(UASchedule *)schedule completionHandler:(void (^)(BOOL))completionHandler {
@@ -129,32 +164,39 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
     [self.automationEngine scheduleMultiple:schedules completionHandler:completionHandler];
 }
 
-
-- (void)cancelSchedulesWithGroup:(NSString *)group
-               completionHandler:(nullable void (^)(NSArray<UASchedule *> * _Nonnull))completionHandler {
-    [self.automationEngine cancelSchedulesWithGroup:group completionHandler:completionHandler];
-}
-
 - (void)cancelScheduleWithID:(NSString *)scheduleID
-           completionHandler:(nullable void (^)(UASchedule * _Nullable))completionHandler {
+           completionHandler:(nullable void (^)(BOOL))completionHandler {
     [self.automationEngine cancelScheduleWithID:scheduleID completionHandler:completionHandler];
 }
 
 - (void)cancelSchedulesWithType:(UAScheduleType)scheduleType
-              completionHandler:(nullable void (^)(NSArray<UASchedule *> *))completionHandler {
+              completionHandler:(nullable void (^)(BOOL))completionHandler {
     [self.automationEngine cancelSchedulesWithType:scheduleType completionHandler:completionHandler];
 }
 
-
-- (void)getSchedulesWithGroup:(NSString *)group
-            completionHandler:(void (^)(NSArray<UASchedule *> *))completionHandler {
-    [self.automationEngine getSchedulesWithGroup:group completionHandler:completionHandler];
+- (void)cancelSchedulesWithGroup:(NSString *)group
+               completionHandler:(nullable void (^)(BOOL))completionHandler {
+    [self.automationEngine cancelSchedulesWithGroup:group completionHandler:completionHandler];
 }
+
+- (void)cancelMessageSchedulesWithGroup:(NSString *)group
+                      completionHandler:(nullable void (^)(BOOL))completionHandler {
+    [self.automationEngine cancelSchedulesWithGroup:group
+                                               type:UAScheduleTypeInAppMessage
+                                  completionHandler:completionHandler];
+}
+
+- (void)cancelActionSchedulesWithGroup:(NSString *)group
+                     completionHandler:(nullable void (^)(BOOL))completionHandler {
+    [self.automationEngine cancelSchedulesWithGroup:group
+                                               type:UAScheduleTypeActions
+                                  completionHandler:completionHandler];
+}
+
 
 - (void)editScheduleWithID:(NSString *)scheduleID
                      edits:(UAScheduleEdits *)edits
-         completionHandler:(void (^)(UASchedule * _Nullable))completionHandler {
-
+         completionHandler:(nullable void (^)(BOOL))completionHandler {
     [self.automationEngine editScheduleWithID:scheduleID edits:edits completionHandler:completionHandler];
 }
 

@@ -4,7 +4,7 @@
 #import "UAAirshipAutomationCoreImport.h"
 #import "UAInAppMessage+Internal.h"
 #import "UAScheduleAudience.h"
-#import "UASchedule.h"
+#import "UASchedule+Internal.h"
 
 @implementation UAScheduleEditsBuilder
 
@@ -26,53 +26,7 @@
 @synthesize data = _data;
 @synthesize type = _type;
 
-+ (instancetype)editsWithMessage:(UAInAppMessage *)message
-                    builderBlock:(void(^)(UAScheduleEditsBuilder *builder))builderBlock {
-    UAScheduleEditsBuilder *builder = [[UAScheduleEditsBuilder alloc] init];
-    if (builderBlock) {
-        builderBlock(builder);
-    }
-
-    return [[self alloc] initWithData:[NSJSONSerialization stringWithObject:[message toJSON]]
-                                 type:@(UAScheduleTypeInAppMessage)
-                              builder:builder];
-}
-
-+ (instancetype)editsWithActions:(NSDictionary *)actions
-                    builderBlock:(void(^)(UAScheduleEditsBuilder *builder))builderBlock {
-    UAScheduleEditsBuilder *builder = [[UAScheduleEditsBuilder alloc] init];
-    if (builderBlock) {
-        builderBlock(builder);
-    }
-
-    return [[self alloc] initWithData:[NSJSONSerialization stringWithObject:actions]
-                                 type:@(UAScheduleTypeActions)
-                              builder:builder];
-}
-
-+ (instancetype)editsWithDeferredData:(UAScheduleDeferredData *)deferred
-                         builderBlock:(void(^)(UAScheduleEditsBuilder *builder))builderBlock {
-    UAScheduleEditsBuilder *builder = [[UAScheduleEditsBuilder alloc] init];
-    if (builderBlock) {
-        builderBlock(builder);
-    }
-
-    return [[self alloc] initWithData:[NSJSONSerialization stringWithObject:[deferred toJSON]]
-                                 type:@(UAScheduleTypeDeferred)
-                              builder:builder];
-}
-
-+ (instancetype)editsWithBuilderBlock:(void(^)(UAScheduleEditsBuilder *builder))builderBlock {
-    UAScheduleEditsBuilder *builder = [[UAScheduleEditsBuilder alloc] init];
-    if (builderBlock) {
-        builderBlock(builder);
-    }
-
-    return [[self alloc] initWithData:nil type:nil builder:builder];
-}
-
-
-- (instancetype)initWithData:(id)data
+- (instancetype)initWithData:(NSString *)data
                         type:(NSNumber *)type
                      builder:(UAScheduleEditsBuilder *)builder {
     self = [super init];
@@ -91,6 +45,52 @@
 
     return self;
 }
+
++ (instancetype)editsWithMessage:(UAInAppMessage *)message
+                    builderBlock:(void(^)(UAScheduleEditsBuilder *builder))builderBlock {
+    UAScheduleEditsBuilder *builder = [[UAScheduleEditsBuilder alloc] init];
+    if (builderBlock) {
+        builderBlock(builder);
+    }
+
+    return [[UAScheduleEdits alloc] initWithData:[NSJSONSerialization stringWithObject:[message toJSON]]
+                                 type:@(UAScheduleTypeInAppMessage)
+                              builder:builder];
+}
+
++ (instancetype)editsWithActions:(NSDictionary *)actions
+                    builderBlock:(void(^)(UAScheduleEditsBuilder *builder))builderBlock {
+    UAScheduleEditsBuilder *builder = [[UAScheduleEditsBuilder alloc] init];
+    if (builderBlock) {
+        builderBlock(builder);
+    }
+
+    return [[UAScheduleEdits alloc] initWithData:[NSJSONSerialization stringWithObject:actions]
+                                 type:@(UAScheduleTypeActions)
+                              builder:builder];
+}
+
++ (instancetype)editsWithDeferredData:(UAScheduleDeferredData *)deferred
+                         builderBlock:(void(^)(UAScheduleEditsBuilder *builder))builderBlock {
+    UAScheduleEditsBuilder *builder = [[UAScheduleEditsBuilder alloc] init];
+    if (builderBlock) {
+        builderBlock(builder);
+    }
+
+    return [[UAScheduleEdits alloc] initWithData:[NSJSONSerialization stringWithObject:[deferred toJSON]]
+                                 type:@(UAScheduleTypeDeferred)
+                              builder:builder];
+}
+
++ (instancetype)editsWithBuilderBlock:(void(^)(UAScheduleEditsBuilder *builder))builderBlock {
+    UAScheduleEditsBuilder *builder = [[UAScheduleEditsBuilder alloc] init];
+    if (builderBlock) {
+        builderBlock(builder);
+    }
+
+    return [[UAScheduleEdits alloc] initWithData:nil type:nil builder:builder];
+}
+
 
 - (NSString *)description {
     return [NSString stringWithFormat:@"Data: %@\n"

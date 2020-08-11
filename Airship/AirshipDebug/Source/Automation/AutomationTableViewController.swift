@@ -18,7 +18,7 @@ class AutomationCell: UITableViewCell {
     @IBOutlet weak var messageName: UILabel!
     @IBOutlet weak var messageID: UILabel!
 
-    var schedule : UASchedule?
+    var schedule : UAInAppMessageSchedule?
 
     func setCellTheme() {
         backgroundColor = ThemeManager.shared.currentTheme.Background
@@ -42,7 +42,7 @@ class AutomationTableViewController: UITableViewController {
     var launchCompletionHandler : (() -> Void)?
 
     private let inAppAutomation = UAInAppAutomation.shared()
-    private var schedules : Array<UASchedule>?
+    private var schedules : Array<UAInAppMessageSchedule>?
 
     func setTableViewTheme() {
         tableView.backgroundColor = ThemeManager.shared.currentTheme.Background;
@@ -67,10 +67,8 @@ class AutomationTableViewController: UITableViewController {
     }
 
     @objc private func refreshInAppAutomation() {
-        self.inAppAutomation?.getAllSchedules({ (schedulesFromAutomation) in
-            self.schedules = schedulesFromAutomation.filter({ (schedule : UASchedule) -> Bool in
-                return schedule.type == UAScheduleType.inAppMessage
-            })
+        self.inAppAutomation?.getMessageSchedules({ (schedulesFromAutomation) in
+            self.schedules = schedulesFromAutomation
             self.tableView.reloadData()
             self.refreshControl?.endRefreshing()
         })
@@ -104,7 +102,7 @@ class AutomationTableViewController: UITableViewController {
 
         if let schedule = self.schedules?[indexPath.row] {
             cell.schedule = schedule
-            let message = schedule.data as! UAInAppMessage
+            let message = schedule.message
             switch (message.displayContent.displayType) {
             case .banner:
                 cell.messageType.text = "B"

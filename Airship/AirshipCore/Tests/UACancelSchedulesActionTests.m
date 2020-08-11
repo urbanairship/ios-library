@@ -97,8 +97,8 @@
     arguments.situation = UASituationManualInvocation;
     arguments.value = @{UACancelSchedulesActionGroups: @[@"group 1", @"group 2"] };
 
-    [[self.mockAutomation expect] cancelSchedulesWithGroup:@"group 1" completionHandler:OCMOCK_ANY];
-    [[self.mockAutomation expect] cancelSchedulesWithGroup:@"group 2" completionHandler:OCMOCK_ANY];
+    [[self.mockAutomation expect] cancelActionSchedulesWithGroup:@"group 1" completionHandler:OCMOCK_ANY];
+    [[self.mockAutomation expect] cancelActionSchedulesWithGroup:@"group 2" completionHandler:OCMOCK_ANY];
 
     [self.action performWithArguments:arguments completionHandler:^(UAActionResult *result) {
         actionPerformed = YES;

@@ -106,13 +106,11 @@
 
     [[self.mockAnalytics expect] addEvent:[OCMArg any]];
 
-
-
     [[[self.mockInAppAutomation expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:3];
-        void (^completionHandler)(UASchedule *) = (__bridge void(^)(UASchedule *))arg;
-        completionHandler([[UASchedule alloc] init]);
+        void (^completionHandler)(BOOL) = (__bridge void(^)(BOOL))arg;
+        completionHandler(YES);
     }] cancelScheduleWithID:messageID completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *testExpectation = [self expectationWithDescription:@"completion handler called"];
@@ -145,13 +143,6 @@
 
     [[self.mockAnalytics reject] addEvent:[OCMArg any]];
     [[self.mockInAppAutomation reject] cancelScheduleWithID:OCMOCK_ANY completionHandler:OCMOCK_ANY];
-
-    [[[self.mockInAppAutomation stub] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:3];
-        void (^completionHandler)(NSArray<UASchedule *> *schedules) = (__bridge void(^)(NSArray<UASchedule *> *))arg;
-        completionHandler(nil);
-    }] getScheduleWithID:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *testExpectation = [self expectationWithDescription:@"completion handler called"];
     [self.inAppMessaging receivedNotificationResponse:response completionHandler:^{

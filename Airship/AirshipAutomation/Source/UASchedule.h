@@ -8,23 +8,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-typedef NS_ENUM(NSUInteger, UAScheduleType) {
-
-    /**
-     * In-app message type.
-     */
-    UAScheduleTypeInAppMessage,
-
-    /**
-     * Actions type.
-     */
-    UAScheduleTypeActions,
-
-    /**
-     * Deferred type.
-     */
-    UAScheduleTypeDeferred
-};
 
 /**
  * Max number of triggers a schedule can support.
@@ -155,18 +138,6 @@ extern NSUInteger const UAScheduleMaxTriggers;
 @property(nonatomic, readonly) NSString *group;
 
 /**
- * The schedule type.
- */
-@property(nonatomic, readonly) UAScheduleType type;
-
-/**
- * Schedule data. The data class depends on the scehdule type:
- *  `UAScheduleTypeInAppMessage`: data will be an `InAppMessage`
- *  `UAScheduleTypeInAppActions`: data will be a dictionary.`
- */
-@property(nonatomic, readonly) id data;
-
-/**
  * The schedule's metadata.
  */
 @property(nonatomic, readonly) NSDictionary *metadata;
@@ -230,24 +201,6 @@ extern NSUInteger const UAScheduleMaxTriggers;
 ///---------------------------------------------------------------------------------------
 /// @name Schedule Methods
 ///---------------------------------------------------------------------------------------
-
-/**
- * Creates an action schedule with a builder block.
- * @param actions The actions.
- * @param builderBlock The builder block.
- * @return A schedule.
- */
-+ (instancetype)scheduleWithActions:(NSDictionary *)actions
-                       builderBlock:(void(^)(UAScheduleBuilder *builder))builderBlock;
-
-/**
- * Creates a schedule with a builder block.
- * @param message The in-app message.
- * @param builderBlock The builder block.
- * @return A schedule.
- */
-+ (instancetype)scheduleWithMessage:(UAInAppMessage *)message
-                       builderBlock:(void(^)(UAScheduleBuilder *builder))builderBlock;
 
 /**
  * Checks if the schedule is equal to another schedule.

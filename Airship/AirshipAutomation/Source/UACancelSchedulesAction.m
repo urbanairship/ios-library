@@ -57,13 +57,13 @@ NSString * const kUACancelSchedulesActionDefaultRegistryAlias = UACancelSchedule
 
         // Single group
         if ([groups isKindOfClass:[NSString class]]) {
-            [[UAInAppAutomation shared] cancelSchedulesWithGroup:groups completionHandler:nil];
+            [[UAInAppAutomation shared] cancelActionSchedulesWithGroup:groups completionHandler:nil];
         } else if ([groups isKindOfClass:[NSArray class]]) {
 
             // Array of groups
             for (id value in groups) {
                 if ([value isKindOfClass:[NSString class]]) {
-                    [[UAInAppAutomation shared] cancelSchedulesWithGroup:value completionHandler:nil];
+                    [[UAInAppAutomation shared] cancelActionSchedulesWithGroup:value completionHandler:nil];
                 }
             }
         }

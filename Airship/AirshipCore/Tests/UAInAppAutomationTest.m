@@ -147,7 +147,7 @@
         builder.identifier = @"message ID";
     }];
 
-    UASchedule *schedule = [UASchedule scheduleWithMessage:message builderBlock:^(UAScheduleBuilder *builder) {
+    UASchedule *schedule = [UAInAppMessageSchedule scheduleWithMessage:message builderBlock:^(UAScheduleBuilder *builder) {
         builder.triggers = @[[UAScheduleTrigger foregroundTriggerWithCount:1]];
         builder.identifier = @"schedule ID";
     }];
@@ -175,7 +175,7 @@
 }
 
 - (void)testPrepareActions {
-    UASchedule *schedule = [UASchedule scheduleWithActions:@{} builderBlock:^(UAScheduleBuilder *builder) {
+    UASchedule *schedule = [UAActionSchedule scheduleWithActions:@{} builderBlock:^(UAScheduleBuilder *builder) {
         builder.triggers = @[[UAScheduleTrigger foregroundTriggerWithCount:1]];
         builder.identifier = @"schedule ID";
     }];
@@ -216,7 +216,7 @@
 
 
 - (void)testPrepareAudienceCheckFailureDefaultMissBehavior {
-    UASchedule *schedule = [UASchedule scheduleWithActions:@{} builderBlock:^(UAScheduleBuilder *builder) {
+    UASchedule *schedule = [UAActionSchedule scheduleWithActions:@{} builderBlock:^(UAScheduleBuilder *builder) {
         builder.audience = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder *builder) {
             builder.notificationsOptIn = @(YES);
         }];
@@ -241,7 +241,7 @@
 }
 
 - (void)testPrepareAudienceCheckFailureMissBehaviorCancel {
-    UASchedule *schedule = [UASchedule scheduleWithActions:@{} builderBlock:^(UAScheduleBuilder *builder) {
+    UASchedule *schedule = [UAActionSchedule scheduleWithActions:@{} builderBlock:^(UAScheduleBuilder *builder) {
         builder.audience = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder *builder) {
             builder.notificationsOptIn = @(YES);
             builder.missBehavior = UAScheduleAudienceMissBehaviorCancel;
@@ -267,7 +267,7 @@
 }
 
 - (void)testPrepareAudienceCheckFailureMissBehaviorSkip {
-    UASchedule *schedule = [UASchedule scheduleWithActions:@{} builderBlock:^(UAScheduleBuilder *builder) {
+    UASchedule *schedule = [UAActionSchedule scheduleWithActions:@{} builderBlock:^(UAScheduleBuilder *builder) {
         builder.audience = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder *builder) {
             builder.notificationsOptIn = @(YES);
             builder.missBehavior = UAScheduleAudienceMissBehaviorSkip;
@@ -293,7 +293,7 @@
 }
 
 - (void)testPrepareAudienceCheckFailureMissBehaviorPenalize {
-    UASchedule *schedule = [UASchedule scheduleWithActions:@{} builderBlock:^(UAScheduleBuilder *builder) {
+    UASchedule *schedule = [UAActionSchedule scheduleWithActions:@{} builderBlock:^(UAScheduleBuilder *builder) {
         builder.audience = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder *builder) {
             builder.notificationsOptIn = @(YES);
             builder.missBehavior = UAScheduleAudienceMissBehaviorPenalize;
@@ -319,7 +319,7 @@
 }
 
 - (void)testIsActionsReady {
-    UASchedule *schedule = [UASchedule scheduleWithActions:@{} builderBlock:^(UAScheduleBuilder *builder) {
+    UASchedule *schedule = [UAActionSchedule scheduleWithActions:@{} builderBlock:^(UAScheduleBuilder *builder) {
         builder.triggers = @[[UAScheduleTrigger foregroundTriggerWithCount:1]];
         builder.identifier = @"schedule ID";
     }];
@@ -338,7 +338,7 @@
         builder.identifier = @"message ID";
     }];
 
-    UASchedule *schedule = [UASchedule scheduleWithMessage:message builderBlock:^(UAScheduleBuilder *builder) {
+    UASchedule *schedule = [UAInAppMessageSchedule scheduleWithMessage:message builderBlock:^(UAScheduleBuilder *builder) {
         builder.triggers = @[[UAScheduleTrigger foregroundTriggerWithCount:1]];
         builder.identifier = @"schedule ID";
     }];
@@ -359,7 +359,7 @@
         builder.identifier = @"message ID";
     }];
 
-    UASchedule *schedule = [UASchedule scheduleWithMessage:message builderBlock:^(UAScheduleBuilder *builder) {
+    UASchedule *schedule = [UAInAppMessageSchedule scheduleWithMessage:message builderBlock:^(UAScheduleBuilder *builder) {
         builder.triggers = @[[UAScheduleTrigger foregroundTriggerWithCount:1]];
         builder.identifier = @"schedule ID";
     }];
@@ -380,7 +380,7 @@
         builder.identifier = @"message ID";
     }];
 
-    UASchedule *schedule = [UASchedule scheduleWithMessage:message builderBlock:^(UAScheduleBuilder * _Nonnull builder) {
+    UASchedule *schedule = [UAInAppMessageSchedule scheduleWithMessage:message builderBlock:^(UAScheduleBuilder * _Nonnull builder) {
     }];
 
     [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
@@ -410,7 +410,7 @@
         builder.identifier = @"message ID";
     }];
 
-    UASchedule *schedule = [UASchedule scheduleWithMessage:message builderBlock:^(UAScheduleBuilder *builder) {
+    UASchedule *schedule = [UAInAppMessageSchedule scheduleWithMessage:message builderBlock:^(UAScheduleBuilder *builder) {
         builder.triggers = @[[UAScheduleTrigger foregroundTriggerWithCount:1]];
         builder.identifier = @"schedule ID";
     }];
@@ -434,7 +434,7 @@
 }
 
 - (void)testExecuteActions {
-    UASchedule *schedule = [UASchedule scheduleWithActions:@{@"foo": @"bar"} builderBlock:^(UAScheduleBuilder *builder) {
+    UASchedule *schedule = [UAActionSchedule scheduleWithActions:@{@"foo": @"bar"} builderBlock:^(UAScheduleBuilder *builder) {
         builder.triggers = @[[UAScheduleTrigger foregroundTriggerWithCount:1]];
         builder.identifier = @"schedule ID";
     }];
@@ -460,17 +460,16 @@
 }
 
 - (void)testCancelScheduleWithID {
-    UASchedule *schedule = [[UASchedule alloc] init];
     [[[self.mockAutomationEngine expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:3];
-        void (^completionHandler)(UASchedule *) = (__bridge void (^)(UASchedule *))arg;
-        completionHandler(schedule);
+        void (^completionHandler)(BOOL) = (__bridge void (^)(BOOL))arg;
+        completionHandler(YES);
     }] cancelScheduleWithID:@"some ID" completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *blockInvoked = [self expectationWithDescription:@"block invoked"];
-    [self.inAppAutomation cancelScheduleWithID:@"some ID" completionHandler:^(UASchedule *cancelled) {
-        XCTAssertEqualObjects(schedule, cancelled);
+    [self.inAppAutomation cancelScheduleWithID:@"some ID" completionHandler:^(BOOL cancelled) {
+        XCTAssertTrue(cancelled);
         [blockInvoked fulfill];
     }];
 
@@ -478,19 +477,53 @@
     [self.mockAutomationEngine verify];
 }
 
-
 - (void)testCancelScheduleWithGroup {
-    UASchedule *schedule = [[UASchedule alloc] init];
     [[[self.mockAutomationEngine expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:3];
-        void (^completionHandler)(NSArray *) = (__bridge void (^)(NSArray *))arg;
-        completionHandler(@[schedule]);
+        void (^completionHandler)(BOOL) = (__bridge void (^)(BOOL))arg;
+        completionHandler(YES);
     }] cancelSchedulesWithGroup:@"some group" completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *blockInvoked = [self expectationWithDescription:@"block invoked"];
-    [self.inAppAutomation cancelSchedulesWithGroup:@"some group" completionHandler:^(NSArray<UASchedule *> *cancelled) {
-        XCTAssertEqualObjects(@[schedule], cancelled);
+    [self.inAppAutomation cancelSchedulesWithGroup:@"some group" completionHandler:^(BOOL cancelled) {
+        XCTAssertTrue(cancelled);
+        [blockInvoked fulfill];
+    }];
+
+    [self waitForTestExpectations];
+    [self.mockAutomationEngine verify];
+}
+
+- (void)testCancelMessageSchedulesWithGroup {
+    [[[self.mockAutomationEngine expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:4];
+        void (^completionHandler)(BOOL) = (__bridge void (^)(BOOL))arg;
+        completionHandler(YES);
+    }] cancelSchedulesWithGroup:@"some group" type:UAScheduleTypeInAppMessage completionHandler:OCMOCK_ANY];
+
+    XCTestExpectation *blockInvoked = [self expectationWithDescription:@"block invoked"];
+    [self.inAppAutomation cancelMessageSchedulesWithGroup:@"some group" completionHandler:^(BOOL cancelled) {
+        XCTAssertTrue(cancelled);
+        [blockInvoked fulfill];
+    }];
+
+    [self waitForTestExpectations];
+    [self.mockAutomationEngine verify];
+}
+
+- (void)testCancelActionSchedulesWithGroup {
+    [[[self.mockAutomationEngine expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:4];
+        void (^completionHandler)(BOOL) = (__bridge void (^)(BOOL))arg;
+        completionHandler(YES);
+    }] cancelSchedulesWithGroup:@"some group" type:UAScheduleTypeActions completionHandler:OCMOCK_ANY];
+
+    XCTestExpectation *blockInvoked = [self expectationWithDescription:@"block invoked"];
+    [self.inAppAutomation cancelActionSchedulesWithGroup:@"some group" completionHandler:^(BOOL cancelled) {
+        XCTAssertTrue(cancelled);
         [blockInvoked fulfill];
     }];
 
@@ -523,7 +556,6 @@
     [self waitForTestExpectations];
     [self.mockAutomationEngine verify];
 }
-
 
 - (void)testScheduleMultiple {
     UASchedule *scheduleOne = [[UASchedule alloc] init];

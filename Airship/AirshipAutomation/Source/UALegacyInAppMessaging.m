@@ -4,7 +4,7 @@
 #import "UALegacyInAppMessage.h"
 #import "UAInAppMessageResolutionEvent+Internal.h"
 #import "UAInAppMessage+Internal.h"
-#import "UASchedule.h"
+#import "UAInAppMessageSchedule.h"
 #import "UAInAppAutomation.h"
 #import "UAInAppMessageBannerDisplayContent.h"
 #import "UAAirshipAutomationCoreImport.h"
@@ -83,9 +83,9 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
 
     if (newMessageID.length && [newMessageID isEqualToString:pendingMessageID]) {
         UA_WEAKIFY(self);
-        [self.inAppAutomation cancelScheduleWithID:pendingMessageID completionHandler:^(UASchedule* _Nullable schedule) {
+        [self.inAppAutomation cancelScheduleWithID:pendingMessageID completionHandler:^(BOOL result) {
             UA_STRONGIFY(self)
-            if (schedule) {
+            if (result) {
                 UA_LTRACE(@"The in-app message delivery push was directly launched for message: %@", pendingMessageID);
 
                 UAInAppMessageResolutionEvent *event = [UAInAppMessageResolutionEvent legacyDirectOpenEventWithMessageID:pendingMessageID];
@@ -138,9 +138,9 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
     // If there is a pending message ID, cancel it
     if (previousMessageID) {
         UA_WEAKIFY(self)
-        [self.inAppAutomation cancelScheduleWithID:previousMessageID completionHandler:^(UASchedule *schedule) {
+        [self.inAppAutomation cancelScheduleWithID:previousMessageID completionHandler:^(BOOL result) {
             UA_STRONGIFY(self)
-            if (schedule) {
+            if (result) {
                 UA_LDEBUG(@"LegacyInAppMessageManager - Pending in-app message replaced");
                 UAInAppMessageResolutionEvent *event = [UAInAppMessageResolutionEvent legacyReplacedEventWithMessageID:previousMessageID replacementID:schedule.identifier];
                 [self.analytics addEvent:event];
@@ -220,8 +220,8 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
         builder.source = UAInAppMessageSourceLegacyPush;
     }];
 
-    return [UASchedule scheduleWithMessage:inAppMessage
-                              builderBlock:^(UAScheduleBuilder * _Nonnull builder) {
+    return [UAInAppMessageSchedule scheduleWithMessage:inAppMessage
+                                          builderBlock:^(UAScheduleBuilder * _Nonnull builder) {
 
         UAScheduleTrigger *trigger;
 

@@ -49,7 +49,7 @@ class AutomationDetailViewController: UIViewController, UITableViewDelegate, UIT
     var collapsedCellPaths:[IndexPath] = []
 
     /* The UASchedule to be displayed */
-    public var schedule : UASchedule?
+    public var schedule : UAInAppMessageSchedule?
 
     private let inAppAutomation = UAInAppAutomation.shared()
 
@@ -233,7 +233,7 @@ class AutomationDetailViewController: UIViewController, UITableViewDelegate, UIT
 
     func createContentCell(_ indexPath:IndexPath) -> UITableViewCell {
         guard let schedule = schedule else { return UITableViewCell() }
-        let message = schedule.data as! UAInAppMessage
+        let message = schedule.message
 
         switch (message.displayType) {
         case .banner:
@@ -639,7 +639,7 @@ class AutomationDetailViewController: UIViewController, UITableViewDelegate, UIT
             return UITableViewCell()
         }
 
-        let message = schedule.data as! UAInAppMessage
+        let message = schedule.message
 
         let cell = defaultAutomationDetailCell(indexPath)
 
@@ -728,22 +728,19 @@ class AutomationDetailViewController: UIViewController, UITableViewDelegate, UIT
         case messageSection:
             return "ua_message_title".localized()
         case contentSection:
-            if schedule?.type == UAScheduleType.inAppMessage {
-                switch ((schedule?.data as! UAInAppMessage).displayType) {
-                case .banner:
-                    return "ua_displaycontent_title_banner".localized()
-                case .fullScreen:
-                    return "ua_displaycontent_title_fullScreen".localized()
-                case .modal:
-                    return "ua_displaycontent_title_modal".localized()
-                case .HTML:
-                    return "ua_displaycontent_title_HTML".localized()
-                case .custom:
-                    return "ua_displaycontent_title_custom".localized()
-                @unknown default:
-                    return "ua_displaycontent_title_unknown".localized()
-                }
-            } else {
+            switch (schedule?.message.displayType) {
+            case .banner:
+                return "ua_displaycontent_title_banner".localized()
+            case .fullScreen:
+                return "ua_displaycontent_title_fullScreen".localized()
+            case .modal:
+                return "ua_displaycontent_title_modal".localized()
+            case .HTML:
+                return "ua_displaycontent_title_HTML".localized()
+            case .custom:
+                return "ua_displaycontent_title_custom".localized()
+            case .none: fallthrough
+            @unknown default:
                 return "ua_displaycontent_title_unknown".localized()
             }
         default:
@@ -798,7 +795,7 @@ class AutomationDetailViewController: UIViewController, UITableViewDelegate, UIT
             fatalError("Unexpected sender: \(sender ?? "unknown sender")")
         }
 
-        let message = schedule?.data as! UAInAppMessage;
+        let message = schedule!.message
 
         var heading : UAInAppMessageTextInfo?
         var body : UAInAppMessageTextInfo?

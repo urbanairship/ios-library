@@ -184,52 +184,49 @@ NSString *const UALegacyActionAutomationStoreFileFormat = @"Automation-%@.sqlite
     }];
 }
 
-- (void)deleteSchedule:(NSString *)scheduleID {
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"identifier == %@", scheduleID];
-    [self deleteSchedulesWithPredicate:predicate];
-}
-
-- (void)deleteSchedules:(NSString *)groupID {
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"group == %@", groupID];
-    [self deleteSchedulesWithPredicate:predicate];
-}
-
-- (void)deleteAllSchedules {
-    [self deleteSchedulesWithPredicate:nil];
-}
-
 - (void)getSchedules:(NSString *)groupID completionHandler:(void (^)(NSArray<UAScheduleData *> *))completionHandler {
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"group == %@ && end >= %@", groupID, self.date.now];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"group == %@", groupID];
+    [self fetchSchedulesWithPredicate:predicate limit:self.scheduleLimit completionHandler:completionHandler];
+}
+
+- (void)getSchedules:(NSString *)groupID
+                type:(UAScheduleType)scheduleType
+   completionHandler:(void (^)(NSArray<UAScheduleData *> *))completionHandler {
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"group == %@ && type == %@", groupID, @(scheduleType)];
     [self fetchSchedulesWithPredicate:predicate limit:self.scheduleLimit completionHandler:completionHandler];
 }
 
 - (void)getSchedules:(void (^)(NSArray<UAScheduleData *> *))completionHandler {
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"end >= %@", self.date.now];
-    [self fetchSchedulesWithPredicate:predicate limit:self.scheduleLimit completionHandler:completionHandler];
+    [self fetchSchedulesWithPredicate:nil limit:self.scheduleLimit completionHandler:completionHandler];
 }
 
-- (void)getSchedulesWithStates:(NSArray *)state completionHandler:(void (^)(NSArray<UAScheduleData *> * _Nonnull))completionHandler {
+- (void)getSchedulesWithStates:(NSArray *)state
+             completionHandler:(void (^)(NSArray<UAScheduleData *> * _Nonnull))completionHandler {
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"executionState IN %@", state];
     [self fetchSchedulesWithPredicate:predicate limit:self.scheduleLimit completionHandler:completionHandler];
 }
 
-- (void)getSchedulesWithType:(UAScheduleType)type completionHandler:(void (^)(NSArray<UAScheduleData *> *))completionHandler {
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"type == %@", @(type)];
+- (void)getSchedulesWithType:(UAScheduleType)scheduleType
+           completionHandler:(void (^)(NSArray<UAScheduleData *> *))completionHandler {
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"type == %@", @(scheduleType)];
     [self fetchSchedulesWithPredicate:predicate limit:self.scheduleLimit completionHandler:completionHandler];
 }
 
-- (void)getSchedule:(NSString *)scheduleID includingExpired:(BOOL)includingExpired completionHandler:(void (^)(UAScheduleData * _Nullable))completionHandler {
-    NSPredicate *predicate = includingExpired ?
-        [NSPredicate predicateWithFormat:@"identifier == %@", scheduleID] :
-        [NSPredicate predicateWithFormat:@"identifier == %@ && end >= %@", scheduleID, self.date.now];
-
+- (void)getSchedule:(NSString *)scheduleID
+  completionHandler:(void (^)(UAScheduleData * _Nullable))completionHandler {
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"identifier == %@", scheduleID];
     [self fetchSchedulesWithPredicate:predicate limit:1 completionHandler:^(NSArray<UAScheduleData *> *result) {
-        completionHandler(result.count == 1 ? result.firstObject : nil);
+        completionHandler(result.firstObject);
     }];
 }
 
-- (void)getSchedule:(NSString *)scheduleID completionHandler:(void (^)(UAScheduleData * _Nullable))completionHandler {
-    [self getSchedule:scheduleID includingExpired:NO completionHandler:completionHandler];
+- (void)getSchedule:(NSString *)scheduleID
+               type:(UAScheduleType)scheduleType
+  completionHandler:(void (^)(UAScheduleData * _Nullable))completionHandler {
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"identifier == %@ && type == %@", scheduleID, @(scheduleType)];
+    [self fetchSchedulesWithPredicate:predicate limit:1 completionHandler:^(NSArray<UAScheduleData *> *result) {
+        completionHandler(result.firstObject);
+    }];
 }
 
 - (void)getActiveExpiredSchedules:(void (^)(NSArray<UAScheduleData *> *))completionHandler {
@@ -237,12 +234,8 @@ NSString *const UALegacyActionAutomationStoreFileFormat = @"Automation-%@.sqlite
     [self fetchSchedulesWithPredicate:predicate limit:self.scheduleLimit completionHandler:completionHandler];
 }
 
-- (void)getAllSchedules:(void (^)(NSArray<UAScheduleData *> *))completionHandler {
-    [self fetchSchedulesWithPredicate:nil limit:self.scheduleLimit completionHandler:completionHandler];
-}
-
 - (void)getActiveTriggers:(NSString *)scheduleID
-                     type:(UAScheduleTriggerType)type
+                     type:(UAScheduleTriggerType)triggerType
         completionHandler:(void (^)(NSArray<UAScheduleTriggerData *> *triggers))completionHandler {
 
     scheduleID = scheduleID ? : @"*";
@@ -250,7 +243,7 @@ NSString *const UALegacyActionAutomationStoreFileFormat = @"Automation-%@.sqlite
     NSString *format = @"(schedule.identifier LIKE %@ AND type = %ld AND start <= %@) AND ((delay != nil AND schedule.executionState in %@) OR (delay == nil AND schedule.executionState == %d))";
 
     NSArray *cancelTriggerState = @[@(UAScheduleStateTimeDelayed), @(UAScheduleStateWaitingScheduleConditions), @(UAScheduleStatePreparingSchedule)];
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:format, scheduleID, type, self.date.now, cancelTriggerState, UAScheduleStateIdle];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:format, scheduleID, triggerType, self.date.now, cancelTriggerState, UAScheduleStateIdle];
 
     [self fetchTriggersWithPredicate:predicate completionHandler:completionHandler];
 }
@@ -267,38 +260,9 @@ NSString *const UALegacyActionAutomationStoreFileFormat = @"Automation-%@.sqlite
     }];
 }
 
-- (void)deleteSchedulesWithPredicate:(NSPredicate *)predicate {
-    [self safePerformBlock:^(BOOL isSafe) {
-        if (!isSafe) {
-            return;
-        }
-
-        NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"UAScheduleData"];
-        request.predicate = predicate;
-
-        NSError *error;
-
-        if (self.inMemory) {
-            request.includesPropertyValues = NO;
-            NSArray *events = [self.managedContext executeFetchRequest:request error:&error];
-            for (NSManagedObject *event in events) {
-                [self.managedContext deleteObject:event];
-            }
-        } else {
-            NSBatchDeleteRequest *deleteRequest = [[NSBatchDeleteRequest alloc] initWithFetchRequest:request];
-            [self.managedContext executeRequest:deleteRequest error:&error];
-        }
-
-        if (error) {
-            UA_LERR(@"Error deleting entities %@", error);
-            return;
-        }
-
-        [self.managedContext safeSave];
-    }];
-}
-
-- (void)fetchSchedulesWithPredicate:(NSPredicate *)predicate limit:(NSUInteger)limit completionHandler:(void (^)(NSArray<UAScheduleData *> *))completionHandler {
+- (void)fetchSchedulesWithPredicate:(NSPredicate *)predicate
+                              limit:(NSUInteger)limit
+                  completionHandler:(void (^)(NSArray<UAScheduleData *> *))completionHandler {
     [self safePerformBlock:^(BOOL isSafe) {
         if (!isSafe) {
             completionHandler(@[]);

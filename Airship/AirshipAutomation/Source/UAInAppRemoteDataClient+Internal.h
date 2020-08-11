@@ -13,11 +13,11 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol UAInAppRemoteDataClientDelegate  <NSObject>
 
 /**
- * Gets all schedules, including schedules that have ended.
+ * Gets schedules.
  *
  * @param completionHandler The completion handler to be called when fetch operation completes.
  */
-- (void)getAllSchedules:(void (^)(NSArray<UASchedule *> *))completionHandler;
+- (void)getSchedules:(void (^)(NSArray<UASchedule *> *))completionHandler;
 
 
 /**

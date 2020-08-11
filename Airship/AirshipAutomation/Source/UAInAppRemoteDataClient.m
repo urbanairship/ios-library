@@ -2,6 +2,7 @@
 
 #import "UAInAppRemoteDataClient+Internal.h"
 #import "UASchedule+Internal.h"
+#import "UAInAppMessageSchedule.h"
 #import "UAInAppMessageManager.h"
 #import "UAScheduleAudienceChecks+Internal.h"
 #import "UAInAppMessage+Internal.h"
@@ -280,7 +281,7 @@ static NSString *const UAScheduleInfoAudienceKey = @"audience";
 
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
     UA_WEAKIFY(self)
-    [self.delegate getAllSchedules:^(NSArray<UASchedule *> *schedules) {
+    [self.delegate getSchedules:^(NSArray<UASchedule *> *schedules) {
         UA_STRONGIFY(self)
         for (UASchedule *schedule in schedules) {
             if ([self isRemoteSchedule:schedule]) {
@@ -371,8 +372,8 @@ static NSString *const UAScheduleInfoAudienceKey = @"audience";
         }
     }
 
-    return [UASchedule scheduleWithMessage:message
-                              builderBlock:^(UAScheduleBuilder *builder) {
+    return [UAInAppMessageSchedule scheduleWithMessage:message
+                                          builderBlock:^(UAScheduleBuilder *builder) {
 
         builder.identifier = [UAInAppRemoteDataClient parseScheduleID:json];
         builder.metadata = metadata;

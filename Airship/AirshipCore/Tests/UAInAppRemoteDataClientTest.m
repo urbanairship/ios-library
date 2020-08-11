@@ -13,6 +13,8 @@
 #import "UAScheduleEdits+Internal.h"
 #import "NSJSONSerialization+UAAdditions.h"
 #import "UAInAppMessage+Internal.h"
+#import "UAActionSchedule.h"
+#import "UAINappMessageSchedule.h"
 
 NSString * const UAInAppMessagesScheduledMessagesKey = @"UAInAppRemoteDataClient.ScheduledMessages";
 
@@ -61,7 +63,7 @@ NSString * const UAInAppMessagesScheduledMessagesKey = @"UAInAppRemoteDataClient
         [invocation getArgument:&arg atIndex:2];
         void (^completionHandler)(NSArray<UASchedule *> *) = (__bridge void (^)(NSArray<UASchedule *> *))arg;
         completionHandler(self.allSchedules);
-    }] getAllSchedules:OCMOCK_ANY];
+    }] getSchedules:OCMOCK_ANY];
 
 
     self.queue = [[NSOperationQueue alloc] init];
@@ -769,7 +771,7 @@ NSString * const UAInAppMessagesScheduledMessagesKey = @"UAInAppRemoteDataClient
 
 - (void)testValidSchedule {
     id remoteDataMetadata = @{@"neat": @"rad"};
-    UASchedule *schedule = [UASchedule scheduleWithActions:@{} builderBlock:^(UAScheduleBuilder * _Nonnull builder) {
+    UASchedule *schedule = [UAActionSchedule scheduleWithActions:@{} builderBlock:^(UAScheduleBuilder * _Nonnull builder) {
         builder.metadata = @{
             @"com.urbanairship.iaa.REMOTE_DATA_METADATA": remoteDataMetadata
         };
@@ -782,7 +784,7 @@ NSString * const UAInAppMessagesScheduledMessagesKey = @"UAInAppRemoteDataClient
 - (void)testInvalidSchedule {
     id remoteDataMetadata = @{@"neat": @"rad"};
 
-    UASchedule *schedule = [UASchedule scheduleWithActions:@{} builderBlock:^(UAScheduleBuilder * _Nonnull builder) {
+    UASchedule *schedule = [UAActionSchedule scheduleWithActions:@{} builderBlock:^(UAScheduleBuilder * _Nonnull builder) {
         builder.metadata = @{
             @"com.urbanairship.iaa.REMOTE_DATA_METADATA": remoteDataMetadata
         };
@@ -795,13 +797,13 @@ NSString * const UAInAppMessagesScheduledMessagesKey = @"UAInAppRemoteDataClient
 - (void)testRemoteSchedule {
     id remoteDataMetadata = @{@"neat": @"rad"};
 
-    UASchedule *remote = [UASchedule scheduleWithActions:@{} builderBlock:^(UAScheduleBuilder * _Nonnull builder) {
+    UASchedule *remote = [UAActionSchedule scheduleWithActions:@{} builderBlock:^(UAScheduleBuilder * _Nonnull builder) {
         builder.metadata = @{
             @"com.urbanairship.iaa.REMOTE_DATA_METADATA": remoteDataMetadata
         };
     }];
 
-    UASchedule *notRemote = [UASchedule scheduleWithActions:@{} builderBlock:^(UAScheduleBuilder * _Nonnull builder) {
+    UASchedule *notRemote = [UAActionSchedule scheduleWithActions:@{} builderBlock:^(UAScheduleBuilder * _Nonnull builder) {
     }];
 
     UAInAppMessage *remoteMessage = [UAInAppMessage messageWithBuilderBlock:^(UAInAppMessageBuilder * _Nonnull builder) {
@@ -809,7 +811,7 @@ NSString * const UAInAppMessagesScheduledMessagesKey = @"UAInAppRemoteDataClient
         builder.source = UAInAppMessageSourceRemoteData;
     }];
 
-    UASchedule *legacyRemote = [UASchedule scheduleWithMessage:remoteMessage builderBlock:^(UAScheduleBuilder * _Nonnull builder) {
+    UASchedule *legacyRemote = [UAInAppMessageSchedule scheduleWithMessage:remoteMessage builderBlock:^(UAScheduleBuilder * _Nonnull builder) {
     }];
 
     XCTAssertFalse([self.remoteDataClient isRemoteSchedule:notRemote]);
