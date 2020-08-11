@@ -3,10 +3,10 @@
 #import "UANamedUser.h"
 #import "UAExtendableChannelRegistration.h"
 #import "UATagGroupsMutation+Internal.h"
+#import "UATagGroupsRegistrar+Internal.h"
 
 @class UANamedUserAPIClient;
 @class UARuntimeConfig;
-@class UATagGroupsRegistrar;
 @class UAAttributeRegistrar;
 @class UAChannel;
 @class UADate;
@@ -16,7 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 /*
  * SDK-private extensions to UANamedUser
  */
-@interface UANamedUser ()
+@interface UANamedUser () <UATagGroupsRegistrarDelegate>
 
 ///---------------------------------------------------------------------------------------
 /// @name Named User Internal Properties
@@ -36,6 +36,31 @@ extern NSString *const UANamedUserChangeTokenKey;
  * Named user last updated token data store key.
  */
 extern NSString *const UANamedUserLastUpdatedTokenKey;
+
+/**
+ * Notification posted when a named user tag group mutation is uploaded.
+ *
+ * User data will contain a UATagGroupsMutation, identifier string and NSDate under
+ * UANamedUserUploadedTagGroupMutationNotificationMutationKey,
+ * UANamedUserUploadedTagGroupMutationNotificationIdentifierKey, and
+ * UANamedUserUploadedTagGroupMutationNotificationDateKey, respectively.
+ */
+extern NSString *const UANamedUserUploadedTagGroupMutationNotification;
+
+/**
+ * The mutation key for UANamedUserUploadedTagGroupMutationNotification.
+ */
+extern NSString *const UANamedUserUploadedTagGroupMutationNotificationMutationKey;
+
+/**
+ * The identifier key for UANamedUserUploadedTagGroupMutationNotification.
+ */
+extern NSString *const UANamedUserUploadedTagGroupMutationNotificationIdentifierKey;
+
+/**
+ * The date key for UANamedUserUploadedTagGroupMutationNotification.
+ */
+extern NSString *const UANamedUserUploadedTagGroupMutationNotificationDateKey;
 
 /**
  * The change token tracks the start of setting the named user ID.

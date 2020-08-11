@@ -7,10 +7,25 @@
 #import "UAPendingTagGroupStore+Internal.h"
 #import "UATagGroupsAPIClient+Internal.h"
 #import "UAComponent+Internal.h"
+#import "UATagGroupsMutation+Internal.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-extern NSString * const UAAirshipTagGroupSentNotification;
+/**
+ * Delegate protocol for tag groups registrar callbacks.
+ */
+@protocol UATagGroupsRegistrarDelegate <NSObject>
+@optional
+
+/**
+ * Called when a mutation has been succesfully uploaded.
+ *
+ * @param mutation The mutation.
+ * @param identifier The identifier associated with the mutation.
+ */
+- (void)uploadedMutation:(UATagGroupsMutation *)mutation identifier:(NSString *)identifier;
+
+@end
 
 @interface UATagGroupsRegistrar : NSObject
 
@@ -28,6 +43,11 @@ extern NSString * const UAAirshipTagGroupSentNotification;
  * The current identifier associated with this registrar.
  */
 @property (nonatomic, readonly) NSString *identifier;
+
+/**
+ * The delegate to receive registrar callbacks.
+ */
+@property (nonatomic, weak) id<UATagGroupsRegistrarDelegate> delegate;
 
 ///---------------------------------------------------------------------------------------
 /// @name Tag Groups Registrar Methods

@@ -19,6 +19,12 @@ NSString *const UAChannelCreatedEvent = @"com.urbanairship.channel.channel_creat
 NSString *const UAChannelUpdatedEvent = @"com.urbanairship.channel.channel_updated";
 NSString *const UAChannelRegistrationFailedEvent = @"com.urbanairship.channel.registration_failed";
 
+NSString *const UAChannelUploadedTagGroupMutationNotification = @"com.urbanairship.channel.uploaded_tag_group_mutation";
+
+NSString *const UAChannelUploadedTagGroupMutationNotificationMutationKey = @"mutation";
+NSString *const UAChannelUploadedTagGroupMutationNotificationDateKey = @"date";
+NSString *const UAChannelUploadedTagGroupMutationNotificationIdentifierKey = @"identifier";
+
 NSString *const UAChannelCreatedEventChannelKey = @"com.urbanairship.channel.identifier";
 NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.channel.existing";
 
@@ -65,6 +71,7 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
         self.registrationExtenderBlocks = [NSMutableArray array];
 
         self.tagGroupsRegistrar.enabled = self.componentEnabled;
+        self.tagGroupsRegistrar.delegate = self;
 
         // Check config to see if user wants to delay channel creation
         // If channel ID exists or channel creation delay is disabled then channelCreationEnabled
@@ -446,6 +453,14 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
     } else {
         UA_LERR(@"Channel creation failed. Missing channelID: %@", channelID);
     }
+}
+
+- (void)uploadedMutation:(UATagGroupsMutation *)mutation identifier:(NSString *)identifier {
+    [[NSNotificationCenter defaultCenter] postNotificationName:UAChannelUploadedTagGroupMutationNotification
+                                                        object:nil
+                                                      userInfo:@{UAChannelUploadedTagGroupMutationNotificationMutationKey:mutation,
+                                                                 UAChannelUploadedTagGroupMutationNotificationDateKey:[NSDate date],
+                                                                 UAChannelUploadedTagGroupMutationNotificationIdentifierKey:identifier }];
 }
 
 - (void)updateRegistrarEnablement {

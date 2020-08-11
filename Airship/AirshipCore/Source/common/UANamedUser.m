@@ -17,6 +17,12 @@ NSString *const UANamedUserChangeTokenKey = @"UANamedUserChangeToken";
 NSString *const UANamedUserLastUpdatedTokenKey = @"UANamedUserLastUpdatedToken";
 NSString *const UANamedUserLastChannelIDKey = @"UANamedUserLastChannelID";
 
+NSString *const UANamedUserUploadedTagGroupMutationNotification = @"com.urbanairship.named_user.uploaded_tag_group_mutation";
+
+NSString *const UANamedUserUploadedTagGroupMutationNotificationMutationKey = @"mutation";
+NSString *const UANamedUserUploadedTagGroupMutationNotificationDateKey = @"date";
+NSString *const UANamedUserUploadedTagGroupMutationNotificationIdentifierKey = @"identifier";
+
 @interface UANamedUser()
 
 /**
@@ -48,6 +54,8 @@ NSString *const UANamedUserLastChannelIDKey = @"UANamedUserLastChannelID";
 
         self.namedUserAPIClient.enabled = self.componentEnabled;
         self.tagGroupsRegistrar.enabled = self.componentEnabled;
+        
+        self.tagGroupsRegistrar.delegate = self;
 
         [self.tagGroupsRegistrar setIdentifier:self.identifier clearPendingOnChange:NO];
 
@@ -292,6 +300,14 @@ NSString *const UANamedUserLastChannelIDKey = @"UANamedUserLastChannelID";
         // Once we get a channel, update the named user if necessary.
         [self update];
     }
+}
+
+- (void)uploadedMutation:(UATagGroupsMutation *)mutation identifier:(NSString *)identifier {
+    [[NSNotificationCenter defaultCenter] postNotificationName:UANamedUserUploadedTagGroupMutationNotification
+                                                        object:nil
+                                                      userInfo:@{UANamedUserUploadedTagGroupMutationNotificationMutationKey:mutation,
+                                                                 UANamedUserUploadedTagGroupMutationNotificationDateKey:[NSDate date],
+                                                                 UANamedUserUploadedTagGroupMutationNotificationIdentifierKey:identifier}];
 }
 
 - (void)updateRegistrarEnablement {

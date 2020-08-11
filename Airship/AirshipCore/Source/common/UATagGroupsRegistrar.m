@@ -8,9 +8,6 @@
 #import "UAAsyncOperation.h"
 #import "UAPendingTagGroupStore+Internal.h"
 
-// Notifications
-NSString * const UAAirshipTagGroupSentNotification = @"com.urbanairship.airship_tagGroupSent";
-
 @interface UATagGroupsRegistrar()
 
 /**
@@ -143,8 +140,11 @@ NSString * const UAAirshipTagGroupSentNotification = @"com.urbanairship.airship_
             // Success - pop uploaded mutation and store the transaction record
             [self popPendingMutation:mutation identifier:identifier];
 
-            [[NSNotificationCenter defaultCenter] postNotificationName:UAAirshipTagGroupSentNotification object:nil userInfo:@{@"tagGroupsMutation":mutation, @"date":[NSDate date]}];
-
+            if ([self.delegate respondsToSelector:@selector(uploadedMutation:identifier:)]) {
+                @synchronized (self) {
+                    [self.delegate uploadedMutation:mutation identifier:identifier];
+                }
+            }
 
             [self uploadNextTagGroupMutationWithBackgroundTaskIdentifier:backgroundTaskIdentifier];
         } else if (status == 400 || status == 403) {
@@ -227,7 +227,7 @@ NSString * const UAAirshipTagGroupSentNotification = @"com.urbanairship.airship_
         if (clearPendingOnChange && ![identifier isEqualToString:self.identifier]) {
             [self clearPendingMutations];
         }
-
+        
         self.identifier = identifier;
     }
 }
