@@ -46,7 +46,7 @@
     }
 
     if (style.cellTitleFont) {
-        self.title.font = style.cellTitleFont;
+        self.title.font = [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleBody] scaledFontForFont:style.cellTitleFont];
     }
 
     if (style.cellTitleColor) {
@@ -60,7 +60,7 @@
     }
 
     if (style.cellDateFont) {
-        self.date.font = style.cellDateFont;
+        self.date.font = [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleBody] scaledFontForFont:style.cellDateFont];
     }
     
     if (style.cellDateColor) {
