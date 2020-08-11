@@ -9,10 +9,28 @@
 	<key>navigationBarColor</key>
 	<string>#000000</string>
 	<key>iconsEnabled</key>
-	<false/>
+	<true/>
 	<key>navigationBarOpaque</key>
 	<true/>
 	<key>navigationBarStyle</key>
 	<string>black</string>
+	<key>cellTitleFont</key>
+	<dict>
+		<key>fontName</key>
+		<string>ChalkboardSE-Bold</string>
+		<key>fontSize</key>
+		<string>13</string>
+	</dict>
+	<key>cellDateFont</key>
+	<dict>
+		<key>fontName</key>
+		<string>ChalkboardSE-Regular</string>
+		<key>fontSize</key>
+		<string>17</string>
+	</dict>
+    <key>cellTitleColor</key>
+    <string>#770000</string>
+    <key>cellDateColor</key>
+    <string>#007700</string>
 </dict>
 </plist>
