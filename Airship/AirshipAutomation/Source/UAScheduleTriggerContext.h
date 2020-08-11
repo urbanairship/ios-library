@@ -6,7 +6,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class UAScheduleTrigger;
 
-@interface UAScheduleTriggerContext : NSObject <NSCoding>
+@interface UAScheduleTriggerContext : NSObject <NSSecureCoding>
 
 //---------------------------------------------------------------------------------------
 /// @name Schedule Trigger Context Properties

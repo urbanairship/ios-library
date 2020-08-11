@@ -77,4 +77,8 @@ static NSString *const UAScheduleTriggerContextEventKey = @"event";
     return self;
 }
 
++ (BOOL)supportsSecureCoding {
+    return YES;
+}
+
 @end

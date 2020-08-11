@@ -15,12 +15,29 @@
     return YES;
 }
 
-- (id)transformedValue:(UAScheduleTriggerContext *)value {
-    return value == nil ? nil : [NSKeyedArchiver archivedDataWithRootObject:value];
+- (id)transformedValue:(id)value {
+    NSError *error = nil;
+    id result = [NSKeyedArchiver archivedDataWithRootObject:value
+                                      requiringSecureCoding:YES
+                                                      error:&error];
+
+    if (error) {
+        UA_LERR(@"Failed to transform value: %@, error: %@", value, error);
+    }
+
+    return result;
 }
 
 - (id)reverseTransformedValue:(id)value {
-    return value == nil ? nil : [NSKeyedUnarchiver unarchiveObjectWithData:value];
-}
+    NSError *error = nil;
+    id result = [NSKeyedUnarchiver unarchivedObjectOfClass:[UAScheduleTriggerContext class]
+                                                  fromData:value
+                                                     error:&error];
 
+    if (error) {
+        UA_LERR(@"Failed to transform value: %@, error: %@", value, error);
+    }
+
+    return result;
+}
 @end
