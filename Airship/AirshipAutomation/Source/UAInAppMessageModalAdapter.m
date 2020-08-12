@@ -41,8 +41,7 @@ NSString *const UAModalStyleFileName = @"UAInAppMessageModalStyle";
     [UAInAppMessageUtils prepareMediaView:displayContent.media assets:assets completionHandler:^(UAInAppMessagePrepareResult result, UAInAppMessageMediaView *mediaView) {
         if (result == UAInAppMessagePrepareResultSuccess) {
             mediaView.hideWindowWhenVideoIsFullScreen = YES;
-            self.modalController = [UAInAppMessageModalViewController modalControllerWithModalMessageID:self.message.identifier
-                                                                                         displayContent:displayContent
+            self.modalController = [UAInAppMessageModalViewController modalControllerWithDisplayContent:displayContent
                                                                                               mediaView:mediaView
                                                                                                   style:self.style];
         }
@@ -59,7 +58,7 @@ NSString *const UAModalStyleFileName = @"UAInAppMessageModalStyle";
     if (@available(iOS 13.0, *)) {
         self.scene = [[UAInAppMessageSceneManager shared] sceneForMessage:self.message];
         if (!self.scene) {
-            UA_LDEBUG(@"Unable to display message %@, no scene.", self.message.identifier);
+            UA_LDEBUG(@"Unable to display message %@, no scene.", self.message);
             return NO;
         }
     }

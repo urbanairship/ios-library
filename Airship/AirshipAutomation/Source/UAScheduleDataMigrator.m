@@ -15,24 +15,35 @@ NSString *const UAInAppMessageV2SourceKey = @"source";
 NSString *const UAInAppMessageV2SourceAppDefinedValue = @"app-defined";
 NSString *const UAInAppMessageV2SourceRemoteDataValue = @"remote-data";
 
+NSString *const UAScheduleMetadataOriginalScheduleIDKey = @"com.urbanairship.original_schedule_id";
+NSString *const UAScheduleMetadataOriginalMessageIDKey = @"com.urbanairship.original_message_id";
+
 @implementation UAScheduleDataMigrator
 
-+ (void)migrateScheduleData:(UAScheduleData *)scheduleData {
++ (void)migrateSchedules:(NSArray<UAScheduleData *> *)schedules {
 
-    int oldVersion = [scheduleData.dataVersion intValue];
+    NSMutableArray *migratedScheduleIDs = [NSMutableArray array];
 
-    switch (oldVersion) {
-        case 0:
-            [self perform0To1MigrationForScheduleData:scheduleData];
-        case 1:
-            [self perform1To2MigrationForScheduleData:scheduleData];
-        case 2:
-            [self perform2To3MigrationForScheduleData:scheduleData];
-            break;
+    for (UAScheduleData *scheduleData in schedules) {
+        int oldVersion = [scheduleData.dataVersion intValue];
+
+        switch (oldVersion) {
+            case 0:
+                [self perform0To1MigrationForScheduleData:scheduleData];
+            case 1:
+                [self perform1To2MigrationForScheduleData:scheduleData];
+            case 2:
+                [self perform2To3MigrationForScheduleData:scheduleData migratedScheduleIDs:migratedScheduleIDs];
+                break;
+        }
+
+        if (scheduleData.identifier){
+            [migratedScheduleIDs addObject:scheduleData.identifier];
+        }
+
+        UA_LTRACE(@"Migrated schedule data from %ld to %ld", (unsigned long)oldVersion, (unsigned long)UAScheduleDataVersion);
+        scheduleData.dataVersion = @(UAScheduleDataVersion);
     }
-
-    UA_LTRACE(@"Migrated schedule data from %ld to %ld", (unsigned long)oldVersion, (unsigned long)UAScheduleDataVersion);
-    scheduleData.dataVersion = @(UAScheduleDataVersion);
 }
 
 // migrate duration from milliseconds to seconds
@@ -80,9 +91,11 @@ NSString *const UAInAppMessageV2SourceRemoteDataValue = @"remote-data";
 }
 
 // move scheduleData.message.audience to scheduleData.audience
-// use group as schedule ID if not app-defined
+// use message ID as schedule ID
 // set the schedule type
-+ (void)perform2To3MigrationForScheduleData:(UAScheduleData *)scheduleData {
++ (void)perform2To3MigrationForScheduleData:(UAScheduleData *)scheduleData
+                        migratedScheduleIDs:(NSMutableArray<NSString *> *)migratedScheduleIDs  {
+
     NSMutableDictionary *json = [[NSJSONSerialization objectWithString:scheduleData.data] mutableCopy];
 
     if (json[@"display_type"] && json[@"display"]) {
@@ -95,16 +108,41 @@ NSString *const UAInAppMessageV2SourceRemoteDataValue = @"remote-data";
             [json removeObjectForKey:@"audience"];
         }
 
-        // If source is not app defined, set the group as the ID
+        // If source is not app defined, set the group (message ID) as the ID
         NSString *source = json[@"source"];
-        if (source && ![source isEqualToString:@"app-defined"] && scheduleData.group) {
-            scheduleData.identifier = scheduleData.group;
-        }
+        if (source && scheduleData.group) {
+            NSString *originalMessageID = scheduleData.group;
+            NSString *originalScheduleID = scheduleData.identifier;
 
+            if([source isEqualToString:@"app-defined"]) {
+                scheduleData.identifier = [self generateUniqueID:originalMessageID identifiers:migratedScheduleIDs];
+                NSMutableDictionary *metadata = [NSMutableDictionary dictionary];
+
+                if (scheduleData.metadata) {
+                    [metadata addEntriesFromDictionary:[NSJSONSerialization objectWithString:scheduleData.metadata]];
+                }
+
+                [metadata setValue:originalScheduleID forKey:UAScheduleMetadataOriginalScheduleIDKey];
+                [metadata setValue:originalMessageID forKey:UAScheduleMetadataOriginalMessageIDKey];
+                scheduleData.metadata = [NSJSONSerialization stringWithObject:metadata];
+            } else {
+                scheduleData.identifier = originalMessageID;
+            }
+        }
         scheduleData.data = [NSJSONSerialization stringWithObject:json];
     } else {
         scheduleData.type = @(UAScheduleTypeActions);
     }
+}
+
++ (NSString *)generateUniqueID:(NSString *)identifier identifiers:(NSArray<NSString *> *)identifiers {
+    NSString *unique = identifier;
+    NSUInteger i = 0;
+    while ([identifiers containsObject:unique]) {
+        i++;
+        unique = [NSString stringWithFormat:@"%@#%lu", identifier, i];
+    }
+    return unique;
 }
 
 @end

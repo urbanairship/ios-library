@@ -114,8 +114,12 @@
                                           @"display_time": @"3.141"};
 
     UAInAppMessageResolution *resolution = [UAInAppMessageResolution buttonClickResolutionWithButtonInfo:self.displayContent.buttons[0]];
-    [self verifyEventWithEventBlock:^UAInAppMessageResolutionEvent *(UAInAppMessage *message) {
-        return [UAInAppMessageResolutionEvent eventWithMessage:message resolution:resolution displayTime:3.141];
+    [self verifyEventWithMessageID:@"message ID"
+                        eventBlock:^UAInAppMessageResolutionEvent *(UAInAppMessage *message) {
+        return [UAInAppMessageResolutionEvent eventWithMessageID:@"message ID"
+                                                         message:message
+                                                    resolution:resolution
+                                                   displayTime:3.141];
     } expectedResolutionData:expectedResolutionData];
 }
 
@@ -129,8 +133,11 @@
                                               @"display_time": @"3.141"};
 
     UAInAppMessageResolution *resolution = [UAInAppMessageResolution buttonClickResolutionWithButtonInfo:self.displayContent.buttons[1]];
-    [self verifyEventWithEventBlock:^UAInAppMessageResolutionEvent *(UAInAppMessage *message) {
-        return [UAInAppMessageResolutionEvent eventWithMessage:message resolution:resolution displayTime:3.141];
+    [self verifyEventWithMessageID:@"message ID" eventBlock:^UAInAppMessageResolutionEvent *(UAInAppMessage *message) {
+        return [UAInAppMessageResolutionEvent eventWithMessageID:@"message ID"
+                                                         message:message
+                                                    resolution:resolution
+                                                   displayTime:3.141];
     } expectedResolutionData:expectedResolutionData];
 }
 
@@ -145,8 +152,12 @@
 
     UAInAppMessageResolution *resolution = [UAInAppMessageResolution buttonClickResolutionWithButtonInfo:self.displayContent.buttons[2]];
 
-    [self verifyEventWithEventBlock:^UAInAppMessageResolutionEvent *(UAInAppMessage *message) {
-        return [UAInAppMessageResolutionEvent eventWithMessage:message resolution:resolution displayTime:3.141];
+    [self verifyEventWithMessageID:@"message ID"
+                        eventBlock:^UAInAppMessageResolutionEvent *(UAInAppMessage *message) {
+        return [UAInAppMessageResolutionEvent eventWithMessageID:@"message ID"
+                                                         message:message
+                                                    resolution:resolution
+                                                   displayTime:3.141];
     } expectedResolutionData:expectedResolutionData];
 }
 
@@ -158,8 +169,12 @@
                                           @"display_time": @"3.141"};
 
     UAInAppMessageResolution *resolution = [UAInAppMessageResolution messageClickResolution];
-    [self verifyEventWithEventBlock:^UAInAppMessageResolutionEvent *(UAInAppMessage *message) {
-        return [UAInAppMessageResolutionEvent eventWithMessage:message resolution:resolution displayTime:3.141];
+    [self verifyEventWithMessageID:@"message ID"
+                        eventBlock:^UAInAppMessageResolutionEvent *(UAInAppMessage *message) {
+        return [UAInAppMessageResolutionEvent eventWithMessageID:@"message ID"
+                                                         message:message
+                                                    resolution:resolution
+                                                   displayTime:3.141];
     } expectedResolutionData:expectedResolutionData];
 }
 
@@ -171,8 +186,12 @@
                                           @"display_time": @"3.141"};
 
     UAInAppMessageResolution *resolution = [UAInAppMessageResolution userDismissedResolution];
-    [self verifyEventWithEventBlock:^UAInAppMessageResolutionEvent *(UAInAppMessage *message) {
-        return [UAInAppMessageResolutionEvent eventWithMessage:message resolution:resolution displayTime:3.141];
+    [self verifyEventWithMessageID:@"message ID"
+                        eventBlock:^UAInAppMessageResolutionEvent *(UAInAppMessage *message) {
+        return [UAInAppMessageResolutionEvent eventWithMessageID:@"message ID"
+                                                         message:message
+                                                    resolution:resolution
+                                                   displayTime:3.141];
     } expectedResolutionData:expectedResolutionData];}
 
 /**
@@ -183,16 +202,20 @@
                                           @"display_time": @"3.141"};
 
     UAInAppMessageResolution *resolution = [UAInAppMessageResolution timedOutResolution];
-    [self verifyEventWithEventBlock:^UAInAppMessageResolutionEvent *(UAInAppMessage *message) {
-        return [UAInAppMessageResolutionEvent eventWithMessage:message resolution:resolution displayTime:3.141];
+    [self verifyEventWithMessageID:@"message ID"
+                        eventBlock:^UAInAppMessageResolutionEvent *(UAInAppMessage *message) {
+        return [UAInAppMessageResolutionEvent eventWithMessageID:@"message ID"
+                                                         message:message
+                                                      resolution:resolution
+                                                     displayTime:3.141];
     } expectedResolutionData:expectedResolutionData];
 }
 
-- (void)verifyEventWithEventBlock:(UAInAppMessageResolutionEvent * (^)(UAInAppMessage *))eventBlock
+- (void)verifyEventWithMessageID:(NSString *)messageID
+                      eventBlock:(UAInAppMessageResolutionEvent * (^)(UAInAppMessage *))eventBlock
            expectedResolutionData:(NSDictionary *)expectedResolutionData {
 
     UAInAppMessage *remoteDataMessage = [UAInAppMessage messageWithBuilderBlock:^(UAInAppMessageBuilder *builder) {
-        builder.identifier = @"remote-data-message";
         builder.source = UAInAppMessageSourceRemoteData;
         builder.campaigns = @{@"some": @"campaigns object"};
         builder.displayContent = self.displayContent;
@@ -201,7 +224,7 @@
 
     UAInAppMessageResolutionEvent *event = eventBlock(remoteDataMessage);
 
-    NSDictionary *expectedData = @{ @"id": @{  @"message_id": @"remote-data-message",
+    NSDictionary *expectedData = @{ @"id": @{  @"message_id": messageID,
                                                @"campaigns": @{@"some": @"campaigns object"} },
                                     @"source": @"urban-airship",
                                     @"conversion_send_id": [self.analytics conversionSendID],
@@ -217,7 +240,6 @@
 
 
     UAInAppMessage *legacyMessage = [UAInAppMessage messageWithBuilderBlock:^(UAInAppMessageBuilder *builder) {
-        builder.identifier = @"legacy-message";
         builder.source = UAInAppMessageSourceLegacyPush;
         builder.campaigns = @{@"some": @"campaigns object"};
         builder.displayContent = self.displayContent;
@@ -225,7 +247,7 @@
 
     event = eventBlock(legacyMessage);
 
-    expectedData = @{ @"id": @"legacy-message",
+    expectedData = @{ @"id": messageID,
                       @"source": @"urban-airship",
                       @"conversion_send_id": [self.analytics conversionSendID],
                       @"conversion_metadata": [self.analytics conversionPushMetadata],
@@ -237,7 +259,6 @@
     XCTAssertTrue([event isValid]);
 
     UAInAppMessage *appDefined = [UAInAppMessage messageWithBuilderBlock:^(UAInAppMessageBuilder *builder) {
-        builder.identifier = @"app-defined-message";
         builder.source = UAInAppMessageSourceAppDefined;
         builder.campaigns = @{@"some": @"campaigns object"};
         builder.displayContent = self.displayContent;
@@ -245,7 +266,7 @@
 
     event = eventBlock(appDefined);
 
-    expectedData = @{ @"id": @{ @"message_id": @"app-defined-message" },
+    expectedData = @{ @"id": @{ @"message_id": messageID },
                       @"source": @"app-defined",
                       @"conversion_send_id": [self.analytics conversionSendID],
                       @"conversion_metadata": [self.analytics conversionPushMetadata],

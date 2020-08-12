@@ -432,7 +432,6 @@
 
 - (UAInAppMessage *)sampleMessageWithMediaURL:(NSURL *)mediaURL {
     UAInAppMessage *message = [UAInAppMessage messageWithBuilderBlock:^(UAInAppMessageBuilder * _Nonnull builder) {
-        builder.identifier = @"test identifier";
         builder.actions = @{@"cool": @"story"};
 
         builder.displayContent = [UAInAppMessageBannerDisplayContent displayContentWithBuilderBlock:^(UAInAppMessageBannerDisplayContentBuilder *builder) {

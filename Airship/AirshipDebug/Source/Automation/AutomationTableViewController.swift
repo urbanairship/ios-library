@@ -118,7 +118,7 @@ class AutomationTableViewController: UITableViewController {
                 break
             }
             cell.messageName.text = message.name
-            cell.messageID.text = message.identifier
+            cell.messageID.text = schedule.identifier
             if (schedule.isValid) {
                 cell.backgroundColor = nil
             } else {

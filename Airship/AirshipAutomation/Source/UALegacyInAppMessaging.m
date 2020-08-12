@@ -215,8 +215,6 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
         if (extender && [extender respondsToSelector:@selector(extendMessageBuilder:message:)]) {
             [extender extendMessageBuilder:builder message:message];
         }
-
-        builder.identifier = message.identifier;
         builder.source = UAInAppMessageSourceLegacyPush;
     }];
 

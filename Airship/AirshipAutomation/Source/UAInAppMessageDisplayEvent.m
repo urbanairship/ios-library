@@ -11,20 +11,20 @@ NSString *const UAInAppMessageDisplayEventLocaleKey = @"locale";
 
 @implementation UAInAppMessageDisplayEvent
 
-- (instancetype)initWithMessage:(UAInAppMessage *)message {
+- (instancetype)initWithMessageID:(NSString *)messageID message:(UAInAppMessage *)message {
     self = [super init];
     if (self) {
-        NSMutableDictionary *mutableEventData = [UAInAppMessageEventUtils createDataForMessage:message];
+        NSMutableDictionary *mutableEventData = [UAInAppMessageEventUtils createDataWithMessageID:messageID
+                                                                                          message:message];
         [mutableEventData setValue:message.renderedLocale forKey:UAInAppMessageDisplayEventLocaleKey];
         self.eventData = mutableEventData;
-
         return self;
     }
     return nil;
 }
 
-+ (instancetype)eventWithMessage:(UAInAppMessage *)message {
-    return [[self alloc] initWithMessage:message];
++ (instancetype)eventWithMessageID:(NSString *)messageID message:(UAInAppMessage *)message {
+    return [[self alloc] initWithMessageID:messageID message:message];
 }
 
 - (NSString *)eventType {

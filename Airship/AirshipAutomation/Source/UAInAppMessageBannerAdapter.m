@@ -36,10 +36,9 @@ NSString *const UABannerStyleFileName = @"UAInAppMessageBannerStyle";
     UAInAppMessageBannerDisplayContent *displayContent = (UAInAppMessageBannerDisplayContent *)self.message.displayContent;
     [UAInAppMessageUtils prepareMediaView:displayContent.media assets:assets completionHandler:^(UAInAppMessagePrepareResult result, UAInAppMessageMediaView *mediaView) {
         if (result == UAInAppMessagePrepareResultSuccess) {
-            self.bannerController = [UAInAppMessageBannerController bannerControllerWithBannerMessageID:self.message.identifier
-                                                                                         displayContent:displayContent
-                                                                                              mediaView:mediaView
-                                                                                                  style:self.style];
+            self.bannerController = [UAInAppMessageBannerController bannerControllerWithDisplayContent:displayContent
+                                                                                             mediaView:mediaView
+                                                                                                 style:self.style];
         }
         completionHandler(result);
     }];
@@ -55,7 +54,7 @@ NSString *const UABannerStyleFileName = @"UAInAppMessageBannerStyle";
     if (@available(iOS 13.0, *)) {
         self.scene = [[UAInAppMessageSceneManager shared] sceneForMessage:self.message];
         if (!self.scene) {
-            UA_LDEBUG(@"Unable to display message %@, no scene.", self.message.identifier);
+            UA_LDEBUG(@"Unable to display message %@, no scene.", self.message);
             return NO;
         }
     }

@@ -129,7 +129,6 @@ CGFloat const UALandingPageDefaultBorderRadiusPoints = 2;
         }];
 
         builder.displayContent = displayContent;
-        builder.identifier = messageID;
         builder.isReportingEnabled = reportEvent;
         builder.displayBehavior = UAInAppMessageDisplayBehaviorImmediate;
 
@@ -140,6 +139,7 @@ CGFloat const UALandingPageDefaultBorderRadiusPoints = 2;
     }];
 
     return [UAInAppMessageSchedule scheduleWithMessage:message builderBlock:^(UAScheduleBuilder * _Nonnull builder) {
+        builder.identifier = messageID;
         builder.priority = 0;
         builder.limit = 1;
         builder.triggers = @[[UAScheduleTrigger triggerWithType:UAScheduleTriggerActiveSession goal:@(1) predicate:nil]];

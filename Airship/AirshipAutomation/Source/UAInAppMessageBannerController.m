@@ -29,11 +29,6 @@ static double const MinimumSwipeVelocity = 100.0;
 @interface UAInAppMessageBannerController ()
 
 /**
- * The idenfier of the banner message.
- */
-@property (nonatomic, copy) NSString *messageID;
-
-/**
  * The banner display content consisting of the text and image.
  */
 @property (nonatomic, strong) UAInAppMessageBannerDisplayContent *displayContent;
@@ -89,25 +84,21 @@ static double const MinimumSwipeVelocity = 100.0;
 
 @implementation UAInAppMessageBannerController
 
-+ (instancetype)bannerControllerWithBannerMessageID:(NSString *)messageID
-                                     displayContent:(UAInAppMessageBannerDisplayContent *)displayContent
-                                          mediaView:(nullable UAInAppMessageMediaView *)mediaView
-                                              style:(nullable UAInAppMessageBannerStyle *)style {
++ (instancetype)bannerControllerWithDisplayContent:(UAInAppMessageBannerDisplayContent *)displayContent
+                                         mediaView:(nullable UAInAppMessageMediaView *)mediaView
+                                             style:(nullable UAInAppMessageBannerStyle *)style {
 
-    return [[self alloc] initWithBannerMessageID:messageID
-                                  displayContent:displayContent
-                                       mediaView:mediaView
-                                           style:style];
+    return [[self alloc] initWithDisplayContent:displayContent
+                                      mediaView:mediaView
+                                          style:style];
 }
 
-- (instancetype)initWithBannerMessageID:(NSString *)messageID
-                         displayContent:(UAInAppMessageBannerDisplayContent *)displayContent
-                              mediaView:(nullable UAInAppMessageMediaView *)mediaView
-                                  style:(nullable UAInAppMessageBannerStyle *)style {
+- (instancetype)initWithDisplayContent:(UAInAppMessageBannerDisplayContent *)displayContent
+                             mediaView:(nullable UAInAppMessageMediaView *)mediaView
+                                 style:(nullable UAInAppMessageBannerStyle *)style {
     self = [super init];
 
     if (self) {
-        self.messageID = messageID;
         self.displayContent = displayContent;
         self.mediaView = mediaView;
         self.style = style;
@@ -211,7 +202,7 @@ static double const MinimumSwipeVelocity = 100.0;
             if (self.showCompletionHandler) {
                 self.showCompletionHandler(resolution);
                 self.showCompletionHandler = nil;
-            }            
+            }
         }];
     }];
 }
@@ -224,8 +215,8 @@ static double const MinimumSwipeVelocity = 100.0;
                                          situation:UASituationManualInvocation
                                           metadata:nil
                                  completionHandler:^(UAActionResult *result) {
-                                     UA_LTRACE(@"Message tap actions finished running.");
-                                 }];
+            UA_LTRACE(@"Message tap actions finished running.");
+        }];
     }
 
     [self dismissWithResolution:[UAInAppMessageResolution messageClickResolution]];
@@ -543,5 +534,6 @@ static double const MinimumSwipeVelocity = 100.0;
 @end
 
 NS_ASSUME_NONNULL_END
+
 
 

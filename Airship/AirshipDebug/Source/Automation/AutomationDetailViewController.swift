@@ -76,11 +76,10 @@ class AutomationDetailViewController: UIViewController, UITableViewDelegate, UIT
     cancelScheduleIdx =  IndexPath(row: 10, section: 0)
 
     // Indexes section 1
-    private let messageIdentifierIdx = IndexPath(row: 0, section: 1),
-    nameIdx = IndexPath(row: 1, section: 1),
-    displayTypeIdx = IndexPath(row: 2, section: 1),
-    audienceIdx = IndexPath(row: 3, section: 1),
-    extrasIdx = IndexPath(row: 4, section: 1)
+    private let nameIdx = IndexPath(row: 0, section: 1),
+    displayTypeIdx = IndexPath(row: 1, section: 1),
+    audienceIdx = IndexPath(row: 2, section: 1),
+    extrasIdx = IndexPath(row: 3, section: 1)
 
     // Indexes section 2
     private let placementIdx = IndexPath(row: 0, section: 2),
@@ -163,8 +162,6 @@ class AutomationDetailViewController: UIViewController, UITableViewDelegate, UIT
 
             switch indexPath {
             case identifierIdx:
-                copiedText = cell.subtitle.text
-            case messageIdentifierIdx:
                 copiedText = cell.subtitle.text
             default:
                 break
@@ -647,9 +644,6 @@ class AutomationDetailViewController: UIViewController, UITableViewDelegate, UIT
         dateFormatter.formatOptions = [.withInternetDateTime]
 
         switch indexPath {
-        case messageIdentifierIdx:
-            cell.title.text = "ua_message_identifier".localized()
-            cell.subtitle.text = message.identifier
         case nameIdx:
             cell.title.text = "ua_message_name".localized()
             if let name = message.name {

@@ -7,16 +7,15 @@
 #import "NSJSONSerialization+UAAdditions.h"
 #import "UAInAppMessageCustomDisplayContent.h"
 
-@interface UAINAppMessageScheduleTests : UABaseTest
+@interface UAInAppMessageScheduleTests : UABaseTest
 
 @end
 
-@implementation UAINAppMessageScheduleTests
+@implementation UAInAppMessageScheduleTests
 
 - (void)testMessage {
     id message = [UAInAppMessage messageWithBuilderBlock:^(UAInAppMessageBuilder *builder) {
         builder.displayContent = [UAInAppMessageCustomDisplayContent displayContentWithValue:@{}];
-        builder.identifier = @"message ID";
     }];
 
     UAInAppMessageSchedule *schedule = [UAInAppMessageSchedule scheduleWithMessage:message builderBlock:^(UAScheduleBuilder * _Nonnull builder) {
@@ -29,7 +28,6 @@
 - (void)testJSON {
     id message = [UAInAppMessage messageWithBuilderBlock:^(UAInAppMessageBuilder *builder) {
         builder.displayContent = [UAInAppMessageCustomDisplayContent displayContentWithValue:@{}];
-        builder.identifier = @"message ID";
     }];
 
     UAInAppMessageSchedule *schedule = [UAInAppMessageSchedule scheduleWithMessage:message builderBlock:^(UAScheduleBuilder * _Nonnull builder) {

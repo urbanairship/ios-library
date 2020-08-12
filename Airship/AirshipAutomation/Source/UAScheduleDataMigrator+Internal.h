@@ -11,10 +11,10 @@ NS_ASSUME_NONNULL_BEGIN
 @interface UAScheduleDataMigrator : NSObject
 
 /**
- * Migrates the schedule data.
- * @param scheduleData The schedule data.
+ * Migrates the schedule datas.
+ * @param schedules The array of schedule data to migrate.
  */
-+ (void)migrateScheduleData:(UAScheduleData *)scheduleData;
++ (void)migrateSchedules:(NSArray<UAScheduleData *> *)schedules;
 
 @end
 

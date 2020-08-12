@@ -120,11 +120,7 @@ NSString *const UALegacyActionAutomationStoreFileFormat = @"Automation-%@.sqlite
         UA_LERR(@"Error fetching schedules %@", error);
         return;
     }
-
-    for (UAScheduleData *scheduleData in result) {
-        [UAScheduleDataMigrator migrateScheduleData:scheduleData];
-    }
-
+    [UAScheduleDataMigrator migrateSchedules:result];
     [self.managedContext safeSave];
 }
 

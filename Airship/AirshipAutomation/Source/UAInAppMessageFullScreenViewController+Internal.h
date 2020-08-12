@@ -17,17 +17,15 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * The factory method for creating a full screen controller.
  *
- * @param identifier The message identifier.
  * @param displayContent The display content.
  * @param mediaView The media view.
  * @param style The full screen styling.
  *
  * @return a configured UAInAppMessageFullScreenView instance.
  */
-+ (instancetype)fullScreenControllerWithFullScreenMessageID:(NSString *)identifier
-                                             displayContent:(UAInAppMessageFullScreenDisplayContent *)displayContent
-                                                  mediaView:(nullable UAInAppMessageMediaView *)mediaView
-                                                      style:(UAInAppMessageFullScreenStyle *)style;
++ (instancetype)fullScreenControllerWithDisplayContent:(UAInAppMessageFullScreenDisplayContent *)displayContent
+                                             mediaView:(nullable UAInAppMessageMediaView *)mediaView
+                                                 style:(UAInAppMessageFullScreenStyle *)style;
 
 /**
  * The method to show the full screen view controller.

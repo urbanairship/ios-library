@@ -45,11 +45,6 @@ NSString *const UAInAppNativeBridgeDismissCommand = @"dismiss";
 @property (strong, nonatomic) UAInAppMessageDismissButton *closeButton;
 
 /**
- * The identifier of the HTML message.
- */
-@property (nonatomic, copy) NSString *messageID;
-
-/**
  * The request headers. These are populated and used when displaying an inbox message.
  */
 @property (nonatomic, copy) NSDictionary *headers;
@@ -59,18 +54,17 @@ NSString *const UAInAppNativeBridgeDismissCommand = @"dismiss";
 
 @implementation UAInAppMessageHTMLViewController
 
-+ (instancetype)htmlControllerWithMessageID:(NSString *)messageID
-                             displayContent:(UAInAppMessageHTMLDisplayContent *)displayContent
-                                      style:(UAInAppMessageHTMLStyle *)style {
-    return [[self alloc] initWithHTMLMessageID:messageID displayContent:displayContent style:style];
++ (instancetype)htmlControllerWithDisplayContent:(UAInAppMessageHTMLDisplayContent *)displayContent
+                                          style:(UAInAppMessageHTMLStyle *)style {
+    return [[self alloc] initWithDisplayContent:displayContent style:style];
 }
 
-- (instancetype)initWithHTMLMessageID:(NSString *)messageID displayContent:(UAInAppMessageHTMLDisplayContent *)displayContent style:(UAInAppMessageHTMLStyle *)style {
+- (instancetype)initWithDisplayContent:(UAInAppMessageHTMLDisplayContent *)displayContent
+                                 style:(UAInAppMessageHTMLStyle *)style {
     NSBundle *bundle = [NSBundle bundleForClass:[self class]];
     self = [self initWithNibName:@"UAInAppMessageHTMLViewController" bundle:bundle];
 
     if (self) {
-        self.messageID = messageID;
         self.displayContent = displayContent;
 
         self.style = style;

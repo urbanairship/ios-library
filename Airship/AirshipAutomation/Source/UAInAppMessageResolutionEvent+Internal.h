@@ -32,14 +32,16 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Creates a resolution event.
  *
+ * @param messageID The message ID.
  * @param message The in-app message.
  * @param resolution The in-app message resolution.
  * @param displayTime The amount of time the message was displayed.
  * @return The resolution event.
  */
-+ (instancetype)eventWithMessage:(UAInAppMessage *)message
-                      resolution:(UAInAppMessageResolution *)resolution
-                     displayTime:(NSTimeInterval)displayTime;
++ (instancetype)eventWithMessageID:(NSString *)messageID
+                           message:(UAInAppMessage *)message
+                        resolution:(UAInAppMessageResolution *)resolution
+                       displayTime:(NSTimeInterval)displayTime;
 
 @end
 

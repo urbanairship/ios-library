@@ -60,13 +60,14 @@ NSString *const UAInAppMessageResolutionEventTimedOut = @"timed_out";
     return [[self alloc] initWithData:data];
 }
 
-+ (instancetype)eventWithMessage:(UAInAppMessage *)message
++ (instancetype)eventWithMessageID:(NSString *)messageID
+                           message:(UAInAppMessage *)message
                       resolution:(UAInAppMessageResolution *)resolution
                      displayTime:(NSTimeInterval)displayTime{
 
     NSDictionary *resolutionData = [UAInAppMessageResolutionEvent createResolutionDataWithResolution:resolution
                                                                                          displayTime:displayTime];
-    NSMutableDictionary *data = [UAInAppMessageEventUtils createDataForMessage:message];
+    NSMutableDictionary *data = [UAInAppMessageEventUtils createDataWithMessageID:messageID message:message];
 
     [data setValue:resolutionData forKey:UAInAppMessageResolutionEventResolutionKey];
     [data setValue:message.renderedLocale forKey:UAInAppMessageResolutionEventLocaleKey];

@@ -807,7 +807,6 @@ NSString * const UAInAppMessagesScheduledMessagesKey = @"UAInAppRemoteDataClient
     }];
 
     UAInAppMessage *remoteMessage = [UAInAppMessage messageWithBuilderBlock:^(UAInAppMessageBuilder * _Nonnull builder) {
-        builder.identifier = @"neat";
         builder.source = UAInAppMessageSourceRemoteData;
     }];
 

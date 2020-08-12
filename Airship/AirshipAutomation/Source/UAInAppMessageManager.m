@@ -403,7 +403,7 @@ NSString *const UAInAppMessageDisplayCoordinatorIsReadyKey = @"isReady";
 
     if (message.isReportingEnabled) {
         // Display event
-        UAEvent *event = [UAInAppMessageDisplayEvent eventWithMessage:message];
+        UAEvent *event = [UAInAppMessageDisplayEvent eventWithMessageID:scheduleID message:message];
         [self.analytics addEvent:event];
     }
 
@@ -430,7 +430,10 @@ NSString *const UAInAppMessageDisplayCoordinatorIsReadyKey = @"isReady";
 
         // Resolution event
         [timer stop];
-        UAEvent *event = [UAInAppMessageResolutionEvent eventWithMessage:message resolution:resolution displayTime:timer.time];
+        UAEvent *event = [UAInAppMessageResolutionEvent eventWithMessageID:scheduleID
+                                                                   message:message
+                                                               resolution:resolution
+                                                              displayTime:timer.time];
 
         if (message.isReportingEnabled) {
             [self.analytics addEvent:event];
