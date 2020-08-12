@@ -3,6 +3,9 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 13.5.4 - August 12, 2020
+Patch release to address [Dynamic Type](https://developer.apple.com/documentation/uikit/uifont/scaling_fonts_automatically) build warnings and Message Center Inbox UI issues. Message Center customers who support Dynamic Type are encouraged update to this version.
+
 ## Version 13.5.3 - August 6, 2020
 Patch release to fix a crash with Accengage data migration. Accengage migration customers should update.
 
