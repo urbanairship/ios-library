@@ -78,7 +78,6 @@ NSUInteger const UAInAppMessageNameLimit = 100;
 NSString * const UAInAppMessageErrorDomain = @"com.urbanairship.in_app_message";
 
 // Keys via IAM v2 spec
-NSString *const UAInAppMessageIDKey = @"message_id";
 NSString *const UAInAppMessageDisplayTypeKey = @"display_type";
 NSString *const UAInAppMessageDisplayContentKey = @"display";
 NSString *const UAInAppMessageExtraKey = @"extra";

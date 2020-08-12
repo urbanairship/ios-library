@@ -66,4 +66,27 @@ NSString *const UAScheduleDeferredDataRetryOnTimeoutKey = @"retry_on_timeout";
     };
 }
 
+- (BOOL)isEqual:(id)other {
+    if (other == self) {
+        return YES;
+    }
+
+    if (![other isKindOfClass:[self class]]) {
+        return NO;
+    }
+
+    return [self isEqualToDeferredData:(UAScheduleDeferredData *)other];
+}
+
+- (BOOL)isEqualToDeferredData:(nullable UAScheduleDeferredData *)other {
+    return [self.URL isEqual:other.URL] && self.retriableOnTimeout == other.retriableOnTimeout;
+}
+
+- (NSUInteger)hash {
+    NSUInteger result = 1;
+    result = 31 * result + [self.URL hash];
+    result = 31 * result + self.retriableOnTimeout;
+    return result;
+}
+
 @end

@@ -10,16 +10,14 @@
 #import "NSObject+AnonymousKVO+Internal.h"
 #import "UAAirshipAutomationCoreImport.h"
 #import "NSDictionary+UAAdditions.h"
+#import "UAActionSchedule.h"
+#import "UADeferredSchedule+Internal.h"
 
 static NSString * const UAInAppMessagesLastPayloadTimeStampKey = @"UAInAppRemoteDataClient.LastPayloadTimeStamp";
 static NSString * const UAInAppMessagesLastPayloadMetadataKey = @"UAInAppRemoteDataClient.LastPayloadMetadata";
 
 static NSString * const UAInAppMessagesScheduledNewUserCutoffTimeKey = @"UAInAppRemoteDataClient.ScheduledNewUserCutoffTime";
 static NSString * const UAInAppRemoteDataClientMetadataKey = @"com.urbanairship.iaa.REMOTE_DATA_METADATA";
-
-//static NSString * const UAInAppMessagesScheduledMessagesKey = @"UAInAppRemoteDataClient.ScheduledMessages";
-
-
 
 static NSString * const UAInAppMessages = @"in_app_messages";
 static NSString * const UAInAppMessagesCreatedJSONKey = @"created";
@@ -34,8 +32,19 @@ static NSString *const UAScheduleInfoTriggersKey = @"triggers";
 static NSString *const UAScheduleInfoDelayKey = @"delay";
 static NSString *const UAScheduleInfoIntervalKey = @"interval";
 static NSString *const UAScheduleInfoEditGracePeriodKey = @"edit_grace_period";
-static NSString *const UAScheduleInfoInAppMessageKey = @"message";
 static NSString *const UAScheduleInfoAudienceKey = @"audience";
+static NSString *const UAScheduleInfoIDKey = @"id";
+static NSString *const UAScheduleInfoLegacyIDKey = @"message_id";
+static NSString *const UAScheduleInfoTypeKey = @"type";
+
+static NSString *const UAScheduleInfoTypeActions = @"actions";
+static NSString *const UAScheduleInfoTypeDeferred = @"deferred";
+static NSString *const UAScheduleInfoTypeInAppMessage = @"in_app_message";
+
+static NSString *const UAScheduleInfoInAppMessageKey = @"message";
+static NSString *const UAScheduleInfoActionsKey = @"actions";
+static NSString *const UAScheduleInfoDeferredKey = @"deferred";
+
 
 @interface UAInAppRemoteDataClient()
 @property(nonatomic, strong) UAInAppMessageManager *inAppMessageManager;
@@ -319,31 +328,15 @@ static NSString *const UAScheduleInfoAudienceKey = @"audience";
     return [self.remoteDataProvider isMetadataCurrent:schedule.metadata[UAInAppRemoteDataClientMetadataKey]];
 }
 
-+ (UASchedule *)parseScheduleWithJSON:(id)json
++ (UASchedule *)parseScheduleWithJSON:(id)JSON
                              metadata:(NSDictionary *)metadata {
-    NSDictionary *data = [json dictionaryForKey:UAScheduleInfoInAppMessageKey defaultValue:nil];
-    if (!data) {
-        UA_LERR(@"Invalid message: %@", json);
-        return nil;
-    }
-
-    NSError *messageError;
-    UAInAppMessage *message = [UAInAppMessage messageWithJSON:data
-                                                defaultSource:UAInAppMessageSourceRemoteData
-                                                        error:&messageError];
-
-    if (!message || messageError) {
-        UA_LERR(@"Invalid message: %@ - %@", json, messageError);
-        return nil;
-    }
-
     // Triggers
     NSMutableArray *triggers = [NSMutableArray array];
-    for (id triggerJSON in [json arrayForKey:UAScheduleInfoTriggersKey defaultValue:nil]) {
+    for (id triggerJSON in [JSON arrayForKey:UAScheduleInfoTriggersKey defaultValue:nil]) {
         NSError *triggerError;
         UAScheduleTrigger *trigger = [UAScheduleTrigger triggerWithJSON:triggerJSON error:&triggerError];
         if (triggerError || !trigger) {
-            UA_LERR(@"Invalid schedule: %@ - %@", json, triggerError);
+            UA_LERR(@"Invalid schedule: %@ - %@", JSON, triggerError);
             return nil;
         }
         [triggers addObject:trigger];
@@ -351,95 +344,58 @@ static NSString *const UAScheduleInfoAudienceKey = @"audience";
 
     // Delay
     UAScheduleDelay *delay = nil;
-    if (json[UAScheduleInfoDelayKey]) {
+    if (JSON[UAScheduleInfoDelayKey]) {
         NSError *delayError;
-        UAScheduleDelay *delay = [UAScheduleDelay delayWithJSON:json[UAScheduleInfoDelayKey] error:&delayError];
+        delay = [UAScheduleDelay delayWithJSON:JSON[UAScheduleInfoDelayKey] error:&delayError];
         if (delayError || !delay) {
-            UA_LERR(@"Invalid schedule: %@ - %@", json, delayError);
+            UA_LERR(@"Invalid schedule: %@ - %@", JSON, delayError);
             return nil;
         }
     }
 
-    UAScheduleAudience *audience;
-    id audienceDict = [data dictionaryForKey:UAScheduleInfoAudienceKey defaultValue:nil];
-    if (audienceDict) {
-        NSError *audienceError;
-        audience = [UAScheduleAudience audienceWithJSON:audienceDict error:&audienceError];
-
-        if (audienceError) {
-            UA_LERR(@"Invalid audience: %@ - %@", json, audienceError);
-            return nil;
-        }
+    NSError *audienceError;
+    UAScheduleAudience *audience = [UAInAppRemoteDataClient parseAudience:JSON error:&audienceError];
+    if (audienceError) {
+        UA_LERR(@"Invalid schedule: %@ - %@", JSON, audienceError);
+        return nil;
     }
 
-    return [UAInAppMessageSchedule scheduleWithMessage:message
-                                          builderBlock:^(UAScheduleBuilder *builder) {
-
-        builder.identifier = [UAInAppRemoteDataClient parseScheduleID:json];
+    return [UAInAppRemoteDataClient scheduleWithJSON:JSON builderBlock:^(UAScheduleBuilder *builder) {
+        builder.identifier = [UAInAppRemoteDataClient parseScheduleID:JSON];
         builder.metadata = metadata;
         builder.triggers = triggers;
         builder.delay = delay;
-        builder.group = [json stringForKey:UAScheduleInfoGroupKey defaultValue:nil];
-        builder.limit = [[json numberForKey:UAScheduleInfoLimitKey defaultValue:@(1)] unsignedIntegerValue];
-        builder.priority = [[json numberForKey:UAScheduleInfoPriorityKey defaultValue:nil] integerValue];
-        builder.editGracePeriod = [[json numberForKey:UAScheduleInfoEditGracePeriodKey defaultValue:nil] doubleValue];
-        builder.interval = [[json numberForKey:UAScheduleInfoIntervalKey defaultValue:nil] doubleValue];
+        builder.group = [JSON stringForKey:UAScheduleInfoGroupKey defaultValue:nil];
+        builder.limit = [[JSON numberForKey:UAScheduleInfoLimitKey defaultValue:@(1)] unsignedIntegerValue];
+        builder.priority = [[JSON numberForKey:UAScheduleInfoPriorityKey defaultValue:nil] integerValue];
+        builder.editGracePeriod = [[JSON numberForKey:UAScheduleInfoEditGracePeriodKey defaultValue:nil] doubleValue];
+        builder.interval = [[JSON numberForKey:UAScheduleInfoIntervalKey defaultValue:nil] doubleValue];
         builder.audience = audience;
 
-        if (json[UAScheduleInfoStartKey]) {
-            builder.start = [UAUtils parseISO8601DateFromString:[json stringForKey:UAScheduleInfoStartKey defaultValue:@""]];
+        if (JSON[UAScheduleInfoStartKey]) {
+            builder.start = [UAUtils parseISO8601DateFromString:[JSON stringForKey:UAScheduleInfoStartKey defaultValue:@""]];
         }
 
-        if (json[UAScheduleInfoEndKey]) {
-            builder.end = [UAUtils parseISO8601DateFromString:[json stringForKey:UAScheduleInfoEndKey defaultValue:@""]];
+        if (JSON[UAScheduleInfoEndKey]) {
+            builder.end = [UAUtils parseISO8601DateFromString:[JSON stringForKey:UAScheduleInfoEndKey defaultValue:@""]];
         }
     }];
 }
 
-+ (NSString *)parseScheduleID:(id)json {
-    id messagePayload = json[UAScheduleInfoInAppMessageKey];
-    if (!messagePayload) {
++ (UAScheduleEdits *)parseScheduleEditsWithJSON:(id)JSON metadata:(NSDictionary *)metadata {
+    NSError *audienceError;
+    UAScheduleAudience *audience = [UAInAppRemoteDataClient parseAudience:JSON error:&audienceError];
+    if (audienceError) {
+        UA_LERR(@"Invalid schedule: %@ - %@", JSON, audienceError);
         return nil;
     }
 
-    return messagePayload[UAInAppMessageIDKey];
-}
-
-+ (UAScheduleEdits *)parseScheduleEditsWithJSON:(id)json metadata:(NSDictionary *)metadata {
-    NSDictionary *data = [json dictionaryForKey:UAScheduleInfoInAppMessageKey defaultValue:nil];
-    if (!data) {
-        UA_LERR(@"Invalid message: %@", json);
-        return nil;
-    }
-
-    NSError *messageError;
-    UAInAppMessage *message = [UAInAppMessage messageWithJSON:data
-                                                defaultSource:UAInAppMessageSourceRemoteData
-                                                        error:&messageError];
-    
-    if (!message || messageError) {
-        UA_LERR(@"Invalid message: %@ - %@", json, messageError);
-        return nil;
-    }
-
-    UAScheduleAudience *audience;
-    id audienceDict = [data dictionaryForKey:UAScheduleInfoAudienceKey defaultValue:nil];
-    if (audienceDict) {
-        NSError *audienceError;
-        audience = [UAScheduleAudience audienceWithJSON:audienceDict error:&audienceError];
-
-        if (audienceError) {
-            UA_LERR(@"Invalid audience: %@ - %@", json, audienceError);
-            return nil;
-        }
-    }
-
-    return [UAScheduleEdits editsWithMessage:message builderBlock:^(UAScheduleEditsBuilder * _Nonnull builder) {
+    return [UAInAppRemoteDataClient editsWithJSON:JSON builderBlock:^(UAScheduleEditsBuilder * _Nonnull builder) {
         builder.metadata = metadata;
-        builder.limit = [json numberForKey:UAScheduleInfoLimitKey defaultValue:nil];
-        builder.priority = [json numberForKey:UAScheduleInfoPriorityKey defaultValue:nil];
-        builder.editGracePeriod = [json numberForKey:UAScheduleInfoEditGracePeriodKey defaultValue:nil];
-        builder.interval = [json numberForKey:UAScheduleInfoIntervalKey defaultValue:nil];
+        builder.limit = [JSON numberForKey:UAScheduleInfoLimitKey defaultValue:nil];
+        builder.priority = [JSON numberForKey:UAScheduleInfoPriorityKey defaultValue:nil];
+        builder.editGracePeriod = [JSON numberForKey:UAScheduleInfoEditGracePeriodKey defaultValue:nil];
+        builder.interval = [JSON numberForKey:UAScheduleInfoIntervalKey defaultValue:nil];
         builder.audience = audience;
 
         /*
@@ -447,19 +403,116 @@ static NSString *const UAScheduleInfoAudienceKey = @"audience";
          * we need to reset them back if the edits do not update them.
          */
 
-        if (json[UAScheduleInfoStartKey]) {
-            builder.start = [UAUtils parseISO8601DateFromString:[json stringForKey:UAScheduleInfoStartKey defaultValue:@""]];
+        if (JSON[UAScheduleInfoStartKey]) {
+            builder.start = [UAUtils parseISO8601DateFromString:[JSON stringForKey:UAScheduleInfoStartKey defaultValue:@""]];
         } else {
             builder.start = [NSDate distantPast];
         }
 
-        if (json[UAScheduleInfoEndKey]) {
-            builder.end = [UAUtils parseISO8601DateFromString:[json stringForKey:UAScheduleInfoEndKey defaultValue:@""]];
+        if (JSON[UAScheduleInfoEndKey]) {
+            builder.end = [UAUtils parseISO8601DateFromString:[JSON stringForKey:UAScheduleInfoEndKey defaultValue:@""]];
         } else {
             builder.end = [NSDate distantFuture];
         }
     }];
 }
 
-@end
++ (NSString *)parseScheduleID:(id)JSON {
+    NSString *scheduleID = [JSON stringForKey:UAScheduleInfoIDKey defaultValue:nil];
+    if (!scheduleID) {
+        NSDictionary *messagePayload = [JSON dictionaryForKey:UAScheduleInfoInAppMessageKey defaultValue:nil];
+        scheduleID = [messagePayload stringForKey:UAScheduleInfoLegacyIDKey defaultValue:nil];
+    }
 
+    return scheduleID;
+}
+
++ (UAScheduleAudience *)parseAudience:(id)JSON error:(NSError **)error {
+    id audienceDict = [JSON dictionaryForKey:UAScheduleInfoAudienceKey defaultValue:nil];
+    if (!audienceDict) {
+        NSDictionary *messagePayload = [JSON dictionaryForKey:UAScheduleInfoInAppMessageKey defaultValue:nil];
+        audienceDict = [messagePayload dictionaryForKey:UAScheduleInfoAudienceKey defaultValue:nil];
+    }
+
+    if (audienceDict) {
+        return [UAScheduleAudience audienceWithJSON:audienceDict error:error];
+    }
+
+    return nil;
+}
+
++ (UASchedule *)scheduleWithJSON:(id)JSON
+                    builderBlock:(void(^)(UAScheduleBuilder *builder))builderBlock {
+
+    NSString *type = [JSON stringForKey:UAScheduleInfoTypeKey defaultValue:UAScheduleInfoTypeInAppMessage];
+    NSError *error;
+
+    if ([type isEqualToString:UAScheduleInfoTypeInAppMessage]) {
+        NSDictionary *data = [JSON dictionaryForKey:UAScheduleInfoInAppMessageKey defaultValue:nil];
+        if (data) {
+            UAInAppMessage *message = [UAInAppMessage messageWithJSON:data
+                                                        defaultSource:UAInAppMessageSourceRemoteData
+                                                                error:&error];
+            if (!error && message) {
+                return [UAInAppMessageSchedule scheduleWithMessage:message
+                                                      builderBlock:builderBlock];
+            }
+        }
+    } else if ([type isEqualToString:UAScheduleInfoTypeDeferred]) {
+        NSDictionary *data = [JSON dictionaryForKey:UAScheduleInfoDeferredKey defaultValue:nil];
+        if (data) {
+            UAScheduleDeferredData *deferred = [UAScheduleDeferredData deferredDataWithJSON:data
+                                                                                      error:&error];
+            if (!error && deferred) {
+                return [UADeferredSchedule scheduleWithDeferredData:deferred
+                                                       builderBlock:builderBlock];
+            }
+        }
+    } else if ([type isEqualToString:UAScheduleInfoTypeActions]) {
+        NSDictionary *actions = [JSON dictionaryForKey:UAScheduleInfoActionsKey defaultValue:nil];
+        if (actions) {
+            return [UAActionSchedule scheduleWithActions:actions builderBlock:builderBlock];
+        }
+    }
+
+    UA_LERR(@"Invalid schedule: %@ error: %@", JSON, error);
+    return nil;
+}
+
++ (UAScheduleEdits *)editsWithJSON:(id)JSON
+                      builderBlock:(void(^)(UAScheduleEditsBuilder *builder))builderBlock {
+
+    NSString *type = [JSON stringForKey:UAScheduleInfoTypeKey defaultValue:UAScheduleInfoTypeInAppMessage];
+    NSError *error;
+
+    if ([type isEqualToString:UAScheduleInfoTypeInAppMessage]) {
+        NSDictionary *data = [JSON dictionaryForKey:UAScheduleInfoInAppMessageKey defaultValue:nil];
+        if (data) {
+            UAInAppMessage *message = [UAInAppMessage messageWithJSON:data
+                                                        defaultSource:UAInAppMessageSourceRemoteData
+                                                                error:&error];
+            if (!error && message) {
+                return [UAScheduleEdits editsWithMessage:message builderBlock:builderBlock];
+            }
+        }
+    } else if ([type isEqualToString:UAScheduleInfoTypeDeferred]) {
+        NSDictionary *data = [JSON dictionaryForKey:UAScheduleInfoDeferredKey defaultValue:nil];
+        if (data) {
+            UAScheduleDeferredData *deferred = [UAScheduleDeferredData deferredDataWithJSON:data
+                                                                                      error:&error];
+            if (!error && deferred) {
+                return [UAScheduleEdits editsWithDeferredData:deferred builderBlock:builderBlock];
+            }
+        }
+    } else if ([type isEqualToString:UAScheduleInfoTypeActions]) {
+        NSDictionary *actions = [JSON dictionaryForKey:UAScheduleInfoActionsKey defaultValue:nil];
+        if (actions) {
+            return [UAScheduleEdits editsWithActions:actions builderBlock:builderBlock];
+        }
+    }
+
+    UA_LERR(@"Invalid schedule: %@ error: %@", JSON, error);
+    return nil;
+}
+
+@end
