@@ -116,6 +116,13 @@
 
 + (void)handleForegroundNotification:(UNNotification *)notification mergedOptions:(UNNotificationPresentationOptions)options withCompletionHandler:(void(^)(void))completionHandler {
     BOOL foregroundPresentation = (options & UNNotificationPresentationOptionAlert) > 0;
+    
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    if (@available(iOS 14.0, tvOS 14.0, *)) {
+        foregroundPresentation = (options & (UNNotificationPresentationOptionAlert | UNNotificationPresentationOptionList | UNNotificationPresentationOptionBanner)) > 0;
+    }
+    #pragma clang diagnostic pop
 
     UANotificationContent *notificationContent = [UANotificationContent notificationWithUNNotification:notification];
 

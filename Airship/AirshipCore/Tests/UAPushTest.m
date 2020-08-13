@@ -1694,6 +1694,11 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 - (void)testPresentationOptionsForNotificationNoDelegate {
 
     self.push.defaultPresentationOptions = UNNotificationPresentationOptionAlert;
+    
+    if (@available(iOS 14.0, tvOS 14.0, *)) {
+        self.push.defaultPresentationOptions = UNNotificationPresentationOptionList | UNNotificationPresentationOptionBanner;
+    }
+    
     self.push.pushNotificationDelegate = nil;
 
     [[[self.mockAirship stub] andReturn:self.push] push];
@@ -1707,14 +1712,22 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
  * Test presentationOptionsForNotification when delegate method is implemented.
  */
 - (void)testPresentationOptionsForNotification {
-
     [[[self.mockAirship stub] andReturn:self.push] push];
 
-    [[[self.mockPushDelegate stub] andReturnValue:OCMOCK_VALUE(UNNotificationPresentationOptionAlert)] extendPresentationOptions:UNNotificationPresentationOptionNone notification:self.mockUNNotification];
+    
+    if (@available(iOS 14.0, *)) {
+        [[[self.mockPushDelegate stub] andReturnValue:OCMOCK_VALUE(UNNotificationPresentationOptionList | UNNotificationPresentationOptionBanner)] extendPresentationOptions:UNNotificationPresentationOptionNone notification:self.mockUNNotification];
+    } else {
+        [[[self.mockPushDelegate stub] andReturnValue:OCMOCK_VALUE(UNNotificationPresentationOptionAlert)] extendPresentationOptions:UNNotificationPresentationOptionNone notification:self.mockUNNotification];
+    }
 
     UNNotificationPresentationOptions result = [self.push presentationOptionsForNotification:self.mockUNNotification];
-
-    XCTAssertEqual(result, UNNotificationPresentationOptionAlert);
+    
+    if (@available(iOS 14.0, *)) {
+        XCTAssertEqual(result, UNNotificationPresentationOptionList | UNNotificationPresentationOptionBanner);
+    } else {
+        XCTAssertEqual(result, UNNotificationPresentationOptionAlert);
+    }
 }
 
 /**
@@ -1723,15 +1736,25 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 - (void)testPresentationOptionsForNotificationWithForegroundOptionsWithoutDelegate {
     // SETUP
     NSArray *array = @[@"alert", @"sound", @"badge"];
+    
+    if (@available(iOS 14.0, *)) {
+        array = @[@"list", @"banner", @"sound", @"badge"];
+    }
+    
     [[[self.mockUserInfo stub] andReturnValue:OCMOCK_VALUE(array)] objectForKey:@"foreground_presentation"];
     self.push.pushNotificationDelegate = nil;
-
+    
+        
     // EXPECTATIONS
     UNNotificationPresentationOptions options = UNNotificationPresentationOptionAlert | UNNotificationPresentationOptionSound | UNNotificationPresentationOptionBadge;
-
+    
+    if (@available(iOS 14.0, *)) {
+        options = UNNotificationPresentationOptionList | UNNotificationPresentationOptionBanner | UNNotificationPresentationOptionSound | UNNotificationPresentationOptionBadge;
+    }
+    
     // TEST
     UNNotificationPresentationOptions result = [self.push presentationOptionsForNotification:self.mockUNNotification];
-
+    
     // VERIFY
     XCTAssertEqual(result, options);
 }
@@ -1743,11 +1766,21 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     // SETUP
     NSArray *array = @[];
     [[[self.mockUserInfo stub] andReturnValue:OCMOCK_VALUE(array)] objectForKey:@"foreground_presentation"];
+    
     self.push.defaultPresentationOptions = UNNotificationPresentationOptionAlert;
+    
+    if (@available(iOS 14.0, *)) {
+        self.push.defaultPresentationOptions = UNNotificationPresentationOptionList | UNNotificationPresentationOptionBanner;
+    }
+    
     self.push.pushNotificationDelegate = nil;
 
     // EXPECTATIONS
     UNNotificationPresentationOptions options = UNNotificationPresentationOptionAlert;
+    
+    if (@available(iOS 14.0, *)) {
+        options = UNNotificationPresentationOptionList | UNNotificationPresentationOptionBanner;
+    }
 
     // TEST
     UNNotificationPresentationOptions result = [self.push presentationOptionsForNotification:self.mockUNNotification];

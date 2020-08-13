@@ -55,6 +55,8 @@ NSString *const UAReceivedBackgroundNotificationEvent = @"com.urbanairship.push.
 NSString *const UAPresentationOptionBadge = @"badge";
 NSString *const UAPresentationOptionAlert = @"alert";
 NSString *const UAPresentationOptionSound = @"sound";
+NSString *const UAPresentationOptionList = @"list";
+NSString *const UAPresentationOptionBanner = @"banner";
 
 // Foreground presentation key
 NSString *const UAForegroundPresentationkey = @"foreground_presentation";
@@ -815,11 +817,18 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
         // build the options bitmask from the array
         for (id presentationOption in payloadPresentationOptions) {
             if ([UAPresentationOptionBadge isEqualToString:presentationOption]) {
-                options |= UNAuthorizationOptionBadge;
+                options |= UNNotificationPresentationOptionBadge;
             } else if ([UAPresentationOptionAlert isEqualToString:presentationOption]) {
-                options |= UNAuthorizationOptionAlert;
+                options |= UNNotificationPresentationOptionAlert;
             } else if ([UAPresentationOptionSound isEqualToString:presentationOption]) {
-                options |= UNAuthorizationOptionSound;
+                options |= UNNotificationPresentationOptionSound;
+            }
+            if (@available(iOS 14.0, tvOS 14.0, *)) {
+                if ([UAPresentationOptionList isEqualToString:presentationOption]) {
+                    options |= UNNotificationPresentationOptionList;
+                } else if ([UAPresentationOptionBanner isEqualToString:presentationOption]) {
+                    options |= UNNotificationPresentationOptionBanner;
+                }
             }
         }
     } else {

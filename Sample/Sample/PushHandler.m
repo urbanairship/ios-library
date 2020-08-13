@@ -31,7 +31,12 @@
 }
 
 - (UNNotificationPresentationOptions)extendPresentationOptions:(UNNotificationPresentationOptions)options notification:(UNNotification *)notification {
-    return options | UNNotificationPresentationOptionSound | UNNotificationPresentationOptionAlert;
+    
+    if (@available(iOS 14.0, *)) {
+        return options | UNNotificationPresentationOptionSound | UNNotificationPresentationOptionList | UNNotificationPresentationOptionBanner;
+    } else {
+        return options | UNNotificationPresentationOptionSound | UNNotificationPresentationOptionAlert;
+    }
 }
 
 @end
