@@ -64,22 +64,22 @@
     UAPendingTagGroupStore *pendingTagGroupStore = [UAPendingTagGroupStore channelHistoryWithDataStore:dataStore];
     UATagGroupsAPIClient *client =  [UATagGroupsAPIClient channelClientWithConfig:config];
 
-    return [[self alloc] initWithPendingTagGroupStore:(UAPendingTagGroupStore *)pendingTagGroupStore
+    return [[self alloc] initWithPendingTagGroupStore:pendingTagGroupStore
                                             apiClient:client
                                           application:[UIApplication sharedApplication]];
 }
 
 + (instancetype)namedUserTagGroupsRegistrarWithConfig:(UARuntimeConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
 
-    UAPendingTagGroupStore *pendingTagGroupStore = [UAPendingTagGroupStore channelHistoryWithDataStore:dataStore];
-    UATagGroupsAPIClient *client =  [UATagGroupsAPIClient channelClientWithConfig:config];
+    UAPendingTagGroupStore *pendingTagGroupStore = [UAPendingTagGroupStore namedUserHistoryWithDataStore:dataStore];
+    UATagGroupsAPIClient *client =  [UATagGroupsAPIClient namedUserClientWithConfig:config];
 
-    return [[self alloc] initWithPendingTagGroupStore:(UAPendingTagGroupStore *)pendingTagGroupStore
+    return [[self alloc] initWithPendingTagGroupStore:pendingTagGroupStore
                                             apiClient:client
                                           application:[UIApplication sharedApplication]];
 }
 
-- (void)updateTagGroupsForID:(NSString *)identifier {
+- (void)updateTagGroups {
     if (!self.enabled) {
         return;
     }
@@ -150,6 +150,8 @@
         } else if (status == 400 || status == 403) {
             // Unrecoverable failure - pop mutation and end the task
             [self popPendingMutation:mutation identifier:identifier];
+            [self endBackgroundTask:backgroundTaskIdentifier];
+        } else {
             [self endBackgroundTask:backgroundTaskIdentifier];
         }
     };

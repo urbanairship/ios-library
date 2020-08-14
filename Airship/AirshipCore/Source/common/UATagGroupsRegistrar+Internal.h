@@ -81,10 +81,9 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)namedUserTagGroupsRegistrarWithConfig:(UARuntimeConfig *)config dataStore:(UAPreferenceDataStore *)dataStore;
 
 /**
- * Update the tag groups for the given identifier.
- * @param channelID The channel identifier.
+ * Update the tag groups.
  */
-- (void)updateTagGroupsForID:(NSString *)channelID;
+- (void)updateTagGroups;
 
 /**
  * Add tags to a tag group. To update the server, make all of your changes,

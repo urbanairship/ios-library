@@ -1,45 +1,48 @@
 /* Copyright Airship and Contributors */
 
 #import <Foundation/Foundation.h>
-#import "UAComponent+Internal.h"
+#import "UAPersistentQueue+Internal.h"
+#import "UAAttributePendingMutations+Internal.h"
+#import "UARuntimeConfig+Internal.h"
+#import "UAPreferenceDataStore.h"
+#import "UAAttributeAPIClient+Internal.h"
 
-@class UAAttributePendingMutations;
-@class UAAttributeAPIClient;
-@class UADate;
 
 NS_ASSUME_NONNULL_BEGIN
 
 /**
  The registrar responsible for routing requests to the attributes APIs.
  */
-@interface UAAttributeRegistrar : UAComponent
+@interface UAAttributeRegistrar : NSObject
 
 ///---------------------------------------------------------------------------------------
 /// @name Attribute Registrar Internal Methods
 ///---------------------------------------------------------------------------------------
 
 /**
- Factory method to create an attribute registrar.
- @param config The Airship config.
- @param dataStore The shared data store.
- @return A new attribute registrar instance.
+ * Factory method to create the channel attribute registrar.
+ * @param config The Airship config.
+ * @return A new attribute registrar instance.
 */
-+ (instancetype)registrarWithConfig:(UARuntimeConfig *)config dataStore:(UAPreferenceDataStore *)dataStore;
++ (instancetype)channelRegistrarWithConfig:(UARuntimeConfig *)config dataStore:(UAPreferenceDataStore *)dateStore;
 
 /**
- Factory method to create an attribute registrar for testing.
- @param dataStore The shared data store.
- @param apiClient The attributes API client.
- @param operationQueue An NSOperation queue used to synchronize changes to attributes.
- @param application The application.
- @param date The date for setting the timestamp.
- @return A new attributes registrar instance.
+ * Factory method to create the named user attribute registrar.
+ * @param config The Airship config.
+ * @return A new attribute registrar instance.
  */
-+ (instancetype)registrarWithDataStore:(UAPreferenceDataStore *)dataStore
-                             apiClient:(UAAttributeAPIClient *)apiClient
-                        operationQueue:(NSOperationQueue *)operationQueue
-                           application:(UIApplication *)application
-                                  date:(UADate *)date;
++ (instancetype)namedUserRegistrarWithConfig:(UARuntimeConfig *)config dataStore:(UAPreferenceDataStore *)dateStore;
+
+/**
+ * Factory method to create an attribute registrar for testing.
+ * @param APIClient The attributes API client.
+ * @param persistentQueue The queue.
+ * @param application The application.
+ * @return A new attributes registrar instance.
+ */
++ (instancetype)registrarWithAPIClient:(UAAttributeAPIClient *)APIClient
+                       persistentQueue:(UAPersistentQueue *)persistentQueue
+                           application:(UIApplication *)application;
 
 /**
  Method to save pending mutations for asynchronous upload.
@@ -48,21 +51,32 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)savePendingMutations:(UAAttributePendingMutations *)mutations;
 
 /**
- * Method to delete pending mutations.
+ * Clears pending mutations.
  */
-- (void)deletePendingMutations;
+- (void)clearPendingMutations;
 
 /**
- Method to update channel attributes with new mutations.
- @param identifier The channel identifier.
-*/
-- (void)updateAttributesForChannel:(NSString *)identifier;
+ * Sets the currently associated identifier.
+ *
+ * @param identifier The identifier.
+ * @param clearPendingOnChange Whether pending mutations should be cleared if the identifier has changed.
+ */
+- (void)setIdentifier:(NSString *)identifier clearPendingOnChange:(BOOL)clearPendingOnChange;
 
 /**
- Method to update named user attributes with new mutations.
- @param identifier The named user identifier.
-*/
-- (void)updateAttributesForNamedUser:(NSString *)identifier;
+ * Update attributes
+ */
+- (void)updateAttributes;
+
+/**
+ * The current identifier associated with this registrar.
+ */
+@property (nonatomic, readonly) NSString *identifier;
+
+/**
+ * Whether the registrar is enabled. Defaults to `YES`.
+ */
+@property (nonatomic, assign) BOOL enabled;
 
 @end
 

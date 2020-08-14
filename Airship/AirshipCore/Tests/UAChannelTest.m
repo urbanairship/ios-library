@@ -35,7 +35,6 @@
 @end
 
 @interface UAChannel()
-- (void)updateChannelAttributes;
 - (void)registrationSucceeded;
 - (void)registrationFailed;
 - (void)channelCreated:(NSString *)channelID
@@ -668,20 +667,24 @@
     XCTAssertEqualObjects(expectedUserInfo, notification.userInfo);
 }
 
-- (void)testInitialIdentifierPassedToRegistrar {
+- (void)testInitialIdentifierPassedToRegistrars {
     [[self.mockTagGroupsRegistrar expect] setIdentifier:self.channelIDFromMockChannelRegistrar clearPendingOnChange:NO];
+    [[self.mockAttributeRegistrar expect] setIdentifier:self.channelIDFromMockChannelRegistrar clearPendingOnChange:NO];
 
     self.channel = [self createChannel];
 
     [self.mockTagGroupsRegistrar verify];
+    [self.mockAttributeRegistrar verify];
 }
 
-- (void)testCreatedIdentifierPassedToRegistrar {
+- (void)testCreatedIdentifierPassedToRegistrars {
     [[self.mockTagGroupsRegistrar expect] setIdentifier:@"foo" clearPendingOnChange:NO];
+    [[self.mockAttributeRegistrar expect] setIdentifier:@"foo" clearPendingOnChange:NO];
 
     [self.channel channelCreated:@"foo" existing:NO];
 
     [self.mockTagGroupsRegistrar verify];
+    [self.mockAttributeRegistrar verify];
 }
 
 /**
@@ -718,7 +721,7 @@
         return [pendingMutations.payload isEqualToDictionary:expectedPendingMutations.payload];
     }]];
 
-    [[self.mockAttributeRegistrar expect] updateAttributesForChannel:@"someChannel"];
+    [[self.mockAttributeRegistrar expect] updateAttributes];
 
     [self.channel applyAttributeMutations:addMutation];
 
@@ -740,7 +743,7 @@
     date:self.testDate];
 
     [[self.mockAttributeRegistrar expect] savePendingMutations:OCMOCK_ANY];
-    [[self.mockAttributeRegistrar reject] updateAttributesForChannel:OCMOCK_ANY];
+    [[self.mockAttributeRegistrar reject] updateAttributes];
 
     [self.channel applyAttributeMutations:addMutation];
 
@@ -869,77 +872,45 @@
 }
 
 /**
- * Test updateChannelTagGroups method if the channel component is disabled
- */
-- (void)testUpdateChannelTagGroupsIfComponentDisabled {
-    self.channel.componentEnabled = NO;
-    [[self.mockTagGroupsRegistrar reject] updateTagGroupsForID:OCMOCK_ANY];
-    [self.channel updateChannelTagGroups];
-    [self.mockTagGroupsRegistrar verify];
-}
-
-/**
- * Test updateChannelTagGroups method if the identifier is not set
+ * Test updateRegistration method if the identifier is not set
  */
 - (void)testUpdateChannelTagGroupsIfIdentifierNil {
     self.channel.componentEnabled = YES;
-    [[self.mockTagGroupsRegistrar reject] updateTagGroupsForID:OCMOCK_ANY];
-    [self.channel updateChannelTagGroups];
+    [[self.mockTagGroupsRegistrar reject] updateTagGroups];
+    [self.channel updateRegistration];
     [self.mockTagGroupsRegistrar verify];
 }
 
 /**
- * Test updateChannelTagGroups method if the identifier is set and component enabled
+ * Test updateRegistration method if the identifier is set.
  */
 - (void)testUpdateChannelTagGroups {
     [self.dataStore setBool:YES forKey:UAirshipDataCollectionEnabledKey];
     self.channelIDFromMockChannelRegistrar = @"123456";
     self.channel.componentEnabled = YES;
-    [[self.mockTagGroupsRegistrar expect] updateTagGroupsForID:OCMOCK_ANY];
-    [self.channel updateChannelTagGroups];
+    [[self.mockTagGroupsRegistrar expect] updateTagGroups];
+    [self.channel updateRegistration];
     [self.mockTagGroupsRegistrar verify];
 }
 
 /**
- * Test updateChannelTagGroups method if data collection is disabled
- */
-- (void)testUpdateChannelTagGroupsDataCollectionDisabled {
-    [self.dataStore setBool:NO forKey:UAirshipDataCollectionEnabledKey];
-    self.channelIDFromMockChannelRegistrar = @"123456";
-    self.channel.componentEnabled = YES;
-    [[self.mockTagGroupsRegistrar reject] updateTagGroupsForID:OCMOCK_ANY];
-    [self.channel updateChannelTagGroups];
-    [self.mockTagGroupsRegistrar verify];
-}
-
-/**
- * Test updateChannelAttributes method if the channel component is disabled
- */
-- (void)testUpdateChannelAttributesIfComponentDisabled {
-    self.channel.componentEnabled = NO;
-    [[self.mockAttributeRegistrar reject] updateAttributesForChannel:OCMOCK_ANY];
-    [self.channel updateChannelAttributes];
-    [self.mockAttributeRegistrar verify];
-}
-
-/**
- * Test updateChannelAttributes method if the identifier is not set
+ * Test updateRegistration method if the identifier is not set
  */
 - (void)testUpdateChannelAttributesIfIdentifierNil {
    self.channel.componentEnabled = YES;
-    [[self.mockAttributeRegistrar reject] updateAttributesForChannel:OCMOCK_ANY];
-    [self.channel updateChannelAttributes];
+    [[self.mockAttributeRegistrar reject] updateAttributes];
+    [self.channel updateRegistration];
     [self.mockAttributeRegistrar verify];
 }
 
 /**
- * Test updateChannelAttributes method if the identifier is set and component enabled
+ * Test updateRegistration method if the identifier is set and component enabled
  */
 - (void)testUpdateChannelAttributes {
     self.channelIDFromMockChannelRegistrar = @"123456";
     self.channel.componentEnabled = YES;
-    [[self.mockAttributeRegistrar expect] updateAttributesForChannel:OCMOCK_ANY];
-    [self.channel updateChannelAttributes];
+    [[self.mockAttributeRegistrar expect] updateAttributes];
+    [self.channel updateRegistration];
     [self.mockAttributeRegistrar verify];
 }
 
@@ -1084,7 +1055,7 @@
 - (void)testEnablingComponentEnablesRegistrars {
     self.channel.componentEnabled = NO;
 
-    [[self.mockAttributeRegistrar expect] setComponentEnabled:YES];
+    [[self.mockAttributeRegistrar expect] setEnabled:YES];
     [[self.mockTagGroupsRegistrar expect] setEnabled:YES];
 
     self.channel.componentEnabled = YES;
@@ -1098,7 +1069,7 @@
 
     self.channel.componentEnabled = NO;
 
-    [[self.mockAttributeRegistrar reject] setComponentEnabled:YES];
+    [[self.mockAttributeRegistrar reject] setEnabled:YES];
     [[self.mockTagGroupsRegistrar reject] setEnabled:YES];
 
     self.channel.componentEnabled = YES;
@@ -1108,7 +1079,7 @@
 }
 
 - (void)testDisablingComponentDisablesRegistrars {
-    [[self.mockAttributeRegistrar expect] setComponentEnabled:NO];
+    [[self.mockAttributeRegistrar expect] setEnabled:NO];
     [[self.mockTagGroupsRegistrar expect] setEnabled:NO];
 
     self.channel.componentEnabled = NO;
@@ -1120,7 +1091,7 @@
 - (void)testEnablingDataEnablesRegistrars {
     [self.dataStore setBool:NO forKey:UAirshipDataCollectionEnabledKey];
 
-    [[self.mockAttributeRegistrar expect] setComponentEnabled:YES];
+    [[self.mockAttributeRegistrar expect] setEnabled:YES];
     [[self.mockTagGroupsRegistrar expect] setEnabled:YES];
 
     [self.dataStore setBool:YES forKey:UAirshipDataCollectionEnabledKey];
@@ -1134,7 +1105,7 @@
     self.channel.componentEnabled = NO;
     [self.dataStore setBool:NO forKey:UAirshipDataCollectionEnabledKey];
 
-    [[self.mockAttributeRegistrar reject] setComponentEnabled:YES];
+    [[self.mockAttributeRegistrar reject] setEnabled:YES];
     [[self.mockTagGroupsRegistrar reject] setEnabled:YES];
 
     [self.dataStore setBool:YES forKey:UAirshipDataCollectionEnabledKey];
@@ -1147,7 +1118,7 @@
 - (void)testDisablingDataDisablesRegistrars {
     [self.dataStore setBool:NO forKey:UAirshipDataCollectionEnabledKey];
 
-    [[self.mockAttributeRegistrar expect] setComponentEnabled:YES];
+    [[self.mockAttributeRegistrar expect] setEnabled:YES];
     [[self.mockTagGroupsRegistrar expect] setEnabled:YES];
 
     [self.dataStore setBool:YES forKey:UAirshipDataCollectionEnabledKey];

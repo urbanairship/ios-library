@@ -70,11 +70,6 @@ extern NSString *const UAChannelUploadedTagGroupMutationNotificationIdentifierKe
 - (void)updateRegistrationForcefully:(BOOL)forcefully;
 
 /**
- * Called to update the tag groups for the current channel.
- */
-- (void)updateChannelTagGroups;
-
-/**
  * Removes the existing channel and causes the registrar to create a new channel on next registration.
  */
 - (void)reset;

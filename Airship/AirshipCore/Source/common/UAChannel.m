@@ -70,8 +70,11 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
         self.channelTagRegistrationEnabled = YES;
         self.registrationExtenderBlocks = [NSMutableArray array];
 
-        self.tagGroupsRegistrar.enabled = self.componentEnabled;
         self.tagGroupsRegistrar.delegate = self;
+        [self.tagGroupsRegistrar setIdentifier:self.identifier clearPendingOnChange:NO];
+        [self.attributeRegistrar setIdentifier:self.identifier clearPendingOnChange:NO];
+
+        [self updateRegistrarEnablement];
 
         // Check config to see if user wants to delay channel creation
         // If channel ID exists or channel creation delay is disabled then channelCreationEnabled
@@ -88,7 +91,6 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
             NSLog(@"Channel ID: %@", self.identifier);
         }
 
-        [self.tagGroupsRegistrar setIdentifier:self.identifier clearPendingOnChange:NO];
 
         [self observeNotificationCenterEvents];
     }
@@ -108,8 +110,8 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
                         channelRegistrar:[UAChannelRegistrar channelRegistrarWithConfig:config
                                                                               dataStore:dataStore]
                         tagGroupsRegistrar:tagGroupsRegistrar
-                        attributeRegistrar:[UAAttributeRegistrar registrarWithConfig:config
-                                                                           dataStore:dataStore]
+                        attributeRegistrar:[UAAttributeRegistrar channelRegistrarWithConfig:config
+                                                                                  dataStore:dataStore]
                              localeManager:localeManager
                                       date:[[UADate alloc] init]];
 }
@@ -295,6 +297,11 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
 #pragma mark Channel Attributes
 
 - (void)applyAttributeMutations:(UAAttributeMutations *)mutations {
+    if (!self.isDataCollectionEnabled) {
+        UA_LWARN(@"Unable to apply attributes %@ when data collection is disabled.", mutations);
+        return;
+    }
+
     UAAttributePendingMutations *pendingMutations = [UAAttributePendingMutations pendingMutationsWithMutations:mutations
                                                                                                           date:self.date];
 
@@ -306,7 +313,7 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
           return;
     }
 
-    [self.attributeRegistrar updateAttributesForChannel:self.identifier];
+    [self.attributeRegistrar updateAttributes];
 }
 
 #pragma mark -
@@ -334,37 +341,11 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
 }
 
 - (void)updateRegistration {
-    [self updateChannelTagGroups];
-    [self updateChannelAttributes];
+    if (self.identifier) {
+        [self.attributeRegistrar updateAttributes];
+        [self.tagGroupsRegistrar updateTagGroups];
+    }
     [self updateRegistrationForcefully:NO];
-}
-
-- (void)updateChannelTagGroups {
-    if (!self.componentEnabled) {
-        return;
-    }
-
-    if (!self.identifier) {
-        return;
-    }
-
-    if (!self.isDataCollectionEnabled) {
-        return;
-    }
-
-    [self.tagGroupsRegistrar updateTagGroupsForID:self.identifier];
-}
-
-- (void)updateChannelAttributes {
-    if (!self.componentEnabled) {
-        return;
-    }
-
-    if (!self.identifier) {
-        return;
-    }
-
-    [self.attributeRegistrar updateAttributesForChannel:self.identifier];
 }
 
 - (NSArray<UATagGroupsMutation *> *)pendingTagGroups {
@@ -445,6 +426,7 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
         }
 
         [self.tagGroupsRegistrar setIdentifier:channelID clearPendingOnChange:NO];
+        [self.attributeRegistrar setIdentifier:channelID clearPendingOnChange:NO];
 
         [self.notificationCenter postNotificationName:UAChannelCreatedEvent
                                                object:self
@@ -465,7 +447,7 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
 
 - (void)updateRegistrarEnablement {
     BOOL enabled = self.componentEnabled && self.dataCollectionEnabled;
-    self.attributeRegistrar.componentEnabled = enabled;
+    self.attributeRegistrar.enabled = enabled;
     self.tagGroupsRegistrar.enabled = enabled;
 }
 
@@ -483,7 +465,7 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
     if (!self.isDataCollectionEnabled) {
         // Clear channel tags and pending mutations
         [self.dataStore setObject:@[] forKey:UAChannelTagsSettingsKey];
-        [self.attributeRegistrar deletePendingMutations];
+        [self.attributeRegistrar clearPendingMutations];
         [self.tagGroupsRegistrar clearPendingMutations];
     }
 

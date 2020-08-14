@@ -146,4 +146,8 @@ NSString *const UAAttributeRemoveActionKey = @"remove";
     };
 }
 
+- (NSString *)description {
+    return self.payload.description;
+}
+
 @end
