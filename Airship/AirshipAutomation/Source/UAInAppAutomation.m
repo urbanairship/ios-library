@@ -14,6 +14,7 @@
 #import "UAScheduleAudience.h"
 #import "UAScheduleAudienceChecks+Internal.h"
 #import "UAInAppMessageSchedule.h"
+#import "UADeferredScheduleAPIClient+Internal.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -30,7 +31,8 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
 @property(nonatomic, strong) UAInAppRemoteDataClient *remoteDataClient;
 @property(nonatomic, strong) UARetriablePipeline *prepareSchedulePipeline;
 @property(nonatomic, strong) UAInAppMessageManager *inAppMessageManager;
-
+@property(nonatomic, strong) UADeferredScheduleAPIClient *deferredScheduleAPIClient;
+@property(nonatomic, strong) UAChannel *channel;
 @end
 
 @implementation UAInAppAutomation
@@ -39,17 +41,21 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
               tagGroupsLookupManager:(UATagGroupsLookupManager *)tagGroupsLookupManager
                     remoteDataClient:(UAInAppRemoteDataClient *)remoteDataClient
                            dataStore:(UAPreferenceDataStore *)dataStore
-                inAppMesssageManager:(UAInAppMessageManager *)inAppMessageManager {
+                 inAppMessageManager:(UAInAppMessageManager *)inAppMessageManager
+                             channel:(UAChannel *)channel
+           deferredScheduleAPIClient:(UADeferredScheduleAPIClient *)deferredScheduleAPIClient {
 
     return [[self alloc] initWithAutomationEngine:automationEngine
                            tagGroupsLookupManager:tagGroupsLookupManager
                                  remoteDataClient:remoteDataClient
                                         dataStore:dataStore
-                              inAppMessageManager:inAppMessageManager];
+                              inAppMessageManager:inAppMessageManager
+                                          channel:channel
+                        deferredScheduleAPIClient:deferredScheduleAPIClient];
 }
 
 + (instancetype)automationWithConfig:(UARuntimeConfig *)config
-                    tagGroupHistorian:(UATagGroupHistorian *)tagGroupHistorian
+                   tagGroupHistorian:(UATagGroupHistorian *)tagGroupHistorian
                   remoteDataProvider:(id<UARemoteDataProvider>)remoteDataProvider
                            dataStore:(UAPreferenceDataStore *)dataStore
                              channel:(UAChannel *)channel
@@ -62,7 +68,7 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
 
     UATagGroupsLookupManager *lookupManager = [UATagGroupsLookupManager lookupManagerWithConfig:config
                                                                                       dataStore:dataStore
-                                                                               tagGroupHistorian:tagGroupHistorian];
+                                                                              tagGroupHistorian:tagGroupHistorian];
 
     UAInAppRemoteDataClient *dataClient = [UAInAppRemoteDataClient clientWithRemoteDataProvider:remoteDataProvider
                                                                                       dataStore:dataStore
@@ -75,14 +81,18 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
                                         tagGroupsLookupManager:lookupManager
                                               remoteDataClient:dataClient
                                                      dataStore:dataStore
-                                           inAppMessageManager:inAppMessageManager];
+                                           inAppMessageManager:inAppMessageManager
+                                                       channel:channel
+                                     deferredScheduleAPIClient:[[UADeferredScheduleAPIClient alloc] init]];
 }
 
 - (instancetype)initWithAutomationEngine:(UAAutomationEngine *)automationEngine
                   tagGroupsLookupManager:(UATagGroupsLookupManager *)tagGroupsLookupManager
                         remoteDataClient:(UAInAppRemoteDataClient *)remoteDataClient
                                dataStore:(UAPreferenceDataStore *)dataStore
-                     inAppMessageManager:(UAInAppMessageManager *)inAppMessageManager {
+                     inAppMessageManager:(UAInAppMessageManager *)inAppMessageManager
+                                 channel:(UAChannel *)channel
+               deferredScheduleAPIClient:(UADeferredScheduleAPIClient *)deferredScheduleAPIClient {
 
     self = [super initWithDataStore:dataStore];
 
@@ -92,6 +102,8 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
         self.remoteDataClient = remoteDataClient;
         self.dataStore = dataStore;
         self.inAppMessageManager = inAppMessageManager;
+        self.channel = channel;
+        self.deferredScheduleAPIClient = deferredScheduleAPIClient;
         self.prepareSchedulePipeline = [UARetriablePipeline pipeline];
 
         self.automationEngine.delegate = self;
@@ -226,17 +238,7 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
                 retriableHandler(UARetriableResultSuccess);
             } else {
                 UA_LDEBUG(@"Message audience conditions not met, skipping display for schedule: %@, missBehavior: %ld", scheduleID, (long)audience.missBehavior);
-                switch(audience.missBehavior) {
-                    case UAScheduleAudienceMissBehaviorCancel:
-                        completionHandler(UAAutomationSchedulePrepareResultCancel);
-                        break;
-                    case UAScheduleAudienceMissBehaviorSkip:
-                        completionHandler(UAAutomationSchedulePrepareResultSkip);
-                        break;
-                    case UAScheduleAudienceMissBehaviorPenalize:
-                        completionHandler(UAAutomationSchedulePrepareResultPenalize);
-                        break;
-                }
+                completionHandler([UAInAppAutomation prepareResultForMissedAudience:schedule.audience]);
                 retriableHandler(UARetriableResultCancel);
             }
         }];
@@ -250,23 +252,97 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
         switch (schedule.type) {
             case UAScheduleTypeActions:
                 completionHandler(UAAutomationSchedulePrepareResultContinue);
+                retriableHandler(UARetriableResultSuccess);
                 break;
 
             case UAScheduleTypeInAppMessage:
                 [self.inAppMessageManager prepareMessage:(UAInAppMessage *) schedule.data
                                               scheduleID:schedule.identifier
                                        completionHandler:completionHandler];
+                retriableHandler(UARetriableResultSuccess);
                 break;
+
+            case UAScheduleTypeDeferred:
+                [self prepareDeferredSchedule:schedule
+                               triggerContext:triggerContext
+                             retriableHandler:retriableHandler
+                            completionHandler:completionHandler];
+                break;
+
 
             default:
                 UA_LERR(@"Unexpected schedule type: %ld", schedule.type);
-                return completionHandler(UAAutomationSchedulePrepareResultContinue);
+                retriableHandler(UARetriableResultSuccess);
         }
-
-        retriableHandler(UARetriableResultSuccess);
     }];
 
     [self.prepareSchedulePipeline addChainedRetriables:@[checkAudience, prepare]];
+}
+
+- (void)prepareDeferredSchedule:(UASchedule *)schedule
+                 triggerContext:(nullable UAScheduleTriggerContext *)triggerContext
+               retriableHandler:(UARetriableCompletionHandler) retriableHandler
+              completionHandler:(void (^)(UAAutomationSchedulePrepareResult))completionHandler {
+
+    UAScheduleDeferredData *deferred =  (UAScheduleDeferredData *)schedule.data;
+    NSString *channelID = self.channel.identifier;
+    if (!channelID) {
+        retriableHandler(UARetriableResultRetry);
+        return;
+    }
+
+    [self.deferredScheduleAPIClient resolveURL:deferred.URL
+                                     channelID:channelID
+                                triggerContext:triggerContext
+                             completionHandler:^(UADeferredScheduleResult *result, NSError *error) {
+        if (error) {
+            switch (error.code) {
+                case UADeferredScheduleAPIClientErrorTimedOut:
+                    if (deferred.retriableOnTimeout) {
+                        retriableHandler(UARetriableResultRetry);
+                    } else {
+                        retriableHandler(UARetriableResultSuccess);
+                        completionHandler(UAAutomationSchedulePrepareResultPenalize);
+                    }
+                    break;
+
+                case UADeferredScheduleAPIClientErrorMissingAuthToken:
+                case UADeferredScheduleAPIClientErrorUnsuccessfulStatus:
+                default:
+                    retriableHandler(UARetriableResultRetry);
+                    break;
+            }
+        } else {
+            if (!result.isAudienceMatch) {
+                UA_LDEBUG(@"Audience conditions not met, skipping display for schedule: %@, missBehavior: %ld", schedule.identifier, (long)schedule.audience.missBehavior);
+                completionHandler([UAInAppAutomation prepareResultForMissedAudience:schedule.audience]);
+                retriableHandler(UARetriableResultCancel);
+            } else if (result.message) {
+                [self.inAppMessageManager prepareMessage:result.message
+                                              scheduleID:schedule.identifier
+                                       completionHandler:completionHandler];
+                retriableHandler(UARetriableResultSuccess);
+            } else {
+                completionHandler(UAAutomationSchedulePrepareResultPenalize);
+                retriableHandler(UARetriableResultSuccess);
+            }
+        }
+    }];
+}
+
++ (UAAutomationSchedulePrepareResult)prepareResultForMissedAudience:(UAScheduleAudience *)audience {
+    if (!audience) {
+        return UAAutomationSchedulePrepareResultPenalize;
+    }
+
+    switch(audience.missBehavior) {
+        case UAScheduleAudienceMissBehaviorCancel:
+            return UAAutomationSchedulePrepareResultCancel;
+        case UAScheduleAudienceMissBehaviorSkip:
+            return UAAutomationSchedulePrepareResultSkip;
+        case UAScheduleAudienceMissBehaviorPenalize:
+            return UAAutomationSchedulePrepareResultPenalize;
+    }
 }
 
 - (UAAutomationScheduleReadyResult)isScheduleReadyToExecute:(UASchedule *)schedule {
@@ -313,7 +389,7 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
         }
 
         case UAScheduleTypeInAppMessage: {
-             [self.inAppMessageManager displayMessageWithScheduleID:schedule.identifier completionHandler:completionHandler];
+            [self.inAppMessageManager displayMessageWithScheduleID:schedule.identifier completionHandler:completionHandler];
             break;
         }
 
@@ -322,9 +398,6 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
             return completionHandler();
         }
     }
-
-
-
 }
 
 /**
@@ -469,7 +542,3 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
 @end
 
 NS_ASSUME_NONNULL_END
-
-
-
-

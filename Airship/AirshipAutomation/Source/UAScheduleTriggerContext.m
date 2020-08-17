@@ -6,6 +6,11 @@
 static NSString *const UAScheduleTriggerContextTriggerKey = @"trigger";
 static NSString *const UAScheduleTriggerContextEventKey = @"event";
 
+@interface UAScheduleTriggerContext()
+@property(nonatomic, strong) UAScheduleTrigger *trigger;
+@property(nonatomic, strong) id event;
+@end
+
 @implementation UAScheduleTriggerContext
 
 - (instancetype)initWithTrigger:(UAScheduleTrigger *)trigger
@@ -19,7 +24,7 @@ static NSString *const UAScheduleTriggerContextEventKey = @"event";
     return self;
 }
 
-+ (instancetype)triggerContextWithTrigger:(UAScheduleTrigger *)trigger event:(NSDictionary *)event {
++ (instancetype)triggerContextWithTrigger:(UAScheduleTrigger *)trigger event:(id)event {
     return [[UAScheduleTriggerContext alloc] initWithTrigger:trigger event:event];
 }
 

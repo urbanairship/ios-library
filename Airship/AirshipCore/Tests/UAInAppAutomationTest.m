@@ -14,6 +14,7 @@
 #import "UAComponent+Internal.h"
 #import "UAInAppAutomation+Internal.h"
 #import "UAInAppMessageCustomDisplayContent+Internal.h"
+#import "UADeferredSchedule+Internal.h"
 
 @interface UAInAppAutomationTest : UAAirshipBaseTest
 @property(nonatomic, strong) UAInAppAutomation *inAppAutomation;
@@ -22,6 +23,9 @@
 @property(nonatomic, strong) id mockRemoteDataClient;
 @property(nonatomic, strong) id mockInAppMessageManager;
 @property(nonatomic, strong) id mockAirship;
+@property(nonatomic, strong) id mockDeferredClient;
+@property(nonatomic, strong) id mockChannel;
+
 @property(nonatomic, strong) id<UAAutomationEngineDelegate> engineDelegate;
 @end
 
@@ -38,6 +42,8 @@
     self.mockTagGroupsLookupManager = [self mockForClass:[UATagGroupsLookupManager class]];
     self.mockRemoteDataClient = [self mockForClass:[UAInAppRemoteDataClient class]];
     self.mockInAppMessageManager = [self mockForClass:[UAInAppMessageManager class]];
+    self.mockDeferredClient = [self mockForClass:[UADeferredScheduleAPIClient class]];
+    self.mockChannel = [self mockForClass:[UAChannel class]];
 
     [[[self.mockAutomationEngine stub] andDo:^(NSInvocation *invocation) {
         void *arg;
@@ -49,8 +55,9 @@
                                             tagGroupsLookupManager:self.mockTagGroupsLookupManager
                                                   remoteDataClient:self.mockRemoteDataClient
                                                          dataStore:self.dataStore
-                                              inAppMesssageManager:self.mockInAppMessageManager];
-
+                                               inAppMessageManager:self.mockInAppMessageManager
+                                                           channel:self.mockChannel
+                                         deferredScheduleAPIClient:self.mockDeferredClient];
     XCTAssertNotNil(self.engineDelegate);
 }
 
@@ -190,6 +197,168 @@
     }];
 
     [self waitForTestExpectations];
+}
+
+- (void)testPrepareDeferred {
+    [[[self.mockChannel stub] andReturn:@"channel ID"] identifier];
+    UAInAppMessage *message = [UAInAppMessage messageWithBuilderBlock:^(UAInAppMessageBuilder *builder) {
+        builder.displayContent = [UAInAppMessageCustomDisplayContent displayContentWithValue:@{}];
+    }];
+
+    UADeferredScheduleResult *deferredResult = [UADeferredScheduleResult resultWithMessage:message audienceMatch:YES];
+
+    UAScheduleTrigger *trigger = [UAScheduleTrigger foregroundTriggerWithCount:1];
+
+    UAScheduleTriggerContext *triggerContext = [UAScheduleTriggerContext triggerContextWithTrigger:trigger
+                                                                                             event:@"some event"];
+    UAScheduleDeferredData *deferred = [UAScheduleDeferredData deferredDataWithURL:[NSURL URLWithString:@"https://airship.com"]
+                                                                retriableOnTimeout:YES];
+
+    UASchedule *schedule = [UADeferredSchedule scheduleWithDeferredData:deferred builderBlock:^(UAScheduleBuilder *builder) {
+        builder.triggers = @[trigger];
+        builder.identifier = @"schedule ID";
+    }];
+
+    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
+    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:schedule];
+
+    [[[self.mockInAppMessageManager expect] andDo:^(NSInvocation *invocation) {
+        void (^block)(UAInAppMessagePrepareResult);
+        [invocation getArgument:&block atIndex:4];
+        block(UAInAppMessagePrepareResultSuccess);
+    }] prepareMessage:message scheduleID:@"schedule ID" completionHandler:OCMOCK_ANY];
+
+
+    [[[self.mockDeferredClient expect] andDo:^(NSInvocation *invocation) {
+        void (^block)(UADeferredScheduleResult *, NSError *);
+        [invocation getArgument:&block atIndex:5];
+        block(deferredResult, nil);
+    }] resolveURL:deferred.URL channelID:@"channel ID" triggerContext:triggerContext completionHandler:OCMOCK_ANY];
+
+
+    XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare finished"];
+    [self.engineDelegate prepareSchedule:schedule
+                          triggerContext:triggerContext
+                       completionHandler:^(UAAutomationSchedulePrepareResult result) {
+        XCTAssertEqual(UAAutomationSchedulePrepareResultContinue, result);
+        [prepareFinished fulfill];
+    }];
+
+    [self waitForTestExpectations];
+    [self.mockDeferredClient verify];
+    [self.mockInAppMessageManager verify];
+}
+
+- (void)testPrepareDeferredTimedOut {
+    [[[self.mockChannel stub] andReturn:@"channel ID"] identifier];
+
+    NSError *deferredResult = [NSError errorWithDomain:UADeferredScheduleAPIClientErrorDomain
+                                                  code:UADeferredScheduleAPIClientErrorTimedOut
+                                              userInfo:nil];
+
+    UAScheduleDeferredData *deferred = [UAScheduleDeferredData deferredDataWithURL:[NSURL URLWithString:@"https://airship.com"]
+                                                                retriableOnTimeout:NO];
+
+    UASchedule *schedule = [UADeferredSchedule scheduleWithDeferredData:deferred builderBlock:^(UAScheduleBuilder *builder) {
+        builder.triggers = @[[UAScheduleTrigger foregroundTriggerWithCount:1]];
+        builder.identifier = @"schedule ID";
+    }];
+
+    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
+    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:schedule];
+
+    [[[self.mockDeferredClient expect] andDo:^(NSInvocation *invocation) {
+        void (^block)(UADeferredScheduleResult *, NSError *);
+        [invocation getArgument:&block atIndex:5];
+        block(nil, deferredResult);
+    }] resolveURL:deferred.URL channelID:@"channel ID" triggerContext:nil completionHandler:OCMOCK_ANY];
+
+    XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare finished"];
+    [self.engineDelegate prepareSchedule:schedule
+                          triggerContext:nil
+                       completionHandler:^(UAAutomationSchedulePrepareResult result) {
+        XCTAssertEqual(UAAutomationSchedulePrepareResultPenalize, result);
+        [prepareFinished fulfill];
+    }];
+
+    [self waitForTestExpectations];
+    [self.mockDeferredClient verify];
+}
+
+- (void)testPrepareDeferredAudienceMiss {
+    [[[self.mockChannel stub] andReturn:@"channel ID"] identifier];
+
+    UADeferredScheduleResult *deferredResult = [UADeferredScheduleResult resultWithMessage:nil audienceMatch:NO];
+
+    UAScheduleDeferredData *deferred = [UAScheduleDeferredData deferredDataWithURL:[NSURL URLWithString:@"https://airship.com"]
+                                                                retriableOnTimeout:NO];
+
+    UASchedule *schedule = [UADeferredSchedule scheduleWithDeferredData:deferred builderBlock:^(UAScheduleBuilder *builder) {
+        builder.triggers = @[[UAScheduleTrigger foregroundTriggerWithCount:1]];
+        builder.identifier = @"schedule ID";
+        builder.audience = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder * _Nonnull builder) {
+            builder.missBehavior = UAScheduleAudienceMissBehaviorSkip;
+        }];
+    }];
+
+    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
+    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:schedule];
+
+    [[[self.mockDeferredClient expect] andDo:^(NSInvocation *invocation) {
+        void (^block)(UADeferredScheduleResult *, NSError *);
+        [invocation getArgument:&block atIndex:5];
+        block(deferredResult, nil);
+    }] resolveURL:deferred.URL channelID:@"channel ID" triggerContext:nil completionHandler:OCMOCK_ANY];
+
+
+    XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare finished"];
+    [self.engineDelegate prepareSchedule:schedule
+                          triggerContext:nil
+                       completionHandler:^(UAAutomationSchedulePrepareResult result) {
+        XCTAssertEqual(UAAutomationSchedulePrepareResultSkip, result);
+        [prepareFinished fulfill];
+    }];
+
+    [self waitForTestExpectations];
+    [self.mockDeferredClient verify];
+}
+
+- (void)testPrepareDeferredNoMessage {
+    [[[self.mockChannel stub] andReturn:@"channel ID"] identifier];
+
+    UADeferredScheduleResult *deferredResult = [UADeferredScheduleResult resultWithMessage:nil audienceMatch:YES];
+
+    UAScheduleDeferredData *deferred = [UAScheduleDeferredData deferredDataWithURL:[NSURL URLWithString:@"https://airship.com"]
+                                                                retriableOnTimeout:NO];
+
+    UASchedule *schedule = [UADeferredSchedule scheduleWithDeferredData:deferred builderBlock:^(UAScheduleBuilder *builder) {
+        builder.triggers = @[[UAScheduleTrigger foregroundTriggerWithCount:1]];
+        builder.identifier = @"schedule ID";
+        builder.audience = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder * _Nonnull builder) {
+            builder.missBehavior = UAScheduleAudienceMissBehaviorSkip;
+        }];
+    }];
+
+    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
+    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:schedule];
+
+    [[[self.mockDeferredClient expect] andDo:^(NSInvocation *invocation) {
+        void (^block)(UADeferredScheduleResult *, NSError *);
+        [invocation getArgument:&block atIndex:5];
+        block(deferredResult, nil);
+    }] resolveURL:deferred.URL channelID:@"channel ID" triggerContext:nil completionHandler:OCMOCK_ANY];
+
+
+    XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare finished"];
+    [self.engineDelegate prepareSchedule:schedule
+                          triggerContext:nil
+                       completionHandler:^(UAAutomationSchedulePrepareResult result) {
+        XCTAssertEqual(UAAutomationSchedulePrepareResultPenalize, result);
+        [prepareFinished fulfill];
+    }];
+
+    [self waitForTestExpectations];
+    [self.mockDeferredClient verify];
 }
 
 - (void)testPrepareScheduleInvalid {

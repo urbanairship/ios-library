@@ -8,10 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		1B05132824AE103D00F5051F /* UALocaleManagerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B05132724AE103D00F5051F /* UALocaleManagerTest.m */; };
-		1B05133524AF600000F5051F /* UAScheduleTriggerContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B05133324AF600000F5051F /* UAScheduleTriggerContext.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1B05133624AF600000F5051F /* UAScheduleTriggerContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B05133424AF600000F5051F /* UAScheduleTriggerContext.m */; };
 		1B05133D24AF657C00F5051F /* UAScheduleTriggerContext+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B05133B24AF657C00F5051F /* UAScheduleTriggerContext+Internal.h */; };
-		1B05134324B373DF00F5051F /* UAScheduleTriggerContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B05133324AF600000F5051F /* UAScheduleTriggerContext.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1B05134424B373EE00F5051F /* UAScheduleTriggerContext+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B05133B24AF657C00F5051F /* UAScheduleTriggerContext+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1B09924824A62E05008459F6 /* UALocaleManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B09924524A62E04008459F6 /* UALocaleManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1B09924924A62E07008459F6 /* UALocaleManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B09924524A62E04008459F6 /* UALocaleManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -412,7 +410,6 @@
 		6E50629E24E1B2DE00689C6D /* UADeferredSchedule+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E50629B24E1B2DE00689C6D /* UADeferredSchedule+Internal.h */; };
 		6E50629F24E1B2DE00689C6D /* UADeferredSchedule.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E50629C24E1B2DE00689C6D /* UADeferredSchedule.m */; };
 		6E5062A024E1B2DE00689C6D /* UADeferredSchedule.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E50629C24E1B2DE00689C6D /* UADeferredSchedule.m */; };
-		6E5062A824E20CD300689C6D /* UAScheduleData+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E5062A724E20CD300689C6D /* UAScheduleData+Internal.h */; };
 		6E5062A924E20CD300689C6D /* UAScheduleData+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E5062A724E20CD300689C6D /* UAScheduleData+Internal.h */; };
 		6E5062B024E23E1C00689C6D /* UAActionScheduleTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E5062AF24E23E1C00689C6D /* UAActionScheduleTests.m */; };
 		6E5062B224E23F1B00689C6D /* UADeferredScheduleTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E5062B124E23F1B00689C6D /* UADeferredScheduleTests.m */; };
@@ -710,6 +707,14 @@
 		6E937726237625BF00AA9C2A /* UAAutoIntegration+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E937701237625BF00AA9C2A /* UAAutoIntegration+Internal.h */; };
 		6E937727237625BF00AA9C2A /* UAPersistentQueue+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E937702237625BF00AA9C2A /* UAPersistentQueue+Internal.h */; };
 		6E937728237625BF00AA9C2A /* UAPersistentQueue+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E937702237625BF00AA9C2A /* UAPersistentQueue+Internal.h */; };
+		6E9F74D024E6F414001F9B05 /* UADeferredScheduleAPIClient+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E9F74CE24E6F414001F9B05 /* UADeferredScheduleAPIClient+Internal.h */; };
+		6E9F74D124E6F414001F9B05 /* UADeferredScheduleAPIClient+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E9F74CE24E6F414001F9B05 /* UADeferredScheduleAPIClient+Internal.h */; };
+		6E9F74D224E6F414001F9B05 /* UADeferredScheduleAPIClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E9F74CF24E6F414001F9B05 /* UADeferredScheduleAPIClient.m */; };
+		6E9F74D324E6F414001F9B05 /* UADeferredScheduleAPIClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E9F74CF24E6F414001F9B05 /* UADeferredScheduleAPIClient.m */; };
+		6E9F74D624E6F68D001F9B05 /* UADeferredScheduleResult+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E9F74D424E6F68D001F9B05 /* UADeferredScheduleResult+Internal.h */; };
+		6E9F74D724E6F68D001F9B05 /* UADeferredScheduleResult+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E9F74D424E6F68D001F9B05 /* UADeferredScheduleResult+Internal.h */; };
+		6E9F74D824E6F68D001F9B05 /* UADeferredScheduleResult.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E9F74D524E6F68D001F9B05 /* UADeferredScheduleResult.m */; };
+		6E9F74D924E6F68D001F9B05 /* UADeferredScheduleResult.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E9F74D524E6F68D001F9B05 /* UADeferredScheduleResult.m */; };
 		6EA5CDC124C78A27008EEED7 /* NSDictionary+UAAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EA5CDBF24C78A27008EEED7 /* NSDictionary+UAAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6EA5CDC224C78A27008EEED7 /* NSDictionary+UAAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EA5CDBF24C78A27008EEED7 /* NSDictionary+UAAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6EA5CDC324C78A27008EEED7 /* NSDictionary+UAAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EA5CDC024C78A27008EEED7 /* NSDictionary+UAAdditions.m */; };
@@ -2395,7 +2400,6 @@
 		07A9F5B3D35A6078949E4EAA /* Pods-AirshipKitTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AirshipKitTests.release.xcconfig"; path = "../Pods/Target Support Files/Pods-AirshipKitTests/Pods-AirshipKitTests.release.xcconfig"; sourceTree = "<group>"; };
 		0F55D47F540C142B0F469570 /* Pods-AirshipTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AirshipTests.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-AirshipTests/Pods-AirshipTests.debug.xcconfig"; sourceTree = "<group>"; };
 		1B05132724AE103D00F5051F /* UALocaleManagerTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UALocaleManagerTest.m; sourceTree = "<group>"; };
-		1B05133324AF600000F5051F /* UAScheduleTriggerContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UAScheduleTriggerContext.h; sourceTree = "<group>"; };
 		1B05133424AF600000F5051F /* UAScheduleTriggerContext.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAScheduleTriggerContext.m; sourceTree = "<group>"; };
 		1B05133B24AF657C00F5051F /* UAScheduleTriggerContext+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAScheduleTriggerContext+Internal.h"; sourceTree = "<group>"; };
 		1B09924324A62E04008459F6 /* UALocaleManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UALocaleManager.m; path = common/UALocaleManager.m; sourceTree = "<group>"; };
@@ -2858,6 +2862,10 @@
 		6E937700237625BF00AA9C2A /* UAPersistentQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAPersistentQueue.m; path = common/UAPersistentQueue.m; sourceTree = "<group>"; };
 		6E937701237625BF00AA9C2A /* UAAutoIntegration+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UAAutoIntegration+Internal.h"; path = "common/UAAutoIntegration+Internal.h"; sourceTree = "<group>"; };
 		6E937702237625BF00AA9C2A /* UAPersistentQueue+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UAPersistentQueue+Internal.h"; path = "common/UAPersistentQueue+Internal.h"; sourceTree = "<group>"; };
+		6E9F74CE24E6F414001F9B05 /* UADeferredScheduleAPIClient+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UADeferredScheduleAPIClient+Internal.h"; sourceTree = "<group>"; };
+		6E9F74CF24E6F414001F9B05 /* UADeferredScheduleAPIClient.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UADeferredScheduleAPIClient.m; sourceTree = "<group>"; };
+		6E9F74D424E6F68D001F9B05 /* UADeferredScheduleResult+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UADeferredScheduleResult+Internal.h"; sourceTree = "<group>"; };
+		6E9F74D524E6F68D001F9B05 /* UADeferredScheduleResult.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UADeferredScheduleResult.m; sourceTree = "<group>"; };
 		6EA5CDBF24C78A27008EEED7 /* NSDictionary+UAAdditions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "NSDictionary+UAAdditions.h"; path = "common/NSDictionary+UAAdditions.h"; sourceTree = "<group>"; };
 		6EA5CDC024C78A27008EEED7 /* NSDictionary+UAAdditions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = "NSDictionary+UAAdditions.m"; path = "common/NSDictionary+UAAdditions.m"; sourceTree = "<group>"; };
 		6EA734AE24B7AA600012B737 /* UAInAppAutomation+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAInAppAutomation+Internal.h"; sourceTree = "<group>"; };
@@ -4302,7 +4310,6 @@
 				6E598D1E1FFC44F3005B234B /* UAScheduleEdits.h */,
 				6E598D1F1FFC44F3005B234B /* UAScheduleEdits.m */,
 				6E598D261FFC4506005B234B /* UAScheduleEdits+Internal.h */,
-				1B05133324AF600000F5051F /* UAScheduleTriggerContext.h */,
 				1B05133424AF600000F5051F /* UAScheduleTriggerContext.m */,
 				1B05133B24AF657C00F5051F /* UAScheduleTriggerContext+Internal.h */,
 				DFD442A61FD77308002E4FA1 /* UAScheduleAudience+Internal.h */,
@@ -4685,6 +4692,10 @@
 				6EA734AE24B7AA600012B737 /* UAInAppAutomation+Internal.h */,
 				DFFCF5B91FD1E65F0014DE2E /* UAInAppRemoteDataClient+Internal.h */,
 				DFFCF5AB1FCF513D0014DE2E /* UAInAppRemoteDataClient.m */,
+				6E9F74CE24E6F414001F9B05 /* UADeferredScheduleAPIClient+Internal.h */,
+				6E9F74CF24E6F414001F9B05 /* UADeferredScheduleAPIClient.m */,
+				6E9F74D424E6F68D001F9B05 /* UADeferredScheduleResult+Internal.h */,
+				6E9F74D524E6F68D001F9B05 /* UADeferredScheduleResult.m */,
 			);
 			name = InAppAutomation;
 			sourceTree = "<group>";
@@ -6120,9 +6131,9 @@
 				6EA734B224B7AA600012B737 /* UAInAppAutomation+Internal.h in Headers */,
 				6E8453D1237E0540007D3B1E /* UALegacyInAppMessage.h in Headers */,
 				6E84546C237E1EB4007D3B1E /* UATimerScheduler+Internal.h in Headers */,
+				6E9F74D124E6F414001F9B05 /* UADeferredScheduleAPIClient+Internal.h in Headers */,
 				6E8453D2237E0540007D3B1E /* UALegacyInAppMessaging.h in Headers */,
 				6E8453D3237E0540007D3B1E /* UAInAppMessageAssetManager.h in Headers */,
-				1B05133524AF600000F5051F /* UAScheduleTriggerContext.h in Headers */,
 				6E845463237E0DCF007D3B1E /* UAAirshipAutomationCoreImport.h in Headers */,
 				6E8453D4237E0540007D3B1E /* UAInAppMessageAssets.h in Headers */,
 				6E8453D5237E0540007D3B1E /* UAInAppMessageDefaultPrepareAssetsDelegate.h in Headers */,
@@ -6164,6 +6175,7 @@
 				6E84546A237E1C84007D3B1E /* NSObject+AnonymousKVO+Internal.h in Headers */,
 				6E84538E237E0523007D3B1E /* UAInAppMessageBannerController+Internal.h in Headers */,
 				6E84538F237E0523007D3B1E /* UAInAppMessageBannerView+Internal.h in Headers */,
+				6E9F74D724E6F68D001F9B05 /* UADeferredScheduleResult+Internal.h in Headers */,
 				6E845390237E0523007D3B1E /* UAInAppMessageBannerContentView+Internal.h in Headers */,
 				6E845391237E0523007D3B1E /* UAInAppMessageModalDisplayContent+Internal.h in Headers */,
 				6E845392237E0523007D3B1E /* UAInAppMessageModalViewController+Internal.h in Headers */,
@@ -6368,7 +6380,6 @@
 				6EE770D5238F15D000E79944 /* UANativeBridge+Internal.h in Headers */,
 				6EE7715A238F16A600E79944 /* UALandingPageAction.h in Headers */,
 				6EE7715B238F16A600E79944 /* UACancelSchedulesAction.h in Headers */,
-				1B05134324B373DF00F5051F /* UAScheduleTriggerContext.h in Headers */,
 				6EE7715C238F16A600E79944 /* UAScheduleAction.h in Headers */,
 				6EE77163238F16A600E79944 /* UASchedule.h in Headers */,
 				6EE77165238F16A600E79944 /* UAScheduleTrigger.h in Headers */,
@@ -6414,6 +6425,7 @@
 				6EE771C0238F16A600E79944 /* AirshipAutomationLib.h in Headers */,
 				6EE771C3238F16A600E79944 /* UAAirshipAutomationCoreImport.h in Headers */,
 				6EE771C4238F16A600E79944 /* UAAutomationModuleLoader.h in Headers */,
+				6E9F74D024E6F414001F9B05 /* UADeferredScheduleAPIClient+Internal.h in Headers */,
 				6EE771C5238F16A600E79944 /* UAAutomationResources.h in Headers */,
 				6EE771C9238F16A600E79944 /* UAMessageCenterAction.h in Headers */,
 				6EE771CA238F16A600E79944 /* UADefaultMessageCenterUI.h in Headers */,
@@ -6466,6 +6478,7 @@
 				6EE770F2238F15D000E79944 /* UAActionResult+Internal.h in Headers */,
 				6EE770F3238F15D000E79944 /* UAirshipVersion.h in Headers */,
 				6EE770F4238F15D000E79944 /* UAEventStore+Internal.h in Headers */,
+				6E9F74D624E6F68D001F9B05 /* UADeferredScheduleResult+Internal.h in Headers */,
 				6EE770F5238F15D000E79944 /* UASQLite+Internal.h in Headers */,
 				6EE770F6238F15D000E79944 /* UACustomEvent+Internal.h in Headers */,
 				6EE770F7238F15D000E79944 /* UAAppBackgroundEvent+Internal.h in Headers */,
@@ -6572,7 +6585,6 @@
 				6EE771B4238F16A600E79944 /* UAScheduleAudience+Internal.h in Headers */,
 				6EE771B6238F16A600E79944 /* UATagSelector+Internal.h in Headers */,
 				6EE771B8238F16A600E79944 /* UAScheduleAudienceChecks+Internal.h in Headers */,
-				6E5062A824E20CD300689C6D /* UAScheduleData+Internal.h in Headers */,
 				6EE771BC238F16A600E79944 /* UAInAppMessageDefaultDisplayCoordinator+Internal.h in Headers */,
 				6EE771C1238F16A600E79944 /* NSObject+AnonymousKVO+Internal.h in Headers */,
 				6EE771C2238F16A600E79944 /* UAActiveTimer+Internal.h in Headers */,
@@ -7983,6 +7995,7 @@
 				6EEAE7FC24C8F9B30046E311 /* UAScheduleTriggerContextTransformer.m in Sources */,
 				6E845405237E0575007D3B1E /* UAInAppMessageModalViewController.m in Sources */,
 				6E845406237E0575007D3B1E /* UAInAppMessageFullScreenAdapter.m in Sources */,
+				6E9F74D924E6F68D001F9B05 /* UADeferredScheduleResult.m in Sources */,
 				6E845407237E0575007D3B1E /* UAInAppMessageFullScreenStyle.m in Sources */,
 				6E845408237E0575007D3B1E /* UAInAppMessageFullScreenDisplayContent.m in Sources */,
 				6E845409237E0575007D3B1E /* UAInAppMessageFullScreenViewController.m in Sources */,
@@ -8008,6 +8021,7 @@
 				3CFB564024E346FD008F9CCE /* UAAuthTokenManager.m in Sources */,
 				6E84541A237E0575007D3B1E /* UAInAppMessageResolutionEvent.m in Sources */,
 				6E84541B237E0575007D3B1E /* UAInAppMessage.m in Sources */,
+				6E9F74D324E6F414001F9B05 /* UADeferredScheduleAPIClient.m in Sources */,
 				45E08F4924CA045E00041803 /* UIImage+UAAdditions+Internal.m in Sources */,
 				6E84541C237E0575007D3B1E /* UAInAppMessageDisplayContent.m in Sources */,
 				6E84541D237E0575007D3B1E /* UAInAppMessageTextInfo.m in Sources */,
@@ -8141,6 +8155,7 @@
 				6EE7722D238F172900E79944 /* UAInAppMessageMediaInfo.m in Sources */,
 				6EE7722E238F172900E79944 /* UAInAppMessageTextView.m in Sources */,
 				6EDD86F323ABF30E0031CCEA /* UANSDictionaryValueTransformer.m in Sources */,
+				6E9F74D224E6F414001F9B05 /* UADeferredScheduleAPIClient.m in Sources */,
 				6EE7722F238F172900E79944 /* UAInAppMessageDismissButton.m in Sources */,
 				6EE77230238F172900E79944 /* UAInAppMessageButtonView.m in Sources */,
 				6EE77231238F172900E79944 /* UAInAppMessageButton.m in Sources */,
@@ -8300,6 +8315,7 @@
 				6EE77039238F15D000E79944 /* UABeveledLoadingIndicator.m in Sources */,
 				6EE7703A238F15D000E79944 /* UAWalletAction.m in Sources */,
 				6EE7703B238F15D000E79944 /* UAAccountEventTemplate.m in Sources */,
+				6E9F74D824E6F68D001F9B05 /* UADeferredScheduleResult.m in Sources */,
 				6EE7703C238F15D000E79944 /* UAEvent.m in Sources */,
 				6EE7703D238F15D000E79944 /* UAActionRegistry.m in Sources */,
 				6EE7703E238F15D000E79944 /* UAEventManager.m in Sources */,
