@@ -19,6 +19,11 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, assign) UAScheduleTriggerType type;
 
 /**
+ * The trigger type name.
+ */
+@property(nonatomic, readonly) NSString *typeName;
+
+/**
  * The trigger's goal. Once the goal is reached it will cause the schedule
  * to execute its actions.
  */

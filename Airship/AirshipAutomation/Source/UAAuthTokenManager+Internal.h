@@ -34,7 +34,7 @@ NS_ASSUME_NONNULL_BEGIN
  * Retrieves the current auth token with the provided completion handler, or nil if one could not be retrieved.
  *
  * @param completionHandler The completion handler invoked with the retrieved auth token, or nil if one
- * could not be retrieved.
+ * could not be retrieved. The completion handler is called on an internal serial queue.
  */
 - (void)tokenWithCompletionHandler:(void (^)(NSString * _Nullable))completionHandler;
 

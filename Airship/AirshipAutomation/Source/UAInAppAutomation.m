@@ -77,13 +77,18 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
     UAInAppMessageManager *inAppMessageManager = [UAInAppMessageManager managerWithDataStore:dataStore
                                                                                    analytics:analytics];
 
+    UAAuthTokenManager *authManager = [UAAuthTokenManager authTokenManagerWithRuntimeConfig:config
+                                                                                    channel:channel];
+
+    UADeferredScheduleAPIClient *deferredScheduleAPIClient = [UADeferredScheduleAPIClient clientWithConfig:config
+                                                                                            authManager:authManager];
     return [[UAInAppAutomation alloc] initWithAutomationEngine:automationEngine
                                         tagGroupsLookupManager:lookupManager
                                               remoteDataClient:dataClient
                                                      dataStore:dataStore
                                            inAppMessageManager:inAppMessageManager
                                                        channel:channel
-                                     deferredScheduleAPIClient:[[UADeferredScheduleAPIClient alloc] init]];
+                                     deferredScheduleAPIClient:deferredScheduleAPIClient];
 }
 
 - (instancetype)initWithAutomationEngine:(UAAutomationEngine *)automationEngine
