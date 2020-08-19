@@ -18,7 +18,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-static NSTimeInterval const MaxSchedules = 200;
+static NSTimeInterval const MaxSchedules = 1000;
 
 NSString *const UAInAppMessageManagerEnabledKey = @"UAInAppMessageManagerEnabled";
 NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
