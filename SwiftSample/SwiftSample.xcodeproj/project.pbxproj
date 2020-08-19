@@ -13,7 +13,6 @@
 		1B94298023883234002051B3 /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1B94297E23883234002051B3 /* MainInterface.storyboard */; };
 		1B94298423883234002051B3 /* SwiftSampleContentExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 1B94297823883234002051B3 /* SwiftSampleContentExtension.appex */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		1BEF602F24CB3DB60039091F /* SwiftSampleAppClip.app in Embed App Clips */ = {isa = PBXBuildFile; fileRef = 1BEF601B24CB3DB60039091F /* SwiftSampleAppClip.app */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		1BEF604024CB3FF10039091F /* AppClip.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1BEF603F24CB3FF10039091F /* AppClip.framework */; };
 		1BEF604124CB40190039091F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCDA35A61B8D233A00950AD5 /* AppDelegate.swift */; };
 		1BEF604224CB40190039091F /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCDA35A81B8D233A00950AD5 /* HomeViewController.swift */; };
 		1BEF604324CB40190039091F /* PushHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61A672E71CA9F4B000BAF58A /* PushHandler.swift */; };
@@ -28,6 +27,23 @@
 		1BEF605024CED8DB0039091F /* UAPushUI.strings in Resources */ = {isa = PBXBuildFile; fileRef = 493F510F1C5B2C8D00B050A1 /* UAPushUI.strings */; };
 		1BEF605324CF03990039091F /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = CCDA35C31B8D237300950AD5 /* AirshipConfig.plist */; };
 		1BF9B0E523A24E5D00E68DBE /* AirshipAccengage.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6E6CC347239A2FB9003D583C /* AirshipAccengage.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		3CF3DDC924E74F9B000CF516 /* MessageCenterStyle.plist in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0C9222834F6B008302F1 /* MessageCenterStyle.plist */; };
+		3CF3DDCA24E74F9B000CF516 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 619A0D401BE81D7B00D9E863 /* Images.xcassets */; };
+		3CF3DDCB24E74F9B000CF516 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CCDA35B11B8D233A00950AD5 /* LaunchScreen.storyboard */; };
+		3CF3DE7524E76ED6000CF516 /* AirshipAccengage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E6CC347239A2FB9003D583C /* AirshipAccengage.framework */; };
+		3CF3DE7624E76ED6000CF516 /* AirshipAccengage.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E6CC347239A2FB9003D583C /* AirshipAccengage.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		3CF3DE7724E76ED6000CF516 /* AirshipAutomation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D5862396E99D00AF2D1A /* AirshipAutomation.framework */; };
+		3CF3DE7824E76ED6000CF516 /* AirshipAutomation.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D5862396E99D00AF2D1A /* AirshipAutomation.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		3CF3DE7924E76ED6000CF516 /* AirshipCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D57C2396E99D00AF2D1A /* AirshipCore.framework */; };
+		3CF3DE7A24E76ED6000CF516 /* AirshipCore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D57C2396E99D00AF2D1A /* AirshipCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		3CF3DE7B24E76ED6000CF516 /* AirshipDebug.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D5842396E99D00AF2D1A /* AirshipDebug.framework */; };
+		3CF3DE7C24E76ED6000CF516 /* AirshipDebug.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D5842396E99D00AF2D1A /* AirshipDebug.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		3CF3DE7D24E76ED6000CF516 /* AirshipExtendedActions.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D58A2396E99D00AF2D1A /* AirshipExtendedActions.framework */; };
+		3CF3DE7E24E76ED6000CF516 /* AirshipExtendedActions.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D58A2396E99D00AF2D1A /* AirshipExtendedActions.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		3CF3DE7F24E76ED6000CF516 /* AirshipLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D5822396E99D00AF2D1A /* AirshipLocation.framework */; };
+		3CF3DE8024E76ED6000CF516 /* AirshipLocation.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D5822396E99D00AF2D1A /* AirshipLocation.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		3CF3DE8124E76ED6000CF516 /* AirshipMessageCenter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D5882396E99D00AF2D1A /* AirshipMessageCenter.framework */; };
+		3CF3DE8224E76ED6000CF516 /* AirshipMessageCenter.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D5882396E99D00AF2D1A /* AirshipMessageCenter.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		456156E622B6F8FE00A68ADA /* UITestUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 456156E522B6F8FE00A68ADA /* UITestUtils.swift */; };
 		45AF558122B562FE006CAE7F /* CoreUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45AF558022B562FE006CAE7F /* CoreUITests.swift */; };
 		45BE0C9822837B7A008302F1 /* MessageCenterStyle.plist in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0C9222834F6B008302F1 /* MessageCenterStyle.plist */; };
@@ -94,19 +110,61 @@
 			remoteGlobalIDString = DFE03D032450E73400622F11;
 			remoteInfo = AirshipNotificationContentExtensionTests;
 		};
-		1BEF604D24CECBDA0039091F /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 6E65D56A2396E99D00AF2D1A /* Airship.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 3CA0E298237CCE2600EE76CF;
-			remoteInfo = AirshipDebug;
-		};
 		1BF9B0E323A24E5D00E68DBE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 6E65D56A2396E99D00AF2D1A /* Airship.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 1BB4C02A239FE5E50000559B;
 			remoteInfo = AirshipAccengageTests;
+		};
+		3CF3DE9F24EB0787000CF516 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E65D56A2396E99D00AF2D1A /* Airship.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 6E6CC310239A2EA9003D583C;
+			remoteInfo = AirshipAccengage;
+		};
+		3CF3DEA124EB0787000CF516 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E65D56A2396E99D00AF2D1A /* Airship.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 6E8450FD237E0271007D3B1E;
+			remoteInfo = AirshipAutomation;
+		};
+		3CF3DEA324EB0787000CF516 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E65D56A2396E99D00AF2D1A /* Airship.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 494DD9561B0EB677009C134E;
+			remoteInfo = AirshipCore;
+		};
+		3CF3DEA524EB0787000CF516 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E65D56A2396E99D00AF2D1A /* Airship.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 3CA0E298237CCE2600EE76CF;
+			remoteInfo = AirshipDebug;
+		};
+		3CF3DEA724EB0787000CF516 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E65D56A2396E99D00AF2D1A /* Airship.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 45C69118238DC79400A03C94;
+			remoteInfo = AirshipExtendedActions;
+		};
+		3CF3DEA924EB0787000CF516 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E65D56A2396E99D00AF2D1A /* Airship.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 6E9373032376164600AA9C2A;
+			remoteInfo = AirshipLocation;
+		};
+		3CF3DEAB24EB0787000CF516 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E65D56A2396E99D00AF2D1A /* Airship.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 3CA0E346237E4A7B00EE76CF;
+			remoteInfo = AirshipMessageCenter;
 		};
 		45AF558322B562FE006CAE7F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -290,6 +348,23 @@
 			name = "Embed App Clips";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		3CF3DE1324E75E01000CF516 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				3CF3DE8024E76ED6000CF516 /* AirshipLocation.framework in Embed Frameworks */,
+				3CF3DE7824E76ED6000CF516 /* AirshipAutomation.framework in Embed Frameworks */,
+				3CF3DE7C24E76ED6000CF516 /* AirshipDebug.framework in Embed Frameworks */,
+				3CF3DE7A24E76ED6000CF516 /* AirshipCore.framework in Embed Frameworks */,
+				3CF3DE7E24E76ED6000CF516 /* AirshipExtendedActions.framework in Embed Frameworks */,
+				3CF3DE8224E76ED6000CF516 /* AirshipMessageCenter.framework in Embed Frameworks */,
+				3CF3DE7624E76ED6000CF516 /* AirshipAccengage.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		49251DF61D6F9C1500EED4BD /* Embed App Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -397,7 +472,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1BEF604024CB3FF10039091F /* AppClip.framework in Frameworks */,
+				3CF3DE7F24E76ED6000CF516 /* AirshipLocation.framework in Frameworks */,
+				3CF3DE7724E76ED6000CF516 /* AirshipAutomation.framework in Frameworks */,
+				3CF3DE7B24E76ED6000CF516 /* AirshipDebug.framework in Frameworks */,
+				3CF3DE7924E76ED6000CF516 /* AirshipCore.framework in Frameworks */,
+				3CF3DE7D24E76ED6000CF516 /* AirshipExtendedActions.framework in Frameworks */,
+				3CF3DE8124E76ED6000CF516 /* AirshipMessageCenter.framework in Frameworks */,
+				3CF3DE7524E76ED6000CF516 /* AirshipAccengage.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -625,11 +706,18 @@
 				1BEF601724CB3DB60039091F /* Sources */,
 				1BEF601824CB3DB60039091F /* Frameworks */,
 				1BEF601924CB3DB60039091F /* Resources */,
+				3CF3DE1324E75E01000CF516 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				1BEF604E24CECBDA0039091F /* PBXTargetDependency */,
+				3CF3DEA024EB0787000CF516 /* PBXTargetDependency */,
+				3CF3DEA224EB0787000CF516 /* PBXTargetDependency */,
+				3CF3DEA424EB0787000CF516 /* PBXTargetDependency */,
+				3CF3DEA624EB0787000CF516 /* PBXTargetDependency */,
+				3CF3DEA824EB0787000CF516 /* PBXTargetDependency */,
+				3CF3DEAA24EB0787000CF516 /* PBXTargetDependency */,
+				3CF3DEAC24EB0787000CF516 /* PBXTargetDependency */,
 			);
 			name = SwiftSampleAppClip;
 			productName = SwiftSampleAppClip;
@@ -916,6 +1004,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3CF3DDC924E74F9B000CF516 /* MessageCenterStyle.plist in Resources */,
+				3CF3DDCA24E74F9B000CF516 /* Images.xcassets in Resources */,
+				3CF3DDCB24E74F9B000CF516 /* LaunchScreen.storyboard in Resources */,
 				1BEF605324CF03990039091F /* AirshipConfig.plist in Resources */,
 				1BEF605024CED8DB0039091F /* UAPushUI.strings in Resources */,
 				1BEF604F24CED85D0039091F /* Main.storyboard in Resources */,
@@ -1048,10 +1139,40 @@
 			target = 1BEF601A24CB3DB60039091F /* SwiftSampleAppClip */;
 			targetProxy = 1BEF602D24CB3DB60039091F /* PBXContainerItemProxy */;
 		};
-		1BEF604E24CECBDA0039091F /* PBXTargetDependency */ = {
+		3CF3DEA024EB0787000CF516 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = AirshipAccengage;
+			targetProxy = 3CF3DE9F24EB0787000CF516 /* PBXContainerItemProxy */;
+		};
+		3CF3DEA224EB0787000CF516 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = AirshipAutomation;
+			targetProxy = 3CF3DEA124EB0787000CF516 /* PBXContainerItemProxy */;
+		};
+		3CF3DEA424EB0787000CF516 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = AirshipCore;
+			targetProxy = 3CF3DEA324EB0787000CF516 /* PBXContainerItemProxy */;
+		};
+		3CF3DEA624EB0787000CF516 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = AirshipDebug;
-			targetProxy = 1BEF604D24CECBDA0039091F /* PBXContainerItemProxy */;
+			targetProxy = 3CF3DEA524EB0787000CF516 /* PBXContainerItemProxy */;
+		};
+		3CF3DEA824EB0787000CF516 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = AirshipExtendedActions;
+			targetProxy = 3CF3DEA724EB0787000CF516 /* PBXContainerItemProxy */;
+		};
+		3CF3DEAA24EB0787000CF516 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = AirshipLocation;
+			targetProxy = 3CF3DEA924EB0787000CF516 /* PBXContainerItemProxy */;
+		};
+		3CF3DEAC24EB0787000CF516 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = AirshipMessageCenter;
+			targetProxy = 3CF3DEAB24EB0787000CF516 /* PBXContainerItemProxy */;
 		};
 		45AF558422B562FE006CAE7F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -1221,6 +1342,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = PGJV57GD94;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
 				INFOPLIST_FILE = SwiftSampleAppClip/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1232,7 +1354,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.richpush.Clip;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = APPCLIP;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "APPCLIP DEBUG";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
