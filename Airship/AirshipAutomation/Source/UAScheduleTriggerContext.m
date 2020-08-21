@@ -3,14 +3,18 @@
 #import "UAScheduleTriggerContext+Internal.h"
 #import "UAScheduleTrigger+Internal.h"
 
-
 static NSString *const UAScheduleTriggerContextTriggerKey = @"trigger";
 static NSString *const UAScheduleTriggerContextEventKey = @"event";
 
+@interface UAScheduleTriggerContext()
+@property(nonatomic, strong) UAScheduleTrigger *trigger;
+@property(nonatomic, strong) id event;
+@end
 
 @implementation UAScheduleTriggerContext
 
-- (instancetype)initWithTrigger:(UAScheduleTrigger *)trigger event:(NSDictionary *)event {
+- (instancetype)initWithTrigger:(UAScheduleTrigger *)trigger
+                          event:(id)event {
     self = [super init];
     if (self) {
         self.trigger = trigger;
@@ -20,7 +24,7 @@ static NSString *const UAScheduleTriggerContextEventKey = @"event";
     return self;
 }
 
-+ (instancetype)triggerContextWithTrigger:(UAScheduleTrigger *)trigger event:(NSDictionary *)event {
++ (instancetype)triggerContextWithTrigger:(UAScheduleTrigger *)trigger event:(id)event {
     return [[UAScheduleTriggerContext alloc] initWithTrigger:trigger event:event];
 }
 
@@ -33,7 +37,7 @@ static NSString *const UAScheduleTriggerContextEventKey = @"event";
         return NO;
     }
 
-    if (![self.event isEqualToDictionary:triggerContext.event]) {
+    if (![self.event isEqual:triggerContext.event]) {
         return NO;
     }
 
@@ -75,6 +79,10 @@ static NSString *const UAScheduleTriggerContextEventKey = @"event";
     }
 
     return self;
+}
+
++ (BOOL)supportsSecureCoding {
+    return YES;
 }
 
 @end

@@ -278,4 +278,24 @@
     return dictionary;
 }
 
+- (BOOL)isEqualToMutation:(UATagGroupsMutation *)mutation {
+    return [self.payload isEqualToDictionary:mutation.payload];
+}
+
+- (BOOL)isEqual:(id)object {
+    if (self == object) {
+        return YES;
+    }
+
+    if (![object isKindOfClass:[self class]]) {
+        return NO;
+    }
+
+    return [self isEqualToMutation:object];
+}
+
+- (NSUInteger)hash {
+    return [self.payload hash];
+}
+
 @end

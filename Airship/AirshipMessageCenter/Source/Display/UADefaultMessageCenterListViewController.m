@@ -665,9 +665,6 @@ NS_ASSUME_NONNULL_BEGIN
 
     if (!cell) {
         cell = [[bundle loadNibNamed:nibName owner:nil options:nil] firstObject];
-        //Set the cell title and date font
-        cell.title.font = [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleBody] scaledFontForFont:cell.title.font];
-        cell.date.font = [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleBody] scaledFontForFont:cell.date.font];
     }
 
     cell.messageCenterStyle = self.messageCenterStyle;

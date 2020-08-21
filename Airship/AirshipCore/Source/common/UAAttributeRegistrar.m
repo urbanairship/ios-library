@@ -5,68 +5,63 @@
 #import "UAAttributeAPIClient+Internal.h"
 #import "UAAttributeMutations+Internal.h"
 #import "UAAttributePendingMutations+Internal.h"
-#import "UAAsyncOperation.h"
 #import "UAUtils.h"
-#import "UADate.h"
-#import "UAComponent.h"
 
-static NSString *const PersistentQueueKey = @"com.urbanairship.channel_attributes.registrar_persistent_queue_key";
+static NSString *const ChannelPersistentQueueKey = @"com.urbanairship.channel_attributes.registrar_persistent_queue_key";
+static NSString *const NamedUserPersistentQueueKey = @"com.urbanairship.named_user_attributes.registrar_persistent_queue_key";
 
 @interface UAAttributeRegistrar()
 @property(nonatomic, strong) UAPersistentQueue *pendingAttributeMutationsQueue;
 @property(nonatomic, strong) UAAttributeAPIClient *client;
 @property(nonatomic, strong) UAPreferenceDataStore *dataStore;
-@property(nonatomic, strong) NSOperationQueue *operationQueue;
 @property(nonatomic, strong) UIApplication *application;
-@property(nonatomic, strong) UADate *date;
+@property(nonatomic, copy) NSString *identifier;
 @end
 
 @implementation UAAttributeRegistrar
 
-+ (instancetype)registrarWithConfig:(UARuntimeConfig *)config
-                          dataStore:(UAPreferenceDataStore *)dataStore {
-    return [[UAAttributeRegistrar alloc] initWithDataStore:dataStore
-                                                 apiClient:[UAAttributeAPIClient clientWithConfig:config]
-                                            operationQueue:[[NSOperationQueue alloc] init]
-                                               application:[UIApplication sharedApplication]
-                                                      date:[[UADate alloc] init]];
++ (instancetype)channelRegistrarWithConfig:(UARuntimeConfig *)config
+                                 dataStore:(UAPreferenceDataStore *)dataStore {
+
+    UAPersistentQueue *queue = [UAPersistentQueue persistentQueueWithDataStore:dataStore
+                                                                           key:ChannelPersistentQueueKey];
+
+    return [[UAAttributeRegistrar alloc] initWithAPIClient:[UAAttributeAPIClient channelClientWithConfig:config]
+                                           persistentQueue:queue
+                                               application:[UIApplication sharedApplication]];
 }
 
-+ (instancetype)registrarWithDataStore:(UAPreferenceDataStore *)dataStore
-                             apiClient:(UAAttributeAPIClient *)apiClient
-                        operationQueue:(NSOperationQueue *)operationQueue
-                           application:(UIApplication *)application
-                                  date:(UADate *)date {
-    return [[UAAttributeRegistrar alloc] initWithDataStore:dataStore
-                                                 apiClient:apiClient
-                                            operationQueue:operationQueue
-                                               application:application
-                                                      date:date];
++ (instancetype)namedUserRegistrarWithConfig:(UARuntimeConfig *)config
+                                   dataStore:(UAPreferenceDataStore *)dataStore {
+
+    UAPersistentQueue *queue = [UAPersistentQueue persistentQueueWithDataStore:dataStore
+                                                                           key:NamedUserPersistentQueueKey];
+
+    return [[UAAttributeRegistrar alloc] initWithAPIClient:[UAAttributeAPIClient namedUserClientWithConfig:config]
+                                           persistentQueue:queue
+                                               application:[UIApplication sharedApplication]];
 }
 
-- (instancetype)initWithDataStore:(UAPreferenceDataStore *)dataStore
-                        apiClient:(UAAttributeAPIClient *)apiClient
-                   operationQueue:(NSOperationQueue *)operationQueue
-                      application:application
-                             date:date {
-    self = [super initWithDataStore:dataStore];
++ (instancetype)registrarWithAPIClient:(UAAttributeAPIClient *)APIClient
+                       persistentQueue:(UAPersistentQueue *)persistentQueue
+                           application:(UIApplication *)application {
+    return [[UAAttributeRegistrar alloc] initWithAPIClient:APIClient
+                                           persistentQueue:persistentQueue
+                                               application:application];
+}
 
+- (instancetype)initWithAPIClient:(UAAttributeAPIClient *)APIClient
+                  persistentQueue:(UAPersistentQueue *)persistentQueue
+                      application:(UIApplication *)application {
+    self = [super init];
     if (self) {
-        self.dataStore = dataStore;
         self.application = application;
-        self.client = apiClient;
-        self.client.enabled = self.componentEnabled;
-        self.date = date;
-        self.pendingAttributeMutationsQueue = [UAPersistentQueue persistentQueueWithDataStore:dataStore key:PersistentQueueKey];
-        self.operationQueue = operationQueue;
-        self.operationQueue.maxConcurrentOperationCount = 1;
+        self.client = APIClient;
+        self.pendingAttributeMutationsQueue = persistentQueue;
+        self.enabled = YES;
     }
 
     return self;
-}
-
--(void)dealloc {
-    [self.operationQueue cancelAllOperations];
 }
 
 - (void)savePendingMutations:(UAAttributePendingMutations *)mutations {
@@ -78,151 +73,114 @@ static NSString *const PersistentQueueKey = @"com.urbanairship.channel_attribute
     [self.pendingAttributeMutationsQueue addObject:mutations];
 }
 
-- (void)deletePendingMutations {
+- (void)clearPendingMutations {
     [self.pendingAttributeMutationsQueue clear];
 }
 
 - (void)collapseQueuedPendingMutations {
-    UAPersistentQueue *queue = self.pendingAttributeMutationsQueue;
-    NSArray<UAAttributePendingMutations *> *mutationsToCollapse = [[queue objects] mutableCopy];
+    [self.pendingAttributeMutationsQueue collapse:^NSArray<id<NSCoding>> * (NSArray<id<NSCoding>> *mutations) {
+        if (mutations.count == 0) {
+            return mutations;
+        }
 
-    if (mutationsToCollapse.count == 0) {
-        // Nothing in the queue to collapse
-        return;
-    }
-
-    UAAttributePendingMutations *mutations = [UAAttributePendingMutations collapseMutations:mutationsToCollapse];
-    [queue setObjects:@[mutations]];
+        return @[[UAAttributePendingMutations collapseMutations:(NSArray<UAAttributePendingMutations *>*)mutations]];
+    }];
 }
 
-- (void)updateAttributesForChannel:(NSString *)identifier {
-    if (!self.componentEnabled || !self.isDataCollectionEnabled) {
+- (void)updateAttributes {
+    if (!self.enabled) {
         return;
     }
 
-    UAAsyncOperation *operation = [UAAsyncOperation operationWithBlock:^(UAAsyncOperation *operation) {
-        UA_WEAKIFY(self);
-        __block UIBackgroundTaskIdentifier backgroundTaskIdentifier = [self.application beginBackgroundTaskWithExpirationHandler:^{
-            UA_STRONGIFY(self);
+    UA_WEAKIFY(self);
+    __block UIBackgroundTaskIdentifier backgroundTaskIdentifier = [self.application beginBackgroundTaskWithExpirationHandler:^{
+        UA_STRONGIFY(self);
 
-            UA_LTRACE(@"UAAttributeRegistrar - Channel attribute mutation background task expired.");
-            [self.client cancelAllRequests];
-            [self endBackgroundTask:backgroundTaskIdentifier];
-            [operation finish];
-        }];
-
-        if (backgroundTaskIdentifier == UIBackgroundTaskInvalid) {
-            UA_LTRACE("UAAttributeRegistrar - Background task unavailable, skipping channel attribute mutation update.");
-            [operation finish];
-            return;
-        }
-
-        // Collapse queued pending mutations
-        [self collapseQueuedPendingMutations];
-
-        if (self.pendingAttributeMutationsQueue.objects.count == 0) {
-            [self endBackgroundTask:backgroundTaskIdentifier];
-            [operation finish];
-            return;
-        }
-
-        UAAttributePendingMutations *nextPendingMutation = (UAAttributePendingMutations *)[self.pendingAttributeMutationsQueue peekObject];
-
-        [self.client updateChannel:identifier withAttributePayload:nextPendingMutation.payload onSuccess:^{
-            // Success - pop uploaded mutation
-            [self.pendingAttributeMutationsQueue popObject];
-
-            // Continue updating attributes for channel if operation has not been canceled and there are remaining mutations to upload
-            if (!operation.isCancelled && self.pendingAttributeMutationsQueue.objects.count > 0) {
-                [self updateAttributesForChannel:identifier];
-            }
-
-            [self endBackgroundTask:backgroundTaskIdentifier];
-            [operation finish];
-        } onFailure:^(NSUInteger statusCode) {
-            UA_LDEBUG("UAAttributeRegistrar - update channel attribute request failed with status code:%lu", (unsigned long)statusCode);
-
-            if (statusCode == 400 || statusCode == 403) {
-                // Unrecoverable failure - pop mutation and end the background task
-                [self.pendingAttributeMutationsQueue popObject];
-                [self endBackgroundTask:backgroundTaskIdentifier];
-            }
-
-            [operation finish];
-        }];
+        UA_LTRACE(@"Attribute background task expired.");
+        [self.client cancelAllRequests];
+        [self endBackgroundTask:backgroundTaskIdentifier];
     }];
 
-    [self.operationQueue addOperation:operation];
+    if (backgroundTaskIdentifier == UIBackgroundTaskInvalid) {
+        UA_LTRACE("Background task unavailable, skipping tag groups update.");
+        return;
+    }
+
+    [self uploadNextMutationWithBackgroundTaskIdentifier:backgroundTaskIdentifier];
 }
 
-- (void)updateAttributesForNamedUser:(NSString *)identifier {
-    if (!self.componentEnabled || !self.isDataCollectionEnabled) {
+- (void)popPendingMutations:(UAAttributePendingMutations *)mutations
+                 identifier:(NSString *)identifier {
+    @synchronized (self) {
+        // Pop the mutation if it is what we expect and the identifier has not changed
+        if ([mutations isEqual:self.pendingAttributeMutationsQueue.peekObject] && [identifier isEqualToString:self.identifier]) {
+            [self.pendingAttributeMutationsQueue popObject];
+        }
+    }
+}
+
+- (void)uploadNextMutationWithBackgroundTaskIdentifier:(UIBackgroundTaskIdentifier)backgroundTaskIdentifier {
+    UAAttributePendingMutations *mutations;
+    NSString *identifier;
+
+    @synchronized (self) {
+        // collapse mutations
+        [self collapseQueuedPendingMutations];
+
+        // peek mutations
+        mutations = (UAAttributePendingMutations *)[self.pendingAttributeMutationsQueue peekObject];
+        identifier = self.identifier;
+    }
+
+    if (!identifier || !mutations) {
+        // no upload work to do - end background task, if necessary, and finish operation
+        [self endBackgroundTask:backgroundTaskIdentifier];
         return;
     }
 
-    UAAsyncOperation *operation = [UAAsyncOperation operationWithBlock:^(UAAsyncOperation *operation) {
-        UA_WEAKIFY(self);
-        __block UIBackgroundTaskIdentifier backgroundTaskIdentifier = [self.application beginBackgroundTaskWithExpirationHandler:^{
-            UA_STRONGIFY(self);
-
-            UA_LTRACE(@"UAAttributeRegistrar - Named user attribute mutation background task expired.");
-            [self.client cancelAllRequests];
+    UA_WEAKIFY(self);
+    void (^apiCompletionBlock)(NSUInteger, NSError *) = ^void(NSUInteger status, NSError *error) {
+        UA_STRONGIFY(self);
+        if (status >= 200 && status <= 299) {
+            // Success - pop mutation
+            [self popPendingMutations:mutations identifier:identifier];
+            [self uploadNextMutationWithBackgroundTaskIdentifier:backgroundTaskIdentifier];
+        } else if (status == 400 || status == 403) {
+            // Unrecoverable failure - pop mutation
+            UA_LERR(@"Unable to upload mutations: %@. Dropping.", mutations);
+            [self popPendingMutations:mutations identifier:identifier];
+            [self uploadNextMutationWithBackgroundTaskIdentifier:backgroundTaskIdentifier];
+        } else {
+            UA_LINFO(@"Update of %@ failed with status: %ld error: %@", mutations, (unsigned long)status, error);
             [self endBackgroundTask:backgroundTaskIdentifier];
-            [operation finish];
-        }];
-
-        if (backgroundTaskIdentifier == UIBackgroundTaskInvalid) {
-            UA_LTRACE("UAAttributeRegistrar - Background task unavailable, skipping named user attribute mutation update.");
-            [operation finish];
-            return;
         }
+    };
 
-        // Collapse queued pending mutations
-        [self collapseQueuedPendingMutations];
-
-        if (self.pendingAttributeMutationsQueue.objects.count == 0) {
-            [self endBackgroundTask:backgroundTaskIdentifier];
-            [operation finish];
-            return;
-        }
-
-        UAAttributePendingMutations *nextPendingMutation = (UAAttributePendingMutations *)[self.pendingAttributeMutationsQueue peekObject];
-
-        [self.client updateNamedUser:identifier withAttributePayload:nextPendingMutation.payload onSuccess:^{
-            // Success - pop uploaded mutation
-            [self.pendingAttributeMutationsQueue popObject];
-
-            // Continue updating attributes for named user if operation has not been canceled and there are remaining mutations to upload
-            if (!operation.isCancelled && self.pendingAttributeMutationsQueue.objects.count > 0) {
-                [self updateAttributesForNamedUser:identifier];
-            }
-
-            [self endBackgroundTask:backgroundTaskIdentifier];
-            [operation finish];
-        } onFailure:^(NSUInteger statusCode) {
-            UA_LDEBUG("UAAttributeRegistrar - update named user attribute request failed with status code: %lu", (unsigned long)statusCode);
-
-            if (statusCode == 400 || statusCode == 403) {
-                // Unrecoverable failure - pop mutation and end the background task
-                [self.pendingAttributeMutationsQueue popObject];
-                [self endBackgroundTask:backgroundTaskIdentifier];
-            }
-
-            [operation finish];
-        }];
-    }];
-
-    [self.operationQueue addOperation:operation];
+    [self.client updateWithIdentifier:identifier
+                   attributeMutations:mutations
+                    completionHandler:apiCompletionBlock];
 }
 
 - (void)endBackgroundTask:(UIBackgroundTaskIdentifier)backgroundTaskIdentifier {
-   if (backgroundTaskIdentifier != UIBackgroundTaskInvalid) {
-       [self.application endBackgroundTask:backgroundTaskIdentifier];
-   }
+    if (backgroundTaskIdentifier != UIBackgroundTaskInvalid) {
+        [self.application endBackgroundTask:backgroundTaskIdentifier];
+    }
 }
 
-- (void)onComponentEnableChange {
-    self.client.enabled = self.componentEnabled;
+- (void)setEnabled:(BOOL)enabled {
+    _enabled = enabled;
+    self.client.enabled = enabled;
+}
+
+- (void)setIdentifier:(NSString *)identifier clearPendingOnChange:(BOOL)clearPendingOnChange {
+    @synchronized (self) {
+        if (clearPendingOnChange && ![identifier isEqualToString:self.identifier]) {
+            [self clearPendingMutations];
+        }
+
+        self.identifier = identifier;
+    }
 }
 
 @end
+

@@ -26,7 +26,8 @@ NS_ASSUME_NONNULL_BEGIN
  * @param message The message.
  * @return In-app message event data.
  */
-+ (NSMutableDictionary *)createDataForMessage:(UAInAppMessage *)message;
++ (NSMutableDictionary *)createDataWithMessageID:(NSString *)messageID
+                                         message:(UAInAppMessage *)message;
 
 @end
 

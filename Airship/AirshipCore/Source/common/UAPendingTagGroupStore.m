@@ -23,6 +23,7 @@ NSString * const UATagGroupsChannelStoreKey = @"channel";
 NSString * const UATagGroupsNamedUserStoreKey = @"named_user";
 
 @interface UAPendingTagGroupStore ()
+@property (nonatomic, copy) NSString *storeKey;
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 @property (nonatomic, strong) UAPersistentQueue *pendingTagGroupsMutations;
 @end
@@ -115,7 +116,6 @@ NSString * const UATagGroupsNamedUserStoreKey = @"named_user";
     [self.dataStore setDouble:maxAge forKey:kUATagGroupsSentMutationsMaxAgeKey];
 }
 
-
 - (NSArray<UATagGroupsMutation *> *)pendingMutations {
     return (NSArray<UATagGroupsMutation *>*)[self.pendingTagGroupsMutations objects];
 }
@@ -133,22 +133,13 @@ NSString * const UATagGroupsNamedUserStoreKey = @"named_user";
 }
 
 - (void)collapsePendingMutations {
-    NSArray<UATagGroupsMutation *> *mutations = [[self.pendingTagGroupsMutations objects] mutableCopy];
-    mutations = [UATagGroupsMutation collapseMutations:mutations];
-
-    [self.pendingTagGroupsMutations setObjects:mutations];
+    [self.pendingTagGroupsMutations collapse:^(NSArray<id<NSCoding>>* objects) {
+        return [UATagGroupsMutation collapseMutations:(NSArray<UATagGroupsMutation *>*)objects];
+    }];
 }
 
 - (void)clearPendingMutations {
     [self.pendingTagGroupsMutations clear];
-}
-
-- (NSDictionary *)applyMutations:(NSArray<UATagGroupsMutation *> *)mutations tags:(NSDictionary *)tags {
-    for (UATagGroupsMutation *mutation in mutations) {
-        tags = [mutation applyToTagGroups:tags];
-    }
-
-    return tags;
 }
 
 @end

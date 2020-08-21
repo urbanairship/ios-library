@@ -74,6 +74,13 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (NSDictionary *)applyToTagGroups:(NSDictionary *)tagGroups;
 
+/**
+ * Compares tag group mutations for equality by payload value.
+ *
+ * @param mutation The mutation to compare to the receiver.
+ */
+- (BOOL)isEqualToMutation:(UATagGroupsMutation *)mutation;
+
 @end
 
 NS_ASSUME_NONNULL_END

@@ -64,7 +64,6 @@ typedef NS_ENUM(NSInteger, UAInAppMessageSource) {
 /**
  * In-app message json keys and values.
  */
-extern NSString *const UAInAppMessageIDKey;
 extern NSString *const UAInAppMessageDisplayTypeKey;
 extern NSString *const UAInAppMessageDisplayContentKey;
 extern NSString *const UAInAppMessageExtraKey;

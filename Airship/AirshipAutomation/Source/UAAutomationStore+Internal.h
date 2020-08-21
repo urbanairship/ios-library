@@ -3,7 +3,7 @@
 #import <Foundation/Foundation.h>
 #import "UAScheduleTrigger+Internal.h"
 #import "UAAirshipAutomationCoreImport.h"
-#import "UASchedule.h"
+#import "UASchedule+Internal.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -68,31 +68,23 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)saveSchedules:(NSArray<UASchedule *> *)schedules completionHandler:(void (^)(BOOL))completionHandler;
 
 /**
- * Deletes the schedule corresponding to the provided identifier.
- *
- * @param scheduleID A schedule identifier.
- */
-- (void)deleteSchedule:(NSString *)scheduleID;
-
-/**
- * Deletes all schedules corresponding to the provided identifier.
- *
- * @param groupID A group identifier.
- */
-- (void)deleteSchedules:(NSString *)groupID;
-
-/**
- * Deletes all schedules.
- */
-- (void)deleteAllSchedules;
-
-/**
- * Gets all schedules corresponding to the provided identifier.
+ * Gets all schedules corresponding to the provided group.
  *
  * @param groupID A group identifier.
  * @param completionHandler Completion handler called back with the retrieved schedule data.
  */
 - (void)getSchedules:(NSString *)groupID completionHandler:(void (^)(NSArray<UAScheduleData *> *))completionHandler;
+
+/**
+ * Gets all schedules corresponding to the provided group and type.
+ *
+ * @param groupID A group identifier.
+ * @param scheduleType The schedule type.
+ * @param completionHandler Completion handler called back with the retrieved schedule data.
+ */
+- (void)getSchedules:(NSString *)groupID
+                type:(UAScheduleType)scheduleType
+   completionHandler:(void (^)(NSArray<UAScheduleData *> *))completionHandler;
 
 /**
  * Gets all un-ended schedules.
@@ -102,28 +94,24 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)getSchedules:(void (^)(NSArray<UAScheduleData *> *))completionHandler;
 
 /**
- * Gets all schedules, including schedules that have ended.
- *
- * @param completionHandler Completion handler called back with the retrieved schedule data.
- */
-- (void)getAllSchedules:(void (^)(NSArray<UAScheduleData *> *))completionHandler;
-
-/**
- * Gets the schedule corresponding to the provided identifier.
- *
- * @param scheduleID A schedule identifier.
- * @param includingExpired Whether to include expired schedules
- * @param completionHandler Completion handler called back with the retrieved schedule data, or nil if the schedule was not found.
- */
-- (void)getSchedule:(NSString *)scheduleID includingExpired:(BOOL)includingExpired completionHandler:(void (^)(UAScheduleData * _Nullable))completionHandler;
-
-/**
- * Gets the schedule corresponding to the provided identifier.
+ * Gets the schedule corresponding to the given identifier.
  *
  * @param scheduleID A schedule identifier.
  * @param completionHandler Completion handler called back with the retrieved schedule data, or nil if the schedule was not found.
  */
 - (void)getSchedule:(NSString *)scheduleID completionHandler:(void (^)(UAScheduleData * _Nullable))completionHandler;
+
+/**
+ * Gets the schedule corresponding to the given identifier and type.
+ *
+ * @param scheduleID A schedule identifier.
+ * @param scheduleType The schedule type.
+ * @param completionHandler Completion handler called back with the retrieved schedule data, or nil if the schedule was not found.
+ */
+- (void)getSchedule:(NSString *)scheduleID
+               type:(UAScheduleType)scheduleType
+  completionHandler:(void (^)(UAScheduleData * _Nullable))completionHandler;
+
 
 /**
  * Gets the schedules with the corresponding state.
@@ -137,10 +125,11 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Gets the schedules with the corresponding type.
  *
- * @param type The type.
+ * @param scheduleType The schedule type.
  * @param completionHandler Completion handler called back with the retrieved schedule data.
  */
-- (void)getSchedulesWithType:(UAScheduleType)type completionHandler:(void (^)(NSArray<UAScheduleData *> *))completionHandler;
+- (void)getSchedulesWithType:(UAScheduleType)scheduleType
+           completionHandler:(void (^)(NSArray<UAScheduleData *> *))completionHandler;
 
 /**
  * Gets all expired schedules that have not exceeded their grace period.
@@ -153,11 +142,11 @@ NS_ASSUME_NONNULL_BEGIN
  * Gets all active triggers corresponding to the provided schedule identifier and trigger type.
  *
  * @param scheduleID A schedule identifier. If this parameter is nil, all schedules will be queried.
- * @param type A trigger type
+ * @param triggerType The trigger type.
  * @param completionHandler Completion handler called back with the retrieved trigger data.
  */
 - (void)getActiveTriggers:(nullable NSString *)scheduleID
-                     type:(UAScheduleTriggerType)type
+                     type:(UAScheduleTriggerType)triggerType
         completionHandler:(void (^)(NSArray<UAScheduleTriggerData *> *triggers))completionHandler;
 
 /**

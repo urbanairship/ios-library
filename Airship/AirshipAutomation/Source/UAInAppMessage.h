@@ -3,14 +3,7 @@
 #import <Foundation/Foundation.h>
 #import "UAInAppMessageDisplayContent.h"
 
-@class UAScheduleAudience;
-
 NS_ASSUME_NONNULL_BEGIN
-
-/**
- * Message identifier limit (100 characters).
- */
-extern NSUInteger const UAInAppMessageIDLimit;
 
 /**
  * Message name limit (100 characters).
@@ -36,13 +29,6 @@ extern NSString *const UAInAppMessageDisplayBehaviorImmediate;
 ///---------------------------------------------------------------------------------------
 /// @name In App Message Builder Properties
 ///---------------------------------------------------------------------------------------
-
-/**
- * Message identifier. Must be between [1-100] characters.
- *
- * Required.
- */
-@property(nonatomic, copy, nullable) NSString *identifier;
 
 /**
  * Message name. Optional. Must be between [1-100] characters.
@@ -97,11 +83,6 @@ extern NSString *const UAInAppMessageDisplayBehaviorImmediate;
 ///---------------------------------------------------------------------------------------
 /// @name In App Message Properties
 ///---------------------------------------------------------------------------------------
-
-/**
- * The unique identifier for the message.
- */
-@property(nonatomic, readonly) NSString *identifier;
 
 /**
  * Message name. Optional. Must be between [1-100] characters.

@@ -98,4 +98,11 @@
     }
 }
 
+- (void)collapse:(NSArray<id<NSCoding>> * (^)(NSArray<id<NSCoding>> *))block {
+    @synchronized (self) {
+        NSArray<id<NSCoding>> *result = block([self.objects copy]);
+        [self setObjects:result];
+    }
+}
+
 @end

@@ -16,10 +16,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Factory method to create an event.
+ * @param messageID The message ID.
  * @param message The in-app message.
  * @return An in-app display event.
  */
-+ (instancetype)eventWithMessage:(UAInAppMessage *)message;
++ (instancetype)eventWithMessageID:(NSString *)messageID
+                           message:(UAInAppMessage *)message;
 
 @end
 

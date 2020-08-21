@@ -1,3 +1,4 @@
+#import "UAActionSchedule.h"
 #import "UAAirshipAutomationCoreImport.h"
 #import "UAAutomationModuleLoader.h"
 #import "UAAutomationResources.h"
@@ -32,6 +33,7 @@
 #import "UAInAppMessageModalStyle.h"
 #import "UAInAppMessageResolution.h"
 #import "UAInAppMessageSceneManager.h"
+#import "UAInAppMessageSchedule.h"
 #import "UAInAppMessageStyleProtocol.h"
 #import "UAInAppMessageTextInfo.h"
 #import "UAInAppMessageTextStyle.h"
@@ -44,5 +46,4 @@
 #import "UAScheduleDelay.h"
 #import "UAScheduleEdits.h"
 #import "UAScheduleTrigger.h"
-#import "UAScheduleTriggerContext.h"
 #import "UATagSelector.h"

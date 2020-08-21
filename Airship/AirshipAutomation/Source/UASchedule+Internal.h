@@ -1,28 +1,48 @@
 /* Copyright Airship and Contributors */
 
 #import "UASchedule.h"
+#import "UAScheduleDeferredData+Internal.h"
 
 NS_ASSUME_NONNULL_BEGIN
+
+typedef NS_ENUM(NSUInteger, UAScheduleType) {
+
+    /**
+     * In-app message type.
+     */
+    UAScheduleTypeInAppMessage,
+
+    /**
+     * Actions type.
+     */
+    UAScheduleTypeActions,
+
+    /**
+     * Deferred type.
+     */
+    UAScheduleTypeDeferred
+};
 
 /**
  * Builder class for UASchedule.
  */
 @interface UASchedule ()
 
-@property (nullable, nonatomic, retain) NSString *dataJSONString;
-
+/**
+ * The schedule type.
+ */
+@property(nonatomic, readonly) UAScheduleType type;
 
 /**
- * Creates a schedule with a builder block and type from JSON.
- * @param type The schedule type.
- * @param JSON The data JSON.
- * @param builderBlock The builder block.
- * @return A schedule or nil if the type is invalid.
+ * Schedule data.
  */
-+ (nullable instancetype)scheduleWithType:(UAScheduleType)type
-                                 dataJSON:(id)JSON
-                             builderBlock:(void(^)(UAScheduleBuilder *builder))builderBlock;
+@property(nonatomic, readonly) id data;
 
+@property(nonatomic, readonly) NSString *dataJSONString;
+
+- (instancetype)initWithData:(id)data
+                        type:(UAScheduleType)scheduleType
+                     builder:(UAScheduleBuilder *)builder;
 
 @end
 

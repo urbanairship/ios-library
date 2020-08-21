@@ -171,12 +171,12 @@ extern NSUInteger const UAScheduleDataVersion;
 @property (nullable, nonatomic, retain) NSString *audience;
 
 /**
- * Whether the scheudle has exceeded its limit.
+ * Whether the schedule has exceeded its limit.
  */
 - (BOOL)isOverLimit;
 
 /**
- * Whether the scheudle has expired.
+ * Whether the schedule has expired.
  */
 - (BOOL)isExpired;
 

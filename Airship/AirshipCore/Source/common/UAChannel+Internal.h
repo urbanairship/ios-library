@@ -10,7 +10,32 @@
 extern NSString *const UAChannelTagsSettingsKey;
 extern NSString *const UAChannelCreationOnForeground;
 
-@interface UAChannel () <UAChannelRegistrarDelegate, UAExtendableChannelRegistration, UAPushableComponent>
+/**
+ * Notification posted when a channel tag group mutation is uploaded.
+ *
+ * User data will contain a UATagGroupsMutation, identifier string and NSDate under
+ * UAChannelUploadedTagGroupMutationNotificationMutationKey,
+ * UAChannelUploadedTagGroupMutationNotificationDateKey, and
+ * UAChannelUploadedTagGroupMutationEventIdentifierKey, respectively.
+ */
+extern NSString *const UAChannelUploadedTagGroupMutationNotification;
+
+/**
+ * The mutation key for UAChannelUploadedTagGroupMutationNotification.
+ */
+extern NSString *const UAChannelUploadedTagGroupMutationNotificationMutationKey;
+
+/**
+ * The date key for UAChannelUploadedTagGroupMutationNotification.
+ */
+extern NSString *const UAChannelUploadedTagGroupMutationNotificationDateKey;
+
+/**
+ * The identifier key for UAChannelUploadedTagGroupMutationNotification.
+ */
+extern NSString *const UAChannelUploadedTagGroupMutationNotificationIdentifierKey;
+
+@interface UAChannel () <UAChannelRegistrarDelegate, UATagGroupsRegistrarDelegate, UAExtendableChannelRegistration, UAPushableComponent>
 
 /**
  * Allows disabling channel registration before a channel is created.  Channel registration will resume
@@ -43,11 +68,6 @@ extern NSString *const UAChannelCreationOnForeground;
  * @param forcefully Tells the device api client to do any device api call forcefully.
  */
 - (void)updateRegistrationForcefully:(BOOL)forcefully;
-
-/**
- * Called to update the tag groups for the current channel.
- */
-- (void)updateChannelTagGroups;
 
 /**
  * Removes the existing channel and causes the registrar to create a new channel on next registration.

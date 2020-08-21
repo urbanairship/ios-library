@@ -202,7 +202,8 @@ typedef NS_ENUM(NSInteger, UAAutomationScheduleReadyResult) {
  * @param schedules The schedules.
  * @param completionHandler A completion handler.
  */
-- (void)scheduleMultiple:(NSArray<UASchedule *> *)schedules completionHandler:(nullable void (^)(BOOL))completionHandler;
+- (void)scheduleMultiple:(NSArray<UASchedule *> *)schedules
+       completionHandler:(nullable void (^)(BOOL))completionHandler;
 
 /**
  * Called when one of the schedule conditions changes.
@@ -213,72 +214,77 @@ typedef NS_ENUM(NSInteger, UAAutomationScheduleReadyResult) {
  * Cancels a schedule with the given identifier.
  *
  * @param identifier A schedule identifier.
- * @param completionHandler A completion handler called with the schedule that was canceled, or nil if the schedule was not found.
+ * @param completionHandler A completion handler called with the result.
  */
-- (void)cancelScheduleWithID:(NSString *)identifier completionHandler:(nullable void (^)(UASchedule * _Nullable))completionHandler;
+- (void)cancelScheduleWithID:(NSString *)identifier
+           completionHandler:(nullable void (^)(BOOL))completionHandler;
 
 /**
- * Cancels a schedule with the given identifier.
+ * Cancels all schedules of the given group and type.
  *
- * @param identifier A schedule identifier.
+ * @param group A schedule group.
+ * @param scheduleType The schedule type.
+ * @param completionHandler A completion handler called with the result.
  */
-- (void)cancelScheduleWithID:(NSString *)identifier;
-
+- (void)cancelSchedulesWithGroup:(NSString *)group
+                            type:(UAScheduleType)scheduleType
+               completionHandler:(nullable void (^)(BOOL))completionHandler;
 
 /**
  * Cancels all schedules of the given group.
  *
  * @param group A schedule group.
- * @param completionHandler A completion handler called with an array of schedules that were canceled. If no schedules matching the group are found, this array will be empty.
+ * @param completionHandler A completion handler called with the result.
  */
-- (void)cancelSchedulesWithGroup:(NSString *)group completionHandler:(nullable void (^)(NSArray <UASchedule *> *))completionHandler;
+- (void)cancelSchedulesWithGroup:(NSString *)group
+               completionHandler:(nullable void (^)(BOOL))completionHandler;
 
 /**
- * Cancels all schedules of the given group.
+ * Cancels all schedules of the given type.
  *
- * @param group A schedule group.
+ * @param scheduleType The schedule type.
+ * @param completionHandler A completion handler called with the result.
  */
-- (void)cancelSchedulesWithGroup:(NSString *)group;
-
 - (void)cancelSchedulesWithType:(UAScheduleType)scheduleType
-              completionHandler:(nullable void (^)(NSArray<UASchedule *> *))completionHandler;
-/**
- * Cancels all schedules.
- */
-- (void)cancelAll;
+              completionHandler:(nullable void (^)(BOOL))completionHandler;
 
 /**
- * Gets the schedule with the given identifier.
+ * Gets the schedule with the given identifier and type.
  *
  * @param identifier A schedule identifier.
+ * @param scheduleType The schedule type.
  * @param completionHandler The completion handler with the result.
  */
 - (void)getScheduleWithID:(NSString *)identifier
+                     type:(UAScheduleType)scheduleType
         completionHandler:(void (^)(UASchedule * _Nullable))completionHandler;
 
 /**
- * Gets all unended schedules.
+ * Gets all schedules of the given type.
+ *
+ * @param scheduleType The schedule type..
+ * @param completionHandler The completion handler with the result.
+ */
+- (void)getSchedulesWithType:(UAScheduleType)scheduleType
+           completionHandler:(void (^)(NSArray<UASchedule *> *))completionHandler;
+
+/**
+ * Gets all schedules.
  *
  * @param completionHandler The completion handler with the result.
  */
 - (void)getSchedules:(void (^)(NSArray<UASchedule *> *))completionHandler;
 
 /**
- * Gets all schedules, including schedules that have ended.
- *
- * @param completionHandler The completion handler with the result.
- */
-- (void)getAllSchedules:(void (^)(NSArray<UASchedule *> *))completionHandler;
-
-/**
- * Gets all schedules of the given group.
+ * Gets all schedules of the given group and type.
  *
  * @param group The schedule group.
+ * @param scheduleType The schedule type.
  * @param completionHandler The completion handler with the result.
  */
 - (void)getSchedulesWithGroup:(NSString *)group
+                         type:(UAScheduleType)scheduleType
             completionHandler:(void (^)(NSArray<UASchedule *> *))completionHandler;
-
 
 /**
  * Edits a schedule.
@@ -289,7 +295,7 @@ typedef NS_ENUM(NSInteger, UAAutomationScheduleReadyResult) {
  */
 - (void)editScheduleWithID:(NSString *)identifier
                      edits:(UAScheduleEdits *)edits
-         completionHandler:(void (^)(UASchedule * _Nullable))completionHandler;
+         completionHandler:(void (^)(BOOL))completionHandler;
 
 @end
 

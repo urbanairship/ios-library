@@ -17,7 +17,7 @@
     NSError *error = nil;
     id result = [NSKeyedArchiver archivedDataWithRootObject:value
                                       requiringSecureCoding:YES
-                                                      error:nil];
+                                                      error:&error];
 
     if (error) {
         UA_LERR(@"Failed to transform value: %@, error: %@", value, error);
@@ -28,7 +28,9 @@
 
 - (id)reverseTransformedValue:(id)value {
     NSError *error = nil;
-    id result = [NSKeyedUnarchiver unarchivedObjectOfClass:[NSDictionary class] fromData:value error:nil];
+    id result = [NSKeyedUnarchiver unarchivedObjectOfClass:[NSDictionary class]
+                                                  fromData:value
+                                                     error:&error];
 
     if (error) {
         UA_LERR(@"Failed to transform value: %@, error: %@", value, error);

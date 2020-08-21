@@ -9,9 +9,7 @@
 @interface UATagGroupHistorian()
 
 @property (nonatomic, strong) UAChannel *channel;
-
 @property (nonatomic, strong) UANamedUser *namedUser;
-
 @property (nonatomic, strong) NSMutableArray<UATagGroupsTransactionRecord *> *records;
 
 @end
@@ -19,30 +17,56 @@
 @implementation UATagGroupHistorian
 
 - (instancetype)initTagGroupHistorianWithChannel:(UAChannel *)channel namedUser:(UANamedUser *)namedUser {
-
     self = [super init];
+
     if (self) {
         self.channel = channel;
         self.namedUser = namedUser;
-        self.records = [[NSMutableArray alloc] init];
+        self.records = [NSMutableArray array];
         
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onTagGroupsMutationUploaded:) name:UAAirshipTagGroupSentNotification object:nil];
-    }
-    return self;
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(uploadedChannelTagGroupsMutation:)
+                                                     name:UAChannelUploadedTagGroupMutationNotification
+                                                   object:nil];
 
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(uploadedNamedUserTagGroupsMutation:)
+                                                     name:UANamedUserUploadedTagGroupMutationNotification
+                                                   object:nil];
+    }
+
+    return self;
 }
 
-- (void)onTagGroupsMutationUploaded:(NSNotification *)notification {
 
-    UATagGroupsMutation *tagGroupsMutation = [notification.userInfo objectForKey:@"tagGroupsMutation"];
-    NSDate *date = [notification.userInfo objectForKey:@"date"];
-    NSString *identifier = [notification.userInfo objectForKey:@"identifier"];
-    
+- (void)uploadedChannelTagGroupsMutation:(NSNotification *)notification {
+
+    UATagGroupsMutation *tagGroupsMutation = [notification.userInfo objectForKey:UAChannelUploadedTagGroupMutationNotificationMutationKey];
+    NSDate *date = [notification.userInfo objectForKey:UAChannelUploadedTagGroupMutationNotificationDateKey];
+    NSString *identifier = [notification.userInfo objectForKey:UAChannelUploadedTagGroupMutationNotificationIdentifierKey];
+
     if (tagGroupsMutation && date) {
-        UATagGroupsTransactionRecord *record = [UATagGroupsTransactionRecord transactionRecordWithMutation:tagGroupsMutation date:date identifer:identifier];
+        UATagGroupsTransactionRecord *record = [UATagGroupsTransactionRecord transactionRecordWithMutation:tagGroupsMutation
+                                                                                                      date:date
+                                                                                                      type:UATagGroupsTransactionRecordTypeChannel
+                                                                                                 identifer:identifier];
         [self.records addObject:record];
     }
+}
 
+- (void)uploadedNamedUserTagGroupsMutation:(NSNotification *)notification {
+
+    UATagGroupsMutation *tagGroupsMutation = [notification.userInfo objectForKey:UANamedUserUploadedTagGroupMutationNotificationMutationKey];
+    NSDate *date = [notification.userInfo objectForKey:UANamedUserUploadedTagGroupMutationNotificationDateKey];
+    NSString *identifier = [notification.userInfo objectForKey:UANamedUserUploadedTagGroupMutationNotificationIdentifierKey];
+
+    if (tagGroupsMutation && date) {
+        UATagGroupsTransactionRecord *record = [UATagGroupsTransactionRecord transactionRecordWithMutation:tagGroupsMutation
+                                                                                                      date:date
+                                                                                                      type:UATagGroupsTransactionRecordTypeNamedUser
+                                                                                                 identifer:identifier];
+        [self.records addObject:record];
+    }
 }
 
 - (NSArray<UATagGroupsTransactionRecord *> *)transactionRecordsWithMaxAge:(NSTimeInterval)maxAge {
@@ -62,10 +86,14 @@
 
     NSString *namedUserIDentifier = self.namedUser.identifier;
     NSMutableArray<UATagGroupsMutation *> *mutations = [NSMutableArray array];
+
     for (UATagGroupsTransactionRecord *record in records) {
-        if (record.identifier == nil || [record.identifier isEqualToString:namedUserIDentifier]) {
-            [mutations addObject:record.mutation];
+        // Skip known named user records with mismatched identifiers
+        if (record.type == UATagGroupsTransactionRecordTypeNamedUser && ![record.identifier isEqualToString:namedUserIDentifier]) {
+            continue;;
         }
+
+        [mutations addObject:record.mutation];
     }
 
     return mutations;

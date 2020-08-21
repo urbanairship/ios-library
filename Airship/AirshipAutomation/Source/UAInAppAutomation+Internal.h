@@ -9,6 +9,7 @@
 #import "UATagGroupsLookupManager+Internal.h"
 #import "UAInAppRemoteDataClient+Internal.h"
 #import "UAAirshipAutomationCoreImport.h"
+#import "UADeferredScheduleAPIClient+Internal.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -25,14 +26,18 @@ NS_ASSUME_NONNULL_BEGIN
  * @param tagGroupsLookupManager The tag groups lookup manager.
  * @param remoteDataClient The remote data client.
  * @param dataStore The preference data store.
- * @param iamManager The in-app message manager instance.
+ * @param inAppMessageManager The in-app message manager instance.
+ * @param channel The channel instance.
+ * @parram deferredScheduleAPIClient The deferred API client.
  * @return A in-app automation manager instance.
  */
 + (instancetype)automationWithEngine:(UAAutomationEngine *)automationEngine
               tagGroupsLookupManager:(UATagGroupsLookupManager *)tagGroupsLookupManager
                     remoteDataClient:(UAInAppRemoteDataClient *)remoteDataClient
                            dataStore:(UAPreferenceDataStore *)dataStore
-                inAppMesssageManager:(UAInAppMessageManager *)iamManager;
+                 inAppMessageManager:(UAInAppMessageManager *)inAppMessageManager
+                             channel:(UAChannel *)channel
+           deferredScheduleAPIClient:(UADeferredScheduleAPIClient *)deferredScheduleAPIClient;
 
 /**
  * Factory method.
@@ -53,7 +58,15 @@ NS_ASSUME_NONNULL_BEGIN
                            analytics:(UAAnalytics *)analytics;
 
 - (void)cancelSchedulesWithType:(UAScheduleType)scheduleType
-              completionHandler:(nullable void (^)(NSArray<UASchedule *> *))completionHandler;
+              completionHandler:(nullable void (^)(BOOL))completionHandler;
+
+/**
+ * Get all the in-app automations.
+ *
+ * @param completionHandler The completion handler to be called when fetch operation completes.
+ */
+- (void)getSchedules:(void (^)(NSArray<UASchedule *> *))completionHandler;
+
 
 @end
 

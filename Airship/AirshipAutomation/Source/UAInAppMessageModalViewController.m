@@ -84,10 +84,6 @@ static CGFloat const ModalCloseButtonViewWidth = 46.0;
  */
 @property (weak, nonatomic) IBOutlet UIView *footerContainerView;
 
-/**
- * The identifier of the modal message.
- */
-@property (nonatomic, copy) NSString *messageID;
 
 /**
  * The modal message's media view.
@@ -105,25 +101,21 @@ static CGFloat const ModalCloseButtonViewWidth = 46.0;
 
 @dynamic view;
 
-+ (instancetype)modalControllerWithModalMessageID:(NSString *)messageID
-                                   displayContent:(UAInAppMessageModalDisplayContent *)displayContent
++ (instancetype)modalControllerWithDisplayContent:(UAInAppMessageModalDisplayContent *)displayContent
                                         mediaView:(nullable UAInAppMessageMediaView *)mediaView
                                             style:(nullable UAInAppMessageModalStyle *)style {
 
-    return [[self alloc] initWithModalMessageID:messageID
-                                 displayContent:displayContent
+    return [[self alloc] initWithDisplayContent:displayContent
                                       mediaView:mediaView
                                           style:style];
 }
 
-- (instancetype)initWithModalMessageID:(NSString *)messageID
-                        displayContent:(UAInAppMessageModalDisplayContent *)displayContent
+- (instancetype)initWithDisplayContent:(UAInAppMessageModalDisplayContent *)displayContent
                              mediaView:(nullable UAInAppMessageMediaView *)mediaView
                                  style:(nullable UAInAppMessageModalStyle *)style {
     self = [self initWithNibName:@"UAInAppMessageModalViewController" bundle:[NSBundle bundleForClass:[self class]]];
 
     if (self) {
-        self.messageID = messageID;
         self.displayContent = displayContent;
         self.mediaView = mediaView;
         self.style = style;

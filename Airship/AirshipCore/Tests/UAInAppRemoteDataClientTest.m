@@ -7,14 +7,15 @@
 #import "UARemoteDataPayload+Internal.h"
 #import "UAUtils+Internal.h"
 #import "UAPreferenceDataStore+Internal.h"
-#import "UAInAppMessageManager.h"
 #import "UAPush+Internal.h"
 #import "UASchedule+Internal.h"
 #import "UAScheduleEdits+Internal.h"
 #import "NSJSONSerialization+UAAdditions.h"
 #import "UAInAppMessage+Internal.h"
-
-NSString * const UAInAppMessagesScheduledMessagesKey = @"UAInAppRemoteDataClient.ScheduledMessages";
+#import "UAActionSchedule.h"
+#import "UAInappMessageSchedule.h"
+#import "UADeferredSchedule+Internal.h"
+#import "UAInAppMessageCustomDisplayContent.h"
 
 @interface UAInAppRemoteDataClientTest : UAAirshipBaseTest
 @property (nonatomic,strong) UAInAppRemoteDataClient *remoteDataClient;
@@ -61,15 +62,15 @@ NSString * const UAInAppMessagesScheduledMessagesKey = @"UAInAppRemoteDataClient
         [invocation getArgument:&arg atIndex:2];
         void (^completionHandler)(NSArray<UASchedule *> *) = (__bridge void (^)(NSArray<UASchedule *> *))arg;
         completionHandler(self.allSchedules);
-    }] getAllSchedules:OCMOCK_ANY];
+    }] getSchedules:OCMOCK_ANY];
 
 
     self.queue = [[NSOperationQueue alloc] init];
     self.queue.maxConcurrentOperationCount = 1;
 
     self.remoteDataClient = [UAInAppRemoteDataClient clientWithRemoteDataProvider:self.mockRemoteDataProvider
-                                                                    dataStore:self.dataStore
-                                                                      channel:self.mockChannel
+                                                                        dataStore:self.dataStore
+                                                                          channel:self.mockChannel
                                                                    operationQueue:self.queue];
     self.remoteDataClient.delegate = self.mockDelegate;
 
@@ -176,7 +177,6 @@ NSString * const UAInAppMessagesScheduledMessagesKey = @"UAInAppRemoteDataClient
     self.publishBlock(@[]);
     [self.queue waitUntilAllOperationsAreFinished];
 }
-
 
 - (void)testEmptyInAppMessageList {
     UARemoteDataPayload *inAppRemoteDataPayload = [[UARemoteDataPayload alloc] initWithType:@"in_app_messages"
@@ -769,7 +769,7 @@ NSString * const UAInAppMessagesScheduledMessagesKey = @"UAInAppRemoteDataClient
 
 - (void)testValidSchedule {
     id remoteDataMetadata = @{@"neat": @"rad"};
-    UASchedule *schedule = [UASchedule scheduleWithActions:@{} builderBlock:^(UAScheduleBuilder * _Nonnull builder) {
+    UASchedule *schedule = [UAActionSchedule scheduleWithActions:@{} builderBlock:^(UAScheduleBuilder * _Nonnull builder) {
         builder.metadata = @{
             @"com.urbanairship.iaa.REMOTE_DATA_METADATA": remoteDataMetadata
         };
@@ -782,7 +782,7 @@ NSString * const UAInAppMessagesScheduledMessagesKey = @"UAInAppRemoteDataClient
 - (void)testInvalidSchedule {
     id remoteDataMetadata = @{@"neat": @"rad"};
 
-    UASchedule *schedule = [UASchedule scheduleWithActions:@{} builderBlock:^(UAScheduleBuilder * _Nonnull builder) {
+    UASchedule *schedule = [UAActionSchedule scheduleWithActions:@{} builderBlock:^(UAScheduleBuilder * _Nonnull builder) {
         builder.metadata = @{
             @"com.urbanairship.iaa.REMOTE_DATA_METADATA": remoteDataMetadata
         };
@@ -795,28 +795,311 @@ NSString * const UAInAppMessagesScheduledMessagesKey = @"UAInAppRemoteDataClient
 - (void)testRemoteSchedule {
     id remoteDataMetadata = @{@"neat": @"rad"};
 
-    UASchedule *remote = [UASchedule scheduleWithActions:@{} builderBlock:^(UAScheduleBuilder * _Nonnull builder) {
+    UASchedule *remote = [UAActionSchedule scheduleWithActions:@{} builderBlock:^(UAScheduleBuilder * _Nonnull builder) {
         builder.metadata = @{
             @"com.urbanairship.iaa.REMOTE_DATA_METADATA": remoteDataMetadata
         };
     }];
 
-    UASchedule *notRemote = [UASchedule scheduleWithActions:@{} builderBlock:^(UAScheduleBuilder * _Nonnull builder) {
+    UASchedule *notRemote = [UAActionSchedule scheduleWithActions:@{} builderBlock:^(UAScheduleBuilder * _Nonnull builder) {
     }];
 
     UAInAppMessage *remoteMessage = [UAInAppMessage messageWithBuilderBlock:^(UAInAppMessageBuilder * _Nonnull builder) {
-        builder.identifier = @"neat";
         builder.source = UAInAppMessageSourceRemoteData;
     }];
 
-    UASchedule *legacyRemote = [UASchedule scheduleWithMessage:remoteMessage builderBlock:^(UAScheduleBuilder * _Nonnull builder) {
+    UASchedule *legacyRemote = [UAInAppMessageSchedule scheduleWithMessage:remoteMessage builderBlock:^(UAScheduleBuilder * _Nonnull builder) {
     }];
 
     XCTAssertFalse([self.remoteDataClient isRemoteSchedule:notRemote]);
     XCTAssertTrue([self.remoteDataClient isRemoteSchedule:remote]);
     XCTAssertTrue([self.remoteDataClient isRemoteSchedule:legacyRemote]);
-
 }
+
+
+- (void)testLegacyMessage {
+    id payload = @{
+        @"message": @{
+                @"name": @"Simple Message",
+                @"display_type": @"custom",
+                @"display": @{
+                        @"custom": @{
+                                @"custom": @"stuff"
+                        }
+                },
+                @"audience": @{
+                        @"notification_opt_in": @(YES)
+                },
+                @"message_id": @"some id"
+        },
+        @"created": @"2017-12-04T19:07:54.564",
+        @"last_updated": @"2017-12-04T19:07:54.564",
+        @"triggers": @[
+                @{
+                    @"type":@"app_init",
+                    @"goal":@1
+                }
+        ],
+        @"edit_grace_period": @(24),
+        @"delay":  @{
+                @"seconds": @(100),
+                @"cancellation_triggers": @[
+                        @{
+                            @"type":@"app_init",
+                            @"goal":@2
+                        }
+                ]
+        },
+        @"group": @"some group",
+        @"interval": @(60),
+        @"priority": @(-30)
+    };
+
+    id metadata = @{@"metadata" : @"so meta"};
+
+
+    UAInAppMessage *message = [UAInAppMessage messageWithBuilderBlock:^(UAInAppMessageBuilder *builder) {
+        builder.displayContent = [UAInAppMessageCustomDisplayContent displayContentWithValue:@{@"custom": @"stuff"}];
+        builder.name = @"Simple Message";
+        builder.source = UAInAppMessageSourceRemoteData;
+    }];
+
+    UASchedule *expected = [UAInAppMessageSchedule scheduleWithMessage:message
+                                                          builderBlock:^(UAScheduleBuilder * _Nonnull builder) {
+        builder.audience = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder * _Nonnull builder) {
+            builder.notificationsOptIn = @(YES);
+        }];
+        builder.identifier = @"some id";
+        builder.triggers = @[[UAScheduleTrigger appInitTriggerWithCount:1]];
+        builder.metadata = @{
+            @"com.urbanairship.iaa.REMOTE_DATA_METADATA": metadata
+        };
+        builder.editGracePeriod = 24;
+        builder.delay = [UAScheduleDelay delayWithBuilderBlock:^(UAScheduleDelayBuilder *builder) {
+            builder.cancellationTriggers = @[[UAScheduleTrigger appInitTriggerWithCount:2]];
+            builder.seconds = 100;
+        }];
+        builder.group = @"some group";
+        builder.interval = 60;
+        builder.priority = -30;
+    }];
+
+    UARemoteDataPayload *inAppRemoteDataPayload = [[UARemoteDataPayload alloc] initWithType:@"in_app_messages"
+                                                                                  timestamp:[NSDate date]
+                                                                                       data:@{@"in_app_messages":@[payload]}
+                                                                                   metadata:metadata];
+
+    XCTestExpectation *scheduled = [self expectationWithDescription:@"scheduled"];
+    [[[self.mockDelegate expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void (^completionHandler)(BOOL) = (__bridge void (^)(BOOL))arg;
+        completionHandler(YES);
+        [scheduled fulfill];
+    }] scheduleMultiple:@[expected] completionHandler:OCMOCK_ANY];
+
+    self.publishBlock(@[inAppRemoteDataPayload]);
+    [self waitForTestExpectations];
+    [self.mockDelegate verify];
+}
+
+- (void)testActionsSchedule {
+    id payload = @{
+        @"actions": @{
+                @"some action name": @"some action value"
+        },
+        @"type": @"actions",
+        @"created": @"2017-12-04T19:07:54.564",
+        @"last_updated": @"2017-12-04T19:07:54.564",
+        @"triggers": @[
+                @{
+                    @"type":@"app_init",
+                    @"goal":@1
+                }
+        ],
+        @"id": @"some id",
+        @"edit_grace_period": @(24),
+        @"delay":  @{
+                @"seconds": @(100),
+                @"cancellation_triggers": @[
+                        @{
+                            @"type":@"app_init",
+                            @"goal":@2
+                        }
+                ]
+        },
+        @"audience": @{
+                @"notification_opt_in": @(YES)
+        },
+        @"group": @"some group",
+        @"interval": @(60),
+        @"priority": @(-30)
+    };
+
+    id metadata = @{@"metadata" : @"so meta"};
+
+    UASchedule *expected = [UAActionSchedule scheduleWithActions:@{@"some action name": @"some action value"}
+                                                    builderBlock:^(UAScheduleBuilder * _Nonnull builder) {
+        builder.audience = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder * _Nonnull builder) {
+            builder.notificationsOptIn = @(YES);
+        }];
+        builder.identifier = @"some id";
+        builder.triggers = @[[UAScheduleTrigger appInitTriggerWithCount:1]];
+        builder.metadata = @{
+            @"com.urbanairship.iaa.REMOTE_DATA_METADATA": metadata
+        };
+        builder.editGracePeriod = 24;
+        builder.delay = [UAScheduleDelay delayWithBuilderBlock:^(UAScheduleDelayBuilder *builder) {
+            builder.cancellationTriggers = @[[UAScheduleTrigger appInitTriggerWithCount:2]];
+            builder.seconds = 100;
+        }];
+        builder.group = @"some group";
+        builder.interval = 60;
+        builder.priority = -30;
+    }];
+
+    UARemoteDataPayload *inAppRemoteDataPayload = [[UARemoteDataPayload alloc] initWithType:@"in_app_messages"
+                                                                                  timestamp:[NSDate date]
+                                                                                       data:@{@"in_app_messages":@[payload]}
+                                                                                   metadata:metadata];
+
+    XCTestExpectation *scheduled = [self expectationWithDescription:@"scheduled"];
+    [[[self.mockDelegate expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void (^completionHandler)(BOOL) = (__bridge void (^)(BOOL))arg;
+        completionHandler(YES);
+        [scheduled fulfill];
+    }] scheduleMultiple:@[expected] completionHandler:OCMOCK_ANY];
+
+    self.publishBlock(@[inAppRemoteDataPayload]);
+    [self waitForTestExpectations];
+    [self.mockDelegate verify];
+}
+
+- (void)testDeferredSchedule {
+    id payload = @{
+        @"deferred": @{
+                @"url": @"https://airship.com/example",
+                @"retry_on_timeout": @(YES)
+        },
+        @"type": @"deferred",
+        @"created": @"2017-12-04T19:07:54.564",
+        @"last_updated": @"2017-12-04T19:07:54.564",
+        @"triggers": @[
+                @{
+                    @"type":@"app_init",
+                    @"goal":@1
+                }
+        ],
+        @"id": @"some id",
+        @"audience": @{
+                @"notification_opt_in": @(YES)
+        }
+    };
+
+    id metadata = @{@"metadata" : @"so meta"};
+
+    UAScheduleDeferredData *deferred = [UAScheduleDeferredData deferredDataWithURL:[NSURL URLWithString:@"https://airship.com/example"]
+                                                                retriableOnTimeout:YES];
+
+    UASchedule *expected = [UADeferredSchedule scheduleWithDeferredData:deferred
+                                                           builderBlock:^(UAScheduleBuilder * _Nonnull builder) {
+        builder.audience = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder * _Nonnull builder) {
+            builder.notificationsOptIn = @(YES);
+        }];
+        builder.identifier = @"some id";
+        builder.triggers = @[[UAScheduleTrigger appInitTriggerWithCount:1]];
+        builder.metadata = @{
+            @"com.urbanairship.iaa.REMOTE_DATA_METADATA": metadata
+        };
+    }];
+
+    UARemoteDataPayload *inAppRemoteDataPayload = [[UARemoteDataPayload alloc] initWithType:@"in_app_messages"
+                                                                                  timestamp:[NSDate date]
+                                                                                       data:@{@"in_app_messages":@[payload]}
+                                                                                   metadata:metadata];
+
+    XCTestExpectation *scheduled = [self expectationWithDescription:@"scheduled"];
+    [[[self.mockDelegate expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void (^completionHandler)(BOOL) = (__bridge void (^)(BOOL))arg;
+        completionHandler(YES);
+        [scheduled fulfill];
+    }] scheduleMultiple:@[expected] completionHandler:OCMOCK_ANY];
+
+    self.publishBlock(@[inAppRemoteDataPayload]);
+    [self waitForTestExpectations];
+    [self.mockDelegate verify];
+}
+
+- (void)testInAppMessageSchedule {
+    id payload = @{
+        @"message": @{
+                @"name": @"Simple Message",
+                @"display_type": @"custom",
+                @"display": @{
+                        @"custom": @{
+                                @"custom": @"stuff"
+                        }
+                }
+        },
+        @"type": @"in_app_message",
+        @"created": @"2017-12-04T19:07:54.564",
+        @"last_updated": @"2017-12-04T19:07:54.564",
+        @"triggers": @[
+                @{
+                    @"type":@"app_init",
+                    @"goal":@1
+                }
+        ],
+        @"id": @"some id",
+        @"audience": @{
+                @"notification_opt_in": @(YES)
+        }
+    };
+
+    id metadata = @{@"metadata" : @"so meta"};
+
+    UAInAppMessage *message = [UAInAppMessage messageWithBuilderBlock:^(UAInAppMessageBuilder *builder) {
+        builder.displayContent = [UAInAppMessageCustomDisplayContent displayContentWithValue:@{@"custom": @"stuff"}];
+        builder.name = @"Simple Message";
+        builder.source = UAInAppMessageSourceRemoteData;
+    }];
+
+    UASchedule *expected = [UAInAppMessageSchedule scheduleWithMessage:message
+                                                          builderBlock:^(UAScheduleBuilder * _Nonnull builder) {
+
+        builder.audience = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder * _Nonnull builder) {
+            builder.notificationsOptIn = @(YES);
+        }];
+        builder.identifier = @"some id";
+        builder.triggers = @[[UAScheduleTrigger appInitTriggerWithCount:1]];
+        builder.metadata = @{
+            @"com.urbanairship.iaa.REMOTE_DATA_METADATA": metadata
+        };
+    }];
+
+    UARemoteDataPayload *inAppRemoteDataPayload = [[UARemoteDataPayload alloc] initWithType:@"in_app_messages"
+                                                                                  timestamp:[NSDate date]
+                                                                                       data:@{@"in_app_messages":@[payload]}
+                                                                                   metadata:metadata];
+
+    XCTestExpectation *scheduled = [self expectationWithDescription:@"scheduled"];
+    [[[self.mockDelegate expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void (^completionHandler)(BOOL) = (__bridge void (^)(BOOL))arg;
+        completionHandler(YES);
+        [scheduled fulfill];
+    }] scheduleMultiple:@[expected] completionHandler:OCMOCK_ANY];
+
+    self.publishBlock(@[inAppRemoteDataPayload]);
+    [self waitForTestExpectations];
+    [self.mockDelegate verify];
+}
+
 
 - (UASchedule *)getScheduleForScheduleId:(NSString *)scheduleId {
     for (UASchedule *schedule in self.allSchedules) {
@@ -826,7 +1109,6 @@ NSString * const UAInAppMessagesScheduledMessagesKey = @"UAInAppRemoteDataClient
     }
     return nil;
 }
-
 
 @end
 

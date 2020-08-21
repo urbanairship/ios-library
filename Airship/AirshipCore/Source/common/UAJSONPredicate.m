@@ -171,4 +171,8 @@ NSString * const UAJSONPredicateErrorDomain = @"com.urbanairship.json_predicate"
     return nil;
 }
 
+- (NSString *)description {
+    return [NSString stringWithFormat:@"UAJSONPredicate{predicate=%@}", self.payload];
+}
+
 @end

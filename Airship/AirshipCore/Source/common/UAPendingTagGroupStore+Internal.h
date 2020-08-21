@@ -14,7 +14,10 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface UAPendingTagGroupStore : NSObject
 
-@property (nonatomic, copy) NSString *storeKey;
+/**
+ * The datastore key.
+ */
+@property (nonatomic, readonly) NSString *storeKey;
 
 /**
  * UAPendingTagGroupStore class factory method.

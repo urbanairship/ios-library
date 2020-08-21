@@ -2,23 +2,13 @@
 
 #import <Foundation/Foundation.h>
 #import "UAAPIClient.h"
+#import "UAAttributePendingMutations+Internal.h"
 
 @class UARuntimeConfig;
 
 NS_ASSUME_NONNULL_BEGIN
 
 extern NSString *const UAAttributePlatform;
-
-/**
- * A block called when the attribute mutation succeeded.
- */
-typedef void (^UAAttributeAPIClientSuccessBlock)(void);
-
-/**
- A block called when the attribute mutation failed.
- @param statusCode The request status code.
- */
-typedef void (^UAAttributeAPIClientFailureBlock)(NSUInteger statusCode);
 
 /**
  A high level abstraction for performing mutations on the attribute API.
@@ -31,46 +21,39 @@ typedef void (^UAAttributeAPIClientFailureBlock)(NSUInteger statusCode);
 ///---------------------------------------------------------------------------------------
 
 /**
- Factory method to create a UAAttributeAPIClient.
- @param config The Airship config.
- @return UAAttributeAPIClient instance.
+ * Factory method to create a channel UAAttributeAPIClient.
+ * @param config The Airship config.
+ * @return UAAttributeAPIClient instance.
  */
-+ (instancetype)clientWithConfig:(UARuntimeConfig *)config;
++ (instancetype)channelClientWithConfig:(UARuntimeConfig *)config;
 
 /**
- Factory method to create a UAAttributeAPIClient.
- @param config The Airship config.
- @param session The UARequestSession instance.
- @return UAAttributeAPIClient instance.
+ * Factory method to create a named user UAAttributeAPIClient.
+ * @param config The Airship config.
+ * @return UAAttributeAPIClient instance.
  */
-+ (instancetype)clientWithConfig:(UARuntimeConfig *)config session:(UARequestSession *)session;
++ (instancetype)namedUserClientWithConfig:(UARuntimeConfig *)config;
 
 /**
- Update the specified channel attributes with the provided attribute payload.
- @param identifier The channel to update.
- @param payload An dictionary representing an attribute payload.
- @param successBlock A UAAttributeAPIClientSuccessBlock that will be called
-         if the attribute was updated successfully.
- @param failureBlock A UAAttributeAPIClientFailureBlock that will be called if
-         the attribute update was unsuccessful.
+ * Factory method to create a UAAttributeAPIClient. Used for testing.
+ * @param config The Airship config.
+ * @param session The UARequestSession instance.
+ * @param URLFactoryBlock The URL factory block.
+ * @return UAAttributeAPIClient instance.
  */
-- (void)updateChannel:(NSString *)identifier withAttributePayload:(NSDictionary *)payload
-                                                        onSuccess:(UAAttributeAPIClientSuccessBlock)successBlock
-                                                        onFailure:(UAAttributeAPIClientFailureBlock)failureBlock;
++ (instancetype)clientWithConfig:(UARuntimeConfig *)config
+                         session:(UARequestSession *)session
+                 URLFactoryBlock:(NSURL *(^)(UARuntimeConfig *, NSString *))URLFactoryBlock;
 
 /**
- Update the specified named user attributes with the provided attribute payload.
- @param identifier The named user to update.
- @param payload An dictionary representing an attribute payload.
- @param successBlock A UAAttributeAPIClientSuccessBlock that will be called
-         if the attribute was updated successfully.
- @param failureBlock A UAAttributeAPIClientFailureBlock that will be called if
-         the attribute update was unsuccessful.
+ * Update the specified identifier with the provided attribute payload.
+ * @param identifier The identifier.
+ * @param mutations The mutations.
+ * @param completionHandler A block that will be called with the result.
  */
-- (void)updateNamedUser:(NSString *)identifier withAttributePayload:(NSDictionary *)payload
-              onSuccess:(UAAttributeAPIClientSuccessBlock)successBlock
-              onFailure:(UAAttributeAPIClientFailureBlock)failureBlock;
-
+- (void)updateWithIdentifier:(NSString *)identifier
+          attributeMutations:(UAAttributePendingMutations *)mutations
+           completionHandler:(void (^)(NSUInteger status, NSError * _Nullable error))completionHandler;
 
 @end
 

@@ -27,7 +27,6 @@ NSUInteger const UAInAppMessageNameLimit = 100;
     self = [self init];
 
     if (self) {
-        self.identifier = message.identifier;
         self.name = message.name;
         self.displayContent = message.displayContent;
         self.extras = message.extras;
@@ -47,11 +46,6 @@ NSUInteger const UAInAppMessageNameLimit = 100;
 }
 
 - (BOOL)isValid {
-    if (!self.identifier.length || self.identifier.length > UAInAppMessageIDLimit) {
-        UA_LERR(@"In-app message requires an identifier between [1, 100] characters");
-        return NO;
-    }
-
     if (self.name && (self.name.length < 1 || self.name.length > UAInAppMessageNameLimit)) {
         UA_LERR(@"If provided, in-app message name must be between [1, 100] characters");
         return NO;
@@ -68,7 +62,6 @@ NSUInteger const UAInAppMessageNameLimit = 100;
 @end
 
 @interface UAInAppMessage()
-@property(nonatomic, copy) NSString *identifier;
 @property(nonatomic, copy) NSString *name;
 @property(nonatomic, strong) UAInAppMessageDisplayContent *displayContent;
 @property(nonatomic, strong, nullable) NSDictionary *extras;
@@ -85,7 +78,6 @@ NSUInteger const UAInAppMessageNameLimit = 100;
 NSString * const UAInAppMessageErrorDomain = @"com.urbanairship.in_app_message";
 
 // Keys via IAM v2 spec
-NSString *const UAInAppMessageIDKey = @"message_id";
 NSString *const UAInAppMessageDisplayTypeKey = @"display_type";
 NSString *const UAInAppMessageDisplayContentKey = @"display";
 NSString *const UAInAppMessageExtraKey = @"extra";
@@ -130,21 +122,6 @@ NSString *const UAInAppMessageSourceLegacyPushValue = @"legacy-push";
         }
 
         return nil;
-    }
-
-    id identifier = json[UAInAppMessageIDKey];
-    if (identifier) {
-        if (![identifier isKindOfClass:[NSString class]]) {
-            if (error) {
-                NSString *msg = [NSString stringWithFormat:@"Message identifier must be a string. Invalid value: %@", identifier];
-                *error =  [NSError errorWithDomain:UAInAppMessageErrorDomain
-                                              code:UAInAppMessageErrorCodeInvalidJSON
-                                          userInfo:@{NSLocalizedDescriptionKey:msg}];
-            }
-            
-            return nil;
-        }
-        builder.identifier = identifier;
     }
 
     id name = json[UAInAppMessageNameKey];
@@ -393,7 +370,6 @@ NSString *const UAInAppMessageSourceLegacyPushValue = @"legacy-push";
     }
     
     if (self) {
-        self.identifier = builder.identifier;
         self.name = builder.name;
         self.displayContent = builder.displayContent;
         self.extras = builder.extras;
@@ -436,7 +412,6 @@ NSString *const UAInAppMessageSourceLegacyPushValue = @"legacy-push";
 - (NSDictionary *)toJSON {
     NSMutableDictionary *data = [NSMutableDictionary dictionary];
     
-    [data setValue:self.identifier forKey:UAInAppMessageIDKey];
     [data setValue:self.name forKey: UAInAppMessageNameKey];
 
     switch (self.displayType) {
@@ -488,10 +463,6 @@ NSString *const UAInAppMessageSourceLegacyPushValue = @"legacy-push";
 }
 
 - (BOOL)isEqualToInAppMessage:(UAInAppMessage *)message {
-    if (![self.identifier isEqualToString:message.identifier]) {
-        return NO;
-    }
-
     if (self.name != message.name && ![self.name isEqualToString:message.name]) {
         return NO;
     }
@@ -543,7 +514,6 @@ NSString *const UAInAppMessageSourceLegacyPushValue = @"legacy-push";
 
 - (NSUInteger)hash {
     NSUInteger result = 1;
-    result = 31 * result + [self.identifier hash];
     result = 31 * result + [self.name hash];
     result = 31 * result + [self.displayContent hash];
     result = 31 * result + [self.extras hash];

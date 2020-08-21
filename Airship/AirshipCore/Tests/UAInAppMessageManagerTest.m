@@ -41,7 +41,6 @@ NSString * const UAInAppMessageManagerTestScheduleID = @"schedule ID";
     [super setUp];
 
     self.message = [UAInAppMessage messageWithBuilderBlock:^(UAInAppMessageBuilder * _Nonnull builder) {
-        builder.identifier = @"neat";
         builder.actions = @{@"cool": @"story"};
         builder.displayContent = [UAInAppMessageCustomDisplayContent displayContentWithValue:@{}];
     }];

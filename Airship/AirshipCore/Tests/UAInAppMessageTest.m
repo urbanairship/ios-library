@@ -21,7 +21,6 @@
 
     // setup
     NSDictionary *originalJSON = @{
-                  @"message_id": @"blah",
                   @"name": @"my name",
                   @"display": @{@"body": @{
                                         @"text":@"the body"
@@ -43,7 +42,6 @@
     XCTAssertNotNil(messageFromOriginalJSON);
     XCTAssertNil(error);
 
-    XCTAssertEqualObjects(@"blah", messageFromOriginalJSON.identifier);
     XCTAssertEqualObjects(@"my name", messageFromOriginalJSON.name);
     XCTAssertEqualObjects(@"the body", ((UAInAppMessageBannerDisplayContent *)(messageFromOriginalJSON.displayContent)).body.text);
     XCTAssertEqual(UAInAppMessageDisplayTypeBanner, messageFromOriginalJSON.displayType);
@@ -68,7 +66,6 @@
 - (void)testMinimalJSON {
     // setup
     NSDictionary *originalJSON = @{
-                                   @"message_id": @"blah",
                                    @"display": @{@"body": @{
                                                          @"text":@"the body"
                                                          },
@@ -82,7 +79,6 @@
     XCTAssertNotNil(messageFromOriginalJSON);
     XCTAssertNil(error);
 
-    XCTAssertEqualObjects(@"blah",messageFromOriginalJSON.identifier);
     XCTAssertEqualObjects(nil,messageFromOriginalJSON.name);
     XCTAssertEqualObjects(@"the body",((UAInAppMessageBannerDisplayContent *)(messageFromOriginalJSON.displayContent)).body.text);
     XCTAssertEqual(UAInAppMessageDisplayTypeBanner, messageFromOriginalJSON.displayType);
@@ -155,42 +151,14 @@
 - (void)testBuilder {
     UAInAppMessage *message = [UAInAppMessage messageWithBuilderBlock:^(UAInAppMessageBuilder * _Nonnull builder) {
         builder.displayContent = [UAInAppMessageCustomDisplayContent displayContentWithValue:@{@"cool": @"story"}];
-        builder.identifier = [@"" stringByPaddingToLength:UAInAppMessageButtonInfoIDLimit withString:@"ID" startingAtIndex:0];
     }];
 
     XCTAssertNotNil(message);
 }
 
-- (void)testMissingID {
-    UAInAppMessage *message = [UAInAppMessage messageWithBuilderBlock:^(UAInAppMessageBuilder * _Nonnull builder) {
-        builder.displayContent = [UAInAppMessageCustomDisplayContent displayContentWithValue:@{@"cool": @"story"}];
-    }];
-
-    XCTAssertNil(message);
-}
-
-- (void)testEmptyID {
-    UAInAppMessage *message = [UAInAppMessage messageWithBuilderBlock:^(UAInAppMessageBuilder * _Nonnull builder) {
-        builder.displayContent = [UAInAppMessageCustomDisplayContent displayContentWithValue:@{@"cool": @"story"}];
-        builder.identifier = @"";
-    }];
-
-    XCTAssertNil(message);
-}
-
-- (void)testExceedsMaxIDLength {
-    UAInAppMessage *message = [UAInAppMessage messageWithBuilderBlock:^(UAInAppMessageBuilder * _Nonnull builder) {
-        builder.displayContent = [UAInAppMessageCustomDisplayContent displayContentWithValue:@{@"cool": @"story"}];
-        builder.identifier = [@"" stringByPaddingToLength:UAInAppMessageButtonInfoIDLimit + 1 withString:@"YOLO" startingAtIndex:0];
-    }];
-
-    XCTAssertNil(message);
-}
-
 - (void)testExtend {
     UAInAppMessage *message = [UAInAppMessage messageWithBuilderBlock:^(UAInAppMessageBuilder * _Nonnull builder) {
         builder.displayContent = [UAInAppMessageCustomDisplayContent displayContentWithValue:@{@"cool": @"story"}];
-        builder.identifier = @"abc123";
     }];
 
     UAInAppMessage *newMessage = [message extend:^(UAInAppMessageBuilder * _Nonnull builder) {
@@ -199,7 +167,6 @@
 
     XCTAssertNotNil(newMessage);
     XCTAssertFalse([newMessage isEqual:message]);
-    XCTAssertEqualObjects(newMessage.identifier, message.identifier);
     XCTAssertEqual(newMessage.displayType, message.displayType);
     XCTAssertEqualObjects(newMessage.extras, message.extras);
     XCTAssertEqualObjects(newMessage.actions, message.actions);

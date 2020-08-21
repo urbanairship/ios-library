@@ -2,7 +2,6 @@
 
 #import "UASchedule+Internal.h"
 #import "UAAirshipAutomationCoreImport.h"
-#import "UAInAppMessage+Internal.h"
 
 NSUInteger const UAScheduleMaxTriggers = 10;
 
@@ -21,8 +20,6 @@ NSUInteger const UAScheduleMaxTriggers = 10;
 
 @interface UASchedule()
 @property(nonatomic, copy) NSString *identifier;
-@property(nonatomic, assign) UAScheduleType type;
-@property(nonatomic, strong) id data;
 @property(nonatomic, assign) NSInteger priority;
 @property(nonatomic, copy) NSArray *triggers;
 @property(nonatomic, assign) NSUInteger limit;
@@ -34,40 +31,15 @@ NSUInteger const UAScheduleMaxTriggers = 10;
 @property(nonatomic, assign) NSTimeInterval editGracePeriod;
 @property(nonatomic, copy) NSDictionary *metadata;
 @property(nonatomic, strong) UAScheduleAudience *audience;
-
 @end
-
 
 @implementation UASchedule
 
-+ (instancetype)scheduleWithActions:(NSDictionary *)actions
-                       builderBlock:(void(^)(UAScheduleBuilder *builder))builderBlock {
-    UAScheduleBuilder *builder = [[UAScheduleBuilder alloc] init];
-    builderBlock(builder);
-    return [[self alloc] initWithData:actions type:UAScheduleTypeActions builder:builder];
-}
+@synthesize data = _data;
+@synthesize type = _type;
 
-+ (instancetype)scheduleWithMessage:(UAInAppMessage *)message
-                       builderBlock:(void(^)(UAScheduleBuilder *builder))builderBlock {
-    UAScheduleBuilder *builder = [[UAScheduleBuilder alloc] init];
-    builderBlock(builder);
-    return [[self alloc] initWithData:message type:UAScheduleTypeInAppMessage builder:builder];
-}
 
-+ (instancetype)scheduleWithType:(UAScheduleType)scheduleType
-                        dataJSON:(id)JSON
-                    builderBlock:(void(^)(UAScheduleBuilder *builder))builderBlock {
 
-    id data = [self parseDataForType:scheduleType JSON:JSON];
-
-    if (!data) {
-        return nil;
-    }
-
-    UAScheduleBuilder *builder = [[UAScheduleBuilder alloc] init];
-    builderBlock(builder);
-    return [[self alloc] initWithData:data type:scheduleType builder:builder];
-}
 
 - (BOOL)isValid {
     if (!self.triggers.count || self.triggers.count > UAScheduleMaxTriggers) {
@@ -86,12 +58,12 @@ NSUInteger const UAScheduleMaxTriggers = 10;
 }
 
 - (instancetype)initWithData:(id)data
-                        type:(UAScheduleType)type
+                        type:(UAScheduleType)scheduleType
                      builder:(UAScheduleBuilder *)builder {
     self = [super init];
     if (self) {
-        self.data = data;
-        self.type = type;
+        _data = data;
+        _type = scheduleType;
         self.identifier = builder.identifier ?: [NSUUID UUID].UUIDString;
         self.priority = builder.priority;
         self.triggers = builder.triggers ?: @[];
@@ -205,39 +177,6 @@ NSUInteger const UAScheduleMaxTriggers = 10;
     result = 31 * result + self.limit;
     result = 31 * result + self.priority;
     return result;
-}
-
-- (NSString *)dataJSONString {
-    switch (self.type) {
-        case UAScheduleTypeActions:
-            return [NSJSONSerialization stringWithObject:self.data];
-        case UAScheduleTypeInAppMessage: {
-            UAInAppMessage *message = (UAInAppMessage *)self.data;
-            return [NSJSONSerialization stringWithObject:[message toJSON]];
-        }
-    }
-}
-
-+ (nullable id)parseDataForType:(UAScheduleType)scheduleType JSON:(id)JSON {
-    switch (scheduleType) {
-        case UAScheduleTypeInAppMessage: {
-            NSError *error;
-            UAInAppMessage *message = [UAInAppMessage messageWithJSON:JSON error:&error];
-            if (!error && message) {
-                return message;
-            } else {
-                UA_LERR(@"Invalid schedule data: %@ error: %@", JSON, error);
-                return nil;
-            }
-        }
-
-        case UAScheduleTypeActions: {
-            return JSON;
-        }
-    }
-
-    UA_LERR(@"Unexpected type %lu", scheduleType);
-    return nil;
 }
 
 @end

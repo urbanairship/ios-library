@@ -33,15 +33,13 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * The factory method for creating a modal controller.
  *
- * @param identifier The message identifier.
  * @param displayContent The display content.
  * @param mediaView The media view.
  * @param style The modal view styling.
  *
  * @return a configured UAInAppMessageModalView instance.
  */
-+ (instancetype)modalControllerWithModalMessageID:(NSString *)identifier
-                                   displayContent:(UAInAppMessageModalDisplayContent *)displayContent
++ (instancetype)modalControllerWithDisplayContent:(UAInAppMessageModalDisplayContent *)displayContent
                                         mediaView:(nullable UAInAppMessageMediaView *)mediaView
                                             style:(nullable UAInAppMessageModalStyle *)style;
 

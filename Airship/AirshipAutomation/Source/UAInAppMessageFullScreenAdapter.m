@@ -37,10 +37,9 @@ NSString *const UAFullScreenStyleFileName = @"UAInAppMessageFullScreenStyle";
     UAInAppMessageFullScreenDisplayContent *displayContent = (UAInAppMessageFullScreenDisplayContent *)self.message.displayContent;
     [UAInAppMessageUtils prepareMediaView:displayContent.media assets:assets completionHandler:^(UAInAppMessagePrepareResult result, UAInAppMessageMediaView *mediaView) {
         if (result == UAInAppMessagePrepareResultSuccess) {
-            self.fullScreenController = [UAInAppMessageFullScreenViewController fullScreenControllerWithFullScreenMessageID:self.message.identifier
-                                                                                                             displayContent:displayContent
-                                                                                                                  mediaView:mediaView
-                                                                                                                      style:self.style];
+            self.fullScreenController = [UAInAppMessageFullScreenViewController fullScreenControllerWithDisplayContent:displayContent
+                                                                                                             mediaView:mediaView
+                                                                                                                 style:self.style];
         }
         completionHandler(result);
     }];
@@ -55,7 +54,7 @@ NSString *const UAFullScreenStyleFileName = @"UAInAppMessageFullScreenStyle";
     if (@available(iOS 13.0, *)) {
         self.scene = [[UAInAppMessageSceneManager shared] sceneForMessage:self.message];
         if (!self.scene) {
-            UA_LDEBUG(@"Unable to display message %@, no scene.", self.message.identifier);
+            UA_LDEBUG(@"Unable to display message %@, no scene.", self.message);
             return NO;
         }
     }

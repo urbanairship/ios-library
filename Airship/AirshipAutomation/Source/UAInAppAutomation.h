@@ -9,6 +9,8 @@
 #import "UAInAppMessageAssetManager.h"
 #import "UAAirshipAutomationCoreImport.h"
 #import "UAInAppMessageManager.h"
+#import "UAActionSchedule.h"
+#import "UAInAppMessageSchedule.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -53,45 +55,87 @@ NS_ASSUME_NONNULL_BEGIN
  * Cancels an in-app automation via its schedule identifier.
  *
  * @param scheduleID The schedule ID.
- * @param completionHandler A completion handler called with the schedule that was canceled, or nil if the schedule was not found.
+ * @param completionHandler A completion handler called with the result.
  */
 - (void)cancelScheduleWithID:(NSString *)scheduleID
-           completionHandler:(nullable void (^)(UASchedule * _Nullable))completionHandler;
+           completionHandler:(nullable void (^)(BOOL))completionHandler;
 
 /**
  * Cancels in-app automations with the specified group identifier.
  *
  * @param group The group.
- * @param completionHandler A completion handler called with an array of schedules that were canceled.
- * If no schedules matching the provided identifier are found, this array will be empty.
+ * @param completionHandler A completion handler called with the result.
  */
 - (void)cancelSchedulesWithGroup:(NSString *)group
-               completionHandler:(nullable void (^)(NSArray <UASchedule *> *))completionHandler;
+               completionHandler:(nullable void (^)(BOOL))completionHandler;
 
 /**
- * Gets schedules with the provided identifier.
+ * Cancels action in-app automations with the specified group identifier.
+ *
+ * @param group The group.
+ * @param completionHandler A completion handler called with the result.
+ */
+- (void)cancelActionSchedulesWithGroup:(NSString *)group
+                     completionHandler:(nullable void (^)(BOOL))completionHandler;
+
+/**
+ * Cancels message schedules with the specified group identifier.
+ *
+ * @param group The group.
+ * @param completionHandler A completion handler called with the result.
+ */
+- (void)cancelMessageSchedulesWithGroup:(NSString *)group
+                      completionHandler:(nullable void (^)(BOOL))completionHandler;
+
+/**
+ * Gets the action in-app automation with the provided identifier.
  *
  * @param identifier The scheduler identifier corresponding to the in-app message to be fetched.
  * @param completionHandler The completion handler to be called when fetch operation completes.
  */
-- (void)getScheduleWithID:(NSString *)identifier
-        completionHandler:(void (^)(UASchedule * _Nullable))completionHandler;
+- (void)getActionScheduleWithID:(NSString *)identifier
+               completionHandler:(void (^)(UAActionSchedule * _Nullable))completionHandler;
 
 /**
- * Gets schedules whose group is the provided group..
+ * Gets action in-app automations with the provided group.
  *
  * @param group The group.
  * @param completionHandler The completion handler to be called when fetch operation completes.
  */
-- (void)getSchedulesWithGroup:(NSString *)group
-            completionHandler:(void (^)(NSArray<UASchedule *> *))completionHandler;
+- (void)getActionSchedulesWithGroup:(NSString *)group
+                  completionHandler:(void (^)(NSArray<UAActionSchedule *> *))completionHandler;
 
 /**
- * Gets all schedules, including schedules that have ended.
+ * Gets all action in-app automations.
  *
  * @param completionHandler The completion handler to be called when fetch operation completes.
  */
-- (void)getAllSchedules:(void (^)(NSArray<UASchedule *> *))completionHandler;
+- (void)getActionSchedules:(void (^)(NSArray<UAActionSchedule *> *))completionHandler;
+
+/**
+ * Gets the message in-app automation with the provided identifier.
+ *
+ * @param identifier The scheduler identifier corresponding to the in-app message to be fetched.
+ * @param completionHandler The completion handler to be called when fetch operation completes.
+ */
+- (void)getMessageScheduleWithID:(NSString *)identifier
+               completionHandler:(void (^)(UAInAppMessageSchedule * _Nullable))completionHandler;
+
+/**
+ * Gets the message in-app automations with the provided group.
+ *
+ * @param group The group.
+ * @param completionHandler The completion handler to be called when fetch operation completes.
+ */
+- (void)getMessageSchedulesWithGroup:(NSString *)group
+                   completionHandler:(void (^)(NSArray<UAInAppMessageSchedule *> *))completionHandler;
+
+/**
+ * Get all message in-app automations.
+ *
+ * @param completionHandler The completion handler to be called when fetch operation completes.
+ */
+- (void)getMessageSchedules:(void (^)(NSArray<UAInAppMessageSchedule *> *))completionHandler;
 
 /**
  * Edits a schedule.
@@ -102,7 +146,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)editScheduleWithID:(NSString *)identifier
                      edits:(UAScheduleEdits *)edits
-         completionHandler:(void (^)(UASchedule * _Nullable))completionHandler;
+         completionHandler:(nullable void (^)(BOOL))completionHandler;
 
 /**
  * Check display audience conditions.

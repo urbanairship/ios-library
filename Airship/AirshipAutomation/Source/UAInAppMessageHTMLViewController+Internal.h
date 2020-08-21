@@ -27,15 +27,13 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * The factory method for creating an HTML controller.
  *
- * @param messageID The message identifier.
  * @param displayContent The display content.
  * @param style The HTML view styling.
  *
  * @return a configured UAInAppMessageHTMLViewController instance.
  */
-+ (instancetype)htmlControllerWithMessageID:(NSString *)messageID
-                             displayContent:(UAInAppMessageHTMLDisplayContent *)displayContent
-                                      style:(UAInAppMessageHTMLStyle *)style;
++ (instancetype)htmlControllerWithDisplayContent:(UAInAppMessageHTMLDisplayContent *)displayContent
+                                           style:(UAInAppMessageHTMLStyle *)style;
 
 @end
 
