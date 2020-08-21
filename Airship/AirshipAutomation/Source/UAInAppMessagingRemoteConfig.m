@@ -1,8 +1,8 @@
 /* Copyright Airship and Contributors */
 
 #import "UAInAppMessagingRemoteConfig+Internal.h"
-#import "UATagGroupsLookupManager+Internal.h"
 #import "UAInAppMessagingTagGroupsConfig+Internal.h"
+#import "UAAirshipAutomationCoreImport.h"
 
 #define kUAInAppMessagingRemoteConfigTagGroupsKey @"tag_groups"
 

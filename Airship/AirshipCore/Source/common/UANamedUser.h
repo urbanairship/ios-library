@@ -3,6 +3,7 @@
 #import <Foundation/Foundation.h>
 #import "UAComponent.h"
 #import "UAAttributeMutations.h"
+#import "UATagGroupsMutation.h"
 
 @class UAPreferenceDataStore;
 
@@ -23,6 +24,13 @@ NS_ASSUME_NONNULL_BEGIN
  * The named user ID for this device.
  */
 @property (nonatomic, copy, nullable) NSString *identifier;
+
+
+/**
+ * Returns the pending tag groups mutuations.
+ * @note For internal use only. :nodoc:
+ */
+@property (nonatomic, readonly)NSArray<UATagGroupsMutation *> *pendingTagGroups;
 
 ///---------------------------------------------------------------------------------------
 /// @name Named User Management

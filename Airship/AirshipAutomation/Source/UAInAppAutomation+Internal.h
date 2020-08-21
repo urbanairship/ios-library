@@ -6,7 +6,7 @@
 #import "UAAutomationEngine+Internal.h"
 #import "UAInAppMessage.h"
 #import "UASchedule.h"
-#import "UATagGroupsLookupManager+Internal.h"
+#import "UAInAppAudienceManager+Internal.h"
 #import "UAInAppRemoteDataClient+Internal.h"
 #import "UAAirshipAutomationCoreImport.h"
 #import "UADeferredScheduleAPIClient+Internal.h"
@@ -23,16 +23,16 @@ NS_ASSUME_NONNULL_BEGIN
  * Factory method. Use for testing.
  *
  * @param automationEngine The automation engine.
- * @param tagGroupsLookupManager The tag groups lookup manager.
+ * @param audienceManager The audience manager.
  * @param remoteDataClient The remote data client.
  * @param dataStore The preference data store.
  * @param inAppMessageManager The in-app message manager instance.
  * @param channel The channel instance.
- * @parram deferredScheduleAPIClient The deferred API client.
+ * @param deferredScheduleAPIClient The deferred API client.
  * @return A in-app automation manager instance.
  */
 + (instancetype)automationWithEngine:(UAAutomationEngine *)automationEngine
-              tagGroupsLookupManager:(UATagGroupsLookupManager *)tagGroupsLookupManager
+                     audienceManager:(UAInAppAudienceManager *)audienceManager
                     remoteDataClient:(UAInAppRemoteDataClient *)remoteDataClient
                            dataStore:(UAPreferenceDataStore *)dataStore
                  inAppMessageManager:(UAInAppMessageManager *)inAppMessageManager
@@ -43,7 +43,7 @@ NS_ASSUME_NONNULL_BEGIN
  * Factory method.
  *
  * @param config The UARuntimeConfigInstance.
- * @param tagGroupHistorian The tag groups history.
+ * @param audienceManager The audience manager.
  * @param remoteDataProvider The remote data provider.
  * @param dataStore The preference data store.
  * @param channel The channel.
@@ -51,7 +51,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @return A in-app automation manager instance.
  */
 + (instancetype)automationWithConfig:(UARuntimeConfig *)config
-                    tagGroupHistorian:(UATagGroupHistorian *)tagGroupHistorian
+                     audienceManager:(UAInAppAudienceManager *)audienceManager
                   remoteDataProvider:(id<UARemoteDataProvider>)remoteDataProvider
                            dataStore:(UAPreferenceDataStore *)dataStore
                              channel:(UAChannel *)channel

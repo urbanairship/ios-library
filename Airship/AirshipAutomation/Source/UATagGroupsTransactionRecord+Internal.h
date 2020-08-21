@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 #import <Foundation/Foundation.h>
-#import "UATagGroupsMutation+Internal.h"
+#import "UATagGroupsMutation.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

@@ -1,33 +1,34 @@
 /* Copyright Airship and Contributors */
 
 #import "UAAirshipBaseTest.h"
-#import "UATagGroupsLookupManager+Internal.h"
+#import "UAInAppAudienceManager+Internal.h"
 #import "UAirship.h"
 #import "UAChannel.h"
 #import "UATagGroupsLookupAPIClient+Internal.h"
 #import "UAPendingTagGroupStore+Internal.h"
 #import "UATestDate.h"
 
-@interface UATagGroupsLookupManagerTest : UAAirshipBaseTest
-@property (nonatomic, strong) UATagGroupsLookupManager *lookupManager;
+@interface UAInAppAudienceManagerTest : UAAirshipBaseTest
+@property (nonatomic, strong) UAInAppAudienceManager *manager;
 @property (nonatomic, strong) id mockAirship;
 @property (nonatomic, strong) id mockChannel;
+@property (nonatomic, strong) id mockNamedUser;
 @property (nonatomic, strong) id mockAPIClient;
 @property (nonatomic, strong) id mockCache;
-@property (nonatomic, strong) id mockTagGroupsHistorian;
+@property (nonatomic, strong) id mockHistorian;
 @property (nonatomic, strong) UATagGroups *requestedTagGroups;
 @property (nonatomic, strong) UATestDate *testDate;
 @property (nonatomic, strong) id mockDelegate;
 @end
 
-@implementation UATagGroupsLookupManagerTest
+@implementation UAInAppAudienceManagerTest
 
 - (void)setUp {
     [super setUp];
     self.requestedTagGroups = [UATagGroups tagGroupsWithTags:@{@"foo": @[@"bar", @"baz"]}];
     self.testDate = [[UATestDate alloc] init];
 
-    self.mockDelegate = [self mockForProtocol:@protocol(UATagGroupsLookupManagerDelegate)];
+    self.mockDelegate = [self mockForProtocol:@protocol(UAInAppAudienceManagerDelegate)];
     [[[self.mockDelegate stub] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:2];
@@ -37,15 +38,16 @@
 
     [self setupMocks:@"channel" channelTagsEnabled:NO];
 
-    self.lookupManager.enabled = YES;
-    self.lookupManager.delegate = self.mockDelegate;
+    self.manager.enabled = YES;
+    self.manager.delegate = self.mockDelegate;
 }
 
 - (void)setupMocks:(NSString *)channelID channelTagsEnabled:(BOOL)enabled {
     self.mockAirship = [self mockForClass:[UAirship class]];
     self.mockChannel = [self mockForClass:[UAChannel class]];
+    self.mockNamedUser = [self mockForClass:[UANamedUser class]];
     self.mockAPIClient = [self mockForClass:[UATagGroupsLookupAPIClient class]];
-    self.mockTagGroupsHistorian = [self mockForClass:[UATagGroupHistorian class]];
+    self.mockHistorian = [self mockForClass:[UAInAppAudienceHistorian class]];
     self.mockCache = [self mockForClass:[UATagGroupsLookupResponseCache class]];
 
     [[[self.mockAirship stub] andReturn:self.mockChannel] channel];
@@ -54,22 +56,24 @@
     [[[self.mockChannel stub] andReturn:channelID] identifier];
     [[[self.mockChannel stub] andReturnValue:@(enabled)] isChannelTagRegistrationEnabled];
 
-    self.lookupManager = [UATagGroupsLookupManager lookupManagerWithAPIClient:self.mockAPIClient
-                                                                    dataStore:self.dataStore
-                                                                        cache:self.mockCache
-                                                             tagGroupHistorian:self.mockTagGroupsHistorian
-                                                                  currentTime:self.testDate];
+    self.manager = [UAInAppAudienceManager managerWithAPIClient:self.mockAPIClient
+                                                      dataStore:self.dataStore
+                                                        channel:self.mockChannel
+                                                      namedUser:self.mockNamedUser
+                                                          cache:self.mockCache
+                                                      historian:self.mockHistorian
+                                                    currentTime:self.testDate];
 }
 
 - (void)testGetTagsComponentDisabled {
-    self.lookupManager.enabled = NO;
+    self.manager.enabled = NO;
 
     XCTestExpectation *fetchCompleted = [self expectationWithDescription:@"fetch completed"];
 
-    [self.lookupManager getTagGroups:self.requestedTagGroups completionHandler:^(UATagGroups * _Nonnull tagGroups, NSError * _Nonnull error) {
+    [self.manager getTagGroups:self.requestedTagGroups completionHandler:^(UATagGroups * _Nonnull tagGroups, NSError * _Nonnull error) {
         XCTAssertNil(tagGroups);
         XCTAssertNotNil(error);
-        XCTAssertEqual(error.code, UATagGroupsLookupManagerErrorCodeComponentDisabled);
+        XCTAssertEqual(error.code, UAInAppAudienceManagerErrorCodeComponentDisabled);
         [fetchCompleted fulfill];
     }];
 
@@ -81,10 +85,10 @@
 
     XCTestExpectation *fetchCompleted = [self expectationWithDescription:@"fetch completed"];
 
-    [self.lookupManager getTagGroups:self.requestedTagGroups completionHandler:^(UATagGroups * _Nonnull tagGroups, NSError * _Nonnull error) {
+    [self.manager getTagGroups:self.requestedTagGroups completionHandler:^(UATagGroups * _Nonnull tagGroups, NSError * _Nonnull error) {
         XCTAssertNil(tagGroups);
         XCTAssertNotNil(error);
-        XCTAssertEqual(error.code, UATagGroupsLookupManagerErrorCodeChannelRequired);
+        XCTAssertEqual(error.code, UAInAppAudienceManagerErrorCodeChannelRequired);
         [fetchCompleted fulfill];
     }];
 
@@ -100,7 +104,7 @@
 
     XCTestExpectation *fetchCompleted = [self expectationWithDescription:@"fetch completed"];
 
-    [self.lookupManager getTagGroups:self.requestedTagGroups completionHandler:^(UATagGroups * _Nonnull tagGroups, NSError * _Nonnull error) {
+    [self.manager getTagGroups:self.requestedTagGroups completionHandler:^(UATagGroups * _Nonnull tagGroups, NSError * _Nonnull error) {
         XCTAssertEqualObjects(tagGroups, [UATagGroups tagGroupsWithTags:@{@"device" : @[@"test"]}]);
         XCTAssertNil(error);
         [fetchCompleted fulfill];
@@ -112,14 +116,16 @@
 }
 
 - (void)testGetTagsCachedResponse {
-
     UATagGroups *responseTagGroups = [UATagGroups tagGroupsWithTags:@{@"foo": @[@"bar"]}];
 
     UATagGroupsLookupResponse *response = [UATagGroupsLookupResponse responseWithTagGroups:responseTagGroups
                                                                                     status:200
                                                                      lastModifiedTimestamp:@"2018-03-02T22:56:09"];
 
-    UATagGroups *tagGroupsWithLocalMutations = [UATagGroups tagGroupsWithTags:@{@"foo": @[@"bar", @"baz"], @"bleep" : @[@"bloop"]}];
+    NSArray *localHistory = @[
+        [UATagGroupsMutation mutationToAddTags:@[@"bar", @"baz"] group:@"foo"],
+        [UATagGroupsMutation mutationToAddTags:@[@"bloop"] group:@"bleep"]
+    ];
 
     NSDate *cacheRefreshDate = [NSDate dateWithTimeIntervalSinceNow:-60];
 
@@ -130,9 +136,8 @@
 
 
     self.testDate.absoluteTime = [NSDate date];
-    NSTimeInterval expectedMaxAge = [[self.testDate now] timeIntervalSinceDate:cacheRefreshDate] + self.lookupManager.preferLocalTagDataTime;
 
-    [[[self.mockTagGroupsHistorian expect] andReturn:tagGroupsWithLocalMutations] applyHistory:response.tagGroups maxAge:expectedMaxAge];
+    [[[self.mockHistorian expect] andReturn:localHistory] tagHistoryNewerThan:[cacheRefreshDate dateByAddingTimeInterval:-self.manager.preferLocalTagDataTime]];
 
     [[self.mockAPIClient reject] lookupTagGroupsWithChannelID:OCMOCK_ANY requestedTagGroups:OCMOCK_ANY cachedResponse:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
@@ -140,7 +145,7 @@
 
     XCTestExpectation *fetchCompleted = [self expectationWithDescription:@"fetch completed"];
 
-    [self.lookupManager getTagGroups:self.requestedTagGroups completionHandler:^(UATagGroups * _Nonnull tagGroups, NSError * _Nonnull error) {
+    [self.manager getTagGroups:self.requestedTagGroups completionHandler:^(UATagGroups * _Nonnull tagGroups, NSError * _Nonnull error) {
         XCTAssertEqualObjects(tagGroups, expectedTagGroups);
         XCTAssertNil(error);
         [fetchCompleted fulfill];
@@ -148,7 +153,7 @@
 
     [self waitForTestExpectations];
     [self.mockCache verify];
-    [self.mockTagGroupsHistorian verify];
+    [self.mockHistorian verify];
     [self.mockAPIClient verify];
 }
 
@@ -163,7 +168,11 @@
                                                                                     status:200
                                                                      lastModifiedTimestamp:@"2018-03-02T22:56:09"];
 
-    UATagGroups *tagGroupsWithLocalMutations = [UATagGroups tagGroupsWithTags:@{@"foo": @[@"bar", @"baz"], @"bleep" : @[@"bloop"]}];
+
+    NSArray *localHistory = @[
+        [UATagGroupsMutation mutationToAddTags:@[@"bar", @"baz"] group:@"foo"],
+        [UATagGroupsMutation mutationToAddTags:@[@"bloop"] group:@"bleep"]
+    ];
 
     XCTestExpectation *apiFetchCompleted = [self expectationWithDescription:@"API fetch completed"];
 
@@ -184,14 +193,14 @@
     [[[self.mockCache expect] andReturnValue:@(NO)] isStale];
 
     self.testDate.absoluteTime = [NSDate date];
-    NSTimeInterval expectedMaxAge = [[self.testDate now] timeIntervalSinceDate:cacheRefreshDate] + self.lookupManager.preferLocalTagDataTime;
-    [[[self.mockTagGroupsHistorian expect] andReturn:tagGroupsWithLocalMutations] applyHistory:response.tagGroups maxAge:expectedMaxAge];
+
+    [[[self.mockHistorian expect] andReturn:localHistory] tagHistoryNewerThan:[cacheRefreshDate dateByAddingTimeInterval:-self.manager.preferLocalTagDataTime]];
 
     UATagGroups *expectedTagGroups = [UATagGroups tagGroupsWithTags:@{@"foo" : @[@"bar", @"baz"]}];
 
     XCTestExpectation *fetchCompleted = [self expectationWithDescription:@"fetch completed"];
 
-    [self.lookupManager getTagGroups:self.requestedTagGroups completionHandler:^(UATagGroups * _Nonnull tagGroups, NSError * _Nonnull error) {
+    [self.manager getTagGroups:self.requestedTagGroups completionHandler:^(UATagGroups * _Nonnull tagGroups, NSError * _Nonnull error) {
         XCTAssertEqualObjects(tagGroups, expectedTagGroups);
         XCTAssertNil(error);
         [fetchCompleted fulfill];
@@ -199,7 +208,7 @@
 
     [self waitForTestExpectations];
     [self.mockCache verify];
-    [self.mockTagGroupsHistorian verify];
+    [self.mockHistorian verify];
     [self.mockAPIClient verify];
 }
 
@@ -235,15 +244,19 @@
     [[[self.mockCache expect] andReturnValue:@(NO)] isStale];
 
     self.testDate.absoluteTime = [NSDate date];
-    NSTimeInterval expectedMaxAge = [[self.testDate now] timeIntervalSinceDate:cacheRefreshDate] + self.lookupManager.preferLocalTagDataTime;
-    UATagGroups *tagGroupsWithLocalMutations = [UATagGroups tagGroupsWithTags:@{@"foo": @[@"bar", @"baz"], @"bleep" : @[@"bloop"]}];
-    [[[self.mockTagGroupsHistorian expect] andReturn:tagGroupsWithLocalMutations] applyHistory:response.tagGroups maxAge:expectedMaxAge];
+
+    NSArray *localHistory = @[
+        [UATagGroupsMutation mutationToAddTags:@[@"bar", @"baz"] group:@"foo"],
+        [UATagGroupsMutation mutationToAddTags:@[@"bloop"] group:@"bleep"]
+    ];
+
+    [[[self.mockHistorian expect] andReturn:localHistory] tagHistoryNewerThan:[cacheRefreshDate dateByAddingTimeInterval:-self.manager.preferLocalTagDataTime]];
 
     UATagGroups *expectedTagGroups = [UATagGroups tagGroupsWithTags:@{@"foo" : @[@"bar", @"baz"]}];
 
     XCTestExpectation *fetchCompleted = [self expectationWithDescription:@"fetch completed"];
 
-    [self.lookupManager getTagGroups:self.requestedTagGroups completionHandler:^(UATagGroups * _Nonnull tagGroups, NSError * _Nonnull error) {
+    [self.manager getTagGroups:self.requestedTagGroups completionHandler:^(UATagGroups * _Nonnull tagGroups, NSError * _Nonnull error) {
         XCTAssertEqualObjects(tagGroups, expectedTagGroups);
         XCTAssertNil(error);
         [fetchCompleted fulfill];
@@ -251,7 +264,7 @@
 
     [self waitForTestExpectations];
     [self.mockCache verify];
-    [self.mockTagGroupsHistorian verify];
+    [self.mockHistorian verify];
     [self.mockAPIClient verify];
 }
 
@@ -282,10 +295,10 @@
 
     XCTestExpectation *fetchCompleted = [self expectationWithDescription:@"fetch completed"];
 
-    [self.lookupManager getTagGroups:self.requestedTagGroups completionHandler:^(UATagGroups * _Nonnull tagGroups, NSError * _Nonnull error) {
+    [self.manager getTagGroups:self.requestedTagGroups completionHandler:^(UATagGroups * _Nonnull tagGroups, NSError * _Nonnull error) {
         XCTAssertNil(tagGroups);
         XCTAssertNotNil(error);
-        XCTAssertEqual(error.code, UATagGroupsLookupManagerErrorCodeCacheRefresh);
+        XCTAssertEqual(error.code, UAInAppAudienceManagerErrorCodeCacheRefresh);
         [fetchCompleted fulfill];
     }];
 
@@ -324,10 +337,10 @@
 
     XCTestExpectation *fetchCompleted = [self expectationWithDescription:@"fetch completed"];
 
-    [self.lookupManager getTagGroups:self.requestedTagGroups completionHandler:^(UATagGroups * _Nonnull tagGroups, NSError * _Nonnull error) {
+    [self.manager getTagGroups:self.requestedTagGroups completionHandler:^(UATagGroups * _Nonnull tagGroups, NSError * _Nonnull error) {
         XCTAssertNil(tagGroups);
         XCTAssertNotNil(error);
-        XCTAssertEqual(error.code, UATagGroupsLookupManagerErrorCodeCacheRefresh);
+        XCTAssertEqual(error.code, UAInAppAudienceManagerErrorCodeCacheRefresh);
         [fetchCompleted fulfill];
     }];
 
@@ -371,7 +384,7 @@
 
     XCTestExpectation *fetchCompleted = [self expectationWithDescription:@"fetch completed"];
 
-    [self.lookupManager getTagGroups:requestedTagGroups completionHandler:^(UATagGroups * _Nonnull tagGroups, NSError * _Nonnull error) {
+    [self.manager getTagGroups:requestedTagGroups completionHandler:^(UATagGroups * _Nonnull tagGroups, NSError * _Nonnull error) {
         [fetchCompleted fulfill];
     }];
 
@@ -380,5 +393,37 @@
     [self.mockAPIClient verify];
 }
 
-@end
+- (void)testTagOverrides {
+    self.testDate.absoluteTime = [NSDate date];
 
+    NSArray *localHistory = @[
+        [UATagGroupsMutation mutationToRemoveTags:@[@"one", @"two"] group:@"foo"],
+        [UATagGroupsMutation mutationToSetTags:@[@"a"] group:@"bar"],
+        [UATagGroupsMutation mutationToSetTags:@[@"1"] group:@"baz"]
+    ];
+
+    [[[self.mockHistorian expect] andReturn:localHistory] tagHistoryNewerThan:[self.testDate.absoluteTime dateByAddingTimeInterval:-self.manager.preferLocalTagDataTime]];
+
+    NSArray *pendingNamedUser = @[
+        [UATagGroupsMutation mutationToSetTags:@[@"3"] group:@"baz"],
+        [UATagGroupsMutation mutationToAddTags:@[@"one"] group:@"foo"]
+    ];
+
+    [[[self.mockNamedUser expect] andReturn:pendingNamedUser] pendingTagGroups];
+
+    NSArray *pendingChannel = @[
+        [UATagGroupsMutation mutationToAddTags:@[@"2"] group:@"baz"],
+        [UATagGroupsMutation mutationToSetTags:@[@"b"] group:@"bar"]
+    ];
+
+    [[[self.mockChannel expect] andReturn:pendingChannel] pendingTagGroups];
+
+    NSMutableArray *expected = [NSMutableArray array];
+    [expected addObjectsFromArray:localHistory];
+    [expected addObjectsFromArray:pendingNamedUser];
+    [expected addObjectsFromArray:pendingChannel];
+
+    XCTAssertEqualObjects([UATagGroupsMutation collapseMutations:expected], self.manager.tagOverrides);
+}
+
+@end

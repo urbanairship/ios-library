@@ -172,13 +172,12 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
             self.locationProvider = locationLoader.locationProvider;
         }
 
-        UATagGroupHistorian *tagGroupHistorian = [[UATagGroupHistorian alloc] initTagGroupHistorianWithChannel:self.sharedChannel namedUser:self.sharedNamedUser];
         id<UAModuleLoader> automationLoader = [UAirship automationModuleLoaderWithDataStore:self.dataStore
                                                                                      config:self.config
                                                                                     channel:self.sharedChannel
+                                                                                  namedUser:self.sharedNamedUser
                                                                                   analytics:self.sharedAnalytics
-                                                                          remoteDataManager:self.sharedRemoteDataManager
-                                                                          tagGroupHistorian:tagGroupHistorian];
+                                                                          remoteDataManager:self.sharedRemoteDataManager];
         if (automationLoader) {
             [loaders addObject:automationLoader];
         }
@@ -548,18 +547,18 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 + (nullable id<UAModuleLoader>)automationModuleLoaderWithDataStore:(UAPreferenceDataStore *)dataStore
                                                             config:(UARuntimeConfig *)config
                                                            channel:(UAChannel *)channel
+                                                         namedUser:(UANamedUser *)namedUser
                                                          analytics:(UAAnalytics *)analytics
-                                                 remoteDataManager:(UARemoteDataManager *)remoteDataManager
-                                                 tagGroupHistorian:(UATagGroupHistorian *)tagGroupHistorian {
+                                                 remoteDataManager:(UARemoteDataManager *)remoteDataManager  {
 
     Class cls = NSClassFromString(UAAutomationModuleLoaderClassName);
     if ([cls conformsToProtocol:@protocol(UAAutomationModuleLoaderFactory)]) {
         return [cls inAppModuleLoaderWithDataStore:dataStore
                                             config:config
                                            channel:channel
+                                         namedUser:namedUser
                                          analytics:analytics
-                                remoteDataProvider:remoteDataManager
-                                 tagGroupHistorian:tagGroupHistorian];
+                                remoteDataProvider:remoteDataManager];
     }
     return nil;
 }

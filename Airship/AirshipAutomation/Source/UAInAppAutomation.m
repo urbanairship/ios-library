@@ -6,7 +6,7 @@
 #import "UAScheduleTriggerContext+Internal.h"
 #import "UAInAppMessage+Internal.h"
 #import "UAInAppMessagingRemoteConfig+Internal.h"
-#import "UATagGroupsLookupManager+Internal.h"
+#import "UAInAppAudienceManager+Internal.h"
 #import "UATagSelector+Internal.h"
 #import "UARetriable+Internal.h"
 #import "UARetriablePipeline+Internal.h"
@@ -23,11 +23,11 @@ static NSTimeInterval const MaxSchedules = 1000;
 NSString *const UAInAppMessageManagerEnabledKey = @"UAInAppMessageManagerEnabled";
 NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
 
-@interface UAInAppAutomation () <UAAutomationEngineDelegate, UATagGroupsLookupManagerDelegate, UAInAppRemoteDataClientDelegate, UAInAppMessagingExecutionDelegate>
+@interface UAInAppAutomation () <UAAutomationEngineDelegate, UAInAppAudienceManagerDelegate, UAInAppRemoteDataClientDelegate, UAInAppMessagingExecutionDelegate>
 
 @property(nonatomic, strong) UAAutomationEngine *automationEngine;
 @property(nonatomic, strong) UAPreferenceDataStore *dataStore;
-@property(nonatomic, strong) UATagGroupsLookupManager *tagGroupsLookupManager;
+@property(nonatomic, strong) UAInAppAudienceManager *audienceManager;
 @property(nonatomic, strong) UAInAppRemoteDataClient *remoteDataClient;
 @property(nonatomic, strong) UARetriablePipeline *prepareSchedulePipeline;
 @property(nonatomic, strong) UAInAppMessageManager *inAppMessageManager;
@@ -38,7 +38,7 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
 @implementation UAInAppAutomation
 
 + (instancetype)automationWithEngine:(UAAutomationEngine *)automationEngine
-              tagGroupsLookupManager:(UATagGroupsLookupManager *)tagGroupsLookupManager
+                     audienceManager:(UAInAppAudienceManager *)audienceManager
                     remoteDataClient:(UAInAppRemoteDataClient *)remoteDataClient
                            dataStore:(UAPreferenceDataStore *)dataStore
                  inAppMessageManager:(UAInAppMessageManager *)inAppMessageManager
@@ -46,7 +46,7 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
            deferredScheduleAPIClient:(UADeferredScheduleAPIClient *)deferredScheduleAPIClient {
 
     return [[self alloc] initWithAutomationEngine:automationEngine
-                           tagGroupsLookupManager:tagGroupsLookupManager
+                                  audienceManager:audienceManager
                                  remoteDataClient:remoteDataClient
                                         dataStore:dataStore
                               inAppMessageManager:inAppMessageManager
@@ -55,7 +55,7 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
 }
 
 + (instancetype)automationWithConfig:(UARuntimeConfig *)config
-                   tagGroupHistorian:(UATagGroupHistorian *)tagGroupHistorian
+                     audienceManager:(UAInAppAudienceManager *)audienceManager
                   remoteDataProvider:(id<UARemoteDataProvider>)remoteDataProvider
                            dataStore:(UAPreferenceDataStore *)dataStore
                              channel:(UAChannel *)channel
@@ -65,10 +65,6 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
     UAAutomationStore *store = [UAAutomationStore automationStoreWithConfig:config
                                                               scheduleLimit:MaxSchedules];
     UAAutomationEngine *automationEngine = [UAAutomationEngine automationEngineWithAutomationStore:store];
-
-    UATagGroupsLookupManager *lookupManager = [UATagGroupsLookupManager lookupManagerWithConfig:config
-                                                                                      dataStore:dataStore
-                                                                              tagGroupHistorian:tagGroupHistorian];
 
     UAInAppRemoteDataClient *dataClient = [UAInAppRemoteDataClient clientWithRemoteDataProvider:remoteDataProvider
                                                                                       dataStore:dataStore
@@ -83,7 +79,7 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
     UADeferredScheduleAPIClient *deferredScheduleAPIClient = [UADeferredScheduleAPIClient clientWithConfig:config
                                                                                             authManager:authManager];
     return [[UAInAppAutomation alloc] initWithAutomationEngine:automationEngine
-                                        tagGroupsLookupManager:lookupManager
+                                               audienceManager:audienceManager
                                               remoteDataClient:dataClient
                                                      dataStore:dataStore
                                            inAppMessageManager:inAppMessageManager
@@ -92,7 +88,7 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
 }
 
 - (instancetype)initWithAutomationEngine:(UAAutomationEngine *)automationEngine
-                  tagGroupsLookupManager:(UATagGroupsLookupManager *)tagGroupsLookupManager
+                         audienceManager:(UAInAppAudienceManager *)audienceManager
                         remoteDataClient:(UAInAppRemoteDataClient *)remoteDataClient
                                dataStore:(UAPreferenceDataStore *)dataStore
                      inAppMessageManager:(UAInAppMessageManager *)inAppMessageManager
@@ -103,7 +99,7 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
 
     if (self) {
         self.automationEngine = automationEngine;
-        self.tagGroupsLookupManager = tagGroupsLookupManager;
+        self.audienceManager = audienceManager;
         self.remoteDataClient = remoteDataClient;
         self.dataStore = dataStore;
         self.inAppMessageManager = inAppMessageManager;
@@ -112,7 +108,7 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
         self.prepareSchedulePipeline = [UARetriablePipeline pipeline];
 
         self.automationEngine.delegate = self;
-        self.tagGroupsLookupManager.delegate = self;
+        self.audienceManager.delegate = self;
         self.remoteDataClient.delegate = self;
         self.inAppMessageManager.executionDelegate = self;
 
@@ -457,10 +453,10 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
     }
     inAppConfig = inAppConfig ?: [UAInAppMessagingRemoteConfig defaultConfig];
 
-    self.tagGroupsLookupManager.enabled = inAppConfig.tagGroupsConfig.enabled;
-    self.tagGroupsLookupManager.cacheMaxAgeTime = inAppConfig.tagGroupsConfig.cacheMaxAgeTime;
-    self.tagGroupsLookupManager.cacheStaleReadTime = inAppConfig.tagGroupsConfig.cacheStaleReadTime;
-    self.tagGroupsLookupManager.preferLocalTagDataTime = inAppConfig.tagGroupsConfig.cachePreferLocalUntil;
+    self.audienceManager.enabled = inAppConfig.tagGroupsConfig.enabled;
+    self.audienceManager.cacheMaxAgeTime = inAppConfig.tagGroupsConfig.cacheMaxAgeTime;
+    self.audienceManager.cacheStaleReadTime = inAppConfig.tagGroupsConfig.cacheStaleReadTime;
+    self.audienceManager.preferLocalTagDataTime = inAppConfig.tagGroupsConfig.cachePreferLocalUntil;
 }
 
 - (void)setPaused:(BOOL)paused {
@@ -524,7 +520,7 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
     UATagGroups *requestedTagGroups = audience.tagSelector.tagGroups;
 
     if (requestedTagGroups.tags.count) {
-        [self.tagGroupsLookupManager getTagGroups:requestedTagGroups completionHandler:^(UATagGroups * _Nullable tagGroups, NSError * _Nonnull error) {
+        [self.audienceManager getTagGroups:requestedTagGroups completionHandler:^(UATagGroups * _Nullable tagGroups, NSError * _Nonnull error) {
             if (error) {
                 completionHandler(NO, error);
             } else {

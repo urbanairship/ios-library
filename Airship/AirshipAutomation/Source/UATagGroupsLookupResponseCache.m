@@ -7,7 +7,7 @@
 #define kUATagGroupsLookupResponseCacheMaxAgeTimeKey @"com.urbanairship.tag_groups.CACHE_MAX_AGE_TIME"
 #define kUATagGroupsLookupResponseCacheStaleReadTimeKey @"com.urbanairship.tag_groups.CACHE_STALE_READ_TIME"
 
-#define kUATagGroupsLookupManagerMinCacheMaxAgeTimeSeconds 60 // 1 minute
+#define kUAInAppAudienceManagerMinCacheMaxAgeTimeSeconds 60 // 1 minute
 
 NSTimeInterval const UATagGroupsLookupResponseCacheDefaultMaxAgeTimeSeconds = 60 * 10; // 10 minutes
 NSTimeInterval const UATagGroupsLookupResponseCacheDefaultStaleReadTimeSeconds = 60 * 60; // 1 hour
@@ -37,7 +37,7 @@ NSTimeInterval const UATagGroupsLookupResponseCacheDefaultStaleReadTimeSeconds =
     NSTimeInterval maxAge = [self.dataStore doubleForKey:kUATagGroupsLookupResponseCacheMaxAgeTimeKey
                                             defaultValue:UATagGroupsLookupResponseCacheDefaultMaxAgeTimeSeconds];
 
-    return MAX(maxAge, kUATagGroupsLookupManagerMinCacheMaxAgeTimeSeconds);
+    return MAX(maxAge, kUAInAppAudienceManagerMinCacheMaxAgeTimeSeconds);
 }
 
 - (void)setMaxAgeTime:(NSTimeInterval)maxAgeTime {

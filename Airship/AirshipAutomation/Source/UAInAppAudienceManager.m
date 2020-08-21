@@ -1,35 +1,41 @@
 /* Copyright Airship and Contributors */
 
-#import "UATagGroupsLookupManager+Internal.h"
+#import "UAInAppAudienceManager+Internal.h"
 #import "UATagGroupsLookupAPIClient+Internal.h"
 #import "UATagGroupsLookupResponse+Internal.h"
 #import "UAAirshipAutomationCoreImport.h"
 
-#define kUATagGroupsLookupManagerEnabledKey @"com.urbanairship.tag_groups.FETCH_ENABLED"
+#define kUAInAppAudienceManagerEnabledKey @"com.urbanairship.tag_groups.FETCH_ENABLED"
 
-#define kUATagGroupsLookupManagerPreferLocalTagDataTimeKey @"com.urbanairship.tag_groups.PREFER_LOCAL_TAG_DATA_TIME"
+#define kUAInAppAudienceManagerPreferLocalTagDataTimeKey @"com.urbanairship.tag_groups.PREFER_LOCAL_TAG_DATA_TIME"
 
 
-NSTimeInterval const UATagGroupsLookupManagerDefaultPreferLocalTagDataTimeSeconds = 60 * 10; // 10 minutes
+NSTimeInterval const UAInAppAudienceManagerDefaultPreferLocalTagDataTimeSeconds = 60 * 10; // 10 minutes
 
-NSString * const UATagGroupsLookupManagerErrorDomain = @"com.urbanairship.tag_groups_lookup_manager";
+NSString * const UAInAppAudienceManagerErrorDomain = @"com.urbanairship.in_app_audience_manager";
 
-@interface UATagGroupsLookupManager ()
+@interface UAInAppAudienceManager ()
 
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
-@property (nonatomic, strong) UATagGroupHistorian *tagGroupHistorian;
+@property (nonatomic, strong) UAInAppAudienceHistorian *historian;
 @property (nonatomic, strong) UATagGroupsLookupAPIClient *lookupAPIClient;
 @property (nonatomic, strong) UATagGroupsLookupResponseCache *cache;
-@property (nonatomic, readonly) NSTimeInterval maxSentMutationAge;
 @property (nonatomic, strong) UADate *currentTime;
+@property (nonatomic, strong) UANamedUser *namedUser;
+@property (nonatomic, strong) UAChannel *channel;
+
+@property (nonatomic, readonly) NSTimeInterval maxSentMutationAge;
+
 @end
 
-@implementation UATagGroupsLookupManager
+@implementation UAInAppAudienceManager
 
 - (instancetype)initWithAPIClient:(UATagGroupsLookupAPIClient *)client
                         dataStore:(UAPreferenceDataStore *)dataStore
+                          channel:(UAChannel *)channel
+                        namedUser:(UANamedUser *)namedUser
                             cache:(UATagGroupsLookupResponseCache *)cache
-                 tagGroupHistorian:(UATagGroupHistorian *)tagGroupHistorian
+                        historian:(UAInAppAudienceHistorian *)historian
                       currentTime:(UADate *)currentTime {
 
     self = [super init];
@@ -37,54 +43,64 @@ NSString * const UATagGroupsLookupManagerErrorDomain = @"com.urbanairship.tag_gr
     if (self) {
         self.dataStore = dataStore;
         self.cache = cache;
-        self.tagGroupHistorian = tagGroupHistorian;
+        self.historian = historian;
         self.lookupAPIClient = client;
         self.currentTime = currentTime;
-
+        self.namedUser = namedUser;
+        self.channel = channel;
         self.lookupAPIClient.enabled = self.enabled;
-        [self updateMaxSentMutationAge];
     }
 
     return self;
 }
 
-+ (instancetype)lookupManagerWithConfig:(UARuntimeConfig *)config
-                              dataStore:(UAPreferenceDataStore *)dataStore
-                       tagGroupHistorian:(UATagGroupHistorian *)tagGroupHistorian {
++ (instancetype)managerWithConfig:(UARuntimeConfig *)config
+                        dataStore:(UAPreferenceDataStore *)dataStore
+                          channel:(UAChannel *)channel
+                        namedUser:(UANamedUser *)namedUser {
 
     return [[self alloc] initWithAPIClient:[UATagGroupsLookupAPIClient clientWithConfig:config]
                                  dataStore:dataStore
+                                   channel:channel
+                                 namedUser:namedUser
                                      cache:[UATagGroupsLookupResponseCache cacheWithDataStore:dataStore]
-                          tagGroupHistorian:tagGroupHistorian
+                                 historian:[UAInAppAudienceHistorian historianWithChannel:channel namedUser:namedUser]
                                currentTime:[[UADate alloc] init]];
 }
 
-+ (instancetype)lookupManagerWithAPIClient:(UATagGroupsLookupAPIClient *)client
-                                 dataStore:(UAPreferenceDataStore *)dataStore
-                                     cache:(UATagGroupsLookupResponseCache *)cache
-                          tagGroupHistorian:(UATagGroupHistorian *)tagGroupHistorian
-                               currentTime:(UADate *)currentTime {
++ (instancetype)managerWithAPIClient:(UATagGroupsLookupAPIClient *)client
+                           dataStore:(UAPreferenceDataStore *)dataStore
+                             channel:(UAChannel *)channel
+                           namedUser:(UANamedUser *)namedUser
+                               cache:(UATagGroupsLookupResponseCache *)cache
+                           historian:(UAInAppAudienceHistorian *)historian
+                         currentTime:(UADate *)currentTime {
 
-    return [[self alloc] initWithAPIClient:client dataStore:dataStore cache:cache tagGroupHistorian:tagGroupHistorian currentTime:currentTime];
+    return [[self alloc] initWithAPIClient:client
+                                 dataStore:dataStore
+                                   channel:channel
+                                 namedUser:namedUser
+                                     cache:cache
+                                 historian:historian
+                               currentTime:currentTime];
 }
 
 - (BOOL)enabled {
-    return [self.dataStore boolForKey:kUATagGroupsLookupManagerEnabledKey defaultValue:YES];
+    return [self.dataStore boolForKey:kUAInAppAudienceManagerEnabledKey defaultValue:YES];
 }
 
 - (void)setEnabled:(BOOL)enabled {
-    [self.dataStore setBool:enabled forKey:kUATagGroupsLookupManagerEnabledKey];
+    [self.dataStore setBool:enabled forKey:kUAInAppAudienceManagerEnabledKey];
     self.lookupAPIClient.enabled = self.enabled;
 }
 
 - (NSTimeInterval)preferLocalTagDataTime {
-    return [self.dataStore doubleForKey:kUATagGroupsLookupManagerPreferLocalTagDataTimeKey
-                           defaultValue:UATagGroupsLookupManagerDefaultPreferLocalTagDataTimeSeconds];
+    return [self.dataStore doubleForKey:kUAInAppAudienceManagerPreferLocalTagDataTimeKey
+                           defaultValue:UAInAppAudienceManagerDefaultPreferLocalTagDataTimeSeconds];
 }
 
 - (void)setPreferLocalTagDataTime:(NSTimeInterval)preferLocalTagDataTime {
-    [self.dataStore setDouble:preferLocalTagDataTime forKey:kUATagGroupsLookupManagerPreferLocalTagDataTimeKey];
-    [self updateMaxSentMutationAge];
+    [self.dataStore setDouble:preferLocalTagDataTime forKey:kUAInAppAudienceManagerPreferLocalTagDataTimeKey];
 }
 
 - (NSTimeInterval)cacheMaxAgeTime {
@@ -101,47 +117,51 @@ NSString * const UATagGroupsLookupManagerErrorDomain = @"com.urbanairship.tag_gr
 
 - (void)setCacheStaleReadTime:(NSTimeInterval)cacheStaleReadTime {
     self.cache.staleReadTime = cacheStaleReadTime;
-    [self updateMaxSentMutationAge];
-}
-
-- (void)updateMaxSentMutationAge {
-    self.tagGroupHistorian.maxSentMutationAge = self.cache.staleReadTime + self.preferLocalTagDataTime;
 }
 
 - (NSTimeInterval)maxSentMutationAge {
-    return self.tagGroupHistorian.maxSentMutationAge;
     return self.cache.staleReadTime + self.preferLocalTagDataTime;
 }
 
-- (NSError *)errorWithCode:(UATagGroupsLookupManagerErrorCode)code message:(NSString *)message {
-    return [NSError errorWithDomain:UATagGroupsLookupManagerErrorDomain
+- (NSError *)errorWithCode:(UAInAppAudienceManagerErrorCode)code message:(NSString *)message {
+    return [NSError errorWithDomain:UAInAppAudienceManagerErrorDomain
                                code:code
                            userInfo:@{NSLocalizedDescriptionKey:message}];
 }
 
-- (UATagGroups *)overrideDeviceTags:(UATagGroups *)tagGroups {
-    NSMutableDictionary *newTags = [tagGroups.tags mutableCopy];
-    [newTags setObject:[UAirship channel].tags forKey:@"device"];
-    return [UATagGroups tagGroupsWithTags:newTags];
+- (NSArray<UATagGroupsMutation *> *)tagOverrides {
+    NSDate *date = [self.currentTime.now dateByAddingTimeInterval:-self.preferLocalTagDataTime];
+    return [self tagOverridesNewerThan:date];
+}
+
+- (NSArray<UATagGroupsMutation *> *)tagOverridesNewerThan:(NSDate *)date {
+    NSMutableArray *overrides = [[self.historian tagHistoryNewerThan:date] mutableCopy];
+
+    [overrides addObjectsFromArray:self.namedUser.pendingTagGroups];
+    [overrides addObjectsFromArray:self.channel.pendingTagGroups];
+
+    // Channel tags
+    if (self.channel.isChannelTagRegistrationEnabled) {
+        [overrides addObject:[UATagGroupsMutation mutationToSetTags:self.channel.tags group:@"device"]];
+    }
+
+    return [UATagGroupsMutation collapseMutations:overrides];
 }
 
 - (UATagGroups *)generateTagGroups:(UATagGroups *)requestedTagGroups
                     cachedResponse:(UATagGroupsLookupResponse *)cachedResponse
                        refreshDate:(NSDate *)refreshDate {
 
-    UATagGroups *cachedTagGroups = cachedResponse.tagGroups;
+    NSDictionary *tags = cachedResponse.tagGroups.tags;
 
     // Apply local history
-    NSTimeInterval maxAge = [[self.currentTime now] timeIntervalSinceDate:refreshDate] + self.preferLocalTagDataTime;
-    UATagGroups *locallyModifiedTagGroups = [self.tagGroupHistorian applyHistory:cachedTagGroups maxAge:maxAge];
-
-    // Override the device tags if needed
-    if ([UAirship channel].isChannelTagRegistrationEnabled) {
-        locallyModifiedTagGroups = [self overrideDeviceTags:locallyModifiedTagGroups];
+    NSDate *date = [refreshDate dateByAddingTimeInterval:-self.preferLocalTagDataTime];
+    for (UATagGroupsMutation *mutation in [self tagOverridesNewerThan:date]) {
+        tags = [mutation applyToTagGroups:tags];
     }
 
     // Only return the requested tags if available
-    return [requestedTagGroups intersect:locallyModifiedTagGroups];
+    return [requestedTagGroups intersect:[UATagGroups tagGroupsWithTags:tags]];
 }
 
 - (void)refreshCacheWithRequestedTagGroups:(UATagGroups *)requestedTagGroups
@@ -168,17 +188,19 @@ NSString * const UATagGroupsLookupManagerErrorDomain = @"com.urbanairship.tag_gr
     __block NSError *error;
 
     if (!self.enabled) {
-        error = [self errorWithCode:UATagGroupsLookupManagerErrorCodeComponentDisabled message:@"Tag group lookup is disabled"];
+        error = [self errorWithCode:UAInAppAudienceManagerErrorCodeComponentDisabled message:@"Tag group lookup is disabled"];
         return completionHandler(nil, error);
     }
 
     // Requesting only device tag groups when channel tag registration is enabled
     if ([requestedTagGroups containsOnlyDeviceTags] && [UAirship channel].isChannelTagRegistrationEnabled) {
-        return completionHandler([self overrideDeviceTags:requestedTagGroups], error);
+        NSMutableDictionary *tags = [NSMutableDictionary dictionary];
+        [tags setValue:self.channel.tags forKey:@"device"];
+        return completionHandler([UATagGroups tagGroupsWithTags:tags], error);
     }
 
     if (![UAirship channel].identifier) {
-        error = [self errorWithCode:UATagGroupsLookupManagerErrorCodeChannelRequired message:@"Channel ID is required"];
+        error = [self errorWithCode:UAInAppAudienceManagerErrorCodeChannelRequired message:@"Channel ID is required"];
         return completionHandler(nil, error);
     }
 
@@ -200,12 +222,12 @@ NSString * const UATagGroupsLookupManagerErrorDomain = @"com.urbanairship.tag_gr
         cacheRefreshDate = self.cache.refreshDate;
 
         if (!cachedResponse) {
-            error = [self errorWithCode:UATagGroupsLookupManagerErrorCodeCacheRefresh message:@"Unable to refresh cache, missing response"];
+            error = [self errorWithCode:UAInAppAudienceManagerErrorCodeCacheRefresh message:@"Unable to refresh cache, missing response"];
             return completionHandler(nil, error);
         }
 
         if ([self.cache isStale]) {
-            error = [self errorWithCode:UATagGroupsLookupManagerErrorCodeCacheRefresh message:@"Unable to refresh cache, read is stale"];
+            error = [self errorWithCode:UAInAppAudienceManagerErrorCodeCacheRefresh message:@"Unable to refresh cache, read is stale"];
             return completionHandler(nil, error);
         }
 
@@ -216,4 +238,3 @@ NSString * const UATagGroupsLookupManagerErrorDomain = @"com.urbanairship.tag_gr
 }
 
 @end
-

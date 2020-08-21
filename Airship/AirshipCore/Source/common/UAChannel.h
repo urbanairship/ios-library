@@ -3,6 +3,7 @@
 #import "UAComponent.h"
 #import "UAChannelNotificationCenterEvents.h"
 #import "UAAttributeMutations.h"
+#import "UATagGroupsMutation.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -19,6 +20,13 @@ NS_ASSUME_NONNULL_BEGIN
  The Channel ID.
  */
 @property(nullable, nonatomic, readonly) NSString *identifier;
+
+/**
+ * Returns the pending tag groups mutuations.
+ * @note For internal use only. :nodoc:
+ */
+@property (nonatomic, readonly)NSArray<UATagGroupsMutation *> *pendingTagGroups;
+
 
 /**
  Tags for this device.

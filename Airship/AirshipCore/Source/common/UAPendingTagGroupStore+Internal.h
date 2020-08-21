@@ -3,7 +3,6 @@
 #import <Foundation/Foundation.h>
 #import "UATagGroupsMutation+Internal.h"
 #import "UAPreferenceDataStore+Internal.h"
-#import "UATagGroupsTransactionRecord+Internal.h"
 #import "UATagGroups.h"
 #import "UATagGroupsAPIClient+Internal.h"
 

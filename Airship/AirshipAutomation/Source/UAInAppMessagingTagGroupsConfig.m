@@ -3,7 +3,7 @@
 #import "UAInAppMessagingTagGroupsConfig+Internal.h"
 #import "UATagGroupsLookupResponse+Internal.h"
 #import "UATagGroupsLookupResponseCache+Internal.h"
-#import "UATagGroupsLookupManager+Internal.h"
+#import "UAInAppAudienceManager+Internal.h"
 #import "UAAirshipAutomationCoreImport.h"
 
 #define kUAInAppMessagingTagGroupsRemoteConfigFetchEnabledKey @"enabled"
@@ -52,7 +52,7 @@
 + (instancetype)defaultConfig {
     return [[self alloc] initWithCacheMaxAgeTime:UATagGroupsLookupResponseCacheDefaultMaxAgeTimeSeconds
                               cacheStaleReadTime:UATagGroupsLookupResponseCacheDefaultStaleReadTimeSeconds
-                           cachePreferLocalUntil:UATagGroupsLookupManagerDefaultPreferLocalTagDataTimeSeconds
+                           cachePreferLocalUntil:UAInAppAudienceManagerDefaultPreferLocalTagDataTimeSeconds
                                          enabled:YES];
 }
 
@@ -69,7 +69,7 @@
 
     NSTimeInterval maxAge = maxAgeNumber ? [maxAgeNumber doubleValue] : UATagGroupsLookupResponseCacheDefaultMaxAgeTimeSeconds;
     NSTimeInterval staleRead = staleReadNumber ? [staleReadNumber doubleValue] : UATagGroupsLookupResponseCacheDefaultStaleReadTimeSeconds;
-    NSTimeInterval preferLocalUntil = preferLocalUntilNumber ? [preferLocalUntilNumber doubleValue] : UATagGroupsLookupManagerDefaultPreferLocalTagDataTimeSeconds;
+    NSTimeInterval preferLocalUntil = preferLocalUntilNumber ? [preferLocalUntilNumber doubleValue] : UAInAppAudienceManagerDefaultPreferLocalTagDataTimeSeconds;
     BOOL enabled = enabledNumber ? [enabledNumber boolValue] : YES;
 
     return [[self alloc] initWithCacheMaxAgeTime:maxAge

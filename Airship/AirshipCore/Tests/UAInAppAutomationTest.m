@@ -19,7 +19,7 @@
 @interface UAInAppAutomationTest : UAAirshipBaseTest
 @property(nonatomic, strong) UAInAppAutomation *inAppAutomation;
 @property(nonatomic, strong) id mockAutomationEngine;
-@property(nonatomic, strong) id mockTagGroupsLookupManager;
+@property(nonatomic, strong) id mockAudienceManager;
 @property(nonatomic, strong) id mockRemoteDataClient;
 @property(nonatomic, strong) id mockInAppMessageManager;
 @property(nonatomic, strong) id mockAirship;
@@ -39,7 +39,7 @@
     [UAirship setSharedAirship:self.mockAirship];
 
     self.mockAutomationEngine = [self mockForClass:[UAAutomationEngine class]];
-    self.mockTagGroupsLookupManager = [self mockForClass:[UATagGroupsLookupManager class]];
+    self.mockAudienceManager = [self mockForClass:[UAInAppAudienceManager class]];
     self.mockRemoteDataClient = [self mockForClass:[UAInAppRemoteDataClient class]];
     self.mockInAppMessageManager = [self mockForClass:[UAInAppMessageManager class]];
     self.mockDeferredClient = [self mockForClass:[UADeferredScheduleAPIClient class]];
@@ -52,7 +52,7 @@
     }] setDelegate:OCMOCK_ANY];
 
     self.inAppAutomation = [UAInAppAutomation automationWithEngine:self.mockAutomationEngine
-                                            tagGroupsLookupManager:self.mockTagGroupsLookupManager
+                                                   audienceManager:self.mockAudienceManager
                                                   remoteDataClient:self.mockRemoteDataClient
                                                          dataStore:self.dataStore
                                                inAppMessageManager:self.mockInAppMessageManager
@@ -81,7 +81,7 @@
     }];
 
     UATagGroups *tagResponse = [UATagGroups tagGroupsWithTags:@{@"group" : @[@"neat"]}];
-    [[[self.mockTagGroupsLookupManager expect] andDo:^(NSInvocation *invocation) {
+    [[[self.mockAudienceManager expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:3];
         void(^completionHandler)(UATagGroups * _Nullable tagGroups, NSError *error);
@@ -106,7 +106,7 @@
     }];
 
     NSError *error = [NSError errorWithDomain:@"com.urbanairship.test" code:1 userInfo:nil];
-    [[[self.mockTagGroupsLookupManager expect] andDo:^(NSInvocation *invocation) {
+    [[[self.mockAudienceManager expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:3];
         void(^completionHandler)(UATagGroups * _Nullable tagGroups, NSError *error);
@@ -130,7 +130,7 @@
     }];
 
     UATagGroups *tagResponse = [UATagGroups tagGroupsWithTags:@{@"group" : @[]}];
-    [[[self.mockTagGroupsLookupManager expect] andDo:^(NSInvocation *invocation) {
+    [[[self.mockAudienceManager expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:3];
         void(^completionHandler)(UATagGroups * _Nullable tagGroups, NSError *error);

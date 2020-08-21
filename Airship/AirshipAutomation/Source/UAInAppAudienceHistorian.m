@@ -1,12 +1,11 @@
 /* Copyright Airship and Contributors */
 
-#import "UATagGroupHistorian.h"
+#import "UAInAppAudienceHistorian+Internal.h"
 #import "UAChannel+Internal.h"
 #import "UANamedUser+Internal.h"
-#import "UATagGroupsRegistrar+Internal.h"
-#import "UATagGroupsMutation+Internal.h"
+#import "UATagGroupsTransactionRecord+Internal.h"
 
-@interface UATagGroupHistorian()
+@interface UAInAppAudienceHistorian()
 
 @property (nonatomic, strong) UAChannel *channel;
 @property (nonatomic, strong) UANamedUser *namedUser;
@@ -14,9 +13,9 @@
 
 @end
 
-@implementation UATagGroupHistorian
+@implementation UAInAppAudienceHistorian
 
-- (instancetype)initTagGroupHistorianWithChannel:(UAChannel *)channel namedUser:(UANamedUser *)namedUser {
+- (instancetype)initWithChannel:(UAChannel *)channel namedUser:(UANamedUser *)namedUser {
     self = [super init];
 
     if (self) {
@@ -38,6 +37,9 @@
     return self;
 }
 
++ (instancetype)historianWithChannel:(UAChannel *)channel namedUser:(UANamedUser *)namedUser {
+    return [[self alloc] initWithChannel:channel namedUser:namedUser];
+}
 
 - (void)uploadedChannelTagGroupsMutation:(NSNotification *)notification {
 
@@ -69,28 +71,17 @@
     }
 }
 
-- (NSArray<UATagGroupsTransactionRecord *> *)transactionRecordsWithMaxAge:(NSTimeInterval)maxAge {
-    NSArray<UATagGroupsTransactionRecord *> * records = (NSArray<UATagGroupsTransactionRecord *> *)self.records;
-
-    records = [records filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(UATagGroupsTransactionRecord *record, id bindings) {
-        NSDate *now = [NSDate date];
-        NSTimeInterval elapsed = [now timeIntervalSinceDate:record.date];
-        return elapsed < maxAge;
-    }]];
-
-    return records;
-}
-
-- (NSArray<UATagGroupsMutation *> *)sentMutationsWithMaxAge:(NSTimeInterval)maxAge {
-    NSArray<UATagGroupsTransactionRecord *> *records = [self transactionRecordsWithMaxAge:maxAge];
-
-    NSString *namedUserIDentifier = self.namedUser.identifier;
-    NSMutableArray<UATagGroupsMutation *> *mutations = [NSMutableArray array];
+- (NSArray<UATagGroupsMutation *> *)mutationsFromRecords:(NSArray *)records newerThan:(NSDate *)date {
+    NSString *namedUserIdentifier = self.namedUser.identifier;
+    NSMutableArray *mutations = [NSMutableArray array];
 
     for (UATagGroupsTransactionRecord *record in records) {
-        // Skip known named user records with mismatched identifiers
-        if (record.type == UATagGroupsTransactionRecordTypeNamedUser && ![record.identifier isEqualToString:namedUserIDentifier]) {
-            continue;;
+        if ([record.date compare:date] == NSOrderedAscending) {
+            continue;
+        }
+
+        if (record.type == UATagGroupsTransactionRecordTypeNamedUser && ![record.identifier isEqualToString:namedUserIdentifier]) {
+            continue;
         }
 
         [mutations addObject:record.mutation];
@@ -99,28 +90,8 @@
     return mutations;
 }
 
-- (NSDictionary *)applyMutations:(NSArray<UATagGroupsMutation *> *)mutations tags:(NSDictionary *)tags {
-    for (UATagGroupsMutation *mutation in mutations) {
-        tags = [mutation applyToTagGroups:tags];
-    }
-
-    return tags;
-}
-
-- (UATagGroups *)applyHistory:(UATagGroups *)tagGroups maxAge:(NSTimeInterval)maxAge {
-    
-    NSDictionary *tags = tagGroups.tags;
-    
-    // Recently uploaded mutations
-    tags = [self applyMutations:[self sentMutationsWithMaxAge:maxAge] tags:tags];
-    
-    // Pending Channel
-    tags = [self applyMutations:[self.channel pendingTagGroups] tags:tags];
-    
-    // Pending Named User
-    tags = [self applyMutations:[self.namedUser pendingTagGroups] tags:tags];
-    
-    return [UATagGroups tagGroupsWithTags:tags];
+- (NSArray<UATagGroupsMutation *> *)tagHistoryNewerThan:(NSDate *)date {
+    return [self mutationsFromRecords:self.records newerThan:date];
 }
 
 @end

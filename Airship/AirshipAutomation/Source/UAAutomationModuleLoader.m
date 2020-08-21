@@ -21,13 +21,19 @@
 + (id<UAModuleLoader>)inAppModuleLoaderWithDataStore:(UAPreferenceDataStore *)dataStore
                                               config:(UARuntimeConfig *)config
                                              channel:(UAChannel *)channel
+                                           namedUser:(UANamedUser *)namedUser
                                            analytics:(UAAnalytics *)analytics
-                                  remoteDataProvider:(id<UARemoteDataProvider>)remoteDataProvider
-                                    tagGroupHistorian:(UATagGroupHistorian *)tagGroupHistorian {
+                                  remoteDataProvider:(id<UARemoteDataProvider>)remoteDataProvider {
 
     NSMutableArray *components = [NSMutableArray array];
+
+    UAInAppAudienceManager *audienceManager = [UAInAppAudienceManager managerWithConfig:config
+                                                                              dataStore:dataStore
+                                                                                channel:channel
+                                                                              namedUser:namedUser];
+
     UAInAppAutomation *inAppAutomation = [UAInAppAutomation automationWithConfig:config
-                                                                tagGroupHistorian:tagGroupHistorian
+                                                                audienceManager:audienceManager
                                                               remoteDataProvider:remoteDataProvider
                                                                        dataStore:dataStore
                                                                          channel:channel

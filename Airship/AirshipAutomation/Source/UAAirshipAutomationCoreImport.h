@@ -68,4 +68,6 @@
 #import "NSManagedObjectContext+UAAdditions.h"
 #import "UAActionPredicateProtocol.h"
 #import "UAJSONSerialization.h"
+#import "UANamedUser.h"
+#import "UATagGroupsMutation.h"
 #endif
