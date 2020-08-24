@@ -34,6 +34,11 @@ extern NSString *const UABackgroundPushNotificationsEnabledKey;
 extern NSString *const UAPushTokenRegistrationEnabledKey;
 
 /**
+ * Extended push notification permission enabled data store key.
+ */
+extern NSString *const UAExtendedPushNotificationPermissionEnabledKey;
+
+/**
  * Alias data store key.
  */
 extern NSString *const UAPushAliasSettingsKey;

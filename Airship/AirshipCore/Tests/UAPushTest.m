@@ -402,6 +402,74 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     XCTAssertNoThrow([self.mockChannel verify],  @"should update channel registration");
 }
 
+/**
+ * Test enabling extended user notification permission saves its settings
+ * to NSUserDefaults and updates apns registration.
+ */
+- (void)testExtendedPushNotificationPermissionEnabled {
+    // SETUP
+    self.push.userPushNotificationsEnabled = NO;
+
+    // EXPECTATIONS
+    __block NSMutableSet *expectedCategories = [NSMutableSet set];
+    for (UANotificationCategory *category in self.push.combinedCategories) {
+        [expectedCategories addObject:[category asUNNotificationCategory]];
+    }
+    UANotificationOptions expectedOptions = UANotificationOptionAlert | UANotificationOptionBadge | UANotificationOptionSound;
+    [self expectUpdatePushRegistrationWithOptions:expectedOptions categories:expectedCategories];
+
+    // TEST
+    self.push.userPushNotificationsEnabled = YES;
+    self.push.extendedPushNotificationPermissionEnabled = YES;
+
+    // VERIFY
+    XCTAssertTrue(self.push.extendedPushNotificationPermissionEnabled,
+                  @"extendedPushNotificationPermissionEnabled should be enabled when set to YES");
+
+    XCTAssertTrue([self.dataStore boolForKey:UAExtendedPushNotificationPermissionEnabledKey],
+                  @"extendedPushNotificationPermissionEnabled should be stored in standardUserDefaults");
+    XCTAssertNoThrow([self.mockPushRegistration verify], @"[UAAPNSRegistration updateRegistrationWithOptions:categories:completionHandler:] should be called");
+}
+
+- (void)testExtendedPushNotificationPermissionEnabledWithUserNotificationsDisabled {
+    // SETUP
+    self.push.userPushNotificationsEnabled = NO;
+
+    // EXPECTATIONS
+    [self rejectUpdatePushRegistrationWithOptions];
+
+    // TEST
+    self.push.extendedPushNotificationPermissionEnabled = YES;
+
+    // VERIFY
+    XCTAssertFalse(self.push.extendedPushNotificationPermissionEnabled,
+                  @"extendedPushNotificationPermissionEnabled should not be enabled when userNotificationsEnabled is set to NO");
+
+    XCTAssertFalse([self.dataStore boolForKey:UAExtendedPushNotificationPermissionEnabledKey],
+                  @"extendedPushNotificationPermissionEnabled should not be stored in standardUserDefaults when userNotificationsEnabled is set to NO");
+    XCTAssertNoThrow([self.mockPushRegistration verify], @"[UAAPNSRegistration updateRegistrationWithOptions:categories:completionHandler:] should not be called");
+}
+
+- (void)testExtendedPushNotificationPermissionDisabled {
+    // SETUP
+    self.push.userPushNotificationsEnabled = NO;
+
+    // EXPECTATIONS
+    [self rejectUpdatePushRegistrationWithOptions];
+
+    // TEST
+    self.authorizationStatus = UAAuthorizationStatusEphemeral;
+    self.push.userPushNotificationsEnabled = YES;
+
+    // VERIFY
+    XCTAssertFalse(self.push.extendedPushNotificationPermissionEnabled,
+                  @"extendedPushNotificationPermissionEnabled should not be enabled when userNotificationsEnabled is set to NO");
+
+    XCTAssertFalse([self.dataStore boolForKey:UAExtendedPushNotificationPermissionEnabledKey],
+                  @"extendedPushNotificationPermissionEnabled should not be stored in standardUserDefaults when userNotificationsEnabled is set to NO");
+    XCTAssertNoThrow([self.mockPushRegistration verify], @"[UAAPNSRegistration updateRegistrationWithOptions:categories:completionHandler:] should not be called");
+}
+
 - (void)testSetQuietTime {
     [self.push setQuietTimeStartHour:12 startMinute:30 endHour:14 endMinute:58];
 

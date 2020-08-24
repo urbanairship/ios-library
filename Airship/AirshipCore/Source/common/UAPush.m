@@ -20,6 +20,7 @@
 NSString *const UAUserPushNotificationsEnabledKey = @"UAUserPushNotificationsEnabled";
 NSString *const UABackgroundPushNotificationsEnabledKey = @"UABackgroundPushNotificationsEnabled";
 NSString *const UAPushTokenRegistrationEnabledKey = @"UAPushTokenRegistrationEnabled";
+NSString *const UAExtendedPushNotificationPermissionEnabledKey = @"UAExtendedPushNotificationPermissionEnabled";
 
 NSString *const UAPushAliasSettingsKey = @"UAPushAlias";
 NSString *const UAPushLegacyTagsSettingsKey = @"UAPushTags";
@@ -339,6 +340,28 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
     [self.dataStore setBool:enabled forKey:UAUserPushNotificationsEnabledKey];
 
     if (enabled != previousValue) {
+        self.shouldUpdateAPNSRegistration = YES;
+        [self updateRegistration];
+    }
+}
+
+- (BOOL)extendedPushNotificationPermissionEnabled {
+    if (![self.dataStore objectForKey:UAExtendedPushNotificationPermissionEnabledKey]) {
+        return NO;
+    }
+
+    return [self.dataStore boolForKey:UAExtendedPushNotificationPermissionEnabledKey];
+}
+
+- (void)setExtendedPushNotificationPermissionEnabled:(BOOL)enabled {
+    if(!self.userPushNotificationsEnabled) {
+        return;
+    }
+    
+    BOOL previousValue = self.extendedPushNotificationPermissionEnabled;
+    [self.dataStore setBool:enabled forKey:UAExtendedPushNotificationPermissionEnabledKey];
+
+    if (enabled && enabled != previousValue) {
         self.shouldUpdateAPNSRegistration = YES;
         [self updateRegistration];
     }
@@ -688,6 +711,9 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
             completionHandler(YES);
         } else if (authorizedSettings == UAAuthorizedNotificationSettingsNone && options == UANotificationOptionNone) {
             completionHandler(NO);
+        } else if (status == UAAuthorizationStatusEphemeral && !self.extendedPushNotificationPermissionEnabled) {
+            [self notificationRegistrationFinishedWithAuthorizedSettings:authorizedSettings status:status];
+            completionHandler(YES);
         } else {
             [self.pushRegistration updateRegistrationWithOptions:options
                                                       categories:categories

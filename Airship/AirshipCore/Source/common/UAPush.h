@@ -269,6 +269,14 @@ typedef NS_ENUM(NSInteger, UAAuthorizationStatus) {
 @property (nonatomic, assign) BOOL userPushNotificationsEnabledByDefault;
 
 /**
+ * Enables/disables extended App Clip user notifications on this device through Airship.
+ * Defaults to `NO`. Once set to `YES`, the user will be prompted for remote notifications.
+ * @warning This property should only be set in an App Clip context. In all other cases, setting it to any value will have no effect.
+ * If userPushNotificationsEnabled is set to 'NO' , setting this property will have no effect.
+ */
+@property (nonatomic, assign) BOOL extendedPushNotificationPermissionEnabled;
+
+/**
  * The device token for this device, as a hex string.
  */
 @property (nonatomic, copy, readonly, nullable) NSString *deviceToken;
