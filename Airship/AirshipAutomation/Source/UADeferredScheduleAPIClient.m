@@ -13,6 +13,7 @@
 #define kUADeferredScheduleAPIClientTriggerTypeKey @"type"
 #define kUADeferredScheduleAPIClientTriggerGoalKey @"goal"
 #define kUADeferredScheduleAPIClientTriggerEventKey @"event"
+#define kUADeferredScheduleAPIClientTagOverridesKey @"tag_overrides"
 #define kUADeferredScheduleAPIClientAudienceMatchKey @"audience_match"
 #define kUADeferredScheduleAPIClientResponseTypeKey @"type"
 #define kUADeferredScheduleAPIClientMessageKey @"message"
@@ -65,6 +66,7 @@ NSString * const UADeferredScheduleAPIClientErrorDomain = @"com.urbanairship.def
 - (void)resolveURL:(NSURL *)URL
          channelID:(NSString *)channelID
     triggerContext:(nullable UAScheduleTriggerContext *)triggerContext
+      tagOverrides:(NSArray<UATagGroupsMutation *> *)tagOverrides
  completionHandler:(void (^)(UADeferredScheduleResult * _Nullable, NSError * _Nullable))completionHandler {
 
     UA_WEAKIFY(self)
@@ -76,7 +78,11 @@ NSString * const UADeferredScheduleAPIClientErrorDomain = @"com.urbanairship.def
             return completionHandler(nil, [self missingAuthTokenError]);
         }
 
-        UADeferredScheduleAPIClientResponse *response = [self performRequest:token URL:URL channelID:channelID triggerContext:triggerContext];
+        UADeferredScheduleAPIClientResponse *response = [self performRequest:token
+                                                                         URL:URL
+                                                                   channelID:channelID
+                                                              triggerContext:triggerContext
+                                                                tagOverrides:tagOverrides];
 
         if (response.error) {
             UA_LTRACE(@"Deferred schedule request failed with error %@", response.error);
@@ -93,7 +99,11 @@ NSString * const UADeferredScheduleAPIClientErrorDomain = @"com.urbanairship.def
                 return completionHandler(nil, [self missingAuthTokenError]);
             }
 
-            response = [self performRequest:token URL:URL channelID:channelID triggerContext:triggerContext];
+            response = [self performRequest:token
+                                        URL:URL
+                                  channelID:channelID
+                             triggerContext:triggerContext
+                               tagOverrides:tagOverrides];
 
             if (response.error) {
                 UA_LTRACE(@"Deferred schedule request failed with error %@", response.error);
@@ -164,9 +174,14 @@ NSString * const UADeferredScheduleAPIClientErrorDomain = @"com.urbanairship.def
 - (UADeferredScheduleAPIClientResponse *)performRequest:(NSString *)authToken
                                                     URL:(NSURL *)URL
                                               channelID:(NSString *)channelID
-                                         triggerContext:(UAScheduleTriggerContext *)triggerContext {
+                                         triggerContext:(UAScheduleTriggerContext *)triggerContext
+                                           tagOverrides:(NSArray<UATagGroupsMutation *> *)tagOverrides {
 
-    UARequest *request = [self requestWithAuthToken:authToken URL:URL channelID:channelID triggerContext:triggerContext];
+    UARequest *request = [self requestWithAuthToken:authToken
+                                                URL:URL
+                                          channelID:channelID
+                                     triggerContext:triggerContext
+                                       tagOverrides:tagOverrides];
 
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
 
@@ -199,7 +214,8 @@ NSString * const UADeferredScheduleAPIClientErrorDomain = @"com.urbanairship.def
 
 
 - (NSData *)requestBodyWithChannelID:(NSString *)channelID
-                      triggerContext:(nullable UAScheduleTriggerContext *)triggerContext {
+                      triggerContext:(nullable UAScheduleTriggerContext *)triggerContext
+                        tagOverrides:(NSArray<UATagGroupsMutation *> *)tagOverrides {
 
     NSMutableDictionary *payload = [NSMutableDictionary dictionary];
     [payload addEntriesFromDictionary:@{kUADeferredScheduleAPIClientPlatformKey: kUADeferredScheduleAPIClientPlatformiOS,
@@ -211,6 +227,16 @@ NSString * const UADeferredScheduleAPIClientErrorDomain = @"com.urbanairship.def
                                                                                       kUADeferredScheduleAPIClientTriggerEventKey: triggerContext.event}}];
     }
 
+    if (tagOverrides.count) {
+        NSMutableArray *overrides = [NSMutableArray array];
+
+        for (UATagGroupsMutation *mutation in tagOverrides) {
+            [overrides addObject:[mutation payload]];
+        }
+
+        payload[kUADeferredScheduleAPIClientTagOverridesKey] = overrides;
+    }
+
     return [UAJSONSerialization dataWithJSONObject:payload
                                            options:0
                                              error:nil];
@@ -219,12 +245,13 @@ NSString * const UADeferredScheduleAPIClientErrorDomain = @"com.urbanairship.def
 - (UARequest *)requestWithAuthToken:(NSString *)authToken
                                 URL:(NSURL *)URL
                           channelID:(NSString *)channelID
-                     triggerContext:(nullable UAScheduleTriggerContext *)triggerContext {
+                     triggerContext:(nullable UAScheduleTriggerContext *)triggerContext
+                       tagOverrides:(NSArray<UATagGroupsMutation *> *)tagOverrides {
 
     UARequest *request = [UARequest requestWithBuilderBlock:^(UARequestBuilder * _Nonnull builder) {
         builder.method = @"POST";
         builder.URL = URL;
-        builder.body = [self requestBodyWithChannelID:channelID triggerContext:triggerContext];
+        builder.body = [self requestBodyWithChannelID:channelID triggerContext:triggerContext tagOverrides:tagOverrides];
         [builder setValue:@"application/vnd.urbanairship+json; version=3;" forHeader:@"Accept"];
         [builder setValue:[@"Bearer " stringByAppendingString:authToken] forHeader:@"Authorization"];
     }];
