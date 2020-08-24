@@ -26,6 +26,13 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (NSArray<UATagGroupsMutation *> *)tagHistoryNewerThan:(NSDate *)date;
 
+/**
+ * Gets attribute history newer than the provided date.
+ * @param date The date.
+ * @return An array of attribute mutation history.
+ */
+- (NSArray<UAAttributePendingMutations *> *)attributeHistoryNewerThan:(NSDate *)date;
+
 @end
 
 NS_ASSUME_NONNULL_END

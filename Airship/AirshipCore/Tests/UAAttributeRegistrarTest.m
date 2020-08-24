@@ -5,7 +5,7 @@
 #import "UAAttributeAPIClient+Internal.h"
 #import "UAUtils+Internal.h"
 #import "UATestDate.h"
-#import "UAAttributePendingMutations+Internal.h"
+#import "UAAttributePendingMutations.h"
 #import "UAPersistentQueue+Internal.h"
 #import "UAAttributeMutations.h"
 
@@ -196,5 +196,23 @@
     [self.registrar setIdentifier:@"cool" clearPendingOnChange:YES];
     XCTAssertNil([self.persistentQueue peekObject]);
 }
+
+- (void)testPendingAttributes {
+    UAAttributeMutations *breakfastDrink = [UAAttributeMutations mutations];
+    [breakfastDrink setString:@"coffee" forAttribute:@"breakfastDrink"];
+    UAAttributePendingMutations *breakfastMutations = [UAAttributePendingMutations pendingMutationsWithMutations:breakfastDrink
+                                                                                                            date:self.testDate];
+
+    UAAttributeMutations *lunchDrink = [UAAttributeMutations mutations];
+    [lunchDrink setString:@"Code Red" forAttribute:@"lunchDrink"];
+    UAAttributePendingMutations *lunchDrinkMutations = [UAAttributePendingMutations pendingMutationsWithMutations:lunchDrink
+                                                                                                             date:self.testDate];
+    [self.registrar savePendingMutations:breakfastMutations];
+    [self.registrar savePendingMutations:lunchDrinkMutations];
+
+    UAAttributePendingMutations *expected = [UAAttributePendingMutations collapseMutations:@[breakfastMutations, lunchDrinkMutations]];
+    XCTAssertEqualObjects(expected, self.registrar.pendingMutations);
+}
+
 
 @end

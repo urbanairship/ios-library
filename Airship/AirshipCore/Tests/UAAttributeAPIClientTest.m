@@ -6,7 +6,7 @@
 #import "UAirship.h"
 #import "UARuntimeConfig.h"
 #import "UAAnalytics+Internal.h"
-#import "UAAttributePendingMutations+Internal.h"
+#import "UAAttributePendingMutations.h"
 #import "UAAttributeMutations+Internal.h"
 #import "UAJSONSerialization.h"
 #import "UAirship+Internal.h"

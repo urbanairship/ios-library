@@ -52,7 +52,7 @@
 + (instancetype)defaultConfig {
     return [[self alloc] initWithCacheMaxAgeTime:UATagGroupsLookupResponseCacheDefaultMaxAgeTimeSeconds
                               cacheStaleReadTime:UATagGroupsLookupResponseCacheDefaultStaleReadTimeSeconds
-                           cachePreferLocalUntil:UAInAppAudienceManagerDefaultPreferLocalTagDataTimeSeconds
+                           cachePreferLocalUntil:UAInAppAudienceManagerDefaultPreferLocalAudienceDataTimeSeconds
                                          enabled:YES];
 }
 
@@ -69,7 +69,7 @@
 
     NSTimeInterval maxAge = maxAgeNumber ? [maxAgeNumber doubleValue] : UATagGroupsLookupResponseCacheDefaultMaxAgeTimeSeconds;
     NSTimeInterval staleRead = staleReadNumber ? [staleReadNumber doubleValue] : UATagGroupsLookupResponseCacheDefaultStaleReadTimeSeconds;
-    NSTimeInterval preferLocalUntil = preferLocalUntilNumber ? [preferLocalUntilNumber doubleValue] : UAInAppAudienceManagerDefaultPreferLocalTagDataTimeSeconds;
+    NSTimeInterval preferLocalUntil = preferLocalUntilNumber ? [preferLocalUntilNumber doubleValue] : UAInAppAudienceManagerDefaultPreferLocalAudienceDataTimeSeconds;
     BOOL enabled = enabledNumber ? [enabledNumber boolValue] : YES;
 
     return [[self alloc] initWithCacheMaxAgeTime:maxAge

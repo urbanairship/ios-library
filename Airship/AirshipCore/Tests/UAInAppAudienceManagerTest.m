@@ -426,4 +426,41 @@
     XCTAssertEqualObjects([UATagGroupsMutation collapseMutations:expected], self.manager.tagOverrides);
 }
 
+- (void)testAttributeOverrides {
+    self.testDate.absoluteTime = [NSDate date];
+
+    NSArray *localHistory = @[
+        [self removeAttributeMutationWithKey:@"foo"],
+        [self setAttributeMutationWithKey:@"bar" value:@"1"],
+        [self setAttributeMutationWithKey:@"baz" value:@"a"]
+    ];
+    [[[self.mockHistorian expect] andReturn:localHistory] attributeHistoryNewerThan:[self.testDate.absoluteTime dateByAddingTimeInterval:-self.manager.preferLocalTagDataTime]];
+
+    UAAttributePendingMutations *pendingNamedUser = [self setAttributeMutationWithKey:@"foo" value:@"some-value"];
+    [[[self.mockNamedUser expect] andReturn:pendingNamedUser] pendingAttributes];
+
+    UAAttributePendingMutations *pendingChannel = [self setAttributeMutationWithKey:@"bar" value:@"2"];
+    [[[self.mockChannel expect] andReturn:pendingChannel] pendingAttributes];
+
+    NSMutableArray *expected = [NSMutableArray array];
+    [expected addObjectsFromArray:localHistory];
+    [expected addObject:pendingNamedUser];
+    [expected addObject:pendingChannel];
+
+    XCTAssertEqualObjects([UAAttributePendingMutations collapseMutations:expected], self.manager.attributeOverrides);
+}
+
+- (UAAttributePendingMutations *)setAttributeMutationWithKey:(NSString *)key value:(NSString *)value {
+    UAAttributeMutations *attribute = [UAAttributeMutations mutations];
+    [attribute setString:value forAttribute:key];
+    return [UAAttributePendingMutations pendingMutationsWithMutations:attribute date:[[UADate alloc] init]];
+}
+
+- (UAAttributePendingMutations *)removeAttributeMutationWithKey:(NSString *)key {
+    UAAttributeMutations *attribute = [UAAttributeMutations mutations];
+    [attribute removeAttribute:key];
+    return [UAAttributePendingMutations pendingMutationsWithMutations:attribute date:[[UADate alloc] init]];
+}
+
+
 @end

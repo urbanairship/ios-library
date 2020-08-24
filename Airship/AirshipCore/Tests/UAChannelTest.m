@@ -8,7 +8,7 @@
 #import "UAUtils+Internal.h"
 #import "UAUserData+Internal.h"
 #import "UATestDate.h"
-#import "UAAttributePendingMutations+Internal.h"
+#import "UAAttributePendingMutations.h"
 #import "UAAppStateTracker.h"
 #import "UAActionResult.h"
 #import "UAirship+Internal.h"

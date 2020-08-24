@@ -2,13 +2,30 @@
 
 #import <Foundation/Foundation.h>
 #import "UAPersistentQueue+Internal.h"
-#import "UAAttributePendingMutations+Internal.h"
+#import "UAAttributePendingMutations.h"
 #import "UARuntimeConfig+Internal.h"
 #import "UAPreferenceDataStore.h"
 #import "UAAttributeAPIClient+Internal.h"
 
 
 NS_ASSUME_NONNULL_BEGIN
+
+/**
+ * Delegate protocol for registrar callbacks.
+ */
+@protocol UAAttributeRegistrarDelegate <NSObject>
+@required
+
+/**
+ * Called when mutations have been succesfully uploaded.
+ *
+ * @param mutations The mutations.
+ * @param identifier The identifier associated with the mutations.
+ */
+- (void)uploadedAttributeMutations:(UAAttributePendingMutations *)mutations
+                        identifier:(NSString *)identifier;
+
+@end
 
 /**
  The registrar responsible for routing requests to the attributes APIs.
@@ -77,6 +94,16 @@ NS_ASSUME_NONNULL_BEGIN
  * Whether the registrar is enabled. Defaults to `YES`.
  */
 @property (nonatomic, assign) BOOL enabled;
+
+/**
+ * Pending mutations.
+ */
+@property (nonatomic, readonly) UAAttributePendingMutations *pendingMutations;
+
+/**
+ * The delegate to receive registrar callbacks.
+ */
+@property (nonatomic, weak) id<UAAttributeRegistrarDelegate> delegate;
 
 @end
 

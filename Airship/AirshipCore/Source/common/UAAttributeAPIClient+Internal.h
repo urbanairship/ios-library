@@ -2,7 +2,7 @@
 
 #import <Foundation/Foundation.h>
 #import "UAAPIClient.h"
-#import "UAAttributePendingMutations+Internal.h"
+#import "UAAttributePendingMutations.h"
 
 @class UARuntimeConfig;
 

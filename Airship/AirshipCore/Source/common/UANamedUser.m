@@ -6,7 +6,7 @@
 #import "UATagGroupsRegistrar+Internal.h"
 #import "UATagUtils+Internal.h"
 #import "UARuntimeConfig.h"
-#import "UAAttributePendingMutations+Internal.h"
+#import "UAAttributePendingMutations.h"
 #import "UAAttributeRegistrar+Internal.h"
 #import "UADate.h"
 
@@ -18,10 +18,11 @@ NSString *const UANamedUserLastUpdatedTokenKey = @"UANamedUserLastUpdatedToken";
 NSString *const UANamedUserLastChannelIDKey = @"UANamedUserLastChannelID";
 
 NSString *const UANamedUserUploadedTagGroupMutationNotification = @"com.urbanairship.named_user.uploaded_tag_group_mutation";
+NSString *const UANamedUserUploadedAttributeMutationsNotification = @"com.urbanairship.named_user.uploaded_attribute_mutations";
 
-NSString *const UANamedUserUploadedTagGroupMutationNotificationMutationKey = @"mutation";
-NSString *const UANamedUserUploadedTagGroupMutationNotificationDateKey = @"date";
-NSString *const UANamedUserUploadedTagGroupMutationNotificationIdentifierKey = @"identifier";
+NSString *const UANamedUserUploadedAudienceMutationNotificationMutationKey = @"mutation";
+NSString *const UANamedUserUploadedAudienceMutationNotificationDateKey = @"date";
+NSString *const UANamedUserUploadedAudienceMutationNotificationIdentifierKey = @"identifier";
 
 @interface UANamedUser()
 
@@ -311,12 +312,20 @@ NSString *const UANamedUserUploadedTagGroupMutationNotificationIdentifierKey = @
     }
 }
 
-- (void)uploadedMutation:(UATagGroupsMutation *)mutation identifier:(NSString *)identifier {
+- (void)uploadedTagGroupsMutation:(UATagGroupsMutation *)mutation identifier:(NSString *)identifier {
     [[NSNotificationCenter defaultCenter] postNotificationName:UANamedUserUploadedTagGroupMutationNotification
                                                         object:nil
-                                                      userInfo:@{UANamedUserUploadedTagGroupMutationNotificationMutationKey:mutation,
-                                                                 UANamedUserUploadedTagGroupMutationNotificationDateKey:[NSDate date],
-                                                                 UANamedUserUploadedTagGroupMutationNotificationIdentifierKey:identifier}];
+                                                      userInfo:@{UANamedUserUploadedAudienceMutationNotificationMutationKey:mutation,
+                                                                 UANamedUserUploadedAudienceMutationNotificationDateKey:[NSDate date],
+                                                                 UANamedUserUploadedAudienceMutationNotificationIdentifierKey:identifier }];
+}
+
+- (void)uploadedAttributeMutations:(UAAttributePendingMutations *)mutations identifier:(NSString *)identifier {
+    [[NSNotificationCenter defaultCenter] postNotificationName:UANamedUserUploadedAttributeMutationsNotification
+                                                        object:nil
+                                                      userInfo:@{UANamedUserUploadedAudienceMutationNotificationMutationKey:mutations,
+                                                                 UANamedUserUploadedAudienceMutationNotificationDateKey:[NSDate date],
+                                                                 UANamedUserUploadedAudienceMutationNotificationIdentifierKey:identifier }];
 }
 
 - (void)updateRegistrarEnablement {
@@ -353,6 +362,10 @@ NSString *const UANamedUserUploadedTagGroupMutationNotificationIdentifierKey = @
 
 - (NSArray<UATagGroupsMutation *> *)pendingTagGroups {
     return self.tagGroupsRegistrar.pendingMutations;
+}
+
+- (UAAttributePendingMutations *)pendingAttributes {
+    return self.attributeRegistrar.pendingMutations;
 }
 
 #pragma mark -

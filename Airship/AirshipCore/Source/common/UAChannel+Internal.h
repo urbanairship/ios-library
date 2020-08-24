@@ -10,32 +10,7 @@
 extern NSString *const UAChannelTagsSettingsKey;
 extern NSString *const UAChannelCreationOnForeground;
 
-/**
- * Notification posted when a channel tag group mutation is uploaded.
- *
- * User data will contain a UATagGroupsMutation, identifier string and NSDate under
- * UAChannelUploadedTagGroupMutationNotificationMutationKey,
- * UAChannelUploadedTagGroupMutationNotificationDateKey, and
- * UAChannelUploadedTagGroupMutationEventIdentifierKey, respectively.
- */
-extern NSString *const UAChannelUploadedTagGroupMutationNotification;
-
-/**
- * The mutation key for UAChannelUploadedTagGroupMutationNotification.
- */
-extern NSString *const UAChannelUploadedTagGroupMutationNotificationMutationKey;
-
-/**
- * The date key for UAChannelUploadedTagGroupMutationNotification.
- */
-extern NSString *const UAChannelUploadedTagGroupMutationNotificationDateKey;
-
-/**
- * The identifier key for UAChannelUploadedTagGroupMutationNotification.
- */
-extern NSString *const UAChannelUploadedTagGroupMutationNotificationIdentifierKey;
-
-@interface UAChannel () <UAChannelRegistrarDelegate, UATagGroupsRegistrarDelegate, UAExtendableChannelRegistration, UAPushableComponent>
+@interface UAChannel () <UAChannelRegistrarDelegate, UATagGroupsRegistrarDelegate, UAExtendableChannelRegistration, UAPushableComponent, UAAttributeRegistrarDelegate>
 
 /**
  * Allows disabling channel registration before a channel is created.  Channel registration will resume

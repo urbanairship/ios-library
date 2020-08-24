@@ -9,7 +9,7 @@
 #import "UARuntimeConfig.h"
 #import "UATagGroupsRegistrar+Internal.h"
 #import "UATestDate.h"
-#import "UAAttributePendingMutations+Internal.h"
+#import "UAAttributePendingMutations.h"
 
 @interface UANamedUserTest : UAAirshipBaseTest
 

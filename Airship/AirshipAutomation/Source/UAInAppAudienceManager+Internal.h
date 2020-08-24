@@ -34,9 +34,9 @@ typedef NS_ENUM(NSInteger, UAInAppAudienceManagerErrorCode) {
 extern NSString * const UAInAppAudienceManagerErrorDomain;
 
 /**
- * The default time interval to prefer local tag data over API responses.
+ * The default time interval to prefer local audience data over API responses.
  */
-extern NSTimeInterval const UAInAppAudienceManagerDefaultPreferLocalTagDataTimeSeconds;
+extern NSTimeInterval const UAInAppAudienceManagerDefaultPreferLocalAudienceDataTimeSeconds;
 
 /**
  * Delegate.
@@ -97,6 +97,13 @@ extern NSTimeInterval const UAInAppAudienceManagerDefaultPreferLocalTagDataTimeS
  * @return An array of tag overrides.
  */
 - (NSArray<UATagGroupsMutation *> *)tagOverrides;
+
+/**
+ * Attribute overrides.
+ *
+ * @return Any attribute overrides.
+ */
+- (UAAttributePendingMutations *)attributeOverrides;
 
 /**
  * UAInAppAudienceManager class factory method.

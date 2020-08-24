@@ -139,13 +139,7 @@
         if (status >= 200 && status <= 299) {
             // Success - pop uploaded mutation and store the transaction record
             [self popPendingMutation:mutation identifier:identifier];
-
-            if ([self.delegate respondsToSelector:@selector(uploadedMutation:identifier:)]) {
-                @synchronized (self) {
-                    [self.delegate uploadedMutation:mutation identifier:identifier];
-                }
-            }
-
+            [self.delegate uploadedTagGroupsMutation:mutation identifier:identifier];
             [self uploadNextTagGroupMutationWithBackgroundTaskIdentifier:backgroundTaskIdentifier];
         } else if (status == 400 || status == 403) {
             // Unrecoverable failure - pop mutation and end the task

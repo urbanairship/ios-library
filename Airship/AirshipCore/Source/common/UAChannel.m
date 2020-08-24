@@ -6,7 +6,7 @@
 #import "UATagUtils+Internal.h"
 #import "UAUtils+Internal.h"
 #import "UAChannelRegistrationPayload+Internal.h"
-#import "UAAttributePendingMutations+Internal.h"
+#import "UAAttributePendingMutations.h"
 #import "UADate.h"
 #import "UAAppStateTracker.h"
 #import "UALocaleManager+Internal.h"
@@ -20,10 +20,11 @@ NSString *const UAChannelUpdatedEvent = @"com.urbanairship.channel.channel_updat
 NSString *const UAChannelRegistrationFailedEvent = @"com.urbanairship.channel.registration_failed";
 
 NSString *const UAChannelUploadedTagGroupMutationNotification = @"com.urbanairship.channel.uploaded_tag_group_mutation";
+NSString *const UAChannelUploadedAttributeMutationsNotification = @"com.urbanairship.channel.uploaded_attribute_mutations";
 
-NSString *const UAChannelUploadedTagGroupMutationNotificationMutationKey = @"mutation";
-NSString *const UAChannelUploadedTagGroupMutationNotificationDateKey = @"date";
-NSString *const UAChannelUploadedTagGroupMutationNotificationIdentifierKey = @"identifier";
+NSString *const UAChannelUploadedAudienceMutationNotificationMutationKey = @"mutation";
+NSString *const UAChannelUploadedAudienceMutationNotificationDateKey = @"date";
+NSString *const UAChannelUploadedAudienceMutationNotificationIdentifierKey = @"identifier";
 
 NSString *const UAChannelCreatedEventChannelKey = @"com.urbanairship.channel.identifier";
 NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.channel.existing";
@@ -352,6 +353,10 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
     return self.tagGroupsRegistrar.pendingMutations;
 }
 
+- (UAAttributePendingMutations *)pendingAttributes {
+    return self.attributeRegistrar.pendingMutations;
+}
+
 #pragma mark -
 #pragma mark Channel Registrar Delegate
 
@@ -437,12 +442,20 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
     }
 }
 
-- (void)uploadedMutation:(UATagGroupsMutation *)mutation identifier:(NSString *)identifier {
+- (void)uploadedTagGroupsMutation:(UATagGroupsMutation *)mutation identifier:(NSString *)identifier {
     [[NSNotificationCenter defaultCenter] postNotificationName:UAChannelUploadedTagGroupMutationNotification
                                                         object:nil
-                                                      userInfo:@{UAChannelUploadedTagGroupMutationNotificationMutationKey:mutation,
-                                                                 UAChannelUploadedTagGroupMutationNotificationDateKey:[NSDate date],
-                                                                 UAChannelUploadedTagGroupMutationNotificationIdentifierKey:identifier }];
+                                                      userInfo:@{UAChannelUploadedAudienceMutationNotificationMutationKey:mutation,
+                                                                 UAChannelUploadedAudienceMutationNotificationDateKey:[NSDate date],
+                                                                 UAChannelUploadedAudienceMutationNotificationIdentifierKey:identifier }];
+}
+
+- (void)uploadedAttributeMutations:(UAAttributePendingMutations *)mutations identifier:(NSString *)identifier {
+    [[NSNotificationCenter defaultCenter] postNotificationName:UAChannelUploadedAttributeMutationsNotification
+                                                        object:nil
+                                                      userInfo:@{UAChannelUploadedAudienceMutationNotificationMutationKey:mutations,
+                                                                 UAChannelUploadedAudienceMutationNotificationDateKey:[NSDate date],
+                                                                 UAChannelUploadedAudienceMutationNotificationIdentifierKey:identifier }];
 }
 
 - (void)updateRegistrarEnablement {

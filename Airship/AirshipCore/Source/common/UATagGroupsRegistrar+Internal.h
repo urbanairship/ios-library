@@ -15,15 +15,16 @@ NS_ASSUME_NONNULL_BEGIN
  * Delegate protocol for tag groups registrar callbacks.
  */
 @protocol UATagGroupsRegistrarDelegate <NSObject>
-@optional
+@required
 
 /**
- * Called when a mutation has been succesfully uploaded.
+ * Called when a mutation has been successfully uploaded.
  *
  * @param mutation The mutation.
  * @param identifier The identifier associated with the mutation.
  */
-- (void)uploadedMutation:(UATagGroupsMutation *)mutation identifier:(NSString *)identifier;
+- (void)uploadedTagGroupsMutation:(UATagGroupsMutation *)mutation
+                       identifier:(NSString *)identifier;
 
 @end
 

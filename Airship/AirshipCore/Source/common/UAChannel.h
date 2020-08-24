@@ -4,12 +4,52 @@
 #import "UAChannelNotificationCenterEvents.h"
 #import "UAAttributeMutations.h"
 #import "UATagGroupsMutation.h"
+#import "UAAttributePendingMutations.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 //---------------------------------------------------------------------------------------
 // UAChannel Class
 //---------------------------------------------------------------------------------------
+/**
+ * Notification posted when a channel tag group mutation is uploaded.
+ *
+ * User data will contain a UATagGroupsMutation, identifier string and NSDate under
+ * UAChannelUploadedAudienceMutationNotificationMutationKey,
+ * UAChannelUploadedAudienceMutationNotificationIdentifierKey, and
+ * UAChannelUploadedAudienceMutationNotificationDateKey, respectively.
+ * @note For internal use only. :nodoc:
+ */
+extern NSString *const UAChannelUploadedTagGroupMutationNotification;
+
+/**
+ * Notification posted when a channel attribute mutation is uploaded.
+ *
+ * User data will contain a UAAttributePendingMutations, identifier string and NSDate under
+ * UAChannelUploadedAudienceMutationNotificationMutationKey,
+ * UAChannelUploadedAudienceMutationNotificationIdentifierKey, and
+ * UAChannelUploadedAudienceMutationNotificationDateKey, respectively.
+ * @note For internal use only. :nodoc:
+ */
+extern NSString *const UAChannelUploadedAttributeMutationsNotification;
+
+/**
+ * The mutation key for UAChannelUploadedTagGroupMutationNotification and UAChannelUploadedAttributeMutationsNotification.
+ * @note For internal use only. :nodoc:
+ */
+extern NSString *const UAChannelUploadedAudienceMutationNotificationMutationKey;
+
+/**
+ * The identifier key for UAChannelUploadedTagGroupMutationNotification and UAChannelUploadedAttributeMutationsNotification.
+ * @note For internal use only. :nodoc:
+ */
+extern NSString *const UAChannelUploadedAudienceMutationNotificationIdentifierKey;
+
+/**
+ * The date key for UAChannelUploadedTagGroupMutationNotification and UAChannelUploadedAttributeMutationsNotification.
+ * @note For internal use only. :nodoc:
+ */
+extern NSString *const UAChannelUploadedAudienceMutationNotificationDateKey;
 
 /**
 * This singleton provides an interface to the channel functionality provided by the Airship iOS Push API.
@@ -27,6 +67,11 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, readonly)NSArray<UATagGroupsMutation *> *pendingTagGroups;
 
+/**
+ * Returns the pending attribute mutuations.
+ * @note For internal use only. :nodoc:
+ */
+@property (nonatomic, readonly) UAAttributePendingMutations *pendingAttributes;
 
 /**
  Tags for this device.

@@ -3,7 +3,7 @@
 #import "UABaseTest.h"
 #import "UADate.h"
 #import "UAUtils+Internal.h"
-#import "UAAttributePendingMutations+Internal.h"
+#import "UAAttributePendingMutations.h"
 #import "UAAttributeMutations+Internal.h"
 #import "UATestDate.h"
 

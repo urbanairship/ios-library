@@ -10,7 +10,7 @@
 #define kUAInAppAudienceManagerPreferLocalTagDataTimeKey @"com.urbanairship.tag_groups.PREFER_LOCAL_TAG_DATA_TIME"
 
 
-NSTimeInterval const UAInAppAudienceManagerDefaultPreferLocalTagDataTimeSeconds = 60 * 10; // 10 minutes
+NSTimeInterval const UAInAppAudienceManagerDefaultPreferLocalAudienceDataTimeSeconds = 60 * 10; // 10 minutes
 
 NSString * const UAInAppAudienceManagerErrorDomain = @"com.urbanairship.in_app_audience_manager";
 
@@ -96,7 +96,7 @@ NSString * const UAInAppAudienceManagerErrorDomain = @"com.urbanairship.in_app_a
 
 - (NSTimeInterval)preferLocalTagDataTime {
     return [self.dataStore doubleForKey:kUAInAppAudienceManagerPreferLocalTagDataTimeKey
-                           defaultValue:UAInAppAudienceManagerDefaultPreferLocalTagDataTimeSeconds];
+                           defaultValue:UAInAppAudienceManagerDefaultPreferLocalAudienceDataTimeSeconds];
 }
 
 - (void)setPreferLocalTagDataTime:(NSTimeInterval)preferLocalTagDataTime {
@@ -146,6 +146,16 @@ NSString * const UAInAppAudienceManagerErrorDomain = @"com.urbanairship.in_app_a
     }
 
     return [UATagGroupsMutation collapseMutations:overrides];
+}
+
+- (UAAttributePendingMutations *)attributeOverrides {
+    NSDate *date = [self.currentTime.now dateByAddingTimeInterval:-UAInAppAudienceManagerDefaultPreferLocalAudienceDataTimeSeconds];
+    NSMutableArray *overrides = [[self.historian attributeHistoryNewerThan:date] mutableCopy];
+
+    [overrides addObject:self.namedUser.pendingAttributes];
+    [overrides addObject:self.channel.pendingAttributes];
+
+    return [UAAttributePendingMutations collapseMutations:overrides];
 }
 
 - (UATagGroups *)generateTagGroups:(UATagGroups *)requestedTagGroups

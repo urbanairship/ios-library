@@ -6,22 +6,19 @@
 @class UADate;
 
 NS_ASSUME_NONNULL_BEGIN
-/**
- Attribute payload keys as defined in the specification
- */
-extern NSString *const UAAttributePayloadKey;
 
+extern NSString *const UAAttributePayloadKey;
 extern NSString *const UAAttributeActionKey;
 extern NSString *const UAAttributeValueKey;
 extern NSString *const UAAttributeNameKey;
 extern NSString *const UAAttributeTimestampKey;
-
 extern NSString *const UAAttributeSetActionKey;
 extern NSString *const UAAttributeRemoveActionKey;
 
 /**
- Defines timestamped and immutable changes to perform on channel attributes that are pending upload.
-*/
+ * Defines timestamped and immutable changes to perform on channel attributes that are pending upload.
+ * @note For internal use only. :nodoc:
+ */
 @interface UAAttributePendingMutations : NSObject <NSCoding>
 
 ///---------------------------------------------------------------------------------------

@@ -4,10 +4,52 @@
 #import "UAComponent.h"
 #import "UAAttributeMutations.h"
 #import "UATagGroupsMutation.h"
+#import "UAAttributePendingMutations.h"
 
 @class UAPreferenceDataStore;
 
 NS_ASSUME_NONNULL_BEGIN
+
+/**
+ * Notification posted when a named user tag group mutation is uploaded.
+ *
+ * User data will contain a UATagGroupsMutation, identifier string and NSDate under
+ * UANamedUserUploadedAudienceMutationNotificationMutationKey,
+ * UANamedUserUploadedAudienceMutationNotificationIdentifierKey, and
+ * UANamedUserUploadedAudienceMutationNotificationDateKey, respectively.
+ * @note For internal use only. :nodoc:
+ */
+extern NSString *const UANamedUserUploadedTagGroupMutationNotification;
+
+/**
+ * Notification posted when a named user attribute mutation is uploaded.
+ *
+ * User data will contain a UAAttributePendingMutations, identifier string and NSDate under
+ * UANamedUserUploadedAudienceMutationNotificationMutationKey,
+ * UANamedUserUploadedAudienceMutationNotificationIdentifierKey, and
+ * UANamedUserUploadedAudienceMutationNotificationDateKey, respectively.
+ * @note For internal use only. :nodoc:
+ */
+extern NSString *const UANamedUserUploadedAttributeMutationsNotification;
+
+/**
+ * The mutation key for UANamedUserUploadedTagGroupMutationNotification and UANamedUserUploadedAttributeMutationsNotification.
+ * @note For internal use only. :nodoc:
+ */
+extern NSString *const UANamedUserUploadedAudienceMutationNotificationMutationKey;
+
+/**
+ * The identifier key for UANamedUserUploadedTagGroupMutationNotification and UANamedUserUploadedAttributeMutationsNotification.
+ * @note For internal use only. :nodoc:
+ */
+extern NSString *const UANamedUserUploadedAudienceMutationNotificationIdentifierKey;
+
+/**
+ * The date key for UANamedUserUploadedTagGroupMutationNotification and UANamedUserUploadedAttributeMutationsNotification.
+ * @note For internal use only. :nodoc:
+ */
+extern NSString *const UANamedUserUploadedAudienceMutationNotificationDateKey;
+
 
 /**
  * The named user is an alternate method of identifying the device. Once a named
@@ -25,12 +67,17 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, copy, nullable) NSString *identifier;
 
-
 /**
  * Returns the pending tag groups mutuations.
  * @note For internal use only. :nodoc:
  */
 @property (nonatomic, readonly)NSArray<UATagGroupsMutation *> *pendingTagGroups;
+
+/**
+ * Returns the pending attribute mutuations.
+ * @note For internal use only. :nodoc:
+ */
+@property (nonatomic, readonly) UAAttributePendingMutations *pendingAttributes;
 
 ///---------------------------------------------------------------------------------------
 /// @name Named User Management

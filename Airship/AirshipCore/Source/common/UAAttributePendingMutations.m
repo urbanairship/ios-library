@@ -3,7 +3,7 @@
 #import <Foundation/Foundation.h>
 #import "UAUtils.h"
 #import "UAChannel.h"
-#import "UAAttributePendingMutations+Internal.h"
+#import "UAAttributePendingMutations.h"
 #import "UAAttributeMutations+Internal.h"
 #import "UADate.h"
 

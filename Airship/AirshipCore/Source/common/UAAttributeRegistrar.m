@@ -4,7 +4,7 @@
 #import "UAPersistentQueue+Internal.h"
 #import "UAAttributeAPIClient+Internal.h"
 #import "UAAttributeMutations+Internal.h"
-#import "UAAttributePendingMutations+Internal.h"
+#import "UAAttributePendingMutations.h"
 #import "UAUtils.h"
 
 static NSString *const ChannelPersistentQueueKey = @"com.urbanairship.channel_attributes.registrar_persistent_queue_key";
@@ -144,6 +144,7 @@ static NSString *const NamedUserPersistentQueueKey = @"com.urbanairship.named_us
         if (status >= 200 && status <= 299) {
             // Success - pop mutation
             [self popPendingMutations:mutations identifier:identifier];
+            [self.delegate uploadedAttributeMutations:mutations identifier:identifier];
             [self uploadNextMutationWithBackgroundTaskIdentifier:backgroundTaskIdentifier];
         } else if (status == 400 || status == 403) {
             // Unrecoverable failure - pop mutation
@@ -180,6 +181,11 @@ static NSString *const NamedUserPersistentQueueKey = @"com.urbanairship.named_us
 
         self.identifier = identifier;
     }
+}
+
+- (UAAttributePendingMutations *)pendingMutations {
+    NSArray *combined = [self.pendingAttributeMutationsQueue objects];
+    return [UAAttributePendingMutations collapseMutations:combined];
 }
 
 @end

@@ -2,7 +2,7 @@
 
 #import <Foundation/Foundation.h>
 #import "UAAttributeMutations+Internal.h"
-#import "UAAttributePendingMutations+Internal.h"
+#import "UAAttributePendingMutations.h"
 #import "UAGlobal.h"
 #import "UAUtils.h"
 
