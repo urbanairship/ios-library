@@ -63,12 +63,14 @@ extern NSString * const UADeferredScheduleAPIClientErrorDomain;
  * @param channelID The channel ID.
  * @param triggerContext The optional trigger context.
  * @param tagOverrides The tag overrides.
+ * @param attributeOverrides The attribute overrides.
  * @param completionHandler The completion handler. The completion handler is called on an internal serial queue.
  */
 - (void)resolveURL:(NSURL *)URL
          channelID:(NSString *)channelID
     triggerContext:(nullable UAScheduleTriggerContext *)triggerContext
       tagOverrides:(NSArray<UATagGroupsMutation *> *)tagOverrides
+attributeOverrides:(UAAttributePendingMutations *)attributeOverrides
  completionHandler:(void (^)(UADeferredScheduleResult * _Nullable, NSError * _Nullable))completionHandler;
 
 @end

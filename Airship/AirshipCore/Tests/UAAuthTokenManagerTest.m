@@ -256,10 +256,10 @@
         }
     }];
 
-    XCTAssertEqualObjects(token1, token2);
-
     [self waitForTestExpectations];
     [self.mockClient verify];
+
+    XCTAssertEqualObjects(token1, token2);
 }
 
 - (void)testExpireTokenQueueing {

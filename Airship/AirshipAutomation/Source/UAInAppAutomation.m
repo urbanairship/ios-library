@@ -296,6 +296,7 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
                                      channelID:channelID
                                 triggerContext:triggerContext
                                   tagOverrides:[self.audienceManager tagOverrides]
+                            attributeOverrides:[self.audienceManager attributeOverrides]
                              completionHandler:^(UADeferredScheduleResult *result, NSError *error) {
         if (error) {
             switch (error.code) {
