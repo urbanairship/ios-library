@@ -3,6 +3,7 @@
 #import "UAScheduleTrigger+Internal.h"
 #import "UAAirshipAutomationCoreImport.h"
 #import "UARegionEvent+Internal.h"
+#import "NSJSONSerialization+UAAdditions.h"
 
 // JSON/NSCoding Keys
 NSString *const UAScheduleTriggerTypeKey = @"type";
@@ -236,19 +237,21 @@ NSString * const UAScheduleTriggerErrorDomain = @"com.urbanairship.schedule_trig
 - (void)encodeWithCoder:(NSCoder *)coder {
     [coder encodeObject:@(self.type) forKey:UAScheduleTriggerTypeKey];
     [coder encodeObject:self.goal forKey:UAScheduleTriggerGoalKey];
-    [coder encodeObject:self.predicate.payload forKey:UAScheduleTriggerPredicateKey];
+    if (self.predicate.payload) {
+        [coder encodeObject:[NSJSONSerialization stringWithObject:self.predicate.payload] forKey:UAScheduleTriggerPredicateKey];
+    }
 }
 
 - (id)initWithCoder:(NSCoder *)coder {
     self = [super init];
 
     if (self) {
-        self.type = [[coder decodeObjectForKey:UAScheduleTriggerTypeKey] integerValue];
-        self.goal = [coder decodeObjectForKey:UAScheduleTriggerGoalKey];
+        self.type = [[coder decodeObjectOfClass:[NSNumber class] forKey:UAScheduleTriggerTypeKey] integerValue];
+        self.goal = [coder decodeObjectOfClass:[NSNumber class] forKey:UAScheduleTriggerGoalKey];
 
-        id predicatePayload = [coder decodeObjectForKey:UAScheduleTriggerPredicateKey];
-        if (predicatePayload) {
-            self.predicate = [UAJSONPredicate predicateWithJSON:predicatePayload
+        id predicateJSON = [coder decodeObjectOfClass:[NSString class] forKey:UAScheduleTriggerPredicateKey];
+        if (predicateJSON) {
+            self.predicate = [UAJSONPredicate predicateWithJSON:[NSJSONSerialization objectWithString:predicateJSON]
                                                           error:nil];
         }
     }
@@ -298,6 +301,8 @@ NSString * const UAScheduleTriggerErrorDomain = @"com.urbanairship.schedule_trig
     }
 }
 
-
++ (BOOL)supportsSecureCoding {
+    return YES;
+}
 
 @end

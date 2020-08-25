@@ -43,7 +43,6 @@
 }
 
 - (void)testInvalidJSON {
-
     NSArray *invalidValues = @[ // Missing type
                                 @{UAScheduleTriggerGoalKey: @(1)},
 
@@ -68,6 +67,29 @@
         XCTAssertNil([UAScheduleTrigger triggerWithJSON:value error:&error]);
         XCTAssertNotNil(error);
     }
+}
+
+- (void)testCoding {
+    UAScheduleTrigger *trigger = [UAScheduleTrigger screenTriggerForScreenName:@"some-screen" count:100];
+
+    NSError *error = nil;
+    id encoded = [NSKeyedArchiver archivedDataWithRootObject:trigger
+                                      requiringSecureCoding:YES
+                                                      error:&error];
+
+
+    XCTAssertNil(error);
+    XCTAssertNotNil(encoded);
+
+    id decoded = [NSKeyedUnarchiver unarchivedObjectOfClass:[UAScheduleTrigger class]
+                                                  fromData:encoded
+                                                     error:&error];
+
+
+    XCTAssertNil(error);
+    XCTAssertNotNil(decoded);
+
+    XCTAssertEqualObjects(trigger, decoded);
 }
 
 @end

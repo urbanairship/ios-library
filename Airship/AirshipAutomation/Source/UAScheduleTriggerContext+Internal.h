@@ -20,7 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * The trigger context event.
  */
-@property(nonatomic, readonly) id event;
+@property(nullable, nonatomic, readonly) id event;
 
 ///---------------------------------------------------------------------------------------
 /// @name Schedule Trigger Factory
@@ -34,7 +34,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @return A schedule trigger context.
  */
 + (instancetype)triggerContextWithTrigger:(UAScheduleTrigger *)trigger
-                                    event:(id)event;
+                                    event:(nullable id)event;
 
 @end
 

@@ -287,6 +287,93 @@
     [self waitForTestExpectations];
 }
 
+- (void)testResolveURLTriggerContextNilEvent {
+    NSURL *URL = [NSURL URLWithString:@"https://cool.story/neat"];
+    NSString *channelID = @"channelID";
+    UAScheduleTrigger *trigger = [UAScheduleTrigger foregroundTriggerWithCount:1];
+    UAScheduleTriggerContext *triggerContext = [UAScheduleTriggerContext triggerContextWithTrigger:trigger event:nil];
+
+    NSDictionary *messageJSON = @{
+        @"display": @{@"body": @{
+                              @"text":@"the body"
+        },
+        },
+        @"display_type": @"banner"
+    };
+
+    NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:200 HTTPVersion:nil headerFields:nil];
+    NSDictionary *responseBody = @{@"audience_match": @(YES), @"type" : @"in_app_message", @"message": messageJSON};
+    NSData *responseData = [NSJSONSerialization dataWithJSONObject:responseBody options:0 error:nil];
+
+    NSString *token = @"token";
+
+    XCTestExpectation *authTokenRetrieved = [self expectationWithDescription:@"Auth token retrieved"];
+
+    [[[self.mockAuthManager expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:2];
+
+        void (^handler)(NSString * _NullablemeterTypes) = (__bridge void (^_Nonnull)(NSString * _Nullable))arg;
+        handler(token);
+        [authTokenRetrieved fulfill];
+    }] tokenWithCompletionHandler:OCMOCK_ANY];
+
+    XCTestExpectation *sessionFinished = [self expectationWithDescription:@"Session finished"];
+
+    NSArray<UATagGroupsMutation *> *tagOverrides = @[];
+
+    UAAttributeMutations *attributeMutations = [UAAttributeMutations mutations];
+    UAAttributePendingMutations *attributeOverrides = [UAAttributePendingMutations pendingMutationsWithMutations:attributeMutations
+                                                                                                            date:[[UADate alloc] init]];
+
+    [[[self.mockSession expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:4];
+        UARequestCompletionHandler completionHandler = (__bridge UARequestCompletionHandler)arg;
+        completionHandler(responseData, response, nil);
+    }] dataTaskWithRequest:[OCMArg checkWithBlock:^BOOL(id obj) {
+        UARequest *request = obj;
+
+        XCTAssertEqualObjects(request.method, @"POST");
+        XCTAssertEqualObjects(request.URL, URL);
+        XCTAssertEqualObjects(request.headers[@"Accept"], @"application/vnd.urbanairship+json; version=3;");
+        XCTAssertEqualObjects(request.headers[@"Authorization"], [@"Bearer " stringByAppendingString:token]);
+
+        NSDictionary *body = [NSJSONSerialization JSONObjectWithData:request.body options:NSJSONReadingAllowFragments error:nil];
+        XCTAssertEqualObjects(body[@"platform"], @"ios");
+        XCTAssertEqualObjects(body[@"channel_id"], channelID);
+
+        id expectedTrigger = @{@"type": trigger.typeName, @"goal" : trigger.goal};
+        XCTAssertEqualObjects(body[@"trigger"], expectedTrigger);
+
+        XCTAssertNil(body[@"tag_overrides"]);
+        XCTAssertNil(body[@"attribute_overrides"]);
+
+        [sessionFinished fulfill];
+
+        return YES;
+    }] retryWhere:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
+    XCTestExpectation *resultResolved = [self expectationWithDescription:@"Result resolved"];
+
+    [self.client resolveURL:URL
+                  channelID:channelID
+             triggerContext:triggerContext
+               tagOverrides:tagOverrides
+         attributeOverrides:attributeOverrides
+          completionHandler:^(UADeferredScheduleResult * _Nullable result, NSError * _Nullable error) {
+
+        XCTAssertNotNil(result);
+        XCTAssertTrue(result.isAudienceMatch);
+        XCTAssertNotNil(result.message);
+        XCTAssertEqualObjects(result.message, [UAInAppMessage messageWithJSON:messageJSON error:nil]);
+
+        [resultResolved fulfill];
+    }];
+
+    [self waitForTestExpectations];
+}
+
 - (void)testResolveURLMissingAuthToken {
     NSURL *URL = [NSURL URLWithString:@"https://cool.story/neat"];
     NSString *channelID = @"channelID";
@@ -404,7 +491,6 @@
     NSString *event = @"event";
     UAScheduleTrigger *trigger = [UAScheduleTrigger foregroundTriggerWithCount:1];
     UAScheduleTriggerContext *triggerContext = [UAScheduleTriggerContext triggerContextWithTrigger:trigger event:event];
-
 
     NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:401 HTTPVersion:nil headerFields:nil];
     NSDictionary *responseBody = @{@"audience_match": @(YES), @"type" : @"whatever"};

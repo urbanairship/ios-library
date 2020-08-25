@@ -2,6 +2,7 @@
 
 #import "UAScheduleTriggerContext+Internal.h"
 #import "UAScheduleTrigger+Internal.h"
+#import "NSJSONSerialization+UAAdditions.h"
 
 static NSString *const UAScheduleTriggerContextTriggerKey = @"trigger";
 static NSString *const UAScheduleTriggerContextEventKey = @"event";
@@ -37,7 +38,7 @@ static NSString *const UAScheduleTriggerContextEventKey = @"event";
         return NO;
     }
 
-    if (![self.event isEqual:triggerContext.event]) {
+    if (self.event != triggerContext.event && ![self.event isEqual:triggerContext.event]) {
         return NO;
     }
 
@@ -66,7 +67,10 @@ static NSString *const UAScheduleTriggerContextEventKey = @"event";
 }
 
 - (void)encodeWithCoder:(NSCoder *)coder {
-    [coder encodeObject:self.event forKey:UAScheduleTriggerContextEventKey];
+    if (self.event) {
+        NSString *eventJSON = [NSJSONSerialization stringWithObject:self.event acceptingFragments:YES];
+        [coder encodeObject:eventJSON forKey:UAScheduleTriggerContextEventKey];
+    }
     [coder encodeObject:self.trigger forKey:UAScheduleTriggerContextTriggerKey];
 }
 
@@ -74,8 +78,15 @@ static NSString *const UAScheduleTriggerContextEventKey = @"event";
     self = [super init];
 
     if (self) {
-        self.event = [coder decodeObjectForKey:UAScheduleTriggerContextEventKey];
-        self.trigger = [coder decodeObjectForKey:UAScheduleTriggerContextTriggerKey];
+
+        id eventJSON = [coder decodeObjectOfClass:[NSString class] forKey:UAScheduleTriggerContextEventKey];
+        if (eventJSON) {
+            self.event = [NSJSONSerialization objectWithString:eventJSON
+                                                       options:NSJSONReadingMutableContainers | NSJSONReadingAllowFragments];
+        }
+
+        self.trigger = [coder decodeObjectOfClass:[UAScheduleTrigger class]
+                                           forKey:UAScheduleTriggerContextTriggerKey];
     }
 
     return self;

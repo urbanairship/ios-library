@@ -229,9 +229,11 @@ attributeOverrides:(UAAttributePendingMutations *)attributeOverrides
                                         kUADeferredScheduleAPIClientChannelIDKey: channelID}];
 
     if (triggerContext) {
-        [payload addEntriesFromDictionary:@{kUADeferredScheduleAPIClientTriggerKey: @{kUADeferredScheduleAPIClientTriggerTypeKey: triggerContext.trigger.typeName,
-                                                                                      kUADeferredScheduleAPIClientTriggerGoalKey: triggerContext.trigger.goal,
-                                                                                      kUADeferredScheduleAPIClientTriggerEventKey: triggerContext.event}}];
+        NSMutableDictionary *triggerContextPayload = [NSMutableDictionary dictionary];
+        [triggerContextPayload setValue:triggerContext.trigger.typeName forKey:kUADeferredScheduleAPIClientTriggerTypeKey];
+        [triggerContextPayload setValue:triggerContext.trigger.goal forKey:kUADeferredScheduleAPIClientTriggerGoalKey];
+        [triggerContextPayload setValue:triggerContext.event forKey:kUADeferredScheduleAPIClientTriggerEventKey];
+        payload[kUADeferredScheduleAPIClientTriggerKey] = triggerContextPayload;
     }
 
     if (tagOverrides.count) {

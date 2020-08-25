@@ -147,7 +147,7 @@ extern NSString *const UAScheduleTriggerVersionName;
 /**
  * Trigger defines a condition to execute actions or cancel a delayed execution of actions.
  */
-@interface UAScheduleTrigger: NSObject <NSCoding>
+@interface UAScheduleTrigger: NSObject <NSSecureCoding>
 
 ///---------------------------------------------------------------------------------------
 /// @name Schedule Trigger Properties
