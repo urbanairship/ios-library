@@ -12,6 +12,8 @@
 #define kUANamedUserDeviceTypeKey @"device_type"
 #define kUANamedUserIdentifierKey @"named_user_id"
 
+NSString * const UANamedUserAPIClientErrorDomain = @"com.urbanairship.named_user_api_client";
+
 @implementation UANamedUserAPIClient
 
 + (instancetype)clientWithConfig:(UARuntimeConfig *)config {
@@ -24,8 +26,7 @@
 
 - (void)associate:(NSString *)identifier
         channelID:(NSString *)channelID
-        onSuccess:(UANamedUserAPIClientSuccessBlock)successBlock
-        onFailure:(UANamedUserAPIClientFailureBlock)failureBlock {
+completionHandler:(void (^)(NSError * _Nullable))completionHandler {
 
     if (!self.enabled) {
         UA_LDEBUG(@"Disabled");
@@ -57,28 +58,38 @@
     [self.session dataTaskWithRequest:request retryWhere:^BOOL(NSData * _Nullable data, NSURLResponse * _Nullable response) {
         return [response hasRetriableStatus];
     } completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
-        NSHTTPURLResponse *httpResponse = nil;
-        if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
-            httpResponse = (NSHTTPURLResponse *) response;
+        NSHTTPURLResponse *httpResponse = [self castResponse:response error:&error];
+        
+        if (error) {
+            return completionHandler(error);
         }
+
         NSInteger status = httpResponse.statusCode;
 
         // Failure
         if (!(status >= 200 && status <= 299)) {
             UA_LTRACE(@"Failed to associate named user with status: %lu", (unsigned long)status);
-            failureBlock(status);
-            return;
+            return completionHandler([self unsuccessfulStatusError]);
         }
 
         // Success
         UA_LTRACE(@"Associated named user with status: %lu", (unsigned long)status);
-        successBlock();
+        completionHandler(nil);
     }];
 }
 
+- (NSError *)unsuccessfulStatusError {
+    NSString *msg = [NSString stringWithFormat:@"Named user client encountered an unsuccessful status"];
+
+    NSError *error = [NSError errorWithDomain:UANamedUserAPIClientErrorDomain
+                                         code:UANamedUserAPIClientErrorUnsuccessfulStatus
+                                     userInfo:@{NSLocalizedDescriptionKey:msg}];
+
+    return error;
+}
+
 - (void)disassociate:(NSString *)channelID
-           onSuccess:(UANamedUserAPIClientSuccessBlock)successBlock
-           onFailure:(UANamedUserAPIClientFailureBlock)failureBlock {
+   completionHandler:(void (^)(NSError * _Nullable))completionHandler {
 
     if (!self.enabled) {
         UA_LDEBUG(@"Disabled");
@@ -103,22 +114,24 @@
     [self.session dataTaskWithRequest:request retryWhere:^BOOL(NSData * _Nullable data, NSURLResponse * _Nullable response) {
         return [response hasRetriableStatus];
     } completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
-        NSHTTPURLResponse *httpResponse = nil;
-        if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
-            httpResponse = (NSHTTPURLResponse *) response;
+        NSHTTPURLResponse *httpResponse = [self castResponse:response error:&error];
+
+        if (error) {
+            return completionHandler(error);
         }
+
         NSInteger status = httpResponse.statusCode;
 
         // Failure
         if (!(status >= 200 && status <= 299)) {
             UA_LTRACE(@"Failed to dissociate named user with status: %lu", (unsigned long)status);
-            failureBlock(status);
+            completionHandler([self unsuccessfulStatusError]);
             return;
         }
 
         // Success
         UA_LTRACE(@"Dissociated named user with status: %lu", (unsigned long)status);
-        successBlock();
+        completionHandler(nil);
     }];
 }
 

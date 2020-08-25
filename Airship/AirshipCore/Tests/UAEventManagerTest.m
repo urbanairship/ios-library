@@ -368,15 +368,15 @@
     [[[self.mockDelegate stub] andReturn:headers] analyticsHeaders];
 
     XCTestExpectation *clientCalled = [self expectationWithDescription:@"client upload callled."];
-    // Expect a call to the client, return a 200 response
+    
+    // Expect a call to the client, return a successful response
     [[[self.mockClient expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:4];
-        void (^returnBlock)(NSHTTPURLResponse *response)= (__bridge void (^)(NSHTTPURLResponse *))arg;
+        void (^returnBlock)(NSDictionary *, NSError *)= (__bridge void (^)(NSDictionary *, NSError *))arg;
 
-        // Return a success response
-        NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:200 HTTPVersion:nil headerFields:nil];
-        returnBlock(response);
+        // Return a successful response
+        returnBlock(@{@"foo" : @"bar"}, nil);
         [clientCalled fulfill];
     }] uploadEvents:[OCMArg checkWithBlock:^BOOL(id obj) {
         NSArray *events = (NSArray *)obj;
@@ -496,15 +496,14 @@
     }] ignoringNonObjectArgs] fetchEventsWithMaxBatchSize:0 completionHandler:OCMOCK_ANY];
 
 
-    // Expect a call to the client, return a 200 response
+    // Expect a call to the client, return an unsuccesful response
     [[[self.mockClient expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:4];
-        void (^returnBlock)(NSHTTPURLResponse *response)= (__bridge void (^)(NSHTTPURLResponse *))arg;
+        void (^returnBlock)(NSDictionary *, NSError *)= (__bridge void (^)(NSDictionary *, NSError *))arg;
 
-        // Return a 400 response
-        NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:400 HTTPVersion:nil headerFields:nil];
-        returnBlock(response);
+        // Return an error
+        returnBlock(nil, [NSError errorWithDomain:NSCocoaErrorDomain code:0 userInfo:@{}]);
     }] uploadEvents:OCMOCK_ANY headers:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     // Expect the store to delete the event

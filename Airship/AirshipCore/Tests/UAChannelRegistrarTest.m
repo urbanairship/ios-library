@@ -18,7 +18,7 @@
 @property (nonatomic, strong) id mockedRegistrarDelegate;
 @property (nonatomic, strong) id mockedApplication;
 
-@property (nonatomic, assign) NSUInteger failureCode;
+@property (nonatomic, strong) NSError *error;
 
 @property (nonatomic, strong) UAChannelRegistrationPayload *payload;
 
@@ -63,34 +63,34 @@ NSString * const ChannelCreateSuccessChannelID = @"newChannelID";
         completionHandler(copyOfPayload);
     }] createChannelPayload:OCMOCK_ANY dispatcher:OCMOCK_ANY];
 
-    self.failureCode = 400;
+    self.error = [NSError errorWithDomain:UAChannelAPIClientErrorDomain code:UAChannelAPIClientErrorUnsuccessfulStatus userInfo:@{}];
 
     channelUpdateSuccessDoBlock = ^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:4];
-        UAChannelAPIClientUpdateSuccessBlock successBlock = (__bridge UAChannelAPIClientUpdateSuccessBlock)arg;
-        successBlock();
+        UAChannelAPIClientUpdateCompletionHandler completionHandler = (__bridge UAChannelAPIClientUpdateCompletionHandler)arg;
+        completionHandler(nil);
     };
 
     channelUpdateFailureDoBlock = ^(NSInvocation *invocation) {
         void *arg;
-        [invocation getArgument:&arg atIndex:5];
-        UAChannelAPIClientFailureBlock failureBlock = (__bridge UAChannelAPIClientFailureBlock)arg;
-        failureBlock(self.failureCode);
+        [invocation getArgument:&arg atIndex:4];
+        UAChannelAPIClientUpdateCompletionHandler completionHandler = (__bridge UAChannelAPIClientUpdateCompletionHandler)arg;
+        completionHandler(self.error);
     };
 
     channelCreateSuccessDoBlock = ^(NSInvocation *invocation, BOOL existing) {
         void *arg;
         [invocation getArgument:&arg atIndex:3];
-        UAChannelAPIClientCreateSuccessBlock successBlock = (__bridge UAChannelAPIClientCreateSuccessBlock)arg;
-        successBlock(ChannelCreateSuccessChannelID, existing);
+        UAChannelAPIClientCreateCompletionHandler completionHandler = (__bridge UAChannelAPIClientCreateCompletionHandler)arg;
+        completionHandler(ChannelCreateSuccessChannelID, existing, nil);
     };
 
     channelCreateFailureDoBlock = ^(NSInvocation *invocation, BOOL existing) {
         void *arg;
-        [invocation getArgument:&arg atIndex:4];
-        UAChannelAPIClientFailureBlock failureBlock = (__bridge UAChannelAPIClientFailureBlock)arg;
-        failureBlock(self.failureCode);
+        [invocation getArgument:&arg atIndex:3];
+        UAChannelAPIClientCreateCompletionHandler completionHandler = (__bridge UAChannelAPIClientCreateCompletionHandler)arg;
+        completionHandler(nil, NO, self.error);
     };
 
 
@@ -283,12 +283,12 @@ NSString * const ChannelCreateSuccessChannelID = @"newChannelID";
  */
 - (void)testRegisterRequestInProgress {
     BOOL existing = NO;
-    __block UAChannelAPIClientCreateSuccessBlock successBlock;
-    [self startRegistrationButLeaveInProgressWithExisting:existing successBlock:&successBlock];
+    __block UAChannelAPIClientCreateCompletionHandler completionHandler;
+    [self startRegistrationButLeaveInProgressWithExisting:existing completionHandler:&completionHandler];
 
     // Reject any registration requests
-    [[self.mockedChannelClient reject] updateChannelWithID:OCMOCK_ANY withPayload:OCMOCK_ANY onSuccess:OCMOCK_ANY onFailure:OCMOCK_ANY];
-    [[self.mockedChannelClient reject] createChannelWithPayload:OCMOCK_ANY onSuccess:OCMOCK_ANY onFailure:OCMOCK_ANY];
+    [[self.mockedChannelClient reject] updateChannelWithID:OCMOCK_ANY withPayload:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    [[self.mockedChannelClient reject] createChannelWithPayload:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     // Register
     [self.registrar registerForcefully:NO];
@@ -298,7 +298,7 @@ NSString * const ChannelCreateSuccessChannelID = @"newChannelID";
     [self expectBackgroundTaskToBeStopped];
 
     // Finish original registration
-    successBlock(ChannelCreateSuccessChannelID, existing);
+    completionHandler(ChannelCreateSuccessChannelID, existing, nil);
 
     // Verify
     [self waitForTestExpectations];
@@ -308,8 +308,8 @@ NSString * const ChannelCreateSuccessChannelID = @"newChannelID";
 - (void)testUpdateRegistrationExistingBackgroundTask {
     // Setup by starting, but not completing, registration
     BOOL existing = NO;
-    __block UAChannelAPIClientCreateSuccessBlock successBlock;
-    [self startRegistrationButLeaveInProgressWithExisting:existing successBlock:&successBlock];
+    __block UAChannelAPIClientCreateCompletionHandler completionHandler;
+    [self startRegistrationButLeaveInProgressWithExisting:existing completionHandler:&completionHandler];
 
     [[self.mockedApplication reject] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
 
@@ -326,8 +326,8 @@ NSString * const ChannelCreateSuccessChannelID = @"newChannelID";
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIBackgroundTaskInvalid)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
 
     // Reject any registration requests
-    [[self.mockedChannelClient reject] updateChannelWithID:OCMOCK_ANY withPayload:OCMOCK_ANY onSuccess:OCMOCK_ANY onFailure:OCMOCK_ANY];
-    [[self.mockedChannelClient reject] createChannelWithPayload:OCMOCK_ANY onSuccess:OCMOCK_ANY onFailure:OCMOCK_ANY];
+    [[self.mockedChannelClient reject] updateChannelWithID:OCMOCK_ANY withPayload:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    [[self.mockedChannelClient reject] createChannelWithPayload:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     // Make a pending request
     [self.registrar registerForcefully:NO];
@@ -343,8 +343,8 @@ NSString * const ChannelCreateSuccessChannelID = @"newChannelID";
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIBackgroundTaskInvalid)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
 
     // Reject any registration requests
-    [[self.mockedChannelClient reject] updateChannelWithID:OCMOCK_ANY withPayload:OCMOCK_ANY onSuccess:OCMOCK_ANY onFailure:OCMOCK_ANY];
-    [[self.mockedChannelClient reject] createChannelWithPayload:OCMOCK_ANY onSuccess:OCMOCK_ANY onFailure:OCMOCK_ANY];
+    [[self.mockedChannelClient reject] updateChannelWithID:OCMOCK_ANY withPayload:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    [[self.mockedChannelClient reject] createChannelWithPayload:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     // Simulate active channel
     self.registrar = [self createRegistrarWithChannelID:MockChannelID];
@@ -377,8 +377,8 @@ NSString * const ChannelCreateSuccessChannelID = @"newChannelID";
 - (void)testCancelAllRequestsRegistrationInProgress {
     // Setup by starting, but not completing, registration
     BOOL existing = NO;
-    __block UAChannelAPIClientCreateSuccessBlock successBlock;
-    [self startRegistrationButLeaveInProgressWithExisting:existing successBlock:&successBlock];
+    __block UAChannelAPIClientCreateCompletionHandler completionHandler;
+    [self startRegistrationButLeaveInProgressWithExisting:existing completionHandler:&completionHandler];
 
     // Expectations
     [[self.mockedChannelClient expect] cancelAllRequests];
@@ -393,7 +393,7 @@ NSString * const ChannelCreateSuccessChannelID = @"newChannelID";
 }
 
 /**
- * Test that a channel update with a 409 status tries to
+ * Test that a channel update with a conflict error tries to
  * create a new channel ID.
  */
 - (void)testChannelConflictNewChannel {
@@ -403,7 +403,7 @@ NSString * const ChannelCreateSuccessChannelID = @"newChannelID";
     self.registrar = [self createRegistrarWithChannelID:MockChannelID];
 
     // Expect the channel client to try to update channel. Simulate failure.
-    self.failureCode = 409;
+    self.error = [NSError errorWithDomain:UAChannelAPIClientErrorDomain code:UAChannelAPIClientErrorConflict userInfo:@{}];
     [self expectChannelClientUpdateChannelWithID:MockChannelID andDo:channelUpdateFailureDoBlock];
 
     // Expect create channel to be called. Simulate success.
@@ -422,36 +422,6 @@ NSString * const ChannelCreateSuccessChannelID = @"newChannelID";
     [self verifyChannelClientUpdateChannelWithID];
     [self verifyChannelClientCreateChannelWithPayload];
     [self verifyRegistrationSucceededDelegateCallback];
-    [self verifyBackgroundTaskWasStartedAndStopped];
-}
-
-/**
- * Test that a channel update with a 409 and the following channel create with a 409 fails to create a new channel.
- */
-- (void)testChannelConflictFailed {
-    // Assume we recently registered
-    self.registrar = [self createRegistrarWithChannelID:MockChannelID];
-
-    // Expect the channel client to try to update channel. Simulate failure.
-    self.failureCode = 409;
-    [self expectChannelClientUpdateChannelWithID:MockChannelID andDo:channelUpdateFailureDoBlock];
-
-    // Expect create channel to be called. Simulate failure.
-    [self expectChannelClientCreateChannelWithPayloadAndDo:channelCreateFailureDoBlock withExisting:NO];
-
-    // Expect the delegate to be called
-    [self expectRegistrationFailedDelegateCallback];
-    [self rejectChannelCreatedDelegateCallback];
-    [self expectBackgroundTaskToBeStartedAndStopped];
-
-    // Register
-    [self.registrar registerForcefully:NO];
-
-    // Verify
-    [self waitForTestExpectations];
-    [self verifyChannelClientUpdateChannelWithID];
-    [self verifyChannelClientCreateChannelWithPayload];
-    [self verifyRegistrationFailedDelegateCallback];
     [self verifyBackgroundTaskWasStartedAndStopped];
 }
 
@@ -561,15 +531,15 @@ NSString * const ChannelCreateSuccessChannelID = @"newChannelID";
  * Start registration but leave it in progress
  */
 - (void)startRegistrationButLeaveInProgressWithExisting:(BOOL)existing
-                                           successBlock:(UAChannelAPIClientCreateSuccessBlock *)successBlock {
+                                           completionHandler:(UAChannelAPIClientCreateCompletionHandler *)completionHandler {
 
-    *successBlock = ^(NSString *channelID, BOOL existing) {
+    *completionHandler = ^(NSString *channelID, BOOL existing, NSError *error) {
         XCTFail(@"This block should be overwritten during the test");
     };
     void (^channelCreateSuccessDoDelayedBlock)(NSInvocation *, BOOL) = ^(NSInvocation *invocation, BOOL existing) {
         void *arg;
         [invocation getArgument:&arg atIndex:3];
-        *successBlock = (__bridge UAChannelAPIClientCreateSuccessBlock)arg;
+        *completionHandler = (__bridge UAChannelAPIClientCreateCompletionHandler)arg;
     };
 
     // Expect the channel client to be asked to create the channel. Don't call back, to keep the request pending.
@@ -663,8 +633,7 @@ NSUInteger backgroundTaskID = 30;
         [expectation fulfill];
         doBlock(invocation, existing);
     }] createChannelWithPayload:[OCMArg checkWithSelector:@selector(isEqualToPayload:) onObject:self.payload]
-                      onSuccess:OCMOCK_ANY
-                      onFailure:OCMOCK_ANY];
+              completionHandler:OCMOCK_ANY];
 }
 
 - (void)verifyChannelClientCreateChannelWithPayload {
@@ -678,8 +647,7 @@ NSUInteger backgroundTaskID = 30;
         doBlock(invocation);
     }] updateChannelWithID:channelID
                withPayload:[OCMArg checkWithSelector:@selector(isEqualToPayload:) onObject:self.payload]
-                 onSuccess:OCMOCK_ANY
-                 onFailure:OCMOCK_ANY];
+         completionHandler:OCMOCK_ANY];
 }
 
 - (void)verifyChannelClientUpdateChannelWithID {
@@ -688,8 +656,7 @@ NSUInteger backgroundTaskID = 30;
 - (void)rejectChannelClientUpdateChannel {
     [[self.mockedChannelClient reject] updateChannelWithID:OCMOCK_ANY
                                                withPayload:OCMOCK_ANY
-                                                 onSuccess:OCMOCK_ANY
-                                                 onFailure:OCMOCK_ANY];
+                                         completionHandler:OCMOCK_ANY];
 }
 
 - (void)verifyRejectChannelClientUpdateChannel {

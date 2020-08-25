@@ -38,7 +38,7 @@ NS_ASSUME_NONNULL_BEGIN
  * Opens the sqlite DB
  *
  * @param aDBPath String representing path of SQLite DB
- * @return YES if sucessful NO if unsucessful
+ * @return YES if sucessful NO if unsuccessful
  */
 - (BOOL)open:(NSString *)aDBPath;
 

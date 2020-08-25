@@ -280,7 +280,7 @@ NSInteger const UARemoteDataRefreshIntervalDefault = 0;
     return false;
 }
 
-- (void)onNewData:(NSArray<UARemoteDataPayload *> *)remoteData
+- (void)onNewData:(NSArray<NSDictionary *> *)remoteData
          metadata:(NSDictionary *)metadata
      lastModified:(NSDate *)lastModified
 completionHandler:(void(^)(BOOL success))completionHandler {
@@ -311,30 +311,33 @@ completionHandler:(void(^)(BOOL success))completionHandler {
 }
 
 - (void)refreshWithCompletionHandler:(void(^)(BOOL success))completionHandler {
-    UA_WEAKIFY(self);
 
     if (![self isLastMetadataCurrent]) {
         [self.remoteDataAPIClient clearLastModifiedTime];
     }
 
-    [self.remoteDataAPIClient fetchRemoteData:^(NSUInteger statusCode, NSArray<UARemoteDataPayload *> *allRemoteDataFromCloud) {
-        UA_STRONGIFY(self);
-        if (statusCode == 200) {
-            NSString *currentAppVersion = [UAUtils bundleShortVersionString];
-            [self.dataStore setObject:currentAppVersion forKey:UARemoteDataLastRefreshAppVersionKey];
-
-            NSDictionary *metadata = [self createMetadata:[self.localeManager currentLocale]];
-
-            [self onNewData:allRemoteDataFromCloud metadata:metadata lastModified:[NSDate date] completionHandler:completionHandler];
-        } else {
-            // statusCode == 304
+    UA_WEAKIFY(self);
+    [self.remoteDataAPIClient fetchRemoteData:^(NSArray<NSDictionary *> * _Nullable remoteDatas, NSError * _Nullable error) {
+        UA_STRONGIFY(self)
+        if (error) {
             if (completionHandler) {
-                completionHandler(YES);
+                completionHandler(NO);
             }
-        }
-    } onFailure:^{
-        if (completionHandler) {
-            completionHandler(NO);
+        } else {
+            // New remote data
+            if (remoteDatas) {
+                NSString *currentAppVersion = [UAUtils bundleShortVersionString];
+                [self.dataStore setObject:currentAppVersion forKey:UARemoteDataLastRefreshAppVersionKey];
+
+                NSDictionary *metadata = [self createMetadata:[self.localeManager currentLocale]];
+
+                [self onNewData:remoteDatas metadata:metadata lastModified:[NSDate date] completionHandler:completionHandler];
+            } else {
+                // Up to date
+                if (completionHandler) {
+                    completionHandler(YES);
+                }
+            }
         }
     }];
 }

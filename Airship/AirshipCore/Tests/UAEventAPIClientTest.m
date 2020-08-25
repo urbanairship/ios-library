@@ -64,18 +64,20 @@
                                                      completionHandler:OCMOCK_ANY];
 
     [self.client uploadEvents:@[@{@"some": @"event"}] headers:headers
-            completionHandler:^(NSHTTPURLResponse *response) {}];
+            completionHandler:^(NSDictionary *responseHeaders, NSError *error) {}];
 
     [self.mockSession verify];
 }
 
 
 /**
- * Test the event response is passed back.
+ * Test that a successful event upload passes the response headers with no errors
  */
-- (void)testEventResponse {
+- (void)testUploadEvents {
 
-    NSHTTPURLResponse *expectedResponse = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:200 HTTPVersion:nil headerFields:nil];
+    NSDictionary *headers = @{@"foo" : @"bar"};
+
+    NSHTTPURLResponse *expectedResponse = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:200 HTTPVersion:nil headerFields:headers];
 
     [(UARequestSession *)[[self.mockSession stub] andDo:^(NSInvocation *invocation) {
         void *arg;
@@ -85,16 +87,71 @@
     }] dataTaskWithRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *expectation = [self expectationWithDescription:@"Callback called"];
-    [self.client uploadEvents:@[@{@"some": @"event"}] headers:@{} completionHandler:^(NSHTTPURLResponse *response) {
-        XCTAssertEqualObjects(response, expectedResponse);
+
+
+    [self.client uploadEvents:@[@{@"some": @"event"}] headers:headers
+            completionHandler:^(NSDictionary *responseHeaders, NSError *error) {
+        XCTAssertNil(error);
+        XCTAssertEqualObjects(responseHeaders, headers);
         [expectation fulfill];
     }];
 
     [self waitForTestExpectations];
 }
 
+/**
+ * Test that a non-200 event upload passes the response headers with an unsuccessful status error
+ */
+- (void)testUploadEventsUnsuccessfulStatus {
 
+    NSDictionary *headers = @{@"foo" : @"bar"};
 
+    NSHTTPURLResponse *expectedResponse = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:400 HTTPVersion:nil headerFields:headers];
 
+    [(UARequestSession *)[[self.mockSession stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        UARequestCompletionHandler completionHandler = (__bridge UARequestCompletionHandler)arg;
+        completionHandler(nil, expectedResponse, nil);
+    }] dataTaskWithRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
+    XCTestExpectation *expectation = [self expectationWithDescription:@"Callback called"];
+
+    [self.client uploadEvents:@[@{@"some": @"event"}] headers:headers
+            completionHandler:^(NSDictionary *responseHeaders, NSError *error) {
+        XCTAssertEqualObjects(error.domain, UAEventAPIClientErrorDomain);
+        XCTAssertEqual(error.code, UAEventAPIClientErrorUnsuccessfulStatus);
+        XCTAssertEqualObjects(responseHeaders, headers);
+        [expectation fulfill];
+    }];
+
+    [self waitForTestExpectations];
+}
+
+/**
+ * Test that a failed event upload passes nil response headers, and the error, when a non-HTTP error is encountered
+ */
+- (void)testUploadEventsError {
+
+    NSDictionary *headers = @{@"foo" : @"bar"};
+    NSError *expectedError = [NSError errorWithDomain:NSCocoaErrorDomain code:0 userInfo:@{}];
+
+    [(UARequestSession *)[[self.mockSession stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        UARequestCompletionHandler completionHandler = (__bridge UARequestCompletionHandler)arg;
+        completionHandler(nil, nil, expectedError);
+    }] dataTaskWithRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
+    XCTestExpectation *expectation = [self expectationWithDescription:@"Callback called"];
+
+    [self.client uploadEvents:@[@{@"some": @"event"}] headers:headers
+            completionHandler:^(NSDictionary *responseHeaders, NSError *error) {
+        XCTAssertEqualObjects(error, expectedError);
+        [expectation fulfill];
+    }];
+
+    [self waitForTestExpectations];
+}
 
 @end

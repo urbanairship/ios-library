@@ -16,8 +16,9 @@
 @implementation UARemoteDataAPIClient
 
 NSString * const kRemoteDataPath = @"api/remote-data/app";
-
 NSString * const kUALastRemoteDataModifiedTime = @"UALastRemoteDataModifiedTime";
+
+NSString * const UARemoteDataAPIClientErrorDomain = @"com.urbanairship.remote_data_api_client";
 
 - (UARemoteDataAPIClient *)initWithConfig:(UARuntimeConfig *)config
                                 dataStore:(UAPreferenceDataStore *)dataStore
@@ -50,29 +51,23 @@ NSString * const kUALastRemoteDataModifiedTime = @"UALastRemoteDataModifiedTime"
                           localeManager:localeManager];
 }
 
-- (UADisposable *)fetchRemoteData:(UARemoteDataRefreshSuccessBlock)successBlock
-                        onFailure:(UARemoteDataRefreshFailureBlock)failureBlock {
-
+- (UADisposable *)fetchRemoteData:(void (^)(NSArray<NSDictionary *> * _Nullable remoteData, NSError * _Nullable error))completionHandler {
     UARequest *refreshRequest = [self requestToRefreshRemoteData];
 
     UA_LTRACE(@"Request to refresh remote data: %@", refreshRequest.URL);
 
-    __block UARemoteDataRefreshSuccessBlock refreshRemoteDataSuccessBlock = successBlock;
-    __block UARemoteDataRefreshFailureBlock refreshRemoteDataFailureBlock = failureBlock;
+    __block void (^refreshCompletionHandler)(NSArray<NSDictionary *> * _Nullable remoteData, NSError * _Nullable error) = completionHandler;
     
     UADisposable *disposable = [UADisposable disposableWithBlock:^{
-        UA_LTRACE(@"Remote data refresh blocks disposed");
-        refreshRemoteDataSuccessBlock = nil;
-        refreshRemoteDataFailureBlock = nil;
+        UA_LTRACE(@"Remote data refresh block disposed");
+        refreshCompletionHandler = ^(NSArray<NSDictionary *> * _Nullable remoteData, NSError * _Nullable error){};
     }];
 
     [self.session dataTaskWithRequest:refreshRequest retryWhere:^BOOL(NSData * _Nullable data, NSURLResponse * _Nullable response) {
         return [response hasRetriableStatus];
     } completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
         if (![response isKindOfClass:[NSHTTPURLResponse class]]) {
-            if (refreshRemoteDataFailureBlock) {
-                refreshRemoteDataFailureBlock();
-            }
+            refreshCompletionHandler(nil, error);
             return;
         }
         
@@ -81,17 +76,13 @@ NSString * const kUALastRemoteDataModifiedTime = @"UALastRemoteDataModifiedTime"
         // Failure
         if (httpResponse.statusCode != 200  && httpResponse.statusCode != 304) {
             [UAUtils logFailedRequest:refreshRequest withMessage:@"Refresh remote data failed" withError:error withResponse:httpResponse];
-            if (refreshRemoteDataFailureBlock) {
-                refreshRemoteDataFailureBlock();
-            }
+            refreshCompletionHandler(nil, [self unsuccessfulStatusError]);
             return;
         }
         
         // 304, no changes
         if (httpResponse.statusCode == 304) {
-            if (refreshRemoteDataSuccessBlock) {
-                refreshRemoteDataSuccessBlock(httpResponse.statusCode, nil);
-            }
+            refreshCompletionHandler(nil, nil);
             return;
         }
         
@@ -100,9 +91,7 @@ NSString * const kUALastRemoteDataModifiedTime = @"UALastRemoteDataModifiedTime"
         // Missing response body
         if (!data) {
             UA_LTRACE(@"Refresh remote data missing response body.");
-            if (refreshRemoteDataFailureBlock) {
-                refreshRemoteDataFailureBlock();
-            }
+            refreshCompletionHandler(nil, [self invalidResponseError]);
             return;
         }
         
@@ -116,9 +105,7 @@ NSString * const kUALastRemoteDataModifiedTime = @"UALastRemoteDataModifiedTime"
         
         if (parseError) {
             UA_LERR(@"Unable to parse remote data body: %@ Error: %@", data, parseError);
-            if (refreshRemoteDataFailureBlock) {
-                refreshRemoteDataFailureBlock();
-            }
+            refreshCompletionHandler(nil, parseError);
             return;
         }
 
@@ -127,14 +114,31 @@ NSString * const kUALastRemoteDataModifiedTime = @"UALastRemoteDataModifiedTime"
         NSArray *remoteData = [jsonResponse objectForKey:@"payloads"];
         
         [self.dataStore setValue:lastModified forKey:kUALastRemoteDataModifiedTime];
-        
-        if (refreshRemoteDataSuccessBlock) {
-            refreshRemoteDataSuccessBlock(httpResponse.statusCode, remoteData);
-        }
+
+        refreshCompletionHandler(remoteData, nil);
     }];
     
     return disposable;
+}
 
+- (NSError *)unsuccessfulStatusError {
+    NSString *msg = [NSString stringWithFormat:@"Remote data client encountered an unsuccessful status"];
+
+    NSError *error = [NSError errorWithDomain:UARemoteDataAPIClientErrorDomain
+                                         code:UARemoteDataAPIClientErrorUnsuccessfulStatus
+                                     userInfo:@{NSLocalizedDescriptionKey:msg}];
+
+    return error;
+}
+
+- (NSError *)invalidResponseError {
+    NSString *msg = [NSString stringWithFormat:@"Remote data client encountered an invalid server response"];
+
+    NSError *error = [NSError errorWithDomain:UARemoteDataAPIClientErrorDomain
+                                         code:UARemoteDataAPIClientErrorInvalidResponse
+                                     userInfo:@{NSLocalizedDescriptionKey:msg}];
+
+    return error;
 }
 
 - (UARequest *)requestToRefreshRemoteData {

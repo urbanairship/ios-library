@@ -7,6 +7,8 @@
 #import "UAJSONSerialization.h"
 #import "UAAnalytics+Internal.h"
 
+NSString * const UAEventAPIClientErrorDomain = @"com.urbanairship.event_api_client";
+
 @implementation UAEventAPIClient
 
 + (instancetype)clientWithConfig:(UARuntimeConfig *)config {
@@ -17,7 +19,7 @@
     return [[UAEventAPIClient alloc] initWithConfig:config session:session];
 }
 
--(void)uploadEvents:(NSArray *)events headers:(NSDictionary *)headers completionHandler:(void (^)(NSHTTPURLResponse *))completionHandler {
+-(void)uploadEvents:(NSArray *)events headers:(NSDictionary *)headers completionHandler:(void (^)(NSDictionary * _Nullable responseHeaders, NSError * _Nullable error))completionHandler {
     UARequest *request = [self requestWithEvents:events headers:headers];
 
     if (uaLogLevel >= UALogLevelTrace) {
@@ -29,11 +31,13 @@
 
     // Perform the upload
     [self.session dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
-        NSHTTPURLResponse *httpResponse = nil;
-        if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
-            httpResponse = (NSHTTPURLResponse *) response;
+        NSHTTPURLResponse *httpResponse = [self castResponse:response error:&error];
+
+        if (error) {
+            return completionHandler(nil, error);
         }
-        completionHandler(httpResponse);
+
+        completionHandler(httpResponse.allHeaderFields, httpResponse.statusCode != 200 ? [self unsuccessfulStatusError] : nil);
     }];
 }
 
@@ -53,6 +57,16 @@
     }];
     
     return request;
+}
+
+- (NSError *)unsuccessfulStatusError {
+    NSString *msg = [NSString stringWithFormat:@"Event API client encountered an unsuccessful status"];
+
+    NSError *error = [NSError errorWithDomain:UAEventAPIClientErrorDomain
+                                         code:UAEventAPIClientErrorUnsuccessfulStatus
+                                     userInfo:@{NSLocalizedDescriptionKey:msg}];
+
+    return error;
 }
 
 @end

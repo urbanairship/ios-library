@@ -75,12 +75,9 @@
 
     [self.client associate:@"fakeNamedUserID"
                  channelID:@"fakeChannel"
-                 onSuccess:^{
-                     XCTFail(@"Should not be called");
-                 }
-                 onFailure:^(NSUInteger status){
-                     XCTFail(@"Should not be called");
-                 }];
+         completionHandler:^(NSError * _Nullable error) {
+        XCTFail(@"Should not be called");
+    }];
 
     [self.mockSession verify];
 }
@@ -89,7 +86,7 @@
  * Test associate named user succeeds request when status is 2xx.
  */
 -(void)testAssociateSucceedsRequest {
-    __block int successBlockCalls = 0;
+    __block int successfulCompletions = 0;
 
     BOOL (^completionBlockCheck)(id obj) = ^(id obj) {
         UARequestCompletionHandler completion = obj;
@@ -111,15 +108,15 @@
 
     [self.client associate:@"fakeNamedUserID"
                  channelID:@"fakeChannel"
-                 onSuccess:^{
-                     successBlockCalls++;
-                 }
-                 onFailure:^(NSUInteger status){
-                     XCTFail(@"Should not be called");
-                 }];
+         completionHandler:^(NSError * _Nullable error) {
+        XCTAssertNil(error);
+        if (!error) {
+            successfulCompletions++;
+        }
+    }];
 
     // Success block should be called once for every HTTP status from 200 to 299
-    XCTAssert(successBlockCalls == 100);
+    XCTAssert(successfulCompletions == 100);
 
     [self.mockSession verify];
 }
@@ -129,7 +126,7 @@
  * when the request fails.
  */
 - (void)testAssociateOnFailure {
-    __block int failureBlockCalls = 0;
+    __block int failedCompletions = 0;
 
     BOOL (^completionBlockCheck)(id obj) = ^(id obj) {
         UARequestCompletionHandler completion = obj;
@@ -151,15 +148,16 @@
 
     [self.client associate:@"fakeNamedUserID"
                  channelID:@"fakeChannel"
-                 onSuccess:^{
-                     XCTFail(@"Should not be called");
-                 }
-                 onFailure:^(NSUInteger status){
-                     failureBlockCalls++;
-                 }];
+         completionHandler:^(NSError * _Nullable error) {
+        XCTAssertNotNil(error);
+
+        if (error) {
+            failedCompletions++;
+        }
+    }];
 
     // Failure block should be called once for every HTTP status from 400 to 499
-    XCTAssert(failureBlockCalls == 100);
+    XCTAssert(failedCompletions == 100);
     
     [self.mockSession verify];
 }
@@ -203,11 +201,8 @@
                                         retryWhere:[OCMArg checkWithBlock:retryBlockCheck]
                                  completionHandler:OCMOCK_ANY];
 
-    [self.client disassociate:@"fakeNamedUserID" onSuccess:^{
+    [self.client disassociate:@"fakeNamedUserID" completionHandler:^(NSError * _Nullable error) {
         XCTFail(@"Should not be called");
-    } onFailure:^(NSUInteger status) {
-        XCTFail(@"Should not be called");
-
     }];
 
     [self.mockSession verify];
@@ -235,18 +230,16 @@
                                         retryWhere:OCMOCK_ANY
                                  completionHandler:[OCMArg checkWithBlock:completionBlockCheck]];
 
-    __block int successBlockCalls = 0;
+    __block int successfulCompletions = 0;
 
-    [self.client disassociate:@"fakeNamedUserID"
-                 onSuccess:^{
-                     successBlockCalls++;
-                 }
-                 onFailure:^(NSUInteger status){
-                     XCTFail(@"Should not be called");
-                 }];
-
+    [self.client disassociate:@"fakeNamedUserID" completionHandler:^(NSError * _Nullable error) {
+        XCTAssertNil(error);
+        if (!error) {
+            successfulCompletions++;
+        }
+    }];
     // Success block should be called once for every HTTP status from 200 to 299
-    XCTAssert(successBlockCalls == 100);
+    XCTAssert(successfulCompletions == 100);
     
     [self.mockSession verify];
 }
@@ -256,7 +249,7 @@
  * when the request fails.
  */
 - (void)testDisassociateOnFailure {
-    __block int failureBlockCalls = 0;
+    __block int failedCompletions = 0;
 
     BOOL (^completionBlockCheck)(id obj) = ^(id obj) {
         UARequestCompletionHandler completion = obj;
@@ -277,16 +270,15 @@
                                         retryWhere:OCMOCK_ANY
                                  completionHandler:[OCMArg checkWithBlock:completionBlockCheck]];
 
-    [self.client disassociate:@"fakeNamedUserID"
-                 onSuccess:^{
-                     XCTFail(@"Should not be called");
-                 }
-                 onFailure:^(NSUInteger status){
-                     failureBlockCalls++;
-                 }];
+    [self.client disassociate:@"fakeNamedUserID" completionHandler:^(NSError * _Nullable error) {
+        XCTAssertNotNil(error);
+        if (error) {
+            failedCompletions++;
+        }
+    }];
 
     // Failure block should be called once for every HTTP status from 400 to 499
-    XCTAssert(failureBlockCalls == 100);
+    XCTAssert(failedCompletions == 100);
     
     [self.mockSession verify];
 }
@@ -320,12 +312,9 @@
     // test
     [self.client associate:@"fakeNamedUserID"
                  channelID:@"fakeChannel"
-                 onSuccess:^{
-                     XCTFail(@"Should not be called");
-                 }
-                 onFailure:^(NSUInteger status){
-                     XCTFail(@"Should not be called");
-                 }];
+         completionHandler:^(NSError * _Nullable error) {
+        XCTFail(@"Should not be called");
+    }];
     
     // verify
     [self.mockSession verify];
@@ -359,12 +348,9 @@
     
     // test
     [self.client disassociate:@"fakeNamedUserID"
-                    onSuccess:^{
-                        XCTFail(@"Should not be called");
-                    }
-                    onFailure:^(NSUInteger status){
-                        XCTFail(@"Should not be called");
-                    }];
+            completionHandler:^(NSError * _Nullable error) {
+        XCTFail(@"Should not be called");
+    }];
     
     // verify
     [self.mockSession verify];

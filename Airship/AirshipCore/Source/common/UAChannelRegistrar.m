@@ -231,43 +231,36 @@ UARuntimeConfig *config;
 
     UAChannelRegistrationPayload *minPayload = [payload minimalUpdatePayloadWithLastPayload:self.lastSuccessfulPayload];
 
-    UAChannelAPIClientUpdateSuccessBlock updateChannelSuccessBlock = ^{
-        UA_STRONGIFY(self);
-        [self.dispatcher dispatchAsync:^{
-            UA_STRONGIFY(self);
-            [self succeededWithPayload:payload];
-        }];
-    };
-
-    UAChannelAPIClientFailureBlock updateChannelFailureBlock = ^(NSUInteger statusCode) {
-        UA_STRONGIFY(self);
-        [self.dispatcher dispatchAsync:^{
-            UA_STRONGIFY(self);
-            if (statusCode == 409) {
-                UA_LTRACE(@"Channel conflict, recreating.");
-                [self createChannelWithPayload:payload];
-            } else {
-                [self failedWithPayload:payload];
-            }
-        }];
-    };
-
     [self.channelAPIClient updateChannelWithID:self.channelID
                                    withPayload:minPayload
-                                     onSuccess:updateChannelSuccessBlock
-                                     onFailure:updateChannelFailureBlock];
+                             completionHandler:^(NSError * _Nullable error) {
+        UA_STRONGIFY(self);
+        [self.dispatcher dispatchAsync:^{
+            UA_STRONGIFY(self);
+            if (!error) {
+                [self succeededWithPayload:payload];
+            } else {
+                if (error.domain == UAChannelAPIClientErrorDomain && error.code == UAChannelAPIClientErrorConflict) {
+                    UA_LTRACE(@"Channel conflict, recreating.");
+                    [self createChannelWithPayload:payload];
+                } else {
+                    [self failedWithPayload:payload];
+                }
+            }
+        }];
+    }];
 }
 
 // Must be called on main queue
 - (void)createChannelWithPayload:(UAChannelRegistrationPayload *)payload {
     UA_WEAKIFY(self);
-
-    UAChannelAPIClientCreateSuccessBlock createChannelSuccessBlock = ^(NSString *newChannelID, BOOL existing) {
+    [self.channelAPIClient createChannelWithPayload:payload
+                                  completionHandler:^(NSString * _Nullable newChannelID, BOOL existing, NSError * _Nullable error) {
         UA_STRONGIFY(self);
         [self.dispatcher dispatchAsync:^{
             UA_STRONGIFY(self);
-            if (!newChannelID) {
-                UA_LDEBUG(@"Channel ID is missing. Channel creation failed.");
+            if (error) {
+                UA_LDEBUG(@"Channel creation failed: %@", error);
                 [self failedWithPayload:payload];
             } else {
                 UA_LDEBUG(@"Channel %@ created successfully.", newChannelID);
@@ -277,20 +270,7 @@ UARuntimeConfig *config;
                 [self succeededWithPayload:payload];
             }
         }];
-    };
-
-    UAChannelAPIClientFailureBlock createChannelFailureBlock = ^(NSUInteger statusCode) {
-        UA_STRONGIFY(self);
-        UA_LDEBUG(@"Channel creation failed.");
-        [self.dispatcher dispatchAsync:^{
-            UA_STRONGIFY(self);
-            [self failedWithPayload:payload];
-        }];
-    };
-
-    [self.channelAPIClient createChannelWithPayload:payload
-                                          onSuccess:createChannelSuccessBlock
-                                          onFailure:createChannelFailureBlock];
+    }];
 }
 
 // Must be called on main queue

@@ -141,10 +141,12 @@
 }
 
 // client (test) subscribes to remote data manager
-// simulate 504 failure from cloud
+// simulate failure from cloud
 - (void)testFailedRefresh {
+    NSError *error = [NSError errorWithDomain:NSCocoaErrorDomain code:0 userInfo:@{}];
+
     // set up test data and expectations
-    NSMutableArray<UARemoteDataPayload *> *testPayloads = [[self createNPayloadsAndSetupTest:1 metadata:self.expectedMetadata withHTTPStatus:504] mutableCopy];
+    NSMutableArray<UARemoteDataPayload *> *testPayloads = [[self createNPayloadsAndSetupTest:1 metadata:self.expectedMetadata error:error] mutableCopy];
 
     // subscribe to remote data manager and observe notifications
     UADisposable *subscription = [self.remoteDataManager subscribeWithTypes:[testPayloads valueForKeyPath:@"type"] block:^(NSArray<UARemoteDataPayload *> * _Nonnull remoteDataArray) {
@@ -193,7 +195,7 @@
 // payload should not be published to client
 - (void)testFailedRefreshNoData {
     // set up test data and expectations
-     NSArray<UARemoteDataPayload *> *testPayloads = [self createNPayloadsAndSetupTest:0 metadata:self.expectedMetadata withHTTPStatus:200];
+     NSArray<UARemoteDataPayload *> *testPayloads = [self createNPayloadsAndSetupTest:0 metadata:self.expectedMetadata];
 
     UADisposable *subscription = [self.remoteDataManager subscribeWithTypes:[testPayloads valueForKeyPath:@"type"] block:^(NSArray<UARemoteDataPayload *> * _Nonnull remoteDataArray) {
         XCTFail(@"Callback should not fire when there is no data");
@@ -298,6 +300,7 @@
     // setup with changed payload
     testPayloads[0] = [self changePayload:testPayloads[0]];
     [self setupTestWithPayloads:testPayloads];
+
     receivedDataExpectation = [self expectationWithDescription:[NSString stringWithFormat:@"Received remote data"]];
 
     // test
@@ -871,10 +874,10 @@
 }
 
 - (NSArray<UARemoteDataPayload *> *)createNPayloadsAndSetupTest:(NSUInteger)numberOfPayloads metadata:(NSDictionary *)metadata {
-    return [self createNPayloadsAndSetupTest:numberOfPayloads metadata:metadata withHTTPStatus:0];
+    return [self createNPayloadsAndSetupTest:numberOfPayloads metadata:metadata error:nil];
 }
 
-- (NSArray<UARemoteDataPayload *> *)createNPayloadsAndSetupTest:(NSUInteger)numberOfPayloads metadata:(NSDictionary *)metadata withHTTPStatus:(NSUInteger)statusCode {
+- (NSArray<UARemoteDataPayload *> *)createNPayloadsAndSetupTest:(NSUInteger)numberOfPayloads metadata:(NSDictionary *)metadata error:(NSError *)error {
     NSMutableArray *testPayloads = [NSMutableArray arrayWithCapacity:numberOfPayloads];
     UARemoteDataPayload *testPayload;
     for (NSUInteger index = 0;index < numberOfPayloads;index++) {
@@ -889,19 +892,19 @@
         [testPayloads addObject:testPayload];
     }
 
-    [self setupTestWithPayloads:testPayloads withHTTPStatus:statusCode];
+    [self setupTestWithPayloads:testPayloads error:error];
 
     return testPayloads;
 }
 
 
 - (void)setupTestWithPayloads:(NSArray<UARemoteDataPayload *> *)testPayloads {
-    return [self setupTestWithPayloads:testPayloads withHTTPStatus:0];
+    return [self setupTestWithPayloads:testPayloads error:nil];
 }
 
-- (void)setupTestWithPayloads:(NSArray<UARemoteDataPayload *> *)testPayloads withHTTPStatus:(NSUInteger)statusCode {
+- (void)setupTestWithPayloads:(NSArray<UARemoteDataPayload *> *)testPayloads error:(NSError *)error {
     NSArray *mockRemoteData = [self getMockedRemoteDataForPayloads:testPayloads];
-    [self setUpMockAPIClientToReturnHTTPStatus:statusCode andRemoteData:mockRemoteData];
+    [self setUpMockAPIClientToReturnRemoteData:mockRemoteData error:error];
 }
 
 - (void)replaceTestPayloads:(NSArray<UARemoteDataPayload *> *)testPayloads {
@@ -927,15 +930,7 @@
     return mockedRemoteData;
 }
 
-- (void)setUpMockAPIClientToReturnHTTPStatus:(NSUInteger)statusCode andRemoteData:(NSArray<NSDictionary *> *)remoteData {
-    // a zero statusCode indicates that we should return 304 if the data is unchanged, 200 if it is changed
-    if (statusCode == 0) {
-        if ([[NSCountedSet setWithArray:self.remoteDataFromCloud] isEqualToSet:[NSCountedSet setWithArray:remoteData]]) {
-            statusCode = 304;
-        } else {
-            statusCode = 200;
-        }
-    }
+- (void)setUpMockAPIClientToReturnRemoteData:(NSArray<NSDictionary *> *)remoteData error:(NSError *)error {
     self.remoteDataFromCloud = remoteData;
 
     // safe to do set up expectation multiple times and no way to overwrite or cancel earlier ones
@@ -947,28 +942,11 @@
 
         void *arg;
         [invocation getArgument:&arg atIndex:2];
-        UARemoteDataRefreshSuccessBlock successBlock = (__bridge UARemoteDataRefreshSuccessBlock) arg;
-        [invocation getArgument:&arg atIndex:3];
-        UARemoteDataRefreshFailureBlock failureBlock = (__bridge UARemoteDataRefreshFailureBlock) arg;
-        switch (statusCode) {
-            case 200: {
-                successBlock(statusCode,self.remoteDataFromCloud);
-                break;
-            }
-            case 304: {
-                successBlock(statusCode,nil);
-                break;
-            }
-            case 504: {
-                failureBlock();
-                break;
-            }
-            default: {
-                XCTFail(@"Unsupported statusCode = %ld",statusCode);
-                break;
-            }
-        }
-    }] fetchRemoteData:OCMOCK_ANY onFailure:OCMOCK_ANY];
+        void (^completionHandler)(NSArray<NSDictionary *> * _Nullable remoteData, NSError * _Nullable error);
+        completionHandler = (__bridge void (^)(NSArray<NSDictionary *> * _Nullable remoteData, NSError * _Nullable error)) arg;
+
+        completionHandler(self.remoteDataFromCloud, error);
+    }] fetchRemoteData:OCMOCK_ANY];
 }
 
 - (void)refresh {

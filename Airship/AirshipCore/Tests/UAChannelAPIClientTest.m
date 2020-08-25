@@ -68,8 +68,7 @@
                                  completionHandler:OCMOCK_ANY];
 
     [self.client createChannelWithPayload:[[UAChannelRegistrationPayload alloc] init]
-                                onSuccess:^(NSString *channelID, BOOL existing){}
-                                onFailure:^(NSUInteger statusCode) {}];
+                        completionHandler:^(NSString *channelID, BOOL existing, NSError *error){}];
 
     [self.mockSession verify];
 }
@@ -95,12 +94,10 @@
     __block NSString *channelID;
 
     [self.client createChannelWithPayload:[[UAChannelRegistrationPayload alloc] init]
-                                onSuccess:^(NSString *cID, BOOL existing){
-                                    channelID = cID;
-                                }
-                                onFailure:^(NSUInteger status) {
-                                    XCTFail(@"Should not be called");
-                                }];
+                        completionHandler:^(NSString *cID, BOOL existing, NSError *error){
+        XCTAssertNil(error);
+        channelID = cID;
+    }];
 
     XCTAssertEqualObjects(@"someChannelID", channelID, @"Channel ID should match someChannelID from the response");
 }
@@ -122,16 +119,11 @@
         completionHandler(nil, response, nil);
     }] dataTaskWithRequest:OCMOCK_ANY retryWhere:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
-    __block NSUInteger failureCode = 0;
     [self.client createChannelWithPayload:[[UAChannelRegistrationPayload alloc] init]
-                                onSuccess:^(NSString *channelID, BOOL existing){
-                                    XCTFail(@"Should not be called");
-                                }
-                                onFailure:^(NSUInteger statusCode) {
-                                    failureCode = statusCode;
-                                }];
-
-    XCTAssertEqual(failureCode, 400);
+                        completionHandler:^(NSString *channelID, BOOL existing, NSError *error){
+        XCTAssertEqualObjects(error.domain, UAChannelAPIClientErrorDomain);
+        XCTAssertEqual(error.code, UAChannelAPIClientErrorUnsuccessfulStatus);
+    }];
 }
 
 /**
@@ -176,9 +168,8 @@
                                         retryWhere:OCMOCK_ANY
                                  completionHandler:OCMOCK_ANY];
 
-    [self.client createChannelWithPayload:payload
-                                onSuccess:^(NSString *channelID, BOOL existing){}
-                                onFailure:^(NSUInteger statusCode) {}];
+    [self.client createChannelWithPayload:[[UAChannelRegistrationPayload alloc] init]
+                        completionHandler:^(NSString *channelID, BOOL existing, NSError *error){}];
 
     [self.mockSession verify];
 }
@@ -227,15 +218,15 @@
 
     [self.client updateChannelWithID:@"someChannelID"
                          withPayload:[[UAChannelRegistrationPayload alloc] init]
-                           onSuccess:^{}
-                           onFailure:^(NSUInteger statusCode) {}];
+                   completionHandler:^(NSError * _Nullable error) {}];
+
     [self.mockSession verify];
 }
 
 /**
- * Test update channel calls the onSuccessBlock when the request is successful.
+ * Test update channel completes with no errors on success
  */
-- (void)testUpdateChannelOnSuccess {
+- (void)testUpdateChannelSuccess {
     // Create a success response
     NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:200 HTTPVersion:nil headerFields:@{}];
     NSData *responseData = [@"{ \"ok\":true, \"channel_id\": \"someChannelID\"}" dataUsingEncoding:NSUTF8StringEncoding];
@@ -248,24 +239,17 @@
         completionHandler(responseData, response, nil);
     }] dataTaskWithRequest:OCMOCK_ANY retryWhere:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
-    __block BOOL  onSuccessCalled = NO;
     [self.client updateChannelWithID:@"someChannelID"
                          withPayload:[[UAChannelRegistrationPayload alloc] init]
-                           onSuccess:^{
-                               onSuccessCalled = YES;
-                           }
-                           onFailure:^(NSUInteger status) {
-                               XCTFail(@"Should not be called");
-                           }];
-    
-    XCTAssertTrue(onSuccessCalled);
+                   completionHandler:^(NSError * _Nullable error) {
+        XCTAssertNil(error);
+    }];
 }
 
 /**
- * Test update channel calls the onFailureBlock with the failed request when
- * the request fails.
+ * Test update channel completes with an unsuccessful status error on non-conflict failures
  */
-- (void)testUpdateChannelOnFailure {
+- (void)testUpdateChannelFailure {
 
     // Create a failure response
     NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:400 HTTPVersion:nil headerFields:nil];
@@ -278,17 +262,36 @@
         completionHandler(nil, response, nil);
     }] dataTaskWithRequest:OCMOCK_ANY retryWhere:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
-    __block NSUInteger failureCode = 0;
     [self.client updateChannelWithID:@"someChannelID"
                          withPayload:[[UAChannelRegistrationPayload alloc] init]
-                           onSuccess:^{
-                               XCTFail(@"Should not be called");
-                           }
-                           onFailure:^(NSUInteger statusCode) {
-                               failureCode = statusCode;
-                           }];
+                   completionHandler:^(NSError * _Nullable error) {
+        XCTAssertEqualObjects(error.domain, UAChannelAPIClientErrorDomain);
+        XCTAssertEqual(error.code, UAChannelAPIClientErrorUnsuccessfulStatus);
+    }];
+}
 
-    XCTAssertEqual(failureCode, 400);
+/**
+ * Test update channel completes with a conflict error on HTTP conflict
+ */
+- (void)testUpdateChannelFailureConflict {
+
+    // Create a failure response
+    NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:409 HTTPVersion:nil headerFields:nil];
+
+    // Stub the session to return a the response
+    [[[self.mockSession stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:4];
+        UARequestCompletionHandler completionHandler = (__bridge UARequestCompletionHandler)arg;
+        completionHandler(nil, response, nil);
+    }] dataTaskWithRequest:OCMOCK_ANY retryWhere:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
+    [self.client updateChannelWithID:@"someChannelID"
+                         withPayload:[[UAChannelRegistrationPayload alloc] init]
+                   completionHandler:^(NSError * _Nullable error) {
+        XCTAssertEqualObjects(error.domain, UAChannelAPIClientErrorDomain);
+        XCTAssertEqual(error.code, UAChannelAPIClientErrorConflict);
+    }];
 }
 
 /**
@@ -334,9 +337,9 @@
                                  completionHandler:OCMOCK_ANY];
 
     [self.client updateChannelWithID:@"someChannelID"
-                         withPayload:payload
-                           onSuccess:^{}
-                           onFailure:^(NSUInteger statusCode){}];
+                         withPayload:[[UAChannelRegistrationPayload alloc] init]
+                   completionHandler:^(NSError * _Nullable error) {}];
+
     [self.mockSession verify];
 }
 

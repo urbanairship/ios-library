@@ -224,24 +224,31 @@ NSString *const UANamedUserUploadedAudienceMutationNotificationIdentifierKey = @
 - (void)associateNamedUser {
     NSString *token = self.changeToken;
     NSString *channelID = self.channel.identifier;
-    [self.namedUserAPIClient associate:self.identifier channelID:channelID onSuccess:^{
+
+    [self.namedUserAPIClient associate:self.identifier channelID:channelID completionHandler:^(NSError * _Nullable error) {
+        if (error) {
+            UA_LDEBUG(@"Failed to associate channel to named user.");
+            return;
+        }
+
         self.lastUpdatedToken = token;
         self.lastChannelID = channelID;
         UA_LDEBUG(@"Named user associated to channel successfully.");
-    } onFailure:^(NSUInteger status) {
-        UA_LDEBUG(@"Failed to associate channel to named user.");
     }];
 }
 
 - (void)disassociateNamedUser {
     NSString *token = self.changeToken;
     NSString *channelID = self.channel.identifier;
-    [self.namedUserAPIClient disassociate:channelID onSuccess:^{
+    
+    [self.namedUserAPIClient disassociate:channelID completionHandler:^(NSError * _Nullable error) {
+        if (error) {
+            UA_LDEBUG(@"Failed to disassociate channel from named user.");
+            return;
+        }
         self.lastUpdatedToken = token;
         self.lastChannelID = channelID;
         UA_LDEBUG(@"Named user disassociated from channel successfully.");
-    } onFailure:^(NSUInteger status) {
-        UA_LDEBUG(@"Failed to disassociate channel from named user.");
     }];
 }
 

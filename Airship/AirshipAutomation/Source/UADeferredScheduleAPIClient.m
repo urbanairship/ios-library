@@ -148,7 +148,7 @@ NSString * const UADeferredScheduleAPIClientErrorDomain = @"com.urbanairship.def
 }
 
 - (NSError *)unsuccessfulStatusError {
-    NSString *msg = [NSString stringWithFormat:@"Deferred schedule client encountered an unsucessful status"];
+    NSString *msg = [NSString stringWithFormat:@"Deferred schedule client encountered an unsuccessful status"];
 
     NSError *error = [NSError errorWithDomain:UADeferredScheduleAPIClientErrorDomain
                                          code:UADeferredScheduleAPIClientErrorUnsuccessfulStatus

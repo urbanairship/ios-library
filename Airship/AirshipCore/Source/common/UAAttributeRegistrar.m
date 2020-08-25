@@ -139,20 +139,20 @@ static NSString *const NamedUserPersistentQueueKey = @"com.urbanairship.named_us
     }
 
     UA_WEAKIFY(self);
-    void (^apiCompletionBlock)(NSUInteger, NSError *) = ^void(NSUInteger status, NSError *error) {
+    void (^apiCompletionBlock)(NSError *) = ^void (NSError *error) {
         UA_STRONGIFY(self);
-        if (status >= 200 && status <= 299) {
+        if (!error) {
             // Success - pop mutation
             [self popPendingMutations:mutations identifier:identifier];
             [self.delegate uploadedAttributeMutations:mutations identifier:identifier];
             [self uploadNextMutationWithBackgroundTaskIdentifier:backgroundTaskIdentifier];
-        } else if (status == 400 || status == 403) {
+        } else if (error.domain == UAAttributeAPIClientErrorDomain && error.code == UAAttributeAPIClientErrorUnrecoverableStatus) {
             // Unrecoverable failure - pop mutation
             UA_LERR(@"Unable to upload mutations: %@. Dropping.", mutations);
             [self popPendingMutations:mutations identifier:identifier];
             [self uploadNextMutationWithBackgroundTaskIdentifier:backgroundTaskIdentifier];
         } else {
-            UA_LINFO(@"Update of %@ failed with status: %ld error: %@", mutations, (unsigned long)status, error);
+            UA_LINFO(@"Update of %@ failed with error: %@", mutations, error);
             [self endBackgroundTask:backgroundTaskIdentifier];
         }
     };

@@ -31,8 +31,8 @@
 
 @implementation UANamedUserTest
 
-void (^namedUserSuccessDoBlock)(NSInvocation *);
-void (^namedUserFailureDoBlock)(NSInvocation *);
+void (^associateSuccessDoBlock)(NSInvocation *);
+void (^disassociateSuccessDoBlock)(NSInvocation *);
 
 - (void)setUp {
     [super setUp];
@@ -60,9 +60,9 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
 
     // Capture the channel payload extender
     [[[self.mockChannel stub] andDo:^(NSInvocation *invocation) {
-           void *arg;
-           [invocation getArgument:&arg atIndex:2];
-           self.channelRegistrationExtenderBlock =  (__bridge UAChannelRegistrationExtenderBlock)arg;
+        void *arg;
+        [invocation getArgument:&arg atIndex:2];
+        self.channelRegistrationExtenderBlock =  (__bridge UAChannelRegistrationExtenderBlock)arg;
     }] addChannelExtenderBlock:OCMOCK_ANY];
 
     self.namedUser = [UANamedUser namedUserWithChannel:self.mockChannel
@@ -80,20 +80,23 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
     self.namedUser.changeToken = @"AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE";
     self.namedUser.lastUpdatedToken = @"AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE";
 
-    namedUserSuccessDoBlock = ^(NSInvocation *invocation) {
+    associateSuccessDoBlock = ^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:4];
-        UANamedUserAPIClientSuccessBlock successBlock = (__bridge UANamedUserAPIClientSuccessBlock)arg;
-        successBlock();
+        void (^completionHandler)(NSError * _Nullable);
+        completionHandler = (__bridge void (^)(NSError * _Nullable))arg;
+        completionHandler(nil);
     };
 
-    namedUserFailureDoBlock = ^(NSInvocation *invocation) {
+    disassociateSuccessDoBlock = ^(NSInvocation *invocation) {
         void *arg;
-        [invocation getArgument:&arg atIndex:5];
-        UANamedUserAPIClientFailureBlock failureBlock = (__bridge UANamedUserAPIClientFailureBlock)arg;
-        failureBlock(400);
+        [invocation getArgument:&arg atIndex:3];
+        void (^completionHandler)(NSError * _Nullable);
+        completionHandler = (__bridge void (^)(NSError * _Nullable))arg;
+        completionHandler([NSError errorWithDomain:@"error" code:0 userInfo:@{}]);
     };
 }
+
 
 - (void)tearDown {
     [self.mockedNamedUserClient stopMocking];
@@ -108,10 +111,9 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
 - (void)testSetIDValid {
     NSString *changeToken = self.namedUser.changeToken;
     // Expect the named user client to associate and call the success block
-    [[[self.mockedNamedUserClient expect] andDo:namedUserSuccessDoBlock] associate:@"superFakeNamedUser"
+    [[[self.mockedNamedUserClient expect] andDo:associateSuccessDoBlock] associate:@"superFakeNamedUser"
                                                                          channelID:@"someChannel"
-                                                                         onSuccess:OCMOCK_ANY
-                                                                         onFailure:OCMOCK_ANY];
+                                                                 completionHandler:OCMOCK_ANY];
 
     self.namedUser.identifier = @"superFakeNamedUser";
 
@@ -132,8 +134,7 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
     // Named user client should not associate
     [[self.mockedNamedUserClient reject] associate:OCMOCK_ANY
                                          channelID:OCMOCK_ANY
-                                         onSuccess:OCMOCK_ANY
-                                         onFailure:OCMOCK_ANY];
+                                 completionHandler:OCMOCK_ANY];
 
     NSString *currentID = self.namedUser.identifier;
     self.namedUser.identifier = @"         ";
@@ -152,8 +153,7 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
     NSString *changeToken = self.namedUser.changeToken;
     // Expect the named user client to disassociate and call the success block
     [[self.mockedNamedUserClient expect] disassociate:@"someChannel"
-                                            onSuccess:OCMOCK_ANY
-                                            onFailure:OCMOCK_ANY];
+                                    completionHandler:OCMOCK_ANY];
     self.namedUser.identifier = @"";
 
     XCTAssertNil(self.namedUser.identifier, @"Named user ID should be nil.");
@@ -171,8 +171,7 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
     NSString *changeToken = self.namedUser.changeToken;
     // Expect the named user client to disassociate and call the success block
     [[self.mockedNamedUserClient expect] disassociate:@"someChannel"
-                                            onSuccess:OCMOCK_ANY
-                                            onFailure:OCMOCK_ANY];
+                                    completionHandler:OCMOCK_ANY];
     self.namedUser.identifier = nil;
 
     XCTAssertNil(self.namedUser.identifier, @"Named user ID should be nil.");
@@ -192,8 +191,7 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
     // Named user client should not associate
     [[self.mockedNamedUserClient reject] associate:OCMOCK_ANY
                                          channelID:OCMOCK_ANY
-                                         onSuccess:OCMOCK_ANY
-                                         onFailure:OCMOCK_ANY];
+                                 completionHandler:OCMOCK_ANY];
 
     NSString *changeToken = self.namedUser.changeToken;
     NSString *lastUpdatedToken = self.namedUser.lastUpdatedToken;
@@ -216,8 +214,7 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
     // Named user client should not associate
     [[self.mockedNamedUserClient reject] associate:OCMOCK_ANY
                                          channelID:OCMOCK_ANY
-                                         onSuccess:OCMOCK_ANY
-                                         onFailure:OCMOCK_ANY];
+                                 completionHandler:OCMOCK_ANY];
 
     NSString *currentID = self.namedUser.identifier;
     NSString *changeToken = self.namedUser.changeToken;
@@ -228,7 +225,7 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
     XCTAssertEqualObjects(currentID, self.namedUser.identifier,
                           @"Named user ID should match.");
     XCTAssertEqualObjects(changeToken, self.namedUser.changeToken,
-                             @"Named user change token should remain the same.");
+                          @"Named user change token should remain the same.");
     XCTAssertEqualObjects(lastUpdatedToken, self.namedUser.lastUpdatedToken,
                           @"Named user last updated token should remain the same.");
     XCTAssertNoThrow([self.mockedNamedUserClient verify], @"Named user should not be associated");
@@ -299,13 +296,11 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
     // Named user client should not associate
     [[self.mockedNamedUserClient reject] associate:OCMOCK_ANY
                                          channelID:OCMOCK_ANY
-                                         onSuccess:OCMOCK_ANY
-                                         onFailure:OCMOCK_ANY];
+                                 completionHandler:OCMOCK_ANY];
 
     // Named user client should not disassociate
     [[self.mockedNamedUserClient reject] disassociate:OCMOCK_ANY
-                                            onSuccess:OCMOCK_ANY
-                                            onFailure:OCMOCK_ANY];
+                                    completionHandler:OCMOCK_ANY];
 
     [self.namedUser update];
 
@@ -318,24 +313,24 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
  */
 - (void)testUpdateSkipUpdateSameNamedUser {
     // Named user client should not associate
-    [[self.mockedNamedUserClient expect] associate:OCMOCK_ANY channelID:OCMOCK_ANY onSuccess:[OCMArg checkWithBlock:^BOOL(id obj) {
-        void(^completionBlock)(void) = obj;
-        completionBlock();
+    [[self.mockedNamedUserClient expect] associate:OCMOCK_ANY
+                                         channelID:OCMOCK_ANY
+                                 completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
+        void(^completionBlock)(NSError * _Nullable) = obj;
+        completionBlock(nil);
         return YES;
-    }] onFailure:OCMOCK_ANY];
+    }]];
 
     [self.namedUser update];
 
     // Named user client should not disassociate
     [[self.mockedNamedUserClient reject] associate:OCMOCK_ANY
                                          channelID:OCMOCK_ANY
-                                         onSuccess:OCMOCK_ANY
-                                         onFailure:OCMOCK_ANY];
+                                 completionHandler:OCMOCK_ANY];
 
     // Named user client should not disassociate
     [[self.mockedNamedUserClient reject] disassociate:OCMOCK_ANY
-                                            onSuccess:OCMOCK_ANY
-                                            onFailure:OCMOCK_ANY];
+                                    completionHandler:OCMOCK_ANY];
 
     [self.namedUser update];
 
@@ -355,13 +350,11 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
     // Named user client should not associate
     [[self.mockedNamedUserClient reject] associate:OCMOCK_ANY
                                          channelID:OCMOCK_ANY
-                                         onSuccess:OCMOCK_ANY
-                                         onFailure:OCMOCK_ANY];
+                                 completionHandler:OCMOCK_ANY];
 
     // Named user client should not disassociate
     [[self.mockedNamedUserClient reject] disassociate:OCMOCK_ANY
-                                            onSuccess:OCMOCK_ANY
-                                            onFailure:OCMOCK_ANY];
+                                    completionHandler:OCMOCK_ANY];
 
     [self.namedUser update];
 
@@ -377,8 +370,7 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
 
     // Expect the named user client to disassociate
     [[self.mockedNamedUserClient expect] disassociate:@"someChannel"
-                                            onSuccess:OCMOCK_ANY
-                                            onFailure:OCMOCK_ANY];
+                                    completionHandler:OCMOCK_ANY];
 
     self.namedUser.changeToken = nil;
     [self.namedUser disassociateNamedUserIfNil];
@@ -395,8 +387,7 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
 
     // Named user client should not disassociate
     [[self.mockedNamedUserClient reject] disassociate:OCMOCK_ANY
-                                            onSuccess:OCMOCK_ANY
-                                            onFailure:OCMOCK_ANY];
+                                    completionHandler:OCMOCK_ANY];
 
     [self.namedUser disassociateNamedUserIfNil];
 
@@ -413,10 +404,9 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
     NSString *changeToken = self.namedUser.changeToken;
 
     // Expect the named user client to associate and call the success block
-    [[[self.mockedNamedUserClient expect] andDo:namedUserSuccessDoBlock] associate:@"fakeNamedUser"
+    [[[self.mockedNamedUserClient expect] andDo:associateSuccessDoBlock] associate:@"fakeNamedUser"
                                                                          channelID:@"someChannel"
-                                                                         onSuccess:OCMOCK_ANY
-                                                                         onFailure:OCMOCK_ANY];
+                                                                 completionHandler:OCMOCK_ANY];
 
     [self.namedUser forceUpdate];
 
@@ -432,10 +422,9 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
  */
 - (void)testUpdateChannelIDChanged {
     // Expect the named user client to associate and call the success block
-    [[[self.mockedNamedUserClient expect] andDo:namedUserSuccessDoBlock] associate:@"fakeNamedUser"
+    [[[self.mockedNamedUserClient expect] andDo:associateSuccessDoBlock] associate:@"fakeNamedUser"
                                                                          channelID:@"someChannel"
-                                                                         onSuccess:OCMOCK_ANY
-                                                                         onFailure:OCMOCK_ANY];
+                                                                 completionHandler:OCMOCK_ANY];
 
     [self.namedUser forceUpdate];
 
@@ -443,10 +432,9 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
     self.pushChannelID = @"neat";
 
     // Expect the named user client to associate and call the success block
-    [[[self.mockedNamedUserClient expect] andDo:namedUserSuccessDoBlock] associate:@"fakeNamedUser"
+    [[[self.mockedNamedUserClient expect] andDo:associateSuccessDoBlock] associate:@"fakeNamedUser"
                                                                          channelID:@"neat"
-                                                                         onSuccess:OCMOCK_ANY
-                                                                         onFailure:OCMOCK_ANY];
+                                                                 completionHandler:OCMOCK_ANY];
 
     [self.namedUser update];
 
@@ -637,9 +625,8 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
     XCTAssertNotNil(self.namedUser.identifier);
 
     // Expect the named user client to disassociate and call the success block
-    [[[self.mockedNamedUserClient expect] andDo:namedUserSuccessDoBlock] disassociate:@"someChannel"
-                                                                         onSuccess:OCMOCK_ANY
-                                                                         onFailure:OCMOCK_ANY];
+    [[[self.mockedNamedUserClient expect] andDo:disassociateSuccessDoBlock] disassociate:@"someChannel"
+                                                                       completionHandler:OCMOCK_ANY];
 
     [self.dataStore setBool:NO forKey:UAirshipDataCollectionEnabledKey];
     [self.namedUser onDataCollectionEnabledChanged];
@@ -677,9 +664,8 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
 
 - (void)testClearNamedUserAttributesOnDataCollectionDisabled {
     // Expect the named user client to disassociate and call the success block
-    [[[self.mockedNamedUserClient expect] andDo:namedUserSuccessDoBlock] disassociate:@"someChannel"
-                                                                         onSuccess:OCMOCK_ANY
-                                                                         onFailure:OCMOCK_ANY];
+    [[[self.mockedNamedUserClient expect] andDo:disassociateSuccessDoBlock] disassociate:@"someChannel"
+                                                                       completionHandler:OCMOCK_ANY];
 
     // expect pending mutations to be deleted
     [[self.mockAttributeRegistrar expect] clearPendingMutations];
@@ -825,10 +811,9 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
     [[self.mockTagGroupsRegistrar expect] setEnabled:YES];
 
     // Expect the named user client to associate and call the success block
-    [[[self.mockedNamedUserClient expect] andDo:namedUserSuccessDoBlock] associate:@"fakeNamedUser"
+    [[[self.mockedNamedUserClient expect] andDo:associateSuccessDoBlock] associate:@"fakeNamedUser"
                                                                          channelID:@"someChannel"
-                                                                         onSuccess:OCMOCK_ANY
-                                                                         onFailure:OCMOCK_ANY];
+                                                                 completionHandler:OCMOCK_ANY];
 
     [self.dataStore setBool:YES forKey:UAirshipDataCollectionEnabledKey];
     [self.namedUser onDataCollectionEnabledChanged];
@@ -854,10 +839,9 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
     [[self.mockedNamedUserClient reject] setEnabled:YES];
 
     // Expect the named user client to associate and call the success block
-    [[[self.mockedNamedUserClient expect] andDo:namedUserSuccessDoBlock] associate:@"fakeNamedUser"
+    [[[self.mockedNamedUserClient expect] andDo:associateSuccessDoBlock] associate:@"fakeNamedUser"
                                                                          channelID:@"someChannel"
-                                                                         onSuccess:OCMOCK_ANY
-                                                                         onFailure:OCMOCK_ANY];
+                                                                 completionHandler:OCMOCK_ANY];
 
     [self.dataStore setBool:YES forKey:UAirshipDataCollectionEnabledKey];
     [self.namedUser onDataCollectionEnabledChanged];
@@ -884,9 +868,8 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
     [[self.mockTagGroupsRegistrar expect] clearPendingMutations];
 
     // Expect the named user client to associate and call the success block
-    [[[self.mockedNamedUserClient expect] andDo:namedUserSuccessDoBlock] disassociate:@"someChannel"
-                                                                            onSuccess:OCMOCK_ANY
-                                                                            onFailure:OCMOCK_ANY];
+    [[[self.mockedNamedUserClient expect] andDo:disassociateSuccessDoBlock] disassociate:@"someChannel"
+                                                                       completionHandler:OCMOCK_ANY];
 
     [self.dataStore setBool:NO forKey:UAirshipDataCollectionEnabledKey];
     [self.namedUser onDataCollectionEnabledChanged];
@@ -894,7 +877,7 @@ void (^namedUserFailureDoBlock)(NSInvocation *);
     XCTAssertNotEqualObjects(changeToken, self.namedUser.changeToken,
                              @"Change token should have changed.");
     XCTAssertNotEqualObjects(self.namedUser.changeToken, self.namedUser.lastUpdatedToken,
-                          @"Tokens should not match.");
+                             @"Tokens should not match.");
     XCTAssertNil(self.namedUser.identifier);
 
     [self.mockTagGroupsRegistrar verify];

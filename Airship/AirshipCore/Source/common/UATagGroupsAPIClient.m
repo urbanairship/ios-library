@@ -16,6 +16,8 @@ NSString * const UANamedUserTagsPath = @"/api/named_users/tags/";
 NSString * const UATagGroupsChannelTypeKey = @"ios_channel";
 NSString * const UATagGroupsNamedUserTypeKey = @"named_user_id";
 
+NSString * const UATagGroupsAPIClientErrorDomain = @"com.urbanairship.tag_groups_api_client";
+
 @interface UATagGroupsAPIClient()
 
 @property(nonatomic) NSString *typeKey;
@@ -54,7 +56,7 @@ NSString * const UATagGroupsNamedUserTypeKey = @"named_user_id";
 
 - (void)updateTagGroupsForId:(NSString *)identifier
            tagGroupsMutation:(UATagGroupsMutation *)mutation
-           completionHandler:(void (^)(NSUInteger status))completionHandler {
+           completionHandler:(void (^)(NSError * _Nullable))completionHandler {
 
     [self performTagGroupsMutation:mutation
                               path:self.path
@@ -65,7 +67,7 @@ NSString * const UATagGroupsNamedUserTypeKey = @"named_user_id";
 - (void)performTagGroupsMutation:(UATagGroupsMutation *)mutation
                             path:(NSString *)path
                         audience:(NSDictionary *)audience
-               completionHandler:(void (^)(NSUInteger status))completionHandler {
+               completionHandler:(void (^)(NSError * _Nullable))completionHandler {
 
     if (!self.enabled) {
         UA_LDEBUG(@"Disabled");
@@ -91,9 +93,10 @@ NSString * const UATagGroupsNamedUserTypeKey = @"named_user_id";
     [self.session dataTaskWithRequest:request retryWhere:^BOOL(NSData * _Nullable data, NSURLResponse * _Nullable response) {
         return [response hasRetriableStatus];
     } completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
-        NSHTTPURLResponse *httpResponse = nil;
-        if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
-            httpResponse = (NSHTTPURLResponse *) response;
+        NSHTTPURLResponse *httpResponse = [self castResponse:response error:&error];
+
+        if (error) {
+            return completionHandler(error);
         }
 
         NSInteger status = httpResponse.statusCode;
@@ -110,8 +113,36 @@ NSString * const UATagGroupsNamedUserTypeKey = @"named_user_id";
             }
         }
 
-        completionHandler(status);
-    }];
+        if (!(status >= 200 && status <= 299)) {
+            if (status == 400 || status == 403) {
+                return completionHandler([self unrecoverableStatusError]);
+            }
 
+            return completionHandler([self unsuccessfulStatusError]);
+        }
+
+        completionHandler(nil);
+    }];
 }
+
+- (NSError *)unsuccessfulStatusError {
+    NSString *msg = [NSString stringWithFormat:@"Tag groups client encountered an unsuccessful status"];
+
+    NSError *error = [NSError errorWithDomain:UATagGroupsAPIClientErrorDomain
+                                         code:UATagGroupsAPIClientErrorUnsuccessfulStatus
+                                     userInfo:@{NSLocalizedDescriptionKey:msg}];
+
+    return error;
+}
+
+- (NSError *)unrecoverableStatusError {
+    NSString *msg = [NSString stringWithFormat:@"Tag groups client encountered an unrecoverable status"];
+
+    NSError *error = [NSError errorWithDomain:UATagGroupsAPIClientErrorDomain
+                                         code:UATagGroupsAPIClientErrorUnrecoverableStatus
+                                     userInfo:@{NSLocalizedDescriptionKey:msg}];
+
+    return error;
+}
+
 @end

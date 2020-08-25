@@ -173,22 +173,18 @@ static NSTimeInterval const BackgroundLowPriorityEventUploadInterval = 900;
     }
 }
 
-- (void)updateAnalyticsParametersWithResponse:(NSHTTPURLResponse *)response {
-    if (response.statusCode != 200 || ![response allHeaderFields].count) {
-        return;
-    }
-
-    id maxTotalValue = [[response allHeaderFields] objectForKey:@"X-UA-Max-Total"];
+- (void)updateAnalyticsParametersWithResponseHeaders:(NSDictionary *)responseHeaders {
+    id maxTotalValue = [responseHeaders objectForKey:@"X-UA-Max-Total"];
     if (maxTotalValue) {
         self.maxTotalDBSize = (NSUInteger)[maxTotalValue integerValue] * 1024; //value returned in KB;
     }
 
-    id maxBatchValue = [[response allHeaderFields] objectForKey:@"X-UA-Max-Batch"];
+    id maxBatchValue = [responseHeaders objectForKey:@"X-UA-Max-Batch"];
     if (maxBatchValue) {
         self.maxBatchSize = (NSUInteger)[maxBatchValue integerValue] * 1024; //value return in KB
     }
 
-    id minBatchValue = [[response allHeaderFields] objectForKey:@"X-UA-Min-Batch-Interval"];
+    id minBatchValue = [responseHeaders objectForKey:@"X-UA-Min-Batch-Interval"];
     if (minBatchValue) {
         self.minBatchInterval = (NSUInteger)[minBatchValue integerValue];
     }
@@ -405,18 +401,16 @@ static NSTimeInterval const BackgroundLowPriorityEventUploadInterval = 900;
                 NSDictionary *headers = [self.delegate analyticsHeaders] ?: @{};
 
                 UA_STRONGIFY(self);
-                [self.client uploadEvents:preparedEvents headers:headers completionHandler:^(NSHTTPURLResponse *response) {
-
+                [self.client uploadEvents:preparedEvents headers:headers completionHandler:^(NSDictionary * _Nullable responseHeaders, NSError * _Nullable error) {
                     UA_STRONGIFY(self);
                     self.lastSendTime = [NSDate date];
 
-                    if (response.statusCode == 200) {
+                    if (!error) {
                         UA_LTRACE(@"Analytic upload success");
-                        UA_LTRACE(@"Response: %@", response);
                         [self.eventStore deleteEventsWithIDs:[preparedEvents valueForKey:@"event_id"]];
-                        [self updateAnalyticsParametersWithResponse:response];
+                        [self updateAnalyticsParametersWithResponseHeaders:responseHeaders];
                     } else {
-                        UA_LTRACE(@"Analytics upload request failed: %ld", (unsigned long)response.statusCode);
+                        UA_LTRACE(@"Analytics upload request failed: %@", error);
                         [self scheduleUploadWithDelay:FailedUploadRetryDelay];
                     }
 

@@ -26,7 +26,6 @@
                                                              dataStore:self.dataStore
                                                                session:self.mockSession
                                                          localeManager:self.mockLocaleClass];
-
 }
 
 /**
@@ -66,14 +65,11 @@
     XCTestExpectation *refreshFinished = [self expectationWithDescription:@"Refresh finished"];
 
     // Make call
-    [self.remoteDataAPIClient fetchRemoteData:^(NSUInteger statusCode, NSArray<NSDictionary *> *remoteData) {
-        XCTAssertEqual(statusCode, 200);
+    [self.remoteDataAPIClient fetchRemoteData:^(NSArray<NSDictionary *> *remoteData, NSError *error) {
+        XCTAssertNil(error);
         XCTAssertTrue([remoteData count] == 1, @"There should be exactly 1 payload");
         XCTAssertTrue([remoteData[0][@"type"] isEqualToString:remoteDataDict[@"type"]]);
         XCTAssertEqualObjects(remoteData[0][@"data"], remoteDataDict[@"data"], @"Remote data should match");
-        [refreshFinished fulfill];
-    } onFailure:^() {
-        XCTFail(@"Should not fail");
         [refreshFinished fulfill];
     }];
 
@@ -100,7 +96,6 @@
     NSString *expectedLastModifiedTimestamp = remoteDataDict[@"timestamp"];
     NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:200 HTTPVersion:nil headerFields:@{@"Last-Modified":expectedLastModifiedTimestamp}];
 
-
     __block UARequestCompletionHandler completionHandler;
 
     // Stub the session to return the response
@@ -111,16 +106,13 @@
     }] dataTaskWithRequest:OCMOCK_ANY retryWhere:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     // Make call
-    UADisposable *disposable = [self.remoteDataAPIClient fetchRemoteData:^(NSUInteger statusCode, NSArray<NSDictionary *> *remoteData) {
-        XCTFail(@"Should not call callbacks");
-    } onFailure:^() {
+    UADisposable *disposable = [self.remoteDataAPIClient fetchRemoteData:^(NSArray<NSDictionary *> *remoteData, NSError *error) {
         XCTFail(@"Should not call callbacks");
     }];
 
     [disposable dispose];
 
     completionHandler(responseData, (NSURLResponse *)response, nil);
-
 }
 
 /**
@@ -162,8 +154,8 @@
     XCTestExpectation *refreshFinished = [self expectationWithDescription:@"Refresh finished"];
 
     // Make call
-    [self.remoteDataAPIClient fetchRemoteData:^(NSUInteger statusCode, NSArray<NSDictionary *> *remoteData) {
-        XCTAssertEqual(statusCode, 200);
+    [self.remoteDataAPIClient fetchRemoteData:^(NSArray<NSDictionary *> *remoteData, NSError *error) {
+        XCTAssertNil(error);
         XCTAssertTrue([remoteData count] == 2, @"There should be exactly 2 payloads");
         NSDictionary *testDict1, *testDict2;
         if ([remoteData[0][@"type"] isEqualToString:remoteDataDict1[@"type"]]) {
@@ -177,9 +169,6 @@
         XCTAssertEqualObjects(testDict1[@"data"], remoteDataDict1[@"data"], @"Remote data should match");
         XCTAssertTrue([testDict2[@"type"] isEqualToString:remoteDataDict2[@"type"]]);
         XCTAssertEqualObjects(testDict2[@"data"], remoteDataDict2[@"data"], @"Remote data should match");
-        [refreshFinished fulfill];
-    } onFailure:^() {
-        XCTFail(@"Should not fail");
         [refreshFinished fulfill];
     }];
 
@@ -201,7 +190,7 @@
                                                          @"font" : @"Comic Sans"
                                                          }
                                                   }
-                                      };
+                                    };
     NSData *responseData = [self createRemoteDataFromDictionaries:@[remoteDataDict]];
     NSString *expectedLastModifiedTimestamp = remoteDataDict[@"timestamp"];
     NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:304 HTTPVersion:nil headerFields:@{@"Last-Modified":expectedLastModifiedTimestamp}];
@@ -218,12 +207,9 @@
     XCTestExpectation *refreshFinished = [self expectationWithDescription:@"Refresh finished"];
 
     // Make call
-    [self.remoteDataAPIClient fetchRemoteData:^(NSUInteger statusCode, NSArray<UARemoteDataPayload *> *remoteData) {
-        XCTAssertEqual(statusCode, 304);
+    [self.remoteDataAPIClient fetchRemoteData:^(NSArray<UARemoteDataPayload *> *remoteData, NSError *error) {
         XCTAssertNil(remoteData);
-        [refreshFinished fulfill];
-    } onFailure:^() {
-        XCTFail(@"Should not fail");
+        XCTAssertNil(error);
         [refreshFinished fulfill];
     }];
 
@@ -236,7 +222,6 @@
  * Test failure to refresh the remote data because of a gateway timeout
  */
 - (void)testFailedRefreshRemoteDataDueToTimeout {
-
     // Create a successful response
     NSDictionary *remoteDataDict = @{ @"message_center" :
                                           @{ @"background_color" : @"0000FF",
@@ -258,9 +243,10 @@
     XCTestExpectation *refreshFinished = [self expectationWithDescription:@"Refresh finished"];
 
     // Make call
-    [self.remoteDataAPIClient fetchRemoteData:^(NSUInteger statusCode, NSArray<UARemoteDataPayload *> *remoteData) {
-        XCTFail(@"Should not succeed");
-    } onFailure:^() {
+    [self.remoteDataAPIClient fetchRemoteData:^(NSArray<UARemoteDataPayload *> *remoteData, NSError *error) {
+        XCTAssertNil(remoteData);
+        XCTAssertEqualObjects(error.domain, UARemoteDataAPIClientErrorDomain);
+        XCTAssertEqual(error.code, UARemoteDataAPIClientErrorUnsuccessfulStatus);
         [refreshFinished fulfill];
     }];
 
@@ -273,7 +259,6 @@
  * Test refresh the remote data when no remote data returned from cloud
  */
 - (void)testRefreshRemoteDataWhenNoData {
-
     // Create a successful response
     NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:200 HTTPVersion:nil headerFields:@{}];
     NSDictionary *remoteDataDict = nil;
@@ -292,12 +277,9 @@
     XCTestExpectation *refreshFinished = [self expectationWithDescription:@"Refresh finished"];
 
     // Make call
-    [self.remoteDataAPIClient fetchRemoteData:^(NSUInteger statusCode, NSArray<UARemoteDataPayload *> *remoteData) {
-        XCTAssertEqual(statusCode, 200);
+    [self.remoteDataAPIClient fetchRemoteData:^(NSArray<UARemoteDataPayload *> *remoteData, NSError *error) {
+        XCTAssertNil(error);
         XCTAssertTrue(!remoteData || [remoteData count] == 0);
-        [refreshFinished fulfill];
-    } onFailure:^() {
-        XCTFail(@"Should not fail");
         [refreshFinished fulfill];
     }];
 
@@ -310,12 +292,22 @@
     NSString *expectedVersionQueryComponent = [NSString stringWithFormat:@"sdk_version=%@", [UAirshipVersion get]];
     int expectedVersionIndex = 0;
 
-    // Make call
-    [self.remoteDataAPIClient fetchRemoteData:^(NSUInteger statusCode, NSArray<NSDictionary *> *remoteData) {
-    } onFailure:^() {
-    }];
+    XCTestExpectation *refreshFinished = [self expectationWithDescription:@"Refresh finished"];
 
-    [[self.mockSession verify] dataTaskWithRequest:[OCMArg checkWithBlock:^BOOL(id obj) {
+    // Create a successful response
+    NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:200 HTTPVersion:nil headerFields:@{}];
+    NSDictionary *remoteDataDict = nil;
+
+    NSData *responseData = [self createRemoteDataFromDictionary:remoteDataDict ofType:@"abcdefghi"];
+
+    // Stub the session to return the response
+    [[[self.mockSession stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:4];
+        UARequestCompletionHandler completionHandler = (__bridge UARequestCompletionHandler)arg;
+
+        completionHandler(responseData, (NSURLResponse *)response, nil);
+    }] dataTaskWithRequest:[OCMArg checkWithBlock:^BOOL(id obj) {
         UARequest *request = obj;
 
         XCTAssertTrue([request.URL.query containsString:@"sdk_version="]);
@@ -323,6 +315,13 @@
 
         return true;
     }] retryWhere:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
+    // Make call
+    [self.remoteDataAPIClient fetchRemoteData:^(NSArray<NSDictionary *> *remoteData, NSError *error) {
+        [refreshFinished fulfill];
+    }];
+
+    [self waitForTestExpectations];
 }
 
 - (void)testLanguage {
@@ -333,20 +332,36 @@
     NSLocale *locale = [[NSLocale alloc] initWithLocaleIdentifier:expectedLocale];
     [[[self.mockLocaleClass stub] andReturn:locale] currentLocale];
 
-    // Make call
-    [self.remoteDataAPIClient fetchRemoteData:^(NSUInteger statusCode, NSArray<NSDictionary *> *remoteData) {
-    } onFailure:^() {
-    }];
+    XCTestExpectation *refreshFinished = [self expectationWithDescription:@"Refresh finished"];
 
-    [[self.mockSession verify] dataTaskWithRequest:[OCMArg checkWithBlock:^BOOL(id obj) {
+    // Create a successful response
+    NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:200 HTTPVersion:nil headerFields:@{}];
+    NSDictionary *remoteDataDict = nil;
+
+    NSData *responseData = [self createRemoteDataFromDictionary:remoteDataDict ofType:@"abcdefghi"];
+
+    // Stub the session to return the response
+    [[[self.mockSession stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:4];
+        UARequestCompletionHandler completionHandler = (__bridge UARequestCompletionHandler)arg;
+
+        completionHandler(responseData, (NSURLResponse *)response, nil);
+    }] dataTaskWithRequest:[OCMArg checkWithBlock:^BOOL(id obj) {
         UARequest *request = obj;
 
         XCTAssertTrue([request.URL.query containsString:@"language="]);
         XCTAssertEqualObjects(expectedLanguageQueryComponent, [[request.URL query] componentsSeparatedByString:@"&"][expectedLanguageIndex]);
 
-
         return true;
     }] retryWhere:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
+    // Make call
+    [self.remoteDataAPIClient fetchRemoteData:^(NSArray<NSDictionary *> *remoteData, NSError *error) {
+        [refreshFinished fulfill];
+    }];
+
+    [self waitForTestExpectations];
 }
 
 - (void)testCountry {
@@ -357,12 +372,22 @@
     NSLocale *locale = [[NSLocale alloc] initWithLocaleIdentifier:expectedLocale];
     [[[self.mockLocaleClass stub] andReturn:locale] currentLocale];
 
-    // Make call
-    [self.remoteDataAPIClient fetchRemoteData:^(NSUInteger statusCode, NSArray<NSDictionary *> *remoteData) {
-    } onFailure:^() {
-    }];
+    XCTestExpectation *refreshFinished = [self expectationWithDescription:@"Refresh finished"];
 
-    [[self.mockSession verify] dataTaskWithRequest:[OCMArg checkWithBlock:^BOOL(id obj) {
+    // Create a successful response
+    NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:200 HTTPVersion:nil headerFields:@{}];
+    NSDictionary *remoteDataDict = nil;
+
+    NSData *responseData = [self createRemoteDataFromDictionary:remoteDataDict ofType:@"abcdefghi"];
+
+    // Stub the session to return the response
+    [[[self.mockSession stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:4];
+        UARequestCompletionHandler completionHandler = (__bridge UARequestCompletionHandler)arg;
+
+        completionHandler(responseData, (NSURLResponse *)response, nil);
+    }] dataTaskWithRequest:[OCMArg checkWithBlock:^BOOL(id obj) {
         UARequest *request = obj;
 
         XCTAssertTrue([request.URL.query containsString:@"country="]);
@@ -370,6 +395,13 @@
 
         return true;
     }] retryWhere:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
+    // Make call
+    [self.remoteDataAPIClient fetchRemoteData:^(NSArray<NSDictionary *> *remoteData, NSError *error) {
+        [refreshFinished fulfill];
+    }];
+
+    [self waitForTestExpectations];
 }
 
 - (void)testLocaleMissingCountry {
@@ -381,12 +413,22 @@
     NSLocale *locale = [[NSLocale alloc] initWithLocaleIdentifier:expectedLocale];
     [[[self.mockLocaleClass stub] andReturn:locale] currentLocale];
 
-    // Make call
-    [self.remoteDataAPIClient fetchRemoteData:^(NSUInteger statusCode, NSArray<NSDictionary *> *remoteData) {
-    } onFailure:^() {
-    }];
+    XCTestExpectation *refreshFinished = [self expectationWithDescription:@"Refresh finished"];
 
-    [[self.mockSession verify] dataTaskWithRequest:[OCMArg checkWithBlock:^BOOL(id obj) {
+    // Create a successful response
+    NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:200 HTTPVersion:nil headerFields:@{}];
+    NSDictionary *remoteDataDict = nil;
+
+    NSData *responseData = [self createRemoteDataFromDictionary:remoteDataDict ofType:@"abcdefghi"];
+
+    // Stub the session to return the response
+    [[[self.mockSession stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:4];
+        UARequestCompletionHandler completionHandler = (__bridge UARequestCompletionHandler)arg;
+
+        completionHandler(responseData, (NSURLResponse *)response, nil);
+    }] dataTaskWithRequest:[OCMArg checkWithBlock:^BOOL(id obj) {
         UARequest *request = obj;
 
         NSArray *queryComponents = [request.URL.query componentsSeparatedByString:@"&"];
@@ -396,6 +438,13 @@
 
         return true;
     }] retryWhere:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
+    // Make call
+    [self.remoteDataAPIClient fetchRemoteData:^(NSArray<NSDictionary *> *remoteData, NSError *error) {
+        [refreshFinished fulfill];
+    }];
+
+    [self waitForTestExpectations];
 }
 
 
@@ -424,7 +473,6 @@
 }
 
 - (NSData *)createRemoteDataFromDictionaries:(NSArray *)remoteDataDicts {
-
     NSMutableArray *payloads = [NSMutableArray array];
     for (NSDictionary *remoteDataDict in remoteDataDicts) {
         [payloads addObject:@{ @"type" : remoteDataDict[@"type"],
@@ -445,7 +493,5 @@
 
     return remoteData;
 }
-
-
 
 @end

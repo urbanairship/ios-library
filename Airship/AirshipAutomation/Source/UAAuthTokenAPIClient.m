@@ -43,15 +43,14 @@ NSString * const UAAuthTokenAPIClientErrorDomain = @"com.urbanairship.auth_token
     [self.session dataTaskWithRequest:request retryWhere:^BOOL(NSData * _Nullable data, NSURLResponse * _Nullable response) {
         return NO;
     } completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
-        NSHTTPURLResponse *httpResponse;
-
-        if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
-            httpResponse = (NSHTTPURLResponse *) response;
-        }
-
-        if (!httpResponse) {
+        if (error) {
             UA_LTRACE(@"Auth token request failed with error %@", error);
             return completionHandler(nil, error);
+        }
+
+        NSHTTPURLResponse *httpResponse;
+        if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
+            httpResponse = (NSHTTPURLResponse *) response;
         }
 
         NSInteger status = httpResponse.statusCode;
@@ -59,7 +58,7 @@ NSString * const UAAuthTokenAPIClientErrorDomain = @"com.urbanairship.auth_token
         // Unsuccessful HTTP response
         if (!(status >= 200 && status <= 299)) {
             UA_LTRACE(@"Auth token request failed with status: %lu", (unsigned long)status);
-            NSString *msg = [NSString stringWithFormat:@"Auth token API client encountered an unsucessful status"];
+            NSString *msg = [NSString stringWithFormat:@"Auth token API client encountered an unsuccessful status"];
 
             NSError *error = [NSError errorWithDomain:UAAuthTokenAPIClientErrorDomain
                                                  code:UAAuthTokenAPIClientErrorUnsuccessfulStatus

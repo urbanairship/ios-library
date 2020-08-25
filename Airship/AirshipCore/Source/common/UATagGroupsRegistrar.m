@@ -134,17 +134,17 @@
     }
 
     UA_WEAKIFY(self);
-    void (^apiCompletionBlock)(NSUInteger) = ^void(NSUInteger status) {
+    void (^apiCompletionBlock)(NSError *) = ^void(NSError *error) {
         UA_STRONGIFY(self);
-        if (status >= 200 && status <= 299) {
+        if (!error) {
             // Success - pop uploaded mutation and store the transaction record
             [self popPendingMutation:mutation identifier:identifier];
             [self.delegate uploadedTagGroupsMutation:mutation identifier:identifier];
             [self uploadNextTagGroupMutationWithBackgroundTaskIdentifier:backgroundTaskIdentifier];
-        } else if (status == 400 || status == 403) {
+        } else if (error.domain == UATagGroupsAPIClientErrorDomain && error.code == UATagGroupsAPIClientErrorUnrecoverableStatus) {
             // Unrecoverable failure - pop mutation and end the task
             [self popPendingMutation:mutation identifier:identifier];
-            [self endBackgroundTask:backgroundTaskIdentifier];
+            [self uploadNextTagGroupMutationWithBackgroundTaskIdentifier:backgroundTaskIdentifier];
         } else {
             [self endBackgroundTask:backgroundTaskIdentifier];
         }

@@ -59,7 +59,7 @@
 
     [self.client updateWithIdentifier:@"some id"
                    attributeMutations:mockMutation
-                    completionHandler:^(NSUInteger status, NSError * _Nullable error) {}];
+                    completionHandler:^(NSError * _Nullable error) {}];
 
     [self.mockSession verify];
 }
@@ -69,7 +69,47 @@
  * Test request
  */
 - (void)testResponse {
-    // Create a reasponse
+    // Create a response
+    NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""]
+                                                              statusCode:200
+                                                             HTTPVersion:nil
+                                                            headerFields:nil];
+
+    id mockMutation = [self mockForClass:[UAAttributePendingMutations class]];
+    [[[mockMutation stub] andReturn:@{@"neat": @"payload"}] payload];
+
+    // Stub the session to return a the response
+    [[[self.mockSession expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:4];
+        UARequestCompletionHandler completionHandler = (__bridge UARequestCompletionHandler)arg;
+        completionHandler(nil, response, nil);
+    }] dataTaskWithRequest:[OCMArg checkWithBlock:^BOOL(id obj) {
+        UARequest *request = (UARequest *)obj;
+        id body = [UAJSONSerialization dataWithJSONObject:@{@"neat": @"payload"}
+                                                  options:0
+                                                    error:nil];
+
+        return [request.method isEqualToString:@"POST"] &&
+        [request.body isEqualToData:body] &&
+        [request.URL isEqual:[NSURL URLWithString:@"https://test/bobby"]];
+    }] retryWhere:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
+
+    XCTestExpectation *callback = [self expectationWithDescription:@"callback"];
+    [self.client updateWithIdentifier:@"bobby"
+                   attributeMutations:mockMutation
+                    completionHandler:^(NSError * _Nullable error) {
+        XCTAssertNil(error);
+        [callback fulfill];
+    }];
+
+    [self waitForTestExpectations];
+    [self.mockSession verify];
+}
+
+- (void)testUnsuccessfulResponse {
+    // Create a response
     NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""]
                                                               statusCode:420
                                                              HTTPVersion:nil
@@ -99,9 +139,50 @@
     XCTestExpectation *callback = [self expectationWithDescription:@"callback"];
     [self.client updateWithIdentifier:@"bobby"
                    attributeMutations:mockMutation
-                    completionHandler:^(NSUInteger status, NSError * _Nullable error) {
-        XCTAssertEqual(420, status);
-        XCTAssertNil(error);
+                    completionHandler:^(NSError * _Nullable error) {
+        XCTAssertEqualObjects(error.domain, UAAttributeAPIClientErrorDomain);
+        XCTAssertEqual(error.code, UAAttributeAPIClientErrorUnsuccessfulStatus);
+        [callback fulfill];
+    }];
+
+    [self waitForTestExpectations];
+    [self.mockSession verify];
+}
+
+- (void)testUnrecoverableResponse {
+    // Create a response
+    NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""]
+                                                              statusCode:400
+                                                             HTTPVersion:nil
+                                                            headerFields:nil];
+
+    id mockMutation = [self mockForClass:[UAAttributePendingMutations class]];
+    [[[mockMutation stub] andReturn:@{@"neat": @"payload"}] payload];
+
+    // Stub the session to return a the response
+    [[[self.mockSession expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:4];
+        UARequestCompletionHandler completionHandler = (__bridge UARequestCompletionHandler)arg;
+        completionHandler(nil, response, nil);
+    }] dataTaskWithRequest:[OCMArg checkWithBlock:^BOOL(id obj) {
+        UARequest *request = (UARequest *)obj;
+        id body = [UAJSONSerialization dataWithJSONObject:@{@"neat": @"payload"}
+                                                  options:0
+                                                    error:nil];
+
+        return [request.method isEqualToString:@"POST"] &&
+        [request.body isEqualToData:body] &&
+        [request.URL isEqual:[NSURL URLWithString:@"https://test/bobby"]];
+    }] retryWhere:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
+
+    XCTestExpectation *callback = [self expectationWithDescription:@"callback"];
+    [self.client updateWithIdentifier:@"bobby"
+                   attributeMutations:mockMutation
+                    completionHandler:^(NSError * _Nullable error) {
+        XCTAssertEqualObjects(error.domain, UAAttributeAPIClientErrorDomain);
+        XCTAssertEqual(error.code, UAAttributeAPIClientErrorUnrecoverableStatus);
         [callback fulfill];
     }];
 
@@ -127,8 +208,7 @@
     XCTestExpectation *callback = [self expectationWithDescription:@"callback"];
     [self.client updateWithIdentifier:@"bobby"
                    attributeMutations:mockMutation
-                    completionHandler:^(NSUInteger status, NSError * _Nullable error) {
-        XCTAssertEqual(0, status);
+                    completionHandler:^(NSError * _Nullable error) {
         XCTAssertEqual(expectedError, error);
         [callback fulfill];
     }];
