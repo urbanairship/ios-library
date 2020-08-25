@@ -212,13 +212,14 @@ NSString *const UAEventKey = @"event";
         return;
     }
 
+    NSString *sessionID = self.sessionID;
 
     UA_WEAKIFY(self)
     [self.dispatcher dispatchAsync:^{
         UA_STRONGIFY(self)
 
         UA_LDEBUG(@"Adding %@ event %@.", event.eventType, event.eventID);
-        [self.eventManager addEvent:event sessionID:self.sessionID];
+        [self.eventManager addEvent:event sessionID:sessionID];
         UA_LTRACE(@"Event added: %@.", event);
 
         if (self.eventConsumer) {

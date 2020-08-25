@@ -570,6 +570,31 @@
     [self.mockEventManager verify];
 }
 
+- (void)testBackgroundEventSessionID {
+    UAAnalytics *analytics = [UAAnalytics analyticsWithConfig:self.config
+                                                    dataStore:self.dataStore
+                                                      channel:self.mockChannel
+                                                 eventManager:self.mockEventManager
+                                           notificationCenter:self.notificationCenter
+                                                         date:self.testDate
+                                                   dispatcher:[UADispatcher mainDispatcher]
+                                                localeManager:self.mockLocaleClass];
+
+    NSString *sessionID = analytics.sessionID;
+
+    // Ensure event is added
+    XCTestExpectation *eventAdded = [self expectationWithDescription:@"Notification event added"];
+    [[[self.mockEventManager expect] andDo:^(NSInvocation *invocation) {
+        [eventAdded fulfill];
+    }] addEvent:OCMOCK_ANY sessionID:sessionID];
+
+    // Background app
+    [self.notificationCenter postNotificationName:UAApplicationDidEnterBackgroundNotification object:nil];
+
+    [self waitForTestExpectations];
+    [self.mockEventManager verify];
+}
+
 - (UAAnalytics *)createAnalytics {
     return [UAAnalytics analyticsWithConfig:self.config
                                   dataStore:self.dataStore
@@ -582,4 +607,3 @@
 }
 
 @end
-
