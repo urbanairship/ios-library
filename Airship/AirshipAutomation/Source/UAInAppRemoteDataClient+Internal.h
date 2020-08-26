@@ -38,7 +38,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)editScheduleWithID:(NSString *)identifier
                      edits:(UAScheduleEdits *)edits
-         completionHandler:(void (^)(UASchedule * _Nullable))completionHandler;
+         completionHandler:(nullable void (^)(BOOL))completionHandler;
 
 
 @end

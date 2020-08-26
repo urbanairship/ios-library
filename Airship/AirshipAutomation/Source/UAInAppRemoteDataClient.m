@@ -210,9 +210,9 @@ static NSString *const UAScheduleInfoDeferredKey = @"deferred";
             dispatch_group_enter(dispatchGroup);
             [self.delegate editScheduleWithID:scheduleID
                                         edits:edits
-                                       completionHandler:^(UASchedule *schedule) {
+                                       completionHandler:^(BOOL result) {
                 dispatch_group_leave(dispatchGroup);
-                if (schedule) {
+                if (result) {
                     UA_LTRACE("Updated in-app automation: %@", scheduleID);
                 }
             }];
@@ -236,9 +236,9 @@ static NSString *const UAScheduleInfoDeferredKey = @"deferred";
             dispatch_group_enter(dispatchGroup);
             [self.delegate editScheduleWithID:scheduleID
                                         edits:edits
-                            completionHandler:^(UASchedule *schedule) {
+                            completionHandler:^(BOOL result) {
                 dispatch_group_leave(dispatchGroup);
-                if (schedule) {
+                if (result) {
                     UA_LTRACE("Ended in-app automation: %@", scheduleID);
                 }
             }];

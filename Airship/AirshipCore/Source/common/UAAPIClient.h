@@ -60,7 +60,14 @@ extern NSUInteger const UAAPIClientStatusUnavailable;
  */
 - (void)cancelAllRequests;
 
-- (NSHTTPURLResponse *)castResponse:(NSURLResponse *)response error:(NSError **)error;
+/**
+ * Utility method to cast an NSURLResponse to an NSHTTPURLResponse.
+ *
+ * @param response The NSURLResponse.
+ * @param error A pointer to an error instance. If non-nil, the original error will be unmodified, otherwise it will be populated if the cast fails.
+ * @return The response cast as an NSHTTPURLResponse, or nil if the cast fails.
+ */
+- (nullable NSHTTPURLResponse *)castResponse:(NSURLResponse *)response error:(NSError **)error;
 
 @end
 
