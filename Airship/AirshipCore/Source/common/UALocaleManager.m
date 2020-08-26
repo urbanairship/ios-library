@@ -41,7 +41,7 @@ NSString *const UALocaleUpdatedEvent = @"com.urbanairship.locale.locale_updated"
     [self.notificationCenter postNotificationName:UALocaleUpdatedEvent object:localeDictionary];
 }
 
-- (nullable NSLocale *)currentLocale {
+- (NSLocale *)currentLocale {
     NSData *encodedLocale = [self.dataStore objectForKey:UALocaleUpdatedEventLocaleKey];
     if (encodedLocale) {
         return [NSKeyedUnarchiver unarchiveObjectWithData:encodedLocale];
