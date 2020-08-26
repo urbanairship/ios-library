@@ -343,7 +343,7 @@
     XCTAssertEqual(config.URLAllowListScopeJavaScriptInterface.count, 0);
     XCTAssertEqual(config.URLAllowListScopeOpenURL.count, 0);
     XCTAssertFalse(config.clearNamedUserOnAppRestore);
-    XCTAssertFalse(config.channelCaptureEnabled);
+    XCTAssertTrue(config.channelCaptureEnabled);
     XCTAssertEqual(config.customConfig.count, 0);
     XCTAssertFalse(config.channelCreationDelayEnabled);
     XCTAssertFalse(config.extendedBroadcastsEnabled);
