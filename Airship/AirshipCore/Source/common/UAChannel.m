@@ -377,18 +377,17 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
     payload.SDKVersion = [UAirshipVersion get];
     payload.deviceOS = [UIDevice currentDevice].systemVersion;
 
+    if (self.channelTagRegistrationEnabled) {
+        payload.tags = self.tags;
+        payload.setTags = YES;
+    } else {
+        payload.setTags = NO;
+    }
+
     // Only set the device model, carrier name and channel tags if the app is opted in to data collection
     if (self.isDataCollectionEnabled) {
         payload.deviceModel = [UAUtils deviceModelName];
         payload.carrier = [UAUtils carrierName];
-
-        // Only set channel tags if channel tag registration is also enabled
-        if (self.channelTagRegistrationEnabled) {
-            payload.tags = self.tags;
-            payload.setTags = YES;
-        } else {
-            payload.setTags = NO;
-        }
     }
 
     id extendersCopy = [self.registrationExtenderBlocks mutableCopy];

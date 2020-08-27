@@ -512,7 +512,8 @@
     expectedPayload.language = [[NSLocale autoupdatingCurrentLocale] objectForKey:NSLocaleLanguageCode];
     expectedPayload.country = [[NSLocale autoupdatingCurrentLocale] objectForKey:NSLocaleCountryCode];
     expectedPayload.timeZone = @"cool zone";
-    expectedPayload.setTags = NO;
+    expectedPayload.setTags = YES;
+    expectedPayload.tags = @[];
     expectedPayload.appVersion = [UAUtils bundleShortVersionString];
     expectedPayload.SDKVersion = [UAirshipVersion get];
     expectedPayload.deviceOS = [UIDevice currentDevice].systemVersion;
