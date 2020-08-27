@@ -14,9 +14,6 @@ const NSUInteger UACustomEventMaxPropertiesCount = 100;
 const NSUInteger UACustomEventMaxPropertyCollectionSize = 20;
 const NSUInteger UACustomEventMaxPropertiesSize = 65536;
 
-// Deprecated constants
-NSString *const kUAInteractionMCRAP = UAInteractionMCRAP;
-
 // Public data keys
 NSString *const UACustomEventNameKey = @"event_name";
 NSString *const UACustomEventValueKey = @"event_value";
@@ -58,30 +55,6 @@ NSString *const UACustomEventTemplateTypeKey = @"template_type";
     return [[self alloc] initWithName:eventName withValue:eventValue];
 }
 
-- (void)setBoolProperty:(BOOL)value forKey:(NSString *)key {
-    NSMutableDictionary *mutableProperties = self.properties.mutableCopy;
-    [mutableProperties setValue:@(value) forKey:key];
-    self.properties = mutableProperties.copy;
-}
-
-- (void)setStringProperty:(NSString *)value forKey:(NSString *)key {
-    NSMutableDictionary *mutableProperties = self.properties.mutableCopy;
-    [mutableProperties setValue:[value copy] forKey:key];
-    self.properties = mutableProperties.copy;
-}
-
-- (void)setNumberProperty:(NSNumber *)value forKey:(NSString *)key {
-    NSMutableDictionary *mutableProperties = self.properties.mutableCopy;
-    [mutableProperties setValue:[value copy] forKey:key];
-    self.properties = mutableProperties.copy;
-}
-
-- (void)setStringArrayProperty:(NSArray *)value forKey:(NSString *)key {
-    NSMutableDictionary *mutableProperties = self.properties.mutableCopy;
-    [mutableProperties setValue:[value copy] forKey:key];
-    self.properties = mutableProperties.copy;
-}
-
 - (void)setEventValue:(NSDecimalNumber *)eventValue {
     if (!eventValue) {
         _eventValue = nil;
@@ -93,7 +66,6 @@ NSString *const UACustomEventTemplateTypeKey = @"template_type";
         }
     }
 }
-
 
 - (BOOL)isValid {
     BOOL isValid = YES;
@@ -196,7 +168,6 @@ NSString *const UACustomEventTemplateTypeKey = @"template_type";
     }
 
     // Properties
-    
     [dictionary setValue:self.properties forKey:UACustomEventPropertiesKey];
 
     return dictionary.copy;

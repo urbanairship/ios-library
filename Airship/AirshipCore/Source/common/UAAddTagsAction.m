@@ -11,10 +11,6 @@
 NSString * const UAAddTagsActionDefaultRegistryName = @"add_tags_action";
 NSString * const UAAddTagsActionDefaultRegistryAlias = @"^+t";
 
-// Deprecated - to be removed in SDK version 14.0.
-NSString * const kUAAddTagsActionDefaultRegistryName = UAAddTagsActionDefaultRegistryName;
-NSString * const kUAAddTagsActionDefaultRegistryAlias = UAAddTagsActionDefaultRegistryAlias;
-
 - (void)applyChannelTags:(NSArray *)tags {
     [[UAirship channel] addTags:tags];
 }

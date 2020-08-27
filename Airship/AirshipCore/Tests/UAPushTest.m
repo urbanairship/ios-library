@@ -188,59 +188,6 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
                    @"autobadgeEnabled should be stored in standardUserDefaults");
 }
 
-- (void)testTags {
-    NSArray *tags = @[@"tag-one", @"tag-two"];
-    [[self.mockChannel expect] setTags:tags];
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    self.push.tags = tags;
-
-    [[self.mockChannel expect] tags];
-    tags = self.push.tags;
-#pragma clang diagnostic pop
-    [self.mockChannel verify];
-}
-
-- (void)testAddTags {
-    NSArray *tags = @[@"tag-one", @"tag-two"];
-    [[self.mockChannel expect] addTags:tags];
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    [self.push addTags:tags];
-#pragma clang diagnostic pop
-    [self.mockChannel verify];
-}
-
-- (void)testAddTag {
-    NSString *tag = @"tag";
-    [[self.mockChannel expect] addTag:tag];
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    [self.push addTag:tag];
-#pragma clang diagnostic pop
-    [self.mockChannel verify];
-}
-
-- (void)testRemoveTag {
-    NSString *tag = @"tag";
-    [[self.mockChannel expect] removeTag:tag];
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    [self.push removeTag:tag];
-#pragma clang diagnostic pop
-    [self.mockChannel verify];
-}
-
-- (void)testRemoveTags {
-    NSArray *tags = @[@"tag-one", @"tag-two"];
-    [[self.mockChannel expect] removeTags:tags];
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    [self.push removeTags:tags];
-#pragma clang diagnostic pop
-    [self.mockChannel verify];
-}
-
 /**
  * Test enabling userPushNotificationsEnabled saves its settings
  * to NSUserDefaults and updates apns registration.
@@ -920,15 +867,6 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     // Verify it reset the flag
     XCTAssertFalse(self.push.shouldUpdateAPNSRegistration, @"updateRegistration should handle APNS registration updates if shouldUpdateAPNSRegistration is YES.");
     XCTAssertNoThrow([self.mockChannel verify], @"should not update channel registration");
-}
-
-- (void)testEnableChannelCreation {
-    [[self.mockChannel expect] enableChannelCreation];
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    [self.push enableChannelCreation];
-#pragma clang diagnostic pop
-    [self.mockChannel verify];
 }
 
 /**

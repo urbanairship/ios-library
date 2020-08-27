@@ -68,20 +68,6 @@ extern NSString * const UALandingPageActionDefaultRegistryName;
 extern NSString * const UALandingPageActionDefaultRegistryAlias;
 
 /**
- * Default registry name for landing page action.
- *
- * @deprecated Deprecated – to be removed in SDK version 14.0. Please use UALandingPageActionDefaultRegistryName.
-*/
-extern NSString * const kUALandingPageActionDefaultRegistryName DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0. Please use UALandingPageActionDefaultRegistryName.");
-
-/**
- * Default registry alias for landing page action.
- *
- * @deprecated Deprecated – to be removed in SDK version 14.0. Please use UALandingPageActionDefaultRegistryAlias.
-*/
-extern NSString * const kUALandingPageActionDefaultRegistryAlias DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0. Please use UALandingPageActionDefaultRegistryAlias.");
-
-/**
  * The URL key.
  */
 extern NSString *const UALandingPageURLKey;

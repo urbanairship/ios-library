@@ -10,27 +10,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
 * Network is unreachable.
-*
-* @deprecated Deprecated – to be removed in SDK version 14.0. Please use UAConnectionTypeNone.
-*/
-extern NSString * const kUAConnectionTypeNone DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0. Please use UAConnectionTypeNone.");
-
-/**
-* Network is a cellular or mobile network.
-*
-* @deprecated Deprecated – to be removed in SDK version 14.0. Please use UAConnectionTypeCell.
-*/
-extern NSString * const kUAConnectionTypeCell DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0. Please use UAConnectionTypeCell.");
-
-/**
-* Network is a WiFi network.
-*
-* @deprecated Deprecated – to be removed in SDK version 14.0. Please use UAConnectionTypeWifi.
-*/
-extern NSString * const kUAConnectionTypeWifi DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0. Please use UAConnectionTypeCell.");
-
-/**
-* Network is unreachable.
 */
 extern NSString * const UAConnectionTypeNone;
 

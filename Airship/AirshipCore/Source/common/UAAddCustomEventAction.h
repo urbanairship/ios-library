@@ -17,13 +17,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
 * Default registry name for custom event action.
-*
-* @deprecated Deprecated – to be removed in SDK version 14.0. Please use UAAddCustomEventActionDefaultRegistryName.
-*/
-extern NSString * const kUAAddCustomEventActionDefaultRegistryName DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0. Please use UAAddCustomEventActionDefaultRegistryName.");
-
-/**
-* Default registry name for custom event action.
 */
 extern NSString * const UAAddCustomEventActionDefaultRegistryName;
 

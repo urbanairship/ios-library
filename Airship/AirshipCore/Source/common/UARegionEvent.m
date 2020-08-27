@@ -30,29 +30,6 @@ NSString * const UAProximityRegionRSSIKey = @"rssi";
 NSString * const UACircularRegionKey = @"circular_region";
 NSString * const UACircularRegionRadiusKey = @"radius";
 
-// Deprecated - to be removed in SDK version 14.0.
-NSString * const kUARegionEventType = UARegionEventType;
-double const kUARegionEventMaxLatitude = UARegionEventMaxLatitude;
-double const kUARegionEventMinLatitude = UARegionEventMinLatitude;
-double const kUARegionEventMaxLongitude = UARegionEventMaxLongitude;
-double const kUARegionEventMinLongitude = UARegionEventMinLongitude;
-NSUInteger const kUARegionEventMaxCharacters = UARegionEventMaxCharacters;
-NSUInteger const kUARegionEventMinCharacters = UARegionEventMinCharacters;
-NSString * const kUARegionSourceKey = UARegionSourceKey;
-NSString * const kUARegionIDKey = UARegionIDKey;
-NSString * const kUARegionBoundaryEventKey = UARegionBoundaryEventKey;
-NSString * const kUARegionBoundaryEventEnterValue = UARegionBoundaryEventEnterValue;
-NSString * const kUARegionBoundaryEventExitValue = UARegionBoundaryEventExitValue;
-NSString * const kUARegionLatitudeKey = UARegionLatitudeKey;
-NSString * const kUARegionLongitudeKey = UARegionLongitudeKey;
-NSString * const kUAProximityRegionKey = UAProximityRegionKey;
-NSString * const kUAProximityRegionIDKey = UAProximityRegionIDKey;
-NSString * const kUAProximityRegionMajorKey = UAProximityRegionMajorKey;
-NSString * const kUAProximityRegionMinorKey = UAProximityRegionMinorKey;
-NSString * const kUAProximityRegionRSSIKey = UAProximityRegionRSSIKey;
-NSString * const kUACircularRegionKey = UACircularRegionKey;
-NSString * const kUACircularRegionRadiusKey = UACircularRegionRadiusKey;
-
 - (NSString *)eventType {
     return UARegionEventType;
 }

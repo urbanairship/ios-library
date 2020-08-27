@@ -19,21 +19,6 @@ extern double const UAProximityRegionMaxRSSI;
  */
 extern double const UAProximityRegionMinRSSI;
 
-/**
- * Maximum RSSI of the proximity region.
- *
- * @deprecated Deprecated – to be removed in SDK version 14.0. Please use UAProximityRegionMaxRSSI.
-*/
-extern double const kUAProximityRegionMaxRSSI DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0. Please use UAProximityRegionMaxRSSI.");
-
-/**
- * Minimum RSSI of the proximity region.
- *
- * @deprecated Deprecated – to be removed in SDK version 14.0. Please use UAProximityRegionMinRSSI.
-*/
-extern double const kUAProximityRegionMinRSSI DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0. Please use UAProximityRegionMinRSSI.");
-
-
 ///---------------------------------------------------------------------------------------
 /// @name Proximity Region Internal Properties
 ///---------------------------------------------------------------------------------------

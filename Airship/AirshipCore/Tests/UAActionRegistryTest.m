@@ -184,7 +184,6 @@
  */
 - (void)testUpdateActionInvalid {
     UAAction *action = [[UAAction alloc] init];
-    UAActionPredicate predicate = ^(UAActionArguments *args) { return YES; };
     [self.registry registerAction:action name:@"name"];
 
     XCTAssertFalse([self.registry updateAction:action forEntryWithName:@"not-found"], @"Update action should return NO if the registry for the name does not exist.");
@@ -195,8 +194,6 @@
  */
 - (void)testUpdateActionClassInvalid {
     Class actionClass = [UAAction class];
-    id<UAActionPredicateProtocol> predicate = [[[UATagsActionPredicate class] alloc] init];
-
     [self.registry registerActionClass:actionClass name:@"name"];
 
     XCTAssertFalse([self.registry updateActionClass:actionClass forEntryWithName:@"not-found"], @"Update action should return NO if the registry for the name does not exist.");

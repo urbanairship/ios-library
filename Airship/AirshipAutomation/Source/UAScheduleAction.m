@@ -11,10 +11,6 @@
 NSString * const UAScheduleActionDefaultRegistryName = @"schedule_actions";
 NSString * const UAScheduleActionDefaultRegistryAlias = @"^sa";
 
-// Deprecated - to be removed in SDK version 14.0.
-NSString * const kUAScheduleActionDefaultRegistryName = UAScheduleActionDefaultRegistryName;
-NSString * const kUAScheduleActionDefaultRegistryAlias = UAScheduleActionDefaultRegistryAlias;
-
 static NSString *const UAScheduleInfoPriorityKey = @"priority";
 static NSString *const UAScheduleInfoLimitKey = @"limit";
 static NSString *const UAScheduleInfoGroupKey = @"group";

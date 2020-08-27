@@ -8,10 +8,6 @@
 NSString * const UADeepLinkActionDefaultRegistryName = @"deep_link_action";
 NSString * const UADeepLinkActionDefaultRegistryAlias = @"^d";
 
-// Deprecated - to be removed in SDK version 14.0.
-NSString * const kUADeepLinkActionDefaultRegistryName = UADeepLinkActionDefaultRegistryName;
-NSString * const kUADeepLinkActionDefaultRegistryAlias = UADeepLinkActionDefaultRegistryAlias;
-
 - (BOOL)acceptsArguments:(UAActionArguments *)arguments {
     if (arguments.situation == UASituationBackgroundPush || arguments.situation == UASituationBackgroundInteractiveButton) {
         return NO;

@@ -4,7 +4,6 @@
 #import <WebKit/WebKit.h>
 #import "UAMessageCenterMessageViewDelegate.h"
 #import "UAInboxMessage.h"
-#import "UAMessageCenterMessageViewProtocol.h"
 
 #import "UAAirshipMessageCenterCoreImport.h"
 

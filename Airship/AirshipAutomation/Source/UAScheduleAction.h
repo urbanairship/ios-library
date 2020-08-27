@@ -27,21 +27,6 @@ extern NSString * const UAScheduleActionDefaultRegistryName;
 extern NSString * const UAScheduleActionDefaultRegistryAlias;
 
 /**
- * Default registry name for schedule action.
- *
- * @deprecated Deprecated – to be removed in SDK version 14.0. Please use UAScheduleActionDefaultRegistryName.
-*/
-extern NSString * const kUAScheduleActionDefaultRegistryName DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0. Please use UAScheduleActionDefaultRegistryName.");
-
-/**
- * Default registry alias for schedule action.
- *
- * @deprecated Deprecated – to be removed in SDK version 14.0. Please use UAScheduleActionDefaultRegistryAlias.
-*/
-extern NSString * const kUAScheduleActionDefaultRegistryAlias DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0. Please use UAScheduleActionDefaultRegistryAlias.");
-
-
-/**
  * Represents the possible error conditions when deserializing schedules from JSON.
  */
 typedef NS_ENUM(NSInteger, UAScheduleActionErrorCode) {

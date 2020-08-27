@@ -16,20 +16,6 @@ extern double const UACircularRegionMaxRadius;
  */
 extern double const UACircularRegionMinRadius;
 
-/**
- * Maximum radius of the circular region.
- *
- * @deprecated Deprecated – to be removed in SDK version 14.0. Please use UACircularRegionMaxRadius.
-*/
-extern double const kUACircularRegionMaxRadius DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0. Please use UACircularRegionMaxRadius.");
-
-/**
- * Minimum radius of the circular region.
- *
- * @deprecated Deprecated – to be removed in SDK version 14.0. Please use UACircularRegionMinRadius.
-*/
-extern double const kUACircularRegionMinRadius DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0. Please use UACircularRegionMinRadius.");
-
 ///---------------------------------------------------------------------------------------
 /// @name Circular Region Internal Properties
 ///---------------------------------------------------------------------------------------

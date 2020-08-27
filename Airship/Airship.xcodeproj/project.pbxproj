@@ -162,9 +162,6 @@
 		3CA0E428237E4BED00EE76CF /* UADefaultMessageCenterUI.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E331237E396100EE76CF /* UADefaultMessageCenterUI.m */; };
 		3CA0E42A237E4BED00EE76CF /* UAMessageCenterDateUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E333237E396100EE76CF /* UAMessageCenterDateUtils.m */; };
 		3CA0E42C237E4BED00EE76CF /* UAMessageCenterListCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E31D237E396100EE76CF /* UAMessageCenterListCell.m */; };
-		3CA0E42E237E4BED00EE76CF /* UAMessageCenterListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E315237E396100EE76CF /* UAMessageCenterListViewController.m */; };
-		3CA0E431237E4BED00EE76CF /* UAMessageCenterMessageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E32F237E396100EE76CF /* UAMessageCenterMessageViewController.m */; };
-		3CA0E434237E4BED00EE76CF /* UAMessageCenterSplitViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E337237E396100EE76CF /* UAMessageCenterSplitViewController.m */; };
 		3CA0E436237E4BED00EE76CF /* UAMessageCenterStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E31C237E396100EE76CF /* UAMessageCenterStyle.m */; };
 		3CA0E437237E4BED00EE76CF /* UAInboxMessageData.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E335237E396100EE76CF /* UAInboxMessageData.m */; };
 		3CA0E439237E4BED00EE76CF /* UAInboxStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E32D237E396100EE76CF /* UAInboxStore.m */; };
@@ -184,11 +181,7 @@
 		3CA0E459237E4CA100EE76CF /* UADefaultMessageCenterUI.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CA0E310237E396100EE76CF /* UADefaultMessageCenterUI.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3CA0E45A237E4CA100EE76CF /* UAMessageCenterDateUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CA0E31B237E396100EE76CF /* UAMessageCenterDateUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3CA0E45B237E4CA100EE76CF /* UAMessageCenterListCell.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CA0E33E237E396100EE76CF /* UAMessageCenterListCell.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		3CA0E45C237E4CA100EE76CF /* UAMessageCenterListViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CA0E329237E396100EE76CF /* UAMessageCenterListViewController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3CA0E45D237E4CA100EE76CF /* UAMessageCenterLocalization.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CA0E316237E396100EE76CF /* UAMessageCenterLocalization.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		3CA0E45E237E4CA100EE76CF /* UAMessageCenterMessageViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CA0E311237E396100EE76CF /* UAMessageCenterMessageViewController.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		3CA0E45F237E4CA100EE76CF /* UAMessageCenterMessageViewProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CA0E314237E396100EE76CF /* UAMessageCenterMessageViewProtocol.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		3CA0E460237E4CA100EE76CF /* UAMessageCenterSplitViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CA0E318237E396100EE76CF /* UAMessageCenterSplitViewController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3CA0E461237E4CA100EE76CF /* UAMessageCenterStyle.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CA0E332237E396100EE76CF /* UAMessageCenterStyle.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3CA0E462237E4CA100EE76CF /* UAInboxMessageData+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CA0E323237E396100EE76CF /* UAInboxMessageData+Internal.h */; };
 		3CA0E463237E4CA100EE76CF /* UAInboxStore+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CA0E33B237E396100EE76CF /* UAInboxStore+Internal.h */; };
@@ -211,11 +204,9 @@
 		3CA0E474237E4CA100EE76CF /* UAMessageCenterModuleLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CA0E326237E396100EE76CF /* UAMessageCenterModuleLoader.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3CA0E476237E4DB900EE76CF /* AirshipMessageCenterLib.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CA0E475237E4DB800EE76CF /* AirshipMessageCenterLib.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3CA0E479237E4E3000EE76CF /* UAInbox.xcdatamodeld in Resources */ = {isa = PBXBuildFile; fileRef = 3CA0E304237E396100EE76CF /* UAInbox.xcdatamodeld */; };
-		3CA0E47A237E4E3000EE76CF /* UAMessageCenterListViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3CA0E306237E396100EE76CF /* UAMessageCenterListViewController.xib */; };
 		3CA0E47B237E4E3000EE76CF /* UAMessageCenterActions.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3CA0E307237E396100EE76CF /* UAMessageCenterActions.plist */; };
 		3CA0E47C237E4E3000EE76CF /* UAMessageCenterListCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3CA0E308237E396100EE76CF /* UAMessageCenterListCell.xib */; };
 		3CA0E47D237E4E3000EE76CF /* UAMessageCenterPlaceholderIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 3CA0E309237E396100EE76CF /* UAMessageCenterPlaceholderIcon.png */; };
-		3CA0E47E237E4E3000EE76CF /* UAMessageCenterMessageViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3CA0E30A237E396100EE76CF /* UAMessageCenterMessageViewController.xib */; };
 		3CBCED5321150742003B7239 /* UAPendingTagGroupStore+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CBCED5121150742003B7239 /* UAPendingTagGroupStore+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3CBCED5421150742003B7239 /* UAPendingTagGroupStore+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CBCED5121150742003B7239 /* UAPendingTagGroupStore+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3CBCED5621150742003B7239 /* UAPendingTagGroupStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CBCED5221150742003B7239 /* UAPendingTagGroupStore.m */; };
@@ -1109,11 +1100,9 @@
 		6EE7713F238F163300E79944 /* UAInAppMessageModalViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6E845479237E231F007D3B1E /* UAInAppMessageModalViewController.xib */; };
 		6EE77140238F163300E79944 /* UAInAppMessageResizableViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6E84547A237E2320007D3B1E /* UAInAppMessageResizableViewController.xib */; };
 		6EE77141238F163F00E79944 /* UAInbox.xcdatamodeld in Resources */ = {isa = PBXBuildFile; fileRef = 3CA0E304237E396100EE76CF /* UAInbox.xcdatamodeld */; };
-		6EE77142238F163F00E79944 /* UAMessageCenterListViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3CA0E306237E396100EE76CF /* UAMessageCenterListViewController.xib */; };
 		6EE77143238F163F00E79944 /* UAMessageCenterActions.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3CA0E307237E396100EE76CF /* UAMessageCenterActions.plist */; };
 		6EE77144238F163F00E79944 /* UAMessageCenterListCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3CA0E308237E396100EE76CF /* UAMessageCenterListCell.xib */; };
 		6EE77145238F163F00E79944 /* UAMessageCenterPlaceholderIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 3CA0E309237E396100EE76CF /* UAMessageCenterPlaceholderIcon.png */; };
-		6EE77146238F163F00E79944 /* UAMessageCenterMessageViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3CA0E30A237E396100EE76CF /* UAMessageCenterMessageViewController.xib */; };
 		6EE77147238F167300E79944 /* UARateAppActionPredicate+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 992F89881EFD99B000E4C8FE /* UARateAppActionPredicate+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6EE77148238F167300E79944 /* UARateAppAction+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 45FD232C21890EAA0056F111 /* UARateAppAction+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6EE7714A238F167300E79944 /* UARateAppPromptViewController+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 9928146F1EF4A14400D0D388 /* UARateAppPromptViewController+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1228,11 +1217,7 @@
 		6EE771CA238F16A600E79944 /* UADefaultMessageCenterUI.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CA0E310237E396100EE76CF /* UADefaultMessageCenterUI.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6EE771CB238F16A600E79944 /* UAMessageCenterDateUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CA0E31B237E396100EE76CF /* UAMessageCenterDateUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6EE771CC238F16A600E79944 /* UAMessageCenterListCell.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CA0E33E237E396100EE76CF /* UAMessageCenterListCell.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6EE771CD238F16A600E79944 /* UAMessageCenterListViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CA0E329237E396100EE76CF /* UAMessageCenterListViewController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6EE771CE238F16A600E79944 /* UAMessageCenterLocalization.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CA0E316237E396100EE76CF /* UAMessageCenterLocalization.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6EE771CF238F16A600E79944 /* UAMessageCenterMessageViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CA0E311237E396100EE76CF /* UAMessageCenterMessageViewController.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6EE771D0238F16A600E79944 /* UAMessageCenterMessageViewProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CA0E314237E396100EE76CF /* UAMessageCenterMessageViewProtocol.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6EE771D1238F16A600E79944 /* UAMessageCenterSplitViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CA0E318237E396100EE76CF /* UAMessageCenterSplitViewController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6EE771D2238F16A600E79944 /* UAMessageCenterStyle.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CA0E332237E396100EE76CF /* UAMessageCenterStyle.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6EE771D3238F16A600E79944 /* UAInboxMessageData+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CA0E323237E396100EE76CF /* UAInboxMessageData+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6EE771D4238F16A600E79944 /* UAInboxStore+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CA0E33B237E396100EE76CF /* UAInboxStore+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1343,9 +1328,6 @@
 		6EE77245238F172A00E79944 /* UADefaultMessageCenterUI.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E331237E396100EE76CF /* UADefaultMessageCenterUI.m */; };
 		6EE77246238F172A00E79944 /* UAMessageCenterDateUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E333237E396100EE76CF /* UAMessageCenterDateUtils.m */; };
 		6EE77247238F172A00E79944 /* UAMessageCenterListCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E31D237E396100EE76CF /* UAMessageCenterListCell.m */; };
-		6EE77248238F172A00E79944 /* UAMessageCenterListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E315237E396100EE76CF /* UAMessageCenterListViewController.m */; };
-		6EE77249238F172A00E79944 /* UAMessageCenterMessageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E32F237E396100EE76CF /* UAMessageCenterMessageViewController.m */; };
-		6EE7724A238F172A00E79944 /* UAMessageCenterSplitViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E337237E396100EE76CF /* UAMessageCenterSplitViewController.m */; };
 		6EE7724B238F172A00E79944 /* UAMessageCenterStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E31C237E396100EE76CF /* UAMessageCenterStyle.m */; };
 		6EE7724C238F172A00E79944 /* UAInboxMessageData.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E335237E396100EE76CF /* UAInboxMessageData.m */; };
 		6EE7724D238F172A00E79944 /* UAInboxStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E32D237E396100EE76CF /* UAInboxStore.m */; };
@@ -2533,24 +2515,18 @@
 		3CA0E24F237CCBA600EE76CF /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3CA0E2AC237CCE2600EE76CF /* AirshipDebug.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AirshipDebug.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3CA0E305237E396100EE76CF /* UAInbox.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = UAInbox.xcdatamodel; sourceTree = "<group>"; };
-		3CA0E306237E396100EE76CF /* UAMessageCenterListViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = UAMessageCenterListViewController.xib; sourceTree = "<group>"; };
 		3CA0E307237E396100EE76CF /* UAMessageCenterActions.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = UAMessageCenterActions.plist; sourceTree = "<group>"; };
 		3CA0E308237E396100EE76CF /* UAMessageCenterListCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = UAMessageCenterListCell.xib; sourceTree = "<group>"; };
 		3CA0E309237E396100EE76CF /* UAMessageCenterPlaceholderIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = UAMessageCenterPlaceholderIcon.png; sourceTree = "<group>"; };
-		3CA0E30A237E396100EE76CF /* UAMessageCenterMessageViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = UAMessageCenterMessageViewController.xib; sourceTree = "<group>"; };
 		3CA0E30C237E396100EE76CF /* UAInboxMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInboxMessage.m; sourceTree = "<group>"; };
 		3CA0E30D237E396100EE76CF /* UAMessageCenterModuleLoader.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAMessageCenterModuleLoader.m; sourceTree = "<group>"; };
 		3CA0E30E237E396100EE76CF /* UAJSONValueTransformer+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAJSONValueTransformer+Internal.h"; sourceTree = "<group>"; };
 		3CA0E30F237E396100EE76CF /* UAInboxMessageList.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInboxMessageList.m; sourceTree = "<group>"; };
 		3CA0E310237E396100EE76CF /* UADefaultMessageCenterUI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UADefaultMessageCenterUI.h; sourceTree = "<group>"; };
-		3CA0E311237E396100EE76CF /* UAMessageCenterMessageViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UAMessageCenterMessageViewController.h; sourceTree = "<group>"; };
 		3CA0E312237E396100EE76CF /* UAMessageCenterAction.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UAMessageCenterAction.h; sourceTree = "<group>"; };
 		3CA0E313237E396100EE76CF /* UAUserData.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAUserData.m; sourceTree = "<group>"; };
-		3CA0E314237E396100EE76CF /* UAMessageCenterMessageViewProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UAMessageCenterMessageViewProtocol.h; sourceTree = "<group>"; };
-		3CA0E315237E396100EE76CF /* UAMessageCenterListViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAMessageCenterListViewController.m; sourceTree = "<group>"; };
 		3CA0E316237E396100EE76CF /* UAMessageCenterLocalization.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UAMessageCenterLocalization.h; sourceTree = "<group>"; };
 		3CA0E317237E396100EE76CF /* UAUser.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAUser.m; sourceTree = "<group>"; };
-		3CA0E318237E396100EE76CF /* UAMessageCenterSplitViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UAMessageCenterSplitViewController.h; sourceTree = "<group>"; };
 		3CA0E319237E396100EE76CF /* UAInboxUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInboxUtils.m; sourceTree = "<group>"; };
 		3CA0E31A237E396100EE76CF /* UAMessageCenterNativeBridgeExtension.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UAMessageCenterNativeBridgeExtension.h; sourceTree = "<group>"; };
 		3CA0E31B237E396100EE76CF /* UAMessageCenterDateUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UAMessageCenterDateUtils.h; sourceTree = "<group>"; };
@@ -2567,13 +2543,11 @@
 		3CA0E326237E396100EE76CF /* UAMessageCenterModuleLoader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UAMessageCenterModuleLoader.h; sourceTree = "<group>"; };
 		3CA0E327237E396100EE76CF /* UAInboxMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UAInboxMessage.h; sourceTree = "<group>"; };
 		3CA0E328237E396100EE76CF /* UAUser+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAUser+Internal.h"; sourceTree = "<group>"; };
-		3CA0E329237E396100EE76CF /* UAMessageCenterListViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UAMessageCenterListViewController.h; sourceTree = "<group>"; };
 		3CA0E32A237E396100EE76CF /* UAMessageCenter+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAMessageCenter+Internal.h"; sourceTree = "<group>"; };
 		3CA0E32B237E396100EE76CF /* UAUserAPIClient+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAUserAPIClient+Internal.h"; sourceTree = "<group>"; };
 		3CA0E32C237E396100EE76CF /* UAUserData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UAUserData.h; sourceTree = "<group>"; };
 		3CA0E32D237E396100EE76CF /* UAInboxStore.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInboxStore.m; sourceTree = "<group>"; };
 		3CA0E32E237E396100EE76CF /* UAMessageCenterAction.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAMessageCenterAction.m; sourceTree = "<group>"; };
-		3CA0E32F237E396100EE76CF /* UAMessageCenterMessageViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAMessageCenterMessageViewController.m; sourceTree = "<group>"; };
 		3CA0E330237E396100EE76CF /* UAJSONValueTransformer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAJSONValueTransformer.m; sourceTree = "<group>"; };
 		3CA0E331237E396100EE76CF /* UADefaultMessageCenterUI.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UADefaultMessageCenterUI.m; sourceTree = "<group>"; };
 		3CA0E332237E396100EE76CF /* UAMessageCenterStyle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UAMessageCenterStyle.h; sourceTree = "<group>"; };
@@ -2581,7 +2555,6 @@
 		3CA0E334237E396100EE76CF /* UAUserData+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAUserData+Internal.h"; sourceTree = "<group>"; };
 		3CA0E335237E396100EE76CF /* UAInboxMessageData.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInboxMessageData.m; sourceTree = "<group>"; };
 		3CA0E336237E396100EE76CF /* UAMessageCenterNativeBridgeExtension.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAMessageCenterNativeBridgeExtension.m; sourceTree = "<group>"; };
-		3CA0E337237E396100EE76CF /* UAMessageCenterSplitViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAMessageCenterSplitViewController.m; sourceTree = "<group>"; };
 		3CA0E338237E396100EE76CF /* UAInboxUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UAInboxUtils.h; sourceTree = "<group>"; };
 		3CA0E339237E396100EE76CF /* UAUser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UAUser.h; sourceTree = "<group>"; };
 		3CA0E33A237E396100EE76CF /* UAUserDataDAO.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAUserDataDAO.m; sourceTree = "<group>"; };
@@ -3788,11 +3761,9 @@
 				3CA0E304237E396100EE76CF /* UAInbox.xcdatamodeld */,
 				3C16DA7223E11FB3001499A4 /* UADefaultMessageCenterListViewController.xib */,
 				3C16DA7323E11FB3001499A4 /* UADefaultMessageCenterMessageViewController.xib */,
-				3CA0E306237E396100EE76CF /* UAMessageCenterListViewController.xib */,
 				3CA0E307237E396100EE76CF /* UAMessageCenterActions.plist */,
 				3CA0E308237E396100EE76CF /* UAMessageCenterListCell.xib */,
 				3CA0E309237E396100EE76CF /* UAMessageCenterPlaceholderIcon.png */,
-				3CA0E30A237E396100EE76CF /* UAMessageCenterMessageViewController.xib */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -3882,16 +3853,9 @@
 				3CA0E333237E396100EE76CF /* UAMessageCenterDateUtils.m */,
 				3CA0E33E237E396100EE76CF /* UAMessageCenterListCell.h */,
 				3CA0E31D237E396100EE76CF /* UAMessageCenterListCell.m */,
-				3CA0E329237E396100EE76CF /* UAMessageCenterListViewController.h */,
-				3CA0E315237E396100EE76CF /* UAMessageCenterListViewController.m */,
 				3CCFD5DA23A077BA001AF966 /* UAMessageCenterListViewDelegate.h */,
 				3CA0E316237E396100EE76CF /* UAMessageCenterLocalization.h */,
-				3CA0E311237E396100EE76CF /* UAMessageCenterMessageViewController.h */,
-				3CA0E32F237E396100EE76CF /* UAMessageCenterMessageViewController.m */,
 				3CCFD5D923A077BA001AF966 /* UAMessageCenterMessageViewDelegate.h */,
-				3CA0E314237E396100EE76CF /* UAMessageCenterMessageViewProtocol.h */,
-				3CA0E318237E396100EE76CF /* UAMessageCenterSplitViewController.h */,
-				3CA0E337237E396100EE76CF /* UAMessageCenterSplitViewController.m */,
 				3CA0E332237E396100EE76CF /* UAMessageCenterStyle.h */,
 				3CA0E31C237E396100EE76CF /* UAMessageCenterStyle.m */,
 				3CCFD5DD23A082EF001AF966 /* UADefaultMessageCenterSplitViewDelegate.h */,
@@ -5840,11 +5804,7 @@
 				3CA0E459237E4CA100EE76CF /* UADefaultMessageCenterUI.h in Headers */,
 				3CA0E45A237E4CA100EE76CF /* UAMessageCenterDateUtils.h in Headers */,
 				3CA0E45B237E4CA100EE76CF /* UAMessageCenterListCell.h in Headers */,
-				3CA0E45C237E4CA100EE76CF /* UAMessageCenterListViewController.h in Headers */,
 				3CA0E45D237E4CA100EE76CF /* UAMessageCenterLocalization.h in Headers */,
-				3CA0E45E237E4CA100EE76CF /* UAMessageCenterMessageViewController.h in Headers */,
-				3CA0E45F237E4CA100EE76CF /* UAMessageCenterMessageViewProtocol.h in Headers */,
-				3CA0E460237E4CA100EE76CF /* UAMessageCenterSplitViewController.h in Headers */,
 				3CA0E461237E4CA100EE76CF /* UAMessageCenterStyle.h in Headers */,
 				3CA0E466237E4CA100EE76CF /* UAInboxMessage.h in Headers */,
 				3CA0E468237E4CA100EE76CF /* UAInboxMessageList.h in Headers */,
@@ -6436,11 +6396,7 @@
 				6EE771CA238F16A600E79944 /* UADefaultMessageCenterUI.h in Headers */,
 				6EE771CB238F16A600E79944 /* UAMessageCenterDateUtils.h in Headers */,
 				6EE771CC238F16A600E79944 /* UAMessageCenterListCell.h in Headers */,
-				6EE771CD238F16A600E79944 /* UAMessageCenterListViewController.h in Headers */,
 				6EE771CE238F16A600E79944 /* UAMessageCenterLocalization.h in Headers */,
-				6EE771CF238F16A600E79944 /* UAMessageCenterMessageViewController.h in Headers */,
-				6EE771D0238F16A600E79944 /* UAMessageCenterMessageViewProtocol.h in Headers */,
-				6EE771D1238F16A600E79944 /* UAMessageCenterSplitViewController.h in Headers */,
 				6EE771D2238F16A600E79944 /* UAMessageCenterStyle.h in Headers */,
 				6EE771D7238F16A600E79944 /* UAInboxMessage.h in Headers */,
 				6EE771D9238F16A600E79944 /* UAInboxMessageList.h in Headers */,
@@ -7379,13 +7335,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				3CA0E479237E4E3000EE76CF /* UAInbox.xcdatamodeld in Resources */,
-				3CA0E47A237E4E3000EE76CF /* UAMessageCenterListViewController.xib in Resources */,
 				3CA0E47B237E4E3000EE76CF /* UAMessageCenterActions.plist in Resources */,
 				3CA0E47C237E4E3000EE76CF /* UAMessageCenterListCell.xib in Resources */,
 				3CA0E47D237E4E3000EE76CF /* UAMessageCenterPlaceholderIcon.png in Resources */,
 				3C16DA7923E11FB3001499A4 /* UADefaultMessageCenterMessageViewController.xib in Resources */,
 				3C16DA7723E11FB3001499A4 /* UADefaultMessageCenterListViewController.xib in Resources */,
-				3CA0E47E237E4E3000EE76CF /* UAMessageCenterMessageViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7447,11 +7401,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				6EE77141238F163F00E79944 /* UAInbox.xcdatamodeld in Resources */,
-				6EE77142238F163F00E79944 /* UAMessageCenterListViewController.xib in Resources */,
 				6EE77143238F163F00E79944 /* UAMessageCenterActions.plist in Resources */,
 				6EE77144238F163F00E79944 /* UAMessageCenterListCell.xib in Resources */,
 				6EE77145238F163F00E79944 /* UAMessageCenterPlaceholderIcon.png in Resources */,
-				6EE77146238F163F00E79944 /* UAMessageCenterMessageViewController.xib in Resources */,
 				6EE77139238F163300E79944 /* UAAutomationActions.plist in Resources */,
 				6EE7713A238F163300E79944 /* UAInAppMessageBannerContentView.xib in Resources */,
 				3C16DA7623E11FB3001499A4 /* UADefaultMessageCenterListViewController.xib in Resources */,
@@ -7771,9 +7723,6 @@
 				3C45B05F23E11D8B004B9590 /* UADefaultMessageCenterListViewController.m in Sources */,
 				3CA0E42A237E4BED00EE76CF /* UAMessageCenterDateUtils.m in Sources */,
 				3CA0E42C237E4BED00EE76CF /* UAMessageCenterListCell.m in Sources */,
-				3CA0E42E237E4BED00EE76CF /* UAMessageCenterListViewController.m in Sources */,
-				3CA0E431237E4BED00EE76CF /* UAMessageCenterMessageViewController.m in Sources */,
-				3CA0E434237E4BED00EE76CF /* UAMessageCenterSplitViewController.m in Sources */,
 				3CA0E436237E4BED00EE76CF /* UAMessageCenterStyle.m in Sources */,
 				3CA0E437237E4BED00EE76CF /* UAInboxMessageData.m in Sources */,
 				3CA0E439237E4BED00EE76CF /* UAInboxStore.m in Sources */,
@@ -8183,9 +8132,6 @@
 				6EE77245238F172A00E79944 /* UADefaultMessageCenterUI.m in Sources */,
 				6EE77246238F172A00E79944 /* UAMessageCenterDateUtils.m in Sources */,
 				6EE77247238F172A00E79944 /* UAMessageCenterListCell.m in Sources */,
-				6EE77248238F172A00E79944 /* UAMessageCenterListViewController.m in Sources */,
-				6EE77249238F172A00E79944 /* UAMessageCenterMessageViewController.m in Sources */,
-				6EE7724A238F172A00E79944 /* UAMessageCenterSplitViewController.m in Sources */,
 				6EE7724B238F172A00E79944 /* UAMessageCenterStyle.m in Sources */,
 				6EE7724C238F172A00E79944 /* UAInboxMessageData.m in Sources */,
 				6EE7724D238F172A00E79944 /* UAInboxStore.m in Sources */,

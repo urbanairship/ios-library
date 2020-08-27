@@ -39,18 +39,4 @@ extern NSString * const UAFetchDeviceInfoActionDefaultRegistryName;
  */
 extern NSString * const UAFetchDeviceInfoActionDefaultRegistryAlias;
 
-/**
- * Default registry name for fetch device info action.
- *
- * @deprecated Deprecated – to be removed in SDK version 14.0. Please use UAFetchDeviceInfoActionDefaultRegistryName.
-*/
-extern NSString * const kUAFetchDeviceInfoActionDefaultRegistryName DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0. Please use UAFetchDeviceInfoActionDefaultRegistryName.");
-
-/**
- * Default registry alias for fetch device info action.
- *
- * @deprecated Deprecated – to be removed in SDK version 14.0. Please use UAFetchDeviceInfoActionDefaultRegistryAlias.
-*/
-extern NSString * const kUAFetchDeviceInfoActionDefaultRegistryAlias DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0. Please use UAFetchDeviceInfoActionDefaultRegistryAlias.");
-
 @end

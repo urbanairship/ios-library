@@ -11,10 +11,6 @@
 NSString * const UARemoveTagsActionDefaultRegistryName = @"remove_tags_action";
 NSString * const UARemoveTagsActionDefaultRegistryAlias = @"^-t";
 
-// Deprecated - to be removed in SDK version 14.0.
-NSString * const kUARemoveTagsActionDefaultRegistryName = UARemoveTagsActionDefaultRegistryName;
-NSString * const kUARemoveTagsActionDefaultRegistryAlias = UARemoveTagsActionDefaultRegistryAlias;
-
 - (void)applyChannelTags:(NSArray *)tags {
     [[UAirship channel] removeTags:tags];
 }

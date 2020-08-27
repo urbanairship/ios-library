@@ -6,13 +6,6 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /**
- * Message Center interaction type
- *
- * @deprecated Deprecated – to be removed in SDK version 14.0.
-*/
-extern NSString * const kUAInteractionMCRAP DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0.");
-
-/**
  * The max character limit for Strings.
  */
 extern const NSUInteger UACustomEventCharacterLimit;
@@ -70,7 +63,10 @@ extern NSString *const UACustomEventInteractionTypeKey;
 @property (nonatomic, copy, nullable) NSString *transactionID;
 
 /**
- * The event's properties.
+ * The event's properties. Properties must be valid JSON:
+ * - All objects are NSString, NSNumber, NSArray, NSDictionary, or NSNull
+ * - All dictionary keys are NSStrings
+ * - NSNumbers are not NaN or infinity
  */
 @property (nonatomic, copy) NSDictionary *properties;
 
@@ -118,50 +114,14 @@ extern NSString *const UACustomEventInteractionTypeKey;
 /**
  * Sets the custom event's interaction type and identifier as coming from a Message Center message.
  * @param messageID The message ID.
+ * @note For internal use only. :nodoc:
  */
 - (void)setInteractionFromMessageCenterMessage:(NSString *)messageID;
-
-/**
- * Sets a custom BOOL property.
- *
- * @param value The property value.
- * @param key The property key.
- * @deprecated Deprecated – to be removed in SDK version 14.0. Instead use the properties property of UACustomEvent.
- */
-
-- (void)setBoolProperty:(BOOL)value forKey:(NSString *)key DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0. Instead use the properties property of UACustomEvent.");
-
-/**
- * Sets a custom String property.
- *
- * @param value The property value.
- * @param key The property key.
- * @deprecated Deprecated – to be removed in SDK version 14.0. Instead use  Instead use the properties property of UACustomEvent.
- */
-- (void)setStringProperty:(NSString *)value forKey:(NSString *)key DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0. Instead use the properties property of UACustomEvent.");
-
-/**
- * Sets a custom Number property.
- *
- * @param value The property value.
- * @param key The property key.
- * @deprecated Deprecated – to be removed in SDK version 14.0. Instead use  Instead use the properties property of UACustomEvent.
- */
-- (void)setNumberProperty:(NSNumber *)value forKey:(NSString *)key DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0. Instead use the properties property of UACustomEvent.");
 
 /**
  * Adds the event to analytics.
  */
 - (void)track;
-
-/**
- * Sets a custom String array property. 
- *
- * @param value The property value.
- * @param key The property key.
- * @deprecated Deprecated – to be removed in SDK version 14.0. Instead use  Instead use the properties property of UACustomEvent.
- */
-- (void)setStringArrayProperty:(NSArray<NSString *> *)value forKey:(NSString *)key DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0. Instead use the properties property of UACustomEvent.");
 
 @end
 

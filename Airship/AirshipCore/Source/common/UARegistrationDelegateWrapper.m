@@ -9,6 +9,7 @@
 - (void)registrationSucceededForChannelID:(NSString *)channelID deviceToken:(NSString *)deviceToken {
     id strongDelegate = self.delegate;
     if ([strongDelegate respondsToSelector:@selector(registrationSucceededForChannelID:deviceToken:)]) {
+        UA_LERR(@"registrationSucceededForChannelID:deviceToken: is deprecated and will be removed in SDK 15. Use UAChannelUpdatedEvent NSNotification for channel updates." );
         [strongDelegate registrationSucceededForChannelID:channelID deviceToken:deviceToken];
     }
 }
@@ -16,6 +17,7 @@
 - (void)registrationFailed {
     id strongDelegate = self.delegate;
     if ([strongDelegate respondsToSelector:@selector(registrationFailed)]) {
+        UA_LERR(@"registrationFailed is deprecated and will be removed in SDK 15. Use UAChannelRegistrationFailedEvent NSNotification for channel registation failures." );
         [strongDelegate registrationFailed];
     }
 }
@@ -72,4 +74,3 @@
 }
 
 @end
-

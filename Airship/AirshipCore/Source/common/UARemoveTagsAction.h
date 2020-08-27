@@ -46,19 +46,4 @@ extern NSString * const UARemoveTagsActionDefaultRegistryName;
  */
 extern NSString * const UARemoveTagsActionDefaultRegistryAlias;
 
-/**
- * Default registry name for remove tags action.
- *
- * @deprecated Deprecated – to be removed in SDK version 14.0. Please use UARemoveTagsActionDefaultRegistryName.
-*/
-extern NSString * const kUARemoveTagsActionDefaultRegistryName DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0. Please use UARemoveTagsActionDefaultRegistryName.");
-
-/**
- * Default registry alias for remove tags action.
- *
- * @deprecated Deprecated – to be removed in SDK version 14.0. Please use UARemoveTagsActionDefaultRegistryAlias.
-*/
-extern NSString * const kUARemoveTagsActionDefaultRegistryAlias DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0. Please use UARemoveTagsActionDefaultRegistryAlias.");
-
 @end
-

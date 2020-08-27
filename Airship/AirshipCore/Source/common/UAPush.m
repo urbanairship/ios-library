@@ -280,18 +280,6 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
 #pragma mark -
 #pragma mark Get/Set Methods
 
-- (void)setChannelTagRegistrationEnabled:(BOOL)channelTagRegistrationEnabled {
-    self.channel.channelTagRegistrationEnabled = channelTagRegistrationEnabled;
-}
-
-- (BOOL)isChannelTagRegistrationEnabled {
-    return self.channel.channelTagRegistrationEnabled;
-}
-
-- (NSString *)channelID {
-    return self.channel.identifier;
-}
-
 - (BOOL)isAutobadgeEnabled {
     return [self.dataStore boolForKey:UAPushBadgeSettingsKey];
 }
@@ -307,18 +295,6 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
 - (void)setAlias:(NSString *)alias {
     NSString * trimmedAlias = [alias stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
     [self.dataStore setObject:trimmedAlias forKey:UAPushAliasSettingsKey];
-}
-
-- (NSArray *)tags {
-    return self.channel.tags;
-}
-
-- (void)setTags:(NSArray *)tags {
-    self.channel.tags = tags;
-}
-
-- (void)enableChannelCreation {
-    [self.channel enableChannelCreation];
 }
 
 - (BOOL)userPushNotificationsEnabled {
@@ -489,41 +465,6 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
 
     self.quietTime = @{UAPushQuietTimeStartKey : startTimeStr,
                        UAPushQuietTimeEndKey : endTimeStr };
-}
-
-
-#pragma mark -
-#pragma mark Open APIs - Airship Registration Tags APIs
-
-- (void)addTag:(NSString *)tag {
-    [self.channel addTag:tag];
-}
-
-- (void)addTags:(NSArray *)tags {
-    [self.channel addTags:tags];
-}
-
-- (void)removeTag:(NSString *)tag {
-    [self.channel removeTag:tag];
-}
-
-- (void)removeTags:(NSArray *)tags {
-    [self.channel removeTags:tags];
-}
-
-#pragma mark -
-#pragma mark Open APIs - Airship Tag Groups APIs
-
-- (void)addTags:(NSArray *)tags group:(NSString *)tagGroupID {
-    [self.channel addTags:tags group:tagGroupID];
-}
-
-- (void)removeTags:(NSArray *)tags group:(NSString *)tagGroupID {
-    [self.channel removeTags:tags group:tagGroupID];
-}
-
-- (void)setTags:(NSArray *)tags group:(NSString *)tagGroupID {
-    [self.channel setTags:tags group:tagGroupID];
 }
 
 #pragma mark Badges

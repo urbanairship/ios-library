@@ -13,20 +13,6 @@ extern NSString * const UAEnableFeatureActionDefaultRegistryName;
 extern NSString * const UAEnableFeatureActionDefaultRegistryAlias;
 
 /**
- * Default registry name for enable feature action.
- *
- * @deprecated Deprecated – to be removed in SDK version 14.0. Please use UAEnableFeatureActionDefaultRegistryName.
-*/
-extern NSString * const kUAEnableFeatureActionDefaultRegistryName DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0. Please use UAEnableFeatureActionDefaultRegistryName.");
-
-/**
- * Default registry alias for enable feature action.
- *
- * @deprecated Deprecated – to be removed in SDK version 14.0. Please use UAEnableFeatureActionDefaultRegistryAlias.
-*/
-extern NSString * const kUAEnableFeatureActionDefaultRegistryAlias DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0. Please use UAEnableFeatureActionDefaultRegistryAlias.");
-
-/**
  * Argument value to enable user notifications.
  */
 extern NSString *const UAEnableUserNotificationsActionValue;

@@ -9,10 +9,6 @@
 NSString * const UALandingPageActionDefaultRegistryName = @"landing_page_action";
 NSString * const UALandingPageActionDefaultRegistryAlias = @"^p";
 
-// Deprecated - to be removed in SDK version 14.0.
-NSString * const kUALandingPageActionDefaultRegistryName = UALandingPageActionDefaultRegistryName;
-NSString * const kUALandingPageActionDefaultRegistryAlias = UALandingPageActionDefaultRegistryAlias;
-
 @implementation UALandingPageAction
 
 NSString *const UALandingPageURLKey = @"url";

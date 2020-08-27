@@ -40,20 +40,6 @@ extern NSString * const UARateAppActionDefaultRegistryName;
 extern NSString * const UARateAppActionDefaultRegistryAlias;
 
 /**
- * Default registry name for rate-app action action.
- *
- * @deprecated Deprecated – to be removed in SDK version 14.0. Please use UARateAppActionDefaultRegistryName.
-*/
-extern NSString * const kUARateAppActionDefaultRegistryName DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0. Please use UARateAppActionDefaultRegistryName.");
-
-/**
- * Default registry alias for rate-app action action.
- *
- * @deprecated Deprecated – to be removed in SDK version 14.0. Please use UARateAppActionDefaultRegistryAlias.
-*/
-extern NSString * const kUARateAppActionDefaultRegistryAlias DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0. Please use UARateAppActionDefaultRegistryAlias.");
-
-/**
  * The show link prompt key.
  */
 extern NSString *const UARateAppShowLinkPromptKey;

@@ -2,12 +2,8 @@
 
 #import "UABaseTest.h"
 #import "UATagGroups.h"
-#import "UAirship.h"
-#import "UAPush.h"
 
 @interface UATagGroupsTest : UABaseTest
-@property(nonatomic, strong) id mockAirship;
-@property(nonatomic, strong) id mockPush;
 @property (nonatomic, strong) UATagGroups *tagGroups;
 @end
 
@@ -15,12 +11,6 @@
 
 - (void)setUp {
     [super setUp];
-    self.mockAirship = [self mockForClass:[UAirship class]];
-    self.mockPush = [self mockForClass:[UAPush class]];
-
-    [[[self.mockAirship stub] andReturn:self.mockPush] push];
-    [[[self.mockPush stub] andReturn:@[@"test"]] tags];
-
     self.tagGroups = [UATagGroups tagGroupsWithTags:@{ @"foo" : [NSSet setWithArray:@[@"baz", @"boz"]], @"bar" : [NSSet setWithArray:@[@"biz"]] }];
 }
 

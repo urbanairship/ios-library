@@ -29,20 +29,6 @@ extern NSString * const UACancelSchedulesActionDefaultRegistryName;
 extern NSString * const UACancelSchedulesActionDefaultRegistryAlias;
 
 /**
- * Default registry name for cancel schedules action.
- *
- * @deprecated Deprecated – to be removed in SDK version 14.0. Please use UACancelSchedulesActionDefaultRegistryName.
-*/
-extern NSString * const kUACancelSchedulesActionDefaultRegistryName DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0. Please use UACancelSchedulesActionDefaultRegistryName.");
-
-/**
- * Default registry alias for cancel schedules action.
- *
- * @deprecated Deprecated – to be removed in SDK version 14.0. Please use UACancelSchedulesActionDefaultRegistryAlias.
-*/
-extern NSString * const kUACancelSchedulesActionDefaultRegistryAlias DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 14.0. Please use UACancelSchedulesActionDefaultRegistryAlias.");
-
-/**
  * Argument value to cancel all schedules.
  */
 extern NSString *const UACancelSchedulesActionAll;
