@@ -138,4 +138,38 @@
     XCTAssertEqualObjects(expected, [collapsed[0] payload]);
 }
 
+- (void)testEquals {
+    // Different order of tags should still be equal
+    UATagGroupsMutation *set1 = [UATagGroupsMutation mutationToSetTags:@[@"tag1", @"tag2", @"tag3", @"tag4"] group:@"group"];
+    UATagGroupsMutation *set2 = [UATagGroupsMutation mutationToSetTags:@[@"tag2", @"tag1", @"tag3", @"tag4"] group:@"group"];
+    XCTAssertEqualObjects(set1, set2);
+}
+
+- (void)testCoding {
+    NSArray *tags = @[@"Enrolled_AB_Goat Experiment_Variant C",
+                      @"Enrolled_AB_Find the best iOS bleat_Variant B (BLEAT REAL GOOD)",
+                      @"Enrolled_AB_Tag Toggle Experiment / Sports & News_Variant B",
+                      @"Enrolled_AB_pfd test_og",
+                      @"Participated_AB_Find the best iOS bleat_Variant B (BLEAT REAL GOOD)",
+                      @"Enrolled_AB_Sales Training Demo EH - A/B_Variant C",
+                      @"Enrolled_AB_pfd bleat test_shimble",
+                      @"Participated_AB_Goat Experiment_Variant C"];
+
+
+    UATagGroupsMutation *set = [UATagGroupsMutation mutationToSetTags:tags group:@"group"];
+
+    NSError *error = nil;
+    id encoded = [NSKeyedArchiver archivedDataWithRootObject:set
+                                       requiringSecureCoding:NO
+                                                       error:&error];
+
+    XCTAssertNil(error);
+    XCTAssertNotNil(encoded);
+
+    id decoded = [NSKeyedUnarchiver unarchiveObjectWithData:encoded];
+
+    XCTAssertNotNil(decoded);
+    XCTAssertEqualObjects(set, decoded);
+}
+
 @end

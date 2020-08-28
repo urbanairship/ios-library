@@ -279,7 +279,19 @@
 }
 
 - (BOOL)isEqualToMutation:(UATagGroupsMutation *)mutation {
-    return [self.payload isEqualToDictionary:mutation.payload];
+    if (self.addTagGroups != mutation.addTagGroups && ![self.addTagGroups isEqualToDictionary:mutation.addTagGroups]) {
+        return NO;
+    }
+
+    if (self.removeTagGroups != mutation.removeTagGroups && ![self.removeTagGroups isEqualToDictionary:mutation.removeTagGroups]) {
+        return NO;
+    }
+
+    if (self.setTagGroups != mutation.setTagGroups && ![self.setTagGroups isEqualToDictionary:mutation.setTagGroups]) {
+        return NO;
+    }
+
+    return YES;
 }
 
 - (BOOL)isEqual:(id)object {
@@ -295,7 +307,12 @@
 }
 
 - (NSUInteger)hash {
-    return [self.payload hash];
+    NSUInteger result = 1;
+    result = 31 * result + [self.addTagGroups hash];
+    result = 31 * result + [self.removeTagGroups hash];
+    result = 31 * result + [self.setTagGroups hash];
+    return result;
 }
+
 
 @end
