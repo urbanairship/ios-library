@@ -88,12 +88,12 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * The current identifier associated with this registrar.
  */
-@property (nonatomic, readonly) NSString *identifier;
+@property (atomic, readonly) NSString *identifier;
 
 /**
  * Whether the registrar is enabled. Defaults to `YES`.
  */
-@property (nonatomic, assign) BOOL enabled;
+@property (atomic, assign) BOOL enabled;
 
 /**
  * Pending mutations.

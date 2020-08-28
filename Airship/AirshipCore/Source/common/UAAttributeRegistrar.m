@@ -15,10 +15,13 @@ static NSString *const NamedUserPersistentQueueKey = @"com.urbanairship.named_us
 @property(nonatomic, strong) UAAttributeAPIClient *client;
 @property(nonatomic, strong) UAPreferenceDataStore *dataStore;
 @property(nonatomic, strong) UIApplication *application;
-@property(nonatomic, copy) NSString *identifier;
+@property(atomic, copy) NSString *identifier;
+@property(atomic, assign) BOOL updating;
 @end
 
 @implementation UAAttributeRegistrar
+
+@synthesize enabled = _enabled;
 
 + (instancetype)channelRegistrarWithConfig:(UARuntimeConfig *)config
                                  dataStore:(UAPreferenceDataStore *)dataStore {
@@ -88,21 +91,24 @@ static NSString *const NamedUserPersistentQueueKey = @"com.urbanairship.named_us
 }
 
 - (void)updateAttributes {
-    if (!self.enabled) {
-        return;
+    @synchronized (self) {
+        if (!self.enabled) {
+            return;
+        }
+
+        if (self.updating) {
+            UA_LTRACE(@"Skipping attribute update, request already in flight");
+            return;
+        }
+
+        self.updating = YES;
     }
 
-    UA_WEAKIFY(self);
-    __block UIBackgroundTaskIdentifier backgroundTaskIdentifier = [self.application beginBackgroundTaskWithExpirationHandler:^{
-        UA_STRONGIFY(self);
-
-        UA_LTRACE(@"Attribute background task expired.");
-        [self.client cancelAllRequests];
-        [self endBackgroundTask:backgroundTaskIdentifier];
-    }];
+    __block UIBackgroundTaskIdentifier backgroundTaskIdentifier = [self beginUploading];
 
     if (backgroundTaskIdentifier == UIBackgroundTaskInvalid) {
         UA_LTRACE("Background task unavailable, skipping tag groups update.");
+        [self endUploading:backgroundTaskIdentifier];
         return;
     }
 
@@ -134,7 +140,7 @@ static NSString *const NamedUserPersistentQueueKey = @"com.urbanairship.named_us
 
     if (!identifier || !mutations) {
         // no upload work to do - end background task, if necessary, and finish operation
-        [self endBackgroundTask:backgroundTaskIdentifier];
+        [self endUploading:backgroundTaskIdentifier];
         return;
     }
 
@@ -153,7 +159,7 @@ static NSString *const NamedUserPersistentQueueKey = @"com.urbanairship.named_us
             [self uploadNextMutationWithBackgroundTaskIdentifier:backgroundTaskIdentifier];
         } else {
             UA_LINFO(@"Update of %@ failed with error: %@", mutations, error);
-            [self endBackgroundTask:backgroundTaskIdentifier];
+            [self endUploading:backgroundTaskIdentifier];
         }
     };
 
@@ -162,15 +168,41 @@ static NSString *const NamedUserPersistentQueueKey = @"com.urbanairship.named_us
                     completionHandler:apiCompletionBlock];
 }
 
-- (void)endBackgroundTask:(UIBackgroundTaskIdentifier)backgroundTaskIdentifier {
+- (UIBackgroundTaskIdentifier)beginUploading {
+    UA_WEAKIFY(self);
+    __block UIBackgroundTaskIdentifier backgroundTaskIdentifier = [self.application beginBackgroundTaskWithExpirationHandler:^{
+        UA_STRONGIFY(self);
+
+        UA_LTRACE(@"Attribute background task expired.");
+        [self.client cancelAllRequests];
+
+        [self endUploading:backgroundTaskIdentifier];
+    }];
+
+    return backgroundTaskIdentifier;
+}
+
+- (void)endUploading:(UIBackgroundTaskIdentifier)backgroundTaskIdentifier {
     if (backgroundTaskIdentifier != UIBackgroundTaskInvalid) {
         [self.application endBackgroundTask:backgroundTaskIdentifier];
+    }
+
+    @synchronized (self) {
+        self.updating = NO;
     }
 }
 
 - (void)setEnabled:(BOOL)enabled {
-    _enabled = enabled;
-    self.client.enabled = enabled;
+    @synchronized (self) {
+        _enabled = enabled;
+        self.client.enabled = enabled;
+    }
+}
+
+- (BOOL)enabled {
+    @synchronized (self) {
+        return _enabled;
+    }
 }
 
 - (void)setIdentifier:(NSString *)identifier clearPendingOnChange:(BOOL)clearPendingOnChange {
