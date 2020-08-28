@@ -36,7 +36,7 @@
 + (instancetype)pipeline {
     NSOperationQueue *queue = [[NSOperationQueue alloc] init];
     queue.maxConcurrentOperationCount = 1;
-    return [self pipelineWithQueue:queue dispatcher:[UADispatcher backgroundDispatcher]];
+    return [self pipelineWithQueue:queue dispatcher:[UADispatcher globalDispatcher]];
 }
 
 - (void)addRetriable:(UARetriable *)retriable {

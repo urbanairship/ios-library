@@ -4,6 +4,7 @@
 #import "UADeferredScheduleAPIClient+Internal.h"
 #import "UAScheduleTrigger+Internal.h"
 #import "UAInAppMessage+Internal.h"
+#import "UATestDispatcher.h"
 
 @interface UADeferredScheduleAPIClientTest : UAAirshipBaseTest
 @property (nonatomic, strong) UADeferredScheduleAPIClient *client;
@@ -16,7 +17,10 @@
 - (void)setUp {
     self.mockSession = [self mockForClass:[UARequestSession class]];
     self.mockAuthManager = [self mockForClass:[UAAuthTokenManager class]];
-    self.client = [UADeferredScheduleAPIClient clientWithConfig:self.config session:self.mockSession authManager:self.mockAuthManager];
+    self.client = [UADeferredScheduleAPIClient clientWithConfig:self.config
+                                                        session:self.mockSession
+                                                     dispatcher:[UATestDispatcher testDispatcher]
+                                                    authManager:self.mockAuthManager];
 }
 
 - (void)testResolveURL {
@@ -532,19 +536,6 @@
 
     XCTestExpectation *resultResolved = [self expectationWithDescription:@"Result resolved"];
 
-    [self.client resolveURL:URL
-                  channelID:channelID
-             triggerContext:triggerContext
-               tagOverrides:tagOverrides
-         attributeOverrides:attributeOverrides
-          completionHandler:^(UADeferredScheduleResult * _Nullable result, NSError * _Nullable error) {
-
-        XCTAssertNotNil(result);
-        XCTAssertTrue(result.isAudienceMatch);
-
-        [resultResolved fulfill];
-    }];
-
     XCTestExpectation *newTokenRetrieved = [self expectationWithDescription:@"New auth token retrieved"];
 
     [[self.mockAuthManager expect] expireToken:token];
@@ -569,6 +560,19 @@
         completionHandler(responseData, response, nil);
         [newSessionFinished fulfill];
     }] dataTaskWithRequest:OCMOCK_ANY retryWhere:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
+    [self.client resolveURL:URL
+                  channelID:channelID
+             triggerContext:triggerContext
+               tagOverrides:tagOverrides
+         attributeOverrides:attributeOverrides
+          completionHandler:^(UADeferredScheduleResult * _Nullable result, NSError * _Nullable error) {
+
+        XCTAssertNotNil(result);
+        XCTAssertTrue(result.isAudienceMatch);
+
+        [resultResolved fulfill];
+    }];
 
     [self waitForTestExpectations];
     [self.mockAuthManager verify];

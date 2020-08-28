@@ -2,6 +2,7 @@
 #import "UABaseTest.h"
 #import "UAAuthTokenManager+Internal.h"
 #import "UATestDate.h"
+#import "UATestDispatcher.h"
 
 @interface UAAuthTokenManagerTest : UABaseTest
 @property(nonatomic, strong) UAAuthTokenManager *manager;
@@ -24,7 +25,10 @@
     self.channelID = @"channel ID";
 
     self.testDate = [[UATestDate alloc] initWithAbsoluteTime:[NSDate date]];
-    self.manager = [UAAuthTokenManager authTokenManagerWithAPIClient:self.mockClient channel:self.mockChannel date:self.testDate];
+    self.manager = [UAAuthTokenManager authTokenManagerWithAPIClient:self.mockClient
+                                                             channel:self.mockChannel
+                                                                date:self.testDate
+                                                          dispatcher:[UATestDispatcher testDispatcher]];
 }
 
 - (void)testTokenWithCompletionHandler {

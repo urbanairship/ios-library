@@ -7,36 +7,50 @@
 @property(nonatomic, strong) UAChannel *channel;
 @property(nonatomic, strong) UAAuthToken *cachedToken;
 @property(nonatomic, strong) UADate *date;
-@property(nonatomic, strong) dispatch_queue_t requestQueue;
+@property(nonatomic, strong) UADispatcher *requestDispatcher;
 @end
 
 @implementation UAAuthTokenManager
 
-- (instancetype)initWithAPIClient:(UAAuthTokenAPIClient *)client channel:(UAChannel *)channel date:(UADate *)date {
+- (instancetype)initWithAPIClient:(UAAuthTokenAPIClient *)client
+                          channel:(UAChannel *)channel
+                             date:(UADate *)date
+                       dispatcher:(UADispatcher *)dispatcher {
+
     self = [super init];
 
     if (self) {
         self.client = client;
         self.channel = channel;
         self.date = date;
-
-        self.requestQueue = dispatch_queue_create("com.urbanairship.auth_token_manager.request_queue", DISPATCH_QUEUE_SERIAL);
+        self.requestDispatcher = dispatcher;
     }
 
     return self;
 }
 
-+ (instancetype)authTokenManagerWithAPIClient:(UAAuthTokenAPIClient *)client channel:(UAChannel *)channel date:(UADate *)date {
-    return [[self alloc] initWithAPIClient:client channel:channel date:date];
++ (instancetype)authTokenManagerWithAPIClient:(UAAuthTokenAPIClient *)client
+                                      channel:(UAChannel *)channel
+                                         date:(UADate *)date
+                                   dispatcher:(UADispatcher *)dispatcher {
+
+    return [[self alloc] initWithAPIClient:client
+                                   channel:channel
+                                      date:date
+                                dispatcher:dispatcher];
 }
 
 + (instancetype)authTokenManagerWithRuntimeConfig:(UARuntimeConfig *)config channel:(UAChannel *)channel {
     UAAuthTokenAPIClient *client = [UAAuthTokenAPIClient clientWithConfig:config];
-    return [[self alloc] initWithAPIClient:client channel:channel date:[[UADate alloc] init]];
+
+    return [[self alloc] initWithAPIClient:client
+                                   channel:channel
+                                      date:[[UADate alloc] init]
+                                dispatcher:[UADispatcher serialDispatcher]];
 }
 
 - (void)tokenWithCompletionHandler:(void (^)(NSString *))completionHandler {
-    dispatch_async(self.requestQueue, ^{
+    [self.requestDispatcher dispatchAsync:^{
         if (!self.channel.identifier) {
             return completionHandler(nil);
         }
@@ -48,7 +62,7 @@
         }
 
         __block UAAuthToken *responseToken;
-        dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
+        __block UASemaphore *semaphore = [UASemaphore semaphore];
 
         [self.client tokenWithChannelID:self.channel.identifier completionHandler:^(UAAuthToken * _Nullable token, NSError * _Nullable error) {
             if (!token || error) {
@@ -57,10 +71,10 @@
 
             responseToken = token;
 
-            dispatch_semaphore_signal(semaphore);
+            [semaphore signal];
         }];
 
-        dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
+        [semaphore wait];
 
         if (!responseToken) {
             return completionHandler(nil);
@@ -68,17 +82,17 @@
 
         self.cachedToken = responseToken;
         completionHandler(responseToken.token);
-    });
+    }];
 }
 
 - (void)expireToken:(NSString *)token {
     UA_WEAKIFY(self)
-    dispatch_async(self.requestQueue, ^{
+    [self.requestDispatcher dispatchAsync:^{
         UA_STRONGIFY(self)
         if ([token isEqualToString:self->_cachedToken.token]) {
             self->_cachedToken = nil;
         }
-    });
+    }];
 }
 
 - (UAAuthToken *)cachedToken {

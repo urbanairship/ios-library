@@ -5,6 +5,8 @@
 #import "UAAuthTokenAPIClient+Internal.h"
 #import "UAChannel.h"
 #import "UADate.h"
+#import "UADispatcher.h"
+#import "UASemaphore.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -19,9 +21,12 @@ NS_ASSUME_NONNULL_BEGIN
  * @param client The API client.
  * @param channel The channel.
  * @param date The UADate.
+ * @param dispatcher The serial dispatcher.
  */
-+ (instancetype)authTokenManagerWithAPIClient:(UAAuthTokenAPIClient *)client channel:(UAChannel *)channel date:(UADate *)date;
-
++ (instancetype)authTokenManagerWithAPIClient:(UAAuthTokenAPIClient *)client
+                                      channel:(UAChannel *)channel
+                                         date:(UADate *)date
+                                   dispatcher:(UADispatcher *)dispatcher;
 /**
  * UAAuthTokenManager class factory method.
  *

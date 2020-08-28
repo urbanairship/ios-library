@@ -83,7 +83,7 @@ NSString * const UAConnectionTypeWifi = @"wifi";
 }
 
 + (void)getDeviceID:(void (^)(NSString *))completionHandler dispatcher:(nullable UADispatcher *)dispatcher {
-    [[UADispatcher backgroundDispatcher] dispatchAsync:^{
+    [[UADispatcher globalDispatcher] dispatchAsync:^{
         NSString *deviceID = [UAKeychainUtils getDeviceID];
         UADispatcher *completionDispatcher = dispatcher ? : [UADispatcher mainDispatcher];
 

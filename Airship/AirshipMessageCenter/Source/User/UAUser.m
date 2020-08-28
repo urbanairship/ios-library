@@ -77,7 +77,7 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
                                     client:[UAUserAPIClient clientWithConfig:config]
                         notificationCenter:[NSNotificationCenter defaultCenter]
                                application:[UIApplication sharedApplication]
-                      backgroundDispatcher:[UADispatcher backgroundDispatcher]
+                      backgroundDispatcher:[UADispatcher globalDispatcher]
                                userDataDAO:[UAUserDataDAO userDataDAOWithConfig:config]];
 }
 

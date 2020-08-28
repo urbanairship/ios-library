@@ -67,6 +67,14 @@
 		3C16DA7823E11FB3001499A4 /* UADefaultMessageCenterMessageViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3C16DA7323E11FB3001499A4 /* UADefaultMessageCenterMessageViewController.xib */; };
 		3C16DA7923E11FB3001499A4 /* UADefaultMessageCenterMessageViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3C16DA7323E11FB3001499A4 /* UADefaultMessageCenterMessageViewController.xib */; };
 		3C2C53C524ECB43F009D45D0 /* UADeferredScheduleAPIClientTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C2C53C424ECB43F009D45D0 /* UADeferredScheduleAPIClientTest.m */; };
+		3C2C53DD24F70ECA009D45D0 /* UASemaphore.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C2C53DB24F70EC9009D45D0 /* UASemaphore.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		3C2C53DE24F70ECA009D45D0 /* UASemaphore.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C2C53DB24F70EC9009D45D0 /* UASemaphore.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		3C2C53DF24F70ECA009D45D0 /* UASemaphore.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C2C53DB24F70EC9009D45D0 /* UASemaphore.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		3C2C53E024F70ECA009D45D0 /* UASemaphore.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C2C53DB24F70EC9009D45D0 /* UASemaphore.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		3C2C53E124F70ECA009D45D0 /* UASemaphore.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C2C53DC24F70EC9009D45D0 /* UASemaphore.m */; };
+		3C2C53E224F70ECA009D45D0 /* UASemaphore.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C2C53DC24F70EC9009D45D0 /* UASemaphore.m */; };
+		3C2C53E324F70ECA009D45D0 /* UASemaphore.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C2C53DC24F70EC9009D45D0 /* UASemaphore.m */; };
+		3C2C53E424F70ECA009D45D0 /* UASemaphore.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C2C53DC24F70EC9009D45D0 /* UASemaphore.m */; };
 		3C38AE0A2384C1F700EDE9B7 /* AirshipMessageCenter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3CA0E423237E4A7B00EE76CF /* AirshipMessageCenter.framework */; };
 		3C39D3092384C8BE003C50D4 /* AirshipMessageCenter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3CA0E423237E4A7B00EE76CF /* AirshipMessageCenter.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		3C3BCBA820E16C8300D86E60 /* UAAutomationEngineIntegrationTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C3BCBA720E16C8300D86E60 /* UAAutomationEngineIntegrationTest.m */; };
@@ -2429,6 +2437,8 @@
 		3C16DA7223E11FB3001499A4 /* UADefaultMessageCenterListViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UADefaultMessageCenterListViewController.xib; sourceTree = "<group>"; };
 		3C16DA7323E11FB3001499A4 /* UADefaultMessageCenterMessageViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UADefaultMessageCenterMessageViewController.xib; sourceTree = "<group>"; };
 		3C2C53C424ECB43F009D45D0 /* UADeferredScheduleAPIClientTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UADeferredScheduleAPIClientTest.m; sourceTree = "<group>"; };
+		3C2C53DB24F70EC9009D45D0 /* UASemaphore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = UASemaphore.h; path = common/UASemaphore.h; sourceTree = "<group>"; };
+		3C2C53DC24F70EC9009D45D0 /* UASemaphore.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = UASemaphore.m; path = common/UASemaphore.m; sourceTree = "<group>"; };
 		3C3BCBA720E16C8300D86E60 /* UAAutomationEngineIntegrationTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAAutomationEngineIntegrationTest.m; sourceTree = "<group>"; };
 		3C3BCBA920E19FC500D86E60 /* UATimerScheduler+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UATimerScheduler+Internal.h"; sourceTree = "<group>"; };
 		3C3BCBAA20E19FC500D86E60 /* UATimerScheduler.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UATimerScheduler.m; sourceTree = "<group>"; };
@@ -5359,6 +5369,8 @@
 				6EA5CDBF24C78A27008EEED7 /* NSDictionary+UAAdditions.h */,
 				6EA5CDC024C78A27008EEED7 /* NSDictionary+UAAdditions.m */,
 				6EDD86F723ABF31F0031CCEA /* Value Transformers */,
+				3C2C53DB24F70EC9009D45D0 /* UASemaphore.h */,
+				3C2C53DC24F70EC9009D45D0 /* UASemaphore.m */,
 			);
 			name = Utils;
 			sourceTree = "<group>";
@@ -5850,6 +5862,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3C2C53DF24F70ECA009D45D0 /* UASemaphore.h in Headers */,
 				DF6AD3D41ED8AA78006EB1DA /* UAKeychainUtils.h in Headers */,
 				3C13BFB02384ABD00071E80C /* UAirshipCoreResources.h in Headers */,
 				3CEE135822E67CD900EDC000 /* UAPushProviderDelegate.h in Headers */,
@@ -6218,6 +6231,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3C2C53DD24F70ECA009D45D0 /* UASemaphore.h in Headers */,
 				3C45B06D23E11EAD004B9590 /* UAMessageCenterListViewDelegate.h in Headers */,
 				6EE77060238F15D000E79944 /* UAKeychainUtils.h in Headers */,
 				3C45B06923E11E37004B9590 /* UADefaultMessageCenterListViewController.h in Headers */,
@@ -6589,6 +6603,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3C2C53DE24F70ECA009D45D0 /* UASemaphore.h in Headers */,
 				6E6CC2FB239A2E35003D583C /* UAAccengageModuleLoaderFactory.h in Headers */,
 				6EE7739D238F19B200E79944 /* Airship.h in Headers */,
 				6EE772E2238F197600E79944 /* UAKeychainUtils.h in Headers */,
@@ -6781,6 +6796,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3C2C53E024F70ECA009D45D0 /* UASemaphore.h in Headers */,
 				6E6CC349239A30A0003D583C /* UAAccengageModuleLoaderFactory.h in Headers */,
 				99666E661EDF2C9500BAE46B /* UAKeychainUtils.h in Headers */,
 				3C13BFB12384ABD00071E80C /* UAirshipCoreResources.h in Headers */,
@@ -7785,6 +7801,7 @@
 				6E2E6D751EB3A34B006056BF /* UASwizzler.m in Sources */,
 				CCD28FE51DD14DD1008D663F /* UATagGroupsMutation.m in Sources */,
 				CC40DD0A1D8C996A00BABD4F /* UARetailEventTemplate.m in Sources */,
+				3C2C53E324F70ECA009D45D0 /* UASemaphore.m in Sources */,
 				6EDD86F523ABF30E0031CCEA /* UANSDictionaryValueTransformer.m in Sources */,
 				CC40DC411D8C996A00BABD4F /* UAAppBackgroundEvent.m in Sources */,
 				CC40DC251D8C996A00BABD4F /* UAActionResult.m in Sources */,
@@ -8125,6 +8142,7 @@
 				6EE7723F238F172900E79944 /* UAAutomationModuleLoader.m in Sources */,
 				6EE77240238F172900E79944 /* UAAutomationResources.m in Sources */,
 				6EE77241238F172900E79944 /* UARetriable.m in Sources */,
+				3C2C53E124F70ECA009D45D0 /* UASemaphore.m in Sources */,
 				6E50629324E1A62C00689C6D /* UAInAppMessageSchedule.m in Sources */,
 				6EE77242238F172900E79944 /* UARetriablePipeline.m in Sources */,
 				6EE77243238F172900E79944 /* UATimerScheduler.m in Sources */,
@@ -8396,6 +8414,7 @@
 				6EE772B7238F197600E79944 /* UAURLRequestOperation.m in Sources */,
 				6EE772B8238F197600E79944 /* UARegistrationDelegateWrapper.m in Sources */,
 				6EE772B9238F197600E79944 /* UAAttributeMutations.m in Sources */,
+				3C2C53E224F70ECA009D45D0 /* UASemaphore.m in Sources */,
 				6EE772BA238F197600E79944 /* UAAssociateIdentifiersEvent.m in Sources */,
 				6EE772BB238F197600E79944 /* UANotificationCategories.m in Sources */,
 				6EE772BC238F197600E79944 /* UAEventStore.m in Sources */,
@@ -8706,6 +8725,7 @@
 				99666D801EDF2B7300BAE46B /* UAURLRequestOperation.m in Sources */,
 				6EDEE210212CD31500918B05 /* UARegistrationDelegateWrapper.m in Sources */,
 				457EDBF5234E3EEB00700FF8 /* UAAttributeMutations.m in Sources */,
+				3C2C53E424F70ECA009D45D0 /* UASemaphore.m in Sources */,
 				99666E421EDF2C8D00BAE46B /* UAAssociateIdentifiersEvent.m in Sources */,
 				99666DC71EDF2BE600BAE46B /* UANotificationCategories.m in Sources */,
 				99666E291EDF2C7C00BAE46B /* UAEventStore.m in Sources */,

@@ -17,7 +17,7 @@
 
     if (self) {
         self.config = config;
-        self.backgroundDispatcher = [UADispatcher backgroundDispatcher];
+        self.backgroundDispatcher = [UADispatcher globalDispatcher];
     }
 
     return self;

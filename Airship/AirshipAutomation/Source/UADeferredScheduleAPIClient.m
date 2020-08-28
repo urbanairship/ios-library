@@ -33,20 +33,21 @@ NSString * const UADeferredScheduleAPIClientErrorDomain = @"com.urbanairship.def
 
 @interface UADeferredScheduleAPIClient ()
 @property(nonatomic, strong) UAAuthTokenManager *authManager;
-@property(nonatomic, strong) dispatch_queue_t requestQueue;
+@property(nonatomic, strong) UADispatcher *requestDispatcher;
 @end
 
 @implementation UADeferredScheduleAPIClient
 
 - (instancetype)initWithConfig:(UARuntimeConfig *)config
                        session:(UARequestSession *)session
+                    dispatcher:(UADispatcher *)dispatcher
                    authManager:(UAAuthTokenManager *)authManager {
 
     self = [super initWithConfig:(UARuntimeConfig *)config session:(UARequestSession *)session];
 
     if (self) {
         self.authManager = authManager;
-        self.requestQueue = dispatch_queue_create("com.urbanairship.deferred_schedule_api_client.request_queue", DISPATCH_QUEUE_SERIAL);
+        self.requestDispatcher = dispatcher;
     }
 
     return self;
@@ -55,13 +56,19 @@ NSString * const UADeferredScheduleAPIClientErrorDomain = @"com.urbanairship.def
 + (instancetype)clientWithConfig:(UARuntimeConfig *)config authManager:(nonnull UAAuthTokenManager *)authManager {
     return [[self alloc] initWithConfig:config
                                 session:[UARequestSession sessionWithConfig:config]
+                             dispatcher:[UADispatcher serialDispatcher]
                             authManager:authManager];
 }
 
 + (instancetype)clientWithConfig:(UARuntimeConfig *)config
                          session:(UARequestSession *)session
+                      dispatcher:(UADispatcher *)dispatcher
                      authManager:(nonnull UAAuthTokenManager *)authManager {
-    return [[self alloc] initWithConfig:config session:session authManager:authManager];
+
+    return [[self alloc] initWithConfig:config
+                                session:session
+                             dispatcher:dispatcher
+                            authManager:authManager];
 }
 
 - (void)resolveURL:(NSURL *)URL
@@ -72,7 +79,7 @@ attributeOverrides:(UAAttributePendingMutations *)attributeOverrides
  completionHandler:(void (^)(UADeferredScheduleResult * _Nullable, NSError * _Nullable))completionHandler {
 
     UA_WEAKIFY(self)
-    dispatch_async(self.requestQueue, ^{
+    [self.requestDispatcher dispatchAsync:^{
         UA_STRONGIFY(self)
         NSString *token = [self authToken];
 
@@ -128,7 +135,7 @@ attributeOverrides:(UAAttributePendingMutations *)attributeOverrides
 
         // Successful deferred schedule request
         completionHandler(result, nil);
-    });
+    }];
 }
 
 - (NSError *)missingAuthTokenError {
@@ -162,15 +169,15 @@ attributeOverrides:(UAAttributePendingMutations *)attributeOverrides
 }
 
 - (NSString *)authToken {
-    dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
-
     __block NSString *authToken;
+    __block UASemaphore *semaphore = [UASemaphore semaphore];
+
     [self.authManager tokenWithCompletionHandler:^(NSString * _Nullable token) {
         authToken = token;
-        dispatch_semaphore_signal(semaphore);
+        [semaphore signal];
     }];
 
-    dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
+    [semaphore wait];
 
     return authToken;
 }
@@ -189,9 +196,8 @@ attributeOverrides:(UAAttributePendingMutations *)attributeOverrides
                                        tagOverrides:tagOverrides
                                  attributeOverrides:attributeOverrides];
 
-    dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
-
     __block UADeferredScheduleAPIClientResponse *clientResponse;
+    __block UASemaphore *semaphore = [UASemaphore semaphore];
 
     [self.session dataTaskWithRequest:request retryWhere:^BOOL(NSData * _Nullable data, NSURLResponse * _Nullable response) {
         return NO;
@@ -210,10 +216,10 @@ attributeOverrides:(UAAttributePendingMutations *)attributeOverrides
 
         clientResponse.error = error;
 
-        dispatch_semaphore_signal(semaphore);
+        [semaphore signal];
     }];
 
-    dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
+    [semaphore wait];
 
     return clientResponse;
 }
