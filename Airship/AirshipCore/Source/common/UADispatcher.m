@@ -17,29 +17,26 @@ static void *UADispatcherQueueSpecificKey = "com.urbanairsip.dispatcher.queue_sp
 static UADispatcher *mainDispatcher;
 static NSMutableDictionary *globalDispatchers;
 
-- (instancetype)initWithQueue:(dispatch_queue_t)queue context:(NSString *)context {
+- (instancetype)initWithQueue:(dispatch_queue_t)queue {
     self = [super init];
 
     if (self) {
         self.queue = queue;
-        self.context = context;
-
-        dispatch_queue_set_specific(queue, UADispatcherQueueSpecificKey, (__bridge void *)self.context, NULL);
+        dispatch_queue_set_specific(queue, UADispatcherQueueSpecificKey, (__bridge void *)self, NULL);
     }
 
     return self;
 }
 
-+ (instancetype)dispatcherWithQueue:(dispatch_queue_t)queue context:(NSString *)context {
-    return [[self alloc] initWithQueue:queue context:context];
++ (instancetype)dispatcherWithQueue:(dispatch_queue_t)queue {
+    return [[self alloc] initWithQueue:queue];
 }
 
 + (instancetype)mainDispatcher {
     static dispatch_once_t mainDispatcherOnceToken;
 
     dispatch_once(&mainDispatcherOnceToken, ^{
-        mainDispatcher = [UADispatcher dispatcherWithQueue:dispatch_get_main_queue()
-                                                   context:@"com.urbanairship.dispatcher.queue_specific_context.main"];
+        mainDispatcher = [UADispatcher dispatcherWithQueue:dispatch_get_main_queue()];
     });
 
     return mainDispatcher;
@@ -54,9 +51,7 @@ static NSMutableDictionary *globalDispatchers;
 
     @synchronized (globalDispatchers) {
         if (!globalDispatchers[@(qos)]) {
-            dispatch_queue_t queue = dispatch_get_global_queue(qos, 0);
-            UADispatcher *dispatcher = [UADispatcher dispatcherWithQueue:queue
-                                                                 context:@"com.urbanairship.dispatcher.queue_specific_context.background"];
+            UADispatcher *dispatcher = [UADispatcher dispatcherWithQueue:dispatch_get_global_queue(qos, 0)];
             globalDispatchers[@(qos)] = dispatcher;
             return dispatcher;
         }
@@ -72,9 +67,7 @@ static NSMutableDictionary *globalDispatchers;
 + (instancetype)serialDispatcher:(dispatch_qos_class_t)qos {
     dispatch_queue_attr_t attributes = dispatch_queue_attr_make_with_qos_class(DISPATCH_QUEUE_SERIAL, qos, 0);
     dispatch_queue_t queue = dispatch_queue_create("com.urbanairship.dispatcher.serial_queue", attributes);
-
-    NSString *ctx = [@"com.urbanairship.dispatcher.queue_specific_context.serial-" stringByAppendingString:[NSUUID UUID].UUIDString];
-    return [self dispatcherWithQueue:queue context:ctx];
+    return [self dispatcherWithQueue:queue];
 }
 
 + (instancetype)serialDispatcher {
@@ -120,8 +113,7 @@ static NSMutableDictionary *globalDispatchers;
 }
 
 - (BOOL)isCurrentQueue {
-    NSString *specific = (__bridge NSString *)dispatch_get_specific(UADispatcherQueueSpecificKey);
-    return [self.context isEqualToString:specific];
+    return dispatch_get_specific(UADispatcherQueueSpecificKey) == (__bridge void *)(self);
 }
 
 @end
