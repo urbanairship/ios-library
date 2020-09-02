@@ -3,6 +3,10 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 13.5.5 - September 2, 2020
+Patch release to fix a bug in analytics that could result in events being
+uploaded with stale session IDs. Apps using reports are encouraged to upgrade.
+
 ## Version 13.5.4 - August 12, 2020
 Patch release to address [Dynamic Type](https://developer.apple.com/documentation/uikit/uifont/scaling_fonts_automatically) build warnings and Message Center Inbox UI issues. Message Center customers who support Dynamic Type are encouraged update to this version.
 
