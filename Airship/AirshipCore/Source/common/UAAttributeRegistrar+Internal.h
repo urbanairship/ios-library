@@ -78,7 +78,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param identifier The identifier.
  * @param clearPendingOnChange Whether pending mutations should be cleared if the identifier has changed.
  */
-- (void)setIdentifier:(NSString *)identifier clearPendingOnChange:(BOOL)clearPendingOnChange;
+- (void)setIdentifier:(nullable NSString *)identifier clearPendingOnChange:(BOOL)clearPendingOnChange;
 
 /**
  * Update attributes
@@ -88,7 +88,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * The current identifier associated with this registrar.
  */
-@property (atomic, readonly) NSString *identifier;
+@property (atomic, readonly, nullable) NSString *identifier;
 
 /**
  * Whether the registrar is enabled. Defaults to `YES`.

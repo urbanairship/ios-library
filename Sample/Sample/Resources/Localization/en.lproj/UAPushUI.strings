@@ -40,3 +40,4 @@
 "ua_invalid_airshipcconfig_plist_message" = "The AirshipConfig.plist must be a part of the app bundle and include a valid appkey and secret for the selected production level.";
 "ua_no_push_in_simulator_message" = "You will not be able to receive push notifications in the simulator.";
 
+"ua_debug_tab_title" = "Debug";

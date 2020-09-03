@@ -19,7 +19,8 @@ class TabBarController: UITabBarController {
         let debugNavController = UINavigationController.init(rootViewController: debugViewController)
         
         // Create new tab bar item for debug library
-        let debugItem = UITabBarItem.init(title: "Debug", image: UIImage.init(named: "outline_bug_report_black_36pt"), tag: 0)
+        let debugTitle = NSLocalizedString("ua_debug_tab_title", tableName: "UAPushUI", comment: "Debug")
+        let debugItem = UITabBarItem.init(title: debugTitle, image: UIImage.init(named: "outline_bug_report_black_36pt"), tag: 0)
         debugNavController.tabBarItem = debugItem
         
         // Add tab to tab bar

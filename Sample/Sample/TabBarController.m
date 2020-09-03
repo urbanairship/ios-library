@@ -29,7 +29,10 @@
     }
     
     // Create new tab bar item for debug library
-    UITabBarItem *debugItem = [[UITabBarItem alloc] initWithTitle:@"Debug" image:[UIImage imageNamed:@"outline_bug_report_black_36pt"] tag:0];
+    NSString *debugTitle = NSLocalizedStringFromTable(@"ua_debug_tab_title", @"UAPushUI", @"Debug");
+    UITabBarItem *debugItem = [[UITabBarItem alloc] initWithTitle:debugTitle
+                                                            image:[UIImage imageNamed:@"outline_bug_report_black_36pt"]
+                                                              tag:0];
     if (!debugItem) {
         return;
     }

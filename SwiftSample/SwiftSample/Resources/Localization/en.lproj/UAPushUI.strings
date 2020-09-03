@@ -32,3 +32,5 @@
 "ua_copied_to_clipboard" = "Copied to clipboard!";
 
 "ua_none" = "None";
+
+"ua_debug_tab_title" = "Debug";

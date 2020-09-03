@@ -184,7 +184,7 @@ NSString *const UAInAppMessageDisplayCoordinatorIsReadyKey = @"isReady";
     }
 }
 
-- (nonnull id<UAInAppMessageAdapterProtocol>)createAdapterForMessage:(UAInAppMessage *)message scheduleID:(NSString *)scheduleID {
+- (nullable id<UAInAppMessageAdapterProtocol>)createAdapterForMessage:(UAInAppMessage *)message scheduleID:(NSString *)scheduleID {
     id<UAInAppMessageAdapterProtocol> (^factory)(UAInAppMessage* message) = self.adapterFactories[@(message.displayType)];
 
     if (!factory) {
@@ -272,9 +272,11 @@ NSString *const UAInAppMessageDisplayCoordinatorIsReadyKey = @"isReady";
 
     // Create adapter
     id<UAInAppMessageAdapterProtocol> adapter = [self createAdapterForMessage:message scheduleID:scheduleID];
+
     if (!adapter) {
         UA_LDEBUG(@"Failed to build adapter for message: %@, skipping display for schedule: %@", message, scheduleID);
         completionHandler(UAAutomationSchedulePrepareResultPenalize);
+        return;
     }
 
     // Display coordinator
