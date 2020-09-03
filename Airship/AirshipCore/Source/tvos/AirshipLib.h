@@ -89,6 +89,7 @@
 #import "UARequestSession.h"
 #import "UARetailEventTemplate.h"
 #import "UARuntimeConfig.h"
+#import "UASemaphore.h"
 #import "UASystemVersion.h"
 #import "UATagGroups.h"
 #import "UATagGroupsMutation.h"
