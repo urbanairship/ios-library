@@ -734,7 +734,7 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
         payload.badge = @(self.badgeNumber);
     }
 
-    if (self.timeZone.name && self.quietTime) {
+    if (self.timeZone.name && self.quietTime && self.isQuietTimeEnabled) {
         payload.quietTime = self.quietTime;
         payload.quietTimeTimeZone = self.timeZone.name;
     }
