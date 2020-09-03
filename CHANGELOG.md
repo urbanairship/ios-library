@@ -3,6 +3,9 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 13.5.6 - September 3, 2020
+Patch release to fix quiet time being applied to channels even if quiet time is disabled. This only affects channels that have set a quiet time using `setQuietTimeStartHour:startMinute:endHour:endMinute`.
+
 ## Version 13.5.5 - September 2, 2020
 Patch release to fix a bug in analytics that could result in events being
 uploaded with stale session IDs. Apps using reports are encouraged to upgrade.

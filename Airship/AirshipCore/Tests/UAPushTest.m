@@ -1906,6 +1906,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     NSData *token = [@"some-token" dataUsingEncoding:NSASCIIStringEncoding];
     [self.push application:self.mockApplication didRegisterForRemoteNotificationsWithDeviceToken:token];
 
+    self.push.quietTimeEnabled = YES;
     self.push.pushTokenRegistrationEnabled = YES;
     self.push.timeZone = [NSTimeZone timeZoneWithName:@"Pacific/Auckland"];
     [self.push setQuietTimeStartHour:12 startMinute:30 endHour:14 endMinute:58];
@@ -1916,6 +1917,23 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
         XCTAssertEqualObjects(@"736f6d652d746f6b656e", payload.pushAddress);
         XCTAssertEqualObjects(self.push.quietTime, payload.quietTime);
         XCTAssertEqualObjects(@"Pacific/Auckland", payload.quietTimeTimeZone);
+        [extendedPayload fulfill];
+    });
+
+    [self waitForTestExpectations];
+}
+
+
+- (void)testRegistrationPayloadQuietTimeDisabled {
+    self.push.quietTimeEnabled = NO;
+    self.push.timeZone = [NSTimeZone timeZoneWithName:@"Pacific/Auckland"];
+    [self.push setQuietTimeStartHour:12 startMinute:30 endHour:14 endMinute:58];
+
+    UAChannelRegistrationPayload *payload = [[UAChannelRegistrationPayload alloc] init];
+    XCTestExpectation *extendedPayload = [self expectationWithDescription:@"extended payload"];
+    self.channelRegistrationExtenderBlock(payload, ^(UAChannelRegistrationPayload * _Nonnull payload) {
+        XCTAssertNil(payload.quietTime);
+        XCTAssertNil(payload.quietTimeTimeZone);
         [extendedPayload fulfill];
     });
 
