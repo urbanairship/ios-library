@@ -7,7 +7,7 @@
 #import "UAAnalytics+Internal.h"
 
 #import "UAUtils+Internal.h"
-#import "UANotificationCategories+Internal.h"
+#import "UANotificationCategories.h"
 #import "UANotificationCategory.h"
 #import "UAPreferenceDataStore+Internal.h"
 #import "UARuntimeConfig.h"

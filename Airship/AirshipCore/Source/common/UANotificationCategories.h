@@ -74,6 +74,21 @@ NS_ASSUME_NONNULL_BEGIN
                                    actions:(NSArray *)actionDefinitions
              hiddenPreviewsBodyPlaceholder:(NSString *)hiddenPreviewsBodyPlaceholder;
 
+/**
+ * Factory method to create the default set of user notification categories.
+ * Background user notification actions will default to requiring authorization.
+ * @return A set of user notification categories.
+ */
++ (NSSet *)defaultCategories;
+
+/**
+ * Factory method to create the default set of user notification categories.
+ *
+ * @param requireAuth If background actions should default to requiring authorization or not.
+ * @return A set of user notification categories.
+ */
++ (NSSet *)defaultCategoriesWithRequireAuth:(BOOL)requireAuth;
+
 @end
 
 NS_ASSUME_NONNULL_END

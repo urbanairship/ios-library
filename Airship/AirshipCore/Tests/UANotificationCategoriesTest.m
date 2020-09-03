@@ -2,7 +2,7 @@
 
 #import "UABaseTest.h"
 #import <UserNotifications/UserNotifications.h>
-#import "UANotificationCategories+Internal.h"
+#import "UANotificationCategories.h"
 #import "UANotificationCategory.h"
 #import "UANotificationAction.h"
 #import "UATextInputNotificationAction.h"
