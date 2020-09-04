@@ -20,6 +20,7 @@
 NSString *const UAUserPushNotificationsEnabledKey = @"UAUserPushNotificationsEnabled";
 NSString *const UABackgroundPushNotificationsEnabledKey = @"UABackgroundPushNotificationsEnabled";
 NSString *const UAPushTokenRegistrationEnabledKey = @"UAPushTokenRegistrationEnabled";
+NSString *const UAExtendedPushNotificationPermissionEnabledKey = @"UAExtendedPushNotificationPermissionEnabled";
 
 NSString *const UAPushAliasSettingsKey = @"UAPushAlias";
 NSString *const UAPushLegacyTagsSettingsKey = @"UAPushTags";
@@ -55,6 +56,8 @@ NSString *const UAReceivedBackgroundNotificationEvent = @"com.urbanairship.push.
 NSString *const UAPresentationOptionBadge = @"badge";
 NSString *const UAPresentationOptionAlert = @"alert";
 NSString *const UAPresentationOptionSound = @"sound";
+NSString *const UAPresentationOptionList = @"list";
+NSString *const UAPresentationOptionBanner = @"banner";
 
 // Foreground presentation key
 NSString *const UAForegroundPresentationkey = @"foreground_presentation";
@@ -313,6 +316,28 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
     [self.dataStore setBool:enabled forKey:UAUserPushNotificationsEnabledKey];
 
     if (enabled != previousValue) {
+        self.shouldUpdateAPNSRegistration = YES;
+        [self updateRegistration];
+    }
+}
+
+- (BOOL)extendedPushNotificationPermissionEnabled {
+    if (![self.dataStore objectForKey:UAExtendedPushNotificationPermissionEnabledKey]) {
+        return NO;
+    }
+
+    return [self.dataStore boolForKey:UAExtendedPushNotificationPermissionEnabledKey];
+}
+
+- (void)setExtendedPushNotificationPermissionEnabled:(BOOL)enabled {
+    if(!self.userPushNotificationsEnabled) {
+        return;
+    }
+    
+    BOOL previousValue = self.extendedPushNotificationPermissionEnabled;
+    [self.dataStore setBool:enabled forKey:UAExtendedPushNotificationPermissionEnabledKey];
+
+    if (enabled && enabled != previousValue) {
         self.shouldUpdateAPNSRegistration = YES;
         [self updateRegistration];
     }
@@ -627,6 +652,9 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
             completionHandler(YES);
         } else if (authorizedSettings == UAAuthorizedNotificationSettingsNone && options == UANotificationOptionNone) {
             completionHandler(NO);
+        } else if (status == UAAuthorizationStatusEphemeral && !self.extendedPushNotificationPermissionEnabled) {
+            [self notificationRegistrationFinishedWithAuthorizedSettings:authorizedSettings status:status];
+            completionHandler(YES);
         } else {
             [self.pushRegistration updateRegistrationWithOptions:options
                                                       categories:categories
@@ -756,11 +784,18 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
         // build the options bitmask from the array
         for (id presentationOption in payloadPresentationOptions) {
             if ([UAPresentationOptionBadge isEqualToString:presentationOption]) {
-                options |= UNAuthorizationOptionBadge;
+                options |= UNNotificationPresentationOptionBadge;
             } else if ([UAPresentationOptionAlert isEqualToString:presentationOption]) {
-                options |= UNAuthorizationOptionAlert;
+                options |= UNNotificationPresentationOptionAlert;
             } else if ([UAPresentationOptionSound isEqualToString:presentationOption]) {
-                options |= UNAuthorizationOptionSound;
+                options |= UNNotificationPresentationOptionSound;
+            }
+            if (@available(iOS 14.0, tvOS 14.0, *)) {
+                if ([UAPresentationOptionList isEqualToString:presentationOption]) {
+                    options |= UNNotificationPresentationOptionList;
+                } else if ([UAPresentationOptionBanner isEqualToString:presentationOption]) {
+                    options |= UNNotificationPresentationOptionBanner;
+                }
             }
         }
     } else {

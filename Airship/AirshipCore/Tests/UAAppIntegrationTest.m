@@ -151,6 +151,10 @@
 
     // Assume alert option
     UNNotificationPresentationOptions expectedOptions = UNNotificationPresentationOptionAlert;
+    
+    if (@available(iOS 14.0, *)) {
+        expectedOptions = UNNotificationPresentationOptionList | UNNotificationPresentationOptionBanner;
+    }
 
     // Return expected options from presentationOptionsForNotification
     [[[self.mockedPush stub] andReturnValue:OCMOCK_VALUE(expectedOptions)] presentationOptionsForNotification:OCMOCK_ANY];
@@ -196,6 +200,10 @@
     id mockConfig = [self strictMockForClass:[UARuntimeConfig class]];
     [[[self.mockedAirship stub] andReturn:mockConfig] config];
     UNNotificationPresentationOptions expectedOptions = UNNotificationPresentationOptionAlert;
+    
+    if (@available(iOS 14.0, *)) {
+        expectedOptions = UNNotificationPresentationOptionList | UNNotificationPresentationOptionBanner;
+    }
 
     //Mock automatic setup to be disabled
     [[[mockConfig stub] andReturnValue:OCMOCK_VALUE(NO)] isAutomaticSetupEnabled];
@@ -205,6 +213,11 @@
 
     NSDictionary *expectedMetadata = @{ UAActionMetadataForegroundPresentationKey: @((expectedOptions & UNNotificationPresentationOptionAlert) > 0),
                                         UAActionMetadataPushPayloadKey: self.notification };
+    
+    if (@available(iOS 14.0, *)) {
+        expectedMetadata = @{ UAActionMetadataForegroundPresentationKey: @((expectedOptions & (UNNotificationPresentationOptionList | UNNotificationPresentationOptionBanner)) > 0),
+                              UAActionMetadataPushPayloadKey: self.notification };
+    }
 
     UASituation expectedSituation = UASituationForegroundPush;
 

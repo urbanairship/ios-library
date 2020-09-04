@@ -98,6 +98,19 @@ NSUInteger const DebugTab = 3;
     return YES;
 }
 
+- (BOOL)application:(UIApplication *)application continueUserActivity:(nonnull NSUserActivity *)userActivity restorationHandler:(nonnull void (^)(NSArray<id<UIUserActivityRestoring>> * _Nullable))restorationHandler {
+    if (![userActivity.activityType isEqualToString:NSUserActivityTypeBrowsingWeb]) {
+        return NO;
+    }
+    
+    NSInteger targetTab = (userActivity.webpageURL.query ?: @"0").intValue;
+    UITabBarController *tabController = (UITabBarController *)self.window.rootViewController;
+
+    tabController.selectedIndex = targetTab;
+    
+    return true;
+}
+
 - (void)showInvalidConfigAlert {
     
     UIAlertController *alertController = [UIAlertController alertControllerWithTitle:NSLocalizedStringFromTable(@"ua_invalid_airshipcconfig_plist_title", @"UAPushUI", @"Invalid AirshipConfig.plist") message:NSLocalizedStringFromTable(@"ua_invalid_airshipcconfig_plist_message", @"UAPushUI", @"The AirshipConfig.plist must be a part of the app bundle and include a valid appkey and secret for the selected production level.") preferredStyle:UIAlertControllerStyleActionSheet];

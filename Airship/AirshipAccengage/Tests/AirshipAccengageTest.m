@@ -203,6 +203,11 @@
     [[[mockContent stub] andReturn:notificationInfo] userInfo];
     
     UNNotificationPresentationOptions defaultOptions = UNNotificationPresentationOptionAlert;
+    
+    if (@available(iOS 14.0, *)) {
+        defaultOptions = UNNotificationPresentationOptionList | UNNotificationPresentationOptionBanner;
+    }
+    
     UNNotificationPresentationOptions options = [accengage presentationOptionsForNotification:mockNotification defaultPresentationOptions:defaultOptions];
     
     XCTAssertEqual(options, UNNotificationPresentationOptionNone, @"Incorrect notification presentation options");

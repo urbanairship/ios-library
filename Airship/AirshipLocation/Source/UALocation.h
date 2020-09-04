@@ -94,6 +94,14 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (BOOL)isLocationDeniedOrRestricted;
 
+/**
+ * Check if the user has granted this application access to location information with reduced accuracy.
+ *
+ * @return `YES` if the user granted this application access to location information with reduced accuracy.
+ * @return `NO` if the user granted this application access to location information with full accuracy.
+ * @warning The values this method returns should only be taken into account if the user has opted in to location updates.
+ */
+- (BOOL)isLocationAccuracyReduced;
 
 NS_ASSUME_NONNULL_END
 

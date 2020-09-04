@@ -14,7 +14,7 @@ AIRSHIP_VERSION=$(bash "$ROOT_PATH/scripts/airship_version.sh")
 
 source "$ROOT_PATH/scripts/config.sh"
 
-DEVELOPER_DIR=$(bash "$ROOT_PATH/scripts/get_xcode_path.sh" $2)
+export DEVELOPER_DIR=$(bash "$ROOT_PATH/scripts/get_xcode_path.sh" $2)
 
 # Target iOS SDK when building the projects
 TARGET_SDK='iphonesimulator'

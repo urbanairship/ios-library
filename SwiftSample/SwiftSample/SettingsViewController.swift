@@ -355,10 +355,10 @@ class SettingsViewController: UIViewController, UITableViewDelegate, UITableView
 }
 
 internal extension String {
-    func localized(bundle: Bundle = Bundle(identifier: "com.urbanairship.richpush")!, tableName: String = "UAPushUI", comment: String = "") -> String {
-        return NSLocalizedString(self, tableName: tableName, bundle: bundle, comment: comment)
+    func localized(tableName: String = "UAPushUI", comment: String = "") -> String {
+        return NSLocalizedString(self, tableName: tableName, comment: comment)
     }
-
+    
     func localizedWithFormat(count:Int) -> String {
         return String.localizedStringWithFormat(localized(), count)
     }

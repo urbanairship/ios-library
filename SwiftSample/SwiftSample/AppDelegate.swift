@@ -79,6 +79,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UARegistrationDelegate, U
         return true
     }
 
+    func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
+        guard userActivity.activityType == NSUserActivityTypeBrowsingWeb else { return false }
+        
+        let targetTab = (Int)(userActivity.webpageURL?.query ?? "0")
+        let tabController = window!.rootViewController as! UITabBarController
+        
+        tabController.selectedIndex = targetTab!
+        
+        return true
+    }
+    
     func showInvalidConfigAlert() {
         let alertController = UIAlertController.init(title: "Invalid AirshipConfig.plist", message: "The AirshipConfig.plist must be a part of the app bundle and include a valid appkey and secret for the selected production level.", preferredStyle:.actionSheet)
         alertController.addAction(UIAlertAction.init(title: "Exit Application", style: UIAlertAction.Style.default, handler: { (UIAlertAction) in
