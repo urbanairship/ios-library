@@ -34,8 +34,11 @@ let package = Package(
             name: "AirshipDebug",
             targets: ["AirshipDebug"]),
         .library(
-            name: "AirshipExtensions",
-            targets: ["AirshipNotificationContentExtension", "AirshipNotificationServiceExtension"])
+            name: "AirshipAirshipNotificationContentExtension",
+            targets: ["AirshipNotificationContentExtension"]),
+        .library(
+            name: "AirshipNotificationServiceExtension",
+            targets: ["AirshipNotificationServiceExtension"])
     ],
     targets: [
         .target(name: "AirshipCore",
