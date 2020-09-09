@@ -39,18 +39,18 @@ jobs:
       - name: Build
         run: |
           bash ./scripts/build.sh
-      - name: Build Carthage framework bundle
-        run: carthage build --no-skip-current --archive --project-directory ./
+      # - name: Build Carthage framework bundle
+      #   run: carthage build --no-skip-current --archive --project-directory ./
       - name: Upload zip distribution
         uses: actions/upload-artifact@v1
         with:
           name: airship
           path: ./build/Airship.zip
-      - name: Upload Carthage framework bundle
-        uses: actions/upload-artifact@v1
-        with:
-          name: carthage
-          path: ./Airship.framework.zip
+      # - name: Upload Carthage framework bundle
+      #   uses: actions/upload-artifact@v1
+      #   with:
+      #     name: carthage
+      #     path: ./Airship.framework.zip
       - name: Upload Documentation tar
         uses: actions/upload-artifact@v1
         with:
@@ -164,11 +164,11 @@ jobs:
         with:
           name: airship
           path: ./build
-      - name: Download Carthage framework bundle
-        uses: actions/download-artifact@v1
-        with:
-          name: carthage
-          path: ./
+      # - name: Download Carthage framework bundle
+      #   uses: actions/download-artifact@v1
+      #   with:
+      #     name: carthage
+      #     path: ./
       - name: Github Release
         id: create_release
         uses: actions/create-release@v1.0.1
@@ -189,15 +189,15 @@ jobs:
           asset_path: ./build/Airship.zip
           asset_name: Airship.zip
           asset_content_type: application/zip
-      - name: Upload Carthage bundle distribution
-        uses: actions/upload-release-asset@v1.0.1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./Airship.framework.zip
-          asset_name: Airship.framework.zip
-          asset_content_type: application/zip
+      # - name: Upload Carthage bundle distribution
+      #   uses: actions/upload-release-asset@v1.0.1
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   with:
+      #     upload_url: ${{ steps.create_release.outputs.upload_url }}
+      #     asset_path: ./Airship.framework.zip
+      #     asset_name: Airship.framework.zip
+      #     asset_content_type: application/zip
       - name: Slack Notification
         uses: homoluctus/slatify@master
         if: always()
