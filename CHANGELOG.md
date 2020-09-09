@@ -3,6 +3,15 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 14.1.0-beta1 - September 8, 2020
+Initial 14.1.0 beta with support for new iOS 14 features.
+
+### Changes
+- Swift package manager support
+- Support for App Clips and ephemeral notification authorization
+- Support for reduced accuracy location
+- Support for list and banner notification types
+
 ## Version 14.0.0 - September 3, 2020
 Airship SDK 14 is a major update that prepares our automation module to support future IAA enhancements, revamps the Channel Capture tool, and provides other improvements.
 
