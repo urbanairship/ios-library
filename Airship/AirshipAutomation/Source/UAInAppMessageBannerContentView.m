@@ -7,6 +7,7 @@
 #import "UAInAppMessageMediaView+Internal.h"
 #import "UAInAppMessageUtils+Internal.h"
 #import "UAAirshipAutomationCoreImport.h"
+#import "UAAutomationResources.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -32,7 +33,7 @@ NSString *const UAInAppMessageBannerContentViewNibName = @"UAInAppMessageBannerC
                                      mediaView:(nullable UAInAppMessageMediaView *)mediaView {
 
     NSString *nibName = UAInAppMessageBannerContentViewNibName;
-    NSBundle *bundle = [NSBundle bundleForClass:[self class]];
+    NSBundle *bundle = [UAAutomationResources bundle];
 
     UAInAppMessageBannerContentView *view;
     // Left and right IAM views are firstObject and lastObject, respectively.

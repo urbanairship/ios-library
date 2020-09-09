@@ -7,6 +7,7 @@
 #import "UAInAppMessageHTMLViewController+Internal.h"
 #import "UAInAppMessageResolution.h"
 #import "UAAirshipAutomationCoreImport.h"
+#import "UAAutomationResources.h"
 
 /*
  * Hand tuned value that removes excess vertical safe area to make the
@@ -209,7 +210,7 @@ static double const DefaultResizableViewAnimationDuration = 0.2;
 }
 
 -(instancetype)initFromNib {
-    return [self initWithNibName:ResizingViewControllerNibName bundle:[NSBundle bundleForClass:[self class]]];
+    return [self initWithNibName:ResizingViewControllerNibName bundle:[UAAutomationResources bundle]];
 }
 
 - (void)viewDidLoad {

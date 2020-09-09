@@ -43,10 +43,6 @@
 
 @end
 
-@interface UALocationEvent()
-@property (nonatomic, copy) NSDictionary *eventData;
-@end
-
 @implementation UALocationEvent
 
 UALocationEventAnalyticsKey * const UALocationEventForegroundKey = @"foreground";

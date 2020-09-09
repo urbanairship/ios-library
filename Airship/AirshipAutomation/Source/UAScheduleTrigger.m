@@ -2,8 +2,8 @@
 
 #import "UAScheduleTrigger+Internal.h"
 #import "UAAirshipAutomationCoreImport.h"
-#import "UARegionEvent+Internal.h"
 #import "NSJSONSerialization+UAAdditions.h"
+#import "UARegionEvent.h"
 
 // JSON/NSCoding Keys
 NSString *const UAScheduleTriggerTypeKey = @"type";

@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
+import UIKit
 
 /**
  * This file contains utility function for the IAA debug views.

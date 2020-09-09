@@ -6,11 +6,6 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /**
- * Key for the id of the region event.
- */
-extern NSString * const UARegionIDKey;
-
-/**
  * Value when entering a boundary.
  */
 extern NSString * const UARegionBoundaryEventEnterValue;

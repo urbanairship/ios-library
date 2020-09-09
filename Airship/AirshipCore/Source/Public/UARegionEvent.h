@@ -9,6 +9,11 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /**
+ * Key for the id of the region event.
+ */
+extern NSString * const UARegionIDKey;
+
+/**
  * Maximum latitude for a region event.
  */
 extern double const UARegionEventMaxLatitude;

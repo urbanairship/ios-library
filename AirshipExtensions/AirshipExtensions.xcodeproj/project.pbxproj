@@ -8,19 +8,19 @@
 
 /* Begin PBXBuildFile section */
 		0F22F804A38BF60364F373DF /* Pods_AirshipNotificationContentExtensionTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9299C14EBDAE631FA98D80B3 /* Pods_AirshipNotificationContentExtensionTests.framework */; };
+		1B63FD6724F6938600A90D70 /* AirshipNotificationContentExtension.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BFF18B023854F0C00013FB9 /* AirshipNotificationContentExtension.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1B63FD6824F6939000A90D70 /* UAContentExtensionViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BFF18D22385520500013FB9 /* UAContentExtensionViewController.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1B63FD6924F693A700A90D70 /* UAGlobal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BFF18D82385925300013FB9 /* UAGlobal.h */; };
+		1B63FD6A24F693AA00A90D70 /* UACarousel.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BFF18C9238551FD00013FB9 /* UACarousel.h */; };
+		1B63FD6B24F693AD00A90D70 /* UACarouselViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BFF18CA238551FD00013FB9 /* UACarouselViewController.h */; };
 		1BFF18472382F9BD00013FB9 /* UAMediaAttachmentPayload.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BFF18422382F9BD00013FB9 /* UAMediaAttachmentPayload.m */; };
 		1BFF18482382F9BD00013FB9 /* UANotificationServiceExtension.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BFF18432382F9BD00013FB9 /* UANotificationServiceExtension.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1BFF18492382F9BD00013FB9 /* UANotificationServiceExtension.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BFF18442382F9BD00013FB9 /* UANotificationServiceExtension.m */; };
 		1BFF184A2382F9BD00013FB9 /* AirshipNotificationServiceExtension.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BFF18452382F9BD00013FB9 /* AirshipNotificationServiceExtension.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1BFF184B2382F9BD00013FB9 /* UAMediaAttachmentPayload.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BFF18462382F9BD00013FB9 /* UAMediaAttachmentPayload.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		1BFF18BE23854F0C00013FB9 /* AirshipNotificationContentExtension.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BFF18B023854F0C00013FB9 /* AirshipNotificationContentExtension.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		1BFF18CD238551FD00013FB9 /* UACarousel.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BFF18C9238551FD00013FB9 /* UACarousel.h */; };
-		1BFF18CE238551FD00013FB9 /* UACarouselViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BFF18CA238551FD00013FB9 /* UACarouselViewController.h */; };
 		1BFF18CF238551FD00013FB9 /* UACarouselViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BFF18CB238551FD00013FB9 /* UACarouselViewController.m */; };
 		1BFF18D0238551FD00013FB9 /* UACarousel.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BFF18CC238551FD00013FB9 /* UACarousel.m */; };
 		1BFF18D42385520500013FB9 /* UAContentExtensionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BFF18D12385520500013FB9 /* UAContentExtensionViewController.m */; };
-		1BFF18D52385520500013FB9 /* UAContentExtensionViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BFF18D22385520500013FB9 /* UAContentExtensionViewController.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		1BFF18DB238593E300013FB9 /* UAGlobal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BFF18D82385925300013FB9 /* UAGlobal.h */; };
 		5872C23EAB3330171E1EBDC3 /* Pods_AirshipNotificationServiceExtensionTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 32B945B8885FAC3BD0955B04 /* Pods_AirshipNotificationServiceExtensionTests.framework */; };
 		DF0C1B19244E483C0011ACCA /* AirshipNotificationServiceExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49AA00FC1D65158C0081989A /* AirshipNotificationServiceExtension.framework */; };
 		DF0C1B22244E50770011ACCA /* UABaseTest.m in Sources */ = {isa = PBXBuildFile; fileRef = DF0C1B21244E50770011ACCA /* UABaseTest.m */; };
@@ -121,6 +121,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1BB124F324F68C8500755EBC /* Public */ = {
+			isa = PBXGroup;
+			children = (
+				1BFF18D22385520500013FB9 /* UAContentExtensionViewController.h */,
+				1BFF18D82385925300013FB9 /* UAGlobal.h */,
+				1BFF18C9238551FD00013FB9 /* UACarousel.h */,
+				1BFF18CA238551FD00013FB9 /* UACarouselViewController.h */,
+			);
+			path = Public;
+			sourceTree = "<group>";
+		};
 		1BFF1861238543FF00013FB9 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -154,7 +165,7 @@
 			isa = PBXGroup;
 			children = (
 				1BFF18B023854F0C00013FB9 /* AirshipNotificationContentExtension.h */,
-				1BFF18D22385520500013FB9 /* UAContentExtensionViewController.h */,
+				1BB124F324F68C8500755EBC /* Public */,
 				1BFF18D12385520500013FB9 /* UAContentExtensionViewController.m */,
 				1BFF18C723854F3E00013FB9 /* Templates */,
 			);
@@ -172,10 +183,7 @@
 		1BFF18C823854F4600013FB9 /* Carousel */ = {
 			isa = PBXGroup;
 			children = (
-				1BFF18D82385925300013FB9 /* UAGlobal.h */,
-				1BFF18C9238551FD00013FB9 /* UACarousel.h */,
 				1BFF18CC238551FD00013FB9 /* UACarousel.m */,
-				1BFF18CA238551FD00013FB9 /* UACarouselViewController.h */,
 				1BFF18CB238551FD00013FB9 /* UACarouselViewController.m */,
 			);
 			path = Carousel;
@@ -257,11 +265,11 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1BFF18BE23854F0C00013FB9 /* AirshipNotificationContentExtension.h in Headers */,
-				1BFF18D52385520500013FB9 /* UAContentExtensionViewController.h in Headers */,
-				1BFF18DB238593E300013FB9 /* UAGlobal.h in Headers */,
-				1BFF18CE238551FD00013FB9 /* UACarouselViewController.h in Headers */,
-				1BFF18CD238551FD00013FB9 /* UACarousel.h in Headers */,
+				1B63FD6B24F693AD00A90D70 /* UACarouselViewController.h in Headers */,
+				1B63FD6724F6938600A90D70 /* AirshipNotificationContentExtension.h in Headers */,
+				1B63FD6924F693A700A90D70 /* UAGlobal.h in Headers */,
+				1B63FD6A24F693AA00A90D70 /* UACarousel.h in Headers */,
+				1B63FD6824F6939000A90D70 /* UAContentExtensionViewController.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

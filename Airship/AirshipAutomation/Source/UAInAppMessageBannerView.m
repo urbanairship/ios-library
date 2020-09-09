@@ -7,6 +7,7 @@
 #import "UAInAppMessageBannerDisplayContent+Internal.h"
 #import "UAInAppMessageBannerDisplayContent+Internal.h"
 #import "UAAirshipAutomationCoreImport.h"
+#import "UAAutomationResources.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -45,7 +46,7 @@ static CGFloat const ShadowOpacity = 0.5;
                                               style:(UAInAppMessageBannerStyle *)style {
 
     NSString *nibName = UAInAppMessageBannerViewNibName;
-    NSBundle *bundle = [NSBundle bundleForClass:[self class]];
+    NSBundle *bundle = [UAAutomationResources bundle];
 
     // Top and bottom banner views are firstObject and lastObject, respectively.
     UAInAppMessageBannerView *view;

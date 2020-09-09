@@ -11,6 +11,7 @@
 #import "UAAirshipAutomationCoreImport.h"
 #import "UAScheduleTriggerContext+Internal.h"
 #import "UAScheduleAudience+Internal.h"
+#import "UAAutomationResources.h"
 
 NSString *const UAInAppAutomationStoreFileFormat = @"In-app-automation-%@.sqlite";
 NSString *const UALegacyActionAutomationStoreFileFormat = @"Automation-%@.sqlite";
@@ -46,8 +47,9 @@ NSString *const UALegacyActionAutomationStoreFileFormat = @"Automation-%@.sqlite
         self.date = date;
         self.finished = NO;
 
-        NSBundle *bundle = [NSBundle bundleForClass:[self class]];
+        NSBundle *bundle = [UAAutomationResources bundle];
         NSURL *modelURL = [bundle URLForResource:@"UAAutomation" withExtension:@"momd"];
+
         self.managedContext = [NSManagedObjectContext managedObjectContextForModelURL:modelURL
                                                                       concurrencyType:NSPrivateQueueConcurrencyType];
         self.managedContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy;

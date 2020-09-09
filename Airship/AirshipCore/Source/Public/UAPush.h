@@ -349,6 +349,12 @@ typedef NS_ENUM(NSInteger, UAAuthorizationStatus) {
  */
 @property (nonatomic, assign) NSInteger badgeNumber;
 
+/**
+ * The set of Accengage notification categories.
+ * @note For internal use only. :nodoc:
+ */
+@property (nonatomic, copy) NSSet<UANotificationCategory *> *accengageCategories;
+
 ///---------------------------------------------------------------------------------------
 /// @name Autobadge
 ///---------------------------------------------------------------------------------------

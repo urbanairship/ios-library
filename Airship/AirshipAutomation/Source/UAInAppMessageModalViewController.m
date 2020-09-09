@@ -10,6 +10,7 @@
 #import "UAInAppMessageModalStyle.h"
 #import "UAInAppMessageResizableViewController+Internal.h"
 #import "UAAirshipAutomationCoreImport.h"
+#import "UAAutomationResources.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -113,7 +114,8 @@ static CGFloat const ModalCloseButtonViewWidth = 46.0;
 - (instancetype)initWithDisplayContent:(UAInAppMessageModalDisplayContent *)displayContent
                              mediaView:(nullable UAInAppMessageMediaView *)mediaView
                                  style:(nullable UAInAppMessageModalStyle *)style {
-    self = [self initWithNibName:@"UAInAppMessageModalViewController" bundle:[NSBundle bundleForClass:[self class]]];
+
+    self = [self initWithNibName:@"UAInAppMessageModalViewController" bundle:[UAAutomationResources bundle]];
 
     if (self) {
         self.displayContent = displayContent;

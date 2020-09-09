@@ -5,6 +5,7 @@
 #import "UAInAppMessageBannerDisplayContent.h"
 #import "UAInAppMessageButton+Internal.h"
 #import "UAAirshipAutomationCoreImport.h"
+#import "UAAutomationResources.h"
 
 // UAInAppMessageButtonView nib name
 NSString *const UAInAppMessageButtonViewNibName = @"UAInAppMessageButtonView";
@@ -21,7 +22,7 @@ static CGFloat const DefaultSeparatedButtonSpacing = 16;
                              selector:(SEL)selector {
 
     NSString *nibName = UAInAppMessageButtonViewNibName;
-    NSBundle *bundle = [NSBundle bundleForClass:[self class]];
+    NSBundle *bundle = [UAAutomationResources bundle];
     
     // Joined, Separate and Stacked views object at index 0,1,2, respectively.
     UAInAppMessageButtonView *view;

@@ -3,13 +3,13 @@
 #import "UAAccengage+Internal.h"
 #import "UAActionRunner.h"
 #import "UAAccengagePayload.h"
-#import "UAChannelRegistrationPayload+Internal.h"
+#import "UAChannelRegistrationPayload.h"
 #import "UAExtendableChannelRegistration.h"
 #import "UAJSONSerialization.h"
 #import "UAAccengageUtils.h"
 #import "UAAccengageResources.h"
 #import "UANotificationCategories.h"
-#import "UAPush+Internal.h"
+#import "UAPush.h"
 #import "ACCStubData+Internal.h"
 
 static NSString * const UAAccengageIDKey = @"a4sid";

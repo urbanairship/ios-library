@@ -15,13 +15,14 @@ Pod::Spec.new do |s|
     s.default_subspecs        = ["NotificationService", "NotificationContent"]
 
     s.subspec "NotificationService" do |notificationService|
-        notificationService.ios.source_files     = "AirshipExtensions/AirshipNotificationServiceExtension/Source/**/*.{h,m,mm}"
+        notificationService.ios.source_files     = "AirshipExtensions/AirshipNotificationServiceExtension/Source/**/*.{h,m}"
         notificationService.ios.weak_frameworks  = "UserNotifications"
     end
 
     s.subspec "NotificationContent" do |notificationContent|
-        notificationContent.ios.source_files     = ["AirshipExtensions/AirshipNotificationContentExtension/Source/**/*.{h,m,mm}", "AirshipExtensions/AirshipNotificationContentExtension/Source/Templates/Carousel/**/*.{h,m,mm}"]
-        notificationContent.ios.weak_frameworks  = "UserNotifications"
+        notificationContent.ios.public_header_files  = "AirshipExtensions/AirshipNotificationContentExtension/Source/Public/*.h"
+        notificationContent.ios.source_files         = ["AirshipExtensions/AirshipNotificationContentExtension/Source/**/*.{h,m}", "AirshipExtensions/AirshipNotificationContentExtension/Source/Templates/Carousel/**/*.{h,m}", "AirshipExtensions/AirshipNotificationContentExtension/Source/Public/**/*.{h,m}"]
+        notificationContent.ios.weak_frameworks      = "UserNotifications"
     end
 
 end

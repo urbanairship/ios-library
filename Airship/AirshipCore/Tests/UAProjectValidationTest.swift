@@ -31,8 +31,23 @@ class UAProjectValidationTest: XCTestCase {
     }
 
     func testAirshipCore() {
-        validateTarget(target: "AirshipCore", sourcePaths:["AirshipCore/Source/ios", "AirshipCore/Source/common"])
-        validateTarget(target: "AirshipCore tvOS", sourcePaths:["AirshipCore/Source/tvos", "AirshipCore/Source/common"])
+        validateTarget(target: "AirshipCore", sourcePaths:["AirshipCore/Source/ios", "AirshipCore/Source/common", "AirshipCore/Source/Public"])
+        validateTarget(target: "AirshipCore tvOS",
+                       sourcePaths:["AirshipCore/Source/tvos", "AirshipCore/Source/common", "AirshipCore/Source/Public"],
+                       excludeFiles: ["AirshipCore/Source/Public/UAActivityViewController.h",
+                                      "AirshipCore/Source/Public/UAChannelCapture.h",
+                                      "AirshipCore/Source/Public/UAJavaScriptCommand.h",
+                                      "AirshipCore/Source/Public/UAJavaScriptEnvironment.h",
+                                      "AirshipCore/Source/Public/UANativeBridge.h",
+                                      "AirshipCore/Source/Public/UANativeBridgeActionHandler.h",
+                                      "AirshipCore/Source/Public/UAPasteboardAction.h",
+                                      "AirshipCore/Source/Public/UAShareAction.h",
+                                      "AirshipCore/Source/Public/UAShareActionPredicate.h",
+                                      "AirshipCore/Source/Public/UAWalletAction.h",
+                                      "AirshipCore/Source/Public/UAWebView.h",
+                                      "AirshipCore/Source/Public/UANativeBridgeExtensionDelegate.h",
+                                      "AirshipCore/Source/Public/UAJavaScriptCommandDelegate.h",
+                                      "AirshipCore/Source/Public/UANativeBridgeDelegate.h"])
     }
 
     func testAirshipLocation() {
@@ -61,9 +76,13 @@ class UAProjectValidationTest: XCTestCase {
                        sourcePaths: ["Airship/Source",
                                      "AirshipCore/Source/ios",
                                      "AirshipCore/Source/common",
+                                     "AirshipCore/Source/Public",
                                      "AirshipAutomation/Source",
+                                     "AirshipAutomation/Source/Public",
                                      "AirshipMessageCenter/Source",
-                                     "AirshipExtendedActions/Source"],
+                                     "AirshipMessageCenter/Source/Public",
+                                     "AirshipExtendedActions/Source",
+                                     "AirshipExtendedActions/Source/Public"],
                        excludeFiles: ["AirshipCore/Source/common/AirshipCore.h",
                                       "AirshipAutomation/Source/AirshipAutomation.h",
                                       "AirshipMessageCenter/Source/AirshipMessageCenter.h",
@@ -73,8 +92,23 @@ class UAProjectValidationTest: XCTestCase {
         validateTarget(target: "Airship tvOS",
                        sourcePaths: ["Airship/Source",
                                      "AirshipCore/Source/tvos",
-                                     "AirshipCore/Source/common"],
-                       excludeFiles: ["AirshipCore/Source/common/AirshipCore.h"])
+                                     "AirshipCore/Source/common",
+                                     "AirshipCore/Source/Public"],
+                       excludeFiles: ["AirshipCore/Source/common/AirshipCore.h",
+                                      "AirshipCore/Source/Public/UAActivityViewController.h",
+                                      "AirshipCore/Source/Public/UAChannelCapture.h",
+                                      "AirshipCore/Source/Public/UAJavaScriptCommand.h",
+                                      "AirshipCore/Source/Public/UAJavaScriptEnvironment.h",
+                                      "AirshipCore/Source/Public/UANativeBridge.h",
+                                      "AirshipCore/Source/Public/UANativeBridgeActionHandler.h",
+                                      "AirshipCore/Source/Public/UAPasteboardAction.h",
+                                      "AirshipCore/Source/Public/UAShareAction.h",
+                                      "AirshipCore/Source/Public/UAShareActionPredicate.h",
+                                      "AirshipCore/Source/Public/UAWalletAction.h",
+                                      "AirshipCore/Source/Public/UAWebView.h",
+                                      "AirshipCore/Source/Public/UANativeBridgeExtensionDelegate.h",
+                                      "AirshipCore/Source/Public/UAJavaScriptCommandDelegate.h",
+                                      "AirshipCore/Source/Public/UANativeBridgeDelegate.h"])
 
     }
     

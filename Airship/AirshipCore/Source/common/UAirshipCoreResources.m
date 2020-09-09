@@ -5,7 +5,10 @@
 @implementation UAirshipCoreResources
 
 + (NSBundle *)bundle {
-    return [NSBundle bundleForClass:[self class]];
+    NSBundle *bundle = [NSBundle bundleWithPath:[[NSBundle mainBundle] pathForResource:@"Airship_AirshipCore"
+                                                                                ofType:@"bundle"]];
+
+    return bundle ? : [NSBundle bundleForClass:[self class]];
 }
 
 @end

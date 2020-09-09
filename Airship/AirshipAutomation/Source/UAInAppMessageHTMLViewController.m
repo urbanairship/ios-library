@@ -5,6 +5,7 @@
 #import "UAInAppMessageDismissButton+Internal.h"
 #import "UAInAppMessageResolution+Internal.h"
 #import "UAAirshipAutomationCoreImport.h"
+#import "UAAutomationResources.h"
 
 #import <WebKit/WebKit.h>
 
@@ -61,8 +62,7 @@ NSString *const UAInAppNativeBridgeDismissCommand = @"dismiss";
 
 - (instancetype)initWithDisplayContent:(UAInAppMessageHTMLDisplayContent *)displayContent
                                  style:(UAInAppMessageHTMLStyle *)style {
-    NSBundle *bundle = [NSBundle bundleForClass:[self class]];
-    self = [self initWithNibName:@"UAInAppMessageHTMLViewController" bundle:bundle];
+    self = [self initWithNibName:@"UAInAppMessageHTMLViewController" bundle:[UAAutomationResources bundle]];
 
     if (self) {
         self.displayContent = displayContent;

@@ -3,6 +3,7 @@
 #import "UAAutomationModuleLoader.h"
 #import "UALegacyInAppMessaging+Internal.h"
 #import "UAInAppAutomation+Internal.h"
+#import "UAAutomationResources.h"
 
 @interface UAAutomationModuleLoader()
 @property (nonatomic, copy) NSArray<UAComponent *> *automationComponents;
@@ -54,7 +55,7 @@
 }
 
 - (void)registerActions:(UAActionRegistry *)registry {
-    NSBundle *bundle = [NSBundle bundleForClass:[self class]];
+    NSBundle *bundle = [UAAutomationResources bundle];
     NSString *path = [bundle pathForResource:@"UAAutomationActions" ofType:@"plist"];
     if (path) {
         [registry registerActionsFromFile:path];
