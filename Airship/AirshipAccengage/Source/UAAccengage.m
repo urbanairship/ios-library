@@ -210,9 +210,16 @@ NSString *const UAAccengageSettingsMigrated = @"UAAccengageSettingsMigrated";
         accengageDeviceID = UIDevice.currentDevice.identifierForVendor.UUIDString;
     }
 
-    payload.accengageDeviceID = accengageDeviceID;
+    if ([self isValidDeviceID:accengageDeviceID]) {
+        payload.accengageDeviceID = accengageDeviceID;
+    }
+
 
     completionHandler(payload);
+}
+
+- (BOOL)isValidDeviceID:(NSString *)deviceID {
+    return deviceID && deviceID.length && ![deviceID isEqualToString:@"00000000-0000-0000-0000-000000000000"];
 }
 
 - (nullable Class)unarchiver:(NSKeyedUnarchiver *)unarchiver cannotDecodeObjectOfClassName:(NSString *)name originalClasses:(NSArray<NSString *> *)classNames {
