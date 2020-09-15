@@ -34,8 +34,11 @@ let package = Package(
             name: "AirshipDebug",
             targets: ["AirshipDebug"]),
         .library(
-            name: "AirshipExtensions",
-            targets: ["AirshipNotificationContentExtension", "AirshipNotificationServiceExtension"])
+            name: "AirshipNotificationContentExtension",
+            targets: ["AirshipNotificationContentExtension"]),
+        .library(
+            name: "AirshipNotificationServiceExtension",
+            targets: ["AirshipNotificationServiceExtension"])
     ],
     targets: [
         .target(name: "AirshipCore",
@@ -73,7 +76,7 @@ let package = Package(
                 ]
         ),
         .target(name:"AirshipAutomation",
-                dependencies : ["AirshipCore"],
+                dependencies: [.target(name: "AirshipCore")],
                 path: "Airship/AirshipAutomation",
                 exclude: ["Resources/Info.plist",
                           "Source/AirshipAutomation.h",
@@ -89,7 +92,7 @@ let package = Package(
                     .linkedFramework("UIKit")]
         ),
         .target(name:"AirshipMessageCenter",
-                dependencies : ["AirshipCore"],
+                dependencies: [.target(name: "AirshipCore")],
                 path: "Airship/AirshipMessageCenter",
                 exclude: ["Resources/Info.plist",
                           "Source/AirshipMessageCenter.h",
@@ -106,7 +109,7 @@ let package = Package(
                     .headerSearchPath("Source/User"),]
         ),
         .target(name:"AirshipExtendedActions",
-                dependencies : ["AirshipCore"],
+                dependencies: [.target(name: "AirshipCore")],
                 path: "Airship/AirshipExtendedActions",
                 exclude: ["Resources/Info.plist",
                           "Source/AirshipExtendedActions.h",
@@ -123,7 +126,7 @@ let package = Package(
                     .linkedFramework("StoreKit")]
         ),
         .target(name:"AirshipLocation",
-                dependencies : ["AirshipCore"],
+                dependencies: [.target(name: "AirshipCore")],
                 path: "Airship/AirshipLocation",
                 exclude: ["Source/AirshipLocation.h",
                           "Info.plist"],
@@ -135,7 +138,7 @@ let package = Package(
                     .linkedFramework("CoreLocation")]
         ),
         .target(name:"AirshipAccengage",
-                dependencies : ["AirshipCore"],
+                dependencies: [.target(name: "AirshipCore")],
                 path: "Airship/AirshipAccengage",
                 exclude: ["Source/AirshipAccengage.h",
                           "info.plist",
@@ -149,7 +152,11 @@ let package = Package(
                     .headerSearchPath("Source/AccengageInternal")]
         ),
         .target(name:"AirshipDebug",
-                dependencies : ["AirshipCore", "AirshipAutomation", "AirshipMessageCenter", "AirshipExtendedActions", "AirshipLocation"],
+                dependencies: [ .target(name: "AirshipCore"),
+                                .target(name: "AirshipAutomation"),
+                                .target(name: "AirshipMessageCenter"),
+                                .target(name: "AirshipExtendedActions"),
+                                .target(name: "AirshipLocation")],
                 path: "Airship/AirshipDebug",
                 exclude: ["Source/AirshipDebug.h",
                           "Info.plist"],
