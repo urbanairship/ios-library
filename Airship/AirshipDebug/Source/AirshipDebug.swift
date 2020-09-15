@@ -145,7 +145,7 @@ public class AirshipDebug : NSObject {
      */
     class func instantiateViewControllerForStoryboard(_ storyBoardName : String) -> UIViewController? {
         // find the bundle containing the storyboard
-        var storyboardBundle : Bundle = Bundle(for: self)
+        var storyboardBundle : Bundle = UADebugResources.bundle();
         if (storyboardBundle.path(forResource: storyBoardName, ofType: "storyboardc") == nil) {
             // if it is not the main bundle, then it should be in the resource bundle
             let resourceBundlePath = storyboardBundle.path(forResource: "AirshipDebugResources", ofType: "bundle")
@@ -210,7 +210,7 @@ public class AirshipDebug : NSObject {
  * Translate the string using the DebugKit strings file
  */
 internal extension String {
-    func localized(bundle: Bundle = Bundle(for: AirshipDebug.self), tableName: String = "AirshipDebug", comment: String = "") -> String {
+    func localized(bundle: Bundle = UADebugResources.bundle(), tableName: String = "AirshipDebug", comment: String = "") -> String {
         return NSLocalizedString(self, tableName: tableName, bundle: bundle, comment: comment)
     }
 

@@ -338,6 +338,7 @@
 		3CA0E47B237E4E3000EE76CF /* UAMessageCenterActions.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3CA0E307237E396100EE76CF /* UAMessageCenterActions.plist */; };
 		3CA0E47C237E4E3000EE76CF /* UAMessageCenterListCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3CA0E308237E396100EE76CF /* UAMessageCenterListCell.xib */; };
 		3CA0E47D237E4E3000EE76CF /* UAMessageCenterPlaceholderIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 3CA0E309237E396100EE76CF /* UAMessageCenterPlaceholderIcon.png */; };
+		3CB37A1E251151A400E60392 /* UADebugResources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CB37A1D251151A400E60392 /* UADebugResources.swift */; };
 		3CBCED5321150742003B7239 /* UAPendingTagGroupStore+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CBCED5121150742003B7239 /* UAPendingTagGroupStore+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3CBCED5421150742003B7239 /* UAPendingTagGroupStore+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CBCED5121150742003B7239 /* UAPendingTagGroupStore+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3CBCED5621150742003B7239 /* UAPendingTagGroupStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CBCED5221150742003B7239 /* UAPendingTagGroupStore.m */; };
@@ -2609,6 +2610,7 @@
 		3CADDEAB21B89AB000C482F4 /* UAInAppMessageDefaultDisplayCoordinator.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageDefaultDisplayCoordinator.m; sourceTree = "<group>"; };
 		3CADDEB221B89B0E00C482F4 /* UAInAppMessageDisplayCoordinator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UAInAppMessageDisplayCoordinator.h; sourceTree = "<group>"; };
 		3CADDEB621B8C54F00C482F4 /* UAInAppMessageDefaultDisplayCoordinator+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAInAppMessageDefaultDisplayCoordinator+Internal.h"; sourceTree = "<group>"; };
+		3CB37A1D251151A400E60392 /* UADebugResources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UADebugResources.swift; sourceTree = "<group>"; };
 		3CBB6F19212CBD0300E094B0 /* UARetriablePipeline+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UARetriablePipeline+Internal.h"; sourceTree = "<group>"; };
 		3CBB6F1A212CBD0300E094B0 /* UARetriablePipeline.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UARetriablePipeline.m; sourceTree = "<group>"; };
 		3CBB6F27212CDE1300E094B0 /* UARetriable+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UARetriable+Internal.h"; sourceTree = "<group>"; };
@@ -3959,6 +3961,7 @@
 				3CA0E23F237CCBA600EE76CF /* Theme.swift */,
 				3CA0E24E237CCBA600EE76CF /* DebugUtils.swift */,
 				DFD2464D2473404C000FD565 /* UADebugLibraryModuleLoader.swift */,
+				3CB37A1D251151A400E60392 /* UADebugResources.swift */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -7692,6 +7695,7 @@
 				DFD2464E2473404C000FD565 /* UADebugLibraryModuleLoader.swift in Sources */,
 				DF2519BF2458E3D800B3587A /* AddChannelAttributeTableViewController.swift in Sources */,
 				3CA0E2AF237CD05F00EE76CF /* AddTagsTableViewController.swift in Sources */,
+				3CB37A1E251151A400E60392 /* UADebugResources.swift in Sources */,
 				6E21852B237D32B30084933A /* EventData.swift in Sources */,
 				3CA0E2B1237CD05F00EE76CF /* AddNamedUserTableViewController.swift in Sources */,
 				4568A6902446E0C100021E02 /* MultilineTextField.swift in Sources */,
