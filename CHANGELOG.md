@@ -3,12 +3,22 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 14.1.0 - September 15, 2020
+Minor release that adds support for iOS 14 features and Swift package manager.
+
+### Changes
+- Requires Xcode 12+
+- Swift package manager support
+- Support for App Clips and ephemeral notification authorization
+- Support for reduced accuracy location
+- Support for list and banner notification types
+
 ## Version 14.0.0 - September 3, 2020
 Airship SDK 14 is a major update that prepares our automation module to support future IAA enhancements, revamps the Channel Capture tool, and provides other improvements.
 
 The majority of apps will only be effected by the new `UAURLAllowList` behavior changes.
 
-## Changes
+### Changes
 - **BEHAVIOR CHANGE** All URLs are not verified by default. Applications that use open URL action, landing pages, and custom in-app message image URLs will need to provide a list of URL patterns that match those URLs for SCOPE_OPEN_URL. The easist way to go back to 13.x behavior is to add the wildcard symbol `*` to the array under the `UAURLAllowListScopeOpenURL` key in your AirshipConfig.plist.
 - Channel Capture tool now detects a `knock` of 6 app opens in 30 seconds. Instead of displaying anything to the user, the tool will write the current channel ID to the clipboard.
 - `UAWhitelist` class and terminology removed and replaced with `UAURLAllowList`.
