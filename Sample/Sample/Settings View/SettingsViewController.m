@@ -265,13 +265,13 @@ typedef NS_ENUM(NSUInteger, UASettingsViewControllerSection) {
     if (indexPath.section == 2) {
         if (indexPath.row == self.analyticsEnabled.row) {
             [cell.cellSwitch setOn:!cell.cellSwitch.on animated:YES];
-            UAirship.push.userPushNotificationsEnabled = cell.cellSwitch.on;
+            UAirship.analytics.enabled = cell.cellSwitch.on;
         }
     }
     if (indexPath.section == 3) {
         if (indexPath.row == self.locationEnabled.row) {
             [cell.cellSwitch setOn:!cell.cellSwitch.on animated:YES];
-            UAirship.push.userPushNotificationsEnabled = cell.cellSwitch.on;
+            UALocation.shared.locationUpdatesEnabled = cell.cellSwitch.on;
         }
     }
 

@@ -22,6 +22,21 @@
 	<string>1</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Sample location</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Sample location</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Sample location</string>
+	<key>UIAppFonts</key>
+	<array>
+		<string>GT-America-Standard-Thin.otf</string>
+		<string>GT-America-Standard-Bold.otf</string>
+		<string>GT-America-Standard-Ultra-Light.otf</string>
+		<string>GT-America-Standard-Light.otf</string>
+		<string>GT-America-Standard-Regular.otf</string>
+		<string>GT-America-Standard-Medium.otf</string>
+	</array>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>
@@ -57,19 +72,6 @@
 		<string>UIInterfaceOrientationPortraitUpsideDown</string>
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
-	</array>
-	<key>NSLocationAlwaysUsageDescription</key>
-	<string>Sample location</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Sample location, when in use.</string>
-	<key>UIAppFonts</key>
-	<array>
-		<string>GT-America-Standard-Thin.otf</string>
-		<string>GT-America-Standard-Bold.otf</string>
-		<string>GT-America-Standard-Ultra-Light.otf</string>
-		<string>GT-America-Standard-Light.otf</string>
-		<string>GT-America-Standard-Regular.otf</string>
-		<string>GT-America-Standard-Medium.otf</string>
 	</array>
 </dict>
 </plist>
