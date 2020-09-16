@@ -119,9 +119,11 @@
     
     #pragma clang diagnostic push
     #pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#if !TARGET_OS_MACCATALYST
     if (@available(iOS 14.0, tvOS 14.0, *)) {
         foregroundPresentation = (options & (UNNotificationPresentationOptionAlert | UNNotificationPresentationOptionList | UNNotificationPresentationOptionBanner)) > 0;
     }
+#endif
     #pragma clang diagnostic pop
 
     UANotificationContent *notificationContent = [UANotificationContent notificationWithUNNotification:notification];

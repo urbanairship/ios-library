@@ -790,6 +790,7 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
             } else if ([UAPresentationOptionSound isEqualToString:presentationOption]) {
                 options |= UNNotificationPresentationOptionSound;
             }
+#if !TARGET_OS_MACCATALYST
             if (@available(iOS 14.0, tvOS 14.0, *)) {
                 if ([UAPresentationOptionList isEqualToString:presentationOption]) {
                     options |= UNNotificationPresentationOptionList;
@@ -797,6 +798,7 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
                     options |= UNNotificationPresentationOptionBanner;
                 }
             }
+#endif
         }
     } else {
         options = self.defaultPresentationOptions;

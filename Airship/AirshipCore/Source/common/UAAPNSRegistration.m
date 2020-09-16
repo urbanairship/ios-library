@@ -67,7 +67,7 @@
     } else if (status == UNAuthorizationStatusAuthorized) {
         return UAAuthorizationStatusAuthorized;
     }
-    #if !TARGET_OS_TV
+    #if !TARGET_OS_TV && !TARGET_OS_MACCATALYST
     else if (@available(iOS 14.0, *)) {
         if (status == UNAuthorizationStatusEphemeral) {
             return UAAuthorizationStatusEphemeral;
