@@ -31,12 +31,18 @@
 }
 
 - (UNNotificationPresentationOptions)extendPresentationOptions:(UNNotificationPresentationOptions)options notification:(UNNotification *)notification {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 #if !TARGET_OS_MACCATALYST
     if (@available(iOS 14.0, *)) {
         return options | UNNotificationPresentationOptionSound | UNNotificationPresentationOptionList | UNNotificationPresentationOptionBanner;
+    } else {
+        return options | UNNotificationPresentationOptionSound | UNNotificationPresentationOptionAlert;
     }
-#endif
+#else
     return options | UNNotificationPresentationOptionSound | UNNotificationPresentationOptionAlert;
+#endif
+#pragma clang diagnostic pop
 }
 
 @end
