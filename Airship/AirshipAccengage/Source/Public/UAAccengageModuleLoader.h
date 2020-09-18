@@ -2,8 +2,10 @@
 
 #import <Foundation/Foundation.h>
 
-#if UA_USE_MODULE_AIRSHIP_IMPORTS
-@import AirshipCore;
+#if UA_USE_AIRSHIP_IMPORT
+#import <Airship/Airship.h>
+#elif UA_USE_MODULE_IMPORT
+#import <AirshipCore/AirshipCore.h>
 #else
 #import "UAAccengageModuleLoaderFactory.h"
 #import "UAModuleLoader.h"
