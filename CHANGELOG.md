@@ -3,6 +3,15 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 14.1.1 - September 17, 2020
+Patch release fixing a crash in the Airship and AirshipAutomation XCFramework. 
+Apps using XCFrameworks should update.
+
+### Changes
+- Added missing resources to Airship and AirshipAutomation modules
+- Fixed XCFrameworks build issues for AirshipAccengage
+- Fixed sample app build issues when targeting macOS Catalyst  
+
 ## Version 14.1.0 - September 15, 2020
 Minor release that adds support for iOS 14 features and Swift package manager.
 

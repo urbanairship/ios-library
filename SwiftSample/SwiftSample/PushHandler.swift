@@ -32,8 +32,15 @@ class PushHandler: NSObject, UAPushNotificationDelegate {
         completionHandler()
     }
 
-    func presentationOptions(for notification: UNNotification) -> UNNotificationPresentationOptions {
-        return [.alert, .sound]
+    func extend(_ options: UNNotificationPresentationOptions = [], notification: UNNotification) -> UNNotificationPresentationOptions {
+        #if !targetEnvironment(macCatalyst)
+        if #available(iOS 14.0, *) {
+            return options.union([.banner, .list, .sound])
+        } else {
+            return options.union([.alert, .sound])
+        }
+        #else
+        return options.union([.alert, .sound])
+        #endif
     }
-
 }

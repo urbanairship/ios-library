@@ -24,7 +24,6 @@
 		1B281EDC24F6AB8100FDC188 /* AirshipMessageCenterLib.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B281EDB24F6AB8100FDC188 /* AirshipMessageCenterLib.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1B281EDD24F6AB8900FDC188 /* AirshipMessageCenterLib.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B281EDB24F6AB8100FDC188 /* AirshipMessageCenterLib.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1B2F3B0124B7403000A5DE8C /* UAScheduleTriggerContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B05133424AF600000F5051F /* UAScheduleTriggerContext.m */; };
-		1B2F3B0A24B7525500A5DE8C /* UAAutomation.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 1B2F3B0324B7525500A5DE8C /* UAAutomation.xcdatamodeld */; };
 		1B70A13F24F7B3D8003209E0 /* AirshipExtendedActionsLib.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B70A13E24F7B3D8003209E0 /* AirshipExtendedActionsLib.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1B70A14024F7B3E0003209E0 /* AirshipExtendedActionsLib.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B70A13E24F7B3D8003209E0 /* AirshipExtendedActionsLib.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1B70A14224F7B85D003209E0 /* AirshipAutomationLib.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B70A14124F7B85D003209E0 /* AirshipAutomationLib.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -243,6 +242,10 @@
 		3C54A7D920B4C8D50026887C /* NSURLResponse+UAAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C54A7D520B4C8D50026887C /* NSURLResponse+UAAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3C54A7DA20B4C8D50026887C /* NSURLResponse+UAAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C54A7D520B4C8D50026887C /* NSURLResponse+UAAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3C5649CF2127746C007E82D2 /* UAInAppMessagingRemoteConfigTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C5649CB2127746C007E82D2 /* UAInAppMessagingRemoteConfigTest.m */; };
+		3C693E4C25141C4B00EBFB88 /* UAAutomation.xcdatamodeld in Resources */ = {isa = PBXBuildFile; fileRef = 1B2F3B0324B7525500A5DE8C /* UAAutomation.xcdatamodeld */; };
+		3C693E4D25141C7E00EBFB88 /* UAAutomation.xcdatamodeld in Resources */ = {isa = PBXBuildFile; fileRef = 1B2F3B0324B7525500A5DE8C /* UAAutomation.xcdatamodeld */; };
+		3C693E4E25141CAC00EBFB88 /* AirshipEventData.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E222237CCBA600EE76CF /* AirshipEventData.xcdatamodeld */; };
+		3C693E4F25141CAC00EBFB88 /* AirshipDebugPushData.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 83A674F623AA7AA4005C0C8F /* AirshipDebugPushData.xcdatamodeld */; };
 		3C77BF922016B22900AD37F3 /* UAInAppMessageHTMLDisplayContentTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C77BF912016B22900AD37F3 /* UAInAppMessageHTMLDisplayContentTest.m */; };
 		3C89DD32211E143C00864358 /* UATagGroupsLookupResponseTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C89DD31211E143C00864358 /* UATagGroupsLookupResponseTest.m */; };
 		3C89DD3A211E354100864358 /* UATagGroupsTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C89DD39211E354100864358 /* UATagGroupsTest.m */; };
@@ -472,7 +475,6 @@
 		6E217364237C811E0084933A /* UALocationModuleLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E21735F237C811D0084933A /* UALocationModuleLoader.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E217365237C811E0084933A /* UALocation+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E217360237C811E0084933A /* UALocation+Internal.h */; };
 		6E217366237C811E0084933A /* UALocation.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E217361237C811E0084933A /* UALocation.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6E218529237D31720084933A /* AirshipEventData.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E222237CCBA600EE76CF /* AirshipEventData.xcdatamodeld */; };
 		6E21852B237D32B30084933A /* EventData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21852A237D32B30084933A /* EventData.swift */; };
 		6E218539237DB7960084933A /* AddAttributeTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E218538237DB7960084933A /* AddAttributeTableViewController.swift */; };
 		6E2E6D741EB3A34B006056BF /* UASwizzler+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E2E6D721EB3A34B006056BF /* UASwizzler+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1703,7 +1705,6 @@
 		6EFB378D2345B3FD005E4E44 /* UANativeBridgeDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EFB378C2345B3FD005E4E44 /* UANativeBridgeDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6EFB37902345B5A5005E4E44 /* UAJavaScriptCommandDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EFB378F2345B5A5005E4E44 /* UAJavaScriptCommandDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		76A5F5F01DCBDD5E00858BA4 /* UAAsyncOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = CC04F1BB1DC16BB300B4842D /* UAAsyncOperation.m */; };
-		83A674F823AA7AA4005C0C8F /* AirshipDebugPushData.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 83A674F623AA7AA4005C0C8F /* AirshipDebugPushData.xcdatamodeld */; };
 		872BA2B223D9EDA900D7C10C /* Accengage.m in Sources */ = {isa = PBXBuildFile; fileRef = 872BA2AE23D9EDA800D7C10C /* Accengage.m */; };
 		872BA2B323D9EDA900D7C10C /* Accengage.h in Headers */ = {isa = PBXBuildFile; fileRef = 872BA2AF23D9EDA800D7C10C /* Accengage.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		872BA2B423D9EDA900D7C10C /* ACCUserProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = 872BA2B023D9EDA800D7C10C /* ACCUserProfile.m */; };
@@ -7430,6 +7431,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3C693E4D25141C7E00EBFB88 /* UAAutomation.xcdatamodeld in Resources */,
 				6E84548B237E2320007D3B1E /* UAInAppMessageBannerView.xib in Resources */,
 				6E845485237E2320007D3B1E /* UAInAppMessageFullScreenViewController.xib in Resources */,
 				6E845489237E2320007D3B1E /* UAInAppMessageBannerContentView.xib in Resources */,
@@ -7452,6 +7454,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3C693E4C25141C4B00EBFB88 /* UAAutomation.xcdatamodeld in Resources */,
 				6EE77141238F163F00E79944 /* UAInbox.xcdatamodeld in Resources */,
 				6EE77143238F163F00E79944 /* UAMessageCenterActions.plist in Resources */,
 				6EE77144238F163F00E79944 /* UAMessageCenterListCell.xib in Resources */,
@@ -7690,6 +7693,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3C693E4F25141CAC00EBFB88 /* AirshipDebugPushData.xcdatamodeld in Sources */,
+				3C693E4E25141CAC00EBFB88 /* AirshipEventData.xcdatamodeld in Sources */,
 				6E6CC38823A3F9B4003D583C /* PushNotificationsTableViewController.swift in Sources */,
 				3CA0E2AE237CD05F00EE76CF /* AssociatedIdentifiersTableViewController.swift in Sources */,
 				DFD2464E2473404C000FD565 /* UADebugLibraryModuleLoader.swift in Sources */,
@@ -7724,13 +7729,11 @@
 				3CA0E2C7237CD05F00EE76CF /* CustomEventTableViewController.swift in Sources */,
 				3CA0E2C9237CD05F00EE76CF /* EventsDetailTableViewController.swift in Sources */,
 				3CA0E2CA237CD05F00EE76CF /* EventDataManager.swift in Sources */,
-				83A674F823AA7AA4005C0C8F /* AirshipDebugPushData.xcdatamodeld in Sources */,
 				45CCE9BB2445412F00D264D4 /* PropertyCells.swift in Sources */,
 				3CA0E2CB237CD05F00EE76CF /* RootTableViewController.swift in Sources */,
 				3CA0E2CC237CD05F00EE76CF /* ThemeManager.swift in Sources */,
 				3CA0E2CD237CD05F00EE76CF /* AirshipDebug.swift in Sources */,
 				DF2519C12458E6CF00B3587A /* AddNamedUserAttributeTableViewController.swift in Sources */,
-				6E218529237D31720084933A /* AirshipEventData.xcdatamodeld in Sources */,
 				6E6CC38623A3F9B4003D583C /* PushDataManager.swift in Sources */,
 				3CA0E2CE237CD05F00EE76CF /* Theme.swift in Sources */,
 				4569E2ED2444E11100F2FB5C /* CustomPropertyAdderTableViewController.swift in Sources */,
@@ -8015,7 +8018,6 @@
 				6E845427237E0575007D3B1E /* UAInAppMessageMediaView.m in Sources */,
 				6E845465237E1C26007D3B1E /* UAActiveTimer.m in Sources */,
 				6E845429237E0575007D3B1E /* UAInAppMessageManager.m in Sources */,
-				1B2F3B0A24B7525500A5DE8C /* UAAutomation.xcdatamodeld in Sources */,
 				6E84542A237E0575007D3B1E /* UAInAppMessageUtils.m in Sources */,
 				6E84542B237E0575007D3B1E /* UAInAppRemoteDataClient.m in Sources */,
 				6E84542C237E0575007D3B1E /* UAScheduleAudience.m in Sources */,

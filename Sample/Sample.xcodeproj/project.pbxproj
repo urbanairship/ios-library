@@ -1016,7 +1016,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "#!/bin/sh\nset -e\nset -u\nset -o pipefail\n\ninstall_framework()\n{\n  echo \"Installing framework $1\"\n  local source=\"${BUILT_PRODUCTS_DIR}/$(basename \"$1\")\"\n  local destination=\"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}\"\n\n  mkdir -p \"$destination\"\n\n  # copy the framework\n  cp -r \"${source}\" \"${destination}\"\n\n  if [ -n \"${EXPANDED_CODE_SIGN_IDENTITY:-}\" -a \"${CODE_SIGNING_REQUIRED:-}\" != \"NO\" -a \"${CODE_SIGNING_ALLOWED}\" != \"NO\" ]; then\n    # Use the current code_sign_identity\n    local binary=\"${destination}/$(basename \"$1\")\"\n    echo \"Code Signing ${binary} with Identity ${EXPANDED_CODE_SIGN_IDENTITY_NAME}\"\n    /usr/bin/codesign --force --sign ${EXPANDED_CODE_SIGN_IDENTITY} ${OTHER_CODE_SIGN_FLAGS:-} --preserve-metadata=identifier,entitlements \"${binary}\"\n  fi\n}\n\necho \"CONFIGURATION = ${CONFIGURATION}\"\nif [[ \"$CONFIGURATION\" == \"Debug\" ]]; then\n  index=0\n  while [ $index -lt ${SCRIPT_INPUT_FILE_COUNT} ]; do\n    scriptInputVar=\"SCRIPT_INPUT_FILE_$index\"\n    framework=${!scriptInputVar}\n    if [[ -d $framework && ${framework: -10} == \".framework\" ]]; then\n      install_framework $framework\n    fi\n    let index=index+1\n  done\nfi\n";
+			shellScript = "#!/bin/sh\nset -e\nset -u\nset -o pipefail\n\ninstall_framework()\n{\n  echo \"Installing framework $1\"\n  local source=\"${BUILT_PRODUCTS_DIR}/$(basename \"$1\")\"\n  local destination=\"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}\"\n\n  mkdir -p \"$destination\"\n\n  # copy the framework\n  cp -R \"${source}\" \"${destination}\"\n\n  if [ -n \"${EXPANDED_CODE_SIGN_IDENTITY:-}\" -a \"${CODE_SIGNING_REQUIRED:-}\" != \"NO\" -a \"${CODE_SIGNING_ALLOWED}\" != \"NO\" ]; then\n    # Use the current code_sign_identity\n    local binary=\"${destination}/$(basename \"$1\")\"\n    echo \"Code Signing ${binary} with Identity ${EXPANDED_CODE_SIGN_IDENTITY_NAME}\"\n    /usr/bin/codesign --force --sign ${EXPANDED_CODE_SIGN_IDENTITY} ${OTHER_CODE_SIGN_FLAGS:-} --preserve-metadata=identifier,entitlements \"${binary}\"\n  fi\n}\n\necho \"CONFIGURATION = ${CONFIGURATION}\"\nif [[ \"$CONFIGURATION\" == \"Debug\" ]]; then\n  index=0\n  while [ $index -lt ${SCRIPT_INPUT_FILE_COUNT} ]; do\n    scriptInputVar=\"SCRIPT_INPUT_FILE_$index\"\n    framework=${!scriptInputVar}\n    if [[ -d $framework && ${framework: -10} == \".framework\" ]]; then\n      install_framework $framework\n    fi\n    let index=index+1\n  done\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -1078,6 +1078,7 @@
 /* Begin PBXTargetDependency section */
 		1BEF600524CB3D8A0039091F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
+			platformFilter = ios;
 			target = 1BEF5FEC24CB3D870039091F /* SampleAppClip */;
 			targetProxy = 1BEF600424CB3D8A0039091F /* PBXContainerItemProxy */;
 		};
@@ -1207,7 +1208,7 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = NO;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_ENTITLEMENTS = SampleAppClip/SampleAppClip.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
@@ -1243,7 +1244,7 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = NO;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_ENTITLEMENTS = SampleAppClip/SampleAppClip.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";

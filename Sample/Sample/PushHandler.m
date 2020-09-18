@@ -31,12 +31,12 @@
 }
 
 - (UNNotificationPresentationOptions)extendPresentationOptions:(UNNotificationPresentationOptions)options notification:(UNNotification *)notification {
-    
+#if !TARGET_OS_MACCATALYST
     if (@available(iOS 14.0, *)) {
         return options | UNNotificationPresentationOptionSound | UNNotificationPresentationOptionList | UNNotificationPresentationOptionBanner;
-    } else {
-        return options | UNNotificationPresentationOptionSound | UNNotificationPresentationOptionAlert;
     }
+#endif
+    return options | UNNotificationPresentationOptionSound | UNNotificationPresentationOptionAlert;
 }
 
 @end
