@@ -270,7 +270,8 @@
     UA_WEAKIFY(self)
     [self.automationStore getSchedule:identifier completionHandler:^(UAScheduleData * _Nullable scheduleData) {
         UA_STRONGIFY(self)
-        [self handleCancelledSchedules:@[scheduleData] completionHandler:completionHandler];
+        [self handleCancelledSchedules:scheduleData ? @[scheduleData] : @[]
+                     completionHandler:completionHandler];
     }];
 }
 
