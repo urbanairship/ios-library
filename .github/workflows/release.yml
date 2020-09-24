@@ -85,9 +85,7 @@ jobs:
       - name: Publish Pods
         env:
           COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
-        run: |
-          pod trunk push Airship.podspec
-          pod trunk push AirshipExtensions.podspec
+        run: bash ./scripts/publish_pods.sh
       - name: Slack Notification
         uses: homoluctus/slatify@master
         if: always()
