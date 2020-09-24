@@ -35,7 +35,7 @@ The majority of apps will only be effected by the new `UAURLAllowList` behavior 
 - In-App Automation APIs have been updated to support future IAA enhancements.
 - Removed deprecated APIs.
 
-See the [Migration Guide](Documentation/Migration/migration-guide-13-14.md) for further details.
+See the [Migration Guide](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration/migration-guide-13-14.md) for further details.
 
 ## Version 13.5.6 - September 3, 2020
 Patch release to fix quiet time being applied to channels even if quiet time is disabled. This only affects channels that have set a quiet time using `setQuietTimeStartHour:startMinute:endHour:endMinute`.
