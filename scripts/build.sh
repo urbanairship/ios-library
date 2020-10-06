@@ -11,7 +11,7 @@ ROOT_PATH=`dirname "${0}"`/..
 AIRSHIP_VERSION=$(bash "$ROOT_PATH/scripts/airship_version.sh")
 
 source "$ROOT_PATH/scripts/config.sh"
-export DEVELOPER_DIR=$(bash "$ROOT_PATH/scripts/get_xcode_path.sh" $2)
+bundle exec xcversion select $XCODE_VERSION
 
 TEMP_DIR=$(mktemp -d /tmp/build-XXXXX)
 DESTINATION="$ROOT_PATH/build"

@@ -2,6 +2,10 @@
 
 ROOT_PATH=`dirname "${0}"`/..
 
+source "$ROOT_PATH/scripts/config.sh"
+bundle exec xcversion select $XCODE_VERSION
+
+
 # Verify pod version matches the version in the Gemfile.lock
 PODFILE_POD_VERSION=$(awk <"$ROOT_PATH/Podfile.lock" "\$1 == \"COCOAPODS:\" { print \$2 }")
 GEMFILE_POD_VERSION=$(bundle exec pod --version)

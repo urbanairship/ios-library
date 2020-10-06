@@ -5,6 +5,7 @@ set -e
 
 ROOT_PATH=`dirname "${0}"`/..
 source "$ROOT_PATH/scripts/config.sh"
+bundle exec xcversion select $XCODE_VERSION
 
 cd "$ROOT_PATH"
 
