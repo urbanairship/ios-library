@@ -4,6 +4,7 @@
 #import "UAInboxMessage.h"
 #import "UAMessageCenterDateUtils.h"
 #import "UAMessageCenterStyle.h"
+#import "UAMessageCenterLocalization.h"
 
 @implementation UAMessageCenterListCell
 
@@ -11,6 +12,7 @@
     self.date.text = [UAMessageCenterDateUtils formattedDateRelativeToNow:message.messageSent];
     self.title.text = message.title;
     self.unreadIndicator.hidden = !message.unread;
+    self.accessibilityHint = UAMessageCenterLocalizedString(@"ua_shows_full_message");
 }
 
 - (void)setMessageCenterStyle:(UAMessageCenterStyle *)style {
