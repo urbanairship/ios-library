@@ -37,7 +37,6 @@
 		3CF3DE7924E76ED6000CF516 /* AirshipCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D57C2396E99D00AF2D1A /* AirshipCore.framework */; };
 		3CF3DE7A24E76ED6000CF516 /* AirshipCore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D57C2396E99D00AF2D1A /* AirshipCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		3CF3DE7B24E76ED6000CF516 /* AirshipDebug.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D5842396E99D00AF2D1A /* AirshipDebug.framework */; };
-		3CF3DE7C24E76ED6000CF516 /* AirshipDebug.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D5842396E99D00AF2D1A /* AirshipDebug.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		3CF3DE7D24E76ED6000CF516 /* AirshipExtendedActions.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D58A2396E99D00AF2D1A /* AirshipExtendedActions.framework */; };
 		3CF3DE7E24E76ED6000CF516 /* AirshipExtendedActions.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D58A2396E99D00AF2D1A /* AirshipExtendedActions.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		3CF3DE7F24E76ED6000CF516 /* AirshipLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D5822396E99D00AF2D1A /* AirshipLocation.framework */; };
@@ -356,7 +355,6 @@
 			files = (
 				3CF3DE8024E76ED6000CF516 /* AirshipLocation.framework in Embed Frameworks */,
 				3CF3DE7824E76ED6000CF516 /* AirshipAutomation.framework in Embed Frameworks */,
-				3CF3DE7C24E76ED6000CF516 /* AirshipDebug.framework in Embed Frameworks */,
 				3CF3DE7A24E76ED6000CF516 /* AirshipCore.framework in Embed Frameworks */,
 				3CF3DE7E24E76ED6000CF516 /* AirshipExtendedActions.framework in Embed Frameworks */,
 				3CF3DE8224E76ED6000CF516 /* AirshipMessageCenter.framework in Embed Frameworks */,
@@ -707,6 +705,7 @@
 				1BEF601824CB3DB60039091F /* Frameworks */,
 				1BEF601924CB3DB60039091F /* Resources */,
 				3CF3DE1324E75E01000CF516 /* Embed Frameworks */,
+				3C12C2052535085800318371 /* Conditionally Embed Debug Framework */,
 			);
 			buildRules = (
 			);
@@ -1043,6 +1042,24 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		3C12C2052535085800318371 /* Conditionally Embed Debug Framework */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Conditionally Embed Debug Framework";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}\"/embed_debug_framework.sh\n\n";
+		};
 		DFC38388243D250F00EA78FE /* Conditionally Embed Debug Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -1061,7 +1078,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "#!/bin/sh\nset -e\nset -u\nset -o pipefail\n\ninstall_framework()\n{\n  echo \"Installing framework $1\"\n  local source=\"${BUILT_PRODUCTS_DIR}/$(basename \"$1\")\"\n  local destination=\"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}\"\n\n  mkdir -p \"$destination\"\n\n  # copy the framework\n  cp -R \"${source}\" \"${destination}\"\n\n  if [ -n \"${EXPANDED_CODE_SIGN_IDENTITY:-}\" -a \"${CODE_SIGNING_REQUIRED:-}\" != \"NO\" -a \"${CODE_SIGNING_ALLOWED}\" != \"NO\" ]; then\n    # Use the current code_sign_identity\n    local binary=\"${destination}/$(basename \"$1\")\"\n    echo \"Code Signing ${binary} with Identity ${EXPANDED_CODE_SIGN_IDENTITY_NAME}\"\n    /usr/bin/codesign --force --sign ${EXPANDED_CODE_SIGN_IDENTITY} ${OTHER_CODE_SIGN_FLAGS:-} --preserve-metadata=identifier,entitlements \"${binary}\"\n  fi\n}\n\necho \"CONFIGURATION = ${CONFIGURATION}\"\nif [[ \"$CONFIGURATION\" == \"Debug\" ]]; then\n  index=0\n  while [ $index -lt ${SCRIPT_INPUT_FILE_COUNT} ]; do\n    scriptInputVar=\"SCRIPT_INPUT_FILE_$index\"\n    framework=${!scriptInputVar}\n    if [[ -d $framework && ${framework: -10} == \".framework\" ]]; then\n      install_framework $framework\n    fi\n    let index=index+1\n  done\nfi\n";
+			shellScript = "\"${SRCROOT}\"/embed_debug_framework.sh\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
