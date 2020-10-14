@@ -1,17 +1,33 @@
 name: CI
 
 on: [pull_request]
-
+env:
+  BUNDLE_PATH: vendor/bundle
 jobs:
   build-sdk:
     runs-on: macOS-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Bundle Install
-        run: bundle install
+      - uses: actions/cache@v1
+        with:
+          path: vendor/bundle
+          key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
+          restore-keys: ${{ runner.os }}-gems-
       - name: Build SDK
-        run: |
-          bash ./scripts/build.sh
+        run: make build-xcframeworks
+
+  build-docs:
+    runs-on: macOS-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/cache@v1
+        with:
+          path: vendor/bundle
+          key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
+          restore-keys: ${{ runner.os }}-gems-
+      - name: Build Docs
+        run: make build-docs
+
   build-samples:
     runs-on: macOS-latest
     steps:
@@ -20,15 +36,10 @@ jobs:
         with:
           path: vendor/bundle
           key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-gems-
-      - name: Bundle install
-        run: |
-          bundle config path vendor/bundle
-          bundle install --jobs 4 --retry 3
+          restore-keys: ${{ runner.os }}-gems-
       - name: Build samples
-        run: |
-          bash ./scripts/run_ci_tasks.sh samples
+        run: make build-samples
+
   run-tests:
     runs-on: macOS-latest
     steps:
@@ -37,15 +48,10 @@ jobs:
         with:
           path: vendor/bundle
           key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-gems-
-      - name: Bundle install
-        run: |
-          bundle config path vendor/bundle
-          bundle install --jobs 4 --retry 3
-      - name: Run tests
-        run: |
-          bash ./scripts/run_ci_tasks.sh tests
+          restore-keys: ${{ runner.os }}-gems-
+      - name: Test
+        run: make test
+
   pod-lib-lint:
     runs-on: macOS-latest
     steps:
@@ -54,12 +60,6 @@ jobs:
         with:
           path: vendor/bundle
           key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-gems-
-      - name: Bundle install
-        run: |
-          bundle config path vendor/bundle
-          bundle install --jobs 4 --retry 3
+          restore-keys: ${{ runner.os }}-gems-
       - name: Pod lint
-        run: |
-          bash ./scripts/run_ci_tasks.sh pod_lint
+        run: make pod-lint
