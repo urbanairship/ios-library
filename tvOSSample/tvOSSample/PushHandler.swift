@@ -21,8 +21,8 @@ class PushHandler: NSObject, UAPushNotificationDelegate {
         // Let system handle it
         completionHandler()
     }
-
-    func presentationOptions(for notification: UNNotification) -> UNNotificationPresentationOptions {
+    
+    func extend(_ options: UNNotificationPresentationOptions = [], notification: UNNotification) -> UNNotificationPresentationOptions {
         return [.badge]
     }
 }
