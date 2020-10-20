@@ -18,6 +18,7 @@
  * Result value: The arguments value.
  *
  */
+API_UNAVAILABLE(tvos)
 @interface UAPasteboardAction : UAAction
 
 /**

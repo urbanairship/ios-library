@@ -9,6 +9,7 @@ NS_ASSUME_NONNULL_BEGIN
  * knocks (app foregrounds) within a specific timeframe. Channel Capture can be enabled
  * or disabled in Airship Config.
  */
+API_UNAVAILABLE(tvos)
 @interface UAChannelCapture : NSObject
 
 ///---------------------------------------------------------------------------------------

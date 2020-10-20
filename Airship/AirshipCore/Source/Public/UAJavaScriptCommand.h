@@ -1,13 +1,13 @@
 /* Copyright Airship and Contributors */
 
 #import <Foundation/Foundation.h>
-#import <UIKit/UIKit.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Model object for holding data associated with JS delegate calls 
  */
+API_UNAVAILABLE(tvos)
 @interface UAJavaScriptCommand : NSObject
 
 ///---------------------------------------------------------------------------------------

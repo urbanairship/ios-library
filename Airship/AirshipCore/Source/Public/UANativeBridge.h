@@ -1,8 +1,10 @@
 /* Copyright Airship and Contributors */
 
 #import <Foundation/Foundation.h>
-#import <UIKit/UIKit.h>
+
+#if !TARGET_OS_TV
 #import <WebKit/WebKit.h>
+
 
 #import "UANativeBridgeDelegate.h"
 #import "UAJavaScriptCommandDelegate.h"
@@ -13,12 +15,14 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * The UAirship scheme.
  */
+API_UNAVAILABLE(tvos)
 extern NSString *const UANativeBridgeUAirshipScheme;
 
 /**
  * The native bridge will automatically loads the Airship JavaScript environment into whitlelisted sites. The native
  * bridge must be assigned as the navigation delegate on a `WKWebView` in order to function.
  */
+API_UNAVAILABLE(tvos)
 @interface UANativeBridge : NSObject <WKNavigationDelegate>
 
 
@@ -67,3 +71,5 @@ extern NSString *const UANativeBridgeUAirshipScheme;
 @end
 
 NS_ASSUME_NONNULL_END
+
+#endif

@@ -1,5 +1,9 @@
 /* Copyright Airship and Contributors */
 
+#import <Foundation/Foundation.h>
+
+#if !TARGET_OS_TV
+
 #import "UAWebView.h"
 #import "UAirship.h"
 #import "UARuntimeConfig.h"
@@ -34,3 +38,5 @@
 }
 
 @end
+
+#endif

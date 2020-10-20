@@ -120,6 +120,11 @@ extern NSString * const UAAirshipReadyNotification;
  */
 @property (nonatomic, weak, nullable) id<UAJavaScriptCommandDelegate> javaScriptCommandDelegate;
 
+/**
+ * The channel capture utility.
+ */
+@property (nonatomic, strong, readonly) UAChannelCapture *channelCapture;
+
 #endif
 
 /**
@@ -136,10 +141,6 @@ extern NSString * const UAAirshipReadyNotification;
  */
 @property (nonatomic, strong, readonly) UAURLAllowList *URLAllowList;
 
-/**
- * The channel capture utility.
- */
-@property (nonatomic, strong, readonly) UAChannelCapture *channelCapture;
 
 /**
  * Analytics instance.

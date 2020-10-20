@@ -10,6 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+API_UNAVAILABLE(tvos)
 @interface UAChannelCapture ()
 
 ///---------------------------------------------------------------------------------------

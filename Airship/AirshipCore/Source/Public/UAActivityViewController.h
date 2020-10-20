@@ -8,6 +8,7 @@ NS_ASSUME_NONNULL_BEGIN
  * Wrapper around UIActivityViewController that takes an optional
  * block that will fire after the view disappears.
  */
+API_UNAVAILABLE(tvos)
 @interface UAActivityViewController : UIActivityViewController <UIPopoverPresentationControllerDelegate, UIPopoverControllerDelegate>
 
 ///---------------------------------------------------------------------------------------

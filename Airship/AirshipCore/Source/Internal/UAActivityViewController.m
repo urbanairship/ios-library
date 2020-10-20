@@ -1,5 +1,7 @@
 /* Copyright Airship and Contributors */
 
+#if !TARGET_OS_TV
+
 #import "UAActivityViewController.h"
 #import "UAUtils+Internal.h"
 
@@ -28,3 +30,5 @@
 }
 
 @end
+
+#endif

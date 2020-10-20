@@ -1,5 +1,9 @@
 /* Copyright Airship and Contributors */
 
+#import <Foundation/Foundation.h>
+
+#if !TARGET_OS_TV
+
 #import "UANativeBridge+Internal.h"
 #import "UAGlobal.h"
 #import "UAirship.h"
@@ -359,3 +363,4 @@ NSString *const UANativeBridgeCloseCommand = @"close";
 
 @end
 
+#endif

@@ -8,6 +8,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Action command handler for the native bridge.
  */
+API_UNAVAILABLE(tvos)
 @interface UANativeBridgeActionHandler : NSObject
 
 /**

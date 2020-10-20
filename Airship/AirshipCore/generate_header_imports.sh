@@ -3,16 +3,10 @@
 SCRIPT_DIRECTORY=`dirname "$0"`
 ROOT_PATH="${SCRIPT_DIRECTORY}/.."
 
-if [[ $# -lt 2 ]]; then
-    echo "Usage: $1 common OS-SPECIFIER"
-    echo "  where: OS-SPECIFIER = ios, tvos, macos, etc."
-    exit 1
-fi
-
 echo "${ROOT_PATH}"
-TMP_LIB="${DERIVED_FILE_DIR}/GeneratedHeader/$2"
+TMP_LIB="${DERIVED_FILE_DIR}/GeneratedHeader/"
 TMP_LIB_HEADER="${TMP_LIB}/AirshipLib.h"
-SOURCE_LIB_HEADER="${ROOT_PATH}/AirshipCore/Source/$2/AirshipLib.h"
+SOURCE_LIB_HEADER="${ROOT_PATH}/AirshipCore/Source/Public/AirshipLib.h"
 
 # Find all public headers, excluding AirshipLib and UI
 # Collect all headers as obj-c import statments into an umbrella header
@@ -21,13 +15,7 @@ mkdir -p "${TMP_LIB}" && touch "${TMP_LIB_HEADER}"
 
 echo "Generated file: ${TMP_LIB_HEADER}"
 
-for headerSubfolder in "$@"
-do
-    if [[ -d "${ROOT_PATH}"/AirshipCore/Source/${headerSubfolder} ]]; then
-        find -s "${ROOT_PATH}"/AirshipCore/Source/${headerSubfolder} -type f -name '*.h' ! -name 'AirshipLib.h' ! -name 'AirshipCore.h' ! -name '*+Internal*.h' \
-    -exec basename {} \; | awk '{print "#import \"" $1"\""}' >> "${TMP_LIB_HEADER}"
-    fi
-done
+find -s "${ROOT_PATH}"/AirshipCore/Source/Public -type f -name '*.h' ! -name 'AirshipLib.h' ! -name 'AirshipCore.h' ! -name '*+Internal*.h' -exec basename {} \; | awk '{print "#import \"" $1"\""}' >> "${TMP_LIB_HEADER}"
 
 # If there's already an AirshipLib.h in the framework headers directory
 if [ -a "${SOURCE_LIB_HEADER}" ]; then

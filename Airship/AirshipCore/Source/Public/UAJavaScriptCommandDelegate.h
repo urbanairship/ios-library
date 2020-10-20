@@ -1,14 +1,19 @@
 /* Copyright Airship and Contributors */
 
 #import <Foundation/Foundation.h>
+
+#if !TARGET_OS_TV
+
 #import "UAJavaScriptCommand.h"
 #import <WebKit/WebKit.h>
+
 
 NS_ASSUME_NONNULL_BEGIN
 
 /**
  * A standard protocol for handling commands from the native brige.
  */
+API_UNAVAILABLE(tvos)
 @protocol UAJavaScriptCommandDelegate <NSObject>
 
 @required
@@ -42,3 +47,5 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 NS_ASSUME_NONNULL_END
+
+#endif

@@ -7,6 +7,7 @@
 #import "UAPreferenceDataStore+Internal.h"
 #import "UAAnalytics.h"
 #import "UAComponent+Internal.h"
+#import "UAChannel+Internal.h"
 
 @interface UALocationTest : UAAirshipBaseTest
 

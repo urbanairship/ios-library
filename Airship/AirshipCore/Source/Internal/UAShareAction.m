@@ -5,6 +5,10 @@
 #import "UAGlobal.h"
 #import "UAActivityViewController.h"
 
+#if !TARGET_OS_TV
+
+
+API_UNAVAILABLE(tvos)
 @interface UAShareAction()
 @property (nonatomic, strong) UAActivityViewController *lastActivityViewController;
 @end
@@ -87,3 +91,5 @@ NSString * const UAShareActionDefaultRegistryAlias = @"^s";
 }
 
 @end
+
+#endif

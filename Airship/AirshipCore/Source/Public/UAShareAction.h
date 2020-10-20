@@ -1,8 +1,11 @@
 /* Copyright Airship and Contributors */
 
-#import "UAAction.h"
 #import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
 
+#if !TARGET_OS_TV
+
+#import "UAAction.h"
 
 /**
  * Shares text using UAActivityViewController.
@@ -20,6 +23,7 @@
  * Result value: nil
  *
  */
+API_UNAVAILABLE(tvos)
 @interface UAShareAction : UAAction
 
 /**
@@ -33,3 +37,5 @@ extern NSString * const UAShareActionDefaultRegistryName;
 extern NSString * const UAShareActionDefaultRegistryAlias;
 
 @end
+
+#endif

@@ -17,34 +17,14 @@ Pod::Spec.new do |s|
 
    s.subspec "Core" do |core|
       core.public_header_files        = "Airship/AirshipCore/Source/Public/*.h"
-      core.ios.source_files           = "Airship/AirshipCore/Source/ios/**/*.{h,m}", "Airship/AirshipCore/Source/common/**/*.{h,m}", "Airship/AirshipCore/Source/Public/**/*.{h,m}"
-      core.tvos.source_files          = "Airship/AirshipCore/Source/tvos/**/*.{h,m}", "Airship/AirshipCore/Source/common/**/*.{h,m}", "Airship/AirshipCore/Source/Public/**/*.{h,m}"
-      core.ios.private_header_files   = "Airship/AirshipCore/Source/common/**/*+Internal*.h", "Airship/AirshipCore/Source/ios/**/*+Internal*.h"
-      core.tvos.private_header_files  = "Airship/AirshipCore/Source/common/**/*+Internal*.h", "Airship/AirshipCore/Source/tvos/**/*+Internal*.h"
-      core.ios.resources              = "Airship/AirshipCore/Resources/common/*", "Airship/AirshipCore/Resources/ios/*"
-      core.tvos.resources             = "Airship/AirshipCore/Resources/common/*", "Airship/AirshipCore/Resources/tvos/*"
-      core.ios.exclude_files          = "Airship/AirshipCore/Resources/ios/Info.plist", "Airship/AirshipCore/Source/common/AirshipCore.h"
-      core.tvos.exclude_files         = "Airship/AirshipCore/Resources/tvos/Info.plist",
-                                        "Airship/AirshipCore/Source/common/AirshipCore.h",
-                                        "Airship/AirshipCore/Source/Public/UAActivityViewController.h",
-                                        "Airship/AirshipCore/Source/Public/UAChannelCapture.h",
-                                        "Airship/AirshipCore/Source/Public/UAJavaScriptCommand.h",
-                                        "Airship/AirshipCore/Source/Public/UAJavaScriptEnvironment.h",
-                                        "Airship/AirshipCore/Source/Public/UANativeBridge.h",
-                                        "Airship/AirshipCore/Source/Public/UANativeBridgeActionHandler.h",
-                                        "Airship/AirshipCore/Source/Public/UAPasteboardAction.h",
-                                        "Airship/AirshipCore/Source/Public/UAShareAction.h",
-                                        "Airship/AirshipCore/Source/Public/UAShareActionPredicate.h",
-                                        "Airship/AirshipCore/Source/Public/UAWalletAction.h",
-                                        "Airship/AirshipCore/Source/Public/UAWebView.h",
-                                        "Airship/AirshipCore/Source/Public/UANativeBridgeExtensionDelegate.h",
-                                        "Airship/AirshipCore/Source/Public/UAJavaScriptCommandDelegate.h",
-                                        "Airship/AirshipCore/Source/Public/UANativeBridgeDelegate.h"
+      core.source_files               = "Airship/AirshipCore/Source/Public/*.h", "Airship/AirshipCore/Source/Internal/*.{h,m}"
+      core.private_header_files       = "Airship/AirshipCore/Source/Internal/*.h"
+      core.resources                  = "Airship/AirshipCore/Resources/*"
+      core.exclude_files              = "Airship/AirshipCore/Resources/Info.plist", "Airship/AirshipCore/Source/Public/AirshipCore.h"
       core.libraries                  = "z", "sqlite3"
       core.frameworks                 = "UserNotifications", "CFNetwork", "CoreGraphics", "Foundation", "Security", "SystemConfiguration", "UIKit", "CoreData"
       core.ios.frameworks             = "WebKit", "CoreTelephony"
    end
-
    s.subspec "ExtendedActions" do |actions|
       actions.ios.public_header_files    = "Airship/AirshipExtendedActions/Source/Public/*.h"
       actions.ios.source_files           = "Airship/AirshipExtendedActions/Source/**/*.{h,m}", "Airship/AirshipExtendedActions/Source/Public/**/*.{h,m}"

@@ -267,7 +267,12 @@ NSString *const UAActionRegistryPredicateClassKey = @"predicate";
 }
 
 - (void)registerDefaultActions {
+#if TARGET_OS_TV
+    NSString *path = [[UAirshipCoreResources bundle] pathForResource:@"UADefaultActionsTVOS" ofType:@"plist"];
+#else
     NSString *path = [[UAirshipCoreResources bundle] pathForResource:@"UADefaultActions" ofType:@"plist"];
+#endif
+
     if (path) {
         [self registerActionsFromFile:path];
     }

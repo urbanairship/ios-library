@@ -1,6 +1,9 @@
 /* Copyright Airship and Contributors */
 
 #import <Foundation/Foundation.h>
+
+#if !TARGET_OS_TV
+
 #import <WebKit/WebKit.h>
 #import "UAJavaScriptEnvironment.h"
 #import "UAJavaScriptCommand.h"
@@ -33,3 +36,4 @@ NS_ASSUME_NONNULL_BEGIN
 
 NS_ASSUME_NONNULL_END
 
+#endif

@@ -31,23 +31,8 @@ class UAProjectValidationTest: XCTestCase {
     }
 
     func testAirshipCore() {
-        validateTarget(target: "AirshipCore", sourcePaths:["AirshipCore/Source/ios", "AirshipCore/Source/common", "AirshipCore/Source/Public"])
-        validateTarget(target: "AirshipCore tvOS",
-                       sourcePaths:["AirshipCore/Source/tvos", "AirshipCore/Source/common", "AirshipCore/Source/Public"],
-                       excludeFiles: ["AirshipCore/Source/Public/UAActivityViewController.h",
-                                      "AirshipCore/Source/Public/UAChannelCapture.h",
-                                      "AirshipCore/Source/Public/UAJavaScriptCommand.h",
-                                      "AirshipCore/Source/Public/UAJavaScriptEnvironment.h",
-                                      "AirshipCore/Source/Public/UANativeBridge.h",
-                                      "AirshipCore/Source/Public/UANativeBridgeActionHandler.h",
-                                      "AirshipCore/Source/Public/UAPasteboardAction.h",
-                                      "AirshipCore/Source/Public/UAShareAction.h",
-                                      "AirshipCore/Source/Public/UAShareActionPredicate.h",
-                                      "AirshipCore/Source/Public/UAWalletAction.h",
-                                      "AirshipCore/Source/Public/UAWebView.h",
-                                      "AirshipCore/Source/Public/UANativeBridgeExtensionDelegate.h",
-                                      "AirshipCore/Source/Public/UAJavaScriptCommandDelegate.h",
-                                      "AirshipCore/Source/Public/UANativeBridgeDelegate.h"])
+        validateTarget(target: "AirshipCore", sourcePaths:["AirshipCore/Source/Internal", "AirshipCore/Source/Public"])
+        validateTarget(target: "AirshipCore tvOS", sourcePaths:["AirshipCore/Source/Internal", "AirshipCore/Source/Public"])
     }
 
     func testAirshipLocation() {
@@ -74,45 +59,25 @@ class UAProjectValidationTest: XCTestCase {
     func testAirship() {
         validateTarget(target: "Airship",
                        sourcePaths: ["Airship/Source",
-                                     "AirshipCore/Source/ios",
-                                     "AirshipCore/Source/common",
                                      "AirshipCore/Source/Public",
+                                     "AirshipCore/Source/Internal",
                                      "AirshipAutomation/Source",
                                      "AirshipAutomation/Source/Public",
                                      "AirshipMessageCenter/Source",
                                      "AirshipMessageCenter/Source/Public",
                                      "AirshipExtendedActions/Source",
                                      "AirshipExtendedActions/Source/Public"],
-                       excludeFiles: ["AirshipCore/Source/common/AirshipCore.h",
+                       excludeFiles: ["AirshipCore/Source/Public/AirshipCore.h",
                                       "AirshipAutomation/Source/AirshipAutomation.h",
                                       "AirshipMessageCenter/Source/AirshipMessageCenter.h",
                                       "AirshipExtendedActions/Source/AirshipExtendedActions.h"])
 
 
         validateTarget(target: "Airship tvOS",
-                       sourcePaths: ["Airship/Source",
-                                     "AirshipCore/Source/tvos",
-                                     "AirshipCore/Source/common",
-                                     "AirshipCore/Source/Public"],
-                       excludeFiles: ["AirshipCore/Source/common/AirshipCore.h",
-                                      "AirshipCore/Source/Public/UAActivityViewController.h",
-                                      "AirshipCore/Source/Public/UAChannelCapture.h",
-                                      "AirshipCore/Source/Public/UAJavaScriptCommand.h",
-                                      "AirshipCore/Source/Public/UAJavaScriptEnvironment.h",
-                                      "AirshipCore/Source/Public/UANativeBridge.h",
-                                      "AirshipCore/Source/Public/UANativeBridgeActionHandler.h",
-                                      "AirshipCore/Source/Public/UAPasteboardAction.h",
-                                      "AirshipCore/Source/Public/UAShareAction.h",
-                                      "AirshipCore/Source/Public/UAShareActionPredicate.h",
-                                      "AirshipCore/Source/Public/UAWalletAction.h",
-                                      "AirshipCore/Source/Public/UAWebView.h",
-                                      "AirshipCore/Source/Public/UANativeBridgeExtensionDelegate.h",
-                                      "AirshipCore/Source/Public/UAJavaScriptCommandDelegate.h",
-                                      "AirshipCore/Source/Public/UANativeBridgeDelegate.h"])
-
+                       sourcePaths: ["Airship/Source", "AirshipCore/Source/Public", "AirshipCore/Source/Internal"],
+                       excludeFiles: ["AirshipCore/Source/Public/AirshipCore.h"])
     }
     
-
 
     func convertSourceTreeFolderToURL(sourceTreeFolder: SourceTreeFolder) -> URL {
         if (sourceTreeFolder != .sourceRoot) {

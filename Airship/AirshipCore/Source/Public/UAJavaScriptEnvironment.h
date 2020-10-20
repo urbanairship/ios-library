@@ -7,6 +7,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * The JavaScript environment builder that is used by the native bridge.
  */
+API_UNAVAILABLE(tvos)
 @interface UAJavaScriptEnvironment : NSObject
 
 ///---------------------------------------------------------------------------------------

@@ -30,7 +30,7 @@ function build_docs {
 
 echo -ne "\n\n *********** BUILDING DOCS *********** \n\n"
 build_docs "Airship" "Airship" "Source/Airship.h"
-build_docs "Airship" "AirshipCore" "Source/common/AirshipCore.h"
+build_docs "Airship" "AirshipCore" "Source/Public/AirshipCore.h"
 build_docs "Airship" "AirshipLocation"  "Source/AirshipLocation.h"
 build_docs "Airship" "AirshipAutomation"  "Source/AirshipAutomation.h"
 build_docs "Airship" "AirshipMessageCenter"  "Source/AirshipMessageCenter.h"

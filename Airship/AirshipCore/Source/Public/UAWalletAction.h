@@ -18,6 +18,7 @@
  *
  * Fetch result: UAActionFetchResultNoData
  */
+API_UNAVAILABLE(tvos)
 @interface UAWalletAction : UAOpenExternalURLAction
 
 /**

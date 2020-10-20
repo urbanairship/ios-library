@@ -43,21 +43,17 @@ let package = Package(
     targets: [
         .target(name: "AirshipCore",
                 path: "Airship/AirshipCore",
-                exclude: ["Resources/ios/Info.plist",
-                          "Resources/tvos/Info.plist",
-                          "Source/common/AirshipCore.h",
+                exclude: ["Resources/Info.plist",
+                          "Source/Public/AirshipCore.h",
                           "generate_header_imports.sh",
                           "Info.plist",
-                          "Resources/tvos/UADefaultActions.plist",
                           "Tests"],
                 sources : ["Source"],
                 resources: [
                     .process("Resources")],
                 publicHeadersPath: "Source/Public",
                 cSettings: [
-                    .headerSearchPath("Source/common"),
-                    .headerSearchPath("Source/ios", .when(platforms: [.iOS])),
-                    .headerSearchPath("Source/tvos", .when(platforms: [.tvOS]))],
+                    .headerSearchPath("Source/Internal"),
                 linkerSettings: [
                     //Frameworks
                     .linkedFramework("UserNotifications"),
