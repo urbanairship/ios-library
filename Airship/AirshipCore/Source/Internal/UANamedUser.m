@@ -24,6 +24,9 @@ NSString *const UANamedUserUploadedAudienceMutationNotificationMutationKey = @"m
 NSString *const UANamedUserUploadedAudienceMutationNotificationDateKey = @"date";
 NSString *const UANamedUserUploadedAudienceMutationNotificationIdentifierKey = @"identifier";
 
+NSString *const UANamedUserIdentifierChangedNotification = @"com.urbanairship.named_user_identifier_changed";
+NSString *const UANamedUserIdentifierChangedNotificationIdentifierKey = @"identifier";
+
 @interface UANamedUser()
 
 /**
@@ -33,6 +36,7 @@ NSString *const UANamedUserUploadedAudienceMutationNotificationIdentifierKey = @
 @property (nonatomic, copy) NSString *lastChannelID;
 @property (nonatomic, strong) UADate *date;
 @property (nonatomic, strong) UAAttributeRegistrar *attributeRegistrar;
+@property (nonatomic, strong) NSNotificationCenter *notificationCenter;
 
 @end
 
@@ -40,14 +44,16 @@ NSString *const UANamedUserUploadedAudienceMutationNotificationIdentifierKey = @
 
 - (instancetype)initWithChannel:(UAChannel<UAExtendableChannelRegistration> *)channel
                          config:(UARuntimeConfig *)config
+             notificationCenter:(NSNotificationCenter *)notificationCenter
                       dataStore:(UAPreferenceDataStore *)dataStore
              tagGroupsRegistrar:(UATagGroupsRegistrar *)tagGroupsRegistrar
              attributeRegistrar:(UAAttributeRegistrar *)attributeRegistrar
                            date:(UADate *)date {
     self = [super initWithDataStore:dataStore];
     if (self) {
-        self.config = config;
         self.channel = channel;
+        self.config = config;
+        self.notificationCenter = notificationCenter;
         self.dataStore = dataStore;
         self.namedUserAPIClient = [UANamedUserAPIClient clientWithConfig:config];
         self.tagGroupsRegistrar = tagGroupsRegistrar;
@@ -61,11 +67,10 @@ NSString *const UANamedUserUploadedAudienceMutationNotificationIdentifierKey = @
         [self.attributeRegistrar setIdentifier:self.identifier clearPendingOnChange:NO];
         [self updateRegistrarEnablement];
 
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(channelCreated:)
-                                                     name:UAChannelCreatedEvent
-                                                   object:nil];
-
+        [self.notificationCenter addObserver:self
+                                    selector:@selector(channelCreated:)
+                                        name:UAChannelCreatedEvent
+                                      object:nil];
         UA_WEAKIFY(self)
         [self.channel addChannelExtenderBlock:^(UAChannelRegistrationPayload *payload, UAChannelRegistrationExtenderCompletionHandler completionHandler) {
             UA_STRONGIFY(self)
@@ -90,6 +95,7 @@ NSString *const UANamedUserUploadedAudienceMutationNotificationIdentifierKey = @
     
     return [[UANamedUser alloc] initWithChannel:channel
                                          config:config
+                             notificationCenter:[NSNotificationCenter defaultCenter]
                                       dataStore:dataStore
                              tagGroupsRegistrar:tagGroupsRegistrar
                              attributeRegistrar:atttributeRegistrar
@@ -97,13 +103,15 @@ NSString *const UANamedUserUploadedAudienceMutationNotificationIdentifierKey = @
 }
 
 + (instancetype)namedUserWithChannel:(UAChannel<UAExtendableChannelRegistration> *)channel
-                               config:(UARuntimeConfig *)config
+                              config:(UARuntimeConfig *)config
+                  notificationCenter:(NSNotificationCenter *)notificationCenter
                             dataStore:(UAPreferenceDataStore *)dataStore
                    tagGroupsRegistrar:(UATagGroupsRegistrar *)tagGroupsRegistrar
                    attributeRegistrar:(UAAttributeRegistrar *)attributeRegistrar
                                  date:(UADate *)date {
     return [[UANamedUser alloc] initWithChannel:channel
                                          config:config
+                             notificationCenter:notificationCenter
                                       dataStore:dataStore
                              tagGroupsRegistrar:tagGroupsRegistrar
                              attributeRegistrar:attributeRegistrar
@@ -191,6 +199,13 @@ NSString *const UANamedUserUploadedAudienceMutationNotificationIdentifierKey = @
         if (self.identifier) {
             [self.channel updateRegistration];
         }
+
+        // Notify observers that the identifier has changed.
+        NSDictionary *userInfo = self.identifier ? @{UANamedUserIdentifierChangedNotificationIdentifierKey : self.identifier} : @{};
+
+        [self.notificationCenter postNotificationName:UANamedUserIdentifierChangedNotification
+                                               object:nil
+                                             userInfo:userInfo];
 
     } else {
         UA_LDEBUG(@"NamedUser - Skipping update. Named user ID trimmed already matches existing named user: %@", self.identifier);

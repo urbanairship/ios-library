@@ -49,6 +49,11 @@ NSString * const UAInAppAudienceManagerErrorDomain = @"com.urbanairship.in_app_a
         self.namedUser = namedUser;
         self.channel = channel;
         self.lookupAPIClient.enabled = self.enabled;
+
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(namedUserChanged:)
+                                                     name:UANamedUserIdentifierChangedNotification
+                                                   object:nil];
     }
 
     return self;
@@ -245,6 +250,10 @@ NSString * const UAInAppAudienceManagerErrorDomain = @"com.urbanairship.in_app_a
                                    cachedResponse:cachedResponse
                                       refreshDate:cacheRefreshDate], error);
     }];
+}
+
+- (void)namedUserChanged:(NSNotification *)notification {
+    self.cache.response = nil;
 }
 
 @end

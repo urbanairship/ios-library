@@ -50,6 +50,19 @@ extern NSString *const UANamedUserUploadedAudienceMutationNotificationIdentifier
  */
 extern NSString *const UANamedUserUploadedAudienceMutationNotificationDateKey;
 
+/**
+ * Notification posted when the named user identifier changes.
+ *
+ * If an identifier is set, the user data will contain an identifier string under the key UANamedUserIdentifierChangedNotificationIdentifierKey .
+ * @note For internal use only. :nodoc:
+ */
+extern NSString *const UANamedUserIdentifierChangedNotification;
+
+/**
+ * The identifier key for UANamedUserIdentifierChangedNotification.
+ * @note For internal use only. :nodoc:
+ */
+extern NSString *const UANamedUserIdentifierChangedNotificationIdentifierKey;
 
 /**
  * The named user is an alternate method of identifying the device. Once a named

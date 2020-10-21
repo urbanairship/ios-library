@@ -19,6 +19,8 @@
 @property (nonatomic, strong) id mockTagGroupsRegistrar;
 @property (nonatomic, strong) id mockAttributeRegistrar;
 @property (nonatomic, strong) id mockTimeZone;
+@property (nonatomic, strong) id mockNotificationCenter;
+
 @property (nonatomic, strong) UATestDate *testDate;
 
 @property (nonatomic, strong) UANamedUser *namedUser;
@@ -55,6 +57,8 @@ void (^disassociateSuccessDoBlock)(NSInvocation *);
 
     self.mockTimeZone = [self mockForClass:[NSTimeZone class]];
     [[[self.mockTimeZone stub] andReturn:self.mockTimeZone] defaultTimeZone];
+
+    self.mockNotificationCenter = [self mockForClass:[NSNotificationCenter class]];
     
     self.testDate = [[UATestDate alloc] initWithAbsoluteTime:[NSDate date]];
 
@@ -67,6 +71,7 @@ void (^disassociateSuccessDoBlock)(NSInvocation *);
 
     self.namedUser = [UANamedUser namedUserWithChannel:self.mockChannel
                                                 config:self.config
+                                    notificationCenter:self.mockNotificationCenter
                                              dataStore:self.dataStore
                                     tagGroupsRegistrar:self.mockTagGroupsRegistrar
                                     attributeRegistrar:self.mockAttributeRegistrar
@@ -115,6 +120,10 @@ void (^disassociateSuccessDoBlock)(NSInvocation *);
                                                                          channelID:@"someChannel"
                                                                  completionHandler:OCMOCK_ANY];
 
+    [[self.mockNotificationCenter expect] postNotificationName:UANamedUserIdentifierChangedNotification
+                                                        object:nil
+                                                      userInfo:@{UANamedUserIdentifierChangedNotificationIdentifierKey : @"superFakeNamedUser"}];
+
     self.namedUser.identifier = @"superFakeNamedUser";
 
     XCTAssertEqualObjects(@"superFakeNamedUser", self.namedUser.identifier,
@@ -124,6 +133,7 @@ void (^disassociateSuccessDoBlock)(NSInvocation *);
     XCTAssertNotEqualObjects(changeToken, self.namedUser.changeToken,
                              @"Change tokens should have changed.");
     XCTAssertNoThrow([self.mockedNamedUserClient verify], @"Named user should be associated");
+    XCTAssertNoThrow([self.mockNotificationCenter verify], @"Change notification should be posted");
 }
 
 /**
@@ -136,6 +146,10 @@ void (^disassociateSuccessDoBlock)(NSInvocation *);
                                          channelID:OCMOCK_ANY
                                  completionHandler:OCMOCK_ANY];
 
+    [[self.mockNotificationCenter reject] postNotificationName:UANamedUserIdentifierChangedNotification
+                                                        object:OCMOCK_ANY
+                                                      userInfo:OCMOCK_ANY];
+
     NSString *currentID = self.namedUser.identifier;
     self.namedUser.identifier = @"         ";
 
@@ -144,6 +158,7 @@ void (^disassociateSuccessDoBlock)(NSInvocation *);
     XCTAssertEqualObjects(changeToken, self.namedUser.changeToken,
                           @"Change tokens should remain the same.");
     XCTAssertNoThrow([self.mockedNamedUserClient verify], @"Named user should not be associated");
+    XCTAssertNoThrow([self.mockNotificationCenter verify], @"Change notification should not be posted");
 }
 
 /**
@@ -154,6 +169,10 @@ void (^disassociateSuccessDoBlock)(NSInvocation *);
     // Expect the named user client to disassociate and call the success block
     [[self.mockedNamedUserClient expect] disassociate:@"someChannel"
                                     completionHandler:OCMOCK_ANY];
+
+    [[self.mockNotificationCenter expect] postNotificationName:UANamedUserIdentifierChangedNotification
+                                                        object:nil
+                                                      userInfo:@{}];
     self.namedUser.identifier = @"";
 
     XCTAssertNil(self.namedUser.identifier, @"Named user ID should be nil.");
@@ -162,6 +181,7 @@ void (^disassociateSuccessDoBlock)(NSInvocation *);
     XCTAssertNotEqualObjects(changeToken, self.namedUser.changeToken,
                              @"Change tokens should have changed.");
     XCTAssertNoThrow([self.mockedNamedUserClient verify], @"Named user should be disassociated");
+    XCTAssertNoThrow([self.mockNotificationCenter verify], @"Change notification should be posted");
 }
 
 /**
@@ -172,6 +192,10 @@ void (^disassociateSuccessDoBlock)(NSInvocation *);
     // Expect the named user client to disassociate and call the success block
     [[self.mockedNamedUserClient expect] disassociate:@"someChannel"
                                     completionHandler:OCMOCK_ANY];
+
+    [[self.mockNotificationCenter expect] postNotificationName:UANamedUserIdentifierChangedNotification
+                                                        object:nil
+                                                      userInfo:@{}];
     self.namedUser.identifier = nil;
 
     XCTAssertNil(self.namedUser.identifier, @"Named user ID should be nil.");
@@ -180,6 +204,7 @@ void (^disassociateSuccessDoBlock)(NSInvocation *);
     XCTAssertNotEqualObjects(changeToken, self.namedUser.changeToken,
                              @"Change tokens should have changed.");
     XCTAssertNoThrow([self.mockedNamedUserClient verify], @"Named user should be disassociated");
+    XCTAssertNoThrow([self.mockNotificationCenter verify], @"Change notification should be posted");
 }
 
 /**
@@ -193,6 +218,10 @@ void (^disassociateSuccessDoBlock)(NSInvocation *);
                                          channelID:OCMOCK_ANY
                                  completionHandler:OCMOCK_ANY];
 
+    [[self.mockNotificationCenter expect] postNotificationName:UANamedUserIdentifierChangedNotification
+                                                        object:nil
+                                                      userInfo:@{UANamedUserIdentifierChangedNotificationIdentifierKey : @"kindaFakeNamedUser"}];
+
     NSString *changeToken = self.namedUser.changeToken;
     NSString *lastUpdatedToken = self.namedUser.lastUpdatedToken;
 
@@ -205,6 +234,7 @@ void (^disassociateSuccessDoBlock)(NSInvocation *);
     XCTAssertEqualObjects(lastUpdatedToken, self.namedUser.lastUpdatedToken,
                           @"Named user last updated token should remain the same.");
     XCTAssertNoThrow([self.mockedNamedUserClient verify], @"Named user should not be associated");
+    XCTAssertNoThrow([self.mockNotificationCenter verify], @"Change notification should be posted");
 }
 
 /**
@@ -215,6 +245,10 @@ void (^disassociateSuccessDoBlock)(NSInvocation *);
     [[self.mockedNamedUserClient reject] associate:OCMOCK_ANY
                                          channelID:OCMOCK_ANY
                                  completionHandler:OCMOCK_ANY];
+
+    [[self.mockNotificationCenter reject] postNotificationName:UANamedUserIdentifierChangedNotification
+                                                        object:OCMOCK_ANY
+                                                      userInfo:OCMOCK_ANY];
 
     NSString *currentID = self.namedUser.identifier;
     NSString *changeToken = self.namedUser.changeToken;
@@ -229,6 +263,7 @@ void (^disassociateSuccessDoBlock)(NSInvocation *);
     XCTAssertEqualObjects(lastUpdatedToken, self.namedUser.lastUpdatedToken,
                           @"Named user last updated token should remain the same.");
     XCTAssertNoThrow([self.mockedNamedUserClient verify], @"Named user should not be associated");
+    XCTAssertNoThrow([self.mockNotificationCenter verify], @"Change notification should not be posted");
 }
 
 - (void)testSetIdentifierDataCollectionDisabled {
@@ -245,6 +280,7 @@ void (^disassociateSuccessDoBlock)(NSInvocation *);
 
     self.namedUser = [UANamedUser namedUserWithChannel:self.mockChannel
                                                 config:self.config
+                                    notificationCenter:self.mockNotificationCenter
                                              dataStore:self.dataStore
                                     tagGroupsRegistrar:self.mockTagGroupsRegistrar
                                     attributeRegistrar:self.mockAttributeRegistrar

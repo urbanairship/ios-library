@@ -61,8 +61,12 @@ NSTimeInterval const UATagGroupsLookupResponseCacheDefaultStaleReadTimeSeconds =
 - (void)setResponse:(UATagGroupsLookupResponse *)response {
     NSData *encodedResonse = [NSKeyedArchiver archivedDataWithRootObject:response];
     [self.dataStore setObject:encodedResonse forKey:kUATagGroupsLookupResponseCacheResponseKey];
-    
-    self.refreshDate = [NSDate date];
+
+    if (response) {
+        self.refreshDate = [NSDate date];
+    } else {
+        self.refreshDate = nil;
+    }
 }
 
 - (NSDate *)refreshDate {

@@ -450,6 +450,16 @@
     XCTAssertEqualObjects([UAAttributePendingMutations collapseMutations:expected], self.manager.attributeOverrides);
 }
 
+- (void)testNamedUserChanged {
+    [[self.mockCache expect] setResponse:nil];
+
+    [[NSNotificationCenter defaultCenter] postNotificationName:UANamedUserIdentifierChangedNotification
+                                                        object:nil
+                                                      userInfo:@{UANamedUserIdentifierChangedNotificationIdentifierKey : @"identifier"}];
+
+    [self.mockCache verify];
+}
+
 - (UAAttributePendingMutations *)setAttributeMutationWithKey:(NSString *)key value:(NSString *)value {
     UAAttributeMutations *attribute = [UAAttributeMutations mutations];
     [attribute setString:value forAttribute:key];

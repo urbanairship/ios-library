@@ -23,17 +23,17 @@ extern NSTimeInterval const UATagGroupsLookupResponseCacheDefaultStaleReadTimeSe
 /**
  * The response.
  */
-@property (nonatomic, strong) UATagGroupsLookupResponse *response;
+@property (nonatomic, strong, nullable) UATagGroupsLookupResponse *response;
 
 /**
  * The previously requested tag groups.
  */
-@property (nonatomic, strong) UATagGroups *requestedTagGroups;
+@property (nonatomic, strong, nullable) UATagGroups *requestedTagGroups;
 
 /**
  * The date the cache was last refreshed.
  */
-@property (nonatomic, readonly) NSDate *refreshDate;
+@property (nonatomic, readonly, nullable) NSDate *refreshDate;
 
 /**
  * The maximum age before the cache should be refreshed.
