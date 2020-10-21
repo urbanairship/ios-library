@@ -3,6 +3,9 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 14.0.1 - October 21, 2020
+Patch release to fix a crash related to sending In-App Messages through push notifications. Applications running 14.0.0 that use In-App Messages should update.
+
 ## Version 14.0.0 - September 3, 2020
 Airship SDK 14 is a major update that prepares our automation module to support future IAA enhancements, revamps the Channel Capture tool, and provides other improvements.
 
