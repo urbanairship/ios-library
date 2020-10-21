@@ -369,6 +369,17 @@
     [self waitForTestExpectations];
 }
 
+- (void)testCancelScheduleDoesNotExist {
+    XCTestExpectation *cancelledExpectation = [self expectationWithDescription:@"schedule cancelled"];
+
+    [self.automationEngine cancelScheduleWithID:@"does not exist" completionHandler:^(BOOL cancelled){
+        XCTAssertFalse(cancelled);
+        [cancelledExpectation fulfill];
+    }];
+
+    [self waitForTestExpectations];
+}
+
 - (void)testCancelGroup {
     NSMutableArray *fooSchedules = [NSMutableArray array];
 
