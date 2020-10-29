@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 #import "UAActiveTimer+Internal.h"
-#import "UAAppStateTracker.h"
+#import "UAAirshipAutomationCoreImport.h"
 
 @interface UAActiveTimer()
 @property (assign, getter=isStarted) BOOL started;

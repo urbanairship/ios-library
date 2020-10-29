@@ -1,5 +1,4 @@
 /* Copyright Airship and Contributors */
-#import "UAirship.h"
 #import "UAInAppMessageFullScreenStyle.h"
 #import "UAInAppMessageUtils+Internal.h"
 

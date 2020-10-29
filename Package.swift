@@ -53,7 +53,7 @@ let package = Package(
                     .process("Resources")],
                 publicHeadersPath: "Source/Public",
                 cSettings: [
-                    .headerSearchPath("Source/Internal"),
+                    .headerSearchPath("Source/Internal")],
                 linkerSettings: [
                     //Frameworks
                     .linkedFramework("UserNotifications"),

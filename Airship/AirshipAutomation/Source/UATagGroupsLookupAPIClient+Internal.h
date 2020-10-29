@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 #import <Foundation/Foundation.h>
-#import "UATagGroups.h"
+#import "UAAirshipAutomationCoreImport.h"
 #import "UATagGroupsLookupResponse+Internal.h"
 #import "UAAirshipAutomationCoreImport.h"
 
