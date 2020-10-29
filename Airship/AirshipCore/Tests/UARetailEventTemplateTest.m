@@ -353,4 +353,31 @@
     XCTAssertEqualObjects(@"retail", [customEvent.data objectForKey:@"template_type"], @"Unexpected event template type.");
 }
 
+/**
+ * Test wishlist event.
+ */
+- (void)testWishlistEvent {
+    UARetailEventTemplate *eventTemplate = [UARetailEventTemplate wishlistTemplate];
+    UACustomEvent *customEvent = [eventTemplate createEvent];
+    [customEvent track];
+
+    XCTAssertEqualObjects(@"wishlist", [customEvent.data objectForKey:@"event_name"], @"Unexpected event name.");
+    XCTAssertEqualObjects(@NO, customEvent.data[@"properties"][@"ltv"], @"Unexpected ltv property.");
+    XCTAssertEqualObjects(@"retail", [customEvent.data objectForKey:@"template_type"], @"Unexpected event template type.");
+}
+
+/**
+ * Test wishlist event with wishlist name and ID.
+ */
+- (void)testWishlistEventWithNameAndID {
+    UARetailEventTemplate *eventTemplate = [UARetailEventTemplate wishlistTemplateWithName:@"wishlist_test" wishlistID:@"1234"];
+    UACustomEvent *customEvent = [eventTemplate createEvent];
+    [customEvent track];
+
+    XCTAssertEqualObjects(@"wishlist", [customEvent.data objectForKey:@"event_name"], @"Unexpected event name.");
+    XCTAssertEqualObjects(@"wishlist_test", [customEvent.data[@"properties"] objectForKey:@"wishlist_name"], @"Unexpected event wishlist name.");
+    XCTAssertEqualObjects(@"1234", [customEvent.data[@"properties"] objectForKey:@"wishlist_id"], @"Unexpected event wishlist ID.");
+    XCTAssertEqualObjects(@"retail", [customEvent.data objectForKey:@"template_type"], @"Unexpected event template type.");
+}
+
 @end

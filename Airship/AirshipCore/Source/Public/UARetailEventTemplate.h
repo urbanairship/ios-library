@@ -197,6 +197,20 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)sharedProductTemplateWithValue:(nullable NSNumber *)eventValue
                                  withSource:(nullable NSString *)source
                                  withMedium:(nullable NSString *)medium;
+
+/**
+ * Factory method for creating a wishlist event template.
+ */
++ (instancetype)wishlistTemplate;
+
+/**
+ * Factory method for creating a wishlist event template with a wishlist name and ID.
+ *
+ * @param name The name of the wishlist as as string.
+ * @param wishlistID The ID of the wishlist as as string.
+ */
++ (instancetype)wishlistTemplateWithName:(nullable NSString *)name wishlistID:(nullable NSString *)wishlistID;
+
 /**
  * Creates the custom retail event.
  */

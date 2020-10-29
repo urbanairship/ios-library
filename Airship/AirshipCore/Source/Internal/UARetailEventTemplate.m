@@ -11,6 +11,7 @@
 #define kUAStarredProductEvent @"starred_product"
 #define kUASharedProductEvent @"shared_product"
 #define kUAPurchasedEvent @"purchased"
+#define kUAWishlistEvent @"wishlist"
 #define kUARetailEventTemplateLifetimeValue @"ltv"
 #define kUARetailEventTemplateIdentifier @"id"
 #define kUARetailEventTemplateCategory @"category"
@@ -19,11 +20,15 @@
 #define kUARetailEventTemplateNewItem @"new_item"
 #define kUARetailEventTemplateSource @"source"
 #define kUARetailEventTemplateMedium @"medium"
+#define kUARetailEventTemplateWishlistName @"wishlist_name"
+#define kUARetailEventTemplateWishlistID @"wishlist_id"
 
 @interface UARetailEventTemplate()
 @property (nonatomic, copy) NSString *eventName;
 @property (nonatomic, copy) NSString *source;
 @property (nonatomic, copy) NSString *medium;
+@property (nonatomic, copy) NSString *wishlistName;
+@property (nonatomic, copy) NSString *wishlistID;
 @property (nonatomic, assign) BOOL newItemSet;
 @end
 
@@ -32,13 +37,17 @@
 - (instancetype)initWithName:(NSString *)name
                    withValue:(NSDecimalNumber *)eventValue
                   withSource:(NSString *)source
-                  withMedium:(NSString *)medium {
+                  withMedium:(NSString *)medium
+            withWishlistName:(NSString *)wishlistName
+              withWishlistID:(NSString *)wishlistID {
     self = [super init];
     if (self) {
         self.eventName = name;
         self.eventValue = eventValue;
         self.source = source;
         self.medium = medium;
+        self.wishlistName = wishlistName;
+        self.wishlistID = wishlistID;
     }
 
     return self;
@@ -57,7 +66,9 @@
     return [[self alloc] initWithName:kUABrowsedProductEvent
                             withValue:eventValue
                            withSource:nil
-                           withMedium:nil];
+                           withMedium:nil
+                     withWishlistName:nil
+                       withWishlistID:nil];
 }
 
 + (instancetype)addedToCartTemplate {
@@ -73,7 +84,9 @@
     return [[self alloc] initWithName:kUAAddedToCartEvent
                             withValue:eventValue
                            withSource:nil
-                           withMedium:nil];
+                           withMedium:nil
+                     withWishlistName:nil
+                       withWishlistID:nil];
 }
 
 + (instancetype)starredProductTemplate {
@@ -89,7 +102,9 @@
     return [[self alloc] initWithName:kUAStarredProductEvent
                             withValue:eventValue
                            withSource:nil
-                           withMedium:nil];
+                           withMedium:nil
+                     withWishlistName:nil
+                       withWishlistID:nil];
 }
 
 + (instancetype)purchasedTemplate {
@@ -105,7 +120,9 @@
     return [[self alloc] initWithName:kUAPurchasedEvent
                             withValue:eventValue
                            withSource:nil
-                           withMedium:nil];
+                           withMedium:nil
+                     withWishlistName:nil
+                       withWishlistID:nil];
 }
 
 + (instancetype)sharedProductTemplate {
@@ -121,7 +138,9 @@
     return [[self alloc] initWithName:kUASharedProductEvent
                             withValue:eventValue
                            withSource:nil
-                           withMedium:nil];
+                           withMedium:nil
+                     withWishlistName:nil
+                       withWishlistID:nil];
 }
 
 + (instancetype)sharedProductTemplateWithSource:(NSString *)source
@@ -129,7 +148,9 @@
     return [[self alloc] initWithName:kUASharedProductEvent
                             withValue:nil
                            withSource:source
-                           withMedium:medium];
+                           withMedium:medium
+                     withWishlistName:nil
+                       withWishlistID:nil];
 }
 
 + (instancetype)sharedProductTemplateWithValueFromString:(NSString *)eventValue
@@ -139,7 +160,9 @@
     return [[self alloc] initWithName:kUASharedProductEvent
                             withValue:decimalValue
                            withSource:source
-                           withMedium:medium];
+                           withMedium:medium
+                     withWishlistName:nil
+                       withWishlistID:nil];
 }
 
 + (instancetype)sharedProductTemplateWithValue:(NSDecimalNumber *)eventValue
@@ -148,7 +171,27 @@
     return [[self alloc] initWithName:kUASharedProductEvent
                             withValue:eventValue
                            withSource:source
-                           withMedium:medium];
+                           withMedium:medium
+                     withWishlistName:nil
+                       withWishlistID:nil];
+}
+
++ (instancetype)wishlistTemplate {
+    return [[self alloc] initWithName:kUAWishlistEvent
+                            withValue:nil
+                           withSource:nil
+                           withMedium:nil
+                     withWishlistName:nil
+                       withWishlistID:nil];
+}
+
++ (instancetype)wishlistTemplateWithName:(NSString *)name wishlistID:(NSString *)wishlistID {
+    return [[self alloc] initWithName:kUAWishlistEvent
+                            withValue:nil
+                           withSource:nil
+                           withMedium:nil
+                     withWishlistName:name
+                       withWishlistID:wishlistID];
 }
 
 - (void)setEventValue:(NSDecimalNumber *)eventValue {
@@ -212,6 +255,14 @@
 
     if (self.medium) {
         [propertyDictionary setValue:self.medium forKey:kUARetailEventTemplateMedium];
+    }
+    
+    if (self.wishlistID) {
+        [propertyDictionary setValue:self.wishlistID forKey:kUARetailEventTemplateWishlistID];
+    }
+    
+    if (self.wishlistName) {
+        [propertyDictionary setValue:self.wishlistName forKey:kUARetailEventTemplateWishlistName];
     }
 
     event.templateType = kUARetailEventTemplate;
