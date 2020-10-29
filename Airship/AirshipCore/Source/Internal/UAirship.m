@@ -93,7 +93,8 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 }
 
 + (void)load {
-    [[NSNotificationCenter defaultCenter] addObserver:[UAirship class] selector:@selector(applicationDidFinishLaunching:)
+    [[NSNotificationCenter defaultCenter] addObserver:[UAirship class]
+                                             selector:@selector(applicationDidFinishLaunching:)
                                                  name:UAApplicationDidFinishLaunchingNotification
                                                object:nil];
 }
@@ -391,7 +392,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 
         return;
     }
-    // If we are inactive the app is launching, otherwise it's a content-available push
+    // If we are inactive the app is launching
     if ([UAAppStateTracker shared].state != UAApplicationStateBackground) {
         // Required before the app init event to track conversion push ID
         NSDictionary *remoteNotification = notification.userInfo[UAApplicationLaunchOptionsRemoteNotificationKey];
@@ -399,9 +400,6 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
             [sharedAirship_.sharedAnalytics launchedFromNotification:remoteNotification];
         }
     }
-
-    // Init event
-    [sharedAirship_.sharedAnalytics addEvent:[UAAppInitEvent event]];
 
     // Update registration on the next run loop to allow apps to customize
     // finish custom setup
