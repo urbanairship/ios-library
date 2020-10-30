@@ -3,6 +3,15 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 14.1.3 - October 29, 2020
+Patch release optimizing tag group cache usage in In-App-Automation, and fixing
+an issue with direct opens for notification action buttons. Apps using named users 
+and IAA, or apps experiencing issues with direct open counts are encouraged to update.
+
+### Changes
+- IAA tag group cache is now cleared when a named user is associated or disassociated 
+- Fixed bug affecting direct open counts when using notification action buttons
+
 ## Version 14.0.1 - October 21, 2020
 Patch release to fix a crash related to sending In-App Messages through push notifications. Applications running 14.0.0 that use In-App Messages should update.
 
