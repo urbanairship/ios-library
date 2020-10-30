@@ -36,6 +36,7 @@ jobs:
           key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
           restore-keys: ${{ runner.os }}-gems-
       - name: Build SDK
+        run: brew install coreutils
         run: make build-package
 
       - name: Upload zip distribution
