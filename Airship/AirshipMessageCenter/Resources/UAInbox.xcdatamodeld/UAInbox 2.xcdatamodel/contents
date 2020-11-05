@@ -6,6 +6,7 @@
         <attribute name="messageBodyURL" optional="YES" attributeType="Transformable" valueTransformerName="UANSURLValueTransformer"/>
         <attribute name="messageExpiration" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="messageID" optional="YES" attributeType="String"/>
+        <attribute name="messageReporting" optional="YES" attributeType="Transformable" valueTransformerName="UANSDictionaryValueTransformer"/>
         <attribute name="messageSent" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="messageURL" optional="YES" attributeType="Transformable" valueTransformerName="UANSURLValueTransformer"/>
         <attribute name="rawMessageObject" optional="YES" attributeType="Transformable" valueTransformerName="UANSDictionaryValueTransformer"/>
@@ -14,6 +15,6 @@
         <attribute name="unreadClient" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="YES"/>
     </entity>
     <elements>
-        <element name="UAInboxMessage" positionX="-63" positionY="-18" width="128" height="208"/>
+        <element name="UAInboxMessage" positionX="-63" positionY="-18" width="128" height="223"/>
     </elements>
 </model>

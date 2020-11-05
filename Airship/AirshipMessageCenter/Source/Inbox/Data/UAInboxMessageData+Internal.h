@@ -34,6 +34,11 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, strong) NSURL *messageURL;
 
+/**
+ * The JSON object that contains the message ID, the group ID and the variant ID.
+ */
+@property (nonatomic, strong) NSDictionary *messageReporting;
+
 /** The MIME content type for the message (e.g., text/html) */
 @property (nonatomic, copy) NSString *contentType;
 

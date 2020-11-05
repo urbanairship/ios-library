@@ -3283,6 +3283,7 @@
 		99EC01821FE0953100B9C408 /* UAInAppMessageFullScreenViewController+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAInAppMessageFullScreenViewController+Internal.h"; sourceTree = "<group>"; };
 		99EC01901FE095B600B9C408 /* UAInAppMessageFullScreenDisplayContent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInAppMessageFullScreenDisplayContent.h; sourceTree = "<group>"; };
 		99EC01971FE1FED100B9C408 /* UAInAppMessageFullScreenAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInAppMessageFullScreenAdapter.h; sourceTree = "<group>"; };
+		A649F50A252F4F39005453CB /* UAInbox 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "UAInbox 2.xcdatamodel"; sourceTree = "<group>"; };
 		C3AEC8D23AA7835AC1E74C9A /* Pods-AirshipAccengageTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AirshipAccengageTests.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-AirshipAccengageTests/Pods-AirshipAccengageTests.debug.xcconfig"; sourceTree = "<group>"; };
 		CC04F1C41DC27E6C00B4842D /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
 		CC40D87B1D8C703E00BABD4F /* libOCMock.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libOCMock.a; path = ../TestCommon/OCMockLibrary/libOCMock.a; sourceTree = "<group>"; };
@@ -9933,9 +9934,10 @@
 		3CA0E304237E396100EE76CF /* UAInbox.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				A649F50A252F4F39005453CB /* UAInbox 2.xcdatamodel */,
 				3CA0E305237E396100EE76CF /* UAInbox.xcdatamodel */,
 			);
-			currentVersion = 3CA0E305237E396100EE76CF /* UAInbox.xcdatamodel */;
+			currentVersion = A649F50A252F4F39005453CB /* UAInbox 2.xcdatamodel */;
 			path = UAInbox.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;

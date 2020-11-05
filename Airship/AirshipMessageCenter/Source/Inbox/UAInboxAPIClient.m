@@ -125,7 +125,7 @@ NSString *const UALastMessageListModifiedTime = @"UALastMessageListModifiedTime.
     }];
 }
 
-- (void)performBatchDeleteForMessageURLs:(NSArray<NSURL *> *)messageURLs
+- (void)performBatchDeleteForMessageReporting:(NSArray<NSDictionary *> *)messageReporting
                             onSuccess:(UAInboxClientSuccessBlock)successBlock
                             onFailure:(UAInboxClientFailureBlock)failureBlock {
 
@@ -136,13 +136,13 @@ NSString *const UALastMessageListModifiedTime = @"UALastMessageListModifiedTime.
 
     [self.user getUserData:^(UAUserData *userData) {
         if (!userData) {
-            UA_LWARN(@"User is not created, unable to delete messages: %@", messageURLs);
+            UA_LWARN(@"User is not created, unable to delete message reporting: %@", messageReporting);
             successBlock();
             return;
         }
     
         UARequest *request = [UARequest requestWithBuilderBlock:^(UARequestBuilder * _Nonnull builder) {
-            NSDictionary *data = @{@"delete" : [messageURLs valueForKeyPath:@"absoluteString"] };
+            NSDictionary *data = @{@"messages" : messageReporting };
 
             NSData* body = [UAJSONSerialization dataWithJSONObject:data
                                                            options:0
@@ -193,7 +193,7 @@ NSString *const UALastMessageListModifiedTime = @"UALastMessageListModifiedTime.
     }];
 }
 
-- (void)performBatchMarkAsReadForMessageURLs:(NSArray *)messageURLs
+- (void)performBatchMarkAsReadForMessageReporting:(NSArray<NSDictionary *> *)messageReporting
                                    onSuccess:(UAInboxClientSuccessBlock)successBlock
                                    onFailure:(UAInboxClientFailureBlock)failureBlock {
 
@@ -204,13 +204,13 @@ NSString *const UALastMessageListModifiedTime = @"UALastMessageListModifiedTime.
 
     [self.user getUserData:^(UAUserData *userData) {
         if (!userData) {
-            UA_LWARN(@"User is not created, unable to mark messages as read: %@", messageURLs);
+            UA_LWARN(@"User is not created, unable to mark messages as read: %@", messageReporting);
             successBlock();
             return;
         }
 
         UARequest *request = [UARequest requestWithBuilderBlock:^(UARequestBuilder * _Nonnull builder) {
-            NSDictionary *data = @{@"mark_as_read" : [messageURLs valueForKeyPath:@"absoluteString"] };
+            NSDictionary *data = @{@"messages" : messageReporting };
 
             NSData* body = [UAJSONSerialization dataWithJSONObject:data
                                                            options:0

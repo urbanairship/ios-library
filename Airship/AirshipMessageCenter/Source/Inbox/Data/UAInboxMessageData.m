@@ -18,7 +18,7 @@
 @dynamic messageID;
 @dynamic extra;
 @dynamic rawMessageObject;
-
+@dynamic messageReporting;
 
 @synthesize contentType;
 

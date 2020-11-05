@@ -170,6 +170,7 @@
         data.unread = [dict[@"unread"] boolValue];
         data.messageSent = [UAUtils parseISO8601DateFromString:dict[@"message_sent"]];
         data.rawMessageObject = dict;
+        data.messageReporting = dict[@"message_reporting"];
 
         NSString *messageExpiration = dict[@"message_expiry"];
         if (messageExpiration) {

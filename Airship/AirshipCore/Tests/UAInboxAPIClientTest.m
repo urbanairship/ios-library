@@ -195,11 +195,14 @@
         return YES;
     }] retryWhere:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
-    NSURL *testURL = [NSURL URLWithString:@"testURL"];
+    NSDictionary *testReporting = @{@"message_id":@"126",
+                                    @"group_id":@"345",
+                                    @"variant_id":@"1"};
+    
     __block BOOL successBlockCalled = false;
 
     // Make call
-    [self.inboxAPIClient performBatchMarkAsReadForMessageURLs:@[testURL] onSuccess:^{
+    [self.inboxAPIClient performBatchMarkAsReadForMessageReporting:@[testReporting] onSuccess:^{
         successBlockCalled = true;
     } onFailure:^() {
         XCTFail(@"Should not be called");
@@ -236,11 +239,13 @@
         return YES;
     }] retryWhere:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
-    NSURL *testURL = [NSURL URLWithString:@"testURL"];
+    NSDictionary *testReporting = @{@"message_id":@"126",
+                                    @"group_id":@"345",
+                                    @"variant_id":@"1"};
     __block BOOL failureBlockCalled = false;
 
     // Make call
-    [self.inboxAPIClient performBatchMarkAsReadForMessageURLs:@[testURL] onSuccess:^{
+    [self.inboxAPIClient performBatchMarkAsReadForMessageReporting:@[testReporting] onSuccess:^{
         XCTFail(@"Should not be called");
     } onFailure:^() {
         failureBlockCalled = true;
@@ -271,11 +276,13 @@
         typedef void (^UARequestCompletionHandler)(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error);
     }] dataTaskWithRequest:OCMOCK_ANY retryWhere:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
-    NSURL *testURL = [NSURL URLWithString:@"testURL"];
+    NSDictionary *testReporting = @{@"message_id":@"126",
+                                    @"group_id":@"345",
+                                    @"variant_id":@"1"};
     __block BOOL successBlockCalled = false;
 
     // Make call
-    [self.inboxAPIClient performBatchDeleteForMessageURLs:@[testURL] onSuccess:^{
+    [self.inboxAPIClient performBatchDeleteForMessageReporting:@[testReporting] onSuccess:^{
         successBlockCalled = true;
     } onFailure:^() {
         XCTFail(@"Should not be called");
@@ -305,11 +312,13 @@
         typedef void (^UARequestCompletionHandler)(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error);
     }] dataTaskWithRequest:OCMOCK_ANY retryWhere:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
-    NSURL *testURL = [NSURL URLWithString:@"testURL"];
+    NSDictionary *testReporting = @{@"message_id":@"126",
+                                    @"group_id":@"345",
+                                    @"variant_id":@"1"};
     __block BOOL failureBlockCalled = false;
 
     // Make call
-    [self.inboxAPIClient performBatchDeleteForMessageURLs:@[testURL] onSuccess:^{
+    [self.inboxAPIClient performBatchDeleteForMessageReporting:@[testReporting] onSuccess:^{
         XCTFail(@"Should not be called");
     } onFailure:^() {
         failureBlockCalled = true;
@@ -352,8 +361,10 @@
     XCTestExpectation *expectationForRefreshSucceeded = [self expectationWithDescription:@"UAInboxClientMessageRetrievalSuccessBlock executed"];
     
     // test
-    NSURL *testURL = [NSURL URLWithString:@"testURL"];
-    [self.inboxAPIClient performBatchDeleteForMessageURLs:@[testURL] onSuccess:^{
+    NSDictionary *testReporting = @{@"message_id":@"126",
+                                    @"group_id":@"345",
+                                    @"variant_id":@"1"};
+    [self.inboxAPIClient performBatchDeleteForMessageReporting:@[testReporting] onSuccess:^{
         [expectationForRefreshSucceeded fulfill];
     } onFailure:^() {
         XCTFail(@"Should not fail");
@@ -372,10 +383,12 @@
     self.inboxAPIClient.enabled = NO;
     XCTestExpectation *expectationForRefreshSucceeded = [self expectationWithDescription:@"UAInboxClientMessageRetrievalSuccessBlock executed"];
     
-    NSURL *testURL = [NSURL URLWithString:@"testURL"];
+    NSDictionary *testReporting = @{@"message_id":@"126",
+                                    @"group_id":@"345",
+                                    @"variant_id":@"1"};
     
     // Make call
-    [self.inboxAPIClient performBatchMarkAsReadForMessageURLs:@[testURL] onSuccess:^{
+    [self.inboxAPIClient performBatchMarkAsReadForMessageReporting:@[testReporting] onSuccess:^{
         [expectationForRefreshSucceeded fulfill];
     } onFailure:^() {
         XCTFail(@"Should not fail");

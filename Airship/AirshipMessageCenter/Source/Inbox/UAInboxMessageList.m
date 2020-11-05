@@ -377,12 +377,17 @@ typedef void (^UAInboxMessageFetchCompletionHandler)(NSArray *);
                                       return;
                                   }
 
-                                  NSArray *messageURLs = [data valueForKeyPath:@"messageURL"];
+                                  NSArray *messageReporting = [data valueForKeyPath:@"messageReporting"];
+        
+                                  if (!messageReporting) {
+                                      return;
+                                  }
+        
                                   NSArray *messageIDs = [data valueForKeyPath:@"messageID"];
 
                                   UA_LTRACE(@"Synchronizing locally read messages %@ on server.", messageIDs);
 
-                                  [self.client performBatchMarkAsReadForMessageURLs:messageURLs onSuccess:^{
+                                  [self.client performBatchMarkAsReadForMessageReporting:messageReporting onSuccess:^{
 
                                       // Mark the messages as read
                                       [self.inboxStore fetchMessagesWithPredicate:[NSPredicate predicateWithFormat:@"messageID IN %@", messageIDs]
@@ -415,13 +420,17 @@ typedef void (^UAInboxMessageFetchCompletionHandler)(NSArray *);
                                       return;
                                   }
 
-
-                                  NSArray *messageURLs = [data valueForKeyPath:@"messageURL"];
+                                  NSArray *messageReporting = [data valueForKeyPath:@"messageReporting"];
+                                
+                                  if (!messageReporting) {
+                                      return;
+                                  }
+        
                                   NSArray *messageIDs = [data valueForKeyPath:@"messageID"];
 
                                   UA_LTRACE(@"Synchronizing locally deleted messages %@ on server.", messageIDs);
 
-                                  [self.client performBatchDeleteForMessageURLs:messageURLs onSuccess:^{
+                                  [self.client performBatchDeleteForMessageReporting:messageReporting onSuccess:^{
                                       UA_LTRACE(@"Successfully synchronized locally deleted messages on server.");
                                   } onFailure:^() {
                                       UA_LTRACE(@"Failed to synchronize locally deleted messages on server.");

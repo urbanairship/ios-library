@@ -65,24 +65,24 @@ typedef void (^UAInboxClientFailureBlock)(void);
 /**
  * Performs a batch delete request on the server.
  *
- * @param messageURLs An NSArray of message URLs to be deleted.
+ * @param messageReporting An NSArray of message reporting IDs to be deleted.
  * @param successBlock A block to be executed when the call completes successfully.
  * @param failureBlock A block to be executed if the call fails.
  */
 
-- (void)performBatchDeleteForMessageURLs:(NSArray<NSURL *> *)messageURLs
+- (void)performBatchDeleteForMessageReporting:(NSArray<NSDictionary *> *)messageReporting
                             onSuccess:(UAInboxClientSuccessBlock)successBlock
                             onFailure:(UAInboxClientFailureBlock)failureBlock;
 
 /**
  * Performs a batch mark-as-read request on the server.
  *
- * @param messageURLs An NSArray of message URLs to be marked as read.
+ * @param messageReporting An NSArray of message reporting IDs to be marked as read.
  * @param successBlock A block to be executed when the call completes successfully.
  * @param failureBlock A block to be executed if the call fails.
  */
 
-- (void)performBatchMarkAsReadForMessageURLs:(NSArray<NSURL *> *)messageURLs
+- (void)performBatchMarkAsReadForMessageReporting:(NSArray<NSDictionary *> *)messageReporting
                                    onSuccess:(UAInboxClientSuccessBlock)successBlock
                                    onFailure:(UAInboxClientFailureBlock)failureBlock;
 
