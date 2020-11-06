@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-#import "NSObject+AnonymousKVO+Internal.h"
+#import "NSObject+UAAdditions.h"
 #import "UAGlobal.h"
 #import <objc/runtime.h>
 
@@ -32,7 +32,7 @@
 
 @end
 
-@implementation NSObject(AnonymousKVO)
+@implementation NSObject(UAAdditions)
 
 @dynamic anonymousObservers;
 

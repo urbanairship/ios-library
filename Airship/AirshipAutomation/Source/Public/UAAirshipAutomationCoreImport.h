@@ -1,6 +1,7 @@
 #if UA_USE_MODULE_IMPORT
 #import <AirshipCore/AirshipCore.h>
 #else
+#import "NSObject+UAAdditions.h"
 #import "NSJSONSerialization+UAAdditions.h"
 #import "NSOperationQueue+UAAdditions.h"
 #import "NSString+UALocalizationAdditions.h"

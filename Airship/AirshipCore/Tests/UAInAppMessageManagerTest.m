@@ -14,7 +14,7 @@
 #import "UAInAppMessageAssetManager+Internal.h"
 #import "UAInAppMessageAssetCache+Internal.h"
 #import "UAInAppMessage+Internal.h"
-#import "NSObject+AnonymousKVO+Internal.h"
+#import "NSObject+UAAdditions.h"
 
 NSString * const UAInAppMessageManagerTestScheduleID = @"schedule ID";
 

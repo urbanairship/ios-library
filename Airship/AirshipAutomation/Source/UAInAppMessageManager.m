@@ -12,7 +12,6 @@
 #import "UAInAppMessageDefaultDisplayCoordinator.h"
 #import "UAInAppMessageAssetManager+Internal.h"
 #import "UAInAppMessageImmediateDisplayCoordinator.h"
-#import "NSObject+AnonymousKVO+Internal.h"
 #import "UAActiveTimer+Internal.h"
 #import "UARetriable+Internal.h"
 #import "UARetriablePipeline+Internal.h"

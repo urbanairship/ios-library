@@ -22,7 +22,7 @@ Pod::Spec.new do |s|
       core.resources                  = "Airship/AirshipCore/Resources/*"
       core.exclude_files              = "Airship/AirshipCore/Resources/Info.plist", "Airship/AirshipCore/Source/Public/AirshipCore.h"
       core.libraries                  = "z", "sqlite3"
-      core.frameworks                 = "UserNotifications", "CFNetwork", "CoreGraphics", "Foundation", "Security", "SystemConfiguration", "UIKit", "CoreData"
+      core.frameworks                 = "UserNotifications", "CFNetwork", "CoreGraphics", "Foundation", "Security", "SystemConfiguration", "UIKit", "CoreData", "Network"
       core.ios.frameworks             = "WebKit", "CoreTelephony"
    end
    s.subspec "ExtendedActions" do |actions|

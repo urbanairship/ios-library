@@ -7,11 +7,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Typedef for blocks passing KVO values.
+ * @note For internal use only. :nodoc:
  */
 typedef void (^UAAnonymousKVOBlock)(id value);
 
 /**
  * Observer class facilitating block-based KVO.
+* @note For internal use only. :nodoc:
  */
 @interface UAAnonymousObserver : NSObject
 
@@ -36,7 +38,7 @@ typedef void (^UAAnonymousKVOBlock)(id value);
 
 @end
 
-@interface NSObject(AnonymousKVO)
+@interface NSObject(UAAdditions)
 
 /**
  * A set of anonymous observers.

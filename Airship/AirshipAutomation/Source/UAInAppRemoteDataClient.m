@@ -7,7 +7,6 @@
 #import "UAScheduleAudienceChecks+Internal.h"
 #import "UAInAppMessage+Internal.h"
 #import "UAScheduleEdits+Internal.h"
-#import "NSObject+AnonymousKVO+Internal.h"
 #import "UAAirshipAutomationCoreImport.h"
 #import "NSDictionary+UAAdditions.h"
 #import "UAActionSchedule.h"
