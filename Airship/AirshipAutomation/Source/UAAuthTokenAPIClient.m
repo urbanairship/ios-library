@@ -40,20 +40,15 @@ NSString * const UAAuthTokenAPIClientErrorDomain = @"com.urbanairship.auth_token
 - (void)tokenWithChannelID:(NSString *)channelID completionHandler:(void (^)(UAAuthToken * _Nullable, NSError * _Nullable))completionHandler {
     UARequest *request = [self authTokenRequestWithChannelID:channelID];
 
-    [self.session dataTaskWithRequest:request retryWhere:^BOOL(NSData * _Nullable data, NSURLResponse * _Nullable response) {
+    [self performRequest:request retryWhere:^BOOL(NSData * _Nullable data, NSHTTPURLResponse * _Nullable response) {
         return NO;
-    } completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+    } completionHandler:^(NSData * _Nullable data, NSHTTPURLResponse * _Nullable response, NSError * _Nullable error) {
         if (error) {
             UA_LTRACE(@"Auth token request failed with error %@", error);
             return completionHandler(nil, error);
         }
 
-        NSHTTPURLResponse *httpResponse;
-        if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
-            httpResponse = (NSHTTPURLResponse *) response;
-        }
-
-        NSInteger status = httpResponse.statusCode;
+        NSInteger status = response.statusCode;
 
         // Unsuccessful HTTP response
         if (!(status >= 200 && status <= 299)) {

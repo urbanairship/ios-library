@@ -35,90 +35,32 @@
 }
 
 /**
- * Test associate named user retries on 5xx status codes.
- */
-- (void)testAssociateRetriesFailedRequests {
-    // Check that the retry block returns YES for any 5xx request
-    BOOL (^retryBlockCheck)(id obj) = ^(id obj) {
-        UARequestRetryBlock retryBlock = obj;
-
-        for (NSInteger i = 500; i < 600; i++) {
-            NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""]
-                                                                      statusCode:i
-                                                                     HTTPVersion:nil
-                                                                    headerFields:nil];
-
-            BOOL retryResult = retryBlock(nil, response);
-
-            if (retryResult) {
-                continue;
-            }
-
-            return NO;
-        }
-
-        // Check that it returns NO for 400 status codes
-        NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""]
-                                                                  statusCode:400
-                                                                 HTTPVersion:nil
-                                                                headerFields:nil];
-        if (retryBlock(nil, response)) {
-            return NO;
-        }
-
-        return YES;
-    };
-
-    [[self.mockSession expect] dataTaskWithRequest:OCMOCK_ANY
-                                        retryWhere:[OCMArg checkWithBlock:retryBlockCheck]
-                                 completionHandler:OCMOCK_ANY];
-
-    [self.client associate:@"fakeNamedUserID"
-                 channelID:@"fakeChannel"
-         completionHandler:^(NSError * _Nullable error) {
-        XCTFail(@"Should not be called");
-    }];
-
-    [self.mockSession verify];
-}
-
-/**
  * Test associate named user succeeds request when status is 2xx.
  */
 -(void)testAssociateSucceedsRequest {
-    __block int successfulCompletions = 0;
+    for (NSInteger i = 200; i < 300; i++) {
+        NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""]
+                                                                  statusCode:i
+                                                                 HTTPVersion:nil
+                                                                headerFields:nil];
 
-    BOOL (^completionBlockCheck)(id obj) = ^(id obj) {
-        UARequestCompletionHandler completion = obj;
+        [[[self.mockSession stub] andDo:^(NSInvocation *invocation) {
+            void *arg;
+            [invocation getArgument:&arg atIndex:3];
+            UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
+            completionHandler(nil, response, nil);
+        }] performHTTPRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
-        for (NSInteger i = 200; i < 300; i++) {
-            NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""]
-                                                                      statusCode:i
-                                                                     HTTPVersion:nil
-                                                                    headerFields:nil];
-            completion(OCMOCK_ANY, response, nil);
-        }
+        XCTestExpectation *finishedCallbacks = [self expectationWithDescription:@"Finished callbacks"];
+        [self.client associate:@"fakeNamedUserID"
+                     channelID:@"fakeChannel"
+             completionHandler:^(NSError * _Nullable error) {
+            XCTAssertNil(error);
+            [finishedCallbacks fulfill];
+        }];
 
-        return YES;
-    };
-
-    [[self.mockSession expect] dataTaskWithRequest:OCMOCK_ANY
-                                        retryWhere:OCMOCK_ANY
-                                 completionHandler:[OCMArg checkWithBlock:completionBlockCheck]];
-
-    [self.client associate:@"fakeNamedUserID"
-                 channelID:@"fakeChannel"
-         completionHandler:^(NSError * _Nullable error) {
-        XCTAssertNil(error);
-        if (!error) {
-            successfulCompletions++;
-        }
-    }];
-
-    // Success block should be called once for every HTTP status from 200 to 299
-    XCTAssert(successfulCompletions == 100);
-
-    [self.mockSession verify];
+        [self waitForTestExpectations];
+    }
 }
 
 /**
@@ -126,122 +68,56 @@
  * when the request fails.
  */
 - (void)testAssociateOnFailure {
-    __block int failedCompletions = 0;
-
-    BOOL (^completionBlockCheck)(id obj) = ^(id obj) {
-        UARequestCompletionHandler completion = obj;
-
-        for (NSInteger i = 400; i < 500; i++) {
-            NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""]
-                                                                      statusCode:i
-                                                                     HTTPVersion:nil
-                                                                    headerFields:nil];
-            completion(OCMOCK_ANY, response, nil);
-        }
-
-        return YES;
-    };
-
-    [[self.mockSession expect] dataTaskWithRequest:OCMOCK_ANY
-                                        retryWhere:OCMOCK_ANY
-                                 completionHandler:[OCMArg checkWithBlock:completionBlockCheck]];
-
-    [self.client associate:@"fakeNamedUserID"
-                 channelID:@"fakeChannel"
-         completionHandler:^(NSError * _Nullable error) {
-        XCTAssertNotNil(error);
-
-        if (error) {
-            failedCompletions++;
-        }
-    }];
-
-    // Failure block should be called once for every HTTP status from 400 to 499
-    XCTAssert(failedCompletions == 100);
-    
-    [self.mockSession verify];
-}
-
-/**
- * Test disassociate named user retries on 5xx status codes.
- */
-- (void)testDisassociateRetriesFailedRequests {
-
-    // Check that the retry block returns YES for any 5xx request
-    BOOL (^retryBlockCheck)(id obj) = ^(id obj) {
-        UARequestRetryBlock retryBlock = obj;
-
-        for (NSInteger i = 500; i < 600; i++) {
-            NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""]
-                                                                      statusCode:i
-                                                                     HTTPVersion:nil
-                                                                    headerFields:nil];
-            BOOL retryResult = retryBlock(nil, response);
-
-            if (retryResult) {
-                continue;
-            }
-
-            return NO;
-        }
-
-        // Check that it returns NO for 400 status codes
+    for (NSInteger i = 400; i < 500; i++) {
         NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""]
-                                                                  statusCode:400
+                                                                  statusCode:i
                                                                  HTTPVersion:nil
                                                                 headerFields:nil];
-        if (retryBlock(nil, response)) {
-            return NO;
-        }
 
-        return YES;
-    };
+        [[[self.mockSession stub] andDo:^(NSInvocation *invocation) {
+            void *arg;
+            [invocation getArgument:&arg atIndex:3];
+            UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
+            completionHandler(nil, response, nil);
+        }] performHTTPRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
-    [[self.mockSession expect] dataTaskWithRequest:OCMOCK_ANY
-                                        retryWhere:[OCMArg checkWithBlock:retryBlockCheck]
-                                 completionHandler:OCMOCK_ANY];
+        XCTestExpectation *finishedCallbacks = [self expectationWithDescription:@"Finished callbacks"];
+        [self.client associate:@"fakeNamedUserID"
+                     channelID:@"fakeChannel"
+             completionHandler:^(NSError * _Nullable error) {
+            XCTAssertNotNil(error);
+            [finishedCallbacks fulfill];
+        }];
 
-    [self.client disassociate:@"fakeNamedUserID" completionHandler:^(NSError * _Nullable error) {
-        XCTFail(@"Should not be called");
-    }];
-
-    [self.mockSession verify];
+        [self waitForTestExpectations];
+    }
 }
 
 /**
  * Test disassociate named user succeeds request when status is 2xx.
  */
 -(void)testDisassociateSucceedsRequest {
-    BOOL (^completionBlockCheck)(id obj) = ^(id obj) {
-        UARequestCompletionHandler completion = obj;
+    for (NSInteger i = 200; i < 300; i++) {
+        NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""]
+                                                                  statusCode:i
+                                                                 HTTPVersion:nil
+                                                                headerFields:nil];
 
-        for (NSInteger i = 200; i < 300; i++) {
-            NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""]
-                                                                      statusCode:i
-                                                                     HTTPVersion:nil
-                                                                    headerFields:nil];
-            completion(OCMOCK_ANY, response, nil);
-        }
+        [[[self.mockSession stub] andDo:^(NSInvocation *invocation) {
+            void *arg;
+            [invocation getArgument:&arg atIndex:3];
+            UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
+            completionHandler(nil, response, nil);
+        }] performHTTPRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
-        return YES;
-    };
+        XCTestExpectation *finishedCallbacks = [self expectationWithDescription:@"Finished callbacks"];
+        [self.client disassociate:@"fakeNamedUserID" completionHandler:^(NSError * _Nullable error) {
+            XCTAssertNil(error);
+            [finishedCallbacks fulfill];
+        }];
 
-    [[self.mockSession expect] dataTaskWithRequest:OCMOCK_ANY
-                                        retryWhere:OCMOCK_ANY
-                                 completionHandler:[OCMArg checkWithBlock:completionBlockCheck]];
-
-    __block int successfulCompletions = 0;
-
-    [self.client disassociate:@"fakeNamedUserID" completionHandler:^(NSError * _Nullable error) {
-        XCTAssertNil(error);
-        if (!error) {
-            successfulCompletions++;
-        }
-    }];
-    // Success block should be called once for every HTTP status from 200 to 299
-    XCTAssert(successfulCompletions == 100);
-    
-    [self.mockSession verify];
+        [self waitForTestExpectations];
+    }
 }
 
 /**
@@ -249,38 +125,27 @@
  * when the request fails.
  */
 - (void)testDisassociateOnFailure {
-    __block int failedCompletions = 0;
+    for (NSInteger i = 400; i < 500; i++) {
+        NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""]
+                                                                  statusCode:i
+                                                                 HTTPVersion:nil
+                                                                headerFields:nil];
 
-    BOOL (^completionBlockCheck)(id obj) = ^(id obj) {
-        UARequestCompletionHandler completion = obj;
+        [[[self.mockSession stub] andDo:^(NSInvocation *invocation) {
+            void *arg;
+            [invocation getArgument:&arg atIndex:3];
+            UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
+            completionHandler(nil, response, nil);
+        }] performHTTPRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
-        for (NSInteger i = 400; i < 500; i++) {
-            NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""]
-                                                                      statusCode:i
-                                                                     HTTPVersion:nil
-                                                                    headerFields:nil];
+        XCTestExpectation *finishedCallbacks = [self expectationWithDescription:@"Finished callbacks"];
+        [self.client disassociate:@"fakeNamedUserID" completionHandler:^(NSError * _Nullable error) {
+            XCTAssertNotNil(error);
+            [finishedCallbacks fulfill];
+        }];
 
-            completion(OCMOCK_ANY, response, nil);
-        }
-
-        return YES;
-    };
-
-    [[self.mockSession expect] dataTaskWithRequest:OCMOCK_ANY
-                                        retryWhere:OCMOCK_ANY
-                                 completionHandler:[OCMArg checkWithBlock:completionBlockCheck]];
-
-    [self.client disassociate:@"fakeNamedUserID" completionHandler:^(NSError * _Nullable error) {
-        XCTAssertNotNil(error);
-        if (error) {
-            failedCompletions++;
-        }
-    }];
-
-    // Failure block should be called once for every HTTP status from 400 to 499
-    XCTAssert(failedCompletions == 100);
-    
-    [self.mockSession verify];
+        [self waitForTestExpectations];
+    }
 }
 
 /**
@@ -289,11 +154,11 @@
 -(void)testAssociateWhenDisabled {
     // setup
     self.client.enabled = NO;
-    
+
     // expectations
     BOOL (^completionBlockCheck)(id obj) = ^(id obj) {
-        UARequestCompletionHandler completion = obj;
-        
+        UAHTTPRequestCompletionHandler completion = obj;
+
         for (NSInteger i = 200; i < 300; i++) {
             NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""]
                                                                       statusCode:i
@@ -301,21 +166,20 @@
                                                                     headerFields:nil];
             completion(OCMOCK_ANY, response, nil);
         }
-        
+
         return YES;
     };
-    
-    [[self.mockSession stub] dataTaskWithRequest:OCMOCK_ANY
-                                        retryWhere:OCMOCK_ANY
-                                 completionHandler:[OCMArg checkWithBlock:completionBlockCheck]];
-    
+
+    [[self.mockSession stub] performHTTPRequest:OCMOCK_ANY
+                              completionHandler:[OCMArg checkWithBlock:completionBlockCheck]];
+
     // test
     [self.client associate:@"fakeNamedUserID"
                  channelID:@"fakeChannel"
          completionHandler:^(NSError * _Nullable error) {
         XCTFail(@"Should not be called");
     }];
-    
+
     // verify
     [self.mockSession verify];
 }
@@ -326,11 +190,11 @@
 -(void)testDisassociateWhenDisabled {
     // setup
     self.client.enabled = NO;
-    
+
     // expectations
     BOOL (^completionBlockCheck)(id obj) = ^(id obj) {
-        UARequestCompletionHandler completion = obj;
-        
+        UAHTTPRequestCompletionHandler completion = obj;
+
         for (NSInteger i = 200; i < 300; i++) {
             NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""]
                                                                       statusCode:i
@@ -338,23 +202,24 @@
                                                                     headerFields:nil];
             completion(OCMOCK_ANY, response, nil);
         }
-        
+
         return YES;
     };
-    
-    [[self.mockSession stub] dataTaskWithRequest:OCMOCK_ANY
-                                        retryWhere:OCMOCK_ANY
-                                 completionHandler:[OCMArg checkWithBlock:completionBlockCheck]];
-    
+
+    [[self.mockSession stub] performHTTPRequest:OCMOCK_ANY
+                              completionHandler:[OCMArg checkWithBlock:completionBlockCheck]];
+
     // test
     [self.client disassociate:@"fakeNamedUserID"
             completionHandler:^(NSError * _Nullable error) {
         XCTFail(@"Should not be called");
     }];
-    
+
     // verify
     [self.mockSession verify];
 }
 
 
 @end
+
+

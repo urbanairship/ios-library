@@ -16,11 +16,11 @@ NSString * const UAChannelAPIClientErrorDomain = @"com.urbanairship.channel_api_
 @implementation UAChannelAPIClient
 
 + (instancetype)clientWithConfig:(UARuntimeConfig *)config {
-    return [UAChannelAPIClient clientWithConfig:config session:[UARequestSession sessionWithConfig:config]];
+    return [self clientWithConfig:config session:[UARequestSession sessionWithConfig:config]];
 }
 
 + (instancetype)clientWithConfig:(UARuntimeConfig *)config session:(UARequestSession *)session {
-    return [[UAChannelAPIClient alloc] initWithConfig:config session:session];
+    return [[self alloc] initWithConfig:config session:session];
 }
 
 - (void)createChannelWithPayload:(UAChannelRegistrationPayload *)payload
@@ -39,16 +39,14 @@ NSString * const UAChannelAPIClientErrorDomain = @"com.urbanairship.channel_api_
         [builder setValue:@"application/json" forHeader:@"Content-Type"];
     }];
 
-    [self.session dataTaskWithRequest:request retryWhere:^BOOL(NSData *data, NSURLResponse *response) {
+    [self performRequest:request retryWhere:^BOOL(NSData *data, NSHTTPURLResponse *response) {
         return [response hasRetriableStatus];
-    } completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
-        NSHTTPURLResponse *httpResponse = [self castResponse:response error:&error];
-
+    } completionHandler:^(NSData *data, NSHTTPURLResponse *response, NSError *error) {
         if (error) {
             return completionHandler(nil, NO, error);
         }
 
-        NSUInteger status = httpResponse.statusCode;
+        NSUInteger status = response.statusCode;
 
         // Failure
         if (status != 200 && status != 201) {
@@ -61,11 +59,11 @@ NSString * const UAChannelAPIClientErrorDomain = @"com.urbanairship.channel_api_
         // Success
         NSDictionary *jsonResponse = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:nil];
 
-        UA_LTRACE(@"Channel creation succeeded with status: %ld jsonResponse: %@", (unsigned long)httpResponse.statusCode, jsonResponse);
+        UA_LTRACE(@"Channel creation succeeded with status: %ld jsonResponse: %@", (unsigned long)response.statusCode, jsonResponse);
 
         // Parse the response
         NSString *channelID = [jsonResponse valueForKey:@"channel_id"];
-        BOOL existing = httpResponse.statusCode == 200;
+        BOOL existing = response.statusCode == 200;
 
         completionHandler(channelID, existing, nil);
     }];
@@ -89,26 +87,24 @@ NSString * const UAChannelAPIClientErrorDomain = @"com.urbanairship.channel_api_
         [builder setValue:@"application/json" forHeader:@"Content-Type"];
     }];
 
-    [self.session dataTaskWithRequest:request retryWhere:^BOOL(NSData *data, NSURLResponse *response) {
+    [self performRequest:request retryWhere:^BOOL(NSData *data, NSHTTPURLResponse *response) {
         return [response hasRetriableStatus];
-    } completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
-        NSHTTPURLResponse *httpResponse = [self castResponse:response error:&error];
-
+    } completionHandler:^(NSData *data, NSHTTPURLResponse *response, NSError *error) {
         if (error) {
             return completionHandler(error);
         }
 
-        NSUInteger status = httpResponse.statusCode;
+        NSUInteger status = response.statusCode;
 
         // Failure
         if (status != 200 && status != 201) {
-            UA_LTRACE(@"Channel update failed with status: %ld error: %@", (unsigned long)httpResponse.statusCode, error);
+            UA_LTRACE(@"Channel update failed with status: %ld error: %@", (unsigned long)response.statusCode, error);
             NSError *error = status == 409 ? [self conflictError] : [self unsuccessfulStatusError];
             return completionHandler(error);
         }
 
         // Success
-        UA_LTRACE(@"Channel update succeeded with status: %ld", (unsigned long)httpResponse.statusCode);
+        UA_LTRACE(@"Channel update succeeded with status: %ld", (unsigned long)response.statusCode);
         completionHandler(nil);
     }];
 }

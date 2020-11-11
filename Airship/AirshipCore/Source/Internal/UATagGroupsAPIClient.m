@@ -28,7 +28,7 @@ NSString * const UATagGroupsAPIClientErrorDomain = @"com.urbanairship.tag_groups
 @implementation UATagGroupsAPIClient
 
 - (instancetype)initWithConfig:(UARuntimeConfig *)config session:(UARequestSession *)session typeKey:(NSString *)typeKey path:(NSString *)path {
-    self = [super initWithConfig:config session:session];
+    self = [super initWithConfig:config session:session queue:nil];
     if (self) {
         self.typeKey = typeKey;
         self.path = path;
@@ -90,16 +90,14 @@ NSString * const UATagGroupsAPIClientErrorDomain = @"com.urbanairship.tag_groups
 
     UA_LTRACE(@"Updating tag groups with payload: %@", payload);
 
-    [self.session dataTaskWithRequest:request retryWhere:^BOOL(NSData * _Nullable data, NSURLResponse * _Nullable response) {
+    [self performRequest:request retryWhere:^BOOL(NSData * _Nullable data, NSHTTPURLResponse * _Nullable response) {
         return [response hasRetriableStatus];
-    } completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
-        NSHTTPURLResponse *httpResponse = [self castResponse:response error:&error];
-
+    } completionHandler:^(NSData * _Nullable data, NSHTTPURLResponse * _Nullable response, NSError * _Nullable error) {
         if (error) {
             return completionHandler(error);
         }
 
-        NSInteger status = httpResponse.statusCode;
+        NSInteger status = response.statusCode;
 
         if (data) {
             NSDictionary *responseBody = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:nil];
@@ -146,3 +144,4 @@ NSString * const UATagGroupsAPIClientErrorDomain = @"com.urbanairship.tag_groups
 }
 
 @end
+

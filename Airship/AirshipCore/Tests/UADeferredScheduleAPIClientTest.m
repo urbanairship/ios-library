@@ -31,12 +31,12 @@
     UAScheduleTriggerContext *triggerContext = [UAScheduleTriggerContext triggerContextWithTrigger:trigger event:event];
 
     NSDictionary *messageJSON = @{
-                                @"display": @{@"body": @{
-                                                        @"text":@"the body"
-                                                        },
-                                            },
-                                @"display_type": @"banner"
-                                };
+        @"display": @{@"body": @{
+                              @"text":@"the body"
+        },
+        },
+        @"display_type": @"banner"
+    };
 
     NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:200 HTTPVersion:nil headerFields:nil];
     NSDictionary *responseBody = @{@"audience_match": @(YES), @"type" : @"in_app_message", @"message": messageJSON};
@@ -65,13 +65,13 @@
     UAAttributeMutations *attributeMutations = [UAAttributeMutations mutations];
     [attributeMutations setString:@"absolutely" forAttribute:@"fabulous"];
     UAAttributePendingMutations *attributeOverrides = [UAAttributePendingMutations pendingMutationsWithMutations:attributeMutations
-                                                                                                             date:[[UADate alloc] init]];
+                                                                                                            date:[[UADate alloc] init]];
     [[[self.mockSession expect] andDo:^(NSInvocation *invocation) {
         void *arg;
-        [invocation getArgument:&arg atIndex:4];
-        UARequestCompletionHandler completionHandler = (__bridge UARequestCompletionHandler)arg;
+        [invocation getArgument:&arg atIndex:3];
+        UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
         completionHandler(responseData, response, nil);
-    }] dataTaskWithRequest:[OCMArg checkWithBlock:^BOOL(id obj) {
+    }] performHTTPRequest:[OCMArg checkWithBlock:^BOOL(id obj) {
         UARequest *request = obj;
 
         XCTAssertEqualObjects(request.method, @"POST");
@@ -94,7 +94,7 @@
         [sessionFinished fulfill];
 
         return YES;
-    }] retryWhere:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    }] completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *resultResolved = [self expectationWithDescription:@"Result resolved"];
 
@@ -124,12 +124,12 @@
     UAScheduleTriggerContext *triggerContext = [UAScheduleTriggerContext triggerContextWithTrigger:trigger event:event];
 
     NSDictionary *messageJSON = @{
-                                @"display": @{@"body": @{
-                                                        @"text":@"the body"
-                                                        },
-                                            },
-                                @"display_type": @"banner"
-                                };
+        @"display": @{@"body": @{
+                              @"text":@"the body"
+        },
+        },
+        @"display_type": @"banner"
+    };
 
     NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:200 HTTPVersion:nil headerFields:nil];
     NSDictionary *responseBody = @{@"audience_match": @(YES), @"type" : @"in_app_message", @"message": messageJSON};
@@ -154,14 +154,14 @@
 
     UAAttributeMutations *attributeMutations = [UAAttributeMutations mutations];
     UAAttributePendingMutations *attributeOverrides = [UAAttributePendingMutations pendingMutationsWithMutations:attributeMutations
-                                                                                                             date:[[UADate alloc] init]];
+                                                                                                            date:[[UADate alloc] init]];
 
     [[[self.mockSession expect] andDo:^(NSInvocation *invocation) {
         void *arg;
-        [invocation getArgument:&arg atIndex:4];
-        UARequestCompletionHandler completionHandler = (__bridge UARequestCompletionHandler)arg;
+        [invocation getArgument:&arg atIndex:3];
+        UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
         completionHandler(responseData, response, nil);
-    }] dataTaskWithRequest:[OCMArg checkWithBlock:^BOOL(id obj) {
+    }] performHTTPRequest:[OCMArg checkWithBlock:^BOOL(id obj) {
         UARequest *request = obj;
 
         XCTAssertEqualObjects(request.method, @"POST");
@@ -182,7 +182,7 @@
         [sessionFinished fulfill];
 
         return YES;
-    }] retryWhere:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    }] completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *resultResolved = [self expectationWithDescription:@"Result resolved"];
 
@@ -209,12 +209,12 @@
     NSString *channelID = @"channelID";
 
     NSDictionary *messageJSON = @{
-                                @"display": @{@"body": @{
-                                                        @"text":@"the body"
-                                                        },
-                                            },
-                                @"display_type": @"banner"
-                                };
+        @"display": @{@"body": @{
+                              @"text":@"the body"
+        },
+        },
+        @"display_type": @"banner"
+    };
 
     NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:200 HTTPVersion:nil headerFields:nil];
     NSDictionary *responseBody = @{@"audience_match": @(YES), @"type" : @"in_app_message", @"message": messageJSON};
@@ -237,10 +237,10 @@
 
     [[[self.mockSession expect] andDo:^(NSInvocation *invocation) {
         void *arg;
-        [invocation getArgument:&arg atIndex:4];
-        UARequestCompletionHandler completionHandler = (__bridge UARequestCompletionHandler)arg;
+        [invocation getArgument:&arg atIndex:3];
+        UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
         completionHandler(responseData, response, nil);
-    }] dataTaskWithRequest:[OCMArg checkWithBlock:^BOOL(id obj) {
+    }] performHTTPRequest:[OCMArg checkWithBlock:^BOOL(id obj) {
         UARequest *request = obj;
 
 
@@ -258,7 +258,7 @@
         [sessionFinished fulfill];
 
         return YES;
-    }] retryWhere:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    }] completionHandler:OCMOCK_ANY];
 
     UATagGroupsMutation *mutation = [UATagGroupsMutation mutationToAddTags:@[@"neat", @"rad"] group:@"cool"];
     UATagGroupsMutation *mutation2 = [UATagGroupsMutation mutationToAddTags:@[@"awesome", @"nice"] group:@"great"];
@@ -268,7 +268,7 @@
     UAAttributeMutations *attributeMutations = [UAAttributeMutations mutations];
     [attributeMutations setString:@"absolutely" forAttribute:@"fabulous"];
     UAAttributePendingMutations *attributeOverrides = [UAAttributePendingMutations pendingMutationsWithMutations:attributeMutations
-                                                                                                             date:[[UADate alloc] init]];
+                                                                                                            date:[[UADate alloc] init]];
 
     XCTestExpectation *resultResolved = [self expectationWithDescription:@"Result resolved"];
 
@@ -332,10 +332,10 @@
 
     [[[self.mockSession expect] andDo:^(NSInvocation *invocation) {
         void *arg;
-        [invocation getArgument:&arg atIndex:4];
-        UARequestCompletionHandler completionHandler = (__bridge UARequestCompletionHandler)arg;
+        [invocation getArgument:&arg atIndex:3];
+        UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
         completionHandler(responseData, response, nil);
-    }] dataTaskWithRequest:[OCMArg checkWithBlock:^BOOL(id obj) {
+    }] performHTTPRequest:[OCMArg checkWithBlock:^BOOL(id obj) {
         UARequest *request = obj;
 
         XCTAssertEqualObjects(request.method, @"POST");
@@ -356,7 +356,7 @@
         [sessionFinished fulfill];
 
         return YES;
-    }] retryWhere:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    }] completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *resultResolved = [self expectationWithDescription:@"Result resolved"];
 
@@ -396,7 +396,7 @@
         [authTokenRetrieved fulfill];
     }] tokenWithCompletionHandler:OCMOCK_ANY];
 
-    [[self.mockSession reject] dataTaskWithRequest:OCMOCK_ANY retryWhere:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    [[self.mockSession reject] performHTTPRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     UATagGroupsMutation *mutation = [UATagGroupsMutation mutationToAddTags:@[@"neat", @"rad"] group:@"cool"];
     UATagGroupsMutation *mutation2 = [UATagGroupsMutation mutationToAddTags:@[@"awesome", @"nice"] group:@"great"];
@@ -406,7 +406,7 @@
     UAAttributeMutations *attributeMutations = [UAAttributeMutations mutations];
     [attributeMutations setString:@"absolutely" forAttribute:@"fabulous"];
     UAAttributePendingMutations *attributeOverrides = [UAAttributePendingMutations pendingMutationsWithMutations:attributeMutations
-                                                                                                             date:[[UADate alloc] init]];
+                                                                                                            date:[[UADate alloc] init]];
 
     XCTestExpectation *resultResolved = [self expectationWithDescription:@"Result resolved"];
 
@@ -452,12 +452,12 @@
 
     [[[self.mockSession expect] andDo:^(NSInvocation *invocation) {
         void *arg;
-        [invocation getArgument:&arg atIndex:4];
-        UARequestCompletionHandler completionHandler = (__bridge UARequestCompletionHandler)arg;
+        [invocation getArgument:&arg atIndex:3];
+        UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
         NSError *error = [NSError errorWithDomain:@"domain" code:0 userInfo:@{}];
         completionHandler(nil, nil, error);
         [sessionFinished fulfill];
-    }] dataTaskWithRequest:OCMOCK_ANY retryWhere:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    }] performHTTPRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     UATagGroupsMutation *mutation = [UATagGroupsMutation mutationToAddTags:@[@"neat", @"rad"] group:@"cool"];
     UATagGroupsMutation *mutation2 = [UATagGroupsMutation mutationToAddTags:@[@"awesome", @"nice"] group:@"great"];
@@ -467,7 +467,7 @@
     UAAttributeMutations *attributeMutations = [UAAttributeMutations mutations];
     [attributeMutations setString:@"absolutely" forAttribute:@"fabulous"];
     UAAttributePendingMutations *attributeOverrides = [UAAttributePendingMutations pendingMutationsWithMutations:attributeMutations
-                                                                                                             date:[[UADate alloc] init]];
+                                                                                                            date:[[UADate alloc] init]];
 
     XCTestExpectation *resultResolved = [self expectationWithDescription:@"Result resolved"];
 
@@ -518,11 +518,11 @@
 
     [[[self.mockSession expect] andDo:^(NSInvocation *invocation) {
         void *arg;
-        [invocation getArgument:&arg atIndex:4];
-        UARequestCompletionHandler completionHandler = (__bridge UARequestCompletionHandler)arg;
+        [invocation getArgument:&arg atIndex:3];
+        UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
         completionHandler(responseData, response, nil);
         [sessionFinished fulfill];
-    }] dataTaskWithRequest:OCMOCK_ANY retryWhere:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    }] performHTTPRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     UATagGroupsMutation *mutation = [UATagGroupsMutation mutationToAddTags:@[@"neat", @"rad"] group:@"cool"];
     UATagGroupsMutation *mutation2 = [UATagGroupsMutation mutationToAddTags:@[@"awesome", @"nice"] group:@"great"];
@@ -532,7 +532,7 @@
     UAAttributeMutations *attributeMutations = [UAAttributeMutations mutations];
     [attributeMutations setString:@"absolutely" forAttribute:@"fabulous"];
     UAAttributePendingMutations *attributeOverrides = [UAAttributePendingMutations pendingMutationsWithMutations:attributeMutations
-                                                                                                             date:[[UADate alloc] init]];
+                                                                                                            date:[[UADate alloc] init]];
 
     XCTestExpectation *resultResolved = [self expectationWithDescription:@"Result resolved"];
 
@@ -555,11 +555,11 @@
 
     [[[self.mockSession expect] andDo:^(NSInvocation *invocation) {
         void *arg;
-        [invocation getArgument:&arg atIndex:4];
-        UARequestCompletionHandler completionHandler = (__bridge UARequestCompletionHandler)arg;
+        [invocation getArgument:&arg atIndex:3];
+        UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
         completionHandler(responseData, response, nil);
         [newSessionFinished fulfill];
-    }] dataTaskWithRequest:OCMOCK_ANY retryWhere:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    }] performHTTPRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     [self.client resolveURL:URL
                   channelID:channelID
@@ -606,11 +606,11 @@
 
     [[[self.mockSession expect] andDo:^(NSInvocation *invocation) {
         void *arg;
-        [invocation getArgument:&arg atIndex:4];
-        UARequestCompletionHandler completionHandler = (__bridge UARequestCompletionHandler)arg;
+        [invocation getArgument:&arg atIndex:3];
+        UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
         completionHandler(responseData, response, nil);
         [sessionFinished fulfill];
-    }] dataTaskWithRequest:OCMOCK_ANY retryWhere:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    }] performHTTPRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     UATagGroupsMutation *mutation = [UATagGroupsMutation mutationToAddTags:@[@"neat", @"rad"] group:@"cool"];
     UATagGroupsMutation *mutation2 = [UATagGroupsMutation mutationToAddTags:@[@"awesome", @"nice"] group:@"great"];
@@ -620,7 +620,7 @@
     UAAttributeMutations *attributeMutations = [UAAttributeMutations mutations];
     [attributeMutations setString:@"absolutely" forAttribute:@"fabulous"];
     UAAttributePendingMutations *attributeOverrides = [UAAttributePendingMutations pendingMutationsWithMutations:attributeMutations
-                                                                                                             date:[[UADate alloc] init]];
+                                                                                                            date:[[UADate alloc] init]];
 
     XCTestExpectation *resultResolved = [self expectationWithDescription:@"Result resolved"];
 
@@ -641,3 +641,4 @@
 }
 
 @end
+

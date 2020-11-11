@@ -1,26 +1,27 @@
 /* Copyright Airship and Contributors */
 
 #import "UABaseTest.h"
-#import "UAURLRequestOperation+Internal.h"
+#import "UAHTTPRequestOperation+Internal.h"
 
-@interface UAURLRequestOperationTest : UABaseTest
-@property (nonatomic, strong) NSURLRequest *request;
+@interface UAHTTPRequestOperationTest : UABaseTest
+@property (nonatomic, strong) UARequest *request;
 @property (nonatomic, strong) id mockSession;
 @end
 
-@implementation UAURLRequestOperationTest
+@implementation UAHTTPRequestOperationTest
 
 - (void)setUp {
     [super setUp];
-    self.request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"https://testing.one.two.three"]];
-    self.mockSession = [self mockForClass:[NSURLSession class]];
+    self.request = [UARequest requestWithBuilderBlock:^(UARequestBuilder * _Nonnull builder) {
+        builder.URL = [NSURL URLWithString:@"https://testing.one.two.three"];
+    }];
+    self.mockSession = [self mockForClass:[UARequestSession class]];
 }
 
-
 - (void)testDefaults {
-    UAURLRequestOperation *operation = [UAURLRequestOperation operationWithRequest:self.request
-                                                                           session:self.mockSession
-                                                                 completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {}];
+    UAHTTPRequestOperation *operation = [UAHTTPRequestOperation operationWithRequest:self.request
+                                                                             session:self.mockSession
+                                                                 completionHandler:^(NSData *data, NSHTTPURLResponse *response, NSError *error) {}];
 
     XCTAssertEqual(operation.isAsynchronous, YES);
     XCTAssertEqual(operation.isExecuting, NO);
@@ -30,14 +31,14 @@
 
 - (void)testOperation {
     NSData *testData = [NSData data];
-    NSURLResponse *testResponse = [[NSURLResponse alloc] init];
+    NSHTTPURLResponse *testResponse = [[NSHTTPURLResponse alloc] init];
     NSError *testError = [NSError errorWithDomain:@"domain" code:100 userInfo:nil];
 
     __block BOOL operationFinished = NO;
 
-    UAURLRequestOperation *operation = [UAURLRequestOperation operationWithRequest:self.request
+    UAHTTPRequestOperation *operation = [UAHTTPRequestOperation operationWithRequest:self.request
                                                                            session:self.mockSession
-                                                                 completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+                                                                 completionHandler:^(NSData *data, NSHTTPURLResponse *response, NSError *error) {
                                                                      XCTAssertEqual(testData, data);
                                                                      XCTAssertEqual(testResponse, response);
                                                                      XCTAssertEqual(testError, error);
@@ -54,7 +55,7 @@
         [invocation getArgument:&arg atIndex:3];
         completionHandler = (__bridge void (^)(NSData *, NSURLResponse *, NSError *))arg;
         [operationPerformedRequest fulfill];
-    }] dataTaskWithRequest:self.request completionHandler:OCMOCK_ANY];
+    }] performHTTPRequest:self.request completionHandler:OCMOCK_ANY];
 
     // Start the operation
     [operation start];
@@ -76,11 +77,27 @@
     XCTAssertEqual(operationFinished, YES);
 }
 
-- (void)testPreemptiveCancel {
-    UAURLRequestOperation *operation = [UAURLRequestOperation operationWithRequest:self.request
-                                                                           session:self.mockSession
-                                                                 completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {}];
+- (void)testCancel {
+    UAHTTPRequestOperation *operation = [UAHTTPRequestOperation operationWithRequest:self.request
+                                                                             session:self.mockSession
+                                                                   completionHandler:^(NSData *data, NSHTTPURLResponse *response, NSError *error) {}];
 
+    XCTestExpectation *disposableCalled = [self expectationWithDescription:@"dispoable called"];
+    UADisposable *disposable = [UADisposable disposableWithBlock:^{
+        [disposableCalled fulfill];
+    }];
+    [[[self.mockSession expect] andReturn:disposable] performHTTPRequest:self.request completionHandler:OCMOCK_ANY];
+
+    [operation start];
+    [operation cancel];
+    [self waitForTestExpectations];
+    XCTAssertEqual(operation.isCancelled, YES);
+}
+
+- (void)testPreemptiveCancel {
+    UAHTTPRequestOperation *operation = [UAHTTPRequestOperation operationWithRequest:self.request
+                                                                             session:self.mockSession
+                                                                   completionHandler:^(NSData *data, NSHTTPURLResponse *response, NSError *error) {}];
     [operation cancel];
     XCTAssertEqual(operation.isCancelled, YES);
 
@@ -88,6 +105,5 @@
     XCTAssertEqual(operation.isExecuting, NO);
     XCTAssertEqual(operation.isFinished, YES);
 }
-
 
 @end

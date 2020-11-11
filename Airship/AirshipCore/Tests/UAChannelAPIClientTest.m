@@ -27,53 +27,6 @@
 }
 
 /**
- * Test channel creation retries all 5xx failures except for 501.
- */
-- (void)testChannelCreationRetry {
-
-    BOOL (^retryBlockCheck)(id obj) = ^(id obj) {
-        UARequestRetryBlock retryBlock = obj;
-
-        for (NSInteger i = 500; i < 600; i++) {
-            NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:i HTTPVersion:nil headerFields:nil];
-
-            if(!retryBlock(nil, response)) {
-                return NO;
-            }
-        }
-
-        // Check that it returns NO for 400 status codes
-        NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:400 HTTPVersion:nil headerFields:nil];
-        if (retryBlock(nil, response)) {
-            return NO;
-        }
-
-        // Check that it returns NO for 200 status codes
-        response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:200 HTTPVersion:nil headerFields:nil];
-        if (retryBlock(nil, response)) {
-            return NO;
-        }
-
-        // Check that it returns NO for 201 status codes
-        response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:201 HTTPVersion:nil headerFields:nil];
-        if (retryBlock(nil, response)) {
-            return NO;
-        }
-
-        return YES;
-    };
-
-    [[self.mockSession expect] dataTaskWithRequest:OCMOCK_ANY
-                                        retryWhere:[OCMArg checkWithBlock:retryBlockCheck]
-                                 completionHandler:OCMOCK_ANY];
-
-    [self.client createChannelWithPayload:[[UAChannelRegistrationPayload alloc] init]
-                        completionHandler:^(NSString *channelID, BOOL existing, NSError *error){}];
-
-    [self.mockSession verify];
-}
-
-/**
  * Test create channel calls the onSuccessBlock with the response channel ID
  * and makes an analytics request when the request is successful.
  */
@@ -86,20 +39,20 @@
     // Stub the session to return the response
     [[[self.mockSession stub] andDo:^(NSInvocation *invocation) {
         void *arg;
-        [invocation getArgument:&arg atIndex:4];
-        UARequestCompletionHandler completionHandler = (__bridge UARequestCompletionHandler)arg;
+        [invocation getArgument:&arg atIndex:3];
+        UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
         completionHandler(responseData, response, nil);
-    }] dataTaskWithRequest:OCMOCK_ANY retryWhere:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    }] performHTTPRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
-    __block NSString *channelID;
-
+    XCTestExpectation *callbackCalled = [self expectationWithDescription:@"callback called"];
     [self.client createChannelWithPayload:[[UAChannelRegistrationPayload alloc] init]
-                        completionHandler:^(NSString *cID, BOOL existing, NSError *error){
+                        completionHandler:^(NSString *channelID, BOOL existing, NSError *error){
         XCTAssertNil(error);
-        channelID = cID;
+        XCTAssertEqualObjects(@"someChannelID", channelID);
+        [callbackCalled fulfill];
     }];
 
-    XCTAssertEqualObjects(@"someChannelID", channelID, @"Channel ID should match someChannelID from the response");
+    [self waitForTestExpectations];
 }
 
 /**
@@ -114,16 +67,20 @@
     // Stub the session to return a the response
     [[[self.mockSession stub] andDo:^(NSInvocation *invocation) {
         void *arg;
-        [invocation getArgument:&arg atIndex:4];
-        UARequestCompletionHandler completionHandler = (__bridge UARequestCompletionHandler)arg;
+        [invocation getArgument:&arg atIndex:3];
+        UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
         completionHandler(nil, response, nil);
-    }] dataTaskWithRequest:OCMOCK_ANY retryWhere:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    }] performHTTPRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
+    XCTestExpectation *callbackCalled = [self expectationWithDescription:@"callback called"];
     [self.client createChannelWithPayload:[[UAChannelRegistrationPayload alloc] init]
                         completionHandler:^(NSString *channelID, BOOL existing, NSError *error){
         XCTAssertEqualObjects(error.domain, UAChannelAPIClientErrorDomain);
         XCTAssertEqual(error.code, UAChannelAPIClientErrorUnsuccessfulStatus);
+        [callbackCalled fulfill];
     }];
+
+    [self waitForTestExpectations];
 }
 
 /**
@@ -164,62 +121,21 @@
         return YES;
     };
 
-    [[self.mockSession expect] dataTaskWithRequest:[OCMArg checkWithBlock:checkRequestBlock]
-                                        retryWhere:OCMOCK_ANY
-                                 completionHandler:OCMOCK_ANY];
+    [[[self.mockSession expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
+        completionHandler(nil, nil, nil);
+    }] performHTTPRequest:[OCMArg checkWithBlock:checkRequestBlock]
+                                completionHandler:OCMOCK_ANY];
 
+    XCTestExpectation *callbackCalled = [self expectationWithDescription:@"callback called"];
     [self.client createChannelWithPayload:[[UAChannelRegistrationPayload alloc] init]
-                        completionHandler:^(NSString *channelID, BOOL existing, NSError *error){}];
+                        completionHandler:^(NSString *channelID, BOOL existing, NSError *error){
+        [callbackCalled fulfill];
+    }];
 
-    [self.mockSession verify];
-}
-
-/**
- * Test update channel retries on any 500 status code
- */
-- (void)testUpdateChannelRetriesFailedRequests {
-
-    BOOL (^retryBlockCheck)(id obj) = ^(id obj) {
-        UARequestRetryBlock retryBlock = obj;
-
-        for (NSInteger i = 500; i < 600; i++) {
-            NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:i HTTPVersion:nil headerFields:nil];
-
-            // Allow it to retry on 5xx and error results
-            if(!retryBlock(nil, response)) {
-                return NO;
-            }
-        }
-
-        // Check that it returns NO for 400 status codes
-        NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:400 HTTPVersion:nil headerFields:nil];
-        if (retryBlock(nil, response)) {
-            return NO;
-        }
-
-        // Check that it returns NO for 200 status codes
-        response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:200 HTTPVersion:nil headerFields:nil];
-        if (retryBlock(nil, response)) {
-            return NO;
-        }
-
-        // Check that it returns NO for 201 status codes
-        response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:201 HTTPVersion:nil headerFields:nil];
-        if (retryBlock(nil, response)) {
-            return NO;
-        }
-
-        return YES;
-    };
-
-    [[self.mockSession expect] dataTaskWithRequest:OCMOCK_ANY
-                                        retryWhere:[OCMArg checkWithBlock:retryBlockCheck]
-                                 completionHandler:OCMOCK_ANY];
-
-    [self.client updateChannelWithID:@"someChannelID"
-                         withPayload:[[UAChannelRegistrationPayload alloc] init]
-                   completionHandler:^(NSError * _Nullable error) {}];
-
+    [self waitForTestExpectations];
     [self.mockSession verify];
 }
 
@@ -234,16 +150,20 @@
     // Stub the session to return the response
     [[[self.mockSession stub] andDo:^(NSInvocation *invocation) {
         void *arg;
-        [invocation getArgument:&arg atIndex:4];
-        UARequestCompletionHandler completionHandler = (__bridge UARequestCompletionHandler)arg;
+        [invocation getArgument:&arg atIndex:3];
+        UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
         completionHandler(responseData, response, nil);
-    }] dataTaskWithRequest:OCMOCK_ANY retryWhere:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    }] performHTTPRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
+    XCTestExpectation *callbackCalled = [self expectationWithDescription:@"callback called"];
     [self.client updateChannelWithID:@"someChannelID"
                          withPayload:[[UAChannelRegistrationPayload alloc] init]
                    completionHandler:^(NSError * _Nullable error) {
         XCTAssertNil(error);
+        [callbackCalled fulfill];
     }];
+
+    [self waitForTestExpectations];
 }
 
 /**
@@ -257,17 +177,21 @@
     // Stub the session to return a the response
     [[[self.mockSession stub] andDo:^(NSInvocation *invocation) {
         void *arg;
-        [invocation getArgument:&arg atIndex:4];
-        UARequestCompletionHandler completionHandler = (__bridge UARequestCompletionHandler)arg;
+        [invocation getArgument:&arg atIndex:3];
+        UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
         completionHandler(nil, response, nil);
-    }] dataTaskWithRequest:OCMOCK_ANY retryWhere:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    }] performHTTPRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
+    XCTestExpectation *callbackCalled = [self expectationWithDescription:@"callback called"];
     [self.client updateChannelWithID:@"someChannelID"
                          withPayload:[[UAChannelRegistrationPayload alloc] init]
                    completionHandler:^(NSError * _Nullable error) {
         XCTAssertEqualObjects(error.domain, UAChannelAPIClientErrorDomain);
         XCTAssertEqual(error.code, UAChannelAPIClientErrorUnsuccessfulStatus);
+        [callbackCalled fulfill];
     }];
+
+    [self waitForTestExpectations];
 }
 
 /**
@@ -281,17 +205,22 @@
     // Stub the session to return a the response
     [[[self.mockSession stub] andDo:^(NSInvocation *invocation) {
         void *arg;
-        [invocation getArgument:&arg atIndex:4];
-        UARequestCompletionHandler completionHandler = (__bridge UARequestCompletionHandler)arg;
+        [invocation getArgument:&arg atIndex:3];
+        UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
         completionHandler(nil, response, nil);
-    }] dataTaskWithRequest:OCMOCK_ANY retryWhere:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    }] performHTTPRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
+    XCTestExpectation *callbackCalled = [self expectationWithDescription:@"callback called"];
     [self.client updateChannelWithID:@"someChannelID"
                          withPayload:[[UAChannelRegistrationPayload alloc] init]
                    completionHandler:^(NSError * _Nullable error) {
         XCTAssertEqualObjects(error.domain, UAChannelAPIClientErrorDomain);
         XCTAssertEqual(error.code, UAChannelAPIClientErrorConflict);
+        [callbackCalled fulfill];
     }];
+
+    [self waitForTestExpectations];
+
 }
 
 /**
@@ -332,15 +261,24 @@
         return YES;
     };
 
-    [[self.mockSession expect] dataTaskWithRequest:[OCMArg checkWithBlock:checkRequestBlock]
-                                        retryWhere:OCMOCK_ANY
-                                 completionHandler:OCMOCK_ANY];
+    [[[self.mockSession expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
+        completionHandler(nil, nil, nil);
+    }] performHTTPRequest:[OCMArg checkWithBlock:checkRequestBlock] completionHandler:OCMOCK_ANY];
 
+    XCTestExpectation *callbackCalled = [self expectationWithDescription:@"callback called"];
     [self.client updateChannelWithID:@"someChannelID"
                          withPayload:[[UAChannelRegistrationPayload alloc] init]
-                   completionHandler:^(NSError * _Nullable error) {}];
+                   completionHandler:^(NSError * _Nullable error) {
+        [callbackCalled fulfill];
+    }];
 
+    [self waitForTestExpectations];
     [self.mockSession verify];
 }
 
 @end
+
+

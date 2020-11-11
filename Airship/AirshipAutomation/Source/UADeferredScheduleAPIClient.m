@@ -199,18 +199,13 @@ attributeOverrides:(UAAttributePendingMutations *)attributeOverrides
     __block UADeferredScheduleAPIClientResponse *clientResponse;
     __block UASemaphore *semaphore = [UASemaphore semaphore];
 
-    [self.session dataTaskWithRequest:request retryWhere:^BOOL(NSData * _Nullable data, NSURLResponse * _Nullable response) {
+    [self performRequest:request retryWhere:^BOOL(NSData * _Nullable data, NSHTTPURLResponse * _Nullable response) {
         return NO;
-    } completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
-        NSHTTPURLResponse *httpResponse;
-
-        if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
-            httpResponse = (NSHTTPURLResponse *) response;
-        }
-
+    } completionHandler:^(NSData * _Nullable data, NSHTTPURLResponse * _Nullable response, NSError * _Nullable error) {
         clientResponse = [[UADeferredScheduleAPIClientResponse alloc] init];
-        if (httpResponse) {
-            clientResponse.status = httpResponse.statusCode;
+
+        if (response) {
+            clientResponse.status = response.statusCode;
             clientResponse.body = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:nil];
         }
 

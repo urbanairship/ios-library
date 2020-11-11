@@ -31,47 +31,6 @@
 }
 
 /**
- * Test create user retry
- */
--(void)testCreateUserRetry {
-    // Check that the retry block returns YES for any 5xx request other than 501
-    BOOL (^retryBlockCheck)(id obj) = ^(id obj) {
-        UARequestRetryBlock retryBlock = obj;
-
-        for (NSInteger i = 500; i < 600; i++) {
-            NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:i HTTPVersion:nil headerFields:nil];
-
-            if (!retryBlock(OCMOCK_ANY, response)) {
-                return NO;
-            }
-        }
-
-        // Check that it returns NO for 400 status codes
-        NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:400 HTTPVersion:nil headerFields:nil];
-        if (retryBlock(OCMOCK_ANY, response)) {
-            return NO;
-        }
-
-        return YES;
-    };
-
-    [[self.mockSession expect] dataTaskWithRequest:OCMOCK_ANY
-                                        retryWhere:[OCMArg checkWithBlock:retryBlockCheck]
-                                 completionHandler:OCMOCK_ANY];
-
-    [self.client createUserWithChannelID:@"channelID"
-                               onSuccess:^(UAUserData *data){
-                                   XCTFail(@"Should not be called");
-                               }
-                               onFailure:^(NSUInteger statusCode){
-                                   XCTFail(@"Should not be called");
-                               }];
-
-
-    XCTAssertNoThrow([self.mockSession verify], @"Create user should call retry on 5xx status codes");
-}
-
-/**
  * Test create user success
  */
 -(void)testCreateUserSuccess {
@@ -87,26 +46,24 @@
     // Stub the session to return the response
     [[[self.mockSession stub] andDo:^(NSInvocation *invocation) {
         void *arg;
-        [invocation getArgument:&arg atIndex:4];
-        UARequestCompletionHandler completionHandler = (__bridge UARequestCompletionHandler)arg;
+        [invocation getArgument:&arg atIndex:3];
+        UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
         completionHandler(responseData, response, nil);
-    }] dataTaskWithRequest:OCMOCK_ANY retryWhere:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    }] performHTTPRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
-
-    __block UAUserData *successData;
-
+    XCTestExpectation *callbackCalled = [self expectationWithDescription:@"callback called"];
     [self.client createUserWithChannelID:@"channelID"
                                onSuccess:^(UAUserData *data){
-                                   successData = data;
-                               }
-                               onFailure:^(NSUInteger statusCode){
-                                   XCTFail(@"Should not be called");
-                               }];
 
-    XCTAssertNoThrow([self.mockSession verify], @"Create user should succeed on 201.");
+        XCTAssertEqualObjects(data.username, [responseDict valueForKey:@"user_id"]);
+        XCTAssertEqualObjects(data.password, [responseDict valueForKey:@"password"]);
+        [callbackCalled fulfill];
+    } onFailure:^(NSUInteger statusCode){
+        XCTFail(@"Should not be called");
+    }];
 
-    XCTAssertEqualObjects(successData.username, [responseDict valueForKey:@"user_id"]);
-    XCTAssertEqualObjects(successData.password, [responseDict valueForKey:@"password"]);
+    [self waitForTestExpectations];
+    [self.mockSession verify];
 }
 
 /**
@@ -125,25 +82,22 @@
     // Stub the session to return the response
     [[[self.mockSession stub] andDo:^(NSInvocation *invocation) {
         void *arg;
-        [invocation getArgument:&arg atIndex:4];
-        UARequestCompletionHandler completionHandler = (__bridge UARequestCompletionHandler)arg;
+        [invocation getArgument:&arg atIndex:3];
+        UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
         completionHandler(responseData, response, nil);
-    }] dataTaskWithRequest:OCMOCK_ANY retryWhere:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    }] performHTTPRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
 
-    __block NSUInteger failureStatusCode = 0;
+    XCTestExpectation *callbackCalled = [self expectationWithDescription:@"callback called"];
+    [self.client createUserWithChannelID:@"channelID" onSuccess:^(UAUserData *data) {
+        XCTFail(@"Should not be called");
+    } onFailure:^(NSUInteger statusCode) {
+        XCTAssertEqual(statusCode, 400);
+        [callbackCalled fulfill];
+    }];
 
-    [self.client createUserWithChannelID:@"channelID"
-                               onSuccess:^(UAUserData *data) {
-                                   XCTFail(@"Should not be called");
-                               }
-                               onFailure:^(NSUInteger statusCode) {
-                                   failureStatusCode = statusCode;
-                               }];
-
+    [self waitForTestExpectations];
     XCTAssertNoThrow([self.mockSession verify], @"Create user should fail on 400.");
-
-    XCTAssertEqual(failureStatusCode, 400);
 }
 
 /**
@@ -182,60 +136,23 @@
         return YES;
     };
 
-    [[self.mockSession expect] dataTaskWithRequest:[OCMArg checkWithBlock:checkRequestBlock]
-                                        retryWhere:OCMOCK_ANY
-                                 completionHandler:OCMOCK_ANY];
 
+    [[[self.mockSession expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
+        completionHandler(nil, nil, nil);
+    }] performHTTPRequest:[OCMArg checkWithBlock:checkRequestBlock] completionHandler:OCMOCK_ANY];
 
+    XCTestExpectation *callbackCalled = [self expectationWithDescription:@"callback called"];
     [self.client createUserWithChannelID:@"channelID" onSuccess:^(UAUserData * _Nonnull data) {
     } onFailure:^(NSUInteger statusCode) {
+        [callbackCalled fulfill];
     }];
 
+    [self waitForTestExpectations];
     [self.mockSession verify];
 }
-
-/**
- * Test update user retry
- */
--(void)testUpdateUserRetry {
-    // Check that the retry block returns YES for any 5xx request other than 501
-    BOOL (^retryBlockCheck)(id obj) = ^(id obj) {
-        UARequestRetryBlock retryBlock = obj;
-
-        for (NSInteger i = 500; i < 600; i++) {
-            NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:i HTTPVersion:nil headerFields:nil];
-
-            if (!retryBlock(OCMOCK_ANY, response)) {
-                return NO;
-            }
-        }
-
-        // Check that it returns NO for 400 status codes
-        NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:400 HTTPVersion:nil headerFields:nil];
-        if (retryBlock(OCMOCK_ANY, response)) {
-            return NO;
-        }
-
-        return YES;
-    };
-
-    [[self.mockSession expect] dataTaskWithRequest:OCMOCK_ANY
-                                        retryWhere:[OCMArg checkWithBlock:retryBlockCheck]
-                                 completionHandler:OCMOCK_ANY];
-
-    [self.client updateUserWithData:self.userData
-                          channelID:@"channelID"
-                          onSuccess:^(){
-                              XCTFail(@"Should not be called");
-                          }
-                          onFailure:^(NSUInteger statusCode){
-                              XCTFail(@"Should not be called");
-                          }];
-
-
-    XCTAssertNoThrow([self.mockSession verify], @"Update user should call retry on 5xx status codes");
-}
-
 /**
  * Test update user success
  */
@@ -252,26 +169,21 @@
     // Stub the session to return the response
     [[[self.mockSession stub] andDo:^(NSInvocation *invocation) {
         void *arg;
-        [invocation getArgument:&arg atIndex:4];
-        UARequestCompletionHandler completionHandler = (__bridge UARequestCompletionHandler)arg;
+        [invocation getArgument:&arg atIndex:3];
+        UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
         completionHandler(responseData, response, nil);
-    }] dataTaskWithRequest:OCMOCK_ANY retryWhere:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    }] performHTTPRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
+    XCTestExpectation *callbackCalled = [self expectationWithDescription:@"callback called"];
+    [self.client updateUserWithData:self.userData channelID:@"channelID" onSuccess:^(){
+        [callbackCalled fulfill];
+    } onFailure:^(NSUInteger statusCode){
+        XCTFail(@"Should not be called");
+    }];
 
-    __block BOOL successBlockCalled = false;
-
-    [self.client updateUserWithData:self.userData
-                          channelID:@"channelID"
-                          onSuccess:^(){
-                              successBlockCalled = YES;
-                          }
-                          onFailure:^(NSUInteger statusCode){
-                              XCTFail(@"Should not be called");
-                          }];
-
+    [self waitForTestExpectations];
     XCTAssertNoThrow([self.mockSession verify], @"Update user should succeed on 200.");
 
-    XCTAssertTrue(successBlockCalled);
 }
 
 /**
@@ -290,26 +202,21 @@
     // Stub the session to return the response
     [[[self.mockSession stub] andDo:^(NSInvocation *invocation) {
         void *arg;
-        [invocation getArgument:&arg atIndex:4];
-        UARequestCompletionHandler completionHandler = (__bridge UARequestCompletionHandler)arg;
+        [invocation getArgument:&arg atIndex:3];
+        UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
         completionHandler(responseData, response, nil);
-    }] dataTaskWithRequest:OCMOCK_ANY retryWhere:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    }] performHTTPRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
+    XCTestExpectation *callbackCalled = [self expectationWithDescription:@"callback called"];
+    [self.client updateUserWithData:self.userData channelID:@"channelID" onSuccess:^(){
+        XCTFail(@"Should not be called");
+    } onFailure:^(NSUInteger statusCode){
+        XCTAssertEqual(statusCode, 400);
+        [callbackCalled fulfill];
+    }];
 
-    __block NSUInteger failureStatusCode = 0;
-
-    [self.client updateUserWithData:self.userData
-                          channelID:@"channelID"
-                          onSuccess:^(){
-                              XCTFail(@"Should not be called");
-                          }
-                          onFailure:^(NSUInteger statusCode){
-                              failureStatusCode = statusCode;
-                          }];
-
+    [self waitForTestExpectations];
     XCTAssertNoThrow([self.mockSession verify], @"Update user should fail on 400.");
-
-    XCTAssertEqual(failureStatusCode, 400);
 }
 
 /**
@@ -351,13 +258,13 @@
 
     [[[self.mockSession expect] andDo:^(NSInvocation *invocation) {
         void *arg;
-        [invocation getArgument:&arg atIndex:4];
-        UARequestCompletionHandler completionHandler = (__bridge UARequestCompletionHandler)arg;
+        [invocation getArgument:&arg atIndex:3];
+        UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
         NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@"https://device-api.urbanairship.com/api/user/username/"]
                                                                   statusCode:200 HTTPVersion:@"1.1"
                                                                 headerFields:nil];
-        completionHandler(nil, (NSURLResponse *)response, nil);
-    }] dataTaskWithRequest:[OCMArg checkWithBlock:checkRequestBlock] retryWhere:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+        completionHandler(nil, response, nil);
+    }] performHTTPRequest:[OCMArg checkWithBlock:checkRequestBlock] completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *expectation = [self expectationWithDescription:@"update succeeded"];
 
@@ -372,4 +279,5 @@
 }
 
 @end
+
 

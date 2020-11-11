@@ -502,7 +502,7 @@ typedef void (^UAInboxMessageFetchCompletionHandler)(NSArray *);
 }
 
 - (void)dealloc {
-    [self.client.session cancelAllRequests];
+    [self.client cancelAllRequests];
 }
 
 - (void)setEnabled:(BOOL)enabled {

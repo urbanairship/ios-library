@@ -29,43 +29,6 @@
 }
 
 /**
- * Test client retries on 5xx and 429 status codes.
- */
-- (void)testChannelMutationRetry {
-    BOOL (^retryBlockCheck)(id obj) = ^(id obj) {
-        UARequestRetryBlock retryBlock = obj;
-        for (NSInteger i = 500; i < 600; i++) {
-            NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:i HTTPVersion:nil headerFields:nil];
-
-            if(!retryBlock(nil, response)) {
-                return NO;
-            }
-        }
-
-        // Check that it retries on 429
-        NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc]initWithURL:[NSURL URLWithString:@""] statusCode:429 HTTPVersion:nil headerFields:nil];
-        if (!retryBlock(nil, response)) {
-            return NO;
-        }
-        return YES;
-    };
-
-    id mockMutation = [self mockForClass:[UAAttributePendingMutations class]];
-    [[[mockMutation stub] andReturn:@{@"neat": @"payload"}] payload];
-
-    [[self.mockSession expect] dataTaskWithRequest:OCMOCK_ANY
-                                        retryWhere:[OCMArg checkWithBlock:retryBlockCheck]
-                                 completionHandler:OCMOCK_ANY];
-
-    [self.client updateWithIdentifier:@"some id"
-                   attributeMutations:mockMutation
-                    completionHandler:^(NSError * _Nullable error) {}];
-
-    [self.mockSession verify];
-}
-
-
-/**
  * Test request
  */
 - (void)testResponse {
@@ -81,10 +44,10 @@
     // Stub the session to return a the response
     [[[self.mockSession expect] andDo:^(NSInvocation *invocation) {
         void *arg;
-        [invocation getArgument:&arg atIndex:4];
-        UARequestCompletionHandler completionHandler = (__bridge UARequestCompletionHandler)arg;
+        [invocation getArgument:&arg atIndex:3];
+        UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
         completionHandler(nil, response, nil);
-    }] dataTaskWithRequest:[OCMArg checkWithBlock:^BOOL(id obj) {
+    }] performHTTPRequest:[OCMArg checkWithBlock:^BOOL(id obj) {
         UARequest *request = (UARequest *)obj;
         id body = [UAJSONSerialization dataWithJSONObject:@{@"neat": @"payload"}
                                                   options:0
@@ -93,7 +56,7 @@
         return [request.method isEqualToString:@"POST"] &&
         [request.body isEqualToData:body] &&
         [request.URL isEqual:[NSURL URLWithString:@"https://test/bobby"]];
-    }] retryWhere:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    }] completionHandler:OCMOCK_ANY];
 
 
     XCTestExpectation *callback = [self expectationWithDescription:@"callback"];
@@ -121,10 +84,10 @@
     // Stub the session to return a the response
     [[[self.mockSession expect] andDo:^(NSInvocation *invocation) {
         void *arg;
-        [invocation getArgument:&arg atIndex:4];
-        UARequestCompletionHandler completionHandler = (__bridge UARequestCompletionHandler)arg;
+        [invocation getArgument:&arg atIndex:3];
+        UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
         completionHandler(nil, response, nil);
-    }] dataTaskWithRequest:[OCMArg checkWithBlock:^BOOL(id obj) {
+    }] performHTTPRequest:[OCMArg checkWithBlock:^BOOL(id obj) {
         UARequest *request = (UARequest *)obj;
         id body = [UAJSONSerialization dataWithJSONObject:@{@"neat": @"payload"}
                                                   options:0
@@ -133,7 +96,7 @@
         return [request.method isEqualToString:@"POST"] &&
         [request.body isEqualToData:body] &&
         [request.URL isEqual:[NSURL URLWithString:@"https://test/bobby"]];
-    }] retryWhere:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    }] completionHandler:OCMOCK_ANY];
 
 
     XCTestExpectation *callback = [self expectationWithDescription:@"callback"];
@@ -162,10 +125,10 @@
     // Stub the session to return a the response
     [[[self.mockSession expect] andDo:^(NSInvocation *invocation) {
         void *arg;
-        [invocation getArgument:&arg atIndex:4];
-        UARequestCompletionHandler completionHandler = (__bridge UARequestCompletionHandler)arg;
+        [invocation getArgument:&arg atIndex:3];
+        UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
         completionHandler(nil, response, nil);
-    }] dataTaskWithRequest:[OCMArg checkWithBlock:^BOOL(id obj) {
+    }] performHTTPRequest:[OCMArg checkWithBlock:^BOOL(id obj) {
         UARequest *request = (UARequest *)obj;
         id body = [UAJSONSerialization dataWithJSONObject:@{@"neat": @"payload"}
                                                   options:0
@@ -174,7 +137,7 @@
         return [request.method isEqualToString:@"POST"] &&
         [request.body isEqualToData:body] &&
         [request.URL isEqual:[NSURL URLWithString:@"https://test/bobby"]];
-    }] retryWhere:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    }] completionHandler:OCMOCK_ANY];
 
 
     XCTestExpectation *callback = [self expectationWithDescription:@"callback"];
@@ -199,11 +162,10 @@
     // Stub the session to return a the response
     [[[self.mockSession expect] andDo:^(NSInvocation *invocation) {
         void *arg;
-        [invocation getArgument:&arg atIndex:4];
-        UARequestCompletionHandler completionHandler = (__bridge UARequestCompletionHandler)arg;
+        [invocation getArgument:&arg atIndex:3];
+        UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
         completionHandler(nil, nil, expectedError);
-    }] dataTaskWithRequest:OCMOCK_ANY retryWhere:OCMOCK_ANY completionHandler:OCMOCK_ANY];
-
+    }] performHTTPRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *callback = [self expectationWithDescription:@"callback"];
     [self.client updateWithIdentifier:@"bobby"

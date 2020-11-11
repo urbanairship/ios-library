@@ -60,12 +60,20 @@
         return YES;
     };
 
-    [(UARequestSession *)[self.mockSession expect] dataTaskWithRequest:[OCMArg checkWithBlock:checkRequestBlock]
-                                                     completionHandler:OCMOCK_ANY];
+    [[[self.mockSession expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
+        completionHandler(nil, nil, nil);
+    }] performHTTPRequest:[OCMArg checkWithBlock:checkRequestBlock] completionHandler:OCMOCK_ANY];
 
+    XCTestExpectation *callbackCalled = [self expectationWithDescription:@"Callback called"];
     [self.client uploadEvents:@[@{@"some": @"event"}] headers:headers
-            completionHandler:^(NSDictionary *responseHeaders, NSError *error) {}];
+            completionHandler:^(NSDictionary *responseHeaders, NSError *error) {
+        [callbackCalled fulfill];
+    }];
 
+    [self waitForTestExpectations];
     [self.mockSession verify];
 }
 
@@ -82,13 +90,11 @@
     [(UARequestSession *)[[self.mockSession stub] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:3];
-        UARequestCompletionHandler completionHandler = (__bridge UARequestCompletionHandler)arg;
+        UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
         completionHandler(nil, expectedResponse, nil);
-    }] dataTaskWithRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    }] performHTTPRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *expectation = [self expectationWithDescription:@"Callback called"];
-
-
     [self.client uploadEvents:@[@{@"some": @"event"}] headers:headers
             completionHandler:^(NSDictionary *responseHeaders, NSError *error) {
         XCTAssertNil(error);
@@ -111,9 +117,9 @@
     [(UARequestSession *)[[self.mockSession stub] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:3];
-        UARequestCompletionHandler completionHandler = (__bridge UARequestCompletionHandler)arg;
+        UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
         completionHandler(nil, expectedResponse, nil);
-    }] dataTaskWithRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    }] performHTTPRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *expectation = [self expectationWithDescription:@"Callback called"];
 
@@ -139,9 +145,9 @@
     [(UARequestSession *)[[self.mockSession stub] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:3];
-        UARequestCompletionHandler completionHandler = (__bridge UARequestCompletionHandler)arg;
+        UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
         completionHandler(nil, nil, expectedError);
-    }] dataTaskWithRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    }] performHTTPRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *expectation = [self expectationWithDescription:@"Callback called"];
 
@@ -155,3 +161,4 @@
 }
 
 @end
+

@@ -34,47 +34,6 @@
     XCTAssertEqualObjects(self.channelClient.path, @"/api/channels/tags/");
     XCTAssertEqualObjects(self.namedUserClient.path, @"/api/named_users/tags/");
 }
-/**
- * Test tag groups retry for 5xx response codes.
- */
-- (void)testRetryBlock {
-    UATagGroupsMutation *mutation = [UATagGroupsMutation mutationToAddTags:@[@"tag1"]
-                                                                     group:@"tag group"];
-
-    // Check that the retry block returns YES for any 5xx request
-    BOOL (^retryBlockCheck)(id obj) = ^(id obj) {
-        UARequestRetryBlock retryBlock = obj;
-
-        for (NSInteger i = 500; i < 600; i++) {
-            NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:i HTTPVersion:nil headerFields:nil];
-
-            if (retryBlock(nil, response)) {
-                continue;
-            }
-
-            return NO;
-        }
-
-        // Check that it returns NO for 400 status codes
-        NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:400 HTTPVersion:nil headerFields:nil];
-        if (retryBlock(nil, response)) {
-            return NO;
-        }
-
-        return YES;
-    };
-
-    // Verify update
-    [[self.mockSession expect] dataTaskWithRequest:OCMOCK_ANY
-                                        retryWhere:[OCMArg checkWithBlock:retryBlockCheck]
-                                 completionHandler:OCMOCK_ANY];
-
-    [self.channelClient updateTagGroupsForId:@"AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE"
-                    tagGroupsMutation:mutation
-                    completionHandler:^(NSError *error){}];
-
-    [self.mockSession verify];
-}
 
 /**
  * Test channel request.
@@ -122,14 +81,13 @@
 
     [[[self.mockSession expect] andDo:^(NSInvocation *invocation) {
         void *arg;
-        [invocation getArgument:&arg atIndex:4];
-        UARequestCompletionHandler completionHandler = (__bridge UARequestCompletionHandler) arg;
+        [invocation getArgument:&arg atIndex:3];
+        UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler) arg;
         if (completionHandler) {
             completionHandler(nil, response, nil);
         }
-    }] dataTaskWithRequest:[OCMArg checkWithBlock:checkRequestBlock]
-                retryWhere:OCMOCK_ANY
-         completionHandler:OCMOCK_ANY];
+    }] performHTTPRequest:[OCMArg checkWithBlock:checkRequestBlock]
+     completionHandler:OCMOCK_ANY];
 
     UATagGroupsMutation *mutation = [UATagGroupsMutation mutationToAddTags:@[@"tag1"]
                                                                      group:@"tag group"];
@@ -138,15 +96,15 @@
 
     // test
     [self.channelClient updateTagGroupsForId:@"AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE"
-                    tagGroupsMutation:mutation
-                    completionHandler:^(NSError *error){
-                        XCTAssertNil(error);
-                        [completionHandlerCalledExpectation fulfill];
-                    }];
+                           tagGroupsMutation:mutation
+                           completionHandler:^(NSError *error){
+        XCTAssertNil(error);
+        [completionHandlerCalledExpectation fulfill];
+    }];
 
     // verify
     [self waitForTestExpectations];
-    
+
     [self.mockSession verify];
 }
 
@@ -197,32 +155,31 @@
 
     [[[self.mockSession expect] andDo:^(NSInvocation *invocation) {
         void *arg;
-        [invocation getArgument:&arg atIndex:4];
-        UARequestCompletionHandler completionHandler = (__bridge UARequestCompletionHandler) arg;
+        [invocation getArgument:&arg atIndex:3];
+        UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler) arg;
         if (completionHandler) {
             completionHandler(nil,response,nil);
         }
-    }] dataTaskWithRequest:[OCMArg checkWithBlock:checkRequestBlock]
-     retryWhere:OCMOCK_ANY
+    }] performHTTPRequest:[OCMArg checkWithBlock:checkRequestBlock]
      completionHandler:OCMOCK_ANY];
-    
+
 
     UATagGroupsMutation *mutation = [UATagGroupsMutation mutationToAddTags:@[@"tag1"]
                                                                      group:@"tag group"];
-    
+
     XCTestExpectation *completionHandlerCalledExpectation = [self expectationWithDescription:@"Completion handler called"];
-    
+
     // test
     [self.namedUserClient updateTagGroupsForId:@"cool"
-                    tagGroupsMutation:mutation
-                    completionHandler:^(NSError *error){
-                        XCTAssertNil(error);
-                        [completionHandlerCalledExpectation fulfill];
-                    }];
-    
+                             tagGroupsMutation:mutation
+                             completionHandler:^(NSError *error){
+        XCTAssertNil(error);
+        [completionHandlerCalledExpectation fulfill];
+    }];
+
     // verify
     [self waitForTestExpectations];
-    
+
     [self.mockSession verify];
 }
 
@@ -234,12 +191,12 @@
 
     [[[self.mockSession expect] andDo:^(NSInvocation *invocation) {
         void *arg;
-        [invocation getArgument:&arg atIndex:4];
-        UARequestCompletionHandler completionHandler = (__bridge UARequestCompletionHandler) arg;
+        [invocation getArgument:&arg atIndex:3];
+        UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler) arg;
         if (completionHandler) {
             completionHandler(nil,response,nil);
         }
-    }] dataTaskWithRequest:OCMOCK_ANY retryWhere:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    }] performHTTPRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     UATagGroupsMutation *mutation = [UATagGroupsMutation mutationToAddTags:@[@"tag1"]
                                                                      group:@"tag group"];
@@ -248,12 +205,12 @@
 
     // test
     [self.namedUserClient updateTagGroupsForId:@"cool"
-                    tagGroupsMutation:mutation
-                    completionHandler:^(NSError *error){
-                        XCTAssertEqualObjects(error.domain, UATagGroupsAPIClientErrorDomain);
-                        XCTAssertEqual(error.code, UATagGroupsAPIClientErrorUnsuccessfulStatus);
-                        [completionHandlerCalledExpectation fulfill];
-                    }];
+                             tagGroupsMutation:mutation
+                             completionHandler:^(NSError *error){
+        XCTAssertEqualObjects(error.domain, UATagGroupsAPIClientErrorDomain);
+        XCTAssertEqual(error.code, UATagGroupsAPIClientErrorUnsuccessfulStatus);
+        [completionHandlerCalledExpectation fulfill];
+    }];
 
     // verify
     [self waitForTestExpectations];
@@ -269,12 +226,12 @@
 
     [[[self.mockSession expect] andDo:^(NSInvocation *invocation) {
         void *arg;
-        [invocation getArgument:&arg atIndex:4];
-        UARequestCompletionHandler completionHandler = (__bridge UARequestCompletionHandler) arg;
+        [invocation getArgument:&arg atIndex:3];
+        UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler) arg;
         if (completionHandler) {
             completionHandler(nil,response,nil);
         }
-    }] dataTaskWithRequest:OCMOCK_ANY retryWhere:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    }] performHTTPRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     UATagGroupsMutation *mutation = [UATagGroupsMutation mutationToAddTags:@[@"tag1"]
                                                                      group:@"tag group"];
@@ -283,12 +240,12 @@
 
     // test
     [self.namedUserClient updateTagGroupsForId:@"cool"
-                    tagGroupsMutation:mutation
-                    completionHandler:^(NSError *error){
-                        XCTAssertEqualObjects(error.domain, UATagGroupsAPIClientErrorDomain);
-                        XCTAssertEqual(error.code, UATagGroupsAPIClientErrorUnrecoverableStatus);
-                        [completionHandlerCalledExpectation fulfill];
-                    }];
+                             tagGroupsMutation:mutation
+                             completionHandler:^(NSError *error){
+        XCTAssertEqualObjects(error.domain, UATagGroupsAPIClientErrorDomain);
+        XCTAssertEqual(error.code, UATagGroupsAPIClientErrorUnrecoverableStatus);
+        [completionHandlerCalledExpectation fulfill];
+    }];
 
     // verify
     [self waitForTestExpectations];
@@ -302,28 +259,27 @@
 - (void)testChannelRequestWhenDisabled {
     //setup
     self.channelClient.enabled = NO;
-    
+
     [[[self.mockSession stub] andDo:^(NSInvocation *invocation) {
         void *arg;
-        [invocation getArgument:&arg atIndex:4];
-        UARequestCompletionHandler completionHandler = (__bridge UARequestCompletionHandler) arg;
+        [invocation getArgument:&arg atIndex:3];
+        UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler) arg;
         if (completionHandler) {
             completionHandler(nil,nil,nil);
         }
-    }] dataTaskWithRequest:OCMOCK_ANY
-     retryWhere:OCMOCK_ANY
+    }] performHTTPRequest:OCMOCK_ANY
      completionHandler:OCMOCK_ANY];
-    
+
     UATagGroupsMutation *mutation = [UATagGroupsMutation mutationToAddTags:@[@"tag1"]
                                                                      group:@"tag group"];
-    
+
     // test
     [self.channelClient updateTagGroupsForId:@"AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE"
-                    tagGroupsMutation:mutation
-                    completionHandler:^(NSError *error){
-                        XCTFail(@"Completion Handler should not be called");
-                    }];
-    
+                           tagGroupsMutation:mutation
+                           completionHandler:^(NSError *error){
+        XCTFail(@"Completion Handler should not be called");
+    }];
+
     // verify
     [self.mockSession verify];
 }
@@ -334,31 +290,31 @@
 - (void)testNamedUserRequestWhenDisabled {
     //setup
     self.namedUserClient.enabled = NO;
-   
+
     [[[self.mockSession stub] andDo:^(NSInvocation *invocation) {
         void *arg;
-        [invocation getArgument:&arg atIndex:4];
-        UARequestCompletionHandler completionHandler = (__bridge UARequestCompletionHandler) arg;
+        [invocation getArgument:&arg atIndex:3];
+        UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler) arg;
         if (completionHandler) {
             completionHandler(nil,nil,nil);
         }
-    }] dataTaskWithRequest:OCMOCK_ANY
-     retryWhere:OCMOCK_ANY
+    }] performHTTPRequest:OCMOCK_ANY
      completionHandler:OCMOCK_ANY];
-    
-    
+
+
     UATagGroupsMutation *mutation = [UATagGroupsMutation mutationToAddTags:@[@"tag1"]
                                                                      group:@"tag group"];
-    
+
     // test
     [self.namedUserClient updateTagGroupsForId:@"cool"
-                    tagGroupsMutation:mutation
-                    completionHandler:^(NSError *error){
-                        XCTFail(@"Completion Handler should not be called");
-                    }];
-    
+                             tagGroupsMutation:mutation
+                             completionHandler:^(NSError *error){
+        XCTFail(@"Completion Handler should not be called");
+    }];
+
     // verify
     [self.mockSession verify];
 }
 
 @end
+

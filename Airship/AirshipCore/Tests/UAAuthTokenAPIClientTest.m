@@ -25,10 +25,10 @@
 
     [[[self.mockSession stub] andDo:^(NSInvocation *invocation) {
         void *arg;
-        [invocation getArgument:&arg atIndex:4];
-        UARequestCompletionHandler completionHandler = (__bridge UARequestCompletionHandler)arg;
+        [invocation getArgument:&arg atIndex:3];
+        UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
         completionHandler(responseData, response, nil);
-    }] dataTaskWithRequest:[OCMArg checkWithBlock:^BOOL(id obj) {
+    }] performHTTPRequest:[OCMArg checkWithBlock:^BOOL(id obj) {
         UARequest *request = obj;
 
         NSData *secret = [self.config.appSecret dataUsingEncoding:NSUTF8StringEncoding];
@@ -45,7 +45,7 @@
         XCTAssertEqualObjects(request.headers[@"Authorization"], [@"Bearer " stringByAppendingString:bearerToken]);
 
         return YES;
-    }] retryWhere:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    }] completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *tokenRetrieved = [self expectationWithDescription:@"token retrieved"];
 
@@ -66,10 +66,10 @@
 
     [[[self.mockSession stub] andDo:^(NSInvocation *invocation) {
         void *arg;
-        [invocation getArgument:&arg atIndex:4];
-        UARequestCompletionHandler completionHandler = (__bridge UARequestCompletionHandler)arg;
+        [invocation getArgument:&arg atIndex:3];
+        UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
         completionHandler(responseData, response, nil);
-    }] dataTaskWithRequest:OCMOCK_ANY retryWhere:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    }] performHTTPRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *tokenRetrieved = [self expectationWithDescription:@"token retrieved"];
 
@@ -92,10 +92,10 @@
 
     [[[self.mockSession stub] andDo:^(NSInvocation *invocation) {
         void *arg;
-        [invocation getArgument:&arg atIndex:4];
-        UARequestCompletionHandler completionHandler = (__bridge UARequestCompletionHandler)arg;
+        [invocation getArgument:&arg atIndex:3];
+        UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
         completionHandler(responseData, response, nil);
-    }] dataTaskWithRequest:OCMOCK_ANY retryWhere:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    }] performHTTPRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *tokenRetrieved = [self expectationWithDescription:@"token retrieved"];
 
@@ -108,32 +108,6 @@
     }];
 
     [self waitForTestExpectations];
-}
-
-- (void)testTokenWithChannelIDDoesNotRetry {
-    NSDictionary *responseBody = @{@"token": @"abc123", @"expires_in" : @(12345)};
-    NSData *responseData = [NSJSONSerialization dataWithJSONObject:responseBody options:0 error:nil];
-    NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:200 HTTPVersion:nil headerFields:nil];
-
-
-    [[[self.mockSession expect] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:4];
-        UARequestCompletionHandler completionHandler = (__bridge UARequestCompletionHandler)arg;
-        completionHandler(responseData, response, nil);
-    }] dataTaskWithRequest:OCMOCK_ANY retryWhere:[OCMArg checkWithBlock:^BOOL(id obj) {
-        UARequestRetryBlock block = obj;
-        for (NSUInteger i = 400; i <= 600; i++) {
-            NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:i HTTPVersion:nil headerFields:nil];
-            BOOL retry = block(responseData, response);
-            XCTAssertFalse(retry);
-        }
-
-        return YES;
-    }] completionHandler:OCMOCK_ANY];
-
-    [self.client tokenWithChannelID:@"channel ID" completionHandler:^(UAAuthToken * _Nullable token, NSError * _Nullable error){}];
-    [self.mockSession verify];
 }
 
 @end

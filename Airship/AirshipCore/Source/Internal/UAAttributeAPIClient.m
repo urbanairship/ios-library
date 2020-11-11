@@ -55,15 +55,15 @@ NSString * const UAAttributeAPIClientErrorDomain = @"com.urbanairship.attribute_
         return [NSURL URLWithString:attributeEndpoint];
     };
 
-    return [UAAttributeAPIClient clientWithConfig:config
-                                          session:[UARequestSession sessionWithConfig:config]
-                                  URLFactoryBlock:URLFactoryBlock];
+    return [self clientWithConfig:config
+                          session:[UARequestSession sessionWithConfig:config]
+                  URLFactoryBlock:URLFactoryBlock];
 }
 
 + (instancetype)clientWithConfig:(UARuntimeConfig *)config
                          session:(UARequestSession *)session
                  URLFactoryBlock:(NSURL *(^)(UARuntimeConfig *, NSString *))URLFactoryBlock {
-    return [[UAAttributeAPIClient alloc] initWithConfig:config session:session URLFactoryBlock:URLFactoryBlock];
+    return [[self alloc] initWithConfig:config session:session URLFactoryBlock:URLFactoryBlock];
 }
 
 - (void)updateWithIdentifier:(NSString *)identifier
@@ -91,18 +91,16 @@ NSString * const UAAttributeAPIClientErrorDomain = @"com.urbanairship.attribute_
         [builder setValue:@"application/json" forHeader:@"Content-Type"];
     }];
 
-    [self.session dataTaskWithRequest:request retryWhere:^BOOL(NSData *data, NSURLResponse *response) {
+    [self performRequest:request retryWhere:^BOOL(NSData *data, NSHTTPURLResponse *response) {
         return [response hasRetriableStatus];
-    } completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
-        NSHTTPURLResponse *httpResponse = [self castResponse:response error:&error];
-
+    } completionHandler:^(NSData *data, NSHTTPURLResponse *response, NSError *error) {
         if (error) {
             UA_LTRACE(@"Update finished with error: %@", error);
             return completionHandler(error);
         }
 
-        NSUInteger status = httpResponse.statusCode;
-        UA_LTRACE(@"Update of %@ finished with status: %ld", httpResponse.URL, status);
+        NSUInteger status = response.statusCode;
+        UA_LTRACE(@"Update of %@ finished with status: %ld", response.URL, status);
 
         if (!(status >= 200 && status <= 299)) {
             if (status == 400 || status == 403) {
@@ -137,3 +135,4 @@ NSString * const UAAttributeAPIClientErrorDomain = @"com.urbanairship.attribute_
 }
 
 @end
+

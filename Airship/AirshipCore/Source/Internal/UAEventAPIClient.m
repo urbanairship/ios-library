@@ -12,11 +12,11 @@ NSString * const UAEventAPIClientErrorDomain = @"com.urbanairship.event_api_clie
 @implementation UAEventAPIClient
 
 + (instancetype)clientWithConfig:(UARuntimeConfig *)config {
-    return [[UAEventAPIClient alloc] initWithConfig:config session:[UARequestSession sessionWithConfig:config]];
+    return [[self alloc] initWithConfig:config session:[UARequestSession sessionWithConfig:config]];
 }
 
 + (instancetype)clientWithConfig:(UARuntimeConfig *)config session:(UARequestSession *)session {
-    return [[UAEventAPIClient alloc] initWithConfig:config session:session];
+    return [[self alloc] initWithConfig:config session:session];
 }
 
 -(void)uploadEvents:(NSArray *)events headers:(NSDictionary *)headers completionHandler:(void (^)(NSDictionary * _Nullable responseHeaders, NSError * _Nullable error))completionHandler {
@@ -30,14 +30,12 @@ NSString * const UAEventAPIClientErrorDomain = @"com.urbanairship.event_api_clie
     }
 
     // Perform the upload
-    [self.session dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
-        NSHTTPURLResponse *httpResponse = [self castResponse:response error:&error];
-
+    [self performRequest:request completionHandler:^(NSData *data, NSHTTPURLResponse *response, NSError *error) {
         if (error) {
             return completionHandler(nil, error);
         }
 
-        completionHandler(httpResponse.allHeaderFields, httpResponse.statusCode != 200 ? [self unsuccessfulStatusError] : nil);
+        completionHandler(response.allHeaderFields, response.statusCode != 200 ? [self unsuccessfulStatusError] : nil);
     }];
 }
 

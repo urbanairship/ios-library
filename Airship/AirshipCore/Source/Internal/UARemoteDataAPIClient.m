@@ -63,25 +63,26 @@ NSString * const UARemoteDataAPIClientErrorDomain = @"com.urbanairship.remote_da
         refreshCompletionHandler = ^(NSArray<NSDictionary *> * _Nullable remoteData, NSError * _Nullable error){};
     }];
 
-    [self.session dataTaskWithRequest:refreshRequest retryWhere:^BOOL(NSData * _Nullable data, NSURLResponse * _Nullable response) {
+    [self performRequest:refreshRequest retryWhere:^BOOL(NSData * _Nullable data, NSHTTPURLResponse * _Nullable response) {
         return [response hasRetriableStatus];
-    } completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
-        if (![response isKindOfClass:[NSHTTPURLResponse class]]) {
+    } completionHandler:^(NSData * _Nullable data, NSHTTPURLResponse * _Nullable response, NSError * _Nullable error) {
+        if (error) {
             refreshCompletionHandler(nil, error);
             return;
         }
-        
-        NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *) response;
-        
+
         // Failure
-        if (httpResponse.statusCode != 200  && httpResponse.statusCode != 304) {
-            [UAUtils logFailedRequest:refreshRequest withMessage:@"Refresh remote data failed" withError:error withResponse:httpResponse];
+        if (response.statusCode != 200  && response.statusCode != 304) {
+            [UAUtils logFailedRequest:refreshRequest
+                          withMessage:@"Refresh remote data failed"
+                            withError:error
+                         withResponse:response];
             refreshCompletionHandler(nil, [self unsuccessfulStatusError]);
             return;
         }
         
         // 304, no changes
-        if (httpResponse.statusCode == 304) {
+        if (response.statusCode == 304) {
             refreshCompletionHandler(nil, nil);
             return;
         }
@@ -96,7 +97,7 @@ NSString * const UARemoteDataAPIClientErrorDomain = @"com.urbanairship.remote_da
         }
         
         // Success
-        NSDictionary *headers = httpResponse.allHeaderFields;
+        NSDictionary *headers = response.allHeaderFields;
         NSString *lastModified = [headers objectForKey:@"Last-Modified"];
         
         // Parse the response
@@ -109,7 +110,7 @@ NSString * const UARemoteDataAPIClientErrorDomain = @"com.urbanairship.remote_da
             return;
         }
 
-        UA_LTRACE(@"Retrieved remote data with status: %ld jsonResponse: %@", (unsigned long)httpResponse.statusCode, jsonResponse);
+        UA_LTRACE(@"Retrieved remote data with status: %ld jsonResponse: %@", (unsigned long)response.statusCode, jsonResponse);
         
         NSArray *remoteData = [jsonResponse objectForKey:@"payloads"];
         

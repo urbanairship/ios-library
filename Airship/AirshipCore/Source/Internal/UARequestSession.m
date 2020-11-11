@@ -2,30 +2,24 @@
 
 
 #import "UARequestSession.h"
-#import "UAURLRequestOperation+Internal.h"
-#import "UADelayOperation+Internal.h"
 #import "UARuntimeConfig.h"
 #import "UAirship.h"
 
+NSString * const UARequestSessionErrorDomain = @"com.urbanairship.request_session";
+
 @interface UARequestSession()
 @property(nonatomic, strong) NSURLSession *session;
-@property(nonatomic, strong) NSOperationQueue *queue;
 @property(nonatomic, strong) NSMutableDictionary *headers;
 @end
 
-static NSTimeInterval const InitialDelay = 30;
-static NSTimeInterval const MaxBackOff = 3000;
-
 @implementation UARequestSession
 
-- (instancetype)initWithConfig:(UARuntimeConfig *)config session:(NSURLSession *)session queue:(NSOperationQueue *)queue {
+- (instancetype)initWithConfig:(UARuntimeConfig *)config session:(NSURLSession *)session {
     self = [super init];
 
     if (self) {
         self.headers = [NSMutableDictionary dictionary];
         self.session = session;
-        self.queue = queue;
-
         [self setValue:@"gzip;q=1.0, compress;q=0.5" forHeader:@"Accept-Encoding"];
         [self setValue:[UARequestSession userAgentWithAppKey:config.appKey] forHeader:@"User-Agent"];
     }
@@ -34,7 +28,6 @@ static NSTimeInterval const MaxBackOff = 3000;
 }
 
 + (instancetype)sessionWithConfig:(UARuntimeConfig *)config {
-
     static dispatch_once_t onceToken;
     static NSURLSession *_session;
     dispatch_once(&onceToken, ^{
@@ -51,97 +44,71 @@ static NSTimeInterval const MaxBackOff = 3000;
         _session = [NSURLSession sessionWithConfiguration:sessionConfig delegate:nil delegateQueue:nil];
     });
 
-    NSOperationQueue *queue = [[NSOperationQueue alloc] init];
-    queue.maxConcurrentOperationCount = 1;
-
-    return [[UARequestSession alloc] initWithConfig:config session:_session queue:queue];
+    return [[self alloc] initWithConfig:config session:_session];
 }
 
-+ (instancetype)sessionWithConfig:(UARuntimeConfig *)config NSURLSession:(NSURLSession *)session {
-    NSOperationQueue *queue = [[NSOperationQueue alloc] init];
-    queue.maxConcurrentOperationCount = 1;
-
-    return [[UARequestSession alloc] initWithConfig:config session:session queue:queue];
-}
-
-+ (instancetype)sessionWithConfig:(UARuntimeConfig *)config NSURLSession:(NSURLSession *)session queue:(NSOperationQueue *)queue {
-    return [[UARequestSession alloc] initWithConfig:config session:session queue:queue];
++ (instancetype)sessionWithConfig:(UARuntimeConfig *)config
+                     NSURLSession:(NSURLSession *)session {
+    return [[self alloc] initWithConfig:config session:session];
 }
 
 - (void)setValue:(id)value forHeader:(NSString *)field {
     [self.headers setValue:value forKey:field];
 }
 
-- (void)dataTaskWithRequest:(UARequest *)request
-          completionHandler:(UARequestCompletionHandler)completionHandler {
+- (UADisposable *)performHTTPRequest:(UARequest *)request
+                   completionHandler:(UAHTTPRequestCompletionHandler)completionHandler {
 
-    [self dataTaskWithRequest:request retryWhere:nil completionHandler:completionHandler];
-}
+    NSMutableURLRequest *URLRequest = [NSMutableURLRequest requestWithURL:request.URL];
+    [URLRequest setHTTPShouldHandleCookies:NO];
+    [URLRequest setHTTPMethod:request.method];
+    [URLRequest setHTTPBody:request.body];
 
-- (void)dataTaskWithRequest:(UARequest *)request
-                 retryWhere:(UARequestRetryBlock)retryBlock
-          completionHandler:(UARequestCompletionHandler)completionHandler {
-
-    // Create the URLRequest
-    NSMutableURLRequest *urlRequest = [NSMutableURLRequest requestWithURL:request.URL];
-    [urlRequest setHTTPShouldHandleCookies:NO];
-    [urlRequest setHTTPMethod:request.method];
-    [urlRequest setHTTPBody:request.body];
-
-    // Session Headers
     for (NSString *key in self.headers) {
-        [urlRequest setValue:self.headers[key] forHTTPHeaderField:key];
+        [URLRequest setValue:self.headers[key] forHTTPHeaderField:key];
     }
 
-    // Request Headers
     for (NSString *key in request.headers) {
-        [urlRequest setValue:request.headers[key] forHTTPHeaderField:key];
+        [URLRequest setValue:request.headers[key] forHTTPHeaderField:key];
     }
 
-    NSOperation *operation = [self operationWithRequest:urlRequest
-                                             retryDelay:InitialDelay
-                                             retryWhere:retryBlock
-                                      completionHandler:completionHandler];
+    NSURLSessionTask *task = [self.session dataTaskWithRequest:URLRequest
+                                             completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
 
-    [self.queue addOperation:operation];
-}
-
-- (void)cancelAllRequests {
-    [self.queue cancelAllOperations];
-}
-
-- (NSOperation *)operationWithRequest:(NSURLRequest *)request
-                           retryDelay:(NSTimeInterval)retryDelay
-                           retryWhere:(BOOL (^)(NSData *data, NSURLResponse *response))retryBlock
-                    completionHandler:(void (^)(NSData *data, NSURLResponse *response, NSError *error))completionHandler {
-
-
-    UAURLRequestOperation *operation = [UAURLRequestOperation operationWithRequest:request
-                                                                           session:self.session
-                                                                 completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
-
-        if (!error && retryBlock && retryBlock(data, response)) {
-            UADelayOperation *delayOperation = [UADelayOperation operationWithDelayInSeconds:retryDelay];
-            NSOperation *retryOperation = [self operationWithRequest:request
-                                                          retryDelay:MIN(retryDelay * 2, MaxBackOff)
-                                                          retryWhere:retryBlock
-                                                   completionHandler:completionHandler];
-
-            [retryOperation addDependency:delayOperation];
-
-            [self.queue addOperation:delayOperation];
-            [self.queue addOperation:retryOperation];
-
-            return;
-        } else {
-            completionHandler(data, response, error);
+        NSHTTPURLResponse *httpResponse;
+        if (!error) {
+            httpResponse = [UARequestSession castResponse:response error:&error];
         }
 
+        if (error) {
+            completionHandler(nil, nil, error);
+        } else {
+            completionHandler(data, httpResponse, nil);
+        }
     }];
-    
-    return operation;
+
+    [task resume];
+
+    return [UADisposable disposableWithBlock:^{
+        [task cancel];
+    }];
 }
 
++ (NSHTTPURLResponse *)castResponse:(NSURLResponse *)response error:(NSError **)error {
+    if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
+        return (NSHTTPURLResponse *)response;
+    }
+
+    if (!*error) {
+        NSString *msg = [NSString stringWithFormat:@"Unable to cast to NSHTTPURLResponse: %@", response];
+
+        *error = [NSError errorWithDomain:UARequestSessionErrorDomain
+                                     code:UARequestSessionErrorInvalidHTTPResponse
+                                 userInfo:@{NSLocalizedDescriptionKey:msg}];
+    }
+
+    return nil;
+}
 
 + (NSString *)userAgentWithAppKey:(NSString *)appKey {
     /*

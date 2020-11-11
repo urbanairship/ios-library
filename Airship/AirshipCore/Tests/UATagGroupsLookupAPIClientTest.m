@@ -31,7 +31,7 @@
 
     NSDictionary *responseDict = @{ @"last_modified": @"2018-03-02T22:56:09",
                                     @"tag_groups": @{@"foo" : @[@"bar", @"baz"]}
-                                 };
+    };
 
     NSData *responseData = [NSJSONSerialization dataWithJSONObject:responseDict options:NSJSONWritingPrettyPrinted error:nil];
 
@@ -40,10 +40,10 @@
     // Stub the session to return the response
     [[[self.mockSession stub] andDo:^(NSInvocation *invocation) {
         void *arg;
-        [invocation getArgument:&arg atIndex:4];
-        UARequestCompletionHandler completionHandler = (__bridge UARequestCompletionHandler)arg;
+        [invocation getArgument:&arg atIndex:3];
+        UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
         completionHandler(responseData, response, nil);
-    }] dataTaskWithRequest:OCMOCK_ANY retryWhere:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    }] performHTTPRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *lookupFinished = [self expectationWithDescription:@"Refresh finished"];
 
@@ -53,11 +53,11 @@
                            requestedTagGroups:requestedTagGroups
                                cachedResponse:nil
                             completionHandler:^(UATagGroupsLookupResponse *lookupResponse) {
-                                XCTAssertEqual(lookupResponse.status, 200);
-                                XCTAssertEqualObjects(lookupResponse.tagGroups, requestedTagGroups);
-                                XCTAssertEqualObjects(lookupResponse.lastModifiedTimestamp, @"2018-03-02T22:56:09");
-                                [lookupFinished fulfill];
-                            }];
+        XCTAssertEqual(lookupResponse.status, 200);
+        XCTAssertEqualObjects(lookupResponse.tagGroups, requestedTagGroups);
+        XCTAssertEqualObjects(lookupResponse.lastModifiedTimestamp, @"2018-03-02T22:56:09");
+        [lookupFinished fulfill];
+    }];
 
     // Wait for the test expectations
     [self waitForTestExpectations];
@@ -68,7 +68,7 @@
 
     NSDictionary *responseDict = @{ @"last_modified": @"2018-03-02T22:56:09",
                                     @"tag_groups": @{@"foo" : @[@"bar", @"baz"]}
-                                    };
+    };
 
     NSData *responseData = [NSJSONSerialization dataWithJSONObject:responseDict options:NSJSONWritingPrettyPrinted error:nil];
     NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:200 HTTPVersion:nil headerFields:nil];
@@ -76,10 +76,10 @@
     // Stub the session to return the response
     [[[self.mockSession stub] andDo:^(NSInvocation *invocation) {
         void *arg;
-        [invocation getArgument:&arg atIndex:4];
-        UARequestCompletionHandler completionHandler = (__bridge UARequestCompletionHandler)arg;
+        [invocation getArgument:&arg atIndex:3];
+        UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
         completionHandler(responseData, response, nil);
-    }] dataTaskWithRequest:OCMOCK_ANY retryWhere:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    }] performHTTPRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *lookupFinished = [self expectationWithDescription:@"Refresh finished"];
 
@@ -93,10 +93,10 @@
                            requestedTagGroups:requestedTagGroups
                                cachedResponse:cachedResponse
                             completionHandler:^(UATagGroupsLookupResponse *lookupResponse) {
-                                XCTAssertEqual(lookupResponse.status, 200);
-                                XCTAssertEqual(lookupResponse, cachedResponse);
-                                [lookupFinished fulfill];
-                            }];
+        XCTAssertEqual(lookupResponse.status, 200);
+        XCTAssertEqual(lookupResponse, cachedResponse);
+        [lookupFinished fulfill];
+    }];
 
     // Wait for the test expectations
     [self waitForTestExpectations];
@@ -105,15 +105,15 @@
 
 - (void)testURLAndPayloadSent {
     NSDictionary *expectedPayload =     @{
-                                          @"channel_id" : @"channel-id",
-                                          @"device_type" : @"ios",
-                                          @"tag_groups" : @{
-                                                  @"foo" : @[
-                                                            @"bar",
-                                                            @"baz"
-                                                            ]
-                                                  }
-                                          };
+        @"channel_id" : @"channel-id",
+        @"device_type" : @"ios",
+        @"tag_groups" : @{
+                @"foo" : @[
+                        @"bar",
+                        @"baz"
+                ]
+        }
+    };
 
     NSString *expectedLookupBaseURL = @"https://go.urbanairship.com";
     NSString *expectedLookupEndpoint = @"/api/channel-tags-lookup";
@@ -125,26 +125,32 @@
 
     // Stub the session to inspect the request
     [[[self.mockSession expect] andDo:^(NSInvocation *invocation) {
-        void *requestArg;
-        [invocation getArgument:&requestArg atIndex:2];
+        void *arg;
+        [invocation getArgument:&arg atIndex:2];
+        UARequest *request = (__bridge UARequest *)arg;
 
-        UARequest *request = (__bridge UARequest *)requestArg;
+        [invocation getArgument:&arg atIndex:3];
+        UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
 
         XCTAssertEqualObjects([request.URL absoluteString], expectedLookupURL);
         XCTAssertEqualObjects(request.body, expectedPayloadData);
-
-    }] dataTaskWithRequest:OCMOCK_ANY retryWhere:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+        completionHandler(nil, nil, nil);
+    }] performHTTPRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     UATagGroups *requestedTagGroups = [UATagGroups tagGroupsWithTags:@{@"foo" : @[@"bar", @"baz"]}];
 
+    XCTestExpectation *lookupFinished = [self expectationWithDescription:@"Refresh finished"];
     [self.client lookupTagGroupsWithChannelID:@"channel-id"
                            requestedTagGroups:requestedTagGroups
                                cachedResponse:nil
                             completionHandler:^(UATagGroupsLookupResponse *lookupResponse) {
-                            }];
+        [lookupFinished fulfill];
+    }];
 
+    [self waitForTestExpectations];
     [self.mockConfig verify];
     [self.mockSession verify];
 }
 
 @end
+

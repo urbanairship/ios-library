@@ -62,7 +62,6 @@
  * Tests retrieving the message list on success.
  */
 - (void)testRetrieveMessageListOnSuccess {
-
     // Create a success response
     NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:200 HTTPVersion:nil headerFields:@{}];
     NSData *responseData = [@"{\"ok\":true, \"messages\": [\"someMessage\"]}" dataUsingEncoding:NSUTF8StringEncoding];
@@ -70,21 +69,17 @@
     // Stub the session to return the response
     [[[self.mockSession stub] andDo:^(NSInvocation *invocation) {
         void *arg;
-        [invocation getArgument:&arg atIndex:4];
-        UARequestCompletionHandler completionHandler = (__bridge UARequestCompletionHandler)arg;
-
-        completionHandler(responseData, (NSURLResponse *)response, nil);
-
-        typedef void (^UARequestCompletionHandler)(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error);
-
-    }] dataTaskWithRequest:[OCMArg checkWithBlock:^BOOL(id obj) {
+        [invocation getArgument:&arg atIndex:3];
+        UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
+        completionHandler(responseData, response, nil);
+    }] performHTTPRequest:[OCMArg checkWithBlock:^BOOL(id obj) {
         UARequest *request = obj;
 
         if (![@"mockChannelID" isEqualToString:request.headers[kUAChannelIDHeader]]) {
             return NO;
         }
         return YES;
-    }] retryWhere:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    }] completionHandler:OCMOCK_ANY];
 
     // Make call
     [self.inboxAPIClient retrieveMessageListOnSuccess:^(NSUInteger status, NSArray * _Nullable messages) {
@@ -100,39 +95,33 @@
  * Tests retrieving the message list on failure.
  */
 - (void)testRetrieveMessageListOnFailure {
-
-
     // Create a failure response
     NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:500 HTTPVersion:nil headerFields:@{}];
 
     // Stub the session to return the response
     [[[self.mockSession stub] andDo:^(NSInvocation *invocation) {
         void *arg;
-        [invocation getArgument:&arg atIndex:4];
-        UARequestCompletionHandler completionHandler = (__bridge UARequestCompletionHandler)arg;
+        [invocation getArgument:&arg atIndex:3];
+        UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
 
-        completionHandler(nil, (NSURLResponse *)response, nil);
-
-        typedef void (^UARequestCompletionHandler)(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error);
-
-    }] dataTaskWithRequest:[OCMArg checkWithBlock:^BOOL(id obj) {
+        completionHandler(nil, response, nil);
+    }] performHTTPRequest:[OCMArg checkWithBlock:^BOOL(id obj) {
         UARequest *request = obj;
 
         if (![@"mockChannelID" isEqualToString:request.headers[kUAChannelIDHeader]]) {
             return NO;
         }
         return YES;
-    }]  retryWhere:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    }] completionHandler:OCMOCK_ANY];
 
-    __block BOOL failed = NO;
+    XCTestExpectation *callbackCalled = [self expectationWithDescription:@"callback called"];
     [self.inboxAPIClient retrieveMessageListOnSuccess:^(NSUInteger status, NSArray * _Nullable messages) {
         XCTFail(@"Should not be called");
     } onFailure:^() {
-        failed = YES;
+        [callbackCalled fulfill];
     }];
 
-    XCTAssertTrue(failed);
-
+    [self waitForTestExpectations];
     [self.mockSession verify];
 }
 
@@ -147,24 +136,23 @@
     // Stub the session to return the response with no message body
     [[[self.mockSession stub] andDo:^(NSInvocation *invocation) {
         void *arg;
-        [invocation getArgument:&arg atIndex:4];
-        UARequestCompletionHandler completionHandler = (__bridge UARequestCompletionHandler)arg;
+        [invocation getArgument:&arg atIndex:3];
+        UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
 
-        completionHandler(nil, (NSURLResponse *)response, nil);
+        completionHandler(nil, response, nil);
 
-        typedef void (^UARequestCompletionHandler)(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error);
+        typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error);
 
-    }] dataTaskWithRequest:OCMOCK_ANY retryWhere:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    }] performHTTPRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
-    __block BOOL failed = NO;
+    XCTestExpectation *callbackCalled = [self expectationWithDescription:@"callback called"];
     [self.inboxAPIClient retrieveMessageListOnSuccess:^(NSUInteger status, NSArray * _Nullable messages) {
         XCTFail(@"Should not be called");
     } onFailure:^() {
-        failed = YES;
+        [callbackCalled fulfill];
     }];
 
-    XCTAssertTrue(failed);
-
+    [self waitForTestExpectations];
     [self.mockSession verify];
 }
 
@@ -180,36 +168,31 @@
     // Stub the session to return the response
     [[[self.mockSession stub] andDo:^(NSInvocation *invocation) {
         void *arg;
-        [invocation getArgument:&arg atIndex:4];
-        UARequestCompletionHandler completionHandler = (__bridge UARequestCompletionHandler)arg;
-
-        completionHandler(responseData, (NSURLResponse *)response, nil);
-
-        typedef void (^UARequestCompletionHandler)(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error);
-    }] dataTaskWithRequest:[OCMArg checkWithBlock:^BOOL(id obj) {
+        [invocation getArgument:&arg atIndex:3];
+        UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
+        completionHandler(responseData, response, nil);
+    }] performHTTPRequest:[OCMArg checkWithBlock:^BOOL(id obj) {
         UARequest *request = obj;
 
         if (![@"mockChannelID" isEqualToString:request.headers[kUAChannelIDHeader]]) {
             return NO;
         }
         return YES;
-    }] retryWhere:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    }] completionHandler:OCMOCK_ANY];
 
     NSDictionary *testReporting = @{@"message_id":@"126",
                                     @"group_id":@"345",
                                     @"variant_id":@"1"};
-    
-    __block BOOL successBlockCalled = false;
 
     // Make call
+    XCTestExpectation *callbackCalled = [self expectationWithDescription:@"callback called"];
     [self.inboxAPIClient performBatchMarkAsReadForMessageReporting:@[testReporting] onSuccess:^{
-        successBlockCalled = true;
+        [callbackCalled fulfill];
     } onFailure:^() {
         XCTFail(@"Should not be called");
     }];
 
-    XCTAssertTrue(successBlockCalled);
-
+    [self waitForTestExpectations];
     [self.mockSession verify];
 }
 
@@ -224,35 +207,33 @@
     // Stub the session to return the response
     [[[self.mockSession stub] andDo:^(NSInvocation *invocation) {
         void *arg;
-        [invocation getArgument:&arg atIndex:4];
-        UARequestCompletionHandler completionHandler = (__bridge UARequestCompletionHandler)arg;
+        [invocation getArgument:&arg atIndex:3];
+        UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
 
-        completionHandler(nil, (NSURLResponse *)response, nil);
+        completionHandler(nil, response, nil);
 
-        typedef void (^UARequestCompletionHandler)(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error);
-    }] dataTaskWithRequest:[OCMArg checkWithBlock:^BOOL(id obj) {
+        typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error);
+    }] performHTTPRequest:[OCMArg checkWithBlock:^BOOL(id obj) {
         UARequest *request = obj;
 
         if (![@"mockChannelID" isEqualToString:request.headers[kUAChannelIDHeader]]) {
             return NO;
         }
         return YES;
-    }] retryWhere:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    }] completionHandler:OCMOCK_ANY];
 
     NSDictionary *testReporting = @{@"message_id":@"126",
                                     @"group_id":@"345",
                                     @"variant_id":@"1"};
-    __block BOOL failureBlockCalled = false;
 
-    // Make call
+    XCTestExpectation *callbackCalled = [self expectationWithDescription:@"callback called"];
     [self.inboxAPIClient performBatchMarkAsReadForMessageReporting:@[testReporting] onSuccess:^{
         XCTFail(@"Should not be called");
     } onFailure:^() {
-        failureBlockCalled = true;
+        [callbackCalled fulfill];
     }];
 
-    XCTAssertTrue(failureBlockCalled);
-
+    [self waitForTestExpectations];
     [self.mockSession verify];
 }
 
@@ -260,7 +241,6 @@
  * Tests batch delete on success.
  */
 - (void)testBatchDeleteOnSuccess {
-
     // Create a success response
     NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:200 HTTPVersion:nil headerFields:@{}];
     NSData *responseData = [@"{\"ok\":true}" dataUsingEncoding:NSUTF8StringEncoding];
@@ -268,28 +248,27 @@
     // Stub the session to return the response
     [[[self.mockSession stub] andDo:^(NSInvocation *invocation) {
         void *arg;
-        [invocation getArgument:&arg atIndex:4];
-        UARequestCompletionHandler completionHandler = (__bridge UARequestCompletionHandler)arg;
+        [invocation getArgument:&arg atIndex:3];
+        UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
 
-        completionHandler(responseData, (NSURLResponse *)response, nil);
+        completionHandler(responseData, response, nil);
 
-        typedef void (^UARequestCompletionHandler)(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error);
-    }] dataTaskWithRequest:OCMOCK_ANY retryWhere:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+        typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error);
+    }] performHTTPRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     NSDictionary *testReporting = @{@"message_id":@"126",
                                     @"group_id":@"345",
                                     @"variant_id":@"1"};
-    __block BOOL successBlockCalled = false;
 
     // Make call
+    XCTestExpectation *callbackCalled = [self expectationWithDescription:@"callback called"];
     [self.inboxAPIClient performBatchDeleteForMessageReporting:@[testReporting] onSuccess:^{
-        successBlockCalled = true;
+        [callbackCalled fulfill];
     } onFailure:^() {
         XCTFail(@"Should not be called");
     }];
 
-    XCTAssertTrue(successBlockCalled);
-
+    [self waitForTestExpectations];
     [self.mockSession verify];
 }
 
@@ -297,35 +276,30 @@
  * Tests batch delete on failure.
  */
 - (void)testBatchDeleteOnFailure {
-
     // Create a failure response
     NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:500 HTTPVersion:nil headerFields:@{}];
 
     // Stub the session to return the response
     [[[self.mockSession stub] andDo:^(NSInvocation *invocation) {
         void *arg;
-        [invocation getArgument:&arg atIndex:4];
-        UARequestCompletionHandler completionHandler = (__bridge UARequestCompletionHandler)arg;
-
-        completionHandler(nil, (NSURLResponse *)response, nil);
-
-        typedef void (^UARequestCompletionHandler)(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error);
-    }] dataTaskWithRequest:OCMOCK_ANY retryWhere:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+        [invocation getArgument:&arg atIndex:3];
+        UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
+        completionHandler(nil, response, nil);
+    }] performHTTPRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     NSDictionary *testReporting = @{@"message_id":@"126",
                                     @"group_id":@"345",
                                     @"variant_id":@"1"};
-    __block BOOL failureBlockCalled = false;
 
     // Make call
+    XCTestExpectation *callbackCalled = [self expectationWithDescription:@"callback called"];
     [self.inboxAPIClient performBatchDeleteForMessageReporting:@[testReporting] onSuccess:^{
         XCTFail(@"Should not be called");
     } onFailure:^() {
-        failureBlockCalled = true;
+        [callbackCalled fulfill];
     }];
 
-    XCTAssertTrue(failureBlockCalled);
-
+    [self waitForTestExpectations];
     [self.mockSession verify];
 }
 
@@ -398,6 +372,5 @@
     [self waitForTestExpectations];
     [self.mockSession verify];
 }
-
 
 @end

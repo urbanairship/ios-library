@@ -32,7 +32,7 @@ completionHandler:(void (^)(NSError * _Nullable))completionHandler {
         UA_LDEBUG(@"Disabled");
         return;
     }
-    
+
     if (!identifier) {
         UA_LERR(@"The named user ID cannot be nil.");
         return;
@@ -55,16 +55,14 @@ completionHandler:(void (^)(NSError * _Nullable))completionHandler {
     UARequest *request = [self requestWithPayload:payload
                                         urlString:[NSString stringWithFormat:@"%@%@", urlString, @"/associate"]];
 
-    [self.session dataTaskWithRequest:request retryWhere:^BOOL(NSData * _Nullable data, NSURLResponse * _Nullable response) {
+    [self performRequest:request retryWhere:^BOOL(NSData * _Nullable data, NSHTTPURLResponse * _Nullable response) {
         return [response hasRetriableStatus];
-    } completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
-        NSHTTPURLResponse *httpResponse = [self castResponse:response error:&error];
-        
+    } completionHandler:^(NSData * _Nullable data, NSHTTPURLResponse * _Nullable response, NSError * _Nullable error) {
         if (error) {
             return completionHandler(error);
         }
 
-        NSInteger status = httpResponse.statusCode;
+        NSInteger status = response.statusCode;
 
         // Failure
         if (!(status >= 200 && status <= 299)) {
@@ -95,7 +93,7 @@ completionHandler:(void (^)(NSError * _Nullable))completionHandler {
         UA_LDEBUG(@"Disabled");
         return;
     }
-    
+
     if (!channelID) {
         UA_LERR(@"The channel ID cannot be nil.");
         return;
@@ -111,16 +109,14 @@ completionHandler:(void (^)(NSError * _Nullable))completionHandler {
     UARequest *request = [self requestWithPayload:payload
                                         urlString:[NSString stringWithFormat:@"%@%@", urlString, @"/disassociate"]];
 
-    [self.session dataTaskWithRequest:request retryWhere:^BOOL(NSData * _Nullable data, NSURLResponse * _Nullable response) {
+    [self performRequest:request retryWhere:^BOOL(NSData * _Nullable data, NSHTTPURLResponse * _Nullable response) {
         return [response hasRetriableStatus];
-    } completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
-        NSHTTPURLResponse *httpResponse = [self castResponse:response error:&error];
-
+    } completionHandler:^(NSData * _Nullable data, NSHTTPURLResponse * _Nullable response, NSError * _Nullable error) {
         if (error) {
             return completionHandler(error);
         }
 
-        NSInteger status = httpResponse.statusCode;
+        NSInteger status = response.statusCode;
 
         // Failure
         if (!(status >= 200 && status <= 299)) {
@@ -153,3 +149,5 @@ completionHandler:(void (^)(NSError * _Nullable))completionHandler {
 }
 
 @end
+
+
