@@ -224,10 +224,10 @@
         UA_STRONGIFY(self)
         if ([self isRequestCurrent:request]) {
             if (result) {
-                UA_LINFO(@"Task %@ finished.", request.taskID);
+                UA_LTRACE(@"Task %@ finished.", request.taskID);
                 [self requestFinished:request];
             } else {
-                UA_LINFO(@"Task %@ failed, will retry in %f seconds", request.taskID, nextBackOff);
+                UA_LTRACE(@"Task %@ failed, will retry in %f seconds", request.taskID, nextBackOff);
                 [self retryRequest:request delay:nextBackOff];
             }
         }

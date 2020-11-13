@@ -3,7 +3,6 @@
 #import "UAUser.h"
 #import "UAUserDataDAO+Internal.h"
 #import "UAUserAPIClient+Internal.h"
-
 #import "UAAirshipMessageCenterCoreImport.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -34,18 +33,16 @@ NS_ASSUME_NONNULL_BEGIN
  * @param dataStore The preference data store.
  * @param client The API client.
  * @param notificationCenter The notification center.
- * @param application The application.
- * @param backgroundDispatcher The dispatcher.
  * @param userDataDAO The user data DAO.
+ * @param taskManager The task manager.
  * @return User instance.
  */
 + (instancetype)userWithChannel:(UAChannel<UAExtendableChannelRegistration> *)channel
                       dataStore:(UAPreferenceDataStore *)dataStore
                          client:(UAUserAPIClient *)client
              notificationCenter:(NSNotificationCenter *)notificationCenter
-                    application:(UIApplication *)application
-           backgroundDispatcher:(UADispatcher *)backgroundDispatcher
-                    userDataDAO:(UAUserDataDAO *)userDataDAO;
+                    userDataDAO:(UAUserDataDAO *)userDataDAO
+                    taskManager:(UATaskManager *)taskManager;
 
 /**
  * Gets the data associated with the user.
@@ -54,11 +51,6 @@ NS_ASSUME_NONNULL_BEGIN
  * @param dispatcher The dispatcher on which to invoked the completion handler.
  */
 - (void)getUserData:(void (^)(UAUserData * _Nullable))completionHandler dispatcher:(nullable UADispatcher *)dispatcher;
-
-/**
- * Removes the existing user from the keychain.
- */
-- (void)resetUser;
 
 /**
  * Flag indicating whether the user is enabled. Clear to disable. Set to enable.

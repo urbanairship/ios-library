@@ -26,7 +26,7 @@
     static dispatch_once_t defaultOptionsOnceToken;
     static UATaskRequestOptions *defaultOptions;
     dispatch_once(&defaultOptionsOnceToken, ^{
-        defaultOptions = [[self alloc] initWithConflictPolicy:UATaskConflictPolicyKeep requiresNetwork:YES extras:nil];
+        defaultOptions = [[self alloc] initWithConflictPolicy:UATaskConflictPolicyReplace requiresNetwork:YES extras:nil];
     });
 
     return defaultOptions;

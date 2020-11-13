@@ -30,4 +30,5 @@
 #import "NSManagedObjectContext+UAAdditions.h"
 #import "NSJSONSerialization+UAAdditions.h"
 #import "UAAction.h"
+#import "UATaskManager.h"
 #endif

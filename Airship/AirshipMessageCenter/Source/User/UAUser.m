@@ -3,22 +3,23 @@
 #import "UAUser+Internal.h"
 #import "UAUserData.h"
 #import "UAUserAPIClient+Internal.h"
-
 #import "UAAirshipMessageCenterCoreImport.h"
+#import "UATaskManager.h"
 
 NSString * const UAUserRegisteredChannelIDKey= @"UAUserRegisteredChannelID";
 NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.user_created";
 
+static NSString * const UAUserUpdateTaskID = @"UAUser.update";
+static NSString * const UAUserResetTaskID = @"UAUser.reset";
+
 @interface UAUser()
 @property (nonatomic, strong) UAChannel<UAExtendableChannelRegistration> *channel;
 @property (nonatomic, strong) NSNotificationCenter *notificationCenter;
-@property (nonatomic, strong) UIApplication *application;
 @property (nonatomic, strong) UAUserDataDAO *userDataDAO;
 @property (nonatomic, strong) UAUserAPIClient *apiClient;
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
-@property (nonatomic, strong) UADispatcher *backgroundDispatcher;
 @property (copy) NSString *registeredChannelID;
-@property (assign) BOOL registrationInProgress;
+@property (nonatomic, strong) UATaskManager *taskManager;
 @end
 
 @implementation UAUser
@@ -27,37 +28,27 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
                   dataStore:(UAPreferenceDataStore *)dataStore
                      client:(UAUserAPIClient *)client
          notificationCenter:(NSNotificationCenter *)notificationCenter
-                application:(UIApplication *)application
-       backgroundDispatcher:(UADispatcher *)backgroundDispatcher
-                userDataDAO:(UAUserDataDAO *)userDataDAO {
+                userDataDAO:(UAUserDataDAO *)userDataDAO
+                taskManager:(UATaskManager *)taskManager {
+
     self = [super init];
 
     if (self) {
+        _enabled = YES;
         self.channel = channel;
         self.dataStore = dataStore;
         self.apiClient = client;
         self.notificationCenter = notificationCenter;
-        self.application = application;
-        self.backgroundDispatcher = backgroundDispatcher;
         self.userDataDAO = userDataDAO;
+        self.taskManager = taskManager;
 
         [self.notificationCenter addObserver:self
-                                    selector:@selector(performUserRegistration)
+                                    selector:@selector(enqueueUpdateTask)
                                         name:UAChannelCreatedEvent
                                       object:nil];
 
         [self.notificationCenter addObserver:self
-                                    selector:@selector(didBecomeActive)
-                                        name:UAApplicationDidBecomeActiveNotification
-                                      object:nil];
-
-        [self.notificationCenter addObserver:self
-                                    selector:@selector(enterForeground)
-                                        name:UAApplicationWillEnterForegroundNotification
-                                      object:nil];
-
-        [self.notificationCenter addObserver:self
-                                    selector:@selector(resetUser)
+                                    selector:@selector(enqueueResetTask)
                                         name:UADeviceIDChangedNotification
                                       object:nil];
 
@@ -66,6 +57,22 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
             UA_STRONGIFY(self)
             [self extendChannelRegistrationPayload:payload completionHandler:completionHandler];
         }];
+
+        [self.taskManager registerForTaskWithIDs:@[UAUserUpdateTaskID, UAUserResetTaskID]
+                                      dispatcher:[UADispatcher serialDispatcher]
+                                   launchHandler:^(id<UATask> task) {
+            UA_STRONGIFY(self)
+            if ([task.taskID isEqualToString:UAUserResetTaskID]) {
+                [self handleResetTask:task];
+            } else if ([task.taskID isEqualToString:UAUserUpdateTaskID]) {
+                [self handleUpdateTask:task];
+            } else {
+                UA_LERR(@"Invalid task: %@", task.taskID);
+                [task taskCompleted];
+            }
+        }];
+
+        [self enqueueUpdateTask];
     }
 
     return self;
@@ -76,26 +83,23 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
                                  dataStore:dataStore
                                     client:[UAUserAPIClient clientWithConfig:config]
                         notificationCenter:[NSNotificationCenter defaultCenter]
-                               application:[UIApplication sharedApplication]
-                      backgroundDispatcher:[UADispatcher globalDispatcher]
-                               userDataDAO:[UAUserDataDAO userDataDAOWithConfig:config]];
+                               userDataDAO:[UAUserDataDAO userDataDAOWithConfig:config]
+                               taskManager:[UATaskManager shared]];
 }
 
 + (instancetype)userWithChannel:(UAChannel<UAExtendableChannelRegistration> *)channel
                       dataStore:(UAPreferenceDataStore *)dataStore
                          client:(UAUserAPIClient *)client
              notificationCenter:(NSNotificationCenter *)notificationCenter
-                    application:(UIApplication *)application
-           backgroundDispatcher:(UADispatcher *)backgroundDispatcher
-                    userDataDAO:(UAUserDataDAO *)userDataDAO {
+                    userDataDAO:(UAUserDataDAO *)userDataDAO
+                    taskManager:(UATaskManager *)taskManager {
 
     return [[UAUser alloc] initWithChannel:channel
                                  dataStore:dataStore
                                     client:client
                         notificationCenter:notificationCenter
-                               application:application
-                      backgroundDispatcher:backgroundDispatcher
-                               userDataDAO:userDataDAO];
+                               userDataDAO:userDataDAO
+                               taskManager:taskManager];
 }
 
 - (nullable UAUserData *)getUserDataSync {
@@ -122,172 +126,109 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
     [self.dataStore setValue:registeredChannelID forKey:UAUserRegisteredChannelIDKey];
 }
 
-- (void)enterForeground {
-    [self ensureUserUpToDate];
+- (void)enqueueUpdateTask {
+    [self.taskManager enqueueRequestWithID:UAUserUpdateTaskID
+                                   options:[UATaskRequestOptions defaultOptions]];
 }
 
-- (void)didBecomeActive {
-    [self ensureUserUpToDate];
-    [self.notificationCenter removeObserver:self
-                                       name:UAApplicationDidBecomeActiveNotification
-                                     object:nil];
+- (void)enqueueResetTask {
+    UATaskRequestOptions *requestOptions = [UATaskRequestOptions optionsWithConflictPolicy:UATaskConflictPolicyKeep
+                                                                           requiresNetwork:NO
+                                                                                    extras:nil];
+    [self.taskManager enqueueRequestWithID:UAUserResetTaskID
+                                   options:requestOptions];
 }
 
-- (void)ensureUserUpToDate {
-    if (!self.channel.identifier) {
-        return;
-    }
-
-    UA_WEAKIFY(self)
-    [self getUserData:^(UAUserData *data) {
-        UA_STRONGIFY(self)
-        if (self.registrationInProgress) {
-            return;
-        }
-
-        if (!data || ![self.registeredChannelID isEqualToString:self.channel.identifier]) {
-            [self performUserRegistration];
-        }
-    } dispatcher:self.backgroundDispatcher];
+- (void)handleResetTask:(id<UATask>)task {
+    self.registeredChannelID = nil;
+    [self.userDataDAO clearUser];
+    [self enqueueUpdateTask];
+    [task taskCompleted];
 }
 
-- (void)resetUser {
-    UA_WEAKIFY(self)
-    [self getUserData:^(UAUserData *data) {
-        if (!data) {
-            return;
-        }
-
-        UA_STRONGIFY(self)
-        self.registeredChannelID = nil;
-        self.registrationInProgress = NO;
-        [self.userDataDAO clearUser];
-        [self performUserRegistration];
-    } dispatcher:self.backgroundDispatcher];
-}
-
-- (void)setEnabled:(BOOL)enabled {
-    _enabled = enabled;
-    self.apiClient.enabled = enabled;
-    if (enabled) {
-        [self ensureUserUpToDate];
-    }
-}
-
-/**
- * Performs either a create or update on the user depending on if the user data is available in the DAO. Perform registration
- * will no-op if the user is disabled, channelID is unavailable, or if a background task fails to create.
- */
-- (void)performUserRegistration {
+- (void)handleUpdateTask:(id<UATask>)task {
     if (!self.enabled) {
         UA_LDEBUG(@"Skipping user registration, user disabled.");
+        [task taskCompleted];
         return;
     }
 
     NSString *channelID = self.channel.identifier;
     if (!channelID) {
-        UA_LDEBUG(@"Skipping user registration, no channel.");
+        [task taskCompleted];
         return;
     }
 
-    UA_WEAKIFY(self)
+    UAUserData *data = [self getUserDataSync];
+    if (data && [self.registeredChannelID isEqualToString:channelID]) {
+        [task taskCompleted];
+        return;
+    }
 
-    __block UIBackgroundTaskIdentifier backgroundTask = [self.application beginBackgroundTaskWithExpirationHandler:^{
-        UA_STRONGIFY(self)
-        [self.apiClient cancelAllRequests];
-        if (backgroundTask != UIBackgroundTaskInvalid) {
-            [self.application endBackgroundTask:backgroundTask];
-            backgroundTask = UIBackgroundTaskInvalid;
+    UADisposable *request = [self performRegistrationWithData:data channelID:channelID completionHandler:^(BOOL completed) {
+        if (completed) {
+            [task taskCompleted];
+        } else {
+            [task taskFailed];
         }
-        self.registrationInProgress = NO;
     }];
 
-    if (backgroundTask == UIBackgroundTaskInvalid) {
-        UA_LDEBUG(@"Skipping user registration, unable to create background task.");
-        return;
-    }
+    task.expirationHandler = ^{
+        [request dispose];
+    };
+}
 
-    void (^completionHandler)(BOOL) = ^(BOOL success) {
-        UA_STRONGIFY(self)
-        [self.backgroundDispatcher dispatchAsync:^{
+- (void)setEnabled:(BOOL)enabled {
+    if (_enabled != enabled) {
+        _enabled = enabled;
+        if (enabled) {
+            [self enqueueUpdateTask];
+        }
+    }
+}
+
+- (UADisposable *)performRegistrationWithData:(nullable UAUserData *)userData
+                                    channelID:(NSString *)channelID
+                            completionHandler:(void(^)(BOOL completed))completionHandler {
+
+    UA_WEAKIFY(self)
+
+    if (userData) {
+        // update
+        return [self.apiClient updateUserWithData:userData channelID:channelID completionHandler:^(NSError * _Nullable error) {
             UA_STRONGIFY(self)
-            self.registrationInProgress = NO;
-            if (success) {
+            if (error) {
+                UA_LDEBUG(@"User update failed with error %@", error);
+                completionHandler(error.code != UAUserAPIClientErrorRecoverable);
+            } else {
+                UA_LINFO(@"Updated user %@ successfully.", userData.username);
                 self.registeredChannelID = channelID;
-            }
-            if (backgroundTask != UIBackgroundTaskInvalid) {
-                [self.application endBackgroundTask:backgroundTask];
-                backgroundTask = UIBackgroundTaskInvalid;
+                completionHandler(YES);
             }
         }];
-    };
-
-    [self getUserData:^(UAUserData *data) {
-        UA_STRONGIFY(self)
-
-        // Checking for registrationInProgress here instead of above so its only
-        // accessed on the background queue.
-        if (self.registrationInProgress) {
-            UA_LDEBUG(@"Skipping user registration, already in progress");
-            completionHandler(NO);
-            return;
-        }
-
-        self.registrationInProgress = YES;
-        if (data) {
-            [self updateUserWithUserData:data channelID:channelID completionHandler:completionHandler];
-        } else {
-            [self createUserWithChannelID:channelID completionHandler:completionHandler];
-        }
-    } dispatcher:self.backgroundDispatcher];
-}
-
-/**
- *  Updates the user with the latest channel. Called from `performUserRegistration`.
- *  @param userData The current user's data.
- *  @param channelID The Airship channel ID.
- *  @param completionHandler Completion handler.
- */
-- (void)updateUserWithUserData:(UAUserData *)userData channelID:(NSString *)channelID completionHandler:(void(^)(BOOL))completionHandler {
-    UA_LTRACE(@"Updating user");
-    [self.apiClient updateUserWithData:userData
-                             channelID:channelID
-                             onSuccess:^{
-                                 UA_LINFO(@"Updated user %@ successfully.", userData.username);
-                                 completionHandler(YES);
-                             }
-                             onFailure:^(NSUInteger statusCode) {
-                                 UA_LDEBUG(@"Failed to update user.");
-                                 completionHandler(NO);
-                             }];
-}
-
-/**
- *  Creates the user with the latest channel and saves the user data to the DAO. Called from `performUserRegistration`.
- *  @param channelID The Airship channel ID.
- *  @param completionHandler Completion handler.
- */
-- (void)createUserWithChannelID:(NSString *)channelID completionHandler:(void(^)(BOOL))completionHandler {
-    UA_LTRACE(@"Creating user");
-    UA_WEAKIFY(self)
-    [self.apiClient createUserWithChannelID:channelID
-                                  onSuccess:^(UAUserData *data) {
-                                      UA_STRONGIFY(self)
-                                      UA_LINFO(@"Created user %@.", data.username);
-                                      [self.userDataDAO saveUserData:data completionHandler:^(BOOL success) {
-                                          UA_STRONGIFY(self)
-                                          if (success) {
-                                              [self.notificationCenter postNotificationName:UAUserCreatedNotification object:nil];
-                                          } else {
-                                              UA_LINFO(@"Failed to save user");
-                                          }
-                                          completionHandler(success);
-                                      }];
-                                  }
-                                  onFailure:^(NSUInteger statusCode) {
-                                      UA_LINFO(@"Failed to create user");
-                                      completionHandler(NO);
-                                  }];
+    } else {
+        // create
+        return [self.apiClient createUserWithChannelID:channelID completionHandler:^(UAUserData * _Nullable data, NSError * _Nullable error) {
+            if (!data || error) {
+                UA_LDEBUG(@"Update failed with error %@", error);
+                completionHandler(error.code != UAUserAPIClientErrorRecoverable);
+            } else {
+                UA_STRONGIFY(self)
+                [self.userDataDAO saveUserData:data completionHandler:^(BOOL success) {
+                    UA_STRONGIFY(self)
+                    if (success) {
+                        UA_LINFO(@"Updated user %@ successfully.", userData.username);
+                        self.registeredChannelID = channelID;
+                        [self.notificationCenter postNotificationName:UAUserCreatedNotification object:nil];
+                        completionHandler(YES);
+                    } else {
+                        UA_LINFO(@"Failed to save user");
+                        completionHandler(NO);
+                    }
+                }];
+            }
+        }];
+    }
 }
 
 - (void)extendChannelRegistrationPayload:(UAChannelRegistrationPayload *)payload
