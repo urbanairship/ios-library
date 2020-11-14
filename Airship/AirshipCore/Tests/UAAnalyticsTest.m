@@ -16,6 +16,8 @@
 #import "UAAppStateTracker.h"
 #import "UAUtils+Internal.h"
 #import "UALocaleManager.h"
+#import "UAAppInitEvent+Internal.h"
+#import "UAAppForegroundEvent+Internal.h"
 
 @interface UAAnalyticsTest: UAAirshipBaseTest
 @property (nonatomic, strong) UAAnalytics *analytics;
@@ -23,6 +25,7 @@
 @property (nonatomic, strong) id mockChannel;
 @property (nonatomic, strong) id mockLocaleClass;
 @property (nonatomic, strong) id mockTimeZoneClass;
+@property (nonatomic, strong) id mockAppStateTracker;
 @property (nonatomic, strong) NSNotificationCenter *notificationCenter;
 @property (nonatomic, strong) UATestDate *testDate;
 @property (nonatomic, strong) id<UAEventManagerDelegate> eventManagerDelegate;
@@ -48,6 +51,7 @@
     [[[self.mockLocaleClass stub] andReturn:locale] currentLocale];
     
     self.mockChannel = [self mockForClass:[UAChannel class]];
+    self.mockAppStateTracker = [self mockForClass:[UAAppStateTracker class]];
     self.analytics = [self createAnalytics];
 
     [self.dataStore setBool:YES forKey:UAirshipDataCollectionEnabledKey];
@@ -60,6 +64,51 @@
     self.mockTimeZoneClass = [self strictMockForClass:[NSTimeZone class]];
     NSTimeZone *timeZone = [[NSTimeZone alloc] initWithName:@"America/New_York"];
     [[[self.mockTimeZoneClass stub] andReturn:timeZone] defaultTimeZone];
+}
+
+- (void)testBackgroundInitEmitsAppInitEvent {
+    [[[self.mockAppStateTracker stub] andReturnValue:@(UAApplicationStateBackground)] state];
+
+    [[self.mockEventManager expect] addEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
+        return [obj isMemberOfClass:[UAAppInitEvent class]];
+    }] sessionID:OCMOCK_ANY];
+
+    [self createAnalytics];
+    [self.mockEventManager verify];
+}
+
+- (void)testInactiveInitDoesNotEmitEvents {
+    [[[self.mockAppStateTracker stub] andReturnValue:@(UAApplicationStateInactive)] state];
+    [[self.mockEventManager reject] addEvent:OCMOCK_ANY sessionID:OCMOCK_ANY];
+
+    [self createAnalytics];
+    [self.mockEventManager verify];
+}
+
+- (void)testTransitionToForegroundEmitsForegroundEvent {
+    [[self.mockEventManager expect] addEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
+        return [obj isMemberOfClass:[UAAppForegroundEvent class]];
+    }] sessionID:OCMOCK_ANY];
+
+    [self.notificationCenter postNotificationName:UAApplicationDidTransitionToForeground object:nil];
+    [self.mockEventManager verify];
+}
+
+- (void)testFirstTransitionToForegroundEmitsAppInitEvent {
+    [[self.mockEventManager expect] addEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
+        return [obj isMemberOfClass:[UAAppInitEvent class]];
+    }] sessionID:OCMOCK_ANY];
+
+    [self.notificationCenter postNotificationName:UAApplicationDidTransitionToForeground object:nil];
+    [self.mockEventManager verify];
+
+    [[self.mockEventManager reject] addEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
+        return [obj isMemberOfClass:[UAAppInitEvent class]];
+    }] sessionID:OCMOCK_ANY];
+
+    [self.notificationCenter postNotificationName:UAApplicationDidTransitionToForeground object:nil];
+
+    [self.mockEventManager verify];
 }
 
 /**
@@ -578,7 +627,8 @@
                                            notificationCenter:self.notificationCenter
                                                          date:self.testDate
                                                    dispatcher:[UADispatcher mainDispatcher]
-                                                localeManager:self.mockLocaleClass];
+                                                localeManager:self.mockLocaleClass
+                                              appStateTracker:self.mockAppStateTracker];
 
     NSString *sessionID = analytics.sessionID;
 
@@ -603,7 +653,8 @@
                          notificationCenter:self.notificationCenter
                                        date:self.testDate
                                  dispatcher:[UATestDispatcher testDispatcher]
-                              localeManager:self.mockLocaleClass];
+                              localeManager:self.mockLocaleClass
+                            appStateTracker:self.mockAppStateTracker];
 }
 
 @end

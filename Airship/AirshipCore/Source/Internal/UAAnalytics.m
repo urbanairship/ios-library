@@ -32,16 +32,17 @@
 @property (nonatomic, strong) UADate *date;
 @property (nonatomic, strong) UADispatcher *dispatcher;
 @property (nonatomic, strong) NSMutableArray<NSString *> *SDKExtensions;
-@property (nonatomic, assign) BOOL isEnteringForeground;
 @property (nonatomic, strong) NSMutableArray<UAAnalyticsHeadersBlock> *headerBlocks;
 @property (nonatomic, strong) UALocaleManager *localeManager;
+@property (nonatomic, strong) UAAppStateTracker *appStateTracker;
+@property (nonatomic, assign) BOOL handledFirstForegroundTransition;
 
 // Screen tracking state
 @property (nonatomic, copy) NSString *currentScreen;
 @property (nonatomic, copy) NSString *previousScreen;
 @property (nonatomic, assign) NSTimeInterval startTime;
-@end
 
+@end
 
 NSString *const UACustomEventAdded = @"UACustomEventAdded";
 
@@ -59,7 +60,8 @@ NSString *const UAEventKey = @"event";
             notificationCenter:(NSNotificationCenter *)notificationCenter
                           date:(UADate *)date
                     dispatcher:(UADispatcher *)dispatcher
-                 localeManager:(UALocaleManager *)localeManager {
+                 localeManager:(UALocaleManager *)localeManager
+               appStateTracker:(UAAppStateTracker *)appStateTracker {
 
     self = [super initWithDataStore:dataStore];
 
@@ -73,6 +75,7 @@ NSString *const UAEventKey = @"event";
         self.date = date;
         self.dispatcher = dispatcher;
         self.localeManager = localeManager;
+        self.appStateTracker = appStateTracker;
         self.SDKExtensions = [NSMutableArray array];
         self.headerBlocks = [NSMutableArray array];
 
@@ -85,6 +88,11 @@ NSString *const UAEventKey = @"event";
         self.eventManager.delegate = self;
         
         [self startSession];
+
+        [self.notificationCenter addObserver:self
+                                    selector:@selector(applicationDidTransitionToForeground)
+                                        name:UAApplicationDidTransitionToForeground
+                                      object:nil];
 
         [self.notificationCenter addObserver:self
                                     selector:@selector(applicationWillEnterForeground)
@@ -101,13 +109,14 @@ NSString *const UAEventKey = @"event";
                                         name:UAApplicationWillTerminateNotification
                                       object:nil];
 
-        [self.notificationCenter addObserver:self
-                                    selector:@selector(applicationDidBecomeActive)
-                                        name:UAApplicationDidBecomeActiveNotification
-                                      object:nil];
-
         if (!self.isEnabled) {
             [self.eventManager deleteAllEvents];
+        }
+
+        // If analytics is initialized in the background state, we are responding to a
+        // content-available push and should emit an app init event
+        if (self.appStateTracker.state == UAApplicationStateBackground) {
+            [self addEvent:[UAAppInitEvent event]];
         }
     }
 
@@ -125,7 +134,8 @@ NSString *const UAEventKey = @"event";
                      notificationCenter:[NSNotificationCenter defaultCenter]
                                    date:[[UADate alloc] init]
                              dispatcher:[UADispatcher mainDispatcher]
-                          localeManager:localeManager];
+                          localeManager:localeManager
+                        appStateTracker:[UAAppStateTracker shared]];
 }
 
 + (instancetype)analyticsWithConfig:(UARuntimeConfig *)airshipConfig
@@ -135,7 +145,8 @@ NSString *const UAEventKey = @"event";
                  notificationCenter:(NSNotificationCenter *)notificationCenter
                                date:(UADate *)date
                          dispatcher:(UADispatcher *)dispatcher
-                      localeManager:(UALocaleManager *)localeManager {
+                      localeManager:(UALocaleManager *)localeManager
+                    appStateTracker:(UAAppStateTracker *)appStateTracker {
 
     return [[self alloc] initWithConfig:airshipConfig
                               dataStore:dataStore
@@ -144,26 +155,40 @@ NSString *const UAEventKey = @"event";
                      notificationCenter:notificationCenter
                                    date:date
                              dispatcher:dispatcher
-                          localeManager:localeManager];
+                          localeManager:localeManager
+                        appStateTracker:appStateTracker];
 }
 
 #pragma mark -
 #pragma mark Application State
 
+- (void)applicationDidTransitionToForeground {
+    UA_LTRACE(@"Application transitioned to foreground.");
+
+    // If the app is transitioning to foreground for the first time, emit an app init event
+    if (!self.handledFirstForegroundTransition) {
+        // Init event
+        [self addEvent:[UAAppInitEvent event]];
+
+        self.handledFirstForegroundTransition = YES;
+    }
+
+    // Start a new session
+    [self startSession];
+
+    //add app_foreground event
+    [self addEvent:[UAAppForegroundEvent event]];
+}
+
 - (void)applicationWillEnterForeground {
-    UA_LTRACE(@"Enter Foreground.");
+    UA_LTRACE(@"Application will enter foreground.");
 
     // Start tracking previous screen before backgrounding began
     [self trackScreen:self.previousScreen];
-
-    // do not send the foreground event yet, as we are not actually in the foreground
-    // (we are merely in the process of foregorunding)
-    // set this flag so that the even will be sent as soon as the app is active.
-    self.isEnteringForeground = YES;
 }
 
 - (void)applicationDidEnterBackground {
-    UA_LTRACE(@"Enter Background.");
+    UA_LTRACE(@"Application did enter background.");
 
     [self stopTrackingScreen];
 
@@ -178,23 +203,6 @@ NSString *const UAEventKey = @"event";
 - (void)applicationWillTerminate {
     UA_LTRACE(@"Application is terminating.");
     [self stopTrackingScreen];
-}
-
-- (void)applicationDidBecomeActive {
-    UA_LTRACE(@"Application did become active.");
-
-    // If this is the first 'inactive->active' transition in this session,
-    // send
-    if (self.isEnteringForeground) {
-
-        self.isEnteringForeground = NO;
-
-        // Start a new session
-        [self startSession];
-
-        //add app_foreground event
-        [self addEvent:[UAAppForegroundEvent event]];
-    }
 }
 
 

@@ -35,6 +35,9 @@ jobs:
           path: vendor/bundle
           key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
           restore-keys: ${{ runner.os }}-gems-
+      - name: Install Coreutils
+        run: brew install coreutils
+
       - name: Build SDK
         run: make build-package
 

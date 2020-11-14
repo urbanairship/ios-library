@@ -76,6 +76,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param date A UADate instance.
  * @param dispatcher The dispatcher.
  * @param localeManager A UALocaleManager.
+ * @param appStateTracker The app state tracker.
  * @return A new analytics instance.
  */
 + (instancetype)analyticsWithConfig:(UARuntimeConfig *)airshipConfig
@@ -85,7 +86,8 @@ NS_ASSUME_NONNULL_BEGIN
                  notificationCenter:(NSNotificationCenter *)notificationCenter
                                date:(UADate *)date
                          dispatcher:(UADispatcher *)dispatcher
-                      localeManager:(UALocaleManager *)localeManager;
+                      localeManager:(UALocaleManager *)localeManager
+                    appStateTracker:(UAAppStateTracker *)appStateTracker;
 
 /**
  * Called to notify analytics the app was launched from a push notification.

@@ -1,6 +1,5 @@
 /* Copyright Airship and Contributors */
 
-#import "UAEvent.h"
 #import "UAInAppMessageDisplayEvent+Internal.h"
 #import "UAInAppMessageEventUtils+Internal.h"
 #import "UAAirshipAutomationCoreImport.h"

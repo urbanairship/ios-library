@@ -3730,6 +3730,7 @@
 		1BAE376124F5561D0095C6E3 /* Public */ = {
 			isa = PBXGroup;
 			children = (
+				1B70A13E24F7B3D8003209E0 /* AirshipExtendedActionsLib.h */,
 				1BB4C013239FB4CD0000559B /* UAExtendedActionsResources.h */,
 				6E27A7D52367AC3200F46B69 /* UAExtendedActionsModuleLoader.h */,
 				6E65D53A2396DB3F00AF2D1A /* UAExtendedActionsCoreImport.h */,
@@ -3766,6 +3767,7 @@
 		1BAE376524F559950095C6E3 /* Public */ = {
 			isa = PBXGroup;
 			children = (
+				1B70A14124F7B85D003209E0 /* AirshipAutomationLib.h */,
 				6EA734B024B7AA600012B737 /* UAInAppAutomation.h */,
 				6E845462237E0DC4007D3B1E /* UAAirshipAutomationCoreImport.h */,
 				6E8A54BA236243A3004AE2A0 /* UAAutomationModuleLoader.h */,
@@ -3822,6 +3824,7 @@
 		1BAE376624F55A340095C6E3 /* Public */ = {
 			isa = PBXGroup;
 			children = (
+				1B281EDB24F6AB8100FDC188 /* AirshipMessageCenterLib.h */,
 				1B8DCF612507BDA60006E595 /* UAMessageCenterListViewDelegate.h */,
 				1B8DCF602507BDA60006E595 /* UAMessageCenterLocalization.h */,
 				1B8DCF5F2507BDA60006E595 /* UAMessageCenterMessageViewDelegate.h */,
@@ -4033,7 +4036,6 @@
 			isa = PBXGroup;
 			children = (
 				3C13BFBC2384AE050071E80C /* AirshipMessageCenter.h */,
-				1B281EDB24F6AB8100FDC188 /* AirshipMessageCenterLib.h */,
 				1BAE376624F55A340095C6E3 /* Public */,
 				3CA0E344237E39CB00EE76CF /* Actions */,
 				3CA0E343237E39BC00EE76CF /* Display */,
@@ -4194,7 +4196,6 @@
 		45C6912E238DC7B300A03C94 /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				1B70A13E24F7B3D8003209E0 /* AirshipExtendedActionsLib.h */,
 				45C6913F238DC93B00A03C94 /* AirshipExtendedActions.h */,
 				1BAE376124F5561D0095C6E3 /* Public */,
 				1BB4C012239FB4CD0000559B /* UAExtendedActionsResources.m */,
@@ -4857,9 +4858,8 @@
 		6E8450BB237DFFB5007D3B1E /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				6E737E0924F042CC0094E2E8 /* Audience */,
-				1B70A14124F7B85D003209E0 /* AirshipAutomationLib.h */,
 				6E84544E237E05F3007D3B1E /* AirshipAutomation.h */,
+				6E737E0924F042CC0094E2E8 /* Audience */,
 				1BAE376524F559950095C6E3 /* Public */,
 				3CFB563424E34428008F9CCE /* Auth */,
 				6EA734AD24B7A9DC0012B737 /* InAppAutomation */,

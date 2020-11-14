@@ -6,7 +6,7 @@ ROOT_PATH="${SCRIPT_DIRECTORY}"
 echo "${ROOT_PATH}"
 TMP_LIB="${DERIVED_FILE_DIR}/GeneratedHeader"
 TMP_LIB_HEADER="${TMP_LIB}/AirshipAutomationLib.h"
-SOURCE_LIB_HEADER="${ROOT_PATH}/Source/AirshipAutomationLib.h"
+SOURCE_LIB_HEADER="${ROOT_PATH}/Source/Public/AirshipAutomationLib.h"
 
 # Find all public headers, excluding AirshipAutomationLib and UI
 # Collect all headers as obj-c import statments into an umbrella header
