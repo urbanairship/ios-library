@@ -62,16 +62,19 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Factory method for creating a browsed content event template.
+ * @returns A Media event template instance
  */
 + (instancetype)browsedTemplate;
 
 /**
  * Factory method for creating a starred content event template.
+ * @returns A Media event template instance
  */
 + (instancetype)starredTemplate;
 
 /**
  * Factory method for creating a shared content event template.
+ * @returns A Media event template instance
  */
 + (instancetype)sharedTemplate;
 
@@ -81,11 +84,13 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @param source The source as an NSString.
  * @param medium The medium as an NSString.
+ * @returns A Media event template instance
  */
 + (instancetype)sharedTemplateWithSource:(nullable NSString *)source withMedium:(nullable NSString *)medium;
 
 /**
  * Factory method for creating a consumed content event template.
+ * @returns A Media event template instance
  */
 + (instancetype)consumedTemplate;
 
@@ -94,6 +99,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @param eventValue The value of the event as as string. The value must be between
  * -2^31 and 2^31 - 1 or it will invalidate the event.
+ * @returns A Media event template instance
  */
 + (instancetype)consumedTemplateWithValueFromString:(nullable NSString *)eventValue;
 
@@ -102,6 +108,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @param eventValue The value of the event. The value must be between -2^31 and
  * 2^31 - 1 or it will invalidate the event.
+ * @returns A Media event template instance
  */
 + (instancetype)consumedTemplateWithValue:(nullable NSNumber *)eventValue;
 

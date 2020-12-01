@@ -63,6 +63,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Factory method for creating a browsed event template.
+ * @returns A Retail event template instance
  */
 + (instancetype)browsedTemplate;
 
@@ -71,6 +72,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @param eventValue The value of the event as as string. The value must be between
  * -2^31 and 2^31 - 1 or it will invalidate the event.
+ * @returns A Retail event template instance
  */
 + (instancetype)browsedTemplateWithValueFromString:(nullable NSString *)eventValue;
 
@@ -79,11 +81,13 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @param eventValue The value of the event. The value must be between -2^31 and
  * 2^31 - 1 or it will invalidate the event.
+ * @returns A Retail event template instance
  */
 + (instancetype)browsedTemplateWithValue:(nullable NSNumber *)eventValue;
 
 /**
  * Factory method for creating an addedToCart event template.
+ * @returns A Retail event template instance
  */
 + (instancetype)addedToCartTemplate;
 
@@ -92,6 +96,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @param eventValue The value of the event as as string. The value must be between
  * -2^31 and 2^31 - 1 or it will invalidate the event.
+ * @returns A Retail event template instance
  */
 + (instancetype)addedToCartTemplateWithValueFromString:(nullable NSString *)eventValue;
 
@@ -100,11 +105,13 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @param eventValue The value of the event. The value must be between -2^31 and
  * 2^31 - 1 or it will invalidate the event.
+ * @returns A Retail event template instance
  */
 + (instancetype)addedToCartTemplateWithValue:(nullable NSNumber *)eventValue;
 
 /**
  * Factory method for creating a starredProduct event template
+ * @returns A Retail event template instance
  */
 + (instancetype)starredProductTemplate;
 
@@ -113,6 +120,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @param eventValue The value of the event as as string. The value must be between
  * -2^31 and 2^31 - 1 or it will invalidate the event.
+ * @returns A Retail event template instance
  */
 + (instancetype)starredProductTemplateWithValueFromString:(nullable NSString *)eventValue;
 
@@ -121,11 +129,13 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @param eventValue The value of the event. The value must be between -2^31 and
  * 2^31 - 1 or it will invalidate the event.
+ * @returns A Retail event template instance
  */
 + (instancetype)starredProductTemplateWithValue:(nullable NSNumber *)eventValue;
 
 /**
  * Factory method for creating a purchased event template.
+ * @returns A Retail event template instance
  */
 + (instancetype)purchasedTemplate;
 
@@ -134,6 +144,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @param eventValue The value of the event as as string. The value must be between
  * -2^31 and 2^31 - 1 or it will invalidate the event.
+ * @returns A Retail event template instance
  */
 + (instancetype)purchasedTemplateWithValueFromString:(nullable NSString *)eventValue;
 
@@ -142,11 +153,13 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @param eventValue The value of the event. The value must be between -2^31 and
  * 2^31 - 1 or it will invalidate the event.
+ * @returns A Retail event template instance
  */
 + (instancetype)purchasedTemplateWithValue:(nullable NSNumber *)eventValue;
 
 /**
  * Factory method for creating a sharedProduct template event.
+ * @returns A Retail event template instance
  */
 + (instancetype)sharedProductTemplate;
 
@@ -155,6 +168,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @param eventValue The value of the event as as string. The value must be between
  * -2^31 and 2^31 - 1 or it will invalidate the event.
+ * @returns A Retail event template instance
  */
 + (instancetype)sharedProductTemplateWithValueFromString:(nullable NSString *)eventValue;
 
@@ -163,13 +177,15 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @param eventValue The value of the event. The value must be between -2^31 and
  * 2^31 - 1 or it will invalidate the event.
+ * @returns A Retail event template instance
  */
 + (instancetype)sharedProductTemplateWithValue:(nullable NSNumber *)eventValue;
 
 /**
  * Factory method for creating a sharedProduct event template.
  * @param source The source as an NSString.
- * @param medium The medium as an NSString.
+ * @param medium The medium as an NSString
+ * @returns A Retail event template instance.
  */
 + (instancetype)sharedProductTemplateWithSource:(nullable NSString *)source
                                   withMedium:(nullable NSString *)medium;
@@ -181,6 +197,7 @@ NS_ASSUME_NONNULL_BEGIN
  * -2^31 and 2^31 - 1 or it will invalidate the event.
  * @param source The source as an NSString.
  * @param medium The medium as an NSString.
+ * @returns A Retail event template instance
  */
 + (instancetype)sharedProductTemplateWithValueFromString:(nullable NSString *)eventValue
                                            withSource:(nullable NSString *)source
@@ -193,6 +210,7 @@ NS_ASSUME_NONNULL_BEGIN
  * 2^31 - 1 or it will invalidate the event.
  * @param source The source as an NSString.
  * @param medium The medium as an NSString.
+ * @returns A Retail event template instance
  */
 + (instancetype)sharedProductTemplateWithValue:(nullable NSNumber *)eventValue
                                  withSource:(nullable NSString *)source
@@ -200,6 +218,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Factory method for creating a wishlist event template.
+ * @returns A Retail event template instance
  */
 + (instancetype)wishlistTemplate;
 
@@ -208,6 +227,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @param name The name of the wishlist as as string.
  * @param wishlistID The ID of the wishlist as as string.
+ * @returns A Retail event template instance
  */
 + (instancetype)wishlistTemplateWithName:(nullable NSString *)name wishlistID:(nullable NSString *)wishlistID;
 

@@ -7,8 +7,12 @@
 
 #define kUAAccountEventTemplate @"account"
 #define kUARegisteredAccountEvent @"registered_account"
+#define kUALoggedInAccountEvent @"logged_in"
+#define kUALoggedOutAccountEvent @"logged_out"
 #define kUAAccountEventTemplateLifetimeValue @"ltv"
 #define kUAAccountEventTemplateCategory @"category"
+#define kUAAccountEventTemplateUserID @"user_id"
+#define kUAAccountEventTemplateType @"type"
 
 @interface UAAccountEventTemplate()
 @property (nonatomic, copy) NSString *eventName;
@@ -16,10 +20,10 @@
 
 @implementation UAAccountEventTemplate
 
-- (instancetype)initWithValue:(NSDecimalNumber *)eventValue {
+- (instancetype)initWithValue:(NSDecimalNumber *)eventValue eventName:(NSString *)eventName {
     self = [super init];
     if (self) {
-        self.eventName = kUARegisteredAccountEvent;
+        self.eventName = eventName;
         self.eventValue = eventValue;
     }
 
@@ -36,7 +40,33 @@
 }
 
 + (instancetype)registeredTemplateWithValue:(NSDecimalNumber *)eventValue {
-    return [[self alloc] initWithValue:eventValue];
+    return [[self alloc] initWithValue:eventValue eventName:kUARegisteredAccountEvent];
+}
+
++ (instancetype)loggedInTemplate {
+    return [self loggedInTemplateWithValue:nil];
+}
+
++ (instancetype)loggedInTemplateWithValueFromString:(NSString *)eventValue {
+    NSDecimalNumber *decimalValue = eventValue ? [NSDecimalNumber decimalNumberWithString:eventValue] : nil;
+    return [self loggedInTemplateWithValue:decimalValue];
+}
+
++ (instancetype)loggedInTemplateWithValue:(NSDecimalNumber *)eventValue {
+    return [[self alloc] initWithValue:eventValue eventName:kUALoggedInAccountEvent];
+}
+
++ (instancetype)loggedOutTemplate {
+    return [self loggedOutTemplateWithValue:nil];
+}
+
++ (instancetype)loggedOutTemplateWithValueFromString:(NSString *)eventValue {
+    NSDecimalNumber *decimalValue = eventValue ? [NSDecimalNumber decimalNumberWithString:eventValue] : nil;
+    return [self loggedOutTemplateWithValue:decimalValue];
+}
+
++ (instancetype)loggedOutTemplateWithValue:(NSDecimalNumber *)eventValue {
+    return [[self alloc] initWithValue:eventValue eventName:kUALoggedOutAccountEvent];
 }
 
 - (void)setEventValue:(NSDecimalNumber *)eventValue {
@@ -69,6 +99,14 @@
 
     if (self.category) {
         [propertyDictionary setValue:self.category forKey:kUAAccountEventTemplateCategory];
+    }
+    
+    if (self.userID) {
+        [propertyDictionary setValue:self.userID forKey:kUAAccountEventTemplateUserID];
+    }
+    
+    if (self.type) {
+        [propertyDictionary setValue:self.type forKey:kUAAccountEventTemplateType];
     }
 
     event.templateType = kUAAccountEventTemplate;

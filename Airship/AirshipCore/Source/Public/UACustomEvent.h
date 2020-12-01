@@ -84,6 +84,7 @@ extern NSString *const UACustomEventInteractionTypeKey;
  *
  * @param eventName The name of the event. The event's name must not exceed
  * 255 characters or it will invalidate the event.
+ * @returns A Custom event instance
  */
 + (instancetype)eventWithName:(NSString *)eventName;
 
@@ -94,6 +95,7 @@ extern NSString *const UACustomEventInteractionTypeKey;
  * 255 characters or it will invalidate the event.
  * @param eventValue The value of the event as a string. The value must be a valid
  * number between -2^31 and 2^31 - 1 or it will invalidate the event.
+ * @returns A Custom event instance
  */
 + (instancetype)eventWithName:(NSString *)eventName valueFromString:(nullable NSString *)eventValue;
 
@@ -104,6 +106,7 @@ extern NSString *const UACustomEventInteractionTypeKey;
  * 255 characters or it will invalidate the event.
  * @param eventValue The value of the event. The value must be between -2^31 and
  * 2^31 - 1 or it will invalidate the event.
+ * @returns A Custom event instance
  */
 + (instancetype)eventWithName:(NSString *)eventName value:(nullable NSNumber *)eventValue;
 
