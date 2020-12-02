@@ -2260,6 +2260,15 @@
 		997140F61FB0F45000EF5445 /* UAInAppMessageTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 997140F31FB0F45000EF5445 /* UAInAppMessageTest.m */; };
 		997AC8221FE5ACE000260440 /* UAInAppMessageFullScreenDisplayContentTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 997AC8211FE5ACE000260440 /* UAInAppMessageFullScreenDisplayContentTest.m */; };
 		9987672A1FBE6B4200197AF4 /* UAInAppMessageBannerDisplayContentTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 998767291FBE6B4200197AF4 /* UAInAppMessageBannerDisplayContentTest.m */; };
+		A604DB7E25597F85001ADCA8 /* UASearchEventTemplateTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A604DB7D25597F85001ADCA8 /* UASearchEventTemplateTest.m */; };
+		A6EEE49E25559E340034A42C /* UASearchEventTemplate.h in Headers */ = {isa = PBXBuildFile; fileRef = A6EEE49C25559E340034A42C /* UASearchEventTemplate.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A6EEE4AC25559E570034A42C /* UASearchEventTemplate.h in Headers */ = {isa = PBXBuildFile; fileRef = A6EEE49C25559E340034A42C /* UASearchEventTemplate.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A6EEE4B925559E570034A42C /* UASearchEventTemplate.h in Headers */ = {isa = PBXBuildFile; fileRef = A6EEE49C25559E340034A42C /* UASearchEventTemplate.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A6EEE4C625559E580034A42C /* UASearchEventTemplate.h in Headers */ = {isa = PBXBuildFile; fileRef = A6EEE49C25559E340034A42C /* UASearchEventTemplate.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A6EEE4FB25559EA00034A42C /* UASearchEventTemplate.m in Sources */ = {isa = PBXBuildFile; fileRef = A6EEE4FA25559EA00034A42C /* UASearchEventTemplate.m */; };
+		A6EEE50825559EA40034A42C /* UASearchEventTemplate.m in Sources */ = {isa = PBXBuildFile; fileRef = A6EEE4FA25559EA00034A42C /* UASearchEventTemplate.m */; };
+		A6EEE51525559EA50034A42C /* UASearchEventTemplate.m in Sources */ = {isa = PBXBuildFile; fileRef = A6EEE4FA25559EA00034A42C /* UASearchEventTemplate.m */; };
+		A6EEE51625559EA50034A42C /* UASearchEventTemplate.m in Sources */ = {isa = PBXBuildFile; fileRef = A6EEE4FA25559EA00034A42C /* UASearchEventTemplate.m */; };
 		CC04F1C51DC27E6C00B4842D /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = CC04F1C41DC27E6C00B4842D /* libsqlite3.tbd */; };
 		CC64F0591D8B77E3009CEF27 /* AirshipCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 494DD9571B0EB677009C134E /* AirshipCore.framework */; };
 		CC64F0CE1D8B781C009CEF27 /* CustomNotificationCategories.plist in Resources */ = {isa = PBXBuildFile; fileRef = CC64F0611D8B781C009CEF27 /* CustomNotificationCategories.plist */; };
@@ -3367,7 +3376,10 @@
 		99EC01821FE0953100B9C408 /* UAInAppMessageFullScreenViewController+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAInAppMessageFullScreenViewController+Internal.h"; sourceTree = "<group>"; };
 		99EC01901FE095B600B9C408 /* UAInAppMessageFullScreenDisplayContent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInAppMessageFullScreenDisplayContent.h; sourceTree = "<group>"; };
 		99EC01971FE1FED100B9C408 /* UAInAppMessageFullScreenAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInAppMessageFullScreenAdapter.h; sourceTree = "<group>"; };
+		A604DB7D25597F85001ADCA8 /* UASearchEventTemplateTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UASearchEventTemplateTest.m; sourceTree = "<group>"; };
 		A649F50A252F4F39005453CB /* UAInbox 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "UAInbox 2.xcdatamodel"; sourceTree = "<group>"; };
+		A6EEE49C25559E340034A42C /* UASearchEventTemplate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = UASearchEventTemplate.h; path = Public/UASearchEventTemplate.h; sourceTree = "<group>"; };
+		A6EEE4FA25559EA00034A42C /* UASearchEventTemplate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UASearchEventTemplate.m; path = Internal/UASearchEventTemplate.m; sourceTree = "<group>"; };
 		C3AEC8D23AA7835AC1E74C9A /* Pods-AirshipAccengageTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AirshipAccengageTests.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-AirshipAccengageTests/Pods-AirshipAccengageTests.debug.xcconfig"; sourceTree = "<group>"; };
 		CC04F1C41DC27E6C00B4842D /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
 		CC40D87B1D8C703E00BABD4F /* libOCMock.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libOCMock.a; path = ../TestCommon/OCMockLibrary/libOCMock.a; sourceTree = "<group>"; };
@@ -4613,6 +4625,8 @@
 				6E41170A2538C1EB00FEE4E8 /* UAMediaEventTemplate.m */,
 				6E4114892538C0A400FEE4E8 /* UAAccountEventTemplate.h */,
 				6E41174D2538C1F100FEE4E8 /* UAAccountEventTemplate.m */,
+				A6EEE49C25559E340034A42C /* UASearchEventTemplate.h */,
+				A6EEE4FA25559EA00034A42C /* UASearchEventTemplate.m */,
 				6E4114762538C0A200FEE4E8 /* UAAnalytics.h */,
 				6E4117582538C1F200FEE4E8 /* UAAnalytics.m */,
 				6E41176D2538C1F400FEE4E8 /* UAAnalytics+Internal.h */,
@@ -5637,6 +5651,7 @@
 		CC04F2181DCAB78500B4842D /* Custom Events */ = {
 			isa = PBXGroup;
 			children = (
+				A604DB7D25597F85001ADCA8 /* UASearchEventTemplateTest.m */,
 				CC64F08C1D8B781C009CEF27 /* UACustomEventTest.m */,
 				CC64F06C1D8B781C009CEF27 /* UAAccountEventTemplateTest.m */,
 				CC64F0AC1D8B781C009CEF27 /* UAMediaEventTemplateTest.m */,
@@ -5976,6 +5991,7 @@
 				6E4114F32538C0AA00FEE4E8 /* UAComponent.h in Headers */,
 				6E4116672538C0B300FEE4E8 /* UALocationProvider.h in Headers */,
 				6E4116532538C0B200FEE4E8 /* UAChannelNotificationCenterEvents.h in Headers */,
+				A6EEE49E25559E340034A42C /* UASearchEventTemplate.h in Headers */,
 				6E4115FB2538C0B000FEE4E8 /* UABeveledLoadingIndicator.h in Headers */,
 				6E4119072538C1FF00FEE4E8 /* UAChannelRegistrar+Internal.h in Headers */,
 				6E4115E72538C0B000FEE4E8 /* UAPadding.h in Headers */,
@@ -6321,6 +6337,7 @@
 				1B05134424B373EE00F5051F /* UAScheduleTriggerContext+Internal.h in Headers */,
 				6E50629724E1ABDB00689C6D /* UAActionSchedule.h in Headers */,
 				3226E11824C1DFC4000106CC /* UAInAppAudienceHistorian+Internal.h in Headers */,
+				A6EEE4AC25559E570034A42C /* UASearchEventTemplate.h in Headers */,
 				6E4117ED2538C1FB00FEE4E8 /* UANamedUser+Internal.h in Headers */,
 				3CFB563D24E346FD008F9CCE /* UAAuthTokenManager+Internal.h in Headers */,
 				6E4115212538C0AB00FEE4E8 /* UANotificationCategory.h in Headers */,
@@ -6732,6 +6749,7 @@
 				6E4115762538C0AD00FEE4E8 /* UAWebView.h in Headers */,
 				6E4115322538C0AB00FEE4E8 /* UARemoteDataPayload.h in Headers */,
 				6E41168A2538C0B400FEE4E8 /* UAJSONPredicate.h in Headers */,
+				A6EEE4B925559E570034A42C /* UASearchEventTemplate.h in Headers */,
 				6E4119922538C20100FEE4E8 /* UARemoteConfigModuleNames+Internal.h in Headers */,
 				6E41194A2538C20000FEE4E8 /* UARemoteConfigModuleAdapter+Internal.h in Headers */,
 				6E4116562538C0B300FEE4E8 /* UARemoteDataProvider.h in Headers */,
@@ -6949,6 +6967,7 @@
 				6E4114F42538C0AA00FEE4E8 /* UAComponent.h in Headers */,
 				6E4116682538C0B300FEE4E8 /* UALocationProvider.h in Headers */,
 				6E4116542538C0B300FEE4E8 /* UAChannelNotificationCenterEvents.h in Headers */,
+				A6EEE4C625559E580034A42C /* UASearchEventTemplate.h in Headers */,
 				6E4115FC2538C0B000FEE4E8 /* UABeveledLoadingIndicator.h in Headers */,
 				6E4119082538C1FF00FEE4E8 /* UAChannelRegistrar+Internal.h in Headers */,
 				6E4115E82538C0B000FEE4E8 /* UAPadding.h in Headers */,
@@ -7916,6 +7935,7 @@
 				6E4118432538C1FC00FEE4E8 /* UAWalletAction.m in Sources */,
 				6E4118F72538C1FF00FEE4E8 /* UARemoteDataStorePayload.m in Sources */,
 				6E4118FB2538C1FF00FEE4E8 /* UAJSONValueMatcher.m in Sources */,
+				A6EEE4FB25559EA00034A42C /* UASearchEventTemplate.m in Sources */,
 				6E4118E72538C1FE00FEE4E8 /* NSManagedContext+UAAdditions.m in Sources */,
 				6E411AA72538C20500FEE4E8 /* UARuntimeConfig.m in Sources */,
 				6E4118332538C1FC00FEE4E8 /* UADeviceRegistrationEvent.m in Sources */,
@@ -8326,6 +8346,7 @@
 				6E411B092538C20700FEE4E8 /* UAURLAllowList.m in Sources */,
 				6E4119992538C20100FEE4E8 /* UAOpenExternalURLAction.m in Sources */,
 				6EE7722A238F172900E79944 /* UAInAppMessageButtonStyle.m in Sources */,
+				A6EEE51625559EA50034A42C /* UASearchEventTemplate.m in Sources */,
 				6EE7722B238F172900E79944 /* UAInAppMessageMediaStyle.m in Sources */,
 				6E4119452538C20000FEE4E8 /* UAURLActionPredicate.m in Sources */,
 				6E411A4D2538C20400FEE4E8 /* UATagGroupsMutation.m in Sources */,
@@ -8476,6 +8497,7 @@
 				6E4118422538C1FC00FEE4E8 /* UAWalletAction.m in Sources */,
 				6E4118F62538C1FF00FEE4E8 /* UARemoteDataStorePayload.m in Sources */,
 				6E4118FA2538C1FF00FEE4E8 /* UAJSONValueMatcher.m in Sources */,
+				A6EEE51525559EA50034A42C /* UASearchEventTemplate.m in Sources */,
 				6E4118E62538C1FE00FEE4E8 /* NSManagedContext+UAAdditions.m in Sources */,
 				6E411AA62538C20500FEE4E8 /* UARuntimeConfig.m in Sources */,
 				6E4118322538C1FC00FEE4E8 /* UADeviceRegistrationEvent.m in Sources */,
@@ -8686,6 +8708,7 @@
 				DF0C1B29244E562B0011ACCA /* UAAirshipBaseTest.m in Sources */,
 				6E598D862003F014005B234B /* UAInAppMessageResolutionEventTest.m in Sources */,
 				6EE6529122A7E2DA00F7D54D /* UAInAppMessageHTMLStyleTest.m in Sources */,
+				A604DB7E25597F85001ADCA8 /* UASearchEventTemplateTest.m in Sources */,
 				CC64F1031D8B781C009CEF27 /* UAInboxMessageListTest.m in Sources */,
 				CC64F1201D8B781C009CEF27 /* UAScheduleActionTests.m in Sources */,
 				DFB1EA2022275AF100CDBD7E /* UAInAppMessageAssetsTest.m in Sources */,
@@ -8809,6 +8832,7 @@
 				6E4118442538C1FC00FEE4E8 /* UAWalletAction.m in Sources */,
 				6E4118F82538C1FF00FEE4E8 /* UARemoteDataStorePayload.m in Sources */,
 				6E4118FC2538C1FF00FEE4E8 /* UAJSONValueMatcher.m in Sources */,
+				A6EEE50825559EA40034A42C /* UASearchEventTemplate.m in Sources */,
 				6E4118E82538C1FE00FEE4E8 /* NSManagedContext+UAAdditions.m in Sources */,
 				6E411AA82538C20500FEE4E8 /* UARuntimeConfig.m in Sources */,
 				6E4118342538C1FC00FEE4E8 /* UADeviceRegistrationEvent.m in Sources */,

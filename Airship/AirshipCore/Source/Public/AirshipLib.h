@@ -99,6 +99,7 @@
 #import "UARequestSession.h"
 #import "UARetailEventTemplate.h"
 #import "UARuntimeConfig.h"
+#import "UASearchEventTemplate.h"
 #import "UASemaphore.h"
 #import "UAShareAction.h"
 #import "UASystemVersion.h"
