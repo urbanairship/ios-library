@@ -367,6 +367,7 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
         case UAScheduleTypeActions:
             return UAAutomationScheduleReadyResultContinue;
 
+        case UAScheduleTypeDeferred:
         case UAScheduleTypeInAppMessage:
             return [self.inAppMessageManager isReadyToDisplay:schedule.identifier];
 
@@ -391,6 +392,7 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
             break;
         }
 
+        case UAScheduleTypeDeferred:
         case UAScheduleTypeInAppMessage: {
             [self.inAppMessageManager displayMessageWithScheduleID:schedule.identifier completionHandler:completionHandler];
             break;

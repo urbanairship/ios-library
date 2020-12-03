@@ -575,12 +575,48 @@
     XCTAssertEqual(UAAutomationScheduleReadyResultContinue, result);
 }
 
+- (void)testIsMessageReadyDeferred {
+    UASchedule *schedule = [UADeferredSchedule scheduleWithDeferredData:[UAScheduleDeferredData deferredDataWithURL:[NSURL URLWithString:@"http:/airship.com"]
+                                                                                                 retriableOnTimeout:YES]
+                                                           builderBlock:^(UAScheduleBuilder * _Nonnull builder) {
+        builder.triggers = @[[UAScheduleTrigger foregroundTriggerWithCount:1]];
+        builder.identifier = @"schedule ID";
+    }];
+
+    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
+    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:schedule];
+
+    [[[self.mockInAppMessageManager expect] andReturnValue:@(UAAutomationScheduleReadyResultContinue)] isReadyToDisplay:@"schedule ID"];
+
+    UAAutomationScheduleReadyResult result = [self.engineDelegate isScheduleReadyToExecute:schedule];
+
+    XCTAssertEqual(UAAutomationScheduleReadyResultContinue, result);
+}
+
 - (void)testIsMessageNotReady {
     UAInAppMessage *message = [UAInAppMessage messageWithBuilderBlock:^(UAInAppMessageBuilder *builder) {
         builder.displayContent = [UAInAppMessageCustomDisplayContent displayContentWithValue:@{}];
     }];
 
     UASchedule *schedule = [UAInAppMessageSchedule scheduleWithMessage:message builderBlock:^(UAScheduleBuilder *builder) {
+        builder.triggers = @[[UAScheduleTrigger foregroundTriggerWithCount:1]];
+        builder.identifier = @"schedule ID";
+    }];
+
+    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
+    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:schedule];
+
+    [[[self.mockInAppMessageManager expect] andReturnValue:@(UAAutomationScheduleReadyResultNotReady)] isReadyToDisplay:@"schedule ID"];
+
+    UAAutomationScheduleReadyResult result = [self.engineDelegate isScheduleReadyToExecute:schedule];
+
+    XCTAssertEqual(UAAutomationScheduleReadyResultNotReady, result);
+}
+
+- (void)testIsMessageNotReadyDeferred {
+    UASchedule *schedule = [UADeferredSchedule scheduleWithDeferredData:[UAScheduleDeferredData deferredDataWithURL:[NSURL URLWithString:@"http:/airship.com"]
+                                                                                                 retriableOnTimeout:YES]
+                                                           builderBlock:^(UAScheduleBuilder * builder) {
         builder.triggers = @[[UAScheduleTrigger foregroundTriggerWithCount:1]];
         builder.identifier = @"schedule ID";
     }];
@@ -630,6 +666,32 @@
     }];
 
     UASchedule *schedule = [UAInAppMessageSchedule scheduleWithMessage:message builderBlock:^(UAScheduleBuilder *builder) {
+        builder.triggers = @[[UAScheduleTrigger foregroundTriggerWithCount:1]];
+        builder.identifier = @"schedule ID";
+    }];
+
+    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
+    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:schedule];
+
+    [[self.mockInAppMessageManager expect] displayMessageWithScheduleID:@"schedule ID" completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
+        void(^completionBlock)(void) = obj;
+        completionBlock();
+        return YES;
+    }]];
+
+    XCTestExpectation *executeFinished = [self expectationWithDescription:@"execute finished"];
+    [self.engineDelegate executeSchedule:schedule completionHandler:^{
+        [executeFinished fulfill];
+    }];
+
+    [self waitForTestExpectations];
+    [self.mockInAppMessageManager verify];
+}
+
+- (void)testExecuteDeferred {
+    UASchedule *schedule = [UADeferredSchedule scheduleWithDeferredData:[UAScheduleDeferredData deferredDataWithURL:[NSURL URLWithString:@"http:/airship.com"]
+                                                                                                 retriableOnTimeout:YES]
+                                                           builderBlock:^(UAScheduleBuilder * _Nonnull builder) {
         builder.triggers = @[[UAScheduleTrigger foregroundTriggerWithCount:1]];
         builder.identifier = @"schedule ID";
     }];
