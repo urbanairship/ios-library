@@ -71,6 +71,14 @@
     XCTAssertTrue([URLAllowList isAllowed:[NSURL URLWithString:@"https://*.youtube.com"] scope:UAURLAllowListScopeOpenURL]);
     XCTAssertFalse([URLAllowList isAllowed:[NSURL URLWithString:@"https://*.youtube.com"] scope:UAURLAllowListScopeJavaScriptInterface]);
     XCTAssertFalse([URLAllowList isAllowed:[NSURL URLWithString:@"https://*.youtube.com"] scope:UAURLAllowListScopeAll]);
+
+    // sms
+    XCTAssertTrue([URLAllowList isAllowed:[NSURL URLWithString:@"sms:+18675309?body=Hi%20you"] scope:UAURLAllowListScopeOpenURL]);
+    XCTAssertTrue([URLAllowList isAllowed:[NSURL URLWithString:@"sms:8675309"] scope:UAURLAllowListScopeOpenURL]);
+
+    // email
+    XCTAssertTrue([URLAllowList isAllowed:[NSURL URLWithString:@"mailto:name@example.com?subject=The%20subject%20of%20the%20mail"] scope:UAURLAllowListScopeOpenURL]);
+    XCTAssertTrue([URLAllowList isAllowed:[NSURL URLWithString:@"mailto:name@example.com"] scope:UAURLAllowListScopeOpenURL]);
 }
 
 /**
@@ -79,9 +87,6 @@
 - (void)testInvalidPatterns {
     // Not a URL
     XCTAssertFalse([self.URLAllowList addEntry:@"not a url"]);
-
-    // Missing /
-    XCTAssertFalse([self.URLAllowList addEntry:@"*:*"]);
 
     // Missing schemes
     XCTAssertFalse([self.URLAllowList addEntry:@"www.urbanairship.com"]);
@@ -93,13 +98,6 @@
     // Invalid hosts
     XCTAssertFalse([self.URLAllowList addEntry:@"*://what*"]);
     XCTAssertFalse([self.URLAllowList addEntry:@"*://*what"]);
-
-    // Missing host
-    XCTAssertFalse([self.URLAllowList addEntry:@"*://"]);
-    XCTAssertFalse([self.URLAllowList addEntry:@"*.://"]);
-
-    // Missing file path
-    XCTAssertFalse([self.URLAllowList addEntry:@"file://"]);
 }
 
 /**
@@ -229,6 +227,7 @@
     XCTAssertTrue([self.URLAllowList isAllowed:[NSURL URLWithString:@"https://hi.urbanairship.com/path"]]);
     XCTAssertTrue([self.URLAllowList isAllowed:[NSURL URLWithString:@"http://urbanairship.com"]]);
     XCTAssertTrue([self.URLAllowList isAllowed:[NSURL URLWithString:@"cool.story://urbanairship.com"]]);
+    XCTAssertTrue([self.URLAllowList isAllowed:[NSURL URLWithString:@"sms:+18664504185?body=Hi"]]);
 }
 
 /**
@@ -423,6 +422,16 @@
     XCTAssertTrue([self.URLAllowList isAllowed:matchingURLToReject scope:scope]);
     XCTAssertTrue([self.URLAllowList isAllowed:matchingURLToAccept scope:scope]);
     XCTAssertFalse([self.URLAllowList isAllowed:nonMatchingURL scope:scope]);
+}
+
+- (void)testSmsPath {
+    XCTAssertTrue([self.URLAllowList addEntry:@"sms:86753*9*"]);
+
+    XCTAssertFalse([self.URLAllowList isAllowed:[NSURL URLWithString:@"sms:86753"]]);
+    XCTAssertFalse([self.URLAllowList isAllowed:[NSURL URLWithString:@"sms:867530"]]);
+
+    XCTAssertTrue([self.URLAllowList isAllowed:[NSURL URLWithString:@"sms:86753191"]]);
+    XCTAssertTrue([self.URLAllowList isAllowed:[NSURL URLWithString:@"sms:8675309"]]);
 }
 
 @end
