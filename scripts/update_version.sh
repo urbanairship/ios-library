@@ -17,4 +17,4 @@ sed -i '' "s/\(^AIRSHIP_VERSION *= *\)\".*\"/\1\"$VERSION\"/g" $ROOT_PATH/Airshi
 sed -i '' "s/\CURRENT_PROJECT_VERSION.*/CURRENT_PROJECT_VERSION = $VERSION/g" $ROOT_PATH/Airship/AirshipConfig.xcconfig
 
 # UAirshipVersion.m
-sed -i '' "s/\(versionString *= *@\)\".*\"/\1\"$VERSION\"/g" $ROOT_PATH/Airship/AirshipCore/Source/common/UAirshipVersion.m
+sed -i '' "s/\(versionString *= *@\)\".*\"/\1\"$VERSION\"/g" $ROOT_PATH/Airship/AirshipCore/Source/Internal/UAirshipVersion.m
