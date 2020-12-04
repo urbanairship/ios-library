@@ -6,6 +6,7 @@
 #import "UAAPIClient.h"
 #import "UAAuthTokenManager+Internal.h"
 #import "UADispatcher.h"
+#import "UAStateOverrides+Internal.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -46,11 +47,13 @@ extern NSString * const UADeferredScheduleAPIClientErrorDomain;
  * @param session The request session.
  * @param dispatcher The serial dispatcher.
  * @param authManager The auth manager.
+ * @param stateOverridesProvider The state overrides provider block.
  */
 + (instancetype)clientWithConfig:(UARuntimeConfig *)config
                          session:(UARequestSession *)session
                       dispatcher:(UADispatcher *)dispatcher
-                     authManager:(UAAuthTokenManager *)authManager;
+                     authManager:(UAAuthTokenManager *)authManager
+          stateOverridesProvider:(UAStateOverrides * (^)(void))stateOverridesProvider;
 
 /**
  * UADeferredScheduleAPIClient class factory method.

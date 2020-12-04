@@ -5,6 +5,8 @@
 #import "UAScheduleTrigger+Internal.h"
 #import "NSDictionary+UAAdditions.h"
 #import "UAInAppMessage+Internal.h"
+#import "UAAirshipAutomationCoreImport.h"
+#import "UAStateOverrides+Internal.h"
 
 #define kUADeferredScheduleAPIClientPlatformKey @"platform"
 #define kUADeferredScheduleAPIClientChannelIDKey @"channel_id"
@@ -19,6 +21,12 @@
 #define kUADeferredScheduleAPIClientResponseTypeKey @"type"
 #define kUADeferredScheduleAPIClientMessageKey @"message"
 #define kUADeferredScheduleAPIClientInAppMessageType @"in_app_message"
+#define kUADeferredScheduleAPIClientStateOverridesKey @"state_overrides"
+#define kUADeferredScheduleAPIClientAppVersionKey @"app_version"
+#define kUADeferredScheduleAPIClientSDKVersionKey @"sdk_version"
+#define kUADeferredScheduleAPIClientNotificationOptInKey @"notification_opt_in"
+#define kUADeferredScheduleAPIClientLocaleLanguageKey @"locale_language"
+#define kUADeferredScheduleAPIClientLocaleCountryKey @"locale_country"
 
 NSString * const UADeferredScheduleAPIClientErrorDomain = @"com.urbanairship.deferred_api_client";
 
@@ -34,6 +42,7 @@ NSString * const UADeferredScheduleAPIClientErrorDomain = @"com.urbanairship.def
 @interface UADeferredScheduleAPIClient ()
 @property(nonatomic, strong) UAAuthTokenManager *authManager;
 @property(nonatomic, strong) UADispatcher *requestDispatcher;
+@property(nonatomic, copy) UAStateOverrides * (^stateOverridesProvider)(void);
 @end
 
 @implementation UADeferredScheduleAPIClient
@@ -41,13 +50,15 @@ NSString * const UADeferredScheduleAPIClientErrorDomain = @"com.urbanairship.def
 - (instancetype)initWithConfig:(UARuntimeConfig *)config
                        session:(UARequestSession *)session
                     dispatcher:(UADispatcher *)dispatcher
-                   authManager:(UAAuthTokenManager *)authManager {
+                   authManager:(UAAuthTokenManager *)authManager
+        stateOverridesProvider:(nonnull UAStateOverrides * (^)(void))stateOverridesProvider {
 
     self = [super initWithConfig:(UARuntimeConfig *)config session:(UARequestSession *)session];
 
     if (self) {
         self.authManager = authManager;
         self.requestDispatcher = dispatcher;
+        self.stateOverridesProvider = stateOverridesProvider;
     }
 
     return self;
@@ -57,18 +68,33 @@ NSString * const UADeferredScheduleAPIClientErrorDomain = @"com.urbanairship.def
     return [[self alloc] initWithConfig:config
                                 session:[UARequestSession sessionWithConfig:config]
                              dispatcher:[UADispatcher serialDispatcher]
-                            authManager:authManager];
+                            authManager:authManager
+                 stateOverridesProvider:[self defaultStateOverridesProvider]];
 }
 
 + (instancetype)clientWithConfig:(UARuntimeConfig *)config
                          session:(UARequestSession *)session
                       dispatcher:(UADispatcher *)dispatcher
-                     authManager:(nonnull UAAuthTokenManager *)authManager {
+                     authManager:(nonnull UAAuthTokenManager *)authManager
+          stateOverridesProvider:(nonnull UAStateOverrides * (^)(void))stateOverridesProvider {
 
     return [[self alloc] initWithConfig:config
                                 session:session
                              dispatcher:dispatcher
-                            authManager:authManager];
+                            authManager:authManager
+                 stateOverridesProvider:stateOverridesProvider];
+}
+
++ (UAStateOverrides * (^)(void))defaultStateOverridesProvider {
+    return ^{
+        BOOL optIn = [UAirship push].userPushNotificationsEnabled && [UAirship push].authorizedNotificationSettings != UAAuthorizedNotificationSettingsNone;
+
+        return [UAStateOverrides stateOverridesWithAppVersion:[UAirshipVersion get]
+                                                   sdkVersion:[UAirshipVersion get]
+                                               localeLanguage:[UAirship shared].locale.currentLocale.languageCode
+                                                localeCountry:[UAirship shared].locale.currentLocale.countryCode
+                                            notificationOptIn:optIn];
+    };;
 }
 
 - (void)resolveURL:(NSURL *)URL
@@ -252,6 +278,17 @@ attributeOverrides:(UAAttributePendingMutations *)attributeOverrides
     if (attributeMutationsPayload.count) {
         payload[kUADeferredScheduleAPIClientAttributeOverridesKey] = attributeMutationsPayload;
     }
+
+    UAStateOverrides *stateOverrides = self.stateOverridesProvider();
+
+    NSMutableDictionary *stateOverridesPayload = [NSMutableDictionary dictionary];
+    [stateOverridesPayload setValue:stateOverrides.sdkVersion forKey:kUADeferredScheduleAPIClientSDKVersionKey];
+    [stateOverridesPayload setValue:stateOverrides.appVersion forKey:kUADeferredScheduleAPIClientAppVersionKey];
+    [stateOverridesPayload setValue:stateOverrides.localeCountry forKey:kUADeferredScheduleAPIClientLocaleCountryKey];
+    [stateOverridesPayload setValue:stateOverrides.localeLanguage forKey:kUADeferredScheduleAPIClientLocaleLanguageKey];
+    [stateOverridesPayload setValue:@(stateOverrides.notificationOptIn) forKey:kUADeferredScheduleAPIClientNotificationOptInKey];
+
+    payload[kUADeferredScheduleAPIClientStateOverridesKey] = stateOverridesPayload;
 
     return [UAJSONSerialization dataWithJSONObject:payload
                                            options:0

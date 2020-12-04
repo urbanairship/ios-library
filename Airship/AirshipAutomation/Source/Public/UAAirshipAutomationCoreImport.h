@@ -72,4 +72,5 @@
 #import "UANamedUser.h"
 #import "UATagGroupsMutation.h"
 #import "UAAttributePendingMutations.h"
+#import "UALocaleManager.h"
 #endif

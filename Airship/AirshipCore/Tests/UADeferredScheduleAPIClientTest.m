@@ -20,7 +20,18 @@
     self.client = [UADeferredScheduleAPIClient clientWithConfig:self.config
                                                         session:self.mockSession
                                                      dispatcher:[UATestDispatcher testDispatcher]
-                                                    authManager:self.mockAuthManager];
+                                                    authManager:self.mockAuthManager
+                                         stateOverridesProvider:[self testStateOverridesProvider]];
+}
+
+- (UAStateOverrides * (^)(void))testStateOverridesProvider {
+    return ^ {
+        return [UAStateOverrides stateOverridesWithAppVersion:@"1.2.3"
+                                                   sdkVersion:@"2.3.4"
+                                               localeLanguage:@"en"
+                                                localeCountry:@"US"
+                                            notificationOptIn:YES];
+    };
 }
 
 - (void)testResolveURL {
@@ -90,6 +101,12 @@
         XCTAssertEqualObjects(body[@"tag_overrides"], expectedOverrides);
 
         XCTAssertEqualObjects(body[@"attribute_overrides"], attributeOverrides.mutationsPayload);
+
+        id expectedStateOverrides = @{@"app_version" : @"1.2.3", @"sdk_version" : @"2.3.4",
+                                      @"locale_language" : @"en", @"locale_country": @"US",
+                                      @"notification_opt_in" : @(YES)};
+
+        XCTAssertEqualObjects(body[@"state_overrides"], expectedStateOverrides);
 
         [sessionFinished fulfill];
 
