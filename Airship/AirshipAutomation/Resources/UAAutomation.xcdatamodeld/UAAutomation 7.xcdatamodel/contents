@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="17192" systemVersion="19G2021" minimumToolsVersion="Automatic" sourceLanguage="Objective-C" userDefinedModelVersionIdentifier="">
+    <entity name="UAScheduleData" representedClassName="UAScheduleData" elementID="UAActionScheduleData" syncable="YES">
+        <attribute name="audience" optional="YES" attributeType="String"/>
+        <attribute name="campaigns" optional="YES" attributeType="Transformable" valueTransformerName="UANSDictionaryValueTransformer"/>
+        <attribute name="data" optional="YES" attributeType="String" elementID="actions"/>
+        <attribute name="dataVersion" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="delayedExecutionDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="editGracePeriod" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="end" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="executionState" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO" elementID="isPendingExecution"/>
+        <attribute name="executionStateChangeDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="group" optional="YES" attributeType="String"/>
+        <attribute name="identifier" optional="YES" attributeType="String"/>
+        <attribute name="interval" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="limit" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="metadata" optional="YES" attributeType="String"/>
+        <attribute name="priority" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="start" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="triggerContext" optional="YES" attributeType="Transformable" valueTransformerName="UAScheduleTriggerContextTransformer"/>
+        <attribute name="triggeredCount" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="type" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <relationship name="delay" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="UAScheduleDelayData" inverseName="schedule" inverseEntity="UAScheduleDelayData"/>
+        <relationship name="triggers" toMany="YES" deletionRule="Cascade" destinationEntity="UAScheduleTriggerData" inverseName="schedule" inverseEntity="UAScheduleTriggerData"/>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="identifier"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
+    </entity>
+    <entity name="UAScheduleDelayData" representedClassName="UAScheduleDelayData" syncable="YES">
+        <attribute name="appState" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="regionID" optional="YES" attributeType="String"/>
+        <attribute name="screens" optional="YES" attributeType="String" elementID="screen"/>
+        <attribute name="seconds" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="NO"/>
+        <relationship name="cancellationTriggers" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="UAScheduleTriggerData" inverseName="delay" inverseEntity="UAScheduleTriggerData"/>
+        <relationship name="schedule" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="UAScheduleData" inverseName="delay" inverseEntity="UAScheduleData"/>
+    </entity>
+    <entity name="UAScheduleTriggerData" representedClassName="UAScheduleTriggerData" syncable="YES">
+        <attribute name="goal" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="NO"/>
+        <attribute name="goalProgress" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="NO"/>
+        <attribute name="predicateData" optional="YES" attributeType="Binary" valueTransformerName="UAJSONPredicateTransformer"/>
+        <attribute name="start" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="type" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO"/>
+        <relationship name="delay" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="UAScheduleDelayData" inverseName="cancellationTriggers" inverseEntity="UAScheduleDelayData"/>
+        <relationship name="schedule" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="UAScheduleData" inverseName="triggers" inverseEntity="UAScheduleData"/>
+    </entity>
+    <elements>
+        <element name="UAScheduleData" positionX="-540" positionY="-63" width="128" height="358"/>
+        <element name="UAScheduleDelayData" positionX="-234" positionY="-27" width="128" height="133"/>
+        <element name="UAScheduleTriggerData" positionX="-191" positionY="378" width="128" height="148"/>
+    </elements>
+</model>

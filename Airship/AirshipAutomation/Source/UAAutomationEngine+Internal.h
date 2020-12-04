@@ -121,6 +121,13 @@ typedef NS_ENUM(NSInteger, UAAutomationScheduleReadyResult) {
  */
 - (void)onNewSchedule:(nonnull UASchedule *)schedule;
 
+
+/**
+ * Called when a schedule was interrupted by the app terminating. Called on next app init.
+ * @param schedule The schedule.
+ */
+- (void)onExecutionInterrupted:(nonnull UASchedule *)schedule;
+
 @end
 
 

@@ -32,7 +32,6 @@ NSUInteger const UAInAppMessageNameLimit = 100;
         self.extras = message.extras;
         self.actions = message.actions;
         self.source = message.source;
-        self.campaigns = message.campaigns;
         self.displayBehavior = message.displayBehavior;
         self.isReportingEnabled = message.isReportingEnabled;
         self.renderedLocale = message.renderedLocale;
@@ -71,7 +70,6 @@ NSUInteger const UAInAppMessageNameLimit = 100;
 @end
 
 @implementation UAInAppMessage
-@synthesize campaigns = _campaigns;
 @synthesize source = _source;
 @synthesize renderedLocale = _renderedLocale;
 
@@ -82,7 +80,6 @@ NSString *const UAInAppMessageDisplayTypeKey = @"display_type";
 NSString *const UAInAppMessageDisplayContentKey = @"display";
 NSString *const UAInAppMessageExtraKey = @"extra";
 NSString *const UAInAppMessageActionsKey = @"actions";
-NSString *const UAInAppMessageCampaignsKey = @"campaigns";
 NSString *const UAInAppMessageSourceKey = @"source";
 NSString *const UAInAppMessageNameKey = @"name";
 NSString *const UAInAppMessageRenderedLocaleKey = @"rendered_locale";
@@ -211,22 +208,6 @@ NSString *const UAInAppMessageSourceLegacyPushValue = @"legacy-push";
         }
 
         builder.actions = actions;
-    }
-
-    id campaigns = json[UAInAppMessageCampaignsKey];
-    if (campaigns) {
-        if (![campaigns isKindOfClass:[NSDictionary class]]) {
-            if (error) {
-                NSString *msg = [NSString stringWithFormat:@"Message campagins must be a dictionary. Invalid value: %@", campaigns];
-                *error =  [NSError errorWithDomain:UAInAppMessageErrorDomain
-                                              code:UAInAppMessageErrorCodeInvalidJSON
-                                          userInfo:@{NSLocalizedDescriptionKey:msg}];
-            }
-
-            return nil;
-        }
-
-        builder.campaigns = campaigns;
     }
     
     id sourceStr = json[UAInAppMessageSourceKey];
@@ -376,7 +357,6 @@ NSString *const UAInAppMessageSourceLegacyPushValue = @"legacy-push";
         self.actions = builder.actions;
         self.displayBehavior = builder.displayBehavior;
         self.isReportingEnabled = builder.isReportingEnabled;
-        _campaigns = builder.campaigns;
         _source = builder.source;
         _renderedLocale = builder.renderedLocale;
     }
@@ -386,10 +366,6 @@ NSString *const UAInAppMessageSourceLegacyPushValue = @"legacy-push";
 
 - (UAInAppMessageSource)source {
     return _source;
-}
-
-- (NSDictionary *)campaigns {
-    return _campaigns;
 }
 
 - (NSDictionary<NSString *, NSString *> *)renderedLocale {
@@ -456,7 +432,6 @@ NSString *const UAInAppMessageSourceLegacyPushValue = @"legacy-push";
     [data setValue:[self.displayContent toJSON] forKey:UAInAppMessageDisplayContentKey];
     [data setValue:self.extras forKey:UAInAppMessageExtraKey];
     [data setValue:self.actions forKey:UAInAppMessageActionsKey];
-    [data setValue:self.campaigns forKey:UAInAppMessageCampaignsKey];
     [data setValue:self.renderedLocale forKey:UAInAppMessageRenderedLocaleKey];
 
     return [data copy];
@@ -477,10 +452,6 @@ NSString *const UAInAppMessageSourceLegacyPushValue = @"legacy-push";
     }
 
     if (self.actions != message.actions && ![self.actions isEqualToDictionary:message.actions]) {
-        return NO;
-    }
-
-    if (self.campaigns != message.campaigns && ![self.campaigns isEqualToDictionary:message.campaigns]) {
         return NO;
     }
 
@@ -518,7 +489,6 @@ NSString *const UAInAppMessageSourceLegacyPushValue = @"legacy-push";
     result = 31 * result + [self.displayContent hash];
     result = 31 * result + [self.extras hash];
     result = 31 * result + [self.actions hash];
-    result = 31 * result + [self.campaigns hash];
     result = 31 * result + self.source;
     result = 31 * result + [self.displayBehavior hash];
     result = 31 * result + self.isReportingEnabled;

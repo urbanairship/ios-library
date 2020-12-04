@@ -47,10 +47,6 @@ typedef NS_ENUM(NSInteger, UAInAppMessageSource) {
  */
 @property(nonatomic, strong, nullable) NSDictionary<NSString *, NSString *> *renderedLocale;
 
-/**
- * In-app message campaigns info.
- */
-@property (nonatomic, copy) NSDictionary *campaigns;
 
 @end
 
@@ -81,11 +77,6 @@ extern NSString *const UAInAppMessageDisplayTypeCustomValue;
  * In-app message source.
  */
 @property (nonatomic, readonly) UAInAppMessageSource source;
-
-/**
- * In-app message campaigns info.
- */
-@property (nonatomic, readonly) NSDictionary *campaigns;
 
 /**
  * The message's rendered locale.

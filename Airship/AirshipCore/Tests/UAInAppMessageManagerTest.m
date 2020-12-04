@@ -109,7 +109,10 @@ NSString * const UAInAppMessageManagerTestScheduleID = @"schedule ID";
     }] assetsForScheduleID:UAInAppMessageManagerTestScheduleID completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare should be finished"];
-    [self.manager prepareMessage:self.message scheduleID:UAInAppMessageManagerTestScheduleID completionHandler:^(UAAutomationSchedulePrepareResult result) {
+    [self.manager prepareMessage:self.message
+                      scheduleID:UAInAppMessageManagerTestScheduleID
+                       campaigns:@{@"categories": @[@"neat"]}
+               completionHandler:^(UAAutomationSchedulePrepareResult result) {
         XCTAssertEqual(UAAutomationSchedulePrepareResultContinue, result);
         [prepareFinished fulfill];
     }];
@@ -131,7 +134,10 @@ NSString * const UAInAppMessageManagerTestScheduleID = @"schedule ID";
     [[[self.mockDelegate expect] andReturn:nil] extendMessage:self.message];
 
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare should be finished"];
-    [self.manager prepareMessage:self.message scheduleID:UAInAppMessageManagerTestScheduleID completionHandler:^(UAAutomationSchedulePrepareResult result) {
+    [self.manager prepareMessage:self.message
+                      scheduleID:UAInAppMessageManagerTestScheduleID
+                       campaigns:@{@"categories": @[@"neat"]}
+               completionHandler:^(UAAutomationSchedulePrepareResult result) {
         XCTAssertEqual(UAAutomationSchedulePrepareResultPenalize, result);
         [prepareFinished fulfill];
     }];
@@ -177,7 +183,10 @@ NSString * const UAInAppMessageManagerTestScheduleID = @"schedule ID";
     }] assetsForScheduleID:UAInAppMessageManagerTestScheduleID completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare should be finished"];
-    [self.manager prepareMessage:self.message scheduleID:UAInAppMessageManagerTestScheduleID completionHandler:^(UAAutomationSchedulePrepareResult result) {
+    [self.manager prepareMessage:self.message
+                      scheduleID:UAInAppMessageManagerTestScheduleID
+                       campaigns:nil
+               completionHandler:^(UAAutomationSchedulePrepareResult result) {
         XCTAssertEqual(UAAutomationSchedulePrepareResultCancel, result);
         [prepareFinished fulfill];
     }];
@@ -191,7 +200,10 @@ NSString * const UAInAppMessageManagerTestScheduleID = @"schedule ID";
 
 - (void)testPrepareNoFactory {
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare should be finished"];
-    [self.manager prepareMessage:self.message scheduleID:UAInAppMessageManagerTestScheduleID completionHandler:^(UAAutomationSchedulePrepareResult result) {
+    [self.manager prepareMessage:self.message
+                      scheduleID:UAInAppMessageManagerTestScheduleID
+                       campaigns:@{@"categories": @[@"neat"]}
+               completionHandler:^(UAAutomationSchedulePrepareResult result) {
         XCTAssertEqual(UAAutomationSchedulePrepareResultPenalize, result);
         [prepareFinished fulfill];
     }];
@@ -205,7 +217,10 @@ NSString * const UAInAppMessageManagerTestScheduleID = @"schedule ID";
     } forDisplayType:UAInAppMessageDisplayTypeCustom];
 
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare should be finished"];
-    [self.manager prepareMessage:self.message scheduleID:UAInAppMessageManagerTestScheduleID completionHandler:^(UAAutomationSchedulePrepareResult result) {
+    [self.manager prepareMessage:self.message
+                      scheduleID:UAInAppMessageManagerTestScheduleID
+                       campaigns:@{@"categories": @[@"neat"]}
+               completionHandler:^(UAAutomationSchedulePrepareResult result) {
         XCTAssertEqual(UAAutomationSchedulePrepareResultPenalize, result);
         [prepareFinished fulfill];
     }];
@@ -286,3 +301,4 @@ NSString * const UAInAppMessageManagerTestScheduleID = @"schedule ID";
 }
 
 @end
+

@@ -30,7 +30,6 @@
                   @"extra": @{@"foo":@"baz", @"baz":@"foo"},
                   @"actions": @{@"cool":@"story"},
                   @"source": @"remote-data",
-                  @"campaigns": @{ @"some": @"campaign info"},
                   @"reporting_enabled": @NO,
                   @"display_behavior":@"default",
                   @"rendered_locale" : self.renderedLocale
@@ -48,7 +47,6 @@
     XCTAssertEqualObjects(@"baz", messageFromOriginalJSON.extras[@"foo"]);
     XCTAssertEqualObjects(@"foo", messageFromOriginalJSON.extras[@"baz"]);
     XCTAssertEqualObjects(@"story", messageFromOriginalJSON.actions[@"cool"]);
-    XCTAssertEqualObjects(@{ @"some": @"campaign info"}, messageFromOriginalJSON.campaigns);
     XCTAssertEqualObjects(UAInAppMessageDisplayBehaviorDefault, messageFromOriginalJSON.displayBehavior);
     XCTAssertEqualObjects(self.renderedLocale, messageFromOriginalJSON.renderedLocale);
 
@@ -85,7 +83,6 @@
     XCTAssertEqualObjects(nil,messageFromOriginalJSON.extras[@"foo"]);
     XCTAssertEqualObjects(nil,messageFromOriginalJSON.extras[@"baz"]);
     XCTAssertEqualObjects(nil,messageFromOriginalJSON.actions[@"cool"]);
-    XCTAssertEqualObjects(nil, messageFromOriginalJSON.campaigns);
     XCTAssertEqual(UAInAppMessageSourceAppDefined, messageFromOriginalJSON.source);
 
     NSDictionary *toJSON = [messageFromOriginalJSON toJSON];
@@ -171,7 +168,6 @@
     XCTAssertEqualObjects(newMessage.extras, message.extras);
     XCTAssertEqualObjects(newMessage.actions, message.actions);
     XCTAssertEqual(newMessage.source, message.source);
-    XCTAssertEqualObjects(newMessage.campaigns, message.campaigns);
     XCTAssertEqualObjects(((UAInAppMessageCustomDisplayContent *)newMessage.displayContent).value, @{@"neat" :@"rad"});
 }
 

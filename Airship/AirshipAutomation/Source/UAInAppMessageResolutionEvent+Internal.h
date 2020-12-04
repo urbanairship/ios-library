@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-#import "UAInAppMessage.h"
+#import "UAInAppMessage+Internal.h"
 #import "UAInAppMessageResolution.h"
 #import "UAAirshipAutomationCoreImport.h"
 
@@ -33,15 +33,17 @@ NS_ASSUME_NONNULL_BEGIN
  * Creates a resolution event.
  *
  * @param messageID The message ID.
- * @param message The in-app message.
+ * @param source The in-app message source.
  * @param resolution The in-app message resolution.
  * @param displayTime The amount of time the message was displayed.
+ * @param campaigns The campaigns info.
  * @return The resolution event.
  */
 + (instancetype)eventWithMessageID:(NSString *)messageID
-                           message:(UAInAppMessage *)message
+                            source:(UAInAppMessageSource)source
                         resolution:(UAInAppMessageResolution *)resolution
-                       displayTime:(NSTimeInterval)displayTime;
+                       displayTime:(NSTimeInterval)displayTime
+                         campaigns:(nullable NSDictionary *)campaigns;
 
 @end
 

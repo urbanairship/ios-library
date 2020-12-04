@@ -21,14 +21,6 @@ NS_ASSUME_NONNULL_BEGIN
                                           source:(UAInAppMessageSource)source
                                        campaigns:(nullable NSDictionary  *)campaigns;
 
-/**
- * Creates common event data for dispaly and resolution events for an in-app message event.
- * @param message The message.
- * @return In-app message event data.
- */
-+ (NSMutableDictionary *)createDataWithMessageID:(NSString *)messageID
-                                         message:(UAInAppMessage *)message;
-
 @end
 
 NS_ASSUME_NONNULL_END

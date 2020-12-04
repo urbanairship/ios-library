@@ -19,6 +19,19 @@
     XCTAssertNil(error);
     XCTAssertEqualObjects([NSURL URLWithString:@"https://neat.com"], deferred.URL);
     XCTAssertFalse(deferred.retriableOnTimeout);
+    XCTAssertEqual(UAScheduleDataDeferredTypeUnknown, deferred.type);
+}
+
+- (void)testFromJSONWithType {
+    id JSON = @{ @"url": @"https://neat.com", @"retry_on_timeout": @(NO), @"type": @"in_app_message"};
+
+    NSError *error;
+
+    UAScheduleDeferredData *deferred = [UAScheduleDeferredData deferredDataWithJSON:JSON error:&error];
+    XCTAssertNil(error);
+    XCTAssertEqualObjects([NSURL URLWithString:@"https://neat.com"], deferred.URL);
+    XCTAssertFalse(deferred.retriableOnTimeout);
+    XCTAssertEqual(UAScheduleDataDeferredTypeInAppMessage, deferred.type);
 }
 
 - (void)testFromJSONDefaultTimeout {
@@ -44,11 +57,14 @@
 }
 
 - (void)testToJSON {
-    id expectedJSON = @{ @"url": @"https://neat.com", @"retry_on_timeout": @(YES) };
+    id expectedJSON = @{ @"url": @"https://neat.com", @"retry_on_timeout": @(YES), @"type": @"in_app_message" };
 
     UAScheduleDeferredData *deferred = [UAScheduleDeferredData deferredDataWithURL:[NSURL URLWithString:@"https://neat.com"]
-                                                                retriableOnTimeout:YES];
-    XCTAssertEqualObjects(expectedJSON, [deferred toJSON]);
+                                                                retriableOnTimeout:YES
+                                                                              type:UAScheduleDataDeferredTypeInAppMessage];
+
+    id toJSON = [deferred toJSON];
+    XCTAssertEqualObjects(expectedJSON, toJSON);
 }
 
 @end

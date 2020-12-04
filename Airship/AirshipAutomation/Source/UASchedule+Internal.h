@@ -24,7 +24,7 @@ typedef NS_ENUM(NSUInteger, UAScheduleType) {
 };
 
 /**
- * Builder class for UASchedule.
+ * UASchedule extension.
  */
 @interface UASchedule ()
 
@@ -38,11 +38,29 @@ typedef NS_ENUM(NSUInteger, UAScheduleType) {
  */
 @property(nonatomic, readonly) id data;
 
+/**
+ * Campaigns info.
+ */
+@property (nonatomic, readonly) NSDictionary *campaigns;
+
 @property(nonatomic, readonly) NSString *dataJSONString;
 
 - (instancetype)initWithData:(id)data
                         type:(UAScheduleType)scheduleType
                      builder:(UAScheduleBuilder *)builder;
+
+@end
+
+
+/**
+ * UAScheduleBuilder extension
+ */
+@interface UAScheduleBuilder ()
+
+/**
+ * Campaigns info.
+ */
+@property (nonatomic, copy) NSDictionary *campaigns;
 
 @end
 

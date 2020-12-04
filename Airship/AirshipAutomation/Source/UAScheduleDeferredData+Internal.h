@@ -15,6 +15,17 @@ typedef NS_ENUM(NSUInteger, UAScheduleDeferredDataErrorCode) {
 };
 
 /**
+ * Represents the possible deferred types.
+ */
+typedef NS_ENUM(NSUInteger, UAScheduleDataDeferredType) {
+    // Unknown type.
+    UAScheduleDataDeferredTypeUnknown,
+
+    // In-App message type.
+    UAScheduleDataDeferredTypeInAppMessage,
+};
+
+/**
  * Deferred schedule data.
  */
 @interface UAScheduleDeferredData : NSObject
@@ -29,12 +40,28 @@ typedef NS_ENUM(NSUInteger, UAScheduleDeferredDataErrorCode) {
 @property(nonatomic, readonly, getter=isRetriableOnTimeout) BOOL retriableOnTimeout;
 
 /**
+ * The deferred type.
+ */
+@property(nonatomic, readonly) UAScheduleDataDeferredType type;
+
+/**
  * Factory method.
  * @param URL The URL.
  * @param retriableOnTimeout `YES` to retry on timeout, otherwise `NO`.
+ * @return A deferred data instance.
  */
 +(instancetype)deferredDataWithURL:(NSURL *)URL
                 retriableOnTimeout:(BOOL)retriableOnTimeout;
+
+/**
+ * Factory method.
+ * @param URL The URL.
+ * @param retriableOnTimeout `YES` to retry on timeout, otherwise `NO`.
+ * @param type The deferred type.
+ * @return A deferred data instance.
+ */
++(instancetype)deferredDataWithURL:(NSURL *)URL retriableOnTimeout:(BOOL)retriableOnTimeout type:(UAScheduleDataDeferredType)type;
+
 /**
  * Class factory method for constructing deferred data from JSON.
  *

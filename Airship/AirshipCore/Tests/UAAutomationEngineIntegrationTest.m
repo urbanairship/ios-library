@@ -902,6 +902,73 @@
     [self waitForTestExpectations];
 }
 
+- (void)testInterrupted {
+    // Schedule the action
+    UASchedule *schedule = [UAActionSchedule scheduleWithActions:@{} builderBlock:^(UAScheduleBuilder *builder) {
+        UAJSONValueMatcher *valueMatcher = [UAJSONValueMatcher matcherWhereStringEquals:@"purchase"];
+        UAJSONMatcher *jsonMatcher = [UAJSONMatcher matcherWithValueMatcher:valueMatcher scope:@[UACustomEventNameKey]];
+        UAJSONPredicate *predicate = [UAJSONPredicate predicateWithJSONMatcher:jsonMatcher];
+        builder.triggers = @[[UAScheduleTrigger customEventTriggerWithPredicate:predicate count:1]];
+        builder.limit = 2;
+    }];
+
+    [self.automationEngine schedule:schedule completionHandler:nil];
+
+    // When prepareSchedule:completionHandler is called on the mockDelegate call the callback
+    [[[self.mockDelegate expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:4];
+        void (^handler)(UAAutomationSchedulePrepareResult) = (__bridge void (^)(UAAutomationSchedulePrepareResult))arg;
+        handler(UAAutomationSchedulePrepareResultContinue);
+    }] prepareSchedule:[OCMArg checkWithBlock:^BOOL(id obj) {
+        UASchedule *schedule = obj;
+        return  [schedule.identifier isEqualToString:schedule.identifier];
+    }] triggerContext:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
+    // When isScheduleReadyToExecute is called on the mockDelegate do this
+    [[[self.mockDelegate expect] andReturnValue:OCMOCK_VALUE(YES)] isScheduleReadyToExecute:[OCMArg checkWithBlock:^BOOL(id obj) {
+        UASchedule *schedule = obj;
+        return  [schedule.identifier isEqualToString:schedule.identifier];
+    }]];
+
+    // When executeSchedule is called on the delegate
+    XCTestExpectation *executeSchedule = [self expectationWithDescription:@"schedule is executing"];
+    [[[self.mockDelegate expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        [executeSchedule fulfill];
+    }] executeSchedule:[OCMArg checkWithBlock:^BOOL(id obj) {
+        UASchedule *schedule = obj;
+        return  [schedule.identifier isEqualToString:schedule.identifier];
+    }] completionHandler:OCMOCK_ANY];
+
+    // Trigger the scheduled actions
+    UACustomEvent *purchase = [UACustomEvent eventWithName:@"purchase"];
+    [self emitEvent:purchase];
+
+    [self waitForTestExpectations];
+
+    XCTestExpectation *checkExecutingState = [self expectationWithDescription:@"executing"];
+    [self.automationEngine.automationStore getSchedule:schedule.identifier completionHandler:^(UAScheduleData *scheduleData) {
+        XCTAssertNotNil(scheduleData);
+        XCTAssertEqual(UAScheduleStateExecuting, [scheduleData.executionState intValue]);
+        [checkExecutingState fulfill];
+    }];
+
+    [self waitForTestExpectations];
+
+    XCTestExpectation *interruptedCalled = [self expectationWithDescription:@"interruptedCalled"];
+    [[[self.mockDelegate expect] andDo:^(NSInvocation *invocation) {
+        [interruptedCalled fulfill];
+    }] onExecutionInterrupted:schedule];
+
+    [self.automationEngine stop];
+    [self.automationEngine start];
+
+    [self waitForTestExpectations];
+    [self.mockDelegate verify];
+}
+
 - (void)testPrepareResultCancel {
     [self verifyPrepareResult:UAAutomationSchedulePrepareResultCancel verifyWithCompletionHandler:^(UAScheduleData *data) {
         XCTAssertNil(data);

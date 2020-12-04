@@ -171,6 +171,12 @@ extern NSUInteger const UAScheduleDataVersion;
 @property (nullable, nonatomic, retain) NSString *audience;
 
 /**
+ * The campaigns info.
+ */
+@property (nullable, nonatomic, retain) NSDictionary *campaigns;
+
+
+/**
  * Whether the schedule has exceeded its limit.
  */
 - (BOOL)isOverLimit;

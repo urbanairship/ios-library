@@ -327,7 +327,7 @@ attributeOverrides:(UAAttributePendingMutations *)attributeOverrides
     if (audienceMatch && [responseType isEqualToString:kUADeferredScheduleAPIClientInAppMessageType]) {
         NSDictionary *messageJSON = [responseBody dictionaryForKey:kUADeferredScheduleAPIClientMessageKey defaultValue:nil];
         NSError *error;
-        message = [UAInAppMessage messageWithJSON:messageJSON error:&error];
+        message = [UAInAppMessage messageWithJSON:messageJSON defaultSource:UAInAppMessageSourceRemoteData error:&error];
         if (error) {
             UA_LDEBUG(@"Unable to create in-app message from response body: %@", responseBody);
         }

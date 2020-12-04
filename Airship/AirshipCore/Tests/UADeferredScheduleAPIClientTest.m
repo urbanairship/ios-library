@@ -125,7 +125,7 @@
         XCTAssertNotNil(result);
         XCTAssertTrue(result.isAudienceMatch);
         XCTAssertNotNil(result.message);
-        XCTAssertEqualObjects(result.message, [UAInAppMessage messageWithJSON:messageJSON error:nil]);
+        XCTAssertEqualObjects(result.message, [UAInAppMessage messageWithJSON:messageJSON defaultSource:UAInAppMessageSourceRemoteData error:nil]);
 
         [resultResolved fulfill];
     }];
@@ -213,8 +213,7 @@
         XCTAssertNotNil(result);
         XCTAssertTrue(result.isAudienceMatch);
         XCTAssertNotNil(result.message);
-        XCTAssertEqualObjects(result.message, [UAInAppMessage messageWithJSON:messageJSON error:nil]);
-
+        XCTAssertEqualObjects(result.message, [UAInAppMessage messageWithJSON:messageJSON defaultSource:UAInAppMessageSourceRemoteData error:nil]);
         [resultResolved fulfill];
     }];
 
@@ -300,7 +299,7 @@
         XCTAssertNil(error);
         XCTAssertTrue(result.isAudienceMatch);
         XCTAssertNotNil(result.message);
-        XCTAssertEqualObjects(result.message, [UAInAppMessage messageWithJSON:messageJSON error:nil]);
+        XCTAssertEqualObjects(result.message, [UAInAppMessage messageWithJSON:messageJSON defaultSource:UAInAppMessageSourceRemoteData error:nil]);
 
         [resultResolved fulfill];
     }];
@@ -387,8 +386,8 @@
         XCTAssertNotNil(result);
         XCTAssertTrue(result.isAudienceMatch);
         XCTAssertNotNil(result.message);
-        XCTAssertEqualObjects(result.message, [UAInAppMessage messageWithJSON:messageJSON error:nil]);
-
+        XCTAssertEqualObjects(result.message, [UAInAppMessage messageWithJSON:messageJSON defaultSource:UAInAppMessageSourceRemoteData error:nil]);
+        
         [resultResolved fulfill];
     }];
 

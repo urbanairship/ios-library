@@ -44,6 +44,9 @@ static NSString *const UAScheduleInfoInAppMessageKey = @"message";
 static NSString *const UAScheduleInfoActionsKey = @"actions";
 static NSString *const UAScheduleInfoDeferredKey = @"deferred";
 
+static NSString *const UAScheduleInfoCampaignsKey = @"campaigns";
+
+
 
 @interface UAInAppRemoteDataClient()
 @property(nonatomic, strong) UAInAppMessageManager *inAppMessageManager;
@@ -352,6 +355,7 @@ static NSString *const UAScheduleInfoDeferredKey = @"deferred";
         }
     }
 
+
     NSError *audienceError;
     UAScheduleAudience *audience = [UAInAppRemoteDataClient parseAudience:JSON error:&audienceError];
     if (audienceError) {
@@ -369,6 +373,7 @@ static NSString *const UAScheduleInfoDeferredKey = @"deferred";
         builder.priority = [[JSON numberForKey:UAScheduleInfoPriorityKey defaultValue:nil] integerValue];
         builder.editGracePeriod = [[JSON numberForKey:UAScheduleInfoEditGracePeriodKey defaultValue:nil] doubleValue];
         builder.interval = [[JSON numberForKey:UAScheduleInfoIntervalKey defaultValue:nil] doubleValue];
+        builder.campaigns = [JSON dictionaryForKey:UAScheduleInfoCampaignsKey defaultValue:nil];
         builder.audience = audience;
 
         if (JSON[UAScheduleInfoStartKey]) {

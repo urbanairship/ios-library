@@ -32,6 +32,7 @@ NSUInteger const UAScheduleDataVersion = 3;
 @dynamic editGracePeriod;
 @dynamic triggerContext;
 @dynamic audience;
+@dynamic campaigns;
 
 -(void)setExecutionState:(NSNumber *)executionState {
     [self willChangeValueForKey:@"executionState"];

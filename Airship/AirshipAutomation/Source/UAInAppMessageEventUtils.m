@@ -16,13 +16,6 @@ NSString *const UAInAppMessageEventAppDefinedSourceValue = @"app-defined";
 @implementation UAInAppMessageEventUtils
 
 + (NSMutableDictionary *)createDataWithMessageID:(NSString *)messageID
-                                         message:(UAInAppMessage *)message {
-    return [UAInAppMessageEventUtils createDataWithMessageID:messageID
-                                                      source:message.source
-                                                   campaigns:message.campaigns];
-}
-
-+ (NSMutableDictionary *)createDataWithMessageID:(NSString *)messageID
                                           source:(UAInAppMessageSource)source
                                        campaigns:(NSDictionary *)campaigns {
 

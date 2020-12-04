@@ -257,8 +257,9 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
                 break;
 
             case UAScheduleTypeInAppMessage:
-                [self.inAppMessageManager prepareMessage:(UAInAppMessage *) schedule.data
+                [self.inAppMessageManager prepareMessage:(UAInAppMessage *)schedule.data
                                               scheduleID:schedule.identifier
+                                               campaigns:schedule.campaigns
                                        completionHandler:completionHandler];
                 retriableHandler(UARetriableResultSuccess);
                 break;
@@ -323,6 +324,7 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
             } else if (result.message) {
                 [self.inAppMessageManager prepareMessage:result.message
                                               scheduleID:schedule.identifier
+                                               campaigns:schedule.campaigns
                                        completionHandler:completionHandler];
                 retriableHandler(UARetriableResultSuccess);
             } else {
@@ -401,6 +403,31 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
         default: {
             UA_LERR(@"Unexpected schedule type: %ld", schedule.type);
             return completionHandler();
+        }
+    }
+}
+
+- (void)onExecutionInterrupted:(UASchedule *)schedule {
+    switch (schedule.type) {
+        case UAScheduleTypeActions: {
+            break;
+        }
+
+        case UAScheduleTypeInAppMessage: {
+            [self.inAppMessageManager messageExecutionInterrupted:schedule.data
+                                                       scheduleID:schedule.identifier
+                                                        campaigns:schedule.campaigns];
+            break;
+        }
+
+        case UAScheduleTypeDeferred: {
+            UAScheduleDeferredData *deferred = schedule.data;
+            if (deferred.type == UAScheduleDataDeferredTypeInAppMessage) {
+                [self.inAppMessageManager messageExecutionInterrupted:nil
+                                                           scheduleID:schedule.identifier
+                                                            campaigns:schedule.campaigns];
+            }
+            break;
         }
     }
 }

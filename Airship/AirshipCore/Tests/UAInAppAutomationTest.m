@@ -156,6 +156,7 @@
     UASchedule *schedule = [UAInAppMessageSchedule scheduleWithMessage:message builderBlock:^(UAScheduleBuilder *builder) {
         builder.triggers = @[[UAScheduleTrigger foregroundTriggerWithCount:1]];
         builder.identifier = @"schedule ID";
+        builder.campaigns = @{@"some": @"campaigns object"};
     }];
 
     [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
@@ -165,6 +166,7 @@
 
     [[self.mockInAppMessageManager expect] prepareMessage:message
                                                scheduleID:@"schedule ID"
+                                                campaigns:@{@"some": @"campaigns object"}
                                         completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
         void(^completionBlock)(UAInAppMessagePrepareResult) = obj;
         completionBlock(UAInAppMessagePrepareResultSuccess);
@@ -217,6 +219,7 @@
     UASchedule *schedule = [UADeferredSchedule scheduleWithDeferredData:deferred builderBlock:^(UAScheduleBuilder *builder) {
         builder.triggers = @[trigger];
         builder.identifier = @"schedule ID";
+        builder.campaigns = @{@"some": @"campaigns object"};
     }];
 
     UATagGroupsMutation *mutation = [UATagGroupsMutation mutationToAddTags:@[@"neat", @"rad"] group:@"cool"];
@@ -227,16 +230,16 @@
     UAAttributeMutations *attributeMutations = [UAAttributeMutations mutations];
     [attributeMutations setString:@"absolutely" forAttribute:@"fabulous"];
     UAAttributePendingMutations *attributeOverrides = [UAAttributePendingMutations pendingMutationsWithMutations:attributeMutations
-                                                                                                             date:[[UADate alloc] init]];
+                                                                                                            date:[[UADate alloc] init]];
 
     [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
     [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:schedule];
 
     [[[self.mockInAppMessageManager expect] andDo:^(NSInvocation *invocation) {
         void (^block)(UAInAppMessagePrepareResult);
-        [invocation getArgument:&block atIndex:4];
+        [invocation getArgument:&block atIndex:5];
         block(UAInAppMessagePrepareResultSuccess);
-    }] prepareMessage:message scheduleID:@"schedule ID" completionHandler:OCMOCK_ANY];
+    }] prepareMessage:message scheduleID:@"schedule ID" campaigns:@{@"some": @"campaigns object"} completionHandler:OCMOCK_ANY];
 
     [[[self.mockAudienceManager expect] andReturn:tagOverrides] tagOverrides];
     [[[self.mockAudienceManager expect] andReturn:attributeOverrides] attributeOverrides];
@@ -246,7 +249,7 @@
         [invocation getArgument:&block atIndex:7];
         block(deferredResult, nil);
     }] resolveURL:deferred.URL
-        channelID:@"channel ID" triggerContext:triggerContext
+     channelID:@"channel ID" triggerContext:triggerContext
      tagOverrides:tagOverrides attributeOverrides:attributeOverrides completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare finished"];
@@ -286,7 +289,7 @@
     UAAttributeMutations *attributeMutations = [UAAttributeMutations mutations];
     [attributeMutations setString:@"absolutely" forAttribute:@"fabulous"];
     UAAttributePendingMutations *attributeOverrides = [UAAttributePendingMutations pendingMutationsWithMutations:attributeMutations
-                                                                                                             date:[[UADate alloc] init]];
+                                                                                                            date:[[UADate alloc] init]];
 
     [[[self.mockAudienceManager expect] andReturn:tagOverrides] tagOverrides];
     [[[self.mockAudienceManager expect] andReturn:attributeOverrides] attributeOverrides];
@@ -337,7 +340,7 @@
     UAAttributeMutations *attributeMutations = [UAAttributeMutations mutations];
     [attributeMutations setString:@"absolutely" forAttribute:@"fabulous"];
     UAAttributePendingMutations *attributeOverrides = [UAAttributePendingMutations pendingMutationsWithMutations:attributeMutations
-                                                                                                             date:[[UADate alloc] init]];
+                                                                                                            date:[[UADate alloc] init]];
 
     [[[self.mockAudienceManager expect] andReturn:tagOverrides] tagOverrides];
     [[[self.mockAudienceManager expect] andReturn:attributeOverrides] attributeOverrides];
@@ -389,7 +392,7 @@
     UAAttributeMutations *attributeMutations = [UAAttributeMutations mutations];
     [attributeMutations setString:@"absolutely" forAttribute:@"fabulous"];
     UAAttributePendingMutations *attributeOverrides = [UAAttributePendingMutations pendingMutationsWithMutations:attributeMutations
-                                                                                                             date:[[UADate alloc] init]];
+                                                                                                            date:[[UADate alloc] init]];
 
     [[[self.mockAudienceManager expect] andReturn:tagOverrides] tagOverrides];
     [[[self.mockAudienceManager expect] andReturn:attributeOverrides] attributeOverrides];
@@ -907,5 +910,7 @@
 }
 
 @end
+
+
 
 

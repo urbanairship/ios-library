@@ -63,13 +63,13 @@
 - (void)testEventData {
     UAInAppMessage *remoteDataMessage = [UAInAppMessage messageWithBuilderBlock:^(UAInAppMessageBuilder *builder) {
         builder.source = UAInAppMessageSourceRemoteData;
-        builder.campaigns = @{@"some": @"campaigns object"};
         builder.displayContent = self.displayContent;
         builder.renderedLocale = @{@"language" : @"en", @"country" : @"US"};
     }];
 
     UAInAppMessageDisplayEvent *event = [UAInAppMessageDisplayEvent eventWithMessageID:@"remote-data-message"
-                                                                               message:remoteDataMessage];
+                                                                               message:remoteDataMessage
+                                                                             campaigns:@{@"some": @"campaigns object"}];
 
     NSDictionary *expectedData = @{ @"id": @{  @"message_id": @"remote-data-message",
                                                @"campaigns": @{@"some": @"campaigns object"} },
@@ -86,11 +86,12 @@
 
     UAInAppMessage *legacyMessage = [UAInAppMessage messageWithBuilderBlock:^(UAInAppMessageBuilder *builder) {
         builder.source = UAInAppMessageSourceLegacyPush;
-        builder.campaigns = @{@"some": @"campaigns object"};
         builder.displayContent = self.displayContent;
     }];
 
-    event = [UAInAppMessageDisplayEvent eventWithMessageID:@"legacy-message" message:legacyMessage];
+    event = [UAInAppMessageDisplayEvent eventWithMessageID:@"legacy-message"
+                                                   message:legacyMessage
+                                                 campaigns:nil];
 
     expectedData = @{ @"id": @"legacy-message",
                       @"source": @"urban-airship",
@@ -104,11 +105,10 @@
 
     UAInAppMessage *appDefined = [UAInAppMessage messageWithBuilderBlock:^(UAInAppMessageBuilder *builder) {
         builder.source = UAInAppMessageSourceAppDefined;
-        builder.campaigns = @{@"some": @"campaigns object"};
         builder.displayContent = self.displayContent;
     }];
 
-    event = [UAInAppMessageDisplayEvent eventWithMessageID:@"app-defined-message" message:appDefined];
+    event = [UAInAppMessageDisplayEvent eventWithMessageID:@"app-defined-message" message:appDefined campaigns:@{@"some": @"campaigns object"}];
 
     expectedData = @{ @"id": @{ @"message_id": @"app-defined-message" },
                       @"source": @"app-defined",

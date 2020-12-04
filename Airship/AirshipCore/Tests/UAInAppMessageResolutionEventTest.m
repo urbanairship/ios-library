@@ -80,7 +80,7 @@
                                     @"conversion_metadata": [self.analytics conversionPushMetadata],
                                     @"source": @"urban-airship",
                                     @"resolution": @{ @"type": @"direct_open" }
-                                    };
+    };
 
 
     UAInAppMessageResolutionEvent *event = [UAInAppMessageResolutionEvent legacyDirectOpenEventWithMessageID:@"message id"];
@@ -97,7 +97,7 @@
                                     @"source": @"urban-airship",
                                     @"resolution": @{ @"type": @"replaced",
                                                       @"replacement_id": @"replacement id"}
-                                    };
+    };
 
     UAInAppMessageResolutionEvent *event = [UAInAppMessageResolutionEvent legacyReplacedEventWithMessageID:@"message id" replacementID:@"replacement id"];
 
@@ -109,17 +109,19 @@
  */
 - (void)testButtonClickedResolutionEvent {
     NSDictionary *expectedResolutionData = @{ @"type": @"button_click",
-                                          @"button_id": self.displayContent.buttons[0].identifier,
-                                          @"button_description": self.displayContent.buttons[0].label.text,
-                                          @"display_time": @"3.141"};
+                                              @"button_id": self.displayContent.buttons[0].identifier,
+                                              @"button_description": self.displayContent.buttons[0].label.text,
+                                              @"display_time": @"3.141"};
 
     UAInAppMessageResolution *resolution = [UAInAppMessageResolution buttonClickResolutionWithButtonInfo:self.displayContent.buttons[0]];
     [self verifyEventWithMessageID:@"message ID"
+                         campaigns:nil
                         eventBlock:^UAInAppMessageResolutionEvent *(UAInAppMessage *message) {
         return [UAInAppMessageResolutionEvent eventWithMessageID:@"message ID"
-                                                         message:message
-                                                    resolution:resolution
-                                                   displayTime:3.141];
+                                                          source:message.source
+                                                      resolution:resolution
+                                                     displayTime:3.141
+                                                       campaigns:nil];
     } expectedResolutionData:expectedResolutionData];
 }
 
@@ -133,11 +135,12 @@
                                               @"display_time": @"3.141"};
 
     UAInAppMessageResolution *resolution = [UAInAppMessageResolution buttonClickResolutionWithButtonInfo:self.displayContent.buttons[1]];
-    [self verifyEventWithMessageID:@"message ID" eventBlock:^UAInAppMessageResolutionEvent *(UAInAppMessage *message) {
+    [self verifyEventWithMessageID:@"message ID" campaigns:nil eventBlock:^UAInAppMessageResolutionEvent *(UAInAppMessage *message) {
         return [UAInAppMessageResolutionEvent eventWithMessageID:@"message ID"
-                                                         message:message
-                                                    resolution:resolution
-                                                   displayTime:3.141];
+                                                          source:message.source
+                                                      resolution:resolution
+                                                     displayTime:3.141
+                                                       campaigns:nil];
     } expectedResolutionData:expectedResolutionData];
 }
 
@@ -153,11 +156,13 @@
     UAInAppMessageResolution *resolution = [UAInAppMessageResolution buttonClickResolutionWithButtonInfo:self.displayContent.buttons[2]];
 
     [self verifyEventWithMessageID:@"message ID"
+                         campaigns:@{@"categories": @[@"neat"]}
                         eventBlock:^UAInAppMessageResolutionEvent *(UAInAppMessage *message) {
         return [UAInAppMessageResolutionEvent eventWithMessageID:@"message ID"
-                                                         message:message
-                                                    resolution:resolution
-                                                   displayTime:3.141];
+                                                          source:message.source
+                                                      resolution:resolution
+                                                     displayTime:3.141
+                                                       campaigns:@{@"categories": @[@"neat"]}];
     } expectedResolutionData:expectedResolutionData];
 }
 
@@ -166,15 +171,17 @@
  */
 - (void)testMessageClickedResolutionEvent {
     NSDictionary *expectedResolutionData = @{ @"type": @"message_click",
-                                          @"display_time": @"3.141"};
+                                              @"display_time": @"3.141"};
 
     UAInAppMessageResolution *resolution = [UAInAppMessageResolution messageClickResolution];
     [self verifyEventWithMessageID:@"message ID"
+                         campaigns:@{@"categories": @[@"neat"]}
                         eventBlock:^UAInAppMessageResolutionEvent *(UAInAppMessage *message) {
         return [UAInAppMessageResolutionEvent eventWithMessageID:@"message ID"
-                                                         message:message
-                                                    resolution:resolution
-                                                   displayTime:3.141];
+                                                          source:message.source
+                                                      resolution:resolution
+                                                     displayTime:3.141
+                                                       campaigns:@{@"categories": @[@"neat"]}];
     } expectedResolutionData:expectedResolutionData];
 }
 
@@ -183,15 +190,17 @@
  */
 - (void)testDismissedResolutionEvent {
     NSDictionary *expectedResolutionData = @{ @"type": @"user_dismissed",
-                                          @"display_time": @"3.141"};
+                                              @"display_time": @"3.141"};
 
     UAInAppMessageResolution *resolution = [UAInAppMessageResolution userDismissedResolution];
     [self verifyEventWithMessageID:@"message ID"
+                         campaigns:@{@"categories": @[@"neat"]}
                         eventBlock:^UAInAppMessageResolutionEvent *(UAInAppMessage *message) {
         return [UAInAppMessageResolutionEvent eventWithMessageID:@"message ID"
-                                                         message:message
-                                                    resolution:resolution
-                                                   displayTime:3.141];
+                                                          source:message.source
+                                                      resolution:resolution
+                                                     displayTime:3.141
+                                                       campaigns:@{@"categories": @[@"neat"]}];
     } expectedResolutionData:expectedResolutionData];}
 
 /**
@@ -199,39 +208,42 @@
  */
 - (void)testTimedOutResolutionEvent {
     NSDictionary *expectedResolutionData = @{ @"type": @"timed_out",
-                                          @"display_time": @"3.141"};
+                                              @"display_time": @"3.141"};
 
     UAInAppMessageResolution *resolution = [UAInAppMessageResolution timedOutResolution];
     [self verifyEventWithMessageID:@"message ID"
+                         campaigns:@{@"categories": @[@"neat"]}
                         eventBlock:^UAInAppMessageResolutionEvent *(UAInAppMessage *message) {
         return [UAInAppMessageResolutionEvent eventWithMessageID:@"message ID"
-                                                         message:message
+                                                          source:message.source
                                                       resolution:resolution
-                                                     displayTime:3.141];
+                                                     displayTime:3.141
+                                                       campaigns:@{@"categories": @[@"neat"]}];
     } expectedResolutionData:expectedResolutionData];
 }
 
 - (void)verifyEventWithMessageID:(NSString *)messageID
+                       campaigns:(NSDictionary *)campaigns
                       eventBlock:(UAInAppMessageResolutionEvent * (^)(UAInAppMessage *))eventBlock
-           expectedResolutionData:(NSDictionary *)expectedResolutionData {
+          expectedResolutionData:(NSDictionary *)expectedResolutionData {
 
     UAInAppMessage *remoteDataMessage = [UAInAppMessage messageWithBuilderBlock:^(UAInAppMessageBuilder *builder) {
         builder.source = UAInAppMessageSourceRemoteData;
-        builder.campaigns = @{@"some": @"campaigns object"};
         builder.displayContent = self.displayContent;
-        builder.renderedLocale = self.renderedLocale;
     }];
 
     UAInAppMessageResolutionEvent *event = eventBlock(remoteDataMessage);
 
-    NSDictionary *expectedData = @{ @"id": @{  @"message_id": messageID,
-                                               @"campaigns": @{@"some": @"campaigns object"} },
+    NSMutableDictionary *idPayload = [NSMutableDictionary dictionary];
+    [idPayload setValue:messageID forKey:@"message_id"];
+    [idPayload setValue:campaigns forKey:@"campaigns"];
+
+    NSDictionary *expectedData = @{ @"id": idPayload,
                                     @"source": @"urban-airship",
                                     @"conversion_send_id": [self.analytics conversionSendID],
                                     @"conversion_metadata": [self.analytics conversionPushMetadata],
                                     @"resolution": expectedResolutionData,
-                                    @"locale" : self.renderedLocale
-                                    };
+    };
 
     XCTAssertEqualObjects(event.data, expectedData);
     XCTAssertEqualObjects(event.eventType, @"in_app_resolution");
@@ -241,7 +253,6 @@
 
     UAInAppMessage *legacyMessage = [UAInAppMessage messageWithBuilderBlock:^(UAInAppMessageBuilder *builder) {
         builder.source = UAInAppMessageSourceLegacyPush;
-        builder.campaigns = @{@"some": @"campaigns object"};
         builder.displayContent = self.displayContent;
     }];
 
@@ -260,7 +271,6 @@
 
     UAInAppMessage *appDefined = [UAInAppMessage messageWithBuilderBlock:^(UAInAppMessageBuilder *builder) {
         builder.source = UAInAppMessageSourceAppDefined;
-        builder.campaigns = @{@"some": @"campaigns object"};
         builder.displayContent = self.displayContent;
     }];
 
@@ -279,4 +289,6 @@
 }
 
 @end
+
+
 

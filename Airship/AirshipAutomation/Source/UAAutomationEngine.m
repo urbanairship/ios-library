@@ -152,8 +152,9 @@
                                     name:UAApplicationDidTransitionToForeground
                                   object:nil];
 
+    [self finishExecutionSchedules];
     [self cleanSchedules];
-    [self resetExecutingSchedules];
+    [self resetPendingSchedules];
     [self rescheduleTimers];
     [self createStateConditions];
     [self restoreCompoundTriggers];
@@ -900,11 +901,29 @@
 /**
  * Resets schedules back to preparing schedule
  */
-- (void)resetExecutingSchedules {
-    id state = @[@(UAScheduleStateWaitingScheduleConditions),@(UAScheduleStateExecuting)];
+- (void)resetPendingSchedules {
+    id state = @[@(UAScheduleStateWaitingScheduleConditions)];
     [self.automationStore getSchedulesWithStates:state completionHandler:^(NSArray<UAScheduleData *> *schedules) {
         for (UAScheduleData *scheduleData in schedules) {
             scheduleData.executionState = @(UAScheduleStatePreparingSchedule);
+        }
+    }];
+}
+
+/**
+ * Finishes any executing schedules from the previous app session.
+ */
+- (void)finishExecutionSchedules {
+    id state = @[@(UAScheduleStateExecuting)];
+    UA_WEAKIFY(self)
+    [self.automationStore getSchedulesWithStates:state completionHandler:^(NSArray<UAScheduleData *> *schedules) {
+        UA_STRONGIFY(self)
+        for (UAScheduleData *scheduleData in schedules) {
+            [self scheduleFinishedExecuting:scheduleData];
+            UASchedule *schedule = [self scheduleFromData:scheduleData];
+            if (schedule) {
+                [self.delegate onExecutionInterrupted:schedule];
+            }
         }
     }];
 }
@@ -1375,6 +1394,7 @@
         builder.metadata = [NSJSONSerialization objectWithString:scheduleData.metadata];
         builder.identifier = scheduleData.identifier;
         builder.audience = audience;
+        builder.campaigns= scheduleData.campaigns;
     }];
 
     if (![schedule isValid]) {

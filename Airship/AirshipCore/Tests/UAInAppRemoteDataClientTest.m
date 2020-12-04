@@ -1045,6 +1045,7 @@
                         }
                 }
         },
+        @"campaigns": @{ @"categories": @[@"cool"] },
         @"type": @"in_app_message",
         @"created": @"2017-12-04T19:07:54.564",
         @"last_updated": @"2017-12-04T19:07:54.564",
@@ -1079,6 +1080,7 @@
         builder.metadata = @{
             @"com.urbanairship.iaa.REMOTE_DATA_METADATA": metadata
         };
+        builder.campaigns = @{ @"categories": @[@"cool"] };
     }];
 
     UARemoteDataPayload *inAppRemoteDataPayload = [[UARemoteDataPayload alloc] initWithType:@"in_app_messages"
@@ -1111,4 +1113,5 @@
 }
 
 @end
+
 

@@ -37,8 +37,7 @@ NSUInteger const UAScheduleMaxTriggers = 10;
 
 @synthesize data = _data;
 @synthesize type = _type;
-
-
+@synthesize campaigns = _campaigns;
 
 
 - (BOOL)isValid {
@@ -76,6 +75,7 @@ NSUInteger const UAScheduleMaxTriggers = 10;
         self.interval = builder.interval;
         self.metadata = builder.metadata ?: @{};
         self.audience = builder.audience;
+        _campaigns = builder.campaigns;
     }
 
     return self;
@@ -142,6 +142,10 @@ NSUInteger const UAScheduleMaxTriggers = 10;
         return NO;
     }
 
+    if (self.campaigns != schedule.campaigns && ![self.campaigns isEqual:schedule.campaigns]) {
+        return NO;
+    }
+
     return YES;
 }
 
@@ -171,6 +175,7 @@ NSUInteger const UAScheduleMaxTriggers = 10;
     result = 31 * result + [self.data hash];
     result = 31 * result + [self.delay hash];
     result = 31 * result + [self.audience hash];
+    result = 31 * result + [self.campaigns hash];
     result = 31 * result + self.editGracePeriod;
     result = 31 * result + self.interval;
     result = 31 * result + self.type;

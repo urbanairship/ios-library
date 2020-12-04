@@ -2797,6 +2797,7 @@
 		6E218538237DB7960084933A /* AddAttributeTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddAttributeTableViewController.swift; sourceTree = "<group>"; };
 		6E27A7D42367AC3200F46B69 /* UAExtendedActionsModuleLoader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAExtendedActionsModuleLoader.m; sourceTree = "<group>"; };
 		6E27A7D52367AC3200F46B69 /* UAExtendedActionsModuleLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAExtendedActionsModuleLoader.h; sourceTree = "<group>"; };
+		6E356F9B2579513D004CCCC8 /* UAAutomation 7.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "UAAutomation 7.xcdatamodel"; sourceTree = "<group>"; };
 		6E3673DF1E8AF9D8005B5DFF /* UAEnableFeatureActionTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAEnableFeatureActionTest.m; sourceTree = "<group>"; };
 		6E3942271F33DA52003D1C50 /* UAInboxStoreTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInboxStoreTest.m; sourceTree = "<group>"; };
 		6E41143D2538C09E00FEE4E8 /* UARequestSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UARequestSession.h; path = Public/UARequestSession.h; sourceTree = "<group>"; };
@@ -10162,6 +10163,7 @@
 		1B2F3B0324B7525500A5DE8C /* UAAutomation.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				6E356F9B2579513D004CCCC8 /* UAAutomation 7.xcdatamodel */,
 				1B2F3B0424B7525500A5DE8C /* UAAutomation 2.xcdatamodel */,
 				1B2F3B0524B7525500A5DE8C /* UAAutomation 4.xcdatamodel */,
 				1B2F3B0624B7525500A5DE8C /* UAAutomation 3.xcdatamodel */,
@@ -10169,7 +10171,7 @@
 				1B2F3B0824B7525500A5DE8C /* UAAutomation 6.xcdatamodel */,
 				1B2F3B0924B7525500A5DE8C /* UAAutomation 5.xcdatamodel */,
 			);
-			currentVersion = 1B2F3B0824B7525500A5DE8C /* UAAutomation 6.xcdatamodel */;
+			currentVersion = 6E356F9B2579513D004CCCC8 /* UAAutomation 7.xcdatamodel */;
 			name = UAAutomation.xcdatamodeld;
 			path = Resources/UAAutomation.xcdatamodeld;
 			sourceTree = "<group>";
