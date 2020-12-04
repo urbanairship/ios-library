@@ -324,7 +324,7 @@ attributeOverrides:(UAAttributePendingMutations *)attributeOverrides
 
     NSString *responseType = [responseBody stringForKey:kUADeferredScheduleAPIClientResponseTypeKey defaultValue:nil];
 
-    if ([responseType isEqualToString:kUADeferredScheduleAPIClientInAppMessageType]) {
+    if (audienceMatch && [responseType isEqualToString:kUADeferredScheduleAPIClientInAppMessageType]) {
         NSDictionary *messageJSON = [responseBody dictionaryForKey:kUADeferredScheduleAPIClientMessageKey defaultValue:nil];
         NSError *error;
         message = [UAInAppMessage messageWithJSON:messageJSON error:&error];
