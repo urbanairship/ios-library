@@ -185,6 +185,14 @@
 		3CA0E47B237E4E3000EE76CF /* UAMessageCenterActions.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3CA0E307237E396100EE76CF /* UAMessageCenterActions.plist */; };
 		3CA0E47C237E4E3000EE76CF /* UAMessageCenterListCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3CA0E308237E396100EE76CF /* UAMessageCenterListCell.xib */; };
 		3CA0E47D237E4E3000EE76CF /* UAMessageCenterPlaceholderIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 3CA0E309237E396100EE76CF /* UAMessageCenterPlaceholderIcon.png */; };
+		3CA6C3242554E89600F71ABF /* UAFrequencyConstraint+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CA6C3222554E89600F71ABF /* UAFrequencyConstraint+Internal.h */; };
+		3CA6C3252554E89600F71ABF /* UAFrequencyConstraint+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CA6C3222554E89600F71ABF /* UAFrequencyConstraint+Internal.h */; };
+		3CA6C3262554E89600F71ABF /* UAFrequencyConstraint.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA6C3232554E89600F71ABF /* UAFrequencyConstraint.m */; };
+		3CA6C3272554E89600F71ABF /* UAFrequencyConstraint.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA6C3232554E89600F71ABF /* UAFrequencyConstraint.m */; };
+		3CA6C3422554ED8B00F71ABF /* UAFrequencyChecker+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CA6C3402554ED8B00F71ABF /* UAFrequencyChecker+Internal.h */; };
+		3CA6C3432554ED8B00F71ABF /* UAFrequencyChecker+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CA6C3402554ED8B00F71ABF /* UAFrequencyChecker+Internal.h */; };
+		3CA6C3442554ED8B00F71ABF /* UAFrequencyChecker.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA6C3412554ED8B00F71ABF /* UAFrequencyChecker.m */; };
+		3CA6C3452554ED8B00F71ABF /* UAFrequencyChecker.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA6C3412554ED8B00F71ABF /* UAFrequencyChecker.m */; };
 		3CB37A1E251151A400E60392 /* UADebugResources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CB37A1D251151A400E60392 /* UADebugResources.swift */; };
 		3CCFD5DF23A082EF001AF966 /* UADefaultMessageCenterSplitViewDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CCFD5DD23A082EF001AF966 /* UADefaultMessageCenterSplitViewDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3CCFD5E023A082EF001AF966 /* UADefaultMessageCenterSplitViewDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CCFD5DE23A082EF001AF966 /* UADefaultMessageCenterSplitViewDelegate.m */; };
@@ -192,6 +200,29 @@
 		3CF62ED2257997850007502B /* UAStateOverrides+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CF62ECF257997850007502B /* UAStateOverrides+Internal.h */; };
 		3CF62ED3257997850007502B /* UAStateOverrides.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CF62ED0257997850007502B /* UAStateOverrides.m */; };
 		3CF62ED4257997850007502B /* UAStateOverrides.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CF62ED0257997850007502B /* UAStateOverrides.m */; };
+		3CF5E808255619DC0074B2A0 /* UAFrequencyLimitManager+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CF5E806255619DC0074B2A0 /* UAFrequencyLimitManager+Internal.h */; };
+		3CF5E809255619DC0074B2A0 /* UAFrequencyLimitManager+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CF5E806255619DC0074B2A0 /* UAFrequencyLimitManager+Internal.h */; };
+		3CF5E80A255619DC0074B2A0 /* UAFrequencyLimitManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CF5E807255619DC0074B2A0 /* UAFrequencyLimitManager.m */; };
+		3CF5E80B255619DC0074B2A0 /* UAFrequencyLimitManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CF5E807255619DC0074B2A0 /* UAFrequencyLimitManager.m */; };
+		3CF5E81A25561FCC0074B2A0 /* UAOccurrence+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CF5E81825561FCC0074B2A0 /* UAOccurrence+Internal.h */; };
+		3CF5E81B25561FCC0074B2A0 /* UAOccurrence+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CF5E81825561FCC0074B2A0 /* UAOccurrence+Internal.h */; };
+		3CF5E81C25561FCC0074B2A0 /* UAOccurrence.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CF5E81925561FCC0074B2A0 /* UAOccurrence.m */; };
+		3CF5E81D25561FCC0074B2A0 /* UAOccurrence.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CF5E81925561FCC0074B2A0 /* UAOccurrence.m */; };
+		3CF5E844255A25BF0074B2A0 /* UAFrequencyLimits.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 3CF5E842255A25BF0074B2A0 /* UAFrequencyLimits.xcdatamodeld */; };
+		3CF5E845255A25BF0074B2A0 /* UAFrequencyLimits.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 3CF5E842255A25BF0074B2A0 /* UAFrequencyLimits.xcdatamodeld */; };
+		3CF5E860255A270A0074B2A0 /* UAFrequencyConstraintData+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CF5E85E255A270A0074B2A0 /* UAFrequencyConstraintData+Internal.h */; };
+		3CF5E861255A270A0074B2A0 /* UAFrequencyConstraintData+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CF5E85E255A270A0074B2A0 /* UAFrequencyConstraintData+Internal.h */; };
+		3CF5E862255A270A0074B2A0 /* UAFrequencyConstraintData.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CF5E85F255A270A0074B2A0 /* UAFrequencyConstraintData.m */; };
+		3CF5E863255A270A0074B2A0 /* UAFrequencyConstraintData.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CF5E85F255A270A0074B2A0 /* UAFrequencyConstraintData.m */; };
+		3CF5E872255A27380074B2A0 /* UAOccurrenceData+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CF5E870255A27380074B2A0 /* UAOccurrenceData+Internal.h */; };
+		3CF5E873255A27380074B2A0 /* UAOccurrenceData+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CF5E870255A27380074B2A0 /* UAOccurrenceData+Internal.h */; };
+		3CF5E874255A27380074B2A0 /* UAOccurrenceData.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CF5E871255A27380074B2A0 /* UAOccurrenceData.m */; };
+		3CF5E875255A27380074B2A0 /* UAOccurrenceData.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CF5E871255A27380074B2A0 /* UAOccurrenceData.m */; };
+		3CF5E89C255A2AF10074B2A0 /* UAFrequencyLimitStore+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CF5E89A255A2AF10074B2A0 /* UAFrequencyLimitStore+Internal.h */; };
+		3CF5E89D255A2AF10074B2A0 /* UAFrequencyLimitStore+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CF5E89A255A2AF10074B2A0 /* UAFrequencyLimitStore+Internal.h */; };
+		3CF5E89E255A2AF10074B2A0 /* UAFrequencyLimitStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CF5E89B255A2AF10074B2A0 /* UAFrequencyLimitStore.m */; };
+		3CF5E89F255A2AF10074B2A0 /* UAFrequencyLimitStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CF5E89B255A2AF10074B2A0 /* UAFrequencyLimitStore.m */; };
+		3CF5E8C6255E28980074B2A0 /* UAFrequencyLimitManagerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CF5E8C5255E28980074B2A0 /* UAFrequencyLimitManagerTest.m */; };
 		3CFB563724E34475008F9CCE /* UAAuthToken+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CFB563524E34475008F9CCE /* UAAuthToken+Internal.h */; };
 		3CFB563824E34475008F9CCE /* UAAuthToken+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CFB563524E34475008F9CCE /* UAAuthToken+Internal.h */; };
 		3CFB563924E34475008F9CCE /* UAAuthToken.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CFB563624E34475008F9CCE /* UAAuthToken.m */; };
@@ -2702,6 +2733,10 @@
 		3CA0E33E237E396100EE76CF /* UAMessageCenterListCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UAMessageCenterListCell.h; sourceTree = "<group>"; };
 		3CA0E423237E4A7B00EE76CF /* AirshipMessageCenter.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AirshipMessageCenter.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3CA0E47F237E505200EE76CF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		3CA6C3222554E89600F71ABF /* UAFrequencyConstraint+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "UAFrequencyConstraint+Internal.h"; path = "AirshipAutomation/Source/UAFrequencyConstraint+Internal.h"; sourceTree = SOURCE_ROOT; };
+		3CA6C3232554E89600F71ABF /* UAFrequencyConstraint.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = UAFrequencyConstraint.m; path = AirshipAutomation/Source/UAFrequencyConstraint.m; sourceTree = SOURCE_ROOT; };
+		3CA6C3402554ED8B00F71ABF /* UAFrequencyChecker+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "UAFrequencyChecker+Internal.h"; path = "AirshipAutomation/Source/UAFrequencyChecker+Internal.h"; sourceTree = SOURCE_ROOT; };
+		3CA6C3412554ED8B00F71ABF /* UAFrequencyChecker.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = UAFrequencyChecker.m; path = AirshipAutomation/Source/UAFrequencyChecker.m; sourceTree = SOURCE_ROOT; };
 		3CADDEAA21B89AB000C482F4 /* UAInAppMessageDefaultDisplayCoordinator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UAInAppMessageDefaultDisplayCoordinator.h; sourceTree = "<group>"; };
 		3CADDEAB21B89AB000C482F4 /* UAInAppMessageDefaultDisplayCoordinator.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageDefaultDisplayCoordinator.m; sourceTree = "<group>"; };
 		3CADDEB221B89B0E00C482F4 /* UAInAppMessageDisplayCoordinator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UAInAppMessageDisplayCoordinator.h; sourceTree = "<group>"; };
@@ -2716,6 +2751,18 @@
 		3CD9C1D021D1A43600B129A6 /* UAInAppMessageResolution+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAInAppMessageResolution+Internal.h"; sourceTree = "<group>"; };
 		3CF62ECF257997850007502B /* UAStateOverrides+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAStateOverrides+Internal.h"; sourceTree = "<group>"; };
 		3CF62ED0257997850007502B /* UAStateOverrides.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAStateOverrides.m; sourceTree = "<group>"; };
+		3CF5E806255619DC0074B2A0 /* UAFrequencyLimitManager+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAFrequencyLimitManager+Internal.h"; sourceTree = "<group>"; };
+		3CF5E807255619DC0074B2A0 /* UAFrequencyLimitManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAFrequencyLimitManager.m; sourceTree = "<group>"; };
+		3CF5E81825561FCC0074B2A0 /* UAOccurrence+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAOccurrence+Internal.h"; sourceTree = "<group>"; };
+		3CF5E81925561FCC0074B2A0 /* UAOccurrence.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAOccurrence.m; sourceTree = "<group>"; };
+		3CF5E843255A25BF0074B2A0 /* UAFrequencyLimits.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = UAFrequencyLimits.xcdatamodel; sourceTree = "<group>"; };
+		3CF5E85E255A270A0074B2A0 /* UAFrequencyConstraintData+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAFrequencyConstraintData+Internal.h"; sourceTree = "<group>"; };
+		3CF5E85F255A270A0074B2A0 /* UAFrequencyConstraintData.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAFrequencyConstraintData.m; sourceTree = "<group>"; };
+		3CF5E870255A27380074B2A0 /* UAOccurrenceData+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAOccurrenceData+Internal.h"; sourceTree = "<group>"; };
+		3CF5E871255A27380074B2A0 /* UAOccurrenceData.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAOccurrenceData.m; sourceTree = "<group>"; };
+		3CF5E89A255A2AF10074B2A0 /* UAFrequencyLimitStore+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAFrequencyLimitStore+Internal.h"; sourceTree = "<group>"; };
+		3CF5E89B255A2AF10074B2A0 /* UAFrequencyLimitStore.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAFrequencyLimitStore.m; sourceTree = "<group>"; };
+		3CF5E8C5255E28980074B2A0 /* UAFrequencyLimitManagerTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAFrequencyLimitManagerTest.m; sourceTree = "<group>"; };
 		3CFB563524E34475008F9CCE /* UAAuthToken+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAAuthToken+Internal.h"; sourceTree = "<group>"; };
 		3CFB563624E34475008F9CCE /* UAAuthToken.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAAuthToken.m; sourceTree = "<group>"; };
 		3CFB563B24E346FD008F9CCE /* UAAuthTokenManager+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAAuthTokenManager+Internal.h"; sourceTree = "<group>"; };
@@ -4143,6 +4190,35 @@
 			path = NativeBridge;
 			sourceTree = "<group>";
 		};
+		3CF5E7E02554F6150074B2A0 /* Limits */ = {
+			isa = PBXGroup;
+			children = (
+				3CA6C3222554E89600F71ABF /* UAFrequencyConstraint+Internal.h */,
+				3CA6C3232554E89600F71ABF /* UAFrequencyConstraint.m */,
+				3CF5E85E255A270A0074B2A0 /* UAFrequencyConstraintData+Internal.h */,
+				3CF5E85F255A270A0074B2A0 /* UAFrequencyConstraintData.m */,
+				3CA6C3402554ED8B00F71ABF /* UAFrequencyChecker+Internal.h */,
+				3CA6C3412554ED8B00F71ABF /* UAFrequencyChecker.m */,
+				3CF5E806255619DC0074B2A0 /* UAFrequencyLimitManager+Internal.h */,
+				3CF5E807255619DC0074B2A0 /* UAFrequencyLimitManager.m */,
+				3CF5E81825561FCC0074B2A0 /* UAOccurrence+Internal.h */,
+				3CF5E81925561FCC0074B2A0 /* UAOccurrence.m */,
+				3CF5E870255A27380074B2A0 /* UAOccurrenceData+Internal.h */,
+				3CF5E871255A27380074B2A0 /* UAOccurrenceData.m */,
+				3CF5E89A255A2AF10074B2A0 /* UAFrequencyLimitStore+Internal.h */,
+				3CF5E89B255A2AF10074B2A0 /* UAFrequencyLimitStore.m */,
+			);
+			name = Limits;
+			sourceTree = "<group>";
+		};
+		3CF5E8C4255E28590074B2A0 /* Limits */ = {
+			isa = PBXGroup;
+			children = (
+				3CF5E8C5255E28980074B2A0 /* UAFrequencyLimitManagerTest.m */,
+			);
+			name = Limits;
+			sourceTree = "<group>";
+		};
 		3CFB563424E34428008F9CCE /* Auth */ = {
 			isa = PBXGroup;
 			children = (
@@ -4864,6 +4940,7 @@
 			isa = PBXGroup;
 			children = (
 				1B2F3B0324B7525500A5DE8C /* UAAutomation.xcdatamodeld */,
+				3CF5E842255A25BF0074B2A0 /* UAFrequencyLimits.xcdatamodeld */,
 				6E845478237E231F007D3B1E /* UAAutomationActions.plist */,
 				6E84547B237E2320007D3B1E /* UAInAppMessageBannerContentView.xib */,
 				6E845482237E2320007D3B1E /* UAInAppMessageBannerView.xib */,
@@ -4879,6 +4956,7 @@
 		6E8450BB237DFFB5007D3B1E /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				3CF5E7E02554F6150074B2A0 /* Limits */,
 				6E84544E237E05F3007D3B1E /* AirshipAutomation.h */,
 				6E737E0924F042CC0094E2E8 /* Audience */,
 				1BAE376524F559950095C6E3 /* Public */,
@@ -5269,6 +5347,7 @@
 		6EA734B724BE5E680012B737 /* InAppAutomation */ = {
 			isa = PBXGroup;
 			children = (
+				3CF5E8C4255E28590074B2A0 /* Limits */,
 				3230E60A24D04C75002C344D /* UAInAppAudienceHistorianTest.m */,
 				3C89DD31211E143C00864358 /* UATagGroupsLookupResponseTest.m */,
 				3C89DD3D211E4D4900864358 /* UAInAppAudienceManagerTest.m */,
@@ -5722,7 +5801,7 @@
 				8F98742CB99EDEDE99A230C2 /* Pods_AirshipKitTests.framework */,
 			);
 			name = Frameworks;
-			path = ..;
+			path = "../";
 			sourceTree = "<group>";
 		};
 		CC64F0551D8B77E3009CEF27 /* Tests */ = {
@@ -6184,6 +6263,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3C13BFB62384AC0E0071E80C /* UAAutomationResources.h in Headers */,
+				3CF5E81B25561FCC0074B2A0 /* UAOccurrence+Internal.h in Headers */,
 				6E8453C4237E0540007D3B1E /* UAInAppMessageHTMLDisplayContent.h in Headers */,
 				6E8453C5237E0540007D3B1E /* UAInAppMessageHTMLAdapter.h in Headers */,
 				6E8453C6237E0540007D3B1E /* UAInAppMessageHTMLStyle.h in Headers */,
@@ -6202,6 +6282,7 @@
 				6E8453D1237E0540007D3B1E /* UALegacyInAppMessage.h in Headers */,
 				6E84546C237E1EB4007D3B1E /* UATimerScheduler+Internal.h in Headers */,
 				6E9F74D124E6F414001F9B05 /* UADeferredScheduleAPIClient+Internal.h in Headers */,
+				3CA6C3252554E89600F71ABF /* UAFrequencyConstraint+Internal.h in Headers */,
 				6E8453D2237E0540007D3B1E /* UALegacyInAppMessaging.h in Headers */,
 				6E8453D3237E0540007D3B1E /* UAInAppMessageAssetManager.h in Headers */,
 				6E845463237E0DCF007D3B1E /* UAAirshipAutomationCoreImport.h in Headers */,
@@ -6241,9 +6322,11 @@
 				6E8453F5237E0540007D3B1E /* UAAutomationModuleLoader.h in Headers */,
 				6E84538A237E0523007D3B1E /* UAInAppMessageHTMLDisplayContent+Internal.h in Headers */,
 				6E84538B237E0523007D3B1E /* UAInAppMessageHTMLViewController+Internal.h in Headers */,
+				3CF5E861255A270A0074B2A0 /* UAFrequencyConstraintData+Internal.h in Headers */,
 				6E84538C237E0523007D3B1E /* UAInAppMessageCustomDisplayContent+Internal.h in Headers */,
 				6E84538D237E0523007D3B1E /* UAInAppMessageBannerDisplayContent+Internal.h in Headers */,
 				6E84538E237E0523007D3B1E /* UAInAppMessageBannerController+Internal.h in Headers */,
+				3CF5E873255A27380074B2A0 /* UAOccurrenceData+Internal.h in Headers */,
 				6E84538F237E0523007D3B1E /* UAInAppMessageBannerView+Internal.h in Headers */,
 				6E9F74D724E6F68D001F9B05 /* UADeferredScheduleResult+Internal.h in Headers */,
 				6E845390237E0523007D3B1E /* UAInAppMessageBannerContentView+Internal.h in Headers */,
@@ -6265,6 +6348,7 @@
 				6E84539B237E0523007D3B1E /* UAInAppMessagingTagGroupsConfig+Internal.h in Headers */,
 				6E84539C237E0523007D3B1E /* UATagGroupsLookupAPIClient+Internal.h in Headers */,
 				6E84544F237E05F3007D3B1E /* AirshipAutomation.h in Headers */,
+				3CA6C3432554ED8B00F71ABF /* UAFrequencyChecker+Internal.h in Headers */,
 				6E84539D237E0523007D3B1E /* UAInAppAudienceManager+Internal.h in Headers */,
 				6E84539E237E0523007D3B1E /* UATagGroupsLookupResponse+Internal.h in Headers */,
 				6E84539F237E0524007D3B1E /* UATagGroupsLookupResponseCache+Internal.h in Headers */,
@@ -6280,12 +6364,14 @@
 				6EA734B624B7AA600012B737 /* UAInAppAutomation.h in Headers */,
 				6E8453A8237E0524007D3B1E /* UAInAppMessageTextView+Internal.h in Headers */,
 				6E8453A9237E0524007D3B1E /* UAInAppMessageDismissButton+Internal.h in Headers */,
+				3CF5E89D255A2AF10074B2A0 /* UAFrequencyLimitStore+Internal.h in Headers */,
 				6E8453AA237E0524007D3B1E /* UAInAppMessageButtonView+Internal.h in Headers */,
 				6E8453AB237E0524007D3B1E /* UAInAppMessageButton+Internal.h in Headers */,
 				6E8453AC237E0524007D3B1E /* UAInAppMessageMediaView+Internal.h in Headers */,
 				6E8453AE237E0524007D3B1E /* UAInAppMessageManager+Internal.h in Headers */,
 				6E8453AF237E0524007D3B1E /* UAInAppMessageUtils+Internal.h in Headers */,
 				6E8453B0237E0524007D3B1E /* UAInAppRemoteDataClient+Internal.h in Headers */,
+				3CF5E809255619DC0074B2A0 /* UAFrequencyLimitManager+Internal.h in Headers */,
 				6E50629824E1ABDB00689C6D /* UAActionSchedule.h in Headers */,
 				6E8453B1237E0524007D3B1E /* UAScheduleAudience+Internal.h in Headers */,
 				6E8453B2237E0524007D3B1E /* UATagSelector+Internal.h in Headers */,
@@ -6348,6 +6434,7 @@
 				6E50629724E1ABDB00689C6D /* UAActionSchedule.h in Headers */,
 				3226E11824C1DFC4000106CC /* UAInAppAudienceHistorian+Internal.h in Headers */,
 				A6EEE4AC25559E570034A42C /* UASearchEventTemplate.h in Headers */,
+				3CF5E89C255A2AF10074B2A0 /* UAFrequencyLimitStore+Internal.h in Headers */,
 				6E4117ED2538C1FB00FEE4E8 /* UANamedUser+Internal.h in Headers */,
 				3CFB563D24E346FD008F9CCE /* UAAuthTokenManager+Internal.h in Headers */,
 				6E4115212538C0AB00FEE4E8 /* UANotificationCategory.h in Headers */,
@@ -6563,6 +6650,7 @@
 				6E41196D2538C20100FEE4E8 /* UARemoteConfigDisableInfo+Internal.h in Headers */,
 				6EE77170238F16A600E79944 /* UAInAppMessageFullScreenDisplayContent+Internal.h in Headers */,
 				6E4115ED2538C0B000FEE4E8 /* UAAppIntegration.h in Headers */,
+				3CA6C3242554E89600F71ABF /* UAFrequencyConstraint+Internal.h in Headers */,
 				6EE77173238F16A600E79944 /* UAInAppMessageFullScreenViewController+Internal.h in Headers */,
 				6EA734B124B7AA600012B737 /* UAInAppAutomation+Internal.h in Headers */,
 				6E41185D2538C1FD00FEE4E8 /* UAFetchDeviceInfoActionPredicate+Internal.h in Headers */,
@@ -6598,6 +6686,7 @@
 				6EE7718F238F16A600E79944 /* UAInAppMessageSceneManager+Internal.h in Headers */,
 				6EE77190238F16A600E79944 /* UAInAppMessagingRemoteConfig+Internal.h in Headers */,
 				6EE77191238F16A600E79944 /* UAInAppMessagingTagGroupsConfig+Internal.h in Headers */,
+				3CF5E860255A270A0074B2A0 /* UAFrequencyConstraintData+Internal.h in Headers */,
 				6E4116652538C0B300FEE4E8 /* UALocationProvider.h in Headers */,
 				6EE77192238F16A600E79944 /* UATagGroupsLookupAPIClient+Internal.h in Headers */,
 				6EE77193238F16A600E79944 /* UAInAppAudienceManager+Internal.h in Headers */,
@@ -6619,6 +6708,7 @@
 				6EE7719E238F16A600E79944 /* UAInAppMessageTextInfo+Internal.h in Headers */,
 				6EE771A4238F16A600E79944 /* UAInAppMessageButtonInfo+Internal.h in Headers */,
 				6E411A252538C20300FEE4E8 /* UATagGroupsRegistrar+Internal.h in Headers */,
+				3CF5E872255A27380074B2A0 /* UAOccurrenceData+Internal.h in Headers */,
 				6E4114FD2538C0AA00FEE4E8 /* UAProximityRegion.h in Headers */,
 				6EE771A7238F16A600E79944 /* UAInAppMessageMediaInfo+Internal.h in Headers */,
 				6E4119912538C20100FEE4E8 /* UARemoteConfigModuleNames+Internal.h in Headers */,
@@ -6648,10 +6738,12 @@
 				6EE771B6238F16A600E79944 /* UATagSelector+Internal.h in Headers */,
 				6EE771B8238F16A600E79944 /* UAScheduleAudienceChecks+Internal.h in Headers */,
 				6E411B212538C20700FEE4E8 /* UASwizzler+Internal.h in Headers */,
+				3CA6C3422554ED8B00F71ABF /* UAFrequencyChecker+Internal.h in Headers */,
 				6E4115692538C0AD00FEE4E8 /* UAActionPredicateProtocol.h in Headers */,
 				6E4117B12538C1FA00FEE4E8 /* UARemoteDataPayload+Internal.h in Headers */,
 				6E4115A12538C0AE00FEE4E8 /* UAModuleLoader.h in Headers */,
 				6E41167D2538C0B400FEE4E8 /* UASemaphore.h in Headers */,
+				3CF5E808255619DC0074B2A0 /* UAFrequencyLimitManager+Internal.h in Headers */,
 				6E411E8E2538F4D000FEE4E8 /* UAAction+Internal.h in Headers */,
 				6EE771BC238F16A600E79944 /* UAInAppMessageDefaultDisplayCoordinator+Internal.h in Headers */,
 				6E4118812538C1FD00FEE4E8 /* UAHTTPRequestOperation+Internal.h in Headers */,
@@ -6693,6 +6785,7 @@
 				6E411E8C2538F4D000FEE4E8 /* UAActionResult+Internal.h in Headers */,
 				6EE771E8238F16A600E79944 /* UAUserData+Internal.h in Headers */,
 				6E4115192538C0AB00FEE4E8 /* UASystemVersion.h in Headers */,
+				3CF5E81A25561FCC0074B2A0 /* UAOccurrence+Internal.h in Headers */,
 				6EE771E9238F16A600E79944 /* UAUserDataDAO+Internal.h in Headers */,
 				6EE77147238F167300E79944 /* UARateAppActionPredicate+Internal.h in Headers */,
 				6EE77148238F167300E79944 /* UARateAppAction+Internal.h in Headers */,
@@ -8117,6 +8210,7 @@
 				6E8453FB237E0575007D3B1E /* UAInAppMessageCustomDisplayContent.m in Sources */,
 				6E8453FC237E0575007D3B1E /* UAInAppMessageBannerAdapter.m in Sources */,
 				6E8453FD237E0575007D3B1E /* UAInAppMessageBannerDisplayContent.m in Sources */,
+				3CF5E89F255A2AF10074B2A0 /* UAFrequencyLimitStore.m in Sources */,
 				6E8453FE237E0575007D3B1E /* UAInAppMessageBannerStyle.m in Sources */,
 				6E8453FF237E0575007D3B1E /* UAInAppMessageBannerController.m in Sources */,
 				6E845400237E0575007D3B1E /* UAInAppMessageBannerView.m in Sources */,
@@ -8130,6 +8224,7 @@
 				6E845406237E0575007D3B1E /* UAInAppMessageFullScreenAdapter.m in Sources */,
 				6E9F74D924E6F68D001F9B05 /* UADeferredScheduleResult.m in Sources */,
 				6E845407237E0575007D3B1E /* UAInAppMessageFullScreenStyle.m in Sources */,
+				3CF5E863255A270A0074B2A0 /* UAFrequencyConstraintData.m in Sources */,
 				6E845408237E0575007D3B1E /* UAInAppMessageFullScreenDisplayContent.m in Sources */,
 				6E845409237E0575007D3B1E /* UAInAppMessageFullScreenViewController.m in Sources */,
 				6E84540A237E0575007D3B1E /* UALegacyInAppMessage.m in Sources */,
@@ -8141,6 +8236,7 @@
 				6E845410237E0575007D3B1E /* UAInAppMessageSceneManager.m in Sources */,
 				6E845411237E0575007D3B1E /* UAInAppMessagingRemoteConfig.m in Sources */,
 				6E845412237E0575007D3B1E /* UAInAppMessagingTagGroupsConfig.m in Sources */,
+				3CF5E875255A27380074B2A0 /* UAOccurrenceData.m in Sources */,
 				3CFB564624E3491A008F9CCE /* UAAuthTokenAPIClient.m in Sources */,
 				6EEAE81624CF93150046E311 /* UAScheduleDeferredData.m in Sources */,
 				6E845413237E0575007D3B1E /* UATagGroupsLookupAPIClient.m in Sources */,
@@ -8154,12 +8250,14 @@
 				3CFB564024E346FD008F9CCE /* UAAuthTokenManager.m in Sources */,
 				6E84541A237E0575007D3B1E /* UAInAppMessageResolutionEvent.m in Sources */,
 				6E84541B237E0575007D3B1E /* UAInAppMessage.m in Sources */,
+				3CA6C3452554ED8B00F71ABF /* UAFrequencyChecker.m in Sources */,
 				6E9F74D324E6F414001F9B05 /* UADeferredScheduleAPIClient.m in Sources */,
 				45E08F4924CA045E00041803 /* UIImage+UAAdditions+Internal.m in Sources */,
 				6E84541C237E0575007D3B1E /* UAInAppMessageDisplayContent.m in Sources */,
 				6E84541D237E0575007D3B1E /* UAInAppMessageTextInfo.m in Sources */,
 				6E84541E237E0575007D3B1E /* UAInAppMessageTextStyle.m in Sources */,
 				6E84541F237E0575007D3B1E /* UAInAppMessageButtonStyle.m in Sources */,
+				3CF5E80B255619DC0074B2A0 /* UAFrequencyLimitManager.m in Sources */,
 				6E845420237E0575007D3B1E /* UAInAppMessageMediaStyle.m in Sources */,
 				6E845421237E0575007D3B1E /* UAInAppMessageButtonInfo.m in Sources */,
 				6E845422237E0575007D3B1E /* UAInAppMessageMediaInfo.m in Sources */,
@@ -8170,14 +8268,17 @@
 				6E845425237E0575007D3B1E /* UAInAppMessageButtonView.m in Sources */,
 				6E845426237E0575007D3B1E /* UAInAppMessageButton.m in Sources */,
 				6E845427237E0575007D3B1E /* UAInAppMessageMediaView.m in Sources */,
+				3CA6C3272554E89600F71ABF /* UAFrequencyConstraint.m in Sources */,
 				6E845465237E1C26007D3B1E /* UAActiveTimer.m in Sources */,
 				6E845429237E0575007D3B1E /* UAInAppMessageManager.m in Sources */,
 				6E84542A237E0575007D3B1E /* UAInAppMessageUtils.m in Sources */,
 				6E84542B237E0575007D3B1E /* UAInAppRemoteDataClient.m in Sources */,
 				6E84542C237E0575007D3B1E /* UAScheduleAudience.m in Sources */,
 				6E84542D237E0575007D3B1E /* UATagSelector.m in Sources */,
+				3CF5E845255A25BF0074B2A0 /* UAFrequencyLimits.xcdatamodeld in Sources */,
 				6EA734B424B7AA600012B737 /* UAInAppAutomation.m in Sources */,
 				6E845467237E1C62007D3B1E /* UARetriablePipeline.m in Sources */,
+				3CF5E81D25561FCC0074B2A0 /* UAOccurrence.m in Sources */,
 				6E737E0024F033480094E2E8 /* UAInAppAudienceHistorian.m in Sources */,
 				6E5062A024E1B2DE00689C6D /* UADeferredSchedule.m in Sources */,
 				6E84542E237E0575007D3B1E /* UAScheduleAudienceChecks.m in Sources */,
@@ -8224,6 +8325,7 @@
 				6E4118192538C1FC00FEE4E8 /* UAAPNSRegistration.m in Sources */,
 				3C45B06623E11DED004B9590 /* UADefaultMessageCenterMessageViewController.m in Sources */,
 				6E4118112538C1FC00FEE4E8 /* UANamedUserAPIClient.m in Sources */,
+				3CF5E874255A27380074B2A0 /* UAOccurrenceData.m in Sources */,
 				3C45B06723E11DED004B9590 /* UADefaultMessageCenterSplitViewController.m in Sources */,
 				6E411E882538F4D000FEE4E8 /* UAActionRunner.m in Sources */,
 				6E411A892538C20500FEE4E8 /* UAPadding.m in Sources */,
@@ -8294,6 +8396,7 @@
 				6E4118592538C1FD00FEE4E8 /* UAAddCustomEventAction.m in Sources */,
 				6E4117CD2538C1FA00FEE4E8 /* UADispatcher.m in Sources */,
 				6EE7720E238F172900E79944 /* UAInAppMessageBannerController.m in Sources */,
+				3CF5E80A255619DC0074B2A0 /* UAFrequencyLimitManager.m in Sources */,
 				6E411E8A2538F4D000FEE4E8 /* UAAction.m in Sources */,
 				6E4119E52538C20200FEE4E8 /* UAAnalytics.m in Sources */,
 				6EE7720F238F172900E79944 /* UAInAppMessageBannerView.m in Sources */,
@@ -8307,6 +8410,7 @@
 				6E41186D2538C1FD00FEE4E8 /* UAInteractiveNotificationEvent.m in Sources */,
 				6E4118312538C1FC00FEE4E8 /* UADeviceRegistrationEvent.m in Sources */,
 				6EE77211238F172900E79944 /* UAInAppMessageCustomDisplayContent.m in Sources */,
+				3CA6C3262554E89600F71ABF /* UAFrequencyConstraint.m in Sources */,
 				6EE77212238F172900E79944 /* UAInAppMessageResizableViewController.m in Sources */,
 				6EE77213238F172900E79944 /* UAInAppMessageHTMLDisplayContent.m in Sources */,
 				6E4119BD2538C20200FEE4E8 /* UARemoteConfigManager.m in Sources */,
@@ -8325,6 +8429,7 @@
 				6E411CAD2538C6A600FEE4E8 /* UAEvents.xcdatamodeld in Sources */,
 				6EE77219238F172900E79944 /* UAInAppMessageAssets.m in Sources */,
 				6E411AB12538C20500FEE4E8 /* UAModifyTagsAction.m in Sources */,
+				3CF5E89E255A2AF10074B2A0 /* UAFrequencyLimitStore.m in Sources */,
 				6E4118AD2538C1FE00FEE4E8 /* UAMediaEventTemplate.m in Sources */,
 				6EE7721A238F172900E79944 /* UAInAppMessageDefaultPrepareAssetsDelegate.m in Sources */,
 				6E411A512538C20400FEE4E8 /* UAAttributeMutations.m in Sources */,
@@ -8335,6 +8440,7 @@
 				6EE7721D238F172900E79944 /* UAInAppMessagingTagGroupsConfig.m in Sources */,
 				6EE7721E238F172900E79944 /* UATagGroupsLookupAPIClient.m in Sources */,
 				6EE7721F238F172900E79944 /* UAInAppAudienceManager.m in Sources */,
+				3CF5E862255A270A0074B2A0 /* UAFrequencyConstraintData.m in Sources */,
 				6E4118A52538C1FE00FEE4E8 /* UATextInputNotificationAction.m in Sources */,
 				6EE77220238F172900E79944 /* UATagGroupsLookupResponse.m in Sources */,
 				6EC32270254FC64C00EA5B38 /* NSObject+UAAdditions.m in Sources */,
@@ -8357,6 +8463,7 @@
 				6EE77229238F172900E79944 /* UAInAppMessageTextStyle.m in Sources */,
 				6E411A0D2538C20300FEE4E8 /* UAAddTagsAction.m in Sources */,
 				6E411B092538C20700FEE4E8 /* UAURLAllowList.m in Sources */,
+				3CF5E844255A25BF0074B2A0 /* UAFrequencyLimits.xcdatamodeld in Sources */,
 				6E4119992538C20100FEE4E8 /* UAOpenExternalURLAction.m in Sources */,
 				6EE7722A238F172900E79944 /* UAInAppMessageButtonStyle.m in Sources */,
 				A6EEE51625559EA50034A42C /* UASearchEventTemplate.m in Sources */,
@@ -8471,6 +8578,7 @@
 				6E4118BD2538C1FE00FEE4E8 /* UANotificationAction.m in Sources */,
 				6EE771EC238F171A00E79944 /* UARateAppPromptViewController.m in Sources */,
 				6EE771ED238F171A00E79944 /* UAExtendedActionsModuleLoader.m in Sources */,
+				3CA6C3442554ED8B00F71ABF /* UAFrequencyChecker.m in Sources */,
 				1B8DCF6D2507BE130006E595 /* UAMessageCenterStyle.m in Sources */,
 				6E411AA12538C20500FEE4E8 /* UARemoteDataStore.m in Sources */,
 				3CFB564524E3491A008F9CCE /* UAAuthTokenAPIClient.m in Sources */,
@@ -8485,6 +8593,7 @@
 				6E411A092538C20300FEE4E8 /* UARegistrationDelegateWrapper.m in Sources */,
 				6E50629F24E1B2DE00689C6D /* UADeferredSchedule.m in Sources */,
 				6E4119F12538C20200FEE4E8 /* UAChannelCapture.m in Sources */,
+				3CF5E81C25561FCC0074B2A0 /* UAOccurrence.m in Sources */,
 				6E4118DD2538C1FE00FEE4E8 /* UAPersistentQueue.m in Sources */,
 				6E411B012538C20700FEE4E8 /* UABespokeCloseView.m in Sources */,
 				6E4118712538C1FD00FEE4E8 /* UAPendingTagGroupStore.m in Sources */,
@@ -8789,6 +8898,7 @@
 				6E4A00791F2A4A4A0069D8A0 /* UABaseTest.m in Sources */,
 				CC70E8CE1DD3E81D000E2528 /* UATagGroupsMutationTest.m in Sources */,
 				CC64F1041D8B781C009CEF27 /* UAInboxMessageTest.m in Sources */,
+				3CF5E8C6255E28980074B2A0 /* UAFrequencyLimitManagerTest.m in Sources */,
 				CC64F0EC1D8B781C009CEF27 /* UACancelSchedulesActionTests.m in Sources */,
 				DF4E49A5221F487500F306A5 /* UAInAppMessageAssetManagerTest.m in Sources */,
 				DFECEA871E662E25006AA8EA /* UANativeBridgeTest.m in Sources */,
@@ -9678,7 +9788,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.urbanairship.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				SWIFT_VERSION = "";
+				SWIFT_VERSION = 5.3;
 				VALID_ARCHS = "$(inherited) x86_64";
 			};
 			name = Debug;
@@ -9712,7 +9822,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.urbanairship.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				SWIFT_VERSION = "";
+				SWIFT_VERSION = 5.3;
 				VALID_ARCHS = "$(inherited) x86_64";
 			};
 			name = Release;
@@ -10195,6 +10305,16 @@
 			);
 			currentVersion = A649F50A252F4F39005453CB /* UAInbox 2.xcdatamodel */;
 			path = UAInbox.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+		3CF5E842255A25BF0074B2A0 /* UAFrequencyLimits.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				3CF5E843255A25BF0074B2A0 /* UAFrequencyLimits.xcdatamodel */,
+			);
+			currentVersion = 3CF5E843255A25BF0074B2A0 /* UAFrequencyLimits.xcdatamodel */;
+			path = UAFrequencyLimits.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
 		};

@@ -49,6 +49,13 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)safePerformBlock:(void (^)(BOOL))block;
 
+/**
+ * Performs a synchronous block with the passed in boolean indicating if it's safe to perform
+ * operations. Safe is determined by checking if the context has any persistent stores.
+ * @param block A block to perform.
+ */
+- (void)safePerformBlockAndWait:(void (^)(BOOL))block;
+
 
 @end
 

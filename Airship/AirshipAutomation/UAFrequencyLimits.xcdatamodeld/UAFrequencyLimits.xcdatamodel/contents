@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="17192" systemVersion="19F101" minimumToolsVersion="Automatic" sourceLanguage="Objective-C" userDefinedModelVersionIdentifier="">
+    <entity name="UAFrequencyConstraintData" representedClassName="UAFrequencyConstraintData" syncable="YES">
+        <attribute name="count" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="identifier" attributeType="String"/>
+        <attribute name="range" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <relationship name="occurrence" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="UAOccurrenceData" inverseName="constraint" inverseEntity="UAOccurrenceData"/>
+    </entity>
+    <entity name="UAOccurrenceData" representedClassName="UAOccurrenceData" syncable="YES">
+        <attribute name="timestamp" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <relationship name="constraint" maxCount="1" deletionRule="Nullify" destinationEntity="UAFrequencyConstraintData" inverseName="occurrence" inverseEntity="UAFrequencyConstraintData"/>
+    </entity>
+    <elements>
+        <element name="UAFrequencyConstraintData" positionX="-63" positionY="-18" width="128" height="103"/>
+        <element name="UAOccurrenceData" positionX="348.53125" positionY="-163.16796875" width="128" height="73"/>
+    </elements>
+</model>

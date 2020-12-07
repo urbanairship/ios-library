@@ -97,6 +97,16 @@ NSString *const UAManagedContextStoreDirectory = @"com.urbanairship.no-backup";
     }];
 }
 
+- (void)safePerformBlockAndWait:(void (^)(BOOL))block {
+    [self performBlockAndWait:^{
+        if (self.persistentStoreCoordinator.persistentStores.count) {
+            block(YES);
+        } else {
+            block(NO);
+        }
+    }];
+}
+
 - (BOOL)safeSave {
     NSError *error;
     if (!self.persistentStoreCoordinator.persistentStores.count) {
