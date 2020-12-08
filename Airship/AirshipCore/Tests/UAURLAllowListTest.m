@@ -79,6 +79,10 @@
     // email
     XCTAssertTrue([URLAllowList isAllowed:[NSURL URLWithString:@"mailto:name@example.com?subject=The%20subject%20of%20the%20mail"] scope:UAURLAllowListScopeOpenURL]);
     XCTAssertTrue([URLAllowList isAllowed:[NSURL URLWithString:@"mailto:name@example.com"] scope:UAURLAllowListScopeOpenURL]);
+
+    // System settings
+    XCTAssertTrue([URLAllowList isAllowed:[NSURL URLWithString:UIApplicationOpenSettingsURLString] scope:UAURLAllowListScopeOpenURL]);
+    XCTAssertTrue([URLAllowList isAllowed:[NSURL URLWithString:@"app-settings:"] scope:UAURLAllowListScopeOpenURL]);
 }
 
 /**

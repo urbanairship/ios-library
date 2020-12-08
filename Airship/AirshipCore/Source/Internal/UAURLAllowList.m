@@ -93,8 +93,9 @@ typedef BOOL (^UAURLAllowListMatcher)(NSURL *);
 
     // Open only
     [URLAllowList addEntry:@"https://*.youtube.com" scope:UAURLAllowListScopeOpenURL];
-    [URLAllowList addEntry:@"mailto:*" scope:UAURLAllowListScopeOpenURL];
-    [URLAllowList addEntry:@"sms:*" scope:UAURLAllowListScopeOpenURL];
+    [URLAllowList addEntry:@"mailto:" scope:UAURLAllowListScopeOpenURL];
+    [URLAllowList addEntry:@"sms:" scope:UAURLAllowListScopeOpenURL];
+    [URLAllowList addEntry:UIApplicationOpenSettingsURLString scope:UAURLAllowListScopeOpenURL];
 
     for (NSString *pattern in config.URLAllowList) {
         [URLAllowList addEntry:pattern];
