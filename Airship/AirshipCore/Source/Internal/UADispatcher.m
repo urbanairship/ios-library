@@ -98,18 +98,26 @@ static NSMutableDictionary *globalDispatchers;
     dispatch_async(self.queue, block);
 }
 
-- (UADisposable *)dispatchAfter:(NSTimeInterval)delay block:(void (^)(void))block {
+- (UADisposable *)dispatchAfter:(NSTimeInterval)delay timebase:(UADispatcherTimeBase)timebase block:(void (^)(void))block {
     if (delay < 0) {
         delay = 0;
     }
 
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay * NSEC_PER_SEC)), self.queue, block);
+    if (timebase == UADispatcherTimeBaseWall) {
+        dispatch_after(dispatch_walltime(DISPATCH_TIME_NOW, (int64_t)(delay * NSEC_PER_SEC)), self.queue, block);
+    } else {
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay * NSEC_PER_SEC)), self.queue, block);
+    }
 
     return [UADisposable disposableWithBlock:^{
         if (!dispatch_block_testcancel(block)) {
             dispatch_block_cancel(block);
         }
     }];
+}
+
+- (UADisposable *)dispatchAfter:(NSTimeInterval)delay block:(void (^)(void))block {
+    return [self dispatchAfter:delay timebase:UADispatcherTimeBaseWall block:block];
 }
 
 - (BOOL)isCurrentQueue {

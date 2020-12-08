@@ -64,6 +64,7 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
 
     UAAutomationStore *store = [UAAutomationStore automationStoreWithConfig:config
                                                               scheduleLimit:MaxSchedules];
+    
     UAAutomationEngine *automationEngine = [UAAutomationEngine automationEngineWithAutomationStore:store];
 
     UAInAppRemoteDataClient *dataClient = [UAInAppRemoteDataClient clientWithRemoteDataProvider:remoteDataProvider

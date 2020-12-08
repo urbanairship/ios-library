@@ -16,6 +16,10 @@
 #import "UAActionSchedule.h"
 #import "UADeferredSchedule+Internal.h"
 
+static NSString * const UAAutomationEngineDelayTaskID = @"UAAutomationEngine.delay";
+static NSString * const UAAutomationEngineIntervalTaskID = @"UAAutomationEngine.interval";
+static NSString * const UAAutomationEngineTaskExtrasIdentifier = @"identifier";
+
 @interface UAAutomationStateCondition : NSObject
 
 @property (nonatomic, copy, nonnull) BOOL (^predicate)(void);
@@ -42,7 +46,6 @@
 
 @interface UAAutomationEngine()
 @property (nonatomic, strong) UAAppStateTracker *appStateTracker;
-@property (nonatomic, strong) UATimerScheduler *timerScheduler;
 @property (nonnull, strong) UADispatcher *dispatcher;
 @property (nonnull, strong) UIApplication *application;
 @property (nonnull, strong) NSNotificationCenter *notificationCenter;
@@ -50,8 +53,9 @@
 
 @property (nonatomic, copy) NSString *currentScreen;
 @property (nonatomic, copy, nullable) NSString * currentRegion;
-@property (nonatomic, strong) NSMutableArray *activeTimers;
-@property (nonatomic, assign) UIBackgroundTaskIdentifier backgroundTaskIdentifier;
+
+@property (nonatomic, strong) UATaskManager *taskManager;
+
 @property (nonatomic, assign) BOOL isStarted;
 @property (nonnull, strong) NSMutableDictionary *stateConditions;
 @property (atomic, assign) BOOL paused;
@@ -68,7 +72,7 @@
 
 - (instancetype)initWithAutomationStore:(UAAutomationStore *)automationStore
                         appStateTracker:(UAAppStateTracker *)appStateTracker
-                         timerScheduler:(UATimerScheduler *)timerScheduler
+                            taskManager:(UATaskManager *)taskManager
                      notificationCenter:(NSNotificationCenter *)notificationCenter
                              dispatcher:(UADispatcher *)dispatcher
                             application:(UIApplication *)application
@@ -78,15 +82,28 @@
     if (self) {
         self.automationStore = automationStore;
         self.appStateTracker = appStateTracker;
-        self.timerScheduler = timerScheduler;
+        self.taskManager = taskManager;
         self.notificationCenter = notificationCenter;
         self.dispatcher = dispatcher;
         self.application = application;
         self.date = date;
-
-        self.activeTimers = [NSMutableArray array];
         self.stateConditions = [NSMutableDictionary dictionary];
         self.paused = NO;
+
+        UA_WEAKIFY(self)
+        [self.taskManager registerForTaskWithIDs:@[UAAutomationEngineDelayTaskID, UAAutomationEngineIntervalTaskID]
+                                      dispatcher:[UADispatcher serialDispatcher]
+                                   launchHandler:^(id<UATask> task) {
+            UA_STRONGIFY(self)
+            if ([task.taskID isEqualToString:UAAutomationEngineDelayTaskID]) {
+                [self handleDelayTask:task];
+            } else if ([task.taskID isEqualToString:UAAutomationEngineIntervalTaskID]) {
+                [self handleIntervalTask:task];
+            } else {
+                UA_LERR(@"Invalid task: %@", task.taskID);
+                [task taskCompleted];
+            }
+        }];
     }
 
     return self;
@@ -94,7 +111,7 @@
 
 + (instancetype)automationEngineWithAutomationStore:(UAAutomationStore *)automationStore
                                     appStateTracker:(UAAppStateTracker *)appStateTracker
-                                     timerScheduler:(UATimerScheduler *)timerScheduler
+                                        taskManager:(UATaskManager *)taskManager
                                  notificationCenter:(NSNotificationCenter *)notificationCenter
                                          dispatcher:(UADispatcher *)dispatcher
                                         application:(UIApplication *)application
@@ -102,7 +119,7 @@
 
     return [[UAAutomationEngine alloc] initWithAutomationStore:automationStore
                                                appStateTracker:appStateTracker
-                                                timerScheduler:timerScheduler
+                                                   taskManager:taskManager
                                             notificationCenter:notificationCenter
                                                     dispatcher:dispatcher
                                                    application:application
@@ -112,7 +129,7 @@
 + (instancetype)automationEngineWithAutomationStore:(UAAutomationStore *)automationStore {
     return [[UAAutomationEngine alloc] initWithAutomationStore:automationStore
                                                appStateTracker:[UAAppStateTracker shared]
-                                                timerScheduler:[[UATimerScheduler alloc] init]
+                                                   taskManager:[UATaskManager shared]
                                             notificationCenter:[NSNotificationCenter defaultCenter]
                                                     dispatcher:[UADispatcher mainDispatcher]
                                                    application:[UIApplication sharedApplication]
@@ -155,7 +172,7 @@
     [self finishExecutionSchedules];
     [self cleanSchedules];
     [self resetPendingSchedules];
-    [self rescheduleTimers];
+    [self rescheduleTasks];
     [self createStateConditions];
     [self restoreCompoundTriggers];
     [self updateTriggersWithType:UAScheduleTriggerAppInit argument:nil incrementAmount:1.0];
@@ -176,7 +193,6 @@
         return;
     }
 
-    [self cancelTimers];
     [self.notificationCenter removeObserver:self];
     [self.stateConditions removeAllObjects];
     self.isStarted = NO;
@@ -471,8 +487,6 @@
             completionHandler([identifiers count] > 0);
         }];
     }
-
-    [self cancelTimersWithIdentifiers:identifiers];
 }
 
 - (BOOL)isForegrounded {
@@ -513,10 +527,6 @@
 #pragma mark Event listeners
 
 - (void)applicationDidTransitionToForeground {
-    if (!self.activeTimers) {
-        [self rescheduleTimers];
-    }
-
     // Update any dependent foreground triggers
     [self updateTriggersWithType:UAScheduleTriggerAppForeground argument:nil incrementAmount:1.0];
 
@@ -652,12 +662,6 @@
             scheduleData.executionState = @(UAScheduleStateIdle);
         }
 
-        // Cancel timers
-        if (schedulesToCancel.count) {
-            NSSet *timersToCancel = [schedulesToCancel valueForKeyPath:@"identifier"];
-            [self cancelTimersWithIdentifiers:timersToCancel];
-        }
-
         NSTimeInterval executionTime = -[start timeIntervalSinceDate:self.date.now];
         UA_LTRACE(@"Automation execution time: %f seconds, triggers: %ld, triggered schedules: %ld", executionTime, (unsigned long)triggers.count, (unsigned long)schedulesToExecute.count);
     }];
@@ -667,80 +671,38 @@
     [self updateTriggersWithScheduleID:nil type:triggerType argument:argument incrementAmount:amount];
 }
 
-/**
- * Starts a timer for the schedule.
- *
- * @param scheduleData The schedule's data.
- */
+- (void)enqueueDelayTaskForSchedule:(UAScheduleData *)scheduleData timeInterval:(NSTimeInterval)timeInterval {
+    id extras = @{UAAutomationEngineTaskExtrasIdentifier : scheduleData.identifier};
 
-- (void)startTimerForSchedule:(UAScheduleData *)scheduleData
-                 timeInterval:(NSTimeInterval)timeInterval
-                     selector:(SEL)selector {
+    UATaskRequestOptions *requestOptions = [UATaskRequestOptions optionsWithConflictPolicy:UATaskConflictPolicyAppend
+                                                                           requiresNetwork:NO
+                                                                                    extras:extras];
+    [self.taskManager enqueueRequestWithID:UAAutomationEngineDelayTaskID
+                                   options:requestOptions
+                              initialDelay:timeInterval];
+}
 
-    NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
-    [userInfo setValue:scheduleData.identifier forKey:@"identifier"];
+- (void)enqueueIntervalTaskForSchedule:(UAScheduleData *)scheduleData timeInterval:(NSTimeInterval)timeInterval {
+    id extras = @{UAAutomationEngineTaskExtrasIdentifier : scheduleData.identifier};
 
-    UA_WEAKIFY(self);
-    [self.dispatcher dispatchAsync:^{
-        UA_STRONGIFY(self);
-
-        NSTimer *timer = [NSTimer timerWithTimeInterval:timeInterval <= 0 ? .1 : timeInterval
-                                                 target:self
-                                               selector:selector
-                                               userInfo:userInfo
-                                                repeats:NO];
-
-        // Make sure we have a background task identifier before starting the timer
-        if (self.backgroundTaskIdentifier == UIBackgroundTaskInvalid) {
-            self.backgroundTaskIdentifier = [self.application beginBackgroundTaskWithExpirationHandler:^{
-                UA_LTRACE(@"Automation background task expired. Cancelling timer alarm.");
-                [self cancelTimers];
-            }];
-
-            // No background time. The timer will be rescheduled the next time the app is active
-            if (self.backgroundTaskIdentifier == UIBackgroundTaskInvalid) {
-                UA_LTRACE(@"Unable to request background task for automation timer.");
-                return;
-            }
-        }
-
-        UA_LTRACE(@"Starting automation timer for %f seconds with user info %@", timeInterval, timer.userInfo);
-        [self.timerScheduler scheduleTimer:timer];
-        [self.activeTimers addObject:timer];
-    }];
+    UATaskRequestOptions *requestOptions = [UATaskRequestOptions optionsWithConflictPolicy:UATaskConflictPolicyAppend
+                                                                           requiresNetwork:NO
+                                                                                    extras:extras];
+    [self.taskManager enqueueRequestWithID:UAAutomationEngineIntervalTaskID
+                                   options:requestOptions
+                              initialDelay:timeInterval];
 }
 
 /**
- * Finishes the timer.
- *
- * @param timer The timer to finish.
+ * Handler for delay tasks. Method is called on a serial dispatch queue.
+ * *
+ * @param task The task.
  */
-- (void)finishTimer:(NSTimer *)timer {
-    [self.dispatcher dispatchAsync:^{
-        [timer invalidate];
-        [self.activeTimers removeObject:timer];
+- (void)handleDelayTask:(id<UATask>)task {
+    NSDictionary *extras = task.requestOptions.extras;
+    UA_LTRACE(@"Handle delay task: %@", extras);
 
-        if (!self.activeTimers.count) {
-            [self endBackgroundTask];
-        }
-    }];
-}
-
-/**
- * Delay timer fired for a schedule. Method is called on the main queue.
- *
- * Called from the main queue.
- *
- * @param timer The timer.
- */
-- (void)delayTimerFired:(NSTimer *)timer {
-    if (!timer.isValid) {
-        return;
-    }
-
-    UA_LTRACE(@"Automation delay timer fired: %@", timer.userInfo);
-
-    NSString *identifier = timer.userInfo[@"identifier"];
+    NSString *identifier = extras[UAAutomationEngineTaskExtrasIdentifier];
 
     UA_WEAKIFY(self);
     [self.automationStore getSchedule:identifier completionHandler:^(UAScheduleData *scheduleData) {
@@ -748,12 +710,14 @@
 
         // Verify we are still delayed
         if (!scheduleData || [scheduleData.executionState intValue] != UAScheduleStateTimeDelayed) {
+            [task taskCompleted];
             return;
         }
 
         // Check expired
         if ([scheduleData isExpired]) {
             [self handleExpiredScheduleData:scheduleData];
+            [task taskCompleted];
             return;
         }
 
@@ -761,24 +725,21 @@
         scheduleData.executionState = @(UAScheduleStatePreparingSchedule);
         [self prepareSchedules:@[scheduleData]];
 
-        // Finish the timer
-        [self finishTimer:timer];
+        // Complete the task
+        [task taskCompleted];
     }];
 }
 
 /**
- * Interval timer fired for a schedule. Method is called on the main queue.
+ * Handler for interval tasks. Method is called on a serial dispatch queue.
  *
- * @param timer The timer.
+ * @param task The task.
  */
-- (void)intervalTimerFired:(NSTimer *)timer {
-    if (!timer.isValid) {
-        return;
-    }
+- (void)handleIntervalTask:(id<UATask>)task {
+    NSDictionary *extras = task.requestOptions.extras;
+    UA_LTRACE(@"Handle interval task: %@", extras);
 
-    UA_LTRACE(@"Automation interval timer fired: %@", timer.userInfo);
-
-    NSString *identifier = timer.userInfo[@"identifier"];
+    NSString *identifier = extras[UAAutomationEngineTaskExtrasIdentifier];
 
     UA_WEAKIFY(self);
     [self.automationStore getSchedule:identifier completionHandler:^(UAScheduleData *scheduleData) {
@@ -786,12 +747,14 @@
 
         // Verify we are still paused
         if (!scheduleData || [scheduleData.executionState intValue] != UAScheduleStatePaused) {
+            [task taskCompleted];
             return;
         }
 
         // Check expired
         if ([scheduleData isExpired]) {
             [self handleExpiredScheduleData:scheduleData];
+            [task taskCompleted];
             return;
         }
 
@@ -809,62 +772,16 @@
             }];
         }
 
-        // Finish the timer
-        [self finishTimer:timer];
-    }];
-}
-
-/**
- * Cancel timers by schedule identifiers.
- *
- * @param identifiers A set of identifiers to cancel.
- */
-- (void)cancelTimersWithIdentifiers:(NSSet<NSString *> *)identifiers {
-        if (!identifiers.count) {
-            return;
-        }
-        [self.dispatcher dispatchAsync:^{
-            for (NSTimer *timer in [self.activeTimers copy]) {
-                if (!timer.isValid || !timer.userInfo) {
-                    [self.activeTimers removeObject:timer];
-                    continue;
-                }
-
-                if ([identifiers containsObject:timer.userInfo[@"identifier"]]) {
-                    [timer invalidate];
-                    [self.activeTimers removeObject:timer];
-                }
-            }
-
-            if (!self.activeTimers.count) {
-                [self endBackgroundTask];
-            }
-        }];
-    }
-
-/**
- * Cancels all timers.
- */
-- (void)cancelTimers {
-    [self.dispatcher dispatchAsync:^{
-        for (NSTimer *timer in self.activeTimers) {
-            if (timer.isValid) {
-                [timer invalidate];
-            }
-        }
-
-        [self.activeTimers removeAllObjects];
-        [self endBackgroundTask];
+        // Complete the task
+        [task taskCompleted];
     }];
 }
 
 /**
  * Reschedules timers for any schedule that is pending execution and has a future delayed execution date.
  */
-- (void)rescheduleTimers {
-    [self cancelTimers];
-
-    // Delay timers
+- (void)rescheduleTasks {
+    // Delay tasks
     UA_WEAKIFY(self);
     [self.automationStore getSchedulesWithStates:@[@(UAScheduleStateTimeDelayed)] completionHandler:^(NSArray<UAScheduleData *> *schedules) {
         UA_STRONGIFY(self);
@@ -874,13 +791,11 @@
                 scheduleData.delayedExecutionDate = [NSDate dateWithTimeInterval:scheduleData.delay.seconds.doubleValue sinceDate:self.date.now];
             }
 
-            [self startTimerForSchedule:scheduleData
-                           timeInterval:[scheduleData.delay.seconds doubleValue]
-                               selector:@selector(delayTimerFired:)];
+            [self enqueueDelayTaskForSchedule:scheduleData timeInterval:[scheduleData.delay.seconds doubleValue]];
         }
     }];
 
-    // Interval timers
+    // Interval tasks
     [self.automationStore getSchedulesWithStates:@[@(UAScheduleStatePaused)] completionHandler:^(NSArray<UAScheduleData *> *schedules) {
         UA_STRONGIFY(self);
         for (UAScheduleData *scheduleData in schedules) {
@@ -891,9 +806,7 @@
                 remainingTime = interval;
             }
 
-            [self startTimerForSchedule:scheduleData
-                           timeInterval:remainingTime
-                               selector:@selector(intervalTimerFired:)];
+            [self enqueueIntervalTaskForSchedule:scheduleData timeInterval:remainingTime];
         }
     }];
 }
@@ -1080,10 +993,9 @@
             scheduleData.executionState = @(UAScheduleStateTimeDelayed);
             scheduleData.delayedExecutionDate = [NSDate dateWithTimeInterval:scheduleData.delay.seconds.doubleValue sinceDate:self.date.now];
 
-            // Start a timer
-            [self startTimerForSchedule:scheduleData
-                           timeInterval:[scheduleData.delay.seconds doubleValue]
-                               selector:@selector(delayTimerFired:)];
+            // Enqueue a delay task
+            [self enqueueDelayTaskForSchedule:scheduleData timeInterval:[scheduleData.delay.seconds doubleValue]];
+
             continue;
         }
 
@@ -1281,9 +1193,8 @@
     } else if ([scheduleData.interval doubleValue] > 0) {
         // Paused
         scheduleData.executionState = @(UAScheduleStatePaused);
-        [self startTimerForSchedule:scheduleData
-                       timeInterval:[scheduleData.interval doubleValue]
-                           selector:@selector(intervalTimerFired:)];
+
+        [self enqueueIntervalTaskForSchedule:scheduleData timeInterval:[scheduleData.interval doubleValue]];
     } else {
         // Back to idle
         scheduleData.executionState = @(UAScheduleStateIdle);
@@ -1333,16 +1244,6 @@
             [delegate onScheduleLimitReached:schedule];
         }
     }];
-}
-
-/**
- * Helper method to end the background task if its not invalid.
- */
-- (void)endBackgroundTask {
-    if (self.backgroundTaskIdentifier != UIBackgroundTaskInvalid) {
-        [self.application endBackgroundTask:self.backgroundTaskIdentifier];
-        self.backgroundTaskIdentifier = UIBackgroundTaskInvalid;
-    }
 }
 
 #pragma mark -
@@ -1536,8 +1437,6 @@
         scheduleData.audience = [NSJSONSerialization stringWithObject:[edits.audience toJSON]];
     }
 }
-     
+
 
 @end
-
-

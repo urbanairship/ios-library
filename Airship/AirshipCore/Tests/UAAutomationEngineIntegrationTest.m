@@ -17,6 +17,9 @@
 #import "UATestRuntimeConfig.h"
 #import "UAActionSchedule.h"
 
+static NSString * const UAAutomationEngineDelayTaskID = @"UAAutomationEngine.delay";
+static NSString * const UAAutomationEngineIntervalTaskID = @"UAAutomationEngine.interval";
+
 @interface UAAutomationEngineIntegrationTest : UABaseTest
 @property (nonatomic, strong) UAAutomationEngine *automationEngine;
 @property (nonatomic, strong) UAAutomationStore *testStore;
@@ -25,11 +28,12 @@
 @property (nonatomic, strong) id mockDelegate;
 @property (nonatomic, strong) id mockMetrics;
 @property (nonatomic, strong) id mockAirship;
-@property (nonatomic, strong) UATimerScheduler *timerScheduler;
+@property (nonatomic, strong) id mockTaskManager;
 @property (nonatomic, strong) NSNotificationCenter *notificationCenter;
 @property (nonatomic, strong) UATestDispatcher *dispatcher;
-@property (nonatomic, copy) void (^timerSchedulerBlock)(NSTimer *);
+@property (nonatomic, copy) void (^taskEnqueueBlock)(void);
 @property (nonatomic, strong) UATestDate *testDate;
+@property(nonatomic, copy) void (^launchHandler)(id<UATask>);
 @end
 
 #define UAAUTOMATIONENGINETESTS_SCHEDULE_LIMIT 100
@@ -54,11 +58,14 @@
     self.mockAirship = [self mockForClass:[UAirship class]];
     [UAirship setSharedAirship:self.mockAirship];
 
-    self.timerScheduler = [UATimerScheduler timerSchedulerWithSchedulerBlock:^(NSTimer *timer) {
-        if (self.timerSchedulerBlock) {
-            self.timerSchedulerBlock(timer);
-        }
-    }];
+    self.mockTaskManager = [self mockForClass:[UATaskManager class]];
+
+    // Capture the task launcher
+    [[[self.mockTaskManager stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:4];
+        self.launchHandler =  (__bridge void (^)(id<UATask>))arg;
+    }] registerForTaskWithIDs:@[UAAutomationEngineDelayTaskID, UAAutomationEngineIntervalTaskID] dispatcher:OCMOCK_ANY launchHandler:OCMOCK_ANY];
 
     self.mockMetrics = [self mockForClass:[UAApplicationMetrics class]];
     [[[self.mockAirship stub] andReturn:self.mockMetrics] applicationMetrics];
@@ -68,7 +75,7 @@
 
     self.automationEngine = [UAAutomationEngine automationEngineWithAutomationStore:self.testStore
                                                                     appStateTracker:self.mockAppStateTracker
-                                                                     timerScheduler:self.timerScheduler
+                                                                        taskManager:self.mockTaskManager
                                                                  notificationCenter:self.notificationCenter
                                                                          dispatcher:self.dispatcher
                                                                         application:self.mockedApplication
@@ -705,9 +712,19 @@
         builder.seconds = 1;
     }];
 
-    self.timerSchedulerBlock = ^(NSTimer *timer) {
-        [timer fire];
-    };
+    [[[self.mockTaskManager expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        UATaskRequestOptions *options = (__bridge UATaskRequestOptions *)arg;
+
+        id mockTask = [self mockForProtocol:@protocol(UATask)];
+        [[[mockTask stub] andReturn:UAAutomationEngineDelayTaskID] taskID];
+        [[[mockTask stub] andReturn:[UATaskRequestOptions optionsWithConflictPolicy:UATaskConflictPolicyAppend
+                                                                    requiresNetwork:NO
+                                                                             extras:@{@"identifier" : options.extras[@"identifier"]}]] requestOptions];
+        self.launchHandler(mockTask);
+
+    }] enqueueRequestWithID:OCMOCK_ANY options:OCMOCK_ANY initialDelay:1.0];
 
     [self verifyDelay:delay fulfillmentBlock:^{}];
 }
@@ -1049,6 +1066,7 @@
         builder.triggers = @[[UAScheduleTrigger customEventTriggerWithPredicate:predicate count:1]];
         builder.interval = 100;
         builder.limit = 2;
+        builder.identifier = @"test";
     }];
 
     [self.automationEngine schedule:schedule completionHandler:nil];
@@ -1083,12 +1101,11 @@
 
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)30)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
 
-    XCTestExpectation *timerScheduled = [self expectationWithDescription:@"timer scheduled"];
-    __block NSTimer *timer;
-    self.timerSchedulerBlock = ^(NSTimer *t) {
-        timer = t;
-        [timerScheduled fulfill];
-    };
+    XCTestExpectation *taskScheduled = [self expectationWithDescription:@"task scheduled"];
+
+    [[[self.mockTaskManager expect] andDo:^(NSInvocation *invocation) {
+        [taskScheduled fulfill];
+    }] enqueueRequestWithID:OCMOCK_ANY options:OCMOCK_ANY initialDelay:100];
 
     // Trigger the scheduled actions
     UACustomEvent *purchase = [UACustomEvent eventWithName:@"purchase"];
@@ -1107,8 +1124,13 @@
 
     [self waitForTestExpectations];
 
-    // Fire the timer
-    [timer fire];
+    id mockTask = [self mockForProtocol:@protocol(UATask)];
+    [[[mockTask stub] andReturn:UAAutomationEngineIntervalTaskID] taskID];
+    [[[mockTask stub] andReturn:[UATaskRequestOptions optionsWithConflictPolicy:UATaskConflictPolicyAppend
+                                                                requiresNetwork:NO
+                                                                         extras:@{@"identifier" : @"test"}]] requestOptions];
+    // Launch the task
+    self.launchHandler(mockTask);
 
     // Verify we are back to idle
     XCTestExpectation *checkIdleState = [self expectationWithDescription:@"idle state"];

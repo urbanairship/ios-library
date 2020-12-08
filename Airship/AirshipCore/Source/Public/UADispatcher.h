@@ -5,6 +5,22 @@
 #import "UADisposable.h"
 
 /**
+ * Dispatcher time bases.
+ * @note For internal use only. :nodoc:
+ */
+typedef NS_ENUM(NSUInteger, UADispatcherTimeBase) {
+    /**
+     * Wall time.
+     */
+    UADispatcherTimeBaseWall,
+
+    /**
+     * System time.
+     */
+    UADispatcherTimeBaseSystem,
+};
+
+/**
  * Utility class that wraps a dispatch queue and related GCD calls
  * @note For internal use only. :nodoc:
  */
@@ -46,13 +62,23 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)serialDispatcher:(dispatch_qos_class_t)qos;
 
 /**
- * Dispatches after a delay. If the delay <= 0, the block will
+ * Dispatches after a delay, scheduled in wall time. If the delay <= 0, the block will
  * be dispatched asynchronously instead.
  *
  * @param delay The delay in seconds.
  * @param block The block to dispatch.
  */
 - (UADisposable *)dispatchAfter:(NSTimeInterval)delay block:(void (^)(void))block;
+
+/**
+ * Dispatches after a delay, scheduled according to the provided timebase.
+ * If the delay <= 0, the block will be dispatched asynchronously instead.
+ *
+ * @param delay The delay in seconds.
+ * @param timebase The timebase.
+ * @param block The block to dispatch.
+ */
+- (UADisposable *)dispatchAfter:(NSTimeInterval)delay timebase:(UADispatcherTimeBase)timebase block:(void (^)(void))block;
 
 /**
  * Dispatches a block asynchronously.
