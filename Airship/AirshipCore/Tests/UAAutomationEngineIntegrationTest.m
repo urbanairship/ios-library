@@ -16,6 +16,7 @@
 #import "UAAppStateTracker.h"
 #import "UATestRuntimeConfig.h"
 #import "UAActionSchedule.h"
+#import "UAScheduleEdits+Internal.h"
 
 static NSString * const UAAutomationEngineDelayTaskID = @"UAAutomationEngine.delay";
 static NSString * const UAAutomationEngineIntervalTaskID = @"UAAutomationEngine.interval";
@@ -911,6 +912,8 @@ static NSString * const UAAutomationEngineIntervalTaskID = @"UAAutomationEngine.
 
     UAScheduleEdits *edits = [UAScheduleEdits editsWithBuilderBlock:^(UAScheduleEditsBuilder *builder) {
         builder.limit = @(2);
+        builder.campaigns = @{@"neat": @"campaign"};
+        builder.frequencyConstraintIDs = @[@"woot"];
     }];
 
     XCTestExpectation *updated = [self expectationWithDescription:@"schedule updated"];
@@ -924,6 +927,8 @@ static NSString * const UAAutomationEngineIntervalTaskID = @"UAAutomationEngine.
     [self.automationEngine.automationStore getSchedule:schedule.identifier completionHandler:^(UAScheduleData *scheduleData) {
         XCTAssertNotNil(scheduleData);
         XCTAssertEqual(UAScheduleStateIdle, [scheduleData.executionState intValue]);
+        XCTAssertEqualObjects(@{@"neat": @"campaign"}, scheduleData.campaigns);
+        XCTAssertEqualObjects(@[@"woot"], scheduleData.frequencyConstraintIDs);
         [checkIdleState fulfill];
     }];
 

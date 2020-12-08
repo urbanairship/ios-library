@@ -336,6 +336,7 @@ NSString *const UALegacyActionAutomationStoreFileFormat = @"Automation-%@.sqlite
     scheduleData.dataVersion = @(UAScheduleDataVersion);
     scheduleData.metadata = [NSJSONSerialization stringWithObject:schedule.metadata];
     scheduleData.campaigns = schedule.campaigns;
+    scheduleData.frequencyConstraintIDs = schedule.frequencyConstraintIDs;
 
     if (schedule.audience) {
         scheduleData.audience = [NSJSONSerialization stringWithObject:[schedule.audience toJSON]];

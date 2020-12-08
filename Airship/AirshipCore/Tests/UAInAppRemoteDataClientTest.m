@@ -816,7 +816,6 @@
     XCTAssertTrue([self.remoteDataClient isRemoteSchedule:legacyRemote]);
 }
 
-
 - (void)testLegacyMessage {
     id payload = @{
         @"message": @{
@@ -1064,7 +1063,8 @@
         @"id": @"some id",
         @"audience": @{
                 @"notification_opt_in": @(YES)
-        }
+        },
+        @"frequency_constraint_ids": @[@"constraint-one"],
     };
 
     id metadata = @{@"metadata" : @"so meta"};
@@ -1087,6 +1087,7 @@
             @"com.urbanairship.iaa.REMOTE_DATA_METADATA": metadata
         };
         builder.campaigns = @{ @"categories": @[@"cool"] };
+        builder.frequencyConstraintIDs = @[@"constraint-one"];
     }];
 
     UARemoteDataPayload *inAppRemoteDataPayload = [[UARemoteDataPayload alloc] initWithType:@"in_app_messages"

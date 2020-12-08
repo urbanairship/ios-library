@@ -25,6 +25,8 @@
 
 @synthesize data = _data;
 @synthesize type = _type;
+@synthesize campaigns = _campaigns;
+@synthesize frequencyConstraintIDs = _frequencyConstraintIDs;
 
 - (instancetype)initWithData:(NSString *)data
                         type:(NSNumber *)type
@@ -33,6 +35,8 @@
     if (self) {
         _data = data;
         _type = type;
+        _campaigns = builder.campaigns;
+        _frequencyConstraintIDs = builder.frequencyConstraintIDs;
         self.priority = builder.priority;
         self.limit = builder.limit;
         self.start = builder.start;
@@ -102,7 +106,9 @@
             "Edit Grace Period: %@\n"
             "Interval: %@\n"
             "Metadata: %@\n"
-            "Audience: %@",
+            "Audience: %@\n"
+            "Campaigns: %@\n"
+            "Frequency Constraint IDs: %@",
             self.data,
             self.type,
             self.priority,
@@ -112,7 +118,9 @@
             self.editGracePeriod,
             self.interval,
             self.metadata,
-            self.audience];
+            self.audience,
+            self.campaigns,
+            self.frequencyConstraintIDs];
 }
 
 @end

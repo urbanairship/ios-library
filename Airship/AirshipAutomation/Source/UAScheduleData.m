@@ -8,7 +8,7 @@
 NSUInteger const UAScheduleDataVersion = 3;
 
 @interface UAScheduleData()
-@property (nullable, nonatomic, retain) NSDate *executionStateChangeDate;
+@property (nullable, nonatomic, strong) NSDate *executionStateChangeDate;
 @end
 
 @implementation UAScheduleData
@@ -33,6 +33,7 @@ NSUInteger const UAScheduleDataVersion = 3;
 @dynamic triggerContext;
 @dynamic audience;
 @dynamic campaigns;
+@dynamic frequencyConstraintIDs;
 
 -(void)setExecutionState:(NSNumber *)executionState {
     [self willChangeValueForKey:@"executionState"];

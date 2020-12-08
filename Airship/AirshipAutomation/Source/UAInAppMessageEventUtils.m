@@ -44,7 +44,10 @@ NSString *const UAInAppMessageEventAppDefinedSourceValue = @"app-defined";
         case UAInAppMessageSourceRemoteData: {
             NSMutableDictionary *idMap = [NSMutableDictionary dictionary];
             [idMap setValue:messageID forKey:UAInAppMessageEventMessageIDKey];
-            [idMap setValue:campaigns forKey:UAInAppMessageEventCampaignsKey];
+
+            if (campaigns.count) {
+                [idMap setValue:campaigns forKey:UAInAppMessageEventCampaignsKey];
+            }
             return idMap;
         }
 

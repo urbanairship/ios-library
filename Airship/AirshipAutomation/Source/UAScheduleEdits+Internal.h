@@ -5,6 +5,21 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@interface UAScheduleEditsBuilder()
+
+/**
+ * The campaigns info.
+ */
+@property (nullable, nonatomic, copy) NSDictionary *campaigns;
+
+/**
+ * The frequency constraint IDs.
+ */
+@property (nullable, nonatomic, copy) NSArray<NSString *> *frequencyConstraintIDs;
+
+
+@end
+
 @interface UAScheduleEdits ()
 
 /**
@@ -16,6 +31,18 @@ NS_ASSUME_NONNULL_BEGIN
  * Schedule data type.
  */
 @property(nonatomic, readonly, nullable) NSNumber *type;
+
+/**
+ * Campaigns info.
+ */
+@property(nonatomic, readonly, nullable) NSDictionary *campaigns;
+
+/**
+ * Frequency constraint IDs.
+ */
+@property(nonatomic, readonly, nullable) NSArray<NSString *> *frequencyConstraintIDs;
+
+
 /**
  * Creates edits that also updates the schedule's data as deferred.
  * @param deferred The deferred data.

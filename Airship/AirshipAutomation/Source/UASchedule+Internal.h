@@ -41,9 +41,15 @@ typedef NS_ENUM(NSUInteger, UAScheduleType) {
 /**
  * Campaigns info.
  */
-@property (nonatomic, readonly) NSDictionary *campaigns;
+@property(nonatomic, readonly) NSDictionary *campaigns;
 
 @property(nonatomic, readonly) NSString *dataJSONString;
+
+/**
+ * Frequency constraint IDs.
+ */
+@property(nonatomic, readonly) NSArray<NSString *> *frequencyConstraintIDs;
+
 
 - (instancetype)initWithData:(id)data
                         type:(UAScheduleType)scheduleType
@@ -60,7 +66,12 @@ typedef NS_ENUM(NSUInteger, UAScheduleType) {
 /**
  * Campaigns info.
  */
-@property (nonatomic, copy) NSDictionary *campaigns;
+@property(nonatomic, copy, nullable) NSDictionary *campaigns;
+
+/**
+ * Frequency constraint IDs.
+ */
+@property (nonatomic, copy, nullable) NSArray<NSString *> *frequencyConstraintIDs;
 
 @end
 

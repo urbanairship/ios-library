@@ -68,113 +68,117 @@ extern NSUInteger const UAScheduleDataVersion;
 /**
  * The schedule's identifier.
  */
-@property (nullable, nonatomic, retain) NSString *identifier;
+@property (nullable, nonatomic, strong) NSString *identifier;
 
 /**
  * The schedule's group.
  */
-@property (nullable, nonatomic, retain) NSString *group;
+@property (nullable, nonatomic, strong) NSString *group;
 
 /**
  * The max number of times the schedule may be successfully executed.
  */
-@property (nullable, nonatomic, retain) NSNumber *limit;
+@property (nullable, nonatomic, strong) NSNumber *limit;
 
 /**
  * The number of times the schedule has been triggered and executed.
  *
  * If the schedule prepare result is `skip` or `invalidate`, this number will not be incremented.
  */
-@property (nullable, nonatomic, retain) NSNumber *triggeredCount;
+@property (nullable, nonatomic, strong) NSNumber *triggeredCount;
 
 /**
  * The schedule data payload.
  */
-@property (nullable, nonatomic, retain) NSString *data;
+@property (nullable, nonatomic, copy) NSString *data;
 
 /**
  * The metadata payload.
  *
  * Metadata payload contain important schedule metadata such as locale.
  */
-@property (nullable, nonatomic, retain) NSString *metadata;
+@property (nullable, nonatomic, copy) NSString *metadata;
 
 /**
  * The schedule's data version.
  */
-@property (nonatomic, retain) NSNumber *dataVersion;
+@property (nonatomic, strong) NSNumber *dataVersion;
 
 /**
  * The schedule's priority. Priority is optional and defaults to 0. Schedules are
  * executed by priority in ascending order.
  */
-@property(nullable, nonatomic, retain) NSNumber *priority;
+@property(nullable, nonatomic, strong) NSNumber *priority;
 
 /**
  * Array of triggers. Triggers define conditions on when to execute the schedule.
  */
-@property (nullable, nonatomic, retain) NSSet<UAScheduleTriggerData *> *triggers;
+@property (nullable, nonatomic, copy) NSSet<UAScheduleTriggerData *> *triggers;
 
 /**
  * The schedule's start time.
  */
-@property (nullable, nonatomic, retain) NSDate *start;
+@property (nullable, nonatomic, strong) NSDate *start;
 
 /**
  * The schedule's end time. After the end time the schedule will be canceled.
  */
-@property (nullable, nonatomic, retain) NSDate *end;
+@property (nullable, nonatomic, strong) NSDate *end;
 
 /**
  * The schedule's delay in seconds.
  */
-@property (nullable, nonatomic, retain) UAScheduleDelayData *delay;
+@property (nullable, nonatomic, strong) UAScheduleDelayData *delay;
 
 /**
  * The schedule's execution state.
  */
-@property (nullable, nonatomic, retain) NSNumber *executionState;
+@property (nullable, nonatomic, strong) NSNumber *executionState;
 
 /**
  * The schedule's execution state change date.
  */
-@property (nullable, nonatomic, retain, readonly) NSDate *executionStateChangeDate;
+@property (nullable, nonatomic, strong, readonly) NSDate *executionStateChangeDate;
 
 /**
  * The delayed execution date. This delay date takes precedent over the delay in seconds.
  */
-@property (nullable, nonatomic, retain) NSDate *delayedExecutionDate;
+@property (nullable, nonatomic, strong) NSDate *delayedExecutionDate;
 
 /**
  * The schedule's edit grace period in seconds.
  */
-@property(nullable, nonatomic, retain) NSNumber *editGracePeriod;
+@property(nullable, nonatomic, strong) NSNumber *editGracePeriod;
 
 /**
  * The schedule's interval in seconds.
  */
-@property(nullable, nonatomic, retain) NSNumber *interval;
+@property(nullable, nonatomic, strong) NSNumber *interval;
 
 /**
  * The trigger context.
  */
-@property (nullable, nonatomic, retain) UAScheduleTriggerContext *triggerContext;
+@property (nullable, nonatomic, strong) UAScheduleTriggerContext *triggerContext;
 
 /**
  * The schedule type.
  */
-@property (nullable, nonatomic, retain) NSNumber *type;
+@property (nullable, nonatomic, strong) NSNumber *type;
 
 /**
  * The audience payload.
  */
-@property (nullable, nonatomic, retain) NSString *audience;
+@property (nullable, nonatomic, copy) NSString *audience;
 
 /**
  * The campaigns info.
  */
-@property (nullable, nonatomic, retain) NSDictionary *campaigns;
+@property (nullable, nonatomic, copy) NSDictionary *campaigns;
 
+/**
+ * The frequency constraint IDs.
+ */
+@property (nullable, nonatomic, copy) NSArray<NSString *> *frequencyConstraintIDs;
 
 /**
  * Whether the schedule has exceeded its limit.

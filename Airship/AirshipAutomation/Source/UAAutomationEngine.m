@@ -1296,6 +1296,7 @@ static NSString * const UAAutomationEngineTaskExtrasIdentifier = @"identifier";
         builder.identifier = scheduleData.identifier;
         builder.audience = audience;
         builder.campaigns= scheduleData.campaigns;
+        builder.frequencyConstraintIDs = scheduleData.frequencyConstraintIDs;
     }];
 
     if (![schedule isValid]) {
@@ -1435,6 +1436,14 @@ static NSString * const UAAutomationEngineTaskExtrasIdentifier = @"identifier";
 
     if (edits.audience) {
         scheduleData.audience = [NSJSONSerialization stringWithObject:[edits.audience toJSON]];
+    }
+
+    if (edits.campaigns) {
+        scheduleData.campaigns = edits.campaigns;
+    }
+
+    if (edits.frequencyConstraintIDs) {
+        scheduleData.frequencyConstraintIDs = edits.frequencyConstraintIDs;
     }
 }
 

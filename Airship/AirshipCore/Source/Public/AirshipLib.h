@@ -72,6 +72,7 @@
 #import "UAMessageCenterModuleLoaderFactory.h"
 #import "UAModifyTagsAction.h"
 #import "UAModuleLoader.h"
+#import "UANSArrayValueTransformer.h"
 #import "UANSDictionaryValueTransformer.h"
 #import "UANSURLValueTransformer.h"
 #import "UANamedUser.h"

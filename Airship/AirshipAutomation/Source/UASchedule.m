@@ -38,7 +38,7 @@ NSUInteger const UAScheduleMaxTriggers = 10;
 @synthesize data = _data;
 @synthesize type = _type;
 @synthesize campaigns = _campaigns;
-
+@synthesize frequencyConstraintIDs = _frequencyConstraintIDs;
 
 - (BOOL)isValid {
     if (!self.triggers.count || self.triggers.count > UAScheduleMaxTriggers) {
@@ -66,6 +66,7 @@ NSUInteger const UAScheduleMaxTriggers = 10;
         self.identifier = builder.identifier ?: [NSUUID UUID].UUIDString;
         self.priority = builder.priority;
         self.triggers = builder.triggers ?: @[];
+        
         self.limit = builder.limit;
         self.group = builder.group;
         self.delay = builder.delay;
@@ -75,7 +76,8 @@ NSUInteger const UAScheduleMaxTriggers = 10;
         self.interval = builder.interval;
         self.metadata = builder.metadata ?: @{};
         self.audience = builder.audience;
-        _campaigns = builder.campaigns;
+        _campaigns = [builder.campaigns copy] ?: @{};
+        _frequencyConstraintIDs = [builder.frequencyConstraintIDs copy] ?: @[];
     }
 
     return self;
@@ -146,6 +148,10 @@ NSUInteger const UAScheduleMaxTriggers = 10;
         return NO;
     }
 
+    if (self.frequencyConstraintIDs != schedule.frequencyConstraintIDs && ![self.frequencyConstraintIDs isEqual:schedule.frequencyConstraintIDs]) {
+        return NO;
+    }
+
     return YES;
 }
 
@@ -176,6 +182,7 @@ NSUInteger const UAScheduleMaxTriggers = 10;
     result = 31 * result + [self.delay hash];
     result = 31 * result + [self.audience hash];
     result = 31 * result + [self.campaigns hash];
+    result = 31 * result + [self.frequencyConstraintIDs hash];
     result = 31 * result + self.editGracePeriod;
     result = 31 * result + self.interval;
     result = 31 * result + self.type;
