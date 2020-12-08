@@ -21,7 +21,7 @@
 @property(nonatomic, strong) NSMutableDictionary<NSString *, NSMutableArray<UATaskRequest *> *> *currentRequests;
 @property(nonatomic, strong) NSMutableArray<UATaskRequest *> *waitingConditionsRequests;
 @property(nonatomic, strong) NSMutableArray<UATaskRequest *> *retryingRequests;
-@property(nonnull, strong) UIApplication *application;
+@property(nonatomic, strong) UIApplication *application;
 @property(nonatomic, strong) UADispatcher *dispatcher;
 @property(nonatomic, strong) UANetworkMonitor *networkMonitor;
 @end

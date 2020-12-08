@@ -9,7 +9,21 @@
 
 NSString * const UAEventAPIClientErrorDomain = @"com.urbanairship.event_api_client";
 
+@interface UAEventAPIClient()
+@property(nonatomic, strong) UARuntimeConfig *config;
+@property(nonatomic, strong) UARequestSession *session;
+@end
 @implementation UAEventAPIClient
+
+
+- (instancetype)initWithConfig:(UARuntimeConfig *)config session:(UARequestSession *)session {
+    self = [super init];
+    if (self) {
+        self.config = config;
+        self.session = session;
+    }
+    return self;
+}
 
 + (instancetype)clientWithConfig:(UARuntimeConfig *)config {
     return [[self alloc] initWithConfig:config session:[UARequestSession sessionWithConfig:config]];
@@ -19,7 +33,7 @@ NSString * const UAEventAPIClientErrorDomain = @"com.urbanairship.event_api_clie
     return [[self alloc] initWithConfig:config session:session];
 }
 
--(void)uploadEvents:(NSArray *)events headers:(NSDictionary *)headers completionHandler:(void (^)(NSDictionary * _Nullable responseHeaders, NSError * _Nullable error))completionHandler {
+- (UADisposable *)uploadEvents:(NSArray *)events headers:(NSDictionary *)headers completionHandler:(void (^)(NSDictionary * _Nullable responseHeaders, NSError * _Nullable error))completionHandler {
     UARequest *request = [self requestWithEvents:events headers:headers];
 
     if (uaLogLevel >= UALogLevelTrace) {
@@ -30,7 +44,7 @@ NSString * const UAEventAPIClientErrorDomain = @"com.urbanairship.event_api_clie
     }
 
     // Perform the upload
-    [self performRequest:request completionHandler:^(NSData *data, NSHTTPURLResponse *response, NSError *error) {
+    return [self.session performHTTPRequest:request completionHandler:^(NSData * _Nullable data, NSHTTPURLResponse * _Nullable response, NSError * _Nullable error) {
         if (error) {
             return completionHandler(nil, error);
         }

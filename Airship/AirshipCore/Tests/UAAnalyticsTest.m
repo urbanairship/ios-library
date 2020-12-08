@@ -115,9 +115,11 @@
  * Test disabling analytics will result in deleting the database.
  */
 - (void)testDisablingAnalytics {
+    self.analytics.dataCollectionEnabled = YES;
     [[self.mockEventManager expect] setUploadsEnabled:NO];
     [[self.mockEventManager expect] deleteAllEvents];
     self.analytics.enabled = NO;
+
 
     [self.mockEventManager verify];
     XCTAssertFalse(self.analytics.enabled);
@@ -533,9 +535,12 @@
 
 // Test disabling / enabling the analytics component disables / enables eventmanager uploads
 - (void)testComponentEnabledSwitch {
+    self.analytics.componentEnabled = YES;
+    self.analytics.enabled = YES;
+    self.analytics.dataCollectionEnabled = YES;
+
     // expectations
     [[self.mockEventManager expect] setUploadsEnabled:NO];
-    [[self.mockEventManager expect] cancelUpload];
 
     // test
     self.analytics.componentEnabled = NO;
@@ -592,6 +597,10 @@
 }
 
 - (void)testOnDataCollectionDisabled {
+    self.analytics.componentEnabled = YES;
+    self.analytics.enabled = YES;
+    self.analytics.dataCollectionEnabled = YES;
+
     NSDictionary *identifiers = @{@"some identifier": @"some value"};
 
     // Associate the identifiers

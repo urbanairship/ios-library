@@ -26,7 +26,7 @@ extern NSString * const UAEventAPIClientErrorDomain;
 /**
  * API client to upload events to Airship.
  */
-@interface UAEventAPIClient : UAAPIClient
+@interface UAEventAPIClient : NSObject
 
 ///---------------------------------------------------------------------------------------
 /// @name Event API Client Internal Methods
@@ -55,7 +55,7 @@ extern NSString * const UAEventAPIClientErrorDomain;
  * @param headers The event headers.
  * @param completionHandler A completion handler.
  */
--(void)uploadEvents:(NSArray *)events headers:(NSDictionary<NSString *, NSString *> *)headers completionHandler:(void (^)(NSDictionary * _Nullable, NSError * _Nullable))completionHandler;
+- (UADisposable *)uploadEvents:(NSArray *)events headers:(NSDictionary<NSString *, NSString *> *)headers completionHandler:(void (^)(NSDictionary * _Nullable, NSError * _Nullable))completionHandler;
 
 @end
 

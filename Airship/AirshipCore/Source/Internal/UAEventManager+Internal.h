@@ -9,6 +9,8 @@
 @class UAPreferenceDataStore;
 @class UAEventAPIClient;
 @class UAEventStore;
+@class UADelay;
+@class UATaskManager;
 
 /**
  * Delegate protocol for the event manager.
@@ -52,21 +54,14 @@
 ///---------------------------------------------------------------------------------------
 
 /**
- * Date representing the last attempt to send analytics.
- * @return NSDate representing the last attempt to send analytics
+ * Flag indicating whether event manager uploads are enabled. Defaults to disabled.
  */
-@property (atomic, strong, readonly) NSDate *lastSendTime;
-
-/**
- * Flag indicating whether evant manager uploads are enabled. Clear to disable. Default is enabled.
- */
-@property (nonatomic, assign) BOOL uploadsEnabled;
+@property(atomic, assign) BOOL uploadsEnabled;
 
 /**
  * Event manager delegate.
  */
-@property (nonatomic, weak) id<UAEventManagerDelegate> delegate;
-
+@property(nonatomic, weak) id<UAEventManagerDelegate> delegate;
 
 ///---------------------------------------------------------------------------------------
 /// @name Event Manager Internal Methods
@@ -80,7 +75,9 @@
  * @param channel The channel instance.
  * @return UAEventManager instance.
  */
-+ (instancetype)eventManagerWithConfig:(UARuntimeConfig *)config dataStore:(UAPreferenceDataStore *)dataStore channel:(UAChannel *)channel;
++ (instancetype)eventManagerWithConfig:(UARuntimeConfig *)config
+                             dataStore:(UAPreferenceDataStore *)dataStore
+                               channel:(UAChannel *)channel;
 
 /**
  * Factory method used for testing.
@@ -90,9 +87,10 @@
  * @param channel The channel instance.
  * @param eventStore The event data store.
  * @param client The event api client.
- * @param queue The operation queue.
  * @param notificationCenter The notification center.
- * @param appStateTracker The app state tracker..
+ * @param appStateTracker The app state tracker.
+ * @param taskManager The task manager.
+ * @param delayProvider A delay provider block.
  * @return UAEventManager instance.
  */
 + (instancetype)eventManagerWithConfig:(UARuntimeConfig *)config
@@ -100,9 +98,10 @@
                                channel:(UAChannel *)channel
                             eventStore:(UAEventStore *)eventStore
                                 client:(UAEventAPIClient *)client
-                                 queue:(NSOperationQueue *)queue
                     notificationCenter:(NSNotificationCenter *)notificationCenter
-                       appStateTracker:(UAAppStateTracker *)appStateTracker;
+                       appStateTracker:(UAAppStateTracker *)appStateTracker
+                           taskManager:(UATaskManager *)taskManager
+                         delayProvider:(UADelay *(^)(NSTimeInterval))delayProvider;
 
 /**
  * Adds an analytic event to be batched and uploaded to Airship.
@@ -121,10 +120,5 @@
  * Schedules an analytic upload.
  */
 - (void)scheduleUpload;
-
-/**
- * Cancels any scheduled event uploads.
- */
-- (void)cancelUpload;
 
 @end

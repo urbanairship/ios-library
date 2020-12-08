@@ -127,8 +127,11 @@ static NSString * const UAUserResetTaskID = @"UAUser.reset";
 }
 
 - (void)enqueueUpdateTask {
+    UATaskRequestOptions *requestOptions = [UATaskRequestOptions optionsWithConflictPolicy:UATaskConflictPolicyKeep
+                                                                           requiresNetwork:YES
+                                                                                    extras:nil];
     [self.taskManager enqueueRequestWithID:UAUserUpdateTaskID
-                                   options:[UATaskRequestOptions defaultOptions]];
+                                   options:requestOptions];
 }
 
 - (void)enqueueResetTask {

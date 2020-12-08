@@ -95,11 +95,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)launchedFromNotification:(NSDictionary *)notification;
 
-/**
- * Cancels any scheduled event uploads.
- */
-- (void)cancelUpload;
-
 @end
 
 NS_ASSUME_NONNULL_END

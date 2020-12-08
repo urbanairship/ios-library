@@ -45,7 +45,6 @@
 @end
 
 NSString *const UACustomEventAdded = @"UACustomEventAdded";
-
 NSString *const UARegionEventAdded = @"UARegionEventAdded";
 NSString *const UAScreenTracked = @"UAScreenTracked";
 NSString *const UAScreenKey = @"screen";
@@ -84,9 +83,9 @@ NSString *const UAEventKey = @"event";
             [self.dataStore setBool:YES forKey:kUAAnalyticsEnabled];
         }
 
-        [self updateEventManagerUploadsEnabled];
         self.eventManager.delegate = self;
-        
+        [self updateEventManagerUploadsEnabled];
+
         [self startSession];
 
         [self.notificationCenter addObserver:self
@@ -205,7 +204,6 @@ NSString *const UAEventKey = @"event";
     [self stopTrackingScreen];
 }
 
-
 #pragma mark -
 #pragma mark Analytics
 
@@ -247,7 +245,6 @@ NSString *const UAEventKey = @"event";
         }
     }];
 }
-
 
 - (void)launchedFromNotification:(NSDictionary *)notification {
     if (!notification) {
@@ -342,23 +339,12 @@ NSString *const UAEventKey = @"event";
     [self trackScreen:nil];
 }
 
-- (void)cancelUpload {
-    [self.eventManager cancelUpload];
-}
-
 - (void)scheduleUpload {
     [self.eventManager scheduleUpload];
 }
 
 - (void)onComponentEnableChange {
     [self updateEventManagerUploadsEnabled];
-    if (self.componentEnabled) {
-        // if component was disabled and is now enabled, schedule an upload just in case
-        [self scheduleUpload];
-    } else {
-        // if component was enabled and is now disabled, cancel any pending uploads
-        [self cancelUpload];
-    }
 }
 
 - (void)registerSDKExtension:(UASDKExtension)extension version:(NSString *)version {
@@ -397,7 +383,6 @@ NSString *const UAEventKey = @"event";
     [headers setValue:[UAUtils bundleShortVersionString] ?: @"" forKey:@"X-UA-Package-Version"];
 
     // Time zone
-    
     NSLocale *currentLocale = [self.localeManager currentLocale];
     [headers setValue:[[NSTimeZone defaultTimeZone] name] forKey:@"X-UA-Timezone"];
     [headers setValue:[currentLocale objectForKey:NSLocaleLanguageCode] forKey:@"X-UA-Locale-Language"];
@@ -440,6 +425,12 @@ NSString *const UAEventKey = @"event";
 }
 
 - (void)updateEventManagerUploadsEnabled {
-    self.eventManager.uploadsEnabled = self.isEnabled && self.componentEnabled && self.isDataCollectionEnabled;
+    if (self.isEnabled && self.componentEnabled && self.isDataCollectionEnabled) {
+        self.eventManager.uploadsEnabled = YES;
+        [self.eventManager scheduleUpload];
+    } else {
+        self.eventManager.uploadsEnabled = NO;
+    }
 }
+
 @end

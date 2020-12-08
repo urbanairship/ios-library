@@ -14,33 +14,32 @@
 #import "NSOperationQueue+UAAdditions.h"
 #import "UADispatcher.h"
 #import "UAAppStateTracker.h"
+#import "UATaskManager.h"
+#import "UASemaphore.h"
+#import "UADelay+Internal.h"
 
 @interface UAEventManager()
-
-@property (nonatomic, strong, nonnull) UARuntimeConfig *config;
-@property (nonatomic, strong, nonnull) UAEventStore *eventStore;
-@property (nonatomic, strong, nonnull) UAPreferenceDataStore *dataStore;
-@property (nonatomic, strong, nonnull) UAEventAPIClient *client;
-@property (nonatomic, strong, nonnull) NSNotificationCenter *notificationCenter;
-@property (nonatomic, strong, nonnull) UAAppStateTracker *appStateTracker;
-@property (nonatomic, strong, nonnull) UAChannel *channel;
-
-@property (nonatomic, assign) NSUInteger maxTotalDBSize;
-@property (nonatomic, assign) NSUInteger maxBatchSize;
-@property (nonatomic, assign) NSUInteger minBatchInterval;
-
-@property (atomic, strong) NSDate *earliestForegroundSendTime;
-@property (atomic, strong, nonnull) NSDate *lastSendTime;
-@property (nonatomic, strong, nonnull) NSOperationQueue *queue;
-@property (atomic, strong, nullable) NSDate *nextUploadDate;
-
+@property(nonatomic, strong, nonnull) UARuntimeConfig *config;
+@property(nonatomic, strong, nonnull) UAPreferenceDataStore *dataStore;
+@property(nonatomic, strong, nonnull) UAChannel *channel;
+@property(nonatomic, strong, nonnull) UAEventStore *eventStore;
+@property(nonatomic, strong, nonnull) UAEventAPIClient *client;
+@property(nonatomic, strong, nonnull) NSNotificationCenter *notificationCenter;
+@property(nonatomic, strong, nonnull) UAAppStateTracker *appStateTracker;
+@property(nonatomic, strong, nonnull) UATaskManager *taskManager;
+@property(nonatomic, copy) UADelay * (^delayProvider)(NSTimeInterval);
+@property(nonatomic, assign) NSUInteger maxTotalDBSize;
+@property(nonatomic, assign) NSUInteger maxBatchSize;
+@property(nonatomic, assign) NSUInteger minBatchInterval;
+@property(nonatomic, strong, nonnull) NSDate *lastSendTime;
+@property(nonatomic, strong, nullable) NSDate *nextUploadDate;
 @end
 
-static NSTimeInterval const FailedUploadRetryDelay = 60;
-static NSTimeInterval const InitialForegroundUploadDelay = 15;
-static NSTimeInterval const HighPriorityUploadDelay = 1;
-static NSTimeInterval const BackgroundUploadDelay = 5;
+static NSTimeInterval const ForegroundTaskBatchDelay = 1;
+static NSTimeInterval const BackgroundTaskBatchDelay = 5;
+static NSTimeInterval const EventUploadScheduleDelay = 15;
 static NSTimeInterval const BackgroundLowPriorityEventUploadInterval = 900;
+static NSString * const UAEventManagerUploadTask = @"UAEventManager.upload";
 
 @implementation UAEventManager
 
@@ -49,9 +48,10 @@ static NSTimeInterval const BackgroundLowPriorityEventUploadInterval = 900;
                        channel:(UAChannel *)channel
                     eventStore:(UAEventStore *)eventStore
                         client:(UAEventAPIClient *)client
-                         queue:(NSOperationQueue *)queue
             notificationCenter:(NSNotificationCenter *)notificationCenter
-               appStateTracker:(UAAppStateTracker *)appStateTracker {
+               appStateTracker:(UAAppStateTracker *)appStateTracker
+                   taskManager:(UATaskManager *)taskManager
+                 delayProvider:(nonnull UADelay *(^)(NSTimeInterval))delayProvider {
 
     self = [super init];
 
@@ -61,39 +61,30 @@ static NSTimeInterval const BackgroundLowPriorityEventUploadInterval = 900;
         self.dataStore = dataStore;
         self.channel = channel;
         self.client = client;
-        self.queue = queue;
         self.notificationCenter = notificationCenter;
         self.appStateTracker = appStateTracker;
+        self.taskManager = taskManager;
+        self.delayProvider = delayProvider;
 
-        _uploadsEnabled = YES;
-
-        // Set the intial delay
-        self.earliestForegroundSendTime = [NSDate dateWithTimeIntervalSinceNow:InitialForegroundUploadDelay];
-
-
-        // Schedule upload on channel creation
         [self.notificationCenter addObserver:self
                                     selector:@selector(scheduleUpload)
                                         name:UAChannelCreatedEvent
                                       object:nil];
 
         [self.notificationCenter addObserver:self
-                                    selector:@selector(applicationWillEnterForeground)
-                                        name:UAApplicationWillEnterForegroundNotification
-                                      object:nil];
-
-        [self.notificationCenter addObserver:self
                                     selector:@selector(applicationDidEnterBackground)
                                         name:UAApplicationDidEnterBackgroundNotification
                                       object:nil];
+
+        UA_WEAKIFY(self)
+        [self.taskManager registerForTaskWithID:UAEventManagerUploadTask
+                                     dispatcher:[UADispatcher serialDispatcher]
+                                  launchHandler:^(id<UATask> task) {
+            UA_STRONGIFY(self)
+            [self uploadEventsTask:task];
+        }];
     }
-
     return self;
-}
-
-
-- (void)dealloc {
-    [self cancelUpload];
 }
 
 + (instancetype)eventManagerWithConfig:(UARuntimeConfig *)config
@@ -102,18 +93,19 @@ static NSTimeInterval const BackgroundLowPriorityEventUploadInterval = 900;
     UAEventStore *eventStore = [UAEventStore eventStoreWithConfig:config];
     UAEventAPIClient *client = [UAEventAPIClient clientWithConfig:config];
 
-    NSOperationQueue *queue = [[NSOperationQueue alloc] init];
-    queue.maxConcurrentOperationCount = 1;
+    UADelay *(^delayProvider)(NSTimeInterval) = ^(NSTimeInterval delay) {
+        return [UADelay delayWithSeconds:delay];
+    };
 
     return [[self alloc] initWithConfig:config
                               dataStore:dataStore
                                 channel:channel
                              eventStore:eventStore
                                  client:client
-                                  queue:queue
                      notificationCenter:[NSNotificationCenter defaultCenter]
-                        appStateTracker:[UAAppStateTracker shared]];
-
+                        appStateTracker:[UAAppStateTracker shared]
+                            taskManager:[UATaskManager shared]
+                          delayProvider:delayProvider];
 }
 
 + (instancetype)eventManagerWithConfig:(UARuntimeConfig *)config
@@ -121,43 +113,24 @@ static NSTimeInterval const BackgroundLowPriorityEventUploadInterval = 900;
                                channel:(UAChannel *)channel
                             eventStore:(UAEventStore *)eventStore
                                 client:(UAEventAPIClient *)client
-                                 queue:(NSOperationQueue *)queue
                     notificationCenter:(NSNotificationCenter *)notificationCenter
-                       appStateTracker:(UAAppStateTracker *)appStateTracker {
+                       appStateTracker:(UAAppStateTracker *)appStateTracker
+                           taskManager:(UATaskManager *)taskManager
+                         delayProvider:(nonnull UADelay *(^)(NSTimeInterval))delayProvider {
 
     return [[self alloc] initWithConfig:config
                               dataStore:dataStore
                                 channel:channel
                              eventStore:eventStore
                                  client:client
-                                  queue:queue
                      notificationCenter:notificationCenter
-                        appStateTracker:appStateTracker];
-}
-
-- (void)setUploadsEnabled:(BOOL)uploadsEnabled {
-    if (_uploadsEnabled != uploadsEnabled) {
-        _uploadsEnabled = uploadsEnabled;
-        if (uploadsEnabled) {
-            [self scheduleUpload];
-        } else {
-            [self cancelUpload];
-        }
-    }
-}
-
-#pragma mark -
-#pragma mark App foreground
-
-- (void)applicationWillEnterForeground {
-    [self cancelUpload];
-
-    // Reset the initial delay
-    self.earliestForegroundSendTime = [NSDate dateWithTimeIntervalSinceNow:InitialForegroundUploadDelay];
+                        appStateTracker:appStateTracker
+                            taskManager:taskManager
+                          delayProvider:delayProvider];
 }
 
 - (void)applicationDidEnterBackground {
-    [self scheduleUploadWithDelay:BackgroundUploadDelay];
+    [self scheduleUploadWithDelay:0];
 }
 
 #pragma mark -
@@ -222,18 +195,29 @@ static NSTimeInterval const BackgroundLowPriorityEventUploadInterval = 900;
 
 - (void)addEvent:(UAEvent *)event sessionID:(NSString *)sessionID {
     [self.eventStore saveEvent:event sessionID:sessionID];
+    [self scheduleUploadWithPriority:event.priority];
+}
 
-    if (!self.uploadsEnabled) {
-        return;
-    }
+- (void)deleteAllEvents {
+    [self.eventStore deleteAllEvents];
+}
 
-    switch (event.priority) {
+- (void)scheduleUpload {
+    [self scheduleUploadWithPriority:UAEventPriorityNormal];
+}
+
+- (void)scheduleUploadWithPriority:(UAEventPriority)priority {
+    switch (priority) {
         case UAEventPriorityHigh:
-            [self scheduleUploadWithDelay:HighPriorityUploadDelay];
+            [self scheduleUploadWithDelay:0];
             break;
 
         case UAEventPriorityNormal:
-            [self scheduleUpload];
+            if (self.appStateTracker.state == UAApplicationStateBackground) {
+                [self scheduleUploadWithDelay:0];
+            } else {
+                [self scheduleUploadWithDelay:[self caculateNextUploadDelay]];
+            }
             break;
 
         case UAEventPriorityLow:
@@ -245,48 +229,9 @@ static NSTimeInterval const BackgroundLowPriorityEventUploadInterval = 900;
                 }
             }
 
-            [self scheduleUpload];
+            [self scheduleUploadWithDelay:[self caculateNextUploadDelay]];
             break;
     }
-}
-
-- (void)deleteAllEvents {
-    [self.eventStore deleteAllEvents];
-    [self cancelUpload];
-}
-
-#pragma mark -
-#pragma mark Event upload
-
-- (void)cancelUpload {
-    [self.queue cancelAllOperations];
-    [self.client cancelAllRequests];
-    self.nextUploadDate = nil;
-}
-
-- (void)scheduleUpload {
-    if (!self.uploadsEnabled) {
-        return;
-    }
-
-    // Background time is limited, so bypass other time delays
-    if (self.appStateTracker.state == UAApplicationStateBackground) {
-        [self scheduleUploadWithDelay:BackgroundUploadDelay];
-        return;
-    }
-
-    NSTimeInterval delay = 0;
-    NSTimeInterval timeSinceLastSend = [[NSDate date] timeIntervalSinceDate:self.lastSendTime];
-    if (timeSinceLastSend < self.minBatchInterval) {
-        delay = self.minBatchInterval - timeSinceLastSend;
-    }
-
-    // Now worry about initial delay
-    NSTimeInterval initialDelayRemaining = [self.earliestForegroundSendTime timeIntervalSinceNow];
-
-    delay = MAX(delay, initialDelayRemaining);
-
-    [self scheduleUploadWithDelay:delay];
 }
 
 - (void)scheduleUploadWithDelay:(NSTimeInterval)delay {
@@ -294,75 +239,108 @@ static NSTimeInterval const BackgroundLowPriorityEventUploadInterval = 900;
         return;
     }
 
-    UA_LTRACE(@"Enqueuing attempt to schedule event upload with delay on main queue.");
-
-    UA_WEAKIFY(self);
-    [[UADispatcher mainDispatcher] dispatchAsync:^{
-        UA_STRONGIFY(self);
-        if (!self.uploadsEnabled) {
-            return;
-        }
-
-        UA_LTRACE(@"Attempting to schedule event upload with delay: %f seconds.", delay);
-
+    @synchronized (self) {
         NSDate *uploadDate = [NSDate dateWithTimeIntervalSinceNow:delay];
-        NSTimeInterval timeDifference = [self.nextUploadDate timeIntervalSinceDate:uploadDate];
-        if (self.nextUploadDate && timeDifference >= 0 && timeDifference <= 1) {
+        if (delay && self.nextUploadDate && [self.nextUploadDate compare:uploadDate] == NSOrderedAscending) {
             UA_LTRACE("Upload already scheduled for an earlier time.");
             return;
         }
+        self.nextUploadDate = uploadDate;
 
-        if (self.nextUploadDate) {
-            [self.queue cancelAllOperations];
-            self.nextUploadDate = nil;
-        }
-
-        UA_LTRACE(@"Scheduling upload.");
-        if ([self enqueueUploadOperationWithDelay:delay]) {
-            self.nextUploadDate = uploadDate;
-        }
-    }];
+        UA_LTRACE("Scheduling upload in %f seconds", delay);
+        [self.taskManager enqueueRequestWithID:UAEventManagerUploadTask
+                                       options:[UATaskRequestOptions defaultOptions]
+                                  initialDelay:delay];
+    }
 }
 
-- (BOOL)enqueueUploadOperationWithDelay:(NSTimeInterval)delay {
+- (void)uploadEventsTask:(id<UATask>)task {
+    if (!self.uploadsEnabled) {
+        [task taskCompleted];
+        return;
+    }
+
+    NSTimeInterval batchDelay = ForegroundTaskBatchDelay;
+    if (self.appStateTracker.state == UAApplicationStateBackground) {
+        batchDelay = BackgroundTaskBatchDelay;
+    }
+
+    [self.delayProvider(batchDelay) start];
+
+    @synchronized (self) {
+        self.nextUploadDate = nil;
+    }
+
+    if (!self.channel.identifier) {
+        UA_LTRACE("No Channel ID. Skipping analytic upload.");
+        [task taskCompleted];
+        return;
+    }
+
+    // Clean up store
+    [self.eventStore trimEventsToStoreSize:self.maxTotalDBSize];
+
+    NSArray *events = [self prepareEvents];
+    if (!events.count) {
+        UA_LTRACE(@"Analytic upload finished, no events to upload.");
+        [task taskCompleted];
+        return;
+    }
+
+    NSDictionary *headers = [self prepareHeaders];
 
     UA_WEAKIFY(self);
-
-    UAAsyncOperation *operation = [UAAsyncOperation operationWithBlock:^(UAAsyncOperation *operation) {
+    UASemaphore *semaphore = [UASemaphore semaphore];
+    UADisposable *request = [self.client uploadEvents:events headers:headers completionHandler:^(NSDictionary * _Nullable responseHeaders, NSError * _Nullable error) {
         UA_STRONGIFY(self);
-        if (!self.uploadsEnabled) {
-            return;
+        self.lastSendTime = [NSDate date];
+
+        if (!error) {
+            UA_LTRACE(@"Analytic upload success");
+            [self.eventStore deleteEventsWithIDs:[events valueForKey:@"event_id"]];
+            [self updateAnalyticsParametersWithResponseHeaders:responseHeaders];
+            [task taskCompleted];
+        } else {
+            UA_LTRACE(@"Analytics upload request failed: %@", error);
+            [task taskFailed];
         }
 
-        self.nextUploadDate = nil;
+        [semaphore signal];
+    }];
 
-        UA_LTRACE("Preparing events for upload");
+    task.expirationHandler = ^{
+        [request dispose];
+    };
 
-        if (!self.channel.identifier) {
-            UA_LTRACE("No Channel ID. Skipping analytic upload.");
-            [operation finish];
-            return;
-        }
+    [semaphore wait];
+}
 
-        // Clean up store
-        [self.eventStore trimEventsToStoreSize:self.maxTotalDBSize];
+#pragma mark -
+#pragma mark Helper methods
 
-        // Fetch events
-        [self.eventStore fetchEventsWithMaxBatchSize:self.maxBatchSize completionHandler:^(NSArray<UAEventData *> *result) {
+- (NSTimeInterval)caculateNextUploadDelay {
+    NSTimeInterval delay = 0;
+    NSTimeInterval timeSinceLastSend = [[NSDate date] timeIntervalSinceDate:self.lastSendTime];
+    if (timeSinceLastSend < self.minBatchInterval) {
+        delay = self.minBatchInterval - timeSinceLastSend;
+    }
+    return MAX(delay, EventUploadScheduleDelay);
+}
 
-            // Make sure we are not cancelled
-            if (operation.isCancelled) {
-                [operation finish];
-                return;
-            }
+- (NSDictionary *)prepareHeaders {
+    __block NSDictionary *headers = nil;
+    [[UADispatcher mainDispatcher] doSync:^{
+        headers = [self.delegate analyticsHeaders] ?: @{};
+    }];
+    return headers;
+}
 
-            if (!result.count) {
-                [operation finish];
-                return;
-            }
-
-            NSMutableArray *preparedEvents = [NSMutableArray arrayWithCapacity:result.count];
-
+- (NSArray *)prepareEvents {
+    __block NSMutableArray *preparedEvents = nil;
+    UASemaphore *semaphore = [UASemaphore semaphore];
+    [self.eventStore fetchEventsWithMaxBatchSize:self.maxBatchSize completionHandler:^(NSArray<UAEventData *> *result) {
+        if (result.count) {
+            preparedEvents = [NSMutableArray arrayWithCapacity:result.count];
             for (UAEventData *eventData in result) {
                 NSMutableDictionary *eventBody = [NSMutableDictionary dictionary];
                 [eventBody setValue:eventData.identifier forKey:@"event_id"];
@@ -381,50 +359,14 @@ static NSTimeInterval const BackgroundLowPriorityEventUploadInterval = 900;
 
                 [preparedEvents addObject:eventBody];
             }
+        }
 
-            // Make sure we are not cancelled
-            if (operation.isCancelled) {
-                [operation finish];
-                return;
-            }
-
-            UA_LTRACE("Uploading events.");
-
-            // Make sure the event upload request is queueed and on the main thread as it needs to access application state
-            [[UADispatcher mainDispatcher] dispatchAsync: ^{
-                // Make sure we are still not cancelled
-                if (operation.isCancelled) {
-                    [operation finish];
-                    return;
-                }
-
-                NSDictionary *headers = [self.delegate analyticsHeaders] ?: @{};
-
-                UA_STRONGIFY(self);
-                [self.client uploadEvents:preparedEvents headers:headers completionHandler:^(NSDictionary * _Nullable responseHeaders, NSError * _Nullable error) {
-                    UA_STRONGIFY(self);
-                    self.lastSendTime = [NSDate date];
-
-                    if (!error) {
-                        UA_LTRACE(@"Analytic upload success");
-                        [self.eventStore deleteEventsWithIDs:[preparedEvents valueForKey:@"event_id"]];
-                        [self updateAnalyticsParametersWithResponseHeaders:responseHeaders];
-                    } else {
-                        UA_LTRACE(@"Analytics upload request failed: %@", error);
-                        [self scheduleUploadWithDelay:FailedUploadRetryDelay];
-                    }
-
-                    [operation finish];
-                }];
-            }];
-        }];
+        [semaphore signal];
     }];
 
-    return [self.queue addBackgroundOperation:operation delay:delay];
+    [semaphore wait];
+    return preparedEvents;
 }
-
-#pragma mark -
-#pragma mark Helper methods
 
 + (NSUInteger)clampValue:(NSUInteger)value min:(NSUInteger)min max:(NSUInteger)max {
     if (value < min) {
