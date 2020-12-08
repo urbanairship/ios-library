@@ -371,7 +371,7 @@ static NSString *const UAScheduleInfoCampaignsKey = @"campaigns";
         builder.group = [JSON stringForKey:UAScheduleInfoGroupKey defaultValue:nil];
         builder.limit = [[JSON numberForKey:UAScheduleInfoLimitKey defaultValue:@(1)] unsignedIntegerValue];
         builder.priority = [[JSON numberForKey:UAScheduleInfoPriorityKey defaultValue:nil] integerValue];
-        builder.editGracePeriod = [[JSON numberForKey:UAScheduleInfoEditGracePeriodKey defaultValue:nil] doubleValue];
+        builder.editGracePeriod = [[JSON numberForKey:UAScheduleInfoEditGracePeriodKey defaultValue:nil] doubleValue] * 60 * 60 * 24;
         builder.interval = [[JSON numberForKey:UAScheduleInfoIntervalKey defaultValue:nil] doubleValue];
         builder.campaigns = [JSON dictionaryForKey:UAScheduleInfoCampaignsKey defaultValue:nil];
         builder.audience = audience;
@@ -398,9 +398,11 @@ static NSString *const UAScheduleInfoCampaignsKey = @"campaigns";
         builder.metadata = metadata;
         builder.limit = [JSON numberForKey:UAScheduleInfoLimitKey defaultValue:nil];
         builder.priority = [JSON numberForKey:UAScheduleInfoPriorityKey defaultValue:nil];
-        builder.editGracePeriod = [JSON numberForKey:UAScheduleInfoEditGracePeriodKey defaultValue:nil];
         builder.interval = [JSON numberForKey:UAScheduleInfoIntervalKey defaultValue:nil];
         builder.audience = audience;
+
+        NSNumber *gracePeriodDays = [JSON numberForKey:UAScheduleInfoEditGracePeriodKey defaultValue:nil];
+        builder.editGracePeriod = gracePeriodDays ? @(gracePeriodDays.doubleValue * 60 * 60 * 24) : nil;
 
         /*
          * Since we cancel a schedule by setting the end time and start time to the payload's last modified timestamp,

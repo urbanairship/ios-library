@@ -840,7 +840,7 @@
                     @"goal":@1
                 }
         ],
-        @"edit_grace_period": @(24),
+        @"edit_grace_period": @(14),
         @"delay":  @{
                 @"seconds": @(100),
                 @"cancellation_triggers": @[
@@ -874,7 +874,10 @@
         builder.metadata = @{
             @"com.urbanairship.iaa.REMOTE_DATA_METADATA": metadata
         };
-        builder.editGracePeriod = 24;
+
+        // Edit grace period should be converted to seconds
+        builder.editGracePeriod = 14 * 60 * 60 * 24;
+
         builder.delay = [UAScheduleDelay delayWithBuilderBlock:^(UAScheduleDelayBuilder *builder) {
             builder.cancellationTriggers = @[[UAScheduleTrigger appInitTriggerWithCount:2]];
             builder.seconds = 100;
@@ -918,7 +921,7 @@
                 }
         ],
         @"id": @"some id",
-        @"edit_grace_period": @(24),
+        @"edit_grace_period": @(14),
         @"delay":  @{
                 @"seconds": @(100),
                 @"cancellation_triggers": @[
@@ -948,7 +951,10 @@
         builder.metadata = @{
             @"com.urbanairship.iaa.REMOTE_DATA_METADATA": metadata
         };
-        builder.editGracePeriod = 24;
+
+        // Edit grace period should be converted to seconds
+        builder.editGracePeriod = 14 * 60 * 60 * 24;
+
         builder.delay = [UAScheduleDelay delayWithBuilderBlock:^(UAScheduleDelayBuilder *builder) {
             builder.cancellationTriggers = @[[UAScheduleTrigger appInitTriggerWithCount:2]];
             builder.seconds = 100;
