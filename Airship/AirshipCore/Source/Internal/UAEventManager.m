@@ -260,10 +260,13 @@ static NSString * const UAEventManagerUploadTask = @"UAEventManager.upload";
         return;
     }
 
-    NSTimeInterval batchDelay = ForegroundTaskBatchDelay;
-    if (self.appStateTracker.state == UAApplicationStateBackground) {
-        batchDelay = BackgroundTaskBatchDelay;
-    }
+    __block NSTimeInterval batchDelay = ForegroundTaskBatchDelay;
+
+    [[UADispatcher mainDispatcher] doSync:^{
+        if (self.appStateTracker.state == UAApplicationStateBackground) {
+            batchDelay = BackgroundTaskBatchDelay;
+        }
+    }];
 
     [self.delayProvider(batchDelay) start];
 
