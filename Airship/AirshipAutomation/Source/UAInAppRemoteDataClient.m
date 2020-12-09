@@ -398,15 +398,15 @@ static NSString *const UAScheduleInfoFrequencyConstraintIDsKey = @"frequency_con
 
     return [UAInAppRemoteDataClient editsWithJSON:JSON builderBlock:^(UAScheduleEditsBuilder * _Nonnull builder) {
         builder.metadata = metadata;
-        builder.limit = [JSON numberForKey:UAScheduleInfoLimitKey defaultValue:nil];
-        builder.priority = [JSON numberForKey:UAScheduleInfoPriorityKey defaultValue:nil];
-        builder.interval = [JSON numberForKey:UAScheduleInfoIntervalKey defaultValue:nil];
+        builder.limit = [JSON numberForKey:UAScheduleInfoLimitKey defaultValue:@(1)];
+        builder.priority = [JSON numberForKey:UAScheduleInfoPriorityKey defaultValue:@(0)];
+        builder.interval = [JSON numberForKey:UAScheduleInfoIntervalKey defaultValue:@(0)];
         builder.audience = audience;
         builder.campaigns = [JSON dictionaryForKey:UAScheduleInfoCampaignsKey defaultValue:@{}];
         builder.frequencyConstraintIDs = [JSON arrayForKey:UAScheduleInfoFrequencyConstraintIDsKey defaultValue:@[]];
 
-        NSNumber *gracePeriodDays = [JSON numberForKey:UAScheduleInfoEditGracePeriodKey defaultValue:nil];
-        builder.editGracePeriod = gracePeriodDays ? @(gracePeriodDays.doubleValue * 60 * 60 * 24) : nil;
+        NSNumber *gracePeriodDays = [JSON numberForKey:UAScheduleInfoEditGracePeriodKey defaultValue:@(14)];
+        builder.editGracePeriod = @(gracePeriodDays.doubleValue * 60 * 60 * 24);
 
         /*
          * Since we cancel a schedule by setting the end time and start time to the payload's last modified timestamp,

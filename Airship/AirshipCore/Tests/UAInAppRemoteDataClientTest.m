@@ -637,6 +637,112 @@
     XCTAssertEqual(editedMessages, 1);
 }
 
+- (void)testDefaultEdits {
+    // setup to add messages
+    NSString *messageID = [NSUUID UUID].UUIDString;
+    NSDictionary *message = @{@"message": @{
+                                      @"name": @"Simple Message",
+                                      @"message_id": messageID,
+                                      @"display_type": @"banner",
+                                      @"limit": @(100),
+                                      @"edit_grace_period": @(28),
+                                      @"frequency_constraint_ids": @[@"neat"],
+                                      @"campaigns": @{ @"neat": @"campaign" },
+                                      @"priority": @(-100),
+                                      @"interval": @(200),
+                                      @"start": @"2000-12-04T19:07:54.564",
+                                      @"end": @"3000-12-04T19:07:54.564",
+                                      @"display": @{
+                                              @"body" : @{
+                                                      @"text" : @"hi there"
+                                              },
+                                      },
+    },
+                              @"created": @"2017-12-04T19:07:54.564",
+                              @"last_updated": @"2017-12-04T19:07:54.564",
+                              @"triggers": @[
+                                      @{
+                                          @"type":@"app_init",
+                                          @"goal":@1
+                                      }
+                              ]
+    };
+
+    NSArray *inAppMessages = @[message];
+    UARemoteDataPayload *inAppRemoteDataPayload = [[UARemoteDataPayload alloc] initWithType:@"in_app_messages"
+                                                                                  timestamp:[UAUtils parseISO8601DateFromString:@"2017-12-04T19:07:54.564"] // REVISIT - change this everywhere?
+                                                                                       data:@{@"in_app_messages":inAppMessages}
+                                                                                   metadata:@{@"cool" : @"story"}];
+
+    [[[self.mockDelegate stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:2];
+        NSArray<UASchedule *> *schedules = (__bridge NSArray<UASchedule *> *)arg;
+        [self.allSchedules addObjectsFromArray:schedules];
+        [invocation getArgument:&arg atIndex:3];
+        void (^completionHandler)(BOOL) = (__bridge void (^)(BOOL))arg;
+        completionHandler(YES);
+    }] scheduleMultiple:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
+    // test
+    self.publishBlock(@[inAppRemoteDataPayload]);
+    [self.queue waitUntilAllOperationsAreFinished];
+
+
+    NSDateFormatter *formatter = [UAUtils ISODateFormatterUTCWithDelimiter];
+    NSString *now = [formatter stringFromDate:[NSDate date]];
+    message = @{@"message": @{
+                        @"name": @"Simple Message",
+                        @"message_id": messageID,
+                        @"display_type": @"banner",
+                        @"display": @{
+                                @"body" : @{
+                                        @"text" : @"hi there"
+                                },
+                        },
+    },
+                @"created": @"2017-12-04T19:07:54.564",
+                @"last_updated": now,
+                @"triggers": @[
+                        @{
+                            @"type":@"app_init",
+                            @"goal":@1
+                        }
+                ]
+    };
+
+    inAppMessages = @[message];
+    inAppRemoteDataPayload = [[UARemoteDataPayload alloc] initWithType:@"in_app_messages"
+                                                             timestamp:[NSDate date]
+                                                                  data:@{@"in_app_messages":inAppMessages}
+                                                              metadata:@{@"cool" : @"story"}];
+
+    [[[self.mockDelegate expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:4];
+        void (^completionHandler)(UASchedule *) = (__bridge void (^)(UASchedule *))arg;
+        completionHandler(nil);
+    }] editScheduleWithID:messageID edits:[OCMArg checkWithBlock:^BOOL(id obj) {
+        UAScheduleEdits *edits = obj;
+        return edits.editGracePeriod.doubleValue == (14 * 60 * 60 * 24) &&
+        edits.campaigns && edits.campaigns.count == 0 &&
+        edits.frequencyConstraintIDs  && edits.frequencyConstraintIDs.count == 0 &&
+        edits.limit && edits.limit.integerValue == 1 &&
+        edits.interval && edits.interval.doubleValue == 0 &&
+        edits.priority && edits.priority.integerValue == 0 &&
+        [edits.start isEqual:[NSDate distantPast]] &&
+        [edits.end isEqual:[NSDate distantFuture]];
+    }] completionHandler:OCMOCK_ANY];
+
+    // test
+    self.publishBlock(@[inAppRemoteDataPayload]);
+    [self.queue waitUntilAllOperationsAreFinished];
+
+    // verify
+    [self.mockDelegate verify];
+}
+
+
 - (void)testEmptyInAppMessageListAfterNonEmptyList {
     // setup to add messages
     NSString *message1ID = [NSUUID UUID].UUIDString;
@@ -1120,5 +1226,6 @@
 }
 
 @end
+
 
 
