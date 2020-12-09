@@ -56,7 +56,7 @@
     return [UAInboxStore storeWithName:storeName inMemory:NO];
 }
 
-- (void) addStores {
+- (void)addStores {
     void (^completion)(NSPersistentStore *, NSError*) = ^void(NSPersistentStore *store, NSError *error) {
         if (!store) {
             UA_LERR(@"Failed to create inbox message persistent store: %@", error);
@@ -104,6 +104,28 @@
         }
 
         completionHandler(resultData);
+        [self.managedContext safeSave];
+    }];
+}
+
+- (void)deleteMessagesWithIDs:(NSArray<NSString *> *)messageIDs {
+    [self.managedContext safePerformBlock:^(BOOL isSafe) {
+        if (!isSafe) {
+            return;
+        }
+
+        NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:kUAInboxDBEntityName];
+        request.predicate = [NSPredicate predicateWithFormat:@"messageID IN %@", messageIDs];
+
+        NSError *error;
+        NSBatchDeleteRequest *deleteRequest = [[NSBatchDeleteRequest alloc] initWithFetchRequest:request];
+        [self.managedContext executeRequest:deleteRequest error:&error];
+
+        if (error) {
+            UA_LERR(@"Error deleting messages %@", error);
+            return;
+        }
+
         [self.managedContext safeSave];
     }];
 }

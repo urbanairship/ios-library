@@ -52,6 +52,13 @@ NS_ASSUME_NONNULL_BEGIN
                  completionHandler:(void(^)(NSArray<UAInboxMessageData *>*messages))completionHandler;
 
 /**
+ * Deletes a list of message IDs.
+ *
+ * @param messageIDs The list of message IDs to delete.
+ */
+- (void)deleteMessagesWithIDs:(NSArray<NSString *> *)messageIDs;
+
+/**
  * Updates the inbox store with the array of messages.
  *
  * @param messages An array of messages.
