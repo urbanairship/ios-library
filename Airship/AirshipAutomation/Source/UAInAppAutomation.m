@@ -244,7 +244,7 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
     __block UAFrequencyChecker *checker;
 
     UARetriable *checkFrequencyLimits = [UARetriable retriableWithRunBlock:^(UARetriableCompletionHandler retriableHandler) {
-        [self.frequencyLimitManager getFrequencyChecker:@[scheduleID] completionHandler:^(UAFrequencyChecker *c) {
+        [self.frequencyLimitManager getFrequencyChecker:schedule.frequencyConstraintIDs completionHandler:^(UAFrequencyChecker *c) {
             checker = c;
             if (checker.isOverLimit) {
                 // If we're over the limit, skip the rest of the prepare steps and invalidate the pipeline

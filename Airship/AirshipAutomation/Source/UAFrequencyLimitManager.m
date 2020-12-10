@@ -146,7 +146,7 @@
         }
 
         [self recordOccurrence:[constraints valueForKey:@"identifier"]];
-        
+
         return YES;
     }
 
@@ -169,8 +169,9 @@
         return;
     }
 
+    NSTimeInterval time = self.date.now;
     for (NSString *identifier in constraintIDs) {
-        UAOccurrence *occurrence = [UAOccurrence occurrenceWithParentConstraintID:identifier timestamp:self.date.now];
+        UAOccurrence *occurrence = [UAOccurrence occurrenceWithParentConstraintID:identifier timestamp:time];
 
         [self.pendingOccurrences addObject:occurrence];
 

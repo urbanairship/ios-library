@@ -161,6 +161,7 @@
         builder.triggers = @[[UAScheduleTrigger foregroundTriggerWithCount:1]];
         builder.identifier = @"schedule ID";
         builder.campaigns = @{@"some": @"campaigns object"};
+        builder.frequencyConstraintIDs = @[@"barConstraint", @"fooConstraint"];
     }];
 
     [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
@@ -171,7 +172,7 @@
         [invocation getArgument:&arg atIndex:3];
         void(^callback)(UAFrequencyChecker *) =  (__bridge void (^)(UAFrequencyChecker *))arg;
         callback(nil);
-    }] getFrequencyChecker:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    }] getFrequencyChecker:@[@"barConstraint", @"fooConstraint"] completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare finished"];
 
@@ -191,6 +192,7 @@
 
     [self waitForTestExpectations];
     [self.mockInAppMessageManager verify];
+    [self.mockFrequencyLimitManager verify];
 }
 
 - (void)testPrepareMessageUnderLimit {
