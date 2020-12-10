@@ -33,6 +33,8 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
 @property(nonatomic, strong) UAInAppMessageManager *inAppMessageManager;
 @property(nonatomic, strong) UADeferredScheduleAPIClient *deferredScheduleAPIClient;
 @property(nonatomic, strong) UAChannel *channel;
+@property(nonatomic, strong) UAFrequencyLimitManager *frequencyLimitManager;
+@property(nonatomic, strong) NSMutableDictionary<NSString *, UAFrequencyChecker *> *frequencyCheckers;
 @end
 
 @implementation UAInAppAutomation
@@ -43,7 +45,8 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
                            dataStore:(UAPreferenceDataStore *)dataStore
                  inAppMessageManager:(UAInAppMessageManager *)inAppMessageManager
                              channel:(UAChannel *)channel
-           deferredScheduleAPIClient:(UADeferredScheduleAPIClient *)deferredScheduleAPIClient {
+           deferredScheduleAPIClient:(UADeferredScheduleAPIClient *)deferredScheduleAPIClient
+               frequencyLimitManager:(UAFrequencyLimitManager *)frequencyLimitManager {
 
     return [[self alloc] initWithAutomationEngine:automationEngine
                                   audienceManager:audienceManager
@@ -51,7 +54,8 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
                                         dataStore:dataStore
                               inAppMessageManager:inAppMessageManager
                                           channel:channel
-                        deferredScheduleAPIClient:deferredScheduleAPIClient];
+                        deferredScheduleAPIClient:deferredScheduleAPIClient
+                            frequencyLimitManager:frequencyLimitManager];
 }
 
 + (instancetype)automationWithConfig:(UARuntimeConfig *)config
@@ -79,13 +83,17 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
 
     UADeferredScheduleAPIClient *deferredScheduleAPIClient = [UADeferredScheduleAPIClient clientWithConfig:config
                                                                                             authManager:authManager];
+
+    UAFrequencyLimitManager *frequencyLimitManager = [UAFrequencyLimitManager managerWithConfig:config];
+
     return [[UAInAppAutomation alloc] initWithAutomationEngine:automationEngine
                                                audienceManager:audienceManager
                                               remoteDataClient:dataClient
                                                      dataStore:dataStore
                                            inAppMessageManager:inAppMessageManager
                                                        channel:channel
-                                     deferredScheduleAPIClient:deferredScheduleAPIClient];
+                                     deferredScheduleAPIClient:deferredScheduleAPIClient
+                                         frequencyLimitManager:frequencyLimitManager];
 }
 
 - (instancetype)initWithAutomationEngine:(UAAutomationEngine *)automationEngine
@@ -94,7 +102,8 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
                                dataStore:(UAPreferenceDataStore *)dataStore
                      inAppMessageManager:(UAInAppMessageManager *)inAppMessageManager
                                  channel:(UAChannel *)channel
-               deferredScheduleAPIClient:(UADeferredScheduleAPIClient *)deferredScheduleAPIClient {
+               deferredScheduleAPIClient:(UADeferredScheduleAPIClient *)deferredScheduleAPIClient
+                   frequencyLimitManager:(UAFrequencyLimitManager *)frequencyLimitManager {
 
     self = [super initWithDataStore:dataStore];
 
@@ -106,7 +115,9 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
         self.inAppMessageManager = inAppMessageManager;
         self.channel = channel;
         self.deferredScheduleAPIClient = deferredScheduleAPIClient;
+        self.frequencyLimitManager = frequencyLimitManager;
         self.prepareSchedulePipeline = [UARetriablePipeline pipeline];
+        self.frequencyCheckers = [NSMutableDictionary dictionary];
 
         self.automationEngine.delegate = self;
         self.audienceManager.delegate = self;
@@ -230,6 +241,21 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
 
     NSString *scheduleID = schedule.identifier;
 
+    __block UAFrequencyChecker *checker;
+
+    UARetriable *checkFrequencyLimits = [UARetriable retriableWithRunBlock:^(UARetriableCompletionHandler retriableHandler) {
+        [self.frequencyLimitManager getFrequencyChecker:@[scheduleID] completionHandler:^(UAFrequencyChecker *c) {
+            checker = c;
+            if (checker.isOverLimit) {
+                // If we're over the limit, skip the rest of the prepare steps and invalidate the pipeline
+                completionHandler(UAAutomationSchedulePrepareResultSkip);
+                retriableHandler(UARetriableResultInvalidate);
+            } else {
+                retriableHandler(UARetriableResultSuccess);
+            }
+        }];
+    }];
+
     // Check audience conditions
     UARetriable *checkAudience = [UARetriable retriableWithRunBlock:^(UARetriableCompletionHandler _Nonnull retriableHandler) {
         UAScheduleAudience *audience = schedule.audience;
@@ -246,14 +272,22 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
         }];
     }];
 
-    // Prepare
     UA_WEAKIFY(self)
+    void (^prepareCompletionHandlerWrapper)(UAAutomationSchedulePrepareResult) = ^(UAAutomationSchedulePrepareResult result){
+        UA_STRONGIFY(self)
+        if (checker && result == UAAutomationSchedulePrepareResultContinue) {
+            [self.frequencyCheckers setObject:checker forKey:scheduleID];
+        }
+        completionHandler(result);
+    };
+
+    // Prepare
     UARetriable *prepare = [UARetriable retriableWithRunBlock:^(UARetriableCompletionHandler _Nonnull retriableHandler) {
         UA_STRONGIFY(self)
 
         switch (schedule.type) {
             case UAScheduleTypeActions:
-                completionHandler(UAAutomationSchedulePrepareResultContinue);
+                prepareCompletionHandlerWrapper(UAAutomationSchedulePrepareResultContinue);
                 retriableHandler(UARetriableResultSuccess);
                 break;
 
@@ -261,7 +295,7 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
                 [self.inAppMessageManager prepareMessage:(UAInAppMessage *)schedule.data
                                               scheduleID:schedule.identifier
                                                campaigns:schedule.campaigns
-                                       completionHandler:completionHandler];
+                                       completionHandler:prepareCompletionHandlerWrapper];
                 retriableHandler(UARetriableResultSuccess);
                 break;
 
@@ -269,7 +303,7 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
                 [self prepareDeferredSchedule:schedule
                                triggerContext:triggerContext
                              retriableHandler:retriableHandler
-                            completionHandler:completionHandler];
+                            completionHandler:prepareCompletionHandlerWrapper];
                 break;
 
 
@@ -279,7 +313,7 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
         }
     }];
 
-    [self.prepareSchedulePipeline addChainedRetriables:@[checkAudience, prepare]];
+    [self.prepareSchedulePipeline addChainedRetriables:@[checkFrequencyLimits, checkAudience, prepare]];
 }
 
 - (void)prepareDeferredSchedule:(UASchedule *)schedule
@@ -364,6 +398,18 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
             [self.inAppMessageManager scheduleExecutionAborted:schedule.identifier];
         }
         return UAAutomationScheduleReadyResultInvalidate;
+    }
+
+    UAFrequencyChecker *checker = self.frequencyCheckers[schedule.identifier];
+    [self.frequencyCheckers removeObjectForKey:schedule.identifier];
+
+    if (checker && !checker.checkAndIncrement) {
+        // Abort execution if necessary and skip
+        if (schedule.type == UAScheduleTypeInAppMessage) {
+            [self.inAppMessageManager scheduleExecutionAborted:schedule.identifier];
+        }
+
+        return UAAutomationScheduleReadyResultSkip;
     }
 
     switch (schedule.type) {
@@ -492,8 +538,7 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
 }
 
 - (void)updateConstraints:(NSArray<UAFrequencyConstraint *> *)constraints {
-    // TODO: update constraints in the FLM
-    // [self.frequencyLimitManager updateConstraints:constraints];
+     [self.frequencyLimitManager updateConstraints:constraints];
 }
 
 - (void)setPaused:(BOOL)paused {

@@ -10,6 +10,7 @@
 #import "UAInAppRemoteDataClient+Internal.h"
 #import "UAAirshipAutomationCoreImport.h"
 #import "UADeferredScheduleAPIClient+Internal.h"
+#import "UAFrequencyLimitManager+Internal.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -29,6 +30,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param inAppMessageManager The in-app message manager instance.
  * @param channel The channel instance.
  * @param deferredScheduleAPIClient The deferred API client.
+ * @param frequencyLimitManager The frequency limit manager.
  * @return A in-app automation manager instance.
  */
 + (instancetype)automationWithEngine:(UAAutomationEngine *)automationEngine
@@ -37,7 +39,8 @@ NS_ASSUME_NONNULL_BEGIN
                            dataStore:(UAPreferenceDataStore *)dataStore
                  inAppMessageManager:(UAInAppMessageManager *)inAppMessageManager
                              channel:(UAChannel *)channel
-           deferredScheduleAPIClient:(UADeferredScheduleAPIClient *)deferredScheduleAPIClient;
+           deferredScheduleAPIClient:(UADeferredScheduleAPIClient *)deferredScheduleAPIClient
+               frequencyLimitManager:(UAFrequencyLimitManager *)frequencyLimitManager;
 
 /**
  * Factory method.

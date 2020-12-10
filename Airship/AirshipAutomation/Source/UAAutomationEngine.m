@@ -1144,6 +1144,11 @@ static NSString * const UAAutomationEngineTaskExtrasIdentifier = @"identifier";
                 UA_LTRACE("Attempted to execute schedule:%@ that is not ready.", schedule);
                 break;
             }
+            case UAAutomationScheduleReadyResultSkip: {
+                UA_LTRACE("Attempted to execute a schedule that has exceeded frequency limits: %@", schedule);
+                nextExecutionState = @(UAScheduleStateIdle);
+                break;
+            }
         }
     }];
 

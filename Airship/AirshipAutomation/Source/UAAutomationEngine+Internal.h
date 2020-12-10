@@ -60,6 +60,11 @@ typedef NS_ENUM(NSInteger, UAAutomationScheduleReadyResult) {
      * Schedule is out of date and should be prepared again before it's able to be ready for execution.
      */
     UAAutomationScheduleReadyResultInvalidate,
+
+    /**
+     * Schedule has exceeded frequency limits and should be skipped
+     */
+    UAAutomationScheduleReadyResultSkip
 };
 
 /**
