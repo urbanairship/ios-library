@@ -1215,6 +1215,97 @@
     [self.mockDelegate verify];
 }
 
+- (void)testEmptyConstraints {
+    [[self.mockDelegate expect] updateConstraints:@[]];
+
+    UARemoteDataPayload *inAppRemoteDataPayload = [[UARemoteDataPayload alloc] initWithType:@"in_app_messages"
+                                                                                  timestamp:[NSDate date]
+                                                                                       data:@{}
+                                                                                   metadata:@{@"cool" : @"story"}];
+    self.publishBlock(@[inAppRemoteDataPayload]);
+    [self.queue waitUntilAllOperationsAreFinished];
+
+    [self.mockDelegate verify];
+}
+
+- (void)testConstraints {
+    id periodMap = @{
+        @"seconds": @(1),
+        @"minutes": @(60),
+        @"hours": @(60 * 60),
+        @"days": @(60 * 60 * 24),
+        @"weeks": @(60 * 60 * 24 * 7),
+        @"months": @(60 * 60 * 24 * 30),
+        @"years": @(60 * 60 * 24 * 365),
+    };
+
+    NSMutableArray *constraintPayloads = [NSMutableArray array];
+    NSMutableArray *expectedConstraints = [NSMutableArray array];
+
+    for (NSString *period in periodMap) {
+        NSString *constraintId = [NSString stringWithFormat:@"%@ id", period];
+        id paylaod = @{
+            @"id": constraintId,
+            @"boundary": @(10),
+            @"range": @(10),
+            @"period": period
+        };
+        [constraintPayloads addObject:paylaod];
+
+
+
+        UAFrequencyConstraint *constraint = [UAFrequencyConstraint frequencyConstraintWithIdentifier:constraintId
+                                                                                               range: 10 * [periodMap[period] doubleValue]
+                                                                                               count:10];
+        [expectedConstraints addObject:constraint];
+    }
+
+    [[self.mockDelegate expect] updateConstraints:expectedConstraints];
+
+    UARemoteDataPayload *inAppRemoteDataPayload = [[UARemoteDataPayload alloc] initWithType:@"in_app_messages"
+                                                                                  timestamp:[NSDate date]
+                                                                                       data:@{@"frequency_constraints": constraintPayloads}
+                                                                                   metadata:@{@"cool" : @"story"}];
+    self.publishBlock(@[inAppRemoteDataPayload]);
+    [self.queue waitUntilAllOperationsAreFinished];
+    [self.mockDelegate verify];
+}
+
+
+- (void)testInvalidConstraint {
+    NSArray *constraintPayloads = @[@{ @"id": @"valid",
+                                       @"boundary": @(10),
+                                       @"range": @(10),
+                                       @"period": @"seconds" },
+                                    @{ @"id": @"missing period",
+                                       @"boundary": @(10),
+                                       @"range": @(10) },
+                                    @{ @"id": @"missing range",
+                                       @"boundary": @(10),
+                                       @"period": @"seconds" },
+                                    @{ @"id": @"missing boundary",
+                                       @"range": @(10),
+                                       @"period": @"seconds" },
+                                    @{ @"boundary": @(10),
+                                       @"range": @(10),
+                                       @"period": @"seconds" },
+                                    @{ @"id": @"invalid range",
+                                       @"boundary": @(10),
+                                       @"range": @(10),
+                                       @"period": @"lightyears" }];
+
+    UAFrequencyConstraint *expected = [UAFrequencyConstraint frequencyConstraintWithIdentifier:@"valid" range:10 count:10];
+
+    [[self.mockDelegate expect] updateConstraints:@[expected]];
+
+    UARemoteDataPayload *inAppRemoteDataPayload = [[UARemoteDataPayload alloc] initWithType:@"in_app_messages"
+                                                                                  timestamp:[NSDate date]
+                                                                                       data:@{@"frequency_constraints": constraintPayloads}
+                                                                                   metadata:@{@"cool" : @"story"}];
+    self.publishBlock(@[inAppRemoteDataPayload]);
+    [self.queue waitUntilAllOperationsAreFinished];
+    [self.mockDelegate verify];
+}
 
 - (UASchedule *)getScheduleForScheduleId:(NSString *)scheduleId {
     for (UASchedule *schedule in self.allSchedules) {
@@ -1226,6 +1317,7 @@
 }
 
 @end
+
 
 
 

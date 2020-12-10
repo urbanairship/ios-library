@@ -4,6 +4,7 @@
 #import "UAAirshipAutomationCoreImport.h"
 #import "UASchedule.h"
 #import "UAScheduleEdits.h"
+#import "UAFrequencyConstraint+Internal.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -40,6 +41,11 @@ NS_ASSUME_NONNULL_BEGIN
                      edits:(UAScheduleEdits *)edits
          completionHandler:(nullable void (^)(BOOL))completionHandler;
 
+/**
+ * Called with updated constraints.
+ * @param constraints The updated constraints.
+ */
+- (void)updateConstraints:(NSArray<UAFrequencyConstraint *> *)constraints;
 
 @end
 

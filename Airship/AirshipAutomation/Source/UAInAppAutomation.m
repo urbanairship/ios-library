@@ -491,6 +491,11 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
     self.audienceManager.preferLocalTagDataTime = inAppConfig.tagGroupsConfig.cachePreferLocalUntil;
 }
 
+- (void)updateConstraints:(NSArray<UAFrequencyConstraint *> *)constraints {
+    // TODO: update constraints in the FLM
+    // [self.frequencyLimitManager updateConstraints:constraints];
+}
+
 - (void)setPaused:(BOOL)paused {
     // If we're unpausing, alert the automation engine
     if (self.isPaused == YES && self.isPaused != paused) {

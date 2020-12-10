@@ -18,6 +18,12 @@ static NSString * const UAInAppMessagesLastPayloadMetadataKey = @"UAInAppRemoteD
 static NSString * const UAInAppMessagesScheduledNewUserCutoffTimeKey = @"UAInAppRemoteDataClient.ScheduledNewUserCutoffTime";
 static NSString * const UAInAppRemoteDataClientMetadataKey = @"com.urbanairship.iaa.REMOTE_DATA_METADATA";
 
+static NSString * const UAFrequencyConstraintsKey = @"frequency_constraints";
+static NSString * const UAFrequencyConstraintPeriodKey = @"period";
+static NSString * const UAFrequencyConstraintBoundaryKey = @"boundary";
+static NSString * const UAFrequencyConstraintRangeKey = @"range";
+static NSString * const UAFrequencyConstraintIDKey = @"id";
+
 static NSString * const UAInAppMessages = @"in_app_messages";
 static NSString * const UAInAppMessagesCreatedJSONKey = @"created";
 static NSString * const UAInAppMessagesUpdatedJSONKey = @"last_updated";
@@ -46,8 +52,6 @@ static NSString *const UAScheduleInfoDeferredKey = @"deferred";
 
 static NSString *const UAScheduleInfoCampaignsKey = @"campaigns";
 static NSString *const UAScheduleInfoFrequencyConstraintIDsKey = @"frequency_constraint_ids";
-
-
 
 @interface UAInAppRemoteDataClient()
 @property(nonatomic, strong) UAInAppMessageManager *inAppMessageManager;
@@ -150,23 +154,27 @@ static NSString *const UAScheduleInfoFrequencyConstraintIDsKey = @"frequency_con
         return;
     }
 
-    // Get the in-app message data, if it exists
-    NSArray *messages;
-    if (!messagePayload.data || !messagePayload.data[UAInAppMessages] || ![messagePayload.data[UAInAppMessages] isKindOfClass:[NSArray class]]) {
-        messages = @[];
-    } else {
-        messages = messagePayload.data[UAInAppMessages];
-    }
+    NSArray *messageJSONList = [messagePayload.data arrayForKey:UAInAppMessages defaultValue:@[]];
+    NSArray *constraintJSONList = [messagePayload.data arrayForKey:UAFrequencyConstraintsKey defaultValue:@[]];
 
     NSArray<NSString *> *currentScheduleIDs = [self getCurrentRemoteScheduleIDs];
     NSMutableArray<NSString *> *scheduleIDs = [NSMutableArray array];
     NSMutableArray<UASchedule *> *newSchedules = [NSMutableArray array];
 
+    NSMutableArray *constraints = [NSMutableArray array];
+    for (id constraintJSON in constraintJSONList) {
+        UAFrequencyConstraint *constraint = [UAInAppRemoteDataClient parseConstraintWithJSON:constraintJSON];
+        if (constraint) {
+            [constraints addObject:constraint];
+        }
+    }
+    [self.delegate updateConstraints:constraints];
+
     // Dispatch group
     dispatch_group_t dispatchGroup = dispatch_group_create();
 
     // Validate messages and create new schedules
-    for (NSDictionary *message in messages) {
+    for (NSDictionary *message in messageJSONList) {
         NSDate *createdTimeStamp = [UAUtils parseISO8601DateFromString:message[UAInAppMessagesCreatedJSONKey]];
         NSDate *lastUpdatedTimeStamp = [UAUtils parseISO8601DateFromString:message[UAInAppMessagesUpdatedJSONKey]];
 
@@ -329,6 +337,40 @@ static NSString *const UAScheduleInfoFrequencyConstraintIDsKey = @"frequency_con
     }
 
     return [self.remoteDataProvider isMetadataCurrent:schedule.metadata[UAInAppRemoteDataClientMetadataKey]];
+}
+
++ (UAFrequencyConstraint *)parseConstraintWithJSON:(id)JSON {
+    NSString *ID = [JSON stringForKey:UAFrequencyConstraintIDKey defaultValue:nil];
+    NSNumber *range = [JSON numberForKey:UAFrequencyConstraintRangeKey defaultValue:nil];
+    NSNumber *boundary = [JSON numberForKey:UAFrequencyConstraintBoundaryKey defaultValue:nil];
+    NSString *period = [JSON stringForKey:UAFrequencyConstraintPeriodKey defaultValue:nil];
+
+    if (!ID || !range || !boundary || !period) {
+        UA_LERR(@"Invalid constraint: %@", JSON);
+        return nil;
+    }
+
+    NSTimeInterval rangeInSeconds = [range doubleValue];
+    if ([period isEqual:@"seconds"]) {
+        rangeInSeconds = [range doubleValue];
+    } else if ([period isEqual:@"minutes"]) {
+        rangeInSeconds = [range doubleValue] * 60;
+    } else if ([period isEqual:@"hours"]) {
+        rangeInSeconds = [range doubleValue] * 60 * 60;
+    } else if ([period isEqual:@"days"]) {
+        rangeInSeconds = [range doubleValue] * 60 * 60 * 24;
+    } else if ([period isEqual:@"weeks"]) {
+        rangeInSeconds = [range doubleValue] * 60 * 60 * 24 * 7;
+    } else if ([period isEqual:@"months"]) {
+        rangeInSeconds = [range doubleValue] * 60 * 60 * 24 * 30;
+    } else if ([period isEqual:@"years"]) {
+        rangeInSeconds = [range doubleValue] * 60 * 60 * 24 * 365;
+    } else {
+        UA_LERR(@"Invalid period %@ in constraint: %@", period, JSON);
+        return nil;
+    }
+
+    return [UAFrequencyConstraint frequencyConstraintWithIdentifier:ID range:rangeInSeconds count:[boundary unsignedIntegerValue]];
 }
 
 + (UASchedule *)parseScheduleWithJSON:(id)JSON
