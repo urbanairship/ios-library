@@ -169,9 +169,9 @@
         return;
     }
 
-    NSTimeInterval time = self.date.now;
+    NSDate *date = self.date.now;
     for (NSString *identifier in constraintIDs) {
-        UAOccurrence *occurrence = [UAOccurrence occurrenceWithParentConstraintID:identifier timestamp:time];
+        UAOccurrence *occurrence = [UAOccurrence occurrenceWithParentConstraintID:identifier timestamp:date];
 
         [self.pendingOccurrences addObject:occurrence];
 
