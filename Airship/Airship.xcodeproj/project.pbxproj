@@ -204,8 +204,6 @@
 		3CF5E81B25561FCC0074B2A0 /* UAOccurrence+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CF5E81825561FCC0074B2A0 /* UAOccurrence+Internal.h */; };
 		3CF5E81C25561FCC0074B2A0 /* UAOccurrence.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CF5E81925561FCC0074B2A0 /* UAOccurrence.m */; };
 		3CF5E81D25561FCC0074B2A0 /* UAOccurrence.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CF5E81925561FCC0074B2A0 /* UAOccurrence.m */; };
-		3CF5E844255A25BF0074B2A0 /* UAFrequencyLimits.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 3CF5E842255A25BF0074B2A0 /* UAFrequencyLimits.xcdatamodeld */; };
-		3CF5E845255A25BF0074B2A0 /* UAFrequencyLimits.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 3CF5E842255A25BF0074B2A0 /* UAFrequencyLimits.xcdatamodeld */; };
 		3CF5E860255A270A0074B2A0 /* UAFrequencyConstraintData+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CF5E85E255A270A0074B2A0 /* UAFrequencyConstraintData+Internal.h */; };
 		3CF5E861255A270A0074B2A0 /* UAFrequencyConstraintData+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CF5E85E255A270A0074B2A0 /* UAFrequencyConstraintData+Internal.h */; };
 		3CF5E862255A270A0074B2A0 /* UAFrequencyConstraintData.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CF5E85F255A270A0074B2A0 /* UAFrequencyConstraintData.m */; };
@@ -286,6 +284,8 @@
 		6E217366237C811E0084933A /* UALocation.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E217361237C811E0084933A /* UALocation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E21852B237D32B30084933A /* EventData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21852A237D32B30084933A /* EventData.swift */; };
 		6E218539237DB7960084933A /* AddAttributeTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E218538237DB7960084933A /* AddAttributeTableViewController.swift */; };
+		6E2A85BF2582969D0067E824 /* UAFrequencyLimits.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6E2A85BD2582969D0067E824 /* UAFrequencyLimits.xcdatamodeld */; };
+		6E2A85C02582969D0067E824 /* UAFrequencyLimits.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6E2A85BD2582969D0067E824 /* UAFrequencyLimits.xcdatamodeld */; };
 		6E2E914B238C4D9E008488D3 /* UALocationEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C4FDDFE225BBED400A54E32 /* UALocationEvent.m */; };
 		6E2E914C238C4DAB008488D3 /* UALocationEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C4FDDFD225BBED300A54E32 /* UALocationEvent.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E2E914F238D99F0008488D3 /* AirshipLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E9375602376164600AA9C2A /* AirshipLocation.framework */; };
@@ -2761,7 +2761,6 @@
 		3CF5E807255619DC0074B2A0 /* UAFrequencyLimitManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAFrequencyLimitManager.m; sourceTree = "<group>"; };
 		3CF5E81825561FCC0074B2A0 /* UAOccurrence+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAOccurrence+Internal.h"; sourceTree = "<group>"; };
 		3CF5E81925561FCC0074B2A0 /* UAOccurrence.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAOccurrence.m; sourceTree = "<group>"; };
-		3CF5E843255A25BF0074B2A0 /* UAFrequencyLimits.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = UAFrequencyLimits.xcdatamodel; sourceTree = "<group>"; };
 		3CF5E85E255A270A0074B2A0 /* UAFrequencyConstraintData+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAFrequencyConstraintData+Internal.h"; sourceTree = "<group>"; };
 		3CF5E85F255A270A0074B2A0 /* UAFrequencyConstraintData.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAFrequencyConstraintData.m; sourceTree = "<group>"; };
 		3CF5E870255A27380074B2A0 /* UAOccurrenceData+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAOccurrenceData+Internal.h"; sourceTree = "<group>"; };
@@ -2852,6 +2851,7 @@
 		6E218538237DB7960084933A /* AddAttributeTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddAttributeTableViewController.swift; sourceTree = "<group>"; };
 		6E27A7D42367AC3200F46B69 /* UAExtendedActionsModuleLoader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAExtendedActionsModuleLoader.m; sourceTree = "<group>"; };
 		6E27A7D52367AC3200F46B69 /* UAExtendedActionsModuleLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAExtendedActionsModuleLoader.h; sourceTree = "<group>"; };
+		6E2A85BE2582969D0067E824 /* UAFrequencyLimits.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = UAFrequencyLimits.xcdatamodel; sourceTree = "<group>"; };
 		6E3494EB2580222A007F5357 /* UAAutomation 8.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "UAAutomation 8.xcdatamodel"; sourceTree = "<group>"; };
 		6E3494EC2580254D007F5357 /* UANSArrayValueTransformer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = UANSArrayValueTransformer.h; path = Public/UANSArrayValueTransformer.h; sourceTree = "<group>"; };
 		6E34950225802571007F5357 /* UANSArrayValueTransformer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UANSArrayValueTransformer.m; path = Internal/UANSArrayValueTransformer.m; sourceTree = "<group>"; };
@@ -4952,8 +4952,8 @@
 		6E84509D237DFE89007D3B1E /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				6E2A85BD2582969D0067E824 /* UAFrequencyLimits.xcdatamodeld */,
 				1B2F3B0324B7525500A5DE8C /* UAAutomation.xcdatamodeld */,
-				3CF5E842255A25BF0074B2A0 /* UAFrequencyLimits.xcdatamodeld */,
 				6E845478237E231F007D3B1E /* UAAutomationActions.plist */,
 				6E84547B237E2320007D3B1E /* UAInAppMessageBannerContentView.xib */,
 				6E845482237E2320007D3B1E /* UAInAppMessageBannerView.xib */,
@@ -8223,6 +8223,7 @@
 				6E8453F7237E0575007D3B1E /* UAInAppMessageHTMLDisplayContent.m in Sources */,
 				6E8453F8237E0575007D3B1E /* UAInAppMessageHTMLViewController.m in Sources */,
 				6E8453F9237E0575007D3B1E /* UAInAppMessageHTMLAdapter.m in Sources */,
+				6E2A85C02582969D0067E824 /* UAFrequencyLimits.xcdatamodeld in Sources */,
 				6E8453FA237E0575007D3B1E /* UAInAppMessageHTMLStyle.m in Sources */,
 				6E50629424E1A62C00689C6D /* UAInAppMessageSchedule.m in Sources */,
 				6E8453FB237E0575007D3B1E /* UAInAppMessageCustomDisplayContent.m in Sources */,
@@ -8293,7 +8294,6 @@
 				6E84542B237E0575007D3B1E /* UAInAppRemoteDataClient.m in Sources */,
 				6E84542C237E0575007D3B1E /* UAScheduleAudience.m in Sources */,
 				6E84542D237E0575007D3B1E /* UATagSelector.m in Sources */,
-				3CF5E845255A25BF0074B2A0 /* UAFrequencyLimits.xcdatamodeld in Sources */,
 				6EA734B424B7AA600012B737 /* UAInAppAutomation.m in Sources */,
 				6E845467237E1C62007D3B1E /* UARetriablePipeline.m in Sources */,
 				3CF5E81D25561FCC0074B2A0 /* UAOccurrence.m in Sources */,
@@ -8481,7 +8481,6 @@
 				6EE77229238F172900E79944 /* UAInAppMessageTextStyle.m in Sources */,
 				6E411A0D2538C20300FEE4E8 /* UAAddTagsAction.m in Sources */,
 				6E411B092538C20700FEE4E8 /* UAURLAllowList.m in Sources */,
-				3CF5E844255A25BF0074B2A0 /* UAFrequencyLimits.xcdatamodeld in Sources */,
 				6E4119992538C20100FEE4E8 /* UAOpenExternalURLAction.m in Sources */,
 				6EE7722A238F172900E79944 /* UAInAppMessageButtonStyle.m in Sources */,
 				A6EEE51625559EA50034A42C /* UASearchEventTemplate.m in Sources */,
@@ -8546,6 +8545,7 @@
 				6E4118ED2538C1FE00FEE4E8 /* UAAggregateActionResult.m in Sources */,
 				6E4118392538C1FC00FEE4E8 /* UAAddCustomEventActionPredicate.m in Sources */,
 				6E4119D12538C20200FEE4E8 /* UAApplicationMetrics.m in Sources */,
+				6E2A85BF2582969D0067E824 /* UAFrequencyLimits.xcdatamodeld in Sources */,
 				6E50629324E1A62C00689C6D /* UAInAppMessageSchedule.m in Sources */,
 				6EE77242238F172900E79944 /* UARetriablePipeline.m in Sources */,
 				6EE77243238F172900E79944 /* UATimerScheduler.m in Sources */,
@@ -10330,13 +10330,14 @@
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
 		};
-		3CF5E842255A25BF0074B2A0 /* UAFrequencyLimits.xcdatamodeld */ = {
+		6E2A85BD2582969D0067E824 /* UAFrequencyLimits.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
-				3CF5E843255A25BF0074B2A0 /* UAFrequencyLimits.xcdatamodel */,
+				6E2A85BE2582969D0067E824 /* UAFrequencyLimits.xcdatamodel */,
 			);
-			currentVersion = 3CF5E843255A25BF0074B2A0 /* UAFrequencyLimits.xcdatamodel */;
-			path = UAFrequencyLimits.xcdatamodeld;
+			currentVersion = 6E2A85BE2582969D0067E824 /* UAFrequencyLimits.xcdatamodel */;
+			name = UAFrequencyLimits.xcdatamodeld;
+			path = Resources/UAFrequencyLimits.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
 		};
