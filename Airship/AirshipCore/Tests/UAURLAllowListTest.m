@@ -76,6 +76,10 @@
     XCTAssertTrue([URLAllowList isAllowed:[NSURL URLWithString:@"sms:+18675309?body=Hi%20you"] scope:UAURLAllowListScopeOpenURL]);
     XCTAssertTrue([URLAllowList isAllowed:[NSURL URLWithString:@"sms:8675309"] scope:UAURLAllowListScopeOpenURL]);
 
+    // tel
+    XCTAssertTrue([URLAllowList isAllowed:[NSURL URLWithString:@"tel:+18675309"] scope:UAURLAllowListScopeOpenURL]);
+    XCTAssertTrue([URLAllowList isAllowed:[NSURL URLWithString:@"tel:867-5309"] scope:UAURLAllowListScopeOpenURL]);
+
     // email
     XCTAssertTrue([URLAllowList isAllowed:[NSURL URLWithString:@"mailto:name@example.com?subject=The%20subject%20of%20the%20mail"] scope:UAURLAllowListScopeOpenURL]);
     XCTAssertTrue([URLAllowList isAllowed:[NSURL URLWithString:@"mailto:name@example.com"] scope:UAURLAllowListScopeOpenURL]);

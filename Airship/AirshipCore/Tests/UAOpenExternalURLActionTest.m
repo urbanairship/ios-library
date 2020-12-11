@@ -253,6 +253,26 @@
     self.arguments.value = @"sms:9999%95";
     url = [UAOpenExternalURLAction parseURLFromArguments:self.arguments];
     XCTAssertNil(url);
+
+    // valid number
+    self.arguments.value = @"tel:999-999-9999";
+    url = [UAOpenExternalURLAction parseURLFromArguments:self.arguments];
+    XCTAssertEqualObjects(url.absoluteString, self.arguments.value);
+
+    // valid number
+    self.arguments.value = @"tel:999%20999-9999";
+    url = [UAOpenExternalURLAction parseURLFromArguments:self.arguments];
+    XCTAssertEqualObjects(url.absoluteString, @"tel:999999-9999");
+
+    // Valid percent encoding
+    self.arguments.value = @"tel:%28999%29999-9999";
+    url = [UAOpenExternalURLAction parseURLFromArguments:self.arguments];
+    XCTAssertEqualObjects(url.absoluteString, @"tel:999999-9999");
+
+    // invalid percent encoding
+    self.arguments.value = @"tel:9999%95";
+    url = [UAOpenExternalURLAction parseURLFromArguments:self.arguments];
+    XCTAssertNil(url);
 }
 
 @end
