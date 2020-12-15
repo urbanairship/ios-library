@@ -14,6 +14,7 @@
 
 NSString *const UANativeBridgeUAirshipScheme = @"uairship";
 NSString *const UANativeBridgeCloseCommand = @"close";
+NSString *const UANativeBridgeMultiCommand = @"multi";
 
 @interface UANativeBridge()
 @property (nonatomic, strong, nonnull) UANativeBridgeActionHandler *actionHandler;
@@ -261,6 +262,19 @@ NSString *const UANativeBridgeCloseCommand = @"close";
         return;
     }
 
+    // Multi command
+    if ([command.name isEqualToString:UANativeBridgeMultiCommand]) {
+        NSArray *URLs = [command.URL.query componentsSeparatedByString:@"&"];
+        for (NSString *URLString in URLs) {
+            NSURL *URL = [NSURL URLWithString:[URLString stringByRemovingPercentEncoding]];
+            if ([[URL scheme] isEqualToString:UANativeBridgeUAirshipScheme]) {
+                UAJavaScriptCommand *command = [UAJavaScriptCommand commandForURL:URL];
+                [self handleAirshipCommand:command webView:webView];
+            }
+        }
+        return;
+    }
+    
     // Local JavaScript command delegate
     if ([self.javaScriptCommandDelegate performCommand:command webView:webView]) {
         return;

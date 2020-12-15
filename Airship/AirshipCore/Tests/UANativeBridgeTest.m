@@ -497,6 +497,85 @@
 }
 
 /**
+ * Test that the multiple commands are handled properly by the native bridge.
+ */
+- (void)testMultiCommand {
+    
+    NSString *firstURLString = @"uairship://close?";
+    NSString *secondURLString = @"uairship://run-basic-actions?add_tags_action=coffee&remove_tags_action=tea";
+   
+    NSMutableCharacterSet *characterSet = NSCharacterSet.URLQueryAllowedCharacterSet.mutableCopy;
+    [characterSet removeCharactersInRange:NSMakeRange('&', 1)];
+    
+    NSString *finalURLString = [NSString stringWithFormat:@"uairship://multi?%@&%@", [firstURLString stringByAddingPercentEncodingWithAllowedCharacters:characterSet], [secondURLString stringByAddingPercentEncodingWithAllowedCharacters:characterSet]];
+    
+    
+    // Airship JavaScript request
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:finalURLString]];
+    NSURL *originatingURL = [NSURL URLWithString:@"https://foo.urbanairship.com/whatever.html"];;
+
+    id mockWKNavigationAction = [self mockForClass:[WKNavigationAction class]];
+    [[[mockWKNavigationAction stub] andReturn:request] request];
+    id mockWKFrameInfo = [self mockForClass:[WKFrameInfo class]];
+    [[[mockWKNavigationAction stub] andReturn:mockWKFrameInfo] targetFrame];
+    [[[self.mockWKWebView stub] andReturn:originatingURL] URL];
+
+    [[self.mockNativeBridgeDelegate expect] close];
+    
+    NSDictionary *customMetadata = @{ @"cool": @"story" };
+
+    [[[self.mockNativeBridgeExtensionDelegate stub] andReturn:customMetadata] actionsMetadataForCommand:OCMOCK_ANY webView:self.mockWKWebView];
+    
+    // Expect the js delegate to be called with the correct command
+    [[self.mockActionHandler expect] runActionsForCommand:[OCMArg checkWithBlock:^BOOL(id obj) { return [((UAJavaScriptCommand *)obj).URL isEqual:request.URL]; }]
+                                                 metadata:customMetadata
+                                        completionHandler:OCMOCK_ANY];
+
+    [self.nativeBridge webView:self.mockWKWebView decidePolicyForNavigationAction:mockWKNavigationAction decisionHandler:^(WKNavigationActionPolicy delegatePolicy) {
+       XCTAssertEqual(delegatePolicy, WKNavigationActionPolicyCancel);
+    }];
+
+    [self.mockActionHandler verify];
+    [self.mockNativeBridgeDelegate verify];
+}
+
+/**
+ * Test that the commands are not handled if the URL is not allowed.
+ */
+- (void)testMultiCommandWithNonAllowedURLs {
+    // Airship JavaScript request
+    
+    NSString *firstURLString = @"https://close?";
+    NSString *secondURLString = @"uairship://run-basic-actions?add_tags_action=coffee&remove_tags_action=tea";
+    
+    NSMutableCharacterSet *characterSet = NSCharacterSet.URLQueryAllowedCharacterSet.mutableCopy;
+    [characterSet removeCharactersInRange:NSMakeRange('&', 1)];
+    
+    NSString *finalURLString = [NSString stringWithFormat:@"uairship://multi?%@&%@", [firstURLString stringByAddingPercentEncodingWithAllowedCharacters:characterSet], [secondURLString stringByAddingPercentEncodingWithAllowedCharacters:characterSet]];
+    
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:finalURLString]];
+    NSURL *originatingURL = [NSURL URLWithString:@"https://foo.urbanairship.com/whatever.html"];;
+
+    id mockWKNavigationAction = [self mockForClass:[WKNavigationAction class]];
+    [[[mockWKNavigationAction stub] andReturn:request] request];
+    id mockWKFrameInfo = [self mockForClass:[WKFrameInfo class]];
+    [[[mockWKNavigationAction stub] andReturn:mockWKFrameInfo] targetFrame];
+    [[[self.mockWKWebView stub] andReturn:originatingURL] URL];
+
+    [[self.mockNativeBridgeDelegate reject] close];
+    
+    // Reject any calls to the JS Delegate
+    [[self.mockActionHandler reject] runActionsForCommand:OCMOCK_ANY metadata:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
+    [self.nativeBridge webView:self.mockWKWebView decidePolicyForNavigationAction:mockWKNavigationAction decisionHandler:^(WKNavigationActionPolicy delegatePolicy) {
+       XCTAssertEqual(delegatePolicy, WKNavigationActionPolicyCancel);
+    }];
+
+    [self.mockActionHandler verify];
+    [self.mockNativeBridgeDelegate verify];
+}
+
+/**
  * Test webView:didFinishNavigation: injects the Airship JavaScript environment.
  */
 - (void)testInjectJavaScriptEnvironment {
