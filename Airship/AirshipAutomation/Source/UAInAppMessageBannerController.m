@@ -19,9 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 @class UAInAppMessageBannerDisplayContent;
 
 static double const DefaultMaxWidth = 420;
-
 static double const DefaultBannerControllerPadding = 24;
-
 static double const DefaultAnimationDuration = 0.2;
 static double const MinimumLongPressDuration = 0.2;
 static double const MinimumSwipeVelocity = 100.0;
@@ -165,8 +163,8 @@ static double const MinimumSwipeVelocity = 100.0;
                                  bannerView:self.bannerView
                                   placement:self.displayContent.placement];
 
-    // Apply style padding to banner container
-    [UAInAppMessageUtils applyPaddingToView:self.bannerView.containerView padding:self.style.additionalPadding replace:NO];
+    // Apply style padding to banner
+    [UAInAppMessageUtils applyPaddingToView:self.bannerView padding:self.style.additionalPadding replace:NO];
 
     // Apply style padding to banner text views
     [UAInAppMessageUtils applyPaddingToView:headerView.textLabel padding:self.style.headerStyle.additionalPadding replace:NO];
@@ -238,78 +236,46 @@ static double const MinimumSwipeVelocity = 100.0;
 - (void)addInitialConstraintsToParentView:(UIView *)parentView
                                bannerView:(UAInAppMessageBannerView *)bannerView
                                 placement:(UAInAppMessageBannerPlacementType)placement {
-
+    
     // Center on X axis
-    [NSLayoutConstraint constraintWithItem:bannerView
-                                 attribute:NSLayoutAttributeCenterX
-                                 relatedBy:NSLayoutRelationEqual
-                                    toItem:parentView
-                                 attribute:NSLayoutAttributeCenterX
-                                multiplier:1
-                                  constant:0].active = YES;
-
+    NSLayoutConstraint *centerX = [bannerView.centerXAnchor constraintEqualToAnchor:parentView.centerXAnchor];
+    if (!self.style.additionalPadding.leading && !self.style.additionalPadding.trailing) {
+        centerX.active = YES;
+    }
+    
+    UILayoutGuide *safeAreaGuide = parentView.safeAreaLayoutGuide;
+    
     // Constrain leading edge
-    NSLayoutConstraint *leading = [NSLayoutConstraint constraintWithItem:bannerView
-                                                               attribute:NSLayoutAttributeLeading
-                                                               relatedBy:NSLayoutRelationEqual
-                                                                  toItem:parentView
-                                                               attribute:NSLayoutAttributeLeading
-                                                              multiplier:1
-                                                                constant:DefaultBannerControllerPadding];
-    // High but can still be broken by max width
-    leading.priority = 999;
+    NSLayoutConstraint *leading = [bannerView.leadingAnchor constraintEqualToAnchor:safeAreaGuide.leadingAnchor constant:DefaultBannerControllerPadding];
+    if (!self.style.additionalPadding.leading) {
+        leading.priority = 999;
+    }
     leading.active = YES;
-
-    // Constrain Trailing edge
-    NSLayoutConstraint *trailing = [NSLayoutConstraint constraintWithItem:parentView
-                                                                attribute:NSLayoutAttributeTrailing
-                                                                relatedBy:NSLayoutRelationEqual
-                                                                   toItem:bannerView
-                                                                attribute:NSLayoutAttributeTrailing
-                                                               multiplier:1
-                                                                 constant:DefaultBannerControllerPadding];
-    // High but can still be broken by max width
-    trailing.priority = 999;
+    
+    // Constrain trailing edge
+    NSLayoutConstraint *trailing = [safeAreaGuide.trailingAnchor constraintEqualToAnchor:bannerView.trailingAnchor constant:DefaultBannerControllerPadding];
+    if (!self.style.additionalPadding.trailing) {
+        trailing.priority = 999;
+    }
     trailing.active = YES;
-
+   
     // Set max width
-    NSLayoutConstraint *maxWidth = [NSLayoutConstraint constraintWithItem:bannerView
-                                                                attribute:NSLayoutAttributeWidth
-                                                                relatedBy:NSLayoutRelationLessThanOrEqual
-                                                                   toItem:nil
-                                                                attribute:NSLayoutAttributeNotAnAttribute
-                                                               multiplier:1
-                                                                 constant:[self.style.maxWidth floatValue] ?: DefaultMaxWidth];
-    maxWidth.priority = UILayoutPriorityRequired;
-    maxWidth.active = YES;
+    [bannerView.widthAnchor constraintLessThanOrEqualToConstant:[self.style.maxWidth floatValue] ?: DefaultMaxWidth].active = YES;
 
     switch (placement) {
         case UAInAppMessageBannerPlacementTop:
             // Top constraint is used for animating the message in the top position.
-            self.verticalConstraint = [NSLayoutConstraint constraintWithItem:parentView
-                                                                   attribute:NSLayoutAttributeTop
-                                                                   relatedBy:NSLayoutRelationEqual
-                                                                      toItem:bannerView
-                                                                   attribute:NSLayoutAttributeTop
-                                                                  multiplier:1
-                                                                    constant:bannerView.bounds.size.height];
+            self.verticalConstraint = [parentView.topAnchor constraintEqualToAnchor:bannerView.topAnchor constant:bannerView.bounds.size.height];
 
             break;
         case UAInAppMessageBannerPlacementBottom:
             // Bottom constraint is used for animating the message in the bottom position.
-            self.verticalConstraint = [NSLayoutConstraint constraintWithItem:bannerView
-                                                                   attribute:NSLayoutAttributeBottom
-                                                                   relatedBy:NSLayoutRelationEqual
-                                                                      toItem:parentView
-                                                                   attribute:NSLayoutAttributeBottom
-                                                                  multiplier:1
-                                                                    constant:bannerView.bounds.size.height];
+            self.verticalConstraint = [bannerView.bottomAnchor constraintEqualToAnchor:parentView.bottomAnchor constant:parentView.bounds.size.height];
 
             break;
     }
 
-
-
+    
     self.verticalConstraint.active = YES;
 
     [parentView layoutIfNeeded];
