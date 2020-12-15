@@ -17,7 +17,7 @@ services into your iOS applications.
 
 ## Installation
 
-Xcode 11.0+ is required for all projects and the static library. Projects must target >= iOS 11.
+Xcode 12.0+ is required for all projects and the static library. Projects must target >= iOS 11.
 
 ### CocoaPods
 
