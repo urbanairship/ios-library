@@ -221,6 +221,11 @@
 		3CF62ED2257997850007502B /* UAStateOverrides+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CF62ECF257997850007502B /* UAStateOverrides+Internal.h */; };
 		3CF62ED3257997850007502B /* UAStateOverrides.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CF62ED0257997850007502B /* UAStateOverrides.m */; };
 		3CF62ED4257997850007502B /* UAStateOverrides.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CF62ED0257997850007502B /* UAStateOverrides.m */; };
+		3CF62FB125883BEA0007502B /* UAAutomationNativeBridgeExtension+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CF62FAF25883BE90007502B /* UAAutomationNativeBridgeExtension+Internal.h */; };
+		3CF62FB225883BEB0007502B /* UAAutomationNativeBridgeExtension+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CF62FAF25883BE90007502B /* UAAutomationNativeBridgeExtension+Internal.h */; };
+		3CF62FB325883BEB0007502B /* UAAutomationNativeBridgeExtension.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CF62FB025883BE90007502B /* UAAutomationNativeBridgeExtension.m */; };
+		3CF62FB425883BEB0007502B /* UAAutomationNativeBridgeExtension.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CF62FB025883BE90007502B /* UAAutomationNativeBridgeExtension.m */; };
+		3CF63039258965F50007502B /* UAAutomationNativeBridgeExtensionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CF63038258965F50007502B /* UAAutomationNativeBridgeExtensionTest.m */; };
 		3CFB563724E34475008F9CCE /* UAAuthToken+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CFB563524E34475008F9CCE /* UAAuthToken+Internal.h */; };
 		3CFB563824E34475008F9CCE /* UAAuthToken+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CFB563524E34475008F9CCE /* UAAuthToken+Internal.h */; };
 		3CFB563924E34475008F9CCE /* UAAuthToken.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CFB563624E34475008F9CCE /* UAAuthToken.m */; };
@@ -2770,6 +2775,9 @@
 		3CF5E8C5255E28980074B2A0 /* UAFrequencyLimitManagerTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAFrequencyLimitManagerTest.m; sourceTree = "<group>"; };
 		3CF62ECF257997850007502B /* UAStateOverrides+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAStateOverrides+Internal.h"; sourceTree = "<group>"; };
 		3CF62ED0257997850007502B /* UAStateOverrides.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAStateOverrides.m; sourceTree = "<group>"; };
+		3CF62FAF25883BE90007502B /* UAAutomationNativeBridgeExtension+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "UAAutomationNativeBridgeExtension+Internal.h"; path = "AirshipAutomation/Source/UAAutomationNativeBridgeExtension+Internal.h"; sourceTree = SOURCE_ROOT; };
+		3CF62FB025883BE90007502B /* UAAutomationNativeBridgeExtension.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = UAAutomationNativeBridgeExtension.m; path = AirshipAutomation/Source/UAAutomationNativeBridgeExtension.m; sourceTree = SOURCE_ROOT; };
+		3CF63038258965F50007502B /* UAAutomationNativeBridgeExtensionTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAAutomationNativeBridgeExtensionTest.m; sourceTree = "<group>"; };
 		3CFB563524E34475008F9CCE /* UAAuthToken+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAAuthToken+Internal.h"; sourceTree = "<group>"; };
 		3CFB563624E34475008F9CCE /* UAAuthToken.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAAuthToken.m; sourceTree = "<group>"; };
 		3CFB563B24E346FD008F9CCE /* UAAuthTokenManager+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAAuthTokenManager+Internal.h"; sourceTree = "<group>"; };
@@ -4230,6 +4238,15 @@
 			name = Limits;
 			sourceTree = "<group>";
 		};
+		3CF6304625896F080007502B /* NativeBridge */ = {
+			isa = PBXGroup;
+			children = (
+				3CF62FAF25883BE90007502B /* UAAutomationNativeBridgeExtension+Internal.h */,
+				3CF62FB025883BE90007502B /* UAAutomationNativeBridgeExtension.m */,
+			);
+			name = NativeBridge;
+			sourceTree = "<group>";
+		};
 		3CFB563424E34428008F9CCE /* Auth */ = {
 			isa = PBXGroup;
 			children = (
@@ -4969,6 +4986,7 @@
 		6E8450BB237DFFB5007D3B1E /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				3CF6304625896F080007502B /* NativeBridge */,
 				3CF5E7E02554F6150074B2A0 /* Limits */,
 				6E84544E237E05F3007D3B1E /* AirshipAutomation.h */,
 				6E737E0924F042CC0094E2E8 /* Audience */,
@@ -5462,6 +5480,7 @@
 				6E5062B324E23FB100689C6D /* UAInAppMessageScheduleTests.m */,
 				3C2C53C424ECB43F009D45D0 /* UADeferredScheduleAPIClientTest.m */,
 				6E20BF6624F5C21D005347EC /* UAScheduleTriggerContextTest.m */,
+				3CF63038258965F50007502B /* UAAutomationNativeBridgeExtensionTest.m */,
 			);
 			name = Automation;
 			sourceTree = "<group>";
@@ -6277,6 +6296,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3C13BFB62384AC0E0071E80C /* UAAutomationResources.h in Headers */,
+				3CF62FB225883BEB0007502B /* UAAutomationNativeBridgeExtension+Internal.h in Headers */,
 				3CF5E81B25561FCC0074B2A0 /* UAOccurrence+Internal.h in Headers */,
 				6E8453C4237E0540007D3B1E /* UAInAppMessageHTMLDisplayContent.h in Headers */,
 				6E8453C5237E0540007D3B1E /* UAInAppMessageHTMLAdapter.h in Headers */,
@@ -6530,6 +6550,7 @@
 				6E4117C52538C1FA00FEE4E8 /* UACircularRegion+Internal.h in Headers */,
 				6EE7718B238F16A600E79944 /* UAInAppMessageAssets.h in Headers */,
 				6EE7718D238F16A600E79944 /* UAInAppMessageDefaultPrepareAssetsDelegate.h in Headers */,
+				3CF62FB125883BEA0007502B /* UAAutomationNativeBridgeExtension+Internal.h in Headers */,
 				6EE7718E238F16A600E79944 /* UAInAppMessageSceneManager.h in Headers */,
 				6E4116052538C0B000FEE4E8 /* UAApplicationMetrics.h in Headers */,
 				6E4115392538C0AB00FEE4E8 /* UAOpenExternalURLAction.h in Headers */,
@@ -8261,6 +8282,7 @@
 				6E845413237E0575007D3B1E /* UATagGroupsLookupAPIClient.m in Sources */,
 				6E845414237E0575007D3B1E /* UAInAppAudienceManager.m in Sources */,
 				6E845415237E0575007D3B1E /* UATagGroupsLookupResponse.m in Sources */,
+				3CF62FB425883BEB0007502B /* UAAutomationNativeBridgeExtension.m in Sources */,
 				6E845416237E0575007D3B1E /* UATagGroupsLookupResponseCache.m in Sources */,
 				6E845466237E1C62007D3B1E /* UARetriable.m in Sources */,
 				6E845417237E0575007D3B1E /* UAInAppMessageEventUtils.m in Sources */,
@@ -8553,6 +8575,7 @@
 				6EE77245238F172A00E79944 /* UADefaultMessageCenterUI.m in Sources */,
 				6E411A152538C20300FEE4E8 /* UADisposable.m in Sources */,
 				6E4118752538C1FD00FEE4E8 /* UARemoteDataPayload.m in Sources */,
+				3CF62FB325883BEB0007502B /* UAAutomationNativeBridgeExtension.m in Sources */,
 				6EE77246238F172A00E79944 /* UAMessageCenterDateUtils.m in Sources */,
 				6E411A8D2538C20500FEE4E8 /* UANativeBridgeActionHandler.m in Sources */,
 				6EE77247238F172A00E79944 /* UAMessageCenterListCell.m in Sources */,
@@ -8951,6 +8974,7 @@
 				DF544B911E428DC800F4F008 /* UATextInputNotificationActionTest.m in Sources */,
 				DF3E96FF207557B000C77E3B /* UATagGroupsRegistrarTest.m in Sources */,
 				CC64F11E1D8B781C009CEF27 /* UARegionEventTest.m in Sources */,
+				3CF63039258965F50007502B /* UAAutomationNativeBridgeExtensionTest.m in Sources */,
 				CC64F0DC1D8B781C009CEF27 /* UAActionRegistryEntryTest.m in Sources */,
 				CC64F10A1D8B781C009CEF27 /* UAJSONPredicateTests.m in Sources */,
 				CC64F1131D8B781C009CEF27 /* UANamedUserTest.m in Sources */,

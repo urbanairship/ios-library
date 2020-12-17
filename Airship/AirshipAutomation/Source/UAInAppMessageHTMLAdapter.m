@@ -54,8 +54,11 @@ NSString *const UAHTMLStyleFileName = @"UAInAppMessageHTMLStyle";
         return;
     }
 
+    UAAutomationNativeBridgeExtension *nativeBridgeExtension = [UAAutomationNativeBridgeExtension extensionWithMessage:self.message];
+
     self.htmlViewController = [UAInAppMessageHTMLViewController htmlControllerWithDisplayContent:content
-                                                                                           style:self.style];
+                                                                                           style:self.style
+                                                                           nativeBridgeExtension:nativeBridgeExtension];
     completionHandler(UAInAppMessagePrepareResultSuccess);
 }
 

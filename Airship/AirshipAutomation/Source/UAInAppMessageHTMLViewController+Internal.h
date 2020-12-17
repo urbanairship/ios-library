@@ -3,6 +3,7 @@
 #import "UAInAppMessageHTMLDisplayContent+Internal.h"
 #import "UAInAppMessageHTMLStyle.h"
 #import "UAInAppMessageResizableViewController+Internal.h"
+#import "UAAutomationNativeBridgeExtension+Internal.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -29,11 +30,13 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @param displayContent The display content.
  * @param style The HTML view styling.
+ * @param nativeBridgeExtension The automation native bridge extension.
  *
  * @return a configured UAInAppMessageHTMLViewController instance.
  */
 + (instancetype)htmlControllerWithDisplayContent:(UAInAppMessageHTMLDisplayContent *)displayContent
-                                           style:(UAInAppMessageHTMLStyle *)style;
+                                           style:(UAInAppMessageHTMLStyle *)style
+                           nativeBridgeExtension:(UAAutomationNativeBridgeExtension *)nativeBridgeExtension;
 
 @end
 
