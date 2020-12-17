@@ -137,7 +137,7 @@ let package = Package(
                 dependencies: [.target(name: "AirshipCore")],
                 path: "Airship/AirshipAccengage",
                 exclude: ["Source/AirshipAccengage.h",
-                          "info.plist",
+                          "Info.plist",
                           "Tests"],
                 sources : ["Source"],
                 resources: [

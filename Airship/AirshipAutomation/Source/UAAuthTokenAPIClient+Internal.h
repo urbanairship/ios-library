@@ -1,9 +1,8 @@
 /* Copyright Airship and Contributors */
 
 #import <Foundation/Foundation.h>
-#import "UARuntimeConfig.h"
 #import "UAAuthToken+Internal.h"
-#import "UAAPIClient.h"
+#import "UAAirshipAutomationCoreImport.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

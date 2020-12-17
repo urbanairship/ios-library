@@ -73,4 +73,7 @@
 #import "UATagGroupsMutation.h"
 #import "UAAttributePendingMutations.h"
 #import "UALocaleManager.h"
+#import "UATaskManager.h"
+#import "UAAPIClient.h"
+#import "NSDictionary+UAAdditions.h"
 #endif

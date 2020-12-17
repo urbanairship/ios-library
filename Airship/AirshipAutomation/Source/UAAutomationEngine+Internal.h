@@ -4,7 +4,6 @@
 #import "UAAutomationStore+Internal.h"
 #import "UAScheduleEdits.h"
 #import "UASchedule.h"
-#import "UATaskManager+Internal.h"
 #import "UAAirshipAutomationCoreImport.h"
 
 NS_ASSUME_NONNULL_BEGIN

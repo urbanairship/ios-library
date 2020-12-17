@@ -3,6 +3,19 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 14.2.0 December 16, 2020
+Minor release adding support for frequency limits and advanced segmentation to In-App Automation, as well as new custom event templates.
+
+### Changes
+- Added frequency limits support to IAA
+- Added support for advanced IAA segmentation
+- Added a new search event template
+- Added wishlist options to retail event template
+- Added tel: sms: and mailto: to default allow list settings
+- IAA messages no longer redisplay if interrupted due to app termination
+- Fixed maxWidth style overrides for IAA banners
+- Fixed a bug handling grace periods for IAA schedule edits
+
 ## Version 14.1.3 - October 29, 2020
 Patch release optimizing tag group cache usage in In-App-Automation, and fixing
 an issue with direct opens for notification action buttons. Apps using named users 

@@ -3,9 +3,7 @@
 #import <Foundation/Foundation.h>
 #import "UADeferredScheduleResult+Internal.h"
 #import "UAScheduleTriggerContext+Internal.h"
-#import "UAAPIClient.h"
 #import "UAAuthTokenManager+Internal.h"
-#import "UADispatcher.h"
 #import "UAStateOverrides+Internal.h"
 
 NS_ASSUME_NONNULL_BEGIN

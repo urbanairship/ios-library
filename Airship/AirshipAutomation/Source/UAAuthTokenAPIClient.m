@@ -3,7 +3,6 @@
 #import <CommonCrypto/CommonHMAC.h>
 
 #import "UAAuthTokenAPIClient+Internal.h"
-#import "NSDictionary+UAAdditions.h"
 
 #define kUAAuthTokenPath @"/api/auth/device"
 #define kUAAuthTokenTokenKey @"token"

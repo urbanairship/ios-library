@@ -1,9 +1,7 @@
 /* Copyright Airship and Contributors */
 
 #import "UADeferredScheduleAPIClient+Internal.h"
-#import "UAJSONSerialization.h"
 #import "UAScheduleTrigger+Internal.h"
-#import "NSDictionary+UAAdditions.h"
 #import "UAInAppMessage+Internal.h"
 #import "UAAirshipAutomationCoreImport.h"
 #import "UAStateOverrides+Internal.h"
