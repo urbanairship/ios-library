@@ -22,6 +22,49 @@ if (typeof UAirship === 'undefined') {
       var encodedResolution = encodeURIComponent(JSON.stringify(resolution))
       invoke('uairship://dismiss/' + encodedResolution)
     }
+    
+    urbanAirship.editTags = function() {
+      return TagEditor()
+    }
+
+    function TagEditor() {
+      var actions = []
+      var editor = {}
+
+      editor.addTag = function(tag) {
+        if (tag) {
+          var encodedUrl = encodeURIComponent('uairship://run-basic-actions?add_tags_action=' + encodeURIComponent(tag))
+          actions.push(encodedUrl)
+        }
+        return editor
+      }
+
+      editor.removeTag = function(tag) {
+        if (tag) {
+          var encodedUrl = encodeURIComponent('uairship://run-basic-actions?remove_tags_action=' + encodeURIComponent(tag))
+          actions.push(encodedUrl)
+        }
+        return editor
+      }
+
+      editor.apply = function() {
+        var url = 'uairship://multi?'
+        var i = 0
+        actions.forEach(function(action) {
+          if (i != 0) {
+            url += '&' + action
+          } else {
+            url += action
+          }
+          i++
+        })
+        invoke(url)
+        actions = []
+        return editor
+      }
+
+      return editor
+    }
 
     urbanAirship.runAction = function(actionName, argument, callback) {
       var callbackKey = 'ua-cb-' + (++callbackID)
