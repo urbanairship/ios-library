@@ -288,18 +288,6 @@ NSString *const UANativeBridgeMultiCommand = @"multi";
     UA_LDEBUG(@"Unhandled JavaScript command: %@", command);
 }
 
-- (nullable NSURL *)createValidPhoneNumberUrlFromUrl:(NSURL *)url {
-    NSString *decodedURLString = [url.absoluteString stringByRemovingPercentEncoding];
-    NSCharacterSet *characterSet = [[NSCharacterSet characterSetWithCharactersInString:@"+-.0123456789"] invertedSet];
-    NSString *strippedNumber = [[decodedURLString componentsSeparatedByCharactersInSet:characterSet] componentsJoinedByString:@""];
-    if (!strippedNumber) {
-        return nil;
-    }
-
-    NSString *scheme = [decodedURLString hasPrefix:@"sms"] ? @"sms:" : @"tel:";
-    return [NSURL URLWithString:[scheme stringByAppendingString:strippedNumber]];
-}
-
 /**
  * Handles a link click.
  *
@@ -307,59 +295,18 @@ NSString *const UANativeBridgeMultiCommand = @"multi";
  * @param completion  The completion handler to execute when openURL processing is complete.
  */
 - (void)handleLinkClick:(NSURL *)url completionHandler:(void (^)(BOOL success))completion {
-    // Send iTunes/Phobos urls to AppStore.app
-    if ([[url host] isEqualToString:@"phobos.apple.com"] || [[url host] isEqualToString:@"itunes.apple.com"]) {
-        // Set the url scheme to http, as it could be itms which will cause the store to launch twice (undesireable)
-        NSString *stringURL = [NSString stringWithFormat:@"http://%@%@", url.host, url.path];
-        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:stringURL] options:@{} completionHandler:^(BOOL success) {
-            completion(success);
-        }];
-        return;
-    }
-
-    // Send maps.google.com url or maps: to GoogleMaps.app
-    if ([[url host] isEqualToString:@"maps.google.com"] || [[url scheme] isEqualToString:@"maps"]) {
+    NSArray *forwardSchemes = @[@"itms-apps", @"maps", @"sms", @"tel", @"mailto"];
+    NSArray *forwardHosts = @[@"maps.google.com", @"www.youtube.com", @"phobos.apple.com", @"itunes.apple.com"];
+    if ([forwardSchemes containsObject:[url scheme].lowercaseString] || [forwardHosts containsObject:[url host].lowercaseString]) {
         [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:^(BOOL success) {
-            completion(success);
+            // Its better to return YES here and no-op on these links instead of reporting an unhandled URL
+            // to avoid the message thinking it failed to load. The only time a NO will happen is on a simulator
+            // without access to the app store.
+            completion(YES);
         }];
-        return;
+    } else {
+        completion(NO);
     }
-
-    // Send www.youtube.com url to YouTube.app
-    if ([[url host] isEqualToString:@"www.youtube.com"]) {
-        [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:^(BOOL success) {
-            completion(success);
-        }];
-        return;
-    }
-
-    // Send mailto: to Mail.app
-    if ([[url scheme] isEqualToString:@"mailto"]) {
-        [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:^(BOOL success) {
-            completion(success);
-        }];
-        return;
-    }
-
-    // Send tel: to Phone.app
-    if ([[url scheme] isEqualToString:@"tel"]) {
-        NSURL *validPhoneUrl = [self createValidPhoneNumberUrlFromUrl:url];
-        [[UIApplication sharedApplication] openURL:validPhoneUrl options:@{} completionHandler:^(BOOL success) {
-            completion(success);
-        }];
-        return;
-    }
-
-    // Send sms: to Messages.app
-    if ([[url scheme] isEqualToString:@"sms"]) {
-        NSURL *validPhoneUrl = [self createValidPhoneNumberUrlFromUrl:url];
-        [[UIApplication sharedApplication] openURL:validPhoneUrl options:@{} completionHandler:^(BOOL success) {
-            completion(success);
-        }];
-        return;
-    }
-
-    completion(NO);
 }
 
 - (BOOL)isAirshipRequest:(NSURLRequest *)request {

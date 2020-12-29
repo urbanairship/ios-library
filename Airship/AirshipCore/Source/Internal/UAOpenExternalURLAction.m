@@ -63,25 +63,7 @@ NSString * const UAOpenExternalURLActionErrorDomain = @"com.urbanairship.actions
         return nil;
     }
 
-    NSURL *url = [arguments.value isKindOfClass:[NSURL class]] ? arguments.value : [NSURL URLWithString:arguments.value];
-
-    if ([[url host] isEqualToString:@"phobos.apple.com"] || [[url host] isEqualToString:@"itunes.apple.com"]) {
-        // Set the url scheme to http, as it could be itms which will cause the store to launch twice (undesireable)
-        url = [NSURL URLWithString:[NSString stringWithFormat:@"http://%@%@", url.host, url.path]];
-    } else if ([[url scheme] isEqualToString:@"tel"] || [[url scheme] isEqualToString:@"sms"]) {
-
-        NSString *decodedUrlString = [url.absoluteString stringByRemovingPercentEncoding];
-        NSCharacterSet *characterSet = [[NSCharacterSet characterSetWithCharactersInString:@"+-.0123456789"] invertedSet];
-        NSString *strippedNumber = [[decodedUrlString componentsSeparatedByCharactersInSet:characterSet] componentsJoinedByString:@""];
-        if (!strippedNumber) {
-            return nil;
-        }
-        
-        NSString *scheme = [decodedUrlString hasPrefix:@"sms"] ? @"sms:" : @"tel:";
-        url = [NSURL URLWithString:[scheme stringByAppendingString:strippedNumber]];
-    }
-
-    return url;
+    return [arguments.value isKindOfClass:[NSURL class]] ? arguments.value : [NSURL URLWithString:arguments.value];
 }
 
 @end

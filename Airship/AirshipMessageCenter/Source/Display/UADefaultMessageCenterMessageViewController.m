@@ -366,6 +366,7 @@ typedef enum MessageState {
     if (self.messageState != LOADING) {
         UA_LWARN(@"MessageState = %u. Should be \"LOADING\"",self.messageState);
     }
+
     if ([navigationResponse.response isKindOfClass:[NSHTTPURLResponse class]]) {
         NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)navigationResponse.response;
         NSInteger status = httpResponse.statusCode;
