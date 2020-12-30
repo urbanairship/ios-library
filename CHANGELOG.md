@@ -3,6 +3,13 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 14.2.1 December 30, 2020
+Patch release fixing sms: and tel: URL handling, and improving logging around push opt out status. Apps experiencing issues with sms or tel links in IAA or Message Center are encouraged to update. 
+
+### Changes
+- Fixed handling of sms: and tel: URLs in the Native Bridge
+- Detailed trace logging of push opt-out status 
+
 ## Version 14.2.0 December 16, 2020
 Minor release adding support for frequency limits and advanced segmentation to In-App Automation, as well as new custom event templates.
 
