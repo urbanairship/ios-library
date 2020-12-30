@@ -34,11 +34,11 @@
 /**
  * Fetches a batch of events.
  *
- * @param maxBatchSize The max event batch size.
+ * @param limit The max number of events to fetch.
  * @param completionHandler A completion handler with the event data.
  */
-- (void)fetchEventsWithMaxBatchSize:(NSUInteger)maxBatchSize
-                  completionHandler:(void (^)(NSArray<UAEventData *> *))completionHandler;
+- (void)fetchEventsWithLimit:(NSUInteger)limit
+           completionHandler:(void (^)(NSArray<UAEventData *> *))completionHandler;
 
 /**
  * Deletes a set of events.

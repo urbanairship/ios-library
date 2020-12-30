@@ -79,8 +79,8 @@ NSString *const UAEventDataEntityName = @"UAEventData";
     }];
 }
 
-- (void)fetchEventsWithMaxBatchSize:(NSUInteger)maxBatchSize
-                  completionHandler:(void (^)(NSArray<UAEventData *> *))completionHandler {
+- (void)fetchEventsWithLimit:(NSUInteger)limit
+           completionHandler:(void (^)(NSArray<UAEventData *> *))completionHandler {
 
 
     [self.managedContext safePerformBlock:^(BOOL isSafe) {
@@ -90,7 +90,8 @@ NSString *const UAEventDataEntityName = @"UAEventData";
         }
 
         NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:UAEventDataEntityName];
-        request.sortDescriptors = @[ [NSSortDescriptor sortDescriptorWithKey:@"storeDate" ascending:NO] ];
+        request.fetchLimit = limit;
+        request.sortDescriptors = @[ [NSSortDescriptor sortDescriptorWithKey:@"storeDate" ascending:YES] ];
 
         NSError *error;
         NSArray *result = [self.managedContext executeFetchRequest:request error:&error];
@@ -154,21 +155,70 @@ NSString *const UAEventDataEntityName = @"UAEventData";
             return;
         }
 
-        NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:UAEventDataEntityName];
-        request.sortDescriptors = @[ [NSSortDescriptor sortDescriptorWithKey:@"storeDate" ascending:NO] ];
-        request.predicate = [NSPredicate predicateWithFormat:@"@sum.bytes >= %ld", (unsigned long)maxSize];
-
-        NSBatchDeleteRequest *deleteRequest = [[NSBatchDeleteRequest alloc] initWithFetchRequest:request];
-
-        NSError *error;
-        [self.managedContext executeRequest:deleteRequest error:&error];
-        if (error) {
-            UA_LERR(@"Error trimming analytic event store %@", error);
-            return;
+        while ([self fetchTotalEventSize] > maxSize) {
+            NSString *sessionID = [self fetchOldestSessionID];
+            if (!sessionID || ![self deleteSession:sessionID]) {
+                return;
+            }
         }
 
         [self.managedContext safeSave];
     }];
+}
+
+- (BOOL)deleteSession:(NSString *)sessionID {
+    NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:UAEventDataEntityName];
+    request.predicate = [NSPredicate predicateWithFormat:@"sessionID == %@", sessionID];
+
+    NSError *error;
+    NSBatchDeleteRequest *deleteRequest = [[NSBatchDeleteRequest alloc] initWithFetchRequest:request];
+    [self.managedContext executeRequest:deleteRequest error:&error];
+
+    if (error) {
+        UA_LERR(@"Error deleting session %@", sessionID);
+        return NO;
+    }
+
+    return YES;
+}
+
+- (NSString *)fetchOldestSessionID {
+    NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:UAEventDataEntityName];
+    request.fetchLimit = 1;
+    request.sortDescriptors = @[ [NSSortDescriptor sortDescriptorWithKey:@"storeDate" ascending:YES] ];
+    request.propertiesToFetch = @[@"sessionID"];
+
+    NSError *error;
+    NSArray *result = [self.managedContext executeFetchRequest:request error:&error];
+
+    if (error || !result.count) {
+        UA_LERR(@"Error fetching oldest sessionID %@", error);
+        return nil;
+    }
+
+    return [result[0] sessionID];
+}
+
+- (NSUInteger)fetchTotalEventSize {
+    NSExpressionDescription *sumDescription = [[NSExpressionDescription alloc] init];
+    sumDescription.name = @"sum";
+    sumDescription.expression = [NSExpression expressionForFunction:@"sum:"
+                                                          arguments:@[[NSExpression expressionForKeyPath:@"bytes"]]];
+    sumDescription.expressionResultType = NSDoubleAttributeType;
+
+    NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:UAEventDataEntityName];
+    request.resultType = NSDictionaryResultType;
+    request.propertiesToFetch = @[sumDescription];
+
+    NSError *error = nil;
+    NSArray *result = [self.managedContext executeFetchRequest:request error:&error];
+    if (error || !result.count) {
+        UA_LERR(@"Error trimming analytic event store %@", error);
+        return 0;
+    }
+
+    NSNumber *value = result[0][@"sum"];
+    return value.unsignedIntegerValue;
 }
 
 - (void)migrateOldDatabase {

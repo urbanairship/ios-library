@@ -26,6 +26,7 @@ static NSString * const UAEventManagerUploadTask = @"UAEventManager.upload";
 @property (nullable, nonatomic, copy) NSString *time;
 @property (nullable, nonatomic, copy) NSString *type;
 @property (nullable, nonatomic, copy) NSString *identifier;
+@property (nullable, nonatomic, strong) NSNumber *bytes;
 @end
 
 @implementation UAEventTestData
@@ -223,7 +224,7 @@ static NSString * const UAEventManagerUploadTask = @"UAEventManager.upload";
         [invocation getArgument:&arg atIndex:3];
         void (^returnBlock)(NSArray *result)= (__bridge void (^)(NSArray *))arg;
         returnBlock(@[eventData]);
-    }] ignoringNonObjectArgs] fetchEventsWithMaxBatchSize:0 completionHandler:OCMOCK_ANY];
+    }] ignoringNonObjectArgs] fetchEventsWithLimit:500 completionHandler:OCMOCK_ANY];
 
     NSDictionary *headers = @{@"header": @"headerValue"};
     [[[self.mockDelegate stub] andReturn:headers] analyticsHeaders];
@@ -271,15 +272,86 @@ static NSString * const UAEventManagerUploadTask = @"UAEventManager.upload";
     id mockTask = [self mockForProtocol:@protocol(UATask)];
     [[mockTask expect] taskCompleted];
 
+    // End of the upload another upload should be scheduled
+    XCTestExpectation *uploadScheduled = [self expectationWithDescription:@"upload scheduled"];
+    [[[[self.mockTaskManager expect] ignoringNonObjectArgs] andDo:^(NSInvocation *invocation) {
+        [uploadScheduled fulfill];
+    }] enqueueRequestWithID:UAEventManagerUploadTask options:OCMOCK_ANY initialDelay:0];
+
     // Start the upload
     self.launchHandler(mockTask);
 
     [self waitForTestExpectations];
     [self.mockClient verify];
     [self.mockStore verify];
+    [self.mockTaskManager verify];
     [mockTask verify];
 }
 
+
+/**
+ * Test batch limit.
+ */
+- (void)testBatchLimit {
+    [[[self.mockChannel stub] andReturn:@"channel ID"] identifier];
+
+    NSMutableArray *events = [NSMutableArray array];
+    for (int i = 0; i <= 1000; i++) {
+        UAEventTestData *eventData = [[UAEventTestData alloc] init];
+        eventData.type = @"mock_event";
+        eventData.time = @"100";
+        eventData.identifier = [NSString stringWithFormat:@"event: %d", i];
+        eventData.sessionID = @"mock_event_session";
+        eventData.data = [NSJSONSerialization dataWithJSONObject:@{@"cool": @"story"} options:0 error:nil];
+        eventData.bytes = @(2048);
+        [events addObject:eventData];
+    }
+
+    // Only the first 500 events will be uploaded
+    NSMutableArray *expectedEventIDs = [[events subarrayWithRange:NSMakeRange(0, 250)] valueForKey:@"identifier"];
+
+    // Stub the event store to return the data
+    [[[[self.mockStore expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void (^returnBlock)(NSArray *result)= (__bridge void (^)(NSArray *))arg;
+        returnBlock(events);
+    }] ignoringNonObjectArgs] fetchEventsWithLimit:500 completionHandler:OCMOCK_ANY];
+
+    NSDictionary *headers = @{@"header": @"headerValue"};
+    [[[self.mockDelegate stub] andReturn:headers] analyticsHeaders];
+
+    XCTestExpectation *clientCalled = [self expectationWithDescription:@"client upload callled."];
+
+    // Expect a call to the client, return a successful response
+    [[[self.mockClient expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:4];
+        void (^returnBlock)(NSDictionary *, NSError *)= (__bridge void (^)(NSDictionary *, NSError *))arg;
+
+        // Return a successful response
+        returnBlock(@{@"foo" : @"bar"}, nil);
+        [clientCalled fulfill];
+    }] uploadEvents:[OCMArg checkWithBlock:^BOOL(id obj) {
+        NSArray *uploadedEventIDs = [(NSArray *)obj valueForKey:@"event_id"];
+        return [uploadedEventIDs isEqualToArray:expectedEventIDs];
+    }] headers:headers completionHandler:OCMOCK_ANY];
+
+    // Expect the store to delete the event
+    [[self.mockStore expect] deleteEventsWithIDs:expectedEventIDs];
+
+    id mockTask = [self mockForProtocol:@protocol(UATask)];
+    [[mockTask expect] taskCompleted];
+
+    // Start the upload
+    self.launchHandler(mockTask);
+
+    [self waitForTestExpectations];
+    [self.mockClient verify];
+    [self.mockStore verify];
+    [self.mockTaskManager verify];
+    [mockTask verify];
+}
 
 /**
  * Test uploading events when uploads are disabled.
@@ -292,7 +364,7 @@ static NSString * const UAEventManagerUploadTask = @"UAEventManager.upload";
     [[[self.mockChannel stub] andReturn:@"channel ID"] identifier];
 
     // Reject any calls to the store
-    [[[self.mockStore reject] ignoringNonObjectArgs] fetchEventsWithMaxBatchSize:0 completionHandler:OCMOCK_ANY];
+    [[[self.mockStore reject] ignoringNonObjectArgs] fetchEventsWithLimit:0 completionHandler:OCMOCK_ANY];
 
     // Reject any calls to the client
     [[self.mockClient reject] uploadEvents:OCMOCK_ANY headers:OCMOCK_ANY completionHandler:OCMOCK_ANY];
@@ -332,7 +404,7 @@ static NSString * const UAEventManagerUploadTask = @"UAEventManager.upload";
         [invocation getArgument:&arg atIndex:3];
         void (^returnBlock)(NSArray *result)= (__bridge void (^)(NSArray *))arg;
         returnBlock(@[eventData]);
-    }] ignoringNonObjectArgs] fetchEventsWithMaxBatchSize:0 completionHandler:OCMOCK_ANY];
+    }] ignoringNonObjectArgs] fetchEventsWithLimit:0 completionHandler:OCMOCK_ANY];
 
     // Expect a call to the client, return an unsuccesful response
     [[[self.mockClient expect] andDo:^(NSInvocation *invocation) {
@@ -369,7 +441,7 @@ static NSString * const UAEventManagerUploadTask = @"UAEventManager.upload";
     [[[self.mockChannel stub] andReturn:nil] identifier];
 
     // Reject store and client calls
-    [[[self.mockStore reject] ignoringNonObjectArgs] fetchEventsWithMaxBatchSize:0 completionHandler:OCMOCK_ANY];
+    [[[self.mockStore reject] ignoringNonObjectArgs] fetchEventsWithLimit:0 completionHandler:OCMOCK_ANY];
     [[self.mockClient reject] uploadEvents:OCMOCK_ANY headers:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     // Start the upload
