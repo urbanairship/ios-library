@@ -101,6 +101,7 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
         self.pushRegistration = pushRegistration;
         self.requireAuthorizationForDefaultCategories = YES;
         self.backgroundPushNotificationsEnabledByDefault = YES;
+        self.shouldUpdateAPNSRegistration = YES;
 
         self.notificationOptions = UANotificationOptionBadge;
 #if !TARGET_OS_TV  // Sound and Alert not supported on tvOS
@@ -588,11 +589,33 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
 }
 
 - (BOOL)userPushNotificationsAllowed {
-    return self.deviceToken
-    && self.userPushNotificationsEnabled
-    && self.authorizedNotificationSettings
-    && self.isRegisteredForRemoteNotifications
-    && self.pushTokenRegistrationEnabled;
+    BOOL allowed = YES;
+    if (!self.deviceToken) {
+        UA_LTRACE(@"Opted out: missing device token");
+        allowed = NO;
+    }
+
+    if (!self.userPushNotificationsEnabled) {
+        UA_LTRACE(@"Opted out: user push notifications disabled");
+        allowed = NO;
+    }
+
+    if (!self.authorizedNotificationSettings) {
+        UA_LTRACE(@"Opted out: no authorized notification settings");
+        allowed = NO;
+    }
+
+    if (!self.isRegisteredForRemoteNotifications) {
+        UA_LTRACE(@"Opted out: not registered for remote notifications");
+        allowed = NO;
+    }
+
+    if (!self.pushTokenRegistrationEnabled) {
+        UA_LTRACE(@"Opted out: push token registration disabled");
+        allowed = NO;
+    }
+
+    return allowed;
 }
 
 - (BOOL)backgroundPushNotificationsAllowed {
