@@ -185,34 +185,6 @@
     XCTAssertNoThrow([self.mockApplication verify], @"application should try to open the url");
 }
 
-/**
- * Test normalizing apple iTunes NSURL
- */
-- (void)testPerformWithiTunesNSURL {
-    [[[[self.mockURLAllowList stub] andReturnValue:OCMOCK_VALUE(YES)] ignoringNonObjectArgs] isAllowed:OCMOCK_ANY scope:UAURLAllowListScopeOpenURL];
-
-    XCTestExpectation *openURLExpectation = [self expectationWithDescription:@"openURL finished"];
-
-    self.arguments.value = [NSURL URLWithString:@"http://itunes.apple.com/some-app"];
-
-    UAAction *action = [[[UAOpenExternalURLAction alloc] init] postExecution:^(UAActionArguments *args, UAActionResult *result){
-        [openURLExpectation fulfill];
-    }];
-
-    [[self.mockApplication expect] openURL:self.arguments.value options:@{} completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
-        BOOL (^handler)(BOOL) = obj;
-        handler(YES);
-        return YES;
-    }]];
-
-    [action performWithArguments:self.arguments completionHandler:^(UAActionResult *performResult) {
-        XCTAssertEqualObjects(performResult.value, [self.arguments.value absoluteString]);
-        XCTAssertEqualObjects(performResult.value, @"http://itunes.apple.com/some-app", @"results value should be http iTunes link");
-    }];
-
-    [self waitForTestExpectations];
-}
-
 - (void)testParseURLFromArguments {
     // Arguments contain an invalid class
     self.arguments.value = [NSNumber numberWithBool:YES];
@@ -232,47 +204,12 @@
     // Arguments contain an apple itunes URL
     self.arguments.value = @"ims://phobos.apple.com";
     url = [UAOpenExternalURLAction parseURLFromArguments:self.arguments];
-    XCTAssertEqualObjects(url.absoluteString, @"http://phobos.apple.com");
+    XCTAssertEqualObjects(url.absoluteString, @"ims://phobos.apple.com");
     
     // valid number
-    self.arguments.value = @"sms:999-999-9999";
+    self.arguments.value = @"sms:21905;?&body=23Grande";
     url = [UAOpenExternalURLAction parseURLFromArguments:self.arguments];
     XCTAssertEqualObjects(url.absoluteString, self.arguments.value);
-
-    // valid number
-    self.arguments.value = @"sms:999%20999-9999";
-    url = [UAOpenExternalURLAction parseURLFromArguments:self.arguments];
-    XCTAssertEqualObjects(url.absoluteString, @"sms:999999-9999");
-
-    // Valid percent encoding
-    self.arguments.value = @"sms:%28999%29999-9999";
-    url = [UAOpenExternalURLAction parseURLFromArguments:self.arguments];
-    XCTAssertEqualObjects(url.absoluteString, @"sms:999999-9999");
-
-    // invalid percent encoding
-    self.arguments.value = @"sms:9999%95";
-    url = [UAOpenExternalURLAction parseURLFromArguments:self.arguments];
-    XCTAssertNil(url);
-
-    // valid number
-    self.arguments.value = @"tel:999-999-9999";
-    url = [UAOpenExternalURLAction parseURLFromArguments:self.arguments];
-    XCTAssertEqualObjects(url.absoluteString, self.arguments.value);
-
-    // valid number
-    self.arguments.value = @"tel:999%20999-9999";
-    url = [UAOpenExternalURLAction parseURLFromArguments:self.arguments];
-    XCTAssertEqualObjects(url.absoluteString, @"tel:999999-9999");
-
-    // Valid percent encoding
-    self.arguments.value = @"tel:%28999%29999-9999";
-    url = [UAOpenExternalURLAction parseURLFromArguments:self.arguments];
-    XCTAssertEqualObjects(url.absoluteString, @"tel:999999-9999");
-
-    // invalid percent encoding
-    self.arguments.value = @"tel:9999%95";
-    url = [UAOpenExternalURLAction parseURLFromArguments:self.arguments];
-    XCTAssertNil(url);
 }
 
 @end

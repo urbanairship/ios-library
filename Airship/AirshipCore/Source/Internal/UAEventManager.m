@@ -40,6 +40,7 @@ static NSTimeInterval const BackgroundTaskBatchDelay = 5;
 static NSTimeInterval const EventUploadScheduleDelay = 15;
 static NSTimeInterval const BackgroundLowPriorityEventUploadInterval = 900;
 static NSString * const UAEventManagerUploadTask = @"UAEventManager.upload";
+static NSUInteger const FetchEventLimit = 500;
 
 @implementation UAEventManager
 
@@ -169,6 +170,7 @@ static NSString * const UAEventManagerUploadTask = @"UAEventManager.upload";
 
 - (NSUInteger)maxTotalDBSize {
     NSUInteger value = (NSUInteger)[self.dataStore integerForKey:kMaxTotalDBSizeUserDefaultsKey];
+    value = value == 0 ? kMaxTotalDBSizeBytes : value;
     return [UAEventManager clampValue:value min:kMinTotalDBSizeBytes max:kMaxTotalDBSizeBytes];
 }
 
@@ -178,6 +180,7 @@ static NSString * const UAEventManagerUploadTask = @"UAEventManager.upload";
 
 - (NSUInteger)maxBatchSize {
     NSUInteger value = (NSUInteger)[self.dataStore integerForKey:kMaxBatchSizeUserDefaultsKey];
+    value = value == 0 ? kMaxBatchSizeBytes : value;
     return [UAEventManager clampValue:value min:kMinBatchSizeBytes max:kMaxBatchSizeBytes];
 }
 
@@ -303,6 +306,12 @@ static NSString * const UAEventManagerUploadTask = @"UAEventManager.upload";
             [self.eventStore deleteEventsWithIDs:[events valueForKey:@"event_id"]];
             [self updateAnalyticsParametersWithResponseHeaders:responseHeaders];
             [task taskCompleted];
+
+            UA_WEAKIFY(self)
+            [[UADispatcher mainDispatcher] dispatchAsync:^{
+                UA_STRONGIFY(self)
+                [self scheduleUpload];
+            }];
         } else {
             UA_LTRACE(@"Analytics upload request failed: %@", error);
             [task taskFailed];
@@ -341,10 +350,21 @@ static NSString * const UAEventManagerUploadTask = @"UAEventManager.upload";
 - (NSArray *)prepareEvents {
     __block NSMutableArray *preparedEvents = nil;
     UASemaphore *semaphore = [UASemaphore semaphore];
-    [self.eventStore fetchEventsWithMaxBatchSize:self.maxBatchSize completionHandler:^(NSArray<UAEventData *> *result) {
+
+    NSUInteger maxBatchSize = self.maxBatchSize;
+
+    [self.eventStore fetchEventsWithLimit:FetchEventLimit completionHandler:^(NSArray<UAEventData *> *result) {
         if (result.count) {
-            preparedEvents = [NSMutableArray arrayWithCapacity:result.count];
+            preparedEvents = [NSMutableArray array];
+
+            NSUInteger batchSize = 0;
             for (UAEventData *eventData in result) {
+
+                if ((batchSize + eventData.bytes.unsignedIntegerValue) > maxBatchSize) {
+                    break;
+                }
+
+                batchSize += eventData.bytes.unsignedIntegerValue;
                 NSMutableDictionary *eventBody = [NSMutableDictionary dictionary];
                 [eventBody setValue:eventData.identifier forKey:@"event_id"];
                 [eventBody setValue:eventData.time forKey:@"time"];
