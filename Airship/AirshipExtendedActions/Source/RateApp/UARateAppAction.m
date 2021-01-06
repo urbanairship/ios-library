@@ -68,7 +68,7 @@ NSString *const UARateAppLinkPromptTimestampsKey = @"RateAppActionLinkPromptCoun
     completionHandler([UAActionResult emptyResult]);
 }
 
--(BOOL)parseArguments:(UAActionArguments *)arguments {
+- (BOOL)parseArguments:(UAActionArguments *)arguments {
     if (self.systemVersion == nil) {
         self.systemVersion = [UASystemVersion systemVersion];
     }

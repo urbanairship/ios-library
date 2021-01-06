@@ -70,6 +70,7 @@
 #import "UALocationProvider.h"
 #import "UAMediaEventTemplate.h"
 #import "UAMessageCenterModuleLoaderFactory.h"
+#import "UAModifyAttributesAction.h"
 #import "UAModifyTagsAction.h"
 #import "UAModuleLoader.h"
 #import "UANSArrayValueTransformer.h"

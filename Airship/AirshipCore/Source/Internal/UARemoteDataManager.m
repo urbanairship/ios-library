@@ -257,7 +257,7 @@ NSInteger const UARemoteDataRefreshIntervalDefault = 0;
     [self refreshWithCompletionHandler:nil];
 }
 
--(BOOL)shouldRefresh {
+- (BOOL)shouldRefresh {
     NSDate *lastRefreshTime = [self.dataStore objectForKey:UARemoteDataLastRefreshTimeKey] ?: [NSDate distantPast];
     NSTimeInterval timeSinceLastRefresh = -([lastRefreshTime timeIntervalSinceDate:self.date.now]);
 
@@ -342,7 +342,7 @@ completionHandler:(void(^)(BOOL success))completionHandler {
     }];
 }
 
--(BOOL)isLastAppVersionCurrent {
+- (BOOL)isLastAppVersionCurrent {
     NSString *appVersionAtTimeOfLastRefresh = ([self.dataStore objectForKey:UARemoteDataLastRefreshAppVersionKey]);
     NSString *currentAppVersion = [UAUtils bundleShortVersionString];
     if (currentAppVersion && ![appVersionAtTimeOfLastRefresh isEqualToString:currentAppVersion]) {
@@ -353,13 +353,13 @@ completionHandler:(void(^)(BOOL success))completionHandler {
 }
 
 
--(BOOL)isMetadataCurrent:(NSDictionary *)metadata {
+- (BOOL)isMetadataCurrent:(NSDictionary *)metadata {
     NSDictionary *currentMetadata = [self createMetadata:[self.localeManager currentLocale]];
 
     return [currentMetadata isEqualToDictionary:metadata];
 }
 
--(BOOL)isLastMetadataCurrent {
+- (BOOL)isLastMetadataCurrent {
     NSDictionary *metadataAtTimeOfLastRefresh = self.lastMetadata;
     NSDictionary *currentMetadata = [self createMetadata:[self.localeManager currentLocale]];
 

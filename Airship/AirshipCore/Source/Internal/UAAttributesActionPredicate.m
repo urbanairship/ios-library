@@ -1,8 +1,8 @@
 /* Copyright Airship and Contributors */
 
-#import "UATagsActionPredicate+Internal.h"
+#import "UAAttributesActionPredicate+Internal.h"
 
-@implementation UATagsActionPredicate
+@implementation UAAttributesActionPredicate
 
 + (instancetype)predicate {
     return [[self alloc] init];

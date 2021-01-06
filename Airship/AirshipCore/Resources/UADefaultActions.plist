@@ -107,5 +107,16 @@
 		<key>predicate</key>
 		<string>UAShareActionPredicate</string>
 	</dict>
+	<dict>
+		<key>names</key>
+		<array>
+			<string>modify_attributes_action</string>
+			<string>^a</string>
+		</array>
+		<key>action</key>
+		<string>UAModifyAttributesAction</string>
+		<key>predicate</key>
+		<string>UAAttributesActionPredicate</string>
+	</dict>
 </array>
 </plist>
