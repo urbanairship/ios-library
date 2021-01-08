@@ -26,10 +26,6 @@
     self.mockURLAllowListDelegate = [self mockForProtocol:@protocol(UAURLAllowListDelegate)];
 }
 
-- (void)tearDown {
-    [super tearDown];
-}
-
 /**
  * Test an empty allow list rejects all URLs.
  */

@@ -61,7 +61,6 @@
 
 - (void)tearDown {
     [self.mockedUNNotification stopMocking];
-
     [super tearDown];
 }
 

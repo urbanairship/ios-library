@@ -27,13 +27,6 @@
     self.client = [UANamedUserAPIClient clientWithConfig:self.config session:self.mockSession];
 }
 
-- (void)tearDown {
-    [self.mockSession stopMocking];
-    [self.mockAirship stopMocking];
-
-    [super tearDown];
-}
-
 /**
  * Test associate named user succeeds request when status is 2xx.
  */

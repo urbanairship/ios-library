@@ -104,9 +104,8 @@ void (^disassociateSuccessDoBlock)(NSInvocation *);
 
 
 - (void)tearDown {
-    [self.mockedNamedUserClient stopMocking];
-    [self.mockedAirship stopMocking];
-    [self.mockChannel stopMocking];
+    [self.mockTimeZone stopMocking];
+    [self.mockNotificationCenter stopMocking];
     [super tearDown];
 }
 

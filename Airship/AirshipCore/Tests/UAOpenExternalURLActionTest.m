@@ -35,13 +35,6 @@
     [[[self.mockAirship stub] andReturn:self.mockURLAllowList] URLAllowList];
 }
 
-- (void)tearDown {
-    [self.mockApplication stopMocking];
-    [self.mockURLAllowList stopMocking];
-    [self.mockAirship stopMocking];
-    [super tearDown];
-}
-
 /**
  * Test accepts valid arguments
  */

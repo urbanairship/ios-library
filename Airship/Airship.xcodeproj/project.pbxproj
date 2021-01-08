@@ -2026,7 +2026,7 @@
 		6EE6529322A7E3B800F7D54D /* Valid-UAInAppMessageHTMLStyle.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6EE6529222A7E3B800F7D54D /* Valid-UAInAppMessageHTMLStyle.plist */; };
 		6EE7705D238F15D000E79944 /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = CC04F1C41DC27E6C00B4842D /* libsqlite3.tbd */; };
 		6EE7705E238F15D000E79944 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = CC944EC71DB161AE00C42269 /* libz.tbd */; };
-		6EE770D9238F15D000E79944 /* (null) in Headers */ = {isa = PBXBuildFile; settings = {ATTRIBUTES = (Private, ); }; };
+		6EE770D9238F15D000E79944 /* BuildFile in Headers */ = {isa = PBXBuildFile; settings = {ATTRIBUTES = (Private, ); }; };
 		6EE77136238F161400E79944 /* UARateAppPromptView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6E9376EA2376236C00AA9C2A /* UARateAppPromptView.xib */; };
 		6EE77137238F161400E79944 /* UAExtendedActions.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6E8A5513236768CC004AE2A0 /* UAExtendedActions.plist */; };
 		6EE77139238F163300E79944 /* UAAutomationActions.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6E845478237E231F007D3B1E /* UAAutomationActions.plist */; };
@@ -6686,7 +6686,7 @@
 				6E411A992538C20500FEE4E8 /* UAUtils+Internal.h in Headers */,
 				6EEAE7F924C8F9B30046E311 /* UAScheduleTriggerContextTransformer+Internal.h in Headers */,
 				6E41156D2538C0AD00FEE4E8 /* UAAssociatedIdentifiers.h in Headers */,
-				6EE770D9238F15D000E79944 /* (null) in Headers */,
+				6EE770D9238F15D000E79944 /* BuildFile in Headers */,
 				6EE77158238F16A600E79944 /* UALandingPageActionPredicate+Internal.h in Headers */,
 				6EE77159238F16A600E79944 /* UALandingPageAction+Internal.h in Headers */,
 				6E41164D2538C0B200FEE4E8 /* UAAddTagsAction.h in Headers */,

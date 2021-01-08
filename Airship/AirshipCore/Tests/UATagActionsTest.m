@@ -54,13 +54,6 @@
     [[[self.mockAirship stub] andReturn:self.mockNamedUser] namedUser];
 }
 
-- (void)tearDown {
-    [self.mockAirship stopMocking];
-    [self.mockNamedUser stopMocking];
-    [self.mockAirship stopMocking];
-    [super tearDown];
-}
-
 /**
  * Makes sure that the passed action rejects the background situation
  */

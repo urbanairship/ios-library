@@ -14,10 +14,6 @@
     [super setUp];
 }
 
-- (void)tearDown {
-    [super tearDown];
-}
-
 /*
  * Test the argumentsWithValue:withSituation factory method sets the values correctly
  */

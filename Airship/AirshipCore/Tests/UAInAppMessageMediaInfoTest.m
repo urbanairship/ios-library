@@ -13,10 +13,6 @@
     [super setUp];
 }
 
-- (void)tearDown {
-    [super tearDown];
-}
-
 - (void)testMediaInfo {
     UAInAppMessageMediaInfo *mediInfo = [UAInAppMessageMediaInfo mediaInfoWithURL:@"theurl"
                                                                contentDescription:@"some desciription"

@@ -20,12 +20,6 @@ static NSString *kTestIdentifier2  = @"TESTID2";
     // Put setup code here. This method is called before the invocation of each test method in the class.
 }
 
-- (void)tearDown {
-    // Put teardown code here. This method is called after the invocation of each test method in the class.
-    [super tearDown];
-}
-
-
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 - (void)testAsUNNotificationActionBackground {

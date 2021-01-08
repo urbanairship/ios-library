@@ -23,10 +23,6 @@
     self.client = [UATagGroupsLookupAPIClient clientWithConfig:self.mockConfig session:self.mockSession];
 }
 
-- (void)tearDown {
-    [super tearDown];
-}
-
 - (void)testLookupTagGroups {
 
     NSDictionary *responseDict = @{ @"last_modified": @"2018-03-02T22:56:09",

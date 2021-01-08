@@ -20,6 +20,11 @@
     self.localeManager = [[UALocaleManager alloc] initWithDataStore:self.dataStore notificationCenter:self.mockNotificationCenter];
 }
 
+- (void)tearDown {
+    [self.mockNotificationCenter stopMocking];
+    [super tearDown];
+}
+
 - (void)testFirstInitLocale {
     XCTAssertEqual(self.localeManager.currentLocale.localeIdentifier, [NSLocale autoupdatingCurrentLocale].localeIdentifier);
     XCTAssertEqual(self.localeManager.currentLocale.countryCode, [NSLocale autoupdatingCurrentLocale].countryCode);

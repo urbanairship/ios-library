@@ -48,16 +48,6 @@
                                                    dataStore:self.dataStore];
 }
 
-- (void)tearDown {
-    [self.mockAirship stopMocking];
-    [self.mockChannel stopMocking];
-    [self.mockUser stopMocking];
-    [self.mockSession stopMocking];
-
-    [super tearDown];
-}
-
-
 /**
  * Tests retrieving the message list on success.
  */

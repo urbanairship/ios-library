@@ -22,11 +22,6 @@
     [[[self.mockBundle stub] andReturn:[NSBundle bundleForClass:[self class]]] mainBundle];
 }
 
-- (void)tearDown {
-    [self.mockBundle stopMocking];
-    [super tearDown];
-}
-
 - (void)testInvalidStyle {
     // Ensure that unknown/improperly formatted values don't crash the app
     XCTAssertNoThrow([UAInAppMessageBannerStyle styleWithContentsOfFile:@"Invalid-UAInAppMessageBannerStyle"], @"Parsing an invalid UAInAppMessageBannerStyle file should never result in an exception");

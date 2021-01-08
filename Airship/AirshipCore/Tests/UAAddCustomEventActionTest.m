@@ -26,12 +26,6 @@
     self.action = [[UAAddCustomEventAction alloc] init];
 }
 
-- (void)tearDown {
-    [self.analytics stopMocking];
-    [self.airship stopMocking];
-    [super tearDown];
-}
-
 /**
  * Test custom event action accepts all the situations.
  */

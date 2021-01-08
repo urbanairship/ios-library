@@ -24,11 +24,6 @@
     [[[self.mockBundle stub] andReturn:[NSBundle bundleForClass:[self class]]] mainBundle];
 }
 
-- (void)tearDown {
-    [self.mockBundle stopMocking];
-    [super tearDown];
-}
-
 // Just compare initial values to final value and return
 - (void)testInvalidStyle {
     // Whatever is set in the xib (nil in this case)

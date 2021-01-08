@@ -65,12 +65,6 @@
     self.renderedLocale = @{@"language" : @"en", @"country" : @"US"};
 }
 
-- (void)tearDown {
-    [self.analytics stopMocking];
-    [self.airship stopMocking];
-    [super tearDown];
-}
-
 /**
  * Test in-app direct open resolution event.
  */

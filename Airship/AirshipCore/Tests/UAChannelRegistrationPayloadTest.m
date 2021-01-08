@@ -57,11 +57,6 @@
 
 }
 
-- (void)tearDown {
-    [self.mockAirship stopMocking];
-    [self.mockAnalytics stopMocking];
-}
-
 /**
  * Test that the json has the full expected payload
  */

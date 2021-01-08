@@ -29,10 +29,6 @@
     [self.registrar setIdentifier:@"someID" clearPendingOnChange:NO];
 }
 
-- (void)tearDown {
-    [super tearDown];
-}
-
 /**
  * Test updating tag groups calls the tag client for every pending mutation.
  */

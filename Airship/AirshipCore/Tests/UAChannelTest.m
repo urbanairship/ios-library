@@ -92,6 +92,11 @@
     });
 }
 
+- (void)tearDown {
+    [self.mockTimeZone stopMocking];
+    [super tearDown];
+}
+
 - (UAChannel *)createChannel {
     UAChannel *channel = [UAChannel channelWithDataStore:self.dataStore
                                                   config:self.config

@@ -48,12 +48,6 @@
     [[[self.mockInAppAutomation stub] andReturn:self.mockInAppAutomation] shared];
 }
 
-- (void)tearDown {
-    [self.mockAirship stopMocking];
-    [self.mockURLAllowList stopMocking];
-    [self.mockConfig stopMocking];
-}
-
 /**
  * Test accepts arguments
  */

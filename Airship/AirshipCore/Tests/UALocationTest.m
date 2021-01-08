@@ -70,6 +70,7 @@
 }
 
 - (void)tearDown {
+    [self.mockProcessInfo stopMocking];
     [self.dataStore removeAll];
     self.location = nil;
 

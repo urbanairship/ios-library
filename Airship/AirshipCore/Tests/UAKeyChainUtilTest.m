@@ -17,11 +17,6 @@
     [[[self.mockBundle stub] andReturn:@{@"CFBundleIdentifier": @"com.urbanairship.test"}] infoDictionary];
   }
 
-- (void)tearDown {
-    [self.mockBundle stopMocking];
-    [super tearDown];
-}
-
 /**
  * Test creating user in the keychain.
  */

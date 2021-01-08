@@ -24,6 +24,7 @@
 - (void)tearDown {
     [self.store shutDown];
     [self.store waitForIdle];
+    [super tearDown];
 }
 
 - (void)testGetCheckerNoLimits {

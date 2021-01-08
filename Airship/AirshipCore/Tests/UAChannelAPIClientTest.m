@@ -21,11 +21,6 @@
     self.client = [UAChannelAPIClient clientWithConfig:self.config session:self.mockSession];
 }
 
-- (void)tearDown {
-    [self.mockSession stopMocking];
-    [super tearDown];
-}
-
 /**
  * Test create channel calls the onSuccessBlock with the response channel ID
  * and makes an analytics request when the request is successful.

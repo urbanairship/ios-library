@@ -26,12 +26,6 @@
     self.action = [[UAScheduleAction alloc] init];
 }
 
-- (void)tearDown {
-    [self.mockAutomation stopMocking];
-    [self.mockAirship stopMocking];
-    [super tearDown];
-}
-
 /**
  * Test accepts arguments.
  */

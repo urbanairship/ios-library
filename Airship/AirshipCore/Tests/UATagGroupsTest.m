@@ -14,10 +14,6 @@
     self.tagGroups = [UATagGroups tagGroupsWithTags:@{ @"foo" : [NSSet setWithArray:@[@"baz", @"boz"]], @"bar" : [NSSet setWithArray:@[@"biz"]] }];
 }
 
-- (void)tearDown {
-    [super tearDown];
-}
-
 - (void)testCoding {
     NSData *data = [NSKeyedArchiver archivedDataWithRootObject:self.tagGroups];
     UATagGroups *decoded = [NSKeyedUnarchiver unarchiveObjectWithData:data];

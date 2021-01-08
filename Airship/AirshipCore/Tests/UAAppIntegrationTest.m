@@ -97,6 +97,16 @@
     [[[self.mockedUNNotificationResponse stub] andReturn:self.mockedUNNotification] notification];
 }
 
+- (void)tearDown {
+    [self.mockedUANotificationContent stopMocking];
+    [self.mockedUNNotification stopMocking];
+    [self.mockedUserNotificationCenter stopMocking];
+    [self.mockedUNNotificationContent stopMocking];
+    [self.mockedUNNotificationRequest stopMocking];
+    [self.mockedUNNotificationResponse stopMocking];
+    [super tearDown];
+}
+
 /**
  * Test registering a device token.
  */

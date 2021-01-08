@@ -54,12 +54,6 @@
     self.renderedLocale = @{@"language" : @"en", @"country" : @"US"};
 }
 
-- (void)tearDown {
-    [self.analytics stopMocking];
-    [self.airship stopMocking];
-    [super tearDown];
-}
-
 - (void)testEventData {
     UAInAppMessage *remoteDataMessage = [UAInAppMessage messageWithBuilderBlock:^(UAInAppMessageBuilder *builder) {
         builder.source = UAInAppMessageSourceRemoteData;

@@ -13,10 +13,6 @@
     [super setUp];
 }
 
-- (void)tearDown {
-    [super tearDown];
-}
-
 /**
  * Test creating a circular region with a valid radius
  */

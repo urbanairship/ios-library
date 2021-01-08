@@ -12,10 +12,6 @@
     [super setUp];
 }
 
-- (void)tearDown {
-    [super tearDown];
-}
-
 - (void)testConfigWithJSON {
     NSDictionary *JSON = @{ @"tag_groups" : @{ @"enabled" : @(NO),
                                              @"cache_max_age_seconds" : @(123),

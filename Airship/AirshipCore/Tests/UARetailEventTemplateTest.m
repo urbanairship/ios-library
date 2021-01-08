@@ -22,13 +22,6 @@
     [[[self.airship stub] andReturn:self.analytics] analytics];
 }
 
-- (void)tearDown {
-    [self.airship stopMocking];
-    [self.analytics stopMocking];
-
-    [super tearDown];
-}
-
 /**
  * Test basic browsed event.
  */

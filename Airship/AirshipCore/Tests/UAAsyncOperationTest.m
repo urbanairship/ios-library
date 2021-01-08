@@ -14,10 +14,6 @@
     self.queue = [[NSOperationQueue alloc] init];
 }
 
-- (void)tearDown {
-    [super tearDown];
-}
-
 /**
  * Test async block is called for the operation.
  */

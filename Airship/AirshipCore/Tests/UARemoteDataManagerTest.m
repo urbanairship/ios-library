@@ -76,9 +76,6 @@
 }
 
 - (void)tearDown {
-    [self.mockAPIClient stopMocking];
-    [self.mockAPIClientClass stopMocking];
-
     [self.testStore shutDown];
     [self.testStore waitForIdle];
 

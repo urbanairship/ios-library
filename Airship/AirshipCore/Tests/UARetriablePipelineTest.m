@@ -22,10 +22,6 @@
     self.pipeline = [UARetriablePipeline pipelineWithQueue:self.queue dispatcher:self.testDispatcher];
 }
 
-- (void)tearDown {
-    [super tearDown];
-}
-
 - (void)testChain {
     __block NSMutableArray *order = [NSMutableArray array];
 

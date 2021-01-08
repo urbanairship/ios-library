@@ -11,9 +11,6 @@ NSTimeInterval const UATestExpectationTimeOut = 10;
 @implementation UABaseTest
 
 - (void)tearDown {
-    for (id mock in self.mocks) {
-        [mock stopMocking];
-    }
     self.mocks = nil;
     [super tearDown];
 }
