@@ -285,7 +285,12 @@
 }
 
 - (BOOL)checkRequestRequirements:(UATaskRequest *)request {
-    if (self.application.backgroundTimeRemaining < kUATaskManagerMinBackgroundTime) {
+    __block NSTimeInterval remainingTime = 0;
+    [[UADispatcher mainDispatcher] doSync:^{
+        remainingTime = self.application.backgroundTimeRemaining;
+    }];
+
+    if (remainingTime < kUATaskManagerMinBackgroundTime) {
         return NO;
     }
 

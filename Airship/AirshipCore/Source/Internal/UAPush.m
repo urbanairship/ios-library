@@ -16,6 +16,8 @@
 #import "UARegistrationDelegateWrapper+Internal.h"
 #import "UADispatcher.h"
 #import "UAAppStateTracker.h"
+#import "NSObject+UAAdditions.h"
+#import "UASemaphore.h"
 
 NSString *const UAUserPushNotificationsEnabledKey = @"UAUserPushNotificationsEnabled";
 NSString *const UABackgroundPushNotificationsEnabledKey = @"UABackgroundPushNotificationsEnabled";
@@ -61,6 +63,8 @@ NSString *const UAPresentationOptionBanner = @"banner";
 
 // Foreground presentation key
 NSString *const UAForegroundPresentationkey = @"foreground_presentation";
+
+NSTimeInterval const UADeviceTokenRegistrationWaitTime = 10;
 
 @interface UAPush()
 @property (nonatomic, strong) UADispatcher *dispatcher;
@@ -250,7 +254,9 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
 
 - (void)setDeviceToken:(NSString *)deviceToken {
     if (deviceToken == nil) {
+        [self willChangeValueForKey:@"deviceToken"];
         [self.dataStore removeObjectForKey:UAPushDeviceTokenKey];
+        [self didChangeValueForKey:@"deviceToken"];
         return;
     }
 
@@ -268,7 +274,9 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
         UA_LWARN(@"Device token %@ should be 64 to 200 hex characters (32 to 100 bytes) long.", deviceToken);
     }
 
+    [self willChangeValueForKey:@"deviceToken"];
     [self.dataStore setObject:deviceToken forKey:UAPushDeviceTokenKey];
+    [self didChangeValueForKey:@"deviceToken"];
 
     // Log the device token at error level, but without logging
     // it as an error.
@@ -772,27 +780,53 @@ NSString *const UAForegroundPresentationkey = @"foreground_presentation";
     [self.registrationDelegateWrapper registrationFailed];
 }
 
+
 - (void)extendChannelRegistrationPayload:(UAChannelRegistrationPayload *)payload
                        completionHandler:(UAChannelRegistrationExtenderCompletionHandler)completionHandler {
-    if (self.pushTokenRegistrationEnabled) {
-        payload.pushAddress = self.deviceToken;
-    }
+    UA_WEAKIFY(self);
+    [self waitForDeviceTokenRegistration:^{
+        UA_STRONGIFY(self);
 
-    payload.optedIn = self.userPushNotificationsAllowed;
-    payload.backgroundEnabled = self.backgroundPushNotificationsAllowed;
+        if (self.pushTokenRegistrationEnabled) {
+            payload.pushAddress = self.deviceToken;
+            payload.optedIn = self.userPushNotificationsAllowed;
+            payload.backgroundEnabled = self.backgroundPushNotificationsAllowed;
+        }
 
-    if (self.autobadgeEnabled) {
-        payload.badge = @(self.badgeNumber);
-    }
+        if (self.autobadgeEnabled) {
+            payload.badge = @(self.badgeNumber);
+        }
 
-    if (self.timeZone.name && self.quietTime && self.isQuietTimeEnabled) {
-        payload.quietTime = self.quietTime;
-        payload.quietTimeTimeZone = self.timeZone.name;
-    }
+        if (self.timeZone.name && self.quietTime && self.isQuietTimeEnabled) {
+            payload.quietTime = self.quietTime;
+            payload.quietTimeTimeZone = self.timeZone.name;
+        }
 
-    completionHandler(payload);
+        completionHandler(payload);
+    }];
 }
 
+- (void)waitForDeviceTokenRegistration:(void (^)(void))completionHandler {
+    UA_WEAKIFY(self);
+    [self.dispatcher dispatchAsync:^{
+        UA_STRONGIFY(self);
+        if (self.pushTokenRegistrationEnabled && !self.deviceToken && self.application.isRegisteredForRemoteNotifications) {
+            UASemaphore *semaphore = [UASemaphore semaphore];
+            __block UADisposable *disposable = [self observeAtKeyPath:@"deviceToken" withBlock:^(id  _Nonnull value) {
+                [semaphore signal];
+                [disposable dispose];
+            }];
+
+            [[UADispatcher globalDispatcher] dispatchAsync:^{
+                UA_STRONGIFY(self);
+                [semaphore wait:UADeviceTokenRegistrationWaitTime];
+                [self.dispatcher dispatchAsync:completionHandler];
+            }];
+        } else {
+            completionHandler();
+        }
+    }];
+}
 
 #pragma mark -
 #pragma mark Push handling
