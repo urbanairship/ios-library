@@ -76,6 +76,8 @@ NSTimeInterval const UADeviceTokenRegistrationWaitTime = 10;
 @property (nonatomic, strong) UARuntimeConfig *config;
 @property (nonatomic, strong) UAChannel<UAExtendableChannelRegistration> *channel;
 @property (nonatomic, strong) UAAppStateTracker *appStateTracker;
+@property (nonatomic, assign) BOOL waitForDeviceToken;
+
 @end
 
 @implementation UAPush
@@ -127,6 +129,8 @@ NSTimeInterval const UADeviceTokenRegistrationWaitTime = 10;
 
         [self updateAuthorizedNotificationTypes];
         self.defaultPresentationOptions = UNNotificationPresentationOptionNone;
+
+        self.waitForDeviceToken = self.channel.identifier == nil;
 
         UA_WEAKIFY(self)
         [self.channel addChannelExtenderBlock:^(UAChannelRegistrationPayload *payload, UAChannelRegistrationExtenderCompletionHandler completionHandler) {
@@ -810,8 +814,9 @@ NSTimeInterval const UADeviceTokenRegistrationWaitTime = 10;
     UA_WEAKIFY(self);
     [self.dispatcher dispatchAsync:^{
         UA_STRONGIFY(self);
-        if (self.pushTokenRegistrationEnabled && !self.deviceToken && self.application.isRegisteredForRemoteNotifications) {
+        if (self.waitForDeviceToken && self.pushTokenRegistrationEnabled && !self.deviceToken && self.application.isRegisteredForRemoteNotifications) {
             UASemaphore *semaphore = [UASemaphore semaphore];
+            self.waitForDeviceToken = NO;
             __block UADisposable *disposable = [self observeAtKeyPath:@"deviceToken" withBlock:^(id  _Nonnull value) {
                 [semaphore signal];
                 [disposable dispose];
