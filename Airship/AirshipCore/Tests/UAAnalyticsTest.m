@@ -18,6 +18,7 @@
 #import "UALocaleManager.h"
 #import "UAAppInitEvent+Internal.h"
 #import "UAAppForegroundEvent+Internal.h"
+#import "UAAppBackgroundEvent+Internal.h"
 
 @interface UAAnalyticsTest: UAAirshipBaseTest
 @property (nonatomic, strong) UAAnalytics *analytics;
@@ -85,28 +86,58 @@
     [self.mockEventManager verify];
 }
 
-- (void)testTransitionToForegroundEmitsForegroundEvent {
+- (void)testFirstTransitionToForegroundEmitsAppInit {
+    [[self.mockEventManager expect] addEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
+        return [obj isMemberOfClass:[UAAppInitEvent class]];
+    }] sessionID:OCMOCK_ANY];
+
+    [[self.mockEventManager reject] addEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
+        return [obj isMemberOfClass:[UAAppForegroundEvent class]];
+    }] sessionID:OCMOCK_ANY];
+
+    [self.notificationCenter postNotificationName:UAApplicationDidTransitionToForeground object:nil];
+
+    [self.mockEventManager verify];
+}
+
+- (void)testSubsequentTransitionToForegroundEmitsForegroundEvent {
     [[self.mockEventManager expect] addEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
         return [obj isMemberOfClass:[UAAppForegroundEvent class]];
     }] sessionID:OCMOCK_ANY];
 
     [self.notificationCenter postNotificationName:UAApplicationDidTransitionToForeground object:nil];
+    [self.notificationCenter postNotificationName:UAApplicationDidTransitionToForeground object:nil];
+
+
     [self.mockEventManager verify];
 }
 
-- (void)testFirstTransitionToForegroundEmitsAppInitEvent {
+- (void)testBackgroundBeforeForegroundEmitsAppInit {
     [[self.mockEventManager expect] addEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
         return [obj isMemberOfClass:[UAAppInitEvent class]];
     }] sessionID:OCMOCK_ANY];
 
-    [self.notificationCenter postNotificationName:UAApplicationDidTransitionToForeground object:nil];
+    [[self.mockEventManager expect] addEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
+        return [obj isMemberOfClass:[UAAppBackgroundEvent class]];
+    }] sessionID:OCMOCK_ANY];
+
+    [self.notificationCenter postNotificationName:UAApplicationDidEnterBackgroundNotification object:nil];
+
     [self.mockEventManager verify];
+}
+
+- (void)testBackgroundAfterForegroundDoesNotEmitAppInit {
+    [self.notificationCenter postNotificationName:UAApplicationDidTransitionToForeground object:nil];
 
     [[self.mockEventManager reject] addEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
         return [obj isMemberOfClass:[UAAppInitEvent class]];
     }] sessionID:OCMOCK_ANY];
 
-    [self.notificationCenter postNotificationName:UAApplicationDidTransitionToForeground object:nil];
+    [[self.mockEventManager expect] addEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
+        return [obj isMemberOfClass:[UAAppBackgroundEvent class]];
+    }] sessionID:OCMOCK_ANY];
+    
+    [self.notificationCenter postNotificationName:UAApplicationDidEnterBackgroundNotification object:nil];
 
     [self.mockEventManager verify];
 }
