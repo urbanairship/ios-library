@@ -19,6 +19,7 @@
 #import "UAAppInitEvent+Internal.h"
 #import "UAAppForegroundEvent+Internal.h"
 #import "UAAppBackgroundEvent+Internal.h"
+#import "UAirship+Internal.h"
 
 @interface UAAnalyticsTest: UAAirshipBaseTest
 @property (nonatomic, strong) UAAnalytics *analytics;
@@ -27,6 +28,7 @@
 @property (nonatomic, strong) id mockLocaleClass;
 @property (nonatomic, strong) id mockTimeZoneClass;
 @property (nonatomic, strong) id mockAppStateTracker;
+@property (nonatomic, strong) id mockInitEvent;
 @property (nonatomic, strong) NSNotificationCenter *notificationCenter;
 @property (nonatomic, strong) UATestDate *testDate;
 @property (nonatomic, strong) id<UAEventManagerDelegate> eventManagerDelegate;
@@ -36,6 +38,10 @@
 
 - (void)setUp {
     [super setUp];
+
+    self.mockInitEvent = [self mockForClass:[UAAppInitEvent class]];
+    UAAppInitEvent *event = [[UAAppInitEvent alloc] init];
+    [[[self.mockInitEvent stub] andReturn:event] event];
 
     self.notificationCenter = [[NSNotificationCenter alloc] init];
     self.testDate = [[UATestDate alloc] init];
@@ -53,6 +59,7 @@
     
     self.mockChannel = [self mockForClass:[UAChannel class]];
     self.mockAppStateTracker = [self mockForClass:[UAAppStateTracker class]];
+
     self.analytics = [self createAnalytics];
 
     [self.dataStore setBool:YES forKey:UAirshipDataCollectionEnabledKey];
@@ -87,6 +94,10 @@
 }
 
 - (void)testFirstTransitionToForegroundEmitsAppInit {
+    // Create analytics in inactive state so that init is deferred
+    [[[self.mockAppStateTracker stub] andReturnValue:@(UAApplicationStateInactive)] state];
+    [self createAnalytics];
+    
     [[self.mockEventManager expect] addEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
         return [obj isMemberOfClass:[UAAppInitEvent class]];
     }] sessionID:OCMOCK_ANY];
@@ -113,6 +124,10 @@
 }
 
 - (void)testBackgroundBeforeForegroundEmitsAppInit {
+    // Create analytics in inactive state so that init is deferred
+    [[[self.mockAppStateTracker stub] andReturnValue:@(UAApplicationStateInactive)] state];
+    [self createAnalytics];
+    
     [[self.mockEventManager expect] addEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
         return [obj isMemberOfClass:[UAAppInitEvent class]];
     }] sessionID:OCMOCK_ANY];

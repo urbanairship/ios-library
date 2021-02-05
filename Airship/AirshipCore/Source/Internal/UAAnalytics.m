@@ -114,8 +114,9 @@ NSString *const UAEventKey = @"event";
         }
 
         // If analytics is initialized in the background state, we are responding to a
-        // content-available push and should emit an app init event
-        if (self.appStateTracker.state == UAApplicationStateBackground) {
+        // content-available push. If it's initialized in the foreground state takeOff
+        // was probably called late. We should ensure an init event in either case.
+        if (self.appStateTracker.state != UAApplicationStateInactive) {
             [self ensureInit];
         }
     }

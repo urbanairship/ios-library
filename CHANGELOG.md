@@ -3,6 +3,13 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 14.2.3 February 5, 2021
+Patch release fixing issues with direct opens with open external URL actions, and thread safety for the frequency limits data store. Applications experiencing problems with direct open counts and apps using frequency limits should update.
+
+### Changes
+- Fixed synchronization for frequency constraints
+- Fixed edge case where launch notifictions with open external URL actions were not generating direct opens
+
 ## Version 14.2.2 January 13, 2021
 Patch release that fixes issues with setting attributes on a named user if the named user ID contains invalid URL characters. Applications using attributes with named users that possibly contain invalid URL characters should update.
 
