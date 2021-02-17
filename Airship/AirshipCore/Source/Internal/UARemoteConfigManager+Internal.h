@@ -29,5 +29,11 @@
                                       applicationMetrics:(UAApplicationMetrics *)applicationMetrics
                                            moduleAdapter:(UARemoteConfigModuleAdapter *)moduleAdapter;
 
+/**
+ * NSNotification event when the remote config  is updated. The event
+ * will contain the remote config  under `UAAirshipRemoteConfigUpdatedKey`.
+ */
+extern NSString *const UAAirshipRemoteConfigUpdatedEvent;
+extern NSString *const UAAirshipRemoteConfigUpdatedKey;
 
 @end

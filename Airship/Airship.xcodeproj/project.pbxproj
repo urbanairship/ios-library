@@ -2318,6 +2318,23 @@
 		A60A2448258D0D81006B7D80 /* UAAttributesActionPredicate+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = A60A2429258D0D77006B7D80 /* UAAttributesActionPredicate+Internal.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A60A2455258D0D81006B7D80 /* UAAttributesActionPredicate+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = A60A2429258D0D77006B7D80 /* UAAttributesActionPredicate+Internal.h */; };
 		A60A2462258D0D82006B7D80 /* UAAttributesActionPredicate+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = A60A2429258D0D77006B7D80 /* UAAttributesActionPredicate+Internal.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A6B483D825ADE89E00550305 /* UARemoteConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = A6B483D725ADE89E00550305 /* UARemoteConfig.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A6B483D925ADE89E00550305 /* UARemoteConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = A6B483D725ADE89E00550305 /* UARemoteConfig.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A6B483DA25ADE89E00550305 /* UARemoteConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = A6B483D725ADE89E00550305 /* UARemoteConfig.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A6B483DB25ADE89E00550305 /* UARemoteConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = A6B483D725ADE89E00550305 /* UARemoteConfig.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A6B483E925ADE8AA00550305 /* UARemoteConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = A6B483E825ADE8AA00550305 /* UARemoteConfig.m */; };
+		A6B483EA25ADE8AA00550305 /* UARemoteConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = A6B483E825ADE8AA00550305 /* UARemoteConfig.m */; };
+		A6B483EB25ADE8AA00550305 /* UARemoteConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = A6B483E825ADE8AA00550305 /* UARemoteConfig.m */; };
+		A6B483EC25ADE8AA00550305 /* UARemoteConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = A6B483E825ADE8AA00550305 /* UARemoteConfig.m */; };
+		A6B8F2EA25AC9AF70037B51B /* UARemoteConfigURLManager.m in Sources */ = {isa = PBXBuildFile; fileRef = A6B8F2E925AC9AF70037B51B /* UARemoteConfigURLManager.m */; };
+		A6B8F2EB25AC9AF70037B51B /* UARemoteConfigURLManager.m in Sources */ = {isa = PBXBuildFile; fileRef = A6B8F2E925AC9AF70037B51B /* UARemoteConfigURLManager.m */; };
+		A6B8F2EC25AC9AF70037B51B /* UARemoteConfigURLManager.m in Sources */ = {isa = PBXBuildFile; fileRef = A6B8F2E925AC9AF70037B51B /* UARemoteConfigURLManager.m */; };
+		A6B8F2ED25AC9AF70037B51B /* UARemoteConfigURLManager.m in Sources */ = {isa = PBXBuildFile; fileRef = A6B8F2E925AC9AF70037B51B /* UARemoteConfigURLManager.m */; };
+		A6B8F2FB25AC9B110037B51B /* UARemoteConfigURLManager.h in Headers */ = {isa = PBXBuildFile; fileRef = A6B8F2FA25AC9B110037B51B /* UARemoteConfigURLManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A6B8F2FC25AC9B110037B51B /* UARemoteConfigURLManager.h in Headers */ = {isa = PBXBuildFile; fileRef = A6B8F2FA25AC9B110037B51B /* UARemoteConfigURLManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A6B8F2FD25AC9B110037B51B /* UARemoteConfigURLManager.h in Headers */ = {isa = PBXBuildFile; fileRef = A6B8F2FA25AC9B110037B51B /* UARemoteConfigURLManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A6B8F2FE25AC9B110037B51B /* UARemoteConfigURLManager.h in Headers */ = {isa = PBXBuildFile; fileRef = A6B8F2FA25AC9B110037B51B /* UARemoteConfigURLManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A6CF89312593910300006C83 /* AddTagGroupsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6CF89302593910300006C83 /* AddTagGroupsTableViewController.swift */; };
 		A6E002D1258BABCA00620226 /* UAModifyAttributesAction.h in Headers */ = {isa = PBXBuildFile; fileRef = A6E002CC258BABCA00620226 /* UAModifyAttributesAction.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A6E002D2258BABCA00620226 /* UAModifyAttributesAction.h in Headers */ = {isa = PBXBuildFile; fileRef = A6E002CC258BABCA00620226 /* UAModifyAttributesAction.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A6E002D3258BABCA00620226 /* UAModifyAttributesAction.h in Headers */ = {isa = PBXBuildFile; fileRef = A6E002CC258BABCA00620226 /* UAModifyAttributesAction.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -2326,7 +2343,6 @@
 		A6E002E4258BABE200620226 /* UAModifyAttributesAction.m in Sources */ = {isa = PBXBuildFile; fileRef = A6E002E1258BABE100620226 /* UAModifyAttributesAction.m */; };
 		A6E002E5258BABE200620226 /* UAModifyAttributesAction.m in Sources */ = {isa = PBXBuildFile; fileRef = A6E002E1258BABE100620226 /* UAModifyAttributesAction.m */; };
 		A6E002E6258BABE200620226 /* UAModifyAttributesAction.m in Sources */ = {isa = PBXBuildFile; fileRef = A6E002E1258BABE100620226 /* UAModifyAttributesAction.m */; };
-		A6CF89312593910300006C83 /* AddTagGroupsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6CF89302593910300006C83 /* AddTagGroupsTableViewController.swift */; };
 		A6EEE49E25559E340034A42C /* UASearchEventTemplate.h in Headers */ = {isa = PBXBuildFile; fileRef = A6EEE49C25559E340034A42C /* UASearchEventTemplate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A6EEE4AC25559E570034A42C /* UASearchEventTemplate.h in Headers */ = {isa = PBXBuildFile; fileRef = A6EEE49C25559E340034A42C /* UASearchEventTemplate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A6EEE4B925559E570034A42C /* UASearchEventTemplate.h in Headers */ = {isa = PBXBuildFile; fileRef = A6EEE49C25559E340034A42C /* UASearchEventTemplate.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -3472,9 +3488,13 @@
 		A60A2429258D0D77006B7D80 /* UAAttributesActionPredicate+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UAAttributesActionPredicate+Internal.h"; path = "Internal/UAAttributesActionPredicate+Internal.h"; sourceTree = "<group>"; };
 		A60A242A258D0D77006B7D80 /* UAAttributesActionPredicate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAAttributesActionPredicate.m; path = Internal/UAAttributesActionPredicate.m; sourceTree = "<group>"; };
 		A649F50A252F4F39005453CB /* UAInbox 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "UAInbox 2.xcdatamodel"; sourceTree = "<group>"; };
+		A6B483D725ADE89E00550305 /* UARemoteConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UARemoteConfig.h; path = Public/UARemoteConfig.h; sourceTree = "<group>"; };
+		A6B483E825ADE8AA00550305 /* UARemoteConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UARemoteConfig.m; path = Internal/UARemoteConfig.m; sourceTree = "<group>"; };
+		A6B8F2E925AC9AF70037B51B /* UARemoteConfigURLManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UARemoteConfigURLManager.m; path = Internal/UARemoteConfigURLManager.m; sourceTree = "<group>"; };
+		A6B8F2FA25AC9B110037B51B /* UARemoteConfigURLManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UARemoteConfigURLManager.h; path = Public/UARemoteConfigURLManager.h; sourceTree = "<group>"; };
+		A6CF89302593910300006C83 /* AddTagGroupsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTagGroupsTableViewController.swift; sourceTree = "<group>"; };
 		A6E002CC258BABCA00620226 /* UAModifyAttributesAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAModifyAttributesAction.h; path = Public/UAModifyAttributesAction.h; sourceTree = "<group>"; };
 		A6E002E1258BABE100620226 /* UAModifyAttributesAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAModifyAttributesAction.m; path = Internal/UAModifyAttributesAction.m; sourceTree = "<group>"; };
-		A6CF89302593910300006C83 /* AddTagGroupsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTagGroupsTableViewController.swift; sourceTree = "<group>"; };
 		A6EEE49C25559E340034A42C /* UASearchEventTemplate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = UASearchEventTemplate.h; path = Public/UASearchEventTemplate.h; sourceTree = "<group>"; };
 		A6EEE4FA25559EA00034A42C /* UASearchEventTemplate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UASearchEventTemplate.m; path = Internal/UASearchEventTemplate.m; sourceTree = "<group>"; };
 		C3AEC8D23AA7835AC1E74C9A /* Pods-AirshipAccengageTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AirshipAccengageTests.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-AirshipAccengageTests/Pods-AirshipAccengageTests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -4572,6 +4592,8 @@
 				6E4114752538C0A200FEE4E8 /* UARuntimeConfig.h */,
 				6E4117882538C1F700FEE4E8 /* UARuntimeConfig.m */,
 				6E4116C92538C1E400FEE4E8 /* UARuntimeConfig+Internal.h */,
+				A6B483D725ADE89E00550305 /* UARemoteConfig.h */,
+				A6B483E825ADE8AA00550305 /* UARemoteConfig.m */,
 			);
 			name = Config;
 			sourceTree = "<group>";
@@ -4593,6 +4615,8 @@
 		6E411D0B2538CD4B00FEE4E8 /* Remote Config */ = {
 			isa = PBXGroup;
 			children = (
+				A6B8F2FA25AC9B110037B51B /* UARemoteConfigURLManager.h */,
+				A6B8F2E925AC9AF70037B51B /* UARemoteConfigURLManager.m */,
 				6E4117742538C1F500FEE4E8 /* UARemoteConfigDisableInfo.m */,
 				6E41173A2538C1EF00FEE4E8 /* UARemoteConfigDisableInfo+Internal.h */,
 				6E41174E2538C1F100FEE4E8 /* UARemoteConfigManager.m */,
@@ -6241,6 +6265,7 @@
 				6E41158B2538C0AD00FEE4E8 /* UAJavaScriptCommand.h in Headers */,
 				6E4118272538C1FC00FEE4E8 /* UAPersistentQueue+Internal.h in Headers */,
 				6E4119DB2538C20200FEE4E8 /* UAKeychainUtils+Internal.h in Headers */,
+				A6B8F2FD25AC9B110037B51B /* UARemoteConfigURLManager.h in Headers */,
 				6E4115E32538C0B000FEE4E8 /* UA_Base64.h in Headers */,
 				6E4116872538C0B400FEE4E8 /* UAModifyTagsAction.h in Headers */,
 				6E411E752538F4C700FEE4E8 /* UAAction+Internal.h in Headers */,
@@ -6261,6 +6286,7 @@
 				6E411A9F2538C20500FEE4E8 /* UADisposable+Internal.h in Headers */,
 				6E41162F2538C0B100FEE4E8 /* UAAnalyticsEventConsumerProtocol.h in Headers */,
 				6E4118D72538C1FE00FEE4E8 /* UAScreenTrackingEvent+Internal.h in Headers */,
+				A6B483DA25ADE89E00550305 /* UARemoteConfig.h in Headers */,
 				6E41154B2538C0AC00FEE4E8 /* UAURLAllowList.h in Headers */,
 				6E41164B2538C0B200FEE4E8 /* UACustomEvent.h in Headers */,
 				6E4114FF2538C0AA00FEE4E8 /* UAProximityRegion.h in Headers */,
@@ -6521,6 +6547,7 @@
 				6E4114E52538C0AA00FEE4E8 /* UAAPIClient.h in Headers */,
 				6EE7715C238F16A600E79944 /* UAScheduleAction.h in Headers */,
 				6E4116452538C0B200FEE4E8 /* UAAttributePendingMutations.h in Headers */,
+				A6B483D825ADE89E00550305 /* UARemoteConfig.h in Headers */,
 				6E4119B52538C20200FEE4E8 /* UAAttributeAPIClient+Internal.h in Headers */,
 				6EE77163238F16A600E79944 /* UASchedule.h in Headers */,
 				6E4116612538C0B300FEE4E8 /* UAAccengageModuleLoaderFactory.h in Headers */,
@@ -6733,6 +6760,7 @@
 				6E4118E92538C1FE00FEE4E8 /* UAAutoIntegration+Internal.h in Headers */,
 				6E4119A52538C20100FEE4E8 /* UAJSONValueMatcher+Internal.h in Headers */,
 				6E4118212538C1FC00FEE4E8 /* UARemoteConfigManager+Internal.h in Headers */,
+				A6B8F2FB25AC9B110037B51B /* UARemoteConfigURLManager.h in Headers */,
 				6EE77177238F16A600E79944 /* UAInAppMessageModalDisplayContent+Internal.h in Headers */,
 				6EE77178238F16A600E79944 /* UAInAppMessageModalViewController+Internal.h in Headers */,
 				A6E002D1258BABCA00620226 /* UAModifyAttributesAction.h in Headers */,
@@ -7023,6 +7051,7 @@
 				6E4115962538C0AE00FEE4E8 /* UADisposable.h in Headers */,
 				6E411AEA2538C20600FEE4E8 /* UAChannelRegistrationPayload+Internal.h in Headers */,
 				6E411A262538C20300FEE4E8 /* UATagGroupsRegistrar+Internal.h in Headers */,
+				A6B8F2FC25AC9B110037B51B /* UARemoteConfigURLManager.h in Headers */,
 				6E4116922538C0B400FEE4E8 /* UACircularRegion.h in Headers */,
 				6E4114FE2538C0AA00FEE4E8 /* UAProximityRegion.h in Headers */,
 				6E411EA62538F4D000FEE4E8 /* UAAction+Internal.h in Headers */,
@@ -7043,6 +7072,7 @@
 				6E4114DE2538C0A900FEE4E8 /* UAirshipCoreResources.h in Headers */,
 				6E4115422538C0AC00FEE4E8 /* UANotificationCategories.h in Headers */,
 				6E4115A62538C0AE00FEE4E8 /* UAPushProviderDelegate.h in Headers */,
+				A6B483D925ADE89E00550305 /* UARemoteConfig.h in Headers */,
 				6E4114F22538C0AA00FEE4E8 /* UAComponent.h in Headers */,
 				6E41197A2538C20100FEE4E8 /* UADelay+Internal.h in Headers */,
 				6E411A7E2538C20500FEE4E8 /* UAAppStateTracker+Internal.h in Headers */,
@@ -7244,6 +7274,7 @@
 				6E4118282538C1FC00FEE4E8 /* UAPersistentQueue+Internal.h in Headers */,
 				6E4119DC2538C20200FEE4E8 /* UAKeychainUtils+Internal.h in Headers */,
 				6E4115E42538C0B000FEE4E8 /* UA_Base64.h in Headers */,
+				A6B8F2FE25AC9B110037B51B /* UARemoteConfigURLManager.h in Headers */,
 				6E4116882538C0B400FEE4E8 /* UAModifyTagsAction.h in Headers */,
 				6E4118582538C1FD00FEE4E8 /* UAPreferenceDataStore+Internal.h in Headers */,
 				6E411EB22538F4D100FEE4E8 /* UAAction+Internal.h in Headers */,
@@ -7264,6 +7295,7 @@
 				6E411AA02538C20500FEE4E8 /* UADisposable+Internal.h in Headers */,
 				6E4116302538C0B200FEE4E8 /* UAAnalyticsEventConsumerProtocol.h in Headers */,
 				6E4118D82538C1FE00FEE4E8 /* UAScreenTrackingEvent+Internal.h in Headers */,
+				A6B483DB25ADE89E00550305 /* UARemoteConfig.h in Headers */,
 				6E41154C2538C0AC00FEE4E8 /* UAURLAllowList.h in Headers */,
 				6E41164C2538C0B200FEE4E8 /* UACustomEvent.h in Headers */,
 				6E4115002538C0AA00FEE4E8 /* UAProximityRegion.h in Headers */,
@@ -7939,12 +7971,13 @@
 			buildActionMask = 2147483647;
 			files = (
 			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-AirshipAccengageTests/Pods-AirshipAccengageTests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-AirshipAccengageTests/Pods-AirshipAccengageTests-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/OCMock/OCMock.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-AirshipAccengageTests/Pods-AirshipAccengageTests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/OCMock.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -7956,12 +7989,15 @@
 			buildActionMask = 2147483647;
 			files = (
 			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-AirshipTests/Pods-AirshipTests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-AirshipTests/Pods-AirshipTests-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/OCMock/OCMock.framework",
+				"${BUILT_PRODUCTS_DIR}/XcodeEdit/XcodeEdit.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-AirshipTests/Pods-AirshipTests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/OCMock.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/XcodeEdit.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -8108,6 +8144,7 @@
 				6E4119632538C20000FEE4E8 /* NSURLResponse+UAAdditions.m in Sources */,
 				6E4119A32538C20100FEE4E8 /* UAAttributeRegistrar.m in Sources */,
 				6E411AFF2538C20700FEE4E8 /* UANotificationResponse.m in Sources */,
+				A6B483EB25ADE8AA00550305 /* UARemoteConfig.m in Sources */,
 				6E4119972538C20100FEE4E8 /* UANotificationCategory.m in Sources */,
 				6E4118432538C1FC00FEE4E8 /* UAWalletAction.m in Sources */,
 				6E4118F72538C1FF00FEE4E8 /* UARemoteDataStorePayload.m in Sources */,
@@ -8240,6 +8277,7 @@
 				6E4117E32538C1FB00FEE4E8 /* UAAttributePendingMutations.m in Sources */,
 				6EB4E40E2548A36600E3FFD0 /* UATaskLauncher.m in Sources */,
 				6E411A0F2538C20300FEE4E8 /* UAAddTagsAction.m in Sources */,
+				A6B8F2EC25AC9AF70037B51B /* UARemoteConfigURLManager.m in Sources */,
 				6E4119C72538C20200FEE4E8 /* UAPushReceivedEvent.m in Sources */,
 				6E4118A72538C1FE00FEE4E8 /* UATextInputNotificationAction.m in Sources */,
 				6E41186B2538C1FD00FEE4E8 /* NSString+UAURLEncoding.m in Sources */,
@@ -8590,6 +8628,7 @@
 				6E4119712538C20100FEE4E8 /* UAChannelRegistrationPayload.m in Sources */,
 				6E4118492538C1FC00FEE4E8 /* UAPasteboardAction.m in Sources */,
 				6E411A552538C20400FEE4E8 /* UARemoteConfigDisableInfo.m in Sources */,
+				A6B483E925ADE8AA00550305 /* UARemoteConfig.m in Sources */,
 				6EE7723C238F172900E79944 /* UAInAppMessageDefaultDisplayCoordinator.m in Sources */,
 				6E41181D2538C1FC00FEE4E8 /* UAActivityViewController.m in Sources */,
 				6EB4E4002548A36600E3FFD0 /* UATaskRequest.m in Sources */,
@@ -8617,6 +8656,7 @@
 				3CF62FB325883BEB0007502B /* UAAutomationNativeBridgeExtension.m in Sources */,
 				6EE77246238F172A00E79944 /* UAMessageCenterDateUtils.m in Sources */,
 				6E411A8D2538C20500FEE4E8 /* UANativeBridgeActionHandler.m in Sources */,
+				A6B8F2EA25AC9AF70037B51B /* UARemoteConfigURLManager.m in Sources */,
 				6EE77247238F172A00E79944 /* UAMessageCenterListCell.m in Sources */,
 				6EE7724C238F172A00E79944 /* UAInboxMessageData.m in Sources */,
 				6EE7724D238F172A00E79944 /* UAInboxStore.m in Sources */,
@@ -8696,6 +8736,7 @@
 				6E4119622538C20000FEE4E8 /* NSURLResponse+UAAdditions.m in Sources */,
 				6E4119A22538C20100FEE4E8 /* UAAttributeRegistrar.m in Sources */,
 				6E411AFE2538C20700FEE4E8 /* UANotificationResponse.m in Sources */,
+				A6B483EA25ADE8AA00550305 /* UARemoteConfig.m in Sources */,
 				6E4119962538C20100FEE4E8 /* UANotificationCategory.m in Sources */,
 				6E4118422538C1FC00FEE4E8 /* UAWalletAction.m in Sources */,
 				6E4118F62538C1FF00FEE4E8 /* UARemoteDataStorePayload.m in Sources */,
@@ -8828,6 +8869,7 @@
 				6E4117FA2538C1FB00FEE4E8 /* UAColorUtils.m in Sources */,
 				6EB4E40D2548A36600E3FFD0 /* UATaskLauncher.m in Sources */,
 				6E4117E22538C1FB00FEE4E8 /* UAAttributePendingMutations.m in Sources */,
+				A6B8F2EB25AC9AF70037B51B /* UARemoteConfigURLManager.m in Sources */,
 				6E411A0E2538C20300FEE4E8 /* UAAddTagsAction.m in Sources */,
 				6E4119C62538C20200FEE4E8 /* UAPushReceivedEvent.m in Sources */,
 				6E4118A62538C1FE00FEE4E8 /* UATextInputNotificationAction.m in Sources */,
@@ -9037,6 +9079,7 @@
 				6E4119642538C20000FEE4E8 /* NSURLResponse+UAAdditions.m in Sources */,
 				6E4119A42538C20100FEE4E8 /* UAAttributeRegistrar.m in Sources */,
 				6E411B002538C20700FEE4E8 /* UANotificationResponse.m in Sources */,
+				A6B483EC25ADE8AA00550305 /* UARemoteConfig.m in Sources */,
 				6E4119982538C20100FEE4E8 /* UANotificationCategory.m in Sources */,
 				6E4118442538C1FC00FEE4E8 /* UAWalletAction.m in Sources */,
 				6E4118F82538C1FF00FEE4E8 /* UARemoteDataStorePayload.m in Sources */,
@@ -9169,6 +9212,7 @@
 				6E4117FC2538C1FB00FEE4E8 /* UAColorUtils.m in Sources */,
 				6EB4E40F2548A36600E3FFD0 /* UATaskLauncher.m in Sources */,
 				6E4117E42538C1FB00FEE4E8 /* UAAttributePendingMutations.m in Sources */,
+				A6B8F2ED25AC9AF70037B51B /* UARemoteConfigURLManager.m in Sources */,
 				6E411A102538C20300FEE4E8 /* UAAddTagsAction.m in Sources */,
 				6E4119C82538C20200FEE4E8 /* UAPushReceivedEvent.m in Sources */,
 				6E4118A82538C1FE00FEE4E8 /* UATextInputNotificationAction.m in Sources */,

@@ -7,59 +7,69 @@ jobs:
   build-sdk:
     runs-on: macOS-latest
     steps:
+      - name: Set env variable
+        run: echo "ImageVersion=$ImageVersion"  >> $GITHUB_ENV
       - uses: actions/checkout@v2
       - uses: actions/cache@v1
         with:
           path: vendor/bundle
-          key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
-          restore-keys: ${{ runner.os }}-gems-
+          key: ${{ runner.os }}-gems-${{ env.ImageVersion }}-${{ hashFiles('**/Gemfile.lock') }}
+          restore-keys: ${{ runner.os }}-gems-${{ env.ImageVersion }}
       - name: Build SDK
         run: make build-xcframeworks
 
   build-docs:
     runs-on: macOS-latest
     steps:
+      - name: Set env variable
+        run: echo "ImageVersion=$ImageVersion"  >> $GITHUB_ENV
       - uses: actions/checkout@v2
       - uses: actions/cache@v1
         with:
           path: vendor/bundle
-          key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
-          restore-keys: ${{ runner.os }}-gems-
+          key: ${{ runner.os }}-gems-${{ env.ImageVersion }}-${{ hashFiles('**/Gemfile.lock') }}
+          restore-keys: ${{ runner.os }}-gems-${{ env.ImageVersion }}
       - name: Build Docs
         run: make build-docs
 
   build-samples:
     runs-on: macOS-latest
     steps:
+      - name: Set env variable
+        run: echo "ImageVersion=$ImageVersion"  >> $GITHUB_ENV
       - uses: actions/checkout@v2
       - uses: actions/cache@v1
         with:
           path: vendor/bundle
-          key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
-          restore-keys: ${{ runner.os }}-gems-
+          key: ${{ runner.os }}-gems-${{ env.ImageVersion }}-${{ hashFiles('**/Gemfile.lock') }}
+          restore-keys: ${{ runner.os }}-gems-${{ env.ImageVersion }}
       - name: Build samples
         run: make build-samples
 
   run-tests:
     runs-on: macOS-latest
     steps:
+      - name: Set env variable
+        run: echo "ImageVersion=$ImageVersion"  >> $GITHUB_ENV
       - uses: actions/checkout@v2
       - uses: actions/cache@v1
         with:
           path: vendor/bundle
-          key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
-          restore-keys: ${{ runner.os }}-gems-
+          key: ${{ runner.os }}-gems-${{ env.ImageVersion }}-${{ hashFiles('**/Gemfile.lock') }}
+          restore-keys: ${{ runner.os }}-gems-${{ env.ImageVersion }}
       - name: Test
         run: make test
 
   pod-lib-lint:
     runs-on: macOS-latest
     steps:
+      - name: Set env variable
+        run: echo "ImageVersion=$ImageVersion"  >> $GITHUB_ENV
       - uses: actions/checkout@v2
       - uses: actions/cache@v1
         with:
           path: vendor/bundle
-          key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
-          restore-keys: ${{ runner.os }}-gems-
+          key: ${{ runner.os }}-gems-${{ env.ImageVersion }}-${{ hashFiles('**/Gemfile.lock') }}
+          restore-keys: ${{ runner.os }}-gems-${{ env.ImageVersion }}
       - name: Pod lint
         run: make pod-lint

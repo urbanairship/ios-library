@@ -4,6 +4,7 @@
 
 @interface UARuntimeConfig()
 
+@property (nonatomic, strong) UAConfig *config;
 @property (nonatomic, copy) NSString *appKey;
 @property (nonatomic, copy) NSString *appSecret;
 @property (nonatomic, assign) UALogLevel logLevel;
@@ -24,6 +25,7 @@
 @property (nonatomic, copy) NSDictionary *customConfig;
 @property (nonatomic, assign) BOOL requestAuthorizationToUseNotifications;
 @property (nonatomic, assign, getter=isDataCollectionOptInEnabled) BOOL dataCollectionOptInEnabled;
+@property (nonatomic, strong) UARemoteConfigURLManager *urlManager;
 
 @property (nonatomic, copy) NSString *deviceAPIURL;
 @property (nonatomic, copy) NSString *analyticsURL;
@@ -43,28 +45,14 @@ NSString *const UARuntimeConfigEURemoteDataAPIURL = @"https://remote-data.asnapi
 
 @implementation UARuntimeConfig
 
-- (instancetype)initWithConfig:(UAConfig *)config {
+- (instancetype)initWithConfig:(UAConfig *)config urlManager:(UARemoteConfigURLManager *)urlManager {
     self = [super init];
     if (self) {
+        self.config = config;
         self.logLevel = config.logLevel;
         self.appKey = config.appKey;
-        self.appSecret = config.appSecret;
-
-        switch (config.site) {
-            case UACloudSiteEU:
-                self.deviceAPIURL = config.deviceAPIURL ?: UARuntimeConfigEUDeviceAPIURL;
-                self.analyticsURL = config.analyticsURL ?: UARuntimeConfigEUAnalyticsURL;
-                self.remoteDataAPIURL = config.remoteDataAPIURL ?: UARuntimeConfigEURemoteDataAPIURL;
-                break;
-
-            case UACloudSiteUS:
-            default:
-                self.deviceAPIURL = config.deviceAPIURL ?: UARuntimeConfigUSDeviceAPIURL;
-                self.analyticsURL = config.analyticsURL ?: UARuntimeConfigUSAnalyticsURL;
-                self.remoteDataAPIURL = config.remoteDataAPIURL ?: UARuntimeConfigUSRemoteDataAPIURL;
-                break;
-        }
-
+        self.appSecret = config.appSecret;        
+        self.urlManager = urlManager;
         self.inProduction = config.inProduction;
         self.detectProvisioningMode = config.detectProvisioningMode;
         self.requestAuthorizationToUseNotifications = config.requestAuthorizationToUseNotifications;
@@ -87,12 +75,63 @@ NSString *const UARuntimeConfigEURemoteDataAPIURL = @"https://remote-data.asnapi
     return self;
 }
 
-+ (nullable instancetype)runtimeConfigWithConfig:(UAConfig *)config {
++ (nullable instancetype)runtimeConfigWithConfig:(UAConfig *)config urlManager:(UARemoteConfigURLManager *)urlManager {
     if (![config validate]) {
         return nil;
     }
 
-    return [[UARuntimeConfig alloc] initWithConfig:config];
+    return [[UARuntimeConfig alloc] initWithConfig:config urlManager:urlManager];
+}
+
+- (NSString *)deviceAPIURL {
+    if (self.urlManager.deviceAPIURL) {
+        return self.urlManager.deviceAPIURL;
+    }
+    if (self.config.deviceAPIURL) {
+        return self.config.deviceAPIURL;
+    }
+    
+    switch (self.config.site) {
+        case UACloudSiteEU:
+            return UARuntimeConfigEUDeviceAPIURL;
+        case UACloudSiteUS:
+        default:
+            return UARuntimeConfigUSDeviceAPIURL;
+    }
+}
+
+- (NSString *)remoteDataAPIURL {
+    if (self.urlManager.remoteDataURL) {
+        return self.urlManager.remoteDataURL;
+    }
+    if (self.config.remoteDataAPIURL) {
+        return self.config.remoteDataAPIURL;
+    }
+    
+    switch (self.config.site) {
+        case UACloudSiteEU:
+            return UARuntimeConfigEURemoteDataAPIURL;
+        case UACloudSiteUS:
+        default:
+            return UARuntimeConfigUSRemoteDataAPIURL;
+    }
+}
+
+- (NSString *)analyticsURL {
+    if (self.urlManager.analyticsURL) {
+        return self.urlManager.analyticsURL;
+    }
+    if (self.config.analyticsURL) {
+        return self.config.analyticsURL;
+    }
+    
+    switch (self.config.site) {
+        case UACloudSiteEU:
+            return UARuntimeConfigEUAnalyticsURL;
+        case UACloudSiteUS:
+        default:
+            return UARuntimeConfigUSAnalyticsURL;
+    }
 }
 
 @end

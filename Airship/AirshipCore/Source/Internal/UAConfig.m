@@ -62,12 +62,12 @@ NSString *const UALogLevelTraceName = @"TRACE";
     return self;
 }
 
--(id)copyWithZone:(NSZone *)zone {
+- (id)copyWithZone:(NSZone *)zone {
     UAConfig *configCopy = [[[self class] alloc] init];
     return [configCopy configWithConfig:self];
 }
 
--(UAConfig *) configWithConfig:(UAConfig *) config {
+- (UAConfig *)configWithConfig:(UAConfig *)config {
     if (config) {
         _developmentAppKey = config.developmentAppKey;
         _developmentAppSecret = config.developmentAppSecret;

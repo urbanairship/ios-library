@@ -29,6 +29,7 @@
 #import "UAAccengageModuleLoaderFactory.h"
 #import "UADebugLibraryModuleLoaderFactory.h"
 #import "UALocaleManager+Internal.h"
+#import "UARemoteConfigURLManager.h"
 
 #if !TARGET_OS_TV
 #import "UAChannelCapture+Internal.h"
@@ -282,8 +283,13 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         return;
     }
 
-    UARuntimeConfig *runtimeConfig = [UARuntimeConfig runtimeConfigWithConfig:config];
+    // Data store
+    UAPreferenceDataStore *dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:[NSString stringWithFormat:@"com.urbanairship.%@.", config.appKey]];
+    [dataStore migrateUnprefixedKeys:@[UALibraryVersion]];
 
+    UARemoteConfigURLManager *remoteConfigURLManager = [UARemoteConfigURLManager remoteConfigURLManagerWithDataStore:dataStore];
+    UARuntimeConfig *runtimeConfig = [UARuntimeConfig runtimeConfigWithConfig:config urlManager:remoteConfigURLManager];
+    
     // Ensure that app credentials are valid
     if (!runtimeConfig) {
         UA_LIMPERR(@"The UAConfig is invalid, no application credentials were specified at runtime.");
@@ -299,10 +305,6 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 
     UA_LINFO(@"UAirship Take Off! Lib Version: %@ App Key: %@ Production: %@.",
              [UAirshipVersion get], runtimeConfig.appKey, runtimeConfig.inProduction ?  @"YES" : @"NO");
-
-    // Data store
-    UAPreferenceDataStore *dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:[NSString stringWithFormat:@"com.urbanairship.%@.", runtimeConfig.appKey]];
-    [dataStore migrateUnprefixedKeys:@[UALibraryVersion]];
 
     // Clearing the key chain
     if ([[NSUserDefaults standardUserDefaults] boolForKey:UAResetKeychainKey]) {
@@ -334,7 +336,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
     // Create Airship
     [UAirship setSharedAirship:[[UAirship alloc] initWithRuntimeConfig:runtimeConfig
                                                              dataStore:dataStore]];
-
+    
     // Save the version
     if ([[UAirshipVersion get] isEqualToString:@"0.0.0"]) {
         UA_LIMPERR(@"_UA_VERSION is undefined - this commonly indicates an issue with the build configuration, UA_VERSION will be set to \"0.0.0\".");

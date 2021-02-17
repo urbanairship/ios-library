@@ -8,12 +8,19 @@
 #import "UAApplicationMetrics.h"
 #import "UARemoteConfigDisableInfo+Internal.h"
 #import "UARemoteConfigModuleNames+Internal.h"
+#import "UARemoteConfig.h"
 
 NSString * const UAAppConfigCommon = @"app_config";
 NSString * const UAAppConfigIOS = @"app_config:ios";
 
 // Disable config key
 NSString * const UARemoteConfigDisableKey = @"disable_features";
+// Airship config key
+NSString * const UAAirshipConfigKey = @"airship_config";
+
+// Notifications
+NSString * const UAAirshipRemoteConfigUpdatedEvent = @"com.urbanairship.airship_remote_config_updated";
+NSString * const UAAirshipRemoteConfigUpdatedKey = @"com.urbanairship.airship_remote_config_updated_key";
 
 @interface UARemoteConfigManager()
 @property (nonatomic, strong) UADisposable *remoteDataSubscription;
@@ -78,6 +85,9 @@ NSString * const UARemoteConfigDisableKey = @"disable_features";
 
     // Module config
     [self applyConfigsFromRemoteData:combinedData];
+    
+    //Remote config
+    [self applyRemoteConfigFromRemoteData:combinedData];
 }
 
 - (void)applyDisableInfosFromRemoteData:(NSDictionary *)data {
@@ -138,6 +148,14 @@ NSString * const UARemoteConfigDisableKey = @"disable_features";
     for (NSString *moduleName in kUARemoteConfigModuleAllModules) {
         [self.moduleAdapter applyConfig:data[moduleName] forModuleName:moduleName];
     }
+}
+
+- (void)applyRemoteConfigFromRemoteData:(NSDictionary *)data {
+    NSDictionary *remoteConfigData = data[UAAirshipConfigKey];
+    if (!remoteConfigData) {
+        return;
+    }
+    [[NSNotificationCenter defaultCenter] postNotificationName:UAAirshipRemoteConfigUpdatedEvent object:nil userInfo:@{UAAirshipRemoteConfigUpdatedKey: remoteConfigData}];
 }
 
 + (NSArray<UARemoteConfigDisableInfo *> *)filterDisableInfos:(NSArray<UARemoteConfigDisableInfo *> *)disableInfos

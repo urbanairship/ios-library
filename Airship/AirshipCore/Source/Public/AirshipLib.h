@@ -94,6 +94,8 @@
 #import "UAPushProviderDelegate.h"
 #import "UAPushableComponent.h"
 #import "UARegionEvent.h"
+#import "UARemoteConfig.h"
+#import "UARemoteConfigURLManager.h"
 #import "UARemoteDataPayload.h"
 #import "UARemoteDataProvider.h"
 #import "UARemoveTagsAction.h"

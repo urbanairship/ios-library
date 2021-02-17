@@ -22,16 +22,16 @@
 @synthesize channelCreationDelayEnabled;
 @synthesize customConfig;
 @synthesize requestAuthorizationToUseNotifications;
-@synthesize deviceAPIURL;
-@synthesize analyticsURL;
-@synthesize remoteDataAPIURL;
 
 - (instancetype)init {
     UAConfig *config = [UAConfig config];
     config.defaultAppKey = @"0000000000000000000000";
     config.defaultAppSecret = @"0000000000000000000000";
 
-    self = [super initWithConfig:config];
+    UAPreferenceDataStore *dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:[NSString stringWithFormat:@"uaRuntimeConfigTest"]];
+    UARemoteConfigURLManager *urlManager = [UARemoteConfigURLManager remoteConfigURLManagerWithDataStore:dataStore];
+   
+    self = [super initWithConfig:config urlManager:urlManager];
     return self;
 }
 
