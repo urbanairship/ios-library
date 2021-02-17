@@ -1,5 +1,5 @@
 
-XCODE ?= 12.2
+XCODE ?= 12.3
 export TEST_DESTINATION ?= platform=iOS Simulator,OS=latest,name=iPhone 11
 export TEST_DESTINATION_TVOS ?= platform=tvOS Simulator,OS=latest,name=Apple TV
 
@@ -81,7 +81,7 @@ test-service-extension: setup
 .PHONY: test-packages
 test-packages: setup
 	bash ./scripts/test_package.sh spm
-
+	bash ./scripts/test_package.sh spm11.4
 .PHONY: pod-publish
 pod-publish: setup
 	bundle exec pod trunk push Airship.podspec
