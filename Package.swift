@@ -56,6 +56,8 @@ let package = Package(
                     .headerSearchPath("Source/Internal")],
                 linkerSettings: [
                     //Frameworks
+                    .linkedFramework("Network"),
+                    .linkedFramework("UserNotifications"),
                     .linkedFramework("UserNotifications"),
                     .linkedFramework("CFNetwork"),
                     .linkedFramework("CoreGraphics"),

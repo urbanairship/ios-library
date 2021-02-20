@@ -88,11 +88,23 @@ static NSString *const OccurrenceEntityName = @"UAOccurrenceData";
 #pragma mark Public Data Access
 
 - (NSArray<UAFrequencyConstraint *> *)getConstraints:(NSArray<NSString *> *)constraintIDs {
-    return [self constraintsFromData:[self getConstraintsDataForIDs:constraintIDs]];
+    __block NSArray<UAFrequencyConstraint *> *constraints;
+
+    [self safePerformSync:^{
+        constraints = [self constraintsFromData:[self getConstraintsDataForIDs:constraintIDs]];
+    }];
+
+    return constraints;
 }
 
 - (NSArray<UAFrequencyConstraint *> *)getConstraints {
-    return [self constraintsFromData:[self getConstraintsData]];
+    __block NSArray<UAFrequencyConstraint *> *constraints;
+
+    [self safePerformSync:^{
+        constraints = [self constraintsFromData:[self getConstraintsData]];
+    }];
+
+    return constraints;
 }
 
 - (BOOL)saveConstraint:(UAFrequencyConstraint *)constraint {
@@ -133,7 +145,13 @@ static NSString *const OccurrenceEntityName = @"UAOccurrenceData";
 }
 
 - (NSArray<UAOccurrence *> *)getOccurrences:(NSString *)constraintID {
-    return [self occurrencesFromData:[self getOccurrencesData:constraintID]];
+    __block NSArray<UAOccurrence *> *occurrences;
+
+    [self safePerformSync:^{
+        occurrences = [self occurrencesFromData:[self getOccurrencesData:constraintID]];
+    }];
+
+    return occurrences;
 }
 
 - (BOOL)saveOccurrences:(NSArray<UAOccurrence *> *)occurrences {

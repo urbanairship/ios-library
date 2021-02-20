@@ -1,5 +1,6 @@
 
 XCODE ?= 12.4
+
 export TEST_DESTINATION ?= platform=iOS Simulator,OS=latest,name=iPhone 11
 export TEST_DESTINATION_TVOS ?= platform=tvOS Simulator,OS=latest,name=Apple TV
 
@@ -60,7 +61,7 @@ build-sample-swift: setup
 	bash ./scripts/build_sample.sh "SwiftSample" "${derived_data_path}"
 
 .PHONY: test
-test: setup test-core test-accengage test-content-extension test-service-extension
+test: setup test-core test-accengage test-content-extension test-service-extension test-packages
 
 .PHONY: test-core
 test-core: setup
@@ -78,6 +79,10 @@ test-content-extension: setup
 test-service-extension: setup
 	bash ./scripts/run_tests.sh AirshipNotificationServiceExtension "${derived_data_path}"
 
+.PHONY: test-packages
+test-packages: setup
+	bash ./scripts/test_package.sh spm
+	bash ./scripts/test_package.sh spm11.4
 .PHONY: pod-publish
 pod-publish: setup
 	bundle exec pod trunk push Airship.podspec

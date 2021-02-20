@@ -1,0 +1,27 @@
+options:
+  bundleIdPrefix: com.urbanairship
+targets:
+  TestApp:
+    type: application
+    platform: iOS
+    deploymentTarget: "14.0"
+    sources: [TestApp]
+    settings:
+      INFOPLIST_FILE: TestApp/Info.plist
+  TestContentExtension:
+    type: app-extension
+    deploymentTarget: "14.0"
+    platform: iOS
+    sources: [TestContentExtension]
+    settings:
+      INFOPLIST_FILE: TestContentExtension/Info.plist
+      PRODUCT_BUNDLE_IDENTIFIER: com.urbanairship.TestApp.TestContentExtension
+  TestServiceExtension:
+    type: app-extension
+    deploymentTarget: "14.0"
+    platform: iOS
+    sources: [TestServiceExtension]
+    settings:
+      INFOPLIST_FILE: TestServiceExtension/Info.plist
+      PRODUCT_BUNDLE_IDENTIFIER: com.urbanairship.TestApp.TestServiceExtension
+

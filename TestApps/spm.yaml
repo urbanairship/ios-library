@@ -1,0 +1,31 @@
+include:
+  - base.yaml
+name: TestApp.spm
+packages:
+  Airship:
+    path: ../
+targets:
+  TestApp:
+    dependencies:
+      - package: Airship
+        product: AirshipCore
+      - package: Airship
+        product: AirshipMessageCenter
+      - package: Airship
+        product: AirshipLocation
+      - package: Airship
+        product: AirshipExtendedActions
+      - package: Airship
+        product: AirshipAutomation
+      - package: Airship
+        product: AirshipAccengage
+      - target: TestContentExtension
+      - target: TestServiceExtension
+  TestContentExtension:
+    dependencies:
+     - package: Airship
+       product: AirshipNotificationContentExtension
+  TestServiceExtension:
+    dependencies:
+      - package: Airship
+        product: AirshipNotificationServiceExtension

@@ -2061,6 +2061,25 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     XCTAssertEqualObjects(expected, headers);
 }
 
+- (void)testChannelExtensionWaitsForDeviceToken {
+    self.push.deviceToken = nil;
+    [[[self.mockApplication stub] andReturnValue:@(YES)] isRegisteredForRemoteNotifications];
+
+    UAChannelRegistrationPayload *payload = [[UAChannelRegistrationPayload alloc] init];
+    XCTestExpectation *extendedPayload = [self expectationWithDescription:@"extended payload"];
+    self.channelRegistrationExtenderBlock(payload, ^(UAChannelRegistrationPayload * _Nonnull payload) {
+        [extendedPayload fulfill];
+    });
+
+    [[UADispatcher mainDispatcher] dispatchAsync:^{
+        self.push.deviceToken = validDeviceToken;
+    }];
+
+    [self waitForTestExpectations];
+
+    XCTAssertEqual(validDeviceToken, payload.pushAddress);
+}
+
 - (void)expectUpdatePushRegistrationWithOptions:(UANotificationOptions)expectedOptions categories:(NSSet<UANotificationCategory *> *)expectedCategories {
     [[[[self.mockPushRegistration expect] andDo:^(NSInvocation *invocation) {
         void *arg;

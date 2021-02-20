@@ -36,6 +36,7 @@
 @property (nonatomic, strong) UALocaleManager *localeManager;
 @property (nonatomic, strong) UAAppStateTracker *appStateTracker;
 @property (nonatomic, assign) BOOL handledFirstForegroundTransition;
+@property (nonatomic, assign) dispatch_once_t ensureInitToken;
 
 // Screen tracking state
 @property (nonatomic, copy) NSString *currentScreen;
@@ -113,9 +114,10 @@ NSString *const UAEventKey = @"event";
         }
 
         // If analytics is initialized in the background state, we are responding to a
-        // content-available push and should emit an app init event
-        if (self.appStateTracker.state == UAApplicationStateBackground) {
-            [self addEvent:[UAAppInitEvent event]];
+        // content-available push. If it's initialized in the foreground state takeOff
+        // was probably called late. We should ensure an init event in either case.
+        if (self.appStateTracker.state != UAApplicationStateInactive) {
+            [self ensureInit];
         }
     }
 
@@ -164,18 +166,17 @@ NSString *const UAEventKey = @"event";
 - (void)applicationDidTransitionToForeground {
     UA_LTRACE(@"Application transitioned to foreground.");
 
-    // If the app is transitioning to foreground for the first time, emit an app init event
+    // If the app is transitioning to foreground for the first time, ensure an app init event
     if (!self.handledFirstForegroundTransition) {
-        // Init event
-        [self addEvent:[UAAppInitEvent event]];
-
         self.handledFirstForegroundTransition = YES;
+        [self ensureInit];
+        return;
     }
 
-    // Start a new session
+    // Otherwise start a new session and emit a foreground event.
     [self startSession];
 
-    //add app_foreground event
+    // Add app_foreground event
     [self addEvent:[UAAppForegroundEvent event]];
 }
 
@@ -191,7 +192,10 @@ NSString *const UAEventKey = @"event";
 
     [self stopTrackingScreen];
 
-    // add app_background event
+    // Ensure an app init event
+    [self ensureInit];
+
+    // Add app_background event
     [self addEvent:[UAAppBackgroundEvent event]];
 
     [self startSession];
@@ -246,6 +250,12 @@ NSString *const UAEventKey = @"event";
     }];
 }
 
+- (void)ensureInit {
+    dispatch_once(&_ensureInitToken, ^{
+        [self addEvent:[UAAppInitEvent event]];
+    });
+}
+
 - (void)launchedFromNotification:(NSDictionary *)notification {
     if (!notification) {
         return;
@@ -254,6 +264,8 @@ NSString *const UAEventKey = @"event";
     if ([UAUtils isAlertingPush:notification]) {
         self.conversionSendID = [notification objectForKey:@"_"] ?: kUAMissingSendID;
         self.conversionPushMetadata = [notification objectForKey:kUAPushMetadata];
+
+        [self ensureInit];
     } else {
         self.conversionSendID = nil;
         self.conversionPushMetadata = nil;

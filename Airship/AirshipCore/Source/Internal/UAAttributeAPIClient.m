@@ -10,6 +10,7 @@
 #import "UAJSONSerialization.h"
 #import "UAAttributePendingMutations.h"
 #import "UAAPIClient.h"
+#import "NSString+UAURLEncoding.h"
 
 NSString *const UAChannelsAPIPath = @"/api/channels/";
 NSString *const UAAttributePlatformSpecifier = @"/attributes?platform=";
@@ -51,7 +52,7 @@ NSString * const UAAttributeAPIClientErrorDomain = @"com.urbanairship.attribute_
 
 + (instancetype)namedUserClientWithConfig:(UARuntimeConfig *)config {
     NSURL *(^URLFactoryBlock)(UARuntimeConfig *, NSString *) = ^NSURL *(UARuntimeConfig *config, NSString *identifier) {
-        NSString *attributeEndpoint =  [NSString stringWithFormat:@"%@%@%@%@", config.deviceAPIURL, UANamedUserAPIPath, identifier, UAAttributeSpecifier];
+        NSString *attributeEndpoint =  [NSString stringWithFormat:@"%@%@%@%@", config.deviceAPIURL, UANamedUserAPIPath, [identifier urlEncodedString], UAAttributeSpecifier];
         return [NSURL URLWithString:attributeEndpoint];
     };
 

@@ -33,6 +33,11 @@ extern NSString * const UAAttributeAPIClientErrorDomain;
 */
 @interface UAAttributeAPIClient : UAAPIClient
 
+/**
+ * URL factory block. Exposed for testing.
+ */
+@property (nonatomic, readonly, nonnull) NSURL *(^URLFactoryBlock)(UARuntimeConfig *, NSString *);
+
 
 ///---------------------------------------------------------------------------------------
 /// @name Attribute API Client Internal Methods

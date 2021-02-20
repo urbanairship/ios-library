@@ -3,12 +3,28 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 14.2.3 February 5, 2021
+Patch release fixing issues with direct opens with open external URL actions, and thread safety for the frequency limits data store. Applications experiencing problems with direct open counts and apps using frequency limits should update.
+
+### Changes
+- Fixed synchronization for frequency constraints
+- Fixed edge case where launch notifictions with open external URL actions were not generating direct opens
+
+## Version 14.2.2 January 13, 2021
+Patch release that fixes issues with setting attributes on a named user if the named user ID contains invalid URL characters. Applications using attributes with named users that possibly contain invalid URL characters should update.
+
+### Changes
+- Fixed attributes updates when the named user has invalid URL characters.
+- Fixed accessing UIApplication state on a background queue warning.
+- Initial channel creation will wait up to 10 seconds for device token registration.
+
+
 ## Version 14.2.1 December 30, 2020
-Patch release fixing sms: and tel: URL handling, and improving logging around push opt out status. Apps experiencing issues with sms or tel links in IAA or Message Center are encouraged to update. 
+Patch release fixing sms: and tel: URL handling, and improving logging around push opt out status. Apps experiencing issues with sms or tel links in IAA or Message Center are encouraged to update.
 
 ### Changes
 - Fixed handling of sms: and tel: URLs in the Native Bridge
-- Detailed trace logging of push opt-out status 
+- Detailed trace logging of push opt-out status
 
 ## Version 14.2.0 December 16, 2020
 Minor release adding support for frequency limits and advanced segmentation to In-App Automation, as well as new custom event templates.
@@ -25,11 +41,11 @@ Minor release adding support for frequency limits and advanced segmentation to I
 
 ## Version 14.1.3 - October 29, 2020
 Patch release optimizing tag group cache usage in In-App-Automation, and fixing
-an issue with direct opens for notification action buttons. Apps using named users 
+an issue with direct opens for notification action buttons. Apps using named users
 and IAA, or apps experiencing issues with direct open counts are encouraged to update.
 
 ### Changes
-- IAA tag group cache is now cleared when a named user is associated or disassociated 
+- IAA tag group cache is now cleared when a named user is associated or disassociated
 - Fixed bug affecting direct open counts when using notification action buttons
 
 ## Version 14.0.1 - October 21, 2020
