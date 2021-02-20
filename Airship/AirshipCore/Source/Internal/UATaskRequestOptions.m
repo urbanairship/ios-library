@@ -37,4 +37,32 @@
                                    extras:(nullable NSDictionary *)extras {
     return [[self alloc] initWithConflictPolicy:conflictPolicy requiresNetwork:requiresNetwork extras:extras];
 }
+
+- (BOOL)isEqualToTaskRequestOptions:(UATaskRequestOptions *)options {
+    return self.conflictPolicy == options.conflictPolicy
+    && self.isNetworkRequired == options.isNetworkRequired
+    && [self.extras isEqualToDictionary:options.extras];
+}
+
+- (BOOL)isEqual:(id)object {
+    if (self == object) {
+        return YES;
+    }
+
+    if (![object isKindOfClass:[UATaskRequestOptions class]]) {
+        return NO;
+    }
+
+    return [self isEqualToTaskRequestOptions:object];
+}
+
+- (NSUInteger)hash {
+    NSUInteger result = 1;
+    result = 31 * result + [self.extras hash];
+    result = 31 * result + self.conflictPolicy;
+    result = 31 * result + self.isNetworkRequired;
+
+    return result;
+}
+
 @end

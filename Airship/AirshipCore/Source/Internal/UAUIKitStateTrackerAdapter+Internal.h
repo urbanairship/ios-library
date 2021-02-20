@@ -3,6 +3,7 @@
 #import <UIKit/UIKit.h>
 
 #import "UAAppStateTrackerAdapter+Internal.h"
+#import "UADispatcher.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -12,9 +13,10 @@ NS_ASSUME_NONNULL_BEGIN
  * Creates an app state tracker. Used for testing.
  *
  * @param notificationCenter The notification center.
+ * @param dispatcher The main dispatcher.
  * @return The tracker.
  */
-+ (id<UAAppStateTrackerAdapter>)adapterWithNotificationCenter:(NSNotificationCenter *)notificationCenter;
++ (id<UAAppStateTrackerAdapter>)adapterWithNotificationCenter:(NSNotificationCenter *)notificationCenter dispatcher:(UADispatcher *)dispatcher;
 
 @end
 

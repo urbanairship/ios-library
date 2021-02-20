@@ -2,11 +2,13 @@
 
 #import "UABaseTest.h"
 #import "UAUIKitStateTrackerAdapter+Internal.h"
+#import "UATestDispatcher.h"
 
 @interface UAUIKitStateTrackerAdapterTest : UABaseTest
 @property(nonatomic, strong) UAUIKitStateTrackerAdapter *adapter;
 @property(nonatomic, strong) id mockApplication;
 @property(nonatomic, strong) id mockDelegate;
+@property(nonatomic, strong) UATestDispatcher *dispatcher;
 @end
 
 @implementation UAUIKitStateTrackerAdapterTest
@@ -15,13 +17,14 @@
     self.mockApplication = [self mockForClass:[UIApplication class]];
     [[[self.mockApplication stub] andReturn:self.mockApplication] sharedApplication];
     self.mockDelegate = [self mockForProtocol:@protocol(UAAppStateTrackerDelegate)];
+    self.dispatcher = [UATestDispatcher mainDispatcher];
 
     [self createAdapter];
 }
 
 
 - (void)createAdapter {
-    self.adapter = [UAUIKitStateTrackerAdapter adapterWithNotificationCenter:[NSNotificationCenter defaultCenter]];
+    self.adapter = [UAUIKitStateTrackerAdapter adapterWithNotificationCenter:[NSNotificationCenter defaultCenter] dispatcher:self.dispatcher];
     self.adapter.stateTrackerDelegate = self.mockDelegate;
 }
 

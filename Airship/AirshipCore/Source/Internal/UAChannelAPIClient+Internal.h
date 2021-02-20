@@ -73,10 +73,11 @@ typedef void (^UAChannelAPIClientUpdateCompletionHandler)(NSError * _Nullable er
  *
  * @param payload An instance of UAChannelRegistrationPayload.
  * @param completionHandler A UAChannelAPIClientCreateCompletionHandler.
+ * @return A disposable.
  *
  */
-- (void)createChannelWithPayload:(UAChannelRegistrationPayload *)payload
-               completionHandler:(UAChannelAPIClientCreateCompletionHandler)completionHandler;
+- (UADisposable *)createChannelWithPayload:(UAChannelRegistrationPayload *)payload
+                         completionHandler:(UAChannelAPIClientCreateCompletionHandler)completionHandler;
 
 /**
  * Update the channel.
@@ -84,11 +85,12 @@ typedef void (^UAChannelAPIClientUpdateCompletionHandler)(NSError * _Nullable er
  * @param channelID The channel identifier.
  * @param payload An instance of UAChannelRegistrationPayload.
  * @param completionHandler A UAChannelAPIClientUpdateCompletionHandler.
+ * @return A disposable.
  *
  */
-- (void)updateChannelWithID:(NSString *)channelID
-                withPayload:(UAChannelRegistrationPayload *)payload
-          completionHandler:(UAChannelAPIClientUpdateCompletionHandler)completionHandler;
+- (UADisposable *)updateChannelWithID:(NSString *)channelID
+                          withPayload:(UAChannelRegistrationPayload *)payload
+                    completionHandler:(UAChannelAPIClientUpdateCompletionHandler)completionHandler;
 
 @end
 

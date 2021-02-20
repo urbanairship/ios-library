@@ -360,12 +360,7 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
 #pragma mark -
 #pragma mark Channel Registrar Delegate
 
-
-
-// Called from main queue
-- (void)createChannelPayload:(void (^)(UAChannelRegistrationPayload *))completionHandler
-                  dispatcher:(nullable UADispatcher *)dispatcher {
-
+- (void)createChannelPayload:(void (^)(UAChannelRegistrationPayload *))completionHandler {
     UAChannelRegistrationPayload *payload = [[UAChannelRegistrationPayload alloc] init];
     
     NSLocale *currentLocale = [self.localeManager currentLocale];
@@ -392,9 +387,7 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
 
     id extendersCopy = [self.registrationExtenderBlocks mutableCopy];
     [UAChannel extendPayload:payload extenders:extendersCopy completionHandler:^(UAChannelRegistrationPayload *payload) {
-        [dispatcher dispatchAsync:^{
-            completionHandler(payload);
-        }];
+        completionHandler(payload);
     }];
 }
 
@@ -408,17 +401,21 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
         return;
     }
 
-    [self.notificationCenter postNotificationName:UAChannelUpdatedEvent
-                                           object:self
-                                         userInfo:@{UAChannelUpdatedEventChannelKey: channelID}];
+    [[UADispatcher mainDispatcher] dispatchAsyncIfNecessary:^{
+        [self.notificationCenter postNotificationName:UAChannelUpdatedEvent
+                                               object:self
+                                             userInfo:@{UAChannelUpdatedEventChannelKey: channelID}];
+    }];
 }
 
 - (void)registrationFailed {
     UA_LINFO(@"Channel registration failed.");
 
-    [self.notificationCenter postNotificationName:UAChannelRegistrationFailedEvent
-                                           object:self
-                                         userInfo:nil];
+    [[UADispatcher mainDispatcher] dispatchAsyncIfNecessary:^{
+        [self.notificationCenter postNotificationName:UAChannelRegistrationFailedEvent
+                                               object:self
+                                             userInfo:nil];
+    }];
 }
 
 - (void)channelCreated:(NSString *)channelID
@@ -432,10 +429,12 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
         [self.tagGroupsRegistrar setIdentifier:channelID clearPendingOnChange:NO];
         [self.attributeRegistrar setIdentifier:channelID clearPendingOnChange:NO];
 
-        [self.notificationCenter postNotificationName:UAChannelCreatedEvent
-                                               object:self
-                                             userInfo:@{UAChannelCreatedEventChannelKey: channelID,
-                                                        UAChannelCreatedEventExistingKey: @(existing)}];
+        [[UADispatcher mainDispatcher] dispatchAsyncIfNecessary:^{
+            [self.notificationCenter postNotificationName:UAChannelCreatedEvent
+                                                   object:self
+                                                 userInfo:@{UAChannelCreatedEventChannelKey: channelID,
+                                                            UAChannelCreatedEventExistingKey: @(existing)}];
+        }]; 
     } else {
         UA_LERR(@"Channel creation failed. Missing channelID: %@", channelID);
     }

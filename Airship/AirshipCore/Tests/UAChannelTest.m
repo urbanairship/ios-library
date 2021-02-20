@@ -467,7 +467,7 @@
     [self.channel createChannelPayload:^(UAChannelRegistrationPayload * _Nonnull payload) {
         XCTAssertEqualObjects(payload, expectedPayload);
         [createdPayload fulfill];
-    } dispatcher:[UATestDispatcher testDispatcher]];
+    }];
 
     [self waitForTestExpectations];
 }
@@ -498,7 +498,7 @@
     [self.channel createChannelPayload:^(UAChannelRegistrationPayload * _Nonnull payload) {
         XCTAssertEqualObjects(payload, expectedPayload);
         [createdPayload fulfill];
-    } dispatcher:[UATestDispatcher testDispatcher]];
+    }];
 
     [self waitForTestExpectations];
 }
@@ -528,7 +528,7 @@
     [self.channel createChannelPayload:^(UAChannelRegistrationPayload * _Nonnull payload) {
         XCTAssertEqualObjects(payload, expectedPayload);
         [createdPayload fulfill];
-    } dispatcher:[UATestDispatcher testDispatcher]];
+    }];
 
     [self waitForTestExpectations];
 }
@@ -551,7 +551,7 @@
     [self.channel createChannelPayload:^(UAChannelRegistrationPayload * _Nonnull payload) {
         XCTAssertEqualObjects(@"WHAT! OK!", payload.pushAddress);
         [createdPayload fulfill];
-    } dispatcher:[UATestDispatcher testDispatcher]];
+    }];
 
     [self waitForTestExpectations];
 }
@@ -578,7 +578,7 @@
     [self.channel createChannelPayload:^(UAChannelRegistrationPayload * _Nonnull payload) {
         XCTAssertEqualObjects(@"WHAT! OK!", payload.pushAddress);
         [createdPayload fulfill];
-    } dispatcher:[UATestDispatcher testDispatcher]];
+    }];
 
     [self waitForTestExpectations];
     XCTAssertTrue(isMainThread);

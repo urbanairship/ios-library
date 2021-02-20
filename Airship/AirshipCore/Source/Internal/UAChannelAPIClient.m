@@ -23,8 +23,8 @@ NSString * const UAChannelAPIClientErrorDomain = @"com.urbanairship.channel_api_
     return [[self alloc] initWithConfig:config session:session];
 }
 
-- (void)createChannelWithPayload:(UAChannelRegistrationPayload *)payload
-               completionHandler:(UAChannelAPIClientCreateCompletionHandler)completionHandler {
+- (UADisposable *)createChannelWithPayload:(UAChannelRegistrationPayload *)payload
+                         completionHandler:(UAChannelAPIClientCreateCompletionHandler)completionHandler {
 
     UA_LTRACE(@"Creating channel with: %@.", payload);
 
@@ -39,9 +39,7 @@ NSString * const UAChannelAPIClientErrorDomain = @"com.urbanairship.channel_api_
         [builder setValue:@"application/json" forHeader:@"Content-Type"];
     }];
 
-    [self performRequest:request retryWhere:^BOOL(NSData *data, NSHTTPURLResponse *response) {
-        return [response hasRetriableStatus];
-    } completionHandler:^(NSData *data, NSHTTPURLResponse *response, NSError *error) {
+    return [self.session performHTTPRequest:request completionHandler:^(NSData *data, NSHTTPURLResponse *response, NSError *error) {
         if (error) {
             return completionHandler(nil, NO, error);
         }
@@ -69,9 +67,9 @@ NSString * const UAChannelAPIClientErrorDomain = @"com.urbanairship.channel_api_
     }];
 }
 
-- (void)updateChannelWithID:(NSString *)channelID
-                withPayload:(UAChannelRegistrationPayload *)payload
-          completionHandler:(UAChannelAPIClientUpdateCompletionHandler)completionHandler {
+- (UADisposable *)updateChannelWithID:(NSString *)channelID
+                          withPayload:(UAChannelRegistrationPayload *)payload
+                    completionHandler:(UAChannelAPIClientUpdateCompletionHandler)completionHandler {
 
     UA_LTRACE(@"Updating channel with: %@.", payload);
     
@@ -87,9 +85,7 @@ NSString * const UAChannelAPIClientErrorDomain = @"com.urbanairship.channel_api_
         [builder setValue:@"application/json" forHeader:@"Content-Type"];
     }];
 
-    [self performRequest:request retryWhere:^BOOL(NSData *data, NSHTTPURLResponse *response) {
-        return [response hasRetriableStatus];
-    } completionHandler:^(NSData *data, NSHTTPURLResponse *response, NSError *error) {
+    return [self.session performHTTPRequest:request completionHandler:^(NSData *data, NSHTTPURLResponse *response, NSError *error) {
         if (error) {
             return completionHandler(error);
         }

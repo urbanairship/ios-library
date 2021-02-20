@@ -12,11 +12,16 @@
 #import "UATestDate.h"
 #import "UATestDispatcher.h"
 
+static NSString * const UAChannelRegistrationTaskID = @"UAChannelRegistrar.registration";
+static NSString * const UAChannelRegistrationActionKey = @"action";
+static NSString * const UAChannelRegistrationCreateAction = @"create";
+static NSString * const UAChannelRegistrationUpdateAction = @"update";
+
 @interface UAChannelRegistrarTest : UAAirshipBaseTest
 
 @property (nonatomic, strong) id mockedChannelClient;
 @property (nonatomic, strong) id mockedRegistrarDelegate;
-@property (nonatomic, strong) id mockedApplication;
+@property (nonatomic, strong) id mockTaskManager;
 
 @property (nonatomic, strong) NSError *error;
 
@@ -24,6 +29,8 @@
 
 @property (nonatomic, strong) UAChannelRegistrar *registrar;
 @property (nonatomic, strong) UATestDate *testDate;
+
+@property(nonatomic, copy) void (^launchHandler)(id<UATask>);
 
 @end
 
@@ -44,7 +51,7 @@ NSString * const ChannelCreateSuccessChannelID = @"newChannelID";
 
     self.mockedChannelClient = [self mockForClass:[UAChannelAPIClient class]];
     self.mockedRegistrarDelegate = [self mockForProtocol:@protocol(UAChannelRegistrarDelegate)];
-    self.mockedApplication = [self mockForClass:[UIApplication class]];
+    self.mockTaskManager = [self mockForClass:[UATaskManager class]];
     self.testDate = [[UATestDate alloc] init];
 
     self.payload = [[UAChannelRegistrationPayload alloc] init];
@@ -61,7 +68,14 @@ NSString * const ChannelCreateSuccessChannelID = @"newChannelID";
 
         copyOfPayload = [self.payload copy];
         completionHandler(copyOfPayload);
-    }] createChannelPayload:OCMOCK_ANY dispatcher:OCMOCK_ANY];
+    }] createChannelPayload:OCMOCK_ANY];
+
+    // Capture the task launcher
+    [[[self.mockTaskManager stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:4];
+        self.launchHandler =  (__bridge void (^)(id<UATask>))arg;
+    }] registerForTaskWithIDs:@[UAChannelRegistrationTaskID] dispatcher:OCMOCK_ANY launchHandler:OCMOCK_ANY];
 
     self.error = [NSError errorWithDomain:UAChannelAPIClientErrorDomain code:UAChannelAPIClientErrorUnsuccessfulStatus userInfo:@{}];
 
@@ -93,9 +107,10 @@ NSString * const ChannelCreateSuccessChannelID = @"newChannelID";
         completionHandler(nil, NO, self.error);
     };
 
-
     // Create the registrar
     self.registrar = [self createRegistrarWithChannelID:nil];
+
+    [self.dataStore removeObjectForKey:UAChannelRegistrarChannelIDKey];
 }
 
 /**
@@ -107,7 +122,7 @@ NSString * const ChannelCreateSuccessChannelID = @"newChannelID";
 
     // Verify
     [self verifyRegistrationSucceededDelegateCallback];
-    [self verifyBackgroundTaskWasStartedAndStopped];
+
     [self verifyChannelClientCreateChannelWithPayload];
 }
 
@@ -119,8 +134,11 @@ NSString * const ChannelCreateSuccessChannelID = @"newChannelID";
     // Expect the CRA to update for first registration
     [self expectChannelClientCreateChannelWithPayloadAndDo:channelCreateSuccessDoBlock withExisting:NO];
     [self expectRegistrationSucceededDelegateCallback];
-    [self expectBackgroundTaskToBeStartedAndStopped];
     [self expectChannelCreatedDelegateCallbackWithExisting:NO];
+
+    [[[self.mockTaskManager expect] andDo:^(NSInvocation *invocation) {
+        [self launchRegistrationTask:NO];
+    }] enqueueRequestWithID:UAChannelRegistrationTaskID options:[self requestOptions]];
 
     // Register
     [self.registrar registerForcefully:NO];
@@ -128,7 +146,6 @@ NSString * const ChannelCreateSuccessChannelID = @"newChannelID";
     // Verify
     [self waitForTestExpectations];
     [self verifyRegistrationSucceededDelegateCallback];
-    [self verifyBackgroundTaskWasStartedAndStopped];
     [self verifyChannelClientCreateChannelWithPayload];
 
     // Register - should skip due to everything being up to date.
@@ -137,7 +154,10 @@ NSString * const ChannelCreateSuccessChannelID = @"newChannelID";
     // Register forcefully again to verify registration is not blocked
     [self expectChannelClientUpdateChannelWithID:ChannelCreateSuccessChannelID andDo:channelUpdateSuccessDoBlock];
     [self expectRegistrationSucceededDelegateCallback];
-    [self expectBackgroundTaskToBeStartedAndStopped];
+
+    [[[self.mockTaskManager expect] andDo:^(NSInvocation *invocation) {
+        [self launchRegistrationTask:YES];
+    }] enqueueRequestWithID:UAChannelRegistrationTaskID options:[self forecefulRequestOptions]];
 
     // Register forcefully
     [self.registrar registerForcefully:YES];
@@ -145,8 +165,8 @@ NSString * const ChannelCreateSuccessChannelID = @"newChannelID";
     //Verify
     [self waitForTestExpectations];
     [self verifyRegistrationSucceededDelegateCallback];
-    [self verifyBackgroundTaskWasStartedAndStopped];
     [self verifyChannelClientUpdateChannelWithID];
+    [self.mockTaskManager verify];
 }
 
 
@@ -159,7 +179,10 @@ NSString * const ChannelCreateSuccessChannelID = @"newChannelID";
 
     // Other expectations
     [self expectRegistrationFailedDelegateCallback];
-    [self expectBackgroundTaskToBeStartedAndStopped];
+
+    [[[self.mockTaskManager expect] andDo:^(NSInvocation *invocation) {
+        [self launchRegistrationTask:NO];
+    }] enqueueRequestWithID:UAChannelRegistrationTaskID options:[self requestOptions]];
 
     // Register
     [self.registrar registerForcefully:NO];
@@ -167,8 +190,8 @@ NSString * const ChannelCreateSuccessChannelID = @"newChannelID";
     // Verify
     [self waitForTestExpectations];
     [self verifyRegistrationFailedDelegateCallback];
-    [self verifyBackgroundTaskWasStartedAndStopped];
     [self verifyChannelClientCreateChannelWithPayload];
+    [self.mockTaskManager verify];
 }
 
 /**
@@ -184,8 +207,11 @@ NSString * const ChannelCreateSuccessChannelID = @"newChannelID";
 
     // Other expectations
     [self expectRegistrationSucceededDelegateCallback];
-    [self expectBackgroundTaskToBeStartedAndStopped];
     [self expectChannelCreatedDelegateCallbackWithExisting:existing];
+
+    [[[self.mockTaskManager expect] andDo:^(NSInvocation *invocation) {
+        [self launchRegistrationTask:NO];
+    }] enqueueRequestWithID:UAChannelRegistrationTaskID options:[self requestOptions]];
 
     // Register
     [self.registrar registerForcefully:NO];
@@ -193,7 +219,6 @@ NSString * const ChannelCreateSuccessChannelID = @"newChannelID";
     // Verify
     [self waitForTestExpectations];
     [self verifyRegistrationSucceededDelegateCallback];
-    [self verifyBackgroundTaskWasStartedAndStopped];
     [self verifyChannelClientCreateChannelWithPayload];
 
     // Time travel forward to simulate 24 hours have passed
@@ -204,7 +229,10 @@ NSString * const ChannelCreateSuccessChannelID = @"newChannelID";
 
     // Other expectations
     [self expectRegistrationSucceededDelegateCallback];
-    [self expectBackgroundTaskToBeStartedAndStopped];
+
+    [[[self.mockTaskManager expect] andDo:^(NSInvocation *invocation) {
+        [self launchRegistrationTask:NO];
+    }] enqueueRequestWithID:UAChannelRegistrationTaskID options:[self requestOptions]];
 
     // Register
     [self.registrar registerForcefully:NO];
@@ -212,7 +240,6 @@ NSString * const ChannelCreateSuccessChannelID = @"newChannelID";
     // Verify
     [self waitForTestExpectations];
     [self verifyRegistrationSucceededDelegateCallback];
-    [self verifyBackgroundTaskWasStartedAndStopped];
     [self verifyChannelClientUpdateChannelWithID];
 
     // Try again with correct lastSuccessfulUpdateDate - should skip registration
@@ -224,6 +251,7 @@ NSString * const ChannelCreateSuccessChannelID = @"newChannelID";
 
     // Verify
     [self verifyRejectChannelClientUpdateChannel];
+    [self.mockTaskManager verify];
 }
 
 /**
@@ -238,8 +266,11 @@ NSString * const ChannelCreateSuccessChannelID = @"newChannelID";
 
     // Other expectations
     [self expectRegistrationSucceededDelegateCallback];
-    [self expectBackgroundTaskToBeStartedAndStopped];
     [self expectChannelCreatedDelegateCallbackWithExisting:existing];
+
+    [[[self.mockTaskManager expect] andDo:^(NSInvocation *invocation) {
+        [self launchRegistrationTask:NO];
+    }] enqueueRequestWithID:UAChannelRegistrationTaskID options:[self requestOptions]];
 
     // Register
     [self.registrar registerForcefully:NO];
@@ -247,7 +278,6 @@ NSString * const ChannelCreateSuccessChannelID = @"newChannelID";
     // Verify
     [self waitForTestExpectations];
     [self verifyRegistrationSucceededDelegateCallback];
-    [self verifyBackgroundTaskWasStartedAndStopped];
     [self verifyChannelClientCreateChannelWithPayload];
 
     // Expect the channel client to update the channel and call the updateChannel block when we call run it forcefully
@@ -255,7 +285,10 @@ NSString * const ChannelCreateSuccessChannelID = @"newChannelID";
 
     // Other expectations
     [self expectRegistrationSucceededDelegateCallback];
-    [self expectBackgroundTaskToBeStartedAndStopped];
+
+    [[[self.mockTaskManager expect] andDo:^(NSInvocation *invocation) {
+        [self launchRegistrationTask:YES];
+    }] enqueueRequestWithID:UAChannelRegistrationTaskID options:[self forecefulRequestOptions]];
 
     // Register forcefully
     [self.registrar registerForcefully:YES];
@@ -263,133 +296,21 @@ NSString * const ChannelCreateSuccessChannelID = @"newChannelID";
     //Verify
     [self waitForTestExpectations];
     [self verifyRegistrationSucceededDelegateCallback];
-    [self verifyBackgroundTaskWasStartedAndStopped];
     [self verifyChannelClientUpdateChannelWithID];
 
     // Reject a update call on another non-forceful update with the same payload
     [self rejectChannelClientUpdateChannel];
+
+    [[[self.mockTaskManager expect] andDo:^(NSInvocation *invocation) {
+        [self launchRegistrationTask:NO];
+    }] enqueueRequestWithID:UAChannelRegistrationTaskID options:[self requestOptions]];
 
     // Register one more time non-forcefully
     [self.registrar registerForcefully:NO];
 
     // Verify
     [self verifyRejectChannelClientUpdateChannel];
-}
-
-
-/**
- * Test that registering when a request is in progress
- * does not attempt to register again
- */
-- (void)testRegisterRequestInProgress {
-    BOOL existing = NO;
-    __block UAChannelAPIClientCreateCompletionHandler completionHandler;
-    [self startRegistrationButLeaveInProgressWithExisting:existing completionHandler:&completionHandler];
-
-    // Reject any registration requests
-    [[self.mockedChannelClient reject] updateChannelWithID:OCMOCK_ANY withPayload:OCMOCK_ANY completionHandler:OCMOCK_ANY];
-    [[self.mockedChannelClient reject] createChannelWithPayload:OCMOCK_ANY completionHandler:OCMOCK_ANY];
-
-    // Register
-    [self.registrar registerForcefully:NO];
-    [self.registrar registerForcefully:YES];
-
-    // Wait until original registration completes
-    [self expectBackgroundTaskToBeStopped];
-
-    // Finish original registration
-    completionHandler(ChannelCreateSuccessChannelID, existing, nil);
-
-    // Verify
-    [self waitForTestExpectations];
-    [self verifyBackgroundTaskWasStopped];
-}
-
-- (void)testUpdateRegistrationExistingBackgroundTask {
-    // Setup by starting, but not completing, registration
-    BOOL existing = NO;
-    __block UAChannelAPIClientCreateCompletionHandler completionHandler;
-    [self startRegistrationButLeaveInProgressWithExisting:existing completionHandler:&completionHandler];
-
-    [[self.mockedApplication reject] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
-
-    [self.registrar registerForcefully:NO];
-
-    XCTAssertNoThrow([self.mockedApplication verify], @"A background task should not be requested if one already exists");
-}
-
-/**
- * Tests create channel registration when background task is invalid.
- */
-- (void)testChannelCreationBackgroundInvalid {
-    // Prevent beginRegistrationBackgroundTask early return
-    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIBackgroundTaskInvalid)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
-
-    // Reject any registration requests
-    [[self.mockedChannelClient reject] updateChannelWithID:OCMOCK_ANY withPayload:OCMOCK_ANY completionHandler:OCMOCK_ANY];
-    [[self.mockedChannelClient reject] createChannelWithPayload:OCMOCK_ANY completionHandler:OCMOCK_ANY];
-
-    // Make a pending request
-    [self.registrar registerForcefully:NO];
-
-    XCTAssertNoThrow([self.mockedChannelClient verify], @"Channel client should get no requests");
-}
-
-/**
- * Tests update registration when background task is invalid.
- */
-- (void)testUpdateRegistrationInvalidBackgroundTask {
-    // Prevent beginRegistrationBackgroundTask early return
-    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIBackgroundTaskInvalid)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
-
-    // Reject any registration requests
-    [[self.mockedChannelClient reject] updateChannelWithID:OCMOCK_ANY withPayload:OCMOCK_ANY completionHandler:OCMOCK_ANY];
-    [[self.mockedChannelClient reject] createChannelWithPayload:OCMOCK_ANY completionHandler:OCMOCK_ANY];
-
-    // Simulate active channel
-    self.registrar = [self createRegistrarWithChannelID:MockChannelID];
-
-    // Make a pending request
-    [self.registrar registerForcefully:NO];
-
-    XCTAssertNoThrow([self.mockedChannelClient verify], @"Channel client should get no requests");
-}
-
-/**
- * Test cancelAllRequests
- */
-- (void)testCancelAllRequestsRegistrationNotInProgress {
-    // Setup by registering
-    [self registerWithExisting:NO];
-
-    // Expectations
-    [[self.mockedChannelClient expect] cancelAllRequests];
-
-    // Test
-    [self.registrar cancelAllRequests];
-
-    // Verify
-    XCTAssertNoThrow([self.mockedChannelClient verify], @"Channel client should cancel all of its requests.");
-    XCTAssertNotNil(self.registrar.lastSuccessfulPayload, @"Last success payload should not be cleared if a request is not in progress.");
-    XCTAssertNotEqualObjects(self.registrar.lastSuccessfulUpdateDate,[NSDate distantPast],@"Last success date should not be cleared if a request is not in progress.");
-}
-
-- (void)testCancelAllRequestsRegistrationInProgress {
-    // Setup by starting, but not completing, registration
-    BOOL existing = NO;
-    __block UAChannelAPIClientCreateCompletionHandler completionHandler;
-    [self startRegistrationButLeaveInProgressWithExisting:existing completionHandler:&completionHandler];
-
-    // Expectations
-    [[self.mockedChannelClient expect] cancelAllRequests];
-
-    // Test
-    [self.registrar cancelAllRequests];
-
-    // Verify
-    XCTAssertNoThrow([self.mockedChannelClient verify], @"Channel client should cancel all of its requests.");
-    XCTAssertNil(self.registrar.lastSuccessfulPayload, @"Last success payload should be cleared if a request is in progress.");
-    XCTAssertEqualObjects(self.registrar.lastSuccessfulUpdateDate,[NSDate distantPast],@"Last success date should be cleared if a request is in progress.");
+    [self.mockTaskManager verify];
 }
 
 /**
@@ -412,7 +333,10 @@ NSString * const ChannelCreateSuccessChannelID = @"newChannelID";
     // Other expectations
     [self expectRegistrationSucceededDelegateCallback];
     [self expectChannelCreatedDelegateCallbackWithExisting:existing];
-    [self expectBackgroundTaskToBeStartedAndStopped];
+
+    [[[self.mockTaskManager expect] andDo:^(NSInvocation *invocation) {
+        [self launchRegistrationTask:NO];
+    }] enqueueRequestWithID:UAChannelRegistrationTaskID options:[self requestOptions]];
 
     // Register
     [self.registrar registerForcefully:NO];
@@ -422,7 +346,7 @@ NSString * const ChannelCreateSuccessChannelID = @"newChannelID";
     [self verifyChannelClientUpdateChannelWithID];
     [self verifyChannelClientCreateChannelWithPayload];
     [self verifyRegistrationSucceededDelegateCallback];
-    [self verifyBackgroundTaskWasStartedAndStopped];
+    [self.mockTaskManager verify];
 }
 
 /**
@@ -436,8 +360,11 @@ NSString * const ChannelCreateSuccessChannelID = @"newChannelID";
 
     // Other expectations
     [self expectRegistrationSucceededDelegateCallback];
-    [self expectBackgroundTaskToBeStartedAndStopped];
     [self expectChannelCreatedDelegateCallbackWithExisting:existing];
+
+    [[[self.mockTaskManager expect] andDo:^(NSInvocation *invocation) {
+        [self launchRegistrationTask:NO];
+    }] enqueueRequestWithID:UAChannelRegistrationTaskID options:[self requestOptions]];
 
     // Register
     [self.registrar registerForcefully:NO];
@@ -445,8 +372,8 @@ NSString * const ChannelCreateSuccessChannelID = @"newChannelID";
     // Verify
     [self waitForTestExpectations];
     [self verifyRegistrationSucceededDelegateCallback];
-    [self verifyBackgroundTaskWasStartedAndStopped];
     [self verifyChannelClientCreateChannelWithPayload];
+    [self.mockTaskManager verify];
 }
 
 - (void)testExistingFlagYES {
@@ -457,8 +384,11 @@ NSString * const ChannelCreateSuccessChannelID = @"newChannelID";
 
     // Other expectations
     [self expectRegistrationSucceededDelegateCallback];
-    [self expectBackgroundTaskToBeStartedAndStopped];
     [self expectChannelCreatedDelegateCallbackWithExisting:existing];
+
+    [[[self.mockTaskManager expect] andDo:^(NSInvocation *invocation) {
+        [self launchRegistrationTask:NO];
+    }] enqueueRequestWithID:UAChannelRegistrationTaskID options:[self requestOptions]];
 
     // Register
     [self.registrar registerForcefully:NO];
@@ -466,33 +396,57 @@ NSString * const ChannelCreateSuccessChannelID = @"newChannelID";
     // Verify
     [self waitForTestExpectations];
     [self verifyRegistrationSucceededDelegateCallback];
-    [self verifyBackgroundTaskWasStartedAndStopped];
     [self verifyChannelClientCreateChannelWithPayload];
+    [self.mockTaskManager verify];
 }
 
 /**
  * Test channel ID is returned when channel ID exists.
  */
 - (void)testChannelID {
-    [self.dataStore setValue:@"channel ID" forKey:@"UAChannelID"];
+    [self.dataStore setValue:MockChannelID forKey:UAChannelRegistrarChannelIDKey];
     
-    XCTAssertEqualObjects(self.registrar.channelID, @"channel ID", @"Should return channel ID");
+    XCTAssertEqualObjects(self.registrar.channelID, MockChannelID, @"Should return channel ID");
 }
 
 /**
  * Test channelID returns nil when channel ID does not exist.
  */
 - (void)testChannelIDNoChannel {
-    [self.dataStore removeObjectForKey:@"UAChannelID"];
+    [self.dataStore removeObjectForKey:UAChannelRegistrarChannelIDKey];
     
     XCTAssertNil(self.registrar.channelID, @"Channel ID should be nil");
 }
 
-
-
 #pragma mark -
 #pragma mark Utility methods
 
+- (UATaskRequestOptions *)requestOptions {
+    return [UATaskRequestOptions optionsWithConflictPolicy:UATaskConflictPolicyKeep
+                                           requiresNetwork:YES
+                                                    extras:@{@"forcefully" : @(NO)}];
+}
+
+- (UATaskRequestOptions *)forecefulRequestOptions {
+    return [UATaskRequestOptions optionsWithConflictPolicy:UATaskConflictPolicyReplace
+                                           requiresNetwork:YES
+                                                    extras:@{@"forcefully" : @(YES)}];
+}
+
+- (id<UATask>)registrationTask:(BOOL)forceful {
+    id mockTask = [self mockForProtocol:@protocol(UATask)];
+
+    UATaskRequestOptions *options = forceful ? [self forecefulRequestOptions] : [self requestOptions];
+
+    [[[mockTask stub] andReturn:UAChannelRegistrationTaskID] taskID];
+    [[[mockTask stub] andReturn:options] requestOptions];
+
+    return mockTask;
+}
+
+- (void)launchRegistrationTask:(BOOL)forceful {
+    self.launchHandler([self registrationTask:forceful]);
+}
 /**
  * Create a new registrar. Usually called by setup(), but also used in some tests when channelID needs to be set
  */
@@ -503,7 +457,7 @@ NSString * const ChannelCreateSuccessChannelID = @"newChannelID";
                                                                   channelAPIClient:self.mockedChannelClient
                                                                               date:self.testDate
                                                                         dispatcher:[UATestDispatcher testDispatcher]
-                                                                       application:self.mockedApplication];
+                                                                       taskManager:self.mockTaskManager];
     registrar.delegate = self.mockedRegistrarDelegate;
     
     return registrar;
@@ -518,43 +472,18 @@ NSString * const ChannelCreateSuccessChannelID = @"newChannelID";
 
     // Other expectations
     [self expectRegistrationSucceededDelegateCallback];
-    [self expectBackgroundTaskToBeStartedAndStopped];
+
+    UATaskRequestOptions *options = existing ? [self forecefulRequestOptions] : [self requestOptions];
+
+    [[[self.mockTaskManager expect] andDo:^(NSInvocation *invocation) {
+        [self launchRegistrationTask:NO];
+    }] enqueueRequestWithID:UAChannelRegistrationTaskID options:options];
 
     // Register
     [self.registrar registerForcefully:existing];
 
     // Verify
     [self waitForTestExpectations];
-}
-
-/**
- * Start registration but leave it in progress
- */
-- (void)startRegistrationButLeaveInProgressWithExisting:(BOOL)existing
-                                           completionHandler:(UAChannelAPIClientCreateCompletionHandler *)completionHandler {
-
-    *completionHandler = ^(NSString *channelID, BOOL existing, NSError *error) {
-        XCTFail(@"This block should be overwritten during the test");
-    };
-    void (^channelCreateSuccessDoDelayedBlock)(NSInvocation *, BOOL) = ^(NSInvocation *invocation, BOOL existing) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:3];
-        *completionHandler = (__bridge UAChannelAPIClientCreateCompletionHandler)arg;
-    };
-
-    // Expect the channel client to be asked to create the channel. Don't call back, to keep the request pending.
-    [self expectChannelClientCreateChannelWithPayloadAndDo:channelCreateSuccessDoDelayedBlock withExisting:existing];
-
-    [self expectBackgroundTaskToBeStarted];
-
-    // Register
-    [self.registrar registerForcefully:NO];
-
-    // Verify
-    [self waitForTestExpectations];
-    [self verifyChannelClientCreateChannelWithPayload];
-    [self verifyBackgroundTaskWasStarted];
-    [self verifyChannelClientCreateChannelWithPayload];
 }
 
 - (void)expectRegistrationSucceededDelegateCallback {
@@ -592,39 +521,6 @@ NSString * const ChannelCreateSuccessChannelID = @"newChannelID";
 - (void)rejectChannelCreatedDelegateCallback {
     [[self.mockedRegistrarDelegate reject] channelCreated:OCMOCK_ANY existing:YES];
     [[self.mockedRegistrarDelegate reject] channelCreated:OCMOCK_ANY existing:NO];
-}
-
-- (void)expectBackgroundTaskToBeStartedAndStopped {
-    [self expectBackgroundTaskToBeStarted];
-    [self expectBackgroundTaskToBeStopped];
-}
-
-- (void)verifyBackgroundTaskWasStartedAndStopped {
-    XCTAssertNoThrow([self.mockedApplication verify], @"begin and end background task should be called.");
-}
-
-NSUInteger backgroundTaskID = 30;
-- (void)expectBackgroundTaskToBeStarted {
-    XCTestExpectation *beginExpectation = [self expectationWithDescription:@"Begin Background Task expected to be called"];
-    [[[self.mockedApplication expect] andDo:^(NSInvocation *invocation) {
-        [beginExpectation fulfill];
-        [invocation setReturnValue:(void *)&backgroundTaskID];
-    }] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
-}
-
-- (void)verifyBackgroundTaskWasStarted {
-    XCTAssertNoThrow([self.mockedApplication verify], @"begin background task should be called.");
-}
-
-- (void)expectBackgroundTaskToBeStopped {
-    XCTestExpectation *endExpectation = [self expectationWithDescription:@"End Background Task expected to be called"];
-    [[[self.mockedApplication expect] andDo:^(NSInvocation *invocation) {
-        [endExpectation fulfill];
-    }] endBackgroundTask:backgroundTaskID];
-}
-
-- (void)verifyBackgroundTaskWasStopped {
-    XCTAssertNoThrow([self.mockedApplication verify], @"end background task should be called.");
 }
 
 - (void)expectChannelClientCreateChannelWithPayloadAndDo:(void (^)(NSInvocation *, BOOL))doBlock withExisting:(BOOL)existing {
