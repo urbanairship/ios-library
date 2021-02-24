@@ -76,6 +76,7 @@
 
 - (void)tearDown {
     [self.mockTimeZoneClass stopMocking];
+    [self.mockInitEvent stopMocking];
     [super tearDown];
 }
 
