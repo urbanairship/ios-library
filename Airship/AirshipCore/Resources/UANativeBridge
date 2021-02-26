@@ -23,6 +23,11 @@ if (typeof UAirship === 'undefined') {
       invoke('uairship://dismiss/' + encodedResolution)
     }
     
+    urbanAirship.setNamedUser = function(namedUser) {
+      var encodedNamedUser = encodeURIComponent(namedUser)
+      invoke('uairship://named_user?id=' + encodedNamedUser)
+    }
+    
     urbanAirship.editTags = function() {
       return TagEditor()
     }

@@ -11,9 +11,11 @@
 #import "UAJavaScriptCommand.h"
 #import "NSString+UAURLEncoding.h"
 #import "UANativeBridgeActionHandler+Internal.h"
+#import "UANamedUser.h"
 
 NSString *const UANativeBridgeUAirshipScheme = @"uairship";
 NSString *const UANativeBridgeCloseCommand = @"close";
+NSString *const UANativeBridgeSetNamedUserCommand = @"named_user";
 NSString *const UANativeBridgeMultiCommand = @"multi";
 
 @interface UANativeBridge()
@@ -260,6 +262,18 @@ NSString *const UANativeBridgeMultiCommand = @"multi";
             }
         }];
         return;
+    }
+    
+    // Set named user command
+    if ([command.name isEqualToString:UANativeBridgeSetNamedUserCommand]) {
+        NSArray *idArgs = command.options[@"id"];
+        NSString *argument = idArgs.firstObject;
+    
+        if (!argument || [argument isKindOfClass:[NSNull class]]) {
+            UA_LERR(@"Malformed Named User command: %@", argument);
+        } else {
+            [UAirship namedUser].identifier = argument;
+        }
     }
 
     // Multi command
