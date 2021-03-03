@@ -21,73 +21,31 @@
 
     [super tearDown];
 }
-- (void)testDefaultValues {
-
-    XCTestExpectation *testExpectation = [self expectationWithDescription:@"test finished"];
-
-    [self.inboxStore syncMessagesWithResponse:@[[self createMessageDictionaryWithMessageID:@"messageID"]]
-                                                completionHandler:^(BOOL success) {
-                                                    XCTAssertTrue(success);
-                                                }];
-
-    [self.inboxStore fetchMessagesWithPredicate:nil
-                              completionHandler:^(NSArray<UAInboxMessageData *> *messages) {
-        XCTAssertEqual(1, messages.count);
-        XCTAssertTrue(messages[0].unreadClient);
-        XCTAssertFalse(messages[0].deletedClient);
-
-        [testExpectation fulfill];
-    }];
-
-     [self waitForTestExpectations];
-}
 
 - (void)testSyncMessages {
+    NSArray *messagesDict = @[[self createMessageDictionaryWithMessageID:@"message-0"],
+                              [self createMessageDictionaryWithMessageID:@"message-1"],
+                              [self createMessageDictionaryWithMessageID:@"message-2"]];
 
 
-    NSArray *messages = @[ [self createMessageDictionaryWithMessageID:@"message-0"],
-                           [self createMessageDictionaryWithMessageID:@"message-1"],
-                           [self createMessageDictionaryWithMessageID:@"message-2"]];
+    BOOL success = [self.inboxStore syncMessagesWithResponse:messagesDict];
+    XCTAssertTrue(success);
 
-
-    [self.inboxStore syncMessagesWithResponse:messages
-                            completionHandler:^(BOOL success) {
-                                XCTAssertTrue(success);
-                            }];
-
-
-    // Verify we have 3 messages
-    XCTestExpectation *firstFetch = [self expectationWithDescription:@"fetched messages"];
-    [self.inboxStore fetchMessagesWithPredicate:nil
-                              completionHandler:^(NSArray<UAInboxMessageData *> *messages) {
-                                  XCTAssertEqual(3, messages.count);
-                                  [firstFetch fulfill];
-                              }];
+    NSArray<UAInboxMessage *> *messages = [self.inboxStore fetchMessagesWithPredicate:nil];
+    XCTAssertEqual(3, messages.count);
 
 
     // Modify one of the messages
-    NSMutableDictionary *message = [messages[1] mutableCopy];
+    NSMutableDictionary *message = [messagesDict[1] mutableCopy];
     message[@"title"] = @"differentTitle";
 
-
-    // Sync only the modified message
-    [self.inboxStore syncMessagesWithResponse:@[message]
-                            completionHandler:^(BOOL success) {
-                                XCTAssertTrue(success);
-                            }];
+    success = [self.inboxStore syncMessagesWithResponse:@[message]];
+    XCTAssertTrue(success);
 
     // Verify we only have the modified message with the updated title
-    XCTestExpectation *secondFetch = [self expectationWithDescription:@"fetched messages"];
-    [self.inboxStore fetchMessagesWithPredicate:nil
-                              completionHandler:^(NSArray<UAInboxMessageData *> *messages) {
-                                  XCTAssertEqual(1, messages.count);
-                                  XCTAssertEqualObjects(@"differentTitle", messages[0].title);
-                                  [secondFetch fulfill];
-                              }];
-
-    [self waitForTestExpectations];
-
-
+    messages = [self.inboxStore fetchMessagesWithPredicate:nil];
+    XCTAssertEqual(1, messages.count);
+    XCTAssertEqualObjects(@"differentTitle", messages[0].title);
 }
 
 - (NSDictionary *)createMessageDictionaryWithMessageID:(NSString *)messageID {

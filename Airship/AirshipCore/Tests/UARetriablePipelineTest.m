@@ -77,10 +77,6 @@
 
     XCTAssertEqual(1, firstRunCount);
     XCTAssertEqual(3, secondRunCount);
-
-    if ([self.testDispatcher.scheduledBlocks count]) {
-        NSLog(@"WHAT: %@", self.testDispatcher.scheduledBlocks);
-    }
 }
 
 - (void)testCancel {

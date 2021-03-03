@@ -2,6 +2,7 @@
 
 #import <Foundation/Foundation.h>
 #import "UAInboxMessageData+Internal.h"
+#import "UAInboxMessage+Internal.h"
 
 #import "UAAirshipMessageCenterCoreImport.h"
 
@@ -10,6 +11,7 @@
 #define kUAInboxDBEntityName @"UAInboxMessage"
 
 @class UARuntimeConfig;
+@class UAInboxMessageList;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -18,6 +20,8 @@ NS_ASSUME_NONNULL_BEGIN
  * to add, delete, fetch and update messages in the database.
  */
 @interface UAInboxStore : NSObject
+
+@property(nonatomic, weak) UAInboxMessageList *messageList;
 
 
 ///---------------------------------------------------------------------------------------
@@ -43,13 +47,43 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)storeWithName:(NSString *)storeName;
 
 /**
- * Fetches messages with a specified predicate on the background context.
+ * Fetches messages matching the provided predicate.
  *
- * @param predicate An NSPredicate querying a subset of messages.
- * @param completionHandler An optional completion handler called when the fetch is complete.
+ * @param predicate The predicate.
+ * @return The matching messages.
  */
-- (void)fetchMessagesWithPredicate:(nullable NSPredicate *)predicate
-                 completionHandler:(void(^)(NSArray<UAInboxMessageData *>*messages))completionHandler;
+- (NSArray<UAInboxMessage *> *)fetchMessagesWithPredicate:(nullable NSPredicate *)predicate;
+
+/**
+ * Fetches messages matching the provided predicate.
+ *
+ * @param predicate The predicate.
+ * @param completionHandler The completion handler with matching messages.
+ */
+- (void)fetchMessagesWithPredicate:(nullable NSPredicate *)predicate completionHandler:(void (^)(NSArray<UAInboxMessage *> *))completionHandler;
+
+/**
+ * Marks messages locally read by ID.
+ *
+ * @param messageIDs The message IDs.
+ * @param completionHandler The completion handler.
+ */
+- (void)markMessagesLocallyReadWithIDs:(NSArray<NSString *> *)messageIDs completionHandler:(void (^)(void))completionHandler;
+
+/**
+ * Marks messages locally deleted by ID.
+ *
+ * @param messageIDs The message IDs.
+ * @param completionHandler The completion handler.
+ */
+- (void)markMessagesLocallyDeletedWithIDs:(NSArray<NSString *> *)messageIDs completionHandler:(void (^)(void))completionHandler;
+
+/**
+ * Marks messages globally read by ID.
+ *
+ * @param messageIDs The message IDs.
+ */
+- (void)markMessagesGloballyReadWithIDs:(NSArray<NSString *> *)messageIDs;
 
 /**
  * Deletes a list of message IDs.
@@ -62,12 +96,21 @@ NS_ASSUME_NONNULL_BEGIN
  * Updates the inbox store with the array of messages.
  *
  * @param messages An array of messages.
- * @param completionHandler The completion handler with the sync result.
- *
+ * @return The success status.
  */
-- (void)syncMessagesWithResponse:(NSArray *)messages
-               completionHandler:(void(^)(BOOL))completionHandler;
+- (BOOL)syncMessagesWithResponse:(NSArray *)messages;
 
+/**
+ * Fetches locally read message reporting data.
+ * @return A dictionary of message IDs to message reporting dictionaries
+ */
+- (NSDictionary<NSString *, NSDictionary *> *)locallyReadMessageReporting;
+
+/**
+ * Fetches locally deleted message reporting data.
+ * @return A dictionary of message IDs to message reporting dictionaries
+ */
+- (NSDictionary<NSString *, NSDictionary *> *)locallyDeletedMessageReporting;
 
 /**
  * Waits for the store to become idle and then returns. Used by Unit Tests.

@@ -31,4 +31,5 @@
 #import "NSJSONSerialization+UAAdditions.h"
 #import "UAAction.h"
 #import "UATaskManager.h"
+#import "UASemaphore.h"
 #endif

@@ -61,7 +61,7 @@ extern NSString * const UARequestSessionErrorDomain;
  * Performs an HTTP request.
  * @param request The request.
  * @param completionHandler The completion handler.
- * @returns A disposable to cancel the request. The completion handler will still be called with a request error if cancelled.
+ * @return A disposable to cancel the request. The completion handler will still be called with a request error if cancelled.
  */
 - (UADisposable *)performHTTPRequest:(UARequest *)request
                    completionHandler:(UAHTTPRequestCompletionHandler)completionHandler;

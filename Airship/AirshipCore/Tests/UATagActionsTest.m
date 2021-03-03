@@ -74,7 +74,6 @@
 
     for (NSInteger i = 0; i < 6; i++) {
         args.situation = situations[i];
-        NSLog(@"situation!: %ld", (long)args.situation);
         XCTAssertTrue([action acceptsArguments:args], @"any non-background situation should be valid");
     }
 
@@ -98,7 +97,6 @@
     XCTAssertTrue([action acceptsArguments:self.dictArgs], @"dictionaries should be accepted");
     XCTAssertFalse([action acceptsArguments:self.dictIntValuesArgs], @"dictionaries with non-array values should not be accepted");
     XCTAssertFalse([action acceptsArguments:self.dictIntKeysArgs], @"dictionaries with non-string keys should not be accepted");
-
 }
 
 /**
