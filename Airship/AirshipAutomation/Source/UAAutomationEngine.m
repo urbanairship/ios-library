@@ -56,6 +56,8 @@ static NSString * const UAAutomationEngineTaskExtrasIdentifier = @"identifier";
 
 @property (nonatomic, strong) UATaskManager *taskManager;
 
+@property (nonatomic, strong) UANetworkMonitor *networkMonitor;
+
 @property (nonatomic, assign) BOOL isStarted;
 @property (nonnull, strong) NSMutableDictionary *stateConditions;
 @property (atomic, assign) BOOL paused;
@@ -73,6 +75,7 @@ static NSString * const UAAutomationEngineTaskExtrasIdentifier = @"identifier";
 - (instancetype)initWithAutomationStore:(UAAutomationStore *)automationStore
                         appStateTracker:(UAAppStateTracker *)appStateTracker
                             taskManager:(UATaskManager *)taskManager
+                         networkMonitor:(UANetworkMonitor *)networkMonitor
                      notificationCenter:(NSNotificationCenter *)notificationCenter
                              dispatcher:(UADispatcher *)dispatcher
                             application:(UIApplication *)application
@@ -88,6 +91,7 @@ static NSString * const UAAutomationEngineTaskExtrasIdentifier = @"identifier";
         self.application = application;
         self.date = date;
         self.stateConditions = [NSMutableDictionary dictionary];
+        self.networkMonitor = networkMonitor;
         self.paused = NO;
 
         UA_WEAKIFY(self)
@@ -104,6 +108,17 @@ static NSString * const UAAutomationEngineTaskExtrasIdentifier = @"identifier";
                 [task taskCompleted];
             }
         }];
+
+        if (@available(ios 12.0, tvOS 12.0, *)) {
+            __block BOOL started = NO;
+            [self.networkMonitor connectionUpdates:^(BOOL connected) {
+                UA_STRONGIFY(self)
+                if (connected && started) {
+                    [self scheduleConditionsChanged];
+                }
+                started = YES;
+            }];
+        }
     }
 
     return self;
@@ -112,6 +127,7 @@ static NSString * const UAAutomationEngineTaskExtrasIdentifier = @"identifier";
 + (instancetype)automationEngineWithAutomationStore:(UAAutomationStore *)automationStore
                                     appStateTracker:(UAAppStateTracker *)appStateTracker
                                         taskManager:(UATaskManager *)taskManager
+                                     networkMonitor:(UANetworkMonitor *)networkMonitor
                                  notificationCenter:(NSNotificationCenter *)notificationCenter
                                          dispatcher:(UADispatcher *)dispatcher
                                         application:(UIApplication *)application
@@ -120,6 +136,7 @@ static NSString * const UAAutomationEngineTaskExtrasIdentifier = @"identifier";
     return [[UAAutomationEngine alloc] initWithAutomationStore:automationStore
                                                appStateTracker:appStateTracker
                                                    taskManager:taskManager
+                                                networkMonitor:networkMonitor
                                             notificationCenter:notificationCenter
                                                     dispatcher:dispatcher
                                                    application:application
@@ -130,6 +147,7 @@ static NSString * const UAAutomationEngineTaskExtrasIdentifier = @"identifier";
     return [[UAAutomationEngine alloc] initWithAutomationStore:automationStore
                                                appStateTracker:[UAAppStateTracker shared]
                                                    taskManager:[UATaskManager shared]
+                                                networkMonitor:[[UANetworkMonitor alloc] init]
                                             notificationCenter:[NSNotificationCenter defaultCenter]
                                                     dispatcher:[UADispatcher mainDispatcher]
                                                    application:[UIApplication sharedApplication]

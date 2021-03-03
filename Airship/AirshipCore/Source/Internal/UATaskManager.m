@@ -6,7 +6,7 @@
 #import "UAGlobal.h"
 #import "UADispatcher.h"
 #import "UAAppStateTracker.h"
-#import "UANetworkMonitor+Internal.h"
+#import "UANetworkMonitor.h"
 #import "UATask.h"
 #import "UAExpirableTask+Internal.h"
 #import "UATaskLauncher+Internal.h"

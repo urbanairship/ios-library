@@ -7,6 +7,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Network monitor.
+ * @note For internal use only. :nodoc:
  */
 @interface UANetworkMonitor : NSObject
 

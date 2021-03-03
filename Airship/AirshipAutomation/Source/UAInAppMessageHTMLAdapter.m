@@ -49,13 +49,7 @@ NSString *const UAHTMLStyleFileName = @"UAInAppMessageHTMLStyle";
         return completionHandler(UAInAppMessagePrepareResultCancel);
     }
 
-    if (![self isNetworkConnected]) {
-        completionHandler(UAInAppMessagePrepareResultRetry);
-        return;
-    }
-
-    self.htmlViewController = [UAInAppMessageHTMLViewController htmlControllerWithDisplayContent:content
-                                                                                           style:self.style];
+    self.htmlViewController = [UAInAppMessageHTMLViewController htmlControllerWithDisplayContent:content style:self.style];
     completionHandler(UAInAppMessagePrepareResultSuccess);
 }
 

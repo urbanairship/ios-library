@@ -296,8 +296,8 @@ NSString *const UAInAppMessageDisplayCoordinatorIsReadyKey = @"isReady";
             case UARetriableResultSuccess:
                 return;
             case UARetriableResultRetry:
-                prepareResult = UAAutomationSchedulePrepareResultInvalidate;
-                break;
+                // Allow the pipeline to retry with backoff
+                return;
             case UARetriableResultCancel:
                 prepareResult = UAAutomationSchedulePrepareResultCancel;
                 break;
@@ -323,8 +323,8 @@ NSString *const UAInAppMessageDisplayCoordinatorIsReadyKey = @"isReady";
                                                                          displayCoordinator:displayCoordinator];
                 break;
             case UARetriableResultRetry:
-                prepareResult = UAAutomationSchedulePrepareResultInvalidate;
-                break;
+                // Allow the pipeline to retry with backoff
+                return;
             case UARetriableResultCancel:
                 prepareResult = UAAutomationSchedulePrepareResultCancel;
                 [self.assetManager onDisplayFinished:message scheduleID:scheduleID];

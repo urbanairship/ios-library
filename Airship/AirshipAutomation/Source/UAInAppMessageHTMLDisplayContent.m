@@ -14,6 +14,7 @@ NSString *const UAInAppMessageURLKey = @"url";
     if (self) {
         self.backgroundColor = [UIColor whiteColor];
         self.dismissButtonColor = [UIColor blackColor];
+        self.requiresConnectivity = YES;
     }
 
     return self;

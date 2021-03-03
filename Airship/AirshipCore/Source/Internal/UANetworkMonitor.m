@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-#import "UANetworkMonitor+Internal.h"
+#import "UANetworkMonitor.h"
 #import "Network/Network.h"
 #import "UADisposable.h"
 #import "UAGlobal.h"
