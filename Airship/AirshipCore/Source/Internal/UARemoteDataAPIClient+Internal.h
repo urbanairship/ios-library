@@ -9,6 +9,9 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+typedef void (^UARemoteDataAPIClientCompletionHandler)(NSArray<NSDictionary *> * _Nullable remoteData, NSString * _Nullable lastModified, NSError * _Nullable error);
+
+
 /**
  * Represents possible remote data API client errors.
  */
@@ -29,7 +32,7 @@ typedef NS_ENUM(NSInteger, UARemoteDataAPIClientError) {
  */
 extern NSString * const UARemoteDataAPIClientErrorDomain;
 
-@interface UARemoteDataAPIClient : UAAPIClient
+@interface UARemoteDataAPIClient : NSObject
 
 ///---------------------------------------------------------------------------------------
 /// @name Internal Methods
@@ -39,42 +42,36 @@ extern NSString * const UARemoteDataAPIClientErrorDomain;
  * Create the remote data API client.
  *
  * @param config The Airship config.
- * @param dataStore A UAPreferenceDataStore to store persistent preferences
- * @param localeManager A UALocaleManager.
  * @return The remote data API client instance.
  */
-+ (UARemoteDataAPIClient *)clientWithConfig:(UARuntimeConfig *)config dataStore:(UAPreferenceDataStore *)dataStore localeManager:(UALocaleManager *)localeManager;
++ (UARemoteDataAPIClient *)clientWithConfig:(UARuntimeConfig *)config;
 
 
 /**
  * Create the remote data API client. Used for testing.
  *
  * @param config The Airship config.
- * @param dataStore A UAPreferenceDataStore to store persistent preferences
  * @param session The UARequestSession session.
- * @param localeManager A UALocaleManager.
  * @return The remote data API client instance.
  */
 + (UARemoteDataAPIClient *)clientWithConfig:(UARuntimeConfig *)config
-                                  dataStore:(UAPreferenceDataStore *)dataStore
-                                    session:(UARequestSession *)session
-                              localeManager:(UALocaleManager *)localeManager;
+                                    session:(UARequestSession *)session;
 
 /**
  * Refresh the remote data by calling the remote data cloud API.
  *
+ * @param locale The current locale.
+ * @param lastModified Optional last modified timestamp.
  * @param completionHandler The completion handler.
  * @return A UADisposable token which can be used to cancel completion handler execution.
  *
  * Note: one block and only one block will be called.
  */
-- (UADisposable *)fetchRemoteData:(void (^)(NSArray<NSDictionary *> * _Nullable remoteData, NSError * _Nullable error))completionHandler;
-
-/**
- * Clears the last modified time for message list requests.
- */
-- (void)clearLastModifiedTime;
+- (UADisposable *)fetchRemoteDataWithLocale:(NSLocale *)locale
+                               lastModified:(nullable NSString *)lastModified
+                          completionHandler:(UARemoteDataAPIClientCompletionHandler)completionHandler;
 
 @end
 
 NS_ASSUME_NONNULL_END
+

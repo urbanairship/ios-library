@@ -13,6 +13,7 @@
 #import "UARemoteDataProvider.h"
 #import "UAAppStateTracker.h"
 #import "UADate.h"
+#import "UATaskManager.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -21,13 +22,6 @@ NS_ASSUME_NONNULL_BEGIN
 ///---------------------------------------------------------------------------------------
 /// @name Internal Properties & Methods
 ///---------------------------------------------------------------------------------------
-
-/**
- * Refresh the remote data from the cloud, with completion handler
- *
- * @param completionHandler Optional completion handler called when refresh is complete, with result.
- */
-- (void)refreshWithCompletionHandler:(nullable void(^)(BOOL success))completionHandler;
 
 /**
  * Create the remote data manager.
@@ -41,36 +35,11 @@ NS_ASSUME_NONNULL_BEGIN
                                   dataStore:(UAPreferenceDataStore *)dataStore
                               localeManager:(UALocaleManager *)localeManager;
 
-///---------------------------------------------------------------------------------------
-/// @name Test Properties & Internal Methods
-///---------------------------------------------------------------------------------------
-
 /**
  * The minimum amount of time in seconds between remote data refreshes. Increase this
  * value to reduce the frequency of refreshes.
  */
 @property (nonatomic, assign) NSUInteger remoteDataRefreshInterval;
-
-/**
- * The metadata used to fetch the most recent payload.
- */
-@property (nullable, nonatomic, copy) NSDictionary *lastMetadata;
-
-/**
- * The last modified date.
- *
- * Exposed for testing purposes.
- */
-@property (nullable, nonatomic, strong) NSDate *lastModified;
-
-/**
- * Refresh the remote data from the cloud only if the time since the last refresh
- * is greater than the minimum foreground refresh interval or last stored metadata
- * doesn't match current metadata.
- *
- * @param completionHandler Optional completion handler called when refresh is complete, with result.
- */
-- (void)foregroundRefreshWithCompletionHandler:(nullable void(^)(BOOL success))completionHandler;
 
 /**
  * Create the remote data manager. Used for testing.
@@ -84,6 +53,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param dispatcher The dispatcher.
  * @param date The date.
  * @param localeManager A UALocaleManager.
+ * @param taskManager The task manager.
  * @return The remote data manager instance.
  */
 + (instancetype)remoteDataManagerWithConfig:(UARuntimeConfig *)config
@@ -94,15 +64,8 @@ NS_ASSUME_NONNULL_BEGIN
                             appStateTracker:(UAAppStateTracker *)appStateTracker
                                  dispatcher:(UADispatcher *)dispatcher
                                        date:(UADate *)date
-                              localeManager:(UALocaleManager *)localeManager;
-
-/**
- * Creates the client metadata used to fetch the request.
- *
- * @param locale The locale with which to create the metadata.
- * @return The metadata dictionary.
- */
--(NSDictionary *)createMetadata:(NSLocale *)locale;
+                              localeManager:(UALocaleManager *)localeManager
+                                taskManager:(UATaskManager *)taskManager;
 
 @end
 

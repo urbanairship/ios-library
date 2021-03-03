@@ -57,11 +57,6 @@ NS_ASSUME_NONNULL_BEGIN
                    completionHandler:(void(^)(NSArray<UARemoteDataStorePayload *>*remoteDataPayloads))completionHandler;
 
 /**
- * Waits for the store to become idle and then returns. Used by Unit Tests.
- */
-- (void)waitForIdle;
-
-/**
  * Shuts down the store and prevents any subsequent interaction with the managed context. Used by Unit Tests.
  */
 - (void)shutDown;

@@ -1,7 +1,6 @@
 /* Copyright Airship and Contributors */
 
 #import "UARemoteDataAPIClient+Internal.h"
-#import "UAPreferenceDataStore+Internal.h"
 #import "UAUtils+Internal.h"
 #import "UARuntimeConfig.h"
 #import "NSURLResponse+UAAdditions.h"
@@ -9,117 +8,110 @@
 #import "UAirship.h"
 
 @interface UARemoteDataAPIClient()
-@property (nonatomic, strong) UAPreferenceDataStore *dataStore;
-@property (nonatomic, strong) UALocaleManager *localeManager;
+@property (nonatomic, strong) UARequestSession *session;
+@property (nonatomic, strong) UARuntimeConfig *config;
 @end
 
 @implementation UARemoteDataAPIClient
 
-NSString * const kRemoteDataPath = @"api/remote-data/app";
-NSString * const kUALastRemoteDataModifiedTime = @"UALastRemoteDataModifiedTime";
-
+NSString * const UARemoteDataAPIClientPath = @"api/remote-data/app";
 NSString * const UARemoteDataAPIClientErrorDomain = @"com.urbanairship.remote_data_api_client";
 
 - (UARemoteDataAPIClient *)initWithConfig:(UARuntimeConfig *)config
-                                dataStore:(UAPreferenceDataStore *)dataStore
-                                  session:(UARequestSession *)session
-                            localeManager:(UALocaleManager *)localeManager {
-    self = [super initWithConfig:config session:session];
-    
+                                  session:(UARequestSession *)session {
+    self = [super init];
+
     if (self) {
-        self.dataStore = dataStore;
-        self.localeManager = localeManager;
+        self.config = config;
+        self.session = session;
     }
-    
+
     return self;
 }
 
-+ (UARemoteDataAPIClient *)clientWithConfig:(UARuntimeConfig *)config dataStore:(UAPreferenceDataStore *)dataStore localeManager:(UALocaleManager *)localeManager {
-    return [[self alloc] initWithConfig:config
-                              dataStore:dataStore
-                                session:[UARequestSession sessionWithConfig:config]
-                          localeManager:localeManager];
-}
-
 + (UARemoteDataAPIClient *)clientWithConfig:(UARuntimeConfig *)config
-                                  dataStore:(UAPreferenceDataStore *)dataStore
-                                    session:(UARequestSession *)session
-                              localeManager:(UALocaleManager *)localeManager {
+                                    session:(UARequestSession *)session {
     return [[self alloc] initWithConfig:config
-                              dataStore:dataStore
-                                session:session
-                          localeManager:localeManager];
+                                session:session];
 }
 
-- (UADisposable *)fetchRemoteData:(void (^)(NSArray<NSDictionary *> * _Nullable remoteData, NSError * _Nullable error))completionHandler {
-    UARequest *refreshRequest = [self requestToRefreshRemoteData];
++ (UARemoteDataAPIClient *)clientWithConfig:(UARuntimeConfig *)config {
+    return [[self alloc] initWithConfig:config
+                                session:[UARequestSession sessionWithConfig:config]];
+}
 
-    UA_LTRACE(@"Request to refresh remote data: %@", refreshRequest.URL);
 
-    __block void (^refreshCompletionHandler)(NSArray<NSDictionary *> * _Nullable remoteData, NSError * _Nullable error) = completionHandler;
-    
-    UADisposable *disposable = [UADisposable disposableWithBlock:^{
-        UA_LTRACE(@"Remote data refresh block disposed");
-        refreshCompletionHandler = ^(NSArray<NSDictionary *> * _Nullable remoteData, NSError * _Nullable error){};
+- (UADisposable *)fetchRemoteDataWithLocale:(NSLocale *)locale
+                               lastModified:(nullable NSString *)lastModified
+                          completionHandler:(UARemoteDataAPIClientCompletionHandler)completionHandler {
+
+    NSURL *URL = [UARemoteDataAPIClient createRemoteDataURLWithURL:self.config.remoteDataAPIURL
+                                                            appKey:self.config.appKey
+                                                            locale:locale];
+
+    UARequest *request = [UARequest requestWithBuilderBlock:^(UARequestBuilder * _Nonnull builder) {
+        builder.URL = URL;
+        builder.method = @"GET";
+        [builder setValue:lastModified forHeader:@"If-Modified-Since"];
     }];
 
-    [self performRequest:refreshRequest retryWhere:^BOOL(NSData * _Nullable data, NSHTTPURLResponse * _Nullable response) {
-        return [response hasRetriableStatus];
-    } completionHandler:^(NSData * _Nullable data, NSHTTPURLResponse * _Nullable response, NSError * _Nullable error) {
+    UA_LTRACE(@"Request to update remote data: %@", URL);
+    return [self.session performHTTPRequest:request
+                          completionHandler:^(NSData * _Nullable data, NSHTTPURLResponse * _Nullable response, NSError * _Nullable error) {
+
         if (error) {
-            refreshCompletionHandler(nil, error);
+            UA_LTRACE(@"Update finished with error: %@", error);
+            completionHandler(nil, nil, error);
+            return;
+        }
+
+        UA_LTRACE(@"Update of %@ finished with status: %ld", response.URL, response.statusCode);
+
+        // 304, no changes
+        if (response.statusCode == 304) {
+            completionHandler(nil, nil, nil);
             return;
         }
 
         // Failure
-        if (response.statusCode != 200  && response.statusCode != 304) {
-            [UAUtils logFailedRequest:refreshRequest
-                          withMessage:@"Refresh remote data failed"
-                            withError:error
-                         withResponse:response];
-            refreshCompletionHandler(nil, [self unsuccessfulStatusError]);
-            return;
-        }
-        
-        // 304, no changes
-        if (response.statusCode == 304) {
-            refreshCompletionHandler(nil, nil);
-            return;
-        }
-        
-        // 200, success
-        
-        // Missing response body
-        if (!data) {
-            UA_LTRACE(@"Refresh remote data missing response body.");
-            refreshCompletionHandler(nil, [self invalidResponseError]);
-            return;
-        }
-        
-        // Success
-        NSDictionary *headers = response.allHeaderFields;
-        NSString *lastModified = [headers objectForKey:@"Last-Modified"];
-        
-        // Parse the response
-        NSError *parseError;
-        NSDictionary *jsonResponse = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:&parseError];
-        
-        if (parseError) {
-            UA_LERR(@"Unable to parse remote data body: %@ Error: %@", data, parseError);
-            refreshCompletionHandler(nil, parseError);
+        if (response.statusCode != 200) {
+            completionHandler(nil, nil, [self unsuccessfulStatusError]);
             return;
         }
 
-        UA_LTRACE(@"Retrieved remote data with status: %ld jsonResponse: %@", (unsigned long)response.statusCode, jsonResponse);
-        
-        NSArray *remoteData = [jsonResponse objectForKey:@"payloads"];
-        
-        [self.dataStore setValue:lastModified forKey:kUALastRemoteDataModifiedTime];
+        NSArray *payloads = [self parseRemoteData:data error:&error];
 
-        refreshCompletionHandler(remoteData, nil);
+        if (error) {
+            UA_LTRACE(@"Failed to parse remote data with status: %ld error: %@", (unsigned long)response.statusCode, error);
+            completionHandler(nil, nil, error);
+        } else {
+            NSString *lastModified = [response.allHeaderFields objectForKey:@"Last-Modified"];
+            completionHandler(payloads, lastModified, nil);
+        }
     }];
-    
-    return disposable;
+}
+
+- (NSArray *)parseRemoteData:(nullable NSData *)data
+                       error:(NSError **)error {
+    // Missing response body
+    if (!data) {
+        UA_LTRACE(@"Refresh remote data missing response body.");
+        *error = [self invalidResponseError];
+        return nil;
+    }
+
+    // Parse the response
+    NSError *parseError;
+    NSDictionary *jsonResponse = [NSJSONSerialization JSONObjectWithData:data
+                                                                 options:NSJSONReadingAllowFragments error:&parseError];
+
+
+    if (!parseError) {
+        return [jsonResponse objectForKey:@"payloads"];
+    } else {
+        *error = parseError;
+        return nil;
+    }
 }
 
 - (NSError *)unsuccessfulStatusError {
@@ -142,25 +134,10 @@ NSString * const UARemoteDataAPIClientErrorDomain = @"com.urbanairship.remote_da
     return error;
 }
 
-- (UARequest *)requestToRefreshRemoteData {
-    UA_WEAKIFY(self)
-    UARequest *request = [UARequest requestWithBuilderBlock:^(UARequestBuilder * _Nonnull builder) {
-        UA_STRONGIFY(self)
++ (NSURL *)createRemoteDataURLWithURL:(NSString *)remoteDataAPIURL
+                               appKey:(NSString *)appKey
+                               locale:(NSLocale *)locale {
 
-        builder.URL = [self createRemoteDataURL:[self.localeManager currentLocale]];
-        builder.method = @"GET";
-        
-        NSString *lastModified = [self.dataStore stringForKey:kUALastRemoteDataModifiedTime];
-        
-        if (lastModified) {
-            [builder setValue:lastModified forHeader:@"If-Modified-Since"];
-        }
-    }];
-    
-    return request;
-}
-
-- (NSURL *)createRemoteDataURL:(NSLocale *)locale {
     NSURLQueryItem *languageItem = [NSURLQueryItem queryItemWithName:@"language"
                                                                value:[locale objectForKey:NSLocaleLanguageCode]];
     NSURLQueryItem *countryItem = [NSURLQueryItem queryItemWithName:@"country"
@@ -168,10 +145,10 @@ NSString * const UARemoteDataAPIClientErrorDomain = @"com.urbanairship.remote_da
     NSURLQueryItem *versionItem = [NSURLQueryItem queryItemWithName:@"sdk_version"
                                                               value:[UAirshipVersion get]];
 
-    NSURLComponents *components = [NSURLComponents componentsWithString:self.config.remoteDataAPIURL];
+    NSURLComponents *components = [NSURLComponents componentsWithString:remoteDataAPIURL];
 
     // api/remote-data/app/{appkey}/{platform}?sdk_version={version}&language={language}&country={country}
-    components.path = [NSString stringWithFormat:@"/%@/%@/%@", kRemoteDataPath, self.config.appKey, @"ios"];
+    components.path = [NSString stringWithFormat:@"/%@/%@/%@", UARemoteDataAPIClientPath, appKey, @"ios"];
 
     NSMutableArray *queryItems = [NSMutableArray arrayWithObject:versionItem];
 
@@ -188,8 +165,6 @@ NSString * const UARemoteDataAPIClientErrorDomain = @"com.urbanairship.remote_da
     return [components URL];
 }
 
-- (void)clearLastModifiedTime {
-    [self.dataStore removeObjectForKey:kUALastRemoteDataModifiedTime];
-}
-
 @end
+
+
