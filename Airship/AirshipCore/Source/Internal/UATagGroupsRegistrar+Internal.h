@@ -8,6 +8,7 @@
 #import "UATagGroupsAPIClient+Internal.h"
 #import "UAComponent+Internal.h"
 #import "UATagGroupsMutation+Internal.h"
+#import "UATask.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -83,8 +84,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Update the tag groups.
+ *
+ * @param task The task.
+ * @param completionHandler The completion handler.
+ * @return UADisposable object.
  */
-- (void)updateTagGroups;
+- (UADisposable *)updateTagGroupsWithTask:(id<UATask>)task completionHandler:(void(^)(BOOL completed))completionHandler;
 
 /**
  * Add tags to a tag group. To update the server, make all of your changes,

@@ -30,11 +30,6 @@
  */
 @property (atomic, copy) NSString *identifier;
 
-/**
- * Whether the client is currently updating.
- */
-@property (atomic, assign) BOOL updating;
-
 @end
 
 @implementation UATagGroupsRegistrar
@@ -86,29 +81,16 @@
                                           application:[UIApplication sharedApplication]];
 }
 
-- (void)updateTagGroups {
+- (UADisposable *)updateTagGroupsWithTask:(id<UATask>)task completionHandler:(void(^)(BOOL completed))completionHandler {
     @synchronized (self) {
         if (!self.enabled) {
-            return;
+            [task taskCompleted];
+            completionHandler(NO);
+            return nil;
         }
-
-        if (self.updating) {
-            UA_LTRACE(@"Skipping tag groups update, request already in flight");
-            return;
-        }
-
-        self.updating = YES;
-    }
-
-    __block UIBackgroundTaskIdentifier backgroundTaskIdentifier = [self beginUploading];
-    
-    if (backgroundTaskIdentifier == UIBackgroundTaskInvalid) {
-        UA_LTRACE("Background task unavailable, skipping tag groups update.");
-        [self endUploading:backgroundTaskIdentifier];
-        return;
     }
     
-    [self uploadNextTagGroupMutationWithBackgroundTaskIdentifier:backgroundTaskIdentifier];
+    return [self uploadNextTagGroupMutationWithTask:task completionHandler:completionHandler];
 }
 
 - (void)popPendingMutation:(UATagGroupsMutation *)mutation identifier:(NSString *)identifier {
@@ -120,10 +102,10 @@
     }
 }
 
-- (void)uploadNextTagGroupMutationWithBackgroundTaskIdentifier:(UIBackgroundTaskIdentifier)backgroundTaskIdentifier {
+- (UADisposable *)uploadNextTagGroupMutationWithTask:(id<UATask>)task completionHandler:(void(^)(BOOL completed))completionHandler {
     UATagGroupsMutation *mutation;
     NSString *identifier;
-
+    
     @synchronized (self) {
         // collapse mutations
         [self.pendingTagGroupStore collapsePendingMutations];
@@ -135,9 +117,10 @@
     }
 
     if (!identifier || !mutation) {
-        // no upload work to do - end background task, if necessary, and finish operation
-        [self endUploading:backgroundTaskIdentifier];
-        return;
+        // no upload work to do - end task, if necessary, and finish operation
+        [task taskCompleted];
+        completionHandler(NO);
+        return nil;
     }
 
     UA_WEAKIFY(self);
@@ -147,47 +130,22 @@
             // Success - pop uploaded mutation and store the transaction record
             [self popPendingMutation:mutation identifier:identifier];
             [self.delegate uploadedTagGroupsMutation:mutation identifier:identifier];
-            [self uploadNextTagGroupMutationWithBackgroundTaskIdentifier:backgroundTaskIdentifier];
+            [task taskCompleted];
+            completionHandler(YES);
         } else if (error.domain == UATagGroupsAPIClientErrorDomain && error.code == UATagGroupsAPIClientErrorUnrecoverableStatus) {
             // Unrecoverable failure - pop mutation and end the task
             [self popPendingMutation:mutation identifier:identifier];
-            [self uploadNextTagGroupMutationWithBackgroundTaskIdentifier:backgroundTaskIdentifier];
+            [task taskCompleted];
+            completionHandler(YES);
         } else {
-            [self endUploading:backgroundTaskIdentifier];
+            [task taskFailed];
+            completionHandler(NO);
         }
     };
 
-    [self.tagGroupsAPIClient updateTagGroupsForId:identifier
+    return [self.tagGroupsAPIClient updateTagGroupsForId:identifier
                                 tagGroupsMutation:mutation
                                 completionHandler:apiCompletionBlock];
-}
-
-- (UIBackgroundTaskIdentifier)beginUploading {
-    UA_WEAKIFY(self);
-    __block UIBackgroundTaskIdentifier backgroundTaskIdentifier = [self.application beginBackgroundTaskWithExpirationHandler:^{
-        UA_STRONGIFY(self);
-
-        UA_LTRACE(@"Tag groups background task expired.");
-        [self.tagGroupsAPIClient cancelAllRequests];
-
-        [self endUploading:backgroundTaskIdentifier];
-    }];
-
-    return backgroundTaskIdentifier;
-}
-
-- (void)endUploading:(UIBackgroundTaskIdentifier)backgroundTaskIdentifier {
-    [self endBackgroundTask:backgroundTaskIdentifier];
-
-    @synchronized (self) {
-        self.updating = NO;
-    }
-}
-
-- (void)endBackgroundTask:(UIBackgroundTaskIdentifier)backgroundTaskIdentifier {
-    if (backgroundTaskIdentifier != UIBackgroundTaskInvalid) {
-        [self.application endBackgroundTask:backgroundTaskIdentifier];
-    }
 }
 
 - (void)mutateTags:(NSArray<NSString *>*)tags
@@ -245,7 +203,6 @@
 - (void)setEnabled:(BOOL)enabled {
     @synchronized (self) {
         _enabled = enabled;
-        self.tagGroupsAPIClient.enabled = enabled;
     }
 }
 

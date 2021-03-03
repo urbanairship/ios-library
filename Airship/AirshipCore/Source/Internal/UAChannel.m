@@ -10,6 +10,7 @@
 #import "UADate.h"
 #import "UAAppStateTracker.h"
 #import "UALocaleManager+Internal.h"
+#import "UASemaphore.h"
 
 NSString *const UAChannelTagsSettingsKey = @"com.urbanairship.channel.tags";
 
@@ -33,6 +34,9 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.channel.ide
 
 NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creation_on_foreground";
 
+static NSString * const UAChannelTagUpdateTaskID = @"UAChannel.tags.update";
+static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.update";
+
 @interface UAChannel ()
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 @property (nonatomic, strong) NSNotificationCenter *notificationCenter;
@@ -44,6 +48,7 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
 @property (nonatomic, assign) BOOL shouldPerformChannelRegistrationOnForeground;
 @property (nonatomic, strong) NSMutableArray<UAChannelRegistrationExtenderBlock> *registrationExtenderBlocks;
 @property (nonatomic, strong) UADate *date;
+@property (nonatomic, strong) UATaskManager *taskManager;
 @end
 
 @implementation UAChannel
@@ -55,7 +60,8 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
                tagGroupsRegistrar:(UATagGroupsRegistrar *)tagGroupsRegistrar
                attributeRegistrar:(UAAttributeRegistrar *)attributeRegistrar
                     localeManager:(UALocaleManager *)localeManager
-                             date:(UADate *)date {
+                             date:(UADate *)date
+                      taskManager:(UATaskManager *)taskManager {
     self = [super initWithDataStore:dataStore];
 
     if (self) {
@@ -67,11 +73,13 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
         self.attributeRegistrar = attributeRegistrar;
         self.localeManager = localeManager;
         self.date = date;
-
+        self.taskManager = taskManager;
+        
         self.channelTagRegistrationEnabled = YES;
         self.registrationExtenderBlocks = [NSMutableArray array];
 
         self.tagGroupsRegistrar.delegate = self;
+        self.attributeRegistrar.delegate = self;
         [self.tagGroupsRegistrar setIdentifier:self.identifier clearPendingOnChange:NO];
         [self.attributeRegistrar setIdentifier:self.identifier clearPendingOnChange:NO];
 
@@ -92,6 +100,20 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
             NSLog(@"Channel ID: %@", self.identifier);
         }
 
+        UA_WEAKIFY(self)
+        [self.taskManager registerForTaskWithIDs:@[UAChannelTagUpdateTaskID, UAChannelAttributeUpdateTaskID]
+                                      dispatcher:[UADispatcher serialDispatcher]
+                                   launchHandler:^(id<UATask> task) {
+            UA_STRONGIFY(self)
+            if ([task.taskID isEqualToString:UAChannelTagUpdateTaskID]) {
+                [self handleTagUpdateTask:task];
+            } else if ([task.taskID isEqualToString:UAChannelAttributeUpdateTaskID]) {
+                 [self handleAttributeUpdateTask:task];
+            } else {
+                UA_LERR(@"Invalid task: %@", task.taskID);
+                [task taskCompleted];
+            }
+        }];
 
         [self observeNotificationCenterEvents];
     }
@@ -103,8 +125,7 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
                               config:(UARuntimeConfig *)config
                        localeManager:(UALocaleManager *)localeManager {
     
-    UATagGroupsRegistrar *tagGroupsRegistrar = [UATagGroupsRegistrar channelTagGroupsRegistrarWithConfig:config
-                                                                                               dataStore:dataStore];
+    UATagGroupsRegistrar *tagGroupsRegistrar = [UATagGroupsRegistrar channelTagGroupsRegistrarWithConfig:config dataStore:dataStore];
     return [[self alloc] initWithDataStore:dataStore
                                     config:config
                         notificationCenter:[NSNotificationCenter defaultCenter]
@@ -114,7 +135,8 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
                         attributeRegistrar:[UAAttributeRegistrar channelRegistrarWithConfig:config
                                                                                   dataStore:dataStore]
                              localeManager:localeManager
-                                      date:[[UADate alloc] init]];
+                                      date:[[UADate alloc] init]
+                               taskManager:[UATaskManager shared]];
 }
 
 + (instancetype)channelWithDataStore:(UAPreferenceDataStore *)dataStore
@@ -124,7 +146,8 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
                   tagGroupsRegistrar:(UATagGroupsRegistrar *)tagGroupsRegistrar
                   attributeRegistrar:(UAAttributeRegistrar *)attributeRegistrar
                        localeManager:(UALocaleManager *)localeManager
-                                date:(UADate *)date {
+                                date:(UADate *)date
+                         taskManager:(UATaskManager *)taskManager {
     return [[self alloc] initWithDataStore:dataStore
                                     config:config
                         notificationCenter:notificationCenter
@@ -132,7 +155,8 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
                         tagGroupsRegistrar:tagGroupsRegistrar
                         attributeRegistrar:attributeRegistrar
                              localeManager:localeManager
-                                      date:date];
+                                      date:date
+                               taskManager:taskManager];
 }
 
 - (void)observeNotificationCenterEvents {
@@ -303,8 +327,7 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
         return;
     }
 
-    UAAttributePendingMutations *pendingMutations = [UAAttributePendingMutations pendingMutationsWithMutations:mutations
-                                                                                                          date:self.date];
+    UAAttributePendingMutations *pendingMutations = [UAAttributePendingMutations pendingMutationsWithMutations:mutations date:self.date];
 
     // Save pending mutations for upload
     [self.attributeRegistrar savePendingMutations:pendingMutations];
@@ -314,7 +337,7 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
           return;
     }
 
-    [self.attributeRegistrar updateAttributes];
+    [self enqueueUpdateAttributesTask];
 }
 
 #pragma mark -
@@ -343,8 +366,8 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
 
 - (void)updateRegistration {
     if (self.identifier) {
-        [self.attributeRegistrar updateAttributes];
-        [self.tagGroupsRegistrar updateTagGroups];
+        [self enqueueUpdateAttributesTask];
+        [self enqueueUpdateTagGroupsTask];
     }
     [self updateRegistrationForcefully:NO];
 }
@@ -355,6 +378,59 @@ NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creat
 
 - (UAAttributePendingMutations *)pendingAttributes {
     return self.attributeRegistrar.pendingMutations;
+}
+
+#pragma mark -
+#pragma mark Task Manager
+
+- (void)enqueueUpdateTagGroupsTask {
+    UATaskRequestOptions *requestOptions = [UATaskRequestOptions optionsWithConflictPolicy:UATaskConflictPolicyAppend requiresNetwork:YES extras:nil];
+    [self.taskManager enqueueRequestWithID:UAChannelTagUpdateTaskID
+                                   options:requestOptions];
+}
+
+- (void)enqueueUpdateAttributesTask {
+    UATaskRequestOptions *requestOptions = [UATaskRequestOptions optionsWithConflictPolicy:UATaskConflictPolicyAppend requiresNetwork:YES extras:nil];
+    [self.taskManager enqueueRequestWithID:UAChannelAttributeUpdateTaskID
+                                   options:requestOptions];
+}
+
+- (void)handleTagUpdateTask:(id<UATask>)task {
+    UASemaphore *semaphore = [UASemaphore semaphore];
+    
+    UADisposable *request = [self.tagGroupsRegistrar updateTagGroupsWithTask:task completionHandler:^(BOOL completed) {
+        [semaphore signal];
+        
+        // queue another task for unproccessed mutations
+        if (completed) {
+            [self enqueueUpdateTagGroupsTask];
+        }
+    }];
+   
+    task.expirationHandler = ^{
+        [request dispose];
+    };
+    
+    [semaphore wait];
+}
+
+- (void)handleAttributeUpdateTask:(id<UATask>)task {
+    UASemaphore *semaphore = [UASemaphore semaphore];
+    
+    UADisposable *request = [self.attributeRegistrar updateAttributesWithTask:task completionHandler:^(BOOL completed) {
+        [semaphore signal];
+        
+        // queue another task for unproccessed mutations
+        if (completed) {
+            [self enqueueUpdateAttributesTask];
+        }
+    }];
+   
+    task.expirationHandler = ^{
+        [request dispose];
+    };
+    
+    [semaphore wait];
 }
 
 #pragma mark -

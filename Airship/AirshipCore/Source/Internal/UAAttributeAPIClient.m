@@ -23,6 +23,8 @@ NSString * const UAAttributeAPIClientErrorDomain = @"com.urbanairship.attribute_
 
 @interface UAAttributeAPIClient()
 @property (nonatomic, copy) NSURL *(^URLFactoryBlock)(UARuntimeConfig *, NSString *);
+@property (nonatomic, strong) UARuntimeConfig *config;
+@property (nonatomic, strong) UARequestSession *session;
 @end
 
 @implementation UAAttributeAPIClient
@@ -31,8 +33,10 @@ NSString * const UAAttributeAPIClientErrorDomain = @"com.urbanairship.attribute_
 - (instancetype)initWithConfig:(UARuntimeConfig *)config
                        session:(UARequestSession *)session
                URLFactoryBlock:(NSURL *(^)(UARuntimeConfig *, NSString *))URLFactoryBlock {
-    self = [super initWithConfig:config session:session];
+    self = [super init];
     if (self) {
+        self.config = config;
+        self.session = session;
         self.URLFactoryBlock = URLFactoryBlock;
     }
     return self;
@@ -67,16 +71,11 @@ NSString * const UAAttributeAPIClientErrorDomain = @"com.urbanairship.attribute_
     return [[self alloc] initWithConfig:config session:session URLFactoryBlock:URLFactoryBlock];
 }
 
-- (void)updateWithIdentifier:(NSString *)identifier
-          attributeMutations:(UAAttributePendingMutations *)mutations
-           completionHandler:(void (^)(NSError * _Nullable error))completionHandler {
+- (UADisposable *)updateWithIdentifier:(NSString *)identifier
+                    attributeMutations:(UAAttributePendingMutations *)mutations
+                     completionHandler:(void (^)(NSError * _Nullable error))completionHandler {
 
     UA_LTRACE(@"Updating attributes for identifier: %@ with attribute payload: %@.", identifier, mutations);
-
-    if (!self.enabled) {
-        UA_LDEBUG(@"Disabled");
-        return;
-    }
 
     NSData *payloadData = [UAJSONSerialization dataWithJSONObject:mutations.payload
                                                           options:0
@@ -91,10 +90,8 @@ NSString * const UAAttributeAPIClientErrorDomain = @"com.urbanairship.attribute_
         [builder setValue:@"application/vnd.urbanairship+json; version=3;" forHeader:@"Accept"];
         [builder setValue:@"application/json" forHeader:@"Content-Type"];
     }];
-
-    [self performRequest:request retryWhere:^BOOL(NSData *data, NSHTTPURLResponse *response) {
-        return [response hasRetriableStatus];
-    } completionHandler:^(NSData *data, NSHTTPURLResponse *response, NSError *error) {
+    
+    return [self.session performHTTPRequest:request completionHandler:^(NSData * _Nullable data, NSHTTPURLResponse * _Nullable response, NSError * _Nullable error) {
         if (error) {
             UA_LTRACE(@"Update finished with error: %@", error);
             return completionHandler(error);

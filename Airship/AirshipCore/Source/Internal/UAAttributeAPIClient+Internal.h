@@ -31,7 +31,7 @@ extern NSString * const UAAttributeAPIClientErrorDomain;
 /**
  A high level abstraction for performing mutations on the attribute API.
 */
-@interface UAAttributeAPIClient : UAAPIClient
+@interface UAAttributeAPIClient : NSObject
 
 /**
  * URL factory block. Exposed for testing.
@@ -74,7 +74,7 @@ extern NSString * const UAAttributeAPIClientErrorDomain;
  * @param mutations The mutations.
  * @param completionHandler The completion handler.
  */
-- (void)updateWithIdentifier:(NSString *)identifier
+- (UADisposable *)updateWithIdentifier:(NSString *)identifier
           attributeMutations:(UAAttributePendingMutations *)mutations
            completionHandler:(void (^)(NSError * _Nullable error))completionHandler;
 

@@ -14,7 +14,23 @@
 
 NSString * const UANamedUserAPIClientErrorDomain = @"com.urbanairship.named_user_api_client";
 
+@interface UANamedUserAPIClient()
+
+@property (nonatomic, strong) UARuntimeConfig *config;
+@property (nonatomic, strong) UARequestSession *session;
+
+@end
+
 @implementation UANamedUserAPIClient
+
+- (instancetype)initWithConfig:(UARuntimeConfig *)config session:(UARequestSession *)session {
+    self = [super init];
+    if (self) {
+        self.config = config;
+        self.session = session;
+    }
+    return self;
+}
 
 + (instancetype)clientWithConfig:(UARuntimeConfig *)config {
     return [[self alloc] initWithConfig:config session:[UARequestSession sessionWithConfig:config]];
@@ -24,25 +40,9 @@ NSString * const UANamedUserAPIClientErrorDomain = @"com.urbanairship.named_user
     return [[self alloc] initWithConfig:config session:session];
 }
 
-- (void)associate:(NSString *)identifier
-        channelID:(NSString *)channelID
+- (UADisposable *)associate:(nonnull NSString *)identifier
+        channelID:(nonnull NSString *)channelID
 completionHandler:(void (^)(NSError * _Nullable))completionHandler {
-
-    if (!self.enabled) {
-        UA_LDEBUG(@"Disabled");
-        return;
-    }
-
-    if (!identifier) {
-        UA_LERR(@"The named user ID cannot be nil.");
-        return;
-    }
-
-    if (!channelID) {
-        UA_LERR(@"The channel ID cannot be nil.");
-        return;
-    }
-
     UA_LTRACE(@"Associating channel %@ with named user ID: %@", channelID, identifier);
 
 
@@ -55,24 +55,19 @@ completionHandler:(void (^)(NSError * _Nullable))completionHandler {
     UARequest *request = [self requestWithPayload:payload
                                         urlString:[NSString stringWithFormat:@"%@%@", urlString, @"/associate"]];
 
-    [self performRequest:request retryWhere:^BOOL(NSData * _Nullable data, NSHTTPURLResponse * _Nullable response) {
-        return [response hasRetriableStatus];
-    } completionHandler:^(NSData * _Nullable data, NSHTTPURLResponse * _Nullable response, NSError * _Nullable error) {
+    return [self.session performHTTPRequest:request completionHandler:^(NSData * _Nullable data, NSHTTPURLResponse * _Nullable response, NSError * _Nullable error) {
         if (error) {
-            return completionHandler(error);
+            completionHandler(error);
         }
 
         NSInteger status = response.statusCode;
-
-        // Failure
-        if (!(status >= 200 && status <= 299)) {
+        if (status >= 200 && status <= 299) {
+            UA_LTRACE(@"Associated named user with status: %lu", (unsigned long)status);
+            completionHandler(nil);
+        } else {
             UA_LTRACE(@"Failed to associate named user with status: %lu", (unsigned long)status);
-            return completionHandler([self unsuccessfulStatusError]);
+            completionHandler([self unsuccessfulStatusError]);
         }
-
-        // Success
-        UA_LTRACE(@"Associated named user with status: %lu", (unsigned long)status);
-        completionHandler(nil);
     }];
 }
 
@@ -86,19 +81,8 @@ completionHandler:(void (^)(NSError * _Nullable))completionHandler {
     return error;
 }
 
-- (void)disassociate:(NSString *)channelID
+- (UADisposable *)disassociate:(nonnull NSString *)channelID
    completionHandler:(void (^)(NSError * _Nullable))completionHandler {
-
-    if (!self.enabled) {
-        UA_LDEBUG(@"Disabled");
-        return;
-    }
-
-    if (!channelID) {
-        UA_LERR(@"The channel ID cannot be nil.");
-        return;
-    }
-
     UA_LTRACE(@"Disassociating channel %@ from named user ID", channelID);
 
     NSMutableDictionary *payload = [NSMutableDictionary dictionary];
@@ -109,25 +93,19 @@ completionHandler:(void (^)(NSError * _Nullable))completionHandler {
     UARequest *request = [self requestWithPayload:payload
                                         urlString:[NSString stringWithFormat:@"%@%@", urlString, @"/disassociate"]];
 
-    [self performRequest:request retryWhere:^BOOL(NSData * _Nullable data, NSHTTPURLResponse * _Nullable response) {
-        return [response hasRetriableStatus];
-    } completionHandler:^(NSData * _Nullable data, NSHTTPURLResponse * _Nullable response, NSError * _Nullable error) {
+    return [self.session performHTTPRequest:request completionHandler:^(NSData * _Nullable data, NSHTTPURLResponse * _Nullable response, NSError * _Nullable error) {
         if (error) {
-            return completionHandler(error);
+            completionHandler(error);
         }
 
         NSInteger status = response.statusCode;
-
-        // Failure
-        if (!(status >= 200 && status <= 299)) {
+        if (status >= 200 && status <= 299) {
+            UA_LTRACE(@"Dissociated named user with status: %lu", (unsigned long)status);
+            completionHandler(nil);
+        } else {
             UA_LTRACE(@"Failed to dissociate named user with status: %lu", (unsigned long)status);
             completionHandler([self unsuccessfulStatusError]);
-            return;
         }
-
-        // Success
-        UA_LTRACE(@"Dissociated named user with status: %lu", (unsigned long)status);
-        completionHandler(nil);
     }];
 }
 

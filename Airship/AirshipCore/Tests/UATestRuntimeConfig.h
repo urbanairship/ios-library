@@ -27,9 +27,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign, getter=isChannelCreationDelayEnabled) BOOL channelCreationDelayEnabled;
 @property (nonatomic, copy) NSDictionary *customConfig;
 @property (nonatomic, assign) BOOL requestAuthorizationToUseNotifications;
-@property (nonatomic, copy) NSString *deviceAPIURL;
-@property (nonatomic, copy) NSString *analyticsURL;
-@property (nonatomic, copy) NSString *remoteDataAPIURL;
 
 + (instancetype)testConfig;
 @end

@@ -9,6 +9,8 @@
 #import "UAAttributePendingMutations.h"
 #import "UAAttributeRegistrar+Internal.h"
 #import "UADate.h"
+#import "UATaskManager.h"
+#import "UASemaphore.h"
 
 #define kUAMaxNamedUserIDLength 128
 
@@ -27,6 +29,10 @@ NSString *const UANamedUserUploadedAudienceMutationNotificationIdentifierKey = @
 NSString *const UANamedUserIdentifierChangedNotification = @"com.urbanairship.named_user_identifier_changed";
 NSString *const UANamedUserIdentifierChangedNotificationIdentifierKey = @"identifier";
 
+static NSString * const UANamedUserUpdateTaskID = @"UANamedUser.update";
+static NSString * const UANamedUserTagUpdateTaskID = @"UANamedUser.tags.update";
+static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attributes.update";
+
 @interface UANamedUser()
 
 /**
@@ -37,6 +43,7 @@ NSString *const UANamedUserIdentifierChangedNotificationIdentifierKey = @"identi
 @property (nonatomic, strong) UADate *date;
 @property (nonatomic, strong) UAAttributeRegistrar *attributeRegistrar;
 @property (nonatomic, strong) NSNotificationCenter *notificationCenter;
+@property (nonatomic, strong) UATaskManager *taskManager;
 
 @end
 
@@ -48,7 +55,8 @@ NSString *const UANamedUserIdentifierChangedNotificationIdentifierKey = @"identi
                       dataStore:(UAPreferenceDataStore *)dataStore
              tagGroupsRegistrar:(UATagGroupsRegistrar *)tagGroupsRegistrar
              attributeRegistrar:(UAAttributeRegistrar *)attributeRegistrar
-                           date:(UADate *)date {
+                           date:(UADate *)date
+                    taskManager:(UATaskManager *)taskManager {
     self = [super initWithDataStore:dataStore];
     if (self) {
         self.channel = channel;
@@ -59,9 +67,9 @@ NSString *const UANamedUserIdentifierChangedNotificationIdentifierKey = @"identi
         self.tagGroupsRegistrar = tagGroupsRegistrar;
         self.attributeRegistrar = attributeRegistrar;
         self.date = date;
+        self.taskManager = taskManager;
 
-        self.namedUserAPIClient.enabled = self.componentEnabled;
-
+        self.attributeRegistrar.delegate = self;
         self.tagGroupsRegistrar.delegate = self;
         [self.tagGroupsRegistrar setIdentifier:self.identifier clearPendingOnChange:NO];
         [self.attributeRegistrar setIdentifier:self.identifier clearPendingOnChange:NO];
@@ -77,6 +85,22 @@ NSString *const UANamedUserIdentifierChangedNotificationIdentifierKey = @"identi
             [self extendChannelRegistrationPayload:payload completionHandler:completionHandler];
         }];
 
+        [self.taskManager registerForTaskWithIDs:@[UANamedUserUpdateTaskID, UANamedUserTagUpdateTaskID, UANamedUserAttributeUpdateTaskID]
+                                      dispatcher:[UADispatcher serialDispatcher]
+                                   launchHandler:^(id<UATask> task) {
+            UA_STRONGIFY(self)
+            if ([task.taskID isEqualToString:UANamedUserUpdateTaskID]) {
+                [self handleUpdateTask:task];
+            } else if ([task.taskID isEqualToString:UANamedUserTagUpdateTaskID]) {
+                [self handleTagUpdateTask:task];
+            } else if ([task.taskID isEqualToString:UANamedUserAttributeUpdateTaskID]) {
+                 [self handleAttributeUpdateTask:task];
+            } else {
+                UA_LERR(@"Invalid task: %@", task.taskID);
+                [task taskCompleted];
+            }
+        }];
+        
         // Update the named user if necessary.
         [self update];
     }
@@ -88,8 +112,7 @@ NSString *const UANamedUserIdentifierChangedNotificationIdentifierKey = @"identi
                                config:(UARuntimeConfig *)config
                             dataStore:(UAPreferenceDataStore *)dataStore {
     
-    UATagGroupsRegistrar *tagGroupsRegistrar = [UATagGroupsRegistrar namedUserTagGroupsRegistrarWithConfig:config
-                                                                                                 dataStore:dataStore];
+    UATagGroupsRegistrar *tagGroupsRegistrar = [UATagGroupsRegistrar namedUserTagGroupsRegistrarWithConfig:config dataStore:dataStore];
     UAAttributeRegistrar *atttributeRegistrar = [UAAttributeRegistrar namedUserRegistrarWithConfig:config
                                                                                          dataStore:dataStore];
     
@@ -99,7 +122,8 @@ NSString *const UANamedUserIdentifierChangedNotificationIdentifierKey = @"identi
                                       dataStore:dataStore
                              tagGroupsRegistrar:tagGroupsRegistrar
                              attributeRegistrar:atttributeRegistrar
-                                           date:[[UADate alloc] init]];
+                                           date:[[UADate alloc] init]
+                                    taskManager:[UATaskManager shared]];
 }
 
 + (instancetype)namedUserWithChannel:(UAChannel<UAExtendableChannelRegistration> *)channel
@@ -108,52 +132,142 @@ NSString *const UANamedUserIdentifierChangedNotificationIdentifierKey = @"identi
                             dataStore:(UAPreferenceDataStore *)dataStore
                    tagGroupsRegistrar:(UATagGroupsRegistrar *)tagGroupsRegistrar
                    attributeRegistrar:(UAAttributeRegistrar *)attributeRegistrar
-                                 date:(UADate *)date {
+                                 date:(UADate *)date
+                        taskManager:(UATaskManager *)taskManager {
+    
     return [[UANamedUser alloc] initWithChannel:channel
                                          config:config
                              notificationCenter:notificationCenter
                                       dataStore:dataStore
                              tagGroupsRegistrar:tagGroupsRegistrar
                              attributeRegistrar:attributeRegistrar
-                                           date:date];
+                                           date:date
+                                    taskManager:taskManager];
 }
 
 - (void)update {
-    [self updateNamedUserAssociation];
-
+    // Enqueue named user tasks
+    [self enqueueUpdateNamedUserTask];
+   
     if (self.identifier) {
-        [self.tagGroupsRegistrar updateTagGroups];
-        [self.attributeRegistrar updateAttributes];
+        [self enqueueUpdateTagGroupsTask];
+        [self enqueueUpdateAttributesTask];
     }
 }
 
-- (void)updateNamedUserAssociation {
+- (void)enqueueUpdateNamedUserTask {
+    UATaskRequestOptions *requestOptions = [UATaskRequestOptions optionsWithConflictPolicy:UATaskConflictPolicyReplace requiresNetwork:YES extras:nil];
+    [self.taskManager enqueueRequestWithID:UANamedUserUpdateTaskID
+                                   options:requestOptions];
+}
+
+- (void)enqueueUpdateTagGroupsTask {
+   if (self.identifier) {
+        UATaskRequestOptions *requestOptions = [UATaskRequestOptions optionsWithConflictPolicy:UATaskConflictPolicyAppend requiresNetwork:YES extras:nil];
+        [self.taskManager enqueueRequestWithID:UANamedUserTagUpdateTaskID
+                                   options:requestOptions];
+    }
+}
+
+- (void)enqueueUpdateAttributesTask {
+    if (self.identifier) {
+        UATaskRequestOptions *requestOptions = [UATaskRequestOptions optionsWithConflictPolicy:UATaskConflictPolicyAppend requiresNetwork:YES extras:nil];
+        [self.taskManager enqueueRequestWithID:UANamedUserAttributeUpdateTaskID
+                                   options:requestOptions];
+    }
+}
+
+- (void)handleUpdateTask:(id<UATask>)task {
     if (!self.changeToken && !self.lastUpdatedToken) {
         // Skip since no one has set the named user ID. Usually from a new or re-install.
         UA_LDEBUG(@"New or re-install, skipping named user update.");
+        [task taskCompleted];
         return;
     }
 
     if ([self.lastChannelID isEqualToString:self.channel.identifier] && [self.changeToken isEqualToString:self.lastUpdatedToken]) {
         // Skip since no change has occurred (token remains the same).
         UA_LDEBUG(@"Named user already updated. Skipping.");
+        [task taskCompleted];
         return;
     }
 
     if (!self.channel.identifier) {
         // Skip since we don't have a channel ID.
         UA_LDEBUG(@"The channel ID does not exist. Will retry when channel ID is available.");
+        [task taskCompleted];
         return;
     }
-
+    
+    UADisposable *request;
+    UASemaphore *semaphore = [UASemaphore semaphore];
+    
     // Treat a nil or empty string as a command to disassociate the named user
     if (self.identifier && [self.identifier length] != 0) {
         // When identifier is non-nil, associate the current named user ID.
-        [self associateNamedUser];
+        request = [self associateNamedUserWithCompletionHandler:^(BOOL completed) {
+            if (completed) {
+                [task taskCompleted];
+            } else {
+                [task taskFailed];
+            }
+            [semaphore signal];
+        }];
     } else {
         // When identifier is nil, disassociate the current named user ID.
-        [self disassociateNamedUser];
+        request = [self disassociateNamedUserWithCompletionHandler:^(BOOL completed) {
+            if (completed) {
+                [task taskCompleted];
+            } else {
+                [task taskFailed];
+            }
+            [semaphore signal];
+        }];
     }
+    
+     task.expirationHandler = ^{
+         [request dispose];
+     };
+    
+    [semaphore wait];
+}
+
+- (void)handleTagUpdateTask:(id<UATask>)task {
+    UASemaphore *semaphore = [UASemaphore semaphore];
+    
+    UADisposable *request = [self.tagGroupsRegistrar updateTagGroupsWithTask:task completionHandler:^(BOOL completed) {
+        [semaphore signal];
+        
+        // queue another task for unproccessed mutations
+        if (completed) {
+            [self enqueueUpdateTagGroupsTask];
+        }
+    }];
+   
+    task.expirationHandler = ^{
+        [request dispose];
+    };
+    
+    [semaphore wait];
+}
+
+- (void)handleAttributeUpdateTask:(id<UATask>)task {
+    UASemaphore *semaphore = [UASemaphore semaphore];
+    
+    UADisposable *request = [self.attributeRegistrar updateAttributesWithTask:task completionHandler:^(BOOL completed) {
+        [semaphore signal];
+        
+        // queue another task for unproccessed mutations
+        if (completed) {
+            [self enqueueUpdateAttributesTask];
+        }
+    }];
+   
+    task.expirationHandler = ^{
+        [request dispose];
+    };
+    
+    [semaphore wait];
 }
 
 - (NSString *)identifier {
@@ -190,7 +304,7 @@ NSString *const UANamedUserIdentifierChangedNotificationIdentifierKey = @"identi
         self.changeToken = [NSUUID UUID].UUIDString;
 
         // Update named user.
-        [self updateNamedUserAssociation];
+        [self enqueueUpdateNamedUserTask];
 
         [self.tagGroupsRegistrar setIdentifier:trimmedID clearPendingOnChange:YES];
         [self.attributeRegistrar setIdentifier:trimmedID clearPendingOnChange:YES];
@@ -236,33 +350,37 @@ NSString *const UANamedUserIdentifierChangedNotificationIdentifierKey = @"identi
     return [self.dataStore objectForKey:UANamedUserLastChannelIDKey];
 }
 
-- (void)associateNamedUser {
+- (UADisposable *)associateNamedUserWithCompletionHandler:(void(^)(BOOL completed))completionHandler {
     NSString *token = self.changeToken;
     NSString *channelID = self.channel.identifier;
-
-    [self.namedUserAPIClient associate:self.identifier channelID:channelID completionHandler:^(NSError * _Nullable error) {
+    
+    return [self.namedUserAPIClient associate:self.identifier channelID:channelID completionHandler:^(NSError * _Nullable error) {
         if (error) {
             UA_LDEBUG(@"Failed to associate channel to named user.");
+            completionHandler(NO);
             return;
         }
 
         self.lastUpdatedToken = token;
         self.lastChannelID = channelID;
+        completionHandler(YES);
         UA_LDEBUG(@"Named user associated to channel successfully.");
     }];
 }
 
-- (void)disassociateNamedUser {
+- (UADisposable *)disassociateNamedUserWithCompletionHandler:(void(^)(BOOL completed))completionHandler {
     NSString *token = self.changeToken;
     NSString *channelID = self.channel.identifier;
     
-    [self.namedUserAPIClient disassociate:channelID completionHandler:^(NSError * _Nullable error) {
+    return [self.namedUserAPIClient disassociate:channelID completionHandler:^(NSError * _Nullable error) {
         if (error) {
             UA_LDEBUG(@"Failed to disassociate channel from named user.");
+            completionHandler(NO);
             return;
         }
         self.lastUpdatedToken = token;
         self.lastChannelID = channelID;
+        completionHandler(YES);
         UA_LDEBUG(@"Named user disassociated from channel successfully.");
     }];
 }
@@ -312,7 +430,7 @@ NSString *const UANamedUserIdentifierChangedNotificationIdentifierKey = @"identi
         return;
     }
     
-    [self.tagGroupsRegistrar updateTagGroups];
+    [self enqueueUpdateTagGroupsTask];
 }
 
 - (void)extendChannelRegistrationPayload:(UAChannelRegistrationPayload *)payload
@@ -330,7 +448,7 @@ NSString *const UANamedUserIdentifierChangedNotificationIdentifierKey = @"identi
         [self disassociateNamedUserIfNil];
     } else {
         // Once we get a channel, update the named user if necessary.
-        [self updateNamedUserAssociation];
+        [self enqueueUpdateNamedUserTask];
     }
 }
 
@@ -359,10 +477,6 @@ NSString *const UANamedUserIdentifierChangedNotificationIdentifierKey = @"identi
 
 - (void)onComponentEnableChange {
     [self updateRegistrarEnablement];
-
-    // We only want to disable the client if the component is disabled
-    // so we can disassociate the named user on data collection enablement changing.
-    self.namedUserAPIClient.enabled = self.componentEnabled;
 
     if (self.componentEnabled) {
         [self update];
@@ -404,10 +518,9 @@ NSString *const UANamedUserIdentifierChangedNotificationIdentifierKey = @"identi
         return;
     }
 
-    UAAttributePendingMutations *pendingMutations = [UAAttributePendingMutations pendingMutationsWithMutations:mutations
-                                                                                                          date:self.date];
+    UAAttributePendingMutations *pendingMutations = [UAAttributePendingMutations pendingMutationsWithMutations:mutations date:self.date];
     [self.attributeRegistrar savePendingMutations:pendingMutations];
-    [self.attributeRegistrar updateAttributes];
+    [self enqueueUpdateAttributesTask];
 }
 
 @end

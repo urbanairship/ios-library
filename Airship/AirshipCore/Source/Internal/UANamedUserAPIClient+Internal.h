@@ -25,7 +25,7 @@ extern NSString * const UANamedUserAPIClientErrorDomain;
 /**
  * A high level abstraction for performing Named User API association and disassociation.
  */
-@interface UANamedUserAPIClient : UAAPIClient
+@interface UANamedUserAPIClient : NSObject
 
 ///---------------------------------------------------------------------------------------
 /// @name Named User Internal Methods
@@ -53,7 +53,7 @@ extern NSString * const UANamedUserAPIClientErrorDomain;
  * @param channelID The channel ID string.
  * @param completionHandler The completion handler.
  */
-- (void)associate:(NSString *)identifier
+- (UADisposable *)associate:(NSString *)identifier
         channelID:(NSString *)channelID
 completionHandler:(void (^)(NSError * _Nullable))completionHandler;
 
@@ -63,7 +63,7 @@ completionHandler:(void (^)(NSError * _Nullable))completionHandler;
  * @param channelID The channel ID string.
  * @param completionHandler The completion handler.
  */
-- (void)disassociate:(NSString *)channelID
+- (UADisposable *)disassociate:(NSString *)channelID
    completionHandler:(void (^)(NSError * _Nullable))completionHandler;
 
 @end

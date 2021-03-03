@@ -20,16 +20,20 @@ NSString * const UATagGroupsAPIClientErrorDomain = @"com.urbanairship.tag_groups
 
 @interface UATagGroupsAPIClient()
 
-@property(nonatomic) NSString *typeKey;
-@property(nonatomic) NSString *path;
+@property (nonatomic) NSString *typeKey;
+@property (nonatomic) NSString *path;
+@property (nonatomic, strong) UARuntimeConfig *config;
+@property (nonatomic, strong) UARequestSession *session;
 
 @end
 
 @implementation UATagGroupsAPIClient
 
 - (instancetype)initWithConfig:(UARuntimeConfig *)config session:(UARequestSession *)session typeKey:(NSString *)typeKey path:(NSString *)path {
-    self = [super initWithConfig:config session:session queue:nil];
+    self = [super init];
     if (self) {
+        self.config = config;
+        self.session = session;
         self.typeKey = typeKey;
         self.path = path;
     }
@@ -54,25 +58,20 @@ NSString * const UATagGroupsAPIClientErrorDomain = @"com.urbanairship.tag_groups
     return client;
 }
 
-- (void)updateTagGroupsForId:(NSString *)identifier
+- (UADisposable *)updateTagGroupsForId:(NSString *)identifier
            tagGroupsMutation:(UATagGroupsMutation *)mutation
            completionHandler:(void (^)(NSError * _Nullable))completionHandler {
 
-    [self performTagGroupsMutation:mutation
+    return [self performTagGroupsMutation:mutation
                               path:self.path
                           audience:@{self.typeKey : identifier}
                  completionHandler:completionHandler];
 }
 
-- (void)performTagGroupsMutation:(UATagGroupsMutation *)mutation
+- (UADisposable *)performTagGroupsMutation:(UATagGroupsMutation *)mutation
                             path:(NSString *)path
                         audience:(NSDictionary *)audience
                completionHandler:(void (^)(NSError * _Nullable))completionHandler {
-
-    if (!self.enabled) {
-        UA_LDEBUG(@"Disabled");
-        return;
-    }
 
     NSMutableDictionary *payload = [[mutation payload] mutableCopy];
     [payload setValue:audience forKey:kUATagGroupsAudienceKey];
@@ -90,11 +89,9 @@ NSString * const UATagGroupsAPIClientErrorDomain = @"com.urbanairship.tag_groups
 
     UA_LTRACE(@"Updating tag groups with payload: %@", payload);
 
-    [self performRequest:request retryWhere:^BOOL(NSData * _Nullable data, NSHTTPURLResponse * _Nullable response) {
-        return [response hasRetriableStatus];
-    } completionHandler:^(NSData * _Nullable data, NSHTTPURLResponse * _Nullable response, NSError * _Nullable error) {
+    return [self.session performHTTPRequest:request completionHandler:^(NSData * _Nullable data, NSHTTPURLResponse * _Nullable response, NSError * _Nullable error) {
         if (error) {
-            return completionHandler(error);
+            completionHandler(error);
         }
 
         NSInteger status = response.statusCode;

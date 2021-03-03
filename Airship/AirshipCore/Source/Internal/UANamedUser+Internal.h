@@ -10,6 +10,7 @@
 @class UARuntimeConfig;
 @class UAChannel;
 @class UADate;
+@class UATaskManager;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -74,7 +75,7 @@ extern NSString *const UANamedUserLastUpdatedTokenKey;
 
 /**
  * Factory method to create a named user. For testing.
- * @parm channel The UAChannel instance.
+ * @param channel The UAChannel instance.
  * @param config The Airship config.
  * @param dataStore The shared preference data store.
  * @return A named user instance.
@@ -92,6 +93,7 @@ extern NSString *const UANamedUserLastUpdatedTokenKey;
  * @param tagGroupsRegistrar The tag groups registrar.
  * @param attributeRegistrar The attribute registrar
  * @param date The date for setting the timestamp.
+ * @param taskManager The task manager.
  * @return A named user instance.
  */
 + (instancetype)namedUserWithChannel:(UAChannel *)channel
@@ -100,7 +102,8 @@ extern NSString *const UANamedUserLastUpdatedTokenKey;
                            dataStore:(UAPreferenceDataStore *)dataStore
                   tagGroupsRegistrar:(UATagGroupsRegistrar *)tagGroupsRegistrar
                   attributeRegistrar:(UAAttributeRegistrar *)attributeRegistrar
-                                date:(UADate *)date;
+                                date:(UADate *)date
+                         taskManager:(UATaskManager *)taskManager;
 
 /**
  * Updates the association or disassociation of the current named user ID.

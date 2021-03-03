@@ -16,7 +16,6 @@ static NSString *const NamedUserPersistentQueueKey = @"com.urbanairship.named_us
 @property(nonatomic, strong) UAPreferenceDataStore *dataStore;
 @property(nonatomic, strong) UIApplication *application;
 @property(atomic, copy) NSString *identifier;
-@property(atomic, assign) BOOL updating;
 @end
 
 @implementation UAAttributeRegistrar
@@ -90,29 +89,16 @@ static NSString *const NamedUserPersistentQueueKey = @"com.urbanairship.named_us
     }];
 }
 
-- (void)updateAttributes {
+- (UADisposable *)updateAttributesWithTask:(id<UATask>)task completionHandler:(void(^)(BOOL completed))completionHandler {
     @synchronized (self) {
         if (!self.enabled) {
-            return;
+            [task taskCompleted];
+            completionHandler(NO);
+            return nil;
         }
-
-        if (self.updating) {
-            UA_LTRACE(@"Skipping attribute update, request already in flight");
-            return;
-        }
-
-        self.updating = YES;
     }
 
-    __block UIBackgroundTaskIdentifier backgroundTaskIdentifier = [self beginUploading];
-
-    if (backgroundTaskIdentifier == UIBackgroundTaskInvalid) {
-        UA_LTRACE("Background task unavailable, skipping tag groups update.");
-        [self endUploading:backgroundTaskIdentifier];
-        return;
-    }
-
-    [self uploadNextMutationWithBackgroundTaskIdentifier:backgroundTaskIdentifier];
+    return [self uploadNextMutationWithTask:task completionHandler:completionHandler];
 }
 
 - (void)popPendingMutations:(UAAttributePendingMutations *)mutations
@@ -125,7 +111,7 @@ static NSString *const NamedUserPersistentQueueKey = @"com.urbanairship.named_us
     }
 }
 
-- (void)uploadNextMutationWithBackgroundTaskIdentifier:(UIBackgroundTaskIdentifier)backgroundTaskIdentifier {
+- (UADisposable *)uploadNextMutationWithTask:(id<UATask>)task completionHandler:(void(^)(BOOL completed))completionHandler {
     UAAttributePendingMutations *mutations;
     NSString *identifier;
 
@@ -139,9 +125,10 @@ static NSString *const NamedUserPersistentQueueKey = @"com.urbanairship.named_us
     }
 
     if (!identifier || !mutations) {
-        // no upload work to do - end background task, if necessary, and finish operation
-        [self endUploading:backgroundTaskIdentifier];
-        return;
+        // no upload work to do - end task, if necessary, and finish operation
+        [task taskCompleted];
+        completionHandler(NO);
+        return nil;
     }
 
     UA_WEAKIFY(self);
@@ -151,51 +138,29 @@ static NSString *const NamedUserPersistentQueueKey = @"com.urbanairship.named_us
             // Success - pop mutation
             [self popPendingMutations:mutations identifier:identifier];
             [self.delegate uploadedAttributeMutations:mutations identifier:identifier];
-            [self uploadNextMutationWithBackgroundTaskIdentifier:backgroundTaskIdentifier];
+            [task taskCompleted];
+            completionHandler(YES);
         } else if (error.domain == UAAttributeAPIClientErrorDomain && error.code == UAAttributeAPIClientErrorUnrecoverableStatus) {
             // Unrecoverable failure - pop mutation
             UA_LERR(@"Unable to upload mutations: %@. Dropping.", mutations);
             [self popPendingMutations:mutations identifier:identifier];
-            [self uploadNextMutationWithBackgroundTaskIdentifier:backgroundTaskIdentifier];
+            [task taskCompleted];
+            completionHandler(YES);
         } else {
             UA_LINFO(@"Update of %@ failed with error: %@", mutations, error);
-            [self endUploading:backgroundTaskIdentifier];
+            [task taskFailed];
+            completionHandler(NO);
         }
     };
 
-    [self.client updateWithIdentifier:identifier
+    return [self.client updateWithIdentifier:identifier
                    attributeMutations:mutations
                     completionHandler:apiCompletionBlock];
-}
-
-- (UIBackgroundTaskIdentifier)beginUploading {
-    UA_WEAKIFY(self);
-    __block UIBackgroundTaskIdentifier backgroundTaskIdentifier = [self.application beginBackgroundTaskWithExpirationHandler:^{
-        UA_STRONGIFY(self);
-
-        UA_LTRACE(@"Attribute background task expired.");
-        [self.client cancelAllRequests];
-
-        [self endUploading:backgroundTaskIdentifier];
-    }];
-
-    return backgroundTaskIdentifier;
-}
-
-- (void)endUploading:(UIBackgroundTaskIdentifier)backgroundTaskIdentifier {
-    if (backgroundTaskIdentifier != UIBackgroundTaskInvalid) {
-        [self.application endBackgroundTask:backgroundTaskIdentifier];
-    }
-
-    @synchronized (self) {
-        self.updating = NO;
-    }
 }
 
 - (void)setEnabled:(BOOL)enabled {
     @synchronized (self) {
         _enabled = enabled;
-        self.client.enabled = enabled;
     }
 }
 

@@ -6,7 +6,7 @@
 #import "UARuntimeConfig+Internal.h"
 #import "UAPreferenceDataStore.h"
 #import "UAAttributeAPIClient+Internal.h"
-
+#import "UATask.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -82,8 +82,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Update attributes
+ *
+ * @param task The task.
+ * @param completionHandler The completion handler.
+ * @return UADisposable object
  */
-- (void)updateAttributes;
+- (UADisposable *)updateAttributesWithTask:(id<UATask>)task completionHandler:(void(^)(BOOL completed))completionHandler;
 
 /**
  * The current identifier associated with this registrar.

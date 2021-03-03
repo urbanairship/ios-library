@@ -31,7 +31,7 @@ extern NSString * const UATagGroupsAPIClientErrorDomain;
 /**
  * A high level abstraction for performing tag group operations.
  */
-@interface UATagGroupsAPIClient : UAAPIClient
+@interface UATagGroupsAPIClient : NSObject
 
 ///---------------------------------------------------------------------------------------
 /// @name Tag Groups API Client Internal Methods
@@ -78,7 +78,7 @@ extern NSString * const UATagGroupsAPIClientErrorDomain;
  * @param mutation The tag groups changes.
  * @param completionHandler The completion handler.
  */
-- (void)updateTagGroupsForId:(NSString *)identifier
+- (UADisposable *)updateTagGroupsForId:(NSString *)identifier
            tagGroupsMutation:(UATagGroupsMutation *)mutation
            completionHandler:(void (^)(NSError * _Nullable))completionHandler;
 

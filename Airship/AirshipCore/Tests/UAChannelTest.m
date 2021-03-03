@@ -16,6 +16,10 @@
 #import "UAAppIntegration+Internal.h"
 #import "UAPush+Internal.h"
 #import "UALocaleManager.h"
+#import "UATaskManager.h"
+
+static NSString * const UAChannelTagUpdateTaskID = @"UAChannel.tags.update";
+static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.update";
 
 @interface UAChannelTest : UAAirshipBaseTest
 @property(nonatomic, strong) id mockTagGroupsRegistrar;
@@ -32,6 +36,8 @@
 @property (nonatomic, strong) id mockedAirship;
 @property (nonatomic, strong) id mockedPush;
 @property (nonatomic, strong) id mockedActionRunner;
+@property (nonatomic, strong) id mockTaskManager;
+@property(nonatomic, copy) void (^launchHandler)(id<UATask>);
 @end
 
 @interface UAChannel()
@@ -71,13 +77,22 @@
     
     self.testDate = [[UATestDate alloc] initWithAbsoluteTime:[NSDate date]];
 
+    self.mockTaskManager = [self mockForClass:[UATaskManager class]];
+    
+    // Capture the task launcher
+    [[[self.mockTaskManager stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:4];
+        self.launchHandler =  (__bridge void (^)(id<UATask>))arg;
+    }] registerForTaskWithIDs:@[UAChannelTagUpdateTaskID, UAChannelAttributeUpdateTaskID] dispatcher:OCMOCK_ANY launchHandler:OCMOCK_ANY];
+    
     // Put setup code here. This method is called before the invocation of each test method in the class.
     self.channel = [self createChannel];
 
     self.mockedPush = [self mockForClass:[UAPush class]];
 
     self.mockedActionRunner = [self mockForClass:[UAActionRunner class]];
-
+    
     self.mockedAirship = [self mockForClass:[UAirship class]];
     [UAirship setSharedAirship:self.mockedAirship];
     [[[self.mockedAirship stub] andReturn:@[self.channel]] components];
@@ -105,7 +120,8 @@
                                       tagGroupsRegistrar:self.mockTagGroupsRegistrar
                                       attributeRegistrar:self.mockAttributeRegistrar
                                            localeManager:self.mockLocaleManager
-                                                    date:self.testDate];
+                                                    date:self.testDate
+                                             taskManager:self.mockTaskManager];
 
     return channel;
 }
@@ -727,11 +743,30 @@
         return [pendingMutations.payload isEqualToDictionary:expectedPendingMutations.payload];
     }]];
 
-    [[self.mockAttributeRegistrar expect] updateAttributes];
+    __block id mockTask = [self mockForProtocol:@protocol(UATask)];
+
+    UATaskRequestOptions *options = [UATaskRequestOptions optionsWithConflictPolicy:UATaskConflictPolicyAppend requiresNetwork:YES extras:nil];
+    [[[mockTask stub] andReturn:UAChannelAttributeUpdateTaskID] taskID];
+    [[[mockTask stub] andReturn:options] requestOptions];
+    
+    [[[self.mockTaskManager expect] andDo:^(NSInvocation *invocation) {
+        self.launchHandler(mockTask);
+    }] enqueueRequestWithID:UAChannelAttributeUpdateTaskID options:OCMOCK_ANY];
+    
+    [[[self.mockAttributeRegistrar expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void (^completionHandler)(BOOL) = (__bridge void (^)(BOOL))arg;
+        if (completionHandler) {
+            completionHandler(NO);
+        }
+    }] updateAttributesWithTask:mockTask completionHandler:OCMOCK_ANY];
 
     [self.channel applyAttributeMutations:addMutation];
 
     [self.mockAttributeRegistrar verify];
+    
+    [self.mockTaskManager verify];
 }
 
 /**
@@ -749,7 +784,14 @@
     date:self.testDate];
 
     [[self.mockAttributeRegistrar expect] savePendingMutations:OCMOCK_ANY];
-    [[self.mockAttributeRegistrar reject] updateAttributes];
+    
+    UATaskRequestOptions *options = [UATaskRequestOptions optionsWithConflictPolicy:UATaskConflictPolicyAppend requiresNetwork:YES extras:nil];
+    id mockTask = [self mockForProtocol:@protocol(UATask)];
+
+    [[[mockTask stub] andReturn:UAChannelAttributeUpdateTaskID] taskID];
+    [[[mockTask stub] andReturn:options] requestOptions];
+    
+    [[self.mockAttributeRegistrar reject] updateAttributesWithTask:mockTask completionHandler:OCMOCK_ANY];
 
     [self.channel applyAttributeMutations:addMutation];
 
@@ -882,7 +924,13 @@
  */
 - (void)testUpdateChannelTagGroupsIfIdentifierNil {
     self.channel.componentEnabled = YES;
-    [[self.mockTagGroupsRegistrar reject] updateTagGroups];
+    UATaskRequestOptions *options = [UATaskRequestOptions optionsWithConflictPolicy:UATaskConflictPolicyAppend requiresNetwork:YES extras:nil];
+    id mockTask = [self mockForProtocol:@protocol(UATask)];
+
+    [[[mockTask stub] andReturn:UAChannelTagUpdateTaskID] taskID];
+    [[[mockTask stub] andReturn:options] requestOptions];
+    
+    [[self.mockTagGroupsRegistrar reject] updateTagGroupsWithTask:mockTask completionHandler:OCMOCK_ANY];
     [self.channel updateRegistration];
     [self.mockTagGroupsRegistrar verify];
 }
@@ -894,9 +942,78 @@
     [self.dataStore setBool:YES forKey:UAirshipDataCollectionEnabledKey];
     self.channelIDFromMockChannelRegistrar = @"123456";
     self.channel.componentEnabled = YES;
-    [[self.mockTagGroupsRegistrar expect] updateTagGroups];
+    UATaskRequestOptions *options = [UATaskRequestOptions optionsWithConflictPolicy:UATaskConflictPolicyAppend requiresNetwork:YES extras:nil];
+    id mockTask = [self mockForProtocol:@protocol(UATask)];
+
+    [[[mockTask stub] andReturn:UAChannelTagUpdateTaskID] taskID];
+    [[[mockTask stub] andReturn:options] requestOptions];
+    
+    [[[self.mockTaskManager expect] andDo:^(NSInvocation *invocation) {
+        self.launchHandler(mockTask);
+    }] enqueueRequestWithID:UAChannelTagUpdateTaskID options:OCMOCK_ANY];
+  
+    [[[self.mockTagGroupsRegistrar expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void (^completionHandler)(BOOL) = (__bridge void (^)(BOOL))arg;
+        if (completionHandler) {
+            completionHandler(NO);
+        }
+    }] updateTagGroupsWithTask:mockTask completionHandler:OCMOCK_ANY];
+
     [self.channel updateRegistration];
     [self.mockTagGroupsRegistrar verify];
+    [self.mockTaskManager verify];
+}
+
+/**
+ * Test that the tag groups registrar is called again if the value passed with the completion handler is YES
+ */
+- (void)testUpdateTagsContinuesIfNeeded {
+    [self.dataStore setBool:YES forKey:UAirshipDataCollectionEnabledKey];
+    self.channelIDFromMockChannelRegistrar = @"123456";
+    self.channel.componentEnabled = YES;
+    UATaskRequestOptions *options = [UATaskRequestOptions optionsWithConflictPolicy:UATaskConflictPolicyAppend requiresNetwork:YES extras:nil];
+    id mockTask = [self mockForProtocol:@protocol(UATask)];
+
+    [[[mockTask stub] andReturn:UAChannelTagUpdateTaskID] taskID];
+    [[[mockTask stub] andReturn:options] requestOptions];
+    
+    [[[self.mockTaskManager expect] andDo:^(NSInvocation *invocation) {
+        self.launchHandler(mockTask);
+    }] enqueueRequestWithID:UAChannelTagUpdateTaskID options:OCMOCK_ANY];
+    
+    // EXPECTATIONS
+    [[[self.mockTagGroupsRegistrar expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void (^completionHandler)(BOOL) = (__bridge void (^)(BOOL))arg;
+        if (completionHandler) {
+            completionHandler(YES);
+        }
+    }] updateTagGroupsWithTask:mockTask completionHandler:OCMOCK_ANY];
+
+    [[[self.mockTaskManager expect] andDo:^(NSInvocation *invocation) {
+        self.launchHandler(mockTask);
+    }] enqueueRequestWithID:UAChannelTagUpdateTaskID options:OCMOCK_ANY];
+    
+    [[[self.mockTagGroupsRegistrar expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void (^completionHandler)(BOOL) = (__bridge void (^)(BOOL))arg;
+        if (completionHandler) {
+            completionHandler(NO);
+        }
+    }] updateTagGroupsWithTask:mockTask completionHandler:OCMOCK_ANY];
+
+    [[self.mockTaskManager reject] enqueueRequestWithID:UAChannelTagUpdateTaskID options:OCMOCK_ANY];
+    
+    // TEST
+    [self.channel updateRegistration];
+    
+    // VERIFY
+    [self.mockTagGroupsRegistrar verify];
+    [self.mockTaskManager verify];
 }
 
 /**
@@ -904,7 +1021,14 @@
  */
 - (void)testUpdateChannelAttributesIfIdentifierNil {
    self.channel.componentEnabled = YES;
-    [[self.mockAttributeRegistrar reject] updateAttributes];
+    
+    UATaskRequestOptions *options = [UATaskRequestOptions optionsWithConflictPolicy:UATaskConflictPolicyAppend requiresNetwork:YES extras:nil];
+    id mockTask = [self mockForProtocol:@protocol(UATask)];
+
+    [[[mockTask stub] andReturn:UAChannelAttributeUpdateTaskID] taskID];
+    [[[mockTask stub] andReturn:options] requestOptions];
+    
+    [[self.mockAttributeRegistrar reject] updateAttributesWithTask:mockTask completionHandler:OCMOCK_ANY];
     [self.channel updateRegistration];
     [self.mockAttributeRegistrar verify];
 }
@@ -915,9 +1039,78 @@
 - (void)testUpdateChannelAttributes {
     self.channelIDFromMockChannelRegistrar = @"123456";
     self.channel.componentEnabled = YES;
-    [[self.mockAttributeRegistrar expect] updateAttributes];
+    
+    UATaskRequestOptions *options = [UATaskRequestOptions optionsWithConflictPolicy:UATaskConflictPolicyAppend requiresNetwork:YES extras:nil];
+    id mockTask = [self mockForProtocol:@protocol(UATask)];
+
+    [[[mockTask stub] andReturn:UAChannelAttributeUpdateTaskID] taskID];
+    [[[mockTask stub] andReturn:options] requestOptions];
+    
+    [[[self.mockTaskManager expect] andDo:^(NSInvocation *invocation) {
+        self.launchHandler(mockTask);
+    }] enqueueRequestWithID:UAChannelTagUpdateTaskID options:OCMOCK_ANY];
+    
+    [[[self.mockAttributeRegistrar expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void (^completionHandler)(BOOL) = (__bridge void (^)(BOOL))arg;
+        if (completionHandler) {
+            completionHandler(NO);
+        }
+    }] updateAttributesWithTask:mockTask completionHandler:OCMOCK_ANY];
+
     [self.channel updateRegistration];
     [self.mockAttributeRegistrar verify];
+    [self.mockTaskManager verify];
+}
+
+/**
+ * Test that the attribute registrar is called again if the value passed with the completion handler is YES
+ */
+- (void)testUpdateAttributesContinuesIfNeeded {
+    self.channelIDFromMockChannelRegistrar = @"123456";
+    self.channel.componentEnabled = YES;
+    
+    UATaskRequestOptions *options = [UATaskRequestOptions optionsWithConflictPolicy:UATaskConflictPolicyAppend requiresNetwork:YES extras:nil];
+    id mockTask = [self mockForProtocol:@protocol(UATask)];
+
+    [[[mockTask stub] andReturn:UAChannelAttributeUpdateTaskID] taskID];
+    [[[mockTask stub] andReturn:options] requestOptions];
+    
+    [[[self.mockTaskManager expect] andDo:^(NSInvocation *invocation) {
+        self.launchHandler(mockTask);
+    }] enqueueRequestWithID:UAChannelAttributeUpdateTaskID options:OCMOCK_ANY];
+    
+    // EXPECTATIONS
+    [[[self.mockAttributeRegistrar expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void (^completionHandler)(BOOL) = (__bridge void (^)(BOOL))arg;
+        if (completionHandler) {
+            completionHandler(YES);
+        }
+    }] updateAttributesWithTask:mockTask completionHandler:OCMOCK_ANY];
+
+    [[[self.mockTaskManager expect] andDo:^(NSInvocation *invocation) {
+        self.launchHandler(mockTask);
+    }] enqueueRequestWithID:UAChannelAttributeUpdateTaskID options:OCMOCK_ANY];
+    
+    [[[self.mockAttributeRegistrar expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void (^completionHandler)(BOOL) = (__bridge void (^)(BOOL))arg;
+        if (completionHandler) {
+            completionHandler(NO);
+        }
+    }] updateAttributesWithTask:mockTask completionHandler:OCMOCK_ANY];
+
+    [[self.mockTaskManager reject] enqueueRequestWithID:UAChannelAttributeUpdateTaskID options:OCMOCK_ANY];
+    
+    [self.channel updateRegistration];
+    
+    // VERIFY
+    [self.mockTagGroupsRegistrar verify];
+    [self.mockTaskManager verify];
 }
 
 /**
