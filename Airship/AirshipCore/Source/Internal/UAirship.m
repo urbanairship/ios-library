@@ -506,6 +506,12 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
     if (![[NSJSONSerialization class] respondsToSelector:@selector(stringWithObject:)]) {
         UA_LIMPERR(@"UAirship library requires the '-ObjC' linker flag set in 'Other linker flags'.");
     }
+
+    if (!self.config.suppressAllowListError) {
+        if (!self.config.URLAllowList.count && !self.config.URLAllowListScopeOpenURL.count) {
+            UA_LIMPERR(@"The airship config options is missing URL allow list rules for SCOPE_OPEN. By default only Airship, YouTube, mailto, sms, and tel URLs will be allowed. To suppress this error, specify allow list rules by providing rules for URLAllowListScopeOpenURL or URLAllowList. Alternatively you can suppress this error and keep the default rules by using the flag suppressAllowListError. For more information, see https://docs.airship.com/platform/ios/getting-started/#url-allow-list.");
+        }
+    }
 }
 
 

@@ -12,6 +12,7 @@
 @property (nonatomic, copy) NSArray<NSString *> *URLAllowList;
 @property (nonatomic, copy) NSArray<NSString *> *URLAllowListScopeJavaScriptInterface;
 @property (nonatomic, copy) NSArray<NSString *> *URLAllowListScopeOpenURL;
+@property (nonatomic, assign) BOOL suppressAllowListError;
 @property (nonatomic, copy) NSString *itunesID;
 @property (nonatomic, assign, getter=isAnalyticsEnabled) BOOL analyticsEnabled;
 @property (nonatomic, assign) BOOL detectProvisioningMode;
@@ -74,6 +75,7 @@ NSString *const UARuntimeConfigEURemoteDataAPIURL = @"https://remote-data.asnapi
         self.URLAllowList = config.URLAllowList;
         self.URLAllowListScopeJavaScriptInterface = config.URLAllowListScopeJavaScriptInterface;
         self.URLAllowListScopeOpenURL = config.URLAllowListScopeOpenURL;
+        self.suppressAllowListError = config.suppressAllowListError;
         self.clearNamedUserOnAppRestore = config.clearNamedUserOnAppRestore;
         self.channelCaptureEnabled = config.channelCaptureEnabled;
         self.customConfig = config.customConfig;

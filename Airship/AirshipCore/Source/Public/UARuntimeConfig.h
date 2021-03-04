@@ -54,6 +54,13 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (readonly) NSArray<NSString *> *URLAllowListScopeOpenURL;
 
+/**
+ * Whether to suppress console error messages about missing allow list entries during takeOff.
+ *
+ * Defaults to `NO`.
+ */
+@property (readonly) BOOL suppressAllowListError;
+
 ///---------------------------------------------------------------------------------------
 /// @name Advanced Configuration Options
 ///---------------------------------------------------------------------------------------

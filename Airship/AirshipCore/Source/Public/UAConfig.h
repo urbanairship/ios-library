@@ -141,6 +141,13 @@ typedef NS_ENUM(NSUInteger, UACloudSite) {
 @property (nonatomic, copy) NSArray<NSString *> *URLAllowListScopeOpenURL;
 
 /**
+ * Whether to suppress console error messages about missing allow list entries during takeOff.
+ *
+ * Defaults to `NO`.
+ */
+@property (nonatomic, assign) BOOL suppressAllowListError;
+
+/**
  * The iTunes ID used for Rate App Actions.
  */
 @property (nonatomic, copy) NSString *itunesID;
