@@ -448,7 +448,7 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
         [self disassociateNamedUserIfNil];
     } else {
         // Once we get a channel, update the named user if necessary.
-        [self enqueueUpdateNamedUserTask];
+        [self forceUpdate];
     }
 }
 

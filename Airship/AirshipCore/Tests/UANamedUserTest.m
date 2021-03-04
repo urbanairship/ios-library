@@ -65,7 +65,7 @@ void (^disassociateSuccessDoBlock)(NSInvocation *);
     self.mockTimeZone = [self mockForClass:[NSTimeZone class]];
     [[[self.mockTimeZone stub] andReturn:self.mockTimeZone] defaultTimeZone];
 
-    self.mockNotificationCenter = [self mockForClass:[NSNotificationCenter class]];
+    self.mockNotificationCenter = [self partialMockForObject:[NSNotificationCenter defaultCenter]];
     
     self.testDate = [[UATestDate alloc] initWithAbsoluteTime:[NSDate date]];
 
@@ -535,6 +535,38 @@ void (^disassociateSuccessDoBlock)(NSInvocation *);
 
     [self.mockTaskManager verify];
     
+    XCTAssertNotEqualObjects(changeToken, self.namedUser.changeToken,
+                             @"Change token should have changed.");
+    XCTAssertEqualObjects(self.namedUser.changeToken, self.namedUser.lastUpdatedToken,
+                          @"Tokens should match.");
+    XCTAssertNoThrow([self.mockedNamedUserClient verify], @"Named user should be associated");
+}
+
+- (void)testChannelCreated {
+    NSString *changeToken = self.namedUser.changeToken;
+
+    // Expect the named user client to associate and call the success block
+    [[[self.mockedNamedUserClient expect] andDo:associateSuccessDoBlock] associate:@"fakeNamedUser"
+                                                                         channelID:@"someChannel"
+                                                                 completionHandler:OCMOCK_ANY];
+
+    UATaskRequestOptions *options = [UATaskRequestOptions optionsWithConflictPolicy:UATaskConflictPolicyReplace requiresNetwork:YES extras:nil];
+    id mockTask = [self mockForProtocol:@protocol(UATask)];
+
+    [[[mockTask stub] andReturn:UANamedUserUpdateTaskID] taskID];
+    [[[mockTask stub] andReturn:options] requestOptions];
+
+    [[[self.mockTaskManager expect] andDo:^(NSInvocation *invocation) {
+        self.launchHandler(mockTask);
+    }] enqueueRequestWithID:UANamedUserUpdateTaskID options:OCMOCK_ANY];
+
+    // Send a channel created event
+    [self.mockNotificationCenter postNotificationName:UAChannelCreatedEvent
+                                               object:nil
+                                             userInfo:@{UAChannelCreatedEventChannelKey:@"newChannel", UAChannelCreatedEventExistingKey: @(NO)}];
+
+    [self.mockTaskManager verify];
+
     XCTAssertNotEqualObjects(changeToken, self.namedUser.changeToken,
                              @"Change token should have changed.");
     XCTAssertEqualObjects(self.namedUser.changeToken, self.namedUser.lastUpdatedToken,
