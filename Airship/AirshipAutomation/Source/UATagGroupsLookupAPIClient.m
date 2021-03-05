@@ -11,10 +11,24 @@
 #define kUATagGroupsLookupAPIClientDeviceType @"ios"
 #define kUATagGroupsLookupAPIClientIfModifiedSinceKey @"if_modified_since"
 
+@interface UATagGroupsLookupAPIClient()
+@property (nonatomic, strong) UARuntimeConfig *config;
+@property (nonatomic, strong) UARequestSession *session;
+@end
+
 @implementation UATagGroupsLookupAPIClient
 
+- (instancetype)initWithConfig:(UARuntimeConfig *)config session:(UARequestSession *)session {
+    self = [super init];
+    if (self) {
+        self.config = config;
+        self.session = session;
+    }
+    return self;
+}
+
 + (instancetype)clientWithConfig:(UARuntimeConfig *)config {
-    return [self clientWithConfig:config session:[UARequestSession sessionWithConfig:config]];
+    return [[self alloc] initWithConfig:config session:[UARequestSession sessionWithConfig:config]];
 }
 
 + (instancetype)clientWithConfig:(UARuntimeConfig *)config session:(UARequestSession *)session {
@@ -46,12 +60,6 @@
                   requestedTagGroups:(UATagGroups *)requestedTagGroups
                       cachedResponse:(UATagGroupsLookupResponse *)cachedResponse
                    completionHandler:(void (^)(UATagGroupsLookupResponse *))completionHandler {
-
-    if (!self.enabled) {
-        UA_LDEBUG(@"Disabled");
-        return;
-    }
-
     NSDictionary *payloadDictionary = [self lookupDictionaryWithChannelID:channelID
                                                             requestedTags:[requestedTagGroups toJSON]
                                                            cachedResponse:cachedResponse];
@@ -70,9 +78,7 @@
 
     UA_LTRACE(@"Performing tag group lookup with payload: %@", payloadDictionary);
 
-    [self performRequest:request retryWhere:^BOOL(NSData * _Nullable data, NSURLResponse * _Nullable response) {
-        return NO;
-    } completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+    [self.session performHTTPRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
         NSHTTPURLResponse *httpResponse = nil;
 
         if ([response isKindOfClass:[NSHTTPURLResponse class]]) {

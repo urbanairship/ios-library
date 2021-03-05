@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 #import <Foundation/Foundation.h>
-#import "UAAPIClient.h"
+#import "UARequestSession.h"
 
 @class UARuntimeConfig;
 @class UATagGroupsMutation;

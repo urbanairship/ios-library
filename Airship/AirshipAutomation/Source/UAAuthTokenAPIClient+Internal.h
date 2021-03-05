@@ -29,7 +29,7 @@ extern NSString * const UAAuthTokenAPIClientErrorDomain;
 /**
  * API client for retrieving auth tokens from the server.
  */
-@interface UAAuthTokenAPIClient : UAAPIClient
+@interface UAAuthTokenAPIClient : NSObject
 
 /**
  * UAAuthTokenAPIClient class factory method. Used for testing.

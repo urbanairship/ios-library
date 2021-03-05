@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 #import <Foundation/Foundation.h>
-#import "UAAPIClient.h"
+#import "UARequestSession.h"
 
 @class UARuntimeConfig;
 
@@ -54,8 +54,8 @@ extern NSString * const UANamedUserAPIClientErrorDomain;
  * @param completionHandler The completion handler.
  */
 - (UADisposable *)associate:(NSString *)identifier
-        channelID:(NSString *)channelID
-completionHandler:(void (^)(NSError * _Nullable))completionHandler;
+                  channelID:(NSString *)channelID
+          completionHandler:(void (^)(NSError * _Nullable))completionHandler;
 
 /**
  * Disassociate the channel from the named user ID.
@@ -63,9 +63,9 @@ completionHandler:(void (^)(NSError * _Nullable))completionHandler;
  * @param channelID The channel ID string.
  * @param completionHandler The completion handler.
  */
-- (UADisposable *)disassociate:(NSString *)channelID
-   completionHandler:(void (^)(NSError * _Nullable))completionHandler;
+- (UADisposable *)disassociate:(NSString *)channelID completionHandler:(void (^)(NSError * _Nullable))completionHandler;
 
 @end
 
 NS_ASSUME_NONNULL_END
+

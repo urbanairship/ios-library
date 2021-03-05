@@ -6,13 +6,13 @@
 NSString * const UAUserAPIClientErrorDomain = @"com.urbanairship.user_api_client";
 
 @interface UAUserAPIClient()
-@property(nonatomic, strong) UAConfig *config;
+@property(nonatomic, strong) UARuntimeConfig *config;
 @property(nonatomic, strong) UARequestSession *session;
 @end
 
 @implementation UAUserAPIClient
 
-- (instancetype)initWithConfig:(UAConfig *)config session:(UARequestSession *)session {
+- (instancetype)initWithConfig:(UARuntimeConfig *)config session:(UARequestSession *)session {
     self = [super init];
     if (self) {
         self.session = session;

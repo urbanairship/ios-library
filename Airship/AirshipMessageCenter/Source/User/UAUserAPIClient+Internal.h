@@ -3,10 +3,8 @@
 #import <Foundation/Foundation.h>
 
 #import "UAAirshipMessageCenterCoreImport.h"
+#import "UAUserData.h"
 
-@class UAUser;
-@class UARuntimeConfig;
-@class UAUserData;
 
 NS_ASSUME_NONNULL_BEGIN
 

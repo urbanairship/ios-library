@@ -1,7 +1,6 @@
 /* Copyright Airship and Contributors */
 
 #import <Foundation/Foundation.h>
-#import "UAAPIClient.h"
 #import "UAPreferenceDataStore+Internal.h"
 #import "UARemoteDataPayload+Internal.h"
 #import "UARequestSession.h"

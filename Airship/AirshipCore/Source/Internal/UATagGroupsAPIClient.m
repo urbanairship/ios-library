@@ -4,7 +4,6 @@
 #import "UATagGroupsMutation+Internal.h"
 #import "UARuntimeConfig.h"
 #import "NSJSONSerialization+UAAdditions.h"
-#import "NSURLResponse+UAAdditions.h"
 #import "UAJSONSerialization.h"
 
 #define kUATagGroupsAudienceKey @"audience"

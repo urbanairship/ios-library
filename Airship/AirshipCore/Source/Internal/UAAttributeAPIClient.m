@@ -6,10 +6,8 @@
 #import "UAirship.h"
 #import "UAAnalytics+Internal.h"
 #import "NSJSONSerialization+UAAdditions.h"
-#import "NSURLResponse+UAAdditions.h"
 #import "UAJSONSerialization.h"
 #import "UAAttributePendingMutations.h"
-#import "UAAPIClient.h"
 #import "NSString+UAURLEncoding.h"
 
 NSString *const UAChannelsAPIPath = @"/api/channels/";

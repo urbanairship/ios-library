@@ -7,16 +7,29 @@
 #import "UAirship.h"
 #import "UAAnalytics+Internal.h"
 #import "NSJSONSerialization+UAAdditions.h"
-#import "NSURLResponse+UAAdditions.h"
 
 #define kUAChannelAPIPath @"/api/channels/"
 
 NSString * const UAChannelAPIClientErrorDomain = @"com.urbanairship.channel_api_client";
 
+@interface UAChannelAPIClient()
+@property(nonatomic, strong) UARuntimeConfig *config;
+@property(nonatomic, strong) UARequestSession *session;
+@end
 @implementation UAChannelAPIClient
 
+
+- (instancetype)initWithConfig:(UARuntimeConfig *)config session:(UARequestSession *)session {
+    self = [super init];
+    if (self) {
+        self.config = config;
+        self.session = session;
+    }
+    return self;
+}
+
 + (instancetype)clientWithConfig:(UARuntimeConfig *)config {
-    return [self clientWithConfig:config session:[UARequestSession sessionWithConfig:config]];
+    return [[self alloc] initWithConfig:config session:[UARequestSession sessionWithConfig:config]];
 }
 
 + (instancetype)clientWithConfig:(UARuntimeConfig *)config session:(UARequestSession *)session {

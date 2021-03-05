@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 #import <Foundation/Foundation.h>
-#import "UAAPIClient.h"
+#import "UARequestSession.h"
 
 @class UAChannelRegistrationPayload;
 @class UARuntimeConfig;
@@ -47,7 +47,7 @@ typedef void (^UAChannelAPIClientUpdateCompletionHandler)(NSError * _Nullable er
 /**
  * A high level abstraction for performing Channel API creation and updates.
  */
-@interface UAChannelAPIClient : UAAPIClient
+@interface UAChannelAPIClient : NSObject
 
 ///---------------------------------------------------------------------------------------
 /// @name Channel API Client Internal Methods

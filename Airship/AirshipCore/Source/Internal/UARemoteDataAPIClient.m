@@ -3,7 +3,6 @@
 #import "UARemoteDataAPIClient+Internal.h"
 #import "UAUtils+Internal.h"
 #import "UARuntimeConfig.h"
-#import "NSURLResponse+UAAdditions.h"
 #import "UAirshipVersion.h"
 #import "UAirship.h"
 

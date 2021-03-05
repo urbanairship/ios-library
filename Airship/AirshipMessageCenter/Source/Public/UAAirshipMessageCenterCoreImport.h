@@ -24,7 +24,6 @@
 #import "UABeveledLoadingIndicator.h"
 #import "UAAppStateTracker.h"
 #import "UAActionArguments.h"
-#import "UAAPIClient.h"
 #import "NSURLResponse+UAAdditions.h"
 #import "NSString+UALocalizationAdditions.h"
 #import "NSManagedObjectContext+UAAdditions.h"
@@ -32,4 +31,6 @@
 #import "UAAction.h"
 #import "UATaskManager.h"
 #import "UASemaphore.h"
+#import "UARequestSession.h"
+#import "UARequest.h"
 #endif

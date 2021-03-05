@@ -7,7 +7,6 @@
 #import "NSString+UALocalizationAdditions.h"
 #import "NSString+UAURLEncoding.h"
 #import "NSURLResponse+UAAdditions.h"
-#import "UAAPIClient.h"
 #import "UAAction.h"
 #import "UAActionArguments.h"
 #import "UAActionResult.h"
@@ -74,6 +73,5 @@
 #import "UAAttributePendingMutations.h"
 #import "UALocaleManager.h"
 #import "UATaskManager.h"
-#import "UAAPIClient.h"
 #import "NSDictionary+UAAdditions.h"
 #endif

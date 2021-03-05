@@ -10,9 +10,24 @@
 
 NSString * const UAAuthTokenAPIClientErrorDomain = @"com.urbanairship.auth_token_api_client";
 
+@interface UAAuthTokenAPIClient()
+@property(nonatomic, strong) UARuntimeConfig *config;
+@property(nonatomic, strong) UARequestSession *session;
+@end
+
 @implementation UAAuthTokenAPIClient
 
+- (instancetype)initWithConfig:(UARuntimeConfig *)config session:(UARequestSession *)session {
+    self = [super init];
+    if (self) {
+        self.config = config;
+        self.session = session;
+    }
+    return self;
+}
+
 + (instancetype)clientWithConfig:(UARuntimeConfig *)config {
+
     return [[self alloc] initWithConfig:config session:[UARequestSession sessionWithConfig:config]];
 }
 
@@ -39,9 +54,7 @@ NSString * const UAAuthTokenAPIClientErrorDomain = @"com.urbanairship.auth_token
 - (void)tokenWithChannelID:(NSString *)channelID completionHandler:(void (^)(UAAuthToken * _Nullable, NSError * _Nullable))completionHandler {
     UARequest *request = [self authTokenRequestWithChannelID:channelID];
 
-    [self performRequest:request retryWhere:^BOOL(NSData * _Nullable data, NSHTTPURLResponse * _Nullable response) {
-        return NO;
-    } completionHandler:^(NSData * _Nullable data, NSHTTPURLResponse * _Nullable response, NSError * _Nullable error) {
+    [self.session performHTTPRequest:request completionHandler:^(NSData * _Nullable data, NSHTTPURLResponse * _Nullable response, NSError * _Nullable error) {
         if (error) {
             UA_LTRACE(@"Auth token request failed with error %@", error);
             return completionHandler(nil, error);
