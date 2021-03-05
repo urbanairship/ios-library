@@ -2026,7 +2026,6 @@
 		6EE6529322A7E3B800F7D54D /* Valid-UAInAppMessageHTMLStyle.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6EE6529222A7E3B800F7D54D /* Valid-UAInAppMessageHTMLStyle.plist */; };
 		6EE7705D238F15D000E79944 /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = CC04F1C41DC27E6C00B4842D /* libsqlite3.tbd */; };
 		6EE7705E238F15D000E79944 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = CC944EC71DB161AE00C42269 /* libz.tbd */; };
-		6EE770D9238F15D000E79944 /* BuildFile in Headers */ = {isa = PBXBuildFile; settings = {ATTRIBUTES = (Private, ); }; };
 		6EE77136238F161400E79944 /* UARateAppPromptView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6E9376EA2376236C00AA9C2A /* UARateAppPromptView.xib */; };
 		6EE77137238F161400E79944 /* UAExtendedActions.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6E8A5513236768CC004AE2A0 /* UAExtendedActions.plist */; };
 		6EE77139238F163300E79944 /* UAAutomationActions.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6E845478237E231F007D3B1E /* UAAutomationActions.plist */; };
@@ -2318,6 +2317,7 @@
 		A60A2448258D0D81006B7D80 /* UAAttributesActionPredicate+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = A60A2429258D0D77006B7D80 /* UAAttributesActionPredicate+Internal.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A60A2455258D0D81006B7D80 /* UAAttributesActionPredicate+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = A60A2429258D0D77006B7D80 /* UAAttributesActionPredicate+Internal.h */; };
 		A60A2462258D0D82006B7D80 /* UAAttributesActionPredicate+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = A60A2429258D0D77006B7D80 /* UAAttributesActionPredicate+Internal.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A6AFF39525F0EDF80032D5D9 /* UARemoteConfigTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A6AFF39425F0EDF80032D5D9 /* UARemoteConfigTest.m */; };
 		A6B483D825ADE89E00550305 /* UARemoteConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = A6B483D725ADE89E00550305 /* UARemoteConfig.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A6B483D925ADE89E00550305 /* UARemoteConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = A6B483D725ADE89E00550305 /* UARemoteConfig.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A6B483DA25ADE89E00550305 /* UARemoteConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = A6B483D725ADE89E00550305 /* UARemoteConfig.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -3488,6 +3488,7 @@
 		A60A2429258D0D77006B7D80 /* UAAttributesActionPredicate+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UAAttributesActionPredicate+Internal.h"; path = "Internal/UAAttributesActionPredicate+Internal.h"; sourceTree = "<group>"; };
 		A60A242A258D0D77006B7D80 /* UAAttributesActionPredicate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAAttributesActionPredicate.m; path = Internal/UAAttributesActionPredicate.m; sourceTree = "<group>"; };
 		A649F50A252F4F39005453CB /* UAInbox 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "UAInbox 2.xcdatamodel"; sourceTree = "<group>"; };
+		A6AFF39425F0EDF80032D5D9 /* UARemoteConfigTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UARemoteConfigTest.m; sourceTree = "<group>"; };
 		A6B483D725ADE89E00550305 /* UARemoteConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UARemoteConfig.h; path = Public/UARemoteConfig.h; sourceTree = "<group>"; };
 		A6B483E825ADE8AA00550305 /* UARemoteConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UARemoteConfig.m; path = Internal/UARemoteConfig.m; sourceTree = "<group>"; };
 		A6B8F2E925AC9AF70037B51B /* UARemoteConfigURLManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UARemoteConfigURLManager.m; path = Internal/UARemoteConfigURLManager.m; sourceTree = "<group>"; };
@@ -5636,6 +5637,7 @@
 		CC04F2091DCAB4FD00B4842D /* Channel */ = {
 			isa = PBXGroup;
 			children = (
+				A6AFF39425F0EDF80032D5D9 /* UARemoteConfigTest.m */,
 				45BB646D23466D400006CFC1 /* Attributes */,
 				CC64F0831D8B781C009CEF27 /* UAChannelAPIClientTest.m */,
 				CC64F0841D8B781C009CEF27 /* UAChannelCaptureTest.m */,
@@ -6716,7 +6718,6 @@
 				6E411A992538C20500FEE4E8 /* UAUtils+Internal.h in Headers */,
 				6EEAE7F924C8F9B30046E311 /* UAScheduleTriggerContextTransformer+Internal.h in Headers */,
 				6E41156D2538C0AD00FEE4E8 /* UAAssociatedIdentifiers.h in Headers */,
-				6EE770D9238F15D000E79944 /* BuildFile in Headers */,
 				6EE77158238F16A600E79944 /* UALandingPageActionPredicate+Internal.h in Headers */,
 				6EE77159238F16A600E79944 /* UALandingPageAction+Internal.h in Headers */,
 				6E41164D2538C0B200FEE4E8 /* UAAddTagsAction.h in Headers */,
@@ -9020,6 +9021,7 @@
 				6EEAE81824CF9FBF0046E311 /* UAScheduleDeferredDataTest.m in Sources */,
 				6E90F0FC228F5F5600E1FCB0 /* UATestRuntimeConfig.m in Sources */,
 				3C152F5E24E4B33000CF1181 /* UAAuthTokenAPIClientTest.m in Sources */,
+				A6AFF39525F0EDF80032D5D9 /* UARemoteConfigTest.m in Sources */,
 				CC64F1211D8B781C009CEF27 /* UAScheduleTriggerTests.m in Sources */,
 				6E4A00791F2A4A4A0069D8A0 /* UABaseTest.m in Sources */,
 				CC70E8CE1DD3E81D000E2528 /* UATagGroupsMutationTest.m in Sources */,
