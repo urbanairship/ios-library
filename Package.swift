@@ -31,9 +31,6 @@ let package = Package(
             name: "AirshipAccengage",
             targets: ["AirshipAccengage"]),
         .library(
-            name: "AirshipDebug",
-            targets: ["AirshipDebug"]),
-        .library(
             name: "AirshipNotificationContentExtension",
             targets: ["AirshipNotificationContentExtension"]),
         .library(
@@ -148,19 +145,6 @@ let package = Package(
                 cSettings: [
                     .headerSearchPath("Source"),
                     .headerSearchPath("Source/AccengageInternal")]
-        ),
-        .target(name:"AirshipDebug",
-                dependencies: [ .target(name: "AirshipCore"),
-                                .target(name: "AirshipAutomation"),
-                                .target(name: "AirshipMessageCenter"),
-                                .target(name: "AirshipExtendedActions"),
-                                .target(name: "AirshipLocation")],
-                path: "Airship/AirshipDebug",
-                exclude: ["Source/AirshipDebug.h",
-                          "Info.plist"],
-                sources : ["Source"],
-                resources: [
-                    .process("Resources")]
         ),
         .target(name:"AirshipNotificationContentExtension",
                 path: "AirshipExtensions/AirshipNotificationContentExtension",
