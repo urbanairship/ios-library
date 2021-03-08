@@ -287,20 +287,26 @@ static NSString * const UALastRemoteDataModifiedTime = @"UALastRemoteDataModifie
     UA_WEAKIFY(self);
     UADisposable *disposable = [self.remoteDataAPIClient fetchRemoteDataWithLocale:locale
                                                                       lastModified:lastModified
-                                                                 completionHandler:^(NSArray<NSDictionary *> * _Nullable remoteData, NSString * _Nullable lastModified, NSError * _Nullable error) {
+                                                                 completionHandler:^(UARemoteDataResponse *response, NSError * error) {
         UA_STRONGIFY(self)
         if (error) {
+            UA_LDEBUG(@"Failed to refresh remote-data with error: %@", error);
             [task taskFailed];
             [semaphore signal];
-        } else {
+            return;
+        }
+
+        if (response.isSuccess) {
             NSDictionary *metadata = [self createMetadata:locale];
-            NSArray<UARemoteDataPayload *> *payloads = [UARemoteDataPayload remoteDataPayloadsFromJSON:remoteData
+            NSArray<UARemoteDataPayload *> *payloads = [UARemoteDataPayload remoteDataPayloadsFromJSON:response.payloads
                                                                                               metadata:metadata];
             [self.remoteDataStore overwriteCachedRemoteDataWithResponse:payloads completionHandler:^(BOOL success) {
                 UA_STRONGIFY(self);
                 if (success) {
+                    UA_LDEBUG(@"Updated remote-data with payloads: %@", payloads);
+
                     self.lastMetadata = metadata;
-                    [self.dataStore setValue:lastModified forKey:UALastRemoteDataModifiedTime];
+                    [self.dataStore setValue:response.lastModified forKey:UALastRemoteDataModifiedTime];
                     [self.dataStore setValue:self.date.now forKey:UARemoteDataLastRefreshTimeKey];
 
                     // notify remote data subscribers
@@ -309,10 +315,19 @@ static NSString * const UALastRemoteDataModifiedTime = @"UALastRemoteDataModifie
                         [semaphore signal];
                     }];
                 } else {
+                    UA_LWARN(@"Failed to save updated remote-data");
                     [task taskFailed];
                     [semaphore signal];
                 }
             }];
+        } else {
+            UA_LDEBUG(@"Failed to refresh remote-data with response: %@", response);
+            if (response.isServerError) {
+                [task taskFailed];
+            } else {
+                [task taskCompleted];
+            }
+            [semaphore signal];
         }
     }];
 

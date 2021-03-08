@@ -5,6 +5,26 @@
 #import "UARuntimeConfig.h"
 #import "UAirshipVersion.h"
 #import "UAirship.h"
+#import "NSError+UAAdditions.h"
+
+@interface UARemoteDataResponse()
+@property (nonatomic, copy, nullable) NSArray<NSDictionary *> *payloads;
+@property (nonatomic, copy, nullable) NSString *lastModified;
+@end
+
+@implementation UARemoteDataResponse
+- (instancetype)initWithStatus:(NSUInteger)status
+                      payloads:(NSArray<NSDictionary *> *)payloads
+                  lastModified:(NSString *)lastModified {
+    self = [super initWithStatus:status];
+    if (self) {
+        self.payloads = payloads;
+        self.lastModified = lastModified;
+    }
+    return self;
+}
+@end
+
 
 @interface UARemoteDataAPIClient()
 @property (nonatomic, strong) UARequestSession *session;
@@ -58,34 +78,31 @@ NSString * const UARemoteDataAPIClientErrorDomain = @"com.urbanairship.remote_da
     return [self.session performHTTPRequest:request
                           completionHandler:^(NSData * _Nullable data, NSHTTPURLResponse * _Nullable response, NSError * _Nullable error) {
 
-        if (error) {
-            UA_LTRACE(@"Update finished with error: %@", error);
-            completionHandler(nil, nil, error);
-            return;
-        }
-
-        UA_LTRACE(@"Update of %@ finished with status: %ld", response.URL, response.statusCode);
-
-        // 304, no changes
-        if (response.statusCode == 304) {
-            completionHandler(nil, nil, nil);
-            return;
-        }
-
-        // Failure
-        if (response.statusCode != 200) {
-            completionHandler(nil, nil, [self unsuccessfulStatusError]);
-            return;
-        }
-
-        NSArray *payloads = [self parseRemoteData:data error:&error];
+        UA_LTRACE(@"Fetch finished with response: %@ error: %@", response, error);
 
         if (error) {
-            UA_LTRACE(@"Failed to parse remote data with status: %ld error: %@", (unsigned long)response.statusCode, error);
-            completionHandler(nil, nil, error);
+            completionHandler(nil, error);
+            return;
+        }
+
+        if (response.statusCode == 200) {
+            NSArray *payloads = [self parseRemoteData:data error:&error];
+
+            if (error) {
+                UA_LTRACE(@"Failed to parse remote data with error: %@", error);
+                completionHandler(nil, error);
+            } else {
+                NSString *lastModified = [response.allHeaderFields objectForKey:@"Last-Modified"];
+                UARemoteDataResponse *remoteDataResponse = [[UARemoteDataResponse alloc] initWithStatus:response.statusCode
+                                                                                               payloads:payloads lastModified:lastModified];
+
+                completionHandler(remoteDataResponse, nil);
+            }
         } else {
-            NSString *lastModified = [response.allHeaderFields objectForKey:@"Last-Modified"];
-            completionHandler(payloads, lastModified, nil);
+            UARemoteDataResponse *remoteDataResponse = [[UARemoteDataResponse alloc] initWithStatus:response.statusCode
+                                                                                           payloads:nil
+                                                                                       lastModified:nil];
+            completionHandler(remoteDataResponse, nil);
         }
     }];
 }
@@ -94,8 +111,7 @@ NSString * const UARemoteDataAPIClientErrorDomain = @"com.urbanairship.remote_da
                        error:(NSError **)error {
     // Missing response body
     if (!data) {
-        UA_LTRACE(@"Refresh remote data missing response body.");
-        *error = [self invalidResponseError];
+        *error = [NSError airshipParseErrorWithMessage:@"Refresh remote data missing response body."];
         return nil;
     }
 
@@ -111,26 +127,6 @@ NSString * const UARemoteDataAPIClientErrorDomain = @"com.urbanairship.remote_da
         *error = parseError;
         return nil;
     }
-}
-
-- (NSError *)unsuccessfulStatusError {
-    NSString *msg = [NSString stringWithFormat:@"Remote data client encountered an unsuccessful status"];
-
-    NSError *error = [NSError errorWithDomain:UARemoteDataAPIClientErrorDomain
-                                         code:UARemoteDataAPIClientErrorUnsuccessfulStatus
-                                     userInfo:@{NSLocalizedDescriptionKey:msg}];
-
-    return error;
-}
-
-- (NSError *)invalidResponseError {
-    NSString *msg = [NSString stringWithFormat:@"Remote data client encountered an invalid server response"];
-
-    NSError *error = [NSError errorWithDomain:UARemoteDataAPIClientErrorDomain
-                                         code:UARemoteDataAPIClientErrorInvalidResponse
-                                     userInfo:@{NSLocalizedDescriptionKey:msg}];
-
-    return error;
 }
 
 + (NSURL *)createRemoteDataURLWithURL:(NSString *)remoteDataAPIURL

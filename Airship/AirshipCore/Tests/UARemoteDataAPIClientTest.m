@@ -61,10 +61,10 @@
     XCTestExpectation *refreshFinished = [self expectationWithDescription:@"Refresh finished"];
     [self.remoteDataAPIClient fetchRemoteDataWithLocale:[NSLocale currentLocale]
                                            lastModified:nil
-                                      completionHandler:^(NSArray<NSDictionary *> * _Nullable remoteData, NSString * _Nullable lastModified, NSError * _Nullable error) {
+                                      completionHandler:^(UARemoteDataResponse *response, NSError * _Nullable error) {
         XCTAssertNil(error);
-        XCTAssertEqualObjects(self.remoteData, remoteData);
-        XCTAssertEqualObjects(responseLastModified, lastModified);
+        XCTAssertEqualObjects(self.remoteData, response.payloads);
+        XCTAssertEqualObjects(responseLastModified, response.lastModified);
         [refreshFinished fulfill];
     }];
 
@@ -96,10 +96,11 @@
     XCTestExpectation *refreshFinished = [self expectationWithDescription:@"Refresh finished"];
     [self.remoteDataAPIClient fetchRemoteDataWithLocale:[NSLocale currentLocale]
                                            lastModified:lastModified
-                                      completionHandler:^(NSArray<NSDictionary *> * _Nullable remoteData, NSString * _Nullable responseLastModified, NSError * _Nullable error) {
-        XCTAssertNil(remoteData);
+                                      completionHandler:^(UARemoteDataResponse *response, NSError * _Nullable error) {
+        XCTAssertEqual(304, response.status);
+        XCTAssertNil(response.lastModified);
+        XCTAssertNil(response.payloads);
         XCTAssertNil(error);
-        XCTAssertNil(responseLastModified);
         [refreshFinished fulfill];
     }];
 
@@ -107,7 +108,6 @@
     [self waitForTestExpectations];
     [self.mockSession verify];
 }
-
 
 /**
  * Test refresh the remote data when no remote data returned from cloud
@@ -137,10 +137,11 @@
     XCTestExpectation *refreshFinished = [self expectationWithDescription:@"Refresh finished"];
     [self.remoteDataAPIClient fetchRemoteDataWithLocale:[NSLocale currentLocale]
                                            lastModified:nil
-                                      completionHandler:^(NSArray<NSDictionary *> * _Nullable remoteData, NSString * _Nullable lastModified, NSError * _Nullable error) {
+                                      completionHandler:^(UARemoteDataResponse *response, NSError * _Nullable error) {
+        XCTAssertEqual(200, response.status);
+        XCTAssertEqualObjects(responseLastModified, response.lastModified);
+        XCTAssertEqualObjects(@[], response.payloads);
         XCTAssertNil(error);
-        XCTAssertEqualObjects(@[], remoteData);
-        XCTAssertEqualObjects(responseLastModified, lastModified);
         [refreshFinished fulfill];
     }];
 
@@ -178,7 +179,7 @@
     XCTestExpectation *refreshFinished = [self expectationWithDescription:@"Refresh finished"];
     [self.remoteDataAPIClient fetchRemoteDataWithLocale:[NSLocale currentLocale]
                                            lastModified:nil
-                                      completionHandler:^(NSArray<NSDictionary *> * _Nullable remoteData, NSString * _Nullable lastModified, NSError * _Nullable error) {
+                                      completionHandler:^(UARemoteDataResponse *response, NSError * _Nullable error) {
         [refreshFinished fulfill];
     }];
 
@@ -215,7 +216,7 @@
     XCTestExpectation *refreshFinished = [self expectationWithDescription:@"Refresh finished"];
     [self.remoteDataAPIClient fetchRemoteDataWithLocale:locale
                                            lastModified:nil
-                                      completionHandler:^(NSArray<NSDictionary *> * _Nullable remoteData, NSString * _Nullable lastModified, NSError * _Nullable error) {
+                                      completionHandler:^(UARemoteDataResponse *response, NSError * _Nullable error) {
         [refreshFinished fulfill];
     }];
 
@@ -248,7 +249,7 @@
     XCTestExpectation *refreshFinished = [self expectationWithDescription:@"Refresh finished"];
     [self.remoteDataAPIClient fetchRemoteDataWithLocale:locale
                                            lastModified:nil
-                                      completionHandler:^(NSArray<NSDictionary *> * _Nullable remoteData, NSString * _Nullable lastModified, NSError * _Nullable error) {
+                                      completionHandler:^(UARemoteDataResponse *response, NSError * _Nullable error) {
         [refreshFinished fulfill];
     }];
 

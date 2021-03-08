@@ -147,12 +147,15 @@ static NSString * const RefreshTask = @"UARemoteDataManager.refresh";
 
 - (void)testRefreshRemoteData {
     NSArray *payloads =  @[@{ @"type": @"test", @"timestamp":@"2017-01-01T12:00:00", @"data": @{ @"foo": @"bar" }}];
+    UARemoteDataResponse *response = [[UARemoteDataResponse alloc] initWithStatus:200
+                                                                         payloads:payloads
+                                                                     lastModified:@"2018-01-01T12:00:00"];
 
     [[[self.mockAPIClient expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:4];
         UARemoteDataAPIClientCompletionHandler completionHandler = (__bridge UARemoteDataAPIClientCompletionHandler) arg;
-        completionHandler(payloads, @"2018-01-01T12:00:00", nil);
+        completionHandler(response, nil);
     }] fetchRemoteDataWithLocale:OCMOCK_ANY lastModified:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     id mockTask = [self mockForProtocol:@protocol(UATask)];
@@ -171,19 +174,27 @@ static NSString * const RefreshTask = @"UARemoteDataManager.refresh";
 
 - (void)testRefreshRemoteData304 {
     NSArray *payloads =  @[@{ @"type": @"test", @"timestamp":@"2017-01-01T12:00:00", @"data": @{ @"foo": @"bar" }}];
+    UARemoteDataResponse *response = [[UARemoteDataResponse alloc] initWithStatus:200
+                                                                         payloads:payloads
+                                                                     lastModified:@"2018-01-01T12:00:00"];
 
     [[[self.mockAPIClient expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:4];
         UARemoteDataAPIClientCompletionHandler completionHandler = (__bridge UARemoteDataAPIClientCompletionHandler) arg;
-        completionHandler(payloads, @"2018-01-01T12:00:00", nil);
+        completionHandler(response, nil);
     }] fetchRemoteDataWithLocale:OCMOCK_ANY lastModified:nil completionHandler:OCMOCK_ANY];
 
+
+    UARemoteDataResponse *updateResponse = [[UARemoteDataResponse alloc] initWithStatus:304
+                                                                               payloads:nil
+                                                                           lastModified:nil];
+
     [[[self.mockAPIClient expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:4];
         UARemoteDataAPIClientCompletionHandler completionHandler = (__bridge UARemoteDataAPIClientCompletionHandler) arg;
-        completionHandler(nil, nil, nil);
+        completionHandler(updateResponse, nil);
     }] fetchRemoteDataWithLocale:OCMOCK_ANY lastModified:@"2018-01-01T12:00:00" completionHandler:OCMOCK_ANY];
 
     id mockTask = [self mockForProtocol:@protocol(UATask)];
@@ -207,14 +218,69 @@ static NSString * const RefreshTask = @"UARemoteDataManager.refresh";
     [mockTask verify];
 }
 
-- (void)testRefreshLastModifiedMetadataChanges {
-    NSArray *payloads =  @[@{ @"type": @"test", @"timestamp":@"2017-01-01T12:00:00", @"data": @{ @"foo": @"bar" }}];
+- (void)testRefreshRemoteDataClientError {
+    UARemoteDataResponse *response = [[UARemoteDataResponse alloc] initWithStatus:400
+                                                                         payloads:nil
+                                                                     lastModified:nil];
 
     [[[self.mockAPIClient expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:4];
         UARemoteDataAPIClientCompletionHandler completionHandler = (__bridge UARemoteDataAPIClientCompletionHandler) arg;
-        completionHandler(payloads, @"2018-01-01T12:00:00", nil);
+        completionHandler(response, nil);
+    }] fetchRemoteDataWithLocale:OCMOCK_ANY lastModified:nil completionHandler:OCMOCK_ANY];
+
+    id mockTask = [self mockForProtocol:@protocol(UATask)];
+    XCTestExpectation *firstTask = [self expectationWithDescription:@"Task finished"];
+    [[[mockTask expect] andDo:^(NSInvocation *invocation) {
+        [firstTask fulfill];
+    }] taskCompleted];
+
+    self.launchHandler(mockTask);
+
+    [self waitForTestExpectations];
+
+    [self.mockAPIClient verify];
+    [mockTask verify];
+}
+
+- (void)testRefreshRemoteDataServerError {
+    UARemoteDataResponse *response = [[UARemoteDataResponse alloc] initWithStatus:500
+                                                                         payloads:nil
+                                                                     lastModified:nil];
+
+    [[[self.mockAPIClient expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:4];
+        UARemoteDataAPIClientCompletionHandler completionHandler = (__bridge UARemoteDataAPIClientCompletionHandler) arg;
+        completionHandler(response, nil);
+    }] fetchRemoteDataWithLocale:OCMOCK_ANY lastModified:nil completionHandler:OCMOCK_ANY];
+
+    id mockTask = [self mockForProtocol:@protocol(UATask)];
+    XCTestExpectation *firstTask = [self expectationWithDescription:@"Task finished"];
+    [[[mockTask expect] andDo:^(NSInvocation *invocation) {
+        [firstTask fulfill];
+    }] taskFailed];
+
+    self.launchHandler(mockTask);
+
+    [self waitForTestExpectations];
+
+    [self.mockAPIClient verify];
+    [mockTask verify];
+}
+
+- (void)testRefreshLastModifiedMetadataChanges {
+    NSArray *payloads =  @[@{ @"type": @"test", @"timestamp":@"2017-01-01T12:00:00", @"data": @{ @"foo": @"bar" }}];
+    UARemoteDataResponse *response = [[UARemoteDataResponse alloc] initWithStatus:200
+                                                                         payloads:payloads
+                                                                     lastModified:@"2018-01-01T12:00:00"];
+
+    [[[self.mockAPIClient expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:4];
+        UARemoteDataAPIClientCompletionHandler completionHandler = (__bridge UARemoteDataAPIClientCompletionHandler) arg;
+        completionHandler(response, nil);
     }] fetchRemoteDataWithLocale:OCMOCK_ANY lastModified:nil completionHandler:OCMOCK_ANY];
 
     id mockTask = [self mockForProtocol:@protocol(UATask)];
@@ -236,7 +302,7 @@ static NSString * const RefreshTask = @"UARemoteDataManager.refresh";
         void *arg;
         [invocation getArgument:&arg atIndex:4];
         UARemoteDataAPIClientCompletionHandler completionHandler = (__bridge UARemoteDataAPIClientCompletionHandler) arg;
-        completionHandler(payloads, @"2018-01-01T12:00:00", nil);
+        completionHandler(response, nil);
     }] fetchRemoteDataWithLocale:OCMOCK_ANY lastModified:nil completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *secontTask = [self expectationWithDescription:@"Task finished"];
@@ -261,7 +327,7 @@ static NSString * const RefreshTask = @"UARemoteDataManager.refresh";
         void *arg;
         [invocation getArgument:&arg atIndex:4];
         UARemoteDataAPIClientCompletionHandler completionHandler = (__bridge UARemoteDataAPIClientCompletionHandler) arg;
-        completionHandler(nil, nil, error);
+        completionHandler(nil, error);
     }] fetchRemoteDataWithLocale:OCMOCK_ANY lastModified:nil completionHandler:OCMOCK_ANY];
 
     id mockTask = [self mockForProtocol:@protocol(UATask)];
@@ -438,11 +504,15 @@ static NSString * const RefreshTask = @"UARemoteDataManager.refresh";
 }
 
 - (void)updatePayloads:(NSArray *)payloads {
+    UARemoteDataResponse *response = [[UARemoteDataResponse alloc] initWithStatus:200
+                                                                         payloads:payloads
+                                                                     lastModified:@"2018-01-01T12:00:00"];
+
     [[[self.mockAPIClient expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:4];
         UARemoteDataAPIClientCompletionHandler completionHandler = (__bridge UARemoteDataAPIClientCompletionHandler) arg;
-        completionHandler(payloads, @"2018-01-01T12:00:00", nil);
+        completionHandler(response, nil);
     }] fetchRemoteDataWithLocale:OCMOCK_ANY lastModified:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     id mockTask = [self mockForProtocol:@protocol(UATask)];
@@ -479,4 +549,5 @@ static NSString * const RefreshTask = @"UARemoteDataManager.refresh";
 }
 
 @end
+
 
