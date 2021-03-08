@@ -287,8 +287,25 @@
 		6E217364237C811E0084933A /* UALocationModuleLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E21735F237C811D0084933A /* UALocationModuleLoader.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E217365237C811E0084933A /* UALocation+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E217360237C811E0084933A /* UALocation+Internal.h */; };
 		6E217366237C811E0084933A /* UALocation.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E217361237C811E0084933A /* UALocation.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6E21780925F1E20D00E1EFAA /* UAHTTPResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E21780725F1E20D00E1EFAA /* UAHTTPResponse.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6E21780A25F1E20D00E1EFAA /* UAHTTPResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E21780725F1E20D00E1EFAA /* UAHTTPResponse.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6E21780B25F1E20D00E1EFAA /* UAHTTPResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E21780725F1E20D00E1EFAA /* UAHTTPResponse.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6E21780C25F1E20D00E1EFAA /* UAHTTPResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E21780725F1E20D00E1EFAA /* UAHTTPResponse.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6E21780D25F1E20D00E1EFAA /* UAHTTPResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E21780825F1E20D00E1EFAA /* UAHTTPResponse.m */; };
+		6E21780E25F1E20D00E1EFAA /* UAHTTPResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E21780825F1E20D00E1EFAA /* UAHTTPResponse.m */; };
+		6E21780F25F1E20D00E1EFAA /* UAHTTPResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E21780825F1E20D00E1EFAA /* UAHTTPResponse.m */; };
+		6E21781025F1E20D00E1EFAA /* UAHTTPResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E21780825F1E20D00E1EFAA /* UAHTTPResponse.m */; };
+		6E21786625F2BBA800E1EFAA /* UAHTTPResponseTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E21786525F2BBA800E1EFAA /* UAHTTPResponseTest.m */; };
 		6E21852B237D32B30084933A /* EventData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21852A237D32B30084933A /* EventData.swift */; };
 		6E218539237DB7960084933A /* AddAttributeTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E218538237DB7960084933A /* AddAttributeTableViewController.swift */; };
+		6E22BAF925F1B3C600E5FCB0 /* NSError+UAAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E22BAF825F1B3C600E5FCB0 /* NSError+UAAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6E22BAFA25F1B3C600E5FCB0 /* NSError+UAAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E22BAF825F1B3C600E5FCB0 /* NSError+UAAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6E22BAFB25F1B3C600E5FCB0 /* NSError+UAAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E22BAF825F1B3C600E5FCB0 /* NSError+UAAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6E22BAFC25F1B3C600E5FCB0 /* NSError+UAAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E22BAF825F1B3C600E5FCB0 /* NSError+UAAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6E22BB0A25F1B3D300E5FCB0 /* NSError+UAAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E22BB0925F1B3D300E5FCB0 /* NSError+UAAdditions.m */; };
+		6E22BB0B25F1B3D300E5FCB0 /* NSError+UAAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E22BB0925F1B3D300E5FCB0 /* NSError+UAAdditions.m */; };
+		6E22BB0C25F1B3D300E5FCB0 /* NSError+UAAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E22BB0925F1B3D300E5FCB0 /* NSError+UAAdditions.m */; };
+		6E22BB0D25F1B3D300E5FCB0 /* NSError+UAAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E22BB0925F1B3D300E5FCB0 /* NSError+UAAdditions.m */; };
 		6E2A85BF2582969D0067E824 /* UAFrequencyLimits.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6E2A85BD2582969D0067E824 /* UAFrequencyLimits.xcdatamodeld */; };
 		6E2A85C02582969D0067E824 /* UAFrequencyLimits.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6E2A85BD2582969D0067E824 /* UAFrequencyLimits.xcdatamodeld */; };
 		6E2E914B238C4D9E008488D3 /* UALocationEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C4FDDFE225BBED400A54E32 /* UALocationEvent.m */; };
@@ -2871,8 +2888,13 @@
 		6E21735F237C811D0084933A /* UALocationModuleLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UALocationModuleLoader.h; sourceTree = "<group>"; };
 		6E217360237C811E0084933A /* UALocation+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UALocation+Internal.h"; sourceTree = "<group>"; };
 		6E217361237C811E0084933A /* UALocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UALocation.h; sourceTree = "<group>"; };
+		6E21780725F1E20D00E1EFAA /* UAHTTPResponse.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = UAHTTPResponse.h; path = Public/UAHTTPResponse.h; sourceTree = "<group>"; };
+		6E21780825F1E20D00E1EFAA /* UAHTTPResponse.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = UAHTTPResponse.m; path = Internal/UAHTTPResponse.m; sourceTree = "<group>"; };
+		6E21786525F2BBA800E1EFAA /* UAHTTPResponseTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAHTTPResponseTest.m; sourceTree = "<group>"; };
 		6E21852A237D32B30084933A /* EventData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventData.swift; sourceTree = "<group>"; };
 		6E218538237DB7960084933A /* AddAttributeTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddAttributeTableViewController.swift; sourceTree = "<group>"; };
+		6E22BAF825F1B3C600E5FCB0 /* NSError+UAAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSError+UAAdditions.h"; path = "Public/NSError+UAAdditions.h"; sourceTree = "<group>"; };
+		6E22BB0925F1B3D300E5FCB0 /* NSError+UAAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSError+UAAdditions.m"; path = "Internal/NSError+UAAdditions.m"; sourceTree = "<group>"; };
 		6E27A7D42367AC3200F46B69 /* UAExtendedActionsModuleLoader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAExtendedActionsModuleLoader.m; sourceTree = "<group>"; };
 		6E27A7D52367AC3200F46B69 /* UAExtendedActionsModuleLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAExtendedActionsModuleLoader.h; sourceTree = "<group>"; };
 		6E2A85BE2582969D0067E824 /* UAFrequencyLimits.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = UAFrequencyLimits.xcdatamodel; sourceTree = "<group>"; };
@@ -4747,6 +4769,8 @@
 				6E4116F82538C1E900FEE4E8 /* UARequest.m */,
 				6E41143D2538C09E00FEE4E8 /* UARequestSession.h */,
 				6E41177B2538C1F600FEE4E8 /* UARequestSession.m */,
+				6E21780725F1E20D00E1EFAA /* UAHTTPResponse.h */,
+				6E21780825F1E20D00E1EFAA /* UAHTTPResponse.m */,
 			);
 			name = HTTP;
 			sourceTree = "<group>";
@@ -4836,6 +4860,8 @@
 		6E411D5F2538D26200FEE4E8 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				6E22BB0925F1B3D300E5FCB0 /* NSError+UAAdditions.m */,
+				6E22BAF825F1B3C600E5FCB0 /* NSError+UAAdditions.h */,
 				6EC32280254FC65800EA5B38 /* NSObject+UAAdditions.h */,
 				6EC3226F254FC64C00EA5B38 /* NSObject+UAAdditions.m */,
 				6E411D842538D2F600FEE4E8 /* Value Transformers */,
@@ -5955,6 +5981,7 @@
 			children = (
 				CC944EDB1DB6AEC600C42269 /* UARequestTest.m */,
 				CC944EF81DB80E0C00C42269 /* UARequestSessionTest.m */,
+				6E21786525F2BBA800E1EFAA /* UAHTTPResponseTest.m */,
 			);
 			name = HTTP;
 			sourceTree = "<group>";
@@ -6255,6 +6282,7 @@
 				6E411B0F2538C20700FEE4E8 /* UAAppBackgroundEvent+Internal.h in Headers */,
 				6E41167B2538C0B300FEE4E8 /* UANotificationResponse.h in Headers */,
 				6E4115332538C0AB00FEE4E8 /* UARemoteDataPayload.h in Headers */,
+				6E22BAFB25F1B3C600E5FCB0 /* NSError+UAAdditions.h in Headers */,
 				6E41163B2538C0B200FEE4E8 /* UAChannel.h in Headers */,
 				6E41159F2538C0AE00FEE4E8 /* UAConfig.h in Headers */,
 				6E41180F2538C1FB00FEE4E8 /* UAAppStateTrackerAdapter+Internal.h in Headers */,
@@ -6274,6 +6302,7 @@
 				6E4116932538C0B400FEE4E8 /* UACircularRegion.h in Headers */,
 				6E4119772538C20100FEE4E8 /* UAirship+Internal.h in Headers */,
 				6E411B382538C44300FEE4E8 /* AirshipLib.h in Headers */,
+				6E21780B25F1E20D00E1EFAA /* UAHTTPResponse.h in Headers */,
 				6E411A632538C20400FEE4E8 /* UAChannelAPIClient+Internal.h in Headers */,
 				6E411AEB2538C20600FEE4E8 /* UAChannelRegistrationPayload+Internal.h in Headers */,
 				6E41196B2538C20000FEE4E8 /* UAAttributeRegistrar+Internal.h in Headers */,
@@ -6644,6 +6673,7 @@
 				6EB4E687254C96BB00E3FFD0 /* UATaskRequestOptions.h in Headers */,
 				6EE771DF238F16A600E79944 /* UAMessageCenter.h in Headers */,
 				6EE771E1238F16A600E79944 /* UAMessageCenterModuleLoader.h in Headers */,
+				6E22BAF925F1B3C600E5FCB0 /* NSError+UAAdditions.h in Headers */,
 				6E411AAD2538C20500FEE4E8 /* UATagUtils+Internal.h in Headers */,
 				6EE771E2238F16A600E79944 /* UAMessageCenterResources.h in Headers */,
 				6EE771E3238F16A600E79944 /* UAAirshipMessageCenterCoreImport.h in Headers */,
@@ -6726,6 +6756,7 @@
 				A6E002D1258BABCA00620226 /* UAModifyAttributesAction.h in Headers */,
 				6EE7717A238F16A600E79944 /* UAInAppMessageBannerDisplayContent+Internal.h in Headers */,
 				6E4115412538C0AC00FEE4E8 /* UANotificationCategories.h in Headers */,
+				6E21780925F1E20D00E1EFAA /* UAHTTPResponse.h in Headers */,
 				6EE7717D238F16A600E79944 /* UAInAppMessageBannerController+Internal.h in Headers */,
 				6EE7717E238F16A600E79944 /* UAInAppMessageBannerView+Internal.h in Headers */,
 				6EE7717F238F16A600E79944 /* UAInAppMessageBannerContentView+Internal.h in Headers */,
@@ -7036,6 +7067,7 @@
 				6E41185E2538C1FD00FEE4E8 /* UAFetchDeviceInfoActionPredicate+Internal.h in Headers */,
 				6E41157E2538C0AD00FEE4E8 /* UAAnalytics.h in Headers */,
 				6E41150A2538C0AA00FEE4E8 /* UAAsyncOperation.h in Headers */,
+				6E22BAFA25F1B3C600E5FCB0 /* NSError+UAAdditions.h in Headers */,
 				6E4115222538C0AB00FEE4E8 /* UANotificationCategory.h in Headers */,
 				6E4117BE2538C1FA00FEE4E8 /* UAProximityRegion+Internal.h in Headers */,
 				6E41183E2538C1FC00FEE4E8 /* UAPushReceivedEvent+Internal.h in Headers */,
@@ -7055,6 +7087,7 @@
 				6E411AAE2538C20500FEE4E8 /* UATagUtils+Internal.h in Headers */,
 				6E4119DA2538C20200FEE4E8 /* UAKeychainUtils+Internal.h in Headers */,
 				6E4115DA2538C0AF00FEE4E8 /* UAAggregateActionResult.h in Headers */,
+				6E21780A25F1E20D00E1EFAA /* UAHTTPResponse.h in Headers */,
 				6E411AD62538C20600FEE4E8 /* UANamedUserAPIClient+Internal.h in Headers */,
 				6E411ABA2538C20500FEE4E8 /* UATagGroupsMutation+Internal.h in Headers */,
 				6E41150E2538C0AA00FEE4E8 /* UAGlobal.h in Headers */,
@@ -7257,6 +7290,7 @@
 				6E411B102538C20700FEE4E8 /* UAAppBackgroundEvent+Internal.h in Headers */,
 				6E41167C2538C0B300FEE4E8 /* UANotificationResponse.h in Headers */,
 				6E4115342538C0AB00FEE4E8 /* UARemoteDataPayload.h in Headers */,
+				6E22BAFC25F1B3C600E5FCB0 /* NSError+UAAdditions.h in Headers */,
 				6E41163C2538C0B200FEE4E8 /* UAChannel.h in Headers */,
 				6E4115A02538C0AE00FEE4E8 /* UAConfig.h in Headers */,
 				6E4118102538C1FC00FEE4E8 /* UAAppStateTrackerAdapter+Internal.h in Headers */,
@@ -7276,6 +7310,7 @@
 				6E4116942538C0B400FEE4E8 /* UACircularRegion.h in Headers */,
 				6E4119782538C20100FEE4E8 /* UAirship+Internal.h in Headers */,
 				6E411B392538C44300FEE4E8 /* AirshipLib.h in Headers */,
+				6E21780C25F1E20D00E1EFAA /* UAHTTPResponse.h in Headers */,
 				6E411A642538C20400FEE4E8 /* UAChannelAPIClient+Internal.h in Headers */,
 				6E411AEC2538C20600FEE4E8 /* UAChannelRegistrationPayload+Internal.h in Headers */,
 				6E41196C2538C20000FEE4E8 /* UAAttributeRegistrar+Internal.h in Headers */,
@@ -8155,6 +8190,7 @@
 				6E4119EB2538C20200FEE4E8 /* UAScreenTrackingEvent.m in Sources */,
 				6E4117CF2538C1FA00FEE4E8 /* UADispatcher.m in Sources */,
 				6E41184F2538C1FC00FEE4E8 /* UAEventAPIClient.m in Sources */,
+				6E22BB0C25F1B3D300E5FCB0 /* NSError+UAAdditions.m in Sources */,
 				6E41184B2538C1FC00FEE4E8 /* UAPasteboardAction.m in Sources */,
 				6E41193B2538C20000FEE4E8 /* UAEvent.m in Sources */,
 				6E4119E32538C20200FEE4E8 /* UARemoteDataManager.m in Sources */,
@@ -8206,6 +8242,7 @@
 				6E411CAB2538C6A600FEE4E8 /* UARemoteData.xcdatamodeld in Sources */,
 				6E4118732538C1FD00FEE4E8 /* UAPendingTagGroupStore.m in Sources */,
 				6E4118672538C1FD00FEE4E8 /* UARequest.m in Sources */,
+				6E21780F25F1E20D00E1EFAA /* UAHTTPResponse.m in Sources */,
 				6E4118CB2538C1FE00FEE4E8 /* UAirshipVersion.m in Sources */,
 				6E411A5B2538C20400FEE4E8 /* UAJSONPredicate.m in Sources */,
 				6E411AAB2538C20500FEE4E8 /* UAChannel.m in Sources */,
@@ -8590,6 +8627,7 @@
 				6EE7723F238F172900E79944 /* UAAutomationModuleLoader.m in Sources */,
 				6E4118992538C1FD00FEE4E8 /* UAFetchDeviceInfoAction.m in Sources */,
 				6EE77240238F172900E79944 /* UAAutomationResources.m in Sources */,
+				6E21780D25F1E20D00E1EFAA /* UAHTTPResponse.m in Sources */,
 				6E411A812538C20500FEE4E8 /* UAirshipCoreResources.m in Sources */,
 				6EE77241238F172900E79944 /* UARetriable.m in Sources */,
 				6E4119292538C1FF00FEE4E8 /* UAAutoIntegration.m in Sources */,
@@ -8604,6 +8642,7 @@
 				6EE77244238F172A00E79944 /* UAMessageCenterAction.m in Sources */,
 				6EE77245238F172A00E79944 /* UADefaultMessageCenterUI.m in Sources */,
 				6E411A152538C20300FEE4E8 /* UADisposable.m in Sources */,
+				6E22BB0A25F1B3D300E5FCB0 /* NSError+UAAdditions.m in Sources */,
 				6E4118752538C1FD00FEE4E8 /* UARemoteDataPayload.m in Sources */,
 				3CF62FB325883BEB0007502B /* UAAutomationNativeBridgeExtension.m in Sources */,
 				6EE77246238F172A00E79944 /* UAMessageCenterDateUtils.m in Sources */,
@@ -8743,6 +8782,7 @@
 				6E41184E2538C1FC00FEE4E8 /* UAEventAPIClient.m in Sources */,
 				6E41184A2538C1FC00FEE4E8 /* UAPasteboardAction.m in Sources */,
 				6E41193A2538C20000FEE4E8 /* UAEvent.m in Sources */,
+				6E22BB0B25F1B3D300E5FCB0 /* NSError+UAAdditions.m in Sources */,
 				6E4119E22538C20200FEE4E8 /* UARemoteDataManager.m in Sources */,
 				6E411AD22538C20600FEE4E8 /* NSString+UALocalizationAdditions.m in Sources */,
 				6E411B022538C20700FEE4E8 /* UABespokeCloseView.m in Sources */,
@@ -8794,6 +8834,7 @@
 				6E411E9F2538F4D000FEE4E8 /* UAActionResult.m in Sources */,
 				6E411CAA2538C6A600FEE4E8 /* UARemoteData.xcdatamodeld in Sources */,
 				6E4118722538C1FD00FEE4E8 /* UAPendingTagGroupStore.m in Sources */,
+				6E21780E25F1E20D00E1EFAA /* UAHTTPResponse.m in Sources */,
 				6E4118662538C1FD00FEE4E8 /* UARequest.m in Sources */,
 				6E4118CA2538C1FE00FEE4E8 /* UAirshipVersion.m in Sources */,
 				6E411A5A2538C20400FEE4E8 /* UAJSONPredicate.m in Sources */,
@@ -8953,6 +8994,7 @@
 				CC64F0E81D8B781C009CEF27 /* UAAssociateIdentifiersEventTest.m in Sources */,
 				3C89DD3A211E354100864358 /* UATagGroupsTest.m in Sources */,
 				CC64F11D1D8B781C009CEF27 /* UAPushTest.m in Sources */,
+				6E21786625F2BBA800E1EFAA /* UAHTTPResponseTest.m in Sources */,
 				CC64F1291D8B781C009CEF27 /* UAUserTest.m in Sources */,
 				CC64F0EB1D8B781C009CEF27 /* UABase64Test.m in Sources */,
 				CC64F0F11D8B781C009CEF27 /* UACircularRegionTest.m in Sources */,
@@ -9083,6 +9125,7 @@
 				6E4118502538C1FC00FEE4E8 /* UAEventAPIClient.m in Sources */,
 				6E41184C2538C1FC00FEE4E8 /* UAPasteboardAction.m in Sources */,
 				6E41193C2538C20000FEE4E8 /* UAEvent.m in Sources */,
+				6E22BB0D25F1B3D300E5FCB0 /* NSError+UAAdditions.m in Sources */,
 				6E4119E42538C20200FEE4E8 /* UARemoteDataManager.m in Sources */,
 				6E411AD42538C20600FEE4E8 /* NSString+UALocalizationAdditions.m in Sources */,
 				6E411B042538C20700FEE4E8 /* UABespokeCloseView.m in Sources */,
@@ -9134,6 +9177,7 @@
 				6E411EAB2538F4D100FEE4E8 /* UAActionResult.m in Sources */,
 				6E411CAC2538C6A600FEE4E8 /* UARemoteData.xcdatamodeld in Sources */,
 				6E4118742538C1FD00FEE4E8 /* UAPendingTagGroupStore.m in Sources */,
+				6E21781025F1E20D00E1EFAA /* UAHTTPResponse.m in Sources */,
 				6E4118682538C1FD00FEE4E8 /* UARequest.m in Sources */,
 				6E4118CC2538C1FE00FEE4E8 /* UAirshipVersion.m in Sources */,
 				6E411A5C2538C20400FEE4E8 /* UAJSONPredicate.m in Sources */,

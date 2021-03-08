@@ -1,4 +1,5 @@
 #import "NSDictionary+UAAdditions.h"
+#import "NSError+UAAdditions.h"
 #import "NSJSONSerialization+UAAdditions.h"
 #import "NSManagedObjectContext+UAAdditions.h"
 #import "NSObject+UAAdditions.h"
@@ -55,6 +56,7 @@
 #import "UAExtendedActionsModuleLoaderFactory.h"
 #import "UAFetchDeviceInfoAction.h"
 #import "UAGlobal.h"
+#import "UAHTTPResponse.h"
 #import "UAInstallAttributionEvent.h"
 #import "UAJSONMatcher.h"
 #import "UAJSONPredicate.h"

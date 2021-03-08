@@ -111,7 +111,6 @@ extern NSString *const UAChannelRegistrarChannelIDKey;
  * Factory method to create a channel registrar. (for testing)
  * @param config The Airship config.
  * @param dataStore The shared preference data store.
- * @param channelID The initial channel ID string.
  * @param channelAPIClient The channel API client.
  * @param date The UADate object.
  * @param dispatcher The dispatcher to dispatch main queue blocks.
@@ -120,7 +119,6 @@ extern NSString *const UAChannelRegistrarChannelIDKey;
  */
 + (instancetype)channelRegistrarWithConfig:(UARuntimeConfig *)config
                                  dataStore:(UAPreferenceDataStore *)dataStore
-                                 channelID:(NSString *)channelID
                           channelAPIClient:(UAChannelAPIClient *)channelAPIClient
                                       date:(UADate *)date
                                 dispatcher:(UADispatcher *)dispatcher

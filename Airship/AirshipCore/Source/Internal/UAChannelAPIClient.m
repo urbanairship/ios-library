@@ -7,17 +7,32 @@
 #import "UAirship.h"
 #import "UAAnalytics+Internal.h"
 #import "NSJSONSerialization+UAAdditions.h"
+#import "NSError+UAAdditions.h"
 
 #define kUAChannelAPIPath @"/api/channels/"
 
-NSString * const UAChannelAPIClientErrorDomain = @"com.urbanairship.channel_api_client";
+
+@interface UAChannelCreateResponse()
+@property(nonatomic, copy) NSString *channelID;
+@end
+
+@implementation UAChannelCreateResponse
+
+- (instancetype)initWithStatus:(NSUInteger)status channelID:(NSString *)channelID {
+    self = [super initWithStatus:status];
+    if (self) {
+        self.channelID = channelID;
+    }
+    return self;
+}
+@end
 
 @interface UAChannelAPIClient()
 @property(nonatomic, strong) UARuntimeConfig *config;
 @property(nonatomic, strong) UARequestSession *session;
 @end
-@implementation UAChannelAPIClient
 
+@implementation UAChannelAPIClient
 
 - (instancetype)initWithConfig:(UARuntimeConfig *)config session:(UARequestSession *)session {
     self = [super init];
@@ -53,30 +68,29 @@ NSString * const UAChannelAPIClientErrorDomain = @"com.urbanairship.channel_api_
     }];
 
     return [self.session performHTTPRequest:request completionHandler:^(NSData *data, NSHTTPURLResponse *response, NSError *error) {
+
+        UA_LTRACE(@"Channel creation finished with response: %@ error: %@", response, error);
+
         if (error) {
-            return completionHandler(nil, NO, error);
+            return completionHandler(nil, error);
         }
 
         NSUInteger status = response.statusCode;
+        if (status == 200 || status == 201) {
+            NSDictionary *jsonResponse = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:nil];
 
-        // Failure
-        if (status != 200 && status != 201) {
-            UA_LTRACE(@"Channel creation failed with status: %ld error: %@", status, error);
+            // Parse the response
+            NSString *channelID = [jsonResponse valueForKey:@"channel_id"];
 
-            NSError *error = status == 409 ? [self conflictError] : [self unsuccessfulStatusError];
-            return completionHandler(nil, NO, error);
+            if (!channelID) {
+                NSString *errorMessage = [NSString stringWithFormat:@"Failed to parse channel: %@", error];
+                completionHandler(nil, [NSError airshipParseErrorWithMessage:errorMessage]);
+            } else {
+                completionHandler([[UAChannelCreateResponse alloc] initWithStatus:status channelID:channelID], nil);
+            }
+        } else {
+            completionHandler([[UAChannelCreateResponse alloc] initWithStatus:status], nil);
         }
-
-        // Success
-        NSDictionary *jsonResponse = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:nil];
-
-        UA_LTRACE(@"Channel creation succeeded with status: %ld jsonResponse: %@", (unsigned long)response.statusCode, jsonResponse);
-
-        // Parse the response
-        NSString *channelID = [jsonResponse valueForKey:@"channel_id"];
-        BOOL existing = response.statusCode == 200;
-
-        completionHandler(channelID, existing, nil);
     }];
 }
 
@@ -99,44 +113,15 @@ NSString * const UAChannelAPIClientErrorDomain = @"com.urbanairship.channel_api_
     }];
 
     return [self.session performHTTPRequest:request completionHandler:^(NSData *data, NSHTTPURLResponse *response, NSError *error) {
+
+        UA_LTRACE(@"Channel update finished with response: %@ error: %@", response, error);
+
         if (error) {
-            return completionHandler(error);
+            completionHandler(nil, error);
+        } else {
+            completionHandler([[UAHTTPResponse alloc] initWithStatus:response.statusCode], nil);
         }
-
-        NSUInteger status = response.statusCode;
-
-        // Failure
-        if (status != 200 && status != 201) {
-            UA_LTRACE(@"Channel update failed with status: %ld error: %@", (unsigned long)response.statusCode, error);
-            NSError *error = status == 409 ? [self conflictError] : [self unsuccessfulStatusError];
-            return completionHandler(error);
-        }
-
-        // Success
-        UA_LTRACE(@"Channel update succeeded with status: %ld", (unsigned long)response.statusCode);
-        completionHandler(nil);
     }];
 }
-
-- (NSError *)unsuccessfulStatusError {
-    NSString *msg = [NSString stringWithFormat:@"Channel client encountered an unsuccessful status"];
-
-    NSError *error = [NSError errorWithDomain:UAChannelAPIClientErrorDomain
-                                         code:UAChannelAPIClientErrorUnsuccessfulStatus
-                                     userInfo:@{NSLocalizedDescriptionKey:msg}];
-
-    return error;
-}
-
-- (NSError *)conflictError {
-    NSString *msg = [NSString stringWithFormat:@"Channel client encountered a conflict"];
-
-    NSError *error = [NSError errorWithDomain:UAChannelAPIClientErrorDomain
-                                         code:UAChannelAPIClientErrorConflict
-                                     userInfo:@{NSLocalizedDescriptionKey:msg}];
-
-    return error;
-}
-
 
 @end

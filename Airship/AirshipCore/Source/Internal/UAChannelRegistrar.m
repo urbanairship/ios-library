@@ -101,19 +101,16 @@ UARuntimeConfig *config;
 // Constructor for unit tests
 + (instancetype)channelRegistrarWithConfig:(UARuntimeConfig *)config
                                  dataStore:(UAPreferenceDataStore *)dataStore
-                                 channelID:(NSString *)channelID
                           channelAPIClient:(UAChannelAPIClient *)channelAPIClient
                                       date:(UADate *)date
                                 dispatcher:(UADispatcher *)dispatcher
                                taskManager:(UATaskManager *)taskManager {
 
-    UAChannelRegistrar *channelRegistrar =  [[self alloc] initWithDataStore:dataStore
-                                                           channelAPIClient:channelAPIClient
-                                                                       date:date
-                                                                 dispatcher:dispatcher
-                                                                taskManager:taskManager];
-    channelRegistrar.channelID = channelID;
-    return channelRegistrar;
+    return [[self alloc] initWithDataStore:dataStore
+                          channelAPIClient:channelAPIClient
+                                      date:date
+                                dispatcher:dispatcher
+                               taskManager:taskManager];
 }
 
 #pragma mark -
@@ -126,15 +123,17 @@ UARuntimeConfig *config;
 - (void)resetChannel {
     [self.dispatcher dispatchAsync:^{
         UA_LDEBUG(@"Clearing previous channel.");
-
-        self.channelID = nil;
-        self.lastSuccessfulPayload = nil;
-        self.lastSuccessfulUpdateDate = [NSDate distantPast];
-
+        [self clearChannelData];
         [self registerForcefully:YES];
     }];
 }
 
+
+- (void)clearChannelData {
+    self.channelID = nil;
+    self.lastSuccessfulPayload = nil;
+    self.lastSuccessfulUpdateDate = [NSDate distantPast];
+}
 #pragma mark -
 #pragma mark Internal Methods
 
@@ -193,15 +192,29 @@ UARuntimeConfig *config;
 
 - (void)createChannelWithPayload:(UAChannelRegistrationPayload *)payload task:(id<UATask>)task {
     UASemaphore *semaphore = [UASemaphore semaphore];
-    __block NSString *newChannelID;
-    __block BOOL existing;
-    __block NSError *error;
-
     UADisposable *disposable = [self.channelAPIClient createChannelWithPayload:payload
-                                                             completionHandler:^(NSString *_newChannelID, BOOL _existing, NSError *_error) {
-        newChannelID = _newChannelID;
-        existing = _existing;
-        error = _error;
+                                                             completionHandler:^(UAChannelCreateResponse * _Nullable response, NSError * _Nullable error) {
+
+        if (error) {
+            UA_LDEBUG(@"Channel creation failed with error: %@", error);
+            [self failedWithPayload:payload];
+            [task taskFailed];
+        } else if (response.isSuccess) {
+            UA_LDEBUG(@"Channel %@ created successfully.", response.channelID);
+            self.channelID = response.channelID;
+            [self.delegate channelCreated:response.channelID existing:response.status == 200];
+            [self succeededWithPayload:payload];
+            [task taskCompleted];
+        } else {
+            UA_LDEBUG(@"Channel creation failed with response: %@.", response);
+            [self failedWithPayload:payload];
+
+            if (response.isServerError || response.status == 429) {
+                [task taskFailed];
+            } else {
+                [task taskCompleted];
+            }
+        }
 
         [semaphore signal];
     }];
@@ -211,25 +224,6 @@ UARuntimeConfig *config;
     };
 
     [semaphore wait];
-
-    if (error) {
-        UA_LDEBUG(@"Channel creation failed: %@", error);
-        [self failedWithPayload:payload];
-        if (error.domain == UAChannelAPIClientErrorDomain) {
-            [task taskCompleted];
-        } else {
-            // Network related error
-            [task taskFailed];
-        }
-    } else {
-        UA_LDEBUG(@"Channel %@ created successfully.", newChannelID);
-        self.channelID = newChannelID;
-
-        [self.delegate channelCreated:newChannelID existing:existing];
-        [self succeededWithPayload:payload];
-
-        [task taskCompleted];
-    }
 }
 
 - (void)updateChannelWithPayload:(UAChannelRegistrationPayload *)payload
@@ -239,12 +233,32 @@ UARuntimeConfig *config;
     UASemaphore *semaphore = [UASemaphore semaphore];
     UAChannelRegistrationPayload *minPayload = [payload minimalUpdatePayloadWithLastPayload:lastSuccessfulPayload];
 
-    __block NSError *error;
-
     UADisposable *disposable = [self.channelAPIClient updateChannelWithID:identifier
                                                               withPayload:minPayload
-                                                        completionHandler:^(NSError *_error) {
-        error = _error;
+                                                        completionHandler:^(UAHTTPResponse * _Nullable response, NSError * _Nullable error) {
+
+        if (error) {
+            UA_LDEBUG(@"Channel creation failed with error: %@", error);
+            [self failedWithPayload:payload];
+            [task taskFailed];
+        } else if (response.isSuccess) {
+            UA_LDEBUG(@"Channel updated successfully.");
+            [self succeededWithPayload:payload];
+            [task taskCompleted];
+        } else if (response.status == 409){
+            UA_LTRACE(@"Channel conflict, recreating.");
+            [self clearChannelData];
+            [self registerForcefully:YES];
+            [task taskCompleted];
+        } else {
+            UA_LDEBUG(@"Channel update failed with response: %@.", response);
+            [self failedWithPayload:payload];
+            if (response.isServerError || response.status == 429) {
+                [task taskFailed];
+            } else {
+                [task taskCompleted];
+            }
+        }
         [semaphore signal];
     }];
 
@@ -253,24 +267,6 @@ UARuntimeConfig *config;
     };
 
     [semaphore wait];
-
-    if (!error) {
-        [self succeededWithPayload:payload];
-        [task taskCompleted];
-    } else {
-        if (error.domain == UAChannelAPIClientErrorDomain) {
-            if (error.code == UAChannelAPIClientErrorConflict) {
-                UA_LTRACE(@"Channel conflict, recreating.");
-                [self createChannelWithPayload:payload task:task];
-            } else {
-                [self failedWithPayload:minPayload];
-                [task taskCompleted];
-            }
-        } else {
-            // Network related error
-            [task taskFailed];
-        }
-    }
 }
 
 - (BOOL)shouldUpdateRegistration:(UAChannelRegistrationPayload *)payload {
