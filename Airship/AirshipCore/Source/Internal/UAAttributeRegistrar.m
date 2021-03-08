@@ -20,8 +20,6 @@ static NSString *const NamedUserPersistentQueueKey = @"com.urbanairship.named_us
 
 @implementation UAAttributeRegistrar
 
-@synthesize enabled = _enabled;
-
 + (instancetype)channelRegistrarWithConfig:(UARuntimeConfig *)config
                                  dataStore:(UAPreferenceDataStore *)dataStore {
 
@@ -60,7 +58,6 @@ static NSString *const NamedUserPersistentQueueKey = @"com.urbanairship.named_us
         self.application = application;
         self.client = APIClient;
         self.pendingAttributeMutationsQueue = persistentQueue;
-        self.enabled = YES;
     }
 
     return self;
@@ -89,29 +86,7 @@ static NSString *const NamedUserPersistentQueueKey = @"com.urbanairship.named_us
     }];
 }
 
-- (UADisposable *)updateAttributesWithTask:(id<UATask>)task completionHandler:(void(^)(BOOL completed))completionHandler {
-    @synchronized (self) {
-        if (!self.enabled) {
-            [task taskCompleted];
-            completionHandler(NO);
-            return nil;
-        }
-    }
-
-    return [self uploadNextMutationWithTask:task completionHandler:completionHandler];
-}
-
-- (void)popPendingMutations:(UAAttributePendingMutations *)mutations
-                 identifier:(NSString *)identifier {
-    @synchronized (self) {
-        // Pop the mutation if it is what we expect and the identifier has not changed
-        if ([mutations isEqual:self.pendingAttributeMutationsQueue.peekObject] && [identifier isEqualToString:self.identifier]) {
-            [self.pendingAttributeMutationsQueue popObject];
-        }
-    }
-}
-
-- (UADisposable *)uploadNextMutationWithTask:(id<UATask>)task completionHandler:(void(^)(BOOL completed))completionHandler {
+- (UADisposable *)updateAttributesWithCompletionHandler:(void(^)(BOOL completed))completionHandler {
     UAAttributePendingMutations *mutations;
     NSString *identifier;
 
@@ -125,50 +100,45 @@ static NSString *const NamedUserPersistentQueueKey = @"com.urbanairship.named_us
     }
 
     if (!identifier || !mutations) {
-        // no upload work to do - end task, if necessary, and finish operation
-        [task taskCompleted];
-        completionHandler(NO);
+        completionHandler(YES);
         return nil;
     }
 
     UA_WEAKIFY(self);
-    void (^apiCompletionBlock)(NSError *) = ^void (NSError *error) {
+    void (^apiCompletionBlock)(UAHTTPResponse *, NSError *) = ^void (UAHTTPResponse *response, NSError *error) {
         UA_STRONGIFY(self);
-        if (!error) {
-            // Success - pop mutation
+
+        if (response.isSuccess) {
+            UA_LDEBUG(@"Update of %@ succeeded", mutations);
             [self popPendingMutations:mutations identifier:identifier];
             [self.delegate uploadedAttributeMutations:mutations identifier:identifier];
-            [task taskCompleted];
             completionHandler(YES);
-        } else if (error.domain == UAAttributeAPIClientErrorDomain && error.code == UAAttributeAPIClientErrorUnrecoverableStatus) {
-            // Unrecoverable failure - pop mutation
-            UA_LERR(@"Unable to upload mutations: %@. Dropping.", mutations);
-            [self popPendingMutations:mutations identifier:identifier];
-            [task taskCompleted];
-            completionHandler(YES);
-        } else {
-            UA_LINFO(@"Update of %@ failed with error: %@", mutations, error);
-            [task taskFailed];
+        } else if (error || response.isServerError || response.status == 429) {
+            UA_LDEBUG(@"Update of %@ failed with response: %@ error: %@", mutations, response, error);
             completionHandler(NO);
+        } else {
+            // Unrecoverable failure - pop mutation
+            UA_LINFO(@"Update of %@ failed with response: %@", mutations, response);
+            [self popPendingMutations:mutations identifier:identifier];
+            completionHandler(YES);
         }
     };
 
     return [self.client updateWithIdentifier:identifier
-                   attributeMutations:mutations
-                    completionHandler:apiCompletionBlock];
+                          attributeMutations:mutations
+                           completionHandler:apiCompletionBlock];
 }
 
-- (void)setEnabled:(BOOL)enabled {
+- (void)popPendingMutations:(UAAttributePendingMutations *)mutations
+                 identifier:(NSString *)identifier {
     @synchronized (self) {
-        _enabled = enabled;
+        // Pop the mutation if it is what we expect and the identifier has not changed
+        if ([mutations isEqual:self.pendingAttributeMutationsQueue.peekObject] && [identifier isEqualToString:self.identifier]) {
+            [self.pendingAttributeMutationsQueue popObject];
+        }
     }
 }
 
-- (BOOL)enabled {
-    @synchronized (self) {
-        return _enabled;
-    }
-}
 
 - (void)setIdentifier:(NSString *)identifier clearPendingOnChange:(BOOL)clearPendingOnChange {
     @synchronized (self) {

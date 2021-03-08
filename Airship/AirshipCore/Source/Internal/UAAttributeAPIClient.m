@@ -17,8 +17,6 @@ NSString *const UAAttributePlatform = @"ios";
 NSString *const UANamedUserAPIPath = @"/api/named_users/";
 NSString *const UAAttributeSpecifier = @"/attributes";
 
-NSString * const UAAttributeAPIClientErrorDomain = @"com.urbanairship.attribute_api_client";
-
 @interface UAAttributeAPIClient()
 @property (nonatomic, copy) NSURL *(^URLFactoryBlock)(UARuntimeConfig *, NSString *);
 @property (nonatomic, strong) UARuntimeConfig *config;
@@ -71,7 +69,7 @@ NSString * const UAAttributeAPIClientErrorDomain = @"com.urbanairship.attribute_
 
 - (UADisposable *)updateWithIdentifier:(NSString *)identifier
                     attributeMutations:(UAAttributePendingMutations *)mutations
-                     completionHandler:(void (^)(NSError * _Nullable error))completionHandler {
+                     completionHandler:(void (^)(UAHTTPResponse *response, NSError *error))completionHandler {
 
     UA_LTRACE(@"Updating attributes for identifier: %@ with attribute payload: %@.", identifier, mutations);
 
@@ -90,44 +88,14 @@ NSString * const UAAttributeAPIClientErrorDomain = @"com.urbanairship.attribute_
     }];
     
     return [self.session performHTTPRequest:request completionHandler:^(NSData * _Nullable data, NSHTTPURLResponse * _Nullable response, NSError * _Nullable error) {
+        UA_LTRACE(@"Update finished with response: %@ error: %@", response, error);
+
         if (error) {
-            UA_LTRACE(@"Update finished with error: %@", error);
-            return completionHandler(error);
+            completionHandler(nil, error);
+        } else {
+            completionHandler([[UAHTTPResponse alloc] initWithStatus:response.statusCode], nil);
         }
-
-        NSUInteger status = response.statusCode;
-        UA_LTRACE(@"Update of %@ finished with status: %ld", response.URL, status);
-
-        if (!(status >= 200 && status <= 299)) {
-            if (status == 400 || status == 403) {
-                return completionHandler([self unrecoverableStatusError]);
-            }
-
-            return completionHandler([self unsuccessfulStatusError]);
-        }
-
-        completionHandler(nil);
     }];
-}
-
-- (NSError *)unsuccessfulStatusError {
-    NSString *msg = [NSString stringWithFormat:@"Attribute client encountered an unsuccessful status"];
-
-    NSError *error = [NSError errorWithDomain:UAAttributeAPIClientErrorDomain
-                                         code:UAAttributeAPIClientErrorUnsuccessfulStatus
-                                     userInfo:@{NSLocalizedDescriptionKey:msg}];
-
-    return error;
-}
-
-- (NSError *)unrecoverableStatusError {
-    NSString *msg = [NSString stringWithFormat:@"Attribute client encountered an unrecoverable status"];
-
-    NSError *error = [NSError errorWithDomain:UAAttributeAPIClientErrorDomain
-                                         code:UAAttributeAPIClientErrorUnrecoverableStatus
-                                     userInfo:@{NSLocalizedDescriptionKey:msg}];
-
-    return error;
 }
 
 @end

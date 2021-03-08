@@ -59,7 +59,7 @@ NSString * const UATagGroupsAPIClientErrorDomain = @"com.urbanairship.tag_groups
 
 - (UADisposable *)updateTagGroupsForId:(NSString *)identifier
            tagGroupsMutation:(UATagGroupsMutation *)mutation
-           completionHandler:(void (^)(NSError * _Nullable))completionHandler {
+                     completionHandler:(void (^)(UAHTTPResponse *, NSError *))completionHandler {
 
     return [self performTagGroupsMutation:mutation
                               path:self.path
@@ -70,7 +70,7 @@ NSString * const UATagGroupsAPIClientErrorDomain = @"com.urbanairship.tag_groups
 - (UADisposable *)performTagGroupsMutation:(UATagGroupsMutation *)mutation
                             path:(NSString *)path
                         audience:(NSDictionary *)audience
-               completionHandler:(void (^)(NSError * _Nullable))completionHandler {
+               completionHandler:(void (^)(UAHTTPResponse *, NSError *))completionHandler {
 
     NSMutableDictionary *payload = [[mutation payload] mutableCopy];
     [payload setValue:audience forKey:kUATagGroupsAudienceKey];
@@ -88,55 +88,28 @@ NSString * const UATagGroupsAPIClientErrorDomain = @"com.urbanairship.tag_groups
 
     UA_LTRACE(@"Updating tag groups with payload: %@", payload);
 
-    return [self.session performHTTPRequest:request completionHandler:^(NSData * _Nullable data, NSHTTPURLResponse * _Nullable response, NSError * _Nullable error) {
+    return [self.session performHTTPRequest:request completionHandler:^(NSData *data, NSHTTPURLResponse *response, NSError *error) {
+        UA_LTRACE(@"Update finished with response: %@ error: %@", response, error);
+
         if (error) {
-            completionHandler(error);
-        }
+            completionHandler(nil, error);
+        } else {
 
-        NSInteger status = response.statusCode;
+            if (data) {
+                NSDictionary *responseBody = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:nil];
 
-        if (data) {
-            NSDictionary *responseBody = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:nil];
+                if (responseBody[kUATagGroupsResponseObjectWarningsKey]) {
+                    UA_LDEBUG(@"Tag group request for: %@ completed with warnings: %@", response.URL, responseBody[kUATagGroupsResponseObjectWarningsKey]);
+                }
 
-            if (responseBody[kUATagGroupsResponseObjectWarningsKey]) {
-                UA_LDEBUG(@"Tag group request for: %@ completed with warnings: %@", response.URL, responseBody[kUATagGroupsResponseObjectWarningsKey]);
+                if (responseBody[kUATagGroupsResponseObjectErrorKey]) {
+                    UA_LDEBUG(@"Tag group request for: %@ completed with errors: %@", response.URL, responseBody[kUATagGroupsResponseObjectErrorKey]);
+                }
             }
 
-            if (responseBody[kUATagGroupsResponseObjectErrorKey]) {
-                UA_LDEBUG(@"Tag group request for: %@ completed with errors: %@", response.URL, responseBody[kUATagGroupsResponseObjectErrorKey]);
-            }
+            completionHandler([[UAHTTPResponse alloc] initWithStatus:response.statusCode], nil);
         }
-
-        if (!(status >= 200 && status <= 299)) {
-            if (status == 400 || status == 403) {
-                return completionHandler([self unrecoverableStatusError]);
-            }
-
-            return completionHandler([self unsuccessfulStatusError]);
-        }
-
-        completionHandler(nil);
     }];
-}
-
-- (NSError *)unsuccessfulStatusError {
-    NSString *msg = [NSString stringWithFormat:@"Tag groups client encountered an unsuccessful status"];
-
-    NSError *error = [NSError errorWithDomain:UATagGroupsAPIClientErrorDomain
-                                         code:UATagGroupsAPIClientErrorUnsuccessfulStatus
-                                     userInfo:@{NSLocalizedDescriptionKey:msg}];
-
-    return error;
-}
-
-- (NSError *)unrecoverableStatusError {
-    NSString *msg = [NSString stringWithFormat:@"Tag groups client encountered an unrecoverable status"];
-
-    NSError *error = [NSError errorWithDomain:UATagGroupsAPIClientErrorDomain
-                                         code:UATagGroupsAPIClientErrorUnrecoverableStatus
-                                     userInfo:@{NSLocalizedDescriptionKey:msg}];
-
-    return error;
 }
 
 @end

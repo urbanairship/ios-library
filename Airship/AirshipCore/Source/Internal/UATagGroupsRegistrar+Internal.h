@@ -1,14 +1,12 @@
 /* Copyright Airship and Contributors */
 
 #import <Foundation/Foundation.h>
-
 #import "UARuntimeConfig.h"
 #import "UAPreferenceDataStore+Internal.h"
 #import "UAPendingTagGroupStore+Internal.h"
 #import "UATagGroupsAPIClient+Internal.h"
 #import "UAComponent+Internal.h"
 #import "UATagGroupsMutation+Internal.h"
-#import "UATask.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -30,11 +28,6 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @interface UATagGroupsRegistrar : NSObject
-
-/**
- * Whether the registrar is enabled. Defaults to `YES`.
- */
-@property (atomic, assign) BOOL enabled;
 
 /**
  * Pending tag groups mutations.
@@ -85,11 +78,10 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Update the tag groups.
  *
- * @param task The task.
  * @param completionHandler The completion handler.
  * @return UADisposable object.
  */
-- (UADisposable *)updateTagGroupsWithTask:(id<UATask>)task completionHandler:(void(^)(BOOL completed))completionHandler;
+- (UADisposable *)updateTagGroupsWithCompletionHandler:(void(^)(BOOL completed))completionHandler;
 
 /**
  * Add tags to a tag group. To update the server, make all of your changes,

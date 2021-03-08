@@ -62,8 +62,9 @@
     XCTestExpectation *callback = [self expectationWithDescription:@"callback"];
     [self.client updateWithIdentifier:@"bobby"
                    attributeMutations:mockMutation
-                    completionHandler:^(NSError * _Nullable error) {
+                    completionHandler:^(UAHTTPResponse *response, NSError * _Nullable error) {
         XCTAssertNil(error);
+        XCTAssertEqual(200, response.status);
         [callback fulfill];
     }];
 
@@ -71,7 +72,7 @@
     [self.mockSession verify];
 }
 
-- (void)testUnsuccessfulResponse {
+- (void)testFailedUpdate {
     // Create a response
     NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""]
                                                               statusCode:420
@@ -102,22 +103,17 @@
     XCTestExpectation *callback = [self expectationWithDescription:@"callback"];
     [self.client updateWithIdentifier:@"bobby"
                    attributeMutations:mockMutation
-                    completionHandler:^(NSError * _Nullable error) {
-        XCTAssertEqualObjects(error.domain, UAAttributeAPIClientErrorDomain);
-        XCTAssertEqual(error.code, UAAttributeAPIClientErrorUnsuccessfulStatus);
+                    completionHandler:^(UAHTTPResponse *response, NSError * _Nullable error) {
+        XCTAssertNil(error);
+        XCTAssertEqual(420, response.status);
         [callback fulfill];
     }];
-
     [self waitForTestExpectations];
     [self.mockSession verify];
 }
 
-- (void)testUnrecoverableResponse {
-    // Create a response
-    NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""]
-                                                              statusCode:400
-                                                             HTTPVersion:nil
-                                                            headerFields:nil];
+- (void)testUpdateError {
+    NSError *responseError = [[NSError alloc] initWithDomain:@"whatever" code:1 userInfo:nil];
 
     id mockMutation = [self mockForClass:[UAAttributePendingMutations class]];
     [[[mockMutation stub] andReturn:@{@"neat": @"payload"}] payload];
@@ -127,7 +123,7 @@
         void *arg;
         [invocation getArgument:&arg atIndex:3];
         UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
-        completionHandler(nil, response, nil);
+        completionHandler(nil, nil, responseError);
     }] performHTTPRequest:[OCMArg checkWithBlock:^BOOL(id obj) {
         UARequest *request = (UARequest *)obj;
         id body = [UAJSONSerialization dataWithJSONObject:@{@"neat": @"payload"}
@@ -143,35 +139,9 @@
     XCTestExpectation *callback = [self expectationWithDescription:@"callback"];
     [self.client updateWithIdentifier:@"bobby"
                    attributeMutations:mockMutation
-                    completionHandler:^(NSError * _Nullable error) {
-        XCTAssertEqualObjects(error.domain, UAAttributeAPIClientErrorDomain);
-        XCTAssertEqual(error.code, UAAttributeAPIClientErrorUnrecoverableStatus);
-        [callback fulfill];
-    }];
-
-    [self waitForTestExpectations];
-    [self.mockSession verify];
-}
-
-- (void)testError {
-    NSError *expectedError = [NSError errorWithDomain:@"some domain" code:20000 userInfo:nil];
-
-    id mockMutation = [self mockForClass:[UAAttributePendingMutations class]];
-    [[[mockMutation stub] andReturn:@{@"neat": @"payload"}] payload];
-
-    // Stub the session to return a the response
-    [[[self.mockSession expect] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:3];
-        UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
-        completionHandler(nil, nil, expectedError);
-    }] performHTTPRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
-
-    XCTestExpectation *callback = [self expectationWithDescription:@"callback"];
-    [self.client updateWithIdentifier:@"bobby"
-                   attributeMutations:mockMutation
-                    completionHandler:^(NSError * _Nullable error) {
-        XCTAssertEqual(expectedError, error);
+                    completionHandler:^(UAHTTPResponse *response, NSError * _Nullable error) {
+        XCTAssertEqual(responseError, error);
+        XCTAssertNil(response);
         [callback fulfill];
     }];
 

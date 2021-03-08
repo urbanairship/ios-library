@@ -5,8 +5,6 @@
 #import "UATagGroupsMutation+Internal.h"
 #import "UATaskManager.h"
 
-static NSString * const UATagGroupsUpdateTaskID = @"UATagGroups.update";
-
 @interface UATagGroupsRegistrarTest : UAAirshipBaseTest
 @property (nonatomic, strong) UAPendingTagGroupStore *pendingTagGroupStore;
 @property (nonatomic, strong) UATagGroupsRegistrar *registrar;
@@ -22,128 +20,143 @@ static NSString * const UATagGroupsUpdateTaskID = @"UATagGroups.update";
     [super setUp];
     
     self.mockApplication = [self mockForClass:[UIApplication class]];
-
     self.mockApiClient = [self mockForClass:[UATagGroupsAPIClient class]];
 
     self.pendingTagGroupStore = [UAPendingTagGroupStore channelHistoryWithDataStore:self.dataStore];
-
     self.registrar = [UATagGroupsRegistrar tagGroupsRegistrarWithPendingTagGroupStore:self.pendingTagGroupStore
                                                                             apiClient:self.mockApiClient
                                                                           application:self.mockApplication];
-
     [self.registrar setIdentifier:@"someID" clearPendingOnChange:NO];
-    
-    self.mockTask = [self mockForProtocol:@protocol(UATask)];
-    
-    self.mockTaskManager = [self mockForClass:[UATaskManager class]];
 }
 
-/**
- * Test updating tag groups calls the tag client for every pending mutation.
- */
-
 - (void)testUpdateTagGroups {
-    // Expect a set mutation, return 200
+    UAHTTPResponse *response = [[UAHTTPResponse alloc] initWithStatus:200];
+
     [[[self.mockApiClient expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:4];
-
-        void (^completionHandler)(NSError *) = (__bridge void (^)(NSError *))arg;
-        completionHandler(nil);
-    }] updateTagGroupsForId:@"someID"
-     tagGroupsMutation:[OCMArg checkWithBlock:^BOOL(id obj) {
+        void (^completionHandler)(UAHTTPResponse *, NSError *) = (__bridge void (^)(UAHTTPResponse *, NSError *))arg;
+        completionHandler(response, nil);
+    }] updateTagGroupsForId:@"someID" tagGroupsMutation:[OCMArg checkWithBlock:^BOOL(id obj) {
         UATagGroupsMutation *mutation = (UATagGroupsMutation *)obj;
         NSDictionary *expectedPayload = @{@"set": @{ @"group2": @[@"tag1"] } };
         return [expectedPayload isEqualToDictionary:[mutation payload]];
     }] completionHandler:OCMOCK_ANY];
 
-    [[self.mockTask expect] taskCompleted];
-
     [self.registrar addTags:@[@"tag1"] group:@"group1"];
     [self.registrar removeTags:@[@"tag2"] group:@"group1"];
     [self.registrar setTags:@[@"tag1"] group:@"group2"];
-    
-    [self updateTagGroups];
-    
+
+    XCTestExpectation *expectation = [self expectationWithDescription:@"Callback finished"];
+    [self.registrar updateTagGroupsWithCompletionHandler:^(BOOL completed) {
+        XCTAssertTrue(completed);
+        [expectation fulfill];
+    }];
+
+    [self waitForTestExpectations];
     [self.mockApiClient verify];
-    
-    [self.mockTask verify];
 }
 
-- (void)testUpdateTagGroupsDoesNotPopOrContinueAfterUnsuccessfulStatus {
-    XCTestExpectation *expectation = [self expectationWithDescription:@"Async update tag groups call"];
+- (void)testUpdateTagGroupsClientError {
+    UAHTTPResponse *response = [[UAHTTPResponse alloc] initWithStatus:400];
+    [[[self.mockApiClient expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:4];
+        void (^completionHandler)(UAHTTPResponse *, NSError *) = (__bridge void (^)(UAHTTPResponse *, NSError *))arg;
+        completionHandler(response, nil);
+    }] updateTagGroupsForId:@"someID" tagGroupsMutation:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
-    NSDictionary *expectedInitialPayload = @{@"set": @{ @"group2": @[@"tag1"] } };
-    NSDictionary *expectedSecondPayload = @{@"add": @{ @"group1": @[@"tag1"] }, @"remove": @{ @"group1": @[@"tag2"] } };
+    [self.registrar setTags:@[@"tag1"] group:@"group2"];
+
+    XCTestExpectation *expectation = [self expectationWithDescription:@"Callback finished"];
+    [self.registrar updateTagGroupsWithCompletionHandler:^(BOOL completed) {
+        XCTAssertTrue(completed);
+        [expectation fulfill];
+    }];
+
+    [self waitForTestExpectations];
+    [self.mockApiClient verify];
+
+    XCTAssertNil([self.pendingTagGroupStore peekPendingMutation]);
+}
+
+- (void)testUpdateTagGroupsServerError {
+    NSDictionary *expectedPayload = @{@"set": @{ @"group2": @[@"tag1"] } };
+
+    UAHTTPResponse *response = [[UAHTTPResponse alloc] initWithStatus:500];
+    [[[self.mockApiClient expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:4];
+
+        void (^completionHandler)(UAHTTPResponse *, NSError *) = (__bridge void (^)(UAHTTPResponse *, NSError *))arg;
+        completionHandler(response, nil);
+    }] updateTagGroupsForId:@"someID" tagGroupsMutation:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
+    [self.registrar setTags:@[@"tag1"] group:@"group2"];
+
+    XCTestExpectation *expectation = [self expectationWithDescription:@"Callback finished"];
+    [self.registrar updateTagGroupsWithCompletionHandler:^(BOOL completed) {
+        XCTAssertFalse(completed);
+        [expectation fulfill];
+    }];
+
+    [self waitForTestExpectations];
+    [self.mockApiClient verify];
+
+    XCTAssertEqualObjects(expectedPayload, [self.pendingTagGroupStore peekPendingMutation].payload);
+}
+
+- (void)testUpdateTagGroups429 {
+    NSDictionary *expectedPayload = @{@"set": @{ @"group2": @[@"tag1"] } };
+
+    UAHTTPResponse *response = [[UAHTTPResponse alloc] initWithStatus:429];
+    [[[self.mockApiClient expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:4];
+
+        void (^completionHandler)(UAHTTPResponse *, NSError *) = (__bridge void (^)(UAHTTPResponse *, NSError *))arg;
+        completionHandler(response, nil);
+    }] updateTagGroupsForId:@"someID" tagGroupsMutation:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
+    [self.registrar setTags:@[@"tag1"] group:@"group2"];
+
+    XCTestExpectation *expectation = [self expectationWithDescription:@"Callback finished"];
+    [self.registrar updateTagGroupsWithCompletionHandler:^(BOOL completed) {
+        XCTAssertFalse(completed);
+        [expectation fulfill];
+    }];
+
+    [self waitForTestExpectations];
+    [self.mockApiClient verify];
+
+    XCTAssertEqualObjects(expectedPayload, [self.pendingTagGroupStore peekPendingMutation].payload);
+}
+
+- (void)testUpdateTagGroupsError {
+    NSDictionary *expectedPayload = @{@"set": @{ @"group2": @[@"tag1"] } };
+
+    NSError *error = [[NSError alloc] initWithDomain:@"domain" code:1 userInfo:nil];
 
     [[[self.mockApiClient expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:4];
 
-        void (^completionHandler)(NSError *) = (__bridge void (^)(NSError *))arg;
-        [expectation fulfill];
-        completionHandler([NSError errorWithDomain:UATagGroupsAPIClientErrorDomain
-                                              code:UATagGroupsAPIClientErrorUnsuccessfulStatus
-                                          userInfo:@{}]);
-    }] updateTagGroupsForId:@"someID"
-     tagGroupsMutation:[OCMArg checkWithBlock:^BOOL(id obj) {
-        UATagGroupsMutation *mutation = (UATagGroupsMutation *)obj;
-        return [expectedInitialPayload isEqualToDictionary:[mutation payload]];
-    }] completionHandler:OCMOCK_ANY];
+        void (^completionHandler)(UAHTTPResponse *, NSError *) = (__bridge void (^)(UAHTTPResponse *, NSError *))arg;
+        completionHandler(nil, error);
+    }] updateTagGroupsForId:@"someID" tagGroupsMutation:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
-    [[self.mockTask expect] taskFailed];
-    
-    [self.registrar addTags:@[@"tag1"] group:@"group1"];
-    [self.registrar removeTags:@[@"tag2"] group:@"group1"];
     [self.registrar setTags:@[@"tag1"] group:@"group2"];
 
-    [self updateTagGroups];
-
-    [self waitForTestExpectations];
-
-    [self.mockApiClient verify];
-    
-    [self.mockTask verify];
-
-    XCTAssertEqualObjects([self.pendingTagGroupStore peekPendingMutation].payload, expectedInitialPayload);
-    [self.pendingTagGroupStore popPendingMutation];
-    XCTAssertEqualObjects([self.pendingTagGroupStore peekPendingMutation].payload, expectedSecondPayload);
-}
-
-- (void)testUpdateTagGroupsDoesNotPopOrContinueAfterError {
-    XCTestExpectation *expectation = [self expectationWithDescription:@"Async update tag groups call"];
-
-    NSDictionary *expectedInitialPayload = @{@"set": @{ @"group2": @[@"tag1"] } };
-    NSDictionary *expectedSecondPayload = @{@"add": @{ @"group1": @[@"tag1"] }, @"remove": @{ @"group1": @[@"tag2"] } };
-
-    [[[self.mockApiClient expect] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:4];
-
-        void (^completionHandler)(NSError *) = (__bridge void (^)(NSError *))arg;
+    XCTestExpectation *expectation = [self expectationWithDescription:@"Callback finished"];
+    [self.registrar updateTagGroupsWithCompletionHandler:^(BOOL completed) {
+        XCTAssertFalse(completed);
         [expectation fulfill];
-        completionHandler([NSError errorWithDomain:@"error" code:0 userInfo:@{}]);
-    }] updateTagGroupsForId:@"someID"
-     tagGroupsMutation:[OCMArg checkWithBlock:^BOOL(id obj) {
-        UATagGroupsMutation *mutation = (UATagGroupsMutation *)obj;
-        return [expectedInitialPayload isEqualToDictionary:[mutation payload]];
-    }] completionHandler:OCMOCK_ANY];
-
-    [[self.mockApiClient reject] updateTagGroupsForId:OCMOCK_ANY tagGroupsMutation:OCMOCK_ANY completionHandler:OCMOCK_ANY];
-
-    [self.registrar addTags:@[@"tag1"] group:@"group1"];
-    [self.registrar removeTags:@[@"tag2"] group:@"group1"];
-    [self.registrar setTags:@[@"tag1"] group:@"group2"];
-
-    [self updateTagGroups];
+    }];
 
     [self waitForTestExpectations];
-
     [self.mockApiClient verify];
 
-    XCTAssertEqualObjects([self.pendingTagGroupStore peekPendingMutation].payload, expectedInitialPayload);
-    [self.pendingTagGroupStore popPendingMutation];
-    XCTAssertEqualObjects([self.pendingTagGroupStore peekPendingMutation].payload, expectedSecondPayload);
+    XCTAssertEqualObjects(expectedPayload, [self.pendingTagGroupStore peekPendingMutation].payload);
 }
 
 - (void)testSetEmptyTagListClearsTags {
@@ -187,10 +200,6 @@ static NSString * const UATagGroupsUpdateTaskID = @"UATagGroups.update";
     XCTAssertNil([self.pendingTagGroupStore peekPendingMutation]);
 }
 
-- (void)testEnabledByDefault {
-    XCTAssertTrue(self.registrar.enabled);
-}
-
 - (void)testSetIdentifier {
     [self.registrar setTags:@[@"tag2", @"tag1"] group: @"group"];
     NSDictionary *expected = @{ @"set": @{ @"group": @[@"tag2", @"tag1"] } };
@@ -204,15 +213,6 @@ static NSString * const UATagGroupsUpdateTaskID = @"UATagGroups.update";
     [self.registrar setTags:@[@"tag2", @"tag1"] group: @"group"];
     [self.registrar setIdentifier:@"cool" clearPendingOnChange:YES];
     XCTAssertEqual(self.registrar.pendingMutations.count, 0);
-}
-
-- (void)updateTagGroups {
-    __block UATaskRequestOptions *options = [UATaskRequestOptions optionsWithConflictPolicy:UATaskConflictPolicyAppend requiresNetwork:YES extras:nil];
-
-    [[[self.mockTask stub] andReturn:UATagGroupsUpdateTaskID] taskID];
-    [[[self.mockTask stub] andReturn:options] requestOptions];
-    
-    [self.registrar updateTagGroupsWithTask:self.mockTask completionHandler:^(BOOL completed) {}];
 }
 
 @end

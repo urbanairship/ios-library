@@ -83,9 +83,7 @@
         void *arg;
         [invocation getArgument:&arg atIndex:3];
         UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler) arg;
-        if (completionHandler) {
-            completionHandler(nil, response, nil);
-        }
+        completionHandler(nil, response, nil);
     }] performHTTPRequest:[OCMArg checkWithBlock:checkRequestBlock]
      completionHandler:OCMOCK_ANY];
 
@@ -97,8 +95,9 @@
     // test
     [self.channelClient updateTagGroupsForId:@"AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE"
                            tagGroupsMutation:mutation
-                           completionHandler:^(NSError *error){
+                           completionHandler:^(UAHTTPResponse *response, NSError *error){
         XCTAssertNil(error);
+        XCTAssertEqual(200, response.status);
         [completionHandlerCalledExpectation fulfill];
     }];
 
@@ -157,9 +156,7 @@
         void *arg;
         [invocation getArgument:&arg atIndex:3];
         UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler) arg;
-        if (completionHandler) {
-            completionHandler(nil,response,nil);
-        }
+        completionHandler(nil, response, nil);
     }] performHTTPRequest:[OCMArg checkWithBlock:checkRequestBlock]
      completionHandler:OCMOCK_ANY];
 
@@ -172,8 +169,9 @@
     // test
     [self.namedUserClient updateTagGroupsForId:@"cool"
                              tagGroupsMutation:mutation
-                             completionHandler:^(NSError *error){
+                             completionHandler:^(UAHTTPResponse *response, NSError *error){
         XCTAssertNil(error);
+        XCTAssertEqual(200, response.status);
         [completionHandlerCalledExpectation fulfill];
     }];
 
@@ -193,9 +191,7 @@
         void *arg;
         [invocation getArgument:&arg atIndex:3];
         UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler) arg;
-        if (completionHandler) {
-            completionHandler(nil,response,nil);
-        }
+        completionHandler(nil, response, nil);
     }] performHTTPRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     UATagGroupsMutation *mutation = [UATagGroupsMutation mutationToAddTags:@[@"tag1"]
@@ -206,9 +202,9 @@
     // test
     [self.namedUserClient updateTagGroupsForId:@"cool"
                              tagGroupsMutation:mutation
-                             completionHandler:^(NSError *error){
-        XCTAssertEqualObjects(error.domain, UATagGroupsAPIClientErrorDomain);
-        XCTAssertEqual(error.code, UATagGroupsAPIClientErrorUnsuccessfulStatus);
+                             completionHandler:^(UAHTTPResponse *response, NSError *error){
+        XCTAssertNil(error);
+        XCTAssertEqual(420, response.status);
         [completionHandlerCalledExpectation fulfill];
     }];
 
@@ -218,19 +214,13 @@
     [self.mockSession verify];
 }
 
-- (void)testUnrecoverableStatus {
-    NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""]
-                                                              statusCode:400
-                                                             HTTPVersion:nil
-                                                            headerFields:nil];
-
+- (void)testUpdateError {
+    NSError *responseError = [[NSError alloc] initWithDomain:@"whatever" code:1 userInfo:nil];
     [[[self.mockSession expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:3];
         UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler) arg;
-        if (completionHandler) {
-            completionHandler(nil,response,nil);
-        }
+        completionHandler(nil, nil, responseError);
     }] performHTTPRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     UATagGroupsMutation *mutation = [UATagGroupsMutation mutationToAddTags:@[@"tag1"]
@@ -241,9 +231,9 @@
     // test
     [self.namedUserClient updateTagGroupsForId:@"cool"
                              tagGroupsMutation:mutation
-                             completionHandler:^(NSError *error){
-        XCTAssertEqualObjects(error.domain, UATagGroupsAPIClientErrorDomain);
-        XCTAssertEqual(error.code, UATagGroupsAPIClientErrorUnrecoverableStatus);
+                             completionHandler:^(UAHTTPResponse *response, NSError *error){
+        XCTAssertEqual(responseError, error);
+        XCTAssertNil(response);
         [completionHandlerCalledExpectation fulfill];
     }];
 
@@ -254,4 +244,5 @@
 }
 
 @end
+
 

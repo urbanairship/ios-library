@@ -83,8 +83,6 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
         [self.tagGroupsRegistrar setIdentifier:self.identifier clearPendingOnChange:NO];
         [self.attributeRegistrar setIdentifier:self.identifier clearPendingOnChange:NO];
 
-        [self updateRegistrarEnablement];
-
         // Check config to see if user wants to delay channel creation
         // If channel ID exists or channel creation delay is disabled then channelCreationEnabled
         if (self.identifier || !config.isChannelCreationDelayEnabled) {
@@ -396,42 +394,56 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
 }
 
 - (void)handleTagUpdateTask:(id<UATask>)task {
+    if (!self.componentEnabled || !self.dataCollectionEnabled) {
+        [task taskCompleted];
+        return;
+    }
+
     UASemaphore *semaphore = [UASemaphore semaphore];
-    
-    UADisposable *request = [self.tagGroupsRegistrar updateTagGroupsWithTask:task completionHandler:^(BOOL completed) {
-        [semaphore signal];
-        
-        // queue another task for unproccessed mutations
+
+    UADisposable *request = [self.tagGroupsRegistrar updateTagGroupsWithCompletionHandler:^(BOOL completed) {
         if (completed) {
-            [self enqueueUpdateTagGroupsTask];
+            [task taskCompleted];
+            [self enqueueUpdateAttributesTask];
+        } else {
+            [task taskFailed];
         }
+        [semaphore signal];
     }];
-   
+
     task.expirationHandler = ^{
         [request dispose];
     };
-    
+
     [semaphore wait];
 }
 
 - (void)handleAttributeUpdateTask:(id<UATask>)task {
+    if (!self.componentEnabled || !self.dataCollectionEnabled) {
+        [task taskCompleted];
+        return;
+    }
+
     UASemaphore *semaphore = [UASemaphore semaphore];
-    
-    UADisposable *request = [self.attributeRegistrar updateAttributesWithTask:task completionHandler:^(BOOL completed) {
-        [semaphore signal];
-        
-        // queue another task for unproccessed mutations
+
+    UADisposable *request = [self.attributeRegistrar updateAttributesWithCompletionHandler:^(BOOL completed) {
         if (completed) {
+            [task taskCompleted];
             [self enqueueUpdateAttributesTask];
+        } else {
+            [task taskFailed];
         }
+        [semaphore signal];
     }];
-   
+
     task.expirationHandler = ^{
         [request dispose];
     };
-    
+
     [semaphore wait];
 }
+
+
 
 #pragma mark -
 #pragma mark Channel Registrar Delegate
@@ -532,23 +544,13 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
                                                                  UAChannelUploadedAudienceMutationNotificationIdentifierKey:identifier }];
 }
 
-- (void)updateRegistrarEnablement {
-    BOOL enabled = self.componentEnabled && self.dataCollectionEnabled;
-    self.attributeRegistrar.enabled = enabled;
-    self.tagGroupsRegistrar.enabled = enabled;
-}
-
 - (void)onComponentEnableChange {
-    [self updateRegistrarEnablement];
-
     if (self.componentEnabled) {
         [self updateRegistration];
     }
 }
 
 - (void)onDataCollectionEnabledChanged {
-    [self updateRegistrarEnablement];
-
     if (!self.isDataCollectionEnabled) {
         // Clear channel tags and pending mutations
         [self.dataStore setObject:@[] forKey:UAChannelTagsSettingsKey];

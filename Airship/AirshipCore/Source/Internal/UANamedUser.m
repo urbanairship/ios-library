@@ -73,7 +73,6 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
         self.tagGroupsRegistrar.delegate = self;
         [self.tagGroupsRegistrar setIdentifier:self.identifier clearPendingOnChange:NO];
         [self.attributeRegistrar setIdentifier:self.identifier clearPendingOnChange:NO];
-        [self updateRegistrarEnablement];
 
         [self.notificationCenter addObserver:self
                                     selector:@selector(channelCreated:)
@@ -233,15 +232,21 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
 }
 
 - (void)handleTagUpdateTask:(id<UATask>)task {
+    if (!self.componentEnabled || !self.dataCollectionEnabled) {
+        [task taskCompleted];
+        return;
+    }
+
     UASemaphore *semaphore = [UASemaphore semaphore];
     
-    UADisposable *request = [self.tagGroupsRegistrar updateTagGroupsWithTask:task completionHandler:^(BOOL completed) {
-        [semaphore signal];
-        
-        // queue another task for unproccessed mutations
+    UADisposable *request = [self.tagGroupsRegistrar updateTagGroupsWithCompletionHandler:^(BOOL completed) {
         if (completed) {
+            [task taskCompleted];
             [self enqueueUpdateTagGroupsTask];
+        } else {
+            [task taskFailed];
         }
+        [semaphore signal];
     }];
    
     task.expirationHandler = ^{
@@ -252,15 +257,21 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
 }
 
 - (void)handleAttributeUpdateTask:(id<UATask>)task {
+    if (!self.componentEnabled || !self.dataCollectionEnabled) {
+        [task taskCompleted];
+        return;
+    }
+
     UASemaphore *semaphore = [UASemaphore semaphore];
     
-    UADisposable *request = [self.attributeRegistrar updateAttributesWithTask:task completionHandler:^(BOOL completed) {
-        [semaphore signal];
-        
-        // queue another task for unproccessed mutations
+    UADisposable *request = [self.attributeRegistrar updateAttributesWithCompletionHandler:^(BOOL completed) {
         if (completed) {
+            [task taskCompleted];
             [self enqueueUpdateAttributesTask];
+        } else {
+            [task taskFailed];
         }
+        [semaphore signal];
     }];
    
     task.expirationHandler = ^{
@@ -468,24 +479,14 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
                                                                  UANamedUserUploadedAudienceMutationNotificationIdentifierKey:identifier }];
 }
 
-- (void)updateRegistrarEnablement {
-    BOOL enabled = self.componentEnabled && self.dataCollectionEnabled;
-
-    self.tagGroupsRegistrar.enabled = enabled;
-    self.attributeRegistrar.enabled = enabled;
-}
 
 - (void)onComponentEnableChange {
-    [self updateRegistrarEnablement];
-
     if (self.componentEnabled) {
         [self update];
     }
 }
 
 - (void)onDataCollectionEnabledChanged {
-    [self updateRegistrarEnablement];
-
     if (!self.isDataCollectionEnabled) {
         // Clear the identifier and all pending mutations
         self.identifier = nil;
