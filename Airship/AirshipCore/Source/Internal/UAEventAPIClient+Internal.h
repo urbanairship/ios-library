@@ -15,7 +15,7 @@ typedef NS_ENUM(NSInteger, UAEventAPIClientError) {
     /**
      * Indicates an unsuccessful client status.
      */
-    UAEventAPIClientErrorUnsuccessfulStatus,
+    UAEventAPIClientErrorUnsuccessfulStatus
 };
 
 /**

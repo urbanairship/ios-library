@@ -19,7 +19,12 @@ typedef NS_ENUM(NSInteger, UARequestSessionError) {
     /**
      * Indicates an invalid HTTP response
      */
-    UARequestSessionErrorInvalidHTTPResponse
+    UARequestSessionErrorInvalidHTTPResponse,
+    
+    /**
+     * Indicates a missing URL.
+     */
+    UARequestSessionErrorMissingURL
 };
 
 /**
