@@ -443,6 +443,30 @@ static NSString * const UAChannelRegistrationTaskID = @"UAChannelRegistrar.regis
     [task verify];
 }
 
+- (void)testFullUpdate {
+    self.payload.tags = @[@"neat"];
+    self.payload.setTags = YES;
+
+    [self createChannel:@"some-channel"];
+
+    [self.registrar performFullRegistration];
+
+    UAHTTPResponse *response = [[UAHTTPResponse alloc] initWithStatus:200];
+    [[[self.mockedChannelClient expect] andDo:^(NSInvocation *invocation) {
+        [UAChannelRegistrarTest callUpdateCompletionHandler:invocation
+                                                   response:response
+                                                      error:nil];
+    }] updateChannelWithID:@"some-channel" withPayload:self.payload completionHandler:OCMOCK_ANY];
+
+    id task = [self registrationTask:YES];
+    [[task expect] taskCompleted];
+
+    self.launchHandler(task);
+
+    [self.mockedChannelClient verify];
+    [task verify];
+}
+
 #pragma mark -
 #pragma mark Utility methods
 

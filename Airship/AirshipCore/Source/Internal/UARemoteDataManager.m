@@ -13,6 +13,7 @@
 #import "UATaskManager.h"
 #import "UATask.h"
 #import "UASemaphore.h"
+#import "UARemoteConfigURLManager.h"
 
 static NSString * const UACoreDataStoreName = @"RemoteData-%@.sqlite";
 static NSString * const UARemoteDataRefreshPayloadKey = @"com.urbanairship.remote-data.update";
@@ -102,7 +103,6 @@ static NSString * const UALastRemoteDataModifiedTime = @"UALastRemoteDataModifie
 @property (nonatomic, strong) UAAppStateTracker *appStateTracker;
 @property (nonatomic, strong) UALocaleManager *localeManager;
 @property (nonatomic, strong) UATaskManager *taskManager;
-
 @end
 
 @implementation UARemoteDataManager
@@ -140,6 +140,11 @@ static NSString * const UALastRemoteDataModifiedTime = @"UALastRemoteDataModifie
         [self.notificationCenter addObserver:self
                                     selector:@selector(checkRefresh)
                                         name:UAApplicationDidTransitionToForeground
+                                      object:nil];
+
+        [self.notificationCenter addObserver:self
+                                    selector:@selector(enqueueRefreshTask)
+                                        name:UARemoteConfigURLManagerConfigUpdated
                                       object:nil];
 
         UA_WEAKIFY(self)

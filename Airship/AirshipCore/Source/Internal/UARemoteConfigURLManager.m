@@ -6,34 +6,46 @@
 
 static NSString * const UARemoteConfigKey = @"com.urbanairship.config.remote_config_key";
 
+NSString * const UARemoteConfigURLManagerConfigUpdated = @"com.urbanairship.remote_url_config_updated";
+
 @interface UARemoteConfigURLManager()
-
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
+@property (nonatomic, strong) NSNotificationCenter *notificationCenter;
 @property (atomic, strong, readwrite) UARemoteConfig *urlConfig;
-
 @end
 
 @implementation UARemoteConfigURLManager
 
 + (instancetype)remoteConfigURLManagerWithDataStore:(UAPreferenceDataStore *)dataStore {
-    return [[UARemoteConfigURLManager alloc] initWithDataStore:dataStore];
+    return [[UARemoteConfigURLManager alloc] initWithDataStore:dataStore
+                                            notificationCenter:[NSNotificationCenter defaultCenter]];
 }
 
-- (instancetype)initWithDataStore:(UAPreferenceDataStore *)dataStore {
++ (instancetype)remoteConfigURLManagerWithDataStore:(UAPreferenceDataStore *)dataStore
+                                 notificationCenter:(NSNotificationCenter *)notificationCenter {
+    return [[UARemoteConfigURLManager alloc] initWithDataStore:dataStore
+                                            notificationCenter:notificationCenter];
+
+}
+- (instancetype)initWithDataStore:(UAPreferenceDataStore *)dataStore
+               notificationCenter:(NSNotificationCenter *)notificationCenter {
+
    
     self = [super init];
  
     if (self) {
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(onRemoteConfigUpdated:)
-                                                     name:UAAirshipRemoteConfigUpdatedEvent
-                                                   object:nil];
+        self.notificationCenter = notificationCenter;
         self.dataStore = dataStore;
         [self restoreConfig];
+
+
+        [self.notificationCenter addObserver:self
+                                    selector:@selector(onRemoteConfigUpdated:)
+                                        name:UAAirshipRemoteConfigUpdatedEvent
+                                      object:nil];
     }
    
     return self;
-    
 }
 
 - (NSString *)deviceAPIURL {
@@ -50,21 +62,18 @@ static NSString * const UARemoteConfigKey = @"com.urbanairship.config.remote_con
 
 - (void)restoreConfig {
     NSDictionary *configData = [self.dataStore objectForKey:UARemoteConfigKey];
-    UARemoteConfig *config = [UARemoteConfig configWithRemoteData:configData];
-    [self updateConfig:config];
-}
-
-- (void)updateConfig:(UARemoteConfig *)remoteConfig {
-    self.urlConfig = [UARemoteConfig configWithRemoteDataURL:remoteConfig.remoteDataURL
-                                                deviceAPIURL:remoteConfig.deviceAPIURL
-                                                analyticsURL:remoteConfig.analyticsURL];
+    self.urlConfig = [UARemoteConfig configWithRemoteData:configData];
 }
 
 - (void)onRemoteConfigUpdated:(NSNotification *)notification {
     NSDictionary *remoteConfigData = notification.userInfo[UAAirshipRemoteConfigUpdatedKey];
     UARemoteConfig *remoteConfig = [UARemoteConfig configWithRemoteData:remoteConfigData];
-    [self updateConfig:remoteConfig];
-    [self.dataStore setObject:remoteConfigData forKey:UARemoteConfigKey];
+
+    if (![remoteConfig isEqual:self.urlConfig]) {
+        self.urlConfig = remoteConfig;
+        [self.dataStore setObject:remoteConfigData forKey:UARemoteConfigKey];
+        [self.notificationCenter postNotificationName:UARemoteConfigURLManagerConfigUpdated object:nil];
+    }
 }
 
 @end

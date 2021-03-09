@@ -296,6 +296,7 @@
 		6E21780F25F1E20D00E1EFAA /* UAHTTPResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E21780825F1E20D00E1EFAA /* UAHTTPResponse.m */; };
 		6E21781025F1E20D00E1EFAA /* UAHTTPResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E21780825F1E20D00E1EFAA /* UAHTTPResponse.m */; };
 		6E21786625F2BBA800E1EFAA /* UAHTTPResponseTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E21786525F2BBA800E1EFAA /* UAHTTPResponseTest.m */; };
+		6E2178A425F72B7700E1EFAA /* UARemoteConfigURLManagerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E2178A325F72B7600E1EFAA /* UARemoteConfigURLManagerTest.m */; };
 		6E21852B237D32B30084933A /* EventData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21852A237D32B30084933A /* EventData.swift */; };
 		6E218539237DB7960084933A /* AddAttributeTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E218538237DB7960084933A /* AddAttributeTableViewController.swift */; };
 		6E22BAF925F1B3C600E5FCB0 /* NSError+UAAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E22BAF825F1B3C600E5FCB0 /* NSError+UAAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -2891,6 +2892,7 @@
 		6E21780725F1E20D00E1EFAA /* UAHTTPResponse.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = UAHTTPResponse.h; path = Public/UAHTTPResponse.h; sourceTree = "<group>"; };
 		6E21780825F1E20D00E1EFAA /* UAHTTPResponse.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = UAHTTPResponse.m; path = Internal/UAHTTPResponse.m; sourceTree = "<group>"; };
 		6E21786525F2BBA800E1EFAA /* UAHTTPResponseTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAHTTPResponseTest.m; sourceTree = "<group>"; };
+		6E2178A325F72B7600E1EFAA /* UARemoteConfigURLManagerTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UARemoteConfigURLManagerTest.m; sourceTree = "<group>"; };
 		6E21852A237D32B30084933A /* EventData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventData.swift; sourceTree = "<group>"; };
 		6E218538237DB7960084933A /* AddAttributeTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddAttributeTableViewController.swift; sourceTree = "<group>"; };
 		6E22BAF825F1B3C600E5FCB0 /* NSError+UAAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSError+UAAdditions.h"; path = "Public/NSError+UAAdditions.h"; sourceTree = "<group>"; };
@@ -6014,6 +6016,7 @@
 			children = (
 				DF96667C1FB526A000CC243C /* UARemoteConfigManagerTest.m */,
 				6EC74C2B234BF223003AF4C6 /* UARemoteConfigDisableInfoTest.m */,
+				6E2178A325F72B7600E1EFAA /* UARemoteConfigURLManagerTest.m */,
 			);
 			name = RemoteConfig;
 			sourceTree = "<group>";
@@ -8988,6 +8991,7 @@
 				CC64F12D1D8B781C009CEF27 /* UAURLAllowListTest.m in Sources */,
 				6E18E6EF23207B57004E09DF /* UAInAppMessageSceneManagerTest.m in Sources */,
 				CC64F10D1D8B781C009CEF27 /* UALandingPageActionTest.m in Sources */,
+				6E2178A425F72B7700E1EFAA /* UARemoteConfigURLManagerTest.m in Sources */,
 				CC64F1151D8B781C009CEF27 /* UANotificationCategoriesTest.m in Sources */,
 				6E65D53C2396DED400AF2D1A /* UARateAppActionTest.m in Sources */,
 				CC64F1121D8B781C009CEF27 /* UANamedUserAPIClientTest.m in Sources */,

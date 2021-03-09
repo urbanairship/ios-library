@@ -5,7 +5,7 @@
 
 static NSString * const UARemoteDataURLKey = @"remote_data_url";
 static NSString * const UADeviceAPIURLKey = @"device_api_url";
-static NSString * const UAAnalyticsURLKey = @"analytics_api_url";
+static NSString * const UAAnalyticsURLKey = @"analytics_url";
 
 @implementation UARemoteConfig
 
@@ -59,6 +59,40 @@ static NSString * const UAAnalyticsURLKey = @"analytics_api_url";
     } else {
         return [urlString copy];
     }
+}
+
+- (BOOL)isEqual:(id)other {
+    if (other == self) {
+        return YES;
+    } else if (![super isEqual:other]) {
+        return NO;
+    } else {
+        return [self isEqualToRemoteURLConfig:other];
+    }
+}
+
+- (BOOL)isEqualToRemoteURLConfig:(nullable UARemoteConfig *)other {
+    if ((self.deviceAPIURL != other.deviceAPIURL) && ![self.deviceAPIURL isEqualToString:other.deviceAPIURL]) {
+        return NO;
+    }
+
+    if ((self.analyticsURL != other.analyticsURL) && ![self.analyticsURL isEqualToString:other.analyticsURL]) {
+        return NO;
+    }
+
+    if ((self.remoteDataURL != other.remoteDataURL) && ![self.remoteDataURL isEqualToString:other.remoteDataURL]) {
+        return NO;
+    }
+    
+    return YES;
+}
+
+- (NSUInteger)hash {
+    NSUInteger result = 1;
+    result = 31 * result + [self.deviceAPIURL hash];
+    result = 31 * result + [self.analyticsURL hash];
+    result = 31 * result + [self.remoteDataURL hash];
+    return result;
 }
 
 @end

@@ -4,6 +4,10 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/**
+ * Remote config.
+ * @note For internal use only. :nodoc:
+ */
 @interface UARemoteConfig : NSObject 
 
 /**

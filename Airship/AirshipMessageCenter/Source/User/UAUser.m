@@ -6,6 +6,7 @@
 #import "UAAirshipMessageCenterCoreImport.h"
 #import "UATaskManager.h"
 #import "UAUserData+Internal.h"
+#import "UARemoteConfigURLManager.h"
 
 NSString * const UAUserRegisteredChannelIDKey= @"UAUserRegisteredChannelID";
 NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.user_created";
@@ -51,6 +52,11 @@ static NSString * const UAUserResetTaskID = @"UAUser.reset";
         [self.notificationCenter addObserver:self
                                     selector:@selector(enqueueResetTask)
                                         name:UADeviceIDChangedNotification
+                                      object:nil];
+
+        [self.notificationCenter addObserver:self
+                                    selector:@selector(remoteURLConfigUpdated)
+                                        name:UARemoteConfigURLManagerConfigUpdated
                                       object:nil];
 
         UA_WEAKIFY(self)
@@ -107,7 +113,8 @@ static NSString * const UAUserResetTaskID = @"UAUser.reset";
     return [self.userDataDAO getUserDataSync];
 }
 
-- (void)getUserData:(void (^)(UAUserData * _Nullable))completionHandler dispatcher:(nullable UADispatcher *)dispatcher {
+- (void)getUserData:(void (^)(UAUserData * _Nullable))completionHandler
+         dispatcher:(nullable UADispatcher *)dispatcher {
     return [self.userDataDAO getUserData:completionHandler dispatcher:dispatcher];
 }
 
@@ -220,7 +227,6 @@ static NSString * const UAUserResetTaskID = @"UAUser.reset";
     }];
 }
 
-
 - (UADisposable *)performUserCreateWithChannelID:(NSString *)channelID task:(id<UATask>)task {
     UA_WEAKIFY(self)
     return [self.apiClient createUserWithChannelID:channelID completionHandler:^(UAUserCreateResponse * _Nullable response, NSError * _Nullable error) {
@@ -261,5 +267,10 @@ static NSString * const UAUserResetTaskID = @"UAUser.reset";
     }];
 }
 
+- (void)remoteURLConfigUpdated {
+    // clear registered channel ID to force an update
+    self.registeredChannelID = nil;
+    [self enqueueUpdateTask];
+}
 
 @end

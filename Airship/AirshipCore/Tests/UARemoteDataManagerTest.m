@@ -17,6 +17,7 @@
 #import "UATaskManager.h"
 #import "UALocaleManager+Internal.h"
 #import "UARemoteDataAPIClient+Internal.h"
+#import "UARemoteConfigURLManager.h"
 
 /**
  * Used to test what UARemoteDataManager does when the cache fails underneath it.
@@ -97,6 +98,14 @@ static NSString * const RefreshTask = @"UARemoteDataManager.refresh";
     [[self.mockTaskManager expect] enqueueRequestWithID:RefreshTask options:OCMOCK_ANY];
 
     [self.notificationCenter postNotificationName:UAApplicationDidTransitionToForeground object:nil];
+
+    [self.mockTaskManager verify];
+}
+
+- (void)testRemoteConfigUpdated {
+    [[self.mockTaskManager expect] enqueueRequestWithID:RefreshTask options:OCMOCK_ANY];
+
+    [self.notificationCenter postNotificationName:UARemoteConfigURLManagerConfigUpdated object:nil];
 
     [self.mockTaskManager verify];
 }

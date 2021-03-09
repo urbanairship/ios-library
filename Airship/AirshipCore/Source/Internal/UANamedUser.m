@@ -11,6 +11,7 @@
 #import "UADate.h"
 #import "UATaskManager.h"
 #import "UASemaphore.h"
+#import "UARemoteConfigURLManager.h"
 
 #define kUAMaxNamedUserIDLength 128
 
@@ -81,6 +82,11 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
         [self.notificationCenter addObserver:self
                                     selector:@selector(channelCreated:)
                                         name:UAChannelCreatedEvent
+                                      object:nil];
+
+        [self.notificationCenter addObserver:self
+                                    selector:@selector(remoteConfigUpdated)
+                                        name:UARemoteConfigURLManagerConfigUpdated
                                       object:nil];
         UA_WEAKIFY(self)
         [self.channel addChannelExtenderBlock:^(UAChannelRegistrationPayload *payload, UAChannelRegistrationExtenderCompletionHandler completionHandler) {
@@ -542,5 +548,10 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
     [self enqueueUpdateAttributesTask];
 }
 
-@end
+- (void)remoteConfigUpdated {
+    if (self.identifier && self.channel.identifier) {
+        [self forceUpdate];
+    }
+}
 
+@end

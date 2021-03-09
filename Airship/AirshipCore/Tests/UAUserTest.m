@@ -465,6 +465,39 @@ static NSString * const UAUserResetTaskID = @"UAUser.reset";
     [mockTask verify];
 }
 
+- (void)testRemoteURLConfigUpdated {
+    // Create the channel
+    [self testUpdateTaskCreatesChannel];
+
+    [[self.mockTaskManager expect] enqueueRequestWithID:UAUserUpdateTaskID options:OCMOCK_ANY];
+
+    [self.notificationCenter postNotificationName:UARemoteConfigURLManagerConfigUpdated object:nil];
+
+    id mockTask = [self mockForProtocol:@protocol(UATask)];
+    [[[mockTask stub] andReturn:UAUserUpdateTaskID] taskID];
+    [[mockTask expect] taskCompleted];
+
+    XCTestExpectation *apiCalled = [self expectationWithDescription:@"API client called"];
+
+    __block void (^completionHandler)(UAHTTPResponse * _Nullable response, NSError * _Nullable error);
+    [[[self.mockUserClient expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:4];
+        completionHandler = (__bridge  void (^)(UAHTTPResponse * _Nullable response, NSError * _Nullable error))arg;
+        [apiCalled fulfill];
+    }] updateUserWithData:self.userData channelID:self.channelID completionHandler:OCMOCK_ANY];
+
+    self.launchHandler(mockTask);
+    [self waitForTestExpectations];
+
+    UAHTTPResponse *response = [[UAHTTPResponse alloc] initWithStatus:200];
+
+    completionHandler(response, nil);
+    [self.mockUserClient verify];
+    [mockTask verify];
+}
+
+
 @end
 
 @implementation UATestUserDataDAO

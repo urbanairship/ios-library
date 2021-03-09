@@ -120,6 +120,14 @@ UARuntimeConfig *config;
     [self enqueueChannelRegistrationTask:forcefully];
 }
 
+- (void)performFullRegistration {
+    [self.dispatcher dispatchAsync:^{
+        self.lastSuccessfulPayload = nil;
+        self.lastSuccessfulUpdateDate = [NSDate distantPast];
+        [self registerForcefully:YES];
+    }];
+}
+
 - (void)resetChannel {
     [self.dispatcher dispatchAsync:^{
         UA_LDEBUG(@"Clearing previous channel.");
@@ -128,12 +136,12 @@ UARuntimeConfig *config;
     }];
 }
 
-
 - (void)clearChannelData {
     self.channelID = nil;
     self.lastSuccessfulPayload = nil;
     self.lastSuccessfulUpdateDate = [NSDate distantPast];
 }
+
 #pragma mark -
 #pragma mark Internal Methods
 

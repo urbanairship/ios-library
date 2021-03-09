@@ -182,6 +182,11 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
                                 selector:@selector(localeUpdated)
                                     name:UALocaleUpdatedEvent
                                   object:nil];
+
+    [self.notificationCenter addObserver:self
+                                selector:@selector(remoteConfigUpdated)
+                                    name:UARemoteConfigURLManagerConfigUpdated
+                                  object:nil];
 }
 
 - (void)reset {
@@ -588,6 +593,12 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
                 [self extendPayload:payload extenders:remainingExtenderBlocks completionHandler:completionHandler];
         });
     }];
+}
+
+- (void)remoteConfigUpdated {
+    if (self.isChannelCreationEnabled) {
+        [self.channelRegistrar performFullRegistration];
+    }
 }
 
 #pragma mark -

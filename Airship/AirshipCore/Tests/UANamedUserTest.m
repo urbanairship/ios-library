@@ -518,6 +518,34 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
     [self.mockTaskManager verify];
 }
 
+- (void)testConfigUpdataed {
+    [self updateNamedUser:@"some-identifier"];
+
+    [[self.mockTaskManager expect] enqueueRequestWithID:UANamedUserUpdateTaskID options:OCMOCK_ANY];
+
+    [self.mockNotificationCenter postNotificationName:UARemoteConfigURLManagerConfigUpdated
+                                               object:nil];
+
+    [self.mockTaskManager verify];
+
+    [[[self.mockedNamedUserClient expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:4];
+        void (^completionHandler)(UAHTTPResponse * _Nullable, NSError * _Nullable);
+        completionHandler = (__bridge void (^)(UAHTTPResponse * _Nullable , NSError * _Nullable))arg;
+        completionHandler([[UAHTTPResponse alloc] initWithStatus:200], nil);
+    }] associate:@"some-identifier" channelID:self.channelID completionHandler:OCMOCK_ANY];
+
+    // Actually run the task
+    id mockTask = [self mockForProtocol:@protocol(UATask)];
+    [[[mockTask stub] andReturn:UANamedUserUpdateTaskID] taskID];
+    [[mockTask expect] taskCompleted];
+    self.launchHandler(mockTask);
+
+    [self.mockedNamedUserClient verify];
+    [mockTask verify];
+}
+
 /**
  * Test update will reassociate named user if the channel ID changes.
  */

@@ -85,6 +85,11 @@ extern NSString *const UAChannelRegistrarChannelIDKey;
 - (void)registerForcefully:(BOOL)forcefully;
 
 /**
+ * Performs a full channel registration.
+ */
+- (void)performFullRegistration;
+
+/**
 * Removes the existing channel and forces a registration to create a new one.
 */
 - (void)resetChannel;

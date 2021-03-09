@@ -1142,4 +1142,24 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
     [self.mockChannelRegistrar verify];
 }
 
+- (void)testConfigUpdateChannelCreationDisabled {
+    self.channel.channelCreationEnabled = NO;
+
+    [[self.mockChannelRegistrar reject] performFullRegistration];
+
+    [self.notificationCenter postNotificationName:UARemoteConfigURLManagerConfigUpdated object:nil];
+
+    [self.mockChannelRegistrar verify];
+}
+
+- (void)testConfigUpdateChannelCreationEnabled {
+    self.channel.channelCreationEnabled = YES;
+
+    [[self.mockChannelRegistrar expect] performFullRegistration];
+
+    [self.notificationCenter postNotificationName:UARemoteConfigURLManagerConfigUpdated object:nil];
+
+    [self.mockChannelRegistrar verify];
+}
+
 @end

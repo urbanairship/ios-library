@@ -6,6 +6,16 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/**
+ *  NSNotification whenever the URL config changes.
+ *  @note For internal use only. :nodoc:
+ */
+extern NSString *const UARemoteConfigURLManagerConfigUpdated;
+
+/**
+ * Remote URL config manager.
+ * @note For internal use only. :nodoc:
+ */
 @interface UARemoteConfigURLManager : NSObject
 
 /**
@@ -38,6 +48,16 @@ NS_ASSUME_NONNULL_BEGIN
  * @return A remote config.
  */
 + (instancetype)remoteConfigURLManagerWithDataStore:(UAPreferenceDataStore *)dataStore;
+
+/**
+ * Factory method.
+ * @param dataStore  the data store.
+ * @param notificationCenter The NSNotification center.
+ * @return A remote config.
+ */
++ (instancetype)remoteConfigURLManagerWithDataStore:(UAPreferenceDataStore *)dataStore
+                                 notificationCenter:(NSNotificationCenter *)notificationCenter;
+
 
 @end
 
