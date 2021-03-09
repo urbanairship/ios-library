@@ -88,13 +88,7 @@ NSString * const UADeferredScheduleAPIClientErrorDomain = @"com.urbanairship.def
 
 + (UAStateOverrides * (^)(void))defaultStateOverridesProvider {
     return ^{
-        BOOL optIn = [UAirship push].userPushNotificationsEnabled && [UAirship push].authorizedNotificationSettings != UAAuthorizedNotificationSettingsNone;
-
-        return [UAStateOverrides stateOverridesWithAppVersion:[UAirshipVersion get]
-                                                   sdkVersion:[UAirshipVersion get]
-                                               localeLanguage:[UAirship shared].locale.currentLocale.languageCode
-                                                localeCountry:[UAirship shared].locale.currentLocale.countryCode
-                                            notificationOptIn:optIn];
+        return [UAStateOverrides defaultStateOverrides];
     };;
 }
 

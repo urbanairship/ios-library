@@ -74,4 +74,5 @@
 #import "UALocaleManager.h"
 #import "UATaskManager.h"
 #import "NSDictionary+UAAdditions.h"
+#import "UANetworkMonitor.h"
 #endif

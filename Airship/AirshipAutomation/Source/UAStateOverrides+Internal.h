@@ -49,6 +49,11 @@ NS_ASSUME_NONNULL_BEGIN
                                localeCountry:(nullable NSString *)localeCountry
                            notificationOptIn:(BOOL)notificationOptIn;
 
+/**
+ * UAStateOverrides factory method, with default values.
+ */
++ (instancetype)defaultStateOverrides;
+
 @end
 
 NS_ASSUME_NONNULL_END

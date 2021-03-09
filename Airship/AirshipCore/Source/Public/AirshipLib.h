@@ -81,6 +81,7 @@
 #import "UANativeBridge.h"
 #import "UANativeBridgeDelegate.h"
 #import "UANativeBridgeExtensionDelegate.h"
+#import "UANetworkMonitor.h"
 #import "UANotificationAction.h"
 #import "UANotificationCategories.h"
 #import "UANotificationCategory.h"

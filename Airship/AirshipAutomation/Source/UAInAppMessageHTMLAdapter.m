@@ -49,11 +49,6 @@ NSString *const UAHTMLStyleFileName = @"UAInAppMessageHTMLStyle";
         return completionHandler(UAInAppMessagePrepareResultCancel);
     }
 
-    if (![self isNetworkConnected]) {
-        completionHandler(UAInAppMessagePrepareResultRetry);
-        return;
-    }
-
     UAAutomationNativeBridgeExtension *nativeBridgeExtension = [UAAutomationNativeBridgeExtension extensionWithMessage:self.message];
 
     self.htmlViewController = [UAInAppMessageHTMLViewController htmlControllerWithDisplayContent:content
@@ -111,3 +106,4 @@ NSString *const UAHTMLStyleFileName = @"UAInAppMessageHTMLStyle";
 }
 
 @end
+

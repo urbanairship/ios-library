@@ -17,6 +17,7 @@
 #import "UATestRuntimeConfig.h"
 #import "UAActionSchedule.h"
 #import "UAScheduleEdits+Internal.h"
+#import "UANetworkMonitor.h"
 
 static NSString * const UAAutomationEngineDelayTaskID = @"UAAutomationEngine.delay";
 static NSString * const UAAutomationEngineIntervalTaskID = @"UAAutomationEngine.interval";
@@ -30,11 +31,14 @@ static NSString * const UAAutomationEngineIntervalTaskID = @"UAAutomationEngine.
 @property (nonatomic, strong) id mockMetrics;
 @property (nonatomic, strong) id mockAirship;
 @property (nonatomic, strong) id mockTaskManager;
+@property (nonatomic, strong) id mockNetworkMonitor;
 @property (nonatomic, strong) NSNotificationCenter *notificationCenter;
 @property (nonatomic, strong) UATestDispatcher *dispatcher;
 @property (nonatomic, copy) void (^taskEnqueueBlock)(void);
 @property (nonatomic, strong) UATestDate *testDate;
 @property(nonatomic, copy) void (^launchHandler)(id<UATask>);
+@property(nonatomic, copy) void (^networkMonitorCallback)(BOOL);
+
 @end
 
 #define UAAUTOMATIONENGINETESTS_SCHEDULE_LIMIT 100
@@ -74,9 +78,20 @@ static NSString * const UAAutomationEngineIntervalTaskID = @"UAAutomationEngine.
 
     self.notificationCenter = [[NSNotificationCenter alloc] init];
 
+    self.mockNetworkMonitor = [self mockForClass:[UANetworkMonitor class]];
+
+    // Capture network monitor callback block
+    [[[self.mockNetworkMonitor stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:2];
+        void (^callbackBlock)(BOOL) = (__bridge void(^)(BOOL))arg;
+        self.networkMonitorCallback = callbackBlock;
+    }] connectionUpdates:OCMOCK_ANY];
+
     self.automationEngine = [UAAutomationEngine automationEngineWithAutomationStore:self.testStore
                                                                     appStateTracker:self.mockAppStateTracker
                                                                         taskManager:self.mockTaskManager
+                                                                     networkMonitor:self.mockNetworkMonitor
                                                                  notificationCenter:self.notificationCenter
                                                                          dispatcher:self.dispatcher
                                                                         application:self.mockedApplication
@@ -1237,6 +1252,81 @@ static NSString * const UAAutomationEngineIntervalTaskID = @"UAAutomationEngine.
     }];
 
     [self waitForTestExpectations];
+}
+
+- (void)testNetworkConnectivityResumed {
+    // Simulate initial connectivity callback on init
+    self.networkMonitorCallback(NO);
+
+    XCTestExpectation *testExpectation = [self expectationWithDescription:@"scheduled action"];
+
+    UASchedule *schedule = [UAActionSchedule scheduleWithActions:@{@"cool": @"story"}
+                                                    builderBlock:^(UAScheduleBuilder * _Nonnull builder) {
+        UAScheduleTrigger *foregroundTrigger = [UAScheduleTrigger foregroundTriggerWithCount:2];
+        builder.triggers = @[foregroundTrigger];
+    }];
+
+    [self.automationEngine schedule:schedule completionHandler:^(BOOL result) {
+        XCTAssertTrue(result);
+        [testExpectation fulfill];
+    }];
+
+    [self waitForTestExpectations];
+
+    // Set state to waiting schedule conditions;
+    [self.automationEngine.automationStore getSchedule:schedule.identifier completionHandler:^(UAScheduleData * data) {
+        data.executionState = @(UAScheduleStateWaitingScheduleConditions);
+    }];
+
+    // Have the delegate signal that the schedule is ready to execute
+    [[[self.mockDelegate expect] andReturnValue:OCMOCK_VALUE(UAAutomationScheduleReadyResultContinue)] isScheduleReadyToExecute:[OCMArg checkWithBlock:^BOOL(id obj) {
+        UASchedule *s = obj;
+        return  [schedule.identifier isEqualToString:s.identifier];
+    }]];
+
+    // Fire connectivity change callback
+    self.networkMonitorCallback(YES);
+
+    // Schedule should be executing
+    [self.automationEngine.automationStore getSchedule:schedule.identifier completionHandler:^(UAScheduleData * data) {
+        XCTAssertEqualObjects(data.executionState, @(UAScheduleStateExecuting));
+    }];
+}
+
+- (void)testNetworkConnectivityFirstCallback {
+    XCTestExpectation *testExpectation = [self expectationWithDescription:@"scheduled action"];
+
+    UASchedule *schedule = [UAActionSchedule scheduleWithActions:@{@"cool": @"story"}
+                                                    builderBlock:^(UAScheduleBuilder * _Nonnull builder) {
+        UAScheduleTrigger *foregroundTrigger = [UAScheduleTrigger foregroundTriggerWithCount:2];
+        builder.triggers = @[foregroundTrigger];
+    }];
+
+    [self.automationEngine schedule:schedule completionHandler:^(BOOL result) {
+        XCTAssertTrue(result);
+        [testExpectation fulfill];
+    }];
+
+    [self waitForTestExpectations];
+
+    // Set state to waiting schedule conditions;
+    [self.automationEngine.automationStore getSchedule:schedule.identifier completionHandler:^(UAScheduleData * data) {
+        data.executionState = @(UAScheduleStateWaitingScheduleConditions);
+    }];
+
+    // Have the delegate signal that the schedule is ready to execute
+    [[[self.mockDelegate expect] andReturnValue:OCMOCK_VALUE(UAAutomationScheduleReadyResultContinue)] isScheduleReadyToExecute:[OCMArg checkWithBlock:^BOOL(id obj) {
+        UASchedule *s = obj;
+        return  [schedule.identifier isEqualToString:s.identifier];
+    }]];
+
+    // Fire connectivity change callback
+    self.networkMonitorCallback(YES);
+
+    // Schedule should still be waiting conditions
+    [self.automationEngine.automationStore getSchedule:schedule.identifier completionHandler:^(UAScheduleData * data) {
+        XCTAssertEqualObjects(data.executionState, @(UAScheduleStateWaitingScheduleConditions));
+    }];
 }
 
 /**

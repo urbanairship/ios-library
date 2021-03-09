@@ -164,6 +164,7 @@ typedef NS_ENUM(NSInteger, UAAutomationScheduleReadyResult) {
  * @param automationStore An initialized UAAutomationStore
  * @param appStateTracker An app state tracker.
  * @param taskManager The task manager.
+ * @param networkMonitor The network monitor.
  * @param notificationCenter The notification center.
  * @param dispatcher The dispatcher to dispatch main queue blocks.
  * @param application The main application.
@@ -174,6 +175,7 @@ typedef NS_ENUM(NSInteger, UAAutomationScheduleReadyResult) {
 + (instancetype)automationEngineWithAutomationStore:(UAAutomationStore *)automationStore
                                     appStateTracker:(UAAppStateTracker *)appStateTracker
                                         taskManager:(UATaskManager *)taskManager
+                                     networkMonitor:(UANetworkMonitor *)networkMonitor
                                  notificationCenter:(NSNotificationCenter *)notificationCenter
                                          dispatcher:(UADispatcher *)dispatcher
                                         application:(UIApplication *)application

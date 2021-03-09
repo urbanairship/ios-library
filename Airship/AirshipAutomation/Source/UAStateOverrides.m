@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
 #import "UAStateOverrides+Internal.h"
+#import "UAAirshipAutomationCoreImport.h"
 
 @interface UAStateOverrides ()
 @property (nonatomic, copy) NSString *appVersion;
@@ -27,6 +28,16 @@
     overrides.notificationOptIn = notificationOptIn;
 
     return overrides;
+}
+
++ (instancetype)defaultStateOverrides {
+    BOOL optIn = [UAirship push].userPushNotificationsEnabled && [UAirship push].authorizedNotificationSettings != UAAuthorizedNotificationSettingsNone;
+    
+    return [UAStateOverrides stateOverridesWithAppVersion:[UAUtils bundleShortVersionString]
+                                               sdkVersion:[UAirshipVersion get]
+                                           localeLanguage:[UAirship shared].locale.currentLocale.languageCode
+                                            localeCountry:[UAirship shared].locale.currentLocale.countryCode
+                                        notificationOptIn:optIn];
 }
 
 @end

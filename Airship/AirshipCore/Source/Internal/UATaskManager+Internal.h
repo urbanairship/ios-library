@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 #import "UATaskManager.h"
-#import "UANetworkMonitor+Internal.h"
+#import "UANetworkMonitor.h"
 
 @interface UATaskManager()
 
