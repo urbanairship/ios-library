@@ -25,23 +25,15 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
 @property (nonatomic, strong) id mockAttributeRegistrar;
 @property (nonatomic, strong) id mockTimeZone;
 @property (nonatomic, strong) id mockNotificationCenter;
-
-@property (nonatomic, strong) UATestDate *testDate;
-
-@property (nonatomic, strong) UANamedUser *namedUser;
-@property (nonatomic, copy) NSString *pushChannelID;
-@property (nonatomic, strong) NSMutableDictionary *addTagGroups;
-@property (nonatomic, strong) NSMutableDictionary *removeTagGroups;
-@property (nonatomic, copy) UAChannelRegistrationExtenderBlock channelRegistrationExtenderBlock;
 @property (nonatomic, strong) id mockTaskManager;
-@property(nonatomic, copy) void (^launchHandler)(id<UATask>);
-
+@property (nonatomic, strong) UATestDate *testDate;
+@property (nonatomic, strong) UANamedUser *namedUser;
+@property (nonatomic, copy) NSString *channelID;
+@property (nonatomic, copy) UAChannelRegistrationExtenderBlock channelRegistrationExtenderBlock;
+@property (nonatomic, copy) void (^launchHandler)(id<UATask>);
 @end
 
 @implementation UANamedUserTest
-
-void (^associateSuccessDoBlock)(NSInvocation *);
-void (^disassociateSuccessDoBlock)(NSInvocation *);
 
 - (void)setUp {
     [super setUp];
@@ -50,14 +42,14 @@ void (^disassociateSuccessDoBlock)(NSInvocation *);
 
     self.mockChannel = [self mockForClass:[UAChannel class]];
     [[[self.mockChannel stub] andDo:^(NSInvocation *invocation) {
-        [invocation setReturnValue:&self->_pushChannelID];
+        [invocation setReturnValue:&self->_channelID];
     }] identifier];
 
     self.mockedAirship = [self mockForClass:[UAirship class]];
     [[[self.mockedAirship stub] andReturn:self.mockChannel] channel];
     [UAirship setSharedAirship:self.mockedAirship];
 
-    self.pushChannelID = @"someChannel";
+    self.channelID = @"someChannel";
 
     self.mockTagGroupsRegistrar = [self mockForClass:[UATagGroupsRegistrar class]];
     self.mockAttributeRegistrar = [self mockForClass:[UAAttributeRegistrar class]];
@@ -68,6 +60,8 @@ void (^disassociateSuccessDoBlock)(NSInvocation *);
     self.mockNotificationCenter = [self partialMockForObject:[NSNotificationCenter defaultCenter]];
 
     self.testDate = [[UATestDate alloc] initWithAbsoluteTime:[NSDate date]];
+
+    self.mockedNamedUserClient = [self mockForClass:[UANamedUserAPIClient class]];
 
     // Capture the channel payload extender
     [[[self.mockChannel stub] andDo:^(NSInvocation *invocation) {
@@ -92,33 +86,9 @@ void (^disassociateSuccessDoBlock)(NSInvocation *);
                                     tagGroupsRegistrar:self.mockTagGroupsRegistrar
                                     attributeRegistrar:self.mockAttributeRegistrar
                                                   date:self.testDate
-                                           taskManager:self.mockTaskManager];
-
-    self.mockedNamedUserClient = [self mockForClass:[UANamedUserAPIClient class]];
-    self.namedUser.namedUserAPIClient = self.mockedNamedUserClient;
-
-    // set up the named user
-    self.namedUser.identifier = @"fakeNamedUser";
-    self.namedUser.changeToken = @"AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE";
-    self.namedUser.lastUpdatedToken = @"AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE";
-
-    associateSuccessDoBlock = ^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:4];
-        void (^completionHandler)(NSError * _Nullable);
-        completionHandler = (__bridge void (^)(NSError * _Nullable))arg;
-        completionHandler(nil);
-    };
-
-    disassociateSuccessDoBlock = ^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:3];
-        void (^completionHandler)(NSError * _Nullable);
-        completionHandler = (__bridge void (^)(NSError * _Nullable))arg;
-        completionHandler([NSError errorWithDomain:@"error" code:0 userInfo:@{}]);
-    };
+                                           taskManager:self.mockTaskManager
+                                       namedUserClient:self.mockedNamedUserClient];
 }
-
 
 - (void)tearDown {
     [self.mockTimeZone stopMocking];
@@ -130,193 +100,63 @@ void (^disassociateSuccessDoBlock)(NSInvocation *);
  * Test set valid ID (associate).
  */
 - (void)testSetIDValid {
-    NSString *changeToken = self.namedUser.changeToken;
-    // Expect the named user client to associate and call the success block
-    [[[self.mockedNamedUserClient expect] andDo:associateSuccessDoBlock] associate:@"superFakeNamedUser"
-                                                                         channelID:@"someChannel"
-                                                                 completionHandler:OCMOCK_ANY];
-
-    [[self.mockNotificationCenter expect] postNotificationName:UANamedUserIdentifierChangedNotification
-                                                        object:nil
-                                                      userInfo:@{UANamedUserIdentifierChangedNotificationIdentifierKey : @"superFakeNamedUser"}];
-
-    UATaskRequestOptions *options = [UATaskRequestOptions optionsWithConflictPolicy:UATaskConflictPolicyReplace requiresNetwork:YES extras:nil];
-    id mockTask = [self mockForProtocol:@protocol(UATask)];
-
-    [[[mockTask stub] andReturn:UANamedUserUpdateTaskID] taskID];
-    [[[mockTask stub] andReturn:options] requestOptions];
-
-    [[[self.mockTaskManager expect] andDo:^(NSInvocation *invocation) {
-        self.launchHandler(mockTask);
-    }] enqueueRequestWithID:UANamedUserUpdateTaskID options:OCMOCK_ANY];
+    [[self.mockTaskManager expect] enqueueRequestWithID:UANamedUserUpdateTaskID options:OCMOCK_ANY];
 
     self.namedUser.identifier = @"superFakeNamedUser";
-
     [self.mockTaskManager verify];
-
-    XCTAssertEqualObjects(@"superFakeNamedUser", self.namedUser.identifier,
-                          @"Named user ID should be set.");
-    XCTAssertEqualObjects(@"superFakeNamedUser", [self.dataStore stringForKey:UANamedUserIDKey],
-                          @"Named user ID should be stored in standardUserDefaults.");
-    XCTAssertNotEqualObjects(changeToken, self.namedUser.changeToken,
-                             @"Change tokens should have changed.");
-    XCTAssertNoThrow([self.mockedNamedUserClient verify], @"Named user should be associated");
-    XCTAssertNoThrow([self.mockNotificationCenter verify], @"Change notification should be posted");
 }
 
 /**
  * Test set invalid ID.
  */
 - (void)testSetIDInvalid {
-    NSString *changeToken = self.namedUser.changeToken;
-    // Named user client should not associate
-    [[self.mockedNamedUserClient reject] associate:OCMOCK_ANY
-                                         channelID:OCMOCK_ANY
-                                 completionHandler:OCMOCK_ANY];
+    self.namedUser.identifier = @"fakeNamedUser";
+    [[self.mockTaskManager reject] enqueueRequestWithID:UANamedUserUpdateTaskID options:OCMOCK_ANY];
 
-    [[self.mockNotificationCenter reject] postNotificationName:UANamedUserIdentifierChangedNotification
-                                                        object:OCMOCK_ANY
-                                                      userInfo:OCMOCK_ANY];
-
-    NSString *currentID = self.namedUser.identifier;
     self.namedUser.identifier = @"         ";
 
-    XCTAssertEqualObjects(currentID, self.namedUser.identifier,
-                          @"Named user ID should not have changed.");
-    XCTAssertEqualObjects(changeToken, self.namedUser.changeToken,
-                          @"Change tokens should remain the same.");
-    XCTAssertNoThrow([self.mockedNamedUserClient verify], @"Named user should not be associated");
-    XCTAssertNoThrow([self.mockNotificationCenter verify], @"Change notification should not be posted");
+    XCTAssertEqualObjects(@"fakeNamedUser", self.namedUser.identifier);
+    [self.mockTaskManager verify];
 }
 
 /**
  * Test set empty ID (disassociate).
  */
 - (void)testSetIDEmpty {
-    NSString *changeToken = self.namedUser.changeToken;
-    // Expect the named user client to disassociate and call the success block
-    [[[self.mockedNamedUserClient expect] andDo:disassociateSuccessDoBlock] disassociate:@"someChannel"
-                                    completionHandler:OCMOCK_ANY];
-
-    [[self.mockNotificationCenter expect] postNotificationName:UANamedUserIdentifierChangedNotification
-                                                        object:nil
-                                                      userInfo:@{}];
-
-    UATaskRequestOptions *options = [UATaskRequestOptions optionsWithConflictPolicy:UATaskConflictPolicyReplace requiresNetwork:YES extras:nil];
-    id mockTask = [self mockForProtocol:@protocol(UATask)];
-
-    [[[mockTask stub] andReturn:UANamedUserUpdateTaskID] taskID];
-    [[[mockTask stub] andReturn:options] requestOptions];
-
-    [[[self.mockTaskManager expect] andDo:^(NSInvocation *invocation) {
-        self.launchHandler(mockTask);
-    }] enqueueRequestWithID:UANamedUserUpdateTaskID options:OCMOCK_ANY];
+    self.namedUser.identifier = @"fakeNamedUser";
+    [[self.mockTaskManager expect] enqueueRequestWithID:UANamedUserUpdateTaskID options:OCMOCK_ANY];
 
     self.namedUser.identifier = @"";
 
+    XCTAssertNil(self.namedUser.identifier);
     [self.mockTaskManager verify];
-
-    XCTAssertNil(self.namedUser.identifier, @"Named user ID should be nil.");
-    XCTAssertNil([self.dataStore stringForKey:UANamedUserIDKey],
-                 @"Named user ID should be able to be cleared in standardUserDefaults.");
-    XCTAssertNotEqualObjects(changeToken, self.namedUser.changeToken,
-                             @"Change tokens should have changed.");
-    XCTAssertNoThrow([self.mockedNamedUserClient verify], @"Named user should be disassociated");
-    XCTAssertNoThrow([self.mockNotificationCenter verify], @"Change notification should be posted");
 }
 
 /**
  * Test set nil ID (disassociate).
  */
 - (void)testSetIDNil {
-    NSString *changeToken = self.namedUser.changeToken;
-    // Expect the named user client to disassociate and call the success block
-    [[[self.mockedNamedUserClient expect] andDo:disassociateSuccessDoBlock] disassociate:@"someChannel"
-                                    completionHandler:OCMOCK_ANY];
-
-    [[self.mockNotificationCenter expect] postNotificationName:UANamedUserIdentifierChangedNotification
-                                                        object:nil
-                                                      userInfo:@{}];
-
-    UATaskRequestOptions *options = [UATaskRequestOptions optionsWithConflictPolicy:UATaskConflictPolicyReplace requiresNetwork:YES extras:nil];
-    id mockTask = [self mockForProtocol:@protocol(UATask)];
-
-    [[[mockTask stub] andReturn:UANamedUserUpdateTaskID] taskID];
-    [[[mockTask stub] andReturn:options] requestOptions];
-
-    [[[self.mockTaskManager expect] andDo:^(NSInvocation *invocation) {
-        self.launchHandler(mockTask);
-    }] enqueueRequestWithID:UANamedUserUpdateTaskID options:OCMOCK_ANY];
+    self.namedUser.identifier = @"fakeNamedUser";
+    [[self.mockTaskManager expect] enqueueRequestWithID:UANamedUserUpdateTaskID options:OCMOCK_ANY];
 
     self.namedUser.identifier = nil;
 
+    XCTAssertNil(self.namedUser.identifier);
     [self.mockTaskManager verify];
-    XCTAssertNil(self.namedUser.identifier, @"Named user ID should be nil.");
-    XCTAssertNil([self.dataStore stringForKey:UANamedUserIDKey],
-                 @"Named user ID should be able to be cleared in standardUserDefaults.");
-    XCTAssertNotEqualObjects(changeToken, self.namedUser.changeToken,
-                             @"Change tokens should have changed.");
-    XCTAssertNoThrow([self.mockedNamedUserClient verify], @"Named user should be disassociated");
-    XCTAssertNoThrow([self.mockNotificationCenter verify], @"Change notification should be posted");
 }
 
 /**
- * Test set ID when channel doesn't exist sets ID, but fails to associate
- */
-- (void)testSetIDNoChannel {
-    self.pushChannelID = nil;
-
-    // Named user client should not associate
-    [[self.mockedNamedUserClient reject] associate:OCMOCK_ANY
-                                         channelID:OCMOCK_ANY
-                                 completionHandler:OCMOCK_ANY];
-
-    [[self.mockNotificationCenter expect] postNotificationName:UANamedUserIdentifierChangedNotification
-                                                        object:nil
-                                                      userInfo:@{UANamedUserIdentifierChangedNotificationIdentifierKey : @"kindaFakeNamedUser"}];
-
-    NSString *changeToken = self.namedUser.changeToken;
-    NSString *lastUpdatedToken = self.namedUser.lastUpdatedToken;
-
-    self.namedUser.identifier = @"kindaFakeNamedUser";
-
-    XCTAssertEqualObjects(@"kindaFakeNamedUser", self.namedUser.identifier,
-                          @"Named user ID should match.");
-    XCTAssertNotEqualObjects(changeToken, self.namedUser.changeToken,
-                             @"Named user change token should not remain the same.");
-    XCTAssertEqualObjects(lastUpdatedToken, self.namedUser.lastUpdatedToken,
-                          @"Named user last updated token should remain the same.");
-    XCTAssertNoThrow([self.mockedNamedUserClient verify], @"Named user should not be associated");
-    XCTAssertNoThrow([self.mockNotificationCenter verify], @"Change notification should be posted");
-}
-
-/**
- * Test when IDs match, don't update named user
+ * Test when IDs match, don't update enqueu task.
  */
 - (void)testIDsMatchNoUpdate {
-    // Named user client should not associate
-    [[self.mockedNamedUserClient reject] associate:OCMOCK_ANY
-                                         channelID:OCMOCK_ANY
-                                 completionHandler:OCMOCK_ANY];
+    self.namedUser.identifier = @"fakeNamedUser";
 
-    [[self.mockNotificationCenter reject] postNotificationName:UANamedUserIdentifierChangedNotification
-                                                        object:OCMOCK_ANY
-                                                      userInfo:OCMOCK_ANY];
+    [[self.mockTaskManager reject] enqueueRequestWithID:UANamedUserUpdateTaskID options:OCMOCK_ANY];
 
-    NSString *currentID = self.namedUser.identifier;
-    NSString *changeToken = self.namedUser.changeToken;
-    NSString *lastUpdatedToken = self.namedUser.lastUpdatedToken;
+    self.namedUser.identifier = @"fakeNamedUser";
 
-    self.namedUser.identifier = currentID;
-
-    XCTAssertEqualObjects(currentID, self.namedUser.identifier,
-                          @"Named user ID should match.");
-    XCTAssertEqualObjects(changeToken, self.namedUser.changeToken,
-                          @"Named user change token should remain the same.");
-    XCTAssertEqualObjects(lastUpdatedToken, self.namedUser.lastUpdatedToken,
-                          @"Named user last updated token should remain the same.");
-    XCTAssertNoThrow([self.mockedNamedUserClient verify], @"Named user should not be associated");
-    XCTAssertNoThrow([self.mockNotificationCenter verify], @"Change notification should not be posted");
+    XCTAssertEqualObjects(@"fakeNamedUser", self.namedUser.identifier);
+    [self.mockTaskManager verify];
 }
 
 - (void)testSetIdentifierDataCollectionDisabled {
@@ -327,10 +167,12 @@ void (^disassociateSuccessDoBlock)(NSInvocation *);
 }
 
 - (void)testInitialIdentifierPassedToRegistrars {
-    [self.dataStore setValue:@"foo" forKey:UANamedUserIDKey];
+    self.namedUser.identifier = @"foo";
+
     [[self.mockTagGroupsRegistrar expect] setIdentifier:@"foo" clearPendingOnChange:NO];
     [[self.mockAttributeRegistrar expect] setIdentifier:@"foo" clearPendingOnChange:NO];
 
+    // Recreate the named user
     self.namedUser = [UANamedUser namedUserWithChannel:self.mockChannel
                                                 config:self.config
                                     notificationCenter:self.mockNotificationCenter
@@ -338,7 +180,8 @@ void (^disassociateSuccessDoBlock)(NSInvocation *);
                                     tagGroupsRegistrar:self.mockTagGroupsRegistrar
                                     attributeRegistrar:self.mockAttributeRegistrar
                                                   date:self.testDate
-                                           taskManager:self.mockTaskManager];
+                                           taskManager:self.mockTaskManager
+                                       namedUserClient:self.mockedNamedUserClient];
 
 
     [self.mockTagGroupsRegistrar verify];
@@ -356,34 +199,9 @@ void (^disassociateSuccessDoBlock)(NSInvocation *);
 }
 
 /**
- * Test set change token.
- */
-- (void)testSetChangeToken {
-    self.namedUser.changeToken = @"fakeChangeToken";
-    XCTAssertEqualObjects(@"fakeChangeToken", self.namedUser.changeToken,
-                          @"Named user change token should be set.");
-    XCTAssertEqualObjects(@"fakeChangeToken", [self.dataStore stringForKey:UANamedUserChangeTokenKey],
-                          @"Named user change token should be stored in standardUserDefaults.");
-}
-
-/**
- * Test set last updated token.
- */
-- (void)testSetLastUpdatedToken {
-    self.namedUser.lastUpdatedToken = @"fakeLastUpdatedToken";
-    XCTAssertEqualObjects(@"fakeLastUpdatedToken", self.namedUser.lastUpdatedToken,
-                          @"Named user lsat updated token should be set.");
-    XCTAssertEqualObjects(@"fakeLastUpdatedToken", [self.dataStore stringForKey:UANamedUserLastUpdatedTokenKey],
-                          @"Named user last updated token should be stored in standardUserDefaults.");
-}
-
-/**
  * Test update will skip update on a new or re-install.
  */
 - (void)testUpdateSkipUpdateOnNewInstall {
-    self.namedUser.changeToken = nil;
-    self.namedUser.lastUpdatedToken = nil;
-
     // Named user client should not associate
     [[self.mockedNamedUserClient reject] associate:OCMOCK_ANY
                                          channelID:OCMOCK_ANY
@@ -393,38 +211,24 @@ void (^disassociateSuccessDoBlock)(NSInvocation *);
     [[self.mockedNamedUserClient reject] disassociate:OCMOCK_ANY
                                     completionHandler:OCMOCK_ANY];
 
-    [self.namedUser update];
+    id mockTask = [self mockForProtocol:@protocol(UATask)];
+    [[[mockTask stub] andReturn:UANamedUserUpdateTaskID] taskID];
+    [[mockTask expect] taskCompleted];
+    self.launchHandler(mockTask);
 
-    XCTAssertNoThrow([self.mockedNamedUserClient verify],
-                     @"Named user client should not associate or disassociate.");
+    [self.mockedNamedUserClient verify];
+    [mockTask verify];
 }
 
 /**
  * Test update will skip update when named user already updated.
  */
 - (void)testUpdateSkipUpdateSameNamedUser {
-    // Named user client should not associate
-    [[self.mockedNamedUserClient expect] associate:OCMOCK_ANY
-                                         channelID:OCMOCK_ANY
-                                 completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
-        void(^completionBlock)(NSError * _Nullable) = obj;
-        completionBlock(nil);
-        return YES;
-    }]];
+    [self updateNamedUser:@"some-ID"];
 
-    UATaskRequestOptions *options = [UATaskRequestOptions optionsWithConflictPolicy:UATaskConflictPolicyReplace requiresNetwork:YES extras:nil];
     id mockTask = [self mockForProtocol:@protocol(UATask)];
-
     [[[mockTask stub] andReturn:UANamedUserUpdateTaskID] taskID];
-    [[[mockTask stub] andReturn:options] requestOptions];
-
-    [[[self.mockTaskManager expect] andDo:^(NSInvocation *invocation) {
-        self.launchHandler(mockTask);
-    }] enqueueRequestWithID:UANamedUserUpdateTaskID options:OCMOCK_ANY];
-
-    [self.namedUser update];
-
-    [self.mockTaskManager verify];
+    [[mockTask expect] taskCompleted];
 
     // Named user client should not disassociate
     [[self.mockedNamedUserClient reject] associate:OCMOCK_ANY
@@ -435,20 +239,15 @@ void (^disassociateSuccessDoBlock)(NSInvocation *);
     [[self.mockedNamedUserClient reject] disassociate:OCMOCK_ANY
                                     completionHandler:OCMOCK_ANY];
 
-    [self.namedUser update];
-
-    XCTAssertNoThrow([self.mockedNamedUserClient verify],
-                     @"Named user client should not associate or disassociate.");
+    self.launchHandler(mockTask);
+    [self.mockedNamedUserClient verify];
 }
 
 /**
  * Test update will skip update when channel ID doesn't exist.
  */
 - (void)testUpdateSkipUpdateNoChannel {
-    self.pushChannelID = nil;
-
-    self.namedUser.changeToken = @"AbcToken";
-    self.namedUser.lastUpdatedToken = @"XyzToken";
+    self.channelID = nil;
 
     // Named user client should not associate
     [[self.mockedNamedUserClient reject] associate:OCMOCK_ANY
@@ -459,106 +258,257 @@ void (^disassociateSuccessDoBlock)(NSInvocation *);
     [[self.mockedNamedUserClient reject] disassociate:OCMOCK_ANY
                                     completionHandler:OCMOCK_ANY];
 
-    [self.namedUser update];
+    id mockTask = [self mockForProtocol:@protocol(UATask)];
+    [[[mockTask stub] andReturn:UANamedUserUpdateTaskID] taskID];
+    [[mockTask expect] taskCompleted];
 
-    XCTAssertNoThrow([self.mockedNamedUserClient verify],
-                     @"Named user client should not associate or disassociate.");
+    self.launchHandler(mockTask);
+    [self.mockedNamedUserClient verify];
 }
 
-/**
- * Test disassociateNamedUserIfNil when named user is nil.
- */
-- (void)testDisassociateNamedUserNil {
+- (void)testAssociate {
+    self.namedUser.identifier = @"named-user";
+
+    id mockTask = [self mockForProtocol:@protocol(UATask)];
+    [[[mockTask stub] andReturn:UANamedUserUpdateTaskID] taskID];
+    [[mockTask expect] taskCompleted];
+
+    [[[self.mockedNamedUserClient expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:4];
+        void (^completionHandler)(UAHTTPResponse * _Nullable, NSError * _Nullable);
+        completionHandler = (__bridge void (^)(UAHTTPResponse * _Nullable , NSError * _Nullable))arg;
+        completionHandler([[UAHTTPResponse alloc] initWithStatus:200], nil);
+    }] associate:@"named-user" channelID:self.channelID completionHandler:OCMOCK_ANY];
+
+    self.launchHandler(mockTask);
+
+    [self.mockedNamedUserClient verify];
+    [mockTask verify];
+}
+
+- (void)testAssociate429 {
+    self.namedUser.identifier = @"named-user";
+
+    id mockTask = [self mockForProtocol:@protocol(UATask)];
+    [[[mockTask stub] andReturn:UANamedUserUpdateTaskID] taskID];
+    [[mockTask expect] taskFailed];
+
+    [[[self.mockedNamedUserClient expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:4];
+        void (^completionHandler)(UAHTTPResponse * _Nullable, NSError * _Nullable);
+        completionHandler = (__bridge void (^)(UAHTTPResponse * _Nullable , NSError * _Nullable))arg;
+        completionHandler([[UAHTTPResponse alloc] initWithStatus:429], nil);
+    }] associate:@"named-user" channelID:self.channelID completionHandler:OCMOCK_ANY];
+
+    self.launchHandler(mockTask);
+
+    [self.mockedNamedUserClient verify];
+    [mockTask verify];
+}
+
+- (void)testAssociateClientError {
+    self.namedUser.identifier = @"named-user";
+
+    id mockTask = [self mockForProtocol:@protocol(UATask)];
+    [[[mockTask stub] andReturn:UANamedUserUpdateTaskID] taskID];
+    [[mockTask expect] taskCompleted];
+
+    [[[self.mockedNamedUserClient expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:4];
+        void (^completionHandler)(UAHTTPResponse * _Nullable, NSError * _Nullable);
+        completionHandler = (__bridge void (^)(UAHTTPResponse * _Nullable , NSError * _Nullable))arg;
+        completionHandler([[UAHTTPResponse alloc] initWithStatus:400], nil);
+    }] associate:@"named-user" channelID:self.channelID completionHandler:OCMOCK_ANY];
+
+    self.launchHandler(mockTask);
+
+    [self.mockedNamedUserClient verify];
+    [mockTask verify];
+}
+
+- (void)testAssociateServerError {
+    self.namedUser.identifier = @"named-user";
+
+    id mockTask = [self mockForProtocol:@protocol(UATask)];
+    [[[mockTask stub] andReturn:UANamedUserUpdateTaskID] taskID];
+    [[mockTask expect] taskFailed];
+
+    [[[self.mockedNamedUserClient expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:4];
+        void (^completionHandler)(UAHTTPResponse * _Nullable, NSError * _Nullable);
+        completionHandler = (__bridge void (^)(UAHTTPResponse * _Nullable , NSError * _Nullable))arg;
+        completionHandler([[UAHTTPResponse alloc] initWithStatus:500], nil);
+    }] associate:@"named-user" channelID:self.channelID completionHandler:OCMOCK_ANY];
+
+    self.launchHandler(mockTask);
+
+    [self.mockedNamedUserClient verify];
+    [mockTask verify];
+}
+
+- (void)testAssociateError {
+    self.namedUser.identifier = @"named-user";
+
+    id mockTask = [self mockForProtocol:@protocol(UATask)];
+    [[[mockTask stub] andReturn:UANamedUserUpdateTaskID] taskID];
+    [[mockTask expect] taskFailed];
+
+    [[[self.mockedNamedUserClient expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:4];
+        void (^completionHandler)(UAHTTPResponse * _Nullable, NSError * _Nullable);
+        completionHandler = (__bridge void (^)(UAHTTPResponse * _Nullable , NSError * _Nullable))arg;
+        NSError *error = [NSError errorWithDomain:@"domain" code:100 userInfo:nil];
+        completionHandler(nil, error);
+    }] associate:@"named-user" channelID:self.channelID completionHandler:OCMOCK_ANY];
+
+    self.launchHandler(mockTask);
+
+    [self.mockedNamedUserClient verify];
+    [mockTask verify];
+}
+
+- (void)testDisassociate {
     self.namedUser.identifier = nil;
 
-    // Expect the named user client to disassociate
-    [[[self.mockedNamedUserClient expect] andDo:disassociateSuccessDoBlock] disassociate:@"someChannel"
-                                    completionHandler:OCMOCK_ANY];
-
-    UATaskRequestOptions *options = [UATaskRequestOptions optionsWithConflictPolicy:UATaskConflictPolicyReplace requiresNetwork:YES extras:nil];
     id mockTask = [self mockForProtocol:@protocol(UATask)];
-
     [[[mockTask stub] andReturn:UANamedUserUpdateTaskID] taskID];
-    [[[mockTask stub] andReturn:options] requestOptions];
+    [[mockTask expect] taskCompleted];
 
-    [[[self.mockTaskManager expect] andDo:^(NSInvocation *invocation) {
-        self.launchHandler(mockTask);
-    }] enqueueRequestWithID:UANamedUserUpdateTaskID options:OCMOCK_ANY];
+    [[[self.mockedNamedUserClient expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void (^completionHandler)(UAHTTPResponse * _Nullable, NSError * _Nullable);
+        completionHandler = (__bridge void (^)(UAHTTPResponse * _Nullable , NSError * _Nullable))arg;
+        completionHandler([[UAHTTPResponse alloc] initWithStatus:200], nil);
+    }] disassociate:self.channelID completionHandler:OCMOCK_ANY];
 
-    self.namedUser.changeToken = nil;
-    [self.namedUser disassociateNamedUserIfNil];
+    self.launchHandler(mockTask);
 
-    XCTAssertNil(self.namedUser.identifier, @"Named user ID should remain nil.");
-    XCTAssertNoThrow([self.mockedNamedUserClient verify],
-                     @"Named user should be disassociated");
+    [self.mockedNamedUserClient verify];
+    [mockTask verify];
 }
 
-/**
- * Test disassociateNamedUserIfNil when named user is not nil.
- */
-- (void)testDisassociateNamedUserNonNil {
+- (void)testDisassociate429 {
+    self.namedUser.identifier = nil;
 
-    // Named user client should not disassociate
-    [[self.mockedNamedUserClient reject] disassociate:OCMOCK_ANY
-                                    completionHandler:OCMOCK_ANY];
+    id mockTask = [self mockForProtocol:@protocol(UATask)];
+    [[[mockTask stub] andReturn:UANamedUserUpdateTaskID] taskID];
+    [[mockTask expect] taskFailed];
 
-    [self.namedUser disassociateNamedUserIfNil];
+    [[[self.mockedNamedUserClient expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void (^completionHandler)(UAHTTPResponse * _Nullable, NSError * _Nullable);
+        completionHandler = (__bridge void (^)(UAHTTPResponse * _Nullable , NSError * _Nullable))arg;
+        completionHandler([[UAHTTPResponse alloc] initWithStatus:429], nil);
+    }] disassociate:self.channelID completionHandler:OCMOCK_ANY];
 
-    XCTAssertEqualObjects(@"fakeNamedUser", self.namedUser.identifier,
-                          @"Named user ID should remain the same.");
-    XCTAssertNoThrow([self.mockedNamedUserClient verify],
-                     @"Named user should not be disassociated");
+    self.launchHandler(mockTask);
+
+    [self.mockedNamedUserClient verify];
+    [mockTask verify];
+}
+
+- (void)testDisassociateClientError {
+    self.namedUser.identifier = nil;
+
+    id mockTask = [self mockForProtocol:@protocol(UATask)];
+    [[[mockTask stub] andReturn:UANamedUserUpdateTaskID] taskID];
+    [[mockTask expect] taskCompleted];
+
+    [[[self.mockedNamedUserClient expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void (^completionHandler)(UAHTTPResponse * _Nullable, NSError * _Nullable);
+        completionHandler = (__bridge void (^)(UAHTTPResponse * _Nullable , NSError * _Nullable))arg;
+        completionHandler([[UAHTTPResponse alloc] initWithStatus:400], nil);
+    }] disassociate:self.channelID completionHandler:OCMOCK_ANY];
+
+    self.launchHandler(mockTask);
+
+    [self.mockedNamedUserClient verify];
+    [mockTask verify];
+}
+
+- (void)testDisassociateServerError {
+    self.namedUser.identifier = nil;
+
+    id mockTask = [self mockForProtocol:@protocol(UATask)];
+    [[[mockTask stub] andReturn:UANamedUserUpdateTaskID] taskID];
+    [[mockTask expect] taskFailed];
+
+    [[[self.mockedNamedUserClient expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void (^completionHandler)(UAHTTPResponse * _Nullable, NSError * _Nullable);
+        completionHandler = (__bridge void (^)(UAHTTPResponse * _Nullable , NSError * _Nullable))arg;
+        completionHandler([[UAHTTPResponse alloc] initWithStatus:500], nil);
+    }] disassociate:self.channelID completionHandler:OCMOCK_ANY];
+
+    self.launchHandler(mockTask);
+
+    [self.mockedNamedUserClient verify];
+    [mockTask verify];
+}
+
+- (void)testDisassociateError {
+    self.namedUser.identifier = nil;
+
+    id mockTask = [self mockForProtocol:@protocol(UATask)];
+    [[[mockTask stub] andReturn:UANamedUserUpdateTaskID] taskID];
+    [[mockTask expect] taskFailed];
+
+    [[[self.mockedNamedUserClient expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void (^completionHandler)(UAHTTPResponse * _Nullable, NSError * _Nullable);
+        completionHandler = (__bridge void (^)(UAHTTPResponse * _Nullable , NSError * _Nullable))arg;
+        NSError *error = [NSError errorWithDomain:@"domain" code:100 userInfo:nil];
+        completionHandler(nil, error);
+    }] disassociate:self.channelID completionHandler:OCMOCK_ANY];
+
+    self.launchHandler(mockTask);
+
+    [self.mockedNamedUserClient verify];
+    [mockTask verify];
 }
 
 /**
  * Test force update changes the current token and updates named user.
  */
 - (void)testForceUpdate {
-    NSString *changeToken = self.namedUser.changeToken;
+    [self updateNamedUser:@"some-identifier"];
 
-    // Expect the named user client to associate and call the success block
-    [[[self.mockedNamedUserClient expect] andDo:associateSuccessDoBlock] associate:@"fakeNamedUser"
-                                                                         channelID:@"someChannel"
-                                                                 completionHandler:OCMOCK_ANY];
+    [[self.mockTaskManager expect] enqueueRequestWithID:UANamedUserUpdateTaskID options:OCMOCK_ANY];
 
-    UATaskRequestOptions *options = [UATaskRequestOptions optionsWithConflictPolicy:UATaskConflictPolicyReplace requiresNetwork:YES extras:nil];
-    id mockTask = [self mockForProtocol:@protocol(UATask)];
-
-    [[[mockTask stub] andReturn:UANamedUserUpdateTaskID] taskID];
-    [[[mockTask stub] andReturn:options] requestOptions];
-
-    [[[self.mockTaskManager expect] andDo:^(NSInvocation *invocation) {
-        self.launchHandler(mockTask);
-    }] enqueueRequestWithID:UANamedUserUpdateTaskID options:OCMOCK_ANY];
-
+    // Force update should make the task call the client
     [self.namedUser forceUpdate];
 
-    [self.mockTaskManager verify];
+    [[[self.mockedNamedUserClient expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:4];
+        void (^completionHandler)(UAHTTPResponse * _Nullable, NSError * _Nullable);
+        completionHandler = (__bridge void (^)(UAHTTPResponse * _Nullable , NSError * _Nullable))arg;
+        completionHandler([[UAHTTPResponse alloc] initWithStatus:200], nil);
+    }] associate:@"some-identifier" channelID:self.channelID completionHandler:OCMOCK_ANY];
 
-    XCTAssertNotEqualObjects(changeToken, self.namedUser.changeToken,
-                             @"Change token should have changed.");
-    XCTAssertEqualObjects(self.namedUser.changeToken, self.namedUser.lastUpdatedToken,
-                          @"Tokens should match.");
-    XCTAssertNoThrow([self.mockedNamedUserClient verify], @"Named user should be associated");
+    // Actually run the task
+    id mockTask = [self mockForProtocol:@protocol(UATask)];
+    [[[mockTask stub] andReturn:UANamedUserUpdateTaskID] taskID];
+    [[mockTask expect] taskCompleted];
+    self.launchHandler(mockTask);
+
+    [self.mockedNamedUserClient verify];
+    [mockTask verify];
 }
 
 - (void)testChannelCreated {
-    NSString *changeToken = self.namedUser.changeToken;
-
-    // Expect the named user client to associate and call the success block
-    [[[self.mockedNamedUserClient expect] andDo:associateSuccessDoBlock] associate:@"fakeNamedUser"
-                                                                         channelID:@"someChannel"
-                                                                 completionHandler:OCMOCK_ANY];
-
-    UATaskRequestOptions *options = [UATaskRequestOptions optionsWithConflictPolicy:UATaskConflictPolicyReplace requiresNetwork:YES extras:nil];
-    id mockTask = [self mockForProtocol:@protocol(UATask)];
-
-    [[[mockTask stub] andReturn:UANamedUserUpdateTaskID] taskID];
-    [[[mockTask stub] andReturn:options] requestOptions];
-
-    [[[self.mockTaskManager expect] andDo:^(NSInvocation *invocation) {
-        self.launchHandler(mockTask);
-    }] enqueueRequestWithID:UANamedUserUpdateTaskID options:OCMOCK_ANY];
+    [[self.mockTaskManager expect] enqueueRequestWithID:UANamedUserUpdateTaskID options:OCMOCK_ANY];
 
     // Send a channel created event
     [self.mockNotificationCenter postNotificationName:UAChannelCreatedEvent
@@ -566,52 +516,31 @@ void (^disassociateSuccessDoBlock)(NSInvocation *);
                                              userInfo:@{UAChannelCreatedEventChannelKey:@"newChannel", UAChannelCreatedEventExistingKey: @(NO)}];
 
     [self.mockTaskManager verify];
-
-    XCTAssertNotEqualObjects(changeToken, self.namedUser.changeToken,
-                             @"Change token should have changed.");
-    XCTAssertEqualObjects(self.namedUser.changeToken, self.namedUser.lastUpdatedToken,
-                          @"Tokens should match.");
-    XCTAssertNoThrow([self.mockedNamedUserClient verify], @"Named user should be associated");
 }
 
 /**
  * Test update will reassociate named user if the channel ID changes.
  */
 - (void)testUpdateChannelIDChanged {
-    // Expect the named user client to associate and call the success block
-    [[[self.mockedNamedUserClient expect] andDo:associateSuccessDoBlock] associate:@"fakeNamedUser"
-                                                                         channelID:@"someChannel"
-                                                                 completionHandler:OCMOCK_ANY];
+    [self updateNamedUser:@"some-identifier"];
 
-    UATaskRequestOptions *options = [UATaskRequestOptions optionsWithConflictPolicy:UATaskConflictPolicyReplace requiresNetwork:YES extras:nil];
+    self.channelID = @"neat";
+
+    [[[self.mockedNamedUserClient expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:4];
+        void (^completionHandler)(UAHTTPResponse * _Nullable, NSError * _Nullable);
+        completionHandler = (__bridge void (^)(UAHTTPResponse * _Nullable , NSError * _Nullable))arg;
+        completionHandler([[UAHTTPResponse alloc] initWithStatus:200], nil);
+    }] associate:@"some-identifier" channelID:self.channelID completionHandler:OCMOCK_ANY];
+
     id mockTask = [self mockForProtocol:@protocol(UATask)];
-
     [[[mockTask stub] andReturn:UANamedUserUpdateTaskID] taskID];
-    [[[mockTask stub] andReturn:options] requestOptions];
+    [[mockTask expect] taskCompleted];
+    self.launchHandler(mockTask);
 
-    [[[self.mockTaskManager expect] andDo:^(NSInvocation *invocation) {
-        self.launchHandler(mockTask);
-    }] enqueueRequestWithID:UANamedUserUpdateTaskID options:OCMOCK_ANY];
-
-    [self.namedUser forceUpdate];
-
-    [self.mockTaskManager verify];
-
-    // Change the channelID
-    self.pushChannelID = @"neat";
-
-    // Expect the named user client to associate and call the success block
-    [[[self.mockedNamedUserClient expect] andDo:associateSuccessDoBlock] associate:@"fakeNamedUser"
-                                                                         channelID:@"neat"
-                                                                 completionHandler:OCMOCK_ANY];
-
-    [[[self.mockTaskManager expect] andDo:^(NSInvocation *invocation) {
-        self.launchHandler(mockTask);
-    }] enqueueRequestWithID:UANamedUserUpdateTaskID options:OCMOCK_ANY];
-
-    [self.namedUser update];
-
-    XCTAssertNoThrow([self.mockedNamedUserClient verify], @"Named user should be associated");
+    [self.mockedNamedUserClient verify];
+    [mockTask verify];
 }
 
 /**
@@ -642,6 +571,8 @@ void (^disassociateSuccessDoBlock)(NSInvocation *);
  * Test that the tag groups registrar is called again if the value passed with the completion handler is YES
  */
 - (void)testUpdateTagsContinuesIfNeeded {
+    self.namedUser.identifier = @"named user";
+
     id mockTask = [self mockForProtocol:@protocol(UATask)];
     [[[mockTask stub] andReturn:UANamedUserTagUpdateTaskID] taskID];
     [[mockTask expect] taskCompleted];
@@ -666,6 +597,8 @@ void (^disassociateSuccessDoBlock)(NSInvocation *);
  * Test that the tag groups registrar is called when UANamedUser is asked to add tags
  */
 - (void)testAddTags {
+    self.namedUser.identifier = @"named user";
+
     NSArray *tags = @[@"foo", @"bar"];
     NSString *group = @"group";
 
@@ -831,26 +764,13 @@ void (^disassociateSuccessDoBlock)(NSInvocation *);
     self.namedUser.identifier = @"neat";
     XCTAssertNotNil(self.namedUser.identifier);
 
-    // Expect the named user client to disassociate and call the success block
-    [[[self.mockedNamedUserClient expect] andDo:disassociateSuccessDoBlock] disassociate:@"someChannel"
-                                                                       completionHandler:OCMOCK_ANY];
-
-    UATaskRequestOptions *options = [UATaskRequestOptions optionsWithConflictPolicy:UATaskConflictPolicyAppend requiresNetwork:YES extras:nil];
-    id mockTask = [self mockForProtocol:@protocol(UATask)];
-
-    [[[mockTask stub] andReturn:UANamedUserUpdateTaskID] taskID];
-    [[[mockTask stub] andReturn:options] requestOptions];
-
-    [[[self.mockTaskManager expect] andDo:^(NSInvocation *invocation) {
-        self.launchHandler(mockTask);
-    }] enqueueRequestWithID:UANamedUserUpdateTaskID options:OCMOCK_ANY];
+    [[self.mockTaskManager expect] enqueueRequestWithID:UANamedUserUpdateTaskID options:OCMOCK_ANY];
 
     [self.dataStore setBool:NO forKey:UAirshipDataCollectionEnabledKey];
     [self.namedUser onDataCollectionEnabledChanged];
 
     XCTAssertNil(self.namedUser.identifier);
 
-    [self.mockedNamedUserClient verify];
     [self.mockTaskManager verify];
 }
 
@@ -881,35 +801,21 @@ void (^disassociateSuccessDoBlock)(NSInvocation *);
 }
 
 - (void)testClearNamedUserAttributesOnDataCollectionDisabled {
-    // Expect the named user client to disassociate and call the success block
-    [[[self.mockedNamedUserClient expect] andDo:disassociateSuccessDoBlock] disassociate:@"someChannel"
-                                                                       completionHandler:OCMOCK_ANY];
-
     // expect pending mutations to be deleted
     [[self.mockAttributeRegistrar expect] clearPendingMutations];
-
-    UATaskRequestOptions *options = [UATaskRequestOptions optionsWithConflictPolicy:UATaskConflictPolicyAppend requiresNetwork:YES extras:nil];
-    id mockTask = [self mockForProtocol:@protocol(UATask)];
-
-    [[[mockTask stub] andReturn:UANamedUserUpdateTaskID] taskID];
-    [[[mockTask stub] andReturn:options] requestOptions];
-
-    [[[self.mockTaskManager expect] andDo:^(NSInvocation *invocation) {
-        self.launchHandler(mockTask);
-    }] enqueueRequestWithID:UANamedUserUpdateTaskID options:OCMOCK_ANY];
 
     [self.dataStore setBool:NO forKey:UAirshipDataCollectionEnabledKey];
     [self.namedUser onDataCollectionEnabledChanged];
 
-    [self.mockedNamedUserClient verify];
     [self.mockAttributeRegistrar verify];
-    [self.mockTaskManager verify];
 }
 
 /**
  * Tests adding a named user attribute results in save and update called when a named user is present.
  */
 - (void)testAddNamedUserAttribute {
+    self.namedUser.identifier = @"some-named-user";
+
     [self.mockTimeZone stopMocking];
 
     UAAttributeMutations *addMutation = [UAAttributeMutations mutations];
@@ -990,6 +896,7 @@ void (^disassociateSuccessDoBlock)(NSInvocation *);
  * Test that the attribute registrar is called again if the value passed with the completion handler is YES
  */
 - (void)testUpdateAttributesContinuesIfNeeded {
+    self.namedUser.identifier = @"named user";
     id mockTask = [self mockForProtocol:@protocol(UATask)];
     [[[mockTask stub] andReturn:UANamedUserAttributeUpdateTaskID] taskID];
     [[mockTask expect] taskCompleted];
@@ -1011,88 +918,44 @@ void (^disassociateSuccessDoBlock)(NSInvocation *);
 }
 
 - (void)testSetDataCollectionEnabledYES {
-    NSString *changeToken = self.namedUser.changeToken;
     [[self.mockTaskManager expect] enqueueRequestWithID:UANamedUserUpdateTaskID options:OCMOCK_ANY];
 
     [self.dataStore setBool:YES forKey:UAirshipDataCollectionEnabledKey];
     [self.namedUser onDataCollectionEnabledChanged];
 
-    XCTAssertNotEqualObjects(changeToken, self.namedUser.changeToken,
-                             @"Change token should have changed.");
-
-    [self.mockTaskManager verify];
-}
-
-- (void)testSetDataCollectionEnabledYESComponentDisabled {
-    NSString *changeToken = self.namedUser.changeToken;
-
-    self.namedUser.componentEnabled = NO;
-    [self.dataStore setBool:NO forKey:UAirshipDataCollectionEnabledKey];
-
-    // Expect the named user client to associate and call the success block
-    [[[self.mockedNamedUserClient expect] andDo:associateSuccessDoBlock] associate:@"fakeNamedUser"
-                                                                         channelID:@"someChannel"
-                                                                 completionHandler:OCMOCK_ANY];
-
-    UATaskRequestOptions *options = [UATaskRequestOptions optionsWithConflictPolicy:UATaskConflictPolicyAppend requiresNetwork:YES extras:nil];
-    id mockTask = [self mockForProtocol:@protocol(UATask)];
-
-    [[[mockTask stub] andReturn:UANamedUserUpdateTaskID] taskID];
-    [[[mockTask stub] andReturn:options] requestOptions];
-
-    [[[self.mockTaskManager expect] andDo:^(NSInvocation *invocation) {
-        self.launchHandler(mockTask);
-    }] enqueueRequestWithID:UANamedUserUpdateTaskID options:OCMOCK_ANY];
-
-    [self.dataStore setBool:YES forKey:UAirshipDataCollectionEnabledKey];
-    [self.namedUser onDataCollectionEnabledChanged];
-
-    XCTAssertNotEqualObjects(changeToken, self.namedUser.changeToken,
-                             @"Change token should have changed.");
-    XCTAssertEqualObjects(self.namedUser.changeToken, self.namedUser.lastUpdatedToken,
-                          @"Tokens should match.");
-
-    [self.mockTagGroupsRegistrar verify];
-    [self.mockAttributeRegistrar verify];
-    [self.mockedNamedUserClient verify];
     [self.mockTaskManager verify];
 }
 
 - (void)testSetDataCollectionEnabledNO {
-    NSString *changeToken = self.namedUser.changeToken;
+    self.namedUser.identifier = @"neat";
 
-    [self.dataStore setBool:YES forKey:UAirshipDataCollectionEnabledKey];
-
-    [[self.mockAttributeRegistrar expect] clearPendingMutations];
-    [[self.mockTagGroupsRegistrar expect] clearPendingMutations];
-
-    // Expect the named user client to associate and call the success block
-    [[[self.mockedNamedUserClient expect] andDo:disassociateSuccessDoBlock] disassociate:@"someChannel"
-                                                                       completionHandler:OCMOCK_ANY];
-
-    UATaskRequestOptions *options = [UATaskRequestOptions optionsWithConflictPolicy:UATaskConflictPolicyAppend requiresNetwork:YES extras:nil];
-    id mockTask = [self mockForProtocol:@protocol(UATask)];
-
-    [[[mockTask stub] andReturn:UANamedUserUpdateTaskID] taskID];
-    [[[mockTask stub] andReturn:options] requestOptions];
-
-    [[[self.mockTaskManager expect] andDo:^(NSInvocation *invocation) {
-        self.launchHandler(mockTask);
-    }] enqueueRequestWithID:UANamedUserUpdateTaskID options:OCMOCK_ANY];
-
+    self.namedUser.componentEnabled = NO;
     [self.dataStore setBool:NO forKey:UAirshipDataCollectionEnabledKey];
     [self.namedUser onDataCollectionEnabledChanged];
 
-    XCTAssertNotEqualObjects(changeToken, self.namedUser.changeToken,
-                             @"Change token should have changed.");
-    XCTAssertNotEqualObjects(self.namedUser.changeToken, self.namedUser.lastUpdatedToken,
-                             @"Tokens should not match.");
+    [[self.mockTaskManager expect] enqueueRequestWithID:UANamedUserUpdateTaskID options:OCMOCK_ANY];
     XCTAssertNil(self.namedUser.identifier);
+}
 
-    [self.mockTagGroupsRegistrar verify];
-    [self.mockAttributeRegistrar verify];
+- (void)updateNamedUser:(NSString *)namedUserID {
+    self.namedUser.identifier = namedUserID;
+
+    id mockTask = [self mockForProtocol:@protocol(UATask)];
+    [[[mockTask stub] andReturn:UANamedUserUpdateTaskID] taskID];
+    [[mockTask expect] taskCompleted];
+
+    [[[self.mockedNamedUserClient expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:4];
+        void (^completionHandler)(UAHTTPResponse * _Nullable, NSError * _Nullable);
+        completionHandler = (__bridge void (^)(UAHTTPResponse * _Nullable , NSError * _Nullable))arg;
+        completionHandler([[UAHTTPResponse alloc] initWithStatus:200], nil);
+    }] associate:namedUserID channelID:self.channelID completionHandler:OCMOCK_ANY];
+
+    self.launchHandler(mockTask);
+
     [self.mockedNamedUserClient verify];
-    [self.mockTaskManager verify];
+    [mockTask verify];
 }
 
 @end

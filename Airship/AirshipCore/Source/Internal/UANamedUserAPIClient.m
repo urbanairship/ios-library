@@ -12,8 +12,6 @@
 #define kUANamedUserDeviceTypeKey @"device_type"
 #define kUANamedUserIdentifierKey @"named_user_id"
 
-NSString * const UANamedUserAPIClientErrorDomain = @"com.urbanairship.named_user_api_client";
-
 @interface UANamedUserAPIClient()
 
 @property (nonatomic, strong) UARuntimeConfig *config;
@@ -41,10 +39,9 @@ NSString * const UANamedUserAPIClientErrorDomain = @"com.urbanairship.named_user
 }
 
 - (UADisposable *)associate:(nonnull NSString *)identifier
-        channelID:(nonnull NSString *)channelID
-completionHandler:(void (^)(NSError * _Nullable))completionHandler {
+                  channelID:(nonnull NSString *)channelID
+          completionHandler:(void (^)(UAHTTPResponse * _Nullable, NSError * _Nullable))completionHandler {
     UA_LTRACE(@"Associating channel %@ with named user ID: %@", channelID, identifier);
-
 
     NSMutableDictionary *payload = [NSMutableDictionary dictionary];
     [payload setValue:channelID forKey:kUANamedUserChannelIDKey];
@@ -55,34 +52,22 @@ completionHandler:(void (^)(NSError * _Nullable))completionHandler {
     UARequest *request = [self requestWithPayload:payload
                                         urlString:[NSString stringWithFormat:@"%@%@", urlString, @"/associate"]];
 
-    return [self.session performHTTPRequest:request completionHandler:^(NSData * _Nullable data, NSHTTPURLResponse * _Nullable response, NSError * _Nullable error) {
-        if (error) {
-            completionHandler(error);
-        }
+    return [self.session performHTTPRequest:request
+                          completionHandler:^(NSData * _Nullable data, NSHTTPURLResponse * _Nullable response, NSError * _Nullable error) {
 
-        NSInteger status = response.statusCode;
-        if (status >= 200 && status <= 299) {
-            UA_LTRACE(@"Associated named user with status: %lu", (unsigned long)status);
-            completionHandler(nil);
+        UA_LTRACE(@"Associated named user with response: %@ error: %@", response, error);
+
+        if (error) {
+            completionHandler(nil, error);
         } else {
-            UA_LTRACE(@"Failed to associate named user with status: %lu", (unsigned long)status);
-            completionHandler([self unsuccessfulStatusError]);
+            completionHandler([[UAHTTPResponse alloc] initWithStatus:response.statusCode], nil);
         }
     }];
 }
 
-- (NSError *)unsuccessfulStatusError {
-    NSString *msg = [NSString stringWithFormat:@"Named user client encountered an unsuccessful status"];
-
-    NSError *error = [NSError errorWithDomain:UANamedUserAPIClientErrorDomain
-                                         code:UANamedUserAPIClientErrorUnsuccessfulStatus
-                                     userInfo:@{NSLocalizedDescriptionKey:msg}];
-
-    return error;
-}
 
 - (UADisposable *)disassociate:(nonnull NSString *)channelID
-   completionHandler:(void (^)(NSError * _Nullable))completionHandler {
+             completionHandler:(void (^)(UAHTTPResponse * _Nullable, NSError * _Nullable))completionHandler {
     UA_LTRACE(@"Disassociating channel %@ from named user ID", channelID);
 
     NSMutableDictionary *payload = [NSMutableDictionary dictionary];
@@ -94,17 +79,12 @@ completionHandler:(void (^)(NSError * _Nullable))completionHandler {
                                         urlString:[NSString stringWithFormat:@"%@%@", urlString, @"/disassociate"]];
 
     return [self.session performHTTPRequest:request completionHandler:^(NSData * _Nullable data, NSHTTPURLResponse * _Nullable response, NSError * _Nullable error) {
-        if (error) {
-            completionHandler(error);
-        }
+        UA_LTRACE(@"Disassociated named user with response: %@ error: %@", response, error);
 
-        NSInteger status = response.statusCode;
-        if (status >= 200 && status <= 299) {
-            UA_LTRACE(@"Dissociated named user with status: %lu", (unsigned long)status);
-            completionHandler(nil);
+        if (error) {
+            completionHandler(nil, error);
         } else {
-            UA_LTRACE(@"Failed to dissociate named user with status: %lu", (unsigned long)status);
-            completionHandler([self unsuccessfulStatusError]);
+            completionHandler([[UAHTTPResponse alloc] initWithStatus:response.statusCode], nil);
         }
     }];
 }
@@ -128,4 +108,5 @@ completionHandler:(void (^)(NSError * _Nullable))completionHandler {
 
 @end
 
-    
+
+
