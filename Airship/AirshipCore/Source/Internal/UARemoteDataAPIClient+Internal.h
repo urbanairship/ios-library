@@ -10,8 +10,10 @@ NS_ASSUME_NONNULL_BEGIN
 @interface UARemoteDataResponse : UAHTTPResponse
 @property (nonatomic, readonly, nullable) NSArray<NSDictionary *> *payloads;
 @property (nonatomic, readonly, nullable) NSString *lastModified;
+@property (nonatomic, readonly) NSURL *requestURL;
 
 - (instancetype)initWithStatus:(NSUInteger)status
+                    requestURL:(NSURL *)requestURL
                       payloads:(nullable NSArray<NSDictionary *> *)payloads
                   lastModified:(nullable NSString *)lastModified;
 @end
@@ -61,6 +63,13 @@ extern NSString * const UARemoteDataAPIClientErrorDomain;
 - (UADisposable *)fetchRemoteDataWithLocale:(NSLocale *)locale
                                lastModified:(nullable NSString *)lastModified
                           completionHandler:(UARemoteDataAPIClientCompletionHandler)completionHandler;
+
+/**
+ * Creaates the remote-data URL.
+ * @param locale The locale.
+ * @return The remote-data URL.
+ */
+- (NSURL *)remoteDataURLWithLocale:(NSLocale *)locale;
 
 @end
 

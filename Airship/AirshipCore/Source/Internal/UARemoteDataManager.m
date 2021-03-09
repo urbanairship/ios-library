@@ -18,12 +18,13 @@ static NSString * const UACoreDataStoreName = @"RemoteData-%@.sqlite";
 static NSString * const UARemoteDataRefreshPayloadKey = @"com.urbanairship.remote-data.update";
 static NSString * const UARemoteDataRefreshTask = @"UARemoteDataManager.refresh";
 static NSInteger const UARemoteDataRefreshIntervalDefault = 0;
-static NSString * const UARemoteDataAppVersion = @"app_version";
+static NSString * const UARemoteDataURLMetadataKey = @"url";
 
 // Datastore keys
 static NSString * const UARemoteDataRefreshIntervalKey = @"remotedata.REFRESH_INTERVAL";
 static NSString * const UARemoteDataLastRefreshMetadataKey = @"remotedata.LAST_REFRESH_METADATA";
 static NSString * const UARemoteDataLastRefreshTimeKey = @"remotedata.LAST_REFRESH_TIME";
+static NSString * const UARemoteDataLastRefreshAppVersionKey = @"remotedata.LAST_REFRESH_APP_VERSION";
 static NSString * const UALastRemoteDataModifiedTime = @"UALastRemoteDataModifiedTime";
 
 @interface UARemoteDataSubscription : NSObject
@@ -268,6 +269,10 @@ static NSString * const UALastRemoteDataModifiedTime = @"UALastRemoteDataModifie
         return true;
     }
 
+    if (![self isLastAppVersionCurrent]) {
+        return true;
+    }
+
     if (![self isLastMetadataCurrent]) {
         return true;
     }
@@ -296,8 +301,13 @@ static NSString * const UALastRemoteDataModifiedTime = @"UALastRemoteDataModifie
             return;
         }
 
-        if (response.isSuccess) {
-            NSDictionary *metadata = [self createMetadata:locale];
+        if (response.status == 304) {
+            [self.dataStore setValue:self.date.now forKey:UARemoteDataLastRefreshTimeKey];
+            [self.dataStore setObject:[UAUtils bundleShortVersionString] forKey:UARemoteDataLastRefreshAppVersionKey];
+            [task taskCompleted];
+            [semaphore signal];
+        } else if (response.isSuccess) {
+            NSDictionary *metadata = [self createMetadataWithRemoteDataURL:response.requestURL];
             NSArray<UARemoteDataPayload *> *payloads = [UARemoteDataPayload remoteDataPayloadsFromJSON:response.payloads
                                                                                               metadata:metadata];
             [self.remoteDataStore overwriteCachedRemoteDataWithResponse:payloads completionHandler:^(BOOL success) {
@@ -307,7 +317,9 @@ static NSString * const UALastRemoteDataModifiedTime = @"UALastRemoteDataModifie
 
                     self.lastMetadata = metadata;
                     [self.dataStore setValue:response.lastModified forKey:UALastRemoteDataModifiedTime];
+                    [self.dataStore setObject:[UAUtils bundleShortVersionString] forKey:UARemoteDataLastRefreshAppVersionKey];
                     [self.dataStore setValue:self.date.now forKey:UARemoteDataLastRefreshTimeKey];
+
 
                     // notify remote data subscribers
                     [self notifySubscribersWithRemoteData:payloads completionHandler:^{
@@ -339,26 +351,35 @@ static NSString * const UALastRemoteDataModifiedTime = @"UALastRemoteDataModifie
 }
 
 - (BOOL)isMetadataCurrent:(NSDictionary *)metadata {
-    NSDictionary *currentMetadata = [self createMetadata:[self.localeManager currentLocale]];
+    NSDictionary *currentMetadata = [self createMetadataWithLocale:[self.localeManager currentLocale]];
     return [currentMetadata isEqualToDictionary:metadata];
 }
 
 - (BOOL)isLastMetadataCurrent {
     NSDictionary *metadataAtTimeOfLastRefresh = self.lastMetadata;
-    NSDictionary *currentMetadata = [self createMetadata:[self.localeManager currentLocale]];
-
+    NSDictionary *currentMetadata = [self createMetadataWithLocale:[self.localeManager currentLocale]];
     return [metadataAtTimeOfLastRefresh isEqualToDictionary:currentMetadata];
 }
 
--(NSDictionary *)createMetadata:(NSLocale *)locale {
+-(NSDictionary *)createMetadataWithLocale:(NSLocale *)locale {
+    NSURL *URL = [self.remoteDataAPIClient remoteDataURLWithLocale:locale];
+    return [self createMetadataWithRemoteDataURL:URL];
+}
+
+-(NSDictionary *)createMetadataWithRemoteDataURL:(NSURL *)remoteDataURL {
     NSMutableDictionary *metadata = [NSMutableDictionary dictionary];
-
-    [metadata setValue:[UAUtils nilIfEmpty:locale.languageCode] forKey:UARemoteDataMetadataLanguageKey];
-    [metadata setValue:[UAUtils nilIfEmpty:locale.countryCode] forKey:UARemoteDataMetadataCountryKey];
-    [metadata setObject:[UAirshipVersion get] forKey:UARemoteDataMetadataSDKVersionKey];
-    [metadata setValue:[UAUtils bundleShortVersionString] forKey:UARemoteDataAppVersion];
-
+    [metadata setValue:remoteDataURL.absoluteString forKey:UARemoteDataURLMetadataKey];
     return metadata;
+}
+
+-(BOOL)isLastAppVersionCurrent {
+    NSString *appVersionAtTimeOfLastRefresh = ([self.dataStore objectForKey:UARemoteDataLastRefreshAppVersionKey]);
+    NSString *currentAppVersion = [UAUtils bundleShortVersionString];
+    if (currentAppVersion && ![appVersionAtTimeOfLastRefresh isEqualToString:currentAppVersion]) {
+        return false;
+    }
+
+    return true;
 }
 
 /**

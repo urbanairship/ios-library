@@ -6,10 +6,6 @@
 
 @implementation UARemoteDataPayload
 
-NSString *const UARemoteDataMetadataLanguageKey = @"language";
-NSString *const UARemoteDataMetadataCountryKey = @"country";
-NSString *const UARemoteDataMetadataSDKVersionKey = @"sdk_version";
-
 - (instancetype)initWithType:(NSString *)type timestamp:(NSDate *)timestamp data:(NSDictionary *)data metadata:(NSDictionary *)metadata {
     self = [super init];
     if (self) {
@@ -81,7 +77,6 @@ NSString * const UARemoteDataTypeKey = @"type";
 NSString * const UARemoteDataTimestampKey = @"timestamp";
 NSString * const UARemoteDataDataKey = @"data";
 NSString * const UARemoteDataMetaDataKey = @"metadata";
-
 
 + (NSArray<UARemoteDataPayload *> *)remoteDataPayloadsFromJSON:(NSArray *)remoteDataPayloadsAsJSON metadata:(NSDictionary *)metadata {
     NSMutableArray<UARemoteDataPayload *> *remoteDataPayloads = [NSMutableArray array];

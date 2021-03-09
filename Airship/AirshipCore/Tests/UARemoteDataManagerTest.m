@@ -39,6 +39,8 @@ static NSString * const RefreshTask = @"UARemoteDataManager.refresh";
 @property (nonatomic, strong) UATestDate *testDate;
 @property (nonatomic, copy) NSArray<NSDictionary *> *remoteDataFromCloud;
 @property (nonatomic, strong) NSString *locale;
+@property (nonatomic, strong) NSURL *requestURL;
+
 @end
 
 @implementation UARemoteDataManagerTest
@@ -47,6 +49,11 @@ static NSString * const RefreshTask = @"UARemoteDataManager.refresh";
     [super setUp];
 
     self.mockAPIClient = [self mockForClass:[UARemoteDataAPIClient class]];
+    self.requestURL = [NSURL URLWithString:@"some-url"];
+    [[[self.mockAPIClient stub] andDo:^(NSInvocation *invocation) {
+        id result = self.requestURL;
+        [invocation setReturnValue:(void *)&result];
+    }] remoteDataURLWithLocale:OCMOCK_ANY];
 
     self.testStore = [UARemoteDataStore storeWithName:[NSUUID UUID].UUIDString inMemory:YES];
     self.testDate = [[UATestDate alloc] initWithAbsoluteTime:[NSDate date]];
@@ -113,11 +120,53 @@ static NSString * const RefreshTask = @"UARemoteDataManager.refresh";
     self.testDate.timeOffset += 100;
     [self.notificationCenter postNotificationName:UAApplicationDidTransitionToForeground object:nil];
     XCTAssertEqual(1, count);
+}
 
-    // Locale change
-    self.locale = @"de-CH";
+- (void)testCheckRefreshAppVersionChanages {
+    self.remoteDataManager.remoteDataRefreshInterval = 1000;
+
+    // Set initial metadata
+    NSArray *payloads =  @[@{ @"type": @"test", @"timestamp":@"2017-01-01T12:00:00", @"data": @{ @"foo": @"bar" }}];
+    [self updatePayloads:payloads];
+
+    __block NSUInteger count = 0;
+
+    [[[self.mockTaskManager stub] andDo:^(NSInvocation *invocation) {
+        count++;
+    }] enqueueRequestWithID:RefreshTask options:OCMOCK_ANY];
+
     [self.notificationCenter postNotificationName:UAApplicationDidTransitionToForeground object:nil];
-    XCTAssertEqual(2, count);
+    XCTAssertEqual(0, count);
+
+    // change app version
+    id mockedBundle = [self mockForClass:[NSBundle class]];
+    [[[mockedBundle stub] andReturn:mockedBundle] mainBundle];
+    [[[mockedBundle stub] andReturn:@{@"CFBundleShortVersionString": @"1.1.1"}] infoDictionary];
+
+    [self.notificationCenter postNotificationName:UAApplicationDidTransitionToForeground object:nil];
+    XCTAssertEqual(1, count);
+}
+
+- (void)testCheckRefreshMetadataChanages {
+    self.remoteDataManager.remoteDataRefreshInterval = 1000;
+
+    // Set initial metadata
+    NSArray *payloads =  @[@{ @"type": @"test", @"timestamp":@"2017-01-01T12:00:00", @"data": @{ @"foo": @"bar" }}];
+    [self updatePayloads:payloads];
+
+    __block NSUInteger count = 0;
+    [[[self.mockTaskManager stub] andDo:^(NSInvocation *invocation) {
+        count++;
+    }] enqueueRequestWithID:RefreshTask options:OCMOCK_ANY];
+
+    [self.notificationCenter postNotificationName:UAApplicationDidTransitionToForeground object:nil];
+    XCTAssertEqual(0, count);
+
+    // change URL
+    self.requestURL = [NSURL URLWithString:@"some-other-url"];
+
+    [self.notificationCenter postNotificationName:UAApplicationDidTransitionToForeground object:nil];
+    XCTAssertEqual(1, count);
 }
 
 - (void)testLocaleChangeRefresh {
@@ -148,6 +197,7 @@ static NSString * const RefreshTask = @"UARemoteDataManager.refresh";
 - (void)testRefreshRemoteData {
     NSArray *payloads =  @[@{ @"type": @"test", @"timestamp":@"2017-01-01T12:00:00", @"data": @{ @"foo": @"bar" }}];
     UARemoteDataResponse *response = [[UARemoteDataResponse alloc] initWithStatus:200
+                                                                       requestURL:self.requestURL
                                                                          payloads:payloads
                                                                      lastModified:@"2018-01-01T12:00:00"];
 
@@ -175,6 +225,7 @@ static NSString * const RefreshTask = @"UARemoteDataManager.refresh";
 - (void)testRefreshRemoteData304 {
     NSArray *payloads =  @[@{ @"type": @"test", @"timestamp":@"2017-01-01T12:00:00", @"data": @{ @"foo": @"bar" }}];
     UARemoteDataResponse *response = [[UARemoteDataResponse alloc] initWithStatus:200
+                                                                       requestURL:self.requestURL
                                                                          payloads:payloads
                                                                      lastModified:@"2018-01-01T12:00:00"];
 
@@ -187,6 +238,7 @@ static NSString * const RefreshTask = @"UARemoteDataManager.refresh";
 
 
     UARemoteDataResponse *updateResponse = [[UARemoteDataResponse alloc] initWithStatus:304
+                                                                             requestURL:self.requestURL
                                                                                payloads:nil
                                                                            lastModified:nil];
 
@@ -220,6 +272,7 @@ static NSString * const RefreshTask = @"UARemoteDataManager.refresh";
 
 - (void)testRefreshRemoteDataClientError {
     UARemoteDataResponse *response = [[UARemoteDataResponse alloc] initWithStatus:400
+                                                                       requestURL:self.requestURL
                                                                          payloads:nil
                                                                      lastModified:nil];
 
@@ -246,6 +299,7 @@ static NSString * const RefreshTask = @"UARemoteDataManager.refresh";
 
 - (void)testRefreshRemoteDataServerError {
     UARemoteDataResponse *response = [[UARemoteDataResponse alloc] initWithStatus:500
+                                                                       requestURL:self.requestURL
                                                                          payloads:nil
                                                                      lastModified:nil];
 
@@ -273,6 +327,7 @@ static NSString * const RefreshTask = @"UARemoteDataManager.refresh";
 - (void)testRefreshLastModifiedMetadataChanges {
     NSArray *payloads =  @[@{ @"type": @"test", @"timestamp":@"2017-01-01T12:00:00", @"data": @{ @"foo": @"bar" }}];
     UARemoteDataResponse *response = [[UARemoteDataResponse alloc] initWithStatus:200
+                                                                       requestURL:self.requestURL
                                                                          payloads:payloads
                                                                      lastModified:@"2018-01-01T12:00:00"];
 
@@ -293,10 +348,8 @@ static NSString * const RefreshTask = @"UARemoteDataManager.refresh";
 
     [self waitForTestExpectations];
 
-    // change the app version
-    id mockedBundle = [self mockForClass:[NSBundle class]];
-    [[[mockedBundle stub] andReturn:mockedBundle] mainBundle];
-    [[[mockedBundle stub] andReturn:@{@"CFBundleShortVersionString": @"1.1.1"}] infoDictionary];
+    // change return URL
+    self.requestURL = [NSURL URLWithString:@"some-other-url"];
 
     [[[self.mockAPIClient expect] andDo:^(NSInvocation *invocation) {
         void *arg;
@@ -316,8 +369,6 @@ static NSString * const RefreshTask = @"UARemoteDataManager.refresh";
 
     [self.mockAPIClient verify];
     [mockTask verify];
-
-    [mockedBundle stopMocking];
 }
 
 - (void)testRefreshError {
@@ -344,17 +395,8 @@ static NSString * const RefreshTask = @"UARemoteDataManager.refresh";
 }
 
 - (void)testMetadata {
-    id mockedBundle = [self mockForClass:[NSBundle class]];
-    [[[mockedBundle stub] andReturn:mockedBundle] mainBundle];
-    [[[mockedBundle stub] andReturn:@{@"CFBundleShortVersionString": @"1.1.1"}] infoDictionary];
-
-    self.locale = @"de-CH";
-
     id expectedMetadata = @{
-        @"app_version": @"1.1.1",
-        @"language": @"de",
-        @"country": @"CH",
-        @"sdk_version": [UAirshipVersion get]
+        @"url": self.requestURL.absoluteString
     };
 
     NSArray *payloads =  @[@{ @"type": @"test", @"timestamp":@"2017-01-01T12:00:00", @"data": @{ @"foo": @"bar" }}];
@@ -464,8 +506,8 @@ static NSString * const RefreshTask = @"UARemoteDataManager.refresh";
 
     [self updatePayloads:payloads];
 
-    // change the locale identifier to en_01
-    self.locale = @"en_01";
+    // change URL so metadata changes
+    self.requestURL = [NSURL URLWithString:@"some-other-url"];
 
     [self updatePayloads:payloads];
 
@@ -505,6 +547,7 @@ static NSString * const RefreshTask = @"UARemoteDataManager.refresh";
 
 - (void)updatePayloads:(NSArray *)payloads {
     UARemoteDataResponse *response = [[UARemoteDataResponse alloc] initWithStatus:200
+                                                                       requestURL:self.requestURL
                                                                          payloads:payloads
                                                                      lastModified:@"2018-01-01T12:00:00"];
 

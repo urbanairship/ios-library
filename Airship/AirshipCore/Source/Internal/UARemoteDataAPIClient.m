@@ -10,21 +10,23 @@
 @interface UARemoteDataResponse()
 @property (nonatomic, copy, nullable) NSArray<NSDictionary *> *payloads;
 @property (nonatomic, copy, nullable) NSString *lastModified;
+@property (nonatomic, copy) NSURL *requestURL;
 @end
 
 @implementation UARemoteDataResponse
 - (instancetype)initWithStatus:(NSUInteger)status
+                    requestURL:(NSURL *)requestURL
                       payloads:(NSArray<NSDictionary *> *)payloads
                   lastModified:(NSString *)lastModified {
     self = [super initWithStatus:status];
     if (self) {
+        self.requestURL = requestURL;
         self.payloads = payloads;
         self.lastModified = lastModified;
     }
     return self;
 }
 @end
-
 
 @interface UARemoteDataAPIClient()
 @property (nonatomic, strong) UARequestSession *session;
@@ -64,9 +66,7 @@ NSString * const UARemoteDataAPIClientErrorDomain = @"com.urbanairship.remote_da
                                lastModified:(nullable NSString *)lastModified
                           completionHandler:(UARemoteDataAPIClientCompletionHandler)completionHandler {
 
-    NSURL *URL = [UARemoteDataAPIClient createRemoteDataURLWithURL:self.config.remoteDataAPIURL
-                                                            appKey:self.config.appKey
-                                                            locale:locale];
+    NSURL *URL = [self remoteDataURLWithLocale:locale];
 
     UARequest *request = [UARequest requestWithBuilderBlock:^(UARequestBuilder * _Nonnull builder) {
         builder.URL = URL;
@@ -94,12 +94,14 @@ NSString * const UARemoteDataAPIClientErrorDomain = @"com.urbanairship.remote_da
             } else {
                 NSString *lastModified = [response.allHeaderFields objectForKey:@"Last-Modified"];
                 UARemoteDataResponse *remoteDataResponse = [[UARemoteDataResponse alloc] initWithStatus:response.statusCode
+                                                                                             requestURL:URL
                                                                                                payloads:payloads lastModified:lastModified];
 
                 completionHandler(remoteDataResponse, nil);
             }
         } else {
             UARemoteDataResponse *remoteDataResponse = [[UARemoteDataResponse alloc] initWithStatus:response.statusCode
+                                                                                         requestURL:URL
                                                                                            payloads:nil
                                                                                        lastModified:nil];
             completionHandler(remoteDataResponse, nil);
@@ -129,10 +131,7 @@ NSString * const UARemoteDataAPIClientErrorDomain = @"com.urbanairship.remote_da
     }
 }
 
-+ (NSURL *)createRemoteDataURLWithURL:(NSString *)remoteDataAPIURL
-                               appKey:(NSString *)appKey
-                               locale:(NSLocale *)locale {
-
+- (NSURL *)remoteDataURLWithLocale:(NSLocale *)locale {
     NSURLQueryItem *languageItem = [NSURLQueryItem queryItemWithName:@"language"
                                                                value:[locale objectForKey:NSLocaleLanguageCode]];
     NSURLQueryItem *countryItem = [NSURLQueryItem queryItemWithName:@"country"
@@ -140,10 +139,10 @@ NSString * const UARemoteDataAPIClientErrorDomain = @"com.urbanairship.remote_da
     NSURLQueryItem *versionItem = [NSURLQueryItem queryItemWithName:@"sdk_version"
                                                               value:[UAirshipVersion get]];
 
-    NSURLComponents *components = [NSURLComponents componentsWithString:remoteDataAPIURL];
+    NSURLComponents *components = [NSURLComponents componentsWithString:self.config.remoteDataAPIURL];
 
     // api/remote-data/app/{appkey}/{platform}?sdk_version={version}&language={language}&country={country}
-    components.path = [NSString stringWithFormat:@"/%@/%@/%@", UARemoteDataAPIClientPath, appKey, @"ios"];
+    components.path = [NSString stringWithFormat:@"/%@/%@/%@", UARemoteDataAPIClientPath, self.config.appKey, @"ios"];
 
     NSMutableArray *queryItems = [NSMutableArray arrayWithObject:versionItem];
 
@@ -161,5 +160,3 @@ NSString * const UARemoteDataAPIClientErrorDomain = @"com.urbanairship.remote_da
 }
 
 @end
-
-
