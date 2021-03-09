@@ -52,5 +52,21 @@
     XCTAssertEqualObjects(@"cool://remote", config.remoteDataAPIURL);
 }
 
+- (void)testRequireInitialRemoteConfig {
+    self.appConfig.requireInitialRemoteConfig = YES;
+
+    self.appConfig.site = UACloudSiteEU;
+
+    self.urlManager = [UARemoteConfigURLManager remoteConfigURLManagerWithDataStore:self.dataStore];
+    UARuntimeConfig *config = [UARuntimeConfig runtimeConfigWithConfig:self.appConfig urlManager:self.urlManager];
+
+    // Device and analytics URLs should not return defaults.
+    XCTAssertNil(config.deviceAPIURL);
+    XCTAssertNil(config.analyticsURL);
+
+    // Remote data URL should still return default
+    XCTAssertEqualObjects(@"https://remote-data.asnapieu.com", config.remoteDataAPIURL);
+}
+
 
 @end

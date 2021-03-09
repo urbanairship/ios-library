@@ -25,6 +25,7 @@
 @property (nonatomic, assign, getter=isExtendedBroadcastsEnabled) BOOL extendedBroadcastsEnabled;
 @property (nonatomic, copy) NSDictionary *customConfig;
 @property (nonatomic, assign) BOOL requestAuthorizationToUseNotifications;
+@property (nonatomic, assign) BOOL requireInitialRemoteConfig;
 @property (nonatomic, assign, getter=isDataCollectionOptInEnabled) BOOL dataCollectionOptInEnabled;
 @property (nonatomic, strong) UARemoteConfigURLManager *urlManager;
 
@@ -57,6 +58,7 @@ NSString *const UARuntimeConfigEURemoteDataAPIURL = @"https://remote-data.asnapi
         self.inProduction = config.inProduction;
         self.detectProvisioningMode = config.detectProvisioningMode;
         self.requestAuthorizationToUseNotifications = config.requestAuthorizationToUseNotifications;
+        self.requireInitialRemoteConfig = config.requireInitialRemoteConfig;
         self.automaticSetupEnabled = config.automaticSetupEnabled;
         self.analyticsEnabled = config.analyticsEnabled;
         self.clearUserOnAppRestore = config.clearUserOnAppRestore;
@@ -92,6 +94,10 @@ NSString *const UARuntimeConfigEURemoteDataAPIURL = @"https://remote-data.asnapi
     if (self.config.deviceAPIURL) {
         return self.config.deviceAPIURL;
     }
+
+    if (self.requireInitialRemoteConfig) {
+        return nil;
+    }
     
     switch (self.config.site) {
         case UACloudSiteEU:
@@ -106,6 +112,7 @@ NSString *const UARuntimeConfigEURemoteDataAPIURL = @"https://remote-data.asnapi
     if (self.urlManager.remoteDataURL) {
         return self.urlManager.remoteDataURL;
     }
+
     if (self.config.remoteDataAPIURL) {
         return self.config.remoteDataAPIURL;
     }
@@ -123,8 +130,13 @@ NSString *const UARuntimeConfigEURemoteDataAPIURL = @"https://remote-data.asnapi
     if (self.urlManager.analyticsURL) {
         return self.urlManager.analyticsURL;
     }
+
     if (self.config.analyticsURL) {
         return self.config.analyticsURL;
+    }
+
+    if (self.requireInitialRemoteConfig) {
+        return nil;
     }
     
     switch (self.config.site) {

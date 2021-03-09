@@ -236,6 +236,13 @@ typedef NS_ENUM(NSUInteger, UACloudSite) {
  */
 @property (nonatomic, assign) BOOL requestAuthorizationToUseNotifications;
 
+/**
+ * If set to `YES`, the SDK will wait for an initial remote config instead of falling back on default API URLs.
+ *
+ * Defaults to `NO`.
+ */
+@property (nonatomic, assign) BOOL requireInitialRemoteConfig;
+
 ///---------------------------------------------------------------------------------------
 /// @name Internal Configuration Options
 ///---------------------------------------------------------------------------------------

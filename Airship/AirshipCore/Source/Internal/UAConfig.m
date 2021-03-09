@@ -83,6 +83,7 @@ NSString *const UALogLevelTraceName = @"TRACE";
         _inProduction = config.inProduction;
         _detectProvisioningMode = config.detectProvisioningMode;
         _requestAuthorizationToUseNotifications = config.requestAuthorizationToUseNotifications;
+        _requireInitialRemoteConfig = config.requireInitialRemoteConfig;
 
         _automaticSetupEnabled = config.automaticSetupEnabled;
         _analyticsEnabled = config.analyticsEnabled;
@@ -120,6 +121,7 @@ NSString *const UALogLevelTraceName = @"TRACE";
             "Production Log Level: %ld\n"
             "Detect Provisioning Mode: %d\n"
             "Request Authorization To Use Notifications: %@\n"
+            "Require initial remote config: %@\n"
             "Analytics Enabled: %d\n"
             "Analytics URL: %@\n"
             "Device API URL: %@\n"
@@ -153,6 +155,7 @@ NSString *const UALogLevelTraceName = @"TRACE";
             (long)self.productionLogLevel,
             self.detectProvisioningMode,
             self.requestAuthorizationToUseNotifications ? @"YES" : @"NO",
+            self.requireInitialRemoteConfig ? @"YES" : @"NO",
             self.analyticsEnabled,
             self.analyticsURL,
             self.deviceAPIURL,
