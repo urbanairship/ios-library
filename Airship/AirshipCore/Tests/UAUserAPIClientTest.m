@@ -78,10 +78,10 @@
 
     XCTestExpectation *callbackCalled = [self expectationWithDescription:@"callback called"];
     [self.client createUserWithChannelID:@"channelID"
-                       completionHandler:^(UAUserData * _Nullable data, NSError * _Nullable error) {
+                       completionHandler:^(UAUserCreateResponse * _Nullable response, NSError * _Nullable error) {
         XCTAssertNil(error);
-        XCTAssertEqualObjects(data.username, [responseDict valueForKey:@"user_id"]);
-        XCTAssertEqualObjects(data.password, [responseDict valueForKey:@"password"]);
+        XCTAssertEqualObjects(response.userData.username, [responseDict valueForKey:@"user_id"]);
+        XCTAssertEqualObjects(response.userData.password, [responseDict valueForKey:@"password"]);
         [callbackCalled fulfill];
     }];
 
@@ -89,8 +89,7 @@
     [self.mockSession verify];
 }
 
-- (void)testCreateUserFailureClientError {
-    // Create a valid response
+- (void)testCreateUserFailureUnrecoverableStatus {
     NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""]
                                                               statusCode:400
                                                              HTTPVersion:nil
@@ -105,10 +104,10 @@
     }] performHTTPRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *callbackCalled = [self expectationWithDescription:@"callback called"];
-    [self.client createUserWithChannelID:@"channelID" completionHandler:^(UAUserData * _Nullable data, NSError * _Nullable error) {
-        XCTAssertNil(data);
-        XCTAssertEqual(UAUserAPIClientErrorDomain, error.domain);
-        XCTAssertEqual(UAUserAPIClientErrorUnrecoverable, error.code);
+
+    [self.client createUserWithChannelID:@"channelID" completionHandler:^(UAUserCreateResponse * _Nullable response, NSError * _Nullable error) {
+        XCTAssertNil(error);
+        XCTAssertEqual(response.status, 400);
         [callbackCalled fulfill];
     }];
 
@@ -116,8 +115,7 @@
     [self.mockSession verify];
 }
 
-- (void)testCreateUserFailureServerError {
-    // Create a valid response
+- (void)testCreateUserFailureRecoverableStatus {
     NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""]
                                                               statusCode:500
                                                              HTTPVersion:nil
@@ -132,10 +130,10 @@
     }] performHTTPRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *callbackCalled = [self expectationWithDescription:@"callback called"];
-    [self.client createUserWithChannelID:@"channelID" completionHandler:^(UAUserData * _Nullable data, NSError * _Nullable error) {
-        XCTAssertNil(data);
-        XCTAssertEqual(UAUserAPIClientErrorDomain, error.domain);
-        XCTAssertEqual(UAUserAPIClientErrorRecoverable, error.code);
+
+    [self.client createUserWithChannelID:@"channelID" completionHandler:^(UAUserCreateResponse * _Nullable response, NSError * _Nullable error) {
+        XCTAssertNil(error);
+        XCTAssertEqual(response.status, 500);
         [callbackCalled fulfill];
     }];
 
@@ -144,7 +142,6 @@
 }
 
 - (void)testCreateUserFailureJSONParseError {
-    // Create a valid response
     NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""]
                                                               statusCode:200
                                                              HTTPVersion:nil
@@ -166,10 +163,10 @@
     }] performHTTPRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *callbackCalled = [self expectationWithDescription:@"callback called"];
-    [self.client createUserWithChannelID:@"channelID" completionHandler:^(UAUserData * _Nullable data, NSError * _Nullable error) {
-        XCTAssertNil(data);
-        XCTAssertEqual(UAUserAPIClientErrorDomain, error.domain);
-        XCTAssertEqual(UAUserAPIClientErrorUnrecoverable, error.code);
+
+    [self.client createUserWithChannelID:@"channelID" completionHandler:^(UAUserCreateResponse * _Nullable response, NSError * _Nullable error) {
+        XCTAssertNotNil(response);
+        XCTAssertNotNil(error);
         [callbackCalled fulfill];
     }];
 
@@ -189,10 +186,10 @@
     }] performHTTPRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *callbackCalled = [self expectationWithDescription:@"callback called"];
-    [self.client createUserWithChannelID:@"channelID" completionHandler:^(UAUserData * _Nullable data, NSError * _Nullable error) {
-        XCTAssertNil(data);
-        XCTAssertEqual(UAUserAPIClientErrorDomain, error.domain);
-        XCTAssertEqual(UAUserAPIClientErrorRecoverable, error.code);
+
+    [self.client createUserWithChannelID:@"channelID" completionHandler:^(UAUserCreateResponse * _Nullable response, NSError * _Nullable error) {
+        XCTAssertNil(response);
+        XCTAssertNotNil(error);
         [callbackCalled fulfill];
     }];
 
@@ -240,7 +237,9 @@
     }] performHTTPRequest:[OCMArg checkWithBlock:checkRequestBlock] completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *callbackCalled = [self expectationWithDescription:@"callback called"];
-    [self.client updateUserWithData:self.userData channelID:@"channelID" completionHandler:^(NSError * _Nullable error) {
+
+    [self.client updateUserWithData:self.userData channelID:@"channelID" completionHandler:^(UAHTTPResponse * _Nullable response, NSError * _Nullable error) {
+        XCTAssertEqual(response.status, 200);
         XCTAssertNil(error);
         [callbackCalled fulfill];
     }];
@@ -249,8 +248,7 @@
     [self.mockSession verify];
 }
 
-- (void)testUpdateUserFailureClientError {
-    // Create a valid response
+- (void)testUpdateUserFailureUnrecoverableStatus {
     NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""]
                                                               statusCode:400
                                                              HTTPVersion:nil
@@ -265,9 +263,10 @@
     }] performHTTPRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *callbackCalled = [self expectationWithDescription:@"callback called"];
-    [self.client updateUserWithData:self.userData channelID:@"channelID" completionHandler:^(NSError * _Nullable error) {
-        XCTAssertEqual(UAUserAPIClientErrorDomain, error.domain);
-        XCTAssertEqual(UAUserAPIClientErrorUnrecoverable, error.code);
+
+    [self.client updateUserWithData:self.userData channelID:@"channelID" completionHandler:^(UAHTTPResponse * _Nullable response, NSError * _Nullable error) {
+        XCTAssertNil(error);
+        XCTAssertEqual(response.status, 400);
         [callbackCalled fulfill];
     }];
 
@@ -275,8 +274,7 @@
     [self.mockSession verify];
 }
 
-- (void)testUpdateUserFailureServerError {
-    // Create a valid response
+- (void)testUpdateUserFailureRecoverableStatus {
     NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""]
                                                               statusCode:500
                                                              HTTPVersion:nil
@@ -291,9 +289,10 @@
     }] performHTTPRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *callbackCalled = [self expectationWithDescription:@"callback called"];
-    [self.client updateUserWithData:self.userData channelID:@"channelID" completionHandler:^(NSError * _Nullable error) {
-        XCTAssertEqual(UAUserAPIClientErrorDomain, error.domain);
-        XCTAssertEqual(UAUserAPIClientErrorRecoverable, error.code);
+
+    [self.client updateUserWithData:self.userData channelID:@"channelID" completionHandler:^(UAHTTPResponse * _Nullable response, NSError * _Nullable error) {
+        XCTAssertNil(error);
+        XCTAssertEqual(response.status, 500);
         [callbackCalled fulfill];
     }];
 
@@ -313,9 +312,10 @@
     }] performHTTPRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *callbackCalled = [self expectationWithDescription:@"callback called"];
-    [self.client updateUserWithData:self.userData channelID:@"channelID" completionHandler:^(NSError * _Nullable error) {
-        XCTAssertEqual(UAUserAPIClientErrorDomain, error.domain);
-        XCTAssertEqual(UAUserAPIClientErrorRecoverable, error.code);
+
+    [self.client updateUserWithData:self.userData channelID:@"channelID" completionHandler:^(UAHTTPResponse * _Nullable response, NSError * _Nullable error) {
+        XCTAssertNotNil(error);
+        XCTAssertNil(response);
         [callbackCalled fulfill];
     }];
 

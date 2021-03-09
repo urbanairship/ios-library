@@ -5,6 +5,7 @@
 #import "UAUserAPIClient+Internal.h"
 #import "UAAirshipMessageCenterCoreImport.h"
 #import "UATaskManager.h"
+#import "UAUserData+Internal.h"
 
 NSString * const UAUserRegisteredChannelIDKey= @"UAUserRegisteredChannelID";
 NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.user_created";
@@ -163,18 +164,19 @@ static NSString * const UAUserResetTaskID = @"UAUser.reset";
     }
 
     UAUserData *data = [self getUserDataSync];
+
     if (data && [self.registeredChannelID isEqualToString:channelID]) {
         [task taskCompleted];
         return;
     }
 
-    UADisposable *request = [self performRegistrationWithData:data channelID:channelID completionHandler:^(BOOL completed) {
-        if (completed) {
-            [task taskCompleted];
-        } else {
-            [task taskFailed];
-        }
-    }];
+    UADisposable *request;
+
+    if (data) {
+        request = [self performUserUpdateWithData:data channelID:channelID task:task];
+    } else {
+        request = [self performUserCreateWithChannelID:channelID task:task];
+    }
 
     task.expirationHandler = ^{
         [request dispose];
@@ -190,48 +192,65 @@ static NSString * const UAUserResetTaskID = @"UAUser.reset";
     }
 }
 
-- (UADisposable *)performRegistrationWithData:(nullable UAUserData *)userData
-                                    channelID:(NSString *)channelID
-                            completionHandler:(void(^)(BOOL completed))completionHandler {
-
+- (UADisposable *)performUserUpdateWithData:(UAUserData *)userData channelID:(NSString *)channelID task:(id<UATask>)task {
     UA_WEAKIFY(self)
+    return [self.apiClient updateUserWithData:userData channelID:channelID completionHandler:^(UAHTTPResponse * _Nullable response, NSError * _Nullable error) {
+        UA_STRONGIFY(self)
+        if (error) {
+            UA_LDEBUG(@"User update failed with error %@", error);
+            [task taskFailed];
+        } else if (!response.isSuccess) {
+            UA_LDEBUG(@"User update failed with status %lul", (unsigned long)response.status);
 
-    if (userData) {
-        // update
-        return [self.apiClient updateUserWithData:userData channelID:channelID completionHandler:^(NSError * _Nullable error) {
+            if (response.isServerError) {
+                [task taskFailed];
+            } else {
+                if (response.status == 401) {
+                    UA_LDEBUG(@"Recreating user");
+                    [self enqueueResetTask];
+                }
+
+                [task taskCompleted];
+            }
+        } else {
+            UA_LINFO(@"Updated user %@ successfully.", userData.username);
+            self.registeredChannelID = channelID;
+            [task taskCompleted];
+        }
+    }];
+}
+
+
+- (UADisposable *)performUserCreateWithChannelID:(NSString *)channelID task:(id<UATask>)task {
+    UA_WEAKIFY(self)
+    return [self.apiClient createUserWithChannelID:channelID completionHandler:^(UAUserCreateResponse * _Nullable response, NSError * _Nullable error) {
+        if (error) {
+            UA_LDEBUG(@"User creation failed with error %@", error);
+            [task taskFailed];
+        } else if (!response.isSuccess) {
+            UA_LDEBUG(@"User creation failed with status %lul", (unsigned long)response.status);
+
+            if (response.isServerError) {
+                [task taskFailed];
+            } else {
+                [task taskCompleted];
+            }
+        } else {
             UA_STRONGIFY(self)
-            if (error) {
-                UA_LDEBUG(@"User update failed with error %@", error);
-                completionHandler(error.code != UAUserAPIClientErrorRecoverable);
-            } else {
-                UA_LINFO(@"Updated user %@ successfully.", userData.username);
-                self.registeredChannelID = channelID;
-                completionHandler(YES);
-            }
-        }];
-    } else {
-        // create
-        return [self.apiClient createUserWithChannelID:channelID completionHandler:^(UAUserData * _Nullable data, NSError * _Nullable error) {
-            if (!data || error) {
-                UA_LDEBUG(@"Update failed with error %@", error);
-                completionHandler(error.code != UAUserAPIClientErrorRecoverable);
-            } else {
+            [self.userDataDAO saveUserData:response.userData completionHandler:^(BOOL success) {
                 UA_STRONGIFY(self)
-                [self.userDataDAO saveUserData:data completionHandler:^(BOOL success) {
-                    UA_STRONGIFY(self)
-                    if (success) {
-                        UA_LINFO(@"Updated user %@ successfully.", userData.username);
-                        self.registeredChannelID = channelID;
-                        [self.notificationCenter postNotificationName:UAUserCreatedNotification object:nil];
-                        completionHandler(YES);
-                    } else {
-                        UA_LINFO(@"Failed to save user");
-                        completionHandler(NO);
-                    }
-                }];
-            }
-        }];
-    }
+                if (success) {
+                    UA_LINFO(@"Created user %@ successfully.", response.userData.username);
+                    self.registeredChannelID = channelID;
+                    [self.notificationCenter postNotificationName:UAUserCreatedNotification object:nil];
+                    [task taskCompleted];
+                } else {
+                    UA_LINFO(@"Failed to save user");
+                    [task taskFailed];
+                }
+            }];
+        }
+    }];
 }
 
 - (void)extendChannelRegistrationPayload:(UAChannelRegistrationPayload *)payload

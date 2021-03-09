@@ -2,8 +2,24 @@
 
 #import "UAUserAPIClient+Internal.h"
 #import "UAUserData+Internal.h"
+#import "NSError+UAAdditions.h"
 
-NSString * const UAUserAPIClientErrorDomain = @"com.urbanairship.user_api_client";
+@interface UAUserCreateResponse()
+@property(nonatomic, strong) UAUserData *userData;
+@end
+
+@implementation UAUserCreateResponse
+
+- (instancetype)initWithStatus:(NSUInteger)status userData:(UAUserData *)userData {
+    self = [super initWithStatus:status];
+
+    if (self) {
+        self.userData = userData;
+    }
+
+    return self;
+}
+@end
 
 @interface UAUserAPIClient()
 @property(nonatomic, strong) UARuntimeConfig *config;
@@ -30,7 +46,7 @@ NSString * const UAUserAPIClientErrorDomain = @"com.urbanairship.user_api_client
 }
 
 - (UADisposable *)createUserWithChannelID:(NSString *)channelID
-                        completionHandler:(void (^)(UAUserData * _Nullable data, NSError * _Nullable error))completionHandler {
+                        completionHandler:(void (^)(UAUserCreateResponse * _Nullable response, NSError * _Nullable error))completionHandler {
 
     NSDictionary *requestBody =  @{
         @"ios_channels": @[channelID]
@@ -55,19 +71,20 @@ NSString * const UAUserAPIClientErrorDomain = @"com.urbanairship.user_api_client
     }];
 
     return [self.session performHTTPRequest:request completionHandler:^(NSData * _Nullable data, NSHTTPURLResponse * _Nullable response, NSError * _Nullable error) {
-        if (response.statusCode == 201 || response.statusCode == 200) {
+        if (error) {
+            completionHandler(nil, error);
+        } else if (response.statusCode == 201 || response.statusCode == 200) {
             UAUserData *userData = [UAUserAPIClient parseResponseData:data error:&error];
-            completionHandler(userData, error);
+            completionHandler([[UAUserCreateResponse alloc] initWithStatus:response.statusCode userData:userData], error);
         } else {
-            NSError *apiError = [UAUserAPIClient errorFromResponse:response error:error];
-            completionHandler(nil, apiError);
+            completionHandler([[UAUserCreateResponse alloc] initWithStatus:response.statusCode userData:nil], nil);
         }
     }];
 }
 
 - (UADisposable *)updateUserWithData:(UAUserData *)userData
                            channelID:(NSString *)channelID
-                   completionHandler:(void (^)(NSError * _Nullable error))completionHandler {
+                   completionHandler:(void (^)(UAHTTPResponse *response, NSError * _Nullable error))completionHandler {
 
     NSDictionary *requestBody =  @{
         @"ios_channels": @{
@@ -95,28 +112,12 @@ NSString * const UAUserAPIClientErrorDomain = @"com.urbanairship.user_api_client
     }];
 
     return [self.session performHTTPRequest:request completionHandler:^(NSData * _Nullable data, NSHTTPURLResponse * _Nullable response, NSError * _Nullable error) {
-
-        if (response.statusCode == 200 || response.statusCode == 201) {
-            completionHandler(nil);
+        if (error) {
+            completionHandler(nil, error);
         } else {
-            NSError *apiError = [UAUserAPIClient errorFromResponse:response error:error];
-            completionHandler(apiError);
+            completionHandler([[UAHTTPResponse alloc] initWithStatus:response.statusCode], nil);
         }
     }];
-}
-
-+ (NSError *)errorFromResponse:(NSHTTPURLResponse *)response error:(NSError *)error {
-    NSString *msg = [NSString stringWithFormat:@"User API failed with status %ld error: %@", response.statusCode, error];
-
-    if (error || [response hasRetriableStatus]) {
-        return [NSError errorWithDomain:UAUserAPIClientErrorDomain
-                                   code:UAUserAPIClientErrorRecoverable
-                               userInfo:@{NSLocalizedDescriptionKey:msg}];
-    } else {
-        return [NSError errorWithDomain:UAUserAPIClientErrorDomain
-                                   code:UAUserAPIClientErrorUnrecoverable
-                               userInfo:@{NSLocalizedDescriptionKey:msg}];
-    }
 }
 
 
@@ -127,12 +128,9 @@ NSString * const UAUserAPIClientErrorDomain = @"com.urbanairship.user_api_client
 
     if (!username || !password) {
         NSString *msg = [NSString stringWithFormat:@"User API failed. Unable to parse response %@", jsonResponse];
-        *error = [NSError errorWithDomain:UAUserAPIClientErrorDomain
-                                                 code:UAUserAPIClientErrorUnrecoverable
-                                             userInfo:@{NSLocalizedDescriptionKey:msg}];
+        *error = [NSError airshipParseErrorWithMessage:msg];
         return nil;
     }
-
 
     return [UAUserData dataWithUsername:username password:password];
 }
