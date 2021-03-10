@@ -25,7 +25,7 @@
 @property (nonatomic, assign, getter=isExtendedBroadcastsEnabled) BOOL extendedBroadcastsEnabled;
 @property (nonatomic, copy) NSDictionary *customConfig;
 @property (nonatomic, assign) BOOL requestAuthorizationToUseNotifications;
-@property (nonatomic, assign) BOOL requireInitialRemoteConfig;
+@property (nonatomic, assign) BOOL requireInitialRemoteConfigEnabled;
 @property (nonatomic, assign, getter=isDataCollectionOptInEnabled) BOOL dataCollectionOptInEnabled;
 @property (nonatomic, strong) UARemoteConfigURLManager *urlManager;
 
@@ -58,7 +58,7 @@ NSString *const UARuntimeConfigEURemoteDataAPIURL = @"https://remote-data.asnapi
         self.inProduction = config.inProduction;
         self.detectProvisioningMode = config.detectProvisioningMode;
         self.requestAuthorizationToUseNotifications = config.requestAuthorizationToUseNotifications;
-        self.requireInitialRemoteConfig = config.requireInitialRemoteConfig;
+        self.requireInitialRemoteConfigEnabled = config.requireInitialRemoteConfigEnabled;
         self.automaticSetupEnabled = config.automaticSetupEnabled;
         self.analyticsEnabled = config.analyticsEnabled;
         self.clearUserOnAppRestore = config.clearUserOnAppRestore;
@@ -95,7 +95,7 @@ NSString *const UARuntimeConfigEURemoteDataAPIURL = @"https://remote-data.asnapi
         return self.config.deviceAPIURL;
     }
 
-    if (self.requireInitialRemoteConfig) {
+    if (self.requireInitialRemoteConfigEnabled) {
         return nil;
     }
     
@@ -135,7 +135,7 @@ NSString *const UARuntimeConfigEURemoteDataAPIURL = @"https://remote-data.asnapi
         return self.config.analyticsURL;
     }
 
-    if (self.requireInitialRemoteConfig) {
+    if (self.requireInitialRemoteConfigEnabled) {
         return nil;
     }
     

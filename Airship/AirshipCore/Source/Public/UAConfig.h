@@ -241,7 +241,7 @@ typedef NS_ENUM(NSUInteger, UACloudSite) {
  *
  * Defaults to `NO`.
  */
-@property (nonatomic, assign) BOOL requireInitialRemoteConfig;
+@property (nonatomic, assign) BOOL requireInitialRemoteConfigEnabled;
 
 ///---------------------------------------------------------------------------------------
 /// @name Internal Configuration Options

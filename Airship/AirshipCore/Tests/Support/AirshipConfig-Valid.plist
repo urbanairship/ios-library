@@ -2,7 +2,7 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>requireInitialRemoteConfig</key>
+	<key>requireInitialRemoteConfigEnabled</key>
 	<true/>
 	<key>developmentAppKey</key>
 	<string>   0A00000000000000000000        </string>

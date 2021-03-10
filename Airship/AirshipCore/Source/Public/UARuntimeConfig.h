@@ -153,7 +153,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * Defaults to `NO`.
  */
-@property (readonly) BOOL requireInitialRemoteConfig;
+@property (readonly) BOOL requireInitialRemoteConfigEnabled;
 
 /**
  * Flag indicating whether data collection needs to be opted in with

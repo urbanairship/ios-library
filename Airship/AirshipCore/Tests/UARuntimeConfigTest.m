@@ -52,8 +52,8 @@
     XCTAssertEqualObjects(@"cool://remote", config.remoteDataAPIURL);
 }
 
-- (void)testRequireInitialRemoteConfig {
-    self.appConfig.requireInitialRemoteConfig = YES;
+- (void)testrequireInitialRemoteConfigEnabled {
+    self.appConfig.requireInitialRemoteConfigEnabled = YES;
 
     self.appConfig.site = UACloudSiteEU;
 
