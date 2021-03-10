@@ -60,8 +60,8 @@
     }] updateWithIdentifier:self.registrar.identifier attributeMutations:expectedMutations completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *updateCompleted = [self expectationWithDescription:@"updateCompleted"];
-    [self.registrar updateAttributesWithCompletionHandler:^(BOOL completed) {
-        XCTAssertTrue(completed);
+    [self.registrar updateAttributesWithCompletionHandler:^(UAAttributeUploadResult result) {
+        XCTAssertEqual(UAAttributeUploadResultFinished, result);
         [updateCompleted fulfill];
     }];
 
@@ -87,8 +87,8 @@
     }] updateWithIdentifier:self.registrar.identifier attributeMutations:pending completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *updateCompleted = [self expectationWithDescription:@"updateCompleted"];
-    [self.registrar updateAttributesWithCompletionHandler:^(BOOL completed) {
-        XCTAssertTrue(completed);
+    [self.registrar updateAttributesWithCompletionHandler:^(UAAttributeUploadResult result) {
+        XCTAssertEqual(UAAttributeUploadResultFinished, result);
         [updateCompleted fulfill];
     }];
 
@@ -115,8 +115,8 @@
     }] updateWithIdentifier:self.registrar.identifier attributeMutations:pending completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *updateCompleted = [self expectationWithDescription:@"updateCompleted"];
-    [self.registrar updateAttributesWithCompletionHandler:^(BOOL completed) {
-        XCTAssertFalse(completed);
+    [self.registrar updateAttributesWithCompletionHandler:^(UAAttributeUploadResult result) {
+        XCTAssertEqual(UAAttributeUploadResultFailed, result);
         [updateCompleted fulfill];
     }];
 
@@ -143,8 +143,8 @@
     }] updateWithIdentifier:self.registrar.identifier attributeMutations:pending completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *updateCompleted = [self expectationWithDescription:@"updateCompleted"];
-    [self.registrar updateAttributesWithCompletionHandler:^(BOOL completed) {
-        XCTAssertFalse(completed);
+    [self.registrar updateAttributesWithCompletionHandler:^(UAAttributeUploadResult result) {
+        XCTAssertEqual(UAAttributeUploadResultFailed, result);
         [updateCompleted fulfill];
     }];
 
@@ -152,6 +152,16 @@
     [self.mockApiClient verify];
 
     XCTAssertEqualObjects(self.persistentQueue.peekObject, pending);
+}
+
+- (void)testUpdateTagGroupsNoPendingMutations{
+    XCTestExpectation *updateCompleted = [self expectationWithDescription:@"updateCompleted"];
+    [self.registrar updateAttributesWithCompletionHandler:^(UAAttributeUploadResult result) {
+        XCTAssertEqual(UAAttributeUploadResultUpToDate, result);
+        [updateCompleted fulfill];
+    }];
+
+    [self waitForTestExpectations];
 }
 
 - (void)testClearAllPendingUpdatesCancelsAndClearsMutations {

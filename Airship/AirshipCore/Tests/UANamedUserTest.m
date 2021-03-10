@@ -571,19 +571,39 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
     [mockTask verify];
 }
 
-/**
- * Test that the tag groups registrar is called when UANamedUser is asked to update tags
- */
-- (void)testUpdateTags {
+- (void)testUpdateTagGroups {
+    self.namedUser.identifier = @"name-user";
     id mockTask = [self mockForProtocol:@protocol(UATask)];
     [[[mockTask stub] andReturn:UANamedUserTagUpdateTaskID] taskID];
-    [[mockTask expect] taskFailed];
+    [[mockTask expect] taskCompleted];
 
     [[[self.mockTagGroupsRegistrar expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:2];
-        void (^completionHandler)(BOOL) = (__bridge void (^)(BOOL))arg;
-        completionHandler(NO);
+        void (^completionHandler)(UATagGroupsUploadResult) = (__bridge void (^)(UATagGroupsUploadResult))arg;
+        completionHandler(UATagGroupsUploadResultFinished);
+    }] updateTagGroupsWithCompletionHandler:OCMOCK_ANY];
+
+    [[self.mockTaskManager expect] enqueueRequestWithID:UANamedUserTagUpdateTaskID options:OCMOCK_ANY];
+
+    self.launchHandler(mockTask);
+
+    [self.mockTagGroupsRegistrar verify];
+    [self.mockTaskManager verify];
+    [mockTask verify];
+}
+
+- (void)testUpdateTagsFailed {
+    self.namedUser.identifier = @"name-user";
+    id mockTask = [self mockForProtocol:@protocol(UATask)];
+    [[[mockTask stub] andReturn:UANamedUserTagUpdateTaskID] taskID];
+    [mockTask taskFailed];
+
+    [[[self.mockTagGroupsRegistrar expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:2];
+        void (^completionHandler)(UATagGroupsUploadResult) = (__bridge void (^)(UATagGroupsUploadResult))arg;
+        completionHandler(UATagGroupsUploadResultFailed);
     }] updateTagGroupsWithCompletionHandler:OCMOCK_ANY];
 
     [[self.mockTaskManager reject] enqueueRequestWithID:UANamedUserTagUpdateTaskID options:OCMOCK_ANY];
@@ -595,24 +615,20 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
     [mockTask verify];
 }
 
-/**
- * Test that the tag groups registrar is called again if the value passed with the completion handler is YES
- */
-- (void)testUpdateTagsContinuesIfNeeded {
-    self.namedUser.identifier = @"named user";
-
+- (void)testUpdateTagsUpToDate {
+    self.namedUser.identifier = @"name-user";
     id mockTask = [self mockForProtocol:@protocol(UATask)];
     [[[mockTask stub] andReturn:UANamedUserTagUpdateTaskID] taskID];
-    [[mockTask expect] taskCompleted];
+    [mockTask taskFailed];
 
     [[[self.mockTagGroupsRegistrar expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:2];
-        void (^completionHandler)(BOOL) = (__bridge void (^)(BOOL))arg;
-        completionHandler(YES);
+        void (^completionHandler)(UATagGroupsUploadResult) = (__bridge void (^)(UATagGroupsUploadResult))arg;
+        completionHandler(UATagGroupsUploadResultUpToDate);
     }] updateTagGroupsWithCompletionHandler:OCMOCK_ANY];
 
-    [[self.mockTaskManager expect] enqueueRequestWithID:UANamedUserTagUpdateTaskID options:OCMOCK_ANY];
+    [[self.mockTaskManager reject] enqueueRequestWithID:UANamedUserTagUpdateTaskID options:OCMOCK_ANY];
 
     self.launchHandler(mockTask);
 
@@ -896,10 +912,32 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
     [mockTask verify];
 }
 
-/**
- * Test updateNamedUserAttributes method if the identifier is set.
- */
-- (void)testUpdateNamedUserAttributes {
+- (void)testUpdateAttributes {
+    self.namedUser.identifier = @"named user";
+
+    id mockTask = [self mockForProtocol:@protocol(UATask)];
+    [[[mockTask stub] andReturn:UANamedUserAttributeUpdateTaskID] taskID];
+    [[mockTask expect] taskCompleted];
+
+    [[[self.mockAttributeRegistrar expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:2];
+        void (^completionHandler)(UAAttributeUploadResult) = (__bridge void (^)(UAAttributeUploadResult))arg;
+        completionHandler(UAAttributeUploadResultFinished);
+    }] updateAttributesWithCompletionHandler:OCMOCK_ANY];
+
+    [[self.mockTaskManager expect] enqueueRequestWithID:UANamedUserAttributeUpdateTaskID options:OCMOCK_ANY];
+
+    self.launchHandler(mockTask);
+
+    [self.mockAttributeRegistrar verify];
+    [self.mockTaskManager verify];
+    [mockTask verify];
+}
+
+- (void)testUpdateAttributesFailed {
+    self.namedUser.identifier = @"named user";
+
     id mockTask = [self mockForProtocol:@protocol(UATask)];
     [[[mockTask stub] andReturn:UANamedUserAttributeUpdateTaskID] taskID];
     [[mockTask expect] taskFailed];
@@ -907,8 +945,8 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
     [[[self.mockAttributeRegistrar expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:2];
-        void (^completionHandler)(BOOL) = (__bridge void (^)(BOOL))arg;
-        completionHandler(NO);
+        void (^completionHandler)(UAAttributeUploadResult) = (__bridge void (^)(UAAttributeUploadResult))arg;
+        completionHandler(UAAttributeUploadResultFailed);
     }] updateAttributesWithCompletionHandler:OCMOCK_ANY];
 
     [[self.mockTaskManager reject] enqueueRequestWithID:UANamedUserAttributeUpdateTaskID options:OCMOCK_ANY];
@@ -920,11 +958,9 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
     [mockTask verify];
 }
 
-/**
- * Test that the attribute registrar is called again if the value passed with the completion handler is YES
- */
-- (void)testUpdateAttributesContinuesIfNeeded {
+- (void)testUpdateAttributesUpToDate {
     self.namedUser.identifier = @"named user";
+
     id mockTask = [self mockForProtocol:@protocol(UATask)];
     [[[mockTask stub] andReturn:UANamedUserAttributeUpdateTaskID] taskID];
     [[mockTask expect] taskCompleted];
@@ -932,15 +968,15 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
     [[[self.mockAttributeRegistrar expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:2];
-        void (^completionHandler)(BOOL) = (__bridge void (^)(BOOL))arg;
-        completionHandler(YES);
+        void (^completionHandler)(UAAttributeUploadResult) = (__bridge void (^)(UAAttributeUploadResult))arg;
+        completionHandler(UAAttributeUploadResultUpToDate);
     }] updateAttributesWithCompletionHandler:OCMOCK_ANY];
 
-    [[self.mockTaskManager expect] enqueueRequestWithID:UANamedUserAttributeUpdateTaskID options:OCMOCK_ANY];
+    [[self.mockTaskManager reject] enqueueRequestWithID:UANamedUserAttributeUpdateTaskID options:OCMOCK_ANY];
 
     self.launchHandler(mockTask);
 
-    [self.mockTagGroupsRegistrar verify];
+    [self.mockAttributeRegistrar verify];
     [self.mockTaskManager verify];
     [mockTask verify];
 }

@@ -86,7 +86,7 @@ static NSString *const NamedUserPersistentQueueKey = @"com.urbanairship.named_us
     }];
 }
 
-- (UADisposable *)updateAttributesWithCompletionHandler:(void(^)(BOOL completed))completionHandler {
+- (UADisposable *)updateAttributesWithCompletionHandler:(void(^)(UAAttributeUploadResult result))completionHandler {
     UAAttributePendingMutations *mutations;
     NSString *identifier;
 
@@ -100,7 +100,7 @@ static NSString *const NamedUserPersistentQueueKey = @"com.urbanairship.named_us
     }
 
     if (!identifier || !mutations) {
-        completionHandler(YES);
+        completionHandler(UAAttributeUploadResultUpToDate);
         return nil;
     }
 
@@ -112,15 +112,15 @@ static NSString *const NamedUserPersistentQueueKey = @"com.urbanairship.named_us
             UA_LDEBUG(@"Update of %@ succeeded", mutations);
             [self popPendingMutations:mutations identifier:identifier];
             [self.delegate uploadedAttributeMutations:mutations identifier:identifier];
-            completionHandler(YES);
+            completionHandler(UAAttributeUploadResultFinished);
         } else if (error || response.isServerError || response.status == 429) {
             UA_LDEBUG(@"Update of %@ failed with response: %@ error: %@", mutations, response, error);
-            completionHandler(NO);
+            completionHandler(UAAttributeUploadResultFailed);
         } else {
             // Unrecoverable failure - pop mutation
             UA_LINFO(@"Update of %@ failed with response: %@", mutations, response);
             [self popPendingMutations:mutations identifier:identifier];
-            completionHandler(YES);
+            completionHandler(UAAttributeUploadResultFinished);
         }
     };
 
@@ -138,7 +138,6 @@ static NSString *const NamedUserPersistentQueueKey = @"com.urbanairship.named_us
         }
     }
 }
-
 
 - (void)setIdentifier:(NSString *)identifier clearPendingOnChange:(BOOL)clearPendingOnChange {
     @synchronized (self) {

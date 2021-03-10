@@ -252,15 +252,22 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
 
     UASemaphore *semaphore = [UASemaphore semaphore];
 
-    UADisposable *request = [self.tagGroupsRegistrar updateTagGroupsWithCompletionHandler:^(BOOL completed) {
-        if (completed) {
-            [task taskCompleted];
-            [self enqueueUpdateTagGroupsTask];
-        } else {
-            [task taskFailed];
+    UADisposable *request = [self.tagGroupsRegistrar updateTagGroupsWithCompletionHandler:^(UATagGroupsUploadResult result) {
+        switch (result) {
+            case UATagGroupsUploadResultFinished:
+                [task taskCompleted];
+                [self enqueueUpdateTagGroupsTask];
+                break;
+            case UATagGroupsUploadResultUpToDate:
+                [task taskCompleted];
+                break;
+            case UATagGroupsUploadResultFailed:
+                [task taskFailed];
+                break;
         }
         [semaphore signal];
     }];
+
 
     task.expirationHandler = ^{
         [request dispose];
@@ -277,12 +284,18 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
 
     UASemaphore *semaphore = [UASemaphore semaphore];
 
-    UADisposable *request = [self.attributeRegistrar updateAttributesWithCompletionHandler:^(BOOL completed) {
-        if (completed) {
-            [task taskCompleted];
-            [self enqueueUpdateAttributesTask];
-        } else {
-            [task taskFailed];
+    UADisposable *request = [self.attributeRegistrar updateAttributesWithCompletionHandler:^(UAAttributeUploadResult result) {
+        switch (result) {
+            case UAAttributeUploadResultFinished:
+                [task taskCompleted];
+                [self enqueueUpdateAttributesTask];
+                break;
+            case UAAttributeUploadResultUpToDate:
+                [task taskCompleted];
+                break;
+            case UAAttributeUploadResultFailed:
+                [task taskFailed];
+                break;
         }
         [semaphore signal];
     }];

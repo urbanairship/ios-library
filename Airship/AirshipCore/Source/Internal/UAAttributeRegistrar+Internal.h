@@ -9,6 +9,27 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+
+/**
+ * Attribute upload results.
+ */
+typedef NS_ENUM(NSUInteger, UAAttributeUploadResult) {
+    /**
+     * Attribute either uploaded successfully or failed with an unrecoverable error code.
+     */
+    UAAttributeUploadResultFinished,
+
+    /**
+     * Attribute already up to date..
+     */
+    UAAttributeUploadResultUpToDate,
+
+    /**
+     * Attribute uploads failed and should retry.
+     */
+    UAAttributeUploadResultFailed,
+};
+
 /**
  * Delegate protocol for registrar callbacks.
  */
@@ -85,7 +106,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param completionHandler The completion handler.
  * @return UADisposable object
  */
-- (UADisposable *)updateAttributesWithCompletionHandler:(void(^)(BOOL completed))completionHandler;
+- (UADisposable *)updateAttributesWithCompletionHandler:(void(^)(UAAttributeUploadResult result))completionHandler;
 
 /**
  * The current identifier associated with this registrar.

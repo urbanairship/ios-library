@@ -48,8 +48,8 @@
     [self.registrar setTags:@[@"tag1"] group:@"group2"];
 
     XCTestExpectation *expectation = [self expectationWithDescription:@"Callback finished"];
-    [self.registrar updateTagGroupsWithCompletionHandler:^(BOOL completed) {
-        XCTAssertTrue(completed);
+    [self.registrar updateTagGroupsWithCompletionHandler:^(UATagGroupsUploadResult result) {
+        XCTAssertEqual(UATagGroupsUploadResultFinished, result);
         [expectation fulfill];
     }];
 
@@ -69,8 +69,8 @@
     [self.registrar setTags:@[@"tag1"] group:@"group2"];
 
     XCTestExpectation *expectation = [self expectationWithDescription:@"Callback finished"];
-    [self.registrar updateTagGroupsWithCompletionHandler:^(BOOL completed) {
-        XCTAssertTrue(completed);
+    [self.registrar updateTagGroupsWithCompletionHandler:^(UATagGroupsUploadResult result) {
+        XCTAssertEqual(UATagGroupsUploadResultFinished, result);
         [expectation fulfill];
     }];
 
@@ -95,8 +95,8 @@
     [self.registrar setTags:@[@"tag1"] group:@"group2"];
 
     XCTestExpectation *expectation = [self expectationWithDescription:@"Callback finished"];
-    [self.registrar updateTagGroupsWithCompletionHandler:^(BOOL completed) {
-        XCTAssertFalse(completed);
+    [self.registrar updateTagGroupsWithCompletionHandler:^(UATagGroupsUploadResult result) {
+        XCTAssertEqual(UATagGroupsUploadResultFailed, result);
         [expectation fulfill];
     }];
 
@@ -121,8 +121,8 @@
     [self.registrar setTags:@[@"tag1"] group:@"group2"];
 
     XCTestExpectation *expectation = [self expectationWithDescription:@"Callback finished"];
-    [self.registrar updateTagGroupsWithCompletionHandler:^(BOOL completed) {
-        XCTAssertFalse(completed);
+    [self.registrar updateTagGroupsWithCompletionHandler:^(UATagGroupsUploadResult result) {
+        XCTAssertEqual(UATagGroupsUploadResultFailed, result);
         [expectation fulfill];
     }];
 
@@ -148,8 +148,8 @@
     [self.registrar setTags:@[@"tag1"] group:@"group2"];
 
     XCTestExpectation *expectation = [self expectationWithDescription:@"Callback finished"];
-    [self.registrar updateTagGroupsWithCompletionHandler:^(BOOL completed) {
-        XCTAssertFalse(completed);
+    [self.registrar updateTagGroupsWithCompletionHandler:^(UATagGroupsUploadResult result) {
+        XCTAssertEqual(UATagGroupsUploadResultFailed, result);
         [expectation fulfill];
     }];
 
@@ -157,6 +157,16 @@
     [self.mockApiClient verify];
 
     XCTAssertEqualObjects(expectedPayload, [self.pendingTagGroupStore peekPendingMutation].payload);
+}
+
+- (void)testUpdateTagGroupsNoPendingMutations {
+    XCTestExpectation *expectation = [self expectationWithDescription:@"Callback finished"];
+    [self.registrar updateTagGroupsWithCompletionHandler:^(UATagGroupsUploadResult result) {
+        XCTAssertEqual(UATagGroupsUploadResultUpToDate, result);
+        [expectation fulfill];
+    }];
+
+    [self waitForTestExpectations];
 }
 
 - (void)testSetEmptyTagListClearsTags {

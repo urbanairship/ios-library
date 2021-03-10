@@ -406,12 +406,18 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
 
     UASemaphore *semaphore = [UASemaphore semaphore];
 
-    UADisposable *request = [self.tagGroupsRegistrar updateTagGroupsWithCompletionHandler:^(BOOL completed) {
-        if (completed) {
-            [task taskCompleted];
-            [self enqueueUpdateAttributesTask];
-        } else {
-            [task taskFailed];
+    UADisposable *request = [self.tagGroupsRegistrar updateTagGroupsWithCompletionHandler:^(UATagGroupsUploadResult result) {
+        switch (result) {
+            case UATagGroupsUploadResultFinished:
+                [task taskCompleted];
+                [self enqueueUpdateTagGroupsTask];
+                break;
+            case UATagGroupsUploadResultUpToDate:
+                [task taskCompleted];
+                break;
+            case UATagGroupsUploadResultFailed:
+                [task taskFailed];
+                break;
         }
         [semaphore signal];
     }];
@@ -431,12 +437,18 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
 
     UASemaphore *semaphore = [UASemaphore semaphore];
 
-    UADisposable *request = [self.attributeRegistrar updateAttributesWithCompletionHandler:^(BOOL completed) {
-        if (completed) {
-            [task taskCompleted];
-            [self enqueueUpdateAttributesTask];
-        } else {
-            [task taskFailed];
+    UADisposable *request = [self.attributeRegistrar updateAttributesWithCompletionHandler:^(UAAttributeUploadResult result) {
+        switch (result) {
+            case UAAttributeUploadResultFinished:
+                [task taskCompleted];
+                [self enqueueUpdateAttributesTask];
+                break;
+            case UAAttributeUploadResultUpToDate:
+                [task taskCompleted];
+                break;
+            case UAAttributeUploadResultFailed:
+                [task taskFailed];
+                break;
         }
         [semaphore signal];
     }];

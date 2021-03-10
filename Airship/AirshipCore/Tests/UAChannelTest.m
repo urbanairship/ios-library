@@ -899,23 +899,45 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
     [self.mockTagGroupsRegistrar verify];
 }
 
-/**
- * Test updateRegistration method if the identifier is set.
- */
-- (void)testUpdateChannelTagGroups {
+- (void)testUpdateTagGroups {
     [self.dataStore setBool:YES forKey:UAirshipDataCollectionEnabledKey];
     self.channelIDFromMockChannelRegistrar = @"123456";
     self.channel.componentEnabled = YES;
 
     id mockTask = [self mockForProtocol:@protocol(UATask)];
     [[[mockTask stub] andReturn:UAChannelTagUpdateTaskID] taskID];
-    [[mockTask expect] taskFailed];
+    [[mockTask expect] taskCompleted];
 
     [[[self.mockTagGroupsRegistrar expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:2];
-        void (^completionHandler)(BOOL) = (__bridge void (^)(BOOL))arg;
-        completionHandler(NO);
+        void (^completionHandler)(UATagGroupsUploadResult) = (__bridge void (^)(UATagGroupsUploadResult))arg;
+        completionHandler(UATagGroupsUploadResultFinished);
+    }] updateTagGroupsWithCompletionHandler:OCMOCK_ANY];
+
+    [[self.mockTaskManager expect] enqueueRequestWithID:UAChannelTagUpdateTaskID options:OCMOCK_ANY];
+
+    self.launchHandler(mockTask);
+
+    [self.mockTagGroupsRegistrar verify];
+    [self.mockTaskManager verify];
+    [mockTask verify];
+}
+
+- (void)testUpdateTagsFailed {
+    [self.dataStore setBool:YES forKey:UAirshipDataCollectionEnabledKey];
+    self.channelIDFromMockChannelRegistrar = @"123456";
+    self.channel.componentEnabled = YES;
+
+    id mockTask = [self mockForProtocol:@protocol(UATask)];
+    [[[mockTask stub] andReturn:UAChannelTagUpdateTaskID] taskID];
+    [mockTask taskFailed];
+
+    [[[self.mockTagGroupsRegistrar expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:2];
+        void (^completionHandler)(UATagGroupsUploadResult) = (__bridge void (^)(UATagGroupsUploadResult))arg;
+        completionHandler(UATagGroupsUploadResultFailed);
     }] updateTagGroupsWithCompletionHandler:OCMOCK_ANY];
 
     [[self.mockTaskManager reject] enqueueRequestWithID:UAChannelTagUpdateTaskID options:OCMOCK_ANY];
@@ -927,33 +949,56 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
     [mockTask verify];
 }
 
-/**
- * Test that the tag groups registrar is called again if the value passed with the completion handler is YES
- */
-- (void)testUpdateTagsContinuesIfNeeded {
+- (void)testUpdateTagsUpToDate {
     [self.dataStore setBool:YES forKey:UAirshipDataCollectionEnabledKey];
     self.channelIDFromMockChannelRegistrar = @"123456";
     self.channel.componentEnabled = YES;
 
     id mockTask = [self mockForProtocol:@protocol(UATask)];
     [[[mockTask stub] andReturn:UAChannelTagUpdateTaskID] taskID];
+    [mockTask taskFailed];
 
     [[[self.mockTagGroupsRegistrar expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:2];
-        void (^completionHandler)(BOOL) = (__bridge void (^)(BOOL))arg;
-        completionHandler(YES);
+        void (^completionHandler)(UATagGroupsUploadResult) = (__bridge void (^)(UATagGroupsUploadResult))arg;
+        completionHandler(UATagGroupsUploadResultUpToDate);
     }] updateTagGroupsWithCompletionHandler:OCMOCK_ANY];
 
-    [[self.mockTaskManager expect] enqueueRequestWithID:UAChannelTagUpdateTaskID options:OCMOCK_ANY];
+    [[self.mockTaskManager reject] enqueueRequestWithID:UAChannelTagUpdateTaskID options:OCMOCK_ANY];
 
     self.launchHandler(mockTask);
+
+    [self.mockTagGroupsRegistrar verify];
+    [self.mockTaskManager verify];
+    [mockTask verify];
 }
 
-/**
- * Test updateRegistration method if the identifier is set and component enabled
- */
-- (void)testUpdateChannelAttributes {
+- (void)testUpdateAttributes {
+    self.channelIDFromMockChannelRegistrar = @"123456";
+    self.channel.componentEnabled = YES;
+
+    id mockTask = [self mockForProtocol:@protocol(UATask)];
+    [[[mockTask stub] andReturn:UAChannelAttributeUpdateTaskID] taskID];
+    [[mockTask expect] taskCompleted];
+
+    [[[self.mockAttributeRegistrar expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:2];
+        void (^completionHandler)(UAAttributeUploadResult) = (__bridge void (^)(UAAttributeUploadResult))arg;
+        completionHandler(UAAttributeUploadResultFinished);
+    }] updateAttributesWithCompletionHandler:OCMOCK_ANY];
+
+    [[self.mockTaskManager expect] enqueueRequestWithID:UAChannelAttributeUpdateTaskID options:OCMOCK_ANY];
+
+    self.launchHandler(mockTask);
+
+    [self.mockAttributeRegistrar verify];
+    [self.mockTaskManager verify];
+    [mockTask verify];
+}
+
+- (void)testUpdateAttributesFailed {
     self.channelIDFromMockChannelRegistrar = @"123456";
     self.channel.componentEnabled = YES;
 
@@ -964,8 +1009,8 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
     [[[self.mockAttributeRegistrar expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:2];
-        void (^completionHandler)(BOOL) = (__bridge void (^)(BOOL))arg;
-        completionHandler(NO);
+        void (^completionHandler)(UAAttributeUploadResult) = (__bridge void (^)(UAAttributeUploadResult))arg;
+        completionHandler(UAAttributeUploadResultFailed);
     }] updateAttributesWithCompletionHandler:OCMOCK_ANY];
 
     [[self.mockTaskManager reject] enqueueRequestWithID:UAChannelAttributeUpdateTaskID options:OCMOCK_ANY];
@@ -977,10 +1022,7 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
     [mockTask verify];
 }
 
-/**
- * Test that the attribute registrar is called again if the value passed with the completion handler is YES
- */
-- (void)testUpdateAttributesContinuesIfNeeded {
+- (void)testUpdateAttributesUpToDate {
     self.channelIDFromMockChannelRegistrar = @"123456";
     self.channel.componentEnabled = YES;
 
@@ -991,11 +1033,11 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
     [[[self.mockAttributeRegistrar expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:2];
-        void (^completionHandler)(BOOL) = (__bridge void (^)(BOOL))arg;
-        completionHandler(YES);
+        void (^completionHandler)(UAAttributeUploadResult) = (__bridge void (^)(UAAttributeUploadResult))arg;
+        completionHandler(UAAttributeUploadResultUpToDate);
     }] updateAttributesWithCompletionHandler:OCMOCK_ANY];
 
-    [[self.mockTaskManager expect] enqueueRequestWithID:UAChannelAttributeUpdateTaskID options:OCMOCK_ANY];
+    [[self.mockTaskManager reject] enqueueRequestWithID:UAChannelAttributeUpdateTaskID options:OCMOCK_ANY];
 
     self.launchHandler(mockTask);
 

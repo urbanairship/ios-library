@@ -78,7 +78,7 @@
                                           application:[UIApplication sharedApplication]];
 }
 
-- (UADisposable *)updateTagGroupsWithCompletionHandler:(void(^)(BOOL completed))completionHandler {
+- (UADisposable *)updateTagGroupsWithCompletionHandler:(void(^)(UATagGroupsUploadResult result))completionHandler {
     UATagGroupsMutation *mutation;
     NSString *identifier;
 
@@ -93,8 +93,7 @@
     }
 
     if (!identifier || !mutation) {
-        // no upload work to do - end task, if necessary, and finish operation
-        completionHandler(NO);
+        completionHandler(UATagGroupsUploadResultUpToDate);
         return nil;
     }
 
@@ -106,15 +105,15 @@
             UA_LDEBUG(@"Update of %@ succeeded", mutation);
             [self popPendingMutation:mutation identifier:identifier];
             [self.delegate uploadedTagGroupsMutation:mutation identifier:identifier];
-            completionHandler(YES);
+            completionHandler(UATagGroupsUploadResultFinished);
         } else if (error || response.isServerError || response.status == 429) {
             UA_LDEBUG(@"Update of %@ failed with response: %@ error: %@", mutation, response, error);
-            completionHandler(NO);
+            completionHandler(UATagGroupsUploadResultFailed);
         } else {
             // Unrecoverable failure - pop mutation
             UA_LINFO(@"Update of %@ failed with response: %@", mutation, response);
             [self popPendingMutation:mutation identifier:identifier];
-            completionHandler(YES);
+            completionHandler(UATagGroupsUploadResultFinished);
         }
     };
 

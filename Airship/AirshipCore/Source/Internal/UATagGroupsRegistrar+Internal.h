@@ -10,6 +10,27 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+
+/**
+ * Tag group upload results.
+ */
+typedef NS_ENUM(NSUInteger, UATagGroupsUploadResult) {
+    /**
+     * Tag groups either uploaded successfully or failed with an unrecoverable error code.
+     */
+    UATagGroupsUploadResultFinished,
+
+    /**
+     * Tag groups  already up to date..
+     */
+    UATagGroupsUploadResultUpToDate,
+
+    /**
+     * Tag groups upload failed and should retry.
+     */
+    UATagGroupsUploadResultFailed,
+};
+
 /**
  * Delegate protocol for tag groups registrar callbacks.
  */
@@ -81,7 +102,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param completionHandler The completion handler.
  * @return UADisposable object.
  */
-- (UADisposable *)updateTagGroupsWithCompletionHandler:(void(^)(BOOL completed))completionHandler;
+- (UADisposable *)updateTagGroupsWithCompletionHandler:(void(^)(UATagGroupsUploadResult result))completionHandler;
 
 /**
  * Add tags to a tag group. To update the server, make all of your changes,
