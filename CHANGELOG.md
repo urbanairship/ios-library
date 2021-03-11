@@ -3,6 +3,14 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 14.3.0 March 11, 2021
+
+Minor release that improves background task management and drops support for uploading historic location data to Airship. The location module can still be used to listen for location updates within the app and will be deprecated in a future release.
+
+### Changes
+- AirshipLocation will no longer upload lat/longs to Airship.
+- Reworked background task management.
+
 ## Version 14.2.3 February 5, 2021
 Patch release fixing issues with direct opens with open external URL actions, and thread safety for the frequency limits data store. Applications experiencing problems with direct open counts and apps using frequency limits should update.
 
