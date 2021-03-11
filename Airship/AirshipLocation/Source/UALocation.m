@@ -377,29 +377,6 @@ NSString *const UALocationBackgroundUpdatesAllowed = @"UALocationBackgroundUpdat
     if ([strongDelegate respondsToSelector:@selector(receivedLocationUpdates:)]) {
         [strongDelegate receivedLocationUpdates:locations];
     }
-
-    CLLocation *location = [locations lastObject];
-
-    // Throw out old values
-    if ([location.timestamp timeIntervalSinceNow] > 300.0) {
-        return;
-    }
-
-    // Throw out locations with accuracy values less than zero that represent invalid lat/long values
-    if (location.horizontalAccuracy < 0) {
-        UA_LTRACE(@"Location %@ did not meet accuracy requirements", location);
-        return;
-    }
-
-    UALocationInfo *info = [UALocationInfo infoWithLatitude:location.coordinate.latitude
-                                                  longitude:location.coordinate.longitude
-                                         horizontalAccuracy:location.horizontalAccuracy
-                                           verticalAccuracy:location.verticalAccuracy];
-
-    UALocationEvent *event = [UALocationEvent significantChangeLocationEventWithInfo:info
-                                                                        providerType:UALocationServiceProviderNetwork];
-
-    [self.analytics addEvent:event];
 }
 
 - (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error {
