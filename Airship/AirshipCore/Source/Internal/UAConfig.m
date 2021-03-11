@@ -67,7 +67,7 @@ NSString *const UALogLevelTraceName = @"TRACE";
     return [configCopy configWithConfig:self];
 }
 
--(UAConfig *) configWithConfig:(UAConfig *) config {
+- (UAConfig *)configWithConfig:(UAConfig *)config {
     if (config) {
         _developmentAppKey = config.developmentAppKey;
         _developmentAppSecret = config.developmentAppSecret;
@@ -83,6 +83,7 @@ NSString *const UALogLevelTraceName = @"TRACE";
         _inProduction = config.inProduction;
         _detectProvisioningMode = config.detectProvisioningMode;
         _requestAuthorizationToUseNotifications = config.requestAuthorizationToUseNotifications;
+        _suppressAllowListError = config.suppressAllowListError;
 
         _automaticSetupEnabled = config.automaticSetupEnabled;
         _analyticsEnabled = config.analyticsEnabled;
@@ -120,6 +121,7 @@ NSString *const UALogLevelTraceName = @"TRACE";
             "Production Log Level: %ld\n"
             "Detect Provisioning Mode: %d\n"
             "Request Authorization To Use Notifications: %@\n"
+            "Suppress Allow List Error: %@\n"
             "Analytics Enabled: %d\n"
             "Analytics URL: %@\n"
             "Device API URL: %@\n"
@@ -153,6 +155,7 @@ NSString *const UALogLevelTraceName = @"TRACE";
             (long)self.productionLogLevel,
             self.detectProvisioningMode,
             self.requestAuthorizationToUseNotifications ? @"YES" : @"NO",
+            self.suppressAllowListError ? @"YES" : @"NO",
             self.analyticsEnabled,
             self.analyticsURL,
             self.deviceAPIURL,
