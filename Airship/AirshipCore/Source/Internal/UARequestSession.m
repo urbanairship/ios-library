@@ -68,7 +68,8 @@ NSString * const UARequestSessionErrorDomain = @"com.urbanairship.request_sessio
                                              userInfo:@{NSLocalizedDescriptionKey:msg}];
             completionHandler(nil, nil, error);
         }];
-        return nil;
+
+        return [[UADisposable alloc] init];
     }
     
     NSMutableURLRequest *URLRequest = [NSMutableURLRequest requestWithURL:request.URL];
