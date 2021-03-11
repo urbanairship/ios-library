@@ -48,7 +48,6 @@ NSString * const UAInAppAudienceManagerErrorDomain = @"com.urbanairship.in_app_a
         self.currentTime = currentTime;
         self.namedUser = namedUser;
         self.channel = channel;
-        self.lookupAPIClient.enabled = self.enabled;
 
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(namedUserChanged:)
@@ -96,7 +95,6 @@ NSString * const UAInAppAudienceManagerErrorDomain = @"com.urbanairship.in_app_a
 
 - (void)setEnabled:(BOOL)enabled {
     [self.dataStore setBool:enabled forKey:kUAInAppAudienceManagerEnabledKey];
-    self.lookupAPIClient.enabled = self.enabled;
 }
 
 - (NSTimeInterval)preferLocalTagDataTime {

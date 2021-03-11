@@ -46,6 +46,11 @@ NSString *const UAInAppNativeBridgeDismissCommand = @"dismiss";
 @property (strong, nonatomic) UAInAppMessageDismissButton *closeButton;
 
 /**
+ * The native bridge extension
+ */
+@property (nonatomic, strong) UAAutomationNativeBridgeExtension *nativeBridgeExtension;
+
+/**
  * The request headers. These are populated and used when displaying an inbox message.
  */
 @property (nonatomic, copy) NSDictionary *headers;
@@ -56,18 +61,20 @@ NSString *const UAInAppNativeBridgeDismissCommand = @"dismiss";
 @implementation UAInAppMessageHTMLViewController
 
 + (instancetype)htmlControllerWithDisplayContent:(UAInAppMessageHTMLDisplayContent *)displayContent
-                                          style:(UAInAppMessageHTMLStyle *)style {
-    return [[self alloc] initWithDisplayContent:displayContent style:style];
+                                           style:(UAInAppMessageHTMLStyle *)style
+                           nativeBridgeExtension:(UAAutomationNativeBridgeExtension *)nativeBridgeExtension {
+    return [[self alloc] initWithDisplayContent:displayContent style:style nativeBridgeExtenson:nativeBridgeExtension];
 }
 
 - (instancetype)initWithDisplayContent:(UAInAppMessageHTMLDisplayContent *)displayContent
-                                 style:(UAInAppMessageHTMLStyle *)style {
+                                 style:(UAInAppMessageHTMLStyle *)style
+                  nativeBridgeExtenson:(UAAutomationNativeBridgeExtension *)nativeBridgeExtension {
     self = [self initWithNibName:@"UAInAppMessageHTMLViewController" bundle:[UAAutomationResources bundle]];
 
     if (self) {
         self.displayContent = displayContent;
-
         self.style = style;
+        self.nativeBridgeExtension = nativeBridgeExtension;
 
         if (!self.style.hideDismissIcon) {
             self.closeButton = [self createCloseButton];
@@ -96,6 +103,7 @@ NSString *const UAInAppNativeBridgeDismissCommand = @"dismiss";
     [super viewDidLoad];
 
     self.nativeBridge = [UANativeBridge nativeBridge];
+    self.nativeBridge.nativeBridgeExtensionDelegate = self.nativeBridgeExtension;
     self.nativeBridge.forwardNavigationDelegate = self;
     self.nativeBridge.javaScriptCommandDelegate = self;
     self.nativeBridge.nativeBridgeDelegate = self;

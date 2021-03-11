@@ -22,10 +22,6 @@
                                                                   [UATagSelector not:[UATagSelector tag:@"not-tag"]]]];
 }
 
-- (void)tearDown {
-    [super tearDown];
-}
-
 - (void)testJSON {
     NSError *error;
     UATagSelector *toAndFromJson = [UATagSelector selectorWithJSON:[self.selector toJSON] error:&error];

@@ -33,16 +33,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) UAInboxStore *inboxStore;
 
 /**
- * The current count of batch operations.
- */
-@property (atomic, assign) NSUInteger batchOperationCount;
-
-/**
- * The current count of retrieve operations.
- */
-@property (atomic, assign) NSUInteger retrieveOperationCount;
-
-/**
  * An array of messages in the inbox.
  */
 @property (nonatomic, copy) NSArray<UAInboxMessage *> *messages;
@@ -60,7 +50,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Flag indicating whether the mesage list is enabled. Clear to disable. Set to enable.
  */
-@property (nonatomic, assign) BOOL enabled;
+@property (atomic, assign) BOOL enabled;
 
 ///---------------------------------------------------------------------------------------
 /// @name Message List Internal Methods
@@ -93,6 +83,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param notificationCenter The notification center.
  * @param dispatcher The dispatcher.
  * @param date The UADate instance.
+ * @param taskManager The shared task manager.
  * @return An allocated UAInboxMessageList instance.
  */
 + (instancetype)messageListWithUser:(UAUser *)user
@@ -101,7 +92,8 @@ NS_ASSUME_NONNULL_BEGIN
                          inboxStore:(UAInboxStore *)inboxStore
                  notificationCenter:(NSNotificationCenter *)notificationCenter
                          dispatcher:(UADispatcher *)dispatcher
-                               date:(UADate *)date;
+                               date:(UADate *)date
+                        taskManager:(UATaskManager *)taskManager;
 
 
 @end

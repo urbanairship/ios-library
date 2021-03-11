@@ -30,16 +30,9 @@
  */
 @property (atomic, copy) NSString *identifier;
 
-/**
- * Whether the client is currently updating.
- */
-@property (atomic, assign) BOOL updating;
-
 @end
 
 @implementation UATagGroupsRegistrar
-
-@synthesize enabled = _enabled;
 
 - (instancetype)initWithPendingTagGroupStore:(UAPendingTagGroupStore *)pendingTagGroupStore
                                    apiClient:(UATagGroupsAPIClient *)apiClient
@@ -48,7 +41,6 @@
     self = [super init];
 
     if (self) {
-        self.enabled = YES;
         self.application = application;
         self.pendingTagGroupStore = pendingTagGroupStore;
         self.tagGroupsAPIClient = apiClient;
@@ -86,41 +78,7 @@
                                           application:[UIApplication sharedApplication]];
 }
 
-- (void)updateTagGroups {
-    @synchronized (self) {
-        if (!self.enabled) {
-            return;
-        }
-
-        if (self.updating) {
-            UA_LTRACE(@"Skipping tag groups update, request already in flight");
-            return;
-        }
-
-        self.updating = YES;
-    }
-
-    __block UIBackgroundTaskIdentifier backgroundTaskIdentifier = [self beginUploading];
-    
-    if (backgroundTaskIdentifier == UIBackgroundTaskInvalid) {
-        UA_LTRACE("Background task unavailable, skipping tag groups update.");
-        [self endUploading:backgroundTaskIdentifier];
-        return;
-    }
-    
-    [self uploadNextTagGroupMutationWithBackgroundTaskIdentifier:backgroundTaskIdentifier];
-}
-
-- (void)popPendingMutation:(UATagGroupsMutation *)mutation identifier:(NSString *)identifier {
-    @synchronized (self) {
-        // Pop the mutation if it is what we expect and the identifier has not changed
-        if ([mutation isEqual:self.pendingTagGroupStore.peekPendingMutation] && [identifier isEqualToString:self.identifier]) {
-            [self.pendingTagGroupStore popPendingMutation];
-        }
-    }
-}
-
-- (void)uploadNextTagGroupMutationWithBackgroundTaskIdentifier:(UIBackgroundTaskIdentifier)backgroundTaskIdentifier {
+- (UADisposable *)updateTagGroupsWithCompletionHandler:(void(^)(UATagGroupsUploadResult result))completionHandler {
     UATagGroupsMutation *mutation;
     NSString *identifier;
 
@@ -135,60 +93,44 @@
     }
 
     if (!identifier || !mutation) {
-        // no upload work to do - end background task, if necessary, and finish operation
-        [self endUploading:backgroundTaskIdentifier];
-        return;
+        completionHandler(UATagGroupsUploadResultUpToDate);
+        return nil;
     }
 
     UA_WEAKIFY(self);
-    void (^apiCompletionBlock)(NSError *) = ^void(NSError *error) {
+    void (^apiCompletionBlock)(UAHTTPResponse *, NSError *) = ^void (UAHTTPResponse *response, NSError *error) {
         UA_STRONGIFY(self);
-        if (!error) {
-            // Success - pop uploaded mutation and store the transaction record
+
+        if (response.isSuccess) {
+            UA_LDEBUG(@"Update of %@ succeeded", mutation);
             [self popPendingMutation:mutation identifier:identifier];
             [self.delegate uploadedTagGroupsMutation:mutation identifier:identifier];
-            [self uploadNextTagGroupMutationWithBackgroundTaskIdentifier:backgroundTaskIdentifier];
-        } else if (error.domain == UATagGroupsAPIClientErrorDomain && error.code == UATagGroupsAPIClientErrorUnrecoverableStatus) {
-            // Unrecoverable failure - pop mutation and end the task
-            [self popPendingMutation:mutation identifier:identifier];
-            [self uploadNextTagGroupMutationWithBackgroundTaskIdentifier:backgroundTaskIdentifier];
+            completionHandler(UATagGroupsUploadResultFinished);
+        } else if (error || response.isServerError || response.status == 429) {
+            UA_LDEBUG(@"Update of %@ failed with response: %@ error: %@", mutation, response, error);
+            completionHandler(UATagGroupsUploadResultFailed);
         } else {
-            [self endUploading:backgroundTaskIdentifier];
+            // Unrecoverable failure - pop mutation
+            UA_LINFO(@"Update of %@ failed with response: %@", mutation, response);
+            [self popPendingMutation:mutation identifier:identifier];
+            completionHandler(UATagGroupsUploadResultFinished);
         }
     };
 
-    [self.tagGroupsAPIClient updateTagGroupsForId:identifier
-                                tagGroupsMutation:mutation
-                                completionHandler:apiCompletionBlock];
+    return [self.tagGroupsAPIClient updateTagGroupsForId:identifier
+                                       tagGroupsMutation:mutation
+                                       completionHandler:apiCompletionBlock];
 }
 
-- (UIBackgroundTaskIdentifier)beginUploading {
-    UA_WEAKIFY(self);
-    __block UIBackgroundTaskIdentifier backgroundTaskIdentifier = [self.application beginBackgroundTaskWithExpirationHandler:^{
-        UA_STRONGIFY(self);
-
-        UA_LTRACE(@"Tag groups background task expired.");
-        [self.tagGroupsAPIClient cancelAllRequests];
-
-        [self endUploading:backgroundTaskIdentifier];
-    }];
-
-    return backgroundTaskIdentifier;
-}
-
-- (void)endUploading:(UIBackgroundTaskIdentifier)backgroundTaskIdentifier {
-    [self endBackgroundTask:backgroundTaskIdentifier];
-
+- (void)popPendingMutation:(UATagGroupsMutation *)mutation identifier:(NSString *)identifier {
     @synchronized (self) {
-        self.updating = NO;
+        // Pop the mutation if it is what we expect and the identifier has not changed
+        if ([mutation isEqual:self.pendingTagGroupStore.peekPendingMutation] && [identifier isEqualToString:self.identifier]) {
+            [self.pendingTagGroupStore popPendingMutation];
+        }
     }
 }
 
-- (void)endBackgroundTask:(UIBackgroundTaskIdentifier)backgroundTaskIdentifier {
-    if (backgroundTaskIdentifier != UIBackgroundTaskInvalid) {
-        [self.application endBackgroundTask:backgroundTaskIdentifier];
-    }
-}
 
 - (void)mutateTags:(NSArray<NSString *>*)tags
              group:(NSString *)group
@@ -240,19 +182,6 @@
 
 - (NSArray<UATagGroupsMutation *> *)pendingMutations {
     return self.pendingTagGroupStore.pendingMutations;
-}
-
-- (void)setEnabled:(BOOL)enabled {
-    @synchronized (self) {
-        _enabled = enabled;
-        self.tagGroupsAPIClient.enabled = enabled;
-    }
-}
-
-- (BOOL)enabled {
-    @synchronized (self) {
-        return _enabled;
-    }
 }
 
 - (void)setIdentifier:(NSString *)identifier clearPendingOnChange:(BOOL)clearPendingOnChange {

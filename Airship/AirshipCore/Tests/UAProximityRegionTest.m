@@ -13,10 +13,6 @@
     [super setUp];
 }
 
-- (void)tearDown {
-    [super tearDown];
-}
-
 /**
  * Test creating a proximity region with a valid proximity ID major and minor
  */

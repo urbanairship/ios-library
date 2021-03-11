@@ -31,7 +31,8 @@ extern NSString *const UAChannelCreationOnForeground;
                   tagGroupsRegistrar:(UATagGroupsRegistrar *)tagGroupsRegistrar
                   attributeRegistrar:(UAAttributeRegistrar *)attributeRegistrar
                        localeManager:(UALocaleManager *)localeManager
-                                date:(UADate *)date;
+                                date:(UADate *)date
+                         taskManager:(UATaskManager *)taskManager;
 
 /**
  * Registers or updates the current registration with an API call. If push notifications are

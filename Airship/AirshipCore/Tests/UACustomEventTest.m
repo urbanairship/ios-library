@@ -23,13 +23,6 @@
     [UAirship setSharedAirship:self.airship];
 }
 
-- (void)tearDown {
-    [self.airship stopMocking];
-    [self.analytics stopMocking];
-
-    [super tearDown];
-}
-
 /**
  * Test creating a custom event.
  */

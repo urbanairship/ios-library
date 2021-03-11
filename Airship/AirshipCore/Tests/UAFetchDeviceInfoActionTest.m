@@ -35,13 +35,6 @@
     self.action = [[UAFetchDeviceInfoAction alloc] init];
 }
 
-- (void)tearDown {
-    [self.mockPush stopMocking];
-    [self.mockNamedUser stopMocking];
-    [self.mockAirship stopMocking];
-    [super tearDown];
-}
-
 /**
  * Test accepts arguments.
  */

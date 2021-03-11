@@ -11,11 +11,10 @@
 @property (nonatomic, copy) NSString *storeName;
 @property (strong, nonatomic) NSManagedObjectContext *managedContext;
 @property (nonatomic, assign) BOOL inMemory;
-@property (nonatomic, assign) BOOL finished;
+@property (atomic, assign) BOOL finished;
 @end
 
 @implementation UAInboxStore
-
 
 - (instancetype)initWithName:(NSString *)storeName inMemory:(BOOL)inMemory {
     self = [super init];
@@ -76,15 +75,38 @@
     }
 }
 
-- (void)fetchMessagesWithPredicate:(NSPredicate *)predicate
-                 completionHandler:(void(^)(NSArray<UAInboxMessageData *>*messages))completionHandler {
+- (NSArray<UAInboxMessage *> *)fetchMessagesWithPredicate:(NSPredicate *)predicate {
+    __block NSMutableArray<UAInboxMessage *> *messages = [NSMutableArray array];
 
-    [self safePerformBlock:^(BOOL isSafe) {
-        if (!isSafe) {
-            completionHandler(@[]);
-            return;
+    [self safePerformSync:^{
+        NSArray<UAInboxMessageData *> *result = [self fetchMessageDataWithPredicate:predicate];
+
+        for (UAInboxMessageData *data in result) {
+            [messages addObject:[self messageFromMessageData:data]];
+        }
+    }];
+
+    return messages;
+}
+
+- (void)fetchMessagesWithPredicate:(nullable NSPredicate *)predicate completionHandler:(void (^)(NSArray<UAInboxMessage *> *))completionHandler {
+    [self safePerformAsync:^{
+        NSArray<UAInboxMessageData *> *result = [self fetchMessageDataWithPredicate:predicate];
+
+        NSMutableArray *messages = [NSMutableArray array];
+
+        for (UAInboxMessageData *data in result) {
+            [messages addObject:[self messageFromMessageData:data]];
         }
 
+        completionHandler(messages);
+    }];
+}
+
+
+- (NSArray<UAInboxMessageData *> *)fetchMessageDataWithPredicate:(NSPredicate *)predicate {
+    __block NSArray<UAInboxMessageData *> *data = @[];
+    [self safePerformSync:^{
         NSError *error = nil;
 
         NSFetchRequest *request = [[NSFetchRequest alloc] init];
@@ -95,25 +117,88 @@
         request.sortDescriptors = [[NSArray alloc] initWithObjects:sortDescriptor, nil];
         request.predicate = predicate;
 
-        NSArray *resultData = [self.managedContext executeFetchRequest:request error:&error];
+        data = [self.managedContext executeFetchRequest:request error:&error];
 
         if (error) {
             UA_LERR(@"Error executing fetch request: %@ with error: %@", request, error);
-            completionHandler(@[]);
+        }
+
+        [self.managedContext safeSave];
+    }];
+
+    return data;
+}
+
+
+- (void)markMessagesLocallyReadWithIDs:(NSArray<NSString *> *)messageIDs completionHandler:(void (^)(void))completionHandler {
+    [self safePerformAsync:^{
+        NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:kUAInboxDBEntityName];
+        request.predicate = [NSPredicate predicateWithFormat:@"messageID IN %@", messageIDs];
+
+        NSError *error;
+        NSArray *result = [self.managedContext executeFetchRequest:request error:&error];
+
+        if (error) {
+            UA_LERR(@"Error marking messages read %@", error);
             return;
         }
 
-        completionHandler(resultData);
+        for (UAInboxMessageData *data in result) {
+            data.unreadClient = NO;
+        }
+
+        [self.managedContext safeSave];
+
+        completionHandler();
+    }];
+}
+
+- (void)markMessagesLocallyDeletedWithIDs:(NSArray<NSString *> *)messageIDs completionHandler:(void (^)(void))completionHandler {
+    [self safePerformAsync:^{
+        NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:kUAInboxDBEntityName];
+        request.predicate = [NSPredicate predicateWithFormat:@"messageID IN %@", messageIDs];
+
+        NSError *error;
+        NSArray *result = [self.managedContext executeFetchRequest:request error:&error];
+
+        if (error) {
+            UA_LERR(@"Error marking messages deleted %@", error);
+            return;
+        }
+
+        for (UAInboxMessageData *data in result) {
+            data.deletedClient = YES;
+        }
+
+        [self.managedContext safeSave];
+
+        completionHandler();
+    }];
+}
+
+- (void)markMessagesGloballyReadWithIDs:(NSArray<NSString *> *)messageIDs {
+    [self safePerformSync:^{
+        NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:kUAInboxDBEntityName];
+        request.predicate = [NSPredicate predicateWithFormat:@"messageID IN %@", messageIDs];
+
+        NSError *error;
+        NSArray *result = [self.managedContext executeFetchRequest:request error:&error];
+
+        if (error) {
+            UA_LERR(@"Error marking messages read %@", error);
+            return;
+        }
+
+        for (UAInboxMessageData *data in result) {
+            data.unread = NO;
+        }
+
         [self.managedContext safeSave];
     }];
 }
 
 - (void)deleteMessagesWithIDs:(NSArray<NSString *> *)messageIDs {
-    [self.managedContext safePerformBlock:^(BOOL isSafe) {
-        if (!isSafe) {
-            return;
-        }
-
+    [self safePerformSync:^{
         NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:kUAInboxDBEntityName];
         request.predicate = [NSPredicate predicateWithFormat:@"messageID IN %@", messageIDs];
 
@@ -130,13 +215,10 @@
     }];
 }
 
-- (void)syncMessagesWithResponse:(NSArray *)messages completionHandler:(void(^)(BOOL))completionHandler {
-    [self safePerformBlock:^(BOOL isSafe) {
-        if (!isSafe) {
-            completionHandler(NO);
-            return;
-        }
+- (BOOL)syncMessagesWithResponse:(NSArray *)messages {
+    __block BOOL result;
 
+    [self safePerformSync:^{
         // Track the response messageIDs so we can remove any messages that are
         // no longer in the response.
         NSMutableSet *newMessageIDs = [NSMutableSet set];
@@ -172,8 +254,44 @@
             [self.managedContext executeRequest:deleteRequest error:&error];
         }
 
-        completionHandler([self.managedContext safeSave]);
+        result = [self.managedContext safeSave];
     }];
+
+    return result;
+}
+
+- (NSDictionary<NSString *, NSDictionary *> *)locallyReadMessageReporting {
+    __block NSMutableDictionary<NSString *, NSDictionary *> *result = [NSMutableDictionary dictionary];
+
+    [self safePerformSync:^{
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"unreadClient == NO && unread == YES"];
+        NSArray<UAInboxMessageData *> *messages = [self fetchMessageDataWithPredicate:predicate];
+
+        for (UAInboxMessageData *data in messages) {
+            if (data.messageReporting) {
+                result[data.messageID] = data.messageReporting;
+            }
+        }
+    }];
+
+    return result;
+}
+
+- (NSDictionary<NSString *, NSDictionary *> *)locallyDeletedMessageReporting {
+    __block NSMutableDictionary<NSString *, NSDictionary *> *result = [NSMutableDictionary dictionary];
+
+    [self safePerformSync:^{
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"deletedClient == YES"];
+        NSArray<UAInboxMessageData *> *messages = [self fetchMessageDataWithPredicate:predicate];
+
+        for (UAInboxMessageData *data in messages) {
+            if (data.messageReporting) {
+                result[data.messageID] = data.messageReporting;
+            }
+        }
+    }];
+
+    return result;
 }
 
 - (void)updateMessageData:(UAInboxMessageData *)data withDictionary:(NSDictionary *)dict {
@@ -242,6 +360,22 @@
     return NO;
 }
 
+- (UAInboxMessage *)messageFromMessageData:(UAInboxMessageData *)data {
+    return [UAInboxMessage messageWithBuilderBlock:^(UAInboxMessageBuilder *builder) {
+        builder.messageURL = data.messageURL;
+        builder.messageID = data.messageID;
+        builder.messageSent = data.messageSent;
+        builder.messageBodyURL = data.messageBodyURL;
+        builder.messageExpiration = data.messageExpiration;
+        builder.unread = data.unreadClient & data.unread;
+        builder.rawMessageObject = data.rawMessageObject;
+        builder.extra = data.extra;
+        builder.title = data.title;
+        builder.contentType = data.contentType;
+        builder.messageList = self.messageList;
+    }];
+}
+
 - (void)moveDatabase {
     NSFileManager *fm = [NSFileManager defaultManager];
 
@@ -293,10 +427,26 @@
     }
 }
 
-- (void)safePerformBlock:(void (^)(BOOL))block {
+- (void)safePerformSync:(void (^)(void))block {
+    @synchronized (self) {
+        if (!self.finished) {
+            [self.managedContext safePerformBlockAndWait:^(BOOL safe){
+                if (safe && !self.finished) {
+                    block();
+                }
+            }];
+        }
+    }
+}
+
+- (void)safePerformAsync:(void (^)(void))block {
     @synchronized(self) {
         if (!self.finished) {
-            [self.managedContext safePerformBlock:block];
+            [self.managedContext safePerformBlock:^(BOOL safe){
+                if (safe && !self.finished) {
+                    block();
+                }
+            }];
         }
     }
 }

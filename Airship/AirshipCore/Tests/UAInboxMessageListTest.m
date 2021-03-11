@@ -15,6 +15,10 @@
 #import "UAUserData+Internal.h"
 #import "UAAutoDisposable.h"
 
+static NSString * const UAInboxMessageListRetrieveTask = @"UAInboxMessageList.retrieve";
+static NSString * const UAInboxMessageListSyncReadMessagesTask = @"UAInboxMessageList.sync_read_messages";
+static NSString * const UAInboxMessageListSyncDeletedMessagesTask = @"UAInboxMessageList.sync_deleted_messages";
+
 @protocol UAInboxMessageListMockNotificationObserver
 - (void)messageListWillUpdate;
 - (void)messageListUpdated;
@@ -33,6 +37,9 @@
 @property (nonatomic, strong) NSNotificationCenter *notificationCenter;
 @property (nonatomic, strong) UAInboxStore *testStore;
 @property (nonatomic, strong) UATestDate *testDate;
+
+@property (nonatomic, strong) id mockTaskManager;
+@property(nonatomic, copy) void (^launchHandler)(id<UATask>);
 
 @end
 
@@ -65,13 +72,26 @@
     self.mockMessageListNotificationObserver = [self mockForProtocol:@protocol(UAInboxMessageListMockNotificationObserver)];
 
     self.notificationCenter = [[NSNotificationCenter alloc] init];
+
+    self.mockTaskManager = [self mockForClass:[UATaskManager class]];
+
+    // Capture the task launcher
+    [[[self.mockTaskManager stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:4];
+        self.launchHandler =  (__bridge void (^)(id<UATask>))arg;
+    }] registerForTaskWithIDs:@[UAInboxMessageListRetrieveTask, UAInboxMessageListSyncReadMessagesTask, UAInboxMessageListSyncDeletedMessagesTask] dispatcher:OCMOCK_ANY launchHandler:OCMOCK_ANY];
+
     self.messageList = [UAInboxMessageList messageListWithUser:self.mockUser
                                                         client:self.mockInboxAPIClient
                                                         config:self.config
                                                     inboxStore:self.testStore
                                             notificationCenter:self.notificationCenter
                                                     dispatcher:[UATestDispatcher testDispatcher]
-                                                          date:self.testDate];
+                                                          date:self.testDate
+                                                   taskManager:self.mockTaskManager];
+
+    self.messageList.enabled = YES;
 
     //inject the API client
     self.messageList.client = self.mockInboxAPIClient;
@@ -105,17 +125,11 @@
 //the succcessBlock should be executed.
 //the UADisposable returned should be non-nil.
 - (void)testRetrieveMessageListWithBlocksSuccess {
-
     XCTestExpectation *requestSucceeded = [self expectationWithDescription:@"request succeeded"];
     XCTestExpectation *messageListWillUpdate = [self expectationWithDescription:@"messageListWillUpdate notification received"];
     XCTestExpectation *messageListUpdated = [self expectationWithDescription:@"messageListUpdated notification received"];
 
-    [[[self.mockInboxAPIClient stub] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:2];
-        UAInboxClientMessageRetrievalSuccessBlock successBlock = (__bridge UAInboxClientMessageRetrievalSuccessBlock) arg;
-        successBlock(304, @[]);
-    }] retrieveMessageListOnSuccess:[OCMArg any] onFailure:[OCMArg any]];
+    [[[self.mockInboxAPIClient stub] andReturn:nil] retrieveMessageList:[OCMArg anyObjectRef]];
 
     [[[self.mockMessageListNotificationObserver stub] andDo:^(NSInvocation *invocation) {
         [messageListWillUpdate fulfill];
@@ -125,9 +139,15 @@
         [messageListUpdated fulfill];
     }] messageListUpdated];
 
-    UADisposable *disposable = [self.messageList retrieveMessageListWithSuccessBlock:^{
+    UAInboxMessageListCallbackBlock successBlock = ^{
         [requestSucceeded fulfill];
-    } withFailureBlock:^{}];
+    };
+
+    [[[self.mockTaskManager stub] andDo:^(NSInvocation *invocation) {
+        [self launchRetrieveTaskWithSuccess:successBlock failure:nil];
+    }] enqueueRequestWithID:UAInboxMessageListRetrieveTask options:OCMOCK_ANY];
+
+    UADisposable *disposable = [self.messageList retrieveMessageListWithSuccessBlock:successBlock withFailureBlock:^{}];
 
     [self waitForTestExpectations:@[messageListWillUpdate, requestSucceeded, messageListUpdated] enforceOrder:YES];
 
@@ -144,11 +164,10 @@
     XCTestExpectation *messageListUpdated = [self expectationWithDescription:@"messageListUpdated notification received"];
 
     [[[self.mockInboxAPIClient stub] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:3];
-        UAInboxClientFailureBlock failureBlock = (__bridge UAInboxClientFailureBlock) arg;
-        failureBlock();
-    }] retrieveMessageListOnSuccess:[OCMArg any] onFailure:[OCMArg any]];
+        __strong NSError **arg;
+        [invocation getArgument:&arg atIndex:2];
+        *arg = [NSError errorWithDomain:NSCocoaErrorDomain code:0 userInfo:nil];
+    }] retrieveMessageList:[OCMArg anyObjectRef]];
 
     [[[self.mockMessageListNotificationObserver stub] andDo:^(NSInvocation *invocation) {
         [messageListWillUpdate fulfill];
@@ -158,11 +177,15 @@
         [messageListUpdated fulfill];
     }] messageListUpdated];
 
-    UADisposable *disposable = [self.messageList retrieveMessageListWithSuccessBlock:^{
-    } withFailureBlock:^{
+    UAInboxMessageListCallbackBlock failureBlock = ^{
         [requestFailed fulfill];
-    }];
+    };
 
+    [[[self.mockTaskManager stub] andDo:^(NSInvocation *invocation) {
+        [self launchRetrieveTaskWithSuccess:nil failure:failureBlock];
+    }] enqueueRequestWithID:UAInboxMessageListRetrieveTask options:OCMOCK_ANY];
+
+    UADisposable *disposable = [self.messageList retrieveMessageListWithSuccessBlock:^{} withFailureBlock:failureBlock];
     [self waitForTestExpectations:@[messageListWillUpdate, requestFailed, messageListUpdated] enforceOrder:YES];
 
     XCTAssertNotNil(disposable, @"disposable should be non-nil");
@@ -173,32 +196,29 @@
  * filtering out any expired messages.
  */
 - (void)testFilterMessagesOnRefresh {
-
     self.testDate.absoluteTime = [NSDate dateWithTimeIntervalSince1970:0];
     NSDate *expiry = [NSDate dateWithTimeInterval:1 sinceDate:self.testDate.absoluteTime];
 
-    XCTestExpectation *inboxSynced = [self expectationWithDescription:@"inboxSynced"];
+    [self.testStore syncMessagesWithResponse:@[[self createMessageDictionaryWithMessageID:@"messageID" expiry:expiry]]];
 
-    [self.testStore syncMessagesWithResponse:@[[self createMessageDictionaryWithMessageID:@"messageID" expiry:expiry]]
-                            completionHandler:^(BOOL success) {
-                                [inboxSynced fulfill];
-                            }];
-
-    [self waitForTestExpectations];
-
-    // Setup a failure response
     [[[self.mockInboxAPIClient stub] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:3];
-        UAInboxClientFailureBlock failureBlock = (__bridge UAInboxClientFailureBlock) arg;
-        failureBlock();
-    }] retrieveMessageListOnSuccess:[OCMArg any] onFailure:[OCMArg any]];
+        __strong NSError **arg;
+        [invocation getArgument:&arg atIndex:2];
+        *arg = [NSError errorWithDomain:NSCocoaErrorDomain code:0 userInfo:nil];
+    }] retrieveMessageList:[OCMArg anyObjectRef]];
 
     // Refresh the listing to pick up the inbox store change
     XCTestExpectation *testExpectation = [self expectationWithDescription:@"updated message list"];
-    [self.messageList retrieveMessageListWithSuccessBlock:nil withFailureBlock:^{
+
+    UAInboxMessageListCallbackBlock failureBlock = ^{
         [testExpectation fulfill];
-    }];
+    };
+
+    [[[self.mockTaskManager expect] andDo:^(NSInvocation *invocation) {
+        [self launchRetrieveTaskWithSuccess:nil failure:failureBlock];
+    }] enqueueRequestWithID:UAInboxMessageListRetrieveTask options:OCMOCK_ANY];
+
+    [self.messageList retrieveMessageListWithSuccessBlock:nil withFailureBlock:failureBlock];
 
     [self waitForTestExpectations];
 
@@ -210,9 +230,16 @@
 
     // Refresh the message again
     testExpectation = [self expectationWithDescription:@"request finished"];
-    [self.messageList retrieveMessageListWithSuccessBlock:nil withFailureBlock:^{
+
+    failureBlock = ^{
         [testExpectation fulfill];
-    }];
+    };
+
+    [[[self.mockTaskManager expect] andDo:^(NSInvocation *invocation) {
+        [self launchRetrieveTaskWithSuccess:nil failure:failureBlock];
+    }] enqueueRequestWithID:UAInboxMessageListRetrieveTask options:OCMOCK_ANY];
+
+    [self.messageList retrieveMessageListWithSuccessBlock:nil withFailureBlock:failureBlock];
 
     [self waitForTestExpectations];
 
@@ -243,12 +270,7 @@
     XCTestExpectation *messageListWillUpdate = [self expectationWithDescription:@"messageListWillUpdate notification received"];
     XCTestExpectation *messageListUpdated = [self expectationWithDescription:@"messageListUpdated notification received"];
 
-    [[[self.mockInboxAPIClient stub] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:2];
-        UAInboxClientMessageRetrievalSuccessBlock successBlock = (__bridge UAInboxClientMessageRetrievalSuccessBlock) arg;
-        successBlock(304, nil);
-    }] retrieveMessageListOnSuccess:[OCMArg any] onFailure:[OCMArg any]];
+    [[[self.mockInboxAPIClient stub] andReturn:nil] retrieveMessageList:[OCMArg anyObjectRef]];
 
     [[[self.mockMessageListNotificationObserver stub] andDo:^(NSInvocation *invocation) {
         [messageListWillUpdate fulfill];
@@ -257,6 +279,13 @@
     [[[self.mockMessageListNotificationObserver stub] andDo:^(NSInvocation *invocation) {
         [messageListUpdated fulfill];
     }] messageListUpdated];
+
+    [[[self.mockTaskManager stub] andDo:^(NSInvocation *invocation) {
+        // Delay launching to give the disposable time to work
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self launchRetrieveTaskWithSuccess:nil failure:nil];
+        });
+    }] enqueueRequestWithID:UAInboxMessageListRetrieveTask options:OCMOCK_ANY];
 
     [self.messageList retrieveMessageListWithSuccessBlock:^{
         XCTFail(@"Callback blocks should not be invoked");
@@ -277,11 +306,10 @@
     XCTestExpectation *messageListUpdated = [self expectationWithDescription:@"messageListUpdated notification received"];
 
     [[[self.mockInboxAPIClient stub] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:3];
-        UAInboxClientFailureBlock failureBlock = (__bridge UAInboxClientFailureBlock) arg;
-        failureBlock();
-    }] retrieveMessageListOnSuccess:[OCMArg any] onFailure:[OCMArg any]];
+        __strong NSError **arg;
+        [invocation getArgument:&arg atIndex:2];
+        *arg = [NSError errorWithDomain:NSCocoaErrorDomain code:0 userInfo:nil];
+    }] retrieveMessageList:[OCMArg anyObjectRef]];
 
     [[[self.mockMessageListNotificationObserver stub] andDo:^(NSInvocation *invocation) {
         [messageListWillUpdate fulfill];
@@ -290,6 +318,13 @@
     [[[self.mockMessageListNotificationObserver stub] andDo:^(NSInvocation *invocation) {
         [messageListUpdated fulfill];
     }] messageListUpdated];
+
+    [[[self.mockTaskManager stub] andDo:^(NSInvocation *invocation) {
+        // Delay launching to give the disposable time to work
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self launchRetrieveTaskWithSuccess:nil failure:nil];
+        });
+    }] enqueueRequestWithID:UAInboxMessageListRetrieveTask options:OCMOCK_ANY];
 
     [self.messageList retrieveMessageListWithSuccessBlock:^{
         XCTFail(@"Callback blocks should not be invoked");
@@ -324,6 +359,26 @@
              @"unread": @"0",
              @"message_sent": @"2013-08-13 00:16:22" };
 
+}
+
+- (void)launchRetrieveTaskWithSuccess:(UAInboxMessageListCallbackBlock)successBlock failure:(UAInboxMessageListCallbackBlock)failureBlock {
+    id mockTask = [self mockForProtocol:@protocol(UATask)];
+
+    void(^callback)(BOOL) = ^(BOOL success) {
+        if (success && successBlock) {
+            successBlock();
+        } else if (!success && failureBlock) {
+            failureBlock();
+        }
+
+        [self.notificationCenter postNotificationName:UAInboxMessageListUpdatedNotification object:nil];
+    };
+
+    [[[mockTask stub] andReturn:UAInboxMessageListRetrieveTask] taskID];
+    [[[mockTask stub] andReturn:[UATaskRequestOptions optionsWithConflictPolicy:UATaskConflictPolicyAppend
+                                                                requiresNetwork:NO
+                                                                         extras:@{@"retrieveCallback" : callback}]] requestOptions];
+    self.launchHandler(mockTask);
 }
 
 @end

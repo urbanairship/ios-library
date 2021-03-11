@@ -8,6 +8,7 @@
 #import "UAAttributePendingMutations.h"
 #import "UAPersistentQueue+Internal.h"
 #import "UAAttributeMutations.h"
+#import "UATaskManager.h"
 
 @interface UAAttributeRegistrarTest : UAAirshipBaseTest
 @property (nonatomic, strong) UAAttributeRegistrar *registrar;
@@ -34,9 +35,6 @@
 }
 
 - (void)testUpdateAttributes {
-    // Background task
-    [[[self.mockApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)30)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
-
     UAAttributeMutations *breakfastDrink = [UAAttributeMutations mutations];
     [breakfastDrink setString:@"coffee" forAttribute:@"breakfastDrink"];
     UAAttributePendingMutations *breakfastMutations = [UAAttributePendingMutations pendingMutationsWithMutations:breakfastDrink
@@ -45,298 +43,126 @@
     UAAttributeMutations *lunchDrink = [UAAttributeMutations mutations];
     [lunchDrink setString:@"Code Red" forAttribute:@"lunchDrink"];
     UAAttributePendingMutations *lunchDrinkMutations = [UAAttributePendingMutations pendingMutationsWithMutations:lunchDrink
-
                                                                                                              date:self.testDate];
+
     [self.registrar savePendingMutations:breakfastMutations];
     [self.registrar savePendingMutations:lunchDrinkMutations];
 
     UAAttributePendingMutations *expectedMutations = [UAAttributePendingMutations collapseMutations:@[breakfastMutations, lunchDrinkMutations]];
 
-    XCTestExpectation *apiClientResponse = [self expectationWithDescription:@"client finished"];
+    UAHTTPResponse *response = [[UAHTTPResponse alloc] initWithStatus:200];
+
     [[[self.mockApiClient expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:4];
-        void (^completionHandler)(NSError *) = (__bridge void (^)(NSError *))arg;
-        completionHandler(nil);
-        [apiClientResponse fulfill];
+        void (^completionHandler)(UAHTTPResponse *, NSError *) = (__bridge void (^)(UAHTTPResponse *, NSError *))arg;
+        completionHandler(response, nil);
     }] updateWithIdentifier:self.registrar.identifier attributeMutations:expectedMutations completionHandler:OCMOCK_ANY];
 
-
-    [[self.mockApplication expect] endBackgroundTask:30];
-
-    [self.registrar updateAttributes];
+    XCTestExpectation *updateCompleted = [self expectationWithDescription:@"updateCompleted"];
+    [self.registrar updateAttributesWithCompletionHandler:^(UAAttributeUploadResult result) {
+        XCTAssertEqual(UAAttributeUploadResultFinished, result);
+        [updateCompleted fulfill];
+    }];
 
     [self waitForTestExpectations];
     [self.mockApiClient verify];
-    [self.mockApplication verify];
     XCTAssertNil([self.persistentQueue peekObject]);
 }
 
-- (void)testUpdateAttributesContinuesUploadsAfterSuccess {
-    // Background task
-    [[[self.mockApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)30)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
+- (void)testUpdateTagGroupsClientError {
+    UAAttributeMutations *attributes = [UAAttributeMutations mutations];
+    [attributes setString:@"Code Red" forAttribute:@"drink"];
+    UAAttributePendingMutations *pending = [UAAttributePendingMutations pendingMutationsWithMutations:attributes
+                                                                                                 date:self.testDate];
+    [self.registrar savePendingMutations:pending];
 
-    UAAttributeMutations *breakfastDrink = [UAAttributeMutations mutations];
-    [breakfastDrink setString:@"coffee" forAttribute:@"breakfastDrink"];
-    UAAttributePendingMutations *breakfastMutations = [UAAttributePendingMutations pendingMutationsWithMutations:breakfastDrink
-                                                                                                            date:self.testDate];
-
-    UAAttributeMutations *lunchDrink = [UAAttributeMutations mutations];
-    [lunchDrink setString:@"Code Red" forAttribute:@"lunchDrink"];
-    UAAttributePendingMutations *lunchDrinkMutations = [UAAttributePendingMutations pendingMutationsWithMutations:lunchDrink
-                                                                                                             date:self.testDate];
-
-    UAAttributeMutations *teaTimeDrink = [UAAttributeMutations mutations];
-    [teaTimeDrink setString:@"tea" forAttribute:@"teaTimeDrink"];
-    UAAttributePendingMutations *teaTimeMutations = [UAAttributePendingMutations pendingMutationsWithMutations:teaTimeDrink
-                                                                                                          date:self.testDate];
-    // Save initial mutations
-    [self.registrar savePendingMutations:breakfastMutations];
-    [self.registrar savePendingMutations:lunchDrinkMutations];
-
-    UAAttributePendingMutations *initialMutations = [UAAttributePendingMutations collapseMutations:@[breakfastMutations, lunchDrinkMutations]];
-
-    XCTestExpectation *apiClientResponse = [self expectationWithDescription:@"client finished"];
-    [[[self.mockApiClient expect] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:4];
-        void (^completionHandler)(NSError *) = (__bridge void (^)(NSError *))arg;
-        // Save new mutations while the client is still working
-        [self.registrar savePendingMutations:teaTimeMutations];
-
-        completionHandler(nil);
-    }] updateWithIdentifier:self.registrar.identifier attributeMutations:initialMutations completionHandler:OCMOCK_ANY];
-
-    [[self.mockApplication expect] endBackgroundTask:30];
+    UAHTTPResponse *response = [[UAHTTPResponse alloc] initWithStatus:400];
 
     [[[self.mockApiClient expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:4];
-        void (^completionHandler)(NSError *) = (__bridge void (^)(NSError *))arg;
-        completionHandler(nil);
-        [apiClientResponse fulfill];
-    }] updateWithIdentifier:self.registrar.identifier attributeMutations:teaTimeMutations completionHandler:OCMOCK_ANY];
+        void (^completionHandler)(UAHTTPResponse *, NSError *) = (__bridge void (^)(UAHTTPResponse *, NSError *))arg;
+        completionHandler(response, nil);
+    }] updateWithIdentifier:self.registrar.identifier attributeMutations:pending completionHandler:OCMOCK_ANY];
 
-    [self.registrar updateAttributes];
-
+    XCTestExpectation *updateCompleted = [self expectationWithDescription:@"updateCompleted"];
+    [self.registrar updateAttributesWithCompletionHandler:^(UAAttributeUploadResult result) {
+        XCTAssertEqual(UAAttributeUploadResultFinished, result);
+        [updateCompleted fulfill];
+    }];
 
     [self waitForTestExpectations];
     [self.mockApiClient verify];
-    [self.mockApplication verify];
+
     XCTAssertNil([self.persistentQueue peekObject]);
 }
 
-- (void)testUpdateAttributesContinuesUploadsAfterUnrecoverableStatus {
-    // Background task
-    [[[self.mockApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)30)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
+- (void)testUpdateTagGroupsServerError {
+    UAAttributeMutations *attributes = [UAAttributeMutations mutations];
+    [attributes setString:@"Code Red" forAttribute:@"drink"];
+    UAAttributePendingMutations *pending = [UAAttributePendingMutations pendingMutationsWithMutations:attributes
+                                                                                                 date:self.testDate];
+    [self.registrar savePendingMutations:pending];
 
-    UAAttributeMutations *breakfastDrink = [UAAttributeMutations mutations];
-    [breakfastDrink setString:@"coffee" forAttribute:@"breakfastDrink"];
-    UAAttributePendingMutations *breakfastMutations = [UAAttributePendingMutations pendingMutationsWithMutations:breakfastDrink
-                                                                                                            date:self.testDate];
-
-    UAAttributeMutations *lunchDrink = [UAAttributeMutations mutations];
-    [lunchDrink setString:@"Code Red" forAttribute:@"lunchDrink"];
-    UAAttributePendingMutations *lunchDrinkMutations = [UAAttributePendingMutations pendingMutationsWithMutations:lunchDrink
-                                                                                                             date:self.testDate];
-
-    UAAttributeMutations *teaTimeDrink = [UAAttributeMutations mutations];
-    [teaTimeDrink setString:@"tea" forAttribute:@"teaTimeDrink"];
-    UAAttributePendingMutations *teaTimeMutations = [UAAttributePendingMutations pendingMutationsWithMutations:teaTimeDrink
-                                                                                                          date:self.testDate];
-    // Save initial mutations
-    [self.registrar savePendingMutations:breakfastMutations];
-    [self.registrar savePendingMutations:lunchDrinkMutations];
-
-    UAAttributePendingMutations *initialMutations = [UAAttributePendingMutations collapseMutations:@[breakfastMutations, lunchDrinkMutations]];
-
-    XCTestExpectation *apiClientResponse = [self expectationWithDescription:@"client finished"];
-    [[[self.mockApiClient expect] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:4];
-        void (^completionHandler)(NSError *) = (__bridge void (^)(NSError *))arg;
-
-        // Save new mutations while the client is still working
-        [self.registrar savePendingMutations:teaTimeMutations];
-
-        completionHandler([NSError errorWithDomain:UAAttributeAPIClientErrorDomain
-                                              code:UAAttributeAPIClientErrorUnrecoverableStatus
-                                          userInfo:@{}]);
-    }] updateWithIdentifier:self.registrar.identifier attributeMutations:initialMutations completionHandler:OCMOCK_ANY];
-
-    [[self.mockApplication expect] endBackgroundTask:30];
+    UAHTTPResponse *response = [[UAHTTPResponse alloc] initWithStatus:500];
 
     [[[self.mockApiClient expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:4];
-        void (^completionHandler)(NSError *) = (__bridge void (^)(NSError *))arg;
-        completionHandler(nil);
-        [apiClientResponse fulfill];
-    }] updateWithIdentifier:self.registrar.identifier attributeMutations:teaTimeMutations completionHandler:OCMOCK_ANY];
+        void (^completionHandler)(UAHTTPResponse *, NSError *) = (__bridge void (^)(UAHTTPResponse *, NSError *))arg;
+        completionHandler(response, nil);
+    }] updateWithIdentifier:self.registrar.identifier attributeMutations:pending completionHandler:OCMOCK_ANY];
 
-    [self.registrar updateAttributes];
-
+    XCTestExpectation *updateCompleted = [self expectationWithDescription:@"updateCompleted"];
+    [self.registrar updateAttributesWithCompletionHandler:^(UAAttributeUploadResult result) {
+        XCTAssertEqual(UAAttributeUploadResultFailed, result);
+        [updateCompleted fulfill];
+    }];
 
     [self waitForTestExpectations];
     [self.mockApiClient verify];
-    [self.mockApplication verify];
-    XCTAssertNil([self.persistentQueue peekObject]);
+
+    XCTAssertEqualObjects(self.persistentQueue.peekObject, pending);
 }
 
-- (void)testUpdateAttributesDoesNotPopOrContinueAfterUnsuccessfulStatus {
-    // Background task
-    [[[self.mockApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)30)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
-
-    UAAttributeMutations *breakfastDrink = [UAAttributeMutations mutations];
-    [breakfastDrink setString:@"coffee" forAttribute:@"breakfastDrink"];
-    UAAttributePendingMutations *breakfastMutations = [UAAttributePendingMutations pendingMutationsWithMutations:breakfastDrink
-                                                                                                            date:self.testDate];
-
-    UAAttributeMutations *lunchDrink = [UAAttributeMutations mutations];
-    [lunchDrink setString:@"Code Red" forAttribute:@"lunchDrink"];
-    UAAttributePendingMutations *lunchDrinkMutations = [UAAttributePendingMutations pendingMutationsWithMutations:lunchDrink
-                                                                                                             date:self.testDate];
-
-    UAAttributeMutations *teaTimeDrink = [UAAttributeMutations mutations];
-    [teaTimeDrink setString:@"tea" forAttribute:@"teaTimeDrink"];
-    UAAttributePendingMutations *teaTimeMutations = [UAAttributePendingMutations pendingMutationsWithMutations:teaTimeDrink
-                                                                                                          date:self.testDate];
-    // Save initial mutations
-    [self.registrar savePendingMutations:breakfastMutations];
-    [self.registrar savePendingMutations:lunchDrinkMutations];
-
-    UAAttributePendingMutations *initialMutations = [UAAttributePendingMutations collapseMutations:@[breakfastMutations, lunchDrinkMutations]];
-
-    XCTestExpectation *apiClientResponse = [self expectationWithDescription:@"client finished"];
-    [[[self.mockApiClient expect] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:4];
-        void (^completionHandler)(NSError *) = (__bridge void (^)(NSError *))arg;
-
-        // Save new mutations while the client is still working
-        [self.registrar savePendingMutations:teaTimeMutations];
-
-        completionHandler([NSError errorWithDomain:UAAttributeAPIClientErrorDomain
-                                              code:UAAttributeAPIClientErrorUnsuccessfulStatus
-                                          userInfo:@{}]);
-        [apiClientResponse fulfill];
-    }] updateWithIdentifier:self.registrar.identifier attributeMutations:initialMutations completionHandler:OCMOCK_ANY];
-
-    [[self.mockApplication expect] endBackgroundTask:30];
-
-    [[self.mockApiClient reject] updateWithIdentifier:OCMOCK_ANY attributeMutations:OCMOCK_ANY completionHandler:OCMOCK_ANY];
-
-    [self.registrar updateAttributes];
-
-    [self waitForTestExpectations];
-    [self.mockApiClient verify];
-    [self.mockApplication verify];
-    XCTAssertEqualObjects(self.persistentQueue.peekObject, initialMutations);
-    [self.persistentQueue popObject];
-    XCTAssertEqualObjects(self.persistentQueue.peekObject, teaTimeMutations);
-}
-
-- (void)testUpdateAttributesDoesNotPopOrContinueAfterError{
-    // Background task
-    [[[self.mockApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)30)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
-
-    UAAttributeMutations *breakfastDrink = [UAAttributeMutations mutations];
-    [breakfastDrink setString:@"coffee" forAttribute:@"breakfastDrink"];
-    UAAttributePendingMutations *breakfastMutations = [UAAttributePendingMutations pendingMutationsWithMutations:breakfastDrink
-                                                                                                            date:self.testDate];
-
-    UAAttributeMutations *lunchDrink = [UAAttributeMutations mutations];
-    [lunchDrink setString:@"Code Red" forAttribute:@"lunchDrink"];
-    UAAttributePendingMutations *lunchDrinkMutations = [UAAttributePendingMutations pendingMutationsWithMutations:lunchDrink
-                                                                                                             date:self.testDate];
-
-    UAAttributeMutations *teaTimeDrink = [UAAttributeMutations mutations];
-    [teaTimeDrink setString:@"tea" forAttribute:@"teaTimeDrink"];
-    UAAttributePendingMutations *teaTimeMutations = [UAAttributePendingMutations pendingMutationsWithMutations:teaTimeDrink
-                                                                                                          date:self.testDate];
-    // Save initial mutations
-    [self.registrar savePendingMutations:breakfastMutations];
-    [self.registrar savePendingMutations:lunchDrinkMutations];
-
-    UAAttributePendingMutations *initialMutations = [UAAttributePendingMutations collapseMutations:@[breakfastMutations, lunchDrinkMutations]];
-
-    XCTestExpectation *apiClientResponse = [self expectationWithDescription:@"client finished"];
-    [[[self.mockApiClient expect] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:4];
-        void (^completionHandler)(NSError *) = (__bridge void (^)(NSError *))arg;
-
-        // Save new mutations while the client is still working
-        [self.registrar savePendingMutations:teaTimeMutations];
-
-        completionHandler([NSError errorWithDomain:@"error" code:0 userInfo:@{}]);
-        [apiClientResponse fulfill];
-    }] updateWithIdentifier:self.registrar.identifier attributeMutations:initialMutations completionHandler:OCMOCK_ANY];
-
-    [[self.mockApplication expect] endBackgroundTask:30];
-
-    [[self.mockApiClient reject] updateWithIdentifier:OCMOCK_ANY attributeMutations:OCMOCK_ANY completionHandler:OCMOCK_ANY];
-
-    [self.registrar updateAttributes];
-
-    [self waitForTestExpectations];
-    [self.mockApiClient verify];
-    [self.mockApplication verify];
-    XCTAssertEqualObjects(self.persistentQueue.peekObject, initialMutations);
-    [self.persistentQueue popObject];
-    XCTAssertEqualObjects(self.persistentQueue.peekObject, teaTimeMutations);
-}
-
-- (void)testUpdateAttributesError {
-    // Background task
-    [[[self.mockApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)30)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
-
-    UAAttributeMutations *breakfastDrink = [UAAttributeMutations mutations];
-    [breakfastDrink setString:@"coffee" forAttribute:@"breakfastDrink"];
-    UAAttributePendingMutations *breakfastMutations = [UAAttributePendingMutations pendingMutationsWithMutations:breakfastDrink
-                                                                                                            date:self.testDate];
-    [self.registrar savePendingMutations:breakfastMutations];
+- (void)testUpdateTagGroupsError {
+    UAAttributeMutations *attributes = [UAAttributeMutations mutations];
+    [attributes setString:@"Code Red" forAttribute:@"drink"];
+    UAAttributePendingMutations *pending = [UAAttributePendingMutations pendingMutationsWithMutations:attributes
+                                                                                                 date:self.testDate];
+    [self.registrar savePendingMutations:pending];
 
     NSError *error = [NSError errorWithDomain:@"test" code:20000 userInfo:nil];
-    XCTestExpectation *apiClientResponse = [self expectationWithDescription:@"client finished"];
+
     [[[self.mockApiClient expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:4];
-        void (^completionHandler)(NSError *) = (__bridge void (^)(NSError *))arg;
-        completionHandler(error);
-        [apiClientResponse fulfill];
-    }] updateWithIdentifier:self.registrar.identifier attributeMutations:breakfastMutations completionHandler:OCMOCK_ANY];
+        void (^completionHandler)(UAHTTPResponse *, NSError *) = (__bridge void (^)(UAHTTPResponse *, NSError *))arg;
+        completionHandler(nil, error);
+    }] updateWithIdentifier:self.registrar.identifier attributeMutations:pending completionHandler:OCMOCK_ANY];
 
-    [[self.mockApplication expect] endBackgroundTask:30];
-
-    [self.registrar updateAttributes];
+    XCTestExpectation *updateCompleted = [self expectationWithDescription:@"updateCompleted"];
+    [self.registrar updateAttributesWithCompletionHandler:^(UAAttributeUploadResult result) {
+        XCTAssertEqual(UAAttributeUploadResultFailed, result);
+        [updateCompleted fulfill];
+    }];
 
     [self waitForTestExpectations];
     [self.mockApiClient verify];
-    [self.mockApplication verify];
-    XCTAssertEqualObjects(breakfastMutations, [self.persistentQueue peekObject]);
+
+    XCTAssertEqualObjects(self.persistentQueue.peekObject, pending);
 }
 
-- (void)testUpdateInvalidBackgroundTask {
-    UAAttributeMutations *mutations = [UAAttributeMutations mutations];
-    [mutations setString:@"coffee" forAttribute:@"cup"];
-    [self.registrar savePendingMutations:[UAAttributePendingMutations pendingMutationsWithMutations:mutations date:self.testDate]];
+- (void)testUpdateTagGroupsNoPendingMutations{
+    XCTestExpectation *updateCompleted = [self expectationWithDescription:@"updateCompleted"];
+    [self.registrar updateAttributesWithCompletionHandler:^(UAAttributeUploadResult result) {
+        XCTAssertEqual(UAAttributeUploadResultUpToDate, result);
+        [updateCompleted fulfill];
+    }];
 
-    // prevent beginRegistrationBackgroundTask early return
-    [[[self.mockApplication stub] andReturnValue:OCMOCK_VALUE(UIBackgroundTaskInvalid)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
-
-    // EXPECTATIONS
-    [[self.mockApiClient reject] updateWithIdentifier:OCMOCK_ANY
-                                   attributeMutations:OCMOCK_ANY
-                                    completionHandler:OCMOCK_ANY];
-
-    // TEST
-    [self.registrar updateAttributes];
-
-    // VERIFY
-    [self.mockApiClient verify];
+    [self waitForTestExpectations];
 }
-
 
 - (void)testClearAllPendingUpdatesCancelsAndClearsMutations {
     UAAttributeMutations *mutations = [UAAttributeMutations mutations];
@@ -347,17 +173,6 @@
 
     [self.registrar clearPendingMutations];
     XCTAssertNil([self.persistentQueue peekObject]);
-}
-
-- (void)testEnabledByDefault {
-    XCTAssertTrue(self.registrar.enabled);
-}
-
-- (void)testSetEnabled {
-    [[self.mockApiClient expect] setEnabled:NO];
-    self.registrar.enabled = NO;
-    XCTAssertFalse(self.registrar.enabled);
-    [self.mockApiClient verify];
 }
 
 - (void)testSetIdentifier {
@@ -398,6 +213,5 @@
     UAAttributePendingMutations *expected = [UAAttributePendingMutations collapseMutations:@[breakfastMutations, lunchDrinkMutations]];
     XCTAssertEqualObjects(expected, self.registrar.pendingMutations);
 }
-
 
 @end

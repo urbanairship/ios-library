@@ -10,15 +10,23 @@
 #import "UAUtils+Internal.h"
 #import "UAAppStateTracker.h"
 #import "UALocaleManager+Internal.h"
+#import "UATaskManager.h"
+#import "UATask.h"
+#import "UASemaphore.h"
+#import "UARemoteConfigURLManager.h"
 
-NSString * const kUACoreDataStoreName = @"RemoteData-%@.sqlite";
-NSString * const UARemoteDataRefreshIntervalKey = @"remotedata.REFRESH_INTERVAL";
-NSString * const UARemoteDataLastRefreshTimeKey = @"remotedata.LAST_REFRESH_TIME";
-NSString * const UARemoteDataLastRefreshMetadataKey = @"remotedata.LAST_REFRESH_METADATA";
-NSString * const UARemoteDataLastRefreshAppVersionKey = @"remotedata.LAST_REFRESH_APP_VERSION";
-NSString * const UARemoteDataRefreshPayloadKey = @"com.urbanairship.remote-data.update";
+static NSString * const UACoreDataStoreName = @"RemoteData-%@.sqlite";
+static NSString * const UARemoteDataRefreshPayloadKey = @"com.urbanairship.remote-data.update";
+static NSString * const UARemoteDataRefreshTask = @"UARemoteDataManager.refresh";
+static NSInteger const UARemoteDataRefreshIntervalDefault = 0;
+static NSString * const UARemoteDataURLMetadataKey = @"url";
 
-NSInteger const UARemoteDataRefreshIntervalDefault = 0;
+// Datastore keys
+static NSString * const UARemoteDataRefreshIntervalKey = @"remotedata.REFRESH_INTERVAL";
+static NSString * const UARemoteDataLastRefreshMetadataKey = @"remotedata.LAST_REFRESH_METADATA";
+static NSString * const UARemoteDataLastRefreshTimeKey = @"remotedata.LAST_REFRESH_TIME";
+static NSString * const UARemoteDataLastRefreshAppVersionKey = @"remotedata.LAST_REFRESH_APP_VERSION";
+static NSString * const UALastRemoteDataModifiedTime = @"UALastRemoteDataModifiedTime";
 
 @interface UARemoteDataSubscription : NSObject
 
@@ -51,24 +59,34 @@ NSInteger const UARemoteDataRefreshIntervalDefault = 0;
  * Notifies a single remote data subscriber.
  *
  * @param remoteDataPayloads The remote data payloads to be sent to the subscriber.
- * @param completionHandler Optional completion handler called after the subscriber has been notified.
+ * @param completionHandler Completion handler called after the subscriber has been notified.
  */
 - (void)notifyRemoteData:(NSArray<UARemoteDataPayload *> *)remoteDataPayloads
               dispatcher:(UADispatcher *)dispatcher
        completionHandler:(void (^)(void))completionHandler {
 
+
+    NSArray *sorted = [remoteDataPayloads sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
+        UARemoteDataPayload *payload1 = (UARemoteDataPayload *)obj1;
+        UARemoteDataPayload *payload2 = (UARemoteDataPayload *)obj2;
+        NSUInteger indexObj1 = [self.payloadTypes indexOfObject:payload1.type];
+        NSUInteger indexObj2 = [self.payloadTypes indexOfObject:payload2.type];
+        if (indexObj1 == indexObj2) {
+            return NSOrderedSame;
+        }
+        return indexObj1 > indexObj2 ? NSOrderedDescending : NSOrderedAscending;
+    }];
+
     [dispatcher dispatchAsync:^{
-        if (remoteDataPayloads.count && ![self.previousPayloads isEqualToArray:remoteDataPayloads]) {
+        if (remoteDataPayloads.count && ![self.previousPayloads isEqualToArray:sorted]) {
             @synchronized(self) {
                 if (self.publishBlock) {
-                    self.publishBlock(remoteDataPayloads);
+                    self.publishBlock(sorted);
                 }
-                self.previousPayloads = remoteDataPayloads;
+                self.previousPayloads = sorted;
             }
         }
-        if (completionHandler) {
-            completionHandler();
-        }
+        completionHandler();
     }];
 }
 
@@ -84,7 +102,7 @@ NSInteger const UARemoteDataRefreshIntervalDefault = 0;
 @property (nonatomic, strong) NSNotificationCenter *notificationCenter;
 @property (nonatomic, strong) UAAppStateTracker *appStateTracker;
 @property (nonatomic, strong) UALocaleManager *localeManager;
-
+@property (nonatomic, strong) UATaskManager *taskManager;
 @end
 
 @implementation UARemoteDataManager
@@ -97,7 +115,8 @@ NSInteger const UARemoteDataRefreshIntervalDefault = 0;
                         appStateTracker:(UAAppStateTracker *)appStateTracker
                              dispatcher:(UADispatcher *)dispatcher
                                    date:(UADate *)date
-                                 locale:(UALocaleManager *)localeManager {
+                                 locale:(UALocaleManager *)localeManager
+                            taskManager:(UATaskManager *)taskManager {
 
     self = [super initWithDataStore:dataStore];
     if (self) {
@@ -110,21 +129,33 @@ NSInteger const UARemoteDataRefreshIntervalDefault = 0;
         self.remoteDataAPIClient = remoteDataAPIClient;
         self.appStateTracker = appStateTracker;
         self.localeManager = localeManager;
+        self.taskManager = taskManager;
 
         // Register for locale change notification
         [self.notificationCenter addObserver:self
-                                    selector:@selector(localeRefresh)
+                                    selector:@selector(checkRefresh)
                                         name:UALocaleUpdatedEvent
                                       object:nil];
 
         [self.notificationCenter addObserver:self
-                                    selector:@selector(applicationWillEnterForeground)
+                                    selector:@selector(checkRefresh)
                                         name:UAApplicationDidTransitionToForeground
                                       object:nil];
 
-        if ([self shouldRefresh]) {
-            [self refresh];
-        }
+        [self.notificationCenter addObserver:self
+                                    selector:@selector(enqueueRefreshTask)
+                                        name:UARemoteConfigURLManagerConfigUpdated
+                                      object:nil];
+
+        UA_WEAKIFY(self)
+        [self.taskManager registerForTaskWithID:UARemoteDataRefreshTask
+                                     dispatcher:[UADispatcher serialDispatcher]
+                                  launchHandler:^(id<UATask> task) {
+            UA_STRONGIFY(self)
+            [self handleRefreshTask:task];
+        }];
+
+        [self checkRefresh];
     }
 
     return self;
@@ -133,16 +164,17 @@ NSInteger const UARemoteDataRefreshIntervalDefault = 0;
 + (UARemoteDataManager *)remoteDataManagerWithConfig:(UARuntimeConfig *)config
                                            dataStore:(UAPreferenceDataStore *)dataStore
                                        localeManager:(UALocaleManager *)localeManager {
-    UARemoteDataStore *remoteDataStore = [UARemoteDataStore storeWithName:[NSString stringWithFormat:kUACoreDataStoreName, config.appKey]];
+    UARemoteDataStore *remoteDataStore = [UARemoteDataStore storeWithName:[NSString stringWithFormat:UACoreDataStoreName, config.appKey]];
     return [self remoteDataManagerWithConfig:config
                                    dataStore:dataStore
                              remoteDataStore:remoteDataStore
-                         remoteDataAPIClient:[UARemoteDataAPIClient clientWithConfig:config dataStore:dataStore localeManager:localeManager]
+                         remoteDataAPIClient:[UARemoteDataAPIClient clientWithConfig:config]
                           notificationCenter:[NSNotificationCenter defaultCenter]
                              appStateTracker:[UAAppStateTracker shared]
                                   dispatcher:[UADispatcher mainDispatcher]
                                         date:[[UADate alloc] init]
-                               localeManager:localeManager];
+                               localeManager:localeManager
+                                 taskManager:[UATaskManager shared]];
 }
 
 + (instancetype)remoteDataManagerWithConfig:(UARuntimeConfig *)config
@@ -153,7 +185,8 @@ NSInteger const UARemoteDataRefreshIntervalDefault = 0;
                             appStateTracker:(UAAppStateTracker *)appStateTracker
                                  dispatcher:(UADispatcher *)dispatcher
                                        date:(UADate *)date
-                              localeManager:(UALocaleManager *)localeManager {
+                              localeManager:(UALocaleManager *)localeManager
+                                taskManager:(UATaskManager *)taskManager {
 
     return [[self alloc] initWithConfig:config
                               dataStore:dataStore
@@ -163,7 +196,8 @@ NSInteger const UARemoteDataRefreshIntervalDefault = 0;
                         appStateTracker:appStateTracker
                              dispatcher:dispatcher
                                    date:date
-                                 locale:localeManager];
+                                 locale:localeManager
+                            taskManager:taskManager];
 }
 
 - (NSUInteger)remoteDataRefreshInterval {
@@ -176,8 +210,9 @@ NSInteger const UARemoteDataRefreshIntervalDefault = 0;
     return [self.dataStore integerForKey:UARemoteDataRefreshIntervalKey];
 }
 
-- (NSDate *)lastModified {
-    return [self.dataStore objectForKey:UARemoteDataLastRefreshTimeKey];
+- (void)setRemoteDataRefreshInterval:(NSUInteger)remoteDataRefreshInterval {
+    // save in the data store
+    [self.dataStore setInteger:remoteDataRefreshInterval forKey:UARemoteDataRefreshIntervalKey];
 }
 
 - (NSDictionary *)lastMetadata {
@@ -186,11 +221,6 @@ NSInteger const UARemoteDataRefreshIntervalDefault = 0;
 
 - (void)setLastMetadata:(NSDictionary *)metadata {
     [self.dataStore setObject:metadata forKey:UARemoteDataLastRefreshMetadataKey];
-}
-
-- (void)setRemoteDataRefreshInterval:(NSUInteger)remoteDataRefreshInterval {
-    // save in the data store
-    [self.dataStore setInteger:remoteDataRefreshInterval forKey:UARemoteDataRefreshIntervalKey];
 }
 
 - (nonnull UADisposable *)subscribeWithTypes:(nonnull NSArray<NSString *> *)payloadTypes block:(nonnull UARemoteDataPublishBlock)publishBlock {
@@ -221,43 +251,18 @@ NSInteger const UARemoteDataRefreshIntervalDefault = 0;
     return disposable;
 }
 
-#pragma mark -
-#pragma mark Application State
-
-- (void)applicationWillEnterForeground {
-    UA_LTRACE(@"Application will enter foreground.");
-
-    // refresh the data from the cloud
-    [self foregroundRefresh];
-}
-
-// foregroundRefresh refreshes only if the time since the last refresh is greater than the minimum foreground refresh interval
-- (void)foregroundRefresh {
-    [self foregroundRefreshWithCompletionHandler:nil];
-}
-
-- (void)localeRefresh {
+- (void)checkRefresh {
     if ([self shouldRefresh]) {
-        // if app locale has changed, force a refresh
-        [self refresh];
+        [self enqueueRefreshTask];
     }
 }
 
-- (void)foregroundRefreshWithCompletionHandler:(nullable void(^)(BOOL success))completionHandler {
-    if ([self shouldRefresh]) {
-        [self refreshWithCompletionHandler:completionHandler];
-    } else {
-        if (completionHandler) {
-            completionHandler(YES);
-        }
-    }
+- (void)enqueueRefreshTask {
+    [self.taskManager enqueueRequestWithID:UARemoteDataRefreshTask
+                                   options:[UATaskRequestOptions defaultOptions]];
 }
 
-- (void)refresh {
-    [self refreshWithCompletionHandler:nil];
-}
-
--(BOOL)shouldRefresh {
+- (BOOL)shouldRefresh {
     NSDate *lastRefreshTime = [self.dataStore objectForKey:UARemoteDataLastRefreshTimeKey] ?: [NSDate distantPast];
     NSTimeInterval timeSinceLastRefresh = -([lastRefreshTime timeIntervalSinceDate:self.date.now]);
 
@@ -280,66 +285,96 @@ NSInteger const UARemoteDataRefreshIntervalDefault = 0;
     return false;
 }
 
-- (void)onNewData:(NSArray<NSDictionary *> *)remoteData
-         metadata:(NSDictionary *)metadata
-     lastModified:(NSDate *)lastModified
-completionHandler:(void(^)(BOOL success))completionHandler {
-    // The result from this can be empty if any expected fields are missing from JSON
-    NSArray<UARemoteDataPayload *> *payloads = [UARemoteDataPayload remoteDataPayloadsFromJSON:remoteData metadata:metadata];
+- (void)handleRefreshTask:(id<UATask>)task {
+    NSString *lastModified;
+    if ([self isLastMetadataCurrent]) {
+        lastModified = [self.dataStore stringForKey:UALastRemoteDataModifiedTime];
+    }
+    NSLocale *locale = self.localeManager.currentLocale;
+
+    UASemaphore *semaphore = [UASemaphore semaphore];
 
     UA_WEAKIFY(self);
-    [self.remoteDataStore overwriteCachedRemoteDataWithResponse:payloads completionHandler:^(BOOL success) {
-        UA_STRONGIFY(self);
-        if (!success) {
-            [self.remoteDataAPIClient clearLastModifiedTime];
-            if (completionHandler) {
-                completionHandler(NO);
-            }
+    UADisposable *disposable = [self.remoteDataAPIClient fetchRemoteDataWithLocale:locale
+                                                                      lastModified:lastModified
+                                                                 completionHandler:^(UARemoteDataResponse *response, NSError * error) {
+        UA_STRONGIFY(self)
+        if (error) {
+            UA_LDEBUG(@"Failed to refresh remote-data with error: %@", error);
+            [task taskFailed];
+            [semaphore signal];
             return;
         }
 
-        [self.dataStore setObject:lastModified forKey:UARemoteDataLastRefreshTimeKey];
-        self.lastMetadata = metadata;
+        if (response.status == 304) {
+            [self.dataStore setValue:self.date.now forKey:UARemoteDataLastRefreshTimeKey];
+            [self.dataStore setObject:[UAUtils bundleShortVersionString] forKey:UARemoteDataLastRefreshAppVersionKey];
+            [task taskCompleted];
+            [semaphore signal];
+        } else if (response.isSuccess) {
+            NSDictionary *metadata = [self createMetadataWithRemoteDataURL:response.requestURL];
+            NSArray<UARemoteDataPayload *> *payloads = [UARemoteDataPayload remoteDataPayloadsFromJSON:response.payloads
+                                                                                              metadata:metadata];
+            [self.remoteDataStore overwriteCachedRemoteDataWithResponse:payloads completionHandler:^(BOOL success) {
+                UA_STRONGIFY(self);
+                if (success) {
+                    UA_LDEBUG(@"Updated remote-data with payloads: %@", payloads);
 
-        // notify remote data subscribers
-        [self notifySubscribersWithRemoteData:payloads completionHandler:^{
-            if (completionHandler) {
-                completionHandler(YES);
-            }
-        }];
-    }];
-}
+                    self.lastMetadata = metadata;
+                    [self.dataStore setValue:response.lastModified forKey:UALastRemoteDataModifiedTime];
+                    [self.dataStore setObject:[UAUtils bundleShortVersionString] forKey:UARemoteDataLastRefreshAppVersionKey];
+                    [self.dataStore setValue:self.date.now forKey:UARemoteDataLastRefreshTimeKey];
 
-- (void)refreshWithCompletionHandler:(void(^)(BOOL success))completionHandler {
 
-    if (![self isLastMetadataCurrent]) {
-        [self.remoteDataAPIClient clearLastModifiedTime];
-    }
-
-    UA_WEAKIFY(self);
-    [self.remoteDataAPIClient fetchRemoteData:^(NSArray<NSDictionary *> * _Nullable remoteDatas, NSError * _Nullable error) {
-        UA_STRONGIFY(self)
-        if (error) {
-            if (completionHandler) {
-                completionHandler(NO);
-            }
-        } else {
-            // New remote data
-            if (remoteDatas) {
-                NSString *currentAppVersion = [UAUtils bundleShortVersionString];
-                [self.dataStore setObject:currentAppVersion forKey:UARemoteDataLastRefreshAppVersionKey];
-
-                NSDictionary *metadata = [self createMetadata:[self.localeManager currentLocale]];
-
-                [self onNewData:remoteDatas metadata:metadata lastModified:[NSDate date] completionHandler:completionHandler];
-            } else {
-                // Up to date
-                if (completionHandler) {
-                    completionHandler(YES);
+                    // notify remote data subscribers
+                    [self notifySubscribersWithRemoteData:payloads completionHandler:^{
+                        [task taskCompleted];
+                        [semaphore signal];
+                    }];
+                } else {
+                    UA_LWARN(@"Failed to save updated remote-data");
+                    [task taskFailed];
+                    [semaphore signal];
                 }
+            }];
+        } else {
+            UA_LDEBUG(@"Failed to refresh remote-data with response: %@", response);
+            if (response.isServerError) {
+                [task taskFailed];
+            } else {
+                [task taskCompleted];
             }
+            [semaphore signal];
         }
     }];
+
+    task.expirationHandler = ^{
+        [disposable dispose];
+    };
+
+    [semaphore wait];
+}
+
+- (BOOL)isMetadataCurrent:(NSDictionary *)metadata {
+    NSDictionary *currentMetadata = [self createMetadataWithLocale:[self.localeManager currentLocale]];
+    return [currentMetadata isEqualToDictionary:metadata];
+}
+
+- (BOOL)isLastMetadataCurrent {
+    NSDictionary *metadataAtTimeOfLastRefresh = self.lastMetadata;
+    NSDictionary *currentMetadata = [self createMetadataWithLocale:[self.localeManager currentLocale]];
+    return [metadataAtTimeOfLastRefresh isEqualToDictionary:currentMetadata];
+}
+
+-(NSDictionary *)createMetadataWithLocale:(NSLocale *)locale {
+    NSURL *URL = [self.remoteDataAPIClient remoteDataURLWithLocale:locale];
+    return [self createMetadataWithRemoteDataURL:URL];
+}
+
+-(NSDictionary *)createMetadataWithRemoteDataURL:(NSURL *)remoteDataURL {
+    NSMutableDictionary *metadata = [NSMutableDictionary dictionary];
+    [metadata setValue:remoteDataURL.absoluteString forKey:UARemoteDataURLMetadataKey];
+    return metadata;
 }
 
 -(BOOL)isLastAppVersionCurrent {
@@ -352,30 +387,6 @@ completionHandler:(void(^)(BOOL success))completionHandler {
     return true;
 }
 
-
--(BOOL)isMetadataCurrent:(NSDictionary *)metadata {
-    NSDictionary *currentMetadata = [self createMetadata:[self.localeManager currentLocale]];
-
-    return [currentMetadata isEqualToDictionary:metadata];
-}
-
--(BOOL)isLastMetadataCurrent {
-    NSDictionary *metadataAtTimeOfLastRefresh = self.lastMetadata;
-    NSDictionary *currentMetadata = [self createMetadata:[self.localeManager currentLocale]];
-
-    return [metadataAtTimeOfLastRefresh isEqualToDictionary:currentMetadata];
-}
-
--(NSDictionary *)createMetadata:(NSLocale *)locale {
-    NSMutableDictionary *metadata = [NSMutableDictionary dictionary];
-
-    [metadata setValue:[UAUtils nilIfEmpty:locale.languageCode] forKey:UARemoteDataMetadataLanguageKey];
-    [metadata setValue:[UAUtils nilIfEmpty:locale.countryCode] forKey:UARemoteDataMetadataCountryKey];
-    [metadata setObject:[UAirshipVersion get] forKey:UARemoteDataMetadataSDKVersionKey];
-
-    return metadata;
-}
-
 /**
  * Notifies all subscriptions of new remote data
  *
@@ -384,37 +395,21 @@ completionHandler:(void(^)(BOOL success))completionHandler {
  */
 - (void)notifySubscribersWithRemoteData:(NSArray<UARemoteDataPayload *> *)remoteDataPayloads completionHandler:(void (^)(void))completionHandler {
     NSArray *subscriptions = [self.subscriptions copy];
-
+    
     dispatch_group_t dispatchGroup = dispatch_group_create();
 
     // notify each subscription
     for (UARemoteDataSubscription *subscription in subscriptions) {
         dispatch_group_enter(dispatchGroup);
-
         NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(type IN %@)", subscription.payloadTypes];
         NSArray *filteredPayloads = [remoteDataPayloads filteredArrayUsingPredicate:predicate];
-
-        NSArray *sorted = [filteredPayloads sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
-            UARemoteDataPayload *payload1 = (UARemoteDataPayload *)obj1;
-            UARemoteDataPayload *payload2 = (UARemoteDataPayload *)obj2;
-            NSUInteger indexObj1 = [subscription.payloadTypes indexOfObject:payload1.type];
-            NSUInteger indexObj2 = [subscription.payloadTypes indexOfObject:payload2.type];
-            if (indexObj1 == indexObj2) {
-                return NSOrderedSame;
-            }
-            return indexObj1 > indexObj2 ? NSOrderedDescending : NSOrderedAscending;
-        }];
-
-        [subscription notifyRemoteData:sorted dispatcher:self.dispatcher completionHandler:^{
+        [subscription notifyRemoteData:filteredPayloads dispatcher:self.dispatcher completionHandler:^{
             dispatch_group_leave(dispatchGroup);
         }];
     }
 
     dispatch_group_notify(dispatchGroup, dispatch_get_main_queue(),^{
-        // When block executes, all subscriptions have been notified
-        if (completionHandler) {
-            completionHandler();
-        }
+        completionHandler();
     });
 }
 
@@ -438,7 +433,7 @@ completionHandler:(void(^)(BOOL success))completionHandler {
             [remoteDataPayloads addObject:remoteData];
         }
 
-        [subscription notifyRemoteData:remoteDataPayloads dispatcher:self.dispatcher completionHandler:nil];
+        [subscription notifyRemoteData:remoteDataPayloads dispatcher:self.dispatcher completionHandler:^{}];
     }];
 }
 
@@ -448,14 +443,13 @@ completionHandler:(void(^)(BOOL success))completionHandler {
 -(void)receivedRemoteNotification:(UANotificationContent *)notification completionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
     if (!notification.notificationInfo[UARemoteDataRefreshPayloadKey]) {
         completionHandler(UIBackgroundFetchResultNoData);
-        return;
+    } else {
+        [self enqueueRefreshTask];
+        completionHandler(UIBackgroundFetchResultNewData);
     }
-
-    [self refreshWithCompletionHandler:^(BOOL success) {
-        completionHandler(success ? UIBackgroundFetchResultNewData : UIBackgroundFetchResultFailed);
-    }];
 }
 
 #pragma mark -
 
 @end
+

@@ -1,7 +1,6 @@
 /* Copyright Airship and Contributors */
 
 #import <Foundation/Foundation.h>
-
 #import "UARuntimeConfig.h"
 #import "UAPreferenceDataStore+Internal.h"
 #import "UAPendingTagGroupStore+Internal.h"
@@ -10,6 +9,27 @@
 #import "UATagGroupsMutation+Internal.h"
 
 NS_ASSUME_NONNULL_BEGIN
+
+
+/**
+ * Tag group upload results.
+ */
+typedef NS_ENUM(NSUInteger, UATagGroupsUploadResult) {
+    /**
+     * Tag groups either uploaded successfully or failed with an unrecoverable error code.
+     */
+    UATagGroupsUploadResultFinished,
+
+    /**
+     * Tag groups  already up to date..
+     */
+    UATagGroupsUploadResultUpToDate,
+
+    /**
+     * Tag groups upload failed and should retry.
+     */
+    UATagGroupsUploadResultFailed,
+};
 
 /**
  * Delegate protocol for tag groups registrar callbacks.
@@ -29,11 +49,6 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @interface UATagGroupsRegistrar : NSObject
-
-/**
- * Whether the registrar is enabled. Defaults to `YES`.
- */
-@property (atomic, assign) BOOL enabled;
 
 /**
  * Pending tag groups mutations.
@@ -83,8 +98,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Update the tag groups.
+ *
+ * @param completionHandler The completion handler.
+ * @return UADisposable object.
  */
-- (void)updateTagGroups;
+- (UADisposable *)updateTagGroupsWithCompletionHandler:(void(^)(UATagGroupsUploadResult result))completionHandler;
 
 /**
  * Add tags to a tag group. To update the server, make all of your changes,

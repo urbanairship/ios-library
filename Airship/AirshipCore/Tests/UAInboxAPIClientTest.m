@@ -8,6 +8,7 @@
 #import "UAPreferenceDataStore+Internal.h"
 #import "UAInboxAPIClient+Internal.h"
 #import "UAUserData+Internal.h"
+#import "UARequestSession.h"
 
 @interface UAInboxAPIClientTest : UAAirshipBaseTest
 
@@ -35,12 +36,7 @@
 
     UAUserData *userData = [UAUserData dataWithUsername:@"username" password:@"password"];
 
-    [[[self.mockUser stub] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:2];
-        void (^completionHandler)(UAUserData * _Nullable) = (__bridge void (^)(UAUserData * _Nullable)) arg;
-        completionHandler(userData);
-    }] getUserData:OCMOCK_ANY];
+    [[[self.mockUser stub] andReturn:userData] getUserDataSync];
 
     self.inboxAPIClient = [UAInboxAPIClient clientWithConfig:self.config
                                                      session:self.mockSession
@@ -48,30 +44,19 @@
                                                    dataStore:self.dataStore];
 }
 
-- (void)tearDown {
-    [self.mockAirship stopMocking];
-    [self.mockChannel stopMocking];
-    [self.mockUser stopMocking];
-    [self.mockSession stopMocking];
-
-    [super tearDown];
-}
-
-
 /**
- * Tests retrieving the message list on success.
+ * Tests retrieving the message list with success.
  */
-- (void)testRetrieveMessageListOnSuccess {
-    // Create a success response
+- (void)testRetrieveMessageListSuccess {
     NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:200 HTTPVersion:nil headerFields:@{}];
     NSData *responseData = [@"{\"ok\":true, \"messages\": [\"someMessage\"]}" dataUsingEncoding:NSUTF8StringEncoding];
 
-    // Stub the session to return the response
     [[[self.mockSession stub] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:3];
         UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
         completionHandler(responseData, response, nil);
+        [invocation setReturnValue:(__bridge void *)([UADisposable disposableWithBlock:^{}])];
     }] performHTTPRequest:[OCMArg checkWithBlock:^BOOL(id obj) {
         UARequest *request = obj;
 
@@ -81,30 +66,29 @@
         return YES;
     }] completionHandler:OCMOCK_ANY];
 
-    // Make call
-    [self.inboxAPIClient retrieveMessageListOnSuccess:^(NSUInteger status, NSArray * _Nullable messages) {
-        XCTAssertEqualObjects(messages[0], @"someMessage", @"Messages should match messages from the response");
-    } onFailure:^() {
-        XCTFail(@"Should not be called");
-    }];
+    NSError *error;
+    NSArray *messages = [self.inboxAPIClient retrieveMessageList:&error];
+
+    XCTAssertEqualObjects(messages[0], @"someMessage", @"Messages should match messages from the response");
+    XCTAssertNil(error);
 
     [self.mockSession verify];
 }
 
 /**
- * Tests retrieving the message list on failure.
+ * Tests retrieving the message list with failure
  */
-- (void)testRetrieveMessageListOnFailure {
-    // Create a failure response
+- (void)testRetrieveMessageListFailure {
     NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:500 HTTPVersion:nil headerFields:@{}];
 
-    // Stub the session to return the response
     [[[self.mockSession stub] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:3];
         UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
-
-        completionHandler(nil, response, nil);
+        completionHandler(nil, response, [NSError errorWithDomain:UAInboxAPIClientErrorDomain
+                                                             code:UAInboxAPIClientErrorUnsuccessfulStatus
+                                                         userInfo:nil]);
+        [invocation setReturnValue:(__bridge void *)([UADisposable disposableWithBlock:^{}])];
     }] performHTTPRequest:[OCMArg checkWithBlock:^BOOL(id obj) {
         UARequest *request = obj;
 
@@ -114,63 +98,60 @@
         return YES;
     }] completionHandler:OCMOCK_ANY];
 
-    XCTestExpectation *callbackCalled = [self expectationWithDescription:@"callback called"];
-    [self.inboxAPIClient retrieveMessageListOnSuccess:^(NSUInteger status, NSArray * _Nullable messages) {
-        XCTFail(@"Should not be called");
-    } onFailure:^() {
-        [callbackCalled fulfill];
-    }];
+    NSError *error;
+    NSArray *messages = [self.inboxAPIClient retrieveMessageList:&error];
 
-    [self waitForTestExpectations];
+    XCTAssertNil(messages, @"Messages should be nil");
+    XCTAssertNotNil(error);
+    XCTAssertEqual(error.code, UAInboxAPIClientErrorUnsuccessfulStatus);
+
     [self.mockSession verify];
 }
 
 /**
-* Tests retrieving the message list on failure.
+ * Tests retrieving the message list with an invalid response
 */
 - (void)testRetrieveMessageListInvalidResponse {
-
-    // Create a success response
     NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:200 HTTPVersion:nil headerFields:@{}];
 
-    // Stub the session to return the response with no message body
     [[[self.mockSession stub] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:3];
         UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
+        completionHandler(nil, response, [NSError errorWithDomain:UAInboxAPIClientErrorDomain code:UAInboxAPIClientErrorInvalidResponse userInfo:nil]);
+        [invocation setReturnValue:(__bridge void *)([UADisposable disposableWithBlock:^{}])];
+    }] performHTTPRequest:[OCMArg checkWithBlock:^BOOL(id obj) {
+        UARequest *request = obj;
 
-        completionHandler(nil, response, nil);
+        if (![@"mockChannelID" isEqualToString:request.headers[kUAChannelIDHeader]]) {
+            return NO;
+        }
+        return YES;
+    }] completionHandler:OCMOCK_ANY];
 
-        typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error);
+    NSError *error;
+    NSArray *messages = [self.inboxAPIClient retrieveMessageList:&error];
 
-    }] performHTTPRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    XCTAssertNil(messages, @"Messages should be nil");
+    XCTAssertNotNil(error);
+    XCTAssertEqual(error.code, UAInboxAPIClientErrorInvalidResponse);
 
-    XCTestExpectation *callbackCalled = [self expectationWithDescription:@"callback called"];
-    [self.inboxAPIClient retrieveMessageListOnSuccess:^(NSUInteger status, NSArray * _Nullable messages) {
-        XCTFail(@"Should not be called");
-    } onFailure:^() {
-        [callbackCalled fulfill];
-    }];
-
-    [self waitForTestExpectations];
     [self.mockSession verify];
 }
 
 /**
- * Tests batch mark as read on success.
+ * Tests batch mark as read success.
  */
-- (void)testBatchMarkAsReadOnSuccess {
-
-    // Create a success response
+- (void)testBatchMarkAsReadSuccess {
     NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:200 HTTPVersion:nil headerFields:@{}];
     NSData *responseData = [@"{\"ok\":true}" dataUsingEncoding:NSUTF8StringEncoding];
 
-    // Stub the session to return the response
     [[[self.mockSession stub] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:3];
         UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
         completionHandler(responseData, response, nil);
+        [invocation setReturnValue:(__bridge void *)([UADisposable disposableWithBlock:^{}])];
     }] performHTTPRequest:[OCMArg checkWithBlock:^BOOL(id obj) {
         UARequest *request = obj;
 
@@ -184,35 +165,24 @@
                                     @"group_id":@"345",
                                     @"variant_id":@"1"};
 
-    // Make call
-    XCTestExpectation *callbackCalled = [self expectationWithDescription:@"callback called"];
-    [self.inboxAPIClient performBatchMarkAsReadForMessageReporting:@[testReporting] onSuccess:^{
-        [callbackCalled fulfill];
-    } onFailure:^() {
-        XCTFail(@"Should not be called");
-    }];
+    BOOL success = [self.inboxAPIClient performBatchMarkAsReadForMessageReporting:@[testReporting]];
+    XCTAssertTrue(success);
 
-    [self waitForTestExpectations];
     [self.mockSession verify];
 }
 
 /**
- * Tests batch mark as read on failure.
+ * Tests batch mark as read failure.
  */
-- (void)testBatchMarkAsReadOnFailure {
-
-    // Create a failure response
+- (void)testBatchMarkAsReadFailure {
     NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:500 HTTPVersion:nil headerFields:@{}];
 
-    // Stub the session to return the response
     [[[self.mockSession stub] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:3];
         UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
-
-        completionHandler(nil, response, nil);
-
-        typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error);
+        completionHandler(nil, response, [NSError errorWithDomain:UAInboxAPIClientErrorDomain code:UAInboxAPIClientErrorUnsuccessfulStatus userInfo:nil]);
+        [invocation setReturnValue:(__bridge void *)([UADisposable disposableWithBlock:^{}])];
     }] performHTTPRequest:[OCMArg checkWithBlock:^BOOL(id obj) {
         UARequest *request = obj;
 
@@ -226,150 +196,72 @@
                                     @"group_id":@"345",
                                     @"variant_id":@"1"};
 
-    XCTestExpectation *callbackCalled = [self expectationWithDescription:@"callback called"];
-    [self.inboxAPIClient performBatchMarkAsReadForMessageReporting:@[testReporting] onSuccess:^{
-        XCTFail(@"Should not be called");
-    } onFailure:^() {
-        [callbackCalled fulfill];
-    }];
+    BOOL success = [self.inboxAPIClient performBatchMarkAsReadForMessageReporting:@[testReporting]];
+    XCTAssertFalse(success);
 
-    [self waitForTestExpectations];
     [self.mockSession verify];
 }
 
 /**
- * Tests batch delete on success.
+ * Tests batch delete success.
  */
-- (void)testBatchDeleteOnSuccess {
-    // Create a success response
+- (void)testBatchDeleteSuccess {
     NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:200 HTTPVersion:nil headerFields:@{}];
     NSData *responseData = [@"{\"ok\":true}" dataUsingEncoding:NSUTF8StringEncoding];
 
-    // Stub the session to return the response
     [[[self.mockSession stub] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:3];
         UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
-
         completionHandler(responseData, response, nil);
+        [invocation setReturnValue:(__bridge void *)([UADisposable disposableWithBlock:^{}])];
+    }] performHTTPRequest:[OCMArg checkWithBlock:^BOOL(id obj) {
+        UARequest *request = obj;
 
-        typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error);
-    }] performHTTPRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+        if (![@"mockChannelID" isEqualToString:request.headers[kUAChannelIDHeader]]) {
+            return NO;
+        }
+        return YES;
+    }] completionHandler:OCMOCK_ANY];
 
     NSDictionary *testReporting = @{@"message_id":@"126",
                                     @"group_id":@"345",
                                     @"variant_id":@"1"};
 
-    // Make call
-    XCTestExpectation *callbackCalled = [self expectationWithDescription:@"callback called"];
-    [self.inboxAPIClient performBatchDeleteForMessageReporting:@[testReporting] onSuccess:^{
-        [callbackCalled fulfill];
-    } onFailure:^() {
-        XCTFail(@"Should not be called");
-    }];
+    BOOL success = [self.inboxAPIClient performBatchDeleteForMessageReporting:@[testReporting]];
+    XCTAssertTrue(success);
 
-    [self waitForTestExpectations];
     [self.mockSession verify];
 }
 
 /**
- * Tests batch delete on failure.
+ * Tests batch delete failure.
  */
-- (void)testBatchDeleteOnFailure {
-    // Create a failure response
+- (void)testBatchDeleteFailure {
     NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:500 HTTPVersion:nil headerFields:@{}];
 
-    // Stub the session to return the response
     [[[self.mockSession stub] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:3];
         UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
-        completionHandler(nil, response, nil);
-    }] performHTTPRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+        completionHandler(nil, response, [NSError errorWithDomain:UAInboxAPIClientErrorDomain code:UAInboxAPIClientErrorUnsuccessfulStatus userInfo:nil]);
+        [invocation setReturnValue:(__bridge void *)([UADisposable disposableWithBlock:^{}])];
+    }] performHTTPRequest:[OCMArg checkWithBlock:^BOOL(id obj) {
+        UARequest *request = obj;
+
+        if (![@"mockChannelID" isEqualToString:request.headers[kUAChannelIDHeader]]) {
+            return NO;
+        }
+        return YES;
+    }] completionHandler:OCMOCK_ANY];
 
     NSDictionary *testReporting = @{@"message_id":@"126",
                                     @"group_id":@"345",
                                     @"variant_id":@"1"};
 
-    // Make call
-    XCTestExpectation *callbackCalled = [self expectationWithDescription:@"callback called"];
-    [self.inboxAPIClient performBatchDeleteForMessageReporting:@[testReporting] onSuccess:^{
-        XCTFail(@"Should not be called");
-    } onFailure:^() {
-        [callbackCalled fulfill];
-    }];
+    BOOL success = [self.inboxAPIClient performBatchDeleteForMessageReporting:@[testReporting]];
+    XCTAssertFalse(success);
 
-    [self waitForTestExpectations];
-    [self.mockSession verify];
-}
-
-/**
- * Tests retrieving the message list when disabled.
- */
-- (void)testRetrieveMessageListWhenDisabled {
-    // setup
-    self.inboxAPIClient.enabled = NO;
-    XCTestExpectation *expectationForRefreshSucceeded = [self expectationWithDescription:@"UAInboxClientMessageRetrievalSuccessBlock executed"];
-    
-    // test
-    [self.inboxAPIClient retrieveMessageListOnSuccess:^(NSUInteger status, NSArray * _Nullable messages) {
-        XCTAssertEqual(status,0);
-        XCTAssertFalse(messages.count);
-        
-        [expectationForRefreshSucceeded fulfill];
-    } onFailure:^() {
-        XCTFail(@"Should not fail");
-    }];
-    
-    // verify
-    [self waitForTestExpectations];
-    [self.mockSession verify];
-}
-
-/**
- * Tests batch delete when disabled.
- */
-- (void)testBatchDeleteWhenDisabled {
-    // setup
-    self.inboxAPIClient.enabled = NO;
-    XCTestExpectation *expectationForRefreshSucceeded = [self expectationWithDescription:@"UAInboxClientMessageRetrievalSuccessBlock executed"];
-    
-    // test
-    NSDictionary *testReporting = @{@"message_id":@"126",
-                                    @"group_id":@"345",
-                                    @"variant_id":@"1"};
-    [self.inboxAPIClient performBatchDeleteForMessageReporting:@[testReporting] onSuccess:^{
-        [expectationForRefreshSucceeded fulfill];
-    } onFailure:^() {
-        XCTFail(@"Should not fail");
-    }];
-    
-    // verify
-    [self waitForTestExpectations];
-    [self.mockSession verify];
-}
-
-/**
- * Tests batch mark as read when disabled.
- */
-- (void)testBatchMarkAsReadWhenDisabled {
-    // setup
-    self.inboxAPIClient.enabled = NO;
-    XCTestExpectation *expectationForRefreshSucceeded = [self expectationWithDescription:@"UAInboxClientMessageRetrievalSuccessBlock executed"];
-    
-    NSDictionary *testReporting = @{@"message_id":@"126",
-                                    @"group_id":@"345",
-                                    @"variant_id":@"1"};
-    
-    // Make call
-    [self.inboxAPIClient performBatchMarkAsReadForMessageReporting:@[testReporting] onSuccess:^{
-        [expectationForRefreshSucceeded fulfill];
-    } onFailure:^() {
-        XCTFail(@"Should not fail");
-    }];
-    
-    // verify
-    [self waitForTestExpectations];
     [self.mockSession verify];
 }
 

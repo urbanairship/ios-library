@@ -4,6 +4,7 @@
 #import "UANativeBridge+Internal.h"
 #import "UAirship+Internal.h"
 #import "UANativeBridgeActionHandler+Internal.h"
+#import "UANamedUser.h"
 
 @interface UANativeBridgeTest : UAAirshipBaseTest
 
@@ -15,6 +16,7 @@
 @property (nonatomic, strong) id mockJavaScriptCommandDelegate;
 @property (nonatomic, strong) id mockAirshipJavaScriptCommandDelegate;
 @property (nonatomic, strong) id mockAirship;
+@property (nonatomic, strong) id mockAirshipNamedUser;
 @property (nonatomic, strong) id mockActionHandler;
 @property (nonatomic, strong) id mockJavaScriptEnvironment;
 @property (nonatomic, strong) id mockApplication;
@@ -624,6 +626,108 @@
     }] evaluateJavaScript:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     [self.nativeBridge webView:self.mockWKWebView didFinishNavigation:mockWKNavigation];
+}
+
+/**
+ * Test sending a Named User command in the Native Bridge
+ */
+- (void)testNamedUserCommand {
+    // Mock AirshipNamedUser
+    self.mockAirshipNamedUser = [self mockForClass:[UANamedUser class]];
+    
+    // Airship JavaScript request
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"uairship://named_user?id=cool"]];
+    NSURL *originatingURL = [NSURL URLWithString:@"https://foo.urbanairship.com/whatever.html"];
+    NSString *expectedName = @"cool";
+
+    [[[self.mockAirship stub] andReturn:self.mockAirshipNamedUser] sharedNamedUser];
+    
+    id mockWKNavigationAction = [self mockForClass:[WKNavigationAction class]];
+    [[[mockWKNavigationAction stub] andReturn:request] request];
+    id mockWKFrameInfo = [self mockForClass:[WKFrameInfo class]];
+    [[[mockWKNavigationAction stub] andReturn:mockWKFrameInfo] targetFrame];
+    [[[self.mockWKWebView stub] andReturn:originatingURL] URL];
+
+    [[self.mockAirshipNamedUser expect] setIdentifier:expectedName];
+    
+    [[[self.mockJavaScriptCommandDelegate expect] andReturnValue:@(YES)] performCommand:[OCMArg checkWithBlock:^BOOL(id obj) {
+        return [((UAJavaScriptCommand *)obj).URL isEqual:request.URL];
+    }] webView:self.mockWKWebView];
+
+    [self.nativeBridge webView:self.mockWKWebView decidePolicyForNavigationAction:mockWKNavigationAction decisionHandler:^(WKNavigationActionPolicy delegatePolicy) {
+       XCTAssertEqual(delegatePolicy, WKNavigationActionPolicyCancel);
+    }];
+
+    [self.mockJavaScriptCommandDelegate verify];
+    [self.mockAirshipNamedUser verify];
+}
+
+/**
+ * Test sending an encoded Named User command in the Native Bridge
+ */
+- (void)testEncodedNamedUserCommand {
+    // Mock AirshipNamedUser
+    self.mockAirshipNamedUser = [self mockForClass:[UANamedUser class]];
+    
+    // Airship JavaScript request
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"uairship://named_user?id=my%2Fname%26%20user"]];
+    NSURL *originatingURL = [NSURL URLWithString:@"https://foo.urbanairship.com/whatever.html"];
+    NSString *expectedName = @"my/name& user";
+
+    [[[self.mockAirship stub] andReturn:self.mockAirshipNamedUser] sharedNamedUser];
+    
+    id mockWKNavigationAction = [self mockForClass:[WKNavigationAction class]];
+    [[[mockWKNavigationAction stub] andReturn:request] request];
+    id mockWKFrameInfo = [self mockForClass:[WKFrameInfo class]];
+    [[[mockWKNavigationAction stub] andReturn:mockWKFrameInfo] targetFrame];
+    [[[self.mockWKWebView stub] andReturn:originatingURL] URL];
+
+    [[self.mockAirshipNamedUser expect] setIdentifier:expectedName];
+    
+    [[[self.mockJavaScriptCommandDelegate expect] andReturnValue:@(YES)] performCommand:[OCMArg checkWithBlock:^BOOL(id obj) {
+        return [((UAJavaScriptCommand *)obj).URL isEqual:request.URL];
+    }] webView:self.mockWKWebView];
+
+    [self.nativeBridge webView:self.mockWKWebView decidePolicyForNavigationAction:mockWKNavigationAction decisionHandler:^(WKNavigationActionPolicy delegatePolicy) {
+       XCTAssertEqual(delegatePolicy, WKNavigationActionPolicyCancel);
+    }];
+
+    [self.mockJavaScriptCommandDelegate verify];
+    [self.mockAirshipNamedUser verify];
+}
+
+/**
+ * Test sending a null Named User to the Native Bridge
+ */
+- (void)testNullNamedUserCommand {
+    // Mock AirshipNamedUser
+    self.mockAirshipNamedUser = [self mockForClass:[UANamedUser class]];
+    
+    // Airship JavaScript request
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"uairship://named_user?id="]];
+    NSURL *originatingURL = [NSURL URLWithString:@"https://foo.urbanairship.com/whatever.html"];
+    NSString *expectedName = @"";
+
+    [[[self.mockAirship stub] andReturn:self.mockAirshipNamedUser] sharedNamedUser];
+    
+    id mockWKNavigationAction = [self mockForClass:[WKNavigationAction class]];
+    [[[mockWKNavigationAction stub] andReturn:request] request];
+    id mockWKFrameInfo = [self mockForClass:[WKFrameInfo class]];
+    [[[mockWKNavigationAction stub] andReturn:mockWKFrameInfo] targetFrame];
+    [[[self.mockWKWebView stub] andReturn:originatingURL] URL];
+
+    [[self.mockAirshipNamedUser expect] setIdentifier:expectedName];
+    
+    [[[self.mockJavaScriptCommandDelegate expect] andReturnValue:@(YES)] performCommand:[OCMArg checkWithBlock:^BOOL(id obj) {
+        return [((UAJavaScriptCommand *)obj).URL isEqual:request.URL];
+    }] webView:self.mockWKWebView];
+
+    [self.nativeBridge webView:self.mockWKWebView decidePolicyForNavigationAction:mockWKNavigationAction decisionHandler:^(WKNavigationActionPolicy delegatePolicy) {
+       XCTAssertEqual(delegatePolicy, WKNavigationActionPolicyCancel);
+    }];
+
+    [self.mockJavaScriptCommandDelegate verify];
+    [self.mockAirshipNamedUser verify];
 }
 
 @end

@@ -27,12 +27,6 @@ NSString *anotherActionName = @"AnotherActionName";
     [[[self.mockAirship stub] andReturn:self.registry] actionRegistry];
 }
 
-- (void)tearDown {
-    [self.mockAirship stopMocking];
-
-    [super tearDown];
-}
-
 /**
  * Test running an action from a name
  */

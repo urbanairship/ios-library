@@ -56,10 +56,6 @@
     self.assetManager.cachePolicyDelegate = self.mockCachePolicyDelegate;
 }
 
-- (void)tearDown {
-    [super tearDown];
-}
-
 /**
  * Test that the onSchedule: method initialize an Assets instance
  * and calls the prepare delegate's onSchedule:assets: when the app
@@ -97,7 +93,8 @@
     NSString *scheduleID = @"some ID";
 
     [[[self.mockCachePolicyDelegate expect] andReturnValue:OCMOCK_VALUE(NO)] shouldCacheOnSchedule:message];
-    [[[self.mockAssetCache reject] andReturn:self.mockAssets] assetsForScheduleId:OCMOCK_ANY];
+    [[[self.mockAssetCache stub] andReturn:self.mockAssets] assetsForScheduleId:OCMOCK_ANY];
+    [[self.mockAssetCache reject] assetsForScheduleId:OCMOCK_ANY];
     [[self.mockAssetCache reject] releaseAssets:OCMOCK_ANY wipeFromDisk:NO];
     [[self.mockAssetCache reject] releaseAssets:OCMOCK_ANY wipeFromDisk:YES];
     [[self.mockPrepareAssetDelegate reject] onSchedule:OCMOCK_ANY assets:OCMOCK_ANY completionHandler:OCMOCK_ANY];
@@ -122,7 +119,8 @@
     UAInAppMessage *message = [self messageWithMediaURL:self.mediaURL];
     NSString *scheduleID = @"some ID";
 
-    [[[self.mockAssetCache reject] andReturn:self.mockAssets] assetsForScheduleId:OCMOCK_ANY];
+    [[[self.mockAssetCache stub] andReturn:self.mockAssets] assetsForScheduleId:OCMOCK_ANY];
+    [[self.mockAssetCache reject] assetsForScheduleId:OCMOCK_ANY];
     [[self.mockAssetCache reject] releaseAssets:OCMOCK_ANY wipeFromDisk:NO];
     [[self.mockAssetCache reject] releaseAssets:OCMOCK_ANY wipeFromDisk:YES];
     [[self.mockPrepareAssetDelegate reject] onSchedule:OCMOCK_ANY assets:OCMOCK_ANY completionHandler:OCMOCK_ANY];

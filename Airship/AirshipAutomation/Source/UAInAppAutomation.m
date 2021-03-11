@@ -485,7 +485,7 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
  * @param schedule The in-app schedule.
  * @return `YES` if the schedule is valid, otherwise `NO`.
  */
--(BOOL)isScheduleInvalid:(UASchedule *)schedule {
+- (BOOL)isScheduleInvalid:(UASchedule *)schedule {
     return [self.remoteDataClient isRemoteSchedule:schedule] &&
     ![self.remoteDataClient isScheduleUpToDate:schedule];
 }

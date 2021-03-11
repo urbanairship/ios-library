@@ -3,7 +3,6 @@
 #import "UADeferredScheduleAPIClient+Internal.h"
 #import "UAScheduleTrigger+Internal.h"
 #import "UAInAppMessage+Internal.h"
-#import "UAAirshipAutomationCoreImport.h"
 #import "UAStateOverrides+Internal.h"
 
 #define kUADeferredScheduleAPIClientPlatformKey @"platform"
@@ -41,6 +40,8 @@ NSString * const UADeferredScheduleAPIClientErrorDomain = @"com.urbanairship.def
 @property(nonatomic, strong) UAAuthTokenManager *authManager;
 @property(nonatomic, strong) UADispatcher *requestDispatcher;
 @property(nonatomic, copy) UAStateOverrides * (^stateOverridesProvider)(void);
+@property(nonatomic, strong) UARuntimeConfig *config;
+@property(nonatomic, strong) UARequestSession *session;
 @end
 
 @implementation UADeferredScheduleAPIClient
@@ -51,9 +52,11 @@ NSString * const UADeferredScheduleAPIClientErrorDomain = @"com.urbanairship.def
                    authManager:(UAAuthTokenManager *)authManager
         stateOverridesProvider:(nonnull UAStateOverrides * (^)(void))stateOverridesProvider {
 
-    self = [super initWithConfig:(UARuntimeConfig *)config session:(UARequestSession *)session];
+    self = [super init];
 
     if (self) {
+        self.config = config;
+        self.session = session;
         self.authManager = authManager;
         self.requestDispatcher = dispatcher;
         self.stateOverridesProvider = stateOverridesProvider;
@@ -217,9 +220,7 @@ attributeOverrides:(UAAttributePendingMutations *)attributeOverrides
     __block UADeferredScheduleAPIClientResponse *clientResponse;
     __block UASemaphore *semaphore = [UASemaphore semaphore];
 
-    [self performRequest:request retryWhere:^BOOL(NSData * _Nullable data, NSHTTPURLResponse * _Nullable response) {
-        return NO;
-    } completionHandler:^(NSData * _Nullable data, NSHTTPURLResponse * _Nullable response, NSError * _Nullable error) {
+    [self.session performHTTPRequest:request completionHandler:^(NSData * _Nullable data, NSHTTPURLResponse * _Nullable response, NSError * _Nullable error) {
         clientResponse = [[UADeferredScheduleAPIClientResponse alloc] init];
 
         if (response) {

@@ -13,10 +13,6 @@
     [super setUp];
 }
 
-- (void)tearDown {
-    [super tearDown];
-}
-
 /**
  * Test basic search event.
  */

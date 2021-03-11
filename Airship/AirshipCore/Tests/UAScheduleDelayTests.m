@@ -15,10 +15,6 @@
     [super setUp];
 }
 
-- (void)tearDown {
-    [super tearDown];
-}
-
 - (void)testWithJSON {
 
     NSArray *testScreens = @[@"test screen", @"another test screen"];

@@ -30,11 +30,6 @@
     self.payload = @{@"identifier":@"some identifier", @"expiry":expiry, @"extra":extra, @"display":display, @"actions":actions};
 }
 
-- (void)tearDown {
-    [self.mockAirship stopMocking];
-    [super tearDown];
-}
-
 /**
  * Helper method for verifying model/payload equivalence 
  */

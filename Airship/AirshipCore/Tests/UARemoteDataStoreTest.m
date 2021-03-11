@@ -8,25 +8,21 @@
 
 @interface UARemoteDataStoreTest : UABaseTest
 @property UARemoteDataStore *remoteDataStore;
-
 @end
 
 @implementation UARemoteDataStoreTest
 
 - (void)setUp {
     [super setUp];
-    self.remoteDataStore = [UARemoteDataStore storeWithName:@"UARemoteDataStoreTest." inMemory:YES];
+    self.remoteDataStore = [UARemoteDataStore storeWithName:self.name inMemory:YES];
 }
 
 - (void)tearDown {
     [self.remoteDataStore shutDown];
-    [self.remoteDataStore waitForIdle];
-
     [super tearDown];
 }
 
 - (void)testFirstRemoteData {
-    
     XCTestExpectation *testExpectation = [self expectationWithDescription:@"fetched remote data"];
     
     UARemoteDataPayload *testPayload = [self createRemoteDataPayload];
@@ -51,20 +47,15 @@
 }
 
 - (void)testNewRemoteData {
-    
-    
     NSArray<UARemoteDataPayload *> *testPayloads = @[ [self createRemoteDataPayload],
                                                       [self createRemoteDataPayload],
-                                                      [self createRemoteDataPayload]
-                                                      ];
-    
+                                                      [self createRemoteDataPayload] ];
     
     [self.remoteDataStore overwriteCachedRemoteDataWithResponse:testPayloads
                                    completionHandler:^(BOOL success) {
                                        XCTAssertTrue(success);
                                    }];
-    
-    
+
     // Verify we have 3 messages
     XCTestExpectation *firstFetch = [self expectationWithDescription:@"fetched first round of remote data"];
     [self.remoteDataStore fetchRemoteDataFromCacheWithPredicate:nil
@@ -89,8 +80,7 @@
     // Provide new remote data for one of the payload types
     UARemoteDataPayload *testPayload = [self createRemoteDataPayload];
     testPayload.type = testPayloads[1].type;
-    
-    
+
     // Sync only the modified message
     [self.remoteDataStore overwriteCachedRemoteDataWithResponse:@[testPayload]
                                    completionHandler:^(BOOL success) {
@@ -112,8 +102,6 @@
                                      }];
     
     [self waitForTestExpectations];
-    
-    
 }
 
 - (UARemoteDataPayload *)createRemoteDataPayload {

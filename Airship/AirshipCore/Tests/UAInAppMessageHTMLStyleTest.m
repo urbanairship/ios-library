@@ -18,12 +18,6 @@
     [[[self.mockBundle stub] andReturn:[NSBundle bundleForClass:[self class]]] mainBundle];
 }
 
-- (void)tearDown {
-    [self.mockBundle stopMocking];
-    [super tearDown];
-}
-
-
 - (void)testValidStyle {
     UAInAppMessageHTMLStyle *validStyle = [UAInAppMessageHTMLStyle styleWithContentsOfFile:@"Valid-UAInAppMessageHTMLStyle"];
 

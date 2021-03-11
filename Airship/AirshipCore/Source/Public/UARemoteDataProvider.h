@@ -36,7 +36,7 @@ typedef void (^UARemoteDataPublishBlock)(NSArray<UARemoteDataPayload *> *remoteD
  *
  * @return `YES` if the metadata is current, otherwise `NO`.
  */
--(BOOL)isMetadataCurrent:(NSDictionary *)metadata;
+- (BOOL)isMetadataCurrent:(NSDictionary *)metadata;
 
 @end
 

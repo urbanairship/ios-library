@@ -2,12 +2,13 @@
 
 #import <UIKit/UIKit.h>
 
-@class UAChannelRegistrationPayload;
-@class UAChannelAPIClient;
-@class UARuntimeConfig;
-@class UAPreferenceDataStore;
-@class UADate;
-@class UADispatcher;
+#import "UAChannelRegistrationPayload.h"
+#import "UAChannelAPIClient+Internal.h"
+#import "UARuntimeConfig.h"
+#import "UAPreferenceDataStore.h"
+#import "UADate.h"
+#import "UADispatcher.h"
+#import "UATaskManager.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -29,11 +30,8 @@ extern NSString *const UAChannelRegistrarChannelIDKey;
  * @note This method will be called on the main thread.
  *
  * @param completionHandler A completion handler which will be passed the created registration payload.
- * @param dispatcher The dispatcher to call the completion handler on.
  */
-- (void)createChannelPayload:(void (^)(UAChannelRegistrationPayload *))completionHandler
-                  dispatcher:(nullable UADispatcher *)dispatcher;
-
+- (void)createChannelPayload:(void (^)(UAChannelRegistrationPayload *))completionHandler;
 /**
  * Called when the channel registrar failed to register.
  */
@@ -87,12 +85,9 @@ extern NSString *const UAChannelRegistrarChannelIDKey;
 - (void)registerForcefully:(BOOL)forcefully;
 
 /**
- * Cancels all pending and current requests.
- *
- * Note: This may or may not prevent the registration finished event and registration
- * delegate calls.
+ * Performs a full channel registration.
  */
-- (void)cancelAllRequests;
+- (void)performFullRegistration;
 
 /**
 * Removes the existing channel and forces a registration to create a new one.
@@ -121,20 +116,18 @@ extern NSString *const UAChannelRegistrarChannelIDKey;
  * Factory method to create a channel registrar. (for testing)
  * @param config The Airship config.
  * @param dataStore The shared preference data store.
- * @param channelID The initial channel ID string.
  * @param channelAPIClient The channel API client.
  * @param date The UADate object.
  * @param dispatcher The dispatcher to dispatch main queue blocks.
- * @param application The application.
+ * @param taskManager The task manager.
  * @return A new channel registrar instance.
  */
 + (instancetype)channelRegistrarWithConfig:(UARuntimeConfig *)config
                                  dataStore:(UAPreferenceDataStore *)dataStore
-                                 channelID:(NSString *)channelID
                           channelAPIClient:(UAChannelAPIClient *)channelAPIClient
                                       date:(UADate *)date
                                 dispatcher:(UADispatcher *)dispatcher
-                               application:(UIApplication *)application;
+                               taskManager:(UATaskManager *)taskManager;
 
 ///---------------------------------------------------------------------------------------
 /// @name Channel Registrar Properties (for testing)

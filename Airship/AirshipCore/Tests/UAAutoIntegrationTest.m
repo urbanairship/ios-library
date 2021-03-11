@@ -53,7 +53,7 @@
     if (self.GeneratedClassForNotificationCenterDelegate) {
         objc_disposeClassPair(self.GeneratedClassForNotificationCenterDelegate);
     }
-    
+    [self.mockUserNotificationCenter stopMocking];
     [super tearDown];
 }
 

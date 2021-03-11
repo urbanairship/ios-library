@@ -22,7 +22,6 @@
     [UAirship setSharedAirship:self.mockAirship];
 }
 
-
 - (void)testConnectionType {
     // SETUP
     NSArray *possibleConnectionTypes = @[@"cell", @"wifi", @"none"];

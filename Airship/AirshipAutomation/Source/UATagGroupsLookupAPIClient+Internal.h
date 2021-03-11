@@ -10,7 +10,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * API client for performing tag group lookups.
  */
-@interface UATagGroupsLookupAPIClient : UAAPIClient
+@interface UATagGroupsLookupAPIClient : NSObject
 
 /**
  * UATagGroupsLookupAPIClient class factory method.

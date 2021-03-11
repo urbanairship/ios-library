@@ -7,8 +7,28 @@
 #import "UAPreferenceDataStore.h"
 #import "UAAttributeAPIClient+Internal.h"
 
-
 NS_ASSUME_NONNULL_BEGIN
+
+
+/**
+ * Attribute upload results.
+ */
+typedef NS_ENUM(NSUInteger, UAAttributeUploadResult) {
+    /**
+     * Attribute either uploaded successfully or failed with an unrecoverable error code.
+     */
+    UAAttributeUploadResultFinished,
+
+    /**
+     * Attribute already up to date..
+     */
+    UAAttributeUploadResultUpToDate,
+
+    /**
+     * Attribute uploads failed and should retry.
+     */
+    UAAttributeUploadResultFailed,
+};
 
 /**
  * Delegate protocol for registrar callbacks.
@@ -82,18 +102,16 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Update attributes
+ *
+ * @param completionHandler The completion handler.
+ * @return UADisposable object
  */
-- (void)updateAttributes;
+- (UADisposable *)updateAttributesWithCompletionHandler:(void(^)(UAAttributeUploadResult result))completionHandler;
 
 /**
  * The current identifier associated with this registrar.
  */
 @property (atomic, readonly, nullable) NSString *identifier;
-
-/**
- * Whether the registrar is enabled. Defaults to `YES`.
- */
-@property (atomic, assign) BOOL enabled;
 
 /**
  * Pending mutations.

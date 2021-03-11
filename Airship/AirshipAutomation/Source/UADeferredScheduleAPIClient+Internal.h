@@ -5,6 +5,7 @@
 #import "UAScheduleTriggerContext+Internal.h"
 #import "UAAuthTokenManager+Internal.h"
 #import "UAStateOverrides+Internal.h"
+#import "UAAirshipAutomationCoreImport.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -36,7 +37,7 @@ extern NSString * const UADeferredScheduleAPIClientErrorDomain;
 /**
  * Deferred schedule API client.
  */
-@interface UADeferredScheduleAPIClient : UAAPIClient
+@interface UADeferredScheduleAPIClient : NSObject
 
 /**
  * UADeferredScheduleAPIClient class factory method. Used for testing.

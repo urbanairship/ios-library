@@ -323,6 +323,8 @@
     XCTAssertTrue(copy.messageCenterStyleConfig == config.messageCenterStyleConfig);
     XCTAssertTrue(copy.itunesID == config.itunesID);
     XCTAssertTrue(copy.requestAuthorizationToUseNotifications == config.requestAuthorizationToUseNotifications);
+    XCTAssertTrue(copy.requireInitialRemoteConfigEnabled == config.requireInitialRemoteConfigEnabled);
+
 }
 
 - (void) testInitialConfig {
@@ -349,6 +351,7 @@
     XCTAssertFalse(config.extendedBroadcastsEnabled);
     XCTAssertTrue(config.defaultDetectProvisioningMode);
     XCTAssertTrue(config.requestAuthorizationToUseNotifications);
+    XCTAssertFalse(config.requireInitialRemoteConfigEnabled);
 }
 
 @end

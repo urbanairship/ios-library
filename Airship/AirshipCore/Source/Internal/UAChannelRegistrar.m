@@ -9,12 +9,18 @@
 #import "UAPreferenceDataStore+Internal.h"
 #import "UADate.h"
 #import "UADispatcher.h"
+#import "UATaskManager.h"
+#import "UATask.h"
+#import "UASemaphore.h"
 
 NSTimeInterval const k24HoursInSeconds = 24 * 60 * 60;
 
 NSString *const UAChannelRegistrarChannelIDKey = @"UAChannelID";
 NSString *const UALastSuccessfulUpdateKey = @"last-update-key";
 NSString *const UALastSuccessfulPayloadKey = @"payload-key";
+
+static NSString * const UAChannelRegistrationTaskID = @"UAChannelRegistrar.registration";
+static NSString * const UAChannelRegistrarTaskExtrasForcefully = @"forcefully";
 
 @interface UAChannelRegistrar ()
 
@@ -39,16 +45,6 @@ NSString *const UALastSuccessfulPayloadKey = @"payload-key";
 @property (nonatomic, strong, nullable) NSDate *lastSuccessfulUpdateDate;
 
 /**
- * A flag indicating if registration is in progress.
- */
-@property (atomic, assign) BOOL isRegistrationInProgress;
-
-/**
- * Background task identifier used to do any registration in the background.
- */
-@property (nonatomic, assign) UIBackgroundTaskIdentifier registrationBackgroundTask;
-
-/**
  * The channel API client.
  */
 @property (nonatomic, strong) UAChannelAPIClient *channelAPIClient;
@@ -59,14 +55,14 @@ NSString *const UALastSuccessfulPayloadKey = @"payload-key";
 @property (nonatomic, strong) UADate *date;
 
 /**
- * The dispatcher to dispatch main queue blocks.
+ * The private serial dispatcher.
  */
 @property (nonnull, strong) UADispatcher *dispatcher;
 
 /**
- * The application
+ * The task manager.
  */
-@property (nonnull, strong) UIApplication *application;
+@property (nonnull, strong) UATaskManager *taskManager;
 
 @end
 
@@ -78,17 +74,16 @@ UARuntimeConfig *config;
        channelAPIClient:(UAChannelAPIClient *)channelAPIClient
                    date:(UADate *)date
              dispatcher:(UADispatcher *)dispatcher
-            application:(UIApplication *)application {
+            taskManager:(UATaskManager *)taskManager {
     self = [super init];
     if (self) {
         self.dataStore = dataStore;
         self.channelAPIClient = channelAPIClient;
         self.date = date;
         self.dispatcher = dispatcher;
-        self.application = application;
+        self.taskManager = taskManager;
 
-        self.isRegistrationInProgress = NO;
-        self.registrationBackgroundTask = UIBackgroundTaskInvalid;
+        [self registerTasks];
     }
 
     return self;
@@ -99,89 +94,188 @@ UARuntimeConfig *config;
     return [[self alloc] initWithDataStore:dataStore
                           channelAPIClient:[UAChannelAPIClient clientWithConfig:config]
                                       date:[[UADate alloc] init]
-                                dispatcher:[UADispatcher mainDispatcher]
-                               application:[UIApplication sharedApplication]];
+                                dispatcher:[UADispatcher serialDispatcher]
+                               taskManager:[UATaskManager shared]];
 }
 
 // Constructor for unit tests
 + (instancetype)channelRegistrarWithConfig:(UARuntimeConfig *)config
                                  dataStore:(UAPreferenceDataStore *)dataStore
-                                 channelID:(NSString *)channelID
                           channelAPIClient:(UAChannelAPIClient *)channelAPIClient
                                       date:(UADate *)date
                                 dispatcher:(UADispatcher *)dispatcher
-                               application:(UIApplication *)application {
+                               taskManager:(UATaskManager *)taskManager {
 
-    UAChannelRegistrar *channelRegistrar =  [[self alloc] initWithDataStore:dataStore
-                                                           channelAPIClient:channelAPIClient
-                                                                       date:date
-                                                                 dispatcher:dispatcher
-                                                                application:application];
-    channelRegistrar.channelID = channelID;
-    return channelRegistrar;
+    return [[self alloc] initWithDataStore:dataStore
+                          channelAPIClient:channelAPIClient
+                                      date:date
+                                dispatcher:dispatcher
+                               taskManager:taskManager];
 }
 
 #pragma mark -
 #pragma mark API Methods
 
 - (void)registerForcefully:(BOOL)forcefully {
-    if (self.isRegistrationInProgress) {
-        UA_LDEBUG(@"Ignoring registration request, one already in progress.");
-        return;
-    }
+    [self enqueueChannelRegistrationTask:forcefully];
+}
 
-    UA_WEAKIFY(self)
-    [self.dispatcher dispatchAsyncIfNecessary:^{
-        [self.delegate createChannelPayload:^(UAChannelRegistrationPayload *payload) {
-            if (self.isRegistrationInProgress) {
-                UA_LDEBUG(@"Ignoring registration request, one already in progress.");
-                return;
-            }
-
-            UA_STRONGIFY(self)
-            if (!forcefully && ![self shouldUpdateRegistration:payload]) {
-                UA_LDEBUG(@"Ignoring registration request, registration is up to date.");
-                return;
-            } else if (![self beginRegistrationBackgroundTask]) {
-                UA_LDEBUG(@"Unable to perform registration, background task not granted.");
-                return;
-            }
-
-            // Proceed with registration
-            self.isRegistrationInProgress = YES;
-            if (!self.channelID) {
-                [self createChannelWithPayload:payload];
-            } else {
-                [self updateChannelWithPayload:payload];
-            }
-        } dispatcher:self.dispatcher];
+- (void)performFullRegistration {
+    [self.dispatcher dispatchAsync:^{
+        self.lastSuccessfulPayload = nil;
+        self.lastSuccessfulUpdateDate = [NSDate distantPast];
+        [self registerForcefully:YES];
     }];
 }
 
-- (void)cancelAllRequests {
-    [self.channelAPIClient cancelAllRequests];
-
-    // If a registration was in progress, its undeterministic if it succeeded
-    // or not, so just clear the last success payload and time.
-    if (self.isRegistrationInProgress) {
-        self.lastSuccessfulPayload = nil;
-        self.lastSuccessfulUpdateDate = [NSDate distantPast];
-    }
-
-    self.isRegistrationInProgress = NO;
+- (void)resetChannel {
+    [self.dispatcher dispatchAsync:^{
+        UA_LDEBUG(@"Clearing previous channel.");
+        [self clearChannelData];
+        [self registerForcefully:YES];
+    }];
 }
 
-- (void)resetChannel {
-    [self cancelAllRequests];
-
-    UA_LDEBUG(@"Clearing previous channel.");
-    [self.dataStore removeObjectForKey:UAChannelRegistrarChannelIDKey];
-
-    [self registerForcefully:YES];
+- (void)clearChannelData {
+    self.channelID = nil;
+    self.lastSuccessfulPayload = nil;
+    self.lastSuccessfulUpdateDate = [NSDate distantPast];
 }
 
 #pragma mark -
 #pragma mark Internal Methods
+
+- (UAChannelRegistrationPayload *)createPayload {
+    __block UAChannelRegistrationPayload *result;
+    UASemaphore *semaphore = [UASemaphore semaphore];
+
+    [self.delegate createChannelPayload:^(UAChannelRegistrationPayload *payload) {
+        result = payload;
+        [semaphore signal];
+    }];
+
+    [semaphore wait];
+
+    return result;
+}
+
+- (void)registerTasks {
+    UA_WEAKIFY(self)
+    [self.taskManager registerForTaskWithIDs:@[UAChannelRegistrationTaskID]
+                                  dispatcher:self.dispatcher
+                               launchHandler:^(id<UATask> task) {
+        UA_STRONGIFY(self)
+        if ([task.taskID isEqualToString:UAChannelRegistrationTaskID]) {
+            [self handleRegistrationTask:task];
+        } else {
+            UA_LERR(@"Invalid task: %@", task.taskID);
+            [task taskCompleted];
+        }
+    }];
+}
+
+- (void)handleRegistrationTask:(id<UATask>)task {
+    NSDictionary *extras = task.requestOptions.extras;
+    UA_LTRACE(@"Handle registration task: %@", extras);
+
+    BOOL forcefully = [extras[UAChannelRegistrarTaskExtrasForcefully] boolValue];
+
+    NSString *channelID = self.channelID;
+    UAChannelRegistrationPayload *payload = [self createPayload];
+    UAChannelRegistrationPayload *lastSuccessfulPayload = self.lastSuccessfulPayload;
+    BOOL shouldUpdateRegistration = [self shouldUpdateRegistration:payload];
+
+    if (!forcefully && !shouldUpdateRegistration) {
+        UA_LDEBUG(@"Ignoring registration request, registration is up to date.");
+        [task taskCompleted];
+        return;
+    }
+
+    if (channelID) {
+        [self updateChannelWithPayload:payload lastSuccessfulPayload:lastSuccessfulPayload identifier:channelID task:task];
+    } else {
+        [self createChannelWithPayload:payload task:task];
+    }
+}
+
+- (void)createChannelWithPayload:(UAChannelRegistrationPayload *)payload task:(id<UATask>)task {
+    UASemaphore *semaphore = [UASemaphore semaphore];
+    UADisposable *disposable = [self.channelAPIClient createChannelWithPayload:payload
+                                                             completionHandler:^(UAChannelCreateResponse * _Nullable response, NSError * _Nullable error) {
+
+        if (error) {
+            UA_LDEBUG(@"Channel creation failed with error: %@", error);
+            [self failedWithPayload:payload];
+            [task taskFailed];
+        } else if (response.isSuccess) {
+            UA_LDEBUG(@"Channel %@ created successfully.", response.channelID);
+            self.channelID = response.channelID;
+            [self.delegate channelCreated:response.channelID existing:response.status == 200];
+            [self succeededWithPayload:payload];
+            [task taskCompleted];
+        } else {
+            UA_LDEBUG(@"Channel creation failed with response: %@.", response);
+            [self failedWithPayload:payload];
+
+            if (response.isServerError || response.status == 429) {
+                [task taskFailed];
+            } else {
+                [task taskCompleted];
+            }
+        }
+
+        [semaphore signal];
+    }];
+
+    task.expirationHandler = ^{
+        [disposable dispose];
+    };
+
+    [semaphore wait];
+}
+
+- (void)updateChannelWithPayload:(UAChannelRegistrationPayload *)payload
+           lastSuccessfulPayload:(UAChannelRegistrationPayload *)lastSuccessfulPayload
+                      identifier:(NSString *)identifier
+                            task:(id<UATask>)task {
+    UASemaphore *semaphore = [UASemaphore semaphore];
+    UAChannelRegistrationPayload *minPayload = [payload minimalUpdatePayloadWithLastPayload:lastSuccessfulPayload];
+
+    UADisposable *disposable = [self.channelAPIClient updateChannelWithID:identifier
+                                                              withPayload:minPayload
+                                                        completionHandler:^(UAHTTPResponse * _Nullable response, NSError * _Nullable error) {
+
+        if (error) {
+            UA_LDEBUG(@"Channel creation failed with error: %@", error);
+            [self failedWithPayload:payload];
+            [task taskFailed];
+        } else if (response.isSuccess) {
+            UA_LDEBUG(@"Channel updated successfully.");
+            [self succeededWithPayload:payload];
+            [task taskCompleted];
+        } else if (response.status == 409){
+            UA_LTRACE(@"Channel conflict, recreating.");
+            [self clearChannelData];
+            [self registerForcefully:YES];
+            [task taskCompleted];
+        } else {
+            UA_LDEBUG(@"Channel update failed with response: %@.", response);
+            [self failedWithPayload:payload];
+            if (response.isServerError || response.status == 429) {
+                [task taskFailed];
+            } else {
+                [task taskCompleted];
+            }
+        }
+        [semaphore signal];
+    }];
+
+    task.expirationHandler = ^{
+        [disposable dispose];
+    };
+
+    [semaphore wait];
+}
 
 - (BOOL)shouldUpdateRegistration:(UAChannelRegistrationPayload *)payload {
     NSTimeInterval timeSinceLastUpdate = [[self.date now] timeIntervalSinceDate:self.lastSuccessfulUpdateDate];
@@ -204,83 +298,26 @@ UARuntimeConfig *config;
     return false;
 }
 
-- (BOOL)beginRegistrationBackgroundTask {
-    if (self.registrationBackgroundTask == UIBackgroundTaskInvalid) {
-        UA_WEAKIFY(self)
-        self.registrationBackgroundTask = [self.application beginBackgroundTaskWithExpirationHandler:^{
-            UA_STRONGIFY(self)
-            [self cancelAllRequests];
-            [self.application endBackgroundTask:self.registrationBackgroundTask];
-            self.registrationBackgroundTask = UIBackgroundTaskInvalid;
-        }];
-    }
-
-    return (BOOL) self.registrationBackgroundTask != UIBackgroundTaskInvalid;
+- (void)enqueueChannelRegistrationTask {
+    [self enqueueChannelRegistrationTask:NO];
 }
 
-- (void)endRegistrationBackgroundTask {
-    if (self.registrationBackgroundTask != UIBackgroundTaskInvalid) {
-        [self.application endBackgroundTask:self.registrationBackgroundTask];
-        self.registrationBackgroundTask = UIBackgroundTaskInvalid;
-    }
+- (void)enqueueChannelRegistrationTask:(BOOL)forcefully {
+    id extras = @{UAChannelRegistrarTaskExtrasForcefully : @(forcefully)};
+
+    UATaskConflictPolicy policy = forcefully ? UATaskConflictPolicyReplace : UATaskConflictPolicyKeep;
+
+    UATaskRequestOptions *requestOptions = [UATaskRequestOptions optionsWithConflictPolicy:policy
+                                                                           requiresNetwork:YES
+                                                                                    extras:extras];
+
+    [self.taskManager enqueueRequestWithID:UAChannelRegistrationTaskID options:requestOptions];
 }
 
-// Must be called on main queue
-- (void)updateChannelWithPayload:(UAChannelRegistrationPayload *)payload {
-    UA_WEAKIFY(self);
-
-    UAChannelRegistrationPayload *minPayload = [payload minimalUpdatePayloadWithLastPayload:self.lastSuccessfulPayload];
-
-    [self.channelAPIClient updateChannelWithID:self.channelID
-                                   withPayload:minPayload
-                             completionHandler:^(NSError * _Nullable error) {
-        UA_STRONGIFY(self);
-        [self.dispatcher dispatchAsync:^{
-            UA_STRONGIFY(self);
-            if (!error) {
-                [self succeededWithPayload:payload];
-            } else {
-                if (error.domain == UAChannelAPIClientErrorDomain && error.code == UAChannelAPIClientErrorConflict) {
-                    UA_LTRACE(@"Channel conflict, recreating.");
-                    [self createChannelWithPayload:payload];
-                } else {
-                    [self failedWithPayload:payload];
-                }
-            }
-        }];
-    }];
-}
-
-// Must be called on main queue
-- (void)createChannelWithPayload:(UAChannelRegistrationPayload *)payload {
-    UA_WEAKIFY(self);
-    [self.channelAPIClient createChannelWithPayload:payload
-                                  completionHandler:^(NSString * _Nullable newChannelID, BOOL existing, NSError * _Nullable error) {
-        UA_STRONGIFY(self);
-        [self.dispatcher dispatchAsync:^{
-            UA_STRONGIFY(self);
-            if (error) {
-                UA_LDEBUG(@"Channel creation failed: %@", error);
-                [self failedWithPayload:payload];
-            } else {
-                UA_LDEBUG(@"Channel %@ created successfully.", newChannelID);
-                self.channelID = newChannelID;
-
-                [self.delegate channelCreated:newChannelID existing:existing];
-                [self succeededWithPayload:payload];
-            }
-        }];
-    }];
-}
-
-// Must be called on main queue
 - (void)failedWithPayload:(UAChannelRegistrationPayload *)payload {
-    self.isRegistrationInProgress = NO;
     [self.delegate registrationFailed];
-    [self endRegistrationBackgroundTask];
 }
 
-// Must be called on main queue
 - (void)succeededWithPayload:(UAChannelRegistrationPayload *)payload {
     self.lastSuccessfulPayload = payload;
     self.lastSuccessfulUpdateDate = [self.date now];
@@ -288,16 +325,11 @@ UARuntimeConfig *config;
     id<UAChannelRegistrarDelegate> delegate = self.delegate;
     [delegate registrationSucceeded];
 
-    UA_WEAKIFY(self)
-    [delegate createChannelPayload:^(UAChannelRegistrationPayload *currentPayload) {
-        UA_STRONGIFY(self)
-        if ([self shouldUpdateRegistration:currentPayload]) {
-            [self updateChannelWithPayload:currentPayload];
-        } else {
-            self.isRegistrationInProgress = NO;
-            [self endRegistrationBackgroundTask];
-        }
-    } dispatcher:self.dispatcher];
+    UAChannelRegistrationPayload *currentPayload = [self createPayload];
+
+    if ([self shouldUpdateRegistration:currentPayload]) {
+        [self enqueueChannelRegistrationTask];
+    }
 }
 
 

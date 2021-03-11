@@ -5,6 +5,7 @@
 @class UAPreferenceDataStore;
 @class UAChannelCapture;
 @class UARemoteConfigManager;
+@class UARemoteConfigURLManager;
 
 @interface UAirship()
 
@@ -26,7 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) NSArray<UAComponent *> *components;
 @property (nonatomic, copy) NSDictionary<NSString *, UAComponent *> *componentClassMap;
 @property (nonatomic, strong) id<UALocationProvider> locationProvider;
-
+@property (nonatomic, strong) UARemoteConfigURLManager *remoteConfigURLManager;
 /**
  * The channel
  */

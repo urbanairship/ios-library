@@ -64,16 +64,8 @@
     [[[self.currentDevice stub] andReturn:self.currentDevice] currentDevice];
 }
 
-- (void)tearDown {
-    [self.analytics stopMocking];
-    [self.airship stopMocking];
+- (void)tearDown {   
     [self.timeZone stopMocking];
-    [self.airshipVersion stopMocking];
-    [self.application stopMocking];
-    [self.push stopMocking];
-    [self.currentDevice stopMocking];
-    [self.utils stopMocking];
-
     [super tearDown];
 }
 

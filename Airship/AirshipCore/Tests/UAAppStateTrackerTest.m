@@ -18,6 +18,11 @@
     [self createTracker];
 }
 
+- (void)tearDown {
+    [self.mockNotificationCenter stopMocking];
+    [super tearDown];
+}
+
 - (void)createTracker {
     self.tracker = [[UAAppStateTracker alloc] initWithNotificationCenter:self.mockNotificationCenter adapter:self.mockAdapter];
 }

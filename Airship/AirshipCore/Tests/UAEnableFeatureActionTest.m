@@ -46,12 +46,6 @@
 }
 
 - (void)tearDown {
-    [self.mockPush stopMocking];
-    [self.mockLocationProvider stopMocking];
-    [self.mockAirship stopMocking];
-    [self.mockPushRegistration stopMocking];
-    [self.mockApplication stopMocking];
-
     [UAirship setSharedAirship:nil];
     [super tearDown];
 }

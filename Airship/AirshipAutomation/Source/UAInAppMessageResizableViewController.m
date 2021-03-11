@@ -510,7 +510,7 @@ static double const DefaultResizableViewAnimationDuration = 0.2;
     return size;
 }
 
--(BOOL)validateAspectRatio:(CGFloat)aspectRatio {
+- (BOOL)validateAspectRatio:(CGFloat)aspectRatio {
     if (isnan(aspectRatio) || aspectRatio > INTMAX_MAX) {
         return NO;
     }

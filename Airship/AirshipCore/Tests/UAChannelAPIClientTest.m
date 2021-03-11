@@ -21,73 +21,9 @@
     self.client = [UAChannelAPIClient clientWithConfig:self.config session:self.mockSession];
 }
 
-- (void)tearDown {
-    [self.mockSession stopMocking];
-    [super tearDown];
-}
-
-/**
- * Test create channel calls the onSuccessBlock with the response channel ID
- * and makes an analytics request when the request is successful.
- */
-- (void)testCreateChannelOnSuccess {
-
-    // Create a success response
+- (void)testCreateChannel {
     NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:200 HTTPVersion:nil headerFields:@{}];
     NSData *responseData = [@"{ \"ok\":true, \"channel_id\": \"someChannelID\"}" dataUsingEncoding:NSUTF8StringEncoding];
-
-    // Stub the session to return the response
-    [[[self.mockSession stub] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:3];
-        UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
-        completionHandler(responseData, response, nil);
-    }] performHTTPRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
-
-    XCTestExpectation *callbackCalled = [self expectationWithDescription:@"callback called"];
-    [self.client createChannelWithPayload:[[UAChannelRegistrationPayload alloc] init]
-                        completionHandler:^(NSString *channelID, BOOL existing, NSError *error){
-        XCTAssertNil(error);
-        XCTAssertEqualObjects(@"someChannelID", channelID);
-        [callbackCalled fulfill];
-    }];
-
-    [self waitForTestExpectations];
-}
-
-/**
- * Test create channel calls the onFailureBlock with the status code when
- * the request fails.
- */
-- (void)testCreateChannelOnFailure {
-
-    // Create a failure response
-    NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:400 HTTPVersion:nil headerFields:nil];
-
-    // Stub the session to return a the response
-    [[[self.mockSession stub] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:3];
-        UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
-        completionHandler(nil, response, nil);
-    }] performHTTPRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
-
-    XCTestExpectation *callbackCalled = [self expectationWithDescription:@"callback called"];
-    [self.client createChannelWithPayload:[[UAChannelRegistrationPayload alloc] init]
-                        completionHandler:^(NSString *channelID, BOOL existing, NSError *error){
-        XCTAssertEqualObjects(error.domain, UAChannelAPIClientErrorDomain);
-        XCTAssertEqual(error.code, UAChannelAPIClientErrorUnsuccessfulStatus);
-        [callbackCalled fulfill];
-    }];
-
-    [self waitForTestExpectations];
-}
-
-/**
- * Test the request headers and body for a create channel request
- */
-- (void)testCreateChannelRequest {
-
     UAChannelRegistrationPayload *payload = [[UAChannelRegistrationPayload alloc] init];
 
     BOOL (^checkRequestBlock)(id obj) = ^(id obj) {
@@ -125,13 +61,15 @@
         void *arg;
         [invocation getArgument:&arg atIndex:3];
         UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
-        completionHandler(nil, nil, nil);
-    }] performHTTPRequest:[OCMArg checkWithBlock:checkRequestBlock]
-                                completionHandler:OCMOCK_ANY];
+        completionHandler(responseData, response, nil);
+    }] performHTTPRequest:[OCMArg checkWithBlock:checkRequestBlock] completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *callbackCalled = [self expectationWithDescription:@"callback called"];
-    [self.client createChannelWithPayload:[[UAChannelRegistrationPayload alloc] init]
-                        completionHandler:^(NSString *channelID, BOOL existing, NSError *error){
+    [self.client createChannelWithPayload:payload
+                        completionHandler:^(UAChannelCreateResponse *response, NSError *error){
+        XCTAssertNil(error);
+        XCTAssertEqualObjects(@"someChannelID", response.channelID);
+        XCTAssertEqual(200, response.status);
         [callbackCalled fulfill];
     }];
 
@@ -139,15 +77,10 @@
     [self.mockSession verify];
 }
 
-/**
- * Test update channel completes with no errors on success
- */
-- (void)testUpdateChannelSuccess {
-    // Create a success response
+- (void)testCreateChannelParseError {
     NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:200 HTTPVersion:nil headerFields:@{}];
-    NSData *responseData = [@"{ \"ok\":true, \"channel_id\": \"someChannelID\"}" dataUsingEncoding:NSUTF8StringEncoding];
+    NSData *responseData = [@"{ \"ok\":true }" dataUsingEncoding:NSUTF8StringEncoding];
 
-    // Stub the session to return the response
     [[[self.mockSession stub] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:3];
@@ -156,78 +89,60 @@
     }] performHTTPRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *callbackCalled = [self expectationWithDescription:@"callback called"];
-    [self.client updateChannelWithID:@"someChannelID"
-                         withPayload:[[UAChannelRegistrationPayload alloc] init]
-                   completionHandler:^(NSError * _Nullable error) {
+    [self.client createChannelWithPayload:[[UAChannelRegistrationPayload alloc] init]
+                        completionHandler:^(UAChannelCreateResponse *response, NSError *error){
+        XCTAssertNotNil(error);
+        XCTAssertNil(response);
+        [callbackCalled fulfill];
+    }];
+
+    [self waitForTestExpectations];
+}
+
+- (void)testCreateChannelFailure {
+    NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:400 HTTPVersion:nil headerFields:@{}];
+
+    [[[self.mockSession stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
+        completionHandler(nil, response, nil);
+    }] performHTTPRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
+    XCTestExpectation *callbackCalled = [self expectationWithDescription:@"callback called"];
+    [self.client createChannelWithPayload:[[UAChannelRegistrationPayload alloc] init]
+                        completionHandler:^(UAChannelCreateResponse *response, NSError *error){
         XCTAssertNil(error);
+        XCTAssertNil(response.channelID);
+        XCTAssertEqual(400, response.status);
         [callbackCalled fulfill];
     }];
 
     [self waitForTestExpectations];
 }
 
-/**
- * Test update channel completes with an unsuccessful status error on non-conflict failures
- */
-- (void)testUpdateChannelFailure {
+- (void)testCreateChannelError {
+    NSError *responseError = [[NSError alloc] initWithDomain:@"neat" code:1 userInfo:nil];
 
-    // Create a failure response
-    NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:400 HTTPVersion:nil headerFields:nil];
-
-    // Stub the session to return a the response
     [[[self.mockSession stub] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:3];
         UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
-        completionHandler(nil, response, nil);
+        completionHandler(nil, nil, responseError);
     }] performHTTPRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *callbackCalled = [self expectationWithDescription:@"callback called"];
-    [self.client updateChannelWithID:@"someChannelID"
-                         withPayload:[[UAChannelRegistrationPayload alloc] init]
-                   completionHandler:^(NSError * _Nullable error) {
-        XCTAssertEqualObjects(error.domain, UAChannelAPIClientErrorDomain);
-        XCTAssertEqual(error.code, UAChannelAPIClientErrorUnsuccessfulStatus);
+    [self.client createChannelWithPayload:[[UAChannelRegistrationPayload alloc] init]
+                        completionHandler:^(UAChannelCreateResponse *response, NSError *error){
+        XCTAssertEqual(responseError, error);
+        XCTAssertNil(response);
         [callbackCalled fulfill];
     }];
 
     [self waitForTestExpectations];
 }
 
-/**
- * Test update channel completes with a conflict error on HTTP conflict
- */
-- (void)testUpdateChannelFailureConflict {
-
-    // Create a failure response
-    NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:409 HTTPVersion:nil headerFields:nil];
-
-    // Stub the session to return a the response
-    [[[self.mockSession stub] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:3];
-        UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
-        completionHandler(nil, response, nil);
-    }] performHTTPRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
-
-    XCTestExpectation *callbackCalled = [self expectationWithDescription:@"callback called"];
-    [self.client updateChannelWithID:@"someChannelID"
-                         withPayload:[[UAChannelRegistrationPayload alloc] init]
-                   completionHandler:^(NSError * _Nullable error) {
-        XCTAssertEqualObjects(error.domain, UAChannelAPIClientErrorDomain);
-        XCTAssertEqual(error.code, UAChannelAPIClientErrorConflict);
-        [callbackCalled fulfill];
-    }];
-
-    [self waitForTestExpectations];
-
-}
-
-/**
- * Test the request headers and body for an update channel request
- */
-- (void)testUpdateChannelRequest {
-
+- (void)testUpdateChannel {
     UAChannelRegistrationPayload *payload = [[UAChannelRegistrationPayload alloc] init];
 
     BOOL (^checkRequestBlock)(id obj) = ^(id obj) {
@@ -261,17 +176,21 @@
         return YES;
     };
 
+    NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:200 HTTPVersion:nil headerFields:@{}];
+
     [[[self.mockSession expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:3];
         UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
-        completionHandler(nil, nil, nil);
+        completionHandler(nil, response, nil);
     }] performHTTPRequest:[OCMArg checkWithBlock:checkRequestBlock] completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *callbackCalled = [self expectationWithDescription:@"callback called"];
     [self.client updateChannelWithID:@"someChannelID"
                          withPayload:[[UAChannelRegistrationPayload alloc] init]
-                   completionHandler:^(NSError * _Nullable error) {
+                   completionHandler:^(UAHTTPResponse *response, NSError * _Nullable error) {
+        XCTAssertEqual(200, response.status);
+        XCTAssertNil(error);
         [callbackCalled fulfill];
     }];
 
@@ -279,6 +198,49 @@
     [self.mockSession verify];
 }
 
-@end
+- (void)testUpdateChannelFailure {
+    NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:400 HTTPVersion:nil headerFields:@{}];
 
+    [[[self.mockSession stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
+        completionHandler(nil, response, nil);
+    }] performHTTPRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
+    XCTestExpectation *callbackCalled = [self expectationWithDescription:@"callback called"];
+    [self.client updateChannelWithID:@"some-payload"
+                         withPayload:[[UAChannelRegistrationPayload alloc] init]
+                   completionHandler:^(UAHTTPResponse *response, NSError *error){
+        XCTAssertNil(error);
+        XCTAssertEqual(400, response.status);
+        [callbackCalled fulfill];
+    }];
+
+    [self waitForTestExpectations];
+}
+
+- (void)testUpdateChannelError {
+    NSError *responseError = [[NSError alloc] initWithDomain:@"neat" code:1 userInfo:nil];
+
+    [[[self.mockSession stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
+        completionHandler(nil, nil, responseError);
+    }] performHTTPRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
+    XCTestExpectation *callbackCalled = [self expectationWithDescription:@"callback called"];
+    [self.client updateChannelWithID:@"some-payload"
+                         withPayload:[[UAChannelRegistrationPayload alloc] init]
+                   completionHandler:^(UAHTTPResponse *response, NSError *error){
+        XCTAssertEqual(responseError, error);
+        XCTAssertNil(response);
+        [callbackCalled fulfill];
+    }];
+
+    [self waitForTestExpectations];
+}
+
+@end
 

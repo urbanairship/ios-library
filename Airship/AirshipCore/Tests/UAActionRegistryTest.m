@@ -34,13 +34,6 @@
     [[[self.mockAirship stub] andReturn:self.mockMetrics] applicationMetrics];
 }
 
-- (void)tearDown {
-    [self.mockAirship stopMocking];
-    [self.mockMetrics stopMocking];
-
-    [super tearDown];
-}
-
 /**
  * Test registering an action
  */

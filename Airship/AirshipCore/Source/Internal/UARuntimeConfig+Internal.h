@@ -4,6 +4,7 @@
 
 #import "UARuntimeConfig.h"
 #import "UAConfig.h"
+#import "UARemoteConfigURLManager.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -15,16 +16,18 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Factory method.
  * @param config the UAConfig instance.
+ * @param urlManager the URL config manager.
  * @return A runtime config if the provided UAConfig is valid, otherwise nil.
  */
-+ (nullable instancetype)runtimeConfigWithConfig:(UAConfig *)config;
++ (nullable instancetype)runtimeConfigWithConfig:(UAConfig *)config urlManager:(UARemoteConfigURLManager *)urlManager;
 
 /**
  * Init method. Exposed for testing.
  * @param config the UAConfig instance.
+ * @param urlManager the URL config manager.
  * @return The instance.
  */
-- (instancetype)initWithConfig:(UAConfig *)config;
+- (instancetype)initWithConfig:(UAConfig *)config urlManager:(UARemoteConfigURLManager *)urlManager;
 
 @end
 

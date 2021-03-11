@@ -27,198 +27,97 @@
     self.client = [UANamedUserAPIClient clientWithConfig:self.config session:self.mockSession];
 }
 
-- (void)tearDown {
-    [self.mockSession stopMocking];
-    [self.mockAirship stopMocking];
+-(void)testAssociate {
+    NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""]
+                                                              statusCode:200
+                                                             HTTPVersion:nil
+                                                            headerFields:nil];
 
-    [super tearDown];
-}
+    [[[self.mockSession stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
+        completionHandler(nil, response, nil);
+    }] performHTTPRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
-/**
- * Test associate named user succeeds request when status is 2xx.
- */
--(void)testAssociateSucceedsRequest {
-    for (NSInteger i = 200; i < 300; i++) {
-        NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""]
-                                                                  statusCode:i
-                                                                 HTTPVersion:nil
-                                                                headerFields:nil];
-
-        [[[self.mockSession stub] andDo:^(NSInvocation *invocation) {
-            void *arg;
-            [invocation getArgument:&arg atIndex:3];
-            UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
-            completionHandler(nil, response, nil);
-        }] performHTTPRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
-
-        XCTestExpectation *finishedCallbacks = [self expectationWithDescription:@"Finished callbacks"];
-        [self.client associate:@"fakeNamedUserID"
-                     channelID:@"fakeChannel"
-             completionHandler:^(NSError * _Nullable error) {
-            XCTAssertNil(error);
-            [finishedCallbacks fulfill];
-        }];
-
-        [self waitForTestExpectations];
-    }
-}
-
-/**
- * Test associate named user calls the FailureBlock with the failed request
- * when the request fails.
- */
-- (void)testAssociateOnFailure {
-    for (NSInteger i = 400; i < 500; i++) {
-        NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""]
-                                                                  statusCode:i
-                                                                 HTTPVersion:nil
-                                                                headerFields:nil];
-
-        [[[self.mockSession stub] andDo:^(NSInvocation *invocation) {
-            void *arg;
-            [invocation getArgument:&arg atIndex:3];
-            UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
-            completionHandler(nil, response, nil);
-        }] performHTTPRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
-
-        XCTestExpectation *finishedCallbacks = [self expectationWithDescription:@"Finished callbacks"];
-        [self.client associate:@"fakeNamedUserID"
-                     channelID:@"fakeChannel"
-             completionHandler:^(NSError * _Nullable error) {
-            XCTAssertNotNil(error);
-            [finishedCallbacks fulfill];
-        }];
-
-        [self waitForTestExpectations];
-    }
-}
-
-/**
- * Test disassociate named user succeeds request when status is 2xx.
- */
--(void)testDisassociateSucceedsRequest {
-    for (NSInteger i = 200; i < 300; i++) {
-        NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""]
-                                                                  statusCode:i
-                                                                 HTTPVersion:nil
-                                                                headerFields:nil];
-
-        [[[self.mockSession stub] andDo:^(NSInvocation *invocation) {
-            void *arg;
-            [invocation getArgument:&arg atIndex:3];
-            UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
-            completionHandler(nil, response, nil);
-        }] performHTTPRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
-
-        XCTestExpectation *finishedCallbacks = [self expectationWithDescription:@"Finished callbacks"];
-        [self.client disassociate:@"fakeNamedUserID" completionHandler:^(NSError * _Nullable error) {
-            XCTAssertNil(error);
-            [finishedCallbacks fulfill];
-        }];
-
-        [self waitForTestExpectations];
-    }
-}
-
-/**
- * Test disassociate named user calls the FailureBlock with the failed request
- * when the request fails.
- */
-- (void)testDisassociateOnFailure {
-    for (NSInteger i = 400; i < 500; i++) {
-        NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""]
-                                                                  statusCode:i
-                                                                 HTTPVersion:nil
-                                                                headerFields:nil];
-
-        [[[self.mockSession stub] andDo:^(NSInvocation *invocation) {
-            void *arg;
-            [invocation getArgument:&arg atIndex:3];
-            UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
-            completionHandler(nil, response, nil);
-        }] performHTTPRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
-
-        XCTestExpectation *finishedCallbacks = [self expectationWithDescription:@"Finished callbacks"];
-        [self.client disassociate:@"fakeNamedUserID" completionHandler:^(NSError * _Nullable error) {
-            XCTAssertNotNil(error);
-            [finishedCallbacks fulfill];
-        }];
-
-        [self waitForTestExpectations];
-    }
-}
-
-/**
- * Test associate named user when disabled.
- */
--(void)testAssociateWhenDisabled {
-    // setup
-    self.client.enabled = NO;
-
-    // expectations
-    BOOL (^completionBlockCheck)(id obj) = ^(id obj) {
-        UAHTTPRequestCompletionHandler completion = obj;
-
-        for (NSInteger i = 200; i < 300; i++) {
-            NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""]
-                                                                      statusCode:i
-                                                                     HTTPVersion:nil
-                                                                    headerFields:nil];
-            completion(OCMOCK_ANY, response, nil);
-        }
-
-        return YES;
-    };
-
-    [[self.mockSession stub] performHTTPRequest:OCMOCK_ANY
-                              completionHandler:[OCMArg checkWithBlock:completionBlockCheck]];
-
-    // test
+    XCTestExpectation *finishedCallbacks = [self expectationWithDescription:@"Finished callbacks"];
     [self.client associate:@"fakeNamedUserID"
                  channelID:@"fakeChannel"
-         completionHandler:^(NSError * _Nullable error) {
-        XCTFail(@"Should not be called");
+         completionHandler:^(UAHTTPResponse *response, NSError *error) {
+        XCTAssertNil(error);
+        XCTAssertEqual(200, response.status);
+        [finishedCallbacks fulfill];
     }];
 
-    // verify
-    [self.mockSession verify];
+    [self waitForTestExpectations];
 }
 
-/**
- * Test disassociate named user when disabled.
- */
--(void)testDisassociateWhenDisabled {
-    // setup
-    self.client.enabled = NO;
+-(void)testAssociateError {
+    NSError *responseError = [NSError errorWithDomain:@"domain" code:100 userInfo:nil];
 
-    // expectations
-    BOOL (^completionBlockCheck)(id obj) = ^(id obj) {
-        UAHTTPRequestCompletionHandler completion = obj;
+    [[[self.mockSession stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
+        completionHandler(nil, nil, responseError);
+    }] performHTTPRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
-        for (NSInteger i = 200; i < 300; i++) {
-            NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""]
-                                                                      statusCode:i
-                                                                     HTTPVersion:nil
-                                                                    headerFields:nil];
-            completion(OCMOCK_ANY, response, nil);
-        }
+    XCTestExpectation *finishedCallbacks = [self expectationWithDescription:@"Finished callbacks"];
+    [self.client associate:@"fakeNamedUserID"
+                 channelID:@"fakeChannel"
+         completionHandler:^(UAHTTPResponse *response, NSError *error) {
+        XCTAssertEqual(responseError, error);
+        XCTAssertNil(response);
+        [finishedCallbacks fulfill];
+    }];
 
-        return YES;
-    };
+    [self waitForTestExpectations];
+}
 
-    [[self.mockSession stub] performHTTPRequest:OCMOCK_ANY
-                              completionHandler:[OCMArg checkWithBlock:completionBlockCheck]];
+-(void)testDisassociate {
+    NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""]
+                                                              statusCode:200
+                                                             HTTPVersion:nil
+                                                            headerFields:nil];
 
-    // test
+    [[[self.mockSession stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
+        completionHandler(nil, response, nil);
+    }] performHTTPRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
+    XCTestExpectation *finishedCallbacks = [self expectationWithDescription:@"Finished callbacks"];
     [self.client disassociate:@"fakeNamedUserID"
-            completionHandler:^(NSError * _Nullable error) {
-        XCTFail(@"Should not be called");
+            completionHandler:^(UAHTTPResponse *response, NSError *error) {
+        XCTAssertEqual(200, response.status);
+        XCTAssertNil(error);
+        [finishedCallbacks fulfill];
     }];
 
-    // verify
-    [self.mockSession verify];
+    [self waitForTestExpectations];
 }
 
+-(void)testDisassociateError {
+    NSError *responseError = [NSError errorWithDomain:@"domain" code:100 userInfo:nil];
+
+    [[[self.mockSession stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
+        completionHandler(nil, nil, responseError);
+    }] performHTTPRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
+    XCTestExpectation *finishedCallbacks = [self expectationWithDescription:@"Finished callbacks"];
+    [self.client disassociate:@"fakeNamedUserID"
+            completionHandler:^(UAHTTPResponse *response, NSError *error) {
+        XCTAssertEqual(responseError, error);
+        XCTAssertNil(response);
+        [finishedCallbacks fulfill];
+    }];
+
+    [self waitForTestExpectations];
+}
 
 @end
 

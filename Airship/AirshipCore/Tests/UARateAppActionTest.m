@@ -53,16 +53,6 @@
     self.action.systemVersion = self.testSystemVersion;
 }
 
-- (void)tearDown {
-    [self.mockApplication stopMocking];
-    [self.mockStoreReviewController stopMocking];
-    [self.mockRateAppPromptViewControler stopMocking];
-    [self.mockConfig stopMocking];
-    [self.mockAirship stopMocking];
-
-    [super tearDown];
-}
-
 // Tests removal of timestamps more than one year old
 - (void)testTimestampRemovalDataStore {
     [[[self.mockConfig stub] andReturn:@"1195168544"] itunesID];

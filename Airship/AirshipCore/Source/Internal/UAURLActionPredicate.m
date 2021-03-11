@@ -8,7 +8,7 @@
     return [[self alloc] init];
 }
 
--(BOOL)applyActionArguments:(UAActionArguments *)args {
+- (BOOL)applyActionArguments:(UAActionArguments *)args {
     return (BOOL)(args.situation != UASituationForegroundPush);
 }
 

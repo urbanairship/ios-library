@@ -149,6 +149,13 @@ NS_ASSUME_NONNULL_BEGIN
 @property (readonly) BOOL requestAuthorizationToUseNotifications;
 
 /**
+ * If set to `YES`, the SDK will wait for an initial remote config instead of falling back on default API URLs.
+ *
+ * Defaults to `NO`.
+ */
+@property (readonly) BOOL requireInitialRemoteConfigEnabled;
+
+/**
  * Flag indicating whether data collection needs to be opted in with
  * `UAirship.dataCollectionEnabled`. This flag will only take affect on first run.
  * If previously not enabled, the device will still have data collection enabled until disabled with

@@ -13,10 +13,6 @@
     [super setUp];
 }
 
-- (void)tearDown {
-    [super tearDown];
-}
-
 /**
  * Test the parsing of 32-bit hex colors, in AARRGGBB format
  */

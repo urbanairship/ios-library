@@ -29,14 +29,8 @@
         NSURL *modelURL = [[UAirshipCoreResources bundle] URLForResource:@"UARemoteData" withExtension:@"momd"];
         self.managedContext = [NSManagedObjectContext managedObjectContextForModelURL:modelURL
                                                                       concurrencyType:NSPrivateQueueConcurrencyType];
-        
-        [self.managedContext addPersistentSqlStore:self.storeName completionHandler:^(NSPersistentStore *store, NSError *error) {
-            if (!store) {
-                UA_LERR(@"Failed to create remote data persistent store: %@", error);
-                return;
-            }
-        }];
-        
+        [self addStores];
+
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(protectedDataAvailable)
                                                      name:UIApplicationProtectedDataDidBecomeAvailable
@@ -55,12 +49,21 @@
 
 - (void)protectedDataAvailable {
     if (!self.managedContext.persistentStoreCoordinator.persistentStores.count) {
-        [self.managedContext addPersistentSqlStore:self.storeName completionHandler:^(NSPersistentStore *store, NSError *error) {
-            if (!store) {
-                UA_LERR(@"Failed to create remote data persistent store: %@", error);
-                return;
-            }
-        }];
+        [self addStores];
+    }
+}
+
+- (void)addStores {
+    void (^completion)(NSPersistentStore *, NSError *) = ^void(NSPersistentStore *store, NSError *error) {
+        if (!store) {
+            UA_LERR(@"Failed to create automation persistent store: %@", error);
+        }
+    };
+
+    if (self.inMemory) {
+        [self.managedContext addPersistentInMemoryStore:self.storeName completionHandler:completion];
+    } else {
+        [self.managedContext addPersistentSqlStore:self.storeName completionHandler:completion];
     }
 }
 
@@ -113,9 +116,18 @@
         
         // Delete all stored remote data
         NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:kUARemoteDataDBEntityName];
-        NSBatchDeleteRequest *deleteRequest = [[NSBatchDeleteRequest alloc] initWithFetchRequest:request];
         NSError *error;
-        [self.managedContext executeRequest:deleteRequest error:&error];
+
+        if (self.inMemory) {
+            request.includesPropertyValues = NO;
+            NSArray *payloads = [self.managedContext executeFetchRequest:request error:&error];
+            for (NSManagedObject *payload in payloads) {
+                [self.managedContext deleteObject:payload];
+            }
+        } else {
+            NSBatchDeleteRequest *deleteRequest = [[NSBatchDeleteRequest alloc] initWithFetchRequest:request];
+            [self.managedContext executeRequest:deleteRequest error:&error];
+        }
 
         for (UARemoteDataPayload *remoteDataPayload in remoteDataPayloads) {
             [self addRemoteDataStorePayloadFromRemoteData:remoteDataPayload];
@@ -135,10 +147,6 @@
     remoteDataStorePayload.timestamp = remoteDataPayload.timestamp;
     remoteDataStorePayload.data = remoteDataPayload.data;
     remoteDataStorePayload.metadata = remoteDataPayload.metadata;
-}
-
-- (void)waitForIdle {
-    [self.managedContext performBlockAndWait:^{}];
 }
 
 - (void)shutDown {

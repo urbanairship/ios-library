@@ -70,6 +70,7 @@
 }
 
 - (void)tearDown {
+    [self.mockProcessInfo stopMocking];
     [self.dataStore removeAll];
     self.location = nil;
 
@@ -463,93 +464,6 @@
 
     // Verify we starting location services
     [self.mockLocationManager verify];
-}
-
-
-/**
- * Test location updates generates a location event.
- */
-- (void)testLocationEvent {
-
-    CLLocation *testLocation = [UALocationTest createLocationWithLat:45.5231
-                                                                 lon:122.6765
-                                                            accuracy:100.0
-                                                                 age:0];
-
-    // Expect a location event
-    [[self.mockAnalytics expect] addEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
-        if (![obj isKindOfClass:[UALocationEvent class]]) {
-            return NO;
-        }
-
-        UALocationEvent *event = obj;
-        if (![[event.data valueForKey:UALocationEventProviderKey] isEqualToString:UALocationServiceProviderNetwork]) {
-            return NO;
-        }
-
-
-        double lat = [[event.data valueForKey:UALocationEventLatitudeKey] doubleValue];
-        if (fabs(lat - testLocation.coordinate.latitude) >= 0.000001) {
-            return NO;
-        }
-
-        double lon = [[event.data valueForKey:UALocationEventLongitudeKey] doubleValue];
-        if (fabs(lon - testLocation.coordinate.longitude) >= 0.000001) {
-            return NO;
-        }
-
-        return YES;
-    }]];
-
-    // Notify location update
-    [self.location locationManager:self.mockLocationManager didUpdateLocations:@[testLocation]];
-
-    // Verify we generated a location event
-    [self.mockAnalytics verify];
-
-}
-
-/**
- * Test location updates does not generate a location event if its older than
- * 300 seconds.
- */
-- (void)testOldLocationEvent {
-    // Reject any events
-    [[self.mockAnalytics reject] addEvent:OCMOCK_ANY];
-
-    // Create a test location older than 300 seconds
-    CLLocation *testLocation = [UALocationTest createLocationWithLat:45.5231
-                                                                 lon:122.6765
-                                                            accuracy:100.0
-                                                                 age:301.0];
-
-    // Notify location update
-    [self.location locationManager:self.mockLocationManager didUpdateLocations:@[testLocation]];
-
-    // Verify we did not generate a location event
-    [self.mockAnalytics verify];
-
-}
-
-/**
- * Test location updates does not generate a location event if the location is
- * invalid (accuracy < 0).
- */
-- (void)testInvalidLocationEvent {
-    // Reject any events
-    [[self.mockAnalytics reject] addEvent:OCMOCK_ANY];
-
-    // Create a test location with invalid accuracy
-    CLLocation *testLocation = [UALocationTest createLocationWithLat:45.5231
-                                                                 lon:122.6765
-                                                            accuracy:-1
-                                                                 age:0];
-
-    // Notify location update
-    [self.location locationManager:self.mockLocationManager didUpdateLocations:@[testLocation]];
-
-    // Verify we did not generate a location event
-    [self.mockAnalytics verify];
 }
 
 

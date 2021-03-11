@@ -24,7 +24,7 @@ typedef void (^NSURLResponseCallback)(NSData * _Nullable data, NSURLResponse * _
     UARequest *request = [UARequest requestWithBuilderBlock:^(UARequestBuilder *builder) {
         builder.method = @"POST";
         builder.body = [@"body" dataUsingEncoding:NSUTF8StringEncoding];
-        builder.URL = [NSURL URLWithString:@"www.urbanairship.com"];
+        builder.URL = [NSURL URLWithString:@"https://www.urbanairship.com"];
         builder.username = @"name";
         builder.password = @"password";
         [builder setValue:@"header_value" forHeader:@"header_key"];
@@ -86,7 +86,7 @@ typedef void (^NSURLResponseCallback)(NSData * _Nullable data, NSURLResponse * _
     UARequest *request = [UARequest requestWithBuilderBlock:^(UARequestBuilder *builder) {
         builder.method = @"POST";
         builder.body = [@"body" dataUsingEncoding:NSUTF8StringEncoding];
-        builder.URL = [NSURL URLWithString:@"www.urbanairship.com"];
+        builder.URL = [NSURL URLWithString:@"https://www.urbanairship.com"];
     }];
 
     id mockTask = [self mockForClass:[NSURLSessionTask class]];
@@ -108,7 +108,7 @@ typedef void (^NSURLResponseCallback)(NSData * _Nullable data, NSURLResponse * _
     // Create a test request
     UARequest *request = [UARequest requestWithBuilderBlock:^(UARequestBuilder *builder) {
         builder.method = @"POST";
-        builder.URL = [NSURL URLWithString:@"www.urbanairship.com"];
+        builder.URL = [NSURL URLWithString:@"https://www.urbanairship.com"];
     }];
 
     // Expect a call to the NSURLSession and capture the callback
@@ -145,7 +145,7 @@ typedef void (^NSURLResponseCallback)(NSData * _Nullable data, NSURLResponse * _
     // Create a test request
     UARequest *request = [UARequest requestWithBuilderBlock:^(UARequestBuilder *builder) {
         builder.method = @"POST";
-        builder.URL = [NSURL URLWithString:@"www.urbanairship.com"];
+        builder.URL = [NSURL URLWithString:@"https://www.urbanairship.com"];
     }];
 
     // Expect a call to the NSURLSession and capture the callback

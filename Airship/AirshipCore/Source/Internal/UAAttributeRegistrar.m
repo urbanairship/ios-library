@@ -16,12 +16,9 @@ static NSString *const NamedUserPersistentQueueKey = @"com.urbanairship.named_us
 @property(nonatomic, strong) UAPreferenceDataStore *dataStore;
 @property(nonatomic, strong) UIApplication *application;
 @property(atomic, copy) NSString *identifier;
-@property(atomic, assign) BOOL updating;
 @end
 
 @implementation UAAttributeRegistrar
-
-@synthesize enabled = _enabled;
 
 + (instancetype)channelRegistrarWithConfig:(UARuntimeConfig *)config
                                  dataStore:(UAPreferenceDataStore *)dataStore {
@@ -61,7 +58,6 @@ static NSString *const NamedUserPersistentQueueKey = @"com.urbanairship.named_us
         self.application = application;
         self.client = APIClient;
         self.pendingAttributeMutationsQueue = persistentQueue;
-        self.enabled = YES;
     }
 
     return self;
@@ -90,42 +86,7 @@ static NSString *const NamedUserPersistentQueueKey = @"com.urbanairship.named_us
     }];
 }
 
-- (void)updateAttributes {
-    @synchronized (self) {
-        if (!self.enabled) {
-            return;
-        }
-
-        if (self.updating) {
-            UA_LTRACE(@"Skipping attribute update, request already in flight");
-            return;
-        }
-
-        self.updating = YES;
-    }
-
-    __block UIBackgroundTaskIdentifier backgroundTaskIdentifier = [self beginUploading];
-
-    if (backgroundTaskIdentifier == UIBackgroundTaskInvalid) {
-        UA_LTRACE("Background task unavailable, skipping tag groups update.");
-        [self endUploading:backgroundTaskIdentifier];
-        return;
-    }
-
-    [self uploadNextMutationWithBackgroundTaskIdentifier:backgroundTaskIdentifier];
-}
-
-- (void)popPendingMutations:(UAAttributePendingMutations *)mutations
-                 identifier:(NSString *)identifier {
-    @synchronized (self) {
-        // Pop the mutation if it is what we expect and the identifier has not changed
-        if ([mutations isEqual:self.pendingAttributeMutationsQueue.peekObject] && [identifier isEqualToString:self.identifier]) {
-            [self.pendingAttributeMutationsQueue popObject];
-        }
-    }
-}
-
-- (void)uploadNextMutationWithBackgroundTaskIdentifier:(UIBackgroundTaskIdentifier)backgroundTaskIdentifier {
+- (UADisposable *)updateAttributesWithCompletionHandler:(void(^)(UAAttributeUploadResult result))completionHandler {
     UAAttributePendingMutations *mutations;
     NSString *identifier;
 
@@ -139,69 +100,42 @@ static NSString *const NamedUserPersistentQueueKey = @"com.urbanairship.named_us
     }
 
     if (!identifier || !mutations) {
-        // no upload work to do - end background task, if necessary, and finish operation
-        [self endUploading:backgroundTaskIdentifier];
-        return;
+        completionHandler(UAAttributeUploadResultUpToDate);
+        return nil;
     }
 
     UA_WEAKIFY(self);
-    void (^apiCompletionBlock)(NSError *) = ^void (NSError *error) {
+    void (^apiCompletionBlock)(UAHTTPResponse *, NSError *) = ^void (UAHTTPResponse *response, NSError *error) {
         UA_STRONGIFY(self);
-        if (!error) {
-            // Success - pop mutation
+
+        if (response.isSuccess) {
+            UA_LDEBUG(@"Update of %@ succeeded", mutations);
             [self popPendingMutations:mutations identifier:identifier];
             [self.delegate uploadedAttributeMutations:mutations identifier:identifier];
-            [self uploadNextMutationWithBackgroundTaskIdentifier:backgroundTaskIdentifier];
-        } else if (error.domain == UAAttributeAPIClientErrorDomain && error.code == UAAttributeAPIClientErrorUnrecoverableStatus) {
-            // Unrecoverable failure - pop mutation
-            UA_LERR(@"Unable to upload mutations: %@. Dropping.", mutations);
-            [self popPendingMutations:mutations identifier:identifier];
-            [self uploadNextMutationWithBackgroundTaskIdentifier:backgroundTaskIdentifier];
+            completionHandler(UAAttributeUploadResultFinished);
+        } else if (error || response.isServerError || response.status == 429) {
+            UA_LDEBUG(@"Update of %@ failed with response: %@ error: %@", mutations, response, error);
+            completionHandler(UAAttributeUploadResultFailed);
         } else {
-            UA_LINFO(@"Update of %@ failed with error: %@", mutations, error);
-            [self endUploading:backgroundTaskIdentifier];
+            // Unrecoverable failure - pop mutation
+            UA_LINFO(@"Update of %@ failed with response: %@", mutations, response);
+            [self popPendingMutations:mutations identifier:identifier];
+            completionHandler(UAAttributeUploadResultFinished);
         }
     };
 
-    [self.client updateWithIdentifier:identifier
-                   attributeMutations:mutations
-                    completionHandler:apiCompletionBlock];
+    return [self.client updateWithIdentifier:identifier
+                          attributeMutations:mutations
+                           completionHandler:apiCompletionBlock];
 }
 
-- (UIBackgroundTaskIdentifier)beginUploading {
-    UA_WEAKIFY(self);
-    __block UIBackgroundTaskIdentifier backgroundTaskIdentifier = [self.application beginBackgroundTaskWithExpirationHandler:^{
-        UA_STRONGIFY(self);
-
-        UA_LTRACE(@"Attribute background task expired.");
-        [self.client cancelAllRequests];
-
-        [self endUploading:backgroundTaskIdentifier];
-    }];
-
-    return backgroundTaskIdentifier;
-}
-
-- (void)endUploading:(UIBackgroundTaskIdentifier)backgroundTaskIdentifier {
-    if (backgroundTaskIdentifier != UIBackgroundTaskInvalid) {
-        [self.application endBackgroundTask:backgroundTaskIdentifier];
-    }
-
+- (void)popPendingMutations:(UAAttributePendingMutations *)mutations
+                 identifier:(NSString *)identifier {
     @synchronized (self) {
-        self.updating = NO;
-    }
-}
-
-- (void)setEnabled:(BOOL)enabled {
-    @synchronized (self) {
-        _enabled = enabled;
-        self.client.enabled = enabled;
-    }
-}
-
-- (BOOL)enabled {
-    @synchronized (self) {
-        return _enabled;
+        // Pop the mutation if it is what we expect and the identifier has not changed
+        if ([mutations isEqual:self.pendingAttributeMutationsQueue.peekObject] && [identifier isEqualToString:self.identifier]) {
+            [self.pendingAttributeMutationsQueue popObject];
+        }
     }
 }
 

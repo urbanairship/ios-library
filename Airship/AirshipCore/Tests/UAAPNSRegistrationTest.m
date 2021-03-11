@@ -38,9 +38,7 @@
 }
 
 - (void)tearDown {
-    [self.mockedApplication stopMocking];
     [self.mockedUserNotificationCenter stopMocking];
-
     self.pushRegistration = nil;
     [super tearDown];
 }

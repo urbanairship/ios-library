@@ -4,29 +4,31 @@
 
 @interface UAUIKitStateTrackerAdapter ()
 @property (nonatomic, strong) NSNotificationCenter *notificationCenter;
+@property (nonatomic, strong) UADispatcher *dispatcher;
 @end
 
 @implementation UAUIKitStateTrackerAdapter
 
 @synthesize stateTrackerDelegate;
 
-- (instancetype)initWithNotificationCenter:(NSNotificationCenter *)notificationCenter {
+- (instancetype)initWithNotificationCenter:(NSNotificationCenter *)notificationCenter dispatcher:(UADispatcher *)dispatcher {
     self = [super init];
 
     if (self) {
         self.notificationCenter = notificationCenter;
+        self.dispatcher = dispatcher;
         [self observeStateEvents];
     }
 
     return self;
 }
 
-+ (instancetype)adapterWithNotificationCenter:(NSNotificationCenter *)notificationCenter {
-    return [[self alloc] initWithNotificationCenter:notificationCenter];
++ (instancetype)adapterWithNotificationCenter:(NSNotificationCenter *)notificationCenter dispatcher:(UADispatcher *)dispatcher {
+    return [[self alloc] initWithNotificationCenter:notificationCenter dispatcher:dispatcher];
 }
 
 + (instancetype)adapter {
-    return [[self alloc] initWithNotificationCenter:[NSNotificationCenter defaultCenter]];
+    return [[self alloc] initWithNotificationCenter:[NSNotificationCenter defaultCenter] dispatcher:[UADispatcher mainDispatcher]];
 }
 
 - (void)observeStateEvents {
@@ -69,14 +71,22 @@
 }
 
 - (UAApplicationState)state {
-    switch ([UIApplication sharedApplication].applicationState) {
-        case UIApplicationStateActive:
-            return UAApplicationStateActive;
-        case UIApplicationStateInactive:
-            return UAApplicationStateInactive;
-        case UIApplicationStateBackground:
-            return UAApplicationStateBackground;
-    }
+    __block UAApplicationState result;
+    [self.dispatcher doSync:^{
+        switch ([UIApplication sharedApplication].applicationState) {
+            case UIApplicationStateActive:
+                result = UAApplicationStateActive;
+                break;
+            case UIApplicationStateInactive:
+                result = UAApplicationStateInactive;
+                break;
+            case UIApplicationStateBackground:
+                result = UAApplicationStateBackground;
+        }
+    }];
+
+    return result;
+
 }
 
 - (void)applicationDidFinishLaunching:(NSNotification *)notification {

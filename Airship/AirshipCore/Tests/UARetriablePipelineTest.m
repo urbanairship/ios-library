@@ -22,10 +22,6 @@
     self.pipeline = [UARetriablePipeline pipelineWithQueue:self.queue dispatcher:self.testDispatcher];
 }
 
-- (void)tearDown {
-    [super tearDown];
-}
-
 - (void)testChain {
     __block NSMutableArray *order = [NSMutableArray array];
 
@@ -81,10 +77,6 @@
 
     XCTAssertEqual(1, firstRunCount);
     XCTAssertEqual(3, secondRunCount);
-
-    if ([self.testDispatcher.scheduledBlocks count]) {
-        NSLog(@"WHAT: %@", self.testDispatcher.scheduledBlocks);
-    }
 }
 
 - (void)testCancel {

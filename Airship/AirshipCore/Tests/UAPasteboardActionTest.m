@@ -22,11 +22,6 @@
     self.action = [UAPasteboardAction new];
 }
 
-- (void)tearDown {
-    [self.mockPasteboard stopMocking];
-    [super tearDown];
-}
-
 /**
  * Test accepts valid string arguments in foreground situations.
  */

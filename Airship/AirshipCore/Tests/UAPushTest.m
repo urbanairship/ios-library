@@ -153,7 +153,8 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     self.push = nil;
 
     [self.dataStore removeAll];
-
+    [self.mockUserInfo stopMocking];
+    [self.mockUNNotification stopMocking];
     [super tearDown];
 }
 

@@ -33,6 +33,7 @@
 "ua_device_info_channel_attributes" = "Channel Attributes";
 "ua_device_info_named_user_attributes" = "Named User Attributes";
 "ua_device_info_tags" = "Tags";
+"ua_device_info_tag_groups" = "Tag Groups";
 "ua_device_info_sdk_version" = "SDK Version";
 "ua_device_info_locale" = "Locale";
 "ua_device_info_app_version" = "Application Version";
@@ -56,6 +57,11 @@
 "ua_attributes_action_set" = "Set";
 "ua_attributes_action_remove" = "Remove";
 "ua_attributes_action_removed" = "Removed";
+
+"ua_tags_action_set" = "Set";
+"ua_tags_action_remove" = "Remove";
+"ua_tag_value" = "Tag";
+"ua_tag_group_value" = "Tag Group";
 
 "ua_attributes_invalid_title" = "Invalid Attribute";
 "ua_attributes_invalid_message" = "Please add valid fields for your selected action";

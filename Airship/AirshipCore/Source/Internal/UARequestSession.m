@@ -59,6 +59,19 @@ NSString * const UARequestSessionErrorDomain = @"com.urbanairship.request_sessio
 - (UADisposable *)performHTTPRequest:(UARequest *)request
                    completionHandler:(UAHTTPRequestCompletionHandler)completionHandler {
 
+    if (!request.URL.host) {
+        [self.session.delegateQueue addOperationWithBlock:^{
+            NSString *msg = [NSString stringWithFormat:@"Attempted to perform request with a missing URL."];
+
+            NSError *error = [NSError errorWithDomain:UARequestSessionErrorDomain
+                                                 code:UARequestSessionErrorMissingURL
+                                             userInfo:@{NSLocalizedDescriptionKey:msg}];
+            completionHandler(nil, nil, error);
+        }];
+
+        return [[UADisposable alloc] init];
+    }
+    
     NSMutableURLRequest *URLRequest = [NSMutableURLRequest requestWithURL:request.URL];
     [URLRequest setHTTPShouldHandleCookies:NO];
     [URLRequest setHTTPMethod:request.method];

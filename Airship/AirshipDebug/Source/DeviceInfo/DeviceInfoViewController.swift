@@ -100,9 +100,10 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
     username = IndexPath(row: 2, section: 2),
     namedUser = IndexPath(row: 3, section: 2),
     tags = IndexPath(row: 4, section: 2),
-    associatedIdentifiers = IndexPath(row: 5, section: 2),
-    channelAttributes = IndexPath(row: 6, section: 2),
-    namedUserAttributes = IndexPath(row: 7, section: 2)
+    tagGroups = IndexPath(row: 5, section: 2),
+    associatedIdentifiers = IndexPath(row: 6, section: 2),
+    channelAttributes = IndexPath(row: 7, section: 2),
+    namedUserAttributes = IndexPath(row: 8, section: 2)
 
     // Location settings
     private let locationEnabled = IndexPath(row: 0, section: 3),
@@ -225,7 +226,7 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
         case inAppAutomationSettings:
             return 2
         case deviceSettings:
-            return 8
+            return 9
         case analyticsSettings:
             return 1
         case locationSettings:
@@ -318,6 +319,9 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
             }
 
             cell.accessoryType = .disclosureIndicator
+        case tagGroups:
+            cell.title.text = "ua_device_info_tag_groups".localized()
+            cell.accessoryType = .disclosureIndicator
         case associatedIdentifiers:
             cell.title.text = "ua_device_info_associated_identifiers".localized()
 
@@ -397,6 +401,8 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
             performSegue(withIdentifier: "namedUserSegue", sender: self)
         case tags:
             performSegue(withIdentifier: "tagsSegue", sender: self)
+        case tagGroups:
+            performSegue(withIdentifier: "tagGroupsSegue", sender: self)
         case associatedIdentifiers:
             performSegue(withIdentifier: "associatedIdentifiersSegue", sender: self)
         case channelAttributes:

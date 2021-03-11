@@ -13,10 +13,6 @@
     [super setUp];
 }
 
-- (void)tearDown {
-    [super tearDown];
-}
-
 /**
  * Tests tag normalization when tag includes whitespace
  */

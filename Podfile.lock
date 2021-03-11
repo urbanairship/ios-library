@@ -1,9 +1,9 @@
 PODS:
-  - OCMock (3.4.3)
+  - OCMock (3.7.1)
   - XcodeEdit (2.7.5)
 
 DEPENDENCIES:
-  - OCMock (~> 3.4.1)
+  - OCMock (~> 3.7.1)
   - XcodeEdit (~> 2.7)
 
 SPEC REPOS:
@@ -12,9 +12,9 @@ SPEC REPOS:
     - XcodeEdit
 
 SPEC CHECKSUMS:
-  OCMock: 43565190abc78977ad44a61c0d20d7f0784d35ab
+  OCMock: 75fbeaa46a9b11f8c182bbb1d1f7e9a35ccc9955
   XcodeEdit: 6c7bcdbc4a858ad3da937b8240063724546fe471
 
-PODFILE CHECKSUM: 9263f60698909466ee62c2ab65c42e3c8ce1ecae
+PODFILE CHECKSUM: 65e6a16b5103e664c6f52aa8b4eded7e97a2bee2
 
 COCOAPODS: 1.10.0

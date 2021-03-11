@@ -74,6 +74,12 @@
     [[[self.mockTimeZoneClass stub] andReturn:timeZone] defaultTimeZone];
 }
 
+- (void)tearDown {
+    [self.mockTimeZoneClass stopMocking];
+    [self.mockInitEvent stopMocking];
+    [super tearDown];
+}
+
 - (void)testBackgroundInitEmitsAppInitEvent {
     [[[self.mockAppStateTracker stub] andReturnValue:@(UAApplicationStateBackground)] state];
 
