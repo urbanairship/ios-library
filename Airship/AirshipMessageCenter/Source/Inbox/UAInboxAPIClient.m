@@ -164,11 +164,11 @@ NSString *const UALastMessageListModifiedTime = @"UALastMessageListModifiedTime.
     }
 
     UARequest *request = [UARequest requestWithBuilderBlock:^(UARequestBuilder * _Nonnull builder) {
-        NSDictionary *data = @{@"messages" : messageReporting };
+        NSDictionary *body = @{@"messages" : messageReporting };
 
-        NSData* body = [UAJSONSerialization dataWithJSONObject:data
-                                                       options:0
-                                                         error:nil];
+        NSData* bodyData = [UAJSONSerialization dataWithJSONObject:body
+                                                           options:0
+                                                             error:nil];
 
         NSString *urlString = [NSString stringWithFormat:@"%@%@%@%@",
                                self.config.deviceAPIURL,
@@ -180,7 +180,7 @@ NSString *const UALastMessageListModifiedTime = @"UALastMessageListModifiedTime.
         builder.method = @"POST";
         builder.username = userData.username;
         builder.password = userData.password;
-        builder.body = body;
+        builder.body = bodyData;
         [builder setValue:@"application/vnd.urbanairship+json; version=3;" forHeader:@"Accept"];
         [builder setValue:@"application/json" forHeader:@"Content-Type"];
         [builder setValue:[UAirship channel].identifier forHeader:kUAChannelIDHeader ];
@@ -227,11 +227,11 @@ NSString *const UALastMessageListModifiedTime = @"UALastMessageListModifiedTime.
     }
 
     UARequest *request = [UARequest requestWithBuilderBlock:^(UARequestBuilder * _Nonnull builder) {
-        NSDictionary *data = @{@"messages" : messageReporting };
+        NSDictionary *body = @{@"messages" : messageReporting };
 
-        NSData* body = [UAJSONSerialization dataWithJSONObject:data
-                                                       options:0
-                                                         error:nil];
+        NSData* bodyData = [UAJSONSerialization dataWithJSONObject:body
+                                                           options:0
+                                                             error:nil];
 
         NSString *urlString = [NSString stringWithFormat:@"%@%@%@%@",
                                self.config.deviceAPIURL,
@@ -243,7 +243,7 @@ NSString *const UALastMessageListModifiedTime = @"UALastMessageListModifiedTime.
         builder.method = @"POST";
         builder.username = userData.username;
         builder.password = userData.password;
-        builder.body = body;
+        builder.body = bodyData;
         [builder setValue:@"application/vnd.urbanairship+json; version=3;" forHeader:@"Accept"];
         [builder setValue:@"application/json" forHeader:@"Content-Type"];
         [builder setValue:[UAirship channel].identifier forHeader:kUAChannelIDHeader];
