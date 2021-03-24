@@ -21,7 +21,7 @@ class AddTagGroupsTableViewController: UITableViewController, UITextFieldDelegat
     var isRemove:Bool = false
     var isNamedUser:Bool = false
 
-    var applyButton:UIBarButtonItem = UIBarButtonItem(title: "ua_tags_action_set".localized(comment: "Set"), style: .plain, target: self, action: #selector(AddTagGroupsTableViewController.addTagGroupTag))
+    var applyButton:UIBarButtonItem = UIBarButtonItem(title: "ua_tags_action_set".localized(comment: "Set"), style: .plain, target: self, action: #selector(AddTagGroupsTableViewController.updateTagGroupTag))
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -72,15 +72,26 @@ class AddTagGroupsTableViewController: UITableViewController, UITextFieldDelegat
         return false
     }
     
-    @objc func addTagGroupTag() {
+    @objc func updateTagGroupTag() {
         guard let tagText = addTagTextField.text,
             let tagGroupText = addTagGroupTextField.text else { return }
         
-        if (isNamedUser) {
-            UAirship.namedUser()?.addTags([tagText], group: tagGroupText)
+        if (isRemove) {
+            if (isNamedUser) {
+                UAirship.namedUser()?.removeTags([tagText], group: tagGroupText)
+            } else {
+                UAirship.channel()?.removeTags([tagText], group: tagGroupText)
+            }
         } else {
-            UAirship.channel()?.addTags([tagText], group: tagGroupText)
+            if (isNamedUser) {
+                UAirship.namedUser()?.addTags([tagText], group: tagGroupText)
+            } else {
+                UAirship.channel()?.addTags([tagText], group: tagGroupText)
+            }
         }
+        
+        addTagTextField.text = ""
+        addTagGroupTextField.text = ""
     }
    
     private func updateApplyButtonState() {
@@ -165,6 +176,7 @@ class AddTagGroupsTableViewController: UITableViewController, UITextFieldDelegat
     func changeNavButtonTitle(_ title:String) {
         let item = navigationItem.rightBarButtonItem!
         item.title = title
+        item.target = self
     }
  
     @objc func textFieldDidChange(textField: UITextField) {
