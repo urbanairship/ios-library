@@ -138,6 +138,12 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)getMessageSchedules:(void (^)(NSArray<UAInAppMessageSchedule *> *))completionHandler;
 
 /**
+ * Get all in-app automations.
+ * @param completionHandler The completion handler to be called when fetch operation completes.
+ */
+- (void)getSchedules:(void (^)(NSArray<UASchedule *> *))completionHandler;
+
+/**
  * Edits a schedule.
  *
  * @param identifier A schedule identifier.

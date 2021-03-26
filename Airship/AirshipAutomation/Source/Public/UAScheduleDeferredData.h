@@ -29,6 +29,7 @@ typedef NS_ENUM(NSUInteger, UAScheduleDataDeferredType) {
  * Deferred schedule data.
  */
 @interface UAScheduleDeferredData : NSObject
+
 /**
  * The URL.
  */

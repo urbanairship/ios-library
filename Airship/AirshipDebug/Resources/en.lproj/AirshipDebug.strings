@@ -210,11 +210,14 @@
 "ua_scheduleinfo_editgraceperiod" = "Edit Grace Period";
 "ua_scheduleinfo_interval" = "Interval";
 "ua_scheduleinfo_isvalid" = "Schedule Is Valid";
+"ua_scheduleinfo_schedule_data" = "Schedule Data";
 
 "ua_cancel_schedule" = "Cancel Schedule";
 
 "ua_message_identifier" = "Identifier";
 "ua_message_name" = "Name";
+"ua_message_action" = "Action";
+"ua_message_url" = "URL";
 "ua_message_displaytype" = "Display Type";
 "ua_message_audience" = "Audience";
 "ua_message_extras" = "Extras";

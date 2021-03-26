@@ -1,21 +1,14 @@
 /* Copyright Airship and Contributors */
 
-#import <Foundation/Foundation.h>
-#import "UASchedule.h"
-#import "UAScheduleDeferredData+Internal.h"
+#import "UADeferredSchedule.h"
+#import "UAScheduleDeferredData.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 /**
- * A deferred schedule.
+ * UADeferredSchedule extension.
  */
-@interface UADeferredSchedule : UASchedule
-
-/**
- * Schedule's deferred data.
- */
-@property(nonatomic, readonly) UAScheduleDeferredData *deferredData;
-
+@interface UADeferredSchedule()
 
 /**
  * Creates a schedule with a builder block.

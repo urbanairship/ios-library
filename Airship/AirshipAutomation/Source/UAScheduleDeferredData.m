@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-#import "UAScheduleDeferredData+Internal.h"
+#import "UAScheduleDeferredData.h"
 #import "NSDictionary+UAAdditions.h"
 
 NSString *const UAScheduleDeferredDataErrorDomain = @"com.urbanairship.deferred_schedule_data";
@@ -16,6 +16,7 @@ static NSString *const UAScheduleDeferredDataTypeInAppMessageValue = @"in_app_me
 @end
 
 @implementation UAScheduleDeferredData
+
 - (instancetype)initWithURL:(NSURL *)URL
          retriableOnTimeout:(BOOL)retriableOnTimeout
                        type:(UAScheduleDataDeferredType)type {

@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 #import "UAScheduleEdits.h"
-#import "UAScheduleDeferredData+Internal.h"
+#import "UAScheduleDeferredData.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

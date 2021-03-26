@@ -41,7 +41,7 @@ class AutomationDetailButtonCell: UITableViewCell {
 
 class AutomationDetailViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     @IBOutlet var tableView: UITableView!
-
+    
     public static let segueID = "AutomationDetailSegue"
 
     private let defaultCellHeight:CGFloat = 44
@@ -49,7 +49,7 @@ class AutomationDetailViewController: UIViewController, UITableViewDelegate, UIT
     var collapsedCellPaths:[IndexPath] = []
 
     /* The UASchedule to be displayed */
-    public var schedule : UAInAppMessageSchedule?
+    public var schedule : UASchedule?
 
     private let inAppAutomation = UAInAppAutomation.shared()
 
@@ -58,12 +58,10 @@ class AutomationDetailViewController: UIViewController, UITableViewDelegate, UIT
      * Note: Number of sections and sections for row are defined in their respective
      * table view data source methods
      */
-    let scheduleSection = 0,
-    messageSection = 1,
-    contentSection = 2
+    let scheduleSection = 0
 
     // Indexes section 0
-    private let identifierIdx = IndexPath(row: 0, section: 0),
+    let identifierIdx = IndexPath(row: 0, section: 0),
     startIdx = IndexPath(row: 1, section: 0),
     endIdx = IndexPath(row: 2, section: 0),
     priorityIdx = IndexPath(row: 3, section: 0),
@@ -73,29 +71,9 @@ class AutomationDetailViewController: UIViewController, UITableViewDelegate, UIT
     editGracePeriodIdx = IndexPath(row: 7, section: 0),
     intervalIdx = IndexPath(row: 8, section: 0),
     isValidIdx = IndexPath(row: 9, section: 0),
-    cancelScheduleIdx =  IndexPath(row: 10, section: 0)
-
-    // Indexes section 1
-    private let nameIdx = IndexPath(row: 0, section: 1),
-    displayTypeIdx = IndexPath(row: 1, section: 1),
-    audienceIdx = IndexPath(row: 2, section: 1),
-    extrasIdx = IndexPath(row: 3, section: 1)
-
-    // Indexes section 2
-    private let placementIdx = IndexPath(row: 0, section: 2),
-    contentLayoutIdx = IndexPath(row: 1, section: 2),
-    headingIdx = IndexPath(row: 2, section: 2),
-    bodyIdx = IndexPath(row: 3, section: 2),
-    mediaIdx = IndexPath(row: 4, section: 2),
-    urlIdx = IndexPath(row: 5, section: 2),
-    buttonsIdx = IndexPath(row: 6, section: 2),
-    footerIdx = IndexPath(row: 7, section: 2),
-    actionsIdx = IndexPath(row: 8, section: 2),
-    durationIdx = IndexPath(row: 9, section: 2),
-    borderRadiusIdx = IndexPath(row: 10, section: 2),
-    backgroundColorIdx = IndexPath(row: 11, section: 2),
-    dismissButtonIdx = IndexPath(row: 12, section: 2),
-    allowFullscreenIdx = IndexPath(row: 13, section: 2)
+    audienceIdx = IndexPath(row: 10, section: 0),
+    scheduleDataIdx =  IndexPath(row: 11, section: 0),
+    cancelScheduleIdx =  IndexPath(row: 12, section: 0)
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -115,11 +93,7 @@ class AutomationDetailViewController: UIViewController, UITableViewDelegate, UIT
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
         case scheduleSection:
-            return 11
-        case messageSection:
-            return 5
-        case contentSection:
-            return 14
+            return 13
         default:
             return 0
         }
@@ -135,10 +109,6 @@ class AutomationDetailViewController: UIViewController, UITableViewDelegate, UIT
         switch indexPath.section {
         case scheduleSection:
             return createScheduleCell(indexPath)
-        case messageSection:
-            return createMessageCell(indexPath)
-        case contentSection:
-            return createContentCell(indexPath)
         default:
             break
         }
@@ -195,18 +165,14 @@ class AutomationDetailViewController: UIViewController, UITableViewDelegate, UIT
             }
         case audienceIdx:
             performSegue(withIdentifier: AudienceDetailViewController.segueID, sender: indexPath)
-        case extrasIdx:
-            performSegue(withIdentifier: ExtrasDetailViewController.segueID, sender: indexPath)
-        case headingIdx:
-            performSegue(withIdentifier: TextInfoDetailViewController.segueID, sender: indexPath)
-        case bodyIdx:
-            performSegue(withIdentifier: TextInfoDetailViewController.segueID, sender: indexPath)
-        case mediaIdx:
-            performSegue(withIdentifier: MediaInfoDetailViewController.segueID, sender: indexPath)
-        case buttonsIdx:
-            performSegue(withIdentifier: ButtonsTableViewController.segueID, sender: indexPath)
-        case footerIdx:
-            performSegue(withIdentifier: TextInfoDetailViewController.segueID, sender: indexPath)
+        case scheduleDataIdx:
+            if schedule is UAInAppMessageSchedule {
+                performSegue(withIdentifier: InAppMessageDetailViewController.segueID, sender: indexPath)
+            } else if schedule is UAActionSchedule {
+                performSegue(withIdentifier: ActionDetailViewController.segueID, sender: indexPath)
+            } else if schedule is UADeferredSchedule {
+                performSegue(withIdentifier: DeferredDetailViewController.segueID, sender: indexPath)
+            }
         default:
             break
         }
@@ -215,7 +181,7 @@ class AutomationDetailViewController: UIViewController, UITableViewDelegate, UIT
     func defaultAutomationDetailCell(_ indexPath:IndexPath) -> AutomationDetailCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "AutomationDetailCell", for: indexPath) as! AutomationDetailCell
 
-        // Remove storyboary placeholders
+        // Remove storyboard placeholders
         cell.title.text = nil
         cell.subtitle.text = nil
 
@@ -227,334 +193,6 @@ class AutomationDetailViewController: UIViewController, UITableViewDelegate, UIT
 
         return cell
     }
-
-    func createContentCell(_ indexPath:IndexPath) -> UITableViewCell {
-        guard let schedule = schedule else { return UITableViewCell() }
-        let message = schedule.message
-
-        switch (message.displayType) {
-        case .banner:
-            let displayContent = message.displayContent as! UAInAppMessageBannerDisplayContent
-            return createBannerContentCell(indexPath, displayContent: displayContent)
-        case .fullScreen:
-            let displayContent = message.displayContent as! UAInAppMessageFullScreenDisplayContent
-            return createFullScreenContentCell(indexPath, displayContent: displayContent)
-        case .modal:
-            let displayContent = message.displayContent as! UAInAppMessageModalDisplayContent
-            return createModalContentCell(indexPath, displayContent: displayContent)
-        case .HTML:
-            let displayContent = message.displayContent as! UAInAppMessageHTMLDisplayContent
-            return createHTMLContentCell(indexPath, displayContent: displayContent)
-        case .custom:  // TODO - IMPLEMENT
-            let _ = message.displayContent as! UAInAppMessageCustomDisplayContent
-        @unknown default:
-            let cell = defaultAutomationDetailCell(indexPath)
-            cell.title.text = "ua_displaycontent_unknown".localized()
-            return cell
-        }
-
-        return UITableViewCell()
-    }
-
-    func createBannerContentCell(_ indexPath:IndexPath, displayContent:UAInAppMessageBannerDisplayContent) -> UITableViewCell {
-        let cell = defaultAutomationDetailCell(indexPath)
-
-        switch indexPath {
-        case placementIdx:
-            cell.title.text = "ua_displaycontent_placement".localized()
-
-            let placement =  displayContent.placement
-
-            var subtitle:String?
-            switch placement {
-            case .top:
-                subtitle = "ua_displaycontent_placement_top".localized()
-            case .bottom:
-                subtitle = "ua_displaycontent_placement_bottom".localized()
-            default:
-                subtitle = nil
-            }
-
-            cell.subtitle.text = subtitle
-        case contentLayoutIdx:
-            cell.title.text = "ua_displaycontent_contentlayout".localized()
-
-            var subtitle:String?
-            switch displayContent.contentLayout {
-            case .mediaLeft:
-                subtitle = "ua_displaycontent_contentLayout_mediaLeft".localized()
-            case .mediaRight:
-                subtitle = "ua_displaycontent_contentLayout_mediaRight".localized()
-            default:
-                subtitle = nil
-            }
-
-            cell.subtitle.text = subtitle
-        case headingIdx:
-            cell.title.text = "ua_displaycontent_heading".localized()
-            cell.subtitle.text = displayContent.heading?.text
-            cell.accessoryType = .disclosureIndicator
-        case bodyIdx:
-            cell.title.text = "ua_displaycontent_body".localized()
-            cell.subtitle.text = displayContent.body?.text
-            cell.accessoryType = .disclosureIndicator
-        case mediaIdx:
-            cell.title.text = "ua_displaycontent_media".localized()
-            cell.subtitle.text = descriptionForMedia(displayContent.media)
-            cell.accessoryType = .disclosureIndicator
-        case urlIdx:
-            collapsedCellPaths.addObjectIfNew(urlIdx)
-        case buttonsIdx:
-            cell.title.text = "ua_displaycontent_buttons".localized()
-            cell.subtitle.text = descriptionForButtons(displayContent.buttons, displayContent.buttonLayout)
-            cell.accessoryType = .disclosureIndicator
-            
-            break
-        case footerIdx:
-            collapsedCellPaths.addObjectIfNew(footerIdx)
-        case actionsIdx:
-            cell.title.text = "ua_displaycontent_actions".localized()
-            cell.subtitle.text = (displayContent.actions != nil) ? "ua_yesno_yes".localized() : "ua_yesno_no".localized()
-        case durationIdx:
-            cell.title.text = "ua_displaycontent_duration".localized()
-            cell.subtitle.text = String(format: "ua_displaycontent_duration_format".localized(), displayContent.durationSeconds)
-        case borderRadiusIdx:
-            cell.title.text = "ua_displaycontent_borderradius".localized()
-            cell.subtitle.text = "\(displayContent.borderRadiusPoints)"
-        case backgroundColorIdx:
-            cell.title.text = "ua_displaycontent_backgroundcolor".localized()
-            cell.subtitle.text = descriptionForColor(displayContent.backgroundColor)
-        case dismissButtonIdx:
-            cell.title.text = "ua_displaycontent_dismissbuttoncolor".localized()
-            cell.subtitle.text = descriptionForColor(displayContent.dismissButtonColor)
-        case allowFullscreenIdx:
-            collapsedCellPaths.addObjectIfNew(allowFullscreenIdx)
-        default:
-            break
-        }
-
-        return cell
-    }
-
-    func createFullScreenContentCell(_ indexPath:IndexPath, displayContent:UAInAppMessageFullScreenDisplayContent) -> UITableViewCell {
-        let cell = defaultAutomationDetailCell(indexPath)
-
-        switch indexPath {
-        case placementIdx:
-            collapsedCellPaths.addObjectIfNew(placementIdx)
-        case contentLayoutIdx:
-            cell.title.text = "ua_displaycontent_contentlayout".localized()
-
-            var subtitle:String?
-            switch displayContent.contentLayout {
-            case .headerMediaBody:
-                subtitle = "ua_displaycontent_contentLayout_headerMediaBody".localized()
-            case .mediaHeaderBody:
-                subtitle = "ua_displaycontent_contentLayout_mediaHeaderBody".localized()
-            case .headerBodyMedia:
-                subtitle = "ua_displaycontent_contentLayout_headerBodyMedia".localized()
-            @unknown default:
-                subtitle = "ua_displaycontent_contentLayout_unknown".localized()
-            }
-
-            cell.subtitle.text = subtitle
-        case headingIdx:
-            cell.title.text = "ua_displaycontent_heading".localized()
-            if let heading = displayContent.heading?.text {
-                cell.subtitle.text = heading
-            } else {
-                collapsedCellPaths.addObjectIfNew(headingIdx)
-            }
-            cell.accessoryType = .disclosureIndicator
-        case bodyIdx:
-            cell.title.text = "ua_displaycontent_body".localized()
-            if let body = displayContent.body?.text {
-                cell.subtitle.text = body
-            } else {
-                collapsedCellPaths.addObjectIfNew(bodyIdx)
-            }
-            cell.accessoryType = .disclosureIndicator
-        case mediaIdx:
-            cell.title.text = "ua_displaycontent_media".localized()
-            cell.accessoryType = .disclosureIndicator
-
-            if let description = descriptionForMedia(displayContent.media) {
-                cell.subtitle.text = description
-            } else {
-                collapsedCellPaths.addObjectIfNew(mediaIdx)
-            }
-        case urlIdx:
-            collapsedCellPaths.addObjectIfNew(urlIdx)
-        case buttonsIdx:
-            cell.title.text = "ua_displaycontent_buttons".localized()
-            cell.subtitle.text = descriptionForButtons(displayContent.buttons, displayContent.buttonLayout)
-            cell.accessoryType = .disclosureIndicator
-        case footerIdx:
-            cell.title.text = "ua_displaycontent_footer".localized()
-
-            if let footer = displayContent.footer?.label.text {
-                cell.subtitle.text = footer
-            } else {
-                collapsedCellPaths.addObjectIfNew(footerIdx)
-            }
-
-            cell.accessoryType = .disclosureIndicator
-        case actionsIdx:
-            collapsedCellPaths.addObjectIfNew(actionsIdx)
-        case durationIdx:
-            collapsedCellPaths.addObjectIfNew(durationIdx)
-        case borderRadiusIdx:
-            collapsedCellPaths.addObjectIfNew(borderRadiusIdx)
-        case backgroundColorIdx:
-            cell.title.text = "ua_displaycontent_backgroundcolor".localized()
-            cell.subtitle.text = descriptionForColor(displayContent.backgroundColor)
-        case dismissButtonIdx:
-            cell.title.text = "ua_displaycontent_dismissbuttoncolor".localized()
-            cell.subtitle.text = descriptionForColor(displayContent.dismissButtonColor)
-        case allowFullscreenIdx:
-            collapsedCellPaths.addObjectIfNew(allowFullscreenIdx)
-        default:
-            break
-        }
-
-        return cell
-    }
-
-    func createModalContentCell(_ indexPath:IndexPath, displayContent:UAInAppMessageModalDisplayContent) -> UITableViewCell {
-        let cell = defaultAutomationDetailCell(indexPath)
-
-        switch indexPath {
-        case placementIdx:
-            collapsedCellPaths.addObjectIfNew(placementIdx)
-        case contentLayoutIdx:
-            cell.title.text = "ua_displaycontent_contentlayout".localized()
-
-            var subtitle:String?
-            switch displayContent.contentLayout {
-            case .headerMediaBody:
-                subtitle = "ua_displaycontent_contentLayout_headerMediaBody".localized()
-            case .mediaHeaderBody:
-                subtitle = "ua_displaycontent_contentLayout_mediaHeaderBody".localized()
-            case .headerBodyMedia:
-                subtitle = "ua_displaycontent_contentLayout_headerBodyMedia".localized()
-            @unknown default:
-                subtitle = "ua_displaycontent_contentLayout_unknown".localized()
-            }
-
-            cell.subtitle.text = subtitle
-        case headingIdx:
-            cell.title.text = "ua_displaycontent_heading".localized()
-            if let heading = displayContent.heading?.text {
-                cell.subtitle.text = heading
-            } else {
-                collapsedCellPaths.addObjectIfNew(headingIdx)
-            }
-            cell.accessoryType = .disclosureIndicator
-        case bodyIdx:
-            cell.title.text = "ua_displaycontent_body".localized()
-            if let body = displayContent.body?.text {
-                cell.subtitle.text = body
-            } else {
-                collapsedCellPaths.addObjectIfNew(bodyIdx)
-            }
-            cell.accessoryType = .disclosureIndicator
-        case mediaIdx:
-            cell.title.text = "ua_displaycontent_media".localized()
-            cell.accessoryType = .disclosureIndicator
-
-            if let description = descriptionForMedia(displayContent.media) {
-                cell.subtitle.text = description
-            } else {
-                collapsedCellPaths.addObjectIfNew(mediaIdx)
-            }
-        case urlIdx:
-            collapsedCellPaths.addObjectIfNew(urlIdx)
-        case buttonsIdx:
-            cell.title.text = "ua_displaycontent_buttons".localized()
-            cell.accessoryType = .disclosureIndicator
-
-            if let description = descriptionForButtons(displayContent.buttons, displayContent.buttonLayout) {
-                cell.subtitle.text = description
-            } else {
-                collapsedCellPaths.addObjectIfNew(buttonsIdx)
-            }
-        case footerIdx:
-            cell.title.text = "ua_displaycontent_footer".localized()
-
-            if let footer = displayContent.footer?.label.text {
-                cell.subtitle.text = footer
-            } else {
-                collapsedCellPaths.addObjectIfNew(footerIdx)
-            }
-
-            cell.accessoryType = .disclosureIndicator
-        case actionsIdx:
-            collapsedCellPaths.addObjectIfNew(actionsIdx)
-        case durationIdx:
-            collapsedCellPaths.addObjectIfNew(durationIdx)
-        case borderRadiusIdx:
-            cell.title.text = "ua_displaycontent_borderradius".localized()
-            cell.subtitle.text = "\(displayContent.borderRadiusPoints)"
-        case backgroundColorIdx:
-            cell.title.text = "ua_displaycontent_backgroundcolor".localized()
-            cell.subtitle.text = descriptionForColor(displayContent.backgroundColor)
-        case dismissButtonIdx:
-            cell.title.text = "ua_displaycontent_dismissbuttoncolor".localized()
-            cell.subtitle.text = descriptionForColor(displayContent.dismissButtonColor)
-        case allowFullscreenIdx:
-            cell.title.text = "ua_displaycontent_allowfullscreendisplay".localized()
-            cell.subtitle.text = (displayContent.allowFullScreenDisplay) ? "ua_yesno_yes".localized() : "ua_yesno_no".localized()
-        default:
-            break
-        }
-
-        return cell
-    }
-
-    func createHTMLContentCell(_ indexPath:IndexPath, displayContent:UAInAppMessageHTMLDisplayContent) -> UITableViewCell {
-        let cell = defaultAutomationDetailCell(indexPath)
-
-        switch indexPath {
-        case placementIdx:
-            collapsedCellPaths.addObjectIfNew(placementIdx)
-        case contentLayoutIdx:
-            collapsedCellPaths.addObjectIfNew(contentLayoutIdx)
-        case headingIdx:
-            collapsedCellPaths.addObjectIfNew(headingIdx)
-        case bodyIdx:
-            collapsedCellPaths.addObjectIfNew(bodyIdx)
-        case mediaIdx:
-            collapsedCellPaths.addObjectIfNew(mediaIdx)
-        case urlIdx:
-            cell.title.text = "ua_displaycontent_url".localized()
-            cell.subtitle.text = displayContent.url
-        case buttonsIdx:
-            collapsedCellPaths.addObjectIfNew(buttonsIdx)
-        case footerIdx:
-           collapsedCellPaths.addObjectIfNew(footerIdx)
-        case actionsIdx:
-            collapsedCellPaths.addObjectIfNew(actionsIdx)
-        case durationIdx:
-            collapsedCellPaths.addObjectIfNew(durationIdx)
-        case borderRadiusIdx:
-            cell.title.text = "ua_displaycontent_borderradius".localized()
-            cell.subtitle.text = "\(displayContent.borderRadiusPoints)"
-        case backgroundColorIdx:
-            cell.title.text = "ua_displaycontent_backgroundcolor".localized()
-            cell.subtitle.text = descriptionForColor(displayContent.backgroundColor)
-        case dismissButtonIdx:
-            cell.title.text = "ua_displaycontent_dismissbuttoncolor".localized()
-            cell.subtitle.text = descriptionForColor(displayContent.dismissButtonColor)
-        case allowFullscreenIdx:
-            cell.title.text = "ua_displaycontent_allowfullscreendisplay".localized()
-            cell.subtitle.text = (displayContent.allowFullScreenDisplay) ? "ua_yesno_yes".localized() : "ua_yesno_no".localized()
-        default:
-            break
-        }
-
-        return cell
-    }
-
 
     func createScheduleCell(_ indexPath:IndexPath) -> UITableViewCell {
         // Handle button cell separately
@@ -616,6 +254,16 @@ class AutomationDetailViewController: UIViewController, UITableViewDelegate, UIT
         case isValidIdx:
             cell.title.text = "ua_scheduleinfo_isvalid".localized()
             cell.subtitle.text = (schedule.isValid) ? "ua_yesno_yes".localized() : "ua_yesno_no".localized()
+        case audienceIdx:
+            cell.title.text = "ua_message_audience".localized()
+            cell.subtitle.text = ""
+            cell.accessoryType = .disclosureIndicator
+            if schedule.audience == nil {
+                collapsedCellPaths.addObjectIfNew(audienceIdx)
+            }
+        case scheduleDataIdx:
+            cell.title.text = "ua_scheduleinfo_schedule_data".localized()
+            cell.accessoryType = .disclosureIndicator
         default:
             break
         }
@@ -631,153 +279,21 @@ class AutomationDetailViewController: UIViewController, UITableViewDelegate, UIT
         return 44
     }
 
-    func createMessageCell(_ indexPath:IndexPath) -> UITableViewCell {
-        guard let schedule = schedule else {
-            return UITableViewCell()
-        }
-
-        let message = schedule.message
-
-        let cell = defaultAutomationDetailCell(indexPath)
-
-        let dateFormatter = ISO8601DateFormatter()
-        dateFormatter.formatOptions = [.withInternetDateTime]
-
-        switch indexPath {
-        case nameIdx:
-            cell.title.text = "ua_message_name".localized()
-            if let name = message.name {
-                cell.subtitle.text = name
-            } else {
-                collapsedCellPaths.addObjectIfNew(nameIdx)
-            }
-        case displayTypeIdx:
-            cell.title.text = "ua_message_displaytype".localized()
-            cell.subtitle.text = generateDisplayTypeSubtitle(message.displayType)
-        case audienceIdx:
-            cell.title.text = "ua_message_audience".localized()
-            cell.subtitle.text = ""
-            cell.accessoryType = .disclosureIndicator
-            if schedule.audience == nil {
-                collapsedCellPaths.addObjectIfNew(audienceIdx)
-            }
-        case extrasIdx:
-            cell.title.text = "ua_message_extras".localized()
-            cell.subtitle.text = ""
-            cell.accessoryType = .disclosureIndicator
-            if message.extras == nil {
-                collapsedCellPaths.addObjectIfNew(extrasIdx)
-            }
-        default:
-            break
-        }
-
-        return cell
-    }
-
-    private func generateDisplayTypeSubtitle(_ type:UAInAppMessageDisplayType) -> String {
-        switch (type) {
-        case .banner:
-            return "ua_message_displaytype_banner".localized()
-        case .fullScreen:
-            return "ua_message_displaytype_fullscreen".localized()
-        case .modal:
-            return "ua_message_displaytype_modal".localized()
-        case .HTML:
-            return "ua_message_displaytype_html".localized()
-        case .custom:
-            return "ua_message_displaytype_custom".localized()
-        default:
-            return ""
-        }
-    }
-
-    private func generatedMediaSubtitle(_ mediaInfo: UAInAppMessageMediaInfo?) -> String? {
-        var subtitle:String?
-        if let mediaInfo = mediaInfo {
-            switch mediaInfo.type {
-            case .image:
-                subtitle = "ua_mediainfo_type_image".localized()
-            case .video:
-                subtitle = "ua_mediainfo_type_video".localized()
-            case .youTube:
-                subtitle = "ua_mediainfo_type_youTube".localized()
-            @unknown default:
-                subtitle = "ua_mediainfo_type_unknown".localized()
-            }
-            subtitle = subtitle! + ": \(mediaInfo.contentDescription)"
-        }
-
-        return subtitle
-    }
-
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 3
+        return 1
     }
 
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch section {
         case scheduleSection:
             return "ua_schedule_title".localized()
-        case messageSection:
-            return "ua_message_title".localized()
-        case contentSection:
-            switch (schedule?.message.displayType) {
-            case .banner:
-                return "ua_displaycontent_title_banner".localized()
-            case .fullScreen:
-                return "ua_displaycontent_title_fullScreen".localized()
-            case .modal:
-                return "ua_displaycontent_title_modal".localized()
-            case .HTML:
-                return "ua_displaycontent_title_HTML".localized()
-            case .custom:
-                return "ua_displaycontent_title_custom".localized()
-            case .none: fallthrough
-            @unknown default:
-                return "ua_displaycontent_title_unknown".localized()
-            }
         default:
             return "ua_displaycontent_title_unknown".localized()
         }
     }
-
-    private func descriptionForMedia(_ mediaInfo: UAInAppMessageMediaInfo?) -> String? {
-        var mediaDescription : String?
-        if let mediaInfo = mediaInfo {
-            switch mediaInfo.type {
-            case .image:
-                mediaDescription = "ua_mediainfo_type_image".localized()
-            case .video:
-                mediaDescription = "ua_mediainfo_type_video".localized()
-            case .youTube:
-                mediaDescription = "ua_mediainfo_type_youTube".localized()
-            @unknown default:
-                mediaDescription = "ua_mediainfo_type_unknown".localized()
-            }
-            mediaDescription = mediaDescription! + ": \(mediaInfo.contentDescription)"
-        }
-        return mediaDescription
-    }
-
-    private func descriptionForButtons(_ buttons : [UAInAppMessageButtonInfo]?, _ buttonLayout: UAInAppMessageButtonLayoutType) -> String? {
-        var buttonsDescription : String?
-        if let buttons = buttons {
-            if (buttons.count > 0) {
-                buttonsDescription = "\(buttons.count)"
-                switch (buttonLayout) {
-                case .stacked:
-                    buttonsDescription = buttonsDescription! + String(format:": %@","ua_displaycontent_buttonLayout_stacked".localized())
-                case .separate:
-                    buttonsDescription = buttonsDescription! + String(format:": %@","ua_displaycontent_buttonLayout_separate".localized())
-                case .joined:
-                    buttonsDescription = buttonsDescription! + String(format:": %@","ua_displaycontent_buttonLayout_joined".localized())
-                @unknown default:
-                    buttonsDescription = buttonsDescription! + String(format:": %@","ua_displaycontent_buttonLayout_unknown".localized())
-                }
-            }
-        }
-        return buttonsDescription
+    
+    func getDisplayContentTitle() -> String? {
+        return "ua_displaycontent_title_unknown".localized()
     }
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -789,83 +305,10 @@ class AutomationDetailViewController: UIViewController, UITableViewDelegate, UIT
             fatalError("Unexpected sender: \(sender ?? "unknown sender")")
         }
 
-        let message = schedule!.message
-
-        var heading : UAInAppMessageTextInfo?
-        var body : UAInAppMessageTextInfo?
-        var mediaInfo : UAInAppMessageMediaInfo?
-        var buttons : [ UAInAppMessageButtonInfo ]?
-
-        switch (message.displayType) {
-        case .banner:
-            let displayContent = message.displayContent as! UAInAppMessageBannerDisplayContent
-            heading = displayContent.heading
-            body = displayContent.body
-            mediaInfo = displayContent.media
-            buttons = displayContent.buttons
-        case .fullScreen:
-            let displayContent = message.displayContent as! UAInAppMessageFullScreenDisplayContent
-            heading = displayContent.heading
-            body = displayContent.body
-            mediaInfo = displayContent.media
-            buttons = displayContent.buttons
-        case .modal:
-            let displayContent = message.displayContent as! UAInAppMessageModalDisplayContent
-            heading = displayContent.heading
-            body = displayContent.body
-            mediaInfo = displayContent.media
-            buttons = displayContent.buttons
-        case .HTML:
-            let _ = message.displayContent as! UAInAppMessageHTMLDisplayContent
-        // TODO - Implement HTML detail view
-        case .custom:
-            let _ = message.displayContent as! UAInAppMessageCustomDisplayContent
-            // TODO - Implement custom detail view
-        @unknown default:
-            break
-        }
-
         switch(segue.identifier ?? "") {
         case "ShowScheduleDelayDetail":
             // TODO - implement schedule delay detail view
             print("UNIMPLEMENTED")
-        case TextInfoDetailViewController.segueID:
-            guard let textInfoDetailViewController = segue.destination as? TextInfoDetailViewController else {
-                fatalError("Unexpected destination: \(segue.destination)")
-            }
-
-            switch (selectedIdx) {
-            case headingIdx:
-                textInfoDetailViewController.textInfo = heading
-                textInfoDetailViewController.title = "ua_textinfo_title_heading".localized()
-            case bodyIdx:
-                textInfoDetailViewController.textInfo = body
-                textInfoDetailViewController.title = "ua_textinfo_title_body".localized()
-            default:
-                print("ERROR: unexpected text info cell selected")
-            }
-        case MediaInfoDetailViewController.segueID:
-            guard let mediaInfoDetailViewController = segue.destination as? MediaInfoDetailViewController else {
-                fatalError("Unexpected destination: \(segue.destination)")
-            }
-
-            switch (selectedIdx) {
-            case mediaIdx:
-                mediaInfoDetailViewController.mediaInfo = mediaInfo
-            default:
-                print("ERROR: unexpected media info cell selected")
-            }
-        case ButtonsTableViewController.segueID:
-            guard let buttonsTableViewController = segue.destination as? ButtonsTableViewController else {
-                fatalError("Unexpected destination: \(segue.destination)")
-            }
-
-            switch (selectedIdx) {
-            case buttonsIdx:
-                buttonsTableViewController.buttons = buttons
-            default:
-                print("ERROR: unexpected buttons cell selected")
-            }
         case TriggerTableViewController.segueID:
             guard let triggersTableViewController = segue.destination as? TriggerTableViewController else {
                 fatalError("Unexpected destination: \(segue.destination)")
@@ -888,19 +331,41 @@ class AutomationDetailViewController: UIViewController, UITableViewDelegate, UIT
             default:
                 print("ERROR: unexpected audience info cell selected")
             }
-        case ExtrasDetailViewController.segueID:
-        guard let extrasDetailViewController = segue.destination as? ExtrasDetailViewController else {
-            fatalError("Unexpected destination: \(segue.destination)")
-        }
+        case InAppMessageDetailViewController.segueID:
+            guard let inAppMessageDetailViewController = segue.destination as? InAppMessageDetailViewController else {
+                fatalError("Unexpected destination: \(segue.destination)")
+            }
 
-        switch (selectedIdx) {
-        case extrasIdx:
-            extrasDetailViewController.message = message
+            switch (selectedIdx) {
+            case scheduleDataIdx:
+                inAppMessageDetailViewController.schedule = schedule as? UAInAppMessageSchedule
+            default:
+                print("ERROR: unexpected schedule data info cell selected")
+            }
+        case ActionDetailViewController.segueID:
+            guard let actionDetailViewController = segue.destination as? ActionDetailViewController else {
+                fatalError("Unexpected destination: \(segue.destination)")
+            }
+
+            switch (selectedIdx) {
+            case scheduleDataIdx:
+                actionDetailViewController.schedule = schedule as? UAActionSchedule
+            default:
+                print("ERROR: unexpected schedule data info cell selected")
+            }
+        case DeferredDetailViewController.segueID:
+            guard let deferredDetailViewController = segue.destination as? DeferredDetailViewController else {
+                fatalError("Unexpected destination: \(segue.destination)")
+            }
+
+            switch (selectedIdx) {
+            case scheduleDataIdx:
+                deferredDetailViewController.schedule = schedule as? UADeferredSchedule
+            default:
+                print("ERROR: unexpected schedule data info cell selected")
+            }
         default:
-            print("ERROR: unexpected extras info cell selected")
-        }
-        default:
-            print("ERROR: Unexpected Segue Identifier; \(segue.identifier ?? "unknown identifier")")
+            return
         }
     }
 }

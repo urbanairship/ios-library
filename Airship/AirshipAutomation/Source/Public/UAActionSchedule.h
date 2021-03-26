@@ -16,6 +16,11 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, readonly) NSDictionary *actions;
 
 /**
+ * Schedule's data Json String.
+ */
+@property(nonatomic, readonly) NSString *dataJSONString;
+
+/**
  * Creates an action schedule with a builder block.
  * @param actions The actions.
  * @param builderBlock The builder block.

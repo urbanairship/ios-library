@@ -2287,12 +2287,17 @@
 		6EEAE7FA24C8F9B30046E311 /* UAScheduleTriggerContextTransformer+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EEAE7F724C8F9B30046E311 /* UAScheduleTriggerContextTransformer+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6EEAE7FB24C8F9B30046E311 /* UAScheduleTriggerContextTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EEAE7F824C8F9B30046E311 /* UAScheduleTriggerContextTransformer.m */; };
 		6EEAE7FC24C8F9B30046E311 /* UAScheduleTriggerContextTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EEAE7F824C8F9B30046E311 /* UAScheduleTriggerContextTransformer.m */; };
-		6EEAE81324CF93140046E311 /* UAScheduleDeferredData+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EEAE81124CF93140046E311 /* UAScheduleDeferredData+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		6EEAE81424CF93140046E311 /* UAScheduleDeferredData+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EEAE81124CF93140046E311 /* UAScheduleDeferredData+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6EEAE81524CF93140046E311 /* UAScheduleDeferredData.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EEAE81224CF93140046E311 /* UAScheduleDeferredData.m */; };
 		6EEAE81624CF93150046E311 /* UAScheduleDeferredData.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EEAE81224CF93140046E311 /* UAScheduleDeferredData.m */; };
 		6EEAE81824CF9FBF0046E311 /* UAScheduleDeferredDataTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EEAE81724CF9FBF0046E311 /* UAScheduleDeferredDataTest.m */; };
 		6EFB377D234595C9005E4E44 /* UAMessageCenterNativeBridgeExtensionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EFB377C234595C9005E4E44 /* UAMessageCenterNativeBridgeExtensionTest.m */; };
+		8449BB5225F7AD99004F4A49 /* UADeferredSchedule.h in Headers */ = {isa = PBXBuildFile; fileRef = 8449BB5125F7AD99004F4A49 /* UADeferredSchedule.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8449BB6C25F7D623004F4A49 /* UADeferredSchedule.h in Headers */ = {isa = PBXBuildFile; fileRef = 8449BB5125F7AD99004F4A49 /* UADeferredSchedule.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8449BB9E25F7D826004F4A49 /* UAScheduleDeferredData.h in Headers */ = {isa = PBXBuildFile; fileRef = 8449BB9D25F7D826004F4A49 /* UAScheduleDeferredData.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8449BB9F25F7D826004F4A49 /* UAScheduleDeferredData.h in Headers */ = {isa = PBXBuildFile; fileRef = 8449BB9D25F7D826004F4A49 /* UAScheduleDeferredData.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		84FA93E325F29E8C008A1729 /* ActionDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84FA93E025F29E8C008A1729 /* ActionDetailViewController.swift */; };
+		84FA93E425F29E8C008A1729 /* DeferredDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84FA93E125F29E8C008A1729 /* DeferredDetailViewController.swift */; };
+		84FA93E525F29E8C008A1729 /* InAppMessageDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84FA93E225F29E8C008A1729 /* InAppMessageDetailViewController.swift */; };
 		872BA2B223D9EDA900D7C10C /* Accengage.m in Sources */ = {isa = PBXBuildFile; fileRef = 872BA2AE23D9EDA800D7C10C /* Accengage.m */; };
 		872BA2B323D9EDA900D7C10C /* Accengage.h in Headers */ = {isa = PBXBuildFile; fileRef = 872BA2AF23D9EDA800D7C10C /* Accengage.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		872BA2B423D9EDA900D7C10C /* ACCUserProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = 872BA2B023D9EDA800D7C10C /* ACCUserProfile.m */; };
@@ -3410,13 +3415,17 @@
 		6EE7712C238F15D000E79944 /* Airship.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Airship.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6EEAE7F724C8F9B30046E311 /* UAScheduleTriggerContextTransformer+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAScheduleTriggerContextTransformer+Internal.h"; sourceTree = "<group>"; };
 		6EEAE7F824C8F9B30046E311 /* UAScheduleTriggerContextTransformer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAScheduleTriggerContextTransformer.m; sourceTree = "<group>"; };
-		6EEAE81124CF93140046E311 /* UAScheduleDeferredData+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAScheduleDeferredData+Internal.h"; sourceTree = "<group>"; };
 		6EEAE81224CF93140046E311 /* UAScheduleDeferredData.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAScheduleDeferredData.m; sourceTree = "<group>"; };
 		6EEAE81724CF9FBF0046E311 /* UAScheduleDeferredDataTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAScheduleDeferredDataTest.m; sourceTree = "<group>"; };
 		6EF2DF0D1E5CBAE30062099A /* UAScheduleDelayData+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAScheduleDelayData+Internal.h"; sourceTree = "<group>"; };
 		6EF2DF0E1E5CBAE30062099A /* UAScheduleDelayData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAScheduleDelayData.m; sourceTree = "<group>"; };
 		6EFB377C234595C9005E4E44 /* UAMessageCenterNativeBridgeExtensionTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAMessageCenterNativeBridgeExtensionTest.m; sourceTree = "<group>"; };
 		83A674F723AA7AA4005C0C8F /* AirshipDebugPushData.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = AirshipDebugPushData.xcdatamodel; sourceTree = "<group>"; };
+		8449BB5125F7AD99004F4A49 /* UADeferredSchedule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UADeferredSchedule.h; sourceTree = "<group>"; };
+		8449BB9D25F7D826004F4A49 /* UAScheduleDeferredData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UAScheduleDeferredData.h; sourceTree = "<group>"; };
+		84FA93E025F29E8C008A1729 /* ActionDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActionDetailViewController.swift; sourceTree = "<group>"; };
+		84FA93E125F29E8C008A1729 /* DeferredDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeferredDetailViewController.swift; sourceTree = "<group>"; };
+		84FA93E225F29E8C008A1729 /* InAppMessageDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InAppMessageDetailViewController.swift; sourceTree = "<group>"; };
 		872BA2AE23D9EDA800D7C10C /* Accengage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Accengage.m; sourceTree = "<group>"; };
 		872BA2AF23D9EDA800D7C10C /* Accengage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Accengage.h; sourceTree = "<group>"; };
 		872BA2B023D9EDA800D7C10C /* ACCUserProfile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACCUserProfile.m; sourceTree = "<group>"; };
@@ -3899,6 +3908,7 @@
 		1BAE376524F559950095C6E3 /* Public */ = {
 			isa = PBXGroup;
 			children = (
+				8449BB5125F7AD99004F4A49 /* UADeferredSchedule.h */,
 				1B70A14124F7B85D003209E0 /* AirshipAutomationLib.h */,
 				6EA734B024B7AA600012B737 /* UAInAppAutomation.h */,
 				6E845462237E0DC4007D3B1E /* UAAirshipAutomationCoreImport.h */,
@@ -3949,6 +3959,7 @@
 				3CADDEAA21B89AB000C482F4 /* UAInAppMessageDefaultDisplayCoordinator.h */,
 				3CADDEB221B89B0E00C482F4 /* UAInAppMessageDisplayCoordinator.h */,
 				3C13BFB42384AC0E0071E80C /* UAAutomationResources.h */,
+				8449BB9D25F7D826004F4A49 /* UAScheduleDeferredData.h */,
 			);
 			path = Public;
 			sourceTree = "<group>";
@@ -4103,6 +4114,9 @@
 		3CA0E234237CCBA600EE76CF /* Automation */ = {
 			isa = PBXGroup;
 			children = (
+				84FA93E025F29E8C008A1729 /* ActionDetailViewController.swift */,
+				84FA93E125F29E8C008A1729 /* DeferredDetailViewController.swift */,
+				84FA93E225F29E8C008A1729 /* InAppMessageDetailViewController.swift */,
 				3CA0E235237CCBA600EE76CF /* UADebugAutomationUtilities.swift */,
 				3CA0E236237CCBA600EE76CF /* ButtonDetailViewController.swift */,
 				3CA0E237237CCBA600EE76CF /* AudienceDetailViewController.swift */,
@@ -5068,7 +5082,6 @@
 				3CBB6F19212CBD0300E094B0 /* UARetriablePipeline+Internal.h */,
 				3C3BCBAA20E19FC500D86E60 /* UATimerScheduler.m */,
 				3C3BCBA920E19FC500D86E60 /* UATimerScheduler+Internal.h */,
-				6EEAE81124CF93140046E311 /* UAScheduleDeferredData+Internal.h */,
 				6EEAE81224CF93140046E311 /* UAScheduleDeferredData.m */,
 			);
 			path = Source;
@@ -6358,6 +6371,7 @@
 				6E8453C6237E0540007D3B1E /* UAInAppMessageHTMLStyle.h in Headers */,
 				6E8453C7237E0540007D3B1E /* UAInAppMessageCustomDisplayContent.h in Headers */,
 				6E8453C8237E0540007D3B1E /* UAInAppMessageBannerAdapter.h in Headers */,
+				8449BB9F25F7D826004F4A49 /* UAScheduleDeferredData.h in Headers */,
 				6E8453C9237E0540007D3B1E /* UAInAppMessageBannerDisplayContent.h in Headers */,
 				6E8453CA237E0540007D3B1E /* UAInAppMessageBannerStyle.h in Headers */,
 				6E8453CB237E0540007D3B1E /* UAInAppMessageModalAdapter.h in Headers */,
@@ -6401,6 +6415,7 @@
 				6EEAE7FA24C8F9B30046E311 /* UAScheduleTriggerContextTransformer+Internal.h in Headers */,
 				6E8453E9237E0540007D3B1E /* UAInAppMessageDisplayCoordinator.h in Headers */,
 				6E8453ED237E0540007D3B1E /* UASchedule.h in Headers */,
+				8449BB5225F7AD99004F4A49 /* UADeferredSchedule.h in Headers */,
 				6E8453EE237E0540007D3B1E /* UAScheduleTrigger.h in Headers */,
 				6E8453EF237E0540007D3B1E /* UAScheduleDelay.h in Headers */,
 				6E8453F1237E0540007D3B1E /* UAScheduleEdits.h in Headers */,
@@ -6445,7 +6460,6 @@
 				6E8453A1237E0524007D3B1E /* UAInAppMessageDisplayEvent+Internal.h in Headers */,
 				6E8453A2237E0524007D3B1E /* UAInAppMessageResolution+Internal.h in Headers */,
 				6E8453A3237E0524007D3B1E /* UAInAppMessageResolutionEvent+Internal.h in Headers */,
-				6EEAE81424CF93140046E311 /* UAScheduleDeferredData+Internal.h in Headers */,
 				6E8453A4237E0524007D3B1E /* UAInAppMessage+Internal.h in Headers */,
 				6E8453A5237E0524007D3B1E /* UAInAppMessageTextInfo+Internal.h in Headers */,
 				6E8453A6237E0524007D3B1E /* UAInAppMessageButtonInfo+Internal.h in Headers */,
@@ -6546,6 +6560,7 @@
 				6E4116452538C0B200FEE4E8 /* UAAttributePendingMutations.h in Headers */,
 				A6B483D825ADE89E00550305 /* UARemoteConfig.h in Headers */,
 				6E4119B52538C20200FEE4E8 /* UAAttributeAPIClient+Internal.h in Headers */,
+				8449BB9E25F7D826004F4A49 /* UAScheduleDeferredData.h in Headers */,
 				6EE77163238F16A600E79944 /* UASchedule.h in Headers */,
 				6E4116612538C0B300FEE4E8 /* UAAccengageModuleLoaderFactory.h in Headers */,
 				6E4114DD2538C0A900FEE4E8 /* UAirshipCoreResources.h in Headers */,
@@ -6708,7 +6723,6 @@
 				1B8DCF6A2507BDC10006E595 /* UAMessageCenterStyle.h in Headers */,
 				6E4116412538C0B200FEE4E8 /* UAChannelRegistrationPayload.h in Headers */,
 				3CFB563724E34475008F9CCE /* UAAuthToken+Internal.h in Headers */,
-				6EEAE81324CF93140046E311 /* UAScheduleDeferredData+Internal.h in Headers */,
 				6E4114F52538C0AA00FEE4E8 /* UAEvent.h in Headers */,
 				1B70A14024F7B3E0003209E0 /* AirshipExtendedActionsLib.h in Headers */,
 				6E411A992538C20500FEE4E8 /* UAUtils+Internal.h in Headers */,
@@ -6854,6 +6868,7 @@
 				6E4116752538C0B300FEE4E8 /* UALocaleManager.h in Headers */,
 				6E4119F92538C20200FEE4E8 /* UATagsActionPredicate+Internal.h in Headers */,
 				6EE771C6238F16A600E79944 /* UARetriable+Internal.h in Headers */,
+				8449BB6C25F7D623004F4A49 /* UADeferredSchedule.h in Headers */,
 				6EC32281254FC65800EA5B38 /* NSObject+UAAdditions.h in Headers */,
 				6E4115C92538C0AF00FEE4E8 /* UAAccountEventTemplate.h in Headers */,
 				6EE771C7238F16A600E79944 /* UARetriablePipeline+Internal.h in Headers */,
@@ -8053,6 +8068,7 @@
 				3CA0E2B5237CD05F00EE76CF /* UADebugAutomationUtilities.swift in Sources */,
 				3CA0E2B6237CD05F00EE76CF /* ButtonDetailViewController.swift in Sources */,
 				3CA0E2B7237CD05F00EE76CF /* AudienceDetailViewController.swift in Sources */,
+				84FA93E525F29E8C008A1729 /* InAppMessageDetailViewController.swift in Sources */,
 				6E218539237DB7960084933A /* AddAttributeTableViewController.swift in Sources */,
 				3CA0E2B8237CD05F00EE76CF /* TriggerTableViewController.swift in Sources */,
 				6E6CC38723A3F9B4003D583C /* PushPayload.swift in Sources */,
@@ -8073,9 +8089,11 @@
 				3CA0E2C9237CD05F00EE76CF /* EventsDetailTableViewController.swift in Sources */,
 				3CA0E2CA237CD05F00EE76CF /* EventDataManager.swift in Sources */,
 				45CCE9BB2445412F00D264D4 /* PropertyCells.swift in Sources */,
+				84FA93E325F29E8C008A1729 /* ActionDetailViewController.swift in Sources */,
 				3CA0E2CB237CD05F00EE76CF /* RootTableViewController.swift in Sources */,
 				3CA0E2CC237CD05F00EE76CF /* ThemeManager.swift in Sources */,
 				3CA0E2CD237CD05F00EE76CF /* AirshipDebug.swift in Sources */,
+				84FA93E425F29E8C008A1729 /* DeferredDetailViewController.swift in Sources */,
 				DF2519C12458E6CF00B3587A /* AddNamedUserAttributeTableViewController.swift in Sources */,
 				6E6CC38623A3F9B4003D583C /* PushDataManager.swift in Sources */,
 				3CA0E2CE237CD05F00EE76CF /* Theme.swift in Sources */,

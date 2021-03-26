@@ -18,7 +18,7 @@ class AutomationCell: UITableViewCell {
     @IBOutlet weak var messageName: UILabel!
     @IBOutlet weak var messageID: UILabel!
 
-    var schedule : UAInAppMessageSchedule?
+    var schedule : UASchedule?
 
     func setCellTheme() {
         backgroundColor = ThemeManager.shared.currentTheme.Background
@@ -42,7 +42,7 @@ class AutomationTableViewController: UITableViewController {
     var launchCompletionHandler : (() -> Void)?
 
     private let inAppAutomation = UAInAppAutomation.shared()
-    private var schedules : Array<UAInAppMessageSchedule>?
+    private var schedules : Array<UASchedule>?
 
     func setTableViewTheme() {
         tableView.backgroundColor = ThemeManager.shared.currentTheme.Background;
@@ -67,7 +67,7 @@ class AutomationTableViewController: UITableViewController {
     }
 
     @objc private func refreshInAppAutomation() {
-        self.inAppAutomation?.getMessageSchedules({ (schedulesFromAutomation) in
+        self.inAppAutomation?.getSchedules({ (schedulesFromAutomation) in
             self.schedules = schedulesFromAutomation
             self.tableView.reloadData()
             self.refreshControl?.endRefreshing()
@@ -102,22 +102,32 @@ class AutomationTableViewController: UITableViewController {
 
         if let schedule = self.schedules?[indexPath.row] {
             cell.schedule = schedule
-            let message = schedule.message
-            switch (message.displayContent.displayType) {
-            case .banner:
-                cell.messageType.text = "B"
-            case .fullScreen:
-                cell.messageType.text = "F"
-            case .modal:
-                cell.messageType.text = "M"
-            case .HTML:
-                cell.messageType.text = "H"
-            case .custom:
-                cell.messageType.text = "C"
-            @unknown default:
-                break
+            if let inAppMessage = schedule as? UAInAppMessageSchedule {
+                let message = inAppMessage.message
+                
+                switch (message.displayContent.displayType) {
+                case .banner:
+                    cell.messageType.text = "B"
+                case .fullScreen:
+                    cell.messageType.text = "F"
+                case .modal:
+                    cell.messageType.text = "M"
+                case .HTML:
+                    cell.messageType.text = "H"
+                case .custom:
+                    cell.messageType.text = "C"
+                @unknown default:
+                    break
+                }
+                cell.messageName.text = message.name
+            } else if schedule is UAActionSchedule {
+                cell.messageType.text = "A"
+                cell.messageName.text = "Action"
+            } else if schedule is UADeferredSchedule {
+                cell.messageType.text = "D"
+                cell.messageName.text = "Deferred"
             }
-            cell.messageName.text = message.name
+            
             cell.messageID.text = schedule.identifier
             if (schedule.isValid) {
                 cell.backgroundColor = nil
@@ -132,7 +142,7 @@ class AutomationTableViewController: UITableViewController {
     // MARK: - Navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         super.prepare(for: segue, sender: sender)
-
+        
         switch(segue.identifier ?? "") {
         case AutomationDetailViewController.segueID:
             guard let automationDetailViewController = segue.destination as? AutomationDetailViewController else {

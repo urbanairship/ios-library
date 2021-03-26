@@ -2,7 +2,7 @@
 
 #import <XCTest/XCTest.h>
 #import "UABaseTest.h"
-#import "UAScheduleDeferredData+Internal.h"
+#import "UAScheduleDeferredData.h"
 
 @interface UAScheduleDeferredDataTest : UABaseTest
 
