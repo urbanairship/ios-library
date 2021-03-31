@@ -11,7 +11,6 @@
 #import "UARuntimeConfig.h"
 #import "UAChannel.h"
 #import "UAirship.h"
-#import "NSOperationQueue+UAAdditions.h"
 #import "UADispatcher.h"
 #import "UAAppStateTracker.h"
 #import "UATaskManager.h"
