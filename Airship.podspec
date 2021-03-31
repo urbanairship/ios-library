@@ -12,12 +12,13 @@ Pod::Spec.new do |s|
    s.module_name             = "Airship"
    s.ios.deployment_target   = "11.0"
    s.tvos.deployment_target  = "11.0"
+   s.swift_versions          = "5.0"
    s.requires_arc            = true
    s.default_subspecs        = ["Core", "Automation", "MessageCenter", "ExtendedActions"]
 
    s.subspec "Core" do |core|
-      core.public_header_files        = "Airship/AirshipCore/Source/Public/*.h"
-      core.source_files               = "Airship/AirshipCore/Source/Public/*.h", "Airship/AirshipCore/Source/Internal/*.{h,m}"
+      core.public_header_files        = "Airship/AirshipCore/Source/Public/*.h", "Cocoapods/Airship.h"
+      core.source_files               = "Airship/AirshipCore/Source/Public/*.h", "Airship/AirshipCore/Source/Internal/*.{h,m}", "Cocoapods/Airship.h"
       core.private_header_files       = "Airship/AirshipCore/Source/Internal/*.h"
       core.resources                  = "Airship/AirshipCore/Resources/*"
       core.exclude_files              = "Airship/AirshipCore/Resources/Info.plist", "Airship/AirshipCore/Source/Public/AirshipCore.h"
@@ -69,5 +70,11 @@ Pod::Spec.new do |s|
       accengage.ios.exclude_files         = "Airship/AirshipAccengage/Source/AirshipAccengage.h"
       accengage.ios.resources             = "Airship/AirshipAccengage/Resources/**/*"
       accengage.dependency                  "Airship/Core"
+   end
+
+   s.subspec "Chat" do |chat|
+      chat.ios.source_files              = "Airship/AirshipChat/Source/**/*.{h,m,swift}"
+      chat.ios.exclude_files             = "Airship/AirshipChat/Source/AirshipChat.h"
+      chat.dependency                      "Airship/Core"
    end
 end

@@ -1748,6 +1748,15 @@
 		6E737E0024F033480094E2E8 /* UAInAppAudienceHistorian.m in Sources */ = {isa = PBXBuildFile; fileRef = 3226E11424C1DF54000106CC /* UAInAppAudienceHistorian.m */; };
 		6E737E0124F033550094E2E8 /* UAInAppAudienceHistorian+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3226E11524C1DF54000106CC /* UAInAppAudienceHistorian+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6E746507235FA9B6000BF09C /* UAMessageCenterTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E746506235FA9B6000BF09C /* UAMessageCenterTest.m */; };
+		6E7C067F26127557006D0E84 /* AirshipChat.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E7C067D26127557006D0E84 /* AirshipChat.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6E7C06A0261275F6006D0E84 /* AirshipChatModuleLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7C069F261275F6006D0E84 /* AirshipChatModuleLoader.swift */; };
+		6E7C06AF26127606006D0E84 /* AirshipChat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7C06AE26127606006D0E84 /* AirshipChat.swift */; };
+		6E7C06BE26127669006D0E84 /* UAAirshipChatModuleLoaderFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E7C06BD26127669006D0E84 /* UAAirshipChatModuleLoaderFactory.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6E7C06CC261276D9006D0E84 /* UAAirshipChatModuleLoaderFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E7C06BD26127669006D0E84 /* UAAirshipChatModuleLoaderFactory.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6E7C06DA261276DA006D0E84 /* UAAirshipChatModuleLoaderFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E7C06BD26127669006D0E84 /* UAAirshipChatModuleLoaderFactory.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6E7C06DB261276DB006D0E84 /* UAAirshipChatModuleLoaderFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E7C06BD26127669006D0E84 /* UAAirshipChatModuleLoaderFactory.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6E7C070326128035006D0E84 /* AirshipCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 494DD9571B0EB677009C134E /* AirshipCore.framework */; };
+		6E7C0731261287FA006D0E84 /* AirshipLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7C0730261287FA006D0E84 /* AirshipLogger.swift */; };
 		6E845389237E04FB007D3B1E /* UAInAppMessageResizableViewController+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 4515B6A92134AFC200284CFF /* UAInAppMessageResizableViewController+Internal.h */; };
 		6E84538A237E0523007D3B1E /* UAInAppMessageHTMLDisplayContent+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C805B16200ED87D0079F56E /* UAInAppMessageHTMLDisplayContent+Internal.h */; };
 		6E84538B237E0523007D3B1E /* UAInAppMessageHTMLViewController+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 45F0CD402124E58000EED496 /* UAInAppMessageHTMLViewController+Internal.h */; };
@@ -2567,6 +2576,13 @@
 			remoteGlobalIDString = 494DD9561B0EB677009C134E;
 			remoteInfo = Core;
 		};
+		6E7C070526128035006D0E84 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 494DD94E1B0EB677009C134E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 494DD9561B0EB677009C134E;
+			remoteInfo = AirshipCore;
+		};
 		6E845451237E08EE007D3B1E /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 494DD94E1B0EB677009C134E /* Project object */;
@@ -3335,6 +3351,13 @@
 		6E6CC38223A3F9B4003D583C /* PushNotificationsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PushNotificationsTableViewController.swift; sourceTree = "<group>"; };
 		6E6CC38923A3FA38003D583C /* AirshipDebugPushNotifications.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = AirshipDebugPushNotifications.storyboard; sourceTree = "<group>"; };
 		6E746506235FA9B6000BF09C /* UAMessageCenterTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAMessageCenterTest.m; sourceTree = "<group>"; };
+		6E7C067B26127557006D0E84 /* AirshipChat.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AirshipChat.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		6E7C067D26127557006D0E84 /* AirshipChat.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AirshipChat.h; sourceTree = "<group>"; };
+		6E7C067E26127557006D0E84 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		6E7C069F261275F6006D0E84 /* AirshipChatModuleLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipChatModuleLoader.swift; sourceTree = "<group>"; };
+		6E7C06AE26127606006D0E84 /* AirshipChat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipChat.swift; sourceTree = "<group>"; };
+		6E7C06BD26127669006D0E84 /* UAAirshipChatModuleLoaderFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAAirshipChatModuleLoaderFactory.h; path = Public/UAAirshipChatModuleLoaderFactory.h; sourceTree = "<group>"; };
+		6E7C0730261287FA006D0E84 /* AirshipLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipLogger.swift; sourceTree = "<group>"; };
 		6E8450AE237DFE89007D3B1E /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6E845377237E0271007D3B1E /* AirshipAutomation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AirshipAutomation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6E84544E237E05F3007D3B1E /* AirshipAutomation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AirshipAutomation.h; sourceTree = "<group>"; };
@@ -3753,6 +3776,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				6E6CC31B239A2EA9003D583C /* AirshipCore.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6E7C067826127557006D0E84 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6E7C070326128035006D0E84 /* AirshipCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4416,6 +4447,7 @@
 				6E84509C237DFE89007D3B1E /* AirshipAutomation */,
 				3CA0E302237E396100EE76CF /* AirshipMessageCenter */,
 				0A550D587E2599A4BD33CDF4 /* Pods */,
+				6E7C067C26127557006D0E84 /* AirshipChat */,
 				E3E85E514DBE69D4C8BF51CE /* Frameworks */,
 				1B8DCF452507B9380006E595 /* Recovered References */,
 			);
@@ -4436,6 +4468,7 @@
 				1BB4C00D239FB4700000559B /* Airship.framework */,
 				1BB4C00E239FB4700000559B /* AirshipAccengage.framework */,
 				1BB4C02A239FE5E50000559B /* AirshipAccengageTests.xctest */,
+				6E7C067B26127557006D0E84 /* AirshipChat.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -4954,6 +4987,7 @@
 		6E411DA92538D36100FEE4E8 /* Loaders */ = {
 			isa = PBXGroup;
 			children = (
+				6E7C06BD26127669006D0E84 /* UAAirshipChatModuleLoaderFactory.h */,
 				6E41147F2538C0A300FEE4E8 /* UAModuleLoader.h */,
 				6E4114BB2538C0A800FEE4E8 /* UAAccengageModuleLoaderFactory.h */,
 				6E4114822538C0A300FEE4E8 /* UAAutomationModuleLoaderFactory.h */,
@@ -5028,6 +5062,26 @@
 				6E8A54DC23639364004AE2A0 /* UATagGroupsLookupResponseCache+Internal.h */,
 			);
 			name = Audience;
+			sourceTree = "<group>";
+		};
+		6E7C067C26127557006D0E84 /* AirshipChat */ = {
+			isa = PBXGroup;
+			children = (
+				6E7C0691261275C3006D0E84 /* Source */,
+				6E7C067E26127557006D0E84 /* Info.plist */,
+			);
+			path = AirshipChat;
+			sourceTree = "<group>";
+		};
+		6E7C0691261275C3006D0E84 /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				6E7C067D26127557006D0E84 /* AirshipChat.h */,
+				6E7C069F261275F6006D0E84 /* AirshipChatModuleLoader.swift */,
+				6E7C06AE26127606006D0E84 /* AirshipChat.swift */,
+				6E7C0730261287FA006D0E84 /* AirshipLogger.swift */,
+			);
+			path = Source;
 			sourceTree = "<group>";
 		};
 		6E84509C237DFE89007D3B1E /* AirshipAutomation */ = {
@@ -6255,6 +6309,7 @@
 				6E411AAF2538C20500FEE4E8 /* UATagUtils+Internal.h in Headers */,
 				6E4117AB2538C1FA00FEE4E8 /* UARuntimeConfig+Internal.h in Headers */,
 				6E4115272538C0AB00FEE4E8 /* UAExtendedActionsModuleLoaderFactory.h in Headers */,
+				6E7C06BE26127669006D0E84 /* UAAirshipChatModuleLoaderFactory.h in Headers */,
 				6E4119FB2538C20200FEE4E8 /* UATagsActionPredicate+Internal.h in Headers */,
 				6E411B1B2538C20700FEE4E8 /* UAUIKitStateTrackerAdapter+Internal.h in Headers */,
 				6E41180B2538C1FB00FEE4E8 /* UASQLite+Internal.h in Headers */,
@@ -6356,6 +6411,14 @@
 				872BA2B523D9EDA900D7C10C /* ACCUserProfile.h in Headers */,
 				6E6CC32E239A2F18003D583C /* UAAccengage+Internal.h in Headers */,
 				1BA67C3C23A0FFA800A07324 /* UAAccengageUtils.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6E7C067626127557006D0E84 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6E7C067F26127557006D0E84 /* AirshipChat.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6835,6 +6898,7 @@
 				6E4115252538C0AB00FEE4E8 /* UAExtendedActionsModuleLoaderFactory.h in Headers */,
 				6E41191D2538C1FF00FEE4E8 /* UAJSONMatcher+Internal.h in Headers */,
 				6E411B0D2538C20700FEE4E8 /* UAAppBackgroundEvent+Internal.h in Headers */,
+				6E7C06CC261276D9006D0E84 /* UAAirshipChatModuleLoaderFactory.h in Headers */,
 				6E4119C92538C20200FEE4E8 /* UAAPNSRegistration+Internal.h in Headers */,
 				6EE771B0238F16A600E79944 /* UAInAppMessageManager+Internal.h in Headers */,
 				6E411A392538C20400FEE4E8 /* UAAnalytics+Internal.h in Headers */,
@@ -7042,6 +7106,7 @@
 				6E41165E2538C0B300FEE4E8 /* UAActionRegistryEntry.h in Headers */,
 				6E41168E2538C0B400FEE4E8 /* UAActionRegistry.h in Headers */,
 				6E4115622538C0AC00FEE4E8 /* NSJSONSerialization+UAAdditions.h in Headers */,
+				6E7C06DA261276DA006D0E84 /* UAAirshipChatModuleLoaderFactory.h in Headers */,
 				6E41190E2538C1FF00FEE4E8 /* UARemoteDataStore+Internal.h in Headers */,
 				6E4115022538C0AA00FEE4E8 /* UAViewUtils.h in Headers */,
 				6E4116222538C0B100FEE4E8 /* UANativeBridge.h in Headers */,
@@ -7265,6 +7330,7 @@
 				6E4117AC2538C1FA00FEE4E8 /* UARuntimeConfig+Internal.h in Headers */,
 				6E4115282538C0AB00FEE4E8 /* UAExtendedActionsModuleLoaderFactory.h in Headers */,
 				6E4119FC2538C20300FEE4E8 /* UATagsActionPredicate+Internal.h in Headers */,
+				6E7C06DB261276DB006D0E84 /* UAAirshipChatModuleLoaderFactory.h in Headers */,
 				6E411B1C2538C20700FEE4E8 /* UAUIKitStateTrackerAdapter+Internal.h in Headers */,
 				6E41180C2538C1FB00FEE4E8 /* UASQLite+Internal.h in Headers */,
 				6E411B242538C20700FEE4E8 /* UASwizzler+Internal.h in Headers */,
@@ -7475,6 +7541,25 @@
 			productReference = 1BB4C00E239FB4700000559B /* AirshipAccengage.framework */;
 			productType = "com.apple.product-type.framework";
 		};
+		6E7C067A26127557006D0E84 /* AirshipChat */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6E7C068026127557006D0E84 /* Build configuration list for PBXNativeTarget "AirshipChat" */;
+			buildPhases = (
+				6E7C067626127557006D0E84 /* Headers */,
+				6E7C067726127557006D0E84 /* Sources */,
+				6E7C067826127557006D0E84 /* Frameworks */,
+				6E7C067926127557006D0E84 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				6E7C070626128035006D0E84 /* PBXTargetDependency */,
+			);
+			name = AirshipChat;
+			productName = AirshipChat;
+			productReference = 6E7C067B26127557006D0E84 /* AirshipChat.framework */;
+			productType = "com.apple.product-type.framework";
+		};
 		6E8450FD237E0271007D3B1E /* AirshipAutomation */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 6E845374237E0271007D3B1E /* Build configuration list for PBXNativeTarget "AirshipAutomation" */;
@@ -7616,6 +7701,10 @@
 						DevelopmentTeamName = "Urban Airship Inc.";
 						LastSwiftMigration = 1170;
 					};
+					6E7C067A26127557006D0E84 = {
+						CreatedOnToolsVersion = 12.4;
+						LastSwiftMigration = 1240;
+					};
 					6EE76FD0238F15D000E79944 = {
 						LastSwiftMigration = 1170;
 					};
@@ -7691,6 +7780,7 @@
 				45C69118238DC79400A03C94 /* AirshipExtendedActions */,
 				6E6CC310239A2EA9003D583C /* AirshipAccengage */,
 				1BB4C029239FE5E50000559B /* AirshipAccengageTests */,
+				6E7C067A26127557006D0E84 /* AirshipChat */,
 			);
 		};
 /* End PBXProject section */
@@ -7758,6 +7848,13 @@
 			files = (
 				1BCDE30E23A12CBA0006A319 /* AirshipAccengage.strings in Resources */,
 				1BCDE30723A12C070006A319 /* UAAccengageNotificationCategories.plist in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6E7C067926127557006D0E84 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8322,6 +8419,16 @@
 				1B8F1B7223CCBFF300BEE715 /* ACCDeviceInformationSet.m in Sources */,
 				1BA67C3D23A0FFA800A07324 /* UAAccengageUtils.m in Sources */,
 				6E6CC332239A2F26003D583C /* UAAccengage.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6E7C067726127557006D0E84 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6E7C06AF26127606006D0E84 /* AirshipChat.swift in Sources */,
+				6E7C0731261287FA006D0E84 /* AirshipLogger.swift in Sources */,
+				6E7C06A0261275F6006D0E84 /* AirshipChatModuleLoader.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -9304,6 +9411,11 @@
 			target = 494DD9561B0EB677009C134E /* AirshipCore */;
 			targetProxy = 6E6CC312239A2EA9003D583C /* PBXContainerItemProxy */;
 		};
+		6E7C070626128035006D0E84 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 494DD9561B0EB677009C134E /* AirshipCore */;
+			targetProxy = 6E7C070526128035006D0E84 /* PBXContainerItemProxy */;
+		};
 		6E845452237E08EE007D3B1E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 494DD9561B0EB677009C134E /* AirshipCore */;
@@ -9907,6 +10019,80 @@
 			};
 			name = Release;
 		};
+		6E7C068126127557006D0E84 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = JZP4756KMT;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				INFOPLIST_FILE = AirshipChat/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.4;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.AirshipChat;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		6E7C068226127557006D0E84 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = JZP4756KMT;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				INFOPLIST_FILE = AirshipChat/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.4;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.AirshipChat;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		6E845375237E0271007D3B1E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = CC40DDB31D8CAF7300BABD4F /* AirshipConfig.xcconfig */;
@@ -10358,6 +10544,15 @@
 			buildConfigurations = (
 				6E6CC32A239A2EA9003D583C /* Debug */,
 				6E6CC32B239A2EA9003D583C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		6E7C068026127557006D0E84 /* Build configuration list for PBXNativeTarget "AirshipChat" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6E7C068126127557006D0E84 /* Debug */,
+				6E7C068226127557006D0E84 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

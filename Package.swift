@@ -35,7 +35,10 @@ let package = Package(
             targets: ["AirshipNotificationContentExtension"]),
         .library(
             name: "AirshipNotificationServiceExtension",
-            targets: ["AirshipNotificationServiceExtension"])
+            targets: ["AirshipNotificationServiceExtension"]),
+        .library(
+            name: "AirshipChat",
+            targets: ["AirshipChat"]),
     ],
     targets: [
         .target(name: "AirshipCore",
@@ -165,6 +168,13 @@ let package = Package(
                 resources: [
                     .process("Resources")],
                 publicHeadersPath: "Source"
+        ),
+        .target(name:"AirshipChat",
+                dependencies: [.target(name: "AirshipCore")],
+                path: "Airship/AirshipChat",
+                exclude: ["Source/AirshipChat.h",
+                          "Info.plist"],
+                sources : ["Source"]
         )
     ]
 )

@@ -30,6 +30,7 @@
 #import "UADebugLibraryModuleLoaderFactory.h"
 #import "UALocaleManager+Internal.h"
 #import "UARemoteConfigURLManager.h"
+#import "UAAirshipChatModuleLoaderFactory.h"
 
 #if !TARGET_OS_TV
 #import "UAChannelCapture+Internal.h"
@@ -52,6 +53,9 @@ NSString * const UAMessageCenterModuleLoaderClassName = @"UAMessageCenterModuleL
 NSString * const UAExtendedActionsModuleLoaderClassName = @"UAExtendedActionsModuleLoader";
 NSString * const UAAccengageModuleLoaderClassName = @"UAAccengageModuleLoader";
 NSString * const UADebugLibraryModuleLoaderClassName = @"AirshipDebug.UADebugLibraryModuleLoader";
+
+NSString * const UAAirshipChatModuleLoaderClassName = @"AirshipChat.AirshipChatModuleLoader";
+
 
 // AirshipReady payload
 NSString * const UAAirshipReadyChannelIdentifier = @"channel_id";
@@ -143,7 +147,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
                                        analytics:self.sharedAnalytics];
         [components addObject:self.sharedPush];
 
-        
+
         self.sharedNamedUser = [UANamedUser namedUserWithChannel:self.sharedChannel
                                                           config:self.config
                                                        dataStore:self.dataStore];
@@ -156,7 +160,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 
         self.sharedRemoteConfigManager = [UARemoteConfigManager remoteConfigManagerWithRemoteDataManager:self.sharedRemoteDataManager
                                                                                       applicationMetrics:self.applicationMetrics];
-        
+
 #if !TARGET_OS_TV
         // UIPasteboard is not available in tvOS
         self.channelCapture = [UAChannelCapture channelCaptureWithConfig:self.config
@@ -183,7 +187,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         if (automationLoader) {
             [loaders addObject:automationLoader];
         }
-        
+
         id<UAModuleLoader> messageCenterLoader = [UAirship messageCenterLoaderWithDataStore:self.dataStore
                                                                                      config:self.config
                                                                                     channel:self.sharedChannel];
@@ -202,6 +206,12 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         id<UAModuleLoader> extendedActionsLoader = [UAirship extendedActionsModuleLoader];
         if (extendedActionsLoader) {
             [loaders addObject:extendedActionsLoader];
+        }
+
+        id<UAModuleLoader> airshipChatLoader = [UAirship airshipChatModuleLoaderWithDataStore:self.dataStore channel:self.sharedChannel push:self.sharedPush];
+
+        if (airshipChatLoader) {
+            [loaders addObject:airshipChatLoader];
         }
 
         id<UAModuleLoader> debugLibraryLoader = [UAirship debugLibraryModuleLoaderWithAnalytics:self.sharedAnalytics];
@@ -256,17 +266,17 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
     dispatch_once(&takeOffPred_, ^{
         [UAirship executeUnsafeTakeOff:[config copy]];
     });
-    
+
     if ([UAirship shared].config.isExtendedBroadcastsEnabled) {
         NSMutableDictionary *airshipReadyPayload = [NSMutableDictionary dictionary];
-        
+
         NSString *channelIdentifier = [UAirship channel].identifier;
         NSString *appKey = [UAirship shared].config.appKey;
-       
+
         [airshipReadyPayload setValue:channelIdentifier forKey:UAAirshipReadyChannelIdentifier];
         [airshipReadyPayload setValue:appKey forKey:UAAirshipReadyAppKey];
         [airshipReadyPayload setValue:@1 forKey:UAAirshipReadyPayloadVersion];
-    
+
         [[NSNotificationCenter defaultCenter] postNotificationName:UAAirshipReadyNotification object:airshipReadyPayload];
     } else {
         [[NSNotificationCenter defaultCenter] postNotificationName:UAAirshipReadyNotification object:nil];
@@ -289,7 +299,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 
     UARemoteConfigURLManager *remoteConfigURLManager = [UARemoteConfigURLManager remoteConfigURLManagerWithDataStore:dataStore];
     UARuntimeConfig *runtimeConfig = [UARuntimeConfig runtimeConfigWithConfig:config urlManager:remoteConfigURLManager];
-    
+
     // Ensure that app credentials are valid
     if (!runtimeConfig) {
         UA_LIMPERR(@"The UAConfig is invalid, no application credentials were specified at runtime.");
@@ -336,7 +346,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
     // Create Airship
     [UAirship setSharedAirship:[[UAirship alloc] initWithRuntimeConfig:runtimeConfig
                                                              dataStore:dataStore]];
-    
+
     // Save the version
     if ([[UAirshipVersion get] isEqualToString:@"0.0.0"]) {
         UA_LIMPERR(@"_UA_VERSION is undefined - this commonly indicates an issue with the build configuration, UA_VERSION will be set to \"0.0.0\".");
@@ -523,8 +533,8 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 
 
 + (nullable id<UAModuleLoader>)messageCenterLoaderWithDataStore:(UAPreferenceDataStore *)dataStore
-                                                config:(UARuntimeConfig *)config
-                                               channel:(UAChannel<UAExtendableChannelRegistration> *)channel {
+                                                         config:(UARuntimeConfig *)config
+                                                        channel:(UAChannel<UAExtendableChannelRegistration> *)channel {
     Class cls = NSClassFromString(UAMessageCenterModuleLoaderClassName);
     if ([cls conformsToProtocol:@protocol(UAMessageCenterModuleLoaderFactory)]) {
         return [cls messageCenterModuleLoaderWithDataStore:dataStore config:config channel:channel];
@@ -584,6 +594,19 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
     return nil;
 }
 
++ (nullable id<UAModuleLoader>)airshipChatModuleLoaderWithDataStore:(UAPreferenceDataStore *)dataStore
+                                                            channel:(UAChannel *)channel
+                                                               push:(UAPush *)push {
+
+    Class cls = NSClassFromString(UAAirshipChatModuleLoaderClassName);
+    if ([cls conformsToProtocol:@protocol(UAAirshipChatModuleLoaderFactory)]) {
+        return [cls moduleLoaderWithDataStore:dataStore
+                                      channel:channel
+                                         push:push];
+    }
+    return nil;
+}
+
 + (nullable id<UAModuleLoader>)debugLibraryModuleLoaderWithAnalytics:(UAAnalytics *)analytics {
     Class cls = NSClassFromString(UADebugLibraryModuleLoaderClassName);
     if ([cls conformsToProtocol:@protocol(UADebugLibraryModuleLoaderFactory)]) {
@@ -607,3 +630,4 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 }
 
 @end
+

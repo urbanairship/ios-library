@@ -21,6 +21,7 @@
 #import "UAAddCustomEventAction.h"
 #import "UAAddTagsAction.h"
 #import "UAAggregateActionResult.h"
+#import "UAAirshipChatModuleLoaderFactory.h"
 #import "UAAnalytics.h"
 #import "UAAnalyticsEventConsumerProtocol.h"
 #import "UAAppIntegration.h"

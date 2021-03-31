@@ -66,6 +66,8 @@
 		6E75B26E2395D1CA00425530 /* AirshipNotificationServiceExtension.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6E75B2682395D1B300425530 /* AirshipNotificationServiceExtension.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		6E75B26F2395D1CF00425530 /* AirshipNotificationContentExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E75B26A2395D1B300425530 /* AirshipNotificationContentExtension.framework */; };
 		6E75B2702395D1CF00425530 /* AirshipNotificationContentExtension.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E75B26A2395D1B300425530 /* AirshipNotificationContentExtension.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		6E7C072E261285AA006D0E84 /* AirshipChat.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E7C071D2612821C006D0E84 /* AirshipChat.framework */; };
+		6E7C072F261285AA006D0E84 /* AirshipChat.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6E7C071D2612821C006D0E84 /* AirshipChat.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		764693A71C237B630090FE40 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 764693A61C237B630090FE40 /* main.m */; };
 		764693AA1C237B630090FE40 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 764693A91C237B630090FE40 /* AppDelegate.m */; };
 		764693AD1C237B630090FE40 /* HomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 764693AC1C237B630090FE40 /* HomeViewController.m */; };
@@ -305,6 +307,20 @@
 			remoteGlobalIDString = 1BFF18AE23854F0C00013FB9;
 			remoteInfo = AirshipNotificationContentExtension;
 		};
+		6E7C07142612821C006D0E84 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E75B2412395D1B100425530 /* Airship.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 6E7C067A26127557006D0E84;
+			remoteInfo = AirshipChat;
+		};
+		6E7C071C2612821C006D0E84 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E75B2412395D1B100425530 /* Airship.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6E7C067B26127557006D0E84;
+			remoteInfo = AirshipChat;
+		};
 		DFC3839F243EA31300EA78FE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 6E75B2622395D1B300425530 /* AirshipExtensions.xcodeproj */;
@@ -383,6 +399,7 @@
 			files = (
 				3CF3DDF824E75CFB000CF516 /* AirshipExtendedActions.framework in CopyFiles */,
 				3CF3DDF424E75CF8000CF516 /* AirshipAutomation.framework in CopyFiles */,
+				6E7C072F261285AA006D0E84 /* AirshipChat.framework in CopyFiles */,
 				3CF3DDFC24E75CFE000CF516 /* AirshipMessageCenter.framework in CopyFiles */,
 				3CF3DDFA24E75CFC000CF516 /* AirshipLocation.framework in CopyFiles */,
 				3CF3DDF624E75CFA000CF516 /* AirshipCore.framework in CopyFiles */,
@@ -481,6 +498,7 @@
 			files = (
 				3CF3DDF924E75CFC000CF516 /* AirshipLocation.framework in Frameworks */,
 				3CF3DDF324E75CF8000CF516 /* AirshipAutomation.framework in Frameworks */,
+				6E7C072E261285AA006D0E84 /* AirshipChat.framework in Frameworks */,
 				3CF3DDFB24E75CFE000CF516 /* AirshipMessageCenter.framework in Frameworks */,
 				3CF3DDF724E75CFB000CF516 /* AirshipExtendedActions.framework in Frameworks */,
 				3CF3DDF124E75CF7000CF516 /* AirshipAccengage.framework in Frameworks */,
@@ -552,6 +570,7 @@
 				6E75B2612395D1B100425530 /* AirshipExtendedActions.framework */,
 				6E6CC33B239A2F93003D583C /* AirshipAccengage.framework */,
 				1BF9B0DA23A24E2400E68DBE /* AirshipAccengageTests.xctest */,
+				6E7C071D2612821C006D0E84 /* AirshipChat.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -742,6 +761,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				6E7C07152612821C006D0E84 /* PBXTargetDependency */,
 				6E6CC334239A2F93003D583C /* PBXTargetDependency */,
 				6E65D52D2396305F00AF2D1A /* PBXTargetDependency */,
 				6E65D52F2396305F00AF2D1A /* PBXTargetDependency */,
@@ -940,6 +960,13 @@
 			fileType = wrapper.framework;
 			path = AirshipNotificationContentExtension.framework;
 			remoteRef = 6E75B2692395D1B300425530 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		6E7C071D2612821C006D0E84 /* AirshipChat.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = AirshipChat.framework;
+			remoteRef = 6E7C071C2612821C006D0E84 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -1168,6 +1195,11 @@
 			isa = PBXTargetDependency;
 			name = AirshipAccengage;
 			targetProxy = 6E6CC333239A2F93003D583C /* PBXContainerItemProxy */;
+		};
+		6E7C07152612821C006D0E84 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = AirshipChat;
+			targetProxy = 6E7C07142612821C006D0E84 /* PBXContainerItemProxy */;
 		};
 		DFC383A0243EA31300EA78FE /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
