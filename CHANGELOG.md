@@ -3,6 +3,13 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 14.3.1 April 5, 2021
+
+Patch fixing an issue with AirshipAccengage that caused apps without a previous Accengage installation to miss first open analytics. Apps including the AirshipAccengage module and experiencing issues with first open data are encouraged to update.
+
+### Changes
+- Fixed first open issues with AirshpAccengage module
+
 ## Version 14.3.0 March 11, 2021
 
 Minor release that improves background task management and drops support for uploading historic location data to Airship. The location module can still be used to listen for location updates within the app and will be deprecated in a future release.
