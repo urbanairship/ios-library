@@ -40,6 +40,12 @@ extern NSString * const UARequestSessionErrorDomain;
 @interface UARequestSession : NSObject
 
 /**
+ * The shared NSURLSession.
+ * @return The NSURLSession.
+ */
++ (NSURLSession *)sharedNSURLSession;
+
+/**
  * UARequestSession factory method.
  * @param config The UARuntimeConfig instance.
  * @return A UARequestSession instance.

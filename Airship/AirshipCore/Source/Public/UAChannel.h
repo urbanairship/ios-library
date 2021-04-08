@@ -11,6 +11,13 @@ NS_ASSUME_NONNULL_BEGIN
 //---------------------------------------------------------------------------------------
 // UAChannel Class
 //---------------------------------------------------------------------------------------
+
+/**
+ * Notification posted when a channel is created.
+ * @note For internal use only. :nodoc:
+ */
+extern NSNotificationName const UAChannelCreatedEvent;
+
 /**
  * Notification posted when a channel tag group mutation is uploaded.
  *

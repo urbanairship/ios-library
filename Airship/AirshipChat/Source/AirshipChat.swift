@@ -11,16 +11,20 @@ import Airship
 /**
  * Airship chat module.
  */
+@available(iOS 13.0, *)
 @objc(UAirshipChat)
 public class AirshipChat : UAComponent {
 
-    private var channel: UAChannel
-    private var push: UAPush
+    /**
+     * The default conversation.
+     */
+    @objc
+    public let conversation : ConversationProtocol
 
-    init(dataStore: UAPreferenceDataStore, channel: UAChannel, push: UAPush) {
-        self.channel = channel
-        self.push = push
+    init(dataStore: UAPreferenceDataStore, config: UARuntimeConfig, channel: UAChannel) {
+        self.conversation = Conversation(dataStore: dataStore, appKey: config.appKey, channel: channel)
         super.init(dataStore: dataStore)
+
         AirshipLogger.info("AirshipChat initialized")
     }
 }

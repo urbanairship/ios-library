@@ -10,19 +10,20 @@ import Airship
  * AirshipChat module loader.
  * @note For internal use only. :nodoc:
  */
+@available(iOS 13.0, *)
 @objc
 public class AirshipChatModuleLoader : NSObject, UAModuleLoader, UAAirshipChatModuleLoaderFactory {
 
-    private var module: AirshipChat
+    private var module: UAComponent
 
     public init(_ module: AirshipChat) {
         self.module = module
     }
 
     public static func moduleLoader(with dataStore: UAPreferenceDataStore,
-                                    channel: UAChannel,
-                                    push: UAPush) -> UAModuleLoader {
-        let airshipChat = AirshipChat(dataStore: dataStore, channel: channel, push: push)
+                                    config: UARuntimeConfig,
+                                    channel: UAChannel) -> UAModuleLoader {
+        let airshipChat = AirshipChat(dataStore: dataStore, config: config, channel: channel)
         return AirshipChatModuleLoader(airshipChat)
     }
 

@@ -16,7 +16,8 @@ NSString *const UAChannelTagsSettingsKey = @"com.urbanairship.channel.tags";
 
 NSString *const UAChannelDefaultDeviceTagGroup = @"device";
 
-NSString *const UAChannelCreatedEvent = @"com.urbanairship.channel.channel_created";
+NSNotificationName const UAChannelCreatedEvent = @"com.urbanairship.channel.channel_created";
+
 NSString *const UAChannelUpdatedEvent = @"com.urbanairship.channel.channel_updated";
 NSString *const UAChannelRegistrationFailedEvent = @"com.urbanairship.channel.registration_failed";
 

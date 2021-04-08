@@ -1757,6 +1757,11 @@
 		6E7C06DB261276DB006D0E84 /* UAAirshipChatModuleLoaderFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E7C06BD26127669006D0E84 /* UAAirshipChatModuleLoaderFactory.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E7C070326128035006D0E84 /* AirshipCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 494DD9571B0EB677009C134E /* AirshipCore.framework */; };
 		6E7C0731261287FA006D0E84 /* AirshipLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7C0730261287FA006D0E84 /* AirshipLogger.swift */; };
+		6E7C07C026139223006D0E84 /* ChatConnectionProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7C07BF26139223006D0E84 /* ChatConnectionProtocol.swift */; };
+		6E7C07CF26139B4A006D0E84 /* Conversation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7C07CE26139B4A006D0E84 /* Conversation.swift */; };
+		6E7C07DE26139B58006D0E84 /* ChatMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7C07DD26139B58006D0E84 /* ChatMessage.swift */; };
+		6E7C07FA26139C02006D0E84 /* ChatDAOProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7C07F926139C02006D0E84 /* ChatDAOProtocol.swift */; };
+		6E7C080926139F74006D0E84 /* ChatAPIClientProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7C080826139F74006D0E84 /* ChatAPIClientProtocol.swift */; };
 		6E845389237E04FB007D3B1E /* UAInAppMessageResizableViewController+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 4515B6A92134AFC200284CFF /* UAInAppMessageResizableViewController+Internal.h */; };
 		6E84538A237E0523007D3B1E /* UAInAppMessageHTMLDisplayContent+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C805B16200ED87D0079F56E /* UAInAppMessageHTMLDisplayContent+Internal.h */; };
 		6E84538B237E0523007D3B1E /* UAInAppMessageHTMLViewController+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 45F0CD402124E58000EED496 /* UAInAppMessageHTMLViewController+Internal.h */; };
@@ -1947,9 +1952,33 @@
 		6E84548C237E2320007D3B1E /* UAInAppMessageHTMLViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6E845483237E2320007D3B1E /* UAInAppMessageHTMLViewController.xib */; };
 		6E84548F237E2889007D3B1E /* AirshipAutomation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E845377237E0271007D3B1E /* AirshipAutomation.framework */; };
 		6E845492237E2D52007D3B1E /* AirshipAutomation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E845377237E0271007D3B1E /* AirshipAutomation.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		6E8776AC261BC1E100B03FC0 /* AirshipChat.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E7C067B26127557006D0E84 /* AirshipChat.framework */; };
+		6E8776F9261BC55100B03FC0 /* ChatAPIClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8776F8261BC55100B03FC0 /* ChatAPIClientTests.swift */; };
+		6E877761261CED1A00B03FC0 /* PendingChatMessageData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E877760261CED1A00B03FC0 /* PendingChatMessageData.swift */; };
+		6E877771261CED2C00B03FC0 /* ChatMessageData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E877770261CED2C00B03FC0 /* ChatMessageData.swift */; };
+		6E877782261CF0A400B03FC0 /* ChatResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E877781261CF0A400B03FC0 /* ChatResponse.swift */; };
 		6E90F0FC228F5F5600E1FCB0 /* UATestRuntimeConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E90F0F4228F592F00E1FCB0 /* UATestRuntimeConfig.m */; };
 		6E90F0FE228F61B400E1FCB0 /* UARuntimeConfigTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E90F0FD228F61B400E1FCB0 /* UARuntimeConfigTest.m */; };
 		6E937643237618AF00AA9C2A /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E937642237618AF00AA9C2A /* CoreLocation.framework */; };
+		6E9D53CA261D2ED6009BD6EB /* HTTPRequestSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9D53C9261D2ED6009BD6EB /* HTTPRequestSession.swift */; };
+		6E9D5423261D6B42009BD6EB /* MockHTTPRequestSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9D53F7261D6B0F009BD6EB /* MockHTTPRequestSession.swift */; };
+		6E9D5433261E0C49009BD6EB /* WebSocketProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9D5432261E0C49009BD6EB /* WebSocketProtocol.swift */; };
+		6E9D5443261E0C62009BD6EB /* WebSocketFactoryProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9D5442261E0C62009BD6EB /* WebSocketFactoryProtocol.swift */; };
+		6E9D5453261E0C7E009BD6EB /* WebSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9D5452261E0C7E009BD6EB /* WebSocket.swift */; };
+		6E9D5463261E0CD6009BD6EB /* WebSocketFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9D5462261E0CD6009BD6EB /* WebSocketFactory.swift */; };
+		6E9D54BD261E13BB009BD6EB /* ChatConnectionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9D54AD261E13B5009BD6EB /* ChatConnectionTests.swift */; };
+		6E9D54CD261E14BC009BD6EB /* MockWebSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9D54CC261E14BC009BD6EB /* MockWebSocket.swift */; };
+		6E9D54EB261E158B009BD6EB /* MockWebSocketFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9D54EA261E158B009BD6EB /* MockWebSocketFactory.swift */; };
+		6E9D554B261E31D2009BD6EB /* ChatConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9D554A261E31D2009BD6EB /* ChatConnection.swift */; };
+		6E9D5585261E33AC009BD6EB /* MockChatConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9D5584261E33AC009BD6EB /* MockChatConnection.swift */; };
+		6E9D5595261E35C1009BD6EB /* ChatAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9D5594261E35C1009BD6EB /* ChatAPIClient.swift */; };
+		6E9D55A5261E39BE009BD6EB /* MockChatAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9D55A4261E39BE009BD6EB /* MockChatAPIClient.swift */; };
+		6E9D55C3261E3A92009BD6EB /* AirshipChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9D55C2261E3A92009BD6EB /* AirshipChannel.swift */; };
+		6E9D55E1261E3B21009BD6EB /* MockChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9D55E0261E3B21009BD6EB /* MockChannel.swift */; };
+		6E9D55F1261E3B96009BD6EB /* MockAppStateTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9D55F0261E3B96009BD6EB /* MockAppStateTracker.swift */; };
+		6E9D560E261E3C66009BD6EB /* ConversationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9D553A261E3182009BD6EB /* ConversationTests.swift */; };
+		6E9D56D4261E6C6A009BD6EB /* ChatDAO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9D56D3261E6C6A009BD6EB /* ChatDAO.swift */; };
+		6E9D5759261F6C22009BD6EB /* AirshipCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 494DD9571B0EB677009C134E /* AirshipCore.framework */; };
 		6E9F74D024E6F414001F9B05 /* UADeferredScheduleAPIClient+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E9F74CE24E6F414001F9B05 /* UADeferredScheduleAPIClient+Internal.h */; };
 		6E9F74D124E6F414001F9B05 /* UADeferredScheduleAPIClient+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E9F74CE24E6F414001F9B05 /* UADeferredScheduleAPIClient+Internal.h */; };
 		6E9F74D224E6F414001F9B05 /* UADeferredScheduleAPIClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E9F74CF24E6F414001F9B05 /* UADeferredScheduleAPIClient.m */; };
@@ -2604,12 +2633,26 @@
 			remoteGlobalIDString = 6E8450FD237E0271007D3B1E;
 			remoteInfo = AirshipAutomation;
 		};
+		6E8776AD261BC1E100B03FC0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 494DD94E1B0EB677009C134E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 6E7C067A26127557006D0E84;
+			remoteInfo = AirshipChat;
+		};
 		6E9376252376167B00AA9C2A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 494DD94E1B0EB677009C134E /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 494DD9561B0EB677009C134E;
 			remoteInfo = Core;
+		};
+		6E9D5749261F6C0D009BD6EB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 494DD94E1B0EB677009C134E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 494DD9561B0EB677009C134E;
+			remoteInfo = AirshipCore;
 		};
 		CC64F05A1D8B77E3009CEF27 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -3358,6 +3401,11 @@
 		6E7C06AE26127606006D0E84 /* AirshipChat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipChat.swift; sourceTree = "<group>"; };
 		6E7C06BD26127669006D0E84 /* UAAirshipChatModuleLoaderFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAAirshipChatModuleLoaderFactory.h; path = Public/UAAirshipChatModuleLoaderFactory.h; sourceTree = "<group>"; };
 		6E7C0730261287FA006D0E84 /* AirshipLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipLogger.swift; sourceTree = "<group>"; };
+		6E7C07BF26139223006D0E84 /* ChatConnectionProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatConnectionProtocol.swift; sourceTree = "<group>"; };
+		6E7C07CE26139B4A006D0E84 /* Conversation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Conversation.swift; sourceTree = "<group>"; };
+		6E7C07DD26139B58006D0E84 /* ChatMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessage.swift; sourceTree = "<group>"; };
+		6E7C07F926139C02006D0E84 /* ChatDAOProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatDAOProtocol.swift; sourceTree = "<group>"; };
+		6E7C080826139F74006D0E84 /* ChatAPIClientProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatAPIClientProtocol.swift; sourceTree = "<group>"; };
 		6E8450AE237DFE89007D3B1E /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6E845377237E0271007D3B1E /* AirshipAutomation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AirshipAutomation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6E84544E237E05F3007D3B1E /* AirshipAutomation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AirshipAutomation.h; sourceTree = "<group>"; };
@@ -3370,6 +3418,12 @@
 		6E84547B237E2320007D3B1E /* UAInAppMessageBannerContentView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = UAInAppMessageBannerContentView.xib; path = Resources/UAInAppMessageBannerContentView.xib; sourceTree = "<group>"; };
 		6E845482237E2320007D3B1E /* UAInAppMessageBannerView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = UAInAppMessageBannerView.xib; path = Resources/UAInAppMessageBannerView.xib; sourceTree = "<group>"; };
 		6E845483237E2320007D3B1E /* UAInAppMessageHTMLViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = UAInAppMessageHTMLViewController.xib; path = Resources/UAInAppMessageHTMLViewController.xib; sourceTree = "<group>"; };
+		6E8776A7261BC1E100B03FC0 /* AirshipChatTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AirshipChatTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		6E8776AB261BC1E100B03FC0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		6E8776F8261BC55100B03FC0 /* ChatAPIClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatAPIClientTests.swift; sourceTree = "<group>"; };
+		6E877760261CED1A00B03FC0 /* PendingChatMessageData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PendingChatMessageData.swift; sourceTree = "<group>"; };
+		6E877770261CED2C00B03FC0 /* ChatMessageData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageData.swift; sourceTree = "<group>"; };
+		6E877781261CF0A400B03FC0 /* ChatResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatResponse.swift; sourceTree = "<group>"; };
 		6E8A54B9236243A3004AE2A0 /* UAAutomationModuleLoader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAAutomationModuleLoader.m; sourceTree = "<group>"; };
 		6E8A54BA236243A3004AE2A0 /* UAAutomationModuleLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAAutomationModuleLoader.h; sourceTree = "<group>"; };
 		6E8A54D523639363004AE2A0 /* UAInAppAudienceManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInAppAudienceManager.m; sourceTree = "<group>"; };
@@ -3388,6 +3442,24 @@
 		6E93762A237616EF00AA9C2A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6E937642237618AF00AA9C2A /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk/System/Library/Frameworks/CoreLocation.framework; sourceTree = DEVELOPER_DIR; };
 		6E9376EA2376236C00AA9C2A /* UARateAppPromptView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UARateAppPromptView.xib; sourceTree = "<group>"; };
+		6E9D53C9261D2ED6009BD6EB /* HTTPRequestSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPRequestSession.swift; sourceTree = "<group>"; };
+		6E9D53F7261D6B0F009BD6EB /* MockHTTPRequestSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockHTTPRequestSession.swift; sourceTree = "<group>"; };
+		6E9D5432261E0C49009BD6EB /* WebSocketProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocketProtocol.swift; sourceTree = "<group>"; };
+		6E9D5442261E0C62009BD6EB /* WebSocketFactoryProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocketFactoryProtocol.swift; sourceTree = "<group>"; };
+		6E9D5452261E0C7E009BD6EB /* WebSocket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocket.swift; sourceTree = "<group>"; };
+		6E9D5462261E0CD6009BD6EB /* WebSocketFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocketFactory.swift; sourceTree = "<group>"; };
+		6E9D54AD261E13B5009BD6EB /* ChatConnectionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatConnectionTests.swift; sourceTree = "<group>"; };
+		6E9D54CC261E14BC009BD6EB /* MockWebSocket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockWebSocket.swift; sourceTree = "<group>"; };
+		6E9D54EA261E158B009BD6EB /* MockWebSocketFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockWebSocketFactory.swift; sourceTree = "<group>"; };
+		6E9D553A261E3182009BD6EB /* ConversationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationTests.swift; sourceTree = "<group>"; };
+		6E9D554A261E31D2009BD6EB /* ChatConnection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatConnection.swift; sourceTree = "<group>"; };
+		6E9D5584261E33AC009BD6EB /* MockChatConnection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockChatConnection.swift; sourceTree = "<group>"; };
+		6E9D5594261E35C1009BD6EB /* ChatAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatAPIClient.swift; sourceTree = "<group>"; };
+		6E9D55A4261E39BE009BD6EB /* MockChatAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockChatAPIClient.swift; sourceTree = "<group>"; };
+		6E9D55C2261E3A92009BD6EB /* AirshipChannel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipChannel.swift; sourceTree = "<group>"; };
+		6E9D55E0261E3B21009BD6EB /* MockChannel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockChannel.swift; sourceTree = "<group>"; };
+		6E9D55F0261E3B96009BD6EB /* MockAppStateTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockAppStateTracker.swift; sourceTree = "<group>"; };
+		6E9D56D3261E6C6A009BD6EB /* ChatDAO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatDAO.swift; sourceTree = "<group>"; };
 		6E9F74CE24E6F414001F9B05 /* UADeferredScheduleAPIClient+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UADeferredScheduleAPIClient+Internal.h"; sourceTree = "<group>"; };
 		6E9F74CF24E6F414001F9B05 /* UADeferredScheduleAPIClient.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UADeferredScheduleAPIClient.m; sourceTree = "<group>"; };
 		6E9F74D424E6F68D001F9B05 /* UADeferredScheduleResult+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UADeferredScheduleResult+Internal.h"; sourceTree = "<group>"; };
@@ -3792,6 +3864,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				6EE7725C238F17C000E79944 /* AirshipCore.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6E8776A4261BC1E100B03FC0 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6E9D5759261F6C22009BD6EB /* AirshipCore.framework in Frameworks */,
+				6E8776AC261BC1E100B03FC0 /* AirshipChat.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4469,6 +4550,7 @@
 				1BB4C00E239FB4700000559B /* AirshipAccengage.framework */,
 				1BB4C02A239FE5E50000559B /* AirshipAccengageTests.xctest */,
 				6E7C067B26127557006D0E84 /* AirshipChat.framework */,
+				6E8776A7261BC1E100B03FC0 /* AirshipChatTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -5067,6 +5149,7 @@
 		6E7C067C26127557006D0E84 /* AirshipChat */ = {
 			isa = PBXGroup;
 			children = (
+				6E8776A2261BC15D00B03FC0 /* Tests */,
 				6E7C0691261275C3006D0E84 /* Source */,
 				6E7C067E26127557006D0E84 /* Info.plist */,
 			);
@@ -5076,10 +5159,17 @@
 		6E7C0691261275C3006D0E84 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				6E7C0730261287FA006D0E84 /* AirshipLogger.swift */,
+				6E9D5472261E0D35009BD6EB /* WebSocket */,
+				6E9D53C8261D2EC2009BD6EB /* HTTP */,
+				6E877780261CF02C00B03FC0 /* ChatAPI */,
+				6E877733261CEC2400B03FC0 /* Data */,
 				6E7C067D26127557006D0E84 /* AirshipChat.h */,
 				6E7C069F261275F6006D0E84 /* AirshipChatModuleLoader.swift */,
 				6E7C06AE26127606006D0E84 /* AirshipChat.swift */,
-				6E7C0730261287FA006D0E84 /* AirshipLogger.swift */,
+				6E7C07CE26139B4A006D0E84 /* Conversation.swift */,
+				6E7C07DD26139B58006D0E84 /* ChatMessage.swift */,
+				6E9D55C2261E3A92009BD6EB /* AirshipChannel.swift */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -5398,6 +5488,40 @@
 			name = Legacy;
 			sourceTree = "<group>";
 		};
+		6E8776A2261BC15D00B03FC0 /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				6E9D549D261E1385009BD6EB /* ChatAPI */,
+				6E9D53F6261D6AFE009BD6EB /* Mocks */,
+				6E8776AB261BC1E100B03FC0 /* Info.plist */,
+				6E9D553A261E3182009BD6EB /* ConversationTests.swift */,
+			);
+			path = Tests;
+			sourceTree = "<group>";
+		};
+		6E877733261CEC2400B03FC0 /* Data */ = {
+			isa = PBXGroup;
+			children = (
+				6E7C07F926139C02006D0E84 /* ChatDAOProtocol.swift */,
+				6E877760261CED1A00B03FC0 /* PendingChatMessageData.swift */,
+				6E877770261CED2C00B03FC0 /* ChatMessageData.swift */,
+				6E9D56D3261E6C6A009BD6EB /* ChatDAO.swift */,
+			);
+			path = Data;
+			sourceTree = "<group>";
+		};
+		6E877780261CF02C00B03FC0 /* ChatAPI */ = {
+			isa = PBXGroup;
+			children = (
+				6E7C080826139F74006D0E84 /* ChatAPIClientProtocol.swift */,
+				6E7C07BF26139223006D0E84 /* ChatConnectionProtocol.swift */,
+				6E877781261CF0A400B03FC0 /* ChatResponse.swift */,
+				6E9D554A261E31D2009BD6EB /* ChatConnection.swift */,
+				6E9D5594261E35C1009BD6EB /* ChatAPIClient.swift */,
+			);
+			path = ChatAPI;
+			sourceTree = "<group>";
+		};
 		6E90F0ED228F550900E1FCB0 /* Config */ = {
 			isa = PBXGroup;
 			children = (
@@ -5469,6 +5593,48 @@
 				CC64F0551D8B77E3009CEF27 /* Tests */,
 			);
 			path = AirshipCore;
+			sourceTree = "<group>";
+		};
+		6E9D53C8261D2EC2009BD6EB /* HTTP */ = {
+			isa = PBXGroup;
+			children = (
+				6E9D53C9261D2ED6009BD6EB /* HTTPRequestSession.swift */,
+			);
+			path = HTTP;
+			sourceTree = "<group>";
+		};
+		6E9D53F6261D6AFE009BD6EB /* Mocks */ = {
+			isa = PBXGroup;
+			children = (
+				6E9D53F7261D6B0F009BD6EB /* MockHTTPRequestSession.swift */,
+				6E9D54CC261E14BC009BD6EB /* MockWebSocket.swift */,
+				6E9D54EA261E158B009BD6EB /* MockWebSocketFactory.swift */,
+				6E9D5584261E33AC009BD6EB /* MockChatConnection.swift */,
+				6E9D55A4261E39BE009BD6EB /* MockChatAPIClient.swift */,
+				6E9D55E0261E3B21009BD6EB /* MockChannel.swift */,
+				6E9D55F0261E3B96009BD6EB /* MockAppStateTracker.swift */,
+			);
+			path = Mocks;
+			sourceTree = "<group>";
+		};
+		6E9D5472261E0D35009BD6EB /* WebSocket */ = {
+			isa = PBXGroup;
+			children = (
+				6E9D5462261E0CD6009BD6EB /* WebSocketFactory.swift */,
+				6E9D5452261E0C7E009BD6EB /* WebSocket.swift */,
+				6E9D5432261E0C49009BD6EB /* WebSocketProtocol.swift */,
+				6E9D5442261E0C62009BD6EB /* WebSocketFactoryProtocol.swift */,
+			);
+			path = WebSocket;
+			sourceTree = "<group>";
+		};
+		6E9D549D261E1385009BD6EB /* ChatAPI */ = {
+			isa = PBXGroup;
+			children = (
+				6E8776F8261BC55100B03FC0 /* ChatAPIClientTests.swift */,
+				6E9D54AD261E13B5009BD6EB /* ChatConnectionTests.swift */,
+			);
+			path = ChatAPI;
 			sourceTree = "<group>";
 		};
 		6EA57DEC25433C57005998C7 /* Tasks */ = {
@@ -7580,6 +7746,25 @@
 			productReference = 6E845377237E0271007D3B1E /* AirshipAutomation.framework */;
 			productType = "com.apple.product-type.framework";
 		};
+		6E8776A6261BC1E100B03FC0 /* AirshipChatTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6E8776AF261BC1E100B03FC0 /* Build configuration list for PBXNativeTarget "AirshipChatTests" */;
+			buildPhases = (
+				6E8776A3261BC1E100B03FC0 /* Sources */,
+				6E8776A4261BC1E100B03FC0 /* Frameworks */,
+				6E8776A5261BC1E100B03FC0 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				6E9D574A261F6C0D009BD6EB /* PBXTargetDependency */,
+				6E8776AE261BC1E100B03FC0 /* PBXTargetDependency */,
+			);
+			name = AirshipChatTests;
+			productName = AirshipChatTests;
+			productReference = 6E8776A7261BC1E100B03FC0 /* AirshipChatTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		6E9373032376164600AA9C2A /* AirshipLocation */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 6E93755D2376164600AA9C2A /* Build configuration list for PBXNativeTarget "AirshipLocation" */;
@@ -7684,6 +7869,7 @@
 		494DD94E1B0EB677009C134E /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastSwiftUpdateCheck = 1240;
 				LastUpgradeCheck = 1110;
 				ORGANIZATIONNAME = "Urban Airship";
 				TargetAttributes = {
@@ -7704,6 +7890,9 @@
 					6E7C067A26127557006D0E84 = {
 						CreatedOnToolsVersion = 12.4;
 						LastSwiftMigration = 1240;
+					};
+					6E8776A6261BC1E100B03FC0 = {
+						CreatedOnToolsVersion = 12.4;
 					};
 					6EE76FD0238F15D000E79944 = {
 						LastSwiftMigration = 1170;
@@ -7781,6 +7970,7 @@
 				6E6CC310239A2EA9003D583C /* AirshipAccengage */,
 				1BB4C029239FE5E50000559B /* AirshipAccengageTests */,
 				6E7C067A26127557006D0E84 /* AirshipChat */,
+				6E8776A6261BC1E100B03FC0 /* AirshipChatTests */,
 			);
 		};
 /* End PBXProject section */
@@ -7871,6 +8061,13 @@
 				6E845486237E2320007D3B1E /* UAAutomationActions.plist in Resources */,
 				6E845488237E2320007D3B1E /* UAInAppMessageResizableViewController.xib in Resources */,
 				6E845484237E2320007D3B1E /* UAInAppMessageButtonView.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6E8776A5261BC1E100B03FC0 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8426,9 +8623,26 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6E9D5453261E0C7E009BD6EB /* WebSocket.swift in Sources */,
+				6E9D53CA261D2ED6009BD6EB /* HTTPRequestSession.swift in Sources */,
+				6E9D5463261E0CD6009BD6EB /* WebSocketFactory.swift in Sources */,
 				6E7C06AF26127606006D0E84 /* AirshipChat.swift in Sources */,
 				6E7C0731261287FA006D0E84 /* AirshipLogger.swift in Sources */,
+				6E7C07FA26139C02006D0E84 /* ChatDAOProtocol.swift in Sources */,
+				6E7C07CF26139B4A006D0E84 /* Conversation.swift in Sources */,
+				6E7C07DE26139B58006D0E84 /* ChatMessage.swift in Sources */,
+				6E877761261CED1A00B03FC0 /* PendingChatMessageData.swift in Sources */,
+				6E9D5595261E35C1009BD6EB /* ChatAPIClient.swift in Sources */,
+				6E877782261CF0A400B03FC0 /* ChatResponse.swift in Sources */,
 				6E7C06A0261275F6006D0E84 /* AirshipChatModuleLoader.swift in Sources */,
+				6E9D56D4261E6C6A009BD6EB /* ChatDAO.swift in Sources */,
+				6E9D5433261E0C49009BD6EB /* WebSocketProtocol.swift in Sources */,
+				6E9D5443261E0C62009BD6EB /* WebSocketFactoryProtocol.swift in Sources */,
+				6E9D554B261E31D2009BD6EB /* ChatConnection.swift in Sources */,
+				6E7C07C026139223006D0E84 /* ChatConnectionProtocol.swift in Sources */,
+				6E7C080926139F74006D0E84 /* ChatAPIClientProtocol.swift in Sources */,
+				6E9D55C3261E3A92009BD6EB /* AirshipChannel.swift in Sources */,
+				6E877771261CED2C00B03FC0 /* ChatMessageData.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8538,6 +8752,23 @@
 				6E845442237E0575007D3B1E /* UACancelSchedulesAction.m in Sources */,
 				6E845443237E0575007D3B1E /* UAScheduleAction.m in Sources */,
 				6E845444237E0575007D3B1E /* UAAutomationModuleLoader.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6E8776A3261BC1E100B03FC0 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6E9D5423261D6B42009BD6EB /* MockHTTPRequestSession.swift in Sources */,
+				6E9D5585261E33AC009BD6EB /* MockChatConnection.swift in Sources */,
+				6E9D560E261E3C66009BD6EB /* ConversationTests.swift in Sources */,
+				6E9D55A5261E39BE009BD6EB /* MockChatAPIClient.swift in Sources */,
+				6E9D54CD261E14BC009BD6EB /* MockWebSocket.swift in Sources */,
+				6E8776F9261BC55100B03FC0 /* ChatAPIClientTests.swift in Sources */,
+				6E9D55E1261E3B21009BD6EB /* MockChannel.swift in Sources */,
+				6E9D54EB261E158B009BD6EB /* MockWebSocketFactory.swift in Sources */,
+				6E9D55F1261E3B96009BD6EB /* MockAppStateTracker.swift in Sources */,
+				6E9D54BD261E13BB009BD6EB /* ChatConnectionTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -9431,10 +9662,20 @@
 			target = 6E8450FD237E0271007D3B1E /* AirshipAutomation */;
 			targetProxy = 6E845490237E2D49007D3B1E /* PBXContainerItemProxy */;
 		};
+		6E8776AE261BC1E100B03FC0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 6E7C067A26127557006D0E84 /* AirshipChat */;
+			targetProxy = 6E8776AD261BC1E100B03FC0 /* PBXContainerItemProxy */;
+		};
 		6E9376262376167B00AA9C2A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 494DD9561B0EB677009C134E /* AirshipCore */;
 			targetProxy = 6E9376252376167B00AA9C2A /* PBXContainerItemProxy */;
+		};
+		6E9D574A261F6C0D009BD6EB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 494DD9561B0EB677009C134E /* AirshipCore */;
+			targetProxy = 6E9D5749261F6C0D009BD6EB /* PBXContainerItemProxy */;
 		};
 		CC64F05B1D8B77E3009CEF27 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -10162,6 +10403,65 @@
 			};
 			name = Release;
 		};
+		6E8776B0261BC1E100B03FC0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = JZP4756KMT;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				INFOPLIST_FILE = AirshipChat/Tests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.4;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.AirshipChatTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		6E8776B1261BC1E100B03FC0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = JZP4756KMT;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				INFOPLIST_FILE = AirshipChat/Tests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.4;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.AirshipChatTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		6E93755E2376164600AA9C2A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = CC40DDB31D8CAF7300BABD4F /* AirshipConfig.xcconfig */;
@@ -10562,6 +10862,15 @@
 			buildConfigurations = (
 				6E845375237E0271007D3B1E /* Debug */,
 				6E845376237E0271007D3B1E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		6E8776AF261BC1E100B03FC0 /* Build configuration list for PBXNativeTarget "AirshipChatTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6E8776B0261BC1E100B03FC0 /* Debug */,
+				6E8776B1261BC1E100B03FC0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

@@ -20,13 +20,13 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Factory method.
  * @param dataStore The preference data store.
+ * @param config The config.
  * @param channel The Airship channel instance.
- * @param push The push instance.
  * @return A module loader.
  */
 + (id<UAModuleLoader>)moduleLoaderWithDataStore:(UAPreferenceDataStore *)dataStore
-                                        channel:(UAChannel *)channel
-                                           push:(UAPush *)push;
+                                        config:(UARuntimeConfig *)config
+                                        channel:(UAChannel *)channel;
 
 @end
 

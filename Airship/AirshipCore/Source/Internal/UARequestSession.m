@@ -27,7 +27,7 @@ NSString * const UARequestSessionErrorDomain = @"com.urbanairship.request_sessio
     return self;
 }
 
-+ (instancetype)sessionWithConfig:(UARuntimeConfig *)config {
++(NSURLSession *)sharedNSURLSession {
     static dispatch_once_t onceToken;
     static NSURLSession *_session;
     dispatch_once(&onceToken, ^{
@@ -44,7 +44,11 @@ NSString * const UARequestSessionErrorDomain = @"com.urbanairship.request_sessio
         _session = [NSURLSession sessionWithConfiguration:sessionConfig delegate:nil delegateQueue:nil];
     });
 
-    return [[self alloc] initWithConfig:config session:_session];
+    return _session;
+}
+
++ (instancetype)sessionWithConfig:(UARuntimeConfig *)config {
+    return [[self alloc] initWithConfig:config session:[self sharedNSURLSession]];
 }
 
 + (instancetype)sessionWithConfig:(UARuntimeConfig *)config
@@ -82,7 +86,8 @@ NSString * const UARequestSessionErrorDomain = @"com.urbanairship.request_sessio
     }
 
     for (NSString *key in request.headers) {
-        [URLRequest setValue:request.headers[key] forHTTPHeaderField:key];
+        NSString *headerValue = [request.headers[key] copy];
+        [URLRequest setValue:headerValue forHTTPHeaderField:key];
     }
 
     NSURLSessionTask *task = [self.session dataTaskWithRequest:URLRequest

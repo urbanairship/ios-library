@@ -218,6 +218,7 @@ NSString * const UAConnectionTypeWifi = @"wifi";
     // All the various formats
     NSArray *formats = @[@"yyyy-MM-dd'T'HH:mm:ss.SSS",
                          @"yyyy-MM-dd'T'HH:mm:ss",
+                         @"yyyy-MM-dd'T'HH:mm:ss'Z'",
                          @"yyyy-MM-dd HH:mm:ss",
                          @"yyyy-MM-dd'T'HH:mm",
                          @"yyyy-MM-dd HH:mm",

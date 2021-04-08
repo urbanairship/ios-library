@@ -54,7 +54,8 @@ NSString * const UAExtendedActionsModuleLoaderClassName = @"UAExtendedActionsMod
 NSString * const UAAccengageModuleLoaderClassName = @"UAAccengageModuleLoader";
 NSString * const UADebugLibraryModuleLoaderClassName = @"AirshipDebug.UADebugLibraryModuleLoader";
 
-NSString * const UAAirshipChatModuleLoaderClassName = @"AirshipChat.AirshipChatModuleLoader";
+NSString * const UAAirshipChatModuleLoaderClassName = @"Airship.AirshipChatModuleLoader";
+NSString * const UAAirshipChatModuleLoaderClassAltName = @"AirshipChat.AirshipChatModuleLoader";
 
 
 // AirshipReady payload
@@ -208,7 +209,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
             [loaders addObject:extendedActionsLoader];
         }
 
-        id<UAModuleLoader> airshipChatLoader = [UAirship airshipChatModuleLoaderWithDataStore:self.dataStore channel:self.sharedChannel push:self.sharedPush];
+        id<UAModuleLoader> airshipChatLoader = [UAirship airshipChatModuleLoaderWithDataStore:self.dataStore config:self.config channel:self.sharedChannel];
 
         if (airshipChatLoader) {
             [loaders addObject:airshipChatLoader];
@@ -595,14 +596,19 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 }
 
 + (nullable id<UAModuleLoader>)airshipChatModuleLoaderWithDataStore:(UAPreferenceDataStore *)dataStore
-                                                            channel:(UAChannel *)channel
-                                                               push:(UAPush *)push {
+                                                             config:(UARuntimeConfig *)config
+                                                            channel:(UAChannel *)channel {
 
-    Class cls = NSClassFromString(UAAirshipChatModuleLoaderClassName);
-    if ([cls conformsToProtocol:@protocol(UAAirshipChatModuleLoaderFactory)]) {
-        return [cls moduleLoaderWithDataStore:dataStore
-                                      channel:channel
-                                         push:push];
+    if (@available(iOS 13.0, *)) {
+        Class cls = NSClassFromString(UAAirshipChatModuleLoaderClassName);
+        if (!cls) {
+            cls = NSClassFromString(UAAirshipChatModuleLoaderClassAltName);
+        }
+        if ([cls conformsToProtocol:@protocol(UAAirshipChatModuleLoaderFactory)]) {
+            return [cls moduleLoaderWithDataStore:dataStore
+                                           config:config
+                                          channel:channel];
+        }
     }
     return nil;
 }
@@ -630,4 +636,5 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 }
 
 @end
+
 

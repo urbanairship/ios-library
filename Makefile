@@ -61,11 +61,15 @@ build-sample-swift: setup
 	bash ./scripts/build_sample.sh "SwiftSample" "${derived_data_path}"
 
 .PHONY: test
-test: setup test-core test-accengage test-content-extension test-service-extension test-packages
+test: setup test-core test-accengage test-chat test-content-extension test-service-extension test-packages
 
 .PHONY: test-core
 test-core: setup
 	bash ./scripts/run_tests.sh AirshipCore "${derived_data_path}"
+
+.PHONY: test-chat
+test-chat: setup
+	bash ./scripts/run_tests.sh AirshipChat "${derived_data_path}"
 
 .PHONY: test-accengage
 test-accengage: setup

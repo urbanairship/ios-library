@@ -46,7 +46,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param value The header value.
  * @param header The header name.
  */
-- (void)setValue:(id)value forHeader:(NSString *)header;
+- (void)setValue:(NSString *)value forHeader:(NSString *)header;
 
 /**
  * Adds headers from a dictionary.
@@ -95,6 +95,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @return A UARequest instance.
  */
 + (instancetype)requestWithBuilderBlock:(void(^)(UARequestBuilder *builder))builderBlock;
+
 
 @end
 
