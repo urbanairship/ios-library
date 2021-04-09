@@ -26,6 +26,7 @@ class ConversationTests: XCTestCase {
     var mockAPIClient : MockChatAPIClient!
     var mockChannel: MockChannel!
     var mockStateTracker: MockAppStateTracker!
+    var mockConfig: MockChatConfig!
     var notificationCenter: NotificationCenter!
     var chatDAO: ChatDAOProtocol!
 
@@ -40,8 +41,12 @@ class ConversationTests: XCTestCase {
         self.notificationCenter = NotificationCenter()
         let dataStore = UAPreferenceDataStore(keyPrefix: UUID().uuidString)
 
+        self.mockConfig = MockChatConfig(appKey: "someAppKey",
+                                         chatURL: "https://test",
+                                         chatWebSocketURL: "wss:test")
+
         self.conversation = Conversation(dataStore: dataStore,
-                                         appKey: "app key",
+                                         chatConfig: self.mockConfig,
                                          channel: self.mockChannel,
                                          client: self.mockAPIClient,
                                          chatConnection: self.mockChatConnection,
@@ -51,21 +56,33 @@ class ConversationTests: XCTestCase {
                                          notificationCenter: self.notificationCenter)
     }
 
+    func testRemoteConfigUpdated() throws {
+        self.mockChannel.identifier = "channel id"
+        self.mockAPIClient.result = (UVPResponse(status: 200, uvp: "some-uvp"), nil)
+        foreground()
+
+        XCTAssertTrue(self.mockChatConnection.isOpenOrOpening)
+        XCTAssertEqual("some-uvp", self.mockChatConnection.lastUVP)
+
+        self.mockAPIClient.result = (UVPResponse(status: 200, uvp: "some-other-uvp"), nil)
+        self.notificationCenter.post(name: NSNotification.Name.UARemoteConfigURLManagerConfigUpdated, object: nil)
+
+        XCTAssertTrue(self.mockChatConnection.isOpenOrOpening)
+        XCTAssertEqual("some-other-uvp", self.mockChatConnection.lastUVP)
+
+    }
     func testConnectingShouldCreateUVP() throws {
         self.mockChannel.identifier = "channel id"
         self.mockAPIClient.result = (UVPResponse(status: 200, uvp: "some-uvp"), nil)
         foreground()
 
         XCTAssertEqual("channel id", self.mockAPIClient.lastChannel)
-        XCTAssertEqual("app key", self.mockAPIClient.lastAppKey)
 
         self.mockAPIClient.lastChannel = nil
-        self.mockAPIClient.lastAppKey = nil
 
         background()
         foreground()
         XCTAssertNil(self.mockAPIClient.lastChannel)
-        XCTAssertNil(self.mockAPIClient.lastAppKey)
     }
 
     func testConnectRequestsConvo() throws {

@@ -76,21 +76,35 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @note This option is reserved for internal debugging. :nodoc:
  */
-@property (readonly) NSString *deviceAPIURL;
+@property (readonly, nullable) NSString *deviceAPIURL;
 
 /**
  * The Airship analytics API url.
  *
  * @note This option is reserved for internal debugging. :nodoc:
  */
-@property (readonly) NSString *analyticsURL;
+@property (readonly, nullable) NSString *analyticsURL;
 
 /**
  * The Airship remote data url.
  *
  * @note This option is reserved for internal debugging. :nodoc:
  */
-@property (readonly) NSString *remoteDataAPIURL;
+@property (readonly, nullable) NSString *remoteDataAPIURL;
+
+/**
+ * The Airship chat API URL.
+ *
+ * @note This option is reserved for internal debugging. :nodoc:
+ */
+@property (readonly, nullable) NSString *chatURL;
+
+/**
+ * The Airship web socket URL.
+ *
+ * @note This option is reserved for internal debugging. :nodoc:
+ */
+@property (readonly, nullable) NSString *chatWebSocketURL;
 
 /**
  * The Airship default message center style configuration file.

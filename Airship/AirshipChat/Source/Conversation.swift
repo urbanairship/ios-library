@@ -74,7 +74,6 @@ class Conversation : ConversationProtocol, ChatConnectionDelegate {
     private let dispatcher: UADispatcher
     private var chatConnection: ChatConnectionProtocol
     private let chatDAO : ChatDAOProtocol
-    private let appKey : String
     private var isPendingSynced = false
     private var isUVPCreating = false
 
@@ -92,18 +91,27 @@ class Conversation : ConversationProtocol, ChatConnectionDelegate {
     @objc
     weak var delegate: ConversationDelegate?
 
+    convenience init(dataStore: UAPreferenceDataStore,
+                     chatConfig: ChatConfig,
+                     channel: AirshipChannel) {
+        self.init(dataStore: dataStore,
+                  chatConfig: chatConfig,
+                  channel: channel,
+                  client: ChatAPIClient(chatConfig: chatConfig),
+                  chatConnection: ChatConnection(chatConfig: chatConfig))
+    }
+
     init(dataStore: UAPreferenceDataStore,
-         appKey: String,
+         chatConfig: ChatConfig,
          channel: AirshipChannel,
-         client: ChatAPIClientProtocol = ChatAPIClient(),
-         chatConnection: ChatConnectionProtocol = ChatConnection(),
+         client: ChatAPIClientProtocol,
+         chatConnection: ChatConnectionProtocol,
          chatDAO: ChatDAOProtocol = ChatDAO(),
          appStateTracker: UAAppStateTracker = UAAppStateTracker.shared(),
          dispatcher: UADispatcher = UADispatcher.serial(),
          notificationCenter: NotificationCenter = NotificationCenter.default) {
 
         self.dataStore = dataStore
-        self.appKey = appKey
         self.channel = channel
         self.client = client
         self.chatConnection = chatConnection
@@ -129,6 +137,12 @@ class Conversation : ConversationProtocol, ChatConnectionDelegate {
             self,
             selector: #selector(self.onChannelCreated),
             name: NSNotification.Name.UAChannelCreatedEvent,
+            object: nil)
+
+        notificationCenter.addObserver(
+            self,
+            selector: #selector(self.onRemoteConfigUpdated),
+            name: NSNotification.Name.UARemoteConfigURLManagerConfigUpdated,
             object: nil)
     }
 
@@ -232,7 +246,7 @@ class Conversation : ConversationProtocol, ChatConnectionDelegate {
             }
 
             self.isUVPCreating = true
-            self.client.createUVP(appKey:self.appKey, channelID:channelID) { [weak self] (response, error) in
+            self.client.createUVP(channelID:channelID) { [weak self] (response, error) in
                 self?.dispatcher.dispatchAsync {
                     self?.isUVPCreating = false
                     if (response?.uvp != nil) {
@@ -243,6 +257,15 @@ class Conversation : ConversationProtocol, ChatConnectionDelegate {
                     }
                 }
             }
+        }
+    }
+
+    @objc
+    private func onRemoteConfigUpdated() {
+        self.dataStore.removeObject(forKey: Conversation.uvpStorageKey)
+        self.dispatcher.dispatchAsync {
+            self.chatConnection.close()
+            self.createUVP()
         }
     }
 

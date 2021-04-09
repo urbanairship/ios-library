@@ -8,17 +8,26 @@ import Airship
 
 import Foundation
 
+enum ChatAPIClientError: Error {
+    case missingURL
+}
+
 class ChatAPIClient : ChatAPIClientProtocol {
-    private let url = "https://rb2socketscontactstest.replybuy.net/api/UVP"
+    private let chatConfig: ChatConfig
     private let session: HTTPRequestSession
 
-    init(session: HTTPRequestSession = UARequestSession.sharedNSURLSession()) {
+    init(chatConfig: ChatConfig, session: HTTPRequestSession = UARequestSession.sharedNSURLSession()) {
+        self.chatConfig = chatConfig
         self.session = session
     }
 
-    func createUVP(appKey: String, channelID: String, callback: @escaping (UVPResponse?, Error?) -> ()) {
-        let requestURL = URL(string:self.url + "?channelId=" + channelID + "&appKey=" + appKey + "&platform=iOS")
-        var uvpUrlRequest = URLRequest(url: requestURL!)
+    func createUVP(channelID: String, callback: @escaping (UVPResponse?, Error?) -> ()) {
+        guard let url = createURL(channelID) else {
+            callback(nil, ChatAPIClientError.missingURL)
+            return
+        }
+
+        var uvpUrlRequest = URLRequest(url: url)
         uvpUrlRequest.httpMethod = "GET"
         uvpUrlRequest.addValue("application/json", forHTTPHeaderField: "Content-Type")
         uvpUrlRequest.addValue("application/json", forHTTPHeaderField: "Accept")
@@ -43,5 +52,15 @@ class ChatAPIClient : ChatAPIClientProtocol {
                 callback(UVPResponse(status: UInt(response!.statusCode), uvp: nil), nil)
             }
         }
+    }
+
+    private func createURL(_ channelID: String) -> URL? {
+        guard let base = self.chatConfig.chatURL else {
+            return nil
+        }
+
+        let urlString = "\(base)/api/UVP?channelId=\(channelID)&appKey=\(self.chatConfig.appKey)&platform=iOS"
+
+        return URL(string: urlString)
     }
 }

@@ -4,7 +4,7 @@ import Foundation
 
 @available(iOS 13.0, *)
 class ChatConnection : ChatConnectionProtocol, WebSocketDelegate  {
-    private static let socketURL : String = "wss://rb2socketscontactstest.replybuy.net?uvp="
+    private let chatConfig: ChatConfig!
     private var uvp: String?
     private var socket: WebSocketProtocol?
     private let lock = NSRecursiveLock()
@@ -19,7 +19,8 @@ class ChatConnection : ChatConnectionProtocol, WebSocketDelegate  {
         }
     }
 
-    init(socketFactory: WebSocketFactoryProtocol = WebSocketFactory()) {
+    init(chatConfig: ChatConfig, socketFactory: WebSocketFactoryProtocol = WebSocketFactory()) {
+        self.chatConfig = chatConfig
         self.socketFactory = socketFactory
         self.encoder = JSONEncoder()
         self.decoder = JSONDecoder()
@@ -51,13 +52,11 @@ class ChatConnection : ChatConnectionProtocol, WebSocketDelegate  {
             return
         }
 
-        self.uvp = uvp
-
-        guard let url = URL(string: ChatConnection.socketURL + uvp) else {
-            AirshipLogger.error("Invalid URL: \(ChatConnection.socketURL + uvp)")
+        guard let url = createURL(uvp: uvp) else {
             return
         }
 
+        self.uvp = uvp
         self.socket = self.socketFactory.createWebSocket(url: url)
         self.socket?.delegate = self
         self.socket?.open()
@@ -102,6 +101,21 @@ class ChatConnection : ChatConnectionProtocol, WebSocketDelegate  {
                 AirshipLogger.trace("Message sent \(jsonString)")
             }
         }
+    }
+
+    private func createURL(uvp: String) -> URL? {
+        guard let chatWebSocketURL = chatConfig.chatWebSocketURL else {
+            AirshipLogger.error("Missing chat web socket URL")
+            return nil;
+        }
+
+        let urlString = chatWebSocketURL + "?uvp=\(uvp)"
+        guard let url = URL(string: urlString) else {
+            AirshipLogger.error("Invalid URL: \(urlString)")
+            return nil;
+        }
+
+        return url;
     }
 
     private struct FetchConversationRequest : Encodable {

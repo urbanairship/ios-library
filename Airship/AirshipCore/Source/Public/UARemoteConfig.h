@@ -12,21 +12,29 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * The Airship device API url.
- *
  */
 @property (nonatomic, copy, nullable) NSString *deviceAPIURL;
 
 /**
  * The Airship analytics API url.
- *
  */
 @property (nonatomic, copy, nullable) NSString *analyticsURL;
 
 /**
  * The Airship remote data url.
- *
  */
 @property (nonatomic, copy, nullable) NSString *remoteDataURL;
+
+/**
+ * The Airship chat URL.
+ */
+@property (nonatomic, copy, nullable) NSString *chatURL;
+
+/**
+ * The Airship chat web socket URL.
+ */
+@property (nonatomic, copy, nullable) NSString *chatWebSocketURL;
+
 
 /**
  * Factory method.
@@ -37,14 +45,18 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Factory method.
- * @param remoteDataURL  the remote data URL.
- * @param deviceAPIURL  the device API URL.
- * @param analyticsURL  the analytics URL.
+ * @param remoteDataURL  The remote data URL.
+ * @param deviceAPIURL  The device API URL.
+ * @param analyticsURL  The analytics URL.
+ * @param chatURL  The chat URL.
+ * @param chatWebSocketURL The chat web socket URL.
  * @return A remote config.
  */
-+ (instancetype)configWithRemoteDataURL:(NSString *)remoteDataURL
-                           deviceAPIURL:(NSString *)deviceAPIURL
-                           analyticsURL:(NSString *)analyticsURL;
++ (instancetype)configWithRemoteDataURL:(nullable NSString *)remoteDataURL
+                           deviceAPIURL:(nullable NSString *)deviceAPIURL
+                           analyticsURL:(nullable NSString *)analyticsURL
+                                chatURL:(nullable NSString *)chatURL
+                       chatWebSocketURL:(nullable NSString *)chatWebSocketURL;
 
 @end
 

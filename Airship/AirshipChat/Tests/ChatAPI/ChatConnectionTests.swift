@@ -10,6 +10,8 @@ class ChatConnectionTests: XCTestCase {
     var mockWebSocket: MockWebSocket!
     var mockWebSocketFactory: MockWebSocketFactory!
     var mockDelegate: MockChatConnectionDelegate!
+    var mockConfig: MockChatConfig!
+
     var connection: ChatConnection!
 
     override func setUp() {
@@ -19,7 +21,12 @@ class ChatConnectionTests: XCTestCase {
         self.mockWebSocketFactory = MockWebSocketFactory(socket: self.mockWebSocket)
         self.mockDelegate = MockChatConnectionDelegate()
 
-        self.connection = ChatConnection(socketFactory: self.mockWebSocketFactory)
+        self.mockConfig = MockChatConfig(appKey: "app Key",
+                                         chatURL: "https://test",
+                                         chatWebSocketURL: "wss:test")
+
+        self.connection = ChatConnection(chatConfig: self.mockConfig,
+                                         socketFactory: self.mockWebSocketFactory)
         self.connection.delegate = self.mockDelegate
     }
 
@@ -32,8 +39,15 @@ class ChatConnectionTests: XCTestCase {
         XCTAssertTrue(self.connection.isOpenOrOpening)
         XCTAssertTrue(self.mockWebSocket.isOpen)
 
-        let expectedURL = "wss://4na0gg07ee.execute-api.us-west-1.amazonaws.com/Prod?uvp=some-uvp"
+        let expectedURL = "wss:test?uvp=some-uvp"
         XCTAssertEqual(expectedURL, self.mockWebSocketFactory.lastURL?.absoluteString)
+    }
+
+    func testOpenMissinigURL() throws {
+        self.mockConfig.chatWebSocketURL = nil
+        self.connection.open(uvp: "some-uvp")
+        XCTAssertFalse(self.connection.isOpenOrOpening)
+        XCTAssertFalse(self.mockWebSocket.isOpen)
     }
 
     func testClose() throws {

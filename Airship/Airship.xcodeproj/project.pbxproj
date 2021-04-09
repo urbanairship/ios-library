@@ -1979,6 +1979,8 @@
 		6E9D560E261E3C66009BD6EB /* ConversationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9D553A261E3182009BD6EB /* ConversationTests.swift */; };
 		6E9D56D4261E6C6A009BD6EB /* ChatDAO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9D56D3261E6C6A009BD6EB /* ChatDAO.swift */; };
 		6E9D5759261F6C22009BD6EB /* AirshipCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 494DD9571B0EB677009C134E /* AirshipCore.framework */; };
+		6E9D57C1261F99BF009BD6EB /* ChatConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9D57C0261F99BF009BD6EB /* ChatConfig.swift */; };
+		6E9D57DF261F9EC0009BD6EB /* MockChatConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9D57DE261F9EC0009BD6EB /* MockChatConfig.swift */; };
 		6E9F74D024E6F414001F9B05 /* UADeferredScheduleAPIClient+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E9F74CE24E6F414001F9B05 /* UADeferredScheduleAPIClient+Internal.h */; };
 		6E9F74D124E6F414001F9B05 /* UADeferredScheduleAPIClient+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E9F74CE24E6F414001F9B05 /* UADeferredScheduleAPIClient+Internal.h */; };
 		6E9F74D224E6F414001F9B05 /* UADeferredScheduleAPIClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E9F74CF24E6F414001F9B05 /* UADeferredScheduleAPIClient.m */; };
@@ -3460,6 +3462,8 @@
 		6E9D55E0261E3B21009BD6EB /* MockChannel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockChannel.swift; sourceTree = "<group>"; };
 		6E9D55F0261E3B96009BD6EB /* MockAppStateTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockAppStateTracker.swift; sourceTree = "<group>"; };
 		6E9D56D3261E6C6A009BD6EB /* ChatDAO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatDAO.swift; sourceTree = "<group>"; };
+		6E9D57C0261F99BF009BD6EB /* ChatConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatConfig.swift; sourceTree = "<group>"; };
+		6E9D57DE261F9EC0009BD6EB /* MockChatConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockChatConfig.swift; sourceTree = "<group>"; };
 		6E9F74CE24E6F414001F9B05 /* UADeferredScheduleAPIClient+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UADeferredScheduleAPIClient+Internal.h"; sourceTree = "<group>"; };
 		6E9F74CF24E6F414001F9B05 /* UADeferredScheduleAPIClient.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UADeferredScheduleAPIClient.m; sourceTree = "<group>"; };
 		6E9F74D424E6F68D001F9B05 /* UADeferredScheduleResult+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UADeferredScheduleResult+Internal.h"; sourceTree = "<group>"; };
@@ -5170,6 +5174,7 @@
 				6E7C07CE26139B4A006D0E84 /* Conversation.swift */,
 				6E7C07DD26139B58006D0E84 /* ChatMessage.swift */,
 				6E9D55C2261E3A92009BD6EB /* AirshipChannel.swift */,
+				6E9D57C0261F99BF009BD6EB /* ChatConfig.swift */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -5613,6 +5618,7 @@
 				6E9D55A4261E39BE009BD6EB /* MockChatAPIClient.swift */,
 				6E9D55E0261E3B21009BD6EB /* MockChannel.swift */,
 				6E9D55F0261E3B96009BD6EB /* MockAppStateTracker.swift */,
+				6E9D57DE261F9EC0009BD6EB /* MockChatConfig.swift */,
 			);
 			path = Mocks;
 			sourceTree = "<group>";
@@ -8639,6 +8645,7 @@
 				6E9D5433261E0C49009BD6EB /* WebSocketProtocol.swift in Sources */,
 				6E9D5443261E0C62009BD6EB /* WebSocketFactoryProtocol.swift in Sources */,
 				6E9D554B261E31D2009BD6EB /* ChatConnection.swift in Sources */,
+				6E9D57C1261F99BF009BD6EB /* ChatConfig.swift in Sources */,
 				6E7C07C026139223006D0E84 /* ChatConnectionProtocol.swift in Sources */,
 				6E7C080926139F74006D0E84 /* ChatAPIClientProtocol.swift in Sources */,
 				6E9D55C3261E3A92009BD6EB /* AirshipChannel.swift in Sources */,
@@ -8768,6 +8775,7 @@
 				6E9D55E1261E3B21009BD6EB /* MockChannel.swift in Sources */,
 				6E9D54EB261E158B009BD6EB /* MockWebSocketFactory.swift in Sources */,
 				6E9D55F1261E3B96009BD6EB /* MockAppStateTracker.swift in Sources */,
+				6E9D57DF261F9EC0009BD6EB /* MockChatConfig.swift in Sources */,
 				6E9D54BD261E13BB009BD6EB /* ChatConnectionTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -6,7 +6,7 @@
 
 static NSString * const UARemoteConfigKey = @"com.urbanairship.config.remote_config_key";
 
-NSString * const UARemoteConfigURLManagerConfigUpdated = @"com.urbanairship.remote_url_config_updated";
+NSNotificationName const UARemoteConfigURLManagerConfigUpdated = @"com.urbanairship.remote_url_config_updated";
 
 @interface UARemoteConfigURLManager()
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;

@@ -10,7 +10,7 @@ NS_ASSUME_NONNULL_BEGIN
  *  NSNotification whenever the URL config changes.
  *  @note For internal use only. :nodoc:
  */
-extern NSString *const UARemoteConfigURLManagerConfigUpdated;
+extern NSNotificationName const UARemoteConfigURLManagerConfigUpdated;
 
 /**
  * Remote URL config manager.
@@ -20,25 +20,31 @@ extern NSString *const UARemoteConfigURLManagerConfigUpdated;
 
 /**
  * The Airship device API URL.
- *
  */
 @property (nonatomic, copy, readonly, nullable) NSString *deviceAPIURL;
 
 /**
  * The Airship analytics URL.
- *
  */
 @property (nonatomic, copy, readonly, nullable) NSString *analyticsURL;
 
 /**
  * The Airship remote data URL.
- *
  */
 @property (nonatomic, copy, readonly, nullable) NSString *remoteDataURL;
 
 /**
+ * The Airship chat URL.
+ */
+@property (nonatomic, copy, readonly, nullable) NSString *chatURL;
+
+/**
+ * The Airship chat web socket URL.
+ */
+@property (nonatomic, copy, readonly, nullable) NSString *chatWebSocketURL;
+
+/**
  * The Airship url config.
- *
  */
 @property (atomic, strong, readonly) UARemoteConfig *urlConfig;
 

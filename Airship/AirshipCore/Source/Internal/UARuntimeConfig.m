@@ -29,9 +29,11 @@
 @property (nonatomic, assign, getter=isDataCollectionOptInEnabled) BOOL dataCollectionOptInEnabled;
 @property (nonatomic, strong) UARemoteConfigURLManager *urlManager;
 
-@property (nonatomic, copy) NSString *deviceAPIURL;
-@property (nonatomic, copy) NSString *analyticsURL;
-@property (nonatomic, copy) NSString *remoteDataAPIURL;
+@property (nonatomic, copy) NSString *internalDeviceAPIURL;
+@property (nonatomic, copy) NSString *internalAnalyticsURL;
+@property (nonatomic, copy) NSString *internalRemoteDataAPIURL;
+@property (nonatomic, copy) NSString *internalChatURL;
+@property (nonatomic, copy) NSString *internalChatWebSocketURL;
 
 @end
 
@@ -39,6 +41,8 @@
 NSString *const UARuntimeConfigUSDeviceAPIURL = @"https://device-api.urbanairship.com";
 NSString *const UARuntimeConfigUSAnalyticsURL = @"https://combine.urbanairship.com";
 NSString *const UARuntimeConfigUSRemoteDataAPIURL = @"https://remote-data.urbanairship.com";
+NSString *const UARuntimeConfigUSChatAPIURL = @"https://rb2socketscontacts.replybuy.net";
+NSString *const UARuntimeConfigUSChatWebSocketAPIURL = @"wss://rb2socketscontacts.replybuy.net";
 
 // EU
 NSString *const UARuntimeConfigEUDeviceAPIURL = @"https://device-api.asnapieu.com";
@@ -74,6 +78,11 @@ NSString *const UARuntimeConfigEURemoteDataAPIURL = @"https://remote-data.asnapi
         self.messageCenterStyleConfig = config.messageCenterStyleConfig;
         self.itunesID = config.itunesID;
         self.dataCollectionOptInEnabled = config.dataCollectionOptInEnabled;
+        self.internalAnalyticsURL = config.analyticsURL;
+        self.internalDeviceAPIURL = config.deviceAPIURL;
+        self.internalRemoteDataAPIURL = config.remoteDataAPIURL;
+        self.internalChatURL = config.chatURL;
+        self.internalChatWebSocketURL = config.chatWebSocketURL;
     }
 
     return self;
@@ -91,8 +100,9 @@ NSString *const UARuntimeConfigEURemoteDataAPIURL = @"https://remote-data.asnapi
     if (self.urlManager.deviceAPIURL) {
         return self.urlManager.deviceAPIURL;
     }
-    if (self.config.deviceAPIURL) {
-        return self.config.deviceAPIURL;
+
+    if (self.internalDeviceAPIURL) {
+        return self.internalDeviceAPIURL;
     }
 
     if (self.requireInitialRemoteConfigEnabled) {
@@ -113,8 +123,8 @@ NSString *const UARuntimeConfigEURemoteDataAPIURL = @"https://remote-data.asnapi
         return self.urlManager.remoteDataURL;
     }
 
-    if (self.config.remoteDataAPIURL) {
-        return self.config.remoteDataAPIURL;
+    if (self.internalRemoteDataAPIURL) {
+        return self.internalRemoteDataAPIURL;
     }
     
     switch (self.config.site) {
@@ -131,8 +141,8 @@ NSString *const UARuntimeConfigEURemoteDataAPIURL = @"https://remote-data.asnapi
         return self.urlManager.analyticsURL;
     }
 
-    if (self.config.analyticsURL) {
-        return self.config.analyticsURL;
+    if (self.internalAnalyticsURL) {
+        return self.internalAnalyticsURL;
     }
 
     if (self.requireInitialRemoteConfigEnabled) {
@@ -147,5 +157,34 @@ NSString *const UARuntimeConfigEURemoteDataAPIURL = @"https://remote-data.asnapi
             return UARuntimeConfigUSAnalyticsURL;
     }
 }
+
+- (NSString *)chatURL {
+    if (self.internalChatURL) {
+        return self.internalChatURL;
+    }
+
+    switch (self.config.site) {
+        case UACloudSiteEU:
+            return nil;
+        case UACloudSiteUS:
+        default:
+            return UARuntimeConfigUSRemoteDataAPIURL;
+    }
+}
+
+- (NSString *)chatWebSocketURL {
+    if (self.internalChatWebSocketURL) {
+        return self.internalChatWebSocketURL;
+    }
+
+    switch (self.config.site) {
+        case UACloudSiteEU:
+            return nil;
+        case UACloudSiteUS:
+        default:
+            return UARuntimeConfigUSChatWebSocketAPIURL;
+    }
+}
+
 
 @end

@@ -496,6 +496,14 @@ NSString *const UALogLevelTraceName = @"TRACE";
     _remoteDataAPIURL = [self normalizeURL:remoteDataAPIURL];
 }
 
+- (void)setChatURL:(NSString *)chatURL {
+    _chatURL = [self normalizeURL:chatURL];
+}
+
+- (void)setChatWebSocketURL:(NSString *)chatWebSocketURL {
+    _chatWebSocketURL = [self normalizeURL:chatWebSocketURL];
+}
+
 #pragma mark -
 #pragma KVC Overrides
 - (void)setValue:(id)value forUndefinedKey:(NSString *)key {

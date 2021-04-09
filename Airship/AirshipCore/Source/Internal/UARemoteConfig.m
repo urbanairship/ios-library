@@ -6,12 +6,16 @@
 static NSString * const UARemoteDataURLKey = @"remote_data_url";
 static NSString * const UADeviceAPIURLKey = @"device_api_url";
 static NSString * const UAAnalyticsURLKey = @"analytics_url";
+static NSString * const UAChatURLKey = @"chat_url";
+static NSString * const UAChatWebSocketURLKey = @"chat_web_socket_url";
 
 @implementation UARemoteConfig
 
 - (instancetype)initWithRemoteDataURL:(NSString *)remoteDataURL
                          deviceAPIURL:(NSString *)deviceAPIURL
-                         analyticsURL:(NSString *)analyticsURL {
+                         analyticsURL:(NSString *)analyticsURL
+                              chatURL:(NSString *)chatURL
+                     chatWebSocketURL:(NSString *)chatWebSocketURL {
   
     self = [super init];
  
@@ -19,6 +23,8 @@ static NSString * const UAAnalyticsURLKey = @"analytics_url";
         self.remoteDataURL = remoteDataURL;
         self.deviceAPIURL = deviceAPIURL;
         self.analyticsURL = analyticsURL;
+        self.chatURL = chatURL;
+        self.chatWebSocketURL = chatWebSocketURL;
     }
    
     return self;
@@ -26,17 +32,29 @@ static NSString * const UAAnalyticsURLKey = @"analytics_url";
 
 + (instancetype)configWithRemoteDataURL:(NSString *)remoteDataURL
                            deviceAPIURL:(NSString *)deviceAPIURL
-                           analyticsURL:(NSString *)analyticsURL {
+                           analyticsURL:(NSString *)analyticsURL
+                                chatURL:(NSString *)chatURL
+                       chatWebSocketURL:(NSString *)chatWebSocketURL {
     
-    return [[UARemoteConfig alloc] initWithRemoteDataURL:remoteDataURL deviceAPIURL:deviceAPIURL analyticsURL:analyticsURL];
+    return [[UARemoteConfig alloc] initWithRemoteDataURL:remoteDataURL
+                                            deviceAPIURL:deviceAPIURL
+                                            analyticsURL:analyticsURL
+                                                 chatURL:chatURL
+                                        chatWebSocketURL:chatWebSocketURL];
 }
 
 + (instancetype)configWithRemoteData:(NSDictionary *)remoteConfigData {
     NSString *deviceAPIURL = remoteConfigData[UADeviceAPIURLKey];
     NSString *remoteDataURL = remoteConfigData[UARemoteDataURLKey];
     NSString *analyticsURL = remoteConfigData[UAAnalyticsURLKey];
-    
-    return [UARemoteConfig configWithRemoteDataURL:remoteDataURL deviceAPIURL:deviceAPIURL analyticsURL:analyticsURL];
+    NSString *chatURL = remoteConfigData[UAChatURLKey];
+    NSString *chatWebSocketURL = remoteConfigData[UAChatWebSocketURLKey];
+
+    return [UARemoteConfig configWithRemoteDataURL:remoteDataURL
+                                      deviceAPIURL:deviceAPIURL
+                                      analyticsURL:analyticsURL
+                                           chatURL:chatURL
+                                  chatWebSocketURL:chatWebSocketURL];
 }
 
 - (void)setAnalyticsURL:(NSString *)analyticsURL {
@@ -49,6 +67,14 @@ static NSString * const UAAnalyticsURLKey = @"analytics_url";
 
 - (void)setRemoteDataURL:(NSString *)remoteDataURL {
     _remoteDataURL = [self normalizeURL:remoteDataURL];
+}
+
+- (void)setChatURL:(NSString *)chatURL {
+    _chatURL = [self normalizeURL:chatURL];
+}
+
+- (void)setChatWebSocketURL:(NSString *)chatWebSocketURL {
+    _chatWebSocketURL = [self normalizeURL:chatWebSocketURL];
 }
 
 - (NSString *)normalizeURL:(NSString *)urlString {
@@ -83,6 +109,14 @@ static NSString * const UAAnalyticsURLKey = @"analytics_url";
     if ((self.remoteDataURL != other.remoteDataURL) && ![self.remoteDataURL isEqualToString:other.remoteDataURL]) {
         return NO;
     }
+
+    if ((self.chatURL != other.chatURL) && ![self.chatURL isEqualToString:other.chatURL]) {
+        return NO;
+    }
+
+    if ((self.chatWebSocketURL != other.chatWebSocketURL) && ![self.chatWebSocketURL isEqualToString:other.chatWebSocketURL]) {
+        return NO;
+    }
     
     return YES;
 }
@@ -92,6 +126,8 @@ static NSString * const UAAnalyticsURLKey = @"analytics_url";
     result = 31 * result + [self.deviceAPIURL hash];
     result = 31 * result + [self.analyticsURL hash];
     result = 31 * result + [self.remoteDataURL hash];
+    result = 31 * result + [self.chatURL hash];
+    result = 31 * result + [self.chatWebSocketURL hash];
     return result;
 }
 

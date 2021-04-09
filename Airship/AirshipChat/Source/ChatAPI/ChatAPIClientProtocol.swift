@@ -14,5 +14,5 @@ struct UVPResponse {
 }
 
 protocol ChatAPIClientProtocol {
-    func createUVP(appKey: String, channelID: String, callback: @escaping (UVPResponse?, Error?) -> ())
+    func createUVP(channelID: String, callback: @escaping (UVPResponse?, Error?) -> ())
 }
