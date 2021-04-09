@@ -6,8 +6,7 @@ import Foundation
 import AirshipCore
 #elseif !COCOAPODS && canImport(Airship)
 import Airship
-#endif 
-
+#endif
 
 /**
  * Conversation delegate.
@@ -57,11 +56,15 @@ public protocol ConversationProtocol {
     func fetchMessages(completionHandler: @escaping (Array<ChatMessage>) -> ())
 }
 
+protocol Refreshable  {
+    func refresh()
+}
+
 /**
  * Chat conversation.
  */
 @available(iOS 13.0, *)
-class Conversation : ConversationProtocol, ChatConnectionDelegate {
+class Conversation : ConversationProtocol, ChatConnectionDelegate, Refreshable {
 
     private static let uvpStorageKey : String = "AirshipChat.UVP"
     private static let uvpRetryDelay : Double = 30
@@ -74,7 +77,8 @@ class Conversation : ConversationProtocol, ChatConnectionDelegate {
     private let dispatcher: UADispatcher
     private var chatConnection: ChatConnectionProtocol
     private let chatDAO : ChatDAOProtocol
-    private var isPendingSynced = false
+
+    private var isPendingSent = false
     private var isUVPCreating = false
 
     @objc
@@ -160,7 +164,7 @@ class Conversation : ConversationProtocol, ChatConnectionDelegate {
         }
 
         dispatcher.dispatchAsync {
-            if (self.chatConnection.isOpenOrOpening && self.isPendingSynced) {
+            if (self.chatConnection.isOpenOrOpening && self.isPendingSent) {
                 self.chatConnection.sendMessage(requestID: requestID, text: text)
             } else {
                 self.updateConnection()
@@ -199,10 +203,15 @@ class Conversation : ConversationProtocol, ChatConnectionDelegate {
         createUVP()
     }
 
-    private func updateConnection() {
+    /**
+     * Updates the connection. When the connection opens, it will remain open
+     * until the conversation is fetched and the pending messages are sent.
+     */
+    private func updateConnection(open: Bool = false) {
         dispatcher.dispatchAsyncIfNecessary {
-            var shouldOpen : Bool = false
-            if (self.appStateTracker.state == UAApplicationState.active) {
+
+            var shouldOpen = false
+            if (open || !self.isPendingSent || self.appStateTracker.state == UAApplicationState.active) {
                 shouldOpen = true
             } else {
                 let semaphore = UASemaphore()
@@ -215,16 +224,19 @@ class Conversation : ConversationProtocol, ChatConnectionDelegate {
             }
 
             if (shouldOpen) {
+                guard !self.chatConnection.isOpenOrOpening else {
+                    return
+                }
+
+                self.isPendingSent = false
+
                 guard let uvp = self.getUVP() else {
                     self.createUVP()
                     return
                 }
-                
-                if (!self.chatConnection.isOpenOrOpening) {
-                    self.isPendingSynced = false
-                    self.chatConnection.open(uvp: uvp)
-                    self.chatConnection.requestConversation()
-                }
+
+                self.chatConnection.open(uvp: uvp)
+                self.chatConnection.requestConversation()
             } else {
                 self.chatConnection.close()
             }
@@ -270,26 +282,36 @@ class Conversation : ConversationProtocol, ChatConnectionDelegate {
     }
 
     private func syncPending() {
-        self.chatDAO.fetchPending { pending in
-            // Copy to tuples to avoid modifying pending data on the wrong queue
-            let pendingCopy = pending.map { ($0.requestID, $0.text) }
+        self.dispatcher.dispatchAsync {
+            let semaphore = UASemaphore()
+            var pendingCopy: [(String, String)]? = nil
 
-            self.dispatcher.dispatchAsync {
-                guard self.chatConnection.isOpenOrOpening else {
-                    return
-                }
+            self.chatDAO.fetchPending { pending in
+                // Copy to tuples to keep honor
+                pendingCopy = pending.map { ($0.requestID, $0.text) }
+                semaphore.signal()
+            }
 
-                pendingCopy.forEach {
+            semaphore.wait()
+
+            if (self.chatConnection.isOpenOrOpening) {
+                pendingCopy?.forEach {
                     self.chatConnection.sendMessage(requestID: $0.0, text: $0.1)
                 }
-
-                self.isPendingSynced = true
+                self.isPendingSent = true
             }
+            self.updateConnection()
         }
     }
 
     func onOpen() {
         self.isConnected = true
+    }
+
+    func refresh() {
+        dispatcher.dispatchAsync {
+            self.updateConnection(open: true)
+        }
     }
 
     func onClose(_ reason: CloseReason) {
@@ -323,7 +345,6 @@ class Conversation : ConversationProtocol, ChatConnectionDelegate {
             self.delegate?.onMessagesUpdated()
         }
     }
-    
 }
 
 @available(iOS 13.0, *)

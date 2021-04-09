@@ -13,7 +13,9 @@ import Airship
  */
 @available(iOS 13.0, *)
 @objc(UAirshipChat)
-public class AirshipChat : UAComponent {
+public class AirshipChat : UAComponent, UAPushableComponent {
+
+    private static let refreshKey = "com.urbanairship.chat"
 
     /**
      * The default conversation.
@@ -28,5 +30,12 @@ public class AirshipChat : UAComponent {
         super.init(dataStore: dataStore)
 
         AirshipLogger.info("AirshipChat initialized")
+    }
+
+    public func receivedRemoteNotification(_ notification: UANotificationContent, completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+        if let refreshable = self.conversation as? Refreshable {
+            refreshable.refresh()
+        }
+        completionHandler(.newData)
     }
 }

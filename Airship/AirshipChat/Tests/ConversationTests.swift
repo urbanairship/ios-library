@@ -100,15 +100,6 @@ class ConversationTests: XCTestCase {
         XCTAssertEqual("some-uvp", self.mockChatConnection.lastUVP)
     }
 
-    func testBackgroundDisconnects() throws {
-        self.mockChannel.identifier = "channel id"
-        self.mockAPIClient.result = (UVPResponse(status: 200, uvp: "some-uvp"), nil)
-
-        foreground()
-        background()
-        XCTAssertFalse(self.mockChatConnection.isOpenOrOpening)
-    }
-
     func testSendMessageAfterSync() throws {
         self.connect()
 
@@ -149,9 +140,18 @@ class ConversationTests: XCTestCase {
         XCTAssertEqual("hello!", self.mockChatConnection.lastSendMessage?.1)
     }
 
-    func testBackgroundClosesConnection() throws  {
+    func testBackgroundClosesConnectionIfPendingSent() throws  {
         self.connect()
         XCTAssertTrue(self.mockChatConnection.isOpenOrOpening)
+
+        self.background()
+        XCTAssertTrue(self.mockChatConnection.isOpenOrOpening)
+
+        self.foreground()
+
+        let fetchConvoPayload = ChatResponse.ConversationLoadedResponsePayload(messages: nil)
+        let fetchConvo = ChatResponse(type: "fetch_conversation", payload: fetchConvoPayload)
+        self.mockChatConnection.delegate?.onChatResponse(fetchConvo)
 
         self.background()
         XCTAssertFalse(self.mockChatConnection.isOpenOrOpening)
@@ -175,6 +175,22 @@ class ConversationTests: XCTestCase {
         let messageReceivedResponse = ChatResponse(type: "message_received", payload: messageReceivedPayload)
         self.mockChatConnection.delegate?.onChatResponse(messageReceivedResponse)
 
+        XCTAssertFalse(self.mockChatConnection.isOpenOrOpening)
+    }
+
+    func testRefershInBackground() throws  {
+        self.connect()
+        let fetchConvoPayload = ChatResponse.ConversationLoadedResponsePayload(messages: nil)
+        let fetchConvo = ChatResponse(type: "fetch_conversation", payload: fetchConvoPayload)
+        self.mockChatConnection.delegate?.onChatResponse(fetchConvo)
+
+        self.background()
+        XCTAssertFalse(self.mockChatConnection.isOpenOrOpening)
+
+        self.conversation.refresh()
+        XCTAssertTrue(self.mockChatConnection.isOpenOrOpening)
+
+        self.mockChatConnection.delegate?.onChatResponse(fetchConvo)
         XCTAssertFalse(self.mockChatConnection.isOpenOrOpening)
     }
 
