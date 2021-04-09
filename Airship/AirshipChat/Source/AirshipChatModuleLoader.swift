@@ -30,4 +30,8 @@ public class AirshipChatModuleLoader : NSObject, UAModuleLoader, UAAirshipChatMo
     public func components() -> [UAComponent] {
         return [self.module]
     }
+
+    public func registerActions(_ registry: UAActionRegistry) {
+        registry.register(OpenChatAction(), name: OpenChatAction.name)
+    }
 }
